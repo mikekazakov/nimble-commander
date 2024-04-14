@@ -68,6 +68,7 @@ struct StateStorage {
 }
 
 @synthesize headerView = m_HeaderView;
+@synthesize actionsDispatcher;
 
 - (id)initWithFrame:(NSRect)frame
      iconRepository:(std::unique_ptr<nc::vfsicon::IconRepository>)_icon_repository

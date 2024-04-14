@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/Hash.h>
 #include <Base/SerialQueue.h>
 #include <NimbleCommander/Bootstrap/Config.h>
@@ -33,6 +33,14 @@ using nc::base::Hash;
     nc::base::SerialQueue m_WorkQue;
     uint64_t m_TotalSize;
 }
+@synthesize HashMethod;
+@synthesize Table;
+@synthesize Progress;
+@synthesize isWorking;
+@synthesize sumsAvailable;
+@synthesize didSaved;
+@synthesize filenameTableColumn;
+@synthesize checksumTableColumn;
 
 - (id)initWithFiles:(std::vector<std::string>)files
           withSizes:(std::vector<uint64_t>)sizes
@@ -61,9 +69,8 @@ using nc::base::Hash;
         m_WorkQue.SetOnDry([=] {
             dispatch_to_main_queue([self] {
                 self.isWorking = false;
-                self.sumsAvailable = count_if(begin(m_Checksums), end(m_Checksums), [](auto &i) {
-                                         return !i.empty();
-                                     }) > 0;
+                self.sumsAvailable =
+                    count_if(begin(m_Checksums), end(m_Checksums), [](auto &i) { return !i.empty(); }) > 0;
             });
         });
     }
@@ -91,22 +98,17 @@ using nc::base::Hash;
             const auto item_index = int(&i - &m_Filenames[0]);
 
             VFSFilePtr file;
-            int rc = m_Host->CreateFile((std::filesystem::path(m_Path) / i).c_str(),
-                                        file,
-                                        [self] { return m_WorkQue.IsStopped(); });
+            int rc = m_Host->CreateFile(
+                (std::filesystem::path(m_Path) / i).c_str(), file, [self] { return m_WorkQue.IsStopped(); });
             if( rc != 0 ) {
-                dispatch_to_main_queue([self, rc, item_index] {
-                    [self reportError:rc forFilenameAtIndex:item_index];
-                });
+                dispatch_to_main_queue([self, rc, item_index] { [self reportError:rc forFilenameAtIndex:item_index]; });
                 continue;
             }
 
             rc = file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache,
                             [self] { return m_WorkQue.IsStopped(); });
             if( rc != 0 ) {
-                dispatch_to_main_queue([self, rc, item_index] {
-                    [self reportError:rc forFilenameAtIndex:item_index];
-                });
+                dispatch_to_main_queue([self, rc, item_index] { [self reportError:rc forFilenameAtIndex:item_index]; });
                 continue;
             }
 
@@ -118,14 +120,12 @@ using nc::base::Hash;
                     break;
                 h.Feed(buf.get(), rn);
                 total_fed += rn;
-                dispatch_to_main_queue(
-                    [self, progress = double(total_fed)] { self.Progress.doubleValue = progress; });
+                dispatch_to_main_queue([self, progress = double(total_fed)] { self.Progress.doubleValue = progress; });
             }
 
             if( rn < 0 ) {
-                dispatch_to_main_queue([self, rn, item_index] {
-                    [self reportError:static_cast<int>(rn) forFilenameAtIndex:item_index];
-                });
+                dispatch_to_main_queue(
+                    [self, rn, item_index] { [self reportError:static_cast<int>(rn) forFilenameAtIndex:item_index]; });
                 continue;
             }
 
@@ -190,8 +190,7 @@ using nc::base::Hash;
 - (void)reportError:(int)error forFilenameAtIndex:(int)ind
 {
     m_Errors[ind] =
-        [NSString stringWithFormat:@"Error: %@", VFSError::ToNSError(error).localizedDescription]
-            .UTF8String;
+        [NSString stringWithFormat:@"Error: %@", VFSError::ToNSError(error).localizedDescription].UTF8String;
     [self.Table reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:ind]
                           columnIndexes:[NSIndexSet indexSetWithIndex:1]];
 }
@@ -250,8 +249,7 @@ using nc::base::Hash;
 
     VFSFilePtr file;
     m_Host->CreateFile((std::filesystem::path(m_Path) / g_SumsFilename).c_str(), file);
-    int rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_NoExist | VFSFlags::OF_Create | S_IWUSR |
-                        S_IRUSR | S_IRGRP);
+    int rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_NoExist | VFSFlags::OF_Create | S_IWUSR | S_IRUSR | S_IRGRP);
     if( rc < 0 ) {
         [[Alert alertWithError:VFSError::ToNSError(rc)] runModal];
         return;

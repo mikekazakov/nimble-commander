@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WebDAVConnectionSheetController.h"
 #include <Utility/StringExtras.h>
 #include <Base/algo.h>
@@ -21,6 +21,16 @@
     std::optional<std::string> m_Password;
     NetworkConnectionsManager::WebDAV m_Connection;
 }
+@synthesize setupMode;
+@synthesize isValid;
+@synthesize titleTextField;
+@synthesize protocolPopup;
+@synthesize serverTextField;
+@synthesize basePathTextField;
+@synthesize usernameTextField;
+@synthesize passwordTextField;
+@synthesize remotePortTextField;
+@synthesize connectButton;
 
 - (id)init
 {

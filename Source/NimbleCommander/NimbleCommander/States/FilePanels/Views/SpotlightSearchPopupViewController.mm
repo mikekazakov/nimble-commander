@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/SimpleComboBoxPersistentDataSource.h>
 #include "SpotlightSearchPopupViewController.h"
 
@@ -16,6 +16,7 @@ static const auto g_ConfigHistoryPath = "filePanel.findWithSpotlightPopup.querie
 }
 
 @synthesize handler = m_Handler;
+@synthesize queryComboBox;
 
 - (void)viewDidLoad
 {

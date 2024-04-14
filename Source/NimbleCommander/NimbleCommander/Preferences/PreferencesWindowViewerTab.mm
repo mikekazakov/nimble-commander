@@ -46,6 +46,7 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 {
     nc::viewer::History *m_History;
 }
+@synthesize DefaultEncoding;
 
 - (instancetype)initWithHistory:(nc::viewer::History&)_history
 {

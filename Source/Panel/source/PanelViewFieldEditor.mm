@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewFieldEditor.h"
 #include <Operations/FilenameTextControl.h>
 #include <Utility/StringExtras.h>
@@ -18,6 +18,8 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
 
 @synthesize originalItem = m_OriginalItem;
 @synthesize editor = m_TextView;
+@synthesize onTextEntered;
+@synthesize onEditingFinished;
 
 - (instancetype)initWithItem:(VFSListingItem)_item
 {
@@ -75,8 +77,7 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
 
 - (void)markNextFilenamePart
 {
-    m_TextView.selectedRange =
-        NextFilenameSelectionRange(m_TextView.string, m_TextView.selectedRange);
+    m_TextView.selectedRange = NextFilenameSelectionRange(m_TextView.string, m_TextView.selectedRange);
 }
 
 - (BOOL)textShouldEndEditing:(NSText *) [[maybe_unused]] textObject
@@ -176,7 +177,7 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
 
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd
 {
-    Log::Trace(SPDLOC, "viewWillMoveToWindow: {}", (__bridge void*)_wnd);
+    Log::Trace(SPDLOC, "viewWillMoveToWindow: {}", (__bridge void *)_wnd);
     const auto notify_center = NSNotificationCenter.defaultCenter;
     if( self.window ) {
         [notify_center removeObserver:self name:NSWindowDidResignKeyNotification object:nil];

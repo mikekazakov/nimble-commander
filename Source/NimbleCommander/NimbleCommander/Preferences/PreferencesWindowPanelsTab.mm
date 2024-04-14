@@ -142,6 +142,36 @@ static const auto g_TagsDDType = @"com.magnumbytes.nc.pref.PreferencesWindowPane
     dispatch_queue m_TagOperationsQue;
     std::unique_ptr<nc::ConfigBinder> m_BinderTagsAreEnabled;
 }
+@synthesize tabParts;
+@synthesize fileSizeFormatCombo;
+@synthesize selectionSizeFormatCombo;
+@synthesize layoutsTable;
+@synthesize anyLayoutSelected;
+@synthesize layoutTitle;
+@synthesize layoutType;
+@synthesize layoutDetailsTabView;
+@synthesize layoutsBriefFixedRadio;
+@synthesize layoutsBriefFixedRadioChoosen;
+@synthesize layoutsBriefFixedValueTextField;
+@synthesize layoutsBriefAmountRadio;
+@synthesize layoutsBriefAmountRadioChoosen;
+@synthesize layoutsBriefAmountValueTextField;
+@synthesize layoutsBriefDynamicRadio;
+@synthesize layoutsBriefDynamicRadioChoosen;
+@synthesize layoutsBriefDynamicMinValueTextField;
+@synthesize layoutsBriefDynamicMaxValueTextField;
+@synthesize layoutsBriefDynamicEqualCheckbox;
+@synthesize layoutsBriefIcon0x;
+@synthesize layoutsBriefIcon1x;
+@synthesize layoutsBriefIcon2x;
+@synthesize layoutsListColumnsTable;
+@synthesize layoutsListIcon0x;
+@synthesize layoutsListIcon1x;
+@synthesize layoutsListIcon2x;
+@synthesize tagsTable;
+@synthesize tagsPlusMinus;
+@synthesize tagsAdditionalMenu;
+@synthesize tagsAreEnabled;
 
 - (id)initWithNibName:(NSString *) [[maybe_unused]] nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {

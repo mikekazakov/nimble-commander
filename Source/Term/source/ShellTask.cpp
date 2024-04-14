@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/select.h>
 #include <sys/ioctl.h>
 #include <sys/sysctl.h>
@@ -27,6 +27,7 @@
 #include "ShellTask.h"
 #include "Log.h"
 #include <fmt/std.h>
+#include <fmt/format.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <memory_resource>
 
@@ -236,7 +237,7 @@ struct ShellTask::Impl {
     std::shared_ptr<OnPwdPrompt> on_pwd_prompt;
     std::shared_ptr<OnStateChange> on_state_changed;
     std::shared_ptr<OnChildOutput> on_child_output;
-    
+
     void OnMasterSourceData();
     void OnMasterSourceCancellation();
     void OnCwdSourceData();
@@ -832,7 +833,7 @@ void ShellTask::Execute(const char *_short_fn, const char *_at, const char *_par
     if( I->state != TaskState::Shell )
         return;
 
-    std::string cmd = EscapeShellFeed(_short_fn);
+    const std::string cmd = EscapeShellFeed(_short_fn);
 
     // process cwd stuff if any
     char cwd[MAXPATHLEN];
@@ -851,22 +852,16 @@ void ShellTask::Execute(const char *_short_fn, const char *_at, const char *_par
         }
     }
 
-    char input[2048];
+    std::string input;
     if( cwd[0] != 0 )
-        snprintf(input,
-                 sizeof(input),
-                 "cd '%s'; ./%s%s%s\n",
-                 cwd,
-                 cmd.c_str(),
-                 _parameters != nullptr ? " " : "",
-                 _parameters != nullptr ? _parameters : "");
+        input = fmt::format("cd '{}'; ./{}{}{}\n",
+                            cwd,
+                            cmd,
+                            _parameters != nullptr ? " " : "",
+                            _parameters != nullptr ? _parameters : "");
     else
-        snprintf(input,
-                 sizeof(input),
-                 "./%s%s%s\n",
-                 cmd.c_str(),
-                 _parameters != nullptr ? " " : "",
-                 _parameters != nullptr ? _parameters : "");
+        input = fmt::format(
+            "./{}{}{}\n", cmd, _parameters != nullptr ? " " : "", _parameters != nullptr ? _parameters : "");
 
     I->SetState(TaskState::ProgramExternal);
     WriteChildInput(input);
@@ -877,32 +872,26 @@ void ShellTask::ExecuteWithFullPath(const char *_path, const char *_parameters)
     if( I->state != TaskState::Shell )
         return;
 
-    std::string cmd = EscapeShellFeed(_path);
-
-    char input[2048];
-    snprintf(input,
-             sizeof(input),
-             "%s%s%s\n",
-             cmd.c_str(),
-             _parameters != nullptr ? " " : "",
-             _parameters != nullptr ? _parameters : "");
+    const std::string cmd = EscapeShellFeed(_path);
+    const std::string input =
+        fmt::format("{}{}{}\n", cmd, _parameters != nullptr ? " " : "", _parameters != nullptr ? _parameters : "");
 
     I->SetState(TaskState::ProgramExternal);
     WriteChildInput(input);
 }
 
-void ShellTask::ExecuteWithFullPath(const std::filesystem::path& _binary_path, std::span<const std::string> _arguments)
+void ShellTask::ExecuteWithFullPath(const std::filesystem::path &_binary_path, std::span<const std::string> _arguments)
 {
     if( I->state != TaskState::Shell )
         return;
-    
+
     std::string cmd = EscapeShellFeed(_binary_path);
-    for( auto &arg: _arguments ) {
+    for( auto &arg : _arguments ) {
         cmd += ' ';
         cmd += EscapeShellFeed(arg);
     }
     cmd += "\n";
-    
+
     I->SetState(TaskState::ProgramExternal);
     WriteChildInput(cmd.c_str());
 }
@@ -1115,28 +1104,18 @@ std::string ShellTask::ComposePromptCommand() const
     // 2.c) NC processes the pwd notification (hopefully) and writes into the semaphore pipe
     // 2.d) data from that semaphore is read and the shell is unblocked
     // 3) the shell resumes
-    char prompt_setup[1024] = {0};
     const int pid = I->shell_pid;
     if( I->shell_type == ShellType::Bash )
-        snprintf(prompt_setup,
-                 sizeof(prompt_setup),
-                 " PROMPT_COMMAND='if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi'\n",
-                 pid);
+        return fmt::format(" PROMPT_COMMAND='if [ $$ -eq {} ]; then pwd>&20; read sema <&21; fi'\n", pid);
     else if( I->shell_type == ShellType::ZSH )
-        snprintf(prompt_setup,
-                 sizeof(prompt_setup),
-                 " precmd(){ if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi; }\n",
-                 pid);
+        return fmt::format(" precmd(){{ if [ $$ -eq {} ]; then pwd>&20; read sema <&21; fi; }}\n", pid);
     else if( I->shell_type == ShellType::TCSH )
-        snprintf(prompt_setup,
-                 sizeof(prompt_setup),
-                 " alias precmd 'if ( $$ == %d ) pwd>>%s;dd if=%s of=/dev/null bs=4 count=1 "
-                 ">&/dev/null'\n",
-                 pid,
-                 I->tcsh_cwd_path.c_str(),
-                 I->tcsh_semaphore_path.c_str());
-
-    return prompt_setup;
+        return fmt::format(" alias precmd 'if ( $$ == {} ) pwd>>{};dd if={} of=/dev/null bs=4 count=1 >&/dev/null'\n",
+                           pid,
+                           I->tcsh_cwd_path,
+                           I->tcsh_semaphore_path);
+    else
+        return {};
 }
 
 } // namespace nc::term

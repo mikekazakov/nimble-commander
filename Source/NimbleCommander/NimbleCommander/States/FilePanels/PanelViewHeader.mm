@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewHeader.h"
 #include <Utility/Layout.h>
 #include <Utility/ObjCpp.h>
@@ -34,6 +34,8 @@ static bool IsDark(NSColor *_color);
 
 @synthesize sortMode = m_SortMode;
 @synthesize sortModeChangeCallback = m_SortModeChangeCallback;
+@synthesize defaultResponder;
+@synthesize sortMenuPopup;
 
 - (id)initWithFrame:(NSRect)frameRect theme:(std::unique_ptr<nc::panel::HeaderTheme>)_theme
 {

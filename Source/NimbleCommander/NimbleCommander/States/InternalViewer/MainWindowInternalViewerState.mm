@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../MainWindowController.h"
 #include <Viewer/ViewerViewController.h>
@@ -29,6 +29,17 @@
     NCViewerViewController *m_Controller;
     NSLayoutConstraint *m_TopLayoutConstraint;
 }
+@synthesize internalViewerToolbar;
+@synthesize internalViewerToolbarSearchField;
+@synthesize internalViewerToolbarSearchProgressIndicator;
+@synthesize internalViewerToolbarEncodingsPopUp;
+@synthesize internalViewerToolbarModePopUp;
+@synthesize internalViewerToolbarPositionButton;
+@synthesize internalViewerToolbarFileSizeLabel;
+@synthesize internalViewerToolbarPopover;
+@synthesize internalViewerToolbarWordWrapCheckBox;
+@synthesize internalViewerToolbarSettingsButton;
+@synthesize embeddedFileView;
 
 - (id)initWithFrame:(NSRect)_frame_rect
       viewerFactory:(const std::function<NCViewerView *(NSRect)> &)_viewer_factory

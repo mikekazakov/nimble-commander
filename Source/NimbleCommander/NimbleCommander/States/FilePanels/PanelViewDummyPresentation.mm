@@ -1,7 +1,11 @@
-// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewDummyPresentation.h"
 
 @implementation NCPanelViewDummyPresentation
+@synthesize itemsInColumn;
+@synthesize maxNumberOfVisibleItems;
+@synthesize cursorPosition;
+@synthesize sortMode;
 
 - (BOOL)isOpaque
 {
@@ -20,33 +24,33 @@
 {
 }
 
-- (void)setData:(nc::panel::data::Model*)[[maybe_unused]] _data
+- (void)setData:(nc::panel::data::Model *) [[maybe_unused]] _data
 {
 }
 
-- (bool)isItemVisible:(int)[[maybe_unused]] _sorted_item_index
+- (bool)isItemVisible:(int) [[maybe_unused]] _sorted_item_index
 {
     return false;
 }
 
-- (void)setupFieldEditor:(NCPanelViewFieldEditor*)[[maybe_unused]] _editor
-          forItemAtIndex:(int)[[maybe_unused]] _sorted_item_index
+- (void)setupFieldEditor:(NCPanelViewFieldEditor *) [[maybe_unused]] _editor
+          forItemAtIndex:(int) [[maybe_unused]] _sorted_item_index
 {
 }
 
-- (void)onScrollToBeginning:(NSEvent*)[[maybe_unused]] _event
+- (void)onScrollToBeginning:(NSEvent *) [[maybe_unused]] _event
 {
 }
 
-- (void)onScrollToEnd:(NSEvent*)[[maybe_unused]] _event
+- (void)onScrollToEnd:(NSEvent *) [[maybe_unused]] _event
 {
 }
 
-- (void)onPageUp:(NSEvent*)[[maybe_unused]] _event
+- (void)onPageUp:(NSEvent *) [[maybe_unused]] _event
 {
 }
 
-- (void)onPageDown:(NSEvent*)[[maybe_unused]] _event
+- (void)onPageDown:(NSEvent *) [[maybe_unused]] _event
 {
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DropboxAccountSheetController.h"
 #include <VFS/NetDropbox.h>
 #include <NimbleCommander/Bootstrap/NCE.h>
@@ -10,15 +10,14 @@ using vfs::dropbox::Authenticator;
 
 namespace {
 
-enum class State
-{
+enum class State {
     Default = 0,
     Validating = 1,
     Success = 2,
     Failure = 3
 };
 
-}
+} // namespace
 
 @interface DropboxAccountSheetController ()
 
@@ -42,6 +41,15 @@ enum class State
     NetworkConnectionsManager::Dropbox m_Connection;
     State m_State;
 }
+@synthesize setupMode;
+@synthesize isValid;
+@synthesize isValidating;
+@synthesize isSuccess;
+@synthesize isFailure;
+@synthesize titleField;
+@synthesize accountField;
+@synthesize failureReasonField;
+@synthesize connectButton;
 
 - (instancetype)init
 {
@@ -108,9 +116,8 @@ enum class State
 {
     // Brings this app to the foreground.
     [NSRunningApplication.currentApplication
-        activateWithOptions:(NSApplicationActivateAllWindows |
-                             NSApplicationActivateIgnoringOtherApps)];
-    
+        activateWithOptions:(NSApplicationActivateAllWindows | NSApplicationActivateIgnoringOtherApps)];
+
     m_Token = vfs::dropbox::TokenMangler::ToMangledRefreshToken(_token.refresh_token);
     self.state = State::Validating;
 
@@ -133,15 +140,13 @@ enum class State
             }
         });
     });
-    
 }
 
 - (void)processAuthError:(int)_vfs_error
 {
     // Brings this app to the foreground.
     [NSRunningApplication.currentApplication
-        activateWithOptions:(NSApplicationActivateAllWindows |
-                             NSApplicationActivateIgnoringOtherApps)];
+        activateWithOptions:(NSApplicationActivateAllWindows | NSApplicationActivateIgnoringOtherApps)];
     self.state = State::Failure;
     self.failureReasonField.stringValue = VFSError::ToNSError(_vfs_error).localizedDescription;
 }
@@ -179,8 +184,8 @@ enum class State
 
 - (void)validate
 {
-    self.isValid = (m_State == State::Default || m_State == State::Success) && !m_Token.empty() &&
-                   !m_Connection.account.empty();
+    self.isValid =
+        (m_State == State::Default || m_State == State::Success) && !m_Token.empty() && !m_Connection.account.empty();
 }
 
 - (State)state

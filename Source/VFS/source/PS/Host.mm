@@ -1,4 +1,5 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "Host.h"
 #include <libproc.h>
 #include <sys/resource.h>
 #include <sys/proc_info.h>
@@ -6,9 +7,9 @@
 #include <Utility/SystemInformation.h>
 #include <RoutedIO/RoutedIO.h>
 #include "../ListingInput.h"
-#include "Host.h"
 #include "Internal.h"
 #include "File.h"
+#include <fmt/format.h>
 
 namespace nc::vfs {
 using namespace std::literals;
@@ -30,13 +31,12 @@ static NSDateFormatter *ProcDateFormatter()
 
 static const std::string &ProcStatus(int _st)
 {
-    [[clang::no_destroy]] static const std::string strings[] = {
-        "",
-        "SIDL (process being created by fork)",
-        "SRUN (currently runnable)",
-        "SSLEEP (sleeping on an address)",
-        "SSTOP (process debugging or suspension)",
-        "SZOMB (awaiting collection by parent)"};
+    [[clang::no_destroy]] static const std::string strings[] = {"",
+                                                                "SIDL (process being created by fork)",
+                                                                "SRUN (currently runnable)",
+                                                                "SSLEEP (sleeping on an address)",
+                                                                "SSTOP (process debugging or suspension)",
+                                                                "SZOMB (awaiting collection by parent)"};
     if( _st >= 0 && _st <= SZOMB )
         return strings[_st];
     return strings[0];
@@ -274,9 +274,7 @@ VFSMeta PSHost::Meta()
     m.Tag = UniqueTag;
     m.SpawnWithConfig = []([[maybe_unused]] const VFSHostPtr &_parent,
                            [[maybe_unused]] const VFSConfiguration &_config,
-                           [[maybe_unused]] VFSCancelChecker _cancel_checker) {
-        return GetSharedOrNew();
-    };
+                           [[maybe_unused]] VFSCancelChecker _cancel_checker) { return GetSharedOrNew(); };
     return m;
 }
 
@@ -320,8 +318,7 @@ std::vector<PSHost::ProcInfo> PSHost::GetProcs()
 
         curr.rusage_avail = false;
         memset(&curr.rusage, 0, sizeof(curr.rusage));
-        if( proc_pid_rusage(curr.pid, RUSAGE_INFO_V2, reinterpret_cast<void **>(&curr.rusage)) ==
-            0 )
+        if( proc_pid_rusage(curr.pid, RUSAGE_INFO_V2, reinterpret_cast<void **>(&curr.rusage)) == 0 )
             curr.rusage_avail = true;
 
         char pidpath[1024] = {0};
@@ -390,9 +387,7 @@ void PSHost::CommitProcs(std::vector<ProcInfo> _procs)
 
     for( auto &i : newdata->procs ) {
         newdata->files.push_back(ProcInfoIntoFile(i, newdata));
-        char filename[MAXPATHLEN];
-        snprintf(filename, sizeof(filename), "%5i - %s.txt", i.pid, i.name.c_str());
-        newdata->plain_filenames.emplace_back(filename);
+        newdata->plain_filenames.emplace_back(fmt::format("{:5} - {}.txt", i.pid, i.name));
     }
 
     m_Data = newdata;
@@ -424,11 +419,9 @@ std::string PSHost::ProcInfoIntoFile(const ProcInfo &_info, std::shared_ptr<Snap
     result += "Process user id: "s + to_string(_info.p_uid) + " (" + user_name + ")\n";
     result += "Process priority: "s + to_string(_info.priority) + "\n";
     result += "Process \"nice\" value: "s + to_string(_info.nice) + "\n";
-    result +=
-        "Started at: "s +
-        [ProcDateFormatter() stringFromDate:[NSDate dateWithTimeIntervalSince1970:_info.start_time]]
-            .UTF8String +
-        "\n";
+    result += "Started at: "s +
+              [ProcDateFormatter() stringFromDate:[NSDate dateWithTimeIntervalSince1970:_info.start_time]].UTF8String +
+              "\n";
     result += "Status: "s + ProcStatus(_info.status) + "\n";
     result += "Architecture: "s + ArchType(_info.cpu_type) + "\n";
     //    if( !ActivationManager::ForAppStore() )
@@ -441,8 +434,7 @@ std::string PSHost::ProcInfoIntoFile(const ProcInfo &_info, std::shared_ptr<Snap
         auto bwritten = to_string(_info.rusage.ri_diskio_byteswritten);
         (bread.length() < bwritten.length() ? bread : bwritten)
             .insert(0,
-                    std::max(bread.length(), bwritten.length()) -
-                        std::min(bread.length(), bwritten.length()),
+                    std::max(bread.length(), bwritten.length()) - std::min(bread.length(), bwritten.length()),
                     ' '); // right align
         result += "Disk I/O bytes read:    "s + bread + "\n";
         result += "Disk I/O bytes written: "s + bwritten + "\n";
@@ -480,8 +472,7 @@ int PSHost::FetchDirectoryListing(const char *_path,
     listing_source.mtimes.reset(variable_container<>::type::common);
     listing_source.mtimes[0] = data->taken_time;
 
-    for( int index = 0, index_e = static_cast<int>(data->procs.size()); index != index_e;
-         ++index ) {
+    for( int index = 0, index_e = static_cast<int>(data->procs.size()); index != index_e; ++index ) {
         listing_source.filenames.emplace_back(data->plain_filenames[index]);
         listing_source.unix_modes.emplace_back(S_IFREG | S_IRUSR | S_IRGRP);
         listing_source.unix_types.emplace_back(DT_REG);
@@ -501,9 +492,7 @@ bool PSHost::IsDirectory(const char *_path,
     return true;
 }
 
-int PSHost::CreateFile(const char *_path,
-                       std::shared_ptr<VFSFile> &_target,
-                       const VFSCancelChecker &_cancel_checker)
+int PSHost::CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker)
 {
     std::lock_guard<std::mutex> lock(m_Lock);
 
@@ -583,8 +572,7 @@ bool PSHost::IsDirChangeObservingAvailable([[maybe_unused]] const char *_path)
     return true;
 }
 
-HostDirObservationTicket PSHost::DirChangeObserve([[maybe_unused]] const char *_path,
-                                                  std::function<void()> _handler)
+HostDirObservationTicket PSHost::DirChangeObserve([[maybe_unused]] const char *_path, std::function<void()> _handler)
 {
     // currently we don't care about _path, since this fs has only one directory - root
     auto ticket = m_LastTicket++;
@@ -594,15 +582,13 @@ HostDirObservationTicket PSHost::DirChangeObserve([[maybe_unused]] const char *_
 
 void PSHost::StopDirChangeObserving(unsigned long _ticket)
 {
-    auto it = find_if(begin(m_UpdateHandlers), end(m_UpdateHandlers), [=](const auto &i) {
-        return i.first == _ticket;
-    });
+    auto it =
+        find_if(begin(m_UpdateHandlers), end(m_UpdateHandlers), [=](const auto &i) { return i.first == _ticket; });
     if( it != end(m_UpdateHandlers) )
         m_UpdateHandlers.erase(it);
 }
 
-int PSHost::IterateDirectoryListing(const char *_path,
-                                    const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+int PSHost::IterateDirectoryListing(const char *_path, const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     assert(_path != 0);
     if( _path[0] != '/' || _path[1] != 0 )
@@ -729,4 +715,4 @@ bool PSHost::IsWritable() const
     return true;
 }
 
-}
+} // namespace nc::vfs

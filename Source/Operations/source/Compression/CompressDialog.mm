@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CompressDialog.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
@@ -33,6 +33,16 @@ using namespace nc::ops;
 
 @synthesize destination = m_FinalDestination;
 @synthesize password = m_FinalPassword;
+@synthesize compressButton;
+@synthesize cancelButton;
+@synthesize protectWithPasswordCheckbox;
+@synthesize passwordTextField;
+@synthesize destinationTextField;
+@synthesize destinationTitleTextField;
+@synthesize protectWithPassword;
+@synthesize validInput;
+@synthesize destinationString;
+@synthesize passwordString;
 
 - (instancetype)initWithItems:(const std::vector<VFSListingItem> &)_source_items
                destinationVFS:(const VFSHostPtr &)_destination_host
@@ -47,8 +57,7 @@ using namespace nc::ops;
         self.protectWithPassword = false;
         self.destinationString = [NSString stringWithUTF8StdString:m_InitialDestination];
         self.validInput = false;
-        m_AutoCompletion =
-            std::make_shared<nc::ops::DirectoryPathAutoCompletionImpl>(m_DestinationHost);
+        m_AutoCompletion = std::make_shared<nc::ops::DirectoryPathAutoCompletionImpl>(m_DestinationHost);
         m_AutoCompletionDelegate = [[NCFilepathAutoCompletionDelegate alloc] init];
         m_AutoCompletionDelegate.completion = m_AutoCompletion;
         m_AutoCompletionDelegate.isNativeVFS = m_DestinationHost->IsNativeFS();
@@ -63,15 +72,13 @@ using namespace nc::ops;
     const auto amount = static_cast<int>(m_SourceItems.size());
     if( amount > 1 )
         self.destinationTitleTextField.stringValue =
-            [NSString stringWithFormat:NSLocalizedString(
-                                           @"Compress %@ items to:",
-                                           "Compress files sheet prompt, compressing many files"),
+            [NSString stringWithFormat:NSLocalizedString(@"Compress %@ items to:",
+                                                         "Compress files sheet prompt, compressing many files"),
                                        [NSNumber numberWithInt:amount]];
     else
         self.destinationTitleTextField.stringValue =
-            [NSString stringWithFormat:NSLocalizedString(
-                                           @"Compress \u201c%@\u201d to:",
-                                           "Compress files sheet prompt, compressing single file"),
+            [NSString stringWithFormat:NSLocalizedString(@"Compress \u201c%@\u201d to:",
+                                                         "Compress files sheet prompt, compressing single file"),
                                        m_SourceItems.front().FilenameNS()];
 }
 
@@ -112,14 +119,10 @@ using namespace nc::ops;
     [self validate];
 }
 
-- (BOOL)control:(NSControl *)_control
-               textView:(NSTextView *)_text_view
-    doCommandBySelector:(SEL)_command_selector
+- (BOOL)control:(NSControl *)_control textView:(NSTextView *)_text_view doCommandBySelector:(SEL)_command_selector
 {
     if( _control == self.destinationTextField && _command_selector == @selector(complete:) ) {
-        return [m_AutoCompletionDelegate control:_control
-                                        textView:_text_view
-                             doCommandBySelector:_command_selector];
+        return [m_AutoCompletionDelegate control:_control textView:_text_view doCommandBySelector:_command_selector];
     }
     return false;
 }

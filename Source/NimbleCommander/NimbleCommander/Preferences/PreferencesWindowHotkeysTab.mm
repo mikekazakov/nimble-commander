@@ -40,14 +40,13 @@ struct ToolShortcutNode {
     bool is_conflicted;
 };
 
-enum class SourceType
-{
+enum class SourceType {
     All,
     Customized,
     Conflicts
 };
 
-}
+} // namespace
 
 @interface PreferencesWindowHotkeysTab ()
 
@@ -74,6 +73,12 @@ enum class SourceType
 }
 
 @synthesize sourceType = m_SourceType;
+@synthesize Table;
+@synthesize forceFnButton;
+@synthesize filterTextField;
+@synthesize sourceAllButton;
+@synthesize sourceCustomizedButton;
+@synthesize sourceConflictsButton;
 
 - (id)initWithToolsStorage:(std::function<nc::panel::ExternalToolsStorage &()>)_tool_storage
 {
@@ -309,7 +314,7 @@ static NSImageView *SpawnCautionSign()
 
                 const auto field_cell = nc::objc_cast<GTMHotKeyTextFieldCell>(key_text_field.cell);
                 field_cell.hotKey = [GTMHotKey hotKeyWithKey:node->current_shortcut.Key()
-                                                        modifiers:node->current_shortcut.modifiers];
+                                                   modifiers:node->current_shortcut.modifiers];
                 field_cell.defaultHotKey = [GTMHotKey hotKeyWithKey:node->default_shortcut.Key()
                                                           modifiers:node->default_shortcut.modifiers];
                 field_cell.menuHotKey = node->is_menu_action;
@@ -338,8 +343,7 @@ static NSImageView *SpawnCautionSign()
                 key_text_field.tag = node->tool_index;
 
                 const auto field_cell = nc::objc_cast<GTMHotKeyTextFieldCell>(key_text_field.cell);
-                field_cell.hotKey = [GTMHotKey hotKeyWithKey:tool.m_Shorcut.Key()
-                                                        modifiers:tool.m_Shorcut.modifiers];
+                field_cell.hotKey = [GTMHotKey hotKeyWithKey:tool.m_Shorcut.Key() modifiers:tool.m_Shorcut.modifiers];
                 field_cell.defaultHotKey = [GTMHotKey hotKeyWithKey:tool.m_Shorcut.Key()
                                                           modifiers:tool.m_Shorcut.modifiers];
                 if( node->is_customized )

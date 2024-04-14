@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../../Core/FeedbackManager.h"
 #include "AskingForRatingOverlayView.h"
 #include <cmath>
@@ -14,12 +14,11 @@
     while( self.trackingAreas.count )
         [self removeTrackingArea:self.trackingAreas[0]];
 
-    NSTrackingArea *trackingArea =
-        [[NSTrackingArea alloc] initWithRect:self.bounds
-                                     options:NSTrackingMouseEnteredAndExited |
-                                             NSTrackingMouseMoved | NSTrackingActiveInActiveApp
-                                       owner:self
-                                    userInfo:nil];
+    NSTrackingArea *trackingArea = [[NSTrackingArea alloc]
+        initWithRect:self.bounds
+             options:NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingActiveInActiveApp
+               owner:self
+            userInfo:nil];
     [self addTrackingArea:trackingArea];
 }
 
@@ -57,6 +56,7 @@
     int m_Rating;
     nc::FeedbackManager *m_FeedbackManager;
 }
+@synthesize mouseHover;
 
 - (instancetype)initWithFrame:(NSRect)frameRect feedbackManager:(nc::FeedbackManager &)_fm
 {
@@ -66,8 +66,7 @@
         self.mouseHover = false;
         m_Rating = 0;
 
-        m_LevelIndicator =
-            [[AskingForRatingOverlayLevelIndicator alloc] initWithFrame:NSMakeRect(0, 0, 50, 20)];
+        m_LevelIndicator = [[AskingForRatingOverlayLevelIndicator alloc] initWithFrame:NSMakeRect(0, 0, 50, 20)];
         m_LevelIndicator.translatesAutoresizingMaskIntoConstraints = false;
         m_LevelIndicator.minValue = 0;
         m_LevelIndicator.maxValue = 5;
@@ -101,8 +100,7 @@
         m_Annotation.drawsBackground = false;
         m_Annotation.font = [NSFont labelFontOfSize:11];
         m_Annotation.textColor = NSColor.secondaryLabelColor;
-        m_Annotation.stringValue =
-            NSLocalizedString(@"How are we doing?", "Asking user to provide a rating");
+        m_Annotation.stringValue = NSLocalizedString(@"How are we doing?", "Asking user to provide a rating");
         [self addSubview:m_Annotation];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:m_Annotation
                                                          attribute:NSLayoutAttributeBottom
@@ -127,8 +125,7 @@
         m_DiscardButton.bordered = false;
         m_DiscardButton.target = self;
         m_DiscardButton.action = @selector(discardClicked:);
-        static_cast<NSButtonCell *>(m_DiscardButton.cell).imageScaling =
-            NSImageScaleProportionallyUpOrDown;
+        static_cast<NSButtonCell *>(m_DiscardButton.cell).imageScaling = NSImageScaleProportionallyUpOrDown;
         [self addSubview:m_DiscardButton];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:m_DiscardButton
                                                          attribute:NSLayoutAttributeCenterY
@@ -167,11 +164,10 @@
 - (void)viewDidMoveToSuperview
 {
     if( self.superview )
-        [m_DiscardButton
-                   bind:@"hidden"
-               toObject:self
-            withKeyPath:@"mouseHover"
-                options:@{NSValueTransformerNameBindingOption: NSNegateBooleanTransformerName}];
+        [m_DiscardButton bind:@"hidden"
+                     toObject:self
+                  withKeyPath:@"mouseHover"
+                      options:@{NSValueTransformerNameBindingOption: NSNegateBooleanTransformerName}];
     else
         [m_DiscardButton unbind:@"hidden"];
 }
@@ -204,11 +200,11 @@
     while( self.trackingAreas.count )
         [self removeTrackingArea:self.trackingAreas[0]];
 
-    NSTrackingArea *trackingArea = [[NSTrackingArea alloc]
-        initWithRect:self.bounds
-             options:NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp
-               owner:self
-            userInfo:nil];
+    NSTrackingArea *trackingArea =
+        [[NSTrackingArea alloc] initWithRect:self.bounds
+                                     options:NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp
+                                       owner:self
+                                    userInfo:nil];
     [self addTrackingArea:trackingArea];
 }
 

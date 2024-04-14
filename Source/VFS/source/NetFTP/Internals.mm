@@ -1,7 +1,8 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include "Internals.h"
 #include "Host.h"
+#include <fmt/format.h>
 
 namespace nc::vfs::ftp {
 
@@ -11,9 +12,6 @@ size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *us
     char *tmp = static_cast<char *>(alloca(sz + 1));
     memcpy(tmp, buffer, sz);
     tmp[sz] = 0;
-
-    //    printf("%s", tmp);
-
     std::string *str = static_cast<std::string *>(userp);
     (*str) += tmp;
 
@@ -98,15 +96,9 @@ static int parse_dir_unix(const char *line, struct stat *sbuf, char *file, char 
     }
 
     sbuf->st_nlink = static_cast<nlink_t>(nlink);
-
     sbuf->st_size = size;
-    /*    if (ftpfs.blksize) {
-     sbuf->st_blksize = ftpfs.blksize;
-     sbuf->st_blocks =
-     ((size + ftpfs.blksize - 1) & ~((unsigned long long) ftpfs.blksize - 1)) >> 9;
-     }*/
 
-    snprintf(date, sizeof(date), "%s,%s,%s", year, month, day);
+    *fmt::format_to(date, "{},{},{}", year, month, day) = 0;
     tt = time(NULL);
     gmtime_r(&tt, &tm);
     tm.tm_sec = tm.tm_min = tm.tm_hour = 0;
@@ -115,7 +107,6 @@ static int parse_dir_unix(const char *line, struct stat *sbuf, char *file, char 
         strptime(date, "%H:%M,%b,%d", &tm);
         // Unix systems omit the year for the last six months
         if( cur_mon + 5 < tm.tm_mon ) { // month from last year
-            //            DEBUG(2, "correct year: cur_mon: %d, file_mon: %d\n", cur_mon, tm.tm_mon);
             tm.tm_year--; // correct the year
         }
     }

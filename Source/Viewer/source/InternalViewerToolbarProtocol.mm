@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InternalViewerToolbarProtocol.h"
 #include <Utility/ObjCpp.h>
 
@@ -59,6 +59,16 @@
 
 
 @implementation InternalViewerToolbarDummyOwner
+@synthesize internalViewerToolbar;
+@synthesize internalViewerToolbarSearchField;
+@synthesize internalViewerToolbarSearchProgressIndicator;
+@synthesize internalViewerToolbarEncodingsPopUp;
+@synthesize internalViewerToolbarModePopUp;
+@synthesize internalViewerToolbarPositionButton;
+@synthesize internalViewerToolbarFileSizeLabel;
+@synthesize internalViewerToolbarPopover;
+@synthesize internalViewerToolbarWordWrapCheckBox;
+@synthesize internalViewerToolbarSettingsButton;
 
 - (IBAction)onInternalViewerToolbarSettings:(id)[[maybe_unused]]_sender{}
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Utility/SheetWithHotkeys.h>
 #include "BatchRenamingDialog.h"
@@ -180,6 +180,22 @@ using SourceReverseMappingStorage = robin_hood::
 @synthesize renamePatternDataSource = m_RenamePatternDataSource;
 @synthesize searchForDataSource = m_SearchForDataSource;
 @synthesize replaceWithDataSource = m_ReplaceWithDataSource;
+@synthesize isValidRenaming;
+@synthesize FilenamesTable;
+@synthesize FilenameMask;
+@synthesize SearchForComboBox;
+@synthesize ReplaceWithComboBox;
+@synthesize SearchCaseSensitive;
+@synthesize SearchOnlyOnce;
+@synthesize SearchInExtension;
+@synthesize SearchWithRegExp;
+@synthesize CaseProcessing;
+@synthesize CaseProcessingWithExtension;
+@synthesize CounterDigits;
+@synthesize InsertNameRangePlaceholderButton;
+@synthesize InsertPlaceholderMenuButton;
+@synthesize InsertPlaceholderMenu;
+@synthesize OkButton;
 
 - (instancetype)initWithItems:(std::vector<VFSListingItem>)_items
 {

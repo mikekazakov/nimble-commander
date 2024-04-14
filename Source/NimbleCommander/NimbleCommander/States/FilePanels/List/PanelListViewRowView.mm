@@ -33,6 +33,7 @@ using namespace nc::panel;
 @synthesize tagAccentColor = m_TagAccentColor;
 @synthesize itemIndex = m_ItemIndex;
 @synthesize item = m_Item;
+@synthesize listView;
 
 - (id)initWithItem:(VFSListingItem)_item
 {

@@ -1,11 +1,10 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "PreferencesWindowThemesTabImportSheet.h"
 
-@interface PreferencesWindowThemesTabImportSheet ()
-
-@end
-
 @implementation PreferencesWindowThemesTabImportSheet
+@synthesize overwriteCurrentTheme;
+@synthesize importAsNewTheme;
+@synthesize importAsName;
 
 - (void)windowDidLoad
 {
@@ -14,31 +13,31 @@
     self.importAsNewTheme = false;
 }
 
-- (IBAction)onImport:(id)[[maybe_unused]]_sender
+- (IBAction)onImport:(id) [[maybe_unused]] _sender
 {
     [self endSheet:NSModalResponseOK];
 }
 
-- (IBAction)onCancel:(id)[[maybe_unused]]_sender
+- (IBAction)onCancel:(id) [[maybe_unused]] _sender
 {
     [self endSheet:NSModalResponseCancel];
 }
 
-- (void) setImportAsNewTheme:(bool)importAsNewTheme
+- (void)setImportAsNewTheme:(bool)_importAsNewTheme
 {
-    if( _importAsNewTheme != importAsNewTheme ) {
+    if( importAsNewTheme != _importAsNewTheme ) {
         [self willChangeValueForKey:@"importAsNewTheme"];
-        _importAsNewTheme = importAsNewTheme;
+        importAsNewTheme = _importAsNewTheme;
         [self didChangeValueForKey:@"importAsNewTheme"];
         self.overwriteCurrentTheme = false;
     }
 }
 
-- (void) setOverwriteCurrentTheme:(bool)overwriteCurrentTheme
+- (void)setOverwriteCurrentTheme:(bool)_overwriteCurrentTheme
 {
-    if( _overwriteCurrentTheme != overwriteCurrentTheme ) {
+    if( overwriteCurrentTheme != _overwriteCurrentTheme ) {
         [self willChangeValueForKey:@"overwriteCurrentTheme"];
-        _overwriteCurrentTheme = overwriteCurrentTheme;
+        overwriteCurrentTheme = _overwriteCurrentTheme;
         [self didChangeValueForKey:@"overwriteCurrentTheme"];
         self.importAsNewTheme = false;
     }

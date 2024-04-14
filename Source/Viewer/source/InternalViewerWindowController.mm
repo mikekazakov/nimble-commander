@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InternalViewerWindowController.h"
 #include <Viewer/ViewerView.h>
 #include <Viewer/ViewerViewController.h>
@@ -38,9 +38,22 @@ using namespace std::literals;
 @implementation InternalViewerWindowController
 {
     NCViewerViewController *m_Controller;
+    __weak id<NCViewerWindowDelegate> m_Delegate;
 }
-
 @synthesize internalViewerController = m_Controller;
+@synthesize delegate = m_Delegate;
+@synthesize viewerPlaceholder;
+@synthesize viewerView;
+@synthesize internalViewerToolbar;
+@synthesize internalViewerToolbarSearchField;
+@synthesize internalViewerToolbarSearchProgressIndicator;
+@synthesize internalViewerToolbarEncodingsPopUp;
+@synthesize internalViewerToolbarModePopUp;
+@synthesize internalViewerToolbarPositionButton;
+@synthesize internalViewerToolbarFileSizeLabel;
+@synthesize internalViewerToolbarPopover;
+@synthesize internalViewerToolbarWordWrapCheckBox;
+@synthesize internalViewerToolbarSettingsButton;
 
 - (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs

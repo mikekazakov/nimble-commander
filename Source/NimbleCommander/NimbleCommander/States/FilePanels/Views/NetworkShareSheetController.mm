@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NetworkShareSheetController.h"
 #include <Utility/StringExtras.h>
 
@@ -21,6 +21,17 @@
     std::optional<NetworkConnectionsManager::Connection> m_Original;
     NetworkConnectionsManager::LANShare m_Connection;
 }
+@synthesize setupMode;
+@synthesize title;
+@synthesize server;
+@synthesize share;
+@synthesize username;
+@synthesize passwordEntered;
+@synthesize mountpath;
+@synthesize protocol;
+@synthesize connectButton;
+@synthesize valid;
+@synthesize nfsSelected;
 
 - (instancetype)init
 {
@@ -152,8 +163,8 @@
 - (void)validate
 {
     self.valid = [self isValid];
-    self.nfsSelected = self.protocol.selectedTag ==
-                       static_cast<int>(NetworkConnectionsManager::LANShare::Protocol::NFS);
+    self.nfsSelected =
+        self.protocol.selectedTag == static_cast<int>(NetworkConnectionsManager::LANShare::Protocol::NFS);
 }
 
 - (bool)isValid

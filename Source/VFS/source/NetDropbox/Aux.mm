@@ -1,28 +1,22 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 #include <VFS/VFSError.h>
 #include "Aux.h"
 #include <VFS/Log.h>
 #include <Utility/ObjCpp.h>
 #include <vector>
+#include <fmt/format.h>
 
 namespace nc::vfs::dropbox {
 
-NSURL *const api::GetCurrentAccount =
-    [NSURL URLWithString:@"https://api.dropboxapi.com/2/users/get_current_account"];
-NSURL *const api::GetSpaceUsage =
-    [NSURL URLWithString:@"https://api.dropboxapi.com/2/users/get_space_usage"];
-NSURL *const api::GetMetadata =
-    [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/get_metadata"];
-NSURL *const api::ListFolder =
-    [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/list_folder"];
-NSURL *const api::ListFolderContinue =
-    [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/list_folder/continue"];
+NSURL *const api::GetCurrentAccount = [NSURL URLWithString:@"https://api.dropboxapi.com/2/users/get_current_account"];
+NSURL *const api::GetSpaceUsage = [NSURL URLWithString:@"https://api.dropboxapi.com/2/users/get_space_usage"];
+NSURL *const api::GetMetadata = [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/get_metadata"];
+NSURL *const api::ListFolder = [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/list_folder"];
+NSURL *const api::ListFolderContinue = [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/list_folder/continue"];
 NSURL *const api::Delete = [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/delete"];
-NSURL *const api::CreateFolder =
-    [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/create_folder"];
-NSURL *const api::Download =
-    [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/download"];
+NSURL *const api::CreateFolder = [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/create_folder"];
+NSURL *const api::Download = [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/download"];
 NSURL *const api::Upload = [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/upload"];
 NSURL *const api::UploadSessionStart =
     [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/upload_session/start"];
@@ -32,8 +26,7 @@ NSURL *const api::UploadSessionFinish =
     [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/upload_session/finish"];
 NSURL *const api::Move = [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/move"];
 NSURL *const api::OAuth2Token = [NSURL URLWithString:@"https://api.dropbox.com/oauth2/token"];
-NSURL *const api::OAuth2Authorize =
-    [NSURL URLWithString:@"https://www.dropbox.com/oauth2/authorize"];
+NSURL *const api::OAuth2Authorize = [NSURL URLWithString:@"https://www.dropbox.com/oauth2/authorize"];
 
 const char *GetString(const rapidjson::Value &_doc, const char *_key)
 {
@@ -139,13 +132,11 @@ int VFSErrorFromErrorAndReponseAndData(NSError *_error, NSURLResponse *_response
     return vfs_error;
 }
 
-static std::pair<int, NSData *> SendInfiniteSynchronousRequest(NSURLSession *_session,
-                                                               NSURLRequest *_request)
+static std::pair<int, NSData *> SendInfiniteSynchronousRequest(NSURLSession *_session, NSURLRequest *_request)
 {
     assert(_session != nil);
     assert(_request != nil);
-    Log::Debug(
-        SPDLOC, "Sending infinite sync request at {}", _request.URL.absoluteString.UTF8String);
+    Log::Debug(SPDLOC, "Sending infinite sync request at {}", _request.URL.absoluteString.UTF8String);
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     __block NSData *data = nil;
     __block NSURLResponse *response = nil;
@@ -173,9 +164,8 @@ static std::pair<int, NSData *> SendInfiniteSynchronousRequest(NSURLSession *_se
     return {VFSErrorFromErrorAndReponseAndData(error, response, data), nil};
 }
 
-std::pair<int, NSData *> SendSynchronousRequest(NSURLSession *_session,
-                                                NSURLRequest *_request,
-                                                const VFSCancelChecker &_cancel_checker)
+std::pair<int, NSData *>
+SendSynchronousRequest(NSURLSession *_session, NSURLRequest *_request, const VFSCancelChecker &_cancel_checker)
 {
     assert(_session != nil);
     assert(_request != nil);
@@ -279,8 +269,10 @@ std::string EscapeString(const std::string &_original)
     for( auto c : _original ) {
         switch( c ) {
             case '"':
+                [[fallthrough]];
             case '\\':
                 after += '\\';
+                [[fallthrough]];
             default:
                 after += c;
         }
@@ -296,12 +288,10 @@ std::string EscapeStringForJSONInHTTPHeader(const std::string &_original)
 
     std::string after;
     after.reserve(str.length + 4);
-    char hex[16];
     for( int i = 0, e = static_cast<int>(str.length); i != e; ++i ) {
         auto c = [str characterAtIndex:i];
         if( c >= 127 ) {
-            snprintf(hex, sizeof(hex), "\\u%04X", c);
-            after += hex;
+            fmt::format_to(std::back_inserter(after), "\\u{:04X}", c);
         }
         else {
             if( c == '"' || c == '\\' )
@@ -368,8 +358,7 @@ std::optional<rapidjson::Document> ParseJSON(NSData *_data)
 
     using namespace rapidjson;
     Document json;
-    ParseResult ok =
-        json.Parse<kParseNoFlags>(static_cast<const char *>(_data.bytes), _data.length);
+    ParseResult ok = json.Parse<kParseNoFlags>(static_cast<const char *>(_data.bytes), _data.length);
     if( !ok )
         return std::nullopt;
     return std::move(json);
@@ -391,10 +380,8 @@ void InsertHTTPBodyCursor(NSMutableURLRequest *_request, const std::string &_cur
 
 void InsertHTTPHeaderPathspec(NSMutableURLRequest *_request, const std::string &_path)
 {
-    const std::string path_spec =
-        "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(_path) + "\" }";
-    [_request setValue:[NSString stringWithUTF8String:path_spec.c_str()]
-        forHTTPHeaderField:@"Dropbox-API-Arg"];
+    const std::string path_spec = "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(_path) + "\" }";
+    [_request setValue:[NSString stringWithUTF8String:path_spec.c_str()] forHTTPHeaderField:@"Dropbox-API-Arg"];
 }
 
-}
+} // namespace nc::vfs::dropbox

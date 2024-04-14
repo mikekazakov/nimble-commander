@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/NetDropbox.h>
@@ -47,7 +47,7 @@ private:
     std::queue<Reaction> m_Reactions;
 };
 
-}
+} // namespace
 
 @interface NCVFSDropboxMockURLSession : NSURLSession
 - (instancetype)initWithFactory:(URLSessionMockFactory &)_factory
@@ -70,14 +70,11 @@ NSURLSession *URLSessionMockFactory::CreateSession(NSURLSessionConfiguration *co
     return CreateSession(configuration, nil, nil);
 }
 
-NSURLSession *
-URLSessionMockFactory::CreateSession([[maybe_unused]] NSURLSessionConfiguration *_configuration,
-                                     id<NSURLSessionDelegate> _delegate,
-                                     NSOperationQueue *_queue)
+NSURLSession *URLSessionMockFactory::CreateSession([[maybe_unused]] NSURLSessionConfiguration *_configuration,
+                                                   id<NSURLSessionDelegate> _delegate,
+                                                   NSOperationQueue *_queue)
 {
-    return [[NCVFSDropboxMockURLSession alloc] initWithFactory:*this
-                                                      delegate:_delegate
-                                                 delegateQueue:_queue];
+    return [[NCVFSDropboxMockURLSession alloc] initWithFactory:*this delegate:_delegate delegateQueue:_queue];
 }
 
 void URLSessionMockFactory::AddReaction(const Reaction &_reaction)
@@ -152,6 +149,8 @@ void URLSessionMockFactory::PopReaction()
 @implementation NCVFSDropBoxMockSessionTask {
     __weak NCVFSDropboxMockURLSession *m_Session;
 }
+@synthesize completionHandler;
+@synthesize request;
 
 - (instancetype)initWithSession:(NCVFSDropboxMockURLSession *)_session
 {
@@ -179,27 +178,24 @@ void URLSessionMockFactory::PopReaction()
     factory.PopReaction();
 
     // Check the expectactions
-    auto request = self.request;
     if( react.exp_URL ) {
-        CHECK(*react.exp_URL == request.URL.absoluteString.UTF8String);
+        CHECK(*react.exp_URL == self.request.URL.absoluteString.UTF8String);
     }
     if( react.exp_HTTPMethod ) {
-        CHECK(*react.exp_HTTPMethod == request.HTTPMethod.UTF8String);
+        CHECK(*react.exp_HTTPMethod == self.request.HTTPMethod.UTF8String);
     }
     if( react.exp_HTTPHeaderFields ) {
-        CHECK([*react.exp_HTTPHeaderFields isEqualToDictionary:request.allHTTPHeaderFields]);
+        CHECK([*react.exp_HTTPHeaderFields isEqualToDictionary:self.request.allHTTPHeaderFields]);
     }
     if( react.exp_HTTPBody ) {
-        CHECK(*react.exp_HTTPBody == [[NSString alloc] initWithData:self.request.HTTPBody
-                                                           encoding:NSUTF8StringEncoding]
-                                         .UTF8String);
+        CHECK(*react.exp_HTTPBody ==
+              [[NSString alloc] initWithData:self.request.HTTPBody encoding:NSUTF8StringEncoding].UTF8String);
     }
 
     // Send the reponse via completion handler
     if( self.completionHandler )
-        dispatch_to_background([react, handler = self.completionHandler] {
-            handler(react.data, react.response, react.error);
-        });
+        dispatch_to_background(
+            [react, handler = self.completionHandler] { handler(react.data, react.response, react.error); });
 }
 
 @end
@@ -325,9 +321,8 @@ TEST_CASE(PREFIX "Operation with a refresh token")
         r4.data = D("{\"token_type\":\"bearer\", \"access_token\":\"sl.asdfghjkl\"}");
         r4.exp_URL = "https://api.dropbox.com/oauth2/token";
         r4.exp_HTTPMethod = "POST";
-        r4.exp_HTTPBody =
-            "grant_type=refresh_token&refresh_token=5678901234&client_id=AAAAAAAAAAAAAAA&"
-            "client_secret=BBBBBBBBBBBBBBB";
+        r4.exp_HTTPBody = "grant_type=refresh_token&refresh_token=5678901234&client_id=AAAAAAAAAAAAAAA&"
+                          "client_secret=BBBBBBBBBBBBBBB";
 
         Reaction &r5 = factory.AddReaction(); // r5 - get fs info
         r5.response = R200();

@@ -22,12 +22,11 @@ static const auto g_TableViewDataType =
 static bool AskUserToDeleteEditor()
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = NSLocalizedString(
-        @"Are you sure you want to remove this editor?",
-        "Asking the user for confirmation on deleting the external editor - message");
-    alert.informativeText = NSLocalizedString(
-        @"This operation is not reversible.",
-        "Asking the user for confirmation on deleting the external editor - informative text");
+    alert.messageText = NSLocalizedString(@"Are you sure you want to remove this editor?",
+                                          "Asking the user for confirmation on deleting the external editor - message");
+    alert.informativeText =
+        NSLocalizedString(@"This operation is not reversible.",
+                          "Asking the user for confirmation on deleting the external editor - informative text");
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     [alert.buttons objectAtIndex:0].keyEquivalent = @"";
@@ -40,6 +39,9 @@ static bool AskUserToDeleteEditor()
     NSMutableArray *m_Editors;
     ExternalEditorsStorage *m_ExternalEditorsStorage;
 }
+@synthesize ExtEditorsController;
+@synthesize TableView;
+@synthesize addRemove;
 
 - (instancetype)initWithEditorsStorage:(ExternalEditorsStorage &)_storage
 {
@@ -105,9 +107,9 @@ static bool AskUserToDeleteEditor()
 
 - (PreferencesWindowExternalEditorsTabNewEditorSheet *)createEditor
 {
-    PreferencesWindowExternalEditorsTabNewEditorSheet *sheet =
-        [PreferencesWindowExternalEditorsTabNewEditorSheet new];
-    sheet.hasTerminal = nc::base::AmISandboxed() == false;;
+    PreferencesWindowExternalEditorsTabNewEditorSheet *sheet = [PreferencesWindowExternalEditorsTabNewEditorSheet new];
+    sheet.hasTerminal = nc::base::AmISandboxed() == false;
+    ;
     return sheet;
 }
 
@@ -149,8 +151,7 @@ static bool AskUserToDeleteEditor()
     return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
 }
 
-- (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view
-                       pasteboardWriterForRow:(NSInteger)_row
+- (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view pasteboardWriterForRow:(NSInteger)_row
 {
     auto data = [NSKeyedArchiver archivedDataWithRootObject:[NSNumber numberWithInteger:_row]
                                       requiringSecureCoding:false
@@ -166,8 +167,7 @@ static bool AskUserToDeleteEditor()
     dropOperation:(NSTableViewDropOperation) [[maybe_unused]] operation
 {
     NSData *data = [info.draggingPasteboard dataForType:g_TableViewDataType];
-    NSNumber *ind =
-        [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
+    NSNumber *ind = [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
     NSInteger drag_from = ind.integerValue;
 
     if( drag_to == drag_from ||    // same index, above

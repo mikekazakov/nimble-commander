@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextModeView.h"
 #include "TextProcessing.h"
 #include "TextModeIndexedTextLine.h"
@@ -71,6 +71,8 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 
     NSScroller *m_VerticalScroller;
 }
+
+@synthesize delegate;
 
 - (instancetype)initWithFrame:(NSRect)_frame
                       backend:(std::shared_ptr<const DataBackend>)_backend

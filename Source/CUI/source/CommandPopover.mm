@@ -47,6 +47,7 @@ static constexpr double g_ContentViewCornerRadius = 10.;
 @synthesize tag = m_Tag;
 @synthesize representedObject = m_RepresentedObject;
 @synthesize image = m_Image;
+@synthesize toolTip;
 
 - (NCCommandPopoverItem *_Nonnull)init
 {
@@ -962,7 +963,10 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
     NCCommandPopoverViewController *m_Controller;
     NCCommandPopoverWindow *m_Window;
     NSSize m_ContentSize;
+    __weak id<NCCommandPopoverDelegate> m_Delegate;
 }
+
+@synthesize delegate = m_Delegate;
 
 - (instancetype _Nonnull)initWithTitle:(NSString *_Nonnull)_title
 {
@@ -1027,7 +1031,7 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
 
 - (void)windowWillClose:(NSNotification *)_notification
 {
-    if( id<NCCommandPopoverDelegate> delegate = self.delegate;
+    if( id<NCCommandPopoverDelegate> delegate = m_Delegate;
         delegate != nil && [delegate respondsToSelector:@selector(commandPopoverDidClose:)] ) {
         [delegate commandPopoverDidClose:self];
     }

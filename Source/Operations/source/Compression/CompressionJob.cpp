@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CompressionJob.h"
 #include <Base/algo.h>
 #include <libarchive/archive.h>
@@ -6,6 +6,7 @@
 #include <Utility/PathManip.h>
 #include <VFS/AppleDoubleEA.h>
 #include <sys/param.h>
+#include <fmt/format.h>
 
 namespace nc::ops {
 
@@ -363,19 +364,17 @@ CompressionJob::StepResult CompressionJob::ProcessRegularItem(int _index,
 
 std::string CompressionJob::FindSuitableFilename(const std::string &_proposed_arcname) const
 {
-    char fn[MAXPATHLEN];
-
-    snprintf(fn, sizeof(fn), "%s%s.zip", m_DstRoot.c_str(), _proposed_arcname.c_str());
+    std::string fn = fmt::format("{}{}.zip", m_DstRoot, _proposed_arcname);
     VFSStat st;
-    if( m_DstVFS->Stat(fn, st, VFSFlags::F_NoFollow, 0) != 0 )
+    if( m_DstVFS->Stat(fn.c_str(), st, VFSFlags::F_NoFollow, 0) != 0 )
         return fn;
 
     for( int i = 2; i < 100; ++i ) {
-        snprintf(fn, sizeof(fn), "%s%s %d.zip", m_DstRoot.c_str(), _proposed_arcname.c_str(), i);
-        if( m_DstVFS->Stat(fn, st, VFSFlags::F_NoFollow, 0) != 0 )
+        fn = fmt::format("{}{} {}.zip", m_DstRoot, _proposed_arcname, i);
+        if( m_DstVFS->Stat(fn.c_str(), st, VFSFlags::F_NoFollow, 0) != 0 )
             return fn;
     }
-    return "";
+    return {};
 }
 
 const std::string &CompressionJob::TargetArchivePath() const
@@ -578,10 +577,9 @@ static void WriteEmptyArchiveEntry(struct ::archive *_archive)
 static bool
 WriteEAs(struct archive *_a, void *_md, size_t _md_s, const char *_path, const char *_name)
 {
-    char metadata_path[MAXPATHLEN];
-    snprintf(metadata_path, sizeof(metadata_path), "__MACOSX/%s._%s", _path, _name);
+    const std::string metadata_path = fmt::format("__MACOSX/{}._{}", _path, _name);
     struct archive_entry *entry = archive_entry_new();
-    archive_entry_set_pathname(entry, metadata_path);
+    archive_entry_set_pathname(entry, metadata_path.c_str());
     archive_entry_set_size(entry, _md_s);
     archive_entry_set_filetype(entry, AE_IFREG);
     archive_entry_set_perm(entry, 0644);

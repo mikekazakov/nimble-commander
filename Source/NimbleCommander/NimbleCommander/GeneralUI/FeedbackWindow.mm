@@ -18,6 +18,7 @@ using namespace std::literals;
 }
 
 @synthesize rating;
+@synthesize tabView;
 
 - (instancetype)initWithFeedbackManager:(nc::FeedbackManager &)_fm
 {

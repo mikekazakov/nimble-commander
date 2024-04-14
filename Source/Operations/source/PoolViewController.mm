@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PoolViewController.h"
 #include "Pool.h"
 #include "Internal.h"
@@ -25,6 +25,10 @@ static const auto g_ViewAppearTimeout = 100ms;
     int m_IndexToShow;
     std::shared_ptr<Operation> m_ShownOperation;
 }
+@synthesize idleViewHolder;
+@synthesize briefViewHolder;
+@synthesize upButton;
+@synthesize downButton;
 
 - (instancetype)initWithPool:(Pool &)_pool
 {
@@ -33,8 +37,7 @@ static const auto g_ViewAppearTimeout = 100ms;
     if( self ) {
         m_IndexToShow = -1;
         m_Pool = _pool.shared_from_this();
-        m_Pool->ObserveUnticketed(Pool::NotifyAboutChange,
-                                  nc::objc_callback(self, @selector(poolDidChangeCallback)));
+        m_Pool->ObserveUnticketed(Pool::NotifyAboutChange, nc::objc_callback(self, @selector(poolDidChangeCallback)));
     }
     return self;
 }
@@ -53,9 +56,8 @@ static const auto g_ViewAppearTimeout = 100ms;
 - (void)syncWithOperations:(const std::vector<std::shared_ptr<Operation>> &)_operations
 {
     const auto find_existing = [=](const std::shared_ptr<Operation> &_op) {
-        const auto existing = std::find_if(m_BriefViews.begin(),
-                                           m_BriefViews.end(),
-                                           [_op](auto &v) { return v.operation == _op; });
+        const auto existing =
+            std::find_if(m_BriefViews.begin(), m_BriefViews.end(), [_op](auto &v) { return v.operation == _op; });
         return existing != m_BriefViews.end() ? *existing : nullptr;
     };
 
@@ -71,12 +73,9 @@ static const auto g_ViewAppearTimeout = 100ms;
         }
 
     const auto index_of = [=](const std::shared_ptr<Operation> &_op) -> int {
-        const auto it = std::find_if(std::begin(m_BriefViews),
-                                     std::end(m_BriefViews),
-                                     [_op](auto &v) { return v.operation == _op; });
-        return it != m_BriefViews.end()
-                   ? static_cast<int>(std::distance(m_BriefViews.begin(), it))
-                   : -1;
+        const auto it = std::find_if(
+            std::begin(m_BriefViews), std::end(m_BriefViews), [_op](auto &v) { return v.operation == _op; });
+        return it != m_BriefViews.end() ? static_cast<int>(std::distance(m_BriefViews.begin(), it)) : -1;
     };
 
     // NB! retain the view controllers until their view are removed
@@ -91,8 +90,7 @@ static const auto g_ViewAppearTimeout = 100ms;
     }
 
     if( !m_ShownOperation ) {
-        m_IndexToShow =
-            std::min(std::max(m_IndexToShow, 0), static_cast<int>(m_BriefViews.size()) - 1);
+        m_IndexToShow = std::min(std::max(m_IndexToShow, 0), static_cast<int>(m_BriefViews.size()) - 1);
         if( m_IndexToShow >= 0 )
             m_ShownOperation = m_BriefViews[m_IndexToShow].operation;
     }
@@ -127,16 +125,14 @@ static const auto g_ViewAppearTimeout = 100ms;
     [self hideBriefView];
     [self.briefViewHolder addSubview:bv];
     NSDictionary *views = NSDictionaryOfVariableBindings(bv);
-    [self.briefViewHolder addConstraints:[NSLayoutConstraint
-                                     constraintsWithVisualFormat:@"|-(==0)-[bv]-(==0)-|"
-                                                         options:0
-                                                         metrics:nil
-                                                           views:views]];
-    [self.briefViewHolder addConstraints:[NSLayoutConstraint
-                                     constraintsWithVisualFormat:@"V:|-(==0)-[bv]-(==0)-|"
-                                                         options:0
-                                                         metrics:nil
-                                                           views:views]];
+    [self.briefViewHolder addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[bv]-(==0)-|"
+                                                                                 options:0
+                                                                                 metrics:nil
+                                                                                   views:views]];
+    [self.briefViewHolder addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[bv]-(==0)-|"
+                                                                                 options:0
+                                                                                 metrics:nil
+                                                                                   views:views]];
 }
 
 - (void)hideBriefView

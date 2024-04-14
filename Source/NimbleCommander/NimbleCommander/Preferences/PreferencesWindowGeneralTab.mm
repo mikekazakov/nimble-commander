@@ -15,6 +15,8 @@ using namespace std::literals;
 @end
 
 @implementation PreferencesWindowGeneralTab
+@synthesize FSAccessResetButton;
+@synthesize FSAccessLabel;
 
 - (void)loadView
 {

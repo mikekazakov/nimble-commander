@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerView.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/NSView+Sugar.h>
@@ -46,6 +46,7 @@ using namespace nc::viewer;
 }
 
 @synthesize verticalPositionPercentage = m_VerticalPositionPercentage;
+@synthesize hotkeyDelegate;
 
 - (id)initWithFrame:(NSRect)frame
         tempStorage:(nc::utility::TemporaryFileStorage &)_temp_storage

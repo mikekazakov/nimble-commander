@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DeletionJob.h"
 #include <Utility/PathManip.h>
 #include <Utility/NativeFSManager.h>
@@ -8,18 +8,14 @@
 
 namespace nc::ops {
 
-static bool IsEAStorage(VFSHost &_host,
-                        const std::string &_directory,
-                        const char *_filename,
-                        uint8_t _unix_type);
+static bool IsEAStorage(VFSHost &_host, const std::string &_directory, const char *_filename, uint8_t _unix_type);
 
 DeletionJob::DeletionJob(std::vector<VFSListingItem> _items, DeletionType _type)
 {
     m_SourceItems = std::move(_items);
     m_Type = _type;
-    if( _type == DeletionType::Trash && !all_of(begin(m_SourceItems),
-                                                end(m_SourceItems),
-                                                [](auto &i) { return i.Host()->IsNativeFS(); }) )
+    if( _type == DeletionType::Trash &&
+        !all_of(begin(m_SourceItems), end(m_SourceItems), [](auto &i) { return i.Host()->IsNativeFS(); }) )
         throw std::invalid_argument("DeletionJob: invalid work mode for the provided items");
     Statistics().SetPreferredSource(Statistics::SourceType::Items);
 }
@@ -55,14 +51,12 @@ void DeletionJob::DoScan()
             si.type = m_Type;
             m_Script.emplace(si);
 
-            const auto nonempty_rm =
-                bool(item.Host()->Features() & vfs::HostFeatures::NonEmptyRmDir);
+            const auto nonempty_rm = bool(item.Host()->Features() & vfs::HostFeatures::NonEmptyRmDir);
             if( m_Type == DeletionType::Permanent && nonempty_rm == false )
                 ScanDirectory(item.Path(), i, si.filename);
         }
         else {
-            const auto is_ea_storage =
-                IsEAStorage(*item.Host(), item.Directory(), item.FilenameC(), item.UnixType());
+            const auto is_ea_storage = IsEAStorage(*item.Host(), item.Directory(), item.FilenameC(), item.UnixType());
             if( !is_ea_storage ) {
                 m_Paths.push_back(item.Filename(), nullptr);
                 SourceItem si;
@@ -98,6 +92,7 @@ void DeletionJob::ScanDirectory(const std::string &_path,
                     continue;
                 case ReadDirErrorResolution::Stop:
                     Stop();
+                    [[fallthrough]];
                 case ReadDirErrorResolution::Skip:
                     return;
             }
@@ -119,8 +114,7 @@ void DeletionJob::ScanDirectory(const std::string &_path,
             ScanDirectory(EnsureTrailingSlash(_path) + e.name, _listing_item_index, si.filename);
         }
         else {
-            const auto is_ea_storage =
-                IsEAStorage(vfs, _path, e.name, static_cast<uint8_t>(e.type));
+            const auto is_ea_storage = IsEAStorage(vfs, _path, e.name, static_cast<uint8_t>(e.type));
             if( !is_ea_storage ) {
                 m_Paths.push_back(e.name, _prefix);
                 SourceItem si;
@@ -142,8 +136,7 @@ void DeletionJob::DoDelete()
         const auto entry = m_Script.top();
         m_Script.pop();
 
-        const auto path = m_SourceItems[entry.listing_item_index].Directory() +
-                          entry.filename->to_str_with_pref();
+        const auto path = m_SourceItems[entry.listing_item_index].Directory() + entry.filename->to_str_with_pref();
         const auto &vfs = m_SourceItems[entry.listing_item_index].Host();
         const auto type = entry.type;
 
@@ -343,13 +336,9 @@ int DeletionJob::UnlockItem(const std::string &_path, VFSHost &_vfs) const
     return chflags_rc;
 }
 
-static bool IsEAStorage(VFSHost &_host,
-                        const std::string &_directory,
-                        const char *_filename,
-                        uint8_t _unix_type)
+static bool IsEAStorage(VFSHost &_host, const std::string &_directory, const char *_filename, uint8_t _unix_type)
 {
-    if( _unix_type != DT_REG || !_host.IsNativeFS() || _filename[0] != '.' || _filename[1] != '_' ||
-        _filename[2] == 0 )
+    if( _unix_type != DT_REG || !_host.IsNativeFS() || _filename[0] != '.' || _filename[1] != '_' || _filename[2] == 0 )
         return false;
 
     char origin_file_path[MAXPATHLEN];

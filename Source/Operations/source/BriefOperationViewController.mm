@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefOperationViewController.h"
 #include "Internal.h"
 #include "Operation.h"
@@ -18,19 +18,18 @@ static const auto g_ViewAppearTimeout = 100ms;
 static const auto g_RapidUpdateFreq = 30.0;
 static const auto g_SlowUpdateFreq = 1.0;
 
-@interface NCOpsBriefOperationViewController()
-@property (strong, nonatomic) IBOutlet NSTextField *titleLabel;
-@property (strong, nonatomic) IBOutlet NSTextField *ETA;
-@property (strong, nonatomic) IBOutlet NSProgressIndicator *progressBar;
-@property (strong, nonatomic) IBOutlet NSButton *pauseButton;
-@property (strong, nonatomic) IBOutlet NSButton *resumeButton;
-@property (strong, nonatomic) IBOutlet NSButton *stopButton;
-@property (nonatomic) bool isPaused;
-@property (nonatomic) bool isCold;
+@interface NCOpsBriefOperationViewController ()
+@property(strong, nonatomic) IBOutlet NSTextField *titleLabel;
+@property(strong, nonatomic) IBOutlet NSTextField *ETA;
+@property(strong, nonatomic) IBOutlet NSProgressIndicator *progressBar;
+@property(strong, nonatomic) IBOutlet NSButton *pauseButton;
+@property(strong, nonatomic) IBOutlet NSButton *resumeButton;
+@property(strong, nonatomic) IBOutlet NSButton *stopButton;
+@property(nonatomic) bool isPaused;
+@property(nonatomic) bool isCold;
 @end
 
-@implementation NCOpsBriefOperationViewController
-{
+@implementation NCOpsBriefOperationViewController {
     std::shared_ptr<nc::ops::Operation> m_Operation;
     NSTimer *m_RapidTimer;
     NSTimer *m_SlowTimer;
@@ -39,12 +38,20 @@ static const auto g_SlowUpdateFreq = 1.0;
 }
 
 @synthesize shouldDelayAppearance = m_ShouldDelayAppearance;
+@synthesize titleLabel;
+@synthesize ETA;
+@synthesize progressBar;
+@synthesize pauseButton;
+@synthesize resumeButton;
+@synthesize stopButton;
+@synthesize isPaused;
+@synthesize isCold;
 
-- (instancetype)initWithOperation:(const std::shared_ptr<nc::ops::Operation>&)_operation
+- (instancetype)initWithOperation:(const std::shared_ptr<nc::ops::Operation> &)_operation
 {
     dispatch_assert_main_queue();
     assert(_operation);
-    
+
     self = [super initWithNibName:@"BriefOperationViewController" bundle:Bundle()];
     if( self ) {
         m_ShouldDelayAppearance = false;
@@ -52,17 +59,15 @@ static const auto g_SlowUpdateFreq = 1.0;
         const auto current_state = _operation->State();
         self.isPaused = current_state == OperationState::Paused;
         self.isCold = current_state == OperationState::Cold;
-        _operation->ObserveUnticketed(
-            Operation::NotifyAboutStateChange,
-            nc::objc_callback_to_main_queue(self, @selector(onOperationStateChanged)));
-        _operation->ObserveUnticketed(
-            Operation::NotifyAboutTitleChange,
-            nc::objc_callback_to_main_queue(self, @selector(onOperationTitleChanged)));
+        _operation->ObserveUnticketed(Operation::NotifyAboutStateChange,
+                                      nc::objc_callback_to_main_queue(self, @selector(onOperationStateChanged)));
+        _operation->ObserveUnticketed(Operation::NotifyAboutTitleChange,
+                                      nc::objc_callback_to_main_queue(self, @selector(onOperationTitleChanged)));
     }
     return self;
 }
 
-- (const std::shared_ptr<nc::ops::Operation>&) operation
+- (const std::shared_ptr<nc::ops::Operation> &)operation
 {
     return m_Operation;
 }
@@ -77,12 +82,9 @@ static const auto g_SlowUpdateFreq = 1.0;
     [super viewDidLoad];
     if( m_ShouldDelayAppearance ) {
         self.view.hidden = true;
-        dispatch_to_main_queue_after(g_ViewAppearTimeout, [self]{
-            self.view.hidden = false;
-        });
+        dispatch_to_main_queue_after(g_ViewAppearTimeout, [self] { self.view.hidden = false; });
     }
-    self.ETA.font = [NSFont monospacedDigitSystemFontOfSize:self.ETA.font.pointSize
-                                                     weight:NSFontWeightRegular];
+    self.ETA.font = [NSFont monospacedDigitSystemFontOfSize:self.ETA.font.pointSize weight:NSFontWeightRegular];
     [self onOperationTitleChanged];
 }
 
@@ -91,7 +93,6 @@ static const auto g_SlowUpdateFreq = 1.0;
     [super viewDidAppear];
     [self startAnimating];
     [self.progressBar startAnimation:self];
-
 }
 
 - (void)viewWillDisappear
@@ -103,21 +104,21 @@ static const auto g_SlowUpdateFreq = 1.0;
 - (void)startAnimating
 {
     dispatch_assert_main_queue();
-    if (!m_RapidTimer) {
-        m_RapidTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/g_RapidUpdateFreq
-                                                         target:self
-                                                       selector:@selector(updateRapid)
-                                                       userInfo:nil
-                                                        repeats:YES];
-        m_RapidTimer.tolerance = m_RapidTimer.timeInterval/10.;
+    if( !m_RapidTimer ) {
+        m_RapidTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 / g_RapidUpdateFreq
+                                                        target:self
+                                                      selector:@selector(updateRapid)
+                                                      userInfo:nil
+                                                       repeats:YES];
+        m_RapidTimer.tolerance = m_RapidTimer.timeInterval / 10.;
     }
-    if (!m_SlowTimer) {
-        m_SlowTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/g_SlowUpdateFreq
-                                                         target:self
-                                                       selector:@selector(updateSlow)
-                                                       userInfo:nil
-                                                        repeats:YES];
-        m_SlowTimer.tolerance = m_SlowTimer.timeInterval/10.;
+    if( !m_SlowTimer ) {
+        m_SlowTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 / g_SlowUpdateFreq
+                                                       target:self
+                                                     selector:@selector(updateSlow)
+                                                     userInfo:nil
+                                                      repeats:YES];
+        m_SlowTimer.tolerance = m_SlowTimer.timeInterval / 10.;
     }
     [self updateSlow];
     [self updateRapid];
@@ -149,13 +150,13 @@ static const auto g_SlowUpdateFreq = 1.0;
 
 - (void)updateSlow
 {
-    if(m_Operation->State() == OperationState::Cold)
+    if( m_Operation->State() == OperationState::Cold )
         self.ETA.stringValue = NSLocalizedString(@"Waiting in the queue...", "");
     else
         self.ETA.stringValue = StatisticsFormatter{m_Operation->Statistics()}.ProgressCaption();
 }
 
-- (IBAction)onStop:(id)[[maybe_unused]]sender
+- (IBAction)onStop:(id) [[maybe_unused]] sender
 {
     m_Operation->Stop();
     self.stopButton.hidden = true;
@@ -163,12 +164,12 @@ static const auto g_SlowUpdateFreq = 1.0;
     self.resumeButton.hidden = true;
 }
 
-- (IBAction)onPause:(id)[[maybe_unused]]sender
+- (IBAction)onPause:(id) [[maybe_unused]] sender
 {
     m_Operation->Pause();
 }
 
-- (IBAction)onResume:(id)[[maybe_unused]]sender
+- (IBAction)onResume:(id) [[maybe_unused]] sender
 {
     m_Operation->Resume();
 }

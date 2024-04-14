@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerSheet.h"
 #include <Viewer/ViewerViewController.h>
 #include <Base/dispatch_cpp.h>
@@ -34,6 +34,17 @@ using namespace nc::viewer;
     
     NCViewerViewController *m_Controller;
 }
+@synthesize view;
+@synthesize viewPlaceholder;
+@synthesize mode;
+@synthesize fileSize;
+@synthesize filePos;
+@synthesize searchIndicator;
+@synthesize searchField;
+@synthesize settingsPopover;
+@synthesize encodings;
+@synthesize wordWrap;
+@synthesize settingsButton;
 
 - (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs

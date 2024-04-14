@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalToolParameterValueSheetController.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
@@ -21,6 +21,11 @@
 }
 
 @synthesize values = m_Values;
+@synthesize buttonConstraint;
+@synthesize valueBlockView;
+@synthesize okButton;
+@synthesize stackView;
+@synthesize promptLabel;
 
 - (id)initWithValueNames:(std::vector<std::string>)_names toolName:(const std::string &)_name
 {
@@ -38,16 +43,15 @@
     [super windowDidLoad];
 
     auto prompt_fmt = NSLocalizedString(@"Please provide parameters to run \"%@\"", "");
-    self.promptLabel.stringValue = [NSString
-        localizedStringWithFormat:prompt_fmt, [NSString stringWithUTF8StdString:m_ToolName]];
+    self.promptLabel.stringValue =
+        [NSString localizedStringWithFormat:prompt_fmt, [NSString stringWithUTF8StdString:m_ToolName]];
 
     m_Values.resize(m_ValueNames.size());
     int index = 0;
     for( auto &value_name : m_ValueNames ) {
         const auto label = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-        label.stringValue = !value_name.empty()
-                                ? [NSString stringWithUTF8StdString:(value_name + ":")]
-                                : [NSString stringWithFormat:@"Parameter #%d:", index];
+        label.stringValue = !value_name.empty() ? [NSString stringWithUTF8StdString:(value_name + ":")]
+                                                : [NSString stringWithFormat:@"Parameter #%d:", index];
         label.bordered = false;
         label.editable = false;
         label.drawsBackground = false;

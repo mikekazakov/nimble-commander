@@ -189,6 +189,7 @@ struct KeycodesHardcode {
 
 @synthesize menuHotKey = m_MenuHotkey;
 @synthesize hotKey = hotKey_;
+@synthesize defaultHotKey;
 
 - (NSTextView *)fieldEditorForView:(NSView *) [[maybe_unused]] aControlView
 {
@@ -406,6 +407,7 @@ struct KeycodesHardcode {
     NSButton *m_ClearButton;
     NSButton *m_RevertButton;
 }
+@synthesize cell;
 
 + (GTMHotKeyFieldEditor *)sharedHotKeyFieldEditor
 {

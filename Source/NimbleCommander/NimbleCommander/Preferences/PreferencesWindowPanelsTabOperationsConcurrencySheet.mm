@@ -1,4 +1,4 @@
-// Copyright (C) 2021-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowPanelsTabOperationsConcurrencySheet.h"
 #include <Base/algo.h>
 #include <robin_hood.h>
@@ -24,6 +24,13 @@
 }
 
 @synthesize exclusionList = m_FinalExclusionList;
+@synthesize opCopy;
+@synthesize opDelete;
+@synthesize opMkdir;
+@synthesize opLink;
+@synthesize opCompress;
+@synthesize opBatchRename;
+@synthesize opChAttrs;
 
 - (instancetype)initWithConcurrencyExclusionList:(const std::string &)_list
 {
@@ -53,7 +60,7 @@
     for( const auto str : std::views::split(std::string_view{m_OriginalExclusionList}, ',') )
         if( auto trimmed = nc::base::Trim(std::string_view{str}); !trimmed.empty() )
             excluded.emplace_back(trimmed);
-    
+
     for( auto &operation : excluded )
         if( m_Tags.contains(operation) )
             [m_Tags[operation] setState:NSControlStateValueOff];

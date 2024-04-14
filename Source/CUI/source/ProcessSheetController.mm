@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ProcessSheetController.h"
 #include <Base/dispatch_cpp.h>
 #include <Base/CommonPaths.h>
@@ -43,6 +43,9 @@ static NSBundle *Bundle() noexcept
 }
 
 @synthesize userCancelled = m_UserCancelled;
+@synthesize OnCancelOperation;
+@synthesize titleTextField;
+@synthesize progressIndicator;
 
 - (id)init
 {

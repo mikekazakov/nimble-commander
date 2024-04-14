@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GenericErrorDialog.h"
 #include <VFS/VFS.h>
 #include "Internal.h"
@@ -37,6 +37,13 @@ using namespace nc::ops;
 @synthesize path = m_Path;
 @synthesize error = m_Error;
 @synthesize showApplyToAll = m_ShowApplyToAll;
+@synthesize pathLabel;
+@synthesize errorLabel;
+@synthesize errorLabelPrompt;
+@synthesize messageLabel;
+@synthesize appIcon;
+@synthesize dialogIcon;
+@synthesize applyToAllCheckBox;
 
 - (instancetype)initWithContext:(std::shared_ptr<nc::ops::AsyncDialogResponse>)_context
 {
@@ -64,14 +71,12 @@ using namespace nc::ops;
 
     [self placeButtons];
 
-    self.dialogIcon.image = m_Style == GenericErrorDialogStyle::Caution
-                                ? [Bundle() imageForResource:@"AlertCautionBig"]
-                                : [Bundle() imageForResource:@"AlertStopBig"];
+    self.dialogIcon.image = m_Style == GenericErrorDialogStyle::Caution ? [Bundle() imageForResource:@"AlertCautionBig"]
+                                                                        : [Bundle() imageForResource:@"AlertStopBig"];
     self.appIcon.image = NSApp.applicationIconImage;
     self.pathLabel.stringValue = m_Path ? m_Path : @"";
     self.errorLabel.stringValue = m_Error ? m_Error : @"";
-    self.errorLabel.toolTip =
-        [NSString stringWithUTF8StdString:VFSError::FormatErrorCode(m_ErrorNo)];
+    self.errorLabel.toolTip = [NSString stringWithUTF8StdString:VFSError::FormatErrorCode(m_ErrorNo)];
     self.errorLabelPrompt.hidden = self.errorLabel.stringValue.length == 0;
     self.messageLabel.stringValue = m_Message ? m_Message : @"";
     [self.window recalculateKeyViewLoop];
@@ -101,34 +106,29 @@ using namespace nc::ops;
 
         if( last ) {
             NSDictionary *views = NSDictionaryOfVariableBindings(button, last);
-            [content_view addConstraints:[NSLayoutConstraint
-                                             constraintsWithVisualFormat:@"[button(>=80)]-[last]"
-                                                                 options:0
-                                                                 metrics:nil
-                                                                   views:views]];
-            [content_view
-                addConstraint:[NSLayoutConstraint constraintWithItem:button
-                                                           attribute:NSLayoutAttributeCenterY
-                                                           relatedBy:NSLayoutRelationEqual
-                                                              toItem:last
-                                                           attribute:NSLayoutAttributeCenterY
-                                                          multiplier:1
-                                                            constant:0]];
+            [content_view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[button(>=80)]-[last]"
+                                                                                 options:0
+                                                                                 metrics:nil
+                                                                                   views:views]];
+            [content_view addConstraint:[NSLayoutConstraint constraintWithItem:button
+                                                                     attribute:NSLayoutAttributeCenterY
+                                                                     relatedBy:NSLayoutRelationEqual
+                                                                        toItem:last
+                                                                     attribute:NSLayoutAttributeCenterY
+                                                                    multiplier:1
+                                                                      constant:0]];
         }
         else {
             const auto bottom = m_ShowApplyToAll ? self.applyToAllCheckBox : self.errorLabel;
             NSDictionary *views = NSDictionaryOfVariableBindings(button, bottom);
-            [content_view
-                addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[button(>=80)]-|"
-                                                                       options:0
-                                                                       metrics:nil
-                                                                         views:views]];
-            [content_view
-                addConstraints:[NSLayoutConstraint
-                                   constraintsWithVisualFormat:@"V:[bottom]-(==16)-[button]-|"
-                                                       options:0
-                                                       metrics:nil
-                                                         views:views]];
+            [content_view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[button(>=80)]-|"
+                                                                                 options:0
+                                                                                 metrics:nil
+                                                                                   views:views]];
+            [content_view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[bottom]-(==16)-[button]-|"
+                                                                                 options:0
+                                                                                 metrics:nil
+                                                                                   views:views]];
             self.window.initialFirstResponder = button;
         }
         last = button;
@@ -149,8 +149,7 @@ static bool IsShiftPressed() noexcept
 {
     if( auto b = nc::objc_cast<NSButton>(sender) ) {
         if( m_ShowApplyToAll && m_Context )
-            m_Context->SetApplyToAll(self.applyToAllCheckBox.state == NSControlStateValueOn ||
-                                     IsShiftPressed());
+            m_Context->SetApplyToAll(self.applyToAllCheckBox.state == NSControlStateValueOn || IsShiftPressed());
         [self.window.sheetParent endSheet:self.window returnCode:b.tag];
     }
 }

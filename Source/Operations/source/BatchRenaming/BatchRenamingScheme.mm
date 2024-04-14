@@ -1,6 +1,7 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenamingScheme.h"
 #include <Utility/StringExtras.h>
+#include <fmt/format.h>
 
 namespace nc::ops {
 
@@ -610,8 +611,7 @@ NSString *BatchRenamingScheme::FormatCounter(const Counter &_c, int _file_number
     char *buf = static_cast<char *>(alloca(_c.width + 32)); // no heap allocs, for great justice!
     if( !buf )
         return @"";
-
-    snprintf(buf, sizeof(buf), "%0*ld", _c.width, _c.start + _c.step * (_file_number / _c.stripe));
+    *fmt::format_to(buf, "{:0{}}", _c.start + _c.step * (_file_number / _c.stripe), _c.width) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 
@@ -681,35 +681,35 @@ static NSString *StringByTransform(NSString *_s, BatchRenamingScheme::CaseTransf
 static NSString *FormatTimeSeconds(const struct tm &_t)
 {
     char buf[16];
-    snprintf(buf, sizeof(buf), "%2.2d", _t.tm_sec);
+    *fmt::format_to(buf, "{:02}", _t.tm_sec) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 
 static NSString *FormatTimeMinutes(const struct tm &_t)
 {
     char buf[16];
-    snprintf(buf, sizeof(buf), "%2.2d", _t.tm_min);
+    *fmt::format_to(buf, "{:02}", _t.tm_min) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 
 static NSString *FormatTimeHours(const struct tm &_t)
 {
     char buf[16];
-    snprintf(buf, sizeof(buf), "%2.2d", _t.tm_hour);
+    *fmt::format_to(buf, "{:02}", _t.tm_hour) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 
 static NSString *FormatTimeDay(const struct tm &_t)
 {
     char buf[16];
-    snprintf(buf, sizeof(buf), "%2.2d", _t.tm_mday);
+    *fmt::format_to(buf, "{:02}", _t.tm_mday) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 
 static NSString *FormatTimeMonth(const struct tm &_t)
 {
     char buf[16];
-    snprintf(buf, sizeof(buf), "%2.2d", _t.tm_mon + 1);
+    *fmt::format_to(buf, "{:02}", _t.tm_mon + 1) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 
@@ -717,16 +717,16 @@ static NSString *FormatTimeYear2(const struct tm &_t)
 {
     char buf[16];
     if( _t.tm_year >= 100 )
-        snprintf(buf, sizeof(buf), "%2.2d", _t.tm_year - 100);
+        *fmt::format_to(buf, "{:02}", _t.tm_year - 100) = 0;
     else
-        snprintf(buf, sizeof(buf), "%2.2d", _t.tm_year);
+        *fmt::format_to(buf, "{:02}", _t.tm_year) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 
 static NSString *FormatTimeYear4(const struct tm &_t)
 {
     char buf[16];
-    snprintf(buf, sizeof(buf), "%4.4d", _t.tm_year + 1900);
+    *fmt::format_to(buf, "{:04}", _t.tm_year + 1900) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 
@@ -915,6 +915,7 @@ NSString *BatchRenamingScheme::Rename(const FileInfo &_fi, int _number) const
                 break;
             case ActionType::Capitalized:
                 case_transform = CaseTransform::Capitalized;
+                break;
             default:
                 break;
         }
@@ -970,4 +971,4 @@ NSString *BatchRenamingScheme::FileInfo::GrandparentFilename() const
     return [NSString stringWithUTF8StdString:parent_path.filename().native()];
 }
 
-}
+} // namespace nc::ops

@@ -1,10 +1,11 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/ByteCountFormatter.h>
 #include <Foundation/Foundation.h>
 #include <Utility/Encodings.h>
 #include <string>
+#include <fmt/format.h>
 
-static inline void strsubst(char *_s, char _what, char _to)
+static constexpr void strsubst(char *_s, char _what, char _to) noexcept
 {
     while( *_s ) {
         if( *_s == _what )
@@ -13,7 +14,7 @@ static inline void strsubst(char *_s, char _what, char _to)
     }
 }
 
-static inline unsigned chartouni(const char *_from, unsigned short *_to, unsigned _amount)
+static constexpr unsigned chartouni(const char *_from, unsigned short *_to, unsigned _amount) noexcept
 {
     for( unsigned i = 0; i < _amount; ++i )
         _to[i] = _from[i];
@@ -77,10 +78,7 @@ ByteCountFormatter &ByteCountFormatter::Instance()
 // External wrapping and convertions
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-unsigned ByteCountFormatter::ToUTF8(uint64_t _size,
-                                    unsigned char *_buf,
-                                    size_t _buffer_size,
-                                    Type _type) const
+unsigned ByteCountFormatter::ToUTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size, Type _type) const
 {
     switch( _type ) {
         case Fixed6:
@@ -96,10 +94,7 @@ unsigned ByteCountFormatter::ToUTF8(uint64_t _size,
     }
 }
 
-unsigned ByteCountFormatter::ToUTF16(uint64_t _size,
-                                     unsigned short *_buf,
-                                     size_t _buffer_size,
-                                     Type _type) const
+unsigned ByteCountFormatter::ToUTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size, Type _type) const
 {
     switch( _type ) {
         case Fixed6:
@@ -131,8 +126,7 @@ NSString *ByteCountFormatter::ToNSString(uint64_t _size, Type _type) const
     }
 }
 
-unsigned
-ByteCountFormatter::Fixed6_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size) const
+unsigned ByteCountFormatter::Fixed6_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size) const
 {
     unsigned short buf[6];
     int len = Fixed6_Impl(_size, buf);
@@ -142,8 +136,7 @@ ByteCountFormatter::Fixed6_UTF8(uint64_t _size, unsigned char *_buf, size_t _buf
     return static_cast<unsigned>(utf8len);
 }
 
-unsigned
-ByteCountFormatter::Fixed6_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size) const
+unsigned ByteCountFormatter::Fixed6_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size) const
 {
     unsigned short buf[6];
     int len = Fixed6_Impl(_size, buf);
@@ -160,9 +153,7 @@ NSString *ByteCountFormatter::Fixed6_NSString(uint64_t _size) const
     return [NSString stringWithCharacters:buf length:len];
 }
 
-unsigned ByteCountFormatter::SpaceSeparated_UTF8(uint64_t _size,
-                                                 unsigned char *_buf,
-                                                 size_t _buffer_size) const
+unsigned ByteCountFormatter::SpaceSeparated_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size) const
 {
     unsigned short buf[64];
     int len = SpaceSeparated_Impl(_size, buf);
@@ -172,9 +163,7 @@ unsigned ByteCountFormatter::SpaceSeparated_UTF8(uint64_t _size,
     return static_cast<unsigned>(utf8len);
 }
 
-unsigned ByteCountFormatter::SpaceSeparated_UTF16(uint64_t _size,
-                                                  unsigned short *_buf,
-                                                  size_t _buffer_size) const
+unsigned ByteCountFormatter::SpaceSeparated_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size) const
 {
     unsigned short buf[64];
     int len = SpaceSeparated_Impl(_size, buf);
@@ -191,8 +180,7 @@ NSString *ByteCountFormatter::SpaceSeparated_NSString(uint64_t _size) const
     return [NSString stringWithCharacters:buf length:len];
 }
 
-unsigned
-ByteCountFormatter::Adaptive_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size) const
+unsigned ByteCountFormatter::Adaptive_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size) const
 {
     unsigned short buf[6];
     int len = Adaptive6_Impl(_size, buf);
@@ -201,8 +189,7 @@ ByteCountFormatter::Adaptive_UTF8(uint64_t _size, unsigned char *_buf, size_t _b
     return static_cast<unsigned>(utf8len);
 }
 
-unsigned
-ByteCountFormatter::Adaptive_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size) const
+unsigned ByteCountFormatter::Adaptive_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size) const
 {
     unsigned short buf[6];
     int len = Adaptive6_Impl(_size, buf);
@@ -220,8 +207,7 @@ NSString *ByteCountFormatter::Adaptive_NSString(uint64_t _size) const
     return [NSString stringWithCharacters:buf length:len];
 }
 
-unsigned
-ByteCountFormatter::Adaptive8_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size) const
+unsigned ByteCountFormatter::Adaptive8_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size) const
 {
     unsigned short buf[8];
     int len = Adaptive8_Impl(_size, buf);
@@ -230,8 +216,7 @@ ByteCountFormatter::Adaptive8_UTF8(uint64_t _size, unsigned char *_buf, size_t _
     return static_cast<unsigned>(utf8len);
 }
 
-unsigned
-ByteCountFormatter::Adaptive8_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size) const
+unsigned ByteCountFormatter::Adaptive8_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size) const
 {
     unsigned short buf[8];
     int len = Adaptive8_Impl(_size, buf);
@@ -256,52 +241,51 @@ NSString *ByteCountFormatter::Adaptive8_NSString(uint64_t _size) const
 int ByteCountFormatter::Fixed6_Impl(uint64_t _size, unsigned short _buf[6]) const
 {
     char buf[32];
-
     if( _size < 1000000 ) { // bytes
-        int len = snprintf(buf, sizeof(buf), "%llu", _size);
+        const int len = static_cast<int>(fmt::format_to(buf, "{}", _size) - buf);
         chartouni(buf, _buf, len);
         return len;
     }
     else if( _size < 9999lu * m_Exponent[1] ) { // kilobytes
-        uint64_t div = m_Exponent[1];
+        constexpr uint64_t div = m_Exponent[1];
         uint64_t res = _size / div;
-        int len = snprintf(buf, sizeof(buf), "%llu", res + (_size - res * div) / (div / 2));
+        const int len = static_cast<int>(fmt::format_to(buf, "{}", res + (_size - res * div) / (div / 2)) - buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[1];
         return len + 2;
     }
     else if( _size < 9999lu * m_Exponent[2] ) { // megabytes
-        uint64_t div = m_Exponent[2];
-        uint64_t res = _size / div;
-        int len = snprintf(buf, sizeof(buf), "%llu", res + (_size - res * div) / (div / 2));
+        constexpr uint64_t div = m_Exponent[2];
+        const uint64_t res = _size / div;
+        const int len = static_cast<int>(fmt::format_to(buf, "{}", res + (_size - res * div) / (div / 2)) - buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[2];
         return len + 2;
     }
     else if( _size < 9999lu * m_Exponent[3] ) { // gigabytes
-        uint64_t div = m_Exponent[3];
-        uint64_t res = _size / div;
-        int len = snprintf(buf, sizeof(buf), "%llu", res + (_size - res * div) / (div / 2));
+        constexpr uint64_t div = m_Exponent[3];
+        const uint64_t res = _size / div;
+        const int len = static_cast<int>(fmt::format_to(buf, "{}", res + (_size - res * div) / (div / 2)) - buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[3];
         return len + 2;
     }
     else if( _size < 9999lu * m_Exponent[4] ) { // terabytes
-        uint64_t div = m_Exponent[4];
-        uint64_t res = _size / div;
-        int len = snprintf(buf, sizeof(buf), "%llu", res + (_size - res * div) / (div / 2));
+        constexpr uint64_t div = m_Exponent[4];
+        const uint64_t res = _size / div;
+        const int len = static_cast<int>(fmt::format_to(buf, "{}", res + (_size - res * div) / (div / 2)) - buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[4];
         return len + 2;
     }
     else if( _size < 9999lu * m_Exponent[5] ) { // petabytes
-        uint64_t div = m_Exponent[5];
-        uint64_t res = _size / div;
-        int len = snprintf(buf, sizeof(buf), "%llu", res + (_size - res * div) / (div / 2));
+        constexpr uint64_t div = m_Exponent[5];
+        const uint64_t res = _size / div;
+        const int len = static_cast<int>(fmt::format_to(buf, "{}", res + (_size - res * div) / (div / 2)) - buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[5];
@@ -312,7 +296,6 @@ int ByteCountFormatter::Fixed6_Impl(uint64_t _size, unsigned short _buf[6]) cons
 
 int ByteCountFormatter::SpaceSeparated_Impl(uint64_t _sz, unsigned short _buf[64]) const
 {
-    // TODO: localization!
     char buf[128];
     int len = 0;
 #define __1000_1(a) ((a) % 1000lu)
@@ -327,20 +310,17 @@ int ByteCountFormatter::SpaceSeparated_Impl(uint64_t _sz, unsigned short _buf[64
     else if( _sz < 1000lu * 1000lu * 1000lu )
         len = snprintf(buf, sizeof(buf), "%llu %03llu %03llu ", __1000_3(_sz), __1000_2(_sz), __1000_1(_sz));
     else if( _sz < 1000lu * 1000lu * 1000lu * 1000lu )
-        len = snprintf(buf, sizeof(buf),
-                      "%llu %03llu %03llu %03llu ",
-                      __1000_4(_sz),
-                      __1000_3(_sz),
-                      __1000_2(_sz),
-                      __1000_1(_sz));
+        len = snprintf(
+            buf, sizeof(buf), "%llu %03llu %03llu %03llu ", __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz));
     else if( _sz < 1000lu * 1000lu * 1000lu * 1000lu * 1000lu )
-        len = snprintf(buf, sizeof(buf),
-                      "%llu %03llu %03llu %03llu %03llu ",
-                      __1000_5(_sz),
-                      __1000_4(_sz),
-                      __1000_3(_sz),
-                      __1000_2(_sz),
-                      __1000_1(_sz));
+        len = snprintf(buf,
+                       sizeof(buf),
+                       "%llu %03llu %03llu %03llu %03llu ",
+                       __1000_5(_sz),
+                       __1000_4(_sz),
+                       __1000_3(_sz),
+                       __1000_2(_sz),
+                       __1000_1(_sz));
 #undef __1000_1
 #undef __1000_2
 #undef __1000_3

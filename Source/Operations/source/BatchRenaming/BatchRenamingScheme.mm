@@ -1,6 +1,7 @@
 // Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenamingScheme.h"
 #include <Utility/StringExtras.h>
+#include <fmt/format.h>
 
 namespace nc::ops {
 
@@ -610,8 +611,7 @@ NSString *BatchRenamingScheme::FormatCounter(const Counter &_c, int _file_number
     char *buf = static_cast<char *>(alloca(_c.width + 32)); // no heap allocs, for great justice!
     if( !buf )
         return @"";
-
-    snprintf(buf, sizeof(buf), "%0*ld", _c.width, _c.start + _c.step * (_file_number / _c.stripe));
+    *fmt::format_to(buf, "{:0{}}", _c.start + _c.step * (_file_number / _c.stripe), _c.width) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 

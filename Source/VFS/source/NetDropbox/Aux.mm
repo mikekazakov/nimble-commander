@@ -5,6 +5,7 @@
 #include <VFS/Log.h>
 #include <Utility/ObjCpp.h>
 #include <vector>
+#include <fmt/format.h>
 
 namespace nc::vfs::dropbox {
 
@@ -287,12 +288,10 @@ std::string EscapeStringForJSONInHTTPHeader(const std::string &_original)
 
     std::string after;
     after.reserve(str.length + 4);
-    char hex[16];
     for( int i = 0, e = static_cast<int>(str.length); i != e; ++i ) {
         auto c = [str characterAtIndex:i];
         if( c >= 127 ) {
-            snprintf(hex, sizeof(hex), "\\u%04X", c);
-            after += hex;
+            fmt::format_to(std::back_inserter(after), "\\u{:04X}", c);
         }
         else {
             if( c == '"' || c == '\\' )

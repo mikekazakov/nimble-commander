@@ -4,6 +4,7 @@
 #include "Internals.h"
 #include "Cache.h"
 #include <Utility/PathManip.h>
+#include <fmt/format.h>
 
 namespace nc::vfs::ftp {
 
@@ -149,7 +150,7 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
 
             if( _file_offset ) { // set offsets
                 char range[16];
-                snprintf(range, 16, "%lld-", _file_offset);
+                *fmt::format_to(range, "{}-", _file_offset) = 0;
                 m_CURL->EasySetOpt(CURLOPT_RANGE, range);
             }
 

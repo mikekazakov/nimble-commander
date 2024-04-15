@@ -122,7 +122,7 @@ private:
 
 - (uint64_t)size
 {
-    return m_Data.st.size;
+    return m_Data.st.mode_bits.dir ? std::numeric_limits<uint64_t>::max() : m_Data.st.size;
 }
 
 - (uint64_t)mdate
@@ -144,12 +144,20 @@ private:
 {
     return NSString.class;
 }
-- (id)transformedValue:(id)value
+- (id)transformedValue:(id)_value
 {
-    if( value == nil )
+    if( _value == nil )
         return nil;
-    const auto &bf = ByteCountFormatter::Instance();
-    return bf.ToNSString([value unsignedLongLongValue], ByteCountFormatter::Fixed6);
+
+    const uint64_t val = [_value unsignedLongLongValue];
+    if( val == std::numeric_limits<uint64_t>::max() ) {
+        return NSLocalizedString(@"__MODERNPRESENTATION_FOLDER_WORD",
+                                 "Folders dummy string when size is not available, for English is 'Folder'");
+    }
+    else {
+        const auto &bf = ByteCountFormatter::Instance();
+        return bf.ToNSString(val, ByteCountFormatter::Fixed6);
+    }
 }
 @end
 
@@ -488,7 +496,7 @@ private:
             to_relative_path(it.host, ensure_tr_slash(_in_path), std::string(m_Host->JunctionPath()) + m_Path);
 
         // TODO: need some decent cancelling mechanics here
-        auto stat_block = [=, it = std::move(it)]() mutable {
+        auto stat_block = [self, it = std::move(it)]() mutable {
             // doing stat()'ing item in async background thread
             it.host->Stat(it.full_filename.c_str(), it.st, 0, 0);
 

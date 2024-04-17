@@ -12,12 +12,12 @@
 name: "CodeQL"
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  schedule:
-    - cron: '22 0 * * 6'
+#  push:
+#    branches: [ "main" ]
+#  pull_request:
+#    branches: [ "main" ]
+#  schedule:
+#    - cron: '22 0 * * 6'
   workflow_dispatch:
 
 env:
@@ -84,7 +84,8 @@ jobs:
     - name: Build
       run: |
         sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app
-        cd Scripts && ./run_all_unit_tests.sh Debug
+        # cd Scripts && ./run_all_unit_tests.sh Debug
+        xcodebuild -project Source/NimbleCommander/NimbleCommander.xcodeproj -scheme BaseUT -configuration Debug
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3

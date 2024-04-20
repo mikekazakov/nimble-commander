@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "HexModeLayout.h"
 #include <Base/CFRange.h>
 #include <cmath>
@@ -19,7 +19,8 @@ HexModeLayout::ScrollerPosition HexModeLayout::CalcScrollerPosition() const noex
     if( m_FileSize > bytes_in_view ) {
         const auto &working_set = m_Frame->WorkingSet();
         ScrollerPosition position;
-        position.position = double(working_set.GlobalOffset() + m_ScrollOffset.row * m_Frame->BytesPerRow()) /
+        position.position = double(working_set.GlobalOffset() +
+                                   static_cast<long>(m_ScrollOffset.row) * static_cast<long>(m_Frame->BytesPerRow())) /
                             double(m_FileSize - bytes_in_view);
         position.proportion = double(bytes_in_view) / double(m_FileSize);
         return position;
@@ -301,8 +302,8 @@ std::pair<double, double> HexModeLayout::CalcColumnSelectionBackground(const CFR
     if( sel_range.length <= 0 )
         return {0., 0.};
 
-    const auto local_start_byte =
-        int(sel_range.location - row.BytesStart() - _columm_index * m_Frame->BytesPerColumn());
+    const auto local_start_byte = int(sel_range.location - row.BytesStart() -
+                                      static_cast<long>(_columm_index) * static_cast<long>(m_Frame->BytesPerColumn()));
 
     const auto symb_width = m_Frame->FontInfo().PreciseMonospaceWidth();
     auto x1 = _offsets.columns.at(_columm_index) + local_start_byte * symb_width * 3;
@@ -377,4 +378,4 @@ void HexModeLayout::SetFileSize(int64_t _file_size)
     m_FileSize = _file_size;
 }
 
-}
+} // namespace nc::viewer

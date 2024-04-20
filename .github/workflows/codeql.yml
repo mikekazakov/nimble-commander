@@ -84,8 +84,7 @@ jobs:
     - name: Build
       run: |
         sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app
-        # cd Scripts && ./run_all_unit_tests.sh Debug
-        xcodebuild -project Source/NimbleCommander/NimbleCommander.xcodeproj -scheme BaseUT -configuration Debug
+        ./Scripts/build_for_codeql.sh
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3

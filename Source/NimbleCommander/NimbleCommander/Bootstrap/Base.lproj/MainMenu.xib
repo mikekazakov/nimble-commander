@@ -31,12 +31,6 @@
                                     <action selector="OnPreferencesCommand:" target="-1" id="890"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Email the Developer..." toolTip="Questions? Comments? Send me an email!" id="891">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="OnMenuSendFeedback:" target="-1" id="893"/>
-                                </connections>
-                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="fPr-eP-snC">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>

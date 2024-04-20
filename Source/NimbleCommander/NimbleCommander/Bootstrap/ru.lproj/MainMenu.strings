@@ -229,12 +229,6 @@
 /* Class = "NSMenuItem"; title = "4"; ObjectID = "885"; */
 "885.title" = "4";
 
-/* Class = "NSMenuItem"; ibShadowedToolTip = "Questions? Comments? Send me an email!"; ObjectID = "891"; */
-"891.ibShadowedToolTip" = "Вопросы? Комментарии? Отправьте мне письмо!";
-
-/* Class = "NSMenuItem"; title = "Email the Developer..."; ObjectID = "891"; */
-"891.title" = "Написать разработчику...";
-
 /* Class = "NSMenuItem"; title = "Preview"; ObjectID = "894"; */
 "894.title" = "Быстрый просмотр";
 

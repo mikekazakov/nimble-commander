@@ -8,13 +8,11 @@
 @class NCConfigObjCBridge;
 @class NCMainWindowController;
 @class InternalViewerWindowController;
-@class AppStoreHelper;
 class ExternalEditorsStorage;
 class NetworkConnectionsManager;
 
 namespace nc {
 
-class FeedbackManager;
 class ThemesManager;
 
 namespace config {
@@ -121,8 +119,6 @@ class NativeHost;
 @property(nonatomic, readonly)
     const std::shared_ptr<NetworkConnectionsManager> &networkConnectionsManager;
 
-@property(nonatomic, readonly) AppStoreHelper *appStoreHelper;
-
 @property(nonatomic, readonly) nc::ops::AggregateProgressTracker &operationsProgressTracker;
 
 @property(nonatomic, readonly)
@@ -143,8 +139,6 @@ class NativeHost;
 @property(nonatomic, readonly) nc::vfs::NativeHost &nativeHost;
 
 @property(nonatomic, readonly) const std::shared_ptr<nc::vfs::NativeHost> &nativeHostPtr;
-
-@property(nonatomic, readonly) nc::FeedbackManager &feedbackManager;
 
 @property(nonatomic, readonly) nc::utility::FSEventsFileUpdate &fsEventsFileUpdate;
 

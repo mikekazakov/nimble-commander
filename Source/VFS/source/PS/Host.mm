@@ -313,9 +313,6 @@ std::vector<PSHost::ProcInfo> PSHost::GetProcs()
         curr.p_uid = kip.kp_eproc.e_pcred.p_ruid;
         curr.c_uid = kip.kp_eproc.e_ucred.cr_uid;
         curr.cpu_type = ArchTypeFromPID(curr.pid);
-        //        if( !ActivationManager::ForAppStore() )
-        //            curr.sandboxed = sandbox_check(curr.pid, NULL, SANDBOX_FILTER_NONE) != 0;
-
         curr.rusage_avail = false;
         memset(&curr.rusage, 0, sizeof(curr.rusage));
         if( proc_pid_rusage(curr.pid, RUSAGE_INFO_V2, reinterpret_cast<void **>(&curr.rusage)) == 0 )
@@ -424,8 +421,6 @@ std::string PSHost::ProcInfoIntoFile(const ProcInfo &_info, std::shared_ptr<Snap
               "\n";
     result += "Status: "s + ProcStatus(_info.status) + "\n";
     result += "Architecture: "s + ArchType(_info.cpu_type) + "\n";
-    //    if( !ActivationManager::ForAppStore() )
-    //        result += "Sandboxed: "s + (_info.sandboxed ? "yes" : "no") + "\n";
     result += "Image file: "s + (_info.bin_path.empty() ? "N/A" : _info.bin_path) + "\n";
     result += "Arguments: "s + (_info.arguments.empty() ? "N/A" : _info.arguments) + "\n";
 

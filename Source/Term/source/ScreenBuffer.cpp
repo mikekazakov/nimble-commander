@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ScreenBuffer.h"
 #include <CoreFoundation/CoreFoundation.h>
 
@@ -18,14 +18,14 @@ ScreenBuffer::ScreenBuffer(unsigned _width, unsigned _height, ExtendedCharRegist
 
 std::unique_ptr<ScreenBuffer::Space[]> ScreenBuffer::ProduceRectangularSpaces(unsigned _width, unsigned _height)
 {
-    return std::make_unique<Space[]>(_width * _height);
+    return std::make_unique<Space[]>(static_cast<size_t>(_width) * static_cast<size_t>(_height));
 }
 
 std::unique_ptr<ScreenBuffer::Space[]>
 ScreenBuffer::ProduceRectangularSpaces(unsigned _width, unsigned _height, Space _initial_char)
 {
     auto p = ProduceRectangularSpaces(_width, _height);
-    std::fill(&p[0], &p[_width * _height], _initial_char);
+    std::fill(&p[0], &p[static_cast<size_t>(_width) * static_cast<size_t>(_height)], _initial_char);
     return p;
 }
 

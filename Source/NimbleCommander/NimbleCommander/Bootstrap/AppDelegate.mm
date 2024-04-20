@@ -42,7 +42,6 @@
 
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
-#include <NimbleCommander/Core/FeedbackManagerImpl.h>
 #include <NimbleCommander/Core/Dock.h>
 #include <NimbleCommander/Core/ServicesHandler.h>
 #include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
@@ -230,7 +229,6 @@ static NCAppDelegate *g_Me = nil;
     std::string m_ConfigDirectory;
     std::string m_StateDirectory;
     std::vector<nc::config::Token> m_ConfigObservationTickets;
-    AppStoreHelper *m_AppStoreHelper;
     upward_flag m_FinishedLaunching;
     std::shared_ptr<nc::panel::FavoriteLocationsStorageImpl> m_Favorites;
     NSMutableArray *m_FilesToOpen;
@@ -249,7 +247,6 @@ static NCAppDelegate *g_Me = nil;
 @synthesize configDirectory = m_ConfigDirectory;
 @synthesize stateDirectory = m_StateDirectory;
 @synthesize supportDirectory = m_SupportDirectory;
-@synthesize appStoreHelper = m_AppStoreHelper;
 @synthesize recentlyClosedMenu;
 
 - (id)init
@@ -280,8 +277,6 @@ static NCAppDelegate *g_Me = nil;
 - (void)applicationWillFinishLaunching:(NSNotification *) [[maybe_unused]] _notification
 {
     RegisterAvailableVFS();
-
-    [self feedbackManager];
 
     // Init themes manager
     m_ThemesManager = std::make_unique<nc::ThemesManager>(GlobalConfig(), g_ConfigSelectedTheme, g_ConfigThemes);
@@ -951,16 +946,6 @@ static void DoTemporaryFileStoragePurge()
 - (nc::ops::PoolEnqueueFilter &)poolEnqueueFilter
 {
     return m_PoolEnqueueFilter;
-}
-
-- (nc::FeedbackManager &)feedbackManager
-{
-    static nc::FeedbackManager *instance = [] {
-        auto fm = new nc::FeedbackManagerImpl();
-        atexit([] { instance->UpdateStatistics(); });
-        return fm;
-    }();
-    return *instance;
 }
 
 - (IBAction)onMainMenuShowLogs:(id)_sender

@@ -11,10 +11,6 @@
 #include <Utility/MIMResponder.h>
 #include <Base/Observable.h>
 
-namespace nc {
-class FeedbackManager;
-}
-
 namespace nc::ops {
 class Pool;
 }
@@ -70,7 +66,6 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     std::shared_ptr<nc::panel::FavoriteLocationsStorage> m_FavoriteLocationsStorage;
     nc::panel::ControllerStateJSONDecoder *m_ControllerStateJSONDecoder;
     NCPanelQLPanelAdaptor *m_QLPanelAdaptor;
-    nc::FeedbackManager *m_FeedbackManager;
     nc::base::ObservableBase::ObservationTicket m_ThemesObservationTicket;
 #pragma clang diagnostic pop
 }
@@ -90,8 +85,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
             loadDefaultContent:(bool)_load_content
                   panelFactory:(std::function<PanelController *()>)_panel_factory
     controllerStateJSONDecoder:(nc::panel::ControllerStateJSONDecoder &)_controller_json_decoder
-                QLPanelAdaptor:(NCPanelQLPanelAdaptor *)_ql_panel_adaptor
-               feedbackManager:(nc::FeedbackManager &)_feedback_manager;
+                QLPanelAdaptor:(NCPanelQLPanelAdaptor *)_ql_panel_adaptor;
 
 - (void)loadDefaultPanelContent;
 

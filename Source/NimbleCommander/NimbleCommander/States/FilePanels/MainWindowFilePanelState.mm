@@ -13,13 +13,11 @@
 #include <NimbleCommander/Core/SandboxManager.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
-#include <NimbleCommander/Core/FeedbackManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include "MainWindowFilePanelState.h"
 #include "PanelController.h"
 #include "PanelController+DataAccess.h"
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
-#include "AskingForRatingOverlayView.h"
 #include "Favorites.h"
 #include "Views/QuickLookOverlay.h"
 #include "Views/FilePanelMainSplitView.h"
@@ -61,44 +59,6 @@ static const auto g_InitialStatePath = "filePanel.initialState";
 static const auto g_InitialStateLeftDefaults = "left";
 static const auto g_InitialStateRightDefaults = "right";
 
-static void SetupRatingOverlay(NSView *_background_view, nc::FeedbackManager &_feedback_manager)
-{
-    AskingForRatingOverlayView *v =
-        [[AskingForRatingOverlayView alloc] initWithFrame:_background_view.bounds
-                                          feedbackManager:_feedback_manager];
-    v.translatesAutoresizingMaskIntoConstraints = false;
-    [_background_view addSubview:v];
-    [_background_view addConstraint:[NSLayoutConstraint constraintWithItem:v
-                                                                 attribute:NSLayoutAttributeCenterX
-                                                                 relatedBy:NSLayoutRelationEqual
-                                                                    toItem:_background_view
-                                                                 attribute:NSLayoutAttributeCenterX
-                                                                multiplier:1.0
-                                                                  constant:0]];
-    [_background_view addConstraint:[NSLayoutConstraint constraintWithItem:v
-                                                                 attribute:NSLayoutAttributeCenterY
-                                                                 relatedBy:NSLayoutRelationEqual
-                                                                    toItem:_background_view
-                                                                 attribute:NSLayoutAttributeCenterY
-                                                                multiplier:1.0
-                                                                  constant:0]];
-    [_background_view addConstraint:[NSLayoutConstraint constraintWithItem:v
-                                                                 attribute:NSLayoutAttributeWidth
-                                                                 relatedBy:NSLayoutRelationEqual
-                                                                    toItem:_background_view
-                                                                 attribute:NSLayoutAttributeWidth
-                                                                multiplier:1.0
-                                                                  constant:0]];
-    [_background_view addConstraint:[NSLayoutConstraint constraintWithItem:v
-                                                                 attribute:NSLayoutAttributeHeight
-                                                                 relatedBy:NSLayoutRelationEqual
-                                                                    toItem:_background_view
-                                                                 attribute:NSLayoutAttributeHeight
-                                                                multiplier:1.0
-                                                                  constant:0]];
-    [_background_view layoutSubtreeIfNeeded];
-}
-
 static bool GoToForcesPanelActivation()
 {
     static const auto fetch = [] { return GlobalConfig().GetBool(g_ConfigGoToActivation); };
@@ -125,12 +85,10 @@ static NSString *TitleForData(const data::Model *_data);
                      panelFactory:(std::function<PanelController *()>)_panel_factory
        controllerStateJSONDecoder:(ControllerStateJSONDecoder &)_controller_json_decoder
                    QLPanelAdaptor:(NCPanelQLPanelAdaptor *)_ql_panel_adaptor
-                  feedbackManager:(nc::FeedbackManager &)_feedback_manager
 {
     assert(_panel_factory);
     if( self = [super initWithFrame:frameRect] ) {
         m_PanelFactory = std::move(_panel_factory);
-        m_FeedbackManager = &_feedback_manager;
         m_ControllerStateJSONDecoder = &_controller_json_decoder;
         m_ClosedPanelsHistory = nullptr;
         m_OperationsPool = _pool.shared_from_this();
@@ -161,14 +119,12 @@ static NSString *TitleForData(const data::Model *_data);
                   panelFactory:(std::function<PanelController *()>)_panel_factory
     controllerStateJSONDecoder:(ControllerStateJSONDecoder &)_controller_json_decoder
                 QLPanelAdaptor:(NCPanelQLPanelAdaptor *)_ql_panel_adaptor
-               feedbackManager:(nc::FeedbackManager &)_feedback_manager
 {
     self = [self initBaseWithFrame:frameRect
                            andPool:_pool
                       panelFactory:std::move(_panel_factory)
         controllerStateJSONDecoder:_controller_json_decoder
-                    QLPanelAdaptor:_ql_panel_adaptor
-                   feedbackManager:_feedback_manager];
+                    QLPanelAdaptor:_ql_panel_adaptor];
     if( self ) {
         if( _load_content ) {
             [self restoreDefaultPanelOptions];
@@ -380,10 +336,6 @@ static NSString *TitleForData(const data::Model *_data);
                                                      metrics:nil
                                                        views:views]];
     }
-
-    if( m_FeedbackManager->ShouldShowRatingOverlayView() )
-        SetupRatingOverlay(m_ToolbarDelegate.operationsPoolViewController.idleView,
-                           *m_FeedbackManager);
 }
 
 - (void)windowStateDidBecomeAssigned

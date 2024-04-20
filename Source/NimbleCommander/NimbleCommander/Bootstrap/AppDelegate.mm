@@ -580,11 +580,6 @@ static NCAppDelegate *g_Me = nil;
     return NSTerminateNow;
 }
 
-- (IBAction)OnMenuSendFeedback:(id) [[maybe_unused]] _sender
-{
-    self.feedbackManager.EmailFeedback();
-}
-
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *) [[maybe_unused]] _sender
 {
     return true;
@@ -648,7 +643,7 @@ static NCAppDelegate *g_Me = nil;
 
 - (IBAction)onMainMenuPerformGoToProductForum:(id) [[maybe_unused]] _sender
 {
-    const auto url = [NSURL URLWithString:@"http://magnumbytes.com/forum/"];
+    const auto url = [NSURL URLWithString:@"https://github.com/mikekazakov/nimble-commander/discussions"];
     [NSWorkspace.sharedWorkspace openURL:url];
 }
 

@@ -84,7 +84,7 @@ jobs:
     - name: Build
       run: |
         sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app
-        ./Scripts/build_for_codeql.sh
+        cd Scripts && ./build_for_codeql.sh
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3

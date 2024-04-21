@@ -29,7 +29,6 @@ jobs:
         NOTARIZATION_APPLE_ID: ${{ secrets.NOTARIZATION_APPLE_ID }}
         NOTARIZATION_PWD: ${{ secrets.NOTARIZATION_PWD }}
         NOTARIZATION_TEAM: ${{ secrets.NOTARIZATION_TEAM }}
-        NC_SENSITIVE: ${{ secrets.NC_SENSITIVE }}
       run: |
         # create variables
         CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
@@ -51,6 +50,8 @@ jobs:
         # store notatization credentials
         xcrun notarytool store-credentials AC_PASSWORD --apple-id $NOTARIZATION_APPLE_ID --team-id $NOTARIZATION_TEAM --password $NOTARIZATION_PWD
     - name: Build and package
+      env:
+        NC_SENSITIVE: ${{ secrets.NC_SENSITIVE }}
       run: |
         echo -n "$NC_SENSITIVE" | base64 --decode -o /Users/runner/.nc_sensitive.h
         cd Scripts && ./build_nightly.sh

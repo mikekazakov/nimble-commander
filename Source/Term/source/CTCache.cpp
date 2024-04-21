@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CTCache.h"
 #include <Utility/FontExtras.h>
 #include <memory_resource>
@@ -121,7 +121,7 @@ CTCache::DisplayChar CTCache::Internalize(CTLineRef _line)
 {
     assert(_line);
 
-    auto insert_full = [=] -> DisplayChar {
+    auto insert_full = [=, this] -> DisplayChar {
         m_Complexes.push_back(base::CFPtr<CTLineRef>(_line));
         return {Kind::Complex, static_cast<uint32_t>(m_Complexes.size() - 1)};
     };

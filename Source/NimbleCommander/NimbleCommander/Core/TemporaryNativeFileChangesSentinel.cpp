@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TemporaryNativeFileChangesSentinel.h"
 #include <Base/algo.h>
 #include <Base/Hash.h>
@@ -52,9 +52,8 @@ bool TemporaryNativeFileChangesSentinel::WatchFile(const std::string &_path,
     auto current = std::make_shared<Meta>();
     auto &dir_update = nc::utility::FSEventsDirUpdate::Instance();
     const auto path = std::filesystem::path(_path).parent_path();
-    uint64_t watch_ticket = dir_update.AddWatchPath(path.c_str(), [current] {
-        TemporaryNativeFileChangesSentinel::Instance().FSEventCallback(current);
-    });
+    uint64_t watch_ticket = dir_update.AddWatchPath(
+        path.c_str(), [current] { TemporaryNativeFileChangesSentinel::Instance().FSEventCallback(current); });
     if( !watch_ticket )
         return false;
 
@@ -77,7 +76,7 @@ void TemporaryNativeFileChangesSentinel::ScheduleItemDrop(const std::shared_ptr<
     using namespace std::chrono;
     static const auto safety_backlash = 100ms;
     _meta->drop_time = duration_cast<milliseconds>(nc::base::machtime() + _meta->drop_delay);
-    dispatch_to_background_after(_meta->drop_delay + safety_backlash, [=] {
+    dispatch_to_background_after(_meta->drop_delay + safety_backlash, [=, this] {
         if( _meta->drop_time < nc::base::machtime() )
             StopFileWatch(_meta->path);
     });
@@ -87,8 +86,7 @@ bool TemporaryNativeFileChangesSentinel::StopFileWatch(const std::string &_path)
 {
     auto &dir_update = nc::utility::FSEventsDirUpdate::Instance();
     auto lock = std::lock_guard{m_WatchesLock};
-    auto it = find_if(
-        begin(m_Watches), end(m_Watches), [&](const auto &_i) { return _i->path == _path; });
+    auto it = find_if(begin(m_Watches), end(m_Watches), [&](const auto &_i) { return _i->path == _path; });
     if( it != end(m_Watches) ) {
         auto meta = *it;
         dir_update.RemoveWatchPathWithTicket(meta->fswatch_ticket);
@@ -107,7 +105,7 @@ void TemporaryNativeFileChangesSentinel::FSEventCallback(std::shared_ptr<Meta> _
 
     _meta->checking_now = true;
 
-    dispatch_to_background_after(_meta->check_delay, [=] { BackgroundItemCheck(_meta); });
+    dispatch_to_background_after(_meta->check_delay, [=, this] { BackgroundItemCheck(_meta); });
 }
 
 void TemporaryNativeFileChangesSentinel::BackgroundItemCheck(std::shared_ptr<Meta> _meta)

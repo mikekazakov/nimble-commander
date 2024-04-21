@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include "Aux.h"
 #include "FileUploadStream.h"
@@ -11,8 +11,7 @@ namespace nc::vfs::dropbox {
 
 using namespace std::literals;
 
-File::File(const char *_relative_path, const std::shared_ptr<class DropboxHost> &_host)
-    : VFSFile(_relative_path, _host)
+File::File(const char *_relative_path, const std::shared_ptr<class DropboxHost> &_host) : VFSFile(_relative_path, _host)
 {
 }
 
@@ -125,7 +124,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
 void File::WaitForDownloadResponse() const
 {
     std::unique_lock<std::mutex> lk(m_SignalLock);
-    m_Signal.wait(lk, [=] { return m_State != Initiated; });
+    m_Signal.wait(lk, [this] { return m_State != Initiated; });
 }
 
 void File::HandleDownloadResponseAsync(ssize_t _download_size)
@@ -161,9 +160,7 @@ void File::AppendDownloadedDataAsync(NSData *_data)
         return;
 
     std::lock_guard<std::mutex> lock{m_DataLock};
-    [_data enumerateByteRangesUsingBlock:[this](const void *bytes,
-                                                NSRange byteRange,
-                                                [[maybe_unused]] BOOL *stop) {
+    [_data enumerateByteRangesUsingBlock:[this](const void *bytes, NSRange byteRange, [[maybe_unused]] BOOL *stop) {
         m_Download->fifo.insert(end(m_Download->fifo),
                                 static_cast<const uint8_t *>(bytes),
                                 static_cast<const uint8_t *>(bytes) + byteRange.length);
@@ -201,8 +198,7 @@ ssize_t File::Read(void *_buf, size_t _size)
             if( !m_Download->fifo.empty() ) {
                 const ssize_t sz = std::min(_size, m_Download->fifo.size());
                 std::copy_n(std::begin(m_Download->fifo), sz, static_cast<uint8_t *>(_buf));
-                m_Download->fifo.erase(std::begin(m_Download->fifo),
-                                       std::begin(m_Download->fifo) + sz);
+                m_Download->fifo.erase(std::begin(m_Download->fifo), std::begin(m_Download->fifo) + sz);
                 m_Download->fifo_offset += sz;
                 m_FilePos += sz;
                 if( m_FilePos == m_FileSize )
@@ -219,8 +215,7 @@ ssize_t File::Read(void *_buf, size_t _size)
 
 bool File::IsOpened() const
 {
-    return m_State == Initiated || m_State == Downloading || m_State == Uploading ||
-           m_State == Completed;
+    return m_State == Initiated || m_State == Downloading || m_State == Uploading || m_State == Completed;
 }
 
 int File::PreferredIOSize() const
@@ -260,9 +255,7 @@ void File::StartSmallUpload()
 
     auto stream = [[NCVFSDropboxFileUploadStream alloc] init];
     stream.hasDataToFeed = [this]() -> bool { return HasDataToFeedUploadTaskAsync(); };
-    stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t {
-        return FeedUploadTaskAsync(_buffer, _sz);
-    };
+    stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t { return FeedUploadTaskAsync(_buffer, _sz); };
 
     auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error) {
@@ -293,8 +286,7 @@ void File::StartSmallUpload()
 
 NSURLRequest *File::BuildRequestForUploadSessionInit() const
 {
-    NSMutableURLRequest *request =
-        [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionStart];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionStart];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
@@ -314,9 +306,7 @@ void File::StartSession()
 
     auto stream = [[NCVFSDropboxFileUploadStream alloc] init];
     stream.hasDataToFeed = [this]() -> bool { return HasDataToFeedUploadTaskAsync(); };
-    stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t {
-        return FeedUploadTaskAsync(_buffer, _sz);
-    };
+    stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t { return FeedUploadTaskAsync(_buffer, _sz); };
 
     auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error) {
@@ -337,8 +327,8 @@ void File::StartSession()
     m_Upload->task = task;
     m_Upload->partitioned = true;
     m_Upload->part_no = 0;
-    m_Upload->parts_count = static_cast<int>(m_Upload->upload_size / m_ChunkSize) +
-                            (m_Upload->upload_size % m_ChunkSize ? 1 : 0);
+    m_Upload->parts_count =
+        static_cast<int>(m_Upload->upload_size / m_ChunkSize) + (m_Upload->upload_size % m_ChunkSize ? 1 : 0);
     SwitchToState(Uploading);
 
     [task resume];
@@ -346,15 +336,13 @@ void File::StartSession()
 
 NSURLRequest *File::BuildRequestForUploadSessionAppend() const
 {
-    NSMutableURLRequest *request =
-        [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionAppend];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionAppend];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
 
-    const std::string header = "{\"cursor\": {"s + "\"session_id\": \"" + m_Upload->session_id +
-                               "\", " + "\"offset\": " + std::to_string(m_FilePos) + "}}";
-    [request setValue:[NSString stringWithUTF8String:header.c_str()]
-        forHTTPHeaderField:@"Dropbox-API-Arg"];
+    const std::string header = "{\"cursor\": {"s + "\"session_id\": \"" + m_Upload->session_id + "\", " +
+                               "\"offset\": " + std::to_string(m_FilePos) + "}}";
+    [request setValue:[NSString stringWithUTF8String:header.c_str()] forHTTPHeaderField:@"Dropbox-API-Arg"];
 
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
     [request setValue:[NSString stringWithUTF8String:std::to_string(m_ChunkSize).c_str()]
@@ -378,9 +366,7 @@ void File::StartSessionAppend()
 
     auto stream = [[NCVFSDropboxFileUploadStream alloc] init];
     stream.hasDataToFeed = [this]() -> bool { return HasDataToFeedUploadTaskAsync(); };
-    stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t {
-        return FeedUploadTaskAsync(_buffer, _sz);
-    };
+    stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t { return FeedUploadTaskAsync(_buffer, _sz); };
 
     auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error) {
@@ -406,17 +392,15 @@ void File::StartSessionAppend()
 
 NSURLRequest *File::BuildRequestForUploadSessionFinish() const
 {
-    NSMutableURLRequest *request =
-        [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionFinish];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionFinish];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
 
-    const std::string header = "{\"cursor\": {"s + "\"session_id\": \"" + m_Upload->session_id +
-                               "\", " + "\"offset\": " + std::to_string(m_FilePos) + "}, " +
+    const std::string header = "{\"cursor\": {"s + "\"session_id\": \"" + m_Upload->session_id + "\", " +
+                               "\"offset\": " + std::to_string(m_FilePos) + "}, " +
                                "\"commit\": " + BuildUploadPathspec() + " }";
 
-    [request setValue:[NSString stringWithUTF8String:header.c_str()]
-        forHTTPHeaderField:@"Dropbox-API-Arg"];
+    [request setValue:[NSString stringWithUTF8String:header.c_str()] forHTTPHeaderField:@"Dropbox-API-Arg"];
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
     const long content_length = m_Upload->upload_size - m_FilePos;
     [request setValue:[NSString stringWithUTF8String:std::to_string(content_length).c_str()]
@@ -440,9 +424,7 @@ void File::StartSessionFinish()
 
     auto stream = [[NCVFSDropboxFileUploadStream alloc] init];
     stream.hasDataToFeed = [this]() -> bool { return HasDataToFeedUploadTaskAsync(); };
-    stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t {
-        return FeedUploadTaskAsync(_buffer, _sz);
-    };
+    stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t { return FeedUploadTaskAsync(_buffer, _sz); };
 
     auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error) {
@@ -503,9 +485,8 @@ ssize_t File::WaitForUploadBufferConsumption() const
 void File::PushUploadDataIntoFIFOAndNotifyStream(const void *_buf, size_t _size)
 {
     std::lock_guard<std::mutex> lock{m_DataLock};
-    m_Upload->fifo.insert(std::end(m_Upload->fifo),
-                          static_cast<const uint8_t *>(_buf),
-                          static_cast<const uint8_t *>(_buf) + _size);
+    m_Upload->fifo.insert(
+        std::end(m_Upload->fifo), static_cast<const uint8_t *>(_buf), static_cast<const uint8_t *>(_buf) + _size);
     [m_Upload->stream notifyAboutNewData];
 }
 
@@ -680,4 +661,4 @@ const DropboxHost &File::DropboxHost() const
     return *static_cast<class DropboxHost *>(Host().get());
 }
 
-}
+} // namespace nc::vfs::dropbox

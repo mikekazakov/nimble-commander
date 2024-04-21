@@ -340,12 +340,13 @@ std::vector<PSHost::ProcInfo> PSHost::GetProcs()
 void PSHost::UpdateCycle()
 {
     auto weak_this = std::weak_ptr<PSHost>(SharedPtr());
-    m_UpdateQ.Run([=] {
-        if( m_UpdateQ.IsStopped() )
+    m_UpdateQ.Run(
+        [=, this] {
+          if (m_UpdateQ.IsStopped())
             return;
 
-        auto procs = GetProcs();
-        if( !m_UpdateQ.IsStopped() ) {
+          auto procs = GetProcs();
+          if (!m_UpdateQ.IsStopped()) {
             auto me = weak_this;
             dispatch_to_main_queue([=, procs = std::move(procs)] {
                 if( !me.expired() )
@@ -356,8 +357,8 @@ void PSHost::UpdateCycle()
                 if( !me.expired() )
                     me.lock()->UpdateCycle();
             });
-        }
-    });
+          }
+        });
 }
 
 void PSHost::EnsureUpdateRunning()

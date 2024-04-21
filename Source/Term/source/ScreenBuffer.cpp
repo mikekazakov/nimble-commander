@@ -317,7 +317,7 @@ void ScreenBuffer::ResizeScreen(unsigned _new_sx, unsigned _new_sy, bool _merge_
         throw std::out_of_range("TermScreenBuffer::ResizeScreen - screen sizes can't be zero");
 
     using ConstIt = std::vector<std::tuple<std::vector<Space>, bool>>::const_iterator;
-    auto fill_scr_from_declines = [=](ConstIt _i, ConstIt _e, size_t _l = 0) {
+    auto fill_scr_from_declines = [this](ConstIt _i, ConstIt _e, size_t _l = 0) {
         for( ; _i != _e; ++_i, ++_l ) {
             std::copy(std::begin(std::get<0>(*_i)),
                       std::end(std::get<0>(*_i)),
@@ -325,7 +325,7 @@ void ScreenBuffer::ResizeScreen(unsigned _new_sx, unsigned _new_sy, bool _merge_
             m_OnScreenLines[_l].is_wrapped = std::get<1>(*_i);
         }
     };
-    auto fill_bkscr_from_declines = [=](ConstIt _i, ConstIt _e) {
+    auto fill_bkscr_from_declines = [this](ConstIt _i, ConstIt _e) {
         for( ; _i != _e; ++_i ) {
             LineMeta lm;
             lm.start_index = static_cast<int>(m_BackScreenSpaces.size());

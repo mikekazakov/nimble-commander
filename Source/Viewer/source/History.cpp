@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "History.h"
 #include <Config/RapidJSON.h>
 #include <Utility/Encodings.h>
@@ -21,28 +21,18 @@ static nc::config::Value EntryToJSONObject(const History::Entry &_entry)
     o.AddMember("position", Value(_entry.position), g_CrtAllocator);
     o.AddMember("wrapping", Value(_entry.wrapping), g_CrtAllocator);
     o.AddMember("mode", Value(static_cast<int>(_entry.view_mode)), g_CrtAllocator);
-    o.AddMember("encoding",
-                MakeStandaloneString(encodings::NameFromEncoding(_entry.encoding)),
-                g_CrtAllocator);
-    o.AddMember(
-        "selection_loc", Value(static_cast<int64_t>(_entry.selection.location)), g_CrtAllocator);
-    o.AddMember(
-        "selection_len", Value(static_cast<int64_t>(_entry.selection.length)), g_CrtAllocator);
+    o.AddMember("encoding", MakeStandaloneString(encodings::NameFromEncoding(_entry.encoding)), g_CrtAllocator);
+    o.AddMember("selection_loc", Value(static_cast<int64_t>(_entry.selection.location)), g_CrtAllocator);
+    o.AddMember("selection_len", Value(static_cast<int64_t>(_entry.selection.length)), g_CrtAllocator);
     return o;
 }
 
 static std::optional<History::Entry> JSONObjectToEntry(const nc::config::Value &_object)
 {
     using namespace rapidjson;
-    auto has_string = [&](const char *_key) {
-        return _object.HasMember(_key) && _object[_key].IsString();
-    };
-    auto has_number = [&](const char *_key) {
-        return _object.HasMember(_key) && _object[_key].IsNumber();
-    };
-    auto has_bool = [&](const char *_key) {
-        return _object.HasMember(_key) && _object[_key].IsBool();
-    };
+    auto has_string = [&](const char *_key) { return _object.HasMember(_key) && _object[_key].IsString(); };
+    auto has_number = [&](const char *_key) { return _object.HasMember(_key) && _object[_key].IsNumber(); };
+    auto has_bool = [&](const char *_key) { return _object.HasMember(_key) && _object[_key].IsBool(); };
 
     History::Entry e;
 
@@ -74,9 +64,7 @@ static std::optional<History::Entry> JSONObjectToEntry(const nc::config::Value &
     return e;
 }
 
-History::History(nc::config::Config &_global_config,
-                 nc::config::Config &_state_config,
-                 const char *_config_path)
+History::History(nc::config::Config &_global_config, nc::config::Config &_state_config, const char *_config_path)
     : m_GlobalConfig(_global_config), m_StateConfig(_state_config), m_StateConfigPath(_config_path)
 {
     m_Limit = std::clamp(m_GlobalConfig.GetInt(g_ConfigMaximumHistoryEntries), 0, 4096);
@@ -84,7 +72,7 @@ History::History(nc::config::Config &_global_config,
     LoadSaveOptions();
     m_GlobalConfig.ObserveMany(
         m_ConfigObservations,
-        [=] { LoadSaveOptions(); },
+        [this] { LoadSaveOptions(); },
         std::initializer_list<const char *>{g_ConfigSaveFileEnconding,
                                             g_ConfigSaveFileMode,
                                             g_ConfigSaveFilePosition,
@@ -96,8 +84,7 @@ History::History(nc::config::Config &_global_config,
 void History::AddEntry(Entry _entry)
 {
     auto lock = std::lock_guard{m_HistoryLock};
-    auto it =
-        find_if(begin(m_History), end(m_History), [&](auto &_i) { return _i.path == _entry.path; });
+    auto it = find_if(begin(m_History), end(m_History), [&](auto &_i) { return _i.path == _entry.path; });
     if( it != end(m_History) )
         m_History.erase(it);
     m_History.push_front(std::move(_entry));
@@ -132,8 +119,7 @@ History::SaveOptions History::Options() const
 bool History::Enabled() const
 {
     auto options = Options();
-    return options.encoding || options.mode || options.position || options.wrapping ||
-           options.selection;
+    return options.encoding || options.mode || options.position || options.wrapping || options.selection;
 }
 
 void History::SaveToStateConfig() const

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Operation.h"
 #include "Job.h"
 #include "AsyncDialogResponse.h"
@@ -159,8 +159,7 @@ void Operation::OnJobResumed()
 {
 }
 
-Operation::ObservationTicket Operation::Observe(uint64_t _notification_mask,
-                                                std::function<void()> _callback)
+Operation::ObservationTicket Operation::Observe(uint64_t _notification_mask, std::function<void()> _callback)
 {
     return AddTicketedObserver(std::move(_callback), _notification_mask);
 }
@@ -170,8 +169,7 @@ void Operation::ObserveUnticketed(uint64_t _notification_mask, std::function<voi
     return AddUnticketedObserver(std::move(_callback), _notification_mask);
 }
 
-void Operation::SetDialogCallback(
-    std::function<bool(NSWindow *, std::function<void(NSModalResponse)>)> _callback)
+void Operation::SetDialogCallback(std::function<bool(NSWindow *, std::function<void(NSModalResponse)>)> _callback)
 {
     const auto guard = std::lock_guard{m_DialogCallbackLock};
     m_DialogCallback = std::move(_callback);
@@ -197,7 +195,7 @@ void Operation::Show(NSWindow *_dialog, std::shared_ptr<AsyncDialogResponse> _re
                 _response->Commit(_dialog_response);
                 dispatch_to_main_queue([controller] {
                     (void)controller;
-                /* solely to extend the lifetime */
+                    /* solely to extend the lifetime */
                 });
             };
             const auto shown = m_DialogCallback(_dialog, dialog_callback);
@@ -209,46 +207,31 @@ void Operation::Show(NSWindow *_dialog, std::shared_ptr<AsyncDialogResponse> _re
     _response->Abort();
 }
 
-void Operation::AddButtonsForGenericDialog(const GenericDialog _dialog_type,
-                                           NCOpsGenericErrorDialog *_dialog)
+void Operation::AddButtonsForGenericDialog(const GenericDialog _dialog_type, NCOpsGenericErrorDialog *_dialog)
 {
     if( _dialog_type == GenericDialog::AbortRetry ) {
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Abort", "")
-                       responseCode:NSModalResponseStop];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Retry", "")
-                       responseCode:NSModalResponseRetry];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
     }
     if( _dialog_type == GenericDialog::Continue ) {
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Continue", "")
-                       responseCode:NSModalResponseContinue];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Continue", "") responseCode:NSModalResponseContinue];
     }
     if( _dialog_type == GenericDialog::AbortSkipSkipAll ) {
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Abort", "")
-                       responseCode:NSModalResponseStop];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip", "")
-                       responseCode:NSModalResponseSkip];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip All", "")
-                       responseCode:NSModalResponseSkipAll];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
     }
     if( _dialog_type == GenericDialog::AbortSkipSkipAllRetry ) {
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Abort", "")
-                       responseCode:NSModalResponseStop];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip", "")
-                       responseCode:NSModalResponseSkip];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip All", "")
-                       responseCode:NSModalResponseSkipAll];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Retry", "")
-                       responseCode:NSModalResponseRetry];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
     }
     if( _dialog_type == GenericDialog::AbortSkipSkipAllOverwrite ) {
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Abort", "")
-                       responseCode:NSModalResponseStop];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip", "")
-                       responseCode:NSModalResponseSkip];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip All", "")
-                       responseCode:NSModalResponseSkipAll];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Overwrite", "")
-                       responseCode:NSModalResponseOverwrite];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Overwrite", "") responseCode:NSModalResponseOverwrite];
     }
 }
 
@@ -259,8 +242,7 @@ void Operation::ShowGenericDialog(GenericDialog _dialog_type,
                                   std::shared_ptr<AsyncDialogResponse> _ctx)
 {
     if( !dispatch_is_main_queue() )
-        return dispatch_to_main_queue(
-            [=] { ShowGenericDialog(_dialog_type, _message, _err, _path, _ctx); });
+        return dispatch_to_main_queue([=, this] { ShowGenericDialog(_dialog_type, _message, _err, _path, _ctx); });
 
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
     sheet.style = GenericErrorDialogStyle::Caution;
@@ -315,7 +297,7 @@ void Operation::ReportHaltReason(NSString *_message,
     if( !IsInteractive() )
         return;
     const auto ctx = std::make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue([=] {
+    dispatch_to_main_queue([=, this] {
         const auto sheet = [[NCOpsHaltReasonDialog alloc] init];
         sheet.message = _message;
         sheet.path = [NSString stringWithUTF8String:_path.c_str()];
@@ -349,4 +331,4 @@ void Operation::SetItemStatusCallback(ItemStateReportCallback _callback)
     }
 }
 
-}
+} // namespace nc::ops

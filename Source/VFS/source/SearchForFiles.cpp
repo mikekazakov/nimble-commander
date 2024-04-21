@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SearchForFiles.h"
 #include <sys/stat.h>
 #include <VFS/FileWindow.h>
@@ -18,7 +18,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 
 SearchForFiles::SearchForFiles()
 {
-    m_Queue.SetOnDry([=] {
+    m_Queue.SetOnDry([this] {
         m_Callback = nullptr;
         m_LookingInCallback = nullptr;
         m_SpawnArchiveCallback = nullptr;
@@ -88,7 +88,7 @@ bool SearchForFiles::Go(const std::string &_from_path,
     m_SearchOptions = _options;
     m_DirsFIFO = {};
 
-    m_Queue.Run([=] { AsyncProc(_from_path.c_str(), *_in_host); });
+    m_Queue.Run([=, this] { AsyncProc(_from_path.c_str(), *_in_host); });
 
     return true;
 }
@@ -235,7 +235,7 @@ bool SearchForFiles::FilterByContent(const char *_full_path, VFSHost &_in_host, 
     }();
     sif.SetSearchOptions(search_options);
 
-    const auto result = sif.Search([=] { return m_Queue.IsStopped(); });
+    const auto result = sif.Search([this] { return m_Queue.IsStopped(); });
     if( result.response == SearchInFile::Response::Found ) {
         _r = CFRangeMake(result.location->offset, result.location->bytes_len);
         return m_FilterContent->not_containing == false;

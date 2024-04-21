@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConfigBackedNetworkConnectionsManager.h"
 #include <dirent.h>
 #include <NetFS/NetFS.h>
@@ -264,7 +264,7 @@ ConfigBackedNetworkConnectionsManager::ConfigBackedNetworkConnectionsManager(
     // Wire up on-the-fly loading of externally changed config
     m_Config.ObserveMany(
         m_ConfigObservations,
-        [=] {
+        [this] {
             if( !m_IsWritingConfig )
                 Load();
         },
@@ -285,7 +285,7 @@ void ConfigBackedNetworkConnectionsManager::InsertConnection(const NetworkConnec
         else
             m_Connections.emplace_back(_conn);
     }
-    dispatch_to_background([=] { Save(); });
+    dispatch_to_background([this] { Save(); });
 }
 
 void ConfigBackedNetworkConnectionsManager::RemoveConnection(const Connection &_connection)
@@ -301,7 +301,7 @@ void ConfigBackedNetworkConnectionsManager::RemoveConnection(const Connection &_
         if( i != end(m_MRU) )
             m_MRU.erase(i);
     }
-    dispatch_to_background([=] { Save(); });
+    dispatch_to_background([this] { Save(); });
 }
 
 std::optional<NetworkConnectionsManager::Connection>
@@ -368,7 +368,7 @@ void ConfigBackedNetworkConnectionsManager::ReportUsage(const Connection &_conne
         else
             m_MRU.insert(begin(m_MRU), _connection.Uuid());
     }
-    dispatch_to_background([=] { Save(); });
+    dispatch_to_background([this] { Save(); });
 }
 
 std::vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::FTPConnectionsByMRU() const

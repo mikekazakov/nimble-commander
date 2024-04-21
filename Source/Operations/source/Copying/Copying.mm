@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Copying.h"
 #include "CopyingJob.h"
 #include "../AsyncDialogResponse.h"
@@ -115,7 +115,7 @@ Copying::OnCopyDestExists(const struct stat &_src, const struct stat &_dst, cons
         return CB::CopyDestExistsResolution::Stop;
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue([=] { OnCopyDestExistsUI(_src, _dst, _path, ctx); });
+    dispatch_to_main_queue([=, this] { OnCopyDestExistsUI(_src, _dst, _path, ctx); });
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip ) {
@@ -186,7 +186,7 @@ Copying::OnRenameDestExists(const struct stat &_src, const struct stat &_dst, co
         return CB::RenameDestExistsResolution::Stop;
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue([=] { OnRenameDestExistsUI(_src, _dst, _path, ctx); });
+    dispatch_to_main_queue([=, this] { OnRenameDestExistsUI(_src, _dst, _path, ctx); });
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip ) {
@@ -551,7 +551,8 @@ Copying::OnLockedItemIssue(int _err, const std::string &_path, VFSHost &_vfs, Lo
         return CB::LockedItemResolution::Stop;
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue([=, vfs = _vfs.shared_from_this()] { OnLockedItemIssueUI(_err, _path, vfs, _cause, ctx); });
+    dispatch_to_main_queue(
+        [=, this, vfs = _vfs.shared_from_this()] { OnLockedItemIssueUI(_err, _path, vfs, _cause, ctx); });
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip ) {
@@ -655,4 +656,4 @@ void Copying::SetCallbackHooks(const CopyingJobCallbacks *_callbacks)
     m_CallbackHooks = _callbacks;
 }
 
-}
+} // namespace nc::ops

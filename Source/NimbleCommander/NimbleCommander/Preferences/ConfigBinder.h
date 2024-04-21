@@ -13,7 +13,8 @@ class ConfigBinder
 public:
     ConfigBinder(nc::config::Config &_config, const char *_config_path, id _object, NSString *_object_key)
         : m_Config(_config), m_ConfigPath(_config_path),
-          m_Token(_config.Observe(_config_path, [=] { ConfigChanged(); })), m_Object(_object), m_ObjectKey(_object_key)
+          m_Token(_config.Observe(_config_path, [this] { ConfigChanged(); })), m_Object(_object),
+          m_ObjectKey(_object_key)
     {
         ConfigChanged();
     }

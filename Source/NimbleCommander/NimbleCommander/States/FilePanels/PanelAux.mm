@@ -137,7 +137,7 @@ void FileOpener::Open(std::string _filename,
         return;
     }
 
-    dispatch_to_default([=] {
+    dispatch_to_default([=, this] {
         auto activity_ticket = [_panel registerExtActivity];
         if( _host->IsDirectory(_filename.c_str(), 0, 0) ) {
             NSBeep();
@@ -198,7 +198,7 @@ void FileOpener::Open(std::vector<std::string> _filenames,
         return;
     }
 
-    dispatch_to_default([=] {
+    dispatch_to_default([=, this] {
         auto activity_ticket = [_panel registerExtActivity];
         NSMutableArray *arr = [NSMutableArray arrayWithCapacity:_filenames.size()];
         for( auto &i : _filenames ) {
@@ -243,7 +243,8 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
                                               fileTitle:_file_title];
     }
     else
-        dispatch_to_default([=] { // do downloading down in a background thread
+        dispatch_to_default([=,
+                             this] { // do downloading down in a background thread
             auto activity_ticket = [_panel registerExtActivity];
 
             if( _host->IsDirectory(_filepath.c_str(), 0, 0) ) {
@@ -264,8 +265,9 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
 
             if( auto tmp_path = CopyFileToTempStorage(_filepath, *_host, m_TemporaryFileStorage) ) {
                 RegisterRemoteFileUploading(_filepath, _host, *tmp_path, _panel);
-                dispatch_to_main_queue([=] { // when we sucessfuly download a file - request
-                                             // terminal execution in main thread
+                dispatch_to_main_queue([=] { // when we sucessfuly download a file -
+                                             // request terminal execution in main
+                                             // thread
                     if( auto wnd = static_cast<NCMainWindowController *>(_panel.window.delegate) )
                         [wnd RequestExternalEditorTerminalExecution:_ext_ed->Path()
                                                              params:_ext_ed->SubstituteFileName(*tmp_path)
@@ -345,4 +347,4 @@ bool ShowQuickLookAsFloatingPanel() noexcept
     return value;
 }
 
-}
+} // namespace nc::panel

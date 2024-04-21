@@ -90,7 +90,7 @@ void TrailingTagsInplaceDisplay::Draw(const double _offset_x,
         [currentContext saveGraphicsState];
 
         NSAffineTransform *tr = [NSAffineTransform transform];
-        [tr translateXBy:_offset_x + i * spacing yBy:_view_height / 2.];
+        [tr translateXBy:_offset_x + static_cast<double>(i) * spacing yBy:_view_height / 2.];
         [tr concat];
 
         if( i < static_cast<ssize_t>(num_colors_to_draw) - 1 ) {

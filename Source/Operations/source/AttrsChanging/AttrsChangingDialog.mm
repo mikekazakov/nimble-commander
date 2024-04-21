@@ -275,7 +275,7 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
 
     if( !user_has_entered_date ) {
         if( _t )
-            _dp.dateValue = [NSDate dateWithTimeIntervalSince1970:*_t];
+            _dp.dateValue = [NSDate dateWithTimeIntervalSince1970:static_cast<double>(*_t)];
         else
             _dp.dateValue = [NSDate date];
     }

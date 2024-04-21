@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <IOKit/IOKitLib.h>
@@ -50,8 +50,7 @@ int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
         // Call sysctl with a NULL buffer.
 
         length = 0;
-        err = sysctl(
-            const_cast<int *>(name), (sizeof(name) / sizeof(*name)) - 1, NULL, &length, NULL, 0);
+        err = sysctl(const_cast<int *>(name), (sizeof(name) / sizeof(*name)) - 1, NULL, &length, NULL, 0);
         if( err == -1 ) {
             err = errno;
         }
@@ -70,12 +69,7 @@ int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
         // error, toss away our buffer and start again.
 
         if( err == 0 ) {
-            err = sysctl(const_cast<int *>(name),
-                         (sizeof(name) / sizeof(*name)) - 1,
-                         result,
-                         &length,
-                         NULL,
-                         0);
+            err = sysctl(const_cast<int *>(name), (sizeof(name) / sizeof(*name)) - 1, result, &length, NULL, 0);
             if( err == -1 ) {
                 err = errno;
             }
@@ -127,8 +121,7 @@ std::optional<MemoryInfo> GetMemoryInfo() noexcept
     // get general memory info
     mach_msg_type_number_t count = HOST_VM_INFO64_COUNT;
     vm_statistics64 vmstat;
-    if( host_statistics64(
-            mach_host_self(), HOST_VM_INFO64, reinterpret_cast<host_info_t>(&vmstat), &count) !=
+    if( host_statistics64(mach_host_self(), HOST_VM_INFO64, reinterpret_cast<host_info_t>(&vmstat), &count) !=
         KERN_SUCCESS )
         return {};
 
@@ -138,18 +131,15 @@ std::optional<MemoryInfo> GetMemoryInfo() noexcept
     const uint64_t free_memory = static_cast<uint64_t>(vmstat.free_count) * pagesize;
     const uint64_t file_cache_memory =
         static_cast<uint64_t>(vmstat.external_page_count + vmstat.purgeable_count) * pagesize;
-    const uint64_t app_memory =
-        static_cast<uint64_t>(vmstat.internal_page_count - vmstat.purgeable_count) * pagesize;
+    const uint64_t app_memory = static_cast<uint64_t>(vmstat.internal_page_count - vmstat.purgeable_count) * pagesize;
     const uint64_t compressed = static_cast<uint64_t>(vmstat.compressor_page_count) * pagesize;
     const uint64_t total_memory = wired_memory + active_memory + inactive_memory + free_memory;
     // Activity monitor shows higher values for "used memory", no idea how these numbers are
     // calculated
     const uint64_t used_memory =
         (static_cast<uint64_t>(vmstat.active_count) + static_cast<uint64_t>(vmstat.inactive_count) +
-         static_cast<uint64_t>(vmstat.speculative_count) +
-         static_cast<uint64_t>(vmstat.wire_count) +
-         static_cast<uint64_t>(vmstat.compressor_page_count) -
-         static_cast<uint64_t>(vmstat.purgeable_count) -
+         static_cast<uint64_t>(vmstat.speculative_count) + static_cast<uint64_t>(vmstat.wire_count) +
+         static_cast<uint64_t>(vmstat.compressor_page_count) - static_cast<uint64_t>(vmstat.purgeable_count) -
          static_cast<uint64_t>(vmstat.external_page_count)) *
         pagesize;
 
@@ -194,8 +184,7 @@ std::optional<CPULoad> GetCPULoad() noexcept
     double user = 0.;
     double idle = 0.;
 
-    static unsigned int *prior =
-        static_cast<unsigned int *>(calloc(CPU_STATE_MAX * numCPUs, sizeof(unsigned int)));
+    static unsigned int *prior = static_cast<unsigned int *>(calloc(CPU_STATE_MAX * numCPUs, sizeof(unsigned int)));
     static const unsigned int alloc_cpus = numCPUs;
     assert(alloc_cpus == numCPUs);
 
@@ -212,9 +201,7 @@ std::optional<CPULoad> GetCPULoad() noexcept
     }
 
     memcpy(prior, cpuInfo, sizeof(integer_t) * numCpuInfo);
-    vm_deallocate(mach_task_self(),
-                  reinterpret_cast<vm_address_t>(cpuInfo),
-                  sizeof(unsigned int) * numCpuInfo);
+    vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(cpuInfo), sizeof(unsigned int) * numCpuInfo);
 
     const double total = system + user + idle;
     system /= total;
@@ -239,11 +226,8 @@ std::optional<CPULoad> GetCPULoad() noexcept
     }();
     struct processor_set_load_info ps_load_info = {};
     mach_msg_type_number_t count = PROCESSOR_SET_LOAD_INFO_COUNT;
-    const kern_return_t ss_err =
-        processor_set_statistics(processors_set,
-                                 PROCESSOR_SET_LOAD_INFO,
-                                 reinterpret_cast<processor_set_info_t>(&ps_load_info),
-                                 &count);
+    const kern_return_t ss_err = processor_set_statistics(
+        processors_set, PROCESSOR_SET_LOAD_INFO, reinterpret_cast<processor_set_info_t>(&ps_load_info), &count);
     if( ss_err != KERN_SUCCESS )
         return {};
 
@@ -251,9 +235,9 @@ std::optional<CPULoad> GetCPULoad() noexcept
     load.system = system;
     load.user = user;
     load.idle = idle;
-    load.history[0] = static_cast<double>(history.ldavg[0]) / history.fscale;
-    load.history[1] = static_cast<double>(history.ldavg[1]) / history.fscale;
-    load.history[2] = static_cast<double>(history.ldavg[2]) / history.fscale;
+    load.history[0] = static_cast<double>(history.ldavg[0]) / static_cast<double>(history.fscale);
+    load.history[1] = static_cast<double>(history.ldavg[1]) / static_cast<double>(history.fscale);
+    load.history[2] = static_cast<double>(history.ldavg[2]) / static_cast<double>(history.fscale);
     load.processes = ps_load_info.task_count;
     load.threads = ps_load_info.thread_count;
 
@@ -287,7 +271,7 @@ static const OSXVersion g_Version = [] {
         switch( sys_ver.minorVersion ) {
             case 15:
                 return OSXVersion::OSX_15;
-            // MacOSX older that 10.15 are unsupported
+                // MacOSX older that 10.15 are unsupported
         }
     return OSXVersion::OSX_Unknown;
 }();
@@ -302,8 +286,7 @@ static std::string ExtractReadableModelNameFromFrameworks(std::string_view _code
     NSDictionary *dict;
 
     // 1st attempt: ServerInformation.framework
-    const auto server_information_framework =
-        @"/System/Library/PrivateFrameworks/ServerInformation.framework";
+    const auto server_information_framework = @"/System/Library/PrivateFrameworks/ServerInformation.framework";
     if( auto bundle = [NSBundle bundleWithPath:server_information_framework] )
         if( auto path = [bundle pathForResource:@"SIMachineAttributes" ofType:@"plist"] )
             dict = [NSDictionary dictionaryWithContentsOfFile:path];
@@ -348,9 +331,7 @@ static std::string ExtractReadableModelNameFromFrameworks(std::string_view _code
 static std::string ExtractReadableModelNameFromSystemProfiler()
 {
     const auto path = base::CommonPaths::Library() + "Preferences/com.apple.SystemProfiler.plist";
-    const auto url = [NSURL fileURLWithFileSystemRepresentation:path.c_str()
-                                                    isDirectory:false
-                                                  relativeToURL:nil];
+    const auto url = [NSURL fileURLWithFileSystemRepresentation:path.c_str() isDirectory:false relativeToURL:nil];
     if( url == nil )
         return {};
 
@@ -429,4 +410,4 @@ const std::string &GetBundleID() noexcept
     return bundle_id;
 }
 
-}
+} // namespace nc::utility

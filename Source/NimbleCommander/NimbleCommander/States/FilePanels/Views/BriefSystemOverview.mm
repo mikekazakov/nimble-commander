@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefSystemOverview.h"
 #include <Utility/SystemInformation.h>
 #include <Utility/NSTimer+Tolerance.h>
@@ -65,12 +65,10 @@ static NSTextField *CreateStockTF()
         m_BytesFormatter.numberStyle = NSNumberFormatterDecimalStyle;
 
         m_UptimeFormatter = [NSDateComponentsFormatter new];
-        m_UptimeFormatter.allowedUnits =
-            NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute;
+        m_UptimeFormatter.allowedUnits = NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute;
         m_UptimeFormatter.allowsFractionalUnits = false;
         m_UptimeFormatter.unitsStyle = NSDateComponentsFormatterUnitsStylePositional;
-        m_UptimeFormatter.zeroFormattingBehavior =
-            NSDateComponentsFormatterZeroFormattingBehaviorDropLeading;
+        m_UptimeFormatter.zeroFormattingBehavior = NSDateComponentsFormatterZeroFormattingBehaviorDropLeading;
 
         m_IsRight = true;
         memset(&m_MemoryInfo, 0, sizeof(m_MemoryInfo));
@@ -145,8 +143,7 @@ static NSTextField *CreateStockTF()
 
     ////////////////////////////////////////////////////////////////////////////////// Title
     NSTextField *title = CreateStockTF();
-    title.stringValue =
-        NSLocalizedString(@"Brief System Information", "Brief System Information overlay title");
+    title.stringValue = NSLocalizedString(@"Brief System Information", "Brief System Information overlay title");
     title.alignment = NSTextAlignmentCenter;
     title.font = [NSFont boldSystemFontOfSize:13];
     [self addSubview:title];
@@ -179,28 +176,23 @@ static NSTextField *CreateStockTF()
         [cpu_box addSubview:line6];
 
         auto cpu_sysload_title = tf_for_text();
-        cpu_sysload_title.stringValue =
-            NSLocalizedString(@"System:", "Brief System Information system label title");
+        cpu_sysload_title.stringValue = NSLocalizedString(@"System:", "Brief System Information system label title");
         [cpu_box addSubview:cpu_sysload_title];
 
         auto cpu_usrload_title = tf_for_text();
-        cpu_usrload_title.stringValue =
-            NSLocalizedString(@"User:", "Brief System Information user label title");
+        cpu_usrload_title.stringValue = NSLocalizedString(@"User:", "Brief System Information user label title");
         [cpu_box addSubview:cpu_usrload_title];
 
         auto cpu_idle_title = tf_for_text();
-        cpu_idle_title.stringValue =
-            NSLocalizedString(@"Idle:", "Brief System Information idle label title");
+        cpu_idle_title.stringValue = NSLocalizedString(@"Idle:", "Brief System Information idle label title");
         [cpu_box addSubview:cpu_idle_title];
 
         auto cpu_load_title = tf_for_text();
-        cpu_load_title.stringValue =
-            NSLocalizedString(@"Load:", "Brief System Information load label title");
+        cpu_load_title.stringValue = NSLocalizedString(@"Load:", "Brief System Information load label title");
         [cpu_box addSubview:cpu_load_title];
 
         auto cpu_threads_title = tf_for_text();
-        cpu_threads_title.stringValue =
-            NSLocalizedString(@"Threads:", "Brief System Information threads label title");
+        cpu_threads_title.stringValue = NSLocalizedString(@"Threads:", "Brief System Information threads label title");
         [cpu_box addSubview:cpu_threads_title];
 
         auto cpu_processes_title = tf_for_text();
@@ -209,8 +201,7 @@ static NSTextField *CreateStockTF()
         [cpu_box addSubview:cpu_processes_title];
 
         auto cpu_uptime_title = tf_for_text();
-        cpu_uptime_title.stringValue =
-            NSLocalizedString(@"Uptime:", "Brief System Information uptime label title");
+        cpu_uptime_title.stringValue = NSLocalizedString(@"Uptime:", "Brief System Information uptime label title");
         [cpu_box addSubview:cpu_uptime_title];
 
         m_TextCPULoadSystem = tf_right_aligned_for_digits();
@@ -321,28 +312,23 @@ static NSTextField *CreateStockTF()
         [ram_box addSubview:line6];
 
         auto ram_total_title = tf_for_text();
-        ram_total_title.stringValue =
-            NSLocalizedString(@"Total:", "Brief System Information total label title");
+        ram_total_title.stringValue = NSLocalizedString(@"Total:", "Brief System Information total label title");
         [ram_box addSubview:ram_total_title];
 
         auto ram_used_title = tf_for_text();
-        ram_used_title.stringValue =
-            NSLocalizedString(@"Used:", "Brief System Information used label title");
+        ram_used_title.stringValue = NSLocalizedString(@"Used:", "Brief System Information used label title");
         [ram_box addSubview:ram_used_title];
 
         auto ram_swap_title = tf_for_text();
-        ram_swap_title.stringValue =
-            NSLocalizedString(@"Swap:", "Brief System Information swap label title");
+        ram_swap_title.stringValue = NSLocalizedString(@"Swap:", "Brief System Information swap label title");
         [ram_box addSubview:ram_swap_title];
 
         auto ram_app_title = tf_for_text();
-        ram_app_title.stringValue =
-            NSLocalizedString(@"App:", "Brief System Information app label title");
+        ram_app_title.stringValue = NSLocalizedString(@"App:", "Brief System Information app label title");
         [ram_box addSubview:ram_app_title];
 
         auto ram_wired_title = tf_for_text();
-        ram_wired_title.stringValue =
-            NSLocalizedString(@"Wired:", "Brief System Information wired label title");
+        ram_wired_title.stringValue = NSLocalizedString(@"Wired:", "Brief System Information wired label title");
         [ram_box addSubview:ram_wired_title];
 
         auto ram_compressed_title = tf_for_text();
@@ -351,8 +337,7 @@ static NSTextField *CreateStockTF()
         [ram_box addSubview:ram_compressed_title];
 
         auto ram_cache_title = tf_for_text();
-        ram_cache_title.stringValue =
-            NSLocalizedString(@"Cache:", "Brief System Information cache label title");
+        ram_cache_title.stringValue = NSLocalizedString(@"Cache:", "Brief System Information cache label title");
         [ram_box addSubview:ram_cache_title];
 
         m_TextMemTotal = tf_right_aligned_for_digits();
@@ -439,8 +424,7 @@ static NSTextField *CreateStockTF()
         system_box.translatesAutoresizingMaskIntoConstraints = NO;
         system_box.titlePosition = NSAtTop;
         system_box.contentViewMargins = {2, 2};
-        system_box.title =
-            NSLocalizedString(@"General", "Brief System Information general box title");
+        system_box.title = NSLocalizedString(@"General", "Brief System Information general box title");
         [self addSubview:system_box];
 
         NSBox *line1 = line_separator();
@@ -450,20 +434,18 @@ static NSTextField *CreateStockTF()
         [system_box addSubview:line2];
 
         auto model_title = CreateStockTF();
-        model_title.stringValue =
-            NSLocalizedString(@"Mac Model:", "Brief System Information mac model label title");
+        model_title.stringValue = NSLocalizedString(@"Mac Model:", "Brief System Information mac model label title");
         model_title.font = text_font;
         [system_box addSubview:model_title];
 
         auto computer_title = CreateStockTF();
-        computer_title.stringValue = NSLocalizedString(
-            @"Computer Name:", "Brief System Information computer name label title");
+        computer_title.stringValue =
+            NSLocalizedString(@"Computer Name:", "Brief System Information computer name label title");
         computer_title.font = text_font;
         [system_box addSubview:computer_title];
 
         auto user_title = CreateStockTF();
-        user_title.stringValue =
-            NSLocalizedString(@"User Name:", "Brief System Information user name label title");
+        user_title.stringValue = NSLocalizedString(@"User Name:", "Brief System Information user name label title");
         user_title.font = text_font;
         [system_box addSubview:user_title];
 
@@ -515,8 +497,7 @@ static NSTextField *CreateStockTF()
         storage_box.translatesAutoresizingMaskIntoConstraints = NO;
         storage_box.titlePosition = NSAtTop;
         storage_box.contentViewMargins = {2, 2};
-        storage_box.title =
-            NSLocalizedString(@"Storage", "Brief System Information storage box title");
+        storage_box.title = NSLocalizedString(@"Storage", "Brief System Information storage box title");
         [self addSubview:storage_box];
 
         NSBox *line1 = line_separator();
@@ -526,8 +507,7 @@ static NSTextField *CreateStockTF()
         [storage_box addSubview:line2];
 
         auto vol_title = CreateStockTF();
-        vol_title.stringValue =
-            NSLocalizedString(@"Volume Name:", "Brief System Information volume name label title");
+        vol_title.stringValue = NSLocalizedString(@"Volume Name:", "Brief System Information volume name label title");
         vol_title.font = text_font;
         [storage_box addSubview:vol_title];
 
@@ -538,8 +518,7 @@ static NSTextField *CreateStockTF()
         [storage_box addSubview:bytes_title];
 
         auto free_title = CreateStockTF();
-        free_title.stringValue =
-            NSLocalizedString(@"Free Bytes:", "Brief System Information free bytes label title");
+        free_title.stringValue = NSLocalizedString(@"Free Bytes:", "Brief System Information free bytes label title");
         free_title.font = text_font;
         [storage_box addSubview:free_title];
 
@@ -586,19 +565,16 @@ static NSTextField *CreateStockTF()
         vis_fmt(@"V:[line2]-(==5)-[m_TextVolumeAvailBytes]");
     }
 
-    NSDictionary *views =
-        NSDictionaryOfVariableBindings(title, system_box, cpu_box, ram_box, storage_box);
-    [self addConstraints:[NSLayoutConstraint
-                             constraintsWithVisualFormat:@"V:|-(==8)-[title]-[system_box(==94)]-["
-                                                         @"cpu_box(==188)]-[storage_box(==94)]"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:views]];
-    [self addConstraints:[NSLayoutConstraint
-                             constraintsWithVisualFormat:@"V:[system_box]-[ram_box(==188)]"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:views]];
+    NSDictionary *views = NSDictionaryOfVariableBindings(title, system_box, cpu_box, ram_box, storage_box);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==8)-[title]-[system_box(==94)]-["
+                                                                         @"cpu_box(==188)]-[storage_box(==94)]"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[system_box]-[ram_box(==188)]"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:system_box
                                                      attribute:NSLayoutAttributeLeading
                                                      relatedBy:NSLayoutRelationEqual
@@ -647,11 +623,10 @@ static NSTextField *CreateStockTF()
                                                                  options:0
                                                                  metrics:nil
                                                                    views:views]];
-    [self addConstraints:[NSLayoutConstraint
-                             constraintsWithVisualFormat:@"[cpu_box(>=128)]-(==16)-[ram_box(>=128)]"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[cpu_box(>=128)]-(==16)-[ram_box(>=128)]"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
     [self centerViewHorizontally:title];
     [self centerViewHorizontally:system_box];
     [self centerViewHorizontally:storage_box];
@@ -690,28 +665,22 @@ static NSTextField *CreateStockTF()
 
 - (void)updateControls
 {
-    m_TextCPULoadSystem.stringValue =
-        [NSString stringWithFormat:@"%.2f %%", m_CPULoad.system * 100.];
+    m_TextCPULoadSystem.stringValue = [NSString stringWithFormat:@"%.2f %%", m_CPULoad.system * 100.];
     m_TextCPULoadUser.stringValue = [NSString stringWithFormat:@"%.2f %%", m_CPULoad.user * 100.];
     m_TextCPULoadIdle.stringValue = [NSString stringWithFormat:@"%.2f %%", m_CPULoad.idle * 100.];
-    m_TextCPULoadHistory.stringValue = [NSString stringWithFormat:@"%.2f %.2f %.2f",
-                                                                  m_CPULoad.history[0],
-                                                                  m_CPULoad.history[1],
-                                                                  m_CPULoad.history[2]];
+    m_TextCPULoadHistory.stringValue =
+        [NSString stringWithFormat:@"%.2f %.2f %.2f", m_CPULoad.history[0], m_CPULoad.history[1], m_CPULoad.history[2]];
     m_TextCPUThreads.stringValue = [NSString stringWithFormat:@"%d", m_CPULoad.threads];
     m_TextCPUProcesses.stringValue = [NSString stringWithFormat:@"%d", m_CPULoad.processes];
-    m_TextCPUUptime.stringValue = [m_UptimeFormatter stringFromTimeInterval:m_Uptime.count()];
+    m_TextCPUUptime.stringValue = [m_UptimeFormatter stringFromTimeInterval:static_cast<double>(m_Uptime.count())];
 
     auto &f = ByteCountFormatter::Instance();
     m_TextMemTotal.stringValue = f.ToNSString(m_MemoryInfo.total_hw, ByteCountFormatter::Adaptive8);
     m_TextMemUsed.stringValue = f.ToNSString(m_MemoryInfo.used, ByteCountFormatter::Adaptive8);
-    m_TextMemApp.stringValue =
-        f.ToNSString(m_MemoryInfo.applications, ByteCountFormatter::Adaptive8);
+    m_TextMemApp.stringValue = f.ToNSString(m_MemoryInfo.applications, ByteCountFormatter::Adaptive8);
     m_TextMemWired.stringValue = f.ToNSString(m_MemoryInfo.wired, ByteCountFormatter::Adaptive8);
-    m_TextMemCompressed.stringValue =
-        f.ToNSString(m_MemoryInfo.compressed, ByteCountFormatter::Adaptive8);
-    m_TextMemCache.stringValue =
-        f.ToNSString(m_MemoryInfo.file_cache, ByteCountFormatter::Adaptive8);
+    m_TextMemCompressed.stringValue = f.ToNSString(m_MemoryInfo.compressed, ByteCountFormatter::Adaptive8);
+    m_TextMemCache.stringValue = f.ToNSString(m_MemoryInfo.file_cache, ByteCountFormatter::Adaptive8);
     m_TextMemSwap.stringValue = f.ToNSString(m_MemoryInfo.swap, ByteCountFormatter::Adaptive8);
 
     m_TextMachineModel.stringValue = [NSString stringWithUTF8StdString:m_Overview.human_model];

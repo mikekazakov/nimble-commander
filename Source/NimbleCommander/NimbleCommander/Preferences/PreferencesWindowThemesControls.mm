@@ -272,7 +272,7 @@ using nc::ThemeAppearance;
 - (void)standardFontClicked:(id)sender
 {
     if( auto i = nc::objc_cast<NSMenuItem>(sender) ) {
-        const auto new_font = [NSFont systemFontOfSize:i.tag];
+        const auto new_font = [NSFont systemFontOfSize:static_cast<double>(i.tag)];
         if( new_font != m_Font ) {
             m_Font = new_font;
             m_Description.stringValue = [m_Font toStringDescription];

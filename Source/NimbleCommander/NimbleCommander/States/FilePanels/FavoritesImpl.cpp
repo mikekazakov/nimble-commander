@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FavoritesImpl.h"
 #include <CoreServices/CoreServices.h>
 #include <VFS/VFS.h>
@@ -15,8 +15,8 @@ namespace nc::panel {
 
 static const auto g_MaxTimeRange = 60 * 60 * 24 * 14; // 14 days range for bothering with visits
 
-static std::shared_ptr<const FavoriteLocationsStorage::Location>
-Encode(const VFSHost &_host, const std::string &_directory)
+static std::shared_ptr<const FavoriteLocationsStorage::Location> Encode(const VFSHost &_host,
+                                                                        const std::string &_directory)
 {
     auto location = PanelDataPersisency::EncodeLocation(_host, _directory);
     if( !location )
@@ -29,8 +29,7 @@ Encode(const VFSHost &_host, const std::string &_directory)
     return v;
 }
 
-FavoriteLocationsStorageImpl::FavoriteLocationsStorageImpl(config::Config &_config,
-                                                           const char *_path)
+FavoriteLocationsStorageImpl::FavoriteLocationsStorageImpl(config::Config &_config, const char *_path)
 {
     LoadData(_config, _path);
 
@@ -44,9 +43,7 @@ FavoriteLocationsStorageImpl::FavoriteLocationsStorageImpl(config::Config &_conf
 }
 
 std::shared_ptr<const FavoriteLocationsStorage::Location>
-FavoriteLocationsStorageImpl::FindInVisitsOrEncode(size_t _footprint,
-                                                   VFSHost &_host,
-                                                   const std::string &_directory)
+FavoriteLocationsStorageImpl::FindInVisitsOrEncode(size_t _footprint, VFSHost &_host, const std::string &_directory)
 {
     const auto visit = m_Visits.find(_footprint);
     if( visit != end(m_Visits) )
@@ -60,12 +57,10 @@ void FavoriteLocationsStorageImpl::AddFavoriteLocation(Favorite _favorite)
     dispatch_assert_main_queue();
 
     // refresh hash regardless to enforce consistency
-    _favorite.footprint =
-        PanelDataPersisency::MakeFootprintStringHash(_favorite.location->hosts_stack);
+    _favorite.footprint = PanelDataPersisency::MakeFootprintStringHash(_favorite.location->hosts_stack);
 
-    const auto has_already = any_of(begin(m_Favorites), end(m_Favorites), [&](auto &i) {
-        return i.footprint == _favorite.footprint;
-    });
+    const auto has_already =
+        any_of(begin(m_Favorites), end(m_Favorites), [&](auto &i) { return i.footprint == _favorite.footprint; });
     if( has_already )
         return;
 
@@ -94,8 +89,7 @@ FavoriteLocationsStorageImpl::ComposeFavoriteLocation(VFSHost &_host,
     return std::move(f);
 }
 
-void FavoriteLocationsStorageImpl::ReportLocationVisit(VFSHost &_host,
-                                                       const std::string &_directory)
+void FavoriteLocationsStorageImpl::ReportLocationVisit(VFSHost &_host, const std::string &_directory)
 {
     dispatch_assert_main_queue();
     const auto timestamp = time(nullptr);
@@ -150,7 +144,7 @@ FavoriteLocationsStorageImpl::FrecentlyUsed(int _amount) const
 
     for( auto &v : recent_visits ) {
         // this is actually not a real frequency, but a normalized value of a visits count.
-        const auto frequency = std::get<1>(v) / max_visits;                            // [0..1]
+        const auto frequency = static_cast<float>(std::get<1>(v)) / max_visits;        // [0..1]
         const auto recency = 1. - float(now - std::get<2>(v)) / float(g_MaxTimeRange); // [0..1]
         const auto score = frequency + recency;                                        // [0..2]
         std::get<3>(v) = static_cast<float>(score);
@@ -167,8 +161,7 @@ FavoriteLocationsStorageImpl::FrecentlyUsed(int _amount) const
     return result;
 }
 
-std::vector<FavoriteLocationsStorage::Favorite>
-    FavoriteLocationsStorageImpl::Favorites(/*limit output later*/) const
+std::vector<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::Favorites(/*limit output later*/) const
 {
     dispatch_assert_main_queue();
     return m_Favorites;
@@ -181,24 +174,19 @@ config::Value FavoriteLocationsStorageImpl::VisitToJSON(const Visit &_visit)
 
     Value json(kObjectType);
 
-    if( auto l = PanelDataPersisency::LocationToJSON(_visit.location->hosts_stack);
-        l.GetType() != kNullType )
+    if( auto l = PanelDataPersisency::LocationToJSON(_visit.location->hosts_stack); l.GetType() != kNullType )
         json.AddMember(MakeStandaloneString("location"), std::move(l), g_CrtAllocator);
     else
         return Value{kNullType};
 
-    json.AddMember(
-        MakeStandaloneString("visits_count"), Value{_visit.visits_count}, g_CrtAllocator);
+    json.AddMember(MakeStandaloneString("visits_count"), Value{_visit.visits_count}, g_CrtAllocator);
 
-    json.AddMember(MakeStandaloneString("last_visit"),
-                   Value{static_cast<int64_t>(_visit.last_visit)},
-                   g_CrtAllocator);
+    json.AddMember(MakeStandaloneString("last_visit"), Value{static_cast<int64_t>(_visit.last_visit)}, g_CrtAllocator);
 
     return json;
 }
 
-std::optional<FavoriteLocationsStorageImpl::Visit>
-FavoriteLocationsStorageImpl::JSONToVisit(const config::Value &_json)
+std::optional<FavoriteLocationsStorageImpl::Visit> FavoriteLocationsStorageImpl::JSONToVisit(const config::Value &_json)
 {
     if( !_json.IsObject() )
         return std::nullopt;
@@ -233,15 +221,13 @@ config::Value FavoriteLocationsStorageImpl::FavoriteToJSON(const Favorite &_favo
     using namespace nc::config;
     Value json(kObjectType);
 
-    if( auto l = PanelDataPersisency::LocationToJSON(_favorite.location->hosts_stack);
-        l.GetType() != kNullType )
+    if( auto l = PanelDataPersisency::LocationToJSON(_favorite.location->hosts_stack); l.GetType() != kNullType )
         json.AddMember(MakeStandaloneString("location"), std::move(l), g_CrtAllocator);
     else
         return Value{kNullType};
 
     if( !_favorite.title.empty() )
-        json.AddMember(
-            MakeStandaloneString("title"), MakeStandaloneString(_favorite.title), g_CrtAllocator);
+        json.AddMember(MakeStandaloneString("title"), MakeStandaloneString(_favorite.title), g_CrtAllocator);
 
     return json;
 }
@@ -337,8 +323,7 @@ void FavoriteLocationsStorageImpl::SetFavorites(const std::vector<Favorite> &_ne
             continue;
 
         Favorite new_favorite = f;
-        new_favorite.footprint =
-            PanelDataPersisency::MakeFootprintStringHash(new_favorite.location->hosts_stack);
+        new_favorite.footprint = PanelDataPersisency::MakeFootprintStringHash(new_favorite.location->hosts_stack);
         m_Favorites.emplace_back(std::move(new_favorite));
     }
 

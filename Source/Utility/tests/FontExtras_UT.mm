@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UnitTests_main.h"
 #include "FontExtras.h"
 #include <vector>
@@ -28,7 +28,7 @@ TEST_CASE(PREFIX "CalculateStringsWidths works for all sizes of input")
         }
     }
 
-    for( size_t n = 0; n <= sz; n = n <= 16 ? n + 1 : size_t(3.1415 * n) ) {
+    for( size_t n = 0; n <= sz; n = n <= 16 ? n + 1 : size_t(3.1415 * static_cast<double>(n)) ) {
         auto widths = FontGeometryInfo::CalculateStringsWidths({vec.data(), n}, font);
         CHECK(widths.size() == n);
         CHECK(std::equal(widths.begin(), widths.end(), exp.begin()));

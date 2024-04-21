@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextModeFrame.h"
 #include <Base/algo.h>
 #include <Base/dispatch_cpp.h>
@@ -11,8 +11,7 @@ static void CalculateLinesWidths(const TextModeIndexedTextLine *_lines_begin,
                                  float *_widths);
 
 TextModeFrame::TextModeFrame(const Source &_source)
-    : m_WorkingSet{_source.working_set}, m_FontInfo{_source.font_info}, m_WrappingWidth{
-                                                                            _source.wrapping_width}
+    : m_WorkingSet{_source.working_set}, m_FontInfo{_source.font_info}, m_WrappingWidth{_source.wrapping_width}
 {
     assert(m_WorkingSet != nullptr);
 
@@ -27,24 +26,19 @@ TextModeFrame::TextModeFrame(const Source &_source)
 
     const auto full_range = CFRangeMake(0, m_WorkingSet->Length());
     CFAttributedStringReplaceString(attr_string, CFRangeMake(0, 0), m_WorkingSet->String());
-    CFAttributedStringSetAttribute(
-        attr_string, full_range, kCTForegroundColorAttributeName, _source.foreground_color);
+    CFAttributedStringSetAttribute(attr_string, full_range, kCTForegroundColorAttributeName, _source.foreground_color);
     CFAttributedStringSetAttribute(attr_string, full_range, kCTFontAttributeName, _source.font);
     CFAttributedStringSetAttribute(attr_string, full_range, kCTParagraphStyleAttributeName, pstyle);
 
-    m_Lines = SplitAttributedStringsIntoLines(attr_string,
-                                              _source.wrapping_width,
-                                              monospace_width,
-                                              tab_width,
-                                              m_WorkingSet->CharactersByteOffsets());
+    m_Lines = SplitAttributedStringsIntoLines(
+        attr_string, _source.wrapping_width, monospace_width, tab_width, m_WorkingSet->CharactersByteOffsets());
 
     m_LinesWidths.resize(m_Lines.size());
     CalculateLinesWidths(m_Lines.data(), m_Lines.data() + m_Lines.size(), m_LinesWidths.data());
 
-    const auto width =
-        m_LinesWidths.empty() ? 0.f : *std::max_element(m_LinesWidths.begin(), m_LinesWidths.end());
-    const auto height = m_FontInfo.LineHeight() * m_Lines.size();
-    m_Bounds = CGSizeMake(std::min(width, static_cast<float>(m_WrappingWidth)), height);
+    const auto width = m_LinesWidths.empty() ? 0.f : *std::max_element(m_LinesWidths.begin(), m_LinesWidths.end());
+    const auto height = m_FontInfo.LineHeight() * static_cast<double>(m_Lines.size());
+    m_Bounds = CGSizeMake(std::min(static_cast<double>(width), m_WrappingWidth), height);
 }
 
 TextModeFrame::TextModeFrame(TextModeFrame &&) noexcept = default;
@@ -65,8 +59,8 @@ int TextModeFrame::CharIndexForPosition(CGPoint _position) const
         return m_WorkingSet->Length();
 
     const auto &line = Line(line_index);
-    const auto char_index = static_cast<int>(
-        CTLineGetStringIndexForPosition(line.Line(), CGPointMake(_position.x, 0.)));
+    const auto char_index =
+        static_cast<int>(CTLineGetStringIndexForPosition(line.Line(), CGPointMake(_position.x, 0.)));
     if( char_index < 0 )
         return 0;
     assert(char_index <= m_WorkingSet->Length());
@@ -99,10 +93,9 @@ static void CalculateLinesWidths(const TextModeIndexedTextLine *_lines_begin,
                                  float *_widths)
 {
     const auto block = [&](size_t n) {
-        _widths[n] = static_cast<float>(
-            CTLineGetTypographicBounds(_lines_begin[n].Line(), nullptr, nullptr, nullptr));
+        _widths[n] = static_cast<float>(CTLineGetTypographicBounds(_lines_begin[n].Line(), nullptr, nullptr, nullptr));
     };
     dispatch_apply(_lines_end - _lines_begin, dispatch_get_global_queue(0, 0), block);
 }
 
-}
+} // namespace nc::viewer

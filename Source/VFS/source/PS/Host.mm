@@ -340,13 +340,12 @@ std::vector<PSHost::ProcInfo> PSHost::GetProcs()
 void PSHost::UpdateCycle()
 {
     auto weak_this = std::weak_ptr<PSHost>(SharedPtr());
-    m_UpdateQ.Run(
-        [=, this] {
-          if (m_UpdateQ.IsStopped())
+    m_UpdateQ.Run([=, this] {
+        if( m_UpdateQ.IsStopped() )
             return;
 
-          auto procs = GetProcs();
-          if (!m_UpdateQ.IsStopped()) {
+        auto procs = GetProcs();
+        if( !m_UpdateQ.IsStopped() ) {
             auto me = weak_this;
             dispatch_to_main_queue([=, procs = std::move(procs)] {
                 if( !me.expired() )
@@ -357,8 +356,8 @@ void PSHost::UpdateCycle()
                 if( !me.expired() )
                     me.lock()->UpdateCycle();
             });
-          }
-        });
+        }
+    });
 }
 
 void PSHost::EnsureUpdateRunning()
@@ -418,7 +417,9 @@ std::string PSHost::ProcInfoIntoFile(const ProcInfo &_info, std::shared_ptr<Snap
     result += "Process priority: "s + to_string(_info.priority) + "\n";
     result += "Process \"nice\" value: "s + to_string(_info.nice) + "\n";
     result += "Started at: "s +
-              [ProcDateFormatter() stringFromDate:[NSDate dateWithTimeIntervalSince1970:_info.start_time]].UTF8String +
+              [ProcDateFormatter()
+                  stringFromDate:[NSDate dateWithTimeIntervalSince1970:static_cast<double>(_info.start_time)]]
+                  .UTF8String +
               "\n";
     result += "Status: "s + ProcStatus(_info.status) + "\n";
     result += "Architecture: "s + ArchType(_info.cpu_type) + "\n";

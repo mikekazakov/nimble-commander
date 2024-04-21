@@ -180,7 +180,7 @@ private:
 
     if( value == nil )
         return nil;
-    NSDate *date = [NSDate dateWithTimeIntervalSince1970:[value unsignedLongLongValue]];
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:static_cast<double>([value unsignedLongLongValue])];
     return [formatter stringFromDate:date];
 }
 @end

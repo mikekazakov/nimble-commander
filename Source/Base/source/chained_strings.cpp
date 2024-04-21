@@ -7,7 +7,7 @@ namespace nc::base {
 
 chained_strings::chained_strings() : m_Begin(nullptr), m_Last(nullptr)
 {
-    static_assert(sizeof(node) == 24, "size of string node should be 14 bytes");
+    static_assert(sizeof(node) == 24, "size of string node should be 24 bytes");
     static_assert(sizeof(block) == 1024, "size of strings chunk should be 1024 bytes");
 }
 

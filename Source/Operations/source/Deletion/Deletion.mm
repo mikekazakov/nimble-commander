@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Deletion.h"
 #include "DeletionJob.h"
 #include "../Internal.h"
@@ -13,8 +13,7 @@ static NSString *Caption(const std::vector<VFSListingItem> &_files);
 
 using Callbacks = DeletionJobCallbacks;
 
-Deletion::Deletion(std::vector<VFSListingItem> _items, DeletionOptions _options)
-    : m_OrigOptions(_options)
+Deletion::Deletion(std::vector<VFSListingItem> _items, DeletionOptions _options) : m_OrigOptions(_options)
 {
     SetTitle(Caption(_items).UTF8String);
     m_LockedItemBehaviour = m_OrigOptions.locked_items_behaviour;
@@ -32,11 +31,10 @@ Deletion::Deletion(std::vector<VFSListingItem> _items, DeletionOptions _options)
     m_Job->m_OnTrashError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
         return OnTrashError(_err, _path, _vfs);
     };
-    m_Job->m_OnLockedItem =
-        [this](int _err, const std::string &_path, VFSHost &_vfs, DeletionType _type) {
-            return OnLockedItem(_err, _path, _vfs, _type);
-        };
-    m_Job->m_OnUnlockError =[this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_OnLockedItem = [this](int _err, const std::string &_path, VFSHost &_vfs, DeletionType _type) {
+        return OnLockedItem(_err, _path, _vfs, _type);
+    };
+    m_Job->m_OnUnlockError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
         return OnUnlockError(_err, _path, _vfs);
     };
 }
@@ -50,16 +48,13 @@ Job *Deletion::GetJob() noexcept
     return m_Job.get();
 }
 
-Callbacks::ReadDirErrorResolution
-Deletion::OnReadDirError(int _err, const std::string &_path, VFSHost &_vfs)
+Callbacks::ReadDirErrorResolution Deletion::OnReadDirError(int _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
-        return m_SkipAll ? Callbacks::ReadDirErrorResolution::Skip
-                         : Callbacks::ReadDirErrorResolution::Stop;
+        return m_SkipAll ? Callbacks::ReadDirErrorResolution::Skip : Callbacks::ReadDirErrorResolution::Stop;
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue(
-        [=, vfs = _vfs.shared_from_this()] { OnReadDirErrorUI(_err, _path, vfs, ctx); });
+    dispatch_to_main_queue([=, this, vfs = _vfs.shared_from_this()] { OnReadDirErrorUI(_err, _path, vfs, ctx); });
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -88,23 +83,19 @@ void Deletion::OnReadDirErrorUI(int _err,
     [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
     [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
     if( m_Job->ItemsInScript() > 0 )
-        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "")
-                     responseCode:NSModalResponseSkipAll];
+        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
     [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
 
     Show(sheet.window, _ctx);
 }
 
-Callbacks::UnlinkErrorResolution
-Deletion::OnUnlinkError(int _err, const std::string &_path, VFSHost &_vfs)
+Callbacks::UnlinkErrorResolution Deletion::OnUnlinkError(int _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
-        return m_SkipAll ? Callbacks::UnlinkErrorResolution::Skip
-                         : Callbacks::UnlinkErrorResolution::Stop;
+        return m_SkipAll ? Callbacks::UnlinkErrorResolution::Skip : Callbacks::UnlinkErrorResolution::Stop;
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue(
-        [=, vfs = _vfs.shared_from_this()] { OnUnlinkErrorUI(_err, _path, vfs, ctx); });
+    dispatch_to_main_queue([=, this, vfs = _vfs.shared_from_this()] { OnUnlinkErrorUI(_err, _path, vfs, ctx); });
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -133,23 +124,19 @@ void Deletion::OnUnlinkErrorUI(int _err,
     [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
     [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
     if( m_Job->ItemsInScript() > 0 )
-        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "")
-                     responseCode:NSModalResponseSkipAll];
+        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
     [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
 
     Show(sheet.window, _ctx);
 }
 
-Callbacks::RmdirErrorResolution
-Deletion::OnRmdirError(int _err, const std::string &_path, VFSHost &_vfs)
+Callbacks::RmdirErrorResolution Deletion::OnRmdirError(int _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
-        return m_SkipAll ? Callbacks::RmdirErrorResolution::Skip
-                         : Callbacks::RmdirErrorResolution::Stop;
+        return m_SkipAll ? Callbacks::RmdirErrorResolution::Skip : Callbacks::RmdirErrorResolution::Stop;
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue(
-        [=, vfs = _vfs.shared_from_this()] { OnRmdirErrorUI(_err, _path, vfs, ctx); });
+    dispatch_to_main_queue([=, this, vfs = _vfs.shared_from_this()] { OnRmdirErrorUI(_err, _path, vfs, ctx); });
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -178,26 +165,22 @@ void Deletion::OnRmdirErrorUI(int _err,
     [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
     [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
     if( m_Job->ItemsInScript() > 0 )
-        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "")
-                     responseCode:NSModalResponseSkipAll];
+        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
     [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
 
     Show(sheet.window, _ctx);
 }
 
-Callbacks::TrashErrorResolution
-Deletion::OnTrashError(int _err, const std::string &_path, VFSHost &_vfs)
+Callbacks::TrashErrorResolution Deletion::OnTrashError(int _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_DeleteAllOnTrashError )
         return Callbacks::TrashErrorResolution::DeletePermanently;
 
     if( m_SkipAll || !IsInteractive() )
-        return m_SkipAll ? Callbacks::TrashErrorResolution::Skip
-                         : Callbacks::TrashErrorResolution::Stop;
+        return m_SkipAll ? Callbacks::TrashErrorResolution::Skip : Callbacks::TrashErrorResolution::Stop;
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue(
-        [=, vfs = _vfs.shared_from_this()] { OnTrashErrorUI(_err, _path, vfs, ctx); });
+    dispatch_to_main_queue([=, this, vfs = _vfs.shared_from_this()] { OnTrashErrorUI(_err, _path, vfs, ctx); });
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip ) {
@@ -253,8 +236,7 @@ Deletion::OnLockedItem(int _err, const std::string &_path, VFSHost &_vfs, Deleti
     }
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue(
-        [=, vfs = _vfs.shared_from_this()] { OnLockedItemUI(_err, _path, vfs, _type, ctx); });
+    dispatch_to_main_queue([=, this, vfs = _vfs.shared_from_this()] { OnLockedItemUI(_err, _path, vfs, _type, ctx); });
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip ) {
@@ -284,9 +266,8 @@ void Deletion::OnLockedItemUI(int _err,
     const auto sheet = [[NCOpsGenericErrorDialog alloc] initWithContext:_ctx];
 
     sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = _type == DeletionType::Permanent
-                        ? NSLocalizedString(@"Cannot delete a locked item", "")
-                        : NSLocalizedString(@"Cannot move a locked item to Trash", "");
+    sheet.message = _type == DeletionType::Permanent ? NSLocalizedString(@"Cannot delete a locked item", "")
+                                                     : NSLocalizedString(@"Cannot move a locked item to Trash", "");
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.showApplyToAll = m_Job->ItemsInScript() > 0;
     sheet.errorNo = _err;
@@ -297,16 +278,13 @@ void Deletion::OnLockedItemUI(int _err,
     Show(sheet.window, _ctx);
 }
 
-DeletionJobCallbacks::UnlockErrorResolution
-Deletion::OnUnlockError(int _err, const std::string &_path, VFSHost &_vfs)
+DeletionJobCallbacks::UnlockErrorResolution Deletion::OnUnlockError(int _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
-        return m_SkipAll ? Callbacks::UnlockErrorResolution::Skip
-                         : Callbacks::UnlockErrorResolution::Stop;
+        return m_SkipAll ? Callbacks::UnlockErrorResolution::Skip : Callbacks::UnlockErrorResolution::Stop;
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue(
-        [=, vfs = _vfs.shared_from_this()] { OnUnlockErrorUI(_err, _path, vfs, ctx); });
+    dispatch_to_main_queue([=, this, vfs = _vfs.shared_from_this()] { OnUnlockErrorUI(_err, _path, vfs, ctx); });
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -335,8 +313,7 @@ void Deletion::OnUnlockErrorUI(int _err,
     [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
     [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
     if( m_Job->ItemsInScript() > 0 )
-        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "")
-                     responseCode:NSModalResponseSkipAll];
+        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
     [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
 
     Show(sheet.window, _ctx);
@@ -345,16 +322,13 @@ void Deletion::OnUnlockErrorUI(int _err,
 static NSString *Caption(const std::vector<VFSListingItem> &_files)
 {
     if( _files.size() == 1 )
-        return [NSString
-            localizedStringWithFormat:NSLocalizedString(@"Deleting \u201c%@\u201d",
-                                                        "Operation title for single item deletion"),
-                                      _files.front().DisplayNameNS()];
+        return [NSString localizedStringWithFormat:NSLocalizedString(@"Deleting \u201c%@\u201d",
+                                                                     "Operation title for single item deletion"),
+                                                   _files.front().DisplayNameNS()];
     else
-        return
-            [NSString localizedStringWithFormat:NSLocalizedString(
-                                                    @"Deleting %@ items",
-                                                    "Operation title for multiple items deletion"),
-                                                [NSNumber numberWithUnsignedLong:_files.size()]];
+        return [NSString localizedStringWithFormat:NSLocalizedString(@"Deleting %@ items",
+                                                                     "Operation title for multiple items deletion"),
+                                                   [NSNumber numberWithUnsignedLong:_files.size()]];
 }
 
-}
+} // namespace nc::ops

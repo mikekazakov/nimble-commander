@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AdaptiveDateFormatting.h"
 #include <Cocoa/Cocoa.h>
 #include <Base/spinlock.h>
@@ -17,8 +17,7 @@
 
 namespace nc::utility {
 
-AdaptiveDateFormatting::Style
-    AdaptiveDateFormatting::StyleForWidthHardcodedLikeFinder( int _width, int _font_size )
+AdaptiveDateFormatting::Style AdaptiveDateFormatting::StyleForWidthHardcodedLikeFinder(int _width, int _font_size)
 {
     if( _font_size <= 10 ) {
         if( _width >= 166 )
@@ -92,11 +91,11 @@ AdaptiveDateFormatting::Style
     }
     else {
         // do some magic calculations here...
-        
-//    15      225     165    143   >0
-//    16      236     172    150   >0
-// intepolation scale:
-//                 ~=/1.35 ~=/1.15
+
+        //    15      225     165    143   >0
+        //    16      236     172    150   >0
+        // intepolation scale:
+        //                 ~=/1.35 ~=/1.15
         const auto s = 236. / 16.;
         const auto v = s * _font_size;
         if( _width >= v )
@@ -113,161 +112,138 @@ AdaptiveDateFormatting::Style
 static bool TimeFormatIsDayFirst()
 {
     // month is first overwise
-    static const auto day_first = []{
-        // a very-very nasty code here - trying to parse 
+    static const auto day_first = [] {
+        // a very-very nasty code here - trying to parse
         // Unicode Technical Standard #35 stuff in a quite naive way
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
         dateFormatter.dateStyle = NSDateFormatterShortStyle;
-        
+
         NSString *format = dateFormatter.dateFormat;
         const char *s = format.UTF8String;
-        
+
         const char *m = strstr(s, "MM");
-        if(m == nullptr)
+        if( m == nullptr )
             m = strstr(s, "M");
-        
+
         const char *d = strstr(s, "dd");
-        if(d == nullptr)
+        if( d == nullptr )
             d = strstr(s, "d");
-        
-        if(m < d)
+
+        if( m < d )
             return false;
         return true;
     }();
-    
+
     return day_first;
 }
 
-static NSString *Orthodox( time_t _time )
+static NSString *Orthodox(time_t _time)
 {
-    static const auto formatter = []{
+    static const auto formatter = [] {
         NSDateFormatter *f = [[NSDateFormatter alloc] init];
         f.dateFormat = TimeFormatIsDayFirst() ? @"dd/LL/yy HH:mm" : @"LL/dd/yy HH:mm";
         return f;
     }();
-    
-    return [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_time]];
+
+    return [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:static_cast<double>(_time)]];
 }
 
 // disclaimer: CFDateFormatter is not thread safe, even for read-only usage, thus using spinlocks
 // to control access. might need something more scaleable later.
 // like having multiple instances (and locks) and choose them according current thread id
 
-static NSString *Long( time_t _time )
+static NSString *Long(time_t _time)
 {
-    static const auto formatter = []{
+    static const auto formatter = [] {
         auto l = CFLocaleCopyCurrent();
-        auto f = CFDateFormatterCreate(kCFAllocatorDefault,
-                                       l,
-                                       kCFDateFormatterLongStyle,
-                                       kCFDateFormatterShortStyle);
+        auto f = CFDateFormatterCreate(kCFAllocatorDefault, l, kCFDateFormatterLongStyle, kCFDateFormatterShortStyle);
         CFRelease(l);
-        CFDateFormatterSetProperty(f,
-                                   kCFDateFormatterDoesRelativeDateFormattingKey,
-                                   kCFBooleanTrue);
+        CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
         return f;
     }();
     const auto time = static_cast<double>(_time) - kCFAbsoluteTimeIntervalSince1970;
     static spinlock formatter_lock;
     auto lock = std::lock_guard{formatter_lock};
     CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, time);
-    return static_cast<NSString*>(CFBridgingRelease(str));
+    return static_cast<NSString *>(CFBridgingRelease(str));
 }
 
-static NSString *Medium( time_t _time )
+static NSString *Medium(time_t _time)
 {
-    static const auto formatter = []{
+    static const auto formatter = [] {
         auto l = CFLocaleCopyCurrent();
-        auto f = CFDateFormatterCreate(kCFAllocatorDefault,
-                                       l,
-                                       kCFDateFormatterMediumStyle,
-                                       kCFDateFormatterShortStyle);
+        auto f = CFDateFormatterCreate(kCFAllocatorDefault, l, kCFDateFormatterMediumStyle, kCFDateFormatterShortStyle);
         CFRelease(l);
-        CFDateFormatterSetProperty(f,
-                                   kCFDateFormatterDoesRelativeDateFormattingKey,
-                                   kCFBooleanTrue);
+        CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
         return f;
     }();
     const auto time = static_cast<double>(_time) - kCFAbsoluteTimeIntervalSince1970;
     static spinlock formatter_lock;
     auto lock = std::lock_guard{formatter_lock};
     CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, time);
-    return static_cast<NSString*>(CFBridgingRelease(str));
+    return static_cast<NSString *>(CFBridgingRelease(str));
 }
 
-static NSString *Short( time_t _time )
+static NSString *Short(time_t _time)
 {
-    static const auto formatter = []{
+    static const auto formatter = [] {
         auto l = CFLocaleCopyCurrent();
-        auto f = CFDateFormatterCreate(kCFAllocatorDefault,
-                                       l,
-                                       kCFDateFormatterShortStyle,
-                                       kCFDateFormatterShortStyle);
+        auto f = CFDateFormatterCreate(kCFAllocatorDefault, l, kCFDateFormatterShortStyle, kCFDateFormatterShortStyle);
         CFRelease(l);
-        CFDateFormatterSetProperty(f,
-                                   kCFDateFormatterDoesRelativeDateFormattingKey,
-                                   kCFBooleanTrue);
+        CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
         return f;
     }();
     const auto time = static_cast<double>(_time) - kCFAbsoluteTimeIntervalSince1970;
     static spinlock formatter_lock;
     auto lock = std::lock_guard{formatter_lock};
     CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, time);
-    return static_cast<NSString*>(CFBridgingRelease(str));
+    return static_cast<NSString *>(CFBridgingRelease(str));
 }
 
-static NSString *Tiny( time_t _time )
+static NSString *Tiny(time_t _time)
 {
-    static const auto general = []{
+    static const auto general = [] {
         auto l = CFLocaleCopyCurrent();
-        auto f = CFDateFormatterCreate(kCFAllocatorDefault,
-                                       l,
-                                       kCFDateFormatterShortStyle,
-                                       kCFDateFormatterNoStyle);
+        auto f = CFDateFormatterCreate(kCFAllocatorDefault, l, kCFDateFormatterShortStyle, kCFDateFormatterNoStyle);
         CFRelease(l);
-        CFDateFormatterSetProperty(f,
-                                   kCFDateFormatterDoesRelativeDateFormattingKey,
-                                   kCFBooleanTrue);
+        CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
         return f;
     }();
-    static const auto today = []{
+    static const auto today = [] {
         auto l = CFLocaleCopyCurrent();
-        auto f = CFDateFormatterCreate(kCFAllocatorDefault,
-                                       l,
-                                       kCFDateFormatterNoStyle,
-                                       kCFDateFormatterShortStyle);
+        auto f = CFDateFormatterCreate(kCFAllocatorDefault, l, kCFDateFormatterNoStyle, kCFDateFormatterShortStyle);
         CFRelease(l);
-        CFDateFormatterSetProperty(f,
-                                   kCFDateFormatterDoesRelativeDateFormattingKey,
-                                   kCFBooleanTrue);
+        CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
         return f;
     }();
-    const auto date = [NSDate dateWithTimeIntervalSince1970:_time];
+    const auto date = [NSDate dateWithTimeIntervalSince1970:static_cast<double>(_time)];
     const auto is_today = [NSCalendar.currentCalendar isDateInToday:date];
     const auto time = static_cast<double>(_time) - kCFAbsoluteTimeIntervalSince1970;
     static spinlock formatter_lock;
     auto lock = std::lock_guard{formatter_lock};
-    auto str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr,
-                                                           is_today ? today : general,
-                                                           time);
-    return static_cast<NSString*>(CFBridgingRelease(str));
+    auto str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, is_today ? today : general, time);
+    return static_cast<NSString *>(CFBridgingRelease(str));
 }
 
-NSString *AdaptiveDateFormatting::Format( Style _style, time_t _time )
+NSString *AdaptiveDateFormatting::Format(Style _style, time_t _time)
 {
     switch( _style ) {
-        case Style::Long:   return Long( _time );
-        case Style::Medium: return Medium( _time );
-        case Style::Short:  return Short( _time );
-        case Style::Tiny:   return Tiny( _time );
-        default:            return Orthodox( _time );
+        case Style::Long:
+            return Long(_time);
+        case Style::Medium:
+            return Medium(_time);
+        case Style::Short:
+            return Short(_time);
+        case Style::Tiny:
+            return Tiny(_time);
+        default:
+            return Orthodox(_time);
     }
 }
 
-AdaptiveDateFormatting::Style
-    AdaptiveDateFormatting::SuitableStyleForWidth( int _width, NSFont *_font )
+AdaptiveDateFormatting::Style AdaptiveDateFormatting::SuitableStyleForWidth(int _width, NSFont *_font)
 {
-    return StyleForWidthHardcodedLikeFinder( _width, static_cast<int>(_font.pointSize) );
+    return StyleForWidthHardcodedLikeFinder(_width, static_cast<int>(_font.pointSize));
 }
 
-}
+} // namespace nc::utility

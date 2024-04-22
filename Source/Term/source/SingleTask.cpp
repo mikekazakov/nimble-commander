@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/ioctl.h>
 #include <sys/sysctl.h>
 
@@ -103,7 +103,7 @@ void SingleTask::Launch(const char *_full_binary_path, const char *_params, int 
 
         // TODO: consider using single shared thread here, not a queue (mind maximum running queues
         // issue)
-        dispatch_async(dispatch_get_global_queue(0, 0), [=] { ReadChildOutput(); });
+        dispatch_async(dispatch_get_global_queue(0, 0), [this] { ReadChildOutput(); });
     }
     else { // slave/child
         SetupTermios(slave_fd);

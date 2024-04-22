@@ -51,10 +51,10 @@ OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemCo
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Path to 3rd-Party dependencies
-THRDPTY=../../3rd_Party
+THRDPTY=$(SRCROOT)/../../3rd_Party
 
 // Path to NC's own libraries
-LIBS=..
+LIBS=$(SRCROOT)/..
 
 // Paths - headers
 USE_HEADERMAP = NO

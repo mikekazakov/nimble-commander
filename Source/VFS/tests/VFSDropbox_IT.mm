@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include "NCE.h"
@@ -59,10 +59,9 @@ TEST_CASE(PREFIX "stat on existing file")
     CHECK(stat.size == 190892);
 
     const auto calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
-    const auto date = [NSDate dateWithTimeIntervalSince1970:stat.mtime.tv_sec];
-    const auto components =
-        [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay
-                    fromDate:date];
+    const auto date = [NSDate dateWithTimeIntervalSince1970:static_cast<double>(stat.mtime.tv_sec)];
+    const auto components = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay
+                                        fromDate:date];
     CHECK(components.year == 2017);
     CHECK(components.month == 4);
     CHECK(components.day == 3);
@@ -91,15 +90,14 @@ TEST_CASE(PREFIX "stat on existing folder")
 TEST_CASE(PREFIX "directory iterating")
 {
     const auto filepath = "/TestSet01/";
-    const auto must_be =
-        std::set<std::string>{{"1ee0209db65d40d68277687017871bda.gif",
-                               "5465bdfd6afa44288520f2c84d2bb011.jpg",
-                               "11778860-R3L8T8D-650-funny-jumping-cats-51__880.jpg",
-                               "11779310-R3L8T8D-650-funny-jumping-cats-91__880.jpg",
-                               "BsQMH1kCUAALgMC.jpg",
-                               "f447bd6f4f6a47e6a355b7b44f2a326f.jpg",
-                               "kvxnws0o3i3g.jpg",
-                               "vw1yzox23csh.jpg"}};
+    const auto must_be = std::set<std::string>{{"1ee0209db65d40d68277687017871bda.gif",
+                                                "5465bdfd6afa44288520f2c84d2bb011.jpg",
+                                                "11778860-R3L8T8D-650-funny-jumping-cats-51__880.jpg",
+                                                "11779310-R3L8T8D-650-funny-jumping-cats-91__880.jpg",
+                                                "BsQMH1kCUAALgMC.jpg",
+                                                "f447bd6f4f6a47e6a355b7b44f2a326f.jpg",
+                                                "kvxnws0o3i3g.jpg",
+                                                "vw1yzox23csh.jpg"}};
     const std::shared_ptr<VFSHost> host = Spawn();
 
     std::set<std::string> filenames;
@@ -169,8 +167,8 @@ TEST_CASE(PREFIX "basic file read")
 
 TEST_CASE(PREFIX "reading file with non ASCII symbols")
 {
-    const auto filepath = reinterpret_cast<const char *>(
-        u8"/TestSet03/Это фотка котега $о ВСЯкими #\"символами\"!!!.jpg");
+    const auto filepath =
+        reinterpret_cast<const char *>(u8"/TestSet03/Это фотка котега $о ВСЯкими #\"символами\"!!!.jpg");
     const std::shared_ptr<VFSHost> host = Spawn();
     std::shared_ptr<VFSFile> file;
     int rc = host->CreateFile(filepath, file);
@@ -228,8 +226,7 @@ TEST_CASE(PREFIX "simple upload")
 TEST_CASE(PREFIX "upload with invalid name")
 {
     const auto to_upload = "Hello, world!"s;
-    const auto filepath =
-        "/FolderToModify/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/test.txt";
+    const auto filepath = "/FolderToModify/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/test.txt";
     std::shared_ptr<VFSHost> host = Spawn();
 
     std::shared_ptr<VFSFile> file;
@@ -397,15 +394,8 @@ TEST_CASE(PREFIX "multi-chunks upload")
 TEST_CASE(PREFIX "upload edge cases")
 {
     const int chunk_size = 1'000'000;
-    const int lengths[] = {999'999,
-                           1'000'000,
-                           1'000'001,
-                           1'999'999,
-                           2'000'000,
-                           2'000'001,
-                           2'999'999,
-                           3'000'000,
-                           3'000'001};
+    const int lengths[] = {
+        999'999, 1'000'000, 1'000'001, 1'999'999, 2'000'000, 2'000'001, 2'999'999, 3'000'000, 3'000'001};
     const auto filepath = "/FolderToModify/SomeBigRubbish.bin";
 
     std::shared_ptr<VFSHost> host = Spawn();

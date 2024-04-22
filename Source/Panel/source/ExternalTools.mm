@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalTools.h"
 #include <Config/Config.h>
 #include <Config/RapidJSON.h>
@@ -409,7 +409,7 @@ ExternalToolsStorage::ExternalToolsStorage(const char *_config_path, nc::config:
 {
     LoadToolsFromConfig();
 
-    m_ConfigObservations.emplace_back(m_Config.Observe(_config_path, [=] {
+    m_ConfigObservations.emplace_back(m_Config.Observe(_config_path, [this] {
         LoadToolsFromConfig();
         FireObservers();
     }));
@@ -468,7 +468,7 @@ void ExternalToolsStorage::WriteToolsToConfig() const
 void ExternalToolsStorage::CommitChanges()
 {
     FireObservers();
-    dispatch_to_background([=] { WriteToolsToConfig(); });
+    dispatch_to_background([=, this] { WriteToolsToConfig(); });
 }
 
 void ExternalToolsStorage::ReplaceTool(ExternalTool _tool, size_t _at_index)

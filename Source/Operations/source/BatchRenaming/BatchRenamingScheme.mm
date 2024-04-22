@@ -739,7 +739,8 @@ static NSString *FormatDate(time_t _t)
         return fmt;
     }();
 
-    NSMutableString *str = [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_t]].mutableCopy;
+    NSMutableString *str =
+        [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:static_cast<double>(_t)]].mutableCopy;
     [str replaceOccurrencesOfString:@"/" withString:@"-" options:0 range:NSMakeRange(0, str.length)];
     [str replaceOccurrencesOfString:@"\\" withString:@"-" options:0 range:NSMakeRange(0, str.length)];
     [str replaceOccurrencesOfString:@":" withString:@"-" options:0 range:NSMakeRange(0, str.length)];
@@ -755,7 +756,8 @@ static NSString *FormatTime(time_t _t)
         return fmt;
     }();
 
-    NSMutableString *str = [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_t]].mutableCopy;
+    NSMutableString *str =
+        [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:static_cast<double>(_t)]].mutableCopy;
     [str replaceOccurrencesOfString:@"/" withString:@"." options:0 range:NSMakeRange(0, str.length)];
     [str replaceOccurrencesOfString:@"\\" withString:@"." options:0 range:NSMakeRange(0, str.length)];
     [str replaceOccurrencesOfString:@":" withString:@"." options:0 range:NSMakeRange(0, str.length)];

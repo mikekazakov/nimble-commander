@@ -106,9 +106,9 @@ static bool IsShiftPressed()
     formatter.timeStyle = NSDateFormatterMediumStyle;
     formatter.dateStyle = NSDateFormatterMediumStyle;
 
-    const auto old_date = [NSDate dateWithTimeIntervalSince1970:m_SourceStat.st_mtime];
+    const auto old_date = [NSDate dateWithTimeIntervalSince1970:static_cast<double>(m_SourceStat.st_mtime)];
     self.NewFileTime.stringValue = [formatter stringFromDate:old_date];
-    const auto new_date = [NSDate dateWithTimeIntervalSince1970:m_DestinationStat.st_mtime];
+    const auto new_date = [NSDate dateWithTimeIntervalSince1970:static_cast<double>(m_DestinationStat.st_mtime)];
     self.ExistingFileTime.stringValue = [formatter stringFromDate:new_date];
 
     self.NewFileSize.integerValue = m_SourceStat.st_size;

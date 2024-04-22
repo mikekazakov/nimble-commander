@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/algo.h>
 #include <Base/CommonPaths.h>
 #include <Utility/SystemInformation.h>
@@ -48,9 +48,8 @@ int VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
                                              VFSCancelChecker _cancel_checker,
                                              std::function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress)
 {
-    auto ggg = at_scope_end([=] {
-        m_SeqFile.reset();
-    }); // ony any result wrapper won't hold any reference to VFSFile after this function ends
+    auto ggg = at_scope_end([this] { m_SeqFile.reset(); }); // ony any result wrapper won't hold any reference to
+                                                            // VFSFile after this function ends
     if( !m_SeqFile )
         return VFSError::InvalidCall;
     if( m_SeqFile->GetReadParadigm() < VFSFile::ReadParadigm::Sequential )

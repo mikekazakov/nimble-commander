@@ -1,0 +1,7 @@
+Checks: >
+  -*,
+  -clang-diagnostic-c99-designator,
+  modernize-avoid-bind
+
+ExtraArgs:
+- -Wno-unknown-pragmas

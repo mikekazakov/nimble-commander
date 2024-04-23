@@ -14,6 +14,7 @@
 #include <span>
 #include <fstream>
 #include <compare>
+#include <thread>
 
 using nc::ops::Copying;
 using nc::ops::CopyingOptions;
@@ -1372,6 +1373,40 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> vfs)")
     }
 
     VFSEasyDelete(target_dir.c_str(), host);
+}
+
+TEST_CASE(PREFIX "Copying a native file that is being written to")
+{
+    TempTestDir dir;
+    const std::filesystem::path p = dir.directory / "a";
+    static constexpr size_t max_size = 100'000'000;
+    
+    std::atomic_bool stop = false;
+    std::thread t([p, &stop] {
+        const int f = open(p.c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR);
+        REQUIRE(f >= 0);
+        for(size_t i = 0; stop == false && i < max_size; ++i ) {
+            write(f, &f, 1);
+        }
+        close(f);
+    });
+
+    CopyingOptions opts;
+    opts.docopy = true;
+    auto host = TestEnv().vfs_native;
+    Copying op(FetchItems(dir.directory, {"a"}, *host), dir.directory / "b", host, opts);
+    op.Start();
+    op.Wait();
+
+    stop = true;
+    t.join();
+
+    REQUIRE(op.State() == OperationState::Completed);
+    REQUIRE(std::filesystem::status(dir.directory / "b").type() == std::filesystem::file_type::regular);
+    const size_t sz_a = std::filesystem::file_size(p);
+    const size_t sz_b = std::filesystem::file_size(dir.directory / "b");
+    CHECK(sz_a < max_size);
+    CHECK(sz_b < sz_a);
 }
 
 static std::vector<std::byte> MakeNoise(size_t _size)

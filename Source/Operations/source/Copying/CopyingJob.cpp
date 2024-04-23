@@ -929,9 +929,9 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
     }
 
     auto read_buffer = m_Buffers[0].get(), write_buffer = m_Buffers[1].get();
-    const uint32_t src_preffered_io_size =
+    const uint32_t src_preferred_io_size =
         src_fs_info.basic.io_size < m_BufferSize ? src_fs_info.basic.io_size : m_BufferSize;
-    const uint32_t dst_preffered_io_size =
+    const uint32_t dst_preferred_io_size =
         dst_fs_info.basic.io_size < m_BufferSize ? dst_fs_info.basic.io_size : m_BufferSize;
     constexpr int max_io_loops = 5; // looked in Apple's copyfile() - treat 5 zero-resulting reads/writes as an error
     uint32_t bytes_to_write = 0;
@@ -951,7 +951,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
                        bytes_to_write,
                        destination_fd,
                        write_buffer,
-                       dst_preffered_io_size,
+                       dst_preferred_io_size,
                        &destination_bytes_written,
                        &write_return,
                        &_dst_path,
@@ -961,7 +961,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
             int write_loops = 0;
             while( left_to_write > 0 ) {
                 int64_t n_written =
-                    write(destination_fd, write_buffer + has_written, std::min(left_to_write, dst_preffered_io_size));
+                    write(destination_fd, write_buffer + has_written, std::min(left_to_write, dst_preferred_io_size));
                 if( n_written > 0 ) {
                     has_written += n_written;
                     left_to_write -= n_written;
@@ -984,14 +984,15 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
 
         // <<<--- reading in current thread --->>>
         // here we handle the case in which source io size is much smaller than dest's io size
-        uint32_t to_read = std::max(src_preffered_io_size, dst_preffered_io_size);
+        uint32_t to_read = std::max(src_preferred_io_size, dst_preferred_io_size);
         if( src_stat_buffer.st_size - source_bytes_read < to_read )
             to_read = uint32_t(src_stat_buffer.st_size - source_bytes_read);
         uint32_t has_read = 0;                 // amount of bytes read into buffer this time
         int read_loops = 0;                    // amount of zero-resulting reads
         std::optional<StepResult> read_return; // optional storage for error returning
         while( to_read != 0 ) {
-            int64_t read_result = read(source_fd, read_buffer + has_read, src_preffered_io_size);
+            const int64_t read_result = read(source_fd, read_buffer + has_read, to_read);
+            assert(read_result <= static_cast<int64_t>(to_read));
             if( read_result > 0 ) {
                 if( _source_data_feedback )
                     _source_data_feedback(read_buffer + has_read, static_cast<unsigned>(read_result));

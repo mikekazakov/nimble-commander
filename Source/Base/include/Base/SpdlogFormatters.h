@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <spdlog/fmt/fmt.h>
@@ -11,7 +11,7 @@ struct fmt::formatter<CGSize> : fmt::formatter<std::string> {
     template <typename FormatContext>
     auto format(const CGSize &sz, FormatContext &ctx)
     {
-        return format_to(ctx.out(), "({}, {})", sz.width, sz.height);
+        return fmt::format_to(ctx.out(), "({}, {})", sz.width, sz.height);
     }
 };
 
@@ -22,7 +22,7 @@ struct fmt::formatter<CGPoint> : fmt::formatter<std::string> {
     template <typename FormatContext>
     auto format(const CGPoint &pt, FormatContext &ctx)
     {
-        return format_to(ctx.out(), "({}, {})", pt.x, pt.y);
+        return fmt::format_to(ctx.out(), "({}, {})", pt.x, pt.y);
     }
 };
 
@@ -33,6 +33,6 @@ struct fmt::formatter<CGRect> : fmt::formatter<std::string> {
     template <typename FormatContext>
     auto format(const CGRect &rc, FormatContext &ctx)
     {
-        return format_to(ctx.out(), "({}, {}, {}, {})", rc.origin.x, rc.origin.y, rc.size.width, rc.size.height);
+        return fmt::format_to(ctx.out(), "({}, {}, {}, {})", rc.origin.x, rc.origin.y, rc.size.width, rc.size.height);
     }
 };

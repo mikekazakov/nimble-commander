@@ -9,14 +9,14 @@ body:
         Thanks for taking the time to fill out this bug report!
   - type: markdown
     attributes:
-      value: "Please make sure to read the [contributing guidelines](/CONTRIBUTING.md) before submitting an issue."
+      value: "Please make sure to read the [contributing guidelines](https://github.com/mikekazakov/nimble-commander/blob/main/CONTRIBUTING.md) before submitting an issue."
   - type: checkboxes
     id: agreement
     attributes:
       label: Confirmation
       description: Confirm before submitting
       options:
-        - label: I have read the [contributing guidelines](/CONTRIBUTING.md)
+        - label: I have read the contributing guidelines
           required: true
   - type: input
     id: version

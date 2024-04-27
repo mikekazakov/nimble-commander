@@ -4352,7 +4352,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"__NC_VERSION_FREE__=1",
+					"__NC_VERSION_MAS__=1",
 				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-MAS-Free-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Lite";
@@ -4371,7 +4371,7 @@
 				DEVELOPMENT_TEAM = AC5SJT236H;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"__NC_VERSION_FREE__=1",
+					"__NC_VERSION_MAS__=1",
 				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-MAS-Free-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Lite";
@@ -4387,7 +4387,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_Unsigned";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"__NC_VERSION_TRIAL__=1",
+					"__NC_VERSION_NONMAS__=1",
 				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-CI-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
@@ -4402,7 +4402,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_Unsigned";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"__NC_VERSION_TRIAL__=1",
+					"__NC_VERSION_NONMAS__=1",
 				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-CI-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
@@ -4437,7 +4437,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"__NC_VERSION_TRIAL__=1",
+					"__NC_VERSION_NONMAS__=1",
 				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
@@ -4457,7 +4457,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"__NC_VERSION_TRIAL__=1",
+					"__NC_VERSION_NONMAS__=1",
 				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;

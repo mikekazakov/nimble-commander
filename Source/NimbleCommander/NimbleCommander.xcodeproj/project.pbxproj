@@ -1266,7 +1266,7 @@
 		CF50926F201C3476004D9CF5 /* VFSInstanceManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInstanceManagerImpl.h; path = NimbleCommander/Core/VFSInstanceManagerImpl.h; sourceTree = SOURCE_ROOT; };
 		CF509270201C3D9A004D9CF5 /* VFSInstanceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSInstanceManager.cpp; path = NimbleCommander/Core/VFSInstanceManager.cpp; sourceTree = SOURCE_ROOT; };
 		CF51D11E1FD512A70026CC00 /* ExternalEditorInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalEditorInfoPrivate.h; path = NimbleCommander/States/FilePanels/ExternalEditorInfoPrivate.h; sourceTree = SOURCE_ROOT; };
-		CF52C3CB22BE5B2D0043E825 /* NCNonMAS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = NCNonMAS.entitlements; path = NimbleCommander/Resources/NCNonMAS.entitlements; sourceTree = SOURCE_ROOT; };
+		CF52C3CB22BE5B2D0043E825 /* NimbleCommander-NonMAS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "NimbleCommander-NonMAS.entitlements"; path = "NimbleCommander/Resources/NimbleCommander-NonMAS.entitlements"; sourceTree = SOURCE_ROOT; };
 		CF56BF521D68061600A08D2B /* VFSInstanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInstanceManager.h; path = NimbleCommander/Core/VFSInstanceManager.h; sourceTree = SOURCE_ROOT; };
 		CF56BF531D68061600A08D2B /* VFSInstanceManagerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSInstanceManagerImpl.cpp; path = NimbleCommander/Core/VFSInstanceManagerImpl.cpp; sourceTree = SOURCE_ROOT; };
 		CF56C2B21DC1934C00F0DF0F /* PanelListViewNameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewNameView.h; path = NimbleCommander/States/FilePanels/List/PanelListViewNameView.h; sourceTree = SOURCE_ROOT; };
@@ -1340,7 +1340,7 @@
 		CF6D997D196675290077B146 /* Nimble Commander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF6D9D2B1966A56E0077B146 /* NimbleCommander-NonMAS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-NonMAS-Info.plist"; path = "NimbleCommander/Resources/NimbleCommander-NonMAS-Info.plist"; sourceTree = SOURCE_ROOT; };
 		CF6D9D2D1966A57B0077B146 /* NimbleCommander-MAS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-MAS-Info.plist"; path = "NimbleCommander/Resources/NimbleCommander-MAS-Info.plist"; sourceTree = SOURCE_ROOT; };
-		CF6D9D301966A5E10077B146 /* Files-Lite.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = "Files-Lite.entitlements"; path = "NimbleCommander/Resources/Files-Lite.entitlements"; sourceTree = SOURCE_ROOT; };
+		CF6D9D301966A5E10077B146 /* NimbleCommander-MAS.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = "NimbleCommander-MAS.entitlements"; path = "NimbleCommander/Resources/NimbleCommander-MAS.entitlements"; sourceTree = SOURCE_ROOT; };
 		CF6E44871CCE390A009F45B0 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		CF6ECDA71E9F4776008FA79E /* ChangeAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChangeAttributes.h; path = NimbleCommander/States/FilePanels/Actions/ChangeAttributes.h; sourceTree = SOURCE_ROOT; };
 		CF6ECDA81E9F4776008FA79E /* ChangeAttributes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ChangeAttributes.mm; path = NimbleCommander/States/FilePanels/Actions/ChangeAttributes.mm; sourceTree = SOURCE_ROOT; };
@@ -2099,7 +2099,7 @@
 			isa = PBXGroup;
 			children = (
 				CF6D9D2B1966A56E0077B146 /* NimbleCommander-NonMAS-Info.plist */,
-				CF52C3CB22BE5B2D0043E825 /* NCNonMAS.entitlements */,
+				CF52C3CB22BE5B2D0043E825 /* NimbleCommander-NonMAS.entitlements */,
 			);
 			name = "NC NonMAS";
 			sourceTree = "<group>";
@@ -2107,7 +2107,7 @@
 		CF6D99A6196676200077B146 /* NS Free MAS */ = {
 			isa = PBXGroup;
 			children = (
-				CF6D9D301966A5E10077B146 /* Files-Lite.entitlements */,
+				CF6D9D301966A5E10077B146 /* NimbleCommander-MAS.entitlements */,
 				CF6D9D2D1966A57B0077B146 /* NimbleCommander-MAS-Info.plist */,
 			);
 			name = "NS Free MAS";
@@ -4330,7 +4330,7 @@
 		CF6D9998196675290077B146 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "NimbleCommander/Resources/Files-Lite.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "NimbleCommander/Resources/NimbleCommander-MAS.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Free";
@@ -4350,7 +4350,7 @@
 		CF6D9999196675290077B146 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "NimbleCommander/Resources/Files-Lite.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "NimbleCommander/Resources/NimbleCommander-MAS.entitlements";
 				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Free";
@@ -4415,7 +4415,7 @@
 		CFC5122F16C4BD3D00D247EE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = NimbleCommander/Resources/NCNonMAS.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "NimbleCommander/Resources/NimbleCommander-NonMAS.entitlements";
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";
@@ -4435,7 +4435,7 @@
 		CFC5123016C4BD3D00D247EE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = NimbleCommander/Resources/NCNonMAS.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "NimbleCommander/Resources/NimbleCommander-NonMAS.entitlements";
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";

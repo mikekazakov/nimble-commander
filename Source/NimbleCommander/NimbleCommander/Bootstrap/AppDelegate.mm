@@ -10,11 +10,11 @@
 #include "Interactions.h"
 #include "NCHelpMenuDelegate.h"
 #include "SparkleShim.h"
+#include "PFMoveToApplicationsShim.h"
 #include "NativeVFSHostInstance.h"
 #include "NCE.h"
 
 #include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
-#include <LetsMove/PFMoveApplication.h>
 #include <spdlog/sinks/stdout_sinks.h>
 #include <magic_enum.hpp>
 
@@ -430,9 +430,7 @@ static NCAppDelegate *g_Me = nil;
         if( GlobalConfig().GetBool(g_ConfigForceFn) )
             nc::utility::FunctionalKeysPass::Instance().Enable(); // accessibility - remapping functional keys FnXX
 
-#ifdef __NC_VERSION_TRIAL__ // no-lic - temp workaround
         PFMoveToApplicationsFolderIfNecessary();
-#endif
     }
 
     m_ConfigWiring = std::make_unique<ConfigWiring>(GlobalConfig(), m_PoolEnqueueFilter);

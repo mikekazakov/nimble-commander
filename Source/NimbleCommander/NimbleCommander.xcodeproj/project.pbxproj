@@ -2095,24 +2095,6 @@
 			name = Theming;
 			sourceTree = "<group>";
 		};
-		CF6D99A5196675FE0077B146 /* NC NonMAS */ = {
-			isa = PBXGroup;
-			children = (
-				CF6D9D2B1966A56E0077B146 /* NimbleCommander-NonMAS-Info.plist */,
-				CF52C3CB22BE5B2D0043E825 /* NimbleCommander-NonMAS.entitlements */,
-			);
-			name = "NC NonMAS";
-			sourceTree = "<group>";
-		};
-		CF6D99A6196676200077B146 /* NS Free MAS */ = {
-			isa = PBXGroup;
-			children = (
-				CF6D9D301966A5E10077B146 /* NimbleCommander-MAS.entitlements */,
-				CF6D9D2D1966A57B0077B146 /* NimbleCommander-MAS-Info.plist */,
-			);
-			name = "NS Free MAS";
-			sourceTree = "<group>";
-		};
 		CF84C8EF1DBB2AA900B4E888 /* List */ = {
 			isa = PBXGroup;
 			children = (
@@ -2405,8 +2387,10 @@
 			isa = PBXGroup;
 			children = (
 				CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */,
-				CF6D99A5196675FE0077B146 /* NC NonMAS */,
-				CF6D99A6196676200077B146 /* NS Free MAS */,
+				CF6D9D2D1966A57B0077B146 /* NimbleCommander-MAS-Info.plist */,
+				CF6D9D301966A5E10077B146 /* NimbleCommander-MAS.entitlements */,
+				CF6D9D2B1966A56E0077B146 /* NimbleCommander-NonMAS-Info.plist */,
+				CF52C3CB22BE5B2D0043E825 /* NimbleCommander-NonMAS.entitlements */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";

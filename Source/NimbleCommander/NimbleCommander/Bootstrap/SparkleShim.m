@@ -4,7 +4,7 @@
 
 SPUStandardUpdaterController *NCBootstrapSharedSUUpdaterInstance(void)
 {
-#ifdef __NC_VERSION_TRIAL__
+#ifdef __NC_VERSION_NONMAS__
     static SPUStandardUpdaterController *ctrl = nil;
     if( !ctrl )
         ctrl = [[SPUStandardUpdaterController alloc] initWithUpdaterDelegate:nil userDriverDelegate:nil];

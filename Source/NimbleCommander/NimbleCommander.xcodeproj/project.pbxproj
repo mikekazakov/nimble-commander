@@ -231,7 +231,6 @@
 		CF67F1B52952034200B92944 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF67F19A2952034200B92944 /* Icon.icns */; };
 		CF67F1B62952034200B92944 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF67F19A2952034200B92944 /* Icon.icns */; };
 		CF67F1B72952034200B92944 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF67F19A2952034200B92944 /* Icon.icns */; };
-		CF67F1BB2952034200B92944 /* Icon-Free.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF67F1B42952034200B92944 /* Icon-Free.icns */; };
 		CF67F1BF2954689000B92944 /* Theme_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF67F1BE2954689000B92944 /* Theme_UT.mm */; };
 		CF67F1C02954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF67F1C52954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */; };
 		CF67F1C12954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF67F1C52954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */; };
@@ -1319,7 +1318,6 @@
 		CF6572991FA6CD7300ABF85F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = NimbleCommander/Config/debug.xcconfig; sourceTree = SOURCE_ROOT; };
 		CF65729A1FA6CD8100ABF85F /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = NimbleCommander/Config/release.xcconfig; sourceTree = SOURCE_ROOT; };
 		CF67F19A2952034200B92944 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Icon.icns; path = NimbleCommander/Resources/Icon.icns; sourceTree = "<group>"; };
-		CF67F1B42952034200B92944 /* Icon-Free.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "Icon-Free.icns"; path = "NimbleCommander/Resources/Icon-Free.icns"; sourceTree = "<group>"; };
 		CF67F1BE2954689000B92944 /* Theme_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Theme_UT.mm; path = NimbleCommander/Tests/Theme_UT.mm; sourceTree = "<group>"; };
 		CF67F1C42954BF9400B92944 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowThemesTabAutomaticSwitchingSheet.xib; sourceTree = "<group>"; };
 		CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RoutedIO.xcodeproj; path = ../RoutedIO/RoutedIO.xcodeproj; sourceTree = "<group>"; };
@@ -2329,7 +2327,6 @@
 		CFB5989A196E38C700D4C108 /* Art */ = {
 			isa = PBXGroup;
 			children = (
-				CF67F1B42952034200B92944 /* Icon-Free.icns */,
 				CF67F19A2952034200B92944 /* Icon.icns */,
 				CFDF449F1D2B990A0062F7AD /* Media.xcassets */,
 			);
@@ -3086,7 +3083,6 @@
 				CF9F4B121ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */,
 				CF4E56A81D5068D700452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */,
-				CF67F1BB2952034200B92944 /* Icon-Free.icns in Resources */,
 				CFEF4E381A6BB409009A1524 /* Preferences.strings in Resources */,
 				CF6D99A9196676AB0077B146 /* Credits.rtf in Resources */,
 			);

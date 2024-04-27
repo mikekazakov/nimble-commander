@@ -2639,9 +2639,9 @@
 			productReference = CF5DE0B2258414CA00604DEE /* NimbleCommanderUT */;
 			productType = "com.apple.product-type.tool";
 		};
-		CF6D997C196675290077B146 /* NimbleCommander-MAS-Free */ = {
+		CF6D997C196675290077B146 /* NimbleCommander-MAS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CF6D9997196675290077B146 /* Build configuration list for PBXNativeTarget "NimbleCommander-MAS-Free" */;
+			buildConfigurationList = CF6D9997196675290077B146 /* Build configuration list for PBXNativeTarget "NimbleCommander-MAS" */;
 			buildPhases = (
 				CF6D9979196675290077B146 /* Sources */,
 				CF6D997A196675290077B146 /* Frameworks */,
@@ -2652,7 +2652,7 @@
 			);
 			dependencies = (
 			);
-			name = "NimbleCommander-MAS-Free";
+			name = "NimbleCommander-MAS";
 			productName = "Files Lite";
 			productReference = CF6D997D196675290077B146 /* Nimble Commander.app */;
 			productType = "com.apple.product-type.application";
@@ -2805,10 +2805,10 @@
 			);
 			projectRoot = "";
 			targets = (
-				CF5DE07D2583E73300604DEE /* NimbleCommanderCommon */,
 				CFA539591D433E2A00C562A7 /* NimbleCommander-Unsigned */,
 				CFC5121016C4BD3D00D247EE /* NimbleCommander-NonMAS */,
-				CF6D997C196675290077B146 /* NimbleCommander-MAS-Free */,
+				CF6D997C196675290077B146 /* NimbleCommander-MAS */,
+				CF5DE07D2583E73300604DEE /* NimbleCommanderCommon */,
 				CF5DE0B1258414CA00604DEE /* NimbleCommanderUT */,
 			);
 		};
@@ -4487,7 +4487,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CF6D9997196675290077B146 /* Build configuration list for PBXNativeTarget "NimbleCommander-MAS-Free" */ = {
+		CF6D9997196675290077B146 /* Build configuration list for PBXNativeTarget "NimbleCommander-MAS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CF6D9998196675290077B146 /* Debug */,

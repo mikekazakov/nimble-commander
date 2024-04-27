@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/libarchive.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v3.7.2 --depth 1 https://github.com/libarchive/libarchive.git
+git clone -b v3.7.4 --depth 1 https://github.com/libarchive/libarchive.git
 
 cd libarchive
 
@@ -39,7 +39,7 @@ cmake \
   -D LZO2_LIBRARY=${CUR_DIR}/../lzo/lib/liblzo2.a \
   -D ENABLE_ICONV="ON" \
   .
-make -j
+cmake --build . --parallel
 
 ctest \
   -E "libarchive_test_gnutar_filename_encoding_EUCJP_CP932|\

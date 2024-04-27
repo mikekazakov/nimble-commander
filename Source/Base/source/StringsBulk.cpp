@@ -1,6 +1,6 @@
 // Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/StringsBulk.h>
-#include <assert.h>
+#include <cassert>
 
 namespace nc::base {
 

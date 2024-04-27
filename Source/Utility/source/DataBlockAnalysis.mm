@@ -1,7 +1,7 @@
 // Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <stdlib.h>
-#include <memory.h>
 #include "../include/Utility/DataBlockAnalysis.h"
+#include <cstdlib>
+#include <memory.h>
 
 #ifndef Endian16_Swap
 #define Endian16_Swap(value)                                                                       \

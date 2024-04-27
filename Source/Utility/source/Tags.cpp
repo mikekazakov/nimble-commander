@@ -1,26 +1,26 @@
 // Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tags.h"
-#include <string_view>
-#include <bit>
-#include <utility>
-#include <fmt/printf.h>
-#include <fmt/format.h>
-#include <assert.h>
+#include <Base/CFPtr.h>
+#include <Base/CFStackAllocator.h>
+#include <Base/CFString.h>
 #include <Base/RobinHoodUtil.h>
-#include <mutex>
-#include <optional>
+#include <Base/algo.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreServices/CoreServices.h>
-#include <Base/CFStackAllocator.h>
-#include <Base/CFPtr.h>
-#include <Base/CFString.h>
-#include <Base/algo.h>
-#include <pstld/pstld.h>
-#include <memory_resource>
-#include <sys/xattr.h>
-#include <frozen/unordered_map.h>
+#include <bit>
+#include <cassert>
+#include <fmt/format.h>
+#include <fmt/printf.h>
 #include <frozen/string.h>
+#include <frozen/unordered_map.h>
+#include <memory_resource>
+#include <mutex>
+#include <optional>
+#include <pstld/pstld.h>
 #include <ranges>
+#include <string_view>
+#include <sys/xattr.h>
+#include <utility>
 
 namespace nc::utility {
 

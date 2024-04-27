@@ -1,6 +1,6 @@
 // Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PosixFilesystemImpl.h"
-#include <stdio.h>
+#include <cstdio>
 
 namespace nc::base {
 

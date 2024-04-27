@@ -1,7 +1,9 @@
 Checks: >
   -*,
   -clang-diagnostic-c99-designator,
-  modernize-avoid-bind
+  modernize-avoid-bind,
+  modernize-concat-nested-namespaces,
+  modernize-deprecated-headers
 
 ExtraArgs:
 - -Wno-unknown-pragmas

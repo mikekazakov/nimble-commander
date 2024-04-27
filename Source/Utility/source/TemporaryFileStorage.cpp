@@ -1,7 +1,7 @@
 // Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TemporaryFileStorage.h"
 #include <Base/algo.h>
-#include <stdio.h>
+#include <cstdio>
 #include <unistd.h>
 
 namespace nc::utility {

@@ -1,10 +1,10 @@
 // Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <string>
 #include <Cocoa/Cocoa.h>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
 #include <mutex>
+#include <string>
 
 #include <Utility/Encodings.h>
 

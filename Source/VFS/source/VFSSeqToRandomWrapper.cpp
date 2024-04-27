@@ -1,17 +1,17 @@
 // Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Base/algo.h>
-#include <Base/CommonPaths.h>
-#include <Utility/SystemInformation.h>
 #include "../include/VFS/VFSSeqToRandomWrapper.h"
 #include "../include/VFS/VFSError.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <limits.h>
-#include <stddef.h>
-#include <sys/param.h>
-#include <sys/fcntl.h>
-#include <errno.h>
+#include <Base/CommonPaths.h>
+#include <Base/algo.h>
+#include <Utility/SystemInformation.h>
+#include <cerrno>
+#include <climits>
+#include <cstddef>
+#include <cstdio>
 #include <fmt/core.h>
+#include <sys/fcntl.h>
+#include <sys/param.h>
+#include <unistd.h>
 
 VFSSeqToRandomROWrapperFile::Backend::~Backend()
 {

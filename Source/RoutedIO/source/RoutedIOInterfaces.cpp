@@ -1,18 +1,18 @@
 // Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <assert.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stddef.h>
-#include <unistd.h>
-#include <ftw.h>
-#include <dirent.h>
-#include <signal.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/param.h>
-#include <sys/mount.h>
 #include <Base/CFPtr.h>
+#include <cassert>
+#include <cerrno>
+#include <csignal>
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <dirent.h>
+#include <ftw.h>
+#include <sys/mount.h>
+#include <sys/param.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "RoutedIOInterfaces.h"
 #include "Trash.h"

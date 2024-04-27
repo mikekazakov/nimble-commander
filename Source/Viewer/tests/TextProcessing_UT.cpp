@@ -7,8 +7,8 @@
 #include <Utility/FontExtras.h>
 #include <Base/algo.h>
 
+#include <cstdint>
 #include <string>
-#include <stdint.h>
 
 using namespace nc::viewer;
 

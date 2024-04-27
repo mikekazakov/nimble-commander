@@ -1,10 +1,10 @@
 // Copyright (C) 2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SysLocale.h"
-#include <locale.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <clocale>
+#include <filesystem>
 #include <fmt/format.h>
 #include <vector>
-#include <filesystem>
-#include <CoreFoundation/CoreFoundation.h>
 
 namespace nc::base {
 

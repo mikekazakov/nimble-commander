@@ -1,6 +1,6 @@
 // Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Internal.h"
-#include <assert.h>
+#include <cassert>
 
 namespace nc::vfs::arc {
 

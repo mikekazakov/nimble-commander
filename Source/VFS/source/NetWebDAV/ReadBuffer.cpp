@@ -1,8 +1,8 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ReadBuffer.h"
-#include <stdlib.h>
 #include <algorithm>
-#include <assert.h>
+#include <cassert>
+#include <cstdlib>
 
 namespace nc::vfs::webdav {
 

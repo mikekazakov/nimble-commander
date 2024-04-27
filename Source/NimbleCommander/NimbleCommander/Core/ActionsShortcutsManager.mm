@@ -1,10 +1,10 @@
 // Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NimbleCommander/Bootstrap/Config.h>
-#include <Config/RapidJSON.h>
 #include "ActionsShortcutsManager.h"
-#include <assert.h>
-#include <frozen/unordered_map.h>
+#include <Config/RapidJSON.h>
+#include <NimbleCommander/Bootstrap/Config.h>
+#include <cassert>
 #include <frozen/string.h>
+#include <frozen/unordered_map.h>
 
 // this key should not exist in config defaults
 static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";

@@ -1338,8 +1338,8 @@
 		CF6BF8522197F5C80017CECB /* PanelBriefViewFixedNumberLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewFixedNumberLayout.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedNumberLayout.h; sourceTree = "<group>"; };
 		CF6BF8532197F5C80017CECB /* PanelBriefViewFixedNumberLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedNumberLayout.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedNumberLayout.mm; sourceTree = "<group>"; };
 		CF6D997D196675290077B146 /* Nimble Commander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CF6D9D2B1966A56E0077B146 /* NimbleCommander-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-Info.plist"; path = "NimbleCommander/Resources/NimbleCommander-Info.plist"; sourceTree = SOURCE_ROOT; };
-		CF6D9D2D1966A57B0077B146 /* NimbleCommander-MAS-Free-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-MAS-Free-Info.plist"; path = "NimbleCommander/Resources/NimbleCommander-MAS-Free-Info.plist"; sourceTree = SOURCE_ROOT; };
+		CF6D9D2B1966A56E0077B146 /* NimbleCommander-NonMAS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-NonMAS-Info.plist"; path = "NimbleCommander/Resources/NimbleCommander-NonMAS-Info.plist"; sourceTree = SOURCE_ROOT; };
+		CF6D9D2D1966A57B0077B146 /* NimbleCommander-MAS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-MAS-Info.plist"; path = "NimbleCommander/Resources/NimbleCommander-MAS-Info.plist"; sourceTree = SOURCE_ROOT; };
 		CF6D9D301966A5E10077B146 /* Files-Lite.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = "Files-Lite.entitlements"; path = "NimbleCommander/Resources/Files-Lite.entitlements"; sourceTree = SOURCE_ROOT; };
 		CF6E44871CCE390A009F45B0 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		CF6ECDA71E9F4776008FA79E /* ChangeAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChangeAttributes.h; path = NimbleCommander/States/FilePanels/Actions/ChangeAttributes.h; sourceTree = SOURCE_ROOT; };
@@ -1634,7 +1634,6 @@
 		CFFA952E1F4930BA0035E606 /* DragSender.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DragSender.mm; path = NimbleCommander/States/FilePanels/DragSender.mm; sourceTree = SOURCE_ROOT; };
 		CFFED0891CC0B41F0059611B /* SpotlightSearchPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightSearchPopupViewController.h; path = NimbleCommander/States/FilePanels/Views/SpotlightSearchPopupViewController.h; sourceTree = SOURCE_ROOT; };
 		CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SpotlightSearchPopupViewController.mm; path = NimbleCommander/States/FilePanels/Views/SpotlightSearchPopupViewController.mm; sourceTree = SOURCE_ROOT; };
-		CFFFBABA1D46284600DFE4D6 /* NimbleCommander-CI-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-CI-Info.plist"; path = "NimbleCommander/Resources/NimbleCommander-CI-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2099,7 +2098,7 @@
 		CF6D99A5196675FE0077B146 /* NC NonMAS */ = {
 			isa = PBXGroup;
 			children = (
-				CF6D9D2B1966A56E0077B146 /* NimbleCommander-Info.plist */,
+				CF6D9D2B1966A56E0077B146 /* NimbleCommander-NonMAS-Info.plist */,
 				CF52C3CB22BE5B2D0043E825 /* NCNonMAS.entitlements */,
 			);
 			name = "NC NonMAS";
@@ -2109,7 +2108,7 @@
 			isa = PBXGroup;
 			children = (
 				CF6D9D301966A5E10077B146 /* Files-Lite.entitlements */,
-				CF6D9D2D1966A57B0077B146 /* NimbleCommander-MAS-Free-Info.plist */,
+				CF6D9D2D1966A57B0077B146 /* NimbleCommander-MAS-Info.plist */,
 			);
 			name = "NS Free MAS";
 			sourceTree = "<group>";
@@ -2266,14 +2265,6 @@
 			name = Network;
 			sourceTree = "<group>";
 		};
-		CFA7E02A1EB97718001FE66C /* NC NonMAS CI */ = {
-			isa = PBXGroup;
-			children = (
-				CFFFBABA1D46284600DFE4D6 /* NimbleCommander-CI-Info.plist */,
-			);
-			name = "NC NonMAS CI";
-			sourceTree = "<group>";
-		};
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -2415,7 +2406,6 @@
 			children = (
 				CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */,
 				CF6D99A5196675FE0077B146 /* NC NonMAS */,
-				CFA7E02A1EB97718001FE66C /* NC NonMAS CI */,
 				CF6D99A6196676200077B146 /* NS Free MAS */,
 			);
 			name = "Supporting Files";
@@ -4350,7 +4340,7 @@
 					"$(inherited)",
 					"__NC_VERSION_MAS__=1",
 				);
-				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-MAS-Free-Info.plist";
+				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-MAS-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Lite";
 				PRODUCT_NAME = "Nimble Commander";
 				PROVISIONING_PROFILE_SPECIFIER = "NC MAS Free Development";
@@ -4369,7 +4359,7 @@
 					"$(inherited)",
 					"__NC_VERSION_MAS__=1",
 				);
-				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-MAS-Free-Info.plist";
+				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-MAS-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Lite";
 				PRODUCT_NAME = "Nimble Commander";
 				PROVISIONING_PROFILE_SPECIFIER = "NC MAS Free Distribution";
@@ -4385,7 +4375,7 @@
 					"$(inherited)",
 					"__NC_VERSION_NONMAS__=1",
 				);
-				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-CI-Info.plist";
+				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-NonMAS-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -4400,7 +4390,7 @@
 					"$(inherited)",
 					"__NC_VERSION_NONMAS__=1",
 				);
-				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-CI-Info.plist";
+				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-NonMAS-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -4435,7 +4425,7 @@
 					"$(inherited)",
 					"__NC_VERSION_NONMAS__=1",
 				);
-				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Info.plist";
+				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-NonMAS-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
 				PROVISIONING_PROFILE_SPECIFIER = "NC NonMAS Developer ID";
@@ -4455,7 +4445,7 @@
 					"$(inherited)",
 					"__NC_VERSION_NONMAS__=1",
 				);
-				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Info.plist";
+				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-NonMAS-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
 				PROVISIONING_PROFILE_SPECIFIER = "NC NonMAS Developer ID";

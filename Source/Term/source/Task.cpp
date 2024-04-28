@@ -1,19 +1,19 @@
 // Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Task.h"
-#include <sys/select.h>
-#include <sys/ioctl.h>
-#include <sys/sysctl.h>
-#include <sys/stat.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <termios.h>
-#include <locale.h>
-#include <algorithm>
-#include <CoreFoundation/CoreFoundation.h>
 #include <Base/CloseFrom.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <algorithm>
+#include <cerrno>
+#include <clocale>
+#include <cstdio>
+#include <cstdlib>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <sys/select.h>
+#include <sys/stat.h>
+#include <sys/sysctl.h>
+#include <termios.h>
+#include <unistd.h>
 
 namespace nc::term {
 

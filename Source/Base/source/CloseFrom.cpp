@@ -1,10 +1,10 @@
 // Copyright (C) 2021-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/CloseFrom.h>
-#include <unistd.h>
+#include <cassert>
 #include <libproc.h>
-#include <vector>
 #include <optional>
-#include <assert.h>
+#include <unistd.h>
+#include <vector>
 
 namespace nc::base {
 

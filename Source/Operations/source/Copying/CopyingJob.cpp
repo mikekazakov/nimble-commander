@@ -1,20 +1,21 @@
 // Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <sys/xattr.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/param.h>
-#include <sys/mount.h>
-#include <Base/algo.h>
-#include <Base/Hash.h>
-#include <Utility/PathManip.h>
-#include <Utility/StringExtras.h>
-#include <RoutedIO/RoutedIO.h>
 #include "CopyingJob.h"
 #include "../Statistics.h"
-#include "NativeFSHelpers.h"
-#include <VFS/Native.h>
 #include "Helpers.h"
+#include "NativeFSHelpers.h"
+#include <Base/Hash.h>
+#include <Base/algo.h>
+#include <RoutedIO/RoutedIO.h>
+#include <Utility/PathManip.h>
+#include <Utility/StringExtras.h>
+#include <VFS/Native.h>
 #include <iostream>
+#include <ranges>
+#include <sys/mount.h>
+#include <sys/param.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/xattr.h>
 
 using namespace nc::ops::copying;
 
@@ -2442,8 +2443,7 @@ CopyingJob::StepResult CopyingJob::RenameVFSFile(VFSHost &_common_host,
 
 void CopyingJob::ClearSourceItems()
 {
-    for( auto i = m_SourceItemsToDelete.rbegin(), e = m_SourceItemsToDelete.rend(); i != e; ++i ) {
-        auto index = *i;
+    for( unsigned int index : std::ranges::reverse_view(m_SourceItemsToDelete) ) {
         auto mode = m_SourceItems.ItemMode(index);
         auto &host = m_SourceItems.ItemHost(index);
         auto source_path = m_SourceItems.ComposeFullPath(index);
@@ -2502,18 +2502,16 @@ void CopyingJob::ApplyPermissionFixups()
     // TODO: should NC bark at perms fixup errors?
     if( m_IsDestinationHostNative ) {
         auto &io = routedio::RoutedIO::Default;
-        for( auto i = m_TargetPermissionsFixupEpilogue.rbegin(), e = m_TargetPermissionsFixupEpilogue.rend(); i != e;
-             ++i ) {
-            if( const int fd = io.open(i->path.c_str(), O_RDONLY); fd >= 0 ) {
+        for( auto &i : std::ranges::reverse_view(m_TargetPermissionsFixupEpilogue) ) {
+            if( const int fd = io.open(i.path.c_str(), O_RDONLY); fd >= 0 ) {
                 auto close_fd = at_scope_end([fd] { close(fd); });
-                fchmod(fd, i->mode);
+                fchmod(fd, i.mode);
             }
         }
     }
     else {
-        for( auto i = m_TargetPermissionsFixupEpilogue.rbegin(), e = m_TargetPermissionsFixupEpilogue.rend(); i != e;
-             ++i ) {
-            m_DestinationHost->SetPermissions(i->path.c_str(), i->mode);
+        for( auto &i : std::ranges::reverse_view(m_TargetPermissionsFixupEpilogue) ) {
+            m_DestinationHost->SetPermissions(i.path.c_str(), i.mode);
         }
     }
 }
@@ -2523,17 +2521,16 @@ void CopyingJob::ApplyTimestampsFixups()
     // TODO: should NC bark at timestamp fixup errors?
     if( m_IsDestinationHostNative ) {
         auto &io = routedio::RoutedIO::Default;
-        for( auto i = m_TargetTimestampFixupEpilogue.rbegin(), e = m_TargetTimestampFixupEpilogue.rend(); i != e;
-             ++i ) {
+        for( auto &i : std::ranges::reverse_view(m_TargetTimestampFixupEpilogue) ) {
 
-            if( const int fd = io.open(i->path.c_str(), O_RDONLY); fd >= 0 ) {
+            if( const int fd = io.open(i.path.c_str(), O_RDONLY); fd >= 0 ) {
                 auto close_fd = at_scope_end([fd] { close(fd); });
                 struct stat st;
                 memset(&st, 0, sizeof(st));
-                st.st_atimespec = i->atime;
-                st.st_mtimespec = i->mtime;
-                st.st_ctimespec = i->ctime;
-                st.st_birthtimespec = i->btime;
+                st.st_atimespec = i.atime;
+                st.st_mtimespec = i.mtime;
+                st.st_ctimespec = i.ctime;
+                st.st_birthtimespec = i.btime;
                 AdjustFileTimesForNativeFD(fd, st);
             }
         }

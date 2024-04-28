@@ -1,10 +1,10 @@
 // Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <string.h>
-#include <stdlib.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <cstdlib>
+#include <cstring>
+#include <libkern/OSByteOrder.h>
 #include <sys/types.h>
 #include <sys/xattr.h>
-#include <libkern/OSByteOrder.h>
-#include <CoreFoundation/CoreFoundation.h>
 
 #include "../include/VFS/AppleDoubleEA.h"
 

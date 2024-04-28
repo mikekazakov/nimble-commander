@@ -1,15 +1,15 @@
 // Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "Trash.h"
 #include <Security/Security.h>
+#include <cerrno>
+#include <cstdio>
+#include <frozen/string.h>
+#include <frozen/unordered_map.h>
+#include <libproc.h>
 #include <mach-o/dyld.h>
 #include <sys/stat.h>
-#include <xpc/xpc.h>
 #include <syslog.h>
-#include <errno.h>
-#include <libproc.h>
-#include <stdio.h>
-#include <frozen/unordered_map.h>
-#include <frozen/string.h>
-#include "Trash.h"
+#include <xpc/xpc.h>
 
 // requires that identifier is right and binary is signed by me
 static const char *g_SignatureRequirement =

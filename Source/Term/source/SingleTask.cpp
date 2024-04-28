@@ -6,20 +6,20 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 
-#include <errno.h>
+#include <Base/CloseFrom.h>
+#include <Base/dispatch_cpp.h>
+#include <cerrno>
+#include <csignal>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <fcntl.h>
 #include <grp.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <iostream>
+#include <syslog.h>
 #include <termios.h>
 #include <unistd.h>
 #include <util.h>
-#include <syslog.h>
-#include <signal.h>
-#include <iostream>
-#include <Base/dispatch_cpp.h>
-#include <Base/CloseFrom.h>
 
 #include "SingleTask.h"
 

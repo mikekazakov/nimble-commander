@@ -1,9 +1,9 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <assert.h>
-#include <math.h>
-#include <stdexcept>
-#include <Utility/FontExtras.h>
 #include <Base/algo.h>
+#include <Utility/FontExtras.h>
+#include <cassert>
+#include <cmath>
+#include <stdexcept>
 
 namespace nc::utility {
 

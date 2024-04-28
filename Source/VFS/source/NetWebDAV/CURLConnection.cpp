@@ -2,7 +2,7 @@
 #include "CURLConnection.h"
 #include "Internal.h"
 #include <Base/StringViewZBuf.h>
-#include <assert.h>
+#include <cassert>
 
 // CURL is full of macros with C-style casts
 #pragma clang diagnostic ignored "-Wold-style-cast"

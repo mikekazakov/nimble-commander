@@ -1,12 +1,12 @@
 // Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <CoreText/CoreText.h>
-#include <stdlib.h>
-#include <memory.h>
-#include <assert.h>
-#include <wchar.h>
-#include <cmath>
-#include <vector>
 #include <Utility/FontCache.h>
+#include <cassert>
+#include <cmath>
+#include <cstdlib>
+#include <cwchar>
+#include <memory.h>
+#include <vector>
 
 namespace nc::utility {
 

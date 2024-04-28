@@ -1,8 +1,8 @@
 // Copyright (C) 20 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Base/CloseFrom.h>
 #include "UnitTests_main.h"
+#include <Base/CloseFrom.h>
+#include <cerrno>
 #include <fcntl.h>
-#include <errno.h>
 #include <unistd.h>
 
 using namespace nc::base;

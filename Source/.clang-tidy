@@ -1,7 +1,18 @@
 Checks: >
   -*,
   -clang-diagnostic-c99-designator,
-  modernize-avoid-bind
+  modernize-avoid-bind,
+  modernize-concat-nested-namespaces,
+  modernize-deprecated-headers,
+  modernize-deprecated-ios-base-aliases,
+  modernize-loop-convert,
+  modernize-macro-to-enum
+
+CheckOptions:
+  - key:    modernize-loop-convert.MinConfidence
+    value:  safe
+  - key:    modernize-loop-convert.UseCxx20ReverseRanges
+    value:  true
 
 ExtraArgs:
 - -Wno-unknown-pragmas

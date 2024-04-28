@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VersionCompare.h>
 #include "UnitTests_main.h"
 
@@ -45,10 +45,8 @@ static constexpr Exp g_Expectations[] = {
 TEST_CASE(PREFIX "Check expectations")
 {
     VC vc;
-    constexpr size_t num = std::size(g_Expectations);
-    for( size_t ind = 0; ind != num; ++ind ) {
-        const auto &exp = g_Expectations[ind];
-        INFO(exp.lhs); 
+    for( const auto &exp : g_Expectations ) {
+        INFO(exp.lhs);
         INFO(exp.rhs);
         CHECK(vc.Compare(exp.lhs, exp.rhs) == exp.cmp);
         CHECK(vc.Compare(exp.rhs, exp.lhs) == -exp.cmp);

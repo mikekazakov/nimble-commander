@@ -1,9 +1,9 @@
 // Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/ExecutionDeadline.h>
+#include <cstdlib>
+#include <iostream>
 #include <pthread.h>
 #include <thread>
-#include <iostream>
-#include <stdlib.h>
 
 namespace nc::base {
 

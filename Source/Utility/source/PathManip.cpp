@@ -1,8 +1,8 @@
 // Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <string.h>
-#include <stdlib.h>
-#include <assert.h>
 #include <Utility/PathManip.h>
+#include <cassert>
+#include <cstdlib>
+#include <cstring>
 
 bool EliminateTrailingSlashInPath(char *_path)
 {

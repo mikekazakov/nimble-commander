@@ -1,6 +1,6 @@
 // Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/chained_strings.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <memory.h>
 
 namespace nc::base {

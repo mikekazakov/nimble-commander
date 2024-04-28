@@ -1,6 +1,0 @@
-GCC_PREPROCESSOR_DEFINITIONS = NDEBUG=1 $(inherited)
-LLVM_LTO = YES
-DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
-
-// uncomment these to allow meaningful assembly view:
-// LLVM_LTO = NO

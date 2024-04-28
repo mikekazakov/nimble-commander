@@ -113,8 +113,6 @@
 		CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ButtonWithTextColor.h; path = include/Utility/ButtonWithTextColor.h; sourceTree = "<group>"; };
 		CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ButtonWithTextColor.mm; path = source/ButtonWithTextColor.mm; sourceTree = "<group>"; };
 		CF22060A27C2644B008EDE3A /* HexadecimalColor_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HexadecimalColor_UT.mm; path = tests/HexadecimalColor_UT.mm; sourceTree = "<group>"; };
-		CF233AF0219E7E9500693E1A /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
-		CF233AF1219E7E9600693E1A /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
 		CF233AF2219E7E9600693E1A /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
 		CF233AF3219E7E9600693E1A /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
 		CF24E1F32288A9FB00C166FA /* ActionShortcut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActionShortcut.h; path = include/Utility/ActionShortcut.h; sourceTree = "<group>"; };
@@ -279,9 +277,7 @@
 		CF233AEF219E7E8200693E1A /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				CF233AF1219E7E9600693E1A /* debug.xcconfig */,
 				CF233AF2219E7E9600693E1A /* default.xcconfig */,
-				CF233AF0219E7E9500693E1A /* release.xcconfig */,
 				CF233AF3219E7E9600693E1A /* tests.xcconfig */,
 			);
 			name = Config;
@@ -684,7 +680,7 @@
 		};
 		CF960DED1C97F833001D8B02 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF233AF1219E7E9600693E1A /* debug.xcconfig */;
+			baseConfigurationReference = CF233AF2219E7E9600693E1A /* default.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
@@ -692,7 +688,7 @@
 		};
 		CF960DEE1C97F833001D8B02 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF233AF0219E7E9500693E1A /* release.xcconfig */;
+			baseConfigurationReference = CF233AF2219E7E9600693E1A /* default.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};

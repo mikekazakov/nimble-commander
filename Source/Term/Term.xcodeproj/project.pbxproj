@@ -101,8 +101,6 @@
 		CF1ADE441F7E76C4003E9B76 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		CF1ADE461F7E77AE003E9B76 /* TranslateMaps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TranslateMaps.cpp; path = source/TranslateMaps.cpp; sourceTree = SOURCE_ROOT; };
 		CF1ADE471F7E77AE003E9B76 /* TranslateMaps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TranslateMaps.h; path = source/TranslateMaps.h; sourceTree = SOURCE_ROOT; };
-		CF238E0B21A136E800569809 /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
-		CF238E0C21A136E800569809 /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF41350A1F846CE6007429B6 /* ShellTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShellTask.h; path = include/Term/ShellTask.h; sourceTree = "<group>"; };
 		CF41350B1F846CE6007429B6 /* SingleTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SingleTask.h; path = include/Term/SingleTask.h; sourceTree = "<group>"; };
 		CF41350C1F846CE6007429B6 /* Task.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Task.h; path = include/Term/Task.h; sourceTree = "<group>"; };
@@ -301,9 +299,7 @@
 		CF5FD9291FA1AC1200752E59 /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				CF238E0B21A136E800569809 /* debug.xcconfig */,
 				CF5FD92A1FA1AC5100752E59 /* default.xcconfig */,
-				CF238E0C21A136E800569809 /* release.xcconfig */,
 				CFE08B3E23DCFC77007E99B8 /* tests.xcconfig */,
 			);
 			name = Config;
@@ -508,14 +504,14 @@
 		};
 		CF1ADE131F7E6A2A003E9B76 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF238E0B21A136E800569809 /* debug.xcconfig */;
+			baseConfigurationReference = CF5FD92A1FA1AC5100752E59 /* default.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		CF1ADE141F7E6A2A003E9B76 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF238E0C21A136E800569809 /* release.xcconfig */;
+			baseConfigurationReference = CF5FD92A1FA1AC5100752E59 /* default.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;

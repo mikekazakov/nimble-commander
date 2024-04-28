@@ -14,10 +14,13 @@ SDKROOT = macosx
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Preprocessor
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-RAPIDJSON_PP_FLAGS[arch=x86_64] = RAPIDJSON_HAS_STDSTRING=1 RAPIDJSON_HAS_CXX11_NOEXCEPT=1 RAPIDJSON_HAS_CXX11_RVALUE_REFS=1 RAPIDJSON_48BITPOINTER_OPTIMIZATION=1 RAPIDJSON_SSE2=1 RAPIDJSON_SSE42=1
-RAPIDJSON_PP_FLAGS[arch=arm64]  = RAPIDJSON_HAS_STDSTRING=1 RAPIDJSON_HAS_CXX11_NOEXCEPT=1 RAPIDJSON_HAS_CXX11_RVALUE_REFS=1
-// disabled RAPIDJSON_NEON=1 for now, after a weird crash on ARM64 during MAS review...
-GCC_PREPROCESSOR_DEFINITIONS = SPDLOG_COMPILED_LIB SPDLOG_FMT_EXTERNAL $(RAPIDJSON_PP_FLAGS)
+RAPIDJSON_PP_FLAGS_x86_64 = RAPIDJSON_HAS_STDSTRING=1 RAPIDJSON_HAS_CXX11_NOEXCEPT=1 RAPIDJSON_HAS_CXX11_RVALUE_REFS=1 RAPIDJSON_48BITPOINTER_OPTIMIZATION=1 RAPIDJSON_SSE2=1 RAPIDJSON_SSE42=1
+RAPIDJSON_PP_FLAGS_arm64  = RAPIDJSON_HAS_STDSTRING=1 RAPIDJSON_HAS_CXX11_NOEXCEPT=1 RAPIDJSON_HAS_CXX11_RVALUE_REFS=1
+
+COMMON_PREPROCESSOR_FLAGS = SPDLOG_COMPILED_LIB SPDLOG_FMT_EXTERNAL GTEST_DONT_DEFINE_FAIL=1 GTEST_DONT_DEFINE_SUCCEED=1
+
+GCC_PREPROCESSOR_DEFINITIONS[config=Debug]   = $(COMMON_PREPROCESSOR_FLAGS) $(RAPIDJSON_PP_FLAGS_$(CURRENT_ARCH))
+GCC_PREPROCESSOR_DEFINITIONS[config=Release] = $(COMMON_PREPROCESSOR_FLAGS) $(RAPIDJSON_PP_FLAGS_$(CURRENT_ARCH)) NDEBUG=1
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Code generation
@@ -26,7 +29,19 @@ CLANG_X86_VECTOR_INSTRUCTIONS[arch=x86_64] = sse4.2
 GCC_NO_COMMON_BLOCKS = YES
 ENABLE_STRICT_OBJC_MSGSEND = YES
 CLANG_ENABLE_OBJC_ARC = YES
-DEBUG_INFORMATION_FORMAT = dwarf
+
+DEBUG_INFORMATION_FORMAT[config=Debug]   = dwarf
+DEBUG_INFORMATION_FORMAT[config=Release] = dwarf-with-dsym
+
+GCC_OPTIMIZATION_LEVEL[config=Debug]   = 0
+GCC_OPTIMIZATION_LEVEL[config=Release] = s
+
+// comment these to allow meaningful assembly view:
+LLVM_LTO[config=Debug]   = NO
+LLVM_LTO[config=Release] = YES
+
+COPY_PHASE_STRIP[config=Debug]   = NO
+COPY_PHASE_STRIP[config=Release] = YES
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Linker
@@ -143,3 +158,10 @@ CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES
 CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES
 CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES
 CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = NO // causes too many false positives...
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Testability
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//ENABLE_TESTABILITY = YES

@@ -135,8 +135,6 @@
 		CFCF43E32B8B644B00B513C7 /* TagsStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TagsStorage.cpp; path = source/TagsStorage.cpp; sourceTree = "<group>"; };
 		CFF33F5F2556924900B3C92C /* libPanel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPanel.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF33F8D255692C000B3C92C /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
-		CFF33F8E255692C000B3C92C /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
-		CFF33F8F255692C000B3C92C /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CFF33F90255692C000B3C92C /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
 		CFF33F952556941B00B3C92C /* PanelData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelData.h; path = include/Panel/PanelData.h; sourceTree = "<group>"; };
 		CFF33F982556942600B3C92C /* PanelData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelData.mm; path = source/PanelData.mm; sourceTree = "<group>"; };
@@ -255,9 +253,7 @@
 		CFF33F8C255692B600B3C92C /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				CFF33F8E255692C000B3C92C /* debug.xcconfig */,
 				CFF33F8D255692C000B3C92C /* default.xcconfig */,
-				CFF33F8F255692C000B3C92C /* release.xcconfig */,
 				CFF33F90255692C000B3C92C /* tests.xcconfig */,
 			);
 			name = Config;
@@ -598,14 +594,14 @@
 		};
 		CFF33F612556924900B3C92C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CFF33F8E255692C000B3C92C /* debug.xcconfig */;
+			baseConfigurationReference = CFF33F8D255692C000B3C92C /* default.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		CFF33F622556924900B3C92C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CFF33F8F255692C000B3C92C /* release.xcconfig */;
+			baseConfigurationReference = CFF33F8D255692C000B3C92C /* default.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;

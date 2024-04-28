@@ -58,9 +58,7 @@
 /* Begin PBXFileReference section */
 		CF3736E12148EF1600C3EBDC /* IconRepositoryImplBase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconRepositoryImplBase.mm; path = source/IconRepositoryImplBase.mm; sourceTree = "<group>"; };
 		CF3736E32149245400C3EBDC /* IconRepositoryImpl_UnitTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconRepositoryImpl_UnitTests.mm; path = tests/IconRepositoryImpl_UnitTests.mm; sourceTree = "<group>"; };
-		CF38BEBA2148AB1B005E336C /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF38BEBB2148AB1B005E336C /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
-		CF38BEBC2148AB1B005E336C /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CF38BEBD2148AD64005E336C /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
 		CF38BEC22148AE5D005E336C /* VFSIconIT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VFSIconIT; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF38BEC92148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLThumbnailsCacheImpl_IntegrationTests.mm; path = tests/QLThumbnailsCacheImpl_IntegrationTests.mm; sourceTree = "<group>"; };
@@ -143,8 +141,6 @@
 			children = (
 				CF38BEBD2148AD64005E336C /* tests.xcconfig */,
 				CF38BEBB2148AB1B005E336C /* default.xcconfig */,
-				CF38BEBC2148AB1B005E336C /* debug.xcconfig */,
-				CF38BEBA2148AB1B005E336C /* release.xcconfig */,
 			);
 			name = Config;
 			sourceTree = "<group>";
@@ -437,14 +433,14 @@
 		};
 		CF8BDD002147D50300F14C3E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF38BEBC2148AB1B005E336C /* debug.xcconfig */;
+			baseConfigurationReference = CF38BEBB2148AB1B005E336C /* default.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		CF8BDD012147D50300F14C3E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF38BEBA2148AB1B005E336C /* release.xcconfig */;
+			baseConfigurationReference = CF38BEBB2148AB1B005E336C /* default.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;

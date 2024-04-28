@@ -24,7 +24,6 @@ namespace nc::base {
 // running under the debugger or has a debugger attached post facto).
 bool AmIBeingDebugged() noexcept
 {
-    int junk;
     int mib[4];
     struct kinfo_proc info;
     size_t size;
@@ -42,7 +41,7 @@ bool AmIBeingDebugged() noexcept
 
     // Call sysctl.
     size = sizeof(info);
-    junk = sysctl(mib, sizeof(mib) / sizeof(*mib), &info, &size, NULL, 0);
+    [[maybe_unused]] int junk = sysctl(mib, sizeof(mib) / sizeof(*mib), &info, &size, NULL, 0);
     assert(junk == 0);
 
     // We're being debugged if the P_TRACED flag is set.

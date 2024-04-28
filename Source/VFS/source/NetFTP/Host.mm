@@ -357,7 +357,7 @@ int FTPHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecker &
     const std::string cmd = "DELE " + path.filename().native();
     const std::string url = BuildFullURLString(parent_path.native());
 
-    CURLMcode curlm_e;
+    [[maybe_unused]] CURLMcode curlm_e;
     auto curl = InstanceForIOAtDir(parent_path);
     if( curl->IsAttached() ) {
         curlm_e = curl->Detach();
@@ -400,7 +400,7 @@ int FTPHost::CreateDirectory(const char *_path,
     std::string cmd = "MKD " + path.filename().native();
     std::string url = BuildFullURLString(parent_path.native());
 
-    CURLMcode curlm_e;
+    [[maybe_unused]] CURLMcode curlm_e;
     auto curl = InstanceForIOAtDir(parent_path);
     if( curl->IsAttached() ) {
         curlm_e = curl->Detach();
@@ -441,7 +441,7 @@ int FTPHost::RemoveDirectory(const char *_path, [[maybe_unused]] const VFSCancel
     const std::string cmd = "RMD " + path.filename().native();
     const std::string url = BuildFullURLString(parent_path.native());
 
-    CURLMcode curlm_e;
+    [[maybe_unused]] CURLMcode curlm_e;
     auto curl = InstanceForIOAtDir(parent_path);
     if( curl->IsAttached() ) {
         curlm_e = curl->Detach();
@@ -485,7 +485,7 @@ int FTPHost::Rename(const char *_old_path,
     std::string cmd1 = "RNFR "s + old_path.native();
     std::string cmd2 = "RNTO "s + new_path.native();
 
-    CURLMcode curlm_e;
+    [[maybe_unused]] CURLMcode curlm_e;
     auto curl = InstanceForIOAtDir(old_parent_path);
     if( curl->IsAttached() ) {
         curlm_e = curl->Detach();

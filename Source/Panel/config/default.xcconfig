@@ -1,5 +1,4 @@
 #include "../XCConfig/common.xcconfig"
-COPY_PHASE_STRIP = NO
 PRODUCT_NAME = $(TARGET_NAME)
 
 HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include $(PROJECT_DIR)/include/Panel $(LIBS)/Base/include $(LIBS)/Utility/include $(LIBS)/VFS/include $(LIBS)/Config/include $(LIBS)/Operations/include $(LIBS)/Term/include

@@ -148,8 +148,6 @@
 		CF1847261E41CC49008B7C9F /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = ../3rd_Party/OpenSSL/built/libssl.a; sourceTree = "<group>"; };
 		CF1847281E41CC4C008B7C9F /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = ../3rd_Party/OpenSSL/built/libcrypto.a; sourceTree = "<group>"; };
 		CF18472F1E41CFB7008B7C9F /* libarchive.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libarchive.a; path = ../3rd_Party/libarchive/built/libarchive.a; sourceTree = "<group>"; };
-		CF197BFA1FB2CE1D009F6C59 /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
-		CF197BFC1FB2CE33009F6C59 /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF1F6FC125E70982003A2497 /* Connection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Connection.h; path = source/NetWebDAV/Connection.h; sourceTree = "<group>"; };
 		CF1F6FC225E70982003A2497 /* CURLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CURLConnection.h; path = source/NetWebDAV/CURLConnection.h; sourceTree = "<group>"; };
 		CF1F6FC325E70982003A2497 /* Connection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Connection.cpp; path = source/NetWebDAV/Connection.cpp; sourceTree = "<group>"; };
@@ -466,9 +464,7 @@
 		CF5FD92B1FA1BCE900752E59 /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				CF197BFA1FB2CE1D009F6C59 /* debug.xcconfig */,
 				CF5FD92C1FA1BD0700752E59 /* default.xcconfig */,
-				CF197BFC1FB2CE33009F6C59 /* release.xcconfig */,
 				CF26DE2221D28699003F0E93 /* tests.xcconfig */,
 			);
 			name = Config;
@@ -953,14 +949,14 @@
 		};
 		CF69CFD11DA224E200992B84 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF197BFA1FB2CE1D009F6C59 /* debug.xcconfig */;
+			baseConfigurationReference = CF5FD92C1FA1BD0700752E59 /* default.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		CF69CFD21DA224E200992B84 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF197BFC1FB2CE33009F6C59 /* release.xcconfig */;
+			baseConfigurationReference = CF5FD92C1FA1BD0700752E59 /* default.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;

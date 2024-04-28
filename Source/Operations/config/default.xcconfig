@@ -1,4 +1,3 @@
 #include "../XCConfig/common.xcconfig"
-ALWAYS_SEARCH_USER_PATHS = NO
 HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include $(LIBS)/VFS/include $(LIBS)/Base/include $(LIBS)/Utility/include $(LIBS)/RoutedIO/include $(HOME)
 OTHER_LDFLAGS = $(inherited) -lVFS -lBase

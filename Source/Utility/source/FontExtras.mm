@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include <string>
 #include <array>
@@ -125,7 +125,7 @@ static const auto g_InfiniteRectPath = CGPathCreateWithRect(CGRectMake(0, 0, CGF
 static void CalculateWidthsOfStringsBulk(CFStringRef const *_str_first,
                                          CFStringRef const *_str_last,
                                          unsigned short *_out_width_first,
-                                         unsigned short *_out_width_last,
+                                         [[maybe_unused]] unsigned short *_out_width_last,
                                          CFDictionaryRef _attributes)
 {
     const auto strings_amount = static_cast<int>(_str_last - _str_first);

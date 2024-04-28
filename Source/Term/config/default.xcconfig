@@ -1,6 +1,4 @@
 #include "../XCConfig/common.xcconfig"
-ENABLE_TESTABILITY = YES
-COPY_PHASE_STRIP = NO
 PRODUCT_NAME = $(TARGET_NAME)
 
 HEADER_SEARCH_PATHS = $(inherited) $(LIBS)/Base/include $(LIBS)/Utility/include $(PROJECT_DIR)/include/Term

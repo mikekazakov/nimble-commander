@@ -109,9 +109,7 @@
 		CF24E2042291772900C166FA /* BaseUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BaseUT; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF24E20B2291777D00C166FA /* UnitTests_main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnitTests_main.cpp; sourceTree = "<group>"; };
 		CF24E20D229191B700C166FA /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
-		CF24E20F229191B800C166FA /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF24E210229191B800C166FA /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
-		CF24E2132291937F00C166FA /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
 		CF24E214229196E100C166FA /* CFPtr_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CFPtr_UT.cpp; sourceTree = "<group>"; };
 		CF308F48213B755F00915730 /* PosixFilesystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PosixFilesystem.cpp; path = source/PosixFilesystem.cpp; sourceTree = "<group>"; };
 		CF308F4C213B773400915730 /* PosixFilesystemImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PosixFilesystemImpl.cpp; path = source/PosixFilesystemImpl.cpp; sourceTree = "<group>"; };
@@ -207,9 +205,7 @@
 		CF24E212229191DF00C166FA /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				CF24E2132291937F00C166FA /* debug.xcconfig */,
 				CF24E20D229191B700C166FA /* default.xcconfig */,
-				CF24E20F229191B800C166FA /* release.xcconfig */,
 				CF24E210229191B800C166FA /* tests.xcconfig */,
 			);
 			name = Config;
@@ -558,14 +554,14 @@
 		};
 		CFD62B791C99C19A0021EE7F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF24E2132291937F00C166FA /* debug.xcconfig */;
+			baseConfigurationReference = CF24E20D229191B700C166FA /* default.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		CFD62B7A1C99C19A0021EE7F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF24E20F229191B800C166FA /* release.xcconfig */;
+			baseConfigurationReference = CF24E20D229191B700C166FA /* default.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;

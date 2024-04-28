@@ -1,5 +1,4 @@
 #include "../XCConfig/common.xcconfig"
-COPY_PHASE_STRIP = NO
 HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include/ $(PROJECT_DIR)/include/Utility/ $(LIBS)/Base/include
 EXECUTABLE_PREFIX = lib
 PRODUCT_NAME = $(TARGET_NAME)

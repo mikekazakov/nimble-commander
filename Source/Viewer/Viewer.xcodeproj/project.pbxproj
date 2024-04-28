@@ -105,8 +105,6 @@
 		CFA9998C26468A4300F72E93 /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Log.cpp; path = source/Log.cpp; sourceTree = "<group>"; };
 		CFD79A7B21F65A980043A26D /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CFD79A7C21F65A980043A26D /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
-		CFD79A7D21F65A980043A26D /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
-		CFD79A7E21F65A980043A26D /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CFD79A8621F65B4E0043A26D /* InternalViewerViewPreviewMode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerViewPreviewMode.mm; path = source/InternalViewerViewPreviewMode.mm; sourceTree = "<group>"; };
 		CFD79A8821F65B4F0043A26D /* Theme.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Theme.mm; path = source/Theme.mm; sourceTree = "<group>"; };
 		CFD79A8921F65B4F0043A26D /* ViewerView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewerView.mm; path = source/ViewerView.mm; sourceTree = "<group>"; };
@@ -223,9 +221,7 @@
 		CFD79A7A21F65A8D0043A26D /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				CFD79A7D21F65A980043A26D /* debug.xcconfig */,
 				CFD79A7B21F65A980043A26D /* default.xcconfig */,
-				CFD79A7E21F65A980043A26D /* release.xcconfig */,
 				CFD79A7C21F65A980043A26D /* tests.xcconfig */,
 			);
 			name = Config;
@@ -619,7 +615,7 @@
 		};
 		CFD79A6821F65A010043A26D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CFD79A7D21F65A980043A26D /* debug.xcconfig */;
+			baseConfigurationReference = CFD79A7B21F65A980043A26D /* default.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -628,7 +624,7 @@
 		};
 		CFD79A6921F65A010043A26D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CFD79A7E21F65A980043A26D /* release.xcconfig */;
+			baseConfigurationReference = CFD79A7B21F65A980043A26D /* default.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;

@@ -35,8 +35,6 @@
 
 /* Begin PBXFileReference section */
 		CF2343E922C908AC00F516CB /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
-		CF2343EA22C90A0600F516CB /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
-		CF2343EB22C90A0600F516CB /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF4601D7256132110095FC73 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		CF4601DE256132400095FC73 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		CF46022F256312190095FC73 /* libRoutedIO.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRoutedIO.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,9 +95,7 @@
 		CF2343E822C9086B00F516CB /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				CF2343EA22C90A0600F516CB /* debug.xcconfig */,
 				CF2343E922C908AC00F516CB /* default.xcconfig */,
-				CF2343EB22C90A0600F516CB /* release.xcconfig */,
 			);
 			name = Config;
 			sourceTree = "<group>";
@@ -396,7 +392,7 @@
 		};
 		CF8D0D5F1D9E4D7400ADFF14 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF2343EA22C90A0600F516CB /* debug.xcconfig */;
+			baseConfigurationReference = CF2343E922C908AC00F516CB /* default.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
@@ -404,7 +400,7 @@
 		};
 		CF8D0D601D9E4D7400ADFF14 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF2343EB22C90A0600F516CB /* release.xcconfig */;
+			baseConfigurationReference = CF2343E922C908AC00F516CB /* default.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};

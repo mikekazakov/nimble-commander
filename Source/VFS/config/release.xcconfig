@@ -1,2 +1,0 @@
-#include "../XCConfig/release.xcconfig"
-#include "default.xcconfig"

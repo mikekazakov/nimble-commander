@@ -190,8 +190,6 @@
 		CF5C8BDC22D0D69100619F45 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CompressDialog.xib; sourceTree = "<group>"; };
 		CF5C8BDF22D0D69500619F45 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/CompressDialog.strings; sourceTree = "<group>"; };
 		CF5FD93E1FA2D3B400752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
-		CF62B7C121B3D703009972DE /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
-		CF62B7C221B3D703009972DE /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF7084D61EF7CC770072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = source/Pool.h; sourceTree = "<group>"; };
 		CF7084D71EF7CC770072F0F6 /* Pool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pool.mm; path = source/Pool.mm; sourceTree = "<group>"; };
 		CF7084DA1EF7CCB00072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = include/Operations/Pool.h; sourceTree = "<group>"; };
@@ -405,9 +403,7 @@
 		CF5FD93D1FA2D39F00752E59 /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				CF62B7C121B3D703009972DE /* debug.xcconfig */,
 				CF5FD93E1FA2D3B400752E59 /* default.xcconfig */,
-				CF62B7C221B3D703009972DE /* release.xcconfig */,
 				CF2C101B22A073AF00A5359D /* tests.xcconfig */,
 			);
 			name = Config;
@@ -1187,7 +1183,7 @@
 		};
 		CFF53B411EDD197300F567C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF62B7C121B3D703009972DE /* debug.xcconfig */;
+			baseConfigurationReference = CF5FD93E1FA2D3B400752E59 /* default.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
@@ -1195,7 +1191,7 @@
 		};
 		CFF53B421EDD197300F567C4 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF62B7C221B3D703009972DE /* release.xcconfig */;
+			baseConfigurationReference = CF5FD93E1FA2D3B400752E59 /* default.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};

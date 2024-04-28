@@ -185,7 +185,7 @@ std::optional<CPULoad> GetCPULoad() noexcept
     double idle = 0.;
 
     static unsigned int *prior = static_cast<unsigned int *>(calloc(CPU_STATE_MAX * numCPUs, sizeof(unsigned int)));
-    static const unsigned int alloc_cpus = numCPUs;
+    [[maybe_unused]] static const unsigned int alloc_cpus = numCPUs;
     assert(alloc_cpus == numCPUs);
 
     for( unsigned i = 0; i < numCPUs; ++i ) {

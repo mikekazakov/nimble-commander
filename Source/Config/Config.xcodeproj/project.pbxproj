@@ -38,8 +38,6 @@
 		CF20CC0B215A2666006716F6 /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Config.h; path = include/Config/Config.h; sourceTree = "<group>"; };
 		CF20CC0D215A267B006716F6 /* Config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Config.cpp; path = source/Config.cpp; sourceTree = "<group>"; };
 		CF20CC0F215A2701006716F6 /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
-		CF20CC10215A2701006716F6 /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
-		CF20CC11215A2701006716F6 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF20CC12215B524C006716F6 /* RapidJSON_fwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RapidJSON_fwd.h; path = include/Config/RapidJSON_fwd.h; sourceTree = "<group>"; };
 		CF20CC13215B524C006716F6 /* RapidJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RapidJSON.h; path = include/Config/RapidJSON.h; sourceTree = "<group>"; };
 		CF20CC16215B5253006716F6 /* RapidJSON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RapidJSON.cpp; path = source/RapidJSON.cpp; sourceTree = "<group>"; };
@@ -110,9 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				CF20CC27215BB10A006716F6 /* tests.xcconfig */,
-				CF20CC10215A2701006716F6 /* debug.xcconfig */,
 				CF20CC0F215A2701006716F6 /* default.xcconfig */,
-				CF20CC11215A2701006716F6 /* release.xcconfig */,
 			);
 			name = Config;
 			sourceTree = "<group>";
@@ -285,14 +281,14 @@
 /* Begin XCBuildConfiguration section */
 		CF20CBE3215A2526006716F6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF20CC10215A2701006716F6 /* debug.xcconfig */;
+			baseConfigurationReference = CF20CC0F215A2701006716F6 /* default.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		CF20CBE4215A2526006716F6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF20CC11215A2701006716F6 /* release.xcconfig */;
+			baseConfigurationReference = CF20CC0F215A2701006716F6 /* default.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;

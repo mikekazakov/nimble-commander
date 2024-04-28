@@ -1005,8 +1005,6 @@
 		CF5FE80A1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewTableHeaderCell.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderCell.mm; sourceTree = SOURCE_ROOT; };
 		CF5FE80C1E16461600CD83B4 /* PanelListViewTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewTableHeaderView.h; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderView.h; sourceTree = SOURCE_ROOT; };
 		CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewTableHeaderView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderView.mm; sourceTree = SOURCE_ROOT; };
-		CF6572991FA6CD7300ABF85F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = NimbleCommander/Config/debug.xcconfig; sourceTree = SOURCE_ROOT; };
-		CF65729A1FA6CD8100ABF85F /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = NimbleCommander/Config/release.xcconfig; sourceTree = SOURCE_ROOT; };
 		CF67F19A2952034200B92944 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Icon.icns; path = NimbleCommander/Resources/Icon.icns; sourceTree = "<group>"; };
 		CF67F1BE2954689000B92944 /* Theme_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Theme_UT.mm; path = NimbleCommander/Tests/Theme_UT.mm; sourceTree = "<group>"; };
 		CF67F1C42954BF9400B92944 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowThemesTabAutomaticSwitchingSheet.xib; sourceTree = "<group>"; };
@@ -1548,9 +1546,7 @@
 		CF197C051FB31597009F6C59 /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				CF6572991FA6CD7300ABF85F /* debug.xcconfig */,
 				CF5FD92D1FA2C02E00752E59 /* default.xcconfig */,
-				CF65729A1FA6CD8100ABF85F /* release.xcconfig */,
 				CFA22D2B2B51BD7E00E71479 /* tests.xcconfig */,
 			);
 			name = Config;
@@ -3762,7 +3758,7 @@
 		};
 		CFC5122C16C4BD3D00D247EE /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF6572991FA6CD7300ABF85F /* debug.xcconfig */;
+			baseConfigurationReference = CF5FD92D1FA2C02E00752E59 /* default.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
@@ -3770,7 +3766,7 @@
 		};
 		CFC5122D16C4BD3D00D247EE /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF65729A1FA6CD8100ABF85F /* release.xcconfig */;
+			baseConfigurationReference = CF5FD92D1FA2C02E00752E59 /* default.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};

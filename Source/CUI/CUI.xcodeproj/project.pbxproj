@@ -18,8 +18,6 @@
 		CF46018725612CFD0095FC73 /* CUIResources.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = CUIResources.plist; path = resources/CUIResources.plist; sourceTree = "<group>"; };
 		CFAA4D0D2BBADD03003073A2 /* CommandPopover.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CommandPopover.h; path = include/CUI/CommandPopover.h; sourceTree = "<group>"; };
 		CFAA4D0E2BBADD0D003073A2 /* CommandPopover.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CommandPopover.mm; path = source/CommandPopover.mm; sourceTree = "<group>"; };
-		CFD79ADE21FE298F0043A26D /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
-		CFD79ADF21FE298F0043A26D /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
 		CFD79AE121FE29900043A26D /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
 		CFD79AEA21FE474B0043A26D /* ProcessSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessSheetController.h; path = include/CUI/ProcessSheetController.h; sourceTree = "<group>"; };
 		CFD79AEC21FE47560043A26D /* ProcessSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProcessSheetController.mm; path = source/ProcessSheetController.mm; sourceTree = "<group>"; };
@@ -73,9 +71,7 @@
 		CFD79AE621FE29950043A26D /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				CFD79ADF21FE298F0043A26D /* debug.xcconfig */,
 				CFD79AE121FE29900043A26D /* default.xcconfig */,
-				CFD79ADE21FE298F0043A26D /* release.xcconfig */,
 			);
 			name = Config;
 			sourceTree = "<group>";

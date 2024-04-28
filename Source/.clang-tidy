@@ -5,7 +5,8 @@ Checks: >
   modernize-concat-nested-namespaces,
   modernize-deprecated-headers,
   modernize-deprecated-ios-base-aliases,
-  modernize-loop-convert
+  modernize-loop-convert,
+  modernize-macro-to-enum
 
 CheckOptions:
   - key:    modernize-loop-convert.MinConfidence

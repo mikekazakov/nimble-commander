@@ -1,13 +1,14 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "Tests.h"
-#include "TestEnv.h"
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../source/NetWebDAV/WebDAVHost.h"
-#include <VFS/VFSEasyOps.h>
-#include <VFS/Native.h>
 #include "NCE.h"
-#include <sys/stat.h>
-#include <span>
+#include "TestEnv.h"
+#include "Tests.h"
+#include <VFS/Native.h>
+#include <VFS/VFSEasyOps.h>
 #include <functional>
+#include <memory>
+#include <span>
+#include <sys/stat.h>
 
 #define PREFIX "WebDAV "
 
@@ -28,14 +29,13 @@ static void WriteWholeFile(VFSHost &_host, const std::filesystem::path &_path, s
 
 static std::shared_ptr<WebDAVHost> spawnLocalHost()
 {
-    return std::shared_ptr<WebDAVHost>(new WebDAVHost(
-        g_Ubuntu2004Host, g_Ubuntu2004Username, g_Ubuntu2004Password, "webdav", false, g_Ubuntu2004Port));
+    return std::make_shared<WebDAVHost>(
+        g_Ubuntu2004Host, g_Ubuntu2004Username, g_Ubuntu2004Password, "webdav", false, g_Ubuntu2004Port);
 }
 
 static std::shared_ptr<WebDAVHost> spawnYandexDiskHost()
 {
-    return std::shared_ptr<WebDAVHost>(
-        new WebDAVHost("webdav.yandex.com", g_YandexDiskUsername, g_YandexDiskPassword, "", true));
+    return std::make_shared<WebDAVHost>("webdav.yandex.com", g_YandexDiskUsername, g_YandexDiskPassword, "", true);
 }
 
 static std::shared_ptr<WebDAVHost> Spawn(const std::string &_server)
@@ -48,7 +48,10 @@ static std::shared_ptr<WebDAVHost> Spawn(const std::string &_server)
 }
 
 #define INSTANTIATE_TEST(Name, Function, Server)                                                                       \
-    TEST_CASE(PREFIX Name " - " Server) { Function(Spawn(Server)); }
+    TEST_CASE(PREFIX Name " - " Server)                                                                                \
+    {                                                                                                                  \
+        Function(Spawn(Server));                                                                                       \
+    }
 
 TEST_CASE(PREFIX "can connect to localhost")
 {
@@ -196,15 +199,42 @@ static void TestVariousCompleteWrites(VFSHostPtr _host)
     file->SetUploadSize(file_size);
 
     size_t write_chunk = std::numeric_limits<size_t>::max();
-    SECTION("") { write_chunk = 439; }
-    SECTION("") { write_chunk = 1234; }
-    SECTION("") { write_chunk = 2000; }
-    SECTION("") { write_chunk = 2048; }
-    SECTION("") { write_chunk = 5000; }
-    SECTION("") { write_chunk = 77777; }
-    SECTION("") { write_chunk = file_size / 2; }
-    SECTION("") { write_chunk = file_size; }
-    SECTION("") { write_chunk = file_size * 2; }
+    SECTION("")
+    {
+        write_chunk = 439;
+    }
+    SECTION("")
+    {
+        write_chunk = 1234;
+    }
+    SECTION("")
+    {
+        write_chunk = 2000;
+    }
+    SECTION("")
+    {
+        write_chunk = 2048;
+    }
+    SECTION("")
+    {
+        write_chunk = 5000;
+    }
+    SECTION("")
+    {
+        write_chunk = 77777;
+    }
+    SECTION("")
+    {
+        write_chunk = file_size / 2;
+    }
+    SECTION("")
+    {
+        write_chunk = file_size;
+    }
+    SECTION("")
+    {
+        write_chunk = file_size * 2;
+    }
 
     ssize_t left_to_write = file_size;
     const std::byte *read_from = noise.data();
@@ -505,8 +535,13 @@ static void TestSimpleDownload(VFSHostPtr _host)
             REQUIRE(file->WriteFile(noise.data(), file_size) == VFSError::Ok);
             REQUIRE(file->Close() == VFSError::Ok);
         }
-        SECTION("reusing same host") {}
-        SECTION("using a fresh host") { _host.reset(new WebDAVHost(config)); }
+        SECTION("reusing same host")
+        {
+        }
+        SECTION("using a fresh host")
+        {
+            _host = std::make_shared<WebDAVHost>(config);
+        }
         {
             VFSFilePtr file;
             REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
@@ -533,8 +568,13 @@ static void TestSimpleDownload(VFSHostPtr _host)
             REQUIRE(file->WriteFile(noise.data(), file_size) == VFSError::Ok);
             REQUIRE(file->Close() == VFSError::Ok);
         }
-        SECTION("reusing same host") {}
-        SECTION("using a fresh host") { _host.reset(new WebDAVHost(config)); }
+        SECTION("reusing same host")
+        {
+        }
+        SECTION("using a fresh host")
+        {
+            _host = std::make_shared<WebDAVHost>(config);
+        }
         {
             VFSFilePtr file;
             REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
@@ -563,8 +603,13 @@ static void TestSimpleDownload(VFSHostPtr _host)
             REQUIRE(file->WriteFile(noise.data(), file_size) == VFSError::Ok);
             REQUIRE(file->Close() == VFSError::Ok);
         }
-        SECTION("reusing same host") {}
-        SECTION("using a fresh host") { _host.reset(new WebDAVHost(config)); }
+        SECTION("reusing same host")
+        {
+        }
+        SECTION("using a fresh host")
+        {
+            _host = std::make_shared<WebDAVHost>(config);
+        }
         {
             VFSFilePtr file;
             REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);

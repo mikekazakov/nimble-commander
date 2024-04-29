@@ -1,9 +1,10 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DirectoryCreation.h"
-#include "DirectoryCreationJob.h"
-#include "../Internal.h"
 #include "../AsyncDialogResponse.h"
+#include "../Internal.h"
+#include "DirectoryCreationJob.h"
 #include <Utility/StringExtras.h>
+#include <memory>
 #include <ranges>
 
 // TODO: remove once callback results are no longer wrapped into 'int'
@@ -19,7 +20,7 @@ DirectoryCreation::DirectoryCreation(std::string _directory_name, std::string _r
 {
     m_Directories = Split(_directory_name);
 
-    m_Job.reset(new DirectoryCreationJob{m_Directories, _root_folder, _vfs.shared_from_this()});
+    m_Job = std::make_unique<DirectoryCreationJob>(m_Directories, _root_folder, _vfs.shared_from_this());
     m_Job->m_OnError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
         return static_cast<Callbacks::ErrorResolution>(OnError(_err, _path, _vfs));
     };

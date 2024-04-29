@@ -7,7 +7,8 @@ Checks: >
   modernize-deprecated-ios-base-aliases,
   modernize-loop-convert,
   modernize-macro-to-enum,
-  modernize-make-shared
+  modernize-make-shared,
+  modernize-make-unique
 
 CheckOptions:
   - key:    modernize-loop-convert.MinConfidence

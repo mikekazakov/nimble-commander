@@ -23,7 +23,6 @@ set -e
 ./AppAuth/bootstrap.sh
 ./Sparkle/bootstrap.sh
 ./LetsMove/bootstrap.sh
-./AquaticPrime/bootstrap.sh
 ./frozen/bootstrap.sh
 ./pstld/bootstrap.sh
 ./re2/bootstrap.sh

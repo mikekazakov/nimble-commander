@@ -7,7 +7,7 @@ curl            8.7.1
 gtest           1.14.0
 letsmove        1.25
 libarchive      3.7.4
-libcxx          16.x
+libcxx          18.x
 libssh2         1.11.0
 lz4             1.9.4
 lzma(xz)        5.4.6

@@ -75,7 +75,10 @@ void AuthenticatorImpl::PerformRequest(const Request &_request,
       if( auto me = weak_this.lock() )
           me->Callback(_auth_state, _error);
     };
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     auto state = [OIDAuthState authStateByPresentingAuthorizationRequest:request callback:callback];
+#pragma clang diagnostic pop
     m_RedirectHTTPHandler.currentAuthorizationFlow = state;
     Log::Info(SPDLOC, "Started OAuth2 authentication process.");
 }

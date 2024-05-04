@@ -12,7 +12,7 @@ libssh2         1.11.0
 lz4             1.9.4
 lzma(xz)        5.4.6
 lzo             2.10
-openssl         1.1.1s
+openssl         1.1.1v
 pstld           head
 pugixml         1.10
 re2             2022-02-01

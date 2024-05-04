@@ -7,6 +7,8 @@
 #include "../GenericErrorDialog.h"
 #include <Base/dispatch_cpp.h>
 
+#include <memory>
+
 namespace nc::ops {
 
 static NSString *Caption(const std::vector<VFSListingItem> &_files);
@@ -18,7 +20,7 @@ Deletion::Deletion(std::vector<VFSListingItem> _items, DeletionOptions _options)
     SetTitle(Caption(_items).UTF8String);
     m_LockedItemBehaviour = m_OrigOptions.locked_items_behaviour;
 
-    m_Job.reset(new DeletionJob(std::move(_items), _options.type));
+    m_Job = std::make_unique<DeletionJob>(std::move(_items), _options.type);
     m_Job->m_OnReadDirError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
         return OnReadDirError(_err, _path, _vfs);
     };

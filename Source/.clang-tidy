@@ -6,7 +6,10 @@ Checks: >
   modernize-deprecated-headers,
   modernize-deprecated-ios-base-aliases,
   modernize-loop-convert,
-  modernize-macro-to-enum
+  modernize-macro-to-enum,
+  modernize-make-shared,
+  modernize-make-unique,
+  modernize-min-max-use-initializer-list
 
 CheckOptions:
   - key:    modernize-loop-convert.MinConfidence
@@ -16,3 +19,5 @@ CheckOptions:
 
 ExtraArgs:
 - -Wno-unknown-pragmas
+
+FormatStyle: file

@@ -11,6 +11,8 @@
 #include <sys/dirent.h>
 #include <fmt/core.h>
 
+#include <memory>
+
 namespace nc::vfs {
 
 using namespace webdav;
@@ -56,17 +58,19 @@ WebDAVHost::~WebDAVHost()
 
 void WebDAVHost::Init()
 {
-    I.reset(new State{Config()});
+    I = std::make_unique<State>(Config());
 
     auto ar = I->m_Pool.Get();
     const auto [rc, requests] = RequestServerOptions(Config(), *ar.connection);
     if( rc != VFSError::Ok )
         throw VFSErrorException(rc);
 
-    // it's besically good to check available requests before commiting to work with the server,
-    // BUT my local QNAP NAS is pretty strange and reports a gibberish like
-    // "Allow: GET,HEAD,POST,OPTIONS,HEAD,HEAD", which doesn't help at all.
-    //    if( (requests & HTTPRequests::MinimalRequiredSet) !=  HTTPRequests::MinimalRequiredSet ) {
+    // it's besically good to check available requests before commiting to work
+    // with the server, BUT my local QNAP NAS is pretty strange and reports a
+    // gibberish like "Allow: GET,HEAD,POST,OPTIONS,HEAD,HEAD", which doesn't help
+    // at all.
+    //    if( (requests & HTTPRequests::MinimalRequiredSet) !=
+    //    HTTPRequests::MinimalRequiredSet ) {
     //        HTTPRequests::Print(requests);
     //        throw VFSErrorException( VFSError::FromErrno(EPROTONOSUPPORT) );
     //    }

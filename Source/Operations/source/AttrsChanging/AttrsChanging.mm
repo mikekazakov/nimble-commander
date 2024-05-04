@@ -1,4 +1,6 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+#include <memory>
+
 #include "AttrsChanging.h"
 #include "AttrsChangingJob.h"
 #include "../AsyncDialogResponse.h"
@@ -13,9 +15,9 @@ namespace nc::ops {
 
 using Callbacks = AttrsChangingJobCallbacks;
 
-AttrsChanging::AttrsChanging( AttrsChangingCommand _command )
+AttrsChanging::AttrsChanging(AttrsChangingCommand _command)
 {
-    m_Job.reset( new AttrsChangingJob(std::move(_command)) );
+    m_Job = std::make_unique<AttrsChangingJob>(std::move(_command));
     m_Job->m_OnSourceAccessError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
         return (Callbacks::SourceAccessErrorResolution)OnSourceAccessError(_err, _path, _vfs);
     };
@@ -48,16 +50,17 @@ Job *AttrsChanging::GetJob() noexcept
 int AttrsChanging::OnSourceAccessError(int _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
-        return m_SkipAll ?
-            (int)Callbacks::SourceAccessErrorResolution::Skip :
-            (int)Callbacks::SourceAccessErrorResolution::Stop;
+        return m_SkipAll ? (int)Callbacks::SourceAccessErrorResolution::Skip
+                         : (int)Callbacks::SourceAccessErrorResolution::Stop;
     const auto ctx = std::make_shared<AsyncDialogResponse>();
-    
+
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to access an item", ""),
-                      _err, {_vfs, _path}, ctx);
+                      _err,
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
-    
+
     if( ctx->response == NSModalResponseSkip )
         return (int)Callbacks::SourceAccessErrorResolution::Skip;
     else if( ctx->response == NSModalResponseSkipAll ) {
@@ -73,16 +76,16 @@ int AttrsChanging::OnSourceAccessError(int _err, const std::string &_path, VFSHo
 int AttrsChanging::OnChmodError(int _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
-        return m_SkipAll ?
-            (int)Callbacks::ChmodErrorResolution::Skip :
-            (int)Callbacks::ChmodErrorResolution::Stop;
-    
+        return m_SkipAll ? (int)Callbacks::ChmodErrorResolution::Skip : (int)Callbacks::ChmodErrorResolution::Stop;
+
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to perform chmod", ""),
-                      _err, {_vfs, _path}, ctx);
+                      _err,
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
-    
+
     if( ctx->response == NSModalResponseSkip )
         return (int)Callbacks::ChmodErrorResolution::Skip;
     else if( ctx->response == NSModalResponseSkipAll ) {
@@ -98,16 +101,16 @@ int AttrsChanging::OnChmodError(int _err, const std::string &_path, VFSHost &_vf
 int AttrsChanging::OnChownError(int _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
-        return m_SkipAll ?
-            (int)Callbacks::ChownErrorResolution::Skip :
-            (int)Callbacks::ChownErrorResolution::Stop;
-    
+        return m_SkipAll ? (int)Callbacks::ChownErrorResolution::Skip : (int)Callbacks::ChownErrorResolution::Stop;
+
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to perform chown", ""),
-                      _err, {_vfs, _path}, ctx);
+                      _err,
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
-    
+
     if( ctx->response == NSModalResponseSkip )
         return (int)Callbacks::ChownErrorResolution::Skip;
     else if( ctx->response == NSModalResponseSkipAll ) {
@@ -122,17 +125,17 @@ int AttrsChanging::OnChownError(int _err, const std::string &_path, VFSHost &_vf
 
 int AttrsChanging::OnFlagsError(int _err, const std::string &_path, VFSHost &_vfs)
 {
-   if( m_SkipAll || !IsInteractive() )
-        return m_SkipAll ?
-            (int)Callbacks::FlagsErrorResolution::Skip :
-            (int)Callbacks::FlagsErrorResolution::Stop;
-            
+    if( m_SkipAll || !IsInteractive() )
+        return m_SkipAll ? (int)Callbacks::FlagsErrorResolution::Skip : (int)Callbacks::FlagsErrorResolution::Stop;
+
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to perform chflags", ""),
-                      _err, {_vfs, _path}, ctx);
+                      _err,
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
-    
+
     if( ctx->response == NSModalResponseSkip )
         return (int)Callbacks::FlagsErrorResolution::Skip;
     else if( ctx->response == NSModalResponseSkipAll ) {
@@ -147,17 +150,17 @@ int AttrsChanging::OnFlagsError(int _err, const std::string &_path, VFSHost &_vf
 
 int AttrsChanging::OnTimesError(int _err, const std::string &_path, VFSHost &_vfs)
 {
-   if( m_SkipAll || !IsInteractive() )
-        return m_SkipAll ?
-            (int)Callbacks::TimesErrorResolution::Skip :
-            (int)Callbacks::TimesErrorResolution::Stop;
-    
+    if( m_SkipAll || !IsInteractive() )
+        return m_SkipAll ? (int)Callbacks::TimesErrorResolution::Skip : (int)Callbacks::TimesErrorResolution::Stop;
+
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to set file time", ""),
-                      _err, {_vfs, _path}, ctx);
+                      _err,
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
-    
+
     if( ctx->response == NSModalResponseSkip )
         return (int)Callbacks::TimesErrorResolution::Skip;
     else if( ctx->response == NSModalResponseSkipAll ) {
@@ -170,4 +173,4 @@ int AttrsChanging::OnTimesError(int _err, const std::string &_path, VFSHost &_vf
         return (int)Callbacks::TimesErrorResolution::Stop;
 }
 
-}
+} // namespace nc::ops

@@ -8,6 +8,8 @@
 #include "CopyingTitleBuilder.h"
 #include <sys/stat.h>
 
+#include <memory>
+
 namespace nc::ops {
 
 using CB = CopyingJobCallbacks;
@@ -20,7 +22,7 @@ Copying::Copying(std::vector<VFSListingItem> _source_files,
     m_ExistBehavior = _options.exist_behavior;
     m_LockedBehaviour = _options.locked_items_behaviour;
 
-    m_Job.reset(new CopyingJob(_source_files, _destination_path, _destination_host, _options));
+    m_Job = std::make_unique<CopyingJob>(_source_files, _destination_path, _destination_host, _options);
     SetupCallbacks();
     OnStageChanged();
 }

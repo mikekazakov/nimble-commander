@@ -1,19 +1,20 @@
 // Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ContextMenu.h"
-#include "PanelController.h"
+#include "Actions/Compress.h"
 #include "Actions/CopyToPasteboard.h"
 #include "Actions/Delete.h"
 #include "Actions/Duplicate.h"
-#include "Actions/Compress.h"
 #include "Actions/OpenFile.h"
 #include "NCPanelOpenWithMenuDelegate.h"
-#include <VFS/VFS.h>
-#include <Utility/StringExtras.h>
-#include <Utility/ObjCpp.h>
+#include "PanelController.h"
 #include <Panel/TagsStorage.h>
 #include <Panel/UI/TagsPresentation.h>
-#include <ranges>
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
+#include <VFS/VFS.h>
+#include <memory>
 #include <pstld/pstld.h>
+#include <ranges>
 
 // TODO: remove this global dependency
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
@@ -56,13 +57,13 @@ using namespace nc::panel;
         self.minimumWidth = 230; // hardcoding is bad!
         auto &global_config = NCAppDelegate.me.globalConfig;
 
-        m_CopyAction.reset(new actions::context::CopyToPasteboard{m_Items});
-        m_MoveToTrashAction.reset(new actions::context::MoveToTrash{m_Items});
-        m_DeletePermanentlyAction.reset(new actions::context::DeletePermanently{m_Items});
-        m_DuplicateAction.reset(new actions::context::Duplicate{global_config, m_Items});
-        m_CompressHereAction.reset(new actions::context::CompressHere{global_config, m_Items});
-        m_CompressToOppositeAction.reset(new actions::context::CompressToOpposite{global_config, m_Items});
-        m_OpenFileAction.reset(new actions::context::OpenFileWithDefaultHandler{m_Items, _file_opener});
+        m_CopyAction = std::make_unique<actions::context::CopyToPasteboard>(m_Items);
+        m_MoveToTrashAction = std::make_unique<actions::context::MoveToTrash>(m_Items);
+        m_DeletePermanentlyAction = std::make_unique<actions::context::DeletePermanently>(m_Items);
+        m_DuplicateAction = std::make_unique<actions::context::Duplicate>(global_config, m_Items);
+        m_CompressHereAction = std::make_unique<actions::context::CompressHere>(global_config, m_Items);
+        m_CompressToOppositeAction = std::make_unique<actions::context::CompressToOpposite>(global_config, m_Items);
+        m_OpenFileAction = std::make_unique<actions::context::OpenFileWithDefaultHandler>(m_Items, _file_opener);
         m_OpenWithDelegate = [[NCPanelOpenWithMenuDelegate alloc] initWithFileOpener:_file_opener utiDB:_uti_db];
         [m_OpenWithDelegate setContextSource:m_Items];
         m_OpenWithDelegate.target = m_Panel;

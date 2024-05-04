@@ -6,7 +6,7 @@ frozen          1.1.1
 curl            8.7.1
 gtest           1.12.1
 letsmove        1.25
-libarchive      3.7.2 + custom patch
+libarchive      3.7.4
 libcxx          16.x
 libssh2         1.11.0
 lz4             1.9.4

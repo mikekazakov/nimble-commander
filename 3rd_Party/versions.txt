@@ -4,7 +4,7 @@ bz2             1.0.8
 fmt             10.2.1
 frozen          1.1.1
 curl            8.7.1
-gtest           1.12.1
+gtest           1.14.0
 letsmove        1.25
 libarchive      3.7.4
 libcxx          16.x

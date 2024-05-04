@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/curl.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b curl-7_73_0 --single-branch https://github.com/curl/curl.git
+git clone -b curl-8_7_1 --single-branch --depth=1 https://github.com/curl/curl.git
 
 cd curl
 
@@ -20,9 +20,9 @@ cmake \
   -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
   -D CMAKE_C_FLAGS="-fvisibility=hidden -flto" \
   -D CMAKE_OSX_DEPLOYMENT_TARGET="10.15" \
-  -D CMAKE_USE_SECTRANSP="ON" \
-  -D CMAKE_USE_LIBSSH="OFF" \
-  -D CMAKE_USE_LIBSSH2="OFF" \
+  -D CURL_USE_SECTRANSP="ON" \
+  -D CURL_USE_LIBSSH="OFF" \
+  -D CURL_USE_LIBSSH2="OFF" \
   -D CURL_DISABLE_LDAP="ON" \
   -D CURL_ZLIB="ON" \
   -D CURL_STATICLIB="ON" \

@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/re2.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b 2022-02-01 --single-branch https://github.com/google/re2.git
+git clone -b 2023-03-01 --single-branch --depth=1 https://github.com/google/re2.git
 cd re2
 mkdir build_cmake
 cd build_cmake

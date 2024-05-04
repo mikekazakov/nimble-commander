@@ -9,7 +9,7 @@ letsmove        1.25
 libarchive      3.7.2 + custom patch
 libcxx          16.x
 libssh2         1.11.0
-lz4             1.9.3
+lz4             1.9.4
 lzma(xz)        5.4.6
 lzo             2.10
 openssl         1.1.1s

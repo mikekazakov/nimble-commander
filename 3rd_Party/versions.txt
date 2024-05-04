@@ -1,5 +1,5 @@
 appauth         1.4.0
-boost           1.83.0
+boost           1.85.0
 bz2             1.0.8
 fmt             10.2.1
 frozen          1.1.1

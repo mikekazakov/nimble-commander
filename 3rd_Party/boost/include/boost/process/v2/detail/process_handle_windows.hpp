@@ -84,22 +84,32 @@ struct basic_process_handle_win
 
 
     template<typename Executor1>
-    basic_process_handle_win(basic_process_handle_win<Executor1> && handle)
-            : pid_(handle.pid_), handle_(handle.handle_.get_executor())
+    basic_process_handle_win(basic_process_handle_win<Executor1> && other)
+            : pid_(other.pid_), handle_(std::move(other.handle_))
     {
+      other.pid_ = static_cast<DWORD>(-1);
     }
 
-    basic_process_handle_win(basic_process_handle_win && handle) 
-        :  pid_(handle.id()), handle_(std::move(handle.handle_))
+    basic_process_handle_win(basic_process_handle_win && other)
+        :  pid_(other.pid_), handle_(std::move(other.handle_))
     {
-        handle.pid_ = static_cast<DWORD>(-1);
+      other.pid_ = static_cast<DWORD>(-1);
     }
 
-    basic_process_handle_win& operator=(basic_process_handle_win && handle)
+    basic_process_handle_win& operator=(basic_process_handle_win && other)
     {
-        pid_ = handle.pid_;
-        handle_ = std::move(handle.handle_);
-        handle.pid_ = static_cast<DWORD>(-1);
+        pid_ = other.pid_;
+        handle_ = std::move(other.handle_);
+        other.pid_ = static_cast<DWORD>(-1);
+        return *this;
+    }
+
+    template<typename Executor1>
+    basic_process_handle_win& operator=(basic_process_handle_win<Executor1> && other)
+    {
+        pid_ = other.pid_;
+        handle_ = std::move(other.handle_);
+        other.pid_ = static_cast<DWORD>(-1);
         return *this;
     }
 

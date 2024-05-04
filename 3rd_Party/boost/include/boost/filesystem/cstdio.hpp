@@ -41,8 +41,8 @@ inline std::FILE* fopen(filesystem::path const& p, const char* mode)
         wchar_t buf[128u];
         wchar_t* p;
 
-        small_array() BOOST_NOEXCEPT : p(buf) {}
-        ~small_array() BOOST_NOEXCEPT
+        small_array() noexcept : p(buf) {}
+        ~small_array() noexcept
         {
             if (BOOST_UNLIKELY(p != buf))
                 std::free(p);
@@ -52,18 +52,18 @@ inline std::FILE* fopen(filesystem::path const& p, const char* mode)
     std::size_t wmode_len = std::mbstowcs(wmode.p, mode, sizeof(wmode.buf) / sizeof(wchar_t));
     if (BOOST_UNLIKELY(wmode_len >= (sizeof(wmode.buf) / sizeof(wchar_t))))
     {
-        wmode_len = std::mbstowcs(NULL, mode, 0u);
+        wmode_len = std::mbstowcs(nullptr, mode, 0u);
         // Check for size overflow, including (size_t)-1, which indicates mbstowcs error
         if (BOOST_UNLIKELY(wmode_len >= (static_cast< std::size_t >(-1) / sizeof(wchar_t))))
-            return NULL;
+            return nullptr;
 
         wmode.p = static_cast< wchar_t* >(std::malloc((wmode_len + 1u) * sizeof(wchar_t)));
         if (BOOST_UNLIKELY(!wmode.p))
-            return NULL;
+            return nullptr;
 
         std::size_t wmode_len2 = std::mbstowcs(wmode.p, mode, wmode_len + 1u);
         if (BOOST_UNLIKELY(wmode_len2 > wmode_len))
-            return NULL;
+            return nullptr;
     }
 
     return ::_wfopen(p.c_str(), wmode.p);

@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/libcxx.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b release/16.x --single-branch --depth=1 https://github.com/llvm/llvm-project.git
+git clone -b release/18.x --single-branch --depth=1 https://github.com/llvm/llvm-project.git
 
 cd llvm-project
 
@@ -21,6 +21,10 @@ clang++ -c \
   -Os \
   -mmacosx-version-min=10.15 \
   -DNDEBUG \
+  -D_LIBCPP_FUNC_VIS= \
+  -D'_LIBCPP_ASSERT_NON_NULL(c,m)=((void)0)' \
+  -D'_LIBCPP_ASSERT_VALID_DEALLOCATION(c,m)=((void)0)' \
+  -D'_LIBCPP_ASSERT_INTERNAL(c,m)=((void)0)' \
   libcxx/src/memory_resource.cpp
 
 libtool -static -o libcxxbackport.a memory_resource.o

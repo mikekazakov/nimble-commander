@@ -101,7 +101,7 @@ void close_all(const std::vector<int> & whitelist, error_code & ec)
              idx++)
         {
             const auto mine = whitelist[idx];
-            const auto next = whitelist[idx];
+            const auto next = whitelist[idx + 1];
             if ((mine + 1) != next && (mine != next))
             {
                 ::close_range(mine + 1, next - 1, 0);
@@ -132,7 +132,7 @@ void close_all(const std::vector<int> & whitelist, error_code & ec)
              idx++)
         {
             const auto mine = whitelist[idx];
-            const auto next = whitelist[idx];
+            const auto next = whitelist[idx + 1];
             if ((mine + 1) != next && (mine != next))
             {
                 ::close_range(mine + 1, next - 1, CLOSE_RANGE_UNSHARE);

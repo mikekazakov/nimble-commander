@@ -66,7 +66,7 @@ struct execute_op
     template<typename Self>
     void operator()(Self && self)
     {
-        self.reset_cancellation_state();
+        self.reset_cancellation_state(BOOST_PROCESS_V2_ASIO_NAMESPACE::enable_total_cancellation());
         BOOST_PROCESS_V2_ASIO_NAMESPACE::cancellation_slot s = self.get_cancellation_state().slot();
         if (s.is_connected())
             s.emplace<cancel>(proc.get());
@@ -110,7 +110,7 @@ async_execute(basic_process<Executor> proc,
                          WaitHandler && handler BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(Executor))
 {
     std::unique_ptr<basic_process<Executor>> pro_(new basic_process<Executor>(std::move(proc)));
-    auto exec = proc.get_executor();
+    auto exec = pro_->get_executor();
     return BOOST_PROCESS_V2_ASIO_NAMESPACE::async_compose<WaitHandler, void(error_code, int)>(
             detail::execute_op<Executor>{std::move(pro_)}, handler, exec);
 }

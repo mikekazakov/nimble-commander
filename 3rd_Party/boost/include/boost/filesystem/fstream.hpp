@@ -15,7 +15,6 @@
 
 #include <boost/filesystem/config.hpp>
 #include <boost/filesystem/path.hpp>
-#include <cstddef>
 #include <iosfwd>
 #include <fstream>
 
@@ -68,31 +67,20 @@ private:
     typedef std::basic_filebuf< Char, Traits > base_type;
 
 public:
-    BOOST_DEFAULTED_FUNCTION(basic_filebuf(), {})
+    basic_filebuf() = default;
 
 #if !defined(BOOST_FILESYSTEM_DETAIL_NO_CXX11_MOVABLE_FSTREAMS)
-#if !defined(BOOST_NO_CXX11_DEFAULTED_MOVES)
     basic_filebuf(basic_filebuf&&) = default;
     basic_filebuf& operator= (basic_filebuf&&) = default;
-#else
-    basic_filebuf(basic_filebuf&& that) :
-        base_type(static_cast< base_type&& >(that)) {}
-
-    basic_filebuf& operator= (basic_filebuf&& that)
-    {
-        *static_cast< base_type* >(this) = static_cast< base_type&& >(that);
-        return *this;
-    }
-#endif
 #endif // !defined(BOOST_FILESYSTEM_DETAIL_NO_CXX11_MOVABLE_FSTREAMS)
 
-    BOOST_DELETED_FUNCTION(basic_filebuf(basic_filebuf const&))
-    BOOST_DELETED_FUNCTION(basic_filebuf const& operator= (basic_filebuf const&))
+    basic_filebuf(basic_filebuf const&) = delete;
+    basic_filebuf const& operator= (basic_filebuf const&) = delete;
 
 public:
     basic_filebuf* open(path const& p, std::ios_base::openmode mode)
     {
-        return base_type::open(BOOST_FILESYSTEM_C_STR(p), mode) ? this : NULL;
+        return base_type::open(BOOST_FILESYSTEM_C_STR(p), mode) ? this : nullptr;
     }
 };
 
@@ -108,7 +96,7 @@ private:
     typedef std::basic_ifstream< Char, Traits > base_type;
 
 public:
-    BOOST_DEFAULTED_FUNCTION(basic_ifstream(), {})
+    basic_ifstream() = default;
 
     // use two signatures, rather than one signature with default second
     // argument, to workaround VC++ 7.1 bug (ID VSWhidbey 38416)
@@ -130,8 +118,8 @@ public:
     }
 #endif
 
-    BOOST_DELETED_FUNCTION(basic_ifstream(basic_ifstream const&))
-    BOOST_DELETED_FUNCTION(basic_ifstream const& operator= (basic_ifstream const&))
+    basic_ifstream(basic_ifstream const&) = delete;
+    basic_ifstream const& operator= (basic_ifstream const&) = delete;
 
 public:
     void open(path const& p)
@@ -157,7 +145,7 @@ private:
     typedef std::basic_ofstream< Char, Traits > base_type;
 
 public:
-    BOOST_DEFAULTED_FUNCTION(basic_ofstream(), {})
+    basic_ofstream() = default;
 
     // use two signatures, rather than one signature with default second
     // argument, to workaround VC++ 7.1 bug (ID VSWhidbey 38416)
@@ -179,8 +167,8 @@ public:
     }
 #endif
 
-    BOOST_DELETED_FUNCTION(basic_ofstream(basic_ofstream const&))
-    BOOST_DELETED_FUNCTION(basic_ofstream const& operator= (basic_ofstream const&))
+    basic_ofstream(basic_ofstream const&) = delete;
+    basic_ofstream const& operator= (basic_ofstream const&) = delete;
 
 public:
     void open(path const& p)
@@ -206,7 +194,7 @@ private:
     typedef std::basic_fstream< Char, Traits > base_type;
 
 public:
-    BOOST_DEFAULTED_FUNCTION(basic_fstream(), {})
+    basic_fstream() = default;
 
     // use two signatures, rather than one signature with default second
     // argument, to workaround VC++ 7.1 bug (ID VSWhidbey 38416)
@@ -228,8 +216,8 @@ public:
     }
 #endif
 
-    BOOST_DELETED_FUNCTION(basic_fstream(basic_fstream const&))
-    BOOST_DELETED_FUNCTION(basic_fstream const& operator= (basic_fstream const&))
+    basic_fstream(basic_fstream const&) = delete;
+    basic_fstream const& operator= (basic_fstream const&) = delete;
 
 public:
     void open(path const& p)

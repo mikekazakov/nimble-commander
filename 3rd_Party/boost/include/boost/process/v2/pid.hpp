@@ -9,6 +9,8 @@
 #include <boost/process/v2/detail/config.hpp>
 #include <boost/process/v2/detail/throw_error.hpp>
 
+#include <vector>
+
 BOOST_PROCESS_V2_BEGIN_NAMESPACE
 
 #if defined(GENERATING_DOCUMENTATION)

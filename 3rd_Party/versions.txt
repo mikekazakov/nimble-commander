@@ -1,26 +1,26 @@
-appauth         1.4.0
-boost           1.83.0
+appauth         1.7.5
+boost           1.85.0
 bz2             1.0.8
-fmt             10.1.1
+fmt             10.2.1
 frozen          1.1.1
-curl            7.73.0
-gtest           1.12.1
+curl            8.7.1
+gtest           1.14.0
 letsmove        1.25
-libarchive      3.7.2 + custom patch
-libcxx		16.x
+libarchive      3.7.4
+libcxx          18.x
 libssh2         1.11.0
-lz4             1.9.3
-lzma(xz)        5.2.5
+lz4             1.9.4
+lzma(xz)        5.4.6
 lzo             2.10
-openssl         1.1.1s
+openssl         1.1.1v
 pstld           head
-pugixml         1.10
-re2             2022-02-01
+pugixml         1.14
+re2             2023-03-01
 robin_hood      3.11.5
-sparkle         2.5.0
-spdlog          1.12.0
-zlib            1.3
-zstd            1.5.5
+sparkle         2.6.1
+spdlog          1.14.1
+zlib            1.3.1
+zstd            1.5.6
 
 Build flags:
 -std=c++2b

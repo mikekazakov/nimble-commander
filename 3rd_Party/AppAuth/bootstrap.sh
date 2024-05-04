@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/appauth.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b 1.4.0 --single-branch https://github.com/openid/AppAuth-iOS.git
+git clone -b 1.7.5 --single-branch --depth=1 https://github.com/openid/AppAuth-iOS.git
 
 cd AppAuth-iOS
 
@@ -33,9 +33,9 @@ mkdir include/AppAuth
 mkdir built
 
 cp ${BINARY_PATH} ./built
-cp ${TMP_DIR}/AppAuth-iOS/Source/*.h ./include/AppAuth
-cp ${TMP_DIR}/AppAuth-iOS/Source/AppAuthCore/*.h ./include/AppAuth
-cp ${TMP_DIR}/AppAuth-iOS/Source/AppAuth/macOS/*.h ./include/AppAuth
-cp ${TMP_DIR}/AppAuth-iOS/Source/AppAuth/macOS/LoopbackHTTPServer/*.h ./include/AppAuth
+cp ${TMP_DIR}/AppAuth-iOS/Sources/*.h ./include/AppAuth
+cp ${TMP_DIR}/AppAuth-iOS/Sources/AppAuthCore/*.h ./include/AppAuth
+cp ${TMP_DIR}/AppAuth-iOS/Sources/AppAuth/macOS/*.h ./include/AppAuth
+cp ${TMP_DIR}/AppAuth-iOS/Sources/AppAuth/macOS/LoopbackHTTPServer/*.h ./include/AppAuth
 
 rm -rf ${TMP_DIR}

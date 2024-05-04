@@ -65,7 +65,7 @@ inline auto native_environment_impl<Char>::get(const pointer_type id) -> string_
     {
         auto err =  ::boost::winapi::GetLastError();
         if (err == ::boost::winapi::ERROR_ENVVAR_NOT_FOUND_)//well, then we consider that an empty value
-            return "";
+            return string_type();
         else
             throw process_error(std::error_code(err, std::system_category()),
                                "GetEnvironmentVariable() failed");

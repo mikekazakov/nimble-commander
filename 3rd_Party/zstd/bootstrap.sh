@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/zstd.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v1.5.5 --single-branch https://github.com/facebook/zstd.git
+git clone -b v1.5.6 --single-branch https://github.com/facebook/zstd.git
 
 cd zstd/build/cmake
 mkdir builddir

@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/spdlog.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v1.12.0 --single-branch --depth=1 https://github.com/gabime/spdlog.git
+git clone -b v1.14.1 --single-branch --depth=1 https://github.com/gabime/spdlog.git
 cd spdlog
 
 clang++ -c \

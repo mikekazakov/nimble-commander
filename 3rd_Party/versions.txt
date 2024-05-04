@@ -14,7 +14,7 @@ lzma(xz)        5.4.6
 lzo             2.10
 openssl         1.1.1v
 pstld           head
-pugixml         1.10
+pugixml         1.14
 re2             2022-02-01
 robin_hood      3.11.5
 sparkle         2.5.0

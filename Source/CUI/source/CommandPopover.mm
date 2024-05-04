@@ -32,6 +32,7 @@ static constexpr double g_ContentViewCornerRadius = 10.;
 @end
 
 @interface NCCommandPopoverTableView : NSTableView
+- (void)processMouseMoved:(NSPoint)_local_coords;
 @end
 
 @implementation NCCommandPopoverItem {
@@ -222,7 +223,7 @@ static constexpr double g_ContentViewCornerRadius = 10.;
     m_TableView.rowHeight = m_RegularRowHeight;
 
     NSTableColumn *img_col = [[NSTableColumn alloc] initWithIdentifier:@"I"];
-    if( @available(macOS 11.0, *))
+    if( @available(macOS 11.0, *) )
         img_col.width = 20.;
     else
         img_col.width = 26.;
@@ -315,10 +316,24 @@ static constexpr double g_ContentViewCornerRadius = 10.;
 {
     [super viewDidAppear];
     [self.view.window makeFirstResponder:m_TableView];
-    [self selectFirstSelectableRow];
     [self updateScrollViewHeighConstraint];
     [self.view layout];
     m_Parent.contentSize = self.view.fittingSize;
+
+    // First try place the selection where the mouse cursor currently is to avoid flicker
+    // (mouse-tracking events are processed later and there's a visual delay between the appearance of the view and
+    // setting the selection via mouse-tracking)
+    const NSPoint global_mouse_location = NSEvent.mouseLocation;
+    const NSPoint window_mouse_location = [self.view.window convertPointFromScreen:global_mouse_location];
+    const NSPoint table_mouse_location = [m_TableView convertPoint:window_mouse_location fromView:nil];
+    if( [m_TableView mouse:table_mouse_location inRect:m_TableView.bounds] ) {
+        [m_TableView processMouseMoved:table_mouse_location];
+    }
+
+    // And only afterwards set to the first row if there's no selection
+    if( m_TableView.selectedRow == -1 ) {
+        [self selectFirstSelectableRow];
+    }
 }
 
 - (double)maximumCommandTitleWidth
@@ -326,7 +341,7 @@ static constexpr double g_ContentViewCornerRadius = 10.;
     if( m_AllItems.empty() ) {
         return 0.;
     }
-    auto attributes = @{NSFontAttributeName:m_LabelFont};
+    auto attributes = @{NSFontAttributeName: m_LabelFont};
     auto widths = m_AllItems | std::views::transform([attributes](NCCommandPopoverItem *_item) -> double {
                       return [_item.title sizeWithAttributes:attributes].width;
                   });
@@ -696,7 +711,7 @@ static constexpr double g_ContentViewCornerRadius = 10.;
 
 - (BOOL)control:(NSControl *)_control textView:(NSTextView *)_text_biew doCommandBySelector:(SEL)_sel
 {
-    if (_control == m_LabelTextField && _sel == @selector(cancelOperation:)) {
+    if( _control == m_LabelTextField && _sel == @selector(cancelOperation:) ) {
         [m_Parent close];
         return true;
     }
@@ -820,17 +835,22 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
     [self addTrackingArea:m_TrackingArea];
 }
 
-- (void)mouseMoved:(NSEvent *)_event
+- (void)processMouseMoved:(NSPoint)_local_coords
 {
-    const NSPoint global = _event.locationInWindow;
-    const NSPoint local = [self convertPoint:global fromView:nil];
-    const long row = [self rowAtPoint:local];
+    const long row = [self rowAtPoint:_local_coords];
     if( row == self.selectedRow )
         return;
     if( row >= 0 && row < self.numberOfRows && [self.delegate tableView:self shouldSelectRow:row] )
         [self selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:false];
     else
         [self selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:false];
+}
+
+- (void)mouseMoved:(NSEvent *)_event
+{
+    const NSPoint global = _event.locationInWindow;
+    const NSPoint local = [self convertPoint:global fromView:nil];
+    [self processMouseMoved:local];
 }
 
 - (void)mouseEntered:(NSEvent *)_event
@@ -978,7 +998,7 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
 
 - (void)dealloc
 {
-    if(m_Window) {
+    if( m_Window ) {
         m_Window.delegate = nil;
         [m_Window close];
     }
@@ -1035,7 +1055,7 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
         delegate != nil && [delegate respondsToSelector:@selector(commandPopoverDidClose:)] ) {
         [delegate commandPopoverDidClose:self];
     }
-        
+
     m_Window = nil;
     m_Controller = nil;
     m_Items.clear();

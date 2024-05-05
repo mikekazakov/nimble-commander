@@ -20,4 +20,4 @@ private:
     std::vector<NSURL *> m_URLs;
 };
 
-}
+} // namespace nc::utility

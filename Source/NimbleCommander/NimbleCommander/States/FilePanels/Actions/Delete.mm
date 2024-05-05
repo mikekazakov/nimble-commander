@@ -183,4 +183,4 @@ static void AddPanelRefreshEpilog(PanelController *_target, nc::ops::Operation &
     });
 }
 
-}
+} // namespace nc::panel::actions

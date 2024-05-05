@@ -5,34 +5,33 @@
 #include <VFS/VFS.h>
 
 namespace nc::ops {
-    
+
 class DirectoryPathAutoCompetion
 {
 public:
     virtual ~DirectoryPathAutoCompetion() = default;
-    virtual std::vector<std::string> PossibleCompletions( const std::string &_path ) = 0;
-    virtual std::string Complete( const std::string &_path, const std::string &_completion ) = 0;
-};    
-    
+    virtual std::vector<std::string> PossibleCompletions(const std::string &_path) = 0;
+    virtual std::string Complete(const std::string &_path, const std::string &_completion) = 0;
+};
+
 class DirectoryPathAutoCompletionImpl : public DirectoryPathAutoCompetion
 {
 public:
-    DirectoryPathAutoCompletionImpl( VFSHostPtr _vfs );
-    std::vector<std::string> PossibleCompletions( const std::string &_path ) override;
-    std::string Complete( const std::string &_path, const std::string &_completion ) override;
-    
+    DirectoryPathAutoCompletionImpl(VFSHostPtr _vfs);
+    std::vector<std::string> PossibleCompletions(const std::string &_path) override;
+    std::string Complete(const std::string &_path, const std::string &_completion) override;
+
 private:
-    std::string ExtractDirectory( const std::string &_path ) const;
-    std::string ExtractFilename( const std::string &_path ) const;
-    VFSListingPtr ListingForDir(const std::string& _path);
-    static std::vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing,
-                                                    const std::string& _prefix);    
-    
+    std::string ExtractDirectory(const std::string &_path) const;
+    std::string ExtractFilename(const std::string &_path) const;
+    VFSListingPtr ListingForDir(const std::string &_path);
+    static std::vector<unsigned> ListDirsWithPrefix(const VFSListing &_listing, const std::string &_prefix);
+
     VFSHostPtr m_VFS;
-    VFSListingPtr m_LastListing;              
+    VFSListingPtr m_LastListing;
 };
-    
-}
+
+} // namespace nc::ops
 
 @interface NCFilenameTextStorage : NSTextStorage
 @end
@@ -41,13 +40,11 @@ private:
 @end
 
 // Either set this object as a delegate or forward @selector(complete:) into this delegate
-@interface NCFilepathAutoCompletionDelegate : NSObject<NSTextFieldDelegate>
+@interface NCFilepathAutoCompletionDelegate : NSObject <NSTextFieldDelegate>
 
-@property (nonatomic) std::shared_ptr<nc::ops::DirectoryPathAutoCompetion> completion;
-@property (nonatomic) bool isNativeVFS;
+@property(nonatomic) std::shared_ptr<nc::ops::DirectoryPathAutoCompetion> completion;
+@property(nonatomic) bool isNativeVFS;
 
-- (BOOL)control:(NSControl *)control
-       textView:(NSTextView *)textView
-doCommandBySelector:(SEL)commandSelector;
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
 
 @end

@@ -6,8 +6,7 @@ namespace nc::panel::data {
 // 2 bytes long, OK to pass by value everywhere
 struct SortMode {
     // Values in this enumeration should be stable - they are used for raw serialization
-    enum Mode : signed char
-    {
+    enum Mode : signed char {
         SortNoSort = 0,
 
         // ascending sorting by name: A, B, C...
@@ -15,10 +14,10 @@ struct SortMode {
 
         // descending sorting by name: C, B, A...
         SortByNameRev = 2,
-        
+
         // ascending sorting by extension: .dmg, .json, .pdf...
         SortByExt = 3,
-        
+
         // descending sorting by extension: .pdf, .json, .dmg ...
         SortByExtRev = 4,
 
@@ -56,7 +55,7 @@ struct SortMode {
         // representation)
         SortByRawCName = 127
     };
-    
+
     // sorting order
     Mode sort = SortByRawCName;
 

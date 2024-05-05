@@ -1,12 +1,10 @@
 // Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSConfiguration.h"
 
-
-struct VFSConfigurationDummyModel
-{
+struct VFSConfigurationDummyModel {
     inline const char *Tag() const { return ""; }
     inline const char *Junction() const { return ""; }
-    inline bool operator==(const VFSConfigurationDummyModel&) const { return false; }
+    inline bool operator==(const VFSConfigurationDummyModel &) const { return false; }
 };
 
 const char *VFSConfiguration::Tag() const
@@ -24,7 +22,7 @@ const char *VFSConfiguration::VerboseJunction() const
     return m_Object->VerboseJunction();
 }
 
-bool VFSConfiguration::Equal( const VFSConfiguration &_rhs ) const
+bool VFSConfiguration::Equal(const VFSConfiguration &_rhs) const
 {
     // logic:
     // 1) check if pointer hold the same object, if so, configs are equal

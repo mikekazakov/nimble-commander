@@ -146,36 +146,30 @@ static bool IsDark(NSColor *_color);
 
 - (void)setupLayout
 {
-    NSDictionary *views =
-        NSDictionaryOfVariableBindings(m_PathTextField, m_SearchTextField, m_SeparatorLine,
-                                       m_SearchMatchesField, m_SortButton, m_BusyIndicator);
+    NSDictionary *views = NSDictionaryOfVariableBindings(
+        m_PathTextField, m_SearchTextField, m_SeparatorLine, m_SearchMatchesField, m_SortButton, m_BusyIndicator);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+                                                 @"V:|-(==0)-[m_PathTextField]-(==0)-[m_SeparatorLine(==1)]-(==0)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SortButton]-(==0)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
     [self addConstraints:[NSLayoutConstraint
-                             constraintsWithVisualFormat:
-                                 @"V:|-(==0)-[m_PathTextField]-(==0)-[m_SeparatorLine(==1)]-(==0)-|"
+                             constraintsWithVisualFormat:@"|-(==0)-[m_SortButton(==20)]-(==0)-[m_PathTextField]-(==2)-|"
                                                  options:0
                                                  metrics:nil
                                                    views:views]];
-    [self addConstraints:[NSLayoutConstraint
-                             constraintsWithVisualFormat:@"V:|-(==0)-[m_SortButton]-(==0)-|"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:views]];
-    [self addConstraints:[NSLayoutConstraint
-                             constraintsWithVisualFormat:
-                                 @"|-(==0)-[m_SortButton(==20)]-(==0)-[m_PathTextField]-(==2)-|"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:views]];
-    [self
-        addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_BusyIndicator]-(==2)-|"
-                                                               options:0
-                                                               metrics:nil
-                                                                 views:views]];
-    [self addConstraints:[NSLayoutConstraint
-                             constraintsWithVisualFormat:@"V:[m_BusyIndicator]-(==2)-|"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_BusyIndicator]-(==2)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_BusyIndicator]-(==2)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:m_SearchTextField
                                                      attribute:NSLayoutAttributeLeft
                                                      relatedBy:NSLayoutRelationEqual
@@ -204,16 +198,14 @@ static bool IsDark(NSColor *_color);
                                                      attribute:NSLayoutAttributeBottom
                                                     multiplier:1
                                                       constant:1]];
-    [self addConstraints:[NSLayoutConstraint
-                             constraintsWithVisualFormat:@"|-(0)-[m_SeparatorLine]-(0)-|"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:views]];
-    [self addConstraints:[NSLayoutConstraint
-                             constraintsWithVisualFormat:@"[m_SearchMatchesField(==50)]-(20)-|"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_SeparatorLine]-(0)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_SearchMatchesField(==50)]-(20)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchMatchesField, self)];
 }
 
@@ -227,13 +219,14 @@ static bool IsDark(NSColor *_color);
     return true;
 }
 
-- (void)drawRect:(NSRect)[[maybe_unused]]dirtyRect
+- (void)drawRect:(NSRect) [[maybe_unused]] dirtyRect
 {
     if( m_Background && m_Background != NSColor.clearColor ) {
         CGContextRef context = NSGraphicsContext.currentContext.CGContext;
         CGContextSetFillColorWithColor(context, m_Background.CGColor);
         CGContextFillRect(context, NSRectToCGRect(self.bounds));
-    } else {
+    }
+    else {
         NSDrawWindowBackground(self.bounds);
     }
 }
@@ -325,7 +318,8 @@ static bool IsDark(NSColor *_color);
         if( v.length > 0 ) {
             if( m_SearchRequestChangeCallback )
                 m_SearchRequestChangeCallback(v);
-        } else
+        }
+        else
             [self onSearchFieldDiscardButton:m_SearchTextField];
     }
 }
@@ -346,19 +340,18 @@ static bool IsDark(NSColor *_color);
             i.state = i.tag == m_SortMode.sort ? NSControlStateValueOn : NSControlStateValueOff;
         else if( i.action == @selector(onSortPopupMenuOptionsClicked:) )
             switch( i.tag ) {
-            case 1:
-                i.state = m_SortMode.sep_dirs ? NSControlStateValueOn : NSControlStateValueOff;
-                break;
-            case 2:
-                i.state =
-                    m_SortMode.extensionless_dirs ? NSControlStateValueOn : NSControlStateValueOff;
-                break;
-            case 3:
-                i.state = m_SortMode.case_sens ? NSControlStateValueOn : NSControlStateValueOff;
-                break;
-            case 4:
-                i.state = m_SortMode.numeric_sort ? NSControlStateValueOn : NSControlStateValueOff;
-                break;
+                case 1:
+                    i.state = m_SortMode.sep_dirs ? NSControlStateValueOn : NSControlStateValueOff;
+                    break;
+                case 2:
+                    i.state = m_SortMode.extensionless_dirs ? NSControlStateValueOn : NSControlStateValueOff;
+                    break;
+                case 3:
+                    i.state = m_SortMode.case_sens ? NSControlStateValueOn : NSControlStateValueOff;
+                    break;
+                case 4:
+                    i.state = m_SortMode.numeric_sort ? NSControlStateValueOn : NSControlStateValueOff;
+                    break;
             }
     }
 
@@ -382,7 +375,7 @@ static bool IsDark(NSColor *_color);
         const auto new_sort_mode = static_cast<data::SortMode::Mode>(item.tag);
         if( !data::SortMode::validate(new_sort_mode) )
             return;
-        
+
         auto proposed = m_SortMode;
         proposed.sort = new_sort_mode;
 
@@ -396,18 +389,18 @@ static bool IsDark(NSColor *_color);
     if( auto item = nc::objc_cast<NSMenuItem>(sender) ) {
         auto proposed = m_SortMode;
         switch( item.tag ) {
-        case 1:
-            proposed.sep_dirs = !proposed.sep_dirs;
-            break;
-        case 2:
-            proposed.extensionless_dirs = !proposed.extensionless_dirs;
-            break;
-        case 3:
-            proposed.case_sens = !proposed.case_sens;
-            break;
-        case 4:
-            proposed.numeric_sort = !proposed.numeric_sort;
-            break;
+            case 1:
+                proposed.sep_dirs = !proposed.sep_dirs;
+                break;
+            case 2:
+                proposed.extensionless_dirs = !proposed.extensionless_dirs;
+                break;
+            case 3:
+                proposed.case_sens = !proposed.case_sens;
+                break;
+            case 4:
+                proposed.numeric_sort = !proposed.numeric_sort;
+                break;
         }
 
         if( proposed != m_SortMode && m_SortModeChangeCallback )
@@ -438,18 +431,14 @@ static bool IsDark(NSColor *_color);
 
 static void ChangeForegroundColor(NSButton *_button, NSColor *_new_color)
 {
-    const auto sort_title =
-        [[NSMutableAttributedString alloc] initWithAttributedString:_button.attributedTitle];
-    [sort_title addAttribute:NSForegroundColorAttributeName
-                       value:_new_color
-                       range:NSMakeRange(0, sort_title.length)];
+    const auto sort_title = [[NSMutableAttributedString alloc] initWithAttributedString:_button.attributedTitle];
+    [sort_title addAttribute:NSForegroundColorAttributeName value:_new_color range:NSMakeRange(0, sort_title.length)];
     _button.attributedTitle = sort_title;
 }
 
 static void ChangeAttributedTitle(NSButton *_button, NSString *_new_text)
 {
-    const auto title =
-        [[NSMutableAttributedString alloc] initWithAttributedString:_button.attributedTitle];
+    const auto title = [[NSMutableAttributedString alloc] initWithAttributedString:_button.attributedTitle];
     [title replaceCharactersInRange:NSMakeRange(0, title.length) withString:_new_text];
     _button.attributedTitle = title;
 }
@@ -457,36 +446,36 @@ static void ChangeAttributedTitle(NSButton *_button, NSString *_new_text)
 static NSString *SortLetter(data::SortMode _mode) noexcept
 {
     switch( _mode.sort ) {
-    case data::SortMode::SortByName:
-        return @"n";
-    case data::SortMode::SortByNameRev:
-        return @"N";
-    case data::SortMode::SortByExt:
-        return @"e";
-    case data::SortMode::SortByExtRev:
-        return @"E";
-    case data::SortMode::SortBySize:
-        return @"s";
-    case data::SortMode::SortBySizeRev:
-        return @"S";
-    case data::SortMode::SortByModTime:
-        return @"m";
-    case data::SortMode::SortByModTimeRev:
-        return @"M";
-    case data::SortMode::SortByBirthTime:
-        return @"b";
-    case data::SortMode::SortByBirthTimeRev:
-        return @"B";
-    case data::SortMode::SortByAddTime:
-        return @"a";
-    case data::SortMode::SortByAddTimeRev:
-        return @"A";
-    case data::SortMode::SortByAccessTime:
-        return @"x";
-    case data::SortMode::SortByAccessTimeRev:
-        return @"X";
-    default:
-        return @"?";
+        case data::SortMode::SortByName:
+            return @"n";
+        case data::SortMode::SortByNameRev:
+            return @"N";
+        case data::SortMode::SortByExt:
+            return @"e";
+        case data::SortMode::SortByExtRev:
+            return @"E";
+        case data::SortMode::SortBySize:
+            return @"s";
+        case data::SortMode::SortBySizeRev:
+            return @"S";
+        case data::SortMode::SortByModTime:
+            return @"m";
+        case data::SortMode::SortByModTimeRev:
+            return @"M";
+        case data::SortMode::SortByBirthTime:
+            return @"b";
+        case data::SortMode::SortByBirthTimeRev:
+            return @"B";
+        case data::SortMode::SortByAddTime:
+            return @"a";
+        case data::SortMode::SortByAddTimeRev:
+            return @"A";
+        case data::SortMode::SortByAccessTime:
+            return @"x";
+        case data::SortMode::SortByAccessTimeRev:
+            return @"X";
+        default:
+            return @"?";
     }
 }
 

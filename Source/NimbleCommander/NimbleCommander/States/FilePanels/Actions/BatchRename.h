@@ -7,11 +7,9 @@
 
 namespace nc::panel::actions {
 
-struct BatchRename final : PanelAction
-{
-    bool Predicate( PanelController *_target ) const override;
-    void Perform( PanelController *_target, id _sender ) const override;
+struct BatchRename final : PanelAction {
+    bool Predicate(PanelController *_target) const override;
+    void Perform(PanelController *_target, id _sender) const override;
 };
 
-
-}
+} // namespace nc::panel::actions

@@ -10,8 +10,7 @@ using nc::utility::NativeFileSystemInfo;
 using nc::utility::NativeFSManagerImpl;
 #define PREFIX "nc::utility::NativeFSManager "
 
-static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout,
-                                                 std::function<bool()> _expection);
+static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expection);
 static int Execute(const std::string &_command);
 
 TEST_CASE(PREFIX "Fast lookup considers firmlinks")
@@ -67,8 +66,7 @@ TEST_CASE(PREFIX "Can detect filesystem mounts and unmounts")
 
     NativeFSManagerImpl fsm;
     auto create_cmd =
-        "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " +
-        dmg_path.native();
+        "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " + dmg_path.native();
     auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path.native();
     auto unmount_cmd = "/usr/bin/hdiutil detach /Volumes/SomethingWickedThisWayComes12345";
     auto volume_path = "/Volumes/SomethingWickedThisWayComes12345";
@@ -95,9 +93,8 @@ TEST_CASE(PREFIX "Can detect filesystem mounts and unmounts")
 
     auto predicate = [&]() -> bool {
         auto volumes = fsm.Volumes();
-        return std::none_of(volumes.begin(), volumes.end(), [&](const auto &volume) {
-            return volume->mounted_at_path == volume_path;
-        });
+        return std::none_of(
+            volumes.begin(), volumes.end(), [&](const auto &volume) { return volume->mounted_at_path == volume_path; });
     };
     REQUIRE(runMainLoopUntilExpectationOrTimeout(10s, predicate));
 }
@@ -109,8 +106,7 @@ TEST_CASE(PREFIX "Can detect filesystem renames", "[!mayfail]")
     const auto dmg_path = tmp_dir.directory / "tmp_image.dmg";
 
     auto create_cmd =
-        "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " +
-        dmg_path.native();
+        "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " + dmg_path.native();
     auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path.native();
     auto rename_cmd = "/usr/sbin/diskutil rename /Volumes/SomethingWickedThisWayComes12345 "
                       "SomethingWickedThisWayComes123456";
@@ -148,8 +144,7 @@ TEST_CASE(PREFIX "Can detect filesystem renames", "[!mayfail]")
     REQUIRE(predicate_old() == false);
 }
 
-static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout,
-                                                 std::function<bool()> _expectation)
+static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation)
 {
     dispatch_assert_main_queue();
     assert(_timeout.count() > 0);

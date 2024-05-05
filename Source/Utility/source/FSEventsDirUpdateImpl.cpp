@@ -230,8 +230,8 @@ void FSEventsDirUpdateImpl::RemoveWatchPathWithTicket(uint64_t _ticket)
         return;
 
     if( !dispatch_is_main_queue() ) {
-      dispatch_to_main_queue([=, this] { RemoveWatchPathWithTicket(_ticket); });
-      return;
+        dispatch_to_main_queue([=, this] { RemoveWatchPathWithTicket(_ticket); });
+        return;
     }
 
     auto lock = std::lock_guard{m_Lock};

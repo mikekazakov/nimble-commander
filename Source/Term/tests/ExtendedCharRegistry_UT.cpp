@@ -31,8 +31,9 @@ static std::string to_utf8(std::u16string_view _str)
 {
     if( _str.empty() )
         return {};
-    auto cf_str = base::CFPtr<CFStringRef>::adopt(CFStringCreateWithCharacters(nullptr, reinterpret_cast<const uint16_t*>(_str.data()), _str.length()));
-      
+    auto cf_str = base::CFPtr<CFStringRef>::adopt(
+        CFStringCreateWithCharacters(nullptr, reinterpret_cast<const uint16_t *>(_str.data()), _str.length()));
+
     char buf[1024]; // whatever...
     long characters_used = 0;
     CFStringGetBytes(cf_str.get(),
@@ -60,9 +61,9 @@ TEST_CASE(PREFIX "Append from scratch")
     CHECK(r.Append(u"привет!") == AR{U'п', 1});
     CHECK(r.Append(u"❆") == AR{U'❆', 1});
     CHECK(r.Append(u"❆a") == AR{U'❆', 1});
-    CHECK(r.Append(u"😹") == AR{U'😹', 2}); // D83D DE39
+    CHECK(r.Append(u"😹") == AR{U'😹', 2});  // D83D DE39
     CHECK(r.Append(u"😹a") == AR{U'😹', 2}); // D83D DE39
-    CHECK(r.Append(u"💩") == AR{U'💩', 2}); // D83D DCA9
+    CHECK(r.Append(u"💩") == AR{U'💩', 2});  // D83D DCA9
 
     // emoji
     {
@@ -216,14 +217,14 @@ TEST_CASE(PREFIX "Append to a base character")
 TEST_CASE(PREFIX "Append to an extended character")
 {
     ExtendedCharRegistry r;
-        
+
     {
-        char32_t invalid = static_cast<char32_t>( (uint32_t(1) << 31) + 43634 );
+        char32_t invalid = static_cast<char32_t>((uint32_t(1) << 31) + 43634);
         auto ar = r.Append(u"\x200D", invalid);
-        CHECK( ar.newchar == invalid );
-        CHECK( ar.eaten == 0 );
+        CHECK(ar.newchar == invalid);
+        CHECK(ar.eaten == 0);
     }
-    
+
     // 🧜🏾‍♀️ = 🧜 D83E DDDC, 🏾 D83C DFFE, ZWJ 200D, ♀️2640, VS FE0F
     {
         auto ar1 = r.Append(u"🧜🏾");
@@ -232,16 +233,16 @@ TEST_CASE(PREFIX "Append to an extended character")
         CHECK(Reg::IsExtended(ar2.newchar));
         CHECK(is(r.Decode(ar2.newchar), u"🧜🏾‍♀️"));
         CHECK(ar2.eaten == 3);
-        
+
         auto ar3 = r.Append(u"\x200D\x2640\xFE0F!Hello, World!", ar1.newchar);
-        CHECK( ar3 == ar2 );
+        CHECK(ar3 == ar2);
     }
 
     {
         auto ar1 = r.Append(u"🧜🏾");
         auto ar2 = r.Append(u"A", ar1.newchar);
-        CHECK( ar2.newchar == ar1.newchar );
-        CHECK( ar2.eaten == 0 );
+        CHECK(ar2.newchar == ar1.newchar);
+        CHECK(ar2.eaten == 0);
     }
 }
 
@@ -281,8 +282,8 @@ TEST_CASE(PREFIX "IsDoubleWidth")
         {u"🏾", true},             // 🏾 feff d83c dffe
     };
     // clang-format on
-    for( auto tc: cases  ) {
-        INFO( to_utf8(tc.str) );
-        CHECK( dw(tc.str) == tc.exp );
+    for( auto tc : cases ) {
+        INFO(to_utf8(tc.str));
+        CHECK(dw(tc.str) == tc.exp);
     }
 }

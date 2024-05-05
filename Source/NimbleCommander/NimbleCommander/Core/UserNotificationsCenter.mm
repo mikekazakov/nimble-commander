@@ -33,8 +33,7 @@ UserNotificationsCenter &UserNotificationsCenter::Instance()
     return *inst;
 }
 
-void UserNotificationsCenter::ReportCompletedOperation(const nc::ops::Operation &_operation,
-                                                       NSWindow *_in_window)
+void UserNotificationsCenter::ReportCompletedOperation(const nc::ops::Operation &_operation, NSWindow *_in_window)
 {
     if( _operation.Statistics().ElapsedTime() < m_MinElapsedOperationTime )
         return;
@@ -44,7 +43,7 @@ void UserNotificationsCenter::ReportCompletedOperation(const nc::ops::Operation 
     un.subtitle = [NSString stringWithUTF8StdString:_operation.Title()];
     un.soundName = NSUserNotificationDefaultSoundName;
     const auto wnd_address = reinterpret_cast<unsigned long>(objc_bridge_cast<void>(_in_window));
-    un.userInfo = @{ g_Window: [NSNumber numberWithUnsignedLong:wnd_address] };
+    un.userInfo = @{g_Window: [NSNumber numberWithUnsignedLong:wnd_address]};
 
     [NSUserNotificationCenter.defaultUserNotificationCenter deliverNotification:un];
 }
@@ -72,14 +71,14 @@ void UserNotificationsCenter::SetMinElapsedOperationTime(std::chrono::nanosecond
 static void MakeWindowKey(unsigned long _wnd_adress)
 {
     const auto windows = NSApp.windows;
-    for( NSWindow *window: windows )
+    for( NSWindow *window : windows )
         if( reinterpret_cast<unsigned long>(objc_bridge_cast<void>(window)) == _wnd_adress ) {
             [window makeKeyAndOrderFront:nil];
             break;
         }
 }
 
-}
+} // namespace nc::core
 
 @implementation NCCoreUserNotificationCenterDelegate
 

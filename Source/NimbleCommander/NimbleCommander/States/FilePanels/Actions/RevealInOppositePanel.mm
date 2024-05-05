@@ -8,21 +8,21 @@
 
 namespace nc::panel::actions {
 
-bool RevealInOppositePanel::Predicate( MainWindowFilePanelState *_target ) const
+bool RevealInOppositePanel::Predicate(MainWindowFilePanelState *_target) const
 {
     const auto pc = _target.activePanelController;
     if( !pc )
         return false;
-    
+
     if( !pc.view.item )
         return false;
-    
+
     if( _target.splitView.anyCollapsedOrOverlayed )
         return false;
-    
+
     return true;
 }
-    
+
 static void RevealItem(const VFSListingItem &_item, PanelController *_panel)
 {
     auto request = std::make_shared<DirectoryChangeRequest>();
@@ -39,13 +39,13 @@ static void RevealItem(const VFSListingItem &_item, PanelController *_panel)
     [_panel GoToDirWithContext:request];
 }
 
-void RevealInOppositePanel::Perform( MainWindowFilePanelState *_target, id ) const
+void RevealInOppositePanel::Perform(MainWindowFilePanelState *_target, id) const
 {
     const auto current = _target.activePanelController;
     const auto opposite = _target.oppositePanelController;
     if( !current || !opposite )
         return;
-    
+
     const auto item = current.view.item;
     if( !item )
         return;
@@ -53,23 +53,22 @@ void RevealInOppositePanel::Perform( MainWindowFilePanelState *_target, id ) con
     RevealItem(item, opposite);
 }
 
-bool RevealInOppositePanelTab::Predicate( MainWindowFilePanelState *_target ) const
+bool RevealInOppositePanelTab::Predicate(MainWindowFilePanelState *_target) const
 {
     const auto pc = _target.activePanelController;
     if( !pc )
         return false;
-    
+
     if( !pc.view.item )
         return false;
-    
+
     if( _target.splitView.anyCollapsedOrOverlayed )
         return false;
-    
+
     return true;
 }
 
-static PanelController *SpawnOppositeTab(MainWindowFilePanelState *_target,
-                                         PanelController *_current )
+static PanelController *SpawnOppositeTab(MainWindowFilePanelState *_target, PanelController *_current)
 {
     if( _current == _target.leftPanelController )
         return [_target spawnNewTabInTabView:_target.splitView.rightTabbedHolder.tabView
@@ -82,16 +81,16 @@ static PanelController *SpawnOppositeTab(MainWindowFilePanelState *_target,
     return nil;
 }
 
-void RevealInOppositePanelTab::Perform( MainWindowFilePanelState *_target, id ) const
+void RevealInOppositePanelTab::Perform(MainWindowFilePanelState *_target, id) const
 {
     const auto current = _target.activePanelController;
     if( !current )
         return;
-    
+
     const auto item = current.view.item;
     if( !item )
         return;
-    
+
     const auto opposite = SpawnOppositeTab(_target, current);
     if( !opposite )
         return;
@@ -99,4 +98,4 @@ void RevealInOppositePanelTab::Perform( MainWindowFilePanelState *_target, id ) 
     RevealItem(item, opposite);
 }
 
-}
+} // namespace nc::panel::actions

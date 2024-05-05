@@ -15,8 +15,7 @@ namespace nc::panel::actions {
 // perhaps it would be good to add support of URLS at least.
 // or even with custom NC's structures used in drag&drop system
 
-static std::vector<VFSListingItem> FetchVFSListingsItemsFromPaths(NSArray *_input,
-                                                                  vfs::NativeHost &_native_host)
+static std::vector<VFSListingItem> FetchVFSListingsItemsFromPaths(NSArray *_input, vfs::NativeHost &_native_host)
 {
     std::vector<VFSListingItem> result;
     for( NSString *ns_filepath in _input ) {
@@ -33,8 +32,7 @@ static std::vector<VFSListingItem> FetchVFSListingsItemsFromPaths(NSArray *_inpu
     return result;
 }
 
-static std::vector<VFSListingItem>
-FetchVFSListingsItemsFromPasteboard(vfs::NativeHost &_native_host)
+static std::vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard(vfs::NativeHost &_native_host)
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -69,8 +67,8 @@ static void PasteOrMove(PanelController *_target, bool _paste, vfs::NativeHost &
     auto opts = MakeDefaultFileCopyOptions();
     opts.docopy = _paste;
     __weak PanelController *wpc = _target;
-    const auto op = std::make_shared<nc::ops::Copying>(
-        std::move(source_items), _target.currentDirectoryPath, _target.vfs, opts);
+    const auto op =
+        std::make_shared<nc::ops::Copying>(std::move(source_items), _target.currentDirectoryPath, _target.vfs, opts);
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=] {
         dispatch_to_main_queue([=] {
             if( PanelController *pc = wpc )
@@ -80,8 +78,7 @@ static void PasteOrMove(PanelController *_target, bool _paste, vfs::NativeHost &
     [_target.mainWindowController enqueueOperation:op];
 }
 
-PasteFromPasteboard::PasteFromPasteboard(nc::vfs::NativeHost &_native_host)
-    : m_NativeHost(_native_host)
+PasteFromPasteboard::PasteFromPasteboard(nc::vfs::NativeHost &_native_host) : m_NativeHost(_native_host)
 {
 }
 
@@ -99,8 +96,7 @@ void PasteFromPasteboard::Perform(PanelController *_target, [[maybe_unused]] id 
     PasteOrMove(_target, true, m_NativeHost);
 }
 
-MoveFromPasteboard::MoveFromPasteboard(nc::vfs::NativeHost &_native_host)
-    : m_NativeHost(_native_host)
+MoveFromPasteboard::MoveFromPasteboard(nc::vfs::NativeHost &_native_host) : m_NativeHost(_native_host)
 {
 }
 
@@ -118,4 +114,4 @@ void MoveFromPasteboard::Perform(PanelController *_target, [[maybe_unused]] id _
     PasteOrMove(_target, false, m_NativeHost);
 }
 
-};
+}; // namespace nc::panel::actions

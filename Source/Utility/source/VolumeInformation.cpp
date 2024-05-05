@@ -27,8 +27,7 @@ int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInfo
     err = getattrlist(_path, &attrs, &info, sizeof(info), 0);
     if( err == 0 ) {
 #define CAPAB(_a, _b) (info.c.capabilities[(_a)] & info.c.valid[(_a)] & (_b))
-        _c->fmt.persistent_objects_ids =
-            CAPAB(VOL_CAPABILITIES_FORMAT, VOL_CAP_FMT_PERSISTENTOBJECTIDS);
+        _c->fmt.persistent_objects_ids = CAPAB(VOL_CAPABILITIES_FORMAT, VOL_CAP_FMT_PERSISTENTOBJECTIDS);
         _c->fmt.symbolic_links = CAPAB(VOL_CAPABILITIES_FORMAT, VOL_CAP_FMT_SYMBOLICLINKS);
         _c->fmt.hard_links = CAPAB(VOL_CAPABILITIES_FORMAT, VOL_CAP_FMT_HARDLINKS);
         _c->fmt.journal = CAPAB(VOL_CAPABILITIES_FORMAT, VOL_CAP_FMT_JOURNAL);
@@ -45,8 +44,7 @@ int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInfo
         _c->fmt.path_from_id = CAPAB(VOL_CAPABILITIES_FORMAT, VOL_CAP_FMT_PATH_FROM_ID);
         _c->fmt.no_volume_sizes = CAPAB(VOL_CAPABILITIES_FORMAT, VOL_CAP_FMT_NO_VOLUME_SIZES);
         _c->fmt.object_ids_64bit = CAPAB(VOL_CAPABILITIES_FORMAT, VOL_CAP_FMT_64BIT_OBJECT_IDS);
-        _c->fmt.decmpfs_compression =
-            CAPAB(VOL_CAPABILITIES_FORMAT, VOL_CAP_FMT_DECMPFS_COMPRESSION);
+        _c->fmt.decmpfs_compression = CAPAB(VOL_CAPABILITIES_FORMAT, VOL_CAP_FMT_DECMPFS_COMPRESSION);
         _c->intr.search_fs = CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_SEARCHFS);
         _c->intr.attr_list = CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_ATTRLIST);
         _c->intr.nfs_export = CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_NFSEXPORT);
@@ -57,15 +55,14 @@ int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInfo
         _c->intr.vol_rename = CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_VOL_RENAME);
         _c->intr.adv_lock = CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_ADVLOCK);
         _c->intr.file_lock = CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_FLOCK);
-        _c->intr.extended_security =
-            CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_EXTENDED_SECURITY);
+        _c->intr.extended_security = CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_EXTENDED_SECURITY);
         _c->intr.user_access = CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_USERACCESS);
         _c->intr.mandatory_lock = CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_MANLOCK);
         _c->intr.extended_attr = CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_EXTENDED_ATTR);
         _c->intr.named_strems = CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_NAMEDSTREAMS);
 #undef CAPAB
-#define ATTRIB(_a, _b, _d)                                                                         \
-    _c->attr._a[0] = info.a.validattr._b & _d;                                                     \
+#define ATTRIB(_a, _b, _d)                                                                                             \
+    _c->attr._a[0] = info.a.validattr._b & _d;                                                                         \
     _c->attr._a[1] = info.a.nativeattr._b & _d;
 
         ATTRIB(cmn.name, commonattr, ATTR_CMN_NAME);
@@ -291,8 +288,7 @@ int FetchVolumeAttributesInformation(const char *_path,
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
             return errno;
         std::memcpy(_a->mount_point,
-                    reinterpret_cast<char *>(&info.mountpoint.val) +
-                        info.mountpoint.val.attr_dataoffset,
+                    reinterpret_cast<char *>(&info.mountpoint.val) + info.mountpoint.val.attr_dataoffset,
                     info.mountpoint.val.attr_length);
     }
     if( _c->attr.vol.name[0] ) {
@@ -314,8 +310,7 @@ int FetchVolumeAttributesInformation(const char *_path,
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
             return errno;
         std::memcpy(_a->mounted_device,
-                    reinterpret_cast<char *>(&info.mounteddevice.val) +
-                        info.mounteddevice.val.attr_dataoffset,
+                    reinterpret_cast<char *>(&info.mounteddevice.val) + info.mounteddevice.val.attr_dataoffset,
                     info.mounteddevice.val.attr_length);
     }
     if( _c->attr.vol.encoding_used[0] ) {
@@ -337,31 +332,28 @@ int FetchVolumeAttributesInformation(const char *_path,
     strcpy(_a->fs_type_name, stat_fs.f_fstypename);
     _a->fs_owner = stat_fs.f_owner;
 
-    CFURLRef cfurl = CFURLCreateFromFileSystemRepresentation(
-        0, reinterpret_cast<const UInt8 *>(_path), std::strlen(_path), false);
+    CFURLRef cfurl =
+        CFURLCreateFromFileSystemRepresentation(0, reinterpret_cast<const UInt8 *>(_path), std::strlen(_path), false);
     CFStringRef fsverbname;
-    if( CFURLCopyResourcePropertyForKey(
-            cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, &fsverbname, nullptr) == false ) {
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, &fsverbname, nullptr) ==
+        false ) {
         CFRelease(cfurl);
         return -1; // what to return???
     }
     // TODO: how some unknown reasons kCFURLVolume"Localized"FormatDescriptionKey now returns
     // "Mac OS Extended (Journaled)" instead of "Mac OS Extended (журнальный)"
     // need to investigate why
-    CFStringGetCString(
-        fsverbname, _a->fs_type_verb, sizeof(_a->fs_type_verb), kCFStringEncodingUTF8);
+    CFStringGetCString(fsverbname, _a->fs_type_verb, sizeof(_a->fs_type_verb), kCFStringEncodingUTF8);
     CFRelease(fsverbname);
 
     CFBooleanRef isejectable = nullptr;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsEjectableKey, &isejectable, 0) &&
-        isejectable ) {
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsEjectableKey, &isejectable, 0) && isejectable ) {
         _a->is_sw_ejectable = CFBooleanGetValue(isejectable);
         CFRelease(isejectable);
     }
 
     CFBooleanRef isremovable = nullptr;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsRemovableKey, &isremovable, 0) &&
-        isremovable ) {
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsRemovableKey, &isremovable, 0) && isremovable ) {
         _a->is_sw_removable = CFBooleanGetValue(isremovable);
         CFRelease(isremovable);
     }
@@ -373,8 +365,7 @@ int FetchVolumeAttributesInformation(const char *_path,
     }
 
     CFBooleanRef isinternal = nullptr;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsInternalKey, &isinternal, 0) &&
-        isinternal ) {
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsInternalKey, &isinternal, 0) && isinternal ) {
         _a->is_internal = CFBooleanGetValue(isinternal);
         CFRelease(isinternal);
     }

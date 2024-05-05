@@ -5,8 +5,8 @@
 #include <Panel/Log.h>
 #include <algorithm>
 
-using nc::panel::view::brief::FixedNumberLayoutEngine;
 using nc::panel::Log;
+using nc::panel::view::brief::FixedNumberLayoutEngine;
 
 namespace {
 
@@ -15,7 +15,7 @@ struct ColumnAnchor {
     int offset_from_left_border = 0;
 };
 
-}
+} // namespace
 
 @implementation NCPanelBriefViewFixedNumberLayout {
     int m_ItemHeight;

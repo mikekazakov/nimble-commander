@@ -3,15 +3,13 @@
 
 namespace nc::ops {
 
-enum class DeletionType : char
-{
+enum class DeletionType : char {
     Permanent = 0,
     Trash = 1
 };
 
 struct DeletionOptions {
-    enum class LockedItemBehavior : char
-    {
+    enum class LockedItemBehavior : char {
         Ask,       // default - ask what to when failed to deled a locked item
         SkipAll,   // silently skips deleting locked items
         UnlockAll, // silently unlock an item it wasn't removed

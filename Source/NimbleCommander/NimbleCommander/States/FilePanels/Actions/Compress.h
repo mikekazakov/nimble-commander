@@ -20,8 +20,7 @@ public:
     CompressBase(nc::config::Config &_config);
 
 protected:
-    void AddDeselectorIfNeeded(nc::ops::Operation &_with_operation,
-                               PanelController *_to_target) const;
+    void AddDeselectorIfNeeded(nc::ops::Operation &_with_operation, PanelController *_to_target) const;
 
 private:
     bool ShouldAutomaticallyDeselect() const;

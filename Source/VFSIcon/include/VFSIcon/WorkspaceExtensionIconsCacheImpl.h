@@ -22,10 +22,8 @@ public:
     NSImage *GenericFolderIcon() const override;
 
 private:
-    using IconsStorage = robin_hood::unordered_flat_map<std::string,
-                                                        NSImage *,
-                                                        RHTransparentStringHashEqual,
-                                                        RHTransparentStringHashEqual>;
+    using IconsStorage = robin_hood::
+        unordered_flat_map<std::string, NSImage *, RHTransparentStringHashEqual, RHTransparentStringHashEqual>;
 
     NSImage *Find_Locked(const std::string &_extension) const;
     void Commit_Locked(const std::string &_extension, NSImage *_image);

@@ -63,7 +63,7 @@ public:
 
     xpc_connection_t Connection();
     bool IsHelperAlive(); // blocking I/O
-    
+
     static void InstallViaRootCLI();
     static void UninstallViaRootCLI();
 

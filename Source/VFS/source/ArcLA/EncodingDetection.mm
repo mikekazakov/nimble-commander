@@ -6,9 +6,7 @@ namespace nc::vfs::arc {
 
 CFStringEncoding DetectEncoding(const void *_bytes, size_t _sz)
 {
-    NSData *data = [NSData dataWithBytesNoCopy:const_cast<void *>(_bytes)
-                                        length:_sz
-                                  freeWhenDone:false];
+    NSData *data = [NSData dataWithBytesNoCopy:const_cast<void *>(_bytes) length:_sz freeWhenDone:false];
 
     NSStringEncoding ns_enc = [NSString stringEncodingForData:data
                                               encodingOptions:nil
@@ -24,4 +22,4 @@ CFStringEncoding DetectEncoding(const void *_bytes, size_t _sz)
     return cf_enc;
 }
 
-}
+} // namespace nc::vfs::arc

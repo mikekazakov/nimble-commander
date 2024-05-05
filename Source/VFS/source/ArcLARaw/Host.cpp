@@ -26,8 +26,7 @@ static constexpr uint64_t g_MaxBytes = 64 * 1024 * 1024;
 static constexpr const char *g_LastResortFilename = "data";
 
 // Lowercase FormC extensions supported by this VFS
-static constexpr std::string_view g_ExtensionsList[] =
-    {"bz2", "gz", "lz", "lz4", "lzma", "lzo", "xz", "z", "zst"};
+static constexpr std::string_view g_ExtensionsList[] = {"bz2", "gz", "lz", "lz4", "lzma", "lzo", "xz", "z", "zst"};
 
 // O(1) unordered set of the extensions
 [[clang::no_destroy]] static const robin_hood::
@@ -161,17 +160,11 @@ public:
 
     const char *Junction() const noexcept { return path.c_str(); }
 
-    bool operator==(const VFSArchiveRawHostConfiguration &_rhs) const noexcept
-    {
-        return path == _rhs.path;
-    }
+    bool operator==(const VFSArchiveRawHostConfiguration &_rhs) const noexcept { return path == _rhs.path; }
 };
 
-ArchiveRawHost::ArchiveRawHost(const std::string &_path,
-                               const VFSHostPtr &_parent,
-                               VFSCancelChecker _cancel_checker)
-    : Host(_path.c_str(), _parent, UniqueTag),
-      m_Configuration(VFSArchiveRawHostConfiguration{_path})
+ArchiveRawHost::ArchiveRawHost(const std::string &_path, const VFSHostPtr &_parent, VFSCancelChecker _cancel_checker)
+    : Host(_path.c_str(), _parent, UniqueTag), m_Configuration(VFSArchiveRawHostConfiguration{_path})
 {
     Init(_cancel_checker);
 }
@@ -179,8 +172,7 @@ ArchiveRawHost::ArchiveRawHost(const std::string &_path,
 ArchiveRawHost::ArchiveRawHost(const VFSHostPtr &_parent,
                                const VFSConfiguration &_config,
                                VFSCancelChecker _cancel_checker)
-    : Host(_config.Get<VFSArchiveRawHostConfiguration>().path.c_str(), _parent, UniqueTag),
-      m_Configuration(_config)
+    : Host(_config.Get<VFSArchiveRawHostConfiguration>().path.c_str(), _parent, UniqueTag), m_Configuration(_config)
 {
     Init(_cancel_checker);
 }
@@ -189,11 +181,10 @@ VFSMeta ArchiveRawHost::Meta()
 {
     VFSMeta m;
     m.Tag = UniqueTag;
-    m.SpawnWithConfig = [](const VFSHostPtr &_parent,
-                           const VFSConfiguration &_config,
-                           VFSCancelChecker _cancel_checker) {
-        return std::make_shared<ArchiveRawHost>(_parent, _config, _cancel_checker);
-    };
+    m.SpawnWithConfig =
+        [](const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker) {
+            return std::make_shared<ArchiveRawHost>(_parent, _config, _cancel_checker);
+        };
     return m;
 }
 
@@ -238,8 +229,7 @@ int ArchiveRawHost::CreateFile(const char *_path,
     if( m_Filename != std::string_view(_path + 1) )
         return VFSError::FromErrno(ENOENT);
 
-    _target = std::make_unique<GenericMemReadOnlyFile>(
-        _path, shared_from_this(), m_Data.data(), m_Data.size());
+    _target = std::make_unique<GenericMemReadOnlyFile>(_path, shared_from_this(), m_Data.data(), m_Data.size());
     return VFSError::Ok;
 }
 
@@ -267,9 +257,8 @@ int ArchiveRawHost::Stat(const char *_path,
     return VFSError::Ok;
 }
 
-int ArchiveRawHost::IterateDirectoryListing(
-    const char *_path,
-    const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+int ArchiveRawHost::IterateDirectoryListing(const char *_path,
+                                            const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     if( _path == nullptr || _path[0] != '/' || !_handler )
         return VFSError::FromErrno(EINVAL);

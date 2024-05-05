@@ -22,8 +22,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     if( _open_flags & VFSFlags::OF_Append )
         return VFSError::FromErrno(EPERM);
 
-    if( (_open_flags & (VFSFlags::OF_Read | VFSFlags::OF_Write)) ==
-        (VFSFlags::OF_Read | VFSFlags::OF_Write) )
+    if( (_open_flags & (VFSFlags::OF_Read | VFSFlags::OF_Write)) == (VFSFlags::OF_Read | VFSFlags::OF_Write) )
         return VFSError::FromErrno(EPERM);
 
     if( _open_flags & VFSFlags::OF_Read ) {

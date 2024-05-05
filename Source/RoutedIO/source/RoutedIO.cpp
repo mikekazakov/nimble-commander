@@ -35,9 +35,8 @@ static PosixIOInterface &IODirectCreateProxy()
 static PosixIOInterface &IOWrappedCreateProxy()
 {
     static PosixIOInterface *interface = []() -> PosixIOInterface * {
-        return !nc::utility::IsThisProcessSandboxed()
-                   ? new PosixIOInterfaceRouted(RoutedIO::Instance())
-                   : new PosixIOInterfaceNative();
+        return !nc::utility::IsThisProcessSandboxed() ? new PosixIOInterfaceRouted(RoutedIO::Instance())
+                                                      : new PosixIOInterfaceNative();
     }();
     return *interface;
 }
@@ -189,7 +188,7 @@ bool RoutedIO::TurnOn()
 void RoutedIO::TurnOff()
 {
     Log::Info(SPDLOC, "RoutedIO::Turnoff() called");
-    
+
     if( m_Connection ) {
         xpc_connection_cancel(m_Connection);
         xpc_release(m_Connection);
@@ -197,7 +196,7 @@ void RoutedIO::TurnOff()
     }
     m_Enabled = false;
     m_AuthenticatedAsAdmin = false;
-    
+
     Log::Info(SPDLOC, "RoutedIO enabled={}", m_Enabled.load());
 }
 
@@ -227,14 +226,13 @@ bool RoutedIO::AskToInstallHelper()
 
     AuthorizationItem auth_item = {kSMRightBlessPrivilegedHelper, 0, nullptr, 0};
     AuthorizationRights auth_rights = {1, &auth_item};
-    AuthorizationFlags flags = kAuthorizationFlagInteractionAllowed |
-                               kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
+    AuthorizationFlags flags =
+        kAuthorizationFlagInteractionAllowed | kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
     AuthorizationRef auth_ref = nullptr;
 
     // Provide a text prompt for the request
     std::string prompt = MessageInstallHelperApp();
-    AuthorizationItem auth_env_item = {
-        kAuthorizationEnvironmentPrompt, prompt.size(), prompt.data(), 0};
+    AuthorizationItem auth_env_item = {kAuthorizationEnvironmentPrompt, prompt.size(), prompt.data(), 0};
     const AuthorizationEnvironment auth_env = {1, &auth_env_item};
 
     // Obtain the right to install privileged helper tools (kSMRightBlessPrivilegedHelper).
@@ -268,9 +266,8 @@ bool RoutedIO::AskToInstallHelper()
                        "RoutedIO::AskToInstallHelper() SMJobBless failed with failure reason: {}. ",
                        base::CFStringGetUTF8StdString(desc.get()));
         if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyRecoverySuggestion(error)) )
-            Log::Error(
-                SPDLOC,
-                "RoutedIO::AskToInstallHelper() SMJobBless failed with recovery suggestion: {}. ",
+            Log::Error(SPDLOC,
+                       "RoutedIO::AskToInstallHelper() SMJobBless failed with recovery suggestion: {}. ",
                        base::CFStringGetUTF8StdString(desc.get()));
         CFRelease(error);
     }
@@ -300,14 +297,12 @@ bool RoutedIO::AuthenticateAsAdmin()
 
     // Provide a text prompt for the request
     std::string prompt = MessageAuthAsAdmin();
-    AuthorizationItem auth_env_item = {
-        kAuthorizationEnvironmentPrompt, prompt.size(), prompt.data(), 0};
+    AuthorizationItem auth_env_item = {kAuthorizationEnvironmentPrompt, prompt.size(), prompt.data(), 0};
     const AuthorizationEnvironment auth_env = {1, &auth_env_item};
 
     // What to auth now
-    const AuthorizationFlags flags = kAuthorizationFlagInteractionAllowed |
-                                     kAuthorizationFlagPreAuthorize |
-                                     kAuthorizationFlagExtendRights;
+    const AuthorizationFlags flags =
+        kAuthorizationFlagInteractionAllowed | kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
 
     const OSStatus status = AuthorizationCreate(&auth_rights, &auth_env, flags, nullptr);
 
@@ -335,11 +330,10 @@ bool RoutedIO::Connect()
         return false;
     }
 
-    xpc_connection_t connection = xpc_connection_create_mach_service(
-        g_HelperLabel, nullptr, XPC_CONNECTION_MACH_SERVICE_PRIVILEGED);
+    xpc_connection_t connection =
+        xpc_connection_create_mach_service(g_HelperLabel, nullptr, XPC_CONNECTION_MACH_SERVICE_PRIVILEGED);
     if( !connection ) {
-        Log::Error(SPDLOC,
-                   "RoutedIO::Connect() failed to call xpc_connection_create_mach_service()");
+        Log::Error(SPDLOC, "RoutedIO::Connect() failed to call xpc_connection_create_mach_service()");
         return false;
     }
 
@@ -436,8 +430,7 @@ void RoutedIO::InstallViaRootCLI()
     // Obtain the right to install privileged helper tools (kSMRightBlessPrivilegedHelper).
     const OSStatus status = AuthorizationCreate(&auth_rights, nullptr, flags, &auth_ref);
     if( status != errAuthorizationSuccess ) {
-        std::cerr << "AuthorizationCreate() failed with the error: " << AuthRCToString(status)
-                  << "." << std::endl;
+        std::cerr << "AuthorizationCreate() failed with the error: " << AuthRCToString(status) << "." << std::endl;
         return;
     }
 
@@ -515,4 +508,4 @@ static const char *AuthRCToString(OSStatus _rc) noexcept
             return "Unknown OSStatus";
     }
 }
-}
+} // namespace nc::routedio

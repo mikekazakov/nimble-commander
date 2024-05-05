@@ -4,12 +4,11 @@
 #include "PanelViewImplementationProtocol.h"
 #include <Panel/PanelDataSortMode.h>
 
-@interface NCPanelViewDummyPresentation : NSView<NCPanelViewPresentationProtocol>
+@interface NCPanelViewDummyPresentation : NSView <NCPanelViewPresentationProtocol>
 
-@property (nonatomic, readonly) int itemsInColumn;
-@property (nonatomic, readonly) int maxNumberOfVisibleItems;
-@property (nonatomic) int cursorPosition;
-@property (nonatomic) nc::panel::data::SortMode sortMode;
-
+@property(nonatomic, readonly) int itemsInColumn;
+@property(nonatomic, readonly) int maxNumberOfVisibleItems;
+@property(nonatomic) int cursorPosition;
+@property(nonatomic) nc::panel::data::SortMode sortMode;
 
 @end

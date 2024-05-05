@@ -7,4 +7,4 @@ namespace nc::utility {
 NativeFileSystemInfo::NativeFileSystemInfo() = default;
 NativeFileSystemInfo::~NativeFileSystemInfo() = default;
 
-}
+} // namespace nc::utility

@@ -3,11 +3,10 @@
 #include "DefaultAction.h"
 
 namespace nc::panel::actions {
-    
-struct ShowTerminal final : StateAction
-{
-    bool ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item ) const override;
-    void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
+
+struct ShowTerminal final : StateAction {
+    bool ValidateMenuItem(MainWindowFilePanelState *_target, NSMenuItem *_item) const override;
+    void Perform(MainWindowFilePanelState *_target, id _sender) const override;
 };
 
-}
+} // namespace nc::panel::actions

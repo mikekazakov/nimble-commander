@@ -5,14 +5,13 @@
 
 namespace nc::panel {
 
-CursorBackup::CursorBackup(int _current_cursor_pos, const data::Model &_data) noexcept:
-    m_Data(_data)
+CursorBackup::CursorBackup(int _current_cursor_pos, const data::Model &_data) noexcept : m_Data(_data)
 {
     Log::Trace(SPDLOC, "Saving cursor position: {}", _current_cursor_pos);
     if( _current_cursor_pos >= 0 ) {
-        assert( _current_cursor_pos < _data.SortedEntriesCount() );
+        assert(_current_cursor_pos < _data.SortedEntriesCount());
         auto item = _data.EntryAtSortPosition(_current_cursor_pos);
-        assert( item );
+        assert(item);
         m_OldCursorName = item.Filename();
         m_OldEntrySortKeys = _data.EntrySortKeysAtSortPosition(_current_cursor_pos);
     }
@@ -28,9 +27,9 @@ int CursorBackup::RestoredCursorPosition() const noexcept
 int CursorBackup::FindRestoredCursorPosition() const noexcept
 {
     if( m_OldCursorName.empty() ) {
-        return m_Data.SortedEntriesCount() > 0 ? 0 : -1;        
+        return m_Data.SortedEntriesCount() > 0 ? 0 : -1;
     }
-    
+
     const auto new_cursor_raw_pos = m_Data.RawIndexForName(m_OldCursorName.c_str());
     if( new_cursor_raw_pos >= 0 ) {
         const auto new_cursor_sort_pos = m_Data.SortedIndexForRawIndex(new_cursor_raw_pos);
@@ -41,7 +40,7 @@ int CursorBackup::FindRestoredCursorPosition() const noexcept
     }
     else {
         const auto lower_bound_ind = m_Data.SortLowerBoundForEntrySortKeys(m_OldEntrySortKeys);
-        if( lower_bound_ind >= 0) {
+        if( lower_bound_ind >= 0 ) {
             return lower_bound_ind;
         }
         else {
@@ -50,4 +49,4 @@ int CursorBackup::FindRestoredCursorPosition() const noexcept
     }
 }
 
-}
+} // namespace nc::panel

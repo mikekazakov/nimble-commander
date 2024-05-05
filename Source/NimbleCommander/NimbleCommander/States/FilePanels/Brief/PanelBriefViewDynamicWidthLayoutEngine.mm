@@ -13,8 +13,8 @@ void DynamicWidthLayoutEngine::Layout(const Params &_params)
         PerformSingularLayout();
     }
     else {
-        m_ColumnsNumber = (m_ItemsNumber % m_RowsNumber != 0) ? (m_ItemsNumber / m_RowsNumber + 1)
-                                                              : (m_ItemsNumber / m_RowsNumber);
+        m_ColumnsNumber =
+            (m_ItemsNumber % m_RowsNumber != 0) ? (m_ItemsNumber / m_RowsNumber + 1) : (m_ItemsNumber / m_RowsNumber);
         PerformNormalLayout(_params);
     }
 }
@@ -52,15 +52,13 @@ void DynamicWidthLayoutEngine::PerformNormalLayout(const Params &_params)
         const auto last_index = std::min((column_index + 1) * rows_number, items_number);
         const auto max_width = *std::max_element(items_intrinsic_widths.begin() + first_index,
                                                  items_intrinsic_widths.begin() + last_index);
-        const auto column_width =
-            std::clamp(static_cast<int>(max_width), m_ItemMinWidth, m_ItemMaxWidth);
+        const auto column_width = std::clamp(static_cast<int>(max_width), m_ItemMinWidth, m_ItemMaxWidth);
 
         for( int index = first_index, row_number = first_index % rows_number; index < last_index;
              ++index, ++row_number ) {
             const auto origin = NSMakePoint(current_column_position, row_number * item_height);
             const auto index_path = [NSIndexPath indexPathForItem:index inSection:0];
-            const auto attributes =
-                [NSCollectionViewLayoutAttributes layoutAttributesForItemWithIndexPath:index_path];
+            const auto attributes = [NSCollectionViewLayoutAttributes layoutAttributesForItemWithIndexPath:index_path];
             attributes.frame = NSMakeRect(origin.x, origin.y, column_width, item_height);
             m_Attributes[index] = attributes;
         }
@@ -86,8 +84,7 @@ void DynamicWidthLayoutEngine::PerformSingularLayout()
 
     for( int index = 0; index < items_number; ++index ) {
         const auto index_path = [NSIndexPath indexPathForItem:index inSection:0];
-        const auto attributes =
-            [NSCollectionViewLayoutAttributes layoutAttributesForItemWithIndexPath:index_path];
+        const auto attributes = [NSCollectionViewLayoutAttributes layoutAttributesForItemWithIndexPath:index_path];
         attributes.frame = frame;
         m_Attributes[index] = attributes;
     }
@@ -97,8 +94,7 @@ void DynamicWidthLayoutEngine::PerformSingularLayout()
     m_ContentSize = NSMakeSize(m_ColumnsNumber * m_ItemMinWidth, m_ItemHeight);
 }
 
-bool DynamicWidthLayoutEngine::ShouldRelayoutForNewBounds(
-    const NSRect clip_view_bounds) const noexcept
+bool DynamicWidthLayoutEngine::ShouldRelayoutForNewBounds(const NSRect clip_view_bounds) const noexcept
 {
     const auto height = clip_view_bounds.size.height;
     const auto projected_rows_number = NumberOfRowsForViewHeight(height, m_ItemHeight);
@@ -114,4 +110,4 @@ DynamicWidthLayoutEngine::AttributesForItemsInRect(NSRect _rect) const noexcept
     return LogarithmicSearchForItemsInRect(_rect);
 }
 
-}
+} // namespace nc::panel::view::brief

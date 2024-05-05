@@ -16,8 +16,7 @@ using namespace std::literals;
  * Otherwise, return _default
  */
 template <class InputIterator, class UnaryPredicate, class T>
-inline T
-all_equal_or_default(InputIterator _first, InputIterator _last, UnaryPredicate _pred, T &&_default)
+inline T all_equal_or_default(InputIterator _first, InputIterator _last, UnaryPredicate _pred, T &&_default)
 {
     if( _first == _last )
         return std::move(_default);
@@ -70,8 +69,8 @@ static std::string GetDefaultHandlerPathForUTI(const std::string &_uti)
     if( !uti )
         return {};
 
-    NSString *bundle = (__bridge_transfer NSString *)LSCopyDefaultRoleHandlerForContentType(
-        (__bridge CFStringRef)uti, kLSRolesAll);
+    NSString *bundle =
+        (__bridge_transfer NSString *)LSCopyDefaultRoleHandlerForContentType((__bridge CFStringRef)uti, kLSRolesAll);
     auto path = [NSWorkspace.sharedWorkspace absolutePathForAppBundleWithIdentifier:bundle];
     if( path )
         return path.fileSystemRepresentation;
@@ -84,13 +83,12 @@ static std::vector<std::string> GetHandlersPathsForUTI(const std::string &_uti)
     if( !uti )
         return {};
 
-    NSArray *bundles = (__bridge_transfer NSArray *)LSCopyAllRoleHandlersForContentType(
-        (__bridge CFStringRef)uti, kLSRolesAll);
+    NSArray *bundles =
+        (__bridge_transfer NSArray *)LSCopyAllRoleHandlersForContentType((__bridge CFStringRef)uti, kLSRolesAll);
 
     std::vector<std::string> result;
     for( NSString *bundle in bundles )
-        if( auto path =
-                [NSWorkspace.sharedWorkspace absolutePathForAppBundleWithIdentifier:bundle] )
+        if( auto path = [NSWorkspace.sharedWorkspace absolutePathForAppBundleWithIdentifier:bundle] )
             result.emplace_back(path.fileSystemRepresentation);
 
     return result;
@@ -100,8 +98,7 @@ LauchServicesHandlers::LauchServicesHandlers()
 {
 }
 
-LauchServicesHandlers::LauchServicesHandlers(const VFSListingItem &_item,
-                                             const nc::utility::UTIDB &_uti_db)
+LauchServicesHandlers::LauchServicesHandlers(const VFSListingItem &_item, const nc::utility::UTIDB &_uti_db)
 {
     if( _item.Host()->IsNativeFS() ) {
         m_UTI = _item.HasExtension() ? _uti_db.UTIForExtension(_item.Extension()) : "public.data";
@@ -116,15 +113,11 @@ LauchServicesHandlers::LauchServicesHandlers(const VFSListingItem &_item,
     }
 }
 
-LauchServicesHandlers::LauchServicesHandlers(
-    const std::vector<LauchServicesHandlers> &_handlers_to_merge)
+LauchServicesHandlers::LauchServicesHandlers(const std::vector<LauchServicesHandlers> &_handlers_to_merge)
 {
     // empty handler path means that there's no default handler available
     const auto default_handler = all_equal_or_default(
-        begin(_handlers_to_merge),
-        end(_handlers_to_merge),
-        [](auto &i) { return i.m_DefaultHandlerPath; },
-        ""s);
+        begin(_handlers_to_merge), end(_handlers_to_merge), [](auto &i) { return i.m_DefaultHandlerPath; }, ""s);
 
     m_UTI = all_equal_or_default(
         begin(_handlers_to_merge), end(_handlers_to_merge), [](auto &i) { return i.m_UTI; }, ""s);
@@ -286,9 +279,9 @@ bool LaunchServiceHandler::SetAsDefaultHandlerForUTI(const std::string &_uti) co
     if( !uti )
         return false;
 
-    OSStatus ret = LSSetDefaultRoleHandlerForContentType(
-        (__bridge CFStringRef)uti, kLSRolesAll, (__bridge CFStringRef)m_AppID);
+    OSStatus ret =
+        LSSetDefaultRoleHandlerForContentType((__bridge CFStringRef)uti, kLSRolesAll, (__bridge CFStringRef)m_AppID);
     return ret == noErr;
 }
 
-}
+} // namespace nc::core

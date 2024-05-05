@@ -21,8 +21,7 @@ NSDictionary *DiskUtility::ListAPFSObjects()
     return DiskUtilityOutputToDictionary(plist);
 }
 
-APFSTree::APFSTree(NSDictionary *_objects_list_from_disk_utility)
-    : m_Root(_objects_list_from_disk_utility)
+APFSTree::APFSTree(NSDictionary *_objects_list_from_disk_utility) : m_Root(_objects_list_from_disk_utility)
 {
     if( m_Root == nil )
         throw std::invalid_argument("APFSTree: object list can't be nil");
@@ -74,8 +73,7 @@ std::optional<std::string> APFSTree::FindContainerOfVolume(std::string_view _bsd
     return {};
 }
 
-std::optional<std::vector<std::string>>
-APFSTree::FindVolumesOfContainer(std::string_view _container_name) const
+std::optional<std::vector<std::string>> APFSTree::FindVolumesOfContainer(std::string_view _container_name) const
 {
     if( _container_name.empty() )
         return {};
@@ -96,8 +94,7 @@ APFSTree::FindVolumesOfContainer(std::string_view _container_name) const
     return {};
 }
 
-std::optional<std::vector<std::string>>
-APFSTree::FindPhysicalStoresOfContainer(std::string_view _container_name) const
+std::optional<std::vector<std::string>> APFSTree::FindPhysicalStoresOfContainer(std::string_view _container_name) const
 {
     if( _container_name.empty() )
         return {};
@@ -118,8 +115,7 @@ APFSTree::FindPhysicalStoresOfContainer(std::string_view _container_name) const
     return {};
 }
 
-bool APFSTree::DoesContainerContainVolume(NSDictionary *_container,
-                                          std::string_view _bsd_volume_name)
+bool APFSTree::DoesContainerContainVolume(NSDictionary *_container, std::string_view _bsd_volume_name)
 {
     if( _bsd_volume_name.empty() || objc_cast<NSDictionary>(_container) == nil )
         return false;
@@ -140,8 +136,8 @@ bool APFSTree::DoesContainerContainVolume(NSDictionary *_container,
     return false;
 }
 
-std::optional<std::vector<std::string>>
-APFSTree::FindVolumesInContainerWithRole(std::string_view _container_name, Role _role) const
+std::optional<std::vector<std::string>> APFSTree::FindVolumesInContainerWithRole(std::string_view _container_name,
+                                                                                 Role _role) const
 {
     if( _container_name.empty() )
         return {};
@@ -242,17 +238,15 @@ std::vector<std::string> APFSTree::VolumesOfContainerWithRole(NSDictionary *_con
     }
 
     std::sort(volumes_bsd_names.begin(), volumes_bsd_names.end());
-    volumes_bsd_names.erase(std::unique(volumes_bsd_names.begin(), volumes_bsd_names.end()),
-                            volumes_bsd_names.end());
+    volumes_bsd_names.erase(std::unique(volumes_bsd_names.begin(), volumes_bsd_names.end()), volumes_bsd_names.end());
     return volumes_bsd_names;
 }
 
 NSDictionary *DiskUtility::DiskUtilityOutputToDictionary(std::string_view _str)
 {
-    const auto data = [[NSData alloc]
-        initWithBytesNoCopy:const_cast<void *>(static_cast<const void *>(_str.data()))
-                     length:_str.length()
-               freeWhenDone:false];
+    const auto data = [[NSData alloc] initWithBytesNoCopy:const_cast<void *>(static_cast<const void *>(_str.data()))
+                                                   length:_str.length()
+                                             freeWhenDone:false];
 
     NSError *error = nil;
     const id root = [NSPropertyListSerialization propertyListWithData:data
@@ -317,4 +311,4 @@ static std::string_view RoleToDiskUtilRepr(APFSTree::Role _role) noexcept
     }
 }
 
-}
+} // namespace nc::utility

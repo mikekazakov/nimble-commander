@@ -855,4 +855,4 @@ static uint32_t MergeUnixFlags(uint32_t _symlink_flags, uint32_t _target_flags) 
     return _target_flags | hidden_flag;
 }
 
-}
+} // namespace nc::vfs

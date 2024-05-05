@@ -17,8 +17,7 @@ inline size_t RHTransparentStringHashEqual::operator()(std::string_view str) con
     return robin_hood::hash_bytes(str.data(), str.size());
 }
 
-inline bool RHTransparentStringHashEqual::operator()(std::string_view lhs,
-                                                     std::string_view rhs) const noexcept
+inline bool RHTransparentStringHashEqual::operator()(std::string_view lhs, std::string_view rhs) const noexcept
 {
     return lhs == rhs;
 }

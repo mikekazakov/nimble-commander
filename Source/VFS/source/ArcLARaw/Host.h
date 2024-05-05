@@ -14,27 +14,20 @@ class ArchiveRawHost final : public Host
 public:
     static const char *const UniqueTag;
 
-    ArchiveRawHost(const std::string &_path,
-                   const VFSHostPtr &_parent,
-                   VFSCancelChecker _cancel_checker = {});
-    ArchiveRawHost(const VFSHostPtr &_parent,
-                   const VFSConfiguration &_config,
-                   VFSCancelChecker _cancel_checker = {});
-    
+    ArchiveRawHost(const std::string &_path, const VFSHostPtr &_parent, VFSCancelChecker _cancel_checker = {});
+    ArchiveRawHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker = {});
+
     static VFSMeta Meta();
 
     int CreateFile(const char *_path,
                    std::shared_ptr<VFSFile> &_target,
                    const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int Stat(const char *_path,
-             VFSStat &_st,
-             unsigned long _flags,
-             const VFSCancelChecker &_cancel_checker = {}) override;
-
     int
-    IterateDirectoryListing(const char *_path,
-                            const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
+    Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker = {}) override;
+
+    int IterateDirectoryListing(const char *_path,
+                                const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
     int FetchDirectoryListing(const char *_path,
                               VFSListingPtr &_target,

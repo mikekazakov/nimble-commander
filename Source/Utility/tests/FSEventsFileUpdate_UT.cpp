@@ -140,8 +140,7 @@ static bool run_until_timeout_or_predicate(std::chrono::nanoseconds _timeout,
     do {
         if( _done() )
             return true;
-        CFRunLoopRunInMode(
-            kCFRunLoopDefaultMode, std::chrono::duration<double>(_slice).count(), false);
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, std::chrono::duration<double>(_slice).count(), false);
     } while( deadline > nc::base::machtime() );
     return false;
 }

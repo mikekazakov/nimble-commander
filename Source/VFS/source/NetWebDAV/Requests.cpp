@@ -24,9 +24,8 @@ static HTTPRequests::Mask ParseSupportedRequests(std::string_view _options_respo
     HTTPRequests::Mask mask = HTTPRequests::None;
 
     const std::string_view allowed_prefix = "Allow: ";
-    const auto allowed = find_if(begin(lines), end(lines), [allowed_prefix](const auto &_line) {
-        return _line.starts_with(allowed_prefix);
-    });
+    const auto allowed = find_if(
+        begin(lines), end(lines), [allowed_prefix](const auto &_line) { return _line.starts_with(allowed_prefix); });
     if( allowed != end(lines) ) {
         const auto requests_set = allowed->substr(allowed_prefix.size());
         const std::vector<std::string> requests = base::SplitByDelimiters(requests_set, ", ");
@@ -67,8 +66,7 @@ static HTTPRequests::Mask ParseSupportedRequests(std::string_view _options_respo
     return mask;
 }
 
-std::pair<int, HTTPRequests::Mask> RequestServerOptions(const HostConfiguration &_options,
-                                                        Connection &_connection)
+std::pair<int, HTTPRequests::Mask> RequestServerOptions(const HostConfiguration &_options, Connection &_connection)
 {
     _connection.SetCustomRequest("OPTIONS");
     _connection.SetURL(_options.full_url);
@@ -101,14 +99,10 @@ static std::optional<PropFindResponse> ParseResponseNode(pugi::xml_node _node)
 {
     using namespace pugi;
     [[clang::no_destroy]] static const auto href_query = xpath_query{"./*[local-name()='href']"};
-    [[clang::no_destroy]] static const auto len_query =
-        xpath_query{"./*/*/*[local-name()='getcontentlength']"};
-    [[clang::no_destroy]] static const auto restype_query =
-        xpath_query{"./*/*/*[local-name()='resourcetype']"};
-    [[clang::no_destroy]] static const auto credate_query =
-        xpath_query{"./*/*/*[local-name()='creationdate']"};
-    [[clang::no_destroy]] static const auto moddate_query =
-        xpath_query{"./*/*/*[local-name()='getlastmodified']"};
+    [[clang::no_destroy]] static const auto len_query = xpath_query{"./*/*/*[local-name()='getcontentlength']"};
+    [[clang::no_destroy]] static const auto restype_query = xpath_query{"./*/*/*[local-name()='resourcetype']"};
+    [[clang::no_destroy]] static const auto credate_query = xpath_query{"./*/*/*[local-name()='creationdate']"};
+    [[clang::no_destroy]] static const auto moddate_query = xpath_query{"./*/*/*[local-name()='getlastmodified']"};
 
     PropFindResponse response;
 
@@ -162,8 +156,7 @@ static std::vector<PropFindResponse> ParseDAVListing(const std::string &_xml_lis
     return items;
 }
 
-static std::vector<PropFindResponse> PruneFilepaths(std::vector<PropFindResponse> _items,
-                                                    const std::string &_base_path)
+static std::vector<PropFindResponse> PruneFilepaths(std::vector<PropFindResponse> _items, const std::string &_base_path)
 {
     if( _base_path.front() != '/' || _base_path.back() != '/' )
         throw std::invalid_argument("PruneFilepaths need a path with heading and trailing slashes");
@@ -202,15 +195,13 @@ FilepathsHavePathPrefix(const std::vector<PropFindResponse> &_items, const std::
         return false;
 
     const auto base_path = "/" + _path;
-    const auto server_uses_prefixes = all_of(begin(_items), end(_items), [&](const auto &_item) {
-        return _item.filename.starts_with(base_path);
-    });
+    const auto server_uses_prefixes =
+        all_of(begin(_items), end(_items), [&](const auto &_item) { return _item.filename.starts_with(base_path); });
     return server_uses_prefixes;
 }
 
-std::pair<int, std::vector<PropFindResponse>> RequestDAVListing(const HostConfiguration &_options,
-                                                                Connection &_connection,
-                                                                const std::string &_path)
+std::pair<int, std::vector<PropFindResponse>>
+RequestDAVListing(const HostConfiguration &_options, Connection &_connection, const std::string &_path)
 {
     if( _path.back() != '/' )
         throw std::invalid_argument("FetchDAVListing: path must contain a trailing slash");
@@ -232,8 +223,8 @@ std::pair<int, std::vector<PropFindResponse>> RequestDAVListing(const HostConfig
                                    "<a:creationdate/>"
                                    "</a:prop>"
                                    "</a:propfind>";
-    _connection.SetBody({reinterpret_cast<const std::byte *>(g_PropfindMessage),
-                         std::string_view(g_PropfindMessage).length()});
+    _connection.SetBody(
+        {reinterpret_cast<const std::byte *>(g_PropfindMessage), std::string_view(g_PropfindMessage).length()});
 
     const auto result = _connection.PerformBlockingRequest();
     if( result.vfs_error != VFSError::Ok )
@@ -244,8 +235,7 @@ std::pair<int, std::vector<PropFindResponse>> RequestDAVListing(const HostConfig
         auto items = ParseDAVListing(response);
         // TODO: clarify use_prefix
         const auto use_prefix = true /* FilepathsHavePathPrefix(items, _options.path) */;
-        const auto base_path =
-            use_prefix ? ((_options.path.empty() ? "" : "/" + _options.path) + _path) : _path;
+        const auto base_path = use_prefix ? ((_options.path.empty() ? "" : "/" + _options.path) + _path) : _path;
         items = PruneFilepaths(std::move(items), base_path);
         return {VFSError::Ok, std::move(items)};
     }
@@ -273,8 +263,7 @@ static std::pair<long, long> ParseSpaceQouta(const std::string &_xml)
                 free = atol(v);
 
     long used = -1;
-    [[clang::no_destroy]] static const auto used_query =
-        xpath_query{"./*/*/*/*/*[local-name()='quota-used-bytes']"};
+    [[clang::no_destroy]] static const auto used_query = xpath_query{"./*/*/*/*/*[local-name()='quota-used-bytes']"};
     if( const auto href = doc.select_node(used_query) )
         if( const auto c = href.node().first_child() )
             if( const auto v = c.value() )
@@ -283,8 +272,7 @@ static std::pair<long, long> ParseSpaceQouta(const std::string &_xml)
     return {free, used};
 }
 
-std::tuple<int, long, long> RequestSpaceQuota(const HostConfiguration &_options,
-                                              Connection &_connection)
+std::tuple<int, long, long> RequestSpaceQuota(const HostConfiguration &_options, Connection &_connection)
 {
     const auto g_QuotaMessage = "<?xml version=\"1.0\"?>"
                                 "<a:propfind xmlns:a=\"DAV:\">"
@@ -295,12 +283,12 @@ std::tuple<int, long, long> RequestSpaceQuota(const HostConfiguration &_options,
                                 "</a:propfind>";
 
     _connection.SetCustomRequest("PROPFIND");
-    _connection.SetHeader(std::initializer_list<std::string_view>{
-        "Depth: 0", "Content-Type: application/xml; charset=\"utf-8\""});
+    _connection.SetHeader(
+        std::initializer_list<std::string_view>{"Depth: 0", "Content-Type: application/xml; charset=\"utf-8\""});
     _connection.SetURL(_options.full_url);
 
-    _connection.SetBody({reinterpret_cast<const std::byte *>(g_QuotaMessage),
-                         std::string_view(g_QuotaMessage).length()});
+    _connection.SetBody(
+        {reinterpret_cast<const std::byte *>(g_QuotaMessage), std::string_view(g_QuotaMessage).length()});
 
     const auto result = _connection.PerformBlockingRequest();
     if( result.vfs_error != VFSError::Ok )
@@ -316,9 +304,7 @@ std::tuple<int, long, long> RequestSpaceQuota(const HostConfiguration &_options,
     }
 }
 
-int RequestMKCOL(const HostConfiguration &_options,
-                 Connection &_connection,
-                 const std::string &_path)
+int RequestMKCOL(const HostConfiguration &_options, Connection &_connection, const std::string &_path)
 {
     if( _path.back() != '/' )
         throw std::invalid_argument("RequestMKCOL: path must contain a trailing slash");
@@ -338,9 +324,7 @@ int RequestMKCOL(const HostConfiguration &_options,
         return HTTPRCToVFSError(result.http_code);
 }
 
-int RequestDelete(const HostConfiguration &_options,
-                  Connection &_connection,
-                  const std::string &_path)
+int RequestDelete(const HostConfiguration &_options, Connection &_connection, const std::string &_path)
 {
     if( _path == "/" )
         return VFSError::FromErrno(EPERM);

@@ -16,8 +16,7 @@ using namespace nc::vfs::native;
 
 static int Execute(const std::string &_command);
 static int Execute(const std::string &_binary, const std::vector<std::string> &_args);
-static bool RunMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout,
-                                                 std::function<bool()> _expectation);
+static bool RunMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation);
 static bool WaitUntilNativeFSManSeesVolumeAtPath(const std::filesystem::path &volume_path,
                                                  std::chrono::nanoseconds _time_limit);
 
@@ -26,8 +25,7 @@ TEST_CASE(PREFIX "Reports case-insensitive on directory path")
     TestDir tmp_dir;
     const auto dmg_path = tmp_dir.directory / "tmp_image.dmg";
     const auto create_cmd =
-        "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " +
-        dmg_path.native();
+        "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " + dmg_path.native();
     const auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path.native();
     const auto unmount_cmd = "/usr/bin/hdiutil detach /Volumes/SomethingWickedThisWayComes12345";
     const std::filesystem::path volume_path = "/Volumes/SomethingWickedThisWayComes12345";
@@ -85,8 +83,14 @@ TEST_CASE(PREFIX "SetFlags")
     SECTION("Regular file")
     {
         uint64_t vfs_flags = 0;
-        SECTION("Flags::None") { vfs_flags = Flags::None; }
-        SECTION("Flags::F_NoFollow") { vfs_flags = Flags::F_NoFollow; }
+        SECTION("Flags::None")
+        {
+            vfs_flags = Flags::None;
+        }
+        SECTION("Flags::F_NoFollow")
+        {
+            vfs_flags = Flags::F_NoFollow;
+        }
         const auto path = dir.directory / "regular_file";
         REQUIRE(close(creat(path.c_str(), 0755)) == 0);
         REQUIRE(host->SetFlags(path.c_str(), UF_HIDDEN, vfs_flags, nullptr) == VFSError::Ok);
@@ -101,8 +105,7 @@ TEST_CASE(PREFIX "SetFlags")
         REQUIRE_NOTHROW(std::filesystem::create_symlink(path_reg, path_sym));
         SECTION("Flags::None")
         {
-            REQUIRE(host->SetFlags(path_sym.c_str(), UF_HIDDEN, Flags::None, nullptr) ==
-                    VFSError::Ok);
+            REQUIRE(host->SetFlags(path_sym.c_str(), UF_HIDDEN, Flags::None, nullptr) == VFSError::Ok);
             REQUIRE(::lstat(path_sym.c_str(), &st) == 0);
             CHECK_FALSE(st.st_flags & UF_HIDDEN);
             REQUIRE(::lstat(path_reg.c_str(), &st) == 0);
@@ -110,8 +113,7 @@ TEST_CASE(PREFIX "SetFlags")
         }
         SECTION("Flags::F_NoFollow")
         {
-            REQUIRE(host->SetFlags(path_sym.c_str(), UF_HIDDEN, Flags::F_NoFollow, nullptr) ==
-                    VFSError::Ok);
+            REQUIRE(host->SetFlags(path_sym.c_str(), UF_HIDDEN, Flags::F_NoFollow, nullptr) == VFSError::Ok);
             REQUIRE(::lstat(path_sym.c_str(), &st) == 0);
             CHECK(st.st_flags & UF_HIDDEN);
             REQUIRE(::lstat(path_reg.c_str(), &st) == 0);
@@ -121,8 +123,7 @@ TEST_CASE(PREFIX "SetFlags")
     SECTION("Non-existent")
     {
         const auto path = dir.directory / "blah";
-        CHECK(host->SetFlags(path.c_str(), UF_HIDDEN, Flags::None, nullptr) ==
-              VFSError::FromErrno(ENOENT));
+        CHECK(host->SetFlags(path.c_str(), UF_HIDDEN, Flags::None, nullptr) == VFSError::FromErrno(ENOENT));
     }
 }
 
@@ -236,7 +237,10 @@ TEST_CASE(PREFIX "Fetching")
     {
         CHECK(Fetching::ReadDirAttributesStat(fd, test_dir.c_str(), fetch, param) == 0);
     }
-    SECTION("ReadDirAttributesBulk") { CHECK(Fetching::ReadDirAttributesBulk(fd, fetch, param) == 0); }
+    SECTION("ReadDirAttributesBulk")
+    {
+        CHECK(Fetching::ReadDirAttributesBulk(fd, fetch, param) == 0);
+    }
 
     CHECK(fetched_notification == total_items_number);
     CHECK(to_visit.empty());
@@ -266,8 +270,7 @@ static int Execute(const std::string &_binary, const std::vector<std::string> &_
     return c.exit_code();
 }
 
-static bool RunMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout,
-                                                 std::function<bool()> _expectation)
+static bool RunMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation)
 {
     dispatch_assert_main_queue();
     assert(_timeout.count() > 0);

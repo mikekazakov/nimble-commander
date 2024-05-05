@@ -34,8 +34,7 @@ std::vector<HexModeSplitter::Line> HexModeSplitter::Split(const Source &_source)
         // upper bound in bytes for this row. the actual number of bytes in this row can be
         // less than this number, but not more.
         const int bytes_for_current_row =
-            char_index != 0 ? bytes_per_row
-                            : (bytes_per_row - int(window_bytes_pos % bytes_per_row));
+            char_index != 0 ? bytes_per_row : (bytes_per_row - int(window_bytes_pos % bytes_per_row));
         const int bytes_for_current_string = bytes_for_current_row - char_extra_bytes;
 
         for( int i = char_index + 1; i < window_chars_size; ++i ) {
@@ -45,12 +44,11 @@ std::vector<HexModeSplitter::Line> HexModeSplitter::Split(const Source &_source)
             line.chars_num++;
         }
 
-        line.string_bytes_num = working_set.ToLocalByteOffset(line.chars_start + line.chars_num) -
-                                line.string_bytes_start;
+        line.string_bytes_num =
+            working_set.ToLocalByteOffset(line.chars_start + line.chars_num) - line.string_bytes_start;
         char_extra_bytes = std::max(line.string_bytes_num - bytes_for_current_string, 0);
 
-        line.row_bytes_num =
-            std::min(bytes_for_current_row, window_bytes_size - line.row_bytes_start);
+        line.row_bytes_num = std::min(bytes_for_current_row, window_bytes_size - line.row_bytes_start);
 
         result_lines.push_back(line);
 
@@ -85,8 +83,8 @@ base::CFPtr<CFStringRef> HexModeSplitter::MakeAddressString(const int _row_bytes
         offset >>= 4;
     }
 
-    const auto str = CFStringCreateWithCharacters(
-        nullptr, reinterpret_cast<const UniChar *>(buffer), _hex_digits_in_address);
+    const auto str =
+        CFStringCreateWithCharacters(nullptr, reinterpret_cast<const UniChar *>(buffer), _hex_digits_in_address);
     return base::CFPtr<CFStringRef>::adopt(str);
 }
 
@@ -116,18 +114,15 @@ base::CFPtr<CFStringRef> HexModeSplitter::MakeBytesHexString(const std::byte *co
     if( size * chars_per_byte * sizeof(char16_t) < max_bytes_via_alloca ) {
         auto buffer = static_cast<char16_t *>(alloca(size * chars_per_byte * sizeof(char16_t)));
         Fill(_first, _last, buffer, _gap_symbol);
-        const auto str = CFStringCreateWithCharacters(nullptr,
-                                                      reinterpret_cast<const UniChar *>(buffer),
-                                                      std::max(size * chars_per_byte - 1, 0));
+        const auto str = CFStringCreateWithCharacters(
+            nullptr, reinterpret_cast<const UniChar *>(buffer), std::max(size * chars_per_byte - 1, 0));
         return base::CFPtr<CFStringRef>::adopt(str);
     }
     else {
         std::u16string buffer(size * chars_per_byte, static_cast<char16_t>(0));
         Fill(_first, _last, buffer.data(), _gap_symbol);
-        const auto str =
-            CFStringCreateWithCharacters(nullptr,
-                                         reinterpret_cast<const UniChar *>(buffer.data()),
-                                         std::max(size * chars_per_byte - 1, 0));
+        const auto str = CFStringCreateWithCharacters(
+            nullptr, reinterpret_cast<const UniChar *>(buffer.data()), std::max(size * chars_per_byte - 1, 0));
         return base::CFPtr<CFStringRef>::adopt(str);
     }
 }

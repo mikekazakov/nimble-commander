@@ -5,19 +5,17 @@
 #include "../PanelPreview.h"
 
 namespace nc::panel {
-    class QuickLookVFSBridge;
+class QuickLookVFSBridge;
 }
 
-@interface NCPanelQLPanelAdaptor : NSObject<NCPanelPreview,
-                                            QLPreviewPanelDataSource,
-                                            QLPreviewPanelDelegate>
+@interface NCPanelQLPanelAdaptor : NSObject <NCPanelPreview, QLPreviewPanelDataSource, QLPreviewPanelDelegate>
 
-- (instancetype) initWithBridge:(nc::panel::QuickLookVFSBridge&)_vfs_bridge;
+- (instancetype)initWithBridge:(nc::panel::QuickLookVFSBridge &)_vfs_bridge;
 
 - (bool)registerExistingQLPreviewPanelFor:(id)_controller;
 - (bool)unregisterExistingQLPreviewPanelFor:(id)_controller;
 
-@property (readonly, nonatomic, weak) id owner;
-@property (readonly, nonatomic) nc::panel::QuickLookVFSBridge &bridge;
+@property(readonly, nonatomic, weak) id owner;
+@property(readonly, nonatomic) nc::panel::QuickLookVFSBridge &bridge;
 
 @end

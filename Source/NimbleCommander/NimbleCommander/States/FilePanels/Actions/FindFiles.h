@@ -25,4 +25,4 @@ private:
     std::function<NCViewerViewController *()> m_MakeController;
 };
 
-};
+}; // namespace nc::panel::actions

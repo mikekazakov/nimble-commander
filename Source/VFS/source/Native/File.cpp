@@ -20,15 +20,13 @@ File::~File()
 int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     auto &io = routedio::RoutedIO::Default;
-    auto fs_info =
-        std::dynamic_pointer_cast<NativeHost>(Host())->NativeFSManager().VolumeFromPath(Path());
+    auto fs_info = std::dynamic_pointer_cast<NativeHost>(Host())->NativeFSManager().VolumeFromPath(Path());
 
     int openflags = O_NONBLOCK;
 
     if( fs_info && fs_info->interfaces.file_lock )
         openflags |= O_SHLOCK;
-    if( (_open_flags & (VFSFlags::OF_Read | VFSFlags::OF_Write)) ==
-        (VFSFlags::OF_Read | VFSFlags::OF_Write) )
+    if( (_open_flags & (VFSFlags::OF_Read | VFSFlags::OF_Write)) == (VFSFlags::OF_Read | VFSFlags::OF_Write) )
         openflags |= O_RDWR;
     else if( (_open_flags & VFSFlags::OF_Read) != 0 )
         openflags |= O_RDONLY;

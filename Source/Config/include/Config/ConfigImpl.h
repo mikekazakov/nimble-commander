@@ -15,12 +15,10 @@ namespace nc::config {
 class ConfigImpl : public Config
 {
 public:
-    ConfigImpl(
-        std::string_view _default_document,
-        std::shared_ptr<OverwritesStorage> _storage,
-        std::shared_ptr<Executor> _overwrites_dump_executor = std::make_shared<ImmediateExecutor>(),
-        std::shared_ptr<Executor> _overwrites_reload_executor =
-            std::make_shared<ImmediateExecutor>());
+    ConfigImpl(std::string_view _default_document,
+               std::shared_ptr<OverwritesStorage> _storage,
+               std::shared_ptr<Executor> _overwrites_dump_executor = std::make_shared<ImmediateExecutor>(),
+               std::shared_ptr<Executor> _overwrites_reload_executor = std::make_shared<ImmediateExecutor>());
     virtual ~ConfigImpl();
 
     bool Has(std::string_view _path) const override;
@@ -100,10 +98,8 @@ private:
     rapidjson::Document m_Document;
     mutable spinlock m_DocumentLock;
 
-    using ObserversStorage = robin_hood::unordered_flat_map<std::string,
-                                                            ObserversPtr,
-                                                            RHTransparentStringHashEqual,
-                                                            RHTransparentStringHashEqual>;
+    using ObserversStorage = robin_hood::
+        unordered_flat_map<std::string, ObserversPtr, RHTransparentStringHashEqual, RHTransparentStringHashEqual>;
     ObserversStorage m_Observers;
     mutable spinlock m_ObserversLock;
 

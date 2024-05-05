@@ -35,8 +35,7 @@ TEST_CASE(PREFIX "symlink creation on invalid path")
 {
     TempTestDir dir;
     const auto host = std::shared_ptr<nc::vfs::Host>(TestEnv().vfs_native);
-    const auto path =
-        (std::filesystem::path(dir.directory) / "not_existing_directory/symlink").native();
+    const auto path = (std::filesystem::path(dir.directory) / "not_existing_directory/symlink").native();
     const auto value = "pointing_somewhere"s;
     Linkage operation{path, value, host, LinkageType::CreateSymlink};
     operation.Start();

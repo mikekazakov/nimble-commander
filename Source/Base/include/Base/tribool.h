@@ -27,8 +27,7 @@ public:
 
     constexpr explicit operator bool() const noexcept;
 
-    enum class value_t : std::int8_t
-    {
+    enum class value_t : std::int8_t {
         false_value = 0,
         true_value = 1,
         indeterminate_value = 2

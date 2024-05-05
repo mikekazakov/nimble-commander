@@ -70,7 +70,7 @@ std::string_view TrimRight(std::string_view _str, char _c) noexcept
 // TODO: unit tests
 std::string ReplaceAll(std::string_view _source, char _what, std::string_view _with) noexcept
 {
-    std::string result;    
+    std::string result;
     for( auto c : _source ) {
         if( c == _what ) {
             result += _with;
@@ -88,10 +88,10 @@ std::string ReplaceAll(std::string_view _source, std::string_view _what, std::st
         return std::string{_source};
     if( _what.length() == 1 )
         return ReplaceAll(_source, _what.front(), _with);
-    
+
     std::string result;
     for( size_t pos = 0; pos != _source.length(); ) {
-        if(size_t next = _source.find(_what, pos); next == std::string_view::npos ) {
+        if( size_t next = _source.find(_what, pos); next == std::string_view::npos ) {
             result.append(_source.substr(pos));
             pos = _source.length();
         }

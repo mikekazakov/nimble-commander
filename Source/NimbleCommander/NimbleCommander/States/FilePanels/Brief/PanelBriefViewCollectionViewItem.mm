@@ -71,7 +71,7 @@ using namespace nc::panel;
     if( m_PanelActive == _active )
         return;
     m_PanelActive = _active;
-    
+
     [self updateBackgroundColor];
     [self updateForegroundColor];
     [self updateAccentColor];

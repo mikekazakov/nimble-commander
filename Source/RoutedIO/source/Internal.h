@@ -2,7 +2,7 @@
 #pragma once
 
 #ifdef __OBJC__
-    #include <Cocoa/Cocoa.h>
+#include <Cocoa/Cocoa.h>
 #endif
 
 #include <string>
@@ -19,5 +19,5 @@ NSString *NSLocalizedString(NSString *_key, const char *_comment) noexcept;
 
 std::string MessageAuthAsAdmin() noexcept;
 std::string MessageInstallHelperApp() noexcept;
-    
-}
+
+} // namespace nc::routedio

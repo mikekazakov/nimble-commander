@@ -10,8 +10,7 @@
 namespace nc::panel {
 
 struct FindFilesMask {
-    enum Type
-    {
+    enum Type {
         Classic = 0,
         RegEx = 1
     };

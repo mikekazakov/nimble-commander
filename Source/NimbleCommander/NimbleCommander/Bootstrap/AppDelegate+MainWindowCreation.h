@@ -4,12 +4,12 @@
 #include "AppDelegate.h"
 
 // this category is private to NCAppDelegate
-@interface NCAppDelegate(MainWindowCreation)
+@interface NCAppDelegate (MainWindowCreation)
 
 // these methods don't call showWindow, it's client's responsibility.
 
-- (NCMainWindowController*)allocateDefaultMainWindow;
-- (NCMainWindowController*)allocateMainWindowRestoredManually;
-- (NCMainWindowController*)allocateMainWindowRestoredBySystem;
+- (NCMainWindowController *)allocateDefaultMainWindow;
+- (NCMainWindowController *)allocateMainWindowRestoredManually;
+- (NCMainWindowController *)allocateMainWindowRestoredBySystem;
 
 @end

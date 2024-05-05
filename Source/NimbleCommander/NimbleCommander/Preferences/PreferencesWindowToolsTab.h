@@ -8,9 +8,8 @@ namespace nc::panel {
 class ExternalToolsStorage;
 }
 
-@interface PreferencesWindowToolsTab : NSViewController <RHPreferencesViewControllerProtocol,
-                                                         NSTableViewDataSource,
-                                                         NSTableViewDelegate>
+@interface PreferencesWindowToolsTab
+    : NSViewController <RHPreferencesViewControllerProtocol, NSTableViewDataSource, NSTableViewDelegate>
 
 - (id)initWithToolsStorage:(std::function<nc::panel::ExternalToolsStorage &()>)_tool_storage;
 

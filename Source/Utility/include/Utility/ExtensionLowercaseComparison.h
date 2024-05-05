@@ -30,14 +30,11 @@ public:
     bool Equal(std::string_view _filename_ext, std::string_view _compare_to_formc_lc);
 
 private:
-    enum
-    {
+    enum {
         m_MaxLength = 16
     };
-    using Storage = robin_hood::unordered_flat_map<std::string,
-                                                   std::string,
-                                                   RHTransparentStringHashEqual,
-                                                   RHTransparentStringHashEqual>;
+    using Storage = robin_hood::
+        unordered_flat_map<std::string, std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>;
 
     Storage m_Data;
     nc::spinlock m_Lock;
@@ -50,8 +47,8 @@ public:
     bool contains(std::string_view _extension) const noexcept;
 
 private:
-    using Storage = robin_hood::
-        unordered_flat_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>;
+    using Storage =
+        robin_hood::unordered_flat_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>;
     Storage m_List;
 };
 

@@ -5,23 +5,21 @@
 
 namespace nc::panel::actions {
 
-EjectVolume::EjectVolume(utility::NativeFSManager &_native_fs_manager):
-    m_NativeFSManager{_native_fs_manager}
+EjectVolume::EjectVolume(utility::NativeFSManager &_native_fs_manager) : m_NativeFSManager{_native_fs_manager}
 {
-}
-    
-bool EjectVolume::Predicate( PanelController *_target ) const
-{
-    return _target.isUniform &&
-        _target.vfs->IsNativeFS() &&
-        m_NativeFSManager.IsVolumeContainingPathEjectable( _target.currentDirectoryPath );
 }
 
-void EjectVolume::Perform( PanelController *_target, [[maybe_unused]] id _sender ) const
+bool EjectVolume::Predicate(PanelController *_target) const
+{
+    return _target.isUniform && _target.vfs->IsNativeFS() &&
+           m_NativeFSManager.IsVolumeContainingPathEjectable(_target.currentDirectoryPath);
+}
+
+void EjectVolume::Perform(PanelController *_target, [[maybe_unused]] id _sender) const
 {
     if( _target.vfs->IsNativeFS() )
         if( m_NativeFSManager.IsVolumeContainingPathEjectable(_target.currentDirectoryPath) )
             m_NativeFSManager.EjectVolumeContainingPath(_target.currentDirectoryPath);
 }
 
-};
+}; // namespace nc::panel::actions

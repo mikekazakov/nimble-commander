@@ -9,14 +9,14 @@
 
 @interface PanelListViewNameView : NSView
 
-@property (nonatomic) NSImage *icon;
+@property(nonatomic) NSImage *icon;
 
-- (void) setFilename:(NSString*)_filename andTags:(std::span<const nc::utility::Tags::Tag>)_tags;
+- (void)setFilename:(NSString *)_filename andTags:(std::span<const nc::utility::Tags::Tag>)_tags;
 
-- (void) buildPresentation;
+- (void)buildPresentation;
 
-- (void) setupFieldEditor:(NCPanelViewFieldEditor*)_editor;
+- (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor;
 
-- (bool) dragAndDropHitTest:(NSPoint)_position; // local coordinates
+- (bool)dragAndDropHitTest:(NSPoint)_position; // local coordinates
 
 @end

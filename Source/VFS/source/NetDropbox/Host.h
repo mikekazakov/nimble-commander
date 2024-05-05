@@ -23,7 +23,7 @@ class DropboxHost final : public Host
 public:
     static const char *UniqueTag;
 
-    struct Params{
+    struct Params {
         std::string account;
         std::string access_token;
         std::string client_id;
@@ -42,38 +42,29 @@ public:
 
     virtual bool IsWritable() const override;
     virtual bool IsCaseSensitiveAtPath(const char *_dir) const override;
-    virtual int
-    StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
+    virtual int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int Stat(const char *_path,
-                     VFSStat &_st,
-                     unsigned long _flags,
-                     const VFSCancelChecker &_cancel_checker) override;
+    virtual int
+    Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
     virtual int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int RemoveDirectory(const char *_path,
-                                const VFSCancelChecker &_cancel_checker) override;
+    virtual int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int
-    IterateDirectoryListing(const char *_path,
-                            const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
+    virtual int IterateDirectoryListing(const char *_path,
+                                        const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
     virtual int FetchDirectoryListing(const char *_path,
                                       VFSListingPtr &_target,
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int CreateFile(const char *_path,
-                           std::shared_ptr<VFSFile> &_target,
-                           const VFSCancelChecker &_cancel_checker) override;
-
     virtual int
-    CreateDirectory(const char *_path, int _mode, const VFSCancelChecker &_cancel_checker) override;
+    CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int Rename(const char *_old_path,
-                       const char *_new_path,
-                       const VFSCancelChecker &_cancel_checker) override;
+    virtual int CreateDirectory(const char *_path, int _mode, const VFSCancelChecker &_cancel_checker) override;
+
+    virtual int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker) override;
 
     std::shared_ptr<const DropboxHost> SharedPtr() const noexcept;
     std::shared_ptr<DropboxHost> SharedPtr() noexcept;
@@ -95,9 +86,8 @@ private:
     void SetAccessToken(const std::string &_access_token);
     void InitialAccountLookup(); // will throw on invalid account / connectivity issues
 
-    std::pair<int, std::string>
-    RetreiveAccessTokenFromRefreshToken(const std::string &_refresh_token);
-    
+    std::pair<int, std::string> RetreiveAccessTokenFromRefreshToken(const std::string &_refresh_token);
+
 #ifdef __OBJC__
     // Sets HTTPMethod to POST
     // Handles Authentications, can update an access token if the current one is expired and

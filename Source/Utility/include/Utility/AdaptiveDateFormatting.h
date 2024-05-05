@@ -8,25 +8,23 @@ namespace nc::utility {
 class AdaptiveDateFormatting
 {
 public:
-    
     enum class Style : char {
-        Orthodox    = 0,
-        Long        = 1,
-        Medium      = 2,
-        Short       = 3,
-        Tiny        = 4
+        Orthodox = 0,
+        Long = 1,
+        Medium = 2,
+        Short = 3,
+        Tiny = 4
     };
-    
+
     /**
      * May return nil!
      */
-    NSString *Format( Style _style, time_t _time );
+    NSString *Format(Style _style, time_t _time);
 
-    Style SuitableStyleForWidth( int _width, NSFont *_font );
-    
+    Style SuitableStyleForWidth(int _width, NSFont *_font);
+
 private:
-    static Style StyleForWidthHardcodedLikeFinder( int _width, int _font_size );    
-    
+    static Style StyleForWidthHardcodedLikeFinder(int _width, int _font_size);
 };
 
-}
+} // namespace nc::utility

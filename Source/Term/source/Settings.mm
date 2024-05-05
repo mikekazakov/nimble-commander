@@ -3,11 +3,10 @@
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
 
-
 namespace nc::term {
-    
+
 Settings::~Settings() = default;
-    
+
 std::shared_ptr<Settings> DefaultSettings::SharedDefaultSettings()
 {
     [[clang::no_destroy]] static const auto settings = std::make_shared<DefaultSettings>();
@@ -139,13 +138,13 @@ bool DefaultSettings::HideScrollbar() const
     return false;
 }
 
-int DefaultSettings::StartChangesObserving( [[maybe_unused]] std::function<void()> _callback )
+int DefaultSettings::StartChangesObserving([[maybe_unused]] std::function<void()> _callback)
 {
     return 0;
 }
 
-void DefaultSettings::StopChangesObserving( [[maybe_unused]] int _ticket )
+void DefaultSettings::StopChangesObserving([[maybe_unused]] int _ticket)
 {
 }
-   
-}
+
+} // namespace nc::term

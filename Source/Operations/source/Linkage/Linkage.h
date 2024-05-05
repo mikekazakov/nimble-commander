@@ -12,8 +12,10 @@ class LinkageJob;
 class Linkage final : public Operation
 {
 public:
-    Linkage(const std::string& _link_path, const std::string &_link_value,
-            const std::shared_ptr<VFSHost> &_vfs, LinkageType _type);
+    Linkage(const std::string &_link_path,
+            const std::string &_link_value,
+            const std::shared_ptr<VFSHost> &_vfs,
+            LinkageType _type);
     ~Linkage();
 
 private:
@@ -25,4 +27,4 @@ private:
     std::unique_ptr<LinkageJob> m_Job;
 };
 
-}
+} // namespace nc::ops

@@ -6,8 +6,7 @@
 namespace nc::term {
 
 // NB! Persistence-bound
-enum class CursorMode : int8_t
-{
+enum class CursorMode : int8_t {
     BlinkingBlock = 0,
     BlinkingUnderline = 1,
     BlinkingBar = 2,

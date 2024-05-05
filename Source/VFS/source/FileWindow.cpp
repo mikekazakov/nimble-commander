@@ -124,9 +124,7 @@ int FileWindow::DoMoveWindowRandom(size_t _offset)
     // check for overlapping window movements
     if( _offset >= m_WindowPos && _offset <= m_WindowPos + m_WindowSize ) {
         // the new offset is within current window, read only unknown data
-        std::memmove(m_Window.get(),
-                     m_Window.get() + _offset - m_WindowPos,
-                     m_WindowSize - (_offset - m_WindowPos));
+        std::memmove(m_Window.get(), m_Window.get() + _offset - m_WindowPos, m_WindowSize - (_offset - m_WindowPos));
         size_t off = m_WindowSize - (_offset - m_WindowPos);
         size_t len = _offset - m_WindowPos;
         m_WindowPos = _offset;
@@ -134,9 +132,7 @@ int FileWindow::DoMoveWindowRandom(size_t _offset)
     }
     else if( _offset + m_WindowSize >= m_WindowPos && _offset <= m_WindowPos ) {
         // the new offset is before current offset, but windows do overlap
-        std::memmove(m_Window.get() + m_WindowPos - _offset,
-                     m_Window.get(),
-                     _offset + m_WindowSize - m_WindowPos);
+        std::memmove(m_Window.get() + m_WindowPos - _offset, m_Window.get(), _offset + m_WindowSize - m_WindowPos);
         size_t off = 0;
         size_t len = m_WindowPos - _offset;
         m_WindowPos = _offset;
@@ -165,9 +161,7 @@ int FileWindow::DoMoveWindowSeqential(size_t _offset)
     // check for possible variants
     if( _offset >= m_WindowPos && _offset <= m_WindowPos + m_WindowSize ) {
         // overlapping
-        std::memmove(m_Window.get(),
-                     m_Window.get() + _offset - m_WindowPos,
-                     m_WindowSize - (_offset - m_WindowPos));
+        std::memmove(m_Window.get(), m_Window.get() + _offset - m_WindowPos, m_WindowSize - (_offset - m_WindowPos));
         size_t off = m_WindowSize - (_offset - m_WindowPos);
         size_t len = _offset - m_WindowPos;
         m_WindowPos = _offset;

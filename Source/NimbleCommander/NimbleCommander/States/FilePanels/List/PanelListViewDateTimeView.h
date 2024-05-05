@@ -5,10 +5,10 @@
 
 @interface PanelListViewDateTimeView : NSView
 
-@property (nonatomic) time_t time;
-@property (nonatomic) nc::utility::AdaptiveDateFormatting::Style style;
+@property(nonatomic) time_t time;
+@property(nonatomic) nc::utility::AdaptiveDateFormatting::Style style;
 
-- (void) buildPresentation;
-- (void) dateChanged;
+- (void)buildPresentation;
+- (void)dateChanged;
 
 @end

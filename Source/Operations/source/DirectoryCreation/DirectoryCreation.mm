@@ -71,4 +71,4 @@ static std::vector<std::string> Split(std::string_view _directory)
     return parts;
 }
 
-}
+} // namespace nc::ops

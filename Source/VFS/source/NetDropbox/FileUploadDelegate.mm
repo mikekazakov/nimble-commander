@@ -8,15 +8,14 @@
 using namespace nc::vfs;
 using namespace nc::vfs::dropbox;
 
-@implementation NCVFSDropboxFileUploadDelegate
-{
-    NSInputStream  *m_Stream;
-    std::mutex                           m_CallbacksLock;
-    std::function<void(int _vfs_error)>  m_HandleFinished;
-    std::function<void(NSData *_data)>   m_HandleReceivedData;
+@implementation NCVFSDropboxFileUploadDelegate {
+    NSInputStream *m_Stream;
+    std::mutex m_CallbacksLock;
+    std::function<void(int _vfs_error)> m_HandleFinished;
+    std::function<void(NSData *_data)> m_HandleReceivedData;
 }
 
-- (instancetype)initWithStream:(NSInputStream*)_stream
+- (instancetype)initWithStream:(NSInputStream *)_stream
 {
     if( self = [super init] ) {
         assert(_stream);
@@ -25,19 +24,19 @@ using namespace nc::vfs::dropbox;
     return self;
 }
 
-- (void)setHandleReceivedData:(std::function<void (NSData *)>)handleReceivedData
+- (void)setHandleReceivedData:(std::function<void(NSData *)>)handleReceivedData
 {
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     m_HandleReceivedData = handleReceivedData;
 }
 
-- (std::function<void (NSData *)>)handleReceivedData
+- (std::function<void(NSData *)>)handleReceivedData
 {
-   std::lock_guard<std::mutex> lock{m_CallbacksLock};
-   return m_HandleReceivedData;
+    std::lock_guard<std::mutex> lock{m_CallbacksLock};
+    return m_HandleReceivedData;
 }
 
-- (void) setHandleFinished:(std::function<void(int)>)handleFinished
+- (void)setHandleFinished:(std::function<void(int)>)handleFinished
 {
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     m_HandleFinished = handleFinished;
@@ -49,15 +48,14 @@ using namespace nc::vfs::dropbox;
     return m_HandleFinished;
 }
 
-- (void)URLSession:(NSURLSession *)[[maybe_unused]]_session
-              task:(NSURLSessionTask *)[[maybe_unused]]_task
- needNewBodyStream:(void (^)(NSInputStream * _Nullable bodyStream))_handler
+- (void)URLSession:(NSURLSession *) [[maybe_unused]] _session
+                 task:(NSURLSessionTask *) [[maybe_unused]] _task
+    needNewBodyStream:(void (^)(NSInputStream *_Nullable bodyStream))_handler
 {
     _handler(m_Stream);
 }
 
-- (void)URLSession:(NSURLSession *)[[maybe_unused]]session
-didBecomeInvalidWithError:(nullable NSError *)_error
+- (void)URLSession:(NSURLSession *) [[maybe_unused]] session didBecomeInvalidWithError:(nullable NSError *)_error
 {
     auto error = VFSErrorFromErrorAndReponseAndData(_error, nil, nil);
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
@@ -73,8 +71,8 @@ static bool HasNoError(NSURLResponse *_response)
     return false;
 }
 
-- (void)URLSession:(NSURLSession *)[[maybe_unused]]session
-    task:(NSURLSessionTask *)_task
+- (void)URLSession:(NSURLSession *) [[maybe_unused]] session
+                    task:(NSURLSessionTask *)_task
     didCompleteWithError:(nullable NSError *)_error
 {
     if( !_error && HasNoError(_task.response) ) {
@@ -90,7 +88,7 @@ static bool HasNoError(NSURLResponse *_response)
     }
 }
 
-- (void)URLSession:(NSURLSession *)[[maybe_unused]]_session
+- (void)URLSession:(NSURLSession *) [[maybe_unused]] _session
           dataTask:(NSURLSessionDataTask *)_task
     didReceiveData:(NSData *)_data
 {
@@ -108,4 +106,3 @@ static bool HasNoError(NSURLResponse *_response)
 }
 
 @end
-

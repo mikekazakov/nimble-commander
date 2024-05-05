@@ -5,14 +5,13 @@
 #include <string>
 
 namespace nc::utility {
-    class NativeFSManager;
+class NativeFSManager;
 }
 
 @interface DetailedVolumeInformationSheetController : SheetController
 
-- (instancetype)initWithFSManager:(nc::utility::NativeFSManager&)_native_fs_manager;
+- (instancetype)initWithFSManager:(nc::utility::NativeFSManager &)_native_fs_manager;
 
-- (void)showSheetForWindow:(NSWindow *)_window
-                  withPath:(const std::string&)_path;
+- (void)showSheetForWindow:(NSWindow *)_window withPath:(const std::string &)_path;
 
 @end

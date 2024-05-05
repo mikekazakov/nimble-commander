@@ -32,7 +32,7 @@ struct DummyTheme : Theme {
 struct Context {
     Context(std::string_view _string);
     void Reload(std::string_view _new_string);
-    
+
     std::shared_ptr<nc::vfs::GenericMemReadOnlyFile> file;
     std::shared_ptr<nc::vfs::FileWindow> window;
     std::shared_ptr<DataBackend> backend;
@@ -41,11 +41,10 @@ private:
     void Open(std::string_view _string);
 };
 
-}
+} // namespace
 
 @interface NCViewerTextModeViewMockDelegate : NSObject <NCViewerTextModeViewDelegate>
-@property(nonatomic, readwrite) std::function<int(NCViewerTextModeView *, int64_t _position)>
-    syncBackendWindowMovement;
+@property(nonatomic, readwrite) std::function<int(NCViewerTextModeView *, int64_t _position)> syncBackendWindowMovement;
 @end
 
 static const auto g_MenloRegular13 = [NSFont fontWithName:@"Menlo-Regular" size:13.];
@@ -56,9 +55,7 @@ TEST_CASE(PREFIX "Basic geomtery initialization")
 {
     const std::string data = "Hello, world!";
     Context ctx{data};
-    auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
-                                                    backend:ctx.backend
-                                                      theme:g_DummyTheme];
+    auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100 backend:ctx.backend theme:g_DummyTheme];
     // let's pretend that I happen to know the internal insets and sizes.
     CHECK(view.contentsSize.width == Approx(477.)); // 500-4-4-15
     CHECK(view.contentsSize.height == Approx(100.));
@@ -83,9 +80,7 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
                                      "text5\n"
                                      "text6";
             Context ctx{data};
-            auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
-                                                            backend:ctx.backend
-                                                              theme:g_DummyTheme];
+            auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100 backend:ctx.backend theme:g_DummyTheme];
             CHECK(view.isAtTheBeginning == true);
             CHECK(view.isAtTheEnd == true);
         }
@@ -99,9 +94,7 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
                                      "text6\n"
                                      "text7\n";
             Context ctx{data};
-            auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
-                                                            backend:ctx.backend
-                                                              theme:g_DummyTheme];
+            auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100 backend:ctx.backend theme:g_DummyTheme];
             CHECK(view.isAtTheBeginning == true);
             CHECK(view.isAtTheEnd == false);
 
@@ -122,9 +115,7 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
             return ctx.backend->MoveWindowSync(_position);
         };
 
-        auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
-                                                        backend:ctx.backend
-                                                          theme:g_DummyTheme];
+        auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100 backend:ctx.backend theme:g_DummyTheme];
         view.delegate = delegate;
         CHECK(view.isAtTheBeginning == true);
         CHECK(view.isAtTheEnd == false);
@@ -151,15 +142,14 @@ TEST_CASE(PREFIX "attachToNewBackend")
                               "text6\n"
                               "text7\n";
     Context ctx{data1};
-    auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
-                                                    backend:ctx.backend
-                                                      theme:g_DummyTheme];
+    auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100 backend:ctx.backend theme:g_DummyTheme];
     [view scrollToGlobalBytesOffset:data1.size()];
     CHECK(view.textFrame.LinesNumber() == 7);
     CHECK(view.isAtTheBeginning == false);
     CHECK(view.isAtTheEnd == true);
 
-    SECTION("Smaller") {
+    SECTION("Smaller")
+    {
         const std::string data2 = "text1\n"
                                   "text2\n"
                                   "text3\n";
@@ -170,7 +160,8 @@ TEST_CASE(PREFIX "attachToNewBackend")
         CHECK(view.isAtTheBeginning == true);
         CHECK(view.isAtTheEnd == true);
     }
-    SECTION("Empty"){
+    SECTION("Empty")
+    {
         const std::string data2 = "";
         ctx.Reload(data2);
         [view attachToNewBackend:ctx.backend];
@@ -217,8 +208,7 @@ Context::Context(std::string_view _string)
 
 void Context::Open(std::string_view _string)
 {
-    file = std::make_shared<nc::vfs::GenericMemReadOnlyFile>(
-        "/foo.txt", nc::vfs::Host::DummyHost(), _string);
+    file = std::make_shared<nc::vfs::GenericMemReadOnlyFile>("/foo.txt", nc::vfs::Host::DummyHost(), _string);
     file->Open(nc::vfs::Flags::OF_Read);
     window = std::make_shared<nc::vfs::FileWindow>(file);
     backend = std::make_shared<DataBackend>(window, encodings::ENCODING_UTF8);
@@ -233,8 +223,7 @@ void Context::Reload(std::string_view _new_string)
 
 @synthesize syncBackendWindowMovement;
 
-- (int)textModeView:(NCViewerTextModeView *)_view
-    requestsSyncBackendWindowMovementAt:(int64_t)_position
+- (int)textModeView:(NCViewerTextModeView *)_view requestsSyncBackendWindowMovementAt:(int64_t)_position
 {
     assert(self.syncBackendWindowMovement);
     return self.syncBackendWindowMovement(_view, _position);

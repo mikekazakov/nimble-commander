@@ -16,22 +16,21 @@ class UserNotificationsCenter
 public:
     static UserNotificationsCenter &Instance();
 
-    void ReportCompletedOperation( const nc::ops::Operation &_operation, NSWindow *_in_window );
-
+    void ReportCompletedOperation(const nc::ops::Operation &_operation, NSWindow *_in_window);
 
     bool ShowWhenActive() const noexcept;
-    void SetShowWhenActive( bool _value );
+    void SetShowWhenActive(bool _value);
 
     std::chrono::nanoseconds MinElapsedOperationTime() const noexcept;
-    void SetMinElapsedOperationTime( std::chrono::nanoseconds _value );
+    void SetMinElapsedOperationTime(std::chrono::nanoseconds _value);
 
 private:
     UserNotificationsCenter();
-    UserNotificationsCenter(const UserNotificationsCenter&) = delete;
+    UserNotificationsCenter(const UserNotificationsCenter &) = delete;
     ~UserNotificationsCenter();
-    void operator=(const UserNotificationsCenter&) = delete;
+    void operator=(const UserNotificationsCenter &) = delete;
     bool m_ShowWhenActive;
     std::chrono::nanoseconds m_MinElapsedOperationTime;
 };
 
-}
+} // namespace nc::core

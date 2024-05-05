@@ -5,15 +5,15 @@
 
 namespace nc::panel::actions {
 
-bool ShowSystemOverview::Predicate( PanelController *_target ) const
+bool ShowSystemOverview::Predicate(PanelController *_target) const
 {
     return !_target.state.anyPanelCollapsed;
 }
 
-void ShowSystemOverview::Perform( PanelController *_target, id ) const
+void ShowSystemOverview::Perform(PanelController *_target, id) const
 {
     const auto state = _target.state;
-        
+
     if( [state briefSystemOverviewForPanel:_target make:false] ) {
         [state closeAttachedUI:_target];
     }
@@ -22,5 +22,5 @@ void ShowSystemOverview::Perform( PanelController *_target, id ) const
             [_target updateAttachedBriefSystemOverview];
     }
 }
-    
-}
+
+} // namespace nc::panel::actions

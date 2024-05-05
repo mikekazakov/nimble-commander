@@ -6,26 +6,27 @@
 
 namespace nc::config {
 
-class Executor 
+class Executor
 {
 public:
     virtual ~Executor() = default;
-    virtual void Execute( std::function<void()> _block ) = 0;        
+    virtual void Execute(std::function<void()> _block) = 0;
 };
 
 class ImmediateExecutor : public Executor
 {
 public:
-    void Execute( std::function<void()> _block ) override;
+    void Execute(std::function<void()> _block) override;
 };
 
 class DelayedAsyncExecutor : public Executor
 {
 public:
     DelayedAsyncExecutor(std::chrono::nanoseconds _delay);
-    void Execute( std::function<void()> _block ) override;
+    void Execute(std::function<void()> _block) override;
+
 private:
     std::chrono::nanoseconds m_Delay;
 };
-    
-}
+
+} // namespace nc::config

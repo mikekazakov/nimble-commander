@@ -8,21 +8,20 @@
 using namespace nc::vfs;
 using namespace nc::vfs::dropbox;
 
-@implementation NCVFSDropboxFileDownloadDelegate
-{
-    std::mutex                                   m_CallbacksLock;
-    std::function<void(ssize_t _size_or_error)>  m_ResponseHandler;
-    std::function<void(NSData*)>                 m_DataHandler;
-    std::function<void(int)>                     m_ErrorHandler;
+@implementation NCVFSDropboxFileDownloadDelegate {
+    std::mutex m_CallbacksLock;
+    std::function<void(ssize_t _size_or_error)> m_ResponseHandler;
+    std::function<void(NSData *)> m_DataHandler;
+    std::function<void(int)> m_ErrorHandler;
 }
 
-- (void)setHandleError:(std::function<void (int)>)handleError
+- (void)setHandleError:(std::function<void(int)>)handleError
 {
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     m_ErrorHandler = handleError;
 }
 
-- (std::function<void (int)>)handleError
+- (std::function<void(int)>)handleError
 {
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     return m_ErrorHandler;
@@ -40,20 +39,19 @@ using namespace nc::vfs::dropbox;
     return m_ResponseHandler;
 }
 
-- (void) setHandleData:(std::function<void (NSData *)>)handleData
+- (void)setHandleData:(std::function<void(NSData *)>)handleData
 {
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     m_DataHandler = handleData;
 }
 
-- (std::function<void (NSData *)>)handleData
+- (std::function<void(NSData *)>)handleData
 {
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     return m_DataHandler;
 }
 
-- (void)URLSession:(NSURLSession *)[[maybe_unused]]session
-didBecomeInvalidWithError:(nullable NSError *)_error
+- (void)URLSession:(NSURLSession *) [[maybe_unused]] session didBecomeInvalidWithError:(nullable NSError *)_error
 {
     auto error = VFSErrorFromErrorAndReponseAndData(_error, nil, nil);
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
@@ -61,9 +59,9 @@ didBecomeInvalidWithError:(nullable NSError *)_error
         m_ErrorHandler(error);
 }
 
-- (void)URLSession:(NSURLSession *)[[maybe_unused]]session
-task:(NSURLSessionTask *)[[maybe_unused]]task
-didCompleteWithError:(nullable NSError *)_error
+- (void)URLSession:(NSURLSession *) [[maybe_unused]] session
+                    task:(NSURLSessionTask *) [[maybe_unused]] task
+    didCompleteWithError:(nullable NSError *)_error
 {
     if( _error ) {
         auto error = VFSErrorFromErrorAndReponseAndData(_error, nil, nil);
@@ -73,9 +71,9 @@ didCompleteWithError:(nullable NSError *)_error
     }
 }
 
-- (void)URLSession:(NSURLSession *)[[maybe_unused]]session
-dataTask:(NSURLSessionDataTask *)task
-didReceiveData:(NSData *)data
+- (void)URLSession:(NSURLSession *) [[maybe_unused]] session
+          dataTask:(NSURLSessionDataTask *)task
+    didReceiveData:(NSData *)data
 {
     if( auto response = nc::objc_cast<NSHTTPURLResponse>(task.response) )
         if( response.statusCode == 200 ) {
@@ -84,7 +82,7 @@ didReceiveData:(NSData *)data
                 m_DataHandler(data);
             return;
         }
-    
+
     auto error = VFSErrorFromErrorAndReponseAndData(nil, task.response, data);
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     if( m_ErrorHandler )
@@ -96,30 +94,29 @@ static long ExtractContentLengthFromResponse(NSURLResponse *_response)
     auto response = nc::objc_cast<NSHTTPURLResponse>(_response);
     if( !response )
         return -1;
-    
+
     if( response.statusCode != 200 )
         return -1;
-    
+
     auto length_string = nc::objc_cast<NSString>(response.allHeaderFields[@"Content-Length"]);
     if( !length_string )
         return -1;
-    
-    auto length = atol( length_string.UTF8String );
+
+    auto length = atol(length_string.UTF8String);
     return length >= 0 ? length : -1;
 }
 
-- (void)URLSession:(NSURLSession *)[[maybe_unused]]session
-    dataTask:(NSURLSessionDataTask *)[[maybe_unused]]task
+- (void)URLSession:(NSURLSession *) [[maybe_unused]] session
+              dataTask:(NSURLSessionDataTask *) [[maybe_unused]] task
     didReceiveResponse:(NSURLResponse *)response
-    completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
+     completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
     if( auto l = ExtractContentLengthFromResponse(response); l >= 0 ) {
         std::lock_guard<std::mutex> lock{m_CallbacksLock};
         if( m_ResponseHandler )
             m_ResponseHandler(l);
     }
-    completionHandler( NSURLSessionResponseAllow );
+    completionHandler(NSURLSessionResponseAllow);
 }
-                                
-@end
 
+@end

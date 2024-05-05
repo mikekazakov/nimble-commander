@@ -5,8 +5,7 @@
 #include <gmock/gmock.h>
 #include <filesystem>
 
-struct TempTestDir
-{
+struct TempTestDir {
     TempTestDir();
     ~TempTestDir();
     std::filesystem::path directory;

@@ -5,4 +5,4 @@ namespace nc::panel {
 
 [[clang::no_destroy]] nc::base::SpdLogger Log::m_Logger("panel");
 
-} // namespace nc::vfs
+} // namespace nc::panel

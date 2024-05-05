@@ -18,8 +18,7 @@ public:
     ~FSEventsFileUpdateImpl();
     void operator=(const FSEventsFileUpdateImpl &) = delete;
 
-    uint64_t AddWatchPath(const std::filesystem::path &_path,
-                          std::function<void()> _handler) override;
+    uint64_t AddWatchPath(const std::filesystem::path &_path, std::function<void()> _handler) override;
 
     void RemoveWatchPathWithToken(uint64_t _token) override;
 
@@ -42,8 +41,7 @@ private:
     };
     struct PathEqual {
         using is_transparent = void;
-        bool operator()(const std::filesystem::path &_lhs,
-                        const std::filesystem::path &_rhs) const noexcept;
+        bool operator()(const std::filesystem::path &_lhs, const std::filesystem::path &_rhs) const noexcept;
         bool operator()(std::string_view _lhs, const std::filesystem::path &_rhs) const noexcept;
     };
 
@@ -53,8 +51,7 @@ private:
                             const std::vector<std::optional<struct stat>> &_stats);
     static void BackgroundScanner(std::vector<std::filesystem::path> _paths,
                                   std::weak_ptr<AsyncContext> _context) noexcept;
-    static bool DidChange(const std::optional<struct stat> &_was,
-                          const std::optional<struct stat> &_now) noexcept;
+    static bool DidChange(const std::optional<struct stat> &_was, const std::optional<struct stat> &_now) noexcept;
 
     FSEventStreamRef CreateEventStream(const std::filesystem::path &_path) const;
     static void DeleteEventStream(FSEventStreamRef _stream);

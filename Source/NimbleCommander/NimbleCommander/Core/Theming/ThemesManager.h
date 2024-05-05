@@ -125,18 +125,18 @@ public:
 
     // Returns true if themes will be automatically switched once system's theme is changed.
     bool DoesAutomaticSwitching() const;
-    
+
     // Sets the theme names to be automatically switched to once system's theme is changed if enabled.
     // Automatically propagates the settings into the underlying config.
-    void SetAutomaticSwitching( const AutoSwitchingSettings &_as );
-        
+    void SetAutomaticSwitching(const AutoSwitchingSettings &_as);
+
     // Returns current setting of automatic themes switching
     AutoSwitchingSettings AutomaticSwitching() const;
-    
+
     // Notifies the theme manager that the system appearance has changed.
     // The automatic theme switching is enabled this will select a theme according to those settings.
     void NotifyAboutSystemAppearanceChange(ThemeAppearance _appearance);
-    
+
     using ObservationTicket = ObservableBase::ObservationTicket;
 
     // Adds an observation for the given events
@@ -177,8 +177,7 @@ private:
 };
 
 struct ThemesManager::Notifications {
-    enum : uint64_t
-    {
+    enum : uint64_t {
         // Current theme has changed completely (i.e. another one was selected)
         Name = 1 << 0,
 
@@ -211,18 +210,17 @@ struct ThemesManager::Notifications {
     };
 };
 
-struct ThemesManager::AutoSwitchingSettings
-{
+struct ThemesManager::AutoSwitchingSettings {
     // whether this automatic switching should happen
     bool enabled;
-    
+
     // the name of a theme to be selected when system changes appearance to Light
     std::string light;
-    
+
     // the name of a theme to be selected when system changes appearance to Dark
     std::string dark;
-    
-    std::strong_ordering operator<=>(const AutoSwitchingSettings&) const noexcept = default;
+
+    std::strong_ordering operator<=>(const AutoSwitchingSettings &) const noexcept = default;
 };
 
 } // namespace nc

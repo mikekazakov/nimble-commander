@@ -8,8 +8,7 @@
 #include <VFS/Native.h>
 #include <memory>
 
-struct TempTestDir
-{
+struct TempTestDir {
     TempTestDir();
     ~TempTestDir();
     std::filesystem::path directory;
@@ -21,4 +20,4 @@ struct TestEnvironment {
     std::shared_ptr<nc::vfs::NativeHost> vfs_native;
 };
 
-const TestEnvironment& TestEnv() noexcept;
+const TestEnvironment &TestEnv() noexcept;

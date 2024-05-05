@@ -10,8 +10,7 @@ struct stat;
 namespace nc::vfs {
 
 struct DirEnt {
-    enum
-    {
+    enum {
         Unknown = 0,  /* = DT_UNKNOWN */
         FIFO = 1,     /* = DT_FIFO    */
         Char = 2,     /* = DT_CHR     */

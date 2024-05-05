@@ -22,18 +22,14 @@ public:
     bool ConformsTo(const std::string &_uti, const std::string &_conforms_to) const override;
 
 private:
-    mutable robin_hood::unordered_flat_map<std::string,
-                                           std::string,
-                                           RHTransparentStringHashEqual,
-                                           RHTransparentStringHashEqual>
-        m_ExtensionToUTI;
+    mutable robin_hood::
+        unordered_flat_map<std::string, std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>
+            m_ExtensionToUTI;
     mutable std::mutex m_ExtensionToUTILock;
 
     mutable robin_hood::unordered_flat_map<
         std::string,
-        robin_hood::unordered_flat_set<std::string,
-                                       RHTransparentStringHashEqual,
-                                       RHTransparentStringHashEqual>,
+        robin_hood::unordered_flat_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>,
         RHTransparentStringHashEqual,
         RHTransparentStringHashEqual>
         m_ConformsTo;

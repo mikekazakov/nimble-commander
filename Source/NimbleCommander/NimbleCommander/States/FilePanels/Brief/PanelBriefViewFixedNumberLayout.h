@@ -3,9 +3,8 @@
 
 #include "PanelBriefViewLayoutProtocol.h"
 
-@interface NCPanelBriefViewFixedNumberLayout :
-    NSCollectionViewFlowLayout<NCPanelBriefViewLayoutProtocol>
+@interface NCPanelBriefViewFixedNumberLayout : NSCollectionViewFlowLayout <NCPanelBriefViewLayoutProtocol>
 
-@property (nonatomic) int columnsPerScreen;
+@property(nonatomic) int columnsPerScreen;
 
-@end 
+@end

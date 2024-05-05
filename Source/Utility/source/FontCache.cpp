@@ -146,8 +146,7 @@ std::shared_ptr<FontCache> FontCache::FontCacheFromFont(CTFontRef _basic_font)
     double font_size = CTFontGetSize(_basic_font);
     for( auto &i : g_Caches ) {
         auto font = i.lock();
-        const bool same_name =
-            CFStringCompare(font->m_FontName.get(), full_name.get(), 0) == kCFCompareEqualTo;
+        const bool same_name = CFStringCompare(font->m_FontName.get(), full_name.get(), 0) == kCFCompareEqualTo;
         const bool same_size = std::fabs(font->Size() - font_size) < 0.1;
         if( same_name && same_size ) {
             // just return already created font cache
@@ -171,10 +170,9 @@ FontCache::FontCache(CTFontRef _basic_font) : m_FontInfo(_basic_font)
 
 FontCache::~FontCache()
 {
-    g_Caches.erase(std::remove_if(std::begin(g_Caches),
-                                  std::end(g_Caches),
-                                  [](auto _t) { return _t.lock() == nullptr; }),
-                   std::end(g_Caches));
+    g_Caches.erase(
+        std::remove_if(std::begin(g_Caches), std::end(g_Caches), [](auto _t) { return _t.lock() == nullptr; }),
+        std::end(g_Caches));
 }
 
 FontCache::Pair FontCache::DoGetBMP(uint16_t _c)
@@ -324,4 +322,4 @@ FontCache::Pair FontCache::Get(uint32_t _c) noexcept
     return _c < 0x10000 ? DoGetBMP(static_cast<uint16_t>(_c)) : DoGetNonBMP(_c);
 }
 
-}
+} // namespace nc::utility

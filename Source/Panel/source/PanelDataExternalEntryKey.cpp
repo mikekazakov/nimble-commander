@@ -5,13 +5,11 @@
 namespace nc::panel::data {
 
 ExternalEntryKey::ExternalEntryKey()
-    : name{""}, extension{""}, display_name{}, size{0}, mtime{0}, btime{0}, atime{0},
-      add_time{-1}, is_dir{false}
+    : name{""}, extension{""}, display_name{}, size{0}, mtime{0}, btime{0}, atime{0}, add_time{-1}, is_dir{false}
 {
 }
 
-ExternalEntryKey::ExternalEntryKey(const VFSListingItem &_item, const ItemVolatileData &_item_vd)
-    : ExternalEntryKey()
+ExternalEntryKey::ExternalEntryKey(const VFSListingItem &_item, const ItemVolatileData &_item_vd) : ExternalEntryKey()
 {
     name = _item.Filename();
     display_name.reset(_item.DisplayNameCF());

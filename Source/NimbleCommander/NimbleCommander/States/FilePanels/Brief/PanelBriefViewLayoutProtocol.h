@@ -4,24 +4,24 @@
 #include <vector>
 #include <Cocoa/Cocoa.h>
 
-@protocol NCPanelBriefViewLayoutDelegate<NSObject>
+@protocol NCPanelBriefViewLayoutDelegate <NSObject>
 
-@optional 
+@optional
 - (void)collectionViewDidLayoutItems:(NSCollectionView *)collectionView;
 
 // this breaks abstraction a bit, since this part only relates to the "DynamicWidth" layout
-- (std::vector<unsigned short>&)collectionViewProvideIntrinsicItemsWidths:(NSCollectionView *)collectionView;
+- (std::vector<unsigned short> &)collectionViewProvideIntrinsicItemsWidths:(NSCollectionView *)collectionView;
 
 @end
 
-@protocol NCPanelBriefViewLayoutProtocol<NSObject>
+@protocol NCPanelBriefViewLayoutProtocol <NSObject>
 
-@property (nonatomic) int itemHeight;
-@property (nonatomic, weak ) id<NCPanelBriefViewLayoutDelegate> layoutDelegate;
+@property(nonatomic) int itemHeight;
+@property(nonatomic, weak) id<NCPanelBriefViewLayoutDelegate> layoutDelegate;
 
-- (int) rowsNumber;
-- (int) columnsNumber;
-- (const std::vector<int>&) columnsPositions;
-- (const std::vector<int>&) columnsWidths;
+- (int)rowsNumber;
+- (int)columnsNumber;
+- (const std::vector<int> &)columnsPositions;
+- (const std::vector<int> &)columnsWidths;
 
 @end

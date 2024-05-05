@@ -5,12 +5,11 @@
 #include <filesystem>
 #include <string>
 
-@interface NCTermExternalEditorState : NSView<NCMainWindowState>
+@interface NCTermExternalEditorState : NSView <NCMainWindowState>
 
 - (id)initWithFrameAndParams:(NSRect)frameRect
-                      binary:(const std::filesystem::path&)_binary_path
-                      params:(const std::string&)_params
-                   fileTitle:(const std::string&)_file_title; // _file_title is used only for window title
+                      binary:(const std::filesystem::path &)_binary_path
+                      params:(const std::string &)_params
+                   fileTitle:(const std::string &)_file_title; // _file_title is used only for window title
 
 @end
-

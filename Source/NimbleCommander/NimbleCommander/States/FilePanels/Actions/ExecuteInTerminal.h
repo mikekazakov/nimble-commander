@@ -5,11 +5,10 @@
 
 namespace nc::panel::actions {
 
-struct ExecuteInTerminal final : PanelAction
-{
-    bool Predicate( PanelController *_target ) const override;
-    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
-    void Perform( PanelController *_target, id _sender ) const override;
+struct ExecuteInTerminal final : PanelAction {
+    bool Predicate(PanelController *_target) const override;
+    bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
+    void Perform(PanelController *_target, id _sender) const override;
 };
 
-}
+} // namespace nc::panel::actions

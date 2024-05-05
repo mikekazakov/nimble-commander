@@ -3,22 +3,20 @@
 
 namespace nc::ops::copying {
 
-std::string FindNonExistingItemPath(const std::string &_orig_existing_path,
-                                    VFSHost &_host,
-                                    const VFSCancelChecker &_cancel_checker)
-{    
-    const auto [epilog, prologue] = [&]{
+std::string
+FindNonExistingItemPath(const std::string &_orig_existing_path, VFSHost &_host, const VFSCancelChecker &_cancel_checker)
+{
+    const auto [epilog, prologue] = [&] {
         const auto p = std::filesystem::path{_orig_existing_path};
         if( p.has_extension() ) {
-            return std::make_pair((p.parent_path() / p.stem()).native() + " ",
-                                  p.extension().native());
+            return std::make_pair((p.parent_path() / p.stem()).native() + " ", p.extension().native());
         }
         else {
             return std::make_pair(_orig_existing_path + " ", std::string{});
         }
     }();
-        
-    for( int check_index = 2; /*noop*/; ++check_index) {
+
+    for( int check_index = 2; /*noop*/; ++check_index ) {
         if( _cancel_checker && _cancel_checker() )
             return "";
         auto path = epilog + std::to_string(check_index) + prologue;
@@ -30,4 +28,4 @@ std::string FindNonExistingItemPath(const std::string &_orig_existing_path,
     }
 }
 
-}
+} // namespace nc::ops::copying

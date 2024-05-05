@@ -141,5 +141,4 @@ SplitByDelimiters(std::string_view _str, std::string_view _delims, bool _compres
 [[nodiscard]] std::vector<std::string>
 SplitByDelimiter(std::string_view _str, char _delim, bool _compress = true) noexcept;
 
-
 } // namespace nc::base

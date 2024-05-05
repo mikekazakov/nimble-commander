@@ -111,4 +111,4 @@ CGColorRef ColorMap::GetSpecialColor(Special _color_type) noexcept
     return m_Special[static_cast<size_t>(_color_type)].get();
 }
 
-}
+} // namespace nc::term

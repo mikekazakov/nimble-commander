@@ -9,7 +9,10 @@
 
 #ifndef SPDLOC
 #define SPDLOC                                                                                                         \
-    spdlog::source_loc { __FILE__, __LINE__, __FUNCTION__ }
+    spdlog::source_loc                                                                                                 \
+    {                                                                                                                  \
+        __FILE__, __LINE__, __FUNCTION__                                                                               \
+    }
 #endif
 
 namespace nc::base {

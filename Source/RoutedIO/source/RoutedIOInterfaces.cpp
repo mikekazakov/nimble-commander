@@ -947,7 +947,7 @@ int PosixIOInterfaceRouted::trash(const char *_path) noexcept
     }
 
     xpc_release(reply);
-    return 0;    
+    return 0;
 }
 
 } // namespace nc::routedio

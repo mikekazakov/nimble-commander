@@ -12,10 +12,10 @@ class SFTPHost;
 
 struct TestEnvironment {
     std::shared_ptr<nc::utility::FSEventsFileUpdate> fsevents_file_update;
-    std::shared_ptr<nc::utility::NativeFSManager> native_fs_man; 
+    std::shared_ptr<nc::utility::NativeFSManager> native_fs_man;
     std::shared_ptr<nc::vfs::NativeHost> vfs_native;
-    
+
     std::shared_ptr<nc::vfs::SFTPHost> SpawnSFTPHost() const;
 };
 
-const TestEnvironment& TestEnv() noexcept;
+const TestEnvironment &TestEnv() noexcept;

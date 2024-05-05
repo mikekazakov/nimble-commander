@@ -10,6 +10,6 @@
 - (instancetype)initWithSwitchingSettings:(const nc::ThemesManager::AutoSwitchingSettings &)_autoswitching
                             andThemeNames:(std::span<const std::string>)_names;
 
-@property (readonly, nonatomic) const nc::ThemesManager::AutoSwitchingSettings &settings;
+@property(readonly, nonatomic) const nc::ThemesManager::AutoSwitchingSettings &settings;
 
 @end

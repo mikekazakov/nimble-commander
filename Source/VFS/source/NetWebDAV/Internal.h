@@ -28,8 +28,7 @@ public:
 
 namespace HTTPRequests {
 using Mask = int;
-enum
-{
+enum {
     None = 0x0000,
     Get = 0x0001,
     Head = 0x0002,
@@ -48,8 +47,7 @@ enum
     PropPatch = 0x4000
 };
 
-enum
-{
+enum {
     //        MinimalRequiredSet = Get | Put | PropFind | PropPatch | Mkcol
     MinimalRequiredSet = Get | PropFind | PropPatch
 };

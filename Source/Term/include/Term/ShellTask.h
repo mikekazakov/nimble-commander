@@ -14,8 +14,7 @@ namespace nc::term {
 class ShellTask : public Task
 {
 public:
-    enum class TaskState
-    {
+    enum class TaskState {
 
         // initial state - shell is not initialized and is not running
         Inactive = 0,
@@ -36,8 +35,7 @@ public:
         Dead = 4
     };
 
-    enum class ShellType
-    {
+    enum class ShellType {
         Unknown = -1,
         Bash = 0,
         ZSH = 1,
@@ -53,7 +51,7 @@ public:
 
     // TODO: describe, change to std::span
     void SetOnChildOutput(OnChildOutput _callback);
-    
+
     // _callback can be called from a background thread
     void SetOnPwdPrompt(OnPwdPrompt _callback);
 
@@ -110,7 +108,7 @@ public:
     void ExecuteWithFullPath(const char *_path, const char *_parameters);
 
     // TODO: describe
-    void ExecuteWithFullPath(const std::filesystem::path& _binary_path, std::span<const std::string> _arguments);
+    void ExecuteWithFullPath(const std::filesystem::path &_binary_path, std::span<const std::string> _arguments);
 
     /**
      * Can be used in any TermShellTask state.
@@ -163,11 +161,11 @@ public:
      * Returns a shell type, depending on a startup path, regardless of an actual state
      */
     ShellType GetShellType() const;
-    
+
 private:
     ShellTask(const ShellTask &) = delete;
     ShellTask &operator=(const ShellTask &) = delete;
-    
+
     bool IsCurrentWD(const char *_what) const;
     char **BuildShellArgs() const;
     std::string ComposePromptCommand() const;

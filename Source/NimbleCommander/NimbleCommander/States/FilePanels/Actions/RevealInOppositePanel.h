@@ -5,16 +5,14 @@
 
 namespace nc::panel::actions {
 
-struct RevealInOppositePanel final : StateAction
-{
-    virtual bool Predicate( MainWindowFilePanelState *_target ) const;
-    virtual void Perform( MainWindowFilePanelState *_target, id _sender ) const;
+struct RevealInOppositePanel final : StateAction {
+    virtual bool Predicate(MainWindowFilePanelState *_target) const;
+    virtual void Perform(MainWindowFilePanelState *_target, id _sender) const;
 };
 
-struct RevealInOppositePanelTab final : StateAction
-{
-    virtual bool Predicate( MainWindowFilePanelState *_target ) const;
-    virtual void Perform( MainWindowFilePanelState *_target, id _sender ) const;
+struct RevealInOppositePanelTab final : StateAction {
+    virtual bool Predicate(MainWindowFilePanelState *_target) const;
+    virtual void Perform(MainWindowFilePanelState *_target, id _sender) const;
 };
 
-}
+} // namespace nc::panel::actions

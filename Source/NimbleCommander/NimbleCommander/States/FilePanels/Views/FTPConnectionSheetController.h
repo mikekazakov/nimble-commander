@@ -5,11 +5,10 @@
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include "ConnectionSheetProtocol.h"
 
-@interface FTPConnectionSheetController : SheetController<ConnectionSheetProtocol,
-                                                          NSTextFieldDelegate>
+@interface FTPConnectionSheetController : SheetController <ConnectionSheetProtocol, NSTextFieldDelegate>
 
-@property (nonatomic) NetworkConnectionsManager::Connection connection;
-@property (nonatomic) std::string password;
-@property (nonatomic) bool setupMode;
+@property(nonatomic) NetworkConnectionsManager::Connection connection;
+@property(nonatomic) std::string password;
+@property(nonatomic) bool setupMode;
 
 @end

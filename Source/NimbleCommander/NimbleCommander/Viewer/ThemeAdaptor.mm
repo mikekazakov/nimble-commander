@@ -4,8 +4,7 @@
 
 namespace nc::viewer {
 
-ThemeAdaptor::ThemeAdaptor(ThemesManager &_themes_mgr):
-    m_ThemesManager{_themes_mgr}
+ThemeAdaptor::ThemeAdaptor(ThemesManager &_themes_mgr) : m_ThemesManager{_themes_mgr}
 {
 }
 
@@ -13,31 +12,31 @@ NSFont *ThemeAdaptor::Font() const
 {
     return CurrentTheme().ViewerFont();
 }
-    
+
 NSColor *ThemeAdaptor::OverlayColor() const
 {
     return CurrentTheme().ViewerOverlayColor();
 }
-    
+
 NSColor *ThemeAdaptor::TextColor() const
 {
     return CurrentTheme().ViewerTextColor();
 }
-    
+
 NSColor *ThemeAdaptor::ViewerSelectionColor() const
 {
     return CurrentTheme().ViewerSelectionColor();
 }
-    
+
 NSColor *ThemeAdaptor::ViewerBackgroundColor() const
 {
     return CurrentTheme().ViewerBackgroundColor();
 }
 
-void ThemeAdaptor::ObserveChanges( std::function<void()> _callback )
+void ThemeAdaptor::ObserveChanges(std::function<void()> _callback)
 {
     const auto filter = ThemesManager::Notifications::Viewer;
-    m_ThemeObservation = m_ThemesManager.ObserveChanges(filter, std::move(_callback) );
+    m_ThemeObservation = m_ThemesManager.ObserveChanges(filter, std::move(_callback));
 }
 
 const ::nc::Theme &ThemeAdaptor::CurrentTheme() const
@@ -45,4 +44,4 @@ const ::nc::Theme &ThemeAdaptor::CurrentTheme() const
     return m_ThemesManager.SelectedTheme();
 }
 
-}
+} // namespace nc::viewer

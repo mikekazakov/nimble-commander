@@ -352,15 +352,14 @@ static bool GetVerboseInfo(NativeFileSystemInfo &_volume)
 void NativeFSManagerImpl::OnDidMount(const std::string &_on_path)
 {
     // presumably called from main thread, so go async to keep UI smooth
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0),
-                   [=, this] {
-                     auto volume = std::make_shared<NativeFileSystemInfo>();
-                     volume->mounted_at_path = _on_path;
-                     GetAllInfos(*volume.get());
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), [=, this] {
+        auto volume = std::make_shared<NativeFileSystemInfo>();
+        volume->mounted_at_path = _on_path;
+        GetAllInfos(*volume.get());
 
-                     std::lock_guard<std::mutex> lock(m_Lock);
-                     InsertNewVolume_Unlocked(volume);
-                   });
+        std::lock_guard<std::mutex> lock(m_Lock);
+        InsertNewVolume_Unlocked(volume);
+    });
 }
 
 void NativeFSManagerImpl::InsertNewVolume_Unlocked(const std::shared_ptr<NativeFileSystemInfo> &_volume)
@@ -530,10 +529,10 @@ bool NativeFSManagerImpl::IsVolumeContainingPathEjectable(const std::string &_pa
 
 void NativeFSManagerImpl::EjectVolumeContainingPath(const std::string &_path)
 {
-  dispatch_to_main_queue([=, this] {
-    if (const auto volume = VolumeFromPath(_path))
-      PerformUnmounting(volume);
-  });
+    dispatch_to_main_queue([=, this] {
+        if( const auto volume = VolumeFromPath(_path) )
+            PerformUnmounting(volume);
+    });
 }
 
 void NativeFSManagerImpl::PerformUnmounting(const Info &_volume)

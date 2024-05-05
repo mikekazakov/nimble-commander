@@ -11,7 +11,6 @@
 #include "Color.h"
 #include "CursorMode.h"
 
-
 // RTFM:
 // http://ascii-table.com/ansi-escape-sequences.php
 // http://en.wikipedia.org/wiki/ANSI_escape_code
@@ -30,13 +29,11 @@
 
 // https://onlineunicodetools.com/add-combining-characters
 
-
 namespace nc::term {
 
 namespace input {
 
-enum class Type : uint8_t
-{
+enum class Type : uint8_t {
     noop,                     // no operation, defined only for conviniency
     text,                     // clean unicode text without any control characters, both escaped
                               // and unescaped. payload type - UTF8Text
@@ -87,8 +84,7 @@ struct None {
 };
 
 struct Title {
-    enum Kind : uint8_t
-    {
+    enum Kind : uint8_t {
         IconAndWindow,
         Icon,
         Window
@@ -102,8 +98,7 @@ struct UTF8Text {
 };
 
 struct CursorMovement {
-    enum Positioning : uint8_t
-    {
+    enum Positioning : uint8_t {
         Absolute,
         Relative
     };
@@ -113,8 +108,7 @@ struct CursorMovement {
 };
 
 struct DisplayErasure {
-    enum Area : uint8_t
-    {
+    enum Area : uint8_t {
         FromCursorToDisplayEnd,
         FromDisplayStartToCursor,
         WholeDisplay,
@@ -124,8 +118,7 @@ struct DisplayErasure {
 };
 
 struct LineErasure {
-    enum Area : uint8_t
-    {
+    enum Area : uint8_t {
         FromCursorToLineEnd,
         FromLineStartToCursor,
         WholeLine
@@ -134,8 +127,7 @@ struct LineErasure {
 };
 
 struct ModeChange {
-    enum Kind : uint8_t
-    {
+    enum Kind : uint8_t {
         Insert,                           // Insert Mode / Replace Mode [IRM]
         NewLine,                          // New Line Mode / Line Feed Mode [LNM]
         Column132,                        // 132 Column Mode / 80 Column Mode [DECCOLM]
@@ -152,19 +144,18 @@ struct ModeChange {
         SendMouseXYOnPress,               // Do send / don't send (X10 compatibility - xterm)
         SendMouseXYOnPressAndRelease,     // Do send / don't send (xterm)
         SendMouseXYOnPressDragAndRelease, // Do send / don't send (xterm)
-        SendMouseXYAnyEvent, // Use All Motion Mouse Tracking / Don't use All Motion Mouse Tracking
-                             // (xterm)
-        SendMouseReportUFT8, // Enable UTF-8 Mouse Mode / Disable UTF-8 Mouse Mode (xterm)
-        SendMouseReportSGR,  // Enable SGR Mouse Mode / Disable SGR Mouse Mode (xterm)
-        BracketedPaste,      // Enable bracketed paste mode/ Disable bracketed paste mode (xterm)
+        SendMouseXYAnyEvent,              // Use All Motion Mouse Tracking / Don't use All Motion Mouse Tracking
+                                          // (xterm)
+        SendMouseReportUFT8,              // Enable UTF-8 Mouse Mode / Disable UTF-8 Mouse Mode (xterm)
+        SendMouseReportSGR,               // Enable SGR Mouse Mode / Disable SGR Mouse Mode (xterm)
+        BracketedPaste,                   // Enable bracketed paste mode/ Disable bracketed paste mode (xterm)
     };
     Kind mode = Insert;
     bool status = false;
 };
 
 struct DeviceReport {
-    enum Kind : uint8_t
-    {
+    enum Kind : uint8_t {
         TerminalId,
         DeviceStatus,
         CursorPosition
@@ -181,8 +172,7 @@ struct ScrollingRegion {
 };
 
 struct TabClear {
-    enum Kind : uint8_t
-    {
+    enum Kind : uint8_t {
         All,
         CurrentColumn
     };
@@ -190,8 +180,7 @@ struct TabClear {
 };
 
 struct CharacterAttributes {
-    enum Kind : uint8_t
-    {
+    enum Kind : uint8_t {
         Normal,
         Bold,
         Faint,
@@ -216,13 +205,12 @@ struct CharacterAttributes {
     };
     Kind mode = Normal;
     Color color; // For ForegroundColor and BackgroundColor
-    
-    constexpr auto operator <=>(const CharacterAttributes &rhs) const noexcept = default;
+
+    constexpr auto operator<=>(const CharacterAttributes &rhs) const noexcept = default;
 };
 
 struct CharacterSetDesignation {
-    enum Set : uint8_t
-    {
+    enum Set : uint8_t {
         DECSpecialGraphics,                      // '0'
         AlternateCharacterROMStandardCharacters, // '1'
         AlternateCharacterROMSpecialGraphics,    // '2'
@@ -234,14 +222,12 @@ struct CharacterSetDesignation {
 };
 
 struct TitleManipulation {
-    enum Kind : uint8_t
-    {
+    enum Kind : uint8_t {
         Both,
         Icon,
         Window
     };
-    enum Operation : uint8_t
-    {
+    enum Operation : uint8_t {
         Save,
         Restore
     };
@@ -249,8 +235,7 @@ struct TitleManipulation {
     Operation operation = Save;
 };
 
-struct CursorStyle
-{
+struct CursorStyle {
     std::optional<CursorMode> style = std::nullopt;
 };
 
@@ -276,7 +261,7 @@ struct Command {
     Command(Type _type, Payload _payload) noexcept;
 
     Type type;
-    Payload payload;    
+    Payload payload;
 };
 
 std::string VerboseDescription(const Command &_command);
@@ -303,8 +288,7 @@ inline Command::Command(Type _type) noexcept : type{_type}
 {
 }
 
-inline Command::Command(Type _type, Payload _payload) noexcept
-    : type{_type}, payload{std::move(_payload)}
+inline Command::Command(Type _type, Payload _payload) noexcept : type{_type}, payload{std::move(_payload)}
 {
 }
 

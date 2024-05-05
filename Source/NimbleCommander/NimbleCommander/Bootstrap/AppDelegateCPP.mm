@@ -21,9 +21,9 @@ const std::string &AppDelegate::SupportDirectory()
 {
     // this is a duplicate of NCAppDelegate.supportDirectory,
     // but it has to be here to break down an initialization dependency circle
-    [[clang::no_destroy]] static const std::string support_dir = []{
+    [[clang::no_destroy]] static const std::string support_dir = [] {
         auto path = NSFileManager.defaultManager.applicationSupportDirectory;
-        return EnsureTrailingSlash( path.fileSystemRepresentationSafe );
+        return EnsureTrailingSlash(path.fileSystemRepresentationSafe);
     }();
     return support_dir;
 }
@@ -33,4 +33,4 @@ const std::shared_ptr<NetworkConnectionsManager> &AppDelegate::NetworkConnection
     return NCAppDelegate.me.networkConnectionsManager;
 }
 
-}
+} // namespace nc

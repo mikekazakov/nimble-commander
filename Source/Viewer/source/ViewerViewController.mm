@@ -57,10 +57,7 @@ static int InvertBitFlag(int _value, int _flag)
 namespace nc::viewer {
 
 struct BackgroundFileOpener {
-    int Open(VFSHostPtr _vfs,
-             const std::string &_path,
-             const nc::config::Config &_config,
-             int _window_size);
+    int Open(VFSHostPtr _vfs, const std::string &_path, const nc::config::Config &_config, int _window_size);
 
     VFSFilePtr original_file;
     VFSSeqToRandomROWrapperFilePtr seq_wrapper;
@@ -70,7 +67,7 @@ struct BackgroundFileOpener {
     std::shared_ptr<nc::vfs::SearchInFile> search_in_file;
 };
 
-}
+} // namespace nc::viewer
 
 @interface NCViewerViewController ()
 
@@ -127,8 +124,7 @@ struct BackgroundFileOpener {
 
 - (instancetype)initWithHistory:(nc::viewer::History &)_history
                          config:(nc::config::Config &)_config
-              shortcutsProvider:
-                  (std::function<nc::utility::ActionShortcut(std::string_view _name)>)_shortcuts
+              shortcutsProvider:(std::function<nc::utility::ActionShortcut(std::string_view _name)>)_shortcuts
 {
     self = [super init];
     if( self ) {
@@ -138,9 +134,8 @@ struct BackgroundFileOpener {
         m_Shortcuts = _shortcuts;
         m_AutomaticFileRefreshScheduled = false;
         __weak NCViewerViewController *weak_self = self;
-        m_SearchInFileQueue.SetOnChange([=] {
-            [static_cast<NCViewerViewController *>(weak_self) onSearchInFileQueueStateChanged];
-        });
+        m_SearchInFileQueue.SetOnChange(
+            [=] { [static_cast<NCViewerViewController *>(weak_self) onSearchInFileQueueStateChanged]; });
 
         NSNib *mynib = [[NSNib alloc] initWithNibNamed:@"InternalViewerController" bundle:Bundle()];
         [mynib instantiateWithOwner:self topLevelObjects:nil];
@@ -250,8 +245,8 @@ struct BackgroundFileOpener {
             m_View.encoding = encoding;
     }
 
-    m_FileSizeLabel.stringValue = ByteCountFormatter::Instance().ToNSString(
-        m_ViewerFileWindow->FileSize(), ByteCountFormatter::Fixed6);
+    m_FileSizeLabel.stringValue =
+        ByteCountFormatter::Instance().ToNSString(m_ViewerFileWindow->FileSize(), ByteCountFormatter::Fixed6);
 
     m_View.hotkeyDelegate = self;
 }
@@ -302,8 +297,8 @@ struct BackgroundFileOpener {
     m_SearchField.action = @selector(onSearchFieldAction:);
     m_SearchField.delegate = self;
     auto cell = static_cast<NSSearchFieldCell *>(m_SearchField.cell);
-    cell.placeholderString = NSLocalizedString(
-        @"Search in file", "Placeholder for search text field in internal viewer");
+    cell.placeholderString =
+        NSLocalizedString(@"Search in file", "Placeholder for search text field in internal viewer");
     cell.sendsWholeSearchString = true;
     cell.recentsAutosaveName = @"BigFileViewRecentSearches";
     cell.maximumRecents = 20;
@@ -327,8 +322,7 @@ struct BackgroundFileOpener {
     NSMenuItem *item;
 
     item = [[NSMenuItem alloc]
-        initWithTitle:NSLocalizedString(@"Case-sensitive search",
-                                        "Menu item option in internal viewer search")
+        initWithTitle:NSLocalizedString(@"Case-sensitive search", "Menu item option in internal viewer search")
                action:@selector(onSearchFieldMenuCaseSensitiveAction:)
         keyEquivalent:@""];
     item.state = m_Config->GetBool(g_ConfigSearchCaseSensitive);
@@ -336,8 +330,7 @@ struct BackgroundFileOpener {
     [menu insertItem:item atIndex:0];
 
     item = [[NSMenuItem alloc]
-        initWithTitle:NSLocalizedString(@"Find whole phrase",
-                                        "Menu item option in internal viewer search")
+        initWithTitle:NSLocalizedString(@"Find whole phrase", "Menu item option in internal viewer search")
                action:@selector(onSearchFiledMenuWholePhraseSearch:)
         keyEquivalent:@""];
     item.state = m_Config->GetBool(g_ConfigSearchForWholePhrase);
@@ -345,8 +338,7 @@ struct BackgroundFileOpener {
     [menu insertItem:item atIndex:1];
 
     item = [[NSMenuItem alloc]
-        initWithTitle:NSLocalizedString(@"Clear Recents",
-                                        "Menu item title in internal viewer search")
+        initWithTitle:NSLocalizedString(@"Clear Recents", "Menu item title in internal viewer search")
                action:NULL
         keyEquivalent:@""];
     item.tag = NSSearchFieldClearRecentsMenuItemTag;
@@ -357,17 +349,15 @@ struct BackgroundFileOpener {
     [menu insertItem:item atIndex:3];
 
     item = [[NSMenuItem alloc]
-        initWithTitle:NSLocalizedString(@"Recent Searches",
-                                        "Menu item title in internal viewer search")
+        initWithTitle:NSLocalizedString(@"Recent Searches", "Menu item title in internal viewer search")
                action:NULL
         keyEquivalent:@""];
     item.tag = NSSearchFieldRecentsTitleMenuItemTag;
     [menu insertItem:item atIndex:4];
 
-    item = [[NSMenuItem alloc]
-        initWithTitle:NSLocalizedString(@"Recents", "Menu item title in internal viewer search")
-               action:NULL
-        keyEquivalent:@""];
+    item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Recents", "Menu item title in internal viewer search")
+                                      action:NULL
+                               keyEquivalent:@""];
     item.tag = NSSearchFieldRecentsMenuItemTag;
     [menu insertItem:item atIndex:5];
 
@@ -419,8 +409,7 @@ struct BackgroundFileOpener {
         if( m_SearchInFile->IsEOF() )
             m_SearchInFile->MoveCurrentPosition(0);
 
-        const auto result =
-            m_SearchInFile->Search([self] { return m_SearchInFileQueue.IsStopped(); });
+        const auto result = m_SearchInFile->Search([self] { return m_SearchInFileQueue.IsStopped(); });
 
         if( result.response == nc::vfs::SearchInFile::Response::Found ) {
             const auto range = CFRangeMake(result.location->offset, result.location->bytes_len);
@@ -437,20 +426,19 @@ struct BackgroundFileOpener {
     if( m_SearchInFileQueue.Empty() )
         dispatch_to_main_queue([=] { [m_SearchProgressIndicator stopAnimation:self]; });
     else
-        dispatch_to_main_queue_after(
-            100ms, [=] { // should be 100 ms of workload before user will get spinning indicator
-                if( !m_SearchInFileQueue.Empty() ) // need to check if task was already done
-                    [m_SearchProgressIndicator startAnimation:self];
-            });
+        dispatch_to_main_queue_after(100ms,
+                                     [=] { // should be 100 ms of workload before user will get spinning indicator
+                                         if( !m_SearchInFileQueue.Empty() ) // need to check if task was already done
+                                             [m_SearchProgressIndicator startAnimation:self];
+                                     });
 }
 
 - (void)onSearchFieldMenuCaseSensitiveAction:(id) [[maybe_unused]] _sender
 {
     using nc::vfs::SearchInFile;
     using Options = SearchInFile::Options;
-    const auto options =
-        static_cast<Options>(InvertBitFlag(static_cast<int>(m_SearchInFile->SearchOptions()),
-                                           static_cast<int>(Options::CaseSensitive)));
+    const auto options = static_cast<Options>(
+        InvertBitFlag(static_cast<int>(m_SearchInFile->SearchOptions()), static_cast<int>(Options::CaseSensitive)));
     m_SearchInFile->SetSearchOptions(options);
 
     auto cell = static_cast<NSSearchFieldCell *>(m_SearchField.cell);
@@ -464,9 +452,8 @@ struct BackgroundFileOpener {
 {
     using nc::vfs::SearchInFile;
     using Options = SearchInFile::Options;
-    const auto options =
-        static_cast<Options>(InvertBitFlag(static_cast<int>(m_SearchInFile->SearchOptions()),
-                                           static_cast<int>(Options::FindWholePhrase)));
+    const auto options = static_cast<Options>(
+        InvertBitFlag(static_cast<int>(m_SearchInFile->SearchOptions()), static_cast<int>(Options::FindWholePhrase)));
     m_SearchInFile->SetSearchOptions(options);
 
     auto cell = static_cast<NSSearchFieldCell *>(m_SearchField.cell);
@@ -544,13 +531,10 @@ struct BackgroundFileOpener {
     m_PositionButton = positionButton;
     m_PositionButton.target = self;
     m_PositionButton.action = @selector(onPositionButtonClicked:);
-    [m_PositionButton
-               bind:@"title"
-           toObject:m_View
-        withKeyPath:@"verticalPositionPercentage"
-            options:@{
-                NSValueTransformerBindingOption: [NCViewerVerticalPostionToStringTransformer new]
-            }];
+    [m_PositionButton bind:@"title"
+                  toObject:m_View
+               withKeyPath:@"verticalPositionPercentage"
+                   options:@{NSValueTransformerBindingOption: [NCViewerVerticalPostionToStringTransformer new]}];
 }
 
 - (void)onPositionButtonClicked:(id)sender
@@ -562,8 +546,7 @@ struct BackgroundFileOpener {
 
 - (void)popoverWillShow:(NSNotification *) [[maybe_unused]] _notification
 {
-    [self.goToPositionValueTextField.window
-        setInitialFirstResponder:self.goToPositionValueTextField];
+    [self.goToPositionValueTextField.window setInitialFirstResponder:self.goToPositionValueTextField];
     [self.goToPositionValueTextField.window makeFirstResponder:self.goToPositionValueTextField];
 }
 
@@ -595,9 +578,7 @@ struct BackgroundFileOpener {
     if( path == nil )
         path = @"...";
     NSString *title =
-        [NSString stringWithFormat:NSLocalizedString(@"File View - %@",
-                                                     "Window title for internal file viewer"),
-                                   path];
+        [NSString stringWithFormat:NSLocalizedString(@"File View - %@", "Window title for internal file viewer"), path];
 
     [self willChangeValueForKey:@"verboseTitle"];
     m_VerboseTitle = title;
@@ -616,8 +597,7 @@ struct BackgroundFileOpener {
     NSString *search_request = [NSString stringWithUTF8StdString:_request];
     m_SearchField.stringValue = search_request;
 
-    if( _selection.location + _selection.length <
-        static_cast<int64_t>(m_SearchFileWindow->FileSize()) )
+    if( _selection.location + _selection.length < static_cast<int64_t>(m_SearchFileWindow->FileSize()) )
         m_SearchInFile->MoveCurrentPosition(_selection.location + _selection.length);
     else
         m_SearchInFile->MoveCurrentPosition(0);
@@ -651,8 +631,8 @@ struct BackgroundFileOpener {
     m_SearchFileWindow = std::move(_opener.search_file_window);
     m_SearchInFile = std::move(_opener.search_in_file);
 
-    m_FileSizeLabel.stringValue = ByteCountFormatter::Instance().ToNSString(
-        m_ViewerFileWindow->FileSize(), ByteCountFormatter::Fixed6);
+    m_FileSizeLabel.stringValue =
+        ByteCountFormatter::Instance().ToNSString(m_ViewerFileWindow->FileSize(), ByteCountFormatter::Fixed6);
 }
 
 - (void)onRefresh
@@ -665,13 +645,10 @@ struct BackgroundFileOpener {
             return;
 
         auto opener = std::make_unique<BackgroundFileOpener>();
-        const int open_err = opener->Open(strong_self->m_VFS,
-                                          strong_self->m_Path,
-                                          *strong_self->m_Config,
-                                          strong_self.fileWindowSize);
+        const int open_err =
+            opener->Open(strong_self->m_VFS, strong_self->m_Path, *strong_self->m_Config, strong_self.fileWindowSize);
         if( open_err != VFSError::Ok ) {
-            Log::Warn(
-                SPDLOC, "failed to open a path {}, vfs_error: {}", strong_self->m_Path, open_err);
+            Log::Warn(SPDLOC, "failed to open a path {}, vfs_error: {}", strong_self->m_Path, open_err);
             return;
         }
 
@@ -690,7 +667,7 @@ struct BackgroundFileOpener {
         return;
     m_AutomaticFileRefreshScheduled = true;
     __weak NCViewerViewController *weak_self = self;
-    dispatch_to_main_queue_after(g_AutomaticRefreshDelay, [weak_self]{
+    dispatch_to_main_queue_after(g_AutomaticRefreshDelay, [weak_self] {
         if( NCViewerViewController *strong_self = weak_self ) {
             strong_self->m_AutomaticFileRefreshScheduled = false;
             [strong_self onRefresh];
@@ -746,17 +723,14 @@ int BackgroundFileOpener::Open(VFSHostPtr _vfs,
     if( original_file->GetReadParadigm() < VFSFile::ReadParadigm::Random ) {
         // we need to read a file into temporary mem/file storage to access it randomly
         ProcessSheetController *proc = [ProcessSheetController new];
-        proc.title = NSLocalizedString(@"Opening file...",
-                                       "Title for process sheet when opening a vfs file");
+        proc.title = NSLocalizedString(@"Opening file...", "Title for process sheet when opening a vfs file");
         [proc Show];
 
         auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(original_file);
         const int open_err = wrapper->Open(
             VFSFlags::OF_Read | VFSFlags::OF_ShLock,
             [=] { return proc.userCancelled; },
-            [=](uint64_t _bytes, uint64_t _total) {
-                proc.progress = double(_bytes) / double(_total);
-            });
+            [=](uint64_t _bytes, uint64_t _total) { proc.progress = double(_bytes) / double(_total); });
         [proc Close];
         if( open_err != VFSError::Ok )
             return open_err;
@@ -770,8 +744,7 @@ int BackgroundFileOpener::Open(VFSHostPtr _vfs,
         work_file = original_file;
     }
     viewer_file_window = std::make_shared<nc::vfs::FileWindow>();
-    if( int attach_err = viewer_file_window->Attach(work_file, _window_size);
-        attach_err != VFSError::Ok )
+    if( int attach_err = viewer_file_window->Attach(work_file, _window_size); attach_err != VFSError::Ok )
         return attach_err;
 
     search_file_window = std::make_shared<nc::vfs::FileWindow>();
@@ -795,4 +768,4 @@ int BackgroundFileOpener::Open(VFSHostPtr _vfs,
     return VFSError::Ok;
 }
 
-}
+} // namespace nc::viewer

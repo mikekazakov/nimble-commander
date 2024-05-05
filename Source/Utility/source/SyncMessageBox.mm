@@ -11,10 +11,12 @@ void SyncMessageBoxUTF8(const char *_utf8_string)
 void SyncMessageBoxNS(NSString *_ns_string)
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    [alert setMessageText: _ns_string];
-    
+    [alert setMessageText:_ns_string];
+
     if( nc::dispatch_is_main_queue() )
         [alert runModal];
     else
-        dispatch_sync(dispatch_get_main_queue(), ^{ [alert runModal]; } );
+        dispatch_sync(dispatch_get_main_queue(), ^{
+          [alert runModal];
+        });
 }

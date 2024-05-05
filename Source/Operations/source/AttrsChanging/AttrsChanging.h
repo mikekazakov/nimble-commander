@@ -11,7 +11,7 @@ class AttrsChangingJob;
 class AttrsChanging : public Operation
 {
 public:
-    AttrsChanging( AttrsChangingCommand _command );
+    AttrsChanging(AttrsChangingCommand _command);
     ~AttrsChanging();
 
 private:
@@ -21,9 +21,9 @@ private:
     int OnChownError(int _err, const std::string &_path, VFSHost &_vfs);
     int OnFlagsError(int _err, const std::string &_path, VFSHost &_vfs);
     int OnTimesError(int _err, const std::string &_path, VFSHost &_vfs);
-    
+
     std::unique_ptr<AttrsChangingJob> m_Job;
-    bool m_SkipAll = false;    
+    bool m_SkipAll = false;
 };
 
-}
+} // namespace nc::ops

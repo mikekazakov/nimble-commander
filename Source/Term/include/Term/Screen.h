@@ -25,9 +25,9 @@ public:
     bool LineOverflown() const noexcept;
 
     void ResizeScreen(unsigned _new_sx, unsigned _new_sy);
-    
+
     char32_t GetCh() noexcept;
-    
+
     void PutCh(char32_t _char);
 
     /**

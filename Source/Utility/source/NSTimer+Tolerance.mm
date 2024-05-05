@@ -3,9 +3,9 @@
 
 @implementation NSTimer (Tolerance)
 
-- (void) setDefaultTolerance
+- (void)setDefaultTolerance
 {
-    self.tolerance = self.timeInterval/10.;
+    self.tolerance = self.timeInterval / 10.;
 }
 
 @end

@@ -9,20 +9,16 @@
 namespace nc::ops {
 
 struct CopyingJobCallbacks {
-    enum class CantAccessSourceItemResolution
-    {
+    enum class CantAccessSourceItemResolution {
         Stop,
         Skip,
         Retry
     };
-    std::function<
-        CantAccessSourceItemResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
-        m_OnCantAccessSourceItem = [](int, const std::string &, VFSHost &) {
-            return CantAccessSourceItemResolution::Stop;
-        };
+    std::function<CantAccessSourceItemResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+        m_OnCantAccessSourceItem =
+            [](int, const std::string &, VFSHost &) { return CantAccessSourceItemResolution::Stop; };
 
-    enum class CopyDestExistsResolution
-    {
+    enum class CopyDestExistsResolution {
         Stop,
         Skip,
         Overwrite,
@@ -30,171 +26,125 @@ struct CopyingJobCallbacks {
         Append,
         KeepBoth
     };
-    std::function<CopyDestExistsResolution(const struct stat &_src,
-                                           const struct stat &_dst,
-                                           const std::string &_path)>
-        m_OnCopyDestinationAlreadyExists =
-            [](const struct stat &, const struct stat &, const std::string &) {
-                return CopyDestExistsResolution::Stop;
-            };
+    std::function<CopyDestExistsResolution(const struct stat &_src, const struct stat &_dst, const std::string &_path)>
+        m_OnCopyDestinationAlreadyExists = [](const struct stat &, const struct stat &, const std::string &) {
+            return CopyDestExistsResolution::Stop;
+        };
 
-    enum class RenameDestExistsResolution
-    {
+    enum class RenameDestExistsResolution {
         Stop,
         Skip,
         Overwrite,
         OverwriteOld,
         KeepBoth
     };
-    std::function<RenameDestExistsResolution(const struct stat &_src,
-                                             const struct stat &_dst,
-                                             const std::string &_path)>
-        m_OnRenameDestinationAlreadyExists =
-            [](const struct stat &, const struct stat &, const std::string &) {
-                return RenameDestExistsResolution::Stop;
-            };
-
-    enum class CantOpenDestinationFileResolution
-    {
-        Stop,
-        Skip,
-        Retry
-    };
     std::function<
-        CantOpenDestinationFileResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
-        m_OnCantOpenDestinationFile = [](int, const std::string &, VFSHost &) {
-            return CantOpenDestinationFileResolution::Stop;
+        RenameDestExistsResolution(const struct stat &_src, const struct stat &_dst, const std::string &_path)>
+        m_OnRenameDestinationAlreadyExists = [](const struct stat &, const struct stat &, const std::string &) {
+            return RenameDestExistsResolution::Stop;
         };
 
-    enum class SourceFileReadErrorResolution
-    {
+    enum class CantOpenDestinationFileResolution {
         Stop,
         Skip,
         Retry
     };
-    std::function<
-        SourceFileReadErrorResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+    std::function<CantOpenDestinationFileResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+        m_OnCantOpenDestinationFile =
+            [](int, const std::string &, VFSHost &) { return CantOpenDestinationFileResolution::Stop; };
+
+    enum class SourceFileReadErrorResolution {
+        Stop,
+        Skip,
+        Retry
+    };
+    std::function<SourceFileReadErrorResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
         m_OnSourceFileReadError =
             [](int, const std::string &, VFSHost &) { return SourceFileReadErrorResolution::Stop; };
 
-    enum class DestinationFileReadErrorResolution
-    {
+    enum class DestinationFileReadErrorResolution {
         Stop,
         Skip
     };
-    std::function<
-        DestinationFileReadErrorResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
-        m_OnDestinationFileReadError = [](int, const std::string &, VFSHost &) {
-            return DestinationFileReadErrorResolution::Stop;
-        };
+    std::function<DestinationFileReadErrorResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+        m_OnDestinationFileReadError =
+            [](int, const std::string &, VFSHost &) { return DestinationFileReadErrorResolution::Stop; };
 
-    enum class DestinationFileWriteErrorResolution
-    {
+    enum class DestinationFileWriteErrorResolution {
         Stop,
         Skip,
         Retry
     };
-    std::function<DestinationFileWriteErrorResolution(int _vfs_error,
-                                                      const std::string &_path,
-                                                      VFSHost &_vfs)>
-        m_OnDestinationFileWriteError = [](int, const std::string &, VFSHost &) {
-            return DestinationFileWriteErrorResolution::Stop;
-        };
+    std::function<DestinationFileWriteErrorResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+        m_OnDestinationFileWriteError =
+            [](int, const std::string &, VFSHost &) { return DestinationFileWriteErrorResolution::Stop; };
 
-    enum class CantCreateDestinationRootDirResolution
-    {
+    enum class CantCreateDestinationRootDirResolution {
         Stop,
         Retry
     };
-    std::function<CantCreateDestinationRootDirResolution(int _vfs_error,
-                                                         const std::string &_path,
-                                                         VFSHost &_vfs)>
-        m_OnCantCreateDestinationRootDir = [](int, const std::string &, VFSHost &) {
-            return CantCreateDestinationRootDirResolution::Stop;
-        };
+    std::function<CantCreateDestinationRootDirResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+        m_OnCantCreateDestinationRootDir =
+            [](int, const std::string &, VFSHost &) { return CantCreateDestinationRootDirResolution::Stop; };
 
-    enum class CantCreateDestinationDirResolution
-    {
+    enum class CantCreateDestinationDirResolution {
         Stop,
         Skip,
         Retry
     };
-    std::function<
-        CantCreateDestinationDirResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
-        m_OnCantCreateDestinationDir = [](int, const std::string &, VFSHost &) {
-            return CantCreateDestinationDirResolution::Stop;
-        };
+    std::function<CantCreateDestinationDirResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+        m_OnCantCreateDestinationDir =
+            [](int, const std::string &, VFSHost &) { return CantCreateDestinationDirResolution::Stop; };
 
-    enum class CantDeleteDestinationFileResolution
-    {
+    enum class CantDeleteDestinationFileResolution {
         Stop,
         Skip,
         Retry
     };
-    std::function<CantDeleteDestinationFileResolution(int _vfs_error,
-                                                      const std::string &_path,
-                                                      VFSHost &_vfs)>
-        m_OnCantDeleteDestinationFile = [](int, const std::string &, VFSHost &) {
-            return CantDeleteDestinationFileResolution::Stop;
-        };
+    std::function<CantDeleteDestinationFileResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+        m_OnCantDeleteDestinationFile =
+            [](int, const std::string &, VFSHost &) { return CantDeleteDestinationFileResolution::Stop; };
 
-    enum class CantDeleteSourceFileResolution
-    {
+    enum class CantDeleteSourceFileResolution {
         Stop,
         Skip,
         Retry
     };
-    std::function<
-        CantDeleteSourceFileResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
-        m_OnCantDeleteSourceItem = [](int, const std::string &, VFSHost &) {
-            return CantDeleteSourceFileResolution::Stop;
-        };
+    std::function<CantDeleteSourceFileResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+        m_OnCantDeleteSourceItem =
+            [](int, const std::string &, VFSHost &) { return CantDeleteSourceFileResolution::Stop; };
 
-    enum class NotADirectoryResolution
-    {
+    enum class NotADirectoryResolution {
         Stop,
         Skip,
         Overwrite
     };
-    std::function<NotADirectoryResolution(const std::string &_path, VFSHost &_vfs)>
-        m_OnNotADirectory =
-            [](const std::string &, VFSHost &) { return NotADirectoryResolution::Stop; };
-    
-    enum class LockedItemResolution
-    {
+    std::function<NotADirectoryResolution(const std::string &_path, VFSHost &_vfs)> m_OnNotADirectory =
+        [](const std::string &, VFSHost &) { return NotADirectoryResolution::Stop; };
+
+    enum class LockedItemResolution {
         Stop,
         Skip,
         Unlock,
         Retry
     };
-    std::function<
-        LockedItemResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
-        m_OnCantRenameLockedItem = [](int, const std::string &, VFSHost &) {
-            return LockedItemResolution::Stop;
-        };
-    std::function<
-        LockedItemResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
-        m_OnCantDeleteLockedItem = [](int, const std::string &, VFSHost &) {
-            return LockedItemResolution::Stop;
-        };
-    std::function<
-        LockedItemResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
-        m_OnCantOpenLockedItem = [](int, const std::string &, VFSHost &) {
-            return LockedItemResolution::Stop;
-        };
-    
-    enum class UnlockErrorResolution
-    {
+    std::function<LockedItemResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+        m_OnCantRenameLockedItem = [](int, const std::string &, VFSHost &) { return LockedItemResolution::Stop; };
+    std::function<LockedItemResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+        m_OnCantDeleteLockedItem = [](int, const std::string &, VFSHost &) { return LockedItemResolution::Stop; };
+    std::function<LockedItemResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+        m_OnCantOpenLockedItem = [](int, const std::string &, VFSHost &) { return LockedItemResolution::Stop; };
+
+    enum class UnlockErrorResolution {
         Stop,
         Skip,
         Retry
     };
-    std::function<UnlockErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)>
-        m_OnUnlockError =
-            [](int, const std::string &, VFSHost &) { return UnlockErrorResolution::Stop; };
+    std::function<UnlockErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnUnlockError =
+        [](int, const std::string &, VFSHost &) { return UnlockErrorResolution::Stop; };
 
-    std::function<void(const std::string &_path, VFSHost &_vfs)> m_OnFileVerificationFailed =
-        [](const std::string &, VFSHost &) {};
+    std::function<void(const std::string &_path, VFSHost &_vfs)> m_OnFileVerificationFailed = [](const std::string &,
+                                                                                                 VFSHost &) {};
 
     std::function<void()> m_OnStageChanged = []() {};
 };

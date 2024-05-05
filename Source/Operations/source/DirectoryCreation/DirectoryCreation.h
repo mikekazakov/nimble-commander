@@ -11,7 +11,7 @@ class DirectoryCreationJob;
 class DirectoryCreation final : public Operation
 {
 public:
-    DirectoryCreation( std::string _directory_name, std::string _root_folder, VFSHost &_vfs );
+    DirectoryCreation(std::string _directory_name, std::string _root_folder, VFSHost &_vfs);
     ~DirectoryCreation();
 
     const std::vector<std::string> &DirectoryNames() const;
@@ -24,4 +24,4 @@ private:
     std::unique_ptr<DirectoryCreationJob> m_Job;
 };
 
-}
+} // namespace nc::ops

@@ -1042,4 +1042,4 @@ inline const ListingItem &Listing::iterator::operator*() const noexcept
     return i;
 }
 
-};
+}; // namespace nc::vfs

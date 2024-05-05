@@ -31,8 +31,7 @@ public:
     ObservationTicket ObserveFavoritesChanges(std::function<void()> _callback) override;
 
 private:
-    enum ObservationEvents : uint64_t
-    {
+    enum ObservationEvents : uint64_t {
         FavoritesChanged = 1
     };
 

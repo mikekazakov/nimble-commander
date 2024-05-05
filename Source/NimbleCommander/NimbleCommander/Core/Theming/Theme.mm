@@ -602,4 +602,4 @@ NSColor *Theme::FilePanelsBriefGridColor() const noexcept
     return I->m_FilePanelsBriefGridColor;
 }
 
-}
+} // namespace nc

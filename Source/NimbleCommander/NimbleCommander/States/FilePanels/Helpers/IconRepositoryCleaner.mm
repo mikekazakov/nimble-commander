@@ -4,8 +4,7 @@
 
 namespace nc::panel {
 
-IconRepositoryCleaner::IconRepositoryCleaner(vfsicon::IconRepository &_repository,
-                                             const data::Model &_data)
+IconRepositoryCleaner::IconRepositoryCleaner(vfsicon::IconRepository &_repository, const data::Model &_data)
     : m_Repository(_repository), m_Data(_data)
 {
 }

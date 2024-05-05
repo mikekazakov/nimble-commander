@@ -21,7 +21,7 @@
 //    [self.view removeObserver:self forKeyPath:@"controlSize"];
 //    [view addObserver:self forKeyPath:@"stringValue" options:0 context:NULL];
 //    [view addObserver:self forKeyPath:@"controlSize" options:0 context:NULL];
-//    
+//
 //    [super setView:view];
 //}
 //
@@ -42,21 +42,20 @@
 @end
 
 // Only for IB's sake
-@interface InternalViewerToolbarDummyOwner : NSObject<InternalViewerToolbarProtocol>
+@interface InternalViewerToolbarDummyOwner : NSObject <InternalViewerToolbarProtocol>
 
-@property (nonatomic) IBOutlet NSToolbar *internalViewerToolbar;
-@property (nonatomic) IBOutlet NSSearchField *internalViewerToolbarSearchField;
-@property (nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
-@property (nonatomic) IBOutlet NSPopUpButton *internalViewerToolbarEncodingsPopUp;
-@property (nonatomic) IBOutlet NSPopUpButton *internalViewerToolbarModePopUp;
-@property (nonatomic) IBOutlet NSButton *internalViewerToolbarPositionButton;
-@property (nonatomic) IBOutlet NSTextField *internalViewerToolbarFileSizeLabel;
-@property (nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
-@property (nonatomic) IBOutlet NSButton *internalViewerToolbarWordWrapCheckBox;
-@property (nonatomic) IBOutlet NSButton *internalViewerToolbarSettingsButton;
+@property(nonatomic) IBOutlet NSToolbar *internalViewerToolbar;
+@property(nonatomic) IBOutlet NSSearchField *internalViewerToolbarSearchField;
+@property(nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
+@property(nonatomic) IBOutlet NSPopUpButton *internalViewerToolbarEncodingsPopUp;
+@property(nonatomic) IBOutlet NSPopUpButton *internalViewerToolbarModePopUp;
+@property(nonatomic) IBOutlet NSButton *internalViewerToolbarPositionButton;
+@property(nonatomic) IBOutlet NSTextField *internalViewerToolbarFileSizeLabel;
+@property(nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
+@property(nonatomic) IBOutlet NSButton *internalViewerToolbarWordWrapCheckBox;
+@property(nonatomic) IBOutlet NSButton *internalViewerToolbarSettingsButton;
 
 @end
-
 
 @implementation InternalViewerToolbarDummyOwner
 @synthesize internalViewerToolbar;
@@ -70,6 +69,8 @@
 @synthesize internalViewerToolbarWordWrapCheckBox;
 @synthesize internalViewerToolbarSettingsButton;
 
-- (IBAction)onInternalViewerToolbarSettings:(id)[[maybe_unused]]_sender{}
+- (IBAction)onInternalViewerToolbarSettings:(id) [[maybe_unused]] _sender
+{
+}
 
 @end

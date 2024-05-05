@@ -18,4 +18,4 @@ public:
 #endif
 };
 
-}
+} // namespace nc::utility

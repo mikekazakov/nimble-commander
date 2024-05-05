@@ -6,10 +6,9 @@
 
 @interface PanelListViewSizeView : NSView
 
-- (void) buildPresentation;
+- (void)buildPresentation;
 
 // PanelListViewSizeView has no right to store listing item and hold a reference to it!
-- (void) setSizeWithItem:(const VFSListingItem &)_dirent
-                   andVD:(const nc::panel::data::ItemVolatileData &)_vd;
+- (void)setSizeWithItem:(const VFSListingItem &)_dirent andVD:(const nc::panel::data::ItemVolatileData &)_vd;
 
 @end

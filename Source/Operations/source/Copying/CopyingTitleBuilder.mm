@@ -28,8 +28,7 @@ static NSString *OpTitleForSingleItem(bool _copying, NSString *_item, NSString *
 static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_to)
 {
     auto fmt = NSLocalizedString(@"%@ %@ items to \u201c%@\u201d", "");
-    return [NSString
-        stringWithFormat:fmt, OpTitlePreffix(_copying), [NSNumber numberWithInt:_items], _to];
+    return [NSString stringWithFormat:fmt, OpTitlePreffix(_copying), [NSNumber numberWithInt:_items], _to];
 }
 
 CopyingTitleBuilder::CopyingTitleBuilder(const std::vector<VFSListingItem> &_source_files,
@@ -58,14 +57,12 @@ std::string CopyingTitleBuilder::TitleForPreparing() const
 std::string CopyingTitleBuilder::TitleForProcessing() const
 {
     if( m_SourceFiles.size() == 1 )
-        return OpTitleForSingleItem(m_Options.docopy,
-                                    m_SourceFiles.front().FilenameNS(),
-                                    ExtractCopyToName(m_DestinationPath))
+        return OpTitleForSingleItem(
+                   m_Options.docopy, m_SourceFiles.front().FilenameNS(), ExtractCopyToName(m_DestinationPath))
             .UTF8String;
     else
-        return OpTitleForMultipleItems(m_Options.docopy,
-                                       static_cast<int>(m_SourceFiles.size()),
-                                       ExtractCopyToName(m_DestinationPath))
+        return OpTitleForMultipleItems(
+                   m_Options.docopy, static_cast<int>(m_SourceFiles.size()), ExtractCopyToName(m_DestinationPath))
             .UTF8String;
 }
 
@@ -79,4 +76,4 @@ std::string CopyingTitleBuilder::TitleForCleanup() const
     return NSLocalizedString(@"Cleaning up..", "").UTF8String;
 }
 
-}
+} // namespace nc::ops

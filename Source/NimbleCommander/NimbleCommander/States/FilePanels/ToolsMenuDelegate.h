@@ -4,6 +4,6 @@
 #include <Cocoa/Cocoa.h>
 #include <Panel/ExternalTools.h>
 
-@interface ToolsMenuDelegate : NSObject<NSMenuDelegate>
+@interface ToolsMenuDelegate : NSObject <NSMenuDelegate>
 
 @end

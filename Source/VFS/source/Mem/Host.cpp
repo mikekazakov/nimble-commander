@@ -35,9 +35,7 @@ VFSMeta MemHost::Meta()
     m.Tag = UniqueTag;
     m.SpawnWithConfig = []([[maybe_unused]] const VFSHostPtr &_parent,
                            [[maybe_unused]] const VFSConfiguration &_config,
-                           [[maybe_unused]] VFSCancelChecker _cancel_checker) {
-        return std::make_shared<MemHost>();
-    };
+                           [[maybe_unused]] VFSCancelChecker _cancel_checker) { return std::make_shared<MemHost>(); };
     return m;
 }
 

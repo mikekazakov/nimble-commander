@@ -6,13 +6,13 @@
 
 namespace nc::panel::actions {
 
-struct EjectVolume final : PanelAction
-{
+struct EjectVolume final : PanelAction {
     EjectVolume(utility::NativeFSManager &_native_fs_manager);
-    bool Predicate( PanelController *_target ) const override;
-    void Perform( PanelController *_target, id _sender ) const override;
+    bool Predicate(PanelController *_target) const override;
+    void Perform(PanelController *_target, id _sender) const override;
+
 private:
     utility::NativeFSManager &m_NativeFSManager;
 };
 
-};
+}; // namespace nc::panel::actions

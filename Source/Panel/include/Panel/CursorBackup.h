@@ -8,19 +8,20 @@ namespace nc::panel {
 namespace data {
 class Model;
 }
-    
+
 class CursorBackup
 {
 public:
     CursorBackup(int _current_cursor_pos, const data::Model &_data) noexcept;
 
     int RestoredCursorPosition() const noexcept;
+
 private:
     int FindRestoredCursorPosition() const noexcept;
-    
-    const data::Model          &m_Data;
-    std::string                 m_OldCursorName;
-    data::ExternalEntryKey      m_OldEntrySortKeys;
+
+    const data::Model &m_Data;
+    std::string m_OldCursorName;
+    data::ExternalEntryKey m_OldEntrySortKeys;
 };
 
-}
+} // namespace nc::panel

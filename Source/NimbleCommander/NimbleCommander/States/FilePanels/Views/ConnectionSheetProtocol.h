@@ -3,11 +3,11 @@
 
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 
-@protocol ConnectionSheetProtocol<NSObject>
+@protocol ConnectionSheetProtocol <NSObject>
 
 @required
-@property (nonatomic) NetworkConnectionsManager::Connection connection;
-@property (nonatomic) std::string password;
-@property (nonatomic) bool setupMode;
+@property(nonatomic) NetworkConnectionsManager::Connection connection;
+@property(nonatomic) std::string password;
+@property(nonatomic) bool setupMode;
 
 @end

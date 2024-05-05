@@ -40,9 +40,7 @@ namespace nc::panel {
 
 static NSArray *BuildImageComponentsForItem(PanelDraggingItem *_item);
 
-DragSender::DragSender(PanelController *_panel,
-                       IconCallback _icon_callback,
-                       nc::vfs::NativeHost &_native_vfs)
+DragSender::DragSender(PanelController *_panel, IconCallback _icon_callback, nc::vfs::NativeHost &_native_vfs)
     : m_Panel(_panel), m_IconCallback(std::move(_icon_callback)), m_NativeHost(_native_vfs)
 {
     assert(m_Panel != nullptr);
@@ -66,8 +64,7 @@ void DragSender::Start(NSView *_from_view, NSEvent *_via_event, int _dragged_pan
     position.x -= 16;
     position.y -= 16;
 
-    const auto dragging_source =
-        [[FilesDraggingSource alloc] initWithSourceController:m_Panel nativeHost:m_NativeHost];
+    const auto dragging_source = [[FilesDraggingSource alloc] initWithSourceController:m_Panel nativeHost:m_NativeHost];
     const auto drag_items = [[NSMutableArray alloc] initWithCapacity:vfs_items.size()];
     for( const auto &item : vfs_items ) {
         // dragging item itself
@@ -79,8 +76,7 @@ void DragSender::Start(NSView *_from_view, NSEvent *_via_event, int _dragged_pan
 
         // visual appearance of a dragging item
         auto drag_item = [[NSDraggingItem alloc] initWithPasteboardWriter:pasterboard_item];
-        drag_item.draggingFrame =
-            NSMakeRect(std::floor(position.x), std::floor(position.y), 32, 32);
+        drag_item.draggingFrame = NSMakeRect(std::floor(position.x), std::floor(position.y), 32, 32);
 
         __weak PanelDraggingItem *weak_pb_item = pasterboard_item;
         drag_item.imageComponentsProvider = ^{
@@ -91,17 +87,14 @@ void DragSender::Start(NSView *_from_view, NSEvent *_via_event, int _dragged_pan
         position.y -= 16;
     }
 
-    const auto session = [_from_view beginDraggingSessionWithItems:drag_items
-                                                             event:_via_event
-                                                            source:dragging_source];
+    const auto session = [_from_view beginDraggingSessionWithItems:drag_items event:_via_event source:dragging_source];
     if( session ) {
         [dragging_source writeURLsPBoard:session.draggingPasteboard];
         [NSApp preventWindowOrdering];
     }
 }
 
-std::vector<VFSListingItem> DragSender::Impl::ComposeItemsForDragging(int _sorted_pos,
-                                                                      const data::Model &_data)
+std::vector<VFSListingItem> DragSender::Impl::ComposeItemsForDragging(int _sorted_pos, const data::Model &_data)
 {
     const auto dragged_item = _data.EntryAtSortPosition(_sorted_pos);
     if( !dragged_item || dragged_item.IsDotDot() )
@@ -164,21 +157,18 @@ BuildLabelComponent(PanelDraggingItem *_item, NSFont *_font, const utility::Font
     }();
 
     const auto filename = _item.item.FilenameNS();
-    const auto estimated_label_bounds =
-        [filename boundingRectWithSize:NSMakeSize(max_label_width, 0)
-                               options:0
-                            attributes:attributes];
-    const auto label_width =
-        std::min(max_label_width, std::ceil(estimated_label_bounds.size.width)) + height;
+    const auto estimated_label_bounds = [filename boundingRectWithSize:NSMakeSize(max_label_width, 0)
+                                                               options:0
+                                                            attributes:attributes];
+    const auto label_width = std::min(max_label_width, std::ceil(estimated_label_bounds.size.width)) + height;
 
     const auto label_image = [[NSImage alloc] initWithSize:CGSizeMake(label_width, height)];
 
     [label_image lockFocus];
     DrawRoundedRect(label_image);
-    [filename
-        drawWithRect:NSMakeRect(std::floor(height / 2), _fi.Descent(), label_width - height, 0)
-             options:0
-          attributes:attributes];
+    [filename drawWithRect:NSMakeRect(std::floor(height / 2), _fi.Descent(), label_width - height, 0)
+                   options:0
+                attributes:attributes];
     [label_image unlockFocus];
 
     const auto label_component = [NSDraggingImageComponent draggingImageComponentWithKey:key];
@@ -206,4 +196,4 @@ static NSArray *BuildImageComponentsForItem(PanelDraggingItem *_item)
         return @[label_component];
 }
 
-}
+} // namespace nc::panel

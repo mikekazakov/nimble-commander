@@ -9,69 +9,55 @@
 namespace nc::ops {
 
 struct DeletionJobCallbacks {
-    enum class ReadDirErrorResolution
-    {
+    enum class ReadDirErrorResolution {
         Stop,
         Skip,
         Retry
     };
-    std::function<ReadDirErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)>
-        m_OnReadDirError =
-            [](int, const std::string &, VFSHost &) { return ReadDirErrorResolution::Stop; };
+    std::function<ReadDirErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnReadDirError =
+        [](int, const std::string &, VFSHost &) { return ReadDirErrorResolution::Stop; };
 
-    enum class UnlinkErrorResolution
-    {
+    enum class UnlinkErrorResolution {
         Stop,
         Skip,
         Retry
     };
-    std::function<UnlinkErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)>
-        m_OnUnlinkError =
-            [](int, const std::string &, VFSHost &) { return UnlinkErrorResolution::Stop; };
+    std::function<UnlinkErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnUnlinkError =
+        [](int, const std::string &, VFSHost &) { return UnlinkErrorResolution::Stop; };
 
-    enum class RmdirErrorResolution
-    {
+    enum class RmdirErrorResolution {
         Stop,
         Skip,
         Retry
     };
-    std::function<RmdirErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)>
-        m_OnRmdirError =
-            [](int, const std::string &, VFSHost &) { return RmdirErrorResolution::Stop; };
+    std::function<RmdirErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnRmdirError =
+        [](int, const std::string &, VFSHost &) { return RmdirErrorResolution::Stop; };
 
-    enum class TrashErrorResolution
-    {
+    enum class TrashErrorResolution {
         Stop,
         Skip,
         DeletePermanently,
         Retry
     };
-    std::function<TrashErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)>
-        m_OnTrashError =
-            [](int, const std::string &, VFSHost &) { return TrashErrorResolution::Stop; };
+    std::function<TrashErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnTrashError =
+        [](int, const std::string &, VFSHost &) { return TrashErrorResolution::Stop; };
 
-    enum class LockedItemResolution
-    {
+    enum class LockedItemResolution {
         Stop,
         Skip,
         Unlock,
         Retry
     };
-    std::function<
-        LockedItemResolution(int _err, const std::string &_path, VFSHost &_vfs, DeletionType _type)>
-        m_OnLockedItem = [](int, const std::string &, VFSHost &, DeletionType) {
-            return LockedItemResolution::Stop;
-        };
-    
-    enum class UnlockErrorResolution
-    {
+    std::function<LockedItemResolution(int _err, const std::string &_path, VFSHost &_vfs, DeletionType _type)>
+        m_OnLockedItem = [](int, const std::string &, VFSHost &, DeletionType) { return LockedItemResolution::Stop; };
+
+    enum class UnlockErrorResolution {
         Stop,
         Skip,
         Retry
     };
-    std::function<UnlockErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)>
-        m_OnUnlockError =
-            [](int, const std::string &, VFSHost &) { return UnlockErrorResolution::Stop; };
+    std::function<UnlockErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnUnlockError =
+        [](int, const std::string &, VFSHost &) { return UnlockErrorResolution::Stop; };
 };
 
 } // namespace nc::ops

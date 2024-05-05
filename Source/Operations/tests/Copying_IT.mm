@@ -1422,12 +1422,12 @@ TEST_CASE(PREFIX "Copying a native file that is being written to")
     TempTestDir dir;
     const std::filesystem::path p = dir.directory / "a";
     static constexpr size_t max_size = 100'000'000;
-    
+
     std::atomic_bool stop = false;
     std::thread t([p, &stop] {
         const int f = open(p.c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR);
         REQUIRE(f >= 0);
-        for(size_t i = 0; stop == false && i < max_size; ++i ) {
+        for( size_t i = 0; stop == false && i < max_size; ++i ) {
             write(f, &f, 1);
         }
         close(f);

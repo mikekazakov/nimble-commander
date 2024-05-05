@@ -8,8 +8,7 @@ namespace nc::vfsicon {
 static NSImage *ProduceThumbnailForTempFile(const std::string &_path, CGSize _px_size);
 static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_path, VFSHost &_host);
 
-QLVFSThumbnailsCacheImpl::QLVFSThumbnailsCacheImpl(
-    const std::shared_ptr<utility::BriefOnDiskStorage> &_temp_storage)
+QLVFSThumbnailsCacheImpl::QLVFSThumbnailsCacheImpl(const std::shared_ptr<utility::BriefOnDiskStorage> &_temp_storage)
     : m_TempStorage(_temp_storage)
 {
 }
@@ -18,9 +17,7 @@ QLVFSThumbnailsCacheImpl::~QLVFSThumbnailsCacheImpl()
 {
 }
 
-NSImage *QLVFSThumbnailsCacheImpl::ThumbnailIfHas(const std::string &_file_path,
-                                                  VFSHost &_host,
-                                                  int _px_size)
+NSImage *QLVFSThumbnailsCacheImpl::ThumbnailIfHas(const std::string &_file_path, VFSHost &_host, int _px_size)
 {
     auto key = MakeKey(_file_path, _host, _px_size);
 
@@ -33,9 +30,7 @@ NSImage *QLVFSThumbnailsCacheImpl::ThumbnailIfHas(const std::string &_file_path,
     return nil;
 }
 
-NSImage *QLVFSThumbnailsCacheImpl::ProduceThumbnail(const std::string &_file_path,
-                                                    VFSHost &_host,
-                                                    int _px_size)
+NSImage *QLVFSThumbnailsCacheImpl::ProduceThumbnail(const std::string &_file_path, VFSHost &_host, int _px_size)
 {
     auto key = MakeKey(_file_path, _host, _px_size);
 
@@ -74,8 +69,7 @@ NSImage *QLVFSThumbnailsCacheImpl::ProduceThumbnail(const std::string &_path,
     return ProduceThumbnailForTempFile(placement_result->Path(), _sz);
 }
 
-std::string
-QLVFSThumbnailsCacheImpl::MakeKey(const std::string &_file_path, VFSHost &_host, int _px_size)
+std::string QLVFSThumbnailsCacheImpl::MakeKey(const std::string &_file_path, VFSHost &_host, int _px_size)
 {
     auto key = _host.MakePathVerbose(_file_path.c_str());
     key += "\x01";
@@ -113,4 +107,4 @@ static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_pa
     return vfs_file->ReadFile();
 }
 
-}
+} // namespace nc::vfsicon

@@ -10,17 +10,17 @@ class SystemThemeDetector : base::ObservableBase
 {
 public:
     using ObservationTicket = ObservableBase::ObservationTicket;
-    
+
     SystemThemeDetector();
     ~SystemThemeDetector();
-    
+
     ThemeAppearance SystemAppearance() const noexcept;
 
     ObservationTicket ObserveChanges(std::function<void()> _callback);
-    
+
 private:
     struct Impl;
-    void OnChanged();    
+    void OnChanged();
     std::unique_ptr<Impl> I;
 };
 

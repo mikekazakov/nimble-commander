@@ -81,7 +81,7 @@ void Dock::SetBaseIcon(NSImage *_icon)
     m_ContentView.image = _icon;
 }
 
-}
+} // namespace nc::core
 
 @implementation NCCoreDockProgressIndicator
 

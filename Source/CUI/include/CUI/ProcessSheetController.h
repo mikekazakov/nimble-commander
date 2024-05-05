@@ -8,8 +8,8 @@
 - (void)Show;
 - (void)Close;
 
-@property (nonatomic) NSString *title;
-@property (nonatomic) double progress;
-@property (nonatomic, strong) void (^OnCancelOperation)();
-@property (nonatomic, readonly) bool userCancelled;
+@property(nonatomic) NSString *title;
+@property(nonatomic) double progress;
+@property(nonatomic, strong) void (^OnCancelOperation)();
+@property(nonatomic, readonly) bool userCancelled;
 @end

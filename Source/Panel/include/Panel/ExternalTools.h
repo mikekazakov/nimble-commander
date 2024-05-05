@@ -40,16 +40,14 @@ namespace nc::panel {
 class ExternalToolsParameters
 {
 public:
-    enum class Location : uint8_t
-    {
+    enum class Location : uint8_t {
         Source,
         Target,
         Left,
         Right
     };
 
-    enum class FileInfo : uint8_t
-    {
+    enum class FileInfo : uint8_t {
         DirectoryPath,
         Path,
         Filename,
@@ -78,8 +76,7 @@ public:
         friend constexpr auto operator<=>(SelectedItems _lhs, SelectedItems _rhs) noexcept = default;
     };
 
-    enum class ActionType : uint8_t
-    {
+    enum class ActionType : uint8_t {
         UserDefined,
         EnterValue,
         CurrentItem,
@@ -131,14 +128,12 @@ private:
 class ExternalTool
 {
 public:
-    enum class StartupMode : uint8_t
-    {
+    enum class StartupMode : uint8_t {
         Automatic = 0,
         RunInTerminal = 1,
         RunDeatached = 2
     };
-    enum class GUIArgumentInterpretation : uint8_t
-    {
+    enum class GUIArgumentInterpretation : uint8_t {
         PassAllAsArguments = 0,
         PassExistingPathsAsURLs = 1
     };
@@ -161,8 +156,7 @@ public:
 class ExternalToolExecution
 {
 public:
-    enum class PanelFocus : uint8_t
-    {
+    enum class PanelFocus : uint8_t {
         left,
         right
     };
@@ -186,7 +180,7 @@ public:
     ExternalTool::StartupMode DeduceStartupMode() const;
 
     bool IsBundle() const;
-    
+
     std::filesystem::path ExecutablePath() const;
 
     // returns a pid (that can already be -1 if the process quit too fast) or an error description

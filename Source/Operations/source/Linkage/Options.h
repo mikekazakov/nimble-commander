@@ -9,4 +9,4 @@ enum class LinkageType {
     CreateHardlink
 };
 
-}
+} // namespace nc::ops

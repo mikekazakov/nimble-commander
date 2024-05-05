@@ -178,4 +178,4 @@ static void FocusResult(PanelController *_target, const std::string &_path)
         dispatch_to_main_queue([_target, _path] { FocusResult(_target, _path); });
 }
 
-}
+} // namespace nc::panel::actions

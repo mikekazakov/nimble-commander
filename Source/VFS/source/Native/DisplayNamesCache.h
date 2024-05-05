@@ -15,34 +15,28 @@ namespace nc::vfs::native {
 class DisplayNamesCache
 {
 public:
-    static DisplayNamesCache& Instance();
+    static DisplayNamesCache &Instance();
 
     // nullptr string means that there's no dispay string for this
-    const char* DisplayName( const std::string &_path );
-    const char* DisplayName( const struct stat &_st, const std::string &_path );
-    const char* DisplayName( ino_t _ino, dev_t _dev, const std::string &_path );
-    
+    const char *DisplayName(const std::string &_path);
+    const char *DisplayName(const struct stat &_st, const std::string &_path);
+    const char *DisplayName(ino_t _ino, dev_t _dev, const std::string &_path);
+
 private:
-    std::optional<const char*> Fast_Unlocked(ino_t _ino,
-                                             dev_t _dev,
-                                             const std::string &_path ) const noexcept;
-    void Commit_Locked(ino_t _ino,
-                       dev_t _dev, 
-                       const std::string &_path,
-                       const char *_dispay_name );
-    
-    struct Filename
-    {
-        const char* fs_filename;
-        const char* display_filename;
+    std::optional<const char *> Fast_Unlocked(ino_t _ino, dev_t _dev, const std::string &_path) const noexcept;
+    void Commit_Locked(ino_t _ino, dev_t _dev, const std::string &_path, const char *_dispay_name);
+
+    struct Filename {
+        const char *fs_filename;
+        const char *display_filename;
     };
     using Inodes = std::unordered_multimap<ino_t, Filename>;
     using Devices = std::unordered_map<dev_t, Inodes>;
-    
+
     std::atomic_int m_Readers{0};
-    spinlock   m_ReadLock;
-    spinlock   m_WriteLock;
-    Devices    m_Devices;
+    spinlock m_ReadLock;
+    spinlock m_WriteLock;
+    Devices m_Devices;
 };
 
-}
+} // namespace nc::vfs::native

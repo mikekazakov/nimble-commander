@@ -41,7 +41,7 @@ public:
 
     FileObservationToken &operator=(const FileObservationToken &_rhs) = delete;
     FileObservationToken &operator=(FileObservationToken &&_rhs) noexcept;
-    
+
     operator bool() const noexcept;
     void reset() noexcept;
 
@@ -51,8 +51,7 @@ private:
 };
 
 struct HostFeatures {
-    enum Features : uint64_t
-    {
+    enum Features : uint64_t {
         FetchUsers = 1 << 0,
         FetchGroups = 1 << 1,
         SetPermissions = 1 << 2,
@@ -162,33 +161,27 @@ public:
      * VFS version of stat().
      * Default implementation does nothing, subclasses MUST implement it.
      */
-    virtual int Stat(const char *_path,
-                     VFSStat &_st,
-                     unsigned long _flags,
-                     const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int
+    Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * VFS version of statfs().
      * Path may be a file path or a directory path.
      */
-    virtual int
-    StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * Default implementation calls Stat() and then returns (st.mode & S_IFMT) == S_IFDIR.
      * On any errors returns false.
      */
-    virtual bool IsDirectory(const char *_path,
-                             unsigned long _flags,
-                             const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual bool
+    IsDirectory(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * Default implementation calls Stat() and then returns (st.mode & S_IFMT) == S_IFLNK.
      * On any errors returns false.
      */
-    virtual bool IsSymlink(const char *_path,
-                           unsigned long _flags,
-                           const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual bool IsSymlink(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /** Return zero upon succes, negative value on error. */
     virtual int ReadSymlink(const char *_symlink_path,
@@ -212,11 +205,9 @@ public:
      * Returns a vector with all xattrs at _path, labeled with it's names.
      * On any error return negative value.
      */
-    virtual int GetXAttrs(const char *_path,
-                          std::vector<std::pair<std::string, std::vector<uint8_t>>> &_xattrs);
+    virtual int GetXAttrs(const char *_path, std::vector<std::pair<std::string, std::vector<uint8_t>>> &_xattrs);
 
-    virtual ssize_t CalculateDirectorySize(const char *_path,
-                                           const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual ssize_t CalculateDirectorySize(const char *_path, const VFSCancelChecker &_cancel_checker = nullptr);
 
     virtual bool ShouldProduceThumbnails() const;
 
@@ -225,11 +216,9 @@ public:
                                    unsigned long _flags,
                                    const VFSCancelChecker &_cancel_checker = nullptr);
 
-    virtual int FetchUsers(std::vector<VFSUser> &_target,
-                           const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int FetchUsers(std::vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker = nullptr);
 
-    virtual int FetchGroups(std::vector<VFSGroup> &_target,
-                            const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int FetchGroups(std::vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /***********************************************************************************************
      * Directories iteration, listings fetching
@@ -258,9 +247,8 @@ public:
      * Do not rely on it to build a directory listing, it's for contents iteration.
      * _handler: return true to allow further iteration, false to stop it.
      */
-    virtual int
-    IterateDirectoryListing(const char *_path,
-                            const std::function<bool(const VFSDirEnt &_dirent)> &_handler);
+    virtual int IterateDirectoryListing(const char *_path,
+                                        const std::function<bool(const VFSDirEnt &_dirent)> &_handler);
 
     int FetchFlexibleListingItems(const std::string &_directory_path,
                                   const std::vector<std::string> &_filenames,
@@ -272,13 +260,10 @@ public:
      * Making changes to the filesystem
      **********************************************************************************************/
 
-    virtual int CreateFile(const char *_path,
-                           std::shared_ptr<VFSFile> &_target,
-                           const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int
+    CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker = nullptr);
 
-    virtual int CreateDirectory(const char *_path,
-                                int _mode,
-                                const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int CreateDirectory(const char *_path, int _mode, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /** Return zero upon succes, negative value on error. */
     virtual int CreateSymlink(const char *_symlink_path,
@@ -295,8 +280,7 @@ public:
      * Deletes an empty directory. Will fail on non-empty ones, unless NonEmptyRmDir flag is
      * specified.
      */
-    virtual int RemoveDirectory(const char *_path,
-                                const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * Moves an item into trash bin.
@@ -306,9 +290,7 @@ public:
     /**
      * Change the name of a file.
      */
-    virtual int Rename(const char *_old_path,
-                       const char *_new_path,
-                       const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * Adjust file node times.
@@ -324,9 +306,7 @@ public:
     /**
      * Change permissions similarly to chmod().
      */
-    virtual int SetPermissions(const char *_path,
-                               uint16_t _mode,
-                               const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int SetPermissions(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * Change flags similarly to chflags().
@@ -340,10 +320,8 @@ public:
     /**
      * Change ownership similarly to chown().
      */
-    virtual int SetOwnership(const char *_path,
-                             unsigned _uid,
-                             unsigned _gid,
-                             const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int
+    SetOwnership(const char *_path, unsigned _uid, unsigned _gid, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /***********************************************************************************************
      * Observation of changes
@@ -357,22 +335,20 @@ public:
     /**
      * _handler can be called from any thread
      */
-    virtual HostDirObservationTicket DirChangeObserve(const char *_path,
-                                                      std::function<void()> _handler);
+    virtual HostDirObservationTicket DirChangeObserve(const char *_path, std::function<void()> _handler);
 
     /**
      * Will fire _handler whenever a file identified by '_path' is changed.
      * Can return an empty token if observation is unavailable.
      */
-    virtual FileObservationToken ObserveFileChanges(const char *_path,
-                                                    std::function<void()> _handler);
+    virtual FileObservationToken ObserveFileChanges(const char *_path, std::function<void()> _handler);
 
 protected:
     void SetFeatures(uint64_t _features_bitset);
     void AddFeatures(uint64_t _features_bitset);
 
     virtual void StopDirChangeObserving(unsigned long _ticket);
-    
+
     virtual void StopObservingFileChanges(unsigned long _token);
 
 private:

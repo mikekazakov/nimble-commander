@@ -11,14 +11,14 @@ QuickSearchHiglight::QuickSearchHiglight(std::span<const Range> _ranges) noexcep
     // limitation: _ranges must be monotonically rising and have no overlaps
     int idx = 0;
     size_t position = 0;
-    for( const Range r: _ranges) {
+    for( const Range r : _ranges ) {
         size_t offset = r.offset;
         size_t length = r.length;
         while( length ) {
             if( offset - position < 16 ) {
-                if( length < 16  ) {
+                if( length < 16 ) {
                     // place this whole segment
-                    uint64_t t = (offset - position ) | (length << 4);
+                    uint64_t t = (offset - position) | (length << 4);
                     d |= t << (idx * 8);
                     ++idx;
                     if( idx == 8 )
@@ -28,7 +28,7 @@ QuickSearchHiglight::QuickSearchHiglight(std::span<const Range> _ranges) noexcep
                 }
                 else {
                     // place 15 characters of this segment
-                    uint64_t t = (offset - position ) | (15 << 4);
+                    uint64_t t = (offset - position) | (15 << 4);
                     d |= t << (idx * 8);
                     ++idx;
                     if( idx == 8 )

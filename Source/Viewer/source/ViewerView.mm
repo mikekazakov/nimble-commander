@@ -34,9 +34,9 @@ using namespace nc::viewer;
     uint64_t m_VerticalPositionInBytes;
     double m_VerticalPositionPercentage;
 
-    CFRange m_SelectionInFile;   // in bytes, raw position within whole file
-    CFRange m_SelectionInWindow; // in bytes, whithin current window positio
-                                 // updated when windows moves, regarding current selection in bytes
+    CFRange m_SelectionInFile;           // in bytes, raw position within whole file
+    CFRange m_SelectionInWindow;         // in bytes, whithin current window positio
+                                         // updated when windows moves, regarding current selection in bytes
     CFRange m_SelectionInWindowUnichars; // in UniChars, whithin current window position,
                                          // updated when windows moves, regarding current selection
                                          // in bytes
@@ -115,11 +115,9 @@ using namespace nc::viewer;
 
 - (void)setFile:(std::shared_ptr<nc::vfs::FileWindow>)_file
 {
-    int encoding =
-        encodings::EncodingFromName(m_Config->GetString(g_ConfigDefaultEncoding).c_str());
+    int encoding = encodings::EncodingFromName(m_Config->GetString(g_ConfigDefaultEncoding).c_str());
     if( encoding == encodings::ENCODING_INVALID )
-        encoding =
-            encodings::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
+        encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
 
     StaticDataBlockAnalysis stat;
     DoStaticDataBlockAnalysis(_file->Window(), _file->WindowSize(), &stat);
@@ -139,9 +137,7 @@ using namespace nc::viewer;
     [self setKnownFile:_file encoding:encoding mode:mode];
 }
 
-- (void)setKnownFile:(std::shared_ptr<nc::vfs::FileWindow>)_file
-            encoding:(int)_encoding
-                mode:(ViewMode)_mode
+- (void)setKnownFile:(std::shared_ptr<nc::vfs::FileWindow>)_file encoding:(int)_encoding mode:(ViewMode)_mode
 {
     assert(_encoding != encodings::ENCODING_INVALID);
 
@@ -170,8 +166,7 @@ using namespace nc::viewer;
 {
     const uint64_t current_position = self.verticalPositionInBytes;
     const bool attach_to_bottom = m_Config->GetBool(g_ConfigStickToBottomOnRefresh) &&
-                                  [m_View respondsToSelector:@selector(isAtTheEnd)] &&
-                                  [m_View isAtTheEnd];
+                                  [m_View respondsToSelector:@selector(isAtTheEnd)] && [m_View isAtTheEnd];
 
     m_File = _file;
     m_Data = std::make_shared<DataBackend>(m_File, m_Data->Encoding());
@@ -304,11 +299,10 @@ using namespace nc::viewer;
                                                                  options:0
                                                                  metrics:nil
                                                                    views:views]];
-    [self
-        addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[_view]-(==0)-|"
-                                                               options:0
-                                                               metrics:nil
-                                                                 views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[_view]-(==0)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
 }
 
 - (std::filesystem::path)previewPath
@@ -318,8 +312,8 @@ using namespace nc::viewer;
     }
     else {
         if( !m_NativeStoredFile )
-            m_NativeStoredFile = CopyFileToTempStorage(
-                m_File->File()->Path(), *m_File->File()->Host(), *m_TempFileStorage);
+            m_NativeStoredFile =
+                CopyFileToTempStorage(m_File->File()->Path(), *m_File->File()->Host(), *m_TempFileStorage);
         if( m_NativeStoredFile )
             return *m_NativeStoredFile;
         return {};
@@ -397,15 +391,12 @@ using namespace nc::viewer;
         return;
     }
 
-    const uint32_t *offset =
-        std::lower_bound(m_Data->UniCharToByteIndeces(),
-                         m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize(),
-                         start - window_pos);
+    const uint32_t *offset = std::lower_bound(
+        m_Data->UniCharToByteIndeces(), m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize(), start - window_pos);
     assert(offset < m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize());
 
-    const uint32_t *tail = std::lower_bound(m_Data->UniCharToByteIndeces(),
-                                            m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize(),
-                                            end - window_pos);
+    const uint32_t *tail = std::lower_bound(
+        m_Data->UniCharToByteIndeces(), m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize(), end - window_pos);
     assert(tail <= m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize());
 
     int startindex = int(offset - m_Data->UniCharToByteIndeces());
@@ -442,8 +433,7 @@ using namespace nc::viewer;
     if( !m_Data )
         return;
 
-    if( _selection.location == m_SelectionInFile.location &&
-        _selection.length == m_SelectionInFile.length )
+    if( _selection.location == m_SelectionInFile.location && _selection.length == m_SelectionInFile.length )
         return;
 
     if( _selection.location < 0 ) {
@@ -480,9 +470,8 @@ using namespace nc::viewer;
         return;
 
     if( m_SelectionInWindow.location >= 0 && m_SelectionInWindow.length > 0 ) {
-        NSString *str = [[NSString alloc]
-            initWithCharacters:m_Data->UniChars() + m_SelectionInWindowUnichars.location
-                        length:m_SelectionInWindowUnichars.length];
+        NSString *str = [[NSString alloc] initWithCharacters:m_Data->UniChars() + m_SelectionInWindowUnichars.location
+                                                      length:m_SelectionInWindowUnichars.length];
         NSPasteboard *pasteBoard = NSPasteboard.generalPasteboard;
         [pasteBoard clearContents];
         [pasteBoard declareTypes:@[NSPasteboardTypeString] owner:nil];
@@ -527,8 +516,7 @@ using namespace nc::viewer;
     return [self moveBackendWindowSyncAt:_position notifyView:false];
 }
 
-- (int)hexModeView:(NCViewerHexModeView *) [[maybe_unused]] _view
-    requestsSyncBackendWindowMovementAt:(int64_t)_position
+- (int)hexModeView:(NCViewerHexModeView *) [[maybe_unused]] _view requestsSyncBackendWindowMovementAt:(int64_t)_position
 {
     return [self moveBackendWindowSyncAt:_position notifyView:false];
 }
@@ -572,8 +560,7 @@ using namespace nc::viewer;
     return [self selectionInFile];
 }
 
-- (void)textModeView:(NCViewerTextModeView *) [[maybe_unused]] _view
-        setSelection:(CFRange)_selection
+- (void)textModeView:(NCViewerTextModeView *) [[maybe_unused]] _view setSelection:(CFRange)_selection
 {
     self.selectionInFile = _selection;
 }

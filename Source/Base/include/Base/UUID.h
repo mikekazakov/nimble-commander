@@ -19,8 +19,7 @@
 #include <string_view>
 #include <optional>
 
-namespace nc::base
-{
+namespace nc::base {
 
 class UUID
 {
@@ -29,10 +28,10 @@ public:
     std::string ToString() const noexcept;
     static UUID Generate() noexcept;
     static std::optional<UUID> FromString(std::string_view _str) noexcept;
-    constexpr bool operator ==(const UUID&) const noexcept = default;
-    
+    constexpr bool operator==(const UUID &) const noexcept = default;
+
 private:
     std::array<uint8_t, 16> m_Data;
 };
 
-}
+} // namespace nc::base

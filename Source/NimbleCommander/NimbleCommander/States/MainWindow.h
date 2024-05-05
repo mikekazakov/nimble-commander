@@ -5,8 +5,8 @@
 
 @interface NCMainWindow : NSWindow
 
-- (instancetype) init;
-+ (NSString*) defaultIdentifier;
-+ (NSString*) defaultFrameIdentifier;
+- (instancetype)init;
++ (NSString *)defaultIdentifier;
++ (NSString *)defaultFrameIdentifier;
 
 @end

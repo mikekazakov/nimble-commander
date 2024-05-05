@@ -8,8 +8,7 @@
 
 using namespace nc::ops;
 
-static VFSListingItem GetRegListingItem(const std::string &_filename,
-                                        const std::filesystem::path &_at);
+static VFSListingItem GetRegListingItem(const std::string &_filename, const std::filesystem::path &_at);
 
 // [N] old file name, WITHOUT extension
 // [N1] The first character of the original name
@@ -64,8 +63,7 @@ TEST_CASE(PREFIX "Name placeholders")
     }
 
     {
-        const auto v =
-            BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"364-365 ", 0); //[N364-365  ]
+        const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"364-365 ", 0); //[N364-365  ]
         REQUIRE(v);
         if( v ) {
             REQUIRE(v->second == 7);
@@ -77,8 +75,7 @@ TEST_CASE(PREFIX "Name placeholders")
     }
 
     {
-        const auto v =
-            BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"364,10 ", 0); //[364,10  ]
+        const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"364,10 ", 0); //[364,10  ]
         REQUIRE(v);
         if( v ) {
             REQUIRE(v->second == 6);
@@ -103,8 +100,7 @@ TEST_CASE(PREFIX "Name placeholders")
     }
 
     {
-        const auto v =
-            BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"-10-2", 0); // [N-10-1]
+        const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"-10-2", 0); // [N-10-1]
         REQUIRE(v);
         if( v ) {
             REQUIRE(v->second == 5);
@@ -117,8 +113,7 @@ TEST_CASE(PREFIX "Name placeholders")
     }
 
     {
-        const auto v =
-            BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"-10,3", 0); // [N-10-1]
+        const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"-10,3", 0); // [N-10-1]
         REQUIRE(v);
         if( v ) {
             REQUIRE(v->second == 5);
@@ -131,8 +126,7 @@ TEST_CASE(PREFIX "Name placeholders")
     }
 
     {
-        const auto v =
-            BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"12--15", 0); // [N4--3]
+        const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"12--15", 0); // [N4--3]
         REQUIRE(v);
         if( v ) {
             REQUIRE(v->second == 6);
@@ -143,10 +137,9 @@ TEST_CASE(PREFIX "Name placeholders")
             REQUIRE(a.to_last == 14);
         }
     }
-    
+
     {
-        const auto v =
-            BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"02,8", 0); // [N02,8]
+        const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"02,8", 0); // [N02,8]
         REQUIRE(v);
         if( v ) {
             REQUIRE(v->second == 4);
@@ -301,8 +294,7 @@ TEST_CASE(PREFIX "Text extraction")
     {
         BatchRenamingScheme::TextExtraction te;
         te.direct_range = std::nullopt;
-        te.reverse_range =
-            BatchRenamingScheme::Range(100, BatchRenamingScheme::Range::max_length());
+        te.reverse_range = BatchRenamingScheme::Range(100, BatchRenamingScheme::Range::max_length());
         auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         REQUIRE([r isEqualToString:@"abc"]);
     }
@@ -375,20 +367,20 @@ TEST_CASE(PREFIX "DecomposeMaskIntoPlaceholders")
     struct TC {
         NSString *input;
         std::optional<std::vector<MD>> expected;
-    } tcs [] = {
-        { @"", std::vector<MD>{} },
-        { @"[", std::nullopt },
-        { @"]", std::nullopt },
-        { @"a", std::vector<MD>{ {@"a", false} } },
-        { @"[[", std::vector<MD>{ {@"[", false} } },
-        { @"[[[[", std::vector<MD>{ {@"[[", false} } },
-        { @"]]", std::vector<MD>{ {@"]", false} } },
-        { @"]]]]", std::vector<MD>{ {@"]]", false} } },
-        { @"[[[[]]]]", std::vector<MD>{ {@"[[]]", false} } },
+    } tcs[] = {
+        {@"", std::vector<MD>{}},
+        {@"[", std::nullopt},
+        {@"]", std::nullopt},
+        {@"a", std::vector<MD>{{@"a", false}}},
+        {@"[[", std::vector<MD>{{@"[", false}}},
+        {@"[[[[", std::vector<MD>{{@"[[", false}}},
+        {@"]]", std::vector<MD>{{@"]", false}}},
+        {@"]]]]", std::vector<MD>{{@"]]", false}}},
+        {@"[[[[]]]]", std::vector<MD>{{@"[[]]", false}}},
     };
-    for( const auto &tc: tcs ) {
+    for( const auto &tc : tcs ) {
         auto decomposed = BatchRenamingScheme::DecomposeMaskIntoPlaceholders(tc.input);
-        CHECK( decomposed == tc.expected  );
+        CHECK(decomposed == tc.expected);
     }
 }
 
@@ -396,7 +388,7 @@ TEST_CASE(PREFIX "Renaming - simple cases")
 {
     TempTestDir tmp_dir;
     auto item_dir = tmp_dir.directory / "grandparent_dir" / "parent_dir";
-    REQUIRE( std::filesystem::create_directories(item_dir) );
+    REQUIRE(std::filesystem::create_directories(item_dir));
     const auto item = GetRegListingItem("filename.txt", item_dir);
     struct Case {
         NSString *pattern;
@@ -404,39 +396,39 @@ TEST_CASE(PREFIX "Renaming - simple cases")
         NSString *expected;
     };
     const Case test_cases[] = {
-        {@"", false, @"" },
+        {@"", false, @""},
         // A - filename
-        {@"[A]", true, @"filename.txt" },
-        {@"[A-5-2]", true, @"e.tx" },
-        {@"[A-5,100]", true, @"e.txt" },
-        {@"[A05-14]", true, @"00name.txt" },
-        {@"[A 5-14]", true, @"  name.txt" },
+        {@"[A]", true, @"filename.txt"},
+        {@"[A-5-2]", true, @"e.tx"},
+        {@"[A-5,100]", true, @"e.txt"},
+        {@"[A05-14]", true, @"00name.txt"},
+        {@"[A 5-14]", true, @"  name.txt"},
         // N - name
-        {@"[N]", true, @"filename" },
-        {@"[N2-]", true, @"ilename" },
-        {@"[N2-3]", true, @"il" },
-        {@"[N-4-]", true, @"name" },
-        {@"[N5]", true, @"n" },
-        {@"[N-5,4]", true, @"enam" },
+        {@"[N]", true, @"filename"},
+        {@"[N2-]", true, @"ilename"},
+        {@"[N2-3]", true, @"il"},
+        {@"[N-4-]", true, @"name"},
+        {@"[N5]", true, @"n"},
+        {@"[N-5,4]", true, @"enam"},
         // E - extension
-        {@"[E]", true, @"txt" },
-        {@"[E-2-]", true, @"xt" },
-        {@"[E3-]", true, @"t" },
-        {@"[E4-]", true, @"" },
+        {@"[E]", true, @"txt"},
+        {@"[E-2-]", true, @"xt"},
+        {@"[E3-]", true, @"t"},
+        {@"[E4-]", true, @""},
         // E - parent filename
-        {@"[P]", true, @"parent_dir" },
-        {@"[P1-6]", true, @"parent" },
+        {@"[P]", true, @"parent_dir"},
+        {@"[P1-6]", true, @"parent"},
         // E - grandparent filename
-        {@"[G]", true, @"grandparent_dir" },
-        {@"[G1-5]", true, @"grand" },
+        {@"[G]", true, @"grandparent_dir"},
+        {@"[G1-5]", true, @"grand"},
         // Escaping
-        {@"[[", true, @"[" },
-        {@"]]", true, @"]" },
-        {@"[N][[1]]", true, @"filename[1]" },
+        {@"[[", true, @"["},
+        {@"]]", true, @"]"},
+        {@"[N][[1]]", true, @"filename[1]"},
     };
-    
+
     const BatchRenamingScheme::FileInfo file_info(item);
-    for( const auto &test_case: test_cases ) {
+    for( const auto &test_case : test_cases ) {
         INFO(test_case.pattern.UTF8String);
         BatchRenamingScheme scheme;
         const bool parsed = scheme.BuildActionsScript(test_case.pattern);
@@ -445,18 +437,16 @@ TEST_CASE(PREFIX "Renaming - simple cases")
             NSString *renamed = scheme.Rename(file_info, 0);
             INFO(test_case.expected.UTF8String);
             INFO(renamed.UTF8String);
-            REQUIRE( [renamed isEqualToString:test_case.expected] );
+            REQUIRE([renamed isEqualToString:test_case.expected]);
         }
     }
 }
 
-static VFSListingItem GetRegListingItem(const std::string &_filename,
-                                        const std::filesystem::path &_at)
+static VFSListingItem GetRegListingItem(const std::string &_filename, const std::filesystem::path &_at)
 {
     REQUIRE(close(creat((_at / _filename).c_str(), 0755)) == 0);
     std::vector<VFSListingItem> items;
-    const int vfs_error =
-        TestEnv().vfs_native->FetchFlexibleListingItems(_at, {_filename}, 0, items, nullptr);
+    const int vfs_error = TestEnv().vfs_native->FetchFlexibleListingItems(_at, {_filename}, 0, items, nullptr);
     REQUIRE(vfs_error == VFSError::Ok);
     REQUIRE(items.size() == 1);
     return items[0];

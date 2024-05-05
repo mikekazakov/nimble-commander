@@ -7,52 +7,51 @@
 @class NCPanelOpenWithMenuDelegate;
 
 namespace nc::panel {
-    class FileOpener;
+class FileOpener;
 }
 
 namespace nc::panel::actions {
 
-struct OpenFileWithSubmenu final : PanelAction
-{
+struct OpenFileWithSubmenu final : PanelAction {
     OpenFileWithSubmenu(NCPanelOpenWithMenuDelegate *_menu_delegate);
-    bool Predicate( PanelController *_target ) const override;
-    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
+    bool Predicate(PanelController *_target) const override;
+    bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
+
 private:
     NCPanelOpenWithMenuDelegate *m_MenuDelegate;
 };
 
-struct AlwaysOpenFileWithSubmenu final : PanelAction
-{
+struct AlwaysOpenFileWithSubmenu final : PanelAction {
     AlwaysOpenFileWithSubmenu(NCPanelOpenWithMenuDelegate *_menu_delegate);
-    bool Predicate( PanelController *_target ) const override;
-    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
+    bool Predicate(PanelController *_target) const override;
+    bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
+
 private:
     NCPanelOpenWithMenuDelegate *m_MenuDelegate;
 };
 
-struct OpenFilesWithDefaultHandler final : PanelAction
-{
+struct OpenFilesWithDefaultHandler final : PanelAction {
     OpenFilesWithDefaultHandler(FileOpener &_file_opener);
-    bool Predicate( PanelController *_target ) const override;
-    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
-    void Perform( PanelController *_target, id _sender ) const override;
+    bool Predicate(PanelController *_target) const override;
+    bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
+    void Perform(PanelController *_target, id _sender) const override;
+
 private:
     FileOpener &m_FileOpener;
 };
 
 namespace context {
 
-struct OpenFileWithDefaultHandler final : PanelAction
-{
-    OpenFileWithDefaultHandler(const std::vector<VFSListingItem>& _items,
-                               FileOpener &_file_opener);
-    bool Predicate( PanelController *_target ) const override;
-    void Perform( PanelController *_target, id _sender ) const override;
+struct OpenFileWithDefaultHandler final : PanelAction {
+    OpenFileWithDefaultHandler(const std::vector<VFSListingItem> &_items, FileOpener &_file_opener);
+    bool Predicate(PanelController *_target) const override;
+    void Perform(PanelController *_target, id _sender) const override;
+
 private:
-    const std::vector<VFSListingItem>& m_Items;
+    const std::vector<VFSListingItem> &m_Items;
     FileOpener &m_FileOpener;
 };
 
-}
+} // namespace context
 
-}
+} // namespace nc::panel::actions

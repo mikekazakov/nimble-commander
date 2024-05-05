@@ -6,7 +6,7 @@
 /**
  * Returns true if user clicked Ok, false otherwise.
  */
-bool RunAskForPasswordModalWindow( const std::string& _password_for, std::string &_passwd );
+bool RunAskForPasswordModalWindow(const std::string &_password_for, std::string &_passwd);
 
 #ifdef __OBJC__
 
@@ -16,7 +16,7 @@ bool RunAskForPasswordModalWindow( const std::string& _password_for, std::string
 
 - (id)initWithResourceName:(NSString *)_name;
 
-@property (readonly) NSString *enteredPasswd;
+@property(readonly) NSString *enteredPasswd;
 
 @end
 

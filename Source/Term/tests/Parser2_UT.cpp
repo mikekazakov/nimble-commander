@@ -177,34 +177,103 @@ TEST_CASE(PREFIX "Handles control characters")
     SECTION("unused")
     {
         std::vector<input::Command> r;
-        SECTION("0") { r = parser.Parse(to_bytes("\x00")); }
-        SECTION("1") { r = parser.Parse(to_bytes("\x01")); }
-        SECTION("2") { r = parser.Parse(to_bytes("\x02")); }
-        SECTION("3") { r = parser.Parse(to_bytes("\x03")); }
-        SECTION("4") { r = parser.Parse(to_bytes("\x04")); }
-        SECTION("5") { r = parser.Parse(to_bytes("\x05")); }
-        SECTION("6") { r = parser.Parse(to_bytes("\x06")); }
-        SECTION("16") { r = parser.Parse(to_bytes("\x10")); }
-        SECTION("17") { r = parser.Parse(to_bytes("\x11")); }
-        SECTION("18") { r = parser.Parse(to_bytes("\x12")); }
-        SECTION("19") { r = parser.Parse(to_bytes("\x13")); }
-        SECTION("20") { r = parser.Parse(to_bytes("\x14")); }
-        SECTION("21") { r = parser.Parse(to_bytes("\x15")); }
-        SECTION("22") { r = parser.Parse(to_bytes("\x16")); }
-        SECTION("23") { r = parser.Parse(to_bytes("\x17")); }
-        SECTION("25") { r = parser.Parse(to_bytes("\x19")); }
-        SECTION("28") { r = parser.Parse(to_bytes("\x1C")); }
-        SECTION("29") { r = parser.Parse(to_bytes("\x1D")); }
-        SECTION("30") { r = parser.Parse(to_bytes("\x1E")); }
-        SECTION("31") { r = parser.Parse(to_bytes("\x1F")); }
+        SECTION("0")
+        {
+            r = parser.Parse(to_bytes("\x00"));
+        }
+        SECTION("1")
+        {
+            r = parser.Parse(to_bytes("\x01"));
+        }
+        SECTION("2")
+        {
+            r = parser.Parse(to_bytes("\x02"));
+        }
+        SECTION("3")
+        {
+            r = parser.Parse(to_bytes("\x03"));
+        }
+        SECTION("4")
+        {
+            r = parser.Parse(to_bytes("\x04"));
+        }
+        SECTION("5")
+        {
+            r = parser.Parse(to_bytes("\x05"));
+        }
+        SECTION("6")
+        {
+            r = parser.Parse(to_bytes("\x06"));
+        }
+        SECTION("16")
+        {
+            r = parser.Parse(to_bytes("\x10"));
+        }
+        SECTION("17")
+        {
+            r = parser.Parse(to_bytes("\x11"));
+        }
+        SECTION("18")
+        {
+            r = parser.Parse(to_bytes("\x12"));
+        }
+        SECTION("19")
+        {
+            r = parser.Parse(to_bytes("\x13"));
+        }
+        SECTION("20")
+        {
+            r = parser.Parse(to_bytes("\x14"));
+        }
+        SECTION("21")
+        {
+            r = parser.Parse(to_bytes("\x15"));
+        }
+        SECTION("22")
+        {
+            r = parser.Parse(to_bytes("\x16"));
+        }
+        SECTION("23")
+        {
+            r = parser.Parse(to_bytes("\x17"));
+        }
+        SECTION("25")
+        {
+            r = parser.Parse(to_bytes("\x19"));
+        }
+        SECTION("28")
+        {
+            r = parser.Parse(to_bytes("\x1C"));
+        }
+        SECTION("29")
+        {
+            r = parser.Parse(to_bytes("\x1D"));
+        }
+        SECTION("30")
+        {
+            r = parser.Parse(to_bytes("\x1E"));
+        }
+        SECTION("31")
+        {
+            r = parser.Parse(to_bytes("\x1F"));
+        }
         CHECK(r.size() == 0);
     }
     SECTION("linefeed")
     {
         std::vector<input::Command> r;
-        SECTION("10") { r = parser.Parse(to_bytes("\x0A")); }
-        SECTION("11") { r = parser.Parse(to_bytes("\x0B")); }
-        SECTION("12") { r = parser.Parse(to_bytes("\x0C")); }
+        SECTION("10")
+        {
+            r = parser.Parse(to_bytes("\x0A"));
+        }
+        SECTION("11")
+        {
+            r = parser.Parse(to_bytes("\x0B"));
+        }
+        SECTION("12")
+        {
+            r = parser.Parse(to_bytes("\x0C"));
+        }
         REQUIRE(r.size() == 1);
         CHECK(r[0].type == Type::line_feed);
     }
@@ -243,10 +312,22 @@ TEST_CASE(PREFIX "Handles control characters")
     SECTION("go to normal mode")
     {
         std::vector<input::Command> r;
-        SECTION("") { r = parser.Parse(to_bytes("\x18")); }
-        SECTION("") { r = parser.Parse(to_bytes("\x1A")); }
-        SECTION("") { r = parser.Parse(to_bytes("\x1B\x18")); }
-        SECTION("") { r = parser.Parse(to_bytes("\x1B\x1A")); }
+        SECTION("")
+        {
+            r = parser.Parse(to_bytes("\x18"));
+        }
+        SECTION("")
+        {
+            r = parser.Parse(to_bytes("\x1A"));
+        }
+        SECTION("")
+        {
+            r = parser.Parse(to_bytes("\x1B\x18"));
+        }
+        SECTION("")
+        {
+            r = parser.Parse(to_bytes("\x1B\x1A"));
+        }
         REQUIRE(r.empty());
     }
     SECTION("select g1")
@@ -1493,9 +1574,18 @@ TEST_CASE(PREFIX "CSI m")
         CHECK(r[0].type == Type::set_character_attributes);
         CHECK(as_character_attributes(r[0]) == _ca);
     };
-    SECTION("ESC [ m") { verify("\x1B[m", CA{.mode = CA::Normal}); }
-    SECTION("ESC [ 0 m") { verify("\x1B[0m", CA{.mode = CA::Normal}); }
-    SECTION("ESC [ 1 m") { verify("\x1B[1m", CA{.mode = CA::Bold}); }
+    SECTION("ESC [ m")
+    {
+        verify("\x1B[m", CA{.mode = CA::Normal});
+    }
+    SECTION("ESC [ 0 m")
+    {
+        verify("\x1B[0m", CA{.mode = CA::Normal});
+    }
+    SECTION("ESC [ 1 m")
+    {
+        verify("\x1B[1m", CA{.mode = CA::Bold});
+    }
     SECTION("ESC [ ; 1 m")
     {
         auto r = parser.Parse(to_bytes("\x1B[;1m"));
@@ -1514,29 +1604,98 @@ TEST_CASE(PREFIX "CSI m")
         CHECK(r[1].type == Type::set_character_attributes);
         CHECK(as_character_attributes(r[1]).mode == CA::Bold);
     }
-    SECTION("ESC [ 2 m") { verify("\x1B[2m", CA{.mode = CA::Faint}); }
-    SECTION("ESC [ 3 m") { verify("\x1B[3m", CA{.mode = CA::Italicized}); }
-    SECTION("ESC [ 4 m") { verify("\x1B[4m", CA{.mode = CA::Underlined}); }
-    SECTION("ESC [ 5 m") { verify("\x1B[5m", CA{.mode = CA::Blink}); }
-    SECTION("ESC [ 7 m") { verify("\x1B[7m", CA{.mode = CA::Inverse}); }
-    SECTION("ESC [ 8 m") { verify("\x1B[8m", CA{.mode = CA::Invisible}); }
-    SECTION("ESC [ 9 m") { verify("\x1B[9m", CA{.mode = CA::Crossed}); }
-    SECTION("ESC [ 21 m") { verify("\x1B[21m", CA{.mode = CA::DoublyUnderlined}); }
-    SECTION("ESC [ 22 m") { verify("\x1B[22m", CA{.mode = CA::NotBoldNotFaint}); }
-    SECTION("ESC [ 23 m") { verify("\x1B[23m", CA{.mode = CA::NotItalicized}); }
-    SECTION("ESC [ 24 m") { verify("\x1B[24m", CA{.mode = CA::NotUnderlined}); }
-    SECTION("ESC [ 25 m") { verify("\x1B[25m", CA{.mode = CA::NotBlink}); }
-    SECTION("ESC [ 27 m") { verify("\x1B[27m", CA{.mode = CA::NotInverse}); }
-    SECTION("ESC [ 28 m") { verify("\x1B[28m", CA{.mode = CA::NotInvisible}); }
-    SECTION("ESC [ 29 m") { verify("\x1B[29m", CA{.mode = CA::NotCrossed}); }
-    SECTION("ESC [ 30 m") { verify("\x1B[30m", CA{.mode = CA::ForegroundColor, .color = Color::Black}); }
-    SECTION("ESC [ 31 m") { verify("\x1B[31m", CA{.mode = CA::ForegroundColor, .color = Color::Red}); }
-    SECTION("ESC [ 32 m") { verify("\x1B[32m", CA{.mode = CA::ForegroundColor, .color = Color::Green}); }
-    SECTION("ESC [ 33 m") { verify("\x1B[33m", CA{.mode = CA::ForegroundColor, .color = Color::Yellow}); }
-    SECTION("ESC [ 34 m") { verify("\x1B[34m", CA{.mode = CA::ForegroundColor, .color = Color::Blue}); }
-    SECTION("ESC [ 35 m") { verify("\x1B[35m", CA{.mode = CA::ForegroundColor, .color = Color::Magenta}); }
-    SECTION("ESC [ 36 m") { verify("\x1B[36m", CA{.mode = CA::ForegroundColor, .color = Color::Cyan}); }
-    SECTION("ESC [ 37 m") { verify("\x1B[37m", CA{.mode = CA::ForegroundColor, .color = Color::White}); }
+    SECTION("ESC [ 2 m")
+    {
+        verify("\x1B[2m", CA{.mode = CA::Faint});
+    }
+    SECTION("ESC [ 3 m")
+    {
+        verify("\x1B[3m", CA{.mode = CA::Italicized});
+    }
+    SECTION("ESC [ 4 m")
+    {
+        verify("\x1B[4m", CA{.mode = CA::Underlined});
+    }
+    SECTION("ESC [ 5 m")
+    {
+        verify("\x1B[5m", CA{.mode = CA::Blink});
+    }
+    SECTION("ESC [ 7 m")
+    {
+        verify("\x1B[7m", CA{.mode = CA::Inverse});
+    }
+    SECTION("ESC [ 8 m")
+    {
+        verify("\x1B[8m", CA{.mode = CA::Invisible});
+    }
+    SECTION("ESC [ 9 m")
+    {
+        verify("\x1B[9m", CA{.mode = CA::Crossed});
+    }
+    SECTION("ESC [ 21 m")
+    {
+        verify("\x1B[21m", CA{.mode = CA::DoublyUnderlined});
+    }
+    SECTION("ESC [ 22 m")
+    {
+        verify("\x1B[22m", CA{.mode = CA::NotBoldNotFaint});
+    }
+    SECTION("ESC [ 23 m")
+    {
+        verify("\x1B[23m", CA{.mode = CA::NotItalicized});
+    }
+    SECTION("ESC [ 24 m")
+    {
+        verify("\x1B[24m", CA{.mode = CA::NotUnderlined});
+    }
+    SECTION("ESC [ 25 m")
+    {
+        verify("\x1B[25m", CA{.mode = CA::NotBlink});
+    }
+    SECTION("ESC [ 27 m")
+    {
+        verify("\x1B[27m", CA{.mode = CA::NotInverse});
+    }
+    SECTION("ESC [ 28 m")
+    {
+        verify("\x1B[28m", CA{.mode = CA::NotInvisible});
+    }
+    SECTION("ESC [ 29 m")
+    {
+        verify("\x1B[29m", CA{.mode = CA::NotCrossed});
+    }
+    SECTION("ESC [ 30 m")
+    {
+        verify("\x1B[30m", CA{.mode = CA::ForegroundColor, .color = Color::Black});
+    }
+    SECTION("ESC [ 31 m")
+    {
+        verify("\x1B[31m", CA{.mode = CA::ForegroundColor, .color = Color::Red});
+    }
+    SECTION("ESC [ 32 m")
+    {
+        verify("\x1B[32m", CA{.mode = CA::ForegroundColor, .color = Color::Green});
+    }
+    SECTION("ESC [ 33 m")
+    {
+        verify("\x1B[33m", CA{.mode = CA::ForegroundColor, .color = Color::Yellow});
+    }
+    SECTION("ESC [ 34 m")
+    {
+        verify("\x1B[34m", CA{.mode = CA::ForegroundColor, .color = Color::Blue});
+    }
+    SECTION("ESC [ 35 m")
+    {
+        verify("\x1B[35m", CA{.mode = CA::ForegroundColor, .color = Color::Magenta});
+    }
+    SECTION("ESC [ 36 m")
+    {
+        verify("\x1B[36m", CA{.mode = CA::ForegroundColor, .color = Color::Cyan});
+    }
+    SECTION("ESC [ 37 m")
+    {
+        verify("\x1B[37m", CA{.mode = CA::ForegroundColor, .color = Color::White});
+    }
     SECTION("ESC [ 38 m")
     {
         ignores("\x1B[38m");
@@ -1556,15 +1715,42 @@ TEST_CASE(PREFIX "CSI m")
         verify("\x1B[38;2;0;0;0m", CA{.mode = CA::ForegroundColor, .color = Color{232}});
         verify("\x1B[38;2;255;255;255m", CA{.mode = CA::ForegroundColor, .color = Color{255}});
     }
-    SECTION("ESC [ 39 m") { verify("\x1B[39m", CA{.mode = CA::ForegroundDefault}); }
-    SECTION("ESC [ 40 m") { verify("\x1B[40m", CA{.mode = CA::BackgroundColor, .color = Color::Black}); }
-    SECTION("ESC [ 41 m") { verify("\x1B[41m", CA{.mode = CA::BackgroundColor, .color = Color::Red}); }
-    SECTION("ESC [ 42 m") { verify("\x1B[42m", CA{.mode = CA::BackgroundColor, .color = Color::Green}); }
-    SECTION("ESC [ 43 m") { verify("\x1B[43m", CA{.mode = CA::BackgroundColor, .color = Color::Yellow}); }
-    SECTION("ESC [ 44 m") { verify("\x1B[44m", CA{.mode = CA::BackgroundColor, .color = Color::Blue}); }
-    SECTION("ESC [ 45 m") { verify("\x1B[45m", CA{.mode = CA::BackgroundColor, .color = Color::Magenta}); }
-    SECTION("ESC [ 46 m") { verify("\x1B[46m", CA{.mode = CA::BackgroundColor, .color = Color::Cyan}); }
-    SECTION("ESC [ 47 m") { verify("\x1B[47m", CA{.mode = CA::BackgroundColor, .color = Color::White}); }
+    SECTION("ESC [ 39 m")
+    {
+        verify("\x1B[39m", CA{.mode = CA::ForegroundDefault});
+    }
+    SECTION("ESC [ 40 m")
+    {
+        verify("\x1B[40m", CA{.mode = CA::BackgroundColor, .color = Color::Black});
+    }
+    SECTION("ESC [ 41 m")
+    {
+        verify("\x1B[41m", CA{.mode = CA::BackgroundColor, .color = Color::Red});
+    }
+    SECTION("ESC [ 42 m")
+    {
+        verify("\x1B[42m", CA{.mode = CA::BackgroundColor, .color = Color::Green});
+    }
+    SECTION("ESC [ 43 m")
+    {
+        verify("\x1B[43m", CA{.mode = CA::BackgroundColor, .color = Color::Yellow});
+    }
+    SECTION("ESC [ 44 m")
+    {
+        verify("\x1B[44m", CA{.mode = CA::BackgroundColor, .color = Color::Blue});
+    }
+    SECTION("ESC [ 45 m")
+    {
+        verify("\x1B[45m", CA{.mode = CA::BackgroundColor, .color = Color::Magenta});
+    }
+    SECTION("ESC [ 46 m")
+    {
+        verify("\x1B[46m", CA{.mode = CA::BackgroundColor, .color = Color::Cyan});
+    }
+    SECTION("ESC [ 47 m")
+    {
+        verify("\x1B[47m", CA{.mode = CA::BackgroundColor, .color = Color::White});
+    }
     SECTION("ESC [ 48 m")
     {
         ignores("\x1B[48m");
@@ -1584,23 +1770,74 @@ TEST_CASE(PREFIX "CSI m")
         verify("\x1B[48;2;0;0;0m", CA{.mode = CA::BackgroundColor, .color = Color{232}});
         verify("\x1B[48;2;255;255;255m", CA{.mode = CA::BackgroundColor, .color = Color{255}});
     }
-    SECTION("ESC [ 49 m") { verify("\x1B[49m", CA{.mode = CA::BackgroundDefault}); }
-    SECTION("ESC [ 90 m") { verify("\x1B[90m", CA{.mode = CA::ForegroundColor, .color = Color::BrightBlack}); }
-    SECTION("ESC [ 91 m") { verify("\x1B[91m", CA{.mode = CA::ForegroundColor, .color = Color::BrightRed}); }
-    SECTION("ESC [ 92 m") { verify("\x1B[92m", CA{.mode = CA::ForegroundColor, .color = Color::BrightGreen}); }
-    SECTION("ESC [ 93 m") { verify("\x1B[93m", CA{.mode = CA::ForegroundColor, .color = Color::BrightYellow}); }
-    SECTION("ESC [ 94 m") { verify("\x1B[94m", CA{.mode = CA::ForegroundColor, .color = Color::BrightBlue}); }
-    SECTION("ESC [ 95 m") { verify("\x1B[95m", CA{.mode = CA::ForegroundColor, .color = Color::BrightMagenta}); }
-    SECTION("ESC [ 96 m") { verify("\x1B[96m", CA{.mode = CA::ForegroundColor, .color = Color::BrightCyan}); }
-    SECTION("ESC [ 97 m") { verify("\x1B[97m", CA{.mode = CA::ForegroundColor, .color = Color::BrightWhite}); }
-    SECTION("ESC [ 100 m") { verify("\x1B[100m", CA{.mode = CA::BackgroundColor, .color = Color::BrightBlack}); }
-    SECTION("ESC [ 101 m") { verify("\x1B[101m", CA{.mode = CA::BackgroundColor, .color = Color::BrightRed}); }
-    SECTION("ESC [ 102 m") { verify("\x1B[102m", CA{.mode = CA::BackgroundColor, .color = Color::BrightGreen}); }
-    SECTION("ESC [ 103 m") { verify("\x1B[103m", CA{.mode = CA::BackgroundColor, .color = Color::BrightYellow}); }
-    SECTION("ESC [ 104 m") { verify("\x1B[104m", CA{.mode = CA::BackgroundColor, .color = Color::BrightBlue}); }
-    SECTION("ESC [ 105 m") { verify("\x1B[105m", CA{.mode = CA::BackgroundColor, .color = Color::BrightMagenta}); }
-    SECTION("ESC [ 106 m") { verify("\x1B[106m", CA{.mode = CA::BackgroundColor, .color = Color::BrightCyan}); }
-    SECTION("ESC [ 107 m") { verify("\x1B[107m", CA{.mode = CA::BackgroundColor, .color = Color::BrightWhite}); }
+    SECTION("ESC [ 49 m")
+    {
+        verify("\x1B[49m", CA{.mode = CA::BackgroundDefault});
+    }
+    SECTION("ESC [ 90 m")
+    {
+        verify("\x1B[90m", CA{.mode = CA::ForegroundColor, .color = Color::BrightBlack});
+    }
+    SECTION("ESC [ 91 m")
+    {
+        verify("\x1B[91m", CA{.mode = CA::ForegroundColor, .color = Color::BrightRed});
+    }
+    SECTION("ESC [ 92 m")
+    {
+        verify("\x1B[92m", CA{.mode = CA::ForegroundColor, .color = Color::BrightGreen});
+    }
+    SECTION("ESC [ 93 m")
+    {
+        verify("\x1B[93m", CA{.mode = CA::ForegroundColor, .color = Color::BrightYellow});
+    }
+    SECTION("ESC [ 94 m")
+    {
+        verify("\x1B[94m", CA{.mode = CA::ForegroundColor, .color = Color::BrightBlue});
+    }
+    SECTION("ESC [ 95 m")
+    {
+        verify("\x1B[95m", CA{.mode = CA::ForegroundColor, .color = Color::BrightMagenta});
+    }
+    SECTION("ESC [ 96 m")
+    {
+        verify("\x1B[96m", CA{.mode = CA::ForegroundColor, .color = Color::BrightCyan});
+    }
+    SECTION("ESC [ 97 m")
+    {
+        verify("\x1B[97m", CA{.mode = CA::ForegroundColor, .color = Color::BrightWhite});
+    }
+    SECTION("ESC [ 100 m")
+    {
+        verify("\x1B[100m", CA{.mode = CA::BackgroundColor, .color = Color::BrightBlack});
+    }
+    SECTION("ESC [ 101 m")
+    {
+        verify("\x1B[101m", CA{.mode = CA::BackgroundColor, .color = Color::BrightRed});
+    }
+    SECTION("ESC [ 102 m")
+    {
+        verify("\x1B[102m", CA{.mode = CA::BackgroundColor, .color = Color::BrightGreen});
+    }
+    SECTION("ESC [ 103 m")
+    {
+        verify("\x1B[103m", CA{.mode = CA::BackgroundColor, .color = Color::BrightYellow});
+    }
+    SECTION("ESC [ 104 m")
+    {
+        verify("\x1B[104m", CA{.mode = CA::BackgroundColor, .color = Color::BrightBlue});
+    }
+    SECTION("ESC [ 105 m")
+    {
+        verify("\x1B[105m", CA{.mode = CA::BackgroundColor, .color = Color::BrightMagenta});
+    }
+    SECTION("ESC [ 106 m")
+    {
+        verify("\x1B[106m", CA{.mode = CA::BackgroundColor, .color = Color::BrightCyan});
+    }
+    SECTION("ESC [ 107 m")
+    {
+        verify("\x1B[107m", CA{.mode = CA::BackgroundColor, .color = Color::BrightWhite});
+    }
     SECTION("Combination")
     {
         auto r = parser.Parse(to_bytes("\x1B[01;04;38;05;196;48;05;232m"));

@@ -7,8 +7,8 @@
 
 @interface PreferencesWindowExternalEditorsTabNewEditorSheet : SheetController
 
-@property (nonatomic, strong) ExternalEditorInfo *Info;
-@property (nonatomic, readwrite) bool hasTerminal;
+@property(nonatomic, strong) ExternalEditorInfo *Info;
+@property(nonatomic, readwrite) bool hasTerminal;
 
 - (IBAction)OnClose:(id)sender;
 - (IBAction)OnOK:(id)sender;

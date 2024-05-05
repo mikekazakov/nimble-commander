@@ -5,14 +5,12 @@
 
 @interface SheetController : NSWindowController
 
+- (instancetype)init; // uses class name as a NIB name
+- (instancetype)initWithWindowNibPath:(NSString *)_window_nib_path owner:(id)_owner;
 
-- (instancetype) init; // uses class name as a NIB name
-- (instancetype) initWithWindowNibPath:(NSString *)_window_nib_path owner:(id)_owner;
+- (void)beginSheetForWindow:(NSWindow *)_wnd completionHandler:(void (^)(NSModalResponse returnCode))_handler;
+- (void)beginSheetForWindow:(NSWindow *)_wnd;
 
-- (void) beginSheetForWindow:(NSWindow*)_wnd
-           completionHandler:(void (^)(NSModalResponse returnCode))_handler;
-- (void) beginSheetForWindow:(NSWindow*)_wnd;
-
-- (void) endSheet:(NSModalResponse)returnCode;
+- (void)endSheet:(NSModalResponse)returnCode;
 
 @end

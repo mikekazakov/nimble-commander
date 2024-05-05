@@ -88,6 +88,6 @@ size_t objc_sizeof() noexcept
     return class_getInstanceSize([T class]);
 }
 
-}
+} // namespace nc
 
 #endif

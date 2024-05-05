@@ -5,15 +5,15 @@
 #include <memory>
 
 namespace nc::ops {
-    class Operation;
+class Operation;
 }
 
 @interface NCOpsBriefOperationViewController : NSViewController
 
-- (instancetype)initWithOperation:(const std::shared_ptr<nc::ops::Operation>&)_operation;
+- (instancetype)initWithOperation:(const std::shared_ptr<nc::ops::Operation> &)_operation;
 
-@property (nonatomic, readonly) const std::shared_ptr<nc::ops::Operation>& operation;
+@property(nonatomic, readonly) const std::shared_ptr<nc::ops::Operation> &operation;
 
-@property (nonatomic) bool shouldDelayAppearance;
+@property(nonatomic) bool shouldDelayAppearance;
 
 @end

@@ -19,15 +19,15 @@ TextModeIndexedTextLine::TextModeIndexedTextLine(int _unichars_start,
 }
 
 TextModeIndexedTextLine::TextModeIndexedTextLine(const TextModeIndexedTextLine &_rhs) noexcept
-    : m_UniCharsStart(_rhs.m_UniCharsStart), m_UniCharsLen(_rhs.m_UniCharsLen),
-      m_BytesStart(_rhs.m_BytesStart), m_BytesLen(_rhs.m_BytesLen), m_Line(_rhs.m_Line)
+    : m_UniCharsStart(_rhs.m_UniCharsStart), m_UniCharsLen(_rhs.m_UniCharsLen), m_BytesStart(_rhs.m_BytesStart),
+      m_BytesLen(_rhs.m_BytesLen), m_Line(_rhs.m_Line)
 {
     CFRetain(m_Line);
 }
 
 TextModeIndexedTextLine::TextModeIndexedTextLine(TextModeIndexedTextLine &&_rhs) noexcept
-    : m_UniCharsStart(_rhs.m_UniCharsStart), m_UniCharsLen(_rhs.m_UniCharsLen),
-      m_BytesStart(_rhs.m_BytesStart), m_BytesLen(_rhs.m_BytesLen), m_Line(_rhs.m_Line)
+    : m_UniCharsStart(_rhs.m_UniCharsStart), m_UniCharsLen(_rhs.m_UniCharsLen), m_BytesStart(_rhs.m_BytesStart),
+      m_BytesLen(_rhs.m_BytesLen), m_Line(_rhs.m_Line)
 {
     _rhs.m_UniCharsStart = 0;
     _rhs.m_UniCharsLen = 0;
@@ -42,8 +42,7 @@ TextModeIndexedTextLine::~TextModeIndexedTextLine() noexcept
         CFRelease(m_Line);
 }
 
-TextModeIndexedTextLine &
-TextModeIndexedTextLine::operator=(const TextModeIndexedTextLine &_rhs) noexcept
+TextModeIndexedTextLine &TextModeIndexedTextLine::operator=(const TextModeIndexedTextLine &_rhs) noexcept
 {
     if( this == &_rhs )
         return *this;
@@ -87,9 +86,7 @@ int FindClosestLineIndex(const TextModeIndexedTextLine *_first,
     if( _first == _last )
         return -1;
 
-    const auto predicate = [](const TextModeIndexedTextLine &_lhs, int _rhs) {
-        return _lhs.BytesStart() < _rhs;
-    };
+    const auto predicate = [](const TextModeIndexedTextLine &_lhs, int _rhs) { return _lhs.BytesStart() < _rhs; };
     const auto lb = std::lower_bound(_first, _last, _bytes_offset, predicate);
     const auto index = static_cast<int>(lb - _first);
     if( lb == _first ) {
@@ -127,9 +124,7 @@ int FindFloorClosestLineIndex(const TextModeIndexedTextLine *_first,
     if( _first == _last )
         return -1;
 
-    const auto predicate = [](const TextModeIndexedTextLine &_lhs, int _rhs) {
-        return _lhs.BytesStart() < _rhs;
-    };
+    const auto predicate = [](const TextModeIndexedTextLine &_lhs, int _rhs) { return _lhs.BytesStart() < _rhs; };
     const auto lb = std::lower_bound(_first, _last, _bytes_offset, predicate);
     const auto index = static_cast<int>(lb - _first);
     if( lb == _first ) {

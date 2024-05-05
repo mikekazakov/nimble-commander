@@ -12,10 +12,9 @@ namespace nc::utility {
 class FileMask
 {
 public:
-    enum class Type
-    {
+    enum class Type {
         Mask, // old-style classic mask, supporting wildcards ('*') and placeholders ('?').
-              // Can contain multiple such masks separated by commas (',').        
+              // Can contain multiple such masks separated by commas (',').
         RegEx // a regular expression string
     };
 
@@ -25,7 +24,7 @@ public:
     // Creates a file mask initialized with a the provided string
     // Any invalid input is discarded silenty.
     FileMask(std::string_view _mask, Type _type = Type::Mask);
-    
+
     // Checks the correctness of the mask.
     // Only RegEx masks can be invalid.
     static bool Validate(std::string_view _mask, Type _type);

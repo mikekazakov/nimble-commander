@@ -19,9 +19,9 @@ struct dispatch_cpp_support {
     static void wrapped_call(void (*_call)(void *_ctx), void (*_delete)(void *_ctx), void *_ctx) noexcept;
 };
 
-}
+} // namespace base
 
-}
+} // namespace nc
 
 // effectively assert( dispatch_is_main_queue() )
 #define dispatch_assert_main_queue() assert(nc::dispatch_is_main_queue());

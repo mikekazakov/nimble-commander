@@ -24,8 +24,8 @@ const char *HostConfiguration::VerboseJunction() const
 
 bool HostConfiguration::operator==(const HostConfiguration &_rhs) const
 {
-    return server_url == _rhs.server_url && user == _rhs.user && passwd == _rhs.passwd &&
-           path == _rhs.path && port == _rhs.port;
+    return server_url == _rhs.server_url && user == _rhs.user && passwd == _rhs.passwd && path == _rhs.path &&
+           port == _rhs.port;
 }
 
 void HTTPRequests::Print(const Mask _mask)

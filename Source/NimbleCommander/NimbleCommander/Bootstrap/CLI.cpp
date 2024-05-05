@@ -8,15 +8,14 @@
 
 namespace nc::bootstrap {
 
-static const auto g_Message =
-    "Command-line options:                                                          \n"
-    "-NCLogLevel <level>   Sets a logging level for all subsystems.                 \n"
-    "                      Levels are: off, trace, debug, info, warn, err, critical.\n"
-    "                                                                               \n"
-    "Command-line commands:                                                         \n"
-    "--help                          Prints this message.                           \n"
-    "--install-privileged-helper     Installs the Admin Mode helper.                \n"
-    "--uninstall-privileged-helper   Stops and uninstalls the Admin Mode helper.    \n";
+static const auto g_Message = "Command-line options:                                                          \n"
+                              "-NCLogLevel <level>   Sets a logging level for all subsystems.                 \n"
+                              "                      Levels are: off, trace, debug, info, warn, err, critical.\n"
+                              "                                                                               \n"
+                              "Command-line commands:                                                         \n"
+                              "--help                          Prints this message.                           \n"
+                              "--install-privileged-helper     Installs the Admin Mode helper.                \n"
+                              "--uninstall-privileged-helper   Stops and uninstalls the Admin Mode helper.    \n";
 
 void ProcessCLIUsage(int argc, char *argv[])
 {

@@ -17,22 +17,15 @@ TextModeWorkingSet::TextModeWorkingSet(const Source &_source)
     m_CharactersNumber = _source.characters_number;
 
     m_Characters = std::make_unique<char16_t[]>(_source.characters_number);
-    memcpy(m_Characters.get(),
-           _source.unprocessed_characters,
-           sizeof(char16_t) * _source.characters_number);
+    memcpy(m_Characters.get(), _source.unprocessed_characters, sizeof(char16_t) * _source.characters_number);
     CleanUnicodeControlSymbols(m_Characters.get(), _source.characters_number);
 
     m_ToByteIndices = std::make_unique<int[]>(_source.characters_number + 1);
-    memcpy(m_ToByteIndices.get(),
-           _source.mapping_to_byte_offsets,
-           sizeof(int) * _source.characters_number);
+    memcpy(m_ToByteIndices.get(), _source.mapping_to_byte_offsets, sizeof(int) * _source.characters_number);
     m_ToByteIndices[_source.characters_number] = _source.bytes_length;
 
-    m_String =
-        CFStringCreateWithCharactersNoCopy(nullptr,
-                                           reinterpret_cast<const UniChar *>(m_Characters.get()),
-                                           _source.characters_number,
-                                           kCFAllocatorNull);
+    m_String = CFStringCreateWithCharactersNoCopy(
+        nullptr, reinterpret_cast<const UniChar *>(m_Characters.get()), _source.characters_number, kCFAllocatorNull);
     if( m_String == nullptr ) {
         throw std::invalid_argument("TextModeWorkingSet: failed to create a CFString");
     }
@@ -67,16 +60,14 @@ CFRange TextModeWorkingSet::ToLocalBytesRange(const CFRange _global_bytes_range)
         return CFRangeMake(kCFNotFound, 0);
     if( _global_bytes_range.location <= m_WorkingSetOffset ) {
         const long location = 0;
-        const long length =
-            _global_bytes_range.length - m_WorkingSetOffset + _global_bytes_range.location;
+        const long length = _global_bytes_range.length - m_WorkingSetOffset + _global_bytes_range.location;
         if( length <= 0 )
             return CFRangeMake(kCFNotFound, 0);
         return CFRangeMake(location, std::min(length, static_cast<long>(m_WorkingSetSize)));
     }
     else if( _global_bytes_range.location < m_WorkingSetOffset + long(m_WorkingSetSize) ) {
         const long location = _global_bytes_range.location - m_WorkingSetOffset;
-        const long length =
-            std::min(_global_bytes_range.length, static_cast<long>(m_WorkingSetSize) - location);
+        const long length = std::min(_global_bytes_range.length, static_cast<long>(m_WorkingSetSize) - location);
         if( length <= 0 )
             return CFRangeMake(kCFNotFound, 0);
         return CFRangeMake(location, length);
@@ -90,8 +81,8 @@ int TextModeWorkingSet::ToLocalCharIndex(int _local_byte_offset) const noexcept
     if( _local_byte_offset < 0 )
         return -1;
 
-    auto it = std::lower_bound(
-        m_ToByteIndices.get(), m_ToByteIndices.get() + m_CharactersNumber + 1, _local_byte_offset);
+    auto it =
+        std::lower_bound(m_ToByteIndices.get(), m_ToByteIndices.get() + m_CharactersNumber + 1, _local_byte_offset);
     return int(it - m_ToByteIndices.get());
 }
 

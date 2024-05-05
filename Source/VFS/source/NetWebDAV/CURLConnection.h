@@ -47,8 +47,7 @@ public:
 
 private:
     using SlistPtr = std::unique_ptr<struct curl_slist, decltype(&curl_slist_free_all)>;
-    using ProgressCallback =
-        std::function<bool(long _dltotal, long _dlnow, long _ultotal, long _ulnow)>;
+    using ProgressCallback = std::function<bool(long _dltotal, long _dlnow, long _ultotal, long _ulnow)>;
 
     void operator=(const CURLConnection &) = delete;
     CURLConnection(const CURLConnection &) = delete;

@@ -79,7 +79,7 @@ ThemeAppearance ThemePersistence::ExtractAppearance(const Value &_doc, const cha
 
     if( !cr->value.IsString() )
         return ThemeAppearance::Light;
-    
+
     const std::string_view val = cr->value.GetString();
 
     if( val == "aqua" || val == "light" )
@@ -90,4 +90,4 @@ ThemeAppearance ThemePersistence::ExtractAppearance(const Value &_doc, const cha
     return ThemeAppearance::Light;
 }
 
-}
+} // namespace nc

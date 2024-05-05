@@ -85,7 +85,7 @@ void SpdLogUISink::DoFlush()
     m_Stock.clear();
 }
 
-}
+} // namespace nc::utility
 
 @implementation NCSpdLogWindowController {
     std::span<nc::base::SpdLogger *const> m_Loggers;

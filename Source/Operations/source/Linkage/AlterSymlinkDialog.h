@@ -6,9 +6,8 @@
 
 @interface NCOpsAlterSymlinkDialog : NSWindowController
 
-- (instancetype)initWithSourcePath:(const std::string&)_src_path
-                       andLinkName:(const std::string&)_link_name;
+- (instancetype)initWithSourcePath:(const std::string &)_src_path andLinkName:(const std::string &)_link_name;
 
-@property (readonly, nonatomic) const std::string& sourcePath;
+@property(readonly, nonatomic) const std::string &sourcePath;
 
 @end

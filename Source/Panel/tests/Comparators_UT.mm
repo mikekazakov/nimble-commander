@@ -20,7 +20,7 @@ struct DummyListingEntry {
     std::optional<std::string> display_name;
     bool is_directory = false;
 };
-}
+} // namespace
 
 static VFSListingPtr ProduceDummyListing(std::span<const DummyListingEntry> _entries)
 {
@@ -35,8 +35,7 @@ static VFSListingPtr ProduceDummyListing(std::span<const DummyListingEntry> _ent
     size_t index = 0;
     for( auto &i : _entries ) {
         l.filenames.emplace_back(i.name);
-        l.unix_modes.emplace_back(i.is_directory ? (S_IRUSR | S_IWUSR | S_IFDIR)
-                                                 : (S_IRUSR | S_IWUSR | S_IFREG));
+        l.unix_modes.emplace_back(i.is_directory ? (S_IRUSR | S_IWUSR | S_IFDIR) : (S_IRUSR | S_IWUSR | S_IFREG));
         l.unix_types.emplace_back(i.is_directory ? DT_DIR : DT_REG);
         if( i.display_name )
             l.display_filenames.insert(index, *i.display_name);
@@ -149,10 +148,10 @@ TEST_CASE(PREFIX "SortByNameRev")
     {
         const IndirectListingComparator cmp(*listing, vd, sort);
         CHECK(cmp(0, 0) == false); // A vs A
-        CHECK(cmp(0, 1) == false);  // A vs B'
-        CHECK(cmp(1, 0) == true); // B' vs A
-        CHECK(cmp(0, 2) == false);  // A vs A(C)'
-        CHECK(cmp(2, 0) == true); // A(C)' vs A
+        CHECK(cmp(0, 1) == false); // A vs B'
+        CHECK(cmp(1, 0) == true);  // B' vs A
+        CHECK(cmp(0, 2) == false); // A vs A(C)'
+        CHECK(cmp(2, 0) == true);  // A(C)' vs A
         CHECK(cmp(2, 2) == false); // A(C)' vs A(C)'
         CHECK(cmp(1, 3) == false); // B' vs B(b)
         CHECK(cmp(3, 1) == false); // B(b) vs B'
@@ -164,13 +163,13 @@ TEST_CASE(PREFIX "SortByNameRev")
         sort.case_sens = true;
         const IndirectListingComparator cmp(*listing, vd, sort);
         CHECK(cmp(0, 0) == false); // A vs A
-        CHECK(cmp(0, 1) == false);  // A vs B'
-        CHECK(cmp(1, 0) == true); // B' vs A
-        CHECK(cmp(0, 2) == false);  // A vs A(C)'
-        CHECK(cmp(2, 0) == true); // A(C)' vs A
+        CHECK(cmp(0, 1) == false); // A vs B'
+        CHECK(cmp(1, 0) == true);  // B' vs A
+        CHECK(cmp(0, 2) == false); // A vs A(C)'
+        CHECK(cmp(2, 0) == true);  // A(C)' vs A
         CHECK(cmp(2, 2) == false); // A(C)' vs A(C)'
-        CHECK(cmp(1, 3) == false);  // B' vs B(b)
-        CHECK(cmp(3, 1) == true); // B(b) vs B'
+        CHECK(cmp(1, 3) == false); // B' vs B(b)
+        CHECK(cmp(3, 1) == true);  // B(b) vs B'
         CHECK(cmp(3, 4) == false); // B(b) vs b'
         CHECK(cmp(4, 3) == false); // b' vs B(b)
     }

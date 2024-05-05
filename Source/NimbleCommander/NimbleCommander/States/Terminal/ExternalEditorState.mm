@@ -46,13 +46,11 @@ using namespace nc::term;
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_TermScrollView];
         const auto views = NSDictionaryOfVariableBindings(m_TermScrollView);
-        [self addConstraints:[NSLayoutConstraint
-                                 constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|"
-                                                     options:0
-                                                     metrics:nil
-                                                       views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                                                     @"V:|-(==0@250)-[m_TermScrollView]-(==0)-|"
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|"
+                                                                     options:0
+                                                                     metrics:nil
+                                                                       views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0@250)-[m_TermScrollView]-(==0)-|"
                                                                      options:0
                                                                      metrics:nil
                                                                        views:views]];
@@ -88,11 +86,10 @@ using namespace nc::term;
             NCTermExternalEditorState *me = weak_self;
             me->m_TermScrollView.view.showCursor = _show;
         });
-        m_Interpreter->SetRequstedMouseEventsChanged(
-            [weak_self](Interpreter::RequestedMouseEvents _events) {
-                NCTermExternalEditorState *me = weak_self;
-                me->m_TermScrollView.view.mouseEvents = _events;
-            });
+        m_Interpreter->SetRequstedMouseEventsChanged([weak_self](Interpreter::RequestedMouseEvents _events) {
+            NCTermExternalEditorState *me = weak_self;
+            me->m_TermScrollView.view.mouseEvents = _events;
+        });
         m_Interpreter->SetScreenResizeAllowed(false);
 
         [m_TermScrollView.view AttachToInputTranslator:m_InputTranslator.get()];
@@ -104,8 +101,7 @@ using namespace nc::term;
 
         m_Task->SetOnChildOutput([=](const void *_d, int _sz) {
             if( auto strongself = weak_self ) {
-                auto cmds = strongself->m_Parser->Parse(
-                    {static_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
+                auto cmds = strongself->m_Parser->Parse({static_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
                 if( cmds.empty() )
                     return;
                 dispatch_to_main_queue([=] {
@@ -119,8 +115,7 @@ using namespace nc::term;
         m_Task->SetOnChildDied([weak_self] {
             dispatch_to_main_queue([=] {
                 if( auto strongself = weak_self )
-                    [static_cast<NCMainWindowController *>(strongself.window.delegate)
-                        ResignAsWindowState:strongself];
+                    [static_cast<NCMainWindowController *>(strongself.window.delegate) ResignAsWindowState:strongself];
             });
         });
     }
@@ -149,10 +144,8 @@ using namespace nc::term;
     m_TopLayoutConstraint.active = true;
     [self layoutSubtreeIfNeeded];
 
-    m_Task->Launch(m_BinaryPath.c_str(),
-                   m_Params.c_str(),
-                   m_TermScrollView.screen.Width(),
-                   m_TermScrollView.screen.Height());
+    m_Task->Launch(
+        m_BinaryPath.c_str(), m_Params.c_str(), m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height());
 
     [self.window makeFirstResponder:m_TermScrollView.view];
     [self updateTitle];
@@ -178,10 +171,8 @@ using namespace nc::term;
     //        self.window.title = title;
     //    });
     const auto &screen_title = m_Title;
-    const auto title =
-        [NSString stringWithUTF8StdString:screen_title.empty()
-                                              ? (m_Task->TaskBinaryName() + " - " + m_FileTitle)
-                                              : screen_title];
+    const auto title = [NSString
+        stringWithUTF8StdString:screen_title.empty() ? (m_Task->TaskBinaryName() + " - " + m_FileTitle) : screen_title];
     dispatch_or_run_in_main_queue([=] { self.window.title = title; });
 }
 

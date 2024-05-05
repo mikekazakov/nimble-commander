@@ -17,38 +17,33 @@ namespace detail {
 
 struct WorkspaceIconsCacheImplBase {
     struct FileStateHint {
-        uint64_t    size = 0;
-        uint64_t    mtime = 0;
-        mode_t      mode = 0;
-    };    
+        uint64_t size = 0;
+        uint64_t mtime = 0;
+        mode_t mode = 0;
+    };
     struct FileStateReader {
         virtual ~FileStateReader() = default;
-        virtual std::optional<FileStateHint>
-            ReadState(const std::string &_file_path) = 0;        
+        virtual std::optional<FileStateHint> ReadState(const std::string &_file_path) = 0;
     };
     struct FileStateReaderImpl final : FileStateReader {
-        std::optional<FileStateHint>
-            ReadState(const std::string &_file_path) override;
+        std::optional<FileStateHint> ReadState(const std::string &_file_path) override;
         static FileStateReaderImpl instance;
     };
     struct IconBuilder {
         virtual ~IconBuilder() = default;
-        virtual NSImage * __strong Build(const std::string &_file_path) = 0;        
+        virtual NSImage *__strong Build(const std::string &_file_path) = 0;
     };
     struct IconBuilderImpl final : IconBuilder {
-        NSImage * __strong Build(const std::string &_file_path) override;
+        NSImage *__strong Build(const std::string &_file_path) override;
         static IconBuilderImpl instance;
     };
 };
 
-}
+} // namespace detail
 
-class WorkspaceIconsCacheImpl final :
-    public WorkspaceIconsCache,
-    public detail::WorkspaceIconsCacheImplBase
+class WorkspaceIconsCacheImpl final : public WorkspaceIconsCache, public detail::WorkspaceIconsCacheImplBase
 {
 public:
-    
     WorkspaceIconsCacheImpl(FileStateReader &_file_state_reader = FileStateReaderImpl::instance,
                             IconBuilder &_icon_builder = IconBuilderImpl::instance);
     ~WorkspaceIconsCacheImpl();
@@ -56,37 +51,36 @@ public:
     NSImage *IconIfHas(const std::string &_file_path) override;
 
     NSImage *ProduceIcon(const std::string &_file_path) override;
-        
-    static int CacheMaxSize() noexcept { return m_CacheSize; }
-    
-private:
-    enum { m_CacheSize = 4096 };
-    
-    struct Info : base::intrusive_ref_counter<Info>
-    {
-        uint64_t    file_size = 0;
-        uint64_t    mtime = 0;
-        mode_t      mode = 0;
-        // 'image' may be nil, it means that Workspace can't produce icon for this file.
-        NSImage    *image = nil; 
-        std::atomic_flag is_in_work = {false}; // item is currenly updating its image        
-    };
-    
-    using Container = base::LRUCache<std::string, base::intrusive_ptr<Info>, m_CacheSize>;    
 
-    NSImage *Produce(const std::string &_file_path,
-                     std::optional<FileStateHint> _state_hint);    
-    
-    void UpdateIfNeeded(const std::string &_file_path,
-                        Info &_info);
+    static int CacheMaxSize() noexcept { return m_CacheSize; }
+
+private:
+    enum {
+        m_CacheSize = 4096
+    };
+
+    struct Info : base::intrusive_ref_counter<Info> {
+        uint64_t file_size = 0;
+        uint64_t mtime = 0;
+        mode_t mode = 0;
+        // 'image' may be nil, it means that Workspace can't produce icon for this file.
+        NSImage *image = nil;
+        std::atomic_flag is_in_work = {false}; // item is currenly updating its image
+    };
+
+    using Container = base::LRUCache<std::string, base::intrusive_ptr<Info>, m_CacheSize>;
+
+    NSImage *Produce(const std::string &_file_path, std::optional<FileStateHint> _state_hint);
+
+    void UpdateIfNeeded(const std::string &_file_path, Info &_info);
     void ProduceNew(const std::string &_file_path, Info &_info);
-    
+
     Container m_Items;
     spinlock m_ItemsLock;
-    FileStateReader &m_FileStateReader;    
+    FileStateReader &m_FileStateReader;
     IconBuilder &m_IconBuilder;
 };
 
-}
+} // namespace nc::vfsicon
 
 #pragma clang diagnostic pop

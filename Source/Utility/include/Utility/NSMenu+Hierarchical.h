@@ -3,7 +3,7 @@
 
 #include <Cocoa/Cocoa.h>
 
-@interface NSMenu(Hierarchical)
+@interface NSMenu (Hierarchical)
 
 - (NSMenuItem *)itemWithTagHierarchical:(NSInteger)tag;
 - (NSMenuItem *)itemContainingItemWithTagHierarchical:(NSInteger)tag;

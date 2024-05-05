@@ -11,22 +11,19 @@ chained_strings::chained_strings() : m_Begin(nullptr), m_Last(nullptr)
     static_assert(sizeof(block) == 1024, "size of strings chunk should be 1024 bytes");
 }
 
-chained_strings::chained_strings(const char *_allocate_with_this_string)
-    : m_Begin(nullptr), m_Last(nullptr)
+chained_strings::chained_strings(const char *_allocate_with_this_string) : m_Begin(nullptr), m_Last(nullptr)
 {
     construct();
     push_back(_allocate_with_this_string, nullptr);
 }
 
-chained_strings::chained_strings(const std::string &_allocate_with_this_string)
-    : m_Begin(nullptr), m_Last(nullptr)
+chained_strings::chained_strings(const std::string &_allocate_with_this_string) : m_Begin(nullptr), m_Last(nullptr)
 {
     construct();
     push_back(_allocate_with_this_string, nullptr);
 }
 
-chained_strings::chained_strings(chained_strings &&_rhs)
-    : m_Begin(_rhs.m_Begin), m_Last(_rhs.m_Last)
+chained_strings::chained_strings(chained_strings &&_rhs) : m_Begin(_rhs.m_Begin), m_Last(_rhs.m_Last)
 {
     _rhs.m_Begin = _rhs.m_Last = 0;
 }

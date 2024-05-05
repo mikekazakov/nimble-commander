@@ -23,8 +23,8 @@ class SettingsImpl : public DefaultSettings
 public:
     SettingsImpl()
     {
-        m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
-            ThemesManager::Notifications::Terminal, [] { DispatchNotification(); });
+        m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(ThemesManager::Notifications::Terminal,
+                                                                           [] { DispatchNotification(); });
         GlobalConfig().ObserveMany(
             m_ConfigObservationTickets,
             [] { DispatchNotification(); },
@@ -63,17 +63,13 @@ public:
         if( dispatch_is_main_queue() )
             std::dynamic_pointer_cast<SettingsImpl>(TerminalSettings())->FireNotification();
         else
-            dispatch_to_main_queue([] {
-                std::dynamic_pointer_cast<SettingsImpl>(TerminalSettings())->FireNotification();
-            });
+            dispatch_to_main_queue(
+                [] { std::dynamic_pointer_cast<SettingsImpl>(TerminalSettings())->FireNotification(); });
     }
 
     NSFont *Font() const override { return CurrentTheme().TerminalFont(); }
     NSColor *ForegroundColor() const override { return CurrentTheme().TerminalForegroundColor(); }
-    NSColor *BoldForegroundColor() const override
-    {
-        return CurrentTheme().TerminalBoldForegroundColor();
-    };
+    NSColor *BoldForegroundColor() const override { return CurrentTheme().TerminalBoldForegroundColor(); };
     NSColor *BackgroundColor() const override { return CurrentTheme().TerminalBackgroundColor(); }
     NSColor *SelectionColor() const override { return CurrentTheme().TerminalSelectionColor(); }
     NSColor *CursorColor() const override { return CurrentTheme().TerminalCursorColor(); }

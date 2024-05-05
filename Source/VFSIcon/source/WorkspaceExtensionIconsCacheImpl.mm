@@ -91,4 +91,4 @@ NSImage *WorkspaceExtensionIconsCacheImpl::GenericFolderIcon() const
     return m_GenericFolderIcon;
 }
 
-}
+} // namespace nc::vfsicon

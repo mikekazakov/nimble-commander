@@ -8,8 +8,7 @@
 
 namespace nc::panel::actions {
 
-AsyncVFSPromiseRestorer::AsyncVFSPromiseRestorer(PanelController *_panel,
-                                                 nc::core::VFSInstanceManager &_instance_mgr)
+AsyncVFSPromiseRestorer::AsyncVFSPromiseRestorer(PanelController *_panel, nc::core::VFSInstanceManager &_instance_mgr)
     : m_Panel(_panel), m_InstanceManager(_instance_mgr)
 {
 }
@@ -21,8 +20,7 @@ void AsyncVFSPromiseRestorer::Restore(const nc::core::VFSInstanceManager::Promis
     auto task = [&manager = m_InstanceManager,
                  promise = _promise,
                  success = std::move(_success_handler),
-                 failure =
-                     std::move(_failure_handler)](const std::function<bool()> &_is_cancelled) {
+                 failure = std::move(_failure_handler)](const std::function<bool()> &_is_cancelled) {
         VFSHostPtr host;
         try {
 
@@ -43,9 +41,8 @@ void AsyncVFSPromiseRestorer::Restore(const nc::core::VFSInstanceManager::Promis
     [m_Panel commitCancelableLoadingTask:std::move(task)];
 }
 
-AsyncPersistentLocationRestorer::AsyncPersistentLocationRestorer(
-    PanelController *_panel,
-    nc::core::VFSInstanceManager &_instance_mgr)
+AsyncPersistentLocationRestorer::AsyncPersistentLocationRestorer(PanelController *_panel,
+                                                                 nc::core::VFSInstanceManager &_instance_mgr)
     : m_Panel(_panel), m_InstanceManager(_instance_mgr)
 {
 }
@@ -57,8 +54,7 @@ void AsyncPersistentLocationRestorer::Restore(const nc::panel::PersistentLocatio
     auto task = [&manager = m_InstanceManager,
                  location = _location,
                  success = std::move(_success_handler),
-                 failure = std::move(_failure_handler)](
-                    [[maybe_unused]] const std::function<bool()> &_is_cancelled) {
+                 failure = std::move(_failure_handler)]([[maybe_unused]] const std::function<bool()> &_is_cancelled) {
         VFSHostPtr host;
         const auto rc = PanelDataPersisency::CreateVFSFromLocation(location, host, manager);
 
@@ -105,15 +101,13 @@ void DeselectorViaOpNotification::Handle(nc::ops::ItemStateReport _report) const
     auto me = shared_from_this();
     nc::vfs::Host *const host = &_report.host;
     std::string path(_report.path);
-    dispatch_to_main_queue(
-        [me = std::move(me), path = std::move(path), host] { me->HandleImpl(host, path); });
+    dispatch_to_main_queue([me = std::move(me), path = std::move(path), host] { me->HandleImpl(host, path); });
 }
 
 // this method can be triggered for every item processed in the background, which means potentially
 // thousands, so it has to be FAST.
 // fun fact: _host can be a dangling pointer and is used only as a key.
-void DeselectorViaOpNotification::HandleImpl(nc::vfs::Host *_host,
-                                             const std::string &_path) const
+void DeselectorViaOpNotification::HandleImpl(nc::vfs::Host *_host, const std::string &_path) const
 {
     dispatch_assert_main_queue();
     PanelController *panel = m_Panel;
@@ -125,7 +119,7 @@ void DeselectorViaOpNotification::HandleImpl(nc::vfs::Host *_host,
         m_Cancelled = true;
         return; // the panel changed its contents, shouldn't do anything with it anymore
     }
-    
+
     const auto &data = panel.data;
     const auto &listing = data.Listing();
     if( listing.IsUniform() ) {
@@ -136,7 +130,8 @@ void DeselectorViaOpNotification::HandleImpl(nc::vfs::Host *_host,
         if( indx >= 0 ) {
             [panel setSelectionForItemAtIndex:indx selected:false];
         }
-    } else {
+    }
+    else {
         // things are much hairier for non-uniform listings :(, but we can try a few thing to make
         // it reasonably fast.
         // 1. find all entries with a filename from the report - O(logN)
@@ -146,17 +141,17 @@ void DeselectorViaOpNotification::HandleImpl(nc::vfs::Host *_host,
         const std::string_view filename = utility::PathManip::Filename(_path);
         const std::string_view parent = utility::PathManip::Parent(_path);
         const std::span<const unsigned> raw_indices = data.RawIndicesForName(filename);
-        for( const unsigned raw_indx: raw_indices ) {
+        for( const unsigned raw_indx : raw_indices ) {
             if( listing.Directory(raw_indx) != parent )
                 continue;
             if( listing.Host(raw_indx).get() != _host )
                 continue;
-            
+
             const int indx = data.SortedIndexForRawIndex(static_cast<int>(raw_indx));
             if( indx >= 0 ) {
                 [panel setSelectionForItemAtIndex:indx selected:false];
             }
-        
+
             // it's hard to imagine a legit situation when parent_path+filename+host wouldn't
             // uniquely identify an item and there will be need to search further. so at this point
             // it should be safe to bail out earlier.

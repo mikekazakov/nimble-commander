@@ -76,8 +76,7 @@ bool SearchInFile::IsEOF() const
     return m_Position >= m_File.FileSize();
 }
 
-SearchInFile::Response
-SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker _checker)
+SearchInFile::Response SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker _checker)
 {
     if( m_File.FileSize() == 0 )
         return Response::NotFound; // for singular case
@@ -110,13 +109,11 @@ SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker 
                m_Position < m_File.WindowPos() + m_File.WindowSize()); // sanity check
 
         // get UniChars from this window using given encoding
-        assert(encodings::BytesForCodeUnit(m_TextSearchEncoding) <=
-               2); // TODO: support for UTF-32 in the future
-        bool isodd = (encodings::BytesForCodeUnit(m_TextSearchEncoding) == 2) &&
-                     ((m_File.WindowPos() & 1) == 1);
+        assert(encodings::BytesForCodeUnit(m_TextSearchEncoding) <= 2); // TODO: support for UTF-32 in the future
+        bool isodd = (encodings::BytesForCodeUnit(m_TextSearchEncoding) == 2) && ((m_File.WindowPos() & 1) == 1);
         encodings::InterpretAsUnichar(m_TextSearchEncoding,
-                                      static_cast<const unsigned char *>(m_File.Window()) +
-                                          left_window_gap + (isodd ? 1 : 0),
+                                      static_cast<const unsigned char *>(m_File.Window()) + left_window_gap +
+                                          (isodd ? 1 : 0),
                                       m_File.WindowSize() - left_window_gap - (isodd ? 1 : 0),
                                       m_DecodedBuffer.get(),
                                       m_DecodedBufferIndx.get(),
@@ -127,8 +124,8 @@ SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker 
         // use this UniChars to produce a regular CFString
         if( m_DecodedBufferString != 0 )
             CFRelease(m_DecodedBufferString);
-        m_DecodedBufferString = CFStringCreateWithCharactersNoCopy(
-            0, m_DecodedBuffer.get(), m_DecodedBufferSize, kCFAllocatorNull);
+        m_DecodedBufferString =
+            CFStringCreateWithCharactersNoCopy(0, m_DecodedBuffer.get(), m_DecodedBufferSize, kCFAllocatorNull);
 
         const auto find_flags = m_SearchOptionsBits.case_sensitive ? 0 : kCFCompareCaseInsensitive;
         CFRange result = CFStringFind(m_DecodedBufferString, m_RequestedTextSearch, find_flags);
@@ -139,10 +136,9 @@ SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker 
                 // left some space in the tail to exclude situations when searched text is cut
                 // between the windows
                 assert(left_window_gap == 0);
-                assert(size_t(CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit) <
-                       m_File.WindowSize());
-                m_Position = m_Position + m_File.WindowSize() -
-                             CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit;
+                assert(size_t(CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit) < m_File.WindowSize());
+                m_Position =
+                    m_Position + m_File.WindowSize() - CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit;
             }
             else { // this is the end (c)
                 m_Position = m_File.FileSize();
@@ -151,8 +147,7 @@ SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker 
         else {
             assert(size_t(result.location + result.length) <= m_DecodedBufferSize); // sanity check
             // check for whole phrase is this option is set
-            if( m_SearchOptionsBits.find_whole_phrase &&
-                !IsWholePhrase(m_DecodedBufferString, result) ) {
+            if( m_SearchOptionsBits.find_whole_phrase && !IsWholePhrase(m_DecodedBufferString, result) ) {
                 // false alarm - just move position beyond found part ang go on
                 m_Position = m_Position + m_DecodedBufferIndx[result.location + result.length];
                 continue;
@@ -207,8 +202,7 @@ static bool IsWholePhrase(CFStringRef _string, CFRange _range)
     }
 
     if( _range.location + _range.length < CFStringGetLength(_string) ) {
-        const auto character =
-            CFStringGetCharacterAtIndex(_string, _range.location + _range.length);
+        const auto character = CFStringGetCharacterAtIndex(_string, _range.location + _range.length);
         if( CFCharacterSetIsCharacterMember(alphanumeric, character) )
             return false;
     }

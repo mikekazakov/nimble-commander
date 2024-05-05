@@ -24,8 +24,7 @@ public:
 private:
     using CB = CopyingJobCallbacks;
 
-    enum class LockedItemCause
-    {
+    enum class LockedItemCause {
         Moving,
         Deletion,
         Opening

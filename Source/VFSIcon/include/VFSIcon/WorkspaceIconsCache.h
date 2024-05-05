@@ -11,9 +11,9 @@ namespace nc::vfsicon {
  */
 class WorkspaceIconsCache
 {
-public:    
+public:
     virtual ~WorkspaceIconsCache() = default;
-    
+
     /**
      * Returns cached Workspace Icon for specified filename without any checking if it is outdated.
      * Caller should call ProduceThumbnail if he wants to get an actual one.
@@ -28,7 +28,6 @@ public:
      * Will return nil for files inaccessible with regular rights.
      */
     virtual NSImage *ProduceIcon(const std::string &_file_path) = 0;
-
 };
 
-}
+} // namespace nc::vfsicon

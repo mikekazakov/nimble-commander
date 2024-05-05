@@ -6,9 +6,9 @@
 
 - (instancetype)init;
 
-@property (nonatomic) NSString* message;
-@property (nonatomic) NSString* path;
-@property (nonatomic) NSString* error;
-@property (nonatomic) int errorNo;
+@property(nonatomic) NSString *message;
+@property(nonatomic) NSString *path;
+@property(nonatomic) NSString *error;
+@property(nonatomic) int errorNo;
 
 @end

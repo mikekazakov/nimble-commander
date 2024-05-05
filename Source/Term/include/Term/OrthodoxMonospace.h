@@ -6,11 +6,10 @@
 
 #include <string>
 
-namespace nc::term
-{
-        
+namespace nc::term {
+
 // graphic configuration
 void SetParamsForUserReadableText(CGContextRef _context);
 void SetParamsForUserASCIIArt(CGContextRef _context);
-    
-}
+
+} // namespace nc::term

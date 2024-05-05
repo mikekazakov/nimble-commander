@@ -87,4 +87,4 @@ void ReadBuffer::Clear()
 {
     m_Size = 0;
 }
-}
+} // namespace nc::vfs::webdav

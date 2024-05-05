@@ -80,10 +80,10 @@ public:
     // Adds the specified tag to the existing list of tags of the specified item.
     // It there's a tag with the same label and different color, it will be overwritten.
     static bool AddTag(const std::filesystem::path &_path, const Tag &_tag) noexcept;
-    
+
     // Removes the specified tag from the existing list of tags of the specified item.
     static bool RemoveTag(const std::filesystem::path &_path, std::string_view _label) noexcept;
-    
+
     // Removes the specified tag from all items on the filesystem.
     static void RemoveTagFromAllItems(std::string_view _tag) noexcept;
 };

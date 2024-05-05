@@ -5,25 +5,25 @@
 #include <Base/algo.h>
 
 using namespace nc::vfs;
-//using nc::vfs::MemHost;
+// using nc::vfs::MemHost;
 #define PREFIX "VFSMem "
 
-//static VFSNativeHost& host()
+// static VFSNativeHost& host()
 //{
-//    return *TestEnv().vfs_native;
-//}
+//     return *TestEnv().vfs_native;
+// }
 //
-//static bool ListingHas(const Listing& listing, const std::string& _filename){
-//    return std::any_of(listing.begin(), listing.end(), [&](auto &item){
-//        return item.Filename() == _filename;
-//    });
-//};
+// static bool ListingHas(const Listing& listing, const std::string& _filename){
+//     return std::any_of(listing.begin(), listing.end(), [&](auto &item){
+//         return item.Filename() == _filename;
+//     });
+// };
 //
-//static bool ListingHas(const VFSListingPtr& listing, const std::string& _filename){
-//    return ListingHas(*listing, _filename);
-//};
+// static bool ListingHas(const VFSListingPtr& listing, const std::string& _filename){
+//     return ListingHas(*listing, _filename);
+// };
 
-TEST_CASE(PREFIX "constructible" )
+TEST_CASE(PREFIX "constructible")
 {
     REQUIRE_NOTHROW(std::make_shared<MemHost>());
 }

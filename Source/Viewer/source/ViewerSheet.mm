@@ -9,29 +9,27 @@ using namespace nc::viewer;
 
 @interface NCViewerSheet ()
 
-@property (nonatomic) NCViewerView *view;
-@property (nonatomic) IBOutlet NSView *viewPlaceholder;
-@property (nonatomic) IBOutlet NSPopUpButton *mode;
-@property (nonatomic) IBOutlet NSTextField *fileSize;
-@property (nonatomic) IBOutlet NSButton *filePos;
-@property (nonatomic) IBOutlet NSProgressIndicator *searchIndicator;
-@property (nonatomic) IBOutlet NSSearchField *searchField;
-@property (nonatomic) IBOutlet NSPopover *settingsPopover;
-@property (nonatomic) IBOutlet NSPopUpButton *encodings;
-@property (nonatomic) IBOutlet NSButton *wordWrap;
-@property (nonatomic) IBOutlet NSButton *settingsButton;
+@property(nonatomic) NCViewerView *view;
+@property(nonatomic) IBOutlet NSView *viewPlaceholder;
+@property(nonatomic) IBOutlet NSPopUpButton *mode;
+@property(nonatomic) IBOutlet NSTextField *fileSize;
+@property(nonatomic) IBOutlet NSButton *filePos;
+@property(nonatomic) IBOutlet NSProgressIndicator *searchIndicator;
+@property(nonatomic) IBOutlet NSSearchField *searchField;
+@property(nonatomic) IBOutlet NSPopover *settingsPopover;
+@property(nonatomic) IBOutlet NSPopUpButton *encodings;
+@property(nonatomic) IBOutlet NSButton *wordWrap;
+@property(nonatomic) IBOutlet NSButton *settingsButton;
 
 - (IBAction)OnClose:(id)sender;
 
-
 @end
 
-@implementation NCViewerSheet
-{
-    VFSHostPtr              m_VFS;
-    std::string             m_Path;
+@implementation NCViewerSheet {
+    VFSHostPtr m_VFS;
+    std::string m_Path;
     std::unique_ptr<nc::vfs::FileWindow> m_FileWindow;
-    
+
     NCViewerViewController *m_Controller;
 }
 @synthesize view;
@@ -46,34 +44,33 @@ using namespace nc::viewer;
 @synthesize wordWrap;
 @synthesize settingsButton;
 
-- (id) initWithFilepath:(std::string)path
-                     at:(VFSHostPtr)vfs
-          viewerFactory:(const std::function<NCViewerView*(NSRect)>&)_viewer_factory
-       viewerController:(NCViewerViewController*)_viewer_controller
+- (id)initWithFilepath:(std::string)path
+                    at:(VFSHostPtr)vfs
+         viewerFactory:(const std::function<NCViewerView *(NSRect)> &)_viewer_factory
+      viewerController:(NCViewerViewController *)_viewer_controller
 {
     dispatch_assert_main_queue();
-    auto nib_path = [Bundle() pathForResource:@"NCViewerSheet"
-                                       ofType:@"nib"];
+    auto nib_path = [Bundle() pathForResource:@"NCViewerSheet" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
-    if(self) {
+    if( self ) {
         m_VFS = vfs;
         m_Path = path;
-        
+
         m_Controller = _viewer_controller;
         [m_Controller setFile:path at:vfs];
-        
-        self.view = _viewer_factory( NSMakeRect(0, 0, 100, 100) );
+
+        self.view = _viewer_factory(NSMakeRect(0, 0, 100, 100));
         self.view.translatesAutoresizingMaskIntoConstraints = false;
     }
     return self;
 }
 
-- (void) dealloc
+- (void)dealloc
 {
     dispatch_assert_main_queue();
 }
 
-- (bool) open
+- (bool)open
 {
     dispatch_assert_background_queue();
 
@@ -83,19 +80,16 @@ using namespace nc::viewer;
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    
+
     [self.viewPlaceholder addSubview:self.view];
     auto viewer = self.view;
     const auto views = NSDictionaryOfVariableBindings(viewer);
-    const auto constraints = { @"V:|-(==0)-[viewer]-(==0)-|", @"|-(==0)-[viewer]-(==0)-|" };
-    for( auto constraint: constraints ) {
-        auto constaints = [NSLayoutConstraint constraintsWithVisualFormat:constraint
-                                                                  options:0
-                                                                  metrics:nil
-                                                                    views:views];
+    const auto constraints = {@"V:|-(==0)-[viewer]-(==0)-|", @"|-(==0)-[viewer]-(==0)-|"};
+    for( auto constraint : constraints ) {
+        auto constaints = [NSLayoutConstraint constraintsWithVisualFormat:constraint options:0 metrics:nil views:views];
         [self.viewPlaceholder addConstraints:constaints];
     }
-    
+
     self.view.wantsLayer = true; // to reduce side-effects of overdrawing by scrolling with touchpad
 
     m_Controller.view = self.view;
@@ -107,22 +101,22 @@ using namespace nc::viewer;
     m_Controller.encodingsPopUp = self.encodings;
     m_Controller.wordWrappingCheckBox = self.wordWrap;
     m_Controller.settingsButton = self.settingsButton;
-    
+
     [m_Controller show];
     m_Controller.nextResponder = self.window.nextResponder;
     self.window.nextResponder = m_Controller;
-    
+
     [self.window recalculateKeyViewLoop];
     [self.window makeFirstResponder:self.view.keyboardResponder];
 }
 
-- (IBAction)OnClose:(id)[[maybe_unused]]_sender
+- (IBAction)OnClose:(id) [[maybe_unused]] _sender
 {
     [m_Controller saveFileState];
     [self endSheet:NSModalResponseOK];
 }
 
-- (IBAction)OnFileInternalBigViewCommand:(id)[[maybe_unused]]_sender
+- (IBAction)OnFileInternalBigViewCommand:(id) [[maybe_unused]] _sender
 {
     [self OnClose:self];
 }

@@ -7,8 +7,7 @@
 
 namespace nc::ops {
 
-enum class ItemStatus
-{
+enum class ItemStatus {
     Processed = 0,
     Skipped = 1
 };

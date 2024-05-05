@@ -10,4 +10,4 @@ PanelViewFilenameTrimming GetCurrentFilenamesTrimmingMode() noexcept;
 ByteCountFormatter::Type GetFileSizeFormat() noexcept;
 ByteCountFormatter::Type GetSelectionSizeFormat() noexcept;
 
-}
+} // namespace nc::panel

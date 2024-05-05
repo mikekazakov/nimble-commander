@@ -18,8 +18,7 @@ using nc::utility::FontGeometryInfo;
 static const auto g_TopInset = 1.;
 
 static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet();
-static std::shared_ptr<const TextModeWorkingSet>
-BuildWorkingSetForBackendState(const DataBackend &_backend);
+static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(const DataBackend &_backend);
 
 @implementation NCViewerHexModeView {
     std::shared_ptr<const nc::viewer::DataBackend> m_Backend;
@@ -62,16 +61,14 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
         [self addSubview:m_VerticalScroller];
 
         NSDictionary *views = NSDictionaryOfVariableBindings(m_VerticalScroller);
-        [self addConstraints:[NSLayoutConstraint
-                                 constraintsWithVisualFormat:@"[m_VerticalScroller(15)]-(0)-|"
-                                                     options:0
-                                                     metrics:nil
-                                                       views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                                 constraintsWithVisualFormat:@"V:|-(0)-[m_VerticalScroller]-(0)-|"
-                                                     options:0
-                                                     metrics:nil
-                                                       views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_VerticalScroller(15)]-(0)-|"
+                                                                     options:0
+                                                                     metrics:nil
+                                                                       views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(0)-[m_VerticalScroller]-(0)-|"
+                                                                     options:0
+                                                                     metrics:nil
+                                                                       views:views]];
 
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)
@@ -133,8 +130,7 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
     source.foreground_color = m_Theme->TextColor().CGColor;
     source.working_set = m_WorkingSet;
     source.raw_bytes_begin = reinterpret_cast<const std::byte *>(m_Backend->Raw());
-    source.raw_bytes_end =
-        reinterpret_cast<const std::byte *>(m_Backend->Raw()) + m_Backend->RawSize();
+    source.raw_bytes_end = reinterpret_cast<const std::byte *>(m_Backend->Raw()) + m_Backend->RawSize();
     source.number_of_columns = 2;
     source.bytes_per_column = 8;
 
@@ -190,8 +186,8 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
             [self pageUp:_sender];
             break;
         case NSScrollerKnob: {
-            auto scroller_pos = HexModeLayout::ScrollerPosition{m_VerticalScroller.doubleValue,
-                                                                m_VerticalScroller.knobProportion};
+            auto scroller_pos =
+                HexModeLayout::ScrollerPosition{m_VerticalScroller.doubleValue, m_VerticalScroller.knobProportion};
             const auto offset = m_Layout->CalcGlobalOffsetForScrollerPosition(scroller_pos);
             [self scrollToGlobalBytesOffset:offset];
             break;
@@ -245,14 +241,12 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
     const auto line_height = m_Frame->FontInfo().LineHeight();
 
     auto line_pos = CGPointMake(origin.x, origin.y + lines_start * m_FontInfo.LineHeight());
-    for( int row_index = lines_start; row_index < lines_end;
-         ++row_index, line_pos.y += line_height ) {
+    for( int row_index = lines_start; row_index < lines_end; ++row_index, line_pos.y += line_height ) {
         if( row_index < 0 || row_index >= m_Frame->NumberOfRows() )
             continue;
 
-        const auto text_origin = CGPointMake(line_pos.x,
-                                             line_pos.y + m_Frame->FontInfo().LineHeight() -
-                                                 m_Frame->FontInfo().Descent());
+        const auto text_origin =
+            CGPointMake(line_pos.x, line_pos.y + m_Frame->FontInfo().LineHeight() - m_Frame->FontInfo().Descent());
 
         auto &row = m_Frame->RowAtIndex(row_index);
 
@@ -262,8 +256,8 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
 
         // columns
         for( int column_index = 0; column_index < row.ColumnsNumber(); ++column_index ) {
-            const auto sel_bg = m_Layout->CalcColumnSelectionBackground(
-                bytes_selection, row_index, column_index, offsets);
+            const auto sel_bg =
+                m_Layout->CalcColumnSelectionBackground(bytes_selection, row_index, column_index, offsets);
             if( sel_bg.first < sel_bg.second )
                 [self highlightSelectionWithRect:CGRectMake(sel_bg.first,
                                                             line_pos.y,
@@ -275,13 +269,10 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
         }
 
         // snippet
-        const auto sel_bg =
-            m_Layout->CalcSnippetSelectionBackground(chars_selection, row_index, offsets);
+        const auto sel_bg = m_Layout->CalcSnippetSelectionBackground(chars_selection, row_index, offsets);
         if( sel_bg.first < sel_bg.second )
-            [self highlightSelectionWithRect:CGRectMake(sel_bg.first,
-                                                        line_pos.y,
-                                                        sel_bg.second - sel_bg.first,
-                                                        line_height)];
+            [self highlightSelectionWithRect:CGRectMake(
+                                                 sel_bg.first, line_pos.y, sel_bg.second - sel_bg.first, line_height)];
         CGContextSetTextPosition(context, offsets.snippet, text_origin.y);
         CTLineDraw(row.SnippetLine(), context);
     }
@@ -336,8 +327,7 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
                        static_cast<int64_t>(0),
                        static_cast<int64_t>(m_Backend->FileSize()) - static_cast<int64_t>(m_Backend->RawSize()));
 
-        const auto rc = [self.delegate hexModeView:self
-               requestsSyncBackendWindowMovementAt:desired_wnd_pos];
+        const auto rc = [self.delegate hexModeView:self requestsSyncBackendWindowMovementAt:desired_wnd_pos];
         if( rc != VFSError::Ok )
             return false;
 
@@ -421,26 +411,24 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
     }
     else if( [self canMoveFileWindowUp] ) {
         const auto old_frame = m_Frame;
-        const auto old_anchor_row_index =
-            std::clamp(scroll_offset.row, 0, old_frame->NumberOfRows() - 1);
+        const auto old_anchor_row_index = std::clamp(scroll_offset.row, 0, old_frame->NumberOfRows() - 1);
         const auto old_anchor_glob_offset =
             static_cast<long>(old_frame->RowAtIndex(old_anchor_row_index).BytesStart()) +
             old_frame->WorkingSet().GlobalOffset();
         const auto desired_window_offset =
             std::clamp(old_anchor_glob_offset - static_cast<int64_t>(m_Backend->RawSize()) +
-                       static_cast<int64_t>(m_Backend->RawSize()) / 4,
+                           static_cast<int64_t>(m_Backend->RawSize()) / 4,
                        static_cast<int64_t>(0),
                        static_cast<int64_t>(m_Backend->FileSize() - m_Backend->RawSize()));
 
-        const auto rc = [self.delegate hexModeView:self
-               requestsSyncBackendWindowMovementAt:desired_window_offset];
+        const auto rc = [self.delegate hexModeView:self requestsSyncBackendWindowMovementAt:desired_window_offset];
         if( rc != VFSError::Ok )
             return false;
 
         [self rebuildWorkingSetAndFrame];
 
-        auto new_offset = HexModeLayout::FindEqualVerticalOffsetForRebuiltFrame(
-            *old_frame, scroll_offset.row, *m_Frame);
+        auto new_offset =
+            HexModeLayout::FindEqualVerticalOffsetForRebuiltFrame(*old_frame, scroll_offset.row, *m_Frame);
         if( new_offset > 0 )
             new_offset--;
 
@@ -465,29 +453,27 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
     }
     else if( [self canMoveFileWindowDown] ) {
         const auto old_frame = m_Frame;
-        const auto old_anchor_row_index =
-            std::clamp(scroll_offset.row, 0, old_frame->NumberOfRows() - 1);
+        const auto old_anchor_row_index = std::clamp(scroll_offset.row, 0, old_frame->NumberOfRows() - 1);
         const auto old_anchor_glob_offset =
             static_cast<long>(old_frame->RowAtIndex(old_anchor_row_index).BytesStart()) +
             old_frame->WorkingSet().GlobalOffset();
         const auto desired_window_offset =
             std::clamp(old_anchor_glob_offset + static_cast<int64_t>(m_Backend->RawSize()) -
-                       static_cast<int64_t>(m_Backend->RawSize()) / 4,
+                           static_cast<int64_t>(m_Backend->RawSize()) / 4,
                        static_cast<int64_t>(0),
                        static_cast<int64_t>(m_Backend->FileSize() - m_Backend->RawSize()));
 
         if( desired_window_offset <= static_cast<int64_t>(m_Backend->FilePos()) )
             return false; // singular situation. don't handle for now.
 
-        const auto rc = [self.delegate hexModeView:self
-               requestsSyncBackendWindowMovementAt:desired_window_offset];
+        const auto rc = [self.delegate hexModeView:self requestsSyncBackendWindowMovementAt:desired_window_offset];
         if( rc != VFSError::Ok )
             return false;
 
         [self rebuildWorkingSetAndFrame];
 
-        auto new_offset = HexModeLayout::FindEqualVerticalOffsetForRebuiltFrame(
-            *old_frame, scroll_offset.row, *m_Frame);
+        auto new_offset =
+            HexModeLayout::FindEqualVerticalOffsetForRebuiltFrame(*old_frame, scroll_offset.row, *m_Frame);
         if( scroll_offset.row + m_Layout->RowsInView() < m_Frame->NumberOfRows() )
             new_offset++;
 
@@ -543,9 +529,8 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
 
 - (void)scrollWheel:(NSEvent *)_event
 {
-    const auto delta_y = _event.hasPreciseScrollingDeltas
-                             ? _event.scrollingDeltaY
-                             : _event.scrollingDeltaY * m_FontInfo.LineHeight();
+    const auto delta_y =
+        _event.hasPreciseScrollingDeltas ? _event.scrollingDeltaY : _event.scrollingDeltaY * m_FontInfo.LineHeight();
     [self scrollWheelVertical:delta_y];
 
     [self scrollPositionDidChange];
@@ -580,8 +565,7 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
 {
     const auto coords = [self convertPoint:_event.locationInWindow fromView:nil];
     const auto hit_part = m_Layout->HitTest(coords.x);
-    if( hit_part == HexModeLayout::HitPart::Columns ||
-        hit_part == HexModeLayout::HitPart::AddressColumsGap ) {
+    if( hit_part == HexModeLayout::HitPart::Columns || hit_part == HexModeLayout::HitPart::AddressColumsGap ) {
         return true;
     }
     if( hit_part == HexModeLayout::HitPart::ColumnsSnippetGap ) {
@@ -619,11 +603,11 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
              event = [self.window nextEventMatchingMask:event_mask] ) {
             const auto curr_view_coords = [self convertPoint:event.locationInWindow fromView:nil];
             const auto curr_ind = m_Layout->ByteOffsetFromColumnHit(curr_view_coords);
-            const auto selection = HexModeLayout::MergeSelection(
-                original_selection, modifying_existing_selection, first_ind, curr_ind);
+            const auto selection =
+                HexModeLayout::MergeSelection(original_selection, modifying_existing_selection, first_ind, curr_ind);
             if( selection.first != selection.second ) {
-                const auto global = CFRangeMake(selection.first + m_WorkingSet->GlobalOffset(),
-                                                selection.second - selection.first);
+                const auto global =
+                    CFRangeMake(selection.first + m_WorkingSet->GlobalOffset(), selection.second - selection.first);
                 [self.delegate hexModeView:self setSelection:global];
             }
             else
@@ -637,13 +621,12 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
              event = [self.window nextEventMatchingMask:event_mask] ) {
             const auto curr_view_coords = [self convertPoint:event.locationInWindow fromView:nil];
             const auto curr_ind = m_Layout->CharOffsetFromSnippetHit(curr_view_coords);
-            const auto selection = HexModeLayout::MergeSelection(
-                original_selection, modifying_existing_selection, first_ind, curr_ind);
+            const auto selection =
+                HexModeLayout::MergeSelection(original_selection, modifying_existing_selection, first_ind, curr_ind);
             if( selection.first != selection.second ) {
-                const auto global =
-                    CFRangeMake(m_WorkingSet->ToGlobalByteOffset(selection.first),
-                                m_WorkingSet->ToGlobalByteOffset(selection.second) -
-                                    m_WorkingSet->ToGlobalByteOffset(selection.first));
+                const auto global = CFRangeMake(m_WorkingSet->ToGlobalByteOffset(selection.first),
+                                                m_WorkingSet->ToGlobalByteOffset(selection.second) -
+                                                    m_WorkingSet->ToGlobalByteOffset(selection.first));
                 [self.delegate hexModeView:self setSelection:global];
             }
             else
@@ -684,8 +667,7 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
     const auto old_frame = m_Frame;
     m_Frame = [self buildFrame];
     m_Layout->SetFrame(m_Frame);
-    auto new_offset = HexModeLayout::FindEqualVerticalOffsetForRebuiltFrame(
-        *old_frame, scroll_offset.row, *m_Frame);
+    auto new_offset = HexModeLayout::FindEqualVerticalOffsetForRebuiltFrame(*old_frame, scroll_offset.row, *m_Frame);
     m_Layout->SetOffset({new_offset, scroll_offset.smooth});
     [self scrollPositionDidChange];
     [self setNeedsDisplay:true];
@@ -693,8 +675,7 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
 
 @end
 
-static std::shared_ptr<const TextModeWorkingSet>
-BuildWorkingSetForBackendState(const DataBackend &_backend)
+static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(const DataBackend &_backend)
 {
     TextModeWorkingSet::Source source;
     source.unprocessed_characters = reinterpret_cast<const char16_t *>(_backend.UniChars());

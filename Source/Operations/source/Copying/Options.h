@@ -4,15 +4,13 @@
 namespace nc::ops {
 
 struct CopyingOptions {
-    enum class ChecksumVerification : char
-    {
+    enum class ChecksumVerification : char {
         Never = 0,
         WhenMoves = 1,
         Always = 2
     };
 
-    enum class ExistBehavior : char
-    {
+    enum class ExistBehavior : char {
         Ask = 0,          // default
         SkipAll = 1,      // silently skips any copiyng file, if target exists
         OverwriteAll = 2, // overwrites existings target
@@ -22,8 +20,7 @@ struct CopyingOptions {
         KeepBoth = 6      // always use a different name to keep both items
     };
 
-    enum class LockedItemBehavior : char
-    {
+    enum class LockedItemBehavior : char {
         Ask,       // default - ask what to when failed to deled a locked item
         SkipAll,   // silently skips deleting locked items
         UnlockAll, // silently unlock an item it wasn't removed

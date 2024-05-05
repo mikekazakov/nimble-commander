@@ -15,7 +15,6 @@ public:
     static const std::string &StateDirectory();
     static const std::string &SupportDirectory();
     static const std::shared_ptr<NetworkConnectionsManager> &NetworkConnectionsManager();
-    
 };
 
-}
+} // namespace nc

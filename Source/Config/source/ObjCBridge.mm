@@ -90,9 +90,7 @@ using nc::config::Config;
  # A class object (Class)
  : A method selector (SEL)
  */
-+ (void)setValue:(nullable id)value
-      forKeyPath:(std::string_view)_key_path
-        inConfig:(Config &)_config
++ (void)setValue:(nullable id)value forKeyPath:(std::string_view)_key_path inConfig:(Config &)_config
 {
     if( const auto n = nc::objc_cast<NSNumber>(value) ) {
         const auto type = n.objCType;

@@ -31,7 +31,7 @@ struct Color {
     constexpr Color() noexcept = default;
     constexpr Color(uint8_t _c) noexcept;
     constexpr Color(uint8_t _r, uint8_t _g, uint8_t _b) noexcept;
-    
+
     constexpr auto operator<=>(const Color &rhs) const noexcept = default;
 
     uint8_t c = Black;

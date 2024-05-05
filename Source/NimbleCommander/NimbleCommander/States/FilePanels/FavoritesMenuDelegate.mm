@@ -9,9 +9,9 @@
 
 using namespace nc::panel;
 
-static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Favorite &_favorite )
+static NSMenuItem *BuildMenuItem(const FavoriteLocationsStorage::Favorite &_favorite)
 {
-    static const auto attributes = @{NSFontAttributeName:[NSFont menuFontOfSize:0]};
+    static const auto attributes = @{NSFontAttributeName: [NSFont menuFontOfSize:0]};
     NSMenuItem *it = [[NSMenuItem alloc] init];
     if( !_favorite.title.empty() ) {
         if( auto title = [NSString stringWithUTF8StdString:_favorite.title] )
@@ -21,14 +21,14 @@ static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Favorite &_fav
         it.title = StringByTruncatingToWidth(title, 600, kTruncateAtMiddle, attributes);
     if( auto tt = [NSString stringWithUTF8StdString:_favorite.location->verbose_path] )
         it.toolTip = tt;
-    
+
     it.target = nil;
     it.action = @selector(OnGoToFavoriteLocation:);
     it.representedObject = [[AnyHolder alloc] initWithAny:std::any(_favorite.location->hosts_stack)];
     return it;
 }
 
-static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Location &_location )
+static NSMenuItem *BuildMenuItem(const FavoriteLocationsStorage::Location &_location)
 {
     NSMenuItem *it = [[NSMenuItem alloc] init];
     if( auto title = [NSString stringWithUTF8StdString:_location.verbose_path] )
@@ -39,25 +39,22 @@ static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Location &_loc
     return it;
 }
 
-@implementation FavoriteLocationsMenuDelegate
-{
-    std::vector<NSMenuItem*> m_MenuItems;
+@implementation FavoriteLocationsMenuDelegate {
+    std::vector<NSMenuItem *> m_MenuItems;
     bool m_MenuIsDirty;
     FavoriteLocationsStorage *m_Storage;
-    NSMenuItem* m_ManageItem;
+    NSMenuItem *m_ManageItem;
     FavoriteLocationsStorage::ObservationTicket m_Ticket;
 }
 
-- (instancetype) initWithStorage:(FavoriteLocationsStorage&)_storage
-               andManageMenuItem:(NSMenuItem *)_item
+- (instancetype)initWithStorage:(FavoriteLocationsStorage &)_storage andManageMenuItem:(NSMenuItem *)_item
 {
-   if( self = [super init] ) {
-       assert(_item);
+    if( self = [super init] ) {
+        assert(_item);
         m_Storage = &_storage;
         m_ManageItem = _item;
         [self refreshItems];
-        m_Ticket = m_Storage->ObserveFavoritesChanges(
-            nc::objc_callback(self, @selector(favoritesChanged)) );
+        m_Ticket = m_Storage->ObserveFavoritesChanges(nc::objc_callback(self, @selector(favoritesChanged)));
     }
     return self;
 }
@@ -67,21 +64,21 @@ static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Location &_loc
     [self refreshItems];
 }
 
-- (void) refreshItems
+- (void)refreshItems
 {
     m_MenuItems.clear();
-    for( auto &f: m_Storage->Favorites() )
-        m_MenuItems.emplace_back( BuildMenuItem(f) );
-    m_MenuItems.emplace_back( NSMenuItem.separatorItem );
-    m_MenuItems.emplace_back( m_ManageItem );
+    for( auto &f : m_Storage->Favorites() )
+        m_MenuItems.emplace_back(BuildMenuItem(f));
+    m_MenuItems.emplace_back(NSMenuItem.separatorItem);
+    m_MenuItems.emplace_back(m_ManageItem);
     m_MenuIsDirty = true;
 }
 
-- (void)menuNeedsUpdate:(NSMenu*)menu
+- (void)menuNeedsUpdate:(NSMenu *)menu
 {
     if( m_MenuIsDirty ) {
         [menu removeAllItems];
-        for(auto i: m_MenuItems)
+        for( auto i : m_MenuItems )
             [menu addItem:i];
         m_MenuIsDirty = false;
     }
@@ -89,17 +86,15 @@ static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Location &_loc
 
 @end
 
-@implementation FrequentlyVisitedLocationsMenuDelegate
-{
+@implementation FrequentlyVisitedLocationsMenuDelegate {
     FavoriteLocationsStorage *m_Storage;
-    NSMenuItem* m_ClearItem;
+    NSMenuItem *m_ClearItem;
 }
 
-- (instancetype) initWithStorage:(FavoriteLocationsStorage&)_storage
-               andClearMenuItem:(NSMenuItem *)_item
+- (instancetype)initWithStorage:(FavoriteLocationsStorage &)_storage andClearMenuItem:(NSMenuItem *)_item
 {
-  if( self = [super init] ) {
-       assert(_item);
+    if( self = [super init] ) {
+        assert(_item);
         m_Storage = &_storage;
         m_ClearItem = _item;
         m_ClearItem.target = self;
@@ -108,27 +103,27 @@ static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Location &_loc
     return self;
 }
 
-- (BOOL)menuHasKeyEquivalent:(NSMenu*)[[maybe_unused]]_menu
-                    forEvent:(NSEvent*)[[maybe_unused]]_event
-                      target:(__nullable id* __nonnull)[[maybe_unused]]_target
-                      action:(__nullable SEL* __nonnull)[[maybe_unused]]_action
+- (BOOL)menuHasKeyEquivalent:(NSMenu *) [[maybe_unused]] _menu
+                    forEvent:(NSEvent *) [[maybe_unused]] _event
+                      target:(__nullable id *__nonnull) [[maybe_unused]] _target
+                      action:(__nullable SEL *__nonnull) [[maybe_unused]] _action
 {
     return false; // this menu has no hotkeys, so there's no reason to (re)build it upon a keydown.
 }
 
-- (void)menuNeedsUpdate:(NSMenu*)menu
+- (void)menuNeedsUpdate:(NSMenu *)menu
 {
     // caching means not much here, so we rebuild this menu on every access
     const auto locations = m_Storage->FrecentlyUsed(10);
 
     [menu removeAllItems];
-    for( auto &l: locations )
+    for( auto &l : locations )
         [menu addItem:BuildMenuItem(*l)];
     [menu addItem:NSMenuItem.separatorItem];
     [menu addItem:m_ClearItem];
 }
 
-- (IBAction)OnClearMenu:(id)[[maybe_unused]]_sender
+- (IBAction)OnClearMenu:(id) [[maybe_unused]] _sender
 {
     m_Storage->ClearVisitedLocations();
 }

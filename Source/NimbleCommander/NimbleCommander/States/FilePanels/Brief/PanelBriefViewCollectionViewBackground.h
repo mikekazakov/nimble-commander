@@ -5,6 +5,6 @@
 
 @interface PanelBriefViewCollectionViewBackground : NSView
 
-@property (nonatomic) int rowHeight;
+@property(nonatomic) int rowHeight;
 
 @end

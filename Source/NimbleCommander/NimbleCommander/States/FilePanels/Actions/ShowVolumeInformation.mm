@@ -7,17 +7,16 @@
 
 namespace nc::panel::actions {
 
-ShowVolumeInformation::ShowVolumeInformation(nc::utility::NativeFSManager& _nfsm):
-    m_NativeFSManager{_nfsm}
+ShowVolumeInformation::ShowVolumeInformation(nc::utility::NativeFSManager &_nfsm) : m_NativeFSManager{_nfsm}
 {
 }
 
-bool ShowVolumeInformation::Predicate( PanelController *_target ) const
+bool ShowVolumeInformation::Predicate(PanelController *_target) const
 {
     return _target.isUniform && _target.vfs->IsNativeFS();
 }
 
-void ShowVolumeInformation::Perform( PanelController *_target, id ) const
+void ShowVolumeInformation::Perform(PanelController *_target, id) const
 {
     std::string path;
     if( auto i = _target.view.item ) {
@@ -35,10 +34,9 @@ void ShowVolumeInformation::Perform( PanelController *_target, id ) const
     }
     else
         return;
-    
-    auto sheet = [[DetailedVolumeInformationSheetController alloc]
-        initWithFSManager:m_NativeFSManager];
+
+    auto sheet = [[DetailedVolumeInformationSheetController alloc] initWithFSManager:m_NativeFSManager];
     [sheet showSheetForWindow:_target.window withPath:path];
 }
 
-};
+}; // namespace nc::panel::actions

@@ -2,8 +2,8 @@
 #pragma once
 #include <functional>
 
-@interface SpotlightSearchPopupViewController : NSViewController<NSPopoverDelegate>
+@interface SpotlightSearchPopupViewController : NSViewController <NSPopoverDelegate>
 
-@property (nonatomic) std::function<void(const std::string&)> handler;
+@property(nonatomic) std::function<void(const std::string &)> handler;
 
 @end

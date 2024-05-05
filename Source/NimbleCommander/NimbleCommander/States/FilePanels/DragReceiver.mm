@@ -25,8 +25,7 @@ namespace nc::panel {
 
 using namespace std::literals;
 
-static void
-UpdateValidDropNumber(id<NSDraggingInfo> _dragging, int _valid_number, NSDragOperation _operation);
+static void UpdateValidDropNumber(id<NSDraggingInfo> _dragging, int _valid_number, NSDragOperation _operation);
 static bool DraggingIntoFoldersAllowed() noexcept;
 static void PrintDragOperations(NSDragOperation _op);
 static std::vector<VFSListingItem> ExtractListingItems(FilesDraggingSource *_source);
@@ -34,13 +33,10 @@ static NSArray<NSURL *> *ExtractURLs(NSPasteboard *_source);
 static int CountItemsWithType(id<NSDraggingInfo> _sender, NSString *_type);
 static NSString *URLs_Promise_UTI();
 static NSString *URLs_UTI();
-static std::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray<NSURL *> *_items,
-                                                                        VFSHost &_host);
+static std::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray<NSURL *> *_items, VFSHost &_host);
 
 static void AddPanelRefreshIfNecessary(PanelController *_target, ops::Operation &_operation);
-static void AddPanelRefreshIfNecessary(PanelController *_target,
-                                       PanelController *_source,
-                                       ops::Operation &_operation);
+static void AddPanelRefreshIfNecessary(PanelController *_target, PanelController *_source, ops::Operation &_operation);
 
 DragReceiver::DragReceiver(PanelController *_target,
                            id<NSDraggingInfo> _dragging,
@@ -82,13 +78,12 @@ NSDragOperation DragReceiver::Validate()
                           destination.Path());
     else
         panel::Log::Trace(SPDLOC, "DragReceiver::Validate() - dragging over an empty destination");
-    
+
     if( destination && destination.Host()->IsWritable() ) {
         if( const auto source = objc_cast<FilesDraggingSource>(m_Dragging.draggingSource) )
             std::tie(operation, valid_items) = ScanLocalSource(source, destination);
         else if( [m_Dragging.draggingPasteboard.types containsObject:URLs_UTI()] )
-            std::tie(operation, valid_items) =
-                ScanURLsSource(ExtractURLs(m_Dragging.draggingPasteboard), destination);
+            std::tie(operation, valid_items) = ScanURLsSource(ExtractURLs(m_Dragging.draggingPasteboard), destination);
         else if( [m_Dragging.draggingPasteboard.types containsObject:URLs_Promise_UTI()] )
             std::tie(operation, valid_items) = ScanURLsPromiseSource(destination);
     }
@@ -147,8 +142,7 @@ std::pair<NSDragOperation, int> DragReceiver::ScanLocalSource(FilesDraggingSourc
     if( operation != NSDragOperationNone && m_DraggingOverDirectory ) {
         // filenames are stored without trailing slashes, so have to add it
         for( const auto &item : _source.items )
-            if( item.item.Host() == _dest.Host() && item.item.IsDir() &&
-                _dest.Path() == item.item.Path() + "/" ) {
+            if( item.item.Host() == _dest.Host() && item.item.IsDir() && _dest.Path() == item.item.Path() + "/" ) {
                 operation = NSDragOperationNone;
                 break;
             }
@@ -195,14 +189,14 @@ vfs::VFSPath DragReceiver::ComposeDestination() const
             if( !m_Target.isUniform )
                 return {};
             auto vfs = m_Target.vfs;
-            
+
             std::filesystem::path parent_dir = nc::utility::PathManip::Parent(m_Target.currentDirectoryPath);
-            if( parent_dir.empty() && vfs->Parent() != nullptr) {
+            if( parent_dir.empty() && vfs->Parent() != nullptr ) {
                 // 'escape' from the current vfs into the parent one
                 parent_dir = nc::utility::PathManip::Parent(vfs->JunctionPath());
                 vfs = vfs->Parent();
             }
-            
+
             if( parent_dir.empty() ) {
                 parent_dir += "/"; // ensure that the path is 1) non-empty 2) has a trailing slash
             }
@@ -237,8 +231,7 @@ NSDragOperation DragReceiver::BuildOperationForLocal(FilesDraggingSource *_sourc
 
         if( m_DraggingOperationsMask & NSDragOperationGeneric ) {
             const auto v1 = m_NativeFSManager.VolumeFromPath(_destination.Path());
-            const auto v2 =
-                m_NativeFSManager.VolumeFromPath(_source.items.front().item.Directory());
+            const auto v2 = m_NativeFSManager.VolumeFromPath(_source.items.front().item.Directory());
             const auto same_native_fs = (v1 != nullptr && v1 == v2);
             return same_native_fs ? NSDragOperationMove : NSDragOperationCopy;
         }
@@ -258,8 +251,7 @@ NSDragOperation DragReceiver::BuildOperationForLocal(FilesDraggingSource *_sourc
     return NSDragOperationNone;
 }
 
-NSDragOperation DragReceiver::BuildOperationForURLs(NSArray<NSURL *> *_source,
-                                                    const vfs::VFSPath &_destination) const
+NSDragOperation DragReceiver::BuildOperationForURLs(NSArray<NSURL *> *_source, const vfs::VFSPath &_destination) const
 {
     if( _source.count == 0 || !_destination )
         return NSDragOperationNone;
@@ -277,8 +269,7 @@ NSDragOperation DragReceiver::BuildOperationForURLs(NSArray<NSURL *> *_source,
 
         if( m_DraggingOperationsMask & NSDragOperationGeneric ) {
             const auto v1 = m_NativeFSManager.VolumeFromPath(_destination.Path());
-            const auto v2 =
-                m_NativeFSManager.VolumeFromPath(_source.firstObject.fileSystemRepresentation);
+            const auto v2 = m_NativeFSManager.VolumeFromPath(_source.firstObject.fileSystemRepresentation);
             const auto same_native_fs = (v1 != nullptr && v1 == v2);
             return same_native_fs ? NSDragOperationMove : NSDragOperationCopy;
         }
@@ -291,8 +282,7 @@ NSDragOperation DragReceiver::BuildOperationForURLs(NSArray<NSURL *> *_source,
     return NSDragOperationNone;
 }
 
-bool DragReceiver::PerformWithLocalSource(FilesDraggingSource *_source,
-                                          const vfs::VFSPath &_destination)
+bool DragReceiver::PerformWithLocalSource(FilesDraggingSource *_source, const vfs::VFSPath &_destination)
 {
     const auto files = ExtractListingItems(_source);
     if( files.empty() )
@@ -301,29 +291,26 @@ bool DragReceiver::PerformWithLocalSource(FilesDraggingSource *_source,
     const auto operation = BuildOperationForLocal(_source, _destination);
     if( operation == NSDragOperationCopy ) {
         const auto opts = MakeDefaultFileCopyOptions();
-        const auto op = std::make_shared<ops::Copying>(
-            std::move(files), _destination.Path(), _destination.Host(), opts);
+        const auto op =
+            std::make_shared<ops::Copying>(std::move(files), _destination.Path(), _destination.Host(), opts);
         AddPanelRefreshIfNecessary(m_Target, *op);
         [m_Target.mainWindowController enqueueOperation:op];
         return true;
     }
     else if( operation == NSDragOperationMove ) {
         const auto opts = MakeDefaultFileMoveOptions();
-        const auto op = std::make_shared<ops::Copying>(
-            std::move(files), _destination.Path(), _destination.Host(), opts);
+        const auto op =
+            std::make_shared<ops::Copying>(std::move(files), _destination.Path(), _destination.Host(), opts);
         AddPanelRefreshIfNecessary(m_Target, _source.sourceController, *op);
         [m_Target.mainWindowController enqueueOperation:op];
         return true;
     }
-    else if( operation == NSDragOperationLink && _source.areAllHostsNative &&
-             _destination.Host()->IsNativeFS() ) {
+    else if( operation == NSDragOperationLink && _source.areAllHostsNative && _destination.Host()->IsNativeFS() ) {
         for( const auto &file : files ) {
             const auto source_path = file.Path();
             const auto dest_path = std::filesystem::path(_destination.Path()) / file.Filename();
-            const auto op = std::make_shared<nc::ops::Linkage>(dest_path.native(),
-                                                               source_path,
-                                                               _destination.Host(),
-                                                               nc::ops::LinkageType::CreateSymlink);
+            const auto op = std::make_shared<nc::ops::Linkage>(
+                dest_path.native(), source_path, _destination.Host(), nc::ops::LinkageType::CreateSymlink);
             AddPanelRefreshIfNecessary(m_Target, *op);
             [m_Target.mainWindowController enqueueOperation:op];
         }
@@ -332,16 +319,14 @@ bool DragReceiver::PerformWithLocalSource(FilesDraggingSource *_source,
     return false;
 }
 
-bool DragReceiver::PerformWithURLsSource(NSArray<NSURL *> *_source,
-                                         const vfs::VFSPath &_destination)
+bool DragReceiver::PerformWithURLsSource(NSArray<NSURL *> *_source, const vfs::VFSPath &_destination)
 {
     if( !_source || _source.count == 0 )
         return false;
 
     // start accessing the security scoped resources identified by the urls if any there are any.
     // this guard must be kept alive until operations finish, hence it's attached to observers.
-    const auto urls_access_guard =
-        std::make_shared<utility::URLSecurityScopedResourceGuard>(_source);
+    const auto urls_access_guard = std::make_shared<utility::URLSecurityScopedResourceGuard>(_source);
 
     const auto operation = BuildOperationForURLs(_source, _destination);
 
@@ -354,9 +339,8 @@ bool DragReceiver::PerformWithURLsSource(NSArray<NSURL *> *_source,
         const int vfs_error = source_items.error();
         dispatch_to_main_queue([vfs_error] {
             Alert *alert = [[Alert alloc] init];
-            alert.messageText =
-                NSLocalizedString(@"Failed to access the dragged item:",
-                                  "Showing error when failed to access the dragged items");
+            alert.messageText = NSLocalizedString(@"Failed to access the dragged item:",
+                                                  "Showing error when failed to access the dragged items");
             alert.informativeText = VFSError::ToNSError(vfs_error).localizedDescription;
             [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];
@@ -386,10 +370,8 @@ bool DragReceiver::PerformWithURLsSource(NSArray<NSURL *> *_source,
         for( const auto &file : *source_items ) {
             const auto source_path = file.Path();
             const auto dest_path = std::filesystem::path(_destination.Path()) / file.Filename();
-            const auto op = std::make_shared<nc::ops::Linkage>(dest_path.native(),
-                                                               source_path,
-                                                               _destination.Host(),
-                                                               nc::ops::LinkageType::CreateSymlink);
+            const auto op = std::make_shared<nc::ops::Linkage>(
+                dest_path.native(), source_path, _destination.Host(), nc::ops::LinkageType::CreateSymlink);
             op->Observe(ops::Operation::NotifyAboutFinish, [urls_access_guard] {});
             AddPanelRefreshIfNecessary(m_Target, *op);
             [m_Target.mainWindowController enqueueOperation:op];
@@ -422,8 +404,7 @@ NSArray<NSString *> *DragReceiver::AcceptedUTIs()
     return utis;
 }
 
-static void
-UpdateValidDropNumber(id<NSDraggingInfo> _dragging, int _valid_number, NSDragOperation _operation)
+static void UpdateValidDropNumber(id<NSDraggingInfo> _dragging, int _valid_number, NSDragOperation _operation)
 {
     // prevent setting of a same value to DraggingInfo, since it causes weird blinking
     static __weak id last_updated = nil;
@@ -507,8 +488,7 @@ static NSString *URLs_UTI()
     return uti;
 }
 
-static std::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray<NSURL *> *_input,
-                                                                        VFSHost &_host)
+static std::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray<NSURL *> *_input, VFSHost &_host)
 {
     // TODO:
     // The current implementation uses a rather moronic approach of fetching multiple single-item
@@ -546,9 +526,7 @@ static void AddPanelRefreshIfNecessary(PanelController *_target, ops::Operation 
     });
 }
 
-static void AddPanelRefreshIfNecessary(PanelController *_target,
-                                       PanelController *_source,
-                                       ops::Operation &_operation)
+static void AddPanelRefreshIfNecessary(PanelController *_target, PanelController *_source, ops::Operation &_operation)
 {
     AddPanelRefreshIfNecessary(_target, _operation);
     AddPanelRefreshIfNecessary(_source, _operation);
@@ -564,12 +542,8 @@ static int CountItemsWithType(id<NSDraggingInfo> _sender, NSString *_type)
           if( [i.types containsObject:_type] )
               amount++;
     };
-    [_sender enumerateDraggingItemsWithOptions:0
-                                       forView:nil
-                                       classes:classes
-                                 searchOptions:options
-                                    usingBlock:block];
+    [_sender enumerateDraggingItemsWithOptions:0 forView:nil classes:classes searchOptions:options usingBlock:block];
     return amount;
 }
 
-}
+} // namespace nc::panel

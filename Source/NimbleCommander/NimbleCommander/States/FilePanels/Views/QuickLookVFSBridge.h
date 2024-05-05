@@ -4,20 +4,20 @@
 #include <VFS/VFS_fwd.h>
 
 namespace nc::utility {
-    class TemporaryFileStorage;
+class TemporaryFileStorage;
 }
 
 namespace nc::panel {
-    
+
 class QuickLookVFSBridge
 {
 public:
-    QuickLookVFSBridge(nc::utility::TemporaryFileStorage &_storage,
-                       uint64_t _max_size = 64*1024*1024 );
-    NSURL *FetchItem( const std::string& _path, VFSHost &_host );
+    QuickLookVFSBridge(nc::utility::TemporaryFileStorage &_storage, uint64_t _max_size = 64 * 1024 * 1024);
+    NSURL *FetchItem(const std::string &_path, VFSHost &_host);
+
 private:
     nc::utility::TemporaryFileStorage &m_TempStorage;
     uint64_t m_MaxSize;
 };
 
-}
+} // namespace nc::panel

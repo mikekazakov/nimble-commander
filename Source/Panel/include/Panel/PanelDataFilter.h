@@ -11,44 +11,42 @@
 
 namespace nc::panel::data {
 
-struct TextualFilter
-{
+struct TextualFilter {
     enum Where : int8_t // persistancy-bound values, don't change it
     {
-        Anywhere            = 0,
-        Beginning           = 1,
-        Ending              = 2, // handling extensions somehow
-        BeginningOrEnding   = 3,
-        Fuzzy               = 4    
+        Anywhere = 0,
+        Beginning = 1,
+        Ending = 2, // handling extensions somehow
+        BeginningOrEnding = 3,
+        Fuzzy = 4
     };
-    
+
     NSString *text;
-    Where     type;
-    bool ignore_dot_dot:1; // will not apply filter on dot-dot entries
-    bool clear_on_new_listing:1; // if true then PanelData will automatically set text to nil on Load method call
-    bool hightlight_results:1; // option for PanelData to mark QS hightlight
-    
+    Where type;
+    bool ignore_dot_dot : 1;       // will not apply filter on dot-dot entries
+    bool clear_on_new_listing : 1; // if true then PanelData will automatically set text to nil on Load method call
+    bool hightlight_results : 1;   // option for PanelData to mark QS hightlight
+
     TextualFilter() noexcept;
-    bool operator==(const TextualFilter& _r) const noexcept;
-    bool operator!=(const TextualFilter& _r) const noexcept;
+    bool operator==(const TextualFilter &_r) const noexcept;
+    bool operator!=(const TextualFilter &_r) const noexcept;
     static Where WhereFromInt(int _v) noexcept;
     static TextualFilter NoFilter() noexcept;
-    bool IsValidItem(const VFSListingItem& _item, QuickSearchHiglight &_found_range) const;
-    bool IsValidItem(const VFSListingItem& _item) const;
+    bool IsValidItem(const VFSListingItem &_item, QuickSearchHiglight &_found_range) const;
+    bool IsValidItem(const VFSListingItem &_item) const;
     void OnPanelDataLoad();
     bool IsFiltering() const noexcept;
 } __attribute__((packed));
 
-struct HardFilter
-{
+struct HardFilter {
     TextualFilter text = TextualFilter::NoFilter();
     bool show_hidden = true;
-    bool IsValidItem(const VFSListingItem& _item, QuickSearchHiglight &_found_range) const;
+    bool IsValidItem(const VFSListingItem &_item, QuickSearchHiglight &_found_range) const;
     bool IsFiltering() const noexcept;
-    bool operator==(const HardFilter& _r) const noexcept = default;
-    bool operator!=(const HardFilter& _r) const noexcept = default;
+    bool operator==(const HardFilter &_r) const noexcept = default;
+    bool operator!=(const HardFilter &_r) const noexcept = default;
 };
 
 std::optional<QuickSearchHiglight> FuzzySearch(NSString *_filename, NSString *_text) noexcept;
 
-}
+} // namespace nc::panel::data

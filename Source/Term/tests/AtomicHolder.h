@@ -78,8 +78,7 @@ bool AtomicHolder<T>::wait_to_become_with_runloop(std::chrono::nanoseconds _time
             if( condvar.wait_for(lock, _slice, pred) )
                 return true;
         }
-        CFRunLoopRunInMode(kCFRunLoopDefaultMode, std::chrono::duration<double>(_slice).count(),
-                           false);
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, std::chrono::duration<double>(_slice).count(), false);
     } while( deadline > nc::base::machtime() );
     if( _dump_on_fail ) {
         auto lg = std::lock_guard{mutex};
@@ -128,19 +127,17 @@ bool QueuedAtomicHolder<T>::wait_to_become(std::chrono::nanoseconds _timeout, co
 
 template <class T>
 bool QueuedAtomicHolder<T>::wait_to_become_with_runloop(std::chrono::nanoseconds _timeout,
-                                 std::chrono::nanoseconds _slice,
-                                 const T &_new_value,
-                                 bool _dump_on_fail)
+                                                        std::chrono::nanoseconds _slice,
+                                                        const T &_new_value,
+                                                        bool _dump_on_fail)
 {
     const auto deadline = nc::base::machtime() + _timeout;
-    do
-    {
+    do {
         if( wait_to_become(_slice, _new_value) )
             return true;
-        CFRunLoopRunInMode(kCFRunLoopDefaultMode, std::chrono::duration<double>(_slice).count(),
-                           false);
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, std::chrono::duration<double>(_slice).count(), false);
     } while( deadline > nc::base::machtime() );
-    
+
     if( _dump_on_fail ) {
         auto lg = std::lock_guard{m_Mutex};
         std::cerr << m_Value << std::endl;

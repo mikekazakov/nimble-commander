@@ -4,13 +4,13 @@
 #include <Cocoa/Cocoa.h>
 #include <VFS/VFS.h>
 
-@interface NCOpsCompressDialog : NSWindowController<NSTextFieldDelegate>
+@interface NCOpsCompressDialog : NSWindowController <NSTextFieldDelegate>
 
-- (instancetype) initWithItems:(const std::vector<VFSListingItem>&)_source_items
-                destinationVFS:(const VFSHostPtr&)_destination_host
-            initialDestination:(const std::string&)_initial_destination;
+- (instancetype)initWithItems:(const std::vector<VFSListingItem> &)_source_items
+               destinationVFS:(const VFSHostPtr &)_destination_host
+           initialDestination:(const std::string &)_initial_destination;
 
-@property (readonly, nonatomic) const std::string &destination;
-@property (readonly, nonatomic) const std::string &password;
+@property(readonly, nonatomic) const std::string &destination;
+@property(readonly, nonatomic) const std::string &password;
 
 @end

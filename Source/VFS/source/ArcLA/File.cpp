@@ -8,8 +8,7 @@
 
 namespace nc::vfs::arc {
 
-File::File(const char *_relative_path, const std::shared_ptr<ArchiveHost> &_host)
-    : VFSFile(_relative_path, _host)
+File::File(const char *_relative_path, const std::shared_ptr<ArchiveHost> &_host) : VFSFile(_relative_path, _host)
 {
 }
 
@@ -34,8 +33,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     if( res < 0 )
         return res;
 
-    if( host->IsDirectory(file_path, _open_flags, _cancel_checker) &&
-        !(_open_flags & VFSFlags::OF_Directory) )
+    if( host->IsDirectory(file_path, _open_flags, _cancel_checker) && !(_open_flags & VFSFlags::OF_Directory) )
         return VFSError::FromErrno(EISDIR);
 
     std::unique_ptr<State> state;

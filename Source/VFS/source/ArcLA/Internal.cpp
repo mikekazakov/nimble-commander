@@ -15,10 +15,7 @@ ssize_t Mediator::myread([[maybe_unused]] struct archive *a, void *client_data, 
     return result;
 }
 
-off_t Mediator::myseek([[maybe_unused]] struct archive *a,
-                       void *client_data,
-                       off_t offset,
-                       int whence)
+off_t Mediator::myseek([[maybe_unused]] struct archive *a, void *client_data, off_t offset, int whence)
 {
     Mediator *_this = static_cast<Mediator *>(client_data);
     off_t result = _this->file->Seek(offset, whence);

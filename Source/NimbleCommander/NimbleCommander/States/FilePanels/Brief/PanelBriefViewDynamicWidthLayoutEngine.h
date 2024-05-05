@@ -17,26 +17,24 @@ public:
         NSRect clip_view_bounds = {{0.0, 0.0}, {0.0, 0.0}};
     };
 
-    void Layout( const Params &_params );
-    
+    void Layout(const Params &_params);
+
     bool ShouldRelayoutForNewBounds(const NSRect clip_view_bounds) const noexcept;
     int ItemMinWidth() const noexcept;
     int ItemMaxWidth() const noexcept;
-    NSArray<NSCollectionViewLayoutAttributes*> *
-        AttributesForItemsInRect(NSRect _rect) const noexcept;
-    
+    NSArray<NSCollectionViewLayoutAttributes *> *AttributesForItemsInRect(NSRect _rect) const noexcept;
+
 private:
-    void CopyInputData( const Params &_params );
-    void PerformNormalLayout( const Params &_params );
-    void PerformSingularLayout( );
-    
-    // input data:    
+    void CopyInputData(const Params &_params);
+    void PerformNormalLayout(const Params &_params);
+    void PerformSingularLayout();
+
+    // input data:
     int m_ItemMinWidth = 50;
     int m_ItemMaxWidth = 200;
     // + intrinsic items widths, which we don't copy inside
 };
 
-    
 inline int DynamicWidthLayoutEngine::ItemMinWidth() const noexcept
 {
     return m_ItemMinWidth;
@@ -47,4 +45,4 @@ inline int DynamicWidthLayoutEngine::ItemMaxWidth() const noexcept
     return m_ItemMaxWidth;
 }
 
-}
+} // namespace nc::panel::view::brief

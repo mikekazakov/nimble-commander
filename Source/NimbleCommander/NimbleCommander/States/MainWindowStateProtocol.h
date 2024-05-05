@@ -5,17 +5,17 @@
 
 @class NCMainWindowController;
 
-@protocol NCMainWindowState<NSObject>
+@protocol NCMainWindowState <NSObject>
 
 @required
-- (NSView*) windowStateContentView;
-- (NSToolbar*) windowStateToolbar;
+- (NSView *)windowStateContentView;
+- (NSToolbar *)windowStateToolbar;
 
 @optional
 - (void)windowStateDidBecomeAssigned;
 - (void)windowStateDidResign;
 - (void)windowStateWillClose;
-- (bool)windowStateShouldClose:(NCMainWindowController*)sender;
+- (bool)windowStateShouldClose:(NCMainWindowController *)sender;
 - (bool)windowStateNeedsTitle;
 
 @end

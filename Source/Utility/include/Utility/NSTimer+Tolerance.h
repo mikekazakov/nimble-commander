@@ -5,6 +5,6 @@
 
 @interface NSTimer (Tolerance)
 
-- (void) setDefaultTolerance;
+- (void)setDefaultTolerance;
 
 @end

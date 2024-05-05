@@ -10,8 +10,7 @@ struct AttrsChangingJob::Meta {
     int origin_item;
 };
 
-static std::pair<uint16_t, uint16_t>
-PermissionsValueAndMask(const AttrsChangingCommand::Permissions &_p);
+static std::pair<uint16_t, uint16_t> PermissionsValueAndMask(const AttrsChangingCommand::Permissions &_p);
 static std::pair<uint32_t, uint32_t> FlagsValueAndMask(const AttrsChangingCommand::Flags &_f);
 
 AttrsChangingJob::AttrsChangingJob(AttrsChangingCommand _command) : m_Command(std::move(_command))
@@ -75,8 +74,7 @@ void AttrsChangingJob::ScanItem(unsigned _origin_item)
     m.stat = st;
     m.origin_item = _origin_item;
     m_Metas.emplace_back(m);
-    m_Filenames.push_back(item.IsDir() ? EnsureTrailingSlash(item.Filename()) : item.Filename(),
-                          nullptr);
+    m_Filenames.push_back(item.IsDir() ? EnsureTrailingSlash(item.Filename()) : item.Filename(), nullptr);
     Statistics().CommitEstimated(Statistics::SourceType::Items, 1);
 
     if( m_Command.apply_to_subdirs && item.IsDir() ) {
@@ -186,9 +184,7 @@ void AttrsChangingJob::DoChange()
     }
 }
 
-bool AttrsChangingJob::AlterSingleItem(const std::string &_path,
-                                       VFSHost &_vfs,
-                                       const VFSStat &_stat)
+bool AttrsChangingJob::AlterSingleItem(const std::string &_path, VFSHost &_vfs, const VFSStat &_stat)
 {
     if( m_ChmodCommand )
         if( !ChmodSingleItem(_path, _vfs, _stat) )
@@ -209,9 +205,7 @@ bool AttrsChangingJob::AlterSingleItem(const std::string &_path,
     return true;
 }
 
-bool AttrsChangingJob::ChmodSingleItem(const std::string &_path,
-                                       VFSHost &_vfs,
-                                       const VFSStat &_stat)
+bool AttrsChangingJob::ChmodSingleItem(const std::string &_path, VFSHost &_vfs, const VFSStat &_stat)
 {
     const auto [new_mode, mask] = *m_ChmodCommand;
     const uint16_t mode = (_stat.mode & ~mask) | (new_mode & mask);
@@ -237,9 +231,7 @@ bool AttrsChangingJob::ChmodSingleItem(const std::string &_path,
     return true;
 }
 
-bool AttrsChangingJob::ChownSingleItem(const std::string &_path,
-                                       VFSHost &_vfs,
-                                       const VFSStat &_stat)
+bool AttrsChangingJob::ChownSingleItem(const std::string &_path, VFSHost &_vfs, const VFSStat &_stat)
 {
     const auto new_uid = m_Command.ownage->uid ? *m_Command.ownage->uid : _stat.uid;
     const auto new_gid = m_Command.ownage->gid ? *m_Command.ownage->gid : _stat.gid;
@@ -265,9 +257,7 @@ bool AttrsChangingJob::ChownSingleItem(const std::string &_path,
     return true;
 }
 
-bool AttrsChangingJob::ChflagSingleItem(const std::string &_path,
-                                        VFSHost &_vfs,
-                                        const VFSStat &_stat)
+bool AttrsChangingJob::ChflagSingleItem(const std::string &_path, VFSHost &_vfs, const VFSStat &_stat)
 {
     const auto [new_flags, mask] = *m_ChflagCommand;
     const uint32_t flags = (_stat.flags & ~mask) | (new_flags & mask);
@@ -293,9 +283,7 @@ bool AttrsChangingJob::ChflagSingleItem(const std::string &_path,
     return true;
 }
 
-bool AttrsChangingJob::ChtimesSingleItem(const std::string &_path,
-                                         VFSHost &_vfs,
-                                         [[maybe_unused]] const VFSStat &_stat)
+bool AttrsChangingJob::ChtimesSingleItem(const std::string &_path, VFSHost &_vfs, [[maybe_unused]] const VFSStat &_stat)
 {
     while( true ) {
         const auto set_times_rc = _vfs.SetTimes(_path.c_str(),
@@ -320,8 +308,7 @@ bool AttrsChangingJob::ChtimesSingleItem(const std::string &_path,
     return true;
 }
 
-static std::pair<uint16_t, uint16_t>
-PermissionsValueAndMask(const AttrsChangingCommand::Permissions &_p)
+static std::pair<uint16_t, uint16_t> PermissionsValueAndMask(const AttrsChangingCommand::Permissions &_p)
 {
     uint16_t value = 0;
     uint16_t mask = 0;

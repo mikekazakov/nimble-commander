@@ -3,9 +3,9 @@
 
 #include "AppDelegate.h"
 
-@interface NCAppDelegate()
+@interface NCAppDelegate ()
 
-- (void) addMainWindow:(NCMainWindowController*) _wnd;
-- (void) removeMainWindow:(NCMainWindowController*) _wnd;
+- (void)addMainWindow:(NCMainWindowController *)_wnd;
+- (void)removeMainWindow:(NCMainWindowController *)_wnd;
 
 @end

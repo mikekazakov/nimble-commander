@@ -41,8 +41,7 @@ void ConnectionsPool::Return(std::unique_ptr<Connection> _connection)
     m_Connections.emplace_back(std::move(_connection));
 }
 
-ConnectionsPool::AR::AR(std::unique_ptr<Connection> _c, ConnectionsPool &_p)
-    : connection(std::move(_c)), pool(_p)
+ConnectionsPool::AR::AR(std::unique_ptr<Connection> _c, ConnectionsPool &_p) : connection(std::move(_c)), pool(_p)
 {
 }
 

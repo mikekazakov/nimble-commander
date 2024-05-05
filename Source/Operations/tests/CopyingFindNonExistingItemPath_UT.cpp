@@ -73,9 +73,8 @@ TEST_CASE(PREFIX "checks magnitudes of tens")
     auto orig_path = dir.directory / "item.zip";
     close(open((dir.directory / "item.zip").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
     for( int i = 2; i <= 9; ++i )
-        close(open((dir.directory / ("item " + std::to_string(i) + ".zip")).c_str(),
-                   O_WRONLY | O_CREAT,
-                   S_IWUSR | S_IRUSR));
+        close(open(
+            (dir.directory / ("item " + std::to_string(i) + ".zip")).c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
 
     auto proposed_path = FindNonExistingItemPath(orig_path.native(), *TestEnv().vfs_native);
 
@@ -88,9 +87,8 @@ TEST_CASE(PREFIX "checks magnitudes of hundreds")
     auto orig_path = dir.directory / "item.zip";
     close(open((dir.directory / "item.zip").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
     for( int i = 2; i <= 99; ++i )
-        close(open((dir.directory / ("item " + std::to_string(i) + ".zip")).c_str(),
-                   O_WRONLY | O_CREAT,
-                   S_IWUSR | S_IRUSR));
+        close(open(
+            (dir.directory / ("item " + std::to_string(i) + ".zip")).c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
 
     auto proposed_path = FindNonExistingItemPath(orig_path.native(), *TestEnv().vfs_native);
 

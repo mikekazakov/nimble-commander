@@ -40,8 +40,7 @@ static int parse_dir_unix(const char *line, struct stat *sbuf, char *file, char 
 #define SPACES "%*[ \t]"
     res = sscanf(line,
                  "%11s"
-                 "%lu" SPACES "%32s" SPACES "%32s" SPACES "%llu" SPACES "%3s" SPACES "%2s" SPACES
-                 "%5s"
+                 "%lu" SPACES "%32s" SPACES "%32s" SPACES "%llu" SPACES "%3s" SPACES "%2s" SPACES "%5s"
                  "%*c"
                  "%1023c",
                  mode,
@@ -107,7 +106,7 @@ static int parse_dir_unix(const char *line, struct stat *sbuf, char *file, char 
         strptime(date, "%H:%M,%b,%d", &tm);
         // Unix systems omit the year for the last six months
         if( cur_mon + 5 < tm.tm_mon ) { // month from last year
-            tm.tm_year--; // correct the year
+            tm.tm_year--;               // correct the year
         }
     }
     else {
@@ -184,8 +183,7 @@ std::shared_ptr<Directory> ParseListing(const char *_str)
         memset(&st, 0, sizeof(st));
         char filename[MAXPATHLEN];
         char link[MAXPATHLEN];
-        if( parse_dir_unix(current_line, &st, filename, link) ||
-            parse_dir_win(current_line, &st, filename, link) ) {
+        if( parse_dir_unix(current_line, &st, filename, link) || parse_dir_win(current_line, &st, filename, link) ) {
             if( strcmp(filename, ".") != 0 && strcmp(filename, "..") != 0 ) {
                 entries.emplace_back();
                 auto &ent = entries.back();
@@ -288,11 +286,7 @@ CURLMcode CURLInstance::Detach()
     return e;
 }
 
-int CURLInstance::ProgressCallback(void *clientp,
-                                   double dltotal,
-                                   double dlnow,
-                                   double ultotal,
-                                   double ulnow)
+int CURLInstance::ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
 {
     CURLInstance *_this = static_cast<CURLInstance *>(clientp);
     return _this->prog_func ? _this->prog_func(dltotal, dlnow, ultotal, ulnow) : 0;

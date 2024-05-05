@@ -7,11 +7,11 @@
 
 #include <filesystem>
 
-@interface NCViewerPreviewModeView : NSView<NCViewerImplementationProtocol>
+@interface NCViewerPreviewModeView : NSView <NCViewerImplementationProtocol>
 
 - (instancetype)initWithFrame:(NSRect)_frame NS_UNAVAILABLE;
 - (instancetype)initWithFrame:(NSRect)_frame
-                         path:(const std::filesystem::path&)_path
-                        theme:(const nc::viewer::Theme&)_theme;
+                         path:(const std::filesystem::path &)_path
+                        theme:(const nc::viewer::Theme &)_theme;
 
 @end

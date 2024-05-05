@@ -37,8 +37,7 @@ TEST_CASE(PREFIX "Verify RowsBuilder against Hello, World!")
         source.bytes_per_column = 8;
         source.number_of_columns = 2;
         HexModeFrame::RowsBuilder builder(source);
-        const auto row =
-            builder.Build(std::make_pair(0, 13), std::make_pair(0, 13), std::make_pair(0, 13));
+        const auto row = builder.Build(std::make_pair(0, 13), std::make_pair(0, 13), std::make_pair(0, 13));
         REQUIRE(row.ColumnsNumber() == 2);
         CHECK(Equal(row.AddressString(), CFSTR("000000")));
         CHECK(Equal(row.SnippetString(), CFSTR("Hello, World!")));
@@ -50,8 +49,7 @@ TEST_CASE(PREFIX "Verify RowsBuilder against Hello, World!")
         source.bytes_per_column = 4;
         source.number_of_columns = 4;
         HexModeFrame::RowsBuilder builder(source);
-        const auto row =
-            builder.Build(std::make_pair(0, 13), std::make_pair(0, 13), std::make_pair(0, 13));
+        const auto row = builder.Build(std::make_pair(0, 13), std::make_pair(0, 13), std::make_pair(0, 13));
         REQUIRE(row.ColumnsNumber() == 4);
         CHECK(Equal(row.AddressString(), CFSTR("000000")));
         CHECK(Equal(row.SnippetString(), CFSTR("Hello, World!")));
@@ -65,8 +63,7 @@ TEST_CASE(PREFIX "Verify RowsBuilder against Hello, World!")
         source.bytes_per_column = 4;
         source.number_of_columns = 2;
         HexModeFrame::RowsBuilder builder(source);
-        const auto row =
-            builder.Build(std::make_pair(0, 8), std::make_pair(0, 8), std::make_pair(0, 8));
+        const auto row = builder.Build(std::make_pair(0, 8), std::make_pair(0, 8), std::make_pair(0, 8));
         REQUIRE(row.ColumnsNumber() == 2);
         CHECK(Equal(row.AddressString(), CFSTR("000000")));
         CHECK(Equal(row.SnippetString(), CFSTR("Hello, W")));
@@ -78,8 +75,7 @@ TEST_CASE(PREFIX "Verify RowsBuilder against Hello, World!")
         source.bytes_per_column = 4;
         source.number_of_columns = 2;
         HexModeFrame::RowsBuilder builder(source);
-        const auto row =
-            builder.Build(std::make_pair(8, 5), std::make_pair(8, 5), std::make_pair(8, 5));
+        const auto row = builder.Build(std::make_pair(8, 5), std::make_pair(8, 5), std::make_pair(8, 5));
         REQUIRE(row.ColumnsNumber() == 2);
         CHECK(Equal(row.AddressString(), CFSTR("000008")));
         CHECK(Equal(row.SnippetString(), CFSTR("orld!")));

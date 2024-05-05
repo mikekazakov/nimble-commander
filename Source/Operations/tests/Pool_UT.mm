@@ -244,8 +244,7 @@ TEST_CASE(PREFIX "Does enqueueing as the callback says")
             CHECK(op1->State() == nc::ops::OperationState::Running);
             CHECK(op2->State() == nc::ops::OperationState::Cold);
             op1->job.done = true;
-            CHECK(check_until_or_die(
-                [&] { return op2->State() == nc::ops::OperationState::Running; }, 1s));
+            CHECK(check_until_or_die([&] { return op2->State() == nc::ops::OperationState::Running; }, 1s));
             CHECK(op1->State() == nc::ops::OperationState::Completed);
             CHECK(op2->State() == nc::ops::OperationState::Running);
             op2->job.done = true;
@@ -290,8 +289,7 @@ TEST_CASE(PREFIX "Does enqueueing as the callback says")
             CHECK(op1->State() == nc::ops::OperationState::Running);
             CHECK(op2->State() == nc::ops::OperationState::Cold);
             op1->job.done = true;
-            CHECK(check_until_or_die(
-                [&] { return op2->State() == nc::ops::OperationState::Running; }, 1s));
+            CHECK(check_until_or_die([&] { return op2->State() == nc::ops::OperationState::Running; }, 1s));
             CHECK(op1->State() == nc::ops::OperationState::Completed);
             CHECK(op2->State() == nc::ops::OperationState::Running);
             op2->job.done = true;

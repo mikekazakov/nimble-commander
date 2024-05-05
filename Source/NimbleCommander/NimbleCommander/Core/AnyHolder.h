@@ -7,6 +7,6 @@
 @interface AnyHolder : NSObject
 
 - (instancetype)initWithAny:(std::any)_any;
-@property (nonatomic, readonly) const std::any& any;
+@property(nonatomic, readonly) const std::any &any;
 
 @end

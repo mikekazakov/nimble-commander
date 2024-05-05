@@ -32,8 +32,7 @@ TEST_CASE(PREFIX "Copies and owns UTF16 characters")
     SECTION("Doesn't rely on the original data")
     {
         CHECK(ws.Characters() != reinterpret_cast<const char16_t *>(utf16_chars.get()));
-        CHECK(ws.CharactersByteOffsets() !=
-              reinterpret_cast<const int *>(utf16_chars_offsets.get()));
+        CHECK(ws.CharactersByteOffsets() != reinterpret_cast<const int *>(utf16_chars_offsets.get()));
     }
     SECTION("UTF16 characters are sane")
     {
@@ -55,8 +54,7 @@ TEST_CASE(PREFIX "Copies and owns UTF16 characters")
     }
     SECTION("Creates a non-owning CFString")
     {
-        CHECK(CFStringGetCharactersPtr(ws.String()) ==
-              reinterpret_cast<const UniChar *>(ws.Characters()));
+        CHECK(CFStringGetCharactersPtr(ws.String()) == reinterpret_cast<const UniChar *>(ws.Characters()));
     }
 }
 

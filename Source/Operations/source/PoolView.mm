@@ -1,10 +1,9 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PoolView.h"
 
-
 @implementation NCOpsPoolView
 
-- (void) drawRect:(NSRect)dirtyRect
+- (void)drawRect:(NSRect)dirtyRect
 {
     if( !self.window.isMainWindow )
         return;
@@ -27,21 +26,14 @@
                                                  object:_wnd];
     }
     else {
-        [NSNotificationCenter.defaultCenter removeObserver:self
-                                                      name:NSWindowDidBecomeMainNotification
-                                                    object:nil];
-        [NSNotificationCenter.defaultCenter removeObserver:self
-                                                      name:NSWindowDidResignMainNotification
-                                                    object:nil];
+        [NSNotificationCenter.defaultCenter removeObserver:self name:NSWindowDidBecomeMainNotification object:nil];
+        [NSNotificationCenter.defaultCenter removeObserver:self name:NSWindowDidResignMainNotification object:nil];
     }
 }
 
-- (void) windowStatusDidChange
+- (void)windowStatusDidChange
 {
     [self setNeedsDisplay:true];
 }
 
-
 @end
-
- 

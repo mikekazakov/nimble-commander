@@ -5,6 +5,6 @@
 
 @interface NCOpsBriefOperationView : NSView
 
-@property (nonatomic, readonly) bool isMouseOver;
+@property(nonatomic, readonly) bool isMouseOver;
 
 @end

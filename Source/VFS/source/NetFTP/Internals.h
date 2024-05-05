@@ -47,8 +47,7 @@ struct CURLInstance {
     std::mutex call_lock;
 
 private:
-    static int
-    ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
+    static int ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
 };
 
 struct ReadBuffer {
@@ -152,4 +151,4 @@ std::shared_ptr<Directory> ParseListing(const char *_str);
 
 int CURLErrorToVFSError(CURLcode _curle);
 
-}
+} // namespace nc::vfs::ftp

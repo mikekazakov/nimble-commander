@@ -8,8 +8,8 @@ namespace nc::vfs::sftp {
 class KeyValidator
 {
 public:
-    KeyValidator( const std::string &_private_key_path, const std::string &_passphrase );
-    
+    KeyValidator(const std::string &_private_key_path, const std::string &_passphrase);
+
     bool Validate() const;
 
 private:
@@ -17,4 +17,4 @@ private:
     std::string m_Passphrase;
 };
 
-}
+} // namespace nc::vfs::sftp

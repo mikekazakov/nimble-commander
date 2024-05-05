@@ -14,6 +14,7 @@ struct Duplicate final : PanelAction {
     Duplicate(nc::config::Config &_config);
     bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
+
 private:
     nc::config::Config &m_Config;
 };

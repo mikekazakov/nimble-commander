@@ -8,26 +8,26 @@
 
 namespace nc::config {
 
-// NB! this class is not properly synchronized yet.    
+// NB! this class is not properly synchronized yet.
 class FileOverwritesStorage : public OverwritesStorage
 {
 public:
     FileOverwritesStorage(std::string_view _file_path);
-    FileOverwritesStorage(const FileOverwritesStorage&) = delete;
+    FileOverwritesStorage(const FileOverwritesStorage &) = delete;
     ~FileOverwritesStorage();
 
     std::optional<std::string> Read() const override;
     void Write(std::string_view _overwrites_json) override;
-    void SetExternalChangeCallback( std::function<void()> _callback ) override;
+    void SetExternalChangeCallback(std::function<void()> _callback) override;
 
 private:
-    void operator=(const FileOverwritesStorage&) = delete;
+    void operator=(const FileOverwritesStorage &) = delete;
     void OverwritesDirChanged();
-    
-    std::filesystem::path m_Path;    
+
+    std::filesystem::path m_Path;
     mutable std::atomic<time_t> m_OverwritesTime = {0};
     uint64_t m_DirObservationTicket = {0};
     std::function<void()> m_OnChange;
 };
 
-}
+} // namespace nc::config

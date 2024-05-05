@@ -9,5 +9,5 @@ namespace nc::bootstrap {
 bool AskUserToResetDefaults();
 bool AskToExitWithRunningOperations();
 void WarnAboutFailingToAccessPrivilegedHelper();
-    
-}
+
+} // namespace nc::bootstrap

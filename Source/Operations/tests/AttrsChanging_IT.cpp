@@ -13,9 +13,8 @@ using namespace std::literals;
 
 #define PREFIX "Operations::AttrsChanging "
 
-static std::vector<VFSListingItem> FetchItems(const std::string &_directory_path,
-                                              const std::vector<std::string> &_filenames,
-                                              VFSHost &_host);
+static std::vector<VFSListingItem>
+FetchItems(const std::string &_directory_path, const std::vector<std::string> &_filenames, VFSHost &_host);
 
 TEST_CASE(PREFIX "chmod")
 {
@@ -125,8 +124,7 @@ TEST_CASE(PREFIX "mtime")
     const auto native_host = TestEnv().vfs_native;
     const auto path = tmp_dir.directory / "test";
     // now - 10'000 seconds
-    const long mtime =
-        std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) - 10'000;
+    const long mtime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) - 10'000;
     close(creat(path.c_str(), 0755));
     AttrsChangingCommand cmd;
     cmd.items = FetchItems(tmp_dir.directory, {"test"}, *native_host);
@@ -166,7 +164,7 @@ TEST_CASE(PREFIX "Item reporting")
         REQUIRE(&_report.host == native_host.get());
         REQUIRE(_report.status == nc::ops::ItemStatus::Processed);
         processed.emplace(_report.path);
-    });    
+    });
     operation.Start();
     operation.Wait();
     REQUIRE(operation.State() == OperationState::Completed);
@@ -175,9 +173,8 @@ TEST_CASE(PREFIX "Item reporting")
     CHECK(processed == expected);
 }
 
-static std::vector<VFSListingItem> FetchItems(const std::string &_directory_path,
-                                              const std::vector<std::string> &_filenames,
-                                              VFSHost &_host)
+static std::vector<VFSListingItem>
+FetchItems(const std::string &_directory_path, const std::vector<std::string> &_filenames, VFSHost &_host)
 {
     std::vector<VFSListingItem> items;
     _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);

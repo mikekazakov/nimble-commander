@@ -6,8 +6,8 @@
 
 class NetworkConnectionsManager;
 
-@interface ConnectionsMenuDelegate : NSObject<NSMenuDelegate>
+@interface ConnectionsMenuDelegate : NSObject <NSMenuDelegate>
 
-- (instancetype) initWithManager:(std::function<NetworkConnectionsManager&()>)_callback;
+- (instancetype)initWithManager:(std::function<NetworkConnectionsManager &()>)_callback;
 
 @end

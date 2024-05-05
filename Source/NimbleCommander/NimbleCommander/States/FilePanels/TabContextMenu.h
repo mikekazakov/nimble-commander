@@ -7,7 +7,6 @@
 
 @interface NCPanelTabContextMenu : NSMenu
 
-- (instancetype) initWithPanel:(PanelController*)_panel
-                       ofState:(MainWindowFilePanelState*)_state;
+- (instancetype)initWithPanel:(PanelController *)_panel ofState:(MainWindowFilePanelState *)_state;
 
 @end

@@ -14,9 +14,7 @@ namespace nc::viewer {
 
 using utility::CharInfo;
 
-void CleanUnicodeControlSymbols(char16_t *const _characters,
-                                int const _characters_length,
-                                const char16_t _replacement)
+void CleanUnicodeControlSymbols(char16_t *const _characters, int const _characters_length, const char16_t _replacement)
 {
     if( _characters == nullptr || _characters_length < 0 )
         throw std::invalid_argument("CleanUnicodeControlSymbols: invalid input");
@@ -121,10 +119,9 @@ std::vector<std::pair<int, int>> SplitStringIntoLines(const char16_t *_character
                 width = probe_width;
             }
             else {
-                const auto probe_width = CharInfo::WCWidthMin1(c) == 1
-                                             ? // TODO: add support for surrogate pairs
+                const auto probe_width = CharInfo::WCWidthMin1(c) == 1 ? // TODO: add support for surrogate pairs
                                              width + _monospace_width
-                                             : width + 2 * _monospace_width;
+                                                                       : width + 2 * _monospace_width;
 
                 if( probe_width > _wrapping_width + wrapping_epsilon ) {
                     break;
@@ -141,12 +138,11 @@ std::vector<std::pair<int, int>> SplitStringIntoLines(const char16_t *_character
     return starts_and_lengths;
 }
 
-std::vector<TextModeIndexedTextLine>
-SplitAttributedStringsIntoLines(CFAttributedStringRef const _attributed_string,
-                                double const _wrapping_width,
-                                double const _monospace_width,
-                                double const _tab_width,
-                                const int *const _unichars_to_byte_indices)
+std::vector<TextModeIndexedTextLine> SplitAttributedStringsIntoLines(CFAttributedStringRef const _attributed_string,
+                                                                     double const _wrapping_width,
+                                                                     double const _monospace_width,
+                                                                     double const _tab_width,
+                                                                     const int *const _unichars_to_byte_indices)
 {
     assert(_wrapping_width > 0.);
     assert(_monospace_width > 0.);
@@ -167,8 +163,8 @@ SplitAttributedStringsIntoLines(CFAttributedStringRef const _attributed_string,
     if( raw_chars == nullptr )
         throw std::invalid_argument("SplitIntoLines: can't get raw characters pointer");
 
-    const auto starts_and_lengths = SplitStringIntoLines(
-        raw_chars, raw_chars_length, _wrapping_width, _monospace_width, _tab_width);
+    const auto starts_and_lengths =
+        SplitStringIntoLines(raw_chars, raw_chars_length, _wrapping_width, _monospace_width, _tab_width);
 
     // build our CTLines in multiple threads since it can be time-consuming
     std::vector<nc::viewer::TextModeIndexedTextLine> lines(starts_and_lengths.size());
@@ -176,13 +172,12 @@ SplitAttributedStringsIntoLines(CFAttributedStringRef const _attributed_string,
         const auto &position = starts_and_lengths[n];
         const auto unichar_range = CFRangeMake(position.first, position.second);
         const auto line = CTTypesetterCreateLine(typesetter, unichar_range);
-        lines[n] =
-            TextModeIndexedTextLine{position.first,
-                                    position.second,
-                                    _unichars_to_byte_indices[position.first],
-                                    _unichars_to_byte_indices[position.first + position.second] -
-                                        _unichars_to_byte_indices[position.first],
-                                    line};
+        lines[n] = TextModeIndexedTextLine{position.first,
+                                           position.second,
+                                           _unichars_to_byte_indices[position.first],
+                                           _unichars_to_byte_indices[position.first + position.second] -
+                                               _unichars_to_byte_indices[position.first],
+                                           line};
     };
     dispatch_apply(lines.size(), dispatch_get_global_queue(0, 0), block);
 

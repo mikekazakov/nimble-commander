@@ -2,8 +2,7 @@
 #pragma once
 #import <Cocoa/Cocoa.h>
 
-@interface NCOpsBatchRenamingRangeSelectionPopover
-    : NSViewController <NSPopoverDelegate, NSTextFieldDelegate>
+@interface NCOpsBatchRenamingRangeSelectionPopover : NSViewController <NSPopoverDelegate, NSTextFieldDelegate>
 
 @property(strong, nonatomic) void (^handler)(NSRange _range);
 @property(strong, nonatomic) NSString *string;

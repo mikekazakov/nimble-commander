@@ -62,8 +62,8 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
 
 - (NSMenuItem *)buildMenuItem:(const ListingPromise &)_listing_promise
 {
-    const auto options = static_cast<loc_fmt::Formatter::RenderOptions>(
-        loc_fmt::Formatter::RenderMenuTitle | loc_fmt::Formatter::RenderMenuTooltip);
+    const auto options = static_cast<loc_fmt::Formatter::RenderOptions>(loc_fmt::Formatter::RenderMenuTitle |
+                                                                        loc_fmt::Formatter::RenderMenuTooltip);
     const auto rep = loc_fmt::ListingPromiseFormatter{}.Render(options, _listing_promise);
 
     NSMenuItem *item = [[NSMenuItem alloc] init];
@@ -103,8 +103,8 @@ static RestoreClosedTabRequest::Side CurrentSide(MainWindowFilePanelState *_stat
         if( current_state ) {
             item.target = current_state;
             item.action = @selector(respawnRecentlyClosedCallout:);
-            item.representedObject = [[AnyHolder alloc]
-                initWithAny:std::any{RestoreClosedTabRequest(side, listing_promise)}];
+            item.representedObject =
+                [[AnyHolder alloc] initWithAny:std::any{RestoreClosedTabRequest(side, listing_promise)}];
         }
 
         [menu addItem:item];
@@ -130,8 +130,8 @@ static RestoreClosedTabRequest::Side CurrentSide(MainWindowFilePanelState *_stat
         return;
     }
 
-    auto payload = [[AnyHolder alloc]
-        initWithAny:std::any{RestoreClosedTabRequest(CurrentSide(current_state), records.front())}];
+    auto payload =
+        [[AnyHolder alloc] initWithAny:std::any{RestoreClosedTabRequest(CurrentSide(current_state), records.front())}];
     nc::objc_cast<NSMenuItem>(_sender).representedObject = payload;
     [current_state respawnRecentlyClosedCallout:_sender];
     nc::objc_cast<NSMenuItem>(_sender).representedObject = nil;

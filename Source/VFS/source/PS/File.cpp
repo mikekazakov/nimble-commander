@@ -3,14 +3,9 @@
 
 namespace nc::vfs {
 
-PSFile::PSFile(const char* _relative_path,
-               std::shared_ptr<class Host> _host,
-               const std::string &_file):
-    GenericMemReadOnlyFile(_relative_path,
-                              _host,
-                              _file.c_str(),
-                              _file.length())
+PSFile::PSFile(const char *_relative_path, std::shared_ptr<class Host> _host, const std::string &_file)
+    : GenericMemReadOnlyFile(_relative_path, _host, _file.c_str(), _file.length())
 {
 }
 
-}
+} // namespace nc::vfs

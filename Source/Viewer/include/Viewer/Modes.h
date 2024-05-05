@@ -3,11 +3,10 @@
 
 namespace nc::viewer {
 
-enum class ViewMode : int
-{ // changing this values may cause stored history corruption
+enum class ViewMode : int { // changing this values may cause stored history corruption
     Text = 0,
-    Hex  = 1,
+    Hex = 1,
     Preview = 2
 };
 
-}
+} // namespace nc::viewer

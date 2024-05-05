@@ -6,11 +6,12 @@
 #include <unistd.h>
 
 // see getattrlist function documentation to get info about values
-struct VolumeCapabilitiesInformation
-{
-    enum {attr_valid = 0, attr_native = 1};
-    struct
-    {
+struct VolumeCapabilitiesInformation {
+    enum {
+        attr_valid = 0,
+        attr_native = 1
+    };
+    struct {
         bool persistent_objects_ids;
         bool symbolic_links;
         bool hard_links;
@@ -30,8 +31,7 @@ struct VolumeCapabilitiesInformation
         bool object_ids_64bit;
         bool decmpfs_compression;
     } fmt;
-    struct
-    {
+    struct {
         bool search_fs;
         bool attr_list;
         bool nfs_export;
@@ -48,10 +48,8 @@ struct VolumeCapabilitiesInformation
         bool extended_attr;
         bool named_strems;
     } intr;
-    struct
-    {
-        struct
-        {
+    struct {
+        struct {
             bool name[2];
             bool dev_id[2];
             bool fs_id[2];
@@ -82,8 +80,7 @@ struct VolumeCapabilitiesInformation
             bool full_path[2];
             bool added_time[2];
         } cmn;
-        struct
-        {
+        struct {
             bool fs_type[2];
             bool signature[2];
             bool size[2];
@@ -103,14 +100,12 @@ struct VolumeCapabilitiesInformation
             bool encoding_used[2];
             bool uuid[2];
         } vol;
-        struct
-        {
+        struct {
             bool link_count[2];
             bool entry_count[2];
             bool mount_status[2];
         } dir;
-        struct
-        {
+        struct {
             bool link_count[2];
             bool total_size[2];
             bool alloc_size[2];
@@ -130,38 +125,36 @@ struct VolumeCapabilitiesInformation
     } attr;
 };
 
-struct VolumeAttributesInformation
-{
+struct VolumeAttributesInformation {
     u_int32_t fs_type;
     u_int32_t signature;
-    off_t     size;
-    off_t     space_free;
-    off_t     space_avail;
-    off_t     min_allocation;
-    off_t     allocation_clump;
+    off_t size;
+    off_t space_free;
+    off_t space_avail;
+    off_t min_allocation;
+    off_t allocation_clump;
     u_int32_t io_block_size;
     u_int32_t obj_count;
     u_int32_t file_count;
     u_int32_t dir_count;
     u_int32_t max_obj_count;
-    char      mount_point[MAXPATHLEN];
-    char      name[NAME_MAX + 1];
+    char mount_point[MAXPATHLEN];
+    char name[NAME_MAX + 1];
     u_int32_t mount_flags;
-    char      mounted_device[MAXPATHLEN];
+    char mounted_device[MAXPATHLEN];
     unsigned long long encoding_used;
-    uuid_t    uuid;
-    char      fs_type_name[MFSNAMELEN]; // this field is retrieved from statfs, not from getattrlist
-    uid_t     fs_owner;                 // this field is retrieved from statfs, not from getattrlist
-    char      fs_type_verb[256];        // from CFURL framework
-    bool      is_sw_ejectable;
-    bool      is_sw_removable;
-    bool      is_local;
-    bool      is_internal;
+    uuid_t uuid;
+    char fs_type_name[MFSNAMELEN]; // this field is retrieved from statfs, not from getattrlist
+    uid_t fs_owner;                // this field is retrieved from statfs, not from getattrlist
+    char fs_type_verb[256];        // from CFURL framework
+    bool is_sw_ejectable;
+    bool is_sw_removable;
+    bool is_local;
+    bool is_internal;
 };
 
 // all functions below return 0 on successful completion or errno on error
-int FetchVolumeCapabilitiesInformation(const char *_path,
-                                       VolumeCapabilitiesInformation *_c);
+int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInformation *_c);
 
 int FetchVolumeAttributesInformation(const char *_path,
                                      const VolumeCapabilitiesInformation *_c,

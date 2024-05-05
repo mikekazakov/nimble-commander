@@ -9,11 +9,10 @@
 
 @interface GoToFolderSheetController : NSWindowController <NSTextFieldDelegate>
 
-@property (nonatomic) PanelController *panel;
-@property (nonatomic, readonly) const std::string &requestedPath;
+@property(nonatomic) PanelController *panel;
+@property(nonatomic, readonly) const std::string &requestedPath;
 
-- (void)showSheetWithParentWindow:(NSWindow *)_window
-                          handler:(std::function<void()>)_handler;
+- (void)showSheetWithParentWindow:(NSWindow *)_window handler:(std::function<void()>)_handler;
 - (void)tellLoadingResult:(int)_code;
 
 @end

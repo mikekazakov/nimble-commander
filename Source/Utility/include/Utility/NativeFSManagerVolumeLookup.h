@@ -13,11 +13,11 @@ class NativeFSManagerVolumeLookup
 {
 public:
     // expects absolute paths ending with a trailing slash
-    void Insert( const std::shared_ptr<const NativeFileSystemInfo> &_volume, std::string_view _at );
-    
-    void Remove( std::string_view _from );
-    std::shared_ptr<const NativeFileSystemInfo>
-        FindVolumeForLocation( std::string_view _location ) const noexcept;
+    void Insert(const std::shared_ptr<const NativeFileSystemInfo> &_volume, std::string_view _at);
+
+    void Remove(std::string_view _from);
+    std::shared_ptr<const NativeFileSystemInfo> FindVolumeForLocation(std::string_view _location) const noexcept;
+
 private:
     // this is a semi-dummy implementation with a linear complexity,
     // something more efficient can be written instead.
@@ -26,4 +26,4 @@ private:
     std::vector<std::shared_ptr<const NativeFileSystemInfo>> m_Sources;
 };
 
-}
+} // namespace nc::utility

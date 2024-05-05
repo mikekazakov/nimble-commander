@@ -19,7 +19,7 @@ namespace nc {
 namespace core {
 class VFSInstancePromise;
 class VFSInstanceManager;
-}
+} // namespace core
 
 namespace utility {
 class NativeFSManager;
@@ -35,7 +35,7 @@ namespace data {
 struct SortMode;
 struct HardFilter;
 class Model;
-}
+} // namespace data
 
 class History;
 struct PersistentLocation;
@@ -209,7 +209,7 @@ using ContextMenuProvider = std::function<NSMenu *(std::vector<VFSListingItem> _
  * If on any checking it will be found that time for request has went out - it will be removed (500ms is just ok for
  * _time_out_in_ms). Will also deselect any currenly selected items.
  */
-- (void)scheduleDelayedFocusing:(const nc::panel::DelayedFocusing&)request;
+- (void)scheduleDelayedFocusing:(const nc::panel::DelayedFocusing &)request;
 
 - (void)requestQuickRenamingOfItem:(VFSListingItem)_item to:(const std::string &)_new_filename;
 

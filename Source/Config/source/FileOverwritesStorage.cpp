@@ -21,8 +21,8 @@ FileOverwritesStorage::FileOverwritesStorage(std::string_view _file_path) : m_Pa
     Log::Trace(SPDLOC, "Created storage with path: {}", _file_path);
     auto parent_path = std::filesystem::path{std::string{_file_path}}.parent_path();
     Log::Trace(SPDLOC, "Setting observation for directory: {}", parent_path);
-    m_DirObservationTicket = FSEventsDirUpdate::Instance().AddWatchPath(
-        parent_path.c_str(), [this] { OverwritesDirChanged(); });
+    m_DirObservationTicket =
+        FSEventsDirUpdate::Instance().AddWatchPath(parent_path.c_str(), [this] { OverwritesDirChanged(); });
 }
 
 FileOverwritesStorage::~FileOverwritesStorage()
@@ -46,8 +46,8 @@ std::optional<std::string> FileOverwritesStorage::Read() const
 
 void FileOverwritesStorage::Write(std::string_view _overwrites_json)
 {
-    const auto bytes = std::span<const std::byte>(
-        reinterpret_cast<const std::byte *>(_overwrites_json.data()), _overwrites_json.length());
+    const auto bytes = std::span<const std::byte>(reinterpret_cast<const std::byte *>(_overwrites_json.data()),
+                                                  _overwrites_json.length());
     if( base::WriteAtomically(m_Path, bytes) ) {
         Log::Info(SPDLOC, "Successfully written overwrites to {}", m_Path);
         m_OverwritesTime = ModificationTime(m_Path);

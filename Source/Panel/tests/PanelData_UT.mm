@@ -14,8 +14,8 @@
 using namespace nc;
 using namespace nc::base;
 using namespace nc::panel;
-using data::Model;
 using data::ItemVolatileData;
+using data::Model;
 
 static VFSListingPtr ProduceDummyListing(const std::vector<std::string> &_filenames)
 {

@@ -11,8 +11,7 @@ namespace nc::base {
 namespace detail {
 
 struct variable_container_base {
-    enum class type : unsigned char
-    {
+    enum class type : unsigned char {
         dense = 0,
         sparse = 1,
         common = 2

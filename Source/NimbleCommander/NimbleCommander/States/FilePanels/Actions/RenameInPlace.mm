@@ -6,15 +6,15 @@
 
 namespace nc::panel::actions {
 
-bool RenameInPlace::Predicate( PanelController *_target ) const
+bool RenameInPlace::Predicate(PanelController *_target) const
 {
     const auto item = _target.view.item;
     return item && !item.IsDotDot() && item.Host()->IsWritable();
 }
 
-void RenameInPlace::Perform( PanelController *_target, id ) const
+void RenameInPlace::Perform(PanelController *_target, id) const
 {
     [_target.view startFieldEditorRenaming];
 }
 
-}
+} // namespace nc::panel::actions

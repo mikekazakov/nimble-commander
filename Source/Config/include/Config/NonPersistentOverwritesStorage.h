@@ -5,23 +5,22 @@
 #include <string_view>
 
 namespace nc::config {
-    
+
 class NonPersistentOverwritesStorage : public OverwritesStorage
 {
 public:
     NonPersistentOverwritesStorage(std::string_view _initial_value);
     ~NonPersistentOverwritesStorage();
 
-    void ExternalWrite( const std::string &_new_value );
-    
+    void ExternalWrite(const std::string &_new_value);
+
     std::optional<std::string> Read() const override;
     void Write(std::string_view _overwrites_json) override;
-    void SetExternalChangeCallback( std::function<void()> ) override;
-    
+    void SetExternalChangeCallback(std::function<void()>) override;
+
 private:
     std::string m_Data;
     std::function<void()> m_Callback;
 };
-    
-}
 
+} // namespace nc::config

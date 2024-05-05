@@ -20,8 +20,7 @@ public:
     void StopAndWaitForShutdown();
 
     // Notifications
-    enum
-    {
+    enum {
         NotifyAboutAddition = 1 << 0,
         NotifyAboutRemoval = 1 << 1,
         NotifyAboutChange = NotifyAboutAddition | NotifyAboutRemoval
@@ -45,10 +44,8 @@ public:
     void SetEnqueuingCallback(std::function<bool(const Operation &_operation)> _should_be_queued);
 
     bool IsInteractive() const;
-    void SetDialogCallback(
-        std::function<void(NSWindow *, std::function<void(NSModalResponse)>)> _callback);
-    void SetOperationCompletionCallback(
-        std::function<void(const std::shared_ptr<Operation> &)> _callback);
+    void SetDialogCallback(std::function<void(NSWindow *, std::function<void(NSModalResponse)>)> _callback);
+    void SetOperationCompletionCallback(std::function<void(const std::shared_ptr<Operation> &)> _callback);
 
 private:
     Pool(const Pool &) = delete;
@@ -65,8 +62,7 @@ private:
 
     std::function<bool(const Operation &_operation)> m_ShouldBeQueuedCallback;
 
-    std::function<void(NSWindow *dialog, std::function<void(NSModalResponse response)>)>
-        m_DialogPresentation;
+    std::function<void(NSWindow *dialog, std::function<void(NSModalResponse response)>)> m_DialogPresentation;
     std::function<void(const std::shared_ptr<Operation> &)> m_OperationCompletionCallback;
 };
 

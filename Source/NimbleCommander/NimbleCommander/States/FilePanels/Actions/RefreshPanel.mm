@@ -3,10 +3,10 @@
 #include "../PanelController.h"
 
 namespace nc::panel::actions {
-    
-void RefreshPanel::Perform( PanelController *_target, id ) const
+
+void RefreshPanel::Perform(PanelController *_target, id) const
 {
     [_target forceRefreshPanel];
 }
 
-}
+} // namespace nc::panel::actions

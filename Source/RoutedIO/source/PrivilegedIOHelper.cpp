@@ -529,8 +529,7 @@ static void XPC_Peer_Event_Handler(xpc_connection_t _peer, xpc_object_t _event)
         //        xpc_release(_peer);
     }
     else if( type == XPC_TYPE_DICTIONARY ) {
-        ConnectionContext *context =
-            static_cast<ConnectionContext *>(xpc_connection_get_context(_peer));
+        ConnectionContext *context = static_cast<ConnectionContext *>(xpc_connection_get_context(_peer));
         if( !context ) {
             send_reply_error(_event, EINVAL);
             return;
@@ -600,8 +599,7 @@ static bool CheckSignature(const char *_bin_path)
 
     // create the requirement to check against
     SecRequirementRef req = NULL;
-    static CFStringRef reqStr =
-        CFStringCreateWithCString(0, g_SignatureRequirement, kCFStringEncodingUTF8);
+    static CFStringRef reqStr = CFStringCreateWithCString(0, g_SignatureRequirement, kCFStringEncodingUTF8);
     status = SecRequirementCreateWithString(reqStr, kSecCSDefaultFlags, &req);
     if( status != noErr || req == NULL ) {
         CFRelease(ref);
@@ -612,8 +610,7 @@ static bool CheckSignature(const char *_bin_path)
 
     status = SecStaticCodeCheckValidity(ref, kSecCSCheckAllArchitectures, req);
 
-    syslog_notice("Called SecStaticCodeCheckValidity(), verdict: %s",
-                  status == noErr ? "valid" : "not valid");
+    syslog_notice("Called SecStaticCodeCheckValidity(), verdict: %s", status == noErr ? "valid" : "not valid");
 
     CFRelease(ref);
     CFRelease(req);

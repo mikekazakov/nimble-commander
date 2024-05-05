@@ -3,8 +3,8 @@
 
 #include <Cocoa/Cocoa.h>
 
-@interface NCUtilSimpleComboBoxPersistentDataSource : NSObject<NSComboBoxDataSource>
+@interface NCUtilSimpleComboBoxPersistentDataSource : NSObject <NSComboBoxDataSource>
 
-- (void)reportEnteredItem:(nullable NSString*)item;
+- (void)reportEnteredItem:(nullable NSString *)item;
 
 @end

@@ -48,10 +48,10 @@ using namespace std::literals;
 - (IBAction)OnFSAccessReset:(id) [[maybe_unused]] _sender
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = NSLocalizedStringFromTable(
-        @"Are you sure you want to reset granted filesystem access?",
-        @"Preferences",
-        "Message text asking if user really wants to reset current file system access");
+    alert.messageText =
+        NSLocalizedStringFromTable(@"Are you sure you want to reset granted filesystem access?",
+                                   @"Preferences",
+                                   "Message text asking if user really wants to reset current file system access");
     alert.informativeText = NSLocalizedStringFromTable(
         @"This will cause Nimble Commander to ask you for access when necessary.",
         @"Preferences",

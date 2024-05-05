@@ -27,7 +27,7 @@ static bool IsBackspace(NSString *_s);
 static NSString *RemoveLastCharacterWithNormalization(NSString *_s);
 static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
-}
+} // namespace nc::panel::QuickSearch
 
 @implementation NCPanelQuickSearch {
     __weak NSObject<NCPanelQuickSearchDelegate> *m_Delegate;
@@ -489,4 +489,4 @@ static KeyModif KeyModifFromInt(int _k)
     return KeyModif::WithAlt;
 }
 
-}
+} // namespace nc::panel::QuickSearch

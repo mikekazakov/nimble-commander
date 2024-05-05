@@ -4,13 +4,13 @@
 #include <Cocoa/Cocoa.h>
 
 namespace nc::core {
-    class VFSInstanceManager;
+class VFSInstanceManager;
 }
 
-@interface VFSListWindowController : NSWindowController<NSTableViewDataSource, NSTableViewDelegate>
+@interface VFSListWindowController : NSWindowController <NSTableViewDataSource, NSTableViewDelegate>
 
-- (instancetype)initWithVFSManager:(nc::core::VFSInstanceManager&)_manager;
+- (instancetype)initWithVFSManager:(nc::core::VFSInstanceManager &)_manager;
 
-- (void) show;
+- (void)show;
 
 @end

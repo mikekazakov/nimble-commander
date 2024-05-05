@@ -85,8 +85,7 @@ public:
     /** return VFSError, not uids returned */
     int ResolvePathIfNeeded(const char *_path, char *_resolved_path, unsigned long _flags);
 
-    enum class SymlinkState : uint8_t
-    {
+    enum class SymlinkState : uint8_t {
         /// symlink is ok to use
         Resolved,
         /// default value - never tried to resolve

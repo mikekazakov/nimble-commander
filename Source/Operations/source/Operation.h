@@ -22,8 +22,7 @@ class Job;
 class Statistics;
 struct AsyncDialogResponse;
 
-enum class OperationState
-{
+enum class OperationState {
     Cold = 0,
     Running = 1,
     Paused = 2,
@@ -54,8 +53,7 @@ public:
     void Wait() const;
     bool Wait(std::chrono::nanoseconds _wait_for_time) const;
 
-    enum
-    {
+    enum {
         NotifyAboutStart = 1 << 0,
         NotifyAboutPause = 1 << 1,
         NotifyAboutResume = 1 << 2,
@@ -63,8 +61,8 @@ public:
         NotifyAboutCompletion = 1 << 4,
         NotifyAboutTitleChange = 1 << 5,
         NotifyAboutFinish = NotifyAboutStop | NotifyAboutCompletion,
-        NotifyAboutStateChange = NotifyAboutStart | NotifyAboutPause | NotifyAboutResume |
-                                 NotifyAboutStop | NotifyAboutCompletion
+        NotifyAboutStateChange =
+            NotifyAboutStart | NotifyAboutPause | NotifyAboutResume | NotifyAboutStop | NotifyAboutCompletion
     };
     using ObservationTicket = ScopedObservableBase::ObservationTicket;
     ObservationTicket Observe(uint64_t _notification_mask, std::function<void()> _callback);
@@ -78,8 +76,7 @@ public:
     void SetItemStatusCallback(ItemStateReportCallback _callback);
 
 protected:
-    enum class GenericDialog
-    {
+    enum class GenericDialog {
         AbortRetry,
         AbortSkipSkipAll,
         AbortSkipSkipAllRetry,
@@ -94,8 +91,7 @@ protected:
     virtual void OnJobResumed();
     bool IsInteractive() const noexcept;
     void Show(NSWindow *_dialog, std::shared_ptr<AsyncDialogResponse> _response);
-    static void AddButtonsForGenericDialog(GenericDialog _dialog_type,
-                                           NCOpsGenericErrorDialog *_dialog);
+    static void AddButtonsForGenericDialog(GenericDialog _dialog_type, NCOpsGenericErrorDialog *_dialog);
     void ShowGenericDialog(GenericDialog _dialog_type,
                            NSString *_message,
                            int _err,

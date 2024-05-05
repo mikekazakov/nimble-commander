@@ -17,7 +17,9 @@ Checks: >
   modernize-replace-auto-ptr,
   modernize-replace-disallow-copy-and-assign-macro,
   modernize-replace-random-shuffle,
-  modernize-return-braced-init-list
+  modernize-return-braced-init-list,
+  modernize-shrink-to-fit,
+  modernize-type-traits
 
 CheckOptions:
   - key:    modernize-loop-convert.MinConfidence

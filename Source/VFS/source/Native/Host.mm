@@ -484,7 +484,7 @@ FileObservationToken NativeHost::ObserveFileChanges(const char *_path, std::func
 {
     assert(_path != nullptr);
     const auto token = m_FSEventsFileUpdate.AddWatchPath(_path, std::move(_handler));
-    return FileObservationToken(token, SharedPtr());
+    return {token, SharedPtr()};
 }
 
 void NativeHost::StopObservingFileChanges(unsigned long _token)

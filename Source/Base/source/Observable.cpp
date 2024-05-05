@@ -89,7 +89,7 @@ ObservableBase::ObservationTicket ObservableBase::AddObserver(std::function<void
         m_Observers = new_observers;
     }
 
-    return ObservationTicket(this, ticket);
+    return {this, ticket};
 }
 
 void ObservableBase::FireObservers(const uint64_t _mask) const

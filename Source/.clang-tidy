@@ -13,7 +13,11 @@ Checks: >
   modernize-make-unique,
   modernize-min-max-use-initializer-list,
   modernize-raw-string-literal,
-  modernize-redundant-void-arg
+  modernize-redundant-void-arg,
+  modernize-replace-auto-ptr,
+  modernize-replace-disallow-copy-and-assign-macro,
+  modernize-replace-random-shuffle,
+  modernize-return-braced-init-list
 
 CheckOptions:
   - key:    modernize-loop-convert.MinConfidence

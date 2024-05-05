@@ -170,7 +170,7 @@ std::string_view PathManip::Filename(std::string_view _path) noexcept
     while( filename > first && filename[-1] != '/' )
         --filename;
 
-    return std::string_view(filename, last - filename);
+    return {filename, static_cast<size_t>(last - filename)};
 }
 
 std::string_view PathManip::Extension(std::string_view _path) noexcept
@@ -195,7 +195,7 @@ std::string_view PathManip::Extension(std::string_view _path) noexcept
     if( extension == first + 1 )
         return {}; // don't allow e.g. ".foo"
 
-    return std::string_view(extension, last - extension);
+    return {extension, static_cast<size_t>(last - extension)};
 }
 
 std::string_view PathManip::Parent(std::string_view _path) noexcept
@@ -209,7 +209,7 @@ std::string_view PathManip::Parent(std::string_view _path) noexcept
     while( last > first && last[-1] != '/' )
         --last;
 
-    return std::string_view(first, last - first);
+    return {first, static_cast<size_t>(last - first)};
 }
 
 std::filesystem::path PathManip::Expand(std::string_view _path, std::string_view _home, std::string_view _cwd) noexcept

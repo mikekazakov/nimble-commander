@@ -137,7 +137,7 @@ static VFSConfiguration ComposeConfguration(const std::string &_serv_url,
     config.port = _port;
     config.verbose = "sftp://"s + config.user + "@" + config.server_url;
     config.home = _home;
-    return VFSConfiguration(std::move(config));
+    return {std::move(config)};
 }
 
 SFTPHost::SFTPHost(const std::string &_serv_url,

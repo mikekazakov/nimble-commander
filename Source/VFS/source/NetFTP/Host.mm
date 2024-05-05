@@ -57,7 +57,7 @@ static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
     config.port = _port;
     config.active = _active;
     config.verbose = "ftp://"s + (config.user.empty() ? "" : config.user + "@") + config.server_url;
-    return VFSConfiguration(std::move(config));
+    return {std::move(config)};
 }
 
 FTPHost::FTPHost(const std::string &_serv_url,
@@ -560,7 +560,7 @@ HostDirObservationTicket FTPHost::DirChangeObserve(const char *_path, std::funct
         h.path += '/';
     h.handler = std::move(_handler);
 
-    return HostDirObservationTicket(h.ticket, shared_from_this());
+    return {h.ticket, shared_from_this()};
 }
 
 void FTPHost::StopDirChangeObserving(unsigned long _ticket)

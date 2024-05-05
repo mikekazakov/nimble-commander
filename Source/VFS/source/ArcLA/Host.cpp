@@ -74,7 +74,7 @@ static VFSConfiguration ComposeConfiguration(const std::string &_path, std::opti
     VFSArchiveHostConfiguration config;
     config.path = _path;
     config.password = std::move(_passwd);
-    return VFSConfiguration(std::move(config));
+    return {std::move(config)};
 }
 
 static void DecodeStringToUTF8(const void *_bytes, size_t _sz, CFStringEncoding _enc, char *_buf, size_t _buf_sz)

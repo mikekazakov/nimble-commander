@@ -574,7 +574,7 @@ HostDirObservationTicket PSHost::DirChangeObserve([[maybe_unused]] const char *_
     // currently we don't care about _path, since this fs has only one directory - root
     auto ticket = m_LastTicket++;
     m_UpdateHandlers.emplace_back(ticket, std::move(_handler));
-    return HostDirObservationTicket(ticket, shared_from_this());
+    return {ticket, shared_from_this()};
 }
 
 void PSHost::StopDirChangeObserving(unsigned long _ticket)

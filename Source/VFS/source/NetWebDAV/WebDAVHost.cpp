@@ -468,7 +468,7 @@ static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
                                   (default_port ? "" : std::to_string(_port)),
                                   (_path.empty() ? "" : _path + "/"));
 
-    return VFSConfiguration(std::move(config));
+    return {std::move(config)};
 }
 
 static bool IsValidInputPath(const char *_path)

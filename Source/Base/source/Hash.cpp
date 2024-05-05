@@ -138,7 +138,7 @@ std::vector<uint8_t> Hash::Final()
         default:
             assert(0);
     }
-    return std::vector<uint8_t>();
+    return {};
 }
 
 std::string Hash::Hex(const std::vector<uint8_t> &_d)

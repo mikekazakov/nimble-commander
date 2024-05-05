@@ -219,7 +219,7 @@ FontCache::Pair FontCache::DoGetBMP(uint16_t _c)
                     }
                 }
                 assert(0); // assume this will never overflow - we should never came here
-                return FontCache::Pair();
+                return {};
             }
             else { // something is very-very bad in the system - let this unichar be a null
                 m_CacheBMP[_c].searched = 1;
@@ -232,7 +232,7 @@ FontCache::Pair FontCache::DoGetBMP(uint16_t _c)
         }
     }
 
-    return FontCache::Pair();
+    return {};
 }
 
 FontCache::Pair FontCache::DoGetNonBMP(uint32_t _c)

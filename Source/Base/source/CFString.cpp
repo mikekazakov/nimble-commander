@@ -55,13 +55,13 @@ CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s, size_t _len
 std::string CFStringGetUTF8StdString(CFStringRef _str)
 {
     if( const char *cstr = CFStringGetCStringPtr(_str, kCFStringEncodingUTF8) )
-        return std::string(cstr);
+        return {cstr};
 
     CFIndex length = CFStringGetLength(_str);
     CFIndex maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
     auto buffer = std::make_unique<char[]>(maxSize); // REMOVE me!!!!
     if( CFStringGetCString(_str, &buffer[0], maxSize, kCFStringEncodingUTF8) )
-        return std::string(buffer.get());
+        return {buffer.get()};
 
     return {};
 }

@@ -793,7 +793,7 @@ static std::string Serialize(const rapidjson::Document &_document)
     rapidjson::StringBuffer buffer;
     rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
     _document.Accept(writer);
-    return std::string(buffer.GetString());
+    return {buffer.GetString()};
 }
 
 } // namespace nc::config

@@ -97,7 +97,7 @@ ScopedObservableBase::ObservationTicket ScopedObservableBase::AddTicketedObserve
         m_Observers = new_observers;
     }
 
-    return ObservationTicket(m_Indirect, ticket);
+    return {m_Indirect, ticket};
 }
 
 void ScopedObservableBase::AddUnticketedObserver(std::function<void()> _callback, uint64_t _mask)

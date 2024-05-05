@@ -169,7 +169,7 @@ static std::vector<std::pair<std::string, std::string>> GetFindersFavorites() //
                     if( !path.empty() && !path.ends_with(".cannedSearch") && !path.ends_with(".cannedSearch/") &&
                         !path.ends_with(".savedSearch") &&
                         nc::bootstrap::NativeVFSHostInstance().IsDirectory(path.c_str(), 0) )
-                        paths.emplace_back(std::make_pair(TitleForURL(url), ensure_tr_slash(std::move(path))));
+                        paths.emplace_back(TitleForURL(url), ensure_tr_slash(std::move(path)));
                     CFRelease(url);
                 }
                 if( err ) {

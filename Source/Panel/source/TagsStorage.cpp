@@ -73,7 +73,7 @@ bool TagsStorage::Load()
         if( !label_elem.IsString() || !color_elem.IsString() )
             continue;
         const int color = std::clamp(std::stoi(color_elem.GetString()), 0, 7);
-        m_Tags.push_back(Tags::Tag(Tags::Tag::Internalize(label_elem.GetString()), static_cast<Tags::Color>(color)));
+        m_Tags.emplace_back(Tags::Tag::Internalize(label_elem.GetString()), static_cast<Tags::Color>(color));
     }
     return true;
 }

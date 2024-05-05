@@ -299,7 +299,7 @@ unsigned long Cache::Observe(const std::string &_path, std::function<void()> _ha
 
     {
         const auto lock = std::lock_guard{m_ObserversLock};
-        m_Observers.emplace(std::make_pair(EnsureTrailingSlash(_path), std::move(o)));
+        m_Observers.emplace(EnsureTrailingSlash(_path), std::move(o));
     }
 
     return ticket;

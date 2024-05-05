@@ -52,14 +52,14 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 {
     std::vector<LauchServicesHandlers> per_item_handlers;
     for( auto &i : _items )
-        per_item_handlers.emplace_back(LauchServicesHandlers{i, _db});
+        per_item_handlers.emplace_back(i, _db);
 
     LauchServicesHandlers items_handlers{per_item_handlers};
 
     std::vector<LaunchServiceHandler> handlers;
     for( const auto &path : items_handlers.HandlersPaths() )
         try {
-            handlers.emplace_back(LaunchServiceHandler(path));
+            handlers.emplace_back(path);
         } catch( ... ) {
         }
 

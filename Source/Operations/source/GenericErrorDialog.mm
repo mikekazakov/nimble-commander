@@ -87,7 +87,7 @@ using namespace nc::ops;
 {
     if( m_Buttons.empty() ) {
         auto title = NSLocalizedString(@"Close", "");
-        m_Buttons.emplace_back(std::make_pair(title, m_EscapeButtonResponse));
+        m_Buttons.emplace_back(title, m_EscapeButtonResponse);
     }
 
     NSButton *last = nil;
@@ -177,7 +177,7 @@ static bool IsShiftPressed() noexcept
 
 - (void)addButtonWithTitle:(NSString *)_title responseCode:(NSModalResponse)_response
 {
-    m_Buttons.emplace_back(std::make_pair(_title, _response));
+    m_Buttons.emplace_back(_title, _response);
 }
 
 - (void)moveRight:(id)sender

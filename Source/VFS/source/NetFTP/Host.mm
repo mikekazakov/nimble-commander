@@ -186,9 +186,25 @@ int FTPHost::DownloadListing(CURLInstance *_inst,
     return 0;
 }
 
+// TODO: unit tests
 std::string FTPHost::BuildFullURLString(std::string_view _path) const
 {
-    return fmt::format("ftp://{}{}", JunctionPath(), _path); // naive implementation
+    std::string result_path = fmt::format("ftp://{}", JunctionPath());
+    for( const auto &part : std::filesystem::path(_path) ) {
+        if( result_path.back() != '/' ) {
+            result_path += '/';
+        }
+        if( !part.empty() && part.native() != "/" ) {
+            char *escaped_curl =
+                curl_easy_escape(nullptr, part.native().c_str(), static_cast<int>(part.native().length()));
+            if( escaped_curl == nullptr ) {
+                return {};
+            }
+            result_path.append(escaped_curl);
+            curl_free(escaped_curl);
+        }
+    }
+    return result_path;
 }
 
 std::unique_ptr<CURLInstance> FTPHost::SpawnCURL()
@@ -438,7 +454,7 @@ int FTPHost::RemoveDirectory(const char *_path, [[maybe_unused]] const VFSCancel
         return VFSError::InvalidCall;
 
     const std::filesystem::path parent_path = utility::PathManip::EnsureTrailingSlash(path.parent_path());
-    const std::string cmd = "RMD " + path.filename().native();
+    const std::string cmd = "RMD " + path.filename().native(); // TODO: this needs to be escaped (?)
     const std::string url = BuildFullURLString(parent_path.native());
 
     [[maybe_unused]] CURLMcode curlm_e;
@@ -482,8 +498,8 @@ int FTPHost::Rename(const char *_old_path,
     const std::filesystem::path old_parent_path = utility::PathManip::EnsureTrailingSlash(old_path.parent_path());
 
     std::string url = BuildFullURLString(old_parent_path.native());
-    std::string cmd1 = "RNFR "s + old_path.native();
-    std::string cmd2 = "RNTO "s + new_path.native();
+    std::string cmd1 = "RNFR "s + old_path.native(); // TODO: this needs to be escaped (?)
+    std::string cmd2 = "RNTO "s + new_path.native(); // TODO: this needs to be escaped (?)
 
     [[maybe_unused]] CURLMcode curlm_e;
     auto curl = InstanceForIOAtDir(old_parent_path);

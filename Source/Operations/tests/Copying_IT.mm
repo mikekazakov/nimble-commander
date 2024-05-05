@@ -825,6 +825,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part1")
 
     op.Start();
     op.Wait();
+    REQUIRE(op.State() == OperationState::Completed);
 
     int compare;
     REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
@@ -851,6 +852,7 @@ TEST_CASE(PREFIX "Copy to local FTP")
 
     op.Start();
     op.Wait();
+    REQUIRE(op.State() == OperationState::Completed);
 
     for( auto &i : files ) {
         int compare;
@@ -876,6 +878,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part3")
 
     op.Start();
     op.Wait();
+    REQUIRE(op.State() == OperationState::Completed);
 
     int result = 0;
     REQUIRE(VFSCompareEntries("/bin", TestEnv().vfs_native, "/Public/!FilesTesting/bin", host, result) == 0);
@@ -902,6 +905,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part4")
                    {});
         op.Start();
         op.Wait();
+        REQUIRE(op.State() == OperationState::Completed);
     }
 
     int compare;
@@ -912,6 +916,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part4")
         Copying op(FetchItems("/Public/!FilesTesting/", {"kernel"}, *host), fn3, host, {});
         op.Start();
         op.Wait();
+        REQUIRE(op.State() == OperationState::Completed);
     }
 
     REQUIRE(VFSEasyCompareFiles(fn2, host, fn3, host, compare) == 0);
@@ -919,6 +924,43 @@ TEST_CASE(PREFIX "Copy to local FTP, part4")
 
     REQUIRE(host->Unlink(fn2, 0) == 0);
     REQUIRE(host->Unlink(fn3, 0) == 0);
+}
+
+TEST_CASE(PREFIX "Copy to local FTP, special characters")
+{
+    VFSHostPtr host;
+    REQUIRE_NOTHROW(host = std::make_shared<nc::vfs::FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+    const std::filesystem::path dir = "/Testing";
+
+    VFSEasyDelete(dir.c_str(), host);
+
+    struct TestCase {
+        std::filesystem::path name;
+    } const tcs[] = {
+        {"sleep"},                   // original
+        {"sleep "},                  // trailing space
+        {" sleep"},                  // heading space
+        {"yet another dir / sleep"}, // spaces with a directory
+        {"!@#$%^&*()_=-+.`'"},       // non-alphanum
+        {"мяу"},                     // non-ascii
+        {"🤡🤡"},                    // emoji
+        {"🤡/😀/😄/😁/😆/🥹/😅/😂"}, // emoji directories
+    };
+
+    for( auto &tc : tcs ) {
+        {
+            Copying op(FetchItems("/bin", {"sleep"}, *TestEnv().vfs_native), dir / tc.name, host, {});
+            op.Start();
+            op.Wait();
+            REQUIRE(op.State() == OperationState::Completed);
+        }
+        int compare;
+        REQUIRE(VFSEasyCompareFiles("/bin/sleep", TestEnv().vfs_native, (dir / tc.name).c_str(), host, compare) == 0);
+        REQUIRE(compare == 0);
+        REQUIRE(host->Unlink((dir / tc.name).c_str(), 0) == 0);
+    }
+
+    VFSEasyDelete(dir.c_str(), host);
 }
 
 TEST_CASE(PREFIX "Renaming a locked native regular item")

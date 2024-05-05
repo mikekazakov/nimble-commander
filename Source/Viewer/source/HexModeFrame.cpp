@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "HexModeFrame.h"
 #include "HexModeProcessing.h"
 #include <Base/algo.h>
@@ -222,7 +222,7 @@ HexModeFrame::Row HexModeFrame::RowsBuilder::Build(std::pair<int, int> const _ch
     // make place for future CTLine objects
     std::vector<base::CFPtr<CTLineRef>> lines(strings.size());
 
-    return Row(_chars_indices, _string_bytes, _row_bytes, std::move(strings), std::move(lines), m_Attributes);
+    return {_chars_indices, _string_bytes, _row_bytes, std::move(strings), std::move(lines), m_Attributes};
 }
 
 } // namespace nc::viewer

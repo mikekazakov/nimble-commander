@@ -156,7 +156,7 @@ void SingleTask::ReadChildOutput()
     constexpr size_t input_sz = 65536;
     std::unique_ptr<char[]> input = std::make_unique<char[]>(input_sz);
 
-    while( 1 ) {
+    while( true ) {
         // Wait for data from standard input and master side of PTY
         FD_ZERO(&fd_in);
         FD_SET(m_MasterFD, &fd_in);
@@ -184,7 +184,8 @@ void SingleTask::ReadChildOutput()
 
         // check if child process died
         if( FD_ISSET(m_MasterFD, &fd_err) ) {
-            // is that right - that we treat any err output as signal that task is dead?
+            // is that right - that we treat any err output as signal that task is
+            // dead?
             read(m_MasterFD, input.get(), input_sz);
             goto end_of_all;
         }

@@ -922,7 +922,7 @@ static const unsigned short* g_SingleBytesTable[] = {
 };
 // clang-format on
 
-static_assert(sizeof(g_SingleBytesTable) / sizeof(unsigned short *) == ENCODING_SINGLE_BYTES_LAST__ + 1, "");
+static_assert(sizeof(g_SingleBytesTable) / sizeof(unsigned short *) == ENCODING_SINGLE_BYTES_LAST__ + 1);
 
 #define Endian16_Swap(value)                                                                                           \
     (((static_cast<uint16_t>((value) & 0x00FF)) << 8) | ((static_cast<uint16_t>((value) & 0xFF00)) >> 8))

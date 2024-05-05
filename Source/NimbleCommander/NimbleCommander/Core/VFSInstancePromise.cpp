@@ -4,7 +4,7 @@
 
 namespace nc::core {
 
-static_assert(sizeof(VFSInstancePromise) == 16, "");
+static_assert(sizeof(VFSInstancePromise) == 16);
 
 VFSInstancePromise::VFSInstancePromise() : inst_id(0), manager(nullptr)
 {

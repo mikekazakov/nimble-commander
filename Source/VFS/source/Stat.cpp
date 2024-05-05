@@ -4,7 +4,7 @@
 
 namespace nc::vfs {
 
-static_assert(sizeof(Stat) == 128, "");
+static_assert(sizeof(Stat) == 128);
 
 bool StatFS::operator==(const StatFS &_r) const
 {

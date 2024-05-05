@@ -161,7 +161,7 @@ std::shared_ptr<FontCache> FontCache::FontCacheFromFont(CTFontRef _basic_font)
 
 FontCache::FontCache(CTFontRef _basic_font) : m_FontInfo(_basic_font)
 {
-    static_assert(sizeof(Pair) == 4, "");
+    static_assert(sizeof(Pair) == 4);
     m_FontName = decltype(m_FontName)::adopt(CTFontCopyFullName(_basic_font));
 
     m_CTFonts[0] = base::CFPtr<CTFontRef>(_basic_font);

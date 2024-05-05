@@ -639,12 +639,12 @@ void File::CheckStateTransition(State _new_state) const
     static const bool valid_flow[StatesAmount][StatesAmount] = {
         /* Valid transitions from index1 to index2                              */
         /*               Cold Initiated Downloading Uploading Canceled Completed*/
-        /*Cold*/ {0, 1, 0, 0, 0, 0},
-        /*Initiated*/ {0, 0, 1, 1, 1, 0},
-        /*Downloading*/ {0, 0, 0, 0, 1, 1},
-        /*Uploading*/ {0, 0, 0, 0, 1, 1},
-        /*Canceled*/ {1, 0, 0, 0, 0, 0},
-        /*Completed*/ {1, 0, 0, 0, 0, 0}};
+        /*Cold*/ {false, true, false, false, false, false},
+        /*Initiated*/ {false, false, true, true, true, false},
+        /*Downloading*/ {false, false, false, false, true, true},
+        /*Uploading*/ {false, false, false, false, true, true},
+        /*Canceled*/ {true, false, false, false, false, false},
+        /*Completed*/ {true, false, false, false, false, false}};
     if( !valid_flow[m_State][_new_state] )
         std::cerr << "suspicious state change: " << m_State << " to " << _new_state << std::endl;
 }

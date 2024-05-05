@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "RapidJSON.h"
 
 namespace nc::config {
@@ -7,12 +7,12 @@ rapidjson::CrtAllocator g_CrtAllocator;
 
 Value MakeStandaloneString(const char *_str)
 {
-    return Value(_str, g_CrtAllocator);
+    return {_str, g_CrtAllocator};
 }
 
 Value MakeStandaloneString(const std::string &_str)
 {
-    return Value(_str.c_str(), g_CrtAllocator);
+    return {_str.c_str(), g_CrtAllocator};
 }
 
 std::optional<bool> GetOptionalBoolFromObject(const Value &_value, const char *_name)

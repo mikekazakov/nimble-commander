@@ -415,7 +415,7 @@ std::string PSHost::ProcInfoIntoFile(const ProcInfo &_info, std::shared_ptr<Snap
     result += "Process parent id: "s + to_string(_info.ppid) + " (" + parent_name + ")\n";
     result += "Process user id: "s + to_string(_info.p_uid) + " (" + user_name + ")\n";
     result += "Process priority: "s + to_string(_info.priority) + "\n";
-    result += "Process \"nice\" value: "s + to_string(_info.nice) + "\n";
+    result += R"(Process "nice" value: )" + to_string(_info.nice) + "\n";
     result += "Started at: "s +
               [ProcDateFormatter()
                   stringFromDate:[NSDate dateWithTimeIntervalSince1970:static_cast<double>(_info.start_time)]]

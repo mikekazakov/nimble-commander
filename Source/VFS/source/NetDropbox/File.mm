@@ -225,9 +225,9 @@ int File::PreferredIOSize() const
 
 std::string File::BuildUploadPathspec() const
 {
-    std::string spec = "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(Path()) + "\" ";
+    std::string spec = R"({ "path": ")" + EscapeStringForJSONInHTTPHeader(Path()) + "\" ";
     if( m_OpenFlags & VFSFlags::OF_Truncate )
-        spec += ", \"mode\": { \".tag\": \"overwrite\" } ";
+        spec += R"(, "mode": { ".tag": "overwrite" } )";
     spec += "}";
     return spec;
 }
@@ -340,7 +340,7 @@ NSURLRequest *File::BuildRequestForUploadSessionAppend() const
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
 
-    const std::string header = "{\"cursor\": {"s + "\"session_id\": \"" + m_Upload->session_id + "\", " +
+    const std::string header = R"({"cursor": {)"s + R"("session_id": ")" + m_Upload->session_id + "\", " +
                                "\"offset\": " + std::to_string(m_FilePos) + "}}";
     [request setValue:[NSString stringWithUTF8String:header.c_str()] forHTTPHeaderField:@"Dropbox-API-Arg"];
 
@@ -396,7 +396,7 @@ NSURLRequest *File::BuildRequestForUploadSessionFinish() const
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
 
-    const std::string header = "{\"cursor\": {"s + "\"session_id\": \"" + m_Upload->session_id + "\", " +
+    const std::string header = R"({"cursor": {)"s + R"("session_id": ")" + m_Upload->session_id + "\", " +
                                "\"offset\": " + std::to_string(m_FilePos) + "}, " +
                                "\"commit\": " + BuildUploadPathspec() + " }";
 

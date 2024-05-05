@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include <VFS/Log.h>
 #include "../ListingInput.h"
@@ -61,14 +61,11 @@ struct DropboxHost::State {
 };
 
 DropboxHost::DropboxHost(const Params &_params)
-    : Host("", nullptr, DropboxHost::UniqueTag),
-      I(std::make_unique<State>()), m_Config{Compose(_params.account,
-                                                     _params.access_token,
-                                                     _params.client_id,
-                                                     _params.client_secret)}
+    : Host("", nullptr, DropboxHost::UniqueTag), I(std::make_unique<State>()),
+      m_Config{Compose(_params.account, _params.access_token, _params.client_id, _params.client_secret)}
 {
-    I->m_SessionCreator = _params.session_creator ? _params.session_creator
-                                                  : &dropbox::URLSessionFactory::DefaultFactory();
+    I->m_SessionCreator =
+        _params.session_creator ? _params.session_creator : &dropbox::URLSessionFactory::DefaultFactory();
 
     Init();
 }
@@ -90,8 +87,7 @@ void DropboxHost::Init()
 void DropboxHost::Construct(const std::string &_account, const std::string &_access_token)
 {
     assert(I->m_SessionCreator != nil);
-    I->m_GenericSession =
-        I->m_SessionCreator->CreateSession(NSURLSessionConfiguration.defaultSessionConfiguration);
+    I->m_GenericSession = I->m_SessionCreator->CreateSession(NSURLSessionConfiguration.defaultSessionConfiguration);
 
     I->m_Account = _account;
     if( TokenMangler::IsMangledRefreshToken(_access_token) ) {
@@ -123,17 +119,16 @@ void DropboxHost::SetAccessToken(const std::string &_access_token)
     I->m_AuthString = [NSString stringWithFormat:@"Bearer %s", I->m_Token.c_str()];
 }
 
-std::pair<int, std::string>
-DropboxHost::RetreiveAccessTokenFromRefreshToken(const std::string &_refresh_token)
+std::pair<int, std::string> DropboxHost::RetreiveAccessTokenFromRefreshToken(const std::string &_refresh_token)
 {
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::OAuth2Token];
     req.HTTPMethod = @"POST";
     // YOLO: let's assume all these string don't need percent escaping...
-    auto post_string = [NSString
-        stringWithFormat:@"grant_type=refresh_token&refresh_token=%s&client_id=%s&client_secret=%s",
-                         _refresh_token.c_str(),
-                         Config().client_id.c_str(),
-                         Config().client_secret.c_str()];
+    auto post_string =
+        [NSString stringWithFormat:@"grant_type=refresh_token&refresh_token=%s&client_id=%s&client_secret=%s",
+                                   _refresh_token.c_str(),
+                                   Config().client_id.c_str(),
+                                   Config().client_secret.c_str()];
     [req setHTTPBody:[post_string dataUsingEncoding:NSUTF8StringEncoding]];
 
     const auto [rc, data] = SendSynchronousRequest(GenericSession(), req);
@@ -165,8 +160,7 @@ void DropboxHost::InitialAccountLookup()
         throw VFSErrorException(rc);
 }
 
-std::pair<int, std::string>
-DropboxHost::CheckTokenAndRetrieveAccountEmail(const std::string &_token)
+std::pair<int, std::string> DropboxHost::CheckTokenAndRetrieveAccountEmail(const std::string &_token)
 {
     const auto config = NSURLSessionConfiguration.defaultSessionConfiguration;
     const auto session = [NSURLSession sessionWithConfiguration:config];
@@ -218,9 +212,7 @@ void DropboxHost::FillAuth(NSMutableURLRequest *_request) const
     [_request setValue:I->m_AuthString forHTTPHeaderField:@"Authorization"];
 }
 
-int DropboxHost::StatFS([[maybe_unused]] const char *_path,
-                        VFSStatFS &_stat,
-                        const VFSCancelChecker &_cancel_checker)
+int DropboxHost::StatFS([[maybe_unused]] const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
 {
     _stat = VFSStatFS{};
 
@@ -297,9 +289,8 @@ int DropboxHost::Stat(const char *_path,
     return rc;
 }
 
-int DropboxHost::IterateDirectoryListing(
-    const char *_path,
-    const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+int DropboxHost::IterateDirectoryListing(const char *_path,
+                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
@@ -310,8 +301,8 @@ int DropboxHost::IterateDirectoryListing(
 
     std::string cursor_token = "";
     do {
-        NSMutableURLRequest *req = [[NSMutableURLRequest alloc]
-            initWithURL:cursor_token.empty() ? api::ListFolder : api::ListFolderContinue];
+        NSMutableURLRequest *req =
+            [[NSMutableURLRequest alloc] initWithURL:cursor_token.empty() ? api::ListFolder : api::ListFolderContinue];
         if( cursor_token.empty() )
             InsertHTTPBodyPathspec(req, path);
         else
@@ -346,8 +337,7 @@ int DropboxHost::IterateDirectoryListing(
 
         cursor_token.clear();
         const auto has_more = json.FindMember("has_more");
-        if( has_more != json.MemberEnd() && has_more->value.IsBool() &&
-            has_more->value.GetBool() ) {
+        if( has_more != json.MemberEnd() && has_more->value.IsBool() && has_more->value.GetBool() ) {
             const auto cursor = json.FindMember("cursor");
             if( cursor != json.MemberEnd() && cursor->value.IsString() ) {
                 cursor_token = cursor->value.GetString();
@@ -391,8 +381,8 @@ int DropboxHost::FetchDirectoryListing(const char *_path,
 
     do {
 
-        NSMutableURLRequest *req = [[NSMutableURLRequest alloc]
-            initWithURL:cursor_token.empty() ? api::ListFolder : api::ListFolderContinue];
+        NSMutableURLRequest *req =
+            [[NSMutableURLRequest alloc] initWithURL:cursor_token.empty() ? api::ListFolder : api::ListFolderContinue];
         if( cursor_token.empty() )
             InsertHTTPBodyPathspec(req, path);
         else
@@ -410,8 +400,7 @@ int DropboxHost::FetchDirectoryListing(const char *_path,
         auto entries = ExtractMetadataEntries(json);
         for( auto &e : entries ) {
             listing_source.filenames.emplace_back(e.name);
-            listing_source.unix_modes.emplace_back(e.is_directory ? DirectoryAccessMode
-                                                                  : RegularFileAccessMode);
+            listing_source.unix_modes.emplace_back(e.is_directory ? DirectoryAccessMode : RegularFileAccessMode);
             listing_source.unix_types.emplace_back(e.is_directory ? DT_DIR : DT_REG);
             if( e.size >= 0 )
                 listing_source.sizes.insert(listing_index, e.size);
@@ -425,8 +414,7 @@ int DropboxHost::FetchDirectoryListing(const char *_path,
 
         cursor_token.clear();
         const auto has_more = json.FindMember("has_more");
-        if( has_more != json.MemberEnd() && has_more->value.IsBool() &&
-            has_more->value.GetBool() ) {
+        if( has_more != json.MemberEnd() && has_more->value.IsBool() && has_more->value.GetBool() ) {
             const auto cursor = json.FindMember("cursor");
             if( cursor != json.MemberEnd() && cursor->value.IsString() ) {
                 cursor_token = cursor->value.GetString();
@@ -483,9 +471,7 @@ int DropboxHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_can
     return rc;
 }
 
-int DropboxHost::CreateDirectory(const char *_path,
-                                 [[maybe_unused]] int _mode,
-                                 const VFSCancelChecker &_cancel_checker)
+int DropboxHost::CreateDirectory(const char *_path, [[maybe_unused]] int _mode, const VFSCancelChecker &_cancel_checker)
 {
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
@@ -506,9 +492,7 @@ bool DropboxHost::IsWritable() const
     return true;
 }
 
-int DropboxHost::Rename(const char *_old_path,
-                        const char *_new_path,
-                        const VFSCancelChecker &_cancel_checker)
+int DropboxHost::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
 {
     if( !_old_path || _old_path[0] != '/' || !_new_path || _new_path[0] != '/' )
         return VFSError::InvalidCall;
@@ -518,8 +502,8 @@ int DropboxHost::Rename(const char *_old_path,
 
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Move];
     [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    const std::string path_spec = "{ "s + "\"from_path\": \"" + EscapeString(old_path) + "\", " +
-                                  "\"to_path\": \"" + EscapeString(new_path) + "\"" + " }";
+    const std::string path_spec = "{ "s + R"("from_path": ")" + EscapeString(old_path) + "\", " + R"("to_path": ")" +
+                                  EscapeString(new_path) + "\"" + " }";
     [req setHTTPBody:[NSData dataWithBytes:data(path_spec) length:size(path_spec)]];
 
     auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
@@ -536,23 +520,20 @@ bool DropboxHost::IsCaseSensitiveAtPath([[maybe_unused]] const char *_dir) const
     return false;
 }
 
-std::pair<int, NSData *>
-DropboxHost::SendSynchronousPostRequest(NSMutableURLRequest *_request,
-                                        const VFSCancelChecker &_cancel_checker)
+std::pair<int, NSData *> DropboxHost::SendSynchronousPostRequest(NSMutableURLRequest *_request,
+                                                                 const VFSCancelChecker &_cancel_checker)
 {
     _request.HTTPMethod = @"POST";
     [_request setValue:I->m_AuthString forHTTPHeaderField:@"Authorization"];
 
-    const auto [_1st_errc, _1st_data] =
-        SendSynchronousRequest(GenericSession(), _request, _cancel_checker);
+    const auto [_1st_errc, _1st_data] = SendSynchronousRequest(GenericSession(), _request, _cancel_checker);
     if( _1st_errc == VFSError::Ok )
         return {_1st_errc, _1st_data};
 
     if( _1st_errc == VFSError::FromErrno(EAUTH) && !I->m_RefreshToken.empty() ) {
         Log::Info(SPDLOC, "Got 401 - trying to refresh an access token");
         // Handle HTTP 401 - try to regen our short-lived access token if possible
-        const auto [refresh_errc, access_token] =
-            RetreiveAccessTokenFromRefreshToken(I->m_RefreshToken);
+        const auto [refresh_errc, access_token] = RetreiveAccessTokenFromRefreshToken(I->m_RefreshToken);
         if( refresh_errc != VFSError::Ok ) {
             Log::Warn(SPDLOC, "Failed to refresn an access token");
             // failed to refresh - give up
@@ -581,4 +562,4 @@ std::shared_ptr<DropboxHost> DropboxHost::SharedPtr() noexcept
     return std::static_pointer_cast<DropboxHost>(Host::SharedPtr());
 }
 
-}
+} // namespace nc::vfs

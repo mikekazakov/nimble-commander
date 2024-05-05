@@ -81,7 +81,7 @@ TEST_CASE(PREFIX "execute a detached console app")
          "echopars\n" + (basedir / "test.txt").string() + "\nHello,\nWorld!\n"},        //
         {(basedir / "test.txt").string() + " first second",                             //
          "echopars\n" + (basedir / "test.txt").string() + "\nfirst\nsecond\n"},         //
-        {(basedir / "test.txt").string() + " \"first\" \"second\"",                     //
+        {(basedir / "test.txt").string() + R"( "first" "second")",                      //
          "echopars\n" + (basedir / "test.txt").string() + "\n\"first\"\n\"second\"\n"}, //
         {(basedir / "test.txt").string() + " first\\ second",                           //
          "echopars\n" + (basedir / "test.txt").string() + "\nfirst second\n"},          //

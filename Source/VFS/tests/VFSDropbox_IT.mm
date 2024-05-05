@@ -226,7 +226,7 @@ TEST_CASE(PREFIX "simple upload")
 TEST_CASE(PREFIX "upload with invalid name")
 {
     const auto to_upload = "Hello, world!"s;
-    const auto filepath = "/FolderToModify/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/test.txt";
+    const auto filepath = R"(/FolderToModify/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/test.txt)";
     std::shared_ptr<VFSHost> host = Spawn();
 
     std::shared_ptr<VFSFile> file;

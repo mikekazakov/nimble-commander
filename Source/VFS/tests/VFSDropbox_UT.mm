@@ -242,7 +242,7 @@ TEST_CASE(PREFIX "Initialization with an old token")
 
     Reaction &r = factory.AddReaction(); // get an account info
     r.response = R200();
-    r.data = D("{\"account_id\":\"dbid:12345\", \"email\":\"foobar@example.com\"}");
+    r.data = D(R"({"account_id":"dbid:12345", "email":"foobar@example.com"})");
     r.exp_URL = "https://api.dropboxapi.com/2/users/get_current_account";
     r.exp_HTTPMethod = "POST";
     r.exp_HTTPHeaderFields = @{@"Authorization": @"Bearer 1234567890"};
@@ -260,7 +260,7 @@ TEST_CASE(PREFIX "Initialization with a refresh token")
 
     Reaction &r1 = factory.AddReaction(); // r1 - convert a refresh token into a short-lived token
     r1.response = R200();
-    r1.data = D("{\"token_type\":\"bearer\", \"access_token\":\"sl.qwertyuiop\"}");
+    r1.data = D(R"({"token_type":"bearer", "access_token":"sl.qwertyuiop"})");
     r1.exp_URL = "https://api.dropbox.com/oauth2/token";
     r1.exp_HTTPMethod = "POST";
     r1.exp_HTTPBody = "grant_type=refresh_token&refresh_token=5678901234&client_id=AAAAAAAAAAAAAAA&"
@@ -268,7 +268,7 @@ TEST_CASE(PREFIX "Initialization with a refresh token")
 
     Reaction &r2 = factory.AddReaction(); // r2 - get an account info
     r2.response = R200();
-    r2.data = D("{\"account_id\": \"dbid:12345\", \"email\":\"foobar@example.com\"}");
+    r2.data = D(R"({"account_id": "dbid:12345", "email":"foobar@example.com"})");
     r2.exp_URL = "https://api.dropboxapi.com/2/users/get_current_account";
     r2.exp_HTTPMethod = "POST";
     r2.exp_HTTPHeaderFields = @{@"Authorization": @"Bearer sl.qwertyuiop"};
@@ -286,7 +286,7 @@ TEST_CASE(PREFIX "Operation with a refresh token")
 
     Reaction &r1 = factory.AddReaction(); // r1 - convert a refresh token into a short-lived token
     r1.response = R200();
-    r1.data = D("{\"token_type\":\"bearer\", \"access_token\":\"sl.qwertyuiop\"}");
+    r1.data = D(R"({"token_type":"bearer", "access_token":"sl.qwertyuiop"})");
     r1.exp_URL = "https://api.dropbox.com/oauth2/token";
     r1.exp_HTTPMethod = "POST";
     r1.exp_HTTPBody = "grant_type=refresh_token&refresh_token=5678901234&client_id=AAAAAAAAAAAAAAA&"
@@ -294,7 +294,7 @@ TEST_CASE(PREFIX "Operation with a refresh token")
 
     Reaction &r2 = factory.AddReaction(); // r2 - get an account info
     r2.response = R200();
-    r2.data = D("{\"account_id\": \"dbid:12345\", \"email\":\"foobar@example.com\"}");
+    r2.data = D(R"({"account_id": "dbid:12345", "email":"foobar@example.com"})");
     r2.exp_URL = "https://api.dropboxapi.com/2/users/get_current_account";
     r2.exp_HTTPMethod = "POST";
     r2.exp_HTTPHeaderFields = @{@"Authorization": @"Bearer sl.qwertyuiop"};
@@ -303,7 +303,7 @@ TEST_CASE(PREFIX "Operation with a refresh token")
     {
         Reaction &r3 = factory.AddReaction(); // r3 - get fs info
         r3.response = R200();
-        r3.data = D("{\"used\":1000, \"allocation\":{\"allocated\":10000}}");
+        r3.data = D(R"({"used":1000, "allocation":{"allocated":10000}})");
         r3.exp_URL = "https://api.dropboxapi.com/2/users/get_space_usage";
         r3.exp_HTTPMethod = "POST";
         r3.exp_HTTPHeaderFields = @{@"Authorization": @"Bearer sl.qwertyuiop"};
@@ -318,7 +318,7 @@ TEST_CASE(PREFIX "Operation with a refresh token")
 
         Reaction &r4 = factory.AddReaction(); // r4 - reauth
         r4.response = R200();
-        r4.data = D("{\"token_type\":\"bearer\", \"access_token\":\"sl.asdfghjkl\"}");
+        r4.data = D(R"({"token_type":"bearer", "access_token":"sl.asdfghjkl"})");
         r4.exp_URL = "https://api.dropbox.com/oauth2/token";
         r4.exp_HTTPMethod = "POST";
         r4.exp_HTTPBody = "grant_type=refresh_token&refresh_token=5678901234&client_id=AAAAAAAAAAAAAAA&"
@@ -326,7 +326,7 @@ TEST_CASE(PREFIX "Operation with a refresh token")
 
         Reaction &r5 = factory.AddReaction(); // r5 - get fs info
         r5.response = R200();
-        r5.data = D("{\"used\":1000, \"allocation\":{\"allocated\":10000}}");
+        r5.data = D(R"({"used":1000, "allocation":{"allocated":10000}})");
         r5.exp_URL = "https://api.dropboxapi.com/2/users/get_space_usage";
         r5.exp_HTTPMethod = "POST";
         r5.exp_HTTPHeaderFields = @{@"Authorization": @"Bearer sl.asdfghjkl"};
@@ -352,7 +352,7 @@ TEST_CASE(PREFIX "Failed re-auth")
 
     Reaction &r1 = factory.AddReaction(); // r1 - convert a refresh token into a short-lived token
     r1.response = R200();
-    r1.data = D("{\"token_type\":\"bearer\", \"access_token\":\"sl.qwertyuiop\"}");
+    r1.data = D(R"({"token_type":"bearer", "access_token":"sl.qwertyuiop"})");
     r1.exp_URL = "https://api.dropbox.com/oauth2/token";
     r1.exp_HTTPMethod = "POST";
     r1.exp_HTTPBody = "grant_type=refresh_token&refresh_token=5678901234&client_id=AAAAAAAAAAAAAAA&"
@@ -360,7 +360,7 @@ TEST_CASE(PREFIX "Failed re-auth")
 
     Reaction &r2 = factory.AddReaction(); // r2 - get an account info
     r2.response = R200();
-    r2.data = D("{\"account_id\": \"dbid:12345\", \"email\":\"foobar@example.com\"}");
+    r2.data = D(R"({"account_id": "dbid:12345", "email":"foobar@example.com"})");
     r2.exp_URL = "https://api.dropboxapi.com/2/users/get_current_account";
     r2.exp_HTTPMethod = "POST";
     r2.exp_HTTPHeaderFields = @{@"Authorization": @"Bearer sl.qwertyuiop"};

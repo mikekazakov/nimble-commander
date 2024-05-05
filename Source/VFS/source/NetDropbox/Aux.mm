@@ -367,20 +367,20 @@ std::optional<rapidjson::Document> ParseJSON(NSData *_data)
 void InsertHTTPBodyPathspec(NSMutableURLRequest *_request, const std::string &_path)
 {
     [_request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    const std::string path_spec = "{ \"path\": \"" + EscapeString(_path) + "\" }";
+    const std::string path_spec = R"({ "path": ")" + EscapeString(_path) + "\" }";
     [_request setHTTPBody:[NSData dataWithBytes:data(path_spec) length:size(path_spec)]];
 }
 
 void InsertHTTPBodyCursor(NSMutableURLRequest *_request, const std::string &_cursor)
 {
     [_request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    const std::string cursor_spec = "{ \"cursor\": \"" + EscapeString(_cursor) + "\" }";
+    const std::string cursor_spec = R"({ "cursor": ")" + EscapeString(_cursor) + "\" }";
     [_request setHTTPBody:[NSData dataWithBytes:data(cursor_spec) length:size(cursor_spec)]];
 }
 
 void InsertHTTPHeaderPathspec(NSMutableURLRequest *_request, const std::string &_path)
 {
-    const std::string path_spec = "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(_path) + "\" }";
+    const std::string path_spec = R"({ "path": ")" + EscapeStringForJSONInHTTPHeader(_path) + "\" }";
     [_request setValue:[NSString stringWithUTF8String:path_spec.c_str()] forHTTPHeaderField:@"Dropbox-API-Arg"];
 }
 

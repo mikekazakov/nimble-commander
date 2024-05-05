@@ -1,3 +1,5 @@
+# https://clang.llvm.org/extra/clang-tidy/checks/list.html
+
 Checks: >
   -*,
   -clang-diagnostic-c99-designator,
@@ -9,7 +11,9 @@ Checks: >
   modernize-macro-to-enum,
   modernize-make-shared,
   modernize-make-unique,
-  modernize-min-max-use-initializer-list
+  modernize-min-max-use-initializer-list,
+  modernize-raw-string-literal,
+  modernize-redundant-void-arg
 
 CheckOptions:
   - key:    modernize-loop-convert.MinConfidence

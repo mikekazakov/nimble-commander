@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileMask.h"
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -25,8 +25,9 @@ static bool strincmp2(const char *s1, const char *s2, size_t _n)
 
 static std::string regex_escape(const std::string &string_to_escape)
 {
+    // TODO: migrate to RE2
     // do not escape "?" and "*"
-    [[clang::no_destroy]] static const std::regex escape("[.^$|()\\[\\]{}+\\\\]");
+    [[clang::no_destroy]] static const std::regex escape(R"([.^$|()\[\]{}+\\])");
     [[clang::no_destroy]] static const std::string replace("\\\\&");
     return std::regex_replace(
         string_to_escape, escape, replace, std::regex_constants::match_default | std::regex_constants::format_sed);

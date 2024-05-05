@@ -10,13 +10,9 @@ static NSData *ToTempNSData(const std::optional<std::vector<uint8_t>> &_data);
 static NSImage *ReadImageFromFile(const std::string &_path, VFSHost &_host);
 static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_path, VFSHost &_host);
 
-VFSBundleIconsCacheImpl::VFSBundleIconsCacheImpl()
-{
-}
+VFSBundleIconsCacheImpl::VFSBundleIconsCacheImpl() = default;
 
-VFSBundleIconsCacheImpl::~VFSBundleIconsCacheImpl()
-{
-}
+VFSBundleIconsCacheImpl::~VFSBundleIconsCacheImpl() = default;
 
 NSImage *VFSBundleIconsCacheImpl::IconIfHas(const std::string &_file_path, VFSHost &_host)
 {

@@ -19,9 +19,7 @@ public:
 MemHost::MemHost() : Host("", std::shared_ptr<Host>(0), UniqueTag)
 {
 }
-MemHost::~MemHost()
-{
-}
+MemHost::~MemHost() = default;
 
 VFSConfiguration MemHost::Configuration() const
 {

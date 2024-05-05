@@ -21,9 +21,7 @@ VFSInstanceManagerImpl::Info::Info(const VFSHostPtr &_host, uint64_t _id, uint64
 {
 }
 
-VFSInstanceManagerImpl::VFSInstanceManagerImpl()
-{
-}
+VFSInstanceManagerImpl::VFSInstanceManagerImpl() = default;
 
 VFSInstanceManagerImpl::~VFSInstanceManagerImpl()
 {

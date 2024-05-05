@@ -14,9 +14,7 @@ WorkspaceExtensionIconsCacheImpl::WorkspaceExtensionIconsCacheImpl(const nc::uti
     m_GenericFileIcon = [NSWorkspace.sharedWorkspace iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
 }
 
-WorkspaceExtensionIconsCacheImpl::~WorkspaceExtensionIconsCacheImpl()
-{
-}
+WorkspaceExtensionIconsCacheImpl::~WorkspaceExtensionIconsCacheImpl() = default;
 
 NSImage *WorkspaceExtensionIconsCacheImpl::CachedIconForExtension(const std::string &_extension) const
 {

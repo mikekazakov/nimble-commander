@@ -82,9 +82,7 @@ bool VFSPathStack::Part::weak_equal(const Part &_r) const
     return true;
 }
 
-VFSPathStack::VFSPathStack()
-{
-}
+VFSPathStack::VFSPathStack() = default;
 
 VFSPathStack::VFSPathStack(const VFSHostPtr &_vfs, const std::string &_path) : m_Path(_path)
 {

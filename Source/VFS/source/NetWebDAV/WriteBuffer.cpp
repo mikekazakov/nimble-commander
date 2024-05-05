@@ -8,9 +8,7 @@ namespace nc::vfs::webdav {
 
 static const size_t g_DefaultCapacity = 32768;
 
-WriteBuffer::WriteBuffer()
-{
-}
+WriteBuffer::WriteBuffer() = default;
 
 WriteBuffer::~WriteBuffer()
 {

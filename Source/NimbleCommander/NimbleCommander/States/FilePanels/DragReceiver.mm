@@ -54,9 +54,7 @@ DragReceiver::DragReceiver(PanelController *_target,
     m_DraggingOverDirectory = m_ItemUnderDrag && m_ItemUnderDrag.IsDir();
 }
 
-DragReceiver::~DragReceiver()
-{
-}
+DragReceiver::~DragReceiver() = default;
 
 NSDragOperation DragReceiver::Validate()
 {

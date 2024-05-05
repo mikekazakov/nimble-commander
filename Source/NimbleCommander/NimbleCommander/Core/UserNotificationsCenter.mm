@@ -23,9 +23,7 @@ UserNotificationsCenter::UserNotificationsCenter()
     NSUserNotificationCenter.defaultUserNotificationCenter.delegate = delegate;
 }
 
-UserNotificationsCenter::~UserNotificationsCenter()
-{
-}
+UserNotificationsCenter::~UserNotificationsCenter() = default;
 
 UserNotificationsCenter &UserNotificationsCenter::Instance()
 {

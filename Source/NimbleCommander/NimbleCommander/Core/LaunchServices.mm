@@ -94,9 +94,7 @@ static std::vector<std::string> GetHandlersPathsForUTI(const std::string &_uti)
     return result;
 }
 
-LauchServicesHandlers::LauchServicesHandlers()
-{
-}
+LauchServicesHandlers::LauchServicesHandlers() = default;
 
 LauchServicesHandlers::LauchServicesHandlers(const VFSListingItem &_item, const nc::utility::UTIDB &_uti_db)
 {

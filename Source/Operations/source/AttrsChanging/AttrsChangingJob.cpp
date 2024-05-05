@@ -23,9 +23,7 @@ AttrsChangingJob::AttrsChangingJob(AttrsChangingCommand _command) : m_Command(st
     Statistics().SetPreferredSource(Statistics::SourceType::Items);
 }
 
-AttrsChangingJob::~AttrsChangingJob()
-{
-}
+AttrsChangingJob::~AttrsChangingJob() = default;
 
 void AttrsChangingJob::Perform()
 {

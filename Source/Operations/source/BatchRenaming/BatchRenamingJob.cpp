@@ -13,9 +13,7 @@ BatchRenamingJob::BatchRenamingJob(std::vector<std::string> _src_paths,
     Statistics().SetPreferredSource(Statistics::SourceType::Items);
 }
 
-BatchRenamingJob::~BatchRenamingJob()
-{
-}
+BatchRenamingJob::~BatchRenamingJob() = default;
 
 void BatchRenamingJob::Perform()
 {

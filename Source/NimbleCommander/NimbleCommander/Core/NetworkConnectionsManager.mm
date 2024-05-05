@@ -90,9 +90,7 @@ void NetworkConnectionsManager::Connection::Accept(NetworkConnectionsManager::Co
     m_Object->Accept(_visitor);
 }
 
-NetworkConnectionsManager::ConnectionVisitor::~ConnectionVisitor()
-{
-}
+NetworkConnectionsManager::ConnectionVisitor::~ConnectionVisitor() = default;
 
 void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::FTP &)
 {

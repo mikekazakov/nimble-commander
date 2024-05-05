@@ -55,9 +55,7 @@ CopyingJob::CopyingJob(std::vector<VFSListingItem> _source_items,
     Statistics().SetPreferredSource(Statistics::SourceType::Bytes);
 }
 
-CopyingJob::~CopyingJob()
-{
-}
+CopyingJob::~CopyingJob() = default;
 
 bool CopyingJob::IsSingleInitialItemProcessing() const noexcept
 {

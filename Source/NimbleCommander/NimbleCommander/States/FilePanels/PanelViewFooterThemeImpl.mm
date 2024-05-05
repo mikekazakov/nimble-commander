@@ -9,9 +9,7 @@ FooterThemeImpl::FooterThemeImpl(ThemesManager &_themes_mgr) : m_ThemesManager(_
 {
 }
 
-FooterThemeImpl::~FooterThemeImpl()
-{
-}
+FooterThemeImpl::~FooterThemeImpl() = default;
 
 NSFont *FooterThemeImpl::Font() const
 {

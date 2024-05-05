@@ -8,9 +8,7 @@ VFSFile::VFSFile(const char *_relative_path, const VFSHostPtr &_host)
 {
 }
 
-VFSFile::~VFSFile()
-{
-}
+VFSFile::~VFSFile() = default;
 
 std::shared_ptr<VFSFile> VFSFile::SharedPtr()
 {

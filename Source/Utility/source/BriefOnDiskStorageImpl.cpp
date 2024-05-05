@@ -14,9 +14,7 @@ BriefOnDiskStorageImpl::BriefOnDiskStorageImpl(const std::string &_base_path,
         m_BasePath += '/';
 }
 
-BriefOnDiskStorageImpl::~BriefOnDiskStorageImpl()
-{
-}
+BriefOnDiskStorageImpl::~BriefOnDiskStorageImpl() = default;
 
 std::optional<BriefOnDiskStorage::PlacementResult> BriefOnDiskStorageImpl::Place(const void *_data, long _bytes)
 {

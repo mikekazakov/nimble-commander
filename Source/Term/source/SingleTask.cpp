@@ -62,9 +62,7 @@ static const char *ImgNameFromPath(const char *_path)
     return img_name;
 }
 
-SingleTask::SingleTask()
-{
-}
+SingleTask::SingleTask() = default;
 
 SingleTask::~SingleTask()
 {

@@ -52,9 +52,7 @@ WebDAVHost::WebDAVHost(const VFSConfiguration &_config)
     Init();
 }
 
-WebDAVHost::~WebDAVHost()
-{
-}
+WebDAVHost::~WebDAVHost() = default;
 
 void WebDAVHost::Init()
 {

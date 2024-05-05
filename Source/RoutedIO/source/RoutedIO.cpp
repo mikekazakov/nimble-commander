@@ -467,9 +467,7 @@ void RoutedIO::UninstallViaRootCLI()
     system(("rm -v /Library/PrivilegedHelperTools/"s + g_HelperLabel).c_str());
 }
 
-PosixIOInterface::~PosixIOInterface()
-{
-}
+PosixIOInterface::~PosixIOInterface() = default;
 
 static const char *AuthRCToString(OSStatus _rc) noexcept
 {

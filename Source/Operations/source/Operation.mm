@@ -13,9 +13,7 @@
 
 namespace nc::ops {
 
-Operation::Operation()
-{
-}
+Operation::Operation() = default;
 
 Operation::~Operation()
 {

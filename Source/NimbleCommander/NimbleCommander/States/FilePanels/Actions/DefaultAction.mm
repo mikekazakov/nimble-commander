@@ -3,9 +3,7 @@
 
 namespace nc::panel::actions {
 
-PanelAction::~PanelAction()
-{
-}
+PanelAction::~PanelAction() = default;
 
 bool PanelAction::Predicate(PanelController *) const
 {
@@ -21,9 +19,7 @@ void PanelAction::Perform(PanelController *, id) const
 {
 }
 
-StateAction::~StateAction()
-{
-}
+StateAction::~StateAction() = default;
 
 bool StateAction::Predicate(MainWindowFilePanelState *) const
 {

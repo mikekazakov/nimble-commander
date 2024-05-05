@@ -13,13 +13,9 @@ using namespace std::literals;
 
 static const auto g_ListingTimeout = 60s;
 
-Cache::Cache()
-{
-}
+Cache::Cache() = default;
 
-Cache::~Cache()
-{
-}
+Cache::~Cache() = default;
 
 void Cache::CommitListing(const std::string &_at_path, std::vector<PropFindResponse> _items)
 {

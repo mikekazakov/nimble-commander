@@ -20,9 +20,7 @@ DeletionJob::DeletionJob(std::vector<VFSListingItem> _items, DeletionType _type)
     Statistics().SetPreferredSource(Statistics::SourceType::Items);
 }
 
-DeletionJob::~DeletionJob()
-{
-}
+DeletionJob::~DeletionJob() = default;
 
 void DeletionJob::Perform()
 {

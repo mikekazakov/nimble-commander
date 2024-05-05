@@ -17,13 +17,9 @@
 
 namespace nc::term {
 
-Task::Task()
-{
-}
+Task::Task() = default;
 
-Task::~Task()
-{
-}
+Task::~Task() = default;
 
 void Task::SetOnChildOutput(std::function<void(const void *_d, size_t _sz)> _callback)
 {

@@ -47,9 +47,7 @@ DragSender::DragSender(PanelController *_panel, IconCallback _icon_callback, nc:
     assert(m_IconCallback != nullptr);
 }
 
-DragSender::~DragSender()
-{
-}
+DragSender::~DragSender() = default;
 
 void DragSender::Start(NSView *_from_view, NSEvent *_via_event, int _dragged_panel_item_index)
 {

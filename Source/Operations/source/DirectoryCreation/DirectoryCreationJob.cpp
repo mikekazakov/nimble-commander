@@ -13,9 +13,7 @@ DirectoryCreationJob::DirectoryCreationJob(const std::vector<std::string> &_dire
     Statistics().SetPreferredSource(Statistics::SourceType::Items);
 }
 
-DirectoryCreationJob::~DirectoryCreationJob()
-{
-}
+DirectoryCreationJob::~DirectoryCreationJob() = default;
 
 void DirectoryCreationJob::Perform()
 {

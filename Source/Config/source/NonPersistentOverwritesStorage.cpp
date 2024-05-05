@@ -7,9 +7,7 @@ NonPersistentOverwritesStorage::NonPersistentOverwritesStorage(std::string_view 
 {
 }
 
-NonPersistentOverwritesStorage::~NonPersistentOverwritesStorage()
-{
-}
+NonPersistentOverwritesStorage::~NonPersistentOverwritesStorage() = default;
 
 void NonPersistentOverwritesStorage::ExternalWrite(const std::string &_new_value)
 {

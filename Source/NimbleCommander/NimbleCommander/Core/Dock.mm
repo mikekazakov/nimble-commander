@@ -27,9 +27,7 @@ Dock::Dock() : m_Progress{-1.}, m_Admin{false}, m_Tile{NSApplication.sharedAppli
     [m_ContentView addSubview:m_Indicator];
 }
 
-Dock::~Dock()
-{
-}
+Dock::~Dock() = default;
 
 double Dock::Progress() const noexcept
 {

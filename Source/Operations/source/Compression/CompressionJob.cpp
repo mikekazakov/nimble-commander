@@ -58,9 +58,7 @@ CompressionJob::CompressionJob(std::vector<VFSListingItem> _src_files,
         m_DstRoot += '/';
 }
 
-CompressionJob::~CompressionJob()
-{
-}
+CompressionJob::~CompressionJob() = default;
 
 void CompressionJob::Perform()
 {

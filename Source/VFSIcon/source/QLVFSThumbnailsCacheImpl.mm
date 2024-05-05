@@ -13,9 +13,7 @@ QLVFSThumbnailsCacheImpl::QLVFSThumbnailsCacheImpl(const std::shared_ptr<utility
 {
 }
 
-QLVFSThumbnailsCacheImpl::~QLVFSThumbnailsCacheImpl()
-{
-}
+QLVFSThumbnailsCacheImpl::~QLVFSThumbnailsCacheImpl() = default;
 
 NSImage *QLVFSThumbnailsCacheImpl::ThumbnailIfHas(const std::string &_file_path, VFSHost &_host, int _px_size)
 {

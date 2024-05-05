@@ -21,9 +21,7 @@ IconBuilderImpl::IconBuilderImpl(const std::shared_ptr<QLThumbnailsCache> &_ql_c
 {
 }
 
-IconBuilderImpl::~IconBuilderImpl()
-{
-}
+IconBuilderImpl::~IconBuilderImpl() = default;
 
 IconBuilder::LookupResult IconBuilderImpl::LookupExistingIcon(const VFSListingItem &_item, int _icon_px_size)
 {

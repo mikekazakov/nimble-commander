@@ -9,9 +9,7 @@ Progress::Progress() : m_Estimated{0}, m_Processed{0}, m_BaseTimePoint{0}, m_Las
 {
 }
 
-Progress::~Progress()
-{
-}
+Progress::~Progress() = default;
 
 void Progress::CommitEstimated(uint64_t _delta)
 {

@@ -104,9 +104,7 @@ void DropboxHost::Construct(const std::string &_account, const std::string &_acc
     }
 }
 
-DropboxHost::~DropboxHost()
-{
-}
+DropboxHost::~DropboxHost() = default;
 
 const VFSNetDropboxHostConfiguration &DropboxHost::Config() const
 {

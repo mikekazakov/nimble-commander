@@ -9,9 +9,7 @@ ConnectionsPool::ConnectionsPool(const HostConfiguration &_config) : m_Config(_c
 {
 }
 
-ConnectionsPool::~ConnectionsPool()
-{
-}
+ConnectionsPool::~ConnectionsPool() = default;
 
 ConnectionsPool::AR ConnectionsPool::Get()
 {

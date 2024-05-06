@@ -148,4 +148,4 @@ void SelectAllByMask::Perform(PanelController *_target, id) const
     [_target.view showPopoverUnderPathBarWithView:view andDelegate:view];
 }
 
-}
+} // namespace nc::panel::actions

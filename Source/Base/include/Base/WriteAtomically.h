@@ -10,7 +10,6 @@ namespace nc::base {
 // Does write a temp file + rename.
 // Path should be an absolute path.
 // Returns true on success, false otherwise + errno contains an error code.
-bool WriteAtomically(const std::filesystem::path &_path,
-                     std::span<const std::byte> _bytes) noexcept;
+bool WriteAtomically(const std::filesystem::path &_path, std::span<const std::byte> _bytes) noexcept;
 
 } // namespace nc::base

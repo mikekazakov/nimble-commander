@@ -41,9 +41,7 @@ Deletion::Deletion(std::vector<VFSListingItem> _items, DeletionOptions _options)
     };
 }
 
-Deletion::~Deletion()
-{
-}
+Deletion::~Deletion() = default;
 
 Job *Deletion::GetJob() noexcept
 {

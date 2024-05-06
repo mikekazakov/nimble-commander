@@ -12,34 +12,28 @@ namespace nc::ops {
 struct CompressionJobCallbacks {
     std::function<void()> m_TargetPathDefined = [] {};
 
-    enum class SourceScanErrorResolution
-    {
+    enum class SourceScanErrorResolution {
         Stop,
         Skip,
         Retry
     };
-    std::function<SourceScanErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)>
-        m_SourceScanError =
-            [](int, const std::string &, VFSHost &) { return SourceScanErrorResolution::Stop; };
+    std::function<SourceScanErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_SourceScanError =
+        [](int, const std::string &, VFSHost &) { return SourceScanErrorResolution::Stop; };
 
-    enum class SourceAccessErrorResolution
-    {
+    enum class SourceAccessErrorResolution {
         Stop,
         Skip,
         Retry
     };
-    std::function<SourceAccessErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)>
-        m_SourceAccessError =
-            [](int, const std::string &, VFSHost &) { return SourceAccessErrorResolution::Stop; };
+    std::function<SourceAccessErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_SourceAccessError =
+        [](int, const std::string &, VFSHost &) { return SourceAccessErrorResolution::Stop; };
 
-    enum class SourceReadErrorResolution
-    {
+    enum class SourceReadErrorResolution {
         Stop,
         Skip
     };
-    std::function<SourceReadErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)>
-        m_SourceReadError =
-            [](int, const std::string &, VFSHost &) { return SourceReadErrorResolution::Stop; };
+    std::function<SourceReadErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_SourceReadError =
+        [](int, const std::string &, VFSHost &) { return SourceReadErrorResolution::Stop; };
 
     std::function<void(int _err, const std::string &_path, VFSHost &_vfs)> m_TargetWriteError =
         [](int, const std::string &, VFSHost &) {};
@@ -58,8 +52,7 @@ public:
 
 private:
     struct Source;
-    enum class StepResult
-    {
+    enum class StepResult {
         Stopped,
         Done,
         Skipped
@@ -77,21 +70,14 @@ private:
     bool BuildArchive();
     void ProcessItems();
     void ProcessItem(const base::chained_strings::node &_node, int _index);
-    StepResult ProcessDirectoryItem(int _index,
-                                    const std::string &_relative_path,
-                                    const std::string &_full_path);
-    StepResult ProcessRegularItem(int _index,
-                                  const std::string &_relative_path,
-                                  const std::string &_full_path);
-    StepResult ProcessSymlinkItem(int _index,
-                                  const std::string &_relative_path,
-                                  const std::string &_full_path);
+    StepResult ProcessDirectoryItem(int _index, const std::string &_relative_path, const std::string &_full_path);
+    StepResult ProcessRegularItem(int _index, const std::string &_relative_path, const std::string &_full_path);
+    StepResult ProcessSymlinkItem(int _index, const std::string &_relative_path, const std::string &_full_path);
 
     std::string FindSuitableFilename(const std::string &_proposed_arcname) const;
     bool IsEncrypted() const noexcept;
 
-    static ssize_t
-    WriteCallback(struct archive *, void *_client_data, const void *_buffer, size_t _length);
+    static ssize_t WriteCallback(struct archive *, void *_client_data, const void *_buffer, size_t _length);
 
     std::vector<VFSListingItem> m_InitialListingItems;
     std::string m_DstRoot;

@@ -7,14 +7,14 @@
 class InternalViewerViewPreviewMode : public BigFileViewImpl
 {
 public:
-    InternalViewerViewPreviewMode(const std::string &_native_path, BigFileView* _view);
+    InternalViewerViewPreviewMode(const std::string &_native_path, BigFileView *_view);
     ~InternalViewerViewPreviewMode();
-    
+
     bool NeedsVerticalScroller() override;
     void DoDraw(CGContextRef _context, NSRect _dirty_rect) override;
-    
+
 private:
     const std::string m_NativePath;
-    QLPreviewView * const m_Preview;
-    __weak BigFileView * const m_View;
+    QLPreviewView *const m_Preview;
+    __weak BigFileView *const m_View;
 };

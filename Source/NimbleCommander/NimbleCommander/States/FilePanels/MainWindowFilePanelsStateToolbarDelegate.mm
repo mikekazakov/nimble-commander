@@ -57,14 +57,11 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
 
         __weak MainWindowFilePanelsStateToolbarDelegate *weak_self = self;
         m_ToolsChangesTicket = _state.externalToolsStorage.ObserveChanges([=] {
-            dispatch_to_main_queue([=] {
-                [static_cast<MainWindowFilePanelsStateToolbarDelegate *>(weak_self)
-                    externalToolsChanged];
-            });
+            dispatch_to_main_queue(
+                [=] { [static_cast<MainWindowFilePanelsStateToolbarDelegate *>(weak_self) externalToolsChanged]; });
         });
 
-        m_PoolViewController =
-            [[NCOpsPoolViewController alloc] initWithPool:self.state.operationsPool];
+        m_PoolViewController = [[NCOpsPoolViewController alloc] initWithPool:self.state.operationsPool];
         [m_PoolViewController loadView];
     }
     return self;
@@ -108,8 +105,7 @@ static NSImage *MakeBackupToolImage()
 {
     const auto path = @"/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/"
                       @"GenericQuestionMarkIcon.icns";
-    auto image = [[NSImage alloc] initWithContentsOfURL:[NSURL fileURLWithPath:path
-                                                                   isDirectory:false]];
+    auto image = [[NSImage alloc] initWithContentsOfURL:[NSURL fileURLWithPath:path isDirectory:false]];
     if( !image )
         return nil;
     image.size = NSMakeSize(24, 24);
@@ -127,8 +123,7 @@ static NSImage *ImageForTool(const nc::panel::ExternalTool &_et)
         tool_path = paths.front();
     }
 
-    NSURL *exec_url =
-        [[NSURL alloc] initFileURLWithPath:[NSString stringWithUTF8StdString:tool_path.native()]];
+    NSURL *exec_url = [[NSURL alloc] initFileURLWithPath:[NSString stringWithUTF8StdString:tool_path.native()]];
     if( !exec_url )
         return MakeBackupToolImage();
 
@@ -255,8 +250,7 @@ static NSImage *ImageForTool(const nc::panel::ExternalTool &_et)
     std::deque<int> to_remove;
     for( NSToolbarItem *i in m_Toolbar.items ) {
         if( [i.itemIdentifier hasPrefix:g_ExternalToolsIdentifiersPrefix] ) {
-            const int n =
-                atoi(i.itemIdentifier.UTF8String + g_ExternalToolsIdentifiersPrefix.length);
+            const int n = atoi(i.itemIdentifier.UTF8String + g_ExternalToolsIdentifiersPrefix.length);
             if( const auto tool = self.state.externalToolsStorage.GetTool(n) ) {
                 [self setupExternalToolItem:i forTool:*tool no:n];
             }

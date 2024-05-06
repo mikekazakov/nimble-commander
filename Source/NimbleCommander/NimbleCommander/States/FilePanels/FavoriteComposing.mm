@@ -53,8 +53,7 @@ static std::string TitleForItem(const VFSListingItem &_i)
     return std::filesystem::path(_i.Directory()).parent_path().filename();
 }
 
-std::optional<FavoriteLocationsStorage::Favorite>
-FavoriteComposing::FromListingItem(const VFSListingItem &_i)
+std::optional<FavoriteLocationsStorage::Favorite> FavoriteComposing::FromListingItem(const VFSListingItem &_i)
 {
     if( !_i )
         return std::nullopt;
@@ -102,8 +101,7 @@ std::vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::DefaultFavori
 static std::string StringFromURL(CFURLRef _url)
 {
     char path_buf[MAXPATHLEN];
-    if( CFURLGetFileSystemRepresentation(
-            _url, true, reinterpret_cast<UInt8 *>(path_buf), MAXPATHLEN) )
+    if( CFURLGetFileSystemRepresentation(_url, true, reinterpret_cast<UInt8 *>(path_buf), MAXPATHLEN) )
         return path_buf;
     return {};
 }
@@ -127,9 +125,7 @@ static std::string TitleForURL(CFURLRef _url)
 
 static std::string TitleForPath(const std::string &_path)
 {
-    auto url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:_path.c_str()
-                                                          isDirectory:true
-                                                        relativeToURL:nil];
+    auto url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:_path.c_str() isDirectory:true relativeToURL:nil];
     if( url ) {
         NSString *title;
         [url getResourceValue:&title forKey:NSURLLocalizedNameKey error:nil];
@@ -160,7 +156,7 @@ static std::vector<std::pair<std::string, std::string>> GetFindersFavorites() //
     std::vector<std::pair<std::string, std::string>> paths;
 
     UInt32 seed;
-    LSSharedFileListRef list = LSSharedFileListCreate(NULL, kLSSharedFileListFavoriteItems, NULL);
+    LSSharedFileListRef list = LSSharedFileListCreate(nullptr, kLSSharedFileListFavoriteItems, nullptr);
     CFArrayRef snapshot = LSSharedFileListCopySnapshot(list, &seed);
     if( snapshot ) {
         for( int i = 0, e = static_cast<int>(CFArrayGetCount(snapshot)); i != e; ++i ) {
@@ -170,11 +166,10 @@ static std::vector<std::pair<std::string, std::string>> GetFindersFavorites() //
                 auto url = LSSharedFileListItemCopyResolvedURL(item, flags, &err);
                 if( url ) {
                     auto path = StringFromURL(url);
-                    if( !path.empty() && !path.ends_with(".cannedSearch") &&
-                        !path.ends_with(".cannedSearch/") && !path.ends_with(".savedSearch") &&
+                    if( !path.empty() && !path.ends_with(".cannedSearch") && !path.ends_with(".cannedSearch/") &&
+                        !path.ends_with(".savedSearch") &&
                         nc::bootstrap::NativeVFSHostInstance().IsDirectory(path.c_str(), 0) )
-                        paths.emplace_back(
-                            std::make_pair(TitleForURL(url), ensure_tr_slash(std::move(path))));
+                        paths.emplace_back(TitleForURL(url), ensure_tr_slash(std::move(path)));
                     CFRelease(url);
                 }
                 if( err ) {
@@ -210,4 +205,4 @@ static std::vector<std::pair<std::string, std::string>> GetDefaultFavorites()
              {TitleForPath(CommonPaths::Pictures()), CommonPaths::Pictures()}}};
 }
 
-}
+} // namespace nc::panel

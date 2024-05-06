@@ -3,16 +3,13 @@
 
 namespace nc::config {
 
-NonPersistentOverwritesStorage::NonPersistentOverwritesStorage(std::string_view _initial_value):
-    m_Data(_initial_value)
+NonPersistentOverwritesStorage::NonPersistentOverwritesStorage(std::string_view _initial_value) : m_Data(_initial_value)
 {
 }
-    
-NonPersistentOverwritesStorage::~NonPersistentOverwritesStorage()
-{
-}
-    
-void NonPersistentOverwritesStorage::ExternalWrite( const std::string &_new_value )
+
+NonPersistentOverwritesStorage::~NonPersistentOverwritesStorage() = default;
+
+void NonPersistentOverwritesStorage::ExternalWrite(const std::string &_new_value)
 {
     if( m_Data == _new_value )
         return;
@@ -20,20 +17,20 @@ void NonPersistentOverwritesStorage::ExternalWrite( const std::string &_new_valu
     if( m_Callback )
         m_Callback();
 }
-    
+
 std::optional<std::string> NonPersistentOverwritesStorage::Read() const
 {
     return std::make_optional(m_Data);
 }
-    
+
 void NonPersistentOverwritesStorage::Write(std::string_view _overwrites_json)
 {
     m_Data = _overwrites_json;
 }
-    
-void NonPersistentOverwritesStorage::SetExternalChangeCallback( std::function<void()> _callback)
+
+void NonPersistentOverwritesStorage::SetExternalChangeCallback(std::function<void()> _callback)
 {
     m_Callback = std::move(_callback);
 }
 
-}
+} // namespace nc::config

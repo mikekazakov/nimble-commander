@@ -5,28 +5,26 @@
 
 namespace nc::panel::actions {
 
-struct GoBack final : PanelAction
-{
-    bool Predicate( PanelController *_target ) const override;
-    void Perform( PanelController *_target, id _sender ) const override;
+struct GoBack final : PanelAction {
+    bool Predicate(PanelController *_target) const override;
+    void Perform(PanelController *_target, id _sender) const override;
 };
 
-struct GoForward final : PanelAction
-{
-    bool Predicate( PanelController *_target ) const override;
-    void Perform( PanelController *_target, id _sender ) const override;
+struct GoForward final : PanelAction {
+    bool Predicate(PanelController *_target) const override;
+    void Perform(PanelController *_target, id _sender) const override;
 };
 
-}
+} // namespace nc::panel::actions
 
 namespace nc::panel {
 
 class ListingPromise;
-    
+
 class ListingPromiseLoader
 {
 public:
-    void Load( const ListingPromise &_promise, PanelController *_panel );
+    void Load(const ListingPromise &_promise, PanelController *_panel);
 };
-    
-}
+
+} // namespace nc::panel

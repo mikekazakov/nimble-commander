@@ -77,8 +77,7 @@ PanelListViewGeometry::PanelListViewGeometry()
 
 PanelListViewGeometry::PanelListViewGeometry(NSFont *_font, int _icon_scale)
 {
-    std::tie(m_LineHeight, m_TextBaseLine, m_IconSize) =
-        GrabGeometryFromSystemFont(_font, _icon_scale);
+    std::tie(m_LineHeight, m_TextBaseLine, m_IconSize) = GrabGeometryFromSystemFont(_font, _icon_scale);
 }
 
 } // namespace nc::panel

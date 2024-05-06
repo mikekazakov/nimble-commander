@@ -10,8 +10,8 @@ namespace nc::vfs {
 using nc::base::variable_container;
 
 // static_assert(sizeof(Listing) <= 824); // became 944 on Xcode15 ???
-static_assert(std::is_move_constructible<ListingItem>::value);
-static_assert(std::is_move_constructible<Listing::iterator>::value);
+static_assert(std::is_move_constructible_v<ListingItem>);
+static_assert(std::is_move_constructible_v<Listing::iterator>);
 
 static bool BasicDirectoryCheck(std::string_view _str) noexcept
 {
@@ -156,7 +156,7 @@ base::intrusive_ptr<const Listing> Listing::Build(ListingInput &&_input)
     l->m_UnixFlags = std::move(_input.unix_flags);
     l->m_Symlinks = std::move(_input.symlinks);
     l->m_Tags = std::move(_input.tags);
-    l->m_CreationTime = time(0);
+    l->m_CreationTime = time(nullptr);
     l->m_CreationTicks = base::machtime();
     l->BuildFilenames();
 

@@ -9,7 +9,7 @@
 
 namespace nc::panel::actions {
 
-static const char* Separator()
+static const char *Separator()
 {
     static const auto config_path = "filePanel.general.separatorForCopyingMultipleFilenames";
     [[clang::no_destroy]] static const auto s = GlobalConfig().GetString(config_path);
@@ -19,61 +19,53 @@ static const char* Separator()
 static void WriteSingleStringToClipboard(const std::string &_s)
 {
     NSPasteboard *pb = NSPasteboard.generalPasteboard;
-    [pb declareTypes:@[NSPasteboardTypeString]
-               owner:nil];
-    [pb setString:[NSString stringWithUTF8StdString:_s]
-          forType:NSPasteboardTypeString];
+    [pb declareTypes:@[NSPasteboardTypeString] owner:nil];
+    [pb setString:[NSString stringWithUTF8StdString:_s] forType:NSPasteboardTypeString];
 }
 
-bool CopyFileName::Predicate( PanelController *_source ) const
+bool CopyFileName::Predicate(PanelController *_source) const
 {
     return _source.view.item;
 }
 
-bool CopyFilePath::Predicate( PanelController *_source ) const
-{
-    return _source.view.item;
-}
-    
-bool CopyFileDirectory::Predicate( PanelController *_source ) const
+bool CopyFilePath::Predicate(PanelController *_source) const
 {
     return _source.view.item;
 }
 
-void CopyFileName::Perform( PanelController *_source, id ) const
+bool CopyFileDirectory::Predicate(PanelController *_source) const
 {
-    const auto entries = _source.selectedEntriesOrFocusedEntry;
-    const auto result = std::accumulate(std::begin(entries),
-                                        std::end(entries),
-                                        std::string{},
-                                        [](const auto &a, const auto &b){
-        return a + (a.empty() ? "" : Separator()) + b.Filename();
-    });
-    WriteSingleStringToClipboard( result );
+    return _source.view.item;
 }
 
-void CopyFilePath::Perform( PanelController *_source, id ) const
+void CopyFileName::Perform(PanelController *_source, id) const
 {
     const auto entries = _source.selectedEntriesOrFocusedEntry;
-    const auto result = std::accumulate(std::begin(entries),
-                                        std::end(entries),
-                                        std::string{},
-                                        [](const auto &a, const auto &b){
-        return a + (a.empty() ? "" : Separator()) + b.Path();
-    });
-    WriteSingleStringToClipboard( result );
+    const auto result =
+        std::accumulate(std::begin(entries), std::end(entries), std::string{}, [](const auto &a, const auto &b) {
+            return a + (a.empty() ? "" : Separator()) + b.Filename();
+        });
+    WriteSingleStringToClipboard(result);
 }
-    
-void CopyFileDirectory::Perform( PanelController *_source, id ) const
+
+void CopyFilePath::Perform(PanelController *_source, id) const
 {
     const auto entries = _source.selectedEntriesOrFocusedEntry;
-    const auto result = std::accumulate(std::begin(entries),
-                                        std::end(entries),
-                                        std::string{},
-                                        [](const auto &a, const auto &b){
-        return a + (a.empty() ? "" : Separator()) + b.Directory();
-    });
-    WriteSingleStringToClipboard( result );
+    const auto result =
+        std::accumulate(std::begin(entries), std::end(entries), std::string{}, [](const auto &a, const auto &b) {
+            return a + (a.empty() ? "" : Separator()) + b.Path();
+        });
+    WriteSingleStringToClipboard(result);
 }
-    
+
+void CopyFileDirectory::Perform(PanelController *_source, id) const
+{
+    const auto entries = _source.selectedEntriesOrFocusedEntry;
+    const auto result =
+        std::accumulate(std::begin(entries), std::end(entries), std::string{}, [](const auto &a, const auto &b) {
+            return a + (a.empty() ? "" : Separator()) + b.Directory();
+        });
+    WriteSingleStringToClipboard(result);
 }
+
+} // namespace nc::panel::actions

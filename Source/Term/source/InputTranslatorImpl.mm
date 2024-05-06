@@ -9,8 +9,7 @@ namespace nc::term {
 
 static_assert(sizeof(InputTranslator::MouseEvent) == 8);
 
-static CFStringRef CreateModifiedCharactersForKeyPress(unsigned short _keycode,
-                                                       NSEventModifierFlags _flags);
+static CFStringRef CreateModifiedCharactersForKeyPress(unsigned short _keycode, NSEventModifierFlags _flags);
 static std::string ReportX10(InputTranslator::MouseEvent _event) noexcept;
 static std::string ReportNormal(InputTranslator::MouseEvent _event) noexcept;
 static std::string ReportUTF8(InputTranslator::MouseEvent _event) noexcept;
@@ -140,10 +139,9 @@ void InputTranslatorImpl::ProcessKeyDown(NSEvent *_event)
     }
 
     if( modflags & NSEventModifierFlagOption )
-        character = static_cast<NSString *>(
-            CFBridgingRelease(CreateModifiedCharactersForKeyPress(_event.keyCode, modflags)));
-    else if( (modflags & NSEventModifierFlagDeviceIndependentFlagsMask) ==
-             NSEventModifierFlagCapsLock )
+        character =
+            static_cast<NSString *>(CFBridgingRelease(CreateModifiedCharactersForKeyPress(_event.keyCode, modflags)));
+    else if( (modflags & NSEventModifierFlagDeviceIndependentFlagsMask) == NSEventModifierFlagCapsLock )
         character = _event.characters;
 
     const char *utf8 = character.UTF8String;
@@ -171,18 +169,16 @@ void InputTranslatorImpl::SetApplicationCursorKeys(bool _enabled)
  * This can serve for purposes of decoding a single option-modified keypress, but can't be used for
  * double keys decoding
  */
-static CFStringRef CreateModifiedCharactersForKeyPress(unsigned short _keycode,
-                                                       NSEventModifierFlags _flags)
+static CFStringRef CreateModifiedCharactersForKeyPress(unsigned short _keycode, NSEventModifierFlags _flags)
 {
     // http://stackoverflow.com/questions/12547007/convert-key-code-into-key-equivalent-string
     // http://stackoverflow.com/questions/8263618/convert-virtual-key-code-to-unicode-string
     // http://stackoverflow.com/questions/22566665/how-to-capture-unicode-from-key-events-without-an-nstextview
 
     TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
-    CFDataRef layoutData = static_cast<CFDataRef>(
-        TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData));
-    const UCKeyboardLayout *keyboardLayout =
-        reinterpret_cast<const UCKeyboardLayout *>(CFDataGetBytePtr(layoutData));
+    CFDataRef layoutData =
+        static_cast<CFDataRef>(TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData));
+    const UCKeyboardLayout *keyboardLayout = reinterpret_cast<const UCKeyboardLayout *>(CFDataGetBytePtr(layoutData));
     const UInt8 kbdType = LMGetKbdType();
     const UInt32 modifierKeyState = (_flags >> 16) & 0xFF;
 
@@ -241,7 +237,7 @@ static std::string ReportX10(InputTranslator::MouseEvent _event) noexcept
     }
     buf[4] = static_cast<char>(std::clamp(_event.x + 32 + 1, 33, 255));
     buf[5] = static_cast<char>(std::clamp(_event.y + 32 + 1, 33, 255));
-    return std::string(buf, sizeof(buf));
+    return {buf, sizeof(buf)};
 }
 
 static std::string ReportNormal(InputTranslator::MouseEvent _event) noexcept
@@ -287,7 +283,7 @@ static std::string ReportNormal(InputTranslator::MouseEvent _event) noexcept
         buf[3] |= 16;
     buf[4] = static_cast<char>(std::clamp(_event.x + 32 + 1, 33, 255));
     buf[5] = static_cast<char>(std::clamp(_event.y + 32 + 1, 33, 255));
-    return std::string(buf, sizeof(buf));
+    return {buf, sizeof(buf)};
 }
 
 static std::string ReportUTF8(InputTranslator::MouseEvent _event) noexcept
@@ -442,11 +438,9 @@ void InputTranslatorImpl::ProcessPaste(std::string_view _utf8)
     constexpr std::string_view bracket_postfix = "\x1B[201~";
 
     if( m_BracketedPaste ) {
-        m_Output(Bytes(reinterpret_cast<const std::byte *>(bracket_prefix.data()),
-                       bracket_prefix.size()));
+        m_Output(Bytes(reinterpret_cast<const std::byte *>(bracket_prefix.data()), bracket_prefix.size()));
         m_Output(Bytes(reinterpret_cast<const std::byte *>(_utf8.data()), _utf8.size()));
-        m_Output(Bytes(reinterpret_cast<const std::byte *>(bracket_postfix.data()),
-                       bracket_postfix.size()));
+        m_Output(Bytes(reinterpret_cast<const std::byte *>(bracket_postfix.data()), bracket_postfix.size()));
     }
     else {
         m_Output(Bytes(reinterpret_cast<const std::byte *>(_utf8.data()), _utf8.size()));
@@ -458,4 +452,4 @@ void InputTranslatorImpl::SetBracketedPaste(bool _bracketed)
     m_BracketedPaste = _bracketed;
 }
 
-}
+} // namespace nc::term

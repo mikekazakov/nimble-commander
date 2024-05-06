@@ -42,7 +42,7 @@ public:
         bool italic : 1;
         bool invisible : 1;
         bool blink : 1;
-        
+
         constexpr bool HaveSameAttributes(const Space &_rhs) const noexcept;
     }; // 8 bytes per screen space
 
@@ -116,10 +116,10 @@ public:
 
     static unsigned OccupiedChars(std::span<const Space> _line) noexcept;
     static unsigned OccupiedChars(const Space *_begin, const Space *_end) noexcept;
-    
+
     // Returns 'true' if the range contains and non-null characters
     static bool HasOccupiedChars(const Space *_begin, const Space *_end) noexcept;
-    
+
     unsigned OccupiedChars(int _line_no) const;
     bool HasOccupiedChars(int _line_no) const;
 
@@ -157,8 +157,8 @@ private:
 constexpr bool ScreenBuffer::Space::HaveSameAttributes(const Space &_rhs) const noexcept
 {
     uint64_t mask = 0x3FFFFFF00000000ULL;
-    uint64_t lhs = *static_cast<const uint64_t*>(static_cast<const void*>(this));
-    uint64_t rhs = *static_cast<const uint64_t*>(static_cast<const void*>(&_rhs));
+    uint64_t lhs = *static_cast<const uint64_t *>(static_cast<const void *>(this));
+    uint64_t rhs = *static_cast<const uint64_t *>(static_cast<const void *>(&_rhs));
     return (lhs & mask) == (rhs & mask);
 }
 

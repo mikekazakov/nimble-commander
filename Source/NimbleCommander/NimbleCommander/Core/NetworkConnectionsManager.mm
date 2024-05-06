@@ -8,54 +8,44 @@ nc::base::UUID NetworkConnectionsManager::MakeUUID()
     return nc::base::UUID::Generate();
 }
 
-static const std::string& PrefixForShareProtocol( NetworkConnectionsManager::LANShare::Protocol p )
+static const std::string &PrefixForShareProtocol(NetworkConnectionsManager::LANShare::Protocol p)
 {
     [[clang::no_destroy]] static const auto smb = "smb"s, afp = "afp"s, nfs = "nfs"s, unknown = ""s;
-    if( p == NetworkConnectionsManager::LANShare::Protocol::SMB ) return smb;
-    if( p == NetworkConnectionsManager::LANShare::Protocol::AFP ) return afp;
-    if( p == NetworkConnectionsManager::LANShare::Protocol::NFS ) return nfs;
+    if( p == NetworkConnectionsManager::LANShare::Protocol::SMB )
+        return smb;
+    if( p == NetworkConnectionsManager::LANShare::Protocol::AFP )
+        return afp;
+    if( p == NetworkConnectionsManager::LANShare::Protocol::NFS )
+        return nfs;
     return unknown;
 }
 
-struct ConnectionPathBuilder : public NetworkConnectionsManager::ConnectionVisitor
-{
-    ConnectionPathBuilder(const NetworkConnectionsManager::Connection &_connection):
-        connection(_connection)
+struct ConnectionPathBuilder : public NetworkConnectionsManager::ConnectionVisitor {
+    ConnectionPathBuilder(const NetworkConnectionsManager::Connection &_connection) : connection(_connection)
     {
         connection.Accept(*this);
     }
-    std::string Path()
-    {
-        return std::move(path);
-    }
+    std::string Path() { return std::move(path); }
+
 private:
-    void Visit( const NetworkConnectionsManager::FTP &ftp )
+    void Visit(const NetworkConnectionsManager::FTP &ftp) override
     {
         path = "ftp://" + (ftp.user.empty() ? ftp.host : ftp.user + "@" + ftp.host);
     }
-    void Visit( const NetworkConnectionsManager::SFTP &sftp )
+    void Visit(const NetworkConnectionsManager::SFTP &sftp) override { path = "sftp://" + sftp.user + "@" + sftp.host; }
+    void Visit(const NetworkConnectionsManager::LANShare &share) override
     {
-        path = "sftp://" + sftp.user + "@" + sftp.host;
+        path =
+            PrefixForShareProtocol(share.proto) + "://" +
+            (share.user.empty() ? share.host + "/" + share.share : share.user + "@" + share.host + "/" + share.share);
     }
-    void Visit( const NetworkConnectionsManager::LANShare &share )
+    void Visit(const NetworkConnectionsManager::Dropbox &dropbox) override { path = "dropbox://" + dropbox.account; }
+    void Visit(const NetworkConnectionsManager::WebDAV &webdav) override
     {
-        path = PrefixForShareProtocol(share.proto) + "://" +
-            (share.user.empty() ?
-                share.host + "/" + share.share :
-                share.user + "@" + share.host + "/" + share.share);
+        path = (webdav.https ? "https://" : "http://") + (webdav.user.empty() ? "" : webdav.user + "@") + webdav.host +
+               (webdav.path.empty() ? "" : "/" + webdav.path);
     }
-    void Visit( const NetworkConnectionsManager::Dropbox &dropbox )
-    {
-        path = "dropbox://" + dropbox.account;
-    }
-    void Visit( const NetworkConnectionsManager::WebDAV &webdav )
-    {
-        path = (webdav.https ? "https://" : "http://") +
-            (webdav.user.empty() ? "" : webdav.user + "@" ) +
-            webdav.host +
-            (webdav.path.empty() ? "" :  "/" + webdav.path );
-    }
-    
+
     std::string path;
     const NetworkConnectionsManager::Connection &connection;
 };
@@ -67,113 +57,86 @@ std::string NetworkConnectionsManager::MakeConnectionPath(const Connection &_con
 
 std::string NetworkConnectionsManager::TitleForConnection(const Connection &_conn)
 {
-    return _conn.Title().empty() ?
-        MakeConnectionPath(_conn) :
-        _conn.Title() + " - " + MakeConnectionPath(_conn);
+    return _conn.Title().empty() ? MakeConnectionPath(_conn) : _conn.Title() + " - " + MakeConnectionPath(_conn);
 }
 
-NetworkConnectionsManager::Connection::Connection() :
-    m_Object{nullptr}
+NetworkConnectionsManager::Connection::Connection() : m_Object{nullptr}
 {
     throw std::domain_error("invalid connection construction");
 }
 
-const std::string& NetworkConnectionsManager::Connection::Title() const noexcept
+const std::string &NetworkConnectionsManager::Connection::Title() const noexcept
 {
     return m_Object->Title();
 }
 
-const nc::base::UUID& NetworkConnectionsManager::Connection::Uuid() const noexcept
+const nc::base::UUID &NetworkConnectionsManager::Connection::Uuid() const noexcept
 {
     return m_Object->Uuid();
 }
 
-bool NetworkConnectionsManager::Connection::operator==(const Connection&_rhs) const noexcept
+bool NetworkConnectionsManager::Connection::operator==(const Connection &_rhs) const noexcept
 {
     return m_Object == _rhs.m_Object || m_Object->Equal(*_rhs.m_Object);
 }
 
-bool NetworkConnectionsManager::Connection::operator!=(const Connection&_rhs) const noexcept
+bool NetworkConnectionsManager::Connection::operator!=(const Connection &_rhs) const noexcept
 {
     return !(*this == _rhs);
 }
 
-void NetworkConnectionsManager::Connection::Accept(
-    NetworkConnectionsManager::ConnectionVisitor &_visitor ) const
+void NetworkConnectionsManager::Connection::Accept(NetworkConnectionsManager::ConnectionVisitor &_visitor) const
 {
     m_Object->Accept(_visitor);
 }
 
-NetworkConnectionsManager::ConnectionVisitor::~ConnectionVisitor()
+NetworkConnectionsManager::ConnectionVisitor::~ConnectionVisitor() = default;
+
+void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::FTP &)
 {
 }
 
-void NetworkConnectionsManager::ConnectionVisitor::Visit(
-    const NetworkConnectionsManager::FTP & )
+void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::SFTP &)
 {
 }
 
-void NetworkConnectionsManager::ConnectionVisitor::Visit(
-    const NetworkConnectionsManager::SFTP & )
+void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::LANShare &)
 {
 }
 
-void NetworkConnectionsManager::ConnectionVisitor::Visit(
-    const NetworkConnectionsManager::LANShare & )
+void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::Dropbox &)
 {
 }
 
-void NetworkConnectionsManager::ConnectionVisitor::Visit(
-    const NetworkConnectionsManager::Dropbox & )
+void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::WebDAV &)
 {
 }
 
-void NetworkConnectionsManager::ConnectionVisitor::Visit(
-    const NetworkConnectionsManager::WebDAV & )
+bool NetworkConnectionsManager::FTP::operator==(const FTP &_rhs) const noexcept
 {
+    return BaseConnection::operator==(_rhs) && user == _rhs.user && host == _rhs.host && path == _rhs.path &&
+           port == _rhs.port && active == _rhs.active;
 }
 
-bool NetworkConnectionsManager::FTP::operator==(const FTP&_rhs) const noexcept
+bool NetworkConnectionsManager::SFTP::operator==(const SFTP &_rhs) const noexcept
 {
-    return BaseConnection::operator==(_rhs) &&
-        user == _rhs.user &&
-        host == _rhs.host &&
-        path == _rhs.path &&
-        port == _rhs.port &&
-        active == _rhs.active;
+    return BaseConnection::operator==(_rhs) && user == _rhs.user && host == _rhs.host && keypath == _rhs.keypath &&
+           port == _rhs.port;
 }
 
-bool NetworkConnectionsManager::SFTP::operator==(const SFTP&_rhs) const noexcept
+bool NetworkConnectionsManager::LANShare::operator==(const LANShare &_rhs) const noexcept
 {
-    return BaseConnection::operator==(_rhs) &&
-        user == _rhs.user &&
-        host == _rhs.host &&
-        keypath == _rhs.keypath &&
-        port == _rhs.port;
+    return BaseConnection::operator==(_rhs) && host == _rhs.host && user == _rhs.user && share == _rhs.share &&
+           mountpoint == _rhs.mountpoint && proto == _rhs.proto;
 }
 
-bool NetworkConnectionsManager::LANShare::operator==(const LANShare&_rhs) const noexcept
+bool NetworkConnectionsManager::Dropbox::operator==(const Dropbox &_rhs) const noexcept
 {
-    return BaseConnection::operator==(_rhs) &&
-        host == _rhs.host &&
-        user == _rhs.user &&
-        share == _rhs.share &&
-        mountpoint == _rhs.mountpoint &&
-        proto == _rhs.proto;
+    return BaseConnection::operator==(_rhs) && account == _rhs.account;
 }
 
-bool NetworkConnectionsManager::Dropbox::operator==(const Dropbox&_rhs) const noexcept
+bool NetworkConnectionsManager::WebDAV::operator==(const WebDAV &_rhs) const noexcept
 {
-    return BaseConnection::operator==(_rhs) &&
-        account == _rhs.account;
-}
-
-bool NetworkConnectionsManager::WebDAV::operator==(const WebDAV&_rhs) const noexcept
-{
-    return BaseConnection::operator==(_rhs) &&
-        host == _rhs.host &&
-        path == _rhs.path &&
-        user == _rhs.user &&
-        port == _rhs.port &&
-        https== _rhs.https;
+    return BaseConnection::operator==(_rhs) && host == _rhs.host && path == _rhs.path && user == _rhs.user &&
+           port == _rhs.port && https == _rhs.https;
 }

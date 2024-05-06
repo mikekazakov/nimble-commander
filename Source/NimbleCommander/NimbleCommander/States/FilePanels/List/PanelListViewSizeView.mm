@@ -15,8 +15,7 @@ static const auto g_InvalidSize = 0xFFFFFFFFFFFFFFFFu;
 static const auto g_NonCalculatedSizeForDotDot = g_InvalidSize - 1;
 static const auto g_NonCalculatedSizeForDir = g_InvalidSize - 2;
 
-static uint64_t ExtractSizeFromInfos(const VFSListingItem &_dirent,
-                                     const data::ItemVolatileData &_vd)
+static uint64_t ExtractSizeFromInfos(const VFSListingItem &_dirent, const data::ItemVolatileData &_vd)
 {
     if( _dirent.IsDir() ) {
         if( _vd.is_size_calculated() )
@@ -34,12 +33,10 @@ static NSString *SizeStringFromEncodedSize(uint64_t _sz)
     if( _sz == g_InvalidSize )
         return @"";
     if( _sz == g_NonCalculatedSizeForDir )
-        return NSLocalizedString(
-            @"__MODERNPRESENTATION_FOLDER_WORD",
-            "Folders dummy string when size is not available, for English is 'Folder'");
+        return NSLocalizedString(@"__MODERNPRESENTATION_FOLDER_WORD",
+                                 "Folders dummy string when size is not available, for English is 'Folder'");
     if( _sz == g_NonCalculatedSizeForDotDot )
-        return NSLocalizedString(@"__MODERNPRESENTATION_UP_WORD",
-                                 "Upper-level in directory, for English is 'Up'");
+        return NSLocalizedString(@"__MODERNPRESENTATION_UP_WORD", "Upper-level in directory, for English is 'Up'");
 
     return ByteCountFormatter::Instance().ToNSString(_sz, GetFileSizeFormat());
 }
@@ -109,11 +106,10 @@ static NSString *SizeStringFromEncodedSize(uint64_t _sz)
             NSRectFill(self.bounds);
             [PanelListViewTableView drawVerticalSeparatorForView:self];
 
-            const auto text_rect =
-                NSMakeRect(geometry.LeftInset(),
-                           geometry.TextBaseLine(),
-                           bounds.size.width - geometry.LeftInset() - geometry.RightInset(),
-                           0);
+            const auto text_rect = NSMakeRect(geometry.LeftInset(),
+                                              geometry.TextBaseLine(),
+                                              bounds.size.width - geometry.LeftInset() - geometry.RightInset(),
+                                              0);
             [m_String drawWithRect:text_rect options:0 attributes:m_TextAttributes context:nil];
         }
     }

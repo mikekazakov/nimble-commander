@@ -73,7 +73,7 @@ TEST_CASE(PREFIX "Can unzip an archive with Chinese symbols")
         CHECK(host->StatTotalRegs() == 1);
 
         VFSFilePtr file;
-        REQUIRE(host->CreateFile(reinterpret_cast<const char *>(u8"/中文测试"), file, 0) == 0);
+        REQUIRE(host->CreateFile(reinterpret_cast<const char *>(u8"/中文测试"), file, nullptr) == 0);
         REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
 
         auto bytes = file->ReadFile();
@@ -208,7 +208,7 @@ TEST_CASE(PREFIX "Can unzip an archive with Cyrillic symbols")
         CHECK(host->StatTotalRegs() == 1);
 
         VFSFilePtr file;
-        REQUIRE(host->CreateFile(reinterpret_cast<const char *>(u8"/Привет, Мир!.txt"), file, 0) == 0);
+        REQUIRE(host->CreateFile(reinterpret_cast<const char *>(u8"/Привет, Мир!.txt"), file, nullptr) == 0);
         REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
 
         auto bytes = file->ReadFile();
@@ -268,14 +268,15 @@ TEST_CASE(PREFIX "Can unrar a file with japanese filenames")
     VFSFilePtr file;
     REQUIRE(host->CreateFile(reinterpret_cast<const char *>(u8"/表だよ/新しいフォルダ/新規テキスト ドキュメント.txt"),
                              file,
-                             0) == 0);
+                             nullptr) == 0);
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
     auto bytes = file->ReadFile();
     REQUIRE(bytes);
     REQUIRE(bytes->size() == 0);
 
-    REQUIRE(host->CreateFile(
-                reinterpret_cast<const char *>(u8"/表だよ/漢字長いファイル名long-filename-in-漢字.txt"), file, 0) == 0);
+    REQUIRE(host->CreateFile(reinterpret_cast<const char *>(u8"/表だよ/漢字長いファイル名long-filename-in-漢字.txt"),
+                             file,
+                             nullptr) == 0);
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
     bytes = file->ReadFile();
     REQUIRE(bytes);
@@ -310,14 +311,14 @@ TEST_CASE(PREFIX "Can unrar a file with cyrilic filenames")
     CHECK(host->StatTotalRegs() == 2);
 
     VFSFilePtr file;
-    REQUIRE(host->CreateFile(reinterpret_cast<const char *>(u8"/ПРИВЕТ"), file, 0) == 0);
+    REQUIRE(host->CreateFile(reinterpret_cast<const char *>(u8"/ПРИВЕТ"), file, nullptr) == 0);
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
     auto bytes = file->ReadFile();
     REQUIRE(bytes);
     REQUIRE(bytes->size() == 6);
     CHECK(std::memcmp(bytes->data(), "\xf0\xf2\xe9\xf7\xe5\xf4", 6) == 0);
 
-    REQUIRE(host->CreateFile(reinterpret_cast<const char *>(u8"/привет"), file, 0) == 0);
+    REQUIRE(host->CreateFile(reinterpret_cast<const char *>(u8"/привет"), file, nullptr) == 0);
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
     bytes = file->ReadFile();
     REQUIRE(bytes);
@@ -571,7 +572,7 @@ TEST_CASE(PREFIX "Cyrilic encoding in a file downloaded from GDrive")
     REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(path.c_str(), TestEnv().vfs_native));
 
     VFSFilePtr file;
-    REQUIRE(host->CreateFile("/тест.txt", file, 0) == 0);
+    REQUIRE(host->CreateFile("/тест.txt", file, nullptr) == 0);
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
 
     auto d = file->ReadFile();
@@ -662,7 +663,7 @@ TEST_CASE(PREFIX "Reading xattr from an archive")
 
     VFSFilePtr file;
     char buf[4096];
-    REQUIRE(host->CreateFile("/f.txt", file, 0) == 0);
+    REQUIRE(host->CreateFile("/f.txt", file, nullptr) == 0);
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
     REQUIRE(file->XAttrCount() == 1);
     REQUIRE(file->XAttrGet("hello", buf, sizeof(buf)) == 5);
@@ -708,7 +709,7 @@ TEST_CASE(PREFIX "Reading com.apple.FinderInfo from an archive")
 
     VFSFilePtr file;
     char buf[4096];
-    REQUIRE(host->CreateFile("/f.txt", file, 0) == 0);
+    REQUIRE(host->CreateFile("/f.txt", file, nullptr) == 0);
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
     REQUIRE(file->XAttrCount() == 2);
     REQUIRE(file->XAttrGet("com.apple.FinderInfo", buf, sizeof(buf)) == 32);

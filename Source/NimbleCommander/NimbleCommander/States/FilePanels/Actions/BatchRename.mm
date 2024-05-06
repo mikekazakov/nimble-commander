@@ -64,4 +64,4 @@ void BatchRename::Perform(PanelController *_target, id) const
     [_target.mainWindowController beginSheet:sheet.window completionHandler:handler];
 }
 
-}
+} // namespace nc::panel::actions

@@ -77,46 +77,46 @@ namespace nc::vfs {
 /*
  * AppleDouble Entry ID's
  */
-#define AD_DATA 1 /* Data fork */
-#define AD_RESOURCE 2 /* Resource fork */
-#define AD_REALNAME 3 /* File’s name on home file system */
-#define AD_COMMENT 4 /* Standard Mac comment */
-#define AD_ICONBW 5 /* Mac black & white icon */
-#define AD_ICONCOLOR 6 /* Mac color icon */
-#define AD_UNUSED 7 /* Not used */
-#define AD_FILEDATES 8 /* File dates; create, modify, etc */
-#define AD_FINDERINFO 9 /* Mac Finder info & extended info */
-#define AD_MACINFO 10 /* Mac file info, attributes, etc */
+#define AD_DATA 1        /* Data fork */
+#define AD_RESOURCE 2    /* Resource fork */
+#define AD_REALNAME 3    /* File’s name on home file system */
+#define AD_COMMENT 4     /* Standard Mac comment */
+#define AD_ICONBW 5      /* Mac black & white icon */
+#define AD_ICONCOLOR 6   /* Mac color icon */
+#define AD_UNUSED 7      /* Not used */
+#define AD_FILEDATES 8   /* File dates; create, modify, etc */
+#define AD_FINDERINFO 9  /* Mac Finder info & extended info */
+#define AD_MACINFO 10    /* Mac file info, attributes, etc */
 #define AD_PRODOSINFO 11 /* Pro-DOS file info, attrib., etc */
-#define AD_MSDOSINFO 12 /* MS-DOS file info, attributes, etc */
-#define AD_AFPNAME 13 /* Short name on AFP server */
-#define AD_AFPINFO 14 /* AFP file info, attrib., etc */
-#define AD_AFPDIRID 15 /* AFP directory ID */
+#define AD_MSDOSINFO 12  /* MS-DOS file info, attributes, etc */
+#define AD_AFPNAME 13    /* Short name on AFP server */
+#define AD_AFPINFO 14    /* AFP file info, attrib., etc */
+#define AD_AFPDIRID 15   /* AFP directory ID */
 #define AD_ATTRIBUTES AD_FINDERINFO
 
 #define ATTR_HDR_MAGIC 0x41545452 /* 'ATTR' */
 
 #define FINDERINFOSIZE 32
 
-//#pragma options align=mac68k
+// #pragma options align=mac68k
 #pragma pack(1)
 
-typedef struct apple_double_entry {
+using apple_double_entry_t = struct apple_double_entry {
     u_int32_t type;   /* entry type: see list, 0 invalid */
     u_int32_t offset; /* entry data offset from the beginning of the file. */
     u_int32_t length; /* entry data length in bytes. */
-} apple_double_entry_t;
+};
 
 /* Entries are aligned on 4 byte boundaries */
-typedef struct attr_entry {
+using attr_entry_t = struct attr_entry {
     u_int32_t offset; /* file offset to data */
     u_int32_t length; /* size of attribute data */
     u_int16_t flags;
     u_int8_t namelen; /* length of name including NULL termination char */
     u_int8_t name[1]; /* NULL-terminated UTF-8 name (up to 128 bytes max) */
-} attr_entry_t;
+};
 
-typedef struct apple_double_header {
+using apple_double_header_t = struct apple_double_header {
     u_int32_t magic;   /* == ADH_MAGIC */
     u_int32_t version; /* format version: 2 = 0x00020000 */
     u_int32_t filler[4];
@@ -124,10 +124,10 @@ typedef struct apple_double_header {
     apple_double_entry_t entries[2]; /* 'finfo' & 'rsrc' always exist */
     u_int8_t finfo[FINDERINFOSIZE];  /* Must start with Finder Info (32 bytes) */
     u_int8_t pad[2];                 /* get better alignment inside attr_header */
-} apple_double_header_t;
+};
 
 /* Header + entries must fit into 64K <-- guess not true since 10.7 .MK. */
-typedef struct attr_header {
+using attr_header_t = struct attr_header {
     apple_double_header_t appledouble;
     u_int32_t magic;       /* == ATTR_HDR_MAGIC */
     u_int32_t debug_tag;   /* for debugging == file id of owning file */
@@ -137,20 +137,19 @@ typedef struct attr_header {
     u_int32_t reserved[3];
     u_int16_t flags;
     u_int16_t num_attrs;
-} attr_header_t;
+};
 
-//#pragma options align=reset
+// #pragma options align=reset
 #pragma pack()
 
 #define SWAP16(x) OSSwapBigToHostInt16(x)
 #define SWAP32(x) OSSwapBigToHostInt32(x)
 #define SWAP64(x) OSSwapBigToHostInt64(x)
 
-#define ATTR_ALIGN 3L /* Use four-byte alignment */
+#define ATTR_ALIGN 3L      /* Use four-byte alignment */
 #define ATTR_DATA_ALIGN 1L /* Use two-byte alignment */
 
-#define ATTR_ENTRY_LENGTH(namelen)                                                                 \
-    ((sizeof(attr_entry_t) - 1 + (namelen) + ATTR_ALIGN) & (~ATTR_ALIGN))
+#define ATTR_ENTRY_LENGTH(namelen) ((sizeof(attr_entry_t) - 1 + (namelen) + ATTR_ALIGN) & (~ATTR_ALIGN))
 
 #define ATTR_NEXT(ae) (attr_entry_t *)((u_int8_t *)(ae) + ATTR_ENTRY_LENGTH((ae)->namelen))
 
@@ -231,7 +230,8 @@ std::vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, siz
             const attr_entry_t *entry =
                 reinterpret_cast<const attr_entry_t *>(static_cast<const char *>(_memory_buf) + sizeof(attr_header_t));
             for( int i = 0; i < count; i++ ) {
-                if( reinterpret_cast<const char *>(entry) + sizeof(attr_entry_t) > static_cast<const char *>(_memory_buf) + _memory_size )
+                if( reinterpret_cast<const char *>(entry) + sizeof(attr_entry_t) >
+                    static_cast<const char *>(_memory_buf) + _memory_size )
                     break; // out-of-boundary guard to be safe about memory (not)corrupting
 
                 u_int32_t offset = SWAP32(entry->offset);
@@ -245,8 +245,7 @@ std::vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, siz
                     ;
 
                 if( namelen > 0 && name + namelen < static_cast<const char *>(_memory_buf) + _memory_size &&
-                    name[namelen] == 0 &&
-                    offset + length <= _memory_size ) { // seems to be a valid EA
+                    name[namelen] == 0 && offset + length <= _memory_size ) { // seems to be a valid EA
                     eas[eas_last].data = static_cast<const char *>(_memory_buf) + offset;
                     eas[eas_last].data_sz = length;
                     eas[eas_last].name = name;
@@ -275,7 +274,7 @@ void *BuildAppleDoubleFromEA(VFSFile &_file, size_t *_buf_sz)
 {
     unsigned ret_xattr_count = _file.XAttrCount();
     if( ret_xattr_count == 0 )
-        return 0;
+        return nullptr;
 
     static const int max_eas = 64;
     struct {
@@ -310,7 +309,7 @@ void *BuildAppleDoubleFromEA(VFSFile &_file, size_t *_buf_sz)
     });
 
     for( int i = 0; i < eas_count; ++i ) {
-        ssize_t sz = _file.XAttrGet(file_eas[i].name, 0, 0);
+        ssize_t sz = _file.XAttrGet(file_eas[i].name, nullptr, 0);
         if( sz > 0 ) {
             file_eas[i].data = std::make_unique<char[]>(sz);
             assert(file_eas[i].data);
@@ -324,8 +323,7 @@ void *BuildAppleDoubleFromEA(VFSFile &_file, size_t *_buf_sz)
     for( int i = 0; i < eas_count; ++i )
         if( !file_eas[i].isfinfo ) {
             file_eas[i].attr_hdr_offset = sizeof(attr_header) + attrs_hdrs_size;
-            attrs_hdrs_size +=
-                ATTR_ENTRY_LENGTH(file_eas[i].name_len + 1); // namelen with zero-terminator
+            attrs_hdrs_size += ATTR_ENTRY_LENGTH(file_eas[i].name_len + 1); // namelen with zero-terminator
             ++attrs_hdrs_count;
         }
 
@@ -343,13 +341,11 @@ void *BuildAppleDoubleFromEA(VFSFile &_file, size_t *_buf_sz)
     attr_header *attr_header_p = (attr_header *)apple_double;
     attr_header_p->appledouble.magic = SWAP32(ADH_MAGIC);
     attr_header_p->appledouble.version = SWAP32(ADH_VERSION);
-    memcpy(
-        attr_header_p->appledouble.filler, ADH_MACOSX, sizeof(attr_header_p->appledouble.filler));
+    memcpy(attr_header_p->appledouble.filler, ADH_MACOSX, sizeof(attr_header_p->appledouble.filler));
     attr_header_p->appledouble.numEntries = SWAP16(2);
     attr_header_p->appledouble.entries[0].type = SWAP32(AD_FINDERINFO);
     attr_header_p->appledouble.entries[0].offset = SWAP32(offsetof(apple_double_header, finfo));
-    attr_header_p->appledouble.entries[0].length =
-        SWAP32(full_ad_size - offsetof(apple_double_header, finfo));
+    attr_header_p->appledouble.entries[0].length = SWAP32(full_ad_size - offsetof(apple_double_header, finfo));
     attr_header_p->appledouble.entries[1].type = SWAP32(AD_RESOURCE);
     attr_header_p->appledouble.entries[1].offset = SWAP32(full_ad_size);
     /*attr_header_p->appledouble.entries[1].length    = SWAP32(0);*/

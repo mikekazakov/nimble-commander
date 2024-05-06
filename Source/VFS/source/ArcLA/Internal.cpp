@@ -15,10 +15,7 @@ ssize_t Mediator::myread([[maybe_unused]] struct archive *a, void *client_data, 
     return result;
 }
 
-off_t Mediator::myseek([[maybe_unused]] struct archive *a,
-                       void *client_data,
-                       off_t offset,
-                       int whence)
+off_t Mediator::myseek([[maybe_unused]] struct archive *a, void *client_data, off_t offset, int whence)
 {
     Mediator *_this = static_cast<Mediator *>(client_data);
     off_t result = _this->file->Seek(offset, whence);
@@ -29,7 +26,7 @@ off_t Mediator::myseek([[maybe_unused]] struct archive *a,
 
 void Mediator::setup(struct archive *a)
 {
-    assert(file.get() != 0);
+    assert(file.get() != nullptr);
     assert(file->GetReadParadigm() >= VFSFile::ReadParadigm::Seek);
     archive_read_set_callback_data(a, this);
     archive_read_set_read_callback(a, myread);

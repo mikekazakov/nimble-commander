@@ -22,4 +22,4 @@ struct CommonPaths {
     static const std::string &StartupCWD() noexcept;
 };
 
-}
+} // namespace nc::base

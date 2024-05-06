@@ -1,7 +1,8 @@
 // Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CharInfo.h"
-#include <vector>
 #include <CoreFoundation/CoreFoundation.h>
+#include <fmt/format.h>
+#include <vector>
 
 namespace nc::utility {
 
@@ -16,11 +17,11 @@ void CharInfo::BuildPossibleCompositionEvidenceTable()
             if( canbecomposed[j] )
                 continue;
             uint16_t chars[] = {uint16_t(i), uint16_t(j)};
-            CFStringRef ref = CFStringCreateWithCharactersNoCopy(NULL, chars, 2, kCFAllocatorNull);
+            CFStringRef ref = CFStringCreateWithCharactersNoCopy(nullptr, chars, 2, kCFAllocatorNull);
             if( ref == nullptr )
                 continue;
 
-            CFMutableStringRef mut = CFStringCreateMutableCopy(NULL, 0, ref);
+            CFMutableStringRef mut = CFStringCreateMutableCopy(nullptr, 0, ref);
             CFStringNormalize(mut, kCFStringNormalizationFormC);
             if( CFStringGetLength(mut) == 1 )
                 canbecomposed[j] = true;
@@ -35,7 +36,7 @@ void CharInfo::BuildPossibleCompositionEvidenceTable()
         for( int j = 0; j < 32; ++j )
             w |= ((canbecomposed[i + j] ? 1 : 0) << j);
 
-        fprintf(f, "%s0x%08x,", i % 256 == 0 ? "\n" : "", w);
+        fmt::print(f, "{}0x{:08x},", i % 256 == 0 ? "\n" : "", w);
     }
     fclose(f);
 }

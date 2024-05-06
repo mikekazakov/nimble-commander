@@ -48,9 +48,8 @@
     if( item == nil || item.length == 0 )
         return;
 
-    m_Items.erase(
-        remove_if(begin(m_Items), end(m_Items), [=](auto _t) { return [_t isEqualToString:item]; }),
-        end(m_Items));
+    m_Items.erase(remove_if(begin(m_Items), end(m_Items), [=](auto _t) { return [_t isEqualToString:item]; }),
+                  end(m_Items));
     m_Items.insert(begin(m_Items), item);
     if( static_cast<int>(m_Items.size()) > m_MaxItems )
         m_Items.resize(m_MaxItems);

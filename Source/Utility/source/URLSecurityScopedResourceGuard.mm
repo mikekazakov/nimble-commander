@@ -8,9 +8,7 @@ URLSecurityScopedResourceGuard::URLSecurityScopedResourceGuard(NSArray<NSURL *> 
 {
     for( NSURL *url in _urls ) {
         if( [url startAccessingSecurityScopedResource] ) {
-            Log::Trace(SPDLOC,
-                       "Started accessing a security scoped resource: {}",
-                       url.fileSystemRepresentation);
+            Log::Trace(SPDLOC, "Started accessing a security scoped resource: {}", url.fileSystemRepresentation);
             m_URLs.emplace_back(url);
         }
         else {
@@ -20,20 +18,17 @@ URLSecurityScopedResourceGuard::URLSecurityScopedResourceGuard(NSArray<NSURL *> 
     }
 }
 
-URLSecurityScopedResourceGuard::URLSecurityScopedResourceGuard(
-    URLSecurityScopedResourceGuard &&) noexcept = default;
+URLSecurityScopedResourceGuard::URLSecurityScopedResourceGuard(URLSecurityScopedResourceGuard &&) noexcept = default;
 
 URLSecurityScopedResourceGuard::~URLSecurityScopedResourceGuard()
 {
     for( NSURL *url : m_URLs ) {
         [url stopAccessingSecurityScopedResource];
-        Log::Trace(SPDLOC,
-                   "Stopped accessing a security scoped resource: {}",
-                   url.fileSystemRepresentation);
+        Log::Trace(SPDLOC, "Stopped accessing a security scoped resource: {}", url.fileSystemRepresentation);
     }
 }
 
 URLSecurityScopedResourceGuard &
 URLSecurityScopedResourceGuard::operator=(URLSecurityScopedResourceGuard &&) noexcept = default;
 
-}
+} // namespace nc::utility

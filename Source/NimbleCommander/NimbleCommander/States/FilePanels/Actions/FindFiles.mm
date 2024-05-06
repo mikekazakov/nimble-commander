@@ -36,8 +36,7 @@ static VFSListingPtr FetchSearchResultsAsListing(const std::vector<vfs::VFSPath>
 
     for( auto &p : _filepaths ) {
         VFSListingPtr listing;
-        int ret = p.Host()->FetchSingleItemListing(
-            p.Path().c_str(), listing, _fetch_flags, _cancel_checker);
+        int ret = p.Host()->FetchSingleItemListing(p.Path().c_str(), listing, _fetch_flags, _cancel_checker);
         if( ret == 0 )
             listings.emplace_back(listing);
 
@@ -94,23 +93,20 @@ void FindFiles::OnView(const FindFilesSheetViewRequest &_request) const
                 if( success ) {
                     [sheet beginSheetForWindow:_request.sender.window];
                     if( _request.content_mark ) {
-                        auto range = CFRangeMake(_request.content_mark->bytes_offset,
-                                                 _request.content_mark->bytes_length);
-                        [sheet markInitialSelection:range
-                                         searchTerm:_request.content_mark->search_term];
+                        auto range =
+                            CFRangeMake(_request.content_mark->bytes_offset, _request.content_mark->bytes_length);
+                        [sheet markInitialSelection:range searchTerm:_request.content_mark->search_term];
                     }
                 }
             });
         });
     }
     else { // as a window
-        auto window = [NCAppDelegate.me retrieveInternalViewerWindowForPath:_request.path
-                                                                      onVFS:_request.vfs];
+        auto window = [NCAppDelegate.me retrieveInternalViewerWindowForPath:_request.path onVFS:_request.vfs];
         if( window.internalViewerController.isOpened ) {
             [window showWindow:_request.sender];
             if( _request.content_mark ) {
-                auto range = CFRangeMake(_request.content_mark->bytes_offset,
-                                         _request.content_mark->bytes_length);
+                auto range = CFRangeMake(_request.content_mark->bytes_offset, _request.content_mark->bytes_length);
                 [window markInitialSelection:range searchTerm:_request.content_mark->search_term];
             }
         }
@@ -121,10 +117,9 @@ void FindFiles::OnView(const FindFilesSheetViewRequest &_request) const
                     if( opening_result ) {
                         [window showAsFloatingWindow];
                         if( _request.content_mark ) {
-                            auto range = CFRangeMake(_request.content_mark->bytes_offset,
-                                                     _request.content_mark->bytes_length);
-                            [window markInitialSelection:range
-                                              searchTerm:_request.content_mark->search_term];
+                            auto range =
+                                CFRangeMake(_request.content_mark->bytes_offset, _request.content_mark->bytes_length);
+                            [window markInitialSelection:range searchTerm:_request.content_mark->search_term];
                         }
                     }
                 });
@@ -133,4 +128,4 @@ void FindFiles::OnView(const FindFilesSheetViewRequest &_request) const
     }
 }
 
-};
+}; // namespace nc::panel::actions

@@ -5,26 +5,21 @@
 
 @implementation Application
 
-- (id) init
+- (id)init
 {
     self = [super init];
-    if(self) {
+    if( self ) {
     }
     return self;
 }
 
 - (void)sendEvent:(NSEvent *)theEvent
 {
-    try
-    {
+    try {
         [super sendEvent:theEvent];
-    }
-    catch(std::exception &e)
-    {
+    } catch( std::exception &e ) {
         std::cerr << "Exception caught: " << e.what() << std::endl;
-    }
-    catch(...)
-    {
+    } catch( ... ) {
         std::cerr << "Caught an unhandled exception!" << std::endl;
     }
 }
@@ -34,16 +29,11 @@
                             inMode:(NSString *)mode
                            dequeue:(BOOL)deqFlag
 {
-    try
-    {
+    try {
         return [super nextEventMatchingMask:mask untilDate:expiration inMode:mode dequeue:deqFlag];
-    }
-    catch(std::exception &e)
-    {
+    } catch( std::exception &e ) {
         std::cerr << "Exception caught: " << e.what() << std::endl;
-    }
-    catch(...)
-    {
+    } catch( ... ) {
         std::cerr << "Caught an unhandled exception!" << std::endl;
     }
 

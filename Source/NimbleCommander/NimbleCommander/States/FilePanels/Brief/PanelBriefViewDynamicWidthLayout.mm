@@ -45,17 +45,16 @@ using nc::panel::view::brief::DynamicWidthLayoutEngine;
 }
 
 - (nullable NSCollectionViewLayoutAttributes *)
-    layoutAttributesForSupplementaryViewOfKind:(NSCollectionViewSupplementaryElementKind)
-                                                   [[maybe_unused]] _elementKind
+    layoutAttributesForSupplementaryViewOfKind:(NSCollectionViewSupplementaryElementKind) [[maybe_unused]] _elementKind
                                    atIndexPath:(NSIndexPath *) [[maybe_unused]] _indexPath
 {
     return nil;
 }
 
-- (nullable NSCollectionViewLayoutAttributes *)
-    layoutAttributesForDecorationViewOfKind:(NSCollectionViewDecorationElementKind)
-                                                [[maybe_unused]] _elementKind
-                                atIndexPath:(NSIndexPath *) [[maybe_unused]] _indexPath
+- (nullable NSCollectionViewLayoutAttributes *)layoutAttributesForDecorationViewOfKind:
+                                                   (NSCollectionViewDecorationElementKind) [[maybe_unused]] _elementKind
+                                                                           atIndexPath:(NSIndexPath *)
+                                                                                           [[maybe_unused]] _indexPath
 {
     return nil;
 }
@@ -87,9 +86,8 @@ using nc::panel::view::brief::DynamicWidthLayoutEngine;
 
     const auto collection_view = self.collectionView;
     const auto clip_bounds = collection_view.superview.bounds;
-    const auto items_number =
-        static_cast<int>([collection_view.dataSource collectionView:collection_view
-                                             numberOfItemsInSection:0]);
+    const auto items_number = static_cast<int>([collection_view.dataSource collectionView:collection_view
+                                                                   numberOfItemsInSection:0]);
     const auto delegate = self.layoutDelegate;
     const auto &widths = [delegate collectionViewProvideIntrinsicItemsWidths:collection_view];
 

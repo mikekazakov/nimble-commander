@@ -13,16 +13,14 @@ namespace nc::term {
 class Interpreter
 {
 public:
-    enum class RequestedMouseEvents
-    {
+    enum class RequestedMouseEvents {
         None,           // no mouse events - default
         X10,            // only mouse press
         Normal,         // press/release
         ButtonTracking, // press->drag->release
         Any             // press/release/drag/motion
     };
-    enum class TitleKind
-    {
+    enum class TitleKind {
         Icon,
         Window
     };

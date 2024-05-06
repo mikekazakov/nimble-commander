@@ -4,8 +4,7 @@
 #include <catch2/catch.hpp>
 #include <filesystem>
 
-struct TempTestDir
-{
+struct TempTestDir {
     TempTestDir();
     ~TempTestDir();
     std::filesystem::path directory;

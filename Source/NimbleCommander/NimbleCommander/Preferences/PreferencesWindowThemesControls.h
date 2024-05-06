@@ -5,40 +5,37 @@
 
 @interface NCPreferencesActionTableCellView : NSTableCellView
 
-@property (nonatomic, nullable, weak) id target;
-@property (nonatomic, nullable) SEL action;
+@property(nonatomic, nullable, weak) id target;
+@property(nonatomic, nullable) SEL action;
 
 - (BOOL)sendAction:(nullable SEL)action to:(nullable id)target;
 
 @end
 
-@interface PreferencesWindowThemesTabColorControl : 
-    NCPreferencesActionTableCellView
+@interface PreferencesWindowThemesTabColorControl : NCPreferencesActionTableCellView
 
-@property (nonnull, nonatomic) NSColor *color;
+@property(nonnull, nonatomic) NSColor *color;
 
 @end
 
 @interface PreferencesWindowThemesTabFontControl : NCPreferencesActionTableCellView
 
-@property (nonnull, nonatomic) NSFont *font;
+@property(nonnull, nonatomic) NSFont *font;
 
 @end
 
 namespace nc::panel {
-    struct PresentationItemsColoringRule;
+struct PresentationItemsColoringRule;
 }
-@interface PreferencesWindowThemesTabColoringRulesControl : 
-    NCPreferencesActionTableCellView<NSTextFieldDelegate>
+@interface PreferencesWindowThemesTabColoringRulesControl : NCPreferencesActionTableCellView <NSTextFieldDelegate>
 
-@property (nonatomic) std::vector<nc::panel::PresentationItemsColoringRule> rules;
+@property(nonatomic) std::vector<nc::panel::PresentationItemsColoringRule> rules;
 
 @end
 
-@interface PreferencesWindowThemesAppearanceControl : 
-    NCPreferencesActionTableCellView
+@interface PreferencesWindowThemesAppearanceControl : NCPreferencesActionTableCellView
 
-@property (nonatomic) nc::ThemeAppearance themeAppearance;
-@property (nonatomic) bool enabled;
+@property(nonatomic) nc::ThemeAppearance themeAppearance;
+@property(nonatomic) bool enabled;
 
 @end

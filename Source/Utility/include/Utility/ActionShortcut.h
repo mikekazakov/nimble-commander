@@ -59,7 +59,7 @@ struct ActionShortcut {
     NSEventModifierFlagsHolder modifiers = 0;
 };
 
-}
+} // namespace nc::utility
 
 template <>
 struct std::hash<nc::utility::ActionShortcut> {

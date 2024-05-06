@@ -7,8 +7,8 @@
 
 @interface ExternalToolParameterValueSheetController : SheetController
 
-- (id) initWithValueNames:(std::vector<std::string>)_names toolName:(const std::string&)_name;
+- (id)initWithValueNames:(std::vector<std::string>)_names toolName:(const std::string &)_name;
 
-@property (nonatomic, readonly) const std::vector<std::string>& values;
+@property(nonatomic, readonly) const std::vector<std::string> &values;
 
 @end

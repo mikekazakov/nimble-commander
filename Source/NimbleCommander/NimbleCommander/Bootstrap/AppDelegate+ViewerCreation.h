@@ -7,8 +7,8 @@
 @class NCViewerViewController;
 
 // this category is private to NCAppDelegate
-@interface NCAppDelegate(ViewerCreation)
+@interface NCAppDelegate (ViewerCreation)
 
-- (NCViewerView*) makeViewerWithFrame:(NSRect)frame;
-- (NCViewerViewController*) makeViewerController;
+- (NCViewerView *)makeViewerWithFrame:(NSRect)frame;
+- (NCViewerViewController *)makeViewerController;
 @end

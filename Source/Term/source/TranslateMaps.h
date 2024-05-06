@@ -6,11 +6,11 @@ namespace nc::term {
 struct TranslateMaps {
     enum {
         USASCII = 0,
-        UK      = 1,
-        Graph   = 2
+        UK = 1,
+        Graph = 2
     };
 };
 
 extern const unsigned short g_TranslateMaps[3][256];
 
-}
+} // namespace nc::term

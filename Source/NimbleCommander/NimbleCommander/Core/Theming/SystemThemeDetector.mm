@@ -12,8 +12,7 @@
 @property(readwrite, nonatomic) std::function<void()> onChange;
 @end
 
-@implementation NCSystemThemeDetectorObjCShim
-{
+@implementation NCSystemThemeDetectorObjCShim {
     std::function<void()> m_onChange;
 }
 @synthesize onChange = m_onChange;

@@ -4,9 +4,9 @@
 #include <memory>
 
 namespace nc::term {
-    
+
 class Settings;
-    
+
 std::shared_ptr<Settings> TerminalSettings();
-    
-}
+
+} // namespace nc::term

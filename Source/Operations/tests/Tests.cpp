@@ -15,13 +15,12 @@
 static auto g_TestDirPrefix = "_nc__operations__test_";
 
 static int Execute(const std::string &_command);
-static bool RunMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout,
-                                                 std::function<bool()> _expectation);
+static bool RunMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation);
 static bool WaitUntilNativeFSManSeesVolumeAtPath(const std::filesystem::path &volume_path,
                                                  std::chrono::nanoseconds _time_limit);
 
 int main(int argc, char *argv[])
-{    
+{
     ::testing::GTEST_FLAG(throw_on_failure) = true;
     ::testing::InitGoogleMock(&argc, argv);
     int result = Catch::Session().run(argc, argv);
@@ -57,8 +56,7 @@ TempTestDmg::TempTestDmg(TempTestDir &_test_dir)
 {
     const auto dmg_path = _test_dir.directory / "tmp_image.dmg";
     const auto create_cmd =
-        "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " +
-        dmg_path.native();
+        "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " + dmg_path.native();
     const auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path.native();
 
     REQUIRE(Execute(create_cmd) == 0);
@@ -86,8 +84,7 @@ static int Execute(const std::string &_command)
     return c.exit_code();
 }
 
-static bool RunMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout,
-                                                 std::function<bool()> _expectation)
+static bool RunMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation)
 {
     dispatch_assert_main_queue();
     assert(_timeout.count() > 0);

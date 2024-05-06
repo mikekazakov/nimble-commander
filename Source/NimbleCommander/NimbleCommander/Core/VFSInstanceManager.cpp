@@ -8,10 +8,10 @@ VFSInstanceManager::Promise VFSInstanceManager::SpawnPromise(uint64_t _inst_id)
 {
     return Promise{_inst_id, *this};
 }
-    
-VFSInstanceManager *VFSInstanceManager::InstanceFromPromise(const Promise& _promise)
+
+VFSInstanceManager *VFSInstanceManager::InstanceFromPromise(const Promise &_promise)
 {
     return _promise.manager;
 }
-    
-}
+
+} // namespace nc::core

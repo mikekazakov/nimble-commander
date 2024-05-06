@@ -5,7 +5,7 @@
 #include <Base/SpdlogFacade.h>
 #include <span>
 
-@interface NCSpdLogWindowController : NSWindowController<NSWindowDelegate, NSTextViewDelegate>
+@interface NCSpdLogWindowController : NSWindowController <NSWindowDelegate, NSTextViewDelegate>
 
 - (instancetype)initWithLogs:(std::span<nc::base::SpdLogger *const>)_loggers;
 

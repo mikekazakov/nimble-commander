@@ -21,9 +21,7 @@ IconBuilderImpl::IconBuilderImpl(const std::shared_ptr<QLThumbnailsCache> &_ql_c
 {
 }
 
-IconBuilderImpl::~IconBuilderImpl()
-{
-}
+IconBuilderImpl::~IconBuilderImpl() = default;
 
 IconBuilder::LookupResult IconBuilderImpl::LookupExistingIcon(const VFSListingItem &_item, int _icon_px_size)
 {
@@ -128,9 +126,9 @@ IconBuilderImpl::BuildRealIcon(const VFSListingItem &_item, int _icon_px_size, c
         // 2nd - if we haven't built a real thumbnail - try an extension instead
         result.filetype = m_WorkspaceIconsCache->ProduceIcon(path);
         Log::Debug(SPDLOC,
-                  "BuildRealIcon(): got a workspace icon for '{}' = {}",
-                  _item.Filename(),
-                  objc_bridge_cast<void>(result.filetype));
+                   "BuildRealIcon(): got a workspace icon for '{}' = {}",
+                   _item.Filename(),
+                   objc_bridge_cast<void>(result.filetype));
         return result;
     }
     else {

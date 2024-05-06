@@ -16,4 +16,4 @@ namespace nc::viewer {
 NSBundle *Bundle() noexcept;
 NSString *NSLocalizedString(NSString *_key, const char *_comment) noexcept;
 
-}
+} // namespace nc::viewer

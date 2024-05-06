@@ -8,8 +8,8 @@ namespace nc::base {
 class ExecutionDeadline
 {
 public:
-    ExecutionDeadline( std::chrono::seconds _execution_limit );
+    ExecutionDeadline(std::chrono::seconds _execution_limit);
     ~ExecutionDeadline();
 };
 
-}
+} // namespace nc::base

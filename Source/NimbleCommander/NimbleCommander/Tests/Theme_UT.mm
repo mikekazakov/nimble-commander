@@ -7,8 +7,8 @@
 #include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 #include <rapidjson/error/en.h>
 
-using nc::ThemeAppearance;
 using nc::Theme;
+using nc::ThemeAppearance;
 
 #define PREFIX "Theme "
 

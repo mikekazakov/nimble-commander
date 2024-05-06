@@ -4,10 +4,10 @@
 #include <Utility/SheetController.h>
 #include "ConnectionSheetProtocol.h"
 
-@interface DropboxAccountSheetController : SheetController<ConnectionSheetProtocol>
+@interface DropboxAccountSheetController : SheetController <ConnectionSheetProtocol>
 
-@property (nonatomic) NetworkConnectionsManager::Connection connection;
-@property (nonatomic) std::string password;
-@property (nonatomic) bool setupMode;
+@property(nonatomic) NetworkConnectionsManager::Connection connection;
+@property(nonatomic) std::string password;
+@property(nonatomic) bool setupMode;
 
 @end

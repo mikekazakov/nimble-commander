@@ -5,7 +5,6 @@
 
 @interface ColoredSeparatorLine : NSView
 
-@property (nonatomic) NSColor *borderColor;
+@property(nonatomic) NSColor *borderColor;
 
 @end
-

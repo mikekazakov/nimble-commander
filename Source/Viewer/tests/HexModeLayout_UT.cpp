@@ -12,9 +12,7 @@ using namespace nc::viewer;
 static std::shared_ptr<const TextModeWorkingSet>
 ProduceWorkingSet(const char *_chars, const int _chars_number, long _ws_offset = 0);
 static std::shared_ptr<const HexModeFrame>
-ProduceFrame(const std::shared_ptr<const TextModeWorkingSet> &ws,
-             const char *_chars,
-             const int _chars_number);
+ProduceFrame(const std::shared_ptr<const TextModeWorkingSet> &ws, const char *_chars, const int _chars_number);
 
 static std::unique_ptr<HexModeLayout> ProduceLayout(std::shared_ptr<const HexModeFrame> _frame);
 
@@ -136,9 +134,7 @@ ProduceWorkingSet(const char *_chars, const int _chars_number, long _ws_offset)
 }
 
 static std::shared_ptr<const HexModeFrame>
-ProduceFrame(const std::shared_ptr<const TextModeWorkingSet> &ws,
-             const char *_chars,
-             const int _chars_number)
+ProduceFrame(const std::shared_ptr<const TextModeWorkingSet> &ws, const char *_chars, const int _chars_number)
 {
     const auto font = CTFontCreateWithName(CFSTR("Menlo-Regular"), 13., nullptr);
     const auto release_font = at_scope_end([&] { CFRelease(font); });

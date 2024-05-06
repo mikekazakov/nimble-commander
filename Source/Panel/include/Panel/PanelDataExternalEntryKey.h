@@ -24,4 +24,4 @@ struct ExternalEntryKey {
     bool is_valid() const noexcept;
 };
 
-}
+} // namespace nc::panel::data

@@ -3,7 +3,7 @@
 
 // This shim only exists to work around an issue that "#if __has_feature(modules)" works weirdly
 // when compiled in Objective-C++20.
-// TODO: Remove this as soon as Sparkle finally removes usage of "@import" in a release version! 
+// TODO: Remove this as soon as Sparkle finally removes usage of "@import" in a release version!
 @class SPUStandardUpdaterController;
 
 #ifdef __cplusplus

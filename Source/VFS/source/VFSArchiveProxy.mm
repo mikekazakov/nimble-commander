@@ -11,8 +11,7 @@ VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const std::string &_path,
                                               VFSCancelChecker _cancel_checker)
 {
     try {
-        auto archive =
-            std::make_shared<nc::vfs::ArchiveHost>(_path, _parent, std::nullopt, _cancel_checker);
+        auto archive = std::make_shared<nc::vfs::ArchiveHost>(_path, _parent, std::nullopt, _cancel_checker);
         return archive;
     } catch( VFSErrorException &e ) {
         if( e.code() == VFSError::ArclibPasswordRequired && _passwd ) {
@@ -20,8 +19,7 @@ VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const std::string &_path,
             if( passwd.empty() )
                 return nullptr;
             try {
-                auto archive =
-                    std::make_shared<nc::vfs::ArchiveHost>(_path, _parent, passwd, _cancel_checker);
+                auto archive = std::make_shared<nc::vfs::ArchiveHost>(_path, _parent, passwd, _cancel_checker);
                 return archive;
             } catch( VFSErrorException &e ) {
             }
@@ -31,8 +29,7 @@ VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const std::string &_path,
 
     if( nc::vfs::ArchiveRawHost::HasSupportedExtension(_path) ) {
         try {
-            auto archive =
-                std::make_shared<nc::vfs::ArchiveRawHost>(_path, _parent, _cancel_checker);
+            auto archive = std::make_shared<nc::vfs::ArchiveRawHost>(_path, _parent, _cancel_checker);
             return archive;
         } catch( VFSErrorException &e ) {
         }

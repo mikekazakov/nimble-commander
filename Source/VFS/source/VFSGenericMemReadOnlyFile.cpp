@@ -18,8 +18,7 @@ GenericMemReadOnlyFile::GenericMemReadOnlyFile(const char *_relative_path,
 GenericMemReadOnlyFile::GenericMemReadOnlyFile(const char *_relative_path,
                                                const std::shared_ptr<VFSHost> &_host,
                                                std::string_view _memory)
-    : VFSFile(_relative_path, _host), m_Mem(static_cast<const void *>(_memory.data())),
-      m_Size(_memory.size())
+    : VFSFile(_relative_path, _host), m_Mem(static_cast<const void *>(_memory.data())), m_Size(_memory.size())
 {
     if( m_Mem == nullptr )
         throw std::invalid_argument("GenericMemReadOnlyFile expects a valid memory pointer");
@@ -30,7 +29,7 @@ ssize_t GenericMemReadOnlyFile::Read(void *_buf, size_t _size)
     if( !IsOpened() )
         return VFSError::InvalidCall;
 
-    if( _buf == 0 )
+    if( _buf == nullptr )
         return VFSError::InvalidCall;
 
     if( _size == 0 )

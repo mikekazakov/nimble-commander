@@ -10,13 +10,9 @@ static NSData *ToTempNSData(const std::optional<std::vector<uint8_t>> &_data);
 static NSImage *ReadImageFromFile(const std::string &_path, VFSHost &_host);
 static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_path, VFSHost &_host);
 
-VFSBundleIconsCacheImpl::VFSBundleIconsCacheImpl()
-{
-}
+VFSBundleIconsCacheImpl::VFSBundleIconsCacheImpl() = default;
 
-VFSBundleIconsCacheImpl::~VFSBundleIconsCacheImpl()
-{
-}
+VFSBundleIconsCacheImpl::~VFSBundleIconsCacheImpl() = default;
 
 NSImage *VFSBundleIconsCacheImpl::IconIfHas(const std::string &_file_path, VFSHost &_host)
 {
@@ -60,7 +56,7 @@ static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_pa
 {
     VFSFilePtr vfs_file;
 
-    if( _host.CreateFile(_path.c_str(), vfs_file, 0) < 0 )
+    if( _host.CreateFile(_path.c_str(), vfs_file, nullptr) < 0 )
         return std::nullopt;
 
     if( vfs_file->Open(VFSFlags::OF_Read) < 0 )
@@ -73,10 +69,9 @@ static NSData *ToTempNSData(const std::optional<std::vector<uint8_t>> &_data)
 {
     if( _data.has_value() == false )
         return nil;
-    return [NSData
-        dataWithBytesNoCopy:const_cast<void *>(reinterpret_cast<const void *>(_data->data()))
-                     length:_data->size()
-               freeWhenDone:false];
+    return [NSData dataWithBytesNoCopy:const_cast<void *>(reinterpret_cast<const void *>(_data->data()))
+                                length:_data->size()
+                          freeWhenDone:false];
 }
 
 static NSDictionary *ReadDictionary(const std::string &_path, VFSHost &_host)
@@ -114,7 +109,7 @@ static NSImage *ProduceBundleIcon(const std::string &_path, VFSHost &_host)
     const auto info_plist_path = std::filesystem::path(_path) / "Contents/Info.plist";
     const auto plist = ReadDictionary(info_plist_path.native(), _host);
     if( !plist )
-        return 0;
+        return nullptr;
 
     auto icon_str = objc_cast<NSString>([plist objectForKey:@"CFBundleIconFile"]);
     if( !icon_str )
@@ -126,4 +121,4 @@ static NSImage *ProduceBundleIcon(const std::string &_path, VFSHost &_host)
     return ReadImageFromFile(img_path, _host);
 }
 
-}
+} // namespace nc::vfsicon

@@ -33,4 +33,4 @@ NSString *NSLocalizedString(NSString *_key, [[maybe_unused]] const char *_commen
     return [Bundle() localizedStringForKey:_key value:@"" table:@"Localizable"];
 }
 
-}
+} // namespace nc::ops

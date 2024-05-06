@@ -36,21 +36,16 @@ NSArray<NSCollectionViewLayoutAttributes *> *
 LayoutEngineBase::LogarithmicSearchForItemsInRect(NSRect _rect) const noexcept
 {
     // 2 * O( ln2(N) );
-    const auto first_col =
-        FindFirstColumnPosForRect(m_ColumnsPositions.begin(), m_ColumnsPositions.end(), _rect);
+    const auto first_col = FindFirstColumnPosForRect(m_ColumnsPositions.begin(), m_ColumnsPositions.end(), _rect);
     if( first_col == m_ColumnsPositions.end() )
         return [[NSArray alloc] init];
-    const auto last_col =
-        FindLastColumnPosForRect(m_ColumnsPositions.begin(), m_ColumnsPositions.end(), _rect);
+    const auto last_col = FindLastColumnPosForRect(m_ColumnsPositions.begin(), m_ColumnsPositions.end(), _rect);
 
     const auto first_row_index = static_cast<int>(std::floor(_rect.origin.y / m_ItemHeight));
     const auto last_row_index =
-        std::min(static_cast<int>(std::ceil((_rect.origin.y + _rect.size.height) / m_ItemHeight)),
-                 m_RowsNumber);
-    const auto first_col_index =
-        static_cast<int>(std::distance(m_ColumnsPositions.begin(), first_col));
-    const auto last_col_index =
-        static_cast<int>(std::distance(m_ColumnsPositions.begin(), last_col));
+        std::min(static_cast<int>(std::ceil((_rect.origin.y + _rect.size.height) / m_ItemHeight)), m_RowsNumber);
+    const auto first_col_index = static_cast<int>(std::distance(m_ColumnsPositions.begin(), first_col));
+    const auto last_col_index = static_cast<int>(std::distance(m_ColumnsPositions.begin(), last_col));
 
     NSMutableArray *array = [[NSMutableArray alloc] init];
     for( int column = first_col_index; column < last_col_index; ++column ) {
@@ -64,4 +59,4 @@ LayoutEngineBase::LogarithmicSearchForItemsInRect(NSRect _rect) const noexcept
     return array;
 }
 
-}
+} // namespace nc::panel::view::brief

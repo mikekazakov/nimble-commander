@@ -9,21 +9,19 @@
 @class PanelController;
 
 namespace nc::panel {
-namespace actions{
-    struct PanelAction;
+namespace actions {
+struct PanelAction;
 }
 
-using PanelActionsMap =
-    robin_hood::unordered_flat_map<SEL, std::unique_ptr<const actions::PanelAction>>;
-}
+using PanelActionsMap = robin_hood::unordered_flat_map<SEL, std::unique_ptr<const actions::PanelAction>>;
+} // namespace nc::panel
 
-@interface NCPanelControllerActionsDispatcher : AttachedResponder<NCPanelViewKeystrokeSink>
+@interface NCPanelControllerActionsDispatcher : AttachedResponder <NCPanelViewKeystrokeSink>
 
-- (instancetype)initWithController:(PanelController*)_controller
-                     andActionsMap:(const nc::panel::PanelActionsMap&)_actions_map;
+- (instancetype)initWithController:(PanelController *)_controller
+                     andActionsMap:(const nc::panel::PanelActionsMap &)_actions_map;
 
-- (bool) validateActionBySelector:(SEL)_selector;
-
+- (bool)validateActionBySelector:(SEL)_selector;
 
 - (IBAction)OnBriefSystemOverviewCommand:(id)sender;
 - (IBAction)OnRefreshPanel:(id)sender;

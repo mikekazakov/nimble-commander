@@ -61,4 +61,4 @@ inline CFString::CFString(CFStringRef _str) noexcept : p(_str)
 {
 }
 
-}
+} // namespace nc::base

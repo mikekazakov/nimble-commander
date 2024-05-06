@@ -26,9 +26,8 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
 
 - (instancetype)init
 {
-    const auto flags = NSWindowStyleMaskResizable | NSWindowStyleMaskTitled |
-        NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable |
-        NSWindowStyleMaskFullSizeContentView;
+    const auto flags = NSWindowStyleMaskResizable | NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
+                       NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskFullSizeContentView;
 
     if( self = [super initWithContentRect:g_InitialWindowContentRect
                                 styleMask:flags
@@ -39,12 +38,12 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
         self.restorable = true;
         self.identifier = g_Identifier;
         self.title = @"";
-        
-        if (@available(macOS 11.0, *)) {
+
+        if( @available(macOS 11.0, *) ) {
             self.titlebarSeparatorStyle = NSTitlebarSeparatorStyleNone;
             self.toolbarStyle = NSWindowToolbarStyleUnifiedCompact;
         }
-        
+
         // window placement logic below:
         // (it may be later overwritten by Cocoa's restoration mechanism)
         if( auto mwc = NCMainWindowController.lastFocused ) {
@@ -53,8 +52,9 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
             // then cascade it using built-in AppKit logic:
             auto cascade_loc = NSMakePoint(0, 0);
             cascade_loc = [self cascadeTopLeftFromPoint:cascade_loc]; // init cascasing
-            [self cascadeTopLeftFromPoint:cascade_loc]; // actually cascade this window
-        } else {
+            [self cascadeTopLeftFromPoint:cascade_loc];               // actually cascade this window
+        }
+        else {
             // if there's no alive window - grab previous value from user defaults
             if( ![self setFrameUsingName:g_FrameIdentifier] ) {
                 // if we somehow don't have it - simply center window

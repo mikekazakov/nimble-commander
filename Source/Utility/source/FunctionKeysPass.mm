@@ -46,8 +46,8 @@ static CGEventRef NewFnButtonPress(CGKeyCode _vk, bool _key_down, CGEventFlags _
 {
     CGEventRef press = CGEventCreateKeyboardEvent(nullptr, _vk, _key_down);
 
-    const auto filter = kCGEventFlagMaskShift | kCGEventFlagMaskControl |
-                        kCGEventFlagMaskAlternate | kCGEventFlagMaskCommand;
+    const auto filter =
+        kCGEventFlagMaskShift | kCGEventFlagMaskControl | kCGEventFlagMaskAlternate | kCGEventFlagMaskCommand;
     const auto flags = _flags & filter;
     if( flags != 0 )
         CGEventSetFlags(press, flags);
@@ -55,15 +55,13 @@ static CGEventRef NewFnButtonPress(CGKeyCode _vk, bool _key_down, CGEventFlags _
     return press;
 }
 
-CGEventRef FunctionalKeysPass::Callback([[maybe_unused]] CGEventTapProxy _proxy,
-                                        CGEventType _type,
-                                        CGEventRef _event)
+CGEventRef FunctionalKeysPass::Callback([[maybe_unused]] CGEventTapProxy _proxy, CGEventType _type, CGEventRef _event)
 {
     if( _type == kCGEventTapDisabledByTimeout ) {
         CGEventTapEnable(m_Port, true);
         return _event;
     }
-    
+
     if( NSApp.isActive && NSApp.keyWindow != nil ) {
         /* The check above is a paranoid one since an inactive app should not receive any messages
          * via this callback. But in practice there were such occasions, which is still a bit of a
@@ -83,11 +81,8 @@ CGEventRef FunctionalKeysPass::HandleRegularKeyEvents(CGEventType _type, CGEvent
     // references:
     // https://www.apple.com/uk/newsroom/2022/06/apple-unveils-all-new-macbook-air-supercharged-by-the-new-m2-chip/
     const auto is_key_down = _type == kCGEventKeyDown;
-    const auto keycode =
-        static_cast<CGKeyCode>(CGEventGetIntegerValueField(_event, kCGKeyboardEventKeycode));
-    const auto substitute = [&](CGKeyCode _vk) {
-        return NewFnButtonPress(_vk, is_key_down, CGEventGetFlags(_event));
-    };
+    const auto keycode = static_cast<CGKeyCode>(CGEventGetIntegerValueField(_event, kCGKeyboardEventKeycode));
+    const auto substitute = [&](CGKeyCode _vk) { return NewFnButtonPress(_vk, is_key_down, CGEventGetFlags(_event)); };
     Log::Trace(SPDLOC, "HandleRegularKeyEvents: keycode is {}, pressed={}", keycode, is_key_down);
     switch( keycode ) {
         case 145:
@@ -124,8 +119,7 @@ CGEventRef FunctionalKeysPass::HandleRegularKeyEvents(CGEventType _type, CGEvent
     return _event;
 }
 
-CGEventRef FunctionalKeysPass::HandleControlButtons([[maybe_unused]] CGEventType _type,
-                                                    CGEventRef _event)
+CGEventRef FunctionalKeysPass::HandleControlButtons([[maybe_unused]] CGEventType _type, CGEventRef _event)
 {
     // have to create a NSEvent object for every NSSystemDefined event, which is awful
     const auto ev = [NSEvent eventWithCGEvent:_event];
@@ -174,21 +168,14 @@ bool FunctionalKeysPass::Enable()
         if( ObtainAccessiblityRights() == false )
             return false;
 
-        const auto interested_events = CGEventMaskBit(kCGEventKeyDown) |
-                                       CGEventMaskBit(kCGEventKeyUp) |
-                                       CGEventMaskBit(NSEventTypeSystemDefined);
-        const auto handler = [](CGEventTapProxy _proxy,
-                                CGEventType _type,
-                                CGEventRef _event,
-                                void *_info) -> CGEventRef {
+        const auto interested_events =
+            CGEventMaskBit(kCGEventKeyDown) | CGEventMaskBit(kCGEventKeyUp) | CGEventMaskBit(NSEventTypeSystemDefined);
+        const auto handler =
+            [](CGEventTapProxy _proxy, CGEventType _type, CGEventRef _event, void *_info) -> CGEventRef {
             return static_cast<FunctionalKeysPass *>(_info)->Callback(_proxy, _type, _event);
         };
-        const auto port = CGEventTapCreate(kCGHIDEventTap,
-                                           kCGHeadInsertEventTap,
-                                           kCGEventTapOptionDefault,
-                                           interested_events,
-                                           handler,
-                                           this);
+        const auto port = CGEventTapCreate(
+            kCGHIDEventTap, kCGHeadInsertEventTap, kCGEventTapOptionDefault, interested_events, handler, this);
         if( port == nullptr )
             return false;
 
@@ -222,4 +209,4 @@ bool FunctionalKeysPass::ObtainAccessiblityRights()
     return accessibility_granted;
 }
 
-}
+} // namespace nc::utility

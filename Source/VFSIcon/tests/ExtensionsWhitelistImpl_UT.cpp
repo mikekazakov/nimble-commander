@@ -5,18 +5,18 @@
 
 #define PREFIX "ExtensionsWhitelistImpl "
 
-TEST_CASE(PREFIX"tests")
+TEST_CASE(PREFIX "tests")
 {
     nc::utility::UTIDBImpl uti_db;
     nc::vfsicon::ExtensionsWhitelistImpl whitelist(uti_db, {"public.image", "public.movie"});
-    CHECK( whitelist.AllowExtension("jpg") );
-    CHECK( whitelist.AllowExtension("png") );
-    CHECK( whitelist.AllowExtension("tiff") );
-    CHECK( whitelist.AllowExtension("mov") );
-    CHECK( whitelist.AllowExtension("avi") );
-    
-    CHECK( not whitelist.AllowExtension("cpp") );
-    CHECK( not whitelist.AllowExtension("mm") );
-    CHECK( not whitelist.AllowExtension("") );
-    CHECK( not whitelist.AllowExtension("txt") );
+    CHECK(whitelist.AllowExtension("jpg"));
+    CHECK(whitelist.AllowExtension("png"));
+    CHECK(whitelist.AllowExtension("tiff"));
+    CHECK(whitelist.AllowExtension("mov"));
+    CHECK(whitelist.AllowExtension("avi"));
+
+    CHECK(not whitelist.AllowExtension("cpp"));
+    CHECK(not whitelist.AllowExtension("mm"));
+    CHECK(not whitelist.AllowExtension(""));
+    CHECK(not whitelist.AllowExtension("txt"));
 }

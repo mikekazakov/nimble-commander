@@ -10,7 +10,7 @@ class CopyingTitleBuilder
 {
 public:
     CopyingTitleBuilder(const std::vector<VFSListingItem> &_source_files,
-                        const std::string& _destination_path,
+                        const std::string &_destination_path,
                         const CopyingOptions &_options);
 
     std::string TitleForPreparing() const;
@@ -20,9 +20,8 @@ public:
 
 private:
     const std::vector<VFSListingItem> &m_SourceFiles;
-    const std::string& m_DestinationPath;
+    const std::string &m_DestinationPath;
     const CopyingOptions &m_Options;
 };
 
-
-}
+} // namespace nc::ops

@@ -7,29 +7,29 @@
 
 namespace nc::panel::actions {
 
-bool SyncPanels::Predicate( MainWindowFilePanelState *_target ) const
+bool SyncPanels::Predicate(MainWindowFilePanelState *_target) const
 {
     const auto act_pc = _target.activePanelController;
     if( !act_pc )
         return false;
-    
+
     if( _target.splitView.anyCollapsedOrOverlayed )
         return false;
-    
+
     return true;
 }
-    
-void SyncPanels::Perform( MainWindowFilePanelState *_target, id ) const
+
+void SyncPanels::Perform(MainWindowFilePanelState *_target, id) const
 {
     if( _target.splitView.anyCollapsedOrOverlayed )
         return;
-    
+
     const auto current = _target.activePanelController;
     const auto opposite = _target.oppositePanelController;
-    
+
     if( !current || !opposite )
         return;
-    
+
     if( current.isUniform ) {
         auto request = std::make_shared<DirectoryChangeRequest>();
         request->RequestedDirectory = current.currentDirectoryPath;
@@ -43,14 +43,14 @@ void SyncPanels::Perform( MainWindowFilePanelState *_target, id ) const
     }
 }
 
-bool SwapPanels::Predicate( MainWindowFilePanelState *_target ) const
+bool SwapPanels::Predicate(MainWindowFilePanelState *_target) const
 {
     return _target.isPanelActive && !_target.splitView.anyCollapsedOrOverlayed;
 }
 
-void SwapPanels::Perform( MainWindowFilePanelState *_target, id ) const
+void SwapPanels::Perform(MainWindowFilePanelState *_target, id) const
 {
     [_target swapPanels];
 }
-    
-}
+
+} // namespace nc::panel::actions

@@ -4,11 +4,10 @@
 #include <Cocoa/Cocoa.h>
 #include <string>
 
-@interface NCOpsCreateHardlinkDialog : NSWindowController<NSTextFieldDelegate>
+@interface NCOpsCreateHardlinkDialog : NSWindowController <NSTextFieldDelegate>
 
-- (instancetype)initWithSourceName:(const std::string&)_src;
+- (instancetype)initWithSourceName:(const std::string &)_src;
 
-@property (readonly, nonatomic) const std::string &result;
-
+@property(readonly, nonatomic) const std::string &result;
 
 @end

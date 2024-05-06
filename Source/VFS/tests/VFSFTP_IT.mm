@@ -28,8 +28,8 @@ TEST_CASE(PREFIX "upload and compare")
     VFSStat stat;
 
     // if there's a trash from previous runs - remove it
-    if( host->Stat(fn2, stat, 0, 0) == 0 )
-        REQUIRE(host->Unlink(fn2, 0) == 0);
+    if( host->Stat(fn2, stat, 0, nullptr) == 0 )
+        REQUIRE(host->Unlink(fn2, nullptr) == 0);
 
     // copy file to the remote server
     REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host) == 0);
@@ -40,15 +40,15 @@ TEST_CASE(PREFIX "upload and compare")
     REQUIRE(compare == 0);
 
     // check that it appeared in stat cache
-    REQUIRE(host->Stat(fn2, stat, 0, 0) == 0);
+    REQUIRE(host->Stat(fn2, stat, 0, nullptr) == 0);
 
     // delete it
-    REQUIRE(host->Unlink(fn2, 0) == 0);
-    REQUIRE(host->Unlink("/Public/!FilesTesting/wf8g2398fg239f6g23976fg79gads", 0) !=
-            0); // also check deleting wrong entry
+    REQUIRE(host->Unlink(fn2, nullptr) == 0);
+    REQUIRE(host->Unlink("/Public/!FilesTesting/wf8g2398fg239f6g23976fg79gads",
+                         nullptr) != 0); // also check deleting wrong entry
 
     // check that it is no longer available in stat cache
-    REQUIRE(host->Stat(fn2, stat, 0, 0) != 0);
+    REQUIRE(host->Stat(fn2, stat, 0, nullptr) != 0);
 }
 
 TEST_CASE(PREFIX "empty file test")
@@ -58,8 +58,8 @@ TEST_CASE(PREFIX "empty file test")
     const char *fn = "/empty_file";
 
     VFSStat stat;
-    if( host->Stat(fn, stat, 0, 0) == 0 )
-        REQUIRE(host->Unlink(fn, 0) == 0);
+    if( host->Stat(fn, stat, 0, nullptr) == 0 )
+        REQUIRE(host->Unlink(fn, nullptr) == 0);
 
     VFSFilePtr file;
     REQUIRE(host->CreateFile(fn, file) == 0);
@@ -68,14 +68,14 @@ TEST_CASE(PREFIX "empty file test")
     REQUIRE(file->Close() == 0);
 
     // sometimes this fail. mb caused by FTP server implementation (?)
-    REQUIRE(host->Stat(fn, stat, 0, 0) == 0);
+    REQUIRE(host->Stat(fn, stat, 0, nullptr) == 0);
     REQUIRE(stat.size == 0);
 
     REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist) != 0);
     REQUIRE(file->IsOpened() == false);
 
-    REQUIRE(host->Unlink(fn, 0) == 0);
-    REQUIRE(host->Stat(fn, stat, 0, 0) != 0);
+    REQUIRE(host->Unlink(fn, nullptr) == 0);
+    REQUIRE(host->Stat(fn, stat, 0, nullptr) != 0);
 }
 
 TEST_CASE(PREFIX "MKD RMD")
@@ -257,7 +257,7 @@ TEST_CASE(PREFIX "seekread")
     constexpr auto fn = "/TestSeekRead/blob";
     VFSFilePtr file;
     char buf[length];
-    REQUIRE(host->CreateFile(fn, file, 0) == 0);
+    REQUIRE(host->CreateFile(fn, file, nullptr) == 0);
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
     REQUIRE(file->Seek(offset, VFSFile::Seek_Set) == offset);
     REQUIRE(file->Read(buf, length) == length);

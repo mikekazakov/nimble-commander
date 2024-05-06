@@ -245,26 +245,22 @@ TEST_CASE(PREFIX "Check address conversion: no offsets")
     const long working_set_offset = 0;
     SECTION("8 digits, 16 bytes per row")
     {
-        const auto string =
-            HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 8);
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 8);
         CHECK(Equal(string.get(), CFSTR("00000000")));
     }
     SECTION("1 digit, 16 bytes per row")
     {
-        const auto string =
-            HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 1);
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 1);
         CHECK(Equal(string.get(), CFSTR("0")));
     }
     SECTION("0 digits, 16 bytes per row")
     {
-        const auto string =
-            HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 0);
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 0);
         CHECK(Equal(string.get(), CFSTR("")));
     }
     SECTION("-1 digits, 16 bytes per row")
     {
-        CHECK_THROWS(
-            HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, -1));
+        CHECK_THROWS(HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, -1));
     }
 }
 
@@ -274,21 +270,18 @@ TEST_CASE(PREFIX "Check address conversion: row_offset=123456")
     const long working_set_offset = 0;
     SECTION("8 digits, 16 bytes per row")
     {
-        const auto string =
-            HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 8);
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 8);
         CHECK(Equal(string.get(), CFSTR("0001E240")));
     }
     SECTION("3 digits, 16 bytes per row")
     {
-        const auto string =
-            HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 3);
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 3);
         CHECK(Equal(string.get(), CFSTR("240")));
     }
 
     SECTION("1 digit, 16 bytes per row")
     {
-        const auto string =
-            HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 1);
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 1);
         CHECK(Equal(string.get(), CFSTR("0")));
     }
 }
@@ -297,8 +290,7 @@ TEST_CASE(PREFIX "Check address conversion: row_offset=123450")
 {
     const int row_bytes_start = 123450;
     const long working_set_offset = 0;
-    const auto string =
-        HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 8);
+    const auto string = HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 8);
     CHECK(Equal(string.get(), CFSTR("0001E230")));
 }
 
@@ -308,26 +300,22 @@ TEST_CASE(PREFIX "Check address conversion: row_offset=50, ws_offset=50")
     const long working_set_offset = 50;
     SECTION("4 digits, 16 bytes per row")
     {
-        const auto string =
-            HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 4);
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 16, 4);
         CHECK(Equal(string.get(), CFSTR("0060")));
     }
     SECTION("4 digits, 10 bytes per row")
     {
-        const auto string =
-            HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 10, 4);
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 10, 4);
         CHECK(Equal(string.get(), CFSTR("0064")));
     }
     SECTION("4 digits, 8 bytes per row")
     {
-        const auto string =
-            HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 8, 4);
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 8, 4);
         CHECK(Equal(string.get(), CFSTR("0060")));
     }
     SECTION("4 digits, 24 bytes per row")
     {
-        const auto string =
-            HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 24, 4);
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset, 24, 4);
         CHECK(Equal(string.get(), CFSTR("0060")));
     }
 }
@@ -337,18 +325,18 @@ TEST_CASE(PREFIX "Check hex conversions")
     SECTION("Hello, World!")
     {
         const auto data = std::string("Hello, World!");
-        const auto hex = HexModeSplitter::MakeBytesHexString(
-            reinterpret_cast<const std::byte *>(data.data()),
-            reinterpret_cast<const std::byte *>(data.data()) + data.size());
+        const auto hex =
+            HexModeSplitter::MakeBytesHexString(reinterpret_cast<const std::byte *>(data.data()),
+                                                reinterpret_cast<const std::byte *>(data.data()) + data.size());
         CHECK(Equal(hex.get(), CFSTR("48 65 6C 6C 6F 2C 20 57 6F 72 6C 64 21")));
     }
     SECTION("Hello, World!, . separator")
     {
         const auto data = std::string("Hello, World!");
-        const auto hex = HexModeSplitter::MakeBytesHexString(
-            reinterpret_cast<const std::byte *>(data.data()),
-            reinterpret_cast<const std::byte *>(data.data()) + data.size(),
-            '.');
+        const auto hex =
+            HexModeSplitter::MakeBytesHexString(reinterpret_cast<const std::byte *>(data.data()),
+                                                reinterpret_cast<const std::byte *>(data.data()) + data.size(),
+                                                '.');
         CHECK(Equal(hex.get(), CFSTR("48.65.6C.6C.6F.2C.20.57.6F.72.6C.64.21")));
     }
     SECTION("Empty data")
@@ -366,9 +354,9 @@ TEST_CASE(PREFIX "Check hex conversions")
     SECTION("Doesn't crash on 16 megabytes")
     {
         const auto data = std::string(16'000'000, static_cast<char16_t>(' '));
-        const auto hex = HexModeSplitter::MakeBytesHexString(
-            reinterpret_cast<const std::byte *>(data.data()),
-            reinterpret_cast<const std::byte *>(data.data()) + data.size());
+        const auto hex =
+            HexModeSplitter::MakeBytesHexString(reinterpret_cast<const std::byte *>(data.data()),
+                                                reinterpret_cast<const std::byte *>(data.data()) + data.size());
     }
 }
 

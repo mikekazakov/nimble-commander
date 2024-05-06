@@ -18,7 +18,9 @@ TEST_CASE(PREFIX "Generic cases", "[!mayfail]")
 
     ChildrenTracker tracker{p1, cb};
 
-    SECTION("Nothing") {}
+    SECTION("Nothing")
+    {
+    }
     SECTION("Single fork")
     {
         int p2 = 0;

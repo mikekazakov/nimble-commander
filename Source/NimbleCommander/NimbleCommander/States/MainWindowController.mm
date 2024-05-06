@@ -109,8 +109,7 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder
 {
-    if( auto panels_state = [m_PanelState encodeRestorableState];
-        panels_state.GetType() != rapidjson::kNullType ) {
+    if( auto panels_state = [m_PanelState encodeRestorableState]; panels_state.GetType() != rapidjson::kNullType ) {
         rapidjson::StringBuffer buffer;
         rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
         panels_state.Accept(writer);
@@ -184,10 +183,9 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
     if( _toolbar )
         _toolbar.visible = _toolbar_visible;
 
-    self.window.titleVisibility =
-        _needs_title
-            ? NSWindowTitleVisible
-            : ((_toolbar && _toolbar_visible) ? NSWindowTitleHidden : NSWindowTitleVisible);
+    self.window.titleVisibility = _needs_title
+                                      ? NSWindowTitleVisible
+                                      : ((_toolbar && _toolbar_visible) ? NSWindowTitleHidden : NSWindowTitleVisible);
 
     m_ToolbarVisible = _toolbar_visible;
 }
@@ -205,8 +203,7 @@ static int CountMainWindows()
 {
     // the are the last main window - need to save current state as "default" in state config
     if( CountMainWindows() == 1 ) {
-        if( auto panels_state = [m_PanelState encodeRestorableState];
-            panels_state.GetType() != rapidjson::kNullType )
+        if( auto panels_state = [m_PanelState encodeRestorableState]; panels_state.GetType() != rapidjson::kNullType )
             StateConfig().Set(g_JSONRestorationFilePanelsStateKey, panels_state);
         [m_PanelState saveDefaultInitialState];
     }
@@ -325,9 +322,7 @@ static int CountMainWindows()
             if( !m_Viewer )
                 dispatch_sync(dispatch_get_main_queue(), [&] {
                     auto rc = NSMakeRect(0, 0, 100, 100);
-                    auto viewer_factory = [](NSRect rc) {
-                        return [NCAppDelegate.me makeViewerWithFrame:rc];
-                    };
+                    auto viewer_factory = [](NSRect rc) { return [NCAppDelegate.me makeViewerWithFrame:rc]; };
                     auto ctrl = [NCAppDelegate.me makeViewerController];
                     m_Viewer = [[MainWindowInternalViewerState alloc] initWithFrame:rc
                                                                       viewerFactory:viewer_factory
@@ -338,16 +333,14 @@ static int CountMainWindows()
             }
         }
         else { // as a window
-            if( auto *ex_window = [NCAppDelegate.me findInternalViewerWindowForPath:_filepath
-                                                                              onVFS:_host] ) {
+            if( auto *ex_window = [NCAppDelegate.me findInternalViewerWindowForPath:_filepath onVFS:_host] ) {
                 // already has this one
                 dispatch_to_main_queue([=] { [ex_window showWindow:self]; });
             }
             else {
                 InternalViewerWindowController *window = nil;
                 dispatch_sync(dispatch_get_main_queue(), [&] {
-                    window = [NCAppDelegate.me retrieveInternalViewerWindowForPath:_filepath
-                                                                             onVFS:_host];
+                    window = [NCAppDelegate.me retrieveInternalViewerWindowForPath:_filepath onVFS:_host];
                 });
                 const auto opening_result = [window performBackgrounOpening];
                 dispatch_to_main_queue([=] {
@@ -363,9 +356,8 @@ static int CountMainWindows()
 - (void)requestTerminal:(const std::string &)_cwd
 {
     if( m_Terminal == nil ) {
-        const auto state =
-            [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame
-                                    nativeFSManager:NCAppDelegate.me.nativeFSManager];
+        const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame
+                                                   nativeFSManager:NCAppDelegate.me.nativeFSManager];
         state.initialWD = _cwd;
         [self pushState:state];
         m_Terminal = state;
@@ -381,14 +373,11 @@ static int CountMainWindows()
     [self requestTerminalExecution:_filename at:_cwd withParameters:nullptr];
 }
 
-- (void)requestTerminalExecution:(const char *)_filename
-                              at:(const char *)_cwd
-                  withParameters:(const char *)_params
+- (void)requestTerminalExecution:(const char *)_filename at:(const char *)_cwd withParameters:(const char *)_params
 {
     if( m_Terminal == nil ) {
-        const auto state =
-            [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame
-                                    nativeFSManager:NCAppDelegate.me.nativeFSManager];
+        const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame
+                                                   nativeFSManager:NCAppDelegate.me.nativeFSManager];
         state.initialWD = std::string(_cwd);
         [self pushState:state];
         m_Terminal = state;
@@ -399,15 +388,14 @@ static int CountMainWindows()
     [m_Terminal execute:_filename at:_cwd parameters:_params];
 }
 
-- (void)requestTerminalExecutionWithFullPath:(const std::filesystem::path&)_binary_path
-                              andArguments:(std::span<const std::string>)_params
+- (void)requestTerminalExecutionWithFullPath:(const std::filesystem::path &)_binary_path
+                                andArguments:(std::span<const std::string>)_params
 {
     dispatch_assert_main_queue();
 
     if( m_Terminal == nil ) {
-        const auto state =
-            [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame
-                                    nativeFSManager:NCAppDelegate.me.nativeFSManager];
+        const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame
+                                                   nativeFSManager:NCAppDelegate.me.nativeFSManager];
         if( PanelController *pc = m_PanelState.activePanelController )
             if( pc.isUniform && pc.vfs->IsNativeFS() )
                 state.initialWD = pc.currentDirectoryPath;
@@ -417,7 +405,7 @@ static int CountMainWindows()
     else {
         [self pushState:m_Terminal];
     }
-    
+
     [m_Terminal executeWithFullPath:_binary_path andArguments:_params];
 }
 

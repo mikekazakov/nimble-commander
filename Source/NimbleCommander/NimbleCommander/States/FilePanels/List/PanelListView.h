@@ -11,12 +11,11 @@ class PanelListViewGeometry;
 namespace data {
 class Model;
 }
-}
+} // namespace nc::panel
 
 @class PanelView;
 
-@interface PanelListView
-    : NSView <NCPanelViewPresentationProtocol, NSTableViewDataSource, NSTableViewDelegate>
+@interface PanelListView : NSView <NCPanelViewPresentationProtocol, NSTableViewDataSource, NSTableViewDelegate>
 
 - (id)initWithFrame:(NSRect)frameRect andIR:(nc::vfsicon::IconRepository &)_ir;
 

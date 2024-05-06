@@ -42,8 +42,7 @@ private:
 class AsyncPersistentLocationRestorer
 {
 public:
-    AsyncPersistentLocationRestorer(PanelController *_panel,
-                                    nc::core::VFSInstanceManager &_instance_mgr);
+    AsyncPersistentLocationRestorer(PanelController *_panel, nc::core::VFSInstanceManager &_instance_mgr);
 
     using SuccessHandler = std::function<void(VFSHostPtr)>;
     using FailureHandler = std::function<void(int)>;
@@ -70,11 +69,11 @@ public:
 
 private:
     void HandleImpl([[maybe_unused]] nc::vfs::Host *_host, const std::string &_path) const;
-    
+
     mutable std::atomic_bool m_Cancelled;
     std::string m_ExpectedUniformDirectory;
     __weak PanelController *m_Panel;
-    unsigned long m_Generation;    
+    unsigned long m_Generation;
 };
 
 } // namespace nc::panel::actions

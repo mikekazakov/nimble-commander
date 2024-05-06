@@ -5,8 +5,8 @@
 
 @interface NCPanelListViewExtensionView : NSView
 
-- (void) setExtension:(NSString*)_extension;
+- (void)setExtension:(NSString *)_extension;
 
-- (void) buildPresentation;
+- (void)buildPresentation;
 
 @end

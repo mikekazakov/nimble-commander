@@ -5,6 +5,6 @@
 
 @interface NSView (Sugar)
 
-- (void) setNeedsDisplay;
+- (void)setNeedsDisplay;
 
 @end

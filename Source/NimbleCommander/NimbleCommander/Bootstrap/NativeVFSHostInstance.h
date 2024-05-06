@@ -8,6 +8,6 @@
 
 namespace nc::bootstrap {
 
-nc::vfs::NativeHost& NativeVFSHostInstance() noexcept;
+nc::vfs::NativeHost &NativeVFSHostInstance() noexcept;
 
 }

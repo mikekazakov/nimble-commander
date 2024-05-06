@@ -11,20 +11,20 @@ namespace nc::vfs::sftp {
 class AccountsFetcher
 {
 public:
-    AccountsFetcher( LIBSSH2_SESSION *_session, OSType _os_type );
+    AccountsFetcher(LIBSSH2_SESSION *_session, OSType _os_type);
 
     int FetchUsers(std::vector<VFSUser> &_target);
     int FetchGroups(std::vector<VFSGroup> &_target);
 
 private:
-    int GetUsersViaGetent( std::vector<VFSUser> &_target );
-    int GetGroupsViaGetent( std::vector<VFSGroup> &_target );
-    int GetUsersViaOpenDirectory( std::vector<VFSUser> &_target );
-    int GetGroupsViaOpenDirectory( std::vector<VFSGroup> &_target );
-    std::optional<std::string> Execute( const std::string &_command );
+    int GetUsersViaGetent(std::vector<VFSUser> &_target);
+    int GetGroupsViaGetent(std::vector<VFSGroup> &_target);
+    int GetUsersViaOpenDirectory(std::vector<VFSUser> &_target);
+    int GetGroupsViaOpenDirectory(std::vector<VFSGroup> &_target);
+    std::optional<std::string> Execute(const std::string &_command);
 
     LIBSSH2_SESSION *const m_Session;
     const OSType m_OSType;
 };
 
-}
+} // namespace nc::vfs::sftp

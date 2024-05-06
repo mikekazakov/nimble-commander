@@ -328,7 +328,7 @@ static void TestUbuntu2004LayoutWithHost(SFTPHost &_host)
 
     // Get the listing of a root directory
     VFSListingPtr root_listing;
-    REQUIRE(_host.FetchDirectoryListing("/", root_listing, 0, 0) == 0);
+    REQUIRE(_host.FetchDirectoryListing("/", root_listing, 0, nullptr) == 0);
     REQUIRE(root_listing);
     auto at = [&](VFSListingPtr _listing, std::string_view _fn) {
         auto it = std::find_if(
@@ -487,7 +487,7 @@ TEST_CASE(PREFIX "basic read")
 {
     VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
     VFSFilePtr file;
-    REQUIRE(host->CreateFile("/etc/debian_version", file, 0) == 0);
+    REQUIRE(host->CreateFile("/etc/debian_version", file, nullptr) == 0);
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
 
     const auto contents = file->ReadFile();
@@ -676,7 +676,7 @@ TEST_CASE(PREFIX "RandomWrappers")
     auto host = hostForUbuntu2004_User2_RSA();
 
     VFSFilePtr seq_file;
-    REQUIRE(host->CreateFile((host->HomeDir() + "/.ssh/authorized_keys").c_str(), seq_file, 0) == VFSError::Ok);
+    REQUIRE(host->CreateFile((host->HomeDir() + "/.ssh/authorized_keys").c_str(), seq_file, nullptr) == VFSError::Ok);
 
     auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(seq_file);
     REQUIRE(wrapper->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock, nullptr, nullptr) == VFSError::Ok);

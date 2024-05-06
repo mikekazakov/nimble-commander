@@ -9,7 +9,7 @@ namespace nc::vfs::sftp {
 class OSDetector
 {
 public:
-    OSDetector( LIBSSH2_SESSION *_session );
+    OSDetector(LIBSSH2_SESSION *_session);
 
     OSType Detect();
 
@@ -17,4 +17,4 @@ private:
     LIBSSH2_SESSION *m_Session;
 };
 
-}
+} // namespace nc::vfs::sftp

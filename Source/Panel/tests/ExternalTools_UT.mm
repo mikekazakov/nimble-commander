@@ -674,7 +674,7 @@ TEST_CASE(PREFIX "ExternalToolExecution - user-input values")
         {{"hello"}, "%\"%?\"?", {"hello"}, {"%?"}},
         {{"hello"}, "%\"%%\"?", {"hello"}, {"%"}},
         {{"hello"}, "%\"%%%%\"?", {"hello"}, {"%%"}},
-//        {{"hello"}, "%\"%%\\\"%%\"?", {"hello"}, {"%\"%"}}, // doesnt work now...
+        //        {{"hello"}, "%\"%%\\\"%%\"?", {"hello"}, {"%\"%"}}, // doesnt work now...
     };
 
     for( const auto &tc : tcs ) {

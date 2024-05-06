@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "HexModeFrame.h"
 #include "HexModeProcessing.h"
 #include <Base/algo.h>
@@ -29,10 +29,9 @@ HexModeFrame::HexModeFrame(const Source &_source)
     RowsBuilder rows_builder(_source);
     auto block = [this, &rows, &rows_builder](size_t _index) {
         const auto &split = rows[_index];
-        m_Rows[_index] =
-            rows_builder.Build(std::make_pair(split.chars_start, split.chars_num),
-                               std::make_pair(split.string_bytes_start, split.string_bytes_num),
-                               std::make_pair(split.row_bytes_start, split.row_bytes_num));
+        m_Rows[_index] = rows_builder.Build(std::make_pair(split.chars_start, split.chars_num),
+                                            std::make_pair(split.string_bytes_start, split.string_bytes_num),
+                                            std::make_pair(split.row_bytes_start, split.row_bytes_num));
     };
     dispatch_apply(rows.size(), dispatch_get_global_queue(0, 0), block);
 }
@@ -144,8 +143,8 @@ static base::CFPtr<CTLineRef> ToCTLine(CFStringRef _string, CFDictionaryRef _att
 {
     if( _string == nullptr || _attributes == nullptr )
         throw std::invalid_argument("ToCTLine: nullptr argument");
-    const auto attr_string = base::CFPtr<CFAttributedStringRef>::adopt(
-        CFAttributedStringCreate(nullptr, _string, _attributes));
+    const auto attr_string =
+        base::CFPtr<CFAttributedStringRef>::adopt(CFAttributedStringCreate(nullptr, _string, _attributes));
     return base::CFPtr<CTLineRef>::adopt(CTLineCreateWithAttributedString(attr_string.get()));
 }
 
@@ -178,13 +177,12 @@ HexModeFrame::RowsBuilder::RowsBuilder(const Source &_source)
 {
     const void *keys[2] = {kCTForegroundColorAttributeName, kCTFontAttributeName};
     const void *values[2] = {m_Source.foreground_color, m_Source.font};
-    const auto dict = CFDictionaryCreate(
-        nullptr, keys, values, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    const auto dict =
+        CFDictionaryCreate(nullptr, keys, values, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     m_Attributes = base::CFPtr<CFDictionaryRef>::adopt(dict);
 }
 
-static base::CFPtr<CFStringRef> MakeSubstring(const CFStringRef _string,
-                                              const std::pair<int, int> _range)
+static base::CFPtr<CFStringRef> MakeSubstring(const CFStringRef _string, const std::pair<int, int> _range)
 {
     assert(_range.first >= 0 && _range.second >= 0);
     assert(_range.first + _range.second <= CFStringGetLength(_string));
@@ -196,18 +194,16 @@ HexModeFrame::Row HexModeFrame::RowsBuilder::Build(std::pair<int, int> const _ch
                                                    std::pair<int, int> const _string_bytes,
                                                    std::pair<int, int> const _row_bytes) const
 {
-    if( _row_bytes.first < 0 || _row_bytes.second < 0 ||
-        _row_bytes.first + _row_bytes.second > m_RawBytesNumber )
+    if( _row_bytes.first < 0 || _row_bytes.second < 0 || _row_bytes.first + _row_bytes.second > m_RawBytesNumber )
         throw std::out_of_range("HexModeFrame::RowsBuilder::Build invalid _row_bytes");
 
     std::vector<base::CFPtr<CFStringRef>> strings;
 
     // AddressIndex = 0
-    auto address_str =
-        HexModeSplitter::MakeAddressString(_row_bytes.first,
-                                           m_Source.working_set->GlobalOffset(),
-                                           m_Source.bytes_per_column * m_Source.number_of_columns,
-                                           m_Source.digits_in_address);
+    auto address_str = HexModeSplitter::MakeAddressString(_row_bytes.first,
+                                                          m_Source.working_set->GlobalOffset(),
+                                                          m_Source.bytes_per_column * m_Source.number_of_columns,
+                                                          m_Source.digits_in_address);
     strings.emplace_back(std::move(address_str));
 
     // SnippetIndex = 1
@@ -219,20 +215,14 @@ HexModeFrame::Row HexModeFrame::RowsBuilder::Build(std::pair<int, int> const _ch
     const auto bytes_per_column = m_Source.bytes_per_column;
     for( int column = 0; column < m_Source.number_of_columns && bytes_ptr < bytes_end; ++column ) {
         const auto to_consume = std::min(bytes_per_column, int(bytes_end - bytes_ptr));
-        strings.emplace_back(
-            HexModeSplitter::MakeBytesHexString(bytes_ptr, bytes_ptr + to_consume));
+        strings.emplace_back(HexModeSplitter::MakeBytesHexString(bytes_ptr, bytes_ptr + to_consume));
         bytes_ptr += to_consume;
     }
 
     // make place for future CTLine objects
     std::vector<base::CFPtr<CTLineRef>> lines(strings.size());
 
-    return Row(_chars_indices,
-               _string_bytes,
-               _row_bytes,
-               std::move(strings),
-               std::move(lines),
-               m_Attributes);
+    return {_chars_indices, _string_bytes, _row_bytes, std::move(strings), std::move(lines), m_Attributes};
 }
 
 } // namespace nc::viewer

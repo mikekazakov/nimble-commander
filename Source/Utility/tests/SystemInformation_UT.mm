@@ -6,7 +6,7 @@ using namespace nc::utility;
 using namespace std::string_literals;
 #define PREFIX "nc::utility::GetSystemOverview "
 
-TEST_CASE(PREFIX"Extracts all data", "[!mayfail]")
+TEST_CASE(PREFIX "Extracts all data", "[!mayfail]")
 {
     SystemOverview so;
     REQUIRE(GetSystemOverview(so));

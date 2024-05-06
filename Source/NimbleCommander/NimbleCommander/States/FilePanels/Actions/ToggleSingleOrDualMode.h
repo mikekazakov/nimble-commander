@@ -5,10 +5,9 @@
 
 namespace nc::panel::actions {
 
-struct ToggleSingleOrDualMode final : StateAction
-{
-    bool ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item ) const override;
-    void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
+struct ToggleSingleOrDualMode final : StateAction {
+    bool ValidateMenuItem(MainWindowFilePanelState *_target, NSMenuItem *_item) const override;
+    void Perform(MainWindowFilePanelState *_target, id _sender) const override;
 };
 
-}
+} // namespace nc::panel::actions

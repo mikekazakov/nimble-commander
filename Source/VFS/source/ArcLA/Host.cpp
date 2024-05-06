@@ -1,21 +1,23 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <sys/dirent.h>
-#include <Base/CFStackAllocator.h>
-#include <Utility/PathManip.h>
-#include <Utility/DataBlockAnalysis.h>
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
-#include <VFS/AppleDoubleEA.h>
-#include <VFS/Log.h>
-#include "../ListingInput.h"
+
 #include "Host.h"
-#include "Internal.h"
-#include "File.h"
+#include "../ListingInput.h"
 #include "EncodingDetection.h"
-#include <sys/param.h>
-#include <mutex>
+#include "File.h"
+#include "Internal.h"
+#include <Base/CFStackAllocator.h>
 #include <Base/RobinHoodUtil.h>
 #include <Base/algo.h>
+#include <Utility/DataBlockAnalysis.h>
+#include <Utility/PathManip.h>
+#include <VFS/AppleDoubleEA.h>
+#include <VFS/Log.h>
+#include <fmt/format.h>
+#include <mutex>
+#include <sys/dirent.h>
+#include <sys/param.h>
 
 namespace nc::vfs {
 
@@ -74,7 +76,7 @@ static VFSConfiguration ComposeConfiguration(const std::string &_path, std::opti
     VFSArchiveHostConfiguration config;
     config.path = _path;
     config.password = std::move(_passwd);
-    return VFSConfiguration(std::move(config));
+    return {std::move(config)};
 }
 
 static void DecodeStringToUTF8(const void *_bytes, size_t _sz, CFStringEncoding _enc, char *_buf, size_t _buf_sz)
@@ -119,9 +121,9 @@ ArchiveHost::ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_con
     assert(_parent);
     int rc = DoInit(_cancel_checker);
     if( rc < 0 ) {
-        if( I->m_Arc != 0 ) { // TODO: ugly
+        if( I->m_Arc != nullptr ) { // TODO: ugly
             archive_read_free(I->m_Arc);
-            I->m_Arc = 0;
+            I->m_Arc = nullptr;
         }
         throw VFSErrorException(rc);
     }
@@ -161,7 +163,7 @@ VFSMeta ArchiveHost::Meta()
 
 int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
 {
-    assert(I->m_Arc == 0);
+    assert(I->m_Arc == nullptr);
     VFSFilePtr source_file;
 
     int res = Parent()->CreateFile(JunctionPath(), source_file, {});
@@ -173,8 +175,7 @@ int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
         return res;
 
     if( source_file->Size() <= 0 )
-        return VFSError::ArclibFileFormat; // libarchive thinks that zero-bytes archives are OK, but
-                                           // I don't think so.
+        return VFSError::ArclibFileFormat; // libarchive thinks that zero-bytes archives are OK, but I don't think so.
 
     if( Parent()->IsNativeFS() ) {
         I->m_ArFile = source_file;
@@ -203,7 +204,7 @@ int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
     res = archive_read_open1(I->m_Arc);
     if( res < 0 ) {
         archive_read_free(I->m_Arc);
-        I->m_Arc = 0;
+        I->m_Arc = nullptr;
         I->m_Mediator.reset();
         I->m_ArFile.reset();
         return -1; // TODO: right error code
@@ -268,7 +269,7 @@ static bool SplitIntoFilenameAndParentPath(const char *_path,
 
 int ArchiveHost::ReadArchiveListing()
 {
-    assert(I->m_Arc != 0);
+    assert(I->m_Arc != nullptr);
     uint32_t aruid = 0;
 
     Dir *parent_dir = nullptr;
@@ -423,7 +424,7 @@ int ArchiveHost::ReadArchiveListing()
     if( ret == ARCHIVE_EOF )
         return VFSError::Ok;
 
-    printf("%s\n", archive_error_string(I->m_Arc));
+    fmt::println("{}", archive_error_string(I->m_Arc));
 
     if( ret == ARCHIVE_WARN )
         return VFSError::Ok;
@@ -536,7 +537,7 @@ int ArchiveHost::FetchDirectoryListing(const char *_path,
         listing_source.filenames.emplace_back("..");
         listing_source.unix_types.emplace_back(DT_DIR);
         listing_source.unix_modes.emplace_back(S_IRUSR | S_IXUSR | S_IFDIR);
-        auto curtime = time(0); // it's better to show date of archive itself
+        auto curtime = time(nullptr); // it's better to show date of archive itself
         listing_source.atimes.insert(0, curtime);
         listing_source.btimes.insert(0, curtime);
         listing_source.ctimes.insert(0, curtime);
@@ -635,7 +636,7 @@ int ArchiveHost::ResolvePathIfNeeded(const char *_path, char *_resolved_path, un
 int ArchiveHost::IterateDirectoryListing(const char *_path,
                                          const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    assert(_path != 0);
+    assert(_path != nullptr);
     if( _path[0] != '/' )
         return VFSError::NotFound;
 
@@ -694,11 +695,11 @@ const DirEntry *ArchiveHost::FindEntry(const char *_path)
     char *last_sl = strrchr(buf, '/');
 
     if( last_sl == buf && strlen(buf) == 1 )
-        return 0; // we have no info about root dir
+        return nullptr; // we have no info about root dir
     if( last_sl == buf + strlen(buf) - 1 ) {
         *last_sl = 0; // cut trailing slash
         last_sl = strrchr(buf, '/');
-        assert(last_sl != 0); // sanity check
+        assert(last_sl != nullptr); // sanity check
     }
 
     strcpy(short_name, last_sl + 1);
@@ -716,7 +717,7 @@ const DirEntry *ArchiveHost::FindEntry(const char *_path)
 
     const auto i = I->m_PathToDir.find(buf);
     if( i == I->m_PathToDir.end() )
-        return 0;
+        return nullptr;
 
     // ok, found dir, now let's find item
     size_t short_name_len = strlen(short_name);

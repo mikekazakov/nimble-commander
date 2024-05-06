@@ -5,6 +5,6 @@
 
 @interface ButtonWithTextColor : NSButton
 
-@property (nonatomic) NSColor *textColor;
+@property(nonatomic) NSColor *textColor;
 
 @end

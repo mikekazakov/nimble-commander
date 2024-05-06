@@ -337,8 +337,8 @@ std::span<const unsigned> Model::RawIndicesForName(std::string_view _filename) c
     // O( 2 * logN )
     const auto [first, last] = std::equal_range(begin, end, _filename, Cmp{m_Listing.get()});
 
-    return std::span<const unsigned>(m_EntriesByRawName.data() + std::distance(begin, first),
-                                     m_EntriesByRawName.data() + std::distance(begin, last));
+    return {m_EntriesByRawName.data() + std::distance(begin, first),
+            m_EntriesByRawName.data() + std::distance(begin, last)};
 }
 
 std::string Model::DirectoryPathWithoutTrailingSlash() const

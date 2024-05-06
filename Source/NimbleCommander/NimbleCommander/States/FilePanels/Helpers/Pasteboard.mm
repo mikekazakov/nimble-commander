@@ -5,8 +5,7 @@
 
 namespace nc::panel {
 
-bool PasteboardSupport::WriteFilesnamesPBoard(const std::vector<VFSListingItem> &_items,
-                                              NSPasteboard *_pasteboard)
+bool PasteboardSupport::WriteFilesnamesPBoard(const std::vector<VFSListingItem> &_items, NSPasteboard *_pasteboard)
 {
     if( !_pasteboard )
         return false;
@@ -28,8 +27,7 @@ bool PasteboardSupport::WriteFilesnamesPBoard(const std::vector<VFSListingItem> 
 #pragma clang diagnostic pop
 }
 
-bool PasteboardSupport::WriteURLSPBoard(const std::vector<VFSListingItem> &_items,
-                                        NSPasteboard *_pasteboard)
+bool PasteboardSupport::WriteURLSPBoard(const std::vector<VFSListingItem> &_items, NSPasteboard *_pasteboard)
 {
     if( !_pasteboard )
         return false;
@@ -46,4 +44,4 @@ bool PasteboardSupport::WriteURLSPBoard(const std::vector<VFSListingItem> &_item
     return [_pasteboard writeObjects:urls];
 }
 
-}
+} // namespace nc::panel

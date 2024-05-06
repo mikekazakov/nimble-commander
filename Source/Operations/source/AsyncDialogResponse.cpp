@@ -25,16 +25,14 @@ void AsyncDialogResponse::Commit(long _response) noexcept
 
 void AsyncDialogResponse::Wait() noexcept
 {
-    const auto pred = [this]{
-        return static_cast<bool>(response);
-    };
+    const auto pred = [this] { return static_cast<bool>(response); };
     if( pred() )
         return;
     std::unique_lock<std::mutex> lck{lock};
     blocker.wait(lck, pred);
 }
 
-void AsyncDialogResponse::SetApplyToAll( bool _v  )
+void AsyncDialogResponse::SetApplyToAll(bool _v)
 {
     messages["apply_to_all"] = _v;
 }
@@ -47,8 +45,8 @@ bool AsyncDialogResponse::IsApplyToAllSet() noexcept
 
     if( const auto v = std::any_cast<bool>(&it->second) )
         return *v;
-    
+
     return false;
 }
 
-}
+} // namespace nc::ops

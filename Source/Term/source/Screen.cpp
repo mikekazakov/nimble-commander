@@ -21,7 +21,7 @@ char32_t Screen::GetCh() noexcept
 
     if( m_PosX < static_cast<int>(line.size()) )
         return line[m_PosX].l;
-    
+
     return 0;
 }
 
@@ -33,7 +33,7 @@ void Screen::PutCh(char32_t _char)
 
     auto chars = line.begin();
     const int line_len = static_cast<int>(line.size());
-    
+
     Screen::Space sp = m_EraseChar;
     sp.l = _char;
     chars[m_PosX] = sp;
@@ -42,7 +42,7 @@ void Screen::PutCh(char32_t _char)
         sp.l = MultiCellGlyph;
         chars[m_PosX + 1] = sp;
     }
-        
+
     if( m_PosX == line_len - 1 || (m_PosX == line_len - 2 && is_dw) ) {
         m_LineOverflown = true;
     }

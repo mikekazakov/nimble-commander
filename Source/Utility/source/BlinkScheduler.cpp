@@ -16,37 +16,33 @@ struct BlinkScheduler::Impl : std::enable_shared_from_this<Impl> {
     void Schedule();
     bool VisibleNow() const noexcept;
     std::chrono::nanoseconds NextFireAfter() const noexcept;
-    
-    std::function<void()>                       m_OnBlink;
-    std::chrono::milliseconds                   m_BlinkTime;
-    IO*                                         m_IO;
-    bool                                        m_Enabled = false;
-    bool                                        m_PhaseVisible = true;
-    bool                                        m_Scheduled = false;
+
+    std::function<void()> m_OnBlink;
+    std::chrono::milliseconds m_BlinkTime;
+    IO *m_IO;
+    bool m_Enabled = false;
+    bool m_PhaseVisible = true;
+    bool m_Scheduled = false;
 };
 
-BlinkScheduler::BlinkScheduler():
-    BlinkScheduler([]{}, DefaultBlinkTime, DefaultIO::Instance)
+BlinkScheduler::BlinkScheduler() : BlinkScheduler([] {}, DefaultBlinkTime, DefaultIO::Instance)
 {
 }
 
-BlinkScheduler::BlinkScheduler(std::function<void()> _on_blink,
-                               std::chrono::milliseconds _blink_time,
-                               IO& _io):
-    I( std::make_shared<Impl>() )
+BlinkScheduler::BlinkScheduler(std::function<void()> _on_blink, std::chrono::milliseconds _blink_time, IO &_io)
+    : I(std::make_shared<Impl>())
 {
-    I->m_OnBlink = std::move(_on_blink );
+    I->m_OnBlink = std::move(_on_blink);
     I->m_BlinkTime = _blink_time;
     I->m_IO = &_io;
-        
+
     if( !I->m_OnBlink )
         throw std::invalid_argument("BlinkScheduler _on_blink can't be empty");
     if( I->m_BlinkTime <= 0ms )
         throw std::invalid_argument("BlinkScheduler _blink_time must be zero");
 }
 
-BlinkScheduler::BlinkScheduler( const BlinkScheduler& _rhs ):
-    I( std::make_shared<Impl>() )
+BlinkScheduler::BlinkScheduler(const BlinkScheduler &_rhs) : I(std::make_shared<Impl>())
 {
     I->m_OnBlink = _rhs.I->m_OnBlink;
     I->m_BlinkTime = _rhs.I->m_BlinkTime;
@@ -56,29 +52,29 @@ BlinkScheduler::BlinkScheduler( const BlinkScheduler& _rhs ):
     I->m_Scheduled = false;
 }
 
-BlinkScheduler::BlinkScheduler(BlinkScheduler&&) noexcept = default;
+BlinkScheduler::BlinkScheduler(BlinkScheduler &&) noexcept = default;
 
 BlinkScheduler::~BlinkScheduler() = default;
 
-BlinkScheduler& BlinkScheduler::operator=(const BlinkScheduler& _rhs)
+BlinkScheduler &BlinkScheduler::operator=(const BlinkScheduler &_rhs)
 {
     if( this != &_rhs )
         *this = BlinkScheduler(_rhs);
     return *this;
 }
 
-BlinkScheduler& BlinkScheduler::operator=(BlinkScheduler&&) noexcept = default;
+BlinkScheduler &BlinkScheduler::operator=(BlinkScheduler &&) noexcept = default;
 
 bool BlinkScheduler::Enabled() const noexcept
 {
     return I->m_Enabled;
 }
 
-void BlinkScheduler::Enable( bool _enabled ) noexcept
+void BlinkScheduler::Enable(bool _enabled) noexcept
 {
     if( I->m_Enabled == _enabled )
         return;
-    
+
     if( I->m_Enabled ) { // disable
         I->m_Enabled = false;
     }
@@ -95,18 +91,18 @@ bool BlinkScheduler::Visible() const noexcept
 {
     if( !I->m_Enabled )
         return true;
-    
+
     return I->m_PhaseVisible;
 }
 
 void BlinkScheduler::Impl::Schedule()
 {
-    assert( m_Scheduled == false );
-    assert( m_Enabled == true );
-    
+    assert(m_Scheduled == false);
+    assert(m_Enabled == true);
+
     const auto after = NextFireAfter();
     std::weak_ptr<Impl> impl = weak_from_this();
-    m_IO->Dispatch(after, [impl]{
+    m_IO->Dispatch(after, [impl] {
         if( auto me = impl.lock() )
             me->Fire();
     });
@@ -120,11 +116,11 @@ void BlinkScheduler::Impl::Fire()
         // was disabled after scheduled - don't do anything
         return;
     }
-    
+
     m_PhaseVisible = !m_PhaseVisible;
-        
+
     m_OnBlink();
-    
+
     if( m_Enabled == false ) {
         // now check for reentrancy shenenigans
         return;
@@ -136,14 +132,14 @@ void BlinkScheduler::Impl::Fire()
 std::chrono::nanoseconds BlinkScheduler::Impl::NextFireAfter() const noexcept
 {
     const auto now = m_IO->Now();
-    const auto div = std::chrono::duration_cast<std::chrono::milliseconds>( now ) / m_BlinkTime;
+    const auto div = std::chrono::duration_cast<std::chrono::milliseconds>(now) / m_BlinkTime;
     return ((div + 1) * m_BlinkTime) - now;
 }
 
 bool BlinkScheduler::Impl::VisibleNow() const noexcept
 {
     const auto now = m_IO->Now();
-    auto n = std::chrono::duration_cast<std::chrono::milliseconds>( now ) / m_BlinkTime;
+    auto n = std::chrono::duration_cast<std::chrono::milliseconds>(now) / m_BlinkTime;
     return n % 2 == 0;
 }
 
@@ -152,10 +148,9 @@ std::chrono::nanoseconds BlinkScheduler::DefaultIO::Now() noexcept
     return base::machtime();
 }
 
-void BlinkScheduler::DefaultIO::Dispatch(std::chrono::nanoseconds _after,
-                  std::function<void()> _what) noexcept
+void BlinkScheduler::DefaultIO::Dispatch(std::chrono::nanoseconds _after, std::function<void()> _what) noexcept
 {
-    dispatch_to_main_queue_after( _after, std::move(_what) );
+    dispatch_to_main_queue_after(_after, std::move(_what));
 }
 
-}
+} // namespace nc::utility

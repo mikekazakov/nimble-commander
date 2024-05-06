@@ -13,9 +13,8 @@ namespace actions {
 struct StateAction;
 }
 
-using StateActionsMap =
-    robin_hood::unordered_flat_map<SEL, std::unique_ptr<const actions::StateAction>>;
-}
+using StateActionsMap = robin_hood::unordered_flat_map<SEL, std::unique_ptr<const actions::StateAction>>;
+} // namespace nc::panel
 
 @interface NCPanelsStateActionsDispatcher : AttachedResponder
 @property(nonatomic, readwrite) bool hasTerminal;

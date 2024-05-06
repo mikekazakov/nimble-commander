@@ -3,7 +3,7 @@
 
 @implementation NCUtilSimpleComboBoxPersistentDataSource
 
-- (void)reportEnteredItem:(nullable NSString*) [[maybe_unused]] item
+- (void)reportEnteredItem:(nullable NSString *) [[maybe_unused]] item
 {
 }
 
@@ -12,8 +12,7 @@
     return 0;
 }
 
-- (id)comboBox:(NSComboBox *) [[maybe_unused]] aComboBox
-objectValueForItemAtIndex:(NSInteger) [[maybe_unused]] index
+- (id)comboBox:(NSComboBox *) [[maybe_unused]] aComboBox objectValueForItemAtIndex:(NSInteger) [[maybe_unused]] index
 {
     return @"";
 }

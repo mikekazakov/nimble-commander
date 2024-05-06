@@ -5,9 +5,8 @@
 
 @interface PreferencesWindowThemesTabImportSheet : SheetController
 
-@property (nonatomic) bool overwriteCurrentTheme;
-@property (nonatomic) bool importAsNewTheme;
-@property (nonatomic) NSString *importAsName;
-
+@property(nonatomic) bool overwriteCurrentTheme;
+@property(nonatomic) bool importAsNewTheme;
+@property(nonatomic) NSString *importAsName;
 
 @end

@@ -24,8 +24,7 @@ namespace nc::base {
 class DispatchGroup
 {
 public:
-    enum Priority
-    {
+    enum Priority {
         High = DISPATCH_QUEUE_PRIORITY_HIGH,
         Default = DISPATCH_QUEUE_PRIORITY_DEFAULT,
         Low = DISPATCH_QUEUE_PRIORITY_LOW,

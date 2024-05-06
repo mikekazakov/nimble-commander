@@ -62,9 +62,7 @@ static const char *ImgNameFromPath(const char *_path)
     return img_name;
 }
 
-SingleTask::SingleTask()
-{
-}
+SingleTask::SingleTask() = default;
 
 SingleTask::~SingleTask()
 {
@@ -126,7 +124,7 @@ void SingleTask::Launch(const char *_full_binary_path, const char *_params, int 
         argvs[0] = strdup(img_name);
         for( size_t i = 0; i < args.size(); ++i )
             argvs[i + 1] = strdup(args[i].c_str());
-        argvs[args.size() + 1] = NULL;
+        argvs[args.size() + 1] = nullptr;
 
         // execution of the program
         execvp(_full_binary_path, argvs);
@@ -156,7 +154,7 @@ void SingleTask::ReadChildOutput()
     constexpr size_t input_sz = 65536;
     std::unique_ptr<char[]> input = std::make_unique<char[]>(input_sz);
 
-    while( 1 ) {
+    while( true ) {
         // Wait for data from standard input and master side of PTY
         FD_ZERO(&fd_in);
         FD_SET(m_MasterFD, &fd_in);
@@ -166,7 +164,7 @@ void SingleTask::ReadChildOutput()
 
         int max_fd = m_MasterFD;
 
-        rc = select(max_fd + 1, &fd_in, NULL, &fd_err, &timeout);
+        rc = select(max_fd + 1, &fd_in, nullptr, &fd_err, &timeout);
         if( rc < 0 || m_TaskPID < 0 )
             goto end_of_all; // error on select(), let's think that task has died
 
@@ -184,7 +182,8 @@ void SingleTask::ReadChildOutput()
 
         // check if child process died
         if( FD_ISSET(m_MasterFD, &fd_err) ) {
-            // is that right - that we treat any err output as signal that task is dead?
+            // is that right - that we treat any err output as signal that task is
+            // dead?
             read(m_MasterFD, input.get(), input_sz);
             goto end_of_all;
         }

@@ -7,28 +7,28 @@
 
 namespace nc::panel::actions {
 
-bool GoBack::Predicate( PanelController *_target ) const
+bool GoBack::Predicate(PanelController *_target) const
 {
     return _target.history.CanMoveBack();
 }
-    
-void GoBack::Perform( PanelController *_target, id ) const
+
+void GoBack::Perform(PanelController *_target, id) const
 {
     auto &history = _target.history;
     if( !history.CanMoveBack() )
         return;
     history.MoveBack();
-    
+
     if( auto listing_promise = history.CurrentPlaying() )
-        ListingPromiseLoader{}.Load( *listing_promise, _target );
+        ListingPromiseLoader{}.Load(*listing_promise, _target);
 }
 
-bool GoForward::Predicate( PanelController *_target ) const
+bool GoForward::Predicate(PanelController *_target) const
 {
     return _target.history.CanMoveForth();
 }
 
-void GoForward::Perform( PanelController *_target, id ) const
+void GoForward::Perform(PanelController *_target, id) const
 {
     auto &history = _target.history;
     if( !history.CanMoveForth() )
@@ -36,34 +36,29 @@ void GoForward::Perform( PanelController *_target, id ) const
     history.MoveForth();
 
     if( auto listing_promise = history.CurrentPlaying() )
-        ListingPromiseLoader{}.Load( *listing_promise, _target );
+        ListingPromiseLoader{}.Load(*listing_promise, _target);
 }
 
-}
+} // namespace nc::panel::actions
 
 namespace nc::panel {
 
-void ListingPromiseLoader::Load( const ListingPromise &_promise, PanelController *_panel )
+void ListingPromiseLoader::Load(const ListingPromise &_promise, PanelController *_panel)
 {
-    auto task = [=]( const std::function<bool()> &_cancelled ) {
-        const auto vfs_adapter = [&](const core::VFSInstancePromise& _promise){
-            return _panel.vfsInstanceManager.RetrieveVFS(_promise, _cancelled );
+    auto task = [=](const std::function<bool()> &_cancelled) {
+        const auto vfs_adapter = [&](const core::VFSInstancePromise &_promise) {
+            return _panel.vfsInstanceManager.RetrieveVFS(_promise, _cancelled);
         };
-        
+
         try {
-            const auto listing = _promise.Restore(_panel.vfsFetchingFlags,
-                                                  vfs_adapter,
-                                                  _cancelled);
+            const auto listing = _promise.Restore(_panel.vfsFetchingFlags, vfs_adapter, _cancelled);
             if( listing )
-                dispatch_to_main_queue([=]{
-                    [_panel loadListing:listing];
-                });
-        }
-        catch(...){
+                dispatch_to_main_queue([=] { [_panel loadListing:listing]; });
+        } catch( ... ) {
             //...
         }
     };
     [_panel commitCancelableLoadingTask:std::move(task)];
 }
 
-}
+} // namespace nc::panel

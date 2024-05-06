@@ -10,8 +10,7 @@ const TestEnvironment &TestEnv() noexcept
         auto e = std::make_unique<TestEnvironment>();
         e->fsevents_file_update = std::make_shared<nc::utility::FSEventsFileUpdateImpl>();
         e->native_fs_man = std::make_shared<nc::utility::NativeFSManagerImpl>();
-        e->vfs_native =
-            std::make_shared<nc::vfs::NativeHost>(*e->native_fs_man, *e->fsevents_file_update);
+        e->vfs_native = std::make_shared<nc::vfs::NativeHost>(*e->native_fs_man, *e->fsevents_file_update);
         return e;
     }();
     return *env;

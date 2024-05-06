@@ -7,9 +7,9 @@
 #ifdef __OBJC__
 @class NSFont;
 @class NSColor;
-#else 
-using NSFont = void*;
-using NSColor = void*;
+#else
+using NSFont = void *;
+using NSColor = void *;
 #endif
 
 namespace nc::term {
@@ -18,7 +18,7 @@ class Settings
 {
 public:
     virtual ~Settings() = 0;
-    virtual NSFont  *Font() const = 0;
+    virtual NSFont *Font() const = 0;
     virtual NSColor *ForegroundColor() const = 0;
     virtual NSColor *BoldForegroundColor() const = 0;
     virtual NSColor *BackgroundColor() const = 0;
@@ -43,17 +43,16 @@ public:
     virtual int MaxFPS() const = 0;
     virtual enum CursorMode CursorMode() const = 0;
     virtual bool HideScrollbar() const = 0;
-    
-    virtual int StartChangesObserving( std::function<void()> _callback ) = 0;
-    virtual void StopChangesObserving( int _ticket ) = 0;
-};
 
+    virtual int StartChangesObserving(std::function<void()> _callback) = 0;
+    virtual void StopChangesObserving(int _ticket) = 0;
+};
 
 class DefaultSettings : public Settings
 {
 public:
     static std::shared_ptr<Settings> SharedDefaultSettings();
-    NSFont  *Font() const override;
+    NSFont *Font() const override;
     NSColor *ForegroundColor() const override;
     NSColor *BoldForegroundColor() const override;
     NSColor *BackgroundColor() const override;
@@ -78,9 +77,9 @@ public:
     int MaxFPS() const override;
     enum CursorMode CursorMode() const override;
     bool HideScrollbar() const override;
-    
-    int StartChangesObserving( std::function<void()> _callback ) override;
-    void StopChangesObserving( int _ticket ) override;
+
+    int StartChangesObserving(std::function<void()> _callback) override;
+    void StopChangesObserving(int _ticket) override;
 };
 
-}
+} // namespace nc::term

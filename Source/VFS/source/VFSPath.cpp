@@ -6,13 +6,11 @@ namespace nc::vfs {
 
 VFSPath::VFSPath() noexcept = default;
 
-VFSPath::VFSPath(const VFSHostPtr &_host, std::filesystem::path _path)
-    : m_Host(_host), m_Path(std::move(_path))
+VFSPath::VFSPath(const VFSHostPtr &_host, std::filesystem::path _path) : m_Host(_host), m_Path(std::move(_path))
 {
 }
 
-VFSPath::VFSPath(VFSHost &_host, std::filesystem::path _path)
-    : VFSPath(_host.shared_from_this(), std::move(_path))
+VFSPath::VFSPath(VFSHost &_host, std::filesystem::path _path) : VFSPath(_host.shared_from_this(), std::move(_path))
 {
 }
 
@@ -84,9 +82,7 @@ bool VFSPathStack::Part::weak_equal(const Part &_r) const
     return true;
 }
 
-VFSPathStack::VFSPathStack()
-{
-}
+VFSPathStack::VFSPathStack() = default;
 
 VFSPathStack::VFSPathStack(const VFSHostPtr &_vfs, const std::string &_path) : m_Path(_path)
 {
@@ -157,8 +153,8 @@ const std::string &VFSPathStack::path() const
 
 } // namespace nc::vfs
 
-std::hash<nc::vfs::VFSPathStack>::value_type std::hash<nc::vfs::VFSPathStack>::operator()(
-    hash<nc::vfs::VFSPathStack>::argument_type const &_v) const
+std::hash<nc::vfs::VFSPathStack>::value_type
+std::hash<nc::vfs::VFSPathStack>::operator()(hash<nc::vfs::VFSPathStack>::argument_type const &_v) const
 {
     std::string str;
     for( auto &i : _v.m_Stack ) {

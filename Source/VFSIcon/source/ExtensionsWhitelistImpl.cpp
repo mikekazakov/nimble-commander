@@ -9,9 +9,7 @@ ExtensionsWhitelistImpl::ExtensionsWhitelistImpl(const nc::utility::UTIDB &_uti_
 {
 }
 
-ExtensionsWhitelistImpl::~ExtensionsWhitelistImpl()
-{
-}
+ExtensionsWhitelistImpl::~ExtensionsWhitelistImpl() = default;
 
 bool ExtensionsWhitelistImpl::AllowExtension(const std::string &_extension) const
 {

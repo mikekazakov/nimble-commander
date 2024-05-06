@@ -42,15 +42,15 @@ int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
     // the amount of data returned, not the amount of data that
     // could have been returned.
 
-    result = NULL;
+    result = nullptr;
     done = false;
     do {
-        assert(result == NULL);
+        assert(result == nullptr);
 
         // Call sysctl with a NULL buffer.
 
         length = 0;
-        err = sysctl(const_cast<int *>(name), (sizeof(name) / sizeof(*name)) - 1, NULL, &length, NULL, 0);
+        err = sysctl(const_cast<int *>(name), (sizeof(name) / sizeof(*name)) - 1, nullptr, &length, nullptr, 0);
         if( err == -1 ) {
             err = errno;
         }
@@ -60,7 +60,7 @@ int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
 
         if( err == 0 ) {
             result = static_cast<kinfo_proc *>(malloc(length));
-            if( result == NULL ) {
+            if( result == nullptr ) {
                 err = ENOMEM;
             }
         }
@@ -69,7 +69,7 @@ int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
         // error, toss away our buffer and start again.
 
         if( err == 0 ) {
-            err = sysctl(const_cast<int *>(name), (sizeof(name) / sizeof(*name)) - 1, result, &length, NULL, 0);
+            err = sysctl(const_cast<int *>(name), (sizeof(name) / sizeof(*name)) - 1, result, &length, nullptr, 0);
             if( err == -1 ) {
                 err = errno;
             }
@@ -77,9 +77,9 @@ int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
                 done = true;
             }
             else if( err == ENOMEM ) {
-                assert(result != NULL);
+                assert(result != nullptr);
                 free(result);
-                result = NULL;
+                result = nullptr;
                 err = 0;
             }
         }
@@ -87,16 +87,16 @@ int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
 
     // Clean up and establish post conditions.
 
-    if( err != 0 && result != NULL ) {
+    if( err != 0 && result != nullptr ) {
         free(result);
-        result = NULL;
+        result = nullptr;
     }
     *procList = result;
     if( err == 0 ) {
         *procCount = length / sizeof(kinfo_proc);
     }
 
-    assert((err == 0) == (*procList != NULL));
+    assert((err == 0) == (*procList != nullptr));
 
     return err;
 }
@@ -111,11 +111,11 @@ std::optional<MemoryInfo> GetMemoryInfo() noexcept
     call_once(once, [] {
         int psmib[2] = {CTL_HW, HW_PAGESIZE};
         size_t length = sizeof(pagesize);
-        sysctl(psmib, 2, &pagesize, &length, NULL, 0);
+        sysctl(psmib, 2, &pagesize, &length, nullptr, 0);
 
         int memsizemib[2] = {CTL_HW, HW_MEMSIZE};
         length = sizeof(memsize);
-        sysctl(memsizemib, 2, &memsize, &length, NULL, 0);
+        sysctl(memsizemib, 2, &memsize, &length, nullptr, 0);
     });
 
     // get general memory info
@@ -158,7 +158,7 @@ std::optional<MemoryInfo> GetMemoryInfo() noexcept
     int swapmib[2] = {CTL_VM, VM_SWAPUSAGE};
     struct xsw_usage swap_info;
     size_t length = sizeof(swap_info);
-    if( sysctl(swapmib, 2, &swap_info, &length, NULL, 0) < 0 )
+    if( sysctl(swapmib, 2, &swap_info, &length, nullptr, 0) < 0 )
         return {};
     mem.swap = swap_info.xsu_used;
 
@@ -214,7 +214,7 @@ std::optional<CPULoad> GetCPULoad() noexcept
     mib[1] = VM_LOADAVG;
     loadavg history = {};
     size_t len = sizeof(history);
-    if( sysctl(mib, 2, &history, &len, NULL, 0) != 0 )
+    if( sysctl(mib, 2, &history, &len, nullptr, 0) != 0 )
         return {};
     assert(history.fscale != 0);
 
@@ -375,7 +375,7 @@ bool GetSystemOverview(SystemOverview &_overview)
     call_once(once, [] {
         char hw_model[256];
         size_t len = 256;
-        if( sysctlbyname("hw.model", hw_model, &len, NULL, 0) != 0 )
+        if( sysctlbyname("hw.model", hw_model, &len, nullptr, 0) != 0 )
             return;
         coded_model = hw_model;
 

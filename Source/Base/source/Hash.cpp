@@ -37,10 +37,10 @@ Hash::Hash(Mode _mode) : m_Mode(_mode)
             CC_MD5_Init(reinterpret_cast<CC_MD5_CTX *>(m_Stuff));
             break;
         case Adler32:
-            *reinterpret_cast<uint32_t *>(m_Stuff) = static_cast<uint32_t>(adler32(0, 0, 0));
+            *reinterpret_cast<uint32_t *>(m_Stuff) = static_cast<uint32_t>(adler32(0, nullptr, 0));
             break;
         case CRC32:
-            *reinterpret_cast<uint32_t *>(m_Stuff) = static_cast<uint32_t>(crc32(0, 0, 0));
+            *reinterpret_cast<uint32_t *>(m_Stuff) = static_cast<uint32_t>(crc32(0, nullptr, 0));
             break;
         default:
             assert(0);
@@ -76,16 +76,12 @@ Hash &Hash::Feed(const void *_data, size_t _size)
             CC_MD5_Update(reinterpret_cast<CC_MD5_CTX *>(m_Stuff), _data, usize);
             break;
         case Adler32:
-            *reinterpret_cast<uint32_t *>(m_Stuff) =
-                static_cast<uint32_t>(adler32(*reinterpret_cast<uint32_t *>(m_Stuff),
-                                              reinterpret_cast<const unsigned char *>(_data),
-                                              usize));
+            *reinterpret_cast<uint32_t *>(m_Stuff) = static_cast<uint32_t>(
+                adler32(*reinterpret_cast<uint32_t *>(m_Stuff), reinterpret_cast<const unsigned char *>(_data), usize));
             break;
         case CRC32:
-            *reinterpret_cast<uint32_t *>(m_Stuff) =
-                static_cast<uint32_t>(crc32(*reinterpret_cast<uint32_t *>(m_Stuff),
-                                            reinterpret_cast<const unsigned char *>(_data),
-                                            usize));
+            *reinterpret_cast<uint32_t *>(m_Stuff) = static_cast<uint32_t>(
+                crc32(*reinterpret_cast<uint32_t *>(m_Stuff), reinterpret_cast<const unsigned char *>(_data), usize));
             break;
         default:
             assert(0);
@@ -142,13 +138,12 @@ std::vector<uint8_t> Hash::Final()
         default:
             assert(0);
     }
-    return std::vector<uint8_t>();
+    return {};
 }
 
 std::string Hash::Hex(const std::vector<uint8_t> &_d)
 {
-    static const char c[] = {
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    static const char c[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
     std::string r;
     r.reserve(_d.size() * 2);
     for( auto i : _d ) {

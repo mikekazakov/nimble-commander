@@ -20,15 +20,13 @@ File::~File()
 int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     auto &io = routedio::RoutedIO::Default;
-    auto fs_info =
-        std::dynamic_pointer_cast<NativeHost>(Host())->NativeFSManager().VolumeFromPath(Path());
+    auto fs_info = std::dynamic_pointer_cast<NativeHost>(Host())->NativeFSManager().VolumeFromPath(Path());
 
     int openflags = O_NONBLOCK;
 
     if( fs_info && fs_info->interfaces.file_lock )
         openflags |= O_SHLOCK;
-    if( (_open_flags & (VFSFlags::OF_Read | VFSFlags::OF_Write)) ==
-        (VFSFlags::OF_Read | VFSFlags::OF_Write) )
+    if( (_open_flags & (VFSFlags::OF_Read | VFSFlags::OF_Write)) == (VFSFlags::OF_Read | VFSFlags::OF_Write) )
         openflags |= O_RDWR;
     else if( (_open_flags & VFSFlags::OF_Read) != 0 )
         openflags |= O_RDONLY;
@@ -187,12 +185,12 @@ unsigned File::XAttrCount() const
     if( m_FD < 0 )
         return 0;
 
-    ssize_t bf_sz = flistxattr(m_FD, 0, 0, 0);
+    ssize_t bf_sz = flistxattr(m_FD, nullptr, 0, 0);
     if( bf_sz <= 0 ) // on error or if there're no xattrs available for this file
         return 0;
 
     char *buf = static_cast<char *>(alloca(bf_sz));
-    assert(buf != 0);
+    assert(buf != nullptr);
 
     ssize_t ret = flistxattr(m_FD, buf, bf_sz, 0);
     if( ret < 0 )
@@ -212,12 +210,12 @@ void File::XAttrIterateNames(const XAttrIterateNamesCallback &_handler) const
     if( m_FD < 0 || !_handler )
         return;
 
-    ssize_t bf_sz = flistxattr(m_FD, 0, 0, 0);
+    ssize_t bf_sz = flistxattr(m_FD, nullptr, 0, 0);
     if( bf_sz <= 0 ) // on error or if there're no xattrs available for this file
         return;
 
     char *buf = static_cast<char *>(alloca(bf_sz));
-    assert(buf != 0);
+    assert(buf != nullptr);
 
     ssize_t ret = flistxattr(m_FD, buf, bf_sz, 0);
     if( ret < 0 )

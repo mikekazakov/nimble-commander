@@ -4,11 +4,10 @@
 #include "DefaultAction.h"
 
 namespace nc::panel::actions {
-    
-struct ShowSystemOverview final : PanelAction
-{
-    bool Predicate( PanelController *_target ) const override;
-    void Perform( PanelController *_target, id _sender ) const override;
+
+struct ShowSystemOverview final : PanelAction {
+    bool Predicate(PanelController *_target) const override;
+    void Perform(PanelController *_target, id _sender) const override;
 };
-    
-}
+
+} // namespace nc::panel::actions

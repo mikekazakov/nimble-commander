@@ -3,9 +3,8 @@
 
 #include "PanelBriefViewLayoutProtocol.h"
 
-@interface NCPanelBriefViewFixedWidthLayout :
-    NSCollectionViewFlowLayout<NCPanelBriefViewLayoutProtocol>
+@interface NCPanelBriefViewFixedWidthLayout : NSCollectionViewFlowLayout <NCPanelBriefViewLayoutProtocol>
 
-@property (nonatomic) int itemWidth;
+@property(nonatomic) int itemWidth;
 
-@end 
+@end

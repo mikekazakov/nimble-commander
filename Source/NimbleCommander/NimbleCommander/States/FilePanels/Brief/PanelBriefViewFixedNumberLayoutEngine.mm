@@ -36,8 +36,8 @@ void FixedNumberLayoutEngine::BuildGrid(const Params &_params)
         m_ColumnsNumber = m_ItemsNumber > 0 ? 1 : 0;
     }
     else {
-        m_ColumnsNumber = (m_ItemsNumber % m_RowsNumber != 0) ? (m_ItemsNumber / m_RowsNumber + 1)
-                                                              : (m_ItemsNumber / m_RowsNumber);
+        m_ColumnsNumber =
+            (m_ItemsNumber % m_RowsNumber != 0) ? (m_ItemsNumber / m_RowsNumber + 1) : (m_ItemsNumber / m_RowsNumber);
     }
 }
 
@@ -69,8 +69,7 @@ void FixedNumberLayoutEngine::PerformNormalLayout()
 
             const auto origin = NSMakePoint(current_column_position, row_index * item_height);
             const auto index_path = [NSIndexPath indexPathForItem:index inSection:0];
-            const auto attributes =
-                [NSCollectionViewLayoutAttributes layoutAttributesForItemWithIndexPath:index_path];
+            const auto attributes = [NSCollectionViewLayoutAttributes layoutAttributesForItemWithIndexPath:index_path];
             attributes.frame = NSMakeRect(origin.x, origin.y, column_width, item_height);
             m_Attributes[index] = attributes;
         }
@@ -94,8 +93,7 @@ void FixedNumberLayoutEngine::PerformSingularLayout()
 
     for( int index = 0; index < items_number; ++index ) {
         const auto index_path = [NSIndexPath indexPathForItem:index inSection:0];
-        const auto attributes =
-            [NSCollectionViewLayoutAttributes layoutAttributesForItemWithIndexPath:index_path];
+        const auto attributes = [NSCollectionViewLayoutAttributes layoutAttributesForItemWithIndexPath:index_path];
         attributes.frame = frame;
         m_Attributes[index] = attributes;
     }
@@ -105,8 +103,7 @@ void FixedNumberLayoutEngine::PerformSingularLayout()
     m_ContentSize = NSMakeSize(m_ColumnsNumber * m_BaseColumnWidth, m_ItemHeight);
 }
 
-bool FixedNumberLayoutEngine::ShouldRelayoutForNewBounds(
-    const NSRect clip_view_bounds) const noexcept
+bool FixedNumberLayoutEngine::ShouldRelayoutForNewBounds(const NSRect clip_view_bounds) const noexcept
 {
     if( static_cast<int>(clip_view_bounds.size.width) != m_ClipViewWidth )
         return true;
@@ -125,4 +122,4 @@ FixedNumberLayoutEngine::AttributesForItemsInRect(NSRect _rect) const noexcept
     return LogarithmicSearchForItemsInRect(_rect);
 }
 
-}
+} // namespace nc::panel::view::brief

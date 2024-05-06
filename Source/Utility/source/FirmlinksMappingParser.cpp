@@ -4,14 +4,13 @@
 
 namespace nc::utility {
 
-std::vector<FirmlinksMappingParser::Firmlink>
-FirmlinksMappingParser::Parse( std::string_view _mapping )
+std::vector<FirmlinksMappingParser::Firmlink> FirmlinksMappingParser::Parse(std::string_view _mapping)
 {
     std::vector<std::string> by_line = base::SplitByDelimiter(_mapping, '\x0A');
-    
-    std::vector<Firmlink> result;    
-    
-    for( const auto &line: by_line ) {
+
+    std::vector<Firmlink> result;
+
+    for( const auto &line : by_line ) {
         std::vector<std::string> by_part = base::SplitByDelimiter(line, '\x09');
         if( by_part.size() == 2 ) {
             result.push_back({by_part[0], by_part[1]});
@@ -20,17 +19,14 @@ FirmlinksMappingParser::Parse( std::string_view _mapping )
     return result;
 }
 
-bool operator==(const FirmlinksMappingParser::Firmlink &_1st,
-                const FirmlinksMappingParser::Firmlink &_2nd) noexcept
+bool operator==(const FirmlinksMappingParser::Firmlink &_1st, const FirmlinksMappingParser::Firmlink &_2nd) noexcept
 {
     return _1st.target == _2nd.target && _1st.source == _2nd.source;
 }
 
-bool operator!=(const FirmlinksMappingParser::Firmlink &_1st,
-                const FirmlinksMappingParser::Firmlink &_2nd) noexcept
+bool operator!=(const FirmlinksMappingParser::Firmlink &_1st, const FirmlinksMappingParser::Firmlink &_2nd) noexcept
 {
     return !(_1st == _2nd);
 }
 
-}
-
+} // namespace nc::utility

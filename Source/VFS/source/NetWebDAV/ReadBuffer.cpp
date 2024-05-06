@@ -8,9 +8,7 @@ namespace nc::vfs::webdav {
 
 static const auto g_DefaultCapacity = 32768;
 
-ReadBuffer::ReadBuffer()
-{
-}
+ReadBuffer::ReadBuffer() = default;
 
 ReadBuffer::~ReadBuffer()
 {
@@ -87,4 +85,4 @@ void ReadBuffer::Clear()
 {
     m_Size = 0;
 }
-}
+} // namespace nc::vfs::webdav

@@ -11,8 +11,7 @@ namespace nc::term {
 class ColorMap
 {
 public:
-    enum class Special
-    {
+    enum class Special {
         Foreground = 0,
         BoldForeground = 1,
         Background = 2,

@@ -14,4 +14,4 @@ void CloseFromExcept(int _lowfd, int _except) noexcept;
 // Close file descriptors starting with _lowfd and above, but skip _except.
 void CloseFromExcept(int _lowfd, std::span<const int> _except) noexcept;
 
-}
+} // namespace nc::base

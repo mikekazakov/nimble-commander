@@ -4,12 +4,11 @@
 #include <Cocoa/Cocoa.h>
 #include <string>
 
-@interface NCOpsCreateSymlinkDialog : NSWindowController<NSTextFieldDelegate>
+@interface NCOpsCreateSymlinkDialog : NSWindowController <NSTextFieldDelegate>
 
-- (instancetype) initWithSourcePath:(const std::string&)_src_path
-                        andDestPath:(const std::string&)_link_path;
+- (instancetype)initWithSourcePath:(const std::string &)_src_path andDestPath:(const std::string &)_link_path;
 
-@property (readonly, nonatomic) const std::string& sourcePath;
-@property (readonly, nonatomic) const std::string& linkPath;
+@property(readonly, nonatomic) const std::string &sourcePath;
+@property(readonly, nonatomic) const std::string &linkPath;
 
 @end

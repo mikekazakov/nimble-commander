@@ -12,23 +12,23 @@
 /**
  * returns -1 on failure.
  */
-- (int) itemIndex;
+- (int)itemIndex;
 
 /**
  * returns -1 on failure.
  */
-- (int) columnIndex;
+- (int)columnIndex;
 
 - (VFSListingItem)item;
-- (void) setItem:(VFSListingItem)_item;
-- (void) setVD:(nc::panel::data::ItemVolatileData)_vd;
-- (void) setIcon:(NSImage*)_icon;
-@property (nonatomic) bool panelActive;
+- (void)setItem:(VFSListingItem)_item;
+- (void)setVD:(nc::panel::data::ItemVolatileData)_vd;
+- (void)setIcon:(NSImage *)_icon;
+@property(nonatomic) bool panelActive;
 
-- (PanelBriefView*)briefView;
+- (PanelBriefView *)briefView;
 
-- (void) setupFieldEditor:(NCPanelViewFieldEditor*)_editor;
+- (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor;
 
-- (void) updateItemLayout;
+- (void)updateItemLayout;
 
 @end

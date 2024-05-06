@@ -11,7 +11,7 @@
 namespace nc::viewer {
 class TextModeWorkingSet;
 class TextModeFrame;
-}
+} // namespace nc::viewer
 
 @interface NCViewerTextModeView : NSView <NCViewerImplementationProtocol>
 

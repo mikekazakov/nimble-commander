@@ -57,8 +57,7 @@ private:
 
     Response SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker _checker);
 
-    enum class WorkMode
-    {
+    enum class WorkMode {
         NotSet,
         Text
         /* binary(hex) and regexp(tempates) later */
@@ -92,8 +91,7 @@ private:
     WorkMode m_WorkMode = WorkMode::NotSet;
 };
 
-enum class SearchInFile::Response : int
-{
+enum class SearchInFile::Response : int {
     // Invalid search request
     Invalid,
 
@@ -114,8 +112,7 @@ enum class SearchInFile::Response : int
     Canceled
 };
 
-enum class SearchInFile::Options : int
-{
+enum class SearchInFile::Options : int {
     None = 0,
 
     // default search option is case _insensitive_

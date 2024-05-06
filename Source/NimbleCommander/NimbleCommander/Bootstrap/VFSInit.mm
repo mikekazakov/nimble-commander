@@ -16,9 +16,9 @@ namespace nc::bootstrap {
 void RegisterAvailableVFS()
 {
     auto native_meta = VFSNativeHost::Meta();
-    native_meta.SpawnWithConfig = [](const VFSHostPtr &,
-                                     const VFSConfiguration &,
-                                     VFSCancelChecker) { return NCAppDelegate.me.nativeHostPtr; };
+    native_meta.SpawnWithConfig = [](const VFSHostPtr &, const VFSConfiguration &, VFSCancelChecker) {
+        return NCAppDelegate.me.nativeHostPtr;
+    };
 
     VFSFactory::Instance().RegisterVFS(std::move(native_meta));
     VFSFactory::Instance().RegisterVFS(vfs::PSHost::Meta());

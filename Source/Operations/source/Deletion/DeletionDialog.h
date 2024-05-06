@@ -7,10 +7,10 @@
 
 @interface NCOpsDeletionDialog : NSWindowController
 
-@property (nonatomic)           bool                  allowMoveToTrash;
-@property (nonatomic)           nc::ops::DeletionType defaultType;
-@property (nonatomic, readonly) nc::ops::DeletionType resultType;
+@property(nonatomic) bool allowMoveToTrash;
+@property(nonatomic) nc::ops::DeletionType defaultType;
+@property(nonatomic, readonly) nc::ops::DeletionType resultType;
 
-- (id)initWithItems:(const std::shared_ptr<std::vector<VFSListingItem>>&)_items;
+- (id)initWithItems:(const std::shared_ptr<std::vector<VFSListingItem>> &)_items;
 
 @end

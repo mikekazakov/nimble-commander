@@ -37,7 +37,7 @@ struct FindFilesSheetViewRequest {
     FindFilesSheetController *sender;
 };
 
-}
+} // namespace nc::panel
 
 @interface FindFilesSheetController
     : SheetController <NSTableViewDataSource, NSTableViewDelegate, NSSearchFieldDelegate>

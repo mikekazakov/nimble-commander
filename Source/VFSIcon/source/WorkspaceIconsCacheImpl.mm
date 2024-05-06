@@ -142,6 +142,6 @@ NSImage *WorkspaceIconsCacheImplBase::IconBuilderImpl::Build(const std::string &
     return image;
 }
 
-}
+} // namespace detail
 
-}
+} // namespace nc::vfsicon

@@ -43,12 +43,11 @@ public:
         bool is_placeholder = false;
 
         MaskDecomposition(NSString *_s, bool _b) : string(_s), is_placeholder(_b) {}
-        bool operator==(const MaskDecomposition& _rhs) const noexcept{
+        bool operator==(const MaskDecomposition &_rhs) const noexcept
+        {
             return [string isEqualToString:_rhs.string] && is_placeholder == _rhs.is_placeholder;
         }
-        bool operator!=(const MaskDecomposition& _rhs) const noexcept {
-            return !(*this == _rhs);
-        }
+        bool operator!=(const MaskDecomposition &_rhs) const noexcept { return !(*this == _rhs); }
     };
 
     struct FileInfo {
@@ -65,28 +64,26 @@ public:
         struct tm mod_time_tm;
     };
 
-    enum class CaseTransform
-    {
+    enum class CaseTransform {
         Unchanged = 0,
         Uppercase = 1,
         Lowercase = 2,
         Capitalized = 3
     };
 
-    static std::optional<std::vector<MaskDecomposition>>
-    DecomposeMaskIntoPlaceholders(NSString *_mask);
+    static std::optional<std::vector<MaskDecomposition>> DecomposeMaskIntoPlaceholders(NSString *_mask);
 
-    static std::optional<std::pair<TextExtraction, int>> ParsePlaceholder_TextExtraction(
-        NSString *_ph,
-        unsigned long _pos); // action and number of chars eaten if no errors
+    static std::optional<std::pair<TextExtraction, int>>
+    ParsePlaceholder_TextExtraction(NSString *_ph,
+                                    unsigned long _pos); // action and number of chars eaten if no errors
 
-    static std::optional<std::pair<Counter, int>> ParsePlaceholder_Counter(
-        NSString *_ph,
-        unsigned long _pos,
-        long _default_start,
-        long _default_step,
-        int _default_width,
-        unsigned _default_stripe); // action and number of chars eaten if no errors
+    static std::optional<std::pair<Counter, int>>
+    ParsePlaceholder_Counter(NSString *_ph,
+                             unsigned long _pos,
+                             long _default_start,
+                             long _default_step,
+                             int _default_width,
+                             unsigned _default_stripe); // action and number of chars eaten if no errors
 
     static NSString *ExtractText(NSString *_from, const TextExtraction &_te);
 
@@ -108,8 +105,7 @@ public:
     NSString *Rename(const FileInfo &_fi, int _number) const;
 
 private:
-    enum class ActionType : short
-    {
+    enum class ActionType : short {
         Static,
         Filename,            // full file name
         Name,                // name without extension and dot
@@ -181,8 +177,7 @@ inline BatchRenamingScheme::Range::Range() : location(0), length(0)
 {
 }
 
-inline BatchRenamingScheme::Range::Range(unsigned short loc, unsigned short len)
-    : location(loc), length(len)
+inline BatchRenamingScheme::Range::Range(unsigned short loc, unsigned short len) : location(loc), length(len)
 {
 }
 
@@ -219,4 +214,4 @@ inline unsigned BatchRenamingScheme::Range::max() const
     return unsigned(location) + unsigned(length);
 }
 
-}
+} // namespace nc::ops

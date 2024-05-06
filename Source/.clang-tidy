@@ -1,3 +1,5 @@
+# https://clang.llvm.org/extra/clang-tidy/checks/list.html
+
 Checks: >
   -*,
   -clang-diagnostic-c99-designator,
@@ -9,13 +11,44 @@ Checks: >
   modernize-macro-to-enum,
   modernize-make-shared,
   modernize-make-unique,
-  modernize-min-max-use-initializer-list
+  modernize-min-max-use-initializer-list,
+  modernize-raw-string-literal,
+  modernize-redundant-void-arg,
+  modernize-replace-auto-ptr,
+  modernize-replace-disallow-copy-and-assign-macro,
+  modernize-replace-random-shuffle,
+  modernize-return-braced-init-list,
+  modernize-shrink-to-fit,
+  modernize-type-traits,
+  modernize-unary-static-assert,
+  modernize-use-bool-literals,
+  modernize-use-constraints,
+  modernize-use-default-member-init,
+  modernize-use-designated-initializers,
+  modernize-use-emplace,
+  modernize-use-equals-default,
+  modernize-use-equals-delete,
+  modernize-use-noexcept,
+  modernize-use-nullptr,
+  modernize-use-override,
+  modernize-use-starts-ends-with,
+  modernize-use-std-numbers,
+  modernize-use-std-print,
+  modernize-use-transparent-functors,
+  modernize-use-uncaught-exceptions,
+  modernize-use-using
 
 CheckOptions:
   - key:    modernize-loop-convert.MinConfidence
     value:  safe
   - key:    modernize-loop-convert.UseCxx20ReverseRanges
     value:  true
+  - key:    modernize-use-std-print.ReplacementPrintFunction
+    value:  fmt::print
+  - key:    modernize-use-std-print.ReplacementPrintlnFunction
+    value:  fmt::println
+  - key:    modernize-use-std-print.PrintHeader
+    value:  <fmt/format.h>
 
 ExtraArgs:
 - -Wno-unknown-pragmas

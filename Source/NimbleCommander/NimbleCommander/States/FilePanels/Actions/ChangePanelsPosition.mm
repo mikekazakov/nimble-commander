@@ -5,7 +5,7 @@
 
 namespace nc::panel::actions {
 
-bool MovePanelsUp::Predicate( MainWindowFilePanelState *_target ) const
+bool MovePanelsUp::Predicate(MainWindowFilePanelState *_target) const
 {
     return [_target canIncreaseBootomTerminalGap];
 }
@@ -15,7 +15,7 @@ void MovePanelsUp::Perform(MainWindowFilePanelState *_target, [[maybe_unused]] i
     [_target increaseBottomTerminalGap];
 }
 
-bool MovePanelsDown::Predicate( MainWindowFilePanelState *_target ) const
+bool MovePanelsDown::Predicate(MainWindowFilePanelState *_target) const
 {
     return [_target canDecreaseBottomTerminalGap];
 }
@@ -39,7 +39,7 @@ bool ShowHidePanels::ValidateMenuItem(MainWindowFilePanelState *_target, NSMenuI
     else {
         _item.title = NSLocalizedString(@"Hide Panels", "Menu item for hiding panels");
     }
-    
+
     return Predicate(_target);
 }
 
@@ -51,4 +51,4 @@ void ShowHidePanels::Perform(MainWindowFilePanelState *_target, [[maybe_unused]]
         [_target hidePanelsSplitView];
 }
 
-}
+} // namespace nc::panel::actions

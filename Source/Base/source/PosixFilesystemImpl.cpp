@@ -5,7 +5,7 @@
 namespace nc::base {
 
 [[clang::no_destroy]] PosixFilesystemImpl PosixFilesystemImpl::instance;
-    
+
 int PosixFilesystemImpl::close(int _fd)
 {
     return ::close(_fd);
@@ -20,7 +20,7 @@ int PosixFilesystemImpl::unlink(const char *_path)
 {
     return ::unlink(_path);
 }
-    
+
 int PosixFilesystemImpl::mkstemp(char *_pattern)
 {
     return ::mkstemp(_pattern);
@@ -31,4 +31,4 @@ int PosixFilesystemImpl::rename(const char *_old, const char *_new)
     return ::rename(_old, _new);
 }
 
-}
+} // namespace nc::base

@@ -6,10 +6,10 @@
 
 @interface NCOpsAttrsChangingDialog : NSWindowController
 
-- (instancetype) initWithItems:(std::vector<VFSListingItem>)_items;
+- (instancetype)initWithItems:(std::vector<VFSListingItem>)_items;
 
-+ (bool)canEditAnythingInItems:(const std::vector<VFSListingItem>&)_items;
++ (bool)canEditAnythingInItems:(const std::vector<VFSListingItem> &)_items;
 
-@property (readonly, nonatomic) const nc::ops::AttrsChangingCommand &command;
+@property(readonly, nonatomic) const nc::ops::AttrsChangingCommand &command;
 
 @end

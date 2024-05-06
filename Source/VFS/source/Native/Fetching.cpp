@@ -38,9 +38,7 @@ static mode_t VNodeToUnixMode(const fsobj_type_t _type)
     };
 }
 
-static int LStatByPath(nc::routedio::PosixIOInterface &_io,
-                       const char *_path,
-                       const Fetching::Callback &_cb_param)
+static int LStatByPath(nc::routedio::PosixIOInterface &_io, const char *_path, const Fetching::Callback &_cb_param)
 {
     struct stat stat_buffer;
     int ret = _io.lstat(_path, &stat_buffer);
@@ -93,10 +91,9 @@ int Fetching::ReadSingleEntryAttributesByPath(nc::routedio::PosixIOInterface &_i
     attrlist attr_list;
     memset(&attr_list, 0, sizeof(attr_list));
     attr_list.bitmapcount = ATTR_BIT_MAP_COUNT;
-    attr_list.commonattr =
-        ATTR_CMN_RETURNED_ATTRS | ATTR_CMN_DEVID | ATTR_CMN_OBJTYPE | ATTR_CMN_CRTIME |
-        ATTR_CMN_MODTIME | ATTR_CMN_CHGTIME | ATTR_CMN_ACCTIME | ATTR_CMN_OWNERID | ATTR_CMN_GRPID |
-        ATTR_CMN_ACCESSMASK | ATTR_CMN_FLAGS | ATTR_CMN_FILEID | ATTR_CMN_ADDEDTIME;
+    attr_list.commonattr = ATTR_CMN_RETURNED_ATTRS | ATTR_CMN_DEVID | ATTR_CMN_OBJTYPE | ATTR_CMN_CRTIME |
+                           ATTR_CMN_MODTIME | ATTR_CMN_CHGTIME | ATTR_CMN_ACCTIME | ATTR_CMN_OWNERID | ATTR_CMN_GRPID |
+                           ATTR_CMN_ACCESSMASK | ATTR_CMN_FLAGS | ATTR_CMN_FILEID | ATTR_CMN_ADDEDTIME;
     attr_list.fileattr = ATTR_FILE_DATALENGTH;
     attr_list.forkattr = ATTR_CMNEXT_EXT_FLAGS;
 
@@ -114,7 +111,7 @@ int Fetching::ReadSingleEntryAttributesByPath(nc::routedio::PosixIOInterface &_i
     auto close_fd = at_scope_end([fd] { close(fd); });
 
     constexpr uint64_t options = FSOPT_ATTR_CMN_EXTENDED;
-    
+
     if( fgetattrlist(fd, &attr_list, &attrs, sizeof(attrs), options) != 0 )
         return errno;
 
@@ -191,7 +188,7 @@ int Fetching::ReadSingleEntryAttributesByPath(nc::routedio::PosixIOInterface &_i
     }
     else
         params.size = -1;
-    
+
     if( attrs.returned.forkattr & ATTR_CMNEXT_EXT_FLAGS ) {
         params.ext_flags = *reinterpret_cast<const uint64_t *>(field);
         field += sizeof(uint64_t);
@@ -220,8 +217,7 @@ int Fetching::ReadDirAttributesStat(const int _dir_fd,
                 strisdotdot(entp->d_name) ) // do not process parent entry
                 continue;
 
-            dirents.emplace_back(
-                std::string(entp->d_name, entp->d_namlen), entp->d_ino, entp->d_type);
+            dirents.emplace_back(std::string(entp->d_name, entp->d_namlen), entp->d_ino, entp->d_type);
         }
     }
     else
@@ -269,16 +265,15 @@ int Fetching::ReadDirAttributesBulk(const int _dir_fd,
     attrlist attr_list;
     memset(&attr_list, 0, sizeof(attr_list));
     attr_list.bitmapcount = ATTR_BIT_MAP_COUNT;
-    attr_list.commonattr = ATTR_CMN_RETURNED_ATTRS | ATTR_CMN_NAME | ATTR_CMN_ERROR |
-                           ATTR_CMN_DEVID | ATTR_CMN_OBJTYPE | ATTR_CMN_CRTIME | ATTR_CMN_MODTIME |
-                           ATTR_CMN_CHGTIME | ATTR_CMN_ACCTIME | ATTR_CMN_ADDEDTIME |
-                           ATTR_CMN_OWNERID | ATTR_CMN_GRPID | ATTR_CMN_ACCESSMASK |
+    attr_list.commonattr = ATTR_CMN_RETURNED_ATTRS | ATTR_CMN_NAME | ATTR_CMN_ERROR | ATTR_CMN_DEVID |
+                           ATTR_CMN_OBJTYPE | ATTR_CMN_CRTIME | ATTR_CMN_MODTIME | ATTR_CMN_CHGTIME | ATTR_CMN_ACCTIME |
+                           ATTR_CMN_ADDEDTIME | ATTR_CMN_OWNERID | ATTR_CMN_GRPID | ATTR_CMN_ACCESSMASK |
                            ATTR_CMN_FLAGS | ATTR_CMN_FILEID;
     attr_list.fileattr = ATTR_FILE_DATALENGTH;
     attr_list.forkattr = ATTR_CMNEXT_EXT_FLAGS;
 
-// TODO: handle ENOTSUP
-//    getattrlist() will return ENOTSUP if it is not supported on a particular volume.
+    // TODO: handle ENOTSUP
+    //    getattrlist() will return ENOTSUP if it is not supported on a particular volume.
 
     constexpr uint64_t options = FSOPT_ATTR_CMN_EXTENDED;
     constexpr size_t attr_buf_size = 65536;
@@ -310,8 +305,7 @@ int Fetching::ReadDirAttributesBulk(const int _dir_fd,
             }
 
             if( returned.commonattr & ATTR_CMN_NAME ) {
-                params.filename =
-                    field + reinterpret_cast<const attrreference_t *>(field)->attr_dataoffset;
+                params.filename = field + reinterpret_cast<const attrreference_t *>(field)->attr_dataoffset;
                 field += sizeof(attrreference_t);
             }
             else
@@ -412,7 +406,7 @@ int Fetching::ReadDirAttributesBulk(const int _dir_fd,
             else {
                 params.size = -1;
             }
-            
+
             if( returned.forkattr & ATTR_CMNEXT_EXT_FLAGS ) {
                 params.ext_flags = *reinterpret_cast<const uint64_t *>(field);
                 field += sizeof(uint64_t);

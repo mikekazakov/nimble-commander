@@ -71,4 +71,4 @@ void StoreFindFilesMasks(nc::config::Config &_dest, std::string_view _path, std:
     _dest.Set(_path, arr);
 }
 
-}
+} // namespace nc::panel

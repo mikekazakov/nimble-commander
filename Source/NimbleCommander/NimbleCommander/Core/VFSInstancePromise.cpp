@@ -4,55 +4,49 @@
 
 namespace nc::core {
 
-static_assert( sizeof(VFSInstancePromise) == 16, "" );
+static_assert(sizeof(VFSInstancePromise) == 16);
 
-VFSInstancePromise::VFSInstancePromise():
-    inst_id(0),
-    manager(nullptr)
+VFSInstancePromise::VFSInstancePromise() : inst_id(0), manager(nullptr)
 {
 }
 
-VFSInstancePromise::VFSInstancePromise(uint64_t _inst_id, VFSInstanceManager &_manager):
-    inst_id(_inst_id),
-    manager(&_manager)
-{ /* here assumes that producing manager will perform initial increment himself. */}
+VFSInstancePromise::VFSInstancePromise(uint64_t _inst_id, VFSInstanceManager &_manager)
+    : inst_id(_inst_id), manager(&_manager)
+{ /* here assumes that producing manager will perform initial increment himself. */
+}
 
 VFSInstancePromise::~VFSInstancePromise()
 {
-    if(manager)
+    if( manager )
         manager->DecPromiseCount(inst_id);
 }
 
-VFSInstancePromise::VFSInstancePromise(VFSInstancePromise &&_rhs):
-    inst_id(_rhs.inst_id),
-    manager(_rhs.manager)
+VFSInstancePromise::VFSInstancePromise(VFSInstancePromise &&_rhs) : inst_id(_rhs.inst_id), manager(_rhs.manager)
 {
     _rhs.inst_id = 0;
     _rhs.manager = nullptr;
 }
 
-VFSInstancePromise::VFSInstancePromise(const VFSInstancePromise &_rhs):
-    inst_id(_rhs.inst_id),
-    manager(_rhs.manager)
+VFSInstancePromise::VFSInstancePromise(const VFSInstancePromise &_rhs) : inst_id(_rhs.inst_id), manager(_rhs.manager)
 {
-    if(manager)
+    if( manager )
         manager->IncPromiseCount(inst_id);
 }
 
-const VFSInstancePromise& VFSInstancePromise::operator=(const VFSInstancePromise &_rhs)
+const VFSInstancePromise &VFSInstancePromise::operator=(const VFSInstancePromise &_rhs)
 {
-    if(manager)
+    if( manager )
         manager->DecPromiseCount(inst_id);
     inst_id = _rhs.inst_id;
     manager = _rhs.manager;
-    if(manager)
+    if( manager )
         manager->IncPromiseCount(inst_id);
     return *this;
 }
 
-const VFSInstancePromise& VFSInstancePromise::operator=(VFSInstancePromise &&_rhs)
+const VFSInstancePromise &VFSInstancePromise::operator=(VFSInstancePromise &&_rhs)
 {
-    if(manager)
+    if( manager )
         manager->DecPromiseCount(inst_id);
     inst_id = _rhs.inst_id;
     manager = _rhs.manager;
@@ -66,12 +60,12 @@ VFSInstancePromise::operator bool() const noexcept
     return manager != nullptr && inst_id != 0;
 }
 
-bool VFSInstancePromise::operator ==(const VFSInstancePromise &_rhs) const noexcept
+bool VFSInstancePromise::operator==(const VFSInstancePromise &_rhs) const noexcept
 {
     return manager == _rhs.manager && inst_id == _rhs.inst_id;
 }
 
-bool VFSInstancePromise::operator !=(const VFSInstancePromise &_rhs) const noexcept
+bool VFSInstancePromise::operator!=(const VFSInstancePromise &_rhs) const noexcept
 {
     return !(*this == _rhs);
 }
@@ -91,4 +85,4 @@ std::string VFSInstancePromise::verbose_title() const
     return manager ? manager->GetVerboseVFSTitle(*this) : "";
 }
 
-}
+} // namespace nc::core

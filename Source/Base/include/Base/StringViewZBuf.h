@@ -1,5 +1,5 @@
 // Copyright (C) 2020-2021 Michael Kazakov. Subject to GNU General Public License version 3.
-#pragma once 
+#pragma once
 
 #include <string_view>
 #include <string>

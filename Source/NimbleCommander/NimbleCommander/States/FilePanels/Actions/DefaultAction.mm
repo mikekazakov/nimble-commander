@@ -3,40 +3,36 @@
 
 namespace nc::panel::actions {
 
-PanelAction::~PanelAction()
-{
-}
+PanelAction::~PanelAction() = default;
 
-bool PanelAction::Predicate( PanelController * ) const
+bool PanelAction::Predicate(PanelController *) const
 {
     return true;
 }
 
-bool PanelAction::ValidateMenuItem( PanelController *_target, NSMenuItem * ) const
+bool PanelAction::ValidateMenuItem(PanelController *_target, NSMenuItem *) const
 {
     return Predicate(_target);
 }
 
-void PanelAction::Perform( PanelController *, id  ) const
+void PanelAction::Perform(PanelController *, id) const
 {
 }
 
-StateAction::~StateAction()
-{
-}
+StateAction::~StateAction() = default;
 
-bool StateAction::Predicate( MainWindowFilePanelState * ) const
+bool StateAction::Predicate(MainWindowFilePanelState *) const
 {
     return true;
 }
 
-bool StateAction::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem * ) const
+bool StateAction::ValidateMenuItem(MainWindowFilePanelState *_target, NSMenuItem *) const
 {
-    return Predicate( _target );
+    return Predicate(_target);
 }
 
-void StateAction::Perform( MainWindowFilePanelState *, id ) const
+void StateAction::Perform(MainWindowFilePanelState *, id) const
 {
 }
 
-};
+}; // namespace nc::panel::actions

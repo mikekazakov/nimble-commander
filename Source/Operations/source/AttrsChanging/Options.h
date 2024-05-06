@@ -5,8 +5,7 @@
 
 namespace nc::ops {
 
-struct AttrsChangingCommand
-{
+struct AttrsChangingCommand {
     struct Permissions {
         std::optional<bool> usr_r;
         std::optional<bool> usr_w;
@@ -22,7 +21,7 @@ struct AttrsChangingCommand
         std::optional<bool> sticky;
     };
     std::optional<Permissions> permissions;
-    
+
     struct Ownage {
         std::optional<unsigned> uid;
         std::optional<unsigned> gid;
@@ -55,9 +54,9 @@ struct AttrsChangingCommand
         std::optional<long> btime;
     };
     std::optional<Times> times;
-    
+
     std::vector<VFSListingItem> items;
     bool apply_to_subdirs = false;
 };
 
-}
+} // namespace nc::ops

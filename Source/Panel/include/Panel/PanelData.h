@@ -30,28 +30,27 @@ struct ExternalEntryKey;
 class Model
 {
 public:
-    enum class PanelType : int8_t
-    {
+    enum class PanelType : int8_t {
         Directory = 0,
         Temporary = 1
     };
 
     // creates a Model with an empty listing
     Model();
-    
-    Model(const Model&);
-    
-    Model(Model&&) noexcept;
-    
+
+    Model(const Model &);
+
+    Model(Model &&) noexcept;
+
     ~Model();
-    
+
     Model &operator=(const Model &);
-    Model &operator=(Model &&) noexcept;    
+    Model &operator=(Model &&) noexcept;
 
     // Initializes a new model with _listing, allocates fresh volatile data, builds search indices,
     // updates statistics.
     void Load(const VFSListingPtr &_listing, PanelType _type);
-        
+
     void ReLoad(const VFSListingPtr &_listing);
 
     /**
@@ -64,17 +63,17 @@ public:
      * Will throw logic_error if called on a listing with no common host.
      */
     const std::shared_ptr<VFSHost> &Host() const;
-    
+
     /**
      * Returns a stored VFS listing.
      */
     const VFSListing &Listing() const noexcept;
-    
+
     /**
      * Returns a shared pointer to a stored VFS listing.
      */
     const VFSListingPtr &ListingPtr() const noexcept;
-    
+
     /**
      * Returns a panel type provided upen loading.
      */
@@ -84,12 +83,11 @@ public:
      * Returns the number of raw i.e. unfiltered entires in the listing.
      */
     int RawEntriesCount() const noexcept;
-    
+
     /**
      * Returns the number of sorted i.e. possibly filtered entires in the listing.
      */
     int SortedEntriesCount() const noexcept;
-
 
     const std::vector<unsigned> &SortedDirectoryEntries() const noexcept;
 
@@ -100,21 +98,21 @@ public:
 
     // will return an "empty" item upon invalid index
     VFSListingItem EntryAtRawPosition(int _pos) const noexcept;
-    
+
     // will throw an exception upon invalid index
-    ItemVolatileData & VolatileDataAtRawPosition(int _pos);
-    
+    ItemVolatileData &VolatileDataAtRawPosition(int _pos);
+
     // will throw an exception upon invalid index
-    const ItemVolatileData & VolatileDataAtRawPosition(int _pos) const;
+    const ItemVolatileData &VolatileDataAtRawPosition(int _pos) const;
 
     bool IsValidSortPosition(int _pos) const noexcept;
-    
+
     // will return an "empty" item upon invalid index
     VFSListingItem EntryAtSortPosition(int _pos) const noexcept;
-    
+
     // will throw an exception upon invalid index
-    ItemVolatileData & VolatileDataAtSortPosition(int _pos);
-    
+    ItemVolatileData &VolatileDataAtSortPosition(int _pos);
+
     // will throw an exception upon invalid index
     const ItemVolatileData &VolatileDataAtSortPosition(int _pos) const;
 
@@ -176,7 +174,8 @@ public:
      * Returns -1 if such entry wasn't found.
      * Returned value is in sorted indxs land.
      * O(logN) complexity, N - total number of items in the listing.
-     * NB! for non-uniform listings this will return only the first item, while there can be more, as filename is not unique there.
+     * NB! for non-uniform listings this will return only the first item, while there can be more, as filename is not
+     * unique there.
      */
     int SortedIndexForName(std::string_view _filename) const noexcept;
 
@@ -238,15 +237,12 @@ public:
     void CustomFlagsClearHighlights();
 
     /**
-     * Searches for a directory named '_filename' in '_directory' using binary search with case-sensitive comparison and sets its size.
-     * Return true if the entry was found and the size was set, false otherwise.
-     * _size should be less than uint64_t(-1).
-     * Automatically rebuilds search/sort indices and statistics.
+     * Searches for a directory named '_filename' in '_directory' using binary search with case-sensitive comparison and
+     * sets its size. Return true if the entry was found and the size was set, false otherwise. _size should be less
+     * than uint64_t(-1). Automatically rebuilds search/sort indices and statistics.
      */
-    bool SetCalculatedSizeForDirectory(std::string_view _filename,
-                                       std::string_view _directory,
-                                       uint64_t _size);
-    
+    bool SetCalculatedSizeForDirectory(std::string_view _filename, std::string_view _directory, uint64_t _size);
+
     /**
      * A batch version of SetCalculatedSizeForDirectory.
      * Returns a number of entries found and set.
@@ -254,7 +250,7 @@ public:
     size_t SetCalculatedSizesForDirectories(std::span<const std::string_view> _filenames,
                                             std::span<const std::string_view> _directories,
                                             std::span<const uint64_t> _sizes);
-    
+
     /**
      * A batch version of SetCalculatedSizeForDirectory that accepts raw item indices.
      * Returns a number of entries found and set.
@@ -280,17 +276,17 @@ private:
     // content changing
     VFSListingPtr m_Listing;
     std::vector<ItemVolatileData> m_VolatileData;
-    
+
     // sorted with raw strcmp comparison
     std::vector<unsigned> m_EntriesByRawName;
-        
+
     // sorted with customly defined sort
     std::vector<unsigned> m_EntriesByCustomSort;
-    
+
     // Reversed index: maps from the raw indices to the sorted indices. Can be
     // std::numeric_limits<unsigned>::max() if the entry is not present in the custom sort.
     std::vector<unsigned> m_ReverseToCustomSort;
-    
+
     // sorted and filtered, points at m_EntriesByCustomSort indices, not the raw ones
     std::vector<unsigned> m_EntriesBySoftFiltering;
     struct SortMode m_CustomSortMode;

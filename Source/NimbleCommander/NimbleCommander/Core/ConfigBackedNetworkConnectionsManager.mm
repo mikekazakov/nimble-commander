@@ -271,9 +271,7 @@ ConfigBackedNetworkConnectionsManager::ConfigBackedNetworkConnectionsManager(
         std::initializer_list<const char *>{g_ConnectionsKey, g_MRUKey});
 }
 
-ConfigBackedNetworkConnectionsManager::~ConfigBackedNetworkConnectionsManager()
-{
-}
+ConfigBackedNetworkConnectionsManager::~ConfigBackedNetworkConnectionsManager() = default;
 
 void ConfigBackedNetworkConnectionsManager::InsertConnection(const NetworkConnectionsManager::Connection &_conn)
 {

@@ -5,21 +5,22 @@
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 
 namespace nc::viewer {
-    
+
 class ThemeAdaptor : public Theme
 {
 public:
     ThemeAdaptor(ThemesManager &_themes_mgr);
-    NSFont  *Font() const override;
+    NSFont *Font() const override;
     NSColor *OverlayColor() const override;
     NSColor *TextColor() const override;
     NSColor *ViewerSelectionColor() const override;
     NSColor *ViewerBackgroundColor() const override;
-    void ObserveChanges( std::function<void()> _callback ) override;
+    void ObserveChanges(std::function<void()> _callback) override;
+
 private:
     const ::nc::Theme &CurrentTheme() const;
     ThemesManager &m_ThemesManager;
     ThemesManager::ObservationTicket m_ThemeObservation;
 };
-    
-}
+
+} // namespace nc::viewer

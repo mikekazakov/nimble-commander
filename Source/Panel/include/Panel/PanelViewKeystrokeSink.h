@@ -6,12 +6,12 @@
 
 namespace nc::panel::view::BiddingPriority {
 
-constexpr int Skip      = 0;
-constexpr int Low       = 10;
-constexpr int Default   = 100;
-constexpr int High      = 1000;
+constexpr int Skip = 0;
+constexpr int Low = 10;
+constexpr int Default = 100;
+constexpr int High = 1000;
 
-}
+} // namespace nc::panel::view::BiddingPriority
 
 @protocol NCPanelViewKeystrokeSink <NSObject>
 @required
@@ -19,11 +19,11 @@ constexpr int High      = 1000;
 /**
  * Return a positive value to participate in bidding.
  */
-- (int)bidForHandlingKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view;
+- (int)bidForHandlingKeyDown:(NSEvent *)_event forPanelView:(PanelView *)_panel_view;
 
 /**
  * Do an actual keystroke processing.
  */
-- (void)handleKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view;
+- (void)handleKeyDown:(NSEvent *)_event forPanelView:(PanelView *)_panel_view;
 
 @end

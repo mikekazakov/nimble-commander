@@ -13,9 +13,7 @@ struct ExternalEntryKey;
 class ListingComparatorBase
 {
 public:
-    ListingComparatorBase(const VFSListing &_items,
-                          std::span<const ItemVolatileData> _vd,
-                          SortMode _sort_mode);
+    ListingComparatorBase(const VFSListing &_items, std::span<const ItemVolatileData> _vd, SortMode _sort_mode);
 
 protected:
     int Compare(CFStringRef _1st, CFStringRef _2nd) const noexcept;
@@ -33,9 +31,7 @@ private:
 class IndirectListingComparator : private ListingComparatorBase
 {
 public:
-    IndirectListingComparator(const VFSListing &_items,
-                              std::span<const ItemVolatileData> _vd,
-                              SortMode sort_mode);
+    IndirectListingComparator(const VFSListing &_items, std::span<const ItemVolatileData> _vd, SortMode sort_mode);
     bool operator()(unsigned _1, unsigned _2) const;
 
 private:
@@ -57,11 +53,10 @@ private:
     bool IsLessByFilesystemRepresentation(unsigned _1, unsigned _2) const;
 };
 
-class ExternalListingComparator : private ListingComparatorBase {
+class ExternalListingComparator : private ListingComparatorBase
+{
 public:
-    ExternalListingComparator(const VFSListing &_items,
-                              std::span<const ItemVolatileData> _vd,
-                              SortMode sort_mode);
+    ExternalListingComparator(const VFSListing &_items, std::span<const ItemVolatileData> _vd, SortMode sort_mode);
     bool operator()(unsigned _1, const ExternalEntryKey &_val2) const;
 };
 

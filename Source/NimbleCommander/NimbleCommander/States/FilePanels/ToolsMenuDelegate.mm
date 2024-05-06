@@ -11,9 +11,8 @@
 static NSMenuItem *ItemForTool(const std::shared_ptr<const nc::panel::ExternalTool> &_tool, int _ind)
 {
     NSMenuItem *item = [[NSMenuItem alloc] init];
-    item.title = _tool->m_Title.empty()
-                     ? [NSString stringWithFormat:NSLocalizedString(@"Tool #%u", ""), _ind]
-                     : [NSString stringWithUTF8StdString:_tool->m_Title];
+    item.title = _tool->m_Title.empty() ? [NSString stringWithFormat:NSLocalizedString(@"Tool #%u", ""), _ind]
+                                        : [NSString stringWithUTF8StdString:_tool->m_Title];
     item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_tool}];
     if( !_tool->m_ExecutablePath.empty() )
         item.action = @selector(onExecuteExternalTool:);
@@ -42,9 +41,7 @@ static NSMenuItem *ItemForTool(const std::shared_ptr<const nc::panel::ExternalTo
 - (void)toolsHaveChanged
 {
     m_IsDirty = true;
-    dispatch_or_run_in_main_queue([=]{
-        [self menuNeedsUpdate:m_MyMenu];
-    });
+    dispatch_or_run_in_main_queue([=] { [self menuNeedsUpdate:m_MyMenu]; });
 }
 
 - (void)menuNeedsUpdate:(NSMenu *)menu
@@ -55,8 +52,8 @@ static NSMenuItem *ItemForTool(const std::shared_ptr<const nc::panel::ExternalTo
 
     // deferred observer setup
     if( !m_ToolsObserver )
-        m_ToolsObserver = NCAppDelegate.me.externalTools.ObserveChanges(
-            nc::objc_callback(self, @selector(toolsHaveChanged)));
+        m_ToolsObserver =
+            NCAppDelegate.me.externalTools.ObserveChanges(nc::objc_callback(self, @selector(toolsHaveChanged)));
 
     if( m_IsDirty ) {
         const auto tools = NCAppDelegate.me.externalTools.GetAllTools();

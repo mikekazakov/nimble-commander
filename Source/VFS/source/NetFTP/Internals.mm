@@ -1,8 +1,8 @@
 // Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <sys/stat.h>
 #include "Internals.h"
 #include "Host.h"
 #include <fmt/format.h>
+#include <sys/stat.h>
 
 namespace nc::vfs::ftp {
 
@@ -40,8 +40,7 @@ static int parse_dir_unix(const char *line, struct stat *sbuf, char *file, char 
 #define SPACES "%*[ \t]"
     res = sscanf(line,
                  "%11s"
-                 "%lu" SPACES "%32s" SPACES "%32s" SPACES "%llu" SPACES "%3s" SPACES "%2s" SPACES
-                 "%5s"
+                 "%lu" SPACES "%32s" SPACES "%32s" SPACES "%llu" SPACES "%3s" SPACES "%2s" SPACES "%5s"
                  "%*c"
                  "%1023c",
                  mode,
@@ -99,7 +98,7 @@ static int parse_dir_unix(const char *line, struct stat *sbuf, char *file, char 
     sbuf->st_size = size;
 
     *fmt::format_to(date, "{},{},{}", year, month, day) = 0;
-    tt = time(NULL);
+    tt = time(nullptr);
     gmtime_r(&tt, &tm);
     tm.tm_sec = tm.tm_min = tm.tm_hour = 0;
     if( strchr(year, ':') ) {
@@ -107,7 +106,7 @@ static int parse_dir_unix(const char *line, struct stat *sbuf, char *file, char 
         strptime(date, "%H:%M,%b,%d", &tm);
         // Unix systems omit the year for the last six months
         if( cur_mon + 5 < tm.tm_mon ) { // month from last year
-            tm.tm_year--; // correct the year
+            tm.tm_year--;               // correct the year
         }
     }
     else {
@@ -138,7 +137,7 @@ static int parse_dir_win(const char *line, struct stat *sbuf, char *file, char *
         return 0;
     }
 
-    tt = time(NULL);
+    tt = time(nullptr);
     gmtime_r(&tt, &tm);
     tm.tm_sec = tm.tm_min = tm.tm_hour = 0;
     strptime(date, "%m-%d-%y", &tm);
@@ -151,7 +150,7 @@ static int parse_dir_win(const char *line, struct stat *sbuf, char *file, char *
         sbuf->st_mode |= S_IFDIR;
     }
     else {
-        unsigned long long nsize = strtoull(size, NULL, 0);
+        unsigned long long nsize = strtoull(size, nullptr, 0);
         sbuf->st_mode |= S_IFREG;
         sbuf->st_size = nsize;
     }
@@ -184,8 +183,7 @@ std::shared_ptr<Directory> ParseListing(const char *_str)
         memset(&st, 0, sizeof(st));
         char filename[MAXPATHLEN];
         char link[MAXPATHLEN];
-        if( parse_dir_unix(current_line, &st, filename, link) ||
-            parse_dir_win(current_line, &st, filename, link) ) {
+        if( parse_dir_unix(current_line, &st, filename, link) || parse_dir_win(current_line, &st, filename, link) ) {
             if( strcmp(filename, ".") != 0 && strcmp(filename, "..") != 0 ) {
                 entries.emplace_back();
                 auto &ent = entries.back();
@@ -200,7 +198,7 @@ std::shared_ptr<Directory> ParseListing(const char *_str)
             }
         }
         else {
-            printf("failed to parse: %s\n", current_line);
+            fmt::println("failed to parse: {}", current_line);
         }
 
         line_start = line_end + 1;
@@ -213,7 +211,7 @@ CURLInstance::~CURLInstance()
 {
     if( curl ) {
         curl_easy_cleanup(curl);
-        curl = 0;
+        curl = nullptr;
     }
 
     if( curlm )
@@ -260,7 +258,7 @@ CURLcode CURLInstance::PerformMulti()
         int msgs_left = 1;
         while( msgs_left ) {
             CURLMsg *msg = curl_multi_info_read(curlm, &msgs_left);
-            if( msg == NULL || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
+            if( msg == nullptr || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
                 if( msg )
                     result = msg->data.result;
             }
@@ -288,11 +286,7 @@ CURLMcode CURLInstance::Detach()
     return e;
 }
 
-int CURLInstance::ProgressCallback(void *clientp,
-                                   double dltotal,
-                                   double dlnow,
-                                   double ultotal,
-                                   double ulnow)
+int CURLInstance::ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
 {
     CURLInstance *_this = static_cast<CURLInstance *>(clientp);
     return _this->prog_func ? _this->prog_func(dltotal, dlnow, ultotal, ulnow) : 0;

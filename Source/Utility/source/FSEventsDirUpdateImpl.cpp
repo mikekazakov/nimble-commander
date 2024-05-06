@@ -102,10 +102,10 @@ FSEventStreamRef FSEventsDirUpdateImpl::CreateEventStream(const std::string &pat
     auto cf_path = base::CFStringCreateWithUTF8StdString(path);
     if( !cf_path ) {
         Log::Warn(SPDLOC, "CreateEventStream failed to create a CFStringRef for '{}'", path);
-        return 0;
+        return nullptr;
     }
 
-    CFArrayRef pathsToWatch = CFArrayCreate(0, reinterpret_cast<const void **>(&cf_path), 1, nullptr);
+    CFArrayRef pathsToWatch = CFArrayCreate(nullptr, reinterpret_cast<const void **>(&cf_path), 1, nullptr);
     FSEventStreamRef stream = nullptr;
     auto create_stream = [&] {
         const auto flags = kFSEventStreamCreateFlagNoDefer | kFSEventStreamCreateFlagWatchRoot;
@@ -230,8 +230,8 @@ void FSEventsDirUpdateImpl::RemoveWatchPathWithTicket(uint64_t _ticket)
         return;
 
     if( !dispatch_is_main_queue() ) {
-      dispatch_to_main_queue([=, this] { RemoveWatchPathWithTicket(_ticket); });
-      return;
+        dispatch_to_main_queue([=, this] { RemoveWatchPathWithTicket(_ticket); });
+        return;
     }
 
     auto lock = std::lock_guard{m_Lock};

@@ -5,7 +5,7 @@
 #define PREFIX "PanelDataItemVolatileData "
 
 using namespace nc;
-//using namespace nc::base;
+// using namespace nc::base;
 using namespace nc::panel::data;
 
 using R = QuickSearchHiglight::Range;
@@ -72,12 +72,10 @@ TEST_CASE(PREFIX "ranges constructor")
     {
         struct TC {
             R src, dst;
-        } tcs[] = {
-            {
-                {0, 1000}, {0, 120},
-                // TODO: more?
-            }            
-        };
+        } tcs[] = {{
+            {0, 1000}, {0, 120},
+            // TODO: more?
+        }};
         for( auto test_case : tcs ) {
             const QuickSearchHiglight hl({&test_case.src, 1});
             CHECK(hl.size() == test_case.dst.length);
@@ -88,5 +86,4 @@ TEST_CASE(PREFIX "ranges constructor")
             CHECK(r.segments[0].length == test_case.dst.length);
         }
     }
-
 }

@@ -953,13 +953,13 @@ static void DoTemporaryFileStoragePurge()
     [m_LogWindowController showWindow:self];
 }
 
-- (nc::panel::TagsStorage&) tagsStorage
+- (nc::panel::TagsStorage &)tagsStorage
 {
     [[clang::no_destroy]] static nc::panel::TagsStorage storage(GlobalConfig(), g_ConfigFinderTags);
     static std::once_flag once;
-    std::call_once(once, []{
+    std::call_once(once, [] {
         if( !storage.Initialized() ) {
-            dispatch_to_background( []{
+            dispatch_to_background([] {
                 auto tags = nc::utility::Tags::GatherAllItemsTags();
                 storage.Set(tags);
             });

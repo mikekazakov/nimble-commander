@@ -207,7 +207,7 @@ bool PanelBriefViewItemLayoutConstants::operator!=(const PanelBriefViewItemLayou
 {
     if( auto pv = nc::objc_cast<PanelView>(self.superview) ) {
         m_PanelView = pv;
-        [pv addObserver:self forKeyPath:@"active" options:0 context:NULL];
+        [pv addObserver:self forKeyPath:@"active" options:0 context:nullptr];
         [self observeValueForKeyPath:@"active" ofObject:pv change:nil context:nil];
     }
 }
@@ -295,7 +295,7 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
     const auto count = static_cast<int>(sorted_idices.size());
     for( int i = 0; i < count; ++i ) {
         const auto raw_idx = sorted_idices[i];
-        if(const auto tags = listing.Tags(raw_idx); !tags.empty() ) {
+        if( const auto tags = listing.Tags(raw_idx); !tags.empty() ) {
             const auto geom = TrailingTagsInplaceDisplay::Place(tags);
             _widths[i] += geom.margin + geom.width;
         }
@@ -305,7 +305,7 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
 - (void)calculateFilenamesWidths
 {
     Log::Trace(SPDLOC, "[PanelBriefView calculateFilenamesWidths] started");
-    at_scope_end([]{Log::Trace(SPDLOC, "[PanelBriefView calculateFilenamesWidths] finished");});
+    at_scope_end([] { Log::Trace(SPDLOC, "[PanelBriefView calculateFilenamesWidths] finished"); });
     const auto strings = GatherDisplayFilenames(m_Data);
     const auto count = static_cast<int>(strings.size());
 

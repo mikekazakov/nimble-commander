@@ -24,12 +24,11 @@ struct ScrollPosition {
     double position = 0.;
     double proportion = 0.;
 };
-}
+} // namespace
 
 static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet();
 
-static std::shared_ptr<const TextModeWorkingSet>
-BuildWorkingSetForBackendState(const DataBackend &_backend);
+static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(const DataBackend &_backend);
 
 static int FindEqualVerticalOffsetForRebuiltFrame(const TextModeFrame &old_frame,
                                                   int old_vertical_offset,
@@ -47,11 +46,10 @@ static int64_t CalculateGlobalBytesOffsetFromScrollPosition(const TextModeFrame 
                                                             int _vertical_line_offset,
                                                             double _scroll_knob_position);
 
-static std::optional<int>
-FindVerticalLineToScrollToBytesOffsetWithFrame(const TextModeFrame &_frame,
-                                               const DataBackend &_backend,
-                                               NSSize _view_size,
-                                               int64_t _global_offset);
+static std::optional<int> FindVerticalLineToScrollToBytesOffsetWithFrame(const TextModeFrame &_frame,
+                                                                         const DataBackend &_backend,
+                                                                         NSSize _view_size,
+                                                                         int64_t _global_offset);
 
 static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame &_frame,
                                                             NSSize _view_size,
@@ -98,16 +96,14 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
         [self addSubview:m_VerticalScroller];
 
         NSDictionary *views = NSDictionaryOfVariableBindings(m_VerticalScroller);
-        [self addConstraints:[NSLayoutConstraint
-                                 constraintsWithVisualFormat:@"[m_VerticalScroller(15)]-(0)-|"
-                                                     options:0
-                                                     metrics:nil
-                                                       views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                                 constraintsWithVisualFormat:@"V:|-(0)-[m_VerticalScroller]-(0)-|"
-                                                     options:0
-                                                     metrics:nil
-                                                       views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_VerticalScroller(15)]-(0)-|"
+                                                                     options:0
+                                                                     metrics:nil
+                                                                       views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(0)-[m_VerticalScroller]-(0)-|"
+                                                                     options:0
+                                                                     metrics:nil
+                                                                       views:views]];
 
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)
@@ -130,13 +126,13 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     return true;
 }
 
-- (const nc::viewer::TextModeWorkingSet&)workingSet
+- (const nc::viewer::TextModeWorkingSet &)workingSet
 {
     assert(m_WorkingSet);
     return *m_WorkingSet;
 }
 
-- (const nc::viewer::TextModeFrame&)textFrame
+- (const nc::viewer::TextModeFrame &)textFrame
 {
     assert(m_Frame);
     return *m_Frame;
@@ -163,8 +159,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 
 - (NSSize)contentsSize
 {
-    auto width =
-        self.bounds.size.width - g_LeftInset - g_RightInset - m_VerticalScroller.bounds.size.width;
+    auto width = self.bounds.size.width - g_LeftInset - g_RightInset - m_VerticalScroller.bounds.size.width;
     auto height = self.bounds.size.height;
 
     return NSMakeSize(width, height);
@@ -197,8 +192,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 {
     const auto origin = CGPointMake(g_LeftInset, g_TopInset);
     const auto vertical_shift = m_VerticalLineOffset * m_FontInfo.LineHeight() + m_PxOffset.y;
-    const auto horizontal_shift =
-        m_HorizontalCharsOffset * m_FontInfo.PreciseMonospaceWidth() + m_PxOffset.x;
+    const auto horizontal_shift = m_HorizontalCharsOffset * m_FontInfo.PreciseMonospaceWidth() + m_PxOffset.x;
     return CGPointMake(origin.x - horizontal_shift, origin.y - vertical_shift);
 }
 
@@ -208,8 +202,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
  */
 - (int)numberOfLinesFittingInView
 {
-    const auto vertical_lines =
-        static_cast<int>(std::floor(self.contentsSize.height / m_FontInfo.LineHeight()));
+    const auto vertical_lines = static_cast<int>(std::floor(self.contentsSize.height / m_FontInfo.LineHeight()));
     return vertical_lines;
 }
 
@@ -224,8 +217,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     const auto head = ws.ToLocalCharIndex(int(local_byte_selection.location));
     if( head < 0 )
         return CFRangeMake(kCFNotFound, 0);
-    const auto tail =
-        ws.ToLocalCharIndex(int(local_byte_selection.location + local_byte_selection.length));
+    const auto tail = ws.ToLocalCharIndex(int(local_byte_selection.location + local_byte_selection.length));
     if( tail < 0 )
         return CFRangeMake(kCFNotFound, 0);
 
@@ -253,8 +245,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     const auto view_width = self.bounds.size.width;
     const auto origin = [self textOrigin];
 
-    const auto lines_per_screen =
-        static_cast<int>(std::ceil(self.bounds.size.height / m_FontInfo.LineHeight()));
+    const auto lines_per_screen = static_cast<int>(std::ceil(self.bounds.size.height / m_FontInfo.LineHeight()));
 
     // both lines_start and lines_end are _not_ clamped regarding real Frame data!
     const int lines_start = static_cast<int>(std::floor((0. - origin.y) / m_FontInfo.LineHeight()));
@@ -266,33 +257,28 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 
     const auto selection = [self localSelection];
 
-    for( int line_no = lines_start; line_no < lines_end;
-         ++line_no, line_pos.y += m_FontInfo.LineHeight() ) {
+    for( int line_no = lines_start; line_no < lines_end; ++line_no, line_pos.y += m_FontInfo.LineHeight() ) {
         if( line_no < 0 || line_no >= m_Frame->LinesNumber() )
             continue;
         auto &line = m_Frame->Line(line_no);
-        const auto text_origin =
-            CGPointMake(line_pos.x, line_pos.y + m_FontInfo.LineHeight() - m_FontInfo.Descent());
+        const auto text_origin = CGPointMake(line_pos.x, line_pos.y + m_FontInfo.LineHeight() - m_FontInfo.Descent());
 
         // draw the selection background
         if( selection.location >= 0 ) {
             const auto selection_end = selection.location + selection.length;
             double x1 = 0, x2 = -1;
-            if( line.UniCharsStart() <= selection.location &&
-                line.UniCharsEnd() > selection.location ) {
-                x1 = line_pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection.location, 0);
-                x2 =
-                    ((selection_end <= line.UniCharsEnd())
-                         ? line_pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection_end, 0)
-                         : view_width);
+            if( line.UniCharsStart() <= selection.location && line.UniCharsEnd() > selection.location ) {
+                x1 = line_pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection.location, nullptr);
+                x2 = ((selection_end <= line.UniCharsEnd())
+                          ? line_pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection_end, nullptr)
+                          : view_width);
             }
             else if( selection_end > line.UniCharsStart() && selection_end <= line.UniCharsEnd() ) {
                 x1 = line_pos.x;
-                x2 = line_pos.x + CTLineGetOffsetForStringIndex(
-                                      line.Line(), selection.location + selection.length, 0);
+                x2 = line_pos.x +
+                     CTLineGetOffsetForStringIndex(line.Line(), selection.location + selection.length, nullptr);
             }
-            else if( selection.location < line.UniCharsStart() &&
-                     selection_end > line.UniCharsEnd() ) {
+            else if( selection.location < line.UniCharsStart() && selection_end > line.UniCharsEnd() ) {
                 x1 = line_pos.x;
                 x2 = view_width;
             }
@@ -301,8 +287,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
                 CGContextSaveGState(context);
                 CGContextSetShouldAntialias(context, false);
                 CGContextSetFillColorWithColor(context, m_Theme->ViewerSelectionColor().CGColor);
-                CGContextFillRect(context,
-                                  CGRectMake(x1, line_pos.y, x2 - x1, m_FontInfo.LineHeight()));
+                CGContextFillRect(context, CGRectMake(x1, line_pos.y, x2 - x1, m_FontInfo.LineHeight()));
                 CGContextRestoreGState(context);
             }
         }
@@ -333,26 +318,22 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     else if( [self canMoveFileWindowUp] ) {
         assert(self.delegate);
         const auto old_frame = m_Frame;
-        const auto old_anchor_line_index =
-            std::clamp(m_VerticalLineOffset, 0, old_frame->LinesNumber() - 1);
-        const auto old_anchor_glob_offset =
-            static_cast<long>(old_frame->Line(old_anchor_line_index).BytesStart()) +
-            old_frame->WorkingSet().GlobalOffset();
+        const auto old_anchor_line_index = std::clamp(m_VerticalLineOffset, 0, old_frame->LinesNumber() - 1);
+        const auto old_anchor_glob_offset = static_cast<long>(old_frame->Line(old_anchor_line_index).BytesStart()) +
+                                            old_frame->WorkingSet().GlobalOffset();
         const auto desired_window_offset =
             std::clamp(old_anchor_glob_offset - static_cast<int64_t>(m_Backend->RawSize()) +
                            static_cast<int64_t>(m_Backend->RawSize()) / 4,
                        static_cast<int64_t>(0),
                        static_cast<int64_t>(m_Backend->FileSize() - m_Backend->RawSize()));
 
-        const auto rc = [self.delegate textModeView:self
-                requestsSyncBackendWindowMovementAt:desired_window_offset];
+        const auto rc = [self.delegate textModeView:self requestsSyncBackendWindowMovementAt:desired_window_offset];
         if( rc != VFSError::Ok )
             return false;
 
         [self rebuildWorkingSetAndFrame];
 
-        m_VerticalLineOffset =
-            FindEqualVerticalOffsetForRebuiltFrame(*old_frame, m_VerticalLineOffset, *m_Frame);
+        m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*old_frame, m_VerticalLineOffset, *m_Frame);
         if( m_VerticalLineOffset > 0 )
             m_VerticalLineOffset--;
         [self setNeedsDisplay:true];
@@ -383,11 +364,9 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     else if( [self canMoveFileWindowDown] ) {
         assert(self.delegate);
         const auto old_frame = m_Frame;
-        const auto old_anchor_line_index =
-            std::clamp(m_VerticalLineOffset, 0, old_frame->LinesNumber() - 1);
-        const auto old_anchor_glob_offset =
-            static_cast<long>(old_frame->Line(old_anchor_line_index).BytesStart()) +
-            old_frame->WorkingSet().GlobalOffset();
+        const auto old_anchor_line_index = std::clamp(m_VerticalLineOffset, 0, old_frame->LinesNumber() - 1);
+        const auto old_anchor_glob_offset = static_cast<long>(old_frame->Line(old_anchor_line_index).BytesStart()) +
+                                            old_frame->WorkingSet().GlobalOffset();
         const auto desired_window_offset =
             std::clamp(old_anchor_glob_offset - static_cast<int64_t>(m_Backend->RawSize()) / 4,
                        static_cast<int64_t>(0),
@@ -395,15 +374,13 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
         if( desired_window_offset <= static_cast<int64_t>(m_Backend->FilePos()) )
             return false; // singular situation. don't handle for now.
 
-        const auto rc = [self.delegate textModeView:self
-                requestsSyncBackendWindowMovementAt:desired_window_offset];
+        const auto rc = [self.delegate textModeView:self requestsSyncBackendWindowMovementAt:desired_window_offset];
         if( rc != VFSError::Ok )
             return false;
 
         [self rebuildWorkingSetAndFrame];
 
-        m_VerticalLineOffset =
-            FindEqualVerticalOffsetForRebuiltFrame(*old_frame, m_VerticalLineOffset, *m_Frame);
+        m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*old_frame, m_VerticalLineOffset, *m_Frame);
         if( m_VerticalLineOffset + self.numberOfLinesFittingInView < m_Frame->LinesNumber() )
             m_VerticalLineOffset++;
         //        std::cout << m_WorkingSet->GlobalOffset() << std::endl;
@@ -575,8 +552,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
         }
         else if( m_HorizontalCharsOffset * m_FontInfo.PreciseMonospaceWidth() + px_offset > gap ) {
             // right-bound clamp
-            m_HorizontalCharsOffset =
-                static_cast<int>(std::floor(gap / m_FontInfo.PreciseMonospaceWidth()));
+            m_HorizontalCharsOffset = static_cast<int>(std::floor(gap / m_FontInfo.PreciseMonospaceWidth()));
             px_offset = std::fmod(gap, m_FontInfo.PreciseMonospaceWidth());
         }
         m_PxOffset.x = px_offset;
@@ -586,17 +562,15 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 
 - (void)scrollWheel:(NSEvent *)_event
 {
-    const auto delta_y = _event.hasPreciseScrollingDeltas
-                             ? _event.scrollingDeltaY
-                             : _event.scrollingDeltaY * m_FontInfo.LineHeight();
-    const auto delta_x = _event.hasPreciseScrollingDeltas
-                             ? _event.scrollingDeltaX
-                             : _event.scrollingDeltaX * m_FontInfo.MonospaceWidth();
+    const auto delta_y =
+        _event.hasPreciseScrollingDeltas ? _event.scrollingDeltaY : _event.scrollingDeltaY * m_FontInfo.LineHeight();
+    const auto delta_x = _event.hasPreciseScrollingDeltas ? _event.scrollingDeltaX
+                                                          : _event.scrollingDeltaX * m_FontInfo.MonospaceWidth();
 
     // Emulate 'predominant axis scrolling' by picking only the greatest magnitude.
     // The implementation in NSScrollView is probably much more complex, but it's unclear
     // how it works under the hood.
-    if( std::abs(delta_y) > std::abs(delta_x)  ) {
+    if( std::abs(delta_y) > std::abs(delta_x) ) {
         [self scrollWheelVertical:delta_y];
     }
     else {
@@ -608,8 +582,8 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 
 - (void)syncVerticalScrollerPosition
 {
-    const auto scroll_pos = CalculateScrollPosition(
-        *m_Frame, *m_Backend, self.contentsSize, m_VerticalLineOffset, m_PxOffset.y);
+    const auto scroll_pos =
+        CalculateScrollPosition(*m_Frame, *m_Backend, self.contentsSize, m_VerticalLineOffset, m_PxOffset.y);
     m_VerticalScroller.doubleValue = scroll_pos.position;
     m_VerticalScroller.knobProportion = scroll_pos.proportion;
 }
@@ -630,12 +604,8 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
                 [self scrollToVerticalPxPosition:offset];
             }
             else {
-                const auto offset =
-                    CalculateGlobalBytesOffsetFromScrollPosition(*m_Frame,
-                                                                 *m_Backend,
-                                                                 self.contentsSize,
-                                                                 m_VerticalLineOffset,
-                                                                 m_VerticalScroller.doubleValue);
+                const auto offset = CalculateGlobalBytesOffsetFromScrollPosition(
+                    *m_Frame, *m_Backend, self.contentsSize, m_VerticalLineOffset, m_VerticalScroller.doubleValue);
                 [self scrollToGlobalBytesOffset:offset];
             }
             break;
@@ -656,8 +626,8 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 
 - (bool)scrollToGlobalBytesOffset:(int64_t)_offset
 {
-    auto probe_instant = FindVerticalLineToScrollToBytesOffsetWithFrame(
-        *m_Frame, *m_Backend, self.contentsSize, _offset);
+    auto probe_instant =
+        FindVerticalLineToScrollToBytesOffsetWithFrame(*m_Frame, *m_Backend, self.contentsSize, _offset);
     if( probe_instant != std::nullopt ) {
         // great, can satisfy the request instantly
         m_VerticalLineOffset = *probe_instant;
@@ -670,22 +640,20 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
         // nope, we need to perform I/O to move the file window
         if( !self.delegate )
             return false;
-        
+
         const auto desired_wnd_pos =
             std::clamp(_offset - static_cast<int64_t>(m_Backend->RawSize()) / 2,
                        static_cast<int64_t>(0),
-                       static_cast<int64_t>(m_Backend->FileSize()) -
-                           static_cast<int64_t>(m_Backend->RawSize()));
-        
-        const auto rc = [self.delegate textModeView:self
-                requestsSyncBackendWindowMovementAt:desired_wnd_pos];
+                       static_cast<int64_t>(m_Backend->FileSize()) - static_cast<int64_t>(m_Backend->RawSize()));
+
+        const auto rc = [self.delegate textModeView:self requestsSyncBackendWindowMovementAt:desired_wnd_pos];
         if( rc != VFSError::Ok )
             return false;
 
         [self rebuildWorkingSetAndFrame];
 
-        auto second_probe = FindVerticalLineToScrollToBytesOffsetWithFrame(
-            *m_Frame, *m_Backend, self.contentsSize, _offset);
+        auto second_probe =
+            FindVerticalLineToScrollToBytesOffsetWithFrame(*m_Frame, *m_Backend, self.contentsSize, _offset);
         if( second_probe != std::nullopt ) {
             m_VerticalLineOffset = *second_probe;
             m_PxOffset.y = 0.;
@@ -704,8 +672,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 {
     if( [self shouldRebuilFrameForChangedFrame] ) {
         const auto new_frame = [self buildLayout];
-        m_VerticalLineOffset =
-            FindEqualVerticalOffsetForRebuiltFrame(*m_Frame, m_VerticalLineOffset, *new_frame);
+        m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*m_Frame, m_VerticalLineOffset, *new_frame);
         m_Frame = new_frame;
         [self scrollPositionDidChange];
     }
@@ -723,11 +690,10 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     [self syncVerticalScrollerPosition];
 
     if( self.delegate ) {
-        const auto bytes_position =
-            ((m_VerticalLineOffset >= 0 && m_VerticalLineOffset < m_Frame->LinesNumber())
-                 ? m_Frame->Line(m_VerticalLineOffset).BytesStart()
-                 : 0) +
-            m_Frame->WorkingSet().GlobalOffset();
+        const auto bytes_position = ((m_VerticalLineOffset >= 0 && m_VerticalLineOffset < m_Frame->LinesNumber())
+                                         ? m_Frame->Line(m_VerticalLineOffset).BytesStart()
+                                         : 0) +
+                                    m_Frame->WorkingSet().GlobalOffset();
         const auto scroll_position = m_VerticalScroller.doubleValue;
 
         [self.delegate textModeView:self
@@ -745,11 +711,10 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 {
     if( !self.delegate )
         return;
-    
+
     m_LineWrap = [self.delegate textModeViewProvideLineWrapping:self];
     const auto new_frame = [self buildLayout];
-    m_VerticalLineOffset =
-        FindEqualVerticalOffsetForRebuiltFrame(*m_Frame, m_VerticalLineOffset, *new_frame);
+    m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*m_Frame, m_VerticalLineOffset, *new_frame);
     m_Frame = new_frame;
     [self scrollPositionDidChange];
     [self setNeedsDisplay:true];
@@ -783,18 +748,15 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
 
     if( _first_mouse_hit_index > _existing_selection.location &&
         _first_mouse_hit_index <= _existing_selection.location + _existing_selection.length ) {
-        const auto attach_top =
-            _first_mouse_hit_index - _existing_selection.location >
-            _existing_selection.location + _existing_selection.length - _first_mouse_hit_index;
-        return attach_top ? static_cast<int>(_existing_selection.location)
-                          : static_cast<int>(_existing_selection.location) +
-                                static_cast<int>(_existing_selection.length);
+        const auto attach_top = _first_mouse_hit_index - _existing_selection.location >
+                                _existing_selection.location + _existing_selection.length - _first_mouse_hit_index;
+        return attach_top
+                   ? static_cast<int>(_existing_selection.location)
+                   : static_cast<int>(_existing_selection.location) + static_cast<int>(_existing_selection.length);
     }
     else if( _first_mouse_hit_index < _existing_selection.location + _existing_selection.length &&
-             _current_mouse_hit_index <
-                 _existing_selection.location + _existing_selection.length ) {
-        return static_cast<int>(_existing_selection.location) +
-               static_cast<int>(_existing_selection.length);
+             _current_mouse_hit_index < _existing_selection.location + _existing_selection.length ) {
+        return static_cast<int>(_existing_selection.location) + static_cast<int>(_existing_selection.length);
     }
     else if( _first_mouse_hit_index > _existing_selection.location &&
              _current_mouse_hit_index > _existing_selection.location )
@@ -807,7 +769,7 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
 {
     if( !self.delegate )
         return;
-    
+
     const auto modifying_existing_selection = bool(_event.modifierFlags & NSEventModifierFlagShift);
     const auto first_down_view_coords = [self convertPoint:_event.locationInWindow fromView:nil];
     const auto first_down_frame_coords = [self viewCoordsToTextFrameCoords:first_down_view_coords];
@@ -821,18 +783,16 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
         const auto curr_frame_coords = [self viewCoordsToTextFrameCoords:curr_view_coords];
         const auto curr_ind = m_Frame->CharIndexForPosition(curr_frame_coords);
 
-        const auto base_ind =
-            modifying_existing_selection
-                ? base_index_with_existing_selection(original_selection, first_ind, curr_ind)
-                : first_ind;
+        const auto base_ind = modifying_existing_selection
+                                  ? base_index_with_existing_selection(original_selection, first_ind, curr_ind)
+                                  : first_ind;
 
         if( base_ind != curr_ind ) {
             const auto sel_start = std::min(base_ind, curr_ind);
             const auto sel_end = std::max(base_ind, curr_ind);
             const auto sel_start_byte = m_WorkingSet->ToGlobalByteOffset(sel_start);
             const auto sel_end_byte = m_WorkingSet->ToGlobalByteOffset(sel_end);
-            [self.delegate textModeView:self
-                           setSelection:CFRangeMake(sel_start_byte, sel_end_byte - sel_start_byte)];
+            [self.delegate textModeView:self setSelection:CFRangeMake(sel_start_byte, sel_end_byte - sel_start_byte)];
         }
         else
             [self.delegate textModeView:self setSelection:CFRangeMake(-1, 0)];
@@ -843,21 +803,20 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
 {
     if( !self.delegate )
         return;
-    
+
     const auto view_coords = [self convertPoint:_event.locationInWindow fromView:nil];
     const auto frame_coords = [self viewCoordsToTextFrameCoords:view_coords];
     const auto [sel_start, sel_end] = m_Frame->WordRangeForPosition(frame_coords);
     const auto sel_start_byte = m_WorkingSet->ToGlobalByteOffset(sel_start);
     const auto sel_end_byte = m_WorkingSet->ToGlobalByteOffset(sel_end);
-    [self.delegate textModeView:self
-                   setSelection:CFRangeMake(sel_start_byte, sel_end_byte - sel_start_byte)];
+    [self.delegate textModeView:self setSelection:CFRangeMake(sel_start_byte, sel_end_byte - sel_start_byte)];
 }
 
 - (void)handleSelectionWithTripleClick:(NSEvent *)_event
 {
     if( !self.delegate )
         return;
-    
+
     const auto view_coords = [self convertPoint:_event.locationInWindow fromView:nil];
     const auto frame_coords = [self viewCoordsToTextFrameCoords:view_coords];
     int line_no = m_Frame->LineIndexForPosition(frame_coords);
@@ -867,9 +826,8 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
     const auto &i = m_Frame->Line(line_no);
     const auto sel_start_byte = i.BytesStart();
     const auto sel_end_byte = i.BytesEnd();
-    const auto global_selection =
-        CFRangeMake(static_cast<long>(sel_start_byte) + m_Frame->WorkingSet().GlobalOffset(),
-                    static_cast<long>(sel_end_byte) - static_cast<long>(sel_start_byte));
+    const auto global_selection = CFRangeMake(static_cast<long>(sel_start_byte) + m_Frame->WorkingSet().GlobalOffset(),
+                                              static_cast<long>(sel_end_byte) - static_cast<long>(sel_start_byte));
 
     [self.delegate textModeView:self setSelection:global_selection];
 }
@@ -878,8 +836,7 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
 {
     m_FontInfo = FontGeometryInfo{(__bridge CTFontRef)m_Theme->Font()};
     const auto new_frame = [self buildLayout];
-    m_VerticalLineOffset =
-        FindEqualVerticalOffsetForRebuiltFrame(*m_Frame, m_VerticalLineOffset, *new_frame);
+    m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*m_Frame, m_VerticalLineOffset, *new_frame);
     m_Frame = new_frame;
     [self scrollPositionDidChange];
     [self setNeedsDisplay:true];
@@ -900,8 +857,7 @@ static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet()
     return std::make_shared<TextModeWorkingSet>(source);
 }
 
-static std::shared_ptr<const TextModeWorkingSet>
-BuildWorkingSetForBackendState(const DataBackend &_backend)
+static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(const DataBackend &_backend)
 {
     TextModeWorkingSet::Source source;
     source.unprocessed_characters = reinterpret_cast<const char16_t *>(_backend.UniChars());
@@ -931,10 +887,8 @@ static int FindEqualVerticalOffsetForRebuiltFrame(const TextModeFrame &old_frame
             // new frame.
             const auto &old_line = old_frame.Line(old_vertical_offset);
             const auto old_byte_offset = old_line.BytesStart();
-            const auto closest =
-                FindClosestLineIndex(new_frame.Lines().data(),
-                                     new_frame.Lines().data() + new_frame.LinesNumber(),
-                                     old_byte_offset);
+            const auto closest = FindClosestLineIndex(
+                new_frame.Lines().data(), new_frame.Lines().data() + new_frame.LinesNumber(), old_byte_offset);
             return closest;
         }
     }
@@ -957,10 +911,9 @@ static int FindEqualVerticalOffsetForRebuiltFrame(const TextModeFrame &old_frame
             const auto new_byte_offset = old_byte_offset + old_global_offset - new_global_offset;
             if( new_byte_offset < 0 || new_byte_offset > std::numeric_limits<int>::max() )
                 return 0; // can't possibly satisfy
-            const auto closest =
-                FindClosestLineIndex(new_frame.Lines().data(),
-                                     new_frame.Lines().data() + new_frame.LinesNumber(),
-                                     static_cast<int>(new_byte_offset));
+            const auto closest = FindClosestLineIndex(new_frame.Lines().data(),
+                                                      new_frame.Lines().data() + new_frame.LinesNumber(),
+                                                      static_cast<int>(new_byte_offset));
             return closest + delta_offset;
         }
         else {
@@ -970,10 +923,9 @@ static int FindEqualVerticalOffsetForRebuiltFrame(const TextModeFrame &old_frame
             const auto new_byte_offset = old_byte_offset + old_global_offset - new_global_offset;
             if( new_byte_offset < 0 || new_byte_offset > std::numeric_limits<int>::max() )
                 return 0; // can't possibly satisfy
-            const auto closest =
-                FindClosestLineIndex(new_frame.Lines().data(),
-                                     new_frame.Lines().data() + new_frame.LinesNumber(),
-                                     static_cast<int>(new_byte_offset));
+            const auto closest = FindClosestLineIndex(new_frame.Lines().data(),
+                                                      new_frame.Lines().data() + new_frame.LinesNumber(),
+                                                      static_cast<int>(new_byte_offset));
             return closest;
         }
     }
@@ -996,8 +948,8 @@ static ScrollPosition CalculateScrollPosition(const TextModeFrame &_frame,
         // calculate based on real pixel-wise position
         const auto full_height = _frame.LinesNumber() * line_height;
         if( full_height > _view_size.height ) {
-            scroll_position.position = (_vertical_line_offset * line_height + _vertical_px_offset) /
-                                       (full_height - _view_size.height);
+            scroll_position.position =
+                (_vertical_line_offset * line_height + _vertical_px_offset) / (full_height - _view_size.height);
             scroll_position.proportion = _view_size.height / full_height;
         }
         else { /* handled by the default initialization */
@@ -1008,10 +960,8 @@ static ScrollPosition CalculateScrollPosition(const TextModeFrame &_frame,
         if( _vertical_line_offset >= 0 && _vertical_line_offset < _frame.LinesNumber() ) {
             const auto first_line_index = _vertical_line_offset;
             const auto &first_line = _frame.Line(first_line_index);
-            const auto lines_per_view =
-                static_cast<int>(std::floor(_view_size.height / line_height));
-            const auto last_line_index =
-                std::min(first_line_index + lines_per_view - 1, _frame.LinesNumber() - 1);
+            const auto lines_per_view = static_cast<int>(std::floor(_view_size.height / line_height));
+            const auto last_line_index = std::min(first_line_index + lines_per_view - 1, _frame.LinesNumber() - 1);
             const auto &last_line = _frame.Line(last_line_index);
             const auto bytes_total = static_cast<int64_t>(_backend.FileSize());
             const auto bytes_on_screen = int64_t(last_line.BytesEnd() - first_line.BytesStart());
@@ -1041,12 +991,10 @@ static int64_t CalculateGlobalBytesOffsetFromScrollPosition(const TextModeFrame 
         const auto first_line_index = _vertical_line_offset;
         const auto &first_line = _frame.Line(first_line_index);
         const auto lines_per_view = static_cast<int>(std::floor(_view_size.height / line_height));
-        const auto last_line_index =
-            std::min(first_line_index + lines_per_view - 1, _frame.LinesNumber() - 1);
+        const auto last_line_index = std::min(first_line_index + lines_per_view - 1, _frame.LinesNumber() - 1);
         const auto &last_line = _frame.Line(last_line_index);
         const auto bytes_total = static_cast<int64_t>(_backend.FileSize());
-        const auto bytes_on_screen =
-            static_cast<int64_t>(last_line.BytesEnd() - first_line.BytesStart());
+        const auto bytes_on_screen = static_cast<int64_t>(last_line.BytesEnd() - first_line.BytesStart());
         assert(bytes_total >= bytes_on_screen);
         return static_cast<int64_t>(_scroll_knob_position * double(bytes_total - bytes_on_screen));
     }
@@ -1055,11 +1003,10 @@ static int64_t CalculateGlobalBytesOffsetFromScrollPosition(const TextModeFrame 
     }
 }
 
-static std::optional<int>
-FindVerticalLineToScrollToBytesOffsetWithFrame(const TextModeFrame &_frame,
-                                               const DataBackend &_backend,
-                                               const NSSize _view_size,
-                                               const int64_t _global_offset)
+static std::optional<int> FindVerticalLineToScrollToBytesOffsetWithFrame(const TextModeFrame &_frame,
+                                                                         const DataBackend &_backend,
+                                                                         const NSSize _view_size,
+                                                                         const int64_t _global_offset)
 {
     if( _frame.Empty() ) {
         // edge-case - let's pretend that we found the line at the beginning

@@ -11,8 +11,7 @@
 
 namespace nc::vfs::dropbox {
 
-class AuthenticatorImpl : public Authenticator,
-                          public std::enable_shared_from_this<AuthenticatorImpl>
+class AuthenticatorImpl : public Authenticator, public std::enable_shared_from_this<AuthenticatorImpl>
 {
 public:
     void PerformRequest(const Request &_request,
@@ -44,15 +43,11 @@ void AuthenticatorImpl::PerformRequest(const Request &_request,
     m_OnError = std::move(_on_error);
 
     m_RedirectHTTPHandler = [[OIDRedirectHTTPHandler alloc]
-        initWithSuccessURL:[NSURL
-                               URLWithString:[NSString
-                                                 stringWithUTF8StdString:m_Request.success_url]]];
-    const auto redirectURI = [m_RedirectHTTPHandler startHTTPListener:nil
-                                                             withPort:m_Request.loopback_port];
+        initWithSuccessURL:[NSURL URLWithString:[NSString stringWithUTF8StdString:m_Request.success_url]]];
+    const auto redirectURI = [m_RedirectHTTPHandler startHTTPListener:nil withPort:m_Request.loopback_port];
 
-    const auto configuration =
-        [[OIDServiceConfiguration alloc] initWithAuthorizationEndpoint:api::OAuth2Authorize
-                                                         tokenEndpoint:api::OAuth2Token];
+    const auto configuration = [[OIDServiceConfiguration alloc] initWithAuthorizationEndpoint:api::OAuth2Authorize
+                                                                                tokenEndpoint:api::OAuth2Token];
 
     auto additional_params = @{@"token_access_type": @"offline"};
 
@@ -87,8 +82,7 @@ void AuthenticatorImpl::Callback(OIDAuthState *_Nullable _auth_state, NSError *_
 {
     if( _auth_state != nil ) {
         Token token;
-        if( auto uid =
-                objc_cast<NSString>(_auth_state.lastTokenResponse.additionalParameters[@"uid"]) )
+        if( auto uid = objc_cast<NSString>(_auth_state.lastTokenResponse.additionalParameters[@"uid"]) )
             token.uid = uid.UTF8String;
         if( _auth_state.lastTokenResponse.accessToken )
             token.access_token = _auth_state.lastTokenResponse.accessToken.UTF8String;
@@ -98,8 +92,7 @@ void AuthenticatorImpl::Callback(OIDAuthState *_Nullable _auth_state, NSError *_
             token.scope = _auth_state.lastTokenResponse.scope.UTF8String;
         if( _auth_state.refreshToken )
             token.refresh_token = _auth_state.refreshToken.UTF8String;
-        if( auto account_id = objc_cast<NSString>(
-                _auth_state.lastTokenResponse.additionalParameters[@"account_id"]) )
+        if( auto account_id = objc_cast<NSString>(_auth_state.lastTokenResponse.additionalParameters[@"account_id"]) )
             token.account_id = account_id.UTF8String;
 
         Log::Info(SPDLOC,
@@ -114,8 +107,7 @@ void AuthenticatorImpl::Callback(OIDAuthState *_Nullable _auth_state, NSError *_
         return;
     }
     if( _error != nil ) {
-        Log::Warn(
-            SPDLOC, "Failed to got auth token, error: {}", _error.localizedDescription.UTF8String);
+        Log::Warn(SPDLOC, "Failed to got auth token, error: {}", _error.localizedDescription.UTF8String);
 
         int error = VFSError::Ok;
         if( [_error.domain isEqualToString:OIDOAuthTokenErrorDomain] ||

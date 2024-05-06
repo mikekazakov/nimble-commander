@@ -17,9 +17,7 @@ LinkageJob::LinkageJob(const std::string &_link_path,
     Statistics().CommitEstimated(Statistics::SourceType::Items, 1);
 }
 
-LinkageJob::~LinkageJob()
-{
-}
+LinkageJob::~LinkageJob() = default;
 
 void LinkageJob::Perform()
 {

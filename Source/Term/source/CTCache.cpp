@@ -105,7 +105,7 @@ CTLineRef CTCache::Build(char32_t _code)
     const void *values[2] = {m_Fonts.front().get(), kCFBooleanTrue};
 
     auto str_dict = base::CFPtr<CFDictionaryRef>::adopt(
-        CFDictionaryCreate(NULL, keys, values, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        CFDictionaryCreate(nullptr, keys, values, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     if( !str_dict )
         return {};
 
@@ -122,7 +122,7 @@ CTCache::DisplayChar CTCache::Internalize(CTLineRef _line)
     assert(_line);
 
     auto insert_full = [=, this] -> DisplayChar {
-        m_Complexes.push_back(base::CFPtr<CTLineRef>(_line));
+        m_Complexes.emplace_back(_line);
         return {Kind::Complex, static_cast<uint32_t>(m_Complexes.size() - 1)};
     };
 
@@ -306,7 +306,7 @@ uint16_t CTCache::FindOrInsert(CTFontRef _font)
             return static_cast<uint16_t>(i);
         }
     }
-    m_Fonts.push_back(base::CFPtr<CTFontRef>(_font));
+    m_Fonts.emplace_back(_font);
     return static_cast<uint16_t>(m_Fonts.size() - 1);
 }
 

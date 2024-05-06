@@ -13,7 +13,7 @@
 namespace nc::ops {
 class Pool;
 class Operation;
-}
+} // namespace nc::ops
 
 @interface NCMainWindowController : NSWindowController <NSWindowDelegate, NSWindowRestoration>
 
@@ -26,11 +26,9 @@ class Operation;
 
 - (void)requestTerminal:(const std::string &)_cwd;
 - (void)requestTerminalExecution:(const char *)_filename at:(const char *)_cwd;
-- (void)requestTerminalExecution:(const char *)_filename
-                              at:(const char *)_cwd
-                  withParameters:(const char *)_params;
-- (void)requestTerminalExecutionWithFullPath:(const std::filesystem::path&)_binary_path
-                              andArguments:(std::span<const std::string>)_params;
+- (void)requestTerminalExecution:(const char *)_filename at:(const char *)_cwd withParameters:(const char *)_params;
+- (void)requestTerminalExecutionWithFullPath:(const std::filesystem::path &)_binary_path
+                                andArguments:(std::span<const std::string>)_params;
 - (void)RequestExternalEditorTerminalExecution:(const std::string &)_full_app_path
                                         params:(const std::string &)_params
                                      fileTitle:(const std::string &)_file_title;
@@ -41,9 +39,8 @@ class Operation;
 + (bool)canRestoreDefaultWindowStateFromLastOpenedWindow;
 
 // Access to states
-@property(nonatomic, readwrite)
-    MainWindowFilePanelState *filePanelsState;                  // one and only one per window
-@property(nonatomic, readonly) NCTermShellState *terminalState; // zero or one per window
+@property(nonatomic, readwrite) MainWindowFilePanelState *filePanelsState; // one and only one per window
+@property(nonatomic, readonly) NCTermShellState *terminalState;            // zero or one per window
 @property(nonatomic, readonly) id<NCMainWindowState> topmostState;
 @property(nonatomic, readonly) nc::ops::Pool &operationsPool;
 

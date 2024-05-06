@@ -8,31 +8,30 @@
 
 @interface PanelDraggingItem : NSPasteboardItem
 
-@property (nonatomic, readonly) const VFSListingItem& item;
-@property (nonatomic) NSImage                        *icon;
+@property(nonatomic, readonly) const VFSListingItem &item;
+@property(nonatomic) NSImage *icon;
 
-- (PanelDraggingItem*) initWithItem:(const VFSListingItem&)_item;
-- (void) reset;
-
-@end
-
-@interface FilesDraggingSource : NSObject<NSDraggingSource, NSPasteboardItemDataProvider>
-
-+ (NSString*) privateDragUTI;
-+ (NSString*) fileURLsPromiseDragUTI;
-+ (NSString*) fileURLsDragUTI;
-+ (NSString*) filenamesPBoardDragUTI;
-
-@property(nonatomic, readonly, weak) PanelController               *sourceController;
-@property(nonatomic, readonly)  bool                                areAllHostsWriteable;
-@property(nonatomic, readonly)  bool                                areAllHostsNative;
-@property(nonatomic, readonly)  const VFSHostPtr&                   commonHost;
-@property(nonatomic, readonly)  const std::vector<PanelDraggingItem*>&items;
-
-- (FilesDraggingSource*) initWithSourceController:(PanelController*)_controller
-                                       nativeHost:(nc::vfs::NativeHost&)_native_vfs;
-- (void)writeURLsPBoard:(NSPasteboard*)_sender;
-- (void)addItem:(PanelDraggingItem*)_item;
+- (PanelDraggingItem *)initWithItem:(const VFSListingItem &)_item;
+- (void)reset;
 
 @end
 
+@interface FilesDraggingSource : NSObject <NSDraggingSource, NSPasteboardItemDataProvider>
+
++ (NSString *)privateDragUTI;
++ (NSString *)fileURLsPromiseDragUTI;
++ (NSString *)fileURLsDragUTI;
++ (NSString *)filenamesPBoardDragUTI;
+
+@property(nonatomic, readonly, weak) PanelController *sourceController;
+@property(nonatomic, readonly) bool areAllHostsWriteable;
+@property(nonatomic, readonly) bool areAllHostsNative;
+@property(nonatomic, readonly) const VFSHostPtr &commonHost;
+@property(nonatomic, readonly) const std::vector<PanelDraggingItem *> &items;
+
+- (FilesDraggingSource *)initWithSourceController:(PanelController *)_controller
+                                       nativeHost:(nc::vfs::NativeHost &)_native_vfs;
+- (void)writeURLsPBoard:(NSPasteboard *)_sender;
+- (void)addItem:(PanelDraggingItem *)_item;
+
+@end

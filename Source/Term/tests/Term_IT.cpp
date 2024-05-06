@@ -532,7 +532,7 @@ const static std::pair<const char8_t *, const char32_t *> g_UTFCases[] = {
 static Parser::Bytes Bytes(const char *_string) noexcept
 {
     const auto view = std::string_view{_string};
-    return Parser::Bytes(reinterpret_cast<const std::byte *>(view.data()), view.length());
+    return {reinterpret_cast<const std::byte *>(view.data()), view.length()};
 }
 
 [[maybe_unused]] static void Print(const std::span<const input::Command> &_commands)

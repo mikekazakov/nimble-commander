@@ -16,8 +16,7 @@ HostDirObservationTicket::HostDirObservationTicket() noexcept : m_Ticket(0), m_H
 {
 }
 
-HostDirObservationTicket::HostDirObservationTicket(unsigned long _ticket,
-                                                   std::weak_ptr<VFSHost> _host) noexcept
+HostDirObservationTicket::HostDirObservationTicket(unsigned long _ticket, std::weak_ptr<VFSHost> _host) noexcept
     : m_Ticket(_ticket), m_Host(_host)
 {
     assert((_ticket == 0 && _host.expired()) || (_ticket != 0 && !_host.expired()));
@@ -118,8 +117,7 @@ public:
 };
 
 Host::Host(const char *_junction_path, const std::shared_ptr<Host> &_parent, const char *_fs_tag)
-    : m_JunctionPath(_junction_path ? _junction_path : ""), m_Parent(_parent), m_Tag(_fs_tag),
-      m_Features(0)
+    : m_JunctionPath(_junction_path ? _junction_path : ""), m_Parent(_parent), m_Tag(_fs_tag), m_Features(0)
 {
 }
 
@@ -171,9 +169,7 @@ int Host::CreateFile([[maybe_unused]] const char *_path,
     return VFSError::NotSupported;
 }
 
-bool Host::IsDirectory(const char *_path,
-                       unsigned long _flags,
-                       const VFSCancelChecker &_cancel_checker)
+bool Host::IsDirectory(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     VFSStat st;
     if( Stat(_path, st, _flags, _cancel_checker) < 0 )
@@ -182,9 +178,7 @@ bool Host::IsDirectory(const char *_path,
     return (st.mode & S_IFMT) == S_IFDIR;
 }
 
-bool Host::IsSymlink(const char *_path,
-                     unsigned long _flags,
-                     const VFSCancelChecker &_cancel_checker)
+bool Host::IsSymlink(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     VFSStat st;
     if( Stat(_path, st, _flags, _cancel_checker) < 0 )
@@ -219,7 +213,7 @@ bool Host::FindLastValidItem(const char *_orig_path,
         }
 
         char *sl = strrchr(tmp, '/');
-        assert(sl != 0);
+        assert(sl != nullptr);
         if( sl == tmp )
             return false;
         *sl = 0;
@@ -230,7 +224,7 @@ bool Host::FindLastValidItem(const char *_orig_path,
 
 ssize_t Host::CalculateDirectorySize(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == 0 || _path[0] != '/' )
+    if( _path == nullptr || _path[0] != '/' )
         return VFSError::InvalidCall;
 
     std::queue<std::filesystem::path> look_paths;
@@ -247,7 +241,7 @@ ssize_t Host::CalculateDirectorySize(const char *_path, const VFSCancelChecker &
                 look_paths.emplace(std::move(full_path));
             else {
                 VFSStat stat;
-                if( Stat(full_path.c_str(), stat, VFSFlags::F_NoFollow, 0) == 0 )
+                if( Stat(full_path.c_str(), stat, VFSFlags::F_NoFollow, nullptr) == 0 )
                     total_size += stat.size;
             }
             return true;
@@ -291,9 +285,8 @@ int Host::Stat([[maybe_unused]] const char *_path,
     return VFSError::NotSupported;
 }
 
-int Host::IterateDirectoryListing(
-    [[maybe_unused]] const char *_path,
-    [[maybe_unused]] const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+int Host::IterateDirectoryListing([[maybe_unused]] const char *_path,
+                                  [[maybe_unused]] const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     // TODO: write a default implementation using listing fetching.
     // it will be less efficient, but for some FS like PS it will be ok
@@ -307,14 +300,12 @@ int Host::StatFS([[maybe_unused]] const char *_path,
     return VFSError::NotSupported;
 }
 
-int Host::Unlink([[maybe_unused]] const char *_path,
-                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int Host::Unlink([[maybe_unused]] const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int Host::Trash([[maybe_unused]] const char *_path,
-                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int Host::Trash([[maybe_unused]] const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
@@ -356,8 +347,7 @@ bool Host::ShouldProduceThumbnails() const
     return false;
 }
 
-int Host::RemoveDirectory([[maybe_unused]] const char *_path,
-                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int Host::RemoveDirectory([[maybe_unused]] const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
@@ -376,9 +366,8 @@ int Host::SetPermissions([[maybe_unused]] const char *_path,
     return VFSError::NotSupported;
 }
 
-int Host::GetXAttrs(
-    [[maybe_unused]] const char *_path,
-    [[maybe_unused]] std::vector<std::pair<std::string, std::vector<uint8_t>>> &_xattrs)
+int Host::GetXAttrs([[maybe_unused]] const char *_path,
+                    [[maybe_unused]] std::vector<std::pair<std::string, std::vector<uint8_t>>> &_xattrs)
 {
     return VFSError::NotSupported;
 }
@@ -450,8 +439,7 @@ int Host::FetchSingleItemListing(const char *_path,
     char path[MAXPATHLEN], directory[MAXPATHLEN], filename[MAXPATHLEN];
     strcpy(path, _path);
 
-    if( !EliminateTrailingSlashInPath(path) ||
-        !GetDirectoryContainingItemFromPath(path, directory) ||
+    if( !EliminateTrailingSlashInPath(path) || !GetDirectoryContainingItemFromPath(path, directory) ||
         !GetFilenameFromPath(path, filename) )
         return VFSError::InvalidCall;
 
@@ -637,10 +625,8 @@ std::string Host::MakePathVerbose(std::string_view _path) const
     }
 
     // make one and only one memory allocation
-    const size_t total_len =
-        std::accumulate(&strings[0], &strings[0] + strings_n, size_t(0), [](auto sum, auto string) {
-            return sum + string.length();
-        });
+    const size_t total_len = std::accumulate(
+        &strings[0], &strings[0] + strings_n, size_t(0), [](auto sum, auto string) { return sum + string.length(); });
     std::string verbose_path;
     verbose_path.reserve(total_len);
     for( size_t index = strings_n - 1; index < strings_n; --index )

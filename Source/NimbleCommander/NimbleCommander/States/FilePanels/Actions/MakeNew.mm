@@ -267,4 +267,4 @@ void MakeNewNamedFolder::Perform(PanelController *_target, id) const
                            }];
 }
 
-}
+} // namespace nc::panel::actions

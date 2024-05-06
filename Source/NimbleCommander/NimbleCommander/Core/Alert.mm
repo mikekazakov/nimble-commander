@@ -20,11 +20,10 @@
 
 @end
 
-@implementation Alert
-{
-    NSAlert                 *m_Alert;
-    AlertWindowController   *m_Controller;
-    void                   (^m_Handler)(NSModalResponse);
+@implementation Alert {
+    NSAlert *m_Alert;
+    AlertWindowController *m_Controller;
+    void (^m_Handler)(NSModalResponse);
 }
 
 + (Alert *)alertWithError:(NSError *)error
@@ -33,12 +32,12 @@
     return [[Alert alloc] initWithAlert:a];
 }
 
-- (instancetype) init
+- (instancetype)init
 {
     return [self initWithAlert:[[NSAlert alloc] init]];
 }
 
-- (instancetype) initWithAlert:(NSAlert*)_alert
+- (instancetype)initWithAlert:(NSAlert *)_alert
 {
     if( self = [super init] ) {
         m_Alert = _alert;
@@ -50,32 +49,32 @@
     return self;
 }
 
-- (NSString*) messageText
+- (NSString *)messageText
 {
     return m_Alert.messageText;
 }
 
-- (void) setMessageText:(NSString *)messageText
+- (void)setMessageText:(NSString *)messageText
 {
     m_Alert.messageText = messageText;
 }
 
-- (NSString*) informativeText
+- (NSString *)informativeText
 {
     return m_Alert.informativeText;
 }
 
-- (void) setInformativeText:(NSString *)informativeText
+- (void)setInformativeText:(NSString *)informativeText
 {
     m_Alert.informativeText = informativeText;
 }
 
-- (NSImage*) icon
+- (NSImage *)icon
 {
     return m_Alert.icon;
 }
 
-- (void) setIcon:(NSImage *)icon
+- (void)setIcon:(NSImage *)icon
 {
     m_Alert.icon = icon;
 }
@@ -85,37 +84,37 @@
     return [m_Alert addButtonWithTitle:title];
 }
 
-- (NSArray<NSButton *> *) buttons
+- (NSArray<NSButton *> *)buttons
 {
     return m_Alert.buttons;
 }
 
-- (BOOL) showsHelp
+- (BOOL)showsHelp
 {
     return m_Alert.showsHelp;
 }
 
-- (void) setShowsHelp:(BOOL)showsHelp
+- (void)setShowsHelp:(BOOL)showsHelp
 {
     m_Alert.showsHelp = showsHelp;
 }
 
-- (NSString*)helpAnchor
+- (NSString *)helpAnchor
 {
     return m_Alert.helpAnchor;
 }
 
-- (void) setHelpAnchor:(NSString *)helpAnchor
+- (void)setHelpAnchor:(NSString *)helpAnchor
 {
     m_Alert.helpAnchor = helpAnchor;
 }
 
-- (NSAlertStyle) alertStyle
+- (NSAlertStyle)alertStyle
 {
     return m_Alert.alertStyle;
 }
 
-- (void) setAlertStyle:(NSAlertStyle)alertStyle
+- (void)setAlertStyle:(NSAlertStyle)alertStyle
 {
     m_Alert.alertStyle = alertStyle;
 }
@@ -126,17 +125,18 @@
 }
 
 - (void)beginSheetModalForWindow:(NSWindow *)sheetWindow
-               completionHandler:(void (^ __nullable)(NSModalResponse returnCode))handler
+               completionHandler:(void (^__nullable)(NSModalResponse returnCode))handler
 {
     // use this artifical retain cycle to ensure longlivety of Alert
     m_Handler = handler;
-    [m_Alert beginSheetModalForWindow:sheetWindow completionHandler:^(NSModalResponse returnCode){
-        if(self->m_Handler)
-            self->m_Handler(returnCode);
-    }];
+    [m_Alert beginSheetModalForWindow:sheetWindow
+                    completionHandler:^(NSModalResponse returnCode) {
+                      if( self->m_Handler )
+                          self->m_Handler(returnCode);
+                    }];
 }
 
-- (NSWindow*) window
+- (NSWindow *)window
 {
     return m_Alert.window;
 }
@@ -145,26 +145,22 @@
 
 namespace nc::core {
 
-void ShowExceptionAlert( const std::string &_message )
+void ShowExceptionAlert(const std::string &_message)
 {
     if( dispatch_is_main_queue() ) {
         auto alert = [[Alert alloc] init];
         alert.messageText = @"Unexpected exception was caught:";
-        alert.informativeText = !_message.empty() ?
-            [NSString stringWithUTF8StdString:_message] :
-            @"Unknown exception";
+        alert.informativeText = !_message.empty() ? [NSString stringWithUTF8StdString:_message] : @"Unknown exception";
         [alert runModal];
     }
     else {
-        dispatch_to_main_queue([_message]{
-            ShowExceptionAlert(_message);
-        });
+        dispatch_to_main_queue([_message] { ShowExceptionAlert(_message); });
     }
 }
 
-void ShowExceptionAlert( const std::exception &_exception )
+void ShowExceptionAlert(const std::exception &_exception)
 {
-    ShowExceptionAlert( _exception.what() );
+    ShowExceptionAlert(_exception.what());
 }
 
-}
+} // namespace nc::core

@@ -3,16 +3,15 @@
 
 class ExternalEditorStartupInfo;
 
-@interface ExternalEditorInfo : NSObject<NSCoding, NSCopying>
+@interface ExternalEditorInfo : NSObject <NSCoding, NSCopying>
 
-@property (nonatomic) NSString *name;
-@property (nonatomic) NSString *path;
-@property (nonatomic) NSString *arguments;
-@property (nonatomic) NSString *mask;
-@property (nonatomic) bool only_files;
-@property (nonatomic) uint64_t max_size;
-@property (nonatomic) bool terminal;
-
+@property(nonatomic) NSString *name;
+@property(nonatomic) NSString *path;
+@property(nonatomic) NSString *arguments;
+@property(nonatomic) NSString *mask;
+@property(nonatomic) bool only_files;
+@property(nonatomic) uint64_t max_size;
+@property(nonatomic) bool terminal;
 
 //- (bool) isValidItem:(const VFSListingItem&)_item;
 
@@ -22,6 +21,6 @@ class ExternalEditorStartupInfo;
  */
 //- (string) substituteFileName:(const string &)_path;
 
-- (std::shared_ptr<ExternalEditorStartupInfo>) toStartupInfo;
+- (std::shared_ptr<ExternalEditorStartupInfo>)toStartupInfo;
 
 @end

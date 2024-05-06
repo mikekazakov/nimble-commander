@@ -3,8 +3,7 @@
 
 namespace nc::panel {
 
-ClosedPanelsHistoryImpl::ClosedPanelsHistoryImpl(size_t _max_capacity)
-    : m_MaxCapacity(_max_capacity)
+ClosedPanelsHistoryImpl::ClosedPanelsHistoryImpl(size_t _max_capacity) : m_MaxCapacity(_max_capacity)
 {
     assert(_max_capacity > 0);
 }

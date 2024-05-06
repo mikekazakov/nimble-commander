@@ -57,4 +57,4 @@ void ChangeAttributes::Perform(PanelController *_target, [[maybe_unused]] id _se
     [_target.mainWindowController beginSheet:sheet.window completionHandler:handler];
 }
 
-}
+} // namespace nc::panel::actions

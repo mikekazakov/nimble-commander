@@ -132,4 +132,4 @@ inline CGSize TextModeFrame::Bounds() const noexcept
     return m_Bounds;
 }
 
-}
+} // namespace nc::viewer

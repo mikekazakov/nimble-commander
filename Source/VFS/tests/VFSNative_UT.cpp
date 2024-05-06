@@ -36,8 +36,14 @@ TEST_CASE(PREFIX "Does produces unified Application directory")
 
     VFSListingPtr listing;
     int rc = 0;
-    SECTION("No ..") { rc = FetchUnifiedApplicationsListing(host(), listing, Flags::F_NoDotDot, {}); }
-    SECTION("With ..") { rc = FetchUnifiedApplicationsListing(host(), listing, Flags::None, {}); }
+    SECTION("No ..")
+    {
+        rc = FetchUnifiedApplicationsListing(host(), listing, Flags::F_NoDotDot, {});
+    }
+    SECTION("With ..")
+    {
+        rc = FetchUnifiedApplicationsListing(host(), listing, Flags::None, {});
+    }
 
     REQUIRE(rc == VFSError::Ok);
     REQUIRE(listing != nullptr);

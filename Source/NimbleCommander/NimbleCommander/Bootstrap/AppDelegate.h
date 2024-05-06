@@ -24,17 +24,17 @@ class FSEventsFileUpdate;
 class NativeFSManager;
 class TemporaryFileStorage;
 class UTIDB;
-}
+} // namespace utility
 
 namespace core {
 class VFSInstanceManager;
 class ServicesHandler;
-}
+} // namespace core
 
 namespace ops {
 class AggregateProgressTracker;
 class PoolEnqueueFilter;
-}
+} // namespace ops
 
 namespace panel {
 class PanelViewLayoutsStorage;
@@ -42,7 +42,7 @@ class FavoriteLocationsStorage;
 class ClosedPanelsHistory;
 class ExternalToolsStorage;
 class TagsStorage;
-}
+} // namespace panel
 
 namespace viewer {
 class History;
@@ -52,20 +52,18 @@ namespace vfs {
 class NativeHost;
 }
 
-}
+} // namespace nc
 
 @interface NCAppDelegate : NSObject <NSApplicationDelegate, NSWindowRestoration>
 
-- (InternalViewerWindowController *)
-    findInternalViewerWindowForPath:(const std::string &)_path
-                              onVFS:(const std::shared_ptr<VFSHost> &)_vfs;
+- (InternalViewerWindowController *)findInternalViewerWindowForPath:(const std::string &)_path
+                                                              onVFS:(const std::shared_ptr<VFSHost> &)_vfs;
 /**
  * Searches for an existing window with corresponding path,
  * if it is not found - allocates a new non-shown one.
  */
-- (InternalViewerWindowController *)
-    retrieveInternalViewerWindowForPath:(const std::string &)_path
-                                  onVFS:(const std::shared_ptr<VFSHost> &)_vfs;
+- (InternalViewerWindowController *)retrieveInternalViewerWindowForPath:(const std::string &)_path
+                                                                  onVFS:(const std::shared_ptr<VFSHost> &)_vfs;
 
 /**
  * Runs a modal dialog window, which asks user if he wants to reset app settings.
@@ -106,23 +104,19 @@ class NativeHost;
 
 @property(nonatomic, readonly) nc::panel::ExternalToolsStorage &externalTools;
 
-@property(nonatomic, readonly)
-    const std::shared_ptr<nc::panel::PanelViewLayoutsStorage> &panelLayouts;
+@property(nonatomic, readonly) const std::shared_ptr<nc::panel::PanelViewLayoutsStorage> &panelLayouts;
 
 @property(nonatomic, readonly) nc::ThemesManager &themesManager;
 
 @property(nonatomic, readonly) ExternalEditorsStorage &externalEditorsStorage;
 
-@property(nonatomic, readonly)
-    const std::shared_ptr<nc::panel::FavoriteLocationsStorage> &favoriteLocationsStorage;
+@property(nonatomic, readonly) const std::shared_ptr<nc::panel::FavoriteLocationsStorage> &favoriteLocationsStorage;
 
-@property(nonatomic, readonly)
-    const std::shared_ptr<NetworkConnectionsManager> &networkConnectionsManager;
+@property(nonatomic, readonly) const std::shared_ptr<NetworkConnectionsManager> &networkConnectionsManager;
 
 @property(nonatomic, readonly) nc::ops::AggregateProgressTracker &operationsProgressTracker;
 
-@property(nonatomic, readonly)
-    const std::shared_ptr<nc::panel::ClosedPanelsHistory> &closedPanelsHistory;
+@property(nonatomic, readonly) const std::shared_ptr<nc::panel::ClosedPanelsHistory> &closedPanelsHistory;
 
 @property(nonatomic, readonly) nc::core::VFSInstanceManager &vfsInstanceManager;
 

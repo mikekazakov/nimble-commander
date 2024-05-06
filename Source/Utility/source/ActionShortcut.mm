@@ -223,7 +223,7 @@ bool ActionShortcut::IsKeyDown(EventData _event) const noexcept
     // modifiers should match exactly
     if( modifiers != clean_modif )
         return false;
-    
+
     // check for exact hit - modifiers and unicode
     if( unicode == _event.char_without_modifiers )
         return true;
@@ -237,7 +237,7 @@ bool ActionShortcut::IsKeyDown(EventData _event) const noexcept
     return false;
 }
 
-}
+} // namespace nc::utility
 
 size_t std::hash<nc::utility::ActionShortcut>::operator()(const nc::utility::ActionShortcut &_ac) const noexcept
 {

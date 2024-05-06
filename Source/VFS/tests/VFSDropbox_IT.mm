@@ -226,7 +226,7 @@ TEST_CASE(PREFIX "simple upload")
 TEST_CASE(PREFIX "upload with invalid name")
 {
     const auto to_upload = "Hello, world!"s;
-    const auto filepath = "/FolderToModify/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/test.txt";
+    const auto filepath = R"(/FolderToModify/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/test.txt)";
     std::shared_ptr<VFSHost> host = Spawn();
 
     std::shared_ptr<VFSFile> file;
@@ -440,7 +440,7 @@ TEST_CASE(PREFIX "folder creation and removal")
 static std::vector<uint8_t> MakeNoise(size_t size)
 {
     std::vector<uint8_t> noise(size);
-    std::srand(static_cast<unsigned>(time(0)));
+    std::srand(static_cast<unsigned>(time(nullptr)));
     for( size_t i = 0; i < size; ++i )
         noise[i] = static_cast<uint8_t>(std::rand() % 256); // yes, I know that rand() is harmful!
     return noise;

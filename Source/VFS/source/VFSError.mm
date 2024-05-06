@@ -152,7 +152,7 @@ int ErrorException::code() const noexcept
     return m_Code;
 }
 
-}
+} // namespace nc::vfs
 
 namespace VFSError {
 
@@ -313,9 +313,7 @@ NSError *ToNSError(int _code)
         return [NSError errorWithDomain:NSURLErrorDomain code:(_code + 2500000) userInfo:nil];
 
     // general codes section
-    return [NSError errorWithDomain:g_Domain
-                               code:_code
-                           userInfo:@{NSLocalizedDescriptionKey: TextForCode(_code)}];
+    return [NSError errorWithDomain:g_Domain code:_code userInfo:@{NSLocalizedDescriptionKey: TextForCode(_code)}];
 }
 
 int FromCFNetwork(int _errno)
@@ -343,12 +341,11 @@ std::string FormatErrorCode(int _vfs_code)
     if( _vfs_code >= g_PosixMin && _vfs_code <= g_PosixMax ) {
         const int posix_code = _vfs_code - g_PosixBase;
         if( auto it = g_PosixCodes.find(posix_code); it != g_PosixCodes.end() ) {
-            return std::string("POSIX: ") + it->second.data() + "(" + std::to_string(posix_code) +
-                   ")";
+            return std::string("POSIX: ") + it->second.data() + "(" + std::to_string(posix_code) + ")";
         }
         return {};
     }
     return {};
 }
 
-}
+} // namespace VFSError

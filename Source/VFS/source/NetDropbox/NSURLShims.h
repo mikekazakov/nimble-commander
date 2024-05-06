@@ -26,4 +26,4 @@ public:
                                 NSOperationQueue *_queue) override;
 };
 
-}
+} // namespace nc::vfs::dropbox

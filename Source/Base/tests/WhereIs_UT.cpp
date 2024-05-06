@@ -28,7 +28,7 @@ TEST_CASE(PREFIX "works with non-existing directories")
     const std::string current_path = std::getenv("PATH");
     const std::string bogus_path = current_path + ":/foo/bar/baz";
     setenv("PATH", bogus_path.c_str(), 1);
-    
+
     CHECK(WhereIs("ls") == VP{"/bin/ls"});
     CHECK(WhereIs("zip") == VP{"/usr/bin/zip"});
     CHECK(WhereIs("halt") == VP{"/sbin/halt"});

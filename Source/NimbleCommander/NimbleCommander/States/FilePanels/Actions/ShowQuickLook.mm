@@ -38,4 +38,4 @@ void ShowQuickLook::Perform(PanelController *_target, [[maybe_unused]] id _sende
     }
 }
 
-}
+} // namespace nc::panel::actions

@@ -7,23 +7,22 @@ class ExternalEditorStartupInfo
 {
 public:
     ExternalEditorStartupInfo() noexcept;
-    
-    const std::string   &Name()         const noexcept;
-    const std::string   &Path()         const noexcept;
-    const std::string   &Arguments()    const noexcept;
-    const std::string   &Mask()         const noexcept;
-    bool            OnlyFiles()         const noexcept;
-    uint64_t        MaxFileSize()       const noexcept;
-    bool            OpenInTerminal()    const noexcept;
 
-    bool IsValidForItem(const VFSListingItem&_item, bool _allow_terminal) const;
-    
+    const std::string &Name() const noexcept;
+    const std::string &Path() const noexcept;
+    const std::string &Arguments() const noexcept;
+    const std::string &Mask() const noexcept;
+    bool OnlyFiles() const noexcept;
+    uint64_t MaxFileSize() const noexcept;
+    bool OpenInTerminal() const noexcept;
+
+    bool IsValidForItem(const VFSListingItem &_item, bool _allow_terminal) const;
+
     /**
      * Returns arguments in UTF8 form where %% appearances are changed to specified file path.
      * Treat empty arguments as @"%%" string. _path is escaped with backward slashes.
      */
     std::string SubstituteFileName(const std::string &_path) const;
-
 
 private:
     std::string m_Name;
@@ -41,17 +40,17 @@ private:
 class ExternalEditorsStorage
 {
 public:
-    ExternalEditorsStorage(const char* _config_path);
+    ExternalEditorsStorage(const char *_config_path);
 
-    std::shared_ptr<ExternalEditorStartupInfo> ViableEditorForItem(const VFSListingItem&_item) const;
+    std::shared_ptr<ExternalEditorStartupInfo> ViableEditorForItem(const VFSListingItem &_item) const;
     std::vector<std::shared_ptr<ExternalEditorStartupInfo>> AllExternalEditors() const;
-    
-    void SetExternalEditors( const std::vector<std::shared_ptr<ExternalEditorStartupInfo>>& _editors );
+
+    void SetExternalEditors(const std::vector<std::shared_ptr<ExternalEditorStartupInfo>> &_editors);
 
 private:
     void LoadFromConfig();
     void SaveToConfig();
 
     std::vector<std::shared_ptr<ExternalEditorStartupInfo>> m_ExternalEditors;
-    const char* const m_ConfigPath;
+    const char *const m_ConfigPath;
 };

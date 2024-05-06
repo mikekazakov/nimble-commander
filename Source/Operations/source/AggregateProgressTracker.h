@@ -10,19 +10,20 @@ class AggregateProgressTracker : public std::enable_shared_from_this<AggregatePr
 public:
     AggregateProgressTracker();
     ~AggregateProgressTracker();
-    void AddPool( Pool &_pool );
-    void SetProgressCallback( std::function<void(double _progress)> _callback );
+    void AddPool(Pool &_pool);
+    void SetProgressCallback(std::function<void(double _progress)> _callback);
 
     static constexpr auto InvalidProgess = -1.;
+
 private:
-    AggregateProgressTracker(const AggregateProgressTracker&) = delete;
-    void operator=(const AggregateProgressTracker&) = delete;
+    AggregateProgressTracker(const AggregateProgressTracker &) = delete;
+    void operator=(const AggregateProgressTracker &) = delete;
     void PoolsChanged();
     bool ArePoolsEmpty() const;
     std::tuple<int, double> OperationsAmountAndProgress() const;
     void Update();
     void Purge();
-    void Signal( double _progress );
+    void Signal(double _progress);
     std::atomic_bool m_IsTracking;
     std::atomic_bool m_IsUpdateScheduled;
     mutable std::mutex m_Lock;
@@ -30,4 +31,4 @@ private:
     std::function<void(double _progress)> m_Callback;
 };
 
-}
+} // namespace nc::ops

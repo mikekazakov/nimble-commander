@@ -19,4 +19,4 @@ public:
     void Perform(MainWindowFilePanelState *_target, id _sender) const override;
 };
 
-}
+} // namespace nc::panel::actions

@@ -4,12 +4,12 @@
 
 @implementation NSView (Sugar)
 
-- (void) setNeedsDisplay
+- (void)setNeedsDisplay
 {
     if( nc::dispatch_is_main_queue() )
         self.needsDisplay = true;
     else
-        dispatch_to_main_queue( [=]{ self.needsDisplay = true; } );
+        dispatch_to_main_queue([=] { self.needsDisplay = true; });
 }
 
 @end

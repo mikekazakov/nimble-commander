@@ -41,16 +41,14 @@ using nc::panel::view::brief::FixedWidthLayoutEngine;
 }
 
 - (nullable NSCollectionViewLayoutAttributes *)
-    layoutAttributesForSupplementaryViewOfKind:(NSCollectionViewSupplementaryElementKind)
-                                                   [[maybe_unused]] _element_kind
+    layoutAttributesForSupplementaryViewOfKind:(NSCollectionViewSupplementaryElementKind) [[maybe_unused]] _element_kind
                                    atIndexPath:(NSIndexPath *) [[maybe_unused]] _index_path
 {
     return nil;
 }
 
 - (nullable NSCollectionViewLayoutAttributes *)
-    layoutAttributesForDecorationViewOfKind:(NSCollectionViewDecorationElementKind)
-                                                [[maybe_unused]] _element_kind
+    layoutAttributesForDecorationViewOfKind:(NSCollectionViewDecorationElementKind) [[maybe_unused]] _element_kind
                                 atIndexPath:(NSIndexPath *) [[maybe_unused]] _index_path
 {
     return nil;
@@ -65,9 +63,8 @@ using nc::panel::view::brief::FixedWidthLayoutEngine;
 {
     const auto collection_view = self.collectionView;
     const auto clip_bounds = collection_view.superview.bounds;
-    const auto items_number =
-        static_cast<int>([collection_view.dataSource collectionView:collection_view
-                                             numberOfItemsInSection:0]);
+    const auto items_number = static_cast<int>([collection_view.dataSource collectionView:collection_view
+                                                                   numberOfItemsInSection:0]);
 
     FixedWidthLayoutEngine::Params params;
     params.item_width = m_ItemWidth;

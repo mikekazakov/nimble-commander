@@ -2,33 +2,30 @@
 #include <Utility/MIMResponder.h>
 #include <Utility/ObjCpp.h>
 
-@implementation AttachedResponder
-{
+@implementation AttachedResponder {
     AttachedResponder *m_Next;
 }
 
-- (AttachedResponder*)nextAttachedResponder
+- (AttachedResponder *)nextAttachedResponder
 {
     return m_Next;
 }
 
 - (void)setNextResponder:(NSResponder *)nextResponder
 {
-    if( m_Next  ) {
-        assert( self.nextResponder == m_Next );
+    if( m_Next ) {
+        assert(self.nextResponder == m_Next);
         [m_Next setNextResponder:nextResponder];
     }
     else {
         [super setNextResponder:nextResponder];
-        
     }
 }
-
 
 - (void)setNextAttachedResponder:(AttachedResponder *)nextAttachedResponder
 {
     if( m_Next ) {
-        assert( self.nextResponder == m_Next );
+        assert(self.nextResponder == m_Next);
         [m_Next setNextAttachedResponder:nextAttachedResponder];
     }
     else {

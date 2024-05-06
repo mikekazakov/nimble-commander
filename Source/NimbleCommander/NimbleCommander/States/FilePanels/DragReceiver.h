@@ -33,15 +33,11 @@ public:
 
 private:
     vfs::VFSPath ComposeDestination() const;
-    std::pair<NSDragOperation, int> ScanLocalSource(FilesDraggingSource *_source,
-                                                    const vfs::VFSPath &_dest) const;
-    std::pair<NSDragOperation, int> ScanURLsSource(NSArray<NSURL *> *_source,
-                                                   const vfs::VFSPath &_dest) const;
+    std::pair<NSDragOperation, int> ScanLocalSource(FilesDraggingSource *_source, const vfs::VFSPath &_dest) const;
+    std::pair<NSDragOperation, int> ScanURLsSource(NSArray<NSURL *> *_source, const vfs::VFSPath &_dest) const;
     std::pair<NSDragOperation, int> ScanURLsPromiseSource(const vfs::VFSPath &_dest) const;
-    NSDragOperation BuildOperationForLocal(FilesDraggingSource *_source,
-                                           const vfs::VFSPath &_destination) const;
-    NSDragOperation BuildOperationForURLs(NSArray<NSURL *> *_source,
-                                          const vfs::VFSPath &_destination) const;
+    NSDragOperation BuildOperationForLocal(FilesDraggingSource *_source, const vfs::VFSPath &_destination) const;
+    NSDragOperation BuildOperationForURLs(NSArray<NSURL *> *_source, const vfs::VFSPath &_destination) const;
     bool PerformWithLocalSource(FilesDraggingSource *_source, const vfs::VFSPath &_dest);
     bool PerformWithURLsSource(NSArray<NSURL *> *_source, const vfs::VFSPath &_dest);
     bool PerformWithURLsPromiseSource(const vfs::VFSPath &_dest);
@@ -56,4 +52,4 @@ private:
     nc::vfs::NativeHost &m_NativeHost;
 };
 
-}
+} // namespace nc::panel

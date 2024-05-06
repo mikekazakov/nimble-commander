@@ -1,13 +1,13 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 
 #include "ObjCBridge.h"
 #include "ConfigImpl.h"
 #include "NonPersistentOverwritesStorage.h"
 
-using nc::config::Token;
 using nc::config::ConfigImpl;
 using nc::config::NonPersistentOverwritesStorage;
+using nc::config::Token;
 
 static std::shared_ptr<NonPersistentOverwritesStorage> MakeDummyStorage();
 static std::shared_ptr<NonPersistentOverwritesStorage> MakeDummyStorage(std::string_view _value);
@@ -24,7 +24,7 @@ TEST_CASE("ConfigBridge returns a valid value")
 
 TEST_CASE("ConfigBridge returns a valid value from a nested value")
 {
-    auto json = "{\"abra\": {\"cadabra\": {\"alakazam\": \"Hello\"} } }";
+    auto json = R"({"abra": {"cadabra": {"alakazam": "Hello"} } })";
     ConfigImpl config{json, MakeDummyStorage()};
     auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:config];
 
@@ -44,7 +44,7 @@ TEST_CASE("ConfigBridge returns nil for an invalid path")
 
 TEST_CASE("ConfigBridge can change a nested value")
 {
-    auto json = "{\"abra\": {\"cadabra\": {\"alakazam\": \"Hello\"} } }";
+    auto json = R"({"abra": {"cadabra": {"alakazam": "Hello"} } })";
     ConfigImpl config{json, MakeDummyStorage()};
     auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:config];
 

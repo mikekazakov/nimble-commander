@@ -28,7 +28,7 @@ public:
 
     // Specifies the behaviour for a particular operation type
     void Set(std::string_view _id, bool _enable) noexcept;
-    
+
     // Removes all rules
     void Reset() noexcept;
 

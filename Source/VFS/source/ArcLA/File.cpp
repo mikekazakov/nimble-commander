@@ -1,15 +1,16 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
-#include <VFS/AppleDoubleEA.h>
+
 #include "File.h"
 #include "Internal.h"
+#include <VFS/AppleDoubleEA.h>
+#include <fmt/format.h>
 #include <sys/param.h>
 
 namespace nc::vfs::arc {
 
-File::File(const char *_relative_path, const std::shared_ptr<ArchiveHost> &_host)
-    : VFSFile(_relative_path, _host)
+File::File(const char *_relative_path, const std::shared_ptr<ArchiveHost> &_host) : VFSFile(_relative_path, _host)
 {
 }
 
@@ -34,8 +35,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     if( res < 0 )
         return res;
 
-    if( host->IsDirectory(file_path, _open_flags, _cancel_checker) &&
-        !(_open_flags & VFSFlags::OF_Directory) )
+    if( host->IsDirectory(file_path, _open_flags, _cancel_checker) && !(_open_flags & VFSFlags::OF_Directory) )
         return VFSError::FromErrno(EISDIR);
 
     std::unique_ptr<State> state;
@@ -102,13 +102,13 @@ ssize_t File::Read(void *_buf, size_t _size)
     if( Eof() )
         return 0;
 
-    assert(_buf != 0);
+    assert(_buf != nullptr);
 
     m_State->ConsumeEntry();
     ssize_t size = archive_read_data(m_State->Archive(), _buf, _size);
     if( size < 0 ) {
         // TODO: libarchive error - convert it into our errors
-        printf("libarchive error: %s\n", archive_error_string(m_State->Archive()));
+        fmt::println("libarchive error: {}", archive_error_string(m_State->Archive()));
         return SetLastError(VFSError::FromLibarchive(archive_errno(m_State->Archive())));
     }
 
@@ -139,7 +139,7 @@ ssize_t File::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size)
 
     for( auto &i : m_EA )
         if( strcmp(i.name, _xattr_name) == 0 ) {
-            if( _buffer == 0 )
+            if( _buffer == nullptr )
                 return i.data_sz;
 
             size_t sz = std::min(i.data_sz, static_cast<uint32_t>(_buf_size));

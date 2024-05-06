@@ -19,9 +19,9 @@ private:
     void SetupOperationsPool();
     void SetupOperationsPoolEnqueFilter();
     void SetupNotification();
-    
+
     config::Config &m_Config;
     ops::PoolEnqueueFilter &m_PoolFilter;
 };
 
-}
+} // namespace nc::bootstrap

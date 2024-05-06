@@ -134,8 +134,7 @@ static NSBundle *Bundle() noexcept
     }
     else {
         NSString *result = nil;
-        dispatch_sync(dispatch_get_main_queue(),
-                      [=, &result] { result = self.titleTextField.stringValue; });
+        dispatch_sync(dispatch_get_main_queue(), [=, &result] { result = self.titleTextField.stringValue; });
         return result;
     }
 }
@@ -149,8 +148,7 @@ static NSBundle *Bundle() noexcept
         self.progressIndicator.doubleValue = m_Progress;
     }
     else {
-        dispatch_async(dispatch_get_main_queue(),
-                       [=] { self.progressIndicator.doubleValue = m_Progress; });
+        dispatch_async(dispatch_get_main_queue(), [=] { self.progressIndicator.doubleValue = m_Progress; });
     }
 }
 

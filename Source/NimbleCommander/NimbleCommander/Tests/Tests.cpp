@@ -16,10 +16,11 @@
 
 static auto g_TestDirPrefix = "_nc__common__test_";
 
-int main( int argc, char* argv[] ) {
+int main(int argc, char *argv[])
+{
     ::testing::GTEST_FLAG(throw_on_failure) = true;
     ::testing::InitGoogleMock(&argc, argv);
-    int result = Catch::Session().run( argc, argv );    
+    int result = Catch::Session().run(argc, argv);
     return result;
 }
 

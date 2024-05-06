@@ -5,20 +5,16 @@
 #include <VFS/VFS.h>
 #include <Utility/SimpleComboBoxPersistentDataSource.h>
 
-@interface NCOpsBatchRenamingDialog : NSWindowController<NSTableViewDataSource,
-                                                         NSTableViewDelegate,
-                                                         NSTextFieldDelegate,
-                                                         NSComboBoxDelegate>
+@interface NCOpsBatchRenamingDialog
+    : NSWindowController <NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate, NSComboBoxDelegate>
 
+@property(readonly, nonatomic) std::vector<std::string> &filenamesSource; // full path
+@property(readonly, nonatomic) std::vector<std::string> &filenamesDestination;
+@property(nonatomic) bool isValidRenaming;
+@property(nonatomic) NCUtilSimpleComboBoxPersistentDataSource *renamePatternDataSource;
+@property(nonatomic) NCUtilSimpleComboBoxPersistentDataSource *searchForDataSource;
+@property(nonatomic) NCUtilSimpleComboBoxPersistentDataSource *replaceWithDataSource;
 
-
-@property (readonly, nonatomic) std::vector<std::string> &filenamesSource;       // full path
-@property (readonly, nonatomic) std::vector<std::string> &filenamesDestination;
-@property (nonatomic) bool isValidRenaming;
-@property (nonatomic) NCUtilSimpleComboBoxPersistentDataSource *renamePatternDataSource;
-@property (nonatomic) NCUtilSimpleComboBoxPersistentDataSource *searchForDataSource;
-@property (nonatomic) NCUtilSimpleComboBoxPersistentDataSource *replaceWithDataSource;
-
-- (instancetype) initWithItems:(std::vector<VFSListingItem>)_items;
+- (instancetype)initWithItems:(std::vector<VFSListingItem>)_items;
 
 @end

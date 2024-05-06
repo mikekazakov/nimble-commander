@@ -7,15 +7,13 @@
 
 namespace nc::panel::actions {
 
-struct CalculateSizes final : PanelAction
-{
-    bool Predicate( PanelController *_target ) const override;
-    void Perform( PanelController *_target, id _sender ) const override;
+struct CalculateSizes final : PanelAction {
+    bool Predicate(PanelController *_target) const override;
+    void Perform(PanelController *_target, id _sender) const override;
 };
 
-struct CalculateAllSizes final : PanelAction
-{
-    void Perform( PanelController *_target, id _sender ) const override;
+struct CalculateAllSizes final : PanelAction {
+    void Perform(PanelController *_target, id _sender) const override;
 };
 
-}
+} // namespace nc::panel::actions

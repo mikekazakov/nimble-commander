@@ -17,7 +17,7 @@ public:
         friend bool operator!=(const Firmlink &_1st, const Firmlink &_2nd) noexcept;
     };
 
-    std::vector<Firmlink> Parse( std::string_view _mapping );
+    std::vector<Firmlink> Parse(std::string_view _mapping);
 };
 
-}
+} // namespace nc::utility

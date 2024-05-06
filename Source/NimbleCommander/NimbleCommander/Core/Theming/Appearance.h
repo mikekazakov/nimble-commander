@@ -5,8 +5,7 @@
 
 namespace nc {
 
-enum class ThemeAppearance : int8_t
-{
+enum class ThemeAppearance : int8_t {
     Light = 0, // NSAppearanceNameAqua
     Dark = 1   // NSAppearanceNameDarkAqua
 };

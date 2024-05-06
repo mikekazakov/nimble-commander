@@ -4,15 +4,15 @@
 #include <Cocoa/Cocoa.h>
 
 namespace nc::ops {
-    class Pool;
+class Pool;
 
 }
 
 // STA design - use it only from main queue
 @interface NCOpsPoolViewController : NSViewController
 
-- (instancetype) initWithPool:(nc::ops::Pool&)_pool;
+- (instancetype)initWithPool:(nc::ops::Pool &)_pool;
 
-@property (nonatomic, readonly) NSView *idleView;
+@property(nonatomic, readonly) NSView *idleView;
 
 @end

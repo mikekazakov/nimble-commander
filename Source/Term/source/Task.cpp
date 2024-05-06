@@ -17,13 +17,9 @@
 
 namespace nc::term {
 
-Task::Task()
-{
-}
+Task::Task() = default;
 
-Task::~Task()
-{
-}
+Task::~Task() = default;
 
 void Task::SetOnChildOutput(std::function<void(const void *_d, size_t _sz)> _callback)
 {
@@ -94,13 +90,11 @@ void Task::SetupHandlesAndSID(int _slave_fd)
 static std::string GetLocale()
 {
     // Keep a copy of the current locale setting for this process
-    char *backupLocale = setlocale(LC_CTYPE, NULL);
-    if( backupLocale != nullptr && 
-        std::string_view{backupLocale} != "" &&
-        std::string_view{backupLocale} != "C" ) {
+    char *backupLocale = setlocale(LC_CTYPE, nullptr);
+    if( backupLocale != nullptr && std::string_view{backupLocale} != "" && std::string_view{backupLocale} != "C" ) {
         return backupLocale;
     }
-    
+
     // Start with the locale
     std::string locale = "en"; // en as a backup for any possible error
 
@@ -120,11 +114,11 @@ static std::string GetLocale()
 
     // check if locale + encoding is valid
     std::string test = locale + '.' + encoding;
-    if( NULL != setlocale(LC_CTYPE, test.c_str()) )
+    if( nullptr != setlocale(LC_CTYPE, test.c_str()) )
         locale = test;
 
     // Check the locale is valid
-    if( NULL == setlocale(LC_CTYPE, locale.c_str()) )
+    if( nullptr == setlocale(LC_CTYPE, locale.c_str()) )
         locale = "";
 
     // Restore locale and return
@@ -169,8 +163,7 @@ unsigned Task::ReadInputAsMuchAsAvailable(int _fd, void *_buf, unsigned _buf_sz,
     unsigned already_read = 0;
     int rc = 0;
     do {
-        rc = static_cast<int>(
-            read(_fd, static_cast<char *>(_buf) + already_read, _buf_sz - already_read));
+        rc = static_cast<int>(read(_fd, static_cast<char *>(_buf) + already_read, _buf_sz - already_read));
         if( rc <= 0 )
             break;
         already_read += rc;
@@ -180,15 +173,14 @@ unsigned Task::ReadInputAsMuchAsAvailable(int _fd, void *_buf, unsigned _buf_sz,
         timeval tt;
         tt.tv_sec = 0;
         tt.tv_usec = _usec_wait;
-        rc = select(_fd + 1, &fdset, NULL, NULL, &tt);
+        rc = select(_fd + 1, &fdset, nullptr, nullptr, &tt);
     } while( rc >= 0 && FD_ISSET(_fd, &fdset) && already_read < _buf_sz );
     return already_read;
 }
 
 std::string Task::EscapeShellFeed(const std::string &_feed)
 {
-    static const char to_esc[] = {
-        '|', '&', ';', '<', '>', '(', ')', '$', '\'', '\\', '\"', '`', ' ', '\t', '!'};
+    static const char to_esc[] = {'|', '&', ';', '<', '>', '(', ')', '$', '\'', '\\', '\"', '`', ' ', '\t', '!'};
     std::string result;
     result.reserve(_feed.length());
     for( auto c : _feed ) {
@@ -211,19 +203,18 @@ static const char *GetImgNameFromPath(const char *_path)
     return img_name;
 }
 
-int Task::RunDetachedProcess(const std::string &_process_path,
-                             const std::vector<std::string> &_args)
+int Task::RunDetachedProcess(const std::string &_process_path, const std::vector<std::string> &_args)
 {
-    if( access (_process_path.c_str(), F_OK|X_OK) < 0)
+    if( access(_process_path.c_str(), F_OK | X_OK) < 0 )
         return -1;
-    
+
     const int rc = fork();
     if( rc == 0 ) {
         char **argvs = static_cast<char **>(std::malloc(sizeof(char *) * (_args.size() + 2)));
         argvs[0] = strdup(GetImgNameFromPath(_process_path.c_str()));
         for( size_t i = 0; i < _args.size(); ++i )
             argvs[i + 1] = strdup(_args[i].c_str());
-        argvs[_args.size() + 1] = NULL;
+        argvs[_args.size() + 1] = nullptr;
 
         nc::base::CloseFrom(3);
 

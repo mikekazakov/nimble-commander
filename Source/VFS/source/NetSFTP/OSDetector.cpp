@@ -13,8 +13,7 @@ static const auto g_FreeBSD = "FreeBSD";
 static const auto g_OpenBSD = "OpenBSD";
 static const auto g_NetBSD = "NetBSD";
 
-OSDetector::OSDetector( LIBSSH2_SESSION *_session ):
-    m_Session(_session)
+OSDetector::OSDetector(LIBSSH2_SESSION *_session) : m_Session(_session)
 {
 }
 
@@ -32,7 +31,7 @@ OSType OSDetector::Detect()
     }
 
     char buffer[512];
-    rc = (int)libssh2_channel_read( channel, buffer, sizeof(buffer) );
+    rc = (int)libssh2_channel_read(channel, buffer, sizeof(buffer));
     libssh2_channel_close(channel);
     libssh2_channel_free(channel);
 
@@ -40,7 +39,7 @@ OSType OSDetector::Detect()
         return OSType::Unknown;
     buffer[rc - 1] = 0;
 
-    const auto eq = [&]( const char *s ) { return strcmp(buffer, s) == 0; };
+    const auto eq = [&](const char *s) { return strcmp(buffer, s) == 0; };
     if( eq(g_Linux) )
         return OSType::Linux;
     if( eq(g_MacOSX) )
@@ -51,4 +50,4 @@ OSType OSDetector::Detect()
     return OSType::Unknown;
 }
 
-}
+} // namespace nc::vfs::sftp

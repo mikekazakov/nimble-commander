@@ -19,11 +19,10 @@ static const auto g_ConfigSpotlightMaxCount = "filePanel.spotlight.maxCount";
 static std::string CookSpotlightSearchQuery(const std::string &_format, const std::string &_input)
 {
     const auto npos = std::string::npos;
-    bool should_split = _format.find("#{query1}") != npos || _format.find("#{query2}") != npos ||
-                        _format.find("#{query3}") != npos || _format.find("#{query4}") != npos ||
-                        _format.find("#{query5}") != npos || _format.find("#{query6}") != npos ||
-                        _format.find("#{query7}") != npos || _format.find("#{query8}") != npos ||
-                        _format.find("#{query9}") != npos;
+    bool should_split =
+        _format.find("#{query1}") != npos || _format.find("#{query2}") != npos || _format.find("#{query3}") != npos ||
+        _format.find("#{query4}") != npos || _format.find("#{query5}") != npos || _format.find("#{query6}") != npos ||
+        _format.find("#{query7}") != npos || _format.find("#{query8}") != npos || _format.find("#{query9}") != npos;
 
     if( !should_split )
         return base::ReplaceAll(_format, "#{query}", _input);
@@ -47,17 +46,13 @@ static std::string CookSpotlightSearchQuery(const std::string &_format, const st
 
 static std::vector<std::string> FetchSpotlightResults(const std::string &_query)
 {
-    auto fmt = GlobalConfig().Has(g_ConfigSpotlightFormat)
-                   ? GlobalConfig().GetString(g_ConfigSpotlightFormat)
-                   : "kMDItemFSName == '*#{query}*'cd";
+    auto fmt = GlobalConfig().Has(g_ConfigSpotlightFormat) ? GlobalConfig().GetString(g_ConfigSpotlightFormat)
+                                                           : "kMDItemFSName == '*#{query}*'cd";
 
     std::string format = CookSpotlightSearchQuery(fmt, _query);
 
     MDQueryRef query =
-        MDQueryCreate(nullptr,
-                      static_cast<CFStringRef>([NSString stringWithUTF8StdString:format]),
-                      nullptr,
-                      nullptr);
+        MDQueryCreate(nullptr, static_cast<CFStringRef>([NSString stringWithUTF8StdString:format]), nullptr, nullptr);
     if( !query )
         return {};
     auto clear_query = at_scope_end([=] { CFRelease(query); });
@@ -71,8 +66,7 @@ static std::vector<std::string> FetchSpotlightResults(const std::string &_query)
     std::vector<std::string> result;
     for( long i = 0, e = MDQueryGetResultCount(query); i < e; ++i ) {
 
-        MDItemRef item =
-            static_cast<MDItemRef>(const_cast<void *>(MDQueryGetResultAtIndex(query, i)));
+        MDItemRef item = static_cast<MDItemRef>(const_cast<void *>(MDQueryGetResultAtIndex(query, i)));
 
         CFStringRef item_path = static_cast<CFStringRef>(MDItemCopyAttribute(item, kMDItemPath));
         auto clear_item_path = at_scope_end([=] { CFRelease(item_path); });
@@ -124,4 +118,4 @@ void SpotlightSearch::Perform(PanelController *_target, id) const
     [_target.view showPopoverUnderPathBarWithView:view andDelegate:view];
 }
 
-};
+}; // namespace nc::panel::actions

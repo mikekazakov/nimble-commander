@@ -35,8 +35,7 @@ NSString *NSLocalizedString(NSString *_key, [[maybe_unused]] const char *_commen
 
 std::string MessageAuthAsAdmin() noexcept
 {
-    return NSLocalizedString(@"AUTH_AS_ADMIN_PROMPT",
-                             "Prompt used when asking user to show they have admin rights")
+    return NSLocalizedString(@"AUTH_AS_ADMIN_PROMPT", "Prompt used when asking user to show they have admin rights")
         .UTF8String;
 }
 
@@ -45,7 +44,6 @@ std::string MessageInstallHelperApp() noexcept
     return NSLocalizedString(@"INSTALL_HELPER_APP_PROMPT",
                              "Prompt used when asking user installed the privileged helper")
         .UTF8String;
-    
 }
 
-}
+} // namespace nc::routedio

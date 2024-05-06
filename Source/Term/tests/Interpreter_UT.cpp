@@ -109,23 +109,74 @@ TEST_CASE(PREFIX "setting foreground colors")
         CHECK(screen.Buffer().At(0, 0).foreground == Color{});
         CHECK(screen.Buffer().At(0, 0).customfg == false);
     }
-    SECTION("Black") { verify(Color::Black); }
-    SECTION("Red") { verify(Color::Red); }
-    SECTION("Green") { verify(Color::Green); }
-    SECTION("Yellow") { verify(Color::Yellow); }
-    SECTION("Blue") { verify(Color::Blue); }
-    SECTION("Magenta") { verify(Color::Magenta); }
-    SECTION("Cyan") { verify(Color::Cyan); }
-    SECTION("White") { verify(Color::White); }
-    SECTION("BlackBright") { verify(Color::BrightBlack); }
-    SECTION("RedBright") { verify(Color::BrightRed); }
-    SECTION("GreenBright") { verify(Color::BrightGreen); }
-    SECTION("YellowBright") { verify(Color::BrightYellow); }
-    SECTION("BlueBright") { verify(Color::BrightBlue); }
-    SECTION("MagentaBright") { verify(Color::BrightMagenta); }
-    SECTION("CyanBright") { verify(Color::BrightCyan); }
-    SECTION("WhiteBright") { verify(Color::BrightWhite); }
-    SECTION("Default") { verify(std::nullopt); }
+    SECTION("Black")
+    {
+        verify(Color::Black);
+    }
+    SECTION("Red")
+    {
+        verify(Color::Red);
+    }
+    SECTION("Green")
+    {
+        verify(Color::Green);
+    }
+    SECTION("Yellow")
+    {
+        verify(Color::Yellow);
+    }
+    SECTION("Blue")
+    {
+        verify(Color::Blue);
+    }
+    SECTION("Magenta")
+    {
+        verify(Color::Magenta);
+    }
+    SECTION("Cyan")
+    {
+        verify(Color::Cyan);
+    }
+    SECTION("White")
+    {
+        verify(Color::White);
+    }
+    SECTION("BlackBright")
+    {
+        verify(Color::BrightBlack);
+    }
+    SECTION("RedBright")
+    {
+        verify(Color::BrightRed);
+    }
+    SECTION("GreenBright")
+    {
+        verify(Color::BrightGreen);
+    }
+    SECTION("YellowBright")
+    {
+        verify(Color::BrightYellow);
+    }
+    SECTION("BlueBright")
+    {
+        verify(Color::BrightBlue);
+    }
+    SECTION("MagentaBright")
+    {
+        verify(Color::BrightMagenta);
+    }
+    SECTION("CyanBright")
+    {
+        verify(Color::BrightCyan);
+    }
+    SECTION("WhiteBright")
+    {
+        verify(Color::BrightWhite);
+    }
+    SECTION("Default")
+    {
+        verify(std::nullopt);
+    }
     // TODO: 8-bit colors
 }
 
@@ -149,23 +200,74 @@ TEST_CASE(PREFIX "setting background colors")
         CHECK(screen.Buffer().At(0, 0).background == Color{});
         CHECK(screen.Buffer().At(0, 0).custombg == false);
     }
-    SECTION("Black") { verify(Color::Black); }
-    SECTION("Red") { verify(Color::Red); }
-    SECTION("Green") { verify(Color::Green); }
-    SECTION("Yellow") { verify(Color::Yellow); }
-    SECTION("Blue") { verify(Color::Blue); }
-    SECTION("Magenta") { verify(Color::Magenta); }
-    SECTION("Cyan") { verify(Color::Cyan); }
-    SECTION("White") { verify(Color::White); }
-    SECTION("BlackBright") { verify(Color::BrightBlack); }
-    SECTION("RedBright") { verify(Color::BrightRed); }
-    SECTION("GreenBright") { verify(Color::BrightGreen); }
-    SECTION("YellowBright") { verify(Color::BrightYellow); }
-    SECTION("BlueBright") { verify(Color::BrightBlue); }
-    SECTION("MagentaBright") { verify(Color::BrightMagenta); }
-    SECTION("CyanBright") { verify(Color::BrightCyan); }
-    SECTION("WhiteBright") { verify(Color::BrightWhite); }
-    SECTION("Default") { verify(std::nullopt); }
+    SECTION("Black")
+    {
+        verify(Color::Black);
+    }
+    SECTION("Red")
+    {
+        verify(Color::Red);
+    }
+    SECTION("Green")
+    {
+        verify(Color::Green);
+    }
+    SECTION("Yellow")
+    {
+        verify(Color::Yellow);
+    }
+    SECTION("Blue")
+    {
+        verify(Color::Blue);
+    }
+    SECTION("Magenta")
+    {
+        verify(Color::Magenta);
+    }
+    SECTION("Cyan")
+    {
+        verify(Color::Cyan);
+    }
+    SECTION("White")
+    {
+        verify(Color::White);
+    }
+    SECTION("BlackBright")
+    {
+        verify(Color::BrightBlack);
+    }
+    SECTION("RedBright")
+    {
+        verify(Color::BrightRed);
+    }
+    SECTION("GreenBright")
+    {
+        verify(Color::BrightGreen);
+    }
+    SECTION("YellowBright")
+    {
+        verify(Color::BrightYellow);
+    }
+    SECTION("BlueBright")
+    {
+        verify(Color::BrightBlue);
+    }
+    SECTION("MagentaBright")
+    {
+        verify(Color::BrightMagenta);
+    }
+    SECTION("CyanBright")
+    {
+        verify(Color::BrightCyan);
+    }
+    SECTION("WhiteBright")
+    {
+        verify(Color::BrightWhite);
+    }
+    SECTION("Default")
+    {
+        verify(std::nullopt);
+    }
     // TODO: 8-bit colors
 }
 
@@ -185,9 +287,18 @@ TEST_CASE(PREFIX "setting faint")
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).faint == false);
     }
-    SECTION("Normal") { verify(CA::Normal, false); }
-    SECTION("Faint") { verify(CA::Faint, true); }
-    SECTION("Not Bold Not Faint") { verify(CA::NotBoldNotFaint, false); }
+    SECTION("Normal")
+    {
+        verify(CA::Normal, false);
+    }
+    SECTION("Faint")
+    {
+        verify(CA::Faint, true);
+    }
+    SECTION("Not Bold Not Faint")
+    {
+        verify(CA::NotBoldNotFaint, false);
+    }
 }
 
 TEST_CASE(PREFIX "setting inverse")
@@ -206,8 +317,14 @@ TEST_CASE(PREFIX "setting inverse")
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).reverse == false);
     }
-    SECTION("Inverse") { verify(CA::Inverse, true); }
-    SECTION("Not inverse") { verify(CA::NotInverse, false); }
+    SECTION("Inverse")
+    {
+        verify(CA::Inverse, true);
+    }
+    SECTION("Not inverse")
+    {
+        verify(CA::NotInverse, false);
+    }
 }
 
 TEST_CASE(PREFIX "setting bold")
@@ -226,8 +343,14 @@ TEST_CASE(PREFIX "setting bold")
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).bold == false);
     }
-    SECTION("Bold") { verify(CA::Bold, true); }
-    SECTION("Not bold") { verify(CA::NotBoldNotFaint, false); }
+    SECTION("Bold")
+    {
+        verify(CA::Bold, true);
+    }
+    SECTION("Not bold")
+    {
+        verify(CA::NotBoldNotFaint, false);
+    }
 }
 
 TEST_CASE(PREFIX "setting italic")
@@ -246,8 +369,14 @@ TEST_CASE(PREFIX "setting italic")
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).italic == false);
     }
-    SECTION("Italic") { verify(CA::Italicized, true); }
-    SECTION("Not italic") { verify(CA::NotItalicized, false); }
+    SECTION("Italic")
+    {
+        verify(CA::Italicized, true);
+    }
+    SECTION("Not italic")
+    {
+        verify(CA::NotItalicized, false);
+    }
 }
 
 TEST_CASE(PREFIX "setting invisible")
@@ -266,8 +395,14 @@ TEST_CASE(PREFIX "setting invisible")
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).invisible == false);
     }
-    SECTION("Invisible") { verify(CA::Invisible, true); }
-    SECTION("Not invsible") { verify(CA::NotInvisible, false); }
+    SECTION("Invisible")
+    {
+        verify(CA::Invisible, true);
+    }
+    SECTION("Not invsible")
+    {
+        verify(CA::NotInvisible, false);
+    }
 }
 
 TEST_CASE(PREFIX "setting blink")
@@ -286,8 +421,14 @@ TEST_CASE(PREFIX "setting blink")
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).blink == false);
     }
-    SECTION("Blink") { verify(CA::Blink, true); }
-    SECTION("Not blink") { verify(CA::NotBlink, false); }
+    SECTION("Blink")
+    {
+        verify(CA::Blink, true);
+    }
+    SECTION("Not blink")
+    {
+        verify(CA::NotBlink, false);
+    }
 }
 
 TEST_CASE(PREFIX "setting underline")
@@ -306,9 +447,18 @@ TEST_CASE(PREFIX "setting underline")
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).underline == false);
     }
-    SECTION("Underline") { verify(CA::Underlined, true); }
-    SECTION("Doubly Underline") { verify(CA::DoublyUnderlined, true); }
-    SECTION("Not underlined") { verify(CA::NotUnderlined, false); }
+    SECTION("Underline")
+    {
+        verify(CA::Underlined, true);
+    }
+    SECTION("Doubly Underline")
+    {
+        verify(CA::DoublyUnderlined, true);
+    }
+    SECTION("Not underlined")
+    {
+        verify(CA::NotUnderlined, false);
+    }
 }
 
 TEST_CASE(PREFIX "setting crossed")
@@ -327,8 +477,14 @@ TEST_CASE(PREFIX "setting crossed")
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).crossed == false);
     }
-    SECTION("Crossed") { verify(CA::Crossed, true); }
-    SECTION("Not crossed") { verify(CA::NotCrossed, false); }
+    SECTION("Crossed")
+    {
+        verify(CA::Crossed, true);
+    }
+    SECTION("Not crossed")
+    {
+        verify(CA::NotCrossed, false);
+    }
 }
 
 TEST_CASE(PREFIX "G0 - DEC Special Graphics")

@@ -230,8 +230,8 @@ void OpenNewFTPConnection::Perform(PanelController *_target, id) const
                m_NetMgr.SetPassword(connection, password);
 
                dispatch_to_background([=, this] {
-                 auto activity = [_target registerExtActivity];
-                 GoToFTP(_target, connection, password, m_NetMgr);
+                   auto activity = [_target registerExtActivity];
+                   GoToFTP(_target, connection, password, m_NetMgr);
                });
              }];
 }
@@ -255,8 +255,8 @@ void OpenNewSFTPConnection::Perform(PanelController *_target, id) const
                m_NetMgr.InsertConnection(connection);
                m_NetMgr.SetPassword(connection, password);
                dispatch_to_background([=, this] {
-                 auto activity = [_target registerExtActivity];
-                 GoToSFTP(_target, connection, password, m_NetMgr);
+                   auto activity = [_target registerExtActivity];
+                   GoToSFTP(_target, connection, password, m_NetMgr);
                });
              }];
 }
@@ -280,8 +280,8 @@ void OpenNewDropboxStorage::Perform(PanelController *_target, id) const
                m_NetMgr.InsertConnection(connection);
                m_NetMgr.SetPassword(connection, password);
                dispatch_to_background([=, this] {
-                 auto activity = [_target registerExtActivity];
-                 GoToDropboxStorage(_target, connection, password, m_NetMgr);
+                   auto activity = [_target registerExtActivity];
+                   GoToDropboxStorage(_target, connection, password, m_NetMgr);
                });
              }];
 }
@@ -327,8 +327,8 @@ void OpenNewWebDAVConnection::Perform(PanelController *_target, id) const
                m_NetMgr.InsertConnection(connection);
                m_NetMgr.SetPassword(connection, password);
                dispatch_to_background([=, this] {
-                 auto activity = [_target registerExtActivity];
-                 GoToWebDAV(_target, connection, password, m_NetMgr);
+                   auto activity = [_target registerExtActivity];
+                   GoToWebDAV(_target, connection, password, m_NetMgr);
                });
              }];
 }

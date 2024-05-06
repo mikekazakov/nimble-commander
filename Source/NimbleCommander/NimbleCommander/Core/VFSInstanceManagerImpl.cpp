@@ -10,20 +10,18 @@ namespace nc::core {
 struct VFSInstanceManagerImpl::Info {
     Info(const std::shared_ptr<VFSHost> &_host, uint64_t _id, uint64_t _parent_id, VFSConfiguration _config);
     uint64_t m_ID;
-    uint64_t m_PromisesCount;          // combined from Promise instances and links via .m_ParentVFSID
+    uint64_t m_PromisesCount{0};       // combined from Promise instances and links via .m_ParentVFSID
     uint64_t m_ParentVFSID;            // zero means no parent vfs info
     std::weak_ptr<VFSHost> m_WeakHost; // need to think about clearing this weak_ptr, so host's memory can be freed
     VFSConfiguration m_Configuration;
 };
 
 VFSInstanceManagerImpl::Info::Info(const VFSHostPtr &_host, uint64_t _id, uint64_t _parent_id, VFSConfiguration _config)
-    : m_ID(_id), m_PromisesCount(0), m_ParentVFSID(_parent_id), m_WeakHost(_host), m_Configuration(_config)
+    : m_ID(_id), m_ParentVFSID(_parent_id), m_WeakHost(_host), m_Configuration(_config)
 {
 }
 
-VFSInstanceManagerImpl::VFSInstanceManagerImpl()
-{
-}
+VFSInstanceManagerImpl::VFSInstanceManagerImpl() = default;
 
 VFSInstanceManagerImpl::~VFSInstanceManagerImpl()
 {

@@ -18,8 +18,7 @@ public:
 
     struct CSIParamsScanner;
 
-    enum class EscState
-    {
+    enum class EscState {
         Text = 0,
         Control = 1,
         Esc = 2,

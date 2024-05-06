@@ -10,12 +10,12 @@ namespace nc::vfs::sftp {
 class File : public VFSFile
 {
 public:
-    File(const char* _relative_path, std::shared_ptr<SFTPHost> _host);
+    File(const char *_relative_path, std::shared_ptr<SFTPHost> _host);
     ~File();
-    
+
     virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
-    virtual bool    IsOpened() const override;
-    virtual int     Close() override;
+    virtual bool IsOpened() const override;
+    virtual int Close() override;
     virtual ReadParadigm GetReadParadigm() const override;
     virtual WriteParadigm GetWriteParadigm() const override;
     virtual off_t Seek(off_t _off, int _basis) override;
@@ -29,7 +29,7 @@ private:
     std::unique_ptr<SFTPHost::Connection> m_Connection;
     LIBSSH2_SFTP_HANDLE *m_Handle = nullptr;
     ssize_t m_Position = 0;
-    ssize_t m_Size     = 0;    
+    ssize_t m_Size = 0;
 };
 
-}
+} // namespace nc::vfs::sftp

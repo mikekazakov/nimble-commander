@@ -8,12 +8,11 @@ namespace nc::panel::data {
 ListingComparatorBase::ListingComparatorBase(const VFSListing &_items,
                                              std::span<const ItemVolatileData> _vd,
                                              SortMode _sort_mode)
-    : l{_items}, vd{_vd}, sort_mode{_sort_mode},
-      str_comp_flags{(_sort_mode.case_sens ? 0 : kCFCompareCaseInsensitive) |
-                     (_sort_mode.numeric_sort ? kCFCompareNumerically : 0)},
+    : l{_items}, vd{_vd}, sort_mode{_sort_mode}, str_comp_flags{(_sort_mode.case_sens ? 0 : kCFCompareCaseInsensitive) |
+                                                                (_sort_mode.numeric_sort ? kCFCompareNumerically : 0)},
       plain_compare{_sort_mode.case_sens ? strcmp : strcasecmp}
 {
-    assert( _vd.size() == _items.Count() );
+    assert(_vd.size() == _items.Count());
 }
 
 int ListingComparatorBase::Compare(CFStringRef _1st, CFStringRef _2nd) const noexcept
@@ -38,7 +37,7 @@ bool IndirectListingComparator::operator()(unsigned _1, unsigned _2) const
     // TODO: using if's and switches is pretty stupid in such function.
     // TODO: Refactor it employ less pointless branching
     using _ = SortMode::Mode;
-    
+
     if( sort_mode.sep_dirs ) {
         if( l.IsDir(_1) && !l.IsDir(_2) )
             return true;
@@ -196,10 +195,8 @@ bool IndirectListingComparator::IsLessByModificationTime(unsigned _1, unsigned _
 
 bool IndirectListingComparator::IsLessByExensionReversed(unsigned _1, unsigned _2) const
 {
-    const auto first_has_extension =
-        l.HasExtension(_1) && (!sort_mode.extensionless_dirs || !l.IsDir(_1));
-    const auto second_has_extension =
-        l.HasExtension(_2) && (!sort_mode.extensionless_dirs || !l.IsDir(_2));
+    const auto first_has_extension = l.HasExtension(_1) && (!sort_mode.extensionless_dirs || !l.IsDir(_1));
+    const auto second_has_extension = l.HasExtension(_2) && (!sort_mode.extensionless_dirs || !l.IsDir(_2));
     if( first_has_extension && second_has_extension ) {
         const auto r = Compare(l.Extension(_1), l.Extension(_2));
         if( r < 0 )
@@ -217,10 +214,8 @@ bool IndirectListingComparator::IsLessByExensionReversed(unsigned _1, unsigned _
 
 bool IndirectListingComparator::IsLessByExension(unsigned _1, unsigned _2) const
 {
-    const auto first_has_extension =
-        l.HasExtension(_1) && (!sort_mode.extensionless_dirs || !l.IsDir(_1));
-    const auto second_has_extension =
-        l.HasExtension(_2) && (!sort_mode.extensionless_dirs || !l.IsDir(_2));
+    const auto first_has_extension = l.HasExtension(_1) && (!sort_mode.extensionless_dirs || !l.IsDir(_1));
+    const auto second_has_extension = l.HasExtension(_2) && (!sort_mode.extensionless_dirs || !l.IsDir(_2));
     if( first_has_extension && second_has_extension ) {
         const auto r = Compare(l.Extension(_1), l.Extension(_2));
         if( r < 0 )
@@ -270,9 +265,7 @@ bool ExternalListingComparator::operator()(unsigned _1, const ExternalEntryKey &
             return false;
     }
 
-    const auto by_name = [&] {
-        return Compare(l.DisplayFilenameCF(_1), _val2.display_name.get());
-    };
+    const auto by_name = [&] { return Compare(l.DisplayFilenameCF(_1), _val2.display_name.get()); };
 
     switch( sort_mode.sort ) {
         case _::SortByName:
@@ -280,8 +273,7 @@ bool ExternalListingComparator::operator()(unsigned _1, const ExternalEntryKey &
         case _::SortByNameRev:
             return by_name() > 0;
         case _::SortByExt: {
-            const bool first_has_extension =
-                l.HasExtension(_1) && (!sort_mode.extensionless_dirs || !l.IsDir(_1));
+            const bool first_has_extension = l.HasExtension(_1) && (!sort_mode.extensionless_dirs || !l.IsDir(_1));
             const bool second_has_extension =
                 !_val2.extension.empty() && (!sort_mode.extensionless_dirs || !_val2.is_dir);
             if( first_has_extension && second_has_extension ) {
@@ -299,8 +291,7 @@ bool ExternalListingComparator::operator()(unsigned _1, const ExternalEntryKey &
             return by_name() < 0; // fallback case
         }
         case _::SortByExtRev: {
-            const bool first_has_extension =
-                l.HasExtension(_1) && (!sort_mode.extensionless_dirs || !l.IsDir(_1));
+            const bool first_has_extension = l.HasExtension(_1) && (!sort_mode.extensionless_dirs || !l.IsDir(_1));
             const bool second_has_extension =
                 !_val2.extension.empty() && (!sort_mode.extensionless_dirs || !_val2.is_dir);
             if( first_has_extension && second_has_extension ) {

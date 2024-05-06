@@ -18,9 +18,7 @@ NSURLSession *URLSessionFactory::CreateSession(NSURLSessionConfiguration *_confi
                                                id<NSURLSessionDelegate> _delegate,
                                                NSOperationQueue *_queue)
 {
-    return [NSURLSession sessionWithConfiguration:_configuration
-                                         delegate:_delegate
-                                    delegateQueue:_queue];
+    return [NSURLSession sessionWithConfiguration:_configuration delegate:_delegate delegateQueue:_queue];
 }
 
-}
+} // namespace nc::vfs::dropbox

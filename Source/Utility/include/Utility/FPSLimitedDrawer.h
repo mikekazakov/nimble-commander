@@ -5,12 +5,12 @@
 
 @interface FPSLimitedDrawer : NSObject
 
-- (id) initWithView:(NSView*)_view;
+- (id)initWithView:(NSView *)_view;
 
 /**
  * A view Drawer is attech at. Set upon init.
  */
-@property (readonly) NSView *view;
+@property(readonly) NSView *view;
 
 /**
  * Zero fps means that invalidation will cause setNeedDisplay immediately.
@@ -22,13 +22,13 @@
  * If fps > 0 then needsDisplay would be deferred.
  * Otherwise it is called immediately
  */
-- (void) invalidate;
+- (void)invalidate;
 
 @end
 
 @protocol ViewWithFPSLimitedDrawer <NSObject>
 
 @required
-@property (nonatomic, readonly) FPSLimitedDrawer *fpsDrawer;
+@property(nonatomic, readonly) FPSLimitedDrawer *fpsDrawer;
 
 @end

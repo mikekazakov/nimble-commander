@@ -9,74 +9,67 @@ using namespace nc::ops;
 
 namespace {
 
-
-struct MyJob : public Job
-{
-    virtual void Perform()
+struct MyJob : public Job {
+    void Perform() override
     {
-        std::this_thread::sleep_for( std::chrono::milliseconds{500} );
+        std::this_thread::sleep_for(std::chrono::milliseconds{500});
         SetCompleted();
     }
 };
 
-struct MyOperation : public Operation
-{
-    ~MyOperation()
-    {
-        Wait();
-    }
-    virtual Job *GetJob() noexcept { return &job; }
+struct MyOperation : public Operation {
+    ~MyOperation() override { Wait(); }
+    Job *GetJob() noexcept override { return &job; }
     MyJob job;
 };
 
-}
+} // namespace
 
 #define PREFIX "Basic Operations Semantics: "
 
-TEST_CASE(PREFIX"External wait")
+TEST_CASE(PREFIX "External wait")
 {
     MyOperation myop;
-    
+
     std::mutex cv_lock;
     std::condition_variable cv;
-    
-    myop.ObserveUnticketed(Operation::NotifyAboutFinish, [&]{ cv.notify_all(); });    
-    
+
+    myop.ObserveUnticketed(Operation::NotifyAboutFinish, [&] { cv.notify_all(); });
+
     myop.Start();
-    REQUIRE( myop.State() == OperationState::Running );
+    REQUIRE(myop.State() == OperationState::Running);
 
     std::unique_lock<std::mutex> lock{cv_lock};
-    cv.wait(lock, [&]{ return myop.State() >= OperationState::Stopped; });
+    cv.wait(lock, [&] { return myop.State() >= OperationState::Stopped; });
 
-    REQUIRE( myop.State() == OperationState::Completed );
+    REQUIRE(myop.State() == OperationState::Completed);
 }
 
-TEST_CASE(PREFIX"builtin wait")
+TEST_CASE(PREFIX "builtin wait")
 {
     MyOperation myop;
     myop.Start();
     myop.Wait();
-    REQUIRE( myop.State() == OperationState::Completed );
+    REQUIRE(myop.State() == OperationState::Completed);
 }
 
-TEST_CASE(PREFIX"builtin partial wait")
+TEST_CASE(PREFIX "builtin partial wait")
 {
     MyOperation myop;
     myop.Start();
-    REQUIRE( myop.Wait( std::chrono::milliseconds{200} ) == false );
-    REQUIRE( myop.State() == OperationState::Running );
+    REQUIRE(myop.Wait(std::chrono::milliseconds{200}) == false);
+    REQUIRE(myop.State() == OperationState::Running);
 }
 
-TEST_CASE(PREFIX"accidental operation wait")
+TEST_CASE(PREFIX "accidental operation wait")
 {
     MyOperation myop;
     myop.Start();
-    REQUIRE( myop.State() == OperationState::Running );
+    REQUIRE(myop.State() == OperationState::Running);
 }
 
-TEST_CASE(PREFIX"non-started operation behaviour")
+TEST_CASE(PREFIX "non-started operation behaviour")
 {
     MyOperation myop;
-    REQUIRE( myop.State() == OperationState::Cold );
+    REQUIRE(myop.State() == OperationState::Cold);
 }
-

@@ -8,9 +8,7 @@ VFSFile::VFSFile(const char *_relative_path, const VFSHostPtr &_host)
 {
 }
 
-VFSFile::~VFSFile()
-{
-}
+VFSFile::~VFSFile() = default;
 
 std::shared_ptr<VFSFile> VFSFile::SharedPtr()
 {
@@ -52,9 +50,7 @@ ssize_t VFSFile::Write([[maybe_unused]] const void *_buf, [[maybe_unused]] size_
     return SetLastError(VFSError::NotSupported);
 }
 
-ssize_t VFSFile::ReadAt([[maybe_unused]] off_t _pos,
-                        [[maybe_unused]] void *_buf,
-                        [[maybe_unused]] size_t _size)
+ssize_t VFSFile::ReadAt([[maybe_unused]] off_t _pos, [[maybe_unused]] void *_buf, [[maybe_unused]] size_t _size)
 {
     return SetLastError(VFSError::NotSupported);
 }
@@ -116,8 +112,7 @@ unsigned VFSFile::XAttrCount() const
     return 0;
 }
 
-void VFSFile::XAttrIterateNames(
-    [[maybe_unused]] const std::function<bool(const char *_xattr_name)> &_handler) const
+void VFSFile::XAttrIterateNames([[maybe_unused]] const std::function<bool(const char *_xattr_name)> &_handler) const
 {
 }
 

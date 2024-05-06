@@ -18,8 +18,7 @@ bool FollowSymlink::ValidateMenuItem(PanelController *_target, NSMenuItem *_item
 {
     if( auto vfs_item = _target.view.item ) {
         _item.title = [NSString
-            stringWithFormat:NSLocalizedString(@"Follow \u201c%@\u201d", "Follow a symlink"),
-                             vfs_item.DisplayNameNS()];
+            stringWithFormat:NSLocalizedString(@"Follow \u201c%@\u201d", "Follow a symlink"), vfs_item.DisplayNameNS()];
     }
 
     return Predicate(_target);
@@ -36,8 +35,7 @@ void FollowSymlink::Perform(PanelController *_target, [[maybe_unused]] id _sende
 
     // poor man's symlink resolution:
     const auto symlink_target =
-        (std::filesystem::path(item.Directory()) / std::filesystem::path(item.Symlink()))
-            .lexically_normal();
+        (std::filesystem::path(item.Directory()) / std::filesystem::path(item.Symlink())).lexically_normal();
     if( symlink_target.empty() )
         return;
 

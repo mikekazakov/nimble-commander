@@ -11,9 +11,10 @@
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
+#include <Base/mach_time.h>
+#include <fmt/format.h>
 #include <mach/mach_time.h>
 #include <mutex>
-#include <Base/mach_time.h>
 
 namespace nc::base {
 
@@ -54,21 +55,21 @@ std::chrono::nanoseconds MachTimeBenchmark::Delta() const
 void MachTimeBenchmark::ResetNano(const char *_msg)
 {
     auto now = machtime();
-    printf("%s%llu\n", _msg, (now - last).count());
+    fmt::println("{}{}", _msg, (now - last).count());
     last = now;
 }
 
 void MachTimeBenchmark::ResetMicro(const char *_msg)
 {
     auto now = machtime();
-    printf("%s%llu\n", _msg, std::chrono::duration_cast<std::chrono::microseconds>(now - last).count());
+    fmt::println("{}{}", _msg, std::chrono::duration_cast<std::chrono::microseconds>(now - last).count());
     last = now;
 }
 
 void MachTimeBenchmark::ResetMilli(const char *_msg)
 {
     auto now = machtime();
-    printf("%s%llu\n", _msg, std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count());
+    fmt::println("{}{}", _msg, std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count());
     last = now;
 }
 

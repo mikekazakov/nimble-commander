@@ -4,8 +4,7 @@
 
 @interface AttachedResponder : NSResponder
 
-
-- (AttachedResponder*)nextAttachedResponder;
+- (AttachedResponder *)nextAttachedResponder;
 
 - (void)setNextResponder:(NSResponder *)nextResponder;
 - (void)setNextAttachedResponder:(AttachedResponder *)nextAttachedResponder;

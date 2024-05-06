@@ -7,13 +7,13 @@
 #include <string>
 
 namespace nc::config {
-    class Config;
+class Config;
 }
 namespace nc::viewer {
-    class History;
+class History;
 };
 namespace nc::utility {
-    struct ActionShortcut;
+struct ActionShortcut;
 }
 
 @interface NCViewerViewController : NSResponder <NSSearchFieldDelegate, NSPopoverDelegate>
@@ -39,8 +39,7 @@ namespace nc::utility {
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithHistory:(nc::viewer::History &)_history
                          config:(nc::config::Config &)_config
-              shortcutsProvider:
-                  (std::function<nc::utility::ActionShortcut(std::string_view _name)>)_shortcuts;
+              shortcutsProvider:(std::function<nc::utility::ActionShortcut(std::string_view _name)>)_shortcuts;
 
 - (void)setFile:(std::string)path at:(VFSHostPtr)vfs;
 

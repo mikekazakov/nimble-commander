@@ -262,4 +262,4 @@ bool HardFilter::IsFiltering() const noexcept
     return !show_hidden || text.IsFiltering();
 }
 
-}
+} // namespace nc::panel::data

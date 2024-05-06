@@ -19,9 +19,9 @@ public:
 private:
     virtual Job *GetJob() noexcept override;
     int OnRenameError(int _err, const std::string &_path, VFSHost &_vfs);
-    
+
     std::unique_ptr<BatchRenamingJob> m_Job;
     bool m_SkipAll = false;
 };
 
-}
+} // namespace nc::ops

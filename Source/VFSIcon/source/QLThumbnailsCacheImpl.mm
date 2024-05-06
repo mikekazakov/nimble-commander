@@ -265,4 +265,4 @@ NSImage *QLThumbnailsCacheImpl::ThumbnailIfHas(const std::string &_filename, int
     }
 }
 
-}
+} // namespace nc::vfsicon

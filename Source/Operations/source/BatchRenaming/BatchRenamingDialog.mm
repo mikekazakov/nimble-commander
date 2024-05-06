@@ -206,7 +206,7 @@ using SourceReverseMappingStorage = robin_hood::
             throw std::logic_error("empty files list");
 
         for( auto &entry : _items ) {
-            m_FileInfos.emplace_back(BatchRenamingScheme::FileInfo(entry));
+            m_FileInfos.emplace_back(entry);
             m_ResultSource.emplace_back(entry.Directory() + entry.Filename());
         }
 

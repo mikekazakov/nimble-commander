@@ -17,12 +17,8 @@ public:
     using element_type = T;
     using pointer = T *;
 
-    static_assert(
-        std::is_same_v<decltype(intrusive_ptr_add_refcount(static_cast<const T *>(nullptr))),
-                       void>);
-    static_assert(
-        std::is_same_v<decltype(intrusive_ptr_dec_refcount(static_cast<const T *>(nullptr))),
-                       void>);
+    static_assert(std::is_same_v<decltype(intrusive_ptr_add_refcount(static_cast<const T *>(nullptr))), void>);
+    static_assert(std::is_same_v<decltype(intrusive_ptr_dec_refcount(static_cast<const T *>(nullptr))), void>);
 
     constexpr intrusive_ptr() noexcept : p(nullptr) {}
 
@@ -41,8 +37,7 @@ public:
     }
 
     template <typename U>
-    intrusive_ptr(const intrusive_ptr<U> &_rhs,
-                  std::enable_if_t<std::is_convertible_v<U *, T *>> * = nullptr) noexcept
+    intrusive_ptr(const intrusive_ptr<U> &_rhs, std::enable_if_t<std::is_convertible_v<U *, T *>> * = nullptr) noexcept
         : p(_rhs.get())
     {
         if( p )
@@ -52,8 +47,7 @@ public:
     intrusive_ptr(intrusive_ptr &&_rhs) noexcept : p(_rhs.p) { _rhs.p = nullptr; }
 
     template <typename U>
-    intrusive_ptr(intrusive_ptr<U> &&_rhs,
-                  std::enable_if_t<std::is_convertible_v<U *, T *>> * = nullptr) noexcept
+    intrusive_ptr(intrusive_ptr<U> &&_rhs, std::enable_if_t<std::is_convertible_v<U *, T *>> * = nullptr) noexcept
         : p(_rhs.get())
     {
         _rhs.release();
@@ -213,7 +207,7 @@ inline void intrusive_ptr_dec_refcount(const intrusive_ref_counter<T> *p) noexce
         delete static_cast<const T *>(p);
     }
 }
-}
+} // namespace nc::base
 
 namespace std {
 
@@ -227,10 +221,7 @@ template <typename T>
 struct hash<nc::base::intrusive_ptr<T>> {
     using argument_type = nc::base::intrusive_ptr<T>;
     using result_type = size_t;
-    result_type operator()(const argument_type &_p) const
-    {
-        return hash<typename argument_type::pointer>()(_p.get());
-    }
+    result_type operator()(const argument_type &_p) const { return hash<typename argument_type::pointer>()(_p.get()); }
 };
 
-}
+} // namespace std

@@ -4,12 +4,12 @@
 #include <Foundation/Foundation.h>
 #include <functional>
 
-@interface NCVFSDropboxFileUploadDelegate : NSObject<NSURLSessionDelegate>
+@interface NCVFSDropboxFileUploadDelegate : NSObject <NSURLSessionDelegate>
 
-- (instancetype)initWithStream:(NSInputStream*)_stream;
+- (instancetype)initWithStream:(NSInputStream *)_stream;
 
 // non-reentrant callbacks, don't change them when upon execution
-@property (nonatomic) std::function<void(int _vfs_error)> handleFinished;
-@property (nonatomic) std::function<void(NSData *_data)> handleReceivedData;
+@property(nonatomic) std::function<void(int _vfs_error)> handleFinished;
+@property(nonatomic) std::function<void(NSData *_data)> handleReceivedData;
 
 @end

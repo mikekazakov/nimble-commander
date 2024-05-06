@@ -6,4 +6,4 @@ namespace nc::base {
 // Gets the current MacOSX locale and sets it as a C locale
 void SetSystemLocaleAsCLocale() noexcept;
 
-}
+} // namespace nc::base

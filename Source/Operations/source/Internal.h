@@ -2,7 +2,7 @@
 #pragma once
 
 #ifdef __OBJC__
-    #include <Cocoa/Cocoa.h>
+#include <Cocoa/Cocoa.h>
 #endif
 
 namespace nc::ops {
@@ -14,5 +14,5 @@ NSBundle *Bundle() noexcept;
 NSString *NSLocalizedString(NSString *_key, const char *_comment) noexcept;
 
 #endif
-    
-}
+
+} // namespace nc::ops

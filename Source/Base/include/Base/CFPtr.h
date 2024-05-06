@@ -28,9 +28,9 @@ public:
         if( m_Ptr )
             CFRetain(m_Ptr);
     }
-    
+
     template <typename U>
-    requires(std::is_convertible_v<U, T>) //
+        requires(std::is_convertible_v<U, T>) //
     CFPtr(const CFPtr<U> &_rhs) noexcept : m_Ptr(_rhs.m_Ptr)
     {
         if( m_Ptr )
@@ -40,7 +40,7 @@ public:
     CFPtr(CFPtr &&_rhs) noexcept : m_Ptr(_rhs.m_Ptr) { _rhs.m_Ptr = nullptr; }
 
     template <typename U>
-    requires(std::is_convertible_v<U, T>) //
+        requires(std::is_convertible_v<U, T>) //
     CFPtr(CFPtr<U> &&_rhs) noexcept : m_Ptr(_rhs.m_Ptr)
     {
         _rhs.m_Ptr = nullptr;
@@ -54,9 +54,9 @@ public:
         swap(tmp);
         return *this;
     }
-    
+
     template <typename U>
-    requires(std::is_convertible_v<U, T>) //
+        requires(std::is_convertible_v<U, T>) //
     CFPtr &operator=(const CFPtr<U> &_rhs) noexcept
     {
         CFPtr tmp{_rhs};
@@ -70,9 +70,9 @@ public:
         swap(tmp);
         return *this;
     }
-    
+
     template <typename U>
-    requires(std::is_convertible_v<U, T>) //
+        requires(std::is_convertible_v<U, T>) //
     CFPtr &operator=(CFPtr<U> &&_rhs) noexcept
     {
         CFPtr tmp{std::move(_rhs)};
@@ -106,7 +106,8 @@ public:
 
 private:
     PointerType m_Ptr;
-    template <typename> friend class CFPtr;
+    template <typename>
+    friend class CFPtr;
 };
 
 template <typename T>

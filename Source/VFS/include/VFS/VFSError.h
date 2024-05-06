@@ -8,8 +8,7 @@
 #endif
 
 namespace VFSError {
-enum
-{
+enum {
     // general error codes
     Ok = 0,            // operation was succesful
     Cancelled = -1,    // operation was canceled by user with cancel-callback
@@ -96,4 +95,4 @@ std::string FormatErrorCode(int _vfs_code);
 NSError *ToNSError(int _code);
 int FromNSError(NSError *_err);
 #endif
-};
+}; // namespace VFSError

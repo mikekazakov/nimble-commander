@@ -20,8 +20,7 @@ public:
     // callbacks shall not access this object back as an implementation is not required to be
     // reenterant.
     // the order in which the callbacks for the same path will be called is not guaranteed.
-    virtual uint64_t AddWatchPath(const std::filesystem::path &_path,
-                                  std::function<void()> _handler) = 0;
+    virtual uint64_t AddWatchPath(const std::filesystem::path &_path, std::function<void()> _handler) = 0;
 
     // registers the watch identified by _token.
     virtual void RemoveWatchPathWithToken(uint64_t _token) = 0;

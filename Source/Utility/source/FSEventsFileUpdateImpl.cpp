@@ -116,7 +116,7 @@ FSEventStreamRef FSEventsFileUpdateImpl::CreateEventStream(const std::filesystem
         return nullptr;
 
     const auto paths_to_watch =
-        base::CFPtr<CFArrayRef>::adopt(CFArrayCreate(0, reinterpret_cast<const void **>(&cf_path), 1, nullptr));
+        base::CFPtr<CFArrayRef>::adopt(CFArrayCreate(nullptr, reinterpret_cast<const void **>(&cf_path), 1, nullptr));
     if( !paths_to_watch )
         return nullptr;
 

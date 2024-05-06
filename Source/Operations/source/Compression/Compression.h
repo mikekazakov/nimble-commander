@@ -4,16 +4,12 @@
 #include "../Operation.h"
 #include <VFS/VFS.h>
 
-
-
 /*
 +TODO:
 - adjusting stats on skips
 */
 
-
-namespace nc::ops
-{
+namespace nc::ops {
 
 class CompressionJob;
 
@@ -45,4 +41,4 @@ private:
     std::string m_InitialSingleItemFilename = "";
 };
 
-}
+} // namespace nc::ops

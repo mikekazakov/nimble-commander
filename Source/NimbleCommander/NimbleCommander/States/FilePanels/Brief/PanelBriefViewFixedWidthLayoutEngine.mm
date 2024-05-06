@@ -49,8 +49,8 @@ void FixedWidthLayoutEngine::BuildGrid(const Params &_params)
         m_ColumnsWidths.resize(0);
     }
     else {
-        m_ColumnsNumber = (m_ItemsNumber % m_RowsNumber != 0) ? (m_ItemsNumber / m_RowsNumber + 1)
-                                                              : (m_ItemsNumber / m_RowsNumber);
+        m_ColumnsNumber =
+            (m_ItemsNumber % m_RowsNumber != 0) ? (m_ItemsNumber / m_RowsNumber + 1) : (m_ItemsNumber / m_RowsNumber);
         m_ContentSize = NSMakeSize(m_ColumnsNumber * m_ItemWidth, m_RowsNumber * m_ItemHeight);
         FillColumnsPositions(m_ColumnsPositions, m_ColumnsNumber, m_ItemWidth);
         FillColumnsWidths(m_ColumnsWidths, m_ColumnsNumber, m_ItemWidth);
@@ -68,8 +68,7 @@ void FixedWidthLayoutEngine::BuildItemsLayout()
             const auto row_number = index % m_RowsNumber;
             const auto origin = NSMakePoint(column_number * m_ItemWidth, row_number * m_ItemHeight);
             const auto index_path = [NSIndexPath indexPathForItem:index inSection:0];
-            const auto attributes =
-                [NSCollectionViewLayoutAttributes layoutAttributesForItemWithIndexPath:index_path];
+            const auto attributes = [NSCollectionViewLayoutAttributes layoutAttributesForItemWithIndexPath:index_path];
             attributes.frame = NSMakeRect(origin.x, origin.y, item_size.width, item_size.height);
             m_Attributes[index] = attributes;
         }
@@ -80,16 +79,14 @@ void FixedWidthLayoutEngine::BuildItemsLayout()
         const auto frame = NSMakeRect(0.0, 0.0, item_size.width, item_size.height);
         for( int index = 0; index < items_number; ++index ) {
             const auto index_path = [NSIndexPath indexPathForItem:index inSection:0];
-            const auto attributes =
-                [NSCollectionViewLayoutAttributes layoutAttributesForItemWithIndexPath:index_path];
+            const auto attributes = [NSCollectionViewLayoutAttributes layoutAttributesForItemWithIndexPath:index_path];
             attributes.frame = frame;
             m_Attributes[index] = attributes;
         }
     }
 }
 
-bool FixedWidthLayoutEngine::ShouldRelayoutForNewBounds(
-    const NSRect clip_view_bounds) const noexcept
+bool FixedWidthLayoutEngine::ShouldRelayoutForNewBounds(const NSRect clip_view_bounds) const noexcept
 {
     const auto height = clip_view_bounds.size.height;
     const auto projected_rows_number = NumberOfRowsForViewHeight(height, m_ItemHeight);
@@ -104,12 +101,10 @@ FixedWidthLayoutEngine::AttributesForItemsInRect(NSRect _rect) const noexcept
 {
     const auto first_column = static_cast<int>(std::floor(_rect.origin.x / m_ItemWidth));
     const auto last_column =
-        std::min(static_cast<int>(std::ceil((_rect.origin.x + _rect.size.width) / m_ItemWidth)),
-                 m_ColumnsNumber);
+        std::min(static_cast<int>(std::ceil((_rect.origin.x + _rect.size.width) / m_ItemWidth)), m_ColumnsNumber);
     const auto first_row = static_cast<int>(std::floor(_rect.origin.y / m_ItemHeight));
     const auto last_row =
-        std::min(static_cast<int>(std::ceil((_rect.origin.y + _rect.size.height) / m_ItemHeight)),
-                 m_RowsNumber);
+        std::min(static_cast<int>(std::ceil((_rect.origin.y + _rect.size.height) / m_ItemHeight)), m_RowsNumber);
     NSMutableArray *array = [[NSMutableArray alloc] init];
     for( int column = first_column; column < last_column; ++column )
         for( int row = first_row; row < last_row; ++row ) {
@@ -121,4 +116,4 @@ FixedWidthLayoutEngine::AttributesForItemsInRect(NSRect _rect) const noexcept
     return array;
 }
 
-}
+} // namespace nc::panel::view::brief

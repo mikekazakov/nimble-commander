@@ -289,7 +289,6 @@ using SelPoint = term::ScreenPoint;
                      cursor_at:(m_Screen->CursorY() != i - bsl) ? -1 : m_Screen->CursorX()];
         }
     }
-    
 }
 
 namespace {
@@ -349,7 +348,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     const double width = m_FontCache->Width();
     const double height = m_FontCache->Height();
     const double descent = m_FontCache->Descent();
-    
+
     // fill the line background
     {
         LazyLineRectFiller filler(_context, 0., _y * height, width, height);
@@ -367,7 +366,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             ++x;
         }
     }
-    
+
     // draw selection if it's here
     if( m_HasSelection ) {
         CGRect rc = {{-1, -1}, {0, 0}};
@@ -393,7 +392,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     // draw glyphs
     const bool blink_visible = m_BlinkScheduler.Visible();
     CGContextSetShouldAntialias(_context, true);
-    
+
     auto draw_characters = [&](int _first, int _last) {
         const ScreenBuffer::Space attr = _line[_first];
         if( attr.invisible )
@@ -416,7 +415,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             codes.push_back(cs.l);
             positions.push_back({rx, ry});
         }
-        
+
         // pick the cells' foreground color
         CGColorRef c = nullptr;
         if( attr.reverse ) {
@@ -440,19 +439,19 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             }
         }
         CGContextSetFillColorWithColor(_context, c);
-        
+
         // pick the cells' effective font
         CTCache &font = attr.bold ? (attr.italic ? *m_BoldItalicFontCache : *m_BoldFontCache)
-                                : (attr.italic ? *m_ItalicFontCache : *m_FontCache);
-        
+                                  : (attr.italic ? *m_ItalicFontCache : *m_FontCache);
+
         // Now draw the characters
         font.DrawCharacters(codes.data(), positions.data(), codes.size(), _context);
-        
+
         if( attr.underline ) {
             CGRect rc;
             rc.origin.x = _first * width;
             rc.origin.y = _y * height + height - 1; /* NEED A REAL UNDERLINE POSITION HERE !!! */
-            rc.size.width = (_last-_first) * width;
+            rc.size.width = (_last - _first) * width;
             rc.size.height = 1.;
             CGContextFillRect(_context, rc);
         }
@@ -461,7 +460,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             CGRect rc;
             rc.origin.x = _first * width;
             rc.origin.y = _y * height + height / 2.; /* NEED A REAL CROSS POSITION HERE !!! */
-            rc.size.width = (_last-_first) * width;
+            rc.size.width = (_last - _first) * width;
             rc.size.height = 1;
             CGContextFillRect(_context, rc);
         }
@@ -888,7 +887,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
 - (void)setForegroundColor:(NSColor *)foregroundColor
 {
-    if( ![foregroundColor isEqualTo:self.foregroundColor]) {
+    if( ![foregroundColor isEqualTo:self.foregroundColor] ) {
         m_Colors.SetSpecialColor(ColorMap::Special::Foreground, foregroundColor);
         self.needsDisplay = true;
     }
@@ -901,7 +900,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
 - (void)setBoldForegroundColor:(NSColor *)boldForegroundColor
 {
-    if( ![boldForegroundColor isEqualTo:self.boldForegroundColor]) {
+    if( ![boldForegroundColor isEqualTo:self.boldForegroundColor] ) {
         m_Colors.SetSpecialColor(ColorMap::Special::BoldForeground, boldForegroundColor);
         self.needsDisplay = true;
     }
@@ -914,7 +913,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
 - (void)setBackgroundColor:(NSColor *)backgroundColor
 {
-    if( ![backgroundColor isEqualTo:self.backgroundColor]) {
+    if( ![backgroundColor isEqualTo:self.backgroundColor] ) {
         m_Colors.SetSpecialColor(ColorMap::Special::Background, backgroundColor);
         self.needsDisplay = true;
     }
@@ -927,7 +926,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
 - (void)setSelectionColor:(NSColor *)selectionColor
 {
-    if( ![selectionColor isEqualTo:self.selectionColor]) {
+    if( ![selectionColor isEqualTo:self.selectionColor] ) {
         m_Colors.SetSpecialColor(ColorMap::Special::Selection, selectionColor);
         self.needsDisplay = true;
     }
@@ -947,7 +946,10 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 }
 
 #define ANSI_COLOR(getter, setter, index)                                                                              \
-    -(NSColor *)getter { return [NSColor colorWithCGColor:m_Colors.GetColor(index)]; }                                 \
+    -(NSColor *)getter                                                                                                 \
+    {                                                                                                                  \
+        return [NSColor colorWithCGColor:m_Colors.GetColor(index)];                                                    \
+    }                                                                                                                  \
     -(void)setter : (NSColor *)color                                                                                   \
     {                                                                                                                  \
         if( ![color isEqualTo:self.getter] ) {                                                                         \

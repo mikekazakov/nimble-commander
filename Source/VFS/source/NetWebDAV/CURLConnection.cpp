@@ -179,8 +179,7 @@ int CURLConnection::SetBody(std::span<const std::byte> _body)
     curl_easy_setopt(m_EasyHandle, CURLOPT_UPLOAD, 1L);
     curl_easy_setopt(m_EasyHandle, CURLOPT_READFUNCTION, WriteBuffer::ReadCURL);
     curl_easy_setopt(m_EasyHandle, CURLOPT_READDATA, &m_RequestBody);
-    curl_easy_setopt(
-        m_EasyHandle, CURLOPT_INFILESIZE_LARGE, static_cast<curl_off_t>(m_RequestBody.Size()));
+    curl_easy_setopt(m_EasyHandle, CURLOPT_INFILESIZE_LARGE, static_cast<curl_off_t>(m_RequestBody.Size()));
 
     // TODO: mb check rcs from curl?
     return VFSError::Ok;

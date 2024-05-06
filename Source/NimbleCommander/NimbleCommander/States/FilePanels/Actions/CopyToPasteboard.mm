@@ -10,7 +10,7 @@
 
 namespace nc::panel::actions {
 
-bool CopyToPasteboard::Predicate( PanelController *_target ) const
+bool CopyToPasteboard::Predicate(PanelController *_target) const
 {
     const auto &stats = _target.data.Stats();
     if( stats.selected_entries_amount > 0 )
@@ -18,23 +18,20 @@ bool CopyToPasteboard::Predicate( PanelController *_target ) const
     return _target.view.item;
 }
 
-bool CopyToPasteboard::ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const
+bool CopyToPasteboard::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
 {
     const auto &stats = _target.data.Stats();
     if( stats.selected_entries_amount > 0 ) {
-        _item.title = [NSString stringWithFormat:
-                       NSLocalizedStringFromTable(@"Copy %d Items",
-                                       @"FilePanelsContextMenu",
-                                       "Copy many items"),
-                       stats.selected_entries_amount];
+        _item.title = [NSString
+            stringWithFormat:NSLocalizedStringFromTable(@"Copy %d Items", @"FilePanelsContextMenu", "Copy many items"),
+                             stats.selected_entries_amount];
     }
     else {
         if( auto item = _target.view.item ) {
-            _item.title = [NSString stringWithFormat:
-                NSLocalizedStringFromTable(@"Copy \u201c%@\u201d",
-                                           @"FilePanelsContextMenu",
-                                           "Copy one item"),
-                          item.DisplayNameNS()];
+            _item.title =
+                [NSString stringWithFormat:NSLocalizedStringFromTable(
+                                               @"Copy \u201c%@\u201d", @"FilePanelsContextMenu", "Copy one item"),
+                                           item.DisplayNameNS()];
         }
         else
             _item.title = @"";
@@ -42,53 +39,47 @@ bool CopyToPasteboard::ValidateMenuItem( PanelController *_target, NSMenuItem *_
     return Predicate(_target);
 }
 
-void CopyToPasteboard::PerformWithItems( const std::vector<VFSListingItem> &_items ) const
+void CopyToPasteboard::PerformWithItems(const std::vector<VFSListingItem> &_items) const
 {
     if( !PasteboardSupport::WriteFilesnamesPBoard(_items, NSPasteboard.generalPasteboard) )
         NSBeep();
 }
 
-void CopyToPasteboard::Perform( PanelController *_target, id ) const
+void CopyToPasteboard::Perform(PanelController *_target, id) const
 {
-    PerformWithItems( _target.selectedEntriesOrFocusedEntryWithDotDot );
+    PerformWithItems(_target.selectedEntriesOrFocusedEntryWithDotDot);
 }
 
-context::CopyToPasteboard::CopyToPasteboard(const std::vector<VFSListingItem> &_items):
-    m_Items(_items)
+context::CopyToPasteboard::CopyToPasteboard(const std::vector<VFSListingItem> &_items) : m_Items(_items)
 {
     if( _items.empty() )
         throw std::invalid_argument("CopyToPasteboard was made with empty items set");
 }
 
-bool context::CopyToPasteboard::Predicate( [[maybe_unused]] PanelController *_target ) const
+bool context::CopyToPasteboard::Predicate([[maybe_unused]] PanelController *_target) const
 {
-// currently there's a difference with previous predicate form context menu:
-//        if( m_CommonHost && m_CommonHost->IsNativeFS() ) {
-// such thing works only on native file systems
+    // currently there's a difference with previous predicate form context menu:
+    //        if( m_CommonHost && m_CommonHost->IsNativeFS() ) {
+    // such thing works only on native file systems
     return !m_Items.empty();
 }
 
-bool context::CopyToPasteboard::ValidateMenuItem(PanelController *_target,
-                                                 NSMenuItem *_item ) const
+bool context::CopyToPasteboard::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
 {
-    if(m_Items.size() > 1)
-        _item.title = [NSString stringWithFormat:
-            NSLocalizedStringFromTable(@"Copy %lu Items",
-                                       @"FilePanelsContextMenu",
-                                       "Copy many items"),
-                       m_Items.size()];
+    if( m_Items.size() > 1 )
+        _item.title = [NSString
+            stringWithFormat:NSLocalizedStringFromTable(@"Copy %lu Items", @"FilePanelsContextMenu", "Copy many items"),
+                             m_Items.size()];
     else
-        _item.title = [NSString stringWithFormat:
-            NSLocalizedStringFromTable(@"Copy \u201c%@\u201d",
-                                       @"FilePanelsContextMenu",
-                                       "Copy one item"),
-                       m_Items.front().DisplayNameNS()];
+        _item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(
+                                                     @"Copy \u201c%@\u201d", @"FilePanelsContextMenu", "Copy one item"),
+                                                 m_Items.front().DisplayNameNS()];
     return Predicate(_target);
 }
 
-void context::CopyToPasteboard::Perform( [[maybe_unused]] PanelController *_target, id ) const
+void context::CopyToPasteboard::Perform([[maybe_unused]] PanelController *_target, id) const
 {
-    PerformWithItems( m_Items );
+    PerformWithItems(m_Items);
 }
 
-}
+} // namespace nc::panel::actions

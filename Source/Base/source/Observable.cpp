@@ -11,8 +11,9 @@
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
-#include <Base/algo.h>
 #include <Base/Observable.h>
+#include <Base/algo.h>
+#include <fmt/format.h>
 
 namespace nc::base {
 
@@ -61,9 +62,8 @@ ObservableBase::~ObservableBase()
 {
     const auto lock = std::lock_guard{m_ObserversLock};
     if( m_Observers && !m_Observers->empty() )
-        printf("ObservableBase %p was destroyed with alive observers! This will lead to UB or "
-               "crash.\n",
-               this);
+        fmt::println("ObservableBase {} was destroyed with alive observers! This will lead to UB or crash.",
+                     static_cast<const void *>(this));
 }
 
 ObservableBase::ObservationTicket ObservableBase::AddObserver(std::function<void()> _callback, const uint64_t _mask)
@@ -89,7 +89,7 @@ ObservableBase::ObservationTicket ObservableBase::AddObserver(std::function<void
         m_Observers = new_observers;
     }
 
-    return ObservationTicket(this, ticket);
+    return {this, ticket};
 }
 
 void ObservableBase::FireObservers(const uint64_t _mask) const

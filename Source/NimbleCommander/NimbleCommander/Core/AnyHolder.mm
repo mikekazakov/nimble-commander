@@ -1,8 +1,7 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AnyHolder.h"
 
-@implementation AnyHolder
-{
+@implementation AnyHolder {
     std::any m_Object;
 }
 
@@ -14,7 +13,7 @@
     return self;
 }
 
-- (const std::any&) any
+- (const std::any &)any
 {
     return m_Object;
 }

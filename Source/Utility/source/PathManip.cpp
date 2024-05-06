@@ -6,7 +6,7 @@
 
 bool EliminateTrailingSlashInPath(char *_path)
 {
-    if( _path == 0 )
+    if( _path == nullptr )
         return false;
 
     size_t len = strlen(_path);
@@ -55,9 +55,8 @@ bool GetDirectoryContainingItemFromPath(const char *_path, char *_buf)
 bool GetFilenameFromRelPath(const char *_path, char *_buf)
 {
     const char *last_sl = strrchr(_path, '/');
-    if( last_sl == 0 ) {
-        strcpy(_buf, _path); // assume that there's no directories in this path, so return the
-                             // entire original path
+    if( last_sl == nullptr ) {
+        strcpy(_buf, _path); // assume that there's no directories in this path, so return the entire original path
         return true;
     }
     else {
@@ -100,7 +99,7 @@ bool GetExtensionFromRelPath(const char *_path, char *_buf)
 {
     const char *last_sl = strrchr(_path, '/');
     const char *last_dot = strrchr(_path, '.');
-    if( last_dot == 0 )
+    if( last_dot == nullptr )
         return false;
 
     if( last_sl ) {
@@ -170,7 +169,7 @@ std::string_view PathManip::Filename(std::string_view _path) noexcept
     while( filename > first && filename[-1] != '/' )
         --filename;
 
-    return std::string_view(filename, last - filename);
+    return {filename, static_cast<size_t>(last - filename)};
 }
 
 std::string_view PathManip::Extension(std::string_view _path) noexcept
@@ -195,7 +194,7 @@ std::string_view PathManip::Extension(std::string_view _path) noexcept
     if( extension == first + 1 )
         return {}; // don't allow e.g. ".foo"
 
-    return std::string_view(extension, last - extension);
+    return {extension, static_cast<size_t>(last - extension)};
 }
 
 std::string_view PathManip::Parent(std::string_view _path) noexcept
@@ -209,7 +208,7 @@ std::string_view PathManip::Parent(std::string_view _path) noexcept
     while( last > first && last[-1] != '/' )
         --last;
 
-    return std::string_view(first, last - first);
+    return {first, static_cast<size_t>(last - first)};
 }
 
 std::filesystem::path PathManip::Expand(std::string_view _path, std::string_view _home, std::string_view _cwd) noexcept

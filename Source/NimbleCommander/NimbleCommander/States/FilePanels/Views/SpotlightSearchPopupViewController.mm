@@ -22,8 +22,7 @@ static const auto g_ConfigHistoryPath = "filePanel.findWithSpotlightPopup.querie
 {
     [super viewDidLoad];
 
-    m_QueryHistory =
-        [[SimpleComboBoxPersistentDataSource alloc] initWithStateConfigPath:g_ConfigHistoryPath];
+    m_QueryHistory = [[SimpleComboBoxPersistentDataSource alloc] initWithStateConfigPath:g_ConfigHistoryPath];
     self.queryComboBox.usesDataSource = true;
     self.queryComboBox.dataSource = m_QueryHistory;
 }

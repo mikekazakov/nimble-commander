@@ -17,7 +17,7 @@ namespace nc::panel {
 static const actions::PanelAction *ActionBySel(SEL _sel, const PanelActionsMap &_map) noexcept;
 static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_target, id _sender);
 
-}
+} // namespace nc::panel
 
 @implementation NCPanelControllerActionsDispatcher {
     __unsafe_unretained PanelController *m_PC;
@@ -49,9 +49,9 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
                    andHandle:(bool)_handle
 {
     const auto event_data = nc::utility::ActionShortcut::EventData(_event);
-    
-    static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native, hk_go_root,
-        hk_go_home, hk_preview, hk_go_into, kh_go_outside;
+
+    static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native, hk_go_root, hk_go_home, hk_preview,
+        hk_go_into, kh_go_outside;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
         std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
             {&hk_file_open, "menu.file.enter"},
@@ -68,9 +68,8 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
             return view::BiddingPriority::Default;
         }
         else
-            return [self validateActionBySelector:@selector(OnFileViewCommand:)]
-                       ? view::BiddingPriority::Default
-                       : view::BiddingPriority::Skip;
+            return [self validateActionBySelector:@selector(OnFileViewCommand:)] ? view::BiddingPriority::Default
+                                                                                 : view::BiddingPriority::Skip;
     }
 
     if( hk_go_home.IsKeyDown(event_data) ) {
@@ -91,8 +90,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 
     if( hk_go_into.IsKeyDown(event_data) ) {
         if( _handle ) {
-            static auto tag =
-                ActionsShortcutsManager::Instance().TagFromAction("menu.go.into_folder");
+            static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.into_folder");
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::Default;
@@ -100,8 +98,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 
     if( kh_go_outside.IsKeyDown(event_data) ) {
         if( _handle ) {
-            static auto tag =
-                ActionsShortcutsManager::Instance().TagFromAction("menu.go.enclosing_folder");
+            static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.enclosing_folder");
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::Default;
@@ -144,8 +141,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
         try {
             return action->Predicate(m_PC);
         } catch( const std::exception &e ) {
-            std::cerr << "validateActionBySelector has caught an exception: " << e.what()
-                      << std::endl;
+            std::cerr << "validateActionBySelector has caught an exception: " << e.what() << std::endl;
         } catch( ... ) {
             std::cerr << "validateActionBySelector has caught an unknown exception!" << std::endl;
         }
@@ -603,9 +599,8 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
         }
     }
     else {
-        std::cerr << "warning - unrecognized selector: " << NSStringFromSelector(_sel).UTF8String
-                  << std::endl;
+        std::cerr << "warning - unrecognized selector: " << NSStringFromSelector(_sel).UTF8String << std::endl;
     }
 }
 
-}
+} // namespace nc::panel

@@ -15,8 +15,7 @@ namespace nc::ops {
 //    it's better to cache results gathered on scanning stage
 
 struct CompressionJob::Source {
-    enum class ItemFlags : uint16_t
-    {
+    enum class ItemFlags : uint16_t {
         no_flags = 0 << 0,
         is_dir = 1 << 0,
         symlink = 1 << 1
@@ -52,23 +51,20 @@ CompressionJob::CompressionJob(std::vector<VFSListingItem> _src_files,
                                std::string _dst_root,
                                VFSHostPtr _dst_vfs,
                                std::string _password)
-    : m_InitialListingItems{std::move(_src_files)}, m_DstRoot{std::move(_dst_root)},
-      m_DstVFS{std::move(_dst_vfs)}, m_Password{std::move(_password)}
+    : m_InitialListingItems{std::move(_src_files)}, m_DstRoot{std::move(_dst_root)}, m_DstVFS{std::move(_dst_vfs)},
+      m_Password{std::move(_password)}
 {
     if( m_DstRoot.empty() || m_DstRoot.back() != '/' )
         m_DstRoot += '/';
 }
 
-CompressionJob::~CompressionJob()
-{
-}
+CompressionJob::~CompressionJob() = default;
 
 void CompressionJob::Perform()
 {
     using namespace std::literals;
-    std::string proposed_arcname = m_InitialListingItems.size() == 1
-                                       ? m_InitialListingItems.front().Filename()
-                                       : "Archive"s; // Localize!
+    std::string proposed_arcname =
+        m_InitialListingItems.size() == 1 ? m_InitialListingItems.front().Filename() : "Archive"s; // Localize!
 
     m_TargetArchivePath = FindSuitableFilename(proposed_arcname);
     if( m_TargetArchivePath.empty() ) {
@@ -88,9 +84,9 @@ void CompressionJob::Perform()
 
 bool CompressionJob::BuildArchive()
 {
-    const auto flags = VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_IRUsr |
-                       VFSFlags::OF_IWUsr | VFSFlags::OF_IRGrp;
-    m_DstVFS->CreateFile(m_TargetArchivePath.c_str(), m_TargetFile, 0);
+    const auto flags =
+        VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_IRUsr | VFSFlags::OF_IWUsr | VFSFlags::OF_IRGrp;
+    m_DstVFS->CreateFile(m_TargetArchivePath.c_str(), m_TargetFile, nullptr);
     const auto open_rc = m_TargetFile->Open(flags);
     if( open_rc == VFSError::Ok ) {
         m_Archive = archive_write_new();
@@ -111,7 +107,7 @@ bool CompressionJob::BuildArchive()
             }
         }
 
-        archive_write_open(m_Archive, this, 0, WriteCallback, 0);
+        archive_write_open(m_Archive, this, nullptr, WriteCallback, nullptr);
         archive_write_set_bytes_in_last_block(m_Archive, 1);
 
         ProcessItems();
@@ -125,8 +121,9 @@ bool CompressionJob::BuildArchive()
         m_TargetFile->Close();
 
         if( IsStopped() )
-            m_DstVFS->Unlink(m_TargetArchivePath.c_str(), 0);
-    } else {
+            m_DstVFS->Unlink(m_TargetArchivePath.c_str(), nullptr);
+    }
+    else {
         m_TargetWriteError(open_rc, m_TargetArchivePath, *m_DstVFS);
         Stop();
         return false;
@@ -152,8 +149,7 @@ void CompressionJob::ProcessItem(const base::chained_strings::node &_node, int _
 {
     const auto meta = m_Source->metas[_index];
     const auto rel_path = _node.to_str_with_pref();
-    const auto full_path =
-        EnsureNoTrailingSlash(m_Source->base_paths[meta.base_path_indx] + rel_path);
+    const auto full_path = EnsureNoTrailingSlash(m_Source->base_paths[meta.base_path_indx] + rel_path);
 
     StepResult result = StepResult::Stopped;
     if( meta.flags & static_cast<int>(Source::ItemFlags::is_dir) )
@@ -164,50 +160,48 @@ void CompressionJob::ProcessItem(const base::chained_strings::node &_node, int _
         result = ProcessRegularItem(_index, rel_path, full_path);
 
     if( result == StepResult::Done || result == StepResult::Skipped ) {
-        ItemStateReport report{
-            *m_Source->base_hosts[meta.base_vfs_indx],
-            std::string_view(full_path),
-            (result == StepResult::Done ? ItemStatus::Processed : ItemStatus::Skipped)};
+        ItemStateReport report{*m_Source->base_hosts[meta.base_vfs_indx],
+                               std::string_view(full_path),
+                               (result == StepResult::Done ? ItemStatus::Processed : ItemStatus::Skipped)};
         TellItemReport(report);
     }
 }
 
-CompressionJob::StepResult CompressionJob::ProcessSymlinkItem(int _index,
-                                                              const std::string &_relative_path,
-                                                              const std::string &_full_path)
+CompressionJob::StepResult
+CompressionJob::ProcessSymlinkItem(int _index, const std::string &_relative_path, const std::string &_full_path)
 {
     const auto meta = m_Source->metas[_index];
     auto &vfs = *m_Source->base_hosts[meta.base_vfs_indx];
 
     VFSStat stat;
     while( true ) {
-        const auto rc = vfs.Stat(_full_path.c_str(), stat, VFSFlags::F_NoFollow, 0);
+        const auto rc = vfs.Stat(_full_path.c_str(), stat, VFSFlags::F_NoFollow, nullptr);
         if( rc == VFSError::Ok )
             break;
         switch( m_SourceAccessError(rc, _full_path, vfs) ) {
-        case SourceAccessErrorResolution::Stop:
-            Stop();
-            return StepResult::Stopped;
-        case SourceAccessErrorResolution::Skip:
-            return StepResult::Skipped;
-        case SourceAccessErrorResolution::Retry:
-            continue;
+            case SourceAccessErrorResolution::Stop:
+                Stop();
+                return StepResult::Stopped;
+            case SourceAccessErrorResolution::Skip:
+                return StepResult::Skipped;
+            case SourceAccessErrorResolution::Retry:
+                continue;
         }
     }
 
     char symlink[MAXPATHLEN];
     while( true ) {
-        const auto rc = vfs.ReadSymlink(_full_path.c_str(), symlink, MAXPATHLEN, 0);
+        const auto rc = vfs.ReadSymlink(_full_path.c_str(), symlink, MAXPATHLEN, nullptr);
         if( rc == VFSError::Ok )
             break;
         switch( m_SourceAccessError(rc, _full_path, vfs) ) {
-        case SourceAccessErrorResolution::Stop:
-            Stop();
-            return StepResult::Stopped;
-        case SourceAccessErrorResolution::Skip:
-            return StepResult::Skipped;
-        case SourceAccessErrorResolution::Retry:
-            continue;
+            case SourceAccessErrorResolution::Stop:
+                Stop();
+                return StepResult::Stopped;
+            case SourceAccessErrorResolution::Skip:
+                return StepResult::Skipped;
+            case SourceAccessErrorResolution::Retry:
+                continue;
         }
     }
 
@@ -221,26 +215,25 @@ CompressionJob::StepResult CompressionJob::ProcessSymlinkItem(int _index,
     return StepResult::Done;
 }
 
-CompressionJob::StepResult CompressionJob::ProcessDirectoryItem(int _index,
-                                                                const std::string &_relative_path,
-                                                                const std::string &_full_path)
+CompressionJob::StepResult
+CompressionJob::ProcessDirectoryItem(int _index, const std::string &_relative_path, const std::string &_full_path)
 {
     const auto meta = m_Source->metas[_index];
     auto &vfs = *m_Source->base_hosts[meta.base_vfs_indx];
 
     VFSStat vfs_stat;
     while( true ) {
-        const auto rc = vfs.Stat(_full_path.c_str(), vfs_stat, 0, 0);
+        const auto rc = vfs.Stat(_full_path.c_str(), vfs_stat, 0, nullptr);
         if( rc == VFSError::Ok )
             break;
         switch( m_SourceAccessError(rc, _full_path, vfs) ) {
-        case SourceAccessErrorResolution::Stop:
-            Stop();
-            return StepResult::Stopped;
-        case SourceAccessErrorResolution::Skip:
-            return StepResult::Skipped;
-        case SourceAccessErrorResolution::Retry:
-            continue;
+            case SourceAccessErrorResolution::Stop:
+                Stop();
+                return StepResult::Stopped;
+            case SourceAccessErrorResolution::Skip:
+                return StepResult::Skipped;
+            case SourceAccessErrorResolution::Retry:
+                continue;
         }
     }
 
@@ -267,9 +260,8 @@ CompressionJob::StepResult CompressionJob::ProcessDirectoryItem(int _index,
     return StepResult::Done;
 }
 
-CompressionJob::StepResult CompressionJob::ProcessRegularItem(int _index,
-                                                              const std::string &_relative_path,
-                                                              const std::string &_full_path)
+CompressionJob::StepResult
+CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path, const std::string &_full_path)
 {
     const auto meta = m_Source->metas[_index];
     auto &vfs = *m_Source->base_hosts[meta.base_vfs_indx];
@@ -280,13 +272,13 @@ CompressionJob::StepResult CompressionJob::ProcessRegularItem(int _index,
         if( rc == VFSError::Ok )
             break;
         switch( m_SourceAccessError(rc, _full_path, vfs) ) {
-        case SourceAccessErrorResolution::Stop:
-            Stop();
-            return StepResult::Stopped;
-        case SourceAccessErrorResolution::Skip:
-            return StepResult::Skipped;
-        case SourceAccessErrorResolution::Retry:
-            continue;
+            case SourceAccessErrorResolution::Stop:
+                Stop();
+                return StepResult::Stopped;
+            case SourceAccessErrorResolution::Skip:
+                return StepResult::Skipped;
+            case SourceAccessErrorResolution::Retry:
+                continue;
         }
     }
 
@@ -299,13 +291,13 @@ CompressionJob::StepResult CompressionJob::ProcessRegularItem(int _index,
         if( rc == VFSError::Ok )
             break;
         switch( m_SourceAccessError(rc, _full_path, vfs) ) {
-        case SourceAccessErrorResolution::Stop:
-            Stop();
-            return StepResult::Stopped;
-        case SourceAccessErrorResolution::Skip:
-            return StepResult::Skipped;
-        case SourceAccessErrorResolution::Retry:
-            continue;
+            case SourceAccessErrorResolution::Stop:
+                Stop();
+                return StepResult::Stopped;
+            case SourceAccessErrorResolution::Skip:
+                return StepResult::Skipped;
+            case SourceAccessErrorResolution::Retry:
+                continue;
         }
     }
 
@@ -347,11 +339,11 @@ CompressionJob::StepResult CompressionJob::ProcessRegularItem(int _index,
 
     if( source_read_rc < 0 )
         switch( m_SourceReadError(static_cast<int>(source_read_rc), _full_path, vfs) ) {
-        case SourceReadErrorResolution::Stop:
-            Stop();
-            return StepResult::Stopped;
-        case SourceReadErrorResolution::Skip:
-            return StepResult::Skipped;
+            case SourceReadErrorResolution::Stop:
+                Stop();
+                return StepResult::Stopped;
+            case SourceReadErrorResolution::Skip:
+                return StepResult::Skipped;
         }
 
     if( IsEncrypted() == false ) {
@@ -366,12 +358,12 @@ std::string CompressionJob::FindSuitableFilename(const std::string &_proposed_ar
 {
     std::string fn = fmt::format("{}{}.zip", m_DstRoot, _proposed_arcname);
     VFSStat st;
-    if( m_DstVFS->Stat(fn.c_str(), st, VFSFlags::F_NoFollow, 0) != 0 )
+    if( m_DstVFS->Stat(fn.c_str(), st, VFSFlags::F_NoFollow, nullptr) != 0 )
         return fn;
 
     for( int i = 2; i < 100; ++i ) {
         fn = fmt::format("{}{} {}.zip", m_DstRoot, _proposed_arcname, i);
-        if( m_DstVFS->Stat(fn.c_str(), st, VFSFlags::F_NoFollow, 0) != 0 )
+        if( m_DstVFS->Stat(fn.c_str(), st, VFSFlags::F_NoFollow, nullptr) != 0 )
             return fn;
     }
     return {};
@@ -403,14 +395,16 @@ bool CompressionJob::ScanItem(const VFSListingItem &_item, Source &_ctx)
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_item.Filename(), nullptr);
         Statistics().CommitEstimated(Statistics::SourceType::Bytes, _item.Size());
-    } else if( _item.IsSymlink() ) {
+    }
+    else if( _item.IsSymlink() ) {
         Source::ItemMeta meta;
         meta.base_path_indx = _ctx.FindOrInsertBasePath(_item.Directory());
         meta.base_vfs_indx = _ctx.FindOrInsertHost(_item.Host());
         meta.flags = static_cast<uint16_t>(Source::ItemFlags::symlink);
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_item.Filename(), nullptr);
-    } else if( _item.IsDir() ) {
+    }
+    else if( _item.IsDir() ) {
         Source::ItemMeta meta;
         meta.base_path_indx = _ctx.FindOrInsertBasePath(_item.Directory());
         meta.base_vfs_indx = _ctx.FindOrInsertHost(_item.Host());
@@ -429,24 +423,20 @@ bool CompressionJob::ScanItem(const VFSListingItem &_item, Source &_ctx)
             if( rc == VFSError::Ok )
                 break;
             switch( m_SourceScanError(rc, _item.Path(), host) ) {
-            case SourceScanErrorResolution::Stop:
-                Stop();
-                return false;
-            case SourceScanErrorResolution::Skip:
-                return true;
-            case SourceScanErrorResolution::Retry:
-                continue;
+                case SourceScanErrorResolution::Stop:
+                    Stop();
+                    return false;
+                case SourceScanErrorResolution::Skip:
+                    return true;
+                case SourceScanErrorResolution::Retry:
+                    continue;
             }
         }
 
         const auto directory_node = &_ctx.filenames.back();
         for( const std::string &filename : directory_entries ) {
-            const auto scan_ok = ScanItem(_item.Path() + "/" + filename,
-                                          filename,
-                                          meta.base_vfs_indx,
-                                          meta.base_path_indx,
-                                          directory_node,
-                                          _ctx);
+            const auto scan_ok = ScanItem(
+                _item.Path() + "/" + filename, filename, meta.base_vfs_indx, meta.base_path_indx, directory_node, _ctx);
             if( !scan_ok )
                 return false;
         }
@@ -465,17 +455,17 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
     auto &vfs = _ctx.base_hosts[_vfs_no];
 
     while( true ) {
-        const auto rc = vfs->Stat(_full_path.c_str(), stat_buffer, VFSFlags::F_NoFollow, 0);
+        const auto rc = vfs->Stat(_full_path.c_str(), stat_buffer, VFSFlags::F_NoFollow, nullptr);
         if( rc == VFSError::Ok )
             break;
         switch( m_SourceScanError(rc, _full_path, *vfs) ) {
-        case SourceScanErrorResolution::Stop:
-            Stop();
-            return false;
-        case SourceScanErrorResolution::Skip:
-            return true;
-        case SourceScanErrorResolution::Retry:
-            continue;
+            case SourceScanErrorResolution::Stop:
+                Stop();
+                return false;
+            case SourceScanErrorResolution::Skip:
+                return true;
+            case SourceScanErrorResolution::Retry:
+                continue;
         }
     }
 
@@ -489,14 +479,16 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_filename, _prefix);
         Statistics().CommitEstimated(Statistics::SourceType::Bytes, stat_buffer.size);
-    } else if( S_ISLNK(stat_buffer.mode) ) {
+    }
+    else if( S_ISLNK(stat_buffer.mode) ) {
         Source::ItemMeta meta;
         meta.base_vfs_indx = static_cast<uint16_t>(_vfs_no);
         meta.base_path_indx = _basepath_no;
         meta.flags = static_cast<uint16_t>(Source::ItemFlags::symlink);
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_filename, _prefix);
-    } else if( S_ISDIR(stat_buffer.mode) ) {
+    }
+    else if( S_ISDIR(stat_buffer.mode) ) {
         Source::ItemMeta meta;
         meta.base_vfs_indx = static_cast<uint16_t>(_vfs_no);
         meta.base_path_indx = _basepath_no;
@@ -514,13 +506,13 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
             if( rc == VFSError::Ok )
                 break;
             switch( m_SourceScanError(rc, _full_path, *vfs) ) {
-            case SourceScanErrorResolution::Stop:
-                Stop();
-                return false;
-            case SourceScanErrorResolution::Skip:
-                return true;
-            case SourceScanErrorResolution::Retry:
-                continue;
+                case SourceScanErrorResolution::Stop:
+                    Stop();
+                    return false;
+                case SourceScanErrorResolution::Skip:
+                    return true;
+                case SourceScanErrorResolution::Retry:
+                    continue;
             }
         }
 
@@ -538,10 +530,7 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
     return true;
 }
 
-ssize_t CompressionJob::WriteCallback(struct archive *,
-                                      void *_client_data,
-                                      const void *_buffer,
-                                      size_t _length)
+ssize_t CompressionJob::WriteCallback(struct archive *, void *_client_data, const void *_buffer, size_t _length)
 {
     const auto me = static_cast<CompressionJob *>(_client_data);
     ssize_t ret = me->m_TargetFile->Write(_buffer, _length);
@@ -574,8 +563,7 @@ static void WriteEmptyArchiveEntry(struct ::archive *_archive)
     archive_entry_free(entry);
 }
 
-static bool
-WriteEAs(struct archive *_a, void *_md, size_t _md_s, const char *_path, const char *_name)
+static bool WriteEAs(struct archive *_a, void *_md, size_t _md_s, const char *_path, const char *_name)
 {
     const std::string metadata_path = fmt::format("__MACOSX/{}._{}", _path, _name);
     struct archive_entry *entry = archive_entry_new();
@@ -597,7 +585,7 @@ static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source
     size_t metadata_sz = 0;
     // will quick almost immediately if there's no EAs
     void *metadata = vfs::BuildAppleDoubleFromEA(_src, &metadata_sz);
-    if( metadata == 0 )
+    if( metadata == nullptr )
         return true;
 
     char item_path[MAXPATHLEN], item_name[MAXPATHLEN];

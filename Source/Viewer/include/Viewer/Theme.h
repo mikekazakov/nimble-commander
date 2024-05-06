@@ -5,17 +5,17 @@
 #include <functional>
 
 namespace nc::viewer {
-    
+
 class Theme
 {
 public:
     virtual ~Theme() = default;
-    virtual NSFont  *Font() const = 0;
+    virtual NSFont *Font() const = 0;
     virtual NSColor *OverlayColor() const = 0;
     virtual NSColor *TextColor() const = 0;
     virtual NSColor *ViewerSelectionColor() const = 0;
     virtual NSColor *ViewerBackgroundColor() const = 0;
-    virtual void ObserveChanges( std::function<void()> _callback ) = 0;
+    virtual void ObserveChanges(std::function<void()> _callback) = 0;
 };
-    
-}
+
+} // namespace nc::viewer

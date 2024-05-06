@@ -8,39 +8,38 @@
 typedef struct kinfo_proc kinfo_proc;
 
 namespace nc::utility {
-    
+
 struct MemoryInfo {
     // this is calculated from a sum of amounts of pages
     uint64_t total;
-    
+
     // actual installed memory, can be *less* than total due to compression
     uint64_t total_hw;
-    
+
     uint64_t active;
     uint64_t inactive;
     uint64_t free;
-    
+
     // physical memory containing data that cannot be compressed or swapped to disk
     uint64_t wired;
-    
+
     // = applications + wired + compressed
     uint64_t used;
-    
+
     // amount of compressed data temporarily moved to disk to make room for recently used data
     uint64_t swap;
-    
+
     // size of files cached by the system into unused memory to improve performance
     uint64_t file_cache;
-    
+
     // physical memory allocated by apps and system processes
     uint64_t applications;
-    
+
     // physical memory used to store a compressed version of data that has not been used recently
     uint64_t compressed;
 };
-    
-struct CPULoad
-{
+
+struct CPULoad {
     double system;
     double user;
     double idle;
@@ -49,9 +48,8 @@ struct CPULoad
     int processes;
     int threads;
 };
-    
-struct SystemOverview
-{
+
+struct SystemOverview {
     std::string computer_name;
     std::string user_name;
     std::string user_full_name;
@@ -59,24 +57,23 @@ struct SystemOverview
     std::string coded_model; // like "Macmini6,2"
 };
 
-enum class OSXVersion
-{
-    OSX_15      = 101500,
-    macOS_11    = 110000,
-    macOS_12    = 120000,
-    macOS_13    = 130000,
+enum class OSXVersion {
+    OSX_15 = 101500,
+    macOS_11 = 110000,
+    macOS_12 = 120000,
+    macOS_13 = 130000,
     OSX_Unknown = 999999
 };
-    
+
 std::optional<MemoryInfo> GetMemoryInfo() noexcept;
-    
+
 /**
  * Synchronously reads the current CPU load, divided in system, user and idle
  */
 std::optional<CPULoad> GetCPULoad() noexcept;
-    
+
 /**
- * Returns currently running OSX Version or 
+ * Returns currently running OSX Version or
  * OSX_Unknown if it's not possible to determine current version (future release maybe)  or
  * OSX_Below if current system is Snow Leopard or older
  * Loads this info on first use, then return cached data instantly
@@ -100,8 +97,8 @@ int GetBSDProcessList(kinfo_proc **procList, size_t *procCount);
 
 bool IsThisProcessSandboxed() noexcept;
 
-const std::string& GetBundleID() noexcept;
+const std::string &GetBundleID() noexcept;
 
 std::chrono::seconds GetUptime() noexcept;
-    
-}
+
+} // namespace nc::utility

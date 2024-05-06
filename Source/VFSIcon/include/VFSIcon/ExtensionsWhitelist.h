@@ -9,7 +9,7 @@ class ExtensionsWhitelist
 {
 public:
     virtual ~ExtensionsWhitelist() = 0;
-    virtual bool AllowExtension( const std::string &_extension ) const = 0;
+    virtual bool AllowExtension(const std::string &_extension) const = 0;
 };
 
-}
+} // namespace nc::vfsicon

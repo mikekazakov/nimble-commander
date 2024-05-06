@@ -42,12 +42,11 @@ void Pool::Enqueue(std::shared_ptr<Operation> _operation)
         if( pool && op )
             pool->OperationDidStart(op);
     });
-    _operation->SetDialogCallback(
-        [weak_this](NSWindow *_dlg, std::function<void(NSModalResponse)> _cb) {
-            if( const auto pool = weak_this.lock() )
-                return pool->ShowDialog(_dlg, _cb);
-            return false;
-        });
+    _operation->SetDialogCallback([weak_this](NSWindow *_dlg, std::function<void(NSModalResponse)> _cb) {
+        if( const auto pool = weak_this.lock() )
+            return pool->ShowDialog(_dlg, _cb);
+        return false;
+    });
 
     {
         const auto guard = std::lock_guard{m_Lock};
@@ -149,14 +148,12 @@ std::vector<std::shared_ptr<Operation>> Pool::RunningOperations() const
     return m_RunningOperations;
 }
 
-void Pool::SetDialogCallback(
-    std::function<void(NSWindow *, std::function<void(NSModalResponse)>)> _callback)
+void Pool::SetDialogCallback(std::function<void(NSWindow *, std::function<void(NSModalResponse)>)> _callback)
 {
     m_DialogPresentation = std::move(_callback);
 }
 
-void Pool::SetOperationCompletionCallback(
-    std::function<void(const std::shared_ptr<Operation> &)> _callback)
+void Pool::SetOperationCompletionCallback(std::function<void(const std::shared_ptr<Operation> &)> _callback)
 {
     m_OperationCompletionCallback = std::move(_callback);
 }
@@ -185,8 +182,7 @@ void Pool::SetConcurrency(int _maximum_current_operations)
     m_Concurrency = std::max(_maximum_current_operations, 1);
 }
 
-void Pool::SetEnqueuingCallback(
-    std::function<bool(const Operation &_operation)> _should_be_queued)
+void Pool::SetEnqueuingCallback(std::function<bool(const Operation &_operation)> _should_be_queued)
 {
     assert(Empty());
     m_ShouldBeQueuedCallback = std::move(_should_be_queued);

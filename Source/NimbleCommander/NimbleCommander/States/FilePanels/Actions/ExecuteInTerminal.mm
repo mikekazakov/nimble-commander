@@ -24,9 +24,8 @@ bool ExecuteInTerminal::Predicate(PanelController *_target) const
 bool ExecuteInTerminal::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
 {
     if( auto vfs_item = _target.view.item ) {
-        _item.title = [NSString
-            stringWithFormat:NSLocalizedString(@"Execute \u201c%@\u201d", "Execute a binary"),
-                             vfs_item.DisplayNameNS()];
+        _item.title = [NSString stringWithFormat:NSLocalizedString(@"Execute \u201c%@\u201d", "Execute a binary"),
+                                                 vfs_item.DisplayNameNS()];
     }
     return Predicate(_target);
 }
@@ -40,4 +39,4 @@ void ExecuteInTerminal::Perform(PanelController *_target, id) const
     [_target.state requestTerminalExecution:item.Filename() at:item.Directory()];
 }
 
-}
+} // namespace nc::panel::actions

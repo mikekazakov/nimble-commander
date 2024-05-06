@@ -9,24 +9,19 @@
 using namespace nc::panel;
 using ActionsT = robin_hood::unordered_flat_map<SEL, std::unique_ptr<actions::StateAction>>;
 
-static const actions::StateAction* ActionBySelector(const ActionsT &_actions, SEL _sel);
-static void Perform(const ActionsT &_actions,
-                    SEL _sel,
-                    MainWindowFilePanelState *_target,
-                    id _sender);
+static const actions::StateAction *ActionBySelector(const ActionsT &_actions, SEL _sel);
+static void Perform(const ActionsT &_actions, SEL _sel, MainWindowFilePanelState *_target, id _sender);
 
-@implementation NCPanelTabContextMenu
-{
+@implementation NCPanelTabContextMenu {
     ActionsT m_Actions;
-    MainWindowFilePanelState* m_State;
-    PanelController* m_CurrentPanel;
+    MainWindowFilePanelState *m_State;
+    PanelController *m_CurrentPanel;
 }
 
-- (instancetype) initWithPanel:(PanelController*)_panel
-                       ofState:(MainWindowFilePanelState*)_state
+- (instancetype)initWithPanel:(PanelController *)_panel ofState:(MainWindowFilePanelState *)_state
 {
     self = [super init];
-    if(self) {
+    if( self ) {
         m_State = _state;
         m_CurrentPanel = _panel;
 
@@ -57,7 +52,7 @@ static void Perform(const ActionsT &_actions,
     close_tab.target = self;
     close_tab.action = @selector(onCloseTab:);
     [self addItem:close_tab];
-    
+
     const auto close_other_tabs = [[NSMenuItem alloc] init];
     close_other_tabs.title = NSLocalizedString(@"Close Other Tabs", "");
     close_other_tabs.target = self;
@@ -65,26 +60,30 @@ static void Perform(const ActionsT &_actions,
     [self addItem:close_other_tabs];
 }
 
-- (IBAction)onAddNewTab:(id)sender { [self perform:_cmd for:sender]; }
-- (IBAction)onCloseTab:(id)sender { [self perform:_cmd for:sender]; }
-- (IBAction)onCloseOtherTabs:(id)sender { [self perform:_cmd for:sender]; }
+- (IBAction)onAddNewTab:(id)sender
+{ [self perform:_cmd for:sender];
+}
+- (IBAction)onCloseTab:(id)sender
+{ [self perform:_cmd for:sender];
+}
+- (IBAction)onCloseOtherTabs:(id)sender
+{ [self perform:_cmd for:sender];
+}
 
 - (void)perform:(SEL)_sel for:(id)_sender
 {
     Perform(m_Actions, _sel, m_State, _sender);
 }
 
-- (BOOL) validateMenuItem:(NSMenuItem *)item
+- (BOOL)validateMenuItem:(NSMenuItem *)item
 {
     try {
         if( const auto action = ActionBySelector(m_Actions, item.action) )
             return action->ValidateMenuItem(m_State, item);
         return true;
-    }
-    catch(std::exception &e) {
+    } catch( std::exception &e ) {
         std::cout << "Exception caught: " << e.what() << std::endl;
-    }
-    catch(...) {
+    } catch( ... ) {
         std::cout << "Caught an unhandled exception!" << std::endl;
     }
     return false;
@@ -92,32 +91,26 @@ static void Perform(const ActionsT &_actions,
 
 @end
 
-static const actions::StateAction* ActionBySelector(const ActionsT &_actions, SEL _sel)
+static const actions::StateAction *ActionBySelector(const ActionsT &_actions, SEL _sel)
 {
     if( const auto action = _actions.find(_sel); action != end(_actions) )
         return action->second.get();
-        
+
     return nullptr;
 }
 
-static void Perform(const ActionsT &_actions,
-                    SEL _sel,
-                    MainWindowFilePanelState *_target,
-                    id _sender)
+static void Perform(const ActionsT &_actions, SEL _sel, MainWindowFilePanelState *_target, id _sender)
 {
     if( const auto action = _actions.find(_sel); action != end(_actions) ) {
         try {
             action->second->Perform(_target, _sender);
-        }
-        catch( std::exception &e ) {
+        } catch( std::exception &e ) {
             nc::core::ShowExceptionAlert(e);
-        }
-        catch(...){
+        } catch( ... ) {
             nc::core::ShowExceptionAlert();
         }
     }
     else {
-        std::cerr << "warning - unrecognized selector: " <<
-        NSStringFromSelector(_sel).UTF8String << std::endl;
+        std::cerr << "warning - unrecognized selector: " << NSStringFromSelector(_sel).UTF8String << std::endl;
     }
 }

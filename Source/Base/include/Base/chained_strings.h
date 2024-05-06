@@ -8,8 +8,7 @@ namespace nc::base {
 
 class chained_strings
 {
-    enum
-    {
+    enum {
         strings_per_block = 42,
         buffer_length = 14,
         max_depth = 128

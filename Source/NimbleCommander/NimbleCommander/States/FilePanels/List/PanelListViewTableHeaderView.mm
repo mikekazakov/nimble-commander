@@ -5,7 +5,7 @@
 
 @implementation PanelListViewTableHeaderView
 
-- (NSMenu*)menu
+- (NSMenu *)menu
 {
     if( auto v = nc::objc_cast<PanelListView>(self.tableView.enclosingScrollView.superview) )
         if( auto menu = v.columnsSelectionMenu ) {
@@ -16,12 +16,12 @@
     return nil;
 }
 
-- (BOOL) isOpaque
+- (BOOL)isOpaque
 {
     return true;
 }
 
-- (BOOL) allowsVibrancy
+- (BOOL)allowsVibrancy
 {
     return false;
 }

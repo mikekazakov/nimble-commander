@@ -383,14 +383,14 @@ static constexpr auto g_DividerThickness = 1.;
     NSView *left = [self.subviews objectAtIndex:0];
     NSView *right = [self.subviews objectAtIndex:1];
     left.hidden = false;
-    
+
     NSRect left_frame = left.frame;
     NSRect right_frame = right.frame;
     const double full_width = self.frame.size.width;
     left_frame.size.width = std::round(full_width - g_DividerThickness) / m_PreCollapseProp;
     right_frame.origin.x = left_frame.size.width + g_DividerThickness;
     right_frame.size.width = full_width - right_frame.origin.x;
-    
+
     left.frameSize = left_frame.size;
     right.frame = right_frame;
     [self display];
@@ -416,14 +416,14 @@ static constexpr auto g_DividerThickness = 1.;
     NSView *left = [self.subviews objectAtIndex:0];
     NSView *right = [self.subviews objectAtIndex:1];
     right.hidden = false;
-    
+
     NSRect left_frame = left.frame;
     NSRect right_frame = right.frame;
     const double full_width = self.frame.size.width;
     left_frame.size.width = std::round(full_width - g_DividerThickness) / m_PreCollapseProp;
     right_frame.origin.x = left_frame.size.width + g_DividerThickness;
     right_frame.size.width = full_width - right_frame.origin.x;
-        
+
     left.frameSize = left_frame.size;
     right.frame = right_frame;
     [self display];
@@ -449,7 +449,7 @@ static constexpr auto g_DividerThickness = 1.;
 
 - (void)splitViewDidResizeSubviews:(NSNotification *)_notification
 {
-    if( !self.isLeftCollapsed && !self.isRightCollapsed  ) {
+    if( !self.isLeftCollapsed && !self.isRightCollapsed ) {
         NSView *left = [self.subviews objectAtIndex:0];
         const auto left_width = left.frame.size.width;
         const auto full_width = self.frame.size.width;

@@ -13,29 +13,30 @@
 NS_ASSUME_NONNULL_BEGIN
 
 + (Alert *)alertWithError:(NSError *)error;
-- (instancetype) init;
+- (instancetype)init;
 
-@property NSString  *messageText;
-@property NSString  *informativeText;
-@property NSImage   *icon;
+@property NSString *messageText;
+@property NSString *informativeText;
+@property NSImage *icon;
 
 - (NSButton *)addButtonWithTitle:(NSString *)title;
-@property (readonly) NSArray<NSButton *> *buttons;
+@property(readonly) NSArray<NSButton *> *buttons;
 
 @property BOOL showsHelp;
 @property NSString *helpAnchor;
 @property NSAlertStyle alertStyle;
 
 - (NSModalResponse)runModal;
-- (void)beginSheetModalForWindow:(NSWindow *)sheetWindow completionHandler:(void (^ __nullable)(NSModalResponse returnCode))handler;
+- (void)beginSheetModalForWindow:(NSWindow *)sheetWindow
+               completionHandler:(void (^__nullable)(NSModalResponse returnCode))handler;
 
-@property (readonly) NSWindow *window;
+@property(readonly) NSWindow *window;
 NS_ASSUME_NONNULL_END
 @end
 
 namespace nc::core {
 
-void ShowExceptionAlert( const std::string &_message = "" );
-void ShowExceptionAlert( const std::exception &_exception );
+void ShowExceptionAlert(const std::string &_message = "");
+void ShowExceptionAlert(const std::exception &_exception);
 
-}
+} // namespace nc::core

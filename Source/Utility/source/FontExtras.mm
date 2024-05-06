@@ -206,4 +206,4 @@ std::vector<unsigned short> FontGeometryInfo::CalculateStringsWidths(std::span<c
     return widths;
 }
 
-}
+} // namespace nc::utility

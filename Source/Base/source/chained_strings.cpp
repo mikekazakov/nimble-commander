@@ -11,24 +11,21 @@ chained_strings::chained_strings() : m_Begin(nullptr), m_Last(nullptr)
     static_assert(sizeof(block) == 1024, "size of strings chunk should be 1024 bytes");
 }
 
-chained_strings::chained_strings(const char *_allocate_with_this_string)
-    : m_Begin(nullptr), m_Last(nullptr)
+chained_strings::chained_strings(const char *_allocate_with_this_string) : m_Begin(nullptr), m_Last(nullptr)
 {
     construct();
     push_back(_allocate_with_this_string, nullptr);
 }
 
-chained_strings::chained_strings(const std::string &_allocate_with_this_string)
-    : m_Begin(nullptr), m_Last(nullptr)
+chained_strings::chained_strings(const std::string &_allocate_with_this_string) : m_Begin(nullptr), m_Last(nullptr)
 {
     construct();
     push_back(_allocate_with_this_string, nullptr);
 }
 
-chained_strings::chained_strings(chained_strings &&_rhs)
-    : m_Begin(_rhs.m_Begin), m_Last(_rhs.m_Last)
+chained_strings::chained_strings(chained_strings &&_rhs) : m_Begin(_rhs.m_Begin), m_Last(_rhs.m_Last)
 {
-    _rhs.m_Begin = _rhs.m_Last = 0;
+    _rhs.m_Begin = _rhs.m_Last = nullptr;
 }
 
 chained_strings::~chained_strings()
@@ -143,7 +140,7 @@ void chained_strings::node::str_with_pref(char *_buf) const
     do {
         nodes[nodes_n++] = n;
         assert(nodes_n < max_depth);
-    } while( (n = n->prefix) != 0 );
+    } while( (n = n->prefix) != nullptr );
 
     for( int i = nodes_n - 1; i >= 0; --i ) {
         memcpy(_buf + bufsz, nodes[i]->c_str(), nodes[i]->len);
@@ -160,7 +157,7 @@ std::string chained_strings::node::to_str_with_pref() const
         bufsz += n->len;
         nodes[nodes_n++] = n;
         assert(nodes_n < max_depth);
-    } while( (n = n->prefix) != 0 );
+    } while( (n = n->prefix) != nullptr );
 
     std::string res;
     res.reserve(bufsz);

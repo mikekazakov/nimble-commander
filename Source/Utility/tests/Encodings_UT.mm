@@ -12,8 +12,7 @@ TEST_CASE(PREFIX "InterpretUnicharsAsUTF8")
         unsigned char output[32];
         size_t output_sz;
 
-        unsigned char output_should_be[32] = {
-            0x24, 0xC2, 0xA2, 0xE2, 0x82, 0xAC, 0xF0, 0xA4, 0xAD, 0xA2, 0x0};
+        unsigned char output_should_be[32] = {0x24, 0xC2, 0xA2, 0xE2, 0x82, 0xAC, 0xF0, 0xA4, 0xAD, 0xA2, 0x0};
         size_t output_should_be_sz = std::strlen(reinterpret_cast<char *>(output_should_be));
 
         size_t input_eaten;
@@ -27,8 +26,7 @@ TEST_CASE(PREFIX "InterpretUnicharsAsUTF8")
     }
 
     { // using nsstring->utf16->utf8 == nsstring->utf comparison
-        NSString *input_ns =
-            @"☕Hello world, Привет мир🌀😁🙀北京市🟔🜽𞸵𝄑𝁺🁰";
+        NSString *input_ns = @"☕Hello world, Привет мир🌀😁🙀北京市🟔🜽𞸵𝄑𝁺🁰";
         const char *input_ns_utf8 = input_ns.UTF8String;
         uint16_t input[64];
         [input_ns getCharacters:input range:NSMakeRange(0, input_ns.length)];
@@ -48,8 +46,7 @@ TEST_CASE(PREFIX "InterpretUnicharsAsUTF8")
 TEST_CASE(PREFIX "InterpretUnicodeAsUTF8")
 {
     { // using nsstring->utf32->utf8 == nsstring->utf comparison
-        NSString *input_ns =
-            @"☕Hello world, Привет мир🌀😁🙀北京市🟔🜽𞸵𝄑𝁺🁰";
+        NSString *input_ns = @"☕Hello world, Привет мир🌀😁🙀北京市🟔🜽𞸵𝄑𝁺🁰";
         const char *input_ns_utf8 = input_ns.UTF8String;
         uint32_t input[64];
         unsigned long input_sz;
@@ -78,13 +75,13 @@ TEST_CASE(PREFIX "ScanUTF8ForValidSequenceLength")
     struct {
         size_t operator()(const char *s) noexcept
         {
-            return encodings::ScanUTF8ForValidSequenceLength(
-                reinterpret_cast<const unsigned char *>(s), std::string_view(s).size());
+            return encodings::ScanUTF8ForValidSequenceLength(reinterpret_cast<const unsigned char *>(s),
+                                                             std::string_view(s).size());
         };
         size_t operator()(const char8_t *s) noexcept
         {
-            return encodings::ScanUTF8ForValidSequenceLength(
-                reinterpret_cast<const unsigned char *>(s), std::u8string_view(s).size());
+            return encodings::ScanUTF8ForValidSequenceLength(reinterpret_cast<const unsigned char *>(s),
+                                                             std::u8string_view(s).size());
         };
     } len;
     CHECK(len("") == 0);

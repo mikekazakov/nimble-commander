@@ -6,7 +6,7 @@
 
 namespace nc::panel {
 
-class HeaderThemeImpl final : public HeaderTheme 
+class HeaderThemeImpl final : public HeaderTheme
 {
 public:
     HeaderThemeImpl(ThemesManager &_themes_mgr);
@@ -16,10 +16,11 @@ public:
     NSColor *ActiveBackgroundColor() const override;
     NSColor *InactiveBackgroundColor() const override;
     NSColor *SeparatorColor() const override;
-    void ObserveChanges( std::function<void()> _callback ) override;   
+    void ObserveChanges(std::function<void()> _callback) override;
+
 private:
-    ThemesManager &m_ThemesManager;    
+    ThemesManager &m_ThemesManager;
     ThemesManager::ObservationTicket m_ThemeObservation;
 };
 
-}
+} // namespace nc::panel

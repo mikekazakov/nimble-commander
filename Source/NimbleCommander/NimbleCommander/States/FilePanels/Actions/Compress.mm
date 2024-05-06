@@ -24,15 +24,13 @@ CompressBase::CompressBase(nc::config::Config &_config) : m_Config{_config}
 {
 }
 
-void CompressBase::AddDeselectorIfNeeded(nc::ops::Operation &_operation,
-                                         PanelController *_target) const
+void CompressBase::AddDeselectorIfNeeded(nc::ops::Operation &_operation, PanelController *_target) const
 {
     if( !ShouldAutomaticallyDeselect() )
         return;
 
     const auto deselector = std::make_shared<const DeselectorViaOpNotification>(_target);
-    _operation.SetItemStatusCallback(
-        [deselector](nc::ops::ItemStateReport _report) { deselector->Handle(_report); });
+    _operation.SetItemStatusCallback([deselector](nc::ops::ItemStateReport _report) { deselector->Handle(_report); });
 }
 
 bool CompressBase::ShouldAutomaticallyDeselect() const
@@ -73,8 +71,7 @@ void CompressHere::Perform(PanelController *_target, id) const
       if( returnCode != NSModalResponseOK )
           return;
 
-      auto op = std::make_shared<nc::ops::Compression>(
-          entries, dialog.destination, _target.vfs, dialog.password);
+      auto op = std::make_shared<nc::ops::Compression>(entries, dialog.destination, _target.vfs, dialog.password);
       const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
       __weak PanelController *weak_target = _target;
       op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
@@ -126,8 +123,8 @@ void CompressToOpposite::Perform(PanelController *_target, id) const
       if( returnCode != NSModalResponseOK )
           return;
 
-      auto op = std::make_shared<nc::ops::Compression>(
-          entries, dialog.destination, opposite_panel.vfs, dialog.password);
+      auto op =
+          std::make_shared<nc::ops::Compression>(entries, dialog.destination, opposite_panel.vfs, dialog.password);
       const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
       __weak PanelController *weak_target = opposite_panel;
       op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
@@ -142,8 +139,7 @@ void CompressToOpposite::Perform(PanelController *_target, id) const
     [_target.mainWindowController beginSheet:dialog.window completionHandler:handler];
 }
 
-context::CompressHere::CompressHere(nc::config::Config &_config,
-                                    const std::vector<VFSListingItem> &_items)
+context::CompressHere::CompressHere(nc::config::Config &_config, const std::vector<VFSListingItem> &_items)
     : CompressBase(_config), m_Items(_items)
 {
 }
@@ -157,16 +153,14 @@ bool context::CompressHere::ValidateMenuItem(PanelController *_target, NSMenuIte
 {
     if( m_Items.size() > 1 )
         _item.title =
-            [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items",
-                                                                  @"FilePanelsContextMenu",
-                                                                  "Compress some items here"),
+            [NSString stringWithFormat:NSLocalizedStringFromTable(
+                                           @"Compress %lu Items", @"FilePanelsContextMenu", "Compress some items here"),
                                        m_Items.size()];
     else
-        _item.title =
-            [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d",
-                                                                  @"FilePanelsContextMenu",
-                                                                  "Compress one item here"),
-                                       m_Items.front().DisplayNameNS()];
+        _item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d",
+                                                                            @"FilePanelsContextMenu",
+                                                                            "Compress one item here"),
+                                                 m_Items.front().DisplayNameNS()];
 
     return Predicate(_target);
 }
@@ -174,8 +168,7 @@ bool context::CompressHere::ValidateMenuItem(PanelController *_target, NSMenuIte
 void context::CompressHere::Perform(PanelController *_target, id) const
 {
     auto entries = m_Items;
-    auto op = std::make_shared<nc::ops::Compression>(
-        std::move(entries), _target.currentDirectoryPath, _target.vfs);
+    auto op = std::make_shared<nc::ops::Compression>(std::move(entries), _target.currentDirectoryPath, _target.vfs);
 
     const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
     __weak PanelController *weak_target = _target;
@@ -188,8 +181,7 @@ void context::CompressHere::Perform(PanelController *_target, id) const
     [_target.mainWindowController enqueueOperation:op];
 }
 
-context::CompressToOpposite::CompressToOpposite(nc::config::Config &_config,
-                                                const std::vector<VFSListingItem> &_items)
+context::CompressToOpposite::CompressToOpposite(nc::config::Config &_config, const std::vector<VFSListingItem> &_items)
     : CompressBase(_config), m_Items(_items)
 {
 }
@@ -203,21 +195,19 @@ bool context::CompressToOpposite::Predicate(PanelController *_target) const
     return opposite.isUniform && opposite.vfs->IsWritable();
 }
 
-bool context::CompressToOpposite::ValidateMenuItem(PanelController *_target,
-                                                   NSMenuItem *_item) const
+bool context::CompressToOpposite::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
 {
     if( m_Items.size() > 1 )
-        _item.title = [NSString
-            stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items in Opposite Panel",
-                                                        @"FilePanelsContextMenu",
-                                                        "Compress some items"),
-                             m_Items.size()];
+        _item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items in Opposite Panel",
+                                                                            @"FilePanelsContextMenu",
+                                                                            "Compress some items"),
+                                                 m_Items.size()];
     else
-        _item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(
-                                                     @"Compress \u201c%@\u201d in Opposite Panel",
-                                                     @"FilePanelsContextMenu",
-                                                     "Compress one item"),
-                                                 m_Items.front().DisplayNameNS()];
+        _item.title =
+            [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d in Opposite Panel",
+                                                                  @"FilePanelsContextMenu",
+                                                                  "Compress one item"),
+                                       m_Items.front().DisplayNameNS()];
 
     return Predicate(_target);
 }
@@ -274,4 +264,4 @@ static void FocusResult(PanelController *_target, const std::shared_ptr<nc::ops:
         dispatch_to_main_queue([_target, _op] { FocusResult(_target, _op); });
 }
 
-}
+} // namespace nc::panel::actions

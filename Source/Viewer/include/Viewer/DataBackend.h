@@ -51,10 +51,9 @@ public:
      */
     uint64_t RawSize() const;
 
-    const UniChar *UniChars() const; // decoded buffer
-    const uint32_t *
-    UniCharToByteIndeces() const;  // byte indeces within file window of decoded unichars
-    uint32_t UniCharsSize() const; // decoded buffer size in unichars
+    const UniChar *UniChars() const;              // decoded buffer
+    const uint32_t *UniCharToByteIndeces() const; // byte indeces within file window of decoded unichars
+    uint32_t UniCharsSize() const;                // decoded buffer size in unichars
 
 private:
     void DecodeBuffer(); // called by internal update logic

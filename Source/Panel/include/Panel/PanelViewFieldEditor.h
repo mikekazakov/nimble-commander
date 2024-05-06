@@ -4,7 +4,7 @@
 #include <VFS/VFS.h>
 #include <Cocoa/Cocoa.h>
 
-@interface NCPanelViewFieldEditor : NSScrollView<NSTextViewDelegate>
+@interface NCPanelViewFieldEditor : NSScrollView <NSTextViewDelegate>
 
 - (instancetype)initWithItem:(VFSListingItem)_item;
 - (void)markNextFilenamePart;
@@ -17,9 +17,9 @@
 // Reverts the effect of the stashing operation.
 - (void)unstash;
 
-@property (nonatomic, readonly) NSTextView *editor;
-@property (nonatomic, readonly) VFSListingItem originalItem;
-@property (nonatomic) void (^onTextEntered)(const std::string &_new_filename);
-@property (nonatomic) void (^onEditingFinished)();
+@property(nonatomic, readonly) NSTextView *editor;
+@property(nonatomic, readonly) VFSListingItem originalItem;
+@property(nonatomic) void (^onTextEntered)(const std::string &_new_filename);
+@property(nonatomic) void (^onEditingFinished)();
 
 @end

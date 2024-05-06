@@ -6,8 +6,8 @@
 
 @interface SimpleComboBoxPersistentDataSource : NCUtilSimpleComboBoxPersistentDataSource
 
-- (instancetype)initWithStateConfigPath:(const std::string&)path;
+- (instancetype)initWithStateConfigPath:(const std::string &)path;
 
-- (void)reportEnteredItem:(NSString*)item; // item can be nil
+- (void)reportEnteredItem:(NSString *)item; // item can be nil
 
 @end

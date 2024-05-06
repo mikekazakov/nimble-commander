@@ -17,23 +17,16 @@ public:
     virtual VFSConfiguration Configuration() const override;
     static VFSMeta Meta();
 
-    int CreateFile(const char *_path,
-                   std::shared_ptr<VFSFile> &_target,
-                   const VFSCancelChecker &_cancel_checker) override;
+    int
+    CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker) override;
 
-    bool IsDirectory(const char *_path,
-                     unsigned long _flags,
-                     const VFSCancelChecker &_cancel_checker) override;
+    bool IsDirectory(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
     bool IsWritable() const override;
 
-    int Stat(const char *_path,
-             VFSStat &_st,
-             unsigned long _flags,
-             const VFSCancelChecker &_cancel_checker) override;
+    int Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
-    int
-    StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
+    int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
 
     int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker = nullptr) override;
 
@@ -42,13 +35,11 @@ public:
                               unsigned long _flags,
                               const VFSCancelChecker &_cancel_checker) override;
 
-    int
-    IterateDirectoryListing(const char *_path,
-                            const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
+    int IterateDirectoryListing(const char *_path,
+                                const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
     bool IsDirChangeObservingAvailable(const char *_path) override;
-    HostDirObservationTicket DirChangeObserve(const char *_path,
-                                              std::function<void()> _handler) override;
+    HostDirObservationTicket DirChangeObserve(const char *_path, std::function<void()> _handler) override;
     void StopDirChangeObserving(unsigned long _ticket) override;
 
     /**
@@ -62,10 +53,7 @@ public:
     {
         return std::static_pointer_cast<const PSHost>(Host::SharedPtr());
     }
-    std::shared_ptr<PSHost> SharedPtr()
-    {
-        return std::static_pointer_cast<PSHost>(Host::SharedPtr());
-    }
+    std::shared_ptr<PSHost> SharedPtr() { return std::static_pointer_cast<PSHost>(Host::SharedPtr()); }
 
     struct ProcInfo;
     struct Snapshot;

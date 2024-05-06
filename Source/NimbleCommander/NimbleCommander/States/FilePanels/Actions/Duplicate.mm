@@ -197,4 +197,4 @@ static std::string ProduceFormCLowercase(std::string_view _string)
     return utf8;
 }
 
-}
+} // namespace nc::panel::actions

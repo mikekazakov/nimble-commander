@@ -12,6 +12,7 @@ class OptionsExporter
 public:
     OptionsExporter(const Model &_data);
     nc::config::Value Export() const;
+
 private:
     const Model &m_Data;
 };
@@ -20,9 +21,10 @@ class OptionsImporter
 {
 public:
     OptionsImporter(Model &_data);
-    void Import(const nc::config::Value& _options);
+    void Import(const nc::config::Value &_options);
+
 private:
     Model &m_Data;
 };
 
-}
+} // namespace nc::panel::data

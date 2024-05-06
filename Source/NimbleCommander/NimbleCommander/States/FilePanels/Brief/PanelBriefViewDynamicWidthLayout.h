@@ -3,10 +3,9 @@
 
 #include "PanelBriefViewLayoutProtocol.h"
 
-@interface NCPanelBriefViewDynamicWidthLayout :
-    NSCollectionViewFlowLayout<NCPanelBriefViewLayoutProtocol>
+@interface NCPanelBriefViewDynamicWidthLayout : NSCollectionViewFlowLayout <NCPanelBriefViewLayoutProtocol>
 
-@property (nonatomic) int itemMinWidth;
-@property (nonatomic) int itemMaxWidth;
+@property(nonatomic) int itemMinWidth;
+@property(nonatomic) int itemMaxWidth;
 
-@end 
+@end

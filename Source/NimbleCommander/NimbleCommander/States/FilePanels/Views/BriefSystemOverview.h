@@ -7,6 +7,6 @@
 
 @interface BriefSystemOverview : NSView
 
-- (void) UpdateVFSTarget:(const std::string&)_path host:(std::shared_ptr<VFSHost>)_host;
+- (void)UpdateVFSTarget:(const std::string &)_path host:(std::shared_ptr<VFSHost>)_host;
 
 @end

@@ -33,9 +33,8 @@ TEST_CASE(PREFIX "can read info about kernel_task")
     VFSListingPtr list;
     REQUIRE(host->FetchDirectoryListing("/", list, 0, {}) == 0);
 
-    auto it = std::find_if(list->begin(), list->end(), [](const auto &item) {
-        return item.Filename().ends_with("kernel_task.txt");
-    });
+    auto it = std::find_if(
+        list->begin(), list->end(), [](const auto &item) { return item.Filename().ends_with("kernel_task.txt"); });
     REQUIRE(it != list->end());
     auto kernel_task_listing_item = *it;
 
@@ -45,8 +44,7 @@ TEST_CASE(PREFIX "can read info about kernel_task")
     const auto file_contents = file->ReadFile();
     REQUIRE(file_contents != std::nullopt);
     REQUIRE(file_contents->size() != 0);
-    std::string_view proc_info(reinterpret_cast<const char *>(file_contents->data()),
-                               file_contents->size());
+    std::string_view proc_info(reinterpret_cast<const char *>(file_contents->data()), file_contents->size());
 
     CHECK(proc_info.find("Name: kernel_task") != std::string_view::npos);
     CHECK(proc_info.find("Process user id: 0 (root)") != std::string_view::npos);

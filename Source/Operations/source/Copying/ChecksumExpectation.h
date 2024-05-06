@@ -7,11 +7,8 @@
 
 namespace nc::ops::copying {
 
-struct ChecksumExpectation
-{
-    ChecksumExpectation(int _source_ind,
-                        std::string _destination,
-                        const std::vector<uint8_t> &_md5 );
+struct ChecksumExpectation {
+    ChecksumExpectation(int _source_ind, std::string _destination, const std::vector<uint8_t> &_md5);
     std::string destination_path;
     int original_item;
     struct {
@@ -19,7 +16,7 @@ struct ChecksumExpectation
     } md5;
 };
 
-bool operator==( const ChecksumExpectation &_lhs, const std::vector<uint8_t> &_rhs ) noexcept;
-bool operator==( const std::vector<uint8_t> &_rhs, const ChecksumExpectation &_lhs ) noexcept;
+bool operator==(const ChecksumExpectation &_lhs, const std::vector<uint8_t> &_rhs) noexcept;
+bool operator==(const std::vector<uint8_t> &_rhs, const ChecksumExpectation &_lhs) noexcept;
 
-}
+} // namespace nc::ops::copying

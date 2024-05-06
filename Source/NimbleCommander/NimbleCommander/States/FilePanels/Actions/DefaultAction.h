@@ -8,20 +8,18 @@
 
 namespace nc::panel::actions {
 
-struct PanelAction
-{
+struct PanelAction {
     virtual ~PanelAction();
-    virtual bool Predicate( PanelController *_target ) const;
-    virtual bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const;
-    virtual void Perform( PanelController *_target, id _sender ) const;
+    virtual bool Predicate(PanelController *_target) const;
+    virtual bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const;
+    virtual void Perform(PanelController *_target, id _sender) const;
 };
 
-struct StateAction
-{
+struct StateAction {
     virtual ~StateAction();
-    virtual bool Predicate( MainWindowFilePanelState *_target ) const;
-    virtual bool ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item ) const;
-    virtual void Perform( MainWindowFilePanelState *_target, id _sender ) const;
+    virtual bool Predicate(MainWindowFilePanelState *_target) const;
+    virtual bool ValidateMenuItem(MainWindowFilePanelState *_target, NSMenuItem *_item) const;
+    virtual void Perform(MainWindowFilePanelState *_target, id _sender) const;
 };
 
-};
+}; // namespace nc::panel::actions

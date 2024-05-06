@@ -11,4 +11,4 @@ class Log : public base::SpdlogFacade<Log>
     friend SpdlogFacade;
 };
 
-} // namespace nc::vfs
+} // namespace nc::panel

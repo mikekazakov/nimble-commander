@@ -1,9 +1,11 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
-#include <VFS/AppleDoubleEA.h>
+
 #include "File.h"
 #include "Internal.h"
+#include <VFS/AppleDoubleEA.h>
+#include <fmt/format.h>
 #include <sys/param.h>
 
 namespace nc::vfs::arc {
@@ -106,7 +108,7 @@ ssize_t File::Read(void *_buf, size_t _size)
     ssize_t size = archive_read_data(m_State->Archive(), _buf, _size);
     if( size < 0 ) {
         // TODO: libarchive error - convert it into our errors
-        printf("libarchive error: %s\n", archive_error_string(m_State->Archive()));
+        fmt::println("libarchive error: {}", archive_error_string(m_State->Archive()));
         return SetLastError(VFSError::FromLibarchive(archive_errno(m_State->Archive())));
     }
 

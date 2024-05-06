@@ -101,22 +101,22 @@ namespace nc::vfs {
 // #pragma options align=mac68k
 #pragma pack(1)
 
-typedef struct apple_double_entry {
+using apple_double_entry_t = struct apple_double_entry {
     u_int32_t type;   /* entry type: see list, 0 invalid */
     u_int32_t offset; /* entry data offset from the beginning of the file. */
     u_int32_t length; /* entry data length in bytes. */
-} apple_double_entry_t;
+};
 
 /* Entries are aligned on 4 byte boundaries */
-typedef struct attr_entry {
+using attr_entry_t = struct attr_entry {
     u_int32_t offset; /* file offset to data */
     u_int32_t length; /* size of attribute data */
     u_int16_t flags;
     u_int8_t namelen; /* length of name including NULL termination char */
     u_int8_t name[1]; /* NULL-terminated UTF-8 name (up to 128 bytes max) */
-} attr_entry_t;
+};
 
-typedef struct apple_double_header {
+using apple_double_header_t = struct apple_double_header {
     u_int32_t magic;   /* == ADH_MAGIC */
     u_int32_t version; /* format version: 2 = 0x00020000 */
     u_int32_t filler[4];
@@ -124,10 +124,10 @@ typedef struct apple_double_header {
     apple_double_entry_t entries[2]; /* 'finfo' & 'rsrc' always exist */
     u_int8_t finfo[FINDERINFOSIZE];  /* Must start with Finder Info (32 bytes) */
     u_int8_t pad[2];                 /* get better alignment inside attr_header */
-} apple_double_header_t;
+};
 
 /* Header + entries must fit into 64K <-- guess not true since 10.7 .MK. */
-typedef struct attr_header {
+using attr_header_t = struct attr_header {
     apple_double_header_t appledouble;
     u_int32_t magic;       /* == ATTR_HDR_MAGIC */
     u_int32_t debug_tag;   /* for debugging == file id of owning file */
@@ -137,7 +137,7 @@ typedef struct attr_header {
     u_int32_t reserved[3];
     u_int16_t flags;
     u_int16_t num_attrs;
-} attr_header_t;
+};
 
 // #pragma options align=reset
 #pragma pack()

@@ -1,8 +1,8 @@
 // Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <sys/stat.h>
 #include "Internals.h"
 #include "Host.h"
 #include <fmt/format.h>
+#include <sys/stat.h>
 
 namespace nc::vfs::ftp {
 
@@ -198,7 +198,7 @@ std::shared_ptr<Directory> ParseListing(const char *_str)
             }
         }
         else {
-            printf("failed to parse: %s\n", current_line);
+            fmt::println("failed to parse: {}", current_line);
         }
 
         line_start = line_end + 1;

@@ -1,21 +1,23 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <sys/dirent.h>
-#include <Base/CFStackAllocator.h>
-#include <Utility/PathManip.h>
-#include <Utility/DataBlockAnalysis.h>
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
-#include <VFS/AppleDoubleEA.h>
-#include <VFS/Log.h>
-#include "../ListingInput.h"
+
 #include "Host.h"
-#include "Internal.h"
-#include "File.h"
+#include "../ListingInput.h"
 #include "EncodingDetection.h"
-#include <sys/param.h>
-#include <mutex>
+#include "File.h"
+#include "Internal.h"
+#include <Base/CFStackAllocator.h>
 #include <Base/RobinHoodUtil.h>
 #include <Base/algo.h>
+#include <Utility/DataBlockAnalysis.h>
+#include <Utility/PathManip.h>
+#include <VFS/AppleDoubleEA.h>
+#include <VFS/Log.h>
+#include <fmt/format.h>
+#include <mutex>
+#include <sys/dirent.h>
+#include <sys/param.h>
 
 namespace nc::vfs {
 
@@ -422,7 +424,7 @@ int ArchiveHost::ReadArchiveListing()
     if( ret == ARCHIVE_EOF )
         return VFSError::Ok;
 
-    printf("%s\n", archive_error_string(I->m_Arc));
+    fmt::println("{}", archive_error_string(I->m_Arc));
 
     if( ret == ARCHIVE_WARN )
         return VFSError::Ok;

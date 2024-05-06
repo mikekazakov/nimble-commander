@@ -30,14 +30,6 @@ XCODEPROJ="../Source/NimbleCommander/NimbleCommander.xcodeproj"
 
 PBUDDY=/usr/libexec/PlistBuddy
 
-if type -p /usr/local/bin/ccache >/dev/null 2>&1; then
-    echo Using ccache
-    export CCACHE_BASEDIR="${ROOT_DIR}"
-    export CCACHE_SLOPPINESS=time_macros,include_file_mtime,include_file_ctime,file_stat_matches
-    export CC="${SCRIPTS_DIR}/ccache-clang"
-    export CXX="${SCRIPTS_DIR}/ccache-clang++"
-fi
-
 XC="xcodebuild \
  -project ${XCODEPROJ} \
  -scheme NimbleCommander-NonMAS \

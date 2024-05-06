@@ -18,17 +18,17 @@ public:
                                uint64_t _mem_size,
                                ReadParadigm _behave_as);
 
-    virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
-    virtual bool IsOpened() const override { return m_Opened; }
-    virtual int Close() override;
+    int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
+    bool IsOpened() const override { return m_Opened; }
+    int Close() override;
 
-    virtual ssize_t Read(void *_buf, size_t _size) override;
-    virtual ssize_t ReadAt(off_t _pos, void *_buf, size_t _size) override;
-    virtual ReadParadigm GetReadParadigm() const override;
-    virtual off_t Seek(off_t _off, int _basis) override;
-    virtual ssize_t Pos() const override;
-    virtual ssize_t Size() const override;
-    virtual bool Eof() const override;
+    ssize_t Read(void *_buf, size_t _size) override;
+    ssize_t ReadAt(off_t _pos, void *_buf, size_t _size) override;
+    ReadParadigm GetReadParadigm() const override;
+    off_t Seek(off_t _off, int _basis) override;
+    ssize_t Pos() const override;
+    ssize_t Size() const override;
+    bool Eof() const override;
 
 private:
     ReadParadigm m_Behaviour;
@@ -52,7 +52,7 @@ ssize_t TestGenericMemReadOnlyFile::Read(void *_buf, size_t _size)
     if( !IsOpened() )
         return VFSError::InvalidCall;
 
-    if( _buf == 0 )
+    if( _buf == nullptr )
         return VFSError::InvalidCall;
 
     if( _size == 0 )
@@ -160,7 +160,7 @@ TEST_CASE(PREFIX "random access")
 
     auto vfs_file = std::make_shared<TestGenericMemReadOnlyFile>(
         nullptr, nullptr, data.get(), data_size, VFSFile::ReadParadigm::Random);
-    vfs_file->Open(0, 0);
+    vfs_file->Open(0, nullptr);
 
     FileWindow fw;
     int ret = fw.Attach(vfs_file);
@@ -186,7 +186,7 @@ TEST_CASE(PREFIX "sequential access")
 
     auto vfs_file = std::make_shared<TestGenericMemReadOnlyFile>(
         nullptr, nullptr, data.get(), data_size, VFSFile::ReadParadigm::Sequential);
-    vfs_file->Open(0, 0);
+    vfs_file->Open(0, nullptr);
 
     FileWindow fw;
     int ret = fw.Attach(vfs_file);
@@ -217,7 +217,7 @@ TEST_CASE(PREFIX "seek access")
 
     auto vfs_file = std::make_shared<TestGenericMemReadOnlyFile>(
         nullptr, nullptr, data.get(), data_size, VFSFile::ReadParadigm::Seek);
-    vfs_file->Open(0, 0);
+    vfs_file->Open(0, nullptr);
 
     FileWindow fw;
     int ret = fw.Attach(vfs_file);

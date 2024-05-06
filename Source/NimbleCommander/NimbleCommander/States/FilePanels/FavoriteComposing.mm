@@ -156,7 +156,7 @@ static std::vector<std::pair<std::string, std::string>> GetFindersFavorites() //
     std::vector<std::pair<std::string, std::string>> paths;
 
     UInt32 seed;
-    LSSharedFileListRef list = LSSharedFileListCreate(NULL, kLSSharedFileListFavoriteItems, NULL);
+    LSSharedFileListRef list = LSSharedFileListCreate(nullptr, kLSSharedFileListFavoriteItems, nullptr);
     CFArrayRef snapshot = LSSharedFileListCopySnapshot(list, &seed);
     if( snapshot ) {
         for( int i = 0, e = static_cast<int>(CFArrayGetCount(snapshot)); i != e; ++i ) {

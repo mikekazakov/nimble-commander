@@ -58,7 +58,7 @@ VFSMeta NativeHost::Meta()
 
 NativeHost::NativeHost(nc::utility::NativeFSManager &_native_fs_man,
                        nc::utility::FSEventsFileUpdate &_fsevents_file_update)
-    : Host("", 0, UniqueTag), m_NativeFSManager(_native_fs_man), m_FSEventsFileUpdate(_fsevents_file_update)
+    : Host("", nullptr, UniqueTag), m_NativeFSManager(_native_fs_man), m_FSEventsFileUpdate(_fsevents_file_update)
 {
     AddFeatures(HostFeatures::FetchUsers | HostFeatures::FetchGroups | HostFeatures::SetOwnership |
                 HostFeatures::SetFlags | HostFeatures::SetPermissions | HostFeatures::SetTimes);
@@ -382,7 +382,7 @@ static int CalculateDirectoriesSizesHelper(char *_path,
     char *var = _path + _path_len + 1;
 
     dirent *entp = nullptr;
-    while( (entp = io.readdir(dirp)) != NULL ) { // <-- sync IO operation
+    while( (entp = io.readdir(dirp)) != nullptr ) { // <-- sync IO operation
         if( _checker && _checker() ) {
             _iscancelling = true;
             goto cleanup;
@@ -414,8 +414,8 @@ static int CalculateDirectoriesSizesHelper(char *_path,
             });
         }
         else if( entp->d_type == DT_UNKNOWN ) {
-            // some filesystems (e.g. ftp) might provide DT_UNKNOWN via readdir, so need to check
-            // them via lstat() before doing further processing
+            // some filesystems (e.g. ftp) might provide DT_UNKNOWN via readdir, so
+            // need to check them via lstat() before doing further processing
             struct stat st;
             if( io.lstat(_path, &st) == 0 ) { // <-- sync IO operation
                 if( S_ISDIR(st.st_mode) ) {
@@ -442,7 +442,7 @@ ssize_t NativeHost::CalculateDirectorySize(const char *_path, const VFSCancelChe
     if( _cancel_checker && _cancel_checker() )
         return VFSError::Cancelled;
 
-    if( _path == 0 || _path[0] != '/' )
+    if( _path == nullptr || _path[0] != '/' )
         return VFSError::InvalidCall;
 
     std::atomic_bool iscancelling{false};
@@ -519,13 +519,13 @@ int NativeHost::IterateDirectoryListing(const char *_path,
     auto &io = routedio::RoutedIO::InterfaceForAccess(_path, R_OK);
 
     DIR *dirp = io.opendir(_path);
-    if( dirp == 0 )
+    if( dirp == nullptr )
         return VFSError::FromErrno();
     const auto close_dirp = at_scope_end([&] { io.closedir(dirp); });
 
     dirent *entp;
     VFSDirEnt vfs_dirent;
-    while( (entp = io.readdir(dirp)) != NULL ) {
+    while( (entp = io.readdir(dirp)) != nullptr ) {
         if( (entp->d_namlen == 1 && entp->d_name[0] == '.') ||
             (entp->d_namlen == 2 && entp->d_name[0] == '.' && entp->d_name[1] == '.') )
             continue;

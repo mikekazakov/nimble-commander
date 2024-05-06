@@ -36,9 +36,9 @@ static const int g_PromptPipe = 20;
 static const int g_SemaphorePipe = 21;
 static int g_TCSHPipeGeneration = 0;
 
-static char *g_BashParams[3] = {const_cast<char *>("bash"), const_cast<char *>("--login"), 0};
-static char *g_ZSHParams[3] = {const_cast<char *>("-Z"), const_cast<char *>("-g"), 0};
-static char *g_TCSH[2] = {const_cast<char *>("tcsh"), 0};
+static char *g_BashParams[3] = {const_cast<char *>("bash"), const_cast<char *>("--login"), nullptr};
+static char *g_ZSHParams[3] = {const_cast<char *>("-Z"), const_cast<char *>("-g"), nullptr};
+static char *g_TCSH[2] = {const_cast<char *>("tcsh"), nullptr};
 static char **g_ShellParams[3] = {g_BashParams, g_ZSHParams, g_TCSH};
 
 static char g_BashHistControlEnv[] = "HISTCONTROL=ignorespace";
@@ -837,7 +837,7 @@ void ShellTask::Execute(const char *_short_fn, const char *_at, const char *_par
     // process cwd stuff if any
     char cwd[MAXPATHLEN];
     cwd[0] = 0;
-    if( _at != 0 ) {
+    if( _at != nullptr ) {
         strcpy(cwd, _at);
         if( IsPathWithTrailingSlash(cwd) && strlen(cwd) > 1 ) // cd command don't like trailing slashes
             cwd[strlen(cwd) - 1] = 0;

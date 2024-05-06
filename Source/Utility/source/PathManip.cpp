@@ -6,7 +6,7 @@
 
 bool EliminateTrailingSlashInPath(char *_path)
 {
-    if( _path == 0 )
+    if( _path == nullptr )
         return false;
 
     size_t len = strlen(_path);
@@ -55,9 +55,8 @@ bool GetDirectoryContainingItemFromPath(const char *_path, char *_buf)
 bool GetFilenameFromRelPath(const char *_path, char *_buf)
 {
     const char *last_sl = strrchr(_path, '/');
-    if( last_sl == 0 ) {
-        strcpy(_buf, _path); // assume that there's no directories in this path, so return the
-                             // entire original path
+    if( last_sl == nullptr ) {
+        strcpy(_buf, _path); // assume that there's no directories in this path, so return the entire original path
         return true;
     }
     else {
@@ -100,7 +99,7 @@ bool GetExtensionFromRelPath(const char *_path, char *_buf)
 {
     const char *last_sl = strrchr(_path, '/');
     const char *last_dot = strrchr(_path, '.');
-    if( last_dot == 0 )
+    if( last_dot == nullptr )
         return false;
 
     if( last_sl ) {

@@ -877,7 +877,7 @@ static const unsigned short g_NonPrintedSymbsVisualization[32] = {
 };
 
 static const unsigned short* g_SingleBytesTable[] = {
-    0,
+    nullptr,
     g_CP_ISO_8859_1_To_UniChar,
     g_CP_ISO_8859_2_To_UniChar,
     g_CP_ISO_8859_3_To_UniChar,

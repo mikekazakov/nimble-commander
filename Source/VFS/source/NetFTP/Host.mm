@@ -225,7 +225,7 @@ int FTPHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const V
         // special case for root path
         memset(&_st, 0, sizeof(_st));
         _st.mode = S_IRUSR | S_IWUSR | S_IFDIR;
-        _st.atime.tv_sec = _st.mtime.tv_sec = _st.btime.tv_sec = _st.ctime.tv_sec = time(0);
+        _st.atime.tv_sec = _st.mtime.tv_sec = _st.btime.tv_sec = _st.ctime.tv_sec = time(nullptr);
 
         _st.meaning.size = 1;
         _st.meaning.mode = 1;
@@ -301,7 +301,7 @@ int FTPHost::FetchDirectoryListing(const char *_path,
         listing_source.filenames.emplace_back("..");
         listing_source.unix_types.emplace_back(DT_DIR);
         listing_source.unix_modes.emplace_back(S_IRUSR | S_IWUSR | S_IFDIR);
-        auto curtime = time(0);
+        auto curtime = time(nullptr);
         listing_source.sizes.insert(0, ListingInput::unknown_size);
         listing_source.atimes.insert(0, curtime);
         listing_source.btimes.insert(0, curtime);
@@ -380,7 +380,7 @@ int FTPHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecker &
         assert(curlm_e == CURLM_OK);
     }
 
-    struct curl_slist *header = NULL;
+    struct curl_slist *header = nullptr;
     header = curl_slist_append(header, cmd.c_str());
     curl->EasySetOpt(CURLOPT_POSTQUOTE, header);
     curl->EasySetOpt(CURLOPT_URL, url.c_str());
@@ -423,7 +423,7 @@ int FTPHost::CreateDirectory(const char *_path,
         assert(curlm_e == CURLM_OK);
     }
 
-    struct curl_slist *header = NULL;
+    struct curl_slist *header = nullptr;
     header = curl_slist_append(header, cmd.c_str());
     curl->EasySetOpt(CURLOPT_POSTQUOTE, header);
     curl->EasySetOpt(CURLOPT_URL, url.c_str());
@@ -464,7 +464,7 @@ int FTPHost::RemoveDirectory(const char *_path, [[maybe_unused]] const VFSCancel
         assert(curlm_e == CURLM_OK);
     }
 
-    struct curl_slist *header = NULL;
+    struct curl_slist *header = nullptr;
     header = curl_slist_append(header, cmd.c_str());
     curl->EasySetOpt(CURLOPT_POSTQUOTE, header);
     curl->EasySetOpt(CURLOPT_URL, url.c_str());
@@ -508,7 +508,7 @@ int FTPHost::Rename(const char *_old_path,
         assert(curlm_e == CURLM_OK);
     }
 
-    struct curl_slist *header = NULL;
+    struct curl_slist *header = nullptr;
     header = curl_slist_append(header, cmd1.c_str());
     header = curl_slist_append(header, cmd2.c_str());
     curl->EasySetOpt(CURLOPT_POSTQUOTE, header);
@@ -547,7 +547,7 @@ bool FTPHost::IsDirChangeObservingAvailable([[maybe_unused]] const char *_path)
 
 HostDirObservationTicket FTPHost::DirChangeObserve(const char *_path, std::function<void()> _handler)
 {
-    if( _path == 0 || _path[0] != '/' )
+    if( _path == nullptr || _path[0] != '/' )
         return {};
 
     std::lock_guard<std::mutex> lock(m_UpdateHandlersLock);

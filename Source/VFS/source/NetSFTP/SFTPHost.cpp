@@ -280,7 +280,7 @@ int SFTPHost::SpawnSSH2(std::unique_ptr<Connection> &_t)
      * sporadically returns LIBSSH2_ERROR_TIMEOUT if it starts negotiation right after connect(). */
     std::this_thread::sleep_for(1ms);
 
-    connection->ssh = libssh2_session_init_ex(NULL, NULL, NULL, this);
+    connection->ssh = libssh2_session_init_ex(nullptr, nullptr, nullptr, this);
     if( !connection->ssh )
         return VFSError::GenericError;
 
@@ -317,7 +317,7 @@ int SFTPHost::SpawnSSH2(std::unique_ptr<Connection> &_t)
                                                (unsigned)Config().user.length(),
                                                Config().passwd.c_str(),
                                                (unsigned)Config().passwd.length(),
-                                               NULL);
+                                               nullptr);
         if( ret )
             return VFSError::NetSFTPCouldntAuthenticatePassword;
     }

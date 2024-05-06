@@ -29,11 +29,11 @@ static int CopyNodeAttrs(const char *_src_full_path,
      */
 
     VFSStat st;
-    int result = _src_host->Stat(_src_full_path, st, VFSFlags::F_NoFollow, 0);
+    int result = _src_host->Stat(_src_full_path, st, VFSFlags::F_NoFollow, nullptr);
     if( result < 0 )
         return result;
 
-    _dst_host->SetTimes(_dst_full_path, st.btime.tv_sec, st.mtime.tv_sec, st.ctime.tv_sec, st.atime.tv_sec, 0);
+    _dst_host->SetTimes(_dst_full_path, st.btime.tv_sec, st.mtime.tv_sec, st.ctime.tv_sec, st.atime.tv_sec, nullptr);
 
     return 0;
 }
@@ -149,7 +149,7 @@ int VFSEasyCopyFile(const char *_src_full_path,
     int result = 0;
 
     VFSFilePtr source_file, dest_file;
-    result = _src_host->CreateFile(_src_full_path, source_file, 0);
+    result = _src_host->CreateFile(_src_full_path, source_file, nullptr);
     if( result != 0 )
         return result;
 
@@ -157,7 +157,7 @@ int VFSEasyCopyFile(const char *_src_full_path,
     if( result != 0 )
         return result;
 
-    result = _dst_host->CreateFile(_dst_full_path, dest_file, 0);
+    result = _dst_host->CreateFile(_dst_full_path, dest_file, nullptr);
     if( result != 0 )
         return result;
 
@@ -190,10 +190,10 @@ int VFSEasyCopyDirectory(const char *_src_full_path,
         _dst_full_path[0] != '/' || !_dst_host )
         return VFSError::InvalidCall;
 
-    if( !_src_host->IsDirectory(_src_full_path, 0, 0) )
+    if( !_src_host->IsDirectory(_src_full_path, 0, nullptr) )
         return VFSError::InvalidCall;
 
-    result = _dst_host->CreateDirectory(_dst_full_path, 0640, 0);
+    result = _dst_host->CreateDirectory(_dst_full_path, 0640, nullptr);
     if( result < 0 )
         return result;
 
@@ -232,11 +232,11 @@ int VFSEasyCopySymlink(const char *_src_full_path,
 
     char symlink_val[MAXPATHLEN];
 
-    result = _src_host->ReadSymlink(_src_full_path, symlink_val, MAXPATHLEN, 0);
+    result = _src_host->ReadSymlink(_src_full_path, symlink_val, MAXPATHLEN, nullptr);
     if( result < 0 )
         return result;
 
-    result = _dst_host->CreateSymlink(_dst_full_path, symlink_val, 0);
+    result = _dst_host->CreateSymlink(_dst_full_path, symlink_val, nullptr);
     if( result < 0 )
         return result;
 
@@ -259,7 +259,7 @@ int VFSEasyCopyNode(const char *_src_full_path,
     VFSStat st;
     int result;
 
-    result = _src_host->Stat(_src_full_path, st, VFSFlags::F_NoFollow, 0);
+    result = _src_host->Stat(_src_full_path, st, VFSFlags::F_NoFollow, nullptr);
     if( result < 0 )
         return result;
 
@@ -291,14 +291,14 @@ int VFSEasyCompareFiles(const char *_file1_full_path,
     VFSFilePtr file1, file2;
     std::optional<std::vector<uint8_t>> data1, data2;
 
-    if( (ret = _file1_host->CreateFile(_file1_full_path, file1, 0)) != 0 )
+    if( (ret = _file1_host->CreateFile(_file1_full_path, file1, nullptr)) != 0 )
         return ret;
     if( (ret = file1->Open(VFSFlags::OF_Read)) != 0 )
         return ret;
     if( !(data1 = file1->ReadFile()) )
         return file1->LastError();
 
-    if( (ret = _file2_host->CreateFile(_file2_full_path, file2, 0)) != 0 )
+    if( (ret = _file2_host->CreateFile(_file2_full_path, file2, nullptr)) != 0 )
         return ret;
     if( (ret = file2->Open(VFSFlags::OF_Read)) != 0 )
         return ret;
@@ -323,7 +323,7 @@ int VFSEasyDelete(const char *_full_path, const std::shared_ptr<VFSHost> &_host)
     VFSStat st;
     int result;
 
-    result = _host->Stat(_full_path, st, VFSFlags::F_NoFollow, 0);
+    result = _host->Stat(_full_path, st, VFSFlags::F_NoFollow, nullptr);
     if( result < 0 )
         return result;
 
@@ -335,16 +335,16 @@ int VFSEasyDelete(const char *_full_path, const std::shared_ptr<VFSHost> &_host)
                 VFSEasyDelete(p.native().c_str(), _host);
                 return true;
             });
-        return _host->RemoveDirectory(_full_path, 0);
+        return _host->RemoveDirectory(_full_path, nullptr);
     }
     else
-        return _host->Unlink(_full_path, 0);
+        return _host->Unlink(_full_path, nullptr);
 }
 
 int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr &_vfs)
 {
     VFSFilePtr file;
-    int ret = _vfs->CreateFile(_path, file, 0);
+    int ret = _vfs->CreateFile(_path, file, nullptr);
     if( ret != 0 )
         return ret;
 
@@ -369,10 +369,10 @@ int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
 
     VFSStat st1, st2;
     int ret;
-    if( (ret = _file1_host->Stat(_file1_full_path.c_str(), st1, VFSFlags::F_NoFollow, 0)) < 0 )
+    if( (ret = _file1_host->Stat(_file1_full_path.c_str(), st1, VFSFlags::F_NoFollow, nullptr)) < 0 )
         return ret;
 
-    if( (ret = _file2_host->Stat(_file2_full_path.c_str(), st2, VFSFlags::F_NoFollow, 0)) < 0 )
+    if( (ret = _file2_host->Stat(_file2_full_path.c_str(), st2, VFSFlags::F_NoFollow, nullptr)) < 0 )
         return ret;
 
     if( (st1.mode & S_IFMT) != (st2.mode & S_IFMT) ) {
@@ -386,9 +386,9 @@ int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
     }
     else if( S_ISLNK(st1.mode) ) {
         char link1[MAXPATHLEN], link2[MAXPATHLEN];
-        if( (ret = _file1_host->ReadSymlink(_file1_full_path.c_str(), link1, MAXPATHLEN, 0)) < 0 )
+        if( (ret = _file1_host->ReadSymlink(_file1_full_path.c_str(), link1, MAXPATHLEN, nullptr)) < 0 )
             return ret;
-        if( (ret = _file2_host->ReadSymlink(_file2_full_path.c_str(), link2, MAXPATHLEN, 0)) < 0 )
+        if( (ret = _file2_host->ReadSymlink(_file2_full_path.c_str(), link2, MAXPATHLEN, nullptr)) < 0 )
             return ret;
         if( strcmp(link1, link2) != 0 )
             _result = strcmp(link1, link2);

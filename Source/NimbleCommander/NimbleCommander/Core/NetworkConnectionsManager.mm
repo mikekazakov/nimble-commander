@@ -28,19 +28,19 @@ struct ConnectionPathBuilder : public NetworkConnectionsManager::ConnectionVisit
     std::string Path() { return std::move(path); }
 
 private:
-    void Visit(const NetworkConnectionsManager::FTP &ftp)
+    void Visit(const NetworkConnectionsManager::FTP &ftp) override
     {
         path = "ftp://" + (ftp.user.empty() ? ftp.host : ftp.user + "@" + ftp.host);
     }
-    void Visit(const NetworkConnectionsManager::SFTP &sftp) { path = "sftp://" + sftp.user + "@" + sftp.host; }
-    void Visit(const NetworkConnectionsManager::LANShare &share)
+    void Visit(const NetworkConnectionsManager::SFTP &sftp) override { path = "sftp://" + sftp.user + "@" + sftp.host; }
+    void Visit(const NetworkConnectionsManager::LANShare &share) override
     {
         path =
             PrefixForShareProtocol(share.proto) + "://" +
             (share.user.empty() ? share.host + "/" + share.share : share.user + "@" + share.host + "/" + share.share);
     }
-    void Visit(const NetworkConnectionsManager::Dropbox &dropbox) { path = "dropbox://" + dropbox.account; }
-    void Visit(const NetworkConnectionsManager::WebDAV &webdav)
+    void Visit(const NetworkConnectionsManager::Dropbox &dropbox) override { path = "dropbox://" + dropbox.account; }
+    void Visit(const NetworkConnectionsManager::WebDAV &webdav) override
     {
         path = (webdav.https ? "https://" : "http://") + (webdav.user.empty() ? "" : webdav.user + "@") + webdav.host +
                (webdav.path.empty() ? "" : "/" + webdav.path);

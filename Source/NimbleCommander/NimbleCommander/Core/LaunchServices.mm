@@ -36,7 +36,7 @@ static std::string GetDefaultHandlerPathForNativeItem(const std::string &_path)
 {
     std::string result;
     const auto url = CFURLCreateFromFileSystemRepresentation(
-        0, reinterpret_cast<const UInt8 *>(_path.c_str()), _path.length(), false);
+        nullptr, reinterpret_cast<const UInt8 *>(_path.c_str()), _path.length(), false);
     if( url ) {
         const auto handler_url = LSCopyDefaultApplicationURLForURL(url, kLSRolesAll, nullptr);
 
@@ -53,7 +53,7 @@ static std::vector<std::string> GetHandlersPathsForNativeItem(const std::string 
 {
     std::vector<std::string> result;
     const auto url = CFURLCreateFromFileSystemRepresentation(
-        0, reinterpret_cast<const UInt8 *>(_path.c_str()), _path.length(), false);
+        nullptr, reinterpret_cast<const UInt8 *>(_path.c_str()), _path.length(), false);
     if( url ) {
         auto apps = (__bridge_transfer NSArray *)LSCopyApplicationURLsForURL(url, kLSRolesAll);
         for( NSURL *app_url in apps )

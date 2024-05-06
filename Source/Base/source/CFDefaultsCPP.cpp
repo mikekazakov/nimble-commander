@@ -150,7 +150,7 @@ long CFDefaultsGetLong(CFStringRef _key) noexcept
 
 void CFDefaultsSetDouble(CFStringRef _key, double _value) noexcept
 {
-    CFNumberRef num = CFNumberCreate(NULL, kCFNumberDoubleType, &_value);
+    CFNumberRef num = CFNumberCreate(nullptr, kCFNumberDoubleType, &_value);
     if( num == nullptr )
         return;
     auto release_val = at_scope_end([=] { CFRelease(num); });
@@ -159,7 +159,7 @@ void CFDefaultsSetDouble(CFStringRef _key, double _value) noexcept
 
 void CFDefaultsSetInt(CFStringRef _key, int _value) noexcept
 {
-    CFNumberRef num = CFNumberCreate(NULL, kCFNumberIntType, &_value);
+    CFNumberRef num = CFNumberCreate(nullptr, kCFNumberIntType, &_value);
     if( num == nullptr )
         return;
     auto release_val = at_scope_end([=] { CFRelease(num); });
@@ -168,7 +168,7 @@ void CFDefaultsSetInt(CFStringRef _key, int _value) noexcept
 
 void CFDefaultsSetLong(CFStringRef _key, long _value) noexcept
 {
-    CFNumberRef num = CFNumberCreate(NULL, kCFNumberLongType, &_value);
+    CFNumberRef num = CFNumberCreate(nullptr, kCFNumberLongType, &_value);
     if( num == nullptr )
         return;
     auto release_val = at_scope_end([=] { CFRelease(num); });

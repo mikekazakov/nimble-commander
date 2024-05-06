@@ -167,7 +167,7 @@ void SearchForFiles::ProcessDirent(const char *_full_path,
     if( failed_filtering == false && m_FilterSize ) {
         if( _dirent.type == VFSDirEnt::Reg ) {
             VFSStat st;
-            if( _in_host.Stat(_full_path, st, 0, 0) == 0 ) {
+            if( _in_host.Stat(_full_path, st, 0, nullptr) == 0 ) {
                 if( st.size < m_FilterSize->min || st.size > m_FilterSize->max )
                     failed_filtering = true;
             }
@@ -204,7 +204,7 @@ bool SearchForFiles::FilterByContent(const char *_full_path, VFSHost &_in_host, 
     _r = CFRangeMake(-1, 0);
 
     VFSFilePtr file;
-    if( _in_host.CreateFile(_full_path, file, 0) != 0 )
+    if( _in_host.CreateFile(_full_path, file, nullptr) != 0 )
         return false;
 
     if( file->Open(VFSFlags::OF_Read) != 0 )

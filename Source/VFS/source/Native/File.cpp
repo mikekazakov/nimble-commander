@@ -185,12 +185,12 @@ unsigned File::XAttrCount() const
     if( m_FD < 0 )
         return 0;
 
-    ssize_t bf_sz = flistxattr(m_FD, 0, 0, 0);
+    ssize_t bf_sz = flistxattr(m_FD, nullptr, 0, 0);
     if( bf_sz <= 0 ) // on error or if there're no xattrs available for this file
         return 0;
 
     char *buf = static_cast<char *>(alloca(bf_sz));
-    assert(buf != 0);
+    assert(buf != nullptr);
 
     ssize_t ret = flistxattr(m_FD, buf, bf_sz, 0);
     if( ret < 0 )
@@ -210,12 +210,12 @@ void File::XAttrIterateNames(const XAttrIterateNamesCallback &_handler) const
     if( m_FD < 0 || !_handler )
         return;
 
-    ssize_t bf_sz = flistxattr(m_FD, 0, 0, 0);
+    ssize_t bf_sz = flistxattr(m_FD, nullptr, 0, 0);
     if( bf_sz <= 0 ) // on error or if there're no xattrs available for this file
         return;
 
     char *buf = static_cast<char *>(alloca(bf_sz));
-    assert(buf != 0);
+    assert(buf != nullptr);
 
     ssize_t ret = flistxattr(m_FD, buf, bf_sz, 0);
     if( ret < 0 )

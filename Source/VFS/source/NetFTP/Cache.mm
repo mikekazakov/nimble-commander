@@ -18,7 +18,7 @@ Entry::Entry(const Entry &_r)
 
 Entry::~Entry()
 {
-    if( cfname != 0 )
+    if( cfname != nullptr )
         CFRelease(cfname);
 }
 
@@ -77,7 +77,7 @@ void Cache::InsertLISTDirectory(const char *_path, std::shared_ptr<Directory> _d
 {
     // TODO: also update ->parent_dir here
 
-    if( _path == 0 || _path[0] != '/' || !_directory )
+    if( _path == nullptr || _path[0] != '/' || !_directory )
         return;
 
     std::string dir = _path;

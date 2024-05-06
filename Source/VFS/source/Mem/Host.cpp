@@ -16,7 +16,7 @@ public:
     const char *VerboseJunction() const { return "[memfs]:"; }
 };
 
-MemHost::MemHost() : Host("", std::shared_ptr<Host>(0), UniqueTag)
+MemHost::MemHost() : Host("", std::shared_ptr<Host>(nullptr), UniqueTag)
 {
 }
 MemHost::~MemHost() = default;

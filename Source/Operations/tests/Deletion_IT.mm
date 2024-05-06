@@ -287,15 +287,15 @@ TEST_CASE(PREFIX "Simple delete from FTP")
     host->CreateDirectory("/Public/!FilesTesting", 0755);
     VFSStat stat;
     // if there's a trash from previous runs - remove it
-    if( host->Stat(fn2, stat, 0, 0) == 0 )
-        REQUIRE(host->Unlink(fn2, 0) == 0);
+    if( host->Stat(fn2, stat, 0, nullptr) == 0 )
+        REQUIRE(host->Unlink(fn2, nullptr) == 0);
     REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host) == 0);
 
     Deletion operation{FetchItems("/Public/!FilesTesting", {"mach_kernel"}, *host), DeletionType::Permanent};
     operation.Start();
     operation.Wait();
 
-    REQUIRE(host->Stat(fn2, stat, 0, 0) != 0); // check that file has gone
+    REQUIRE(host->Stat(fn2, stat, 0, nullptr) != 0); // check that file has gone
 
     VFSEasyDelete("/Public/!FilesTesting", host);
 }
@@ -310,7 +310,7 @@ TEST_CASE(PREFIX "Deleting from FTP directory")
     host->CreateDirectory("/Public/!FilesTesting", 0755);
     VFSStat stat;
     // if there's a trash from previous runs - remove it
-    if( host->Stat(fn2, stat, 0, 0) == 0 )
+    if( host->Stat(fn2, stat, 0, nullptr) == 0 )
         REQUIRE(VFSEasyDelete(fn2, host) == 0);
     REQUIRE(VFSEasyCopyNode(fn1, TestEnv().vfs_native, fn2, host) == 0);
 
@@ -318,7 +318,7 @@ TEST_CASE(PREFIX "Deleting from FTP directory")
     operation.Start();
     operation.Wait();
 
-    REQUIRE(host->Stat(fn2, stat, 0, 0) != 0); // check that file has gone
+    REQUIRE(host->Stat(fn2, stat, 0, nullptr) != 0); // check that file has gone
 
     VFSEasyDelete("/Public/!FilesTesting", host);
 }

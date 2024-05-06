@@ -20,7 +20,7 @@ NSURL *QuickLookVFSBridge::FetchItem(const std::string &_path, VFSHost &_host)
 
     if( !is_dir ) {
         VFSStat st;
-        if( _host.Stat(_path.c_str(), st, 0, 0) < 0 )
+        if( _host.Stat(_path.c_str(), st, 0, nullptr) < 0 )
             return nil;
         if( st.size > m_MaxSize )
             return nil;

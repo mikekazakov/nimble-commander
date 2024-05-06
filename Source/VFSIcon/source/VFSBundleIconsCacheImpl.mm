@@ -56,7 +56,7 @@ static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_pa
 {
     VFSFilePtr vfs_file;
 
-    if( _host.CreateFile(_path.c_str(), vfs_file, 0) < 0 )
+    if( _host.CreateFile(_path.c_str(), vfs_file, nullptr) < 0 )
         return std::nullopt;
 
     if( vfs_file->Open(VFSFlags::OF_Read) < 0 )
@@ -109,7 +109,7 @@ static NSImage *ProduceBundleIcon(const std::string &_path, VFSHost &_host)
     const auto info_plist_path = std::filesystem::path(_path) / "Contents/Info.plist";
     const auto plist = ReadDictionary(info_plist_path.native(), _host);
     if( !plist )
-        return 0;
+        return nullptr;
 
     auto icon_str = objc_cast<NSString>([plist objectForKey:@"CFBundleIconFile"]);
     if( !icon_str )

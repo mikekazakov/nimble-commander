@@ -10,7 +10,7 @@ using namespace nc::ops;
 namespace {
 
 struct MyJob : public Job {
-    virtual void Perform()
+    void Perform() override
     {
         std::this_thread::sleep_for(std::chrono::milliseconds{500});
         SetCompleted();
@@ -18,8 +18,8 @@ struct MyJob : public Job {
 };
 
 struct MyOperation : public Operation {
-    ~MyOperation() { Wait(); }
-    virtual Job *GetJob() noexcept { return &job; }
+    ~MyOperation() override { Wait(); }
+    Job *GetJob() noexcept override { return &job; }
     MyJob job;
 };
 

@@ -22,9 +22,9 @@ SearchInFile::SearchInFile(nc::vfs::FileWindow &_file)
 
 SearchInFile::~SearchInFile()
 {
-    if( m_RequestedTextSearch != 0 )
+    if( m_RequestedTextSearch != nullptr )
         CFRelease(m_RequestedTextSearch);
-    if( m_DecodedBufferString != 0 )
+    if( m_DecodedBufferString != nullptr )
         CFRelease(m_DecodedBufferString);
 }
 
@@ -45,9 +45,9 @@ void SearchInFile::MoveCurrentPosition(uint64_t _pos)
 
 void SearchInFile::ToggleTextSearch(CFStringRef _string, int _encoding)
 {
-    if( m_RequestedTextSearch != 0 )
+    if( m_RequestedTextSearch != nullptr )
         CFRelease(m_RequestedTextSearch);
-    m_RequestedTextSearch = CFStringCreateCopy(0, _string);
+    m_RequestedTextSearch = CFStringCreateCopy(nullptr, _string);
     m_TextSearchEncoding = _encoding;
 
     m_WorkMode = WorkMode::Text;
@@ -122,10 +122,10 @@ SearchInFile::Response SearchInFile::SearchText(uint64_t *_offset, uint64_t *_by
         assert(m_DecodedBufferSize != 0);
 
         // use this UniChars to produce a regular CFString
-        if( m_DecodedBufferString != 0 )
+        if( m_DecodedBufferString != nullptr )
             CFRelease(m_DecodedBufferString);
         m_DecodedBufferString =
-            CFStringCreateWithCharactersNoCopy(0, m_DecodedBuffer.get(), m_DecodedBufferSize, kCFAllocatorNull);
+            CFStringCreateWithCharactersNoCopy(nullptr, m_DecodedBuffer.get(), m_DecodedBufferSize, kCFAllocatorNull);
 
         const auto find_flags = m_SearchOptionsBits.case_sensitive ? 0 : kCFCompareCaseInsensitive;
         CFRange result = CFStringFind(m_DecodedBufferString, m_RequestedTextSearch, find_flags);

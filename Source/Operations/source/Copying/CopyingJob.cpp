@@ -1513,7 +1513,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
 
     // stat destination
     VFSStat dst_stat_buffer;
-    if( m_DestinationHost->Stat(_dst_path.c_str(), dst_stat_buffer, 0, 0) == 0 ) {
+    if( m_DestinationHost->Stat(_dst_path.c_str(), dst_stat_buffer, 0, nullptr) == 0 ) {
         // file already exist. what should we do now?
         const auto setup_overwrite = [&] {
             dst_open_flags = VFSFlags::OF_Write | VFSFlags::OF_Truncate | VFSFlags::OF_NoCache;
@@ -1602,7 +1602,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
             dst_file->Close();
             dst_file.reset();
             if( do_unlink_on_stop == true )
-                m_DestinationHost->Unlink(_dst_path.c_str(), 0);
+                m_DestinationHost->Unlink(_dst_path.c_str(), nullptr);
         }
     });
 
@@ -1911,7 +1911,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_s
     // we currently ignore possible errors on attributes copying, which is not great at all
 
     VFSStat src_stat_buffer;
-    if( _src_vfs.Stat(_src_path.c_str(), src_stat_buffer, 0, 0) < 0 )
+    if( _src_vfs.Stat(_src_path.c_str(), src_stat_buffer, 0, nullptr) < 0 )
         return StepResult::Ok;
 
     if( m_Options.copy_unix_flags ) {
@@ -1928,7 +1928,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_s
     // xattr processing
     if( m_Options.copy_xattrs ) {
         std::shared_ptr<VFSFile> src_file;
-        if( _src_vfs.CreateFile(_src_path.c_str(), src_file, 0) >= 0 )
+        if( _src_vfs.CreateFile(_src_path.c_str(), src_file, nullptr) >= 0 )
             if( src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_Directory | VFSFlags::OF_ShLock) >= 0 )
                 if( src_file->XAttrCount() > 0 )
                     CopyXattrsFromVFSFileToPath(*src_file, _dst_path.c_str());
@@ -1966,7 +1966,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
     }
 
     VFSStat dest_st;
-    if( m_DestinationHost->Stat(_dst_path.c_str(), dest_st, VFSFlags::F_NoFollow, 0) == 0 ) {
+    if( m_DestinationHost->Stat(_dst_path.c_str(), dest_st, VFSFlags::F_NoFollow, nullptr) == 0 ) {
         // this directory already exist. currently do nothing, later - update it's attrs.
     }
     else {

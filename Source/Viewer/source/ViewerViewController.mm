@@ -339,7 +339,7 @@ struct BackgroundFileOpener {
 
     item = [[NSMenuItem alloc]
         initWithTitle:NSLocalizedString(@"Clear Recents", "Menu item title in internal viewer search")
-               action:NULL
+               action:nullptr
         keyEquivalent:@""];
     item.tag = NSSearchFieldClearRecentsMenuItemTag;
     [menu insertItem:item atIndex:2];
@@ -350,13 +350,13 @@ struct BackgroundFileOpener {
 
     item = [[NSMenuItem alloc]
         initWithTitle:NSLocalizedString(@"Recent Searches", "Menu item title in internal viewer search")
-               action:NULL
+               action:nullptr
         keyEquivalent:@""];
     item.tag = NSSearchFieldRecentsTitleMenuItemTag;
     [menu insertItem:item atIndex:4];
 
     item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Recents", "Menu item title in internal viewer search")
-                                      action:NULL
+                                      action:nullptr
                                keyEquivalent:@""];
     item.tag = NSSearchFieldRecentsMenuItemTag;
     [menu insertItem:item atIndex:5];
@@ -383,7 +383,7 @@ struct BackgroundFileOpener {
         return;
     }
 
-    if( m_SearchInFile->TextSearchString() == NULL ||
+    if( m_SearchInFile->TextSearchString() == nullptr ||
         [str compare:(__bridge NSString *)m_SearchInFile->TextSearchString()] != NSOrderedSame ||
         m_SearchInFile->TextSearchEncoding() != m_View.encoding ) {
         // user did some changes in search request
@@ -717,7 +717,7 @@ int BackgroundFileOpener::Open(VFSHostPtr _vfs,
 {
     dispatch_assert_background_queue();
     assert(_vfs);
-    if( int vfs_err = _vfs->CreateFile(_path.c_str(), original_file, 0); vfs_err != VFSError::Ok )
+    if( int vfs_err = _vfs->CreateFile(_path.c_str(), original_file, nullptr); vfs_err != VFSError::Ok )
         return vfs_err;
 
     if( original_file->GetReadParadigm() < VFSFile::ReadParadigm::Random ) {

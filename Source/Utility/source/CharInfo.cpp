@@ -16,11 +16,11 @@ void CharInfo::BuildPossibleCompositionEvidenceTable()
             if( canbecomposed[j] )
                 continue;
             uint16_t chars[] = {uint16_t(i), uint16_t(j)};
-            CFStringRef ref = CFStringCreateWithCharactersNoCopy(NULL, chars, 2, kCFAllocatorNull);
+            CFStringRef ref = CFStringCreateWithCharactersNoCopy(nullptr, chars, 2, kCFAllocatorNull);
             if( ref == nullptr )
                 continue;
 
-            CFMutableStringRef mut = CFStringCreateMutableCopy(NULL, 0, ref);
+            CFMutableStringRef mut = CFStringCreateMutableCopy(nullptr, 0, ref);
             CFStringNormalize(mut, kCFStringNormalizationFormC);
             if( CFStringGetLength(mut) == 1 )
                 canbecomposed[j] = true;

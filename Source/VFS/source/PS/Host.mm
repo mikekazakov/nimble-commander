@@ -60,7 +60,7 @@ static cpu_type_t ArchTypeFromPID(pid_t _pid)
         mibLen += 1;
 
         cpuTypeSize = sizeof(cpuType);
-        err = sysctl(mib, static_cast<unsigned>(mibLen), &cpuType, &cpuTypeSize, 0, 0);
+        err = sysctl(mib, static_cast<unsigned>(mibLen), &cpuType, &cpuTypeSize, nullptr, 0);
         if( err == 0 )
             return cpuType;
     }
@@ -99,13 +99,13 @@ static void print_argv_of_pid(int pid, std::string &_out)
     mib[1] = KERN_ARGMAX;
 
     size = sizeof(argmax);
-    if( sysctl(mib, 2, &argmax, &size, NULL, 0) == -1 ) {
+    if( sysctl(mib, 2, &argmax, &size, nullptr, 0) == -1 ) {
         goto ERROR_A;
     }
 
     /* Allocate space for the arguments. */
     procargs = static_cast<char *>(std::malloc(argmax));
-    if( procargs == NULL ) {
+    if( procargs == nullptr ) {
         goto ERROR_A;
     }
 
@@ -155,7 +155,7 @@ static void print_argv_of_pid(int pid, std::string &_out)
     mib[2] = pid;
 
     size = static_cast<size_t>(argmax);
-    if( sysctl(mib, 3, procargs, &size, NULL, 0) == -1 ) {
+    if( sysctl(mib, 3, procargs, &size, nullptr, 0) == -1 ) {
         goto ERROR_B;
     }
 
@@ -193,10 +193,10 @@ static void print_argv_of_pid(int pid, std::string &_out)
      * know where the command arguments end and the environment strings
      * start, which is why the '=' character is searched for as a heuristic.
      */
-    for( np = NULL; c < nargs && cp < &procargs[size]; cp++ ) {
+    for( np = nullptr; c < nargs && cp < &procargs[size]; cp++ ) {
         if( *cp == '\0' ) {
             c++;
-            if( np != NULL ) {
+            if( np != nullptr ) {
                 /* Convert previous '\0'. */
                 *np = ' ';
             }
@@ -222,7 +222,7 @@ static void print_argv_of_pid(int pid, std::string &_out)
      * sp points to the beginning of the arguments/environment string, and
      * np should point to the '\0' terminator for the string.
      */
-    if( np == NULL || np == sp ) {
+    if( np == nullptr || np == sp ) {
         /* Empty or unterminated string. */
         goto ERROR_B;
     }
@@ -252,7 +252,7 @@ public:
     const char *VerboseJunction() const { return "[psfs]:"; }
 };
 
-PSHost::PSHost() : Host("", std::shared_ptr<Host>(0), UniqueTag), m_UpdateQ("PSHost")
+PSHost::PSHost() : Host("", std::shared_ptr<Host>(nullptr), UniqueTag), m_UpdateQ("PSHost")
 {
     CommitProcs(GetProcs());
 }
@@ -295,7 +295,7 @@ std::shared_ptr<PSHost> PSHost::GetSharedOrNew()
 std::vector<PSHost::ProcInfo> PSHost::GetProcs()
 {
     size_t proc_cnt = 0;
-    kinfo_proc *proc_list = 0;
+    kinfo_proc *proc_list = nullptr;
     nc::utility::GetBSDProcessList(&proc_list, &proc_cnt);
 
     std::vector<ProcInfo> procs(proc_cnt);
@@ -484,7 +484,7 @@ bool PSHost::IsDirectory(const char *_path,
                          [[maybe_unused]] unsigned long _flags,
                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == 0 || strcmp(_path, "/") != 0 )
+    if( _path == nullptr || strcmp(_path, "/") != 0 )
         return false;
     return true;
 }
@@ -587,7 +587,7 @@ void PSHost::StopDirChangeObserving(unsigned long _ticket)
 
 int PSHost::IterateDirectoryListing(const char *_path, const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    assert(_path != 0);
+    assert(_path != nullptr);
     if( _path[0] != '/' || _path[1] != 0 )
         return VFSError::NotFound;
 
@@ -636,7 +636,7 @@ static std::optional<bool> WaitForProcessToDie(int pid)
     struct kevent ke;
     EV_SET(&ke, pid, EVFILT_PROC, EV_ADD, NOTE_EXIT, 0, NULL);
 
-    int i = kevent(kq, &ke, 1, NULL, 0, NULL);
+    int i = kevent(kq, &ke, 1, nullptr, 0, nullptr);
     if( i == -1 )
         return std::nullopt;
 
@@ -644,7 +644,7 @@ static std::optional<bool> WaitForProcessToDie(int pid)
     struct timespec tm;
     tm.tv_sec = 5;
     tm.tv_nsec = 0;
-    i = kevent(kq, NULL, 0, &ke, 1, &tm);
+    i = kevent(kq, nullptr, 0, &ke, 1, &tm);
     if( i == -1 )
         return std::nullopt;
 

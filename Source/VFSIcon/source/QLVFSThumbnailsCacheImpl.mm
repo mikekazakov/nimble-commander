@@ -82,9 +82,9 @@ static NSImage *ProduceThumbnailForTempFile(const std::string &_path, CGSize _px
         nullptr, reinterpret_cast<const UInt8 *>(_path.c_str()), _path.length(), false);
     const void *keys[] = {static_cast<const void *>(kQLThumbnailOptionIconModeKey)};
     const void *values[] = {static_cast<const void *>(kCFBooleanTrue)};
-    static CFDictionaryRef dict = CFDictionaryCreate(0, keys, values, 1, 0, 0);
-    NSImage *result = 0;
-    if( CGImageRef thumbnail = QLThumbnailImageCreate(0, url, _px_size, dict) ) {
+    static CFDictionaryRef dict = CFDictionaryCreate(nullptr, keys, values, 1, nullptr, nullptr);
+    NSImage *result = nullptr;
+    if( CGImageRef thumbnail = QLThumbnailImageCreate(nullptr, url, _px_size, dict) ) {
         result = [[NSImage alloc] initWithCGImage:thumbnail size:_px_size];
         CGImageRelease(thumbnail);
     }
@@ -96,7 +96,7 @@ static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_pa
 {
     VFSFilePtr vfs_file;
 
-    if( _host.CreateFile(_path.c_str(), vfs_file, 0) < 0 )
+    if( _host.CreateFile(_path.c_str(), vfs_file, nullptr) < 0 )
         return std::nullopt;
 
     if( vfs_file->Open(VFSFlags::OF_Read) < 0 )

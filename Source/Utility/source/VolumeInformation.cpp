@@ -332,8 +332,8 @@ int FetchVolumeAttributesInformation(const char *_path,
     strcpy(_a->fs_type_name, stat_fs.f_fstypename);
     _a->fs_owner = stat_fs.f_owner;
 
-    CFURLRef cfurl =
-        CFURLCreateFromFileSystemRepresentation(0, reinterpret_cast<const UInt8 *>(_path), std::strlen(_path), false);
+    CFURLRef cfurl = CFURLCreateFromFileSystemRepresentation(
+        nullptr, reinterpret_cast<const UInt8 *>(_path), std::strlen(_path), false);
     CFStringRef fsverbname;
     if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, &fsverbname, nullptr) ==
         false ) {
@@ -347,25 +347,25 @@ int FetchVolumeAttributesInformation(const char *_path,
     CFRelease(fsverbname);
 
     CFBooleanRef isejectable = nullptr;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsEjectableKey, &isejectable, 0) && isejectable ) {
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsEjectableKey, &isejectable, nullptr) && isejectable ) {
         _a->is_sw_ejectable = CFBooleanGetValue(isejectable);
         CFRelease(isejectable);
     }
 
     CFBooleanRef isremovable = nullptr;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsRemovableKey, &isremovable, 0) && isremovable ) {
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsRemovableKey, &isremovable, nullptr) && isremovable ) {
         _a->is_sw_removable = CFBooleanGetValue(isremovable);
         CFRelease(isremovable);
     }
 
     CFBooleanRef islocal = nullptr;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsLocalKey, &islocal, 0) && islocal ) {
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsLocalKey, &islocal, nullptr) && islocal ) {
         _a->is_local = CFBooleanGetValue(islocal);
         CFRelease(islocal);
     }
 
     CFBooleanRef isinternal = nullptr;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsInternalKey, &isinternal, 0) && isinternal ) {
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsInternalKey, &isinternal, nullptr) && isinternal ) {
         _a->is_internal = CFBooleanGetValue(isinternal);
         CFRelease(isinternal);
     }

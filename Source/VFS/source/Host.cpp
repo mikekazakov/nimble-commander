@@ -213,7 +213,7 @@ bool Host::FindLastValidItem(const char *_orig_path,
         }
 
         char *sl = strrchr(tmp, '/');
-        assert(sl != 0);
+        assert(sl != nullptr);
         if( sl == tmp )
             return false;
         *sl = 0;
@@ -224,7 +224,7 @@ bool Host::FindLastValidItem(const char *_orig_path,
 
 ssize_t Host::CalculateDirectorySize(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == 0 || _path[0] != '/' )
+    if( _path == nullptr || _path[0] != '/' )
         return VFSError::InvalidCall;
 
     std::queue<std::filesystem::path> look_paths;
@@ -241,7 +241,7 @@ ssize_t Host::CalculateDirectorySize(const char *_path, const VFSCancelChecker &
                 look_paths.emplace(std::move(full_path));
             else {
                 VFSStat stat;
-                if( Stat(full_path.c_str(), stat, VFSFlags::F_NoFollow, 0) == 0 )
+                if( Stat(full_path.c_str(), stat, VFSFlags::F_NoFollow, nullptr) == 0 )
                     total_size += stat.size;
             }
             return true;

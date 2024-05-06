@@ -207,7 +207,7 @@ bool PanelBriefViewItemLayoutConstants::operator!=(const PanelBriefViewItemLayou
 {
     if( auto pv = nc::objc_cast<PanelView>(self.superview) ) {
         m_PanelView = pv;
-        [pv addObserver:self forKeyPath:@"active" options:0 context:NULL];
+        [pv addObserver:self forKeyPath:@"active" options:0 context:nullptr];
         [self observeValueForKeyPath:@"active" ofObject:pv change:nil context:nil];
     }
 }

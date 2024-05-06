@@ -831,7 +831,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part1")
     REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
     REQUIRE(compare == 0);
 
-    REQUIRE(host->Unlink(fn2, 0) == 0);
+    REQUIRE(host->Unlink(fn2, nullptr) == 0);
 }
 
 TEST_CASE(PREFIX "Copy to local FTP")
@@ -862,7 +862,7 @@ TEST_CASE(PREFIX "Copy to local FTP")
                                     host,
                                     compare) == 0);
         REQUIRE(compare == 0);
-        REQUIRE(host->Unlink(("/Public/!FilesTesting/" + i).c_str(), 0) == 0);
+        REQUIRE(host->Unlink(("/Public/!FilesTesting/" + i).c_str(), nullptr) == 0);
     }
 }
 
@@ -922,8 +922,8 @@ TEST_CASE(PREFIX "Copy to local FTP, part4")
     REQUIRE(VFSEasyCompareFiles(fn2, host, fn3, host, compare) == 0);
     REQUIRE(compare == 0);
 
-    REQUIRE(host->Unlink(fn2, 0) == 0);
-    REQUIRE(host->Unlink(fn3, 0) == 0);
+    REQUIRE(host->Unlink(fn2, nullptr) == 0);
+    REQUIRE(host->Unlink(fn3, nullptr) == 0);
 }
 
 TEST_CASE(PREFIX "Copy to local FTP, special characters")
@@ -957,7 +957,7 @@ TEST_CASE(PREFIX "Copy to local FTP, special characters")
         int compare;
         REQUIRE(VFSEasyCompareFiles("/bin/sleep", TestEnv().vfs_native, (dir / tc.name).c_str(), host, compare) == 0);
         REQUIRE(compare == 0);
-        REQUIRE(host->Unlink((dir / tc.name).c_str(), 0) == 0);
+        REQUIRE(host->Unlink((dir / tc.name).c_str(), nullptr) == 0);
     }
 
     VFSEasyDelete(dir.c_str(), host);
@@ -1480,10 +1480,10 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
 
     VFSStat st1, st2;
     int ret;
-    if( (ret = _file1_host->Stat(_file1_full_path.c_str(), st1, 0, 0)) != 0 )
+    if( (ret = _file1_host->Stat(_file1_full_path.c_str(), st1, 0, nullptr)) != 0 )
         return ret;
 
-    if( (ret = _file2_host->Stat(_file2_full_path.c_str(), st2, 0, 0)) != 0 )
+    if( (ret = _file2_host->Stat(_file2_full_path.c_str(), st2, 0, nullptr)) != 0 )
         return ret;
 
     if( (st1.mode & S_IFMT) != (st2.mode & S_IFMT) ) {

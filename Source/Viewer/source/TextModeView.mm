@@ -268,14 +268,15 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
             const auto selection_end = selection.location + selection.length;
             double x1 = 0, x2 = -1;
             if( line.UniCharsStart() <= selection.location && line.UniCharsEnd() > selection.location ) {
-                x1 = line_pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection.location, 0);
+                x1 = line_pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection.location, nullptr);
                 x2 = ((selection_end <= line.UniCharsEnd())
-                          ? line_pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection_end, 0)
+                          ? line_pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection_end, nullptr)
                           : view_width);
             }
             else if( selection_end > line.UniCharsStart() && selection_end <= line.UniCharsEnd() ) {
                 x1 = line_pos.x;
-                x2 = line_pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection.location + selection.length, 0);
+                x2 = line_pos.x +
+                     CTLineGetOffsetForStringIndex(line.Line(), selection.location + selection.length, nullptr);
             }
             else if( selection.location < line.UniCharsStart() && selection_end > line.UniCharsEnd() ) {
                 x1 = line_pos.x;

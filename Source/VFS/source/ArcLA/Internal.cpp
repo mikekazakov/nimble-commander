@@ -26,7 +26,7 @@ off_t Mediator::myseek([[maybe_unused]] struct archive *a, void *client_data, of
 
 void Mediator::setup(struct archive *a)
 {
-    assert(file.get() != 0);
+    assert(file.get() != nullptr);
     assert(file->GetReadParadigm() >= VFSFile::ReadParadigm::Seek);
     archive_read_set_callback_data(a, this);
     archive_read_set_read_callback(a, myread);

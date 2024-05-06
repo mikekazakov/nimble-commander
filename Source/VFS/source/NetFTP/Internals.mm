@@ -98,7 +98,7 @@ static int parse_dir_unix(const char *line, struct stat *sbuf, char *file, char 
     sbuf->st_size = size;
 
     *fmt::format_to(date, "{},{},{}", year, month, day) = 0;
-    tt = time(NULL);
+    tt = time(nullptr);
     gmtime_r(&tt, &tm);
     tm.tm_sec = tm.tm_min = tm.tm_hour = 0;
     if( strchr(year, ':') ) {
@@ -137,7 +137,7 @@ static int parse_dir_win(const char *line, struct stat *sbuf, char *file, char *
         return 0;
     }
 
-    tt = time(NULL);
+    tt = time(nullptr);
     gmtime_r(&tt, &tm);
     tm.tm_sec = tm.tm_min = tm.tm_hour = 0;
     strptime(date, "%m-%d-%y", &tm);
@@ -150,7 +150,7 @@ static int parse_dir_win(const char *line, struct stat *sbuf, char *file, char *
         sbuf->st_mode |= S_IFDIR;
     }
     else {
-        unsigned long long nsize = strtoull(size, NULL, 0);
+        unsigned long long nsize = strtoull(size, nullptr, 0);
         sbuf->st_mode |= S_IFREG;
         sbuf->st_size = nsize;
     }
@@ -211,7 +211,7 @@ CURLInstance::~CURLInstance()
 {
     if( curl ) {
         curl_easy_cleanup(curl);
-        curl = 0;
+        curl = nullptr;
     }
 
     if( curlm )
@@ -258,7 +258,7 @@ CURLcode CURLInstance::PerformMulti()
         int msgs_left = 1;
         while( msgs_left ) {
             CURLMsg *msg = curl_multi_info_read(curlm, &msgs_left);
-            if( msg == NULL || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
+            if( msg == nullptr || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
                 if( msg )
                     result = msg->data.result;
             }

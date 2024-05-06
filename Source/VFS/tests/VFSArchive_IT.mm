@@ -22,10 +22,10 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
 
     VFSStat st1, st2;
     int ret;
-    if( (ret = _file1_host->Stat(_file1_full_path.c_str(), st1, VFSFlags::F_NoFollow, 0)) < 0 )
+    if( (ret = _file1_host->Stat(_file1_full_path.c_str(), st1, VFSFlags::F_NoFollow, nullptr)) < 0 )
         return ret;
 
-    if( (ret = _file2_host->Stat(_file2_full_path.c_str(), st2, VFSFlags::F_NoFollow, 0)) < 0 )
+    if( (ret = _file2_host->Stat(_file2_full_path.c_str(), st2, VFSFlags::F_NoFollow, nullptr)) < 0 )
         return ret;
 
     if( (st1.mode & S_IFMT) != (st2.mode & S_IFMT) ) {
@@ -39,9 +39,9 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
     }
     else if( S_ISLNK(st1.mode) ) {
         char link1[MAXPATHLEN], link2[MAXPATHLEN];
-        if( (ret = _file1_host->ReadSymlink(_file1_full_path.c_str(), link1, MAXPATHLEN, 0)) < 0 )
+        if( (ret = _file1_host->ReadSymlink(_file1_full_path.c_str(), link1, MAXPATHLEN, nullptr)) < 0 )
             return ret;
-        if( (ret = _file2_host->ReadSymlink(_file2_full_path.c_str(), link2, MAXPATHLEN, 0)) < 0 )
+        if( (ret = _file2_host->ReadSymlink(_file2_full_path.c_str(), link2, MAXPATHLEN, nullptr)) < 0 )
             return ret;
         if( strcmp(link1, link2) != 0 )
             _result = strcmp(link1, link2);
@@ -71,13 +71,13 @@ TEST_CASE(PREFIX "XNUSource - TAR")
 
     REQUIRE(host->StatTotalDirs() == 245);
     REQUIRE(host->StatTotalRegs() == 3451);
-    REQUIRE(host->IsDirectory("/", 0, 0) == true);
-    REQUIRE(host->IsDirectory("/xnu-xnu-3248.20.55/EXTERNAL_HEADERS/mach-o/x86_64", 0, 0) == true);
-    REQUIRE(host->IsDirectory("/xnu-xnu-3248.20.55/EXTERNAL_HEADERS/mach-o/x86_64/", 0, 0) == true);
+    REQUIRE(host->IsDirectory("/", 0, nullptr) == true);
+    REQUIRE(host->IsDirectory("/xnu-xnu-3248.20.55/EXTERNAL_HEADERS/mach-o/x86_64", 0, nullptr) == true);
+    REQUIRE(host->IsDirectory("/xnu-xnu-3248.20.55/EXTERNAL_HEADERS/mach-o/x86_64/", 0, nullptr) == true);
     REQUIRE(host->Exists("/xnu-xnu-3248.20.55/2342423/9182391273/x86_64") == false);
 
     VFSStat st;
-    REQUIRE(host->Stat("/xnu-xnu-3248.20.55/bsd/security/audit/audit_bsm_socket_type.c", st, 0, 0) == 0);
+    REQUIRE(host->Stat("/xnu-xnu-3248.20.55/bsd/security/audit/audit_bsm_socket_type.c", st, 0, nullptr) == 0);
     REQUIRE(st.mode_bits.reg);
     REQUIRE(st.size == 3313);
 
@@ -85,7 +85,7 @@ TEST_CASE(PREFIX "XNUSource - TAR")
         // symlinks were faulty in <1.1.3
         auto fn = "/xnu-xnu-3248.20.55/libkern/.clang-format";
         REQUIRE(host->IsSymlink(fn, VFSFlags::F_NoFollow));
-        REQUIRE(host->Stat(fn, st, 0, 0) == 0);
+        REQUIRE(host->Stat(fn, st, 0, nullptr) == 0);
         REQUIRE(st.mode_bits.reg);
         REQUIRE(st.size == 957);
 
@@ -121,7 +121,7 @@ TEST_CASE(PREFIX "XNUSource - TAR")
           std::string fn = filenames[std::rand() % filenames.size()];
 
           VFSStat local_st;
-          REQUIRE(host->Stat(fn.c_str(), local_st, 0, 0) == 0);
+          REQUIRE(host->Stat(fn.c_str(), local_st, 0, nullptr) == 0);
 
           VFSFilePtr file;
           REQUIRE(host->CreateFile(fn.c_str(), file, nullptr) == 0);

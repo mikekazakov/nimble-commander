@@ -274,7 +274,7 @@ void *BuildAppleDoubleFromEA(VFSFile &_file, size_t *_buf_sz)
 {
     unsigned ret_xattr_count = _file.XAttrCount();
     if( ret_xattr_count == 0 )
-        return 0;
+        return nullptr;
 
     static const int max_eas = 64;
     struct {
@@ -309,7 +309,7 @@ void *BuildAppleDoubleFromEA(VFSFile &_file, size_t *_buf_sz)
     });
 
     for( int i = 0; i < eas_count; ++i ) {
-        ssize_t sz = _file.XAttrGet(file_eas[i].name, 0, 0);
+        ssize_t sz = _file.XAttrGet(file_eas[i].name, nullptr, 0);
         if( sz > 0 ) {
             file_eas[i].data = std::make_unique<char[]>(sz);
             assert(file_eas[i].data);

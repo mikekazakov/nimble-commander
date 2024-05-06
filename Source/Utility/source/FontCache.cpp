@@ -30,13 +30,13 @@ static base::CFPtr<CTFontRef> CreateFallbackFontStraight(uint32_t _unicode, CTFo
     const auto str = [&] {
         if( _unicode < 0x10000 ) { // BMP
             chars[0] = static_cast<unsigned short>(_unicode);
-            auto cf_str = CFStringCreateWithCharactersNoCopy(0, chars, 1, kCFAllocatorNull);
+            auto cf_str = CFStringCreateWithCharactersNoCopy(nullptr, chars, 1, kCFAllocatorNull);
             return base::CFPtr<CFStringRef>::adopt(cf_str);
         }
         else { // non-BMP
             chars[0] = static_cast<unsigned short>(0xD800 + ((_unicode - 0x010000) >> 10));
             chars[1] = static_cast<unsigned short>(0xDC00 + ((_unicode - 0x010000) & 0x3FF));
-            auto cf_str = CFStringCreateWithCharactersNoCopy(0, chars, 2, kCFAllocatorNull);
+            auto cf_str = CFStringCreateWithCharactersNoCopy(nullptr, chars, 2, kCFAllocatorNull);
             return base::CFPtr<CFStringRef>::adopt(cf_str);
         }
     }();
@@ -52,73 +52,73 @@ static base::CFPtr<CTFontRef> CreateFallbackFontStraight(uint32_t _unicode, CTFo
 static base::CFPtr<CTFontRef> CreateFallbackFontHardway(uint32_t _unicode, CTFontRef _basic_font)
 {
     static CFStringRef font_key = CFSTR("NSFont");
-    static CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, 1000, 1000), NULL);
-    CTFontRef font = NULL;
-    CFStringRef str = NULL;
-    CFDictionaryRef str_dict = NULL;
-    CFAttributedStringRef str_attr = NULL;
-    CTFramesetterRef framesetter = NULL;
-    CTFrameRef frame = NULL;
-    CFArrayRef lines = NULL;
-    CTLineRef line = NULL;
-    CFArrayRef runs = NULL;
-    CTRunRef run = NULL;
-    CFDictionaryRef dict = NULL;
+    static CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, 1000, 1000), nullptr);
+    CTFontRef font = nullptr;
+    CFStringRef str = nullptr;
+    CFDictionaryRef str_dict = nullptr;
+    CFAttributedStringRef str_attr = nullptr;
+    CTFramesetterRef framesetter = nullptr;
+    CTFrameRef frame = nullptr;
+    CFArrayRef lines = nullptr;
+    CTLineRef line = nullptr;
+    CFArrayRef runs = nullptr;
+    CTRunRef run = nullptr;
+    CFDictionaryRef dict = nullptr;
     uint16_t chrs[2];
 
     if( _unicode < 0x10000 ) { // BMP
         chrs[0] = static_cast<uint16_t>(_unicode);
-        str = CFStringCreateWithCharactersNoCopy(0, chrs, 1, kCFAllocatorNull);
+        str = CFStringCreateWithCharactersNoCopy(nullptr, chrs, 1, kCFAllocatorNull);
     }
     else { // non-BMP
         chrs[0] = static_cast<uint16_t>(0xD800 + ((_unicode - 0x010000) >> 10));
         chrs[1] = static_cast<uint16_t>(0xDC00 + ((_unicode - 0x010000) & 0x3FF));
-        str = CFStringCreateWithCharactersNoCopy(0, chrs, 2, kCFAllocatorNull);
+        str = CFStringCreateWithCharactersNoCopy(nullptr, chrs, 2, kCFAllocatorNull);
     }
 
-    if( str == NULL )
+    if( str == nullptr )
         goto cleanup;
 
     static auto font_name_attribute = kCTFontNameAttribute;
-    str_dict = CFDictionaryCreate(NULL,
+    str_dict = CFDictionaryCreate(nullptr,
                                   reinterpret_cast<const void **>(&_basic_font),
                                   reinterpret_cast<const void **>(&font_name_attribute),
                                   1,
                                   &kCFTypeDictionaryKeyCallBacks,
                                   &kCFTypeDictionaryValueCallBacks);
-    if( str_dict == NULL )
+    if( str_dict == nullptr )
         goto cleanup;
 
-    str_attr = CFAttributedStringCreate(NULL, str, str_dict);
-    if( str_attr == NULL )
+    str_attr = CFAttributedStringCreate(nullptr, str, str_dict);
+    if( str_attr == nullptr )
         goto cleanup;
 
     framesetter = CTFramesetterCreateWithAttributedString(str_attr);
-    if( framesetter == NULL )
+    if( framesetter == nullptr )
         goto cleanup;
 
-    frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, NULL);
-    if( frame == NULL )
+    frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, nullptr);
+    if( frame == nullptr )
         goto cleanup;
 
     lines = CTFrameGetLines(frame);
-    if( lines == NULL || CFArrayGetCount(lines) == 0 )
+    if( lines == nullptr || CFArrayGetCount(lines) == 0 )
         goto cleanup;
 
     line = static_cast<CTLineRef>(CFArrayGetValueAtIndex(lines, 0));
-    if( line == NULL )
+    if( line == nullptr )
         goto cleanup;
 
     runs = static_cast<CFArrayRef>(CTLineGetGlyphRuns(line));
-    if( runs == NULL || CFArrayGetCount(runs) == 0 )
+    if( runs == nullptr || CFArrayGetCount(runs) == 0 )
         goto cleanup;
 
     run = static_cast<CTRunRef>(CFArrayGetValueAtIndex(runs, 0));
-    if( run == NULL )
+    if( run == nullptr )
         goto cleanup;
 
     dict = CTRunGetAttributes(run);
-    if( dict == NULL )
+    if( dict == nullptr )
         goto cleanup;
 
     font = static_cast<CTFontRef>(CFDictionaryGetValue(dict, font_key));

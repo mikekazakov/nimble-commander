@@ -52,7 +52,7 @@ TEST_CASE(PREFIX "Enques and reports the operation back as running")
         std::atomic_bool done{false};
     };
     struct MyOperation : public Operation {
-        ~MyOperation() { Wait(); }
+        ~MyOperation() override { Wait(); }
         Job *GetJob() noexcept override { return &job; }
         MyJob job;
     };
@@ -96,7 +96,7 @@ TEST_CASE(PREFIX "Obeys concurrency settings")
         std::atomic_bool done{false};
     };
     struct MyOperation : public Operation {
-        ~MyOperation() { Wait(); }
+        ~MyOperation() override { Wait(); }
         Job *GetJob() noexcept override { return &job; }
         MyJob job;
     };
@@ -168,7 +168,7 @@ TEST_CASE(PREFIX "Drains pending queues as operation complete")
         std::atomic_bool done{false};
     };
     struct MyOperation : public Operation {
-        ~MyOperation() { Wait(); }
+        ~MyOperation() override { Wait(); }
         Job *GetJob() noexcept override { return &job; }
         MyJob job;
     };
@@ -216,7 +216,7 @@ TEST_CASE(PREFIX "Does enqueueing as the callback says")
         std::atomic_bool done{false};
     };
     struct MyOperation : public Operation {
-        ~MyOperation() { Wait(); }
+        ~MyOperation() override { Wait(); }
         Job *GetJob() noexcept override { return &job; }
         MyJob job;
     };

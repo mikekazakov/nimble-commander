@@ -13,7 +13,7 @@ namespace nc::utility {
  */
 static double GetLineHeightForFont(CTFontRef iFont, CGFloat *_ascent, CGFloat *_descent, CGFloat *_leading)
 {
-    assert(iFont != NULL);
+    assert(iFont != nullptr);
     double ascent = CTFontGetAscent(iFont);
     double descent = CTFontGetDescent(iFont);
     double leading = CTFontGetLeading(iFont);
@@ -63,7 +63,7 @@ static std::pair<double, double> GetMonospaceFontCharWidth(CTFontRef _font)
     const auto line = CTLineCreateWithAttributedString(attr_string);
     const auto release_line = at_scope_end([&] { CFRelease(line); });
 
-    const auto width = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
+    const auto width = CTLineGetTypographicBounds(line, nullptr, nullptr, nullptr);
     return {floor(width + 0.5), width};
 }
 

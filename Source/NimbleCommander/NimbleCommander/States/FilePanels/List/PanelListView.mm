@@ -178,7 +178,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
     m_NameColumn.maxWidth = 2000;
     m_NameColumn.headerCell.alignment = NSTextAlignmentLeft;
     m_NameColumn.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
-    [m_NameColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
+    [m_NameColumn addObserver:self forKeyPath:@"width" options:0 context:nullptr];
 
     m_ExtensionColumn = [[NSTableColumn alloc] initWithIdentifier:ToKindIdentifier(PanelListViewColumns::Extension)];
     m_ExtensionColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
@@ -188,7 +188,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
     m_ExtensionColumn.maxWidth = 200;
     m_ExtensionColumn.headerCell.alignment = NSTextAlignmentLeft;
     m_ExtensionColumn.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
-    [m_ExtensionColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
+    [m_ExtensionColumn addObserver:self forKeyPath:@"width" options:0 context:nullptr];
 
     m_SizeColumn = [[NSTableColumn alloc] initWithIdentifier:ToKindIdentifier(PanelListViewColumns::Size)];
     m_SizeColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
@@ -198,7 +198,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
     m_SizeColumn.maxWidth = 110;
     m_SizeColumn.headerCell.alignment = NSTextAlignmentLeft;
     m_SizeColumn.resizingMask = NSTableColumnUserResizingMask;
-    [m_SizeColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
+    [m_SizeColumn addObserver:self forKeyPath:@"width" options:0 context:nullptr];
 
     m_DateCreatedColumn =
         [[NSTableColumn alloc] initWithIdentifier:ToKindIdentifier(PanelListViewColumns::DateCreated)];
@@ -209,7 +209,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
     m_DateCreatedColumn.maxWidth = 300;
     m_DateCreatedColumn.headerCell.alignment = NSTextAlignmentLeft;
     m_DateCreatedColumn.resizingMask = NSTableColumnUserResizingMask;
-    [m_DateCreatedColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
+    [m_DateCreatedColumn addObserver:self forKeyPath:@"width" options:0 context:nullptr];
     [self widthDidChangeForColumn:m_DateCreatedColumn];
 
     m_DateAddedColumn = [[NSTableColumn alloc] initWithIdentifier:ToKindIdentifier(PanelListViewColumns::DateAdded)];
@@ -220,7 +220,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
     m_DateAddedColumn.maxWidth = 300;
     m_DateAddedColumn.headerCell.alignment = NSTextAlignmentLeft;
     m_DateAddedColumn.resizingMask = NSTableColumnUserResizingMask;
-    [m_DateAddedColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
+    [m_DateAddedColumn addObserver:self forKeyPath:@"width" options:0 context:nullptr];
     [self widthDidChangeForColumn:m_DateAddedColumn];
 
     m_DateModifiedColumn =
@@ -232,7 +232,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
     m_DateModifiedColumn.maxWidth = 300;
     m_DateModifiedColumn.headerCell.alignment = NSTextAlignmentLeft;
     m_DateModifiedColumn.resizingMask = NSTableColumnUserResizingMask;
-    [m_DateModifiedColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
+    [m_DateModifiedColumn addObserver:self forKeyPath:@"width" options:0 context:nullptr];
     [self widthDidChangeForColumn:m_DateModifiedColumn];
 
     m_DateAccessedColumn =
@@ -244,7 +244,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
     m_DateAccessedColumn.maxWidth = 300;
     m_DateAccessedColumn.headerCell.alignment = NSTextAlignmentLeft;
     m_DateAccessedColumn.resizingMask = NSTableColumnUserResizingMask;
-    [m_DateAccessedColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
+    [m_DateAccessedColumn addObserver:self forKeyPath:@"width" options:0 context:nullptr];
     [self widthDidChangeForColumn:m_DateAccessedColumn];
 
     m_TagsColumn = [[NSTableColumn alloc] initWithIdentifier:ToKindIdentifier(PanelListViewColumns::Tags)];
@@ -255,7 +255,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
     m_TagsColumn.maxWidth = 400;
     m_TagsColumn.headerCell.alignment = NSTextAlignmentLeft;
     m_TagsColumn.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
-    [m_TagsColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
+    [m_TagsColumn addObserver:self forKeyPath:@"width" options:0 context:nullptr];
 }
 
 - (void)dealloc
@@ -276,7 +276,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
 {
     if( auto pv = nc::objc_cast<PanelView>(self.superview) ) {
         m_PanelView = pv;
-        [pv addObserver:self forKeyPath:@"active" options:0 context:NULL];
+        [pv addObserver:self forKeyPath:@"active" options:0 context:nullptr];
         [self observeValueForKeyPath:@"active" ofObject:pv change:nil context:nil];
     }
 }

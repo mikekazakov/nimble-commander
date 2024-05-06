@@ -105,7 +105,7 @@ CTLineRef CTCache::Build(char32_t _code)
     const void *values[2] = {m_Fonts.front().get(), kCFBooleanTrue};
 
     auto str_dict = base::CFPtr<CFDictionaryRef>::adopt(
-        CFDictionaryCreate(NULL, keys, values, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        CFDictionaryCreate(nullptr, keys, values, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     if( !str_dict )
         return {};
 

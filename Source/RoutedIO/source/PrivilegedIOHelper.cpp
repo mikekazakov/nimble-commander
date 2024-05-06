@@ -584,24 +584,24 @@ static bool CheckSignature(const char *_bin_path)
     OSStatus status = 0;
 
     CFURLRef url = CFURLCreateFromFileSystemRepresentation(
-        0, reinterpret_cast<const UInt8 *>(_bin_path), std::strlen(_bin_path), false);
+        nullptr, reinterpret_cast<const UInt8 *>(_bin_path), std::strlen(_bin_path), false);
     if( !url )
         return false;
 
     // obtain the cert info from the executable
-    SecStaticCodeRef ref = NULL;
+    SecStaticCodeRef ref = nullptr;
     status = SecStaticCodeCreateWithPath(url, kSecCSDefaultFlags, &ref);
     CFRelease(url);
-    if( ref == NULL || status != noErr )
+    if( ref == nullptr || status != noErr )
         return false;
 
     syslog_notice("Got a SecStaticCodeRef");
 
     // create the requirement to check against
-    SecRequirementRef req = NULL;
-    static CFStringRef reqStr = CFStringCreateWithCString(0, g_SignatureRequirement, kCFStringEncodingUTF8);
+    SecRequirementRef req = nullptr;
+    static CFStringRef reqStr = CFStringCreateWithCString(nullptr, g_SignatureRequirement, kCFStringEncodingUTF8);
     status = SecRequirementCreateWithString(reqStr, kSecCSDefaultFlags, &req);
-    if( status != noErr || req == NULL ) {
+    if( status != noErr || req == nullptr ) {
         CFRelease(ref);
         return false;
     }

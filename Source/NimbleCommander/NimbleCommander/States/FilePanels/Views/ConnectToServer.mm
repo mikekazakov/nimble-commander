@@ -27,27 +27,27 @@ public:
     }
 
 private:
-    virtual void Visit(const NetworkConnectionsManager::FTP &)
+    void Visit(const NetworkConnectionsManager::FTP &) override
     {
         m_Sheet = [[FTPConnectionSheetController alloc] init];
     }
 
-    virtual void Visit(const NetworkConnectionsManager::SFTP &)
+    void Visit(const NetworkConnectionsManager::SFTP &) override
     {
         m_Sheet = [[SFTPConnectionSheetController alloc] init];
     }
 
-    virtual void Visit(const NetworkConnectionsManager::LANShare &)
+    void Visit(const NetworkConnectionsManager::LANShare &) override
     {
         m_Sheet = [[NetworkShareSheetController alloc] init];
     }
 
-    virtual void Visit(const NetworkConnectionsManager::Dropbox &)
+    void Visit(const NetworkConnectionsManager::Dropbox &) override
     {
         m_Sheet = [[DropboxAccountSheetController alloc] init];
     }
 
-    virtual void Visit(const NetworkConnectionsManager::WebDAV &)
+    void Visit(const NetworkConnectionsManager::WebDAV &) override
     {
         m_Sheet = [[WebDAVConnectionSheetController alloc] init];
     }

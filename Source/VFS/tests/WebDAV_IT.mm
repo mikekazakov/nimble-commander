@@ -708,7 +708,7 @@ INSTANTIATE_TEST("write flags semantics", TestWriteFlagsSemantics, "yandex.com")
 static std::vector<std::byte> MakeNoise(size_t size)
 {
     std::vector<std::byte> noise(size);
-    std::srand(static_cast<unsigned>(time(0)));
+    std::srand(static_cast<unsigned>(time(nullptr)));
     for( size_t i = 0; i < size; ++i )
         noise[i] = static_cast<std::byte>(std::rand() % 256); // yes, I know that rand() is harmful!
     return noise;

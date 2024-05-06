@@ -29,7 +29,7 @@ ssize_t GenericMemReadOnlyFile::Read(void *_buf, size_t _size)
     if( !IsOpened() )
         return VFSError::InvalidCall;
 
-    if( _buf == 0 )
+    if( _buf == nullptr )
         return VFSError::InvalidCall;
 
     if( _size == 0 )

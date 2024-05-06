@@ -8,8 +8,8 @@ namespace nc::routedio {
 
 int TrashItemAtPath(const char *_path) noexcept
 {
-    const auto url = nc::base::CFPtr<CFURLRef>::adopt(
-        CFURLCreateFromFileSystemRepresentation(0, reinterpret_cast<const UInt8 *>(_path), std::strlen(_path), false));
+    const auto url = nc::base::CFPtr<CFURLRef>::adopt(CFURLCreateFromFileSystemRepresentation(
+        nullptr, reinterpret_cast<const UInt8 *>(_path), std::strlen(_path), false));
 
     if( !url ) {
         errno = ENOENT;

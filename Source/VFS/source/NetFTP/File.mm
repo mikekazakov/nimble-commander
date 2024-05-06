@@ -191,9 +191,8 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
             int msgs_left = 1;
             while( msgs_left ) {
                 CURLMsg *msg = curl_multi_info_read(m_CURL->curlm, &msgs_left);
-                if( msg == NULL || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
-                    //                    DEBUG(1, "error: curl_multi_info %d\n", msg->msg);
-                    //                    err = 1;
+                if( msg == nullptr || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
+                    //                    DEBUG(1, "error: curl_multi_info %d\n", msg->msg); err = 1;
                     NSLog(@"!!!");
                     error = true;
                 }
@@ -222,7 +221,7 @@ ssize_t File::Read(void *_buf, size_t _size)
     if( Eof() )
         return 0;
 
-    ssize_t ret = ReadChunk(_buf, _size, m_FilePos, 0);
+    ssize_t ret = ReadChunk(_buf, _size, m_FilePos, nullptr);
     if( ret < 0 )
         return ret;
 
@@ -273,7 +272,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
         int msgs_left = 1;
         while( msgs_left ) {
             CURLMsg *msg = curl_multi_info_read(m_CURL->curlm, &msgs_left);
-            if( msg == NULL || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
+            if( msg == nullptr || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
                 NSLog(@"!!!");
                 error = true;
             }

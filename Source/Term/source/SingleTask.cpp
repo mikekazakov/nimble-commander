@@ -124,7 +124,7 @@ void SingleTask::Launch(const char *_full_binary_path, const char *_params, int 
         argvs[0] = strdup(img_name);
         for( size_t i = 0; i < args.size(); ++i )
             argvs[i + 1] = strdup(args[i].c_str());
-        argvs[args.size() + 1] = NULL;
+        argvs[args.size() + 1] = nullptr;
 
         // execution of the program
         execvp(_full_binary_path, argvs);
@@ -164,7 +164,7 @@ void SingleTask::ReadChildOutput()
 
         int max_fd = m_MasterFD;
 
-        rc = select(max_fd + 1, &fd_in, NULL, &fd_err, &timeout);
+        rc = select(max_fd + 1, &fd_in, nullptr, &fd_err, &timeout);
         if( rc < 0 || m_TaskPID < 0 )
             goto end_of_all; // error on select(), let's think that task has died
 

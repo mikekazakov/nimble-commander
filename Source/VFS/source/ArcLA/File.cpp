@@ -100,7 +100,7 @@ ssize_t File::Read(void *_buf, size_t _size)
     if( Eof() )
         return 0;
 
-    assert(_buf != 0);
+    assert(_buf != nullptr);
 
     m_State->ConsumeEntry();
     ssize_t size = archive_read_data(m_State->Archive(), _buf, _size);
@@ -137,7 +137,7 @@ ssize_t File::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size)
 
     for( auto &i : m_EA )
         if( strcmp(i.name, _xattr_name) == 0 ) {
-            if( _buffer == 0 )
+            if( _buffer == nullptr )
                 return i.data_sz;
 
             size_t sz = std::min(i.data_sz, static_cast<uint32_t>(_buf_size));

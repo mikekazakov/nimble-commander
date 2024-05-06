@@ -37,10 +37,10 @@ Hash::Hash(Mode _mode) : m_Mode(_mode)
             CC_MD5_Init(reinterpret_cast<CC_MD5_CTX *>(m_Stuff));
             break;
         case Adler32:
-            *reinterpret_cast<uint32_t *>(m_Stuff) = static_cast<uint32_t>(adler32(0, 0, 0));
+            *reinterpret_cast<uint32_t *>(m_Stuff) = static_cast<uint32_t>(adler32(0, nullptr, 0));
             break;
         case CRC32:
-            *reinterpret_cast<uint32_t *>(m_Stuff) = static_cast<uint32_t>(crc32(0, 0, 0));
+            *reinterpret_cast<uint32_t *>(m_Stuff) = static_cast<uint32_t>(crc32(0, nullptr, 0));
             break;
         default:
             assert(0);

@@ -86,7 +86,7 @@ bool CompressionJob::BuildArchive()
 {
     const auto flags =
         VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_IRUsr | VFSFlags::OF_IWUsr | VFSFlags::OF_IRGrp;
-    m_DstVFS->CreateFile(m_TargetArchivePath.c_str(), m_TargetFile, 0);
+    m_DstVFS->CreateFile(m_TargetArchivePath.c_str(), m_TargetFile, nullptr);
     const auto open_rc = m_TargetFile->Open(flags);
     if( open_rc == VFSError::Ok ) {
         m_Archive = archive_write_new();
@@ -107,7 +107,7 @@ bool CompressionJob::BuildArchive()
             }
         }
 
-        archive_write_open(m_Archive, this, 0, WriteCallback, 0);
+        archive_write_open(m_Archive, this, nullptr, WriteCallback, nullptr);
         archive_write_set_bytes_in_last_block(m_Archive, 1);
 
         ProcessItems();
@@ -121,7 +121,7 @@ bool CompressionJob::BuildArchive()
         m_TargetFile->Close();
 
         if( IsStopped() )
-            m_DstVFS->Unlink(m_TargetArchivePath.c_str(), 0);
+            m_DstVFS->Unlink(m_TargetArchivePath.c_str(), nullptr);
     }
     else {
         m_TargetWriteError(open_rc, m_TargetArchivePath, *m_DstVFS);
@@ -175,7 +175,7 @@ CompressionJob::ProcessSymlinkItem(int _index, const std::string &_relative_path
 
     VFSStat stat;
     while( true ) {
-        const auto rc = vfs.Stat(_full_path.c_str(), stat, VFSFlags::F_NoFollow, 0);
+        const auto rc = vfs.Stat(_full_path.c_str(), stat, VFSFlags::F_NoFollow, nullptr);
         if( rc == VFSError::Ok )
             break;
         switch( m_SourceAccessError(rc, _full_path, vfs) ) {
@@ -191,7 +191,7 @@ CompressionJob::ProcessSymlinkItem(int _index, const std::string &_relative_path
 
     char symlink[MAXPATHLEN];
     while( true ) {
-        const auto rc = vfs.ReadSymlink(_full_path.c_str(), symlink, MAXPATHLEN, 0);
+        const auto rc = vfs.ReadSymlink(_full_path.c_str(), symlink, MAXPATHLEN, nullptr);
         if( rc == VFSError::Ok )
             break;
         switch( m_SourceAccessError(rc, _full_path, vfs) ) {
@@ -223,7 +223,7 @@ CompressionJob::ProcessDirectoryItem(int _index, const std::string &_relative_pa
 
     VFSStat vfs_stat;
     while( true ) {
-        const auto rc = vfs.Stat(_full_path.c_str(), vfs_stat, 0, 0);
+        const auto rc = vfs.Stat(_full_path.c_str(), vfs_stat, 0, nullptr);
         if( rc == VFSError::Ok )
             break;
         switch( m_SourceAccessError(rc, _full_path, vfs) ) {
@@ -358,12 +358,12 @@ std::string CompressionJob::FindSuitableFilename(const std::string &_proposed_ar
 {
     std::string fn = fmt::format("{}{}.zip", m_DstRoot, _proposed_arcname);
     VFSStat st;
-    if( m_DstVFS->Stat(fn.c_str(), st, VFSFlags::F_NoFollow, 0) != 0 )
+    if( m_DstVFS->Stat(fn.c_str(), st, VFSFlags::F_NoFollow, nullptr) != 0 )
         return fn;
 
     for( int i = 2; i < 100; ++i ) {
         fn = fmt::format("{}{} {}.zip", m_DstRoot, _proposed_arcname, i);
-        if( m_DstVFS->Stat(fn.c_str(), st, VFSFlags::F_NoFollow, 0) != 0 )
+        if( m_DstVFS->Stat(fn.c_str(), st, VFSFlags::F_NoFollow, nullptr) != 0 )
             return fn;
     }
     return {};
@@ -455,7 +455,7 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
     auto &vfs = _ctx.base_hosts[_vfs_no];
 
     while( true ) {
-        const auto rc = vfs->Stat(_full_path.c_str(), stat_buffer, VFSFlags::F_NoFollow, 0);
+        const auto rc = vfs->Stat(_full_path.c_str(), stat_buffer, VFSFlags::F_NoFollow, nullptr);
         if( rc == VFSError::Ok )
             break;
         switch( m_SourceScanError(rc, _full_path, *vfs) ) {
@@ -585,7 +585,7 @@ static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source
     size_t metadata_sz = 0;
     // will quick almost immediately if there's no EAs
     void *metadata = vfs::BuildAppleDoubleFromEA(_src, &metadata_sz);
-    if( metadata == 0 )
+    if( metadata == nullptr )
         return true;
 
     char item_path[MAXPATHLEN], item_name[MAXPATHLEN];

@@ -109,7 +109,7 @@
 /* Class = "NSMenuItem"; title = "%-n\tTarget item filename without extension"; ObjectID = "t7c-uZ-Wyx"; */
 "t7c-uZ-Wyx.title" = "%-n\tИмя целевого объекта без расширения";
 
-/* Class = "NSMenuItem"; title = "%LP\tSource filepaths in a text file"; ObjectID = "Uut-qc-UcK"; */
+/* Class = "NSMenuItem"; title = "%LP\t\tSource filepaths in a text file"; ObjectID = "Uut-qc-UcK"; */
 "Uut-qc-UcK.title" = "%LP\t\tПути исходных объектов в текстовом файле";
 
 /* Class = "NSMenuItem"; title = "%- Use left/right panels instead of source/target"; ObjectID = "w1u-x0-TD2"; */

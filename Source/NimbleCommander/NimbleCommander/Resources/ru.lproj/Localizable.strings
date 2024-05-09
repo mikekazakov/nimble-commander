@@ -34,13 +34,13 @@
 /* (No Comment) */
 "__PANELVIEW_TEMPORARY_PANEL_WITHOUT_TITLE" = "Временная панель";
 
-/* Informative text to thank user for buying */
+/* (No Comment) */
 "__THANKS_FOR_REGISTER_INFORMATIVE" = "Спасибо за использование зарегистрированной копии Nimble Commander!";
 
-/* Message to thank user for buying */
+/* (No Comment) */
 "__THANKS_FOR_REGISTER_MESSAGE" = "Успешная активация";
 
-/* Nag screen text about test period */
+/* (No Comment) */
 "__TRIAL_WINDOW_NOTE" = "Это пробная версия Nimble Commander.\nЧтобы продолжить использование этого продукта после окончания пробного периода в 30 дней, Вам нужно купить лицензию или установить платную версию из Mac App Store.\nЭто окно появляется только в пробной версии.";
 
 /* Panels bottom volume bar, showing amount of bytes available */
@@ -69,6 +69,9 @@
 
 /* Asking user for confirmation on reverting a standard theme - message */
 "Are you sure you want to revert the changes of this theme?" = "Вы действительно хотите сбросить изменения этой темы?";
+
+/* No comment provided by engineer. */
+"Blue" = "Синий";
 
 /* Brief System Information overlay title */
 "Brief System Information" = "Краткий обзор системы";
@@ -125,14 +128,20 @@
 /* Brief System Information cpu box title */
 "CPU" = "ЦП";
 
+/* No comment provided by engineer. */
+"Delete Tag" = "Удалить Тэг";
+
 /* Menu item title for disabling an admin mode */
 "Disable Admin Mode" = "Выключить режим администратора";
+
+/* Tooltip for a quick list menu shown for each finder tag */
+"Display all items with the tag “%@”" = "Показать все объекты с тегом “%@”";
 
 /* Asking to close window with processes running */
 "Do you want to close this window?" = "Вы хотите закрыть это окно?";
 
-/* No comment provided by engineer. */
-"Don't send" = "Не отправлять";
+/* Alert shown when a user removes a tag */
+"Do you want to delete tag “%@”?" = "Вы действительно хотите удалить тэг “%@”?";
 
 /* Showing error when connecting to Dropbox service */
 "Dropbox connection error:" = "Ошибка подключения к Dropbox:";
@@ -290,6 +299,12 @@
 /* Goto popup menu title */
 "Go to" = "Перейти к";
 
+/* No comment provided by engineer. */
+"Gray" = "Серый";
+
+/* No comment provided by engineer. */
+"Green" = "Зеленый";
+
 /* Menu item for hiding panels */
 "Hide Panels" = "Скрыть панели";
 
@@ -305,14 +320,8 @@
 /* History popup menu title in file panels */
 "History" = "История";
 
-/* Asking user to provide a rating */
-"How are we doing?" = "Ваше мнение о NC?";
-
 /* Brief System Information idle label title */
 "Idle:" = "Свободно:";
-
-/* IAP dialog text for URL pointing to website */
-"Learn more about advanced tools" = "Узнать больше о дополнительных возможностях";
 
 /* Toolbar palette */
 "Left GoTo" = "Левый Переход";
@@ -342,6 +351,12 @@
 "No" = "Нет";
 
 /* No comment provided by engineer. */
+"No Colour" = "Без цвета";
+
+/* Information shown when no new tags were found after searching the fs */
+"No new tags were found." = "Новые тэги не найдены.";
+
+/* No comment provided by engineer. */
 "Not Containing" = "Не содержит";
 
 /* No comment provided by engineer. */
@@ -359,20 +374,20 @@
 /* No comment provided by engineer. */
 "Options" = "Настройки";
 
+/* No comment provided by engineer. */
+"Orange" = "Оранжевый";
+
 /* Upper-dirs popup menu title in file panels */
 "Parent Folders" = "Родительские папки";
-
-/* Asking user to provide anonymous usage information - message */
-"Please help us to improve the product" = "Помогите нам улучшить продукт";
 
 /* No comment provided by engineer. */
 "Please provide parameters to run \"%@\"" = "Пожалуйста введите параметры для запуска \"%@\"";
 
-/* No comment provided by engineer. */
-"Please select your license file (.nimblecommanderlicense)" = "Пожалуйста, выберите Ваш файл лицензии (.nimblecommanderlicense)";
-
 /* Brief System Information processes label title */
 "Processes:" = "Процессы:";
+
+/* No comment provided by engineer. */
+"Purple" = "Лиловый";
 
 /* Brief System Information ram box title */
 "RAM" = "Память";
@@ -382,6 +397,9 @@
 
 /* No comment provided by engineer. */
 "Recently Closed" = "Недавно закрытые";
+
+/* No comment provided by engineer. */
+"Red" = "Красный";
 
 /* Find file masks history - regex */
 "RegEx “%@”" = "RegEx “%@”";
@@ -425,9 +443,6 @@
 /* Informative text for a bottom information bar in panels, showing size of selection */
 "Selected %@ in 9 files" = "Выделено %@ в 9 файлах";
 
-/* No comment provided by engineer. */
-"Send" = "Отправлять";
-
 /* Showing error when connecting to SFTP server */
 "SFTP connection error:" = "Ошибка подключения SFTP:";
 
@@ -461,11 +476,17 @@
 /* Brief System Information system label title */
 "System:" = "Система:";
 
+/* Tags popup menu title in file panels */
+"Tags" = "Теги";
+
 /* User confirmation on message box */
 "Terminate and Close" = "Прервать и закрыть";
 
 /* Asking user for quitting app with activity */
 "The application has running operations. Do you want to stop all operations and quit?" = "Имеются работающие операции. Прекратить все операции и завершить приложение?";
+
+/* Information shown when new tags were found after searching the fs */
+"The following tags were added: %@." = "Следующие теги были добавлены: %@.";
 
 /* Message text when user is entering an invalid filename */
 "The name “%@” can’t be used." = "Имя “%@” не может быть использовано.";
@@ -512,6 +533,9 @@
 
 /* Informing a user that NC can't connect to network share */
 "Unable to connect to a network share" = "Не удалось подключиться к сетевой папке";
+
+/* Name of a newly created tag */
+"Untitled" = "Новый";
 
 /* Name for freshly create folder by hotkey */
 "untitled folder" = "Новая папка";
@@ -567,13 +591,14 @@
 /* Brief System Information wired label title */
 "Wired:" = "Зарезервировано:";
 
-/* Asking user to provide anonymous usage information - informative text */
-"Would you like to send anonymous usage statistics to the developer? None of your personal data would be collected." = "Хотели бы Вы отправлять разработчику анонимную статистику об использовании? Никакая личная информация о Вас не будет собираться.";
+/* No comment provided by engineer. */
+"Yellow" = "Желтый";
 
 /* No comment provided by engineer. */
 "Yes" = "Да";
 
-/* Asking user for confirmation on erasing custom theme - informative text
+/* Alert shown when a user removes a tag - message
+   Asking user for confirmation on erasing custom theme - informative text
    Asking user for confirmation on reverting a standard theme - informative text */
 "You can’t undo this action." = "Вы не сможете отменить эту операцию.";
 

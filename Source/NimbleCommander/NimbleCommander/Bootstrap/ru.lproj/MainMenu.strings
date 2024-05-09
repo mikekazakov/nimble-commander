@@ -277,6 +277,9 @@
 /* Class = "NSMenuItem"; title = "Redo"; ObjectID = "agx-eP-0jI"; */
 "agx-eP-0jI.title" = "Повторить";
 
+/* Class = "NSMenuItem"; title = "Tags"; ObjectID = "ANW-0c-qGJ"; */
+"ANW-0c-qGJ.title" = "Теги";
+
 /* Class = "NSMenuItem"; title = "10"; ObjectID = "ARz-X0-fAA"; */
 "ARz-X0-fAA.title" = "10";
 

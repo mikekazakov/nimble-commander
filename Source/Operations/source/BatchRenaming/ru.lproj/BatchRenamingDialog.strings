@@ -103,8 +103,8 @@
 /* Class = "NSMenuItem"; title = "[Px] xth character of the filename"; ObjectID = "CQg-4y-Ulu"; */
 "CQg-4y-Ulu.title" = "[Px] x-ый символ имени";
 
-/* Class = "NSMenuItem"; title = "[]] Closing square bracket"; ObjectID = "cS1-vL-FvU"; */
-"cS1-vL-FvU.title" = "[]] Закрывающая квадратная скобка";
+/* Class = "NSMenuItem"; title = "]] Closing square bracket"; ObjectID = "cS1-vL-FvU"; */
+"cS1-vL-FvU.title" = "]] Закрывающая квадратная скобка";
 
 /* Class = "NSMenuItem"; title = "[G-x-] Characters starting from the xth-last"; ObjectID = "CWU-Al-vZS"; */
 "CWU-Al-vZS.title" = "[G-x-] Символы с x-последнего символа";
@@ -379,8 +379,8 @@
 /* Class = "NSMenuItem"; title = "[Ex,y] y characters starting from the xth"; ObjectID = "tLd-t3-eny"; */
 "tLd-t3-eny.title" = "[Ex,y] y символов начиная с символа x";
 
-/* Class = "NSMenuItem"; title = "[[] Opening square bracket"; ObjectID = "twO-ES-XWZ"; */
-"twO-ES-XWZ.title" = "[[] Открывающая квадратная скобка";
+/* Class = "NSMenuItem"; title = "[[ Opening square bracket"; ObjectID = "twO-ES-XWZ"; */
+"twO-ES-XWZ.title" = "[[ Открывающая квадратная скобка";
 
 /* Class = "NSMenuItem"; title = "[A-x-] Characters starting from the xth-last"; ObjectID = "u67-zs-iEh"; */
 "u67-zs-iEh.title" = "[A-x-] y символов начиная с x-последнего символа";

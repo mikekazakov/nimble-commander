@@ -10,6 +10,9 @@
 /* Class = "NSMenuItem"; title = "Date Modified"; ObjectID = "fAK-5J-yak"; */
 "fAK-5J-yak.title" = "Дата изменения";
 
+/* Class = "NSMenuItem"; title = "Tags"; ObjectID = "JuP-sv-0Ng"; */
+"JuP-sv-0Ng.title" = "Теги";
+
 /* Class = "NSMenuItem"; title = "Date Accessed"; ObjectID = "N2S-KG-c0L"; */
 "N2S-KG-c0L.title" = "Дате открытия";
 

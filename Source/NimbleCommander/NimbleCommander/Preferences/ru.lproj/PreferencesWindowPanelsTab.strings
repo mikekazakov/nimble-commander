@@ -1,3 +1,6 @@
+/* Class = "NSMenuItem"; title = "Search for new tags..."; ObjectID = "0Kl-Dk-sYm"; */
+"0Kl-Dk-sYm.title" = "Искать новые теги...";
+
 /* Class = "NSTextFieldCell"; title = "Title:"; ObjectID = "0Zd-1e-wMf"; */
 "0Zd-1e-wMf.title" = "Название:";
 
@@ -27,6 +30,9 @@
 
 /* Class = "NSTabViewItem"; label = "Quick Search"; ObjectID = "7ue-46-YVg"; */
 "7ue-46-YVg.label" = "Быстрый поиск";
+
+/* Class = "NSButtonCell"; title = "Enable Tags"; ObjectID = "7Ul-EA-77f"; */
+"7Ul-EA-77f.title" = "Включить Теги";
 
 /* Class = "NSMenuItem"; title = "2"; ObjectID = "7UM-pB-for"; */
 "7UM-pB-for.title" = "2";
@@ -114,6 +120,9 @@
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "FXa-o4-dhn"; */
 "FXa-o4-dhn.title" = "OtherViews";
+
+/* Class = "NSTabViewItem"; label = "Tags"; ObjectID = "gkd-Xc-4OI"; */
+"gkd-Xc-4OI.label" = "Теги";
 
 /* Class = "NSTextFieldCell"; title = "Default paths (L/R):"; ObjectID = "GnB-SA-FAJ"; */
 "GnB-SA-FAJ.title" = "Пути по-умолчанию (Л/П):";
@@ -207,6 +216,9 @@
 
 /* Class = "NSSegmentedCell"; qL1-bW-KKU.ibShadowedLabels[3] = "Quick Search"; ObjectID = "qL1-bW-KKU"; */
 "qL1-bW-KKU.ibShadowedLabels[3]" = "Быстрый поиск";
+
+/* Class = "NSSegmentedCell"; qL1-bW-KKU.ibShadowedLabels[4] = "Tags"; ObjectID = "qL1-bW-KKU"; */
+"qL1-bW-KKU.ibShadowedLabels[4]" = "Теги";
 
 /* Class = "NSMenuItem"; title = "⇧⌥"; ObjectID = "Qu9-e4-IYz"; */
 "Qu9-e4-IYz.title" = "⇧⌥";

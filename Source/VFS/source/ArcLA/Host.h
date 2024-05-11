@@ -25,7 +25,7 @@ public:
                 VFSCancelChecker _cancel_checker = nullptr); // flags will be added later
 
     // Creates an archive host out of a configuration of a previously existed host
-    ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker = nullptr);
+    ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker = {});
 
     // Destructor
     ~ArchiveHost();
@@ -40,18 +40,20 @@ public:
 
     bool IsImmutableFS() const noexcept override;
 
-    bool IsDirectory(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
+    bool IsDirectory(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
-    int Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
-
+    int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = {}) override;
     int
-    CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker) override;
+    Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker = {}) override;
+
+    int CreateFile(const char *_path,
+                   std::shared_ptr<VFSFile> &_target,
+                   const VFSCancelChecker &_cancel_checker = {}) override;
 
     int FetchDirectoryListing(const char *_path,
                               VFSListingPtr &_target,
                               unsigned long _flags,
-                              const VFSCancelChecker &_cancel_checker) override;
+                              const VFSCancelChecker &_cancel_checker = {}) override;
 
     int IterateDirectoryListing(const char *_path,
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
@@ -59,7 +61,7 @@ public:
     int ReadSymlink(const char *_symlink_path,
                     char *_buffer,
                     size_t _buffer_size,
-                    const VFSCancelChecker &_cancel_checker) override;
+                    const VFSCancelChecker &_cancel_checker = {}) override;
 
     bool ShouldProduceThumbnails() const override;
 

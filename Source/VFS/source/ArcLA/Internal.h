@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <libarchive/archive.h>
@@ -7,6 +7,8 @@
 #include <deque>
 
 namespace nc::vfs::arc {
+
+constexpr inline uint32_t SyntheticArUID = std::numeric_limits<uint32_t>::max();
 
 struct Mediator {
     std::shared_ptr<VFSFile> file;
@@ -60,7 +62,7 @@ private:
 struct DirEntry {
     std::string name;
     struct stat st;
-    uint32_t aruid; // unique number inside archive in same order as appearance in archive
+    uint32_t aruid = 0; // unique number inside archive in same order as appearance in archive
 };
 
 struct Dir {

@@ -53,6 +53,8 @@ struct ArchiveHost::Impl {
 
     std::vector<std::unique_ptr<arc::State>> m_States;
     std::mutex m_StatesLock;
+
+    struct stat m_SrcFileStat;
 };
 
 class VFSArchiveHostConfiguration
@@ -164,9 +166,18 @@ VFSMeta ArchiveHost::Meta()
 int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
 {
     assert(I->m_Arc == nullptr);
-    VFSFilePtr source_file;
+    int res = 0;
 
-    int res = Parent()->CreateFile(JunctionPath(), source_file, {});
+    {
+        VFSStat st;
+        res = Parent()->Stat(JunctionPath(), st, 0);
+        if( res < 0 )
+            return res;
+        st.ToSysStat(st, I->m_SrcFileStat);
+    }
+
+    VFSFilePtr source_file;
+    res = Parent()->CreateFile(JunctionPath(), source_file, {});
     if( res < 0 )
         return res;
 
@@ -359,6 +370,7 @@ int ArchiveHost::ReadArchiveListing()
             for( size_t i = 0, e = parent_dir->entries.size(); i < e; ++i ) {
                 auto &it = parent_dir->entries[i];
                 if( (it.st.st_mode & S_IFMT) == S_IFDIR && it.name == short_name ) {
+                    assert(it.aruid == SyntheticArUID);
                     entry = &it;
                     entry_index_in_dir = static_cast<unsigned>(i);
                     break;
@@ -466,9 +478,8 @@ Dir *ArchiveHost::FindOrBuildDir(const char *_path_with_tr_sl)
     strcpy(entry_name, strrchr(parent_path, '/') + 1);
     *(strrchr(parent_path, '/') + 1) = 0;
 
-    auto parent_dir = FindOrBuildDir(parent_path);
-
-    //    printf("FindOrBuildDir: adding new dir %s\n", _path_with_tr_sl);
+    Dir *const parent_dir = FindOrBuildDir(parent_path);
+    assert(parent_dir != nullptr);
 
     // TODO: need to check presense of entry_name in parent_dir
 
@@ -482,11 +493,23 @@ Dir *ArchiveHost::FindOrBuildDir(const char *_path_with_tr_sl)
 
 void ArchiveHost::InsertDummyDirInto(Dir *_parent, const char *_dir_name)
 {
+    constexpr mode_t synthetic_mode = S_IFDIR |                     //
+                                      S_IRUSR | S_IXUSR | S_IWUSR | //
+                                      S_IRGRP | S_IXGRP |           //
+                                      S_IROTH | S_IXOTH;
+
     _parent->entries.emplace_back();
     auto &entry = _parent->entries.back();
     entry.name = _dir_name;
     memset(&entry.st, 0, sizeof(entry.st));
-    entry.st.st_mode = S_IFDIR;
+    entry.st.st_mode = synthetic_mode;
+    entry.st.st_atimespec = I->m_SrcFileStat.st_atimespec;
+    entry.st.st_mtimespec = I->m_SrcFileStat.st_mtimespec;
+    entry.st.st_ctimespec = I->m_SrcFileStat.st_ctimespec;
+    entry.st.st_birthtimespec = I->m_SrcFileStat.st_birthtimespec;
+    entry.st.st_uid = I->m_SrcFileStat.st_uid;
+    entry.st.st_gid = I->m_SrcFileStat.st_gid;
+    entry.aruid = SyntheticArUID;
 }
 
 int ArchiveHost::CreateFile(const char *_path,

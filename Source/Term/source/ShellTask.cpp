@@ -166,7 +166,7 @@ static void KillAndReap(int _pid, std::chrono::nanoseconds _gentle_deadline, std
                 // I have no idea what to do with the marvelous MacOS thing called
                 // "E - The process is trying to exit". Subprocesses can fall into this state
                 // with some low propability, deadlocking a blocking waitpid() forever.
-                std::cerr << "Letting go a child at PID " << _pid << std::endl;
+                std::cerr << "Letting go a child at PID " << _pid << '\n';
                 break;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -400,7 +400,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
     const auto fork_rc = fork();
     if( fork_rc < 0 ) {
         // error
-        std::cerr << "fork() failed with " << errno << "!" << std::endl;
+        std::cerr << "fork() failed with " << errno << "!" << '\n';
         return false;
     }
     else if( fork_rc > 0 ) {
@@ -656,7 +656,7 @@ void ShellTask::WriteChildInput(std::string_view _data)
         const auto lock = std::lock_guard{I->master_write_lock};
         ssize_t rc = write(I->master_fd, _data.data(), _data.size());
         if( rc < 0 || rc != static_cast<ssize_t>(_data.size()) )
-            std::cerr << "write( m_MasterFD, _data.data(), _data.size() ) returned " << rc << std::endl;
+            std::cerr << "write( m_MasterFD, _data.data(), _data.size() ) returned " << rc << '\n';
     }
 
     if( (_data.back() == '\n' || _data.back() == '\r') && I->state == TaskState::Shell ) {

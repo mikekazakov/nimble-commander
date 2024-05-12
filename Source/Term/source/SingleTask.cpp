@@ -175,7 +175,7 @@ void SingleTask::ReadChildOutput()
                 DoCalloutOnChildOutput(input.get(), rc);
             }
             else if( rc < 0 ) {
-                std::cerr << "Error " << errno << " on read master PTY" << std::endl;
+                std::cerr << "Error " << errno << " on read master PTY" << '\n';
                 goto end_of_all;
             }
         }

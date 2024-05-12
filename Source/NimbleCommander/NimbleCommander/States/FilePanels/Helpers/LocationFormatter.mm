@@ -56,7 +56,7 @@ ListingPromiseFormatter::Representation ListingPromiseFormatter::Render(RenderOp
     else if( auto nonuniform = std::get_if<ListingPromise::NonUniformListing>(description) )
         visit_nonuniform_listing(*nonuniform);
     else
-        std::cerr << "ListingPromiseFormatter::Render: unhandled case" << std::endl;
+        std::cerr << "ListingPromiseFormatter::Render: unhandled case" << '\n';
 
     return rep;
 }

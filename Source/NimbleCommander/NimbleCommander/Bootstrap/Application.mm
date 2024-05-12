@@ -18,9 +18,9 @@
     try {
         [super sendEvent:theEvent];
     } catch( std::exception &e ) {
-        std::cerr << "Exception caught: " << e.what() << std::endl;
+        std::cerr << "Exception caught: " << e.what() << '\n';
     } catch( ... ) {
-        std::cerr << "Caught an unhandled exception!" << std::endl;
+        std::cerr << "Caught an unhandled exception!" << '\n';
     }
 }
 
@@ -32,9 +32,9 @@
     try {
         return [super nextEventMatchingMask:mask untilDate:expiration inMode:mode dequeue:deqFlag];
     } catch( std::exception &e ) {
-        std::cerr << "Exception caught: " << e.what() << std::endl;
+        std::cerr << "Exception caught: " << e.what() << '\n';
     } catch( ... ) {
-        std::cerr << "Caught an unhandled exception!" << std::endl;
+        std::cerr << "Caught an unhandled exception!" << '\n';
     }
 
     return nil;

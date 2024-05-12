@@ -413,12 +413,12 @@ bool RoutedIO::Enabled() const noexcept
 void RoutedIO::InstallViaRootCLI()
 {
     if( geteuid() != 0 ) {
-        std::cerr << "this command must be executed with root rights." << std::endl;
+        std::cerr << "this command must be executed with root rights." << '\n';
         return;
     }
 
     if( utility::IsThisProcessSandboxed() ) {
-        std::cerr << "must be not a sandboxed process." << std::endl;
+        std::cerr << "must be not a sandboxed process." << '\n';
         return;
     }
 
@@ -430,7 +430,7 @@ void RoutedIO::InstallViaRootCLI()
     // Obtain the right to install privileged helper tools (kSMRightBlessPrivilegedHelper).
     const OSStatus status = AuthorizationCreate(&auth_rights, nullptr, flags, &auth_ref);
     if( status != errAuthorizationSuccess ) {
-        std::cerr << "AuthorizationCreate() failed with the error: " << AuthRCToString(status) << "." << std::endl;
+        std::cerr << "AuthorizationCreate() failed with the error: " << AuthRCToString(status) << "." << '\n';
         return;
     }
 
@@ -438,11 +438,11 @@ void RoutedIO::InstallViaRootCLI()
     const bool result = SMJobBless(kSMDomainSystemLaunchd, g_HelperLabelCF, auth_ref, &error);
     if( !result && error != nullptr ) {
         if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyDescription(error)) )
-            std::cerr << base::CFStringGetUTF8StdString(desc.get()) << std::endl;
+            std::cerr << base::CFStringGetUTF8StdString(desc.get()) << '\n';
         if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyFailureReason(error)) )
-            std::cerr << base::CFStringGetUTF8StdString(desc.get()) << std::endl;
+            std::cerr << base::CFStringGetUTF8StdString(desc.get()) << '\n';
         if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyRecoverySuggestion(error)) )
-            std::cerr << base::CFStringGetUTF8StdString(desc.get()) << std::endl;
+            std::cerr << base::CFStringGetUTF8StdString(desc.get()) << '\n';
         CFRelease(error);
     }
 
@@ -453,12 +453,12 @@ void RoutedIO::UninstallViaRootCLI()
     using namespace std::string_literals;
 
     if( geteuid() != 0 ) {
-        std::cerr << "this command must be executed with root rights." << std::endl;
+        std::cerr << "this command must be executed with root rights." << '\n';
         return;
     }
 
     if( utility::IsThisProcessSandboxed() ) {
-        std::cerr << "must be not a sandboxed process." << std::endl;
+        std::cerr << "must be not a sandboxed process." << '\n';
         return;
     }
 

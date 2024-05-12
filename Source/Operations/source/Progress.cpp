@@ -21,7 +21,7 @@ void Progress::CommitSkipped(uint64_t _delta)
     if( _delta + m_Processed > m_Estimated ) {
         std::cerr << "Progress::CommitSkipped: supicious argument: "
                      "_delta + m_Processed > m_Estimated"
-                  << std::endl;
+                  << '\n';
         m_Estimated = m_Processed.load();
     }
     else {

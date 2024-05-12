@@ -461,14 +461,14 @@ static NCAppDelegate *g_Me = nil;
     const auto config_defaults_path = [bundle pathForResource:@"Config" ofType:@"json"].fileSystemRepresentationSafe;
     const auto config_defaults = Load(config_defaults_path);
     if( config_defaults == std::nullopt ) {
-        std::cerr << "Failed to read the main config file: " << config_defaults_path << std::endl;
+        std::cerr << "Failed to read the main config file: " << config_defaults_path << '\n';
         exit(-1);
     }
 
     const auto state_defaults_path = [bundle pathForResource:@"State" ofType:@"json"].fileSystemRepresentationSafe;
     const auto state_defaults = Load(state_defaults_path);
     if( state_defaults == std::nullopt ) {
-        std::cerr << "Failed to read the state config file: " << state_defaults_path << std::endl;
+        std::cerr << "Failed to read the state config file: " << state_defaults_path << '\n';
         exit(-1);
     }
 

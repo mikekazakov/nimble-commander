@@ -19,14 +19,14 @@ Operation::~Operation()
 {
     if( IsWaitingForUIResponse() )
         std::cerr << "Warning: an operation at address " << reinterpret_cast<void *>(this)
-                  << " was destroyed while it was waiting for a UI response!" << std::endl;
+                  << " was destroyed while it was waiting for a UI response!" << '\n';
 }
 
 Job *Operation::GetJob() noexcept
 {
     if( typeid(*this) != typeid(Operation) )
         std::cerr << "Warning: operation's implementation class " << typeid(*this).name()
-                  << " has no GetJob() overload!" << std::endl;
+                  << " has no GetJob() overload!" << '\n';
     return nullptr;
 }
 

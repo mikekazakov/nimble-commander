@@ -50,7 +50,7 @@ CopyingJob::CopyingJob(std::vector<VFSListingItem> _source_items,
     m_IsSingleInitialItemProcessing = m_VFSListingItems.size() == 1;
 
     if( m_VFSListingItems.empty() )
-        std::cerr << "CopyingJob(..) was called with an empty entries list!" << std::endl;
+        std::cerr << "CopyingJob(..) was called with an empty entries list!" << '\n';
 
     Statistics().SetPreferredSource(Statistics::SourceType::Bytes);
 }
@@ -764,7 +764,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
     assert(m_NativeFSManager);
     auto src_fs_info_holder = m_NativeFSManager->VolumeFromFD(source_fd);
     if( !src_fs_info_holder ) {
-        std::cerr << "Failed to find fs_info for dev_id: " << src_stat_buffer.st_dev << std::endl;
+        std::cerr << "Failed to find fs_info for dev_id: " << src_stat_buffer.st_dev << '\n';
         return StepResult::Stop; // something VERY BAD has happened, can't go on
     }
     auto &src_fs_info = *src_fs_info_holder;

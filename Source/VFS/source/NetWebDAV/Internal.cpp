@@ -63,7 +63,7 @@ void HTTPRequests::Print(const Mask _mask)
         std::cout << "PROPPATCH ";
     if( _mask & HTTPRequests::Unlock )
         std::cout << "UNLOCK ";
-    std::cout << std::endl;
+    std::cout << '\n';
 }
 
 static bool IsOkHTTPRC(const int _rc)

@@ -39,10 +39,10 @@ void Job::Execute()
         Perform();
     } catch( const std::exception &e ) {
         std::cerr << "Error: operation " << typeid(*this).name() << " has thrown an exeption: " << e.what() << "."
-                  << std::endl;
+                  << '\n';
         Stop();
     } catch( ... ) {
-        std::cerr << "Error: operation " << typeid(*this).name() << " has thrown an unknown exeption." << std::endl;
+        std::cerr << "Error: operation " << typeid(*this).name() << " has thrown an unknown exeption." << '\n';
         Stop();
     }
 

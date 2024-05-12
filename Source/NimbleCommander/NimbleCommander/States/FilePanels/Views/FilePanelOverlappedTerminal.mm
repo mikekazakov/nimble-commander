@@ -84,7 +84,7 @@ static const auto g_LongProcessDelay = 100ms;
 
         // parser
         ParserImpl::Params parser_params;
-        parser_params.error_log = [](std::string_view _error) { std::cerr << _error << std::endl; };
+        parser_params.error_log = [](std::string_view _error) { std::cerr << _error << '\n'; };
         m_Parser = std::make_unique<ParserImpl>(parser_params);
 
         // interpreter

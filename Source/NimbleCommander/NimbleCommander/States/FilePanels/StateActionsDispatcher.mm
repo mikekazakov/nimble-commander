@@ -53,9 +53,9 @@ static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelSt
             return action->ValidateMenuItem(m_FS, item);
         return true;
     } catch( const std::exception &e ) {
-        std::cerr << "validateMenuItem has caught an exception: " << e.what() << std::endl;
+        std::cerr << "validateMenuItem has caught an exception: " << e.what() << '\n';
     } catch( ... ) {
-        std::cerr << "validateMenuItem has caught an unknown exception!" << std::endl;
+        std::cerr << "validateMenuItem has caught an unknown exception!" << '\n';
     }
     return false;
 }
@@ -66,9 +66,9 @@ static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelSt
         try {
             return action->Predicate(m_FS);
         } catch( const std::exception &e ) {
-            std::cerr << "validateActionBySelector has caught an exception: " << e.what() << std::endl;
+            std::cerr << "validateActionBySelector has caught an exception: " << e.what() << '\n';
         } catch( ... ) {
-            std::cerr << "validateActionBySelector has caught an unknown exception!" << std::endl;
+            std::cerr << "validateActionBySelector has caught an unknown exception!" << '\n';
         }
         return false;
     }
@@ -288,7 +288,7 @@ static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelSt
         }
     }
     else {
-        std::cerr << "warning - unrecognized selector: " << NSStringFromSelector(_sel).UTF8String << std::endl;
+        std::cerr << "warning - unrecognized selector: " << NSStringFromSelector(_sel).UTF8String << '\n';
     }
 }
 

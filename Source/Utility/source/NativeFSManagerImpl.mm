@@ -200,7 +200,7 @@ static bool GetBasicInfo(NativeFileSystemInfo &_volume)
 
     struct stat entry_stat;
     if( ::stat(_volume.mounted_at_path.c_str(), &entry_stat) != 0 ) {
-        std::cerr << "failed to stat() a volume: " << _volume.mounted_at_path << std::endl;
+        std::cerr << "failed to stat() a volume: " << _volume.mounted_at_path << '\n';
         return false;
     }
 

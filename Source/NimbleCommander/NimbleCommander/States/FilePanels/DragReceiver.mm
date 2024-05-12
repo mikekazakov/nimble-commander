@@ -437,10 +437,10 @@ static bool DraggingIntoFoldersAllowed() noexcept
 [[maybe_unused]] static void PrintDragOperations(NSDragOperation _op)
 {
     if( _op == NSDragOperationNone ) {
-        std::cout << "NSDragOperationNone" << std::endl;
+        std::cout << "NSDragOperationNone" << '\n';
     }
     else if( _op == NSDragOperationEvery ) {
-        std::cout << "NSDragOperationEvery" << std::endl;
+        std::cout << "NSDragOperationEvery" << '\n';
     }
     else {
         if( _op & NSDragOperationCopy )
@@ -455,7 +455,7 @@ static bool DraggingIntoFoldersAllowed() noexcept
             std::cout << "NSDragOperationMove ";
         if( _op & NSDragOperationDelete )
             std::cout << "NSDragOperationDelete ";
-        std::cout << std::endl;
+        std::cout << '\n';
     }
 }
 

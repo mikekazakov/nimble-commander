@@ -539,7 +539,7 @@ static Parser::Bytes Bytes(const char *_string) noexcept
 {
     for( auto &cmd : _commands )
         std::cout << input::VerboseDescription(cmd) << "\n";
-    std::cout << std::endl;
+    std::cout << '\n';
 }
 
 [[maybe_unused]] static std::string ToUTF8(const std::u32string &str)

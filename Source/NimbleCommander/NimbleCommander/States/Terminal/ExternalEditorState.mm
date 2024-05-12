@@ -66,7 +66,7 @@ using namespace nc::term;
         });
 
         ParserImpl::Params parser_params;
-        parser_params.error_log = [](std::string_view _error) { std::cerr << _error << std::endl; };
+        parser_params.error_log = [](std::string_view _error) { std::cerr << _error << '\n'; };
         m_Parser = std::make_unique<ParserImpl>(parser_params);
 
         m_Interpreter = std::make_unique<InterpreterImpl>(m_TermScrollView.screen);

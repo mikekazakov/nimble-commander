@@ -345,9 +345,9 @@ private:
         if( item.action == @selector(OnFileInternalBigViewCommand:) )
             return [self Predicate_OnFileInternalBigViewCommand];
     } catch( const std::exception &e ) {
-        std::cout << "Exception caught: " << e.what() << std::endl;
+        std::cout << "Exception caught: " << e.what() << '\n';
     } catch( ... ) {
-        std::cout << "Caught an unhandled exception!" << std::endl;
+        std::cout << "Caught an unhandled exception!" << '\n';
     }
     return true;
 }

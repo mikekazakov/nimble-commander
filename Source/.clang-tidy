@@ -36,7 +36,10 @@ Checks: >
   modernize-use-std-print,
   modernize-use-transparent-functors,
   modernize-use-uncaught-exceptions,
-  modernize-use-using
+  modernize-use-using,
+  performance-avoid-endl,
+  performance-enum-size,
+  performance-faster-string-find
 
 CheckOptions:
   - key:    modernize-loop-convert.MinConfidence

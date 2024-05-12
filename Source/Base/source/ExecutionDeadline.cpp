@@ -16,7 +16,7 @@ ExecutionDeadline::ExecutionDeadline(std::chrono::seconds _execution_limit)
         pthread_setname_np("ExecutionDeadline watchdog");
         std::this_thread::sleep_for(_execution_limit);
         std::cerr << "Here comes the grim reaper after a naughty process which has been running for more than "
-                  << _execution_limit.count() << " seconds!" << std::endl;
+                  << _execution_limit.count() << " seconds!" << '\n';
         exit(-1);
     }).detach();
 }

@@ -12,7 +12,7 @@ static const auto g_UpdateDelay = 100ms;
 
 AggregateProgressTracker::AggregateProgressTracker() : m_IsTracking{false}, m_IsUpdateScheduled{false}
 {
-    SetProgressCallback([](double _progress) { std::cout << _progress << std::endl; });
+    SetProgressCallback([](double _progress) { std::cout << _progress << '\n'; });
 }
 
 AggregateProgressTracker::~AggregateProgressTracker() = default;

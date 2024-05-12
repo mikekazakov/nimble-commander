@@ -646,7 +646,7 @@ void File::CheckStateTransition(State _new_state) const
         /*Canceled*/ {true, false, false, false, false, false},
         /*Completed*/ {true, false, false, false, false, false}};
     if( !valid_flow[m_State][_new_state] )
-        std::cerr << "suspicious state change: " << m_State << " to " << _new_state << std::endl;
+        std::cerr << "suspicious state change: " << m_State << " to " << _new_state << '\n';
 }
 
 void File::SwitchToState(State _new_state)

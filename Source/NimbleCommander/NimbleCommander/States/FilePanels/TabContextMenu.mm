@@ -82,9 +82,9 @@ static void Perform(const ActionsT &_actions, SEL _sel, MainWindowFilePanelState
             return action->ValidateMenuItem(m_State, item);
         return true;
     } catch( std::exception &e ) {
-        std::cout << "Exception caught: " << e.what() << std::endl;
+        std::cout << "Exception caught: " << e.what() << '\n';
     } catch( ... ) {
-        std::cout << "Caught an unhandled exception!" << std::endl;
+        std::cout << "Caught an unhandled exception!" << '\n';
     }
     return false;
 }
@@ -111,6 +111,6 @@ static void Perform(const ActionsT &_actions, SEL _sel, MainWindowFilePanelState
         }
     }
     else {
-        std::cerr << "warning - unrecognized selector: " << NSStringFromSelector(_sel).UTF8String << std::endl;
+        std::cerr << "warning - unrecognized selector: " << NSStringFromSelector(_sel).UTF8String << '\n';
     }
 }

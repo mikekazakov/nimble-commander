@@ -80,7 +80,7 @@ void SpdLogUISink::DoFlush()
         dispatch_to_main_queue([s, callback] { callback(s); });
     }
     else {
-        std::cerr << "failed to convert an input string to NSString: " << m_Stock << std::endl;
+        std::cerr << "failed to convert an input string to NSString: " << m_Stock << '\n';
     }
     m_Stock.clear();
 }

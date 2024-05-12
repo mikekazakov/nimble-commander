@@ -48,7 +48,7 @@ TempTestDir::~TempTestDir()
     try {
         std::filesystem::remove_all(directory);
     } catch( const std::exception &ex ) {
-        std::cerr << ex.what() << std::endl;
+        std::cerr << ex.what() << '\n';
     }
 }
 

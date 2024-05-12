@@ -25,7 +25,7 @@ VFSInstanceManagerImpl::VFSInstanceManagerImpl() = default;
 
 VFSInstanceManagerImpl::~VFSInstanceManagerImpl()
 {
-    std::cerr << "VFSInstanceManager instances must live forever!" << std::endl;
+    std::cerr << "VFSInstanceManager instances must live forever!" << '\n';
 }
 
 VFSInstanceManager::Promise VFSInstanceManagerImpl::TameVFS(const VFSHostPtr &_instance)

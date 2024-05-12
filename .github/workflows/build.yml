@@ -3,12 +3,14 @@ name: Build and Test
 on:
   push:
     paths-ignore:
-      - '**/*.md'
       - '.github/ISSUE_TEMPLATE/**'
+      - 'Docs/**'
+      - '**/*.md'
   pull_request:
     paths-ignore:
-      - '**/*.md'
       - '.github/ISSUE_TEMPLATE/**'
+      - 'Docs/**'
+      - '**/*.md'
   workflow_dispatch:
 
 env:

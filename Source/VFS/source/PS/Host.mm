@@ -257,10 +257,7 @@ PSHost::PSHost() : Host("", std::shared_ptr<Host>(nullptr), UniqueTag), m_Update
     CommitProcs(GetProcs());
 }
 
-PSHost::~PSHost()
-{
-    //    m_UpdateQ->Stop();
-}
+PSHost::~PSHost() = default;
 
 VFSConfiguration PSHost::Configuration() const
 {

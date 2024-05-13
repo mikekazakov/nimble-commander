@@ -247,7 +247,6 @@
 		CF6D99A9196676AB0077B146 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
 		CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
-		CF6E44881CCE390A009F45B0 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E44871CCE390A009F45B0 /* StoreKit.framework */; };
 		CF754D4D1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF754D511C8FE23C00381260 /* AskForPasswordWindowController.xib */; };
 		CF754D4E1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF754D511C8FE23C00381260 /* AskForPasswordWindowController.xib */; };
 		CF764CE2258765E600D7ED17 /* DragReceiver.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95241F47CA760035E606 /* DragReceiver.mm */; };
@@ -345,7 +344,6 @@
 		CFC706542B497FAC0045D2C9 /* CUIResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CFC705BF2B497D010045D2C9 /* CUIResources.bundle */; };
 		CFC706552B497FB00045D2C9 /* OperationsResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CFC705C92B497D090045D2C9 /* OperationsResources.bundle */; };
 		CFC706562B497FB20045D2C9 /* PanelResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CFC705D82B497D110045D2C9 /* PanelResources.bundle */; };
-		CFC706572B497FB40045D2C9 /* RoutedIOResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CFC705E32B497D1A0045D2C9 /* RoutedIOResources.bundle */; };
 		CFC706582B497FB90045D2C9 /* ViewerResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CFC706102B497D680045D2C9 /* ViewerResources.bundle */; };
 		CFC7065F2B4982FF0045D2C9 /* LetsMove.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFC706482B497F6A0045D2C9 /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CFC706602B4983020045D2C9 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFC706462B497F5C0045D2C9 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -397,6 +395,34 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		CF5BF70F2BF2B32A0057C92E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CF9B081D2700650900D2842B;
+			remoteInfo = RoutedIOResources;
+		};
+		CF5BF7112BF2B32A0057C92E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CF69CFB31DA209F000992B84;
+			remoteInfo = info.filesmanager.Files.PrivilegedIOHelperV2;
+		};
+		CF5BF7132BF2B3330057C92E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CF9B081D2700650900D2842B;
+			remoteInfo = RoutedIOResources;
+		};
+		CF5BF7152BF2B3330057C92E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CF69CFB31DA209F000992B84;
+			remoteInfo = info.filesmanager.Files.PrivilegedIOHelperV2;
+		};
 		CFC705AC2B497CD90045D2C9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
@@ -655,20 +681,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = CF46022E256312190095FC73;
 			remoteInfo = RoutedIO;
-		};
-		CFC706382B497E710045D2C9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CF9B081D2700650900D2842B;
-			remoteInfo = RoutedIOResources;
-		};
-		CFC7063A2B497E740045D2C9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CF69CFB31DA209F000992B84;
-			remoteInfo = info.filesmanager.Files.PrivilegedIOHelperV2;
 		};
 		CFC7063C2B497E780045D2C9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1345,7 +1357,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFB63D3C2598A7B70038502E /* libNimbleCommanderCommon.a in Frameworks */,
-				CF6E44881CCE390A009F45B0 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2262,8 +2273,6 @@
 				CFC706412B497E810045D2C9 /* PBXTargetDependency */,
 				CFC7063F2B497E7C0045D2C9 /* PBXTargetDependency */,
 				CFC7063D2B497E780045D2C9 /* PBXTargetDependency */,
-				CFC7063B2B497E740045D2C9 /* PBXTargetDependency */,
-				CFC706392B497E710045D2C9 /* PBXTargetDependency */,
 				CFC706372B497E6D0045D2C9 /* PBXTargetDependency */,
 				CFC706352B497E660045D2C9 /* PBXTargetDependency */,
 				CFC706332B497E620045D2C9 /* PBXTargetDependency */,
@@ -2328,6 +2337,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				CF5BF7142BF2B3330057C92E /* PBXTargetDependency */,
+				CF5BF7162BF2B3330057C92E /* PBXTargetDependency */,
 			);
 			name = "NimbleCommander-Unsigned";
 			productName = Directories;
@@ -2349,6 +2360,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				CF5BF7102BF2B32A0057C92E /* PBXTargetDependency */,
+				CF5BF7122BF2B32A0057C92E /* PBXTargetDependency */,
 			);
 			name = "NimbleCommander-NonMAS";
 			productName = Directories;
@@ -2699,7 +2712,6 @@
 				CFC706552B497FB00045D2C9 /* OperationsResources.bundle in Resources */,
 				CFC706562B497FB20045D2C9 /* PanelResources.bundle in Resources */,
 				CFC706582B497FB90045D2C9 /* ViewerResources.bundle in Resources */,
-				CFC706572B497FB40045D2C9 /* RoutedIOResources.bundle in Resources */,
 				CFC706542B497FAC0045D2C9 /* CUIResources.bundle in Resources */,
 				CF8D0D061D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */,
 				CF4E56CD1D50694200452912 /* PreferencesWindowViewerTab.xib in Resources */,
@@ -3183,6 +3195,26 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		CF5BF7102BF2B32A0057C92E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RoutedIOResources;
+			targetProxy = CF5BF70F2BF2B32A0057C92E /* PBXContainerItemProxy */;
+		};
+		CF5BF7122BF2B32A0057C92E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = info.filesmanager.Files.PrivilegedIOHelperV2;
+			targetProxy = CF5BF7112BF2B32A0057C92E /* PBXContainerItemProxy */;
+		};
+		CF5BF7142BF2B3330057C92E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RoutedIOResources;
+			targetProxy = CF5BF7132BF2B3330057C92E /* PBXContainerItemProxy */;
+		};
+		CF5BF7162BF2B3330057C92E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = info.filesmanager.Files.PrivilegedIOHelperV2;
+			targetProxy = CF5BF7152BF2B3330057C92E /* PBXContainerItemProxy */;
+		};
 		CFC706272B497E470045D2C9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Utility;
@@ -3227,16 +3259,6 @@
 			isa = PBXTargetDependency;
 			name = RoutedIO;
 			targetProxy = CFC706362B497E6D0045D2C9 /* PBXContainerItemProxy */;
-		};
-		CFC706392B497E710045D2C9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = RoutedIOResources;
-			targetProxy = CFC706382B497E710045D2C9 /* PBXContainerItemProxy */;
-		};
-		CFC7063B2B497E740045D2C9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = info.filesmanager.Files.PrivilegedIOHelperV2;
-			targetProxy = CFC7063A2B497E740045D2C9 /* PBXContainerItemProxy */;
 		};
 		CFC7063D2B497E780045D2C9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

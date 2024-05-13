@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22505"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -33,16 +33,14 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="622" height="696"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <value key="minSize" type="size" width="480" height="400"/>
             <view key="contentView" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="622" height="696"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button toolTip="⎋" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="00I-4I-INo">
                         <rect key="frame" x="515" y="13" width="94" height="32"/>
-                        <constraints>
-                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="oih-vi-Gq4"/>
-                        </constraints>
                         <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PmQ-cC-ryL">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -50,15 +48,15 @@
 Gw
 </string>
                         </buttonCell>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="oih-vi-Gq4"/>
+                        </constraints>
                         <connections>
                             <action selector="OnClose:" target="-2" id="LXn-Km-fwQ"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="40b-pd-d3f">
                         <rect key="frame" x="423" y="13" width="94" height="32"/>
-                        <constraints>
-                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="sIp-wL-3ye"/>
-                        </constraints>
                         <buttonCell key="cell" type="push" title="Search" alternateTitle="Stop" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oef-aB-x9Q">
                             <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -66,6 +64,9 @@ Gw
 DQ
 </string>
                         </buttonCell>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="sIp-wL-3ye"/>
+                        </constraints>
                         <connections>
                             <action selector="OnSearch:" target="-2" id="PJf-Kk-SLs"/>
                             <binding destination="-2" name="value" keyPath="self.searchingNow" id="g9W-SP-7Za"/>
@@ -73,13 +74,13 @@ DQ
                         </connections>
                     </button>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="axX-0L-v6g">
-                        <rect key="frame" x="20" y="60" width="582" height="470"/>
+                        <rect key="frame" x="20" y="60" width="582" height="468"/>
                         <clipView key="contentView" id="vBG-YV-mkX">
-                            <rect key="frame" x="1" y="1" width="580" height="468"/>
+                            <rect key="frame" x="1" y="1" width="580" height="466"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView toolTip="^I" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="Jgw-jU-GMB" id="03U-A8-eOk">
-                                    <rect key="frame" x="0.0" y="0.0" width="580" height="445"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="580" height="443"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -179,7 +180,7 @@ DQ
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WmK-6C-oal">
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WmK-6C-oal">
                         <rect key="frame" x="18" y="23" width="70" height="14"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Items found:" id="z2i-rD-QXz">
                             <font key="font" metaFont="smallSystem"/>
@@ -194,7 +195,7 @@ DQ
                             </binding>
                         </connections>
                     </textField>
-                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="rT5-dE-JF7">
+                    <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="rT5-dE-JF7">
                         <rect key="frame" x="88" y="23" width="24" height="14"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="20" id="ebZ-84-wma"/>
@@ -215,13 +216,13 @@ DQ
                     </textField>
                     <button toolTip="^V" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XFM-mL-fme">
                         <rect key="frame" x="239" y="13" width="94" height="32"/>
-                        <constraints>
-                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="LbT-45-6a9"/>
-                        </constraints>
                         <buttonCell key="cell" type="push" title="View" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cjR-hz-P7N">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="LbT-45-6a9"/>
+                        </constraints>
                         <connections>
                             <action selector="OnFileView:" target="-2" id="E4B-3D-vl8"/>
                             <binding destination="-2" name="enabled" keyPath="self.focusedItem" id="rpL-HM-rCY">
@@ -240,7 +241,7 @@ DQ
                             <outlet property="nextKeyView" destination="NVP-CR-YO4" id="g5I-2t-rGY"/>
                         </connections>
                     </button>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="100" translatesAutoresizingMaskIntoConstraints="NO" id="VVb-jD-bRB">
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="100" translatesAutoresizingMaskIntoConstraints="NO" id="VVb-jD-bRB">
                         <rect key="frame" x="18" y="41" width="586" height="14"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingHead" enabled="NO" allowsUndo="NO" sendsActionOnEndEditing="YES" id="vQs-jd-jZW">
                             <font key="font" metaFont="smallSystem"/>
@@ -250,13 +251,13 @@ DQ
                     </textField>
                     <button toolTip="^G" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NVP-CR-YO4">
                         <rect key="frame" x="331" y="13" width="94" height="32"/>
-                        <constraints>
-                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="ShV-Hs-brh"/>
-                        </constraints>
                         <buttonCell key="cell" type="push" title="Go To" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wf8-iS-Nke">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="ShV-Hs-brh"/>
+                        </constraints>
                         <connections>
                             <action selector="OnGoToFile:" target="-2" id="WpL-1A-vdd"/>
                             <binding destination="-2" name="enabled" keyPath="self.focusedItem" id="xR9-v0-SLQ">
@@ -269,13 +270,13 @@ DQ
                     </button>
                     <button toolTip="^P" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="g6m-zK-tE9">
                         <rect key="frame" x="147" y="13" width="94" height="32"/>
-                        <constraints>
-                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="Frc-uX-PD0"/>
-                        </constraints>
                         <buttonCell key="cell" type="push" title="Panel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="a08-QI-zeL">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="Frc-uX-PD0"/>
+                        </constraints>
                         <connections>
                             <action selector="OnPanelize:" target="-2" id="W79-g3-57Y"/>
                             <binding destination="ehN-Ke-Ten" name="enabled" keyPath="arrangedObjects.@count" id="mJe-4x-nsh"/>
@@ -291,297 +292,284 @@ DQ
                             <outlet property="nextKeyView" destination="XFM-mL-fme" id="bNf-7Z-deN"/>
                         </connections>
                     </button>
-                    <box autoresizesSubviews="NO" borderType="none" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="3im-V9-my6">
-                        <rect key="frame" x="-3" y="534" width="628" height="164"/>
-                        <view key="contentView" id="lGh-LY-EvR">
-                            <rect key="frame" x="0.0" y="0.0" width="628" height="164"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            <subviews>
-                                <button translatesAutoresizingMaskIntoConstraints="NO" id="JW2-j0-Voo">
-                                    <rect key="frame" x="254" y="107" width="138" height="16"/>
-                                    <buttonCell key="cell" type="check" title="Look in subdirectories" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="on" inset="2" id="lJf-WO-EGY">
-                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                        <font key="font" metaFont="smallSystem"/>
-                                    </buttonCell>
-                                    <connections>
-                                        <action selector="onSearchSettingsUIChanged:" target="-2" id="1lZ-oH-tIp"/>
-                                        <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="gqD-Cc-PzX">
-                                            <dictionary key="options">
-                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                            </dictionary>
-                                        </binding>
-                                        <outlet property="nextKeyView" destination="Mrn-CD-zhD" id="7QI-iI-OVa"/>
-                                    </connections>
-                                </button>
-                                <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="o7G-2J-2qr">
-                                    <rect key="frame" x="585" y="1" width="16" height="16"/>
-                                    <connections>
-                                        <binding destination="-2" name="animate" keyPath="self.SearchButton.state" id="N5I-LM-aRW"/>
-                                    </connections>
-                                </progressIndicator>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="O0G-eo-ej9">
-                                    <rect key="frame" x="143" y="45" width="100" height="16"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Containing text:" id="sq9-fx-uq3">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kfR-KH-AUs">
-                                    <rect key="frame" x="246" y="12" width="47" height="25"/>
-                                    <constraints>
-                                        <constraint firstAttribute="width" constant="40" id="7D2-hn-HzF"/>
-                                    </constraints>
-                                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="fPn-ZK-SEq">
-                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                        <font key="font" metaFont="menu"/>
-                                        <menu key="menu" id="10X-cZ-a2S">
-                                            <items>
-                                                <menuItem title="≥" id="ydK-d2-gsz">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                                <menuItem title="=" tag="1" id="3HI-7Z-GC3">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                                <menuItem title="≤" tag="2" id="udS-8N-4fz">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                            </items>
-                                        </menu>
-                                    </popUpButtonCell>
-                                    <connections>
-                                        <action selector="onSearchSettingsUIChanged:" target="-2" id="oDh-rd-Ygp"/>
-                                        <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="WBL-Lf-z0s">
-                                            <dictionary key="options">
-                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                            </dictionary>
-                                        </binding>
-                                        <outlet property="nextKeyView" destination="a2f-4v-JJC" id="u9D-jR-JLP"/>
-                                    </connections>
-                                </popUpButton>
-                                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WTz-uI-fN2">
-                                    <rect key="frame" x="362" y="12" width="59" height="25"/>
-                                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="kh9-Bc-dmG">
-                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                        <font key="font" metaFont="menu"/>
-                                        <menu key="menu" id="8sA-yU-MON">
-                                            <items>
-                                                <menuItem title="b" id="Tt9-8O-AZV">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                                <menuItem title="Kb" tag="1" id="WY5-uo-vrc">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                                <menuItem title="Mb" tag="2" id="c22-DH-E7c">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                                <menuItem title="Gb" tag="3" id="OhY-jN-05K">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                            </items>
-                                        </menu>
-                                    </popUpButtonCell>
-                                    <connections>
-                                        <action selector="onSearchSettingsUIChanged:" target="-2" id="8Qw-lG-3Q5"/>
-                                        <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="yNV-ER-J5z">
-                                            <dictionary key="options">
-                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                            </dictionary>
-                                        </binding>
-                                        <outlet property="nextKeyView" destination="03U-A8-eOk" id="qvG-yh-XA5"/>
-                                    </connections>
-                                </popUpButton>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NWO-0P-f1V">
-                                    <rect key="frame" x="179" y="18" width="64" height="16"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="With size:" id="YVt-Nt-3dl">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <textField toolTip="^S" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="a2f-4v-JJC">
-                                    <rect key="frame" x="297" y="16" width="60" height="21"/>
-                                    <constraints>
-                                        <constraint firstAttribute="width" constant="60" id="eMz-Z8-F2u"/>
-                                    </constraints>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" placeholderString="0" drawsBackground="YES" id="2dl-Rj-gsT">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                    <connections>
-                                        <binding destination="-2" name="value" keyPath="self.SizeTextFieldValue" id="ERT-n5-ZFK">
-                                            <dictionary key="options">
-                                                <bool key="NSContinuouslyUpdatesValue" value="YES"/>
-                                                <string key="NSNullPlaceholder">0</string>
-                                            </dictionary>
-                                        </binding>
-                                        <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="jJ8-0T-lpC">
-                                            <dictionary key="options">
-                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                            </dictionary>
-                                        </binding>
-                                        <outlet property="delegate" destination="-2" id="UOB-M8-x8c"/>
-                                        <outlet property="nextKeyView" destination="WTz-uI-fN2" id="y8q-dK-gML"/>
-                                    </connections>
-                                </textField>
-                                <button translatesAutoresizingMaskIntoConstraints="NO" id="Mrn-CD-zhD">
-                                    <rect key="frame" x="254" y="89" width="106" height="16"/>
-                                    <buttonCell key="cell" type="check" title="Look in archives" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="7HA-yk-SzZ">
-                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                        <font key="font" metaFont="smallSystem"/>
-                                    </buttonCell>
-                                    <connections>
-                                        <action selector="onSearchSettingsUIChanged:" target="-2" id="uau-Tq-1cJ"/>
-                                        <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="GqQ-xQ-N7q">
-                                            <dictionary key="options">
-                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                            </dictionary>
-                                        </binding>
-                                        <outlet property="nextKeyView" destination="rhf-af-9N3" id="QIy-Ri-aIy"/>
-                                    </connections>
-                                </button>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jb7-tj-7W9">
-                                    <rect key="frame" x="64" y="129" width="179" height="16"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Search for items using mask:" id="R8e-FO-aEj">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="w87-Kl-zeY">
-                                    <rect key="frame" x="253" y="71" width="62" height="14"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Search for:" id="HCA-wY-Kq2">
-                                        <font key="font" metaFont="smallSystem"/>
-                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
-                                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rhf-af-9N3">
-                                    <rect key="frame" x="317" y="66" width="119" height="22"/>
-                                    <popUpButtonCell key="cell" type="push" title="Files and folders" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="9y5-XT-tuj" id="qXn-z1-0pd">
-                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                        <font key="font" metaFont="smallSystem"/>
-                                        <menu key="menu" id="386-Tu-LZ5">
-                                            <items>
-                                                <menuItem title="Files and folders" state="on" id="9y5-XT-tuj">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                                <menuItem title="Files" tag="1" id="HFH-1O-0dG">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                                <menuItem title="Folders" tag="2" id="cqA-Yt-0Rm">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                            </items>
-                                        </menu>
-                                    </popUpButtonCell>
-                                </popUpButton>
-                                <searchField toolTip="^M" wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2em-D1-cWh">
-                                    <rect key="frame" x="249" y="126" width="250" height="22"/>
-                                    <constraints>
-                                        <constraint firstAttribute="width" constant="250" id="CpB-6I-NbN"/>
-                                    </constraints>
-                                    <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" sendsWholeSearchString="YES" id="b8R-cB-qac">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </searchFieldCell>
-                                    <connections>
-                                        <outlet property="delegate" destination="-2" id="3Cn-zG-PAc"/>
-                                        <outlet property="nextKeyView" destination="JW2-j0-Voo" id="rNV-Sd-fQQ"/>
-                                    </connections>
-                                </searchField>
-                                <textField toolTip="The filename mask is invalid" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3as-dG-HXy">
-                                    <rect key="frame" x="505" y="129" width="23" height="16"/>
-                                    <textFieldCell key="cell" lineBreakMode="clipping" title="⚠️" id="Y1K-uR-Va0">
-                                        <font key="font" usesAppearanceFont="YES"/>
-                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                    <connections>
-                                        <binding destination="-2" name="hidden" keyPath="self.filenameMaskIsOk" id="0P0-CL-yFg"/>
-                                    </connections>
-                                </textField>
-                                <searchField toolTip="^T" wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TQe-Ao-p2i">
-                                    <rect key="frame" x="249" y="42" width="250" height="22"/>
-                                    <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" sendsWholeSearchString="YES" id="e9j-ny-tsJ">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </searchFieldCell>
-                                    <connections>
-                                        <outlet property="delegate" destination="-2" id="iHq-Ds-Cmm"/>
-                                    </connections>
-                                </searchField>
-                            </subviews>
-                            <constraints>
-                                <constraint firstItem="2em-D1-cWh" firstAttribute="firstBaseline" secondItem="jb7-tj-7W9" secondAttribute="firstBaseline" id="0sn-77-aVc"/>
-                                <constraint firstItem="JW2-j0-Voo" firstAttribute="top" secondItem="2em-D1-cWh" secondAttribute="bottom" constant="4" id="3Iq-No-VSh"/>
-                                <constraint firstItem="kfR-KH-AUs" firstAttribute="leading" secondItem="TQe-Ao-p2i" secondAttribute="leading" id="4Yz-bw-Nex"/>
-                                <constraint firstItem="TQe-Ao-p2i" firstAttribute="firstBaseline" secondItem="O0G-eo-ej9" secondAttribute="firstBaseline" id="9i7-My-gnT"/>
-                                <constraint firstItem="rhf-af-9N3" firstAttribute="leading" secondItem="w87-Kl-zeY" secondAttribute="trailing" constant="8" symbolic="YES" id="C0g-E5-FJD"/>
-                                <constraint firstItem="2em-D1-cWh" firstAttribute="centerX" secondItem="lGh-LY-EvR" secondAttribute="centerX" constant="60" id="HlZ-vf-Un7"/>
-                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="3as-dG-HXy" secondAttribute="trailing" constant="20" symbolic="YES" id="IlC-m2-AcQ"/>
-                                <constraint firstItem="kfR-KH-AUs" firstAttribute="top" secondItem="TQe-Ao-p2i" secondAttribute="bottom" constant="6" id="IqT-mS-PXL"/>
-                                <constraint firstItem="rhf-af-9N3" firstAttribute="top" secondItem="Mrn-CD-zhD" secondAttribute="bottom" constant="4" id="JT8-sd-SQP"/>
-                                <constraint firstAttribute="bottom" secondItem="kfR-KH-AUs" secondAttribute="bottom" constant="16" id="KN2-sU-BHb"/>
-                                <constraint firstItem="Mrn-CD-zhD" firstAttribute="top" secondItem="JW2-j0-Voo" secondAttribute="bottom" constant="4" id="QLe-OZ-5y2"/>
-                                <constraint firstItem="Mrn-CD-zhD" firstAttribute="leading" secondItem="JW2-j0-Voo" secondAttribute="leading" id="QVG-al-1lI"/>
-                                <constraint firstItem="3as-dG-HXy" firstAttribute="leading" secondItem="2em-D1-cWh" secondAttribute="trailing" constant="8" symbolic="YES" id="Uoe-OO-rd9"/>
-                                <constraint firstItem="TQe-Ao-p2i" firstAttribute="trailing" secondItem="2em-D1-cWh" secondAttribute="trailing" id="Ut4-xa-Ybb"/>
-                                <constraint firstItem="2em-D1-cWh" firstAttribute="top" secondItem="lGh-LY-EvR" secondAttribute="top" constant="16" id="WkR-v3-VRz"/>
-                                <constraint firstItem="TQe-Ao-p2i" firstAttribute="leading" secondItem="2em-D1-cWh" secondAttribute="leading" id="XAD-So-Ow0"/>
-                                <constraint firstItem="JW2-j0-Voo" firstAttribute="leading" secondItem="2em-D1-cWh" secondAttribute="leading" constant="6" id="ZdN-OL-OR5"/>
-                                <constraint firstItem="3as-dG-HXy" firstAttribute="firstBaseline" secondItem="2em-D1-cWh" secondAttribute="firstBaseline" id="aJJ-Fr-8zb"/>
-                                <constraint firstItem="TQe-Ao-p2i" firstAttribute="leading" secondItem="O0G-eo-ej9" secondAttribute="trailing" constant="8" symbolic="YES" id="jZo-zU-CI9"/>
-                                <constraint firstItem="rhf-af-9N3" firstAttribute="baseline" secondItem="w87-Kl-zeY" secondAttribute="baseline" id="jn3-xn-BXg"/>
-                                <constraint firstItem="TQe-Ao-p2i" firstAttribute="top" secondItem="rhf-af-9N3" secondAttribute="bottom" constant="6" id="lCG-cv-H06"/>
-                                <constraint firstItem="w87-Kl-zeY" firstAttribute="leading" secondItem="Mrn-CD-zhD" secondAttribute="leading" id="o8U-ap-SOh"/>
-                                <constraint firstItem="2em-D1-cWh" firstAttribute="leading" secondItem="jb7-tj-7W9" secondAttribute="trailing" constant="8" symbolic="YES" id="qkr-6Q-TbJ"/>
-                            </constraints>
-                        </view>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="JW2-j0-Voo">
+                        <rect key="frame" x="255" y="635" width="138" height="16"/>
+                        <buttonCell key="cell" type="check" title="Look in subdirectories" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="on" inset="2" id="lJf-WO-EGY">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="smallSystem"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="onSearchSettingsUIChanged:" target="-2" id="1lZ-oH-tIp"/>
+                            <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="gqD-Cc-PzX">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                            <outlet property="nextKeyView" destination="Mrn-CD-zhD" id="7QI-iI-OVa"/>
+                        </connections>
+                    </button>
+                    <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="o7G-2J-2qr">
+                        <rect key="frame" x="586" y="531" width="16" height="16"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <connections>
+                            <binding destination="-2" name="animate" keyPath="self.SearchButton.state" id="N5I-LM-aRW"/>
+                        </connections>
+                    </progressIndicator>
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="O0G-eo-ej9">
+                        <rect key="frame" x="144" y="573" width="100" height="16"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Containing text:" id="sq9-fx-uq3">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kfR-KH-AUs">
+                        <rect key="frame" x="247" y="540" width="48" height="25"/>
+                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="fPn-ZK-SEq">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" id="10X-cZ-a2S">
+                                <items>
+                                    <menuItem title="≥" id="ydK-d2-gsz">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="=" tag="1" id="3HI-7Z-GC3">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="≤" tag="2" id="udS-8N-4fz">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
                         <constraints>
-                            <constraint firstItem="kfR-KH-AUs" firstAttribute="baseline" secondItem="WTz-uI-fN2" secondAttribute="baseline" id="Eyy-zx-doV"/>
-                            <constraint firstAttribute="trailing" secondItem="o7G-2J-2qr" secondAttribute="trailing" constant="24" id="GZ6-64-oNl"/>
-                            <constraint firstItem="a2f-4v-JJC" firstAttribute="leading" secondItem="kfR-KH-AUs" secondAttribute="trailing" constant="8" symbolic="YES" id="L0z-Su-jp7"/>
-                            <constraint firstItem="O0G-eo-ej9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="3im-V9-my6" secondAttribute="leading" constant="8" id="ME1-hC-f31"/>
-                            <constraint firstItem="NWO-0P-f1V" firstAttribute="centerY" secondItem="a2f-4v-JJC" secondAttribute="centerY" id="Mjl-Wm-9zK"/>
-                            <constraint firstItem="a2f-4v-JJC" firstAttribute="centerY" secondItem="kfR-KH-AUs" secondAttribute="centerY" id="RJb-ZG-NWf"/>
-                            <constraint firstItem="kfR-KH-AUs" firstAttribute="leading" secondItem="NWO-0P-f1V" secondAttribute="trailing" constant="8" symbolic="YES" id="TnJ-Bu-oDb"/>
-                            <constraint firstItem="jb7-tj-7W9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="3im-V9-my6" secondAttribute="leading" constant="8" id="UjN-uU-un0"/>
-                            <constraint firstItem="NWO-0P-f1V" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="3im-V9-my6" secondAttribute="leading" constant="8" id="Vyc-HB-hfb"/>
-                            <constraint firstAttribute="height" constant="158" id="doP-Sk-p13"/>
-                            <constraint firstAttribute="bottom" secondItem="o7G-2J-2qr" secondAttribute="bottom" constant="-3" id="jtv-kQ-q90"/>
-                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="479" id="kSq-00-rqJ"/>
-                            <constraint firstItem="WTz-uI-fN2" firstAttribute="leading" secondItem="a2f-4v-JJC" secondAttribute="trailing" constant="8" symbolic="YES" id="obR-rY-cos"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="40" id="7D2-hn-HzF"/>
                         </constraints>
-                    </box>
+                        <connections>
+                            <action selector="onSearchSettingsUIChanged:" target="-2" id="oDh-rd-Ygp"/>
+                            <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="WBL-Lf-z0s">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                            <outlet property="nextKeyView" destination="a2f-4v-JJC" id="u9D-jR-JLP"/>
+                        </connections>
+                    </popUpButton>
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NWO-0P-f1V">
+                        <rect key="frame" x="180" y="547" width="64" height="16"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="With size:" id="YVt-Nt-3dl">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField toolTip="^S" focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="a2f-4v-JJC">
+                        <rect key="frame" x="299" y="544" width="60" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="60" id="eMz-Z8-F2u"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" placeholderString="0" drawsBackground="YES" id="2dl-Rj-gsT">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="-2" name="value" keyPath="self.SizeTextFieldValue" id="ERT-n5-ZFK">
+                                <dictionary key="options">
+                                    <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                    <string key="NSNullPlaceholder">0</string>
+                                </dictionary>
+                            </binding>
+                            <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="jJ8-0T-lpC">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                            <outlet property="delegate" destination="-2" id="UOB-M8-x8c"/>
+                            <outlet property="nextKeyView" destination="WTz-uI-fN2" id="y8q-dK-gML"/>
+                        </connections>
+                    </textField>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="Mrn-CD-zhD">
+                        <rect key="frame" x="255" y="617" width="106" height="16"/>
+                        <buttonCell key="cell" type="check" title="Look in archives" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="7HA-yk-SzZ">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="smallSystem"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="onSearchSettingsUIChanged:" target="-2" id="uau-Tq-1cJ"/>
+                            <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="GqQ-xQ-N7q">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                            <outlet property="nextKeyView" destination="rhf-af-9N3" id="QIy-Ri-aIy"/>
+                        </connections>
+                    </button>
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jb7-tj-7W9">
+                        <rect key="frame" x="65" y="657" width="179" height="16"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Search for items using mask:" id="R8e-FO-aEj">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="w87-Kl-zeY">
+                        <rect key="frame" x="254" y="599" width="62" height="14"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Search for:" id="HCA-wY-Kq2">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rhf-af-9N3">
+                        <rect key="frame" x="318" y="594" width="119" height="22"/>
+                        <popUpButtonCell key="cell" type="push" title="Files and folders" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="9y5-XT-tuj" id="qXn-z1-0pd">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="smallSystem"/>
+                            <menu key="menu" id="386-Tu-LZ5">
+                                <items>
+                                    <menuItem title="Files and folders" state="on" id="9y5-XT-tuj">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="Files" tag="1" id="HFH-1O-0dG">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="Folders" tag="2" id="cqA-Yt-0Rm">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                    </popUpButton>
+                    <searchField toolTip="^M" wantsLayer="YES" focusRingType="none" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2em-D1-cWh">
+                        <rect key="frame" x="250" y="654" width="250" height="22"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="250" id="CpB-6I-NbN"/>
+                        </constraints>
+                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" sendsWholeSearchString="YES" id="b8R-cB-qac">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </searchFieldCell>
+                        <connections>
+                            <outlet property="delegate" destination="-2" id="3Cn-zG-PAc"/>
+                            <outlet property="nextKeyView" destination="JW2-j0-Voo" id="rNV-Sd-fQQ"/>
+                        </connections>
+                    </searchField>
+                    <textField toolTip="The filename mask is invalid" focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3as-dG-HXy">
+                        <rect key="frame" x="506" y="657" width="23" height="16"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="⚠️" id="Y1K-uR-Va0">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="-2" name="hidden" keyPath="self.filenameMaskIsOk" id="0P0-CL-yFg"/>
+                        </connections>
+                    </textField>
+                    <searchField toolTip="^T" wantsLayer="YES" focusRingType="none" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TQe-Ao-p2i">
+                        <rect key="frame" x="250" y="570" width="250" height="22"/>
+                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" sendsWholeSearchString="YES" id="e9j-ny-tsJ">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </searchFieldCell>
+                        <connections>
+                            <outlet property="delegate" destination="-2" id="iHq-Ds-Cmm"/>
+                        </connections>
+                    </searchField>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WTz-uI-fN2">
+                        <rect key="frame" x="364" y="540" width="59" height="25"/>
+                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="kh9-Bc-dmG">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" id="8sA-yU-MON">
+                                <items>
+                                    <menuItem title="b" id="Tt9-8O-AZV">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="Kb" tag="1" id="WY5-uo-vrc">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="Mb" tag="2" id="c22-DH-E7c">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="Gb" tag="3" id="OhY-jN-05K">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="52" id="AsA-8M-hpt"/>
+                        </constraints>
+                        <connections>
+                            <action selector="onSearchSettingsUIChanged:" target="-2" id="8Qw-lG-3Q5"/>
+                            <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="yNV-ER-J5z">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                            <outlet property="nextKeyView" destination="03U-A8-eOk" id="qvG-yh-XA5"/>
+                        </connections>
+                    </popUpButton>
                 </subviews>
                 <constraints>
                     <constraint firstItem="NVP-CR-YO4" firstAttribute="leading" secondItem="XFM-mL-fme" secondAttribute="trailing" constant="12" symbolic="YES" id="3SZ-Ca-uaY"/>
-                    <constraint firstItem="axX-0L-v6g" firstAttribute="top" secondItem="3im-V9-my6" secondAttribute="bottom" constant="8" symbolic="YES" id="43f-vg-Mzk"/>
+                    <constraint firstItem="NWO-0P-f1V" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="3mv-gM-pWl"/>
+                    <constraint firstItem="Mrn-CD-zhD" firstAttribute="top" secondItem="JW2-j0-Voo" secondAttribute="bottom" constant="4" id="4JX-c1-JNF"/>
                     <constraint firstItem="40b-pd-d3f" firstAttribute="baseline" secondItem="g6m-zK-tE9" secondAttribute="baseline" id="7mH-JL-ILg"/>
+                    <constraint firstItem="kfR-KH-AUs" firstAttribute="leading" secondItem="TQe-Ao-p2i" secondAttribute="leading" id="8re-A7-kyg"/>
                     <constraint firstItem="g6m-zK-tE9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="rT5-dE-JF7" secondAttribute="trailing" constant="8" symbolic="YES" id="9J0-YV-1Ay"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="WTz-uI-fN2" secondAttribute="trailing" constant="20" symbolic="YES" id="9eZ-6K-REM"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="JW2-j0-Voo" secondAttribute="trailing" constant="20" symbolic="YES" id="APt-Ob-8RA"/>
+                    <constraint firstItem="rhf-af-9N3" firstAttribute="top" secondItem="Mrn-CD-zhD" secondAttribute="bottom" constant="4" id="B6S-ZM-Tma"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="rhf-af-9N3" secondAttribute="trailing" constant="20" symbolic="YES" id="Cwr-8H-ivK"/>
+                    <constraint firstItem="Mrn-CD-zhD" firstAttribute="leading" secondItem="JW2-j0-Voo" secondAttribute="leading" id="EAY-uk-AVm"/>
                     <constraint firstItem="00I-4I-INo" firstAttribute="leading" secondItem="40b-pd-d3f" secondAttribute="trailing" constant="12" symbolic="YES" id="EjG-pB-ubm"/>
+                    <constraint firstItem="2em-D1-cWh" firstAttribute="centerX" secondItem="2" secondAttribute="centerX" constant="64" id="Gco-yZ-uXg"/>
+                    <constraint firstItem="kfR-KH-AUs" firstAttribute="top" secondItem="TQe-Ao-p2i" secondAttribute="bottom" constant="6" id="HwU-Uw-xCe"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="3as-dG-HXy" secondAttribute="trailing" constant="20" symbolic="YES" id="Ipq-gb-SG4"/>
+                    <constraint firstItem="JW2-j0-Voo" firstAttribute="top" secondItem="2em-D1-cWh" secondAttribute="bottom" constant="4" id="LNQ-iq-pAG"/>
+                    <constraint firstItem="TQe-Ao-p2i" firstAttribute="leading" secondItem="2em-D1-cWh" secondAttribute="leading" id="M9i-kL-09L"/>
+                    <constraint firstItem="rhf-af-9N3" firstAttribute="baseline" secondItem="w87-Kl-zeY" secondAttribute="baseline" id="MMc-FI-HDv"/>
                     <constraint firstItem="40b-pd-d3f" firstAttribute="baseline" secondItem="NVP-CR-YO4" secondAttribute="baseline" id="PI7-1y-g7p"/>
+                    <constraint firstItem="jb7-tj-7W9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="PhX-38-e0A"/>
                     <constraint firstItem="40b-pd-d3f" firstAttribute="baseline" secondItem="00I-4I-INo" secondAttribute="baseline" id="QtB-9M-dJj"/>
+                    <constraint firstItem="WTz-uI-fN2" firstAttribute="leading" secondItem="a2f-4v-JJC" secondAttribute="trailing" constant="8" symbolic="YES" id="QvI-gX-tlx"/>
+                    <constraint firstItem="3as-dG-HXy" firstAttribute="firstBaseline" secondItem="2em-D1-cWh" secondAttribute="firstBaseline" id="RXw-tj-Lnu"/>
                     <constraint firstItem="WmK-6C-oal" firstAttribute="baseline" secondItem="XFM-mL-fme" secondAttribute="baseline" id="Rpx-RL-jGV"/>
+                    <constraint firstItem="a2f-4v-JJC" firstAttribute="leading" secondItem="kfR-KH-AUs" secondAttribute="trailing" constant="8" symbolic="YES" id="SQv-oh-qbm"/>
                     <constraint firstItem="WmK-6C-oal" firstAttribute="leading" secondItem="axX-0L-v6g" secondAttribute="leading" id="SvC-j3-psK"/>
                     <constraint firstItem="40b-pd-d3f" firstAttribute="leading" secondItem="NVP-CR-YO4" secondAttribute="trailing" constant="12" symbolic="YES" id="SxT-wZ-TiJ"/>
                     <constraint firstItem="VVb-jD-bRB" firstAttribute="trailing" secondItem="axX-0L-v6g" secondAttribute="trailing" id="TLb-TT-2Zi"/>
+                    <constraint firstItem="rhf-af-9N3" firstAttribute="leading" secondItem="w87-Kl-zeY" secondAttribute="trailing" constant="8" symbolic="YES" id="Teu-dA-D4F"/>
+                    <constraint firstItem="TQe-Ao-p2i" firstAttribute="trailing" secondItem="2em-D1-cWh" secondAttribute="trailing" id="Tym-y1-uyz"/>
+                    <constraint firstItem="TQe-Ao-p2i" firstAttribute="top" secondItem="rhf-af-9N3" secondAttribute="bottom" constant="6" id="VOm-UY-wo8"/>
+                    <constraint firstItem="O0G-eo-ej9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="Vqa-Vf-L4N"/>
+                    <constraint firstItem="TQe-Ao-p2i" firstAttribute="leading" secondItem="O0G-eo-ej9" secondAttribute="trailing" constant="8" symbolic="YES" id="XHO-wu-Hhh"/>
                     <constraint firstItem="XFM-mL-fme" firstAttribute="baseline" secondItem="40b-pd-d3f" secondAttribute="baseline" id="Y7X-RC-ZeI"/>
                     <constraint firstAttribute="trailing" secondItem="axX-0L-v6g" secondAttribute="trailing" constant="20" symbolic="YES" id="Y9I-hS-b2T"/>
                     <constraint firstItem="40b-pd-d3f" firstAttribute="top" secondItem="axX-0L-v6g" secondAttribute="bottom" constant="20" symbolic="YES" id="YDo-HV-w6L"/>
-                    <constraint firstItem="3im-V9-my6" firstAttribute="top" secondItem="2" secondAttribute="top" id="atJ-OV-YLN"/>
+                    <constraint firstItem="JW2-j0-Voo" firstAttribute="leading" secondItem="2em-D1-cWh" secondAttribute="leading" constant="6" id="YL5-SW-wJJ"/>
+                    <constraint firstItem="2em-D1-cWh" firstAttribute="firstBaseline" secondItem="jb7-tj-7W9" secondAttribute="firstBaseline" id="Ymo-Ei-7Fj"/>
+                    <constraint firstItem="a2f-4v-JJC" firstAttribute="firstBaseline" secondItem="kfR-KH-AUs" secondAttribute="firstBaseline" id="c4A-oi-o6s"/>
+                    <constraint firstItem="w87-Kl-zeY" firstAttribute="leading" secondItem="Mrn-CD-zhD" secondAttribute="leading" id="cEC-kq-uqO"/>
                     <constraint firstAttribute="bottom" secondItem="00I-4I-INo" secondAttribute="bottom" constant="20" symbolic="YES" id="dgX-2Y-QXz"/>
                     <constraint firstAttribute="trailing" secondItem="00I-4I-INo" secondAttribute="trailing" constant="20" symbolic="YES" id="f0v-6e-fOK"/>
                     <constraint firstItem="axX-0L-v6g" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="g2D-tB-Ab3"/>
+                    <constraint firstItem="kfR-KH-AUs" firstAttribute="leading" secondItem="NWO-0P-f1V" secondAttribute="trailing" constant="8" symbolic="YES" id="jeY-7j-sba"/>
                     <constraint firstItem="XFM-mL-fme" firstAttribute="leading" secondItem="g6m-zK-tE9" secondAttribute="trailing" constant="12" symbolic="YES" id="jzp-v2-sjK"/>
                     <constraint firstItem="WmK-6C-oal" firstAttribute="baseline" secondItem="rT5-dE-JF7" secondAttribute="baseline" id="kDR-1I-YwO"/>
+                    <constraint firstItem="TQe-Ao-p2i" firstAttribute="firstBaseline" secondItem="O0G-eo-ej9" secondAttribute="firstBaseline" id="msb-jf-ydO"/>
+                    <constraint firstItem="3as-dG-HXy" firstAttribute="leading" secondItem="2em-D1-cWh" secondAttribute="trailing" constant="8" symbolic="YES" id="n7h-Mi-3tL"/>
                     <constraint firstItem="rT5-dE-JF7" firstAttribute="leading" secondItem="WmK-6C-oal" secondAttribute="trailing" constant="4" id="onO-Nr-1kq"/>
-                    <constraint firstAttribute="trailing" secondItem="3im-V9-my6" secondAttribute="trailing" id="uCE-oa-5Lt"/>
-                    <constraint firstItem="3im-V9-my6" firstAttribute="leading" secondItem="2" secondAttribute="leading" id="wkq-7q-Iab"/>
+                    <constraint firstItem="WTz-uI-fN2" firstAttribute="centerY" secondItem="kfR-KH-AUs" secondAttribute="centerY" id="qU9-nl-6RA"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Mrn-CD-zhD" secondAttribute="trailing" constant="20" symbolic="YES" id="rRB-eV-yMM"/>
+                    <constraint firstItem="axX-0L-v6g" firstAttribute="top" secondItem="kfR-KH-AUs" secondAttribute="bottom" constant="16" id="sQH-n2-rGm"/>
+                    <constraint firstItem="NWO-0P-f1V" firstAttribute="firstBaseline" secondItem="kfR-KH-AUs" secondAttribute="firstBaseline" id="tMc-wk-a8g"/>
+                    <constraint firstItem="2em-D1-cWh" firstAttribute="top" secondItem="2" secondAttribute="top" constant="20" id="tQv-fV-CNH"/>
+                    <constraint firstItem="2em-D1-cWh" firstAttribute="leading" secondItem="jb7-tj-7W9" secondAttribute="trailing" constant="8" symbolic="YES" id="z5p-63-Jjj"/>
                     <constraint firstItem="WmK-6C-oal" firstAttribute="top" secondItem="VVb-jD-bRB" secondAttribute="bottom" constant="4" id="zSk-yB-P5W"/>
                     <constraint firstItem="VVb-jD-bRB" firstAttribute="leading" secondItem="axX-0L-v6g" secondAttribute="leading" id="zsS-VA-bSD"/>
                 </constraints>

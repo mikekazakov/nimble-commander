@@ -10,6 +10,9 @@ Builds Nimble Commander with the `NimbleCommander-NonMAS` scheme / `Release` con
 `xcodebuild`, `xcpretty` and `create-dmg` must be available in the environment in order for this script to run.  
 It also requires the codesigning certificate to be properly signed.  
 
+## `build_release.sh`  
+Same a `build_nightly.sh`, but creates a release build. 
+
 ## `build_unsigned.sh`
 Builds Nimble Commander with the `NimbleCommander-Unsigned` scheme / `Release` configuration and packages the runnable build into a `.dmg` image.  
 `xcodebuild`, `xcpretty` and `create-dmg` must be available in the environment in order for this script to run.  

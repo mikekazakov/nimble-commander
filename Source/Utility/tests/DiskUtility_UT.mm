@@ -177,7 +177,7 @@ TEST_CASE(PREFIX "The system has volumes for both Data and System roles")
     bool has_data = false;
     bool has_system = false;
 
-    for( auto container_name : tree.ContainersNames() ) {
+    for( const auto &container_name : tree.ContainersNames() ) {
         const auto data = tree.FindVolumesInContainerWithRole(container_name, APFSTree::Role::Data);
         if( data && !data->empty() )
             has_data = true;

@@ -283,7 +283,7 @@ std::vector<unsigned> DirectoryPathAutoCompletionImpl::ListDirsWithPrefix(const 
     const auto prefix = [NSString stringWithUTF8StdString:_prefix];
     const auto range = NSMakeRange(0, prefix.length);
 
-    for( auto i : _listing ) {
+    for( const auto &i : _listing ) {
 
         if( !i.IsDir() )
             continue;

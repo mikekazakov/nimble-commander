@@ -92,7 +92,7 @@ using namespace nc::ops;
 
     NSButton *last = nil;
     const auto content_view = self.window.contentView;
-    for( auto p : m_Buttons ) {
+    for( const auto &p : m_Buttons ) {
         NSButton *button = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
         button.translatesAutoresizingMaskIntoConstraints = false;
         button.buttonType = NSButtonTypeMomentaryPushIn;

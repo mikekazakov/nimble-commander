@@ -294,7 +294,7 @@ TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
     const auto dir3 = dir.directory / "Blackmore's Night" / "";
     const auto dir4 = dir.directory / U"Сектор Газа" / "";
     const auto dir5 = dir.directory / U"😀🍻" / "";
-    for( auto d : {dir2, dir3, dir4, dir5} )
+    for( const auto &d : {dir2, dir3, dir4, dir5} )
         std::filesystem::create_directory(d);
 
     AtomicHolder<std::string> buffer_dump;

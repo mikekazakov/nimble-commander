@@ -15,7 +15,7 @@ static std::vector<unsigned> ListDirsWithPrefix(const VFSListing &_listing, cons
     NSString *prefix = [NSString stringWithUTF8StdString:_prefix];
     NSRange range = NSMakeRange(0, prefix.length);
 
-    for( auto i : _listing ) {
+    for( const auto &i : _listing ) {
 
         if( !i.IsDir() )
             continue;

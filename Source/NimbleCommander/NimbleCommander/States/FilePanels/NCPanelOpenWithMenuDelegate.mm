@@ -51,6 +51,7 @@ static void SortAndPurgeDuplicateHandlers(std::vector<LaunchServiceHandler> &_ha
 static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, const UTIDB &_db)
 {
     std::vector<LauchServicesHandlers> per_item_handlers;
+    per_item_handlers.reserve(_items.size());
     for( auto &i : _items )
         per_item_handlers.emplace_back(i, _db);
 
@@ -321,6 +322,7 @@ static void ShowOpenPanel(NSOpenPanel *_panel, NSWindow *_window, std::function<
         });
         if( same_host ) {
             std::vector<std::string> items;
+            items.reserve(source_items.size());
             for( auto &i : source_items )
                 items.emplace_back(i.Path());
             m_FileOpener->Open(items, source_items.front().Host(), _handler.Identifier(), self.target);

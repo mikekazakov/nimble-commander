@@ -902,6 +902,7 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
         m_TagsStorage->Set(m_Tags);
         [self.tagsTable reloadData];
         std::vector<std::string> labels;
+        labels.reserve(added.size());
         for( auto &tag : added )
             labels.push_back(fmt::format("“{}”", tag.Label()));
 

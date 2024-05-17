@@ -414,17 +414,27 @@ static constinit std::pair<const char*, const char8_t*> g_DefaultShortcuts[] = {
 };
 // clang-format on
 
+template <size_t size, typename T, size_t... indexes>
+static constexpr auto make_array_n_impl(T &&value, std::index_sequence<indexes...>)
+{
+    return std::array<std::decay_t<T>, size>{(static_cast<void>(indexes), value)..., std::forward<T>(value)};
+}
+
+template <size_t size, typename T>
+static constexpr auto make_array_n(T &&value)
+{
+    return make_array_n_impl<size>(std::forward<T>(value), std::make_index_sequence<size - 1>{});
+}
+
 static constinit const auto g_ActionToTag = [] {
-    std::pair<frozen::string, int> items[std::size(g_ActionsTags)] = {
-        [0 ... std::size(g_ActionsTags) - 1] = {frozen::string(""), 0}};
+    auto items = make_array_n<std::size(g_ActionsTags)>(std::pair<frozen::string, int>(frozen::string(""), 0));
     for( size_t i = 0; i < std::size(g_ActionsTags); ++i )
         items[i] = std::pair<frozen::string, int>(g_ActionsTags[i].first, g_ActionsTags[i].second);
     return frozen::make_unordered_map(items);
 }();
 
 static constinit const auto g_TagToAction = [] {
-    std::pair<int, frozen::string> items[std::size(g_ActionsTags)] = {
-        [0 ... std::size(g_ActionsTags) - 1] = {0, frozen::string("")}};
+    auto items = make_array_n<std::size(g_ActionsTags)>(std::pair<int, frozen::string>(0, frozen::string("")));
     for( size_t i = 0; i < std::size(g_ActionsTags); ++i )
         items[i] = std::pair<int, frozen::string>(g_ActionsTags[i].second, g_ActionsTags[i].first);
     return frozen::make_unordered_map(items);

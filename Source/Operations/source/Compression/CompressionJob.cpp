@@ -518,7 +518,7 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
 
         const auto directory_node = &_ctx.filenames.back();
         for( const std::string &filename : directory_entries )
-            if( !ScanItem(_full_path + "/" + filename,
+            if( !ScanItem(fmt::format("{}/{}", _full_path, filename),
                           filename,
                           meta.base_vfs_indx,
                           meta.base_path_indx,

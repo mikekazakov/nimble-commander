@@ -119,6 +119,7 @@ static void PerformOpeningFilesWithDefaultHandler(const std::vector<VFSListingIt
             all_of(begin(_items), end(_items), [&](const auto &i) { return i.Host() == _items.front().Host(); });
         if( same_host ) {
             std::vector<std::string> items;
+            items.reserve(_items.size());
             for( auto &i : _items )
                 items.emplace_back(i.Path());
             _file_opener.Open(items, _items.front().Host(), nil, _target);

@@ -155,6 +155,7 @@ static std::vector<unsigned> ListDirsWithPrefix(const VFSListing &_listing, cons
 - (NSMenu *)buildMenuWithElements:(const std::vector<unsigned> &)_inds ofListing:(const VFSListing &)_listing
 {
     std::vector<NSString *> filenames;
+    filenames.reserve(_inds.size());
     for( auto i : _inds )
         filenames.emplace_back(_listing.FilenameNS(i));
 

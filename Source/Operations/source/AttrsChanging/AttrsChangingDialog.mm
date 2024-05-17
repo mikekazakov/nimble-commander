@@ -699,6 +699,7 @@ static auto optional_common_value(_InputIterator _first, _InputIterator _last, _
 static AttrsChangingCommand::Permissions ExtractCommonPermissions(const std::vector<VFSListingItem> &_items)
 {
     std::vector<uint16_t> modes;
+    modes.reserve(_items.size());
     for( const auto &i : _items )
         modes.emplace_back(i.UnixMode());
 
@@ -732,6 +733,7 @@ static AttrsChangingCommand::Ownage ExtractCommonOwnage(const std::vector<VFSLis
 static AttrsChangingCommand::Flags ExtractCommonFlags(const std::vector<VFSListingItem> &_items)
 {
     std::vector<uint32_t> flags;
+    flags.reserve(_items.size());
     for( const auto &i : _items )
         flags.emplace_back(i.UnixFlags());
 

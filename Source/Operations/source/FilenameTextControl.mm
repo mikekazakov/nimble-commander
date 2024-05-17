@@ -135,6 +135,7 @@
                       forCurrentPath:(const std::string &)_current_path
 {
     std::vector<NSString *> directories;
+    directories.reserve(_suggestions.size());
     for( const auto &suggestion : _suggestions )
         directories.emplace_back([NSString stringWithUTF8StdString:suggestion]);
 
@@ -211,6 +212,7 @@ std::vector<std::string> DirectoryPathAutoCompletionImpl::PossibleCompletions(co
         const auto indices = ListDirsWithPrefix(*listing, filename);
 
         std::vector<std::string> directories;
+        directories.reserve(indices.size());
         for( auto index : indices )
             directories.emplace_back(listing->Filename(index));
 

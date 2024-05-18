@@ -63,7 +63,7 @@ static const auto g_ViewAppearTimeout = 100ms;
 
     std::vector<NCOpsBriefOperationViewController *> new_views;
     new_views.reserve(_operations.size());
-    for( auto o : _operations )
+    for( const auto &o : _operations )
         if( const auto existing = find_existing(o) ) {
             new_views.emplace_back(existing);
         }

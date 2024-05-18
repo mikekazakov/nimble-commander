@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Duplicate.h"
 #include "../PanelController.h"
 #include <VFS/VFS.h>
@@ -14,6 +14,7 @@
 #include <Config/Config.h>
 #include "Helpers.h"
 #include <robin_hood.h>
+#include <fmt/format.h>
 
 namespace nc::panel::actions {
 
@@ -137,14 +138,15 @@ static std::string FindFreeFilenameToDuplicateIn(const VFSListingItem &_item,
 
     if( duplicate_index < 0 )
         for( int i = 1; i < max_duplicates; ++i ) {
-            const auto target = filename + " " + g_Suffix + (i == 1 ? "" : " " + std::to_string(i)) + extension;
-            if( _filenames.count(ProduceFormCLowercase(target)) == 0 )
+            const auto target =
+                fmt::format("{} {}{}{}", filename, g_Suffix, (i == 1 ? ""s : " "s + std::to_string(i)), extension);
+            if( !_filenames.contains(ProduceFormCLowercase(target)) )
                 return target;
         }
     else
         for( int i = duplicate_index + 1; i < max_duplicates; ++i ) {
-            auto target = filename_wo_index + " " + std::to_string(i) + extension;
-            if( _filenames.count(ProduceFormCLowercase(target)) == 0 )
+            const auto target = fmt::format("{} {}{}", filename_wo_index, i, extension);
+            if( !_filenames.contains(ProduceFormCLowercase(target)) )
                 return target;
         }
 

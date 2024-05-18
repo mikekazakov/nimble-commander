@@ -1,5 +1,6 @@
-// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Helpers.h"
+#include <fmt/format.h>
 
 namespace nc::ops::copying {
 
@@ -19,7 +20,7 @@ FindNonExistingItemPath(const std::string &_orig_existing_path, VFSHost &_host, 
     for( int check_index = 2; /*noop*/; ++check_index ) {
         if( _cancel_checker && _cancel_checker() )
             return "";
-        auto path = epilog + std::to_string(check_index) + prologue;
+        auto path = fmt::format("{}{}{}", epilog, check_index, prologue);
         if( _host.Exists(path.c_str(), _cancel_checker) == false ) {
             if( _cancel_checker && _cancel_checker() )
                 return "";

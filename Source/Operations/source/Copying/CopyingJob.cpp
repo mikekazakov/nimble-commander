@@ -16,6 +16,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/xattr.h>
+#include <fmt/format.h>
 
 using namespace nc::ops::copying;
 
@@ -670,7 +671,7 @@ std::tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
                             return StepResult::Stop;
 
                         // go into recursion
-                        scan_item(my_indx, _full_relative_path + '/' + entry, entry);
+                        scan_item(my_indx, fmt::format("{}/{}", _full_relative_path, entry), entry);
                     }
                 }
             }

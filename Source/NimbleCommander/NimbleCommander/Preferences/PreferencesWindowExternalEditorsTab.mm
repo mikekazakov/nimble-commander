@@ -50,7 +50,7 @@ static bool AskUserToDeleteEditor()
         m_ExternalEditorsStorage = &_storage;
         auto v = m_ExternalEditorsStorage->AllExternalEditors();
         m_Editors = [NSMutableArray new];
-        for( auto i : v ) {
+        for( const auto &i : v ) {
             ExternalEditorInfo *ed = [ExternalEditorInfo new];
             ed.name = [NSString stringWithUTF8StdString:i->Name()];
             ed.path = [NSString stringWithUTF8StdString:i->Path()];

@@ -68,6 +68,7 @@ public:
 
 private:
     std::string_view m_Text;
+    std::vector<uint32_t> m_Lines;
     std::vector<char> m_Styles;
     Sci_Position m_StylingPosition = 0;
 };

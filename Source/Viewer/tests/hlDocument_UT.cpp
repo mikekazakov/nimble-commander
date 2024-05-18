@@ -51,6 +51,12 @@ TEST_CASE(PREFIX "Check integration with a lexer")
          "LLLLL"},
         {"\"hi!\"",
          "SSSSS"},
+        {"//line 1\x0Ahi2;\x0A//line 3\x0Ahi4",
+         "LLLLLLLLL" "IIIOD" "LLLLLLLLL" "III"
+        },
+        {"\x0A\x0A\x0A\x0A!",
+         "D" "D" "D" "D" "O"
+        },
     };
     // clang-format on
 

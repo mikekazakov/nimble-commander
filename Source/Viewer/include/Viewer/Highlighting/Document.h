@@ -12,33 +12,33 @@
 
 namespace nc::viewer::hl {
 
-class Document : public Scintilla::IDocument
+class Document final : public Scintilla::IDocument
 {
 public:
     Document(std::string_view _text);
     virtual ~Document();
 
-    char StyleAt(Sci_Position position) const override;
+    char StyleAt(Sci_Position position) const noexcept override;
 
-    int GetLevel(Sci_Position line) const override;
+    int GetLevel(Sci_Position line) const noexcept override;
 
-    int SetLevel(Sci_Position line, int level) override;
+    int SetLevel(Sci_Position line, int level) noexcept override;
 
-    int GetLineState(Sci_Position line) const override;
+    int GetLineState(Sci_Position line) const noexcept override;
 
-    int SetLineState(Sci_Position line, int state) override;
+    int SetLineState(Sci_Position line, int state) noexcept override;
 
-    int CodePage() const override;
+    int CodePage() const noexcept override;
 
-    bool IsDBCSLeadByte(char ch) const override;
+    bool IsDBCSLeadByte(char ch) const noexcept override;
 
-    int GetLineIndentation(Sci_Position line) override;
+    int GetLineIndentation(Sci_Position line) noexcept override;
 
-    Sci_Position LineEnd(Sci_Position line) const override;
+    Sci_Position LineEnd(Sci_Position line) const noexcept override;
 
-    Sci_Position GetRelativePosition(Sci_Position positionStart, Sci_Position characterOffset) const override;
+    Sci_Position GetRelativePosition(Sci_Position positionStart, Sci_Position characterOffset) const noexcept override;
 
-    int GetCharacterAndWidth(Sci_Position position, Sci_Position *pWidth) const override;
+    int GetCharacterAndWidth(Sci_Position position, Sci_Position *pWidth) const noexcept override;
 
     int Version() const noexcept override;
 

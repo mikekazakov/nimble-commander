@@ -57,6 +57,15 @@ TEST_CASE(PREFIX "Check integration with a lexer")
         {"\x0A\x0A\x0A\x0A!",
          "D" "D" "D" "D" "O"
         },
+        {"int привет=10;",
+         "WWWDIIIIIIIIIIIIONNO"
+        },
+        {"int ꮚ=10;",
+         "WWWDIIIONNO"
+        },
+        {"int 🤡=10;",
+         "WWWDIIIIONNO"
+        },
     };
     // clang-format on
 

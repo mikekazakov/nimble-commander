@@ -27,3 +27,4 @@ set -e
 ./pstld/bootstrap.sh
 ./re2/bootstrap.sh
 ./libcxxbackport/bootstrap.sh
+./lexilla/bootstrap.sh

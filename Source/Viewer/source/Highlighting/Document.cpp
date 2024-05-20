@@ -84,6 +84,8 @@ Document::Document(const std::string_view _text) : m_Text(_text), m_Styles(_text
                 m_Lines.push_back(static_cast<uint32_t>(i + 1));
         }
     }
+
+    m_LineStates.resize(m_Lines.size() + 1);
 }
 
 Document::~Document() = default;
@@ -123,16 +125,14 @@ int Document::SetLevel(Sci_Position /*_line*/, int /*_level*/) noexcept
     return 0;
 }
 
-int Document::GetLineState(Sci_Position /*_line*/) const noexcept
+int Document::GetLineState(Sci_Position _line) const noexcept
 {
-    abort();
-    return 0;
+    return m_LineStates.at(_line);
 }
 
-int Document::SetLineState(Sci_Position /*_line*/, int /*_state*/) noexcept
+int Document::SetLineState(Sci_Position _line, int _state) noexcept
 {
-    abort();
-    return 0;
+    return m_LineStates.at(_line) = _state;
 }
 
 int Document::GetLineIndentation(Sci_Position /*_line*/) noexcept

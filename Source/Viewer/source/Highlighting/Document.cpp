@@ -253,4 +253,9 @@ void Document::ChangeLexerState(Sci_Position /*_start*/, Sci_Position /*_end*/) 
     abort();
 }
 
+std::span<const char> Document::Styles() const noexcept
+{
+    return m_Styles;
+}
+
 } // namespace nc::viewer::hl

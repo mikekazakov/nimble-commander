@@ -14,6 +14,14 @@
 		CF5BF7832BF90FF20057C92E /* Document.h in Headers */ = {isa = PBXBuildFile; fileRef = CF5BF7822BF90FF20057C92E /* Document.h */; };
 		CF5BF7862BF910100057C92E /* Document.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7852BF910100057C92E /* Document.cpp */; };
 		CF5BF7892BF922DE0057C92E /* hlDocument_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7872BF9209E0057C92E /* hlDocument_UT.cpp */; };
+		CF5BF78B2BFA12F70057C92E /* Style.h in Headers */ = {isa = PBXBuildFile; fileRef = CF5BF78A2BFA12F70057C92E /* Style.h */; };
+		CF5BF78D2BFA13A80057C92E /* Style.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF78C2BFA13A80057C92E /* Style.cpp */; };
+		CF5BF78F2BFA19F50057C92E /* hlStyle_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF78E2BFA19F50057C92E /* hlStyle_UT.cpp */; };
+		CF5BF7922BFBC9F90057C92E /* LexerSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7912BFBC9F90057C92E /* LexerSettings.cpp */; };
+		CF5BF7942BFBCA030057C92E /* LexerSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = CF5BF7932BFBCA030057C92E /* LexerSettings.h */; };
+		CF5BF7962BFBD9480057C92E /* Highlighter.h in Headers */ = {isa = PBXBuildFile; fileRef = CF5BF7952BFBD9480057C92E /* Highlighter.h */; };
+		CF5BF7982BFBD9510057C92E /* Highlighter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7972BFBD9510057C92E /* Highlighter.cpp */; };
+		CF5BF79A2BFBDF1F0057C92E /* hlHighlighter_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7992BFBDF1F0057C92E /* hlHighlighter_UT.cpp */; };
 		CF5C1D36255EE63000ADE703 /* InternalViewerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B0821FE4F430043A26D /* InternalViewerController.xib */; };
 		CF5C1D3A255EE63C00ADE703 /* InternalViewerToolbar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B1B2205DE520043A26D /* InternalViewerToolbar.xib */; };
 		CF5C1D3E255EE63F00ADE703 /* InternalViewerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */; };
@@ -91,6 +99,14 @@
 		CF5BF7822BF90FF20057C92E /* Document.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Document.h; path = include/Viewer/Highlighting/Document.h; sourceTree = "<group>"; };
 		CF5BF7852BF910100057C92E /* Document.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Document.cpp; path = source/Highlighting/Document.cpp; sourceTree = "<group>"; };
 		CF5BF7872BF9209E0057C92E /* hlDocument_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hlDocument_UT.cpp; path = tests/hlDocument_UT.cpp; sourceTree = "<group>"; };
+		CF5BF78A2BFA12F70057C92E /* Style.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Style.h; path = include/Viewer/Highlighting/Style.h; sourceTree = "<group>"; };
+		CF5BF78C2BFA13A80057C92E /* Style.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Style.cpp; path = source/Highlighting/Style.cpp; sourceTree = "<group>"; };
+		CF5BF78E2BFA19F50057C92E /* hlStyle_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hlStyle_UT.cpp; path = tests/hlStyle_UT.cpp; sourceTree = "<group>"; };
+		CF5BF7912BFBC9F90057C92E /* LexerSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LexerSettings.cpp; path = source/Highlighting/LexerSettings.cpp; sourceTree = "<group>"; };
+		CF5BF7932BFBCA030057C92E /* LexerSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LexerSettings.h; path = include/Viewer/Highlighting/LexerSettings.h; sourceTree = "<group>"; };
+		CF5BF7952BFBD9480057C92E /* Highlighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Highlighter.h; path = include/Viewer/Highlighting/Highlighter.h; sourceTree = "<group>"; };
+		CF5BF7972BFBD9510057C92E /* Highlighter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Highlighter.cpp; path = source/Highlighting/Highlighter.cpp; sourceTree = "<group>"; };
+		CF5BF7992BFBDF1F0057C92E /* hlHighlighter_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hlHighlighter_UT.cpp; path = tests/hlHighlighter_UT.cpp; sourceTree = "<group>"; };
 		CF5C1D1D255ED68200ADE703 /* ViewerResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViewerResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF5C1D2C255ED7D300ADE703 /* ViewerResources.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ViewerResources.plist; path = resources/ViewerResources.plist; sourceTree = "<group>"; };
 		CF5C1D70255EEA5200ADE703 /* libViewer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libViewer.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -190,7 +206,10 @@
 		CF5BF7812BF90FDE0057C92E /* Highlighting */ = {
 			isa = PBXGroup;
 			children = (
+				CF5BF7952BFBD9480057C92E /* Highlighter.h */,
+				CF5BF7932BFBCA030057C92E /* LexerSettings.h */,
 				CF5BF7822BF90FF20057C92E /* Document.h */,
+				CF5BF78A2BFA12F70057C92E /* Style.h */,
 			);
 			name = Highlighting;
 			sourceTree = "<group>";
@@ -198,7 +217,10 @@
 		CF5BF7842BF90FFA0057C92E /* Highlighting */ = {
 			isa = PBXGroup;
 			children = (
+				CF5BF7972BFBD9510057C92E /* Highlighter.cpp */,
+				CF5BF7912BFBC9F90057C92E /* LexerSettings.cpp */,
 				CF5BF7852BF910100057C92E /* Document.cpp */,
+				CF5BF78C2BFA13A80057C92E /* Style.cpp */,
 			);
 			name = Highlighting;
 			sourceTree = "<group>";
@@ -320,6 +342,8 @@
 				CF24E1D1227F0B2400C166FA /* HexModeLayout_UT.cpp */,
 				CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */,
 				CF5BF7872BF9209E0057C92E /* hlDocument_UT.cpp */,
+				CF5BF7992BFBDF1F0057C92E /* hlHighlighter_UT.cpp */,
+				CF5BF78E2BFA19F50057C92E /* hlStyle_UT.cpp */,
 				CFD79B5822106E3C0043A26D /* Tests.cpp */,
 				CFD79B5722106E3B0043A26D /* Tests.h */,
 				CF13255E2225FB610097F9A1 /* TextModeFrame_UT.cpp */,
@@ -355,7 +379,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF5BF78B2BFA12F70057C92E /* Style.h in Headers */,
+				CF5BF7962BFBD9480057C92E /* Highlighter.h in Headers */,
 				CF46FEFF255EF4480095FC73 /* Internal.h in Headers */,
+				CF5BF7942BFBCA030057C92E /* LexerSettings.h in Headers */,
 				CF5BF7832BF90FF20057C92E /* Document.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -492,6 +519,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF5BF78D2BFA13A80057C92E /* Style.cpp in Sources */,
 				CF5BF7862BF910100057C92E /* Document.cpp in Sources */,
 				CF5C1D8B255EEA6A00ADE703 /* History.cpp in Sources */,
 				CF5C1D85255EEA6A00ADE703 /* Internal.mm in Sources */,
@@ -510,8 +538,10 @@
 				CF5C1D82255EEA6A00ADE703 /* ViewerSheet.mm in Sources */,
 				CF5C1D90255EEA6A00ADE703 /* TextModeFrame.mm in Sources */,
 				CF5C1D80255EEA6A00ADE703 /* HexModeProcessing.cpp in Sources */,
+				CF5BF7922BFBC9F90057C92E /* LexerSettings.cpp in Sources */,
 				CF5C1D7A255EEA6A00ADE703 /* TextModeView.mm in Sources */,
 				CFA9998D26468A4300F72E93 /* Log.cpp in Sources */,
+				CF5BF7982BFBD9510057C92E /* Highlighter.cpp in Sources */,
 				CF5C1D86255EEA6A00ADE703 /* PreviewModeView.mm in Sources */,
 				CF5C1D7F255EEA6A00ADE703 /* HexModeView.mm in Sources */,
 			);
@@ -521,10 +551,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF5BF79A2BFBDF1F0057C92E /* hlHighlighter_UT.cpp in Sources */,
 				CF9BF90D226CF99000AD36D9 /* HexModeFrame_UT.cpp in Sources */,
 				CF61F2FC263D610A009FF900 /* TextMoveView_UT.mm in Sources */,
 				CF9BF9062269FD7000AD36D9 /* HexModeProcessing_UT.cpp in Sources */,
 				CFD79B6A22106F080043A26D /* TextProcessing_UT.cpp in Sources */,
+				CF5BF78F2BFA19F50057C92E /* hlStyle_UT.cpp in Sources */,
 				CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */,
 				CF1325622225FD630097F9A1 /* TextModeFrame_UT.cpp in Sources */,
 				CFD79B8422198DB50043A26D /* TextModeWorkingSet_UT.cpp in Sources */,

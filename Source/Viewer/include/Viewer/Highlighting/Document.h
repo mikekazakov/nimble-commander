@@ -66,6 +66,7 @@ public:
 
     void ChangeLexerState(Sci_Position start, Sci_Position end) noexcept override;
 
+    std::span<const char> Styles() const noexcept;
 private:
     std::string_view m_Text;
     std::vector<uint32_t> m_Lines;

@@ -90,3 +90,57 @@ on:
         CHECK(hl[i] == m.at(hl_exp[i]));
     }
 }
+
+TEST_CASE(PREFIX "Regular use with Bash lexer")
+{
+    LexerSettings set;
+    set.name = "bash";
+    set.wordlists.push_back("set if command then echo exit fi export");
+    set.mapping.SetMapping(SCE_SH_DEFAULT, Style::Default);
+    set.mapping.SetMapping(SCE_SH_ERROR, Style::Default);
+    set.mapping.SetMapping(SCE_SH_COMMENTLINE, Style::Comment);
+    set.mapping.SetMapping(SCE_SH_HERE_DELIM, Style::Comment);
+    set.mapping.SetMapping(SCE_SH_HERE_Q, Style::Comment);
+    set.mapping.SetMapping(SCE_SH_WORD, Style::Keyword);
+    set.mapping.SetMapping(SCE_SH_NUMBER, Style::Number);
+    set.mapping.SetMapping(SCE_SH_SCALAR, Style::Number);
+    set.mapping.SetMapping(SCE_SH_IDENTIFIER, Style::Identifier);
+    set.mapping.SetMapping(SCE_SH_OPERATOR, Style::Operator);
+    set.mapping.SetMapping(SCE_SH_BACKTICKS, Style::Operator);
+    set.mapping.SetMapping(SCE_SH_PARAM, Style::Identifier);
+    set.mapping.SetMapping(SCE_SH_STRING, Style::String);
+    set.mapping.SetMapping(SCE_SH_CHARACTER, Style::String);
+
+    const std::string src =
+        R"Z(#!/bin/sh
+set -e
+set -o pipefail
+if ! [ -x "$(command -v xcpretty)" ] ; then
+    echo 'xcpretty is not found, aborting. (https://github.com/xcpretty/xcpretty)'
+    exit -1
+fi
+
+# https://github.com/xcpretty/xcpretty/issues/48
+export LC_CTYPE=en_US.UTF-8)Z";
+
+    const std::string hl_exp = "CCCCCCCCCD"
+                               "WWWDIID"
+                               "WWWDIIDIIIIIIIID"
+                               "WWDODODWWDSSSSSSSSSSSSSSSSSSSSSSSSDODODWWWWD"
+                               "DDDDWWWWDSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSD"
+                               "DDDDWWWWDOND"
+                               "WWD"
+                               "D"
+                               "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCD"
+                               "WWWWWWDIIIIIIIIOIIIIIIIIIII";
+
+    REQUIRE(src.length() == hl_exp.length());
+
+    Highlighter highlighter(set);
+    std::vector<Style> hl = highlighter.Highlight(src);
+    REQUIRE(hl.size() == hl_exp.size());
+
+    for( size_t i = 0; i < hl.size(); ++i ) {
+        CHECK(hl[i] == m.at(hl_exp[i]));
+    }
+}

@@ -22,6 +22,7 @@
 		CF5BF7962BFBD9480057C92E /* Highlighter.h in Headers */ = {isa = PBXBuildFile; fileRef = CF5BF7952BFBD9480057C92E /* Highlighter.h */; };
 		CF5BF7982BFBD9510057C92E /* Highlighter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7972BFBD9510057C92E /* Highlighter.cpp */; };
 		CF5BF79A2BFBDF1F0057C92E /* hlHighlighter_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7992BFBDF1F0057C92E /* hlHighlighter_UT.cpp */; };
+		CF5BF79C2BFD39A60057C92E /* hlLexerSettings_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF79B2BFD39A60057C92E /* hlLexerSettings_UT.cpp */; };
 		CF5C1D36255EE63000ADE703 /* InternalViewerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B0821FE4F430043A26D /* InternalViewerController.xib */; };
 		CF5C1D3A255EE63C00ADE703 /* InternalViewerToolbar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B1B2205DE520043A26D /* InternalViewerToolbar.xib */; };
 		CF5C1D3E255EE63F00ADE703 /* InternalViewerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */; };
@@ -107,6 +108,7 @@
 		CF5BF7952BFBD9480057C92E /* Highlighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Highlighter.h; path = include/Viewer/Highlighting/Highlighter.h; sourceTree = "<group>"; };
 		CF5BF7972BFBD9510057C92E /* Highlighter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Highlighter.cpp; path = source/Highlighting/Highlighter.cpp; sourceTree = "<group>"; };
 		CF5BF7992BFBDF1F0057C92E /* hlHighlighter_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hlHighlighter_UT.cpp; path = tests/hlHighlighter_UT.cpp; sourceTree = "<group>"; };
+		CF5BF79B2BFD39A60057C92E /* hlLexerSettings_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hlLexerSettings_UT.cpp; path = tests/hlLexerSettings_UT.cpp; sourceTree = "<group>"; };
 		CF5C1D1D255ED68200ADE703 /* ViewerResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViewerResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF5C1D2C255ED7D300ADE703 /* ViewerResources.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ViewerResources.plist; path = resources/ViewerResources.plist; sourceTree = "<group>"; };
 		CF5C1D70255EEA5200ADE703 /* libViewer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libViewer.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -343,6 +345,7 @@
 				CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */,
 				CF5BF7872BF9209E0057C92E /* hlDocument_UT.cpp */,
 				CF5BF7992BFBDF1F0057C92E /* hlHighlighter_UT.cpp */,
+				CF5BF79B2BFD39A60057C92E /* hlLexerSettings_UT.cpp */,
 				CF5BF78E2BFA19F50057C92E /* hlStyle_UT.cpp */,
 				CFD79B5822106E3C0043A26D /* Tests.cpp */,
 				CFD79B5722106E3B0043A26D /* Tests.h */,
@@ -555,6 +558,7 @@
 				CF9BF90D226CF99000AD36D9 /* HexModeFrame_UT.cpp in Sources */,
 				CF61F2FC263D610A009FF900 /* TextMoveView_UT.mm in Sources */,
 				CF9BF9062269FD7000AD36D9 /* HexModeProcessing_UT.cpp in Sources */,
+				CF5BF79C2BFD39A60057C92E /* hlLexerSettings_UT.cpp in Sources */,
 				CFD79B6A22106F080043A26D /* TextProcessing_UT.cpp in Sources */,
 				CF5BF78F2BFA19F50057C92E /* hlStyle_UT.cpp in Sources */,
 				CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */,

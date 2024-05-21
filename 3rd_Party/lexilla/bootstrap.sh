@@ -59,3 +59,5 @@ cp ${TMP_DIR}/scintilla/include/*.h ./include/scintilla
 cp ${TMP_DIR}/lexilla/liblexilla.a ./lib/
 
 rm -rf ${TMP_DIR}
+
+./extract_names.sh ./include/lexilla/SciLexer.h > ./include/lexilla/SciLexerStyleNames.h

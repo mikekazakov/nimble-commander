@@ -13,6 +13,7 @@ libssh2         1.11.0
 lz4             1.9.4
 lzma(xz)        5.4.6
 lzo             2.10
+nlohmann        3.11.3
 openssl         1.1.1v
 pstld           head
 pugixml         1.14

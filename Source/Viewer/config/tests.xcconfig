@@ -1,2 +1,5 @@
 OTHER_LDFLAGS = $(inherited) -lVFS -lVFSIcon -lCUI -lConfig -lViewer -lUtility
 ONLY_ACTIVE_ARCH=YES
+LIBRARY_SEARCH_PATHS = $(inherited) $(BUILD_DIR)/$(CONFIGURATION)
+CONFIGURATION_BUILD_DIR=$(BUILD_DIR)/$(CONFIGURATION)/ViewerUT.app/Contents/MacOS
+INFOPLIST_FILE = tests/Info.plist

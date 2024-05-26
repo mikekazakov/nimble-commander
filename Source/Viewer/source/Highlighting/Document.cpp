@@ -250,7 +250,7 @@ void Document::DecorationFillRange(Sci_Position /*_position*/, int /*_value*/, S
 
 void Document::ChangeLexerState(Sci_Position /*_start*/, Sci_Position /*_end*/) noexcept
 {
-    abort();
+    // deliberately do nothing
 }
 
 std::span<const char> Document::Styles() const noexcept

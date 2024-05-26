@@ -23,6 +23,15 @@
 		CF5BF7982BFBD9510057C92E /* Highlighter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7972BFBD9510057C92E /* Highlighter.cpp */; };
 		CF5BF79A2BFBDF1F0057C92E /* hlHighlighter_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7992BFBDF1F0057C92E /* hlHighlighter_UT.cpp */; };
 		CF5BF79C2BFD39A60057C92E /* hlLexerSettings_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF79B2BFD39A60057C92E /* hlLexerSettings_UT.cpp */; };
+		CF5BF7AB2BFD48950057C92E /* Service.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7AA2BFD48950057C92E /* Service.cpp */; };
+		CF5BF7B02BFE86980057C92E /* Info.plist in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF5BF7AF2BFE855E0057C92E /* Info.plist */; };
+		CF5BF7B62BFE8A870057C92E /* Highlighter.xpc in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF5BF7A12BFD483D0057C92E /* Highlighter.xpc */; };
+		CF5BF7B92BFE8B540057C92E /* Client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7B82BFE8B540057C92E /* Client.cpp */; };
+		CF5BF7BD2BFFD71B0057C92E /* Document.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7852BF910100057C92E /* Document.cpp */; };
+		CF5BF7BE2BFFD7220057C92E /* Highlighter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7972BFBD9510057C92E /* Highlighter.cpp */; };
+		CF5BF7BF2BFFD7280057C92E /* LexerSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7912BFBC9F90057C92E /* LexerSettings.cpp */; };
+		CF5BF7C02BFFD72D0057C92E /* Style.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF78C2BFA13A80057C92E /* Style.cpp */; };
+		CF5BF7C22BFFDD240057C92E /* hlClient_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7C12BFFDD240057C92E /* hlClient_UT.cpp */; };
 		CF5C1D36255EE63000ADE703 /* InternalViewerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B0821FE4F430043A26D /* InternalViewerController.xib */; };
 		CF5C1D3A255EE63C00ADE703 /* InternalViewerToolbar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B1B2205DE520043A26D /* InternalViewerToolbar.xib */; };
 		CF5C1D3E255EE63F00ADE703 /* InternalViewerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */; };
@@ -66,17 +75,42 @@
 			remoteGlobalIDString = CF5C1D1C255ED68200ADE703;
 			remoteInfo = ViewerResources;
 		};
+		CF5BF7B12BFE8A100057C92E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFD79A5921F65A000043A26D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CF5BF7A02BFD483D0057C92E;
+			remoteInfo = Highlighter;
+		};
+		CF5BF7BA2BFFD6C90057C92E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFD79A5921F65A000043A26D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CF5C1D6F255EEA5200ADE703;
+			remoteInfo = Viewer;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		CFD79B4E22106E010043A26D /* CopyFiles */ = {
+		CF5BF7B52BFE8A630057C92E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			dstPath = ../XPCServices;
+			dstSubfolderSpec = 16;
 			files = (
+				CF5BF7B62BFE8A870057C92E /* Highlighter.xpc in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CFD79B4E22106E010043A26D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = ..;
+			dstSubfolderSpec = 16;
+			files = (
+				CF5BF7B02BFE86980057C92E /* Info.plist in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -109,6 +143,13 @@
 		CF5BF7972BFBD9510057C92E /* Highlighter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Highlighter.cpp; path = source/Highlighting/Highlighter.cpp; sourceTree = "<group>"; };
 		CF5BF7992BFBDF1F0057C92E /* hlHighlighter_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hlHighlighter_UT.cpp; path = tests/hlHighlighter_UT.cpp; sourceTree = "<group>"; };
 		CF5BF79B2BFD39A60057C92E /* hlLexerSettings_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hlLexerSettings_UT.cpp; path = tests/hlLexerSettings_UT.cpp; sourceTree = "<group>"; };
+		CF5BF7A12BFD483D0057C92E /* Highlighter.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = Highlighter.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF5BF7AA2BFD48950057C92E /* Service.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Service.cpp; path = source/Highlighting/Service.cpp; sourceTree = "<group>"; };
+		CF5BF7AC2BFE6B160057C92E /* Highlighter.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Highlighter.plist; path = resources/Highlighter.plist; sourceTree = "<group>"; };
+		CF5BF7AF2BFE855E0057C92E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = tests/Info.plist; sourceTree = "<group>"; };
+		CF5BF7B72BFE8B3B0057C92E /* Client.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Client.h; path = include/Viewer/Highlighting/Client.h; sourceTree = "<group>"; };
+		CF5BF7B82BFE8B540057C92E /* Client.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Client.cpp; path = source/Highlighting/Client.cpp; sourceTree = "<group>"; };
+		CF5BF7C12BFFDD240057C92E /* hlClient_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hlClient_UT.cpp; path = tests/hlClient_UT.cpp; sourceTree = "<group>"; };
 		CF5C1D1D255ED68200ADE703 /* ViewerResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViewerResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF5C1D2C255ED7D300ADE703 /* ViewerResources.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ViewerResources.plist; path = resources/ViewerResources.plist; sourceTree = "<group>"; };
 		CF5C1D70255EEA5200ADE703 /* libViewer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libViewer.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -180,6 +221,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		CF5BF79E2BFD483D0057C92E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CF5C1D1A255ED68200ADE703 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -208,9 +256,10 @@
 		CF5BF7812BF90FDE0057C92E /* Highlighting */ = {
 			isa = PBXGroup;
 			children = (
+				CF5BF7B72BFE8B3B0057C92E /* Client.h */,
+				CF5BF7822BF90FF20057C92E /* Document.h */,
 				CF5BF7952BFBD9480057C92E /* Highlighter.h */,
 				CF5BF7932BFBCA030057C92E /* LexerSettings.h */,
-				CF5BF7822BF90FF20057C92E /* Document.h */,
 				CF5BF78A2BFA12F70057C92E /* Style.h */,
 			);
 			name = Highlighting;
@@ -219,9 +268,11 @@
 		CF5BF7842BF90FFA0057C92E /* Highlighting */ = {
 			isa = PBXGroup;
 			children = (
+				CF5BF7B82BFE8B540057C92E /* Client.cpp */,
+				CF5BF7852BF910100057C92E /* Document.cpp */,
 				CF5BF7972BFBD9510057C92E /* Highlighter.cpp */,
 				CF5BF7912BFBC9F90057C92E /* LexerSettings.cpp */,
-				CF5BF7852BF910100057C92E /* Document.cpp */,
+				CF5BF7AA2BFD48950057C92E /* Service.cpp */,
 				CF5BF78C2BFA13A80057C92E /* Style.cpp */,
 			);
 			name = Highlighting;
@@ -246,6 +297,7 @@
 				CFD79B5022106E010043A26D /* ViewerUT */,
 				CF5C1D1D255ED68200ADE703 /* ViewerResources.bundle */,
 				CF5C1D70255EEA5200ADE703 /* libViewer.a */,
+				CF5BF7A12BFD483D0057C92E /* Highlighter.xpc */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -253,10 +305,11 @@
 		CFD79A7921F65A710043A26D /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CF739C3F29564D72004758C5 /* Localizable.strings */,
+				CF5BF7AC2BFE6B160057C92E /* Highlighter.plist */,
 				CFD79B0821FE4F430043A26D /* InternalViewerController.xib */,
 				CFD79B1B2205DE520043A26D /* InternalViewerToolbar.xib */,
 				CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */,
+				CF739C3F29564D72004758C5 /* Localizable.strings */,
 				CF2343F022CDDFC600F516CB /* Localizable.strings */,
 				CFD79B132205B8450043A26D /* NCViewerSheet.xib */,
 				CF5C1D2C255ED7D300ADE703 /* ViewerResources.plist */,
@@ -343,10 +396,12 @@
 				CF9BF90C226CF99000AD36D9 /* HexModeFrame_UT.cpp */,
 				CF24E1D1227F0B2400C166FA /* HexModeLayout_UT.cpp */,
 				CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */,
+				CF5BF7C12BFFDD240057C92E /* hlClient_UT.cpp */,
 				CF5BF7872BF9209E0057C92E /* hlDocument_UT.cpp */,
 				CF5BF7992BFBDF1F0057C92E /* hlHighlighter_UT.cpp */,
 				CF5BF79B2BFD39A60057C92E /* hlLexerSettings_UT.cpp */,
 				CF5BF78E2BFA19F50057C92E /* hlStyle_UT.cpp */,
+				CF5BF7AF2BFE855E0057C92E /* Info.plist */,
 				CFD79B5822106E3C0043A26D /* Tests.cpp */,
 				CFD79B5722106E3B0043A26D /* Tests.h */,
 				CF13255E2225FB610097F9A1 /* TextModeFrame_UT.cpp */,
@@ -393,6 +448,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		CF5BF7A02BFD483D0057C92E /* Highlighter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF5BF7A92BFD483D0057C92E /* Build configuration list for PBXNativeTarget "Highlighter" */;
+			buildPhases = (
+				CF5BF79D2BFD483D0057C92E /* Sources */,
+				CF5BF79E2BFD483D0057C92E /* Frameworks */,
+				CF5BF79F2BFD483D0057C92E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CF5BF7BB2BFFD6C90057C92E /* PBXTargetDependency */,
+			);
+			name = Highlighter;
+			productName = Highlighter;
+			productReference = CF5BF7A12BFD483D0057C92E /* Highlighter.xpc */;
+			productType = "com.apple.product-type.xpc-service";
+		};
 		CF5C1D1C255ED68200ADE703 /* ViewerResources */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CF5C1D22255ED68300ADE703 /* Build configuration list for PBXNativeTarget "ViewerResources" */;
@@ -436,10 +509,12 @@
 				CFD79B4C22106E010043A26D /* Sources */,
 				CFD79B4D22106E010043A26D /* Frameworks */,
 				CFD79B4E22106E010043A26D /* CopyFiles */,
+				CF5BF7B52BFE8A630057C92E /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				CF5BF7B22BFE8A100057C92E /* PBXTargetDependency */,
 			);
 			name = ViewerUT;
 			productName = ViewerUT;
@@ -455,6 +530,9 @@
 				LastUpgradeCheck = 1220;
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
+					CF5BF7A02BFD483D0057C92E = {
+						CreatedOnToolsVersion = 15.1;
+					};
 					CF5C1D1C255ED68200ADE703 = {
 						CreatedOnToolsVersion = 12.0;
 					};
@@ -483,11 +561,19 @@
 				CF5C1D6F255EEA5200ADE703 /* Viewer */,
 				CFD79B4F22106E010043A26D /* ViewerUT */,
 				CF5C1D1C255ED68200ADE703 /* ViewerResources */,
+				CF5BF7A02BFD483D0057C92E /* Highlighter */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		CF5BF79F2BFD483D0057C92E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CF5C1D1B255ED68200ADE703 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -511,6 +597,18 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		CF5BF79D2BFD483D0057C92E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF5BF7BD2BFFD71B0057C92E /* Document.cpp in Sources */,
+				CF5BF7BE2BFFD7220057C92E /* Highlighter.cpp in Sources */,
+				CF5BF7C02BFFD72D0057C92E /* Style.cpp in Sources */,
+				CF5BF7AB2BFD48950057C92E /* Service.cpp in Sources */,
+				CF5BF7BF2BFFD7280057C92E /* LexerSettings.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CF5C1D19255ED68200ADE703 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -526,6 +624,7 @@
 				CF5BF7862BF910100057C92E /* Document.cpp in Sources */,
 				CF5C1D8B255EEA6A00ADE703 /* History.cpp in Sources */,
 				CF5C1D85255EEA6A00ADE703 /* Internal.mm in Sources */,
+				CF5BF7B92BFE8B540057C92E /* Client.cpp in Sources */,
 				CF5C1D7D255EEA6A00ADE703 /* ViewerViewController.mm in Sources */,
 				CF5C1D8F255EEA6A00ADE703 /* TextModeFrame.cpp in Sources */,
 				CF5C1D87255EEA6A00ADE703 /* TextModeWorkingSet.cpp in Sources */,
@@ -562,6 +661,7 @@
 				CFD79B6A22106F080043A26D /* TextProcessing_UT.cpp in Sources */,
 				CF5BF78F2BFA19F50057C92E /* hlStyle_UT.cpp in Sources */,
 				CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */,
+				CF5BF7C22BFFDD240057C92E /* hlClient_UT.cpp in Sources */,
 				CF1325622225FD630097F9A1 /* TextModeFrame_UT.cpp in Sources */,
 				CFD79B8422198DB50043A26D /* TextModeWorkingSet_UT.cpp in Sources */,
 				CF5BF7892BF922DE0057C92E /* hlDocument_UT.cpp in Sources */,
@@ -576,6 +676,16 @@
 			isa = PBXTargetDependency;
 			target = CF5C1D1C255ED68200ADE703 /* ViewerResources */;
 			targetProxy = CF2F110025680BCB00622405 /* PBXContainerItemProxy */;
+		};
+		CF5BF7B22BFE8A100057C92E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CF5BF7A02BFD483D0057C92E /* Highlighter */;
+			targetProxy = CF5BF7B12BFE8A100057C92E /* PBXContainerItemProxy */;
+		};
+		CF5BF7BB2BFFD6C90057C92E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CF5C1D6F255EEA5200ADE703 /* Viewer */;
+			targetProxy = CF5BF7BA2BFFD6C90057C92E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -627,6 +737,38 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		CF5BF7A72BFD483D0057C92E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = resources/Highlighter.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = AC5SJT236H;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = resources/Highlighter.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Highlighter;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Michael G. Kazakov. All rights reserved.";
+				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.Highlighter;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		CF5BF7A82BFD483D0057C92E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = resources/Highlighter.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = AC5SJT236H;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = resources/Highlighter.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Highlighter;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Michael G. Kazakov. All rights reserved.";
+				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.Highlighter;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		CF5C1D20255ED68300ADE703 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -714,6 +856,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		CF5BF7A92BFD483D0057C92E /* Build configuration list for PBXNativeTarget "Highlighter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF5BF7A72BFD483D0057C92E /* Debug */,
+				CF5BF7A82BFD483D0057C92E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CF5C1D22255ED68300ADE703 /* Build configuration list for PBXNativeTarget "ViewerResources" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

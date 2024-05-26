@@ -741,14 +741,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = resources/Highlighter.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = AC5SJT236H;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = resources/Highlighter.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Highlighter;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Michael G. Kazakov. All rights reserved.";
 				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.Highlighter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -757,14 +758,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = resources/Highlighter.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = AC5SJT236H;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = resources/Highlighter.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Highlighter;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Michael G. Kazakov. All rights reserved.";
 				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.Highlighter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

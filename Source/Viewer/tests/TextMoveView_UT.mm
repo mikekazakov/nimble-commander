@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TextModeView.h"
 #include "TextModeFrame.h"
@@ -24,6 +24,13 @@ struct DummyTheme : Theme {
     NSFont *Font() const override;
     NSColor *OverlayColor() const override;
     NSColor *TextColor() const override;
+    NSColor *TextSyntaxCommentColor() const override;
+    NSColor *TextSyntaxPreprocessorColor() const override;
+    NSColor *TextSyntaxKeywordColor() const override;
+    NSColor *TextSyntaxOperatorColor() const override;
+    NSColor *TextSyntaxIdentifierColor() const override;
+    NSColor *TextSyntaxNumberColor() const override;
+    NSColor *TextSyntaxStringColor() const override;
     NSColor *ViewerSelectionColor() const override;
     NSColor *ViewerBackgroundColor() const override;
     void ObserveChanges(std::function<void()>) override;
@@ -183,6 +190,41 @@ NSColor *DummyTheme::OverlayColor() const
 }
 
 NSColor *DummyTheme::TextColor() const
+{
+    return NSColor.blackColor;
+}
+
+NSColor *DummyTheme::TextSyntaxCommentColor() const
+{
+    return NSColor.blackColor;
+}
+
+NSColor *DummyTheme::TextSyntaxPreprocessorColor() const
+{
+    return NSColor.blackColor;
+}
+
+NSColor *DummyTheme::TextSyntaxKeywordColor() const
+{
+    return NSColor.blackColor;
+}
+
+NSColor *DummyTheme::TextSyntaxOperatorColor() const
+{
+    return NSColor.blackColor;
+}
+
+NSColor *DummyTheme::TextSyntaxIdentifierColor() const
+{
+    return NSColor.blackColor;
+}
+
+NSColor *DummyTheme::TextSyntaxNumberColor() const
+{
+    return NSColor.blackColor;
+}
+
+NSColor *DummyTheme::TextSyntaxStringColor() const
 {
     return NSColor.blackColor;
 }

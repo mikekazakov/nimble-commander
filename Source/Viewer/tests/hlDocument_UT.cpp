@@ -54,6 +54,12 @@ TEST_CASE(PREFIX "Check integration with a lexer")
         {"//line 1\x0Ahi2;\x0A//line 3\x0Ahi4",
          "LLLLLLLLL" "IIIOD" "LLLLLLLLL" "III"
         },
+        {"//line 1\x0D\x0Ahi2;\x0D\x0A//line 3\x0D\x0Ahi4",
+         "LLLLLLLLLL"    "IIIODD"    "LLLLLLLLLL"    "III"
+        },
+        {"/*line 1*/\x0D\x0A",
+         "CCCCCCCCCCDD"
+        },
         {"\x0A\x0A\x0A\x0A!",
          "D" "D" "D" "D" "O"
         },
@@ -78,4 +84,48 @@ TEST_CASE(PREFIX "Check integration with a lexer")
         }
     }
     lexer->Release();
+}
+
+TEST_CASE(PREFIX "Line breaks - LineStart/LineEnd")
+{
+    struct TC {
+        std::string text;
+        std::vector<long> starts;
+        std::vector<long> ends;
+    } const tcs[] = {
+        {"", {}, {}},
+        {"a", {0}, {1}},
+        {"aa", {0}, {2}},
+        {"Ц", {0}, {2}},
+        {"aaa", {0}, {3}},
+        {"a\x0A", {0}, {2}}, // wrong??
+        {"\x0A", {0}, {1}},  // wrong??
+        {"\x0A\x0A", {0, 1}, {0, 2}},
+        {"\x0D\x0A\x0D\x0A", {0, 2}, {0, 4}},
+        {"a\x0Az", {0, 2}, {1, 3}},
+        {"a\x0D\x0Az", {0, 3}, {1, 4}},
+        {"xyz\x0Axyz\x0Axyz", {0, 4, 8}, {3, 7, 11}},
+        {"xyz\x0D\x0Axyz\x0D\x0Axyz", {0, 5, 10}, {3, 8, 13}},
+    };
+
+    for( const auto &tc : tcs ) {
+        REQUIRE(tc.starts.size() == tc.ends.size());
+        Document doc(tc.text);
+
+        for( size_t l = 0; l < tc.starts.size(); ++l ) {
+            CHECK(doc.LineStart(l) == tc.starts[l]);
+        }
+
+        for( size_t l = 0; l < tc.starts.size(); ++l ) {
+            CHECK(doc.LineEnd(l) == tc.ends[l]);
+        }
+
+        // OOB - lower
+        CHECK(doc.LineStart(-1) == 0);
+        CHECK(doc.LineEnd(-1) == 0);
+
+        // OOB - higher
+        CHECK(doc.LineStart(tc.starts.size()) == static_cast<long>(tc.text.size()));
+        CHECK(doc.LineEnd(tc.starts.size()) == static_cast<long>(tc.text.size()));
+    }
 }

@@ -34,6 +34,8 @@ public:
 
     int GetLineIndentation(Sci_Position line) noexcept override;
 
+    Sci_Position LineStart(Sci_Position line) const noexcept override;
+    
     Sci_Position LineEnd(Sci_Position line) const noexcept override;
 
     Sci_Position GetRelativePosition(Sci_Position positionStart, Sci_Position characterOffset) const noexcept override;
@@ -51,8 +53,6 @@ public:
     const char *BufferPointer() noexcept override;
 
     Sci_Position LineFromPosition(Sci_Position pos) const noexcept override;
-
-    Sci_Position LineStart(Sci_Position line) const noexcept override;
 
     void StartStyling(Sci_Position position) noexcept override;
 

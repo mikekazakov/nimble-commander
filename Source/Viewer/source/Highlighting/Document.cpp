@@ -7,6 +7,9 @@
 
 namespace nc::viewer::hl {
 
+static constexpr char g_CR = '\x0D';
+static constexpr char g_LF = '\x0A';
+
 static constinit std::array<uint8_t, 256> g_UTF8Lengths = []() {
     std::array<uint8_t, 256> lengths = {};
     for( int i = 0; i < 0x80; ++i ) {
@@ -60,7 +63,7 @@ static std::pair<int, int> UTF8Decode(std::string_view _str, Sci_Position _posit
             else {
                 return {'\0', 1};
             }
-        default:
+        case 4:
             if( static_cast<size_t>(_position + 3) < _str.length() ) {
                 return {((static_cast<int>(_str[_position]) & 0x7) << 18) +
                             ((static_cast<int>(_str[_position + 1]) & 0x3F) << 12) +
@@ -71,15 +74,16 @@ static std::pair<int, int> UTF8Decode(std::string_view _str, Sci_Position _posit
             else {
                 return {'\0', 1};
             }
+        default:
+            std::unreachable();
     }
 }
 
 Document::Document(const std::string_view _text) : m_Text(_text), m_Styles(_text.length())
 {
-    // TODO: support CRLF
     m_Lines.push_back(0);
     for( size_t i = 0; i < _text.length(); ++i ) {
-        if( _text[i] == '\n' ) {
+        if( _text[i] == g_LF ) {
             if( i < _text.length() - 1 )
                 m_Lines.push_back(static_cast<uint32_t>(i + 1));
         }
@@ -212,7 +216,11 @@ Sci_Position Document::LineEnd(Sci_Position _line) const noexcept
     if( static_cast<size_t>(_line + 1) >= m_Lines.size() ) {
         return m_Text.length();
     }
-    return m_Lines[_line + 1] - 1; // NB! This will fail for CRLF!
+    const long position = static_cast<long>(m_Lines[_line + 1]) - 1;
+    if( position > 0 && m_Text[position - 1] == g_CR ) {
+        return position - 1;
+    }
+    return position;
 }
 
 void Document::StartStyling(Sci_Position _position) noexcept

@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ThemeAdaptor.h"
 #include <NimbleCommander/Core/Theming/Theme.h>
 
@@ -21,6 +21,41 @@ NSColor *ThemeAdaptor::OverlayColor() const
 NSColor *ThemeAdaptor::TextColor() const
 {
     return CurrentTheme().ViewerTextColor();
+}
+
+NSColor *ThemeAdaptor::TextSyntaxCommentColor() const
+{
+    return CurrentTheme().ViewerTextSyntaxCommentColor();
+}
+
+NSColor *ThemeAdaptor::TextSyntaxPreprocessorColor() const
+{
+    return CurrentTheme().ViewerTextSyntaxPreprocessorColor();
+}
+
+NSColor *ThemeAdaptor::TextSyntaxKeywordColor() const
+{
+    return CurrentTheme().ViewerTextSyntaxKeywordColor();
+}
+
+NSColor *ThemeAdaptor::TextSyntaxOperatorColor() const
+{
+    return CurrentTheme().ViewerTextSyntaxOperatorColor();
+}
+
+NSColor *ThemeAdaptor::TextSyntaxIdentifierColor() const
+{
+    return CurrentTheme().ViewerTextSyntaxIdentifierColor();
+}
+
+NSColor *ThemeAdaptor::TextSyntaxNumberColor() const
+{
+    return CurrentTheme().ViewerTextSyntaxNumberColor();
+}
+
+NSColor *ThemeAdaptor::TextSyntaxStringColor() const
+{
+    return CurrentTheme().ViewerTextSyntaxStringColor();
 }
 
 NSColor *ThemeAdaptor::ViewerSelectionColor() const

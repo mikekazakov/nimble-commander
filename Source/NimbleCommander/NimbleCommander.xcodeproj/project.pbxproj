@@ -233,6 +233,7 @@
 		CF4E56DA1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
 		CF4E56DB1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
 		CF4E56DC1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
+		CF5BF7DF2C0B8D420057C92E /* Highlighter.xpc in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF5BF7DD2C0B8D230057C92E /* Highlighter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CF5DE09925840D3E00604DEE /* libNimbleCommanderCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */; };
 		CF5DE0A325840E9200604DEE /* libNimbleCommanderCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */; };
 		CF5DE0C22584157B00604DEE /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5DE0C12584157B00604DEE /* Tests.cpp */; };
@@ -422,6 +423,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = CF69CFB31DA209F000992B84;
 			remoteInfo = info.filesmanager.Files.PrivilegedIOHelperV2;
+		};
+		CF5BF7CB2C0B8D230057C92E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFD79A7321F65A540043A26D /* Viewer.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CF5BF7A02BFD483D0057C92E;
+			remoteInfo = Highlighter;
+		};
+		CF5BF7DC2C0B8D230057C92E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFD79A7321F65A540043A26D /* Viewer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF5BF7A12BFD483D0057C92E;
+			remoteInfo = Highlighter;
 		};
 		CFC705AC2B497CD90045D2C9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -756,6 +771,16 @@
 			files = (
 				CFC7065F2B4982FF0045D2C9 /* LetsMove.framework in CopyFiles */,
 				CFC706602B4983020045D2C9 /* Sparkle.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF5BF7DE2C0B8D310057C92E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
+			dstSubfolderSpec = 16;
+			files = (
+				CF5BF7DF2C0B8D420057C92E /* Highlighter.xpc in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2186,6 +2211,7 @@
 				CFC7060C2B497D680045D2C9 /* libViewer.a */,
 				CFC7060E2B497D680045D2C9 /* ViewerUT */,
 				CFC706102B497D680045D2C9 /* ViewerResources.bundle */,
+				CF5BF7DD2C0B8D230057C92E /* Highlighter.xpc */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2356,10 +2382,12 @@
 				CF52C3CC22BE9DA90043E825 /* ShellScript */,
 				CF9EEB3E17256372001443FA /* ShellScript */,
 				CFD54FC41A29C67C0098A4A9 /* CopyFiles */,
+				CF5BF7DE2C0B8D310057C92E /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				CF5BF7CC2C0B8D230057C92E /* PBXTargetDependency */,
 				CF5BF7102BF2B32A0057C92E /* PBXTargetDependency */,
 				CF5BF7122BF2B32A0057C92E /* PBXTargetDependency */,
 			);
@@ -2485,6 +2513,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		CF5BF7DD2C0B8D230057C92E /* Highlighter.xpc */ = {
+			isa = PBXReferenceProxy;
+			fileType = "wrapper.xpc-service";
+			path = Highlighter.xpc;
+			remoteRef = CF5BF7DC2C0B8D230057C92E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		CFC705AD2B497CD90045D2C9 /* libUtility.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -3214,6 +3249,11 @@
 			isa = PBXTargetDependency;
 			name = info.filesmanager.Files.PrivilegedIOHelperV2;
 			targetProxy = CF5BF7152BF2B3330057C92E /* PBXContainerItemProxy */;
+		};
+		CF5BF7CC2C0B8D230057C92E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Highlighter;
+			targetProxy = CF5BF7CB2C0B8D230057C92E /* PBXContainerItemProxy */;
 		};
 		CFC706272B497E470045D2C9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

@@ -10,6 +10,33 @@ static void CalculateLinesWidths(const TextModeIndexedTextLine *_lines_begin,
                                  const TextModeIndexedTextLine *_lines_end,
                                  float *_widths);
 
+static void ApplyStyles(CFMutableAttributedStringRef _str,
+                        const TextModeWorkingSetHighlighting &_styles,
+                        const std::array<CGColorRef, 8> &_colors)
+{
+    const size_t str_len = CFAttributedStringGetLength(_str);
+    const std::span<const hl::Style> styles = _styles.Styles();
+
+    size_t start = 0, i = 0;
+    hl::Style current = hl::Style::Default;
+    auto commit = [&] {
+        if( start == i )
+            return;
+        const auto range = CFRangeMake(start, i - start);
+        CFAttributedStringSetAttribute(
+            _str, range, kCTForegroundColorAttributeName, _colors.at(std::to_underlying(current)));
+    };
+
+    for( ; i < std::min(styles.size(), str_len); ++i ) {
+        if( styles[i] != current ) {
+            commit();
+            start = i;
+            current = styles[i];
+        }
+    }
+    commit();
+}
+
 TextModeFrame::TextModeFrame(const Source &_source)
     : m_WorkingSet{_source.working_set}, m_FontInfo{_source.font_info}, m_WrappingWidth{_source.wrapping_width}
 {
@@ -26,9 +53,14 @@ TextModeFrame::TextModeFrame(const Source &_source)
 
     const auto full_range = CFRangeMake(0, m_WorkingSet->Length());
     CFAttributedStringReplaceString(attr_string, CFRangeMake(0, 0), m_WorkingSet->String());
-    CFAttributedStringSetAttribute(attr_string, full_range, kCTForegroundColorAttributeName, _source.foreground_color);
+    CFAttributedStringSetAttribute(
+        attr_string, full_range, kCTForegroundColorAttributeName, _source.foreground_colors[0]);
     CFAttributedStringSetAttribute(attr_string, full_range, kCTFontAttributeName, _source.font);
     CFAttributedStringSetAttribute(attr_string, full_range, kCTParagraphStyleAttributeName, pstyle);
+    if( _source.working_set_highlighting &&
+        _source.working_set_highlighting->Status() == TextModeWorkingSetHighlighting::Status::Done ) {
+        ApplyStyles(attr_string, *_source.working_set_highlighting, _source.foreground_colors);
+    }
 
     m_Lines = SplitAttributedStringsIntoLines(
         attr_string, _source.wrapping_width, monospace_width, tab_width, m_WorkingSet->CharactersByteOffsets());

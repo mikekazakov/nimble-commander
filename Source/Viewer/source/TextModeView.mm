@@ -3,7 +3,9 @@
 #include "TextProcessing.h"
 #include "TextModeIndexedTextLine.h"
 #include "TextModeWorkingSet.h"
+#include "TextModeWorkingSetHighlighting.h"
 #include "TextModeFrame.h"
+#include "Highlighting/SettingsStorage.h"
 
 #include <cmath>
 #include <iostream>
@@ -174,13 +176,29 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 {
     const auto wrapping_width = [self wrappingWidth];
 
+    // !!!
+    // TODO: TEMP, Shouldn't be here!
+    hl::DummySettingsStorage settings;
+    auto highlighting = std::make_shared<TextModeWorkingSetHighlighting>(m_WorkingSet, settings.Settings(""));
+    highlighting->Highlight({}, {});
+    // !!!
+    
+    using S = hl::Style;    
     TextModeFrame::Source source;
     source.wrapping_width = wrapping_width;
     source.font = (__bridge CTFontRef)m_Theme->Font();
     source.font_info = m_FontInfo;
-    source.foreground_color = m_Theme->TextColor().CGColor;
+    source.foreground_colors[std::to_underlying(S::Default)] = m_Theme->TextColor().CGColor;
+    source.foreground_colors[std::to_underlying(S::Comment)] = m_Theme->TextSyntaxCommentColor().CGColor;
+    source.foreground_colors[std::to_underlying(S::Preprocessor)] = m_Theme->TextSyntaxPreprocessorColor().CGColor;
+    source.foreground_colors[std::to_underlying(S::Keyword)] = m_Theme->TextSyntaxKeywordColor().CGColor;
+    source.foreground_colors[std::to_underlying(S::Operator)] = m_Theme->TextSyntaxOperatorColor().CGColor;
+    source.foreground_colors[std::to_underlying(S::Identifier)] = m_Theme->TextSyntaxIdentifierColor().CGColor;
+    source.foreground_colors[std::to_underlying(S::Number)] = m_Theme->TextSyntaxNumberColor().CGColor;
+    source.foreground_colors[std::to_underlying(S::String)] = m_Theme->TextSyntaxStringColor().CGColor;
     source.tab_spaces = g_TabSpaces;
     source.working_set = m_WorkingSet;
+    source.working_set_highlighting = highlighting;
     return std::make_shared<TextModeFrame>(source);
 }
 

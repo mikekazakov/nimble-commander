@@ -624,6 +624,13 @@
                       "viewerFont": "Menlo-Regular, 13",
                       "viewerOverlayColor": "@whiteColor",
                       "viewerTextColor": "#000000",
+                      "viewerTextSyntaxCommentColor": "#267507",
+                      "viewerTextSyntaxPreprocessorColor": "#643820",
+                      "viewerTextSyntaxKeywordColor": "#9B2393",
+                      "viewerTextSyntaxOperatorColor": "#121249",
+                      "viewerTextSyntaxIdentifierColor": "#000000",
+                      "viewerTextSyntaxNumberColor": "#1C00CF",
+                      "viewerTextSyntaxStringColor": "#C41A16",
                       "viewerSelectionColor": "#B4D6FC",
                       "viewerBackgroundColor": "#FFFFFF"
                       },
@@ -735,7 +742,7 @@
                       "terminalAnsiColorE": "#00E5E5", // bright cyan
                       "terminalAnsiColorF": "#E5E6E5", // bright white
                       
-                      /* Viewer Emulator */
+                      /* Viewer */
                       "viewerFont": "Menlo-Regular, 13",
                       "viewerOverlayColor": "@blackColor",
                       "viewerTextColor": "#DCDCDC",

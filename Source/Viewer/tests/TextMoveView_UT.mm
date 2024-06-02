@@ -3,6 +3,7 @@
 #include "TextModeView.h"
 #include "TextModeFrame.h"
 #include "Theme.h"
+#include "Highlighting/SettingsStorage.h"
 #include "TextModeWorkingSet.h"
 #include <Utility/Encodings.h>
 #include <Base/algo.h>
@@ -43,6 +44,7 @@ struct Context {
     std::shared_ptr<nc::vfs::GenericMemReadOnlyFile> file;
     std::shared_ptr<nc::vfs::FileWindow> window;
     std::shared_ptr<DataBackend> backend;
+    hl::DummySettingsStorage hl_settings;
 
 private:
     void Open(std::string_view _string);
@@ -62,7 +64,10 @@ TEST_CASE(PREFIX "Basic geomtery initialization")
 {
     const std::string data = "Hello, world!";
     Context ctx{data};
-    auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100 backend:ctx.backend theme:g_DummyTheme];
+    auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
+                                                    backend:ctx.backend
+                                                      theme:g_DummyTheme
+                                       highlightingSettings:ctx.hl_settings];
     // let's pretend that I happen to know the internal insets and sizes.
     CHECK(view.contentsSize.width == Approx(477.)); // 500-4-4-15
     CHECK(view.contentsSize.height == Approx(100.));
@@ -87,7 +92,10 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
                                      "text5\n"
                                      "text6";
             Context ctx{data};
-            auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100 backend:ctx.backend theme:g_DummyTheme];
+            auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
+                                                            backend:ctx.backend
+                                                              theme:g_DummyTheme
+                                               highlightingSettings:ctx.hl_settings];
             CHECK(view.isAtTheBeginning == true);
             CHECK(view.isAtTheEnd == true);
         }
@@ -101,7 +109,10 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
                                      "text6\n"
                                      "text7\n";
             Context ctx{data};
-            auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100 backend:ctx.backend theme:g_DummyTheme];
+            auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
+                                                            backend:ctx.backend
+                                                              theme:g_DummyTheme
+                                               highlightingSettings:ctx.hl_settings];
             CHECK(view.isAtTheBeginning == true);
             CHECK(view.isAtTheEnd == false);
 
@@ -122,7 +133,10 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
             return ctx.backend->MoveWindowSync(_position);
         };
 
-        auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100 backend:ctx.backend theme:g_DummyTheme];
+        auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
+                                                        backend:ctx.backend
+                                                          theme:g_DummyTheme
+                                           highlightingSettings:ctx.hl_settings];
         view.delegate = delegate;
         CHECK(view.isAtTheBeginning == true);
         CHECK(view.isAtTheEnd == false);
@@ -149,7 +163,10 @@ TEST_CASE(PREFIX "attachToNewBackend")
                               "text6\n"
                               "text7\n";
     Context ctx{data1};
-    auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100 backend:ctx.backend theme:g_DummyTheme];
+    auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
+                                                    backend:ctx.backend
+                                                      theme:g_DummyTheme
+                                       highlightingSettings:ctx.hl_settings];
     [view scrollToGlobalBytesOffset:data1.size()];
     CHECK(view.textFrame.LinesNumber() == 7);
     CHECK(view.isAtTheBeginning == false);

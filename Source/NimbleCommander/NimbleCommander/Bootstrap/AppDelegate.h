@@ -47,6 +47,9 @@ class TagsStorage;
 namespace viewer {
 class History;
 }
+namespace viewer::hl {
+class SettingsStorage;
+}
 
 namespace vfs {
 class NativeHost;
@@ -139,5 +142,7 @@ class NativeHost;
 @property(nonatomic, readonly) nc::ops::PoolEnqueueFilter &poolEnqueueFilter;
 
 @property(nonatomic, readonly) nc::panel::TagsStorage &tagsStorage;
+
+@property(nonatomic, readonly) nc::viewer::hl::SettingsStorage &syntaxHighlightingSettingsStorage;
 
 @end

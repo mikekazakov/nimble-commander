@@ -14,6 +14,7 @@ class TextModeFrame
 public:
     struct Source {
         std::shared_ptr<const TextModeWorkingSet> working_set;
+        // TODO: should be a span of styles instead
         std::shared_ptr<const TextModeWorkingSetHighlighting> working_set_highlighting; // optional
         double wrapping_width = 10000.;
         int tab_spaces = 4;

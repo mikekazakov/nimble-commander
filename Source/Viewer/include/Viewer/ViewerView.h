@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/Encodings.h>
@@ -18,6 +18,10 @@ namespace nc::viewer {
 class Theme;
 }
 
+namespace nc::viewer::hl {
+class SettingsStorage;
+}
+
 @interface NCViewerView : NSView <NCViewerTextModeViewDelegate, NCViewerHexModeViewDelegate>
 
 - (instancetype)init NS_UNAVAILABLE;
@@ -25,7 +29,8 @@ class Theme;
 - (instancetype)initWithFrame:(NSRect)frame
                   tempStorage:(nc::utility::TemporaryFileStorage &)_temp_storage
                        config:(const nc::config::Config &)_config
-                        theme:(std::unique_ptr<nc::viewer::Theme>)_theme;
+                        theme:(std::unique_ptr<nc::viewer::Theme>)_theme
+         highlightingSettings:(nc::viewer::hl::SettingsStorage &)_hl_settings;
 
 - (void)setFile:(std::shared_ptr<nc::vfs::FileWindow>)_file;
 - (void)setKnownFile:(std::shared_ptr<nc::vfs::FileWindow>)_file

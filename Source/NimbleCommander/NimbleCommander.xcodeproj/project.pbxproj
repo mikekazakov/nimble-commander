@@ -234,6 +234,7 @@
 		CF4E56DB1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
 		CF4E56DC1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
 		CF5BF7DF2C0B8D420057C92E /* Highlighter.xpc in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF5BF7DD2C0B8D230057C92E /* Highlighter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		CF5BF7FB2C0C8FA30057C92E /* SyntaxHighlighting in Resources */ = {isa = PBXBuildFile; fileRef = CF5BF7EC2C0C8FA30057C92E /* SyntaxHighlighting */; };
 		CF5DE09925840D3E00604DEE /* libNimbleCommanderCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */; };
 		CF5DE0A325840E9200604DEE /* libNimbleCommanderCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */; };
 		CF5DE0C22584157B00604DEE /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5DE0C12584157B00604DEE /* Tests.cpp */; };
@@ -1012,6 +1013,7 @@
 		CF56C2CE1DC35E8B00F0DF0F /* PanelListViewSizeView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewSizeView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewSizeView.mm; sourceTree = SOURCE_ROOT; };
 		CF56C2D41DC43C7E00F0DF0F /* PanelListViewDateTimeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewDateTimeView.h; path = NimbleCommander/States/FilePanels/List/PanelListViewDateTimeView.h; sourceTree = SOURCE_ROOT; };
 		CF56C2D51DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewDateTimeView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewDateTimeView.mm; sourceTree = SOURCE_ROOT; };
+		CF5BF7EC2C0C8FA30057C92E /* SyntaxHighlighting */ = {isa = PBXFileReference; lastKnownFileType = folder; name = SyntaxHighlighting; path = NimbleCommander/Resources/SyntaxHighlighting; sourceTree = "<group>"; };
 		CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNimbleCommanderCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF5DE0B2258414CA00604DEE /* NimbleCommanderUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NimbleCommanderUT; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF5DE0C02584157B00604DEE /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tests.h; path = NimbleCommander/Tests/Tests.h; sourceTree = "<group>"; };
@@ -1411,12 +1413,13 @@
 		B51014CF170721340023FF24 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CFC5121B16C4BD3D00D247EE /* Supporting Files */,
 				CFB5989A196E38C700D4C108 /* Art */,
 				CFB598BF196E3A0400D4C108 /* Doc */,
-				CFD6295C1C2CE3AD0050EC68 /* State.json */,
+				CFC5121B16C4BD3D00D247EE /* Supporting Files */,
+				CF5BF7EC2C0C8FA30057C92E /* SyntaxHighlighting */,
 				CF7D7A741C15AAC200ECEBA0 /* Config.json */,
 				CF3120C81A510F640062185A /* Localizable.strings */,
+				CFD6295C1C2CE3AD0050EC68 /* State.json */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -2863,6 +2866,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF5BF7FB2C0C8FA30057C92E /* SyntaxHighlighting in Resources */,
 				CFC7064A2B497F770045D2C9 /* CUIResources.bundle in Resources */,
 				CFC7064C2B497F7F0045D2C9 /* PanelResources.bundle in Resources */,
 				CFC7064D2B497F820045D2C9 /* RoutedIOResources.bundle in Resources */,

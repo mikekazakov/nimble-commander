@@ -78,6 +78,7 @@
 #include <Viewer/Log.h>
 #include <Viewer/ViewerViewController.h>
 #include <Viewer/InternalViewerWindowController.h>
+#include <Viewer/Highlighting/SettingsStorage.h>
 
 #include <Term/Log.h>
 
@@ -965,6 +966,13 @@ static void DoTemporaryFileStoragePurge()
             });
         }
     });
+    return storage;
+}
+
+- (nc::viewer::hl::SettingsStorage &)syntaxHighlightingSettingsStorage
+{
+    [[clang::no_destroy]] static nc::viewer::hl::FileSettingsStorage storage{
+        [NSBundle.mainBundle pathForResource:@"SyntaxHighlighting" ofType:@""].fileSystemRepresentation, ""};
     return storage;
 }
 

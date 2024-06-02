@@ -1,0 +1,26 @@
+{
+    "lexer": "json",
+    "wordlists": [
+        "false true null"
+    ],
+    "properties": {
+        "lexer.json.escape.sequence": "1",
+        "lexer.json.allow.comments": "1"
+    },
+    "mapping": {
+        "SCE_JSON_DEFAULT": "default",
+        "SCE_JSON_NUMBER": "number",
+        "SCE_JSON_STRING": "string",
+        "SCE_JSON_STRINGEOL": "string",
+        "SCE_JSON_PROPERTYNAME": "keyword",
+        "SCE_JSON_ESCAPESEQUENCE": "string",
+        "SCE_JSON_LINECOMMENT": "comment",
+        "SCE_JSON_BLOCKCOMMENT": "comment",
+        "SCE_JSON_OPERATOR": "operator",
+        "SCE_JSON_URI": "string",
+        "SCE_JSON_COMPACTIRI": "string",
+        "SCE_JSON_KEYWORD": "keyword",
+        "SCE_JSON_LDKEYWORD": "keyword",
+        "SCE_JSON_ERROR": "preprocessor"
+    }
+}

@@ -60,6 +60,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 @implementation NCViewerTextModeView {
     std::shared_ptr<const DataBackend> m_Backend;
     const Theme *m_Theme;
+    hl::SettingsStorage *m_HighlightingSettings;
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
     std::shared_ptr<const TextModeFrame> m_Frame;
     bool m_LineWrap;
@@ -77,12 +78,14 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 - (instancetype)initWithFrame:(NSRect)_frame
                       backend:(std::shared_ptr<const DataBackend>)_backend
                         theme:(const nc::viewer::Theme &)_theme
+         highlightingSettings:(nc::viewer::hl::SettingsStorage &)_hl_settings
 {
     if( self = [super initWithFrame:_frame] ) {
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.clipsToBounds = true;
         m_Backend = _backend;
         m_Theme = &_theme;
+        m_HighlightingSettings = &_hl_settings;
         m_WorkingSet = MakeEmptyWorkingSet();
         m_LineWrap = true;
         m_FontInfo = FontGeometryInfo{(__bridge CTFontRef)m_Theme->Font()};
@@ -175,14 +178,6 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 - (std::shared_ptr<const TextModeFrame>)buildLayout
 {
     const auto wrapping_width = [self wrappingWidth];
-
-    // !!!
-    // TODO: TEMP, Shouldn't be here!
-    hl::DummySettingsStorage settings;
-    auto highlighting = std::make_shared<TextModeWorkingSetHighlighting>(m_WorkingSet, settings.Settings(""));
-    highlighting->Highlight({}, {});
-    // !!!
-    
     using S = hl::Style;    
     TextModeFrame::Source source;
     source.wrapping_width = wrapping_width;
@@ -198,7 +193,18 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     source.foreground_colors[std::to_underlying(S::String)] = m_Theme->TextSyntaxStringColor().CGColor;
     source.tab_spaces = g_TabSpaces;
     source.working_set = m_WorkingSet;
-    source.working_set_highlighting = highlighting;
+    
+    // !!!
+    // TODO: TEMP, Shouldn't be here!
+    const std::string lang = m_HighlightingSettings->Language( m_Backend->FileName().native() );
+    if( !lang.empty() && m_HighlightingSettings->Settings(lang) != nullptr ) {
+        auto settings = m_HighlightingSettings->Settings(lang);
+        auto highlighting = std::make_shared<TextModeWorkingSetHighlighting>(m_WorkingSet, settings);
+        highlighting->Highlight({}, {});
+        source.working_set_highlighting = highlighting;
+    }
+    // !!!
+    
     return std::make_shared<TextModeFrame>(source);
 }
 

@@ -20,6 +20,7 @@ static const auto g_WrappingWidth = 10000.;
 static const auto g_TopInset = 4.;
 static const auto g_LeftInset = 4.;
 static const auto g_RightInset = 4.;
+static const auto g_SyncHighlightingThreshold = std::chrono::milliseconds{16};
 
 namespace {
 struct ScrollPosition {
@@ -62,6 +63,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     const Theme *m_Theme;
     hl::SettingsStorage *m_HighlightingSettings;
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
+    std::shared_ptr<TextModeWorkingSetHighlighting> m_WorkingSetHighlighting;
     std::shared_ptr<const TextModeFrame> m_Frame;
     bool m_LineWrap;
     FontGeometryInfo m_FontInfo;
@@ -157,6 +159,24 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 - (void)rebuildWorkingSetAndFrame
 {
     m_WorkingSet = BuildWorkingSetForBackendState(*m_Backend);
+
+    const std::string lang = m_HighlightingSettings->Language(m_Backend->FileName().native());
+    if( !lang.empty() && m_HighlightingSettings->Settings(lang) != nullptr ) {
+        auto settings = m_HighlightingSettings->Settings(lang);
+        m_WorkingSetHighlighting = std::make_shared<TextModeWorkingSetHighlighting>(m_WorkingSet, settings);
+        __weak NCViewerTextModeView *weak_self = self;
+        m_WorkingSetHighlighting->Highlight(g_SyncHighlightingThreshold,
+                                            [weak_self](std::shared_ptr<const TextModeWorkingSetHighlighting> _hl) {
+            NCViewerTextModeView *strong_self = weak_self;
+            if( !strong_self || _hl != strong_self->m_WorkingSetHighlighting )
+                return;
+            [strong_self highlightingHasChanged];
+        });
+    }
+    else {
+        m_WorkingSetHighlighting.reset();
+    }
+
     m_Frame = [self buildLayout];
     [self setNeedsDisplay:true];
     [self scrollPositionDidChange];
@@ -178,7 +198,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 - (std::shared_ptr<const TextModeFrame>)buildLayout
 {
     const auto wrapping_width = [self wrappingWidth];
-    using S = hl::Style;    
+    using S = hl::Style;
     TextModeFrame::Source source;
     source.wrapping_width = wrapping_width;
     source.font = (__bridge CTFontRef)m_Theme->Font();
@@ -193,18 +213,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     source.foreground_colors[std::to_underlying(S::String)] = m_Theme->TextSyntaxStringColor().CGColor;
     source.tab_spaces = g_TabSpaces;
     source.working_set = m_WorkingSet;
-    
-    // !!!
-    // TODO: TEMP, Shouldn't be here!
-    const std::string lang = m_HighlightingSettings->Language( m_Backend->FileName().native() );
-    if( !lang.empty() && m_HighlightingSettings->Settings(lang) != nullptr ) {
-        auto settings = m_HighlightingSettings->Settings(lang);
-        auto highlighting = std::make_shared<TextModeWorkingSetHighlighting>(m_WorkingSet, settings);
-        highlighting->Highlight({}, {});
-        source.working_set_highlighting = highlighting;
-    }
-    // !!!
-    
+    source.working_set_highlighting = m_WorkingSetHighlighting;
     return std::make_shared<TextModeFrame>(source);
 }
 
@@ -863,6 +872,12 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
     m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*m_Frame, m_VerticalLineOffset, *new_frame);
     m_Frame = new_frame;
     [self scrollPositionDidChange];
+    [self setNeedsDisplay:true];
+}
+
+- (void)highlightingHasChanged
+{
+    m_Frame = [self buildLayout];
     [self setNeedsDisplay:true];
 }
 

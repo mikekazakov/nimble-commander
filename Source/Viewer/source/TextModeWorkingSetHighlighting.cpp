@@ -1,19 +1,31 @@
 // Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextModeWorkingSetHighlighting.h"
 #include "Highlighting/Client.h"
+#include "Log.h"
+#include <fmt/chrono.h>
 #include <Utility/Encodings.h>
+#include <Base/dispatch_cpp.h>
 #include <stdexcept>
 #include <assert.h>
 
 namespace nc::viewer {
 
+// TODO: cover it with unit tests somehow
+
 TextModeWorkingSetHighlighting::TextModeWorkingSetHighlighting(std::shared_ptr<const TextModeWorkingSet> _working_set,
                                                                std::shared_ptr<const std::string> _highlighting_options)
-    : m_WorkingSet(std::move(_working_set)), m_HighlightingOptions(std::move(_highlighting_options))
+    : m_WorkingSet(std::move(_working_set)), m_HighlightingOptions(std::move(_highlighting_options)),
+      m_AsyncQueue(dispatch_queue_create("com.magnumbytes.NimbleCommander.TextModeWorkingSetHighlighting",
+                                         DISPATCH_QUEUE_CONCURRENT))
 {
     assert(m_WorkingSet);
     assert(m_HighlightingOptions);
     m_Styles.resize(m_WorkingSet->Length(), hl::Style::Default);
+}
+
+TextModeWorkingSetHighlighting::~TextModeWorkingSetHighlighting()
+{
+    dispatch_release(m_AsyncQueue);
 }
 
 std::span<const hl::Style> TextModeWorkingSetHighlighting::Styles() const noexcept
@@ -95,13 +107,11 @@ static void MapUTF8ToUTF16(const std::span<const hl::Style> _styles_utf8,
     }
 }
 
-// TODO: support async operation
 void TextModeWorkingSetHighlighting::Highlight(
     std::chrono::milliseconds _sync_timeout,
     std::function<void(std::shared_ptr<const TextModeWorkingSetHighlighting> me)> _on_highlighted)
 {
-    (void)_sync_timeout;
-    (void)_on_highlighted;
+    dispatch_assert_main_queue();
 
     if( m_Status != Status::Inactive ) {
         throw std::logic_error("TextModeWorkingSetHighlighting::Highlight can only be called once");
@@ -130,12 +140,71 @@ void TextModeWorkingSetHighlighting::Highlight(
 
     m_Status = Status::Working;
 
+    m_Callback = std::move(_on_highlighted);
+
+    Log::Trace(SPDLOC, "TextModeWorkingSetHighlighting: sending async highlighting request");
+    const auto timepoint_start = std::chrono::steady_clock::now();
+
     hl::Client client;
-    const std::vector<hl::Style> styles_utf8 = client.Highlight({utf8.data(), utf8.size()}, *m_HighlightingOptions);
+    client.HighlightAsync(
+        {utf8.data(), utf8.size()},
+        *m_HighlightingOptions,
+        [me](std::expected<std::vector<hl::Style>, std::string> _result) { me->Commit(std::move(_result)); },
+        m_AsyncQueue);
 
-    MapUTF8ToUTF16(styles_utf8, {utf16_chars, utf16_length}, m_Styles);
+    if( _sync_timeout > std::chrono::milliseconds{0} ) {
+        Log::Trace(SPDLOC, "TextModeWorkingSetHighlighting: waiting synchronously for a response");
 
-    m_Status = Status::Done;
+        std::unique_lock lock{m_StatusMut};
+        m_StatusCV.wait_for(lock, _sync_timeout, [&] { return m_Status == Status::Done; });
+        const auto timepoint_end = std::chrono::steady_clock::now();
+        const auto time_spent = std::chrono::duration_cast<std::chrono::milliseconds>(timepoint_end - timepoint_start);
+
+        if( m_Status == Status::Done ) {
+            Log::Info(
+                SPDLOC,
+                "TextModeWorkingSetHighlighting: got asynchronous response in {}, providing highlighting immediately",
+                time_spent);
+            m_Callback = nullptr;
+        }
+        else {
+            Log::Info(
+                SPDLOC,
+                "TextModeWorkingSetHighlighting: didn't get an asynchronous response in {}, deferring the highlighting",
+                time_spent);
+        }
+    }
+}
+
+void TextModeWorkingSetHighlighting::Commit(std::expected<std::vector<hl::Style>, std::string> _result)
+{
+    dispatch_assert_background_queue();
+    if( _result ) {
+        const std::vector<hl::Style> &styles_utf8 = _result.value();
+        const size_t utf16_length = m_WorkingSet->Length();
+        const char16_t *const utf16_chars = m_WorkingSet->Characters();
+        MapUTF8ToUTF16(styles_utf8, {utf16_chars, utf16_length}, m_Styles);
+        // Technically speaking the above can be a race condition: one thread can read from the styles and this thread
+        // can write there without synchronization. However the worst thing can happen here would be a partial
+        // highlighting for a very short period of time, which is acceptable.
+    }
+
+    {
+        std::lock_guard lock{m_StatusMut};
+        m_Status = Status::Done;
+    }
+    m_StatusCV.notify_one();
+
+    dispatch_to_main_queue([me = shared_from_this()] { me->Notify(); });
+}
+
+void TextModeWorkingSetHighlighting::Notify()
+{
+    dispatch_assert_main_queue();
+    if( m_Callback ) {
+        m_Callback(shared_from_this());
+        m_Callback = nullptr;
+    }
 }
 
 std::shared_ptr<const TextModeWorkingSet> TextModeWorkingSetHighlighting::WorkingSet() const noexcept

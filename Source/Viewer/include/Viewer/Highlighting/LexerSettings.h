@@ -23,6 +23,6 @@ struct LexerSettings {
     StyleMapper mapping;
 };
 
-std::expected<LexerSettings, std::string> ParseLexerSettings(std::string_view _json);
+std::expected<LexerSettings, std::string> ParseLexerSettings(std::string_view _json) noexcept;
 
 } // namespace nc::viewer::hl

@@ -206,6 +206,9 @@
 		CF45CA291D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
 		CF45CA2D1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
 		CF45CA2E1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
+		CF4AC4F22C10F90300475EDC /* Highlighter.xpc in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF5BF7DD2C0B8D230057C92E /* Highlighter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		CF4AC4F62C11067500475EDC /* Highlighter.xpc in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF5BF7DD2C0B8D230057C92E /* Highlighter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		CF4AC4F72C1106E100475EDC /* SyntaxHighlighting in Resources */ = {isa = PBXBuildFile; fileRef = CF5BF7EC2C0C8FA30057C92E /* SyntaxHighlighting */; };
 		CF4E56701D50667300452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56721D50667300452912 /* PreferencesWindowExternalEditorsTab.xib */; };
 		CF4E56751D50668A00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56771D50668A00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
 		CF4E56781D50668E00452912 /* PreferencesWindowGeneralTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E567A1D50668E00452912 /* PreferencesWindowGeneralTab.xib */; };
@@ -233,7 +236,6 @@
 		CF4E56DA1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
 		CF4E56DB1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
 		CF4E56DC1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
-		CF5BF7DF2C0B8D420057C92E /* Highlighter.xpc in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF5BF7DD2C0B8D230057C92E /* Highlighter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CF5BF7FB2C0C8FA30057C92E /* SyntaxHighlighting in Resources */ = {isa = PBXBuildFile; fileRef = CF5BF7EC2C0C8FA30057C92E /* SyntaxHighlighting */; };
 		CF5DE09925840D3E00604DEE /* libNimbleCommanderCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */; };
 		CF5DE0A325840E9200604DEE /* libNimbleCommanderCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */; };
@@ -397,6 +399,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		CF4AC4EF2C10F8A100475EDC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFD79A7321F65A540043A26D /* Viewer.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CF5BF7A02BFD483D0057C92E;
+			remoteInfo = Highlighter;
+		};
+		CF4AC4F32C11064F00475EDC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFD79A7321F65A540043A26D /* Viewer.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CF5BF7A02BFD483D0057C92E;
+			remoteInfo = Highlighter;
+		};
 		CF5BF70F2BF2B32A0057C92E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */;
@@ -424,13 +440,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = CF69CFB31DA209F000992B84;
 			remoteInfo = info.filesmanager.Files.PrivilegedIOHelperV2;
-		};
-		CF5BF7CB2C0B8D230057C92E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFD79A7321F65A540043A26D /* Viewer.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CF5BF7A02BFD483D0057C92E;
-			remoteInfo = Highlighter;
 		};
 		CF5BF7DC2C0B8D230057C92E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -764,6 +773,26 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		CF4AC4F12C10F8E700475EDC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
+			dstSubfolderSpec = 16;
+			files = (
+				CF4AC4F22C10F90300475EDC /* Highlighter.xpc in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF4AC4F52C11066200475EDC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
+			dstSubfolderSpec = 16;
+			files = (
+				CF4AC4F62C11067500475EDC /* Highlighter.xpc in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CF52C3CD22BEA5570043E825 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -772,16 +801,6 @@
 			files = (
 				CFC7065F2B4982FF0045D2C9 /* LetsMove.framework in CopyFiles */,
 				CFC706602B4983020045D2C9 /* Sparkle.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CF5BF7DE2C0B8D310057C92E /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
-			dstSubfolderSpec = 16;
-			files = (
-				CF5BF7DF2C0B8D420057C92E /* Highlighter.xpc in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2357,15 +2376,17 @@
 			buildConfigurationList = CFA53A6A1D433E2A00C562A7 /* Build configuration list for PBXNativeTarget "NimbleCommander-Unsigned" */;
 			buildPhases = (
 				CFA53A681D433E2A00C562A7 /* Copy Files */,
+				CFA53A661D433E2A00C562A7 /* CopyFiles */,
+				CF4AC4F52C11066200475EDC /* CopyFiles */,
 				CFA5395C1D433E2A00C562A7 /* Sources */,
 				CFA53A181D433E2A00C562A7 /* Frameworks */,
 				CFA53A331D433E2A00C562A7 /* Resources */,
 				CFA53A651D433E2A00C562A7 /* ShellScript */,
-				CFA53A661D433E2A00C562A7 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				CF4AC4F42C11064F00475EDC /* PBXTargetDependency */,
 				CF5BF7142BF2B3330057C92E /* PBXTargetDependency */,
 				CF5BF7162BF2B3330057C92E /* PBXTargetDependency */,
 			);
@@ -2379,18 +2400,18 @@
 			buildConfigurationList = CFC5122E16C4BD3D00D247EE /* Build configuration list for PBXNativeTarget "NimbleCommander-NonMAS" */;
 			buildPhases = (
 				CF52C3CD22BEA5570043E825 /* CopyFiles */,
+				CF4AC4F12C10F8E700475EDC /* CopyFiles */,
+				CFD54FC41A29C67C0098A4A9 /* CopyFiles */,
 				CFC5120D16C4BD3D00D247EE /* Sources */,
 				CFC5120E16C4BD3D00D247EE /* Frameworks */,
 				CFC5120F16C4BD3D00D247EE /* Resources */,
-				CF52C3CC22BE9DA90043E825 /* ShellScript */,
+				CF52C3CC22BE9DA90043E825 /* Run Script */,
 				CF9EEB3E17256372001443FA /* ShellScript */,
-				CFD54FC41A29C67C0098A4A9 /* CopyFiles */,
-				CF5BF7DE2C0B8D310057C92E /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				CF5BF7CC2C0B8D230057C92E /* PBXTargetDependency */,
+				CF4AC4F02C10F8A100475EDC /* PBXTargetDependency */,
 				CF5BF7102BF2B32A0057C92E /* PBXTargetDependency */,
 				CF5BF7122BF2B32A0057C92E /* PBXTargetDependency */,
 			);
@@ -2802,6 +2823,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF4AC4F72C1106E100475EDC /* SyntaxHighlighting in Resources */,
 				CFC706502B497F970045D2C9 /* OperationsResources.bundle in Resources */,
 				CFC706532B497FA20045D2C9 /* ViewerResources.bundle in Resources */,
 				CFC706512B497F9A0045D2C9 /* PanelResources.bundle in Resources */,
@@ -2922,7 +2944,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		CF52C3CC22BE9DA90043E825 /* ShellScript */ = {
+		CF52C3CC22BE9DA90043E825 /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2930,14 +2952,16 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"${TARGET_BUILD_DIR}/${XPCSERVICES_FOLDER_PATH}/Highlighter.xpc/Contents/MacOS/Highlighter",
 			);
+			name = "Run Script";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ $CODE_SIGNING_ALLOWED -eq NO ]] ; then exit ; fi\ncodesign --verbose --sign 'Developer ID Application' --force --deep --timestamp --options runtime \"${CODESIGNING_FOLDER_PATH}/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app\"\ncodesign --verbose --sign 'Developer ID Application' --force --deep --timestamp --options runtime \"${CODESIGNING_FOLDER_PATH}/Contents/Frameworks/Sparkle.framework\"\n";
+			shellScript = "if [[ $CODE_SIGNING_ALLOWED == NO ]] ; then exit ; fi\ncodesign --verbose --sign 'Developer ID Application' --force --deep --timestamp --options runtime \"${TARGET_BUILD_DIR}/${XPCSERVICES_FOLDER_PATH}/Highlighter.xpc/Contents/MacOS/Highlighter\"\n";
 		};
 		CF9EEB3E17256372001443FA /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3234,6 +3258,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		CF4AC4F02C10F8A100475EDC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Highlighter;
+			targetProxy = CF4AC4EF2C10F8A100475EDC /* PBXContainerItemProxy */;
+		};
+		CF4AC4F42C11064F00475EDC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Highlighter;
+			targetProxy = CF4AC4F32C11064F00475EDC /* PBXContainerItemProxy */;
+		};
 		CF5BF7102BF2B32A0057C92E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = RoutedIOResources;
@@ -3253,11 +3287,6 @@
 			isa = PBXTargetDependency;
 			name = info.filesmanager.Files.PrivilegedIOHelperV2;
 			targetProxy = CF5BF7152BF2B3330057C92E /* PBXContainerItemProxy */;
-		};
-		CF5BF7CC2C0B8D230057C92E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Highlighter;
-			targetProxy = CF5BF7CB2C0B8D230057C92E /* PBXContainerItemProxy */;
 		};
 		CFC706272B497E470045D2C9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

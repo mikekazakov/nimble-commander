@@ -84,7 +84,7 @@ static std::shared_ptr<const TextModeFrame> ProduceFrame(std::shared_ptr<const T
     source.tab_spaces = _tab_spaces;
     source.font = _font;
     source.font_info = nc::utility::FontGeometryInfo{_font};
-    source.foreground_color = CGColorGetConstantColor(kCGColorBlack);
+    source.foreground_colors.fill(CGColorGetConstantColor(kCGColorBlack));
     return std::make_shared<TextModeFrame>(source);
 }
 

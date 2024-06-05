@@ -1,0 +1,14 @@
+{
+    "langs": [ 
+        {
+            "name": "C++",
+            "settings": "C++.json",
+            "filemask": "*.cpp, *.cxx, *.cc, *.h, *.hpp"
+        },
+        {
+            "name": "JSON",
+            "settings": "JSON.json",
+            "filemask": "*.json"
+        }
+    ]
+}

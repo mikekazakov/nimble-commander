@@ -6,12 +6,14 @@ frozen          1.1.1
 curl            8.7.1
 gtest           1.14.0
 letsmove        1.25
+lexilla         5.3.2
 libarchive      3.7.4
 libcxx          18.x
 libssh2         1.11.0
 lz4             1.9.4
 lzma(xz)        5.4.6
 lzo             2.10
+nlohmann        3.11.3
 openssl         1.1.1v
 pstld           head
 pugixml         1.14

@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Viewer/Theme.h>
@@ -13,6 +13,13 @@ public:
     NSFont *Font() const override;
     NSColor *OverlayColor() const override;
     NSColor *TextColor() const override;
+    NSColor *TextSyntaxCommentColor() const override;
+    NSColor *TextSyntaxPreprocessorColor() const override;
+    NSColor *TextSyntaxKeywordColor() const override;
+    NSColor *TextSyntaxOperatorColor() const override;
+    NSColor *TextSyntaxIdentifierColor() const override;
+    NSColor *TextSyntaxNumberColor() const override;
+    NSColor *TextSyntaxStringColor() const override;
     NSColor *ViewerSelectionColor() const override;
     NSColor *ViewerBackgroundColor() const override;
     void ObserveChanges(std::function<void()> _callback) override;

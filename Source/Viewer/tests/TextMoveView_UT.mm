@@ -1,8 +1,9 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TextModeView.h"
 #include "TextModeFrame.h"
 #include "Theme.h"
+#include "Highlighting/SettingsStorage.h"
 #include "TextModeWorkingSet.h"
 #include <Utility/Encodings.h>
 #include <Base/algo.h>
@@ -24,6 +25,13 @@ struct DummyTheme : Theme {
     NSFont *Font() const override;
     NSColor *OverlayColor() const override;
     NSColor *TextColor() const override;
+    NSColor *TextSyntaxCommentColor() const override;
+    NSColor *TextSyntaxPreprocessorColor() const override;
+    NSColor *TextSyntaxKeywordColor() const override;
+    NSColor *TextSyntaxOperatorColor() const override;
+    NSColor *TextSyntaxIdentifierColor() const override;
+    NSColor *TextSyntaxNumberColor() const override;
+    NSColor *TextSyntaxStringColor() const override;
     NSColor *ViewerSelectionColor() const override;
     NSColor *ViewerBackgroundColor() const override;
     void ObserveChanges(std::function<void()>) override;
@@ -36,6 +44,7 @@ struct Context {
     std::shared_ptr<nc::vfs::GenericMemReadOnlyFile> file;
     std::shared_ptr<nc::vfs::FileWindow> window;
     std::shared_ptr<DataBackend> backend;
+    hl::DummySettingsStorage hl_settings;
 
 private:
     void Open(std::string_view _string);
@@ -55,7 +64,10 @@ TEST_CASE(PREFIX "Basic geomtery initialization")
 {
     const std::string data = "Hello, world!";
     Context ctx{data};
-    auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100 backend:ctx.backend theme:g_DummyTheme];
+    auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
+                                                    backend:ctx.backend
+                                                      theme:g_DummyTheme
+                                       highlightingSettings:ctx.hl_settings];
     // let's pretend that I happen to know the internal insets and sizes.
     CHECK(view.contentsSize.width == Approx(477.)); // 500-4-4-15
     CHECK(view.contentsSize.height == Approx(100.));
@@ -80,7 +92,10 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
                                      "text5\n"
                                      "text6";
             Context ctx{data};
-            auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100 backend:ctx.backend theme:g_DummyTheme];
+            auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
+                                                            backend:ctx.backend
+                                                              theme:g_DummyTheme
+                                               highlightingSettings:ctx.hl_settings];
             CHECK(view.isAtTheBeginning == true);
             CHECK(view.isAtTheEnd == true);
         }
@@ -94,7 +109,10 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
                                      "text6\n"
                                      "text7\n";
             Context ctx{data};
-            auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100 backend:ctx.backend theme:g_DummyTheme];
+            auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
+                                                            backend:ctx.backend
+                                                              theme:g_DummyTheme
+                                               highlightingSettings:ctx.hl_settings];
             CHECK(view.isAtTheBeginning == true);
             CHECK(view.isAtTheEnd == false);
 
@@ -115,7 +133,10 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
             return ctx.backend->MoveWindowSync(_position);
         };
 
-        auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100 backend:ctx.backend theme:g_DummyTheme];
+        auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
+                                                        backend:ctx.backend
+                                                          theme:g_DummyTheme
+                                           highlightingSettings:ctx.hl_settings];
         view.delegate = delegate;
         CHECK(view.isAtTheBeginning == true);
         CHECK(view.isAtTheEnd == false);
@@ -142,7 +163,10 @@ TEST_CASE(PREFIX "attachToNewBackend")
                               "text6\n"
                               "text7\n";
     Context ctx{data1};
-    auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100 backend:ctx.backend theme:g_DummyTheme];
+    auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
+                                                    backend:ctx.backend
+                                                      theme:g_DummyTheme
+                                       highlightingSettings:ctx.hl_settings];
     [view scrollToGlobalBytesOffset:data1.size()];
     CHECK(view.textFrame.LinesNumber() == 7);
     CHECK(view.isAtTheBeginning == false);
@@ -183,6 +207,41 @@ NSColor *DummyTheme::OverlayColor() const
 }
 
 NSColor *DummyTheme::TextColor() const
+{
+    return NSColor.blackColor;
+}
+
+NSColor *DummyTheme::TextSyntaxCommentColor() const
+{
+    return NSColor.blackColor;
+}
+
+NSColor *DummyTheme::TextSyntaxPreprocessorColor() const
+{
+    return NSColor.blackColor;
+}
+
+NSColor *DummyTheme::TextSyntaxKeywordColor() const
+{
+    return NSColor.blackColor;
+}
+
+NSColor *DummyTheme::TextSyntaxOperatorColor() const
+{
+    return NSColor.blackColor;
+}
+
+NSColor *DummyTheme::TextSyntaxIdentifierColor() const
+{
+    return NSColor.blackColor;
+}
+
+NSColor *DummyTheme::TextSyntaxNumberColor() const
+{
+    return NSColor.blackColor;
+}
+
+NSColor *DummyTheme::TextSyntaxStringColor() const
 {
     return NSColor.blackColor;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stdint.h>
@@ -146,6 +146,13 @@ public:
     NSFont *ViewerFont() const noexcept;
     NSColor *ViewerOverlayColor() const noexcept;
     NSColor *ViewerTextColor() const noexcept;
+    NSColor *ViewerTextSyntaxCommentColor() const noexcept;
+    NSColor *ViewerTextSyntaxPreprocessorColor() const noexcept;
+    NSColor *ViewerTextSyntaxKeywordColor() const noexcept;
+    NSColor *ViewerTextSyntaxOperatorColor() const noexcept;
+    NSColor *ViewerTextSyntaxIdentifierColor() const noexcept;
+    NSColor *ViewerTextSyntaxNumberColor() const noexcept;
+    NSColor *ViewerTextSyntaxStringColor() const noexcept;
     NSColor *ViewerSelectionColor() const noexcept;
     NSColor *ViewerBackgroundColor() const noexcept;
 

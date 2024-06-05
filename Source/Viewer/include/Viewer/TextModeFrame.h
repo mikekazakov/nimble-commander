@@ -1,7 +1,8 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "TextModeWorkingSet.h"
+#include "TextModeWorkingSetHighlighting.h"
 #include "TextProcessing.h"
 #include "TextModeIndexedTextLine.h"
 #include <Utility/FontExtras.h>
@@ -13,11 +14,13 @@ class TextModeFrame
 public:
     struct Source {
         std::shared_ptr<const TextModeWorkingSet> working_set;
+        // TODO: should be a span of styles instead
+        std::shared_ptr<const TextModeWorkingSetHighlighting> working_set_highlighting; // optional
         double wrapping_width = 10000.;
         int tab_spaces = 4;
         CTFontRef font = nullptr;
         nc::utility::FontGeometryInfo font_info;
-        CGColorRef foreground_color = nullptr;
+        std::array<CGColorRef, 8> foreground_colors = {};
     };
 
     TextModeFrame(const Source &_source);

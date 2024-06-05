@@ -42,6 +42,7 @@ using namespace nc::viewer;
                                          // in bytes
     nc::utility::TemporaryFileStorage *m_TempFileStorage;
     const nc::config::Config *m_Config;
+    nc::viewer::hl::SettingsStorage *m_HighlightingSettings;
     std::unique_ptr<nc::viewer::Theme> m_Theme;
 }
 
@@ -49,14 +50,16 @@ using namespace nc::viewer;
 @synthesize hotkeyDelegate;
 
 - (id)initWithFrame:(NSRect)frame
-        tempStorage:(nc::utility::TemporaryFileStorage &)_temp_storage
-             config:(const nc::config::Config &)_config
-              theme:(std::unique_ptr<nc::viewer::Theme>)_theme
+             tempStorage:(nc::utility::TemporaryFileStorage &)_temp_storage
+                  config:(const nc::config::Config &)_config
+                   theme:(std::unique_ptr<nc::viewer::Theme>)_theme
+    highlightingSettings:(nc::viewer::hl::SettingsStorage &)_hl_settings
 {
     if( self = [super initWithFrame:frame] ) {
 
         m_TempFileStorage = &_temp_storage;
         m_Config = &_config;
+        m_HighlightingSettings = &_hl_settings;
         m_Theme = std::move(_theme);
         [self commonInit];
     }
@@ -259,7 +262,8 @@ using namespace nc::viewer;
     if( _mode == ViewMode::Text ) {
         auto view = [[NCViewerTextModeView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)
                                                         backend:m_Data
-                                                          theme:*m_Theme];
+                                                          theme:*m_Theme
+                                           highlightingSettings:*m_HighlightingSettings];
         view.delegate = self;
         [self addFillingSubview:view];
         m_View = view;

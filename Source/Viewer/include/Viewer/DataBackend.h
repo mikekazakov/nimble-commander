@@ -1,9 +1,10 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/FileWindow.h>
 #include <MacTypes.h>
 #include <functional>
+#include <filesystem>
 
 namespace nc::viewer {
 
@@ -55,6 +56,9 @@ public:
     const uint32_t *UniCharToByteIndeces() const; // byte indeces within file window of decoded unichars
     uint32_t UniCharsSize() const;                // decoded buffer size in unichars
 
+    // Returns a filename component of the underlying VFS file's path
+    std::filesystem::path FileName() const;
+    
 private:
     void DecodeBuffer(); // called by internal update logic
 

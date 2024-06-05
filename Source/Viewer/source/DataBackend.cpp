@@ -1,6 +1,7 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DataBackend.h"
 #include <Utility/Encodings.h>
+#include <Utility/PathManip.h>
 
 namespace nc::viewer {
 
@@ -50,4 +51,18 @@ int DataBackend::MoveWindowSync(uint64_t _pos)
     DecodeBuffer();
     return 0;
 }
+
+std::filesystem::path DataBackend::FileName() const
+{
+    if( !m_FileWindow->File() ) {
+        return {};
+    }
+    const char *path = m_FileWindow->File()->Path();
+    if( path == nullptr ) {
+        return {};
+    }
+    
+    return utility::PathManip::Filename(path);
+}
+
 } // namespace nc::viewer

@@ -38,3 +38,5 @@ While this source code mirrors that of the official Nimble Commander builds, the
   * Privileged Helper: Requires proper signing to be installed and function correctly.
   * Dropbox VFS: Needs a specific application key for to operate.
   
+## Implementation Notes
+  * [Syntax Highlighting](SyntaxHighlighting.md)

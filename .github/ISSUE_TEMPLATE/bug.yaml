@@ -32,8 +32,9 @@ body:
       label: Distribution Type
       description: Please select where this version was downloaded from.
       options:
-        - Downloaded directly from the website
-        - Downloaded from the Mac App Store (i.e. sandboxed)
+        - Downloaded directly from the website (including Brew)
+        - Downloaded from GitHub (nightly and test workflows)        
+        - Downloaded from Mac App Store (i.e. sandboxed)
       default: 0
   - type: textarea
     id: expected

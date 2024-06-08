@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SpdLogWindow.h"
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/base_sink.h>
@@ -98,6 +98,9 @@ void SpdLogUISink::DoFlush()
     std::shared_ptr<nc::utility::SpdLogUISink> m_Sink;
     NSTimer *m_DrainTimer;
     NSDictionary<NSAttributedStringKey, id> *m_TextAttrs;
+    NSDictionary<NSAttributedStringKey, id> *m_WarningAttrs;
+    NSDictionary<NSAttributedStringKey, id> *m_ErrorAttrs;
+    NSDictionary<NSAttributedStringKey, id> *m_CriticalAttrs;
     bool m_AutoScroll;
 }
 
@@ -218,8 +221,21 @@ void SpdLogUISink::DoFlush()
 
     m_TextAttrs = @{
         NSFontAttributeName: [NSFont monospacedSystemFontOfSize:10. weight:NSFontWeightRegular],
-        NSForegroundColorAttributeName: [NSColor textColor]
+        NSForegroundColorAttributeName: NSColor.textColor
     };
+    m_WarningAttrs = @{
+        NSFontAttributeName: [NSFont monospacedSystemFontOfSize:10. weight:NSFontWeightSemibold],
+        NSForegroundColorAttributeName: NSColor.systemYellowColor
+    };
+    m_ErrorAttrs = @{
+        NSFontAttributeName: [NSFont monospacedSystemFontOfSize:10. weight:NSFontWeightSemibold],
+        NSForegroundColorAttributeName: NSColor.systemRedColor
+    };
+    m_CriticalAttrs = @{
+        NSFontAttributeName: [NSFont monospacedSystemFontOfSize:10. weight:NSFontWeightBold],
+        NSForegroundColorAttributeName: NSColor.systemRedColor
+    };
+
     m_ScrollView = sv;
     m_TextView = tv;
     m_TextStorage = tv.textStorage;
@@ -244,11 +260,34 @@ void SpdLogUISink::DoFlush()
     return wnd;
 }
 
+- (void)highlightString:(NSMutableAttributedString *)_str
+         withAttributes:(NSDictionary<NSAttributedStringKey, id> *)_attrs
+           forSubstring:(NSString *)_sub_str
+{
+    NSString *str = _str.string;
+    const size_t length = str.length;
+
+    NSRange search_range = NSMakeRange(0, str.length);
+    NSRange found;
+    while( (found = [str rangeOfString:_sub_str options:0 range:search_range]).location != NSNotFound ) {
+        [_str setAttributes:_attrs range:found];
+        search_range = NSMakeRange(NSMaxRange(found), length - NSMaxRange(found));
+    }
+}
+
+- (void)highlightString:(NSMutableAttributedString *)_str
+{
+    [self highlightString:_str withAttributes:m_WarningAttrs forSubstring:@" [warning] "];
+    [self highlightString:_str withAttributes:m_ErrorAttrs forSubstring:@" [error] "];
+    [self highlightString:_str withAttributes:m_CriticalAttrs forSubstring:@" [critical] "];
+}
+
 - (void)acceptNewString:(NSString *)_str
 {
     dispatch_assert_main_queue();
     assert(_str != nil);
-    if( auto as = [[NSAttributedString alloc] initWithString:_str attributes:m_TextAttrs] ) {
+    if( auto as = [[NSMutableAttributedString alloc] initWithString:_str attributes:m_TextAttrs] ) {
+        [self highlightString:as];
         [m_TextStorage appendAttributedString:as];
         if( m_AutoScroll )
             [m_TextView scrollToEndOfDocument:nil];

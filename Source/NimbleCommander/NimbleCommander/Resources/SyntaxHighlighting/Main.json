@@ -1,5 +1,10 @@
 {
-    "langs": [ 
+    "langs": [
+        {
+            "name": "Bash",
+            "settings": "Bash.json",
+            "filemask": "*.sh"
+        },
         {
             "name": "C++",
             "settings": "C++.json",
@@ -9,6 +14,11 @@
             "name": "JSON",
             "settings": "JSON.json",
             "filemask": "*.json"
+        },
+        {
+            "name": "YAML",
+            "settings": "YAML.json",
+            "filemask": "*.yaml, *.yml"
         }
     ]
 }

@@ -1,0 +1,29 @@
+{
+    "lexer": "bash",
+    "wordlists": [
+        "if then elif else fi time for in until while do done case esac coproc select function"
+    ],
+    "properties": {
+        "lexer.bash.styling.inside.string": "1",
+        "lexer.bash.styling.inside.backticks": "1",
+        "lexer.bash.styling.inside.parameter": "1",
+        "lexer.bash.styling.inside.heredoc": "1",
+        "lexer.bash.command.substitution": "1"
+    },
+    "mapping": {
+        "SCE_SH_DEFAULT": "default",
+        "SCE_SH_ERROR": "preprocessor",
+        "SCE_SH_COMMENTLINE": "comment",
+        "SCE_SH_NUMBER": "number",
+        "SCE_SH_WORD": "keyword",
+        "SCE_SH_STRING": "string",
+        "SCE_SH_CHARACTER": "string",
+        "SCE_SH_OPERATOR": "operator",
+        "SCE_SH_IDENTIFIER": "identifier",
+        "SCE_SH_SCALAR": "keyword",
+        "SCE_SH_PARAM": "keyword",
+        "SCE_SH_BACKTICKS": "operator",
+        "SCE_SH_HERE_DELIM": "operator",
+        "SCE_SH_HERE_Q": "operator"
+    }
+}

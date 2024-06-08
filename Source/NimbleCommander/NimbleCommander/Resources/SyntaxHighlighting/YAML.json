@@ -1,0 +1,20 @@
+{
+    "lexer": "yaml",
+    "wordlists": [
+        "true false yes no"
+    ],
+    "properties": {
+    },
+    "mapping": {
+        "SCE_YAML_DEFAULT": "default",
+        "SCE_YAML_COMMENT": "comment",
+        "SCE_YAML_IDENTIFIER": "keyword",
+        "SCE_YAML_KEYWORD": "keyword",
+        "SCE_YAML_NUMBER": "number",
+        "SCE_YAML_REFERENCE": "identifier",
+        "SCE_YAML_DOCUMENT": "keyword",
+        "SCE_YAML_TEXT": "string",
+        "SCE_YAML_ERROR": "preprocessor",
+        "SCE_YAML_OPERATOR": "operator"
+    }
+}

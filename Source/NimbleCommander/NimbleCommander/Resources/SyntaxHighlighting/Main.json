@@ -9,6 +9,11 @@
             "name": "JSON",
             "settings": "JSON.json",
             "filemask": "*.json"
+        },
+        {
+            "name": "YAML",
+            "settings": "YAML.json",
+            "filemask": "*.yaml, *.yml"
         }
     ]
 }

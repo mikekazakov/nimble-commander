@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <functional>
@@ -19,5 +19,7 @@ class Settings;
 @property(nonatomic, readonly) NSEdgeInsets viewInsets;
 @property(nonatomic, readwrite) NSCursor *customCursor;
 @property(nonatomic, readwrite) std::function<void(int sx, int sy)> onScreenResized;
+@property(nonatomic, readwrite) bool overlapped;
+@property(nonatomic, readwrite) double nonOverlappedHeight;
 
 @end

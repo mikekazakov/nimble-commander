@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/CommonPaths.h>
 #include <Term/ShellTask.h>
 #include <Term/Screen.h>
@@ -57,6 +57,7 @@ static const auto g_LongProcessDelay = 100ms;
                                                           settings:TerminalSettings()];
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
         m_TermScrollView.view.reportsSizeByOccupiedContent = true;
+        m_TermScrollView.overlapped = true;
         [self addSubview:m_TermScrollView];
         [self addConstraints:[NSLayoutConstraint
                                  constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|"
@@ -228,6 +229,11 @@ static const auto g_LongProcessDelay = 100ms;
 - (NCTermView *)termView
 {
     return m_TermScrollView.view;
+}
+
+- (NCTermScrollView *)termScrollView
+{
+    return m_TermScrollView;
 }
 
 - (void)runShell:(const std::string &)_initial_wd

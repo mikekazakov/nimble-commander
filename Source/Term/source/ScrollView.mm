@@ -19,7 +19,9 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
     std::shared_ptr<nc::term::Settings> m_Settings;
     std::function<void(int sx, int sy)> m_OnScreenResized;
     int m_SettingsNotificationTicket;
-    bool m_MouseInsideNonOverlappedArea;
+    bool m_Overlapped;
+    double m_NonOverlappedHeight;
+    NSTrackingArea *m_TrackingArea;
 }
 
 @synthesize view = m_View;
@@ -31,7 +33,8 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
     assert(settings);
     self = [super initWithFrame:frameRect];
     if( self ) {
-        m_MouseInsideNonOverlappedArea = false;
+        m_Overlapped = false;
+        m_NonOverlappedHeight = 0.;
         self.customCursor = NSCursor.IBeamCursor;
 
         auto rc = self.contentView.bounds;
@@ -74,13 +77,7 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
                 [strong_self onSettingsChanged];
         });
 
-        const auto tracking_flags = NSTrackingActiveInKeyWindow | NSTrackingMouseMoved |
-                                    NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect;
-        const auto tracking = [[NSTrackingArea alloc] initWithRect:NSRect()
-                                                           options:tracking_flags
-                                                             owner:self
-                                                          userInfo:nil];
-        [self addTrackingArea:tracking];
+        [self updateTrackingAreas];
     }
     return self;
 }
@@ -95,56 +92,27 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
-- (void)mouseMoved:(NSEvent *)event
+- (void)cursorUpdate:(NSEvent *) [[maybe_unused]] _event
 {
-    const auto hit_view = [self.window.contentView hitTest:event.locationInWindow];
-    const auto inside = static_cast<bool>([hit_view isDescendantOf:self]);
-    if( inside ) {
-        if( m_MouseInsideNonOverlappedArea == false ) {
-            m_MouseInsideNonOverlappedArea = true;
-            [self mouseEnteredNonOverlappedArea];
+    if( !m_TrackingArea ) {
+        [super cursorUpdate:_event];
+        return;
+    }
+
+    if( m_Overlapped ) {
+        const NSPoint global_mouse_location = NSEvent.mouseLocation;
+        const NSPoint window_mouse_location = [self.view.window convertPointFromScreen:global_mouse_location];
+        const NSPoint local_mouse_location = [self convertPoint:window_mouse_location fromView:nil];
+        const NSRect tracking_rect = m_TrackingArea.rect;
+        if( NSPointInRect(local_mouse_location, tracking_rect) ) {
+            [self.customCursor set];
+        }
+        else {
+            [super cursorUpdate:_event];
         }
     }
     else {
-        if( m_MouseInsideNonOverlappedArea == true ) {
-            m_MouseInsideNonOverlappedArea = false;
-            [self mouseExitedNonOverlappedArea];
-        }
-    }
-}
-
-- (void)mouseEntered:(NSEvent *)event
-{
-    [self mouseMoved:event];
-}
-
-- (void)mouseExited:(NSEvent *) [[maybe_unused]] _event
-{
-    if( m_MouseInsideNonOverlappedArea == true ) {
-        m_MouseInsideNonOverlappedArea = false;
-        [self mouseExitedNonOverlappedArea];
-    }
-}
-
-- (void)cursorUpdate:(NSEvent *) [[maybe_unused]] _event
-{
-}
-
-- (void)mouseEnteredNonOverlappedArea
-{
-    [self.customCursor push];
-}
-
-- (void)mouseExitedNonOverlappedArea
-{
-    [self.customCursor pop];
-}
-
-- (void)viewDidMoveToWindow
-{
-    if( self.window == nil && m_MouseInsideNonOverlappedArea ) {
-        m_MouseInsideNonOverlappedArea = false;
-        [self mouseExitedNonOverlappedArea];
+        [self.customCursor set];
     }
 }
 
@@ -234,6 +202,70 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
 - (void)mouseDown:(NSEvent *)_event
 {
     [m_View mouseDown:_event];
+}
+
+- (bool)overlapped
+{
+    return m_Overlapped;
+}
+
+- (void)setOverlapped:(bool)_overlapped
+{
+    if( m_Overlapped == _overlapped ) {
+        return;
+    }
+    m_Overlapped = _overlapped;
+    if( m_TrackingArea ) {
+        [self removeTrackingArea:m_TrackingArea];
+        m_TrackingArea = nil;
+    }
+    [self updateTrackingAreas];
+}
+
+- (double)nonOverlappedHeight
+{
+    return m_NonOverlappedHeight;
+}
+
+- (void)setNonOverlappedHeight:(double)_height
+{
+    if( m_NonOverlappedHeight == _height ) {
+        return;
+    }
+
+    m_NonOverlappedHeight = _height;
+    [self updateTrackingAreas];
+}
+
+- (void)updateTrackingAreas
+{
+    [super updateTrackingAreas];
+
+    if( m_Overlapped ) {
+        if( m_TrackingArea ) {
+            [self removeTrackingArea:m_TrackingArea];
+            m_TrackingArea = nil;
+        }
+
+        if( m_NonOverlappedHeight > 0. ) {
+            const NSTrackingAreaOptions tracking_flags = NSTrackingActiveInKeyWindow | NSTrackingCursorUpdate;
+            const NSRect rc = NSMakeRect(
+                0., self.bounds.size.height - m_NonOverlappedHeight, self.bounds.size.width, m_NonOverlappedHeight);
+            m_TrackingArea = [[NSTrackingArea alloc] initWithRect:rc options:tracking_flags owner:self userInfo:nil];
+            [self addTrackingArea:m_TrackingArea];
+        }
+    }
+    else {
+        if( m_TrackingArea == nil ) {
+            const NSTrackingAreaOptions tracking_flags =
+                NSTrackingActiveInKeyWindow | NSTrackingCursorUpdate | NSTrackingInVisibleRect;
+            m_TrackingArea = [[NSTrackingArea alloc] initWithRect:NSRect {}
+                                                          options:tracking_flags
+                                                            owner:self
+                                                         userInfo:nil];
+            [self addTrackingArea:m_TrackingArea];
+        }
+    }
 }
 
 @end

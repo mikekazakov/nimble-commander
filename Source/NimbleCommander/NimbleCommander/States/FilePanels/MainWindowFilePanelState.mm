@@ -892,7 +892,7 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window, std::function<v
     if( m_OverlappedTerminal->terminal == nullptr )
         return;
 
-    auto gap = [m_OverlappedTerminal->terminal bottomGapForLines:m_OverlappedTerminal->bottom_gap];
+    const double gap = [m_OverlappedTerminal->terminal bottomGapForLines:m_OverlappedTerminal->bottom_gap];
     m_MainSplitViewBottomConstraint.constant = -gap;
 
     [self updateOverlappedTerminalVisibility];

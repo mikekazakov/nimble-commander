@@ -1,8 +1,9 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Term/ShellTask.h>
 #include <Term/View.h>
+#include <Term/ScrollView.h>
 
 @interface FilePanelOverlappedTerminal : NSView
 
@@ -20,6 +21,7 @@
 
 @property(nonatomic, readonly) nc::term::ShellTask::TaskState state;
 @property(nonatomic, readonly) NCTermView *termView;
+@property(nonatomic, readonly) NCTermScrollView *termScrollView;
 
 /**
  * tries to understand if Bash shell has something entered awaiting for Enter hit.

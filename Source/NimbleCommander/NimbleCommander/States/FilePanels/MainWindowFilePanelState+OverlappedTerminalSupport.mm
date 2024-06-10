@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
@@ -136,16 +136,16 @@ static const auto g_ConfigGapPath = "filePanel.general.bottomGapForOverlappedTer
 - (void)onOverlappedTerminalLongTaskStarted
 {
     if( self.overlappedTerminalVisible && !self.isPanelsSplitViewHidden ) {
-        [self hidePanelsSplitView];
         m_OverlappedTerminal->did_hide_panels_for_long_task = true;
+        [self hidePanelsSplitView];
     }
 }
 
 - (void)onOverlappedTerminalLongTaskFinished
 {
     if( self.isPanelsSplitViewHidden && m_OverlappedTerminal->did_hide_panels_for_long_task ) {
-        [self showPanelsSplitView];
         m_OverlappedTerminal->did_hide_panels_for_long_task = false;
+        [self showPanelsSplitView];
     }
 }
 
@@ -174,6 +174,15 @@ static const auto g_ConfigGapPath = "filePanel.general.bottomGapForOverlappedTer
     }
     else {
         m_OverlappedTerminal->terminal.hidden = false;
+    }
+
+    if( m_OverlappedTerminal->did_hide_panels_for_long_task ) {
+        m_OverlappedTerminal->terminal.termScrollView.nonOverlappedHeight =
+            m_OverlappedTerminal->terminal.termScrollView.bounds.size.height;
+    }
+    else {
+        const double gap = [m_OverlappedTerminal->terminal bottomGapForLines:m_OverlappedTerminal->bottom_gap];
+        m_OverlappedTerminal->terminal.termScrollView.nonOverlappedHeight = gap;
     }
 }
 

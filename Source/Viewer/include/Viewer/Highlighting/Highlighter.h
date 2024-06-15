@@ -4,8 +4,7 @@
 #include "Style.h"
 #include "LexerSettings.h"
 
-namespace Scintilla
-{
+namespace Scintilla {
 class ILexer5;
 }
 
@@ -15,15 +14,15 @@ class Highlighter
 {
 public:
     Highlighter(LexerSettings _settings);
-    Highlighter(const Highlighter&) = delete;
+    Highlighter(const Highlighter &) = delete;
     ~Highlighter();
-    Highlighter &operator=(const Highlighter&) = delete;
+    Highlighter &operator=(const Highlighter &) = delete;
 
     std::vector<Style> Highlight(std::string_view _text) const;
-    
+
 private:
     LexerSettings m_Settings;
     Scintilla::ILexer5 *m_Lexer = nullptr;
 };
 
-}
+} // namespace nc::viewer::hl

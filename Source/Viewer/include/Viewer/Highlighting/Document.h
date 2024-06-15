@@ -35,7 +35,7 @@ public:
     int GetLineIndentation(Sci_Position line) noexcept override;
 
     Sci_Position LineStart(Sci_Position line) const noexcept override;
-    
+
     Sci_Position LineEnd(Sci_Position line) const noexcept override;
 
     Sci_Position GetRelativePosition(Sci_Position positionStart, Sci_Position characterOffset) const noexcept override;
@@ -67,6 +67,7 @@ public:
     void ChangeLexerState(Sci_Position start, Sci_Position end) noexcept override;
 
     std::span<const char> Styles() const noexcept;
+
 private:
     std::string_view m_Text;
     std::vector<uint32_t> m_Lines;

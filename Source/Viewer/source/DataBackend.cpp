@@ -61,7 +61,7 @@ std::filesystem::path DataBackend::FileName() const
     if( path == nullptr ) {
         return {};
     }
-    
+
     return utility::PathManip::Filename(path);
 }
 

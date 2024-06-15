@@ -29,7 +29,7 @@ static constexpr double g_ContentViewCornerRadius = 10.;
 - (instancetype _Nonnull)initWithPopover:(NCCommandPopover *)_popover andTitle:(NSString *)_title;
 - (void)tableView:(NSTableView *)_table didClickTableRow:(NSInteger)_row;
 - (bool)processKeyDown:(NSEvent *)_event;
-@property (readonly, nonatomic) bool numericHotkeysEnabled;
+@property(readonly, nonatomic) bool numericHotkeysEnabled;
 @end
 
 @interface NCCommandPopoverTableView : NSTableView
@@ -404,9 +404,9 @@ static constexpr double g_ContentViewCornerRadius = 10.;
 
 - (std::optional<size_t>)itemIndexFromKeyDown:(NSEvent *)_event
 {
-    if(!self.numericHotkeysEnabled)
+    if( !self.numericHotkeysEnabled )
         return {};
-    
+
     // Use only clear keypresses, no modifiers
     if( _event.modifierFlags & (NSEventModifierFlagShift | NSEventModifierFlagControl | NSEventModifierFlagOption |
                                 NSEventModifierFlagCommand) )
@@ -565,7 +565,7 @@ static constexpr double g_ContentViewCornerRadius = 10.;
             return cv;
         }
 
-        if( [_column.identifier isEqualToString:@"K"] && self.numericHotkeysEnabled) {
+        if( [_column.identifier isEqualToString:@"K"] && self.numericHotkeysEnabled ) {
             NSString *hk = [self hotkeyLabelForItemAtIndex:_row];
             if( hk.length == 0 )
                 return nil;
@@ -759,7 +759,7 @@ static constexpr double g_ContentViewCornerRadius = 10.;
     }
 }
 
-- (bool) numericHotkeysEnabled
+- (bool)numericHotkeysEnabled
 {
     return m_LabelTextField.stringValue == nil || m_LabelTextField.stringValue.length == 0;
 }

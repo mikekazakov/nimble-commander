@@ -23,19 +23,17 @@ TEST_CASE(PREFIX "Load from a JSON")
             "SCE_C_NUMBER": "number"
         }
     })";
-    
+
     auto sets = ParseLexerSettings(json);
     REQUIRE(sets.has_value());
-    
-    CHECK( sets->name == "cpp" );
-    CHECK( sets->wordlists == std::vector<std::string>{"int float char", "enum class"} );
-    CHECK( sets->properties == std::vector<LexerSettings::Property>{
-        LexerSettings::Property{ "some key1", "some val1"},
-        LexerSettings::Property{ "some key2", "some val2"}
-    } );
-        
+
+    CHECK(sets->name == "cpp");
+    CHECK(sets->wordlists == std::vector<std::string>{"int float char", "enum class"});
+    CHECK(sets->properties == std::vector<LexerSettings::Property>{LexerSettings::Property{"some key1", "some val1"},
+                                                                   LexerSettings::Property{"some key2", "some val2"}});
+
     const std::vector<char> in{SCE_C_WORD, SCE_C_STRING, SCE_C_PREPROCESSOR, SCE_C_NUMBER};
     std::vector<Style> out(in.size());
     sets->mapping.MapStyles(in, out);
-    CHECK( out == std::vector<Style>{Style::Keyword, Style::Default, Style::Preprocessor, Style::Number} );
+    CHECK(out == std::vector<Style>{Style::Keyword, Style::Default, Style::Preprocessor, Style::Number});
 }

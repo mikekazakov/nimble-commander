@@ -61,7 +61,7 @@ struct Theme::Internals {
     NSColor *m_FilePanelsBriefFocusedActiveItemBackgroundColor;
     NSColor *m_FilePanelsBriefFocusedInactiveItemBackgroundColor;
     NSColor *m_FilePanelsBriefSelectedItemBackgroundColor;
-    
+
     NSFont *m_TerminalFont;
     NSColor *m_TerminalOverlayColor;
     NSColor *m_TerminalForegroundColor;
@@ -85,7 +85,7 @@ struct Theme::Internals {
     NSColor *m_TerminalAnsiColorD;
     NSColor *m_TerminalAnsiColorE;
     NSColor *m_TerminalAnsiColorF;
-    
+
     NSFont *m_ViewerFont;
     NSColor *m_ViewerOverlayColor;
     NSColor *m_ViewerTextColor;

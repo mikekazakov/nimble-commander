@@ -58,7 +58,7 @@ public:
 
     // Returns a filename component of the underlying VFS file's path
     std::filesystem::path FileName() const;
-    
+
 private:
     void DecodeBuffer(); // called by internal update logic
 

@@ -160,7 +160,7 @@ void Client::HighlightAsync(std::string_view _text,
     auto release_message = at_scope_end([&] { xpc_release(message); });
 
     xpc_connection_send_message_with_reply(connection, message, _queue, handler);
-    
+
     // VVV I seriously don't understand the ownership model of xpc_connection_t and why this seem to be correct...
     xpc_release(connection);
 }

@@ -37,7 +37,7 @@ static constinit frozen::unordered_map<frozen::string, Style, 8> g_MappedStyles{
 std::expected<LexerSettings, std::string> ParseLexerSettings(std::string_view _json) noexcept
 {
     try {
-        json json_obj = json::parse(_json);
+        json json_obj = json::parse(_json, nullptr, true, true);
 
         LexerSettings sets;
         sets.name = json_obj.at("lexer");

@@ -34,6 +34,13 @@ static void send_reply_styles(xpc_connection_t _peer,
 static void peer_event_handler(xpc_connection_t _peer, xpc_object_t _event) noexcept
 {
     const xpc_type_t type = xpc_get_type(_event);
+    if( type == XPC_TYPE_ERROR ) {
+        if( _event == XPC_ERROR_TERMINATION_IMMINENT ) {
+            exit(0);
+        }
+        return;
+    }
+
     if( type != XPC_TYPE_DICTIONARY ) {
         send_reply_error(_peer, _event, "The request type must be dictionary.");
         return;

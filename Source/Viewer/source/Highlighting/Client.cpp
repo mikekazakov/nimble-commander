@@ -105,7 +105,6 @@ void Client::HighlightAsync(std::string_view _text,
     }
 
     auto handler = ^(xpc_object_t _reply) {
-      auto release_connection = at_scope_end([&] { xpc_release(connection); });
       Log::Trace(SPDLOC, "Got a response from the XPC service");
       const xpc_type_t type = xpc_get_type(_reply);
       if( type == XPC_TYPE_ERROR ) {
@@ -161,6 +160,9 @@ void Client::HighlightAsync(std::string_view _text,
     auto release_message = at_scope_end([&] { xpc_release(message); });
 
     xpc_connection_send_message_with_reply(connection, message, _queue, handler);
+    
+    // VVV I seriously don't understand the ownership model of xpc_connection_t and why this seem to be correct...
+    xpc_release(connection);
 }
 
 } // namespace nc::viewer::hl

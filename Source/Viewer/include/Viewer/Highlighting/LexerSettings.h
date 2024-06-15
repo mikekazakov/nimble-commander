@@ -14,7 +14,7 @@ struct LexerSettings {
     struct Property {
         std::string key;
         std::string value;
-        auto operator<=>(const Property& ) const noexcept = default;
+        auto operator<=>(const Property &) const noexcept = default;
     };
 
     std::string name;

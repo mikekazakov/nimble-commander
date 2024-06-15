@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		CF1325622225FD630097F9A1 /* TextModeFrame_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF13255E2225FB610097F9A1 /* TextModeFrame_UT.cpp */; };
 		CF24E1D3227F0B2A00C166FA /* HexModeLayout_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF24E1D1227F0B2400C166FA /* HexModeLayout_UT.cpp */; };
+		CF26778A2C1E03FD00EE8F06 /* FileSettingsStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2677892C1E03FD00EE8F06 /* FileSettingsStorage.h */; };
+		CF26778C2C1E041400EE8F06 /* FileSettingsStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF26778B2C1E041400EE8F06 /* FileSettingsStorage.cpp */; };
+		CF26778E2C1E0A0E00EE8F06 /* hlFileSettingsStorage_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF26778D2C1E0A0E00EE8F06 /* hlFileSettingsStorage_UT.cpp */; };
 		CF3989B62B41707F006103C1 /* libBase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989B52B41707F006103C1 /* libBase.a */; };
 		CF46FEFF255EF4480095FC73 /* Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CF46FEFE255EF4480095FC73 /* Internal.h */; };
 		CF5BF7832BF90FF20057C92E /* Document.h in Headers */ = {isa = PBXBuildFile; fileRef = CF5BF7822BF90FF20057C92E /* Document.h */; };
@@ -132,6 +135,9 @@
 		CF24E1D1227F0B2400C166FA /* HexModeLayout_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeLayout_UT.cpp; path = tests/HexModeLayout_UT.cpp; sourceTree = "<group>"; };
 		CF24E1D62286E23800C166FA /* PreviewModeView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreviewModeView.mm; path = source/PreviewModeView.mm; sourceTree = "<group>"; };
 		CF24E1D82286E24300C166FA /* PreviewModeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreviewModeView.h; path = include/Viewer/PreviewModeView.h; sourceTree = "<group>"; };
+		CF2677892C1E03FD00EE8F06 /* FileSettingsStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSettingsStorage.h; path = include/Viewer/Highlighting/FileSettingsStorage.h; sourceTree = "<group>"; };
+		CF26778B2C1E041400EE8F06 /* FileSettingsStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileSettingsStorage.cpp; path = source/Highlighting/FileSettingsStorage.cpp; sourceTree = "<group>"; };
+		CF26778D2C1E0A0E00EE8F06 /* hlFileSettingsStorage_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hlFileSettingsStorage_UT.cpp; path = tests/hlFileSettingsStorage_UT.cpp; sourceTree = "<group>"; };
 		CF3989B52B41707F006103C1 /* libBase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libBase.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF46FEFE255EF4480095FC73 /* Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internal.h; path = source/Internal.h; sourceTree = "<group>"; };
 		CF46FF03255EF4690095FC73 /* Bundle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Bundle.h; path = include/Viewer/Bundle.h; sourceTree = "<group>"; };
@@ -266,6 +272,7 @@
 			children = (
 				CF5BF7B72BFE8B3B0057C92E /* Client.h */,
 				CF5BF7822BF90FF20057C92E /* Document.h */,
+				CF2677892C1E03FD00EE8F06 /* FileSettingsStorage.h */,
 				CF5BF7952BFBD9480057C92E /* Highlighter.h */,
 				CF5BF7932BFBCA030057C92E /* LexerSettings.h */,
 				CF5BF7C72C0B89B40057C92E /* SettingsStorage.h */,
@@ -279,6 +286,7 @@
 			children = (
 				CF5BF7B82BFE8B540057C92E /* Client.cpp */,
 				CF5BF7852BF910100057C92E /* Document.cpp */,
+				CF26778B2C1E041400EE8F06 /* FileSettingsStorage.cpp */,
 				CF5BF7972BFBD9510057C92E /* Highlighter.cpp */,
 				CF5BF7912BFBC9F90057C92E /* LexerSettings.cpp */,
 				CF5BF7AA2BFD48950057C92E /* Service.cpp */,
@@ -410,6 +418,7 @@
 				CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */,
 				CF5BF7C12BFFDD240057C92E /* hlClient_UT.cpp */,
 				CF5BF7872BF9209E0057C92E /* hlDocument_UT.cpp */,
+				CF26778D2C1E0A0E00EE8F06 /* hlFileSettingsStorage_UT.cpp */,
 				CF5BF7992BFBDF1F0057C92E /* hlHighlighter_UT.cpp */,
 				CF5BF79B2BFD39A60057C92E /* hlLexerSettings_UT.cpp */,
 				CF5BF78E2BFA19F50057C92E /* hlStyle_UT.cpp */,
@@ -450,6 +459,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF5BF78B2BFA12F70057C92E /* Style.h in Headers */,
+				CF26778A2C1E03FD00EE8F06 /* FileSettingsStorage.h in Headers */,
 				CF5BF7962BFBD9480057C92E /* Highlighter.h in Headers */,
 				CF5BF7C82C0B89B40057C92E /* SettingsStorage.h in Headers */,
 				CF5BF7C42C0B41F90057C92E /* TextModeWorkingSetHighlighting.h in Headers */,
@@ -661,6 +671,7 @@
 				CFA9998D26468A4300F72E93 /* Log.cpp in Sources */,
 				CF5BF7982BFBD9510057C92E /* Highlighter.cpp in Sources */,
 				CF5C1D86255EEA6A00ADE703 /* PreviewModeView.mm in Sources */,
+				CF26778C2C1E041400EE8F06 /* FileSettingsStorage.cpp in Sources */,
 				CF5C1D7F255EEA6A00ADE703 /* HexModeView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -670,6 +681,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF5BF79A2BFBDF1F0057C92E /* hlHighlighter_UT.cpp in Sources */,
+				CF26778E2C1E0A0E00EE8F06 /* hlFileSettingsStorage_UT.cpp in Sources */,
 				CF9BF90D226CF99000AD36D9 /* HexModeFrame_UT.cpp in Sources */,
 				CF61F2FC263D610A009FF900 /* TextMoveView_UT.mm in Sources */,
 				CF9BF9062269FD7000AD36D9 /* HexModeProcessing_UT.cpp in Sources */,

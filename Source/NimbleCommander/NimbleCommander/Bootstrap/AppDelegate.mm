@@ -78,7 +78,7 @@
 #include <Viewer/Log.h>
 #include <Viewer/ViewerViewController.h>
 #include <Viewer/InternalViewerWindowController.h>
-#include <Viewer/Highlighting/SettingsStorage.h>
+#include <Viewer/Highlighting/FileSettingsStorage.h>
 
 #include <Term/Log.h>
 

@@ -2961,7 +2961,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ $CODE_SIGNING_ALLOWED == NO ]] ; then exit ; fi\ncodesign --verbose --sign 'Developer ID Application' --force --deep --timestamp --options runtime \"${TARGET_BUILD_DIR}/${XPCSERVICES_FOLDER_PATH}/Highlighter.xpc/Contents/MacOS/Highlighter\"\n";
+			shellScript = "if [[ $CODE_SIGNING_ALLOWED == NO ]] ; then exit ; fi\ncodesign \\\n --verbose \\\n --sign 'Developer ID Application' \\\n --force \\\n --deep \\\n --timestamp \\\n --entitlements \"${PROJECT_DIR}/../Viewer/resources/Highlighter.entitlements\" \\\n --options runtime \\\n \"${TARGET_BUILD_DIR}/${XPCSERVICES_FOLDER_PATH}/Highlighter.xpc/Contents/MacOS/Highlighter\"\n";
 		};
 		CF9EEB3E17256372001443FA /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -4,6 +4,7 @@
 #include <string>
 #include <string_view>
 #include <memory>
+#include <optional>
 
 namespace nc::viewer::hl {
 
@@ -13,7 +14,7 @@ public:
     virtual ~SettingsStorage() = default;
 
     // Returns a name of a predicted language for the given filename.
-    virtual std::string Language(std::string_view _filename) = 0;
+    virtual std::optional<std::string> Language(std::string_view _filename) = 0;
 
     // Returns the syntax settings of the given language name or nullptr if no such language is defined
     virtual std::shared_ptr<const std::string> Settings(std::string_view _lang) = 0;
@@ -22,7 +23,7 @@ public:
 class DummySettingsStorage : public SettingsStorage
 {
 public:
-    std::string Language(std::string_view _filename) override;
+    std::optional<std::string> Language(std::string_view _filename) override;
 
     std::shared_ptr<const std::string> Settings(std::string_view _lang) override;
 };

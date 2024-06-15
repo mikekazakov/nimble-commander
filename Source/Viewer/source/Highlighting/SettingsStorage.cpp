@@ -3,7 +3,7 @@
 
 namespace nc::viewer::hl {
 
-std::string DummySettingsStorage::Language(std::string_view _filename)
+std::optional<std::string> DummySettingsStorage::Language(std::string_view _filename)
 {
     (void)_filename;
     return {};

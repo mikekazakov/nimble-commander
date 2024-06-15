@@ -159,22 +159,20 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 - (void)rebuildWorkingSetAndFrame
 {
     m_WorkingSet = BuildWorkingSetForBackendState(*m_Backend);
+    m_WorkingSetHighlighting.reset();
 
-    const std::string lang = m_HighlightingSettings->Language(m_Backend->FileName().native());
-    if( !lang.empty() && m_HighlightingSettings->Settings(lang) != nullptr ) {
-        auto settings = m_HighlightingSettings->Settings(lang);
-        m_WorkingSetHighlighting = std::make_shared<TextModeWorkingSetHighlighting>(m_WorkingSet, settings);
-        __weak NCViewerTextModeView *weak_self = self;
-        m_WorkingSetHighlighting->Highlight(g_SyncHighlightingThreshold,
-                                            [weak_self](std::shared_ptr<const TextModeWorkingSetHighlighting> _hl) {
-                                                NCViewerTextModeView *strong_self = weak_self;
-                                                if( !strong_self || _hl != strong_self->m_WorkingSetHighlighting )
-                                                    return;
-                                                [strong_self highlightingHasChanged];
-                                            });
-    }
-    else {
-        m_WorkingSetHighlighting.reset();
+    if( const std::optional<std::string> lang = m_HighlightingSettings->Language(m_Backend->FileName().native()) ) {
+        if( const std::shared_ptr<const std::string> settings = m_HighlightingSettings->Settings(*lang) ) {
+            m_WorkingSetHighlighting = std::make_shared<TextModeWorkingSetHighlighting>(m_WorkingSet, settings);
+            __weak NCViewerTextModeView *weak_self = self;
+            m_WorkingSetHighlighting->Highlight(g_SyncHighlightingThreshold,
+                                                [weak_self](std::shared_ptr<const TextModeWorkingSetHighlighting> _hl) {
+                                                    NCViewerTextModeView *strong_self = weak_self;
+                                                    if( !strong_self || _hl != strong_self->m_WorkingSetHighlighting )
+                                                        return;
+                                                    [strong_self highlightingHasChanged];
+                                                });
+        }
     }
 
     m_Frame = [self buildLayout];

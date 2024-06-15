@@ -13,7 +13,7 @@ class FileSettingsStorage : public SettingsStorage
 public:
     FileSettingsStorage(const std::filesystem::path &_base_dir, const std::filesystem::path &_overrides_dir);
 
-    std::string Language(std::string_view _filename) override;
+    std::optional<std::string> Language(std::string_view _filename) noexcept override;
 
     std::shared_ptr<const std::string> Settings(std::string_view _lang) override;
 
@@ -24,7 +24,7 @@ private:
         nc::utility::FileMask mask;
     };
 
-    void LoadLangs();
+    std::vector<Lang> LoadLangs();
 
     std::filesystem::path m_BaseDir;
     std::vector<Lang> m_Langs;

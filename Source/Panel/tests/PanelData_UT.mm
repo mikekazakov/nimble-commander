@@ -232,7 +232,7 @@ TEST_CASE(PREFIX "SortingWithCases")
     sorting.sort = data::SortMode::SortByName;
     sorting.case_sens = false;
     data.SetSortMode(sorting);
-    data.Load(std::move(listing), data::Model::PanelType::Directory);
+    data.Load(listing, data::Model::PanelType::Directory);
 
     CHECK(data.SortedIndexForName(listing->Item(0).FilenameC()) == 0);
     CHECK(data.SortedIndexForName(listing->Item(2).FilenameC()) == 1);

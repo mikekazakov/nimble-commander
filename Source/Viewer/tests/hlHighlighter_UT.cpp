@@ -23,7 +23,7 @@ TEST_CASE(PREFIX "Regular use with C++ lexer")
 {
     LexerSettings set;
     set.name = "cpp";
-    set.wordlists.push_back("int");
+    set.wordlists.emplace_back("int");
     set.mapping.SetMapping(SCE_C_DEFAULT, Style::Default);
     set.mapping.SetMapping(SCE_C_COMMENT, Style::Comment);
     set.mapping.SetMapping(SCE_C_COMMENTLINE, Style::Comment);
@@ -95,7 +95,7 @@ TEST_CASE(PREFIX "Regular use with Bash lexer")
 {
     LexerSettings set;
     set.name = "bash";
-    set.wordlists.push_back("set if command then echo exit fi export");
+    set.wordlists.emplace_back("set if command then echo exit fi export");
     set.mapping.SetMapping(SCE_SH_DEFAULT, Style::Default);
     set.mapping.SetMapping(SCE_SH_ERROR, Style::Default);
     set.mapping.SetMapping(SCE_SH_COMMENTLINE, Style::Comment);

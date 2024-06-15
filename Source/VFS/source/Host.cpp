@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include "ListingInput.h"
 #include "../include/VFS/Host.h"
@@ -68,7 +68,7 @@ FileObservationToken::FileObservationToken(unsigned long _token, std::weak_ptr<H
 }
 
 FileObservationToken::FileObservationToken(FileObservationToken &&_rhs) noexcept
-    : m_Token{_rhs.m_Token}, m_Host{_rhs.m_Host}
+    : m_Token{_rhs.m_Token}, m_Host{std::move(_rhs.m_Host)}
 {
     _rhs.m_Token = 0;
     _rhs.m_Host.reset();

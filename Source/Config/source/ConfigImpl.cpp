@@ -349,7 +349,7 @@ void ConfigImpl::InsertObserver(std::string_view _path, base::intrusive_ptr<cons
         // it's the first request to observe this path
         auto new_observers = base::intrusive_ptr{new Observers};
         new_observers->observers.emplace_back(std::move(_observer));
-        m_Observers.emplace(std::move(path), std::move(new_observers));
+        m_Observers.emplace(path, std::move(new_observers));
     }
 }
 

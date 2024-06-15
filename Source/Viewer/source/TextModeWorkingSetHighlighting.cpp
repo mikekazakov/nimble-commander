@@ -2,11 +2,11 @@
 #include "TextModeWorkingSetHighlighting.h"
 #include "Highlighting/Client.h"
 #include "Log.h"
-#include <fmt/chrono.h>
-#include <Utility/Encodings.h>
 #include <Base/dispatch_cpp.h>
+#include <Utility/Encodings.h>
+#include <cassert>
+#include <fmt/chrono.h>
 #include <stdexcept>
-#include <assert.h>
 
 namespace nc::viewer {
 

@@ -34,7 +34,7 @@ void BatchRename::Perform(PanelController *_target, id) const
     if( !all_of(begin(items), end(items), [=](auto &i) { return i.Host() == host; }) )
         return; // currently BatchRenameOperation supports only single host for items
 
-    const auto sheet = [[NCOpsBatchRenamingDialog alloc] initWithItems:std::move(items)];
+    const auto sheet = [[NCOpsBatchRenamingDialog alloc] initWithItems:items];
     sheet.renamePatternDataSource =
         [[SimpleComboBoxPersistentDataSource alloc] initWithStateConfigPath:g_ConfigPatternsPath];
     sheet.searchForDataSource =

@@ -181,7 +181,7 @@ static std::optional<std::filesystem::path> TryToResolve(const std::filesystem::
     if( ec == std::error_code{} && exists ) {
         const bool is_symlink = std::filesystem::is_symlink(_path, ec);
         if( ec == std::error_code{} && is_symlink ) {
-            const auto symlink = std::filesystem::read_symlink(_path, ec);
+            auto symlink = std::filesystem::read_symlink(_path, ec);
             if( ec != std::error_code{} )
                 return {};
             if( symlink.is_absolute() )

@@ -1,10 +1,11 @@
 // Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Viewer/Highlighting/LexerSettings.h>
-#include <Viewer/Highlighting/Highlighter.h>
-#include <span>
-#include <optional>
+#include <Viewer/Highlighting/LexerSettings.h> // NOLINT
+#include <Viewer/Highlighting/Highlighter.h>   // NOLINT
+
+#include <cstdio>
 #include <fmt/format.h>
-#include <stdio.h>
+#include <optional>
+#include <span>
 #include <xpc/xpc.h>
 
 static void send_reply_error(xpc_connection_t _peer, xpc_object_t _from_event, const std::string &_error_msg) noexcept

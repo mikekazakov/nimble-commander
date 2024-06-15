@@ -1,10 +1,10 @@
 // Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+#include <Base/algo.h>
 #include <Viewer/Highlighting/Client.h>
 #include <Viewer/Log.h>
-#include <Base/algo.h>
-#include <xpc/xpc.h>
-#include <assert.h>
+#include <cassert>
 #include <thread>
+#include <xpc/xpc.h>
 
 namespace nc::viewer::hl {
 

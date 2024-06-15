@@ -215,7 +215,7 @@ void Model::ReLoad(const VFSListingPtr &_listing)
         throw std::invalid_argument("PanelData::ReLoad: incompatible listing type!");
 
     // put a new data in a place
-    m_Listing = std::move(_listing);
+    m_Listing = _listing;
     m_VolatileData = std::move(new_vd);
     m_EntriesByRawName = std::move(dirbyrawcname);
 

@@ -22,7 +22,7 @@
 using namespace std::literals;
 using nc::ThemePersistence;
 
-static NSTextField *SpawnSectionTitle(NSString *_title)
+static NSTableCellView *SpawnSectionTitle(NSString *_title)
 {
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     tf.stringValue = _title;
@@ -30,10 +30,25 @@ static NSTextField *SpawnSectionTitle(NSString *_title)
     tf.editable = false;
     tf.drawsBackground = false;
     tf.font = [NSFont labelFontOfSize:13];
-    return tf;
+    tf.translatesAutoresizingMaskIntoConstraints = false;
+    NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
+    [cv addSubview:tf];
+    [cv addConstraints:[NSLayoutConstraint
+                           constraintsWithVisualFormat:@"H:|-(0)-[tf]-(0)-|"
+                                               options:0
+                                               metrics:nil
+                                                 views:NSDictionaryOfVariableBindings(tf)]];
+    [cv addConstraint:[NSLayoutConstraint constraintWithItem:tf
+                                                   attribute:NSLayoutAttributeCenterY
+                                                   relatedBy:NSLayoutRelationEqual
+                                                      toItem:cv
+                                                   attribute:NSLayoutAttributeCenterY
+                                                  multiplier:1.
+                                                    constant:0.]];
+    return cv;
 }
 
-static NSTextField *SpawnEntryTitle(NSString *_title)
+static NSTableCellView *SpawnEntryTitle(NSString *_title)
 {
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     tf.stringValue = _title;
@@ -42,7 +57,22 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     tf.drawsBackground = false;
     tf.font = [NSFont labelFontOfSize:11];
     tf.lineBreakMode = NSLineBreakByTruncatingTail;
-    return tf;
+    tf.translatesAutoresizingMaskIntoConstraints = false;
+    NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
+    [cv addSubview:tf];
+    [cv addConstraints:[NSLayoutConstraint
+                           constraintsWithVisualFormat:@"H:|-(0)-[tf]-(0)-|"
+                                               options:0
+                                               metrics:nil
+                                                 views:NSDictionaryOfVariableBindings(tf)]];
+    [cv addConstraint:[NSLayoutConstraint constraintWithItem:tf
+                                                   attribute:NSLayoutAttributeCenterY
+                                                   relatedBy:NSLayoutRelationEqual
+                                                      toItem:cv
+                                                   attribute:NSLayoutAttributeCenterY
+                                                  multiplier:1.
+                                                    constant:0.]];
+    return cv;
 }
 
 @interface PreferencesWindowThemesTab ()
@@ -382,7 +412,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
         if( i.type == PreferencesWindowThemesTabItemType::ColoringRules )
             return 140;
 
-    return 18;
+    return 20.;
 }
 
 - (void)loadSelectedDocument

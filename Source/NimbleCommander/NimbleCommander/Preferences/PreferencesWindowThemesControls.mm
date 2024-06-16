@@ -76,8 +76,22 @@ using nc::ThemeAppearance;
             [self addConstraints:constraints];
         };
         add_visfmt(@"|[m_ColorWell(==40)]-[m_Description]-(>=0)-|");
-        add_visfmt(@"V:|-(>=0@250)-[m_ColorWell(==18)]-(>=0@250)-|");
-        add_visfmt(@"V:|-(==0)-[m_Description]-(==0)-|");
+        add_visfmt(@"V:[m_ColorWell(==18)]");
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:m_ColorWell
+                                                         attribute:NSLayoutAttributeCenterY
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:self
+                                                         attribute:NSLayoutAttributeCenterY
+                                                        multiplier:1.
+                                                          constant:0.]];
+
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:m_Description
+                                                         attribute:NSLayoutAttributeCenterY
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:self
+                                                         attribute:NSLayoutAttributeCenterY
+                                                        multiplier:1.
+                                                          constant:0.]];
     }
     return self;
 }
@@ -370,7 +384,9 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
 {
     if( row >= static_cast<int>(m_Rules.size()) )
         return nil;
+
     auto &r = m_Rules[row];
+
     if( [tableColumn.identifier isEqualToString:@"name"] ) {
         NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
         tf.stringValue = [NSString stringWithUTF8StdString:r.name];
@@ -385,14 +401,56 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
         cw.color = r.regular;
         cw.target = self;
         cw.action = @selector(onColorChanged:);
-        return cw;
+        cw.translatesAutoresizingMaskIntoConstraints = false;
+        NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
+        [cv addSubview:cw];
+        [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[cw(==18)]"
+                                                                   options:0
+                                                                   metrics:nil
+                                                                     views:NSDictionaryOfVariableBindings(cw)]];
+        [cv addConstraint:[NSLayoutConstraint constraintWithItem:cw
+                                                       attribute:NSLayoutAttributeCenterX
+                                                       relatedBy:NSLayoutRelationEqual
+                                                          toItem:cv
+                                                       attribute:NSLayoutAttributeCenterX
+                                                      multiplier:1.
+                                                        constant:0.]];
+        [cv addConstraint:[NSLayoutConstraint constraintWithItem:cw
+                                                       attribute:NSLayoutAttributeCenterY
+                                                       relatedBy:NSLayoutRelationEqual
+                                                          toItem:cv
+                                                       attribute:NSLayoutAttributeCenterY
+                                                      multiplier:1.
+                                                        constant:0.]];
+        return cv;
     }
     if( [tableColumn.identifier isEqualToString:@"focused"] ) {
         NSColorWell *cw = [[NSColorWell alloc] initWithFrame:NSRect()];
         cw.color = r.focused;
         cw.target = self;
         cw.action = @selector(onColorChanged:);
-        return cw;
+        cw.translatesAutoresizingMaskIntoConstraints = false;
+        NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
+        [cv addSubview:cw];
+        [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[cw(==18)]"
+                                                                   options:0
+                                                                   metrics:nil
+                                                                     views:NSDictionaryOfVariableBindings(cw)]];
+        [cv addConstraint:[NSLayoutConstraint constraintWithItem:cw
+                                                       attribute:NSLayoutAttributeCenterX
+                                                       relatedBy:NSLayoutRelationEqual
+                                                          toItem:cv
+                                                       attribute:NSLayoutAttributeCenterX
+                                                      multiplier:1.
+                                                        constant:0.]];
+        [cv addConstraint:[NSLayoutConstraint constraintWithItem:cw
+                                                       attribute:NSLayoutAttributeCenterY
+                                                       relatedBy:NSLayoutRelationEqual
+                                                          toItem:cv
+                                                       attribute:NSLayoutAttributeCenterY
+                                                      multiplier:1.
+                                                        constant:0.]];
+        return cv;
     }
     if( [tableColumn.identifier isEqualToString:@"filter"] ) {
         NSButton *bt = [[NSButton alloc] initWithFrame:NSRect()];
@@ -402,8 +460,30 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
         static_cast<NSButtonCell *>(bt.cell).controlSize = NSControlSizeMini;
         bt.target = self;
         bt.action = @selector(onColoringFilterClicked:);
-        return bt;
+        bt.translatesAutoresizingMaskIntoConstraints = false;
+        NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
+        [cv addSubview:bt];
+        [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[bt(==18)]"
+                                                                   options:0
+                                                                   metrics:nil
+                                                                     views:NSDictionaryOfVariableBindings(bt)]];
+        [cv addConstraint:[NSLayoutConstraint constraintWithItem:bt
+                                                       attribute:NSLayoutAttributeCenterX
+                                                       relatedBy:NSLayoutRelationEqual
+                                                          toItem:cv
+                                                       attribute:NSLayoutAttributeCenterX
+                                                      multiplier:1.
+                                                        constant:0.]];
+        [cv addConstraint:[NSLayoutConstraint constraintWithItem:bt
+                                                       attribute:NSLayoutAttributeCenterY
+                                                       relatedBy:NSLayoutRelationEqual
+                                                          toItem:cv
+                                                       attribute:NSLayoutAttributeCenterY
+                                                      multiplier:1.
+                                                        constant:0.]];
+        return cv;
     }
+
     return nil;
 }
 

@@ -1,9 +1,9 @@
 // Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Viewer/Highlighting/Document.h>
-#include <stdlib.h>
 #include <algorithm>
+#include <cassert>
+#include <cstdlib>
 #include <iostream>
-#include <assert.h>
 
 namespace nc::viewer::hl {
 

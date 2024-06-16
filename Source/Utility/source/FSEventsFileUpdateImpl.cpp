@@ -1,4 +1,4 @@
-// Copyright (C) 2021-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FSEventsFileUpdateImpl.h"
 #include <Utility/StringExtras.h>
 #include <Utility/Log.h>
@@ -235,8 +235,9 @@ void FSEventsFileUpdateImpl::KickstartBackgroundScanner()
         }
     }
 
-    dispatch_to_background(
-        [paths = std::move(paths), context = m_WeakAsyncContext] { BackgroundScanner(std::move(paths), context); });
+    dispatch_to_background([paths = std::move(paths), context = m_WeakAsyncContext] mutable {
+        BackgroundScanner(std::move(paths), context);
+    });
 }
 
 void FSEventsFileUpdateImpl::AcceptScannedStats(const std::vector<std::filesystem::path> &_paths,

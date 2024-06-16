@@ -43,13 +43,13 @@ void ExternalToolsParameters::InsertValueRequirement(EnterValue _ev, bool _parti
 void ExternalToolsParameters::InsertCurrentItem(CurrentItem _ci, bool _partial)
 {
     m_Steps.emplace_back(ActionType::CurrentItem, m_CurrentItems.size(), _partial);
-    m_CurrentItems.emplace_back(std::move(_ci));
+    m_CurrentItems.emplace_back(_ci);
 }
 
 void ExternalToolsParameters::InsertSelectedItem(SelectedItems _si, bool _partial)
 {
     m_Steps.emplace_back(ActionType::SelectedItems, m_SelectedItems.size(), _partial);
-    m_SelectedItems.emplace_back(std::move(_si));
+    m_SelectedItems.emplace_back(_si);
 }
 
 std::span<const ExternalToolsParameters::Step> ExternalToolsParameters::Steps() const noexcept
@@ -344,10 +344,10 @@ std::expected<ExternalToolsParameters, std::string> ExternalToolsParametersParse
             result.InsertValueRequirement(std::move(*val), partial);
         }
         if( auto val = std::get_if<ExternalToolsParameters::CurrentItem>(&param) ) {
-            result.InsertCurrentItem(std::move(*val), partial);
+            result.InsertCurrentItem(*val, partial);
         }
         if( auto val = std::get_if<ExternalToolsParameters::SelectedItems>(&param) ) {
-            result.InsertSelectedItem(std::move(*val), partial);
+            result.InsertSelectedItem(*val, partial);
         }
         if( auto val = std::get_if<SetMaximumFilesFlag>(&param) ) {
             result.m_MaximumTotalFiles = val->maximum;

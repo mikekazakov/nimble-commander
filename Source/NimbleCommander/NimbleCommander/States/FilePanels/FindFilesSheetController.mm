@@ -717,7 +717,7 @@ private:
 
     const auto search_fied_value = self.maskSearchField.stringValue;
 
-    const auto query = search_fied_value != nil ? std::string(search_fied_value.UTF8String) : std::string{};
+    auto query = search_fied_value != nil ? std::string(search_fied_value.UTF8String) : std::string{};
     if( query.empty() )
         return {};
     if( m_RegexSearch ) {

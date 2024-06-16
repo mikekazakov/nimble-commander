@@ -289,16 +289,14 @@ bool DragReceiver::PerformWithLocalSource(FilesDraggingSource *_source, const vf
     const auto operation = BuildOperationForLocal(_source, _destination);
     if( operation == NSDragOperationCopy ) {
         const auto opts = MakeDefaultFileCopyOptions();
-        const auto op =
-            std::make_shared<ops::Copying>(std::move(files), _destination.Path(), _destination.Host(), opts);
+        const auto op = std::make_shared<ops::Copying>(files, _destination.Path(), _destination.Host(), opts);
         AddPanelRefreshIfNecessary(m_Target, *op);
         [m_Target.mainWindowController enqueueOperation:op];
         return true;
     }
     else if( operation == NSDragOperationMove ) {
         const auto opts = MakeDefaultFileMoveOptions();
-        const auto op =
-            std::make_shared<ops::Copying>(std::move(files), _destination.Path(), _destination.Host(), opts);
+        const auto op = std::make_shared<ops::Copying>(files, _destination.Path(), _destination.Host(), opts);
         AddPanelRefreshIfNecessary(m_Target, _source.sourceController, *op);
         [m_Target.mainWindowController enqueueOperation:op];
         return true;

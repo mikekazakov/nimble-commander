@@ -1,16 +1,17 @@
 // Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Viewer/Highlighting/Highlighter.h>
 #include <Viewer/Highlighting/Document.h>
-#include <assert.h>
-#include <lexilla/Lexilla.h>
-#include <lexilla/WordList.h>
-#include <lexilla/LexAccessor.h>
-#include <lexilla/Accessor.h>
-#include <lexilla/CharacterSet.h>
-#include <lexilla/LexerModule.h>
-#include <lexilla/CatalogueModules.h>
-#include <lexilla/SciLexer.h>
+#include <Viewer/Highlighting/Highlighter.h>
+#include <cassert>
 #include <fmt/format.h>
+
+#include <lexilla/Lexilla.h>          // NOLINT
+#include <lexilla/WordList.h>         // NOLINT
+#include <lexilla/LexAccessor.h>      // NOLINT
+#include <lexilla/Accessor.h>         // NOLINT
+#include <lexilla/CharacterSet.h>     // NOLINT
+#include <lexilla/LexerModule.h>      // NOLINT
+#include <lexilla/CatalogueModules.h> // NOLINT
+#include <lexilla/SciLexer.h>         // NOLINT
 
 namespace nc::viewer::hl {
 

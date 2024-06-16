@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22505"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -20,13 +20,13 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <scrollView autohidesScrollers="YES" horizontalLineScroll="22" horizontalPageScroll="10" verticalLineScroll="22" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RNZ-Qr-pWu">
-                    <rect key="frame" x="0.0" y="22" width="480" height="248"/>
+                    <rect key="frame" x="0.0" y="21" width="480" height="249"/>
                     <clipView key="contentView" id="OsV-YV-G77">
-                        <rect key="frame" x="1" y="1" width="478" height="246"/>
+                        <rect key="frame" x="1" y="1" width="478" height="247"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="20" headerView="UeM-ZM-O4W" viewBased="YES" id="gEi-az-coH">
-                                <rect key="frame" x="0.0" y="0.0" width="478" height="223"/>
+                                <rect key="frame" x="0.0" y="0.0" width="478" height="224"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <size key="intercellSpacing" width="3" height="2"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -48,7 +48,7 @@
                                                 <rect key="frame" x="1" y="1" width="105" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="w82-gp-o7c">
+                                                    <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="w82-gp-o7c">
                                                         <rect key="frame" x="0.0" y="0.0" width="105" height="17"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" id="tCj-0u-HiC">
@@ -80,7 +80,7 @@
                                                 <rect key="frame" x="109" y="1" width="60" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5CV-wH-7eP">
+                                                    <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5CV-wH-7eP">
                                                         <rect key="frame" x="0.0" y="0.0" width="60" height="17"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" id="NhI-RM-YuG">
@@ -112,7 +112,7 @@
                                                 <rect key="frame" x="172" y="1" width="60" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VmU-e8-X2l">
+                                                    <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VmU-e8-X2l">
                                                         <rect key="frame" x="0.0" y="0.0" width="60" height="17"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" id="Fl6-nd-iFu">
@@ -144,7 +144,7 @@
                                                 <rect key="frame" x="235" y="1" width="74" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wRf-To-RYl">
+                                                    <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wRf-To-RYl">
                                                         <rect key="frame" x="0.0" y="0.0" width="74" height="17"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" id="cGg-68-vf8">
@@ -182,7 +182,7 @@
                     </tableHeaderView>
                 </scrollView>
                 <segmentedControl horizontalHuggingPriority="1" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="CV9-ra-BaN">
-                    <rect key="frame" x="0.0" y="1" width="49" height="23"/>
+                    <rect key="frame" x="0.0" y="-1" width="49" height="23"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="49" id="M39-4x-Dud"/>
                     </constraints>
@@ -198,23 +198,23 @@
                     </connections>
                 </segmentedControl>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dBF-9n-N5r">
-                    <rect key="frame" x="48" y="1" width="432" height="23"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="21" id="Wdk-hz-cM6"/>
-                    </constraints>
+                    <rect key="frame" x="48" y="-1" width="432" height="23"/>
                     <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="6sn-pf-m7y">
                         <behavior key="behavior" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="Wdk-hz-cM6"/>
+                    </constraints>
                 </button>
             </subviews>
             <constraints>
                 <constraint firstItem="RNZ-Qr-pWu" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="2" id="28f-Tl-Xwu"/>
-                <constraint firstAttribute="bottom" secondItem="CV9-ra-BaN" secondAttribute="bottom" constant="2" id="8Kc-MR-gUB"/>
+                <constraint firstAttribute="bottom" secondItem="CV9-ra-BaN" secondAttribute="bottom" id="8Kc-MR-gUB"/>
                 <constraint firstAttribute="trailing" secondItem="dBF-9n-N5r" secondAttribute="trailing" id="CLE-2r-SlO"/>
-                <constraint firstAttribute="bottom" secondItem="dBF-9n-N5r" secondAttribute="bottom" constant="2" id="Uwf-JV-dne"/>
+                <constraint firstAttribute="bottom" secondItem="dBF-9n-N5r" secondAttribute="bottom" id="Uwf-JV-dne"/>
                 <constraint firstItem="CV9-ra-BaN" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" id="bfW-ji-VcR"/>
-                <constraint firstItem="dBF-9n-N5r" firstAttribute="top" secondItem="RNZ-Qr-pWu" secondAttribute="bottom" constant="-1" id="f2y-HI-oUt"/>
+                <constraint firstItem="dBF-9n-N5r" firstAttribute="top" secondItem="RNZ-Qr-pWu" secondAttribute="bottom" id="f2y-HI-oUt"/>
                 <constraint firstItem="RNZ-Qr-pWu" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" id="mUj-7D-xdD"/>
                 <constraint firstItem="dBF-9n-N5r" firstAttribute="leading" secondItem="CV9-ra-BaN" secondAttribute="trailing" constant="-1" id="qVA-R7-RS5"/>
                 <constraint firstAttribute="trailing" secondItem="RNZ-Qr-pWu" secondAttribute="trailing" id="wva-bd-Xca"/>
@@ -223,7 +223,7 @@
         </customView>
     </objects>
     <resources>
-        <image name="NSAddTemplate" width="14" height="13"/>
-        <image name="NSRemoveTemplate" width="14" height="4"/>
+        <image name="NSAddTemplate" width="18" height="17"/>
+        <image name="NSRemoveTemplate" width="18" height="5"/>
     </resources>
 </document>

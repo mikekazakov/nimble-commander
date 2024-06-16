@@ -7,7 +7,10 @@
 #include <charconv>
 #include <fmt/core.h>
 #include <ranges>
+#include <ranges>
 #include <algorithm>
+#include <frozen/string.h>
+#include <frozen/unordered_map.h>
 
 namespace nc {
 
@@ -15,12 +18,20 @@ static const auto g_NameKey = "themeName";
 
 [[clang::no_destroy]] static std::shared_ptr<const Theme> g_CurrentTheme;
 
+template <size_t size, typename T, size_t... indexes>
+static constexpr auto make_array_n_impl(T &&value, std::index_sequence<indexes...>)
+{
+    return std::array<std::decay_t<T>, size>{(static_cast<void>(indexes), value)..., std::forward<T>(value)};
+}
+
+template <size_t size, typename T>
+static constexpr auto make_array_n(T &&value)
+{
+    return make_array_n_impl<size>(std::forward<T>(value), std::make_index_sequence<size - 1>{});
+}
+
 using TMN = ThemesManager::Notifications;
-
-using NotificationsMapping =
-    robin_hood::unordered_flat_map<std::string, uint64_t, RHTransparentStringHashEqual, RHTransparentStringHashEqual>;
-
-[[clang::no_destroy]] static const NotificationsMapping g_EntryToNotificationMapping = {
+static constexpr std::pair<const char *, uint64_t> g_EntryToNotificationMappingTable[] = {
     {"themeAppearance", TMN::Appearance},
     {"filePanelsColoringRules_v1", TMN::FilePanelsGeneral},
     {"filePanelsGeneralDropBorderColor", TMN::FilePanelsGeneral},
@@ -93,9 +104,25 @@ using NotificationsMapping =
     {"viewerFont", TMN::Viewer},
     {"viewerOverlayColor", TMN::Viewer},
     {"viewerTextColor", TMN::Viewer},
+    {"viewerTextSyntaxCommentColor", TMN::Viewer},
+    {"viewerTextSyntaxPreprocessorColor", TMN::Viewer},
+    {"viewerTextSyntaxKeywordColor", TMN::Viewer},
+    {"viewerTextSyntaxOperatorColor", TMN::Viewer},
+    {"viewerTextSyntaxIdentifierColor", TMN::Viewer},
+    {"viewerTextSyntaxNumberColor", TMN::Viewer},
+    {"viewerTextSyntaxStringColor", TMN::Viewer},
     {"viewerSelectionColor", TMN::Viewer},
     {"viewerBackgroundColor", TMN::Viewer},
 };
+
+static constinit const auto g_EntryToNotificationMapping = [] {
+    auto items = make_array_n<std::size(g_EntryToNotificationMappingTable)>(
+        std::pair<frozen::string, uint64_t>(frozen::string(""), 0));
+    for( size_t i = 0; i < std::size(g_EntryToNotificationMappingTable); ++i )
+        items[i] = std::pair<frozen::string, uint64_t>(g_EntryToNotificationMappingTable[i].first,
+                                                       g_EntryToNotificationMappingTable[i].second);
+    return frozen::make_unordered_map(items);
+}();
 
 static std::string MigrateThemeName(const std::string &_name);
 static std::optional<std::string> ExtractThemeNameAppearance(const nc::config::Value &_doc);

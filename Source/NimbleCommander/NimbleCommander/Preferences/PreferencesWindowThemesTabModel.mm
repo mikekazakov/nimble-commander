@@ -149,6 +149,13 @@ NSArray *BuildThemeSettingsNodesTree()
         SpawnFontNode(@"Text font", "viewerFont"),
         SpawnColorNode(@"Overlay color", "viewerOverlayColor"),
         SpawnColorNode(@"Foreground color", "viewerTextColor"),
+        SpawnColorNode(@"Syntax color - keyword", "viewerTextSyntaxKeywordColor"),
+        SpawnColorNode(@"Syntax color - operator", "viewerTextSyntaxOperatorColor"),
+        SpawnColorNode(@"Syntax color - identifier", "viewerTextSyntaxIdentifierColor"),
+        SpawnColorNode(@"Syntax color - number", "viewerTextSyntaxNumberColor"),
+        SpawnColorNode(@"Syntax color - string", "viewerTextSyntaxStringColor"),
+        SpawnColorNode(@"Syntax color - comment", "viewerTextSyntaxCommentColor"),
+        SpawnColorNode(@"Syntax color - preprocessor", "viewerTextSyntaxPreprocessorColor"),
         SpawnColorNode(@"Selection color", "viewerSelectionColor"),
         SpawnColorNode(@"Background color", "viewerBackgroundColor")
     ];

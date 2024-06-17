@@ -21,6 +21,11 @@
             "filemask": "*.md, *.markdown"
         },
         {
+            "name": "XML",
+            "settings": "XML.json",
+            "filemask": "*.xml, *.plist"
+        },
+        {
             "name": "YAML",
             "settings": "YAML.json",
             "filemask": "*.yaml, *.yml"

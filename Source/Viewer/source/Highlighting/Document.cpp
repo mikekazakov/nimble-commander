@@ -9,6 +9,7 @@ namespace nc::viewer::hl {
 
 static constexpr char g_CR = '\x0D';
 static constexpr char g_LF = '\x0A';
+static constexpr int g_BaseLevel = 0x400;
 
 static constinit std::array<uint8_t, 256> g_UTF8Lengths = []() {
     std::array<uint8_t, 256> lengths = {};
@@ -90,6 +91,7 @@ Document::Document(const std::string_view _text) : m_Text(_text), m_Styles(_text
     }
 
     m_LineStates.resize(m_Lines.size() + 1);
+    m_LineLevels.resize(m_Lines.size(), g_BaseLevel);
 }
 
 Document::~Document() = default;
@@ -109,7 +111,7 @@ bool Document::IsDBCSLeadByte(char) const noexcept
     return false;
 }
 
-char Document::StyleAt(Sci_Position _position) const noexcept
+char Document::StyleAt(const Sci_Position _position) const noexcept
 {
     if( _position < 0 || _position >= static_cast<long>(m_Text.length()) ) {
         return 0;
@@ -117,24 +119,26 @@ char Document::StyleAt(Sci_Position _position) const noexcept
     return m_Styles[_position];
 }
 
-int Document::GetLevel(Sci_Position /*_line*/) const noexcept
+int Document::GetLevel(const Sci_Position _line) const noexcept
 {
-    abort();
-    return 0;
+    return _line >= 0 && static_cast<size_t>(_line) < m_LineLevels.size() ? m_LineLevels[_line] : g_BaseLevel;
 }
 
-int Document::SetLevel(Sci_Position /*_line*/, int /*_level*/) noexcept
+int Document::SetLevel(const Sci_Position _line, const int _level) noexcept
 {
-    abort();
-    return 0;
+    if( _line >= 0 && static_cast<size_t>(_line) < m_LineLevels.size() ) {
+        m_LineLevels[_line] = _level;
+        return _level;
+    }
+    return g_BaseLevel;
 }
 
-int Document::GetLineState(Sci_Position _line) const noexcept
+int Document::GetLineState(const Sci_Position _line) const noexcept
 {
     return m_LineStates.at(_line);
 }
 
-int Document::SetLineState(Sci_Position _line, int _state) noexcept
+int Document::SetLineState(const Sci_Position _line, const int _state) noexcept
 {
     return m_LineStates.at(_line) = _state;
 }
@@ -145,9 +149,9 @@ int Document::GetLineIndentation(Sci_Position /*_line*/) noexcept
     return 0;
 }
 
-Sci_Position Document::GetRelativePosition(Sci_Position _position, Sci_Position _offset) const noexcept
+Sci_Position Document::GetRelativePosition(const Sci_Position _position, const Sci_Position _offset) const noexcept
 {
-    return _position + _offset;
+    return _position + _offset; // TODO: is _offset in bytes or in code units?
 }
 
 int Document::GetCharacterAndWidth(Sci_Position _position, Sci_Position *_width) const noexcept

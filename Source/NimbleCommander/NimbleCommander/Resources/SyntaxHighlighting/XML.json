@@ -1,0 +1,35 @@
+{
+    "lexer": "xml",
+    "wordlists": [],
+    "properties": {
+    },
+    "mapping": {
+        "SCE_H_DEFAULT": "default",
+        "SCE_H_TAG": "keyword",
+        "SCE_H_TAGUNKNOWN": "comment",
+        "SCE_H_ATTRIBUTE": "identifier",
+        "SCE_H_ATTRIBUTEUNKNOWN": "comment",
+        "SCE_H_NUMBER": "number",
+        "SCE_H_DOUBLESTRING": "string",
+        "SCE_H_SINGLESTRING": "string",
+        "SCE_H_OTHER": "operator",
+        "SCE_H_COMMENT": "comment",
+        "SCE_H_ENTITY": "identifier",
+        "SCE_H_TAGEND": "default",
+        "SCE_H_XMLSTART": "comment",
+        "SCE_H_XMLEND": "comment",
+        "SCE_H_CDATA": "string",
+        "SCE_H_QUESTION": "preprocessor",
+        "SCE_H_VALUE": "default",
+        "SCE_H_SGML_DEFAULT": "default",
+        "SCE_H_SGML_COMMAND": "preprocessor",
+        "SCE_H_SGML_1ST_PARAM": "preprocessor",
+        "SCE_H_SGML_DOUBLESTRING": "string",
+        "SCE_H_SGML_SIMPLESTRING": "string",
+        "SCE_H_SGML_ERROR": "comment",
+        "SCE_H_SGML_SPECIAL": "identifier",
+        "SCE_H_SGML_ENTITY": "identifier",
+        "SCE_H_SGML_COMMENT": "comment",
+        "SCE_H_SGML_BLOCK_DEFAULT": "default"
+    }
+}

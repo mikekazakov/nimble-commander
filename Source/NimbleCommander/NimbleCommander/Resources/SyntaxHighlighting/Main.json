@@ -16,6 +16,11 @@
             "filemask": "*.json"
         },
         {
+            "name": "Markdown",
+            "settings": "Markdown.json",
+            "filemask": "*.md, *.markdown"
+        },
+        {
             "name": "YAML",
             "settings": "YAML.json",
             "filemask": "*.yaml, *.yml"

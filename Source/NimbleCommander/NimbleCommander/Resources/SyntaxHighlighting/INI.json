@@ -1,0 +1,15 @@
+{
+    "lexer": "props",
+    "wordlists": [],
+    "properties": {
+        "lexer.props.allow.initial.spaces": "1"
+    },
+    "mapping": {
+        "SCE_PROPS_DEFAULT": "default",
+        "SCE_PROPS_COMMENT": "comment",
+        "SCE_PROPS_SECTION": "keyword",
+        "SCE_PROPS_ASSIGNMENT": "operator",
+        "SCE_PROPS_KEY": "identifier",
+        "SCE_PROPS_DEFVAL": "string"
+    }
+}

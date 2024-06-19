@@ -6,9 +6,19 @@
             "filemask": "*.sh"
         },
         {
+            "name": "C",
+            "settings": "C.json",
+            "filemask": "*.c"
+        },
+        {
             "name": "C++",
             "settings": "C++.json",
-            "filemask": "*.cpp, *.cxx, *.cc, *.h, *.hpp"
+            "filemask": "*.cc, *.cpp, *.cxx, *.hpp, *.hxx"
+        },
+        {
+            "name": "INI",
+            "settings": "INI.json",
+            "filemask": "*.ini"
         },
         {
             "name": "JSON",
@@ -19,6 +29,16 @@
             "name": "Markdown",
             "settings": "Markdown.json",
             "filemask": "*.md, *.markdown"
+        },
+        {
+            "name": "Objective C",
+            "settings": "Objective C.json",
+            "filemask": "*.m"
+        },
+        {
+            "name": "Objective C++",
+            "settings": "Objective C++.json",
+            "filemask": "*.mm, *.h"
         },
         {
             "name": "XML",

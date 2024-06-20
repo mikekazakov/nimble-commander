@@ -16,6 +16,11 @@
             "filemask": "*.cc, *.cpp, *.cxx, *.hpp, *.hxx"
         },
         {
+            "name": "HTML",
+            "settings": "HTML.json",
+            "filemask": "*.htm, *.html"
+        },
+        {
             "name": "INI",
             "settings": "INI.json",
             "filemask": "*.ini"

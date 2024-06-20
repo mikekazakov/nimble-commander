@@ -1,0 +1,32 @@
+// https://github.com/ScintillaOrg/lexilla/blob/master/lexers/LexPython.cxx
+{
+    "lexer": "python",
+    "wordlists": [
+        "False None True and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with"
+    ],
+    "properties": {
+    },
+    "mapping": {
+        "SCE_P_DEFAULT": "default",
+        "SCE_P_COMMENTLINE": "comment",
+        "SCE_P_NUMBER": "number",
+        "SCE_P_STRING": "string",
+        "SCE_P_CHARACTER": "string",
+        "SCE_P_WORD": "keyword",
+        "SCE_P_TRIPLE": "string",
+        "SCE_P_TRIPLEDOUBLE": "string",
+        "SCE_P_CLASSNAME": "identifier",
+        "SCE_P_DEFNAME": "identifier",
+        "SCE_P_OPERATOR": "operator",
+        "SCE_P_IDENTIFIER": "identifier",
+        "SCE_P_COMMENTBLOCK": "comment",
+        "SCE_P_STRINGEOL": "string",
+        "SCE_P_WORD2": "keyword",
+        "SCE_P_DECORATOR": "preprocessor",
+        "SCE_P_FSTRING": "string",
+        "SCE_P_FCHARACTER": "string",
+        "SCE_P_FTRIPLE": "string",
+        "SCE_P_FTRIPLEDOUBLE": "string",
+        "SCE_P_ATTRIBUTE": "identifier"
+    }
+}

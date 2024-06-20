@@ -1,3 +1,4 @@
+// https://github.com/ScintillaOrg/lexilla/blob/master/lexers/LexJSON.cxx
 {
     "lexer": "json",
     "wordlists": [

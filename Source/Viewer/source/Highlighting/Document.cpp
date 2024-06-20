@@ -252,12 +252,12 @@ bool Document::SetStyles(Sci_Position _length, const char *_styles) noexcept
 
 void Document::DecorationSetCurrentIndicator(int /*_indicator*/) noexcept
 {
-    abort();
+    // deliberately do nothing
 }
 
 void Document::DecorationFillRange(Sci_Position /*_position*/, int /*_value*/, Sci_Position /*_length*/) noexcept
 {
-    abort();
+    // deliberately do nothing
 }
 
 void Document::ChangeLexerState(Sci_Position /*_start*/, Sci_Position /*_end*/) noexcept

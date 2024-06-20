@@ -7,7 +7,8 @@
     ],
     "properties": {
         "styling.within.preprocessor": "1",
-        "lexer.cpp.allow.dollars": "0"
+        "lexer.cpp.allow.dollars": "0",
+        "lexer.cpp.track.preprocessor": "0"
     },
     "mapping": {
         "SCE_C_DEFAULT": "default",

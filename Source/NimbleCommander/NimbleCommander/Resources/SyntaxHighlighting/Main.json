@@ -36,6 +36,11 @@
             "filemask": "*.json"
         },
         {
+            "name": "Makefile",
+            "settings": "Makefile.json",
+            "filemask": "makefile, makefile.*"
+        },
+        {
             "name": "Markdown",
             "settings": "Markdown.json",
             "filemask": "*.md, *.markdown"

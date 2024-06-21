@@ -1,0 +1,17 @@
+// https://github.com/ScintillaOrg/lexilla/blob/master/lexers/LexMake.cxx
+{
+    "lexer": "makefile",
+    "wordlists": [
+    ],
+    "properties": {
+    },
+    "mapping": {
+        "SCE_MAKE_DEFAULT": "default",
+        "SCE_MAKE_COMMENT": "comment",
+        "SCE_MAKE_PREPROCESSOR": "preprocessor",
+        "SCE_MAKE_IDENTIFIER": "string",
+        "SCE_MAKE_OPERATOR": "operator",
+        "SCE_MAKE_TARGET": "keyword",
+        "SCE_MAKE_IDEOL": "identifier"
+    }
+}

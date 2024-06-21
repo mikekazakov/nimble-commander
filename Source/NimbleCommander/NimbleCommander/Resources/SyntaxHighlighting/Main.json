@@ -16,6 +16,11 @@
             "filemask": "*.cc, *.cpp, *.cxx, *.hpp, *.hxx"
         },
         {
+            "name": "CSS",
+            "settings": "CSS.json",
+            "filemask": "*.css"
+        },
+        {
             "name": "HTML",
             "settings": "HTML.json",
             "filemask": "*.htm, *.html"
@@ -29,6 +34,11 @@
             "name": "JSON",
             "settings": "JSON.json",
             "filemask": "*.json"
+        },
+        {
+            "name": "Makefile",
+            "settings": "Makefile.json",
+            "filemask": "makefile, makefile.*"
         },
         {
             "name": "Markdown",

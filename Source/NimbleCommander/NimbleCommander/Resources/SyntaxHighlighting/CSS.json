@@ -1,0 +1,33 @@
+// https://github.com/ScintillaOrg/lexilla/blob/master/lexers/LexCSS.cxx
+{
+    "lexer": "css",
+    "wordlists": [],
+    "properties": {
+    },
+    "mapping": {
+        "SCE_CSS_DEFAULT": "default",
+        "SCE_CSS_TAG": "keyword",
+        "SCE_CSS_CLASS": "identifier",
+        "SCE_CSS_PSEUDOCLASS": "identifier",
+        "SCE_CSS_UNKNOWN_PSEUDOCLASS": "identifier",
+        "SCE_CSS_OPERATOR": "operator",
+        "SCE_CSS_IDENTIFIER": "identifier",
+        "SCE_CSS_UNKNOWN_IDENTIFIER": "identifier",
+        "SCE_CSS_VALUE": "number",
+        "SCE_CSS_COMMENT": "comment",
+        "SCE_CSS_ID": "preprocessor",
+        "SCE_CSS_IMPORTANT": "keyword",
+        "SCE_CSS_DIRECTIVE": "default",
+        "SCE_CSS_DOUBLESTRING": "string",
+        "SCE_CSS_SINGLESTRING": "string",
+        "SCE_CSS_IDENTIFIER2": "identifier",
+        "SCE_CSS_ATTRIBUTE": "identifier",
+        "SCE_CSS_IDENTIFIER3": "identifier",
+        "SCE_CSS_PSEUDOELEMENT": "identifier",
+        "SCE_CSS_EXTENDED_IDENTIFIER": "identifier",
+        "SCE_CSS_EXTENDED_PSEUDOCLASS": "identifier",
+        "SCE_CSS_EXTENDED_PSEUDOELEMENT": "identifier",
+        "SCE_CSS_GROUP_RULE": "identifier",
+        "SCE_CSS_VARIABLE": "identifier"
+    }
+}

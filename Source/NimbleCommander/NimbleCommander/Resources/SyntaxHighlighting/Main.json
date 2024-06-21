@@ -16,6 +16,11 @@
             "filemask": "*.cc, *.cpp, *.cxx, *.hpp, *.hxx"
         },
         {
+            "name": "CSS",
+            "settings": "CSS.json",
+            "filemask": "*.css"
+        },
+        {
             "name": "HTML",
             "settings": "HTML.json",
             "filemask": "*.htm, *.html"

@@ -135,12 +135,18 @@ int Document::SetLevel(const Sci_Position _line, const int _level) noexcept
 
 int Document::GetLineState(const Sci_Position _line) const noexcept
 {
-    return m_LineStates.at(_line);
+    if( _line >= 0 && static_cast<size_t>(_line) < m_LineStates.size() ) {
+        return m_LineStates[_line];
+    }
+    return 0;
 }
 
 int Document::SetLineState(const Sci_Position _line, const int _state) noexcept
 {
-    return m_LineStates.at(_line) = _state;
+    if( _line >= 0 && static_cast<size_t>(_line) < m_LineStates.size() ) {
+        return m_LineStates[_line] = _state;
+    }
+    return 0;
 }
 
 int Document::GetLineIndentation(Sci_Position /*_line*/) noexcept

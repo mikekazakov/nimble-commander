@@ -1,6 +1,11 @@
 {
     "langs": [
         {
+            "name": "Assembler",
+            "settings": "Assembler.json",
+            "filemask": "*.asm, *.s"
+        },
+        {
             "name": "Bash",
             "settings": "Bash.json",
             "filemask": "*.sh"

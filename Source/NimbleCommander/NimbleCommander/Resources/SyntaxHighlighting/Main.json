@@ -16,6 +16,11 @@
             "filemask": "*.cc, *.cpp, *.cxx, *.hpp, *.hxx"
         },
         {
+            "name": "C#",
+            "settings": "C#.json",
+            "filemask": "*.cs, *.csx"
+        },
+        {
             "name": "CMake",
             "settings": "CMake.json",
             "filemask": "CMakeLists.txt, *.cmake"

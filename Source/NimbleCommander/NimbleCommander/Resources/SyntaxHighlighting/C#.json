@@ -1,0 +1,43 @@
+// https://github.com/ScintillaOrg/lexilla/blob/master/lexers/LexCPP.cxx
+{
+    "lexer": "cpp",
+    "wordlists": [
+        "abstract as base bool break byte case catch char checked class const continue decimal default delegate do double else enum event explicit extern false finally fixed float for foreach goto if implicit in int interface internal is lock long namespace new null object operator out override params private protected public readonly ref return sbyte sealed short sizeof stackalloc static string struct switch this throw true try typeof uint ulong unchecked unsafe ushort using virtual void volatile while"
+    ],
+    "properties": {
+        "styling.within.preprocessor": "1",
+        "lexer.cpp.allow.dollars": "0",
+        "lexer.cpp.track.preprocessor": "0"
+    },
+    "mapping": {
+        "SCE_C_DEFAULT": "default",
+        "SCE_C_COMMENT": "comment",
+        "SCE_C_COMMENTLINE": "comment",
+        "SCE_C_COMMENTDOC": "comment",
+        "SCE_C_NUMBER": "number",
+        "SCE_C_WORD": "keyword",
+        "SCE_C_STRING": "string",
+        "SCE_C_CHARACTER": "string",
+        "SCE_C_UUID": "string",
+        "SCE_C_PREPROCESSOR": "preprocessor",
+        "SCE_C_OPERATOR": "operator",
+        "SCE_C_IDENTIFIER": "identifier",
+        "SCE_C_STRINGEOL": "string",
+        "SCE_C_VERBATIM": "string",
+        "SCE_C_REGEX": "string",
+        "SCE_C_REGEX": "string",
+        "SCE_C_COMMENTLINEDOC": "comment",
+        "SCE_C_WORD2": "keyword",
+        "SCE_C_COMMENTDOCKEYWORD": "comment",
+        "SCE_C_COMMENTDOCKEYWORDERROR": "comment",
+        "SCE_C_GLOBALCLASS": "identifier",
+        "SCE_C_STRINGRAW": "string",
+        "SCE_C_TRIPLEVERBATIM": "string",
+        "SCE_C_HASHQUOTEDSTRING": "string",
+        "SCE_C_PREPROCESSORCOMMENT": "comment",
+        "SCE_C_PREPROCESSORCOMMENTDOC": "comment",
+        "SCE_C_USERLITERAL": "identifier",
+        "SCE_C_TASKMARKER": "comment",
+        "SCE_C_ESCAPESEQUENCE": "string"
+    }
+}

@@ -1,0 +1,32 @@
+// https://github.com/ScintillaOrg/lexilla/blob/master/lexers/LexLua.cxx
+{
+    "lexer": "lua",
+    "wordlists": [
+        "and break do else elseif end false for function if in local nil not or repeat return then true until while"
+    ],
+    "properties": {
+    },
+    "mapping": {
+        "SCE_LUA_DEFAULT": "default",
+        "SCE_LUA_COMMENT": "comment",
+        "SCE_LUA_COMMENTLINE": "comment",
+        "SCE_LUA_COMMENTDOC": "comment",
+        "SCE_LUA_NUMBER": "number",
+        "SCE_LUA_WORD": "keyword",
+        "SCE_LUA_STRING": "string",
+        "SCE_LUA_CHARACTER": "string",
+        "SCE_LUA_LITERALSTRING": "string",
+        "SCE_LUA_PREPROCESSOR": "preprocessor",
+        "SCE_LUA_OPERATOR": "operator",
+        "SCE_LUA_IDENTIFIER": "identifier",
+        "SCE_LUA_STRINGEOL": "string",
+        "SCE_LUA_WORD2": "keyword",
+        "SCE_LUA_WORD3": "keyword",
+        "SCE_LUA_WORD4": "keyword",
+        "SCE_LUA_WORD5": "keyword",
+        "SCE_LUA_WORD6": "keyword",
+        "SCE_LUA_WORD7": "keyword",
+        "SCE_LUA_WORD8": "keyword",
+        "SCE_LUA_LABEL": "preprocessor"
+    }
+}

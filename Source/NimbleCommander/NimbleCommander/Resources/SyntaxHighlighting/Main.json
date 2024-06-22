@@ -51,6 +51,11 @@
             "filemask": "*.json"
         },
         {
+            "name": "Lua",
+            "settings": "Lua.json",
+            "filemask": "*.lua"
+        },
+        {
             "name": "Makefile",
             "settings": "Makefile.json",
             "filemask": "makefile, makefile.*"

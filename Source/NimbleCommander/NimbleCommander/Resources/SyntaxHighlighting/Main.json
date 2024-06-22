@@ -36,6 +36,11 @@
             "filemask": "*.ini"
         },
         {
+            "name": "JavaScript",
+            "settings": "JavaScript.json",
+            "filemask": "*.js, *.cjs, *.mjs"
+        },
+        {
             "name": "JSON",
             "settings": "JSON.json",
             "filemask": "*.json"

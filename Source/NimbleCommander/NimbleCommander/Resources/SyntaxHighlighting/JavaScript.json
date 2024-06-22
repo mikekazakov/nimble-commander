@@ -1,0 +1,40 @@
+// https://github.com/ScintillaOrg/lexilla/blob/master/lexers/LexCPP.cxx
+{
+    "lexer": "cpp",
+    "wordlists": [
+        "async await break case catch class const continue debugger default delete do else enum eval export extends false finally for function get if import in instanceof let new null return set static super switch this throw true try typeof var void while with yield"
+    ],
+    "properties": {
+    },
+    "mapping": {
+        "SCE_C_DEFAULT": "default",
+        "SCE_C_COMMENT": "comment",
+        "SCE_C_COMMENTLINE": "comment",
+        "SCE_C_COMMENTDOC": "comment",
+        "SCE_C_NUMBER": "number",
+        "SCE_C_WORD": "keyword",
+        "SCE_C_STRING": "string",
+        "SCE_C_CHARACTER": "string",
+        "SCE_C_UUID": "string",
+        "SCE_C_PREPROCESSOR": "preprocessor",
+        "SCE_C_OPERATOR": "operator",
+        "SCE_C_IDENTIFIER": "identifier",
+        "SCE_C_STRINGEOL": "string",
+        "SCE_C_VERBATIM": "string",
+        "SCE_C_REGEX": "string",
+        "SCE_C_REGEX": "string",
+        "SCE_C_COMMENTLINEDOC": "comment",
+        "SCE_C_WORD2": "keyword",
+        "SCE_C_COMMENTDOCKEYWORD": "comment",
+        "SCE_C_COMMENTDOCKEYWORDERROR": "comment",
+        "SCE_C_GLOBALCLASS": "identifier",
+        "SCE_C_STRINGRAW": "string",
+        "SCE_C_TRIPLEVERBATIM": "string",
+        "SCE_C_HASHQUOTEDSTRING": "string",
+        "SCE_C_PREPROCESSORCOMMENT": "comment",
+        "SCE_C_PREPROCESSORCOMMENTDOC": "comment",
+        "SCE_C_USERLITERAL": "identifier",
+        "SCE_C_TASKMARKER": "comment",
+        "SCE_C_ESCAPESEQUENCE": "string"
+    }
+}

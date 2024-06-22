@@ -27,7 +27,7 @@ public:
 private:
     UserNotificationsCenter();
     UserNotificationsCenter(const UserNotificationsCenter &) = delete;
-    ~UserNotificationsCenter();
+    ~UserNotificationsCenter() = default;
     void operator=(const UserNotificationsCenter &) = delete;
     bool m_ShowWhenActive;
     std::chrono::nanoseconds m_MinElapsedOperationTime;

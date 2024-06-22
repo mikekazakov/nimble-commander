@@ -881,7 +881,7 @@ Tags::Tag::Tag(const std::string *const _label, const Tags::Color _color) noexce
 const std::string &Tags::Tag::Label() const noexcept
 {
     return *reinterpret_cast<const std::string *>(reinterpret_cast<const char *>(m_TaggedPtr) -
-                                                  (reinterpret_cast<uint64_t>(m_TaggedPtr) & ~0x7));
+                                                  (reinterpret_cast<uint64_t>(m_TaggedPtr) & 0x7));
 }
 
 Tags::Color Tags::Tag::Color() const noexcept

@@ -701,7 +701,7 @@ bool ConfigBackedNetworkConnectionsManager::MountShareAsync(
     if( !_conn.IsType<LANShare>() )
         return false;
 
-    const auto conn = _conn;
+    const auto &conn = _conn;
     const auto &share = conn.Get<LANShare>();
 
     if( const auto v = FindExistingMountedShare(share, m_NativeFSManager) ) {

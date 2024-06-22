@@ -367,7 +367,7 @@ void ConfigImpl::DropToken(unsigned long _number)
         const auto to_drop_it = std::find_if(
             begin(observers), end(observers), [_number](auto &observer) { return observer->token == _number; });
         if( to_drop_it != end(observers) ) {
-            const auto observer = *to_drop_it; // holding by a *strong* shared pointer
+            const auto observer = *to_drop_it; // NOLINT - holding by a *strong* shared pointer
 
             // We need to guarantee that the callback will not be called after the token is
             // destroyed. To achieve this, the callback calls are guared by a *recursive* mutex

@@ -21,6 +21,4 @@ ExecutionDeadline::ExecutionDeadline(std::chrono::seconds _execution_limit)
     }).detach();
 }
 
-ExecutionDeadline::~ExecutionDeadline() = default;
-
 } // namespace nc::base

@@ -51,7 +51,7 @@ TEST_CASE(PREFIX "copy constructor")
     SECTION("Empty")
     {
         intrusive_ptr<Counted> ptr1;
-        intrusive_ptr<Counted> ptr2{ptr1};
+        intrusive_ptr<Counted> ptr2{ptr1}; // NOLINT
         CHECK(ptr1.get() == nullptr);
         CHECK(ptr2.get() == nullptr);
     }
@@ -62,7 +62,7 @@ TEST_CASE(PREFIX "copy constructor")
         {
             intrusive_ptr<Counted> ptr1{raw_ptr};
             {
-                intrusive_ptr<Counted> ptr2{ptr1};
+                intrusive_ptr<Counted> ptr2{ptr1}; // NOLINT
                 CHECK(ptr1.get() == raw_ptr);
                 CHECK(ptr2.get() == raw_ptr);
                 CHECK(Counted::alive == 1);

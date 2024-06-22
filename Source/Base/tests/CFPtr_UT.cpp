@@ -45,7 +45,7 @@ TEST_CASE(PREFIX "Copy constructor")
     CFMutableArrayRef array = CFArrayCreateMutable(nullptr, 0, nullptr);
     auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
     CHECK(CFGetRetainCount(array) == 1);
-    CFPtr<CFMutableArrayRef> p2(p1);
+    CFPtr<CFMutableArrayRef> p2(p1); // NOLINT
     CHECK(CFGetRetainCount(array) == 2);
     CHECK(p2.get() == array);
 }

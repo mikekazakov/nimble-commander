@@ -131,7 +131,7 @@ static const auto g_HazardousExtensionsList = "filePanel.presentation.quickLookH
 - (void)doVFSPreview:(const std::filesystem::path &)_path host:(const VFSHostPtr &)_host ticket:(uint64_t)_ticket
 {
     std::filesystem::path path = _path;
-    VFSHostPtr host = _host;
+    const VFSHostPtr &host = _host;
     dispatch_after(g_Delay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [=] {
         if( _ticket != m_CurrentTicket || m_Closed )
             return;

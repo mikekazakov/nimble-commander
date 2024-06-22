@@ -36,7 +36,7 @@ TEST_CASE(PREFIX "can read info about kernel_task")
     auto it = std::find_if(
         list->begin(), list->end(), [](const auto &item) { return item.Filename().ends_with("kernel_task.txt"); });
     REQUIRE(it != list->end());
-    auto kernel_task_listing_item = *it;
+    const auto &kernel_task_listing_item = *it;
 
     VFSFilePtr file;
     REQUIRE(host->CreateFile(kernel_task_listing_item.Path().c_str(), file, {}) == 0);

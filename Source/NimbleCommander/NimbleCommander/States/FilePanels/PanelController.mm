@@ -726,7 +726,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
         _filename == _item.Filename() )
         return;
 
-    const auto target_fn = _filename;
+    const auto &target_fn = _filename;
 
     // checking for invalid symbols
     if( !_item.Host()->ValidateFilename(target_fn.c_str()) ) {
@@ -953,7 +953,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
     m_DirectoryLoadingQ.Run([=] {
         // 1st - try to locate a valid dir in current host
         std::filesystem::path path = initial_path;
-        auto vfs = initial_vfs;
+        const auto &vfs = initial_vfs;
 
         while( true ) {
             if( vfs->IterateDirectoryListing(path.c_str(), [](const VFSDirEnt &) { return false; }) >= 0 ) {

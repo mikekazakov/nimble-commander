@@ -60,7 +60,7 @@ ActivityTicket::ActivityTicket(PanelController *_panel, uint64_t _ticket) : tick
 {
 }
 
-ActivityTicket::ActivityTicket(ActivityTicket &&_rhs) : ticket(_rhs.ticket), panel(_rhs.panel)
+ActivityTicket::ActivityTicket(ActivityTicket &&_rhs) noexcept : ticket(_rhs.ticket), panel(_rhs.panel)
 {
     _rhs.panel = nil;
     _rhs.ticket = 0;
@@ -71,7 +71,7 @@ ActivityTicket::~ActivityTicket()
     Reset();
 }
 
-void ActivityTicket::operator=(ActivityTicket &&_rhs)
+void ActivityTicket::operator=(ActivityTicket &&_rhs) noexcept
 {
     Reset();
     panel = _rhs.panel;

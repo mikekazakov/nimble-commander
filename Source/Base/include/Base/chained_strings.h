@@ -101,7 +101,7 @@ public:
     chained_strings();
     chained_strings(const char *_allocate_with_this_string);
     chained_strings(const std::string &_allocate_with_this_string);
-    chained_strings(chained_strings &&_rhs);
+    chained_strings(chained_strings &&_rhs) noexcept;
 
     template <class T>
     inline chained_strings(std::initializer_list<T> l) : m_Begin(nullptr), m_Last(nullptr)
@@ -126,9 +126,8 @@ public:
     unsigned size() const;     // O(N) linear(!) time, N - number of blocks
     bool singleblock() const;  // O(1)
 
-    void swap(chained_strings &_rhs);
-    void swap(chained_strings &&_rhs);
-    const chained_strings &operator=(chained_strings &&);
+    void swap(chained_strings &_rhs) noexcept;
+    const chained_strings &operator=(chained_strings &&) noexcept;
 
 private:
     void insert_into(block *_to, const char *_str, unsigned _len, const node *_prefix);

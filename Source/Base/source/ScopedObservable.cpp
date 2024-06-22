@@ -42,7 +42,7 @@ ScopedObservableBase::ObservationTicket::~ObservationTicket()
 }
 
 const ScopedObservableBase::ObservationTicket &
-ScopedObservableBase::ObservationTicket::operator=(ScopedObservableBase::ObservationTicket &&_r)
+ScopedObservableBase::ObservationTicket::operator=(ScopedObservableBase::ObservationTicket &&_r) noexcept
 {
     if( *this ) {
         const auto lock = std::lock_guard{indirect->lock};

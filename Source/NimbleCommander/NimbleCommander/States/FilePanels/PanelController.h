@@ -65,10 +65,10 @@ public:
     ActivityTicket();
     ActivityTicket(PanelController *_panel, uint64_t _ticket);
     ActivityTicket(const ActivityTicket &) = delete;
-    ActivityTicket(ActivityTicket &&);
+    ActivityTicket(ActivityTicket &&) noexcept;
     ~ActivityTicket();
     void operator=(const ActivityTicket &) = delete;
-    void operator=(ActivityTicket &&);
+    void operator=(ActivityTicket &&) noexcept;
 
 private:
     void Reset();

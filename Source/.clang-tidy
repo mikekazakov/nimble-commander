@@ -4,6 +4,7 @@ Checks: >
   -*,
   -clang-diagnostic-c99-designator,
   modernize-avoid-bind,
+  # modernize-avoid-c-arrays,
   modernize-concat-nested-namespaces,
   modernize-deprecated-headers,
   modernize-deprecated-ios-base-aliases,
@@ -12,6 +13,7 @@ Checks: >
   modernize-make-shared,
   modernize-make-unique,
   modernize-min-max-use-initializer-list,
+  # modernize-pass-by-value,
   modernize-raw-string-literal,
   modernize-redundant-void-arg,
   modernize-replace-auto-ptr,
@@ -21,6 +23,7 @@ Checks: >
   modernize-shrink-to-fit,
   modernize-type-traits,
   modernize-unary-static-assert,
+  # modernize-use-auto,
   modernize-use-bool-literals,
   modernize-use-constraints,
   modernize-use-default-member-init,
@@ -32,8 +35,10 @@ Checks: >
   modernize-use-nullptr,
   modernize-use-override,
   modernize-use-starts-ends-with,
+  modernize-use-std-format,
   modernize-use-std-numbers,
   modernize-use-std-print,
+  # modernize-use-trailing-return-type,
   modernize-use-transparent-functors,
   modernize-use-uncaught-exceptions,
   modernize-use-using,
@@ -47,13 +52,21 @@ Checks: >
   performance-inefficient-vector-operation,
   performance-move-const-arg,
   performance-move-constructor-init,
-  performance-no-automatic-move
+  performance-no-automatic-move,
+  performance-no-int-to-ptr,
+  performance-noexcept-destructor,
+  performance-noexcept-move-constructor,
+  performance-noexcept-swap
 
 CheckOptions:
   - key:    modernize-loop-convert.MinConfidence
     value:  safe
   - key:    modernize-loop-convert.UseCxx20ReverseRanges
     value:  true
+  - key:    modernize-use-std-format.ReplacementFormatFunction
+    value:  fmt::format
+  - key:    modernize-use-std-format.FormatHeader
+    value:  <fmt/format.h>
   - key:    modernize-use-std-print.ReplacementPrintFunction
     value:  fmt::print
   - key:    modernize-use-std-print.ReplacementPrintlnFunction

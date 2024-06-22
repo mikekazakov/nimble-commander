@@ -694,11 +694,8 @@ void ShellTask::Impl::DoCleanUp()
     if( shell_pid > 0 ) {
         const int pid = shell_pid;
         shell_pid = -1;
-        const auto task = +[](void *_ctx) {
-            const int pid = static_cast<int>(reinterpret_cast<intptr_t>(_ctx));
-            KillAndReap(pid, std::chrono::milliseconds(400), std::chrono::milliseconds(1000));
-        };
-        dispatch_async_f(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), reinterpret_cast<void *>(pid), task);
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0),
+                       [pid] { KillAndReap(pid, std::chrono::milliseconds(400), std::chrono::milliseconds(1000)); });
     }
 
     if( master_source != nullptr ) {

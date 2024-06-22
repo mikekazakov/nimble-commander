@@ -23,7 +23,7 @@ chained_strings::chained_strings(const std::string &_allocate_with_this_string) 
     push_back(_allocate_with_this_string, nullptr);
 }
 
-chained_strings::chained_strings(chained_strings &&_rhs) : m_Begin(_rhs.m_Begin), m_Last(_rhs.m_Last)
+chained_strings::chained_strings(chained_strings &&_rhs) noexcept : m_Begin(_rhs.m_Begin), m_Last(_rhs.m_Last)
 {
     _rhs.m_Begin = _rhs.m_Last = nullptr;
 }
@@ -188,19 +188,13 @@ bool chained_strings::singleblock() const
     return m_Begin != nullptr && m_Begin == m_Last;
 }
 
-void chained_strings::swap(chained_strings &_rhs)
+void chained_strings::swap(chained_strings &_rhs) noexcept
 {
     std::swap(m_Begin, _rhs.m_Begin);
     std::swap(m_Last, _rhs.m_Last);
 }
 
-void chained_strings::swap(chained_strings &&_rhs)
-{
-    std::swap(m_Begin, _rhs.m_Begin);
-    std::swap(m_Last, _rhs.m_Last);
-}
-
-const chained_strings &chained_strings::operator=(chained_strings &&_rhs)
+const chained_strings &chained_strings::operator=(chained_strings &&_rhs) noexcept
 {
     destroy();
     m_Begin = _rhs.m_Begin;

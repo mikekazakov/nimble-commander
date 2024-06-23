@@ -84,3 +84,17 @@ The main application communicates with the helper by providing it with UTF-8 tex
 Once ready, the helper tool responds back with a single blob of data containing styles: 1 byte per each input UTF-8 code unit.
 
 The await process is asynchronous on Nimble Commander’s side to avoid freezing the whole application. However, the built-in viewer allows up to 16ms of synchronous wait before falling back to deferred highlighting. This way, visual flicker is avoided.
+
+## Adding More Languages
+
+To add syntax highlighting for a new language, follow these steps:
+  - Ensure that Lexilla has a lexer for the languge.
+  - Create a JSON file for the configugation in `Source/NimbleCommander/NimbleCommander/Resources/SyntaxHighlighting`.  
+    Use the existing settings files as examples.
+  - Add the ID of the lexer in the configuration file (e.g. "bash", "cmake", "xml").  
+    The ID can be found at the bottom of the lexer implementation file.  
+    Refer to the [Lexilla lexers]( https://github.com/ScintillaOrg/lexilla/blob/master/lexers/) to locate the file.
+  - Specify one or multipe lists of language keywords, separated by spaces.
+  - Include any required lexer properties.
+  - Map the Scintilla styles to Nimble Commander styles in the configuration file.
+  - In the `Main.json` file, add the new configuration file, give it a name and a filemask to determine when to use this syntax.

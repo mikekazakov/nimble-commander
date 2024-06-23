@@ -108,7 +108,7 @@ public:
     Token(Token &&) noexcept;
     ~Token();
 
-    const Token &operator=(Token &&);
+    const Token &operator=(Token &&) noexcept;
 
     operator bool() const noexcept;
 

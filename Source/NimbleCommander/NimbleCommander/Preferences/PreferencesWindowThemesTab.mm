@@ -33,11 +33,10 @@ static NSTableCellView *SpawnSectionTitle(NSString *_title)
     tf.translatesAutoresizingMaskIntoConstraints = false;
     NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
     [cv addSubview:tf];
-    [cv addConstraints:[NSLayoutConstraint
-                           constraintsWithVisualFormat:@"H:|-(0)-[tf]-(0)-|"
-                                               options:0
-                                               metrics:nil
-                                                 views:NSDictionaryOfVariableBindings(tf)]];
+    [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(0)-[tf]-(0)-|"
+                                                               options:0
+                                                               metrics:nil
+                                                                 views:NSDictionaryOfVariableBindings(tf)]];
     [cv addConstraint:[NSLayoutConstraint constraintWithItem:tf
                                                    attribute:NSLayoutAttributeCenterY
                                                    relatedBy:NSLayoutRelationEqual
@@ -60,11 +59,10 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
     tf.translatesAutoresizingMaskIntoConstraints = false;
     NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
     [cv addSubview:tf];
-    [cv addConstraints:[NSLayoutConstraint
-                           constraintsWithVisualFormat:@"H:|-(0)-[tf]-(0)-|"
-                                               options:0
-                                               metrics:nil
-                                                 views:NSDictionaryOfVariableBindings(tf)]];
+    [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(0)-[tf]-(0)-|"
+                                                               options:0
+                                                               metrics:nil
+                                                                 views:NSDictionaryOfVariableBindings(tf)]];
     [cv addConstraint:[NSLayoutConstraint constraintWithItem:tf
                                                    attribute:NSLayoutAttributeCenterY
                                                    relatedBy:NSLayoutRelationEqual

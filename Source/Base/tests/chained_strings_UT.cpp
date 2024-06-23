@@ -41,7 +41,8 @@ TEST_CASE(PREFIX "basic")
     CHECK(str.size() == strings.front().size());
     CHECK(long_str.size() == strings.back().size());
 
-    strings.swap(chained_strings());
+    chained_strings empty;
+    strings.swap(empty);
     CHECK(strings.empty() == true);
     CHECK(strings.size() == 0);
 }

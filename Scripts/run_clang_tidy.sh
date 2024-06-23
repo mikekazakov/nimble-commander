@@ -41,7 +41,7 @@ XCODEPROJ="${ROOT_DIR}/Source/NimbleCommander/NimbleCommander.xcodeproj"
 # Compose a list of targets to build
 uts=$(xcodebuild -project ${XCODEPROJ} -list | awk -v word="Schemes:" 'BEGIN {found=0} found {if ($0 ~ /UT$/) print} $0 ~ word {found=1}' | sed 's/^[[:space:]]*//')
 its=$(xcodebuild -project ${XCODEPROJ} -list | awk -v word="Schemes:" 'BEGIN {found=0} found {if ($0 ~ /IT$/) print} $0 ~ word {found=1}' | sed 's/^[[:space:]]*//')
-others=("NimbleCommander-Unsigned" "RoutedIO" "info.filesmanager.Files.PrivilegedIOHelperV2")
+others=("NimbleCommander-Unsigned" "RoutedIO" "info.filesmanager.Files.PrivilegedIOHelperV2" "Highlighter" )
 targets=("${uts[@]}" "${its[@]}" "${others[@]}")
 echo Building these targets: ${targets[@]}
 

@@ -118,7 +118,7 @@ TEST_CASE(PREFIX "XNUSource - TAR")
     // massive concurrent access to archive
     for( int i = 0; i < 1000; ++i )
         dispatch_group_async(dg, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-          std::string fn = filenames[std::rand() % filenames.size()];
+          const std::string &fn = filenames[std::rand() % filenames.size()];
 
           VFSStat local_st;
           REQUIRE(host->Stat(fn.c_str(), local_st, 0, nullptr) == 0);

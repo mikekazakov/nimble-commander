@@ -9,7 +9,7 @@ class ExecutionDeadline
 {
 public:
     ExecutionDeadline(std::chrono::seconds _execution_limit);
-    ~ExecutionDeadline();
+    ~ExecutionDeadline() = default;
 };
 
 } // namespace nc::base

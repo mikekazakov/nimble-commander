@@ -18,7 +18,7 @@ public:
     HostDirObservationTicket(HostDirObservationTicket &&_rhs) noexcept;
     ~HostDirObservationTicket();
 
-    HostDirObservationTicket &operator=(HostDirObservationTicket &&_rhs);
+    HostDirObservationTicket &operator=(HostDirObservationTicket &&_rhs) noexcept;
     operator bool() const noexcept;
     bool valid() const noexcept;
     void reset();

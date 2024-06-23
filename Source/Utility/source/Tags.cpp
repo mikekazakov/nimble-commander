@@ -870,8 +870,8 @@ void Tags::RemoveTagFromAllItems(std::string_view _tag) noexcept
 }
 
 Tags::Tag::Tag(const std::string *const _label, const Tags::Color _color) noexcept
-    : m_TaggedPtr{reinterpret_cast<const std::string *>(reinterpret_cast<uint64_t>(_label) |
-                                                        static_cast<uint64_t>(std::to_underlying(_color)))}
+    : m_TaggedPtr{
+          reinterpret_cast<const std::string *>(reinterpret_cast<const char *>(_label) + std::to_underlying(_color))}
 {
     assert(_label != nullptr);
     assert(std::to_underlying(_color) < 8);
@@ -880,7 +880,8 @@ Tags::Tag::Tag(const std::string *const _label, const Tags::Color _color) noexce
 
 const std::string &Tags::Tag::Label() const noexcept
 {
-    return *reinterpret_cast<const std::string *>(reinterpret_cast<uint64_t>(m_TaggedPtr) & ~0x7);
+    return *reinterpret_cast<const std::string *>(reinterpret_cast<const char *>(m_TaggedPtr) -
+                                                  (reinterpret_cast<uint64_t>(m_TaggedPtr) & 0x7));
 }
 
 Tags::Color Tags::Tag::Color() const noexcept

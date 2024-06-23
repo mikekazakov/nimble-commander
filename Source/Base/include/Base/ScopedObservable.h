@@ -68,7 +68,7 @@ struct ScopedObservableBase::ObservationTicket {
     ObservationTicket() noexcept;
     ObservationTicket(ObservationTicket &&) noexcept;
     ~ObservationTicket();
-    const ObservationTicket &operator=(ObservationTicket &&);
+    const ObservationTicket &operator=(ObservationTicket &&) noexcept;
     operator bool() const noexcept;
 
 private:

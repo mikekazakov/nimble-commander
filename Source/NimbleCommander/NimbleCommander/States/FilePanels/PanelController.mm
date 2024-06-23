@@ -60,7 +60,7 @@ ActivityTicket::ActivityTicket(PanelController *_panel, uint64_t _ticket) : tick
 {
 }
 
-ActivityTicket::ActivityTicket(ActivityTicket &&_rhs) : ticket(_rhs.ticket), panel(_rhs.panel)
+ActivityTicket::ActivityTicket(ActivityTicket &&_rhs) noexcept : ticket(_rhs.ticket), panel(_rhs.panel)
 {
     _rhs.panel = nil;
     _rhs.ticket = 0;
@@ -71,7 +71,7 @@ ActivityTicket::~ActivityTicket()
     Reset();
 }
 
-void ActivityTicket::operator=(ActivityTicket &&_rhs)
+void ActivityTicket::operator=(ActivityTicket &&_rhs) noexcept
 {
     Reset();
     panel = _rhs.panel;
@@ -726,7 +726,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
         _filename == _item.Filename() )
         return;
 
-    const auto target_fn = _filename;
+    const auto &target_fn = _filename;
 
     // checking for invalid symbols
     if( !_item.Host()->ValidateFilename(target_fn.c_str()) ) {
@@ -953,7 +953,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
     m_DirectoryLoadingQ.Run([=] {
         // 1st - try to locate a valid dir in current host
         std::filesystem::path path = initial_path;
-        auto vfs = initial_vfs;
+        const auto &vfs = initial_vfs;
 
         while( true ) {
             if( vfs->IterateDirectoryListing(path.c_str(), [](const VFSDirEnt &) { return false; }) >= 0 ) {

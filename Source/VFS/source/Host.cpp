@@ -33,7 +33,7 @@ HostDirObservationTicket::~HostDirObservationTicket()
     reset();
 }
 
-HostDirObservationTicket &HostDirObservationTicket::operator=(HostDirObservationTicket &&_rhs)
+HostDirObservationTicket &HostDirObservationTicket::operator=(HostDirObservationTicket &&_rhs) noexcept
 {
     reset();
     m_Ticket = _rhs.m_Ticket;

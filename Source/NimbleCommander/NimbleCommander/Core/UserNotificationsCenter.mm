@@ -23,8 +23,6 @@ UserNotificationsCenter::UserNotificationsCenter()
     NSUserNotificationCenter.defaultUserNotificationCenter.delegate = delegate;
 }
 
-UserNotificationsCenter::~UserNotificationsCenter() = default;
-
 UserNotificationsCenter &UserNotificationsCenter::Instance()
 {
     static const auto inst = new UserNotificationsCenter;

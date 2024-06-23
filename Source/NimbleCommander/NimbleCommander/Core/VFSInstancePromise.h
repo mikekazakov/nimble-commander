@@ -12,11 +12,11 @@ class VFSInstancePromise
 {
 public:
     VFSInstancePromise();
-    VFSInstancePromise(VFSInstancePromise &&_rhs);
+    VFSInstancePromise(VFSInstancePromise &&_rhs) noexcept;
     VFSInstancePromise(const VFSInstancePromise &_rhs);
     ~VFSInstancePromise();
     const VFSInstancePromise &operator=(const VFSInstancePromise &_rhs);
-    const VFSInstancePromise &operator=(VFSInstancePromise &&_rhs);
+    const VFSInstancePromise &operator=(VFSInstancePromise &&_rhs) noexcept;
     operator bool() const noexcept;
     bool operator==(const VFSInstancePromise &_rhs) const noexcept;
     bool operator!=(const VFSInstancePromise &_rhs) const noexcept;

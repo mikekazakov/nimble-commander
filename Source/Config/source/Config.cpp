@@ -30,7 +30,7 @@ Token::~Token()
         m_Instance->Discard(*this);
 }
 
-const Token &Token::operator=(Token &&_rhs)
+const Token &Token::operator=(Token &&_rhs) noexcept
 {
     if( *this )
         m_Instance->Discard(*this);

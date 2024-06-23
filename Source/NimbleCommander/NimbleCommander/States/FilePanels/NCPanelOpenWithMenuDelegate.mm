@@ -110,7 +110,7 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
     return @"always";
 }
 
-- (void)setContextSource:(const std::vector<VFSListingItem>&)_items
+- (void)setContextSource:(const std::vector<VFSListingItem> &)_items
 {
     m_ContextItems = _items;
 }

@@ -21,7 +21,8 @@ VFSInstancePromise::~VFSInstancePromise()
         manager->DecPromiseCount(inst_id);
 }
 
-VFSInstancePromise::VFSInstancePromise(VFSInstancePromise &&_rhs) : inst_id(_rhs.inst_id), manager(_rhs.manager)
+VFSInstancePromise::VFSInstancePromise(VFSInstancePromise &&_rhs) noexcept
+    : inst_id(_rhs.inst_id), manager(_rhs.manager)
 {
     _rhs.inst_id = 0;
     _rhs.manager = nullptr;
@@ -44,7 +45,7 @@ const VFSInstancePromise &VFSInstancePromise::operator=(const VFSInstancePromise
     return *this;
 }
 
-const VFSInstancePromise &VFSInstancePromise::operator=(VFSInstancePromise &&_rhs)
+const VFSInstancePromise &VFSInstancePromise::operator=(VFSInstancePromise &&_rhs) noexcept
 {
     if( manager )
         manager->DecPromiseCount(inst_id);

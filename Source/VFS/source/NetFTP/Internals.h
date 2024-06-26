@@ -92,28 +92,42 @@ struct ReadBuffer {
     uint32_t capacity = 0;
 };
 
-struct WriteBuffer {
+// WriteBuffer provides an intermediatery storage where a File can write into and CURL can read from afterwards
+class WriteBuffer {
+public:
     WriteBuffer();
     WriteBuffer(const WriteBuffer &) = delete;
     ~WriteBuffer();
 
     WriteBuffer &operator=(const WriteBuffer &) = delete;
 
-    void clear();
+    // Adds the specified bytes into the buffer
+    void Write(const void *_mem, size_t _size);
+    
+    // Returns the amount of data stored in the buffer
+    size_t Size() const noexcept;
+    
+    // Returns the amount of data fed into the read function out of the available size
+    size_t Consumed() const noexcept;
 
-    void add(const void *_mem, size_t _size);
+    // Returns true if there's no available data to provide to the read function
+    bool Exhausted() const noexcept;
+        
+    // Removes the portion of the buffer that has been written.
+    // Consumed() will be 0 afterwards.
+    void DiscardConsumed() noexcept;
 
-    void grow(uint32_t _new_size);
+    // Reads the data from the buffer into the specified target.
+    static size_t Read(void *_dest, size_t _size, size_t _nmemb, void *_this);
 
-    static size_t read_from_function(void *ptr, size_t size, size_t nmemb, void *data);
-
-    void discard(size_t _sz);
-
-    uint8_t *buf = 0;
-    static const uint32_t default_capacity = 32768;
-    uint32_t size = 0;
-    uint32_t capacity = 0;
-    uint32_t feed_size = 0; // amount of bytes fed to CURL
+private:
+    void Grow(uint32_t _new_size);
+    
+    static constexpr uint32_t s_DefaultCapacity = 32768;
+    uint8_t *m_Buf = nullptr;
+    uint32_t m_Size = 0;
+    uint32_t m_Consumed = 0; // amount of bytes fed to CURL
+    uint32_t m_Capacity = 0;
 };
 
 /**

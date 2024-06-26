@@ -99,7 +99,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
         m_CURL->EasySetOpt(CURLOPT_URL, m_URLRequest.c_str());
         m_CURL->EasySetOpt(CURLOPT_UPLOAD, 1l);
         m_CURL->EasySetOpt(CURLOPT_INFILESIZE, -1l);
-        m_CURL->EasySetOpt(CURLOPT_READFUNCTION, WriteBuffer::read_from_function);
+        m_CURL->EasySetOpt(CURLOPT_READFUNCTION, WriteBuffer::Read);
         m_CURL->EasySetOpt(CURLOPT_READDATA, m_WriteBuf.get());
 
         m_FilePos = 0;
@@ -240,8 +240,8 @@ ssize_t File::Write(const void *_buf, size_t _size)
     if( !IsOpened() )
         return VFSError::InvalidCall;
 
-    assert(m_WriteBuf->feed_size == 0);
-    m_WriteBuf->add(_buf, _size);
+    assert(m_WriteBuf->Consumed() == 0);
+    m_WriteBuf->Write(_buf, _size);
 
     bool error = false;
 
@@ -256,7 +256,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
             Log::Error(SPDLOC, "curl_multi failed, code {}.", std::to_underlying(mc));
             break;
         }
-    } while( still_running && m_WriteBuf->feed_size < m_WriteBuf->size );
+    } while( still_running && !m_WriteBuf->Exhausted() );
 
     // check for error codes here
     if( still_running == 0 ) {
@@ -273,11 +273,9 @@ ssize_t File::Write(const void *_buf, size_t _size)
     if( error == true )
         return VFSError::FromErrno(EIO);
 
-    m_FilePos += m_WriteBuf->feed_size;
-    m_FileSize += m_WriteBuf->feed_size;
-
-    m_WriteBuf->discard(m_WriteBuf->feed_size);
-    m_WriteBuf->feed_size = 0;
+    m_FilePos += m_WriteBuf->Consumed();
+    m_FileSize += m_WriteBuf->Consumed();
+    m_WriteBuf->DiscardConsumed();
 
     return _size;
 }

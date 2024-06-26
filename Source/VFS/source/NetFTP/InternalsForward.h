@@ -10,7 +10,7 @@ struct CURLInstance;
 struct Entry;
 struct Directory;
 struct ReadBuffer;
-struct WriteBuffer;
+class WriteBuffer;
 class Cache;
 class File;
 } // namespace ftp

@@ -6,21 +6,17 @@
 #include <deque>
 #include <mutex>
 #include <Base/RobinHoodUtil.h>
+#include <Base/CFPtr.h>
 #include <string_view>
 #include <functional>
 
 namespace nc::vfs::ftp {
 
 struct Entry {
-    Entry();
+    Entry() noexcept = default;
     Entry(const std::string &_name);
-    Entry(const Entry &_r);
-    ~Entry();
-    Entry(const Entry &&) = delete;
-    void operator=(const Entry &) = delete;
 
     std::string name;
-    CFStringRef cfname = 0; // no allocations, pointing at name
     uint64_t size = 0;
     time_t time = 0;
     mode_t mode = 0;

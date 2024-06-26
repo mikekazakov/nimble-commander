@@ -5,6 +5,7 @@
 #include "Cache.h"
 #include <Utility/PathManip.h>
 #include <fmt/format.h>
+#include <VFS/Log.h>
 
 namespace nc::vfs::ftp {
 
@@ -12,10 +13,12 @@ File::File(const char *_relative_path, std::shared_ptr<FTPHost> _host)
     : VFSFile(_relative_path, _host), m_ReadBuf(std::make_unique<ReadBuffer>()),
       m_WriteBuf(std::make_unique<WriteBuffer>())
 {
+    Log::Trace(SPDLOC, "File::File({}, {}) called", _relative_path, static_cast<void *>(_host.get()));
 }
 
 File::~File()
 {
+    Log::Trace(SPDLOC, "File::~File() called");
     Close();
 }
 
@@ -26,6 +29,8 @@ bool File::IsOpened() const
 
 int File::Close()
 {
+    Log::Trace(SPDLOC, "File::Close() called");
+
     if( m_CURL && m_Mode == Mode::Write ) {
         // if we're still writing - finish it and tell cache about changes
         FinishWriting();
@@ -58,9 +63,11 @@ std::filesystem::path File::DirName() const
 
 int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
+    Log::Trace(SPDLOC, "File::Open({}) called", _open_flags);
     auto ftp_host = std::dynamic_pointer_cast<FTPHost>(Host());
     VFSStat stat;
-    int stat_ret = ftp_host->Stat(Path(), stat, 0, _cancel_checker);
+    const int stat_ret = ftp_host->Stat(Path(), stat, 0, _cancel_checker);
+    Log::Trace(SPDLOC, "stat_ret = {}", stat_ret);
 
     if( stat_ret == 0 && ((stat.mode & S_IFMT) == S_IFREG) && (_open_flags & VFSFlags::OF_Read) != 0 &&
         (_open_flags & VFSFlags::OF_Write) == 0 ) {
@@ -90,15 +97,15 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
         if( m_CURL->IsAttached() )
             m_CURL->Detach();
         m_CURL->EasySetOpt(CURLOPT_URL, m_URLRequest.c_str());
-        m_CURL->EasySetOpt(CURLOPT_UPLOAD, 1);
-        m_CURL->EasySetOpt(CURLOPT_INFILESIZE, -1);
+        m_CURL->EasySetOpt(CURLOPT_UPLOAD, 1l);
+        m_CURL->EasySetOpt(CURLOPT_INFILESIZE, -1l);
         m_CURL->EasySetOpt(CURLOPT_READFUNCTION, WriteBuffer::read_from_function);
         m_CURL->EasySetOpt(CURLOPT_READDATA, m_WriteBuf.get());
 
         m_FilePos = 0;
         m_FileSize = 0;
         if( _open_flags & VFSFlags::OF_Append ) {
-            m_CURL->EasySetOpt(CURLOPT_APPEND, 1);
+            m_CURL->EasySetOpt(CURLOPT_APPEND, 1l);
 
             if( stat_ret == 0 ) {
                 m_FilePos = stat.size;
@@ -117,6 +124,8 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
 
 ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offset, VFSCancelChecker _cancel_checker)
 {
+    Log::Trace(SPDLOC, "File::ReadChunk({}, {}, {}) called", _read_to, _read_size, _file_offset);
+
     // TODO: mutex lock
     bool error = false;
 
@@ -127,6 +136,7 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
 
         // check for dead connection
         // check for big offset changes so we need to restart connection
+        bool has_range = false;
         if( _file_offset < m_BufFileOffset || _file_offset > m_BufFileOffset + m_ReadBuf->size ||
             m_CURL->RunningHandles() == 0 ) { // (re)connect
 
@@ -140,60 +150,52 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
             m_CURL->EasySetOpt(CURLOPT_URL, m_URLRequest.c_str());
             m_CURL->EasySetOpt(CURLOPT_WRITEFUNCTION, ReadBuffer::write_here_function);
             m_CURL->EasySetOpt(CURLOPT_WRITEDATA, m_ReadBuf.get());
-            m_CURL->EasySetOpt(CURLOPT_UPLOAD, 0);
-            m_CURL->EasySetOpt(CURLOPT_INFILESIZE, -1);
-            m_CURL->EasySetOpt(CURLOPT_READFUNCTION, 0);
-            m_CURL->EasySetOpt(CURLOPT_READDATA, 0);
-            m_CURL->EasySetOpt(CURLOPT_LOW_SPEED_LIMIT, 1);
-            m_CURL->EasySetOpt(CURLOPT_LOW_SPEED_TIME, 60);
+            m_CURL->EasySetOpt(CURLOPT_UPLOAD, 0l);
+            m_CURL->EasySetOpt(CURLOPT_INFILESIZE, -1l);
+            m_CURL->EasySetOpt(CURLOPT_READFUNCTION, nullptr);
+            m_CURL->EasySetOpt(CURLOPT_READDATA, nullptr);
+            m_CURL->EasySetOpt(CURLOPT_LOW_SPEED_LIMIT, 1l);
+            m_CURL->EasySetOpt(CURLOPT_LOW_SPEED_TIME, 60l);
             m_CURL->EasySetupProgFunc();
 
             if( _file_offset ) { // set offsets
                 char range[16];
                 *fmt::format_to(range, "{}-", _file_offset) = 0;
                 m_CURL->EasySetOpt(CURLOPT_RANGE, range);
+                has_range = true;
             }
 
             m_CURL->Attach();
         }
 
-        int running_handles = 0;
-
-        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles) )
-            ;
-
-        curl_easy_setopt(m_CURL->curl, CURLOPT_RANGE, NULL);
-
-        while( (m_ReadBuf->size < _read_size + _file_offset - m_BufFileOffset) && running_handles ) {
-            struct timeval timeout = m_SelectTimeout;
-
-            fd_set fdread, fdwrite, fdexcep;
-            int maxfd;
-
-            FD_ZERO(&fdread);
-            FD_ZERO(&fdwrite);
-            FD_ZERO(&fdexcep);
-            curl_multi_fdset(m_CURL->curlm, &fdread, &fdwrite, &fdexcep, &maxfd);
-
-            if( select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout) == -1 ) {
-                NSLog(@"!!");
+        int still_running = 0;
+        do {
+            CURLMcode mc;
+            mc = curl_multi_perform(m_CURL->curlm, &still_running);
+            if( mc == CURLM_OK ) {
+                mc = curl_multi_wait(m_CURL->curlm, nullptr, 0, m_SelectTimeout.tv_usec, nullptr);
+            }
+            if( mc != CURLM_OK ) {
+                Log::Error(SPDLOC, "curl_multi failed, code {}.", std::to_underlying(mc));
                 error = true;
                 break;
             }
-
-            while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles) )
-                if( _cancel_checker && _cancel_checker() )
-                    return VFSError::Cancelled;
-        }
+            if( has_range ) {
+                curl_easy_setopt(m_CURL->curl, CURLOPT_RANGE, nullptr);
+                has_range = false;
+            }
+            if( _cancel_checker && _cancel_checker() ) {
+                return VFSError::Cancelled;
+            }
+        } while( still_running && (m_ReadBuf->size < _read_size + _file_offset - m_BufFileOffset) );
 
         // check for error codes here
-        if( running_handles == 0 ) {
+        if( still_running == 0 ) {
             int msgs_left = 1;
             while( msgs_left ) {
                 CURLMsg *msg = curl_multi_info_read(m_CURL->curlm, &msgs_left);
                 if( msg == nullptr || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
-                    //                    DEBUG(1, "error: curl_multi_info %d\n", msg->msg); err = 1;
-                    NSLog(@"!!!");
+                    Log::Error(SPDLOC, "curl_multi_info_read() returned {}.", std::to_underlying(msg->msg));
                     error = true;
                 }
             }
@@ -218,6 +220,7 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
 
 ssize_t File::Read(void *_buf, size_t _size)
 {
+    Log::Trace(SPDLOC, "File::Read({}, {}) called", _buf, _size);
     if( Eof() )
         return 0;
 
@@ -231,6 +234,7 @@ ssize_t File::Read(void *_buf, size_t _size)
 
 ssize_t File::Write(const void *_buf, size_t _size)
 {
+    Log::Trace(SPDLOC, "File::Write({}, {}) called", _buf, _size);
     // TODO: reconnecting support
 
     if( !IsOpened() )
@@ -241,39 +245,26 @@ ssize_t File::Write(const void *_buf, size_t _size)
 
     bool error = false;
 
-    int running_handles = 0;
-    while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles) )
-        ;
-
-    while( m_WriteBuf->feed_size < m_WriteBuf->size && running_handles ) {
-        struct timeval timeout = m_SelectTimeout;
-
-        fd_set fdread, fdwrite, fdexcep;
-        int maxfd;
-
-        FD_ZERO(&fdread);
-        FD_ZERO(&fdwrite);
-        FD_ZERO(&fdexcep);
-        curl_multi_fdset(m_CURL->curlm, &fdread, &fdwrite, &fdexcep, &maxfd);
-
-        if( select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout) == -1 ) {
-            NSLog(@"!!");
-            error = true;
+    int still_running = 0;
+    do {
+        CURLMcode mc;
+        mc = curl_multi_perform(m_CURL->curlm, &still_running);
+        if( mc == CURLM_OK ) {
+            mc = curl_multi_wait(m_CURL->curlm, nullptr, 0, m_SelectTimeout.tv_usec, nullptr);
+        }
+        if( mc != CURLM_OK ) {
+            Log::Error(SPDLOC, "curl_multi failed, code {}.", std::to_underlying(mc));
             break;
         }
-
-        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles) )
-            ;
-    }
+    } while( still_running && m_WriteBuf->feed_size < m_WriteBuf->size );
 
     // check for error codes here
-    if( running_handles == 0 ) {
-        NSLog(@"running_handles == 0");
+    if( still_running == 0 ) {
         int msgs_left = 1;
         while( msgs_left ) {
             CURLMsg *msg = curl_multi_info_read(m_CURL->curlm, &msgs_left);
             if( msg == nullptr || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
-                NSLog(@"!!!");
+                Log::Error(SPDLOC, "curl_multi_info_read() returned {}.", std::to_underlying(msg->msg));
                 error = true;
             }
         }
@@ -313,6 +304,7 @@ ssize_t File::Size() const
 
 bool File::Eof() const
 {
+    Log::Trace(SPDLOC, "File::Eof() called");
     if( !IsOpened() )
         return true;
     return m_FilePos >= m_FileSize;
@@ -320,12 +312,12 @@ bool File::Eof() const
 
 off_t File::Seek(off_t _off, int _basis)
 {
+    Log::Trace(SPDLOC, "File::Seek({}, {}) called", _off, _basis);
     if( !IsOpened() )
         return VFSError::InvalidCall;
 
     if( m_Mode != Mode::Read )
         return VFSError::InvalidCall;
-    ;
 
     // we can only deal with cache buffer now, need another branch later
     off_t req_pos = 0;
@@ -350,37 +342,25 @@ off_t File::Seek(off_t _off, int _basis)
 
 void File::FinishWriting()
 {
+    Log::Trace(SPDLOC, "File::FinishWriting() called");
     assert(m_Mode == Mode::Write);
 
-    if( m_CURL->RunningHandles() <= 0 )
-        return;
-
-    // tell curl that data is over
-    m_WriteBuf->discard(m_WriteBuf->size);
-    int running_handles = 0;
-    while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles) )
-        ;
-    while( running_handles ) {
-        struct timeval timeout = m_SelectTimeout;
-
-        fd_set fdread, fdwrite, fdexcep;
-        int maxfd;
-
-        FD_ZERO(&fdread);
-        FD_ZERO(&fdwrite);
-        FD_ZERO(&fdexcep);
-        curl_multi_fdset(m_CURL->curlm, &fdread, &fdwrite, &fdexcep, &maxfd);
-
-        if( select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout) == -1 )
+    int still_running = 0;
+    do {
+        CURLMcode mc = curl_multi_perform(m_CURL->curlm, &still_running);
+        if( mc == CURLM_OK ) {
+            mc = curl_multi_wait(m_CURL->curlm, nullptr, 0, m_SelectTimeout.tv_usec, nullptr);
+        }
+        if( mc != CURLM_OK ) {
+            Log::Error(SPDLOC, "curl_multi failed, code {}.", std::to_underlying(mc));
             break;
-
-        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles) )
-            ;
-    }
+        }
+    } while( still_running );
 }
 
 void File::FinishReading()
 {
+    Log::Trace(SPDLOC, "File::FinishReading() called");
     assert(m_Mode == Mode::Read);
 
     // tell curl to cancel any going reading if any

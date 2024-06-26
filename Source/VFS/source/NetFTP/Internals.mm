@@ -3,11 +3,13 @@
 #include "Host.h"
 #include <fmt/format.h>
 #include <sys/stat.h>
+#include <VFS/Log.h>
 
 namespace nc::vfs::ftp {
 
 size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *userp)
 {
+    Log::Trace(SPDLOC, "CURLWriteDataIntoString({}, {}, {}, {}) called", buffer, size, nmemb, userp);
     auto sz = size * nmemb;
     char *tmp = static_cast<char *>(alloca(sz + 1));
     memcpy(tmp, buffer, sz);
@@ -187,11 +189,7 @@ std::shared_ptr<Directory> ParseListing(const char *_str)
             if( strcmp(filename, ".") != 0 && strcmp(filename, "..") != 0 ) {
                 entries.emplace_back();
                 auto &ent = entries.back();
-
                 ent.name = filename;
-                ent.cfname = base::CFStringCreateWithUTF8StdStringNoCopy(ent.name);
-                if( !ent.cfname )
-                    ent.cfname = base::CFStringCreateWithMacOSRomanStdStringNoCopy(ent.name);
                 ent.mode = st.st_mode;
                 ent.size = st.st_size;
                 ent.time = st.st_mtime;
@@ -220,41 +218,30 @@ CURLInstance::~CURLInstance()
 
 CURLcode CURLInstance::PerformEasy()
 {
+    Log::Trace(SPDLOC, "CURLInstance::PerformEasy() called");
     assert(!IsAttached());
     return curl_easy_perform(curl);
 }
 
 CURLcode CURLInstance::PerformMulti()
 {
-    //    bool error = false;
-    int running_handles = 0;
-    CURLcode result = CURLE_OK;
-
-    while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(curlm, &running_handles) )
-        ;
-
-    while( running_handles ) {
-        struct timeval timeout = {0, 10000};
-
-        fd_set fdread, fdwrite, fdexcep;
-        int maxfd;
-
-        FD_ZERO(&fdread);
-        FD_ZERO(&fdwrite);
-        FD_ZERO(&fdexcep);
-        curl_multi_fdset(curlm, &fdread, &fdwrite, &fdexcep, &maxfd);
-
-        if( select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout) == -1 ) {
-            //            error = true;
+    int still_running = 0;
+    do {
+        CURLMcode mc;
+        mc = curl_multi_perform(curlm, &still_running);
+        if( mc == CURLM_OK ) {
+            mc = curl_multi_wait(curlm, nullptr, 0, 10000, nullptr);
+        }
+        if( mc != CURLM_OK ) {
+            Log::Error(SPDLOC, "curl_multi failed, code {}", std::to_underlying(mc));
             break;
         }
+    } while( still_running );
 
-        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(curlm, &running_handles) )
-            ;
-    }
+    CURLcode result = CURLE_OK;
 
     // check for error codes here
-    if( running_handles == 0 ) {
+    if( still_running == 0 ) {
         int msgs_left = 1;
         while( msgs_left ) {
             CURLMsg *msg = curl_multi_info_read(curlm, &msgs_left);
@@ -306,6 +293,64 @@ void CURLInstance::EasyClearProgFunc()
     EasySetOpt(CURLOPT_PROGRESSDATA, nullptr);
     EasySetOpt(CURLOPT_NOPROGRESS, 1);
     prog_func = nil;
+}
+
+WriteBuffer::WriteBuffer()
+{
+    Log::Trace(SPDLOC, "WriteBuffer::WriteBuffer() called");
+    grow(default_capacity);
+}
+
+WriteBuffer::~WriteBuffer()
+{
+    Log::Trace(SPDLOC, "WriteBuffer::~WriteBuffer() called");
+    free(buf);
+}
+
+void WriteBuffer::clear()
+{
+    Log::Trace(SPDLOC, "WriteBuffer::clear() called");
+    size = 0;
+}
+
+void WriteBuffer::add(const void *_mem, size_t _size)
+{
+    Log::Trace(SPDLOC, "WriteBuffer::add({}, {}) called", _mem, _size);
+    if( capacity < size + _size )
+        grow(size + static_cast<uint32_t>(_size));
+
+    std::memcpy(buf + size, _mem, _size);
+    size += _size;
+}
+
+void WriteBuffer::grow(uint32_t _new_size)
+{
+    Log::Trace(SPDLOC, "WriteBuffer::grow({}) called", _new_size);
+    buf = static_cast<uint8_t *>(std::realloc(buf, capacity = _new_size));
+}
+
+size_t WriteBuffer::read_from_function(void *ptr, size_t size, size_t nmemb, void *data)
+{
+    Log::Trace(SPDLOC, "WriteBuffer::read_from_function({}, {}, {}, {}) called", ptr, size, nmemb, data);
+    WriteBuffer *buf = static_cast<WriteBuffer *>(data);
+
+    assert(buf->feed_size <= buf->size);
+
+    size_t feed = size * nmemb;
+    if( feed > buf->size - buf->feed_size )
+        feed = buf->size - buf->feed_size;
+    memcpy(ptr, buf->buf + buf->feed_size, feed);
+    buf->feed_size += feed;
+    Log::Trace(SPDLOC, "WriteBuffer: fed {} bytes", feed);
+    return feed;
+}
+
+void WriteBuffer::discard(size_t _sz)
+{
+    Log::Trace(SPDLOC, "WriteBuffer::discard({}) called", _sz);
+    assert(_sz <= size);
+    std::memmove(buf, buf + _sz, size - _sz);
+    size = size - static_cast<uint32_t>(_sz);
 }
 
 int CURLErrorToVFSError(CURLcode _curle)

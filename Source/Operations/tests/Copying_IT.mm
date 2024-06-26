@@ -841,8 +841,7 @@ TEST_CASE(PREFIX "Copy to local FTP")
 
     auto files = std::vector<std::string>{"Info.plist", "PkgInfo", "version.plist"};
 
-    for( auto &i : files )
-        VFSEasyDelete(("/Public/!FilesTesting/" + i).c_str(), host);
+    VFSEasyDelete("/Public", host);
 
     CopyingOptions opts;
     Copying op(FetchItems("/System/Applications/Mail.app/Contents", {begin(files), end(files)}, *TestEnv().vfs_native),
@@ -864,6 +863,8 @@ TEST_CASE(PREFIX "Copy to local FTP")
         REQUIRE(compare == 0);
         REQUIRE(host->Unlink(("/Public/!FilesTesting/" + i).c_str(), nullptr) == 0);
     }
+    
+    VFSEasyDelete("/Public", host);
 }
 
 TEST_CASE(PREFIX "Copy to local FTP, part3")
@@ -887,7 +888,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part3")
     VFSEasyDelete("/Public/!FilesTesting/bin", host);
 }
 
-TEST_CASE(PREFIX "Copy to local FTP, part4")
+TEST_CASE(PREFIX "Copy to local FTP part4")
 {
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = std::make_shared<nc::vfs::FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));

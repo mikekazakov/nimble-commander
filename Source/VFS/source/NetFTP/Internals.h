@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <curl/curl.h>
@@ -7,9 +7,8 @@
 
 namespace nc::vfs::ftp {
 
-static const curl_ftpmethod g_CURLFTPMethod = /*CURLFTPMETHOD_DEFAULT*/ /*CURLFTPMETHOD_MULTICWD*/
-    CURLFTPMETHOD_SINGLECWD /*CURLFTPMETHOD_NOCWD*/;
-static const int g_CURLVerbose = 0;
+inline constexpr curl_ftpmethod g_CURLFTPMethod = CURLFTPMETHOD_SINGLECWD;
+inline constexpr int g_CURLVerbose = 0;
 
 struct CURLInstance {
     ~CURLInstance();
@@ -94,46 +93,21 @@ struct ReadBuffer {
 };
 
 struct WriteBuffer {
-    WriteBuffer() { grow(default_capacity); }
-    ~WriteBuffer() { free(buf); }
+    WriteBuffer();
     WriteBuffer(const WriteBuffer &) = delete;
-    WriteBuffer(const WriteBuffer &&) = delete;
-    void operator=(const WriteBuffer &) = delete;
+    ~WriteBuffer();
 
-    void clear() { size = 0; }
+    WriteBuffer &operator=(const WriteBuffer &) = delete;
 
-    void add(const void *_mem, size_t _size)
-    {
-        if( capacity < size + _size )
-            grow(size + static_cast<uint32_t>(_size));
+    void clear();
 
-        std::memcpy(buf + size, _mem, _size);
-        size += _size;
-    }
+    void add(const void *_mem, size_t _size);
 
-    void grow(uint32_t _new_size) { buf = static_cast<uint8_t *>(std::realloc(buf, capacity = _new_size)); }
+    void grow(uint32_t _new_size);
 
-    static size_t read_from_function(void *ptr, size_t size, size_t nmemb, void *data)
-    {
-        WriteBuffer *buf = static_cast<WriteBuffer *>(data);
+    static size_t read_from_function(void *ptr, size_t size, size_t nmemb, void *data);
 
-        assert(buf->feed_size <= buf->size);
-
-        size_t feed = size * nmemb;
-        if( feed > buf->size - buf->feed_size )
-            feed = buf->size - buf->feed_size;
-        memcpy(ptr, buf->buf + buf->feed_size, feed);
-        buf->feed_size += feed;
-
-        return feed;
-    }
-
-    void discard(size_t _sz)
-    {
-        assert(_sz <= size);
-        std::memmove(buf, buf + _sz, size - _sz);
-        size = size - static_cast<uint32_t>(_sz);
-    }
+    void discard(size_t _sz);
 
     uint8_t *buf = 0;
     static const uint32_t default_capacity = 32768;

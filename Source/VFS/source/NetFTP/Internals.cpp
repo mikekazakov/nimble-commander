@@ -183,8 +183,8 @@ std::shared_ptr<Directory> ParseListing(const char *_str)
 
         struct stat st;
         memset(&st, 0, sizeof(st));
-        char filename[MAXPATHLEN];
-        char link[MAXPATHLEN];
+        char filename[2048];
+        char link[2048];
         if( parse_dir_unix(current_line, &st, filename, link) || parse_dir_win(current_line, &st, filename, link) ) {
             if( strcmp(filename, ".") != 0 && strcmp(filename, "..") != 0 ) {
                 entries.emplace_back();

@@ -55,10 +55,10 @@
 		CF46009D256057C80095FC73 /* FileUploadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22A1151E97755000149C44 /* FileUploadDelegate.mm */; };
 		CF46009E256057C80095FC73 /* FileUploadStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22A1111E9751A800149C44 /* FileUploadStream.mm */; };
 		CF46009F256057C80095FC73 /* FileDownloadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B7E1EA715ED00BC28E6 /* FileDownloadDelegate.mm */; };
-		CF4600A3256057D00095FC73 /* Host.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D03A1DA2324100992B84 /* Host.mm */; };
-		CF4600A4256057D00095FC73 /* Internals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D03C1DA2324100992B84 /* Internals.mm */; };
-		CF4600A5256057D00095FC73 /* Cache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0361DA2324100992B84 /* Cache.mm */; };
-		CF4600A6256057D00095FC73 /* File.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0381DA2324100992B84 /* File.mm */; };
+		CF4600A3256057D00095FC73 /* Host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D03A1DA2324100992B84 /* Host.cpp */; };
+		CF4600A4256057D00095FC73 /* Internals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D03C1DA2324100992B84 /* Internals.cpp */; };
+		CF4600A5256057D00095FC73 /* Cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0361DA2324100992B84 /* Cache.cpp */; };
+		CF4600A6256057D00095FC73 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0381DA2324100992B84 /* File.cpp */; };
 		CF4600AA256057DA0095FC73 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0481DA232EF00992B84 /* File.cpp */; };
 		CF4600AB256057DA0095FC73 /* KeyValidator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09BB1EC4382700533B07 /* KeyValidator.cpp */; };
 		CF4600AC256057DA0095FC73 /* SFTPHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D04A1DA232EF00992B84 /* SFTPHost.cpp */; };
@@ -235,13 +235,13 @@
 		CF69D0301DA231EA00992B84 /* xattr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xattr.cpp; path = source/XAttr/xattr.cpp; sourceTree = "<group>"; };
 		CF69D0311DA231EA00992B84 /* xattr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xattr.h; path = source/XAttr/xattr.h; sourceTree = "<group>"; };
 		CF69D0351DA2324100992B84 /* Cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Cache.h; path = source/NetFTP/Cache.h; sourceTree = "<group>"; };
-		CF69D0361DA2324100992B84 /* Cache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Cache.mm; path = source/NetFTP/Cache.mm; sourceTree = "<group>"; };
+		CF69D0361DA2324100992B84 /* Cache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Cache.cpp; path = source/NetFTP/Cache.cpp; sourceTree = "<group>"; };
 		CF69D0371DA2324100992B84 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = source/NetFTP/File.h; sourceTree = "<group>"; };
-		CF69D0381DA2324100992B84 /* File.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = File.mm; path = source/NetFTP/File.mm; sourceTree = "<group>"; };
+		CF69D0381DA2324100992B84 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = File.cpp; path = source/NetFTP/File.cpp; sourceTree = "<group>"; };
 		CF69D0391DA2324100992B84 /* Host.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Host.h; path = source/NetFTP/Host.h; sourceTree = "<group>"; };
-		CF69D03A1DA2324100992B84 /* Host.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Host.mm; path = source/NetFTP/Host.mm; sourceTree = "<group>"; };
+		CF69D03A1DA2324100992B84 /* Host.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Host.cpp; path = source/NetFTP/Host.cpp; sourceTree = "<group>"; };
 		CF69D03B1DA2324100992B84 /* Internals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internals.h; path = source/NetFTP/Internals.h; sourceTree = "<group>"; };
-		CF69D03C1DA2324100992B84 /* Internals.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Internals.mm; path = source/NetFTP/Internals.mm; sourceTree = "<group>"; };
+		CF69D03C1DA2324100992B84 /* Internals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Internals.cpp; path = source/NetFTP/Internals.cpp; sourceTree = "<group>"; };
 		CF69D03D1DA2324100992B84 /* InternalsForward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalsForward.h; path = source/NetFTP/InternalsForward.h; sourceTree = "<group>"; };
 		CF69D0481DA232EF00992B84 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = File.cpp; path = source/NetSFTP/File.cpp; sourceTree = "<group>"; };
 		CF69D0491DA232EF00992B84 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = source/NetSFTP/File.h; sourceTree = "<group>"; };
@@ -595,14 +595,14 @@
 			isa = PBXGroup;
 			children = (
 				CF69D0351DA2324100992B84 /* Cache.h */,
-				CF69D0361DA2324100992B84 /* Cache.mm */,
+				CF69D0361DA2324100992B84 /* Cache.cpp */,
 				CF69D0371DA2324100992B84 /* File.h */,
-				CF69D0381DA2324100992B84 /* File.mm */,
+				CF69D0381DA2324100992B84 /* File.cpp */,
 				CF69D03B1DA2324100992B84 /* Internals.h */,
-				CF69D03C1DA2324100992B84 /* Internals.mm */,
+				CF69D03C1DA2324100992B84 /* Internals.cpp */,
 				CF69D03D1DA2324100992B84 /* InternalsForward.h */,
 				CF69D0391DA2324100992B84 /* Host.h */,
-				CF69D03A1DA2324100992B84 /* Host.mm */,
+				CF69D03A1DA2324100992B84 /* Host.cpp */,
 			);
 			name = NetFTP;
 			sourceTree = "<group>";
@@ -828,16 +828,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF4600A5256057D00095FC73 /* Cache.mm in Sources */,
+				CF4600A5256057D00095FC73 /* Cache.cpp in Sources */,
 				CF460095256057BE0095FC73 /* File.cpp in Sources */,
 				CF46007F2560579F0095FC73 /* VFSError.mm in Sources */,
 				CF4600B4256057E80095FC73 /* PathRoutines.mm in Sources */,
 				CF4600B3256057E80095FC73 /* WebDAVHost.cpp in Sources */,
-				CF4600A6256057D00095FC73 /* File.mm in Sources */,
+				CF4600A6256057D00095FC73 /* File.cpp in Sources */,
 				CF46009A256057C80095FC73 /* Host.mm in Sources */,
 				CF4600732560579F0095FC73 /* Listing.cpp in Sources */,
 				CF4600AE256057DA0095FC73 /* AccountsFetcher.cpp in Sources */,
-				CF4600A4256057D00095FC73 /* Internals.mm in Sources */,
+				CF4600A4256057D00095FC73 /* Internals.cpp in Sources */,
 				CF460086256057A90095FC73 /* EncodingDetection.mm in Sources */,
 				CF4600AB256057DA0095FC73 /* KeyValidator.cpp in Sources */,
 				CF46007D2560579F0095FC73 /* VFSArchiveProxy.mm in Sources */,
@@ -849,7 +849,7 @@
 				CF460093256057BE0095FC73 /* Host.mm in Sources */,
 				CF4600782560579F0095FC73 /* VFSSeqToRandomWrapper.cpp in Sources */,
 				CF46009B256057C80095FC73 /* Aux.mm in Sources */,
-				CF4600A3256057D00095FC73 /* Host.mm in Sources */,
+				CF4600A3256057D00095FC73 /* Host.cpp in Sources */,
 				CF46007E2560579F0095FC73 /* Stat.cpp in Sources */,
 				CF824F67279F564800C4F29C /* Host.cpp in Sources */,
 				CF4600722560579F0095FC73 /* VFSFile.cpp in Sources */,

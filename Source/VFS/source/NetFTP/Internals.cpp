@@ -295,64 +295,42 @@ void CURLInstance::EasyClearProgFunc()
     prog_func = nil;
 }
 
-WriteBuffer::WriteBuffer()
-{
-    Log::Trace(SPDLOC, "WriteBuffer::WriteBuffer() called");
-    Grow(s_DefaultCapacity);
-}
-
-WriteBuffer::~WriteBuffer()
-{
-    Log::Trace(SPDLOC, "WriteBuffer::~WriteBuffer() called");
-    free(m_Buf);
-}
-
 void WriteBuffer::Write(const void *_mem, size_t _size)
 {
     Log::Trace(SPDLOC, "WriteBuffer::Write({}, {}) called", _mem, _size);
-    if( m_Capacity < m_Size + _size )
-        Grow(m_Size + static_cast<uint32_t>(_size));
-
-    std::memcpy(m_Buf + m_Size, _mem, _size);
-    m_Size += _size;
+    m_Buf.insert(m_Buf.end(), static_cast<const std::byte *>(_mem), static_cast<const std::byte *>(_mem) + _size);
 }
 
-void WriteBuffer::Grow(uint32_t _new_size)
+size_t WriteBuffer::Read(void *ptr, size_t size, size_t nmemb, void *_this)
 {
-    Log::Trace(SPDLOC, "WriteBuffer::Grow({}) called", _new_size);
-    m_Buf = static_cast<uint8_t *>(std::realloc(m_Buf, m_Capacity = _new_size));
+    assert(_this != nullptr);
+    return static_cast<WriteBuffer *>(_this)->DoRead(ptr, size, nmemb);
 }
 
-size_t WriteBuffer::Read(void *ptr, size_t size, size_t nmemb, void *data)
+size_t WriteBuffer::DoRead(void *_dest, size_t _size, size_t _nmemb)
 {
-    Log::Trace(SPDLOC, "WriteBuffer::read_from_function({}, {}, {}, {}) called", ptr, size, nmemb, data);
-    WriteBuffer *buf = static_cast<WriteBuffer *>(data);
+    Log::Trace(SPDLOC, "WriteBuffer::DoRead({}, {}, {}) called", _dest, _size, _nmemb);
 
-    assert(buf->m_Consumed <= buf->m_Size);
-
-    size_t feed = size * nmemb;
-    if( feed > buf->m_Size - buf->m_Consumed )
-        feed = buf->m_Size - buf->m_Consumed;
-    memcpy(ptr, buf->m_Buf + buf->m_Consumed, feed);
-    buf->m_Consumed += feed;
+    assert(m_Consumed <= m_Buf.size());
+    const size_t feed = std::min(_size * _nmemb, m_Buf.size() - m_Consumed);
+    std::memcpy(_dest, m_Buf.data() + m_Consumed, feed);
+    m_Consumed += feed;
+    assert(m_Consumed <= m_Buf.size());
     Log::Trace(SPDLOC, "WriteBuffer: fed {} bytes", feed);
     return feed;
 }
 
 void WriteBuffer::DiscardConsumed() noexcept
 {
-    Log::Trace(SPDLOC, "WriteBuffer::DiscardConsumed() called");
-    if( m_Consumed > 0 ) {
-        assert(m_Consumed <= m_Size);
-        std::memmove(m_Buf, m_Buf + m_Consumed, m_Size - m_Consumed);
-        m_Size = m_Size - static_cast<uint32_t>(m_Consumed);
-        m_Consumed = 0;
-    }
+    Log::Trace(SPDLOC, "WriteBuffer::DiscardConsumed() called, m_Consumed={}", m_Consumed);
+    assert(m_Consumed <= m_Buf.size());
+    m_Buf.erase(m_Buf.begin(), std::next(m_Buf.begin(), m_Consumed));
+    m_Consumed = 0;
 }
 
 size_t WriteBuffer::Size() const noexcept
 {
-    return m_Size;
+    return m_Buf.size();
 }
 
 size_t WriteBuffer::Consumed() const noexcept
@@ -362,8 +340,8 @@ size_t WriteBuffer::Consumed() const noexcept
 
 bool WriteBuffer::Exhausted() const noexcept
 {
-    assert( m_Consumed <= m_Size );
-    return m_Consumed == m_Size;
+    assert(m_Consumed <= m_Buf.size());
+    return m_Consumed == m_Buf.size();
 }
 
 int CURLErrorToVFSError(CURLcode _curle)

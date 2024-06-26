@@ -10,8 +10,7 @@
 namespace nc::vfs::ftp {
 
 File::File(const char *_relative_path, std::shared_ptr<FTPHost> _host)
-    : VFSFile(_relative_path, _host), m_ReadBuf(std::make_unique<ReadBuffer>()),
-      m_WriteBuf(std::make_unique<WriteBuffer>())
+    : VFSFile(_relative_path, _host), m_ReadBuf(std::make_unique<ReadBuffer>())
 {
     Log::Trace(SPDLOC, "File::File({}, {}) called", _relative_path, static_cast<void *>(_host.get()));
 }
@@ -100,7 +99,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
         m_CURL->EasySetOpt(CURLOPT_UPLOAD, 1l);
         m_CURL->EasySetOpt(CURLOPT_INFILESIZE, -1l);
         m_CURL->EasySetOpt(CURLOPT_READFUNCTION, WriteBuffer::Read);
-        m_CURL->EasySetOpt(CURLOPT_READDATA, m_WriteBuf.get());
+        m_CURL->EasySetOpt(CURLOPT_READDATA, &m_WriteBuf);
 
         m_FilePos = 0;
         m_FileSize = 0;
@@ -240,8 +239,8 @@ ssize_t File::Write(const void *_buf, size_t _size)
     if( !IsOpened() )
         return VFSError::InvalidCall;
 
-    assert(m_WriteBuf->Consumed() == 0);
-    m_WriteBuf->Write(_buf, _size);
+    assert(m_WriteBuf.Consumed() == 0);
+    m_WriteBuf.Write(_buf, _size);
 
     bool error = false;
 
@@ -256,7 +255,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
             Log::Error(SPDLOC, "curl_multi failed, code {}.", std::to_underlying(mc));
             break;
         }
-    } while( still_running && !m_WriteBuf->Exhausted() );
+    } while( still_running && !m_WriteBuf.Exhausted() );
 
     // check for error codes here
     if( still_running == 0 ) {
@@ -273,9 +272,9 @@ ssize_t File::Write(const void *_buf, size_t _size)
     if( error == true )
         return VFSError::FromErrno(EIO);
 
-    m_FilePos += m_WriteBuf->Consumed();
-    m_FileSize += m_WriteBuf->Consumed();
-    m_WriteBuf->DiscardConsumed();
+    m_FilePos += m_WriteBuf.Consumed();
+    m_FileSize += m_WriteBuf.Consumed();
+    m_WriteBuf.DiscardConsumed();
 
     return _size;
 }

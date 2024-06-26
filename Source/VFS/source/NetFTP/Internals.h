@@ -3,7 +3,10 @@
 
 #include <curl/curl.h>
 #include <VFS/Host.h>
+#include <vector>
+#include <cstddef>
 #include "Cache.h"
+
 
 namespace nc::vfs::ftp {
 
@@ -95,12 +98,6 @@ struct ReadBuffer {
 // WriteBuffer provides an intermediatery storage where a File can write into and CURL can read from afterwards
 class WriteBuffer {
 public:
-    WriteBuffer();
-    WriteBuffer(const WriteBuffer &) = delete;
-    ~WriteBuffer();
-
-    WriteBuffer &operator=(const WriteBuffer &) = delete;
-
     // Adds the specified bytes into the buffer
     void Write(const void *_mem, size_t _size);
     
@@ -121,13 +118,10 @@ public:
     static size_t Read(void *_dest, size_t _size, size_t _nmemb, void *_this);
 
 private:
-    void Grow(uint32_t _new_size);
+    size_t DoRead(void *_dest, size_t _size, size_t _nmemb);
     
-    static constexpr uint32_t s_DefaultCapacity = 32768;
-    uint8_t *m_Buf = nullptr;
-    uint32_t m_Size = 0;
-    uint32_t m_Consumed = 0; // amount of bytes fed to CURL
-    uint32_t m_Capacity = 0;
+    std::vector<std::byte> m_Buf;
+    size_t m_Consumed = 0; // amount of bytes fed to CURL
 };
 
 /**

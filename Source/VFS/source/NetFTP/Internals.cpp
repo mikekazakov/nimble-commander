@@ -295,6 +295,38 @@ void CURLInstance::EasyClearProgFunc()
     prog_func = nil;
 }
 
+size_t ReadBuffer::Size() const noexcept
+{
+    return m_Buf.size();
+}
+
+const void *ReadBuffer::Data() const noexcept
+{
+    return m_Buf.data();
+}
+
+void ReadBuffer::Clear()
+{
+    m_Buf.clear();
+}
+
+size_t ReadBuffer::Write(const void *buffer, size_t _size, size_t _nmemb, void *userp)
+{
+    ReadBuffer *buf = static_cast<ReadBuffer *>(userp);
+    const size_t bytes = _size * _nmemb;
+
+    buf->m_Buf.insert(
+        buf->m_Buf.end(), static_cast<const std::byte *>(buffer), static_cast<const std::byte *>(buffer) + bytes);
+
+    return bytes;
+}
+
+void ReadBuffer::Discard(size_t _sz)
+{
+    assert(_sz <= m_Buf.size());
+    m_Buf.erase(m_Buf.begin(), std::next(m_Buf.begin(), _sz));
+}
+
 void WriteBuffer::Write(const void *_mem, size_t _size)
 {
     Log::Trace(SPDLOC, "WriteBuffer::Write({}, {}) called", _mem, _size);

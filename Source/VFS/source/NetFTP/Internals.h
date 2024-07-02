@@ -52,47 +52,27 @@ private:
     static int ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
 };
 
-struct ReadBuffer {
-    ReadBuffer() { grow(default_capacity); }
-    ~ReadBuffer() { free(buf); }
-    ReadBuffer(const ReadBuffer &) = delete;
-    ReadBuffer(const ReadBuffer &&) = delete;
-    void operator=(const ReadBuffer &) = delete;
+// ...
+class ReadBuffer {
+public:
+    
+    // Returns the amount of data stored in the buffer
+    size_t Size() const noexcept;
+    
+    // ...
+    const void *Data() const noexcept;
 
-    void clear() { size = 0; }
+    // ...
+    void Clear();
+    
+    // ...
+    static size_t Write(const void *_src, size_t _size, size_t _nmemb, void *_this);
 
-    void add(const void *_mem, size_t _size)
-    {
-        if( capacity < size + _size )
-            grow(size + static_cast<uint32_t>(_size));
+    // ...
+    void Discard(size_t _sz);
 
-        memcpy(buf + size, _mem, _size);
-        size += _size;
-    }
-
-    void grow(uint32_t _new_size)
-    {
-        buf = static_cast<uint8_t *>(realloc(buf, capacity = static_cast<uint32_t>(_new_size)));
-    }
-
-    static size_t write_here_function(void *buffer, size_t size, size_t nmemb, void *userp)
-    {
-        ReadBuffer *buf = static_cast<ReadBuffer *>(userp);
-        buf->add(buffer, size * nmemb);
-        return size * nmemb;
-    }
-
-    void discard(size_t _sz)
-    {
-        assert(_sz <= size);
-        memmove(buf, buf + _sz, size - _sz);
-        size = size - static_cast<uint32_t>(_sz);
-    }
-
-    uint8_t *buf = 0;
-    static const uint32_t default_capacity = 32768;
-    uint32_t size = 0;
-    uint32_t capacity = 0;
+private:
+    std::vector<std::byte> m_Buf;
 };
 
 // WriteBuffer provides an intermediatery storage where a File can write into and CURL can read from afterwards

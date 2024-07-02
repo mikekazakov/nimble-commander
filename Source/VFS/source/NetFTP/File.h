@@ -41,7 +41,7 @@ private:
     void FinishReading();
 
     std::unique_ptr<CURLInstance> m_CURL;
-    std::unique_ptr<ReadBuffer> m_ReadBuf;
+    ReadBuffer m_ReadBuf;
     uint64_t m_BufFileOffset = 0;
     WriteBuffer m_WriteBuf;
     Mode m_Mode = Mode::Closed;

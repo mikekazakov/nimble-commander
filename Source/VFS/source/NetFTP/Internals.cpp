@@ -3,11 +3,13 @@
 #include "Host.h"
 #include <fmt/format.h>
 #include <sys/stat.h>
+#include <VFS/Log.h>
 
 namespace nc::vfs::ftp {
 
 size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *userp)
 {
+    Log::Trace(SPDLOC, "CURLWriteDataIntoString({}, {}, {}, {}) called", buffer, size, nmemb, userp);
     auto sz = size * nmemb;
     char *tmp = static_cast<char *>(alloca(sz + 1));
     memcpy(tmp, buffer, sz);
@@ -181,17 +183,13 @@ std::shared_ptr<Directory> ParseListing(const char *_str)
 
         struct stat st;
         memset(&st, 0, sizeof(st));
-        char filename[MAXPATHLEN];
-        char link[MAXPATHLEN];
+        char filename[2048];
+        char link[2048];
         if( parse_dir_unix(current_line, &st, filename, link) || parse_dir_win(current_line, &st, filename, link) ) {
             if( strcmp(filename, ".") != 0 && strcmp(filename, "..") != 0 ) {
                 entries.emplace_back();
                 auto &ent = entries.back();
-
                 ent.name = filename;
-                ent.cfname = base::CFStringCreateWithUTF8StdStringNoCopy(ent.name);
-                if( !ent.cfname )
-                    ent.cfname = base::CFStringCreateWithMacOSRomanStdStringNoCopy(ent.name);
                 ent.mode = st.st_mode;
                 ent.size = st.st_size;
                 ent.time = st.st_mtime;
@@ -220,41 +218,30 @@ CURLInstance::~CURLInstance()
 
 CURLcode CURLInstance::PerformEasy()
 {
+    Log::Trace(SPDLOC, "CURLInstance::PerformEasy() called");
     assert(!IsAttached());
     return curl_easy_perform(curl);
 }
 
 CURLcode CURLInstance::PerformMulti()
 {
-    //    bool error = false;
-    int running_handles = 0;
-    CURLcode result = CURLE_OK;
-
-    while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(curlm, &running_handles) )
-        ;
-
-    while( running_handles ) {
-        struct timeval timeout = {0, 10000};
-
-        fd_set fdread, fdwrite, fdexcep;
-        int maxfd;
-
-        FD_ZERO(&fdread);
-        FD_ZERO(&fdwrite);
-        FD_ZERO(&fdexcep);
-        curl_multi_fdset(curlm, &fdread, &fdwrite, &fdexcep, &maxfd);
-
-        if( select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout) == -1 ) {
-            //            error = true;
+    int still_running = 0;
+    do {
+        CURLMcode mc;
+        mc = curl_multi_perform(curlm, &still_running);
+        if( mc == CURLM_OK ) {
+            mc = curl_multi_wait(curlm, nullptr, 0, 10000, nullptr);
+        }
+        if( mc != CURLM_OK ) {
+            Log::Error(SPDLOC, "curl_multi failed, code {}", std::to_underlying(mc));
             break;
         }
+    } while( still_running );
 
-        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(curlm, &running_handles) )
-            ;
-    }
+    CURLcode result = CURLE_OK;
 
     // check for error codes here
-    if( running_handles == 0 ) {
+    if( still_running == 0 ) {
         int msgs_left = 1;
         while( msgs_left ) {
             CURLMsg *msg = curl_multi_info_read(curlm, &msgs_left);
@@ -306,6 +293,93 @@ void CURLInstance::EasyClearProgFunc()
     EasySetOpt(CURLOPT_PROGRESSDATA, nullptr);
     EasySetOpt(CURLOPT_NOPROGRESS, 1);
     prog_func = nil;
+}
+
+size_t ReadBuffer::Size() const noexcept
+{
+    return m_Buf.size();
+}
+
+const void *ReadBuffer::Data() const noexcept
+{
+    return m_Buf.data();
+}
+
+void ReadBuffer::Clear()
+{
+    m_Buf.clear();
+}
+
+size_t ReadBuffer::Write(const void *_src, size_t _size, size_t _nmemb, void *_this)
+{
+    assert(_this != nullptr);
+    return static_cast<ReadBuffer *>(_this)->DoWrite(_src, _size, _nmemb);
+}
+
+size_t ReadBuffer::DoWrite(const void *_src, size_t _size, size_t _nmemb)
+{
+    Log::Trace(SPDLOC, "ReadBuffer::Write({}, {}, {}) called", _src, _size, _nmemb);
+    const size_t bytes = _size * _nmemb;
+
+    m_Buf.insert(m_Buf.end(), static_cast<const std::byte *>(_src), static_cast<const std::byte *>(_src) + bytes);
+
+    return bytes;
+}
+
+void ReadBuffer::Discard(size_t _sz)
+{
+    Log::Trace(SPDLOC, "ReadBuffer::Discard({}) called", _sz);
+    assert(_sz <= m_Buf.size());
+    m_Buf.erase(m_Buf.begin(), std::next(m_Buf.begin(), _sz));
+}
+
+void WriteBuffer::Write(const void *_mem, size_t _size)
+{
+    Log::Trace(SPDLOC, "WriteBuffer::Write({}, {}) called", _mem, _size);
+    m_Buf.insert(m_Buf.end(), static_cast<const std::byte *>(_mem), static_cast<const std::byte *>(_mem) + _size);
+}
+
+size_t WriteBuffer::Read(void *ptr, size_t size, size_t nmemb, void *_this)
+{
+    assert(_this != nullptr);
+    return static_cast<WriteBuffer *>(_this)->DoRead(ptr, size, nmemb);
+}
+
+size_t WriteBuffer::DoRead(void *_dest, size_t _size, size_t _nmemb)
+{
+    Log::Trace(SPDLOC, "WriteBuffer::DoRead({}, {}, {}) called", _dest, _size, _nmemb);
+
+    assert(m_Consumed <= m_Buf.size());
+    const size_t feed = std::min(_size * _nmemb, m_Buf.size() - m_Consumed);
+    std::memcpy(_dest, m_Buf.data() + m_Consumed, feed);
+    m_Consumed += feed;
+    assert(m_Consumed <= m_Buf.size());
+    Log::Trace(SPDLOC, "WriteBuffer: fed {} bytes", feed);
+    return feed;
+}
+
+void WriteBuffer::DiscardConsumed() noexcept
+{
+    Log::Trace(SPDLOC, "WriteBuffer::DiscardConsumed() called, m_Consumed={}", m_Consumed);
+    assert(m_Consumed <= m_Buf.size());
+    m_Buf.erase(m_Buf.begin(), std::next(m_Buf.begin(), m_Consumed));
+    m_Consumed = 0;
+}
+
+size_t WriteBuffer::Size() const noexcept
+{
+    return m_Buf.size();
+}
+
+size_t WriteBuffer::Consumed() const noexcept
+{
+    return m_Consumed;
+}
+
+bool WriteBuffer::Exhausted() const noexcept
+{
+    assert(m_Consumed <= m_Buf.size());
+    return m_Consumed == m_Buf.size();
 }
 
 int CURLErrorToVFSError(CURLcode _curle)

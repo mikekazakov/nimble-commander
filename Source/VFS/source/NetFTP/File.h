@@ -1,8 +1,9 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFSFile.h>
 #include "InternalsForward.h"
+#include "Internals.h"
 #include <filesystem>
 
 namespace nc::vfs::ftp {
@@ -40,9 +41,9 @@ private:
     void FinishReading();
 
     std::unique_ptr<CURLInstance> m_CURL;
-    std::unique_ptr<ReadBuffer> m_ReadBuf;
-    uint64_t m_BufFileOffset = 0;
-    std::unique_ptr<WriteBuffer> m_WriteBuf;
+    ReadBuffer m_ReadBuf;
+    uint64_t m_BufFileOffset = 0; // offset of ReadBuf within the file
+    WriteBuffer m_WriteBuf;
     Mode m_Mode = Mode::Closed;
     std::string m_URLRequest;
     uint64_t m_FileSize = 0;

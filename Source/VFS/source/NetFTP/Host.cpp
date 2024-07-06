@@ -8,6 +8,7 @@
 #include <sys/dirent.h>
 #include <sys/stat.h>
 #include <fmt/format.h>
+#include <VFS/Log.h>
 
 namespace nc::vfs {
 
@@ -127,6 +128,7 @@ int FTPHost::DownloadAndCacheListing(CURLInstance *_inst,
                                      std::shared_ptr<Directory> *_cached_dir,
                                      const VFSCancelChecker &_cancel_checker)
 {
+    Log::Trace(SPDLOC, "FTPHost::DownloadAndCacheListing({}, {}) called", static_cast<void *>(_inst), _path);
     if( _inst == nullptr || _path == nullptr )
         return VFSError::InvalidCall;
 
@@ -151,6 +153,7 @@ int FTPHost::DownloadListing(CURLInstance *_inst,
                              std::string &_buffer,
                              const VFSCancelChecker &_cancel_checker)
 {
+    Log::Trace(SPDLOC, "FTPHost::DownloadListing({}, {}) called", static_cast<void *>(_inst), _path);
     if( _path == nullptr || _path[0] != '/' )
         return VFSError::InvalidCall;
 
@@ -158,9 +161,10 @@ int FTPHost::DownloadListing(CURLInstance *_inst,
     if( path.back() != '/' )
         path += '/';
 
-    std::string request = BuildFullURLString(path.c_str());
-    std::string response;
+    const std::string request = BuildFullURLString(path.c_str());
+    Log::Trace(SPDLOC, "Request: {}", request);
 
+    std::string response;
     _inst->call_lock.lock();
     _inst->EasySetOpt(CURLOPT_URL, request.c_str());
     _inst->EasySetOpt(CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
@@ -176,11 +180,12 @@ int FTPHost::DownloadListing(CURLInstance *_inst,
     _inst->EasyClearProgFunc();
     _inst->call_lock.unlock();
 
-    //    NSLog(@"%s", response.c_str());
+    Log::Trace(SPDLOC, "CURLcode = {}", std::to_underlying(result));
 
     if( result != 0 )
         return CURLErrorToVFSError(result);
 
+    Log::Trace(SPDLOC, "response = {}", response);
     _buffer.swap(response);
 
     return 0;
@@ -217,8 +222,11 @@ std::unique_ptr<CURLInstance> FTPHost::SpawnCURL()
 
 int FTPHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == nullptr || _path[0] != '/' )
+    Log::Trace(SPDLOC, "FTPHost::Stat({}, {}) called", _path, _flags);
+    if( _path == nullptr || _path[0] != '/' ) {
+        Log::Warn(SPDLOC, "Invalid call");
         return VFSError::InvalidCall;
+    }
 
     std::filesystem::path path = EnsureNoTrailingSlash(_path);
     if( path == "/" ) {
@@ -240,16 +248,21 @@ int FTPHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const V
     // try to find dir from cache
     if( !(_flags & VFSFlags::F_ForceRefresh) ) {
         if( auto dir = m_Cache->FindDirectory(parent_dir.native()) ) {
+            Log::Trace(SPDLOC, "found a cached directory '{}', outdated={}", parent_dir.native(), dir->IsOutdated());
             auto entry = dir->EntryByName(filename);
             if( entry ) {
+                Log::Trace(SPDLOC, "found an entry for '{}', outdated={}", filename, entry->dirty);
                 if( !entry->dirty ) { // if entry is here and it's not outdated - return it
                     entry->ToStat(_st);
                     return 0;
                 }
                 // if entry is here and it is outdated - we have to fetch a new listing
             }
-            else if( !dir->IsOutdated() ) { // if we can't find entry and dir is not outdated - return NotFound.
-                return VFSError::NotFound;
+            else {
+                Log::Trace(SPDLOC, "didn't find an entry for '{}'", filename);
+                if( !dir->IsOutdated() ) { // if we can't find entry and dir is not outdated - return NotFound.
+                    return VFSError::NotFound;
+                }
             }
         }
     }
@@ -259,7 +272,6 @@ int FTPHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const V
     std::shared_ptr<Directory> dir;
     int result = DownloadAndCacheListing(m_ListingInstance.get(), parent_dir.c_str(), &dir, _cancel_checker);
     if( result != 0 ) {
-        //        NSLog(@"VFSNetFTPHost::Stat failed to download listing");
         return result;
     }
 
@@ -268,7 +280,6 @@ int FTPHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const V
         entry->ToStat(_st);
         return 0;
     }
-    //    NSLog(@"VFSNetFTPHost::Stat failed to found item");
     return VFSError::NotFound;
 }
 
@@ -327,7 +338,7 @@ int FTPHost::FetchDirectoryListing(const char *_path,
     return 0;
 }
 
-int FTPHost::GetListingForFetching([[maybe_unused]] CURLInstance *_inst,
+int FTPHost::GetListingForFetching(CURLInstance *_inst,
                                    const char *_path,
                                    std::shared_ptr<Directory> &_cached_dir,
                                    const VFSCancelChecker &_cancel_checker)
@@ -344,7 +355,7 @@ int FTPHost::GetListingForFetching([[maybe_unused]] CURLInstance *_inst,
     }
 
     // download listing, sync I/O
-    int result = DownloadAndCacheListing(m_ListingInstance.get(), path.c_str(), &dir, _cancel_checker); // sync I/O here
+    int result = DownloadAndCacheListing(_inst, path.c_str(), &dir, _cancel_checker); // sync I/O here
     if( result != 0 )
         return result;
 

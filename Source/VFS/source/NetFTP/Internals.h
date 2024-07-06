@@ -1,15 +1,17 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <curl/curl.h>
 #include <VFS/Host.h>
+#include <vector>
+#include <cstddef>
 #include "Cache.h"
+
 
 namespace nc::vfs::ftp {
 
-static const curl_ftpmethod g_CURLFTPMethod = /*CURLFTPMETHOD_DEFAULT*/ /*CURLFTPMETHOD_MULTICWD*/
-    CURLFTPMETHOD_SINGLECWD /*CURLFTPMETHOD_NOCWD*/;
-static const int g_CURLVerbose = 0;
+inline constexpr curl_ftpmethod g_CURLFTPMethod = CURLFTPMETHOD_SINGLECWD;
+inline constexpr int g_CURLVerbose = 0;
 
 struct CURLInstance {
     ~CURLInstance();
@@ -50,96 +52,58 @@ private:
     static int ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
 };
 
-struct ReadBuffer {
-    ReadBuffer() { grow(default_capacity); }
-    ~ReadBuffer() { free(buf); }
-    ReadBuffer(const ReadBuffer &) = delete;
-    ReadBuffer(const ReadBuffer &&) = delete;
-    void operator=(const ReadBuffer &) = delete;
+// ReadBuffer provides an intermediatery storage where CURL can write to so that a File can read from afterwards
+class ReadBuffer {
+public:
+    
+    // Returns the amount of data stored in the buffer
+    size_t Size() const noexcept;
+        
+    // Provides access to the memory managed by the buffer
+    const void *Data() const noexcept;
 
-    void clear() { size = 0; }
+    // Clears the contents of the buffer
+    void Clear();
+    
+    // Writes the data at the end of the buffer
+    static size_t Write(const void *_src, size_t _size, size_t _nmemb, void *_this);
 
-    void add(const void *_mem, size_t _size)
-    {
-        if( capacity < size + _size )
-            grow(size + static_cast<uint32_t>(_size));
+    // Discards the specified amount of bytes from the beginning of the buffer
+    void Discard(size_t _sz);
 
-        memcpy(buf + size, _mem, _size);
-        size += _size;
-    }
-
-    void grow(uint32_t _new_size)
-    {
-        buf = static_cast<uint8_t *>(realloc(buf, capacity = static_cast<uint32_t>(_new_size)));
-    }
-
-    static size_t write_here_function(void *buffer, size_t size, size_t nmemb, void *userp)
-    {
-        ReadBuffer *buf = static_cast<ReadBuffer *>(userp);
-        buf->add(buffer, size * nmemb);
-        return size * nmemb;
-    }
-
-    void discard(size_t _sz)
-    {
-        assert(_sz <= size);
-        memmove(buf, buf + _sz, size - _sz);
-        size = size - static_cast<uint32_t>(_sz);
-    }
-
-    uint8_t *buf = 0;
-    static const uint32_t default_capacity = 32768;
-    uint32_t size = 0;
-    uint32_t capacity = 0;
+private:
+    size_t DoWrite(const void *_src, size_t _size, size_t _nmemb);
+    
+    std::vector<std::byte> m_Buf;
 };
 
-struct WriteBuffer {
-    WriteBuffer() { grow(default_capacity); }
-    ~WriteBuffer() { free(buf); }
-    WriteBuffer(const WriteBuffer &) = delete;
-    WriteBuffer(const WriteBuffer &&) = delete;
-    void operator=(const WriteBuffer &) = delete;
+// WriteBuffer provides an intermediatery storage where a File can write into and CURL can read from afterwards
+class WriteBuffer {
+public:
+    // Adds the specified bytes into the buffer
+    void Write(const void *_mem, size_t _size);
+    
+    // Returns the amount of data stored in the buffer
+    size_t Size() const noexcept;
+    
+    // Returns the amount of data fed into the read function out of the available size
+    size_t Consumed() const noexcept;
 
-    void clear() { size = 0; }
+    // Returns true if there's no available data to provide to the read function
+    bool Exhausted() const noexcept;
+        
+    // Removes the portion of the buffer that has been written.
+    // Consumed() will be 0 afterwards.
+    void DiscardConsumed() noexcept;
 
-    void add(const void *_mem, size_t _size)
-    {
-        if( capacity < size + _size )
-            grow(size + static_cast<uint32_t>(_size));
+    // Reads the data from the buffer into the specified target.
+    static size_t Read(void *_dest, size_t _size, size_t _nmemb, void *_this);
 
-        std::memcpy(buf + size, _mem, _size);
-        size += _size;
-    }
-
-    void grow(uint32_t _new_size) { buf = static_cast<uint8_t *>(std::realloc(buf, capacity = _new_size)); }
-
-    static size_t read_from_function(void *ptr, size_t size, size_t nmemb, void *data)
-    {
-        WriteBuffer *buf = static_cast<WriteBuffer *>(data);
-
-        assert(buf->feed_size <= buf->size);
-
-        size_t feed = size * nmemb;
-        if( feed > buf->size - buf->feed_size )
-            feed = buf->size - buf->feed_size;
-        memcpy(ptr, buf->buf + buf->feed_size, feed);
-        buf->feed_size += feed;
-
-        return feed;
-    }
-
-    void discard(size_t _sz)
-    {
-        assert(_sz <= size);
-        std::memmove(buf, buf + _sz, size - _sz);
-        size = size - static_cast<uint32_t>(_sz);
-    }
-
-    uint8_t *buf = 0;
-    static const uint32_t default_capacity = 32768;
-    uint32_t size = 0;
-    uint32_t capacity = 0;
-    uint32_t feed_size = 0; // amount of bytes fed to CURL
+private:
+    size_t DoRead(void *_dest, size_t _size, size_t _nmemb);
+    
+    std::vector<std::byte> m_Buf;
+    size_t m_Consumed = 0; // amount of bytes fed to CURL
 };
 
 /**

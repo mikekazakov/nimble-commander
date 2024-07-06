@@ -12,7 +12,13 @@
 #include <Base/dispatch_cpp.h>
 #include <boost/process.hpp>
 
+#include <spdlog/sinks/stdout_sinks.h>
+#include <VFS/Log.h>
+
 static auto g_TestDirPrefix = "_nc__operations__test_";
+
+[[clang::no_destroy]] static auto g_LogSink = std::make_shared<spdlog::sinks::stdout_sink_mt>();
+[[clang::no_destroy]] static auto g_Log = std::make_shared<spdlog::logger>("vfs", g_LogSink);
 
 static int Execute(const std::string &_command);
 static bool RunMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation);
@@ -21,6 +27,9 @@ static bool WaitUntilNativeFSManSeesVolumeAtPath(const std::filesystem::path &vo
 
 int main(int argc, char *argv[])
 {
+    //    g_Log->set_level(spdlog::level::trace);
+    //    nc::vfs::Log::Set(g_Log);
+
     ::testing::GTEST_FLAG(throw_on_failure) = true;
     ::testing::InitGoogleMock(&argc, argv);
     int result = Catch::Session().run(argc, argv);

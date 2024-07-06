@@ -52,26 +52,28 @@ private:
     static int ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
 };
 
-// ...
+// ReadBuffer provides an intermediatery storage where CURL can write to so that a File can read from afterwards
 class ReadBuffer {
 public:
     
     // Returns the amount of data stored in the buffer
     size_t Size() const noexcept;
-    
-    // ...
+        
+    // Provides access to the memory managed by the buffer
     const void *Data() const noexcept;
 
-    // ...
+    // Clears the contents of the buffer
     void Clear();
     
-    // ...
+    // Writes the data at the end of the buffer
     static size_t Write(const void *_src, size_t _size, size_t _nmemb, void *_this);
 
-    // ...
+    // Discards the specified amount of bytes from the beginning of the buffer
     void Discard(size_t _sz);
 
 private:
+    size_t DoWrite(const void *_src, size_t _size, size_t _nmemb);
+    
     std::vector<std::byte> m_Buf;
 };
 

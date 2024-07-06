@@ -42,7 +42,7 @@ private:
 
     std::unique_ptr<CURLInstance> m_CURL;
     ReadBuffer m_ReadBuf;
-    uint64_t m_BufFileOffset = 0;
+    uint64_t m_BufFileOffset = 0; // offset of ReadBuf within the file
     WriteBuffer m_WriteBuf;
     Mode m_Mode = Mode::Closed;
     std::string m_URLRequest;

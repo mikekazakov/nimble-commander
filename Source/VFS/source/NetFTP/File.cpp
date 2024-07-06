@@ -9,8 +9,7 @@
 
 namespace nc::vfs::ftp {
 
-File::File(const char *_relative_path, std::shared_ptr<FTPHost> _host)
-    : VFSFile(_relative_path, _host)
+File::File(const char *_relative_path, std::shared_ptr<FTPHost> _host) : VFSFile(_relative_path, _host)
 {
     Log::Trace(SPDLOC, "File::File({}, {}) called", _relative_path, static_cast<void *>(_host.get()));
 }
@@ -128,16 +127,18 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
     // TODO: mutex lock
     bool error = false;
 
-    if( (m_ReadBuf.Size() < _read_size + _file_offset - m_BufFileOffset || _file_offset < m_BufFileOffset ||
-         _file_offset > m_BufFileOffset + m_ReadBuf.Size()) &&
-        (m_ReadBuf.Size() < m_FileSize) ) {
+    const bool can_fulfill =
+        _file_offset >= m_BufFileOffset && _file_offset + _read_size <= m_BufFileOffset + m_ReadBuf.Size();
+
+    if( !can_fulfill ) {
         // can't satisfy request from memory buffer, need to perform I/O
 
         // check for dead connection
         // check for big offset changes so we need to restart connection
         bool has_range = false;
-        if( _file_offset < m_BufFileOffset || _file_offset > m_BufFileOffset + m_ReadBuf.Size() ||
-            m_CURL->RunningHandles() == 0 ) { // (re)connect
+        if( _file_offset < m_BufFileOffset ||                    //
+            _file_offset > m_BufFileOffset + m_ReadBuf.Size() || //
+            m_CURL->RunningHandles() == 0 ) {                    // (re)connect
 
             // create a brand new ftp request (possibly reusing exiting network connection)
             m_ReadBuf.Clear();
@@ -157,10 +158,10 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
             m_CURL->EasySetOpt(CURLOPT_LOW_SPEED_TIME, 60l);
             m_CURL->EasySetupProgFunc();
 
-            if( _file_offset ) { // set offsets
+            if( _file_offset != 0 ) {
                 char range[16];
                 *fmt::format_to(range, "{}-", _file_offset) = 0;
-                m_CURL->EasySetOpt(CURLOPT_RANGE, range);
+                m_CURL->EasySetOpt(CURLOPT_RANGE, range); // set offset
                 has_range = true;
             }
 
@@ -204,13 +205,20 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
     if( error )
         return VFSError::FromErrno(EIO);
 
-    assert(m_BufFileOffset >= _file_offset);
-    size_t to_copy = m_ReadBuf.Size() + m_BufFileOffset - _file_offset;
-    size_t size = _read_size > to_copy ? to_copy : _read_size;
+    if( m_BufFileOffset < _file_offset ) {
+        uint64_t discard = std::min(m_ReadBuf.Size(), static_cast<size_t>(_file_offset - m_BufFileOffset));
+        m_ReadBuf.Discard(discard);
+        m_BufFileOffset += discard;
+    }
 
-    if( _read_to != nullptr ) {
-        memcpy(_read_to, static_cast<const uint8_t*>(m_ReadBuf.Data()) + _file_offset - m_BufFileOffset, size);
-        m_ReadBuf.Discard(_file_offset - m_BufFileOffset + size);
+    assert(m_BufFileOffset >= _file_offset);
+    const size_t available = m_BufFileOffset >= _file_offset ? m_ReadBuf.Size() + m_BufFileOffset - _file_offset : 0;
+    size_t size = _read_size > available ? available : _read_size;
+
+    if( _read_to != nullptr && size > 0 ) {
+        const size_t buf_offset = _file_offset - m_BufFileOffset;
+        memcpy(_read_to, static_cast<const uint8_t *>(m_ReadBuf.Data()) + buf_offset, size);
+        m_ReadBuf.Discard(buf_offset + size);
         m_BufFileOffset = _file_offset + size;
     }
 

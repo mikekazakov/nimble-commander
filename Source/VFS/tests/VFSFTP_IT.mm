@@ -250,18 +250,31 @@ TEST_CASE(PREFIX "seekread")
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
 
-    // check seeking at big distance and reading an arbitrary selected known data block
-    constexpr auto offset = 0x2E0F077;
-    constexpr auto length = 16;
-    constexpr auto expected = "\x77\x78\x79\x7A\x7B\x7C\x7D\x7E\x7F\x80\x81\x82\x83\x84\x85\x86";
     constexpr auto fn = "/TestSeekRead/blob";
     VFSFilePtr file;
-    char buf[length];
     REQUIRE(host->CreateFile(fn, file, nullptr) == 0);
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
-    REQUIRE(file->Seek(offset, VFSFile::Seek_Set) == offset);
-    REQUIRE(file->Read(buf, length) == length);
-    REQUIRE(memcmp(buf, expected, length) == 0);
+    
+    struct TC {
+        uint64_t offset;
+        std::vector<uint8_t> expected;
+    } const tcs [] = {
+        {0x2E0F077, {0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E, 0x7F, 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86} },
+        {0x0000001, {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08} },
+        {0x000000A, {0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F} },
+        {0x0000000, {0x00} },
+        {0x0000000, {} },
+        {0x0123456, {0x56, 0x57, 0x58} },
+        {0x123F077, {0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E, 0x7F, 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86} },
+    };
+    
+    for( auto &tc: tcs) {
+        std::vector<uint8_t> buf(tc.expected.size());
+        REQUIRE(file->Seek(tc.offset, VFSFile::Seek_Set) == static_cast<int64_t>(tc.offset));
+        REQUIRE(file->Read(buf.data(), tc.expected.size()) == static_cast<int64_t>(tc.expected.size()));
+        REQUIRE(buf == tc.expected);
+    }
+        
     VFSEasyDelete("/TestSeekRead", host);
 }
 

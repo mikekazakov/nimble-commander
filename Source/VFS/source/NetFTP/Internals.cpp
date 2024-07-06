@@ -310,19 +310,25 @@ void ReadBuffer::Clear()
     m_Buf.clear();
 }
 
-size_t ReadBuffer::Write(const void *buffer, size_t _size, size_t _nmemb, void *userp)
+size_t ReadBuffer::Write(const void *_src, size_t _size, size_t _nmemb, void *_this)
 {
-    ReadBuffer *buf = static_cast<ReadBuffer *>(userp);
+    assert(_this != nullptr);
+    return static_cast<ReadBuffer *>(_this)->DoWrite(_src, _size, _nmemb);
+}
+
+size_t ReadBuffer::DoWrite(const void *_src, size_t _size, size_t _nmemb)
+{
+    Log::Trace(SPDLOC, "ReadBuffer::Write({}, {}, {}) called", _src, _size, _nmemb);
     const size_t bytes = _size * _nmemb;
 
-    buf->m_Buf.insert(
-        buf->m_Buf.end(), static_cast<const std::byte *>(buffer), static_cast<const std::byte *>(buffer) + bytes);
+    m_Buf.insert(m_Buf.end(), static_cast<const std::byte *>(_src), static_cast<const std::byte *>(_src) + bytes);
 
     return bytes;
 }
 
 void ReadBuffer::Discard(size_t _sz)
 {
+    Log::Trace(SPDLOC, "ReadBuffer::Discard({}) called", _sz);
     assert(_sz <= m_Buf.size());
     m_Buf.erase(m_Buf.begin(), std::next(m_Buf.begin(), _sz));
 }

@@ -30,11 +30,9 @@ jobs:
     - name: Build and run unit tests
       run: "cd Scripts && ./run_all_unit_tests.sh ${{ matrix.configuration }}"
 
-
-  # NB! need to run on amd64 since m1 doesn't support nested virtualization
-  # NB! colima v0.5.6 seem to run more stable than latest - that has occasional network failures (ports are not open)
+  
   integration-tests:
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
     - name: Select latest Xcode
       run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
@@ -45,9 +43,8 @@ jobs:
         brew update
         brew install docker
         brew install colima
-        brew unlink colima
-        curl -L -o /usr/local/bin/colima https://github.com/abiosoft/colima/releases/download/v0.5.6/colima-Darwin-x86_64 && sudo chmod +x /usr/local/bin/colima
-        colima start --network-address
+        sudo curl -L -o /opt/homebrew/Cellar/lima/0.22.0/bin/limactl https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x /opt/homebrew/Cellar/lima/0.22.0/bin/limactl
+        colima start --network-address --arch arm64 --vm-type=qemu
     - uses: actions/checkout@v4
     - name: Work around GHA issue 7522
       run: |

@@ -43,7 +43,6 @@ jobs:
         brew update
         brew install docker
         brew install colima
-        brew unlink colima
         curl -L -o /opt/homebrew/Cellar/lima/0.22.0/bin/limactl https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && chmod +x /opt/homebrew/Cellar/lima/0.22.0/bin/limactl
         colima start --network-address --arch arm64 --vm-type=qemu
     - uses: actions/checkout@v4

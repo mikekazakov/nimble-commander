@@ -3737,7 +3737,11 @@ dispatch_apply(size_t iterations, void *ctx, void (*function)(void *, size_t)) n
 {
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wnullability-extension"
-    ::dispatch_apply_f(iterations, DISPATCH_APPLY_AUTO, ctx, function);
+    #if DISPATCH_APPLY_AUTO_AVAILABLE
+        ::dispatch_apply_f(iterations, DISPATCH_APPLY_AUTO, ctx, function);
+    #else
+        ::dispatch_apply_f(iterations, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ctx, function);
+    #endif
     #pragma clang diagnostic pop
 }
 

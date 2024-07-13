@@ -88,6 +88,26 @@ _to be written_
 ### Hotkeys
 _to be written_
 
+Available hotkeys are listed below. These are the default values, which can be altered later. Some actions do not have a default hotkey, but they can still be accessed via the application’s menu.
+
+| Action                            | Key Equivalent |
+| --------------------------------- | -------------- |
+| _Nimble Commander Menu_           |                |
+| &nbsp; About                      |                |
+| &nbsp; Preferences                | Cmd+,          |
+| &nbsp; Enable Admin Mode          |                |
+| &nbsp; Hide Nimble Commander      | Cmd+H          |
+| &nbsp; Hide Others                | Alt+Cmd+H      |
+| &nbsp; Show All                   |                |
+| &nbsp; Quit Nimble Commander      | Cmd+Q          |
+| &nbsp; Quit and Close All Windows | Alt+Cmd+Q      |
+| _File Menu_                       |                |
+| &nbsp; New Window                 | Cmd+N          |
+| &nbsp; New Folder                 | Shift+Cmd+N    |
+| &nbsp; New Folder with Selection  | Ctrl+Cmd+N     |
+| &nbsp; New File                   | Alt+Cmd+N      |
+| &nbsp; New Tab                    | Cmd+T          |
+
 ### External Editors
 _to be written_
 

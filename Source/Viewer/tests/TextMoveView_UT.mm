@@ -67,7 +67,8 @@ TEST_CASE(PREFIX "Basic geomtery initialization")
     auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
                                                     backend:ctx.backend
                                                       theme:g_DummyTheme
-                                       highlightingSettings:ctx.hl_settings];
+                                       highlightingSettings:ctx.hl_settings
+                                         enableHighlighting:false];
     // let's pretend that I happen to know the internal insets and sizes.
     CHECK(view.contentsSize.width == Approx(477.)); // 500-4-4-15
     CHECK(view.contentsSize.height == Approx(100.));
@@ -95,7 +96,8 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
             auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
                                                             backend:ctx.backend
                                                               theme:g_DummyTheme
-                                               highlightingSettings:ctx.hl_settings];
+                                               highlightingSettings:ctx.hl_settings
+                                                 enableHighlighting:false];
             CHECK(view.isAtTheBeginning == true);
             CHECK(view.isAtTheEnd == true);
         }
@@ -112,7 +114,8 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
             auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
                                                             backend:ctx.backend
                                                               theme:g_DummyTheme
-                                               highlightingSettings:ctx.hl_settings];
+                                               highlightingSettings:ctx.hl_settings
+                                                 enableHighlighting:false];
             CHECK(view.isAtTheBeginning == true);
             CHECK(view.isAtTheEnd == false);
 
@@ -136,7 +139,8 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
         auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
                                                         backend:ctx.backend
                                                           theme:g_DummyTheme
-                                           highlightingSettings:ctx.hl_settings];
+                                           highlightingSettings:ctx.hl_settings
+                                             enableHighlighting:false];
         view.delegate = delegate;
         CHECK(view.isAtTheBeginning == true);
         CHECK(view.isAtTheEnd == false);
@@ -166,7 +170,8 @@ TEST_CASE(PREFIX "attachToNewBackend")
     auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
                                                     backend:ctx.backend
                                                       theme:g_DummyTheme
-                                       highlightingSettings:ctx.hl_settings];
+                                       highlightingSettings:ctx.hl_settings
+                                         enableHighlighting:false];
     [view scrollToGlobalBytesOffset:data1.size()];
     CHECK(view.textFrame.LinesNumber() == 7);
     CHECK(view.isAtTheBeginning == false);

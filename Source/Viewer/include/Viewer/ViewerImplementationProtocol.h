@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
@@ -64,5 +64,10 @@ class DataBackend;
  * Informs that visual theme provided for the implementation has changed.
  */
 - (void)themeHasChanged;
+
+/**
+ * Informs that the setting that enables the syntax highlighting has changed.
+ */
+- (void)syntaxHighlightingEnabled:(bool)_enabled;
 
 @end

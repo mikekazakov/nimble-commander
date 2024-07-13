@@ -4,6 +4,7 @@
 #include <Utility/NSView+Sugar.h>
 #include <Utility/DataBlockAnalysis.h>
 #include <Utility/TemporaryFileStorage.h>
+#include <Utility/ObjCpp.h>
 #include <Config/Config.h>
 #include "DataBackend.h"
 #include <Base/dispatch_cpp.h>
@@ -16,6 +17,7 @@
 static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 static const auto g_ConfigAutoDetectEncoding = "viewer.autoDetectEncoding";
 static const auto g_ConfigStickToBottomOnRefresh = "viewer.stickToBottomOnRefresh";
+static const auto g_ConfigEnableSyntaxHighlighting = "viewer.enableHighlighting";
 
 using nc::vfs::easy::CopyFileToTempStorage;
 using namespace nc::viewer;
@@ -41,9 +43,10 @@ using namespace nc::viewer;
                                          // updated when windows moves, regarding current selection
                                          // in bytes
     nc::utility::TemporaryFileStorage *m_TempFileStorage;
-    const nc::config::Config *m_Config;
+    nc::config::Config *m_Config;
     nc::viewer::hl::SettingsStorage *m_HighlightingSettings;
     std::unique_ptr<nc::viewer::Theme> m_Theme;
+    std::array<nc::config::Token, 1> m_ConfigObservers;
 }
 
 @synthesize verticalPositionPercentage = m_VerticalPositionPercentage;
@@ -51,7 +54,7 @@ using namespace nc::viewer;
 
 - (id)initWithFrame:(NSRect)frame
              tempStorage:(nc::utility::TemporaryFileStorage &)_temp_storage
-                  config:(const nc::config::Config &)_config
+                  config:(nc::config::Config &)_config
                    theme:(std::unique_ptr<nc::viewer::Theme>)_theme
     highlightingSettings:(nc::viewer::hl::SettingsStorage &)_hl_settings
 {
@@ -88,12 +91,22 @@ using namespace nc::viewer;
         if( auto strong_self = weak_self )
             [strong_self reloadAppearance];
     });
+
+    m_ConfigObservers[0] =
+        m_Config->Observe(g_ConfigEnableSyntaxHighlighting,
+                          nc::objc_callback_to_main_queue(self, @selector(configEnableSyntaxHighlightingChanged)));
 }
 
 - (void)reloadAppearance
 {
     if( [m_View respondsToSelector:@selector(themeHasChanged)] )
         [m_View themeHasChanged];
+}
+
+- (void)configEnableSyntaxHighlightingChanged
+{
+    if( [m_View respondsToSelector:@selector(syntaxHighlightingEnabled:)] )
+        [m_View syntaxHighlightingEnabled:m_Config->GetBool(g_ConfigEnableSyntaxHighlighting)];
 }
 
 - (BOOL)isOpaque
@@ -263,7 +276,8 @@ using namespace nc::viewer;
         auto view = [[NCViewerTextModeView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)
                                                         backend:m_Data
                                                           theme:*m_Theme
-                                           highlightingSettings:*m_HighlightingSettings];
+                                           highlightingSettings:*m_HighlightingSettings
+                                             enableHighlighting:m_Config->GetBool(g_ConfigEnableSyntaxHighlighting)];
         view.delegate = self;
         [self addFillingSubview:view];
         m_View = view;

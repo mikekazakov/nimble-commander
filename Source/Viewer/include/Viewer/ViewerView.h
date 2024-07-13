@@ -28,7 +28,7 @@ class SettingsStorage;
 - (instancetype)initWithFrame:(NSRect)frame NS_UNAVAILABLE;
 - (instancetype)initWithFrame:(NSRect)frame
                   tempStorage:(nc::utility::TemporaryFileStorage &)_temp_storage
-                       config:(const nc::config::Config &)_config
+                       config:(nc::config::Config &)_config
                         theme:(std::unique_ptr<nc::viewer::Theme>)_theme
          highlightingSettings:(nc::viewer::hl::SettingsStorage &)_hl_settings;
 

@@ -29,4 +29,5 @@ pandoc \
  -V linkcolor=blue \
  -V urlcolor=blue \
  -V toccolor=blue \
+ -V geometry:margin=1in \
  -o ${BUILD_DIR}/Help.pdf

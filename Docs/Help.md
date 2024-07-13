@@ -25,9 +25,11 @@ Simply double-click on the Nimble Commander icon to start it.
 ### Access Permissions
 
 If you downloaded Nimble Commander from the Mac App Store, the application will request permissions when navigating to a new location. This requirement is imposed on all applications published in the Mac App Store as a safety measure to prevent unauthorized access outside of the sandbox container. You can revoke granted access permissions at any time by clicking `Settings > General > Granted filesystem access > Reset`. The permission request will appear as shown below:
-![sandbox permissions](Help-sandbox-perm.png)
+
+![NC asking for an access permission](Help-sandbox-perm.png)
 
 Even if you downloaded Nimble Commander outside of the Mac App Store, accessing certain locations will require granting permissions. As of this writing, the list of such locations includes:
+
 - Desktop Folder
 - Documents Folder
 - Downloads Folder

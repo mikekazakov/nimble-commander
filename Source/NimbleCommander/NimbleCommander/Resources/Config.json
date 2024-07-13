@@ -435,7 +435,12 @@
         /**
          * Should keep the scroll at the bottom when a file is reloaded.
          */
-        "stickToBottomOnRefresh": true
+        "stickToBottomOnRefresh": true,
+        
+        /**
+         * Whether the viewer should try do syntax highlighting.
+         */
+         "enableHighlighting": true
     },
     
     /**

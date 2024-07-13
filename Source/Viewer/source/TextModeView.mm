@@ -66,6 +66,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     std::shared_ptr<TextModeWorkingSetHighlighting> m_WorkingSetHighlighting;
     std::shared_ptr<const TextModeFrame> m_Frame;
     bool m_LineWrap;
+    bool m_EnableSyntaxHighlighting;
     FontGeometryInfo m_FontInfo;
 
     int m_VerticalLineOffset;    // offset in lines number within existing text lines in Frame
@@ -81,6 +82,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
                       backend:(std::shared_ptr<const DataBackend>)_backend
                         theme:(const nc::viewer::Theme &)_theme
          highlightingSettings:(nc::viewer::hl::SettingsStorage &)_hl_settings
+           enableHighlighting:(bool)_highlighting_enabled
 {
     if( self = [super initWithFrame:_frame] ) {
         self.translatesAutoresizingMaskIntoConstraints = false;
@@ -94,6 +96,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
         m_VerticalLineOffset = 0;
         m_HorizontalCharsOffset = 0;
         m_PxOffset = CGPointMake(0., 0.);
+        m_EnableSyntaxHighlighting = _highlighting_enabled;
 
         m_VerticalScroller = [[NSScroller alloc] initWithFrame:NSMakeRect(0, 0, 15, 100)];
         m_VerticalScroller.enabled = true;
@@ -161,17 +164,20 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     m_WorkingSet = BuildWorkingSetForBackendState(*m_Backend);
     m_WorkingSetHighlighting.reset();
 
-    if( const std::optional<std::string> lang = m_HighlightingSettings->Language(m_Backend->FileName().native()) ) {
-        if( const std::shared_ptr<const std::string> settings = m_HighlightingSettings->Settings(*lang) ) {
-            m_WorkingSetHighlighting = std::make_shared<TextModeWorkingSetHighlighting>(m_WorkingSet, settings);
-            __weak NCViewerTextModeView *weak_self = self;
-            m_WorkingSetHighlighting->Highlight(g_SyncHighlightingThreshold,
-                                                [weak_self](std::shared_ptr<const TextModeWorkingSetHighlighting> _hl) {
-                                                    NCViewerTextModeView *strong_self = weak_self;
-                                                    if( !strong_self || _hl != strong_self->m_WorkingSetHighlighting )
-                                                        return;
-                                                    [strong_self highlightingHasChanged];
-                                                });
+    if( m_EnableSyntaxHighlighting ) {
+        if( const std::optional<std::string> lang = m_HighlightingSettings->Language(m_Backend->FileName().native()) ) {
+            if( const std::shared_ptr<const std::string> settings = m_HighlightingSettings->Settings(*lang) ) {
+                m_WorkingSetHighlighting = std::make_shared<TextModeWorkingSetHighlighting>(m_WorkingSet, settings);
+                __weak NCViewerTextModeView *weak_self = self;
+                m_WorkingSetHighlighting->Highlight(
+                    g_SyncHighlightingThreshold,
+                    [weak_self](std::shared_ptr<const TextModeWorkingSetHighlighting> _hl) {
+                        NCViewerTextModeView *strong_self = weak_self;
+                        if( !strong_self || _hl != strong_self->m_WorkingSetHighlighting )
+                            return;
+                        [strong_self highlightingHasChanged];
+                    });
+            }
         }
     }
 
@@ -877,6 +883,15 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
 {
     m_Frame = [self buildLayout];
     [self setNeedsDisplay:true];
+}
+
+- (void)syntaxHighlightingEnabled:(bool)_enabled
+{
+    if( m_EnableSyntaxHighlighting == _enabled ) {
+        return;
+    }
+    m_EnableSyntaxHighlighting = _enabled;
+    [self rebuildWorkingSetAndFrame];
 }
 
 @end

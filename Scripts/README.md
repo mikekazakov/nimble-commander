@@ -5,6 +5,9 @@ The `Scripts` directory contains a set of useful scripts to be used during devel
 Builds tests and the main application without running so that CodeQL can intercept the commands and perform its analysis afterwards.  
 `xcodebuild` and `xcpretty` must be available in the environment in order for this script to run.  
 
+## `build_help.sh`
+Converts the markdown documention into a pdf placed in `build_help.tmp/Help.pdf`
+
 ## `build_nightly.sh`
 Builds Nimble Commander with the `NimbleCommander-NonMAS` scheme / `Release` configuration, signs it, packages the runnable build into a `.dmg` image and notarizes the final image.  
 `xcodebuild`, `xcpretty` and `create-dmg` must be available in the environment in order for this script to run.  

@@ -110,4 +110,64 @@ _to be written_
 _to be written_
 
 ## Frequently Asked Questions
-_to be written_
+
+**Q**: I have an idea for Nimble Commander!  
+**A**: Great, please feel free to go ahead and implement it! The entire source code and build instructions for Nimble Commander are available in [this repository](https://github.com/mikekazakov/nimble-commander). Though make sure to read through [CONTRIBUTING](https://github.com/mikekazakov/nimble-commander/blob/main/CONTRIBUTING.md) carefully.
+
+---
+
+**Q**: Nimble Commander crashes/behaves incorrectly/etc. Can you fix it?  
+**A**: Probably. However, often is hard to impossible to track the problem down without a detailed description of a setup and a set of reproducible steps. So if you'd like this issue to be fixed - please, spend some time describing in details what has happened and how that could be reproduced.
+
+---
+
+**Q**: Can you implement a _specific feature or request_?  
+**A**: Likely no. As Nimble Commander is maintained by a single contributor, the resources are rather limited, and I'm not able to accommodate all requests due to time and energy constraints. However, contributions from the community are welcome and you could consider getting involved in implementing the feature yourself. Check out the [contribution guidelines](https://github.com/mikekazakov/nimble-commander/blob/main/CONTRIBUTING.md) for more information.
+
+---
+
+**Q**: Preview lacks a feature XYZ, is it possible to add it?  
+**A**: Likely not so easy. The entire preview functionality is managed by macOS via the [Quick Look framework](https://en.wikipedia.org/wiki/Quick_Look). Rendition and behaviour for various file types is provided by various plugins in that system-wide framework, and Nimble Commander has nothing to do with it. Currently it doesn’t even have any content-specific logic. While it’s possible to start providing special handling for some specific file types, e.g. images, it would require significant resources investment to implement, cover with tests and maintain.
+
+---
+
+**Q**: Can Nimble Commander access iCloud storage?  
+**A**: NC does not provide a first-class citizen access to iCloud. The reason is that Apple doesn’t have an official API to allow applications to directly manipulate items outside of their own containers. At least that’s my understanding of the status quo at the moment of writing (I’d be glad to be proven wrong). Having said that, it’s possible to manually navigate into `~/Library/Mobile Documents/com~apple~CloudDocs` and access the items there using the normal UI of NC. This usually works, however there’s no guarantee that content of that folder is properly synchronised.
+
+---
+
+**Q**: NC crashes with EXC_BAD_INSTRUCTION.  
+**A**: This was observed when macOS Catalina was installed on hardware that is not officially supported. NC/x64 requires SSE4.2 since v1.2.9, which is available on all Mac models officially supported by Catalina. But if this OS version was installed on a machine with a CPU without these instructions, NC v1.2.9+ simply cannot run. The only possible workaround is using an older version.
+
+---
+
+**Q**: How to download a previous version?  
+**A**: All previous releases are available here: [https://github.com/mikekazakov/nimble-commander-releases](https://github.com/mikekazakov/nimble-commander-releases)
+
+---
+
+**Q**: Do you plan to add capabilities to modify existing archives?  
+**A**: There are no such plans at the moment, unless somebody wants to step up and roll out a sound implementation of the feature. The seasons why were discussed here: [https://magnumbytes.com/forum/viewtopic.php?f=6&t=205](https://magnumbytes.com/forum/viewtopic.php?f=6&t=205)
+
+---
+
+**Q**: How to make Nimble Commander restore the state of its windows after it has been closed and restarted?  
+**A**: Turn off the checkbox `System Settings > Desktop & Dock > Close windows when quitting an application`, by default it is On.
+
+---
+
+**Q**: Where does Nimble Commander store its state?  
+**A**: In these locations:
+
+- Main configuration files (managed by NC):  
+`~/Library/Application Support/Nimble Commander/Config`
+- Volatile state file (managed by NC):  
+`~/Library/Application Support/Nimble Commander/State`
+- Windows state (managed by macOS):  
+`~/Library/Saved Application State/info.filesmanager.Files.savedState`
+- Application defaults (managed by macOS):  
+`~/Library/Preferences/info.filesmanager.Files.plist`
+- Admin Mode helper binary (managed by macOS):  
+`/Library/PrivilegedHelperTools/info.filesmanager.Files.PrivilegedIOHelperV2`
+- Admin Mode helper configuration (managed by macOS):  
+`/Library/LaunchDaemons/info.filesmanager.Files.PrivilegedIOHelperV2.plist`

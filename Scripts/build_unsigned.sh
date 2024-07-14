@@ -25,10 +25,12 @@ mkdir "${BUILD_DIR}"
 
 # all builds paths will be relative to ROOT_DIR
 ROOT_DIR=$(cd "$SCRIPTS_DIR/.." && pwd)
-
 XCODEPROJ="../Source/NimbleCommander/NimbleCommander.xcodeproj"
-
 PBUDDY=/usr/libexec/PlistBuddy
+
+# Build Help.pdf and copy it into the NC sources
+${SCRIPTS_DIR}/build_help.sh
+cp -f "${SCRIPTS_DIR}/build_help.tmp/Help.pdf" "${ROOT_DIR}/Source/NimbleCommander/NimbleCommander/Resources/Help.pdf"
 
 XC="xcodebuild \
  -project ${XCODEPROJ} \

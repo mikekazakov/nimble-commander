@@ -97,44 +97,44 @@ Available hotkeys are listed below. These are the default values, which can be a
 | &nbsp; Preferences                           | Cmd + ,                   |
 | &nbsp; Enable Admin Mode                     |                           |
 | &nbsp; Hide Nimble Commander                 | Cmd + H                   |
-| &nbsp; Hide Others                           | Alt+Cmd+H                 |
+| &nbsp; Hide Others                           | Opt + Cmd+H               |
 | &nbsp; Show All                              |                           |
 | &nbsp; Quit Nimble Commander                 | Cmd + Q                   |
-| &nbsp; Quit and Close All Windows            | Alt + Cmd + Q             |
+| &nbsp; Quit and Close All Windows            | Opt + Cmd + Q             |
 | _**File Menu**_                              |                           |
 | &nbsp; New Window                            | Cmd + N                   |
 | &nbsp; New Folder                            | Shift + Cmd + N           |
 | &nbsp; New Folder with Selection             | Ctrl + Cmd + N            |
-| &nbsp; New File                              | Alt + Cmd + N             |
+| &nbsp; New File                              | Opt + Cmd + N             |
 | &nbsp; New Tab                               | Cmd + T                   |
 | &nbsp; Enter                                 | Return                    |
 | &nbsp; Open                                  | Shift + Return            |
-| &nbsp; Reveal in Opposite Panel              | Alt + Return              |
-| &nbsp; Reveal in Opposite Panel Tab          | Alt + Cmd + Return        |
-| &nbsp; Paste Filename to Terminal            | Ctrl + Alt + Return       |
-| &nbsp; Paste Filenames to Terminal...        | Ctrl + Alt + Cmd + Return |
-| &nbsp; Calculate Folders Sizes               | Shift + Alt + Return      |
+| &nbsp; Reveal in Opposite Panel              | Opt + Return              |
+| &nbsp; Reveal in Opposite Panel Tab          | Opt + Cmd + Return        |
+| &nbsp; Paste Filename to Terminal            | Ctrl + Opt + Return       |
+| &nbsp; Paste Filenames to Terminal...        | Ctrl + Opt + Cmd + Return |
+| &nbsp; Calculate Folders Sizes               | Shift + Opt + Return      |
 | &nbsp; Calculate All Folders Sizes           | Ctrl + Shift + Return     |
 | &nbsp; Calculate Checksum                    | Shift + Cmd + K           |
 | &nbsp; Duplicate                             | Cmd + D                   |
 | &nbsp; Add to Favorites                      | Cmd + B                   |
 | &nbsp; Close                                 | Cmd + W                   |
 | &nbsp; Close Window                          | Shift + Cmd + W           |
-| &nbsp; Close Other Tabs                      | Alt + Cmd + W             |
+| &nbsp; Close Other Tabs                      | Opt + Cmd + W             |
 | &nbsp; Find...                               | Cmd + F                   |
-| &nbsp; Find with Spotlight...                | Alt + Cmd + F             |
+| &nbsp; Find with Spotlight...                | Opt + Cmd + F             |
 | &nbsp; Find Next                             | Cmd + G                   |
 | _**Edit Menu**_                              |                           |
 | &nbsp; Copy                                  | Cmd + C                   |
 | &nbsp; Paste                                 | Cmd + V                   |
-| &nbsp; Move Item Here                        | Alt + Cmd + V             |
+| &nbsp; Move Item Here                        | Opt + Cmd + V             |
 | &nbsp; Select All                            | Cmd + A                   |
-| &nbsp; Deselect All                          | Alt + Cmd + A             |
+| &nbsp; Deselect All                          | Opt + Cmd + A             |
 | &nbsp; Invert Selection                      | Ctrl + Cmd + A            |
 | _**View Menu**_                              |                           |
 | &nbsp; Toggle Single-Pane Mode               | Shift + Cmd + P           |
 | &nbsp; Swap Panels                           | Cmd + U                   |
-| &nbsp; Sync Panels                           | Alt + Cmd + U             |
+| &nbsp; Sync Panels                           | Opt + Cmd + U             |
 | &nbsp; _**View Mode Submenu**_               |                           |
 | &nbsp; &nbsp; Toggle Short View Mode         | Ctrl + 1                  |
 | &nbsp; &nbsp; Toggle Medium View Mode        | Ctrl + 2                  |
@@ -160,15 +160,15 @@ Available hotkeys are listed below. These are the default values, which can be a
 | &nbsp; &nbsp; Numeric Comparison             |                           |
 | &nbsp; Show Hidden Files                     | Shift + Cmd + .           |
 | &nbsp; _**Panels Position Submenu**_         |                           |
-| &nbsp; &nbsp; Move Left                      | Ctrl + Alt + Left         |
-| &nbsp; &nbsp; Move Right                     | Ctrl + Alt + Right        |
-| &nbsp; &nbsp; Move Up                        | Ctrl + Alt + Up           |
-| &nbsp; &nbsp; Move Down                      | Ctrl + Alt + Down         |
-| &nbsp; &nbsp; Show Panels                    | Ctrl + Alt + O            |
-| &nbsp; &nbsp; Focus Overlapped Terminal      | Ctrl + Alt + Tab          |
+| &nbsp; &nbsp; Move Left                      | Ctrl + Opt + Left         |
+| &nbsp; &nbsp; Move Right                     | Ctrl + Opt + Right        |
+| &nbsp; &nbsp; Move Up                        | Ctrl + Opt + Up           |
+| &nbsp; &nbsp; Move Down                      | Ctrl + Opt + Down         |
+| &nbsp; &nbsp; Show Panels                    | Ctrl + Opt + O            |
+| &nbsp; &nbsp; Focus Overlapped Terminal      | Ctrl + Opt + Tab          |
 | &nbsp; Show Tab Bar                          | Shift + Cmd + T           |
-| &nbsp; Show Toolbar                          | Alt + Cmd + T             |
-| &nbsp; Show Terminal                         | Alt + Cmd + O             |
+| &nbsp; Show Toolbar                          | Opt + Cmd + T             |
+| &nbsp; Show Terminal                         | Opt + Cmd + O             |
 | _**Go Menu**_                                |                           |
 | &nbsp; Left Panel...                         | F1                        |
 | &nbsp; Right Panel...                        | F2                        |
@@ -179,13 +179,13 @@ Available hotkeys are listed below. These are the default values, which can be a
 | &nbsp; Follow                                | Cmd + Right               |
 | &nbsp; Documents                             | Shift + Cmd + O           |
 | &nbsp; Desktop                               | Shift + Cmd + D           |
-| &nbsp; Downloads                             | Alt + Cmd + L             |
+| &nbsp; Downloads                             | Opt + Cmd + L             |
 | &nbsp; Home                                  | Shift + Cmd + H           |
 | &nbsp; Library                               |                           |
 | &nbsp; Applications                          | Shift + Cmd + A           |
 | &nbsp; Utilities                             | Shift + Cmd + U           |
 | &nbsp; Root                                  |                           |
-| &nbsp; Processes List                        | Alt + Cmd + P             |
+| &nbsp; Processes List                        | Opt + Cmd + P             |
 | &nbsp; _**Favorites Submenu**_               |                           |
 | &nbsp; &nbsp; Manage Favorites...            | Ctrl + Cmd + B            |
 | &nbsp; _**Recently Closed Submenu**_         |                           |
@@ -204,21 +204,21 @@ Available hotkeys are listed below. These are the default values, which can be a
 | &nbsp; &nbsp; WebDAV Server...               |                           |
 | &nbsp; &nbsp; Dropbox Storage...             |                           |
 | &nbsp; &nbsp; Network Share...               |                           |
-| &nbsp; &nbsp; Manage Connections...          |  Cmd + K                  |
+| &nbsp; &nbsp; Manage Connections...          | Cmd + K                   |
 | _**Command Menu**_                           |                           |
 | &nbsp; System Overview                       | Cmd + L                   |
 | &nbsp; Detailed Volume Information           |                           |
 | &nbsp; File Attributes                       | Ctrl + A                  |
-| &nbsp; Open Extended Attributes              | Alt + Cmd + X             |
+| &nbsp; Open Extended Attributes              | Opt + Cmd + X             |
 | &nbsp; Copy Item Name                        | Shift + Cmd + C           |
-| &nbsp; Copy Item Path                        | Alt + Cmd + C             |
-| &nbsp; Copy Item Directory                   | Shift + Alt + Cmd + C     |
+| &nbsp; Copy Item Path                        | Opt + Cmd + C             |
+| &nbsp; Copy Item Directory                   | Shift + Opt + Cmd + C     |
 | &nbsp; Select With Mask                      | Cmd + =                   |
-| &nbsp; Select With Extension                 | Alt + Cmd + =             |
+| &nbsp; Select With Extension                 | Opt + Cmd + =             |
 | &nbsp; Deselect With Mask                    | Cmd + -                   |
-| &nbsp; Deselect With Extension               | Alt + Cmd + -             |
+| &nbsp; Deselect With Extension               | Opt + Cmd + -             |
 | &nbsp; Preview                               | Cmd + Y                   |
-| &nbsp; Internal Viewer                       | Alt + F3                  |
+| &nbsp; Internal Viewer                       | Opt + F3                  |
 | &nbsp; External Editor                       | F4                        |
 | &nbsp; Eject Volume                          | Cmd + E                   |
 | &nbsp; Batch Rename...                       | Ctrl + M                  |
@@ -252,16 +252,16 @@ Available hotkeys are listed below. These are the default values, which can be a
 | &nbsp; &nbsp; Move Left                      | Left                      |
 | &nbsp; &nbsp; Move Right                     | Right                     |
 | &nbsp; &nbsp; Move to the First Element      | Home                      |
-| &nbsp; &nbsp; Scroll to the First Element    | Alt + Home                |
+| &nbsp; &nbsp; Scroll to the First Element    | Opt + Home                |
 | &nbsp; &nbsp; Move to the Last Element       | End                       |
-| &nbsp; &nbsp; Scroll to the Last Element     | Alt + End                 |
+| &nbsp; &nbsp; Scroll to the Last Element     | Opt + End                 |
 | &nbsp; &nbsp; Move to the Next Page          | Page Down                 |
-| &nbsp; &nbsp; Scroll to the Next Page        | Alt + Page Down           |
+| &nbsp; &nbsp; Scroll to the Next Page        | Opt + Page Down           |
 | &nbsp; &nbsp; Move to the Previous Page      | Page Up                   |
-| &nbsp; &nbsp; Scroll to the Previous Page    | Alt + Page Up             |
+| &nbsp; &nbsp; Scroll to the Previous Page    | Opt + Page Up             |
 | &nbsp; &nbsp; Toggle Selection               |                           |
 | &nbsp; &nbsp; Toggle Selection and Move Down | Enter                     |
-| &nbsp; &nbsp; Change active panel            | Tab                       |
+| &nbsp; &nbsp; Change Active panel            | Tab                       |
 | &nbsp; &nbsp; Previous Tab                   | Shift + Cmd + [           |
 | &nbsp; &nbsp; Next Tab                       | Shift + Cmd + ]           |
 | &nbsp; &nbsp; Go into Enclosing folder       | Backward Delete           |

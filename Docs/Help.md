@@ -359,6 +359,21 @@ _to be written_
 
 ---
 
+**Q**: Can I see folders which are starting with dot (for example, ".folder")?  
+**A**: Yes, it’s possible to see hidden folders. Toggle this option by selecting `Menu > View > Show Hidden Files` or by pressing `Shift + Cmd + .`.
+
+---
+
+**Q**: Can I open an archive which has an improper extension (for example. .xlsx, .pak etc)?  
+**A**: Yes, an archive with an improper extension can be opened by selecting `Menu > Go > Enter`, or by using the hotkey `Cmd + Down`.
+
+---
+
+**Q**: Do dialogs in Nimble Commander have hotkeys?  
+**A**: Yes, many dialogs have hotkeys using the Ctrl (^) key modifier. Hovering the mouse cursor over a UI element will display context help, which may show the hotkey for that element.
+
+---
+
 **Q**: Where does Nimble Commander store its state?  
 **A**: In these locations:
 

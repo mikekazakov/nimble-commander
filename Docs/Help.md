@@ -90,23 +90,47 @@ _to be written_
 
 Available hotkeys are listed below. These are the default values, which can be altered later. Some actions do not have a default hotkey, but they can still be accessed via the application’s menu.
 
-| Action                            | Key Equivalent |
-| --------------------------------- | -------------- |
-| _Nimble Commander Menu_           |                |
-| &nbsp; About                      |                |
-| &nbsp; Preferences                | Cmd+,          |
-| &nbsp; Enable Admin Mode          |                |
-| &nbsp; Hide Nimble Commander      | Cmd+H          |
-| &nbsp; Hide Others                | Alt+Cmd+H      |
-| &nbsp; Show All                   |                |
-| &nbsp; Quit Nimble Commander      | Cmd+Q          |
-| &nbsp; Quit and Close All Windows | Alt+Cmd+Q      |
-| _File Menu_                       |                |
-| &nbsp; New Window                 | Cmd+N          |
-| &nbsp; New Folder                 | Shift+Cmd+N    |
-| &nbsp; New Folder with Selection  | Ctrl+Cmd+N     |
-| &nbsp; New File                   | Alt+Cmd+N      |
-| &nbsp; New Tab                    | Cmd+T          |
+| Action                              | Key Equivalent            |
+| ----------------------------------- | ------------------------- |
+| _Nimble Commander Menu_             |                           |
+| &nbsp; About                        |                           |
+| &nbsp; Preferences                  | Cmd + ,                   |
+| &nbsp; Enable Admin Mode            |                           |
+| &nbsp; Hide Nimble Commander        | Cmd + H                   |
+| &nbsp; Hide Others                  | Alt+Cmd+H                 |
+| &nbsp; Show All                     |                           |
+| &nbsp; Quit Nimble Commander        | Cmd + Q                   |
+| &nbsp; Quit and Close All Windows   | Alt + Cmd + Q             |
+| _File Menu_                         |                           |
+| &nbsp; New Window                   | Cmd + N                   |
+| &nbsp; New Folder                   | Shift + Cmd + N           |
+| &nbsp; New Folder with Selection    | Ctrl + Cmd + N            |
+| &nbsp; New File                     | Alt + Cmd + N             |
+| &nbsp; New Tab                      | Cmd + T                   |
+| &nbsp; Enter                        | Return                    |
+| &nbsp; Open                         | Shift + Return            |
+| &nbsp; Reveal in Opposite Panel     | Alt + Return              |
+| &nbsp; Reveal in Opposite Panel Tab | Alt + Cmd + Return        |
+| &nbsp; Paste Filename to Terminal   | Ctrl + Alt + Return       |
+| &nbsp; Paste Filenames to Terminal… | Ctrl + Alt + Cmd + Return |
+| &nbsp; Calculate Folders Sizes      | Shift + Alt + Return      |
+| &nbsp; Calculate All Folders Sizes  | Ctrl + Shift + Return     |
+| &nbsp; Calculate Checksum           | Shift + Cmd + K           |
+| &nbsp; Duplicate                    | Cmd + D                   |
+| &nbsp; Add to Favorites             | Cmd + B                   |
+| &nbsp; Close                        | Cmd + W                   |
+| &nbsp; Close Window                 | Shift + Cmd + W           |
+| &nbsp; Close Other Tabs             | Alt + Cmd + W             |
+| &nbsp; Find…                        | Cmd + F                   |
+| &nbsp; Find with Spotlight…         | Alt + Cmd + F             |
+| &nbsp; Find Next                    | Cmd + G                   |
+| _Edit Menu_                         |                           |
+| &nbsp; Copy                         | Cmd + C                   |
+| &nbsp; Paste                        | Cmd + V                   |
+| &nbsp; Move Item Here               | Alt + Cmd + V             |
+| &nbsp; Select All                   | Cmd + A                   |
+| &nbsp; Deselect All                 | Alt + Cmd + A             |
+| &nbsp; Invert Selection             | Ctrl + Cmd + A            |
 
 ### External Editors
 _to be written_

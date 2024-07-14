@@ -18,7 +18,6 @@ jobs:
     - name: Install deps
       run: |
         brew install create-dmg pandoc basictex
-        export PATH="/Library/TeX/texbin:$PATH"
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
@@ -55,6 +54,7 @@ jobs:
       env:
         NC_SENSITIVE: ${{ secrets.NC_SENSITIVE }}
       run: |
+        eval "$(/usr/libexec/path_helper)"
         echo -n "$NC_SENSITIVE" | base64 --decode -o /Users/runner/.nc_sensitive.h
         cd Scripts && ./build_nightly.sh
     - name: Clean up keychain and provisioning profile

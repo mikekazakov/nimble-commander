@@ -90,47 +90,121 @@ _to be written_
 
 Available hotkeys are listed below. These are the default values, which can be altered later. Some actions do not have a default hotkey, but they can still be accessed via the application’s menu.
 
-| Action                              | Key Equivalent            |
-| ----------------------------------- | ------------------------- |
-| _Nimble Commander Menu_             |                           |
-| &nbsp; About                        |                           |
-| &nbsp; Preferences                  | Cmd + ,                   |
-| &nbsp; Enable Admin Mode            |                           |
-| &nbsp; Hide Nimble Commander        | Cmd + H                   |
-| &nbsp; Hide Others                  | Alt+Cmd+H                 |
-| &nbsp; Show All                     |                           |
-| &nbsp; Quit Nimble Commander        | Cmd + Q                   |
-| &nbsp; Quit and Close All Windows   | Alt + Cmd + Q             |
-| _File Menu_                         |                           |
-| &nbsp; New Window                   | Cmd + N                   |
-| &nbsp; New Folder                   | Shift + Cmd + N           |
-| &nbsp; New Folder with Selection    | Ctrl + Cmd + N            |
-| &nbsp; New File                     | Alt + Cmd + N             |
-| &nbsp; New Tab                      | Cmd + T                   |
-| &nbsp; Enter                        | Return                    |
-| &nbsp; Open                         | Shift + Return            |
-| &nbsp; Reveal in Opposite Panel     | Alt + Return              |
-| &nbsp; Reveal in Opposite Panel Tab | Alt + Cmd + Return        |
-| &nbsp; Paste Filename to Terminal   | Ctrl + Alt + Return       |
-| &nbsp; Paste Filenames to Terminal… | Ctrl + Alt + Cmd + Return |
-| &nbsp; Calculate Folders Sizes      | Shift + Alt + Return      |
-| &nbsp; Calculate All Folders Sizes  | Ctrl + Shift + Return     |
-| &nbsp; Calculate Checksum           | Shift + Cmd + K           |
-| &nbsp; Duplicate                    | Cmd + D                   |
-| &nbsp; Add to Favorites             | Cmd + B                   |
-| &nbsp; Close                        | Cmd + W                   |
-| &nbsp; Close Window                 | Shift + Cmd + W           |
-| &nbsp; Close Other Tabs             | Alt + Cmd + W             |
-| &nbsp; Find…                        | Cmd + F                   |
-| &nbsp; Find with Spotlight…         | Alt + Cmd + F             |
-| &nbsp; Find Next                    | Cmd + G                   |
-| _Edit Menu_                         |                           |
-| &nbsp; Copy                         | Cmd + C                   |
-| &nbsp; Paste                        | Cmd + V                   |
-| &nbsp; Move Item Here               | Alt + Cmd + V             |
-| &nbsp; Select All                   | Cmd + A                   |
-| &nbsp; Deselect All                 | Alt + Cmd + A             |
-| &nbsp; Invert Selection             | Ctrl + Cmd + A            |
+| Action                                    | Key Equivalent            |
+| ----------------------------------------- | ------------------------- |
+| _**Nimble Commander Menu**_               |                           |
+| &nbsp; About                              |                           |
+| &nbsp; Preferences                        | Cmd + ,                   |
+| &nbsp; Enable Admin Mode                  |                           |
+| &nbsp; Hide Nimble Commander              | Cmd + H                   |
+| &nbsp; Hide Others                        | Alt+Cmd+H                 |
+| &nbsp; Show All                           |                           |
+| &nbsp; Quit Nimble Commander              | Cmd + Q                   |
+| &nbsp; Quit and Close All Windows         | Alt + Cmd + Q             |
+| _**File Menu**_                           |                           |
+| &nbsp; New Window                         | Cmd + N                   |
+| &nbsp; New Folder                         | Shift + Cmd + N           |
+| &nbsp; New Folder with Selection          | Ctrl + Cmd + N            |
+| &nbsp; New File                           | Alt + Cmd + N             |
+| &nbsp; New Tab                            | Cmd + T                   |
+| &nbsp; Enter                              | Return                    |
+| &nbsp; Open                               | Shift + Return            |
+| &nbsp; Reveal in Opposite Panel           | Alt + Return              |
+| &nbsp; Reveal in Opposite Panel Tab       | Alt + Cmd + Return        |
+| &nbsp; Paste Filename to Terminal         | Ctrl + Alt + Return       |
+| &nbsp; Paste Filenames to Terminal...     | Ctrl + Alt + Cmd + Return |
+| &nbsp; Calculate Folders Sizes            | Shift + Alt + Return      |
+| &nbsp; Calculate All Folders Sizes        | Ctrl + Shift + Return     |
+| &nbsp; Calculate Checksum                 | Shift + Cmd + K           |
+| &nbsp; Duplicate                          | Cmd + D                   |
+| &nbsp; Add to Favorites                   | Cmd + B                   |
+| &nbsp; Close                              | Cmd + W                   |
+| &nbsp; Close Window                       | Shift + Cmd + W           |
+| &nbsp; Close Other Tabs                   | Alt + Cmd + W             |
+| &nbsp; Find...                            | Cmd + F                   |
+| &nbsp; Find with Spotlight...             | Alt + Cmd + F             |
+| &nbsp; Find Next                          | Cmd + G                   |
+| _**Edit Menu**_                           |                           |
+| &nbsp; Copy                               | Cmd + C                   |
+| &nbsp; Paste                              | Cmd + V                   |
+| &nbsp; Move Item Here                     | Alt + Cmd + V             |
+| &nbsp; Select All                         | Cmd + A                   |
+| &nbsp; Deselect All                       | Alt + Cmd + A             |
+| &nbsp; Invert Selection                   | Ctrl + Cmd + A            |
+| _**View Menu**_                           |                           |
+| &nbsp; Toggle Single-Pane Mode            | Shift + Cmd + P           |
+| &nbsp; Swap Panels                        | Cmd + U                   |
+| &nbsp; Sync Panels                        | Alt + Cmd + U             |
+| &nbsp; _**View Mode Submenu**_            |                           |
+| &nbsp; &nbsp; Toggle Short View Mode      | Ctrl + 1                  |
+| &nbsp; &nbsp; Toggle Medium View Mode     | Ctrl + 2                  |
+| &nbsp; &nbsp; Toggle Full View Mode       | Ctrl + 3                  |
+| &nbsp; &nbsp; Toggle Wide View Mode       | Ctrl + 4                  |
+| &nbsp; &nbsp; Toggle View Mode V          | Ctrl + 5                  |
+| &nbsp; &nbsp; Toggle View Mode VI         | Ctrl + 6                  |
+| &nbsp; &nbsp; Toggle View Mode VII        | Ctrl + 7                  |
+| &nbsp; &nbsp; Toggle View Mode VIII       | Ctrl + 8                  |
+| &nbsp; &nbsp; Toggle View Mode IX         | Ctrl + 9                  |
+| &nbsp; &nbsp; Toggle View Mode X          | Ctrl + 0                  |
+| &nbsp; _**Sorting Submenu**_              |                           |
+| &nbsp; &nbsp; Sort By Name                | Ctrl + Cmd + 1            |
+| &nbsp; &nbsp; Sort By Extension           | Ctrl + Cmd + 2            |
+| &nbsp; &nbsp; Sort By Modified Time       | Ctrl + Cmd + 3            |
+| &nbsp; &nbsp; Sort By Size                | Ctrl + Cmd + 4            |
+| &nbsp; &nbsp; Sort By Creation Time       | Ctrl + Cmd + 5            |
+| &nbsp; &nbsp; Sort By Added Time          | Ctrl + Cmd + 6            |
+| &nbsp; &nbsp; Sort By Accessed Time       | Ctrl + Cmd + 7            |
+| &nbsp; &nbsp; Separate Folders From Files |                           |
+| &nbsp; &nbsp; Extensionless Folders       |                           |
+| &nbsp; &nbsp; Case-Sensitive Comparison   |                           |
+| &nbsp; &nbsp; Numeric Comparison          |                           |
+| &nbsp; Show Hidden Files                  | Shift + Cmd + .           |
+| &nbsp; _**Panels Position Submenu**_      |                           |
+| &nbsp; &nbsp; Move Left                   | Ctrl + Alt + Left         |
+| &nbsp; &nbsp; Move Right                  | Ctrl + Alt + Right        |
+| &nbsp; &nbsp; Move Up                     | Ctrl + Alt + Up           |
+| &nbsp; &nbsp; Move Down                   | Ctrl + Alt + Down         |
+| &nbsp; &nbsp; Show Panels                 | Ctrl + Alt + O            |
+| &nbsp; &nbsp; Focus Overlapped Terminal   | Ctrl + Alt + Tab          |
+| &nbsp; Show Tab Bar                       | Shift + Cmd + T           |
+| &nbsp; Show Toolbar                       | Alt + Cmd + T             |
+| &nbsp; Show Terminal                      | Alt + Cmd + O             |
+| _**Go Menu**_                             |                           |
+| &nbsp; Left Panel...                      | F1                        |
+| &nbsp; Right Panel...                     | F2                        |
+| &nbsp; Back                               | Cmd + [                   |
+| &nbsp; Forward                            | Cmd + ]                   |
+| &nbsp; Enclosing Folder                   | Cmd + Up                  |
+| &nbsp; Enter                              | Cmd + Down                |
+| &nbsp; Follow                             | Cmd + Right               |
+| &nbsp; Documents                          | Shift + Cmd + O           |
+| &nbsp; Desktop                            | Shift + Cmd + D           |
+| &nbsp; Downloads                          | Alt + Cmd + L             |
+| &nbsp; Home                               | Shift + Cmd + H           |
+| &nbsp; Library                            |                           |
+| &nbsp; Applications                       | Shift + Cmd + A           |
+| &nbsp; Utilities                          | Shift + Cmd + U           |
+| &nbsp; Root                               |                           |
+| &nbsp; Processes List                     | Alt + Cmd + P             |
+| &nbsp; _**Favorites Submenu**_            |                           |
+| &nbsp; &nbsp; Manage Favorites...         | Ctrl + Cmd + B            |
+| &nbsp; _**Recently Closed Submenu**_      |                           |
+| &nbsp; &nbsp; Restore Last Closed Panel   | Shift + Cmd + R           |
+| &nbsp; _**Quick Lists Submenu**_          |                           |
+| &nbsp; &nbsp; Parent Folders              | Cmd + 1                   |
+| &nbsp; &nbsp; History                     | Cmd + 2                   |
+| &nbsp; &nbsp; Favorites                   | Cmd + 3                   |
+| &nbsp; &nbsp; Volumes                     | Cmd + 4                   |
+| &nbsp; &nbsp; Connections                 | Cmd + 5                   |
+| &nbsp; &nbsp; Tags                        | Cmd + 6                   |
+| &nbsp; Go To Folder...                    | Shift + Cmd + G           |
+| &nbsp; _**Connect To Submenu**_           |                           |
+| &nbsp; &nbsp; FTP Server...               |                           |
+| &nbsp; &nbsp; SFTP Server...              |                           |
+| &nbsp; &nbsp; WebDAV Server...            |                           |
+| &nbsp; &nbsp; Dropbox Storage...          |                           |
+| &nbsp; &nbsp; Network Share...            |                           |
+| &nbsp; &nbsp; Manage Connections...       |  Cmd + K                  |
 
 ### External Editors
 _to be written_

@@ -28,6 +28,10 @@ BUILT_PATH="${BUILD_DIR}/built"
 mkdir -p "${BUILD_DIR}"
 mkdir -p "${ARCHIVE_PATH}"
 
+# Build Help.pdf and copy it into the NC sources
+${SCRIPTS_DIR}/build_help.sh
+cp -f "${SCRIPTS_DIR}/build_help.tmp/Help.pdf" "${ROOT_DIR}/Source/NimbleCommander/NimbleCommander/Resources/Help.pdf"
+
 # Gather common flags in the XC variable
 XC="xcodebuild \
  -project ${XCODEPROJ} \

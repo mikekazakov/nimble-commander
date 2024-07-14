@@ -303,7 +303,6 @@
 		CFA53A351D433E2A00C562A7 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */; };
 		CFA53A361D433E2A00C562A7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
 		CFA53A381D433E2A00C562A7 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
-		CFA53A3B1D433E2A00C562A7 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFA53A3C1D433E2A00C562A7 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
 		CFA53A401D433E2A00C562A7 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
 		CFA53A421D433E2A00C562A7 /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBD01A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib */; };
@@ -326,8 +325,6 @@
 		CFAB6CE32587C38800397DB5 /* FollowSymlink.h in Headers */ = {isa = PBXBuildFile; fileRef = CFAB6CC92587C38700397DB5 /* FollowSymlink.h */; };
 		CFAB6CE42587C38800397DB5 /* FollowSymlink.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAB6CE22587C38700397DB5 /* FollowSymlink.mm */; };
 		CFAB6CE72588B70900397DB5 /* GTMHotKeyTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */; };
-		CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
-		CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFB63D3C2598A7B70038502E /* libNimbleCommanderCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */; };
 		CFB7BCFF2606A73000E2EA4D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
 		CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
@@ -389,6 +386,9 @@
 		CFDAC2331DFBDE2B0039A104 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2321DFBDE2B0039A104 /* main.cpp */; };
 		CFDF44A01D2B990A0062F7AD /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
 		CFDF44A11D2B990A0062F7AD /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
+		CFE5AF2A2C4434010035CCFA /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFE5AF292C4434010035CCFA /* Help.pdf */; };
+		CFE5AF2B2C4434010035CCFA /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFE5AF292C4434010035CCFA /* Help.pdf */; };
+		CFE5AF2C2C4434010035CCFA /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFE5AF292C4434010035CCFA /* Help.pdf */; };
 		CFEADD48259CF60D009ECA14 /* ChangePanelsPosition.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEADD2E259CF60D009ECA14 /* ChangePanelsPosition.mm */; };
 		CFEADD49259CF60D009ECA14 /* ChangePanelsPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = CFEADD47259CF60D009ECA14 /* ChangePanelsPosition.h */; };
 		CFEADD54259D01AD009ECA14 /* FocusOverlappedTerminal.h in Headers */ = {isa = PBXBuildFile; fileRef = CFEADD52259D01AD009ECA14 /* FocusOverlappedTerminal.h */; };
@@ -1209,7 +1209,6 @@
 		CFB2AB6D21573BE30009EB81 /* PanelViewHeaderThemeImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewHeaderThemeImpl.mm; path = NimbleCommander/States/FilePanels/PanelViewHeaderThemeImpl.mm; sourceTree = "<group>"; };
 		CFB44F0A1F35F0B900E7555E /* UserNotificationsCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserNotificationsCenter.h; path = NimbleCommander/Core/UserNotificationsCenter.h; sourceTree = SOURCE_ROOT; };
 		CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = UserNotificationsCenter.mm; path = NimbleCommander/Core/UserNotificationsCenter.mm; sourceTree = SOURCE_ROOT; };
-		CFB598C0196E3A1F00D4C108 /* Help.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = Help.pdf; path = NimbleCommander/Resources/Help.pdf; sourceTree = SOURCE_ROOT; };
 		CFB7006B28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowThemesTabAutomaticSwitchingSheet.h; path = NimbleCommander/Preferences/PreferencesWindowThemesTabAutomaticSwitchingSheet.h; sourceTree = "<group>"; };
 		CFB7006C28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowThemesTabAutomaticSwitchingSheet.mm; path = NimbleCommander/Preferences/PreferencesWindowThemesTabAutomaticSwitchingSheet.mm; sourceTree = "<group>"; };
 		CFB791811D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowToolsTab.h; path = NimbleCommander/Preferences/PreferencesWindowToolsTab.h; sourceTree = SOURCE_ROOT; };
@@ -1361,6 +1360,7 @@
 		CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SFTPConnectionSheetController.mm; path = NimbleCommander/States/FilePanels/Views/SFTPConnectionSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CFDF449F1D2B990A0062F7AD /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = NimbleCommander/Resources/Media.xcassets; sourceTree = SOURCE_ROOT; };
 		CFE08B0C23D4BE3D007E99B8 /* NativeVFSHostInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NativeVFSHostInstance.h; path = NimbleCommander/Bootstrap/NativeVFSHostInstance.h; sourceTree = "<group>"; };
+		CFE5AF292C4434010035CCFA /* Help.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = Help.pdf; path = NimbleCommander/Resources/Help.pdf; sourceTree = "<group>"; };
 		CFEADD2E259CF60D009ECA14 /* ChangePanelsPosition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ChangePanelsPosition.mm; path = NimbleCommander/States/FilePanels/Actions/ChangePanelsPosition.mm; sourceTree = "<group>"; };
 		CFEADD47259CF60D009ECA14 /* ChangePanelsPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChangePanelsPosition.h; path = NimbleCommander/States/FilePanels/Actions/ChangePanelsPosition.h; sourceTree = "<group>"; };
 		CFEADD52259D01AD009ECA14 /* FocusOverlappedTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FocusOverlappedTerminal.h; path = NimbleCommander/States/FilePanels/Actions/FocusOverlappedTerminal.h; sourceTree = "<group>"; };
@@ -2053,8 +2053,8 @@
 		CFB598BF196E3A0400D4C108 /* Doc */ = {
 			isa = PBXGroup;
 			children = (
+				CFE5AF292C4434010035CCFA /* Help.pdf */,
 				CFC5122316C4BD3D00D247EE /* Credits.rtf */,
-				CFB598C0196E3A1F00D4C108 /* Help.pdf */,
 			);
 			name = Doc;
 			sourceTree = "<group>";
@@ -2777,6 +2777,7 @@
 				CF9F4B431ECD81BC00E0AF82 /* NetworkShareSheetController.xib in Resources */,
 				CF4E56C11D50691B00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */,
+				CFE5AF2C2C4434010035CCFA /* Help.pdf in Resources */,
 				CF7C7CD11E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib in Resources */,
 				CF4E56A21D5068CC00452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CF3120C51A510F640062185A /* Localizable.strings in Resources */,
@@ -2800,7 +2801,6 @@
 				CF4E56BB1D5068F700452912 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CF36DBE21F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */,
 				CF9F4B3D1ECD814800E0AF82 /* ConnectToServer.xib in Resources */,
-				CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CFCCFBC31A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
 				CF45CA291D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */,
 				CFA7FA751C1D6E06000D039F /* Config.json in Resources */,
@@ -2837,8 +2837,8 @@
 				CF7C7CD01E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib in Resources */,
 				CF8D0CF91D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib in Resources */,
 				CF4E56BC1D5068F800452912 /* PreferencesWindowPanelsTab.xib in Resources */,
-				CFA53A3B1D433E2A00C562A7 /* Help.pdf in Resources */,
 				CFA53A3C1D433E2A00C562A7 /* MainMenu.xib in Resources */,
+				CFE5AF2A2C4434010035CCFA /* Help.pdf in Resources */,
 				CF4E56C81D50692400452912 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CFA53A401D433E2A00C562A7 /* FilePanelsContextMenu.strings in Resources */,
 				CFA53A421D433E2A00C562A7 /* DetailedVolumeInformationSheetController.xib in Resources */,
@@ -2903,7 +2903,7 @@
 				CF7C7CCF1E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib in Resources */,
 				CF8D0CF81D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib in Resources */,
 				CF4E568A1D5066A400452912 /* PreferencesWindowViewerTab.xib in Resources */,
-				CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */,
+				CFE5AF2B2C4434010035CCFA /* Help.pdf in Resources */,
 				CF9F4B351ECD813300E0AF82 /* DropboxAccountSheetController.xib in Resources */,
 				CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */,
 				CF4E56751D50668A00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,

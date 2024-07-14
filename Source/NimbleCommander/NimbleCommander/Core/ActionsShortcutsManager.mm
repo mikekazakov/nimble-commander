@@ -304,7 +304,7 @@ static constinit std::pair<const char*, const char8_t*> g_DefaultShortcuts[] = {
     {"menu.go.forward",                                     u8"⌘]"      }, // cmd+]
     {"menu.go.enclosing_folder",                            u8"⌘\uF700" }, // cmd+↑
     {"menu.go.into_folder",                                 u8"⌘\uF701" }, // cmd+↓
-    {"menu.go.follow_symlink",                              u8"⌘\uF703" },
+    {"menu.go.follow_symlink",                              u8"⌘\uF703" }, // cmd+→
     {"menu.go.left_panel",                                  u8"\uF704"  }, // F1
     {"menu.go.right_panel",                                 u8"\uF705"  }, // F2
     {"menu.go.documents",                                   u8"⇧⌘o"     }, // shift+cmd+o

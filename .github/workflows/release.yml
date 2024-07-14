@@ -16,7 +16,7 @@ jobs:
     - name: Install deps
       run: |
         brew install create-dmg pandoc basictex
-        eval "$(/usr/libexec/path_helper)"
+        export PATH="/Library/TeX/texbin:$PATH"
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0

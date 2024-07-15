@@ -15,6 +15,7 @@
 #include <fstream>
 #include <compare>
 #include <thread>
+#include <condition_variable>
 
 using nc::ops::Copying;
 using nc::ops::CopyingOptions;
@@ -1423,17 +1424,28 @@ TEST_CASE(PREFIX "Copying a native file that is being written to")
     TempTestDir dir;
     const std::filesystem::path p = dir.directory / "a";
     static constexpr size_t max_size = 100'000'000;
-
-    std::atomic_bool stop = false;
-    std::thread t([p, &stop] {
+    
+    std::mutex m;
+    std::condition_variable cv; // should be a std::latch instead, but isn't available on macosx10.15 :-(
+    std::atomic_bool started = false, stop = false;
+    std::thread t([&] {
         const int f = open(p.c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR);
         REQUIRE(f >= 0);
         for( size_t i = 0; stop == false && i < max_size; ++i ) {
             write(f, &f, 1);
+            
+            if( i == 0) {
+                started = true;
+                cv.notify_all();
+            }
         }
         close(f);
     });
-
+    
+    // wait until the writing has started on the background thread
+    std::unique_lock lk(m);
+    REQUIRE( cv.wait_for(lk, std::chrono::seconds{5}, [&]{ return started.load(); }) );
+    
     CopyingOptions opts;
     opts.docopy = true;
     auto host = TestEnv().vfs_native;

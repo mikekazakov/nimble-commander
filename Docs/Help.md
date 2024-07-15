@@ -4,7 +4,7 @@
 
 ### Introduction
 
-Nimble Commander is a free dual-pane file manager for macOS, designed with a focus on speed, keyboard-based navigation, and flexibility. The project aims to blend the user experience of classic file managers from the '80s and '90s with the modern look and feel of Mac computers.
+Nimble Commander is a free dual-pane file manager for macOS, designed with a focus on speed, keyboard-based navigation, and flexibility. The project aims to blend the user experience of classic file managers from the '80s and '90s with the modern look and feel of Mac computers. Nimble Commander follows the design principles of [orthodox file managers](https://en.wikipedia.org/wiki/File_manager#Orthodox_file_managers), specifically dual-pane file managers. This website contains an in-depth study of this kind of software: [Less is More: Orthodox File Managers as Sysadmin IDE](https://softpanorama.org/OFM/index.shtml).
 
 ### System Requirements
 
@@ -50,7 +50,23 @@ There are two existing versions of Nimble Commander: the sandboxed version avail
 ## File Panels
 
 ### Introduction
-_to be written_
+Below is a screenshot of a typical interface of Nimble Commander:
+
+![Example of the interface](Help-main-ui.png)
+
+The main window is typically split vertically between the two panels. Sometimes these panels are called panes; both words will be used interchangeably later on. Only one panel is active at a time, which is indicated by highlighting. To change the active panel, you can click on the desired panel or use hotkeys:
+
+- `Tab`: focuses on the opposite panel
+- `Shift + Cmd + Left`: focuses on the left panel
+- `Shift + Cmd + Right`: focuses on the right panel
+
+The proportion between the left and right panels can be changed by either dragging a vertical separator line or by using the hotkeys: `Ctrl + Alt + Left` and `Ctrl + Alt + Right`. A panel can also be collapsed entirely so that only one is visible. This can be achieved by changing the width proportion until one panel is completely removed or by using the hotkey `Shift + Cmd + P`, which toggles between dual-pane and single-pane modes.
+
+Each panel is vertically divided into three logical parts:
+
+- Header: contains the path of the current location and the indicator of the sorting mode.
+- File items: displays a list of the file items in the location of this panel.
+- Footer: shows the filename of the focused item, its size and modification date, the total number of items in the panel, and the free space available on this storage.
 
 ### Navigation
 _to be written_
@@ -58,7 +74,13 @@ _to be written_
 ### Selection
 _to be written_
 
+### Sorting Modes
+_to be written_
+
 ### Quick Search
+_to be written_
+
+### View Modes
 _to be written_
 
 ### Quick Lists

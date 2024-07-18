@@ -258,8 +258,8 @@ static void HeatUpConfigValues()
         };
         m_View.headerView.searchRequestChangeCallback = std::move(callback);
 
-        [m_View addKeystrokeSink:self withBasePriority:view::BiddingPriority::Default];
-        [m_View addKeystrokeSink:m_QuickSearch withBasePriority:view::BiddingPriority::High];
+        [m_View addKeystrokeSink:self];
+        [m_View addKeystrokeSink:m_QuickSearch];
     }
 
     return self;

@@ -107,7 +107,7 @@ class Model;
 
 + (NSArray *)acceptedDragAndDropTypes;
 
-- (void)addKeystrokeSink:(id<NCPanelViewKeystrokeSink>)_sink withBasePriority:(int)_priority;
+- (void)addKeystrokeSink:(id<NCPanelViewKeystrokeSink>)_sink;
 - (void)removeKeystrokeSink:(id<NCPanelViewKeystrokeSink>)_sink;
 
 @end

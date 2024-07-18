@@ -147,13 +147,13 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
     if( !empty_now ) {
         if( IsBackspace(character) )
-            return view::BiddingPriority::Default;
+            return view::BiddingPriority::Max;
         if( m_IsSoftFiltering ) {
             if( IsLeft(character) || IsRight(character) || IsUp(character) || IsDown(character) )
                 return view::BiddingPriority::Default;
         }
         if( _event.keyCode == 53 ) { // Esc button
-            return view::BiddingPriority::Default;
+            return view::BiddingPriority::Max;
         }
     }
 

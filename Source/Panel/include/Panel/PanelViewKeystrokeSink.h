@@ -7,9 +7,10 @@
 namespace nc::panel::view::BiddingPriority {
 
 constexpr int Skip = 0;
-constexpr int Low = 10;
-constexpr int Default = 100;
-constexpr int High = 1000;
+constexpr int Low = 25;
+constexpr int Default = 50;
+constexpr int High = 75;
+constexpr int Max = 100;
 
 } // namespace nc::panel::view::BiddingPriority
 

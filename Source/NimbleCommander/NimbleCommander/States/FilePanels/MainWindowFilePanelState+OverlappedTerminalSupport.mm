@@ -289,7 +289,7 @@ static const auto g_ConfigGapPath = "filePanel.general.bottomGapForOverlappedTer
             m_OverlappedTerminal->terminal.isShellVirgin == false ) {
             // if user has entered something in overlapped terminal, then executing this stuff
             // via Enter should be in high priority
-            return nc::panel::view::BiddingPriority::High;
+            return nc::panel::view::BiddingPriority::Max;
         }
     }
 

@@ -18,6 +18,10 @@ Nimble Commander supports any Mac running the following versions of macOS:
 
 It runs natively on both Intel and Arm architectures.
 
+### Installation
+
+_to be written_
+
 ### Running the Application
 
 Simply double-click on the Nimble Commander icon to start it.
@@ -97,6 +101,10 @@ There are some locations that can be navigated to using hotkeys:
 - `Opt + Cmd + L`: Downloads folder
 - `Shift + Cmd + A`: Applications folder
 - `Shift + Cmd + U`: Utilities folder
+
+To navigate to an arbitrary location on the filesystem, you can use the GoTo dialog opened by the `Shift + Cmd + G` hotkey or through the menu: `Go > Go To Folder...`. In this dialog, you can type any path, and after clicking the Go button Nimble Commander will navigate to the specified folder. Below is the view of this dialog box:
+
+![GoTo dialog](Help-goto-dialog.png)
 
 _to be continued..._
 

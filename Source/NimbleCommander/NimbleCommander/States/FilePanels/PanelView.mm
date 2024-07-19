@@ -47,7 +47,7 @@ struct StateStorage {
 
 @implementation PanelView {
     data::Model *m_Data;
-    std::vector<std::pair<__weak id<NCPanelViewKeystrokeSink>, int>> m_KeystrokeSinks;
+    std::vector<__weak id<NCPanelViewKeystrokeSink>> m_KeystrokeSinks;
 
     robin_hood::unordered_flat_map<uint64_t, StateStorage> m_States;
     NSString *m_HeaderTitle;
@@ -509,13 +509,13 @@ struct StateStorage {
 - (void)keyDown:(NSEvent *)event
 {
     id<NCPanelViewKeystrokeSink> best_handler = nil;
-    int best_bid = 0;
+    int best_bid = view::BiddingPriority::Skip;
     for( const auto &handler : m_KeystrokeSinks )
-        if( id<NCPanelViewKeystrokeSink> h = handler.first ) {
+        if( id<NCPanelViewKeystrokeSink> h = handler ) {
             const auto bid = [h bidForHandlingKeyDown:event forPanelView:self];
-            if( bid > 0 && bid + handler.second > best_bid ) {
+            if( bid > best_bid ) {
                 best_handler = h;
-                best_bid = bid + handler.second;
+                best_bid = bid;
             }
         }
 
@@ -1125,16 +1125,14 @@ struct StateStorage {
     [self.controller panelViewDidChangePresentationLayout];
 }
 
-- (void)addKeystrokeSink:(id<NCPanelViewKeystrokeSink>)_sink withBasePriority:(int)_priority
+- (void)addKeystrokeSink:(id<NCPanelViewKeystrokeSink>)_sink
 {
-    m_KeystrokeSinks.emplace_back(_sink, _priority);
+    m_KeystrokeSinks.emplace_back(_sink);
 }
 
 - (void)removeKeystrokeSink:(id<NCPanelViewKeystrokeSink>)_sink
 {
-    m_KeystrokeSinks.erase(
-        remove_if(begin(m_KeystrokeSinks), end(m_KeystrokeSinks), [&](const auto &v) { return v.first == _sink; }),
-        end(m_KeystrokeSinks));
+    std::erase(m_KeystrokeSinks, _sink);
 }
 
 @end

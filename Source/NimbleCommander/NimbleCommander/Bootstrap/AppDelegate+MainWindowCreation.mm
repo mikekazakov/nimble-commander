@@ -172,7 +172,7 @@ static std::vector<std::string> CommaSeparatedStrings(const nc::config::Config &
     auto actions_dispatcher = [[NCPanelControllerActionsDispatcher alloc] initWithController:panel
                                                                                andActionsMap:self.panelActionsMap];
     [panel setNextAttachedResponder:actions_dispatcher];
-    [panel.view addKeystrokeSink:actions_dispatcher withBasePriority:nc::panel::view::BiddingPriority::Low];
+    [panel.view addKeystrokeSink:actions_dispatcher];
     panel.view.actionsDispatcher = actions_dispatcher;
 
     return panel;

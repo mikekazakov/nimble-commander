@@ -1008,7 +1008,7 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window, std::function<v
 - (void)attachPanel:(PanelController *)_pc
 {
     _pc.state = self;
-    [_pc.view addKeystrokeSink:self withBasePriority:nc::panel::view::BiddingPriority::Default];
+    [_pc.view addKeystrokeSink:self];
 }
 
 static bool RouteKeyboardInputIntoTerminal()
@@ -1028,7 +1028,7 @@ static bool RouteKeyboardInputIntoTerminal()
     const auto unicode = [character characterAtIndex:0];
 
     if( unicode == NSTabCharacter ) {
-        return nc::panel::view::BiddingPriority::Default;
+        return nc::panel::view::BiddingPriority::High;
     }
 
     if( RouteKeyboardInputIntoTerminal() ) {

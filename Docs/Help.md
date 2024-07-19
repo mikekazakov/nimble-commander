@@ -18,6 +18,10 @@ Nimble Commander supports any Mac running the following versions of macOS:
 
 It runs natively on both Intel and Arm architectures.
 
+### Installation
+
+_to be written_
+
 ### Running the Application
 
 Simply double-click on the Nimble Commander icon to start it.
@@ -69,7 +73,40 @@ Each panel is vertically divided into three logical parts:
 - Footer: shows the filename of the focused item, its size and modification date, the total number of items in the panel, and the free space available on this storage.
 
 ### Navigation
-_to be written_
+Nimble Commander supports both mouse-based and keyboard-based navigation inside the file panel, although the keyboard is preferred. Use a single mouse click to change the cursor position (i.e., the focused item) and scroll gestures to scroll through the contents of the file panel without changing the cursor position. The navigation hotkeys are the following:
+
+- `Up`: moves the cursor up
+- `Down`: moves the cursor down
+- `Left`: moves the cursor left
+- `Right`: moves the cursor right
+- `Home`: moves the cursor to the first element
+- `Opt + Home`: scrolls the contents to the first element
+- `End`: moves the cursor to the last element
+- `Opt + End`: scrolls the contents to the last element
+- `Page Up`: moves the cursor to the previous page
+- `Opt + Page Up`: scrolls the contents to the previous page
+- `Page Down`: moves the cursor to the next page
+- `Opt + Page Down`: scrolls the contents to the next page
+
+To navigate to a different folder inside the file panel, either double-click on it or press `Return` when the folder is focused. To go to a parent folder, do the same with the `..` [pseudo-folder](https://en.wikipedia.org/wiki/Path_(computing)#Representations_of_paths_by_operating_system_and_shell) located at the beginning of the items. Displaying the `..` folder is optional and can be turned off in the Settings dialog. Pressing `Backward Delete` (Backspace) navigates to the parent folder, regardless of the current cursor position.
+
+Nimble Commander stores location history for each file panel. To navigate the history back and forth, use the `Cmd + [` and `Cmd + ]` hotkeys.
+
+There are some locations that can be navigated to using hotkeys:
+
+- `/`: Root of the filesystem
+- `~` and `Shift + Cmd + H`: Home folder
+- `Shift + Cmd + O`: Documents folder
+- `Shift + Cmd + D`: Desktop folder
+- `Opt + Cmd + L`: Downloads folder
+- `Shift + Cmd + A`: Applications folder
+- `Shift + Cmd + U`: Utilities folder
+
+To navigate to an arbitrary location on the filesystem, you can use the GoTo dialog opened by the `Shift + Cmd + G` hotkey or through the menu: `Go > Go To Folder...`. In this dialog, you can type any path, and after clicking the Go button Nimble Commander will navigate to the specified folder. Below is the view of this dialog box:
+
+![GoTo dialog](Help-goto-dialog.png)
+
+_to be continued..._
 
 ### Selection
 _to be written_

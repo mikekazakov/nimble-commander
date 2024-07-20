@@ -19,7 +19,7 @@ VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const std::string &_path,
             if( passwd.empty() )
                 return nullptr;
             try {
-                        auto archive = std::make_shared<nc::vfs::ArchiveHost>(_path, _parent, passwd, _cancel_checker);
+                auto archive = std::make_shared<nc::vfs::ArchiveHost>(_path, _parent, passwd, _cancel_checker);
                 return archive;
             } catch( VFSErrorException &e ) {
             }

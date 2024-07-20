@@ -59,6 +59,18 @@ jobs:
         cd Scripts && ./run_all_integration_tests.sh
 
 
+  clang-format:
+    runs-on: macos-14
+    steps:
+    - name: Install deps
+      run: |
+        brew update
+        brew install clang-format
+    - uses: actions/checkout@v4
+    - name: Run clang-format
+      run: "cd Scripts && ./run_clang_format.sh --check"
+
+
   build-unsigned:
     runs-on: macos-14
     steps:

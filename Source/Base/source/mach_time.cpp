@@ -45,7 +45,7 @@ std::chrono::nanoseconds machtime() noexcept
     return std::chrono::nanoseconds(GetTimeInNanoseconds());
 }
 
-MachTimeBenchmark::MachTimeBenchmark() noexcept : last(machtime()){};
+MachTimeBenchmark::MachTimeBenchmark() noexcept : last(machtime()) {};
 
 std::chrono::nanoseconds MachTimeBenchmark::Delta() const
 {

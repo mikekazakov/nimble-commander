@@ -11,10 +11,7 @@
 namespace encodings {
 
 // don't care about ordering here
-#define _(a)                                                                                                           \
-    {                                                                                                                  \
-        #a, a                                                                                                          \
-    }
+#define _(a) {#a, a}
 static struct {
     const char *name;
     int encoding;

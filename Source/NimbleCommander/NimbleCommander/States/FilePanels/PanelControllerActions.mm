@@ -55,8 +55,7 @@ PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
 
     add(@selector(OnOpenNatively:), new OpenFilesWithDefaultHandler{_file_opener});
     add(@selector(onOpenFileWith:), new OpenFileWithSubmenu{_open_with_menu_delegate});
-    add(
-        @selector(OnOpen:), new Enter { *m[@selector(OnOpenNatively:)] });
+    add(@selector(OnOpen:), new Enter { *m[@selector(OnOpenNatively:)] });
     add(@selector(onAlwaysOpenFileWith:), new AlwaysOpenFileWithSubmenu{_open_with_menu_delegate});
     add(@selector(onMainMenuPerformFindAction:), new FindFiles{_make_viewer, _make_viewer_controller});
     add(@selector(OnSpotlightSearch:), new SpotlightSearch);

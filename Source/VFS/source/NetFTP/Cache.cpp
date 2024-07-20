@@ -63,7 +63,7 @@ std::shared_ptr<Directory> Cache::FindDirectoryInt(std::string_view _path) const
 void Cache::InsertLISTDirectory(const char *_path, std::shared_ptr<Directory> _directory)
 {
     Log::Trace(SPDLOC, "Cache::InsertLISTDirectory({}) called", _path);
-    
+
     // TODO: also update ->parent_dir here
 
     if( _path == nullptr || _path[0] != '/' || !_directory )
@@ -87,7 +87,7 @@ void Cache::InsertLISTDirectory(const char *_path, std::shared_ptr<Directory> _d
 void Cache::CommitNewFile(const std::string &_path)
 {
     Log::Trace(SPDLOC, "Cache::CommitNewFile({}) called", _path);
-    
+
     std::filesystem::path p = _path;
     assert(p.is_absolute());
 

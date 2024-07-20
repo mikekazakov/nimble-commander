@@ -36,7 +36,7 @@ static constexpr std::string_view g_ExtensionsList[] = {"bz2", "gz", "lz", "lz4"
 namespace {
 struct Extracted {
     Extracted() = default;
-    Extracted(int _vfs_err) : vfs_err(_vfs_err){};
+    Extracted(int _vfs_err) : vfs_err(_vfs_err) {};
 
     int vfs_err = VFSError::Ok;
     std::vector<std::byte> bytes;

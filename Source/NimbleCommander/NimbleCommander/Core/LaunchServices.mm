@@ -117,8 +117,8 @@ LauchServicesHandlers::LauchServicesHandlers(const std::vector<LauchServicesHand
     const auto default_handler = all_equal_or_default(
         begin(_handlers_to_merge), end(_handlers_to_merge), [](auto &i) { return i.m_DefaultHandlerPath; }, ""s);
 
-    m_UTI = all_equal_or_default(
-        begin(_handlers_to_merge), end(_handlers_to_merge), [](auto &i) { return i.m_UTI; }, ""s);
+    m_UTI =
+        all_equal_or_default(begin(_handlers_to_merge), end(_handlers_to_merge), [](auto &i) { return i.m_UTI; }, ""s);
 
     // maps handler path to usage amount
     // then use only handlers with usage amount == _input.size() (or common ones)

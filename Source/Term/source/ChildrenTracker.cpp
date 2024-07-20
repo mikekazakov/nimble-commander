@@ -63,8 +63,7 @@ ChildrenTracker::ChildrenTracker(int _root_pid, std::function<void()> _cb)
     Subscribe(m_KQ, m_Tracked);
     m_Queue = dispatch_queue_create("nc::term::ChildrenTracker event queue", DISPATCH_QUEUE_SERIAL);
     m_Source = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, m_KQ, 0, m_Queue);
-    dispatch_source_set_event_handler_f(
-        m_Source, +[](void *_ctx) { static_cast<ChildrenTracker *>(_ctx)->Drain(); });
+    dispatch_source_set_event_handler_f(m_Source, +[](void *_ctx) { static_cast<ChildrenTracker *>(_ctx)->Drain(); });
     dispatch_set_context(m_Source, this);
     dispatch_activate(m_Source);
 }

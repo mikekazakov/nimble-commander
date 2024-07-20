@@ -48,7 +48,7 @@ private:
         block *next;     // #8
         // next is valid pointer when .amount == strings_per_block, otherwise it should be null
         node strings[strings_per_block]; // # 16
-    };                                   // 1024 bytes long
+    }; // 1024 bytes long
 
     inline static block *const m_Sentinel = reinterpret_cast<block *>(0xDEADBEEFDEADBEEF);
 

@@ -75,7 +75,7 @@ private:
     struct Model final : Concept {
         T obj;
 
-        Model(T _t) : obj(std::move(_t)){};
+        Model(T _t) : obj(std::move(_t)) {};
 
         virtual const char *Tag() const { return obj.Tag(); }
 
@@ -90,8 +90,8 @@ private:
         }
 
         template <typename C>
-        static auto VerboseJunctionImpl(const C &t, int)
-            -> decltype(t.VerboseJunction(), static_cast<const char *>(nullptr))
+        static auto VerboseJunctionImpl(const C &t, int) -> decltype(t.VerboseJunction(),
+                                                                     static_cast<const char *>(nullptr))
         {
             return t.VerboseJunction();
         }

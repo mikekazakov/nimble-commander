@@ -7,7 +7,6 @@
 #include <cstddef>
 #include "Cache.h"
 
-
 namespace nc::vfs::ftp {
 
 inline constexpr curl_ftpmethod g_CURLFTPMethod = CURLFTPMETHOD_SINGLECWD;
@@ -53,18 +52,18 @@ private:
 };
 
 // ReadBuffer provides an intermediatery storage where CURL can write to so that a File can read from afterwards
-class ReadBuffer {
+class ReadBuffer
+{
 public:
-    
     // Returns the amount of data stored in the buffer
     size_t Size() const noexcept;
-        
+
     // Provides access to the memory managed by the buffer
     const void *Data() const noexcept;
 
     // Clears the contents of the buffer
     void Clear();
-    
+
     // Writes the data at the end of the buffer
     static size_t Write(const void *_src, size_t _size, size_t _nmemb, void *_this);
 
@@ -73,25 +72,26 @@ public:
 
 private:
     size_t DoWrite(const void *_src, size_t _size, size_t _nmemb);
-    
+
     std::vector<std::byte> m_Buf;
 };
 
 // WriteBuffer provides an intermediatery storage where a File can write into and CURL can read from afterwards
-class WriteBuffer {
+class WriteBuffer
+{
 public:
     // Adds the specified bytes into the buffer
     void Write(const void *_mem, size_t _size);
-    
+
     // Returns the amount of data stored in the buffer
     size_t Size() const noexcept;
-    
+
     // Returns the amount of data fed into the read function out of the available size
     size_t Consumed() const noexcept;
 
     // Returns true if there's no available data to provide to the read function
     bool Exhausted() const noexcept;
-        
+
     // Removes the portion of the buffer that has been written.
     // Consumed() will be 0 afterwards.
     void DiscardConsumed() noexcept;
@@ -101,7 +101,7 @@ public:
 
 private:
     size_t DoRead(void *_dest, size_t _size, size_t _nmemb);
-    
+
     std::vector<std::byte> m_Buf;
     size_t m_Consumed = 0; // amount of bytes fed to CURL
 };

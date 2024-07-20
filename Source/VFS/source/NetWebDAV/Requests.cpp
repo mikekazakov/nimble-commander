@@ -188,8 +188,7 @@ static std::vector<PropFindResponse> PruneFilepaths(std::vector<PropFindResponse
 [[maybe_unused]]
 // macOS server doesn't prefix filepaths with "webdav" prefix, but I didn't manage to get it
 // to work properly anyway. Maybe later.
-static bool
-FilepathsHavePathPrefix(const std::vector<PropFindResponse> &_items, const std::string &_path)
+static bool FilepathsHavePathPrefix(const std::vector<PropFindResponse> &_items, const std::string &_path)
 {
     if( _path.empty() )
         return false;

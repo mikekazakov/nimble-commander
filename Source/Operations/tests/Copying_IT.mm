@@ -864,7 +864,7 @@ TEST_CASE(PREFIX "Copy to local FTP")
         REQUIRE(compare == 0);
         REQUIRE(host->Unlink(("/Public/!FilesTesting/" + i).c_str(), nullptr) == 0);
     }
-    
+
     VFSEasyDelete("/Public", host);
 }
 
@@ -1424,7 +1424,7 @@ TEST_CASE(PREFIX "Copying a native file that is being written to")
     TempTestDir dir;
     const std::filesystem::path p = dir.directory / "a";
     static constexpr size_t max_size = 100'000'000;
-    
+
     std::mutex m;
     std::condition_variable cv; // should be a std::latch instead, but isn't available on macosx10.15 :-(
     std::atomic_bool started = false, stop = false;
@@ -1433,19 +1433,19 @@ TEST_CASE(PREFIX "Copying a native file that is being written to")
         REQUIRE(f >= 0);
         for( size_t i = 0; stop == false && i < max_size; ++i ) {
             write(f, &f, 1);
-            
-            if( i == 0) {
+
+            if( i == 0 ) {
                 started = true;
                 cv.notify_all();
             }
         }
         close(f);
     });
-    
+
     // wait until the writing has started on the background thread
     std::unique_lock lk(m);
-    REQUIRE( cv.wait_for(lk, std::chrono::seconds{5}, [&]{ return started.load(); }) );
-    
+    REQUIRE(cv.wait_for(lk, std::chrono::seconds{5}, [&] { return started.load(); }));
+
     CopyingOptions opts;
     opts.docopy = true;
     auto host = TestEnv().vfs_native;

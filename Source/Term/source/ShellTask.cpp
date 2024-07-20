@@ -680,8 +680,7 @@ void ShellTask::Impl::CleanUp()
     dispatch_group_wait(io_group, DISPATCH_TIME_FOREVER);
 
     // next dispatch a request for the cleanup and wait until it completes
-    dispatch_group_async_f(
-        io_group, io_queue, this, +[](void *_ctx) { static_cast<Impl *>(_ctx)->DoCleanUp(); });
+    dispatch_group_async_f(io_group, io_queue, this, +[](void *_ctx) { static_cast<Impl *>(_ctx)->DoCleanUp(); });
     dispatch_group_wait(io_group, DISPATCH_TIME_FOREVER);
 }
 
@@ -758,8 +757,7 @@ void ShellTask::Impl::OnShellDied()
 
     dispatch_source_cancel(master_source);
     dispatch_source_cancel(cwd_source);
-    dispatch_group_async_f(
-        io_group, io_queue, this, +[](void *_ctx) { static_cast<Impl *>(_ctx)->DoCleanUp(); });
+    dispatch_group_async_f(io_group, io_queue, this, +[](void *_ctx) { static_cast<Impl *>(_ctx)->DoCleanUp(); });
 }
 
 void ShellTask::Impl::SetState(TaskState _new_state)

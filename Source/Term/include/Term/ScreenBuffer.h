@@ -16,7 +16,7 @@ struct ScreenPoint {
     int x = 0;
     int y = 0;
     inline ScreenPoint() noexcept {};
-    inline ScreenPoint(int _x, int _y) noexcept : x(_x), y(_y){};
+    inline ScreenPoint(int _x, int _y) noexcept : x(_x), y(_y) {};
     inline bool operator>(const ScreenPoint &_r) const noexcept { return (y > _r.y) || (y == _r.y && x > _r.x); }
     inline bool operator>=(const ScreenPoint &_r) const noexcept { return (y > _r.y) || (y == _r.y && x >= _r.x); }
     inline bool operator<(const ScreenPoint &_r) const noexcept { return !(*this >= _r); }

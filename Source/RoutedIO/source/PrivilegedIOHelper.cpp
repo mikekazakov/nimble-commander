@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 #include <syslog.h>
 #include <xpc/xpc.h>
+#include <Base/CFPtr.h>
 
 // requires that identifier is right and binary is signed by me
 static const char *g_SignatureRequirement =
@@ -618,6 +619,48 @@ static bool CheckSignature(const char *_bin_path)
     return status == noErr;
 }
 
+static bool CheckHardening(const pid_t _client_pid)
+{
+    using nc::base::CFPtr;
+    const CFPtr<CFMutableDictionaryRef> attr =
+        CFPtr<CFMutableDictionaryRef>::adopt(CFDictionaryCreateMutable(nullptr,                        //
+                                                                       0,                              //
+                                                                       &kCFTypeDictionaryKeyCallBacks, //
+                                                                       &kCFTypeDictionaryValueCallBacks));
+    const CFPtr<CFNumberRef> pid_number =
+        CFPtr<CFNumberRef>::adopt(CFNumberCreate(nullptr, kCFNumberIntType, &_client_pid));
+    CFDictionarySetValue(attr.get(), kSecGuestAttributePid, pid_number.get());
+
+    // Get a reference to the running client's code
+    SecCodeRef code_ref_input = nullptr;
+    if( OSStatus status = SecCodeCopyGuestWithAttributes(nullptr, attr.get(), kSecCSDefaultFlags, &code_ref_input);
+        status != errSecSuccess || code_ref_input == nullptr ) {
+        return false;
+    }
+    const CFPtr<SecCodeRef> code_ref = CFPtr<SecCodeRef>::adopt(code_ref_input);
+
+    // Obtain it's dynamic signing information
+    CFDictionaryRef csinfo_input = NULL;
+    if( OSStatus status = SecCodeCopySigningInformation(code_ref.get(), kSecCSDynamicInformation, &csinfo_input);
+        status != errSecSuccess || csinfo_input == nullptr ) {
+        return false;
+    }
+    const CFPtr<CFDictionaryRef> csinfo = CFPtr<CFDictionaryRef>::adopt(csinfo_input);
+
+    // Get the signature flags
+    CFNumberRef status = static_cast<CFNumberRef>(CFDictionaryGetValue(csinfo.get(), kSecCodeInfoStatus));
+    if( status == nullptr || CFGetTypeID(status) != CFNumberGetTypeID() ) {
+        return false;
+    }
+    int flags = 0;
+    if( !CFNumberGetValue(status, kCFNumberIntType, &flags) ) {
+        return false;
+    }
+
+    // Check that either a hardened runtime is enabled or run-time library validation is enabled
+    return flags & (kSecCodeSignatureLibraryValidation | kSecCodeSignatureRuntime);
+}
+
 static void XPC_Connection_Handler(xpc_connection_t _connection)
 {
     pid_t client_pid = xpc_connection_get_pid(_connection);
@@ -625,7 +668,7 @@ static void XPC_Connection_Handler(xpc_connection_t _connection)
     proc_pidpath(client_pid, client_path, sizeof(client_path));
     syslog_notice("Got an incoming connection from: %s", client_path);
 
-    if( !AllowConnectionFrom(client_path) || !CheckSignature(client_path) ) {
+    if( !AllowConnectionFrom(client_path) || !CheckSignature(client_path) || !CheckHardening(client_pid) ) {
         syslog_warning("Client failed checking, dropping connection.");
         xpc_connection_cancel(_connection);
         return;

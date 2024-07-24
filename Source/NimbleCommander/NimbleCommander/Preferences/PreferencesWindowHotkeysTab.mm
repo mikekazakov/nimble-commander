@@ -40,7 +40,7 @@ struct ToolShortcutNode {
     bool is_conflicted;
 };
 
-enum class SourceType {
+enum class SourceType : uint8_t {
     All,
     Customized,
     Conflicts

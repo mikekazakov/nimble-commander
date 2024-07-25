@@ -32,7 +32,7 @@ Checks: >
   modernize-use-emplace,
   modernize-use-equals-default,
   modernize-use-equals-delete,
-  # modernize-use-nodiscard, <-- not yet looked into
+  modernize-use-nodiscard,
   modernize-use-noexcept,
   modernize-use-nullptr,
   modernize-use-override,

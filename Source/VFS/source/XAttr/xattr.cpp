@@ -88,11 +88,11 @@ public:
     const std::string path;
     const std::string verbose_junction;
 
-    const char *Tag() const { return XAttrHost::UniqueTag; }
+    [[nodiscard]] const char *Tag() const { return XAttrHost::UniqueTag; }
 
-    const char *Junction() const { return path.c_str(); }
+    [[nodiscard]] const char *Junction() const { return path.c_str(); }
 
-    const char *VerboseJunction() const { return verbose_junction.c_str(); }
+    [[nodiscard]] const char *VerboseJunction() const { return verbose_junction.c_str(); }
 
     bool operator==(const VFSXAttrHostConfiguration &_rhs) const { return path == _rhs.path; }
 };

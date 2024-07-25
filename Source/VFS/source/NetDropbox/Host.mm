@@ -24,16 +24,16 @@ public:
     std::string client_id;
     std::string client_secret;
 
-    const char *Tag() const { return DropboxHost::UniqueTag; }
+    [[nodiscard]] const char *Tag() const { return DropboxHost::UniqueTag; }
 
-    const char *Junction() const { return account.c_str(); }
+    [[nodiscard]] const char *Junction() const { return account.c_str(); }
 
     bool operator==(const VFSNetDropboxHostConfiguration &_rhs) const
     {
         return account == _rhs.token && token == _rhs.token;
     }
 
-    const char *VerboseJunction() const { return verbose.c_str(); }
+    [[nodiscard]] const char *VerboseJunction() const { return verbose.c_str(); }
 };
 
 static VFSNetDropboxHostConfiguration Compose(const std::string &_account,

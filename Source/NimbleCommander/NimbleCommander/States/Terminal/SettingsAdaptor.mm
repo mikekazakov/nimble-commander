@@ -67,34 +67,37 @@ public:
                 [] { std::dynamic_pointer_cast<SettingsImpl>(TerminalSettings())->FireNotification(); });
     }
 
-    NSFont *Font() const override { return CurrentTheme().TerminalFont(); }
-    NSColor *ForegroundColor() const override { return CurrentTheme().TerminalForegroundColor(); }
-    NSColor *BoldForegroundColor() const override { return CurrentTheme().TerminalBoldForegroundColor(); };
-    NSColor *BackgroundColor() const override { return CurrentTheme().TerminalBackgroundColor(); }
-    NSColor *SelectionColor() const override { return CurrentTheme().TerminalSelectionColor(); }
-    NSColor *CursorColor() const override { return CurrentTheme().TerminalCursorColor(); }
-    NSColor *AnsiColor0() const override { return CurrentTheme().TerminalAnsiColor0(); }
-    NSColor *AnsiColor1() const override { return CurrentTheme().TerminalAnsiColor1(); }
-    NSColor *AnsiColor2() const override { return CurrentTheme().TerminalAnsiColor2(); }
-    NSColor *AnsiColor3() const override { return CurrentTheme().TerminalAnsiColor3(); }
-    NSColor *AnsiColor4() const override { return CurrentTheme().TerminalAnsiColor4(); }
-    NSColor *AnsiColor5() const override { return CurrentTheme().TerminalAnsiColor5(); }
-    NSColor *AnsiColor6() const override { return CurrentTheme().TerminalAnsiColor6(); }
-    NSColor *AnsiColor7() const override { return CurrentTheme().TerminalAnsiColor7(); }
-    NSColor *AnsiColor8() const override { return CurrentTheme().TerminalAnsiColor8(); }
-    NSColor *AnsiColor9() const override { return CurrentTheme().TerminalAnsiColor9(); }
-    NSColor *AnsiColorA() const override { return CurrentTheme().TerminalAnsiColorA(); }
-    NSColor *AnsiColorB() const override { return CurrentTheme().TerminalAnsiColorB(); }
-    NSColor *AnsiColorC() const override { return CurrentTheme().TerminalAnsiColorC(); }
-    NSColor *AnsiColorD() const override { return CurrentTheme().TerminalAnsiColorD(); }
-    NSColor *AnsiColorE() const override { return CurrentTheme().TerminalAnsiColorE(); }
-    NSColor *AnsiColorF() const override { return CurrentTheme().TerminalAnsiColorF(); }
-    int MaxFPS() const override { return GlobalConfig().GetInt(g_ConfigMaxFPS); }
-    enum CursorMode CursorMode() const override
+    [[nodiscard]] NSFont *Font() const override { return CurrentTheme().TerminalFont(); }
+    [[nodiscard]] NSColor *ForegroundColor() const override { return CurrentTheme().TerminalForegroundColor(); }
+    [[nodiscard]] NSColor *BoldForegroundColor() const override
+    {
+        return CurrentTheme().TerminalBoldForegroundColor();
+    };
+    [[nodiscard]] NSColor *BackgroundColor() const override { return CurrentTheme().TerminalBackgroundColor(); }
+    [[nodiscard]] NSColor *SelectionColor() const override { return CurrentTheme().TerminalSelectionColor(); }
+    [[nodiscard]] NSColor *CursorColor() const override { return CurrentTheme().TerminalCursorColor(); }
+    [[nodiscard]] NSColor *AnsiColor0() const override { return CurrentTheme().TerminalAnsiColor0(); }
+    [[nodiscard]] NSColor *AnsiColor1() const override { return CurrentTheme().TerminalAnsiColor1(); }
+    [[nodiscard]] NSColor *AnsiColor2() const override { return CurrentTheme().TerminalAnsiColor2(); }
+    [[nodiscard]] NSColor *AnsiColor3() const override { return CurrentTheme().TerminalAnsiColor3(); }
+    [[nodiscard]] NSColor *AnsiColor4() const override { return CurrentTheme().TerminalAnsiColor4(); }
+    [[nodiscard]] NSColor *AnsiColor5() const override { return CurrentTheme().TerminalAnsiColor5(); }
+    [[nodiscard]] NSColor *AnsiColor6() const override { return CurrentTheme().TerminalAnsiColor6(); }
+    [[nodiscard]] NSColor *AnsiColor7() const override { return CurrentTheme().TerminalAnsiColor7(); }
+    [[nodiscard]] NSColor *AnsiColor8() const override { return CurrentTheme().TerminalAnsiColor8(); }
+    [[nodiscard]] NSColor *AnsiColor9() const override { return CurrentTheme().TerminalAnsiColor9(); }
+    [[nodiscard]] NSColor *AnsiColorA() const override { return CurrentTheme().TerminalAnsiColorA(); }
+    [[nodiscard]] NSColor *AnsiColorB() const override { return CurrentTheme().TerminalAnsiColorB(); }
+    [[nodiscard]] NSColor *AnsiColorC() const override { return CurrentTheme().TerminalAnsiColorC(); }
+    [[nodiscard]] NSColor *AnsiColorD() const override { return CurrentTheme().TerminalAnsiColorD(); }
+    [[nodiscard]] NSColor *AnsiColorE() const override { return CurrentTheme().TerminalAnsiColorE(); }
+    [[nodiscard]] NSColor *AnsiColorF() const override { return CurrentTheme().TerminalAnsiColorF(); }
+    [[nodiscard]] int MaxFPS() const override { return GlobalConfig().GetInt(g_ConfigMaxFPS); }
+    [[nodiscard]] enum CursorMode CursorMode() const override
     {
         return static_cast<enum CursorMode>(GlobalConfig().GetInt(g_ConfigCursorMode));
     }
-    bool HideScrollbar() const override { return GlobalConfig().GetBool(g_ConfigHideScrollbar); }
+    [[nodiscard]] bool HideScrollbar() const override { return GlobalConfig().GetBool(g_ConfigHideScrollbar); }
 };
 
 std::shared_ptr<Settings> TerminalSettings()

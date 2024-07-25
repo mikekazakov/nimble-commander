@@ -109,9 +109,9 @@ const char *Host::UniqueTag = "nullfs";
 class VFSHostConfiguration
 {
 public:
-    const char *Tag() const { return Host::UniqueTag; }
+    [[nodiscard]] const char *Tag() const { return Host::UniqueTag; }
 
-    const char *Junction() const { return ""; }
+    [[nodiscard]] const char *Junction() const { return ""; }
 
     bool operator==(const VFSHostConfiguration &) const { return true; }
 };

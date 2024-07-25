@@ -156,9 +156,9 @@ class VFSArchiveRawHostConfiguration
 public:
     std::filesystem::path path;
 
-    const char *Tag() const noexcept { return ArchiveRawHost::UniqueTag; }
+    [[nodiscard]] const char *Tag() const noexcept { return ArchiveRawHost::UniqueTag; }
 
-    const char *Junction() const noexcept { return path.c_str(); }
+    [[nodiscard]] const char *Junction() const noexcept { return path.c_str(); }
 
     bool operator==(const VFSArchiveRawHostConfiguration &_rhs) const noexcept { return path == _rhs.path; }
 };

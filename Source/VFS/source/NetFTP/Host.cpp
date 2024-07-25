@@ -28,9 +28,9 @@ public:
     long port = 21;
     bool active = false;
 
-    const char *Tag() const { return FTPHost::UniqueTag; }
+    [[nodiscard]] const char *Tag() const { return FTPHost::UniqueTag; }
 
-    const char *Junction() const { return server_url.c_str(); }
+    [[nodiscard]] const char *Junction() const { return server_url.c_str(); }
 
     bool operator==(const VFSNetFTPHostConfiguration &_rhs) const
     {
@@ -38,7 +38,7 @@ public:
                start_dir == _rhs.start_dir && port == _rhs.port && active == _rhs.active;
     }
 
-    const char *VerboseJunction() const { return verbose.c_str(); }
+    [[nodiscard]] const char *VerboseJunction() const { return verbose.c_str(); }
 };
 
 FTPHost::~FTPHost() = default;

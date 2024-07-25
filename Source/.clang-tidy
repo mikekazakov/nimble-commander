@@ -3,6 +3,7 @@
 Checks: >
   -*,
   -clang-diagnostic-c99-designator,
+  misc-use-internal-linkage,
   modernize-avoid-bind,
   # modernize-avoid-c-arrays, <-- not yet looked into
   modernize-concat-nested-namespaces,
@@ -35,7 +36,7 @@ Checks: >
   modernize-use-noexcept,
   modernize-use-nullptr,
   modernize-use-override,
-  # modernize-use-ranges, <-- not yet looked into
+  modernize-use-ranges,
   modernize-use-starts-ends-with,
   modernize-use-std-format,
   modernize-use-std-numbers,

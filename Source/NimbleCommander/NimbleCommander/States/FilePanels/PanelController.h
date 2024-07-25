@@ -68,7 +68,7 @@ public:
     ActivityTicket(ActivityTicket &&) noexcept;
     ~ActivityTicket();
     void operator=(const ActivityTicket &) = delete;
-    void operator=(ActivityTicket &&) noexcept;
+    ActivityTicket &operator=(ActivityTicket &&) noexcept;
 
 private:
     void Reset();

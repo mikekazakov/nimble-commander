@@ -1,4 +1,4 @@
-/* Copyright (c) 2017-2023 Michael G. Kazakov
+/* Copyright (c) 2017-2024 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -41,7 +41,7 @@ ScopedObservableBase::ObservationTicket::~ObservationTicket()
     }
 }
 
-const ScopedObservableBase::ObservationTicket &
+ScopedObservableBase::ObservationTicket &
 ScopedObservableBase::ObservationTicket::operator=(ScopedObservableBase::ObservationTicket &&_r) noexcept
 {
     if( *this ) {

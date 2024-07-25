@@ -71,13 +71,14 @@ ActivityTicket::~ActivityTicket()
     Reset();
 }
 
-void ActivityTicket::operator=(ActivityTicket &&_rhs) noexcept
+ActivityTicket &ActivityTicket::operator=(ActivityTicket &&_rhs) noexcept
 {
     Reset();
     panel = _rhs.panel;
     ticket = _rhs.ticket;
     _rhs.panel = nil;
     _rhs.ticket = 0;
+    return *this;
 }
 
 void ActivityTicket::Reset()

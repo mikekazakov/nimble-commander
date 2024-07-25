@@ -5,7 +5,6 @@
 namespace nc::panel {
 
 using base::indeterminate;
-using base::tribool;
 
 bool PresentationItemsColoringFilter::IsEmpty() const
 {

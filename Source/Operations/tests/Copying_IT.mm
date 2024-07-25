@@ -20,7 +20,6 @@
 using nc::ops::Copying;
 using nc::ops::CopyingOptions;
 using nc::ops::OperationState;
-using nc::utility::NativeFSManager;
 
 static std::vector<std::byte> MakeNoise(size_t _size);
 static bool Save(const std::filesystem::path &_filepath, std::span<const std::byte> _content);

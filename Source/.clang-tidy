@@ -3,6 +3,10 @@
 Checks: >
   -*,
   -clang-diagnostic-c99-designator,
+  misc-uniqueptr-reset-release,
+  misc-unused-alias-decls,
+  misc-unused-parameters,
+  misc-unused-using-decls,
   misc-use-internal-linkage,
   modernize-avoid-bind,
   # modernize-avoid-c-arrays, <-- not yet looked into

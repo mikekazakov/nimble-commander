@@ -108,13 +108,14 @@ TEST_CASE(PREFIX "Settings()")
 TEST_CASE(PREFIX "Loads main settings from an override file")
 {
     TempTestDir dir;
-    auto base = dir.directory/"base";
-    auto ovr = dir.directory/"ovr";
+    auto base = dir.directory / "base";
+    auto ovr = dir.directory / "ovr";
     std::filesystem::create_directory(base);
     std::filesystem::create_directory(ovr);
-    SECTION( "Sane overrides" ) {
-        std::ofstream{base /  "Main.json"} << R"( some nonesense )";
-        std::ofstream{ovr /  "Main.json"} << R"({ "langs": [
+    SECTION("Sane overrides")
+    {
+        std::ofstream{base / "Main.json"} << R"( some nonesense )";
+        std::ofstream{ovr / "Main.json"} << R"({ "langs": [
             {"name": "C++", "settings": "cpp.json", "filemask":"*.cpp"}
         ]})";
         std::ofstream{base / "cpp.json"} << "Hello, World!";
@@ -122,17 +123,19 @@ TEST_CASE(PREFIX "Loads main settings from an override file")
         REQUIRE(stor.Settings("C++") != nullptr);
         CHECK(*stor.Settings("C++") == "Hello, World!");
     }
-    SECTION( "Corrupted overrides" ) {
-        std::ofstream{base /  "Main.json"} << R"({ "langs": [
+    SECTION("Corrupted overrides")
+    {
+        std::ofstream{base / "Main.json"} << R"({ "langs": [
             {"name": "C++", "settings": "cpp.json", "filemask":"*.cpp"}
         ]})";
-        std::ofstream{ovr /  "Main.json"} << R"( some nonesense )";
+        std::ofstream{ovr / "Main.json"} << R"( some nonesense )";
         std::ofstream{base / "cpp.json"} << "Hello, World!";
         FSL stor{base, ovr};
         REQUIRE(stor.Settings("C++") == nullptr);
     }
-    SECTION( "Load settings from the overrides directory" ) {
-        std::ofstream{base /  "Main.json"} << R"({ "langs": [
+    SECTION("Load settings from the overrides directory")
+    {
+        std::ofstream{base / "Main.json"} << R"({ "langs": [
             {"name": "C++", "settings": "cpp.json", "filemask":"*.cpp"}
         ]})";
         std::ofstream{base / "cpp.json"} << "Hello, Base!";
@@ -142,4 +145,3 @@ TEST_CASE(PREFIX "Loads main settings from an override file")
         CHECK(*stor.Settings("C++") == "Hello, Overrides!");
     }
 }
-

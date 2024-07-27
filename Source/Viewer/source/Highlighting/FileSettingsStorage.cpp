@@ -1,6 +1,7 @@
 // Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Viewer/Highlighting/FileSettingsStorage.h>
 #include <Viewer/Log.h>
+#include <Utility/FSEventsDirUpdate.h>
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <ranges>
@@ -36,7 +37,7 @@ FileSettingsStorage::FileSettingsStorage(const std::filesystem::path &_base_dir,
             m_Langs = LoadLangs(overrides_main);
         } catch( std::exception &ex ) {
             // Something went wrong with the overrides, complain but allow to continue
-            Log::Info(SPDLOC,
+            Log::Warn(SPDLOC,
                       "Unable to load the languages definitions from '{}', continuing with no definitions",
                       overrides_main.native());
         }
@@ -45,6 +46,13 @@ FileSettingsStorage::FileSettingsStorage(const std::filesystem::path &_base_dir,
         // No overrides main exist - use the base file
         m_Langs = LoadLangs(base_main);
     }
+
+    SubscribeToOverridesChanges();
+}
+
+FileSettingsStorage::~FileSettingsStorage()
+{
+    UnsubscribeFromOverridesChanges();
 }
 
 std::vector<FileSettingsStorage::Lang> FileSettingsStorage::LoadLangs(const std::filesystem::path &_path) const
@@ -114,8 +122,34 @@ std::vector<FileSettingsStorage::Lang> FileSettingsStorage::LoadLangs(const std:
     return output;
 }
 
+void FileSettingsStorage::ReloadLangs()
+{
+    const std::filesystem::path base_main = m_BaseDir / g_MainFile;
+    const std::filesystem::path overrides_main = m_OverridesDir / g_MainFile;
+    m_Langs.clear();
+
+    try {
+        if( RegFileExists(overrides_main) ) {
+            m_Langs = LoadLangs(overrides_main);
+        }
+        else {
+            m_Langs = LoadLangs(base_main);
+        }
+    } catch( std::exception &ex ) {
+        // Something went wrong with the overrides, complain but allow to continue
+        Log::Warn(SPDLOC,
+                  "Unable to reload the languages definitions from '{}', continuing with no definitions",
+                  overrides_main.native());
+    }
+    m_Outdated = false;
+}
+
 std::optional<std::string> FileSettingsStorage::Language(std::string_view _filename) noexcept
 {
+    if( m_Outdated ) {
+        ReloadLangs();
+    }
+
     for( auto &lang : m_Langs ) {
         if( lang.mask.MatchName(_filename) ) {
             return lang.name;
@@ -126,9 +160,15 @@ std::optional<std::string> FileSettingsStorage::Language(std::string_view _filen
 
 std::shared_ptr<const std::string> FileSettingsStorage::Settings(std::string_view _lang)
 {
+    Log::Trace(SPDLOC, "Settings() called");
+
     if( auto sett_it = m_Settings.find(_lang); sett_it != m_Settings.end() ) {
         Log::Trace(SPDLOC, "Retreived the syntax settings for the language '{}'", _lang);
         return sett_it->second;
+    }
+
+    if( m_Outdated ) {
+        ReloadLangs();
     }
 
     const auto lang_it = std::ranges::find_if(m_Langs, [&](auto &lang) { return lang.name == _lang; });
@@ -154,6 +194,29 @@ std::shared_ptr<const std::string> FileSettingsStorage::Settings(std::string_vie
         Log::Error(SPDLOC, "Unable to load the syntax settings from the file '{}'", settings_path.native());
         return {};
     }
+}
+
+void FileSettingsStorage::SubscribeToOverridesChanges()
+{
+    Log::Trace(SPDLOC, "SubscribeToOverridesChanges() called");
+    m_OverridesObservationToken =
+        utility::FSEventsDirUpdate::Instance().AddWatchPath(m_OverridesDir.c_str(), [this] { OverridesChanged(); });
+}
+
+void FileSettingsStorage::UnsubscribeFromOverridesChanges()
+{
+    Log::Trace(SPDLOC, "UnsubscribeFromOverridesChanges() called");
+    if( m_OverridesObservationToken ) {
+        utility::FSEventsDirUpdate::Instance().RemoveWatchPathWithTicket(m_OverridesObservationToken);
+        m_OverridesObservationToken = 0;
+    }
+}
+
+void FileSettingsStorage::OverridesChanged()
+{
+    Log::Trace(SPDLOC, "OverridesChanged() called");
+    m_Outdated = true;  // mark the definitions as outdated
+    m_Settings.clear(); // drop anything was loaded before
 }
 
 } // namespace nc::viewer::hl

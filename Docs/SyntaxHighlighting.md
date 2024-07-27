@@ -69,9 +69,9 @@ Here's an example of such settings file:
 
 In addition to the styles mapping, the settings file also provides the name of the lexer to be used, lists of keywords, and lexer properties.
 
-These JSON files are all located in the application directory `SyntaxHighlighting`, which is currently non-modifiable. In the future, Nimble Commander will support overriding with files placed in the `~/Library/Application Support/...` directory.
+These JSON files are located in the application's `SyntaxHighlighting` directory, shipped with the application. This directory also contains the `Main.json` file, which defines the list of known languages, their file masks, and the filenames of the settings for each language. 
 
-This directory also contains the `Main.json` file, which defines the list of known languages, their file masks, and the filenames of the settings for each language.
+Nimble Commander supports overriding these settings with files placed in the `~/Library/Application Support/Nimble Commander/SyntaxHighlighting` directory. Any file will first be looked for in the `Application Support` directory, and if not found, in the application directory. Changes in the overrides directory will be automatically picked up by Nimble Commander, and the next time the Viewer is shown, the updated settings will be used.
 
 ## Helper Tool
 

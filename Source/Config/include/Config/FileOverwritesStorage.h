@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "OverwritesStorage.h"
@@ -12,7 +12,7 @@ namespace nc::config {
 class FileOverwritesStorage : public OverwritesStorage
 {
 public:
-    FileOverwritesStorage(std::string_view _file_path);
+    FileOverwritesStorage(const std::filesystem::path &_file_path);
     FileOverwritesStorage(const FileOverwritesStorage &) = delete;
     ~FileOverwritesStorage();
 

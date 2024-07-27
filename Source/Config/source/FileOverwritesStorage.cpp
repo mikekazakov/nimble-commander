@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileOverwritesStorage.h"
 #include "Log.h"
 #include <sys/stat.h>
@@ -16,10 +16,10 @@ using utility::FSEventsDirUpdate;
 static std::optional<std::string> Load(const std::string &_filepath);
 static time_t ModificationTime(const std::string &_filepath);
 
-FileOverwritesStorage::FileOverwritesStorage(std::string_view _file_path) : m_Path(_file_path)
+FileOverwritesStorage::FileOverwritesStorage(const std::filesystem::path &_file_path) : m_Path(_file_path)
 {
     Log::Trace(SPDLOC, "Created storage with path: {}", _file_path);
-    auto parent_path = std::filesystem::path{std::string{_file_path}}.parent_path();
+    auto parent_path = _file_path.parent_path();
     Log::Trace(SPDLOC, "Setting observation for directory: {}", parent_path);
     m_DirObservationTicket =
         FSEventsDirUpdate::Instance().AddWatchPath(parent_path.c_str(), [this] { OverwritesDirChanged(); });

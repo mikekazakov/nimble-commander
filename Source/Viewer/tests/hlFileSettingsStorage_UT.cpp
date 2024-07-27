@@ -3,11 +3,15 @@
 #include "Highlighting/FileSettingsStorage.h"
 #include <robin_hood.h>
 #include <fstream>
+#include <Base/dispatch_cpp.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 using namespace nc::viewer::hl;
 using FSL = FileSettingsStorage;
 
 #define PREFIX "hl::FileSettingsStorage "
+
+static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation);
 
 TEST_CASE(PREFIX "Check invalid inputs")
 {
@@ -103,4 +107,145 @@ TEST_CASE(PREFIX "Settings()")
     CHECK(stor.Settings("C++").get() == stor.Settings("C++").get());
     CHECK(stor.Settings("C#") == nullptr);
     CHECK(stor.Settings("C#") == nullptr);
+}
+
+TEST_CASE(PREFIX "Loads main settings from an override file")
+{
+    TempTestDir dir;
+    auto base = dir.directory / "base";
+    auto ovr = dir.directory / "ovr";
+    std::filesystem::create_directory(base);
+    std::filesystem::create_directory(ovr);
+    SECTION("Sane overrides")
+    {
+        std::ofstream{base / "Main.json"} << R"( some nonesense )";
+        std::ofstream{ovr / "Main.json"} << R"({ "langs": [
+            {"name": "C++", "settings": "cpp.json", "filemask":"*.cpp"}
+        ]})";
+        std::ofstream{base / "cpp.json"} << "Hello, World!";
+        FSL stor{base, ovr};
+        REQUIRE(stor.Settings("C++") != nullptr);
+        CHECK(*stor.Settings("C++") == "Hello, World!");
+    }
+    SECTION("Corrupted overrides")
+    {
+        std::ofstream{base / "Main.json"} << R"({ "langs": [
+            {"name": "C++", "settings": "cpp.json", "filemask":"*.cpp"}
+        ]})";
+        std::ofstream{ovr / "Main.json"} << R"( some nonesense )";
+        std::ofstream{base / "cpp.json"} << "Hello, World!";
+        FSL stor{base, ovr};
+        REQUIRE(stor.Settings("C++") == nullptr);
+    }
+    SECTION("Load settings from the overrides directory")
+    {
+        std::ofstream{base / "Main.json"} << R"({ "langs": [
+            {"name": "C++", "settings": "cpp.json", "filemask":"*.cpp"}
+        ]})";
+        std::ofstream{base / "cpp.json"} << "Hello, Base!";
+        std::ofstream{ovr / "cpp.json"} << "Hello, Overrides!";
+        FSL stor{base, ovr};
+        REQUIRE(stor.Settings("C++") != nullptr);
+        CHECK(*stor.Settings("C++") == "Hello, Overrides!");
+    }
+}
+
+TEST_CASE(PREFIX "React to changes in the overrides directory")
+{
+    TempTestDir dir;
+    auto base = dir.directory / "base";
+    auto ovr = dir.directory / "ovr";
+    std::filesystem::create_directory(base);
+    std::filesystem::create_directory(ovr);
+    std::ofstream{base / "Main.json"} << R"({ "langs": [
+        {"name": "C++", "settings": "cpp.json", "filemask":"*.cpp"},
+        {"name": "JS", "settings": "js.json", "filemask":"*.js"}
+    ]})";
+    std::ofstream{ovr / "Main.json"} << R"({ "langs": [
+        {"name": "C++", "settings": "cpp.json", "filemask":"*.cpp"}
+    ]})";
+    std::ofstream{base / "cpp.json"} << "Hello, World! Base";
+    std::ofstream{base / "js.json"} << "JavaScript! Base";
+    std::ofstream{ovr / "cpp.json"} << "Hello, World! Ovr";
+    FSL stor{base, ovr};
+
+    SECTION("Change of the settings file in the overrides")
+    {
+        REQUIRE(stor.Settings("C++") != nullptr);
+        CHECK(*stor.Settings("C++") == "Hello, World! Ovr");
+        std::ofstream{ovr / "cpp.json"} << "Hello, World! Take #2";
+        CHECK(runMainLoopUntilExpectationOrTimeout(std::chrono::seconds{10}, [&] {
+            return stor.Settings("C++") != nullptr && *stor.Settings("C++") == "Hello, World! Take #2";
+        }));
+    }
+    SECTION("Override settings file removed")
+    {
+        REQUIRE(stor.Settings("C++") != nullptr);
+        CHECK(*stor.Settings("C++") == "Hello, World! Ovr");
+        std::filesystem::remove(ovr / "cpp.json");
+        CHECK(runMainLoopUntilExpectationOrTimeout(std::chrono::seconds{10}, [&] {
+            return stor.Settings("C++") != nullptr && *stor.Settings("C++") == "Hello, World! Base";
+        }));
+    }
+    SECTION("Override settings file added")
+    {
+        std::filesystem::remove(ovr / "cpp.json");
+        REQUIRE(stor.Settings("C++") != nullptr);
+        CHECK(*stor.Settings("C++") == "Hello, World! Base");
+        std::ofstream{ovr / "cpp.json"} << "Hello, World! Take #2";
+        CHECK(runMainLoopUntilExpectationOrTimeout(std::chrono::seconds{10}, [&] {
+            return stor.Settings("C++") != nullptr && *stor.Settings("C++") == "Hello, World! Take #2";
+        }));
+    }
+    SECTION("Change of the main file in the overrides")
+    {
+        std::ofstream{base / "java.json"} << "Hey there!";
+        std::ofstream{ovr / "Main.json"} << R"({ "langs": [
+            {"name": "C++", "settings": "cpp.json", "filemask":"*.cpp"},
+            {"name": "Java", "settings": "java.json", "filemask":"*.java"}
+        ]})";
+        CHECK(runMainLoopUntilExpectationOrTimeout(std::chrono::seconds{10}, [&] {
+            return stor.Settings("Java") != nullptr && *stor.Settings("Java") == "Hey there!";
+        }));
+    }
+    SECTION("Removal of the main file in the overrides")
+    {
+        REQUIRE(stor.Settings("JS") == nullptr);
+        std::filesystem::remove(ovr / "Main.json");
+        CHECK(runMainLoopUntilExpectationOrTimeout(std::chrono::seconds{10}, [&] {
+            return stor.Settings("JS") != nullptr && *stor.Settings("JS") == "JavaScript! Base";
+        }));
+    }
+    SECTION("Adding of the main file in the overrides")
+    {
+        REQUIRE(stor.Settings("JS") == nullptr);
+        std::filesystem::remove(ovr / "Main.json");
+        CHECK(runMainLoopUntilExpectationOrTimeout(std::chrono::seconds{10}, [&] {
+            return stor.Settings("JS") != nullptr && *stor.Settings("JS") == "JavaScript! Base";
+        }));
+        std::ofstream{ovr / "java.json"} << "Hey there!";
+        std::ofstream{ovr / "Main.json"} << R"({ "langs": [
+            {"name": "C++", "settings": "cpp.json", "filemask":"*.cpp"},
+            {"name": "Java", "settings": "java.json", "filemask":"*.java"}
+        ]})";
+        CHECK(runMainLoopUntilExpectationOrTimeout(std::chrono::seconds{10}, [&] {
+            return stor.Settings("Java") != nullptr && *stor.Settings("Java") == "Hey there!";
+        }));
+    }
+}
+
+static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation)
+{
+    dispatch_assert_main_queue();
+    assert(_timeout.count() > 0);
+    assert(_expectation);
+    const auto start_tp = std::chrono::steady_clock::now();
+    const auto time_slice = 1. / 100.; // 10 ms;
+    while( true ) {
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, time_slice, false);
+        if( std::chrono::steady_clock::now() - start_tp > _timeout )
+            return false;
+        if( _expectation() )
+            return true;
+    }
 }

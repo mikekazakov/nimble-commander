@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegateCPP.h"
 #include <Utility/PathManip.h>
 #include <Utility/StringExtras.h>
@@ -7,21 +7,21 @@
 
 namespace nc {
 
-const std::string &AppDelegate::ConfigDirectory()
+const std::filesystem::path &AppDelegate::ConfigDirectory()
 {
     return NCAppDelegate.me.configDirectory;
 }
 
-const std::string &AppDelegate::StateDirectory()
+const std::filesystem::path &AppDelegate::StateDirectory()
 {
     return NCAppDelegate.me.stateDirectory;
 }
 
-const std::string &AppDelegate::SupportDirectory()
+const std::filesystem::path &AppDelegate::SupportDirectory()
 {
     // this is a duplicate of NCAppDelegate.supportDirectory,
     // but it has to be here to break down an initialization dependency circle
-    [[clang::no_destroy]] static const std::string support_dir = [] {
+    [[clang::no_destroy]] static const std::filesystem::path support_dir = [] {
         auto path = NSFileManager.defaultManager.applicationSupportDirectory;
         return EnsureTrailingSlash(path.fileSystemRepresentationSafe);
     }();

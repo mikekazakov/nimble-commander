@@ -226,9 +226,9 @@ static NCAppDelegate *g_Me = nil;
     std::vector<NCMainWindowController *> m_MainWindows;
     std::vector<InternalViewerWindowController *> m_ViewerWindows;
     nc::spinlock m_ViewerWindowsLock;
-    std::string m_SupportDirectory;
-    std::string m_ConfigDirectory;
-    std::string m_StateDirectory;
+    std::filesystem::path m_SupportDirectory;
+    std::filesystem::path m_ConfigDirectory;
+    std::filesystem::path m_StateDirectory;
     std::vector<nc::config::Token> m_ConfigObservationTickets;
     upward_flag m_FinishedLaunching;
     std::shared_ptr<nc::panel::FavoriteLocationsStorageImpl> m_Favorites;
@@ -478,19 +478,19 @@ static NCAppDelegate *g_Me = nil;
 
     g_Config = new nc::config::ConfigImpl(
         *config_defaults,
-        std::make_shared<nc::config::FileOverwritesStorage>(self.configDirectory + "Config.json"),
+        std::make_shared<nc::config::FileOverwritesStorage>(self.configDirectory / "Config.json"),
         std::make_shared<nc::config::DelayedAsyncExecutor>(write_delay),
         std::make_shared<nc::config::DelayedAsyncExecutor>(reload_delay));
 
     g_State = new nc::config::ConfigImpl(
         *state_defaults,
-        std::make_shared<nc::config::FileOverwritesStorage>(self.stateDirectory + "State.json"),
+        std::make_shared<nc::config::FileOverwritesStorage>(self.stateDirectory / "State.json"),
         std::make_shared<nc::config::DelayedAsyncExecutor>(write_delay),
         std::make_shared<nc::config::DelayedAsyncExecutor>(reload_delay));
 
     g_NetworkConnectionsConfig = new nc::config::ConfigImpl(
         "",
-        std::make_shared<nc::config::FileOverwritesStorage>(self.configDirectory + "NetworkConnections.json"),
+        std::make_shared<nc::config::FileOverwritesStorage>(self.configDirectory / "NetworkConnections.json"),
         std::make_shared<nc::config::DelayedAsyncExecutor>(write_delay),
         std::make_shared<nc::config::DelayedAsyncExecutor>(reload_delay));
 
@@ -971,8 +971,20 @@ static void DoTemporaryFileStoragePurge()
 
 - (nc::viewer::hl::SettingsStorage &)syntaxHighlightingSettingsStorage
 {
+    // if the overrides directory doesn't exist - create it. Check it only once per run
+    static std::once_flag once;
+    std::call_once(once, [self] {
+        const std::filesystem::path overrides_dir = self.supportDirectory / "SyntaxHighlighting";
+        std::error_code ec = {};
+        if( !std::filesystem::exists(overrides_dir, ec) ) {
+            std::filesystem::create_directory(overrides_dir, ec);
+        }
+    });
+
     [[clang::no_destroy]] static nc::viewer::hl::FileSettingsStorage storage{
-        [NSBundle.mainBundle pathForResource:@"SyntaxHighlighting" ofType:@""].fileSystemRepresentation, ""};
+        [NSBundle.mainBundle pathForResource:@"SyntaxHighlighting" ofType:@""].fileSystemRepresentation,
+        self.supportDirectory / "SyntaxHighlighting"};
+
     return storage;
 }
 

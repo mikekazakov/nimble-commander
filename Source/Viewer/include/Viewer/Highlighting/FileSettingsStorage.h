@@ -12,6 +12,9 @@ class FileSettingsStorage : public SettingsStorage
 {
 public:
     FileSettingsStorage(const std::filesystem::path &_base_dir, const std::filesystem::path &_overrides_dir);
+    FileSettingsStorage(const FileSettingsStorage &) = delete;
+    ~FileSettingsStorage();
+    FileSettingsStorage &operator=(const FileSettingsStorage &) = delete;
 
     std::optional<std::string> Language(std::string_view _filename) noexcept override;
 
@@ -24,9 +27,20 @@ private:
         nc::utility::FileMask mask;
     };
 
-    std::vector<Lang> LoadLangs();
+    // Loads and parses the contents of the "Main.json" file
+    std::vector<Lang> LoadLangs(const std::filesystem::path &_path) const;
+
+    void ReloadLangs();
+
+    void SubscribeToOverridesChanges();
+    void UnsubscribeFromOverridesChanges();
+    void OverridesChanged();
 
     std::filesystem::path m_BaseDir;
+    std::filesystem::path m_OverridesDir;
+    uint64_t m_OverridesObservationToken = 0;
+    bool m_Outdated = false;
+
     std::vector<Lang> m_Langs;
     robin_hood::unordered_flat_map<std::string,
                                    std::shared_ptr<const std::string>,

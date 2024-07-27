@@ -4,6 +4,7 @@
 
 #include <VFS/VFS_fwd.h>
 #include <Cocoa/Cocoa.h>
+#include <filesystem>
 
 @class NCConfigObjCBridge;
 @class NCMainWindowController;
@@ -86,18 +87,18 @@ class NativeHost;
  * Support dir, ~/Library/Application Support/Nimble Commander/.
  * Is in Containers for Sandboxes versions
  */
-@property(nonatomic, readonly) const std::string &supportDirectory;
+@property(nonatomic, readonly) const std::filesystem::path &supportDirectory;
 
 /**
  * By default this dir is ~/Library/Application Support/Nimble Commander/Config/.
  * May change in the future.
  */
-@property(nonatomic, readonly) const std::string &configDirectory;
+@property(nonatomic, readonly) const std::filesystem::path &configDirectory;
 
 /**
  * This dir is ~/Library/Application Support/Nimble Commander/State/.
  */
-@property(nonatomic, readonly) const std::string &stateDirectory;
+@property(nonatomic, readonly) const std::filesystem::path &stateDirectory;
 
 @property(nonatomic, readonly) NCConfigObjCBridge *config;
 

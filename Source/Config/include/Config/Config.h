@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string_view>
@@ -108,7 +108,7 @@ public:
     Token(Token &&) noexcept;
     ~Token();
 
-    const Token &operator=(Token &&) noexcept;
+    Token &operator=(Token &&) noexcept;
 
     operator bool() const noexcept;
 

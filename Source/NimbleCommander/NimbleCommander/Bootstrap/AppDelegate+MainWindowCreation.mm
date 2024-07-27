@@ -44,7 +44,7 @@ static const auto g_ConfigRestoreLastWindowState = "filePanel.general.restoreLas
 
 namespace {
 
-enum class CreationContext {
+enum class CreationContext : uint8_t {
     Default,
     ManualRestoration,
     SystemRestoration

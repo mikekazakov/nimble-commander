@@ -7,7 +7,6 @@
 
 using nc::config::ConfigImpl;
 using nc::config::NonPersistentOverwritesStorage;
-using nc::config::Token;
 
 static std::shared_ptr<NonPersistentOverwritesStorage> MakeDummyStorage();
 static std::shared_ptr<NonPersistentOverwritesStorage> MakeDummyStorage(std::string_view _value);

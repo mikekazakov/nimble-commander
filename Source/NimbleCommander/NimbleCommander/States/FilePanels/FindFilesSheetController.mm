@@ -54,7 +54,7 @@ static std::string to_relative_path(const VFSHostPtr &_in_host, std::string _pat
         a = a->Parent();
     }
 
-    if( _base_path.length() > 1 && _path.find(_base_path) == 0 )
+    if( _base_path.length() > 1 && _path.starts_with(_base_path) )
         _path.replace(0, _base_path.length(), "./");
     return _path;
 }

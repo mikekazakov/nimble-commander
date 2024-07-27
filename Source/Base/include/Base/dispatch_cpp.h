@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <dispatch/dispatch.h>
@@ -81,7 +81,7 @@ public:
     dispatch_queue(const char *label = nullptr, bool concurrent = false);
     dispatch_queue(const dispatch_queue &rhs);
     ~dispatch_queue();
-    const dispatch_queue &operator=(const dispatch_queue &rhs);
+    dispatch_queue &operator=(const dispatch_queue &rhs);
 
     void async(dispatch_block_t block);
     template <class T>

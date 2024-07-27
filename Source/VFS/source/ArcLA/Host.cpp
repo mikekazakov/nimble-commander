@@ -63,9 +63,9 @@ public:
     std::string path;
     std::optional<std::string> password;
 
-    const char *Tag() const { return ArchiveHost::UniqueTag; }
+    [[nodiscard]] const char *Tag() const { return ArchiveHost::UniqueTag; }
 
-    const char *Junction() const { return path.c_str(); }
+    [[nodiscard]] const char *Junction() const { return path.c_str(); }
 
     bool operator==(const VFSArchiveHostConfiguration &_rhs) const
     {

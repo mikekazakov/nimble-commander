@@ -11,8 +11,6 @@
 
 namespace nc::term {
 
-using utility::CharInfo;
-
 static std::u16string ConvertUTF8ToUTF16(std::string_view _utf8);
 static void ApplyTranslateMap(std::u16string &_utf16, const unsigned short *_map);
 

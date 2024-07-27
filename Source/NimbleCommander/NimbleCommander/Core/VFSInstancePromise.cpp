@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "VFSInstancePromise.h"
 #include "VFSInstanceManager.h"
 
@@ -34,7 +34,7 @@ VFSInstancePromise::VFSInstancePromise(const VFSInstancePromise &_rhs) : inst_id
         manager->IncPromiseCount(inst_id);
 }
 
-const VFSInstancePromise &VFSInstancePromise::operator=(const VFSInstancePromise &_rhs)
+VFSInstancePromise &VFSInstancePromise::operator=(const VFSInstancePromise &_rhs)
 {
     if( manager )
         manager->DecPromiseCount(inst_id);
@@ -45,7 +45,7 @@ const VFSInstancePromise &VFSInstancePromise::operator=(const VFSInstancePromise
     return *this;
 }
 
-const VFSInstancePromise &VFSInstancePromise::operator=(VFSInstancePromise &&_rhs) noexcept
+VFSInstancePromise &VFSInstancePromise::operator=(VFSInstancePromise &&_rhs) noexcept
 {
     if( manager )
         manager->DecPromiseCount(inst_id);

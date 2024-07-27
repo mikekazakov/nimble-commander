@@ -2,8 +2,8 @@
 #include "../include/VFS/VFSConfiguration.h"
 
 struct VFSConfigurationDummyModel {
-    inline const char *Tag() const { return ""; }
-    inline const char *Junction() const { return ""; }
+    [[nodiscard]] inline const char *Tag() const { return ""; }
+    [[nodiscard]] inline const char *Junction() const { return ""; }
     inline bool operator==(const VFSConfigurationDummyModel &) const { return false; }
 };
 

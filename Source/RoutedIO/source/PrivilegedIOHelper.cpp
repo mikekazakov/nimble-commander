@@ -640,7 +640,7 @@ static bool CheckHardening(const pid_t _client_pid)
     const CFPtr<SecCodeRef> code_ref = CFPtr<SecCodeRef>::adopt(code_ref_input);
 
     // Obtain it's dynamic signing information
-    CFDictionaryRef csinfo_input = NULL;
+    CFDictionaryRef csinfo_input = nullptr;
     if( OSStatus status = SecCodeCopySigningInformation(code_ref.get(), kSecCSDynamicInformation, &csinfo_input);
         status != errSecSuccess || csinfo_input == nullptr ) {
         return false;

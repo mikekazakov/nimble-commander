@@ -84,9 +84,9 @@ public:
     long port;
     std::string home; // optional ftp ssh servers, mandatory for sftp-only servers
 
-    const char *Tag() const { return SFTPHost::UniqueTag; }
+    [[nodiscard]] const char *Tag() const { return SFTPHost::UniqueTag; }
 
-    const char *Junction() const { return server_url.c_str(); }
+    [[nodiscard]] const char *Junction() const { return server_url.c_str(); }
 
     bool operator==(const SFTPHostConfiguration &_rhs) const
     {
@@ -94,7 +94,7 @@ public:
                port == _rhs.port && home == _rhs.home;
     }
 
-    const char *VerboseJunction() const { return verbose.c_str(); }
+    [[nodiscard]] const char *VerboseJunction() const { return verbose.c_str(); }
 };
 
 VFSConfiguration SFTPHost::Configuration() const

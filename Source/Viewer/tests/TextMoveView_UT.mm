@@ -22,18 +22,18 @@ using namespace nc::viewer;
 namespace {
 
 struct DummyTheme : Theme {
-    NSFont *Font() const override;
-    NSColor *OverlayColor() const override;
-    NSColor *TextColor() const override;
-    NSColor *TextSyntaxCommentColor() const override;
-    NSColor *TextSyntaxPreprocessorColor() const override;
-    NSColor *TextSyntaxKeywordColor() const override;
-    NSColor *TextSyntaxOperatorColor() const override;
-    NSColor *TextSyntaxIdentifierColor() const override;
-    NSColor *TextSyntaxNumberColor() const override;
-    NSColor *TextSyntaxStringColor() const override;
-    NSColor *ViewerSelectionColor() const override;
-    NSColor *ViewerBackgroundColor() const override;
+    [[nodiscard]] NSFont *Font() const override;
+    [[nodiscard]] NSColor *OverlayColor() const override;
+    [[nodiscard]] NSColor *TextColor() const override;
+    [[nodiscard]] NSColor *TextSyntaxCommentColor() const override;
+    [[nodiscard]] NSColor *TextSyntaxPreprocessorColor() const override;
+    [[nodiscard]] NSColor *TextSyntaxKeywordColor() const override;
+    [[nodiscard]] NSColor *TextSyntaxOperatorColor() const override;
+    [[nodiscard]] NSColor *TextSyntaxIdentifierColor() const override;
+    [[nodiscard]] NSColor *TextSyntaxNumberColor() const override;
+    [[nodiscard]] NSColor *TextSyntaxStringColor() const override;
+    [[nodiscard]] NSColor *ViewerSelectionColor() const override;
+    [[nodiscard]] NSColor *ViewerBackgroundColor() const override;
     void ObserveChanges(std::function<void()>) override;
 };
 

@@ -5,8 +5,6 @@
 
 namespace nc::term {
 
-using utility::CharInfo;
-
 Screen::Screen(unsigned _w, unsigned _h, ExtendedCharRegistry &_reg) : m_Registry(_reg), m_Buffer(_w, _h)
 
 {

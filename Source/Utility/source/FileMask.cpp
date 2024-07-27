@@ -62,7 +62,7 @@ class InplaceFormCLowercaseString
 {
 public:
     InplaceFormCLowercaseString(std::string_view _string) noexcept;
-    std::string_view str() const noexcept;
+    [[nodiscard]] std::string_view str() const noexcept;
 
 private:
     char m_Buf[4096]; // strings longer than this will be truncated and possibly not matched.

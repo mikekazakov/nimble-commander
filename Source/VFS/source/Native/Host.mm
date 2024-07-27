@@ -36,9 +36,9 @@ const char *NativeHost::UniqueTag = "native";
 class VFSNativeHostConfiguration
 {
 public:
-    const char *Tag() const { return VFSNativeHost::UniqueTag; }
+    [[nodiscard]] const char *Tag() const { return VFSNativeHost::UniqueTag; }
 
-    const char *Junction() const { return ""; }
+    [[nodiscard]] const char *Junction() const { return ""; }
 
     bool operator==(const VFSNativeHostConfiguration &) const { return true; }
 };

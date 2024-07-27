@@ -15,16 +15,16 @@ namespace nc::ops {
 //    it's better to cache results gathered on scanning stage
 
 struct CompressionJob::Source {
-    enum class ItemFlags : uint16_t {
-        no_flags = 0 << 0,
+    enum class ItemFlags : uint8_t {
+        none = 0 << 0,
         is_dir = 1 << 0,
         symlink = 1 << 1
     };
 
     struct ItemMeta {
-        unsigned base_path_indx; // m_BasePaths index
-        uint16_t base_vfs_indx;  // m_SourceHosts index
-        uint16_t flags;
+        unsigned base_path_indx = 0; // m_BasePaths index
+        uint16_t base_vfs_indx = 0;  // m_SourceHosts index
+        ItemFlags flags = ItemFlags::none;
     };
 
     base::chained_strings filenames;
@@ -40,6 +40,16 @@ struct CompressionJob::Source {
     unsigned FindOrInsertBasePath(const std::string &_path)
     {
         return static_cast<unsigned>(linear_find_or_insert(base_paths, _path));
+    }
+
+    friend constexpr ItemFlags operator&(const ItemFlags &_lhs, const ItemFlags &_rhs)
+    {
+        return static_cast<ItemFlags>(static_cast<int>(_lhs) & static_cast<int>(_rhs));
+    }
+
+    friend constexpr ItemFlags operator|(const ItemFlags &_lhs, const ItemFlags &_rhs)
+    {
+        return static_cast<ItemFlags>(static_cast<int>(_lhs) | static_cast<int>(_rhs));
     }
 };
 
@@ -147,14 +157,15 @@ void CompressionJob::ProcessItems()
 
 void CompressionJob::ProcessItem(const base::chained_strings::node &_node, int _index)
 {
+    using IF = Source::ItemFlags;
     const auto meta = m_Source->metas[_index];
     const auto rel_path = _node.to_str_with_pref();
     const auto full_path = EnsureNoTrailingSlash(m_Source->base_paths[meta.base_path_indx] + rel_path);
 
     StepResult result = StepResult::Stopped;
-    if( meta.flags & static_cast<int>(Source::ItemFlags::is_dir) )
+    if( (meta.flags & IF::is_dir) == IF::is_dir )
         result = ProcessDirectoryItem(_index, rel_path, full_path);
-    else if( meta.flags & static_cast<int>(Source::ItemFlags::symlink) )
+    else if( (meta.flags & IF::symlink) == IF::symlink )
         result = ProcessSymlinkItem(_index, rel_path, full_path);
     else
         result = ProcessRegularItem(_index, rel_path, full_path);
@@ -391,7 +402,6 @@ bool CompressionJob::ScanItem(const VFSListingItem &_item, Source &_ctx)
         Source::ItemMeta meta;
         meta.base_path_indx = _ctx.FindOrInsertBasePath(_item.Directory());
         meta.base_vfs_indx = _ctx.FindOrInsertHost(_item.Host());
-        meta.flags = static_cast<uint16_t>(Source::ItemFlags::no_flags);
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_item.Filename(), nullptr);
         Statistics().CommitEstimated(Statistics::SourceType::Bytes, _item.Size());
@@ -400,7 +410,7 @@ bool CompressionJob::ScanItem(const VFSListingItem &_item, Source &_ctx)
         Source::ItemMeta meta;
         meta.base_path_indx = _ctx.FindOrInsertBasePath(_item.Directory());
         meta.base_vfs_indx = _ctx.FindOrInsertHost(_item.Host());
-        meta.flags = static_cast<uint16_t>(Source::ItemFlags::symlink);
+        meta.flags = Source::ItemFlags::symlink;
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_item.Filename(), nullptr);
     }
@@ -408,7 +418,7 @@ bool CompressionJob::ScanItem(const VFSListingItem &_item, Source &_ctx)
         Source::ItemMeta meta;
         meta.base_path_indx = _ctx.FindOrInsertBasePath(_item.Directory());
         meta.base_vfs_indx = _ctx.FindOrInsertHost(_item.Host());
-        meta.flags = static_cast<uint16_t>(Source::ItemFlags::is_dir);
+        meta.flags = Source::ItemFlags::is_dir;
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_item.Filename() + "/", nullptr);
         auto &host = *_item.Host();
@@ -475,7 +485,6 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
         Source::ItemMeta meta;
         meta.base_vfs_indx = static_cast<uint16_t>(_vfs_no);
         meta.base_path_indx = _basepath_no;
-        meta.flags = static_cast<uint16_t>(Source::ItemFlags::no_flags);
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_filename, _prefix);
         Statistics().CommitEstimated(Statistics::SourceType::Bytes, stat_buffer.size);
@@ -484,7 +493,7 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
         Source::ItemMeta meta;
         meta.base_vfs_indx = static_cast<uint16_t>(_vfs_no);
         meta.base_path_indx = _basepath_no;
-        meta.flags = static_cast<uint16_t>(Source::ItemFlags::symlink);
+        meta.flags = Source::ItemFlags::symlink;
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_filename, _prefix);
     }
@@ -492,7 +501,7 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
         Source::ItemMeta meta;
         meta.base_vfs_indx = static_cast<uint16_t>(_vfs_no);
         meta.base_path_indx = _basepath_no;
-        meta.flags = static_cast<uint16_t>(Source::ItemFlags::is_dir);
+        meta.flags = Source::ItemFlags::is_dir;
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_filename + "/", _prefix);
 

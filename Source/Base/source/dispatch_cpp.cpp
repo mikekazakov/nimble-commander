@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/dispatch_cpp.h>
 #include <cassert>
 #include <fmt/core.h>
@@ -20,7 +20,7 @@ dispatch_queue::dispatch_queue(const dispatch_queue &rhs) : m_queue(rhs.m_queue)
     dispatch_retain(m_queue);
 }
 
-const dispatch_queue &dispatch_queue::operator=(const dispatch_queue &rhs)
+dispatch_queue &dispatch_queue::operator=(const dispatch_queue &rhs)
 {
     dispatch_release(m_queue);
     m_queue = rhs.m_queue;

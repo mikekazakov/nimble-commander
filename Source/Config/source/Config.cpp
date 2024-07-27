@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Config.h"
 
 namespace nc::config {
@@ -30,7 +30,7 @@ Token::~Token()
         m_Instance->Discard(*this);
 }
 
-const Token &Token::operator=(Token &&_rhs) noexcept
+Token &Token::operator=(Token &&_rhs) noexcept
 {
     if( *this )
         m_Instance->Discard(*this);

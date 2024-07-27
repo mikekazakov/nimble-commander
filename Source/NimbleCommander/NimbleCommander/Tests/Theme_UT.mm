@@ -8,7 +8,6 @@
 #include <rapidjson/error/en.h>
 
 using nc::Theme;
-using nc::ThemeAppearance;
 
 #define PREFIX "Theme "
 

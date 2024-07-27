@@ -243,13 +243,13 @@ ERROR_A:;
 class VFSPSHostConfiguration
 {
 public:
-    const char *Tag() const { return PSHost::UniqueTag; }
+    [[nodiscard]] const char *Tag() const { return PSHost::UniqueTag; }
 
-    const char *Junction() const { return ""; }
+    [[nodiscard]] const char *Junction() const { return ""; }
 
     bool operator==(const VFSPSHostConfiguration &) const { return true; }
 
-    const char *VerboseJunction() const { return "[psfs]:"; }
+    [[nodiscard]] const char *VerboseJunction() const { return "[psfs]:"; }
 };
 
 PSHost::PSHost() : Host("", std::shared_ptr<Host>(nullptr), UniqueTag), m_UpdateQ("PSHost")

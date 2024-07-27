@@ -10,7 +10,7 @@ using vfs::dropbox::Authenticator;
 
 namespace {
 
-enum class State {
+enum class State : uint8_t {
     Default = 0,
     Validating = 1,
     Success = 2,

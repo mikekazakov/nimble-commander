@@ -104,3 +104,42 @@ TEST_CASE(PREFIX "Settings()")
     CHECK(stor.Settings("C#") == nullptr);
     CHECK(stor.Settings("C#") == nullptr);
 }
+
+TEST_CASE(PREFIX "Loads main settings from an override file")
+{
+    TempTestDir dir;
+    auto base = dir.directory/"base";
+    auto ovr = dir.directory/"ovr";
+    std::filesystem::create_directory(base);
+    std::filesystem::create_directory(ovr);
+    SECTION( "Sane overrides" ) {
+        std::ofstream{base /  "Main.json"} << R"( some nonesense )";
+        std::ofstream{ovr /  "Main.json"} << R"({ "langs": [
+            {"name": "C++", "settings": "cpp.json", "filemask":"*.cpp"}
+        ]})";
+        std::ofstream{base / "cpp.json"} << "Hello, World!";
+        FSL stor{base, ovr};
+        REQUIRE(stor.Settings("C++") != nullptr);
+        CHECK(*stor.Settings("C++") == "Hello, World!");
+    }
+    SECTION( "Corrupted overrides" ) {
+        std::ofstream{base /  "Main.json"} << R"({ "langs": [
+            {"name": "C++", "settings": "cpp.json", "filemask":"*.cpp"}
+        ]})";
+        std::ofstream{ovr /  "Main.json"} << R"( some nonesense )";
+        std::ofstream{base / "cpp.json"} << "Hello, World!";
+        FSL stor{base, ovr};
+        REQUIRE(stor.Settings("C++") == nullptr);
+    }
+    SECTION( "Load settings from the overrides directory" ) {
+        std::ofstream{base /  "Main.json"} << R"({ "langs": [
+            {"name": "C++", "settings": "cpp.json", "filemask":"*.cpp"}
+        ]})";
+        std::ofstream{base / "cpp.json"} << "Hello, Base!";
+        std::ofstream{ovr / "cpp.json"} << "Hello, Overrides!";
+        FSL stor{base, ovr};
+        REQUIRE(stor.Settings("C++") != nullptr);
+        CHECK(*stor.Settings("C++") == "Hello, Overrides!");
+    }
+}
+

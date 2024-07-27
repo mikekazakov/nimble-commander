@@ -24,9 +24,11 @@ private:
         nc::utility::FileMask mask;
     };
 
-    std::vector<Lang> LoadLangs();
+    // Loads and parses the contents of the "Main.json" file
+    std::vector<Lang> LoadLangs(const std::filesystem::path &_path) const;
 
     std::filesystem::path m_BaseDir;
+    std::filesystem::path m_OverridesDir;
     std::vector<Lang> m_Langs;
     robin_hood::unordered_flat_map<std::string,
                                    std::shared_ptr<const std::string>,

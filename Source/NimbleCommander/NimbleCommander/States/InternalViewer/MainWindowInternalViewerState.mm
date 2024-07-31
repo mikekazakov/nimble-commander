@@ -14,9 +14,7 @@
 @property(nonatomic) IBOutlet NSSearchField *internalViewerToolbarSearchField;
 @property(nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
 @property(nonatomic) IBOutlet NSPopUpButton *internalViewerToolbarEncodingsPopUp;
-@property(nonatomic) IBOutlet NSPopUpButton *internalViewerToolbarModePopUp;
 @property(nonatomic) IBOutlet NSButton *internalViewerToolbarPositionButton;
-@property(nonatomic) IBOutlet NSTextField *internalViewerToolbarFileSizeLabel;
 @property(nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
 @property(nonatomic) IBOutlet NSButton *internalViewerToolbarWordWrapCheckBox;
 @property(nonatomic) IBOutlet NSButton *internalViewerToolbarSettingsButton;
@@ -33,9 +31,7 @@
 @synthesize internalViewerToolbarSearchField;
 @synthesize internalViewerToolbarSearchProgressIndicator;
 @synthesize internalViewerToolbarEncodingsPopUp;
-@synthesize internalViewerToolbarModePopUp;
 @synthesize internalViewerToolbarPositionButton;
-@synthesize internalViewerToolbarFileSizeLabel;
 @synthesize internalViewerToolbarPopover;
 @synthesize internalViewerToolbarWordWrapCheckBox;
 @synthesize internalViewerToolbarSettingsButton;
@@ -78,9 +74,7 @@
     m_Controller.searchField = self.internalViewerToolbarSearchField;
     m_Controller.searchProgressIndicator = self.internalViewerToolbarSearchProgressIndicator;
     m_Controller.encodingsPopUp = self.internalViewerToolbarEncodingsPopUp;
-    m_Controller.modePopUp = self.internalViewerToolbarModePopUp;
     m_Controller.positionButton = self.internalViewerToolbarPositionButton;
-    m_Controller.fileSizeLabel = self.internalViewerToolbarFileSizeLabel;
     m_Controller.wordWrappingCheckBox = self.internalViewerToolbarWordWrapCheckBox;
     m_Controller.settingsButton = self.internalViewerToolbarSettingsButton;
 }

@@ -99,9 +99,7 @@ struct BackgroundFileOpener {
     NSSearchField *m_SearchField;
     NSProgressIndicator *m_SearchProgressIndicator;
     NSPopUpButton *m_EncodingsPopUp;
-    NSPopUpButton *m_ModePopUp;
     NSButton *m_PositionButton;
-    NSTextField *m_FileSizeLabel;
     NSString *m_VerboseTitle;
     NSButton *m_WordWrappingCheckBox;
 }
@@ -110,9 +108,7 @@ struct BackgroundFileOpener {
 @synthesize searchField = m_SearchField;
 @synthesize searchProgressIndicator = m_SearchProgressIndicator;
 @synthesize encodingsPopUp = m_EncodingsPopUp;
-@synthesize modePopUp = m_ModePopUp;
 @synthesize positionButton = m_PositionButton;
-@synthesize fileSizeLabel = m_FileSizeLabel;
 @synthesize verboseTitle = m_VerboseTitle;
 @synthesize filePath = m_Path;
 @synthesize fileVFS = m_VFS;
@@ -244,9 +240,6 @@ struct BackgroundFileOpener {
             (encoding = EncodingFromXAttr(m_OriginalFile)) != encodings::ENCODING_INVALID )
             m_View.encoding = encoding;
     }
-
-    m_FileSizeLabel.stringValue =
-        ByteCountFormatter::Instance().ToNSString(m_ViewerFileWindow->FileSize(), ByteCountFormatter::Fixed6);
 
     m_View.hotkeyDelegate = self;
 }
@@ -498,25 +491,6 @@ struct BackgroundFileOpener {
     [self onSearchFieldAction:self];
 }
 
-- (void)setModePopUp:(NSPopUpButton *)modePopUp
-{
-    dispatch_assert_main_queue();
-    if( m_ModePopUp == modePopUp )
-        return;
-
-    m_ModePopUp = modePopUp;
-    m_ModePopUp.target = self;
-    m_ModePopUp.action = @selector(onModePopUpChanged:);
-    [m_ModePopUp removeAllItems];
-    [m_ModePopUp addItemWithTitle:@"Text"];
-    m_ModePopUp.lastItem.tag = static_cast<int>(ViewMode::Text);
-    [m_ModePopUp addItemWithTitle:@"Hex"];
-    m_ModePopUp.lastItem.tag = static_cast<int>(ViewMode::Hex);
-    [m_ModePopUp addItemWithTitle:@"Preview"];
-    m_ModePopUp.lastItem.tag = static_cast<int>(ViewMode::Preview);
-    [m_ModePopUp bind:@"selectedTag" toObject:m_View withKeyPath:@"mode" options:nil];
-}
-
 - (void)onModePopUpChanged:(id) [[maybe_unused]] _sender
 {
     dispatch_assert_main_queue();
@@ -562,14 +536,6 @@ struct BackgroundFileOpener {
         const long pos = string.integerValue;
         m_View.verticalPositionInBytes = std::clamp(pos, 0l, m_WorkFile->Size());
     }
-}
-
-- (void)setFileSizeLabel:(NSTextField *)fileSizeLabel
-{
-    dispatch_assert_main_queue();
-    if( m_FileSizeLabel == fileSizeLabel )
-        return;
-    m_FileSizeLabel = fileSizeLabel;
 }
 
 - (void)buildTitle
@@ -630,9 +596,6 @@ struct BackgroundFileOpener {
     m_ViewerFileWindow = std::move(_opener.viewer_file_window);
     m_SearchFileWindow = std::move(_opener.search_file_window);
     m_SearchInFile = std::move(_opener.search_in_file);
-
-    m_FileSizeLabel.stringValue =
-        ByteCountFormatter::Instance().ToNSString(m_ViewerFileWindow->FileSize(), ByteCountFormatter::Fixed6);
 }
 
 - (void)onRefresh

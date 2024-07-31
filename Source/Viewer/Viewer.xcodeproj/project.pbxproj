@@ -72,6 +72,7 @@
 		CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B5822106E3C0043A26D /* Tests.cpp */; };
 		CFD79B6A22106F080043A26D /* TextProcessing_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B6822106F000043A26D /* TextProcessing_UT.cpp */; };
 		CFD79B8422198DB50043A26D /* TextModeWorkingSet_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B8222198DA80043A26D /* TextModeWorkingSet_UT.cpp */; };
+		CFE5AF8F2C5812C30035CCFA /* ViewerFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE5AF8E2C5812C30035CCFA /* ViewerFooter.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -231,6 +232,8 @@
 		CFD79B702210B6DB0043A26D /* TextModeWorkingSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextModeWorkingSet.cpp; path = source/TextModeWorkingSet.cpp; sourceTree = "<group>"; };
 		CFD79B802214C46C0043A26D /* TextModeWorkingSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextModeWorkingSet.h; path = include/Viewer/TextModeWorkingSet.h; sourceTree = "<group>"; };
 		CFD79B8222198DA80043A26D /* TextModeWorkingSet_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextModeWorkingSet_UT.cpp; path = tests/TextModeWorkingSet_UT.cpp; sourceTree = "<group>"; };
+		CFE5AF8D2C5812B40035CCFA /* ViewerFooter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ViewerFooter.h; path = include/Viewer/ViewerFooter.h; sourceTree = "<group>"; };
+		CFE5AF8E2C5812C30035CCFA /* ViewerFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewerFooter.mm; path = source/ViewerFooter.mm; sourceTree = "<group>"; };
 		CFF54448261670F100A6C49C /* libHabanero.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libHabanero.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -370,6 +373,7 @@
 				CF5BF7C32C0B41F80057C92E /* TextModeWorkingSetHighlighting.h */,
 				CFD79B3D221045210043A26D /* TextProcessing.h */,
 				CFD79A9321F65B570043A26D /* Theme.h */,
+				CFE5AF8D2C5812B40035CCFA /* ViewerFooter.h */,
 				CFD79A9221F65B570043A26D /* ViewerImplementationProtocol.h */,
 				CFD79B0F2205B82F0043A26D /* ViewerSheet.h */,
 				CFD79A9721F65B570043A26D /* ViewerView.h */,
@@ -403,6 +407,7 @@
 				CF5BF7C52C0B42260057C92E /* TextModeWorkingSetHighlighting.cpp */,
 				CFD79B3F2210452C0043A26D /* TextProcessing.cpp */,
 				CFD79A8821F65B4F0043A26D /* Theme.mm */,
+				CFE5AF8E2C5812C30035CCFA /* ViewerFooter.mm */,
 				CFD79B112205B8360043A26D /* ViewerSheet.mm */,
 				CFD79A8921F65B4F0043A26D /* ViewerView.mm */,
 				CFD79B0421FE4CCC0043A26D /* ViewerViewController.mm */,
@@ -652,6 +657,7 @@
 				CF5BF7B92BFE8B540057C92E /* Client.cpp in Sources */,
 				CF5C1D7D255EEA6A00ADE703 /* ViewerViewController.mm in Sources */,
 				CF5C1D8F255EEA6A00ADE703 /* TextModeFrame.cpp in Sources */,
+				CFE5AF8F2C5812C30035CCFA /* ViewerFooter.mm in Sources */,
 				CF5C1D87255EEA6A00ADE703 /* TextModeWorkingSet.cpp in Sources */,
 				CF5C1D7C255EEA6A00ADE703 /* Theme.mm in Sources */,
 				CF5C1D84255EEA6A00ADE703 /* ViewerView.mm in Sources */,

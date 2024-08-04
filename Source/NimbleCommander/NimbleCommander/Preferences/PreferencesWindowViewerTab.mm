@@ -66,13 +66,15 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 {
     [super loadView];
 
-    for( const auto &i : encodings::LiteralEncodingsList() )
+    for( const auto &i : nc::utility::LiteralEncodingsList() )
         [self.DefaultEncoding addItemWithTitle:(__bridge NSString *)i.second];
-    int default_encoding = encodings::EncodingFromName(GlobalConfig().GetString(g_ConfigDefaultEncoding).c_str());
-    if( default_encoding == encodings::ENCODING_INVALID )
-        default_encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
+    nc::utility::Encoding default_encoding =
+        nc::utility::EncodingFromName(GlobalConfig().GetString(g_ConfigDefaultEncoding).c_str());
+    if( default_encoding == nc::utility::Encoding::ENCODING_INVALID )
+        default_encoding =
+            nc::utility::Encoding::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
 
-    for( const auto &i : encodings::LiteralEncodingsList() )
+    for( const auto &i : nc::utility::LiteralEncodingsList() )
         if( i.first == default_encoding ) {
             [self.DefaultEncoding selectItemWithTitle:(__bridge NSString *)i.second];
             break;
@@ -109,9 +111,9 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 
 - (IBAction)DefaultEncodingChanged:(id) [[maybe_unused]] _sender
 {
-    for( const auto &i : encodings::LiteralEncodingsList() )
+    for( const auto &i : nc::utility::LiteralEncodingsList() )
         if( [(__bridge NSString *)i.second isEqualToString:[[self.DefaultEncoding selectedItem] title]] ) {
-            GlobalConfig().Set(g_ConfigDefaultEncoding, encodings::NameFromEncoding(i.first));
+            GlobalConfig().Set(g_ConfigDefaultEncoding, nc::utility::NameFromEncoding(i.first));
             break;
         }
 }

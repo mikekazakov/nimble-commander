@@ -21,7 +21,7 @@ static nc::config::Value EntryToJSONObject(const History::Entry &_entry)
     o.AddMember("position", Value(_entry.position), g_CrtAllocator);
     o.AddMember("wrapping", Value(_entry.wrapping), g_CrtAllocator);
     o.AddMember("mode", Value(static_cast<int>(_entry.view_mode)), g_CrtAllocator);
-    o.AddMember("encoding", MakeStandaloneString(encodings::NameFromEncoding(_entry.encoding)), g_CrtAllocator);
+    o.AddMember("encoding", MakeStandaloneString(utility::NameFromEncoding(_entry.encoding)), g_CrtAllocator);
     o.AddMember("selection_loc", Value(static_cast<int64_t>(_entry.selection.location)), g_CrtAllocator);
     o.AddMember("selection_len", Value(static_cast<int64_t>(_entry.selection.length)), g_CrtAllocator);
     return o;
@@ -54,7 +54,7 @@ static std::optional<History::Entry> JSONObjectToEntry(const nc::config::Value &
         e.view_mode = static_cast<ViewMode>(_object["mode"].GetInt());
 
     if( has_string("encoding") )
-        e.encoding = encodings::EncodingFromName(_object["encoding"].GetString());
+        e.encoding = utility::EncodingFromName(_object["encoding"].GetString());
 
     if( has_number("selection_loc") && has_number("selection_len") ) {
         e.selection.location = _object["selection_loc"].GetInt64();

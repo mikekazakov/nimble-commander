@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SearchInFile.h"
 #include <Utility/Encodings.h>
 #include <VFS/FileWindow.h>
@@ -11,7 +11,7 @@ static const unsigned g_MaximumCodeUnit = 2;
 static bool IsWholePhrase(CFStringRef _string, CFRange _range);
 
 SearchInFile::SearchInFile(nc::vfs::FileWindow &_file)
-    : m_File(_file), m_TextSearchEncoding(encodings::ENCODING_INVALID)
+    : m_File(_file), m_TextSearchEncoding(utility::Encoding::ENCODING_INVALID)
 {
     if( !m_File.FileOpened() )
         throw std::invalid_argument("SearchInFile: FileWindow should be opened");
@@ -43,7 +43,7 @@ void SearchInFile::MoveCurrentPosition(uint64_t _pos)
         m_File.MoveWindow(m_Position);
 }
 
-void SearchInFile::ToggleTextSearch(CFStringRef _string, int _encoding)
+void SearchInFile::ToggleTextSearch(CFStringRef _string, utility::Encoding _encoding)
 {
     if( m_RequestedTextSearch != nullptr )
         CFRelease(m_RequestedTextSearch);
@@ -81,7 +81,7 @@ SearchInFile::Response SearchInFile::SearchText(uint64_t *_offset, uint64_t *_by
     if( m_File.FileSize() == 0 )
         return Response::NotFound; // for singular case
 
-    if( m_File.FileSize() < static_cast<size_t>(encodings::BytesForCodeUnit(m_TextSearchEncoding)) )
+    if( m_File.FileSize() < static_cast<size_t>(utility::BytesForCodeUnit(m_TextSearchEncoding)) )
         return Response::NotFound; // for singular case
 
     if( m_Position >= m_File.FileSize() )
@@ -109,15 +109,15 @@ SearchInFile::Response SearchInFile::SearchText(uint64_t *_offset, uint64_t *_by
                m_Position < m_File.WindowPos() + m_File.WindowSize()); // sanity check
 
         // get UniChars from this window using given encoding
-        assert(encodings::BytesForCodeUnit(m_TextSearchEncoding) <= 2); // TODO: support for UTF-32 in the future
-        bool isodd = (encodings::BytesForCodeUnit(m_TextSearchEncoding) == 2) && ((m_File.WindowPos() & 1) == 1);
-        encodings::InterpretAsUnichar(m_TextSearchEncoding,
-                                      static_cast<const unsigned char *>(m_File.Window()) + left_window_gap +
-                                          (isodd ? 1 : 0),
-                                      m_File.WindowSize() - left_window_gap - (isodd ? 1 : 0),
-                                      m_DecodedBuffer.get(),
-                                      m_DecodedBufferIndx.get(),
-                                      &m_DecodedBufferSize);
+        assert(utility::BytesForCodeUnit(m_TextSearchEncoding) <= 2); // TODO: support for UTF-32 in the future
+        bool isodd = (utility::BytesForCodeUnit(m_TextSearchEncoding) == 2) && ((m_File.WindowPos() & 1) == 1);
+        utility::InterpretAsUnichar(m_TextSearchEncoding,
+                                    static_cast<const unsigned char *>(m_File.Window()) + left_window_gap +
+                                        (isodd ? 1 : 0),
+                                    m_File.WindowSize() - left_window_gap - (isodd ? 1 : 0),
+                                    m_DecodedBuffer.get(),
+                                    m_DecodedBufferIndx.get(),
+                                    &m_DecodedBufferSize);
 
         assert(m_DecodedBufferSize != 0);
 
@@ -174,7 +174,7 @@ CFStringRef SearchInFile::TextSearchString()
     return m_RequestedTextSearch;
 }
 
-int SearchInFile::TextSearchEncoding()
+utility::Encoding SearchInFile::TextSearchEncoding()
 {
     return m_TextSearchEncoding;
 }

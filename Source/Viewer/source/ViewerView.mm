@@ -21,6 +21,7 @@ static const auto g_ConfigStickToBottomOnRefresh = "viewer.stickToBottomOnRefres
 static const auto g_ConfigEnableSyntaxHighlighting = "viewer.enableHighlighting";
 
 using nc::vfs::easy::CopyFileToTempStorage;
+using namespace nc;
 using namespace nc::viewer;
 
 @implementation NCViewerView {
@@ -149,21 +150,21 @@ using namespace nc::viewer;
 
 - (void)setFile:(std::shared_ptr<nc::vfs::FileWindow>)_file
 {
-    int encoding = encodings::EncodingFromName(m_Config->GetString(g_ConfigDefaultEncoding).c_str());
-    if( encoding == encodings::ENCODING_INVALID )
-        encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
+    utility::Encoding encoding = utility::EncodingFromName(m_Config->GetString(g_ConfigDefaultEncoding).c_str());
+    if( encoding == utility::Encoding::ENCODING_INVALID )
+        encoding = utility::Encoding::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
 
     StaticDataBlockAnalysis stat;
     DoStaticDataBlockAnalysis(_file->Window(), _file->WindowSize(), &stat);
     if( m_Config->GetBool(g_ConfigAutoDetectEncoding) ) {
         if( stat.likely_utf16_le )
-            encoding = encodings::ENCODING_UTF16LE;
+            encoding = utility::Encoding::ENCODING_UTF16LE;
         else if( stat.likely_utf16_be )
-            encoding = encodings::ENCODING_UTF16BE;
+            encoding = utility::Encoding::ENCODING_UTF16BE;
         else if( stat.can_be_utf8 )
-            encoding = encodings::ENCODING_UTF8;
+            encoding = utility::Encoding::ENCODING_UTF8;
         else
-            encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN;
+            encoding = utility::Encoding::ENCODING_MACOS_ROMAN_WESTERN;
     }
 
     ViewMode mode = stat.is_binary ? ViewMode::Hex : ViewMode::Text;
@@ -171,9 +172,11 @@ using namespace nc::viewer;
     [self setKnownFile:_file encoding:encoding mode:mode];
 }
 
-- (void)setKnownFile:(std::shared_ptr<nc::vfs::FileWindow>)_file encoding:(int)_encoding mode:(ViewMode)_mode
+- (void)setKnownFile:(std::shared_ptr<nc::vfs::FileWindow>)_file
+            encoding:(utility::Encoding)_encoding
+                mode:(ViewMode)_mode
 {
-    assert(_encoding != encodings::ENCODING_INVALID);
+    assert(_encoding != utility::Encoding::ENCODING_INVALID);
 
     m_File = _file;
     m_Data = std::make_shared<DataBackend>(m_File, _encoding);
@@ -222,14 +225,14 @@ using namespace nc::viewer;
     }
 }
 
-- (int)encoding
+- (utility::Encoding)encoding
 {
     if( m_Data )
         return m_Data->Encoding();
-    return encodings::ENCODING_UTF8; // ??
+    return utility::Encoding::ENCODING_UTF8; // ??
 }
 
-- (void)setEncoding:(int)_encoding
+- (void)setEncoding:(utility::Encoding)_encoding
 {
     if( !m_Data || m_Data->Encoding() == _encoding )
         return; // nothing to do

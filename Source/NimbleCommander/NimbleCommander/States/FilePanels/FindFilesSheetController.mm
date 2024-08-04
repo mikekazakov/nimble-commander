@@ -227,7 +227,7 @@ private:
     bool m_CaseSensitiveTextSearch;
     bool m_WholePhraseTextSearch;
     bool m_NotContainingTextSearch;
-    int m_TextSearchEncoding;
+    nc::utility::Encoding m_TextSearchEncoding;
 
     std::vector<nc::panel::FindFilesMask> m_MaskHistory;
     std::unique_ptr<FindFilesSheetComboHistory> m_TextHistory;
@@ -287,7 +287,7 @@ private:
         m_CaseSensitiveTextSearch = false;
         m_WholePhraseTextSearch = false;
         m_NotContainingTextSearch = false;
-        m_TextSearchEncoding = encodings::ENCODING_UTF8;
+        m_TextSearchEncoding = nc::utility::Encoding::ENCODING_UTF8;
         m_MaskHistory = nc::panel::LoadFindFilesMasks(StateConfig(), g_StateMaskHistory);
         m_TextHistory = std::make_unique<FindFilesSheetComboHistory>(16, g_StateTextHistory);
         m_UIChanged = true;
@@ -859,11 +859,11 @@ private:
     not_containing.indentationLevel = 1;
 
     const auto encoding_menu = [[NSMenu alloc] initWithTitle:@""];
-    for( const auto &i : encodings::LiteralEncodingsList() ) {
+    for( const auto &i : nc::utility::LiteralEncodingsList() ) {
         auto item = [encoding_menu addItemWithTitle:(__bridge NSString *)i.second
                                              action:@selector(onTextMenuEncodingClicked:)
                                       keyEquivalent:@""];
-        item.tag = i.first;
+        item.tag = std::to_underlying(i.first);
         if( i.first == m_TextSearchEncoding )
             item.state = NSControlStateValueOn;
     }
@@ -897,7 +897,7 @@ private:
 - (void)onTextMenuEncodingClicked:(id)_sender
 {
     if( auto item = nc::objc_cast<NSMenuItem>(_sender) ) {
-        m_TextSearchEncoding = static_cast<int>(item.tag);
+        m_TextSearchEncoding = static_cast<nc::utility::Encoding>(item.tag);
         [self updateTextMenu];
         [self onSearchSettingsUIChanged:_sender];
     }

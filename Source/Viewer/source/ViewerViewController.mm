@@ -15,6 +15,7 @@
 #include "Internal.h"
 
 using namespace std::literals;
+using namespace nc;
 using namespace nc::viewer;
 
 static const auto g_ConfigRespectComAppleTextEncoding = "viewer.respectComAppleTextEncoding";
@@ -24,14 +25,14 @@ static const auto g_ConfigWindowSize = "viewer.fileWindowSize";
 static const auto g_ConfigAutomaticRefresh = "viewer.automaticRefresh";
 static const auto g_AutomaticRefreshDelay = std::chrono::milliseconds(200);
 
-static int EncodingFromXAttr(const VFSFilePtr &_f)
+static utility::Encoding EncodingFromXAttr(const VFSFilePtr &_f)
 {
     char buf[128];
     ssize_t r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
     if( r < 0 || r >= static_cast<ssize_t>(sizeof(buf)) )
-        return encodings::ENCODING_INVALID;
+        return utility::Encoding::ENCODING_INVALID;
     buf[r] = 0;
-    return encodings::FromComAppleTextEncodingXAttr(buf);
+    return utility::FromComAppleTextEncodingXAttr(buf);
 }
 
 static int InvertBitFlag(int _value, int _flag)
@@ -237,9 +238,9 @@ struct BackgroundFileOpener {
     }
     else {
         [m_View setFile:m_ViewerFileWindow];
-        int encoding = 0;
+        utility::Encoding encoding = utility::Encoding::ENCODING_INVALID;
         if( m_Config->GetBool(g_ConfigRespectComAppleTextEncoding) &&
-            (encoding = EncodingFromXAttr(m_OriginalFile)) != encodings::ENCODING_INVALID )
+            (encoding = EncodingFromXAttr(m_OriginalFile)) != utility::Encoding::ENCODING_INVALID )
             m_View.encoding = encoding;
     }
 
@@ -386,7 +387,7 @@ struct BackgroundFileOpener {
         m_View.selectionInFile = CFRangeMake(-1, 0); // remove current selection
 
         uint64_t view_offset = m_View.verticalPositionInBytes;
-        int encoding = m_View.encoding;
+        utility::Encoding encoding = m_View.encoding;
 
         m_SearchInFileQueue.Stop(); // we should stop current search if any
         m_SearchInFileQueue.Wait();
@@ -481,9 +482,9 @@ struct BackgroundFileOpener {
     m_EncodingsPopUp.target = self;
     m_EncodingsPopUp.action = @selector(onEncodingsPopUpChanged:);
     [m_EncodingsPopUp removeAllItems];
-    for( const auto &i : encodings::LiteralEncodingsList() ) {
+    for( const auto &i : utility::LiteralEncodingsList() ) {
         [m_EncodingsPopUp addItemWithTitle:(__bridge NSString *)i.second];
-        m_EncodingsPopUp.lastItem.tag = i.first;
+        m_EncodingsPopUp.lastItem.tag = std::to_underlying(i.first);
     }
     [m_EncodingsPopUp bind:@"selectedTag" toObject:m_View withKeyPath:@"encoding" options:nil];
 }

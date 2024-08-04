@@ -130,7 +130,7 @@ unsigned ByteCountFormatter::Fixed6_UTF8(uint64_t _size, unsigned char *_buf, si
     int len = Fixed6_Impl(_size, buf);
 
     size_t utf8len;
-    InterpretUnicharsAsUTF8(buf, len, _buf, _buffer_size, utf8len, nullptr);
+    nc::utility::InterpretUnicharsAsUTF8(buf, len, _buf, _buffer_size, utf8len, nullptr);
     return static_cast<unsigned>(utf8len);
 }
 
@@ -157,7 +157,7 @@ unsigned ByteCountFormatter::SpaceSeparated_UTF8(uint64_t _size, unsigned char *
     int len = SpaceSeparated_Impl(_size, buf);
 
     size_t utf8len;
-    InterpretUnicharsAsUTF8(buf, len, _buf, _buffer_size, utf8len, nullptr);
+    nc::utility::InterpretUnicharsAsUTF8(buf, len, _buf, _buffer_size, utf8len, nullptr);
     return static_cast<unsigned>(utf8len);
 }
 
@@ -183,7 +183,7 @@ unsigned ByteCountFormatter::Adaptive_UTF8(uint64_t _size, unsigned char *_buf, 
     unsigned short buf[6];
     int len = Adaptive6_Impl(_size, buf);
     size_t utf8len;
-    InterpretUnicharsAsUTF8(buf, len, _buf, _buffer_size, utf8len, nullptr);
+    nc::utility::InterpretUnicharsAsUTF8(buf, len, _buf, _buffer_size, utf8len, nullptr);
     return static_cast<unsigned>(utf8len);
 }
 
@@ -210,7 +210,7 @@ unsigned ByteCountFormatter::Adaptive8_UTF8(uint64_t _size, unsigned char *_buf,
     unsigned short buf[8];
     int len = Adaptive8_Impl(_size, buf);
     size_t utf8len;
-    InterpretUnicharsAsUTF8(buf, len, _buf, _buffer_size, utf8len, nullptr);
+    nc::utility::InterpretUnicharsAsUTF8(buf, len, _buf, _buffer_size, utf8len, nullptr);
     return static_cast<unsigned>(utf8len);
 }
 

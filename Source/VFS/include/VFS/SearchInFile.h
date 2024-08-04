@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
@@ -7,6 +7,7 @@
 #include <functional>
 #include <optional>
 #include <VFS/FileWindow.h>
+#include <Utility/Encodings.h>
 
 namespace nc::vfs {
 
@@ -44,9 +45,9 @@ public:
 
     bool IsEOF() const;
 
-    void ToggleTextSearch(CFStringRef _string, int _encoding);
-    CFStringRef TextSearchString(); // may be NULL. don't alter it. don't release it
-    int TextSearchEncoding();       // may be ENCODING_INVALID
+    void ToggleTextSearch(CFStringRef _string, utility::Encoding _encoding);
+    CFStringRef TextSearchString();         // may be NULL. don't alter it. don't release it
+    utility::Encoding TextSearchEncoding(); // may be ENCODING_INVALID
 
     using CancelChecker = std::function<bool()>;
     Result Search(const CancelChecker &_checker = {});
@@ -80,7 +81,7 @@ private:
 
     // text search related stuff
     CFStringRef m_RequestedTextSearch = nullptr;
-    int m_TextSearchEncoding;
+    utility::Encoding m_TextSearchEncoding;
 
     std::unique_ptr<uint16_t[]> m_DecodedBuffer;
     std::unique_ptr<uint32_t[]> m_DecodedBufferIndx;

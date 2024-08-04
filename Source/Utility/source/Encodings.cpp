@@ -1,10 +1,10 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <cassert>
 #include <cstdlib>
 
 #include <Utility/Encodings.h>
 
-using namespace encodings;
+namespace nc::utility {
 
 // clang-format off
 static const unsigned short g_CP_OEM437_To_Unicode[256] = {
@@ -922,7 +922,8 @@ static const unsigned short* g_SingleBytesTable[] = {
 };
 // clang-format on
 
-static_assert(sizeof(g_SingleBytesTable) / sizeof(unsigned short *) == ENCODING_SINGLE_BYTES_LAST__ + 1);
+static_assert(sizeof(g_SingleBytesTable) / sizeof(unsigned short *) ==
+              std::to_underlying(Encoding::ENCODING_SINGLE_BYTES_LAST__) + 1);
 
 #define Endian16_Swap(value)                                                                                           \
     (((static_cast<uint16_t>((value) & 0x00FF)) << 8) | ((static_cast<uint16_t>((value) & 0xFF00)) >> 8))
@@ -933,14 +934,14 @@ void InterpretSingleByteBufferAsUniCharPreservingBufferSize(
     const unsigned char *_input,
     size_t _input_size,
     unsigned short *_output, // should be at least _input_size 16b words long
-    int _codepage)
+    Encoding _codepage)
 {
-    if( _codepage < ENCODING_SINGLE_BYTES_FIRST__ || _codepage > ENCODING_SINGLE_BYTES_LAST__ ) {
+    if( _codepage < Encoding::ENCODING_SINGLE_BYTES_FIRST__ || _codepage > Encoding::ENCODING_SINGLE_BYTES_LAST__ ) {
         memset(_output, 0, sizeof(unsigned short) * _input_size);
         return;
     }
 
-    auto *t = g_SingleBytesTable[_codepage];
+    auto *t = g_SingleBytesTable[std::to_underlying(_codepage)];
     const unsigned char *end = _input + _input_size;
     while( _input < end )
         *(_output++) = t[*(_input++)];
@@ -1632,8 +1633,6 @@ void InterpretUnicodeAsUTF8(const uint32_t *_input,
         *_input_chars_eaten = cur - _input;
 }
 
-namespace encodings {
-
 size_t ScanUTF8ForValidSequenceLength(const unsigned char *_input, size_t _input_size) noexcept
 {
     if( _input == nullptr || _input_size == 0 )
@@ -1682,4 +1681,4 @@ size_t ScanUTF8ForValidSequenceLength(const unsigned char *_input, size_t _input
     return static_cast<size_t>(length);
 }
 
-} // namespace encodings
+} // namespace nc::utility

@@ -109,7 +109,7 @@ void ParserImpl::FlushCompleteText()
     if( m_TextState.UTF8StockLen == 0 )
         return;
 
-    const size_t valid_length = encodings::ScanUTF8ForValidSequenceLength(
+    const size_t valid_length = utility::ScanUTF8ForValidSequenceLength(
         reinterpret_cast<const unsigned char *>(m_TextState.UTF8CharsStock.data()), m_TextState.UTF8StockLen);
 
     if( valid_length == 0 )

@@ -8,6 +8,8 @@
 #include "HexModeViewDelegate.h"
 #include <memory>
 
+@class NCViewerFooter;
+
 namespace nc::utility {
 class TemporaryFileStorage;
 }
@@ -96,5 +98,7 @@ class SettingsStorage;
 
 /** If set, NCViewerView will try to redirect performKeyEquivalent: to this responder. */
 @property(nonatomic, weak) NSResponder *hotkeyDelegate;
+
+@property(nonatomic, readonly) NCViewerFooter *footer;
 
 @end

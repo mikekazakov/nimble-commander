@@ -72,11 +72,6 @@ using namespace nc::viewer;
     return self;
 }
 
-- (void)dealloc
-{    
-    [m_Footer removeObserver:self forKeyPath:@"mode"];
-}
-
 - (void)awakeFromNib
 {
     [self commonInit];
@@ -102,15 +97,20 @@ using namespace nc::viewer;
     m_ConfigObservers[0] =
         m_Config->Observe(g_ConfigEnableSyntaxHighlighting,
                           nc::objc_callback_to_main_queue(self, @selector(configEnableSyntaxHighlightingChanged)));
-    
+
     m_Footer = [[NCViewerFooter alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     m_Footer.translatesAutoresizingMaskIntoConstraints = false;
     [self addSubview:m_Footer];
-    [m_Footer addObserver:self forKeyPath:@"mode" options:0 context:nullptr];
-    
+
     const auto views = NSDictionaryOfVariableBindings(m_Footer);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_Footer]-(==0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_Footer(==20)]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_Footer]-(==0)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_Footer(==20)]-(==0)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
 }
 
 - (void)reloadAppearance
@@ -142,7 +142,7 @@ using namespace nc::viewer;
 
 - (void)resetCursorRects
 {
-    if(m_View) {
+    if( m_View ) {
         [self addCursorRect:m_View.frame cursor:NSCursor.IBeamCursor];
     }
 }
@@ -184,7 +184,7 @@ using namespace nc::viewer;
 
     [self willChangeValueForKey:@"encoding"];
     [self didChangeValueForKey:@"encoding"];
-    
+
     m_Footer.fileSize = m_File->FileSize();
 }
 
@@ -629,7 +629,6 @@ using namespace nc::viewer;
     return [super performKeyEquivalent:_event];
 }
 
-
 - (void)observeValueForKeyPath:(NSString *)_key_path
                       ofObject:(id)_object
                         change:(NSDictionary *) [[maybe_unused]] _change
@@ -638,6 +637,11 @@ using namespace nc::viewer;
     if( _object == m_Footer && [_key_path isEqualToString:@"mode"] ) {
         self.mode = m_Footer.mode;
     }
+}
+
+- (NCViewerFooter *)footer
+{
+    return m_Footer;
 }
 
 @end

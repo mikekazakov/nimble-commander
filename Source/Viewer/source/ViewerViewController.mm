@@ -1,5 +1,6 @@
 // Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerViewController.h"
+#include "ViewerFooter.h"
 #include <Viewer/Log.h>
 #include <VFS/VFS.h>
 #include <CUI/ProcessSheetController.h>
@@ -143,6 +144,7 @@ struct BackgroundFileOpener {
 {
     dispatch_assert_main_queue();
     Log::Debug(SPDLOC, "deallocating NCViewerViewController {}", nc::objc_bridge_cast<void>(self));
+    [m_View.footer removeObserver:self forKeyPath:@"mode"];
     [self clear];
 }
 
@@ -278,6 +280,7 @@ struct BackgroundFileOpener {
         return;
 
     m_View = view;
+    [m_View.footer addObserver:self forKeyPath:@"mode" options:0 context:nullptr];
 }
 
 - (void)setSearchField:(NSSearchField *)searchField
@@ -491,11 +494,6 @@ struct BackgroundFileOpener {
     [self onSearchFieldAction:self];
 }
 
-- (void)onModePopUpChanged:(id) [[maybe_unused]] _sender
-{
-    dispatch_assert_main_queue();
-}
-
 - (void)setPositionButton:(NSButton *)positionButton
 {
     dispatch_assert_main_queue();
@@ -667,6 +665,17 @@ struct BackgroundFileOpener {
         return true;
     }
     return false;
+}
+
+- (void)observeValueForKeyPath:(NSString *)_key_path
+                      ofObject:(id)_object
+                        change:(NSDictionary *) [[maybe_unused]] _change
+                       context:(void *) [[maybe_unused]] _context
+{
+    dispatch_assert_main_queue();
+    if( _object == m_View.footer && [_key_path isEqualToString:@"mode"] ) {
+        m_View.mode = m_View.footer.mode;
+    }
 }
 
 @end

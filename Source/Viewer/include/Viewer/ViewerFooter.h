@@ -9,8 +9,8 @@
 
 - (instancetype)initWithFrame:(NSRect)frame;
 
-@property (nonatomic, readwrite) nc::viewer::ViewMode mode; // KVO-compatible
+@property(nonatomic, readwrite) nc::viewer::ViewMode mode; // KVO-compatible
 
-@property (nonatomic, readwrite) uint64_t fileSize;
+@property(nonatomic, readwrite) uint64_t fileSize;
 
 @end

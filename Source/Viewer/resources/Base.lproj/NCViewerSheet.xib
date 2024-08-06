@@ -8,7 +8,6 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NCViewerSheet">
             <connections>
-                <outlet property="encodings" destination="c8x-WQ-8jt" id="ST1-Hl-8rZ"/>
                 <outlet property="filePos" destination="gGC-MV-h6K" id="dJO-mV-hqr"/>
                 <outlet property="searchField" destination="vcM-ZZ-dH2" id="pnN-9r-2Ph"/>
                 <outlet property="searchIndicator" destination="cKE-aL-pDT" id="hCH-e9-jTP"/>
@@ -146,27 +145,8 @@ Gw
             <rect key="frame" x="0.0" y="0.0" width="398" height="79"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OSU-cn-jZr">
-                    <rect key="frame" x="18" y="43" width="65" height="16"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Encoding:" id="kyl-qY-jvY">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="c8x-WQ-8jt">
-                    <rect key="frame" x="86" y="36" width="296" height="25"/>
-                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="giG-Js-G5r">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
-                        <menu key="menu" id="rND-Qm-82m"/>
-                    </popUpButtonCell>
-                    <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="dHX-8C-lyL"/>
-                    </constraints>
-                </popUpButton>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="eTM-MZ-q2F">
-                    <rect key="frame" x="18" y="18" width="94" height="18"/>
+                    <rect key="frame" x="18" y="42" width="94" height="18"/>
                     <buttonCell key="cell" type="check" title="Word Wrap" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="e2e-I5-ELa">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -174,13 +154,8 @@ Gw
                 </button>
             </subviews>
             <constraints>
-                <constraint firstItem="c8x-WQ-8jt" firstAttribute="leading" secondItem="OSU-cn-jZr" secondAttribute="trailing" constant="8" symbolic="YES" id="5hV-FX-i8N"/>
-                <constraint firstItem="eTM-MZ-q2F" firstAttribute="top" secondItem="OSU-cn-jZr" secondAttribute="bottom" constant="8" symbolic="YES" id="7OT-ku-H1c"/>
-                <constraint firstItem="OSU-cn-jZr" firstAttribute="top" secondItem="2xf-3L-wFH" secondAttribute="top" constant="20" symbolic="YES" id="9lE-XS-hGn"/>
-                <constraint firstAttribute="trailing" secondItem="c8x-WQ-8jt" secondAttribute="trailing" constant="20" symbolic="YES" id="fHd-8C-9zf"/>
-                <constraint firstItem="c8x-WQ-8jt" firstAttribute="baseline" secondItem="OSU-cn-jZr" secondAttribute="baseline" id="gMU-b5-it3"/>
+                <constraint firstItem="eTM-MZ-q2F" firstAttribute="top" secondItem="2xf-3L-wFH" secondAttribute="top" constant="20" symbolic="YES" id="Ahf-n2-5Iv"/>
                 <constraint firstItem="eTM-MZ-q2F" firstAttribute="leading" secondItem="2xf-3L-wFH" secondAttribute="leading" constant="20" symbolic="YES" id="p6c-TQ-aaI"/>
-                <constraint firstItem="OSU-cn-jZr" firstAttribute="leading" secondItem="2xf-3L-wFH" secondAttribute="leading" constant="20" symbolic="YES" id="rkg-ye-sF7"/>
             </constraints>
             <point key="canvasLocation" x="81" y="682.5"/>
         </customView>

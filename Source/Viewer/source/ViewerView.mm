@@ -189,6 +189,7 @@ using namespace nc::viewer;
     [self didChangeValueForKey:@"encoding"];
 
     m_Footer.fileSize = m_File->FileSize();
+    m_Footer.encoding = m_Data->Encoding();
 }
 
 - (void)detachFromFile
@@ -243,6 +244,8 @@ using namespace nc::viewer;
 
     if( [m_View respondsToSelector:@selector(backendContentHasChanged)] )
         [m_View backendContentHasChanged];
+
+    m_Footer.encoding = m_Data->Encoding();
 }
 
 - (void)RequestWindowMovementAt:(uint64_t)_pos

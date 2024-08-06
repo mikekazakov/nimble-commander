@@ -4,16 +4,20 @@
 #include <Utility/ColoredSeparatorLine.h>
 #include <Utility/VerticallyCenteredTextFieldCell.h>
 #include <Utility/ByteCountFormatter.h>
+#include <Utility/Encodings.h>
 #include <utility>
 
+using namespace nc;
 using namespace nc::viewer;
 
 @implementation NCViewerFooter {
     ViewMode m_Mode;
+    utility::Encoding m_Encoding;
     uint64_t m_FileSize;
 
     ColoredSeparatorLine *m_SeparatorLine;
     NSPopUpButton *m_ModeButton;
+    NSPopUpButton *m_EncodingButton;
     NSTextField *m_FileSizeLabel;
 }
 
@@ -21,6 +25,7 @@ using namespace nc::viewer;
 {
     if( self = [super initWithFrame:_frame] ) {
         m_Mode = ViewMode::Text;
+        m_Encoding = utility::Encoding::ENCODING_UTF8;
         m_FileSize = 0;
 
         [self buildControls];
@@ -51,6 +56,22 @@ using namespace nc::viewer;
     m_ModeButton.translatesAutoresizingMaskIntoConstraints = false;
     [self addSubview:m_ModeButton];
 
+    NSMenu *encoding_menu = [[NSMenu alloc] init];
+    for( const auto &encoding : utility::LiteralEncodingsList() ) {
+        [encoding_menu addItemWithTitle:(__bridge NSString *)encoding.second action:nullptr keyEquivalent:@""].tag =
+            std::to_underlying(encoding.first);
+    }
+
+    m_EncodingButton = [[NSPopUpButton alloc] initWithFrame:NSRect() pullsDown:false];
+    m_EncodingButton.imagePosition = NSNoImage;
+    m_EncodingButton.bordered = false;
+    m_EncodingButton.menu = encoding_menu;
+    [m_EncodingButton selectItemWithTag:std::to_underlying(m_Encoding)];
+    m_EncodingButton.target = self;
+    m_EncodingButton.action = @selector(onEncodingChanged:);
+    m_EncodingButton.translatesAutoresizingMaskIntoConstraints = false;
+    [self addSubview:m_EncodingButton];
+
     m_FileSizeLabel = [[NSTextField alloc] initWithFrame:NSRect()];
     m_FileSizeLabel.translatesAutoresizingMaskIntoConstraints = false;
     m_FileSizeLabel.cell = [VerticallyCenteredTextFieldCell new];
@@ -66,7 +87,7 @@ using namespace nc::viewer;
 
 - (void)layoutControls
 {
-    const auto views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_ModeButton, m_FileSizeLabel);
+    const auto views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_ModeButton, m_EncodingButton, m_FileSizeLabel);
     const auto add = [&](NSString *_vf) {
         auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_vf options:0 metrics:nil views:views];
         [self addConstraints:constraints];
@@ -75,10 +96,11 @@ using namespace nc::viewer;
     add(@"V:|-(==0)-[m_SeparatorLine(==1)]");
     add(@"V:[m_SeparatorLine]-(==0)-[m_ModeButton]-(==0)-|");
     add(@"V:[m_SeparatorLine]-(==0)-[m_FileSizeLabel]-(==0)-|");
+    add(@"V:[m_SeparatorLine]-(==0)-[m_EncodingButton]-(==0)-|");
 
     add(@"|-(==0)-[m_SeparatorLine]-(==0)-|");
     add(@"|-(4)-[m_ModeButton]");
-    add(@"[m_FileSizeLabel]-(4)-|");
+    add(@"[m_EncodingButton]-(4)-[m_FileSizeLabel]-(4)-|");
 }
 
 //@property (nonatomic, readonly) nc::viewer::ViewMode mode;
@@ -101,6 +123,23 @@ using namespace nc::viewer;
     return m_Mode;
 }
 
+- (nc::utility::Encoding)encoding
+{
+    return m_Encoding;
+}
+
+- (void)setEncoding:(nc::utility::Encoding)_encoding
+{
+    if( m_Encoding == _encoding )
+        return; // nothing to do
+
+    [self willChangeValueForKey:@"encoding"];
+    m_Encoding = _encoding;
+    [self didChangeValueForKey:@"encoding"];
+
+    [m_EncodingButton selectItemWithTag:std::to_underlying(m_Encoding)];
+}
+
 - (uint64_t)fileSize
 {
     return m_FileSize;
@@ -117,10 +156,14 @@ using namespace nc::viewer;
 
 - (IBAction)onModeChanged:(id)_sender
 {
-    if( _sender != m_ModeButton )
-        return;
-
+    assert(_sender == m_ModeButton);
     self.mode = static_cast<ViewMode>(m_ModeButton.selectedTag); // notifies via KVO
+}
+
+- (IBAction)onEncodingChanged:(id)_sender
+{
+    assert(_sender == m_EncodingButton);
+    self.encoding = static_cast<nc::utility::Encoding>(m_EncodingButton.selectedTag); // notifies via KVO
 }
 
 @end

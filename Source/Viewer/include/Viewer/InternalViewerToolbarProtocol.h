@@ -10,7 +10,6 @@
 @property(nonatomic) IBOutlet NSToolbar *internalViewerToolbar;
 @property(nonatomic) IBOutlet NSSearchField *internalViewerToolbarSearchField;
 @property(nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
-@property(nonatomic) IBOutlet NSPopUpButton *internalViewerToolbarEncodingsPopUp;
 @property(nonatomic) IBOutlet NSButton *internalViewerToolbarPositionButton;
 @property(nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
 @property(nonatomic) IBOutlet NSButton *internalViewerToolbarWordWrapCheckBox;

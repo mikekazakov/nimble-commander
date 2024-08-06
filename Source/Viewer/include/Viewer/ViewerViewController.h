@@ -22,7 +22,6 @@ struct ActionShortcut;
 @property(nonatomic) NCViewerView *view;
 @property(nonatomic) NSSearchField *searchField;
 @property(nonatomic) NSProgressIndicator *searchProgressIndicator;
-@property(nonatomic) NSPopUpButton *encodingsPopUp;
 @property(nonatomic) NSButton *positionButton;
 @property(nonatomic) NSButton *wordWrappingCheckBox;
 @property(nonatomic) NSButton *settingsButton;

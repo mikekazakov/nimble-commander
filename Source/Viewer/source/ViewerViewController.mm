@@ -100,7 +100,6 @@ struct BackgroundFileOpener {
     NCViewerView *m_View;
     NSSearchField *m_SearchField;
     NSProgressIndicator *m_SearchProgressIndicator;
-    NSPopUpButton *m_EncodingsPopUp;
     NSButton *m_PositionButton;
     NSString *m_VerboseTitle;
     NSButton *m_WordWrappingCheckBox;
@@ -109,7 +108,6 @@ struct BackgroundFileOpener {
 @synthesize view = m_View;
 @synthesize searchField = m_SearchField;
 @synthesize searchProgressIndicator = m_SearchProgressIndicator;
-@synthesize encodingsPopUp = m_EncodingsPopUp;
 @synthesize positionButton = m_PositionButton;
 @synthesize verboseTitle = m_VerboseTitle;
 @synthesize filePath = m_Path;
@@ -146,6 +144,7 @@ struct BackgroundFileOpener {
     dispatch_assert_main_queue();
     Log::Debug(SPDLOC, "deallocating NCViewerViewController {}", nc::objc_bridge_cast<void>(self));
     [m_View.footer removeObserver:self forKeyPath:@"mode"];
+    [m_View.footer removeObserver:self forKeyPath:@"encoding"];
     [self clear];
 }
 
@@ -282,6 +281,7 @@ struct BackgroundFileOpener {
 
     m_View = view;
     [m_View.footer addObserver:self forKeyPath:@"mode" options:0 context:nullptr];
+    [m_View.footer addObserver:self forKeyPath:@"encoding" options:0 context:nullptr];
 }
 
 - (void)setSearchField:(NSSearchField *)searchField
@@ -472,29 +472,6 @@ struct BackgroundFileOpener {
     m_SearchProgressIndicator.displayedWhenStopped = false;
 }
 
-- (void)setEncodingsPopUp:(NSPopUpButton *)encodingsPopUp
-{
-    dispatch_assert_main_queue();
-    assert(m_View != nil);
-    if( m_EncodingsPopUp == encodingsPopUp )
-        return;
-    m_EncodingsPopUp = encodingsPopUp;
-    m_EncodingsPopUp.target = self;
-    m_EncodingsPopUp.action = @selector(onEncodingsPopUpChanged:);
-    [m_EncodingsPopUp removeAllItems];
-    for( const auto &i : utility::LiteralEncodingsList() ) {
-        [m_EncodingsPopUp addItemWithTitle:(__bridge NSString *)i.second];
-        m_EncodingsPopUp.lastItem.tag = std::to_underlying(i.first);
-    }
-    [m_EncodingsPopUp bind:@"selectedTag" toObject:m_View withKeyPath:@"encoding" options:nil];
-}
-
-- (void)onEncodingsPopUpChanged:(id) [[maybe_unused]] _sender
-{
-    dispatch_assert_main_queue();
-    [self onSearchFieldAction:self];
-}
-
 - (void)setPositionButton:(NSButton *)positionButton
 {
     dispatch_assert_main_queue();
@@ -676,6 +653,9 @@ struct BackgroundFileOpener {
     dispatch_assert_main_queue();
     if( _object == m_View.footer && [_key_path isEqualToString:@"mode"] ) {
         m_View.mode = m_View.footer.mode;
+    }
+    if( _object == m_View.footer && [_key_path isEqualToString:@"encoding"] ) {
+        m_View.encoding = m_View.footer.encoding;
     }
 }
 

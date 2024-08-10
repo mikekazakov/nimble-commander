@@ -15,8 +15,6 @@ using namespace nc::viewer;
 @property(nonatomic) IBOutlet NSProgressIndicator *searchIndicator;
 @property(nonatomic) IBOutlet NSSearchField *searchField;
 @property(nonatomic) IBOutlet NSPopover *settingsPopover;
-@property(nonatomic) IBOutlet NSButton *wordWrap;
-@property(nonatomic) IBOutlet NSButton *settingsButton;
 
 - (IBAction)OnClose:(id)sender;
 
@@ -35,8 +33,6 @@ using namespace nc::viewer;
 @synthesize searchIndicator;
 @synthesize searchField;
 @synthesize settingsPopover;
-@synthesize wordWrap;
-@synthesize settingsButton;
 
 - (id)initWithFilepath:(std::string)path
                     at:(VFSHostPtr)vfs
@@ -90,8 +86,6 @@ using namespace nc::viewer;
     m_Controller.positionButton = self.filePos;
     m_Controller.searchField = self.searchField;
     m_Controller.searchProgressIndicator = self.searchIndicator;
-    m_Controller.wordWrappingCheckBox = self.wordWrap;
-    m_Controller.settingsButton = self.settingsButton;
 
     [m_Controller show];
     m_Controller.nextResponder = self.window.nextResponder;

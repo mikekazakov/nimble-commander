@@ -14,6 +14,8 @@
 
 @property(nonatomic, readwrite) nc::utility::Encoding encoding; // KVO-compatible
 
+@property(nonatomic, readwrite) bool wrapLines; // KVO-compatible
+
 @property(nonatomic, readwrite) uint64_t fileSize;
 
 @end

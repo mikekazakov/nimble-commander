@@ -15,8 +15,6 @@
 @property(nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
 @property(nonatomic) IBOutlet NSButton *internalViewerToolbarPositionButton;
 @property(nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
-@property(nonatomic) IBOutlet NSButton *internalViewerToolbarWordWrapCheckBox;
-@property(nonatomic) IBOutlet NSButton *internalViewerToolbarSettingsButton;
 
 @property(nonatomic) IBOutlet NCViewerView *embeddedFileView;
 
@@ -31,8 +29,6 @@
 @synthesize internalViewerToolbarSearchProgressIndicator;
 @synthesize internalViewerToolbarPositionButton;
 @synthesize internalViewerToolbarPopover;
-@synthesize internalViewerToolbarWordWrapCheckBox;
-@synthesize internalViewerToolbarSettingsButton;
 @synthesize embeddedFileView;
 
 - (id)initWithFrame:(NSRect)_frame_rect
@@ -72,8 +68,6 @@
     m_Controller.searchField = self.internalViewerToolbarSearchField;
     m_Controller.searchProgressIndicator = self.internalViewerToolbarSearchProgressIndicator;
     m_Controller.positionButton = self.internalViewerToolbarPositionButton;
-    m_Controller.wordWrappingCheckBox = self.internalViewerToolbarWordWrapCheckBox;
-    m_Controller.settingsButton = self.internalViewerToolbarSettingsButton;
 }
 
 - (NSView *)windowStateContentView

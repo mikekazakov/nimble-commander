@@ -23,8 +23,6 @@ struct ActionShortcut;
 @property(nonatomic) NSSearchField *searchField;
 @property(nonatomic) NSProgressIndicator *searchProgressIndicator;
 @property(nonatomic) NSButton *positionButton;
-@property(nonatomic) NSButton *wordWrappingCheckBox;
-@property(nonatomic) NSButton *settingsButton;
 
 // Useful information
 @property(nonatomic, readonly) NSString *verboseTitle;

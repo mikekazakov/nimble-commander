@@ -73,6 +73,7 @@
 		CFD79B6A22106F080043A26D /* TextProcessing_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B6822106F000043A26D /* TextProcessing_UT.cpp */; };
 		CFD79B8422198DB50043A26D /* TextModeWorkingSet_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B8222198DA80043A26D /* TextModeWorkingSet_UT.cpp */; };
 		CFE5AF8F2C5812C30035CCFA /* ViewerFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE5AF8E2C5812C30035CCFA /* ViewerFooter.mm */; };
+		CFE5AF912C62C0940035CCFA /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFE5AF902C62C0940035CCFA /* Media.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -234,6 +235,7 @@
 		CFD79B8222198DA80043A26D /* TextModeWorkingSet_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextModeWorkingSet_UT.cpp; path = tests/TextModeWorkingSet_UT.cpp; sourceTree = "<group>"; };
 		CFE5AF8D2C5812B40035CCFA /* ViewerFooter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ViewerFooter.h; path = include/Viewer/ViewerFooter.h; sourceTree = "<group>"; };
 		CFE5AF8E2C5812C30035CCFA /* ViewerFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewerFooter.mm; path = source/ViewerFooter.mm; sourceTree = "<group>"; };
+		CFE5AF902C62C0940035CCFA /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = resources/Media.xcassets; sourceTree = "<group>"; };
 		CFF54448261670F100A6C49C /* libHabanero.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libHabanero.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -334,6 +336,7 @@
 				CF2343F022CDDFC600F516CB /* Localizable.strings */,
 				CFD79B132205B8450043A26D /* NCViewerSheet.xib */,
 				CF5C1D2C255ED7D300ADE703 /* ViewerResources.plist */,
+				CFE5AF902C62C0940035CCFA /* Media.xcassets */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -611,6 +614,7 @@
 				CF5C1D42255EE64200ADE703 /* Localizable.strings in Resources */,
 				CF5C1D46255EE64500ADE703 /* NCViewerSheet.xib in Resources */,
 				CF5C1D36255EE63000ADE703 /* InternalViewerController.xib in Resources */,
+				CFE5AF912C62C0940035CCFA /* Media.xcassets in Resources */,
 				CF5C1D3E255EE63F00ADE703 /* InternalViewerWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

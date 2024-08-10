@@ -190,6 +190,7 @@ using namespace nc::viewer;
 
     m_Footer.fileSize = m_File->FileSize();
     m_Footer.encoding = m_Data->Encoding();
+    m_Footer.wrapLines = m_WrapWords;
 }
 
 - (void)detachFromFile
@@ -269,6 +270,8 @@ using namespace nc::viewer;
         [m_View lineWrappingHasChanged];
     }
     [self didChangeValueForKey:@"wordWrap"];
+
+    m_Footer.wrapLines = m_WrapWords;
 }
 
 - (ViewMode)mode

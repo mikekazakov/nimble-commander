@@ -27,8 +27,6 @@ using namespace std::literals;
 @property(nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
 @property(nonatomic) IBOutlet NSButton *internalViewerToolbarPositionButton;
 @property(nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
-@property(nonatomic) IBOutlet NSButton *internalViewerToolbarWordWrapCheckBox;
-@property(nonatomic) IBOutlet NSButton *internalViewerToolbarSettingsButton;
 
 @end
 
@@ -45,8 +43,6 @@ using namespace std::literals;
 @synthesize internalViewerToolbarSearchProgressIndicator;
 @synthesize internalViewerToolbarPositionButton;
 @synthesize internalViewerToolbarPopover;
-@synthesize internalViewerToolbarWordWrapCheckBox;
-@synthesize internalViewerToolbarSettingsButton;
 
 - (id)initWithFilepath:(std::string)path
                     at:(VFSHostPtr)vfs
@@ -87,8 +83,6 @@ using namespace std::literals;
     m_Controller.searchField = self.internalViewerToolbarSearchField;
     m_Controller.searchProgressIndicator = self.internalViewerToolbarSearchProgressIndicator;
     m_Controller.positionButton = self.internalViewerToolbarPositionButton;
-    m_Controller.wordWrappingCheckBox = self.internalViewerToolbarWordWrapCheckBox;
-    m_Controller.settingsButton = self.internalViewerToolbarSettingsButton;
 
     m_Controller.nextResponder = self.window.nextResponder;
     self.window.nextResponder = m_Controller;

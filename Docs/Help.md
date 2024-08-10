@@ -344,7 +344,6 @@ Available hotkeys are listed below. These are the default values, which can be a
 | &nbsp; &nbsp; Toggle Text                    | Cmd + 1                   |
 | &nbsp; &nbsp; Toggle Hex                     | Cmd + 2                   |
 | &nbsp; &nbsp; Toggle Preview                 | Cmd + 3                   |
-| &nbsp; &nbsp; Show Settings                  | Cmd + 0                   |
 | &nbsp; &nbsp; Show GoTo                      | Cmd + L                   |
 | &nbsp; &nbsp; Refresh                        | Cmd + R                   |
 

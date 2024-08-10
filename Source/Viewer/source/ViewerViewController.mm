@@ -102,7 +102,6 @@ struct BackgroundFileOpener {
     NSProgressIndicator *m_SearchProgressIndicator;
     NSButton *m_PositionButton;
     NSString *m_VerboseTitle;
-    NSButton *m_WordWrappingCheckBox;
 }
 
 @synthesize view = m_View;
@@ -112,8 +111,6 @@ struct BackgroundFileOpener {
 @synthesize verboseTitle = m_VerboseTitle;
 @synthesize filePath = m_Path;
 @synthesize fileVFS = m_VFS;
-@synthesize wordWrappingCheckBox = m_WordWrappingCheckBox;
-@synthesize settingsButton;
 @synthesize goToPositionPopover;
 @synthesize goToPositionValueTextField;
 @synthesize goToPositionKindButton;
@@ -145,6 +142,7 @@ struct BackgroundFileOpener {
     Log::Debug(SPDLOC, "deallocating NCViewerViewController {}", nc::objc_bridge_cast<void>(self));
     [m_View.footer removeObserver:self forKeyPath:@"mode"];
     [m_View.footer removeObserver:self forKeyPath:@"encoding"];
+    [m_View.footer removeObserver:self forKeyPath:@"wrapLines"];
     [self clear];
 }
 
@@ -282,6 +280,7 @@ struct BackgroundFileOpener {
     m_View = view;
     [m_View.footer addObserver:self forKeyPath:@"mode" options:0 context:nullptr];
     [m_View.footer addObserver:self forKeyPath:@"encoding" options:0 context:nullptr];
+    [m_View.footer addObserver:self forKeyPath:@"wrapLines" options:0 context:nullptr];
 }
 
 - (void)setSearchField:(NSSearchField *)searchField
@@ -546,15 +545,6 @@ struct BackgroundFileOpener {
     m_SearchInFile->ToggleTextSearch((__bridge CFStringRef)search_request, m_View.encoding);
 }
 
-- (void)setWordWrappingCheckBox:(NSButton *)wordWrappingCheckBox
-{
-    dispatch_assert_main_queue();
-    if( m_WordWrappingCheckBox == wordWrappingCheckBox )
-        return;
-    m_WordWrappingCheckBox = wordWrappingCheckBox;
-    [m_WordWrappingCheckBox bind:@"value" toObject:m_View withKeyPath:@"wordWrap" options:nil];
-}
-
 - (bool)isOpened
 {
     return m_WorkFile != nullptr;
@@ -630,10 +620,6 @@ struct BackgroundFileOpener {
         [m_View setMode:ViewMode::Preview];
         return true;
     }
-    if( is("viewer.show_settings") ) {
-        [self.settingsButton performClick:self];
-        return true;
-    }
     if( is("viewer.show_goto") ) {
         [self.positionButton performClick:self];
         return true;
@@ -651,11 +637,16 @@ struct BackgroundFileOpener {
                        context:(void *) [[maybe_unused]] _context
 {
     dispatch_assert_main_queue();
-    if( _object == m_View.footer && [_key_path isEqualToString:@"mode"] ) {
-        m_View.mode = m_View.footer.mode;
-    }
-    if( _object == m_View.footer && [_key_path isEqualToString:@"encoding"] ) {
-        m_View.encoding = m_View.footer.encoding;
+    if( _object == m_View.footer ) {
+        if( [_key_path isEqualToString:@"mode"] ) {
+            m_View.mode = m_View.footer.mode;
+        }
+        if( [_key_path isEqualToString:@"encoding"] ) {
+            m_View.encoding = m_View.footer.encoding;
+        }
+        if( [_key_path isEqualToString:@"wrapLines"] ) {
+            m_View.wordWrap = m_View.footer.wrapLines;
+        }
     }
 }
 

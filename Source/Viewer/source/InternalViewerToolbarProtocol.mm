@@ -49,8 +49,6 @@
 @property(nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
 @property(nonatomic) IBOutlet NSButton *internalViewerToolbarPositionButton;
 @property(nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
-@property(nonatomic) IBOutlet NSButton *internalViewerToolbarWordWrapCheckBox;
-@property(nonatomic) IBOutlet NSButton *internalViewerToolbarSettingsButton;
 
 @end
 
@@ -60,8 +58,6 @@
 @synthesize internalViewerToolbarSearchProgressIndicator;
 @synthesize internalViewerToolbarPositionButton;
 @synthesize internalViewerToolbarPopover;
-@synthesize internalViewerToolbarWordWrapCheckBox;
-@synthesize internalViewerToolbarSettingsButton;
 
 - (IBAction)onInternalViewerToolbarSettings:(id) [[maybe_unused]] _sender
 {

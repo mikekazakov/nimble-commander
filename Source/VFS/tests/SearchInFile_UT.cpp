@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "SearchInFile.h"
 #include "VFSGenericMemReadOnlyFile.h"
@@ -10,6 +10,7 @@ using namespace nc::base;
 using nc::vfs::FileWindow;
 using nc::vfs::GenericMemReadOnlyFile;
 using nc::vfs::SearchInFile;
+using nc::utility::Encoding;
 #define PREFIX "[nc::vfs::SearchInFile] "
 
 static FileWindow MakeFileWindow(std::string_view _data);
@@ -24,7 +25,7 @@ TEST_CASE(PREFIX "Doesn't search for empty strings")
 {
     auto fw = MakeFileWindow("some string data");
     auto search = SearchInFile{fw};
-    search.ToggleTextSearch(CFSTR(""), encodings::ENCODING_UTF8);
+    search.ToggleTextSearch(CFSTR(""), Encoding::ENCODING_UTF8);
     const auto result = search.Search();
     CHECK(result.response != SearchInFile::Response::Found);
 }
@@ -36,7 +37,7 @@ TEST_CASE(PREFIX "Does simple search")
 
     SECTION("Search for 0123")
     {
-        search.ToggleTextSearch(CFSTR("0123"), encodings::ENCODING_UTF8);
+        search.ToggleTextSearch(CFSTR("0123"), Encoding::ENCODING_UTF8);
 
         const auto result = search.Search();
         REQUIRE(result.response == SearchInFile::Response::Found);
@@ -45,7 +46,7 @@ TEST_CASE(PREFIX "Does simple search")
     }
     SECTION("Search for hello")
     {
-        search.ToggleTextSearch(CFSTR("hello"), encodings::ENCODING_UTF8);
+        search.ToggleTextSearch(CFSTR("hello"), Encoding::ENCODING_UTF8);
 
         const auto result = search.Search();
         REQUIRE(result.response == SearchInFile::Response::Found);
@@ -54,7 +55,7 @@ TEST_CASE(PREFIX "Does simple search")
     }
     SECTION("Search for HELLO")
     {
-        search.ToggleTextSearch(CFSTR("HELLO"), encodings::ENCODING_UTF8);
+        search.ToggleTextSearch(CFSTR("HELLO"), Encoding::ENCODING_UTF8);
 
         const auto result = search.Search();
         REQUIRE(result.response == SearchInFile::Response::Found);
@@ -63,7 +64,7 @@ TEST_CASE(PREFIX "Does simple search")
     }
     SECTION("Search for 56789 twice")
     {
-        search.ToggleTextSearch(CFSTR("56789"), encodings::ENCODING_UTF8);
+        search.ToggleTextSearch(CFSTR("56789"), Encoding::ENCODING_UTF8);
 
         const auto result1 = search.Search();
         REQUIRE(result1.response == SearchInFile::Response::Found);
@@ -77,7 +78,7 @@ TEST_CASE(PREFIX "Does simple search")
     }
     SECTION("Search for 9 twice")
     {
-        search.ToggleTextSearch(CFSTR("9"), encodings::ENCODING_UTF8);
+        search.ToggleTextSearch(CFSTR("9"), Encoding::ENCODING_UTF8);
 
         const auto result1 = search.Search();
         REQUIRE(result1.response == SearchInFile::Response::Found);
@@ -101,7 +102,7 @@ TEST_CASE(PREFIX "Does search for text which is outside of file window size")
 
     auto fw = MakeFileWindow(memory);
     auto search = SearchInFile{fw};
-    search.ToggleTextSearch(CFSTR("hello"), encodings::ENCODING_UTF8);
+    search.ToggleTextSearch(CFSTR("hello"), Encoding::ENCODING_UTF8);
 
     const auto result = search.Search();
     REQUIRE(result.response == SearchInFile::Response::Found);
@@ -116,7 +117,7 @@ TEST_CASE(PREFIX "Can search for non-ANSI characters")
         auto fw = MakeFileWindow(reinterpret_cast<const char *>(u8"0123456789привет"));
         auto search = SearchInFile{fw};
         const auto cf_string = CFString(reinterpret_cast<const char *>(u8"привет"));
-        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        search.ToggleTextSearch(*cf_string, Encoding::ENCODING_UTF8);
         const auto result = search.Search();
         REQUIRE(result.response == SearchInFile::Response::Found);
         CHECK(result.location->offset == 10);
@@ -127,7 +128,7 @@ TEST_CASE(PREFIX "Can search for non-ANSI characters")
         auto fw = MakeFileWindow(reinterpret_cast<const char *>(u8"01234567890привет"));
         auto search = SearchInFile{fw};
         const auto cf_string = CFString(reinterpret_cast<const char *>(u8"привет"));
-        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        search.ToggleTextSearch(*cf_string, Encoding::ENCODING_UTF8);
         const auto result = search.Search();
         REQUIRE(result.response == SearchInFile::Response::Found);
         CHECK(result.location->offset == 11);
@@ -143,7 +144,7 @@ TEST_CASE(PREFIX "Can search for text located beyond 32bit boundary")
     auto fw = MakeFileWindow(memory);
     auto search = SearchInFile{fw};
     search.MoveCurrentPosition(hello_offset - 100);
-    search.ToggleTextSearch(CFSTR("hello"), encodings::ENCODING_MACOS_ROMAN_WESTERN);
+    search.ToggleTextSearch(CFSTR("hello"), Encoding::ENCODING_MACOS_ROMAN_WESTERN);
     const auto result = search.Search();
     REQUIRE(result.response == SearchInFile::Response::Found);
     CHECK(result.location->offset == hello_offset);
@@ -158,21 +159,21 @@ TEST_CASE(PREFIX "Handles case the sensitivity flag")
     SECTION("case insensitive - match")
     { // default option
         const auto cf_string = CFString(reinterpret_cast<const char *>(u8"привет"));
-        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        search.ToggleTextSearch(*cf_string, Encoding::ENCODING_UTF8);
         const auto result = search.Search();
         REQUIRE(result.response == SearchInFile::Response::Found);
     }
     SECTION("case insensitive - match")
     { // default option
         const auto cf_string = CFString(reinterpret_cast<const char *>(u8"ПРИВЕТ"));
-        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        search.ToggleTextSearch(*cf_string, Encoding::ENCODING_UTF8);
         const auto result = search.Search();
         REQUIRE(result.response == SearchInFile::Response::Found);
     }
     SECTION("case sensitive - match")
     {
         const auto cf_string = CFString(reinterpret_cast<const char *>(u8"привет"));
-        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        search.ToggleTextSearch(*cf_string, Encoding::ENCODING_UTF8);
         search.SetSearchOptions(SearchInFile::Options::CaseSensitive);
         const auto result = search.Search();
         REQUIRE(result.response == SearchInFile::Response::Found);
@@ -180,7 +181,7 @@ TEST_CASE(PREFIX "Handles case the sensitivity flag")
     SECTION("case sensitive - no match")
     {
         const auto cf_string = CFString(reinterpret_cast<const char *>(u8"ПРИВЕТ"));
-        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        search.ToggleTextSearch(*cf_string, Encoding::ENCODING_UTF8);
         search.SetSearchOptions(SearchInFile::Options::CaseSensitive);
         const auto result = search.Search();
         REQUIRE(result.response == SearchInFile::Response::NotFound);
@@ -194,7 +195,7 @@ TEST_CASE(PREFIX "Handles case the whole phrase flag")
     SECTION("regardless")
     { // default option
         const auto cf_string = CFString(reinterpret_cast<const char *>(u8"hello"));
-        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        search.ToggleTextSearch(*cf_string, Encoding::ENCODING_UTF8);
         const auto result = search.Search();
         REQUIRE(result.response == SearchInFile::Response::Found);
         CHECK(result.location->offset == 10);
@@ -203,7 +204,7 @@ TEST_CASE(PREFIX "Handles case the whole phrase flag")
     SECTION("whole phrase")
     {
         const auto cf_string = CFString(reinterpret_cast<const char *>(u8"hello"));
-        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        search.ToggleTextSearch(*cf_string, Encoding::ENCODING_UTF8);
         search.SetSearchOptions(SearchInFile::Options::FindWholePhrase);
         const auto result = search.Search();
         REQUIRE(result.response == SearchInFile::Response::Found);

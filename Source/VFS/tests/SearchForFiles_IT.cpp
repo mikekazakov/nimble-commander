@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include "SearchForFiles.h"
@@ -217,7 +217,7 @@ TEST_CASE(PREFIX "Test content filter")
     {
         auto filter = SearchForFiles::FilterContent{};
         filter.text = reinterpret_cast<const char *>(u8"мир");
-        filter.encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN;
+        filter.encoding = nc::utility::Encoding::ENCODING_MACOS_ROMAN_WESTERN;
         search.SetFilterContent(filter);
         do_search(Options::GoIntoSubDirs | Options::SearchForFiles | Options::SearchForDirs);
         CHECK(filenames == set{});

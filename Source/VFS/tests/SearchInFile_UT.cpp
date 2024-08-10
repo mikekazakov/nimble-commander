@@ -7,10 +7,10 @@
 #include <Base/CFString.h>
 
 using namespace nc::base;
+using nc::utility::Encoding;
 using nc::vfs::FileWindow;
 using nc::vfs::GenericMemReadOnlyFile;
 using nc::vfs::SearchInFile;
-using nc::utility::Encoding;
 #define PREFIX "[nc::vfs::SearchInFile] "
 
 static FileWindow MakeFileWindow(std::string_view _data);

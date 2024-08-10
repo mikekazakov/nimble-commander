@@ -78,7 +78,7 @@ using namespace nc::viewer;
 
     m_LineWrapButton = [[NSButton alloc] initWithFrame:NSRect()];
     m_LineWrapButton.image = [Bundle() imageForResource:@"custom.return.left"];
-    m_LineWrapButton.image.size = NSMakeSize(16, 16);
+    [m_LineWrapButton.image setTemplate:true];
     m_LineWrapButton.imagePosition = NSImageOnly;
     m_LineWrapButton.imageScaling = NSImageScaleNone;
     m_LineWrapButton.translatesAutoresizingMaskIntoConstraints = false;

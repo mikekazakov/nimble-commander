@@ -47,7 +47,6 @@
 @property(nonatomic) IBOutlet NSToolbar *internalViewerToolbar;
 @property(nonatomic) IBOutlet NSSearchField *internalViewerToolbarSearchField;
 @property(nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
-@property(nonatomic) IBOutlet NSButton *internalViewerToolbarPositionButton;
 @property(nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
 
 @end
@@ -56,7 +55,6 @@
 @synthesize internalViewerToolbar;
 @synthesize internalViewerToolbarSearchField;
 @synthesize internalViewerToolbarSearchProgressIndicator;
-@synthesize internalViewerToolbarPositionButton;
 @synthesize internalViewerToolbarPopover;
 
 - (IBAction)onInternalViewerToolbarSettings:(id) [[maybe_unused]] _sender

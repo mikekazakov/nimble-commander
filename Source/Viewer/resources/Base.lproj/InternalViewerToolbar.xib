@@ -10,7 +10,6 @@
             <connections>
                 <outlet property="internalViewerToolbar" destination="rLU-Qm-1gC" id="B69-iT-hOW"/>
                 <outlet property="internalViewerToolbarPopover" destination="aZY-jm-b2A" id="GYw-oF-EmL"/>
-                <outlet property="internalViewerToolbarPositionButton" destination="ZB4-Mb-NHI" id="fK4-hJ-Ncy"/>
                 <outlet property="internalViewerToolbarSearchField" destination="drQ-lK-Cpl" id="KHx-bJ-Xo2"/>
                 <outlet property="internalViewerToolbarSearchProgressIndicator" destination="Wp3-l9-n3O" id="g3B-SO-Ygu"/>
             </connections>
@@ -39,20 +38,8 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </progressIndicator>
                 </toolbarItem>
-                <toolbarItem implicitItemIdentifier="0AE9D749-57E0-45C7-A994-F119862378A7" label="Position" paletteLabel="Position" title="Position" visibilityPriority="1" sizingBehavior="auto" id="RcC-bj-Zj1">
-                    <nil key="toolTip"/>
-                    <button key="view" verticalHuggingPriority="750" id="ZB4-Mb-NHI">
-                        <rect key="frame" x="0.0" y="14" width="63" height="19"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <buttonCell key="cell" type="recessed" title="Position" bezelStyle="recessed" alignment="center" borderStyle="border" inset="2" id="xf4-mb-WQH">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                    </button>
-                </toolbarItem>
             </allowedToolbarItems>
             <defaultToolbarItems>
-                <toolbarItem reference="RcC-bj-Zj1"/>
                 <toolbarItem reference="zgw-kr-e3m"/>
                 <toolbarItem reference="r4X-h2-aDN"/>
                 <toolbarItem reference="Qk3-zV-KEt"/>

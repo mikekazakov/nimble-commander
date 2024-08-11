@@ -25,7 +25,6 @@ using namespace std::literals;
 @property(nonatomic) IBOutlet NSToolbar *internalViewerToolbar;
 @property(nonatomic) IBOutlet NSSearchField *internalViewerToolbarSearchField;
 @property(nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
-@property(nonatomic) IBOutlet NSButton *internalViewerToolbarPositionButton;
 @property(nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
 
 @end
@@ -41,7 +40,6 @@ using namespace std::literals;
 @synthesize internalViewerToolbar;
 @synthesize internalViewerToolbarSearchField;
 @synthesize internalViewerToolbarSearchProgressIndicator;
-@synthesize internalViewerToolbarPositionButton;
 @synthesize internalViewerToolbarPopover;
 
 - (id)initWithFilepath:(std::string)path
@@ -82,7 +80,6 @@ using namespace std::literals;
     m_Controller.view = self.viewerView;
     m_Controller.searchField = self.internalViewerToolbarSearchField;
     m_Controller.searchProgressIndicator = self.internalViewerToolbarSearchProgressIndicator;
-    m_Controller.positionButton = self.internalViewerToolbarPositionButton;
 
     m_Controller.nextResponder = self.window.nextResponder;
     self.window.nextResponder = m_Controller;

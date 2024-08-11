@@ -22,6 +22,7 @@ using namespace nc::viewer;
     NSPopUpButton *m_EncodingButton;
     NSButton *m_LineWrapButton;
     NSTextField *m_FileSizeLabel;
+    NSButton *m_LinePositionButton;
 }
 
 - (instancetype)initWithFrame:(NSRect)_frame
@@ -58,6 +59,7 @@ using namespace nc::viewer;
     m_ModeButton.target = self;
     m_ModeButton.action = @selector(onModeChanged:);
     m_ModeButton.translatesAutoresizingMaskIntoConstraints = false;
+    m_EncodingButton.contentTintColor = NSColor.secondaryLabelColor;
     [self addSubview:m_ModeButton];
 
     NSMenu *encoding_menu = [[NSMenu alloc] init];
@@ -74,6 +76,7 @@ using namespace nc::viewer;
     m_EncodingButton.target = self;
     m_EncodingButton.action = @selector(onEncodingChanged:);
     m_EncodingButton.translatesAutoresizingMaskIntoConstraints = false;
+    m_EncodingButton.contentTintColor = NSColor.secondaryLabelColor;
     [self addSubview:m_EncodingButton];
 
     m_LineWrapButton = [[NSButton alloc] initWithFrame:NSRect()];
@@ -100,13 +103,21 @@ using namespace nc::viewer;
     m_FileSizeLabel.lineBreakMode = NSLineBreakByClipping;
     m_FileSizeLabel.usesSingleLineMode = true;
     m_FileSizeLabel.alignment = NSTextAlignmentRight;
+    m_FileSizeLabel.textColor = NSColor.secondaryLabelColor;
     [self addSubview:m_FileSizeLabel];
+
+    m_LinePositionButton = [[NSButton alloc] initWithFrame:NSRect()];
+    m_LinePositionButton.translatesAutoresizingMaskIntoConstraints = false;
+    m_LinePositionButton.bordered = false;
+    m_LinePositionButton.buttonType = NSButtonTypeMomentaryPushIn;
+    m_LinePositionButton.title = @"";
+    [self addSubview:m_LinePositionButton];
 }
 
 - (void)layoutControls
 {
     const auto views = NSDictionaryOfVariableBindings(
-        m_SeparatorLine, m_ModeButton, m_EncodingButton, m_LineWrapButton, m_FileSizeLabel);
+        m_SeparatorLine, m_ModeButton, m_EncodingButton, m_LineWrapButton, m_FileSizeLabel, m_LinePositionButton);
     const auto add = [&](NSString *_vf) {
         auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_vf options:0 metrics:nil views:views];
         [self addConstraints:constraints];
@@ -115,12 +126,14 @@ using namespace nc::viewer;
     add(@"V:|-(==0)-[m_SeparatorLine(==1)]");
     add(@"V:[m_SeparatorLine]-(==0)-[m_ModeButton]-(==0)-|");
     add(@"V:[m_SeparatorLine]-(==0)-[m_FileSizeLabel]-(==0)-|");
+    add(@"V:[m_SeparatorLine]-(==0)-[m_LinePositionButton]-(==0)-|");
     add(@"V:[m_SeparatorLine]-(==0)-[m_EncodingButton]-(==0)-|");
     add(@"V:[m_SeparatorLine]-(==0)-[m_LineWrapButton]-(==0)-|");
 
     add(@"|-(==0)-[m_SeparatorLine]-(==0)-|");
     add(@"|-(4)-[m_ModeButton]");
-    add(@"[m_LineWrapButton(==24)]-(4)-[m_EncodingButton]-(4)-[m_FileSizeLabel]-(4)-|");
+    add(@"[m_LineWrapButton(==24)]-(4)-[m_EncodingButton]-(4)-[m_LinePositionButton(>=60)]-(4)-[m_FileSizeLabel(>=60)]-"
+        @"(4)-|");
 }
 
 - (void)setMode:(ViewMode)_mode
@@ -206,6 +219,41 @@ using namespace nc::viewer;
 {
     assert(_sender == m_LineWrapButton);
     self.wrapLines = m_LineWrapButton.state == NSControlStateValueOn;
+}
+
+- (NSString *)filePosition
+{
+    return m_LinePositionButton.title;
+}
+
+- (void)setFilePosition:(NSString *)_file_position
+{
+    m_LinePositionButton.title = _file_position;
+}
+
+- (id)filePositionClickTarget
+{
+    return m_LinePositionButton.target;
+}
+
+- (void)setFilePositionClickTarget:(id)_target
+{
+    m_LinePositionButton.target = _target;
+}
+
+- (SEL)filePositionClickAction
+{
+    return m_LinePositionButton.action;
+}
+
+- (void)setFilePositionClickAction:(SEL)_action
+{
+    m_LinePositionButton.action = _action;
+}
+
+- (void)performFilePositionClick:(id)_sender
+{
+    [m_LinePositionButton performClick:_sender];
 }
 
 @end

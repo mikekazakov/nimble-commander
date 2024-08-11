@@ -8,7 +8,6 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NCViewerSheet">
             <connections>
-                <outlet property="filePos" destination="gGC-MV-h6K" id="dJO-mV-hqr"/>
                 <outlet property="searchField" destination="vcM-ZZ-dH2" id="pnN-9r-2Ph"/>
                 <outlet property="searchIndicator" destination="cKE-aL-pDT" id="hCH-e9-jTP"/>
                 <outlet property="settingsPopover" destination="T94-gH-ROL" id="22O-0M-lil"/>
@@ -47,16 +46,6 @@ Gw
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="agn-et-TU9">
                         <rect key="frame" x="20" y="60" width="699" height="383"/>
                     </customView>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gGC-MV-h6K">
-                        <rect key="frame" x="20" y="450" width="46" height="19"/>
-                        <buttonCell key="cell" type="recessed" bezelStyle="recessed" alignment="center" borderStyle="border" inset="2" id="Yb1-IC-dNE">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="46" id="DY2-Xo-n9c"/>
-                        </constraints>
-                    </button>
                     <searchField wantsLayer="YES" focusRingType="none" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vcM-ZZ-dH2">
                         <rect key="frame" x="519" y="449" width="200" height="22"/>
                         <constraints>
@@ -86,7 +75,6 @@ Gw
                 </subviews>
                 <constraints>
                     <constraint firstItem="LGo-bH-RLu" firstAttribute="bottom" secondItem="agn-et-TU9" secondAttribute="bottom" constant="1" id="90n-mw-ZBb"/>
-                    <constraint firstItem="gGC-MV-h6K" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="Bbh-NQ-gCy"/>
                     <constraint firstAttribute="bottom" secondItem="1BM-GG-fwQ" secondAttribute="bottom" constant="20" symbolic="YES" id="Erx-r9-yxF"/>
                     <constraint firstItem="b9G-tJ-W8x" firstAttribute="leading" secondItem="agn-et-TU9" secondAttribute="leading" id="Gdt-Ue-zHS"/>
                     <constraint firstItem="LGo-bH-RLu" firstAttribute="leading" secondItem="agn-et-TU9" secondAttribute="trailing" id="JbT-P4-qVg"/>
@@ -94,7 +82,6 @@ Gw
                     <constraint firstItem="b9G-tJ-W8x" firstAttribute="trailing" secondItem="agn-et-TU9" secondAttribute="trailing" id="LcG-1x-g4x"/>
                     <constraint firstItem="V2m-F5-frJ" firstAttribute="top" secondItem="agn-et-TU9" secondAttribute="top" constant="-1" id="O3F-BW-Izc"/>
                     <constraint firstItem="vcM-ZZ-dH2" firstAttribute="leading" secondItem="cKE-aL-pDT" secondAttribute="trailing" constant="8" symbolic="YES" id="Ta0-Iy-1jw"/>
-                    <constraint firstItem="b9G-tJ-W8x" firstAttribute="top" secondItem="gGC-MV-h6K" secondAttribute="bottom" constant="7" id="Ugu-Pq-fSP"/>
                     <constraint firstItem="DUy-Xi-YNp" firstAttribute="trailing" secondItem="agn-et-TU9" secondAttribute="trailing" id="W18-Q4-Goa"/>
                     <constraint firstItem="agn-et-TU9" firstAttribute="top" secondItem="vcM-ZZ-dH2" secondAttribute="bottom" constant="6" id="ZVp-vv-G1R"/>
                     <constraint firstAttribute="trailing" secondItem="agn-et-TU9" secondAttribute="trailing" constant="20" symbolic="YES" id="ZhP-i6-UVA"/>

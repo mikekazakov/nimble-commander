@@ -11,7 +11,6 @@ using namespace nc::viewer;
 
 @property(nonatomic) NCViewerView *view;
 @property(nonatomic) IBOutlet NSView *viewPlaceholder;
-@property(nonatomic) IBOutlet NSButton *filePos;
 @property(nonatomic) IBOutlet NSProgressIndicator *searchIndicator;
 @property(nonatomic) IBOutlet NSSearchField *searchField;
 @property(nonatomic) IBOutlet NSPopover *settingsPopover;
@@ -29,7 +28,6 @@ using namespace nc::viewer;
 }
 @synthesize view;
 @synthesize viewPlaceholder;
-@synthesize filePos;
 @synthesize searchIndicator;
 @synthesize searchField;
 @synthesize settingsPopover;
@@ -83,7 +81,6 @@ using namespace nc::viewer;
     self.view.wantsLayer = true; // to reduce side-effects of overdrawing by scrolling with touchpad
 
     m_Controller.view = self.view;
-    m_Controller.positionButton = self.filePos;
     m_Controller.searchField = self.searchField;
     m_Controller.searchProgressIndicator = self.searchIndicator;
 

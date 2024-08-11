@@ -100,14 +100,12 @@ struct BackgroundFileOpener {
     NCViewerView *m_View;
     NSSearchField *m_SearchField;
     NSProgressIndicator *m_SearchProgressIndicator;
-    NSButton *m_PositionButton;
     NSString *m_VerboseTitle;
 }
 
 @synthesize view = m_View;
 @synthesize searchField = m_SearchField;
 @synthesize searchProgressIndicator = m_SearchProgressIndicator;
-@synthesize positionButton = m_PositionButton;
 @synthesize verboseTitle = m_VerboseTitle;
 @synthesize filePath = m_Path;
 @synthesize fileVFS = m_VFS;
@@ -140,6 +138,7 @@ struct BackgroundFileOpener {
 {
     dispatch_assert_main_queue();
     Log::Debug(SPDLOC, "deallocating NCViewerViewController {}", nc::objc_bridge_cast<void>(self));
+    [m_View removeObserver:self forKeyPath:@"verticalPositionPercentage"];
     [m_View.footer removeObserver:self forKeyPath:@"mode"];
     [m_View.footer removeObserver:self forKeyPath:@"encoding"];
     [m_View.footer removeObserver:self forKeyPath:@"wrapLines"];
@@ -278,9 +277,12 @@ struct BackgroundFileOpener {
         return;
 
     m_View = view;
+    [m_View addObserver:self forKeyPath:@"verticalPositionPercentage" options:0 context:nullptr];
     [m_View.footer addObserver:self forKeyPath:@"mode" options:0 context:nullptr];
     [m_View.footer addObserver:self forKeyPath:@"encoding" options:0 context:nullptr];
     [m_View.footer addObserver:self forKeyPath:@"wrapLines" options:0 context:nullptr];
+    m_View.footer.filePositionClickTarget = self;
+    m_View.footer.filePositionClickAction = @selector(onPositionButtonClicked:);
 }
 
 - (void)setSearchField:(NSSearchField *)searchField
@@ -471,26 +473,11 @@ struct BackgroundFileOpener {
     m_SearchProgressIndicator.displayedWhenStopped = false;
 }
 
-- (void)setPositionButton:(NSButton *)positionButton
+- (void)onPositionButtonClicked:(id)_sender
 {
-    dispatch_assert_main_queue();
-    if( m_PositionButton == positionButton )
-        return;
-
-    m_PositionButton = positionButton;
-    m_PositionButton.target = self;
-    m_PositionButton.action = @selector(onPositionButtonClicked:);
-    [m_PositionButton bind:@"title"
-                  toObject:m_View
-               withKeyPath:@"verticalPositionPercentage"
-                   options:@{NSValueTransformerBindingOption: [NCViewerVerticalPostionToStringTransformer new]}];
-}
-
-- (void)onPositionButtonClicked:(id)sender
-{
-    [self.goToPositionPopover showRelativeToRect:nc::objc_cast<NSButton>(sender).bounds
-                                          ofView:nc::objc_cast<NSButton>(sender)
-                                   preferredEdge:NSMaxYEdge];
+    [self.goToPositionPopover showRelativeToRect:nc::objc_cast<NSView>(_sender).bounds
+                                          ofView:nc::objc_cast<NSView>(_sender)
+                                   preferredEdge:/*NSMaxYEdge*/ NSMinYEdge];
 }
 
 - (void)popoverWillShow:(NSNotification *) [[maybe_unused]] _notification
@@ -621,7 +608,7 @@ struct BackgroundFileOpener {
         return true;
     }
     if( is("viewer.show_goto") ) {
-        [self.positionButton performClick:self];
+        [m_View.footer performFilePositionClick:self];
         return true;
     }
     if( is("viewer.refresh") ) {
@@ -646,6 +633,12 @@ struct BackgroundFileOpener {
         }
         if( [_key_path isEqualToString:@"wrapLines"] ) {
             m_View.wordWrap = m_View.footer.wrapLines;
+        }
+    }
+    else if( _object == m_View ) {
+        if( [_key_path isEqualToString:@"verticalPositionPercentage"] ) {
+            m_View.footer.filePosition =
+                [NSString stringWithFormat:@"%2.0f%%", 100.0 * m_View.verticalPositionPercentage];
         }
     }
 }

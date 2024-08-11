@@ -18,4 +18,10 @@
 
 @property(nonatomic, readwrite) uint64_t fileSize;
 
+@property(nonatomic, readwrite) NSString *filePosition;
+@property(nonatomic, readwrite, weak) id filePositionClickTarget;
+@property(nonatomic, readwrite) SEL filePositionClickAction;
+
+- (void)performFilePositionClick:(id)_sender;
+
 @end

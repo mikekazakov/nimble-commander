@@ -13,7 +13,6 @@
 @property(nonatomic) IBOutlet NSToolbar *internalViewerToolbar;
 @property(nonatomic) IBOutlet NSSearchField *internalViewerToolbarSearchField;
 @property(nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
-@property(nonatomic) IBOutlet NSButton *internalViewerToolbarPositionButton;
 @property(nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
 
 @property(nonatomic) IBOutlet NCViewerView *embeddedFileView;
@@ -27,7 +26,6 @@
 @synthesize internalViewerToolbar;
 @synthesize internalViewerToolbarSearchField;
 @synthesize internalViewerToolbarSearchProgressIndicator;
-@synthesize internalViewerToolbarPositionButton;
 @synthesize internalViewerToolbarPopover;
 @synthesize embeddedFileView;
 
@@ -67,7 +65,6 @@
     m_Controller.view = self.embeddedFileView;
     m_Controller.searchField = self.internalViewerToolbarSearchField;
     m_Controller.searchProgressIndicator = self.internalViewerToolbarSearchProgressIndicator;
-    m_Controller.positionButton = self.internalViewerToolbarPositionButton;
 }
 
 - (NSView *)windowStateContentView

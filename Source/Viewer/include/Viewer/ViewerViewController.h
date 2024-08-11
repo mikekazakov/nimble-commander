@@ -22,7 +22,6 @@ struct ActionShortcut;
 @property(nonatomic) NCViewerView *view;
 @property(nonatomic) NSSearchField *searchField;
 @property(nonatomic) NSProgressIndicator *searchProgressIndicator;
-@property(nonatomic) NSButton *positionButton;
 
 // Useful information
 @property(nonatomic, readonly) NSString *verboseTitle;

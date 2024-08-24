@@ -59,7 +59,7 @@ using namespace nc::viewer;
     m_ModeButton.target = self;
     m_ModeButton.action = @selector(onModeChanged:);
     m_ModeButton.translatesAutoresizingMaskIntoConstraints = false;
-    m_EncodingButton.contentTintColor = NSColor.secondaryLabelColor;
+    m_ModeButton.contentTintColor = NSColor.secondaryLabelColor;
     [self addSubview:m_ModeButton];
 
     NSMenu *encoding_menu = [[NSMenu alloc] init];

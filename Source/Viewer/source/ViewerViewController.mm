@@ -1,6 +1,7 @@
 // Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerViewController.h"
 #include "ViewerFooter.h"
+#include "ViewerSearchView.h"
 #include <Viewer/Log.h>
 #include <VFS/VFS.h>
 #include <CUI/ProcessSheetController.h>
@@ -104,8 +105,6 @@ struct BackgroundFileOpener {
 }
 
 @synthesize view = m_View;
-@synthesize searchField = m_SearchField;
-@synthesize searchProgressIndicator = m_SearchProgressIndicator;
 @synthesize verboseTitle = m_VerboseTitle;
 @synthesize filePath = m_Path;
 @synthesize fileVFS = m_VFS;
@@ -283,6 +282,9 @@ struct BackgroundFileOpener {
     [m_View.footer addObserver:self forKeyPath:@"wrapLines" options:0 context:nullptr];
     m_View.footer.filePositionClickTarget = self;
     m_View.footer.filePositionClickAction = @selector(onPositionButtonClicked:);
+
+    [self setSearchField:m_View.searchView.searchField];
+    [self setSearchProgressIndicator:m_View.searchView.progressIndicator];
 }
 
 - (void)setSearchField:(NSSearchField *)searchField
@@ -309,6 +311,7 @@ struct BackgroundFileOpener {
 {
     if( control == m_SearchField && commandSelector == @selector(cancelOperation:) ) {
         [m_View.window makeFirstResponder:m_View.keyboardResponder];
+        m_View.searchView.hidden = true;
         return true;
     }
     return false;
@@ -364,11 +367,13 @@ struct BackgroundFileOpener {
 
 - (IBAction)onMainMenuPerformFindAction:(id) [[maybe_unused]] _sender
 {
+    self.view.searchView.hidden = false;
     [self.view.window makeFirstResponder:m_SearchField];
 }
 
 - (IBAction)onMainMenuPerformFindNextAction:(id) [[maybe_unused]] _sender
 {
+    self.view.searchView.hidden = false;
     [self onSearchFieldAction:self];
 }
 
@@ -468,9 +473,6 @@ struct BackgroundFileOpener {
         return;
 
     m_SearchProgressIndicator = searchProgressIndicator;
-    m_SearchProgressIndicator.indeterminate = true;
-    m_SearchProgressIndicator.style = NSProgressIndicatorStyleSpinning;
-    m_SearchProgressIndicator.displayedWhenStopped = false;
 }
 
 - (void)onPositionButtonClicked:(id)_sender

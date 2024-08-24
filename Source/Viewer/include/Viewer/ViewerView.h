@@ -9,6 +9,7 @@
 #include <memory>
 
 @class NCViewerFooter;
+@class NCViewerSearchView;
 
 namespace nc::utility {
 class TemporaryFileStorage;
@@ -100,5 +101,7 @@ class SettingsStorage;
 @property(nonatomic, weak) NSResponder *hotkeyDelegate;
 
 @property(nonatomic, readonly) NCViewerFooter *footer;
+
+@property(nonatomic, readonly) NCViewerSearchView *searchView;
 
 @end

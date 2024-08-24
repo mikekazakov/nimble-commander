@@ -11,9 +11,6 @@
 @interface MainWindowInternalViewerState ()
 
 @property(nonatomic) IBOutlet NSToolbar *internalViewerToolbar;
-@property(nonatomic) IBOutlet NSSearchField *internalViewerToolbarSearchField;
-@property(nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
-@property(nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
 
 @property(nonatomic) IBOutlet NCViewerView *embeddedFileView;
 
@@ -24,9 +21,6 @@
     NSLayoutConstraint *m_TopLayoutConstraint;
 }
 @synthesize internalViewerToolbar;
-@synthesize internalViewerToolbarSearchField;
-@synthesize internalViewerToolbarSearchProgressIndicator;
-@synthesize internalViewerToolbarPopover;
 @synthesize embeddedFileView;
 
 - (id)initWithFrame:(NSRect)_frame_rect
@@ -37,8 +31,6 @@
     if( self = [super initWithFrame:_frame_rect] ) {
         self.translatesAutoresizingMaskIntoConstraints = false;
 
-        NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar" bundle:nc::viewer::Bundle()];
-        [toolbar_nib instantiateWithOwner:self topLevelObjects:nil];
 
         auto viewer = _viewer_factory(NSMakeRect(0, 0, 100, 100));
         viewer.translatesAutoresizingMaskIntoConstraints = false;
@@ -63,8 +55,6 @@
     dispatch_assert_main_queue();
     self.embeddedFileView.focusRingType = NSFocusRingTypeNone;
     m_Controller.view = self.embeddedFileView;
-    m_Controller.searchField = self.internalViewerToolbarSearchField;
-    m_Controller.searchProgressIndicator = self.internalViewerToolbarSearchProgressIndicator;
 }
 
 - (NSView *)windowStateContentView
@@ -139,12 +129,6 @@
     return true;
 }
 
-- (IBAction)onInternalViewerToolbarSettings:(id)sender
-{
-    [self.internalViewerToolbarPopover showRelativeToRect:nc::objc_cast<NSButton>(sender).bounds
-                                                   ofView:nc::objc_cast<NSButton>(sender)
-                                            preferredEdge:NSMaxYEdge];
-}
 
 - (BOOL)isOpaque
 {

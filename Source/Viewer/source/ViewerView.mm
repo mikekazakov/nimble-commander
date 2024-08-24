@@ -14,6 +14,7 @@
 #include "HexModeView.h"
 #include "PreviewModeView.h"
 #include "ViewerFooter.h"
+#include "ViewerSearchView.h"
 
 static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 static const auto g_ConfigAutoDetectEncoding = "viewer.autoDetectEncoding";
@@ -35,6 +36,7 @@ using namespace nc::viewer;
 
     NSView<NCViewerImplementationProtocol> *m_View;
     NCViewerFooter *m_Footer;
+    NCViewerSearchView *m_SearchView;
 
     uint64_t m_VerticalPositionInBytes;
     double m_VerticalPositionPercentage;
@@ -103,12 +105,25 @@ using namespace nc::viewer;
     m_Footer.translatesAutoresizingMaskIntoConstraints = false;
     [self addSubview:m_Footer];
 
-    const auto views = NSDictionaryOfVariableBindings(m_Footer);
+    m_SearchView = [[NCViewerSearchView alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    m_SearchView.translatesAutoresizingMaskIntoConstraints = false;
+    m_SearchView.hidden = true;
+    [self addSubview:m_SearchView positioned:NSWindowAbove relativeTo:nil];
+
+    const auto views = NSDictionaryOfVariableBindings(m_Footer, m_SearchView);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_Footer]-(==0)-|"
                                                                  options:0
                                                                  metrics:nil
                                                                    views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_Footer(==20)]-(==0)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(>=20)-[m_SearchView]-(==34)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==12)-[m_SearchView]"
                                                                  options:0
                                                                  metrics:nil
                                                                    views:views]];
@@ -342,7 +357,8 @@ using namespace nc::viewer;
 
 - (void)addFillingSubview:(NSView *)_view
 {
-    [self addSubview:_view];
+    [self addSubview:_view positioned:NSWindowBelow relativeTo:nil];
+
     NSDictionary *views = NSDictionaryOfVariableBindings(_view, m_Footer);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[_view]-(==0)-|"
                                                                  options:0
@@ -651,6 +667,11 @@ using namespace nc::viewer;
 - (NCViewerFooter *)footer
 {
     return m_Footer;
+}
+
+- (NCViewerSearchView *)searchView
+{
+    return m_SearchView;
 }
 
 @end

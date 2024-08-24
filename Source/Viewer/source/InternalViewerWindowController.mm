@@ -22,10 +22,6 @@ using namespace std::literals;
 @interface InternalViewerWindowController ()
 @property(nonatomic) IBOutlet NSView *viewerPlaceholder;
 @property(nonatomic) NCViewerView *viewerView;
-@property(nonatomic) IBOutlet NSToolbar *internalViewerToolbar;
-@property(nonatomic) IBOutlet NSSearchField *internalViewerToolbarSearchField;
-@property(nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
-@property(nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
 
 @end
 
@@ -37,10 +33,6 @@ using namespace std::literals;
 @synthesize delegate = m_Delegate;
 @synthesize viewerPlaceholder;
 @synthesize viewerView;
-@synthesize internalViewerToolbar;
-@synthesize internalViewerToolbarSearchField;
-@synthesize internalViewerToolbarSearchProgressIndicator;
-@synthesize internalViewerToolbarPopover;
 
 - (id)initWithFilepath:(std::string)path
                     at:(VFSHostPtr)vfs
@@ -53,8 +45,6 @@ using namespace std::literals;
         m_Controller = _controller;
         [m_Controller setFile:path at:vfs];
 
-        NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar" bundle:Bundle()];
-        [toolbar_nib instantiateWithOwner:self topLevelObjects:nil];
 
         self.viewerView = _viewer_factory(NSMakeRect(0, 0, 100, 100));
         self.viewerView.translatesAutoresizingMaskIntoConstraints = false;
@@ -75,11 +65,7 @@ using namespace std::literals;
         [self.viewerPlaceholder addConstraints:constaints];
     }
 
-    self.window.toolbar = self.internalViewerToolbar;
-    self.window.toolbar.visible = true;
     m_Controller.view = self.viewerView;
-    m_Controller.searchField = self.internalViewerToolbarSearchField;
-    m_Controller.searchProgressIndicator = self.internalViewerToolbarSearchProgressIndicator;
 
     m_Controller.nextResponder = self.window.nextResponder;
     self.window.nextResponder = m_Controller;
@@ -121,12 +107,6 @@ using namespace std::literals;
     [m_Controller markSelection:_selection forSearchTerm:_request];
 }
 
-- (IBAction)onInternalViewerToolbarSettings:(id)sender
-{
-    [self.internalViewerToolbarPopover showRelativeToRect:nc::objc_cast<NSButton>(sender).bounds
-                                                   ofView:nc::objc_cast<NSButton>(sender)
-                                            preferredEdge:NSMaxYEdge];
-}
 
 - (IBAction)OnFileInternalBigViewCommand:(id) [[maybe_unused]] _sender
 {

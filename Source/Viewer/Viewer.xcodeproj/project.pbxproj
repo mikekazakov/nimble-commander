@@ -40,7 +40,6 @@
 		CF5BF7C82C0B89B40057C92E /* SettingsStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CF5BF7C72C0B89B40057C92E /* SettingsStorage.h */; };
 		CF5BF7CA2C0B89C90057C92E /* SettingsStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7C92C0B89C90057C92E /* SettingsStorage.cpp */; };
 		CF5C1D36255EE63000ADE703 /* InternalViewerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B0821FE4F430043A26D /* InternalViewerController.xib */; };
-		CF5C1D3A255EE63C00ADE703 /* InternalViewerToolbar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B1B2205DE520043A26D /* InternalViewerToolbar.xib */; };
 		CF5C1D3E255EE63F00ADE703 /* InternalViewerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */; };
 		CF5C1D42255EE64200ADE703 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF2343F022CDDFC600F516CB /* Localizable.strings */; };
 		CF5C1D46255EE64500ADE703 /* NCViewerSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B132205B8450043A26D /* NCViewerSheet.xib */; };
@@ -60,7 +59,6 @@
 		CF5C1D87255EEA6A00ADE703 /* TextModeWorkingSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B702210B6DB0043A26D /* TextModeWorkingSet.cpp */; };
 		CF5C1D8A255EEA6A00ADE703 /* HexModeLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF91C2275FD9500AD36D9 /* HexModeLayout.cpp */; };
 		CF5C1D8B255EEA6A00ADE703 /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79AB521FCA4F30043A26D /* History.cpp */; };
-		CF5C1D8C255EEA6A00ADE703 /* InternalViewerToolbarProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B192205DE480043A26D /* InternalViewerToolbarProtocol.mm */; };
 		CF5C1D8E255EEA6A00ADE703 /* InternalViewerWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B212205DEA40043A26D /* InternalViewerWindowController.mm */; };
 		CF5C1D8F255EEA6A00ADE703 /* TextModeFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF13255A2222B6D40097F9A1 /* TextModeFrame.cpp */; };
 		CF5C1D90255EEA6A00ADE703 /* TextModeFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF13256322287F250097F9A1 /* TextModeFrame.mm */; };
@@ -74,6 +72,7 @@
 		CFD79B8422198DB50043A26D /* TextModeWorkingSet_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B8222198DA80043A26D /* TextModeWorkingSet_UT.cpp */; };
 		CFE5AF8F2C5812C30035CCFA /* ViewerFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE5AF8E2C5812C30035CCFA /* ViewerFooter.mm */; };
 		CFE5AF912C62C0940035CCFA /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFE5AF902C62C0940035CCFA /* Media.xcassets */; };
+		CFE5AFBC2C6956CE0035CCFA /* ViewerSearchView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE5AFBB2C6956CE0035CCFA /* ViewerSearchView.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -215,10 +214,6 @@
 		CFD79B112205B8360043A26D /* ViewerSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewerSheet.mm; path = source/ViewerSheet.mm; sourceTree = "<group>"; };
 		CFD79B142205B8450043A26D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = resources/Base.lproj/NCViewerSheet.xib; sourceTree = "<group>"; };
 		CFD79B162205B84E0043A26D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = resources/ru.lproj/NCViewerSheet.strings; sourceTree = "<group>"; };
-		CFD79B172205DE3D0043A26D /* InternalViewerToolbarProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerToolbarProtocol.h; path = include/Viewer/InternalViewerToolbarProtocol.h; sourceTree = "<group>"; };
-		CFD79B192205DE480043A26D /* InternalViewerToolbarProtocol.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerToolbarProtocol.mm; path = source/InternalViewerToolbarProtocol.mm; sourceTree = "<group>"; };
-		CFD79B1C2205DE520043A26D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = resources/Base.lproj/InternalViewerToolbar.xib; sourceTree = "<group>"; };
-		CFD79B1E2205DE610043A26D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = resources/ru.lproj/InternalViewerToolbar.strings; sourceTree = "<group>"; };
 		CFD79B1F2205DE9C0043A26D /* InternalViewerWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerWindowController.h; path = include/Viewer/InternalViewerWindowController.h; sourceTree = "<group>"; };
 		CFD79B212205DEA40043A26D /* InternalViewerWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerWindowController.mm; path = source/InternalViewerWindowController.mm; sourceTree = "<group>"; };
 		CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = InternalViewerWindowController.xib; path = resources/InternalViewerWindowController.xib; sourceTree = "<group>"; };
@@ -236,6 +231,8 @@
 		CFE5AF8D2C5812B40035CCFA /* ViewerFooter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ViewerFooter.h; path = include/Viewer/ViewerFooter.h; sourceTree = "<group>"; };
 		CFE5AF8E2C5812C30035CCFA /* ViewerFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewerFooter.mm; path = source/ViewerFooter.mm; sourceTree = "<group>"; };
 		CFE5AF902C62C0940035CCFA /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = resources/Media.xcassets; sourceTree = "<group>"; };
+		CFE5AFBA2C6956C70035CCFA /* ViewerSearchView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ViewerSearchView.h; path = include/Viewer/ViewerSearchView.h; sourceTree = "<group>"; };
+		CFE5AFBB2C6956CE0035CCFA /* ViewerSearchView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewerSearchView.mm; path = source/ViewerSearchView.mm; sourceTree = "<group>"; };
 		CFF54448261670F100A6C49C /* libHabanero.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libHabanero.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -330,7 +327,6 @@
 			children = (
 				CF5BF7AC2BFE6B160057C92E /* Highlighter.plist */,
 				CFD79B0821FE4F430043A26D /* InternalViewerController.xib */,
-				CFD79B1B2205DE520043A26D /* InternalViewerToolbar.xib */,
 				CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */,
 				CF739C3F29564D72004758C5 /* Localizable.strings */,
 				CF2343F022CDDFC600F516CB /* Localizable.strings */,
@@ -362,7 +358,6 @@
 				CF9BF91B22724A3D00AD36D9 /* HexModeViewDelegate.h */,
 				CF5BF7812BF90FDE0057C92E /* Highlighting */,
 				CFD79AB321FCA4E50043A26D /* History.h */,
-				CFD79B172205DE3D0043A26D /* InternalViewerToolbarProtocol.h */,
 				CFD79A9521F65B570043A26D /* InternalViewerViewPreviewMode.h */,
 				CFD79B1F2205DE9C0043A26D /* InternalViewerWindowController.h */,
 				CFA9998B26468A3900F72E93 /* Log.h */,
@@ -378,6 +373,7 @@
 				CFD79A9321F65B570043A26D /* Theme.h */,
 				CFE5AF8D2C5812B40035CCFA /* ViewerFooter.h */,
 				CFD79A9221F65B570043A26D /* ViewerImplementationProtocol.h */,
+				CFE5AFBA2C6956C70035CCFA /* ViewerSearchView.h */,
 				CFD79B0F2205B82F0043A26D /* ViewerSheet.h */,
 				CFD79A9721F65B570043A26D /* ViewerView.h */,
 				CFD79B0221FE4CC40043A26D /* ViewerViewController.h */,
@@ -397,7 +393,6 @@
 				CFD79AB521FCA4F30043A26D /* History.cpp */,
 				CF46FEFE255EF4480095FC73 /* Internal.h */,
 				CF2343F422CDE0F000F516CB /* Internal.mm */,
-				CFD79B192205DE480043A26D /* InternalViewerToolbarProtocol.mm */,
 				CFD79A8621F65B4E0043A26D /* InternalViewerViewPreviewMode.mm */,
 				CFD79B212205DEA40043A26D /* InternalViewerWindowController.mm */,
 				CFA9998C26468A4300F72E93 /* Log.cpp */,
@@ -411,6 +406,7 @@
 				CFD79B3F2210452C0043A26D /* TextProcessing.cpp */,
 				CFD79A8821F65B4F0043A26D /* Theme.mm */,
 				CFE5AF8E2C5812C30035CCFA /* ViewerFooter.mm */,
+				CFE5AFBB2C6956CE0035CCFA /* ViewerSearchView.mm */,
 				CFD79B112205B8360043A26D /* ViewerSheet.mm */,
 				CFD79A8921F65B4F0043A26D /* ViewerView.mm */,
 				CFD79B0421FE4CCC0043A26D /* ViewerViewController.mm */,
@@ -610,7 +606,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF5C1D3A255EE63C00ADE703 /* InternalViewerToolbar.xib in Resources */,
 				CF5C1D42255EE64200ADE703 /* Localizable.strings in Resources */,
 				CF5C1D46255EE64500ADE703 /* NCViewerSheet.xib in Resources */,
 				CF5C1D36255EE63000ADE703 /* InternalViewerController.xib in Resources */,
@@ -660,6 +655,7 @@
 				CF5C1D85255EEA6A00ADE703 /* Internal.mm in Sources */,
 				CF5BF7B92BFE8B540057C92E /* Client.cpp in Sources */,
 				CF5C1D7D255EEA6A00ADE703 /* ViewerViewController.mm in Sources */,
+				CFE5AFBC2C6956CE0035CCFA /* ViewerSearchView.mm in Sources */,
 				CF5C1D8F255EEA6A00ADE703 /* TextModeFrame.cpp in Sources */,
 				CFE5AF8F2C5812C30035CCFA /* ViewerFooter.mm in Sources */,
 				CF5C1D87255EEA6A00ADE703 /* TextModeWorkingSet.cpp in Sources */,
@@ -667,7 +663,6 @@
 				CF5C1D84255EEA6A00ADE703 /* ViewerView.mm in Sources */,
 				CF5C1D7B255EEA6A00ADE703 /* HexModeFrame.cpp in Sources */,
 				CF5C1D7E255EEA6A00ADE703 /* DataBackend.cpp in Sources */,
-				CF5C1D8C255EEA6A00ADE703 /* InternalViewerToolbarProtocol.mm in Sources */,
 				CF5C1D81255EEA6A00ADE703 /* TextModeIndexedTextLine.cpp in Sources */,
 				CF5C1D8E255EEA6A00ADE703 /* InternalViewerWindowController.mm in Sources */,
 				CF5C1D83255EEA6A00ADE703 /* TextProcessing.cpp in Sources */,
@@ -761,15 +756,6 @@
 				CFD79B162205B84E0043A26D /* ru */,
 			);
 			name = NCViewerSheet.xib;
-			sourceTree = "<group>";
-		};
-		CFD79B1B2205DE520043A26D /* InternalViewerToolbar.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFD79B1C2205DE520043A26D /* Base */,
-				CFD79B1E2205DE610043A26D /* ru */,
-			);
-			name = InternalViewerToolbar.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

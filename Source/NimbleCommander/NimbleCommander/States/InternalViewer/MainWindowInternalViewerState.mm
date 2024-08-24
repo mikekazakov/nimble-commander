@@ -31,7 +31,6 @@
     if( self = [super initWithFrame:_frame_rect] ) {
         self.translatesAutoresizingMaskIntoConstraints = false;
 
-
         auto viewer = _viewer_factory(NSMakeRect(0, 0, 100, 100));
         viewer.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:viewer];
@@ -128,7 +127,6 @@
     }
     return true;
 }
-
 
 - (BOOL)isOpaque
 {

@@ -45,6 +45,7 @@ using namespace nc::viewer;
 
         self.view = _viewer_factory(NSMakeRect(0, 0, 100, 100));
         self.view.translatesAutoresizingMaskIntoConstraints = false;
+        self.view.focusRingType = NSFocusRingTypeNone;
     }
     return self;
 }

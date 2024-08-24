@@ -26,7 +26,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1BM-GG-fwQ">
-                        <rect key="frame" x="632" y="13" width="94" height="32"/>
+                        <rect key="frame" x="631" y="13" width="94" height="32"/>
                         <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5rO-0k-5gI">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -42,41 +42,41 @@ Gw
                         </connections>
                     </button>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="agn-et-TU9">
-                        <rect key="frame" x="20" y="60" width="699" height="402"/>
+                        <rect key="frame" x="21" y="61" width="697" height="409"/>
                     </customView>
                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="DUy-Xi-YNp">
-                        <rect key="frame" x="20" y="57" width="699" height="5"/>
+                        <rect key="frame" x="21" y="58" width="697" height="5"/>
                     </box>
                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="b9G-tJ-W8x">
-                        <rect key="frame" x="20" y="468" width="699" height="5"/>
+                        <rect key="frame" x="21" y="468" width="697" height="5"/>
                     </box>
                     <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="LGo-bH-RLu">
-                        <rect key="frame" x="717" y="59" width="4" height="385"/>
+                        <rect key="frame" x="716" y="60" width="5" height="411"/>
                     </box>
                     <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="V2m-F5-frJ">
-                        <rect key="frame" x="17" y="59" width="5" height="385"/>
+                        <rect key="frame" x="18" y="60" width="5" height="411"/>
                     </box>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="LGo-bH-RLu" secondAttribute="trailing" constant="20" symbolic="YES" id="8Xw-1o-lZO"/>
                     <constraint firstItem="LGo-bH-RLu" firstAttribute="bottom" secondItem="agn-et-TU9" secondAttribute="bottom" constant="1" id="90n-mw-ZBb"/>
+                    <constraint firstItem="DUy-Xi-YNp" firstAttribute="trailing" secondItem="agn-et-TU9" secondAttribute="trailing" id="9NG-cU-yqw"/>
+                    <constraint firstItem="V2m-F5-frJ" firstAttribute="bottom" secondItem="agn-et-TU9" secondAttribute="bottom" constant="1" id="9hS-HW-hdj"/>
                     <constraint firstAttribute="bottom" secondItem="1BM-GG-fwQ" secondAttribute="bottom" constant="20" symbolic="YES" id="Erx-r9-yxF"/>
                     <constraint firstItem="b9G-tJ-W8x" firstAttribute="leading" secondItem="agn-et-TU9" secondAttribute="leading" id="EzA-w2-nZa"/>
                     <constraint firstItem="LGo-bH-RLu" firstAttribute="leading" secondItem="agn-et-TU9" secondAttribute="trailing" id="JbT-P4-qVg"/>
                     <constraint firstItem="b9G-tJ-W8x" firstAttribute="trailing" secondItem="agn-et-TU9" secondAttribute="trailing" id="LcG-1x-g4x"/>
-                    <constraint firstItem="agn-et-TU9" firstAttribute="top" secondItem="b9G-tJ-W8x" secondAttribute="bottom" constant="8" symbolic="YES" id="P69-PC-jlo"/>
-                    <constraint firstItem="LGo-bH-RLu" firstAttribute="baseline" secondItem="V2m-F5-frJ" secondAttribute="baseline" id="UUm-Va-yv2"/>
-                    <constraint firstItem="LGo-bH-RLu" firstAttribute="top" secondItem="V2m-F5-frJ" secondAttribute="top" id="WeR-MF-IQi"/>
-                    <constraint firstAttribute="trailing" secondItem="agn-et-TU9" secondAttribute="trailing" constant="20" symbolic="YES" id="ZhP-i6-UVA"/>
-                    <constraint firstItem="1BM-GG-fwQ" firstAttribute="top" secondItem="agn-et-TU9" secondAttribute="bottom" constant="20" symbolic="YES" id="daP-zf-5rb"/>
+                    <constraint firstItem="1BM-GG-fwQ" firstAttribute="top" secondItem="DUy-Xi-YNp" secondAttribute="bottom" constant="20" symbolic="YES" id="MhG-Vb-gMF"/>
+                    <constraint firstItem="agn-et-TU9" firstAttribute="top" secondItem="b9G-tJ-W8x" secondAttribute="bottom" id="P69-PC-jlo"/>
                     <constraint firstItem="agn-et-TU9" firstAttribute="leading" secondItem="V2m-F5-frJ" secondAttribute="trailing" id="hOB-cp-9PB"/>
                     <constraint firstItem="agn-et-TU9" firstAttribute="trailing" secondItem="1BM-GG-fwQ" secondAttribute="trailing" id="jgM-bI-zoI"/>
                     <constraint firstItem="DUy-Xi-YNp" firstAttribute="leading" secondItem="agn-et-TU9" secondAttribute="leading" id="lyk-Wh-aL3"/>
+                    <constraint firstItem="V2m-F5-frJ" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="mOt-rc-x1l"/>
                     <constraint firstItem="DUy-Xi-YNp" firstAttribute="top" secondItem="agn-et-TU9" secondAttribute="bottom" id="mSh-cb-3hg"/>
-                    <constraint firstItem="LGo-bH-RLu" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="47" id="ppu-9V-o60"/>
-                    <constraint firstItem="agn-et-TU9" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="v8Y-s4-HQm"/>
+                    <constraint firstItem="V2m-F5-frJ" firstAttribute="top" secondItem="agn-et-TU9" secondAttribute="top" constant="-1" id="n7g-uU-IBy"/>
+                    <constraint firstItem="1BM-GG-fwQ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="w1b-Nb-O5w"/>
                     <constraint firstItem="b9G-tJ-W8x" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="wbg-Am-xb2"/>
-                    <constraint firstItem="LGo-bH-RLu" firstAttribute="trailing" secondItem="DUy-Xi-YNp" secondAttribute="trailing" id="xhL-y1-wq6"/>
+                    <constraint firstItem="LGo-bH-RLu" firstAttribute="top" secondItem="agn-et-TU9" secondAttribute="top" constant="-1" id="yqb-hm-YhE"/>
                 </constraints>
             </view>
             <connections>

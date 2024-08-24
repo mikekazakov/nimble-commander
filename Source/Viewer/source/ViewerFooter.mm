@@ -43,7 +43,7 @@ using namespace nc::viewer;
 {
     m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
     m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = false;
-    m_SeparatorLine.borderColor = NSColor.systemPinkColor;
+    m_SeparatorLine.borderColor = NSColor.separatorColor;
     [self addSubview:m_SeparatorLine];
 
     NSMenu *mode_menu = [[NSMenu alloc] init];

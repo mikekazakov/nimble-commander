@@ -45,7 +45,6 @@ using namespace std::literals;
         m_Controller = _controller;
         [m_Controller setFile:path at:vfs];
 
-
         self.viewerView = _viewer_factory(NSMakeRect(0, 0, 100, 100));
         self.viewerView.translatesAutoresizingMaskIntoConstraints = false;
     }
@@ -106,7 +105,6 @@ using namespace std::literals;
 {
     [m_Controller markSelection:_selection forSearchTerm:_request];
 }
-
 
 - (IBAction)OnFileInternalBigViewCommand:(id) [[maybe_unused]] _sender
 {

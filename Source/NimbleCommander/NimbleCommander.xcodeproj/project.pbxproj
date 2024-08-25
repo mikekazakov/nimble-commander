@@ -49,7 +49,6 @@
 		CF0A47FF2BDD9F2600833160 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */; };
 		CF0A48002BDD9F3200833160 /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B11DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm */; };
 		CF0A48012BDD9F3600833160 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC29E1DFBFBA10039A104 /* TemporaryNativeFileChangesSentinel.cpp */; };
-		CF0A48022BDD9F4D00833160 /* CalculateChecksumSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */; };
 		CF0A48032BDD9F5500833160 /* Preferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */; };
 		CF0A48042BDD9F5B00833160 /* PreferencesWindowExternalEditorsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E562F1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm */; };
 		CF0A48052BDD9F6200833160 /* PreferencesWindowGeneralTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56331D5064FE00452912 /* PreferencesWindowGeneralTab.mm */; };
@@ -91,7 +90,6 @@
 		CF0A48292BDDA06C00833160 /* TabContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF20DF171FC41CF90074ABB8 /* TabContextMenu.mm */; };
 		CF0A482A2BDDA0AA00833160 /* AddToFavorites.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */; };
 		CF0A482B2BDDA0B100833160 /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0260C91E9DF45D0025B50F /* BatchRename.mm */; };
-		CF0A482C2BDDA0B600833160 /* CalculateChecksum.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDCF1E8CF07F00E4DC53 /* CalculateChecksum.mm */; };
 		CF0A482D2BDDA0BC00833160 /* CalculateSizes.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0260C61E9DEC380025B50F /* CalculateSizes.mm */; };
 		CF0A482E2BDDA0C200833160 /* ChangeAttributes.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6ECDA81E9F4776008FA79E /* ChangeAttributes.mm */; };
 		CF0A482F2BDDA0E300833160 /* Compress.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4A911EC9442C00E0AF82 /* Compress.mm */; };
@@ -309,7 +307,6 @@
 		CFA53A431D433E2A00C562A7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
 		CFA53A4A1D433E2A00C562A7 /* FilePanelsQuickSearch.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */; };
 		CFA53A4C1D433E2A00C562A7 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
-		CFA53A4E1D433E2A00C562A7 /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */; };
 		CFA53A501D433E2A00C562A7 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CFA53A591D433E2A00C562A7 /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
 		CFA53A5A1D433E2A00C562A7 /* State.json in Resources */ = {isa = PBXBuildFile; fileRef = CFD6295C1C2CE3AD0050EC68 /* State.json */; };
@@ -356,8 +353,6 @@
 		CFC7066E2B49AF6D0045D2C9 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC706462B497F5C0045D2C9 /* Sparkle.framework */; };
 		CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
 		CFCCFBAF1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
-		CFCCFBB31A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */; };
-		CFCCFBB41A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */; };
 		CFCCFBB81A5D687600313845 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */; };
 		CFCCFBB91A5D687600313845 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */; };
 		CFCCFBC21A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBC61A5D7F0E00313845 /* GoToFolderSheetController.xib */; };
@@ -1221,13 +1216,10 @@
 		CFC4F99D1F0F40430000B3EE /* Link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Link.h; path = NimbleCommander/States/FilePanels/Actions/Link.h; sourceTree = SOURCE_ROOT; };
 		CFC4F99E1F0F40430000B3EE /* Link.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Link.mm; path = NimbleCommander/States/FilePanels/Actions/Link.mm; sourceTree = SOURCE_ROOT; };
 		CFC5121116C4BD3D00D247EE /* Nimble Commander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CFC5D4AE19BDD59F005BB24A /* CalculateChecksumSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CalculateChecksumSheetController.h; path = NimbleCommander/GeneralUI/CalculateChecksumSheetController.h; sourceTree = SOURCE_ROOT; };
-		CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CalculateChecksumSheetController.mm; path = NimbleCommander/GeneralUI/CalculateChecksumSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CFC705FA2B497D600045D2C9 /* VFSIcon.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VFSIcon.xcodeproj; path = ../VFSIcon/VFSIcon.xcodeproj; sourceTree = "<group>"; };
 		CFC706462B497F5C0045D2C9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = ../../../3rd_Party/Sparkle/Sparkle.framework; sourceTree = "<group>"; };
 		CFC706482B497F6A0045D2C9 /* LetsMove.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LetsMove.framework; path = ../../../3rd_Party/LetsMove/LetsMove.framework; sourceTree = "<group>"; };
 		CFCCFBB11A5D340000313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SFTPConnectionSheetController.xib; sourceTree = "<group>"; };
-		CFCCFBB61A5D4E6100313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CalculateChecksumSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBBB1A5D687600313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FTPConnectionSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBC51A5D7F0E00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/GoToFolderSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBCF1A5E2CFC00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DetailedVolumeInformationSheetController.xib; sourceTree = "<group>"; };
@@ -1236,7 +1228,6 @@
 		CFCCFC121A5E891400313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/GoToFolderSheetController.strings; sourceTree = "<group>"; };
 		CFCCFC161A5E891600313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		CFCCFC171A5E891700313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/SFTPConnectionSheetController.strings; sourceTree = "<group>"; };
-		CFCCFC201A5E891A00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/CalculateChecksumSheetController.strings; sourceTree = "<group>"; };
 		CFCCFC521A5FA85400313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/FilePanelsContextMenu.strings; sourceTree = "<group>"; };
 		CFCCFC591A5FAFFD00313845 /* ru */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FilePanelsContextMenu.strings; sourceTree = "<group>"; };
 		CFCCFC611A5FBC9500313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/FilePanelsQuickSearch.strings; sourceTree = "<group>"; };
@@ -1282,8 +1273,6 @@
 		CFD8CDC31E8CDBFA00E4DC53 /* InsertFromPasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InsertFromPasteboard.mm; path = NimbleCommander/States/FilePanels/Actions/InsertFromPasteboard.mm; sourceTree = SOURCE_ROOT; };
 		CFD8CDC81E8CE65600E4DC53 /* OpenXAttr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenXAttr.h; path = NimbleCommander/States/FilePanels/Actions/OpenXAttr.h; sourceTree = SOURCE_ROOT; };
 		CFD8CDC91E8CE65600E4DC53 /* OpenXAttr.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenXAttr.mm; path = NimbleCommander/States/FilePanels/Actions/OpenXAttr.mm; sourceTree = SOURCE_ROOT; };
-		CFD8CDCE1E8CF07F00E4DC53 /* CalculateChecksum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CalculateChecksum.h; path = NimbleCommander/States/FilePanels/Actions/CalculateChecksum.h; sourceTree = SOURCE_ROOT; };
-		CFD8CDCF1E8CF07F00E4DC53 /* CalculateChecksum.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CalculateChecksum.mm; path = NimbleCommander/States/FilePanels/Actions/CalculateChecksum.mm; sourceTree = SOURCE_ROOT; };
 		CFD8CDD41E8DEDB200E4DC53 /* SpotlightSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightSearch.h; path = NimbleCommander/States/FilePanels/Actions/SpotlightSearch.h; sourceTree = SOURCE_ROOT; };
 		CFD8CDD51E8DEDB200E4DC53 /* SpotlightSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SpotlightSearch.mm; path = NimbleCommander/States/FilePanels/Actions/SpotlightSearch.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC20F1DF95D370039A104 /* PanelViewFooterVolumeInfoFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewFooterVolumeInfoFetcher.h; path = NimbleCommander/States/FilePanels/PanelViewFooterVolumeInfoFetcher.h; sourceTree = SOURCE_ROOT; };
@@ -1727,8 +1716,6 @@
 				CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */,
 				CF0260C81E9DF45D0025B50F /* BatchRename.h */,
 				CF0260C91E9DF45D0025B50F /* BatchRename.mm */,
-				CFD8CDCE1E8CF07F00E4DC53 /* CalculateChecksum.h */,
-				CFD8CDCF1E8CF07F00E4DC53 /* CalculateChecksum.mm */,
 				CF0260C51E9DEC380025B50F /* CalculateSizes.h */,
 				CF0260C61E9DEC380025B50F /* CalculateSizes.mm */,
 				CF6ECDA71E9F4776008FA79E /* ChangeAttributes.h */,
@@ -2273,9 +2260,6 @@
 				CF859A8C16FC100F0081183E /* DetailedVolumeInformationSheetController.h */,
 				CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */,
 				CFCCFBD01A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib */,
-				CFC5D4AE19BDD59F005BB24A /* CalculateChecksumSheetController.h */,
-				CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */,
-				CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */,
 			);
 			name = GeneralUI;
 			path = NimbleCommander/GeneralUI;
@@ -2790,7 +2774,6 @@
 				CFD2F3582709D7DD00ADC852 /* PreferencesWindowPanelsTabOperationsConcurrencySheet.xib in Resources */,
 				CF4E56DC1D506BA100452912 /* FindFilesSheetController.xib in Resources */,
 				CFCCFC501A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
-				CFCCFBB41A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CF7C7CBF1E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib in Resources */,
 				CF67F1B72952034200B92944 /* Icon.icns in Resources */,
 				CFF6F3A51A13576200011177 /* InfoPlist.strings in Resources */,
@@ -2854,7 +2837,6 @@
 				CFA53A4C1D433E2A00C562A7 /* Media.xcassets in Resources */,
 				CF7C7CCA1E5C3ED5002DB0E2 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */,
 				CF9F4B421ECD81BC00E0AF82 /* NetworkShareSheetController.xib in Resources */,
-				CFA53A4E1D433E2A00C562A7 /* CalculateChecksumSheetController.xib in Resources */,
 				CF4E56A31D5068CD00452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFA53A501D433E2A00C562A7 /* RHPreferencesWindow.xib in Resources */,
 				CF4E56CE1D50694200452912 /* PreferencesWindowViewerTab.xib in Resources */,
@@ -2923,7 +2905,6 @@
 				CFDF44A01D2B990A0062F7AD /* Media.xcassets in Resources */,
 				CF7C7CC31E5C3EB9002DB0E2 /* PreferencesWindowThemesTab.xib in Resources */,
 				CF9F4B3B1ECD814800E0AF82 /* ConnectToServer.xib in Resources */,
-				CFCCFBB31A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */,
 				CF67F1C12954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */,
 				CF7C7CC91E5C3ED5002DB0E2 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */,
@@ -3122,7 +3103,6 @@
 				CF0A485A2BDDA3A000833160 /* PanelBriefViewCollectionView.mm in Sources */,
 				CF0A47FB2BDD9E9F00833160 /* ConfigWiring.mm in Sources */,
 				CF0A484B2BDDA29A00833160 /* ShowQuickLook.mm in Sources */,
-				CF0A48022BDD9F4D00833160 /* CalculateChecksumSheetController.mm in Sources */,
 				CF0A48402BDDA1D100833160 /* MakeNew.mm in Sources */,
 				CF0A48122BDD9FA700833160 /* MainWindowController.mm in Sources */,
 				CF0A48292BDDA06C00833160 /* TabContextMenu.mm in Sources */,
@@ -3143,7 +3123,6 @@
 				CF0A484F2BDDA2AC00833160 /* ShowVolumeInformation.mm in Sources */,
 				CF0A48432BDDA26E00833160 /* OpenNetworkConnection.mm in Sources */,
 				CF0A48422BDDA1DB00833160 /* OpenFile.mm in Sources */,
-				CF0A482C2BDDA0B600833160 /* CalculateChecksum.mm in Sources */,
 				CF0A47282BDD8A1100833160 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF0A47FF2BDD9F2600833160 /* ActionsShortcutsManager.mm in Sources */,
 				CF0A48222BDDA04400833160 /* PanelDataOptionsPersistence.mm in Sources */,
@@ -3663,16 +3642,6 @@
 			);
 			name = SFTPConnectionSheetController.xib;
 			path = NimbleCommander/States/FilePanels/Views;
-			sourceTree = SOURCE_ROOT;
-		};
-		CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFCCFBB61A5D4E6100313845 /* Base */,
-				CFCCFC201A5E891A00313845 /* ru */,
-			);
-			name = CalculateChecksumSheetController.xib;
-			path = NimbleCommander/GeneralUI;
 			sourceTree = SOURCE_ROOT;
 		};
 		CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */ = {

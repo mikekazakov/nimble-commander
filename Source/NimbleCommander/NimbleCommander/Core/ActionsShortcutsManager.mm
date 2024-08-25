@@ -40,7 +40,7 @@ static constexpr std::pair<const char*,int> g_ActionsTags[] = {
     {"menu.file.feed_filenames_to_terminal",            11'023},
     {"menu.file.calculate_sizes",                       11'030},
     {"menu.file.calculate_all_sizes",                   11'031},
-    {"menu.file.calculate_checksum",                    11'080},
+    {"menu.file.calculate_checksum",                    11'080}, // no longer used
     {"menu.file.duplicate",                             11'150},
     {"menu.file.add_to_favorites",                      11'140},
     {"menu.file.close_window",                          11'041},
@@ -245,7 +245,7 @@ static constinit std::pair<const char*, const char8_t*> g_DefaultShortcuts[] = {
     {"menu.file.calculate_all_sizes",                       u8"⇧^\\r"   }, // shift+ctrl+↵
     {"menu.file.feed_filename_to_terminal",                 u8"^⌥\\r"   }, // ctrl+alt+↵
     {"menu.file.feed_filenames_to_terminal",                u8"^⌥⌘\\r"  }, // ctrl+alt+cmd+↵
-    {"menu.file.calculate_checksum",                        u8"⇧⌘k"     }, // shift+cmd+k
+//  {"menu.file.calculate_checksum",                        u8"⇧⌘k"     }, // shift+cmd+k, no longer used
     {"menu.file.duplicate",                                 u8"⌘d"      }, // cmd+d
     {"menu.file.add_to_favorites",                          u8"⌘b"      }, // cmd+b
     {"menu.file.close_window",                              u8"⇧⌘w"     }, // shift+cmd+w

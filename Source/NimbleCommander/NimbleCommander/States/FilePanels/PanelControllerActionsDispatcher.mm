@@ -370,10 +370,6 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 {
     PERFORM;
 }
-- (IBAction)OnCalculateChecksum:(id)sender
-{
-    PERFORM;
-}
 - (IBAction)OnQuickNewFolder:(id)sender
 {
     PERFORM;

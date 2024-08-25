@@ -1,12 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "return.left-1x.png",
+      "filename" : "return.left.12-1x.png",
       "idiom" : "mac",
       "scale" : "1x"
     },
     {
-      "filename" : "return.left-2x.png",
+      "filename" : "return.left.12-2x.png",
       "idiom" : "mac",
       "scale" : "2x"
     }

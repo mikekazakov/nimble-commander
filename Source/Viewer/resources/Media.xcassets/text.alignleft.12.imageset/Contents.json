@@ -1,12 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "text.alignment-1x.png",
+      "filename" : "left.alignleft-12-1x.png",
       "idiom" : "mac",
       "scale" : "1x"
     },
     {
-      "filename" : "text.alignment-2x.png",
+      "filename" : "left.alignleft-12-2x.png",
       "idiom" : "mac",
       "scale" : "2x"
     }

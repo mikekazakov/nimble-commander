@@ -111,9 +111,9 @@ using namespace nc::viewer;
     [self addSubview:m_EncodingButton];
 
     m_LineWrapButton = [[NSButton alloc] initWithFrame:NSRect()];
-    m_LineWrapButton.image = [Bundle() imageForResource:@"text.alignleft"];
+    m_LineWrapButton.image = [Bundle() imageForResource:@"text.alignleft.12"];
     [m_LineWrapButton.image setTemplate:true];
-    m_LineWrapButton.alternateImage = [Bundle() imageForResource:@"return.left"];
+    m_LineWrapButton.alternateImage = [Bundle() imageForResource:@"return.left.12"];
     [m_LineWrapButton.alternateImage setTemplate:true];
     m_LineWrapButton.imagePosition = NSImageOnly;
     m_LineWrapButton.imageScaling = NSImageScaleNone;

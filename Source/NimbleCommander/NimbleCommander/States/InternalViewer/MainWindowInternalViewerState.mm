@@ -11,15 +11,6 @@
 @interface MainWindowInternalViewerState ()
 
 @property(nonatomic) IBOutlet NSToolbar *internalViewerToolbar;
-@property(nonatomic) IBOutlet NSSearchField *internalViewerToolbarSearchField;
-@property(nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
-@property(nonatomic) IBOutlet NSPopUpButton *internalViewerToolbarEncodingsPopUp;
-@property(nonatomic) IBOutlet NSPopUpButton *internalViewerToolbarModePopUp;
-@property(nonatomic) IBOutlet NSButton *internalViewerToolbarPositionButton;
-@property(nonatomic) IBOutlet NSTextField *internalViewerToolbarFileSizeLabel;
-@property(nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
-@property(nonatomic) IBOutlet NSButton *internalViewerToolbarWordWrapCheckBox;
-@property(nonatomic) IBOutlet NSButton *internalViewerToolbarSettingsButton;
 
 @property(nonatomic) IBOutlet NCViewerView *embeddedFileView;
 
@@ -30,15 +21,6 @@
     NSLayoutConstraint *m_TopLayoutConstraint;
 }
 @synthesize internalViewerToolbar;
-@synthesize internalViewerToolbarSearchField;
-@synthesize internalViewerToolbarSearchProgressIndicator;
-@synthesize internalViewerToolbarEncodingsPopUp;
-@synthesize internalViewerToolbarModePopUp;
-@synthesize internalViewerToolbarPositionButton;
-@synthesize internalViewerToolbarFileSizeLabel;
-@synthesize internalViewerToolbarPopover;
-@synthesize internalViewerToolbarWordWrapCheckBox;
-@synthesize internalViewerToolbarSettingsButton;
 @synthesize embeddedFileView;
 
 - (id)initWithFrame:(NSRect)_frame_rect
@@ -48,9 +30,6 @@
     dispatch_assert_main_queue();
     if( self = [super initWithFrame:_frame_rect] ) {
         self.translatesAutoresizingMaskIntoConstraints = false;
-
-        NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar" bundle:nc::viewer::Bundle()];
-        [toolbar_nib instantiateWithOwner:self topLevelObjects:nil];
 
         auto viewer = _viewer_factory(NSMakeRect(0, 0, 100, 100));
         viewer.translatesAutoresizingMaskIntoConstraints = false;
@@ -75,14 +54,6 @@
     dispatch_assert_main_queue();
     self.embeddedFileView.focusRingType = NSFocusRingTypeNone;
     m_Controller.view = self.embeddedFileView;
-    m_Controller.searchField = self.internalViewerToolbarSearchField;
-    m_Controller.searchProgressIndicator = self.internalViewerToolbarSearchProgressIndicator;
-    m_Controller.encodingsPopUp = self.internalViewerToolbarEncodingsPopUp;
-    m_Controller.modePopUp = self.internalViewerToolbarModePopUp;
-    m_Controller.positionButton = self.internalViewerToolbarPositionButton;
-    m_Controller.fileSizeLabel = self.internalViewerToolbarFileSizeLabel;
-    m_Controller.wordWrappingCheckBox = self.internalViewerToolbarWordWrapCheckBox;
-    m_Controller.settingsButton = self.internalViewerToolbarSettingsButton;
 }
 
 - (NSView *)windowStateContentView
@@ -155,13 +126,6 @@
         return true;
     }
     return true;
-}
-
-- (IBAction)onInternalViewerToolbarSettings:(id)sender
-{
-    [self.internalViewerToolbarPopover showRelativeToRect:nc::objc_cast<NSButton>(sender).bounds
-                                                   ofView:nc::objc_cast<NSButton>(sender)
-                                            preferredEdge:NSMaxYEdge];
 }
 
 - (BOOL)isOpaque

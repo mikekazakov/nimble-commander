@@ -130,12 +130,12 @@ void TextModeWorkingSetHighlighting::Highlight(
     const size_t utf8_maxsz = utf16_length * 4;
     std::vector<char> utf8(utf8_maxsz);
     size_t utf8_len = 0;
-    InterpretUnicharsAsUTF8(reinterpret_cast<const uint16_t *>(utf16_chars),
-                            utf16_length,
-                            reinterpret_cast<uint8_t *>(utf8.data()),
-                            utf8_maxsz,
-                            utf8_len,
-                            nullptr);
+    utility::InterpretUnicharsAsUTF8(reinterpret_cast<const uint16_t *>(utf16_chars),
+                                     utf16_length,
+                                     reinterpret_cast<uint8_t *>(utf8.data()),
+                                     utf8_maxsz,
+                                     utf8_len,
+                                     nullptr);
     utf8.resize(utf8_len);
 
     m_Status = Status::Working;

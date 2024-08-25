@@ -1,5 +1,7 @@
 // Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerViewController.h"
+#include "ViewerFooter.h"
+#include "ViewerSearchView.h"
 #include <Viewer/Log.h>
 #include <VFS/VFS.h>
 #include <CUI/ProcessSheetController.h>
@@ -14,6 +16,7 @@
 #include "Internal.h"
 
 using namespace std::literals;
+using namespace nc;
 using namespace nc::viewer;
 
 static const auto g_ConfigRespectComAppleTextEncoding = "viewer.respectComAppleTextEncoding";
@@ -23,14 +26,14 @@ static const auto g_ConfigWindowSize = "viewer.fileWindowSize";
 static const auto g_ConfigAutomaticRefresh = "viewer.automaticRefresh";
 static const auto g_AutomaticRefreshDelay = std::chrono::milliseconds(200);
 
-static int EncodingFromXAttr(const VFSFilePtr &_f)
+static utility::Encoding EncodingFromXAttr(const VFSFilePtr &_f)
 {
     char buf[128];
     ssize_t r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
     if( r < 0 || r >= static_cast<ssize_t>(sizeof(buf)) )
-        return encodings::ENCODING_INVALID;
+        return utility::Encoding::ENCODING_INVALID;
     buf[r] = 0;
-    return encodings::FromComAppleTextEncodingXAttr(buf);
+    return utility::FromComAppleTextEncodingXAttr(buf);
 }
 
 static int InvertBitFlag(int _value, int _flag)
@@ -98,26 +101,13 @@ struct BackgroundFileOpener {
     NCViewerView *m_View;
     NSSearchField *m_SearchField;
     NSProgressIndicator *m_SearchProgressIndicator;
-    NSPopUpButton *m_EncodingsPopUp;
-    NSPopUpButton *m_ModePopUp;
-    NSButton *m_PositionButton;
-    NSTextField *m_FileSizeLabel;
     NSString *m_VerboseTitle;
-    NSButton *m_WordWrappingCheckBox;
 }
 
 @synthesize view = m_View;
-@synthesize searchField = m_SearchField;
-@synthesize searchProgressIndicator = m_SearchProgressIndicator;
-@synthesize encodingsPopUp = m_EncodingsPopUp;
-@synthesize modePopUp = m_ModePopUp;
-@synthesize positionButton = m_PositionButton;
-@synthesize fileSizeLabel = m_FileSizeLabel;
 @synthesize verboseTitle = m_VerboseTitle;
 @synthesize filePath = m_Path;
 @synthesize fileVFS = m_VFS;
-@synthesize wordWrappingCheckBox = m_WordWrappingCheckBox;
-@synthesize settingsButton;
 @synthesize goToPositionPopover;
 @synthesize goToPositionValueTextField;
 @synthesize goToPositionKindButton;
@@ -147,6 +137,10 @@ struct BackgroundFileOpener {
 {
     dispatch_assert_main_queue();
     Log::Debug(SPDLOC, "deallocating NCViewerViewController {}", nc::objc_bridge_cast<void>(self));
+    [m_View removeObserver:self forKeyPath:@"verticalPositionPercentage"];
+    [m_View.footer removeObserver:self forKeyPath:@"mode"];
+    [m_View.footer removeObserver:self forKeyPath:@"encoding"];
+    [m_View.footer removeObserver:self forKeyPath:@"wrapLines"];
     [self clear];
 }
 
@@ -239,14 +233,11 @@ struct BackgroundFileOpener {
     }
     else {
         [m_View setFile:m_ViewerFileWindow];
-        int encoding = 0;
+        utility::Encoding encoding = utility::Encoding::ENCODING_INVALID;
         if( m_Config->GetBool(g_ConfigRespectComAppleTextEncoding) &&
-            (encoding = EncodingFromXAttr(m_OriginalFile)) != encodings::ENCODING_INVALID )
+            (encoding = EncodingFromXAttr(m_OriginalFile)) != utility::Encoding::ENCODING_INVALID )
             m_View.encoding = encoding;
     }
-
-    m_FileSizeLabel.stringValue =
-        ByteCountFormatter::Instance().ToNSString(m_ViewerFileWindow->FileSize(), ByteCountFormatter::Fixed6);
 
     m_View.hotkeyDelegate = self;
 }
@@ -285,6 +276,15 @@ struct BackgroundFileOpener {
         return;
 
     m_View = view;
+    [m_View addObserver:self forKeyPath:@"verticalPositionPercentage" options:0 context:nullptr];
+    [m_View.footer addObserver:self forKeyPath:@"mode" options:0 context:nullptr];
+    [m_View.footer addObserver:self forKeyPath:@"encoding" options:0 context:nullptr];
+    [m_View.footer addObserver:self forKeyPath:@"wrapLines" options:0 context:nullptr];
+    m_View.footer.filePositionClickTarget = self;
+    m_View.footer.filePositionClickAction = @selector(onPositionButtonClicked:);
+
+    [self setSearchField:m_View.searchView.searchField];
+    [self setSearchProgressIndicator:m_View.searchView.progressIndicator];
 }
 
 - (void)setSearchField:(NSSearchField *)searchField
@@ -311,6 +311,7 @@ struct BackgroundFileOpener {
 {
     if( control == m_SearchField && commandSelector == @selector(cancelOperation:) ) {
         [m_View.window makeFirstResponder:m_View.keyboardResponder];
+        m_View.searchView.hidden = true;
         return true;
     }
     return false;
@@ -366,11 +367,13 @@ struct BackgroundFileOpener {
 
 - (IBAction)onMainMenuPerformFindAction:(id) [[maybe_unused]] _sender
 {
+    self.view.searchView.hidden = false;
     [self.view.window makeFirstResponder:m_SearchField];
 }
 
 - (IBAction)onMainMenuPerformFindNextAction:(id) [[maybe_unused]] _sender
 {
+    self.view.searchView.hidden = false;
     [self onSearchFieldAction:self];
 }
 
@@ -390,7 +393,7 @@ struct BackgroundFileOpener {
         m_View.selectionInFile = CFRangeMake(-1, 0); // remove current selection
 
         uint64_t view_offset = m_View.verticalPositionInBytes;
-        int encoding = m_View.encoding;
+        utility::Encoding encoding = m_View.encoding;
 
         m_SearchInFileQueue.Stop(); // we should stop current search if any
         m_SearchInFileQueue.Wait();
@@ -470,78 +473,13 @@ struct BackgroundFileOpener {
         return;
 
     m_SearchProgressIndicator = searchProgressIndicator;
-    m_SearchProgressIndicator.indeterminate = true;
-    m_SearchProgressIndicator.style = NSProgressIndicatorStyleSpinning;
-    m_SearchProgressIndicator.displayedWhenStopped = false;
 }
 
-- (void)setEncodingsPopUp:(NSPopUpButton *)encodingsPopUp
+- (void)onPositionButtonClicked:(id)_sender
 {
-    dispatch_assert_main_queue();
-    assert(m_View != nil);
-    if( m_EncodingsPopUp == encodingsPopUp )
-        return;
-    m_EncodingsPopUp = encodingsPopUp;
-    m_EncodingsPopUp.target = self;
-    m_EncodingsPopUp.action = @selector(onEncodingsPopUpChanged:);
-    [m_EncodingsPopUp removeAllItems];
-    for( const auto &i : encodings::LiteralEncodingsList() ) {
-        [m_EncodingsPopUp addItemWithTitle:(__bridge NSString *)i.second];
-        m_EncodingsPopUp.lastItem.tag = i.first;
-    }
-    [m_EncodingsPopUp bind:@"selectedTag" toObject:m_View withKeyPath:@"encoding" options:nil];
-}
-
-- (void)onEncodingsPopUpChanged:(id) [[maybe_unused]] _sender
-{
-    dispatch_assert_main_queue();
-    [self onSearchFieldAction:self];
-}
-
-- (void)setModePopUp:(NSPopUpButton *)modePopUp
-{
-    dispatch_assert_main_queue();
-    if( m_ModePopUp == modePopUp )
-        return;
-
-    m_ModePopUp = modePopUp;
-    m_ModePopUp.target = self;
-    m_ModePopUp.action = @selector(onModePopUpChanged:);
-    [m_ModePopUp removeAllItems];
-    [m_ModePopUp addItemWithTitle:@"Text"];
-    m_ModePopUp.lastItem.tag = static_cast<int>(ViewMode::Text);
-    [m_ModePopUp addItemWithTitle:@"Hex"];
-    m_ModePopUp.lastItem.tag = static_cast<int>(ViewMode::Hex);
-    [m_ModePopUp addItemWithTitle:@"Preview"];
-    m_ModePopUp.lastItem.tag = static_cast<int>(ViewMode::Preview);
-    [m_ModePopUp bind:@"selectedTag" toObject:m_View withKeyPath:@"mode" options:nil];
-}
-
-- (void)onModePopUpChanged:(id) [[maybe_unused]] _sender
-{
-    dispatch_assert_main_queue();
-}
-
-- (void)setPositionButton:(NSButton *)positionButton
-{
-    dispatch_assert_main_queue();
-    if( m_PositionButton == positionButton )
-        return;
-
-    m_PositionButton = positionButton;
-    m_PositionButton.target = self;
-    m_PositionButton.action = @selector(onPositionButtonClicked:);
-    [m_PositionButton bind:@"title"
-                  toObject:m_View
-               withKeyPath:@"verticalPositionPercentage"
-                   options:@{NSValueTransformerBindingOption: [NCViewerVerticalPostionToStringTransformer new]}];
-}
-
-- (void)onPositionButtonClicked:(id)sender
-{
-    [self.goToPositionPopover showRelativeToRect:nc::objc_cast<NSButton>(sender).bounds
-                                          ofView:nc::objc_cast<NSButton>(sender)
-                                   preferredEdge:NSMaxYEdge];
+    [self.goToPositionPopover showRelativeToRect:nc::objc_cast<NSView>(_sender).bounds
+                                          ofView:nc::objc_cast<NSView>(_sender)
+                                   preferredEdge:/*NSMaxYEdge*/ NSMinYEdge];
 }
 
 - (void)popoverWillShow:(NSNotification *) [[maybe_unused]] _notification
@@ -562,14 +500,6 @@ struct BackgroundFileOpener {
         const long pos = string.integerValue;
         m_View.verticalPositionInBytes = std::clamp(pos, 0l, m_WorkFile->Size());
     }
-}
-
-- (void)setFileSizeLabel:(NSTextField *)fileSizeLabel
-{
-    dispatch_assert_main_queue();
-    if( m_FileSizeLabel == fileSizeLabel )
-        return;
-    m_FileSizeLabel = fileSizeLabel;
 }
 
 - (void)buildTitle
@@ -604,15 +534,6 @@ struct BackgroundFileOpener {
     m_SearchInFile->ToggleTextSearch((__bridge CFStringRef)search_request, m_View.encoding);
 }
 
-- (void)setWordWrappingCheckBox:(NSButton *)wordWrappingCheckBox
-{
-    dispatch_assert_main_queue();
-    if( m_WordWrappingCheckBox == wordWrappingCheckBox )
-        return;
-    m_WordWrappingCheckBox = wordWrappingCheckBox;
-    [m_WordWrappingCheckBox bind:@"value" toObject:m_View withKeyPath:@"wordWrap" options:nil];
-}
-
 - (bool)isOpened
 {
     return m_WorkFile != nullptr;
@@ -630,9 +551,6 @@ struct BackgroundFileOpener {
     m_ViewerFileWindow = std::move(_opener.viewer_file_window);
     m_SearchFileWindow = std::move(_opener.search_file_window);
     m_SearchInFile = std::move(_opener.search_in_file);
-
-    m_FileSizeLabel.stringValue =
-        ByteCountFormatter::Instance().ToNSString(m_ViewerFileWindow->FileSize(), ByteCountFormatter::Fixed6);
 }
 
 - (void)onRefresh
@@ -691,12 +609,8 @@ struct BackgroundFileOpener {
         [m_View setMode:ViewMode::Preview];
         return true;
     }
-    if( is("viewer.show_settings") ) {
-        [self.settingsButton performClick:self];
-        return true;
-    }
     if( is("viewer.show_goto") ) {
-        [self.positionButton performClick:self];
+        [m_View.footer performFilePositionClick:self];
         return true;
     }
     if( is("viewer.refresh") ) {
@@ -704,6 +618,31 @@ struct BackgroundFileOpener {
         return true;
     }
     return false;
+}
+
+- (void)observeValueForKeyPath:(NSString *)_key_path
+                      ofObject:(id)_object
+                        change:(NSDictionary *) [[maybe_unused]] _change
+                       context:(void *) [[maybe_unused]] _context
+{
+    dispatch_assert_main_queue();
+    if( _object == m_View.footer ) {
+        if( [_key_path isEqualToString:@"mode"] ) {
+            m_View.mode = m_View.footer.mode;
+        }
+        if( [_key_path isEqualToString:@"encoding"] ) {
+            m_View.encoding = m_View.footer.encoding;
+        }
+        if( [_key_path isEqualToString:@"wrapLines"] ) {
+            m_View.wordWrap = m_View.footer.wrapLines;
+        }
+    }
+    else if( _object == m_View ) {
+        if( [_key_path isEqualToString:@"verticalPositionPercentage"] ) {
+            m_View.footer.filePosition =
+                [NSString stringWithFormat:@"%2.0f%%", 100.0 * m_View.verticalPositionPercentage];
+        }
+    }
 }
 
 @end

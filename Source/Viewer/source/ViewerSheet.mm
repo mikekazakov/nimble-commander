@@ -11,15 +11,7 @@ using namespace nc::viewer;
 
 @property(nonatomic) NCViewerView *view;
 @property(nonatomic) IBOutlet NSView *viewPlaceholder;
-@property(nonatomic) IBOutlet NSPopUpButton *mode;
-@property(nonatomic) IBOutlet NSTextField *fileSize;
-@property(nonatomic) IBOutlet NSButton *filePos;
-@property(nonatomic) IBOutlet NSProgressIndicator *searchIndicator;
-@property(nonatomic) IBOutlet NSSearchField *searchField;
 @property(nonatomic) IBOutlet NSPopover *settingsPopover;
-@property(nonatomic) IBOutlet NSPopUpButton *encodings;
-@property(nonatomic) IBOutlet NSButton *wordWrap;
-@property(nonatomic) IBOutlet NSButton *settingsButton;
 
 - (IBAction)OnClose:(id)sender;
 
@@ -34,15 +26,7 @@ using namespace nc::viewer;
 }
 @synthesize view;
 @synthesize viewPlaceholder;
-@synthesize mode;
-@synthesize fileSize;
-@synthesize filePos;
-@synthesize searchIndicator;
-@synthesize searchField;
 @synthesize settingsPopover;
-@synthesize encodings;
-@synthesize wordWrap;
-@synthesize settingsButton;
 
 - (id)initWithFilepath:(std::string)path
                     at:(VFSHostPtr)vfs
@@ -61,6 +45,7 @@ using namespace nc::viewer;
 
         self.view = _viewer_factory(NSMakeRect(0, 0, 100, 100));
         self.view.translatesAutoresizingMaskIntoConstraints = false;
+        self.view.focusRingType = NSFocusRingTypeNone;
     }
     return self;
 }
@@ -93,14 +78,6 @@ using namespace nc::viewer;
     self.view.wantsLayer = true; // to reduce side-effects of overdrawing by scrolling with touchpad
 
     m_Controller.view = self.view;
-    m_Controller.modePopUp = self.mode;
-    m_Controller.fileSizeLabel = self.fileSize;
-    m_Controller.positionButton = self.filePos;
-    m_Controller.searchField = self.searchField;
-    m_Controller.searchProgressIndicator = self.searchIndicator;
-    m_Controller.encodingsPopUp = self.encodings;
-    m_Controller.wordWrappingCheckBox = self.wordWrap;
-    m_Controller.settingsButton = self.settingsButton;
 
     [m_Controller show];
     m_Controller.nextResponder = self.window.nextResponder;

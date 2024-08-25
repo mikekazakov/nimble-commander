@@ -1,10 +1,9 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
 #include "../MainWindowStateProtocol.h"
 #include <Viewer/ViewerView.h>
-#include <Viewer/InternalViewerToolbarProtocol.h>
 
 @class NCViewerViewController;
 

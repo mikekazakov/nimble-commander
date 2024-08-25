@@ -6,14 +6,14 @@
 
 namespace nc::vfs {
 
-static int EncodingFromXAttr(const VFSFilePtr &_f)
+static utility::Encoding EncodingFromXAttr(const VFSFilePtr &_f)
 {
     char buf[128];
     ssize_t r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
     if( r < 0 || r >= static_cast<ssize_t>(sizeof(buf)) )
-        return encodings::ENCODING_INVALID;
+        return utility::Encoding::ENCODING_INVALID;
     buf[r] = 0;
-    return encodings::FromComAppleTextEncodingXAttr(buf);
+    return utility::FromComAppleTextEncodingXAttr(buf);
 }
 
 SearchForFiles::SearchForFiles()
@@ -216,8 +216,8 @@ bool SearchForFiles::FilterByContent(const char *_full_path, VFSHost &_in_host, 
     if( fw.Attach(file) != 0 )
         return false;
 
-    int encoding = m_FilterContent->encoding;
-    if( int xattr_enc = EncodingFromXAttr(file) )
+    utility::Encoding encoding = m_FilterContent->encoding;
+    if( utility::Encoding xattr_enc = EncodingFromXAttr(file); xattr_enc != utility::Encoding::ENCODING_INVALID )
         encoding = xattr_enc;
 
     using nc::vfs::SearchInFile;

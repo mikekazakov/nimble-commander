@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/SerialQueue.h>
@@ -27,7 +27,7 @@ public:
 
     struct FilterContent {
         std::string text; // utf8-encoded
-        int encoding = encodings::ENCODING_UTF8;
+        utility::Encoding encoding = utility::Encoding::ENCODING_UTF8;
         bool whole_phrase = false; // search for a phrase, not a part of something
         bool case_sensitive = false;
         bool not_containing = false;

@@ -13,6 +13,8 @@
 #include "TextModeView.h"
 #include "HexModeView.h"
 #include "PreviewModeView.h"
+#include "ViewerFooter.h"
+#include "ViewerSearchView.h"
 
 static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 static const auto g_ConfigAutoDetectEncoding = "viewer.autoDetectEncoding";
@@ -20,6 +22,7 @@ static const auto g_ConfigStickToBottomOnRefresh = "viewer.stickToBottomOnRefres
 static const auto g_ConfigEnableSyntaxHighlighting = "viewer.enableHighlighting";
 
 using nc::vfs::easy::CopyFileToTempStorage;
+using namespace nc;
 using namespace nc::viewer;
 
 @implementation NCViewerView {
@@ -32,6 +35,8 @@ using namespace nc::viewer;
     bool m_WrapWords;
 
     NSView<NCViewerImplementationProtocol> *m_View;
+    NCViewerFooter *m_Footer;
+    NCViewerSearchView *m_SearchView;
 
     uint64_t m_VerticalPositionInBytes;
     double m_VerticalPositionPercentage;
@@ -95,6 +100,33 @@ using namespace nc::viewer;
     m_ConfigObservers[0] =
         m_Config->Observe(g_ConfigEnableSyntaxHighlighting,
                           nc::objc_callback_to_main_queue(self, @selector(configEnableSyntaxHighlightingChanged)));
+
+    m_Footer = [[NCViewerFooter alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    m_Footer.translatesAutoresizingMaskIntoConstraints = false;
+    [self addSubview:m_Footer];
+
+    m_SearchView = [[NCViewerSearchView alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    m_SearchView.translatesAutoresizingMaskIntoConstraints = false;
+    m_SearchView.hidden = true;
+    [self addSubview:m_SearchView positioned:NSWindowAbove relativeTo:nil];
+
+    const auto views = NSDictionaryOfVariableBindings(m_Footer, m_SearchView);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_Footer]-(==0)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_Footer(==20)]-(==0)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(>=20)-[m_SearchView]-(==34)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==12)-[m_SearchView]"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
 }
 
 - (void)reloadAppearance
@@ -126,26 +158,28 @@ using namespace nc::viewer;
 
 - (void)resetCursorRects
 {
-    [self addCursorRect:self.frame cursor:NSCursor.IBeamCursor];
+    if( m_View ) {
+        [self addCursorRect:m_View.frame cursor:NSCursor.IBeamCursor];
+    }
 }
 
 - (void)setFile:(std::shared_ptr<nc::vfs::FileWindow>)_file
 {
-    int encoding = encodings::EncodingFromName(m_Config->GetString(g_ConfigDefaultEncoding).c_str());
-    if( encoding == encodings::ENCODING_INVALID )
-        encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
+    utility::Encoding encoding = utility::EncodingFromName(m_Config->GetString(g_ConfigDefaultEncoding).c_str());
+    if( encoding == utility::Encoding::ENCODING_INVALID )
+        encoding = utility::Encoding::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
 
     StaticDataBlockAnalysis stat;
     DoStaticDataBlockAnalysis(_file->Window(), _file->WindowSize(), &stat);
     if( m_Config->GetBool(g_ConfigAutoDetectEncoding) ) {
         if( stat.likely_utf16_le )
-            encoding = encodings::ENCODING_UTF16LE;
+            encoding = utility::Encoding::ENCODING_UTF16LE;
         else if( stat.likely_utf16_be )
-            encoding = encodings::ENCODING_UTF16BE;
+            encoding = utility::Encoding::ENCODING_UTF16BE;
         else if( stat.can_be_utf8 )
-            encoding = encodings::ENCODING_UTF8;
+            encoding = utility::Encoding::ENCODING_UTF8;
         else
-            encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN;
+            encoding = utility::Encoding::ENCODING_MACOS_ROMAN_WESTERN;
     }
 
     ViewMode mode = stat.is_binary ? ViewMode::Hex : ViewMode::Text;
@@ -153,9 +187,11 @@ using namespace nc::viewer;
     [self setKnownFile:_file encoding:encoding mode:mode];
 }
 
-- (void)setKnownFile:(std::shared_ptr<nc::vfs::FileWindow>)_file encoding:(int)_encoding mode:(ViewMode)_mode
+- (void)setKnownFile:(std::shared_ptr<nc::vfs::FileWindow>)_file
+            encoding:(utility::Encoding)_encoding
+                mode:(ViewMode)_mode
 {
-    assert(_encoding != encodings::ENCODING_INVALID);
+    assert(_encoding != utility::Encoding::ENCODING_INVALID);
 
     m_File = _file;
     m_Data = std::make_shared<DataBackend>(m_File, _encoding);
@@ -166,6 +202,10 @@ using namespace nc::viewer;
 
     [self willChangeValueForKey:@"encoding"];
     [self didChangeValueForKey:@"encoding"];
+
+    m_Footer.fileSize = m_File->FileSize();
+    m_Footer.encoding = m_Data->Encoding();
+    m_Footer.wrapLines = m_WrapWords;
 }
 
 - (void)detachFromFile
@@ -187,6 +227,7 @@ using namespace nc::viewer;
     m_File = _file;
     m_Data = std::make_shared<DataBackend>(m_File, m_Data->Encoding());
     m_NativeStoredFile = std::nullopt;
+    m_Footer.fileSize = m_File->FileSize();
     if( [m_View respondsToSelector:@selector(attachToNewBackend:)] ) {
         [m_View attachToNewBackend:m_Data];
 
@@ -201,14 +242,14 @@ using namespace nc::viewer;
     }
 }
 
-- (int)encoding
+- (utility::Encoding)encoding
 {
     if( m_Data )
         return m_Data->Encoding();
-    return encodings::ENCODING_UTF8; // ??
+    return utility::Encoding::ENCODING_UTF8; // ??
 }
 
-- (void)setEncoding:(int)_encoding
+- (void)setEncoding:(utility::Encoding)_encoding
 {
     if( !m_Data || m_Data->Encoding() == _encoding )
         return; // nothing to do
@@ -219,6 +260,8 @@ using namespace nc::viewer;
 
     if( [m_View respondsToSelector:@selector(backendContentHasChanged)] )
         [m_View backendContentHasChanged];
+
+    m_Footer.encoding = m_Data->Encoding();
 }
 
 - (void)RequestWindowMovementAt:(uint64_t)_pos
@@ -242,6 +285,8 @@ using namespace nc::viewer;
         [m_View lineWrappingHasChanged];
     }
     [self didChangeValueForKey:@"wordWrap"];
+
+    m_Footer.wrapLines = m_WrapWords;
 }
 
 - (ViewMode)mode
@@ -307,17 +352,19 @@ using namespace nc::viewer;
         [self.window makeFirstResponder:m_View];
 
     [m_View setFocusRingType:self.focusRingType];
+    m_Footer.mode = _mode;
 }
 
 - (void)addFillingSubview:(NSView *)_view
 {
-    [self addSubview:_view];
-    NSDictionary *views = NSDictionaryOfVariableBindings(_view);
+    [self addSubview:_view positioned:NSWindowBelow relativeTo:nil];
+
+    NSDictionary *views = NSDictionaryOfVariableBindings(_view, m_Footer);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[_view]-(==0)-|"
                                                                  options:0
                                                                  metrics:nil
                                                                    views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[_view]-(==0)-|"
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[_view]-(==0)-[m_Footer]"
                                                                  options:0
                                                                  metrics:nil
                                                                    views:views]];
@@ -605,6 +652,26 @@ using namespace nc::viewer;
             return true;
     }
     return [super performKeyEquivalent:_event];
+}
+
+- (void)observeValueForKeyPath:(NSString *)_key_path
+                      ofObject:(id)_object
+                        change:(NSDictionary *) [[maybe_unused]] _change
+                       context:(void *) [[maybe_unused]] _context
+{
+    if( _object == m_Footer && [_key_path isEqualToString:@"mode"] ) {
+        self.mode = m_Footer.mode;
+    }
+}
+
+- (NCViewerFooter *)footer
+{
+    return m_Footer;
+}
+
+- (NCViewerSearchView *)searchView
+{
+    return m_SearchView;
 }
 
 @end

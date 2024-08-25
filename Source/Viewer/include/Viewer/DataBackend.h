@@ -2,6 +2,7 @@
 #pragma once
 
 #include <VFS/FileWindow.h>
+#include <Utility/Encodings.h>
 #include <MacTypes.h>
 #include <functional>
 #include <filesystem>
@@ -15,12 +16,12 @@ namespace nc::viewer {
 class DataBackend
 {
 public:
-    DataBackend(std::shared_ptr<nc::vfs::FileWindow> _fw, int _encoding);
+    DataBackend(std::shared_ptr<nc::vfs::FileWindow> _fw, utility::Encoding _encoding);
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     // settings
-    int Encoding() const;
-    void SetEncoding(int _encoding);
+    utility::Encoding Encoding() const;
+    void SetEncoding(utility::Encoding _encoding);
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     // operations
@@ -63,7 +64,7 @@ private:
     void DecodeBuffer(); // called by internal update logic
 
     std::shared_ptr<nc::vfs::FileWindow> m_FileWindow;
-    int m_Encoding;
+    utility::Encoding m_Encoding;
 
     // decoded buffer with unichars
     // useful size of m_DecodedBufferSize

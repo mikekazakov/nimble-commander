@@ -1,9 +1,12 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
+#include <stdint.h>
 
 namespace nc::viewer {
 
-enum class ViewMode : int { // changing this values may cause stored history corruption
+// Enumeration of the possible viewer modes.
+// NB! changing this values may cause corruption of the stored history.
+enum class ViewMode : uint8_t {
     Text = 0,
     Hex = 1,
     Preview = 2

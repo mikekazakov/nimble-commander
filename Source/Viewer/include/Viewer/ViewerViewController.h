@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "ViewerView.h"
@@ -20,14 +20,6 @@ struct ActionShortcut;
 
 // UI wiring
 @property(nonatomic) NCViewerView *view;
-@property(nonatomic) NSSearchField *searchField;
-@property(nonatomic) NSProgressIndicator *searchProgressIndicator;
-@property(nonatomic) NSPopUpButton *encodingsPopUp;
-@property(nonatomic) NSPopUpButton *modePopUp;
-@property(nonatomic) NSButton *positionButton;
-@property(nonatomic) NSTextField *fileSizeLabel;
-@property(nonatomic) NSButton *wordWrappingCheckBox;
-@property(nonatomic) NSButton *settingsButton;
 
 // Useful information
 @property(nonatomic, readonly) NSString *verboseTitle;

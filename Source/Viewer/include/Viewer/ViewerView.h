@@ -8,6 +8,9 @@
 #include "HexModeViewDelegate.h"
 #include <memory>
 
+@class NCViewerFooter;
+@class NCViewerSearchView;
+
 namespace nc::utility {
 class TemporaryFileStorage;
 }
@@ -34,7 +37,7 @@ class SettingsStorage;
 
 - (void)setFile:(std::shared_ptr<nc::vfs::FileWindow>)_file;
 - (void)setKnownFile:(std::shared_ptr<nc::vfs::FileWindow>)_file
-            encoding:(int)_encoding
+            encoding:(nc::utility::Encoding)_encoding
                 mode:(nc::viewer::ViewMode)_mode;
 
 // informs NCViewerView that a file window was changed completely, presumably reloaded afresh.
@@ -52,7 +55,7 @@ class SettingsStorage;
  * Setting how data backend should translate raw bytes into UniChars characters.
  * KVO-compatible.
  */
-@property(nonatomic) int encoding;
+@property(nonatomic) nc::utility::Encoding encoding;
 
 /**
  * Set if text presentation should fit lines into a view width to disable horiziontal scrolling.
@@ -96,5 +99,9 @@ class SettingsStorage;
 
 /** If set, NCViewerView will try to redirect performKeyEquivalent: to this responder. */
 @property(nonatomic, weak) NSResponder *hotkeyDelegate;
+
+@property(nonatomic, readonly) NCViewerFooter *footer;
+
+@property(nonatomic, readonly) NCViewerSearchView *searchView;
 
 @end

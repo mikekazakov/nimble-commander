@@ -70,7 +70,6 @@ using PanelActionsMap = robin_hood::unordered_flat_map<SEL, std::unique_ptr<cons
 - (IBAction)OnGoToProcessesList:(id)sender;
 - (IBAction)OnGoToFolder:(id)sender;
 - (IBAction)OnCreateDirectoryCommand:(id)sender;
-- (IBAction)OnCalculateChecksum:(id)sender;
 - (IBAction)OnQuickNewFolder:(id)sender;
 - (IBAction)OnQuickNewFolderWithSelection:(id)sender;
 - (IBAction)OnQuickNewFile:(id)sender;

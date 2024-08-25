@@ -8,7 +8,6 @@
 #include "Actions/ShowVolumeInformation.h"
 #include "Actions/InsertFromPasteboard.h"
 #include "Actions/OpenXAttr.h"
-#include "Actions/CalculateChecksum.h"
 #include "Actions/SpotlightSearch.h"
 #include "Actions/OpenWithExternalEditor.h"
 #include "Actions/ToggleSort.h"
@@ -63,7 +62,6 @@ PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
     add(@selector(OnAddToFavorites:), new AddToFavorites);
     add(@selector(OnCalculateSizes:), new CalculateSizes);
     add(@selector(OnCalculateAllSizes:), new CalculateAllSizes);
-    add(@selector(OnCalculateChecksum:), new CalculateChecksum);
     add(@selector(OnQuickNewFile:), new MakeNewFile);
     add(@selector(OnQuickNewFolder:), new MakeNewFolder);
     add(@selector(OnQuickNewFolderWithSelection:), new MakeNewFolderWithSelection);

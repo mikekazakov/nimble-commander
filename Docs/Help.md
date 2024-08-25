@@ -174,7 +174,6 @@ Available hotkeys are listed below. These are the default values, which can be a
 | &nbsp; Paste Filenames to Terminal...        | Ctrl + Opt + Cmd + Return |
 | &nbsp; Calculate Folders Sizes               | Shift + Opt + Return      |
 | &nbsp; Calculate All Folders Sizes           | Ctrl + Shift + Return     |
-| &nbsp; Calculate Checksum                    | Shift + Cmd + K           |
 | &nbsp; Duplicate                             | Cmd + D                   |
 | &nbsp; Add to Favorites                      | Cmd + B                   |
 | &nbsp; Close                                 | Cmd + W                   |

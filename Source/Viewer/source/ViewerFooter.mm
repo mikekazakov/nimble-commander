@@ -18,6 +18,10 @@ using namespace nc::viewer;
     bool m_WrapLines;
 
     ColoredSeparatorLine *m_SeparatorLine;
+    ColoredSeparatorLine *m_VSep1;
+    ColoredSeparatorLine *m_VSep2;
+    ColoredSeparatorLine *m_VSep3;
+    ColoredSeparatorLine *m_VSep4;
     NSPopUpButton *m_ModeButton;
     NSPopUpButton *m_EncodingButton;
     NSButton *m_LineWrapButton;
@@ -46,10 +50,35 @@ using namespace nc::viewer;
     m_SeparatorLine.borderColor = NSColor.separatorColor;
     [self addSubview:m_SeparatorLine];
 
+    m_VSep1 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
+    m_VSep1.translatesAutoresizingMaskIntoConstraints = false;
+    m_VSep1.borderColor = NSColor.separatorColor;
+    [self addSubview:m_VSep1];
+
+    m_VSep2 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
+    m_VSep2.translatesAutoresizingMaskIntoConstraints = false;
+    m_VSep2.borderColor = NSColor.separatorColor;
+    [self addSubview:m_VSep2];
+
+    m_VSep3 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
+    m_VSep3.translatesAutoresizingMaskIntoConstraints = false;
+    m_VSep3.borderColor = NSColor.separatorColor;
+    [self addSubview:m_VSep3];
+
+    m_VSep4 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
+    m_VSep4.translatesAutoresizingMaskIntoConstraints = false;
+    m_VSep4.borderColor = NSColor.separatorColor;
+    [self addSubview:m_VSep4];
+
     NSMenu *mode_menu = [[NSMenu alloc] init];
-    [mode_menu addItemWithTitle:@"Text" action:nullptr keyEquivalent:@""].tag = static_cast<int>(ViewMode::Text);
-    [mode_menu addItemWithTitle:@"Hex" action:nullptr keyEquivalent:@""].tag = static_cast<int>(ViewMode::Hex);
-    [mode_menu addItemWithTitle:@"Preview" action:nullptr keyEquivalent:@""].tag = static_cast<int>(ViewMode::Preview);
+    [mode_menu addItemWithTitle:NSLocalizedString(@"Text", "Tooltip for menu element") action:nullptr keyEquivalent:@""]
+        .tag = static_cast<int>(ViewMode::Text);
+    [mode_menu addItemWithTitle:NSLocalizedString(@"Hex", "Tooltip for menu element") action:nullptr keyEquivalent:@""]
+        .tag = static_cast<int>(ViewMode::Hex);
+    [mode_menu addItemWithTitle:NSLocalizedString(@"Preview", "Tooltip for menu element")
+                         action:nullptr
+                  keyEquivalent:@""]
+        .tag = static_cast<int>(ViewMode::Preview);
 
     m_ModeButton = [[NSPopUpButton alloc] initWithFrame:NSRect() pullsDown:false];
     m_ModeButton.imagePosition = NSNoImage;
@@ -60,6 +89,7 @@ using namespace nc::viewer;
     m_ModeButton.action = @selector(onModeChanged:);
     m_ModeButton.translatesAutoresizingMaskIntoConstraints = false;
     m_ModeButton.contentTintColor = NSColor.secondaryLabelColor;
+    m_ModeButton.toolTip = NSLocalizedString(@"View mode", "Tooltip for the footer element");
     [self addSubview:m_ModeButton];
 
     NSMenu *encoding_menu = [[NSMenu alloc] init];
@@ -77,11 +107,14 @@ using namespace nc::viewer;
     m_EncodingButton.action = @selector(onEncodingChanged:);
     m_EncodingButton.translatesAutoresizingMaskIntoConstraints = false;
     m_EncodingButton.contentTintColor = NSColor.secondaryLabelColor;
+    m_EncodingButton.toolTip = NSLocalizedString(@"File encoding", "Tooltip for the footer element");
     [self addSubview:m_EncodingButton];
 
     m_LineWrapButton = [[NSButton alloc] initWithFrame:NSRect()];
-    m_LineWrapButton.image = [Bundle() imageForResource:@"custom.return.left"];
+    m_LineWrapButton.image = [Bundle() imageForResource:@"text.alignleft"];
     [m_LineWrapButton.image setTemplate:true];
+    m_LineWrapButton.alternateImage = [Bundle() imageForResource:@"return.left"];
+    [m_LineWrapButton.alternateImage setTemplate:true];
     m_LineWrapButton.imagePosition = NSImageOnly;
     m_LineWrapButton.imageScaling = NSImageScaleNone;
     m_LineWrapButton.translatesAutoresizingMaskIntoConstraints = false;
@@ -102,8 +135,9 @@ using namespace nc::viewer;
     m_FileSizeLabel.drawsBackground = false;
     m_FileSizeLabel.lineBreakMode = NSLineBreakByClipping;
     m_FileSizeLabel.usesSingleLineMode = true;
-    m_FileSizeLabel.alignment = NSTextAlignmentRight;
+    m_FileSizeLabel.alignment = NSTextAlignmentCenter;
     m_FileSizeLabel.textColor = NSColor.secondaryLabelColor;
+    m_FileSizeLabel.toolTip = NSLocalizedString(@"File size", "Tooltip for the footer element");
     [self addSubview:m_FileSizeLabel];
 
     m_LinePositionButton = [[NSButton alloc] initWithFrame:NSRect()];
@@ -111,13 +145,22 @@ using namespace nc::viewer;
     m_LinePositionButton.bordered = false;
     m_LinePositionButton.buttonType = NSButtonTypeMomentaryPushIn;
     m_LinePositionButton.title = @"";
+    m_LinePositionButton.toolTip = NSLocalizedString(@"File position", "Tooltip for the footer element");
     [self addSubview:m_LinePositionButton];
 }
 
 - (void)layoutControls
 {
-    const auto views = NSDictionaryOfVariableBindings(
-        m_SeparatorLine, m_ModeButton, m_EncodingButton, m_LineWrapButton, m_FileSizeLabel, m_LinePositionButton);
+    const auto views = NSDictionaryOfVariableBindings(m_SeparatorLine,
+                                                      m_ModeButton,
+                                                      m_EncodingButton,
+                                                      m_LineWrapButton,
+                                                      m_FileSizeLabel,
+                                                      m_LinePositionButton,
+                                                      m_VSep1,
+                                                      m_VSep2,
+                                                      m_VSep3,
+                                                      m_VSep4);
     const auto add = [&](NSString *_vf) {
         auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_vf options:0 metrics:nil views:views];
         [self addConstraints:constraints];
@@ -129,11 +172,29 @@ using namespace nc::viewer;
     add(@"V:[m_SeparatorLine]-(==0)-[m_LinePositionButton]-(==0)-|");
     add(@"V:[m_SeparatorLine]-(==0)-[m_EncodingButton]-(==0)-|");
     add(@"V:[m_SeparatorLine]-(==0)-[m_LineWrapButton]-(==0)-|");
-
+    add(@"V:[m_SeparatorLine]-(4)-[m_VSep1]-(4)-|");
+    add(@"V:[m_SeparatorLine]-(4)-[m_VSep2]-(4)-|");
+    add(@"V:[m_SeparatorLine]-(4)-[m_VSep3]-(4)-|");
+    add(@"V:[m_SeparatorLine]-(4)-[m_VSep4]-(4)-|");
     add(@"|-(==0)-[m_SeparatorLine]-(==0)-|");
-    add(@"|-(4)-[m_ModeButton]");
-    add(@"[m_LineWrapButton(==24)]-(4)-[m_EncodingButton]-(4)-[m_LinePositionButton(>=60)]-(4)-[m_FileSizeLabel(>=60)]-"
-        @"(4)-|");
+    add(@"|-(4)-[m_ModeButton]-(>=2)-[m_VSep1(1)]-(2)-"
+        @"[m_LineWrapButton(24)]-(2)-[m_VSep2(1)]-(2)-"
+        @"[m_EncodingButton]-(2)-[m_VSep3(1)]-(2)-"
+        @"[m_LinePositionButton(>=50)]-(2)-[m_VSep4(1)]-(2)-"
+        @"[m_FileSizeLabel(>=50)]-(4)-|");
+
+    [m_EncodingButton setContentCompressionResistancePriority:NSLayoutPriorityDragThatCannotResizeWindow
+                                               forOrientation:NSLayoutConstraintOrientationHorizontal];
+}
+
+- (void)updateControlsVisibility
+{
+    m_VSep1.hidden = !(m_Mode == ViewMode::Text);
+    m_LineWrapButton.hidden = !(m_Mode == ViewMode::Text);
+    m_VSep2.hidden = !(m_Mode == ViewMode::Text || m_Mode == ViewMode::Hex);
+    m_EncodingButton.hidden = !(m_Mode == ViewMode::Text || m_Mode == ViewMode::Hex);
+    m_VSep3.hidden = !(m_Mode == ViewMode::Text || m_Mode == ViewMode::Hex);
+    m_LinePositionButton.hidden = !(m_Mode == ViewMode::Text || m_Mode == ViewMode::Hex);
 }
 
 - (void)setMode:(ViewMode)_mode
@@ -147,7 +208,7 @@ using namespace nc::viewer;
 
     [m_ModeButton selectItemWithTag:std::to_underlying(m_Mode)];
 
-    // TODO: update layouts...
+    [self updateControlsVisibility];
 }
 
 - (ViewMode)mode

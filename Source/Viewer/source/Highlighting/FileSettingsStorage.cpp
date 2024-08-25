@@ -158,6 +158,15 @@ std::optional<std::string> FileSettingsStorage::Language(std::string_view _filen
     return {};
 }
 
+std::vector<std::string> FileSettingsStorage::List()
+{
+    std::vector<std::string> list;
+    for( const Lang &lang : m_Langs ) {
+        list.push_back(lang.name);
+    }
+    return list;
+}
+
 std::shared_ptr<const std::string> FileSettingsStorage::Settings(std::string_view _lang)
 {
     Log::Trace(SPDLOC, "Settings() called");

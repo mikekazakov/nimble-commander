@@ -1,41 +1,55 @@
 // Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerFooter.h"
+#include "Highlighting/SettingsStorage.h"
 #include "Internal.h"
 #include <Utility/ObjCpp.h>
 #include <Utility/ColoredSeparatorLine.h>
 #include <Utility/VerticallyCenteredTextFieldCell.h>
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/Encodings.h>
+#include <Utility/StringExtras.h>
 #include <utility>
 
 using namespace nc;
 using namespace nc::viewer;
 
 @implementation NCViewerFooter {
+    hl::SettingsStorage *m_SettingsStorage;
+
     ViewMode m_Mode;
     utility::Encoding m_Encoding;
     uint64_t m_FileSize;
     bool m_WrapLines;
+    std::string m_HighlightingLanguage;
 
     ColoredSeparatorLine *m_SeparatorLine;
     ColoredSeparatorLine *m_VSep1;
     ColoredSeparatorLine *m_VSep2;
     ColoredSeparatorLine *m_VSep3;
     ColoredSeparatorLine *m_VSep4;
+    ColoredSeparatorLine *m_VSep5;
     NSPopUpButton *m_ModeButton;
     NSPopUpButton *m_EncodingButton;
+    NSPopUpButton *m_LanguageButton;
     NSButton *m_LineWrapButton;
     NSTextField *m_FileSizeLabel;
     NSButton *m_LinePositionButton;
+
+    std::vector<std::string> m_Languages;
 }
 
-- (instancetype)initWithFrame:(NSRect)_frame
+- (instancetype)initWithFrame:(NSRect)_frame andHighlightingSyntaxStorage:(nc::viewer::hl::SettingsStorage &)_stor
 {
     if( self = [super initWithFrame:_frame] ) {
+        m_SettingsStorage = &_stor;
         m_Mode = ViewMode::Text;
         m_Encoding = utility::Encoding::ENCODING_UTF8;
         m_FileSize = 0;
         m_WrapLines = false;
+
+        m_Languages = _stor.List();
+        m_Languages.insert(m_Languages.begin(),
+                           NSLocalizedString(@"Plain Text", "Menu element of language selection").UTF8String);
 
         [self buildControls];
         [self layoutControls];
@@ -69,6 +83,11 @@ using namespace nc::viewer;
     m_VSep4.translatesAutoresizingMaskIntoConstraints = false;
     m_VSep4.borderColor = NSColor.separatorColor;
     [self addSubview:m_VSep4];
+
+    m_VSep5 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
+    m_VSep5.translatesAutoresizingMaskIntoConstraints = false;
+    m_VSep5.borderColor = NSColor.separatorColor;
+    [self addSubview:m_VSep5];
 
     NSMenu *mode_menu = [[NSMenu alloc] init];
     [mode_menu addItemWithTitle:NSLocalizedString(@"Text", "Tooltip for menu element") action:nullptr keyEquivalent:@""]
@@ -109,6 +128,25 @@ using namespace nc::viewer;
     m_EncodingButton.contentTintColor = NSColor.secondaryLabelColor;
     m_EncodingButton.toolTip = NSLocalizedString(@"File encoding", "Tooltip for the footer element");
     [self addSubview:m_EncodingButton];
+
+    NSMenu *languages_menu = [[NSMenu alloc] init];
+    for( size_t idx = 0; const std::string &lang : m_Languages ) {
+        [languages_menu addItemWithTitle:[NSString stringWithUTF8StdString:lang] action:nullptr keyEquivalent:@""].tag =
+            idx;
+        ++idx;
+    }
+
+    m_LanguageButton = [[NSPopUpButton alloc] initWithFrame:NSRect() pullsDown:false];
+    m_LanguageButton.imagePosition = NSNoImage;
+    m_LanguageButton.bordered = false;
+    m_LanguageButton.menu = languages_menu;
+    [m_LanguageButton selectItemWithTag:0];
+    m_LanguageButton.target = self;
+    m_LanguageButton.action = @selector(onLanguageChanged:);
+    m_LanguageButton.translatesAutoresizingMaskIntoConstraints = false;
+    m_LanguageButton.contentTintColor = NSColor.secondaryLabelColor;
+    m_LanguageButton.toolTip = NSLocalizedString(@"Language highlighting", "Tooltip for the footer element");
+    [self addSubview:m_LanguageButton];
 
     m_LineWrapButton = [[NSButton alloc] initWithFrame:NSRect()];
     m_LineWrapButton.image = [Bundle() imageForResource:@"text.alignleft.12"];
@@ -157,10 +195,12 @@ using namespace nc::viewer;
                                                       m_LineWrapButton,
                                                       m_FileSizeLabel,
                                                       m_LinePositionButton,
+                                                      m_LanguageButton,
                                                       m_VSep1,
                                                       m_VSep2,
                                                       m_VSep3,
-                                                      m_VSep4);
+                                                      m_VSep4,
+                                                      m_VSep5);
     const auto add = [&](NSString *_vf) {
         auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_vf options:0 metrics:nil views:views];
         [self addConstraints:constraints];
@@ -171,16 +211,19 @@ using namespace nc::viewer;
     add(@"V:[m_SeparatorLine]-(==0)-[m_FileSizeLabel]-(==0)-|");
     add(@"V:[m_SeparatorLine]-(==0)-[m_LinePositionButton]-(==0)-|");
     add(@"V:[m_SeparatorLine]-(==0)-[m_EncodingButton]-(==0)-|");
+    add(@"V:[m_SeparatorLine]-(==0)-[m_LanguageButton]-(==0)-|");
     add(@"V:[m_SeparatorLine]-(==0)-[m_LineWrapButton]-(==0)-|");
     add(@"V:[m_SeparatorLine]-(4)-[m_VSep1]-(4)-|");
     add(@"V:[m_SeparatorLine]-(4)-[m_VSep2]-(4)-|");
     add(@"V:[m_SeparatorLine]-(4)-[m_VSep3]-(4)-|");
     add(@"V:[m_SeparatorLine]-(4)-[m_VSep4]-(4)-|");
+    add(@"V:[m_SeparatorLine]-(4)-[m_VSep5]-(4)-|");
     add(@"|-(==0)-[m_SeparatorLine]-(==0)-|");
     add(@"|-(4)-[m_ModeButton]-(>=2)-[m_VSep1(1)]-(2)-"
         @"[m_LineWrapButton(24)]-(2)-[m_VSep2(1)]-(2)-"
-        @"[m_EncodingButton]-(2)-[m_VSep3(1)]-(2)-"
-        @"[m_LinePositionButton(>=50)]-(2)-[m_VSep4(1)]-(2)-"
+        @"[m_LanguageButton]-(2)-[m_VSep3(1)]-(2)-"
+        @"[m_EncodingButton]-(2)-[m_VSep4(1)]-(2)-"
+        @"[m_LinePositionButton(>=50)]-(2)-[m_VSep5(1)]-(2)-"
         @"[m_FileSizeLabel(>=50)]-(4)-|");
 
     [m_EncodingButton setContentCompressionResistancePriority:NSLayoutPriorityDragThatCannotResizeWindow
@@ -191,9 +234,11 @@ using namespace nc::viewer;
 {
     m_VSep1.hidden = !(m_Mode == ViewMode::Text);
     m_LineWrapButton.hidden = !(m_Mode == ViewMode::Text);
-    m_VSep2.hidden = !(m_Mode == ViewMode::Text || m_Mode == ViewMode::Hex);
-    m_EncodingButton.hidden = !(m_Mode == ViewMode::Text || m_Mode == ViewMode::Hex);
+    m_VSep2.hidden = !(m_Mode == ViewMode::Text);
+    m_LanguageButton.hidden = !(m_Mode == ViewMode::Text);
     m_VSep3.hidden = !(m_Mode == ViewMode::Text || m_Mode == ViewMode::Hex);
+    m_EncodingButton.hidden = !(m_Mode == ViewMode::Text || m_Mode == ViewMode::Hex);
+    m_VSep4.hidden = !(m_Mode == ViewMode::Text || m_Mode == ViewMode::Hex);
     m_LinePositionButton.hidden = !(m_Mode == ViewMode::Text || m_Mode == ViewMode::Hex);
 }
 
@@ -315,6 +360,45 @@ using namespace nc::viewer;
 - (void)performFilePositionClick:(id)_sender
 {
     [m_LinePositionButton performClick:_sender];
+}
+
+- (const std::string &)highlightingLanguage
+{
+    return m_HighlightingLanguage;
+}
+
+- (void)setHighlightingLanguage:(const std::string &)_highlighting_language
+{
+    if( m_HighlightingLanguage == _highlighting_language ) {
+        return;
+    }
+
+    [self willChangeValueForKey:@"highlightingLanguage"];
+    m_HighlightingLanguage = _highlighting_language;
+    [self didChangeValueForKey:@"highlightingLanguage"];
+
+    long tag = -1;
+    if( m_HighlightingLanguage == "" ) {
+        tag = 0;
+    }
+    else if( auto it = std::find(m_Languages.begin(), m_Languages.end(), m_HighlightingLanguage);
+             it != m_Languages.end() ) {
+        tag = std::distance(m_Languages.begin(), it);
+    }
+    [m_LanguageButton selectItemWithTag:tag];
+}
+
+- (void)onLanguageChanged:(id)_sender
+{
+    assert(_sender == m_LanguageButton);
+
+    const long tag = m_LanguageButton.selectedTag;
+    if( tag == 0 ) {
+        self.highlightingLanguage = std::string{};
+    }
+    else {
+        self.highlightingLanguage = m_Languages.at(tag);
+    }
 }
 
 @end

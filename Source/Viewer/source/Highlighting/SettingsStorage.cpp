@@ -9,6 +9,11 @@ std::optional<std::string> DummySettingsStorage::Language(std::string_view _file
     return {};
 }
 
+std::vector<std::string> DummySettingsStorage::List()
+{
+    return {};
+}
+
 std::shared_ptr<const std::string> DummySettingsStorage::Settings(std::string_view _lang)
 {
     (void)_lang;

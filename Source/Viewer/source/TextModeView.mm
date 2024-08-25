@@ -65,6 +65,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
     std::shared_ptr<TextModeWorkingSetHighlighting> m_WorkingSetHighlighting;
     std::shared_ptr<const TextModeFrame> m_Frame;
+    std::string m_Language;
     bool m_LineWrap;
     bool m_EnableSyntaxHighlighting;
     FontGeometryInfo m_FontInfo;
@@ -150,34 +151,35 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 
 - (void)backendContentHasChanged
 {
-    [self rebuildWorkingSetAndFrame];
+    [self rebuildWorkingSetAndHighlightingAndFrame];
 }
 
 - (void)attachToNewBackend:(std::shared_ptr<const nc::viewer::DataBackend>)_backend
 {
     m_Backend = _backend;
-    [self rebuildWorkingSetAndFrame];
+    [self rebuildWorkingSetAndHighlightingAndFrame];
 }
 
-- (void)rebuildWorkingSetAndFrame
+- (void)rebuildWorkingSetAndHighlightingAndFrame
 {
     m_WorkingSet = BuildWorkingSetForBackendState(*m_Backend);
-    m_WorkingSetHighlighting.reset();
+    [self rebuildHighlightingAndFrame];
+}
 
-    if( m_EnableSyntaxHighlighting ) {
-        if( const std::optional<std::string> lang = m_HighlightingSettings->Language(m_Backend->FileName().native()) ) {
-            if( const std::shared_ptr<const std::string> settings = m_HighlightingSettings->Settings(*lang) ) {
-                m_WorkingSetHighlighting = std::make_shared<TextModeWorkingSetHighlighting>(m_WorkingSet, settings);
-                __weak NCViewerTextModeView *weak_self = self;
-                m_WorkingSetHighlighting->Highlight(
-                    g_SyncHighlightingThreshold,
-                    [weak_self](std::shared_ptr<const TextModeWorkingSetHighlighting> _hl) {
-                        NCViewerTextModeView *strong_self = weak_self;
-                        if( !strong_self || _hl != strong_self->m_WorkingSetHighlighting )
-                            return;
-                        [strong_self highlightingHasChanged];
-                    });
-            }
+- (void)rebuildHighlightingAndFrame
+{
+    m_WorkingSetHighlighting.reset();
+    if( m_EnableSyntaxHighlighting && !m_Language.empty() ) {
+        if( const std::shared_ptr<const std::string> settings = m_HighlightingSettings->Settings(m_Language) ) {
+            m_WorkingSetHighlighting = std::make_shared<TextModeWorkingSetHighlighting>(m_WorkingSet, settings);
+            __weak NCViewerTextModeView *weak_self = self;
+            m_WorkingSetHighlighting->Highlight(g_SyncHighlightingThreshold,
+                                                [weak_self](std::shared_ptr<const TextModeWorkingSetHighlighting> _hl) {
+                                                    NCViewerTextModeView *strong_self = weak_self;
+                                                    if( !strong_self || _hl != strong_self->m_WorkingSetHighlighting )
+                                                        return;
+                                                    [strong_self highlightingHasChanged];
+                                                });
         }
     }
 
@@ -368,7 +370,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
         if( rc != VFSError::Ok )
             return false;
 
-        [self rebuildWorkingSetAndFrame];
+        [self rebuildWorkingSetAndHighlightingAndFrame];
 
         m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*old_frame, m_VerticalLineOffset, *m_Frame);
         if( m_VerticalLineOffset > 0 )
@@ -415,7 +417,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
         if( rc != VFSError::Ok )
             return false;
 
-        [self rebuildWorkingSetAndFrame];
+        [self rebuildWorkingSetAndHighlightingAndFrame];
 
         m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*old_frame, m_VerticalLineOffset, *m_Frame);
         if( m_VerticalLineOffset + self.numberOfLinesFittingInView < m_Frame->LinesNumber() )
@@ -687,7 +689,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
         if( rc != VFSError::Ok )
             return false;
 
-        [self rebuildWorkingSetAndFrame];
+        [self rebuildWorkingSetAndHighlightingAndFrame];
 
         auto second_probe =
             FindVerticalLineToScrollToBytesOffsetWithFrame(*m_Frame, *m_Backend, self.contentsSize, _offset);
@@ -891,7 +893,17 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
         return;
     }
     m_EnableSyntaxHighlighting = _enabled;
-    [self rebuildWorkingSetAndFrame];
+    [self rebuildHighlightingAndFrame];
+}
+
+- (void)setHighlightingLanguage:(const std::string &)_language
+{
+    if( m_Language == _language ) {
+        return; // nothing to do
+    }
+
+    m_Language = _language;
+    [self rebuildHighlightingAndFrame];
 }
 
 @end

@@ -93,6 +93,17 @@ TEST_CASE(PREFIX "Language()")
     CHECK(stor.Language("") == std::nullopt);
 }
 
+TEST_CASE(PREFIX "List()")
+{
+    TempTestDir dir;
+    std::ofstream{dir.directory / "Main.json"} << R"({ "langs": [
+        {"name": "C++", "settings": "a", "filemask":"*.cpp"},
+        {"name": "C#", "settings": "a", "filemask":"*.cs"}
+    ]})";
+    FSL stor{dir.directory, ""};
+    CHECK(stor.List() == std::vector<std::string>{"C++", "C#"});
+}
+
 TEST_CASE(PREFIX "Settings()")
 {
     TempTestDir dir;

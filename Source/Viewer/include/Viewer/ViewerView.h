@@ -89,6 +89,9 @@ class SettingsStorage;
  */
 @property(nonatomic) CFRange selectionInFile;
 
+// Language for syntax highlighting in the text mode.
+@property(nonatomic) std::string language;
+
 - (void)scrollToVerticalPosition:(double)_p; // [0..1]
 - (void)scrollToSelection;
 - (CFRange)SelectionWithinWindow;         // bytes within a decoded window

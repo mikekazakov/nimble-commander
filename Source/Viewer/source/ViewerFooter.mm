@@ -221,11 +221,13 @@ using namespace nc::viewer;
     add(@"|-(==0)-[m_SeparatorLine]-(==0)-|");
     add(@"|-(4)-[m_ModeButton]-(>=2)-[m_VSep1(1)]-(2)-"
         @"[m_LineWrapButton(24)]-(2)-[m_VSep2(1)]-(2)-"
-        @"[m_LanguageButton]-(2)-[m_VSep3(1)]-(2)-"
-        @"[m_EncodingButton]-(2)-[m_VSep4(1)]-(2)-"
+        @"[m_LanguageButton(>=50)]-(2)-[m_VSep3(1)]-(2)-"
+        @"[m_EncodingButton(>=50)]-(2)-[m_VSep4(1)]-(2)-"
         @"[m_LinePositionButton(>=50)]-(2)-[m_VSep5(1)]-(2)-"
         @"[m_FileSizeLabel(>=50)]-(4)-|");
 
+    [m_LanguageButton setContentCompressionResistancePriority:NSLayoutPriorityDragThatCannotResizeWindow
+                                               forOrientation:NSLayoutConstraintOrientationHorizontal];
     [m_EncodingButton setContentCompressionResistancePriority:NSLayoutPriorityDragThatCannotResizeWindow
                                                forOrientation:NSLayoutConstraintOrientationHorizontal];
 }

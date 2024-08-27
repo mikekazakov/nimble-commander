@@ -349,7 +349,7 @@ using namespace nc::viewer;
 
     if( [m_View respondsToSelector:@selector(scrollToGlobalBytesOffset:)] )
         [m_View scrollToGlobalBytesOffset:static_cast<int64_t>(m_VerticalPositionInBytes)];
-    
+
     if( [m_View respondsToSelector:@selector(setHighlightingLanguage:)] )
         [m_View setHighlightingLanguage:m_HighlightingLanguage];
 

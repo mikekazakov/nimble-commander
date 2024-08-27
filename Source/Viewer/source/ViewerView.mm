@@ -202,8 +202,6 @@ using namespace nc::viewer;
     self.mode = _mode;
     self.verticalPositionInBytes = 0;
     self.selectionInFile = CFRangeMake(-1, 0);
-
-    m_HighlightingLanguage = ""; // force update
     self.language = m_HighlightingSettings->Language(m_Data->FileName().native()).value_or("");
 
     [self willChangeValueForKey:@"encoding"];
@@ -351,6 +349,9 @@ using namespace nc::viewer;
 
     if( [m_View respondsToSelector:@selector(scrollToGlobalBytesOffset:)] )
         [m_View scrollToGlobalBytesOffset:static_cast<int64_t>(m_VerticalPositionInBytes)];
+    
+    if( [m_View respondsToSelector:@selector(setHighlightingLanguage:)] )
+        [m_View setHighlightingLanguage:m_HighlightingLanguage];
 
     [self didChangeValueForKey:@"mode"];
 

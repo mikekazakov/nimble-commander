@@ -425,6 +425,7 @@
         "saveFilePosition":     true,
         "saveFileWrapping":     true,
         "saveFileSelection":    true,
+        "saveFileLanguage":     true,
         "maximumHistoryEntries": 256,
 
         /**

@@ -214,8 +214,9 @@ struct BackgroundFileOpener {
     // try to load a saved info if any
     if( auto info = m_History->EntryByPath(m_GlobalFilePath) ) {
         auto options = m_History->Options();
+        const std::optional<std::string> language = options.language ? info->language : std::nullopt;
         if( options.encoding && options.mode ) {
-            [m_View setKnownFile:m_ViewerFileWindow encoding:info->encoding mode:info->view_mode];
+            [m_View setKnownFile:m_ViewerFileWindow encoding:info->encoding mode:info->view_mode language:language];
         }
         else {
             [m_View setFile:m_ViewerFileWindow];
@@ -231,7 +232,8 @@ struct BackgroundFileOpener {
             m_View.verticalPositionInBytes = info->position;
         if( options.selection )
             m_View.selectionInFile = info->selection;
-        // TODO: set highlighting language
+        if( language )
+            m_View.language = language.value();
     }
     else {
         [m_View setFile:m_ViewerFileWindow];
@@ -260,6 +262,7 @@ struct BackgroundFileOpener {
     info.view_mode = m_View.mode;
     info.encoding = m_View.encoding;
     info.selection = m_View.selectionInFile;
+    info.language = m_View.language;
     m_History->AddEntry(std::move(info));
 }
 

@@ -187,12 +187,13 @@ using namespace nc::viewer;
 
     ViewMode mode = stat.is_binary ? ViewMode::Hex : ViewMode::Text;
 
-    [self setKnownFile:_file encoding:encoding mode:mode];
+    [self setKnownFile:_file encoding:encoding mode:mode language:std::nullopt];
 }
 
 - (void)setKnownFile:(std::shared_ptr<nc::vfs::FileWindow>)_file
             encoding:(utility::Encoding)_encoding
                 mode:(ViewMode)_mode
+            language:(const std::optional<std::string> &)_language
 {
     assert(_encoding != utility::Encoding::ENCODING_INVALID);
 
@@ -202,7 +203,8 @@ using namespace nc::viewer;
     self.mode = _mode;
     self.verticalPositionInBytes = 0;
     self.selectionInFile = CFRangeMake(-1, 0);
-    self.language = m_HighlightingSettings->Language(m_Data->FileName().native()).value_or("");
+    self.language =
+        _language ? _language.value() : m_HighlightingSettings->Language(m_Data->FileName().native()).value_or("");
 
     [self willChangeValueForKey:@"encoding"];
     [self didChangeValueForKey:@"encoding"];

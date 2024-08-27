@@ -8,6 +8,7 @@
 #include <Base/spinlock.h>
 #include <deque>
 #include <vector>
+#include <mutex>
 #include <CoreFoundation/CoreFoundation.h>
 
 namespace nc::viewer {
@@ -16,11 +17,12 @@ class History
 {
 public:
     struct SaveOptions {
-        bool encoding = false;
-        bool mode = false;
-        bool position = false;
-        bool wrapping = false;
-        bool selection = false;
+        bool encoding : 1 = false;
+        bool mode : 1 = false;
+        bool position : 1 = false;
+        bool wrapping : 1 = false;
+        bool selection : 1 = false;
+        bool language : 1 = false;
     };
 
     struct Entry {
@@ -30,6 +32,7 @@ public:
         ViewMode view_mode = ViewMode::Text;
         utility::Encoding encoding = utility::Encoding::ENCODING_INVALID;
         CFRange selection = {-1, 0};
+        std::optional<std::string> language;
     };
 
     History(nc::config::Config &_global_config, nc::config::Config &_state_config, const char *_config_path);
@@ -67,7 +70,7 @@ private:
     void LoadFromStateConfig();
 
     std::deque<Entry> m_History;
-    mutable spinlock m_HistoryLock;
+    mutable std::mutex m_HistoryLock;
 
     std::vector<nc::config::Token> m_ConfigObservations;
     SaveOptions m_Options;

@@ -1,5 +1,6 @@
 // Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerView.h"
+#include "Highlighting/SettingsStorage.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/DataBlockAnalysis.h>
@@ -47,6 +48,7 @@ using namespace nc::viewer;
     CFRange m_SelectionInWindowUnichars; // in UniChars, whithin current window position,
                                          // updated when windows moves, regarding current selection
                                          // in bytes
+    std::string m_HighlightingLanguage;
     nc::utility::TemporaryFileStorage *m_TempFileStorage;
     nc::config::Config *m_Config;
     nc::viewer::hl::SettingsStorage *m_HighlightingSettings;
@@ -101,7 +103,8 @@ using namespace nc::viewer;
         m_Config->Observe(g_ConfigEnableSyntaxHighlighting,
                           nc::objc_callback_to_main_queue(self, @selector(configEnableSyntaxHighlightingChanged)));
 
-    m_Footer = [[NCViewerFooter alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    m_Footer = [[NCViewerFooter alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)
+                        andHighlightingSyntaxStorage:*m_HighlightingSettings];
     m_Footer.translatesAutoresizingMaskIntoConstraints = false;
     [self addSubview:m_Footer];
 
@@ -199,6 +202,7 @@ using namespace nc::viewer;
     self.mode = _mode;
     self.verticalPositionInBytes = 0;
     self.selectionInFile = CFRangeMake(-1, 0);
+    self.language = m_HighlightingSettings->Language(m_Data->FileName().native()).value_or("");
 
     [self willChangeValueForKey:@"encoding"];
     [self didChangeValueForKey:@"encoding"];
@@ -345,6 +349,9 @@ using namespace nc::viewer;
 
     if( [m_View respondsToSelector:@selector(scrollToGlobalBytesOffset:)] )
         [m_View scrollToGlobalBytesOffset:static_cast<int64_t>(m_VerticalPositionInBytes)];
+
+    if( [m_View respondsToSelector:@selector(setHighlightingLanguage:)] )
+        [m_View setHighlightingLanguage:m_HighlightingLanguage];
 
     [self didChangeValueForKey:@"mode"];
 
@@ -654,16 +661,6 @@ using namespace nc::viewer;
     return [super performKeyEquivalent:_event];
 }
 
-- (void)observeValueForKeyPath:(NSString *)_key_path
-                      ofObject:(id)_object
-                        change:(NSDictionary *) [[maybe_unused]] _change
-                       context:(void *) [[maybe_unused]] _context
-{
-    if( _object == m_Footer && [_key_path isEqualToString:@"mode"] ) {
-        self.mode = m_Footer.mode;
-    }
-}
-
 - (NCViewerFooter *)footer
 {
     return m_Footer;
@@ -672,6 +669,24 @@ using namespace nc::viewer;
 - (NCViewerSearchView *)searchView
 {
     return m_SearchView;
+}
+
+- (std::string)language
+{
+    return m_HighlightingLanguage;
+}
+
+- (void)setLanguage:(std::string)_language
+{
+    if( m_HighlightingLanguage == _language ) {
+        return;
+    }
+    m_HighlightingLanguage = _language;
+
+    if( m_View && [m_View respondsToSelector:@selector(setHighlightingLanguage:)] ) {
+        [m_View setHighlightingLanguage:m_HighlightingLanguage];
+    }
+    m_Footer.highlightingLanguage = m_HighlightingLanguage;
 }
 
 @end

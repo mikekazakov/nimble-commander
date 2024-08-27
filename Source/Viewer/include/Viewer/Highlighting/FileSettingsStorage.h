@@ -18,6 +18,8 @@ public:
 
     std::optional<std::string> Language(std::string_view _filename) noexcept override;
 
+    std::vector<std::string> List() override;
+
     std::shared_ptr<const std::string> Settings(std::string_view _lang) override;
 
 private:

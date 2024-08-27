@@ -141,6 +141,7 @@ struct BackgroundFileOpener {
     [m_View.footer removeObserver:self forKeyPath:@"mode"];
     [m_View.footer removeObserver:self forKeyPath:@"encoding"];
     [m_View.footer removeObserver:self forKeyPath:@"wrapLines"];
+    [m_View.footer removeObserver:self forKeyPath:@"highlightingLanguage"];
     [self clear];
 }
 
@@ -223,13 +224,14 @@ struct BackgroundFileOpener {
             if( options.mode )
                 m_View.mode = info->view_mode;
         }
-        // a bit suboptimal no - may re-layout after first one
+        // a bit suboptimal now - may re-layout after first one
         if( options.wrapping )
             m_View.wordWrap = info->wrapping;
         if( options.position )
             m_View.verticalPositionInBytes = info->position;
         if( options.selection )
             m_View.selectionInFile = info->selection;
+        // TODO: set highlighting language
     }
     else {
         [m_View setFile:m_ViewerFileWindow];
@@ -280,6 +282,7 @@ struct BackgroundFileOpener {
     [m_View.footer addObserver:self forKeyPath:@"mode" options:0 context:nullptr];
     [m_View.footer addObserver:self forKeyPath:@"encoding" options:0 context:nullptr];
     [m_View.footer addObserver:self forKeyPath:@"wrapLines" options:0 context:nullptr];
+    [m_View.footer addObserver:self forKeyPath:@"highlightingLanguage" options:0 context:nullptr];
     m_View.footer.filePositionClickTarget = self;
     m_View.footer.filePositionClickAction = @selector(onPositionButtonClicked:);
 
@@ -635,6 +638,9 @@ struct BackgroundFileOpener {
         }
         if( [_key_path isEqualToString:@"wrapLines"] ) {
             m_View.wordWrap = m_View.footer.wrapLines;
+        }
+        if( [_key_path isEqualToString:@"highlightingLanguage"] ) {
+            m_View.language = m_View.footer.highlightingLanguage;
         }
     }
     else if( _object == m_View ) {

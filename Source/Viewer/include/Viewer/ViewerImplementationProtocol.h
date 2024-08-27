@@ -70,4 +70,9 @@ class DataBackend;
  */
 - (void)syntaxHighlightingEnabled:(bool)_enabled;
 
+/**
+ * Updates the current language syntax used for highlighting.
+ */
+- (void)setHighlightingLanguage:(const std::string &)_language;
+
 @end

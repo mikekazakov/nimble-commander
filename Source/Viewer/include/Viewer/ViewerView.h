@@ -7,6 +7,8 @@
 #include "TextModeViewDelegate.h"
 #include "HexModeViewDelegate.h"
 #include <memory>
+#include <optional>
+#include <string>
 
 @class NCViewerFooter;
 @class NCViewerSearchView;
@@ -38,7 +40,8 @@ class SettingsStorage;
 - (void)setFile:(std::shared_ptr<nc::vfs::FileWindow>)_file;
 - (void)setKnownFile:(std::shared_ptr<nc::vfs::FileWindow>)_file
             encoding:(nc::utility::Encoding)_encoding
-                mode:(nc::viewer::ViewMode)_mode;
+                mode:(nc::viewer::ViewMode)_mode
+            language:(const std::optional<std::string> &)_language;
 
 // informs NCViewerView that a file window was changed completely, presumably reloaded afresh.
 // the view should try to preserve its current visual state while rebuilding its backend structures.

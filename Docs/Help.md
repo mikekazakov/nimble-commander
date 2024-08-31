@@ -104,7 +104,7 @@ There are some locations that can be navigated to using hotkeys:
 - `Shift + Cmd + A`: Applications folder
 - `Shift + Cmd + U`: Utilities folder
 
-To navigate to a commonly used location, you can use the Go To popup, which can be opened by pressing the `F1`/`F2` hotkey or via the menu: `Go > Left Panel...` / `Go > Right Panel...`. This popup provides quick access to favorite locations, volumes, connections, and locations of other panels. Elements of this popup have hotkeys associated with them in the order of appearance: `0`, `1`, ..., `9`, `0`, `-`, `=`. Any text typed while the Go To popup is open will act as a filter, hiding locations that do not contain the typed text in their names.  Once you click on the selected location, the panel will navigate there and become focused if it wasn’t already. Here is what the popup looks like:
+To navigate to a commonly used location, you can use the Go To popup, which can be opened by pressing the `F1` / `F2` hotkey or via the menu: `Go > Left Panel...` / `Go > Right Panel...`. This popup provides quick access to favorite locations, volumes, connections, and locations of other panels. Elements of this popup have hotkeys associated with them in the order of appearance: `0`, `1`, ..., `9`, `0`, `-`, `=`. Any text typed while the Go To popup is open will act as a filter, hiding locations that do not contain the typed text in their names.  Once you click on the selected location, the panel will navigate there and become focused if it wasn’t already. Here is what the popup looks like:
 
 ![GoTo popup](Help-goto-popup.png)
 
@@ -114,8 +114,23 @@ To navigate to an arbitrary location on the filesystem, you can use the GoTo dia
 
 If the cursor is currently pointing to a file that is a symbolic link, the `Cmd + Right` hotkey can be used to navigate to the location the symlink points to.
 
-### Selection
+### Panel Management
 _to be written_
+
+### Selection
+Nimble Commander follows the UX of orthodox file managers and diverges from the typical MacOS UX when it comes to item selection. It treats item selection and cursor position separately, which means moving the cursor does not change the selection of items in the panel. Below is an example of a panel with some selected items and the cursor focused on an item that is not selected:
+
+![Items selection](Help-panel-selection.png)
+
+There are numerous ways to manipulate the item selection using the keyboard or mouse in Nimble Commander:
+
+- `Cmd + A`: selects all items.
+- `Opt + Cmd + A`: deselects all items.
+- `Ctrl + Cmd + A`: inverts the selection.
+- `Shift + Up` / `Shift + Down`: inverts the selection of the currently focused item before moving the cursor. The behaviour (selection or deselection) is determined when the `Shift` key is pressed and persists while it is held down.
+- `Shift + Cursor Movement`: changes the selection within the range starting at the current cursor position and ending at the new cursor position. The selection is inverted depending on the state of the initially focused item: if it was not selected, the entire range will be selected; if it was already selected, the whole range will be deselected.
+- `Enter`: inverts the selection of the currently focused item and moves the cursor to the next item 
+- `Cmd + Click`: inverts the selection of the clicked item.
 
 ### Sorting Modes
 _to be written_

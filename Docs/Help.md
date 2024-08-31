@@ -20,7 +20,9 @@ It runs natively on both Intel and Arm architectures.
 
 ### Installation
 
-_to be written_
+Nimble Commander is portable; it doesn't require the installation of additional components and can run from any folder. When downloaded from the Mac App Store, Nimble Commander is automatically placed in the `/Applications` folder. If it was downloaded from the website, it can be copied into the `/Applications` folder by dragging the icon there. You can also run Nimble Commander directly from a `.dmg` disk image; in this case, Nimble Commander will offer to move itself to the `/Applications` folder.
+
+![Copying NC from a dmg](Help-install-dmg.png)
 
 ### Running the Application
 

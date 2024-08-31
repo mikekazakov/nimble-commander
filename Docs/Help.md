@@ -20,7 +20,9 @@ It runs natively on both Intel and Arm architectures.
 
 ### Installation
 
-_to be written_
+Nimble Commander is portable; it doesn't require the installation of additional components and can run from any folder. When downloaded from the Mac App Store, Nimble Commander is automatically placed in the `/Applications` folder. If it was downloaded from the website, it can be copied into the `/Applications` folder by dragging the icon there. You can also run Nimble Commander directly from a `.dmg` disk image; in this case, Nimble Commander will offer to move itself to the `/Applications` folder.
+
+![Copying NC from a dmg](Help-install-dmg.png)
 
 ### Running the Application
 
@@ -88,7 +90,7 @@ Nimble Commander supports both mouse-based and keyboard-based navigation inside 
 - `Page Down`: moves the cursor to the next page
 - `Opt + Page Down`: scrolls the contents to the next page
 
-To navigate to a different folder inside the file panel, either double-click on it or press `Return` when the folder is focused. To go to a parent folder, do the same with the `..` [pseudo-folder](https://en.wikipedia.org/wiki/Path_(computing)#Representations_of_paths_by_operating_system_and_shell) located at the beginning of the items. Displaying the `..` folder is optional and can be turned off in the Settings dialog. Pressing `Backward Delete` (Backspace) navigates to the parent folder, regardless of the current cursor position.
+To navigate to a different folder inside the file panel, either double-click on it or press `Return` when the folder is focused. To go to a parent folder, do the same with the `..` [pseudo-folder](https://en.wikipedia.org/wiki/Path_(computing)#Representations_of_paths_by_operating_system_and_shell) located at the beginning of the items. Displaying the `..` folder is optional and can be turned off in the Settings dialog. Pressing `Backward Delete` (Backspace) or `Cmd + Up` navigates to the parent folder, regardless of the current cursor position.
 
 Nimble Commander stores location history for each file panel. To navigate the history back and forth, use the `Cmd + [` and `Cmd + ]` hotkeys.
 
@@ -102,11 +104,15 @@ There are some locations that can be navigated to using hotkeys:
 - `Shift + Cmd + A`: Applications folder
 - `Shift + Cmd + U`: Utilities folder
 
+To navigate to a commonly used location, you can use the Go To popup, which can be opened by pressing the `F1`/`F2` hotkey or via the menu: `Go > Left Panel...` / `Go > Right Panel...`. This popup provides quick access to favorite locations, volumes, connections, and locations of other panels. Elements of this popup have hotkeys associated with them in the order of appearance: `0`, `1`, ..., `9`, `0`, `-`, `=`. Any text typed while the Go To popup is open will act as a filter, hiding locations that do not contain the typed text in their names.  Once you click on the selected location, the panel will navigate there and become focused if it wasn’t already. Here is what the popup looks like:
+
+![GoTo popup](Help-goto-popup.png)
+
 To navigate to an arbitrary location on the filesystem, you can use the GoTo dialog opened by the `Shift + Cmd + G` hotkey or through the menu: `Go > Go To Folder...`. In this dialog, you can type any path, and after clicking the Go button Nimble Commander will navigate to the specified folder. Below is the view of this dialog box:
 
 ![GoTo dialog](Help-goto-dialog.png)
 
-_to be continued..._
+If the cursor is currently pointing to a file that is a symbolic link, the `Cmd + Right` hotkey can be used to navigate to the location the symlink points to.
 
 ### Selection
 _to be written_
@@ -124,6 +130,9 @@ _to be written_
 _to be written_
 
 ### Tabs
+_to be written_
+
+### Favorites
 _to be written_
 
 ## Operations

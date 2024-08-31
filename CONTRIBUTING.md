@@ -41,6 +41,9 @@ Got experience with Nimble Commander or insights on common questions? Your exper
 ## Localizations
 Nimble Commander is currently available in two languages—the languages that the original author is fluent in. If you're proficient in another language and interested in helping to make Nimble Commander accessible to more users worldwide, your skills could be invaluable. To participate in translating Nimble Commander into additional languages, please reach out to express your interest.
 
+## Documentation
+The [user guide](Docs/Help.md) for Nimble Commander is in its early stages, and any help expanding this documentation would greatly benefit the project. If you notice something missing from the documentation or think an explanation could be clearer, your contributions to improve these areas would be highly appreciated.
+
 ## Sharing
 A single tweet from you can go a long way. You can support this project by sharing information about it. Whether it's mentioning Nimble Commander on forums, submitting reviews, or talking about your experience, every bit of exposure helps.
 

@@ -115,7 +115,16 @@ To navigate to an arbitrary location on the filesystem, you can use the GoTo dia
 If the cursor is currently pointing to a file that is a symbolic link, the `Cmd + Right` hotkey can be used to navigate to the location the symlink points to.
 
 ### Panel Management
-_to be written_
+You can swap the contents of the left and right panels using the `Cmd + U` hotkey or the menu item `View > Swap Panels`. This operation also transfers the focus to the opposite panel.  
+To sync the contents of the opposite panel with the contents of the current panel, you can use the `Opt + Cmd + U` hotkey or the menu item `View > Sync Panels`.  
+In most cases, Nimble Commander will automatically refresh the contents of the file panel whenever the underlying part of the filesystem changes. Sometimes, however, it's not possible to automatically detect these changes. In such cases, the panel can be manually refreshed using the `Cmd + R` hotkey or the menu item `View > Refresh`.
+
+The two panels in a Nimble Commander's window normally have the same width. If needed this proportion can be changed by either dragging the splitter located between them or by using the `Ctrl + Opt + Left` / `Ctrl + Opt + Right` hotkeys. Here is an example of panels with different widths:
+
+![Panels proportion](Help-panel-proportion.png){ width=50% }
+
+_to be continued_
+
 
 ### Selection
 Nimble Commander follows the UX of orthodox file managers and diverges from the typical MacOS UX when it comes to item selection. It treats item selection and cursor position separately, which means moving the cursor does not change the selection of items in the panel. Below is an example of a panel with some selected items and the cursor focused on an item that is not selected:

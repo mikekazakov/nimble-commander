@@ -139,8 +139,12 @@ There are numerous ways to manipulate the item selection using the keyboard or m
 - `Ctrl + Cmd + A`: inverts the selection.
 - `Shift + Up` / `Shift + Down`: inverts the selection of the currently focused item before moving the cursor. The behaviour (selection or deselection) is determined when the `Shift` key is pressed and persists while it is held down.
 - `Shift + Cursor Movement`: changes the selection within the range starting at the current cursor position and ending at the new cursor position. The selection is inverted depending on the state of the initially focused item: if it was not selected, the entire range will be selected; if it was already selected, the whole range will be deselected.
-- `Enter`: inverts the selection of the currently focused item and moves the cursor to the next item 
+- `Enter`: inverts the selection of the currently focused item and moves the cursor to the next item.
 - `Cmd + Click`: inverts the selection of the clicked item.
+- `Cmd + =`: selects all items with a filename matching the specified file mask or regular expression.
+- `Cmd + -`: deselects all items with a filename matching the specified file mask or regular expression.
+- `Alt + Cmd + =`: selects all items with the same extension as the currently focused item.
+- `Alt + Cmd + -`: deselects all items with the same extension as the currently focused item.
 
 ### Sorting Modes
 _to be written_

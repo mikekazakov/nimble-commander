@@ -121,10 +121,11 @@ In most cases, Nimble Commander will automatically refresh the contents of the f
 
 The two panels in a Nimble Commander's window normally have the same width. If needed this proportion can be changed by either dragging the splitter located between them or by using the `Ctrl + Opt + Left` / `Ctrl + Opt + Right` hotkeys. Here is an example of panels with different widths:
 
-![Panels proportion](Help-panel-proportion.png){ width=50% }
+![Panels proportion](Help-panel-proportion.png)
 
-_to be continued_
+A panel can be collapsed entirely, turning the UI into single-pane mode. This can also be done via the  `Shift + Cmd + P` hotkey or the `View > Toggle Single-Pane Mode` menu item. To return to dual-pane mode, expand the collapsed panel the same way it was previously collapsed, or use the `Shift + Cmd + P` hotkey or the `View > Toggle Dual-Pane Mode` menu item. The following screenshot provides an example of how single-pane mode looks:
 
+![Single-pane mode](Help-panel-collapsed.png)
 
 ### Selection
 Nimble Commander follows the UX of orthodox file managers and diverges from the typical MacOS UX when it comes to item selection. It treats item selection and cursor position separately, which means moving the cursor does not change the selection of items in the panel. Below is an example of a panel with some selected items and the cursor focused on an item that is not selected:

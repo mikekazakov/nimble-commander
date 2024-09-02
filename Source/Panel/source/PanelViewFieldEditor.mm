@@ -83,10 +83,10 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
 - (BOOL)textShouldEndEditing:(NSText *) [[maybe_unused]] textObject
 {
     if( m_Stashed ) {
-        Log::Trace(SPDLOC, "textShouldEndEditing called, stashed, ignoring");
+        Log::Trace("textShouldEndEditing called, stashed, ignoring");
     }
     else {
-        Log::Trace(SPDLOC, "textShouldEndEditing called, accepting");
+        Log::Trace("textShouldEndEditing called, accepting");
         [self finishEditing];
     }
     return true;
@@ -95,10 +95,10 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
 - (void)textDidEndEditing:(NSNotification *) [[maybe_unused]] notification
 {
     if( m_Stashed ) {
-        Log::Trace(SPDLOC, "textShouldEndEditing called, stashed, ignoring");
+        Log::Trace("textShouldEndEditing called, stashed, ignoring");
     }
     else {
-        Log::Trace(SPDLOC, "textShouldEndEditing called, accepting");
+        Log::Trace("textShouldEndEditing called, accepting");
         [self cancelEditing];
     }
 }
@@ -161,7 +161,7 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
 
 - (void)cancelEditing
 {
-    Log::Trace(SPDLOC, "cancelEditing called");
+    Log::Trace("cancelEditing called");
     self.onTextEntered = nil;
     auto finish_handler = self.onEditingFinished;
     self.onEditingFinished = nil;
@@ -177,7 +177,7 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
 
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd
 {
-    Log::Trace(SPDLOC, "viewWillMoveToWindow: {}", (__bridge void *)_wnd);
+    Log::Trace("viewWillMoveToWindow: {}", (__bridge void *)_wnd);
     const auto notify_center = NSNotificationCenter.defaultCenter;
     if( self.window ) {
         [notify_center removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
@@ -197,7 +197,7 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
 
 - (void)windowStatusDidChange
 {
-    Log::Trace(SPDLOC, "windowStatusDidChange called");
+    Log::Trace("windowStatusDidChange called");
     [self finishEditing];
 }
 
@@ -234,13 +234,13 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
 
 - (void)stash
 {
-    Log::Trace(SPDLOC, "stash called");
+    Log::Trace("stash called");
     m_Stashed = true;
 }
 
 - (void)unstash
 {
-    Log::Trace(SPDLOC, "unstash called");
+    Log::Trace("unstash called");
     m_Stashed = false;
 }
 

@@ -142,7 +142,7 @@ void TextModeWorkingSetHighlighting::Highlight(
 
     m_Callback = std::move(_on_highlighted);
 
-    Log::Trace(SPDLOC, "TextModeWorkingSetHighlighting: sending async highlighting request");
+    Log::Trace("TextModeWorkingSetHighlighting: sending async highlighting request");
     const auto timepoint_start = std::chrono::steady_clock::now();
 
     hl::Client client;
@@ -153,7 +153,7 @@ void TextModeWorkingSetHighlighting::Highlight(
         m_AsyncQueue);
 
     if( _sync_timeout > std::chrono::milliseconds{0} ) {
-        Log::Trace(SPDLOC, "TextModeWorkingSetHighlighting: waiting synchronously for a response");
+        Log::Trace("TextModeWorkingSetHighlighting: waiting synchronously for a response");
 
         std::unique_lock lock{m_StatusMut};
         m_StatusCV.wait_for(lock, _sync_timeout, [&] { return m_Status == Status::Done; });
@@ -162,14 +162,14 @@ void TextModeWorkingSetHighlighting::Highlight(
 
         if( m_Status == Status::Done ) {
             Log::Info(
-                SPDLOC,
+
                 "TextModeWorkingSetHighlighting: got asynchronous response in {}, providing highlighting immediately",
                 time_spent);
             m_Callback = nullptr;
         }
         else {
             Log::Info(
-                SPDLOC,
+
                 "TextModeWorkingSetHighlighting: didn't get an asynchronous response in {}, deferring the highlighting",
                 time_spent);
         }

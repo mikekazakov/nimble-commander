@@ -1007,7 +1007,7 @@ struct StateStorage {
 
 - (void)panelItem:(int)_sorted_index mouseDown:(NSEvent *)_event
 {
-    nc::panel::Log::Trace(SPDLOC, "[PanelController panelItem:mouseDown:] called for sorted index '{}'", _sorted_index);
+    nc::panel::Log::Trace("[PanelController panelItem:mouseDown:] called for sorted index '{}'", _sorted_index);
 
     if( !self.window.isKeyWindow ) {
         // any cursor movements or selection changes should be performed only in active window
@@ -1046,7 +1046,7 @@ struct StateStorage {
 
 - (void)panelItem:(int)_sorted_index dblClick:(NSEvent *) [[maybe_unused]] _event
 {
-    nc::panel::Log::Trace(SPDLOC, "[PanelController panelItem:dblClick:] called for sorted index '{}'", _sorted_index);
+    nc::panel::Log::Trace("[PanelController panelItem:dblClick:] called for sorted index '{}'", _sorted_index);
     if( _sorted_index >= 0 && _sorted_index == m_CursorPos ) {
         if( auto action_dispatcher = self.actionsDispatcher )
             [action_dispatcher OnOpen:self];

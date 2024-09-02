@@ -78,7 +78,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
         });
 
         ParserImpl::Params parser_params;
-        parser_params.error_log = [](std::string_view _error) { Log::Error(SPDLOC, "parsing error: {}", _error); };
+        parser_params.error_log = [](std::string_view _error) { Log::Error("parsing error: {}", _error); };
         m_Parser = std::make_unique<ParserImpl>(parser_params);
 
         m_Interpreter = std::make_unique<InterpreterImpl>(m_TermScrollView.screen);
@@ -398,7 +398,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
     dispatch_assert_background_queue();
     if( Log::Level() <= spdlog::level::trace ) {
         auto input = term::input::FormatRawInput(_bytes);
-        dispatch_to_main_queue([input = std::move(input)] { Log::Trace(SPDLOC, "raw input: {}", input); });
+        dispatch_to_main_queue([input = std::move(input)] { Log::Trace("raw input: {}", input); });
     }
     //    std::cerr <<  term::input::FormatRawInput(_bytes) << std::endl;
 }

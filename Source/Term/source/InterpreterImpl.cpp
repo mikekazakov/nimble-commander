@@ -130,7 +130,7 @@ void InterpreterImpl::InterpretSingleCommand(const input::Command &_command)
             ProcessCursorStyle(*std::get_if<input::CursorStyle>(&_command.payload));
             break;
         default:
-            Log::Warn(SPDLOC, "Interpreter::InterpretSingleCommand: missed {}", magic_enum::enum_name(type));
+            Log::Warn("Interpreter::InterpretSingleCommand: missed {}", magic_enum::enum_name(type));
             break;
     }
 }

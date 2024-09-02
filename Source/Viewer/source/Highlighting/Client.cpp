@@ -12,11 +12,11 @@ static constexpr auto g_ServiceName = "com.magnumbytes.NimbleCommander.Highlight
 
 std::expected<std::vector<Style>, std::string> Client::Highlight(std::string_view _text, std::string_view _settings)
 {
-    Log::Trace(SPDLOC, "Client::Highlight called");
+    Log::Trace("Client::Highlight called");
 
     xpc_connection_t connection = xpc_connection_create(g_ServiceName, nullptr);
     if( connection == nullptr ) {
-        Log::Error(SPDLOC, "Failed to create an XPC connection");
+        Log::Error("Failed to create an XPC connection");
         return std::unexpected<std::string>("Failed to create an XPC connection");
     }
     auto release_connection = at_scope_end([&] { xpc_release(connection); });
@@ -25,13 +25,13 @@ std::expected<std::vector<Style>, std::string> Client::Highlight(std::string_vie
       const xpc_type_t type = xpc_get_type(_event);
       if( type == XPC_TYPE_ERROR ) {
           if( _event == XPC_ERROR_CONNECTION_INTERRUPTED ) {
-              Log::Error(SPDLOC, "XPC connection interrupted");
+              Log::Error("XPC connection interrupted");
           }
           else if( _event == XPC_ERROR_CONNECTION_INVALID ) {
-              Log::Error(SPDLOC, "XPC connection invalid");
+              Log::Error("XPC connection invalid");
           }
           else {
-              Log::Error(SPDLOC, "XPC unknown error");
+              Log::Error("XPC unknown error");
           }
       }
     });
@@ -45,41 +45,41 @@ std::expected<std::vector<Style>, std::string> Client::Highlight(std::string_vie
 
     xpc_object_t reply = xpc_connection_send_message_with_reply_sync(connection, message);
     auto release_reply = at_scope_end([&] { xpc_release(reply); });
-    Log::Trace(SPDLOC, "Got a response from the XPC service");
+    Log::Trace("Got a response from the XPC service");
 
     const xpc_type_t reply_type = xpc_get_type(reply);
     if( reply_type == XPC_TYPE_ERROR ) {
         if( reply == XPC_ERROR_CONNECTION_INTERRUPTED ) {
-            Log::Error(SPDLOC, "XPC connection interrupted");
+            Log::Error("XPC connection interrupted");
             return std::unexpected<std::string>("XPC connection interrupted");
         }
         else if( reply == XPC_ERROR_CONNECTION_INVALID ) {
-            Log::Error(SPDLOC, "XPC connection invalid");
+            Log::Error("XPC connection invalid");
             return std::unexpected<std::string>("XPC connection invalid");
         }
         else {
-            Log::Error(SPDLOC, "XPC unknown error");
+            Log::Error("XPC unknown error");
             return std::unexpected<std::string>("XPC unknown error");
         }
     }
 
     if( reply_type != XPC_TYPE_DICTIONARY ) {
-        Log::Error(SPDLOC, "XPC reply is not a dictionary");
+        Log::Error("XPC reply is not a dictionary");
         return std::unexpected<std::string>("XPC reply is not a dictionary");
     }
 
     if( const char *error_str = xpc_dictionary_get_string(reply, "error") ) {
-        Log::Error(SPDLOC, "Error while highlighting: {}", error_str);
+        Log::Error("Error while highlighting: {}", error_str);
         return std::unexpected<std::string>(error_str);
     }
 
     size_t styles_size = 0;
     const void *styles = xpc_dictionary_get_data(reply, "response", &styles_size);
     if( !styles ) {
-        Log::Error(SPDLOC, "The reply doesn't contain a 'response' field");
+        Log::Error("The reply doesn't contain a 'response' field");
         return std::unexpected<std::string>("The reply doesn't contain a 'response' field");
     }
-    Log::Info(SPDLOC, "Got styles from the XPC service, {}b long", styles_size);
+    Log::Info("Got styles from the XPC service, {}b long", styles_size);
 
     std::vector<Style> out(static_cast<const Style *>(styles), static_cast<const Style *>(styles) + styles_size);
 
@@ -92,7 +92,7 @@ void Client::HighlightAsync(std::string_view _text,
                             dispatch_queue_t _queue)
 {
     assert(_done);
-    Log::Trace(SPDLOC, "Client::HighlightAsync called");
+    Log::Trace("Client::HighlightAsync called");
 
     if( _queue == nullptr ) {
         _queue = dispatch_get_main_queue();
@@ -100,33 +100,33 @@ void Client::HighlightAsync(std::string_view _text,
 
     xpc_connection_t connection = xpc_connection_create(g_ServiceName, _queue);
     if( connection == nullptr ) {
-        Log::Error(SPDLOC, "Failed to create an XPC connection");
+        Log::Error("Failed to create an XPC connection");
         _done(std::unexpected<std::string>("Failed to create an XPC connection"));
     }
 
     auto handler = ^(xpc_object_t _reply) {
-      Log::Trace(SPDLOC, "Got a response from the XPC service");
+      Log::Trace("Got a response from the XPC service");
       const xpc_type_t type = xpc_get_type(_reply);
       if( type == XPC_TYPE_ERROR ) {
           if( _reply == XPC_ERROR_CONNECTION_INTERRUPTED ) {
-              Log::Error(SPDLOC, "XPC connection interrupted");
+              Log::Error("XPC connection interrupted");
               _done(std::unexpected<std::string>("XPC connection interrupted"));
               return;
           }
           else if( _reply == XPC_ERROR_CONNECTION_INVALID ) {
-              Log::Error(SPDLOC, "XPC connection invalid");
+              Log::Error("XPC connection invalid");
               _done(std::unexpected<std::string>("XPC connection invalid"));
               return;
           }
           else {
-              Log::Error(SPDLOC, "XPC unknown error");
+              Log::Error("XPC unknown error");
               _done(std::unexpected<std::string>("XPC unknown error"));
               return;
           }
       }
       else if( type == XPC_TYPE_DICTIONARY ) {
           if( const char *error_str = xpc_dictionary_get_string(_reply, "error") ) {
-              Log::Error(SPDLOC, "Error while highlighting: {}", error_str);
+              Log::Error("Error while highlighting: {}", error_str);
               _done(std::unexpected<std::string>(error_str));
               return;
           }
@@ -134,18 +134,18 @@ void Client::HighlightAsync(std::string_view _text,
           size_t styles_size = 0;
           const void *styles = xpc_dictionary_get_data(_reply, "response", &styles_size);
           if( !styles ) {
-              Log::Error(SPDLOC, "The reply doesn't contain a 'response' field");
+              Log::Error("The reply doesn't contain a 'response' field");
               _done(std::unexpected<std::string>("The reply doesn't contain a 'response' field"));
               return;
           }
-          Log::Info(SPDLOC, "Got styles from the XPC service, {}b long", styles_size);
+          Log::Info("Got styles from the XPC service, {}b long", styles_size);
 
           std::vector<Style> out(static_cast<const Style *>(styles), static_cast<const Style *>(styles) + styles_size);
 
           _done(std::move(out));
       }
       else {
-          Log::Error(SPDLOC, "XPC reply is not a dictionary");
+          Log::Error("XPC reply is not a dictionary");
           _done(std::unexpected<std::string>("XPC reply is not a dictionary"));
           return;
       }

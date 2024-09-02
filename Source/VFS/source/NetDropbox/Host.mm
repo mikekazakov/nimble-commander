@@ -529,15 +529,15 @@ std::pair<int, NSData *> DropboxHost::SendSynchronousPostRequest(NSMutableURLReq
         return {_1st_errc, _1st_data};
 
     if( _1st_errc == VFSError::FromErrno(EAUTH) && !I->m_RefreshToken.empty() ) {
-        Log::Info(SPDLOC, "Got 401 - trying to refresh an access token");
+        Log::Info("Got 401 - trying to refresh an access token");
         // Handle HTTP 401 - try to regen our short-lived access token if possible
         const auto [refresh_errc, access_token] = RetreiveAccessTokenFromRefreshToken(I->m_RefreshToken);
         if( refresh_errc != VFSError::Ok ) {
-            Log::Warn(SPDLOC, "Failed to refresn an access token");
+            Log::Warn("Failed to refresn an access token");
             // failed to refresh - give up
             return {_1st_errc, _1st_data};
         }
-        Log::Info(SPDLOC, "Successfully refreshed an access token");
+        Log::Info("Successfully refreshed an access token");
         SetAccessToken(access_token);
     }
     else {

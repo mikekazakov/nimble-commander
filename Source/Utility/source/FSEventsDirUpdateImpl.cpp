@@ -21,14 +21,14 @@ static std::string GetRealPath(const char *_path_in)
 {
     int tfd = open(_path_in, O_RDONLY);
     if( tfd == -1 ) {
-        Log::Warn(SPDLOC, "GetRealPath() failed to open '{}'", _path_in);
+        Log::Warn("GetRealPath() failed to open '{}'", _path_in);
         return {};
     }
     char path_buf[MAXPATHLEN];
     int ret = fcntl(tfd, F_GETPATH, path_buf);
     close(tfd);
     if( ret == -1 ) {
-        Log::Warn(SPDLOC, "GetRealPath() failed to F_GETPATH of '{}', errno: {}", _path_in, errno);
+        Log::Warn("GetRealPath() failed to F_GETPATH of '{}', errno: {}", _path_in, errno);
         return {};
     }
 
@@ -84,8 +84,7 @@ void FSEventsDirUpdateImpl::FSEventsDirUpdateCallback([[maybe_unused]] ConstFSEv
 {
     // WTF this data access is not locked????
 
-    Log::Trace(SPDLOC,
-               "FSEventsDirUpdate::Impl::FSEventsDirUpdateCallback for {} path(s): {}",
+    Log::Trace("FSEventsDirUpdate::Impl::FSEventsDirUpdateCallback for {} path(s): {}",
                _num,
                fmt::join(std::span<const char *>{reinterpret_cast<const char **>(_paths), _num}, ", "));
 
@@ -98,10 +97,10 @@ void FSEventsDirUpdateImpl::FSEventsDirUpdateCallback([[maybe_unused]] ConstFSEv
 
 FSEventStreamRef FSEventsDirUpdateImpl::CreateEventStream(const std::string &path, void *context_ptr)
 {
-    Log::Debug(SPDLOC, "CreateEventStream called for '{}'", path);
+    Log::Debug("CreateEventStream called for '{}'", path);
     auto cf_path = base::CFStringCreateWithUTF8StdString(path);
     if( !cf_path ) {
-        Log::Warn(SPDLOC, "CreateEventStream failed to create a CFStringRef for '{}'", path);
+        Log::Warn("CreateEventStream failed to create a CFStringRef for '{}'", path);
         return nullptr;
     }
 
@@ -118,7 +117,7 @@ FSEventStreamRef FSEventsDirUpdateImpl::CreateEventStream(const std::string &pat
                                      g_FSEventsLatency,
                                      flags);
         if( stream == nullptr ) {
-            Log::Warn(SPDLOC, "FSEventStreamCreate failed to create a stream for '{}'", path);
+            Log::Warn("FSEventStreamCreate failed to create a stream for '{}'", path);
         }
     };
 
@@ -141,7 +140,7 @@ static void StartStream(FSEventStreamRef _stream)
         FSEventStreamScheduleWithRunLoop(_stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
         const bool started = FSEventStreamStart(_stream);
         if( !started ) {
-            Log::Error(SPDLOC, "FSEventStreamStart failed to start");
+            Log::Error("FSEventStreamStart failed to start");
         }
     };
 
@@ -171,12 +170,12 @@ uint64_t FSEventsDirUpdateImpl::AddWatchPath(const char *_path, std::function<vo
     if( !_path || !_handler )
         return no_ticket;
 
-    Log::Debug(SPDLOC, "FSEventsDirUpdate::Impl::AddWatchPath called for '{}'", _path);
+    Log::Debug("FSEventsDirUpdate::Impl::AddWatchPath called for '{}'", _path);
 
     // convert _path into canonical path of OS
     const auto dir_path = GetRealPath(_path);
     if( dir_path.empty() ) {
-        Log::Debug(SPDLOC, "Failed to get a real path of '{}'", _path);
+        Log::Debug("Failed to get a real path of '{}'", _path);
         return no_ticket;
     }
 
@@ -187,13 +186,13 @@ uint64_t FSEventsDirUpdateImpl::AddWatchPath(const char *_path, std::function<vo
 
     // check if this path already presents in watched paths
     if( auto it = m_Watches.find(dir_path); it != m_Watches.end() ) {
-        Log::Trace(SPDLOC, "Using an already existing watcher for '{}'", _path);
+        Log::Trace("Using an already existing watcher for '{}'", _path);
         it->second.handlers.emplace_back(ticket, std::move(_handler));
         return ticket;
     }
 
     // create a new watch stream
-    Log::Trace(SPDLOC, "Creating a new watcher for '{}'", _path);
+    Log::Trace("Creating a new watcher for '{}'", _path);
     auto ep = m_Watches.emplace(dir_path, WatchData{});
     assert(ep.second == true);
     WatchData &w = ep.first->second;

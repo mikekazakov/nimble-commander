@@ -75,7 +75,7 @@ void AuthenticatorImpl::PerformRequest(const Request &_request,
     auto state = [OIDAuthState authStateByPresentingAuthorizationRequest:request callback:callback];
 #pragma clang diagnostic pop
     m_RedirectHTTPHandler.currentAuthorizationFlow = state;
-    Log::Info(SPDLOC, "Started OAuth2 authentication process.");
+    Log::Info("Started OAuth2 authentication process.");
 }
 
 void AuthenticatorImpl::Callback(OIDAuthState *_Nullable _auth_state, NSError *_Nullable _error)
@@ -95,8 +95,7 @@ void AuthenticatorImpl::Callback(OIDAuthState *_Nullable _auth_state, NSError *_
         if( auto account_id = objc_cast<NSString>(_auth_state.lastTokenResponse.additionalParameters[@"account_id"]) )
             token.account_id = account_id.UTF8String;
 
-        Log::Info(SPDLOC,
-                  "Successfully got auth token, type={}, scope={}, account_id={}, len(token)={}, "
+        Log::Info("Successfully got auth token, type={}, scope={}, account_id={}, len(token)={}, "
                   "len(refresh_token)={}.",
                   token.token_type,
                   token.scope,
@@ -107,7 +106,7 @@ void AuthenticatorImpl::Callback(OIDAuthState *_Nullable _auth_state, NSError *_
         return;
     }
     if( _error != nil ) {
-        Log::Warn(SPDLOC, "Failed to got auth token, error: {}", _error.localizedDescription.UTF8String);
+        Log::Warn("Failed to got auth token, error: {}", _error.localizedDescription.UTF8String);
 
         int error = VFSError::Ok;
         if( [_error.domain isEqualToString:OIDOAuthTokenErrorDomain] ||

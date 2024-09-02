@@ -45,7 +45,7 @@ FSEventsFileUpdateImpl::FSEventsFileUpdateImpl()
     m_WeakAsyncContext = m_AsyncContext;
     m_KickstartQueue = dispatch_queue_create("FSEventsFileUpdateImpl", DISPATCH_QUEUE_SERIAL);
 
-    Log::Trace(SPDLOC, "FSEventsFileUpdateImpl created");
+    Log::Trace("FSEventsFileUpdateImpl created");
 }
 
 FSEventsFileUpdateImpl::~FSEventsFileUpdateImpl()
@@ -55,7 +55,7 @@ FSEventsFileUpdateImpl::~FSEventsFileUpdateImpl()
     for( auto &watch : m_Watches ) {
         DeleteEventStream(watch.second.stream);
     }
-    Log::Trace(SPDLOC, "FSEventsFileUpdateImpl destroyed");
+    Log::Trace("FSEventsFileUpdateImpl destroyed");
     dispatch_release(m_KickstartQueue);
 }
 
@@ -65,7 +65,7 @@ uint64_t FSEventsFileUpdateImpl::AddWatchPath(const std::filesystem::path &_path
     auto lock = std::lock_guard{m_Lock};
 
     const auto token = m_NextTicket++;
-    Log::Debug(SPDLOC, "Adding for path: {}, token: {}", _path, token);
+    Log::Debug("Adding for path: {}, token: {}", _path, token);
     const auto was_empty = m_Watches.empty();
 
     if( auto existing = m_Watches.find(_path); existing != m_Watches.end() ) {
@@ -97,7 +97,7 @@ void FSEventsFileUpdateImpl::RemoveWatchPathWithToken(uint64_t _token)
     for( auto watch_it = m_Watches.begin(), watch_end = m_Watches.end(); watch_it != watch_end; ++watch_it ) {
         auto &watch = watch_it->second;
         if( watch.handlers.contains(_token) ) {
-            Log::Debug(SPDLOC, "Removing a watch for token {} - {}", _token, watch_it->first);
+            Log::Debug("Removing a watch for token {} - {}", _token, watch_it->first);
             watch.handlers.erase(_token);
             if( watch.handlers.empty() ) {
                 DeleteEventStream(watch.stream);
@@ -106,7 +106,7 @@ void FSEventsFileUpdateImpl::RemoveWatchPathWithToken(uint64_t _token)
             return;
         }
     }
-    Log::Warn(SPDLOC, "Unable to remove a watch for stray token: {}", _token);
+    Log::Warn("Unable to remove a watch for stray token: {}", _token);
 }
 
 FSEventStreamRef FSEventsFileUpdateImpl::CreateEventStream(const std::filesystem::path &_path) const
@@ -134,13 +134,13 @@ FSEventStreamRef FSEventsFileUpdateImpl::CreateEventStream(const std::filesystem
                                      g_FSEventsLatency,
                                      flags);
         if( stream == nullptr ) {
-            Log::Warn(SPDLOC, "Failed to create a stream for {}", _path);
+            Log::Warn("Failed to create a stream for {}", _path);
             return;
         }
         FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
         FSEventStreamStart(stream);
 
-        Log::Debug(SPDLOC, "Started a stream for {}", _path);
+        Log::Debug("Started a stream for {}", _path);
     };
 
     if( dispatch_is_main_queue() )
@@ -179,7 +179,7 @@ void FSEventsFileUpdateImpl::Callback([[maybe_unused]] ConstFSEventStreamRef _st
     auto lock = std::lock_guard{m_Lock};
     const auto now = base::machtime();
     for( auto path : paths ) {
-        Log::Debug(SPDLOC, "Callback fired for {}", path);
+        Log::Debug("Callback fired for {}", path);
         auto watches_it = m_Watches.find(path);
         if( watches_it != m_Watches.end() ) {
             watches_it->second.stat = GetStat(watches_it->first); // sync I/O :`(
@@ -259,7 +259,7 @@ void FSEventsFileUpdateImpl::AcceptScannedStats(const std::vector<std::filesyste
         it->second.snapshot_time = now;
 
         if( changed ) {
-            Log::Debug(SPDLOC, "Callback fired for {}", _paths[i]);
+            Log::Debug("Callback fired for {}", _paths[i]);
             for( auto &handler : it->second.handlers ) {
                 // NB! no copy here => this call is NOT reenterant!
                 handler.second();
@@ -291,7 +291,7 @@ void FSEventsFileUpdateImpl::BackgroundScanner(std::vector<std::filesystem::path
 
 {
     dispatch_assert_background_queue();
-    Log::Trace(SPDLOC, "FSEventsFileUpdateImpl background file scan");
+    Log::Trace("FSEventsFileUpdateImpl background file scan");
 
     std::vector<std::optional<struct stat>> stats;
     stats.reserve(_paths.size());

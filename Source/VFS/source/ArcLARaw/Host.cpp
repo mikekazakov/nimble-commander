@@ -193,8 +193,7 @@ void ArchiveRawHost::Init(const VFSCancelChecker &_cancel_checker)
     const auto &path = Configuration().Get<VFSArchiveRawHostConfiguration>().path;
     auto extracted = read_stream(g_MaxBytes, path, *Parent(), _cancel_checker);
     if( extracted.vfs_err != VFSError::Ok ) {
-        Log::Warn(SPDLOC,
-                  "unable to open {}({}), error: {}({})",
+        Log::Warn("unable to open {}({}), error: {}({})",
                   path.c_str(),
                   Parent()->Tag(),
                   VFSError::FormatErrorCode(extracted.vfs_err),

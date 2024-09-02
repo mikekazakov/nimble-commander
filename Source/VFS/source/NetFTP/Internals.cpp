@@ -9,7 +9,7 @@ namespace nc::vfs::ftp {
 
 size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *userp)
 {
-    Log::Trace(SPDLOC, "CURLWriteDataIntoString({}, {}, {}, {}) called", buffer, size, nmemb, userp);
+    Log::Trace("CURLWriteDataIntoString({}, {}, {}, {}) called", buffer, size, nmemb, userp);
     auto sz = size * nmemb;
     char *tmp = static_cast<char *>(alloca(sz + 1));
     memcpy(tmp, buffer, sz);
@@ -218,7 +218,7 @@ CURLInstance::~CURLInstance()
 
 CURLcode CURLInstance::PerformEasy()
 {
-    Log::Trace(SPDLOC, "CURLInstance::PerformEasy() called");
+    Log::Trace("CURLInstance::PerformEasy() called");
     assert(!IsAttached());
     return curl_easy_perform(curl);
 }
@@ -233,7 +233,7 @@ CURLcode CURLInstance::PerformMulti()
             mc = curl_multi_wait(curlm, nullptr, 0, 10000, nullptr);
         }
         if( mc != CURLM_OK ) {
-            Log::Error(SPDLOC, "curl_multi failed, code {}", std::to_underlying(mc));
+            Log::Error("curl_multi failed, code {}", std::to_underlying(mc));
             break;
         }
     } while( still_running );
@@ -318,7 +318,7 @@ size_t ReadBuffer::Write(const void *_src, size_t _size, size_t _nmemb, void *_t
 
 size_t ReadBuffer::DoWrite(const void *_src, size_t _size, size_t _nmemb)
 {
-    Log::Trace(SPDLOC, "ReadBuffer::Write({}, {}, {}) called", _src, _size, _nmemb);
+    Log::Trace("ReadBuffer::Write({}, {}, {}) called", _src, _size, _nmemb);
     const size_t bytes = _size * _nmemb;
 
     m_Buf.insert(m_Buf.end(), static_cast<const std::byte *>(_src), static_cast<const std::byte *>(_src) + bytes);
@@ -328,14 +328,14 @@ size_t ReadBuffer::DoWrite(const void *_src, size_t _size, size_t _nmemb)
 
 void ReadBuffer::Discard(size_t _sz)
 {
-    Log::Trace(SPDLOC, "ReadBuffer::Discard({}) called", _sz);
+    Log::Trace("ReadBuffer::Discard({}) called", _sz);
     assert(_sz <= m_Buf.size());
     m_Buf.erase(m_Buf.begin(), std::next(m_Buf.begin(), _sz));
 }
 
 void WriteBuffer::Write(const void *_mem, size_t _size)
 {
-    Log::Trace(SPDLOC, "WriteBuffer::Write({}, {}) called", _mem, _size);
+    Log::Trace("WriteBuffer::Write({}, {}) called", _mem, _size);
     m_Buf.insert(m_Buf.end(), static_cast<const std::byte *>(_mem), static_cast<const std::byte *>(_mem) + _size);
 }
 
@@ -347,20 +347,20 @@ size_t WriteBuffer::Read(void *ptr, size_t size, size_t nmemb, void *_this)
 
 size_t WriteBuffer::DoRead(void *_dest, size_t _size, size_t _nmemb)
 {
-    Log::Trace(SPDLOC, "WriteBuffer::DoRead({}, {}, {}) called", _dest, _size, _nmemb);
+    Log::Trace("WriteBuffer::DoRead({}, {}, {}) called", _dest, _size, _nmemb);
 
     assert(m_Consumed <= m_Buf.size());
     const size_t feed = std::min(_size * _nmemb, m_Buf.size() - m_Consumed);
     std::memcpy(_dest, m_Buf.data() + m_Consumed, feed);
     m_Consumed += feed;
     assert(m_Consumed <= m_Buf.size());
-    Log::Trace(SPDLOC, "WriteBuffer: fed {} bytes", feed);
+    Log::Trace("WriteBuffer: fed {} bytes", feed);
     return feed;
 }
 
 void WriteBuffer::DiscardConsumed() noexcept
 {
-    Log::Trace(SPDLOC, "WriteBuffer::DiscardConsumed() called, m_Consumed={}", m_Consumed);
+    Log::Trace("WriteBuffer::DiscardConsumed() called, m_Consumed={}", m_Consumed);
     assert(m_Consumed <= m_Buf.size());
     m_Buf.erase(m_Buf.begin(), std::next(m_Buf.begin(), m_Consumed));
     m_Consumed = 0;

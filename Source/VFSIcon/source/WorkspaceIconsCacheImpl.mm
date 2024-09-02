@@ -17,34 +17,34 @@ WorkspaceIconsCacheImpl::~WorkspaceIconsCacheImpl() = default;
 
 NSImage *WorkspaceIconsCacheImpl::IconIfHas(const std::string &_file_path)
 {
-    Log::Trace(SPDLOC, "IconIfHas() called for '{}'", _file_path);
+    Log::Trace("IconIfHas() called for '{}'", _file_path);
     auto lock = std::lock_guard{m_ItemsLock};
     if( m_Items.count(_file_path) != 0 ) { // O(1)
         auto &info = m_Items[_file_path];  // O(1)
         assert(info != nullptr);
-        Log::Trace(SPDLOC, "found, image={}", objc_bridge_cast<void>(info->image));
+        Log::Trace("found, image={}", objc_bridge_cast<void>(info->image));
         return info->image;
     }
-    Log::Trace(SPDLOC, "wasn't found");
+    Log::Trace("wasn't found");
     return nil;
 }
 
 NSImage *WorkspaceIconsCacheImpl::ProduceIcon(const std::string &_file_path)
 {
-    Log::Trace(SPDLOC, "ProduceIcon() called for '{}'", _file_path);
+    Log::Trace("ProduceIcon() called for '{}'", _file_path);
     auto lock = std::unique_lock{m_ItemsLock};
     if( m_Items.count(_file_path) ) {    // O(1)
         auto info = m_Items[_file_path]; // acquiring a copy of intrusive_ptr **by*value**! O(1)
         lock.unlock();
         assert(info != nullptr);
-        Log::Trace(SPDLOC, "found, image={}", objc_bridge_cast<void>(info->image));
+        Log::Trace("found, image={}", objc_bridge_cast<void>(info->image));
         UpdateIfNeeded(_file_path, *info);
         return info->image;
     }
     else {
         // insert dummy info into the structure, so no one else can try producing it
         // concurrently - prohibit wasting of resources
-        Log::Trace(SPDLOC, "wasn't found");
+        Log::Trace("wasn't found");
         auto info = base::intrusive_ptr{new Info};
         info->is_in_work.test_and_set();
         m_Items.insert(_file_path, info); // O(1)
@@ -70,7 +70,7 @@ void WorkspaceIconsCacheImpl::UpdateIfNeeded(const std::string &_file_path, Info
             return; // is up-to-date => nothing to do
         }
 
-        Log::Trace(SPDLOC, "not up-to-date, updating: '{}'", _file_path);
+        Log::Trace("not up-to-date, updating: '{}'", _file_path);
 
         _info.file_size = file_state_hint->size;
         _info.mtime = file_state_hint->mtime;
@@ -82,12 +82,12 @@ void WorkspaceIconsCacheImpl::UpdateIfNeeded(const std::string &_file_path, Info
             _info.image = new_image;
         }
         else {
-            Log::Warn(SPDLOC, "failed to build at icon for '{}'", _file_path);
+            Log::Warn("failed to build at icon for '{}'", _file_path);
         }
     }
     else {
         // the item is currently in updating state, let's use the current image
-        Log::Trace(SPDLOC, "currently already updating, skip: '{}'", _file_path);
+        Log::Trace("currently already updating, skip: '{}'", _file_path);
     }
 }
 
@@ -99,7 +99,7 @@ void WorkspaceIconsCacheImpl::ProduceNew(const std::string &_file_path, Info &_i
     // file must exist and be accessible
     const auto file_state_hint = m_FileStateReader.ReadState(_file_path);
     if( file_state_hint.has_value() == false ) {
-        Log::Warn(SPDLOC, "failed to get a file state hint for '{}'", _file_path);
+        Log::Warn("failed to get a file state hint for '{}'", _file_path);
         return;
     }
 
@@ -109,7 +109,7 @@ void WorkspaceIconsCacheImpl::ProduceNew(const std::string &_file_path, Info &_i
     _info.image = m_IconBuilder.Build(_file_path); // img may be nil - it's ok
 
     if( _info.image == nil ) {
-        Log::Warn(SPDLOC, "failed to build at icon for '{}'", _file_path);
+        Log::Warn("failed to build at icon for '{}'", _file_path);
     }
 }
 

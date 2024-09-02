@@ -50,11 +50,11 @@ static std::vector<FirmlinksMappingParser::Firmlink> FetchFirmlinks() noexcept;
 
 NativeFSManagerImpl::NativeFSManagerImpl()
 {
-    Log::Debug(SPDLOC, "Started initializing NativeFSManagerImpl {}", static_cast<void *>(this));
+    Log::Debug("Started initializing NativeFSManagerImpl {}", static_cast<void *>(this));
     // it takes ~150ms, so this delay can be shaved off by running it async
     auto apfstree_promise = std::async(std::launch::async, [] { return FetchAPFSTree(); });
 
-    Log::Trace(SPDLOC, "Gathering info about all native filesystems {}", static_cast<void *>(this));
+    Log::Trace("Gathering info about all native filesystems {}", static_cast<void *>(this));
     for( const auto &mount_path : GetFullFSList() ) {
         const auto volume = std::make_shared<NativeFileSystemInfo>();
         volume->mounted_at_path = mount_path;
@@ -64,10 +64,10 @@ NativeFSManagerImpl::NativeFSManagerImpl()
         m_VolumeLookup.Insert(volume, EnsureTrailingSlash(mount_path));
     }
 
-    Log::Trace(SPDLOC, "Getting APFSTree {}", static_cast<void *>(this));
+    Log::Trace("Getting APFSTree {}", static_cast<void *>(this));
     m_StartupAPFSTree = apfstree_promise.get();
 
-    Log::Trace(SPDLOC, "Getting firmlinks {}", static_cast<void *>(this));
+    Log::Trace("Getting firmlinks {}", static_cast<void *>(this));
     m_RootFirmlinks = FetchFirmlinks();
 
     if( m_StartupAPFSTree )
@@ -76,7 +76,7 @@ NativeFSManagerImpl::NativeFSManagerImpl()
 
     SubscribeToWorkspaceNotifications();
 
-    Log::Debug(SPDLOC, "Finished initializing NativeFSManagerImpl {}", static_cast<void *>(this));
+    Log::Debug("Finished initializing NativeFSManagerImpl {}", static_cast<void *>(this));
 }
 
 NativeFSManagerImpl::~NativeFSManagerImpl()
@@ -138,27 +138,27 @@ void NativeFSManagerImpl::UnsubscribeFromWorkspaceNotifications()
 
 static void GetAllInfos(NativeFileSystemInfo &_volume)
 {
-    Log::Info(SPDLOC, "Gatherning info about {}", _volume.mounted_at_path);
+    Log::Info("Gatherning info about {}", _volume.mounted_at_path);
 
     if( !GetBasicInfo(_volume) )
-        Log::Error(SPDLOC, "failed to GetBasicInfo() on the volume {}", _volume.mounted_at_path);
+        Log::Error("failed to GetBasicInfo() on the volume {}", _volume.mounted_at_path);
 
     if( !GetFormatInfo(_volume) )
-        Log::Error(SPDLOC, "failed to GetFormatInfo() on the volume {}", _volume.mounted_at_path);
+        Log::Error("failed to GetFormatInfo() on the volume {}", _volume.mounted_at_path);
 
     if( !GetInterfacesInfo(_volume) )
-        Log::Error(SPDLOC, "failed to GetInterfacesInfo() on the volume {}", _volume.mounted_at_path);
+        Log::Error("failed to GetInterfacesInfo() on the volume {}", _volume.mounted_at_path);
 
     if( !GetVerboseInfo(_volume) )
-        Log::Error(SPDLOC, "failed to GetVerboseInfo() on the volume {}", _volume.mounted_at_path);
+        Log::Error("failed to GetVerboseInfo() on the volume {}", _volume.mounted_at_path);
 
     if( !UpdateSpaceInfo(_volume) )
-        Log::Error(SPDLOC, "failed to UpdateSpaceInfo() on the volume {}", _volume.mounted_at_path);
+        Log::Error("failed to UpdateSpaceInfo() on the volume {}", _volume.mounted_at_path);
 }
 
 static bool GetBasicInfo(NativeFileSystemInfo &_volume)
 {
-    Log::Trace(SPDLOC, "Getting basic info about {}", _volume.mounted_at_path);
+    Log::Trace("Getting basic info about {}", _volume.mounted_at_path);
 
     struct statfs stat;
 
@@ -211,7 +211,7 @@ static bool GetBasicInfo(NativeFileSystemInfo &_volume)
 
 static bool GetFormatInfo(NativeFileSystemInfo &_v)
 {
-    Log::Trace(SPDLOC, "Getting format info about {}", _v.mounted_at_path);
+    Log::Trace("Getting format info about {}", _v.mounted_at_path);
 
     struct {
         u_int32_t attr_length;
@@ -258,7 +258,7 @@ static bool GetFormatInfo(NativeFileSystemInfo &_v)
 
 static bool GetInterfacesInfo(NativeFileSystemInfo &_v)
 {
-    Log::Trace(SPDLOC, "Getting interface info about {}", _v.mounted_at_path);
+    Log::Trace("Getting interface info about {}", _v.mounted_at_path);
     struct {
         u_int32_t attr_length;
         vol_capabilities_attr_t c;
@@ -297,7 +297,7 @@ static bool GetInterfacesInfo(NativeFileSystemInfo &_v)
 
 static bool GetVerboseInfo(NativeFileSystemInfo &_volume)
 {
-    Log::Trace(SPDLOC, "Getting verbose info about {}", _volume.mounted_at_path);
+    Log::Trace("Getting verbose info about {}", _volume.mounted_at_path);
 
     NSString *path_str = [NSString stringWithUTF8String:_volume.mounted_at_path.c_str()];
     if( path_str == nil )

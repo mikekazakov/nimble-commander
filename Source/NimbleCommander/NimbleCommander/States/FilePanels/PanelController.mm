@@ -376,7 +376,7 @@ static void HeatUpConfigValues()
 - (void)reloadRefreshedListing:(const VFSListingPtr &)_ptr
 {
     assert(dispatch_is_main_queue());
-    Log::Info(SPDLOC, "Reloading refreshed listing, {}", _ptr->IsUniform() ? _ptr->Directory().c_str() : "uniform");
+    Log::Info("Reloading refreshed listing, {}", _ptr->IsUniform() ? _ptr->Directory().c_str() : "uniform");
 
     const auto pers = CursorBackup{m_View.curpos, m_Data};
 
@@ -385,7 +385,7 @@ static void HeatUpConfigValues()
     [m_QuickSearch dataUpdated];
 
     if( [self checkAgainstRequestedFocusing] ) {
-        Log::Trace(SPDLOC, "Cursor position was changed by requested focusing, skipping RestoredCursorPosition()");
+        Log::Trace("Cursor position was changed by requested focusing, skipping RestoredCursorPosition()");
     }
     else {
         m_View.curpos = pers.RestoredCursorPosition();
@@ -991,7 +991,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
     if( request.filename.empty() )
         return;
 
-    nc::panel::Log::Trace(SPDLOC, "[PanelController scheduleDelayedFocusing] called for '{}'", request.filename);
+    nc::panel::Log::Trace("[PanelController scheduleDelayedFocusing] called for '{}'", request.filename);
 
     m_DelayedSelection.request_end = nc::base::machtime() + request.timeout;
     m_DelayedSelection.filename = request.filename;
@@ -1012,8 +1012,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
         return false;
 
     if( nc::base::machtime() > m_DelayedSelection.request_end ) {
-        nc::panel::Log::Trace(SPDLOC,
-                              "[PanelController checkAgainstRequestedFocusing] removing a stale request for '{}'",
+        nc::panel::Log::Trace("[PanelController checkAgainstRequestedFocusing] removing a stale request for '{}'",
                               m_DelayedSelection.filename);
         [self clearFocusingRequest];
         return false;
@@ -1023,8 +1022,8 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
     int raw_index = m_Data.RawIndexForName(m_DelayedSelection.filename);
     if( raw_index < 0 )
         return false;
-    nc::panel::Log::Trace(
-        SPDLOC, "[PanelController checkAgainstRequestedFocusing] found an entry for '{}'", m_DelayedSelection.filename);
+    nc::panel::Log::Trace("[PanelController checkAgainstRequestedFocusing] found an entry for '{}'",
+                          m_DelayedSelection.filename);
 
     // we found this entry. regardless of appearance of this entry in current directory presentation
     // there's no reason to search for it again

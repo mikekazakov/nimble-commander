@@ -138,7 +138,7 @@ FavoriteLocationsStorageImpl::FrecentlyUsed(int _amount) const
 
     const auto max_visits_it =
         std::max_element(std::begin(recent_visits), std::end(recent_visits), [](auto &l, auto &r) {
-            return std::max(std::get<1>(l), std::get<1>(r));
+            return std::get<1>(l) < std::get<1>(r);
         });
     const auto max_visits = float(std::get<1>(*max_visits_it));
 

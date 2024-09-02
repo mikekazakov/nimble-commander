@@ -48,7 +48,7 @@ libarchive_test_read_format_lha_filename|\
 libarchive_test_read_format_zip_filename_CP932_eucJP|\
 libarchive_test_read_format_zip_filename_CP932_CP932|\
 libarchive_test_sparse_basic|libarchive_test_ustar_filename_encoding_EUCJP_CP932" \
-  --testing-dir .
+  --test-dir .
 
 cd ./../../
 rm -rf ./include/

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <CoreText/CTFont.h>
@@ -7,7 +7,7 @@
 #include <map>
 #include <memory>
 #include <cassert>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 #include "FontExtras.h"
 #include <Base/CFPtr.h>
 
@@ -48,7 +48,7 @@ private:
     // fallbacks start from [1]. [0] is basefont
     std::array<base::CFPtr<CTFontRef>, 256> m_CTFonts;
     std::array<Pair, 65536> m_CacheBMP;
-    robin_hood::unordered_map<uint32_t, Pair> m_CacheNonBMP;
+    ankerl::unordered_dense::map<uint32_t, Pair> m_CacheNonBMP;
     base::CFPtr<CFStringRef> m_FontName;
     FontGeometryInfo m_FontInfo;
 };

@@ -29,8 +29,8 @@ private:
         std::vector<std::pair<uint64_t, std::function<void()>>> handlers;
     };
 
-    using WatchesT = robin_hood::
-        unordered_node_map<std::string, WatchData, RHTransparentStringHashEqual, RHTransparentStringHashEqual>;
+    using WatchesT = ankerl::unordered_dense::
+        segmented_map<std::string, WatchData, UnorderedStringHashEqual, UnorderedStringHashEqual>;
 
     void OnVolumeDidUnmount(const std::string &_on_path) override;
 

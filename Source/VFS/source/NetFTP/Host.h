@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <string_view>
 #include <map>
+#include <mutex>
 
 // RTFM: http://www.ietf.org/rfc/rfc959.txt
 

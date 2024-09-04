@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "LaunchServices.h"
 #include <sys/stat.h>
 #include <VFS/VFS.h>
@@ -6,6 +6,7 @@
 #include <Cocoa/Cocoa.h>
 #include <unordered_map>
 #include <robin_hood.h>
+#include <mutex>
 
 namespace nc::core {
 

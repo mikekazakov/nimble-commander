@@ -95,7 +95,7 @@ std::string VerboseDescription(const Command &_command)
 void LogCommands(std::span<const Command> _commands)
 {
     for( auto &cmd : _commands )
-        Log::Debug(SPDLOC, "command: {}", VerboseDescription(cmd));
+        Log::Debug("command: {}", VerboseDescription(cmd));
 }
 
 std::string FormatRawInput(std::span<const std::byte> _input)

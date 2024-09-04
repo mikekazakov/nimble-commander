@@ -80,7 +80,7 @@ Value ConfigImpl::Get(std::string_view _path) const
         if( const auto value = FindInDocument_Unlocked(_path) )
             return Value{*value, g_CrtAllocator};
     }
-    Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
+    Log::Error("Couldn't find config path: {}", _path);
     return Value{rapidjson::kNullType};
 }
 
@@ -91,7 +91,7 @@ Value ConfigImpl::GetDefault(std::string_view _path) const
         if( const auto value = FindInDefaults_Unlocked(_path) )
             return Value{*value, g_CrtAllocator};
     }
-    Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
+    Log::Error("Couldn't find config path: {}", _path);
     return Value{rapidjson::kNullType};
 }
 
@@ -104,11 +104,11 @@ std::string ConfigImpl::GetString(std::string_view _path) const noexcept
                 return std::string{value->GetString(), value->GetStringLength()};
             }
             else {
-                Log::Error(SPDLOC, "Config path doesn't contain a string: {}", _path);
+                Log::Error("Config path doesn't contain a string: {}", _path);
             }
         }
         else {
-            Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
+            Log::Error("Couldn't find config path: {}", _path);
         }
     }
     return {};
@@ -121,7 +121,7 @@ bool ConfigImpl::GetBool(std::string_view _path) const noexcept
         if( const auto value = FindInDocument_Unlocked(_path) )
             return value->GetType() == rapidjson::kTrueType;
     }
-    Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
+    Log::Error("Couldn't find config path: {}", _path);
     return false;
 }
 
@@ -150,11 +150,11 @@ int ConfigImpl::GetInt(std::string_view _path) const noexcept
             return ExtractNumericAs<int>(*value);
         }
         else {
-            Log::Error(SPDLOC, "Config path doesn't contain a number: {}", _path);
+            Log::Error("Config path doesn't contain a number: {}", _path);
         }
     }
     else {
-        Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
+        Log::Error("Couldn't find config path: {}", _path);
     }
     return 0;
 }
@@ -167,11 +167,11 @@ unsigned int ConfigImpl::GetUInt(std::string_view _path) const noexcept
             return ExtractNumericAs<unsigned int>(*value);
         }
         else {
-            Log::Error(SPDLOC, "Config path doesn't contain a number: {}", _path);
+            Log::Error("Config path doesn't contain a number: {}", _path);
         }
     }
     else {
-        Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
+        Log::Error("Couldn't find config path: {}", _path);
     }
     return 0;
 }
@@ -184,11 +184,11 @@ long ConfigImpl::GetLong(std::string_view _path) const noexcept
             return ExtractNumericAs<long>(*value);
         }
         else {
-            Log::Error(SPDLOC, "Config path doesn't contain a number: {}", _path);
+            Log::Error("Config path doesn't contain a number: {}", _path);
         }
     }
     else {
-        Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
+        Log::Error("Couldn't find config path: {}", _path);
     }
     return 0;
 }
@@ -201,11 +201,11 @@ unsigned long ConfigImpl::GetULong(std::string_view _path) const noexcept
             return ExtractNumericAs<unsigned long>(*value);
         }
         else {
-            Log::Error(SPDLOC, "Config path doesn't contain a number: {}", _path);
+            Log::Error("Config path doesn't contain a number: {}", _path);
         }
     }
     else {
-        Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
+        Log::Error("Couldn't find config path: {}", _path);
     }
     return 0;
 }
@@ -218,11 +218,11 @@ double ConfigImpl::GetDouble(std::string_view _path) const noexcept
             return ExtractNumericAs<double>(*value);
         }
         else {
-            Log::Error(SPDLOC, "Config path doesn't contain a number: {}", _path);
+            Log::Error("Config path doesn't contain a number: {}", _path);
         }
     }
     else {
-        Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
+        Log::Error("Couldn't find config path: {}", _path);
     }
     return 0.;
 }

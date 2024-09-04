@@ -62,7 +62,7 @@ std::shared_ptr<Directory> Cache::FindDirectoryInt(std::string_view _path) const
 
 void Cache::InsertLISTDirectory(const char *_path, std::shared_ptr<Directory> _directory)
 {
-    Log::Trace(SPDLOC, "Cache::InsertLISTDirectory({}) called", _path);
+    Log::Trace("Cache::InsertLISTDirectory({}) called", _path);
 
     // TODO: also update ->parent_dir here
 
@@ -86,7 +86,7 @@ void Cache::InsertLISTDirectory(const char *_path, std::shared_ptr<Directory> _d
 
 void Cache::CommitNewFile(const std::string &_path)
 {
-    Log::Trace(SPDLOC, "Cache::CommitNewFile({}) called", _path);
+    Log::Trace("Cache::CommitNewFile({}) called", _path);
 
     std::filesystem::path p = _path;
     assert(p.is_absolute());
@@ -117,7 +117,7 @@ void Cache::CommitNewFile(const std::string &_path)
 
 void Cache::MakeEntryDirty(const std::string &_path)
 {
-    Log::Trace(SPDLOC, "Cache::MakeEntryDirty({}) called", _path);
+    Log::Trace("Cache::MakeEntryDirty({}) called", _path);
     std::filesystem::path p = _path;
     assert(p.is_absolute());
 
@@ -138,7 +138,7 @@ void Cache::MakeEntryDirty(const std::string &_path)
 
 void Cache::CommitRMD(const std::string &_path)
 {
-    Log::Trace(SPDLOC, "Cache::CommitRMD({}) called", _path);
+    Log::Trace("Cache::CommitRMD({}) called", _path);
     std::lock_guard<std::mutex> lock(m_CacheLock);
 
     EraseEntryInt(_path);
@@ -153,14 +153,14 @@ void Cache::CommitRMD(const std::string &_path)
 
 void Cache::CommitUnlink(const std::string &_path)
 {
-    Log::Trace(SPDLOC, "Cache::CommitUnlink({}) called", _path);
+    Log::Trace("Cache::CommitUnlink({}) called", _path);
     std::lock_guard<std::mutex> lock(m_CacheLock);
     EraseEntryInt(_path);
 }
 
 void Cache::CommitMKD(const std::string &_path)
 {
-    Log::Trace(SPDLOC, "Cache::CommitMKD({}) called", _path);
+    Log::Trace("Cache::CommitMKD({}) called", _path);
     std::filesystem::path p = _path;
     assert(p.is_absolute());
 
@@ -184,7 +184,7 @@ void Cache::CommitMKD(const std::string &_path)
 
 void Cache::CommitRename(const std::string &_old_path, const std::string &_new_path)
 {
-    Log::Trace(SPDLOC, "Cache::CommitRename({}, {}) called", _old_path, _new_path);
+    Log::Trace("Cache::CommitRename({}, {}) called", _old_path, _new_path);
     std::filesystem::path old_path = _old_path, new_path = _new_path;
     assert(old_path.is_absolute() && new_path.is_absolute());
 
@@ -256,7 +256,7 @@ void Cache::CommitRename(const std::string &_old_path, const std::string &_new_p
 
 void Cache::EraseEntryInt(const std::string &_path)
 {
-    Log::Trace(SPDLOC, "Cache::EraseEntryInt({}) called", _path);
+    Log::Trace("Cache::EraseEntryInt({}) called", _path);
     std::filesystem::path p = _path;
     assert(p.filename() != ""); // _path with no trailing slashes
     assert(p.is_absolute());

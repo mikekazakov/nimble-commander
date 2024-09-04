@@ -108,8 +108,7 @@ void Model::Load(const VFSListingPtr &_listing, PanelType _type)
     if( !_listing )
         throw std::logic_error("PanelData::Load: listing can't be nullptr");
 
-    Log::Info(SPDLOC,
-              "Loading {} listing, {} entries, {}",
+    Log::Info("Loading {} listing, {} entries, {}",
               magic_enum::enum_name(_type),
               _listing->Count(),
               _listing->IsUniform() ? _listing->Directory().c_str() : "N/A");
@@ -147,8 +146,7 @@ void Model::ReLoad(const VFSListingPtr &_listing)
 {
     assert(dispatch_is_main_queue()); // STA api design
 
-    Log::Info(SPDLOC,
-              "ReLoading listing, {} entries, {}",
+    Log::Info("ReLoading listing, {} entries, {}",
               _listing->Count(),
               _listing->IsUniform() ? _listing->Directory().c_str() : "N/A");
 

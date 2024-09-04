@@ -113,10 +113,10 @@ bool RoutedIO::IsHelperCurrent()
 
 bool RoutedIO::TurnOn()
 {
-    Log::Info(SPDLOC, "RoutedIO::TurnOn() called");
+    Log::Info("RoutedIO::TurnOn() called");
 
     if( m_Sandboxed ) {
-        Log::Error(SPDLOC, "RoutedIO::TurnOn() was called in the sandboxed process.");
+        Log::Error("RoutedIO::TurnOn() was called in the sandboxed process.");
         return false;
     }
 
@@ -124,23 +124,23 @@ bool RoutedIO::TurnOn()
         return true;
 
     if( !IsHelperInstalled() ) {
-        Log::Info(SPDLOC, "The privileged helper is not installed.");
+        Log::Info("The privileged helper is not installed.");
         if( !AskToInstallHelper() ) {
-            Log::Error(SPDLOC, "Failed to install the privileged helper.");
+            Log::Error("Failed to install the privileged helper.");
             return false;
         }
     }
 
     if( !AuthenticateAsAdmin() ) {
-        Log::Error(SPDLOC, "Failed to authenticate as admin, cannot turn RoutedIO on");
+        Log::Error("Failed to authenticate as admin, cannot turn RoutedIO on");
         return false;
     }
 
     if( IsHelperCurrent() ) {
-        Log::Info(SPDLOC, "The installed privileged helper is the same as the bundled one.");
+        Log::Info("The installed privileged helper is the same as the bundled one.");
     }
     else {
-        Log::Warn(SPDLOC, "Detected an outdated privileged helper.");
+        Log::Warn("Detected an outdated privileged helper.");
         // we have another version of a helper app
         if( Connect() && IsHelperAlive() ) {
             // ask helper it remove itself and then to exit gracefully
@@ -165,14 +165,14 @@ bool RoutedIO::TurnOn()
             m_Connection = nullptr;
 
             if( !AskToInstallHelper() ) {
-                Log::Error(SPDLOC, "Failed to install the privileged helper.");
+                Log::Error("Failed to install the privileged helper.");
                 return false;
             }
         }
         else {
             // the helper is not current + we can't ask it to remove itself. protocol/signing probs?
             // anyway, can't go this way, no turning routing on
-            Log::Error(SPDLOC, "Failed to communicate with an outdated helper.");
+            Log::Error("Failed to communicate with an outdated helper.");
             return false;
         }
     }
@@ -180,14 +180,14 @@ bool RoutedIO::TurnOn()
     if( Connect() )
         m_Enabled = true;
 
-    Log::Info(SPDLOC, "RoutedIO enabled={}", m_Enabled.load());
+    Log::Info("RoutedIO enabled={}", m_Enabled.load());
 
     return m_Enabled;
 }
 
 void RoutedIO::TurnOff()
 {
-    Log::Info(SPDLOC, "RoutedIO::Turnoff() called");
+    Log::Info("RoutedIO::Turnoff() called");
 
     if( m_Connection ) {
         xpc_connection_cancel(m_Connection);
@@ -197,7 +197,7 @@ void RoutedIO::TurnOff()
     m_Enabled = false;
     m_AuthenticatedAsAdmin = false;
 
-    Log::Info(SPDLOC, "RoutedIO enabled={}", m_Enabled.load());
+    Log::Info("RoutedIO enabled={}", m_Enabled.load());
 }
 
 bool RoutedIO::SayImAuthenticated(xpc_connection_t _connection) noexcept
@@ -220,7 +220,7 @@ bool RoutedIO::SayImAuthenticated(xpc_connection_t _connection) noexcept
 bool RoutedIO::AskToInstallHelper()
 {
     if( m_Sandboxed ) {
-        Log::Error(SPDLOC, "RoutedIO::AskToInstallHelper() was called in a sandboxed process");
+        Log::Error("RoutedIO::AskToInstallHelper() was called in a sandboxed process");
         return false;
     }
 
@@ -238,11 +238,10 @@ bool RoutedIO::AskToInstallHelper()
     // Obtain the right to install privileged helper tools (kSMRightBlessPrivilegedHelper).
     const OSStatus status = AuthorizationCreate(&auth_rights, &auth_env, flags, &auth_ref);
     if( status == errAuthorizationSuccess ) {
-        Log::Info(SPDLOC, "Successfully authenticated for SMRightBless");
+        Log::Info("Successfully authenticated for SMRightBless");
     }
     else {
-        Log::Error(SPDLOC,
-                   "RoutedIO::AskToInstallHelper() failed to execute AuthorizationCreate() with "
+        Log::Error("RoutedIO::AskToInstallHelper() failed to execute AuthorizationCreate() with "
                    "the error: {}.",
                    AuthRCToString(status));
         return false;
@@ -254,20 +253,17 @@ bool RoutedIO::AskToInstallHelper()
 
     const bool result = SMJobBless(kSMDomainSystemLaunchd, g_HelperLabelCF, auth_ref, &error);
     if( result ) {
-        Log::Info(SPDLOC, "Successfully installed a privileged helper");
+        Log::Info("Successfully installed a privileged helper");
     }
     else if( error != nullptr ) {
         if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyDescription(error)) )
-            Log::Error(SPDLOC,
-                       "RoutedIO::AskToInstallHelper() SMJobBless failed with error: {}. ",
+            Log::Error("RoutedIO::AskToInstallHelper() SMJobBless failed with error: {}. ",
                        base::CFStringGetUTF8StdString(desc.get()));
         if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyFailureReason(error)) )
-            Log::Error(SPDLOC,
-                       "RoutedIO::AskToInstallHelper() SMJobBless failed with failure reason: {}. ",
+            Log::Error("RoutedIO::AskToInstallHelper() SMJobBless failed with failure reason: {}. ",
                        base::CFStringGetUTF8StdString(desc.get()));
         if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyRecoverySuggestion(error)) )
-            Log::Error(SPDLOC,
-                       "RoutedIO::AskToInstallHelper() SMJobBless failed with recovery suggestion: {}. ",
+            Log::Error("RoutedIO::AskToInstallHelper() SMJobBless failed with recovery suggestion: {}. ",
                        base::CFStringGetUTF8StdString(desc.get()));
         CFRelease(error);
     }
@@ -279,15 +275,15 @@ bool RoutedIO::AskToInstallHelper()
 
 bool RoutedIO::AuthenticateAsAdmin()
 {
-    Log::Debug(SPDLOC, "RoutedIO::AuthenticateAsAdmin() called");
+    Log::Debug("RoutedIO::AuthenticateAsAdmin() called");
 
     if( m_Sandboxed ) {
-        Log::Error(SPDLOC, "RoutedIO::AuthenticateAsAdmin() was called in a sandboxed process");
+        Log::Error("RoutedIO::AuthenticateAsAdmin() was called in a sandboxed process");
         return false;
     }
 
     if( m_AuthenticatedAsAdmin ) {
-        Log::Debug(SPDLOC, "Already authenticated");
+        Log::Debug("Already authenticated");
         return true;
     }
 
@@ -307,12 +303,11 @@ bool RoutedIO::AuthenticateAsAdmin()
     const OSStatus status = AuthorizationCreate(&auth_rights, &auth_env, flags, nullptr);
 
     if( status == errAuthorizationSuccess ) {
-        Log::Info(SPDLOC, "Successfully authenticated as administrator");
+        Log::Info("Successfully authenticated as administrator");
         m_AuthenticatedAsAdmin = true;
     }
     else {
-        Log::Error(SPDLOC,
-                   "RoutedIO::AuthenticateAsAdmin() failed to execute AuthorizationCreate() with "
+        Log::Error("RoutedIO::AuthenticateAsAdmin() failed to execute AuthorizationCreate() with "
                    "the error: {}",
                    AuthRCToString(status));
     }
@@ -326,14 +321,14 @@ bool RoutedIO::Connect()
         return true;
 
     if( m_AuthenticatedAsAdmin == false ) {
-        Log::Error(SPDLOC, "RoutedIO::Connect() was called without being authenticated as admin");
+        Log::Error("RoutedIO::Connect() was called without being authenticated as admin");
         return false;
     }
 
     xpc_connection_t connection =
         xpc_connection_create_mach_service(g_HelperLabel, nullptr, XPC_CONNECTION_MACH_SERVICE_PRIVILEGED);
     if( !connection ) {
-        Log::Error(SPDLOC, "RoutedIO::Connect() failed to call xpc_connection_create_mach_service()");
+        Log::Error("RoutedIO::Connect() failed to call xpc_connection_create_mach_service()");
         return false;
     }
 
@@ -349,7 +344,7 @@ bool RoutedIO::Connect()
     xpc_connection_resume(connection);
 
     if( !SayImAuthenticated(connection) ) {
-        Log::Error(SPDLOC, "RoutedIO::Connect() failed to call SayImAuthenticated()");
+        Log::Error("RoutedIO::Connect() failed to call SayImAuthenticated()");
         xpc_connection_cancel(connection);
         return false;
     }

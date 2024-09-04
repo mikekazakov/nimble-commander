@@ -8,7 +8,7 @@ URLSecurityScopedResourceGuard::URLSecurityScopedResourceGuard(NSArray<NSURL *> 
 {
     for( NSURL *url in _urls ) {
         if( [url startAccessingSecurityScopedResource] ) {
-            Log::Trace(SPDLOC, "Started accessing a security scoped resource: {}", url.fileSystemRepresentation);
+            Log::Trace("Started accessing a security scoped resource: {}", url.fileSystemRepresentation);
             m_URLs.emplace_back(url);
         }
         else {
@@ -24,7 +24,7 @@ URLSecurityScopedResourceGuard::~URLSecurityScopedResourceGuard()
 {
     for( NSURL *url : m_URLs ) {
         [url stopAccessingSecurityScopedResource];
-        Log::Trace(SPDLOC, "Stopped accessing a security scoped resource: {}", url.fileSystemRepresentation);
+        Log::Trace("Stopped accessing a security scoped resource: {}", url.fileSystemRepresentation);
     }
 }
 

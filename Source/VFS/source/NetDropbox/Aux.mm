@@ -136,7 +136,7 @@ static std::pair<int, NSData *> SendInfiniteSynchronousRequest(NSURLSession *_se
 {
     assert(_session != nil);
     assert(_request != nil);
-    Log::Debug(SPDLOC, "Sending infinite sync request at {}", _request.URL.absoluteString.UTF8String);
+    Log::Debug("Sending infinite sync request at {}", _request.URL.absoluteString.UTF8String);
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     __block NSData *data = nil;
     __block NSURLResponse *response = nil;
@@ -172,7 +172,7 @@ SendSynchronousRequest(NSURLSession *_session, NSURLRequest *_request, const VFS
     if( !_cancel_checker )
         return SendInfiniteSynchronousRequest(_session, _request);
 
-    Log::Debug(SPDLOC, "Sending finite sync request at {}", _request.URL.absoluteString.UTF8String);
+    Log::Debug("Sending finite sync request at {}", _request.URL.absoluteString.UTF8String);
     const auto timeout = 100 * NSEC_PER_MSEC; // wake up every 100ms
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     __block NSData *data = nil;

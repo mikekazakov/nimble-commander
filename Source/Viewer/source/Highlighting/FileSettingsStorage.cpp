@@ -37,8 +37,7 @@ FileSettingsStorage::FileSettingsStorage(const std::filesystem::path &_base_dir,
             m_Langs = LoadLangs(overrides_main);
         } catch( std::exception &ex ) {
             // Something went wrong with the overrides, complain but allow to continue
-            Log::Warn(SPDLOC,
-                      "Unable to load the languages definitions from '{}', continuing with no definitions",
+            Log::Warn("Unable to load the languages definitions from '{}', continuing with no definitions",
                       overrides_main.native());
         }
     }
@@ -57,11 +56,11 @@ FileSettingsStorage::~FileSettingsStorage()
 
 std::vector<FileSettingsStorage::Lang> FileSettingsStorage::LoadLangs(const std::filesystem::path &_path) const
 {
-    Log::Debug(SPDLOC, "Loading languages definitions from '{}'", _path.native());
+    Log::Debug("Loading languages definitions from '{}'", _path.native());
 
     std::ifstream f(_path);
     if( !f.is_open() ) {
-        Log::Error(SPDLOC, "Unable to open the file '{}'", _path.native());
+        Log::Error("Unable to open the file '{}'", _path.native());
         throw std::invalid_argument(fmt::format("Unable to open the file '{}'", _path.native()));
     }
 
@@ -69,12 +68,12 @@ std::vector<FileSettingsStorage::Lang> FileSettingsStorage::LoadLangs(const std:
     try {
         data = json::parse(f);
     } catch( std::exception &ex ) {
-        Log::Error(SPDLOC, "Unable to parse '{}': {}", _path.native());
+        Log::Error("Unable to parse '{}': {}", _path.native());
         throw std::invalid_argument(fmt::format("Unable to parse '{}': {}", _path.native(), ex.what()));
     }
 
     if( !data.contains("langs") ) {
-        Log::Error(SPDLOC, "Invalid JSON format '{}': no 'langs' array", _path.native());
+        Log::Error("Invalid JSON format '{}': no 'langs' array", _path.native());
         throw std::invalid_argument(fmt::format("Invalid JSON format '{}': no 'langs' array", _path.native()));
     }
 
@@ -105,7 +104,7 @@ std::vector<FileSettingsStorage::Lang> FileSettingsStorage::LoadLangs(const std:
         }
 
     } catch( std::exception &ex ) {
-        Log::Error(SPDLOC, "Parse error in '{}': {}", _path.native(), ex.what());
+        Log::Error("Parse error in '{}': {}", _path.native(), ex.what());
         throw std::invalid_argument(fmt::format("Parse error in '{}': {}", _path.native(), ex.what()));
     }
 
@@ -113,7 +112,7 @@ std::vector<FileSettingsStorage::Lang> FileSettingsStorage::LoadLangs(const std:
     set.reserve(output.size());
     for( auto &lang : output ) {
         if( set.contains(lang.name) ) {
-            Log::Error(SPDLOC, "The language '{}' is defined more than once", lang.name);
+            Log::Error("The language '{}' is defined more than once", lang.name);
             throw std::invalid_argument(fmt::format("The language '{}' is defined more than once", lang.name));
         }
         set.emplace(lang.name);
@@ -137,8 +136,7 @@ void FileSettingsStorage::ReloadLangs()
         }
     } catch( std::exception &ex ) {
         // Something went wrong with the overrides, complain but allow to continue
-        Log::Warn(SPDLOC,
-                  "Unable to reload the languages definitions from '{}', continuing with no definitions",
+        Log::Warn("Unable to reload the languages definitions from '{}', continuing with no definitions",
                   overrides_main.native());
     }
     m_Outdated = false;
@@ -169,10 +167,10 @@ std::vector<std::string> FileSettingsStorage::List()
 
 std::shared_ptr<const std::string> FileSettingsStorage::Settings(std::string_view _lang)
 {
-    Log::Trace(SPDLOC, "Settings() called");
+    Log::Trace("Settings() called");
 
     if( auto sett_it = m_Settings.find(_lang); sett_it != m_Settings.end() ) {
-        Log::Trace(SPDLOC, "Retreived the syntax settings for the language '{}'", _lang);
+        Log::Trace("Retreived the syntax settings for the language '{}'", _lang);
         return sett_it->second;
     }
 
@@ -195,26 +193,26 @@ std::shared_ptr<const std::string> FileSettingsStorage::Settings(std::string_vie
         std::string text((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
         auto shared = std::make_shared<std::string>(std::move(text));
         m_Settings.emplace(_lang, shared);
-        Log::Debug(SPDLOC, "Sucessfuly loaded the syntax settings from the file '{}'", settings_path.native());
+        Log::Debug("Sucessfuly loaded the syntax settings from the file '{}'", settings_path.native());
         return shared;
     }
     else {
         m_Settings.emplace(_lang, nullptr);
-        Log::Error(SPDLOC, "Unable to load the syntax settings from the file '{}'", settings_path.native());
+        Log::Error("Unable to load the syntax settings from the file '{}'", settings_path.native());
         return {};
     }
 }
 
 void FileSettingsStorage::SubscribeToOverridesChanges()
 {
-    Log::Trace(SPDLOC, "SubscribeToOverridesChanges() called");
+    Log::Trace("SubscribeToOverridesChanges() called");
     m_OverridesObservationToken =
         utility::FSEventsDirUpdate::Instance().AddWatchPath(m_OverridesDir.c_str(), [this] { OverridesChanged(); });
 }
 
 void FileSettingsStorage::UnsubscribeFromOverridesChanges()
 {
-    Log::Trace(SPDLOC, "UnsubscribeFromOverridesChanges() called");
+    Log::Trace("UnsubscribeFromOverridesChanges() called");
     if( m_OverridesObservationToken ) {
         utility::FSEventsDirUpdate::Instance().RemoveWatchPathWithTicket(m_OverridesObservationToken);
         m_OverridesObservationToken = 0;
@@ -223,7 +221,7 @@ void FileSettingsStorage::UnsubscribeFromOverridesChanges()
 
 void FileSettingsStorage::OverridesChanged()
 {
-    Log::Trace(SPDLOC, "OverridesChanged() called");
+    Log::Trace("OverridesChanged() called");
     m_Outdated = true;  // mark the definitions as outdated
     m_Settings.clear(); // drop anything was loaded before
 }

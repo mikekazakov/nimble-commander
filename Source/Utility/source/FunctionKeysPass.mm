@@ -83,7 +83,7 @@ CGEventRef FunctionalKeysPass::HandleRegularKeyEvents(CGEventType _type, CGEvent
     const auto is_key_down = _type == kCGEventKeyDown;
     const auto keycode = static_cast<CGKeyCode>(CGEventGetIntegerValueField(_event, kCGKeyboardEventKeycode));
     const auto substitute = [&](CGKeyCode _vk) { return NewFnButtonPress(_vk, is_key_down, CGEventGetFlags(_event)); };
-    Log::Trace(SPDLOC, "HandleRegularKeyEvents: keycode is {}, pressed={}", keycode, is_key_down);
+    Log::Trace("HandleRegularKeyEvents: keycode is {}, pressed={}", keycode, is_key_down);
     switch( keycode ) {
         case 145:
             return substitute(kVK_F1);
@@ -133,7 +133,7 @@ CGEventRef FunctionalKeysPass::HandleControlButtons([[maybe_unused]] CGEventType
     const auto substitute = [&](CGKeyCode _vk) {
         return NewFnButtonPress(_vk, is_key_down, static_cast<CGEventFlags>(ev.modifierFlags));
     };
-    Log::Trace(SPDLOC, "HandleControlButtons: keycode is {}, pressed={}", keycode, is_key_down);
+    Log::Trace("HandleControlButtons: keycode is {}, pressed={}", keycode, is_key_down);
     switch( keycode ) {
         case NX_KEYTYPE_BRIGHTNESS_DOWN:
             return substitute(kVK_F1);

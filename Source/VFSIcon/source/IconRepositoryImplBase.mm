@@ -58,9 +58,9 @@ void Base::GCDLimitedConcurrentQueue::RunBlock(const std::function<void()> &_cli
     try {
         _client_block();
     } catch( std::exception &ex ) {
-        Log::Error(SPDLOC, "RunBlock(): exception caught: '{}'({})", ex.what(), typeid(ex).name());
+        Log::Error("RunBlock(): exception caught: '{}'({})", ex.what(), typeid(ex).name());
     } catch( ... ) {
-        Log::Error(SPDLOC, "RunBlock(): unknown exception caught");
+        Log::Error("RunBlock(): unknown exception caught");
     }
 
     auto lock = std::lock_guard{m_AwaitingLock};

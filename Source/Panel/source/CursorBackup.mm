@@ -7,7 +7,7 @@ namespace nc::panel {
 
 CursorBackup::CursorBackup(int _current_cursor_pos, const data::Model &_data) noexcept : m_Data(_data)
 {
-    Log::Trace(SPDLOC, "Saving cursor position: {}", _current_cursor_pos);
+    Log::Trace("Saving cursor position: {}", _current_cursor_pos);
     if( _current_cursor_pos >= 0 ) {
         assert(_current_cursor_pos < _data.SortedEntriesCount());
         auto item = _data.EntryAtSortPosition(_current_cursor_pos);
@@ -20,7 +20,7 @@ CursorBackup::CursorBackup(int _current_cursor_pos, const data::Model &_data) no
 int CursorBackup::RestoredCursorPosition() const noexcept
 {
     const int restored_pos = FindRestoredCursorPosition();
-    Log::Trace(SPDLOC, "Restored cursor position: {}", restored_pos);
+    Log::Trace("Restored cursor position: {}", restored_pos);
     return restored_pos;
 }
 

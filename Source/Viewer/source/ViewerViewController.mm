@@ -118,7 +118,7 @@ struct BackgroundFileOpener {
 {
     self = [super init];
     if( self ) {
-        Log::Debug(SPDLOC, "created new NCViewerViewController {}", nc::objc_bridge_cast<void>(self));
+        Log::Debug("created new NCViewerViewController {}", nc::objc_bridge_cast<void>(self));
         m_History = &_history;
         m_Config = &_config;
         m_Shortcuts = _shortcuts;
@@ -136,7 +136,7 @@ struct BackgroundFileOpener {
 - (void)dealloc
 {
     dispatch_assert_main_queue();
-    Log::Debug(SPDLOC, "deallocating NCViewerViewController {}", nc::objc_bridge_cast<void>(self));
+    Log::Debug("deallocating NCViewerViewController {}", nc::objc_bridge_cast<void>(self));
     [m_View removeObserver:self forKeyPath:@"verticalPositionPercentage"];
     [m_View.footer removeObserver:self forKeyPath:@"mode"];
     [m_View.footer removeObserver:self forKeyPath:@"encoding"];
@@ -561,7 +561,7 @@ struct BackgroundFileOpener {
 
 - (void)onRefresh
 {
-    Log::Debug(SPDLOC, "refresh called");
+    Log::Debug("refresh called");
     __weak NCViewerViewController *weak_self = self;
     dispatch_to_background([weak_self] {
         NCViewerViewController *strong_self = weak_self;
@@ -572,7 +572,7 @@ struct BackgroundFileOpener {
         const int open_err =
             opener->Open(strong_self->m_VFS, strong_self->m_Path, *strong_self->m_Config, strong_self.fileWindowSize);
         if( open_err != VFSError::Ok ) {
-            Log::Warn(SPDLOC, "failed to open a path {}, vfs_error: {}", strong_self->m_Path, open_err);
+            Log::Warn("failed to open a path {}, vfs_error: {}", strong_self->m_Path, open_err);
             return;
         }
 

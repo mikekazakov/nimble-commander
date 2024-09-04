@@ -26,12 +26,11 @@ IconBuilderImpl::~IconBuilderImpl() = default;
 IconBuilder::LookupResult IconBuilderImpl::LookupExistingIcon(const VFSListingItem &_item, int _icon_px_size)
 {
     if( bool(_item) == false || _icon_px_size <= 0 ) {
-        Log::Warn(SPDLOC, "LookupExistingIcon(): invalid lookup request");
+        Log::Warn("LookupExistingIcon(): invalid lookup request");
         return {};
     }
 
-    Log::Trace(SPDLOC,
-               "LookupExistingIcon(): looking up at '{}' for '{}', vfs: '{}'",
+    Log::Trace("LookupExistingIcon(): looking up at '{}' for '{}', vfs: '{}'",
                _item.Directory(),
                _item.Filename(),
                _item.Host()->JunctionPath());
@@ -43,13 +42,13 @@ IconBuilder::LookupResult IconBuilderImpl::LookupExistingIcon(const VFSListingIt
 
         result.thumbnail = m_QLThumbnailsCache->ThumbnailIfHas(path, _icon_px_size);
         if( result.thumbnail ) {
-            Log::Debug(SPDLOC, "got a thumbnail for '{}'", path);
+            Log::Debug("got a thumbnail for '{}'", path);
             return result;
         }
 
         result.filetype = m_WorkspaceIconsCache->IconIfHas(path);
         if( result.filetype ) {
-            Log::Debug(SPDLOC, "got a workspace icon for '{}'", path);
+            Log::Debug("got a workspace icon for '{}'", path);
             return result;
         }
     }
@@ -71,12 +70,12 @@ IconBuilder::LookupResult IconBuilderImpl::LookupExistingIcon(const VFSListingIt
     if( _item.HasExtension() ) {
         result.filetype = m_ExtensionIconsCache->IconForExtension(_item.Extension());
         if( result.filetype ) {
-            Log::Debug(SPDLOC, "got a filetype icon for '{}'", _item.Filename());
+            Log::Debug("got a filetype icon for '{}'", _item.Filename());
             return result;
         }
     }
 
-    Log::Debug(SPDLOC, "have only a generic icon for '{}'", _item.Filename());
+    Log::Debug("have only a generic icon for '{}'", _item.Filename());
     result.generic = GetGenericIcon(_item);
     return result;
 }
@@ -85,12 +84,11 @@ IconBuilder::BuildResult
 IconBuilderImpl::BuildRealIcon(const VFSListingItem &_item, int _icon_px_size, const CancelChecker &_cancel_checker)
 {
     if( bool(_item) == false || _icon_px_size <= 0 ) {
-        Log::Warn(SPDLOC, "BuildRealIcon(): invalid lookup request");
+        Log::Warn("BuildRealIcon(): invalid lookup request");
         return {};
     }
 
-    Log::Trace(SPDLOC,
-               "BuildRealIcon(): building for at '{}' for '{}', vfs: '{}'",
+    Log::Trace("BuildRealIcon(): building for at '{}' for '{}', vfs: '{}'",
                _item.Directory(),
                _item.Filename(),
                _item.Host()->JunctionPath());
@@ -106,17 +104,17 @@ IconBuilderImpl::BuildRealIcon(const VFSListingItem &_item, int _icon_px_size, c
 
         // 1st - try to built a real thumbnail
         if( ShouldTryProducingQLThumbnailOnNativeFS(_item) ) {
-            Log::Debug(SPDLOC, "BuildRealIcon(): building a QL thumbnail for '{}'", _item.Filename());
+            Log::Debug("BuildRealIcon(): building a QL thumbnail for '{}'", _item.Filename());
             auto file_hint = QLThumbnailsCache::FileStateHint{};
             file_hint.size = _item.Size();
             file_hint.mtime = _item.MTime();
             result.thumbnail = m_QLThumbnailsCache->ProduceThumbnail(path, _icon_px_size, file_hint);
             if( result.thumbnail ) {
-                Log::Debug(SPDLOC, "BuildRealIcon(): got a QL thumbnail for '{}'", _item.Filename());
+                Log::Debug("BuildRealIcon(): got a QL thumbnail for '{}'", _item.Filename());
                 return result;
             }
             else {
-                Log::Warn(SPDLOC, "BuildRealIcon(): failed to get a QL thumbnail for '{}'", _item.Filename());
+                Log::Warn("BuildRealIcon(): failed to get a QL thumbnail for '{}'", _item.Filename());
             }
         }
 
@@ -125,8 +123,7 @@ IconBuilderImpl::BuildRealIcon(const VFSListingItem &_item, int _icon_px_size, c
 
         // 2nd - if we haven't built a real thumbnail - try an extension instead
         result.filetype = m_WorkspaceIconsCache->ProduceIcon(path);
-        Log::Debug(SPDLOC,
-                   "BuildRealIcon(): got a workspace icon for '{}' = {}",
+        Log::Debug("BuildRealIcon(): got a workspace icon for '{}' = {}",
                    _item.Filename(),
                    objc_bridge_cast<void>(result.filetype));
         return result;

@@ -70,12 +70,11 @@ NSDragOperation DragReceiver::Validate()
     const auto destination = ComposeDestination();
 
     if( destination )
-        panel::Log::Trace(SPDLOC,
-                          "DragReceiver::Validate() - dragging over path: {}{}",
+        panel::Log::Trace("DragReceiver::Validate() - dragging over path: {}{}",
                           destination.Host()->JunctionPath(),
                           destination.Path());
     else
-        panel::Log::Trace(SPDLOC, "DragReceiver::Validate() - dragging over an empty destination");
+        panel::Log::Trace("DragReceiver::Validate() - dragging over an empty destination");
 
     if( destination && destination.Host()->IsWritable() ) {
         if( const auto source = objc_cast<FilesDraggingSource>(m_Dragging.draggingSource) )

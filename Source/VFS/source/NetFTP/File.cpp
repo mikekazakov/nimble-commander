@@ -11,12 +11,12 @@ namespace nc::vfs::ftp {
 
 File::File(const char *_relative_path, std::shared_ptr<FTPHost> _host) : VFSFile(_relative_path, _host)
 {
-    Log::Trace(SPDLOC, "File::File({}, {}) called", _relative_path, static_cast<void *>(_host.get()));
+    Log::Trace("File::File({}, {}) called", _relative_path, static_cast<void *>(_host.get()));
 }
 
 File::~File()
 {
-    Log::Trace(SPDLOC, "File::~File() called");
+    Log::Trace("File::~File() called");
     Close();
 }
 
@@ -27,7 +27,7 @@ bool File::IsOpened() const
 
 int File::Close()
 {
-    Log::Trace(SPDLOC, "File::Close() called");
+    Log::Trace("File::Close() called");
 
     if( m_CURL && m_Mode == Mode::Write ) {
         // if we're still writing - finish it and tell cache about changes
@@ -61,11 +61,11 @@ std::filesystem::path File::DirName() const
 
 int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
-    Log::Trace(SPDLOC, "File::Open({}) called", _open_flags);
+    Log::Trace("File::Open({}) called", _open_flags);
     auto ftp_host = std::dynamic_pointer_cast<FTPHost>(Host());
     VFSStat stat;
     const int stat_ret = ftp_host->Stat(Path(), stat, 0, _cancel_checker);
-    Log::Trace(SPDLOC, "stat_ret = {}", stat_ret);
+    Log::Trace("stat_ret = {}", stat_ret);
 
     if( stat_ret == 0 && ((stat.mode & S_IFMT) == S_IFREG) && (_open_flags & VFSFlags::OF_Read) != 0 &&
         (_open_flags & VFSFlags::OF_Write) == 0 ) {
@@ -122,7 +122,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
 
 ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offset, VFSCancelChecker _cancel_checker)
 {
-    Log::Trace(SPDLOC, "File::ReadChunk({}, {}, {}) called", _read_to, _read_size, _file_offset);
+    Log::Trace("File::ReadChunk({}, {}, {}) called", _read_to, _read_size, _file_offset);
 
     // TODO: mutex lock
     bool error = false;
@@ -176,7 +176,7 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
                 mc = curl_multi_wait(m_CURL->curlm, nullptr, 0, m_SelectTimeout.tv_usec, nullptr);
             }
             if( mc != CURLM_OK ) {
-                Log::Error(SPDLOC, "curl_multi failed, code {}.", std::to_underlying(mc));
+                Log::Error("curl_multi failed, code {}.", std::to_underlying(mc));
                 error = true;
                 break;
             }
@@ -195,7 +195,7 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
             while( msgs_left ) {
                 CURLMsg *msg = curl_multi_info_read(m_CURL->curlm, &msgs_left);
                 if( msg == nullptr || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
-                    Log::Error(SPDLOC, "curl_multi_info_read() returned {}.", std::to_underlying(msg->msg));
+                    Log::Error("curl_multi_info_read() returned {}.", std::to_underlying(msg->msg));
                     error = true;
                 }
             }
@@ -227,7 +227,7 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
 
 ssize_t File::Read(void *_buf, size_t _size)
 {
-    Log::Trace(SPDLOC, "File::Read({}, {}) called", _buf, _size);
+    Log::Trace("File::Read({}, {}) called", _buf, _size);
     if( Eof() )
         return 0;
 
@@ -241,7 +241,7 @@ ssize_t File::Read(void *_buf, size_t _size)
 
 ssize_t File::Write(const void *_buf, size_t _size)
 {
-    Log::Trace(SPDLOC, "File::Write({}, {}) called", _buf, _size);
+    Log::Trace("File::Write({}, {}) called", _buf, _size);
     // TODO: reconnecting support
 
     if( !IsOpened() )
@@ -260,7 +260,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
             mc = curl_multi_wait(m_CURL->curlm, nullptr, 0, m_SelectTimeout.tv_usec, nullptr);
         }
         if( mc != CURLM_OK ) {
-            Log::Error(SPDLOC, "curl_multi failed, code {}.", std::to_underlying(mc));
+            Log::Error("curl_multi failed, code {}.", std::to_underlying(mc));
             break;
         }
     } while( still_running && !m_WriteBuf.Exhausted() );
@@ -271,7 +271,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
         while( msgs_left ) {
             CURLMsg *msg = curl_multi_info_read(m_CURL->curlm, &msgs_left);
             if( msg == nullptr || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
-                Log::Error(SPDLOC, "curl_multi_info_read() returned {}.", std::to_underlying(msg->msg));
+                Log::Error("curl_multi_info_read() returned {}.", std::to_underlying(msg->msg));
                 error = true;
             }
         }
@@ -309,7 +309,7 @@ ssize_t File::Size() const
 
 bool File::Eof() const
 {
-    Log::Trace(SPDLOC, "File::Eof() called");
+    Log::Trace("File::Eof() called");
     if( !IsOpened() )
         return true;
     return m_FilePos >= m_FileSize;
@@ -317,7 +317,7 @@ bool File::Eof() const
 
 off_t File::Seek(off_t _off, int _basis)
 {
-    Log::Trace(SPDLOC, "File::Seek({}, {}) called", _off, _basis);
+    Log::Trace("File::Seek({}, {}) called", _off, _basis);
     if( !IsOpened() )
         return VFSError::InvalidCall;
 
@@ -347,7 +347,7 @@ off_t File::Seek(off_t _off, int _basis)
 
 void File::FinishWriting()
 {
-    Log::Trace(SPDLOC, "File::FinishWriting() called");
+    Log::Trace("File::FinishWriting() called");
     assert(m_Mode == Mode::Write);
 
     int still_running = 0;
@@ -357,7 +357,7 @@ void File::FinishWriting()
             mc = curl_multi_wait(m_CURL->curlm, nullptr, 0, m_SelectTimeout.tv_usec, nullptr);
         }
         if( mc != CURLM_OK ) {
-            Log::Error(SPDLOC, "curl_multi failed, code {}.", std::to_underlying(mc));
+            Log::Error("curl_multi failed, code {}.", std::to_underlying(mc));
             break;
         }
     } while( still_running );
@@ -365,7 +365,7 @@ void File::FinishWriting()
 
 void File::FinishReading()
 {
-    Log::Trace(SPDLOC, "File::FinishReading() called");
+    Log::Trace("File::FinishReading() called");
     assert(m_Mode == Mode::Read);
 
     // tell curl to cancel any going reading if any

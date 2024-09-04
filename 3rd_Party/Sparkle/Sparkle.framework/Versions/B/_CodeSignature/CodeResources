@@ -22,7 +22,7 @@
 		</data>
 		<key>Resources/Info.plist</key>
 		<data>
-		vbThLOecOFzZs5c73SswIUHAQn8=
+		CU9SOhCb7nYLmmQmJ5/NUIXgKig=
 		</data>
 		<key>Resources/ReleaseNotesColorStyle.css</key>
 		<data>
@@ -939,10 +939,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			Fr9dsunrnNRMocbZmEF8cP1nnpg=
+			0tP0lDyqGENjO38pU4Ou/nd9vWw=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"16bf5db2e9eb9cd44ca1c6d998417c70fd679e98" or cdhash H"5b0b9e5a1caeac7527be86fe3c27bd58aac73ecd"</string>
+			<string>cdhash H"d2d3f4943caa1843633b7f295383aefe777dbd6c" or cdhash H"b958b1f76c4f2ae3d6b843a7ddc2279c7bc77700"</string>
 		</dict>
 		<key>Headers/SPUDownloadData.h</key>
 		<dict>
@@ -1186,7 +1186,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			1FpNwahKoFCadHstLOC9OeKkNAQ5mE1Mtmgx0/JaTlU=
+			4eIah47zOTXNyKQH/yKsb7Mg9oQD0h1kkVKr1rGDJlY=
 			</data>
 		</dict>
 		<key>Resources/ReleaseNotesColorStyle.css</key>
@@ -2107,28 +2107,28 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			5tsZt2a/TMYDmh2slp6d3ibEen8=
+			tooTko0dE29snYyRAxnWxvqP+lc=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"e6db19b766bf4cc6039a1dac969e9dde26c47a7f" or cdhash H"a98ea185d0bc0b8f1684dd967b5c72358b09b0cd"</string>
+			<string>cdhash H"b68a13928d1d136f6c9d8c910319d6c6fa8ffa57" or cdhash H"80defc6b85ef53f965055cbe43e1be46056f9bae"</string>
 		</dict>
 		<key>XPCServices/Downloader.xpc</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			tQxSTgy8hxjRI4We12og2TBCics=
+			A+xHakKuGXizsz6k3xifwWuafzw=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"b50c524e0cbc8718d123859ed76a20d9304289cb" or cdhash H"b9ef2c32b236930c5c11b098dcc8236da2d33c3d"</string>
+			<string>cdhash H"03ec476a42ae1978b3b33ea4df189fc16b9a7f3c" or cdhash H"2e8bf408dc29a6159a27bc57dfac39fdea3093b4"</string>
 		</dict>
 		<key>XPCServices/Installer.xpc</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			AuoSZAgXGf3dUo7LU0wHSXdXrA8=
+			0M5djLhamWuot0RTeXljgaaNKJg=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"02ea1264081719fddd528ecb534c07497757ac0f" or cdhash H"86569414135260b525546d703fa21b40263b071a"</string>
+			<string>cdhash H"d0ce5d8cb85a996ba8b7445379796381a68d2898" or cdhash H"e77e789ad007a20a6ab38608b1991aa494aa9ffe"</string>
 		</dict>
 	</dict>
 	<key>rules</key>

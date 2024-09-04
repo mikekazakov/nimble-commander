@@ -162,7 +162,7 @@ int FromErrno(int _errno) noexcept
         return _errno + g_PosixBase;
     }
     else {
-        nc::vfs::Log::Warn(SPDLOC, "VFSError::FromErrno(): unknown errno - {}", _errno);
+        nc::vfs::Log::Warn("VFSError::FromErrno(): unknown errno - {}", _errno);
         return FromErrno(EINVAL);
     }
 }

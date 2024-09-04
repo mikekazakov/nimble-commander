@@ -40,20 +40,20 @@ struct ColumnAnchor {
 - (NSSize)collectionViewContentSize
 {
     const auto sz = m_Engine.ContentSize();
-    Log::Trace(SPDLOC, "[NCPanelBriefViewFixedNumberLayout collectionViewContentSize], return: {}", sz);
+    Log::Trace("[NCPanelBriefViewFixedNumberLayout collectionViewContentSize], return: {}", sz);
     return sz;
 }
 
 - (NSCollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)_index_path
 {
     const auto index = static_cast<int>(_index_path.item);
-    Log::Trace(SPDLOC, "[NCPanelBriefViewFixedNumberLayout layoutAttributesForItemAtIndexPath={}]", index);
+    Log::Trace("[NCPanelBriefViewFixedNumberLayout layoutAttributesForItemAtIndexPath={}]", index);
     return m_Engine.AttributesForItemNumber(index);
 }
 
 - (NSArray *)layoutAttributesForElementsInRect:(NSRect)_rect
 {
-    Log::Trace(SPDLOC, "[NCPanelBriefViewFixedNumberLayout layoutAttributesForElementsInRect:{}]", _rect);
+    Log::Trace("[NCPanelBriefViewFixedNumberLayout layoutAttributesForElementsInRect:{}]", _rect);
     return m_Engine.AttributesForItemsInRect(_rect);
 }
 
@@ -75,8 +75,7 @@ struct ColumnAnchor {
 - (BOOL)shouldInvalidateLayoutForBoundsChange:(NSRect)_new_bounds
 {
     const auto result = m_Engine.ShouldRelayoutForNewBounds(_new_bounds);
-    Log::Trace(SPDLOC,
-               "[NCPanelBriefViewFixedNumberLayout shouldInvalidateLayoutForBoundsChange:{}], return: {}",
+    Log::Trace("[NCPanelBriefViewFixedNumberLayout shouldInvalidateLayoutForBoundsChange:{}], return: {}",
                _new_bounds,
                result);
     return result;
@@ -84,7 +83,7 @@ struct ColumnAnchor {
 
 - (void)prepareLayout
 {
-    Log::Trace(SPDLOC, "[NCPanelBriefViewFixedNumberLayout prepareLayout]");
+    Log::Trace("[NCPanelBriefViewFixedNumberLayout prepareLayout]");
     const auto anchor = [self getColumnAnchor];
     const auto collection_view = self.collectionView;
     const auto clip_bounds = collection_view.superview.bounds;

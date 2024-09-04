@@ -29,3 +29,4 @@ set -e
 ./libcxxbackport/bootstrap.sh
 ./lexilla/bootstrap.sh
 ./nlohmann/bootstrap.sh
+./unordered_dense/bootstrap.sh

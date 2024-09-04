@@ -73,7 +73,7 @@ LIBS=$(SRCROOT)/..
 
 // Paths - headers
 USE_HEADERMAP = NO
-HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/Catch2/include $(THRDPTY)/rapidjson/include $(THRDPTY)/libssh2/include $(THRDPTY)/pugixml/include $(THRDPTY)/zlib/include $(THRDPTY)/bz2/include $(THRDPTY)/libcurl/include $(THRDPTY)/MMTabBarView $(THRDPTY)/AppAuth/include $(THRDPTY)/pstld/include $(THRDPTY)/re2/include $(THRDPTY)/fmt/include $(THRDPTY)/lexilla/include $(THRDPTY)/nlohmann/include
+HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/Catch2/include $(THRDPTY)/rapidjson/include $(THRDPTY)/libssh2/include $(THRDPTY)/pugixml/include $(THRDPTY)/zlib/include $(THRDPTY)/bz2/include $(THRDPTY)/libcurl/include $(THRDPTY)/MMTabBarView $(THRDPTY)/AppAuth/include $(THRDPTY)/pstld/include $(THRDPTY)/re2/include $(THRDPTY)/fmt/include $(THRDPTY)/lexilla/include $(THRDPTY)/nlohmann/include $(THRDPTY)/unordered_dense/include
 
 // Paths - libraries
 LIBRARY_SEARCH_PATHS = $(THRDPTY)/spdlog/lib $(THRDPTY)/googletest/lib $(THRDPTY)/z/lib $(THRDPTY)/OpenSSL/lib $(THRDPTY)/libarchive/lib $(THRDPTY)/lzma/lib $(THRDPTY)/bz2/lib $(THRDPTY)/libssh2/lib  $(THRDPTY)/libcurl/lib $(THRDPTY)/pugixml/lib $(THRDPTY)/AppAuth/built $(THRDPTY)/pstld/lib $(THRDPTY)/zstd/lib $(THRDPTY)/lz4/lib $(THRDPTY)/lzo/lib $(THRDPTY)/re2/lib $(THRDPTY)/fmt/lib $(THRDPTY)/libcxxbackport/lib $(THRDPTY)/lexilla/lib

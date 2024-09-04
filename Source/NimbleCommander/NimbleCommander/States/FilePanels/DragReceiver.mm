@@ -20,6 +20,7 @@
 #include <filesystem>
 #include <expected>
 #include <iostream>
+#include <algorithm>
 
 namespace nc::panel {
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "OpenFile.h"
 #include "../NCPanelOpenWithMenuDelegate.h"
 #include "../PanelController.h"
@@ -7,6 +7,7 @@
 #include "../PanelAux.h"
 #include <VFS/VFS.h>
 #include <Utility/ObjCpp.h>
+#include <algorithm>
 
 namespace nc::panel::actions {
 

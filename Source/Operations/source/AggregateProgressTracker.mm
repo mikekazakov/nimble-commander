@@ -1,8 +1,9 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AggregateProgressTracker.h"
 #include "Statistics.h"
 #include <iostream>
 #include <Base/dispatch_cpp.h>
+#include <algorithm>
 
 namespace nc::ops {
 

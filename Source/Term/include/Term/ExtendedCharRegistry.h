@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <stdint.h>
 #include <CoreFoundation/CoreFoundation.h>
@@ -8,7 +8,7 @@
 #include <vector>
 #include <Base/CFPtr.h>
 #include <Base/spinlock.h>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 
 #ifdef __OBJC__
 #include <Cocoa/Cocoa.h>
@@ -93,7 +93,7 @@ private:
     };
 
     mutable spinlock m_Lock;
-    robin_hood::unordered_set<uint32_t, HashEqual, HashEqual> m_Lookup;
+    ankerl::unordered_dense::set<uint32_t, HashEqual, HashEqual> m_Lookup;
     CharsT m_Chars;
 };
 

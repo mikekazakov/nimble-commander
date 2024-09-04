@@ -6,6 +6,7 @@
 #include <Utility/StringExtras.h>
 #include <Utility/PathManip.h>
 #include <filesystem>
+#include <algorithm>
 
 @interface NCFilenameTextStorage ()
 @property(nonatomic, strong) NSMutableAttributedString *backingStore;

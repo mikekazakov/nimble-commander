@@ -13,6 +13,7 @@
 #include <Panel/UI/TagsPresentation.h>
 #include <Base/dispatch_cpp.h>
 #include <ranges>
+#include <algorithm>
 #include <fmt/format.h>
 #include "ConfigBinder.h"
 

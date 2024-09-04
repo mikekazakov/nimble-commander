@@ -1,7 +1,8 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ListingPromise.h"
 #include <VFS/VFSListingInput.h>
 #include <unordered_map>
+#include <algorithm>
 
 namespace nc::panel {
 

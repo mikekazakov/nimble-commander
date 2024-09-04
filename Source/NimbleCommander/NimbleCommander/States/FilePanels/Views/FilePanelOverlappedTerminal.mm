@@ -13,6 +13,7 @@
 #include <Base/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
+#include <algorithm>
 
 using namespace nc;
 using namespace nc::term;

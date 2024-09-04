@@ -5,6 +5,7 @@
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
+#include <algorithm>
 
 static const auto g_StateGoToKey = "filePanel.goToSheetLastPath";
 

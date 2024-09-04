@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "ModalDialogResponses.h"
@@ -6,13 +6,13 @@
 #include <mutex>
 #include <condition_variable>
 #include <optional>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 
 namespace nc::ops {
 
 struct AsyncDialogResponse {
     std::optional<long> response;
-    robin_hood::unordered_map<std::string, std::any> messages;
+    ankerl::unordered_dense::map<std::string, std::any> messages;
     std::mutex lock;
     std::condition_variable blocker;
 

@@ -70,8 +70,8 @@ private:
     void ReadOverrideFromConfig();
     void WriteOverridesToConfig() const;
 
-    robin_hood::unordered_flat_map<int, ShortCut> m_ShortCutsDefaults;
-    robin_hood::unordered_flat_map<int, ShortCut> m_ShortCutsOverrides;
+    ankerl::unordered_dense::map<int, ShortCut> m_ShortCutsDefaults;
+    ankerl::unordered_dense::map<int, ShortCut> m_ShortCutsOverrides;
 };
 
 class ActionsShortcutsManager::ShortCutsUpdater

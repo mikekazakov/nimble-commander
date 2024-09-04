@@ -169,7 +169,7 @@ static uint64_t GetSizedInt(const std::byte *_ptr, uint64_t _sz) noexcept
 
 static const std::string *InternalizeString(std::string_view _str) noexcept
 {
-    using Set = robin_hood::unordered_node_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>;
+    using Set = ankerl::unordered_dense::segmented_set<std::string, UnorderedStringHashEqual, UnorderedStringHashEqual>;
     [[clang::no_destroy]] static Set strings;
     [[clang::no_destroy]] static std::mutex mut;
 
@@ -762,7 +762,7 @@ std::vector<Tags::Tag> Tags::GatherAllItemsTags() noexcept
                      [](const std::filesystem::path &_path) -> std::vector<Tag> { return ReadTags(_path); });
 
     // And the consolidate them in a single dictionary
-    robin_hood::unordered_flat_set<Tags::Tag> tags;
+    ankerl::unordered_dense::set<Tags::Tag> tags;
     for( const auto &file_tags : files_tags ) {
         for( auto &file_tag : file_tags )
             tags.emplace(file_tag);

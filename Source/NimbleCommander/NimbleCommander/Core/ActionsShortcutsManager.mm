@@ -462,7 +462,7 @@ ActionsShortcutsManager::ActionsShortcutsManager()
 {
     // safety checks against malformed g_ActionsTags, only in Debug builds
     assert(
-        (robin_hood::unordered_map<std::string_view, int>{std::begin(g_ActionsTags), std::end(g_ActionsTags)}).size() ==
+        (ankerl::unordered_dense::map<std::string_view, int>{std::begin(g_ActionsTags), std::end(g_ActionsTags)}).size() ==
         std::size(g_ActionsTags));
 
     for( auto &d : g_DefaultShortcuts ) {

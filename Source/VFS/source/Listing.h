@@ -9,6 +9,7 @@
 #include <cassert>
 #include <chrono>
 #include <span>
+#include <robin_hood.h>
 
 /**
  * A note about symlinks handling. Listing must be aware, that some items might be symlinks.

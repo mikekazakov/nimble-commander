@@ -5,6 +5,7 @@
 #include <Utility/Tags.h>
 #include "../include/VFS/VFSDeclarations.h"
 #include <sys/types.h>
+#include <robin_hood.h>
 
 namespace nc::vfs {
 

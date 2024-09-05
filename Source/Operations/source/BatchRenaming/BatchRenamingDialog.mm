@@ -8,7 +8,7 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include "../Internal.h"
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 
 using namespace nc::ops;
 

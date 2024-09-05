@@ -1,7 +1,7 @@
 // Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/HexadecimalColor.h>
 #include <Utility/SystemInformation.h>
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 #include <vector>
 #include <algorithm>
 

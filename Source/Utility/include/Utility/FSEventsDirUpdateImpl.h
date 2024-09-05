@@ -5,7 +5,7 @@
 #include <CoreServices/CoreServices.h>
 #include <Base/spinlock.h>
 #include <filesystem>
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 
 namespace nc::utility {
 

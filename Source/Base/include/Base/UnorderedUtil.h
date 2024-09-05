@@ -6,8 +6,6 @@
 
 namespace nc {
 
-// TODO: rename the file
-
 struct UnorderedStringHashEqual {
     using is_transparent = void;
     using is_avalanching = void;

@@ -5,7 +5,7 @@
 #include "RapidJSON.h"
 #include <Base/spinlock.h>
 #include <Base/intrusive_ptr.h>
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 #include <vector>
 #include <algorithm>
 #include "OverwritesStorage.h"

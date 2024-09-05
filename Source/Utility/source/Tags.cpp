@@ -3,7 +3,7 @@
 #include <Base/CFPtr.h>
 #include <Base/CFStackAllocator.h>
 #include <Base/CFString.h>
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 #include <Base/algo.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreServices/CoreServices.h>

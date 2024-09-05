@@ -5,7 +5,7 @@
 #include <Base/spinlock.h>
 #include "WorkspaceExtensionIconsCache.h"
 #include <Utility/UTI.h>
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 
 namespace nc::vfsicon {
 

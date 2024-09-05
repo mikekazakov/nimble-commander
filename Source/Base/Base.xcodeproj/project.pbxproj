@@ -27,7 +27,7 @@
 		CF3989792B4162A5006103C1 /* CFDefaultsCPP.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3989542B4162A5006103C1 /* CFDefaultsCPP.h */; };
 		CF39897A2B4162A5006103C1 /* SpdlogFacade.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3989552B4162A5006103C1 /* SpdlogFacade.h */; };
 		CF39897B2B4162A5006103C1 /* SysLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3989562B4162A5006103C1 /* SysLocale.h */; };
-		CF39897C2B4162A5006103C1 /* RobinHoodUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3989572B4162A5006103C1 /* RobinHoodUtil.h */; };
+		CF39897C2B4162A5006103C1 /* UnorderedUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3989572B4162A5006103C1 /* UnorderedUtil.h */; };
 		CF39897D2B4162A5006103C1 /* DispatchGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3989582B4162A5006103C1 /* DispatchGroup.h */; };
 		CF39897E2B4162A5006103C1 /* WhereIs.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3989592B4162A5006103C1 /* WhereIs.h */; };
 		CF39897F2B4162A5006103C1 /* ExecutionDeadline.h in Headers */ = {isa = PBXBuildFile; fileRef = CF39895A2B4162A5006103C1 /* ExecutionDeadline.h */; };
@@ -125,7 +125,7 @@
 		CF3989542B4162A5006103C1 /* CFDefaultsCPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFDefaultsCPP.h; path = include/Base/CFDefaultsCPP.h; sourceTree = "<group>"; };
 		CF3989552B4162A5006103C1 /* SpdlogFacade.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpdlogFacade.h; path = include/Base/SpdlogFacade.h; sourceTree = "<group>"; };
 		CF3989562B4162A5006103C1 /* SysLocale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SysLocale.h; path = include/Base/SysLocale.h; sourceTree = "<group>"; };
-		CF3989572B4162A5006103C1 /* RobinHoodUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RobinHoodUtil.h; path = include/Base/RobinHoodUtil.h; sourceTree = "<group>"; };
+		CF3989572B4162A5006103C1 /* UnorderedUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UnorderedUtil.h; path = include/Base/UnorderedUtil.h; sourceTree = "<group>"; };
 		CF3989582B4162A5006103C1 /* DispatchGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DispatchGroup.h; path = include/Base/DispatchGroup.h; sourceTree = "<group>"; };
 		CF3989592B4162A5006103C1 /* WhereIs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WhereIs.h; path = include/Base/WhereIs.h; sourceTree = "<group>"; };
 		CF39895A2B4162A5006103C1 /* ExecutionDeadline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExecutionDeadline.h; path = include/Base/ExecutionDeadline.h; sourceTree = "<group>"; };
@@ -286,7 +286,7 @@
 				CF3989502B4162A5006103C1 /* PosixFilesystem.h */,
 				CF3989692B4162A5006103C1 /* PosixFilesystemImpl.h */,
 				CF3989532B4162A5006103C1 /* PosixFilesystemMock.h */,
-				CF3989572B4162A5006103C1 /* RobinHoodUtil.h */,
+				CF3989572B4162A5006103C1 /* UnorderedUtil.h */,
 				CF3989632B4162A5006103C1 /* ScopedObservable.h */,
 				CF39896D2B4162A5006103C1 /* SerialQueue.h */,
 				CF3989552B4162A5006103C1 /* SpdlogFacade.h */,
@@ -373,7 +373,7 @@
 				CF3989792B4162A5006103C1 /* CFDefaultsCPP.h in Headers */,
 				CF3989862B4162A5006103C1 /* debug.h in Headers */,
 				CF3989762B4162A5006103C1 /* LRUCache.h in Headers */,
-				CF39897C2B4162A5006103C1 /* RobinHoodUtil.h in Headers */,
+				CF39897C2B4162A5006103C1 /* UnorderedUtil.h in Headers */,
 				CF3989782B4162A5006103C1 /* PosixFilesystemMock.h in Headers */,
 				CF39898C2B4162A5006103C1 /* UUID.h in Headers */,
 				CF3989822B4162A5006103C1 /* CFStackAllocator.h in Headers */,

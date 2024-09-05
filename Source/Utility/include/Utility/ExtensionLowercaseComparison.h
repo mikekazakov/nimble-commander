@@ -4,7 +4,7 @@
 #include <string>
 #include <string_view>
 
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 #include <Base/spinlock.h>
 
 namespace nc::utility {

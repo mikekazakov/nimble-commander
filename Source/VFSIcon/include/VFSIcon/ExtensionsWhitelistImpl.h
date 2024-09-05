@@ -1,7 +1,7 @@
 // Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExtensionsWhitelist.h"
 #include <Utility/UTI.h>
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 
 #include <vector>
 #include <mutex>

@@ -56,7 +56,7 @@ DEAD_CODE_STRIPPING = YES
 OTHER_CFLAGS = -fvisibility=hidden -Wframe-larger-than=32768 -fbracket-depth=512
 
 // C++
-OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2b -Wall -Wextra -Wold-style-cast -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include -cxx-isystem$(THRDPTY)/googletest/include -cxx-isystem$(THRDPTY)/robin_hood/include -cxx-isystem$(THRDPTY)/frozen/include
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2b -Wall -Wextra -Wold-style-cast -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include -cxx-isystem$(THRDPTY)/googletest/include -cxx-isystem$(THRDPTY)/frozen/include
 
 // Linker
 OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework Quartz -framework QuartzCore -framework DiskArbitration -framework OpenDirectory -framework ServiceManagement -framework Security -framework Carbon -framework NetFS -weak_framework UniformTypeIdentifiers -lxml2 -larchive -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lcurl -lpugixml -liconv -lAppAuth-macOS -lpstld -lzstd -llz4 -llzo2 -lre2 -lfmt -lcxxbackport -llexilla -v -ld_classic

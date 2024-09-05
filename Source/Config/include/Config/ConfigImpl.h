@@ -7,6 +7,7 @@
 #include <Base/intrusive_ptr.h>
 #include <Base/RobinHoodUtil.h>
 #include <vector>
+#include <algorithm>
 #include "OverwritesStorage.h"
 #include "Executor.h"
 

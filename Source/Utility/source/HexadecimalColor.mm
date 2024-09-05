@@ -3,6 +3,7 @@
 #include <Utility/SystemInformation.h>
 #include <Base/RobinHoodUtil.h>
 #include <vector>
+#include <algorithm>
 
 // In some contexts, primarily OpenGL, the term "RGBA" actually means the colors are stored in
 // memory such that R is at the lowest address, G after it, B after that, and A last. This is not

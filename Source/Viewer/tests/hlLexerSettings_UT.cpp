@@ -2,7 +2,6 @@
 #include "Tests.h"
 #include "Highlighting/LexerSettings.h"
 #include <lexilla/SciLexer.h>
-#include <robin_hood.h>
 
 using namespace nc::viewer::hl;
 

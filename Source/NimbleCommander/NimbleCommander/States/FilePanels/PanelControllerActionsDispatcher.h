@@ -1,10 +1,9 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/MIMResponder.h>
-#include <unordered_map>
 #include <Panel/PanelViewKeystrokeSink.h>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 
 @class PanelController;
 
@@ -13,7 +12,7 @@ namespace actions {
 struct PanelAction;
 }
 
-using PanelActionsMap = robin_hood::unordered_flat_map<SEL, std::unique_ptr<const actions::PanelAction>>;
+using PanelActionsMap = ankerl::unordered_dense::map<SEL, std::unique_ptr<const actions::PanelAction>>;
 } // namespace nc::panel
 
 @interface NCPanelControllerActionsDispatcher : AttachedResponder <NCPanelViewKeystrokeSink>

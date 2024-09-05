@@ -461,9 +461,8 @@ void ActionsShortcutsManager::ShortCutsUpdater::CheckAndUpdate() const
 ActionsShortcutsManager::ActionsShortcutsManager()
 {
     // safety checks against malformed g_ActionsTags, only in Debug builds
-    assert(
-        (ankerl::unordered_dense::map<std::string_view, int>{std::begin(g_ActionsTags), std::end(g_ActionsTags)}).size() ==
-        std::size(g_ActionsTags));
+    assert((ankerl::unordered_dense::map<std::string_view, int>{std::begin(g_ActionsTags), std::end(g_ActionsTags)})
+               .size() == std::size(g_ActionsTags));
 
     for( auto &d : g_DefaultShortcuts ) {
         auto i = g_ActionToTag.find(std::string_view{d.first});

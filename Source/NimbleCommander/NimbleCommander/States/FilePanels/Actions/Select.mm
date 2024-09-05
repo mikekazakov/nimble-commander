@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Select.h"
 #include <Utility/FileMask.h>
 #include <Utility/StringExtras.h>
@@ -11,7 +11,7 @@
 #include <VFS/VFS.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 #include <mutex>
 
 namespace nc::panel::actions {
@@ -41,7 +41,7 @@ public:
     }
 
 private:
-    using MapT = robin_hood::unordered_flat_map<ptrdiff_t, nc::panel::FindFilesMask>;
+    using MapT = ankerl::unordered_dense::map<ptrdiff_t, nc::panel::FindFilesMask>;
 
     ptrdiff_t ToNumber(NSWindow *_wnd) noexcept
     {

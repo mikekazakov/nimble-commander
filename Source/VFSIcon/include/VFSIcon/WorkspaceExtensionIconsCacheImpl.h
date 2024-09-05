@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -22,8 +22,8 @@ public:
     NSImage *GenericFolderIcon() const override;
 
 private:
-    using IconsStorage = robin_hood::
-        unordered_flat_map<std::string, NSImage *, RHTransparentStringHashEqual, RHTransparentStringHashEqual>;
+    using IconsStorage =
+        ankerl::unordered_dense::map<std::string, NSImage *, UnorderedStringHashEqual, UnorderedStringHashEqual>;
 
     NSImage *Find_Locked(const std::string &_extension) const;
     void Commit_Locked(const std::string &_extension, NSImage *_image);

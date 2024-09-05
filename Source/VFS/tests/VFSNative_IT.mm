@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <Base/algo.h>
@@ -131,8 +131,7 @@ TEST_CASE(PREFIX "Fetching")
 {
     TestDir test_dir_holder;
     std::filesystem::path test_dir = test_dir_holder.directory;
-    robin_hood::unordered_flat_set<std::string, nc::RHTransparentStringHashEqual, nc::RHTransparentStringHashEqual>
-        to_visit;
+    ankerl::unordered_dense::set<std::string, nc::UnorderedStringHashEqual, nc::UnorderedStringHashEqual> to_visit;
     const uid_t uid = geteuid();
     const uid_t gid = getgid();
     const time_t time = ::time(nullptr);

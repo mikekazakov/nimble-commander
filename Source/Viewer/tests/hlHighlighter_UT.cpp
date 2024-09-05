@@ -2,13 +2,13 @@
 #include "Tests.h"
 #include "Highlighting/Highlighter.h"
 #include <lexilla/SciLexer.h>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 
 using namespace nc::viewer::hl;
 
 #define PREFIX "hl::Highlighter "
 
-[[clang::no_destroy]] static const robin_hood::unordered_flat_map<char, Style> m{
+[[clang::no_destroy]] static const ankerl::unordered_dense::map<char, Style> m{
     {'D', Style::Default},
     {'C', Style::Comment},
     {'W', Style::Keyword},

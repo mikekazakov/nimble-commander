@@ -1,9 +1,9 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Favorites.h"
 #include <Config/Config.h>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 
 namespace nc::panel {
 
@@ -52,7 +52,7 @@ private:
     static nc::config::Value FavoriteToJSON(const Favorite &_favorite);
     static std::optional<Favorite> JSONToFavorite(const nc::config::Value &_json);
 
-    robin_hood::unordered_flat_map<size_t, Visit> m_Visits;
+    ankerl::unordered_dense::map<size_t, Visit> m_Visits;
     std::vector<Favorite> m_Favorites;
 };
 

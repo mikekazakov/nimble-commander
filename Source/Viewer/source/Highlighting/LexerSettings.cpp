@@ -4,7 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <frozen/unordered_map.h>
 #include <frozen/string.h>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 #include <fmt/format.h>
 #include <map>
 
@@ -12,10 +12,10 @@ namespace nc::viewer::hl {
 
 using json = nlohmann::json;
 
-[[clang::no_destroy]] static const robin_hood::unordered_flat_map<std::string_view, char> g_SCENames = [] {
+[[clang::no_destroy]] static const ankerl::unordered_dense::map<std::string_view, char> g_SCENames = [] {
     static_assert(std::size(Lexilla::g_SCENames) == std::size(Lexilla::g_SCEValues));
     const size_t len = std::size(Lexilla::g_SCENames);
-    robin_hood::unordered_flat_map<std::string_view, char> names;
+    ankerl::unordered_dense::map<std::string_view, char> names;
     names.reserve(len);
     for( size_t i = 0; i < len; ++i ) {
         names.emplace(Lexilla::g_SCENames[i], Lexilla::g_SCEValues[i]);

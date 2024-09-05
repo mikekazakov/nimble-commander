@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExtensionsWhitelist.h"
 #include <Utility/UTI.h>
 #include <Base/RobinHoodUtil.h>
@@ -17,7 +17,7 @@ public:
 
 private:
     using WhitelistStorage =
-        robin_hood::unordered_flat_map<std::string, bool, RHTransparentStringHashEqual, RHTransparentStringHashEqual>;
+        ankerl::unordered_dense::map<std::string, bool, UnorderedStringHashEqual, UnorderedStringHashEqual>;
 
     const nc::utility::UTIDB &m_UTIDB;
     std::vector<std::string> m_Allowed_UTIs;

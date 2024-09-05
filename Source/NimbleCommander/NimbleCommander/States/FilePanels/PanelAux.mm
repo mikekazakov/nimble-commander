@@ -15,7 +15,6 @@
 #include <Operations/Copying.h>
 #include <Base/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
-#include <robin_hood.h>
 
 // TODO: remove this, DI stuff instead
 #include <NimbleCommander/Bootstrap/AppDelegate.h>

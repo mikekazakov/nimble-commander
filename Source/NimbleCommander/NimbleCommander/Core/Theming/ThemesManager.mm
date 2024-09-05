@@ -3,7 +3,7 @@
 #include "Theme.h"
 #include <Config/RapidJSON.h>
 #include <Base/dispatch_cpp.h>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 #include <charconv>
 #include <fmt/core.h>
 #include <ranges>
@@ -460,7 +460,7 @@ std::string ThemesManager::SuitableNameForNewTheme(const std::string &_current_t
         return {}; // empty names are not allowed
 
     const auto themes = ThemeNames();
-    robin_hood::unordered_flat_set<std::string> names(themes.begin(), themes.end());
+    ankerl::unordered_dense::set<std::string> names(themes.begin(), themes.end());
 
     if( names.contains(_current_theme_name) == false ) {
         // no collision, accept as-is

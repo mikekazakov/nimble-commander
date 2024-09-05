@@ -13,7 +13,7 @@
 #include <Base/dispatch_cpp.h>
 #include <Config/Config.h>
 #include "Helpers.h"
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 #include <fmt/format.h>
 
 namespace nc::panel::actions {
@@ -23,10 +23,10 @@ using namespace std::literals;
 [[clang::no_destroy]] static const auto g_Suffix = "copy"s; // TODO: localize
 static const auto g_DeselectConfigFlag = "filePanel.general.deselectItemsAfterFileOperations";
 
-static robin_hood::unordered_set<std::string> ExtractFilenames(const VFSListing &_listing);
+static ankerl::unordered_dense::set<std::string> ExtractFilenames(const VFSListing &_listing);
 static std::string ProduceFormCLowercase(std::string_view _string);
 static std::string FindFreeFilenameToDuplicateIn(const VFSListingItem &_item,
-                                                 const robin_hood::unordered_set<std::string> &_filenames);
+                                                 const ankerl::unordered_dense::set<std::string> &_filenames);
 static void CommonPerform(PanelController *_target, const std::vector<VFSListingItem> &_items, bool _add_deselector);
 
 Duplicate::Duplicate(nc::config::Config &_config) : m_Config(_config)
@@ -129,7 +129,7 @@ static std::pair<int, std::string> ExtractExistingDuplicateInfo(const std::strin
 }
 
 static std::string FindFreeFilenameToDuplicateIn(const VFSListingItem &_item,
-                                                 const robin_hood::unordered_set<std::string> &_filenames)
+                                                 const ankerl::unordered_dense::set<std::string> &_filenames)
 {
     const auto max_duplicates = 100;
     const auto filename = _item.FilenameWithoutExt();
@@ -153,9 +153,9 @@ static std::string FindFreeFilenameToDuplicateIn(const VFSListingItem &_item,
     return "";
 }
 
-static robin_hood::unordered_set<std::string> ExtractFilenames(const VFSListing &_listing)
+static ankerl::unordered_dense::set<std::string> ExtractFilenames(const VFSListing &_listing)
 {
-    robin_hood::unordered_set<std::string> filenames;
+    ankerl::unordered_dense::set<std::string> filenames;
     for( int i = 0, e = _listing.Count(); i != e; ++i )
         filenames.emplace(ProduceFormCLowercase(_listing.Filename(i)));
     return filenames;

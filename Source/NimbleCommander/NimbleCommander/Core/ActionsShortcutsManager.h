@@ -10,7 +10,6 @@
 #include <Base/Observable.h>
 #include <Base/RobinHoodUtil.h>
 #include <Utility/ActionShortcut.h>
-#include <robin_hood.h>
 #include <vector>
 #include <span>
 #include <string_view>

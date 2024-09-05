@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Host.h"
 #include "../Log.h"
 #include <vector>
@@ -29,9 +29,9 @@ static constexpr const char *g_LastResortFilename = "data";
 static constexpr std::string_view g_ExtensionsList[] = {"bz2", "gz", "lz", "lz4", "lzma", "lzo", "xz", "z", "zst"};
 
 // O(1) unordered set of the extensions
-[[clang::no_destroy]] static const robin_hood::
-    unordered_flat_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>
-        g_ExtensionsSet(std::begin(g_ExtensionsList), std::end(g_ExtensionsList));
+[[clang::no_destroy]] static const ankerl::unordered_dense::
+    set<std::string, UnorderedStringHashEqual, UnorderedStringHashEqual> g_ExtensionsSet(std::begin(g_ExtensionsList),
+                                                                                         std::end(g_ExtensionsList));
 
 namespace {
 struct Extracted {

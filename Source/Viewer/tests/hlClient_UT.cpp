@@ -3,14 +3,14 @@
 #include "Highlighting/Client.h"
 #include <Base/mach_time.h>
 #include <CoreFoundation/CoreFoundation.h>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 #include <fmt/format.h>
 
 using namespace nc::viewer::hl;
 
 #define PREFIX "hl::Client "
 
-[[clang::no_destroy]] static const robin_hood::unordered_flat_map<char, nc::viewer::hl::Style> m{
+[[clang::no_destroy]] static const ankerl::unordered_dense::map<char, nc::viewer::hl::Style> m{
     {'D', nc::viewer::hl::Style::Default},
     {'C', nc::viewer::hl::Style::Comment},
     {'W', nc::viewer::hl::Style::Keyword},

@@ -108,7 +108,7 @@ std::vector<FileSettingsStorage::Lang> FileSettingsStorage::LoadLangs(const std:
         throw std::invalid_argument(fmt::format("Parse error in '{}': {}", _path.native(), ex.what()));
     }
 
-    robin_hood::unordered_flat_set<std::string_view, RHTransparentStringHashEqual, RHTransparentStringHashEqual> set;
+    ankerl::unordered_dense::set<std::string_view, UnorderedStringHashEqual, UnorderedStringHashEqual> set;
     set.reserve(output.size());
     for( auto &lang : output ) {
         if( set.contains(lang.name) ) {

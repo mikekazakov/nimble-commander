@@ -49,7 +49,7 @@ struct StateStorage {
     data::Model *m_Data;
     std::vector<__weak id<NCPanelViewKeystrokeSink>> m_KeystrokeSinks;
 
-    robin_hood::unordered_flat_map<uint64_t, StateStorage> m_States;
+    ankerl::unordered_dense::map<uint64_t, StateStorage> m_States;
     NSString *m_HeaderTitle;
     NCPanelViewFieldEditor *m_RenamingEditor;
 

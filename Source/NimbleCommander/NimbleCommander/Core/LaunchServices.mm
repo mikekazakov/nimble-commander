@@ -5,7 +5,7 @@
 #include <Utility/StringExtras.h>
 #include <Cocoa/Cocoa.h>
 #include <unordered_map>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 #include <mutex>
 
 namespace nc::core {
@@ -123,10 +123,10 @@ LauchServicesHandlers::LauchServicesHandlers(const std::vector<LauchServicesHand
 
     // maps handler path to usage amount
     // then use only handlers with usage amount == _input.size() (or common ones)
-    robin_hood::unordered_map<std::string, int> handlers_count;
+    ankerl::unordered_dense::map<std::string, int> handlers_count;
     for( auto &i : _handlers_to_merge ) {
         // a very inefficient approach, should be rewritten if will cause lags on UI
-        robin_hood::unordered_set<std::string> inserted;
+        ankerl::unordered_dense::set<std::string> inserted;
         for( auto &p : i.m_Paths )
             // here we exclude multiple counting for repeating handlers for one content type
             if( !inserted.count(p) ) {

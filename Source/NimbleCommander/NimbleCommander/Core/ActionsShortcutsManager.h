@@ -8,9 +8,8 @@
 // ⌘ - NSCommandKeyMask
 
 #include <Base/Observable.h>
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 #include <Utility/ActionShortcut.h>
-#include <robin_hood.h>
 #include <vector>
 #include <span>
 #include <string_view>
@@ -70,8 +69,8 @@ private:
     void ReadOverrideFromConfig();
     void WriteOverridesToConfig() const;
 
-    robin_hood::unordered_flat_map<int, ShortCut> m_ShortCutsDefaults;
-    robin_hood::unordered_flat_map<int, ShortCut> m_ShortCutsOverrides;
+    ankerl::unordered_dense::map<int, ShortCut> m_ShortCutsDefaults;
+    ankerl::unordered_dense::map<int, ShortCut> m_ShortCutsOverrides;
 };
 
 class ActionsShortcutsManager::ShortCutsUpdater

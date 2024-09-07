@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/UTIImpl.h>
 #include <CoreServices/CoreServices.h>
 #include <Base/CFPtr.h>
@@ -9,18 +9,14 @@ namespace nc::utility {
 
 using nc::base::CFPtr;
 
-UTIDBImpl::UTIDBImpl() = default;
-
-UTIDBImpl::~UTIDBImpl() = default;
-
-std::string UTIDBImpl::UTIForExtension(const std::string &_extension) const
+std::string UTIDBImpl::UTIForExtension(std::string_view _extension) const
 {
     std::lock_guard lock{m_ExtensionToUTILock};
     if( auto i = m_ExtensionToUTI.find(_extension); i != std::end(m_ExtensionToUTI) )
         return i->second;
 
     std::string uti;
-    if( const auto ext = CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StdStringNoCopy(_extension)) ) {
+    if( const auto ext = CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StringNoCopy(_extension)) ) {
         const auto cf_uti = CFPtr<CFStringRef>::adopt(
             UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext.get(), nullptr));
         if( cf_uti ) {
@@ -31,25 +27,25 @@ std::string UTIDBImpl::UTIForExtension(const std::string &_extension) const
     return uti;
 }
 
-bool UTIDBImpl::IsDeclaredUTI(const std::string &_uti) const
+bool UTIDBImpl::IsDeclaredUTI(std::string_view _uti) const
 {
-    if( const auto ext = CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StdStringNoCopy(_uti)) ) {
+    if( const auto ext = CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StringNoCopy(_uti)) ) {
         return UTTypeIsDeclared(ext.get());
     }
     return false;
 }
 
-bool UTIDBImpl::IsDynamicUTI(const std::string &_uti) const
+bool UTIDBImpl::IsDynamicUTI(std::string_view _uti) const
 {
     constexpr std::string_view prefix = "dyn.a";
-    return std::string_view{_uti}.starts_with(prefix);
+    return _uti.starts_with(prefix);
 }
 
 static void TraverseConformingUTIs(
-    const std::string &_uti,
-    robin_hood::unordered_flat_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual> &_target)
+    std::string_view _uti,
+    ankerl::unordered_dense::set<std::string, UnorderedStringHashEqual, UnorderedStringHashEqual> &_target)
 {
-    const auto uti = CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StdString(_uti));
+    const auto uti = CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StringNoCopy(_uti));
     if( !uti )
         return;
 
@@ -85,15 +81,14 @@ static void TraverseConformingUTIs(
     }
 }
 
-bool UTIDBImpl::ConformsTo(const std::string &_uti, const std::string &_conforms_to) const
+bool UTIDBImpl::ConformsTo(std::string_view _uti, std::string_view _conforms_to) const
 {
     std::lock_guard lock{m_ConformsToLock};
     if( const auto it = m_ConformsTo.find(_uti); it != m_ConformsTo.end() ) {
         const auto &conforming = it->second;
         return conforming.contains(_conforms_to);
     }
-    robin_hood::unordered_flat_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>
-        conforming_utis;
+    ankerl::unordered_dense::set<std::string, UnorderedStringHashEqual, UnorderedStringHashEqual> conforming_utis;
     TraverseConformingUTIs(_uti, conforming_utis);
 
     const bool does_conform = conforming_utis.contains(_conforms_to);

@@ -22,7 +22,7 @@
 #include "PanelBriefViewDynamicWidthLayout.h"
 #include "PanelBriefViewFixedNumberLayout.h"
 #include <Utility/ObjCpp.h>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 
 using namespace ::nc::panel;
 using ::nc::vfsicon::IconRepository;
@@ -122,7 +122,7 @@ bool PanelBriefViewItemLayoutConstants::operator!=(const PanelBriefViewItemLayou
     data::Model *m_Data;
     std::vector<unsigned short> m_IntrinsicItemsWidths;
     IconRepository *m_IconsRepository;
-    robin_hood::unordered_map<IconRepository::SlotKey, int> m_IconSlotToItemIndexMapping;
+    ankerl::unordered_dense::map<IconRepository::SlotKey, int> m_IconSlotToItemIndexMapping;
     PanelBriefViewItemLayoutConstants m_ItemLayout;
     PanelBriefViewColumnsLayout m_ColumnsLayout;
     __weak PanelView *m_PanelView;

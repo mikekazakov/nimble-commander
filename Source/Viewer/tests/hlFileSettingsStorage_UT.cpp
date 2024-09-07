@@ -1,7 +1,6 @@
 // Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "Highlighting/FileSettingsStorage.h"
-#include <robin_hood.h>
 #include <fstream>
 #include <Base/dispatch_cpp.h>
 #include <CoreFoundation/CoreFoundation.h>

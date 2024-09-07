@@ -8,13 +8,13 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include "../Internal.h"
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 
 using namespace nc::ops;
 
 static auto g_MyPrivateTableViewDataType = @"com.magnumbytes.nc.ops.BatchRenameSheetControllerPrivateTableViewDataType";
 
-[[clang::no_destroy]] static const robin_hood::unordered_map<long, NSString *> g_InsertSnippets = {
+[[clang::no_destroy]] static const ankerl::unordered_dense::map<long, NSString *> g_InsertSnippets = {
     {101, @"[N]"},        //
     {102, @"[N1]"},       //
     {103, @"[N2-5]"},     //
@@ -151,8 +151,8 @@ static auto g_MyPrivateTableViewDataType = @"com.magnumbytes.nc.ops.BatchRenameS
 
 @end
 
-using SourceReverseMappingStorage = robin_hood::
-    unordered_flat_map<std::string, size_t, nc::RHTransparentStringHashEqual, nc::RHTransparentStringHashEqual>;
+using SourceReverseMappingStorage =
+    ankerl::unordered_dense::map<std::string, size_t, nc::UnorderedStringHashEqual, nc::UnorderedStringHashEqual>;
 
 @implementation NCOpsBatchRenamingDialog {
     std::vector<BatchRenamingScheme::FileInfo> m_FileInfos;

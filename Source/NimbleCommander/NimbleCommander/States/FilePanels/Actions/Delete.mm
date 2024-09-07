@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Delete.h"
 #include "../PanelController.h"
 #include "../MainWindowFilePanelState.h"
@@ -9,14 +9,14 @@
 #include <Operations/Deletion.h>
 #include <Operations/DeletionDialog.h>
 #include "../../MainWindowController.h"
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 #include <Base/dispatch_cpp.h>
 
 namespace nc::panel::actions {
 
 static bool CommonDeletePredicate(PanelController *_target);
 static bool AllAreNative(const std::vector<VFSListingItem> &_c);
-static robin_hood::unordered_set<std::string> ExtractDirectories(const std::vector<VFSListingItem> &_c);
+static ankerl::unordered_dense::set<std::string> ExtractDirectories(const std::vector<VFSListingItem> &_c);
 static bool TryTrash(const std::vector<VFSListingItem> &_c, utility::NativeFSManager &_fsman);
 static void AddPanelRefreshEpilog(PanelController *_target, nc::ops::Operation &_operation);
 
@@ -140,9 +140,9 @@ static bool AllAreNative(const std::vector<VFSListingItem> &_c)
     return std::all_of(std::begin(_c), std::end(_c), [&](auto &i) { return i.Host()->IsNativeFS(); });
 }
 
-static robin_hood::unordered_set<std::string> ExtractDirectories(const std::vector<VFSListingItem> &_c)
+static ankerl::unordered_dense::set<std::string> ExtractDirectories(const std::vector<VFSListingItem> &_c)
 {
-    robin_hood::unordered_set<std::string> directories;
+    ankerl::unordered_dense::set<std::string> directories;
     for( const auto &i : _c )
         directories.emplace(i.Directory());
     return directories;

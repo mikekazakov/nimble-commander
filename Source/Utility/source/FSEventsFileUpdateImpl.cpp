@@ -6,6 +6,7 @@
 #include <Base/dispatch_cpp.h>
 #include <Base/mach_time.h>
 #include <iostream>
+#include <algorithm>
 #include <fmt/std.h>
 
 namespace nc::utility {
@@ -18,12 +19,12 @@ static std::optional<struct stat> GetStat(const std::filesystem::path &_path) no
 
 size_t FSEventsFileUpdateImpl::PathHash::operator()(const std::filesystem::path &_path) const noexcept
 {
-    return robin_hood::hash_bytes(_path.native().c_str(), _path.native().size());
+    return ankerl::unordered_dense::hash<std::string_view>{}(_path.native());
 }
 
 size_t FSEventsFileUpdateImpl::PathHash::operator()(const std::string_view &_path) const noexcept
 {
-    return robin_hood::hash_bytes(_path.data(), _path.size());
+    return ankerl::unordered_dense::hash<std::string_view>{}(_path);
 }
 
 bool FSEventsFileUpdateImpl::PathEqual::operator()(const std::filesystem::path &_lhs,

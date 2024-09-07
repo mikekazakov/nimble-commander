@@ -254,7 +254,7 @@ size_t ExtendedCharRegistry::HashEqual::operator()(uint32_t _idx) const noexcept
 
 size_t ExtendedCharRegistry::HashEqual::operator()(std::u16string_view _str) const noexcept
 {
-    return robin_hood::hash_bytes(_str.data(), _str.length() * sizeof(char16_t));
+    return ankerl::unordered_dense::hash<std::u16string_view>{}(_str);
 }
 
 bool ExtendedCharRegistry::HashEqual::operator()(std::u16string_view _lhs, std::u16string_view _rhs) const noexcept

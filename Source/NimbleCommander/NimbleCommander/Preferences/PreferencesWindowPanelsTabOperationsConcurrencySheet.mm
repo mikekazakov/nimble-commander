@@ -1,7 +1,7 @@
 // Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowPanelsTabOperationsConcurrencySheet.h"
 #include <Base/algo.h>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 #include <vector>
 #include <ranges>
 #include <fmt/core.h>
@@ -20,7 +20,7 @@
 @implementation PreferencesWindowPanelsTabOperationsConcurrencySheet {
     std::string m_OriginalExclusionList;
     std::string m_FinalExclusionList;
-    robin_hood::unordered_map<std::string, NSButton *> m_Tags;
+    ankerl::unordered_dense::map<std::string, NSButton *> m_Tags;
 }
 
 @synthesize exclusionList = m_FinalExclusionList;

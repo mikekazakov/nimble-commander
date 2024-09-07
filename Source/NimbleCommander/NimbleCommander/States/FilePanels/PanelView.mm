@@ -5,7 +5,7 @@
 #include <Utility/MIMResponder.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 #include "PanelViewLayoutSupport.h"
 #include <Panel/PanelData.h>
 #include <Panel/Log.h>
@@ -49,7 +49,7 @@ struct StateStorage {
     data::Model *m_Data;
     std::vector<__weak id<NCPanelViewKeystrokeSink>> m_KeystrokeSinks;
 
-    robin_hood::unordered_flat_map<uint64_t, StateStorage> m_States;
+    ankerl::unordered_dense::map<uint64_t, StateStorage> m_States;
     NSString *m_HeaderTitle;
     NCPanelViewFieldEditor *m_RenamingEditor;
 

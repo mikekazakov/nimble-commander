@@ -2,7 +2,7 @@
 #pragma once
 
 #include <Base/Observable.h>
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 #include <Config/Config.h>
 
 #include "Appearance.h"
@@ -149,10 +149,10 @@ private:
     // Note copy-assignable
     ThemesManager &operator=(const ThemesManager &) = delete;
 
-    using ThemesDataT = robin_hood::unordered_flat_map<std::string,
-                                                       std::shared_ptr<const nc::config::Document>,
-                                                       RHTransparentStringHashEqual,
-                                                       RHTransparentStringHashEqual>;
+    using ThemesDataT = ankerl::unordered_dense::map<std::string,
+                                                     std::shared_ptr<const nc::config::Document>,
+                                                     UnorderedStringHashEqual,
+                                                     UnorderedStringHashEqual>;
 
     void LoadThemes();
     void LoadDefaultThemes();

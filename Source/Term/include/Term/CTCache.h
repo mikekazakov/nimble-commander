@@ -1,9 +1,9 @@
-// Copyright (C) 2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "ExtendedCharRegistry.h"
 #include <CoreText/CoreText.h>
 #include <Base/CFPtr.h>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 #include <array>
 
 namespace nc::term {
@@ -74,8 +74,8 @@ private:
     uint16_t FindOrInsert(CTFontRef _font);
 
     const ExtendedCharRegistry &m_Reg;
-    std::array<DisplayChar, 128> m_BasicLatinChars;                     // [0..127], contiguous
-    robin_hood::unordered_flat_map<char32_t, DisplayChar> m_OtherChars; // [128..inf], sparse
+    std::array<DisplayChar, 128> m_BasicLatinChars;                   // [0..127], contiguous
+    ankerl::unordered_dense::map<char32_t, DisplayChar> m_OtherChars; // [128..inf], sparse
 
     std::vector<base::CFPtr<CTFontRef>> m_Fonts; // 0 - the base font
     std::vector<Single> m_Singles;

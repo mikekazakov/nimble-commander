@@ -3,6 +3,7 @@
 #include <Utility/FontExtras.h>
 #include <memory_resource>
 #include <iostream>
+#include <algorithm>
 
 namespace nc::term {
 

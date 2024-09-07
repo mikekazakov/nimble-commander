@@ -5,7 +5,7 @@
 #include <VFS/Host.h>
 #include <deque>
 #include <mutex>
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 #include <Base/CFPtr.h>
 #include <string_view>
 #include <functional>
@@ -94,10 +94,8 @@ public:
     void CommitRename(const std::string &_old_path, const std::string &_new_path);
 
 private:
-    using DirectoriesT = robin_hood::unordered_flat_map<std::string,
-                                                        std::shared_ptr<Directory>,
-                                                        RHTransparentStringHashEqual,
-                                                        RHTransparentStringHashEqual>;
+    using DirectoriesT = ankerl::unordered_dense::
+        map<std::string, std::shared_ptr<Directory>, UnorderedStringHashEqual, UnorderedStringHashEqual>;
 
     std::shared_ptr<Directory> FindDirectoryInt(std::string_view _path) const noexcept;
     void EraseEntryInt(const std::string &_path);

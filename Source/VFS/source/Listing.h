@@ -9,6 +9,7 @@
 #include <cassert>
 #include <chrono>
 #include <span>
+#include <ankerl/unordered_dense.h>
 
 /**
  * A note about symlinks handling. Listing must be aware, that some items might be symlinks.
@@ -174,7 +175,7 @@ private:
     base::variable_container<std::string> m_Symlinks;
     base::variable_container<std::string> m_DisplayFilenames;
     base::variable_container<base::CFString> m_DisplayFilenamesCF;
-    robin_hood::unordered_flat_map<size_t, std::vector<utility::Tags::Tag>> m_Tags;
+    ankerl::unordered_dense::map<size_t, std::vector<utility::Tags::Tag>> m_Tags;
 
     // this is a copy of POSIX/BSD constants to reduce headers pollution
     inline constexpr static const mode_t m_S_IFMT = 0170000;

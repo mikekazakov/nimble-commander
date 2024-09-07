@@ -19,7 +19,6 @@ set -e
 ./fmt/bootstrap.sh
 ./spdlog/bootstrap.sh
 ./googletest/bootstrap.sh
-./robin_hood/bootstrap.sh
 ./AppAuth/bootstrap.sh
 ./Sparkle/bootstrap.sh
 ./LetsMove/bootstrap.sh
@@ -29,3 +28,4 @@ set -e
 ./libcxxbackport/bootstrap.sh
 ./lexilla/bootstrap.sh
 ./nlohmann/bootstrap.sh
+./unordered_dense/bootstrap.sh

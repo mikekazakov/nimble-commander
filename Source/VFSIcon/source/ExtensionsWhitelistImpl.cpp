@@ -1,5 +1,6 @@
-// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/ExtensionsWhitelistImpl.h>
+#include <algorithm>
 
 namespace nc::vfsicon {
 

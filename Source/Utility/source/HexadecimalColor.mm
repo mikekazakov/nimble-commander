@@ -1,9 +1,9 @@
-// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/HexadecimalColor.h>
 #include <Utility/SystemInformation.h>
-#include <robin_hood.h>
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 #include <vector>
+#include <algorithm>
 
 // In some contexts, primarily OpenGL, the term "RGBA" actually means the colors are stored in
 // memory such that R is at the lowest address, G after it, B after that, and A last. This is not
@@ -91,11 +91,11 @@ static constexpr void HexadecimalColorRGBAToString(uint32_t _rgba, char _string[
 
 // TODO: unit test for a round-trip!
 
-[[clang::no_destroy]]                                                         //
-static const robin_hood::unordered_flat_map<std::string,                      //
-                                            NSColor *,                        //
-                                            nc::RHTransparentStringHashEqual, //
-                                            nc::RHTransparentStringHashEqual> //
+[[clang::no_destroy]]                                                   //
+static const ankerl::unordered_dense::map<std::string,                  //
+                                          NSColor *,                    //
+                                          nc::UnorderedStringHashEqual, //
+                                          nc::UnorderedStringHashEqual> //
     g_SystemColors = {
         {"@blackColor", NSColor.blackColor},
         {"@darkGrayColor", NSColor.darkGrayColor},
@@ -189,7 +189,7 @@ static NSColor *DecodeSystemColor(std::string_view _color) noexcept
 // Returns an empty string view if a corresponding color was not found.
 static std::string_view FindCorrespondingSystemColorNameViaPtr(NSColor *_for_color) noexcept
 {
-    using Map = robin_hood::unordered_flat_map<void *, std::string_view>;
+    using Map = ankerl::unordered_dense::map<void *, std::string_view>;
     [[clang::no_destroy]] static const Map ptrs_to_original_names = [] {
         Map map;
         map.reserve(g_SystemColors.size());
@@ -208,10 +208,8 @@ static std::string_view FindCorrespondingSystemColorNameViaPtr(NSColor *_for_col
 // Returns an empty string view if a corresponding color was not found.
 static std::string_view FindCorrespondingSystemColorNameViaDescription(NSColor *_for_color) noexcept
 {
-    using Map = robin_hood::unordered_flat_map<std::string,
-                                               std::string_view,
-                                               nc::RHTransparentStringHashEqual,
-                                               nc::RHTransparentStringHashEqual>;
+    using Map = ankerl::unordered_dense::
+        map<std::string, std::string_view, nc::UnorderedStringHashEqual, nc::UnorderedStringHashEqual>;
     [[clang::no_destroy]] static const Map description_to_original_names = [] {
         Map map;
         map.reserve(g_SystemColors.size());

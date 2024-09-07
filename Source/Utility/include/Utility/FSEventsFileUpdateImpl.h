@@ -1,8 +1,8 @@
-// Copyright (C) 2021-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include "FSEventsFileUpdate.h"
 #include <CoreServices/CoreServices.h>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 #include <vector>
 #include <optional>
 #include <mutex>
@@ -29,7 +29,7 @@ private:
         FSEventStreamRef stream;
         std::optional<struct stat> stat;
         std::chrono::nanoseconds snapshot_time;
-        robin_hood::unordered_flat_map<uint64_t, std::function<void()>> handlers;
+        ankerl::unordered_dense::map<uint64_t, std::function<void()>> handlers;
     };
     struct AsyncContext {
         FSEventsFileUpdateImpl *me = nullptr;
@@ -67,7 +67,7 @@ private:
                             const FSEventStreamEventFlags _flags[],
                             const FSEventStreamEventId _ids[]);
 
-    robin_hood::unordered_map<std::filesystem::path, Watch, PathHash, PathEqual> m_Watches;
+    ankerl::unordered_dense::map<std::filesystem::path, Watch, PathHash, PathEqual> m_Watches;
     mutable std::mutex m_Lock;
     dispatch_queue_t m_KickstartQueue;
     uint64_t m_NextTicket = 1;

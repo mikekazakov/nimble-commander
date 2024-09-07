@@ -1,8 +1,8 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <typeindex>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 #include <Base/spinlock.h>
 
 namespace nc::ops {
@@ -41,7 +41,7 @@ public:
     static std::string_view TypetoID(const std::type_info &_type) noexcept;
 
 private:
-    robin_hood::unordered_flat_map<std::type_index, bool> m_Enabled;
+    ankerl::unordered_dense::map<std::type_index, bool> m_Enabled;
     mutable spinlock m_Mutex;
 };
 

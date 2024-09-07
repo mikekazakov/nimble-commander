@@ -8,7 +8,7 @@
 #include "PanelAux.h"
 #include "PanelController.h"
 #include <Base/SerialQueue.h>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 
 using namespace nc::core;
 using namespace nc::panel;
@@ -85,7 +85,7 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
     std::string m_DefaultHandlerPath;
     std::string m_ItemsUTI;
     nc::base::SerialQueue m_FetchQueue;
-    robin_hood::unordered_set<NSMenu *> m_ManagedMenus;
+    ankerl::unordered_dense::set<NSMenu *> m_ManagedMenus;
     FileOpener *m_FileOpener;
     const UTIDB *m_UTIDB;
 }

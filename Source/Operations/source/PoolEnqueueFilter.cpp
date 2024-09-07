@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PoolEnqueueFilter.h"
 #include "Operation.h"
 #include "AttrsChanging/AttrsChanging.h"
@@ -8,7 +8,7 @@
 #include "Deletion/Deletion.h"
 #include "DirectoryCreation/DirectoryCreation.h"
 #include "Linkage/Linkage.h"
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 #include <mutex>
 
 namespace nc::ops {
@@ -41,11 +41,9 @@ void PoolEnqueueFilter::Reset() noexcept
 const std::type_info *PoolEnqueueFilter::IDtoType(std::string_view _id) noexcept
 {
     [[clang::no_destroy]] static const auto mapping = [] {
-        robin_hood::unordered_flat_map<std::string,
-                                       const std::type_info *,
-                                       RHTransparentStringHashEqual,
-                                       RHTransparentStringHashEqual>
-            m;
+        ankerl::unordered_dense::
+            map<std::string, const std::type_info *, UnorderedStringHashEqual, UnorderedStringHashEqual>
+                m;
         m.emplace("attrs_change", &typeid(AttrsChanging));
         m.emplace("batch_rename", &typeid(BatchRenaming));
         m.emplace("compress", &typeid(Compression));
@@ -63,7 +61,7 @@ const std::type_info *PoolEnqueueFilter::IDtoType(std::string_view _id) noexcept
 std::string_view PoolEnqueueFilter::TypetoID(const std::type_info &_type) noexcept
 {
     [[clang::no_destroy]] static const auto mapping = [] {
-        robin_hood::unordered_flat_map<std::type_index, std::string> m;
+        ankerl::unordered_dense::map<std::type_index, std::string> m;
         m.emplace(typeid(AttrsChanging), "attrs_change");
         m.emplace(typeid(BatchRenaming), "batch_rename");
         m.emplace(typeid(Compression), "compress");

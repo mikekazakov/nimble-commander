@@ -1,11 +1,11 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #define _LIBCPP_DISABLE_DEPRECATION_WARNINGS 1
 #include "ActionShortcut.h"
 #include <locale>
 #include <vector>
 #include <codecvt>
 #include <unordered_map>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 #include <Base/ToLower.h>
 #include <Carbon/Carbon.h>
 
@@ -149,7 +149,7 @@ static NSString *StringForModifierFlags(uint64_t flags)
     return [NSString stringWithCharacters:modChars length:charCount];
 }
 
-[[clang::no_destroy]] static const robin_hood::unordered_flat_map<uint32_t, NSString *> g_UnicodeToNiceString = {
+[[clang::no_destroy]] static const ankerl::unordered_dense::map<uint32_t, NSString *> g_UnicodeToNiceString = {
     {NSLeftArrowFunctionKey, @"←"},        //
     {NSRightArrowFunctionKey, @"→"},       //
     {NSDownArrowFunctionKey, @"↓"},        //

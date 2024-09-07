@@ -1,10 +1,9 @@
-// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/MIMResponder.h>
-#include <unordered_map>
 #include <memory>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 
 @class MainWindowFilePanelState;
 
@@ -13,7 +12,7 @@ namespace actions {
 struct StateAction;
 }
 
-using StateActionsMap = robin_hood::unordered_flat_map<SEL, std::unique_ptr<const actions::StateAction>>;
+using StateActionsMap = ankerl::unordered_dense::map<SEL, std::unique_ptr<const actions::StateAction>>;
 } // namespace nc::panel
 
 @interface NCPanelsStateActionsDispatcher : AttachedResponder

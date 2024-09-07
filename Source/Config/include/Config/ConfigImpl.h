@@ -1,12 +1,13 @@
-// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Config.h"
 #include "RapidJSON.h"
 #include <Base/spinlock.h>
 #include <Base/intrusive_ptr.h>
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 #include <vector>
+#include <algorithm>
 #include "OverwritesStorage.h"
 #include "Executor.h"
 
@@ -98,8 +99,8 @@ private:
     rapidjson::Document m_Document;
     mutable spinlock m_DocumentLock;
 
-    using ObserversStorage = robin_hood::
-        unordered_flat_map<std::string, ObserversPtr, RHTransparentStringHashEqual, RHTransparentStringHashEqual>;
+    using ObserversStorage =
+        ankerl::unordered_dense::map<std::string, ObserversPtr, UnorderedStringHashEqual, UnorderedStringHashEqual>;
     ObserversStorage m_Observers;
     mutable spinlock m_ObserversLock;
 

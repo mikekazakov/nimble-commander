@@ -4,18 +4,18 @@ set -o xtrace
 set -e
 
 CUR_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )
-TMP_DIR=${CUR_DIR}/rh.tmp
+TMP_DIR=${CUR_DIR}/ud.tmp
 
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b 3.11.5 --single-branch https://github.com/martinus/robin-hood-hashing.git
+git clone -b v4.4.0 --single-branch https://github.com/martinus/unordered_dense.git
 
 cd ..
 
 rm -rf ./include/
 
 mkdir include
-cp ${TMP_DIR}/robin-hood-hashing/src/include/robin_hood.h ./include
+cp -r ${TMP_DIR}/unordered_dense/include/ankerl ./include
 
 rm -rf ${TMP_DIR}

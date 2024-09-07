@@ -1,7 +1,8 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
 #include <Utility/CharInfo.h>
 #include "Screen.h"
+#include <algorithm>
 
 namespace nc::term {
 
@@ -65,9 +66,9 @@ void Screen::DoEraseScreen(int _mode)
         for( int i = 0; i < Height(); ++i ) {
             auto l = m_Buffer.LineFromNo(i);
             if( i != m_PosY )
-                std::fill(begin(l), end(l), m_EraseChar);
+                std::fill(std::begin(l), std::end(l), m_EraseChar);
             else {
-                std::fill(begin(l), std::min(std::begin(l) + m_PosX + 1, std::end(l)), m_EraseChar);
+                std::fill(std::begin(l), std::min(std::begin(l) + m_PosX + 1, std::end(l)), m_EraseChar);
                 return;
             }
             m_Buffer.SetLineWrapped(i, false);
@@ -76,7 +77,7 @@ void Screen::DoEraseScreen(int _mode)
     else if( _mode == 2 ) { // clear all screen
         for( int i = 0; i < Height(); ++i ) {
             auto l = m_Buffer.LineFromNo(i);
-            std::fill(begin(l), end(l), m_EraseChar);
+            std::fill(std::begin(l), std::end(l), m_EraseChar);
             m_Buffer.SetLineWrapped(i, false);
         }
     }

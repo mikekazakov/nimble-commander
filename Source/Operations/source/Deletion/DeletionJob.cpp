@@ -5,6 +5,7 @@
 #include <dirent.h>
 #include <sys/param.h>
 #include <sys/stat.h>
+#include <algorithm>
 
 namespace nc::ops {
 

@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Actions/DefaultAction.h"
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 #include <memory>
 
 class NetworkConnectionsManager;
@@ -19,7 +19,7 @@ class NativeFSManager;
 namespace nc::panel {
 class TagsStorage;
 
-using StateActionsMap = robin_hood::unordered_flat_map<SEL, std::unique_ptr<const actions::StateAction>>;
+using StateActionsMap = ankerl::unordered_dense::map<SEL, std::unique_ptr<const actions::StateAction>>;
 
 StateActionsMap BuildStateActionsMap(nc::config::Config &_global_config,
                                      NetworkConnectionsManager &_net_mgr,

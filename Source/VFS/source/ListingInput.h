@@ -5,6 +5,7 @@
 #include <Utility/Tags.h>
 #include "../include/VFS/VFSDeclarations.h"
 #include <sys/types.h>
+#include <ankerl/unordered_dense.h>
 
 namespace nc::vfs {
 
@@ -97,7 +98,7 @@ struct ListingInput {
     /**
      * finder tags of the listing entries.
      */
-    robin_hood::unordered_flat_map<size_t, std::vector<utility::Tags::Tag>> tags;
+    ankerl::unordered_dense::map<size_t, std::vector<utility::Tags::Tag>> tags;
 };
 
 } // namespace nc::vfs

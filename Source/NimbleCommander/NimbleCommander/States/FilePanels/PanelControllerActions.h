@@ -5,7 +5,7 @@
 #include <Utility/NativeFSManager.h>
 #include <Config/Config.h>
 #include <functional>
-#include <robin_hood.h>
+#include <ankerl/unordered_dense.h>
 
 class NetworkConnectionsManager;
 @class NCPanelOpenWithMenuDelegate;
@@ -20,7 +20,7 @@ namespace nc::panel {
 class FileOpener;
 class TagsStorage;
 
-using PanelActionsMap = robin_hood::unordered_flat_map<SEL, std::unique_ptr<const actions::PanelAction>>;
+using PanelActionsMap = ankerl::unordered_dense::map<SEL, std::unique_ptr<const actions::PanelAction>>;
 
 PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
                                      NetworkConnectionsManager &_net_mgr,

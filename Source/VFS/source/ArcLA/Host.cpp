@@ -8,7 +8,7 @@
 #include "File.h"
 #include "Internal.h"
 #include <Base/CFStackAllocator.h>
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 #include <Base/algo.h>
 #include <Utility/DataBlockAnalysis.h>
 #include <Utility/PathManip.h>
@@ -27,10 +27,10 @@ using namespace std::literals;
 const char *const ArchiveHost::UniqueTag = "arc_libarchive";
 
 struct ArchiveHost::Impl {
-    using PathToDirT = robin_hood::
-        unordered_node_map<std::string, arc::Dir, nc::RHTransparentStringHashEqual, nc::RHTransparentStringHashEqual>;
+    using PathToDirT = ankerl::unordered_dense::
+        segmented_map<std::string, arc::Dir, nc::UnorderedStringHashEqual, nc::UnorderedStringHashEqual>;
 
-    using SymlinksT = robin_hood::unordered_flat_map<uint32_t, Symlink>;
+    using SymlinksT = ankerl::unordered_dense::map<uint32_t, Symlink>;
 
     std::shared_ptr<VFSFile> m_ArFile;
     std::shared_ptr<arc::Mediator> m_Mediator;

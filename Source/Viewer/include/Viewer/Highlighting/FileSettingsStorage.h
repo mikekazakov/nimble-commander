@@ -1,7 +1,7 @@
 // Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include "SettingsStorage.h"
-#include <Base/RobinHoodUtil.h>
+#include <Base/UnorderedUtil.h>
 #include <Utility/FileMask.h>
 #include <filesystem>
 #include <vector>
@@ -44,11 +44,9 @@ private:
     bool m_Outdated = false;
 
     std::vector<Lang> m_Langs;
-    robin_hood::unordered_flat_map<std::string,
-                                   std::shared_ptr<const std::string>,
-                                   RHTransparentStringHashEqual,
-                                   RHTransparentStringHashEqual>
-        m_Settings;
+    ankerl::unordered_dense::
+        map<std::string, std::shared_ptr<const std::string>, UnorderedStringHashEqual, UnorderedStringHashEqual>
+            m_Settings;
 };
 
 } // namespace nc::viewer::hl

@@ -123,6 +123,9 @@ public:
     unsigned OccupiedChars(int _line_no) const;
     bool HasOccupiedChars(int _line_no) const;
 
+    std::vector<std::vector<Space>> ComposeContinuousLines(int _from,
+                                                           int _to) const; // [_from, _to), _from is less than _to
+
 private:
     struct LineMeta {
         unsigned start_index = 0;
@@ -137,8 +140,6 @@ private:
     FixupOnScreenLinesIndeces(std::vector<LineMeta>::iterator _i, std::vector<LineMeta>::iterator _e, unsigned _width);
     static std::unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width, unsigned _height);
     static std::unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width, unsigned _height, Space _initial_char);
-    std::vector<std::vector<Space>> ComposeContinuousLines(int _from,
-                                                           int _to) const; // [_from, _to), _from is less than _to
     static std::vector<std::tuple<std::vector<Space>, bool>>
     DecomposeContinuousLines(const std::vector<std::vector<Space>> &_scr,
                              unsigned _width); // <spaces, is wrapped>

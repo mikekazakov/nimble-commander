@@ -78,10 +78,11 @@ PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
     add(@selector(ToggleSortByBTime:), new ToggleSortingByCreatedTime);
     add(@selector(ToggleSortByAddTime:), new ToggleSortingByAddedTime);
     add(@selector(ToggleSortByATime:), new ToggleSortingByAccessedTime);
-    add(@selector(ToggleCaseSensitiveComparison:), new ToggleSortingCaseSensitivity);
+    add(@selector(onToggleNaturalCollation:), new ToggleSortingNaturalCollation);
+    add(@selector(onToggleCaseInsensitiveCollation:), new ToggleSortingCaseInsensitiveCollation);
+    add(@selector(onToggleCaseSensitiveCollation:), new ToggleSortingCaseSensitiveCollation);
     add(@selector(ToggleSeparateFoldersFromFiles:), new ToggleSortingFoldersSeparation);
     add(@selector(ToggleExtensionlessFolders:), new ToggleSortingExtensionlessFolders);
-    add(@selector(ToggleNumericComparison:), new ToggleSortingNumerical);
     add(@selector(ToggleViewHiddenFiles:), new ToggleSortingShowHidden);
     add(@selector(onToggleViewLayout1:), new ToggleLayout{0});
     add(@selector(onToggleViewLayout2:), new ToggleLayout{1});

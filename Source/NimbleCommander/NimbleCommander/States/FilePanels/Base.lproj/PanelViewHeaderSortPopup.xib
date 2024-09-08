@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23091" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23091"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PanelViewHeader">
@@ -116,13 +116,22 @@
                         <action selector="onSortPopupMenuOptionsClicked:" target="-2" id="LFw-mT-T55"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Case-Sensitive Comparison" tag="3" indentationLevel="1" id="fpg-oA-HmO">
+                <menuItem title="Comparison" enabled="NO" id="ysh-wj-wqx">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Natural" tag="3" indentationLevel="1" id="ikn-C4-NbT">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuOptionsClicked:" target="-2" id="cc5-30-jNf"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Case-Insensitive" tag="4" indentationLevel="1" id="fpg-oA-HmO">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="onSortPopupMenuOptionsClicked:" target="-2" id="hLW-AQ-HMM"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Numeric Comparison" tag="4" indentationLevel="1" id="mJ3-ls-nKo">
+                <menuItem title="Case-Sensitive" tag="5" indentationLevel="1" id="mJ3-ls-nKo">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="onSortPopupMenuOptionsClicked:" target="-2" id="9aY-hJ-6GI"/>

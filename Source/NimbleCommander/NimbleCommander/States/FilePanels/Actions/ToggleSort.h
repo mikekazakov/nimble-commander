@@ -42,7 +42,17 @@ struct ToggleSortingByAccessedTime final : PanelAction {
     void Perform(PanelController *_target, id _sender) const override;
 };
 
-struct ToggleSortingCaseSensitivity final : PanelAction {
+struct ToggleSortingNaturalCollation final : PanelAction {
+    bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
+    void Perform(PanelController *_target, id _sender) const override;
+};
+
+struct ToggleSortingCaseInsensitiveCollation final : PanelAction {
+    bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
+    void Perform(PanelController *_target, id _sender) const override;
+};
+
+struct ToggleSortingCaseSensitiveCollation final : PanelAction {
     bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
     void Perform(PanelController *_target, id _sender) const override;
 };
@@ -53,11 +63,6 @@ struct ToggleSortingFoldersSeparation final : PanelAction {
 };
 
 struct ToggleSortingExtensionlessFolders final : PanelAction {
-    bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
-    void Perform(PanelController *_target, id _sender) const override;
-};
-
-struct ToggleSortingNumerical final : PanelAction {
     bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
     void Perform(PanelController *_target, id _sender) const override;
 };

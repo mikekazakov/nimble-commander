@@ -238,8 +238,14 @@
 /* Class = "NSMenuItem"; title = "Deselect All"; ObjectID = "899"; */
 "899.title" = "Убрать выделение";
 
-/* Class = "NSMenuItem"; title = "Case-Sensitive Comparison"; ObjectID = "902"; */
-"902.title" = "Сравнение с учетом регистра";
+/* Class = "NSMenuItem"; title = "Natural Comparison"; ObjectID = "TCl-Dh-lAh"; */
+"TCl-Dh-lAh.title" = "Естественное сравнение";
+
+/* Class = "NSMenuItem"; title = "Case-Insensitive Comparison"; ObjectID = "902"; */
+"902.title" = "Сравнение без учета регистра";
+
+/* Class = "NSMenuItem"; title = "Case-Sensitive Comparison"; ObjectID = "ES4-0D-t9Y"; */
+"ES4-0D-t9Y.title" = "Сравнение с учетом регистра";
 
 /* Class = "NSMenuItem"; title = "Internal Viewer"; ObjectID = "905"; */
 "905.title" = "Встроенный просмотрщик";

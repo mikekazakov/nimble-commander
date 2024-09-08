@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -18,14 +18,10 @@ public:
 protected:
     int Compare(CFStringRef _1st, CFStringRef _2nd) const noexcept;
     int Compare(const char *_1st, const char *_2nd) const noexcept;
+    static int NaturalCompare(CFStringRef _1st, CFStringRef _2nd) noexcept;
     const VFSListing &l;
     const std::span<const ItemVolatileData> vd;
     const SortMode sort_mode;
-
-private:
-    const CFStringCompareFlags str_comp_flags;
-    typedef int (*comparison)(const char *, const char *);
-    const comparison plain_compare;
 };
 
 class IndirectListingComparator : private ListingComparatorBase

@@ -252,8 +252,9 @@ Available hotkeys are listed below. These are the default values, which can be a
 | &nbsp; &nbsp; Sort By Accessed Time          | Ctrl + Cmd + 7            |
 | &nbsp; &nbsp; Separate Folders From Files    |                           |
 | &nbsp; &nbsp; Extensionless Folders          |                           |
+| &nbsp; &nbsp; Natural Comparison             |                           |
+| &nbsp; &nbsp; Case-Insensitive Comparison    |                           |
 | &nbsp; &nbsp; Case-Sensitive Comparison      |                           |
-| &nbsp; &nbsp; Numeric Comparison             |                           |
 | &nbsp; Show Hidden Files                     | Shift + Cmd + .           |
 | &nbsp; _**Panels Position Submenu**_         |                           |
 | &nbsp; &nbsp; Move Left                      | Ctrl + Opt + Left         |

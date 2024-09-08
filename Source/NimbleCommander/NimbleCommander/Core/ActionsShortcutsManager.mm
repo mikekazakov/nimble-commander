@@ -83,8 +83,11 @@ static constexpr std::pair<const char*,int> g_ActionsTags[] = {
     {"menu.view.sorting_view_hidden",                   13'140},
     {"menu.view.sorting_separate_folders",              13'150},
     {"menu.view.sorting_extensionless_folders",         13'270},
-    {"menu.view.sorting_case_sensitive",                13'160},
-    {"menu.view.sorting_numeric_comparison",            13'170},
+//  {"menu.view.sorting_case_sensitive",                13'160}, // no longer used
+//  {"menu.view.sorting_numeric_comparison",            13'170}, // no longer used
+    {"menu.view.sorting_natural",                       13'161},
+    {"menu.view.sorting_case_insens",                   13'162},
+    {"menu.view.sorting_case_sens",                     13'163},
     {"menu.view.show_tabs",                             13'179},
     {"menu.view.show_toolbar",                          13'180},
     {"menu.view.show_terminal",                         13'190},
@@ -288,8 +291,11 @@ static constinit std::pair<const char*, const char8_t*> g_DefaultShortcuts[] = {
     {"menu.view.sorting_view_hidden",                       u8"⇧⌘."     }, // shift+cmd+.
     {"menu.view.sorting_separate_folders",                  u8""        },
     {"menu.view.sorting_extensionless_folders",             u8""        },
-    {"menu.view.sorting_case_sensitive",                    u8""        },
-    {"menu.view.sorting_numeric_comparison",                u8""        },
+//  {"menu.view.sorting_case_sensitive",                    u8""        }, // no longer used
+//  {"menu.view.sorting_numeric_comparison",                u8""        }, // no longer used
+    {"menu.view.sorting_natural",                           u8""        },
+    {"menu.view.sorting_case_insens",                       u8""        },
+    {"menu.view.sorting_case_sens",                         u8""        },
     {"menu.view.panels_position.move_up",                   u8"^⌥\uF700"}, // ctrl+alt+↑
     {"menu.view.panels_position.move_down",                 u8"^⌥\uF701"}, // ctrl+alt+↓
     {"menu.view.panels_position.move_left",                 u8"^⌥\uF702"}, // ctrl+alt+←

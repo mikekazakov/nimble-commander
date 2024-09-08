@@ -16,8 +16,8 @@
 /* Class = "NSMenuItem"; title = "Accessed Time ↑"; ObjectID = "ehv-BQ-xXY"; */
 "ehv-BQ-xXY.title" = "Времени открытия ↑";
 
-/* Class = "NSMenuItem"; title = "Case-Sensitive Comparison"; ObjectID = "fpg-oA-HmO"; */
-"fpg-oA-HmO.title" = "Сравнение с учетом регистра";
+/* Class = "NSMenuItem"; title = "Case-Insensitive"; ObjectID = "fpg-oA-HmO"; */
+"fpg-oA-HmO.title" = "Без учета регистра";
 
 /* Class = "NSMenuItem"; title = "Modified Time ↓"; ObjectID = "gjX-58-iwr"; */
 "gjX-58-iwr.title" = "Времени модификации ↓";
@@ -28,8 +28,14 @@
 /* Class = "NSMenuItem"; title = "Size ↑"; ObjectID = "kDo-Q7-LNI"; */
 "kDo-Q7-LNI.title" = "Размеру ↑";
 
-/* Class = "NSMenuItem"; title = "Numeric Comparison"; ObjectID = "mJ3-ls-nKo"; */
-"mJ3-ls-nKo.title" = "Численное сравнение";
+/* Class = "NSMenuItem"; title = "Case-Sensitive"; ObjectID = "mJ3-ls-nKo"; */
+"mJ3-ls-nKo.title" = "С учетом регистра";
+
+/* Class = "NSMenuItem"; title = "Natural"; ObjectID = "ikn-C4-NbT"; */
+"ikn-C4-NbT.title" = "Естественное";
+
+/* Class = "NSMenuItem"; title = "Comparison"; ObjectID = "ysh-wj-wqx"; */
+"ysh-wj-wqx.title" = "Cравнение";
 
 /* Class = "NSMenuItem"; title = "Modified Time ↑"; ObjectID = "Nl7-FN-dds"; */
 "Nl7-FN-dds.title" = "Времени модификации ↑";

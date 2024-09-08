@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataEntriesComparator.h"
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataExternalEntryKey.h"
@@ -8,21 +8,33 @@ namespace nc::panel::data {
 ListingComparatorBase::ListingComparatorBase(const VFSListing &_items,
                                              std::span<const ItemVolatileData> _vd,
                                              SortMode _sort_mode)
-    : l{_items}, vd{_vd}, sort_mode{_sort_mode}, str_comp_flags{(_sort_mode.case_sens ? 0 : kCFCompareCaseInsensitive) |
-                                                                (_sort_mode.numeric_sort ? kCFCompareNumerically : 0)},
-      plain_compare{_sort_mode.case_sens ? strcmp : strcasecmp}
+    : l{_items}, vd{_vd}, sort_mode{_sort_mode}
 {
     assert(_vd.size() == _items.Count());
 }
 
 int ListingComparatorBase::Compare(CFStringRef _1st, CFStringRef _2nd) const noexcept
 {
-    return static_cast<int>(CFStringCompare(_1st, _2nd, str_comp_flags));
+    switch( sort_mode.collation ) {
+        case SortMode::Collation::Natural:
+            return NaturalCompare(_1st, _2nd);
+        case SortMode::Collation::CaseInsensitive:
+            return static_cast<int>(CFStringCompare(_1st, _2nd, kCFCompareCaseInsensitive));
+        case SortMode::Collation::CaseSensitive:
+            return static_cast<int>(CFStringCompare(_1st, _2nd, 0));
+    }
 }
 
 int ListingComparatorBase::Compare(const char *_1st, const char *_2nd) const noexcept
 {
-    return plain_compare(_1st, _2nd);
+    switch( sort_mode.collation ) {
+        case SortMode::Collation::Natural:
+            [[fallthrough]];
+        case SortMode::Collation::CaseInsensitive:
+            return strcasecmp(_1st, _2nd);
+        case SortMode::Collation::CaseSensitive:
+            return strcmp(_1st, _2nd);
+    }
 }
 
 IndirectListingComparator::IndirectListingComparator(const VFSListing &_items,

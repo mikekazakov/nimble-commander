@@ -85,8 +85,9 @@ using PanelActionsMap = ankerl::unordered_dense::map<SEL, std::unique_ptr<const 
 - (IBAction)ToggleViewHiddenFiles:(id)sender;
 - (IBAction)ToggleSeparateFoldersFromFiles:(id)sender;
 - (IBAction)ToggleExtensionlessFolders:(id)sender;
-- (IBAction)ToggleCaseSensitiveComparison:(id)sender;
-- (IBAction)ToggleNumericComparison:(id)sender;
+- (IBAction)onToggleNaturalCollation:(id)sender;
+- (IBAction)onToggleCaseInsensitiveCollation:(id)sender;
+- (IBAction)onToggleCaseSensitiveCollation:(id)sender;
 - (IBAction)ToggleSortByName:(id)sender;
 - (IBAction)ToggleSortByExt:(id)sender;
 - (IBAction)ToggleSortByMTime:(id)sender;

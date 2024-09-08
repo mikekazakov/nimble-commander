@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23091" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22690"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23091"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -442,16 +442,23 @@ DQ
                                                 <action selector="ToggleExtensionlessFolders:" target="-1" id="b3R-nn-XVz"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Case-Sensitive Comparison" tag="13160" id="902">
+                                        <menuItem isSeparatorItem="YES" id="boy-z1-zRc"/>
+                                        <menuItem title="Natural Comparison" tag="13161" id="TCl-Dh-lAh">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="ToggleCaseSensitiveComparison:" target="-1" id="904"/>
+                                                <action selector="onToggleNaturalCollation:" target="-1" id="kcg-hy-6Gr"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Numeric Comparison" tag="13170" id="923">
+                                        <menuItem title="Case-Insensitive Comparison" tag="13162" id="902">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="ToggleNumericComparison:" target="-1" id="925"/>
+                                                <action selector="onToggleCaseInsensitiveCollation:" target="-1" id="4LO-dV-Wkg"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Case-Sensitive Comparison" tag="13163" id="ES4-0D-t9Y">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="onToggleCaseSensitiveCollation:" target="-1" id="peQ-Xu-oLM"/>
                                             </connections>
                                         </menuItem>
                                     </items>

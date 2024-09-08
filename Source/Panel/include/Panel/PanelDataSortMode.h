@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 namespace nc::panel::data {
@@ -6,7 +6,7 @@ namespace nc::panel::data {
 // 2 bytes long, OK to pass by value everywhere
 struct SortMode {
     // Values in this enumeration should be stable - they are used for raw serialization
-    enum Mode : signed char {
+    enum Mode : unsigned char {
         SortNoSort = 0,
 
         // ascending sorting by name: A, B, C...
@@ -56,6 +56,16 @@ struct SortMode {
         SortByRawCName = 127
     };
 
+    enum class Collation : unsigned char {
+        // Unicode-based interpretation of the character, simple case-sensitive comparison
+        CaseSensitive = 0,
+        // Unicode-based interpretation of the character, case-insensitive comparison
+        CaseInsensitive = 1,
+        // Apple's interpretation of https://en.wikipedia.org/wiki/Unicode_collation_algorithm
+        // (normally [NSString localizedStandardCompare:] and UCCompareTextDefault() as a fallback)
+        Natural = 2
+    };
+
     // sorting order
     Mode sort = SortByRawCName;
 
@@ -65,17 +75,15 @@ struct SortMode {
     // treat directories like they don't have any extension at all
     bool extensionless_dirs : 1 = false;
 
-    // case sensitivity when comparing filenames, ignored on Raw Sorting (SortByRawCName)
-    bool case_sens : 1 = false;
-
-    // try to treat filenames as numbers and use them as compare basis
-    bool numeric_sort : 1 = false;
+    // text-comparison method
+    Collation collation : 2 = Collation::CaseInsensitive;
 
     bool isdirect() const noexcept;
     bool isrevert() const noexcept;
     static bool validate(Mode _mode) noexcept;
-    bool operator==(const SortMode &_r) const noexcept;
-    bool operator!=(const SortMode &_r) const noexcept;
+    static bool validate(Collation _collation) noexcept;
+    bool operator==(const SortMode &_r) const noexcept = default;
+    bool operator!=(const SortMode &_r) const noexcept = default;
 };
 
 } // namespace nc::panel::data

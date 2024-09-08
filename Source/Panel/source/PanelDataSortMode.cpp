@@ -46,17 +46,11 @@ bool SortMode::validate(Mode _mode) noexcept
            _mode == SortByAccessTimeRev;
 }
 
-bool SortMode::operator==(const SortMode &_r) const noexcept
+bool SortMode::validate(Collation _collation) noexcept
 {
-    return sort == _r.sort &&                 //
-           sep_dirs == _r.sep_dirs &&         //
-           case_sens == _r.case_sens &&       //
-           numeric_sort == _r.numeric_sort && //
-           extensionless_dirs == _r.extensionless_dirs;
+    return _collation == Collation::CaseSensitive ||   //
+           _collation == Collation::CaseInsensitive || //
+           _collation == Collation::Natural;
 }
 
-bool SortMode::operator!=(const SortMode &_r) const noexcept
-{
-    return !(*this == _r);
-}
 } // namespace nc::panel::data

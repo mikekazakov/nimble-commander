@@ -434,11 +434,15 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 {
     PERFORM;
 }
-- (IBAction)ToggleCaseSensitiveComparison:(id)sender
+- (IBAction)onToggleNaturalCollation:(id)sender
 {
     PERFORM;
 }
-- (IBAction)ToggleNumericComparison:(id)sender
+- (IBAction)onToggleCaseInsensitiveCollation:(id)sender
+{
+    PERFORM;
+}
+- (IBAction)onToggleCaseSensitiveCollation:(id)sender
 {
     PERFORM;
 }

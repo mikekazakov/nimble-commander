@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ToggleSort.h"
 #include "../PanelController.h"
 #include <Panel/PanelData.h>
@@ -156,16 +156,42 @@ void ToggleSortingByAccessedTime::Perform(PanelController *_target, id) const
                                                   data::SortMode::SortByAccessTimeRev)];
 }
 
-bool ToggleSortingCaseSensitivity::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
+bool ToggleSortingNaturalCollation::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
 {
-    _item.state = _target.data.SortMode().case_sens;
+    _item.state = _target.data.SortMode().collation == data::SortMode::Collation::Natural;
     return Predicate(_target);
 }
 
-void ToggleSortingCaseSensitivity::Perform(PanelController *_target, id) const
+void ToggleSortingNaturalCollation::Perform(PanelController *_target, id) const
 {
     auto mode = _target.data.SortMode();
-    mode.case_sens = !mode.case_sens;
+    mode.collation = data::SortMode::Collation::Natural;
+    [_target changeSortingModeTo:mode];
+}
+
+bool ToggleSortingCaseInsensitiveCollation::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
+{
+    _item.state = _target.data.SortMode().collation == data::SortMode::Collation::CaseInsensitive;
+    return Predicate(_target);
+}
+
+void ToggleSortingCaseInsensitiveCollation::Perform(PanelController *_target, id) const
+{
+    auto mode = _target.data.SortMode();
+    mode.collation = data::SortMode::Collation::CaseInsensitive;
+    [_target changeSortingModeTo:mode];
+}
+
+bool ToggleSortingCaseSensitiveCollation::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
+{
+    _item.state = _target.data.SortMode().collation == data::SortMode::Collation::CaseSensitive;
+    return Predicate(_target);
+}
+
+void ToggleSortingCaseSensitiveCollation::Perform(PanelController *_target, id) const
+{
+    auto mode = _target.data.SortMode();
+    mode.collation = data::SortMode::Collation::CaseSensitive;
     [_target changeSortingModeTo:mode];
 }
 
@@ -192,19 +218,6 @@ void ToggleSortingExtensionlessFolders::Perform(PanelController *_target, id) co
 {
     auto mode = _target.data.SortMode();
     mode.extensionless_dirs = !mode.extensionless_dirs;
-    [_target changeSortingModeTo:mode];
-}
-
-bool ToggleSortingNumerical::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
-{
-    _item.state = _target.data.SortMode().numeric_sort;
-    return Predicate(_target);
-}
-
-void ToggleSortingNumerical::Perform(PanelController *_target, id) const
-{
-    auto mode = _target.data.SortMode();
-    mode.numeric_sort = !mode.numeric_sort;
     [_target changeSortingModeTo:mode];
 }
 

@@ -347,10 +347,17 @@ static bool IsDark(NSColor *_color);
                     i.state = m_SortMode.extensionless_dirs ? NSControlStateValueOn : NSControlStateValueOff;
                     break;
                 case 3:
-                    i.state = m_SortMode.case_sens ? NSControlStateValueOn : NSControlStateValueOff;
+                    i.state = m_SortMode.collation == data::SortMode::Collation::Natural ? NSControlStateValueOn
+                                                                                         : NSControlStateValueOff;
                     break;
                 case 4:
-                    i.state = m_SortMode.numeric_sort ? NSControlStateValueOn : NSControlStateValueOff;
+                    i.state = m_SortMode.collation == data::SortMode::Collation::CaseInsensitive
+                                  ? NSControlStateValueOn
+                                  : NSControlStateValueOff;
+                    break;
+                case 5:
+                    i.state = m_SortMode.collation == data::SortMode::Collation::CaseSensitive ? NSControlStateValueOn
+                                                                                               : NSControlStateValueOff;
                     break;
             }
     }
@@ -396,10 +403,13 @@ static bool IsDark(NSColor *_color);
                 proposed.extensionless_dirs = !proposed.extensionless_dirs;
                 break;
             case 3:
-                proposed.case_sens = !proposed.case_sens;
+                proposed.collation = data::SortMode::Collation::Natural;
                 break;
             case 4:
-                proposed.numeric_sort = !proposed.numeric_sort;
+                proposed.collation = data::SortMode::Collation::CaseInsensitive;
+                break;
+            case 5:
+                proposed.collation = data::SortMode::Collation::CaseSensitive;
                 break;
         }
 

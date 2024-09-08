@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/dirent.h>
 #include <VFS/VFS.h>
 #include <VFS/VFSListingInput.h>
@@ -6,6 +6,7 @@
 #include "PanelDataItemVolatileData.h"
 #include <memory>
 #include <span>
+#include <fmt/format.h>
 #include "Tests.h"
 
 #define PREFIX "IndirectListingComparator "
@@ -79,7 +80,7 @@ TEST_CASE(PREFIX "SortByName")
     }
     SECTION("Case-sensitive")
     {
-        sort.case_sens = true;
+        sort.collation = SortMode::Collation::CaseSensitive;
         const IndirectListingComparator cmp(*listing, vd, sort);
         CHECK(cmp(0, 0) == false); // A vs A
         CHECK(cmp(0, 1) == true);  // A vs B'
@@ -109,7 +110,7 @@ TEST_CASE(PREFIX "SortByName")
     }
     SECTION("Case-sensitive, separate directories")
     {
-        sort.case_sens = true;
+        sort.collation = SortMode::Collation::CaseSensitive;
         sort.sep_dirs = true;
         const IndirectListingComparator cmp(*listing, vd, sort);
         CHECK(cmp(0, 0) == false); // A vs A
@@ -122,6 +123,81 @@ TEST_CASE(PREFIX "SortByName")
         CHECK(cmp(3, 1) == false); // B(b) vs B'
         CHECK(cmp(3, 4) == false); // B(b) vs b'
         CHECK(cmp(4, 3) == true);  // b' vs B(b)
+    }
+}
+
+TEST_CASE(PREFIX "SortByName, collation")
+{
+    std::array<DummyListingEntry, 5> entries;
+    entries[0].name = "A 2";
+    entries[1].name = "a 2";
+    entries[2].name = "a 10";
+    entries[3].name = "__42";
+    entries[4].name = "42__";
+    const auto listing = ProduceDummyListing(entries);
+    const std::array<ItemVolatileData, 5> vd;
+
+    SortMode sort;
+    sort.sort = SortMode::SortByName;
+    SECTION("CaseSensitive")
+    {
+        sort.collation = SortMode::Collation::CaseSensitive;
+        const IndirectListingComparator cmp(*listing, vd, sort);
+        // clang-format off
+        bool v[5][5] = {
+            /*        A 2 a 2 a 10 __42 42__ */
+            /*A 2*/  {  0,  1,   1,   1,   0 },
+            /*a 2*/  {  0,  0,   0,   0,   0 },
+            /*a 10*/ {  0,  1,   0,   0,   0 },
+            /*__42*/ {  0,  1,   1,   0,   0 },
+            /*42__*/ {  1,  1,   1,   1,   0 },
+        };
+        // clang-format on
+        for( int i = 0; i < 5; ++i )
+            for( int j = 0; j < 5; ++j ) {
+                INFO(fmt::format("'{}' - '{}'", entries[i].name, entries[j].name));
+                CHECK(cmp(i, j) == v[i][j]);
+            }
+    }
+    SECTION("CaseInsensitive")
+    {
+        sort.collation = SortMode::Collation::CaseInsensitive;
+        const IndirectListingComparator cmp(*listing, vd, sort);
+        // clang-format off
+        bool v[5][5] = {
+            /*        A 2 a 2 a 10 __42 42__ */
+            /*A 2*/  {  0,  0,   0,   0,   0 },
+            /*a 2*/  {  0,  0,   0,   0,   0 },
+            /*a 10*/ {  1,  1,   0,   0,   0 },
+            /*__42*/ {  1,  1,   1,   0,   0 },
+            /*42__*/ {  1,  1,   1,   1,   0 },
+        };
+        // clang-format on
+        for( int i = 0; i < 5; ++i )
+            for( int j = 0; j < 5; ++j ) {
+                INFO(fmt::format("'{}' - '{}'", entries[i].name, entries[j].name));
+                CHECK(cmp(i, j) == v[i][j]);
+            }
+    }
+    SECTION("Natural")
+    {
+        sort.collation = SortMode::Collation::Natural;
+        const IndirectListingComparator cmp(*listing, vd, sort);
+        // clang-format off
+        bool v[5][5] = {
+            /*        A 2 a 2 a 10 __42 42__ */
+            /*A 2*/  {  0,  0,   1,   0,   0 },
+            /*a 2*/  {  1,  0,   1,   0,   0 },
+            /*a 10*/ {  0,  0,   0,   0,   0 },
+            /*__42*/ {  1,  1,   1,   0,   1 },
+            /*42__*/ {  1,  1,   1,   0,   0 },
+        };
+        // clang-format on
+        for( int i = 0; i < 5; ++i )
+            for( int j = 0; j < 5; ++j ) {
+                INFO(fmt::format("'{}'({}) - '{}'({})", entries[i].name, i, entries[j].name, j));
+                CHECK(cmp(i, j) == v[i][j]);
+            }
     }
 }
 
@@ -160,7 +236,7 @@ TEST_CASE(PREFIX "SortByNameRev")
     }
     SECTION("Case-sensitive")
     {
-        sort.case_sens = true;
+        sort.collation = SortMode::Collation::CaseSensitive;
         const IndirectListingComparator cmp(*listing, vd, sort);
         CHECK(cmp(0, 0) == false); // A vs A
         CHECK(cmp(0, 1) == false); // A vs B'
@@ -190,7 +266,7 @@ TEST_CASE(PREFIX "SortByNameRev")
     }
     SECTION("Case-sensitive, separate directories")
     {
-        sort.case_sens = true;
+        sort.collation = SortMode::Collation::CaseSensitive;
         sort.sep_dirs = true;
         const IndirectListingComparator cmp(*listing, vd, sort);
         CHECK(cmp(0, 0) == false); // A vs A

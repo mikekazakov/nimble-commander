@@ -443,6 +443,13 @@
 			remoteGlobalIDString = CF5BF7A12BFD483D0057C92E;
 			remoteInfo = Highlighter;
 		};
+		CFB3B5862C8C973E00365F9D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFF33F842556929300B3C92C /* Panel.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF13B5F92C8C598D004C1879;
+			remoteInfo = PanelPT;
+		};
 		CFC705AC2B497CD90045D2C9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
@@ -2169,6 +2176,7 @@
 			children = (
 				CFC705D42B497D110045D2C9 /* libPanel.a */,
 				CFC705D62B497D110045D2C9 /* PanelUT */,
+				CFB3B5872C8C973E00365F9D /* PanelPT */,
 				CFC705D82B497D110045D2C9 /* PanelResources.bundle */,
 			);
 			name = Products;
@@ -2526,6 +2534,13 @@
 			fileType = "wrapper.xpc-service";
 			path = Highlighter.xpc;
 			remoteRef = CF5BF7DC2C0B8D230057C92E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CFB3B5872C8C973E00365F9D /* PanelPT */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = PanelPT;
+			remoteRef = CFB3B5862C8C973E00365F9D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CFC705AD2B497CD90045D2C9 /* libUtility.a */ = {

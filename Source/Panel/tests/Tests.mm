@@ -1,4 +1,5 @@
 // Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+#define CATCH_CONFIG_ENABLE_BENCHMARKING
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
 #include <Base/CommonPaths.h>

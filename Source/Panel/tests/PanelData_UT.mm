@@ -142,7 +142,6 @@ TEST_CASE(PREFIX "SortedIndexForRawIndex")
         const auto listing = ProduceDummyListing(std::vector<std::string>{"a", "b", "c", "a", "A", "b", "a", "c", "a"});
         data::SortMode sorting;
         sorting.sort = data::SortMode::SortByName;
-        sorting.case_sens = false;
 
         Model model;
         model.SetSortMode(sorting);
@@ -165,7 +164,6 @@ TEST_CASE(PREFIX "SortedIndexForRawIndex")
         const auto listing = ProduceDummyListing(std::vector<std::string>{"a", "b", "c", "a", "A", "b", "a", "c", "a"});
         data::SortMode sorting;
         sorting.sort = data::SortMode::SortByName;
-        sorting.case_sens = false;
 
         data::TextualFilter textual_filter;
         textual_filter.text = @"a";
@@ -230,7 +228,6 @@ TEST_CASE(PREFIX "SortingWithCases")
     data::Model data;
     auto sorting = data.SortMode();
     sorting.sort = data::SortMode::SortByName;
-    sorting.case_sens = false;
     data.SetSortMode(sorting);
     data.Load(listing, data::Model::PanelType::Directory);
 
@@ -239,7 +236,7 @@ TEST_CASE(PREFIX "SortingWithCases")
     CHECK(data.SortedIndexForName(listing->Item(1).FilenameC()) == 2);
     CHECK(data.SortedIndexForName(listing->Item(3).FilenameC()) == 3);
 
-    sorting.case_sens = true;
+    sorting.collation = data::SortMode::Collation::CaseSensitive;
     data.SetSortMode(sorting);
     CHECK(data.SortedIndexForName(listing->Item(2).FilenameC()) == 0);
     CHECK(data.SortedIndexForName(listing->Item(3).FilenameC()) == 1);

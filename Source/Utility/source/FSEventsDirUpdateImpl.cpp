@@ -192,7 +192,7 @@ uint64_t FSEventsDirUpdateImpl::AddWatchPath(const char *_path, std::function<vo
     }
 
     // create a new watch stream
-    Log::Trace("Creating a new watcher for '{}'", _path);    
+    Log::Trace("Creating a new watcher for '{}'", _path);
     auto ep = m_Watches.emplace(dir_path, std::make_unique<WatchData>());
     assert(ep.second == true);
     WatchData &w = *ep.first->second.get();

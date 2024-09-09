@@ -24,13 +24,13 @@ public:
 
 private:
     struct WatchData {
-        std::string_view path; // canonical fs representation, should include a trailing slash. points into hashmap
+        std::string path; // canonical fs representation, should include a trailing slash
         FSEventStreamRef stream = nullptr;
         std::vector<std::pair<uint64_t, std::function<void()>>> handlers;
     };
 
     using WatchesT = ankerl::unordered_dense::
-        segmented_map<std::string, WatchData, UnorderedStringHashEqual, UnorderedStringHashEqual>;
+        map<std::string, std::unique_ptr<WatchData>, UnorderedStringHashEqual, UnorderedStringHashEqual>;
 
     void OnVolumeDidUnmount(const std::string &_on_path) override;
 

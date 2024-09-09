@@ -187,15 +187,15 @@ uint64_t FSEventsDirUpdateImpl::AddWatchPath(const char *_path, std::function<vo
     // check if this path already presents in watched paths
     if( auto it = m_Watches.find(dir_path); it != m_Watches.end() ) {
         Log::Trace("Using an already existing watcher for '{}'", _path);
-        it->second.handlers.emplace_back(ticket, std::move(_handler));
+        it->second->handlers.emplace_back(ticket, std::move(_handler));
         return ticket;
     }
 
     // create a new watch stream
     Log::Trace("Creating a new watcher for '{}'", _path);
-    auto ep = m_Watches.emplace(dir_path, WatchData{});
+    auto ep = m_Watches.emplace(dir_path, std::make_unique<WatchData>());
     assert(ep.second == true);
-    WatchData &w = ep.first->second;
+    WatchData &w = *ep.first->second.get();
     w.stream = CreateEventStream(dir_path, &w);
     if( w.stream == nullptr ) {
         // failed to creat the event stream, roll back the changes and return a failure indication
@@ -236,7 +236,7 @@ void FSEventsDirUpdateImpl::RemoveWatchPathWithTicket(uint64_t _ticket)
     auto lock = std::lock_guard{m_Lock};
 
     for( auto i = m_Watches.begin(), e = m_Watches.end(); i != e; ++i ) {
-        auto &watch = i->second;
+        auto &watch = *i->second;
         for( auto h = watch.handlers.begin(), he = watch.handlers.end(); h != he; ++h )
             if( h->first == _ticket ) {
                 unordered_erase(watch.handlers, h);
@@ -255,8 +255,8 @@ void FSEventsDirUpdateImpl::OnVolumeDidUnmount(const std::string &_on_path)
     dispatch_assert_main_queue();
     // locking??
     for( auto &i : m_Watches ) {
-        if( i.second.path.starts_with(_on_path) ) {
-            for( auto &h : i.second.handlers )
+        if( i.second->path.starts_with(_on_path) ) {
+            for( auto &h : i.second->handlers )
                 h.second();
         }
     }

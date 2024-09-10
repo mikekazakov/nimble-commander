@@ -147,7 +147,61 @@ There are numerous ways to manipulate the item selection using the keyboard or m
 - `Alt + Cmd + -`: deselects all items with the same extension as the currently focused item.
 
 ### Sorting Modes
-_to be written_
+Nimble Commander offers various ways to organize items in a folder.
+You can sort the items in ascending or descending order based on the following properties:
+
+- Name
+- Extension
+- Size
+- Modified Time
+- Created Time
+- Added Time
+- Accessed Time
+
+A letter indicator in the top-left corner of the file panel shows the current sorting criteria:
+
+| Indicator | Criteria        | Order           | Example
+| --------- | --------------- | --------------- | ---------
+| `n`       | Name            | Ascending       | a ... z
+| `N`       | Name            | Descending      | z ... a
+| `e`       | Extension       | Ascending       | csv ... zip
+| `E`       | Extension       | Descending      | zip ... csv
+| `s`       | Size            | Descending      | 10 MB ... 1 MB
+| `S`       | Size            | Ascending       | 1 MB ... 10 MB
+| `m`       | Modified Time   | Descending      | 20:43 ... 18:15
+| `M`       | Modified Time   | Ascending       | 18:15 ... 20:43
+| `b`       | Created Time    | Descending      | 20:43 ... 18:15
+| `B`       | Created Time    | Ascending       | 18:15 ... 20:43
+| `a`       | Added Time      | Descending      | 20:43 ... 18:15
+| `A`       | Added Time      | Ascending       | 18:15 ... 20:43
+| `x`       | Accessed Time   | Descending      | 20:43 ... 18:15
+| `X`       | Accessed Time   | Ascending       | 18:15 ... 20:43
+
+This is an example of the sorting pop-up menu shown after clicking on the sorting indicator:
+
+![Sorting pop-up](Help-panel-sorting.png)
+
+You can change the sorting order by clicking on the indicator and selecting a new option in the pop-up menu, by using the menu `View > Sorting`, by clicking the column headers in List View mode, or via the following hotkeys:
+
+- `Ctrl + Cmd + 1`: Sort by Name.
+- `Ctrl + Cmd + 2`: Sort by Extension.
+- `Ctrl + Cmd + 3`: Sort by Modified Time.
+- `Ctrl + Cmd + 4`: Sort by Size.
+- `Ctrl + Cmd + 5`: Sort by Creation Time.
+- `Ctrl + Cmd + 6`: Sort by Added Time.
+- `Ctrl + Cmd + 7`: Sort by Accessed Time.
+
+When changing the sorting order via hotkeys or the menu, the behavior depends on the previous sorting order. If the criteria are different, it will switch to the selected criteria with its default order (as shown in the table above). 
+Selecting the same sorting criteria again will toggle the order between ascending and descending.
+
+Nimble Commander also provides some customization options to fine-tune sorting:
+
+- `Separate Folders from Files` places all folders before any regular files.
+- `Extensionless Folders` forces extension-based sorting to treat any folder as if it doesn't have an extension.
+- `Comparison` affects how filenames are compared when determining the order:
+  - `Natural`: takes into account locale-specific collation rules and treats digits as numbers. This is the same ordering used by Finder and approximately follows the [Unicode collation algorithm](https://en.wikipedia.org/wiki/Unicode_collation_algorithm). The slowest of the three.
+  - `Case-Insensitive`: A Unicode-based comparison that ignores the case of letters in filenames.
+  - `Case-Sensitive`:  A simple Unicode-based comparison that compares characters one by one without transformations. The fastest of the three.
 
 ### Quick Search
 _to be written_

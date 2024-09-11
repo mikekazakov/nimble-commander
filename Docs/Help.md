@@ -204,7 +204,30 @@ Nimble Commander also provides some customization options to fine-tune sorting:
   - `Case-Sensitive`:  A simple Unicode-based comparison that compares characters one by one without transformations. The fastest of the three.
 
 ### Quick Search
-_to be written_
+
+Nimble Commander offers a fast way to locate a file in a folder by typing a few letters from its name. This keyboard-based navigation is called Quick Search. It's highly customizable and can behave differently based on your settings, but at its core, the idea is simple: any keyboard input can be used to filter folder items. To remove the filtering, press the `Esc` button to clear the search query.
+
+Quick Search underscores the items with matching filenames and offers two ways to handle non-matching items: either continue showing them or hide them from the listing. This behavior can be changed in the `Settings` dialog: `Panel > Quick Search > When searching`: `Show all items` or `Show only matching items`. The following screenshot shows how Quick Search filters out all items except the two that match the input query 'color':
+
+![Quick search](Help-panel-quicksearch.png)
+
+An optional key modifier can be specified so that only keypresses with the chosen modifier will be registered as input for Quick Search. There are 5 different options for the modifiers that can be chosen in `Panel > Quick Search > Key modifier`:
+
+- `Opt`
+- `Ctrl + Opt`
+- `Shift + Opt`
+- `No modifier` (default)
+- `Disabled` (turns off Quick Search altogether)
+
+The input query can be interpreted in different ways. There are 5 options for matching filenames against it, configurable in `Panel > Quick Search > Where to search`:
+
+- `Fuzzy`: Letters from the input query must appear anywhere in the filename, in the same order.
+- `Anywhere` (default): The input query must appear as a whole anywhere in the filename.
+- `Beginning`: The filename must start with the input query.
+- `Ending`: The filename must end with the input query.
+- `Beginning or ending`: The filename must start or end with the input query.
+
+When filtered-out items are configured to still be shown, and a key modifier is set, it can be used to lock navigation within the matching files. Using normal keyboard navigation (Arrows, Home, End, etc.) while holding the modifier will restrict the cursor movement to only the matching files.
 
 ### View Modes
 _to be written_

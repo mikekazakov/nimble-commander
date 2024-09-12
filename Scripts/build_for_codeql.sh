@@ -25,3 +25,8 @@ echo Building these targets: ${targets[@]}
 for target in ${targets[@]}; do
     xcodebuild -project ${XCODEPROJ} -scheme ${target} -configuration Debug | xcpretty
 done
+
+# clean afterwards to save space on gh runners
+for target in ${targets[@]}; do
+    xcodebuild clean -project ${XCODEPROJ} -scheme ${target} -configuration Debug
+done

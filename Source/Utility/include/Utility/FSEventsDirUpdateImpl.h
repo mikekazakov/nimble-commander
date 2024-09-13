@@ -12,7 +12,7 @@ namespace nc::utility {
 class FSEventsDirUpdateImpl : public FSEventsDirUpdate
 {
 public:
-    uint64_t AddWatchPath(const char *_path, std::function<void()> _handler) override;
+    uint64_t AddWatchPath(std::string_view _path, std::function<void()> _handler) override;
 
     void RemoveWatchPathWithTicket(uint64_t _ticket) override;
 

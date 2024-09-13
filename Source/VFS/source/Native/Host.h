@@ -47,7 +47,7 @@ public:
     int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker) override;
 
     bool IsDirChangeObservingAvailable(const char *_path) override;
-    HostDirObservationTicket DirChangeObserve(const char *_path, std::function<void()> _handler) override;
+    HostDirObservationTicket DirChangeObserve(std::string_view _path, std::function<void()> _handler) override;
 
     void StopDirChangeObserving(unsigned long _ticket) override;
 

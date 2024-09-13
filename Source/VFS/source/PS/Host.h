@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/SerialQueue.h>
@@ -39,7 +39,7 @@ public:
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
     bool IsDirChangeObservingAvailable(const char *_path) override;
-    HostDirObservationTicket DirChangeObserve(const char *_path, std::function<void()> _handler) override;
+    HostDirObservationTicket DirChangeObserve(std::string_view _path, std::function<void()> _handler) override;
     void StopDirChangeObserving(unsigned long _ticket) override;
 
     /**

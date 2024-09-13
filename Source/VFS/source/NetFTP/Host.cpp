@@ -556,9 +556,9 @@ bool FTPHost::IsDirChangeObservingAvailable([[maybe_unused]] const char *_path)
     return true;
 }
 
-HostDirObservationTicket FTPHost::DirChangeObserve(const char *_path, std::function<void()> _handler)
+HostDirObservationTicket FTPHost::DirChangeObserve(std::string_view _path, std::function<void()> _handler)
 {
-    if( _path == nullptr || _path[0] != '/' )
+    if( _path.empty() || _path[0] != '/' )
         return {};
 
     std::lock_guard<std::mutex> lock(m_UpdateHandlersLock);

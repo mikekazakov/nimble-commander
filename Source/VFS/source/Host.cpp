@@ -257,7 +257,7 @@ bool Host::IsDirChangeObservingAvailable([[maybe_unused]] const char *_path)
     return false;
 }
 
-HostDirObservationTicket Host::DirChangeObserve([[maybe_unused]] const char *_path,
+HostDirObservationTicket Host::DirChangeObserve([[maybe_unused]] std::string_view _path,
                                                 [[maybe_unused]] std::function<void()> _handler)
 {
     return {};

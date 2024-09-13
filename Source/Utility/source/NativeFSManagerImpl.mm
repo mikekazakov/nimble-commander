@@ -14,7 +14,7 @@
 #include <Base/dispatch_cpp.h>
 #include <Base/algo.h>
 #include <Base/CFPtr.h>
-#include <Base/StringViewZBuf.h>
+#include <Base/StackAllocator.h>
 #include <iostream>
 #include <string_view>
 #include <future>
@@ -502,7 +502,8 @@ NativeFSManager::Info NativeFSManagerImpl::VolumeFromPath(std::string_view _path
     if( _path.empty() )
         return nullptr;
 
-    base::StringViewZBuf<512> path{_path};
+    nc::StackAllocator alloc;
+    std::pmr::string path(_path, &alloc);
     struct statfs info;
     if( statfs(path.c_str(), &info) < 0 )
         return nullptr;

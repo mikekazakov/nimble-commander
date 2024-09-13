@@ -566,7 +566,7 @@ bool PSHost::IsDirChangeObservingAvailable([[maybe_unused]] const char *_path)
     return true;
 }
 
-HostDirObservationTicket PSHost::DirChangeObserve([[maybe_unused]] const char *_path, std::function<void()> _handler)
+HostDirObservationTicket PSHost::DirChangeObserve(std::string_view, std::function<void()> _handler)
 {
     // currently we don't care about _path, since this fs has only one directory - root
     auto ticket = m_LastTicket++;

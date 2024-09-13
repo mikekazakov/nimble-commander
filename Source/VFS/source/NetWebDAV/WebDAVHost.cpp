@@ -34,6 +34,7 @@ static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
                                              bool _https,
                                              int _port);
 static bool IsValidInputPath(const char *_path);
+static bool IsValidInputPath(std::string_view _path);
 
 WebDAVHost::WebDAVHost(const std::string &_serv_url,
                        const std::string &_user,
@@ -388,11 +389,11 @@ bool WebDAVHost::IsDirChangeObservingAvailable([[maybe_unused]] const char *_pat
     return true;
 }
 
-HostDirObservationTicket WebDAVHost::DirChangeObserve(const char *_path, std::function<void()> _handler)
+HostDirObservationTicket WebDAVHost::DirChangeObserve(std::string_view _path, std::function<void()> _handler)
 {
     if( !IsValidInputPath(_path) )
         return {};
-    const auto ticket = I->m_Cache.Observe(_path, std::move(_handler));
+    const auto ticket = I->m_Cache.Observe(std::string(_path), std::move(_handler));
     return HostDirObservationTicket{ticket, shared_from_this()};
 }
 
@@ -472,7 +473,12 @@ static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
 
 static bool IsValidInputPath(const char *_path)
 {
-    return _path != nullptr && _path[0] == '/';
+    return _path != nullptr && IsValidInputPath(std::string_view(_path));
+}
+
+static bool IsValidInputPath(std::string_view _path)
+{
+    return _path.length() > 0 && _path[0] == '/';
 }
 
 } // namespace nc::vfs

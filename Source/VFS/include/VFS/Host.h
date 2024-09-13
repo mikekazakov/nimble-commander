@@ -336,7 +336,7 @@ public:
     /**
      * _handler can be called from any thread
      */
-    virtual HostDirObservationTicket DirChangeObserve(const char *_path, std::function<void()> _handler);
+    virtual HostDirObservationTicket DirChangeObserve(std::string_view _path, std::function<void()> _handler);
 
     /**
      * Will fire _handler whenever a file identified by '_path' is changed.

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <string>
+#include <string_view>
 #include <functional>
 
 namespace nc::utility {
@@ -17,7 +18,7 @@ public:
     // Registers _handler as a watch callback for any changes of the directory '_path' (but not its children)
     // Zero will be returned to indicate an error.
     // Any other values represent observation tickets.
-    virtual uint64_t AddWatchPath(const char *_path, std::function<void()> _handler) = 0;
+    virtual uint64_t AddWatchPath(std::string_view _path, std::function<void()> _handler) = 0;
 
     // Deregisters the watcher identified by _ticket.
     virtual void RemoveWatchPathWithTicket(uint64_t _ticket) = 0;

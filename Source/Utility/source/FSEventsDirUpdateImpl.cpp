@@ -7,6 +7,7 @@
 #include <Utility/Log.h>
 #include <Base/dispatch_cpp.h>
 #include <Base/spinlock.h>
+#include <Base/StackAllocator.h>
 #include <fmt/ranges.h>
 #include <span>
 
@@ -17,9 +18,12 @@ static const CFAbsoluteTime g_FSEventsLatency = 0.05; // 50ms
 // ask FS about real file path - case sensitive etc
 // also we're getting rid of symlinks - it will be a real file
 // return path with trailing slash
-static std::string GetRealPath(const char *_path_in)
+static std::string GetRealPath(std::string_view _path_in)
 {
-    int tfd = open(_path_in, O_RDONLY);
+    StackAllocator alloc;
+    std::pmr::string path_in(_path_in, &alloc);
+
+    int tfd = open(path_in.c_str(), O_RDONLY);
     if( tfd == -1 ) {
         Log::Warn("GetRealPath() failed to open '{}'", _path_in);
         return {};
@@ -165,9 +169,9 @@ static void StopStream(FSEventStreamRef _stream)
     });
 }
 
-uint64_t FSEventsDirUpdateImpl::AddWatchPath(const char *_path, std::function<void()> _handler)
+uint64_t FSEventsDirUpdateImpl::AddWatchPath(std::string_view _path, std::function<void()> _handler)
 {
-    if( !_path || !_handler )
+    if( _path.empty() || !_handler )
         return no_ticket;
 
     Log::Debug("FSEventsDirUpdate::Impl::AddWatchPath called for '{}'", _path);

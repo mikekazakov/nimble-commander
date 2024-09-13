@@ -109,15 +109,15 @@ XAttrHost::XAttrHost(const std::string_view _file_path, const VFSHostPtr &_host)
 XAttrHost::XAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config)
     : Host(_config.Get<VFSXAttrHostConfiguration>().path, _parent, UniqueTag), m_Configuration(_config)
 {
-    auto path = JunctionPath();
+    const std::string &path = JunctionPath();
     if( !_parent->IsNativeFS() )
         throw VFSErrorException(VFSError::InvalidCall);
 
-    int fd = open(path, O_RDONLY | O_NONBLOCK | O_EXLOCK);
+    int fd = open(path.c_str(), O_RDONLY | O_NONBLOCK | O_EXLOCK);
     if( fd < 0 )
-        fd = open(path, O_RDONLY | O_NONBLOCK | O_SHLOCK);
+        fd = open(path.c_str(), O_RDONLY | O_NONBLOCK | O_SHLOCK);
     if( fd < 0 )
-        fd = open(path, O_RDONLY | O_NONBLOCK);
+        fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
     if( fd < 0 )
         throw VFSErrorException(VFSError::FromErrno(EIO));
 

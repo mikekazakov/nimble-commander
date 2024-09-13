@@ -96,11 +96,11 @@ public:
     const char *Tag() const noexcept;
 
     /**
-     * Returns a path of a filesystem root.
+     * Returns a path of the filesystem root.
      * It may be a filepath for archive or network address for remote filesystem
      * or even "" for special virtual filesystems or for native filesystem.
      */
-    const char *JunctionPath() const noexcept;
+    const std::string& JunctionPath() const noexcept;
 
     /**
      * Hosted filesystems, like archives, must have a parent vfs.

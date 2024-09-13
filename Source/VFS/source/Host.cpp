@@ -147,9 +147,9 @@ const VFSHostPtr &Host::Parent() const noexcept
     return m_Parent;
 }
 
-const char *Host::JunctionPath() const noexcept
+const std::string& Host::JunctionPath() const noexcept
 {
-    return m_JunctionPath.c_str();
+    return m_JunctionPath;
 }
 
 bool Host::IsWritable() const
@@ -599,7 +599,7 @@ uint64_t Host::FullHashForPath(const char *_path) const noexcept
         const auto host = hosts[--hosts_n];
         p = stpcpy(p, host->Tag());
         p = stpcpy(p, "|");
-        p = stpcpy(p, host->JunctionPath());
+        p = stpcpy(p, host->JunctionPath().c_str());
         p = stpcpy(p, "|");
     }
     p = stpcpy(p, _path);

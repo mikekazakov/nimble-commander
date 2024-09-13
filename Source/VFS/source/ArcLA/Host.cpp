@@ -170,14 +170,14 @@ int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
 
     {
         VFSStat st;
-        res = Parent()->Stat(JunctionPath(), st, 0);
+        res = Parent()->Stat(JunctionPath().c_str(), st, 0);
         if( res < 0 )
             return res;
         st.ToSysStat(st, I->m_SrcFileStat);
     }
 
     VFSFilePtr source_file;
-    res = Parent()->CreateFile(JunctionPath(), source_file, {});
+    res = Parent()->CreateFile(JunctionPath().c_str(), source_file, {});
     if( res < 0 )
         return res;
 
@@ -804,10 +804,9 @@ int ArchiveHost::ResolvePath(const char *_path, char *_resolved_path)
 
 int ArchiveHost::StatFS(const char * /*_path*/, VFSStatFS &_stat, const VFSCancelChecker &)
 {
-    char vol_name[256];
-    if( !GetFilenameFromPath(JunctionPath(), vol_name) )
+    std::string_view vol_name = utility::PathManip::Filename(JunctionPath());
+    if( vol_name.empty() )
         return VFSError::InvalidCall;
-
     _stat.volume_name = vol_name;
     _stat.total_bytes = I->m_ArchivedFilesTotalSize;
     _stat.free_bytes = 0;

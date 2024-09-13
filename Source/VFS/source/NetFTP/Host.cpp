@@ -556,7 +556,7 @@ bool FTPHost::IsDirChangeObservingAvailable([[maybe_unused]] const char *_path)
     return true;
 }
 
-HostDirObservationTicket FTPHost::DirChangeObserve(std::string_view _path, std::function<void()> _handler)
+HostDirObservationTicket FTPHost::ObserveDirectoryChanges(std::string_view _path, std::function<void()> _handler)
 {
     if( _path.empty() || _path[0] != '/' )
         return {};

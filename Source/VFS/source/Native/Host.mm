@@ -467,7 +467,7 @@ bool NativeHost::IsDirChangeObservingAvailable(const char *_path)
     return access(_path, R_OK) == 0; // should use _not_ routed I/O here!
 }
 
-HostDirObservationTicket NativeHost::DirChangeObserve(std::string_view _path, std::function<void()> _handler)
+HostDirObservationTicket NativeHost::ObserveDirectoryChanges(std::string_view _path, std::function<void()> _handler)
 {
     auto &inst = nc::utility::FSEventsDirUpdate::Instance();
     uint64_t t = inst.AddWatchPath(_path, std::move(_handler));

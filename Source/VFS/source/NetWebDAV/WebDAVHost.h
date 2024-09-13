@@ -55,7 +55,7 @@ public:
 
     bool IsDirChangeObservingAvailable(const char *_path) override;
 
-    HostDirObservationTicket DirChangeObserve(std::string_view _path, std::function<void()> _handler) override;
+    HostDirObservationTicket ObserveDirectoryChanges(std::string_view _path, std::function<void()> _handler) override;
 
     const std::string &Host() const noexcept;
     const std::string &Path() const noexcept;

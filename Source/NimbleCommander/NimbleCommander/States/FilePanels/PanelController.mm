@@ -627,7 +627,7 @@ static void HeatUpConfigValues()
             dispatch_to_main_queue([=] { [static_cast<PanelController *>(weakself) refreshPanel]; });
         };
         m_UpdatesObservationTicket =
-            self.vfs->DirChangeObserve(self.currentDirectoryPath.c_str(), std::move(dir_change_callback));
+            self.vfs->ObserveDirectoryChanges(self.currentDirectoryPath.c_str(), std::move(dir_change_callback));
     }
 
     [self clearFocusingRequest];

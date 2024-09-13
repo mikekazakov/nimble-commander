@@ -58,7 +58,8 @@ public:
     virtual bool IsWritable() const override;
 
     virtual bool IsDirChangeObservingAvailable(const char *_path) override;
-    virtual HostDirObservationTicket DirChangeObserve(std::string_view _path, std::function<void()> _handler) override;
+    virtual HostDirObservationTicket ObserveDirectoryChanges(std::string_view _path,
+                                                             std::function<void()> _handler) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;
 
     // internal stuff below:

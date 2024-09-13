@@ -389,7 +389,7 @@ bool WebDAVHost::IsDirChangeObservingAvailable([[maybe_unused]] const char *_pat
     return true;
 }
 
-HostDirObservationTicket WebDAVHost::DirChangeObserve(std::string_view _path, std::function<void()> _handler)
+HostDirObservationTicket WebDAVHost::ObserveDirectoryChanges(std::string_view _path, std::function<void()> _handler)
 {
     if( !IsValidInputPath(_path) )
         return {};

@@ -39,7 +39,7 @@ public:
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
     bool IsDirChangeObservingAvailable(const char *_path) override;
-    HostDirObservationTicket DirChangeObserve(std::string_view _path, std::function<void()> _handler) override;
+    HostDirObservationTicket ObserveDirectoryChanges(std::string_view _path, std::function<void()> _handler) override;
     void StopDirChangeObserving(unsigned long _ticket) override;
 
     /**

@@ -147,7 +147,7 @@ const VFSHostPtr &Host::Parent() const noexcept
     return m_Parent;
 }
 
-const std::string& Host::JunctionPath() const noexcept
+const std::string &Host::JunctionPath() const noexcept
 {
     return m_JunctionPath;
 }
@@ -267,7 +267,7 @@ void Host::StopDirChangeObserving([[maybe_unused]] unsigned long _ticket)
 {
 }
 
-FileObservationToken Host::ObserveFileChanges([[maybe_unused]] const char *_path,
+FileObservationToken Host::ObserveFileChanges([[maybe_unused]] std::string_view _path,
                                               [[maybe_unused]] std::function<void()> _handler)
 {
     return {};

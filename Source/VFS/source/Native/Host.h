@@ -51,7 +51,7 @@ public:
 
     void StopDirChangeObserving(unsigned long _ticket) override;
 
-    FileObservationToken ObserveFileChanges(const char *_path, std::function<void()> _handler) override;
+    FileObservationToken ObserveFileChanges(std::string_view _path, std::function<void()> _handler) override;
 
     void StopObservingFileChanges(unsigned long _token) override;
 

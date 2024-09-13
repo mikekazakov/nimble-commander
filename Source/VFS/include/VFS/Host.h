@@ -100,7 +100,7 @@ public:
      * It may be a filepath for archive or network address for remote filesystem
      * or even "" for special virtual filesystems or for native filesystem.
      */
-    const std::string& JunctionPath() const noexcept;
+    const std::string &JunctionPath() const noexcept;
 
     /**
      * Hosted filesystems, like archives, must have a parent vfs.
@@ -342,7 +342,7 @@ public:
      * Will fire _handler whenever a file identified by '_path' is changed.
      * Can return an empty token if observation is unavailable.
      */
-    virtual FileObservationToken ObserveFileChanges(const char *_path, std::function<void()> _handler);
+    virtual FileObservationToken ObserveFileChanges(std::string_view _path, std::function<void()> _handler);
 
 protected:
     void SetFeatures(uint64_t _features_bitset);

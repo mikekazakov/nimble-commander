@@ -480,9 +480,8 @@ void NativeHost::StopDirChangeObserving(unsigned long _ticket)
     inst.RemoveWatchPathWithTicket(_ticket);
 }
 
-FileObservationToken NativeHost::ObserveFileChanges(const char *_path, std::function<void()> _handler)
+FileObservationToken NativeHost::ObserveFileChanges(const std::string_view _path, std::function<void()> _handler)
 {
-    assert(_path != nullptr);
     const auto token = m_FSEventsFileUpdate.AddWatchPath(_path, std::move(_handler));
     return {token, SharedPtr()};
 }

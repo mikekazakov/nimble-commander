@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <sys/stat.h>
@@ -10,7 +10,7 @@ namespace nc::vfs {
 class XAttrHost final : public Host
 {
 public:
-    XAttrHost(const std::string &_file_path, const VFSHostPtr &_host); // _host must be native currently
+    XAttrHost(std::string_view _file_path, const VFSHostPtr &_host); // _host must be native currently
     XAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config);
     ~XAttrHost();
 

@@ -73,7 +73,7 @@ public:
     }
 };
 
-static VFSConfiguration ComposeConfiguration(const std::string &_path, std::optional<std::string> _passwd)
+static VFSConfiguration ComposeConfiguration(const std::string_view _path, std::optional<std::string> _passwd)
 {
     VFSArchiveHostConfiguration config;
     config.path = _path;
@@ -98,11 +98,11 @@ static void DecodeStringToUTF8(const void *_bytes, size_t _sz, CFStringEncoding 
     }
 }
 
-ArchiveHost::ArchiveHost(const std::string &_path,
+ArchiveHost::ArchiveHost(const std::string_view _path,
                          const VFSHostPtr &_parent,
                          std::optional<std::string> _password,
                          VFSCancelChecker _cancel_checker)
-    : Host(_path.c_str(), _parent, UniqueTag), I(std::make_unique<Impl>()),
+    : Host(_path, _parent, UniqueTag), I(std::make_unique<Impl>()),
       m_Configuration(ComposeConfiguration(_path, std::move(_password)))
 {
     assert(_parent);

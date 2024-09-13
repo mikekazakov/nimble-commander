@@ -154,7 +154,7 @@ static Extracted read_stream(const uint64_t _max_bytes,
 class VFSArchiveRawHostConfiguration
 {
 public:
-    std::filesystem::path path;
+    std::string path;
 
     [[nodiscard]] const char *Tag() const noexcept { return ArchiveRawHost::UniqueTag; }
 
@@ -163,8 +163,10 @@ public:
     bool operator==(const VFSArchiveRawHostConfiguration &_rhs) const noexcept { return path == _rhs.path; }
 };
 
-ArchiveRawHost::ArchiveRawHost(const std::string &_path, const VFSHostPtr &_parent, VFSCancelChecker _cancel_checker)
-    : Host(_path.c_str(), _parent, UniqueTag), m_Configuration(VFSArchiveRawHostConfiguration{_path})
+ArchiveRawHost::ArchiveRawHost(const std::string_view _path,
+                               const VFSHostPtr &_parent,
+                               VFSCancelChecker _cancel_checker)
+    : Host(_path, _parent, UniqueTag), m_Configuration(VFSArchiveRawHostConfiguration{std::string(_path)})
 {
     Init(_cancel_checker);
 }
@@ -204,7 +206,7 @@ void ArchiveRawHost::Init(const VFSCancelChecker &_cancel_checker)
     m_Data = std::move(extracted.bytes);
     m_Filename = extracted.filename;
     if( m_Filename.empty() )
-        m_Filename = DeduceFilename(path.native());
+        m_Filename = DeduceFilename(path);
     if( m_Filename.empty() )
         m_Filename = g_LastResortFilename;
     m_MTime.tv_nsec = 0;

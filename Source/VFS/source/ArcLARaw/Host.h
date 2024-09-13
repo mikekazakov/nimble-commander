@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../../include/VFS/Host.h"
@@ -14,7 +14,7 @@ class ArchiveRawHost final : public Host
 public:
     static const char *const UniqueTag;
 
-    ArchiveRawHost(const std::string &_path, const VFSHostPtr &_parent, VFSCancelChecker _cancel_checker = {});
+    ArchiveRawHost(std::string_view _path, const VFSHostPtr &_parent, VFSCancelChecker _cancel_checker = {});
     ArchiveRawHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker = {});
 
     static VFSMeta Meta();

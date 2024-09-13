@@ -1,9 +1,10 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include "xattr.h"
 #include <VFS/VFSFile.h>
 #include "../ListingInput.h"
 #include <dirent.h>
+#include <fmt/format.h>
 
 using namespace std::literals;
 
@@ -83,7 +84,10 @@ static const mode_t g_RootMode = S_IRUSR | S_IXUSR | S_IFDIR;
 class VFSXAttrHostConfiguration
 {
 public:
-    VFSXAttrHostConfiguration(const std::string &_path) : path(_path), verbose_junction("[xattr]:"s + _path) {}
+    VFSXAttrHostConfiguration(const std::string_view _path)
+        : path(_path), verbose_junction(fmt::format("[xattr]:{}", _path))
+    {
+    }
 
     const std::string path;
     const std::string verbose_junction;
@@ -97,13 +101,13 @@ public:
     bool operator==(const VFSXAttrHostConfiguration &_rhs) const { return path == _rhs.path; }
 };
 
-XAttrHost::XAttrHost(const std::string &_file_path, const VFSHostPtr &_host)
+XAttrHost::XAttrHost(const std::string_view _file_path, const VFSHostPtr &_host)
     : XAttrHost(_host, VFSConfiguration(VFSXAttrHostConfiguration(_file_path)))
 {
 }
 
 XAttrHost::XAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config)
-    : Host(_config.Get<VFSXAttrHostConfiguration>().path.c_str(), _parent, UniqueTag), m_Configuration(_config)
+    : Host(_config.Get<VFSXAttrHostConfiguration>().path, _parent, UniqueTag), m_Configuration(_config)
 {
     auto path = JunctionPath();
     if( !_parent->IsNativeFS() )

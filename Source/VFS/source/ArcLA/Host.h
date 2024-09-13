@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../../include/VFS/Host.h"
@@ -19,7 +19,7 @@ class ArchiveHost final : public Host
 {
 public:
     // Creates an archive host out of raw input
-    ArchiveHost(const std::string &_path,
+    ArchiveHost(std::string_view _path,
                 const VFSHostPtr &_parent,
                 std::optional<std::string> _password = std::nullopt,
                 VFSCancelChecker _cancel_checker = nullptr); // flags will be added later

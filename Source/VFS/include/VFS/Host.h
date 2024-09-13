@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
@@ -7,6 +7,7 @@
 #include "VFSConfiguration.h"
 #include "VFSFactory.h"
 #include "../../source/Listing.h"
+#include <string_view>
 
 namespace nc::vfs {
 
@@ -71,7 +72,7 @@ public:
     /**
      * junction path and parent can be nil
      */
-    Host(const char *_junction_path, const std::shared_ptr<Host> &_parent, const char *_fs_tag);
+    Host(std::string_view _junction_path, const std::shared_ptr<Host> &_parent, const char *_fs_tag);
     virtual ~Host();
 
     /***********************************************************************************************

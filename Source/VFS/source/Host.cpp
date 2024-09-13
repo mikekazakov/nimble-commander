@@ -116,8 +116,8 @@ public:
     bool operator==(const VFSHostConfiguration &) const { return true; }
 };
 
-Host::Host(const char *_junction_path, const std::shared_ptr<Host> &_parent, const char *_fs_tag)
-    : m_JunctionPath(_junction_path ? _junction_path : ""), m_Parent(_parent), m_Tag(_fs_tag), m_Features(0)
+Host::Host(const std::string_view _junction_path, const std::shared_ptr<Host> &_parent, const char *_fs_tag)
+    : m_JunctionPath(_junction_path), m_Parent(_parent), m_Tag(_fs_tag), m_Features(0)
 {
 }
 

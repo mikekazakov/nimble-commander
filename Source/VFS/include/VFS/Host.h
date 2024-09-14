@@ -239,7 +239,7 @@ public:
      * If there's no overriden implementaition in derived class, VFSHost will try to produce
      * this listing with Stat().
      */
-    virtual int FetchSingleItemListing(const char *_path_to_item,
+    virtual int FetchSingleItemListing(std::string_view _path_to_item,
                                        VFSListingPtr &_target,
                                        unsigned long _flags,
                                        const VFSCancelChecker &_cancel_checker = nullptr);

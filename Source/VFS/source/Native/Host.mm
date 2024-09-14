@@ -240,25 +240,27 @@ int NativeHost::FetchDirectoryListing(std::string_view _path,
     return 0;
 }
 
-int NativeHost::FetchSingleItemListing(const char *_path,
+int NativeHost::FetchSingleItemListing(std::string_view _path,
                                        VFSListingPtr &_target,
                                        unsigned long _flags,
                                        const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::InvalidCall;
 
     if( _cancel_checker && _cancel_checker() )
         return VFSError::Cancelled;
 
+    // TODO: rewrite without using C-style strings
     char path[MAXPATHLEN], directory[MAXPATHLEN], filename[MAXPATHLEN];
-    strcpy(path, _path);
+    memcpy(path, _path.data(), _path.length());
+    path[_path.length()] = 0;
 
     if( !EliminateTrailingSlashInPath(path) || !GetDirectoryContainingItemFromPath(path, directory) ||
         !GetFilenameFromPath(path, filename) )
         return VFSError::InvalidCall;
 
-    auto &io = routedio::RoutedIO::InterfaceForAccess(_path, R_OK);
+    auto &io = routedio::RoutedIO::InterfaceForAccess(path, R_OK);
 
     using nc::base::variable_container;
     uint64_t ext_flags = 0;
@@ -338,7 +340,7 @@ int NativeHost::FetchSingleItemListing(const char *_path,
     // syscalls).
     if( (_flags & Flags::F_LoadTags) && !(ext_flags & EF_NO_XATTRS) ) {
         // TODO: is it worth routing the I/O here? guess not atm
-        const int entry_fd = open(_path, O_RDONLY | O_NONBLOCK);
+        const int entry_fd = open(path, O_RDONLY | O_NONBLOCK);
         if( entry_fd >= 0 ) {
             auto close_entry_fd = at_scope_end([entry_fd] { close(entry_fd); });
             if( auto tags = utility::Tags::ReadTags(entry_fd); !tags.empty() )

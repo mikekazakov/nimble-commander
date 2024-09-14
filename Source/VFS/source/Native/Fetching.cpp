@@ -4,6 +4,7 @@
 #include <sys/errno.h>
 #include <sys/vnode.h>
 #include <Base/algo.h>
+#include <Base/StackAllocator.h>
 #include <RoutedIO/RoutedIO.h>
 #include <Utility/PathManip.h>
 #include <VFS/VFSError.h>
@@ -66,7 +67,7 @@ static int LStatByPath(nc::routedio::PosixIOInterface &_io, const char *_path, c
 }
 
 int Fetching::ReadSingleEntryAttributesByPath(nc::routedio::PosixIOInterface &_io,
-                                              const char *_path,
+                                              std::string_view _path,
                                               const Callback &_cb_param)
 {
     struct Attrs {
@@ -97,13 +98,16 @@ int Fetching::ReadSingleEntryAttributesByPath(nc::routedio::PosixIOInterface &_i
     attr_list.fileattr = ATTR_FILE_DATALENGTH;
     attr_list.forkattr = ATTR_CMNEXT_EXT_FLAGS;
 
-    const int fd = _io.open(_path, O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_CLOEXEC);
+    StackAllocator alloc;
+    std::pmr::string path(_path, &alloc);
+
+    const int fd = _io.open(path.c_str(), O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_CLOEXEC);
     if( fd < 0 ) {
         int error = errno;
         if( error == ELOOP ) {
             // special treating for symlinks - they can't be opened by open(), so fall back to
             // regular stat():
-            return LStatByPath(_io, _path, _cb_param);
+            return LStatByPath(_io, path.c_str(), _cb_param);
         }
 
         return error;

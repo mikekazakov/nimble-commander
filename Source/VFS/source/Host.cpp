@@ -420,7 +420,7 @@ int Host::FetchDirectoryListing([[maybe_unused]] std::string_view _path,
     return VFSError::NotSupported;
 }
 
-int Host::FetchSingleItemListing(const char *_path,
+int Host::FetchSingleItemListing(std::string_view _path,
                                  VFSListingPtr &_target,
                                  [[maybe_unused]] unsigned long _flags,
                                  const VFSCancelChecker &_cancel_checker)
@@ -428,14 +428,16 @@ int Host::FetchSingleItemListing(const char *_path,
     // as we came here - there's no special implementation in derived class,
     // so need to try to emulate it with available methods.
 
-    if( !_path || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::InvalidCall;
 
     if( _cancel_checker && _cancel_checker() )
         return VFSError::Cancelled;
 
+    // TODO: rewriting without using C-style strings
     char path[MAXPATHLEN], directory[MAXPATHLEN], filename[MAXPATHLEN];
-    strcpy(path, _path);
+    memcpy(path, _path.data(), _path.length());
+    path[_path.length()] = 0;
 
     if( !EliminateTrailingSlashInPath(path) || !GetDirectoryContainingItemFromPath(path, directory) ||
         !GetFilenameFromPath(path, filename) )

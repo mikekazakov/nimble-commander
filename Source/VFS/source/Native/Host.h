@@ -32,7 +32,7 @@ public:
                               unsigned long _flags,
                               const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int FetchSingleItemListing(const char *_path_to_item,
+    int FetchSingleItemListing(std::string_view _path_to_item,
                                VFSListingPtr &_target,
                                unsigned long _flags,
                                const VFSCancelChecker &_cancel_checker = {}) override;

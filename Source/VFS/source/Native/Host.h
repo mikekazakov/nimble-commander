@@ -20,7 +20,7 @@ public:
     static VFSMeta Meta();
 
     bool IsWritable() const override;
-    bool IsCaseSensitiveAtPath(const char *_dir) const override;
+    bool IsCaseSensitiveAtPath(std::string_view _directory) const override;
 
     int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = {}) override;
 

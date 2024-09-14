@@ -626,7 +626,7 @@ std::string Host::MakePathVerbose(std::string_view _path) const
     return verbose_path;
 }
 
-bool Host::IsCaseSensitiveAtPath([[maybe_unused]] const char *_dir) const
+bool Host::IsCaseSensitiveAtPath([[maybe_unused]] std::string_view _dir) const
 {
     return true;
 }

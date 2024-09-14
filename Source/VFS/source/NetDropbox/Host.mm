@@ -513,7 +513,7 @@ const std::string &DropboxHost::Account() const
     return I->m_Account;
 }
 
-bool DropboxHost::IsCaseSensitiveAtPath([[maybe_unused]] const char *_dir) const
+bool DropboxHost::IsCaseSensitiveAtPath([[maybe_unused]] std::string_view _dir) const
 {
     return false;
 }

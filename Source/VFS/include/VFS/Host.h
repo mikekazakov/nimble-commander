@@ -156,7 +156,7 @@ public:
      * Tell if VFS differs between "Filename" and "filename" starting from a _dir.
      * In case of error will return "true" as a fallback value.
      */
-    virtual bool IsCaseSensitiveAtPath(const char *_dir = "/") const;
+    virtual bool IsCaseSensitiveAtPath(std::string_view _dir = "/") const;
 
     /**
      * VFS version of stat().

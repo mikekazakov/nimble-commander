@@ -841,9 +841,9 @@ int NativeHost::FetchGroups(std::vector<VFSGroup> &_target, [[maybe_unused]] con
     return VFSError::Ok;
 }
 
-bool NativeHost::IsCaseSensitiveAtPath(const char *_dir) const
+bool NativeHost::IsCaseSensitiveAtPath(std::string_view _dir) const
 {
-    if( !_dir || _dir[0] != '/' )
+    if( _dir.empty() || _dir[0] != '/' )
         return true;
     if( const auto fs_info = m_NativeFSManager.VolumeFromPath(_dir) )
         return fs_info->format.case_sensitive;

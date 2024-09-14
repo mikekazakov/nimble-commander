@@ -159,7 +159,7 @@ bool Host::IsWritable() const
     return false;
 }
 
-bool Host::IsWritableAtPath([[maybe_unused]] const char *_dir) const
+bool Host::IsWritableAtPath([[maybe_unused]] std::string_view _dir) const
 {
     return IsWritable();
 }

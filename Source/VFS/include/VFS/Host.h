@@ -150,7 +150,7 @@ public:
     /**
      * Default implementation returns IsWritable();
      */
-    virtual bool IsWritableAtPath(const char *_dir) const;
+    virtual bool IsWritableAtPath(std::string_view _dir) const;
 
     /**
      * Tell if VFS differs between "Filename" and "filename" starting from a _dir.

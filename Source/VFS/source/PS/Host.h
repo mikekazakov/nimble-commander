@@ -20,7 +20,7 @@ public:
     int
     CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker) override;
 
-    bool IsDirectory(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
+    bool IsDirectory(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
     bool IsWritable() const override;
 

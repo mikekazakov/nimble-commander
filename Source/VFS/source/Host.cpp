@@ -171,7 +171,7 @@ int Host::CreateFile([[maybe_unused]] const char *_path,
     return VFSError::NotSupported;
 }
 
-bool Host::IsDirectory(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
+bool Host::IsDirectory(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     VFSStat st;
     if( Stat(_path, st, _flags, _cancel_checker) < 0 )

@@ -176,7 +176,7 @@ public:
      * On any errors returns false.
      */
     virtual bool
-    IsDirectory(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = nullptr);
+    IsDirectory(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * Default implementation calls Stat() and then returns (st.mode & S_IFMT) == S_IFLNK.

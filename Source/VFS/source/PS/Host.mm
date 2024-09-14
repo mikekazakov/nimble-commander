@@ -477,11 +477,11 @@ int PSHost::FetchDirectoryListing(const char *_path,
     return 0;
 }
 
-bool PSHost::IsDirectory(const char *_path,
+bool PSHost::IsDirectory(std::string_view _path,
                          [[maybe_unused]] unsigned long _flags,
                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == nullptr || strcmp(_path, "/") != 0 )
+    if( _path.empty() || _path != "/" )
         return false;
     return true;
 }

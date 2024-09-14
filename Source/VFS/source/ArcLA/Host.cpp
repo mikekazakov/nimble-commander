@@ -609,13 +609,13 @@ int ArchiveHost::FetchDirectoryListing(const char *_path,
     return 0;
 }
 
-bool ArchiveHost::IsDirectory(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
+bool ArchiveHost::IsDirectory(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path )
+    if( _path.empty() )
         return false;
     if( _path[0] != '/' )
         return false;
-    if( strcmp(_path, "/") == 0 )
+    if( _path == "/" )
         return true;
 
     return Host::IsDirectory(_path, _flags, _cancel_checker);

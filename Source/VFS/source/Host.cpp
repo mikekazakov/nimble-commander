@@ -402,18 +402,14 @@ bool Host::IsNativeFS() const noexcept
     return false;
 }
 
-bool Host::ValidateFilename(const char *_filename) const
+bool Host::ValidateFilename(std::string_view _filename) const
 {
-    if( !_filename )
+    constexpr size_t max_filename_len = 256;
+    if( _filename.empty() || _filename.length() > max_filename_len )
         return false;
 
-    const auto max_filename_len = 256;
-    const auto i = _filename, e = _filename + strlen(_filename);
-    if( i == e || e - i > max_filename_len )
-        return false;
-
-    static const char invalid_chars[] = ":\\/\r\t\n";
-    return std::find_first_of(i, e, std::begin(invalid_chars), std::end(invalid_chars)) == e;
+    constexpr std::string_view invalid_chars = ":\\/\r\t\n";
+    return _filename.find_first_of(invalid_chars) == _filename.npos;
 }
 
 int Host::FetchDirectoryListing([[maybe_unused]] const char *_path,

@@ -199,7 +199,7 @@ public:
      * Checks if _filenames contains a forbidden symbols and return false if found them.
      * Default implementation forbids ":\\/\r\t\n" chars, overrides may change this behaviour
      */
-    virtual bool ValidateFilename(const char *_filename) const;
+    virtual bool ValidateFilename(std::string_view _filename) const;
 
     /**
      * DO NOT USE IT. Currently for experimental purposes only.

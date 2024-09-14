@@ -186,7 +186,7 @@ public:
     IsSymlink(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /** Return zero upon succes, negative value on error. */
-    virtual int ReadSymlink(const char *_symlink_path,
+    virtual int ReadSymlink(std::string_view _symlink_path,
                             char *_buffer,
                             size_t _buffer_size,
                             const VFSCancelChecker &_cancel_checker = nullptr);

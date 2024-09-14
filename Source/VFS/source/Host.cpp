@@ -319,7 +319,7 @@ int Host::CreateDirectory([[maybe_unused]] const char *_path,
     return VFSError::NotSupported;
 }
 
-int Host::ReadSymlink([[maybe_unused]] const char *_path,
+int Host::ReadSymlink([[maybe_unused]] std::string_view _path,
                       [[maybe_unused]] char *_buffer,
                       [[maybe_unused]] size_t _buffer_size,
                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)

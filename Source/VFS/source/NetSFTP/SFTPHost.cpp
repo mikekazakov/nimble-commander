@@ -828,7 +828,7 @@ long SFTPHost::Port() const noexcept
     return Config().port;
 }
 
-int SFTPHost::ReadSymlink(const char *_symlink_path,
+int SFTPHost::ReadSymlink(std::string_view _symlink_path,
                           char *_buffer,
                           size_t _buffer_size,
                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
@@ -840,8 +840,8 @@ int SFTPHost::ReadSymlink(const char *_symlink_path,
     AutoConnectionReturn acr(conn, this);
 
     const auto readlink_rc = libssh2_sftp_symlink_ex(conn->sftp,
-                                                     _symlink_path,
-                                                     (unsigned)strlen(_symlink_path),
+                                                     _symlink_path.data(),
+                                                     static_cast<unsigned>(_symlink_path.length()),
                                                      _buffer,
                                                      int(_buffer_size - 1),
                                                      LIBSSH2_SFTP_READLINK);

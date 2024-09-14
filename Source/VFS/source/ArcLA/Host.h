@@ -61,7 +61,7 @@ public:
     int IterateDirectoryListing(const char *_path,
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
-    int ReadSymlink(const char *_symlink_path,
+    int ReadSymlink(std::string_view _symlink_path,
                     char *_buffer,
                     size_t _buffer_size,
                     const VFSCancelChecker &_cancel_checker = {}) override;
@@ -112,7 +112,7 @@ public:
     };
 
     /** searches for entry in archive without any path resolving */
-    const arc::DirEntry *FindEntry(const char *_path);
+    const arc::DirEntry *FindEntry(std::string_view _path);
 
     /** searches for entry in archive by id */
     const arc::DirEntry *FindEntry(uint32_t _uid);

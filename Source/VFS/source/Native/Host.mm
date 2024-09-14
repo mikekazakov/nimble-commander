@@ -604,13 +604,16 @@ int NativeHost::RemoveDirectory(const char *_path, [[maybe_unused]] const VFSCan
     return VFSError::FromErrno();
 }
 
-int NativeHost::ReadSymlink(const char *_path,
+int NativeHost::ReadSymlink(std::string_view _path,
                             char *_buffer,
                             size_t _buffer_size,
                             [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
+    StackAllocator alloc;
+    std::pmr::string path(_path, &alloc);
+
     auto &io = routedio::RoutedIO::Default;
-    ssize_t sz = io.readlink(_path, _buffer, _buffer_size);
+    ssize_t sz = io.readlink(path.c_str(), _buffer, _buffer_size);
     if( sz < 0 )
         return VFSError::FromErrno();
 

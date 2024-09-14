@@ -58,7 +58,7 @@ public:
 
     ssize_t CalculateDirectorySize(const char *_path, const VFSCancelChecker &_cancel_checker) override;
 
-    int ReadSymlink(const char *_path,
+    int ReadSymlink(std::string_view _path,
                     char *_buffer,
                     size_t _buffer_size,
                     const VFSCancelChecker &_cancel_checker) override;

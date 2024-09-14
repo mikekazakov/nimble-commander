@@ -715,14 +715,17 @@ uint32_t ArchiveHost::ItemUID(const char *_filename)
     return 0;
 }
 
-const DirEntry *ArchiveHost::FindEntry(const char *_path)
+const DirEntry *ArchiveHost::FindEntry(std::string_view _path)
 {
-    if( !_path || _path[0] != '/' )
+    if( _path.empty() || _path[0] != '/' )
         return nullptr;
+
+    // TODO: rewrite without using C-style strings
 
     // 1st - try to find _path directly (assume it's directory)
     char buf[1024], short_name[256];
-    strcpy(buf, _path);
+    memcpy(buf, _path.data(), _path.length());
+    buf[_path.length()] = 0;
 
     char *last_sl = strrchr(buf, '/');
 
@@ -1080,7 +1083,10 @@ const ArchiveHost::Symlink *ArchiveHost::ResolvedSymlink(uint32_t _uid)
     return &iter->second;
 }
 
-int ArchiveHost::ReadSymlink(const char *_symlink_path, char *_buffer, size_t _buffer_size, const VFSCancelChecker &)
+int ArchiveHost::ReadSymlink(std::string_view _symlink_path,
+                             char *_buffer,
+                             size_t _buffer_size,
+                             const VFSCancelChecker &)
 {
     auto entry = FindEntry(_symlink_path);
     if( !entry )

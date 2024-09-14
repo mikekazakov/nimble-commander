@@ -5,14 +5,9 @@ namespace nc::config {
 
 rapidjson::CrtAllocator g_CrtAllocator;
 
-Value MakeStandaloneString(const char *_str)
+Value MakeStandaloneString(std::string_view _str)
 {
-    return {_str, g_CrtAllocator};
-}
-
-Value MakeStandaloneString(const std::string &_str)
-{
-    return {_str.c_str(), g_CrtAllocator};
+    return {_str.data(), static_cast<rapidjson::SizeType>(_str.length()), g_CrtAllocator};
 }
 
 std::optional<bool> GetOptionalBoolFromObject(const Value &_value, const char *_name)

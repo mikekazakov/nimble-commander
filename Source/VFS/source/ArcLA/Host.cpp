@@ -10,6 +10,7 @@
 #include <Base/CFStackAllocator.h>
 #include <Base/UnorderedUtil.h>
 #include <Base/algo.h>
+#include <Base/StackAllocator.h>
 #include <Utility/DataBlockAnalysis.h>
 #include <Utility/PathManip.h>
 #include <VFS/AppleDoubleEA.h>
@@ -168,16 +169,19 @@ int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
     assert(I->m_Arc == nullptr);
     int res = 0;
 
+    StackAllocator alloc;
+    std::pmr::string path(JunctionPath(), &alloc);
+
     {
         VFSStat st;
-        res = Parent()->Stat(JunctionPath().c_str(), st, 0);
+        res = Parent()->Stat(path.c_str(), st, 0);
         if( res < 0 )
             return res;
         st.ToSysStat(st, I->m_SrcFileStat);
     }
 
     VFSFilePtr source_file;
-    res = Parent()->CreateFile(JunctionPath().c_str(), source_file, {});
+    res = Parent()->CreateFile(path.c_str(), source_file, {});
     if( res < 0 )
         return res;
 

@@ -109,7 +109,7 @@ XAttrHost::XAttrHost(const std::string_view _file_path, const VFSHostPtr &_host)
 XAttrHost::XAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config)
     : Host(_config.Get<VFSXAttrHostConfiguration>().path, _parent, UniqueTag), m_Configuration(_config)
 {
-    const std::string &path = JunctionPath();
+    const std::string &path = _config.Get<VFSXAttrHostConfiguration>().path;
     if( !_parent->IsNativeFS() )
         throw VFSErrorException(VFSError::InvalidCall);
 

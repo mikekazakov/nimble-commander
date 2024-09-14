@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
@@ -14,8 +14,7 @@ using Document = rapidjson::GenericDocument<rapidjson::UTF8<char>, rapidjson::Cr
 
 using Value = rapidjson::GenericValue<rapidjson::UTF8<char>, rapidjson::CrtAllocator>;
 
-Value MakeStandaloneString(const char *_str);
-Value MakeStandaloneString(const std::string &_str);
+Value MakeStandaloneString(std::string_view _str);
 std::optional<bool> GetOptionalBoolFromObject(const Value &_value, const char *_name);
 std::optional<int> GetOptionalIntFromObject(const Value &_value, const char *_name);
 std::optional<const char *> GetOptionalStringFromObject(const Value &_value, const char *_name);

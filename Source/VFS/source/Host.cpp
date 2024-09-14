@@ -1,5 +1,6 @@
 // Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
+#include <Base/StackAllocator.h>
 #include "ListingInput.h"
 #include "../include/VFS/Host.h"
 #include <sys/param.h>
@@ -9,6 +10,7 @@
 #include <filesystem>
 #include <sys/dirent.h>
 #include <sys/stat.h>
+#include <fmt/format.h>
 
 namespace nc::vfs {
 
@@ -147,7 +149,7 @@ const VFSHostPtr &Host::Parent() const noexcept
     return m_Parent;
 }
 
-const std::string &Host::JunctionPath() const noexcept
+std::string_view Host::JunctionPath() const noexcept
 {
     return m_JunctionPath;
 }
@@ -591,20 +593,16 @@ uint64_t Host::FullHashForPath(const char *_path) const noexcept
         cur = cur->Parent().get();
     }
 
-    const auto buf_sz = 4096;
-    char buf[buf_sz];
-    char *p = &buf[0];
+    StackAllocator alloc;
+    std::pmr::string buf(&alloc);
 
     while( hosts_n > 0 ) {
         const auto host = hosts[--hosts_n];
-        p = stpcpy(p, host->Tag());
-        p = stpcpy(p, "|");
-        p = stpcpy(p, host->JunctionPath().c_str());
-        p = stpcpy(p, "|");
+        fmt::format_to(std::back_inserter(buf), "{}|{}|", host->Tag(), host->JunctionPath());
     }
-    p = stpcpy(p, _path);
+    buf += _path;
 
-    return std::hash<std::string_view>()(std::string_view(&buf[0], p - &buf[0]));
+    return std::hash<std::string_view>()(buf);
 }
 
 std::string Host::MakePathVerbose(std::string_view _path) const

@@ -100,7 +100,7 @@ public:
      * It may be a filepath for archive or network address for remote filesystem
      * or even "" for special virtual filesystems or for native filesystem.
      */
-    const std::string &JunctionPath() const noexcept;
+    std::string_view JunctionPath() const noexcept;
 
     /**
      * Hosted filesystems, like archives, must have a parent vfs.

@@ -150,7 +150,6 @@ static void check(const Case &test_case)
 
     // let's fetch a listing
     VFSListingPtr listing;
-    CHECK(host->FetchDirectoryListing(nullptr, listing, Flags::None) == einval);
     CHECK(host->FetchDirectoryListing("", listing, Flags::None) == einval);
     CHECK(host->FetchDirectoryListing("blah-blah", listing, Flags::None) == einval);
     CHECK(host->FetchDirectoryListing("/blah-blah", listing, Flags::None) == enoent);

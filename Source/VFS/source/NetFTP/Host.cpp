@@ -283,7 +283,7 @@ int FTPHost::Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, co
     return VFSError::NotFound;
 }
 
-int FTPHost::FetchDirectoryListing(const char *_path,
+int FTPHost::FetchDirectoryListing(std::string_view _path,
                                    VFSListingPtr &_target,
                                    unsigned long _flags,
                                    const VFSCancelChecker &_cancel_checker)
@@ -300,7 +300,7 @@ int FTPHost::FetchDirectoryListing(const char *_path,
     using nc::base::variable_container;
     ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
-    listing_source.directories[0] = EnsureTrailingSlash(_path);
+    listing_source.directories[0] = EnsureTrailingSlash(std::string(_path));
     listing_source.sizes.reset(variable_container<>::type::dense);
     listing_source.atimes.reset(variable_container<>::type::dense);
     listing_source.mtimes.reset(variable_container<>::type::dense);
@@ -339,11 +339,11 @@ int FTPHost::FetchDirectoryListing(const char *_path,
 }
 
 int FTPHost::GetListingForFetching(CURLInstance *_inst,
-                                   const char *_path,
+                                   std::string_view _path,
                                    std::shared_ptr<Directory> &_cached_dir,
                                    const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == nullptr || _path[0] != '/' )
+    if( _path.empty() || _path[0] != '/' )
         return VFSError::InvalidCall;
 
     const auto path = utility::PathManip::EnsureTrailingSlash(_path);

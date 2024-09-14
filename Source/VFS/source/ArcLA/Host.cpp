@@ -527,7 +527,7 @@ int ArchiveHost::CreateFile(const char *_path,
     return VFSError::Ok;
 }
 
-int ArchiveHost::FetchDirectoryListing(const char *_path,
+int ArchiveHost::FetchDirectoryListing(std::string_view _path,
                                        VFSListingPtr &_target,
                                        unsigned long _flags,
                                        const VFSCancelChecker &)
@@ -551,7 +551,7 @@ int ArchiveHost::FetchDirectoryListing(const char *_path,
     using nc::base::variable_container;
     ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
-    listing_source.directories[0] = EnsureTrailingSlash(_path);
+    listing_source.directories[0] = EnsureTrailingSlash(std::string(_path));
     listing_source.atimes.reset(variable_container<>::type::dense);
     listing_source.mtimes.reset(variable_container<>::type::dense);
     listing_source.ctimes.reset(variable_container<>::type::dense);

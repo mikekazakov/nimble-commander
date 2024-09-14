@@ -412,7 +412,7 @@ bool Host::ValidateFilename(std::string_view _filename) const
     return _filename.find_first_of(invalid_chars) == _filename.npos;
 }
 
-int Host::FetchDirectoryListing([[maybe_unused]] const char *_path,
+int Host::FetchDirectoryListing([[maybe_unused]] std::string_view _path,
                                 [[maybe_unused]] VFSListingPtr &_target,
                                 [[maybe_unused]] unsigned long _flags,
                                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)

@@ -33,7 +33,7 @@ public:
     bool Active() const noexcept;
 
     // core VFSHost methods
-    virtual int FetchDirectoryListing(const char *_path,
+    virtual int FetchDirectoryListing(std::string_view _path,
                                       VFSListingPtr &_target,
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker) override;
@@ -86,7 +86,7 @@ private:
                                 const VFSCancelChecker &_cancel_checker);
 
     int GetListingForFetching(ftp::CURLInstance *_inst,
-                              const char *_path,
+                              std::string_view _path,
                               std::shared_ptr<ftp::Directory> &_cached_dir,
                               const VFSCancelChecker &_cancel_checker);
 

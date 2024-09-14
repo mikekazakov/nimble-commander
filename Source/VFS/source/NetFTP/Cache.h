@@ -65,7 +65,7 @@ public:
      */
     void MakeEntryDirty(const std::string &_path);
 
-    void MarkDirectoryDirty(const std::string &_path);
+    void MarkDirectoryDirty(std::string_view _path);
 
     /**
      * Creates a new dirty file.

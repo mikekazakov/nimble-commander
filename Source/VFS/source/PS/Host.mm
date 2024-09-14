@@ -439,14 +439,14 @@ std::string PSHost::ProcInfoIntoFile(const ProcInfo &_info, std::shared_ptr<Snap
     return result;
 }
 
-int PSHost::FetchDirectoryListing(const char *_path,
+int PSHost::FetchDirectoryListing(std::string_view _path,
                                   VFSListingPtr &_target,
                                   [[maybe_unused]] unsigned long _flags,
                                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     EnsureUpdateRunning();
 
-    if( !_path || strcmp(_path, "/") != 0 )
+    if( _path != "/" )
         return VFSError::NotFound;
 
     auto data = m_Data;

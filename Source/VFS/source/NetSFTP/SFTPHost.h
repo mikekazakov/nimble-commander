@@ -47,7 +47,7 @@ public:
 
     virtual int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    virtual int FetchDirectoryListing(const char *_path,
+    virtual int FetchDirectoryListing(std::string_view _path,
                                       VFSListingPtr &_target,
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker = {}) override;

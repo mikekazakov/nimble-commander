@@ -93,7 +93,7 @@ bool WebDAVHost::IsWritable() const
     return true;
 }
 
-int WebDAVHost::FetchDirectoryListing(const char *_path,
+int WebDAVHost::FetchDirectoryListing(std::string_view _path,
                                       VFSListingPtr &_target,
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker)
@@ -101,7 +101,7 @@ int WebDAVHost::FetchDirectoryListing(const char *_path,
     if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;
 
-    const auto path = EnsureTrailingSlash(_path);
+    const auto path = EnsureTrailingSlash(std::string(_path));
 
     if( _flags & VFSFlags::F_ForceRefresh )
         I->m_Cache.DiscardListing(path);

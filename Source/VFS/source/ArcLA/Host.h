@@ -53,7 +53,7 @@ public:
                    std::shared_ptr<VFSFile> &_target,
                    const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int FetchDirectoryListing(const char *_path,
+    int FetchDirectoryListing(std::string_view _path,
                               VFSListingPtr &_target,
                               unsigned long _flags,
                               const VFSCancelChecker &_cancel_checker = {}) override;

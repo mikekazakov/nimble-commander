@@ -37,7 +37,7 @@ std::shared_ptr<Directory> Cache::FindDirectory(std::string_view _path) const no
     return FindDirectoryInt(_path);
 }
 
-void Cache::MarkDirectoryDirty(const std::string &_path)
+void Cache::MarkDirectoryDirty(std::string_view _path)
 {
     assert(!_path.empty() && _path.back() == '/');
 

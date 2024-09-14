@@ -376,7 +376,7 @@ in_addr_t SFTPHost::InetAddr() const
     return m_HostAddr;
 }
 
-int SFTPHost::FetchDirectoryListing(const char *_path,
+int SFTPHost::FetchDirectoryListing(std::string_view _path,
                                     VFSListingPtr &_target,
                                     unsigned long _flags,
                                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
@@ -392,7 +392,7 @@ int SFTPHost::FetchDirectoryListing(const char *_path,
     using nc::base::variable_container;
     ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
-    listing_source.directories[0] = EnsureTrailingSlash(_path);
+    listing_source.directories[0] = EnsureTrailingSlash(std::string(_path));
     listing_source.sizes.reset(variable_container<>::type::dense);
     listing_source.uids.reset(variable_container<>::type::dense);
     listing_source.gids.reset(variable_container<>::type::dense);
@@ -404,8 +404,8 @@ int SFTPHost::FetchDirectoryListing(const char *_path,
 
     {
         // fetch listing using readdir
-        LIBSSH2_SFTP_HANDLE *sftp_handle =
-            libssh2_sftp_open_ex(conn->sftp, _path, (unsigned)strlen(_path), 0, 0, LIBSSH2_SFTP_OPENDIR);
+        LIBSSH2_SFTP_HANDLE *sftp_handle = libssh2_sftp_open_ex(
+            conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), 0, 0, LIBSSH2_SFTP_OPENDIR);
         if( !sftp_handle )
             return VFSErrorForConnection(*conn);
         auto close_sftp_handle = at_scope_end([=] { libssh2_sftp_closedir(sftp_handle); });

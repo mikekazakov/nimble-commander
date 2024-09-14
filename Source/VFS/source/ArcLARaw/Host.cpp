@@ -278,15 +278,15 @@ int ArchiveRawHost::IterateDirectoryListing(const char *_path,
     return VFSError::Ok;
 }
 
-int ArchiveRawHost::FetchDirectoryListing(const char *_path,
+int ArchiveRawHost::FetchDirectoryListing(std::string_view _path,
                                           VFSListingPtr &_target,
                                           unsigned long _flags,
                                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 
 {
-    if( _path == nullptr || _path[0] != '/' )
+    if( _path.empty() || _path[0] != '/' )
         return VFSError::FromErrno(EINVAL);
-    if( std::string_view(_path) != "/" )
+    if( _path != "/" )
         return VFSError::FromErrno(ENOENT);
 
     using nc::base::variable_container;

@@ -31,7 +31,7 @@ public:
     int IterateDirectoryListing(const char *_path,
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
-    int FetchDirectoryListing(const char *_path,
+    int FetchDirectoryListing(std::string_view _path,
                               VFSListingPtr &_target,
                               unsigned long _flags,
                               const VFSCancelChecker &_cancel_checker = {}) override;

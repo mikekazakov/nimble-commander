@@ -348,15 +348,15 @@ int DropboxHost::IterateDirectoryListing(const char *_path,
     return VFSError::Ok;
 }
 
-int DropboxHost::FetchDirectoryListing(const char *_path,
+int DropboxHost::FetchDirectoryListing(std::string_view _path,
                                        VFSListingPtr &_target,
                                        unsigned long _flags,
                                        const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::InvalidCall;
 
-    std::string path = _path;
+    std::string path = std::string(_path);
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
@@ -365,7 +365,7 @@ int DropboxHost::FetchDirectoryListing(const char *_path,
 
     ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
-    listing_source.directories[0] = EnsureTrailingSlash(_path);
+    listing_source.directories[0] = EnsureTrailingSlash(std::string(_path));
     listing_source.sizes.reset(variable_container<>::type::sparse);
     listing_source.atimes.reset(variable_container<>::type::sparse);
     listing_source.btimes.reset(variable_container<>::type::sparse);

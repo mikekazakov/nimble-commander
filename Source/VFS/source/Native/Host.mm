@@ -70,18 +70,21 @@ bool NativeHost::ShouldProduceThumbnails() const
     return true;
 }
 
-int NativeHost::FetchDirectoryListing(const char *_path,
+int NativeHost::FetchDirectoryListing(std::string_view _path,
                                       VFSListingPtr &_target,
                                       const unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::InvalidCall;
 
-    const auto need_to_add_dot_dot = !(_flags & VFSFlags::F_NoDotDot) && strcmp(_path, "/") != 0;
-    auto &io = routedio::RoutedIO::InterfaceForAccess(_path, R_OK);
+    StackAllocator alloc;
+    const std::pmr::string path(_path, &alloc);
+
+    const auto need_to_add_dot_dot = !(_flags & VFSFlags::F_NoDotDot) && _path != "/";
+    auto &io = routedio::RoutedIO::InterfaceForAccess(path.c_str(), R_OK);
     const bool is_native_io = !io.isrouted();
-    const int fd = io.open(_path, O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
+    const int fd = io.open(path.c_str(), O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
     if( fd < 0 )
         return VFSError::FromErrno();
     auto close_fd = at_scope_end([fd] { close(fd); });
@@ -89,7 +92,7 @@ int NativeHost::FetchDirectoryListing(const char *_path,
     using nc::base::variable_container;
     ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
-    listing_source.directories[0] = EnsureTrailingSlash(_path);
+    listing_source.directories[0] = EnsureTrailingSlash(std::string(_path));
     listing_source.inodes.reset(variable_container<>::type::dense);
     listing_source.atimes.reset(variable_container<>::type::dense);
     listing_source.mtimes.reset(variable_container<>::type::dense);
@@ -159,7 +162,7 @@ int NativeHost::FetchDirectoryListing(const char *_path,
     auto cb_param = [&](const Fetching::CallbackParams &_params) { fill(next_entry_index++, _params); };
 
     if( need_to_add_dot_dot ) {
-        Fetching::ReadSingleEntryAttributesByPath(io, _path, cb_param);
+        Fetching::ReadSingleEntryAttributesByPath(io, path.c_str(), cb_param);
         listing_source.filenames[0] = "..";
     }
 

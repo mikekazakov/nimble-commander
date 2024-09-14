@@ -229,7 +229,7 @@ public:
     /**
      * Produce a regular directory listing.
      */
-    virtual int FetchDirectoryListing(const char *_path,
+    virtual int FetchDirectoryListing(std::string_view _path,
                                       VFSListingPtr &_target,
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker = nullptr);

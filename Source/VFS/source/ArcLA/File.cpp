@@ -5,6 +5,7 @@
 #include "File.h"
 #include "Internal.h"
 #include <VFS/AppleDoubleEA.h>
+#include <Base/StackAllocator.h>
 #include <fmt/format.h>
 #include <sys/param.h>
 
@@ -30,16 +31,17 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     int res;
     auto host = std::dynamic_pointer_cast<ArchiveHost>(Host());
 
-    char file_path[MAXPATHLEN * 2];
+    StackAllocator alloc;
+    std::pmr::string file_path(&alloc);
     res = host->ResolvePathIfNeeded(Path(), file_path, _open_flags);
     if( res < 0 )
         return res;
 
-    if( host->IsDirectory(file_path, _open_flags, _cancel_checker) && !(_open_flags & VFSFlags::OF_Directory) )
+    if( host->IsDirectory(file_path.c_str(), _open_flags, _cancel_checker) && !(_open_flags & VFSFlags::OF_Directory) )
         return VFSError::FromErrno(EISDIR);
 
     std::unique_ptr<State> state;
-    res = host->ArchiveStateForItem(file_path, state);
+    res = host->ArchiveStateForItem(file_path.c_str(), state);
     if( res < 0 )
         return res;
 

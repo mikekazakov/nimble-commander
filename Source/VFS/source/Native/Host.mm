@@ -496,17 +496,20 @@ void NativeHost::StopObservingFileChanges(unsigned long _token)
     m_FSEventsFileUpdate.RemoveWatchPathWithToken(_token);
 }
 
-int NativeHost::Stat(const char *_path,
+int NativeHost::Stat(std::string_view _path,
                      VFSStat &_st,
                      unsigned long _flags,
                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    auto &io = routedio::RoutedIO::InterfaceForAccess(_path, R_OK);
+    StackAllocator alloc;
+    std::pmr::string path(_path, &alloc);
+
+    auto &io = routedio::RoutedIO::InterfaceForAccess(path.c_str(), R_OK);
     memset(&_st, 0, sizeof(_st));
 
     struct stat st;
 
-    int ret = (_flags & VFSFlags::F_NoFollow) ? io.lstat(_path, &st) : io.stat(_path, &st);
+    int ret = (_flags & VFSFlags::F_NoFollow) ? io.lstat(path.c_str(), &st) : io.stat(path.c_str(), &st);
 
     if( ret == 0 ) {
         VFSStat::FromSysStat(st, _st);

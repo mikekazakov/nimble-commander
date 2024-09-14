@@ -505,7 +505,7 @@ int PSHost::CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, con
     return VFSError::Ok;
 }
 
-int PSHost::Stat(const char *_path,
+int PSHost::Stat(std::string_view _path,
                  VFSStat &_st,
                  [[maybe_unused]] unsigned long _flags,
                  [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
@@ -524,7 +524,7 @@ int PSHost::Stat(const char *_path,
 
     std::lock_guard<std::mutex> lock(m_Lock);
 
-    if( _path == nullptr )
+    if( _path.empty() )
         return VFSError::InvalidCall;
 
     auto index = ProcIndexFromFilepath_Unlocked(_path);
@@ -544,15 +544,15 @@ int PSHost::Stat(const char *_path,
     return VFSError::Ok;
 }
 
-int PSHost::ProcIndexFromFilepath_Unlocked(const char *_filepath)
+int PSHost::ProcIndexFromFilepath_Unlocked(std::string_view _filepath)
 {
-    if( _filepath == nullptr )
+    if( _filepath.empty() )
         return -1;
 
     if( _filepath[0] != '/' )
         return -1;
 
-    auto plain_fn = _filepath + 1;
+    auto plain_fn = _filepath.substr(1);
 
     auto it = find(begin(m_Data->plain_filenames), end(m_Data->plain_filenames), plain_fn);
     if( it == end(m_Data->plain_filenames) )

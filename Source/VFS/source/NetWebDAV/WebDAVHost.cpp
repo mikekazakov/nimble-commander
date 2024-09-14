@@ -195,7 +195,7 @@ int WebDAVHost::IterateDirectoryListing(const char *_path,
     return VFSError::Ok;
 }
 
-int WebDAVHost::Stat(const char *_path,
+int WebDAVHost::Stat(std::string_view _path,
                      VFSStat &_st,
                      [[maybe_unused]] unsigned long _flags,
                      const VFSCancelChecker &_cancel_checker)

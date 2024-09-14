@@ -163,7 +163,7 @@ public:
      * Default implementation does nothing, subclasses MUST implement it.
      */
     virtual int
-    Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker = nullptr);
+    Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * VFS version of statfs().

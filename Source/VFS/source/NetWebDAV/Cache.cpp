@@ -56,7 +56,7 @@ std::optional<std::vector<PropFindResponse>> Cache::Listing(const std::string &_
     return listing.items;
 }
 
-std::pair<std::optional<PropFindResponse>, Cache::E> Cache::Item(const std::string &_at_path) const
+std::pair<std::optional<PropFindResponse>, Cache::E> Cache::Item(std::string_view _at_path) const
 {
     const auto [directory, filename] = DeconstructPath(_at_path);
     if( filename.empty() )

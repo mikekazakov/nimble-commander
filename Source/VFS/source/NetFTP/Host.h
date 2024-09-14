@@ -42,7 +42,7 @@ public:
                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
     virtual int
-    Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
+    Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
     virtual int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
 

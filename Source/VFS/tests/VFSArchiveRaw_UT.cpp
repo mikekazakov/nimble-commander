@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -124,7 +124,6 @@ static void check(const Case &test_case)
 
     // let's stat
     VFSStat st;
-    CHECK(host->Stat(nullptr, st, Flags::None) == einval);
     CHECK(host->Stat("", st, Flags::None) == einval);
     CHECK(host->Stat("blah-blah", st, Flags::None) == einval);
     CHECK(host->Stat("/blah-blah", st, Flags::None) == enoent);

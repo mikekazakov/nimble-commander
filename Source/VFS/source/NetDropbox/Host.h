@@ -45,7 +45,7 @@ public:
     virtual int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
 
     virtual int
-    Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
+    Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
     virtual int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker) override;
 

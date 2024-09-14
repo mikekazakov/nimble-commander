@@ -479,7 +479,7 @@ int SFTPHost::FetchDirectoryListing(const char *_path,
     return 0;
 }
 
-int SFTPHost::Stat(const char *_path,
+int SFTPHost::Stat(std::string_view _path,
                    VFSStat &_st,
                    unsigned long _flags,
                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
@@ -493,8 +493,8 @@ int SFTPHost::Stat(const char *_path,
 
     LIBSSH2_SFTP_ATTRIBUTES attrs;
     rc = libssh2_sftp_stat_ex(conn->sftp,
-                              _path,
-                              (unsigned)strlen(_path),
+                              _path.data(),
+                              static_cast<unsigned>(_path.length()),
                               (_flags & VFSFlags::F_NoFollow) ? LIBSSH2_SFTP_LSTAT : LIBSSH2_SFTP_STAT,
                               &attrs);
     if( rc )

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PathRoutines.h"
 #include "Internal.h"
 #include <Foundation/Foundation.h>
@@ -6,7 +6,7 @@
 
 namespace nc::vfs::webdav {
 
-std::pair<std::string, std::string> DeconstructPath(const std::string &_path)
+std::pair<std::string, std::string> DeconstructPath(std::string_view _path)
 {
     if( _path.empty() )
         return {};
@@ -17,13 +17,13 @@ std::pair<std::string, std::string> DeconstructPath(const std::string &_path)
         const auto ls = _path.find_last_of('/', _path.length() - 2);
         if( ls == std::string::npos )
             return {};
-        return {_path.substr(0, ls + 1), _path.substr(ls + 1, _path.length() - ls - 2)};
+        return {std::string(_path.substr(0, ls + 1)), std::string(_path.substr(ls + 1, _path.length() - ls - 2))};
     }
     else {
         const auto ls = _path.find_last_of('/');
         if( ls == std::string::npos )
             return {};
-        return {_path.substr(0, ls + 1), _path.substr(ls + 1)};
+        return {std::string(_path.substr(0, ls + 1)), std::string(_path.substr(ls + 1))};
     }
 }
 

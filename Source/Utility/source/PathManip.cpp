@@ -157,6 +157,11 @@ bool GetDirectoryNameFromPath(const char *_path, char *_dir_out, [[maybe_unused]
 
 namespace nc::utility {
 
+bool PathManip::IsAbsolute(std::string_view _path) noexcept
+{
+    return _path.length() > 0 && _path.front() == '/';
+}
+
 std::string_view PathManip::Filename(std::string_view _path) noexcept
 {
     const char *const first = _path.data();

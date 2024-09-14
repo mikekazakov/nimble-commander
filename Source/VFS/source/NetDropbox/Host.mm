@@ -235,24 +235,24 @@ int DropboxHost::StatFS([[maybe_unused]] const char *_path, VFSStatFS &_stat, co
     return rc;
 }
 
-int DropboxHost::Stat(const char *_path,
+int DropboxHost::Stat(std::string_view _path,
                       VFSStat &_st,
                       [[maybe_unused]] unsigned long _flags,
                       const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( _path.empty() || _path[0] != '/' )
         return VFSError::InvalidCall;
 
     memset(&_st, 0, sizeof(_st));
 
-    if( strcmp(_path, "/") == 0 ) {
+    if( _path == "/" ) {
         // special treatment for root dir
         _st.mode = DirectoryAccessMode;
         _st.meaning.mode = true;
         return 0;
     }
 
-    std::string path = _path;
+    std::string path = std::string(_path);
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 

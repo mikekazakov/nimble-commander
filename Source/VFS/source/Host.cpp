@@ -279,7 +279,7 @@ void Host::StopObservingFileChanges([[maybe_unused]] unsigned long _token)
 {
 }
 
-int Host::Stat([[maybe_unused]] const char *_path,
+int Host::Stat([[maybe_unused]] std::string_view _path,
                [[maybe_unused]] VFSStat &_st,
                [[maybe_unused]] unsigned long _flags,
                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)

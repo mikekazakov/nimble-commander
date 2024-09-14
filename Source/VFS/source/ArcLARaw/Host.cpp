@@ -234,15 +234,15 @@ int ArchiveRawHost::CreateFile(const char *_path,
     return VFSError::Ok;
 }
 
-int ArchiveRawHost::Stat(const char *_path,
+int ArchiveRawHost::Stat(std::string_view _path,
                          VFSStat &_st,
                          [[maybe_unused]] unsigned long _flags,
                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == nullptr || _path[0] != '/' )
+    if( _path.empty() || _path[0] != '/' )
         return VFSError::FromErrno(EINVAL);
 
-    if( m_Filename != std::string_view(_path + 1) )
+    if( m_Filename != _path.substr(1) )
         return VFSError::FromErrno(ENOENT);
 
     std::memset(&_st, 0, sizeof(_st));

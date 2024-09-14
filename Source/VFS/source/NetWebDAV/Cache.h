@@ -27,7 +27,7 @@ public:
     };
 
     std::optional<std::vector<PropFindResponse>> Listing(const std::string &_at_path) const;
-    std::pair<std::optional<PropFindResponse>, E> Item(const std::string &_at_path) const;
+    std::pair<std::optional<PropFindResponse>, E> Item(std::string_view _at_path) const;
 
     void CommitListing(const std::string &_at_path, std::vector<PropFindResponse> _items);
     void DiscardListing(const std::string &_at_path);

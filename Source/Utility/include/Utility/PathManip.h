@@ -102,7 +102,7 @@ inline bool IsPathWithTrailingSlash(const std::string &_path)
 namespace nc::utility {
 
 struct PathManip {
-
+    static bool IsAbsolute(std::string_view _path) noexcept;
     static std::string_view Filename(std::string_view _path) noexcept;
     static std::string_view Extension(std::string_view _path) noexcept;
     static std::string_view Parent(std::string_view _path) noexcept;

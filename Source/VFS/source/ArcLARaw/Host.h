@@ -23,8 +23,10 @@ public:
                    std::shared_ptr<VFSFile> &_target,
                    const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int
-    Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker = {}) override;
+    int Stat(std::string_view _path,
+             VFSStat &_st,
+             unsigned long _flags,
+             const VFSCancelChecker &_cancel_checker = {}) override;
 
     int IterateDirectoryListing(const char *_path,
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;

@@ -2,6 +2,7 @@
 #include <sys/xattr.h>
 #include "xattr.h"
 #include <VFS/VFSFile.h>
+#include <Utility/PathManip.h>
 #include "../ListingInput.h"
 #include <dirent.h>
 #include <fmt/format.h>
@@ -40,11 +41,6 @@ private:
     ssize_t m_Size = 0;
     ssize_t m_UploadSize = -1;
 };
-
-static bool is_absolute_path(const char *_s) noexcept
-{
-    return _s != nullptr && _s[0] == '/';
-}
 
 static bool TurnOffBlockingMode(int _fd) noexcept
 {
@@ -225,12 +221,12 @@ int XAttrHost::FetchDirectoryListing(const char *_path,
     return VFSError::Ok;
 }
 
-int XAttrHost::Stat(const char *_path,
+int XAttrHost::Stat(std::string_view _path,
                     VFSStat &_st,
                     [[maybe_unused]] unsigned long _flags,
                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( !is_absolute_path(_path) )
+    if( !utility::PathManip::IsAbsolute(_path) )
         return VFSError::NotFound;
 
     memset(&_st, 0, sizeof(_st));
@@ -245,16 +241,15 @@ int XAttrHost::Stat(const char *_path,
     _st.btime = m_Stat.st_birthtimespec;
     _st.ctime = m_Stat.st_ctimespec;
 
-    auto path = std::string_view(_path);
-    if( path == "/" ) {
+    if( _path == "/" ) {
         _st.mode = g_RootMode;
         _st.size = 0;
         return VFSError::Ok;
     }
-    else if( path.length() > 1 ) {
-        path.remove_prefix(1);
+    else if( _path.length() > 1 ) {
+        _path.remove_prefix(1);
         for( auto &i : m_Attrs )
-            if( path == i.first ) {
+            if( _path == i.first ) {
                 _st.mode = g_RegMode;
                 _st.size = i.second;
                 return 0;

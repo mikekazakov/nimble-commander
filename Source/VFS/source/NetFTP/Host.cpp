@@ -220,15 +220,15 @@ std::unique_ptr<CURLInstance> FTPHost::SpawnCURL()
     return inst;
 }
 
-int FTPHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
+int FTPHost::Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     Log::Trace("FTPHost::Stat({}, {}) called", _path, _flags);
-    if( _path == nullptr || _path[0] != '/' ) {
+    if( _path.empty() || _path[0] != '/' ) {
         Log::Warn("Invalid call");
         return VFSError::InvalidCall;
     }
 
-    std::filesystem::path path = EnsureNoTrailingSlash(_path);
+    std::filesystem::path path = EnsureNoTrailingSlash(std::string(_path));
     if( path == "/" ) {
         // special case for root path
         memset(&_st, 0, sizeof(_st));

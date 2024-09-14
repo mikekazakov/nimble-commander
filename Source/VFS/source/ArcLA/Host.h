@@ -43,8 +43,10 @@ public:
     bool IsDirectory(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = {}) override;
 
     int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = {}) override;
-    int
-    Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker = {}) override;
+    int Stat(std::string_view _path,
+             VFSStat &_st,
+             unsigned long _flags,
+             const VFSCancelChecker &_cancel_checker = {}) override;
 
     int CreateFile(const char *_path,
                    std::shared_ptr<VFSFile> &_target,
@@ -85,7 +87,7 @@ public:
     std::shared_ptr<ArchiveHost> SharedPtr();
 
     /** return VFSError, not uids returned */
-    int ResolvePathIfNeeded(const char *_path, char *_resolved_path, unsigned long _flags);
+    int ResolvePathIfNeeded(std::string_view _path, std::pmr::string &_resolved_path, unsigned long _flags);
 
     enum class SymlinkState : uint8_t {
         /// symlink is ok to use
@@ -134,7 +136,7 @@ private:
      * any positive number - item's uid, good to go.
      * negative number or zero - error
      */
-    int ResolvePath(const char *_path, char *_resolved_path);
+    int ResolvePath(std::string_view _path, std::pmr::string &_resolved_path);
 
     void ResolveSymlink(uint32_t _uid);
 

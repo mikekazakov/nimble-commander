@@ -532,13 +532,15 @@ int ArchiveHost::FetchDirectoryListing(const char *_path,
                                        unsigned long _flags,
                                        const VFSCancelChecker &)
 {
-    char path[MAXPATHLEN * 2];
+    StackAllocator alloc;
+    std::pmr::string path(&alloc);
+
     int res = ResolvePathIfNeeded(_path, path, _flags);
     if( res < 0 )
         return res;
 
-    if( path[strlen(path) - 1] != '/' )
-        strcat(path, "/");
+    if( path.back() != '/' )
+        path += "/";
 
     const auto i = I->m_PathToDir.find(path);
     if( i == I->m_PathToDir.end() )
@@ -619,39 +621,41 @@ bool ArchiveHost::IsDirectory(const char *_path, unsigned long _flags, const VFS
     return Host::IsDirectory(_path, _flags, _cancel_checker);
 }
 
-int ArchiveHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &)
+int ArchiveHost::Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &)
 {
-    if( !_path )
+    if( _path.empty() )
         return VFSError::InvalidCall;
     if( _path[0] != '/' )
         return VFSError::NotFound;
 
-    if( strlen(_path) == 1 ) {
+    if( _path.length() == 1 ) {
         // we have no info about root dir - dummy here
         memset(&_st, 0, sizeof(_st));
         _st.mode = S_IRUSR | S_IFDIR;
         return VFSError::Ok;
     }
 
-    char resolve_buf[MAXPATHLEN * 2];
+    StackAllocator alloc;
+    std::pmr::string resolve_buf(&alloc);
+
     int res = ResolvePathIfNeeded(_path, resolve_buf, _flags);
     if( res < 0 )
         return res;
 
-    if( auto it = FindEntry(resolve_buf) ) {
+    if( auto it = FindEntry(resolve_buf.c_str()) ) {
         VFSStat::FromSysStat(it->st, _st);
         return VFSError::Ok;
     }
     return VFSError::NotFound;
 }
 
-int ArchiveHost::ResolvePathIfNeeded(const char *_path, char *_resolved_path, unsigned long _flags)
+int ArchiveHost::ResolvePathIfNeeded(std::string_view _path, std::pmr::string &_resolved_path, unsigned long _flags)
 {
-    if( !_path || !_resolved_path )
+    if( _path.empty() )
         return VFSError::InvalidCall;
 
     if( !I->m_NeedsPathResolving || (_flags & VFSFlags::F_NoFollow) )
-        strcpy(_resolved_path, _path);
+        _resolved_path = _path;
     else {
         int res = ResolvePath(_path, _resolved_path);
         if( res < 0 )
@@ -667,14 +671,15 @@ int ArchiveHost::IterateDirectoryListing(const char *_path,
     if( _path[0] != '/' )
         return VFSError::NotFound;
 
-    char buf[1024];
+    StackAllocator alloc;
+    std::pmr::string buf(&alloc);
 
     int ret = ResolvePathIfNeeded(_path, buf, 0);
     if( ret < 0 )
         return ret;
 
-    if( buf[strlen(buf) - 1] != '/' )
-        strcat(buf, "/"); // we store directories with trailing slash
+    if( buf.back() != '/' )
+        buf += '/'; // we store directories with trailing slash
 
     const auto i = I->m_PathToDir.find(buf);
     if( i == I->m_PathToDir.end() )
@@ -767,12 +772,12 @@ const DirEntry *ArchiveHost::FindEntry(uint32_t _uid)
     return &dir->entries[ind];
 }
 
-int ArchiveHost::ResolvePath(const char *_path, char *_resolved_path)
+int ArchiveHost::ResolvePath(std::string_view _path, std::pmr::string &_resolved_path)
 {
-    if( !_path || _path[0] != '/' )
+    if( _path.empty() || _path[0] != '/' )
         return VFSError::NotFound;
 
-    std::filesystem::path p = EnsureNoTrailingSlash(_path);
+    std::filesystem::path p = EnsureNoTrailingSlash(std::string(_path));
     p = p.relative_path();
     std::filesystem::path result_path = "/";
 
@@ -802,7 +807,7 @@ int ArchiveHost::ResolvePath(const char *_path, char *_resolved_path)
         }
     }
 
-    strcpy(_resolved_path, result_path.c_str());
+    _resolved_path = result_path.native();
     return result_uid;
 }
 

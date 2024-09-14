@@ -17,6 +17,7 @@
 #include "../ListingInput.h"
 #include "Fetching.h"
 #include <Base/DispatchGroup.h>
+#include <Base/StackAllocator.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/Tags.h>
 #include <sys/mount.h>
@@ -460,11 +461,14 @@ ssize_t NativeHost::CalculateDirectorySize(const char *_path, const VFSCancelChe
         return result;
 }
 
-bool NativeHost::IsDirChangeObservingAvailable(const char *_path)
+bool NativeHost::IsDirChangeObservingAvailable(std::string_view _path)
 {
-    if( !_path )
+    if( _path.empty() )
         return false;
-    return access(_path, R_OK) == 0; // should use _not_ routed I/O here!
+
+    StackAllocator alloc;
+    std::pmr::string path(_path, &alloc);
+    return access(path.c_str(), R_OK) == 0; // should use _not_ routed I/O here!
 }
 
 HostDirObservationTicket NativeHost::ObserveDirectoryChanges(std::string_view _path, std::function<void()> _handler)

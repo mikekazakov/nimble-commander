@@ -561,7 +561,7 @@ int PSHost::ProcIndexFromFilepath_Unlocked(const char *_filepath)
     return int(it - begin(m_Data->plain_filenames));
 }
 
-bool PSHost::IsDirChangeObservingAvailable([[maybe_unused]] const char *_path)
+bool PSHost::IsDirChangeObservingAvailable([[maybe_unused]] std::string_view _path)
 {
     return true;
 }

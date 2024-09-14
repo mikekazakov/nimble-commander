@@ -254,7 +254,7 @@ ssize_t Host::CalculateDirectorySize(const char *_path, const VFSCancelChecker &
     return total_size;
 }
 
-bool Host::IsDirChangeObservingAvailable([[maybe_unused]] const char *_path)
+bool Host::IsDirChangeObservingAvailable([[maybe_unused]] std::string_view _path)
 {
     return false;
 }

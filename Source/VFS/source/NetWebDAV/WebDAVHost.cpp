@@ -384,7 +384,7 @@ int WebDAVHost::Rename(const char *_old_path,
     return VFSError::Ok;
 }
 
-bool WebDAVHost::IsDirChangeObservingAvailable([[maybe_unused]] const char *_path)
+bool WebDAVHost::IsDirChangeObservingAvailable([[maybe_unused]] std::string_view _path)
 {
     return true;
 }

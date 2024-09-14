@@ -551,7 +551,7 @@ void FTPHost::MakeDirectoryStructureDirty(const char *_path)
     }
 }
 
-bool FTPHost::IsDirChangeObservingAvailable([[maybe_unused]] std::string_view _path)
+bool FTPHost::IsDirectoryChangeObservationAvailable([[maybe_unused]] std::string_view _path)
 {
     return true;
 }

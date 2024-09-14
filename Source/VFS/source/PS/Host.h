@@ -38,7 +38,7 @@ public:
     int IterateDirectoryListing(const char *_path,
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
-    bool IsDirChangeObservingAvailable(std::string_view _path) override;
+    bool IsDirectoryChangeObservationAvailable(std::string_view _path) override;
     HostDirObservationTicket ObserveDirectoryChanges(std::string_view _path, std::function<void()> _handler) override;
     void StopDirChangeObserving(unsigned long _ticket) override;
 

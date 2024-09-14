@@ -461,7 +461,7 @@ ssize_t NativeHost::CalculateDirectorySize(const char *_path, const VFSCancelChe
         return result;
 }
 
-bool NativeHost::IsDirChangeObservingAvailable(std::string_view _path)
+bool NativeHost::IsDirectoryChangeObservationAvailable(std::string_view _path)
 {
     if( _path.empty() )
         return false;

@@ -331,7 +331,7 @@ public:
     /**
      * Default implementation doesn't provide any observation functionality.
      */
-    virtual bool IsDirChangeObservingAvailable(std::string_view _path);
+    virtual bool IsDirectoryChangeObservationAvailable(std::string_view _path);
 
     /**
      * _handler can be called from any thread

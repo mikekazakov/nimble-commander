@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/Host.h>
@@ -51,7 +51,7 @@ public:
 
     virtual int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int IterateDirectoryListing(const char *_path,
+    virtual int IterateDirectoryListing(std::string_view _path,
                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
     virtual int FetchDirectoryListing(std::string_view _path,

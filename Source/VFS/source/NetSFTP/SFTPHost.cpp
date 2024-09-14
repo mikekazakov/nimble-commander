@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/algo.h>
 #include <Utility/PathManip.h>
 #include <libssh2.h>
@@ -533,7 +533,8 @@ int SFTPHost::Stat(std::string_view _path,
     return 0;
 }
 
-int SFTPHost::IterateDirectoryListing(const char *_path, const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+int SFTPHost::IterateDirectoryListing(std::string_view _path,
+                                      const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -542,8 +543,8 @@ int SFTPHost::IterateDirectoryListing(const char *_path, const std::function<boo
 
     AutoConnectionReturn acr(conn, this);
 
-    LIBSSH2_SFTP_HANDLE *sftp_handle =
-        libssh2_sftp_open_ex(conn->sftp, _path, (unsigned)strlen(_path), 0, 0, LIBSSH2_SFTP_OPENDIR);
+    LIBSSH2_SFTP_HANDLE *sftp_handle = libssh2_sftp_open_ex(
+        conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), 0, 0, LIBSSH2_SFTP_OPENDIR);
     if( !sftp_handle ) {
         return VFSErrorForConnection(*conn);
     }

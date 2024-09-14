@@ -287,7 +287,7 @@ int Host::Stat([[maybe_unused]] std::string_view _path,
     return VFSError::NotSupported;
 }
 
-int Host::IterateDirectoryListing([[maybe_unused]] const char *_path,
+int Host::IterateDirectoryListing([[maybe_unused]] std::string_view _path,
                                   [[maybe_unused]] const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     // TODO: write a default implementation using listing fetching.

@@ -258,12 +258,12 @@ int ArchiveRawHost::Stat(std::string_view _path,
     return VFSError::Ok;
 }
 
-int ArchiveRawHost::IterateDirectoryListing(const char *_path,
+int ArchiveRawHost::IterateDirectoryListing(std::string_view _path,
                                             const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    if( _path == nullptr || _path[0] != '/' || !_handler )
+    if( !_path.starts_with("/") || !_handler )
         return VFSError::FromErrno(EINVAL);
-    if( std::string_view(_path) != "/" )
+    if( _path != "/" )
         return VFSError::FromErrno(ENOENT);
 
     VFSDirEnt entry;

@@ -596,7 +596,8 @@ bool FTPHost::IsWritable() const
     return true;
 }
 
-int FTPHost::IterateDirectoryListing(const char *_path, const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+int FTPHost::IterateDirectoryListing(std::string_view _path,
+                                     const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     std::shared_ptr<Directory> dir;
     int result = GetListingForFetching(m_ListingInstance.get(), _path, dir, nullptr);

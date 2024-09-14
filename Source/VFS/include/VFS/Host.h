@@ -249,7 +249,7 @@ public:
      * Do not rely on it to build a directory listing, it's for contents iteration.
      * _handler: return true to allow further iteration, false to stop it.
      */
-    virtual int IterateDirectoryListing(const char *_path,
+    virtual int IterateDirectoryListing(std::string_view _path,
                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler);
 
     int FetchFlexibleListingItems(const std::string &_directory_path,

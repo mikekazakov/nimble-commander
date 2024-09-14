@@ -522,12 +522,15 @@ int NativeHost::Stat(std::string_view _path,
     return VFSError::FromErrno();
 }
 
-int NativeHost::IterateDirectoryListing(const char *_path,
+int NativeHost::IterateDirectoryListing(std::string_view _path,
                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    auto &io = routedio::RoutedIO::InterfaceForAccess(_path, R_OK);
+    StackAllocator alloc;
+    std::pmr::string path(_path, &alloc);
 
-    DIR *dirp = io.opendir(_path);
+    auto &io = routedio::RoutedIO::InterfaceForAccess(path.c_str(), R_OK);
+
+    DIR *dirp = io.opendir(path.c_str());
     if( dirp == nullptr )
         return VFSError::FromErrno();
     const auto close_dirp = at_scope_end([&] { io.closedir(dirp); });

@@ -664,11 +664,10 @@ int ArchiveHost::ResolvePathIfNeeded(std::string_view _path, std::pmr::string &_
     return VFSError::Ok;
 }
 
-int ArchiveHost::IterateDirectoryListing(const char *_path,
+int ArchiveHost::IterateDirectoryListing(std::string_view _path,
                                          const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    assert(_path != nullptr);
-    if( _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::NotFound;
 
     StackAllocator alloc;

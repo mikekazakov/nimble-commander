@@ -52,7 +52,7 @@ public:
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker = {}) override;
 
-    virtual int IterateDirectoryListing(const char *_path,
+    virtual int IterateDirectoryListing(std::string_view _path,
                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
     virtual int CreateFile(const char *_path,

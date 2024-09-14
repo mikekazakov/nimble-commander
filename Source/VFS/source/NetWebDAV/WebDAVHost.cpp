@@ -157,13 +157,13 @@ int WebDAVHost::FetchDirectoryListing(std::string_view _path,
     return VFSError::Ok;
 }
 
-int WebDAVHost::IterateDirectoryListing(const char *_path,
+int WebDAVHost::IterateDirectoryListing(std::string_view _path,
                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;
 
-    const auto path = EnsureTrailingSlash(_path);
+    const auto path = EnsureTrailingSlash(std::string(_path));
 
     std::vector<PropFindResponse> items;
     if( auto cached = I->m_Cache.Listing(path) ) {

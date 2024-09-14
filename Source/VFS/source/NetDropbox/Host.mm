@@ -289,13 +289,13 @@ int DropboxHost::Stat(std::string_view _path,
     return rc;
 }
 
-int DropboxHost::IterateDirectoryListing(const char *_path,
+int DropboxHost::IterateDirectoryListing(std::string_view _path,
                                          const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    if( !_path || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::InvalidCall;
 
-    std::string path = _path;
+    std::string path = std::string(_path);
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 

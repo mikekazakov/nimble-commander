@@ -142,7 +142,6 @@ static void check(const Case &test_case)
         CHECK(_dirent.name_len == std::string_view("hello.txt").size());
         return true;
     };
-    CHECK(host->IterateDirectoryListing(nullptr, iter_cb) == einval);
     CHECK(host->IterateDirectoryListing("", iter_cb) == einval);
     CHECK(host->IterateDirectoryListing("blah-blah", iter_cb) == einval);
     CHECK(host->IterateDirectoryListing("/blah-blah", iter_cb) == enoent);

@@ -194,7 +194,7 @@ public:
     /**
      * Default implementation calls Stat() and returns true if return was Ok.
      */
-    virtual bool Exists(const char *_path, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual bool Exists(std::string_view _path, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * Checks if _filenames contains a forbidden symbols and return false if found them.

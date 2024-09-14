@@ -386,7 +386,7 @@ VFSConfiguration Host::Configuration() const
     return config;
 }
 
-bool Host::Exists(const char *_path, const VFSCancelChecker &_cancel_checker)
+bool Host::Exists(std::string_view _path, const VFSCancelChecker &_cancel_checker)
 {
     VFSStat st;
     return Stat(_path, st, 0, _cancel_checker) == VFSError::Ok;

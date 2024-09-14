@@ -182,7 +182,8 @@ public:
      * Default implementation calls Stat() and then returns (st.mode & S_IFMT) == S_IFLNK.
      * On any errors returns false.
      */
-    virtual bool IsSymlink(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual bool
+    IsSymlink(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /** Return zero upon succes, negative value on error. */
     virtual int ReadSymlink(const char *_symlink_path,

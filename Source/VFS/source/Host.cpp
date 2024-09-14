@@ -180,7 +180,7 @@ bool Host::IsDirectory(std::string_view _path, unsigned long _flags, const VFSCa
     return (st.mode & S_IFMT) == S_IFDIR;
 }
 
-bool Host::IsSymlink(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
+bool Host::IsSymlink(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     VFSStat st;
     if( Stat(_path, st, _flags, _cancel_checker) < 0 )

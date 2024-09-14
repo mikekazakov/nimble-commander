@@ -789,7 +789,7 @@ struct StateStorage {
     if( !item )
         return;
 
-    const auto hash = listing.Host()->FullHashForPath(listing.Directory().c_str());
+    const auto hash = listing.Host()->FullHashForPath(listing.Directory());
     auto &storage = m_States[hash];
     storage.focused_item = item.Filename();
 }
@@ -802,7 +802,7 @@ struct StateStorage {
 
     const auto &listing = m_Data->Listing();
 
-    const auto hash = listing.Host()->FullHashForPath(listing.Directory().c_str());
+    const auto hash = listing.Host()->FullHashForPath(listing.Directory());
     const auto it = m_States.find(hash);
     if( it == end(m_States) )
         return;

@@ -574,11 +574,8 @@ uint64_t Host::Features() const noexcept
     return m_Features;
 }
 
-uint64_t Host::FullHashForPath(const char *_path) const noexcept
+uint64_t Host::FullHashForPath(std::string_view _path) const noexcept
 {
-    if( !_path )
-        return 0;
-
     const auto max_hosts = 8;
     std::array<const VFSHost *, max_hosts> hosts;
     int hosts_n = 0;

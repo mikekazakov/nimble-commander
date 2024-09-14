@@ -79,7 +79,7 @@ FavoriteLocationsStorageImpl::ComposeFavoriteLocation(VFSHost &_host,
 
     Favorite f;
     f.location = location;
-    f.footprint = _host.FullHashForPath(_directory.c_str());
+    f.footprint = _host.FullHashForPath(_directory);
     if( _title.empty() ) {
         f.title = std::filesystem::path(EnsureNoTrailingSlash(_directory)).filename();
     }
@@ -93,7 +93,7 @@ void FavoriteLocationsStorageImpl::ReportLocationVisit(VFSHost &_host, const std
 {
     dispatch_assert_main_queue();
     const auto timestamp = time(nullptr);
-    const auto footprint = _host.FullHashForPath(_directory.c_str());
+    const auto footprint = _host.FullHashForPath(_directory);
 
     const auto existing = m_Visits.find(footprint);
     if( existing != end(m_Visits) ) {

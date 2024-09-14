@@ -133,7 +133,7 @@ public:
      * Calculates a hash of a string representation of a hosts stack and the corresponding path.
      * Should not be used for an offline state storing.
      */
-    uint64_t FullHashForPath(const char *_path) const noexcept;
+    uint64_t FullHashForPath(std::string_view _path) const noexcept;
 
     std::string MakePathVerbose(std::string_view _path) const;
 

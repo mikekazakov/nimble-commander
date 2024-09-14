@@ -210,7 +210,9 @@ void DropboxHost::FillAuth(NSMutableURLRequest *_request) const
     [_request setValue:I->m_AuthString forHTTPHeaderField:@"Authorization"];
 }
 
-int DropboxHost::StatFS([[maybe_unused]] const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
+int DropboxHost::StatFS([[maybe_unused]] std::string_view _path,
+                        VFSStatFS &_stat,
+                        const VFSCancelChecker &_cancel_checker)
 {
     _stat = VFSStatFS{};
 

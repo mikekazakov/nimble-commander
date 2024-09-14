@@ -674,7 +674,7 @@ void FTPHost::BasicOptsSetup(CURLInstance *_inst)
     // _inst->EasySetOpt(CURLOPT_SSL_VERIFYHOST, false);
 }
 
-int FTPHost::StatFS([[maybe_unused]] const char *_path,
+int FTPHost::StatFS([[maybe_unused]] std::string_view _path,
                     VFSStatFS &_stat,
                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {

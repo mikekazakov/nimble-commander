@@ -259,7 +259,7 @@ int WebDAVHost::RefreshListingAtPath(const std::string &_path, [[maybe_unused]] 
     return VFSError::Ok;
 }
 
-int WebDAVHost::StatFS([[maybe_unused]] const char *_path,
+int WebDAVHost::StatFS([[maybe_unused]] std::string_view _path,
                        VFSStatFS &_stat,
                        [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {

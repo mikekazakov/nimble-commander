@@ -295,7 +295,7 @@ int Host::IterateDirectoryListing([[maybe_unused]] const char *_path,
     return VFSError::NotSupported;
 }
 
-int Host::StatFS([[maybe_unused]] const char *_path,
+int Host::StatFS([[maybe_unused]] std::string_view _path,
                  [[maybe_unused]] VFSStatFS &_stat,
                  [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {

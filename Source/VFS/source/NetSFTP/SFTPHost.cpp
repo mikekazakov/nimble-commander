@@ -578,7 +578,7 @@ int SFTPHost::IterateDirectoryListing(const char *_path, const std::function<boo
     return 0;
 }
 
-int SFTPHost::StatFS(const char *_path, VFSStatFS &_stat, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int SFTPHost::StatFS(std::string_view _path, VFSStatFS &_stat, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -588,7 +588,7 @@ int SFTPHost::StatFS(const char *_path, VFSStatFS &_stat, [[maybe_unused]] const
     AutoConnectionReturn acr(conn, this);
 
     LIBSSH2_SFTP_STATVFS statfs;
-    rc = libssh2_sftp_statvfs(conn->sftp, _path, strlen(_path), &statfs);
+    rc = libssh2_sftp_statvfs(conn->sftp, _path.data(), _path.length(), &statfs);
     if( rc < 0 )
         return VFSErrorForConnection(*conn);
 

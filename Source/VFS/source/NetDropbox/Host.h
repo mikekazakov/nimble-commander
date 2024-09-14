@@ -42,7 +42,7 @@ public:
 
     virtual bool IsWritable() const override;
     virtual bool IsCaseSensitiveAtPath(std::string_view _dir) const override;
-    virtual int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
+    virtual int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
 
     virtual int
     Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;

@@ -169,7 +169,7 @@ public:
      * VFS version of statfs().
      * Path may be a file path or a directory path.
      */
-    virtual int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * Default implementation calls Stat() and then returns (st.mode & S_IFMT) == S_IFDIR.

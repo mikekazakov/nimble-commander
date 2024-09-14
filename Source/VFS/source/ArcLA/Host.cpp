@@ -811,7 +811,7 @@ int ArchiveHost::ResolvePath(std::string_view _path, std::pmr::string &_resolved
     return result_uid;
 }
 
-int ArchiveHost::StatFS(const char * /*_path*/, VFSStatFS &_stat, const VFSCancelChecker &)
+int ArchiveHost::StatFS(std::string_view /*_path*/, VFSStatFS &_stat, const VFSCancelChecker &)
 {
     std::string_view vol_name = utility::PathManip::Filename(JunctionPath());
     if( vol_name.empty() )

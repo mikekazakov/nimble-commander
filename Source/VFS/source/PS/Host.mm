@@ -608,7 +608,7 @@ int PSHost::IterateDirectoryListing(const char *_path, const std::function<bool(
     return VFSError::Ok;
 }
 
-int PSHost::StatFS([[maybe_unused]] const char *_path,
+int PSHost::StatFS([[maybe_unused]] std::string_view _path,
                    VFSStatFS &_stat,
                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {

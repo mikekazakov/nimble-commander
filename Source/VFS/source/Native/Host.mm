@@ -547,10 +547,15 @@ int NativeHost::IterateDirectoryListing(const char *_path,
     return VFSError::Ok;
 }
 
-int NativeHost::StatFS(const char *_path, VFSStatFS &_stat, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int NativeHost::StatFS(std::string_view _path,
+                       VFSStatFS &_stat,
+                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
+    StackAllocator alloc;
+    std::pmr::string path(_path, &alloc);
+
     struct statfs info;
-    if( statfs(_path, &info) < 0 )
+    if( statfs(path.c_str(), &info) < 0 )
         return VFSError::FromErrno();
 
     auto volume = m_NativeFSManager.VolumeFromMountPoint(info.f_mntonname);

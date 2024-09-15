@@ -43,7 +43,7 @@ public:
 
     int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
 
-    int CreateDirectory(const char *_path, int _mode, const VFSCancelChecker &_cancel_checker) override;
+    int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker) override;
 
     int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker) override;
 

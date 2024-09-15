@@ -597,10 +597,14 @@ bool NativeHost::IsWritable() const
     return true; // dummy now
 }
 
-int NativeHost::CreateDirectory(const char *_path, int _mode, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int NativeHost::CreateDirectory(std::string_view _path,
+                                int _mode,
+                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
+    StackAllocator alloc;
+    std::pmr::string path(_path, &alloc);
     auto &io = routedio::RoutedIO::Default;
-    int ret = io.mkdir(_path, mode_t(_mode));
+    int ret = io.mkdir(path.c_str(), mode_t(_mode));
     if( ret == 0 )
         return 0;
     return VFSError::FromErrno();

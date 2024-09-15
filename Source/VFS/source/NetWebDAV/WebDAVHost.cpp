@@ -283,14 +283,14 @@ int WebDAVHost::StatFS([[maybe_unused]] std::string_view _path,
     return VFSError::Ok;
 }
 
-int WebDAVHost::CreateDirectory(const char *_path,
+int WebDAVHost::CreateDirectory(std::string_view _path,
                                 [[maybe_unused]] int _mode,
                                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;
 
-    const auto path = EnsureTrailingSlash(_path);
+    const auto path = EnsureTrailingSlash(std::string(_path));
     const auto ar = I->m_Pool.Get();
     const auto rc = RequestMKCOL(Config(), *ar.connection, path);
     if( rc != VFSError::Ok )

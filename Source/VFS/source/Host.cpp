@@ -312,7 +312,7 @@ int Host::Trash([[maybe_unused]] const char *_path, [[maybe_unused]] const VFSCa
     return VFSError::NotSupported;
 }
 
-int Host::CreateDirectory([[maybe_unused]] const char *_path,
+int Host::CreateDirectory([[maybe_unused]] std::string_view _path,
                           [[maybe_unused]] int _mode,
                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {

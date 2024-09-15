@@ -686,7 +686,9 @@ int SFTPHost::RemoveDirectory(const char *_path, [[maybe_unused]] const VFSCance
     return 0;
 }
 
-int SFTPHost::CreateDirectory(const char *_path, int _mode, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int SFTPHost::CreateDirectory(std::string_view _path,
+                              int _mode,
+                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -695,7 +697,7 @@ int SFTPHost::CreateDirectory(const char *_path, int _mode, [[maybe_unused]] con
 
     AutoConnectionReturn acr(conn, this);
 
-    rc = libssh2_sftp_mkdir_ex(conn->sftp, _path, (unsigned)strlen(_path), _mode);
+    rc = libssh2_sftp_mkdir_ex(conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), _mode);
 
     if( rc < 0 )
         return VFSErrorForConnection(*conn);

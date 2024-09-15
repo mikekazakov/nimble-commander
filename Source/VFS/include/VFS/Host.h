@@ -266,7 +266,7 @@ public:
                            std::shared_ptr<VFSFile> &_target,
                            const VFSCancelChecker &_cancel_checker = nullptr);
 
-    virtual int CreateDirectory(const char *_path, int _mode, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /** Return zero upon succes, negative value on error. */
     virtual int CreateSymlink(const char *_symlink_path,

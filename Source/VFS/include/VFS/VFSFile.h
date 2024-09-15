@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
@@ -46,7 +46,7 @@ public:
         NoWrite = 0
     };
 
-    VFSFile(const char *_relative_path, const VFSHostPtr &_host);
+    VFSFile(std::string_view _relative_path, const VFSHostPtr &_host);
     virtual ~VFSFile();
 
     virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = nullptr);

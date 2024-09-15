@@ -1,10 +1,10 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSFile.h"
 #include "../include/VFS/VFSError.h"
 #include "../include/VFS/Host.h"
 
-VFSFile::VFSFile(const char *_relative_path, const VFSHostPtr &_host)
-    : m_RelativePath(_relative_path ? _relative_path : ""), m_Host(_host), m_LastError(VFSError::Ok)
+VFSFile::VFSFile(std::string_view _relative_path, const VFSHostPtr &_host)
+    : m_RelativePath(_relative_path), m_Host(_host), m_LastError(VFSError::Ok)
 {
 }
 

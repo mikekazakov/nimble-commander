@@ -460,9 +460,9 @@ int FTPHost::CreateDirectory(std::string_view _path,
                               : VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
 }
 
-int FTPHost::RemoveDirectory(const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int FTPHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    const std::filesystem::path path = EnsureNoTrailingSlash(_path);
+    const std::filesystem::path path = EnsureNoTrailingSlash(std::string(_path));
     if( path.is_absolute() == false )
         return VFSError::InvalidCall;
 

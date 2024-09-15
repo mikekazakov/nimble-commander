@@ -669,7 +669,7 @@ int SFTPHost::Rename(const char *_old_path, const char *_new_path, const VFSCanc
     return rename_vfs_rc;
 }
 
-int SFTPHost::RemoveDirectory(const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int SFTPHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -678,7 +678,7 @@ int SFTPHost::RemoveDirectory(const char *_path, [[maybe_unused]] const VFSCance
 
     AutoConnectionReturn acr(conn, this);
 
-    rc = libssh2_sftp_rmdir_ex(conn->sftp, _path, (unsigned)strlen(_path));
+    rc = libssh2_sftp_rmdir_ex(conn->sftp, _path.data(), static_cast<unsigned>(_path.length()));
 
     if( rc < 0 )
         return VFSErrorForConnection(*conn);

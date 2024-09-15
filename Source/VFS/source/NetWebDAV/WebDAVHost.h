@@ -45,7 +45,7 @@ public:
 
     int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker) override;
 
-    int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker) override;
+    int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
     int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 

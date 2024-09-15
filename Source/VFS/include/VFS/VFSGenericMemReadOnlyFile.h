@@ -14,7 +14,9 @@ public:
                            const std::shared_ptr<VFSHost> &_host,
                            const void *_memory,
                            uint64_t _mem_size);
-    GenericMemReadOnlyFile(const char *_relative_path, const std::shared_ptr<VFSHost> &_host, std::string_view _memory);
+    GenericMemReadOnlyFile(std::string_view _relative_path,
+                           const std::shared_ptr<VFSHost> &_host,
+                           std::string_view _memory);
 
     int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = {}) override;
     bool IsOpened() const override;

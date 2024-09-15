@@ -49,7 +49,7 @@ public:
 
     virtual int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker) override;
+    virtual int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
     virtual int IterateDirectoryListing(std::string_view _path,
                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;

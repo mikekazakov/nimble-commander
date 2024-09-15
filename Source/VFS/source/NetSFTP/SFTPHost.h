@@ -64,7 +64,7 @@ public:
     Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker = {}) override;
     virtual int
     CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker = {}) override;
+    virtual int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
     virtual int ReadSymlink(std::string_view _symlink_path,
                             char *_buffer,
                             size_t _buffer_size,

@@ -209,7 +209,7 @@ public:
      */
     virtual int GetXAttrs(const char *_path, std::vector<std::pair<std::string, std::vector<uint8_t>>> &_xattrs);
 
-    virtual ssize_t CalculateDirectorySize(const char *_path, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual ssize_t CalculateDirectorySize(std::string_view _path, const VFSCancelChecker &_cancel_checker = nullptr);
 
     virtual bool ShouldProduceThumbnails() const;
 

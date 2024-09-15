@@ -443,17 +443,20 @@ cleanup:
     return VFSError::Ok;
 }
 
-ssize_t NativeHost::CalculateDirectorySize(const char *_path, const VFSCancelChecker &_cancel_checker)
+ssize_t NativeHost::CalculateDirectorySize(std::string_view _path, const VFSCancelChecker &_cancel_checker)
 {
     if( _cancel_checker && _cancel_checker() )
         return VFSError::Cancelled;
 
-    if( _path == nullptr || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::InvalidCall;
 
     std::atomic_bool iscancelling{false};
+
+    // TODO: rewrite without using C-style shenanigans
     char path[MAXPATHLEN];
-    strcpy(path, _path);
+    memcpy(path, _path.data(), _path.length());
+    path[_path.length()] = 0;
 
     dispatch_queue stat_queue("VFSNativeHost.CalculateDirectoriesSizes");
 

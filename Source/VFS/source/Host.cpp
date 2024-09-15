@@ -224,9 +224,9 @@ bool Host::FindLastValidItem(const char *_orig_path,
     return false;
 }
 
-ssize_t Host::CalculateDirectorySize(const char *_path, const VFSCancelChecker &_cancel_checker)
+ssize_t Host::CalculateDirectorySize(std::string_view _path, const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == nullptr || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::InvalidCall;
 
     std::queue<std::filesystem::path> look_paths;

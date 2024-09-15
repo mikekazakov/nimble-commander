@@ -323,7 +323,7 @@ int RequestMKCOL(const HostConfiguration &_options, Connection &_connection, con
         return HTTPRCToVFSError(result.http_code);
 }
 
-int RequestDelete(const HostConfiguration &_options, Connection &_connection, const std::string &_path)
+int RequestDelete(const HostConfiguration &_options, Connection &_connection, std::string_view _path)
 {
     if( _path == "/" )
         return VFSError::FromErrno(EPERM);

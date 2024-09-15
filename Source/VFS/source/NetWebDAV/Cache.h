@@ -34,7 +34,7 @@ public:
     void CommitMkDir(const std::string &_at_path);
     void CommitRmDir(const std::string &_at_path);
     void CommitMkFile(const std::string &_at_path);
-    void CommitUnlink(const std::string &_at_path);
+    void CommitUnlink(std::string_view _at_path);
     void CommitMove(const std::string &_old_path, const std::string &_new_path);
 
     unsigned long Observe(const std::string &_path, std::function<void()> _handler);

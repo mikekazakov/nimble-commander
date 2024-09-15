@@ -376,7 +376,7 @@ int FTPHost::CreateFile(std::string_view _path,
     return VFSError::Ok;
 }
 
-int FTPHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int FTPHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     const std::filesystem::path path = _path;
     if( path.is_absolute() == false || path.native().back() == '/' )

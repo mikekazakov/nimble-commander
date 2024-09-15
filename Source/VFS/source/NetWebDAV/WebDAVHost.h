@@ -47,7 +47,7 @@ public:
 
     int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker) override;
 
-    int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker) override;
+    int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
     int CreateFile(std::string_view _path,
                    std::shared_ptr<VFSFile> &_target,

@@ -617,7 +617,7 @@ bool SFTPHost::IsWritable() const
     return true; // dummy now
 }
 
-int SFTPHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int SFTPHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -626,7 +626,7 @@ int SFTPHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecker 
 
     AutoConnectionReturn acr(conn, this);
 
-    rc = libssh2_sftp_unlink_ex(conn->sftp, _path, (unsigned)strlen(_path));
+    rc = libssh2_sftp_unlink_ex(conn->sftp, _path.data(), static_cast<unsigned>(_path.length()));
 
     if( rc < 0 )
         return VFSErrorForConnection(*conn);

@@ -27,10 +27,10 @@ std::pair<std::string, std::string> DeconstructPath(std::string_view _path)
     }
 }
 
-std::string URIEscape(const std::string &_unescaped)
+std::string URIEscape(std::string_view _unescaped)
 {
     static const auto acs = NSCharacterSet.URLPathAllowedCharacterSet;
-    if( auto str = [NSString stringWithUTF8StdString:_unescaped] )
+    if( auto str = [NSString stringWithUTF8StdStringView:_unescaped] )
         if( auto percents = [str stringByAddingPercentEncodingWithAllowedCharacters:acs] )
             if( auto utf8 = percents.UTF8String )
                 return utf8;
@@ -46,7 +46,7 @@ std::string URIUnescape(const std::string &_escaped)
     return {};
 }
 
-std::string URIForPath(const HostConfiguration &_options, const std::string &_path)
+std::string URIForPath(const HostConfiguration &_options, std::string_view _path)
 {
     auto uri = _options.full_url;
     if( _path != "/" ) {

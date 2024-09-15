@@ -262,7 +262,7 @@ std::vector<Metadata> ExtractMetadataEntries(const rapidjson::Value &_value)
     return result;
 }
 
-std::string EscapeString(const std::string &_original)
+std::string EscapeString(std::string_view _original)
 {
     std::string after;
     after.reserve(_original.length() + 4);
@@ -364,7 +364,7 @@ std::optional<rapidjson::Document> ParseJSON(NSData *_data)
     return std::move(json);
 }
 
-void InsertHTTPBodyPathspec(NSMutableURLRequest *_request, const std::string &_path)
+void InsertHTTPBodyPathspec(NSMutableURLRequest *_request, std::string_view _path)
 {
     [_request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     const std::string path_spec = R"({ "path": ")" + EscapeString(_path) + "\" }";

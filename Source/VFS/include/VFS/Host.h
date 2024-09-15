@@ -277,7 +277,7 @@ public:
      * Unlinks(deletes) a file. Dont follow last symlink, in case of.
      * Don't delete directories, similar to POSIX.
      */
-    virtual int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * Deletes an empty directory. Will fail on non-empty ones, unless NonEmptyRmDir flag is

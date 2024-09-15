@@ -650,9 +650,9 @@ static std::optional<bool> WaitForProcessToDie(int pid)
     return false;
 }
 
-int PSHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int PSHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == nullptr )
+    if( _path.empty() )
         return VFSError::InvalidCall;
 
     int gid = -1;

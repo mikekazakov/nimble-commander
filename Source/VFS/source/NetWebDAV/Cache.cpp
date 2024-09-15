@@ -174,7 +174,7 @@ void Cache::CommitRmDir(const std::string &_at_path)
     DiscardListing(_at_path);
 }
 
-void Cache::CommitUnlink(const std::string &_at_path)
+void Cache::CommitUnlink(std::string_view _at_path)
 {
     const auto [directory, filename] = DeconstructPath(_at_path);
     if( filename.empty() )

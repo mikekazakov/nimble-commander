@@ -443,9 +443,9 @@ const std::string &DropboxHost::Token() const
     return I->m_Token;
 }
 
-int DropboxHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
+int DropboxHost::Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::InvalidCall;
 
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Delete];

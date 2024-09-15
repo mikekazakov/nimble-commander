@@ -302,7 +302,7 @@ int Host::StatFS([[maybe_unused]] std::string_view _path,
     return VFSError::NotSupported;
 }
 
-int Host::Unlink([[maybe_unused]] const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int Host::Unlink([[maybe_unused]] std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }

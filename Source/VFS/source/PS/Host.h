@@ -30,7 +30,7 @@ public:
 
     int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
 
-    int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker = nullptr) override;
+    int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = nullptr) override;
 
     int FetchDirectoryListing(std::string_view _path,
                               VFSListingPtr &_target,

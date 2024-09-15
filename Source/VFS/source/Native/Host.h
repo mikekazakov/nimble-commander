@@ -68,7 +68,7 @@ public:
                       const char *_symlink_value,
                       const VFSCancelChecker &_cancel_checker) override;
 
-    int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker) override;
+    int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
     int Trash(const char *_path, const VFSCancelChecker &_cancel_checker) override;
 

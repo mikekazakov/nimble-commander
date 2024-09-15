@@ -3,6 +3,7 @@
 #include "xattr.h"
 #include <VFS/VFSFile.h>
 #include <Utility/PathManip.h>
+#include <Base/StackAllocator.h>
 #include "../ListingInput.h"
 #include <dirent.h>
 #include <fmt/format.h>
@@ -270,12 +271,15 @@ int XAttrHost::CreateFile(std::string_view _path,
     return VFSError::Ok;
 }
 
-int XAttrHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int XAttrHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::FromErrno(ENOENT);
 
-    if( fremovexattr(m_FD, _path + 1, 0) == -1 )
+    StackAllocator alloc;
+    std::pmr::string path(_path.substr(1), &alloc);
+
+    if( fremovexattr(m_FD, path.c_str(), 0) == -1 )
         return VFSError::FromErrno();
 
     ReportChange();

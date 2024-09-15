@@ -583,10 +583,12 @@ int NativeHost::StatFS(std::string_view _path,
     return 0;
 }
 
-int NativeHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int NativeHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
+    StackAllocator alloc;
+    std::pmr::string path(_path, &alloc);
     auto &io = routedio::RoutedIO::Default;
-    int ret = io.unlink(_path);
+    int ret = io.unlink(path.c_str());
     if( ret == 0 )
         return 0;
     return VFSError::FromErrno();

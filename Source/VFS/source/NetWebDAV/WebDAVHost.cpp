@@ -317,7 +317,7 @@ int WebDAVHost::RemoveDirectory(const char *_path, [[maybe_unused]] const VFSCan
     return VFSError::Ok;
 }
 
-int WebDAVHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int WebDAVHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;

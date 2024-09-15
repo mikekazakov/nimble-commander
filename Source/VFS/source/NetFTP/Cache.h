@@ -86,7 +86,7 @@ public:
     /**
      * Erases a entry at _path.
      */
-    void CommitUnlink(const std::string &_path);
+    void CommitUnlink(std::string_view _path);
 
     /**
      * Removes old entry path and places it as a new entry.
@@ -98,7 +98,7 @@ private:
         map<std::string, std::shared_ptr<Directory>, UnorderedStringHashEqual, UnorderedStringHashEqual>;
 
     std::shared_ptr<Directory> FindDirectoryInt(std::string_view _path) const noexcept;
-    void EraseEntryInt(const std::string &_path);
+    void EraseEntryInt(std::string_view _path);
 
     DirectoriesT m_Directories; // "/Abra/Cadabra/" -> Directory
 

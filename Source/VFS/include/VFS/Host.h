@@ -262,8 +262,9 @@ public:
      * Making changes to the filesystem
      **********************************************************************************************/
 
-    virtual int
-    CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int CreateFile(std::string_view _path,
+                           std::shared_ptr<VFSFile> &_target,
+                           const VFSCancelChecker &_cancel_checker = nullptr);
 
     virtual int CreateDirectory(const char *_path, int _mode, const VFSCancelChecker &_cancel_checker = nullptr);
 

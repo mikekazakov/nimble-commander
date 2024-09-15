@@ -516,7 +516,7 @@ void ArchiveHost::InsertDummyDirInto(Dir *_parent, const char *_dir_name)
     entry.aruid = SyntheticArUID;
 }
 
-int ArchiveHost::CreateFile(const char *_path,
+int ArchiveHost::CreateFile(std::string_view _path,
                             std::shared_ptr<VFSFile> &_target,
                             const VFSCancelChecker &_cancel_checker)
 {

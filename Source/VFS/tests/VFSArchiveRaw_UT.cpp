@@ -109,7 +109,6 @@ static void check(const Case &test_case)
 
     // let's read a file
     VFSFilePtr file;
-    CHECK(host->CreateFile(nullptr, file) == einval);
     CHECK(host->CreateFile("", file) == einval);
     CHECK(host->CreateFile("blah-blah", file) == einval);
     CHECK(host->CreateFile("/blah-blah", file) == enoent);

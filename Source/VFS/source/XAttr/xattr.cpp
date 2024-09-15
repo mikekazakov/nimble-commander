@@ -14,7 +14,7 @@ namespace nc::vfs {
 class XAttrFile final : public VFSFile
 {
 public:
-    XAttrFile(const std::string &_xattr_path, const std::shared_ptr<XAttrHost> &_parent, int _fd);
+    XAttrFile(std::string_view _xattr_path, const std::shared_ptr<XAttrHost> &_parent, int _fd);
     int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = nullptr) override;
     int Close() override;
     bool IsOpened() const override;
@@ -259,7 +259,9 @@ int XAttrHost::Stat(std::string_view _path,
     return VFSError::FromErrno(ENOENT);
 }
 
-int XAttrHost::CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker)
+int XAttrHost::CreateFile(std::string_view _path,
+                          std::shared_ptr<VFSFile> &_target,
+                          const VFSCancelChecker &_cancel_checker)
 {
     auto file = std::make_shared<XAttrFile>(_path, std::static_pointer_cast<XAttrHost>(shared_from_this()), m_FD);
     if( _cancel_checker && _cancel_checker() )
@@ -320,8 +322,8 @@ void XAttrHost::ReportChange()
 // hardly needs own version of this, since xattr will happily work with abra:cadabra filenames
 // bool VFSHost::ValidateFilename(const char *_filename) const
 
-XAttrFile::XAttrFile(const std::string &_xattr_path, const std::shared_ptr<XAttrHost> &_parent, int _fd)
-    : VFSFile(_xattr_path.c_str(), _parent), m_FD(_fd)
+XAttrFile::XAttrFile(std::string_view _xattr_path, const std::shared_ptr<XAttrHost> &_parent, int _fd)
+    : VFSFile(_xattr_path, _parent), m_FD(_fd)
 {
 }
 

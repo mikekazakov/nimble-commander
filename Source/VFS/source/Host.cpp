@@ -164,7 +164,7 @@ bool Host::IsWritableAtPath([[maybe_unused]] std::string_view _dir) const
     return IsWritable();
 }
 
-int Host::CreateFile([[maybe_unused]] const char *_path,
+int Host::CreateFile([[maybe_unused]] std::string_view _path,
                      [[maybe_unused]] std::shared_ptr<VFSFile> &_target,
                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {

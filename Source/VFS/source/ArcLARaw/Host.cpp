@@ -220,14 +220,14 @@ void ArchiveRawHost::Init(const VFSCancelChecker &_cancel_checker)
     }
 }
 
-int ArchiveRawHost::CreateFile(const char *_path,
+int ArchiveRawHost::CreateFile(std::string_view _path,
                                std::shared_ptr<VFSFile> &_target,
                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == nullptr || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::FromErrno(EINVAL);
 
-    if( m_Filename != std::string_view(_path + 1) )
+    if( m_Filename != _path.substr(1) )
         return VFSError::FromErrno(ENOENT);
 
     _target = std::make_unique<GenericMemReadOnlyFile>(_path, shared_from_this(), m_Data.data(), m_Data.size());

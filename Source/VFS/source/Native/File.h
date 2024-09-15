@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <VFS/VFSFile.h>
 
@@ -11,7 +11,7 @@ namespace nc::vfs::native {
 class File : public VFSFile
 {
 public:
-    File(const char *_relative_path, const std::shared_ptr<NativeHost> &_host);
+    File(std::string_view _relative_path, const std::shared_ptr<NativeHost> &_host);
     ~File();
 
     virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;

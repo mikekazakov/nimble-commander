@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include <Utility/NativeFSManager.h>
 #include <RoutedIO/RoutedIO.h>
@@ -7,7 +7,7 @@
 
 namespace nc::vfs::native {
 
-File::File(const char *_relative_path, const std::shared_ptr<NativeHost> &_host)
+File::File(std::string_view _relative_path, const std::shared_ptr<NativeHost> &_host)
     : VFSFile(_relative_path, _host), m_FD(-1), m_OpenFlags(0), m_Position(0)
 {
 }

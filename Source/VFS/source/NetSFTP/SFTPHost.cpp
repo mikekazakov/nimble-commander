@@ -601,7 +601,9 @@ int SFTPHost::StatFS(std::string_view _path, VFSStatFS &_stat, [[maybe_unused]] 
     return 0;
 }
 
-int SFTPHost::CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker)
+int SFTPHost::CreateFile(std::string_view _path,
+                         std::shared_ptr<VFSFile> &_target,
+                         const VFSCancelChecker &_cancel_checker)
 {
     auto file = std::make_shared<sftp::File>(_path, SharedPtr());
     if( _cancel_checker && _cancel_checker() )

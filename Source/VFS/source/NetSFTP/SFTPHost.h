@@ -55,7 +55,7 @@ public:
     virtual int IterateDirectoryListing(std::string_view _path,
                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
-    virtual int CreateFile(const char *_path,
+    virtual int CreateFile(std::string_view _path,
                            std::shared_ptr<VFSFile> &_target,
                            const VFSCancelChecker &_cancel_checker = {}) override;
 

@@ -9,7 +9,7 @@
 
 namespace nc::vfs::ftp {
 
-File::File(const char *_relative_path, std::shared_ptr<FTPHost> _host) : VFSFile(_relative_path, _host)
+File::File(std::string_view _relative_path, std::shared_ptr<FTPHost> _host) : VFSFile(_relative_path, _host)
 {
     Log::Trace("File::File({}, {}) called", _relative_path, static_cast<void *>(_host.get()));
 }

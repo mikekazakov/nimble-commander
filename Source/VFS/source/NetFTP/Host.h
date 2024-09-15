@@ -46,8 +46,9 @@ public:
 
     virtual int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int
-    CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker) override;
+    virtual int CreateFile(std::string_view _path,
+                           std::shared_ptr<VFSFile> &_target,
+                           const VFSCancelChecker &_cancel_checker) override;
 
     virtual int CreateDirectory(const char *_path, int _mode, const VFSCancelChecker &_cancel_checker) override;
 

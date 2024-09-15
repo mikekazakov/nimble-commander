@@ -40,8 +40,9 @@ public:
     int IterateDirectoryListing(std::string_view _path,
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
-    int
-    CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker) override;
+    int CreateFile(std::string_view _path,
+                   std::shared_ptr<VFSFile> &_target,
+                   const VFSCancelChecker &_cancel_checker) override;
 
     int CreateDirectory(const char *_path, int _mode, const VFSCancelChecker &_cancel_checker) override;
 

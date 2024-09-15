@@ -427,7 +427,7 @@ int DropboxHost::FetchDirectoryListing(std::string_view _path,
     return VFSError::Ok;
 }
 
-int DropboxHost::CreateFile(const char *_path,
+int DropboxHost::CreateFile(std::string_view _path,
                             std::shared_ptr<VFSFile> &_target,
                             const VFSCancelChecker &_cancel_checker)
 {

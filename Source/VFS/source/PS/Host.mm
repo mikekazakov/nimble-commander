@@ -486,12 +486,14 @@ bool PSHost::IsDirectory(std::string_view _path,
     return true;
 }
 
-int PSHost::CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker)
+int PSHost::CreateFile(std::string_view _path,
+                       std::shared_ptr<VFSFile> &_target,
+                       const VFSCancelChecker &_cancel_checker)
 {
-    std::lock_guard<std::mutex> lock(m_Lock);
-
-    if( _path == nullptr )
+    if( _path.empty() )
         return VFSError::InvalidCall;
+
+    std::lock_guard<std::mutex> lock(m_Lock);
 
     auto index = ProcIndexFromFilepath_Unlocked(_path);
 

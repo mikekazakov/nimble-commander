@@ -332,7 +332,7 @@ int WebDAVHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecke
     return VFSError::Ok;
 }
 
-int WebDAVHost::CreateFile(const char *_path,
+int WebDAVHost::CreateFile(std::string_view _path,
                            std::shared_ptr<VFSFile> &_target,
                            [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {

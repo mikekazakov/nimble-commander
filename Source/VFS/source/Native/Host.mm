@@ -353,7 +353,7 @@ int NativeHost::FetchSingleItemListing(std::string_view _path,
     return 0;
 }
 
-int NativeHost::CreateFile(const char *_path,
+int NativeHost::CreateFile(std::string_view _path,
                            std::shared_ptr<VFSFile> &_target,
                            const VFSCancelChecker &_cancel_checker)
 {

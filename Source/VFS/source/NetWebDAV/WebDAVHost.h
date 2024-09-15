@@ -49,8 +49,9 @@ public:
 
     int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker) override;
 
-    int
-    CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker) override;
+    int CreateFile(std::string_view _path,
+                   std::shared_ptr<VFSFile> &_target,
+                   const VFSCancelChecker &_cancel_checker) override;
 
     int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker) override;
 

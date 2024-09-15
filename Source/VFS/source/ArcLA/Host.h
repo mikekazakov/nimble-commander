@@ -49,7 +49,7 @@ public:
              unsigned long _flags,
              const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int CreateFile(const char *_path,
+    int CreateFile(std::string_view _path,
                    std::shared_ptr<VFSFile> &_target,
                    const VFSCancelChecker &_cancel_checker = {}) override;
 

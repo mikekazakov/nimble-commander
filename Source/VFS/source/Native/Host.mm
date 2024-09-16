@@ -742,17 +742,20 @@ int NativeHost::SetPermissions(std::string_view _path,
     return VFSError::FromErrno();
 }
 
-int NativeHost::SetFlags(const char *_path,
+int NativeHost::SetFlags(std::string_view _path,
                          uint32_t _flags,
                          uint64_t _vfs_options,
                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == nullptr )
+    if( _path.empty() )
         return VFSError::FromErrno(EINVAL);
+
+    StackAllocator alloc;
+    std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
     const bool no_follow = _vfs_options & Flags::F_NoFollow;
-    const auto ret = no_follow ? io.lchflags(_path, _flags) : io.chflags(_path, _flags);
+    const auto ret = no_follow ? io.lchflags(path.c_str(), _flags) : io.chflags(path.c_str(), _flags);
     if( ret == 0 )
         return VFSError::Ok;
     return VFSError::FromErrno();

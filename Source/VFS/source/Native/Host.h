@@ -77,7 +77,7 @@ public:
 
     int SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker) override;
 
-    int SetFlags(const char *_path,
+    int SetFlags(std::string_view _path,
                  uint32_t _flags,
                  uint64_t _vfs_options,
                  const VFSCancelChecker &_cancel_checker) override;

@@ -316,7 +316,7 @@ public:
      * Change flags similarly to chflags().
      * _vfs_options can include F_NoFollow to work akin to lchflags() instead.
      */
-    virtual int SetFlags(const char *_path,
+    virtual int SetFlags(std::string_view _path,
                          uint32_t _flags,
                          uint64_t _vfs_options,
                          const VFSCancelChecker &_cancel_checker = nullptr);

@@ -201,14 +201,14 @@ void Cache::CommitUnlink(std::string_view _at_path)
     Notify(directory);
 }
 
-void Cache::CommitMove(const std::string &_old_path, const std::string &_new_path)
+void Cache::CommitMove(std::string_view _old_path, std::string_view _new_path)
 {
     {
         const auto lock = std::lock_guard{m_Lock};
 
-        const auto dir_it = m_Dirs.find(EnsureTrailingSlash(_old_path));
+        const auto dir_it = m_Dirs.find(EnsureTrailingSlash(std::string(_old_path)));
         if( dir_it != end(m_Dirs) ) {
-            m_Dirs[EnsureTrailingSlash(_new_path)] = std::move(dir_it->second);
+            m_Dirs[EnsureTrailingSlash(std::string(_new_path))] = std::move(dir_it->second);
             m_Dirs.erase(dir_it);
         }
     }

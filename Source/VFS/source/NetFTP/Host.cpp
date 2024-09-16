@@ -499,12 +499,12 @@ int FTPHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFSC
                                 : VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
 }
 
-int FTPHost::Rename(const char *_old_path,
-                    const char *_new_path,
+int FTPHost::Rename(std::string_view _old_path,
+                    std::string_view _new_path,
                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    const std::filesystem::path old_path = EnsureNoTrailingSlash(_old_path);
-    const std::filesystem::path new_path = EnsureNoTrailingSlash(_new_path);
+    const std::filesystem::path old_path = EnsureNoTrailingSlash(std::string(_old_path));
+    const std::filesystem::path new_path = EnsureNoTrailingSlash(std::string(_new_path));
     if( old_path.is_absolute() == false || new_path.is_absolute() == false )
         return VFSError::InvalidCall;
 

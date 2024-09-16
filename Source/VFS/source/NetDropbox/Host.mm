@@ -494,13 +494,13 @@ bool DropboxHost::IsWritable() const
     return true;
 }
 
-int DropboxHost::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
+int DropboxHost::Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker)
 {
-    if( !_old_path || _old_path[0] != '/' || !_new_path || _new_path[0] != '/' )
+    if( !_old_path.starts_with("/") || !_new_path.starts_with("/") )
         return VFSError::InvalidCall;
 
-    const std::string old_path = EnsureNoTrailingSlash(_old_path);
-    const std::string new_path = EnsureNoTrailingSlash(_new_path);
+    const std::string old_path = EnsureNoTrailingSlash(std::string(_old_path));
+    const std::string new_path = EnsureNoTrailingSlash(std::string(_new_path));
 
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Move];
     [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];

@@ -681,12 +681,16 @@ int NativeHost::SetTimes(const char *_path,
     return VFSError::Ok;
 }
 
-int NativeHost::Rename(const char *_old_path,
-                       const char *_new_path,
+int NativeHost::Rename(std::string_view _old_path,
+                       std::string_view _new_path,
                        [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
+    StackAllocator alloc;
+    std::pmr::string old_path(_old_path, &alloc);
+    std::pmr::string new_path(_new_path, &alloc);
+
     auto &io = routedio::RoutedIO::Default;
-    int ret = io.rename(_old_path, _new_path);
+    int ret = io.rename(old_path.c_str(), new_path.c_str());
     if( ret == 0 )
         return VFSError::Ok;
     return VFSError::FromErrno();

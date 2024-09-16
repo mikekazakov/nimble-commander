@@ -33,7 +33,6 @@ static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
                                              const std::string &_path,
                                              bool _https,
                                              int _port);
-static bool IsValidInputPath(const char *_path);
 static bool IsValidInputPath(std::string_view _path);
 
 WebDAVHost::WebDAVHost(const std::string &_serv_url,
@@ -354,8 +353,8 @@ webdav::Cache &WebDAVHost::Cache()
     return I->m_Cache;
 }
 
-int WebDAVHost::Rename(const char *_old_path,
-                       const char *_new_path,
+int WebDAVHost::Rename(std::string_view _old_path,
+                       std::string_view _new_path,
                        [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_old_path) || !IsValidInputPath(_new_path) )
@@ -366,8 +365,8 @@ int WebDAVHost::Rename(const char *_old_path,
     if( stat_rc != VFSError::Ok )
         return stat_rc;
 
-    std::string old_path = _old_path;
-    std::string new_path = _new_path;
+    std::string old_path = std::string(_old_path);
+    std::string new_path = std::string(_new_path);
     if( st.mode_bits.dir ) {
         // WebDAV RFC mandates that directories (collections) should be denoted with a trailing slash
         old_path = EnsureTrailingSlash(old_path);
@@ -469,11 +468,6 @@ static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
                                   (_path.empty() ? "" : _path + "/"));
 
     return {std::move(config)};
-}
-
-static bool IsValidInputPath(const char *_path)
-{
-    return _path != nullptr && IsValidInputPath(std::string_view(_path));
 }
 
 static bool IsValidInputPath(std::string_view _path)

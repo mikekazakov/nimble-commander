@@ -53,7 +53,8 @@ public:
                    std::shared_ptr<VFSFile> &_target,
                    const VFSCancelChecker &_cancel_checker) override;
 
-    int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker) override;
+    int
+    Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker) override;
 
     bool IsDirectoryChangeObservationAvailable(std::string_view _path) override;
 

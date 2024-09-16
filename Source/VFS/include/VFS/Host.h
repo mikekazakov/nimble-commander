@@ -293,7 +293,8 @@ public:
     /**
      * Change the name of a file.
      */
-    virtual int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int
+    Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * Adjust file node times.

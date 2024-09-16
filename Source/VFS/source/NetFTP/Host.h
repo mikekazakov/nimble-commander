@@ -54,7 +54,8 @@ public:
 
     virtual int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
     virtual int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
-    virtual int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker) override;
+    virtual int
+    Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker) override;
 
     virtual bool IsWritable() const override;
 

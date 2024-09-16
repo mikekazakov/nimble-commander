@@ -634,7 +634,7 @@ int SFTPHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChe
     return 0;
 }
 
-int SFTPHost::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
+int SFTPHost::Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -644,8 +644,12 @@ int SFTPHost::Rename(const char *_old_path, const char *_new_path, const VFSCanc
     AutoConnectionReturn acr(conn, this);
 
     const auto rename_flags = LIBSSH2_SFTP_RENAME_OVERWRITE | LIBSSH2_SFTP_RENAME_ATOMIC | LIBSSH2_SFTP_RENAME_NATIVE;
-    const auto rename_rc = libssh2_sftp_rename_ex(
-        conn->sftp, _old_path, (unsigned)strlen(_old_path), _new_path, (unsigned)strlen(_new_path), rename_flags);
+    const auto rename_rc = libssh2_sftp_rename_ex(conn->sftp,
+                                                  _old_path.data(),
+                                                  static_cast<unsigned>(_old_path.length()),
+                                                  _new_path.data(),
+                                                  static_cast<unsigned>(_new_path.length()),
+                                                  rename_flags);
     if( rename_rc == LIBSSH2_ERROR_NONE )
         return VFSError::Ok;
 
@@ -659,8 +663,12 @@ int SFTPHost::Rename(const char *_old_path, const char *_new_path, const VFSCanc
         if( unlink_rc != VFSError::Ok )
             return unlink_rc;
 
-        const auto rename2_rc = libssh2_sftp_rename_ex(
-            conn->sftp, _old_path, (unsigned)strlen(_old_path), _new_path, (unsigned)strlen(_new_path), rename_flags);
+        const auto rename2_rc = libssh2_sftp_rename_ex(conn->sftp,
+                                                       _old_path.data(),
+                                                       static_cast<unsigned>(_old_path.length()),
+                                                       _new_path.data(),
+                                                       static_cast<unsigned>(_new_path.length()),
+                                                       rename_flags);
         if( rename2_rc == LIBSSH2_ERROR_NONE )
             return VFSError::Ok;
 

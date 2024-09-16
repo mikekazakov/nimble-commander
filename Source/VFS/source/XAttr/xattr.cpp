@@ -287,28 +287,30 @@ int XAttrHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelCh
     return VFSError::Ok;
 }
 
-int XAttrHost::Rename(const char *_old_path,
-                      const char *_new_path,
+int XAttrHost::Rename(std::string_view _old_path,
+                      std::string_view _new_path,
                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( !_old_path || _old_path[0] != '/' || !_new_path || _new_path[0] != '/' )
+    if( !_old_path.starts_with("/") || !_new_path.starts_with("/") )
         return VFSError::FromErrno(ENOENT);
 
-    const auto old_path = _old_path + 1;
-    const auto new_path = _new_path + 1;
+    StackAllocator alloc;
 
-    const auto xattr_size = fgetxattr(m_FD, old_path, nullptr, 0, 0, 0);
+    const std::pmr::string old_path(_old_path.substr(1), &alloc);
+    const std::pmr::string new_path(_new_path.substr(1), &alloc);
+
+    const auto xattr_size = fgetxattr(m_FD, old_path.c_str(), nullptr, 0, 0, 0);
     if( xattr_size < 0 )
         return VFSError::FromErrno();
 
-    const auto buf = std::make_unique<uint8_t[]>(xattr_size);
-    if( fgetxattr(m_FD, old_path, buf.get(), xattr_size, 0, 0) < 0 )
+    std::pmr::vector<uint8_t> buf(xattr_size, &alloc);
+    if( fgetxattr(m_FD, old_path.c_str(), buf.data(), xattr_size, 0, 0) < 0 )
         return VFSError::FromErrno();
 
-    if( fsetxattr(m_FD, new_path, buf.get(), xattr_size, 0, 0) < 0 )
+    if( fsetxattr(m_FD, new_path.c_str(), buf.data(), xattr_size, 0, 0) < 0 )
         return VFSError::FromErrno();
 
-    if( fremovexattr(m_FD, old_path, 0) < 0 )
+    if( fremovexattr(m_FD, old_path.c_str(), 0) < 0 )
         return VFSError::FromErrno();
 
     ReportChange();

@@ -355,8 +355,8 @@ int Host::RemoveDirectory([[maybe_unused]] std::string_view _path,
     return VFSError::NotSupported;
 }
 
-int Host::Rename([[maybe_unused]] const char *_old_path,
-                 [[maybe_unused]] const char *_new_path,
+int Host::Rename([[maybe_unused]] std::string_view _old_path,
+                 [[maybe_unused]] std::string_view _new_path,
                  [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;

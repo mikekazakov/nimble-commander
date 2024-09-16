@@ -918,7 +918,7 @@ int SFTPHost::SetPermissions(std::string_view _path,
         return VFSErrorForConnection(*conn);
 }
 
-int SFTPHost::SetOwnership(const char *_path,
+int SFTPHost::SetOwnership(std::string_view _path,
                            unsigned _uid,
                            unsigned _gid,
                            [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
@@ -935,7 +935,8 @@ int SFTPHost::SetOwnership(const char *_path,
     attrs.uid = _uid;
     attrs.gid = _gid;
 
-    const auto rc = libssh2_sftp_stat_ex(conn->sftp, _path, (unsigned)strlen(_path), LIBSSH2_SFTP_SETSTAT, &attrs);
+    const auto rc = libssh2_sftp_stat_ex(
+        conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), LIBSSH2_SFTP_SETSTAT, &attrs);
     if( rc == 0 )
         return VFSError::Ok;
     else

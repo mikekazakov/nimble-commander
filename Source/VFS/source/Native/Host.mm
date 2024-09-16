@@ -761,16 +761,19 @@ int NativeHost::SetFlags(std::string_view _path,
     return VFSError::FromErrno();
 }
 
-int NativeHost::SetOwnership(const char *_path,
+int NativeHost::SetOwnership(std::string_view _path,
                              unsigned _uid,
                              unsigned _gid,
                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == nullptr )
+    if( _path.empty() )
         return VFSError::FromErrno(EINVAL);
 
+    StackAllocator alloc;
+    std::pmr::string path(_path, &alloc);
+
     auto &io = routedio::RoutedIO::Default;
-    const auto ret = io.chown(_path, _uid, _gid);
+    const auto ret = io.chown(path.c_str(), _uid, _gid);
     if( ret == 0 )
         return VFSError::Ok;
     return VFSError::FromErrno();

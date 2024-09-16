@@ -324,8 +324,10 @@ public:
     /**
      * Change ownership similarly to chown().
      */
-    virtual int
-    SetOwnership(const char *_path, unsigned _uid, unsigned _gid, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int SetOwnership(std::string_view _path,
+                             unsigned _uid,
+                             unsigned _gid,
+                             const VFSCancelChecker &_cancel_checker = nullptr);
 
     /***********************************************************************************************
      * Observation of changes

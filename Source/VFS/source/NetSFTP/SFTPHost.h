@@ -75,7 +75,7 @@ public:
                               const VFSCancelChecker &_cancel_checker = {}) override;
     virtual int
     SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int SetOwnership(const char *_path,
+    virtual int SetOwnership(std::string_view _path,
                              unsigned _uid,
                              unsigned _gid,
                              const VFSCancelChecker &_cancel_checker = {}) override;

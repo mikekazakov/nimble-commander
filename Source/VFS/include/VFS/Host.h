@@ -309,7 +309,8 @@ public:
     /**
      * Change permissions similarly to chmod().
      */
-    virtual int SetPermissions(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int
+    SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * Change flags similarly to chflags().

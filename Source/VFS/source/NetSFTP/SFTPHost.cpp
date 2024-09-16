@@ -895,7 +895,7 @@ int SFTPHost::CreateSymlink(const char *_symlink_path,
         return VFSErrorForConnection(*conn);
 }
 
-int SFTPHost::SetPermissions(const char *_path,
+int SFTPHost::SetPermissions(std::string_view _path,
                              uint16_t _mode,
                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
@@ -910,7 +910,8 @@ int SFTPHost::SetPermissions(const char *_path,
     attrs.flags = LIBSSH2_SFTP_ATTR_PERMISSIONS;
     attrs.permissions = _mode;
 
-    const auto rc = libssh2_sftp_stat_ex(conn->sftp, _path, (unsigned)strlen(_path), LIBSSH2_SFTP_SETSTAT, &attrs);
+    const auto rc = libssh2_sftp_stat_ex(
+        conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), LIBSSH2_SFTP_SETSTAT, &attrs);
     if( rc == 0 )
         return VFSError::Ok;
     else

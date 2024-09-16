@@ -75,7 +75,7 @@ public:
     int
     Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker) override;
 
-    int SetPermissions(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker) override;
+    int SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker) override;
 
     int SetFlags(const char *_path,
                  uint32_t _flags,

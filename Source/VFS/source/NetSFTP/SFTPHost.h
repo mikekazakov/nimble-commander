@@ -74,7 +74,7 @@ public:
                               const char *_symlink_value,
                               const VFSCancelChecker &_cancel_checker = {}) override;
     virtual int
-    SetPermissions(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;
+    SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;
     virtual int SetOwnership(const char *_path,
                              unsigned _uid,
                              unsigned _gid,

@@ -362,7 +362,7 @@ int Host::Rename([[maybe_unused]] std::string_view _old_path,
     return VFSError::NotSupported;
 }
 
-int Host::SetPermissions([[maybe_unused]] const char *_path,
+int Host::SetPermissions([[maybe_unused]] std::string_view _path,
                          [[maybe_unused]] uint16_t _mode,
                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {

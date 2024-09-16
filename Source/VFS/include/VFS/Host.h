@@ -202,21 +202,9 @@ public:
      */
     virtual bool ValidateFilename(std::string_view _filename) const;
 
-    /**
-     * DO NOT USE IT. Currently for experimental purposes only.
-     * Returns a vector with all xattrs at _path, labeled with it's names.
-     * On any error return negative value.
-     */
-    virtual int GetXAttrs(const char *_path, std::vector<std::pair<std::string, std::vector<uint8_t>>> &_xattrs);
-
     virtual ssize_t CalculateDirectorySize(std::string_view _path, const VFSCancelChecker &_cancel_checker = nullptr);
 
     virtual bool ShouldProduceThumbnails() const;
-
-    virtual bool FindLastValidItem(const char *_orig_path,
-                                   char *_valid_path,
-                                   unsigned long _flags,
-                                   const VFSCancelChecker &_cancel_checker = nullptr);
 
     virtual int FetchUsers(std::vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker = nullptr);
 

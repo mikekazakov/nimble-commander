@@ -189,41 +189,6 @@ bool Host::IsSymlink(std::string_view _path, unsigned long _flags, const VFSCanc
     return (st.mode & S_IFMT) == S_IFLNK;
 }
 
-bool Host::FindLastValidItem(const char *_orig_path,
-                             char *_valid_path,
-                             unsigned long _flags,
-                             const VFSCancelChecker &_cancel_checker)
-{
-    // TODO: maybe it's better to go left-to-right than right-to-left
-    if( _orig_path[0] != '/' )
-        return false;
-
-    char tmp[MAXPATHLEN * 8];
-    strcpy(tmp, _orig_path);
-    if( IsPathWithTrailingSlash(tmp) && strcmp(tmp, "/") != 0 )
-        tmp[strlen(tmp) - 1] = 0; // cut trailing slash if any
-
-    VFSStat st;
-    while( true ) {
-        if( _cancel_checker && _cancel_checker() )
-            return false;
-
-        int ret = Stat(tmp, st, _flags, _cancel_checker);
-        if( ret == 0 ) {
-            strcpy(_valid_path, tmp);
-            return true;
-        }
-
-        char *sl = strrchr(tmp, '/');
-        assert(sl != nullptr);
-        if( sl == tmp )
-            return false;
-        *sl = 0;
-    }
-
-    return false;
-}
-
 ssize_t Host::CalculateDirectorySize(std::string_view _path, const VFSCancelChecker &_cancel_checker)
 {
     if( !_path.starts_with("/") )
@@ -365,12 +330,6 @@ int Host::Rename([[maybe_unused]] std::string_view _old_path,
 int Host::SetPermissions([[maybe_unused]] std::string_view _path,
                          [[maybe_unused]] uint16_t _mode,
                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
-{
-    return VFSError::NotSupported;
-}
-
-int Host::GetXAttrs([[maybe_unused]] const char *_path,
-                    [[maybe_unused]] std::vector<std::pair<std::string, std::vector<uint8_t>>> &_xattrs)
 {
     return VFSError::NotSupported;
 }

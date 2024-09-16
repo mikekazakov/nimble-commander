@@ -867,8 +867,8 @@ int SFTPHost::ReadSymlink(std::string_view _symlink_path,
     }
 }
 
-int SFTPHost::CreateSymlink(const char *_symlink_path,
-                            const char *_symlink_value,
+int SFTPHost::CreateSymlink(std::string_view _symlink_path,
+                            std::string_view _symlink_value,
                             [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
@@ -877,18 +877,19 @@ int SFTPHost::CreateSymlink(const char *_symlink_path,
 
     AutoConnectionReturn acr(conn, this);
 
-    const auto symlink_rc = m_ReversedSymlinkParameters ? libssh2_sftp_symlink_ex(conn->sftp,
-                                                                                  _symlink_value,
-                                                                                  (unsigned)strlen(_symlink_value),
-                                                                                  (char *)_symlink_path,
-                                                                                  (unsigned)strlen(_symlink_path),
-                                                                                  LIBSSH2_SFTP_SYMLINK)
-                                                        : libssh2_sftp_symlink_ex(conn->sftp,
-                                                                                  _symlink_path,
-                                                                                  (unsigned)strlen(_symlink_path),
-                                                                                  (char *)_symlink_value,
-                                                                                  (unsigned)strlen(_symlink_value),
-                                                                                  LIBSSH2_SFTP_SYMLINK);
+    const auto symlink_rc = m_ReversedSymlinkParameters
+                                ? libssh2_sftp_symlink_ex(conn->sftp,
+                                                          _symlink_value.data(),
+                                                          static_cast<unsigned>(_symlink_value.length()),
+                                                          (char *)_symlink_path.data(),
+                                                          static_cast<unsigned>(_symlink_path.length()),
+                                                          LIBSSH2_SFTP_SYMLINK)
+                                : libssh2_sftp_symlink_ex(conn->sftp,
+                                                          _symlink_path.data(),
+                                                          static_cast<unsigned>(_symlink_path.length()),
+                                                          (char *)_symlink_value.data(),
+                                                          static_cast<unsigned>(_symlink_value.length()),
+                                                          LIBSSH2_SFTP_SYMLINK);
     if( symlink_rc == 0 )
         return VFSError::Ok;
     else

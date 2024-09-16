@@ -643,12 +643,16 @@ int NativeHost::ReadSymlink(std::string_view _path,
     return 0;
 }
 
-int NativeHost::CreateSymlink(const char *_symlink_path,
-                              const char *_symlink_value,
+int NativeHost::CreateSymlink(std::string_view _symlink_path,
+                              std::string_view _symlink_value,
                               [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
+    StackAllocator alloc;
+    std::pmr::string symlink_path(_symlink_path, &alloc);
+    std::pmr::string symlink_value(_symlink_value, &alloc);
+
     auto &io = routedio::RoutedIO::Default;
-    int result = io.symlink(_symlink_value, _symlink_path);
+    int result = io.symlink(symlink_value.c_str(), symlink_path.c_str());
     if( result < 0 )
         return VFSError::FromErrno();
 

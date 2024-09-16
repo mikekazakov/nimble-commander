@@ -70,8 +70,8 @@ public:
                             char *_buffer,
                             size_t _buffer_size,
                             const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int CreateSymlink(const char *_symlink_path,
-                              const char *_symlink_value,
+    virtual int CreateSymlink(std::string_view _symlink_path,
+                              std::string_view _symlink_value,
                               const VFSCancelChecker &_cancel_checker = {}) override;
     virtual int
     SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;

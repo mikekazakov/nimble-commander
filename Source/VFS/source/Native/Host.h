@@ -64,8 +64,8 @@ public:
                     size_t _buffer_size,
                     const VFSCancelChecker &_cancel_checker) override;
 
-    int CreateSymlink(const char *_symlink_path,
-                      const char *_symlink_value,
+    int CreateSymlink(std::string_view _symlink_path,
+                      std::string_view _symlink_value,
                       const VFSCancelChecker &_cancel_checker) override;
 
     int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;

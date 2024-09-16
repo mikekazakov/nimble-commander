@@ -327,8 +327,8 @@ int Host::ReadSymlink([[maybe_unused]] std::string_view _path,
     return VFSError::NotSupported;
 }
 
-int Host::CreateSymlink([[maybe_unused]] const char *_symlink_path,
-                        [[maybe_unused]] const char *_symlink_value,
+int Host::CreateSymlink([[maybe_unused]] std::string_view _symlink_path,
+                        [[maybe_unused]] std::string_view _symlink_value,
                         [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;

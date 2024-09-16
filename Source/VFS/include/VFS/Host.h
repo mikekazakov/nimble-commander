@@ -288,7 +288,7 @@ public:
     /**
      * Moves an item into trash bin.
      */
-    virtual int Trash(const char *_path, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int Trash(std::string_view _path, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * Change the name of a file.

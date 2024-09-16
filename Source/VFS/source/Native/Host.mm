@@ -703,13 +703,16 @@ VFSConfiguration NativeHost::Configuration() const
     return aa;
 }
 
-int NativeHost::Trash(const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int NativeHost::Trash(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == nullptr )
+    if( _path.empty() )
         return VFSError::FromErrno(EINVAL);
 
+    StackAllocator alloc;
+    std::pmr::string path(_path, &alloc);
+
     auto &io = routedio::RoutedIO::Default;
-    const auto ret = io.trash(_path);
+    const auto ret = io.trash(path.c_str());
     if( ret == 0 )
         return VFSError::Ok;
     return VFSError::FromErrno();

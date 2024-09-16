@@ -84,7 +84,7 @@ public:
 
     int SetOwnership(const char *_path, unsigned _uid, unsigned _gid, const VFSCancelChecker &_cancel_checker) override;
 
-    int SetTimes(const char *_path,
+    int SetTimes(std::string_view _path,
                  std::optional<time_t> _birth_time,
                  std::optional<time_t> _mod_time,
                  std::optional<time_t> _chg_time,

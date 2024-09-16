@@ -655,27 +655,30 @@ int NativeHost::CreateSymlink(const char *_symlink_path,
     return 0;
 }
 
-int NativeHost::SetTimes(const char *_path,
+int NativeHost::SetTimes(std::string_view _path,
                          std::optional<time_t> _birth_time,
                          std::optional<time_t> _mod_time,
                          std::optional<time_t> _chg_time,
                          std::optional<time_t> _acc_time,
                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == nullptr )
+    if( _path.empty() )
         return VFSError::InvalidCall;
 
     if( !_birth_time && !_mod_time && !_chg_time && !_acc_time )
         return VFSError::Ok;
 
+    StackAllocator alloc;
+    std::pmr::string path(_path, &alloc);
+
     auto &io = routedio::RoutedIO::Default;
-    if( _birth_time && io.chbtime(_path, *_birth_time) != 0 )
+    if( _birth_time && io.chbtime(path.c_str(), *_birth_time) != 0 )
         return VFSError::FromErrno();
-    if( _mod_time && io.chmtime(_path, *_mod_time) != 0 )
+    if( _mod_time && io.chmtime(path.c_str(), *_mod_time) != 0 )
         return VFSError::FromErrno();
-    if( _chg_time && io.chctime(_path, *_chg_time) != 0 )
+    if( _chg_time && io.chctime(path.c_str(), *_chg_time) != 0 )
         return VFSError::FromErrno();
-    if( _acc_time && io.chatime(_path, *_acc_time) != 0 )
+    if( _acc_time && io.chatime(path.c_str(), *_acc_time) != 0 )
         return VFSError::FromErrno();
 
     return VFSError::Ok;

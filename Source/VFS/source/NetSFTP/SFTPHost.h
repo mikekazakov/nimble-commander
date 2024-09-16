@@ -79,7 +79,7 @@ public:
                              unsigned _uid,
                              unsigned _gid,
                              const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int SetTimes(const char *_path,
+    virtual int SetTimes(std::string_view _path,
                          std::optional<time_t> _birth_time,
                          std::optional<time_t> _mod_time,
                          std::optional<time_t> _chg_time,

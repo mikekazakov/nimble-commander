@@ -941,7 +941,7 @@ int SFTPHost::SetOwnership(const char *_path,
         return VFSErrorForConnection(*conn);
 }
 
-int SFTPHost::SetTimes(const char *_path,
+int SFTPHost::SetTimes(std::string_view _path,
                        std::optional<time_t> _birth_time,
                        std::optional<time_t> _mod_time,
                        std::optional<time_t> _chg_time,
@@ -962,7 +962,8 @@ int SFTPHost::SetTimes(const char *_path,
 
     if( !_mod_time || !_acc_time ) {
         LIBSSH2_SFTP_ATTRIBUTES attrs;
-        const int rc = libssh2_sftp_stat_ex(conn->sftp, _path, (unsigned)strlen(_path), LIBSSH2_SFTP_LSTAT, &attrs);
+        const int rc = libssh2_sftp_stat_ex(
+            conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), LIBSSH2_SFTP_LSTAT, &attrs);
         if( rc != 0 )
             return VFSErrorForConnection(*conn);
 
@@ -982,7 +983,8 @@ int SFTPHost::SetTimes(const char *_path,
     attrs.atime = *_acc_time;
     attrs.mtime = *_mod_time;
 
-    const auto rc = libssh2_sftp_stat_ex(conn->sftp, _path, (unsigned)strlen(_path), LIBSSH2_SFTP_SETSTAT, &attrs);
+    const auto rc = libssh2_sftp_stat_ex(
+        conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), LIBSSH2_SFTP_SETSTAT, &attrs);
     if( rc == 0 )
         return VFSError::Ok;
     else

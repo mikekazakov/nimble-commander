@@ -298,9 +298,8 @@ public:
 
     /**
      * Adjust file node times.
-     * NoFollow flag can be specified to alter symlink node itself.
      */
-    virtual int SetTimes(const char *_path,
+    virtual int SetTimes(std::string_view _path,
                          std::optional<time_t> _birth_time,
                          std::optional<time_t> _mod_time,
                          std::optional<time_t> _chg_time,

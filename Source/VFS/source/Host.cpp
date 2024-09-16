@@ -334,7 +334,7 @@ int Host::CreateSymlink([[maybe_unused]] const char *_symlink_path,
     return VFSError::NotSupported;
 }
 
-int Host::SetTimes([[maybe_unused]] const char *_path,
+int Host::SetTimes([[maybe_unused]] std::string_view _path,
                    [[maybe_unused]] std::optional<time_t> _birth_time,
                    [[maybe_unused]] std::optional<time_t> _mod_time,
                    [[maybe_unused]] std::optional<time_t> _chg_time,

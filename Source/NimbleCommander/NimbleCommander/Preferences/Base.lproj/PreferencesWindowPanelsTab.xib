@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23094" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23094"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -117,7 +117,7 @@
                                         <rect key="frame" x="289" y="246" width="122" height="25"/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="dCU-3l-7rD">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="message"/>
                                             <menu key="menu" id="QtM-HB-dSl">
                                                 <items>
                                                     <menuItem title="Always" tag="2" id="UT3-qe-aaM"/>
@@ -142,7 +142,7 @@
                                         <rect key="frame" x="289" y="210" width="54" height="25"/>
                                         <popUpButtonCell key="cell" type="push" title="1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="1" imageScaling="proportionallyDown" inset="2" selectedItem="DmJ-72-Pie" id="A4V-Gy-kSq">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="message"/>
                                             <menu key="menu" id="amp-OU-uFt">
                                                 <items>
                                                     <menuItem title="1" state="on" tag="1" id="DmJ-72-Pie">
@@ -171,8 +171,8 @@
                                         </connections>
                                     </popUpButton>
                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sYM-UF-55G">
-                                        <rect key="frame" x="343" y="217" width="255" height="16"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="simulateneous file operations per window" id="gnX-Dl-80b">
+                                        <rect key="frame" x="343" y="217" width="248" height="16"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="simultaneous file operations per window" id="gnX-Dl-80b">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -235,7 +235,7 @@
                                         <rect key="frame" x="444" y="128" width="110" height="25"/>
                                         <popUpButtonCell key="cell" type="push" title="None" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="7dI-h3-gRl" id="dvv-YB-cJl">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="message"/>
                                             <menu key="menu" id="wMZ-nM-3uf">
                                                 <items>
                                                     <menuItem title="None" state="on" id="7dI-h3-gRl">
@@ -885,7 +885,7 @@
                                         <rect key="frame" x="443" y="297" width="92" height="25"/>
                                         <popUpButtonCell key="cell" type="push" title="Brief" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Bs6-RN-w2G" id="p2t-XZ-gZV">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="message"/>
                                             <menu key="menu" id="Tcg-lA-tEp">
                                                 <items>
                                                     <menuItem title="Brief" state="on" id="Bs6-RN-w2G"/>
@@ -939,7 +939,7 @@
                                         <rect key="frame" x="325" y="286" width="107" height="25"/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="38H-gd-nHF">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="message"/>
                                             <menu key="menu" id="kXk-id-QqV">
                                                 <items>
                                                     <menuItem title="Beginning" id="Nvh-L7-hpr">
@@ -985,7 +985,7 @@
                                         <rect key="frame" x="325" y="250" width="161" height="25"/>
                                         <popUpButtonCell key="cell" type="push" title="2" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" selectedItem="zmO-E9-RBq" id="cDx-Dw-ERH">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="message"/>
                                             <menu key="menu" id="Wfu-ct-eye">
                                                 <items>
                                                     <menuItem title="1" tag="1" id="tBZ-Qz-rwE">
@@ -1016,7 +1016,7 @@
                                         <rect key="frame" x="325" y="224" width="161" height="25"/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" id="4RW-5z-qNZ">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="message"/>
                                             <menu key="menu" id="tBX-od-Ab0">
                                                 <items>
                                                     <menuItem title="0" id="s4p-4L-S6N">
@@ -1115,7 +1115,7 @@
                                         <rect key="frame" x="325" y="134" width="140" height="25"/>
                                         <popUpButtonCell key="cell" type="push" title="Panel Overlay" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="tGa-eg-1b9" id="S1o-ux-BWl">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="message"/>
                                             <menu key="menu" id="FNt-EW-xiF">
                                                 <items>
                                                     <menuItem title="Panel Overlay" state="on" id="tGa-eg-1b9">
@@ -1218,7 +1218,7 @@
                                         <rect key="frame" x="325" y="272" width="167" height="25"/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="LEU-be-d00">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="message"/>
                                             <menu key="menu" title="OtherViews" id="FXa-o4-dhn">
                                                 <items>
                                                     <menuItem title="⌥" id="TpP-J2-OmP"/>
@@ -1240,7 +1240,7 @@
                                         <rect key="frame" x="325" y="331" width="198" height="25"/>
                                         <popUpButtonCell key="cell" type="push" title="Show all items" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Eac-M1-Djg" id="hnD-4N-zvf">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="message"/>
                                             <menu key="menu" id="xmm-Ez-ivz">
                                                 <items>
                                                     <menuItem title="Show all items" state="on" id="Eac-M1-Djg">
@@ -1272,7 +1272,7 @@
                                         <rect key="frame" x="325" y="240" width="167" height="25"/>
                                         <popUpButtonCell key="cell" type="push" title="Fuzzy" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="4" imageScaling="proportionallyDown" inset="2" selectedItem="uZL-kd-7db" id="Yp8-cZ-7kX">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="message"/>
                                             <menu key="menu" title="OtherViews" id="hwd-Vk-Rmi">
                                                 <items>
                                                     <menuItem title="Fuzzy" state="on" tag="4" id="uZL-kd-7db"/>
@@ -1362,7 +1362,7 @@
                                         <rect key="frame" x="165" y="40" width="400" height="290"/>
                                         <clipView key="contentView" id="42L-US-hgx">
                                             <rect key="frame" x="1" y="1" width="398" height="288"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="20" viewBased="YES" id="1YK-eG-CYm">
                                                     <rect key="frame" x="0.0" y="0.0" width="398" height="288"/>
@@ -1384,7 +1384,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView id="bit-Yb-oxf">
-                                                                    <rect key="frame" x="8" y="0.0" width="58" height="24"/>
+                                                                    <rect key="frame" x="18" y="0.0" width="58" height="24"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jl8-u7-nEG">
@@ -1416,7 +1416,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView id="3Jb-cB-oeg">
-                                                                    <rect key="frame" x="83" y="0.0" width="197" height="17"/>
+                                                                    <rect key="frame" x="93" y="0.0" width="197" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hCJ-vV-6FF">

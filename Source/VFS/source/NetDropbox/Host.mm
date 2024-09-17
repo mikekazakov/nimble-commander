@@ -210,7 +210,9 @@ void DropboxHost::FillAuth(NSMutableURLRequest *_request) const
     [_request setValue:I->m_AuthString forHTTPHeaderField:@"Authorization"];
 }
 
-int DropboxHost::StatFS([[maybe_unused]] const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
+int DropboxHost::StatFS([[maybe_unused]] std::string_view _path,
+                        VFSStatFS &_stat,
+                        const VFSCancelChecker &_cancel_checker)
 {
     _stat = VFSStatFS{};
 
@@ -235,24 +237,24 @@ int DropboxHost::StatFS([[maybe_unused]] const char *_path, VFSStatFS &_stat, co
     return rc;
 }
 
-int DropboxHost::Stat(const char *_path,
+int DropboxHost::Stat(std::string_view _path,
                       VFSStat &_st,
                       [[maybe_unused]] unsigned long _flags,
                       const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( _path.empty() || _path[0] != '/' )
         return VFSError::InvalidCall;
 
     memset(&_st, 0, sizeof(_st));
 
-    if( strcmp(_path, "/") == 0 ) {
+    if( _path == "/" ) {
         // special treatment for root dir
         _st.mode = DirectoryAccessMode;
         _st.meaning.mode = true;
         return 0;
     }
 
-    std::string path = _path;
+    std::string path = std::string(_path);
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
@@ -287,13 +289,13 @@ int DropboxHost::Stat(const char *_path,
     return rc;
 }
 
-int DropboxHost::IterateDirectoryListing(const char *_path,
+int DropboxHost::IterateDirectoryListing(std::string_view _path,
                                          const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    if( !_path || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::InvalidCall;
 
-    std::string path = _path;
+    std::string path = std::string(_path);
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
@@ -346,15 +348,15 @@ int DropboxHost::IterateDirectoryListing(const char *_path,
     return VFSError::Ok;
 }
 
-int DropboxHost::FetchDirectoryListing(const char *_path,
+int DropboxHost::FetchDirectoryListing(std::string_view _path,
                                        VFSListingPtr &_target,
                                        unsigned long _flags,
                                        const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::InvalidCall;
 
-    std::string path = _path;
+    std::string path = std::string(_path);
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
@@ -363,7 +365,7 @@ int DropboxHost::FetchDirectoryListing(const char *_path,
 
     ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
-    listing_source.directories[0] = EnsureTrailingSlash(_path);
+    listing_source.directories[0] = EnsureTrailingSlash(std::string(_path));
     listing_source.sizes.reset(variable_container<>::type::sparse);
     listing_source.atimes.reset(variable_container<>::type::sparse);
     listing_source.btimes.reset(variable_container<>::type::sparse);
@@ -425,7 +427,7 @@ int DropboxHost::FetchDirectoryListing(const char *_path,
     return VFSError::Ok;
 }
 
-int DropboxHost::CreateFile(const char *_path,
+int DropboxHost::CreateFile(std::string_view _path,
                             std::shared_ptr<VFSFile> &_target,
                             const VFSCancelChecker &_cancel_checker)
 {
@@ -441,9 +443,9 @@ const std::string &DropboxHost::Token() const
     return I->m_Token;
 }
 
-int DropboxHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
+int DropboxHost::Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::InvalidCall;
 
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Delete];
@@ -453,12 +455,12 @@ int DropboxHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_check
     return rc;
 }
 
-int DropboxHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)
+int DropboxHost::RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::InvalidCall;
 
-    std::string path = _path;
+    std::string path = std::string(_path);
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
@@ -469,12 +471,14 @@ int DropboxHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_can
     return rc;
 }
 
-int DropboxHost::CreateDirectory(const char *_path, [[maybe_unused]] int _mode, const VFSCancelChecker &_cancel_checker)
+int DropboxHost::CreateDirectory(std::string_view _path,
+                                 [[maybe_unused]] int _mode,
+                                 const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::InvalidCall;
 
-    std::string path = _path;
+    std::string path = std::string(_path);
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
@@ -490,13 +494,13 @@ bool DropboxHost::IsWritable() const
     return true;
 }
 
-int DropboxHost::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
+int DropboxHost::Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker)
 {
-    if( !_old_path || _old_path[0] != '/' || !_new_path || _new_path[0] != '/' )
+    if( !_old_path.starts_with("/") || !_new_path.starts_with("/") )
         return VFSError::InvalidCall;
 
-    const std::string old_path = EnsureNoTrailingSlash(_old_path);
-    const std::string new_path = EnsureNoTrailingSlash(_new_path);
+    const std::string old_path = EnsureNoTrailingSlash(std::string(_old_path));
+    const std::string new_path = EnsureNoTrailingSlash(std::string(_new_path));
 
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Move];
     [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
@@ -513,7 +517,7 @@ const std::string &DropboxHost::Account() const
     return I->m_Account;
 }
 
-bool DropboxHost::IsCaseSensitiveAtPath([[maybe_unused]] const char *_dir) const
+bool DropboxHost::IsCaseSensitiveAtPath([[maybe_unused]] std::string_view _dir) const
 {
     return false;
 }

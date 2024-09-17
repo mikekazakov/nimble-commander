@@ -477,7 +477,7 @@ TEST_CASE(PREFIX "Spotlight detects items with new tags invented by NC")
 
     // Try a few times to find the new tag via Spotlight, need multiple attempts since there's still a race condition
     // even after an explicit call to mdimport
-    for( int attempt = 0; attempt < 10; ++attempt ) {
+    for( int attempt = 0; attempt < 50; ++attempt ) {
         auto all_tags = Tags::GatherAllItemsTags();
         if( std::ranges::find(all_tags, Tags::Tag{&label, color}) == all_tags.end() ) {
             std::this_thread::sleep_for(std::chrono::milliseconds{100});
@@ -522,7 +522,7 @@ TEST_CASE(PREFIX "GatherAllItemsWithTag")
 
         // Try a few times to find the items via Spotlight, need multiple attempts since there's still a race condition
         // even after an explicit call to mdimport
-        for( int attempt = 0; attempt < 10; ++attempt ) {
+        for( int attempt = 0; attempt < 50; ++attempt ) {
             const auto items = Tags::GatherAllItemsWithTag(label);
             if( std::set<std::filesystem::path>{items.begin(), items.end()} == filepaths )
                 break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
@@ -565,7 +565,7 @@ TEST_CASE(PREFIX "ChangeColorOfAllItemsWithTag")
 
     // Try a few times to find the items via Spotlight, need multiple attempts since there's still a race condition
     // even after an explicit call to mdimport
-    for( int attempt = 0; attempt < 10; ++attempt ) {
+    for( int attempt = 0; attempt < 50; ++attempt ) {
         const auto items = Tags::GatherAllItemsWithTag(label1);
         if( std::set<std::filesystem::path>{items.begin(), items.end()} == std::set<std::filesystem::path>{p1, p2, p3} )
             break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
@@ -611,7 +611,7 @@ TEST_CASE(PREFIX "ChangeLabelOfAllItemsWithTag")
 
     // Try a few times to find the items via Spotlight, need multiple attempts since there's still a race condition
     // even after an explicit call to mdimport
-    for( int attempt = 0; attempt < 10; ++attempt ) {
+    for( int attempt = 0; attempt < 50; ++attempt ) {
         const auto items = Tags::GatherAllItemsWithTag(label1);
         if( std::set<std::filesystem::path>{items.begin(), items.end()} == std::set<std::filesystem::path>{p1, p2, p3} )
             break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
@@ -711,7 +711,7 @@ TEST_CASE(PREFIX "RemoveTagFromAllItems")
 
     // Try a few times to find the items via Spotlight, need multiple attempts since there's still a race condition
     // even after an explicit call to mdimport
-    for( int attempt = 0; attempt < 10; ++attempt ) {
+    for( int attempt = 0; attempt < 50; ++attempt ) {
         const auto items = Tags::GatherAllItemsWithTag(label1);
         if( std::set<std::filesystem::path>{items.begin(), items.end()} == std::set<std::filesystem::path>{p1, p2, p3} )
             break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success

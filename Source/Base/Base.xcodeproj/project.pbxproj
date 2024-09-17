@@ -40,7 +40,6 @@
 		CF3989862B4162A5006103C1 /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3989612B4162A5006103C1 /* debug.h */; };
 		CF3989872B4162A5006103C1 /* Hash.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3989622B4162A5006103C1 /* Hash.h */; };
 		CF3989882B4162A5006103C1 /* ScopedObservable.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3989632B4162A5006103C1 /* ScopedObservable.h */; };
-		CF3989892B4162A5006103C1 /* StringViewZBuf.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3989642B4162A5006103C1 /* StringViewZBuf.h */; };
 		CF39898A2B4162A5006103C1 /* spinlock.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3989652B4162A5006103C1 /* spinlock.h */; };
 		CF39898B2B4162A5006103C1 /* algo.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3989662B4162A5006103C1 /* algo.h */; };
 		CF39898C2B4162A5006103C1 /* UUID.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3989672B4162A5006103C1 /* UUID.h */; };
@@ -52,7 +51,6 @@
 		CF3989922B4162A5006103C1 /* SerialQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = CF39896D2B4162A5006103C1 /* SerialQueue.h */; };
 		CF3989932B4162A5006103C1 /* variable_container.h in Headers */ = {isa = PBXBuildFile; fileRef = CF39896E2B4162A5006103C1 /* variable_container.h */; };
 		CF3989942B4162A5006103C1 /* dispatch_cpp.h in Headers */ = {isa = PBXBuildFile; fileRef = CF39896F2B4162A5006103C1 /* dispatch_cpp.h */; };
-		CF3ABD8723C094A700D1878B /* StringViewZBuf_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD8623C094A700D1878B /* StringViewZBuf_UT.cpp */; };
 		CF4601ED25630DE80095FC73 /* DispatchGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */; };
 		CF4601EE25630DE80095FC73 /* PosixFilesystemImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F4C213B773400915730 /* PosixFilesystemImpl.cpp */; };
 		CF4601EF25630DE80095FC73 /* StringsBulk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2084001FEFACFC0014D6AD /* StringsBulk.cpp */; };
@@ -138,7 +136,6 @@
 		CF3989612B4162A5006103C1 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debug.h; path = include/Base/debug.h; sourceTree = "<group>"; };
 		CF3989622B4162A5006103C1 /* Hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Hash.h; path = include/Base/Hash.h; sourceTree = "<group>"; };
 		CF3989632B4162A5006103C1 /* ScopedObservable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScopedObservable.h; path = include/Base/ScopedObservable.h; sourceTree = "<group>"; };
-		CF3989642B4162A5006103C1 /* StringViewZBuf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringViewZBuf.h; path = include/Base/StringViewZBuf.h; sourceTree = "<group>"; };
 		CF3989652B4162A5006103C1 /* spinlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = spinlock.h; path = include/Base/spinlock.h; sourceTree = "<group>"; };
 		CF3989662B4162A5006103C1 /* algo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = algo.h; path = include/Base/algo.h; sourceTree = "<group>"; };
 		CF3989672B4162A5006103C1 /* UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UUID.h; path = include/Base/UUID.h; sourceTree = "<group>"; };
@@ -150,13 +147,13 @@
 		CF39896D2B4162A5006103C1 /* SerialQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SerialQueue.h; path = include/Base/SerialQueue.h; sourceTree = "<group>"; };
 		CF39896E2B4162A5006103C1 /* variable_container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = variable_container.h; path = include/Base/variable_container.h; sourceTree = "<group>"; };
 		CF39896F2B4162A5006103C1 /* dispatch_cpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dispatch_cpp.h; path = include/Base/dispatch_cpp.h; sourceTree = "<group>"; };
-		CF3ABD8623C094A700D1878B /* StringViewZBuf_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringViewZBuf_UT.cpp; sourceTree = "<group>"; };
 		CF4601E725630DCB0095FC73 /* libBase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBase.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DispatchGroup.cpp; path = source/DispatchGroup.cpp; sourceTree = "<group>"; };
 		CF5338682532512100022EE8 /* ExecutionDeadline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExecutionDeadline.cpp; path = source/ExecutionDeadline.cpp; sourceTree = "<group>"; };
 		CF614ACD1F9D8EDC0005F2DB /* Hash_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hash_UT.cpp; sourceTree = "<group>"; };
 		CF614ACE1F9D8EDD0005F2DB /* VariableContainer_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableContainer_UT.cpp; sourceTree = "<group>"; };
 		CF614AD11F9D8EF00005F2DB /* chained_strings_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chained_strings_UT.cpp; sourceTree = "<group>"; };
+		CF6D1DC02C94C85B0010FBFF /* StackAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = StackAllocator.h; path = include/Base/StackAllocator.h; sourceTree = "<group>"; };
 		CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFStackAllocator.cpp; path = source/CFStackAllocator.cpp; sourceTree = "<group>"; };
 		CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = spinlock.cpp; path = source/spinlock.cpp; sourceTree = "<group>"; };
 		CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFDefaultsCPP.cpp; path = source/CFDefaultsCPP.cpp; sourceTree = "<group>"; };
@@ -230,7 +227,6 @@
 				CFD22CD52012DDF800608DFE /* LRUCache_Tests.cpp */,
 				CFE8F90321A27F3000300019 /* spinlock_UT.cpp */,
 				CF2084021FEFB2F70014D6AD /* StringsBulk_UT.cpp */,
-				CF3ABD8623C094A700D1878B /* StringViewZBuf_UT.cpp */,
 				CF24E20B2291777D00C166FA /* UnitTests_main.cpp */,
 				CFD231362AEEA26E0000C7CF /* UUID_UT.cpp */,
 				CF614ACE1F9D8EDD0005F2DB /* VariableContainer_UT.cpp */,
@@ -286,17 +282,17 @@
 				CF3989502B4162A5006103C1 /* PosixFilesystem.h */,
 				CF3989692B4162A5006103C1 /* PosixFilesystemImpl.h */,
 				CF3989532B4162A5006103C1 /* PosixFilesystemMock.h */,
-				CF3989572B4162A5006103C1 /* UnorderedUtil.h */,
 				CF3989632B4162A5006103C1 /* ScopedObservable.h */,
 				CF39896D2B4162A5006103C1 /* SerialQueue.h */,
 				CF3989552B4162A5006103C1 /* SpdlogFacade.h */,
 				CF39895E2B4162A5006103C1 /* SpdlogFormatters.h */,
 				CF3989652B4162A5006103C1 /* spinlock.h */,
+				CF6D1DC02C94C85B0010FBFF /* StackAllocator.h */,
 				CF39896C2B4162A5006103C1 /* StringsBulk.h */,
-				CF3989642B4162A5006103C1 /* StringViewZBuf.h */,
 				CF3989562B4162A5006103C1 /* SysLocale.h */,
 				CF39895C2B4162A5006103C1 /* ToLower.h */,
 				CF39894D2B4162A4006103C1 /* tribool.h */,
+				CF3989572B4162A5006103C1 /* UnorderedUtil.h */,
 				CF3989672B4162A5006103C1 /* UUID.h */,
 				CF39896E2B4162A5006103C1 /* variable_container.h */,
 				CF3989592B4162A5006103C1 /* WhereIs.h */,
@@ -369,7 +365,6 @@
 				CF3989712B4162A5006103C1 /* Observable.h in Headers */,
 				CF3989722B4162A5006103C1 /* tribool.h in Headers */,
 				CF3989772B4162A5006103C1 /* chained_strings.h in Headers */,
-				CF3989892B4162A5006103C1 /* StringViewZBuf.h in Headers */,
 				CF3989792B4162A5006103C1 /* CFDefaultsCPP.h in Headers */,
 				CF3989862B4162A5006103C1 /* debug.h in Headers */,
 				CF3989762B4162A5006103C1 /* LRUCache.h in Headers */,
@@ -464,7 +459,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF3ABD8723C094A700D1878B /* StringViewZBuf_UT.cpp in Sources */,
 				CFD231372AEEA26E0000C7CF /* UUID_UT.cpp in Sources */,
 				CF24E2192291A0D500C166FA /* LRUCache_Tests.cpp in Sources */,
 				CF24E215229196E100C166FA /* CFPtr_UT.cpp in Sources */,

@@ -40,42 +40,46 @@ public:
     // core VFSHost methods
     virtual bool IsWritable() const override;
 
-    virtual int
-    Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker = {}) override;
+    virtual int Stat(std::string_view _path,
+                     VFSStat &_st,
+                     unsigned long _flags,
+                     const VFSCancelChecker &_cancel_checker = {}) override;
 
-    virtual int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = {}) override;
+    virtual int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    virtual int FetchDirectoryListing(const char *_path,
+    virtual int FetchDirectoryListing(std::string_view _path,
                                       VFSListingPtr &_target,
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker = {}) override;
 
-    virtual int IterateDirectoryListing(const char *_path,
+    virtual int IterateDirectoryListing(std::string_view _path,
                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
-    virtual int CreateFile(const char *_path,
+    virtual int CreateFile(std::string_view _path,
                            std::shared_ptr<VFSFile> &_target,
                            const VFSCancelChecker &_cancel_checker = {}) override;
 
-    virtual int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker = {}) override;
+    virtual int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
+    virtual int Rename(std::string_view _old_path,
+                       std::string_view _new_path,
+                       const VFSCancelChecker &_cancel_checker = {}) override;
     virtual int
-    Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int CreateDirectory(const char *_path, int _mode, const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int ReadSymlink(const char *_symlink_path,
+    CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker = {}) override;
+    virtual int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
+    virtual int ReadSymlink(std::string_view _symlink_path,
                             char *_buffer,
                             size_t _buffer_size,
                             const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int CreateSymlink(const char *_symlink_path,
-                              const char *_symlink_value,
+    virtual int CreateSymlink(std::string_view _symlink_path,
+                              std::string_view _symlink_value,
                               const VFSCancelChecker &_cancel_checker = {}) override;
     virtual int
-    SetPermissions(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int SetOwnership(const char *_path,
+    SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;
+    virtual int SetOwnership(std::string_view _path,
                              unsigned _uid,
                              unsigned _gid,
                              const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int SetTimes(const char *_path,
+    virtual int SetTimes(std::string_view _path,
                          std::optional<time_t> _birth_time,
                          std::optional<time_t> _mod_time,
                          std::optional<time_t> _chg_time,

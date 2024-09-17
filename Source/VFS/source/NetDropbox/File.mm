@@ -11,7 +11,8 @@ namespace nc::vfs::dropbox {
 
 using namespace std::literals;
 
-File::File(const char *_relative_path, const std::shared_ptr<class DropboxHost> &_host) : VFSFile(_relative_path, _host)
+File::File(std::string_view _relative_path, const std::shared_ptr<class DropboxHost> &_host)
+    : VFSFile(_relative_path, _host)
 {
 }
 

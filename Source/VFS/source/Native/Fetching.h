@@ -2,6 +2,7 @@
 #pragma once
 
 #include <functional>
+#include <string_view>
 #include <sys/types.h>
 
 namespace nc::routedio {
@@ -38,7 +39,8 @@ public:
      * In case of symlinks falls back to lstat() call.
      * returns 0 on success or errno value on error
      */
-    static int ReadSingleEntryAttributesByPath(routedio::PosixIOInterface &_io, const char *_path, const Callback &_cb);
+    static int
+    ReadSingleEntryAttributesByPath(routedio::PosixIOInterface &_io, std::string_view _path, const Callback &_cb);
 
     /** assuming this will be called when Admin Mode is on
      * returns 0 on success or errno value on error

@@ -1,9 +1,12 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include "xattr.h"
 #include <VFS/VFSFile.h>
+#include <Utility/PathManip.h>
+#include <Base/StackAllocator.h>
 #include "../ListingInput.h"
 #include <dirent.h>
+#include <fmt/format.h>
 
 using namespace std::literals;
 
@@ -12,7 +15,7 @@ namespace nc::vfs {
 class XAttrFile final : public VFSFile
 {
 public:
-    XAttrFile(const std::string &_xattr_path, const std::shared_ptr<XAttrHost> &_parent, int _fd);
+    XAttrFile(std::string_view _xattr_path, const std::shared_ptr<XAttrHost> &_parent, int _fd);
     int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = nullptr) override;
     int Close() override;
     bool IsOpened() const override;
@@ -39,11 +42,6 @@ private:
     ssize_t m_Size = 0;
     ssize_t m_UploadSize = -1;
 };
-
-static bool is_absolute_path(const char *_s) noexcept
-{
-    return _s != nullptr && _s[0] == '/';
-}
 
 static bool TurnOffBlockingMode(int _fd) noexcept
 {
@@ -83,7 +81,10 @@ static const mode_t g_RootMode = S_IRUSR | S_IXUSR | S_IFDIR;
 class VFSXAttrHostConfiguration
 {
 public:
-    VFSXAttrHostConfiguration(const std::string &_path) : path(_path), verbose_junction("[xattr]:"s + _path) {}
+    VFSXAttrHostConfiguration(const std::string_view _path)
+        : path(_path), verbose_junction(fmt::format("[xattr]:{}", _path))
+    {
+    }
 
     const std::string path;
     const std::string verbose_junction;
@@ -97,23 +98,23 @@ public:
     bool operator==(const VFSXAttrHostConfiguration &_rhs) const { return path == _rhs.path; }
 };
 
-XAttrHost::XAttrHost(const std::string &_file_path, const VFSHostPtr &_host)
+XAttrHost::XAttrHost(const std::string_view _file_path, const VFSHostPtr &_host)
     : XAttrHost(_host, VFSConfiguration(VFSXAttrHostConfiguration(_file_path)))
 {
 }
 
 XAttrHost::XAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config)
-    : Host(_config.Get<VFSXAttrHostConfiguration>().path.c_str(), _parent, UniqueTag), m_Configuration(_config)
+    : Host(_config.Get<VFSXAttrHostConfiguration>().path, _parent, UniqueTag), m_Configuration(_config)
 {
-    auto path = JunctionPath();
+    const std::string &path = _config.Get<VFSXAttrHostConfiguration>().path;
     if( !_parent->IsNativeFS() )
         throw VFSErrorException(VFSError::InvalidCall);
 
-    int fd = open(path, O_RDONLY | O_NONBLOCK | O_EXLOCK);
+    int fd = open(path.c_str(), O_RDONLY | O_NONBLOCK | O_EXLOCK);
     if( fd < 0 )
-        fd = open(path, O_RDONLY | O_NONBLOCK | O_SHLOCK);
+        fd = open(path.c_str(), O_RDONLY | O_NONBLOCK | O_SHLOCK);
     if( fd < 0 )
-        fd = open(path, O_RDONLY | O_NONBLOCK);
+        fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
     if( fd < 0 )
         throw VFSErrorException(VFSError::FromErrno(EIO));
 
@@ -175,12 +176,12 @@ int XAttrHost::Fetch()
     return VFSError::Ok;
 }
 
-int XAttrHost::FetchDirectoryListing(const char *_path,
+int XAttrHost::FetchDirectoryListing(std::string_view _path,
                                      VFSListingPtr &_target,
                                      unsigned long _flags,
                                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path != std::string_view("/") )
+    if( _path != "/" )
         return VFSError::InvalidCall;
 
     using nc::base::variable_container;
@@ -221,12 +222,12 @@ int XAttrHost::FetchDirectoryListing(const char *_path,
     return VFSError::Ok;
 }
 
-int XAttrHost::Stat(const char *_path,
+int XAttrHost::Stat(std::string_view _path,
                     VFSStat &_st,
                     [[maybe_unused]] unsigned long _flags,
                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( !is_absolute_path(_path) )
+    if( !utility::PathManip::IsAbsolute(_path) )
         return VFSError::NotFound;
 
     memset(&_st, 0, sizeof(_st));
@@ -241,16 +242,15 @@ int XAttrHost::Stat(const char *_path,
     _st.btime = m_Stat.st_birthtimespec;
     _st.ctime = m_Stat.st_ctimespec;
 
-    auto path = std::string_view(_path);
-    if( path == "/" ) {
+    if( _path == "/" ) {
         _st.mode = g_RootMode;
         _st.size = 0;
         return VFSError::Ok;
     }
-    else if( path.length() > 1 ) {
-        path.remove_prefix(1);
+    else if( _path.length() > 1 ) {
+        _path.remove_prefix(1);
         for( auto &i : m_Attrs )
-            if( path == i.first ) {
+            if( _path == i.first ) {
                 _st.mode = g_RegMode;
                 _st.size = i.second;
                 return 0;
@@ -260,7 +260,9 @@ int XAttrHost::Stat(const char *_path,
     return VFSError::FromErrno(ENOENT);
 }
 
-int XAttrHost::CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker)
+int XAttrHost::CreateFile(std::string_view _path,
+                          std::shared_ptr<VFSFile> &_target,
+                          const VFSCancelChecker &_cancel_checker)
 {
     auto file = std::make_shared<XAttrFile>(_path, std::static_pointer_cast<XAttrHost>(shared_from_this()), m_FD);
     if( _cancel_checker && _cancel_checker() )
@@ -269,12 +271,15 @@ int XAttrHost::CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, 
     return VFSError::Ok;
 }
 
-int XAttrHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int XAttrHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::FromErrno(ENOENT);
 
-    if( fremovexattr(m_FD, _path + 1, 0) == -1 )
+    StackAllocator alloc;
+    std::pmr::string path(_path.substr(1), &alloc);
+
+    if( fremovexattr(m_FD, path.c_str(), 0) == -1 )
         return VFSError::FromErrno();
 
     ReportChange();
@@ -282,28 +287,30 @@ int XAttrHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecker
     return VFSError::Ok;
 }
 
-int XAttrHost::Rename(const char *_old_path,
-                      const char *_new_path,
+int XAttrHost::Rename(std::string_view _old_path,
+                      std::string_view _new_path,
                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( !_old_path || _old_path[0] != '/' || !_new_path || _new_path[0] != '/' )
+    if( !_old_path.starts_with("/") || !_new_path.starts_with("/") )
         return VFSError::FromErrno(ENOENT);
 
-    const auto old_path = _old_path + 1;
-    const auto new_path = _new_path + 1;
+    StackAllocator alloc;
 
-    const auto xattr_size = fgetxattr(m_FD, old_path, nullptr, 0, 0, 0);
+    const std::pmr::string old_path(_old_path.substr(1), &alloc);
+    const std::pmr::string new_path(_new_path.substr(1), &alloc);
+
+    const auto xattr_size = fgetxattr(m_FD, old_path.c_str(), nullptr, 0, 0, 0);
     if( xattr_size < 0 )
         return VFSError::FromErrno();
 
-    const auto buf = std::make_unique<uint8_t[]>(xattr_size);
-    if( fgetxattr(m_FD, old_path, buf.get(), xattr_size, 0, 0) < 0 )
+    std::pmr::vector<uint8_t> buf(xattr_size, &alloc);
+    if( fgetxattr(m_FD, old_path.c_str(), buf.data(), xattr_size, 0, 0) < 0 )
         return VFSError::FromErrno();
 
-    if( fsetxattr(m_FD, new_path, buf.get(), xattr_size, 0, 0) < 0 )
+    if( fsetxattr(m_FD, new_path.c_str(), buf.data(), xattr_size, 0, 0) < 0 )
         return VFSError::FromErrno();
 
-    if( fremovexattr(m_FD, old_path, 0) < 0 )
+    if( fremovexattr(m_FD, old_path.c_str(), 0) < 0 )
         return VFSError::FromErrno();
 
     ReportChange();
@@ -321,8 +328,8 @@ void XAttrHost::ReportChange()
 // hardly needs own version of this, since xattr will happily work with abra:cadabra filenames
 // bool VFSHost::ValidateFilename(const char *_filename) const
 
-XAttrFile::XAttrFile(const std::string &_xattr_path, const std::shared_ptr<XAttrHost> &_parent, int _fd)
-    : VFSFile(_xattr_path.c_str(), _parent), m_FD(_fd)
+XAttrFile::XAttrFile(std::string_view _xattr_path, const std::shared_ptr<XAttrHost> &_parent, int _fd)
+    : VFSFile(_xattr_path, _parent), m_FD(_fd)
 {
 }
 

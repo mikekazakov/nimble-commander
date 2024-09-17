@@ -439,14 +439,14 @@ std::string PSHost::ProcInfoIntoFile(const ProcInfo &_info, std::shared_ptr<Snap
     return result;
 }
 
-int PSHost::FetchDirectoryListing(const char *_path,
+int PSHost::FetchDirectoryListing(std::string_view _path,
                                   VFSListingPtr &_target,
                                   [[maybe_unused]] unsigned long _flags,
                                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     EnsureUpdateRunning();
 
-    if( !_path || strcmp(_path, "/") != 0 )
+    if( _path != "/" )
         return VFSError::NotFound;
 
     auto data = m_Data;
@@ -477,21 +477,23 @@ int PSHost::FetchDirectoryListing(const char *_path,
     return 0;
 }
 
-bool PSHost::IsDirectory(const char *_path,
+bool PSHost::IsDirectory(std::string_view _path,
                          [[maybe_unused]] unsigned long _flags,
                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == nullptr || strcmp(_path, "/") != 0 )
+    if( _path.empty() || _path != "/" )
         return false;
     return true;
 }
 
-int PSHost::CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker)
+int PSHost::CreateFile(std::string_view _path,
+                       std::shared_ptr<VFSFile> &_target,
+                       const VFSCancelChecker &_cancel_checker)
 {
-    std::lock_guard<std::mutex> lock(m_Lock);
-
-    if( _path == nullptr )
+    if( _path.empty() )
         return VFSError::InvalidCall;
+
+    std::lock_guard<std::mutex> lock(m_Lock);
 
     auto index = ProcIndexFromFilepath_Unlocked(_path);
 
@@ -505,7 +507,7 @@ int PSHost::CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, con
     return VFSError::Ok;
 }
 
-int PSHost::Stat(const char *_path,
+int PSHost::Stat(std::string_view _path,
                  VFSStat &_st,
                  [[maybe_unused]] unsigned long _flags,
                  [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
@@ -524,7 +526,7 @@ int PSHost::Stat(const char *_path,
 
     std::lock_guard<std::mutex> lock(m_Lock);
 
-    if( _path == nullptr )
+    if( _path.empty() )
         return VFSError::InvalidCall;
 
     auto index = ProcIndexFromFilepath_Unlocked(_path);
@@ -544,15 +546,15 @@ int PSHost::Stat(const char *_path,
     return VFSError::Ok;
 }
 
-int PSHost::ProcIndexFromFilepath_Unlocked(const char *_filepath)
+int PSHost::ProcIndexFromFilepath_Unlocked(std::string_view _filepath)
 {
-    if( _filepath == nullptr )
+    if( _filepath.empty() )
         return -1;
 
     if( _filepath[0] != '/' )
         return -1;
 
-    auto plain_fn = _filepath + 1;
+    auto plain_fn = _filepath.substr(1);
 
     auto it = find(begin(m_Data->plain_filenames), end(m_Data->plain_filenames), plain_fn);
     if( it == end(m_Data->plain_filenames) )
@@ -561,12 +563,12 @@ int PSHost::ProcIndexFromFilepath_Unlocked(const char *_filepath)
     return int(it - begin(m_Data->plain_filenames));
 }
 
-bool PSHost::IsDirChangeObservingAvailable([[maybe_unused]] const char *_path)
+bool PSHost::IsDirectoryChangeObservationAvailable([[maybe_unused]] std::string_view _path)
 {
     return true;
 }
 
-HostDirObservationTicket PSHost::DirChangeObserve([[maybe_unused]] const char *_path, std::function<void()> _handler)
+HostDirObservationTicket PSHost::ObserveDirectoryChanges(std::string_view, std::function<void()> _handler)
 {
     // currently we don't care about _path, since this fs has only one directory - root
     auto ticket = m_LastTicket++;
@@ -582,14 +584,11 @@ void PSHost::StopDirChangeObserving(unsigned long _ticket)
         m_UpdateHandlers.erase(it);
 }
 
-int PSHost::IterateDirectoryListing(const char *_path, const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+int PSHost::IterateDirectoryListing(std::string_view _path,
+                                    const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    assert(_path != nullptr);
-    if( _path[0] != '/' || _path[1] != 0 )
+    if( _path != "/" )
         return VFSError::NotFound;
-
-    char buf[1024];
-    strcpy(buf, _path);
 
     m_Lock.lock();
     auto snapshot = m_Data;
@@ -608,7 +607,7 @@ int PSHost::IterateDirectoryListing(const char *_path, const std::function<bool(
     return VFSError::Ok;
 }
 
-int PSHost::StatFS([[maybe_unused]] const char *_path,
+int PSHost::StatFS([[maybe_unused]] std::string_view _path,
                    VFSStatFS &_stat,
                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
@@ -651,9 +650,9 @@ static std::optional<bool> WaitForProcessToDie(int pid)
     return false;
 }
 
-int PSHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int PSHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == nullptr )
+    if( _path.empty() )
         return VFSError::InvalidCall;
 
     int gid = -1;

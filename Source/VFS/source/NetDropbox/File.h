@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Host.h"
@@ -15,7 +15,7 @@ namespace nc::vfs::dropbox {
 class File final : public VFSFile
 {
 public:
-    File(const char *_relative_path, const std::shared_ptr<class DropboxHost> &_host);
+    File(std::string_view _relative_path, const std::shared_ptr<class DropboxHost> &_host);
     ~File();
 
     virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;

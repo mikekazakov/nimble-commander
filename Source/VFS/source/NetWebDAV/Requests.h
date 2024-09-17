@@ -15,7 +15,7 @@ RequestDAVListing(const HostConfiguration &_options, Connection &_connection, co
 
 int RequestMKCOL(const HostConfiguration &_options, Connection &_connection, const std::string &_path);
 
-int RequestDelete(const HostConfiguration &_options, Connection &_connection, const std::string &_path);
+int RequestDelete(const HostConfiguration &_options, Connection &_connection, std::string_view _path);
 
 int RequestMove(const HostConfiguration &_options,
                 Connection &_connection,

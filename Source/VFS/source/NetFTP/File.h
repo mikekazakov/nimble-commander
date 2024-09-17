@@ -11,7 +11,7 @@ namespace nc::vfs::ftp {
 class File final : public VFSFile
 {
 public:
-    File(const char *_relative_path, std::shared_ptr<FTPHost> _host);
+    File(std::string_view _relative_path, std::shared_ptr<FTPHost> _host);
     ~File();
 
     //        OF_Truncate is implicitly added to VFSFile when OF_Append is not used - FTP specific

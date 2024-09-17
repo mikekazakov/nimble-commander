@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../../include/VFS/Host.h"
@@ -19,7 +19,7 @@ class ArchiveHost final : public Host
 {
 public:
     // Creates an archive host out of raw input
-    ArchiveHost(const std::string &_path,
+    ArchiveHost(std::string_view _path,
                 const VFSHostPtr &_parent,
                 std::optional<std::string> _password = std::nullopt,
                 VFSCancelChecker _cancel_checker = nullptr); // flags will be added later
@@ -40,25 +40,28 @@ public:
 
     bool IsImmutableFS() const noexcept override;
 
-    bool IsDirectory(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = {}) override;
+    bool
+    IsDirectory(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = {}) override;
-    int
-    Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker = {}) override;
+    int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = {}) override;
+    int Stat(std::string_view _path,
+             VFSStat &_st,
+             unsigned long _flags,
+             const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int CreateFile(const char *_path,
+    int CreateFile(std::string_view _path,
                    std::shared_ptr<VFSFile> &_target,
                    const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int FetchDirectoryListing(const char *_path,
+    int FetchDirectoryListing(std::string_view _path,
                               VFSListingPtr &_target,
                               unsigned long _flags,
                               const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int IterateDirectoryListing(const char *_path,
+    int IterateDirectoryListing(std::string_view _path,
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
-    int ReadSymlink(const char *_symlink_path,
+    int ReadSymlink(std::string_view _symlink_path,
                     char *_buffer,
                     size_t _buffer_size,
                     const VFSCancelChecker &_cancel_checker = {}) override;
@@ -85,7 +88,7 @@ public:
     std::shared_ptr<ArchiveHost> SharedPtr();
 
     /** return VFSError, not uids returned */
-    int ResolvePathIfNeeded(const char *_path, char *_resolved_path, unsigned long _flags);
+    int ResolvePathIfNeeded(std::string_view _path, std::pmr::string &_resolved_path, unsigned long _flags);
 
     enum class SymlinkState : uint8_t {
         /// symlink is ok to use
@@ -109,7 +112,7 @@ public:
     };
 
     /** searches for entry in archive without any path resolving */
-    const arc::DirEntry *FindEntry(const char *_path);
+    const arc::DirEntry *FindEntry(std::string_view _path);
 
     /** searches for entry in archive by id */
     const arc::DirEntry *FindEntry(uint32_t _uid);
@@ -134,7 +137,7 @@ private:
      * any positive number - item's uid, good to go.
      * negative number or zero - error
      */
-    int ResolvePath(const char *_path, char *_resolved_path);
+    int ResolvePath(std::string_view _path, std::pmr::string &_resolved_path);
 
     void ResolveSymlink(uint32_t _uid);
 

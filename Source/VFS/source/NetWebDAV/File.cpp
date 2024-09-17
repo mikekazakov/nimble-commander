@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include "Internal.h"
 #include "Cache.h"
@@ -7,7 +7,7 @@
 
 namespace nc::vfs::webdav {
 
-File::File(const char *_relative_path, const std::shared_ptr<WebDAVHost> &_host)
+File::File(std::string_view _relative_path, const std::shared_ptr<WebDAVHost> &_host)
     : VFSFile(_relative_path, _host), m_Host(*_host)
 {
 }

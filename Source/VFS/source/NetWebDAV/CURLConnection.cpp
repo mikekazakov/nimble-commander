@@ -1,7 +1,7 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CURLConnection.h"
 #include "Internal.h"
-#include <Base/StringViewZBuf.h>
+#include <Base/StackAllocator.h>
 #include <cassert>
 
 // CURL is full of macros with C-style casts
@@ -146,24 +146,29 @@ void CURLConnection::Clear()
 
 int CURLConnection::SetCustomRequest(std::string_view _request)
 {
-    base::StringViewZBuf<64> request(_request);
+    StackAllocator alloc;
+    std::pmr::string request(_request, &alloc);
+
     const auto rc = curl_easy_setopt(m_EasyHandle, CURLOPT_CUSTOMREQUEST, request.c_str());
     return CurlRCToVFSError(rc);
 }
 
 int CURLConnection::SetURL(std::string_view _url)
 {
-    base::StringViewZBuf<512> url(_url);
+    StackAllocator alloc;
+    std::pmr::string url(_url, &alloc);
     const auto rc = curl_easy_setopt(m_EasyHandle, CURLOPT_URL, url.c_str());
     return CurlRCToVFSError(rc);
 }
 
 int CURLConnection::SetHeader(std::span<const std::string_view> _header)
 {
+    StackAllocator alloc;
     struct curl_slist *chunk = nullptr;
 
+    std::pmr::string element_nt(&alloc);
     for( const auto &element : _header ) {
-        base::StringViewZBuf<512> element_nt(element);
+        element_nt = element;
         chunk = curl_slist_append(chunk, element_nt.c_str());
     }
 

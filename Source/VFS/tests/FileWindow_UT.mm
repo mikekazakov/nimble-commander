@@ -12,7 +12,7 @@ using nc::vfs::FileWindow;
 class TestGenericMemReadOnlyFile : public VFSFile
 {
 public:
-    TestGenericMemReadOnlyFile(const char *_relative_path,
+    TestGenericMemReadOnlyFile(std::string_view _relative_path,
                                std::shared_ptr<VFSHost> _host,
                                const void *_memory,
                                uint64_t _mem_size,
@@ -38,7 +38,7 @@ private:
     bool m_Opened = false;
 };
 
-TestGenericMemReadOnlyFile::TestGenericMemReadOnlyFile(const char *_relative_path,
+TestGenericMemReadOnlyFile::TestGenericMemReadOnlyFile(std::string_view _relative_path,
                                                        std::shared_ptr<VFSHost> _host,
                                                        const void *_memory,
                                                        uint64_t _mem_size,
@@ -158,8 +158,8 @@ TEST_CASE(PREFIX "random access")
     for( int i = 0; i < data_size; ++i )
         data[i] = static_cast<unsigned char>(rand() % 256);
 
-    auto vfs_file = std::make_shared<TestGenericMemReadOnlyFile>(
-        nullptr, nullptr, data.get(), data_size, VFSFile::ReadParadigm::Random);
+    auto vfs_file =
+        std::make_shared<TestGenericMemReadOnlyFile>("", nullptr, data.get(), data_size, VFSFile::ReadParadigm::Random);
     vfs_file->Open(0, nullptr);
 
     FileWindow fw;
@@ -185,7 +185,7 @@ TEST_CASE(PREFIX "sequential access")
         data[i] = static_cast<unsigned char>(rand() % 256);
 
     auto vfs_file = std::make_shared<TestGenericMemReadOnlyFile>(
-        nullptr, nullptr, data.get(), data_size, VFSFile::ReadParadigm::Sequential);
+        "", nullptr, data.get(), data_size, VFSFile::ReadParadigm::Sequential);
     vfs_file->Open(0, nullptr);
 
     FileWindow fw;
@@ -215,8 +215,8 @@ TEST_CASE(PREFIX "seek access")
     for( int i = 0; i < data_size; ++i )
         data[i] = static_cast<unsigned char>(rand() % 256);
 
-    auto vfs_file = std::make_shared<TestGenericMemReadOnlyFile>(
-        nullptr, nullptr, data.get(), data_size, VFSFile::ReadParadigm::Seek);
+    auto vfs_file =
+        std::make_shared<TestGenericMemReadOnlyFile>("", nullptr, data.get(), data_size, VFSFile::ReadParadigm::Seek);
     vfs_file->Open(0, nullptr);
 
     FileWindow fw;

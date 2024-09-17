@@ -37,7 +37,7 @@ std::shared_ptr<Directory> Cache::FindDirectory(std::string_view _path) const no
     return FindDirectoryInt(_path);
 }
 
-void Cache::MarkDirectoryDirty(const std::string &_path)
+void Cache::MarkDirectoryDirty(std::string_view _path)
 {
     assert(!_path.empty() && _path.back() == '/');
 
@@ -151,7 +151,7 @@ void Cache::CommitRMD(const std::string &_path)
         m_Directories.erase(i);
 }
 
-void Cache::CommitUnlink(const std::string &_path)
+void Cache::CommitUnlink(std::string_view _path)
 {
     Log::Trace("Cache::CommitUnlink({}) called", _path);
     std::lock_guard<std::mutex> lock(m_CacheLock);
@@ -254,7 +254,7 @@ void Cache::CommitRename(const std::string &_old_path, const std::string &_new_p
     }
 }
 
-void Cache::EraseEntryInt(const std::string &_path)
+void Cache::EraseEntryInt(std::string_view _path)
 {
     Log::Trace("Cache::EraseEntryInt({}) called", _path);
     std::filesystem::path p = _path;

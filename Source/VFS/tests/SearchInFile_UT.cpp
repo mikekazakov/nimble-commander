@@ -216,7 +216,7 @@ TEST_CASE(PREFIX "Handles case the whole phrase flag")
 static FileWindow MakeFileWindow(std::string_view _data)
 {
     assert(_data.data() != nullptr);
-    auto mem_file = std::make_shared<GenericMemReadOnlyFile>(nullptr, nullptr, _data);
+    auto mem_file = std::make_shared<GenericMemReadOnlyFile>("", nullptr, _data);
     mem_file->Open(VFSFlags::OF_Read);
     return FileWindow{mem_file};
 }

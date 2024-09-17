@@ -197,7 +197,7 @@ struct BackgroundFileOpener {
     if( m_Config->GetBool(g_ConfigAutomaticRefresh) ) {
         assert(m_VFS);
         __weak NCViewerViewController *weak_self = self;
-        m_FileObservationToken = m_VFS->ObserveFileChanges(m_Path.c_str(), [weak_self] {
+        m_FileObservationToken = m_VFS->ObserveFileChanges(m_Path, [weak_self] {
             if( NCViewerViewController *strong_self = weak_self )
                 [strong_self onFileChanged];
         });

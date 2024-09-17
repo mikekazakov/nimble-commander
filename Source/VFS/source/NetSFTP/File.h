@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFSFile.h>
@@ -10,7 +10,7 @@ namespace nc::vfs::sftp {
 class File : public VFSFile
 {
 public:
-    File(const char *_relative_path, std::shared_ptr<SFTPHost> _host);
+    File(std::string_view _relative_path, std::shared_ptr<SFTPHost> _host);
     ~File();
 
     virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;

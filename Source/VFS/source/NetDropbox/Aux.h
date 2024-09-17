@@ -41,7 +41,7 @@ struct api {
 constexpr uint16_t DirectoryAccessMode = S_IRUSR | S_IWUSR | S_IFDIR | S_IXUSR;
 constexpr uint16_t RegularFileAccessMode = S_IRUSR | S_IWUSR | S_IFREG;
 
-void InsertHTTPBodyPathspec(NSMutableURLRequest *_request, const std::string &_path);
+void InsertHTTPBodyPathspec(NSMutableURLRequest *_request, std::string_view _path);
 void InsertHTTPBodyCursor(NSMutableURLRequest *_request, const std::string &_cursor);
 void InsertHTTPHeaderPathspec(NSMutableURLRequest *_request, const std::string &_path);
 
@@ -75,7 +75,7 @@ std::optional<std::string> ParseRefreshTokenReponse(const rapidjson::Value &_val
 const char *GetString(const rapidjson::Value &_doc, const char *_key);
 std::optional<long> GetLong(const rapidjson::Value &_doc, const char *_key);
 
-std::string EscapeString(const std::string &_original);
+std::string EscapeString(std::string_view _original);
 std::string EscapeStringForJSONInHTTPHeader(const std::string &_original);
 
 std::optional<rapidjson::Document> ParseJSON(NSData *_data);

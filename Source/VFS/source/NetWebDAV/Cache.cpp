@@ -56,7 +56,7 @@ std::optional<std::vector<PropFindResponse>> Cache::Listing(const std::string &_
     return listing.items;
 }
 
-std::pair<std::optional<PropFindResponse>, Cache::E> Cache::Item(const std::string &_at_path) const
+std::pair<std::optional<PropFindResponse>, Cache::E> Cache::Item(std::string_view _at_path) const
 {
     const auto [directory, filename] = DeconstructPath(_at_path);
     if( filename.empty() )
@@ -174,7 +174,7 @@ void Cache::CommitRmDir(const std::string &_at_path)
     DiscardListing(_at_path);
 }
 
-void Cache::CommitUnlink(const std::string &_at_path)
+void Cache::CommitUnlink(std::string_view _at_path)
 {
     const auto [directory, filename] = DeconstructPath(_at_path);
     if( filename.empty() )
@@ -201,14 +201,14 @@ void Cache::CommitUnlink(const std::string &_at_path)
     Notify(directory);
 }
 
-void Cache::CommitMove(const std::string &_old_path, const std::string &_new_path)
+void Cache::CommitMove(std::string_view _old_path, std::string_view _new_path)
 {
     {
         const auto lock = std::lock_guard{m_Lock};
 
-        const auto dir_it = m_Dirs.find(EnsureTrailingSlash(_old_path));
+        const auto dir_it = m_Dirs.find(EnsureTrailingSlash(std::string(_old_path)));
         if( dir_it != end(m_Dirs) ) {
-            m_Dirs[EnsureTrailingSlash(_new_path)] = std::move(dir_it->second);
+            m_Dirs[EnsureTrailingSlash(std::string(_new_path))] = std::move(dir_it->second);
             m_Dirs.erase(dir_it);
         }
     }

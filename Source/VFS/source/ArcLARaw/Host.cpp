@@ -154,7 +154,7 @@ static Extracted read_stream(const uint64_t _max_bytes,
 class VFSArchiveRawHostConfiguration
 {
 public:
-    std::filesystem::path path;
+    std::string path;
 
     [[nodiscard]] const char *Tag() const noexcept { return ArchiveRawHost::UniqueTag; }
 
@@ -163,8 +163,10 @@ public:
     bool operator==(const VFSArchiveRawHostConfiguration &_rhs) const noexcept { return path == _rhs.path; }
 };
 
-ArchiveRawHost::ArchiveRawHost(const std::string &_path, const VFSHostPtr &_parent, VFSCancelChecker _cancel_checker)
-    : Host(_path.c_str(), _parent, UniqueTag), m_Configuration(VFSArchiveRawHostConfiguration{_path})
+ArchiveRawHost::ArchiveRawHost(const std::string_view _path,
+                               const VFSHostPtr &_parent,
+                               VFSCancelChecker _cancel_checker)
+    : Host(_path, _parent, UniqueTag), m_Configuration(VFSArchiveRawHostConfiguration{std::string(_path)})
 {
     Init(_cancel_checker);
 }
@@ -204,7 +206,7 @@ void ArchiveRawHost::Init(const VFSCancelChecker &_cancel_checker)
     m_Data = std::move(extracted.bytes);
     m_Filename = extracted.filename;
     if( m_Filename.empty() )
-        m_Filename = DeduceFilename(path.native());
+        m_Filename = DeduceFilename(path);
     if( m_Filename.empty() )
         m_Filename = g_LastResortFilename;
     m_MTime.tv_nsec = 0;
@@ -218,29 +220,29 @@ void ArchiveRawHost::Init(const VFSCancelChecker &_cancel_checker)
     }
 }
 
-int ArchiveRawHost::CreateFile(const char *_path,
+int ArchiveRawHost::CreateFile(std::string_view _path,
                                std::shared_ptr<VFSFile> &_target,
                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == nullptr || _path[0] != '/' )
+    if( !_path.starts_with("/") )
         return VFSError::FromErrno(EINVAL);
 
-    if( m_Filename != std::string_view(_path + 1) )
+    if( m_Filename != _path.substr(1) )
         return VFSError::FromErrno(ENOENT);
 
     _target = std::make_unique<GenericMemReadOnlyFile>(_path, shared_from_this(), m_Data.data(), m_Data.size());
     return VFSError::Ok;
 }
 
-int ArchiveRawHost::Stat(const char *_path,
+int ArchiveRawHost::Stat(std::string_view _path,
                          VFSStat &_st,
                          [[maybe_unused]] unsigned long _flags,
                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _path == nullptr || _path[0] != '/' )
+    if( _path.empty() || _path[0] != '/' )
         return VFSError::FromErrno(EINVAL);
 
-    if( m_Filename != std::string_view(_path + 1) )
+    if( m_Filename != _path.substr(1) )
         return VFSError::FromErrno(ENOENT);
 
     std::memset(&_st, 0, sizeof(_st));
@@ -256,12 +258,12 @@ int ArchiveRawHost::Stat(const char *_path,
     return VFSError::Ok;
 }
 
-int ArchiveRawHost::IterateDirectoryListing(const char *_path,
+int ArchiveRawHost::IterateDirectoryListing(std::string_view _path,
                                             const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    if( _path == nullptr || _path[0] != '/' || !_handler )
+    if( !_path.starts_with("/") || !_handler )
         return VFSError::FromErrno(EINVAL);
-    if( std::string_view(_path) != "/" )
+    if( _path != "/" )
         return VFSError::FromErrno(ENOENT);
 
     VFSDirEnt entry;
@@ -276,15 +278,15 @@ int ArchiveRawHost::IterateDirectoryListing(const char *_path,
     return VFSError::Ok;
 }
 
-int ArchiveRawHost::FetchDirectoryListing(const char *_path,
+int ArchiveRawHost::FetchDirectoryListing(std::string_view _path,
                                           VFSListingPtr &_target,
                                           unsigned long _flags,
                                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 
 {
-    if( _path == nullptr || _path[0] != '/' )
+    if( _path.empty() || _path[0] != '/' )
         return VFSError::FromErrno(EINVAL);
-    if( std::string_view(_path) != "/" )
+    if( _path != "/" )
         return VFSError::FromErrno(ENOENT);
 
     using nc::base::variable_container;

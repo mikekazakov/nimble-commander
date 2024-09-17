@@ -18,6 +18,7 @@
 #include <Utility/ObjCpp.h>
 #include <Panel/FindFilesData.h>
 #include <iostream>
+#include <fmt/format.h>
 
 static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";
 static const auto g_StateTextHistory = "filePanel.findFilesSheet.textHistory";
@@ -493,7 +494,7 @@ private:
         it.full_filename = ensure_tr_slash(_in_path) + it.filename;
         it.content_pos = _cont_pos;
         it.rel_path =
-            to_relative_path(it.host, ensure_tr_slash(_in_path), std::string(m_Host->JunctionPath()) + m_Path);
+            to_relative_path(it.host, ensure_tr_slash(_in_path), fmt::format("{}{}", m_Host->JunctionPath(), m_Path));
 
         // TODO: need some decent cancelling mechanics here
         auto stat_block = [self, it = std::move(it)]() mutable {

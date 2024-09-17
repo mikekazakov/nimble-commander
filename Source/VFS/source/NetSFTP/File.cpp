@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include <libssh2.h>
 #include <libssh2_sftp.h>
@@ -6,7 +6,7 @@
 
 namespace nc::vfs::sftp {
 
-File::File(const char *_relative_path, std::shared_ptr<SFTPHost> _host) : VFSFile(_relative_path, _host)
+File::File(std::string_view _relative_path, std::shared_ptr<SFTPHost> _host) : VFSFile(_relative_path, _host)
 {
 }
 

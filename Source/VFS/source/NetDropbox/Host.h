@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/Host.h>
@@ -41,30 +41,32 @@ public:
     static VFSMeta Meta();
 
     virtual bool IsWritable() const override;
-    virtual bool IsCaseSensitiveAtPath(const char *_dir) const override;
-    virtual int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
+    virtual bool IsCaseSensitiveAtPath(std::string_view _dir) const override;
+    virtual int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
 
     virtual int
-    Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
+    Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker) override;
+    virtual int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker) override;
+    virtual int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int IterateDirectoryListing(const char *_path,
+    virtual int IterateDirectoryListing(std::string_view _path,
                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
-    virtual int FetchDirectoryListing(const char *_path,
+    virtual int FetchDirectoryListing(std::string_view _path,
                                       VFSListingPtr &_target,
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker) override;
 
+    virtual int CreateFile(std::string_view _path,
+                           std::shared_ptr<VFSFile> &_target,
+                           const VFSCancelChecker &_cancel_checker) override;
+
+    virtual int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker) override;
+
     virtual int
-    CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker) override;
-
-    virtual int CreateDirectory(const char *_path, int _mode, const VFSCancelChecker &_cancel_checker) override;
-
-    virtual int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker) override;
+    Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker) override;
 
     std::shared_ptr<const DropboxHost> SharedPtr() const noexcept;
     std::shared_ptr<DropboxHost> SharedPtr() noexcept;

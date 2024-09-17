@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../../include/VFS/Host.h"
@@ -31,31 +31,34 @@ public:
 
     bool IsWritable() const override;
 
-    int FetchDirectoryListing(const char *_path,
+    int FetchDirectoryListing(std::string_view _path,
                               VFSListingPtr &_target,
                               unsigned long _flags,
                               const VFSCancelChecker &_cancel_checker) override;
 
-    int IterateDirectoryListing(const char *_path,
+    int IterateDirectoryListing(std::string_view _path,
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
-    int Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
+    int
+    Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
-    int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
+    int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
 
-    int CreateDirectory(const char *_path, int _mode, const VFSCancelChecker &_cancel_checker) override;
+    int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker) override;
 
-    int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker) override;
+    int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
-    int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker) override;
+    int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
+
+    int CreateFile(std::string_view _path,
+                   std::shared_ptr<VFSFile> &_target,
+                   const VFSCancelChecker &_cancel_checker) override;
 
     int
-    CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker) override;
+    Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker) override;
 
-    int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker) override;
+    bool IsDirectoryChangeObservationAvailable(std::string_view _path) override;
 
-    bool IsDirChangeObservingAvailable(const char *_path) override;
-
-    HostDirObservationTicket DirChangeObserve(const char *_path, std::function<void()> _handler) override;
+    HostDirObservationTicket ObserveDirectoryChanges(std::string_view _path, std::function<void()> _handler) override;
 
     const std::string &Host() const noexcept;
     const std::string &Path() const noexcept;

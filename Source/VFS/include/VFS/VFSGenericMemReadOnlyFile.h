@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "VFSFile.h"
@@ -10,11 +10,13 @@ namespace nc::vfs {
 class GenericMemReadOnlyFile : public VFSFile
 {
 public:
-    GenericMemReadOnlyFile(const char *_relative_path,
+    GenericMemReadOnlyFile(std::string_view _relative_path,
                            const std::shared_ptr<VFSHost> &_host,
                            const void *_memory,
                            uint64_t _mem_size);
-    GenericMemReadOnlyFile(const char *_relative_path, const std::shared_ptr<VFSHost> &_host, std::string_view _memory);
+    GenericMemReadOnlyFile(std::string_view _relative_path,
+                           const std::shared_ptr<VFSHost> &_host,
+                           std::string_view _memory);
 
     int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = {}) override;
     bool IsOpened() const override;

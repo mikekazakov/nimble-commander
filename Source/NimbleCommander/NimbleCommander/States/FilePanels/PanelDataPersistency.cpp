@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma clang diagnostic push
 #include <boost/container/static_vector.hpp>
 #include <VFS/Native.h>
@@ -117,17 +117,17 @@ static std::any EncodeState(const VFSHost &_host)
         return PSFS{};
     }
     else if( tag == vfs::XAttrHost::UniqueTag ) {
-        return XAttr{_host.JunctionPath()};
+        return XAttr{std::string(_host.JunctionPath())};
     }
     else if( IsNetworkVFS(_host) ) {
         if( auto conn = ConnectionsManager().ConnectionForVFS(_host) )
             return Network{conn->Uuid()};
     }
     else if( tag == vfs::ArchiveHost::UniqueTag ) {
-        return ArcLA{_host.JunctionPath()};
+        return ArcLA{std::string(_host.JunctionPath())};
     }
     else if( tag == vfs::ArchiveRawHost::UniqueTag ) {
-        return ArcLARaw{_host.JunctionPath()};
+        return ArcLARaw{std::string(_host.JunctionPath())};
     }
     return {};
 }

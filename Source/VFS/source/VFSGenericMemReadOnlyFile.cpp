@@ -1,11 +1,11 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "VFSGenericMemReadOnlyFile.h"
 #include <algorithm>
 #include <cassert>
 
 namespace nc::vfs {
 
-GenericMemReadOnlyFile::GenericMemReadOnlyFile(const char *_relative_path,
+GenericMemReadOnlyFile::GenericMemReadOnlyFile(std::string_view _relative_path,
                                                const std::shared_ptr<VFSHost> &_host,
                                                const void *_memory,
                                                uint64_t _mem_size)
@@ -15,7 +15,7 @@ GenericMemReadOnlyFile::GenericMemReadOnlyFile(const char *_relative_path,
         throw std::invalid_argument("GenericMemReadOnlyFile expects a valid memory pointer");
 }
 
-GenericMemReadOnlyFile::GenericMemReadOnlyFile(const char *_relative_path,
+GenericMemReadOnlyFile::GenericMemReadOnlyFile(std::string_view _relative_path,
                                                const std::shared_ptr<VFSHost> &_host,
                                                std::string_view _memory)
     : VFSFile(_relative_path, _host), m_Mem(static_cast<const void *>(_memory.data())), m_Size(_memory.size())

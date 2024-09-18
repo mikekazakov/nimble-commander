@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/SerialQueue.h>
 
 namespace nc::base {
@@ -15,21 +15,21 @@ SerialQueue::~SerialQueue()
 
 void SerialQueue::SetOnDry(std::function<void()> _cb)
 {
-    std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>(std::move(_cb));
+    const std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>(std::move(_cb));
     const auto lock = std::lock_guard{m_CallbackLock};
     m_OnDry = cb;
 }
 
 void SerialQueue::SetOnWet(std::function<void()> _cb)
 {
-    std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>(std::move(_cb));
+    const std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>(std::move(_cb));
     const auto lock = std::lock_guard{m_CallbackLock};
     m_OnWet = cb;
 }
 
 void SerialQueue::SetOnChange(std::function<void()> _cb)
 {
-    std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>(std::move(_cb));
+    const std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>(std::move(_cb));
     const auto lock = std::lock_guard{m_CallbackLock};
     m_OnChange = cb;
 }

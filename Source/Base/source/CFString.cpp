@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2023 Michael G. Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael G. Kazakov. Subject to GNU General Public License version 3.
 #include <Base/CFString.h>
 #include <memory>
 
@@ -69,8 +69,8 @@ std::string CFStringGetUTF8StdString(CFStringRef _str)
     if( const char *cstr = CFStringGetCStringPtr(_str, kCFStringEncodingUTF8) )
         return {cstr};
 
-    CFIndex length = CFStringGetLength(_str);
-    CFIndex maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
+    const CFIndex length = CFStringGetLength(_str);
+    const CFIndex maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
     auto buffer = std::make_unique<char[]>(maxSize); // REMOVE me!!!!
     if( CFStringGetCString(_str, &buffer[0], maxSize, kCFStringEncodingUTF8) )
         return {buffer.get()};

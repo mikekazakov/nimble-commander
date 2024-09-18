@@ -58,7 +58,7 @@ struct ObservableBase::ObservationTicket {
     ObservationTicket() noexcept;
     ObservationTicket(ObservationTicket &&) noexcept;
     ~ObservationTicket();
-    const ObservationTicket &operator=(ObservationTicket &&) noexcept;
+    ObservationTicket &operator=(ObservationTicket &&) noexcept;
     operator bool() const noexcept;
 
 private:

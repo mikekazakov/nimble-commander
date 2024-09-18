@@ -39,7 +39,7 @@ ObservableBase::ObservationTicket::~ObservationTicket()
         instance->StopObservation(ticket);
 }
 
-const ObservableBase::ObservationTicket &
+ObservableBase::ObservationTicket &
 ObservableBase::ObservationTicket::operator=(ObservableBase::ObservationTicket &&_r) noexcept
 {
     if( *this )

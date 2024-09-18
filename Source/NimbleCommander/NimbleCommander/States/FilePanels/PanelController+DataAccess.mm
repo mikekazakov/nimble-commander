@@ -1,6 +1,6 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/CommonPaths.h>
-#include "PanelController+DataAccess.h"
+#include "PanelController.h"
 #include <Panel/PanelDataItemVolatileData.h>
 #include <Panel/PanelData.h>
 #include "PanelView.h"

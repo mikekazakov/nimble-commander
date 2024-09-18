@@ -159,6 +159,7 @@ std::optional<std::string> FileSettingsStorage::Language(std::string_view _filen
 std::vector<std::string> FileSettingsStorage::List()
 {
     std::vector<std::string> list;
+    list.reserve(m_Langs.size());
     for( const Lang &lang : m_Langs ) {
         list.push_back(lang.name);
     }

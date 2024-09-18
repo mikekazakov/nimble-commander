@@ -194,7 +194,7 @@ void chained_strings::swap(chained_strings &_rhs) noexcept
     std::swap(m_Last, _rhs.m_Last);
 }
 
-const chained_strings &chained_strings::operator=(chained_strings &&_rhs) noexcept
+chained_strings &chained_strings::operator=(chained_strings &&_rhs) noexcept
 {
     destroy();
     m_Begin = _rhs.m_Begin;

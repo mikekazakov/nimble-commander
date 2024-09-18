@@ -127,7 +127,7 @@ public:
     bool singleblock() const;  // O(1)
 
     void swap(chained_strings &_rhs) noexcept;
-    const chained_strings &operator=(chained_strings &&) noexcept;
+    chained_strings &operator=(chained_strings &&) noexcept;
 
 private:
     void insert_into(block *_to, const char *_str, unsigned _len, const node *_prefix);

@@ -460,7 +460,7 @@ std::string ThemesManager::SuitableNameForNewTheme(const std::string &_current_t
         return {}; // empty names are not allowed
 
     const auto themes = ThemeNames();
-    ankerl::unordered_dense::set<std::string> names(themes.begin(), themes.end());
+    const ankerl::unordered_dense::set<std::string> names(themes.begin(), themes.end());
 
     if( names.contains(_current_theme_name) == false ) {
         // no collision, accept as-is

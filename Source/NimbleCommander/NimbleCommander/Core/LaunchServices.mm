@@ -168,7 +168,7 @@ struct CachedLaunchServiceHandler {
 
     static CachedLaunchServiceHandler GetLaunchHandlerInfo(const std::string &_handler_path)
     {
-        std::lock_guard<std::mutex> lock{g_HandlersByPathLock};
+        const std::lock_guard<std::mutex> lock{g_HandlersByPathLock};
         if( auto i = g_HandlersByPath.find(_handler_path);
             i != end(g_HandlersByPath) && !IsOutdated(i->second.path, i->second.mtime) ) {
             return i->second;
@@ -278,7 +278,7 @@ bool LaunchServiceHandler::SetAsDefaultHandlerForUTI(const std::string &_uti) co
     if( !uti )
         return false;
 
-    OSStatus ret =
+    const OSStatus ret =
         LSSetDefaultRoleHandlerForContentType((__bridge CFStringRef)uti, kLSRolesAll, (__bridge CFStringRef)m_AppID);
     return ret == noErr;
 }

@@ -35,7 +35,7 @@ bool AskToExitWithRunningOperations()
     [alert addButtonWithTitle:NSLocalizedString(@"Stop and Quit",
                                                 "Asking user for quitting app with activity - confirmation")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
-    NSInteger result = [alert runModal];
+    const NSInteger result = [alert runModal];
 
     return result == NSAlertFirstButtonReturn;
 }

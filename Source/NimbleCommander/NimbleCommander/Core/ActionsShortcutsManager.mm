@@ -505,7 +505,7 @@ void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
             SetMenuShortCuts(i.submenu);
         }
         else {
-            int tag = static_cast<int>(i.tag);
+            const int tag = static_cast<int>(i.tag);
             auto scover = m_ShortCutsOverrides.find(tag);
             if( scover != m_ShortCutsOverrides.end() ) {
                 [i nc_setKeyEquivalentWithShortcut:scover->second];
@@ -542,7 +542,7 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
 
 ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromAction(std::string_view _action) const noexcept
 {
-    int tag = TagFromAction(_action);
+    const int tag = TagFromAction(_action);
     if( tag <= 0 )
         return {};
     return ShortCutFromTag(tag);

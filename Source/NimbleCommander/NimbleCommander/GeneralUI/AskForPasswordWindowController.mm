@@ -64,7 +64,7 @@ bool RunAskForPasswordModalWindow(const std::string &_password_for, std::string 
 
     auto wnd =
         [[AskForPasswordWindowController alloc] initWithResourceName:[NSString stringWithUTF8StdString:_password_for]];
-    NSModalResponse ret = [NSApp runModalForWindow:wnd.window];
+    const NSModalResponse ret = [NSApp runModalForWindow:wnd.window];
     if( ret == NSModalResponseOK ) {
         _passwd = wnd.enteredPasswd.UTF8String;
         return true;

@@ -52,7 +52,7 @@ bool TemporaryNativeFileChangesSentinel::WatchFile(const std::string &_path,
     auto current = std::make_shared<Meta>();
     auto &dir_update = nc::utility::FSEventsDirUpdate::Instance();
     const auto path = std::filesystem::path(_path).parent_path();
-    uint64_t watch_ticket = dir_update.AddWatchPath(
+    const uint64_t watch_ticket = dir_update.AddWatchPath(
         path.c_str(), [current] { TemporaryNativeFileChangesSentinel::Instance().FSEventCallback(current); });
     if( !watch_ticket )
         return false;

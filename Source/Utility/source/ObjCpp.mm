@@ -1,4 +1,4 @@
-// Copyright (C) 2021-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/ObjCpp.h>
 #include <Foundation/Foundation.h>
 
@@ -13,7 +13,7 @@ const char *objc_class_c_str(id _object) noexcept
     if( cl == nil )
         return "";
 
-    NSString *ns_str = NSStringFromClass(cl);
+    NSString *const ns_str = NSStringFromClass(cl);
     if( ns_str == nil )
         return "";
 

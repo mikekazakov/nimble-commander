@@ -737,7 +737,7 @@ static nc::config::Value EncodeUIState(MainWindowFilePanelState *_state)
 static void AskAboutStoppingRunningOperations(NSWindow *_window, std::function<void(NSModalResponse)> _handler)
 {
     assert(_window && _handler);
-    Alert *dialog = [[Alert alloc] init];
+    Alert *const dialog = [[Alert alloc] init];
     [dialog addButtonWithTitle:NSLocalizedString(@"Stop and Close",
                                                  "User action to stop running actions and close window")];
     [dialog addButtonWithTitle:NSLocalizedString(@"Cancel", "")];

@@ -41,7 +41,7 @@ bool OpenFileWithSubmenu::Predicate(PanelController *_target) const
 bool OpenFileWithSubmenu::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
 {
     if( ShouldRebuildSubmenu(_item) ) {
-        NSMenu *menu = [[NSMenu alloc] init];
+        NSMenu *const menu = [[NSMenu alloc] init];
         menu.identifier = NCPanelOpenWithMenuDelegate.regularMenuIdentifier;
         menu.delegate = m_MenuDelegate;
         [m_MenuDelegate addManagedMenu:menu];
@@ -66,7 +66,7 @@ bool AlwaysOpenFileWithSubmenu::Predicate(PanelController *_target) const
 bool AlwaysOpenFileWithSubmenu::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
 {
     if( ShouldRebuildSubmenu(_item) ) {
-        NSMenu *menu = [[NSMenu alloc] init];
+        NSMenu *const menu = [[NSMenu alloc] init];
         menu.identifier = NCPanelOpenWithMenuDelegate.alwaysOpenWithMenuIdentifier;
         menu.delegate = m_MenuDelegate;
         [m_MenuDelegate addManagedMenu:menu];

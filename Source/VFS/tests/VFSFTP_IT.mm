@@ -146,7 +146,9 @@ TEST_CASE(PREFIX "renaming")
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
 
-    std::string fn1 = "/System/Library/Kernels/kernel", fn2 = "/kernel", fn3 = "/kernel34234234";
+    const std::string fn1 = "/System/Library/Kernels/kernel";
+    const std::string fn2 = "/kernel";
+    const std::string fn3 = "/kernel34234234";
 
     VFSStat stat;
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DragReceiver.h"
 #include "FilesDraggingSource.h"
 #include "PanelController.h"
@@ -334,7 +334,7 @@ bool DragReceiver::PerformWithURLsSource(NSArray<NSURL *> *_source, const vfs::V
         // refuse the drag and show an error message asynchronously.
         const int vfs_error = source_items.error();
         dispatch_to_main_queue([vfs_error] {
-            Alert *alert = [[Alert alloc] init];
+            Alert *const alert = [[Alert alloc] init];
             alert.messageText = NSLocalizedString(@"Failed to access the dragged item:",
                                                   "Showing error when failed to access the dragged items");
             alert.informativeText = VFSError::ToNSError(vfs_error).localizedDescription;
@@ -460,7 +460,7 @@ static bool DraggingIntoFoldersAllowed() noexcept
 static std::vector<VFSListingItem> ExtractListingItems(FilesDraggingSource *_source)
 {
     std::vector<VFSListingItem> files;
-    for( PanelDraggingItem *item : _source.items )
+    for( PanelDraggingItem *const &item : _source.items )
         files.emplace_back(item.item);
     return files;
 }
@@ -516,7 +516,7 @@ static void AddPanelRefreshIfNecessary(PanelController *_target, ops::Operation 
     __weak PanelController *cntr = _target;
     _operation.ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
         dispatch_to_main_queue([cntr] {
-            if( PanelController *pc = cntr )
+            if( PanelController *const pc = cntr )
                 [pc hintAboutFilesystemChange];
         });
     });

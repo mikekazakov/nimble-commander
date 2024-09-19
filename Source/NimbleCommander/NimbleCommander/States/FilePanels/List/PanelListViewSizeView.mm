@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/ByteCountFormatter.h>
 #include "../PanelViewPresentationSettings.h"
 #include "PanelListView.h"
@@ -118,7 +118,7 @@ static NSString *SizeStringFromEncodedSize(uint64_t _sz)
 static NSParagraphStyle *PStyle()
 {
     static const auto style = [] {
-        NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
+        NSMutableParagraphStyle *const p = [NSMutableParagraphStyle new];
         p.alignment = NSTextAlignmentRight;
         p.lineBreakMode = NSLineBreakByClipping;
         return p;

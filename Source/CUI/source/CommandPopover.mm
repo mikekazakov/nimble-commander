@@ -689,7 +689,7 @@ static constexpr double g_ContentViewCornerRadius = 10.;
     }
 
     static NSCharacterSet *const allowed = [] {
-        NSMutableCharacterSet *set = [[NSMutableCharacterSet alloc] init];
+        NSMutableCharacterSet *const set = [[NSMutableCharacterSet alloc] init];
         [set formUnionWithCharacterSet:NSCharacterSet.alphanumericCharacterSet];
         [set formUnionWithCharacterSet:NSCharacterSet.punctuationCharacterSet];
         [set formUnionWithCharacterSet:NSCharacterSet.symbolCharacterSet];

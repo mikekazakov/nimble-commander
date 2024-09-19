@@ -514,14 +514,14 @@ VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection(const 
 static std::string NetFSErrorString(int _code)
 {
     if( _code > 0 ) {
-        NSError *err = [NSError errorWithDomain:NSPOSIXErrorDomain code:_code userInfo:nil];
+        NSError *const err = [NSError errorWithDomain:NSPOSIXErrorDomain code:_code userInfo:nil];
         if( err && err.localizedFailureReason.UTF8String )
             return err.localizedFailureReason.UTF8String;
         else
             return "Unknown error";
     }
     else if( _code < 0 ) {
-        NSError *err = [NSError errorWithDomain:NSOSStatusErrorDomain code:_code userInfo:nil];
+        NSError *const err = [NSError errorWithDomain:NSOSStatusErrorDomain code:_code userInfo:nil];
         if( err && err.localizedFailureReason.UTF8String )
             return err.localizedFailureReason.UTF8String;
         else
@@ -603,7 +603,7 @@ TearDownSMBOrAFPMountName(const std::string &_name, std::string &_user, std::str
     if( !url_string )
         return false;
 
-    NSURL *url = [NSURL URLWithString:url_string];
+    NSURL *const url = [NSURL URLWithString:url_string];
     if( !url )
         return false;
 

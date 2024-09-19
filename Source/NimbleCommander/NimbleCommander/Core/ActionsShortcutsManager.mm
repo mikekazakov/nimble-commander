@@ -499,7 +499,7 @@ std::string_view ActionsShortcutsManager::ActionFromTag(int _tag) const noexcept
 
 void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
 {
-    NSArray *array = _menu.itemArray;
+    NSArray *const array = _menu.itemArray;
     for( NSMenuItem *i : array ) {
         if( i.submenu != nil ) {
             SetMenuShortCuts(i.submenu);

@@ -11,7 +11,7 @@
 using namespace nc;
 
 static NSParagraphStyle *const g_Style = [] {
-    NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
+    NSMutableParagraphStyle *const style = [NSMutableParagraphStyle new];
     style.alignment = NSTextAlignmentLeft;
     style.lineBreakMode = NSLineBreakByTruncatingTail;
     style.allowsDefaultTighteningForTruncation = false;

@@ -72,7 +72,7 @@ int File::Close()
 
 NSURLRequest *File::BuildDownloadRequest() const
 {
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::Download];
+    NSMutableURLRequest *const request = [[NSMutableURLRequest alloc] initWithURL:api::Download];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
     InsertHTTPHeaderPathspec(request, Path());
@@ -235,7 +235,7 @@ std::string File::BuildUploadPathspec() const
 
 NSURLRequest *File::BuildRequestForSinglePartUpload() const
 {
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::Upload];
+    NSMutableURLRequest *const request = [[NSMutableURLRequest alloc] initWithURL:api::Upload];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
@@ -287,7 +287,7 @@ void File::StartSmallUpload()
 
 NSURLRequest *File::BuildRequestForUploadSessionInit() const
 {
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionStart];
+    NSMutableURLRequest *const request = [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionStart];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
@@ -337,7 +337,7 @@ void File::StartSession()
 
 NSURLRequest *File::BuildRequestForUploadSessionAppend() const
 {
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionAppend];
+    NSMutableURLRequest *const request = [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionAppend];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
 
@@ -393,7 +393,7 @@ void File::StartSessionAppend()
 
 NSURLRequest *File::BuildRequestForUploadSessionFinish() const
 {
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionFinish];
+    NSMutableURLRequest *const request = [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionFinish];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
 

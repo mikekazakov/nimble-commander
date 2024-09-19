@@ -178,7 +178,7 @@ static const auto g_TagsDDType = @"com.magnumbytes.nc.pref.PreferencesWindowPane
 {
     static std::once_flag once;
     std::call_once(once, [] {
-        NSImage *image =
+        NSImage *const image =
             [[NSImage alloc] initWithContentsOfFile:@"/System/Library/CoreServices/CoreTypes.bundle/Contents/"
                                                     @"Resources/GenericApplicationIcon.icns"];
         if( image )
@@ -272,9 +272,9 @@ static NSMenu *BuildTagColorMenu()
         {Color::Blue, NSLocalizedString(@"Blue", "")},
         {Color::Purple, NSLocalizedString(@"Purple", "")},
         {Color::Gray, NSLocalizedString(@"Gray", "")}};
-    NSMenu *menu = [[NSMenu alloc] init];
+    NSMenu *const menu = [[NSMenu alloc] init];
     for( auto &item : items ) {
-        NSMenuItem *it = [[NSMenuItem alloc] initWithTitle:item.second action:nil keyEquivalent:@""];
+        NSMenuItem *const it = [[NSMenuItem alloc] initWithTitle:item.second action:nil keyEquivalent:@""];
         it.image = TagsMenuDisplay::Images().at(std::to_underlying(item.first));
         it.tag = std::to_underlying(item.first);
         [menu addItem:it];
@@ -402,7 +402,7 @@ static NSMenu *BuildTagColorMenu()
         auto data = [NSKeyedArchiver archivedDataWithRootObject:[NSNumber numberWithInteger:_row]
                                           requiringSecureCoding:false
                                                           error:nil];
-        NSPasteboardItem *pbitem = [[NSPasteboardItem alloc] init];
+        NSPasteboardItem *const pbitem = [[NSPasteboardItem alloc] init];
         [pbitem setData:data forType:_type];
         return pbitem;
     };
@@ -869,10 +869,10 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
 {
     __weak PreferencesWindowPanelsTab *weak_self = self;
     m_TagOperationsQue.async([weak_self] {
-        if( PreferencesWindowPanelsTab *me = weak_self ) {
+        if( PreferencesWindowPanelsTab *const me = weak_self ) {
             auto all_tags = nc::utility::Tags::GatherAllItemsTags();
             dispatch_to_main_queue([all_tags = std::move(all_tags), weak_self] {
-                if( PreferencesWindowPanelsTab *me = weak_self )
+                if( PreferencesWindowPanelsTab *const me = weak_self )
                     [me acceptFSTags:all_tags];
             });
         }

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalEditorState.h"
 #include "../../../NimbleCommander/States/MainWindowController.h"
 #include <Term/SingleTask.h>
@@ -76,25 +76,25 @@ using namespace nc::term;
         m_Interpreter->SetBell([] { NSBeep(); });
         m_Interpreter->SetTitle([weak_self](const std::string &_title, Interpreter::TitleKind) {
             dispatch_to_main_queue([weak_self, _title] {
-                NCTermExternalEditorState *me = weak_self;
+                NCTermExternalEditorState *const me = weak_self;
                 me->m_Title = _title;
                 [me updateTitle];
             });
         });
         m_Interpreter->SetInputTranslator(m_InputTranslator.get());
         m_Interpreter->SetShowCursorChanged([weak_self](bool _show) {
-            NCTermExternalEditorState *me = weak_self;
+            NCTermExternalEditorState *const me = weak_self;
             me->m_TermScrollView.view.showCursor = _show;
         });
         m_Interpreter->SetRequstedMouseEventsChanged([weak_self](Interpreter::RequestedMouseEvents _events) {
-            NCTermExternalEditorState *me = weak_self;
+            NCTermExternalEditorState *const me = weak_self;
             me->m_TermScrollView.view.mouseEvents = _events;
         });
         m_Interpreter->SetScreenResizeAllowed(false);
 
         [m_TermScrollView.view AttachToInputTranslator:m_InputTranslator.get()];
         m_TermScrollView.onScreenResized = [weak_self](int _sx, int _sy) {
-            NCTermExternalEditorState *me = weak_self;
+            NCTermExternalEditorState *const me = weak_self;
             me->m_Interpreter->NotifyScreenResized();
             me->m_Task->ResizeWindow(_sx, _sy);
         };

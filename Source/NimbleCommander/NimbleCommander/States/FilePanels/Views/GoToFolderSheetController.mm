@@ -13,7 +13,7 @@ static std::vector<unsigned> ListDirsWithPrefix(const VFSListing &_listing, cons
 {
     std::vector<unsigned> result;
 
-    NSString *prefix = [NSString stringWithUTF8StdString:_prefix];
+    NSString *const prefix = [NSString stringWithUTF8StdString:_prefix];
     const NSRange range = NSMakeRange(0, prefix.length);
 
     for( const auto &i : _listing ) {

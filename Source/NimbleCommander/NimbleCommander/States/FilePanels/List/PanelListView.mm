@@ -372,7 +372,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
 template <typename View>
 static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 {
-    if( View *v = [_tv makeViewWithIdentifier:_identifier owner:nil] )
+    if( View *const v = [_tv makeViewWithIdentifier:_identifier owner:nil] )
         return v;
     auto v = [[View alloc] initWithFrame:NSRect()];
     v.identifier = _identifier;
@@ -1082,7 +1082,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     // thread
     __weak PanelListView *weak_self = self;
     dispatch_to_main_queue([weak_self] {
-        if( PanelListView *strong_self = weak_self )
+        if( PanelListView *const strong_self = weak_self )
             [strong_self dateDidChangeImpl];
     });
 }

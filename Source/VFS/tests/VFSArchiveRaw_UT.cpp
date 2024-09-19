@@ -83,7 +83,7 @@ TEST_CASE(PREFIX "Deduces a proper filename")
     struct TC {
         const char *path;
         const char *expected;
-    } tcs[]{
+    } const tcs[]{
         {"hello.txt.gz", "hello.txt"},
         {"/hello.txt.gz", "hello.txt"},
         {"/foo/bar/hello.txt.gz", "hello.txt"},

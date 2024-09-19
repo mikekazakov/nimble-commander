@@ -21,7 +21,7 @@ static const auto g_TableViewDataType =
 
 static bool AskUserToDeleteEditor()
 {
-    NSAlert *alert = [[NSAlert alloc] init];
+    NSAlert *const alert = [[NSAlert alloc] init];
     alert.messageText = NSLocalizedString(@"Are you sure you want to remove this editor?",
                                           "Asking the user for confirmation on deleting the external editor - message");
     alert.informativeText =

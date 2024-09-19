@@ -49,13 +49,13 @@ static VFSListingPtr FetchSearchResultsAsListing(const std::vector<vfs::VFSPath>
 
 void FindFiles::Perform(PanelController *_target, id) const
 {
-    FindFilesSheetController *sheet = [FindFilesSheetController new];
+    FindFilesSheetController *const sheet = [FindFilesSheetController new];
     sheet.vfsInstanceManager = &_target.vfsInstanceManager;
     sheet.host = _target.isUniform ? _target.vfs : _target.view.item.Host();
     sheet.path = _target.isUniform ? _target.currentDirectoryPath : _target.view.item.Directory();
     __weak PanelController *wp = _target;
     sheet.onPanelize = [wp](const std::vector<vfs::VFSPath> &_paths) {
-        if( PanelController *panel = wp ) {
+        if( PanelController *const panel = wp ) {
             auto task = [=](const std::function<bool()> &_cancelled) {
                 auto l = FetchSearchResultsAsListing(_paths, panel.vfsFetchingFlags, _cancelled);
                 if( l )

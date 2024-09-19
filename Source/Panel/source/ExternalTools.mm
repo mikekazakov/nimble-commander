@@ -668,7 +668,7 @@ std::vector<std::string> ExternalToolExecution::BuildArguments() const
 
 bool ExternalToolExecution::IsBundle() const
 {
-    NSBundle *b = [NSBundle bundleWithPath:[NSString stringWithUTF8StdString:m_ET.m_ExecutablePath]];
+    NSBundle *const b = [NSBundle bundleWithPath:[NSString stringWithUTF8StdString:m_ET.m_ExecutablePath]];
     return b != nil;
 }
 
@@ -694,8 +694,8 @@ static bool IsRunnableExecutable(const std::string &_path)
 
 static std::filesystem::path GetExecutablePathForBundle(const std::string &_path)
 {
-    if( NSBundle *b = [NSBundle bundleWithPath:[NSString stringWithUTF8StdString:_path]] )
-        if( NSURL *u = b.executableURL )
+    if( NSBundle *const b = [NSBundle bundleWithPath:[NSString stringWithUTF8StdString:_path]] )
+        if( NSURL *const u = b.executableURL )
             if( const char *fsr = u.fileSystemRepresentation )
                 return fsr;
     return "";
@@ -742,12 +742,12 @@ std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedFork()
 
 std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedUI()
 {
-    NSURL *app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:m_ET.m_ExecutablePath]];
+    NSURL *const app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:m_ET.m_ExecutablePath]];
 
     const auto args = BuildArguments();
 
-    NSMutableArray *params_urls = [NSMutableArray new];
-    NSMutableArray *params_args = [NSMutableArray new];
+    NSMutableArray *const params_urls = [NSMutableArray new];
+    NSMutableArray *const params_args = [NSMutableArray new];
     const bool allow_urls =
         m_ET.m_GUIArgumentInterpretation == ExternalTool::GUIArgumentInterpretation::PassExistingPathsAsURLs;
     for( auto &s : args ) {
@@ -761,7 +761,7 @@ std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedUI()
         }
     }
 
-    NSWorkspaceOpenConfiguration *config = [NSWorkspaceOpenConfiguration new];
+    NSWorkspaceOpenConfiguration *const config = [NSWorkspaceOpenConfiguration new];
     config.promptsUserIfNeeded = false;
     config.arguments = params_args;
 

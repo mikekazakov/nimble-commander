@@ -130,7 +130,7 @@ static NSTextField *CreateStockTF()
         return tf;
     };
     const auto line_separator = [] {
-        NSBox *line = [[NSBox alloc] initWithFrame:NSRect()];
+        NSBox *const line = [[NSBox alloc] initWithFrame:NSRect()];
         line.translatesAutoresizingMaskIntoConstraints = NO;
         line.boxType = NSBoxCustom;
         line.borderColor = NSColor.separatorColor;

@@ -24,14 +24,14 @@ using nc::ThemePersistence;
 
 static NSTableCellView *SpawnSectionTitle(NSString *_title)
 {
-    NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    NSTextField *const tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     tf.stringValue = _title;
     tf.bordered = false;
     tf.editable = false;
     tf.drawsBackground = false;
     tf.font = [NSFont labelFontOfSize:13];
     tf.translatesAutoresizingMaskIntoConstraints = false;
-    NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
+    NSTableCellView *const cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
     [cv addSubview:tf];
     [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(0)-[tf]-(0)-|"
                                                                options:0
@@ -49,7 +49,7 @@ static NSTableCellView *SpawnSectionTitle(NSString *_title)
 
 static NSTableCellView *SpawnEntryTitle(NSString *_title)
 {
-    NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    NSTextField *const tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     tf.stringValue = _title;
     tf.bordered = false;
     tf.editable = false;
@@ -57,7 +57,7 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
     tf.font = [NSFont labelFontOfSize:11];
     tf.lineBreakMode = NSLineBreakByTruncatingTail;
     tf.translatesAutoresizingMaskIntoConstraints = false;
-    NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
+    NSTableCellView *const cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
     [cv addSubview:tf];
     [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(0)-[tf]-(0)-|"
                                                                options:0

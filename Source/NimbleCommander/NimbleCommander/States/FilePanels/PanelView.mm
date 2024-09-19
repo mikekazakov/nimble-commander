@@ -91,7 +91,7 @@ struct StateStorage {
         m_HeaderView.defaultResponder = self;
         __weak PanelView *weak_self = self;
         m_HeaderView.sortModeChangeCallback = [weak_self](data::SortMode _sm) {
-            if( PanelView *strong_self = weak_self )
+            if( PanelView *const strong_self = weak_self )
                 [strong_self.controller changeSortingModeTo:_sm];
         };
         [self addSubview:m_HeaderView];
@@ -176,7 +176,7 @@ struct StateStorage {
     v.translatesAutoresizingMaskIntoConstraints = false;
     __weak PanelView *weak_self = self;
     v.sortModeChangeCallback = [=](data::SortMode _sm) {
-        if( PanelView *strong_self = weak_self )
+        if( PanelView *const strong_self = weak_self )
             [strong_self.controller changeSortingModeTo:_sm];
     };
     return v;
@@ -210,7 +210,7 @@ struct StateStorage {
 {
     __weak PanelView *weak_self = self;
     dispatch_to_main_queue([=] {
-        if( PanelView *strong_self = weak_self )
+        if( PanelView *const strong_self = weak_self )
             [strong_self refreshActiveStatus];
     });
     return YES;

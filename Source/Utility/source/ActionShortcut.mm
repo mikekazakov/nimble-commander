@@ -125,7 +125,7 @@ NSString *ActionShortcut::Key() const noexcept
 {
     if( !*this )
         return @"";
-    if( NSString *key = [NSString stringWithCharacters:&unicode length:1] )
+    if( NSString *const key = [NSString stringWithCharacters:&unicode length:1] )
         return key;
     return @"";
 }

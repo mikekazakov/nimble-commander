@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "EncodingDetection.h"
 #include <Foundation/Foundation.h>
 
@@ -6,7 +6,7 @@ namespace nc::vfs::arc {
 
 CFStringEncoding DetectEncoding(const void *_bytes, size_t _sz)
 {
-    NSData *data = [NSData dataWithBytesNoCopy:const_cast<void *>(_bytes) length:_sz freeWhenDone:false];
+    NSData *const data = [NSData dataWithBytesNoCopy:const_cast<void *>(_bytes) length:_sz freeWhenDone:false];
 
     const NSStringEncoding ns_enc = [NSString stringEncodingForData:data
                                                     encodingOptions:nil

@@ -501,7 +501,7 @@ private:
             // doing stat()'ing item in async background thread
             it.host->Stat(it.full_filename.c_str(), it.st, 0, nullptr);
 
-            FindFilesSheetFoundItem *item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:std::move(it)];
+            FindFilesSheetFoundItem *const item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:std::move(it)];
             m_BatchQueue.Run([self, item] {
                 // dumping result entry into batch array in BatchQueue
                 [m_FoundItemsBatch addObject:item];
@@ -585,11 +585,11 @@ private:
         if( m_FoundItemsBatch.count == 0 )
             return; // nothing to add
 
-        NSArray *temp = m_FoundItemsBatch;
+        NSArray *const temp = m_FoundItemsBatch;
         m_FoundItemsBatch = [[NSMutableArray alloc] initWithCapacity:4096];
 
         dispatch_to_main_queue([=] {
-            NSMutableArray *new_objects = [m_FoundItems mutableCopy];
+            NSMutableArray *const new_objects = [m_FoundItems mutableCopy];
             [new_objects addObjectsFromArray:temp];
             self.FoundItems = new_objects;
         });

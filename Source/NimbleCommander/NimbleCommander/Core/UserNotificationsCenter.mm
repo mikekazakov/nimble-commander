@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UserNotificationsCenter.h"
 #include <Cocoa/Cocoa.h>
 #include <Operations/Statistics.h>
@@ -34,7 +34,7 @@ void UserNotificationsCenter::ReportCompletedOperation(const nc::ops::Operation 
     if( _operation.Statistics().ElapsedTime() < m_MinElapsedOperationTime )
         return;
 
-    NSUserNotification *un = [[NSUserNotification alloc] init];
+    NSUserNotification *const un = [[NSUserNotification alloc] init];
     un.title = NSLocalizedString(@"Operation is complete", "Notification text");
     un.subtitle = [NSString stringWithUTF8StdString:_operation.Title()];
     un.soundName = NSUserNotificationDefaultSoundName;

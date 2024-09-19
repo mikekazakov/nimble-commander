@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ToolsMenuDelegate.h"
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/AnyHolder.h>
@@ -10,7 +10,7 @@
 
 static NSMenuItem *ItemForTool(const std::shared_ptr<const nc::panel::ExternalTool> &_tool, int _ind)
 {
-    NSMenuItem *item = [[NSMenuItem alloc] init];
+    NSMenuItem *const item = [[NSMenuItem alloc] init];
     item.title = _tool->m_Title.empty() ? [NSString stringWithFormat:NSLocalizedString(@"Tool #%u", ""), _ind]
                                         : [NSString stringWithUTF8StdString:_tool->m_Title];
     item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_tool}];

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataFilter.h"
 #include <VFS/VFS.h>
 #include <Base/CFPtr.h>
@@ -153,7 +153,7 @@ bool TextualFilter::IsValidItem(const VFSListingItem &_item, QuickSearchHiglight
     if( textlen == 0 )
         return true; // will return true on any item with @"" filter
 
-    NSString *name = _item.DisplayNameNS();
+    NSString *const name = _item.DisplayNameNS();
     const auto namelen = name.length;
     if( textlen > namelen )
         return false; // unsatisfiable by definition

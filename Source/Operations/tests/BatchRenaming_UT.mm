@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
 #include "TestEnv.h"
@@ -367,7 +367,7 @@ TEST_CASE(PREFIX "DecomposeMaskIntoPlaceholders")
     struct TC {
         NSString *input;
         std::optional<std::vector<MD>> expected;
-    } tcs[] = {
+    } const tcs[] = {
         {@"", std::vector<MD>{}},
         {@"[", std::nullopt},
         {@"]", std::nullopt},
@@ -434,7 +434,7 @@ TEST_CASE(PREFIX "Renaming - simple cases")
         const bool parsed = scheme.BuildActionsScript(test_case.pattern);
         REQUIRE(parsed == test_case.parsed);
         if( parsed ) {
-            NSString *renamed = scheme.Rename(file_info, 0);
+            NSString *const renamed = scheme.Rename(file_info, 0);
             INFO(test_case.expected.UTF8String);
             INFO(renamed.UTF8String);
             REQUIRE([renamed isEqualToString:test_case.expected]);

@@ -198,7 +198,7 @@ struct BackgroundFileOpener {
         assert(m_VFS);
         __weak NCViewerViewController *weak_self = self;
         m_FileObservationToken = m_VFS->ObserveFileChanges(m_Path, [weak_self] {
-            if( NCViewerViewController *strong_self = weak_self )
+            if( NCViewerViewController *const strong_self = weak_self )
                 [strong_self onFileChanged];
         });
     }
@@ -564,7 +564,7 @@ struct BackgroundFileOpener {
     Log::Debug("refresh called");
     __weak NCViewerViewController *weak_self = self;
     dispatch_to_background([weak_self] {
-        NCViewerViewController *strong_self = weak_self;
+        NCViewerViewController *const strong_self = weak_self;
         if( !strong_self )
             return;
 
@@ -577,7 +577,7 @@ struct BackgroundFileOpener {
         }
 
         dispatch_to_main_queue([weak_self, opener = std::move(opener)] {
-            NCViewerViewController *strong_self = weak_self;
+            NCViewerViewController *const strong_self = weak_self;
             if( !strong_self )
                 return;
             [strong_self commitRefresh:*opener];
@@ -592,7 +592,7 @@ struct BackgroundFileOpener {
     m_AutomaticFileRefreshScheduled = true;
     __weak NCViewerViewController *weak_self = self;
     dispatch_to_main_queue_after(g_AutomaticRefreshDelay, [weak_self] {
-        if( NCViewerViewController *strong_self = weak_self ) {
+        if( NCViewerViewController *const strong_self = weak_self ) {
             strong_self->m_AutomaticFileRefreshScheduled = false;
             [strong_self onRefresh];
         }
@@ -670,7 +670,7 @@ int BackgroundFileOpener::Open(VFSHostPtr _vfs,
 
     if( original_file->GetReadParadigm() < VFSFile::ReadParadigm::Random ) {
         // we need to read a file into temporary mem/file storage to access it randomly
-        ProcessSheetController *proc = [ProcessSheetController new];
+        ProcessSheetController *const proc = [ProcessSheetController new];
         proc.title = NSLocalizedString(@"Opening file...", "Title for process sheet when opening a vfs file");
         [proc Show];
 

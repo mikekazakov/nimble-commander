@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "TabBarStyle.h"
 #import <MMTabBarView/MMTabStyle.h>
 #import <MMTabBarView/MMAttachedTabBarButton.h>
@@ -20,7 +20,7 @@ static NSImage *MakeTabCloseFreeImage()
 {
     auto handler = []([[maybe_unused]] NSRect rc) -> BOOL {
         [nc::CurrentTheme().FilePanelsTabsPictogramColor() set];
-        NSBezierPath *bezier = [NSBezierPath bezierPath];
+        NSBezierPath *const bezier = [NSBezierPath bezierPath];
         [bezier moveToPoint:NSMakePoint(2.5, 2.5)];
         [bezier lineToPoint:NSMakePoint(9.5, 9.5)];
         [bezier moveToPoint:NSMakePoint(2.5, 9.5)];
@@ -75,7 +75,7 @@ static auto g_TabClosePressedImage = MakeTabClosePressedImage();
 
 static NSBezierPath *MakePlusShape()
 {
-    NSBezierPath *bezier = [NSBezierPath bezierPath];
+    NSBezierPath *const bezier = [NSBezierPath bezierPath];
     [bezier moveToPoint:NSMakePoint(11.5, 6)];
     [bezier lineToPoint:NSMakePoint(11.5, 17)];
     [bezier moveToPoint:NSMakePoint(6, 11.5)];
@@ -98,7 +98,7 @@ static NSImage *MakeTabAddHoverImage()
 {
     auto handler = [](NSRect rc) -> BOOL {
         [[nc::CurrentTheme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.1] set];
-        NSBezierPath *bezier = [NSBezierPath bezierPathWithRect:rc];
+        NSBezierPath *const bezier = [NSBezierPath bezierPathWithRect:rc];
         [bezier fill];
 
         [nc::CurrentTheme().FilePanelsTabsPictogramColor() set];
@@ -114,7 +114,7 @@ static NSImage *MakeTabAddPressedImage()
 {
     auto handler = [](NSRect rc) -> BOOL {
         [[nc::CurrentTheme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.2] set];
-        NSBezierPath *bezier = [NSBezierPath bezierPathWithRect:rc];
+        NSBezierPath *const bezier = [NSBezierPath bezierPathWithRect:rc];
         [bezier fill];
 
         [nc::CurrentTheme().FilePanelsTabsPictogramColor() set];
@@ -169,7 +169,7 @@ static std::chrono::nanoseconds g_LastImagesRebuildTime{0};
                 g_LastImagesRebuildTime = nc::base::machtime();
             }
 
-            if( MMTabBarView *sv = v ) {
+            if( MMTabBarView *const sv = v ) {
                 [sv updateImages];
                 [sv windowStatusDidChange:[[NSNotification alloc] initWithName:@"" object:nil userInfo:nil]];
                 for( NSView *b in sv.subviews )
@@ -277,7 +277,7 @@ static std::chrono::nanoseconds g_LastImagesRebuildTime{0};
 - (NSAttributedString *)attributedStringValueForTabCell:(MMTabBarButtonCell *)cell
 {
     static const auto paragraph_style = []() -> NSParagraphStyle * {
-        NSMutableParagraphStyle *ps = NSParagraphStyle.defaultParagraphStyle.mutableCopy;
+        NSMutableParagraphStyle *const ps = NSParagraphStyle.defaultParagraphStyle.mutableCopy;
         ps.lineBreakMode = NSLineBreakByTruncatingTail;
         ps.alignment = NSTextAlignmentCenter;
         return ps;
@@ -340,7 +340,7 @@ static std::chrono::nanoseconds g_LastImagesRebuildTime{0};
     MMAttachedTabBarButton *button = nc::objc_cast<MMAttachedTabBarButton>(controlView);
 
     const NSColor *bg_color = [&] {
-        const MMTabBarView *tabBarView = [controlView enclosingTabBarView];
+        const MMTabBarView *const tabBarView = [controlView enclosingTabBarView];
         const bool wnd_active = [tabBarView isWindowActive];
         const bool tab_selected = [button state] == NSControlStateValueOn;
         const bool button_hovered = [button mouseHovered];

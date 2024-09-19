@@ -291,9 +291,9 @@ TEST_CASE(PREFIX "Can read from a file")
     for( auto &tc : tcs ) {
         INFO(fmt::format("{} - {} - {}", tc.key.UTF8String, tc.expected_label, std::to_underlying(tc.expected_color)));
         close(open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR));
-        NSURL *url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:path.c_str()
-                                                                isDirectory:false
-                                                              relativeToURL:nil];
+        NSURL *const url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:path.c_str()
+                                                                      isDirectory:false
+                                                                    relativeToURL:nil];
         CHECK([url setResourceValue:tc.value forKey:tc.key error:nil]);
         auto tags = Tags::ReadTags(path);
         REQUIRE(tags.size() == 1);
@@ -439,9 +439,9 @@ TEST_CASE(PREFIX "Our tags can be read back by Cocoa")
 
     for( auto &tc : tcs ) {
         CHECK(Tags::WriteTags(path, tc.tags));
-        NSURL *url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:path.c_str()
-                                                                isDirectory:false
-                                                              relativeToURL:nil];
+        NSURL *const url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:path.c_str()
+                                                                      isDirectory:false
+                                                                    relativeToURL:nil];
 
         id tag_names;
         CHECK([url getResourceValue:&tag_names forKey:NSURLTagNamesKey error:nil]);

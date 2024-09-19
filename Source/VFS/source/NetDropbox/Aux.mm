@@ -142,7 +142,7 @@ static std::pair<int, NSData *> SendInfiniteSynchronousRequest(NSURLSession *_se
     __block NSURLResponse *response = nil;
     __block NSError *error = nil;
 
-    NSURLSessionDataTask *task =
+    NSURLSessionDataTask *const task =
         [_session dataTaskWithRequest:_request
                     completionHandler:^(NSData *_data, NSURLResponse *_response, NSError *_error) {
                       error = _error;
@@ -209,7 +209,7 @@ Metadata ParseMetadata(const rapidjson::Value &_value)
     using namespace std::literals;
     [[clang::no_destroy]] static const auto file_type = "file"s, folder_type = "folder"s;
     [[clang::no_destroy]] static const auto date_formatter = [] {
-        NSDateFormatter *df = [[NSDateFormatter alloc] init];
+        NSDateFormatter *const df = [[NSDateFormatter alloc] init];
         df.dateFormat = @"yyyy-MM-dd'T'HH:mm:ssZZZZZ";
         return df;
     }();
@@ -282,7 +282,7 @@ std::string EscapeString(std::string_view _original)
 
 std::string EscapeStringForJSONInHTTPHeader(const std::string &_original)
 {
-    NSString *str = [NSString stringWithUTF8String:_original.c_str()];
+    NSString *const str = [NSString stringWithUTF8String:_original.c_str()];
     if( !str )
         return {};
 

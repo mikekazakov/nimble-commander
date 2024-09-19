@@ -66,11 +66,11 @@ static std::vector<std::string> GetHandlersPathsForNativeItem(const std::string 
 
 static std::string GetDefaultHandlerPathForUTI(const std::string &_uti)
 {
-    NSString *uti = [NSString stringWithUTF8StdString:_uti];
+    NSString *const uti = [NSString stringWithUTF8StdString:_uti];
     if( !uti )
         return {};
 
-    NSString *bundle =
+    NSString *const bundle =
         (__bridge_transfer NSString *)LSCopyDefaultRoleHandlerForContentType((__bridge CFStringRef)uti, kLSRolesAll);
     auto path = [NSWorkspace.sharedWorkspace absolutePathForAppBundleWithIdentifier:bundle];
     if( path )
@@ -80,11 +80,11 @@ static std::string GetDefaultHandlerPathForUTI(const std::string &_uti)
 
 static std::vector<std::string> GetHandlersPathsForUTI(const std::string &_uti)
 {
-    NSString *uti = [NSString stringWithUTF8StdString:_uti];
+    NSString *const uti = [NSString stringWithUTF8StdString:_uti];
     if( !uti )
         return {};
 
-    NSArray *bundles =
+    NSArray *const bundles =
         (__bridge_transfer NSArray *)LSCopyAllRoleHandlersForContentType((__bridge CFStringRef)uti, kLSRolesAll);
 
     std::vector<std::string> result;
@@ -183,11 +183,11 @@ struct CachedLaunchServiceHandler {
 private:
     static CachedLaunchServiceHandler BuildLaunchHandler(const std::string &_handler_path)
     {
-        NSString *path = [NSString stringWithUTF8StdString:_handler_path];
+        NSString *const path = [NSString stringWithUTF8StdString:_handler_path];
         if( !path )
             throw std::domain_error("malformed path");
 
-        NSBundle *handler_bundle = [NSBundle bundleWithPath:path];
+        NSBundle *const handler_bundle = [NSBundle bundleWithPath:path];
         if( handler_bundle == nil )
             throw std::domain_error("can't open NSBundle");
 
@@ -221,7 +221,7 @@ private:
         for( NSImageRep *representation in representations )
             if( representation.pixelsHigh > 32 && representation.pixelsWide > 32 )
                 to_remove.emplace_back(representation);
-        for( NSImageRep *representation : to_remove )
+        for( NSImageRep *const &representation : to_remove )
             [_image removeRepresentation:representation];
         return _image;
     }
@@ -274,7 +274,7 @@ bool LaunchServiceHandler::SetAsDefaultHandlerForUTI(const std::string &_uti) co
     if( _uti.empty() )
         return false;
 
-    NSString *uti = [NSString stringWithUTF8StdString:_uti];
+    NSString *const uti = [NSString stringWithUTF8StdString:_uti];
     if( !uti )
         return false;
 

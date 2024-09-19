@@ -53,7 +53,7 @@ void BatchRename::Perform(PanelController *_target, id) const
           __weak PanelController *weak_panel = _target;
           operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=] {
               dispatch_to_main_queue([=] {
-                  if( PanelController *pc = weak_panel )
+                  if( PanelController *const pc = weak_panel )
                       [pc hintAboutFilesystemChange];
               });
           });

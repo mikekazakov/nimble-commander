@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 #include <Utility/StringExtras.h>
 #include <Base/CFStackAllocator.h>
@@ -57,7 +57,7 @@ StringTruncateToWidth(NSMutableString *str, double maxWidth, ETruncationType tru
     int mid;
 
     // Make a backup copy of the string so that we can restore it if we fail low.
-    NSMutableString *backup = [str mutableCopy];
+    NSMutableString *const backup = [str mutableCopy];
 
     while( hi >= lo ) {
         mid = (hi + lo) / 2;
@@ -90,7 +90,7 @@ NSString *
 StringByTruncatingToWidth(NSString *str, double inWidth, ETruncationType truncationType, NSDictionary *attributes)
 {
     if( [str sizeWithAttributes:attributes].width > inWidth ) {
-        NSMutableString *mutableCopy = [str mutableCopy];
+        NSMutableString *const mutableCopy = [str mutableCopy];
         StringTruncateToWidth(mutableCopy, inWidth, truncationType, attributes);
         return mutableCopy;
     }

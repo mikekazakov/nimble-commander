@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MakeNew.h"
 #include <NimbleCommander/Core/Alert.h>
 #include "../PanelController.h"
@@ -18,7 +18,7 @@ namespace nc::panel::actions {
 using namespace std::literals;
 
 [[clang::no_destroy]] static const auto g_InitialFileName = []() -> std::string {
-    NSString *stub = NSLocalizedString(@"untitled.txt", "Name for freshly created file by hotkey");
+    NSString *const stub = NSLocalizedString(@"untitled.txt", "Name for freshly created file by hotkey");
     if( stub && stub.length )
         return stub.fileSystemRepresentationSafe;
 
@@ -26,7 +26,7 @@ using namespace std::literals;
 }();
 
 [[clang::no_destroy]] static const auto g_InitialFolderName = []() -> std::string {
-    NSString *stub = NSLocalizedString(@"untitled folder", "Name for freshly create folder by hotkey");
+    NSString *const stub = NSLocalizedString(@"untitled folder", "Name for freshly create folder by hotkey");
     if( stub && stub.length )
         return stub.fileSystemRepresentationSafe;
 
@@ -34,7 +34,7 @@ using namespace std::literals;
 }();
 
 [[clang::no_destroy]] static const auto g_InitialFolderWithItemsName = []() -> std::string {
-    NSString *stub =
+    NSString *const stub =
         NSLocalizedString(@"New Folder with Items", "Name for freshly created folder by hotkey with items");
     if( stub && stub.length )
         return stub.fileSystemRepresentationSafe;
@@ -132,7 +132,7 @@ void MakeNewFile::Perform(PanelController *_target, id) const
         const int ret = VFSEasyCreateEmptyFile((dir / name).c_str(), vfs);
         if( ret != 0 )
             return dispatch_to_main_queue([=] {
-                Alert *alert = [[Alert alloc] init];
+                Alert *const alert = [[Alert alloc] init];
                 alert.messageText = NSLocalizedString(@"Failed to create an empty file:",
                                                       "Showing error when trying to create an empty file");
                 alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
@@ -141,7 +141,7 @@ void MakeNewFile::Perform(PanelController *_target, id) const
             });
 
         dispatch_to_main_queue([=] {
-            if( PanelController *panel = weak_panel ) {
+            if( PanelController *const panel = weak_panel ) {
                 [panel hintAboutFilesystemChange];
                 ScheduleRenaming(name, panel);
             }
@@ -169,7 +169,7 @@ void MakeNewFolder::Perform(PanelController *_target, id) const
     const auto op = std::make_shared<nc::ops::DirectoryCreation>(name, dir.native(), *vfs);
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
         dispatch_to_main_queue([=] {
-            if( PanelController *panel = weak_panel ) {
+            if( PanelController *const panel = weak_panel ) {
                 [panel hintAboutFilesystemChange];
                 ScheduleRenaming(name, panel);
             }
@@ -208,7 +208,7 @@ void MakeNewFolderWithSelection::Perform(PanelController *_target, id) const
     const auto op = std::make_shared<nc::ops::Copying>(files, destination.native(), vfs, options);
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=] {
         dispatch_to_main_queue([=] {
-            if( PanelController *panel = weak_panel ) {
+            if( PanelController *const panel = weak_panel ) {
                 [panel hintAboutFilesystemChange];
                 ScheduleRenaming(name, panel);
             }
@@ -255,7 +255,7 @@ void MakeNewNamedFolder::Perform(PanelController *_target, id) const
                                      const auto &dir_names = weak_op.lock()->DirectoryNames();
                                      const std::string to_focus = dir_names.empty() ? ""s : dir_names.front();
                                      dispatch_to_main_queue([=] {
-                                         if( PanelController *panel = weak_panel ) {
+                                         if( PanelController *const panel = weak_panel ) {
                                              [panel hintAboutFilesystemChange];
                                              ScheduleFocus(to_focus, panel);
                                          }

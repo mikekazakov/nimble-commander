@@ -18,7 +18,7 @@ static const char *Separator()
 
 static void WriteSingleStringToClipboard(const std::string &_s)
 {
-    NSPasteboard *pb = NSPasteboard.generalPasteboard;
+    NSPasteboard *const pb = NSPasteboard.generalPasteboard;
     [pb declareTypes:@[NSPasteboardTypeString] owner:nil];
     [pb setString:[NSString stringWithUTF8StdString:_s] forType:NSPasteboardTypeString];
 }

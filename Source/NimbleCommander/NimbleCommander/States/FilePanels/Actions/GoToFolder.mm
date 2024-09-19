@@ -24,7 +24,7 @@ using namespace std::literals;
 
 void GoToFolder::Perform(PanelController *_target, id) const
 {
-    GoToFolderSheetController *sheet = [GoToFolderSheetController new];
+    GoToFolderSheetController *const sheet = [GoToFolderSheetController new];
     sheet.panel = _target;
     [sheet showSheetWithParentWindow:_target.window
                              handler:[=] {

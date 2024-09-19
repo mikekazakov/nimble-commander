@@ -119,7 +119,7 @@ void SelectAllByMask::Perform(PanelController *_target, id) const
     view.onSelect = [wp, this](const nc::panel::FindFilesMask &_mask) {
         using utility::FileMask;
         CommitRecentFindFilesMask(_mask);
-        if( PanelController *panel = wp ) {
+        if( PanelController *const panel = wp ) {
             g_PerWindowMasks.ReportRecent(_mask, panel.window);
             FileMask match_mask;
             if( _mask.type == FindFilesMask::Classic ) {

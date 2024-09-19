@@ -1069,7 +1069,7 @@ TEST_CASE(PREFIX "Overwriting a locked native regular item")
         bool src_exist;
         bool dst_exist;
         ssize_t dst_size;
-    } test_cases[] = {
+    } const test_cases[] = {
         {true, LockedItemBehavior::Ask, OperationState::Stopped, true, true, old_sz},
         {true, LockedItemBehavior::SkipAll, OperationState::Completed, true, true, old_sz},
         {true, LockedItemBehavior::UnlockAll, OperationState::Completed, true, true, new_sz},

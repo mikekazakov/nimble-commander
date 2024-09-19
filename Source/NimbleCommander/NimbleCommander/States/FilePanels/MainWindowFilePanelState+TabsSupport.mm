@@ -452,7 +452,7 @@ static NSImage *ResizeImage(NSImage *_img, NSSize _new_size)
     if( !_img.valid )
         return nil;
 
-    NSImage *small_img = [[NSImage alloc] initWithSize:_new_size];
+    NSImage *const small_img = [[NSImage alloc] initWithSize:_new_size];
     [small_img lockFocus];
     _img.size = _new_size;
     NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;

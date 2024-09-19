@@ -299,13 +299,13 @@ static bool GetVerboseInfo(NativeFileSystemInfo &_volume)
 {
     Log::Trace("Getting verbose info about {}", _volume.mounted_at_path);
 
-    NSString *path_str = [NSString stringWithUTF8String:_volume.mounted_at_path.c_str()];
+    NSString *const path_str = [NSString stringWithUTF8String:_volume.mounted_at_path.c_str()];
     if( path_str == nil )
         return false;
 
     _volume.verbose.mounted_at_path = path_str;
 
-    NSURL *url = [NSURL fileURLWithPath:path_str isDirectory:true];
+    NSURL *const url = [NSURL fileURLWithPath:path_str isDirectory:true];
     if( url == nil )
         return false;
 

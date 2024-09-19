@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewLayoutEngineBase.h"
 #include <cmath>
 #include <algorithm>
@@ -47,7 +47,7 @@ LayoutEngineBase::LogarithmicSearchForItemsInRect(NSRect _rect) const noexcept
     const auto first_col_index = static_cast<int>(std::distance(m_ColumnsPositions.begin(), first_col));
     const auto last_col_index = static_cast<int>(std::distance(m_ColumnsPositions.begin(), last_col));
 
-    NSMutableArray *array = [[NSMutableArray alloc] init];
+    NSMutableArray *const array = [[NSMutableArray alloc] init];
     for( int column = first_col_index; column < last_col_index; ++column ) {
         for( int row = first_row_index; row < last_row_index; ++row ) {
             const auto index = column * m_RowsNumber + row;

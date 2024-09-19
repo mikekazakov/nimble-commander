@@ -51,7 +51,7 @@ static bool GoToFTP(PanelController *_target,
         return true;
     } catch( VFSErrorException &e ) {
         dispatch_to_main_queue([=] {
-            Alert *alert = [[Alert alloc] init];
+            Alert *const alert = [[Alert alloc] init];
             alert.messageText =
                 NSLocalizedString(@"FTP connection error:", "Showing error when connecting to FTP server");
             alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
@@ -86,7 +86,7 @@ static bool GoToSFTP(PanelController *_target,
         return true;
     } catch( const VFSErrorException &e ) {
         dispatch_to_main_queue([=] {
-            Alert *alert = [[Alert alloc] init];
+            Alert *const alert = [[Alert alloc] init];
             alert.messageText =
                 NSLocalizedString(@"SFTP connection error:", "Showing error when connecting to SFTP server");
             alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
@@ -121,7 +121,7 @@ static bool GoToWebDAV(PanelController *_target,
         return true;
     } catch( const VFSErrorException &e ) {
         dispatch_to_main_queue([=] {
-            Alert *alert = [[Alert alloc] init];
+            Alert *const alert = [[Alert alloc] init];
             alert.messageText =
                 NSLocalizedString(@"WebDAV connection error:", "Showing error when connecting to WebDAV server");
             alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
@@ -159,7 +159,7 @@ static void GoToDropboxStorage(PanelController *_target,
         _net_mgr.ReportUsage(_connection);
     } catch( const VFSErrorException &e ) {
         dispatch_to_main_queue([=] {
-            Alert *alert = [[Alert alloc] init];
+            Alert *const alert = [[Alert alloc] init];
             alert.messageText =
                 NSLocalizedString(@"Dropbox connection error:", "Showing error when connecting to Dropbox service");
             alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
@@ -179,7 +179,7 @@ static void GoToLANShare(PanelController *_target,
     __weak PanelController *weak_panel = _target;
     auto cb = [weak_panel, activity, _connection, _passwd, _save_password_on_success, &_net_mgr](
                   const std::string &_path, const std::string &_err) {
-        if( PanelController *panel = weak_panel ) {
+        if( PanelController *const panel = weak_panel ) {
             if( !_path.empty() ) {
                 auto request = std::make_shared<DirectoryChangeRequest>();
                 request->RequestedDirectory = _path;
@@ -195,7 +195,7 @@ static void GoToLANShare(PanelController *_target,
             }
             else {
                 dispatch_to_main_queue([=] {
-                    Alert *alert = [[Alert alloc] init];
+                    Alert *const alert = [[Alert alloc] init];
                     alert.messageText = NSLocalizedString(@"Unable to connect to a network share",
                                                           "Informing a user that NC can't connect to network share");
                     alert.informativeText = [NSString stringWithUTF8StdString:_err];

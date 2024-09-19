@@ -119,7 +119,7 @@ void DropboxHost::SetAccessToken(const std::string &_access_token)
 
 std::pair<int, std::string> DropboxHost::RetreiveAccessTokenFromRefreshToken(const std::string &_refresh_token)
 {
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::OAuth2Token];
+    NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::OAuth2Token];
     req.HTTPMethod = @"POST";
     // YOLO: let's assume all these string don't need percent escaping...
     auto post_string =
@@ -146,7 +146,7 @@ std::pair<int, std::string> DropboxHost::RetreiveAccessTokenFromRefreshToken(con
 
 void DropboxHost::InitialAccountLookup()
 {
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::GetCurrentAccount];
+    NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::GetCurrentAccount];
     auto [rc, data] = SendSynchronousPostRequest(req);
     if( rc == VFSError::Ok ) {
         auto json = ParseJSON(data);
@@ -163,7 +163,7 @@ std::pair<int, std::string> DropboxHost::CheckTokenAndRetrieveAccountEmail(const
     const auto config = NSURLSessionConfiguration.defaultSessionConfiguration;
     const auto session = [NSURLSession sessionWithConfiguration:config];
     const auto auth_string = [NSString stringWithFormat:@"Bearer %s", _token.c_str()];
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::GetCurrentAccount];
+    NSMutableURLRequest *const request = [[NSMutableURLRequest alloc] initWithURL:api::GetCurrentAccount];
     request.HTTPMethod = @"POST";
     [request setValue:auth_string forHTTPHeaderField:@"Authorization"];
     auto [rc, data] = SendSynchronousRequest(session, request);
@@ -216,7 +216,7 @@ int DropboxHost::StatFS([[maybe_unused]] std::string_view _path,
 {
     _stat = VFSStatFS{};
 
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::GetSpaceUsage];
+    NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::GetSpaceUsage];
     auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
     if( rc == VFSError::Ok ) {
         auto json_opt = ParseJSON(data);
@@ -258,7 +258,7 @@ int DropboxHost::Stat(std::string_view _path,
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::GetMetadata];
+    NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::GetMetadata];
     InsertHTTPBodyPathspec(req, path);
 
     auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
@@ -301,7 +301,7 @@ int DropboxHost::IterateDirectoryListing(std::string_view _path,
 
     std::string cursor_token = "";
     do {
-        NSMutableURLRequest *req =
+        NSMutableURLRequest *const req =
             [[NSMutableURLRequest alloc] initWithURL:cursor_token.empty() ? api::ListFolder : api::ListFolderContinue];
         if( cursor_token.empty() )
             InsertHTTPBodyPathspec(req, path);
@@ -381,7 +381,7 @@ int DropboxHost::FetchDirectoryListing(std::string_view _path,
 
     do {
 
-        NSMutableURLRequest *req =
+        NSMutableURLRequest *const req =
             [[NSMutableURLRequest alloc] initWithURL:cursor_token.empty() ? api::ListFolder : api::ListFolderContinue];
         if( cursor_token.empty() )
             InsertHTTPBodyPathspec(req, path);
@@ -448,7 +448,7 @@ int DropboxHost::Unlink(std::string_view _path, const VFSCancelChecker &_cancel_
     if( !_path.starts_with("/") )
         return VFSError::InvalidCall;
 
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Delete];
+    NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::Delete];
     InsertHTTPBodyPathspec(req, _path);
 
     auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
@@ -464,7 +464,7 @@ int DropboxHost::RemoveDirectory(std::string_view _path, const VFSCancelChecker 
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Delete];
+    NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::Delete];
     InsertHTTPBodyPathspec(req, path);
 
     auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
@@ -482,7 +482,7 @@ int DropboxHost::CreateDirectory(std::string_view _path,
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::CreateFolder];
+    NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::CreateFolder];
     InsertHTTPBodyPathspec(req, path);
 
     auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
@@ -502,7 +502,7 @@ int DropboxHost::Rename(std::string_view _old_path, std::string_view _new_path, 
     const std::string old_path = EnsureNoTrailingSlash(std::string(_old_path));
     const std::string new_path = EnsureNoTrailingSlash(std::string(_new_path));
 
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Move];
+    NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::Move];
     [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     const std::string path_spec = "{ "s + R"("from_path": ")" + EscapeString(old_path) + "\", " + R"("to_path": ")" +
                                   EscapeString(new_path) + "\"" + " }";

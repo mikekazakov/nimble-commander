@@ -177,7 +177,7 @@ static void AddPanelRefreshEpilog(PanelController *_target, nc::ops::Operation &
     __weak PanelController *weak_panel = _target;
     _operation.ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=] {
         dispatch_to_main_queue([=] {
-            if( PanelController *strong_pc = weak_panel )
+            if( PanelController *const strong_pc = weak_panel )
                 [strong_pc hintAboutFilesystemChange];
         });
     });

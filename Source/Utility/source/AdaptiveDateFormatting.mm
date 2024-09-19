@@ -115,10 +115,10 @@ static bool TimeFormatIsDayFirst()
     static const auto day_first = [] {
         // a very-very nasty code here - trying to parse
         // Unicode Technical Standard #35 stuff in a quite naive way
-        NSDateFormatter *dateFormatter = [NSDateFormatter new];
+        NSDateFormatter *const dateFormatter = [NSDateFormatter new];
         dateFormatter.dateStyle = NSDateFormatterShortStyle;
 
-        NSString *format = dateFormatter.dateFormat;
+        NSString *const format = dateFormatter.dateFormat;
         const char *s = format.UTF8String;
 
         const char *m = strstr(s, "MM");
@@ -140,7 +140,7 @@ static bool TimeFormatIsDayFirst()
 static NSString *Orthodox(time_t _time)
 {
     static const auto formatter = [] {
-        NSDateFormatter *f = [[NSDateFormatter alloc] init];
+        NSDateFormatter *const f = [[NSDateFormatter alloc] init];
         f.dateFormat = TimeFormatIsDayFirst() ? @"dd/LL/yy HH:mm" : @"LL/dd/yy HH:mm";
         return f;
     }();

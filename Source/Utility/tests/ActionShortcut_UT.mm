@@ -88,7 +88,7 @@ TEST_CASE(PREFIX "PrettyString()")
 
 TEST_CASE(PREFIX "[NSMenuItem nc_setKeyEquivalentWithShortcut]")
 {
-    NSMenuItem *it = [[NSMenuItem alloc] initWithTitle:@"Hello" action:nil keyEquivalent:@""];
+    NSMenuItem *const it = [[NSMenuItem alloc] initWithTitle:@"Hello" action:nil keyEquivalent:@""];
     SECTION("Empty")
     {
         [it nc_setKeyEquivalentWithShortcut:ActionShortcut{u8"⌘1"}];

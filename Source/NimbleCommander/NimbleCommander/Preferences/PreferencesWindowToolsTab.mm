@@ -29,7 +29,7 @@ static auto g_MyPrivateTableViewDataType = @"com.magnumbytes.nc.pref.Preferences
 
 static bool AskUserToDeleteTool()
 {
-    NSAlert *alert = [[NSAlert alloc] init];
+    NSAlert *const alert = [[NSAlert alloc] init];
     alert.messageText = NSLocalizedString(@"Are you sure you want to remove this tool?",
                                           "Asking the user for confirmation on deleting the external tool - message");
     alert.informativeText =
@@ -336,7 +336,7 @@ static bool AskUserToDeleteTool()
             dispatch_to_main_queue_after(1ms, [=] {
                 if( auto t = self.selectedTool )
                     if( t->m_Title.empty() )
-                        if( NSString *name = [NSFileManager.defaultManager displayNameAtPath:panel.URL.path] )
+                        if( NSString *const name = [NSFileManager.defaultManager displayNameAtPath:panel.URL.path] )
                             [self setNewTitleString:name];
             });
         }

@@ -164,7 +164,7 @@ void CopyAs::Perform(MainWindowFilePanelState *_target, id) const
       __weak PanelController *weak_panel = act_pc;
       op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
           dispatch_to_main_queue([=] {
-              if( PanelController *panel = weak_panel ) {
+              if( PanelController *const panel = weak_panel ) {
                   if( panel.isUniform &&
                       panel.currentDirectoryPath == std::filesystem::path(path).parent_path().native() + "/" ) {
                       nc::panel::DelayedFocusing req;

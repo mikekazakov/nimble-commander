@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TabsManagement.h"
 #include "../MainWindowFilePanelState.h"
 #include "../MainWindowFilePanelState+TabsSupport.h"
@@ -64,7 +64,7 @@ static void
 AskAboutClosingWindowWithExtraTabs(int _amount, NSWindow *_window, std::function<void(NSModalResponse)> _handler)
 {
     assert(_window && _handler);
-    Alert *dialog = [[Alert alloc] init];
+    Alert *const dialog = [[Alert alloc] init];
     [dialog addButtonWithTitle:NSLocalizedString(@"Close", "User action to close a window")];
     [dialog addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     auto fmt = NSLocalizedString(@"The window has %@ tabs. Are you sure you want to close this window?",

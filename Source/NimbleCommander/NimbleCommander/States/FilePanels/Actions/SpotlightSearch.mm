@@ -103,7 +103,7 @@ void SpotlightSearch::Perform(PanelController *_target, id) const
     const auto view = [[SpotlightSearchPopupViewController alloc] init];
     __weak PanelController *wp = _target;
     view.handler = [wp](const std::string &_query) {
-        if( PanelController *panel = wp ) {
+        if( PanelController *const panel = wp ) {
             auto task = [=](const std::function<bool()> &_cancelled) {
                 if( auto l = FetchSearchResultsAsListing(FetchSpotlightResults(_query),
                                                          nc::bootstrap::NativeVFSHostInstance(),

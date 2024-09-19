@@ -31,14 +31,14 @@ ByteCountFormatter::ByteCountFormatter(bool _localized)
         auto bundle = NSBundle.mainBundle;
         auto language = std::string(bundle.preferredLocalizations.firstObject.UTF8String);
 
-        NSNumberFormatter *def_formatter = [NSNumberFormatter new];
-        NSString *decimal_symbol = [def_formatter decimalSeparator];
+        NSNumberFormatter *const def_formatter = [NSNumberFormatter new];
+        NSString *const decimal_symbol = [def_formatter decimalSeparator];
         if( decimal_symbol.length == 1 && [decimal_symbol characterAtIndex:0] < 256 ) {
             m_DecimalSeparatorUni = [decimal_symbol characterAtIndex:0];
             m_DecimalSeparator = static_cast<char>(m_DecimalSeparatorUni);
         }
 
-        NSString *b = [&] {
+        NSString *const b = [&] {
             if( language == "ru" )
                 return @"б";
             return @"B";
@@ -46,7 +46,7 @@ ByteCountFormatter::ByteCountFormatter(bool _localized)
         if( b.length == 1 )
             m_B = [b characterAtIndex:0];
 
-        NSString *si = [&] {
+        NSString *const si = [&] {
             if( language == "ru" )
                 return @" КМГТП";
             return @" KMGTP";
@@ -56,7 +56,7 @@ ByteCountFormatter::ByteCountFormatter(bool _localized)
                 m_SI[i] = [si characterAtIndex:i];
 
         m_Bytes.clear();
-        NSString *bytes = [&] {
+        NSString *const bytes = [&] {
             if( language == "ru" )
                 return @"байт";
             return @"bytes";

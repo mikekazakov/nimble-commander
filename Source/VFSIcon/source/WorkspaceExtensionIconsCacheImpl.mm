@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/WorkspaceExtensionIconsCacheImpl.h>
 #include <VFSIcon/Log.h>
 #include <Cocoa/Cocoa.h>
@@ -60,7 +60,7 @@ NSImage *WorkspaceExtensionIconsCacheImpl::IconForExtension(const std::string &_
         NSImage *image = nil;
         if( @available(macOS 11.0, *) ) {
             Log::Debug("IconForExtension() polling [NSWorkspace iconForContentType:'{}']", uti);
-            UTType *uttype = [UTType typeWithIdentifier:[NSString stringWithUTF8StdString:uti]];
+            UTType *const uttype = [UTType typeWithIdentifier:[NSString stringWithUTF8StdString:uti]];
             image = [NSWorkspace.sharedWorkspace iconForContentType:uttype];
         }
         else {

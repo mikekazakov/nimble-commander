@@ -278,7 +278,7 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 
 static NSOpenPanel *BuildAppChoose()
 {
-    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    NSOpenPanel *const panel = [NSOpenPanel openPanel];
     panel.allowsMultipleSelection = false;
     panel.canChooseFiles = true;
     panel.canChooseDirectories = false;

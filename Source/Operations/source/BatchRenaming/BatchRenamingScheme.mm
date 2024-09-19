@@ -591,8 +591,8 @@ NSString *BatchRenamingScheme::ExtractText(NSString *_from, const TextExtraction
     else {
         if( _te.to_last + 1 >= length )
             return @"";
-        unsigned start = _te.from_first;
-        unsigned end = length - _te.to_last - 1;
+        const unsigned start = _te.from_first;
+        const unsigned end = length - _te.to_last - 1;
         if( start > end )
             return @"";
 
@@ -668,7 +668,7 @@ static NSString *StringByTransform(NSString *_s, BatchRenamingScheme::CaseTransf
 
     static auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];
     auto r = [_s rangeOfCharacterFromSet:cs options:NSBackwardsSearch];
-    bool has_ext = (r.location != NSNotFound && r.location != 0 && r.location != _s.length - 1);
+    const bool has_ext = (r.location != NSNotFound && r.location != 0 && r.location != _s.length - 1);
     if( !has_ext )
         return StringByTransform(_s, _ct);
 
@@ -780,7 +780,7 @@ NSString *BatchRenamingScheme::DoSearchReplace(const ReplaceOptions &_opts, NSSt
     if( !_opts.search_in_ext ) {
         static auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];
         auto r = [_source rangeOfCharacterFromSet:cs options:NSBackwardsSearch];
-        bool has_ext = (r.location != NSNotFound && r.location != 0 && r.location != _source.length - 1);
+        const bool has_ext = (r.location != NSNotFound && r.location != 0 && r.location != _source.length - 1);
         if( has_ext )
             range = NSMakeRange(0, r.location);
     }

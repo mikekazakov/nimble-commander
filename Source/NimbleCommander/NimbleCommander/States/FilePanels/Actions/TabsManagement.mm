@@ -90,7 +90,7 @@ void CloseTab::Perform(MainWindowFilePanelState *_target, id _sender) const
         [_target closeTabForController:act_pc];
     }
     else {
-        int total_tabs = static_cast<int>(_target.leftControllers.size() + _target.rightControllers.size());
+        const int total_tabs = static_cast<int>(_target.leftControllers.size() + _target.rightControllers.size());
         if( total_tabs > 2 ) {
             auto window = _target.window;
             auto close_callback = [=](NSModalResponse result) {

@@ -57,7 +57,7 @@ static std::string NextName(const std::string &_initial, int _index)
 static bool HasEntry(const std::string &_name, const VFSListing &_listing, bool _case_sensitive)
 {
     // naive O(n) implementation, may cause troubles on huge listings
-    unsigned size = _listing.Count();
+    const unsigned size = _listing.Count();
     if( _case_sensitive ) {
         for( unsigned i = 0; i != size; ++i ) {
             if( _listing.Filename(i) == _name )
@@ -129,7 +129,7 @@ void MakeNewFile::Perform(PanelController *_target, id) const
         if( name.empty() )
             return;
 
-        int ret = VFSEasyCreateEmptyFile((dir / name).c_str(), vfs);
+        const int ret = VFSEasyCreateEmptyFile((dir / name).c_str(), vfs);
         if( ret != 0 )
             return dispatch_to_main_queue([=] {
                 Alert *alert = [[Alert alloc] init];

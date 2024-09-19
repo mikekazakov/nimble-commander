@@ -79,7 +79,7 @@ void GoToApplicationsFolder::Perform(PanelController *_target, id) const
     else {
         auto task = [_target](const std::function<bool()> &_cancelled) {
             VFSListingPtr listing;
-            int rc = vfs::native::FetchUnifiedApplicationsListing(
+            const int rc = vfs::native::FetchUnifiedApplicationsListing(
                 nc::bootstrap::NativeVFSHostInstance(), listing, _target.vfsFetchingFlags, _cancelled);
             if( rc == VFSError::Ok ) {
                 dispatch_to_main_queue([listing, _target] { [_target loadListing:listing]; });
@@ -97,7 +97,7 @@ void GoToUtilitiesFolder::Perform(PanelController *_target, id) const
     else {
         auto task = [_target](const std::function<bool()> &_cancelled) {
             VFSListingPtr listing;
-            int rc = vfs::native::FetchUnifiedUtilitiesListing(
+            const int rc = vfs::native::FetchUnifiedUtilitiesListing(
                 nc::bootstrap::NativeVFSHostInstance(), listing, _target.vfsFetchingFlags, _cancelled);
             if( rc == VFSError::Ok ) {
                 dispatch_to_main_queue([listing, _target] { [_target loadListing:listing]; });
@@ -178,10 +178,10 @@ void GoToEnclosingFolder::Perform(PanelController *_target, id _sender) const
 
         if( cur == "/" ) {
             if( const auto parent_vfs = vfs->Parent() ) {
-                std::filesystem::path junct = vfs->JunctionPath();
+                const std::filesystem::path junct = vfs->JunctionPath();
                 assert(!junct.empty());
-                std::string dir = junct.parent_path();
-                std::string sel_fn = junct.filename();
+                const std::string dir = junct.parent_path();
+                const std::string sel_fn = junct.filename();
 
                 auto request = std::make_shared<DirectoryChangeRequest>();
                 request->RequestedDirectory = dir;
@@ -194,8 +194,8 @@ void GoToEnclosingFolder::Perform(PanelController *_target, id _sender) const
             }
         }
         else {
-            std::string dir = cur.parent_path().remove_filename();
-            std::string sel_fn = cur.parent_path().filename();
+            const std::string dir = cur.parent_path().remove_filename();
+            const std::string sel_fn = cur.parent_path().filename();
 
             auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = dir;

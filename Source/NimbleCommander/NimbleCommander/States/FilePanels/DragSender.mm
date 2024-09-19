@@ -179,7 +179,7 @@ BuildLabelComponent(PanelDraggingItem *_item, NSFont *_font, const utility::Font
 static NSArray *BuildImageComponentsForItem(PanelDraggingItem *_item)
 {
     static const auto font = [NSFont systemFontOfSize:13];
-    static utility::FontGeometryInfo font_info{(__bridge CTFontRef)font};
+    static const utility::FontGeometryInfo font_info{(__bridge CTFontRef)font};
 
     if( _item == nil || !_item.item )
         return nil;

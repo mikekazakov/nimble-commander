@@ -162,7 +162,7 @@ static const auto g_LongProcessDelay = 100ms;
 {
     if( _state == ShellTask::TaskState::ProgramInternal || _state == ShellTask::TaskState::ProgramExternal ) {
         dispatch_to_main_queue_after(g_TaskStartInputDelay, [=] {
-            int task_pid = m_Task->ShellChildPID();
+            const int task_pid = m_Task->ShellChildPID();
             if( task_pid >= 0 )
                 dispatch_to_main_queue_after(g_LongProcessDelay, [=] {
                     if( (m_Task->State() == ShellTask::TaskState::ProgramInternal ||

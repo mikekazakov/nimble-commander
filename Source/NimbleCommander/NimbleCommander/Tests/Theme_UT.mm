@@ -26,7 +26,7 @@ static nc::config::Value JSONToObj(std::string_view _json)
         return nc::config::Value(rapidjson::kNullType);
 
     rapidjson::Document doc;
-    rapidjson::ParseResult ok = doc.Parse<rapidjson::kParseCommentsFlag>(json.data(), json.length());
+    const rapidjson::ParseResult ok = doc.Parse<rapidjson::kParseCommentsFlag>(json.data(), json.length());
     if( !ok ) {
         throw std::invalid_argument{rapidjson::GetParseError_En(ok.Code())};
     }
@@ -111,7 +111,7 @@ TEST_CASE(PREFIX "Constructs from JSON")
         'viewerSelectionColor': '#01013E',\
         'viewerBackgroundColor': '#01013D'\
     }";
-    Theme t{JSONToObj(json), JSONToObj("{}")};
+    const Theme t{JSONToObj(json), JSONToObj("{}")};
     CHECK(t.FilePanelsGeneralDropBorderColor().toHexStdString == "#010101");
     CHECK(t.FilePanelsGeneralOverlayColor().toHexStdString == "#010102");
     CHECK(t.FilePanelsGeneralSplitterColor().toHexStdString == "#010103");

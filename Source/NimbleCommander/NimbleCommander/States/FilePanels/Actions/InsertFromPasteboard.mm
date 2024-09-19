@@ -24,7 +24,7 @@ static std::vector<VFSListingItem> FetchVFSListingsItemsFromPaths(NSArray *_inpu
 
         if( const char *filepath = ns_filepath.fileSystemRepresentation ) {
             VFSListingPtr listing;
-            int rc = _native_host.FetchSingleItemListing(filepath, listing, 0, nullptr);
+            const int rc = _native_host.FetchSingleItemListing(filepath, listing, 0, nullptr);
             if( rc == 0 )
                 result.emplace_back(listing->Item(0));
         }

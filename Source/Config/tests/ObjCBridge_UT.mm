@@ -17,7 +17,7 @@ TEST_CASE("ConfigBridge returns a valid value")
     ConfigImpl config{json, MakeDummyStorage()}; // NOLINT
     auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:config];
 
-    id const value = [bridge valueForKeyPath:@"abra"];
+    const id value = [bridge valueForKeyPath:@"abra"];
     CHECK(static_cast<NSNumber *>(value).intValue == 42);
 }
 
@@ -27,7 +27,7 @@ TEST_CASE("ConfigBridge returns a valid value from a nested value")
     ConfigImpl config{json, MakeDummyStorage()}; // NOLINT
     auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:config];
 
-    id const value = [bridge valueForKeyPath:@"abra.cadabra.alakazam"];
+    const id value = [bridge valueForKeyPath:@"abra.cadabra.alakazam"];
     CHECK([static_cast<NSString *>(value) isEqualToString:@"Hello"]);
 }
 
@@ -37,7 +37,7 @@ TEST_CASE("ConfigBridge returns nil for an invalid path")
     ConfigImpl config{json, MakeDummyStorage()}; // NOLINT
     auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:config];
 
-    id const value = [bridge valueForKeyPath:@"abra1"];
+    const id value = [bridge valueForKeyPath:@"abra1"];
     CHECK(value == nil);
 }
 

@@ -19,7 +19,7 @@ static const auto g_ConfigSpotlightMaxCount = "filePanel.spotlight.maxCount";
 static std::string CookSpotlightSearchQuery(const std::string &_format, const std::string &_input)
 {
     const auto npos = std::string::npos;
-    bool should_split =
+    const bool should_split =
         _format.find("#{query1}") != npos || _format.find("#{query2}") != npos || _format.find("#{query3}") != npos ||
         _format.find("#{query4}") != npos || _format.find("#{query5}") != npos || _format.find("#{query6}") != npos ||
         _format.find("#{query7}") != npos || _format.find("#{query8}") != npos || _format.find("#{query9}") != npos;
@@ -49,7 +49,7 @@ static std::vector<std::string> FetchSpotlightResults(const std::string &_query)
     auto fmt = GlobalConfig().Has(g_ConfigSpotlightFormat) ? GlobalConfig().GetString(g_ConfigSpotlightFormat)
                                                            : "kMDItemFSName == '*#{query}*'cd";
 
-    std::string format = CookSpotlightSearchQuery(fmt, _query);
+    const std::string format = CookSpotlightSearchQuery(fmt, _query);
 
     MDQueryRef query =
         MDQueryCreate(nullptr, static_cast<CFStringRef>([NSString stringWithUTF8StdString:format]), nullptr, nullptr);
@@ -59,7 +59,7 @@ static std::vector<std::string> FetchSpotlightResults(const std::string &_query)
 
     MDQuerySetMaxCount(query, GlobalConfig().GetInt(g_ConfigSpotlightMaxCount));
 
-    Boolean query_result = MDQueryExecute(query, kMDQuerySynchronous);
+    const Boolean query_result = MDQueryExecute(query, kMDQuerySynchronous);
     if( !query_result )
         return {};
 
@@ -90,7 +90,7 @@ static VFSListingPtr FetchSearchResultsAsListing(const std::vector<std::string> 
 
     for( auto &p : _file_paths ) {
         VFSListingPtr listing;
-        int ret = _vfs.FetchSingleItemListing(p.c_str(), listing, _fetch_flags, _cancel_checker);
+        const int ret = _vfs.FetchSingleItemListing(p.c_str(), listing, _fetch_flags, _cancel_checker);
         if( ret == 0 )
             listings.emplace_back(listing);
     }

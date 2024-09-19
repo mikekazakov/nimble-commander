@@ -416,7 +416,7 @@ static void HeatUpConfigValues()
             if( m_DirectoryReLoadingQ.IsStopped() )
                 return;
             VFSListingPtr listing;
-            int ret = vfs->FetchDirectoryListing(
+            const int ret = vfs->FetchDirectoryListing(
                 dirpath.c_str(), listing, fetch_flags, [&] { return m_DirectoryReLoadingQ.IsStopped(); });
             if( ret >= 0 )
                 dispatch_to_main_queue([=] { [self reloadRefreshedListing:listing]; });

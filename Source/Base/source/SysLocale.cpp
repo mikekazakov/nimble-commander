@@ -24,7 +24,7 @@ static std::vector<std::string> ListAllLocales()
     const std::filesystem::path dir{"/usr/share/locale"};
     std::vector<std::string> list;
     std::error_code ec;
-    for( auto const &dir_entry : std::filesystem::directory_iterator{dir, ec} )
+    for( const auto &dir_entry : std::filesystem::directory_iterator{dir, ec} )
         list.push_back(dir_entry.path().filename());
     return list;
 }

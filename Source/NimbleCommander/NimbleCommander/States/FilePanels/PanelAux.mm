@@ -70,7 +70,7 @@ static void RegisterRemoteFileUploading(const std::string &_original_path,
 
     __weak NCMainWindowController *origin_window = _origin.mainWindowController;
     __weak PanelController *origin_controller = _origin;
-    VFSHostWeakPtr weak_host(_original_vfs);
+    const VFSHostWeakPtr weak_host(_original_vfs);
 
     auto on_file_change = [=] {
         NCMainWindowController *window = origin_window;
@@ -283,7 +283,7 @@ bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item)
 
     // TODO: need more sophisticated executable handling here
     // THIS IS WRONG!
-    bool uexec = (_item.UnixMode() & S_IXUSR) || (_item.UnixMode() & S_IXGRP) || (_item.UnixMode() & S_IXOTH);
+    const bool uexec = (_item.UnixMode() & S_IXUSR) || (_item.UnixMode() & S_IXGRP) || (_item.UnixMode() & S_IXOTH);
 
     if( !uexec )
         return false;
@@ -300,7 +300,7 @@ bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item)
 static ops::CopyingOptions::ChecksumVerification DefaultChecksumVerificationSetting()
 {
     // TODO: make depencies on Config explicit
-    int v = GlobalConfig().GetInt(g_ConfigDefaultVerificationSetting);
+    const int v = GlobalConfig().GetInt(g_ConfigDefaultVerificationSetting);
     if( v == static_cast<int>(ops::CopyingOptions::ChecksumVerification::Always) )
         return ops::CopyingOptions::ChecksumVerification::Always;
     else if( v == static_cast<int>(ops::CopyingOptions::ChecksumVerification::WhenMoves) )

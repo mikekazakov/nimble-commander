@@ -175,7 +175,7 @@ std::pair<NSDragOperation, int> DragReceiver::ScanURLsPromiseSource(const vfs::V
         return {NSDragOperationNone, 0};
 
     const auto valid_items = CountItemsWithType(m_Dragging, URLs_Promise_UTI());
-    NSDragOperation operation = NSDragOperationCopy;
+    const NSDragOperation operation = NSDragOperationCopy;
 
     return {operation, valid_items};
 }

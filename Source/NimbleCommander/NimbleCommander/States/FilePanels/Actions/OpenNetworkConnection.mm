@@ -224,7 +224,7 @@ void OpenNewFTPConnection::Perform(PanelController *_target, id) const
                    return;
 
                auto connection = sheet.connection;
-               std::string password = sheet.password;
+               const std::string password = sheet.password;
 
                m_NetMgr.InsertConnection(connection);
                m_NetMgr.SetPassword(connection, password);
@@ -250,7 +250,7 @@ void OpenNewSFTPConnection::Perform(PanelController *_target, id) const
                    return;
 
                auto connection = sheet.connection;
-               std::string password = sheet.password;
+               const std::string password = sheet.password;
 
                m_NetMgr.InsertConnection(connection);
                m_NetMgr.SetPassword(connection, password);
@@ -275,7 +275,7 @@ void OpenNewDropboxStorage::Perform(PanelController *_target, id) const
                    return;
 
                auto connection = sheet.connection;
-               std::string password = sheet.password;
+               const std::string password = sheet.password;
 
                m_NetMgr.InsertConnection(connection);
                m_NetMgr.SetPassword(connection, password);
@@ -322,7 +322,7 @@ void OpenNewWebDAVConnection::Perform(PanelController *_target, id) const
                    return;
 
                auto connection = sheet.connection;
-               std::string password = sheet.password;
+               const std::string password = sheet.password;
 
                m_NetMgr.InsertConnection(connection);
                m_NetMgr.SetPassword(connection, password);
@@ -348,14 +348,14 @@ static void GoToConnection(PanelController *_target,
     if( connection.IsType<NetworkConnectionsManager::FTP>() )
         dispatch_to_background([=, &_net_mgr] {
             auto activity = [_target registerExtActivity];
-            bool success = GoToFTP(_target, connection, passwd, _net_mgr);
+            const bool success = GoToFTP(_target, connection, passwd, _net_mgr);
             if( success && should_save_passwd )
                 _net_mgr.SetPassword(connection, passwd);
         });
     else if( connection.IsType<NetworkConnectionsManager::SFTP>() )
         dispatch_to_background([=, &_net_mgr] {
             auto activity = [_target registerExtActivity];
-            bool success = GoToSFTP(_target, connection, passwd, _net_mgr);
+            const bool success = GoToSFTP(_target, connection, passwd, _net_mgr);
             if( success && should_save_passwd )
                 _net_mgr.SetPassword(connection, passwd);
         });
@@ -369,7 +369,7 @@ static void GoToConnection(PanelController *_target,
     else if( connection.IsType<NetworkConnectionsManager::WebDAV>() )
         dispatch_to_background([=, &_net_mgr] {
             auto activity = [_target registerExtActivity];
-            bool success = GoToWebDAV(_target, connection, passwd, _net_mgr);
+            const bool success = GoToWebDAV(_target, connection, passwd, _net_mgr);
             if( success && should_save_passwd )
                 _net_mgr.SetPassword(connection, passwd);
         });

@@ -34,7 +34,7 @@ FetchItems(const std::string &_directory_path, const std::vector<std::string> &_
 
 TEST_CASE(PREFIX "valid signature after extracting an application")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto source_fn = "Chess.app";
     const auto source_dir = std::filesystem::path("/System/Applications");
     const auto source_path = source_dir / source_fn;
@@ -49,7 +49,7 @@ TEST_CASE(PREFIX "valid signature after extracting an application")
     REQUIRE(VFSCompareEntries("/"s + source_fn, host, source_path, TestEnv().vfs_native, cmp_result) == 0);
     REQUIRE(cmp_result == 0);
 
-    CopyingOptions copy_opts;
+    const CopyingOptions copy_opts;
     Copying copy_operation(
         FetchItems("/", {source_fn}, *host), tmp_dir.directory.native(), TestEnv().vfs_native, copy_opts);
     copy_operation.Start();
@@ -62,7 +62,7 @@ TEST_CASE(PREFIX "valid signature after extracting an application")
 
 TEST_CASE(PREFIX "Compressing an item with big xattrs")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto source_fn = "file";
     const auto xattr_name = "some_xattr";
     const auto source_path = tmp_dir.directory / source_fn;
@@ -124,7 +124,7 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
     }
     else if( S_ISDIR(st1.mode) ) {
         _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
-            int ret = VFSCompareEntries(
+            const int ret = VFSCompareEntries(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
             if( ret != 0 )
                 return false;

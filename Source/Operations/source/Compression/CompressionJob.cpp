@@ -73,7 +73,7 @@ CompressionJob::~CompressionJob() = default;
 void CompressionJob::Perform()
 {
     using namespace std::literals;
-    std::string proposed_arcname =
+    const std::string proposed_arcname =
         m_InitialListingItems.size() == 1 ? m_InitialListingItems.front().Filename() : "Archive"s; // Localize!
 
     m_TargetArchivePath = FindSuitableFilename(proposed_arcname);
@@ -171,9 +171,9 @@ void CompressionJob::ProcessItem(const base::chained_strings::node &_node, int _
         result = ProcessRegularItem(_index, rel_path, full_path);
 
     if( result == StepResult::Done || result == StepResult::Skipped ) {
-        ItemStateReport report{*m_Source->base_hosts[meta.base_vfs_indx],
-                               std::string_view(full_path),
-                               (result == StepResult::Done ? ItemStatus::Processed : ItemStatus::Skipped)};
+        const ItemStateReport report{*m_Source->base_hosts[meta.base_vfs_indx],
+                                     std::string_view(full_path),
+                                     (result == StepResult::Done ? ItemStatus::Processed : ItemStatus::Skipped)};
         TellItemReport(report);
     }
 }
@@ -263,7 +263,7 @@ CompressionJob::ProcessDirectoryItem(int _index, const std::string &_relative_pa
         VFSFilePtr src_file;
         vfs.CreateFile(_full_path.c_str(), src_file);
         if( src_file->Open(VFSFlags::OF_Read) == VFSError::Ok ) {
-            std::string name_wo_slash = {std::begin(_relative_path), std::end(_relative_path) - 1};
+            const std::string name_wo_slash = {std::begin(_relative_path), std::end(_relative_path) - 1};
             WriteEAsIfAny(*src_file, m_Archive, name_wo_slash.c_str());
         }
     }
@@ -324,7 +324,7 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
     }
 
     constexpr int buf_sz = 256 * 1024; // Why 256Kb?
-    std::unique_ptr<char[]> buf = std::make_unique<char[]>(buf_sz);
+    const std::unique_ptr<char[]> buf = std::make_unique<char[]>(buf_sz);
     ssize_t source_read_rc;
     while( (source_read_rc = src_file->Read(buf.get(), buf_sz)) > 0 ) { // reading and compressing itself
         if( BlockIfPaused(); IsStopped() )
@@ -542,7 +542,7 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
 ssize_t CompressionJob::WriteCallback(struct archive *, void *_client_data, const void *_buffer, size_t _length)
 {
     const auto me = static_cast<CompressionJob *>(_client_data);
-    ssize_t ret = me->m_TargetFile->Write(_buffer, _length);
+    const ssize_t ret = me->m_TargetFile->Write(_buffer, _length);
     if( ret >= 0 )
         return ret;
     return ARCHIVE_FATAL;
@@ -581,7 +581,7 @@ static bool WriteEAs(struct archive *_a, void *_md, size_t _md_s, const char *_p
     archive_entry_set_filetype(entry, AE_IFREG);
     archive_entry_set_perm(entry, 0644);
     archive_write_header(_a, entry);
-    ssize_t ret = archive_write_data(_a, _md, _md_s); // we may need cycle here
+    const ssize_t ret = archive_write_data(_a, _md, _md_s); // we may need cycle here
     archive_entry_free(entry);
 
     return ret == static_cast<ssize_t>(_md_s);
@@ -600,7 +600,7 @@ static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source
     char item_path[MAXPATHLEN], item_name[MAXPATHLEN];
     if( GetFilenameFromRelPath(_source_fn, item_name) &&
         GetDirectoryContainingItemFromRelPath(_source_fn, item_path) ) {
-        bool ret = WriteEAs(_a, metadata, metadata_sz, item_path, item_name);
+        const bool ret = WriteEAs(_a, metadata, metadata_sz, item_path, item_name);
         free(metadata);
         return ret;
     }

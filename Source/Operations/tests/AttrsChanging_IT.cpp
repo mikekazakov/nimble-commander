@@ -18,7 +18,7 @@ FetchItems(const std::string &_directory_path, const std::vector<std::string> &_
 
 TEST_CASE(PREFIX "chmod")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
     const auto path = tmp_dir.directory / "test";
     close(creat(path.c_str(), 0755));
@@ -42,7 +42,7 @@ TEST_CASE(PREFIX "chmod")
 
 TEST_CASE(PREFIX "recursion")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
     const auto path = tmp_dir.directory / "test";
     const auto path1 = tmp_dir.directory / "test/qwer";
@@ -78,7 +78,7 @@ TEST_CASE(PREFIX "recursion")
 
 TEST_CASE(PREFIX "chown")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
     const auto path = tmp_dir.directory / "test";
     close(creat(path.c_str(), 0755));
@@ -98,7 +98,7 @@ TEST_CASE(PREFIX "chown")
 
 TEST_CASE(PREFIX "chflags")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
     const auto path = tmp_dir.directory / "test";
     close(creat(path.c_str(), 0755));
@@ -120,7 +120,7 @@ TEST_CASE(PREFIX "chflags")
 
 TEST_CASE(PREFIX "mtime")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
     const auto path = tmp_dir.directory / "test";
     // now - 10'000 seconds
@@ -143,7 +143,7 @@ TEST_CASE(PREFIX "mtime")
 
 TEST_CASE(PREFIX "Item reporting")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
     const auto path = tmp_dir.directory / "test";
     const auto path1 = tmp_dir.directory / "test/dir";

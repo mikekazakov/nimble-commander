@@ -36,7 +36,7 @@ void ExecuteExternalTool::Perform(MainWindowFilePanelState *_target, id _sender)
     if( [_sender respondsToSelector:@selector(representedObject)] ) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wstrict-selector-match"
-        id rep_obj = [_sender representedObject];
+        const id rep_obj = [_sender representedObject];
 #pragma clang diagnostic pop
         if( auto any_holder = objc_cast<AnyHolder>(rep_obj) )
             if( auto tool = std::any_cast<std::shared_ptr<const ExternalTool>>(&any_holder.any) )

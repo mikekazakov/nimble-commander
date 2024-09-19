@@ -257,7 +257,7 @@ void Operation::WaitForDialogResponse(std::shared_ptr<AsyncDialogResponse> _resp
     if( !_response )
         return;
 
-    StatisticsTimingPauser timing_pauser{GetJob()->Statistics()};
+    const StatisticsTimingPauser timing_pauser{GetJob()->Statistics()};
 
     {
         const auto guard = std::lock_guard{m_PendingResponseLock};

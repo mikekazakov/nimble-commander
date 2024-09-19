@@ -633,7 +633,7 @@ CB::UnlockErrorResolution Copying::OnUnlockError(int _err, const std::string &_p
 
 void Copying::OnStageChanged()
 {
-    CopyingTitleBuilder b{m_Job->SourceItems(), m_Job->DestinationPath(), m_Job->Options()};
+    const CopyingTitleBuilder b{m_Job->SourceItems(), m_Job->DestinationPath(), m_Job->Options()};
     std::string title = "";
     switch( m_Job->Stage() ) {
         case CopyingJob::Stage::Default:

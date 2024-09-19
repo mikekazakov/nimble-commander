@@ -8,7 +8,7 @@ using nc::panel::view::brief::DynamicWidthLayoutEngine;
 
 TEST_CASE(PREFIX "empty by default")
 {
-    DynamicWidthLayoutEngine engine;
+    const DynamicWidthLayoutEngine engine;
 
     CHECK(engine.ItemsNumber() == 0);
     CHECK(engine.RowsNumber() == 0);

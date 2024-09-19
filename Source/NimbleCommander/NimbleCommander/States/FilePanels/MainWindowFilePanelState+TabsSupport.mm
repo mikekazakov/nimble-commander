@@ -118,7 +118,7 @@ using namespace nc::panel;
 
 static std::string TabNameForController(PanelController *_controller)
 {
-    std::filesystem::path p = _controller.currentDirectoryPath;
+    const std::filesystem::path p = _controller.currentDirectoryPath;
     std::string name = p == "/" ? p.native() : p.parent_path().filename().native();
     if( name == "/" && _controller.isUniform && _controller.vfs->Parent() ) {
         // source file name for vfs like archives and xattr

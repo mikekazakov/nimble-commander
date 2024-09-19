@@ -11,7 +11,7 @@ using nc::base::CFPtr;
 
 std::string UTIDBImpl::UTIForExtension(std::string_view _extension) const
 {
-    std::lock_guard lock{m_ExtensionToUTILock};
+    const std::lock_guard lock{m_ExtensionToUTILock};
     if( auto i = m_ExtensionToUTI.find(_extension); i != std::end(m_ExtensionToUTI) )
         return i->second;
 
@@ -83,7 +83,7 @@ static void TraverseConformingUTIs(
 
 bool UTIDBImpl::ConformsTo(std::string_view _uti, std::string_view _conforms_to) const
 {
-    std::lock_guard lock{m_ConformsToLock};
+    const std::lock_guard lock{m_ConformsToLock};
     if( const auto it = m_ConformsTo.find(_uti); it != m_ConformsTo.end() ) {
         const auto &conforming = it->second;
         return conforming.contains(_conforms_to);

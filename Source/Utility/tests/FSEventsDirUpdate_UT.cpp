@@ -23,7 +23,7 @@ TEST_CASE(PREFIX "Returns zero on invalid paths")
 
 TEST_CASE(PREFIX "Registers event listeners")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     auto &inst = FSEventsDirUpdate::Instance();
     int call_count[3] = {0, 0, 0};
 
@@ -50,7 +50,7 @@ TEST_CASE(PREFIX "Registers event listeners")
 
 TEST_CASE(PREFIX "Removes event listeners")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     auto &inst = FSEventsDirUpdate::Instance();
     int call_count[3] = {0, 0, 0};
 
@@ -102,7 +102,7 @@ TEST_CASE(PREFIX "Firing logic")
 
     for( auto &tc : tcs ) {
         assert(tc.event_paths.size() == tc.event_flags.size());
-        bool result =
+        const bool result =
             I::ShouldFire(tc.watched_path, tc.event_paths.size(), tc.event_paths.data(), tc.event_flags.data());
         CHECK(result == tc.exp);
     }

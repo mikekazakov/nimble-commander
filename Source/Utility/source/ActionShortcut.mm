@@ -44,7 +44,7 @@ ActionShortcut::EventData::EventData(NSEvent *_event) noexcept
 ActionShortcut::ActionShortcut(std::string_view _from) noexcept : ActionShortcut()
 {
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
-    std::u16string utf16 = convert.from_bytes(_from.data(), _from.data() + _from.length());
+    const std::u16string utf16 = convert.from_bytes(_from.data(), _from.data() + _from.length());
     std::u16string_view v(utf16);
     uint64_t mod_flags = 0;
     while( !v.empty() ) {

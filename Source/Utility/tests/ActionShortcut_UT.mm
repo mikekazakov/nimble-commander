@@ -9,7 +9,7 @@ using nc::utility::ActionShortcut;
 #define PREFIX "nc::utility::ActionShortcut "
 TEST_CASE(PREFIX "Default constructor makes both unicode and modifiers zero")
 {
-    ActionShortcut as;
+    const ActionShortcut as;
     CHECK(as.unicode == 0);
     CHECK(as.modifiers.is_empty());
 }

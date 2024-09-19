@@ -9,7 +9,7 @@ const char *objc_class_c_str(id _object) noexcept
     if( _object == nil )
         return "";
 
-    Class cl = [_object class];
+    const Class cl = [_object class];
     if( cl == nil )
         return "";
 

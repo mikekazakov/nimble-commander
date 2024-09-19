@@ -219,7 +219,7 @@ TEST_CASE(PREFIX "Append to an extended character")
     ExtendedCharRegistry r;
 
     {
-        char32_t invalid = static_cast<char32_t>((uint32_t(1) << 31) + 43634);
+        const char32_t invalid = static_cast<char32_t>((uint32_t(1) << 31) + 43634);
         auto ar = r.Append(u"\x200D", invalid);
         CHECK(ar.newchar == invalid);
         CHECK(ar.eaten == 0);

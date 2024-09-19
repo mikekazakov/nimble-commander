@@ -9,7 +9,7 @@ bool EliminateTrailingSlashInPath(char *_path)
     if( _path == nullptr )
         return false;
 
-    size_t len = strlen(_path);
+    const size_t len = strlen(_path);
     if( len == 0 || _path[0] != '/' )
         return false;
 
@@ -39,7 +39,7 @@ bool GetDirectoryContainingItemFromPath(const char *_path, char *_buf)
 {
     if( _path[0] != '/' )
         return false;
-    size_t sz = strlen(_path);
+    const size_t sz = strlen(_path);
     if( sz == 1 )
         return false;
 
@@ -147,7 +147,7 @@ bool GetDirectoryNameFromPath(const char *_path, char *_dir_out, [[maybe_unused]
         first_sep = _path - 1;
     }
 
-    size_t len = second_sep - first_sep - 1;
+    const size_t len = second_sep - first_sep - 1;
     assert(len + 1 <= _dir_size);
     memcpy(_dir_out, first_sep + 1, len);
     _dir_out[len + 1] = 0;

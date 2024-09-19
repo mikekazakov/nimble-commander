@@ -14,7 +14,7 @@ static int UTF8Errors(const unsigned char *_bytes, size_t _n)
 
     for( size_t i = 0, e = _n, n = 0; i < e; ++i ) // check UTF-8 sequence
     {
-        unsigned char b = _bytes[i];
+        const unsigned char b = _bytes[i];
         if( n == 0 ) {
             if( (b & 0x80) == 0 ) {
                 continue;
@@ -59,7 +59,7 @@ static int UTF16LEErrors(const unsigned char *_bytes, size_t _n)
     int errors = 0;
 
     while( cur < end ) {
-        uint16_t val = *cur;
+        const uint16_t val = *cur;
 
         if( val <= 0xD7FF || val >= 0xE000 ) { // BMP - ok
             cur++;
@@ -92,7 +92,7 @@ static int UTF16BEErrors(const unsigned char *_bytes, size_t _n)
     int errors = 0;
 
     while( cur < end ) {
-        uint16_t val = static_cast<uint16_t>(Endian16_Swap(*cur));
+        const uint16_t val = static_cast<uint16_t>(Endian16_Swap(*cur));
 
         if( val <= 0xD7FF || val >= 0xE000 ) { // BMP - just ok
             cur++;
@@ -100,7 +100,7 @@ static int UTF16BEErrors(const unsigned char *_bytes, size_t _n)
         else {                                     // need to check suggorate pair
             if( val >= 0xD800 && val <= 0xDBFF ) { // leading surrogate
                 if( cur + 1 < end ) {
-                    uint16_t next = static_cast<uint16_t>(Endian16_Swap(*(cur + 1)));
+                    const uint16_t next = static_cast<uint16_t>(Endian16_Swap(*(cur + 1)));
                     if( next >= 0xDC00 && next <= 0xDFFF ) { // ok, normal surrogate
                         cur += 2;
                     }
@@ -173,11 +173,11 @@ int DoStaticDataBlockAnalysis(const void *_data, size_t _bytes_amount, StaticDat
 
     const unsigned char *bytes = reinterpret_cast<const unsigned char *>(_data);
 
-    int byte_zeros_count = ByteZeros(bytes, _bytes_amount); // zeros count in a file
-    int word_zeros_count = WordZeros(bytes, _bytes_amount); // zeros count in a file
-    int inv_utf8 = UTF8Errors(bytes, _bytes_amount);        // invalid utf-8 sequences appearances
-    int inv_utf16le = UTF16LEErrors(bytes, _bytes_amount);  // invalid utf-16 le sequences appearances
-    int inv_utf16be = UTF16BEErrors(bytes, _bytes_amount);  // invalid utf-16 be sequences appearances
+    const int byte_zeros_count = ByteZeros(bytes, _bytes_amount); // zeros count in a file
+    const int word_zeros_count = WordZeros(bytes, _bytes_amount); // zeros count in a file
+    const int inv_utf8 = UTF8Errors(bytes, _bytes_amount);        // invalid utf-8 sequences appearances
+    const int inv_utf16le = UTF16LEErrors(bytes, _bytes_amount);  // invalid utf-16 le sequences appearances
+    const int inv_utf16be = UTF16BEErrors(bytes, _bytes_amount);  // invalid utf-16 be sequences appearances
     int utf16le_spaces, utf16be_spaces;
     SpacesForUTF16(bytes, _bytes_amount, &utf16le_spaces, &utf16be_spaces);
 

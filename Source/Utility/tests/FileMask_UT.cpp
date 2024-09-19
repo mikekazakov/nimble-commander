@@ -138,7 +138,7 @@ TEST_CASE(PREFIX "MatchName - old file masks")
     for( auto &tc : cases ) {
         INFO(tc.mask);
         INFO(tc.name);
-        FileMask mask(tc.mask);
+        const FileMask mask(tc.mask);
         CHECK(mask.MatchName(tc.name) == tc.result);
     }
 }
@@ -172,7 +172,7 @@ TEST_CASE(PREFIX "MatchName - regexes")
     for( auto &tc : cases ) {
         INFO(tc.mask);
         INFO(tc.name);
-        FileMask mask(tc.mask, FileMask::Type::RegEx);
+        const FileMask mask(tc.mask, FileMask::Type::RegEx);
         CHECK(mask.MatchName(tc.name) == tc.result);
     }
 }

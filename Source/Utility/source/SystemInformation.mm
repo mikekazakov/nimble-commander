@@ -172,11 +172,11 @@ std::optional<CPULoad> GetCPULoad() noexcept
     unsigned int *cpuInfo;
     mach_msg_type_number_t numCpuInfo;
     natural_t numCPUs = 0;
-    kern_return_t err = host_processor_info(mach_host_self(),
-                                            PROCESSOR_CPU_LOAD_INFO,
-                                            &numCPUs,
-                                            reinterpret_cast<processor_info_array_t *>(&cpuInfo),
-                                            &numCpuInfo);
+    const kern_return_t err = host_processor_info(mach_host_self(),
+                                                  PROCESSOR_CPU_LOAD_INFO,
+                                                  &numCPUs,
+                                                  reinterpret_cast<processor_info_array_t *>(&cpuInfo),
+                                                  &numCpuInfo);
     if( err != KERN_SUCCESS )
         return {};
 

@@ -154,7 +154,7 @@ void InputTranslatorImpl::ProcessTextInput(NSString *_str)
         return;
 
     const char *utf8str = [_str UTF8String];
-    size_t sz = strlen(utf8str);
+    const size_t sz = strlen(utf8str);
 
     m_Output(Bytes(reinterpret_cast<const std::byte *>(utf8str), sz));
 }
@@ -337,8 +337,8 @@ static std::string ReportUTF8(InputTranslator::MouseEvent _event) noexcept
         cb |= 8;
     if( _event.control )
         cb |= 16;
-    unsigned x = std::clamp(_event.x + 32 + 1, 33, 2047);
-    unsigned y = std::clamp(_event.y + 32 + 1, 33, 2047);
+    const unsigned x = std::clamp(_event.x + 32 + 1, 33, 2047);
+    const unsigned y = std::clamp(_event.y + 32 + 1, 33, 2047);
     buf += to_utf8(cb);
     buf += to_utf8(x);
     buf += to_utf8(y);
@@ -382,8 +382,8 @@ static std::string ReportSGR(InputTranslator::MouseEvent _event) noexcept
         cb |= 8;
     if( _event.control )
         cb |= 16;
-    unsigned x = std::max(_event.x + 1, 1);
-    unsigned y = std::max(_event.y + 1, 1);
+    const unsigned x = std::max(_event.x + 1, 1);
+    const unsigned y = std::max(_event.y + 1, 1);
     buf += std::to_string(cb);
     buf += ";";
     buf += std::to_string(x);

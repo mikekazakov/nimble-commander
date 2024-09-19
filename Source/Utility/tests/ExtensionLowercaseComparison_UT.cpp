@@ -9,14 +9,14 @@ using nc::utility::ExtensionsLowercaseList;
 
 TEST_CASE(PREFIX "ExtensionsLowercaseList - empty")
 {
-    ExtensionsLowercaseList l({});
+    const ExtensionsLowercaseList l({});
     CHECK(l.contains("png") == false);
     CHECK(l.contains("") == false);
 }
 
 TEST_CASE(PREFIX "ExtensionsLowercaseList - Basic usage scenario")
 {
-    ExtensionsLowercaseList l("    ,jpg    ,    PNG   ,TxT");
+    const ExtensionsLowercaseList l("    ,jpg    ,    PNG   ,TxT");
     CHECK(l.contains("png") == true);
     CHECK(l.contains("Png") == true);
     CHECK(l.contains("PNG") == true);
@@ -32,6 +32,6 @@ TEST_CASE(PREFIX "ExtensionsLowercaseList - Basic usage scenario")
 
 TEST_CASE(PREFIX "ExtensionsLowercaseList - Long ext")
 {
-    ExtensionsLowercaseList l("This_Is_A_Very_Long_Extension_That_Cannot_For_Sure_Fit_Into_SBO");
+    const ExtensionsLowercaseList l("This_Is_A_Very_Long_Extension_That_Cannot_For_Sure_Fit_Into_SBO");
     CHECK(l.contains("this_is_a_very_long_extension_that_cannot_for_sure_fit_into_sbo") == true);
 }

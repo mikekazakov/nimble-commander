@@ -263,7 +263,7 @@ TEST_CASE(PREFIX "Can parse muliple labels at once")
 
 TEST_CASE(PREFIX "Can read from a file")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto path = dir.directory / "f.txt";
     struct TC {
         NSURLResourceKey key;
@@ -414,7 +414,7 @@ TEST_CASE(PREFIX "Our tags can be read back by Cocoa")
 {
     std::set<std::string> labels;
     auto tag = [&labels](const char *_l, Tags::Color _c) { return Tags::Tag(&*labels.emplace(_l).first, _c); };
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto path = dir.directory / "f.txt";
     close(open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR));
     struct TC {
@@ -635,7 +635,7 @@ TEST_CASE(PREFIX "AddTag")
     // TODO: add a unit test for directories as well
     using C = Tags::Color;
     auto tag = [](std::string_view _l, Tags::Color _c) { return Tags::Tag(Tags::Tag::Internalize(_l), _c); };
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto path = dir.directory / "f.txt";
     close(open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR));
     struct TC {
@@ -662,7 +662,7 @@ TEST_CASE(PREFIX "RemoveTag")
     // TODO: add a unit test for directories as well
     using C = Tags::Color;
     auto tag = [](std::string_view _l, Tags::Color _c) { return Tags::Tag(Tags::Tag::Internalize(_l), _c); };
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto path = dir.directory / "f.txt";
     close(open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR));
     struct TC {

@@ -357,7 +357,7 @@ void NativeFSManagerImpl::OnDidMount(const std::string &_on_path)
         volume->mounted_at_path = _on_path;
         GetAllInfos(*volume.get());
 
-        std::lock_guard<std::mutex> lock(m_Lock);
+        const std::lock_guard<std::mutex> lock(m_Lock);
         InsertNewVolume_Unlocked(volume);
     });
 }
@@ -383,7 +383,7 @@ void NativeFSManagerImpl::OnWillUnmount([[maybe_unused]] const std::string &_on_
 void NativeFSManagerImpl::OnDidUnmount(const std::string &_on_path)
 {
     {
-        std::lock_guard lock{m_Lock};
+        const std::lock_guard lock{m_Lock};
         const auto pred = [=](std::shared_ptr<NativeFileSystemInfo> &_v) { return _v->mounted_at_path == _on_path; };
         const auto it = std::find_if(std::begin(m_Volumes), std::end(m_Volumes), pred);
         if( it != std::end(m_Volumes) )
@@ -398,7 +398,7 @@ void NativeFSManagerImpl::OnDidUnmount(const std::string &_on_path)
 void NativeFSManagerImpl::OnDidRename(const std::string &_old_path, const std::string &_new_path)
 {
     {
-        std::lock_guard lock{m_Lock};
+        const std::lock_guard lock{m_Lock};
 
         const auto pred = [=](std::shared_ptr<NativeFileSystemInfo> &_v) { return _v->mounted_at_path == _old_path; };
         auto it = std::find_if(std::begin(m_Volumes), std::end(m_Volumes), pred);
@@ -419,7 +419,7 @@ void NativeFSManagerImpl::OnDidRename(const std::string &_old_path, const std::s
 
 std::vector<NativeFSManager::Info> NativeFSManagerImpl::Volumes() const
 {
-    std::lock_guard<std::mutex> lock(m_Lock);
+    const std::lock_guard<std::mutex> lock(m_Lock);
     std::vector<NativeFSManager::Info> volumes(std::begin(m_Volumes), std::end(m_Volumes));
     return volumes;
 }
@@ -461,7 +461,7 @@ NativeFSManager::Info NativeFSManagerImpl::VolumeFromFD(int _fd) const noexcept
 
 NativeFSManager::Info NativeFSManagerImpl::VolumeFromPathFast(std::string_view _path) const noexcept
 {
-    std::lock_guard<std::mutex> lock(m_Lock);
+    const std::lock_guard<std::mutex> lock(m_Lock);
     return m_VolumeLookup.FindVolumeForLocation(_path);
 }
 
@@ -470,7 +470,7 @@ NativeFSManager::Info NativeFSManagerImpl::VolumeFromMountPoint(std::string_view
     if( _mount_point.empty() )
         return nullptr;
 
-    std::lock_guard<std::mutex> lock(m_Lock);
+    const std::lock_guard<std::mutex> lock(m_Lock);
     return VolumeFromMountPoint_Unlocked(_mount_point);
 }
 
@@ -503,7 +503,7 @@ NativeFSManager::Info NativeFSManagerImpl::VolumeFromPath(std::string_view _path
         return nullptr;
 
     nc::StackAllocator alloc;
-    std::pmr::string path(_path, &alloc);
+    const std::pmr::string path(_path, &alloc);
     struct statfs info;
     if( statfs(path.c_str(), &info) < 0 )
         return nullptr;
@@ -723,7 +723,7 @@ static std::vector<std::string> GetFullFSList()
 {
     struct statfs *mounts_ptr = nullptr;
     const int num_mounts = getmntinfo_r_np(&mounts_ptr, MNT_NOWAIT);
-    std::unique_ptr<struct statfs[], decltype(&std::free)> mounts(mounts_ptr, &std::free);
+    const std::unique_ptr<struct statfs[], decltype(&std::free)> mounts(mounts_ptr, &std::free);
 
     std::vector<std::string> result;
     for( int i = 0; i < num_mounts; i++ ) {

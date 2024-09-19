@@ -65,7 +65,7 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
     // TODO: investigate using stack-based memory storage for CF objects
     if( _initial == 0 ) {
         // Working without an initial character to try to append to
-        base::CFPtr<CFStringRef> cf_str = base::CFPtr<CFStringRef>::adopt(CFStringCreateWithCharactersNoCopy(
+        const base::CFPtr<CFStringRef> cf_str = base::CFPtr<CFStringRef>::adopt(CFStringCreateWithCharactersNoCopy(
             nullptr, reinterpret_cast<const UniChar *>(_input.data()), _input.length(), kCFAllocatorNull));
         if( !cf_str ) {
             // discard incorrect input
@@ -79,11 +79,11 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
         }
         else if( grapheme_len == 2 && CFStringIsSurrogateHighCharacter(_input[0]) &&
                  CFStringIsSurrogateLowCharacter(_input[1]) ) {
-            uint32_t utf32 = CFStringGetLongCharacterForSurrogatePair(_input[0], _input[1]);
+            const uint32_t utf32 = CFStringGetLongCharacterForSurrogatePair(_input[0], _input[1]);
             return {utf32, 2};
         }
         else {
-            std::lock_guard lock{m_Lock};
+            const std::lock_guard lock{m_Lock};
             const uint32_t idx = FindOrAdd_Unlocked(_input.substr(0, grapheme_len));
             return {ToExtChar(idx), static_cast<size_t>(grapheme_len)};
         }
@@ -97,7 +97,7 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
         memcpy(buf + len, _input.data(), input_len * sizeof(char16_t));
         len += input_len;
 
-        base::CFPtr<CFStringRef> cf_str =
+        const base::CFPtr<CFStringRef> cf_str =
             base::CFPtr<CFStringRef>::adopt(CFStringCreateWithCharactersNoCopy(nullptr, buf, len, kCFAllocatorNull));
         if( !cf_str ) {
             // discard incorrect input
@@ -110,7 +110,7 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
             return {_initial, 0}; // can't be composed with _initial
         }
         else {
-            std::lock_guard lock{m_Lock};
+            const std::lock_guard lock{m_Lock};
             const uint32_t idx =
                 FindOrAdd_Unlocked({reinterpret_cast<const char16_t *>(buf), static_cast<size_t>(grapheme_len)});
             return {ToExtChar(idx), grapheme_len - initial_len};
@@ -118,7 +118,7 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
     }
     else {
         // Working with an initial character to try to append to, which is an extended character.
-        std::lock_guard lock{m_Lock}; // TODO: this is rather silly and will bottleneck on contention...
+        const std::lock_guard lock{m_Lock}; // TODO: this is rather silly and will bottleneck on contention...
 
         // look up the initial extended character
         const uint32_t initial_ex_idx = ToExtIdx(_initial);
@@ -138,7 +138,7 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
         memcpy(buf + len, _input.data(), input_len * sizeof(char16_t));
         len += input_len;
 
-        base::CFPtr<CFStringRef> cf_str =
+        const base::CFPtr<CFStringRef> cf_str =
             base::CFPtr<CFStringRef>::adopt(CFStringCreateWithCharactersNoCopy(nullptr, buf, len, kCFAllocatorNull));
         if( !cf_str ) {
             // discard incorrect input
@@ -177,7 +177,7 @@ base::CFPtr<CFStringRef> ExtendedCharRegistry::Decode(char32_t _code) const noex
         return {};
 
     const uint32_t idx = ToExtIdx(_code);
-    std::lock_guard lock{m_Lock};
+    const std::lock_guard lock{m_Lock};
     if( idx >= m_Chars.size() )
         return {};
     return m_Chars[idx].cf_str;
@@ -199,7 +199,7 @@ bool ExtendedCharRegistry::IsDoubleWidth(char32_t _code) const noexcept
     }
     else {
         const uint32_t idx = ToExtIdx(_code);
-        std::lock_guard lock{m_Lock};
+        const std::lock_guard lock{m_Lock};
         if( idx >= m_Chars.size() )
             return false; // treat invalid extended characters as single-space
         return m_Chars[idx].flags & ExtendedChar::DoubleWidth;
@@ -221,7 +221,7 @@ ExtendedCharRegistry::ExtendedChar::ExtendedChar(std::u16string_view _str)
     const char16_t *chars = str.data();
     // safe to do this as the string is null-termined, hence [0] and [1] always exist
     if( CFStringIsSurrogateHighCharacter(chars[0]) && CFStringIsSurrogateLowCharacter(chars[1]) ) {
-        uint32_t utf32 = CFStringGetLongCharacterForSurrogatePair(chars[0], chars[1]);
+        const uint32_t utf32 = CFStringGetLongCharacterForSurrogatePair(chars[0], chars[1]);
         is_double_width = utility::CharInfo::WCWidthMin1(utf32) == 2;
     }
     else {
@@ -230,7 +230,7 @@ ExtendedCharRegistry::ExtendedChar::ExtendedChar(std::u16string_view _str)
 
     if( is_double_width == false ) {
         // also check for presense of variation selectors
-        for( char16_t c : str ) {
+        for( const char16_t c : str ) {
             if( c == g_VariationSelectorEmoji ) {
                 is_double_width = true;
                 break;

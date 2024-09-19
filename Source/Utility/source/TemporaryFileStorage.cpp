@@ -24,7 +24,7 @@ std::optional<std::string> TemporaryFileStorage::MakeFileFromMemory(std::string_
     const char *memory = _memory.data();
     ssize_t left = _memory.size();
     while( left > 0 ) {
-        ssize_t written = write(opened_file->file_descriptor, memory, left);
+        const ssize_t written = write(opened_file->file_descriptor, memory, left);
         if( written >= 0 ) {
             left -= written;
             memory += written;

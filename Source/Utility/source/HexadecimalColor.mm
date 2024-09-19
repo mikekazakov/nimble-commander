@@ -67,10 +67,10 @@ static constexpr uint32_t HexadecimalColorStringToRGBA(std::string_view _string)
 static constexpr void HexadecimalColorRGBAToString(uint32_t _rgba, char _string[10]) noexcept
 {
     constexpr char hex[] = "0123456789ABCDEF";
-    uint8_t r = uint8_t(_rgba & 0x000000FF);
-    uint8_t g = uint8_t((_rgba >> 8) & 0x000000FF);
-    uint8_t b = uint8_t((_rgba >> 16) & 0x000000FF);
-    uint8_t a = uint8_t((_rgba >> 24) & 0x000000FF);
+    const uint8_t r = uint8_t(_rgba & 0x000000FF);
+    const uint8_t g = uint8_t((_rgba >> 8) & 0x000000FF);
+    const uint8_t b = uint8_t((_rgba >> 16) & 0x000000FF);
+    const uint8_t a = uint8_t((_rgba >> 24) & 0x000000FF);
 
     _string[0] = '#';
     _string[1] = hex[r >> 4];

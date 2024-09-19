@@ -34,7 +34,7 @@ static void StringTruncateTo(NSMutableString *str, unsigned maxCharacters, ETrun
 
     static NSString *sEllipsisString = nil;
     if( !sEllipsisString ) {
-        unichar ellipsisChar = 0x2026;
+        const unichar ellipsisChar = 0x2026;
         sEllipsisString = [[NSString alloc] initWithCharacters:&ellipsisChar length:1];
     }
 
@@ -187,7 +187,7 @@ bool LowercaseEqual(std::string_view _s1, std::string_view _s2) noexcept
     if( _s1.data() == nullptr || _s2.data() == nullptr )
         return false;
 
-    nc::base::CFStackAllocator st_alloc;
+    const nc::base::CFStackAllocator st_alloc;
 
     const auto s1 = CFStringCreateWithBytesNoCopy(st_alloc,
                                                   reinterpret_cast<const UInt8 *>(_s1.data()),

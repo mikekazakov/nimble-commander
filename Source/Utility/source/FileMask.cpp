@@ -51,7 +51,7 @@ static std::vector<std::string> sub_masks(std::string_view _source)
 
 static bool string_needs_normalization(std::string_view _string)
 {
-    for( unsigned char c : _string )
+    for( const unsigned char c : _string )
         if( c > 127 || (c >= 0x41 && c <= 0x5A) ) // >= 'A' && <= 'Z'
             return true;
 
@@ -75,7 +75,7 @@ InplaceFormCLowercaseString::InplaceFormCLowercaseString(std::string_view _strin
         m_View = _string; // using the original string! The characters are not copied.
 
     using base::CFPtr;
-    base::CFStackAllocator allocator;
+    const base::CFStackAllocator allocator;
 
     auto original =
         CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(allocator,
@@ -114,7 +114,7 @@ std::string_view InplaceFormCLowercaseString::str() const noexcept
 
 static std::string ProduceFormCLowercase(std::string_view _string)
 {
-    base::CFStackAllocator allocator;
+    const base::CFStackAllocator allocator;
 
     CFStringRef original = CFStringCreateWithBytesNoCopy(allocator,
                                                          reinterpret_cast<const UInt8 *>(_string.data()),
@@ -206,7 +206,7 @@ FileMask::FileMask(const std::string_view _mask, const Type _type) : m_Mask(_mas
 bool FileMask::Validate(const std::string_view _mask, const Type _type)
 {
     if( _type == Type::RegEx ) {
-        re2::RE2 regex(string_needs_normalization(_mask) ? ProduceFormCLowercase(_mask) : _mask, re2::RE2::Quiet);
+        re2::RE2 const regex(string_needs_normalization(_mask) ? ProduceFormCLowercase(_mask) : _mask, re2::RE2::Quiet);
         return regex.ok();
     }
     return true;
@@ -218,7 +218,7 @@ static bool CompareAgainstSimpleMask(const std::string &_mask, std::string_view 
         return false;
 
     const char *chars = _name.data();
-    size_t chars_num = _name.length();
+    const size_t chars_num = _name.length();
 
     return strincmp2(_mask.c_str(), chars + chars_num - _mask.size(), _mask.size());
 }
@@ -228,7 +228,7 @@ bool FileMask::MatchName(std::string_view _name) const noexcept
     if( m_Masks.empty() || _name.empty() )
         return false;
 
-    InplaceFormCLowercaseString normalized_name(_name);
+    const InplaceFormCLowercaseString normalized_name(_name);
     for( auto &m : m_Masks )
         if( m.index() == 0 ) {
             const auto &re = std::get<std::shared_ptr<const re2::RE2>>(m);

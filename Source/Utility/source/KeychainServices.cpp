@@ -40,7 +40,7 @@ bool KeychainServices::SetPassword(const std::string &_where, const std::string 
 
     if( status == errSecSuccess ) {
         // update existing item
-        CFPtr<CFMutableDictionaryRef> update = CFPtr<CFMutableDictionaryRef>::adopt(
+        const CFPtr<CFMutableDictionaryRef> update = CFPtr<CFMutableDictionaryRef>::adopt(
             CFDictionaryCreateMutable(nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFDictionarySetValue(update.get(), kSecValueData, value.get());
         return SecItemUpdate(query.get(), update.get()) == errSecSuccess;
@@ -58,16 +58,16 @@ bool KeychainServices::SetPassword(const std::string &_where, const std::string 
 bool KeychainServices::GetPassword(const std::string &_where, const std::string &_account, std::string &_password)
 {
     using nc::base::CFPtr;
-    CFPtr<CFMutableDictionaryRef> query =
+    const CFPtr<CFMutableDictionaryRef> query =
         CFPtr<CFMutableDictionaryRef>::adopt(CFDictionaryCreateMutable(nullptr,                        //
                                                                        0,                              //
                                                                        &kCFTypeDictionaryKeyCallBacks, //
                                                                        &kCFTypeDictionaryValueCallBacks));
     CFDictionarySetValue(query.get(), kSecClass, kSecClassInternetPassword);
-    CFPtr<CFStringRef> server =
+    const CFPtr<CFStringRef> server =
         CFPtr<CFStringRef>::adopt(CFStringCreateWithCString(nullptr, _where.c_str(), kCFStringEncodingUTF8));
     CFDictionarySetValue(query.get(), kSecAttrServer, server.get());
-    CFPtr<CFStringRef> account =
+    const CFPtr<CFStringRef> account =
         CFPtr<CFStringRef>::adopt(CFStringCreateWithCString(nullptr, _account.c_str(), kCFStringEncodingUTF8));
     CFDictionarySetValue(query.get(), kSecAttrAccount, account.get());
     CFDictionarySetValue(query.get(), kSecReturnData, kCFBooleanTrue);
@@ -75,7 +75,7 @@ bool KeychainServices::GetPassword(const std::string &_where, const std::string 
 
     CFDataRef out = nullptr;
     const OSStatus status = SecItemCopyMatching(query.get(), reinterpret_cast<CFTypeRef *>(&out));
-    CFPtr<CFDataRef> result = CFPtr<CFDataRef>::adopt(out);
+    const CFPtr<CFDataRef> result = CFPtr<CFDataRef>::adopt(out);
     if( status == errSecSuccess && result ) {
         _password.assign(reinterpret_cast<const char *>(CFDataGetBytePtr(result.get())), CFDataGetLength(result.get()));
         return true;
@@ -86,16 +86,16 @@ bool KeychainServices::GetPassword(const std::string &_where, const std::string 
 bool KeychainServices::ErasePassword(const std::string &_where, const std::string &_account)
 {
     using nc::base::CFPtr;
-    CFPtr<CFMutableDictionaryRef> query =
+    const CFPtr<CFMutableDictionaryRef> query =
         CFPtr<CFMutableDictionaryRef>::adopt(CFDictionaryCreateMutable(nullptr,                        //
                                                                        0,                              //
                                                                        &kCFTypeDictionaryKeyCallBacks, //
                                                                        &kCFTypeDictionaryValueCallBacks));
     CFDictionarySetValue(query.get(), kSecClass, kSecClassInternetPassword);
-    CFPtr<CFStringRef> server =
+    const CFPtr<CFStringRef> server =
         CFPtr<CFStringRef>::adopt(CFStringCreateWithCString(nullptr, _where.c_str(), kCFStringEncodingUTF8));
     CFDictionarySetValue(query.get(), kSecAttrServer, server.get());
-    CFPtr<CFStringRef> account =
+    const CFPtr<CFStringRef> account =
         CFPtr<CFStringRef>::adopt(CFStringCreateWithCString(nullptr, _account.c_str(), kCFStringEncodingUTF8));
     CFDictionarySetValue(query.get(), kSecAttrAccount, account.get());
     return SecItemDelete(query.get()) == errSecSuccess;

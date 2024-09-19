@@ -13,7 +13,7 @@ TEST_CASE(PREFIX "InterpretUnicharsAsUTF8")
         size_t output_sz;
 
         unsigned char output_should_be[32] = {0x24, 0xC2, 0xA2, 0xE2, 0x82, 0xAC, 0xF0, 0xA4, 0xAD, 0xA2, 0x0};
-        size_t output_should_be_sz = std::strlen(reinterpret_cast<char *>(output_should_be));
+        const size_t output_should_be_sz = std::strlen(reinterpret_cast<char *>(output_should_be));
 
         size_t input_eaten;
 

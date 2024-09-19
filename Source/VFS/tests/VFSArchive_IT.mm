@@ -48,7 +48,7 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
     }
     else if( S_ISDIR(st1.mode) ) {
         _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
-            int ret = VFSCompareEntries(
+            const int ret = VFSCompareEntries(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
             if( ret != 0 )
                 return false;
@@ -60,7 +60,7 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
 
 TEST_CASE(PREFIX "XNUSource - TAR")
 {
-    TestDir dir;
+    const TestDir dir;
     auto url = "https://opensource.apple.com/tarballs/xnu/xnu-3248.20.55.tar.gz";
     auto path = dir.directory / "xnu-3248.20.55.tar.gz";
     auto cmd = fmt::format("/usr/bin/curl -s -L -o {} {}", path.native(), url);
@@ -98,22 +98,22 @@ TEST_CASE(PREFIX "XNUSource - TAR")
         REQUIRE(std::memcmp(d->data(), ref, strlen(ref)) == 0);
     }
 
-    std::vector<std::string> filenames{"/xnu-xnu-3248.20.55/bsd/bsm/audit_domain.h",
-                                       "/xnu-xnu-3248.20.55/bsd/netinet6/scope6_var.h",
-                                       "/xnu-xnu-3248.20.55/bsd/vm/vm_unix.c",
-                                       "/xnu-xnu-3248.20.55/iokit/bsddev/DINetBootHook.cpp",
-                                       "/xnu-xnu-3248.20.55/iokit/Kernel/x86_64/IOAsmSupport.s",
-                                       "/xnu-xnu-3248.20.55/iokit/Kernel/IOSubMemoryDescriptor.cpp",
-                                       "/xnu-xnu-3248.20.55/bsd/libkern/memchr.c",
-                                       "/xnu-xnu-3248.20.55/bsd/miscfs/deadfs/dead_vnops.c",
-                                       "/xnu-xnu-3248.20.55/osfmk/x86_64/pmap.c",
-                                       "/xnu-xnu-3248.20.55/pexpert/gen/device_tree.c",
-                                       "/xnu-xnu-3248.20.55/pexpert/i386/pe_init.c",
-                                       "/xnu-xnu-3248.20.55/pexpert/pexpert/i386/efi.h",
-                                       "/xnu-xnu-3248.20.55/security/mac_policy.h",
-                                       "/xnu-xnu-3248.20.55/tools/lockstat/lockstat.c"};
+    const std::vector<std::string> filenames{"/xnu-xnu-3248.20.55/bsd/bsm/audit_domain.h",
+                                             "/xnu-xnu-3248.20.55/bsd/netinet6/scope6_var.h",
+                                             "/xnu-xnu-3248.20.55/bsd/vm/vm_unix.c",
+                                             "/xnu-xnu-3248.20.55/iokit/bsddev/DINetBootHook.cpp",
+                                             "/xnu-xnu-3248.20.55/iokit/Kernel/x86_64/IOAsmSupport.s",
+                                             "/xnu-xnu-3248.20.55/iokit/Kernel/IOSubMemoryDescriptor.cpp",
+                                             "/xnu-xnu-3248.20.55/bsd/libkern/memchr.c",
+                                             "/xnu-xnu-3248.20.55/bsd/miscfs/deadfs/dead_vnops.c",
+                                             "/xnu-xnu-3248.20.55/osfmk/x86_64/pmap.c",
+                                             "/xnu-xnu-3248.20.55/pexpert/gen/device_tree.c",
+                                             "/xnu-xnu-3248.20.55/pexpert/i386/pe_init.c",
+                                             "/xnu-xnu-3248.20.55/pexpert/pexpert/i386/efi.h",
+                                             "/xnu-xnu-3248.20.55/security/mac_policy.h",
+                                             "/xnu-xnu-3248.20.55/tools/lockstat/lockstat.c"};
 
-    dispatch_group_t dg = dispatch_group_create();
+    const dispatch_group_t dg = dispatch_group_create();
 
     // massive concurrent access to archive
     for( int i = 0; i < 1000; ++i )

@@ -97,7 +97,7 @@ TEST_CASE(PREFIX "Deduces a proper filename")
 static void check(const Case &test_case)
 {
     INFO(test_case.name);
-    TestDir dir;
+    const TestDir dir;
     const auto path = std::filesystem::path(dir.directory) / test_case.name;
     REQUIRE(nc::base::WriteAtomically(path, {reinterpret_cast<const std::byte *>(test_case.bytes), test_case.size}));
 
@@ -174,14 +174,14 @@ TEST_CASE(PREFIX "hello compressed via different compressors")
 TEST_CASE(PREFIX "gracefully discards non-compressed input")
 {
     // clang-format off
-    std::vector<uint8_t> cases[] = {
+    std::vector<uint8_t> const cases[] = {
         {},
         {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
         {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B,
          0x0C, 0x0D, 0x0E, 0x0F}
     };
     // clang-format on
-    TestDir dir;
+    const TestDir dir;
     const auto path = std::filesystem::path(dir.directory) / "gibberish.gz";
     for( const auto &tc : cases ) {
         REQUIRE(nc::base::WriteAtomically(path, {reinterpret_cast<const std::byte *>(tc.data()), tc.size()}));

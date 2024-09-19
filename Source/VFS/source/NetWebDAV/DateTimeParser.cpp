@@ -77,7 +77,7 @@ time_t DateTimeFromRFC3339(const char *_date_time)
 
 static time_t ParseUnlocked(CFDateFormatterRef _fmt, const char *_date_time)
 {
-    base::CFStackAllocator alloc;
+    const base::CFStackAllocator alloc;
     time_t result = -1;
 
     const auto str = CFStringCreateWithCString(alloc, _date_time, kCFStringEncodingUTF8);

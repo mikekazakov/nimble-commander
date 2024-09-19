@@ -228,7 +228,7 @@ static std::shared_ptr<SFTPHost> hostForUbuntu2004_User1_Pwd()
 
 static std::shared_ptr<SFTPHost> hostForUbuntu2004_User2_RSA()
 {
-    TestDir td;
+    const TestDir td;
     const auto path = td.directory / "key";
     REQUIRE(nc::base::WriteAtomically(
         path, {reinterpret_cast<const std::byte *>(g_Ubuntu2004_User2RSA.data()), g_Ubuntu2004_User2RSA.length()}));
@@ -237,7 +237,7 @@ static std::shared_ptr<SFTPHost> hostForUbuntu2004_User2_RSA()
 
 static std::shared_ptr<SFTPHost> hostForUbuntu2004_User3_DSA()
 {
-    TestDir td;
+    const TestDir td;
     const auto path = td.directory / "key";
     REQUIRE(nc::base::WriteAtomically(
         path, {reinterpret_cast<const std::byte *>(g_Ubuntu2004_User3DSA.data()), g_Ubuntu2004_User3DSA.length()}));
@@ -246,7 +246,7 @@ static std::shared_ptr<SFTPHost> hostForUbuntu2004_User3_DSA()
 
 static std::shared_ptr<SFTPHost> hostForUbuntu2004_User4_ECDSA()
 {
-    TestDir td;
+    const TestDir td;
     const auto path = td.directory / "key";
     REQUIRE(nc::base::WriteAtomically(
         path, {reinterpret_cast<const std::byte *>(g_Ubuntu2004_User4ECDSA.data()), g_Ubuntu2004_User4ECDSA.length()}));
@@ -255,7 +255,7 @@ static std::shared_ptr<SFTPHost> hostForUbuntu2004_User4_ECDSA()
 
 static std::shared_ptr<SFTPHost> hostForUbuntu2004_User5_ED25519()
 {
-    TestDir td;
+    const TestDir td;
     const auto path = td.directory / "key";
     REQUIRE(nc::base::WriteAtomically(
         path,
@@ -271,7 +271,7 @@ static std::shared_ptr<SFTPHost> hostForUbuntu2004_User6_Passwd()
 
 static std::shared_ptr<SFTPHost> hostForUbuntu2004_User7_RSA_Passwd()
 {
-    TestDir td;
+    const TestDir td;
     const auto path = td.directory / "key";
     REQUIRE(nc::base::WriteAtomically(
         path, {reinterpret_cast<const std::byte *>(g_Ubuntu2004_User7RSA.data()), g_Ubuntu2004_User7RSA.length()}));
@@ -281,7 +281,7 @@ static std::shared_ptr<SFTPHost> hostForUbuntu2004_User7_RSA_Passwd()
 
 static std::shared_ptr<SFTPHost> hostForUbuntu2004_User8_DSA_Passwd()
 {
-    TestDir td;
+    const TestDir td;
     const auto path = td.directory / "key";
     REQUIRE(nc::base::WriteAtomically(
         path, {reinterpret_cast<const std::byte *>(g_Ubuntu2004_User8DSA.data()), g_Ubuntu2004_User8DSA.length()}));
@@ -291,7 +291,7 @@ static std::shared_ptr<SFTPHost> hostForUbuntu2004_User8_DSA_Passwd()
 
 static std::shared_ptr<SFTPHost> hostForUbuntu2004_User9_ECDSA_Passwd()
 {
-    TestDir td;
+    const TestDir td;
     const auto path = td.directory / "key";
     REQUIRE(nc::base::WriteAtomically(
         path, {reinterpret_cast<const std::byte *>(g_Ubuntu2004_User9ECDSA.data()), g_Ubuntu2004_User9ECDSA.length()}));
@@ -301,7 +301,7 @@ static std::shared_ptr<SFTPHost> hostForUbuntu2004_User9_ECDSA_Passwd()
 
 static std::shared_ptr<SFTPHost> hostForUbuntu2004_User10_ED25519_Passwd()
 {
-    TestDir td;
+    const TestDir td;
     const auto path = td.directory / "key";
     REQUIRE(nc::base::WriteAtomically(
         path,
@@ -312,7 +312,7 @@ static std::shared_ptr<SFTPHost> hostForUbuntu2004_User10_ED25519_Passwd()
 
 static std::shared_ptr<SFTPHost> hostForUbuntu2004_Root_ED25519()
 {
-    TestDir td;
+    const TestDir td;
     const auto path = td.directory / "key";
     REQUIRE(nc::base::WriteAtomically(
         path,
@@ -474,7 +474,7 @@ TEST_CASE(PREFIX "doesn't crash on many connections")
 
     // in this test VFS must simply not crash under this workload.
     // returning errors on this case is ok at the moment
-    nc::base::DispatchGroup grp;
+    const nc::base::DispatchGroup grp;
     for( int i = 0; i < 100; ++i )
         grp.Run([&] {
             VFSStat st;
@@ -485,7 +485,7 @@ TEST_CASE(PREFIX "doesn't crash on many connections")
 
 TEST_CASE(PREFIX "basic read")
 {
-    VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
+    const VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
     VFSFilePtr file;
     REQUIRE(host->CreateFile("/etc/debian_version", file, nullptr) == 0);
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
@@ -500,7 +500,7 @@ TEST_CASE(PREFIX "basic read")
 
 TEST_CASE(PREFIX "read link")
 {
-    VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
+    const VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
     char link[MAXPATHLEN];
     const auto rc = host->ReadSymlink("/etc/os-release", link, sizeof(link));
     REQUIRE(rc == VFSError::Ok);
@@ -509,7 +509,7 @@ TEST_CASE(PREFIX "read link")
 
 TEST_CASE(PREFIX "create link")
 {
-    VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
+    const VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
     const auto lnk_path = "/home/user1/smtest";
     const auto lnk_value = "/path/to/some/rubbish";
     const auto createlink_rc = host->CreateSymlink(lnk_path, lnk_value);
@@ -524,7 +524,7 @@ TEST_CASE(PREFIX "create link")
 
 TEST_CASE(PREFIX "chmod")
 {
-    VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
+    const VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
     const auto path = "/home/user1/chmodtest";
 
     REQUIRE(VFSEasyCreateEmptyFile(path, host) == VFSError::Ok);
@@ -544,7 +544,7 @@ TEST_CASE(PREFIX "chmod")
 
 TEST_CASE(PREFIX "chown")
 {
-    VFSHostPtr host = hostForUbuntu2004_Root_ED25519();
+    const VFSHostPtr host = hostForUbuntu2004_Root_ED25519();
     const auto path = "/root/chowntest";
 
     REQUIRE(VFSEasyCreateEmptyFile(path, host) == VFSError::Ok);
@@ -564,7 +564,7 @@ TEST_CASE(PREFIX "chown")
 
 TEST_CASE(PREFIX "FetchUsers")
 {
-    VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
+    const VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
     std::vector<VFSUser> users;
     REQUIRE(host->FetchUsers(users) == VFSError::Ok);
     const std::vector<VFSUser> expected_users{{0, "root", "root"},
@@ -606,7 +606,7 @@ TEST_CASE(PREFIX "FetchUsers")
 
 TEST_CASE(PREFIX "FetchGroups")
 {
-    VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
+    const VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
     std::vector<VFSGroup> groups;
     REQUIRE(host->FetchGroups(groups) == VFSError::Ok);
     const std::vector<VFSGroup> expected_groups{{0, "root", ""},
@@ -684,7 +684,7 @@ TEST_CASE(PREFIX "RandomWrappers")
 
 TEST_CASE(PREFIX "Invalid auth")
 {
-    TestDir td;
+    const TestDir td;
     const auto rsa = td.directory / "rsa";
     REQUIRE(nc::base::WriteAtomically(
         rsa, {reinterpret_cast<const std::byte *>(g_Ubuntu2004_User2RSA.data()), g_Ubuntu2004_User2RSA.length()}));

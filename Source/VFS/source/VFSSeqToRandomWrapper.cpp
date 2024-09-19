@@ -40,7 +40,7 @@ int VFSSeqToRandomROWrapperFile::Open(unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker,
                                       std::function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress)
 {
-    int ret = OpenBackend(_flags, _cancel_checker, _progress);
+    const int ret = OpenBackend(_flags, _cancel_checker, _progress);
     return ret;
 }
 
@@ -56,7 +56,7 @@ int VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
         return VFSError::InvalidCall;
 
     if( !m_SeqFile->IsOpened() ) {
-        int res = m_SeqFile->Open(_flags);
+        const int res = m_SeqFile->Open(_flags);
         if( res < 0 )
             return res;
     }
@@ -100,7 +100,7 @@ int VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
         auto pattern_buf =
             fmt::format("{}{}.vfs.XXXXXX", nc::base::CommonPaths::AppTemporaryDirectory(), nc::utility::GetBundleID());
 
-        int fd = mkstemp(pattern_buf.data());
+        const int fd = mkstemp(pattern_buf.data());
 
         if( fd < 0 )
             return VFSError::FromErrno(errno);
@@ -113,8 +113,8 @@ int VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
         backend->m_Size = m_SeqFile->Size();
 
         constexpr uint64_t bufsz = 256 * 1024;
-        std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
-        uint64_t left_read = backend->m_Size;
+        const std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
+        const uint64_t left_read = backend->m_Size;
         ssize_t res_read;
         ssize_t total_wrote = 0;
 
@@ -199,7 +199,7 @@ bool VFSSeqToRandomROWrapperFile::IsOpened() const
 
 ssize_t VFSSeqToRandomROWrapperFile::Read(void *_buf, size_t _size)
 {
-    ssize_t result = ReadAt(m_Pos, _buf, _size);
+    const ssize_t result = ReadAt(m_Pos, _buf, _size);
     if( result >= 0 )
         m_Pos += result;
     return result;
@@ -214,13 +214,13 @@ ssize_t VFSSeqToRandomROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size
         return VFSError::InvalidCall;
 
     if( m_Backend->m_DataBuf ) {
-        ssize_t toread = std::min(m_Backend->m_Size - _pos, static_cast<off_t>(_size));
+        const ssize_t toread = std::min(m_Backend->m_Size - _pos, static_cast<off_t>(_size));
         memcpy(_buf, &m_Backend->m_DataBuf[_pos], toread);
         return toread;
     }
     else if( m_Backend->m_FD >= 0 ) {
-        ssize_t toread = std::min(m_Backend->m_Size - _pos, static_cast<off_t>(_size));
-        ssize_t res = pread(m_Backend->m_FD, _buf, toread, _pos);
+        const ssize_t toread = std::min(m_Backend->m_Size - _pos, static_cast<off_t>(_size));
+        const ssize_t res = pread(m_Backend->m_FD, _buf, toread, _pos);
         if( res >= 0 )
             return res;
         else

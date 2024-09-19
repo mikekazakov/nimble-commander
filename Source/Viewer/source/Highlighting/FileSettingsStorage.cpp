@@ -16,7 +16,7 @@ namespace nc::viewer::hl {
 static bool RegFileExists(const std::filesystem::path &_path) noexcept
 {
     std::error_code ec = {};
-    std::filesystem::file_status status = std::filesystem::status(_path, ec);
+    const std::filesystem::file_status status = std::filesystem::status(_path, ec);
     if( ec ) {
         return false;
     }

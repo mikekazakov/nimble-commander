@@ -70,7 +70,7 @@ FTPHost::FTPHost(const std::string &_serv_url,
     : Host(_serv_url.c_str(), nullptr, UniqueTag), m_Cache(std::make_unique<ftp::Cache>()),
       m_Configuration(ComposeConfiguration(_serv_url, _user, _passwd, _start_dir, _port, _active))
 {
-    int rc = DoInit();
+    const int rc = DoInit();
     if( rc < 0 )
         throw VFSErrorException(rc);
 }
@@ -79,7 +79,7 @@ FTPHost::FTPHost(const VFSConfiguration &_config)
     : Host(_config.Get<VFSNetFTPHostConfiguration>().server_url.c_str(), nullptr, UniqueTag),
       m_Cache(std::make_unique<ftp::Cache>()), m_Configuration(_config)
 {
-    int rc = DoInit();
+    const int rc = DoInit();
     if( rc < 0 )
         throw VFSErrorException(rc);
 }
@@ -114,7 +114,7 @@ int FTPHost::DoInit()
 
     auto instance = SpawnCURL();
 
-    int result = DownloadAndCacheListing(instance.get(), Config().start_dir.c_str(), nullptr, nullptr);
+    const int result = DownloadAndCacheListing(instance.get(), Config().start_dir.c_str(), nullptr, nullptr);
     if( result == 0 ) {
         m_ListingInstance = std::move(instance);
         return 0;
@@ -133,7 +133,7 @@ int FTPHost::DownloadAndCacheListing(CURLInstance *_inst,
         return VFSError::InvalidCall;
 
     std::string listing_data;
-    int result = DownloadListing(_inst, _path, listing_data, _cancel_checker);
+    const int result = DownloadListing(_inst, _path, listing_data, _cancel_checker);
     if( result != 0 )
         return result;
 
@@ -176,7 +176,7 @@ int FTPHost::DownloadListing(CURLInstance *_inst,
       return _cancel_checker() ? 1 : 0;
     };
 
-    CURLcode result = _inst->PerformEasy();
+    const CURLcode result = _inst->PerformEasy();
     _inst->EasyClearProgFunc();
     _inst->call_lock.unlock();
 
@@ -228,7 +228,7 @@ int FTPHost::Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, co
         return VFSError::InvalidCall;
     }
 
-    std::filesystem::path path = EnsureNoTrailingSlash(std::string(_path));
+    const std::filesystem::path path = EnsureNoTrailingSlash(std::string(_path));
     if( path == "/" ) {
         // special case for root path
         memset(&_st, 0, sizeof(_st));
@@ -243,7 +243,7 @@ int FTPHost::Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, co
 
     // 1st - extract directory and filename from _path
     const std::filesystem::path parent_dir = utility::PathManip::EnsureTrailingSlash(path.parent_path());
-    std::string filename = path.filename().native();
+    const std::string filename = path.filename().native();
 
     // try to find dir from cache
     if( !(_flags & VFSFlags::F_ForceRefresh) ) {
@@ -270,7 +270,7 @@ int FTPHost::Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, co
     // assume that file is freshly created and thus we don't have it in current cache state
     // download new listing, sync I/O
     std::shared_ptr<Directory> dir;
-    int result = DownloadAndCacheListing(m_ListingInstance.get(), parent_dir.c_str(), &dir, _cancel_checker);
+    const int result = DownloadAndCacheListing(m_ListingInstance.get(), parent_dir.c_str(), &dir, _cancel_checker);
     if( result != 0 ) {
         return result;
     }
@@ -292,7 +292,7 @@ int FTPHost::FetchDirectoryListing(std::string_view _path,
         m_Cache->MarkDirectoryDirty(_path);
 
     std::shared_ptr<Directory> dir;
-    int result = GetListingForFetching(m_ListingInstance.get(), _path, dir, _cancel_checker);
+    const int result = GetListingForFetching(m_ListingInstance.get(), _path, dir, _cancel_checker);
     if( result != 0 )
         return result;
 
@@ -324,7 +324,7 @@ int FTPHost::FetchDirectoryListing(std::string_view _path,
         listing_source.filenames.emplace_back(entry.name);
         listing_source.unix_types.emplace_back((entry.mode & S_IFDIR) ? DT_DIR : DT_REG);
         listing_source.unix_modes.emplace_back(entry.mode);
-        int index = int(listing_source.filenames.size() - 1);
+        const int index = int(listing_source.filenames.size() - 1);
 
         listing_source.sizes.insert(index, S_ISDIR(entry.mode) ? ListingInput::unknown_size : entry.size);
         listing_source.atimes.insert(index, entry.time);
@@ -355,7 +355,7 @@ int FTPHost::GetListingForFetching(CURLInstance *_inst,
     }
 
     // download listing, sync I/O
-    int result = DownloadAndCacheListing(_inst, path.c_str(), &dir, _cancel_checker); // sync I/O here
+    const int result = DownloadAndCacheListing(_inst, path.c_str(), &dir, _cancel_checker); // sync I/O here
     if( result != 0 )
         return result;
 
@@ -403,7 +403,7 @@ int FTPHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChec
 
     curlm_e = curl->Attach();
     assert(curlm_e == CURLM_OK);
-    CURLcode curl_res = curl->PerformMulti();
+    const CURLcode curl_res = curl->PerformMulti();
 
     curl_slist_free_all(header);
 
@@ -426,8 +426,8 @@ int FTPHost::CreateDirectory(std::string_view _path,
         return VFSError::InvalidCall;
 
     const std::filesystem::path parent_path = utility::PathManip::EnsureTrailingSlash(path.parent_path());
-    std::string cmd = "MKD " + path.filename().native();
-    std::string url = BuildFullURLString(parent_path.native());
+    const std::string cmd = "MKD " + path.filename().native();
+    const std::string url = BuildFullURLString(parent_path.native());
 
     [[maybe_unused]] CURLMcode curlm_e;
     auto curl = InstanceForIOAtDir(parent_path);
@@ -447,7 +447,7 @@ int FTPHost::CreateDirectory(std::string_view _path,
     curlm_e = curl->Attach();
     assert(curlm_e == CURLM_OK);
 
-    CURLcode curl_e = curl->PerformMulti();
+    const CURLcode curl_e = curl->PerformMulti();
 
     curl_slist_free_all(header);
 
@@ -487,7 +487,7 @@ int FTPHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFSC
 
     curlm_e = curl->Attach();
     assert(curlm_e == CURLM_OK);
-    CURLcode curl_res = curl->PerformMulti();
+    const CURLcode curl_res = curl->PerformMulti();
     curl_slist_free_all(header);
 
     if( curl_res == CURLE_OK )
@@ -510,9 +510,9 @@ int FTPHost::Rename(std::string_view _old_path,
 
     const std::filesystem::path old_parent_path = utility::PathManip::EnsureTrailingSlash(old_path.parent_path());
 
-    std::string url = BuildFullURLString(old_parent_path.native());
-    std::string cmd1 = "RNFR "s + old_path.native(); // TODO: this needs to be escaped (?)
-    std::string cmd2 = "RNTO "s + new_path.native(); // TODO: this needs to be escaped (?)
+    const std::string url = BuildFullURLString(old_parent_path.native());
+    const std::string cmd1 = "RNFR "s + old_path.native(); // TODO: this needs to be escaped (?)
+    const std::string cmd2 = "RNTO "s + new_path.native(); // TODO: this needs to be escaped (?)
 
     [[maybe_unused]] CURLMcode curlm_e;
     auto curl = InstanceForIOAtDir(old_parent_path);
@@ -532,7 +532,7 @@ int FTPHost::Rename(std::string_view _old_path,
 
     curlm_e = curl->Attach();
     assert(curlm_e == CURLM_OK);
-    CURLcode curl_res = curl->PerformMulti();
+    const CURLcode curl_res = curl->PerformMulti();
 
     curl_slist_free_all(header);
 
@@ -563,7 +563,7 @@ HostDirObservationTicket FTPHost::ObserveDirectoryChanges(std::string_view _path
     if( _path.empty() || _path[0] != '/' )
         return {};
 
-    std::lock_guard<std::mutex> lock(m_UpdateHandlersLock);
+    const std::lock_guard<std::mutex> lock(m_UpdateHandlersLock);
 
     m_UpdateHandlers.emplace_back();
     auto &h = m_UpdateHandlers.back();
@@ -578,7 +578,7 @@ HostDirObservationTicket FTPHost::ObserveDirectoryChanges(std::string_view _path
 
 void FTPHost::StopDirChangeObserving(unsigned long _ticket)
 {
-    std::lock_guard<std::mutex> lock(m_UpdateHandlersLock);
+    const std::lock_guard<std::mutex> lock(m_UpdateHandlersLock);
     m_UpdateHandlers.erase(
         remove_if(begin(m_UpdateHandlers), end(m_UpdateHandlers), [=](auto &_h) { return _h.ticket == _ticket; }),
         m_UpdateHandlers.end());
@@ -587,7 +587,7 @@ void FTPHost::StopDirChangeObserving(unsigned long _ticket)
 void FTPHost::InformDirectoryChanged(const std::string &_dir_wth_sl)
 {
     assert(_dir_wth_sl.back() == '/');
-    std::lock_guard<std::mutex> lock(m_UpdateHandlersLock);
+    const std::lock_guard<std::mutex> lock(m_UpdateHandlersLock);
     for( auto &i : m_UpdateHandlers )
         if( i.path == _dir_wth_sl )
             i.handler();
@@ -602,7 +602,7 @@ int FTPHost::IterateDirectoryListing(std::string_view _path,
                                      const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     std::shared_ptr<Directory> dir;
-    int result = GetListingForFetching(m_ListingInstance.get(), _path, dir, nullptr);
+    const int result = GetListingForFetching(m_ListingInstance.get(), _path, dir, nullptr);
     if( result != 0 )
         return result;
 
@@ -621,7 +621,7 @@ int FTPHost::IterateDirectoryListing(std::string_view _path,
 std::unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const std::filesystem::path &_dir)
 {
     assert(!_dir.empty() && _dir.native().back() == '/');
-    std::lock_guard<std::mutex> lock(m_IOIntancesLock);
+    const std::lock_guard<std::mutex> lock(m_IOIntancesLock);
 
     // try to find cached inst in exact this directory
     auto i = m_IOIntances.find(_dir);
@@ -650,7 +650,7 @@ std::unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const std::filesystem:
 void FTPHost::CommitIOInstanceAtDir(const std::filesystem::path &_dir, std::unique_ptr<CURLInstance> _i)
 {
     assert(!_dir.empty() && _dir.native().back() == '/');
-    std::lock_guard<std::mutex> lock(m_IOIntancesLock);
+    const std::lock_guard<std::mutex> lock(m_IOIntancesLock);
 
     _i->EasyReset();
     BasicOptsSetup(_i.get());

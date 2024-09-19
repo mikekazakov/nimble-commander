@@ -84,10 +84,10 @@ static NSDictionary *ReadDictionary(const std::string &_path, VFSHost &_host)
     if( objc_data == nil )
         return nil;
 
-    id dictionary = [NSPropertyListSerialization propertyListWithData:objc_data
-                                                              options:NSPropertyListImmutable
-                                                               format:nil
-                                                                error:nil];
+    const id dictionary = [NSPropertyListSerialization propertyListWithData:objc_data
+                                                                    options:NSPropertyListImmutable
+                                                                     format:nil
+                                                                      error:nil];
     return objc_cast<NSDictionary>(dictionary);
 }
 

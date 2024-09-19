@@ -214,7 +214,7 @@ std::vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, siz
     apple_double_header_t adhdr = *static_cast<const apple_double_header_t *>(_memory_buf);
     swap_adhdr(&adhdr);
 
-    bool has_finfo = memcmp(adhdr.finfo, emptyfinfo, sizeof(emptyfinfo)) != 0;
+    const bool has_finfo = memcmp(adhdr.finfo, emptyfinfo, sizeof(emptyfinfo)) != 0;
 
     std::vector<AppleDoubleEA> eas;
     int eas_last = 0;
@@ -224,7 +224,7 @@ std::vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, siz
         swap_attrhdr(&attrhdr);
 
         if( attrhdr.magic == ATTR_HDR_MAGIC ) {
-            int count = attrhdr.num_attrs;
+            const int count = attrhdr.num_attrs;
             eas.resize(has_finfo ? count + 1 : count);
 
             const attr_entry_t *entry =
@@ -234,8 +234,8 @@ std::vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, siz
                     static_cast<const char *>(_memory_buf) + _memory_size )
                     break; // out-of-boundary guard to be safe about memory (not)corrupting
 
-                u_int32_t offset = SWAP32(entry->offset);
-                u_int32_t length = SWAP32(entry->length);
+                const u_int32_t offset = SWAP32(entry->offset);
+                const u_int32_t length = SWAP32(entry->length);
                 u_int32_t namelen = 0;
                 const char *name = reinterpret_cast<const char *>(&entry->name[0]);
 
@@ -272,7 +272,7 @@ std::vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, siz
 
 void *BuildAppleDoubleFromEA(VFSFile &_file, size_t *_buf_sz)
 {
-    unsigned ret_xattr_count = _file.XAttrCount();
+    const unsigned ret_xattr_count = _file.XAttrCount();
     if( ret_xattr_count == 0 )
         return nullptr;
 
@@ -309,7 +309,7 @@ void *BuildAppleDoubleFromEA(VFSFile &_file, size_t *_buf_sz)
     });
 
     for( int i = 0; i < eas_count; ++i ) {
-        ssize_t sz = _file.XAttrGet(file_eas[i].name, nullptr, 0);
+        const ssize_t sz = _file.XAttrGet(file_eas[i].name, nullptr, 0);
         if( sz > 0 ) {
             file_eas[i].data = std::make_unique<char[]>(sz);
             assert(file_eas[i].data);
@@ -334,7 +334,7 @@ void *BuildAppleDoubleFromEA(VFSFile &_file, size_t *_buf_sz)
             attrs_data_size += (file_eas[i].data_sz + ATTR_ALIGN) & (~ATTR_ALIGN);
         }
 
-    unsigned full_ad_size = sizeof(attr_header) + attrs_hdrs_size + attrs_data_size;
+    const unsigned full_ad_size = sizeof(attr_header) + attrs_hdrs_size + attrs_data_size;
     void *apple_double = malloc(full_ad_size);
     memset(apple_double, 0, full_ad_size);
 

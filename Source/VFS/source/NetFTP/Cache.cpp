@@ -32,7 +32,7 @@ const Entry *Directory::EntryByName(const std::string &_name) const
 
 std::shared_ptr<Directory> Cache::FindDirectory(std::string_view _path) const noexcept
 {
-    std::lock_guard<std::mutex> lock(m_CacheLock);
+    const std::lock_guard<std::mutex> lock(m_CacheLock);
 
     return FindDirectoryInt(_path);
 }
@@ -41,7 +41,7 @@ void Cache::MarkDirectoryDirty(std::string_view _path)
 {
     assert(!_path.empty() && _path.back() == '/');
 
-    std::lock_guard<std::mutex> lock(m_CacheLock);
+    const std::lock_guard<std::mutex> lock(m_CacheLock);
     if( auto d = FindDirectoryInt(_path) )
         d->dirty_structure = true;
 }
@@ -75,7 +75,7 @@ void Cache::InsertLISTDirectory(const char *_path, std::shared_ptr<Directory> _d
 
     _directory->path = dir;
 
-    std::lock_guard<std::mutex> lock(m_CacheLock);
+    const std::lock_guard<std::mutex> lock(m_CacheLock);
 
     auto i = m_Directories.find(dir);
     if( i != m_Directories.end() )
@@ -88,14 +88,14 @@ void Cache::CommitNewFile(const std::string &_path)
 {
     Log::Trace("Cache::CommitNewFile({}) called", _path);
 
-    std::filesystem::path p = _path;
+    const std::filesystem::path p = _path;
     assert(p.is_absolute());
 
     std::filesystem::path dir_path = p.parent_path();
     if( dir_path != "/" )
         dir_path += "/";
 
-    std::lock_guard<std::mutex> lock(m_CacheLock);
+    const std::lock_guard<std::mutex> lock(m_CacheLock);
     auto dir = FindDirectoryInt(dir_path.native());
     if( dir != nullptr ) {
         if( auto entry = dir->EntryByName(p.filename().native()) ) {
@@ -118,14 +118,14 @@ void Cache::CommitNewFile(const std::string &_path)
 void Cache::MakeEntryDirty(const std::string &_path)
 {
     Log::Trace("Cache::MakeEntryDirty({}) called", _path);
-    std::filesystem::path p = _path;
+    const std::filesystem::path p = _path;
     assert(p.is_absolute());
 
     std::filesystem::path dir_path = p.parent_path();
     if( dir_path != "/" )
         dir_path += "/";
 
-    std::lock_guard<std::mutex> lock(m_CacheLock);
+    const std::lock_guard<std::mutex> lock(m_CacheLock);
     auto dir = FindDirectoryInt(dir_path.native());
     if( dir ) {
         auto entry = dir->EntryByName(p.filename().native());
@@ -139,7 +139,7 @@ void Cache::MakeEntryDirty(const std::string &_path)
 void Cache::CommitRMD(const std::string &_path)
 {
     Log::Trace("Cache::CommitRMD({}) called", _path);
-    std::lock_guard<std::mutex> lock(m_CacheLock);
+    const std::lock_guard<std::mutex> lock(m_CacheLock);
 
     EraseEntryInt(_path);
 
@@ -154,21 +154,21 @@ void Cache::CommitRMD(const std::string &_path)
 void Cache::CommitUnlink(std::string_view _path)
 {
     Log::Trace("Cache::CommitUnlink({}) called", _path);
-    std::lock_guard<std::mutex> lock(m_CacheLock);
+    const std::lock_guard<std::mutex> lock(m_CacheLock);
     EraseEntryInt(_path);
 }
 
 void Cache::CommitMKD(const std::string &_path)
 {
     Log::Trace("Cache::CommitMKD({}) called", _path);
-    std::filesystem::path p = _path;
+    const std::filesystem::path p = _path;
     assert(p.is_absolute());
 
     std::filesystem::path dir_path = p.parent_path();
     if( dir_path != "/" )
         dir_path += "/";
 
-    std::lock_guard<std::mutex> lock(m_CacheLock);
+    const std::lock_guard<std::mutex> lock(m_CacheLock);
     auto dir = FindDirectoryInt(dir_path.native());
     if( dir != nullptr ) {
         auto copy = std::make_shared<Directory>(*dir);
@@ -188,7 +188,7 @@ void Cache::CommitRename(const std::string &_old_path, const std::string &_new_p
     std::filesystem::path old_path = _old_path, new_path = _new_path;
     assert(old_path.is_absolute() && new_path.is_absolute());
 
-    std::lock_guard<std::mutex> lock(m_CacheLock);
+    const std::lock_guard<std::mutex> lock(m_CacheLock);
 
     std::filesystem::path old_par_path = old_path.parent_path();
     if( old_par_path != "/" )
@@ -197,7 +197,7 @@ void Cache::CommitRename(const std::string &_old_path, const std::string &_new_p
     if( new_par_path != "/" )
         new_par_path += "/";
 
-    bool same_dir = old_path.parent_path() == new_path.parent_path();
+    const bool same_dir = old_path.parent_path() == new_path.parent_path();
 
     const Entry *old_entry = nullptr;
     auto dir = FindDirectoryInt(old_par_path.native());
@@ -257,7 +257,7 @@ void Cache::CommitRename(const std::string &_old_path, const std::string &_new_p
 void Cache::EraseEntryInt(std::string_view _path)
 {
     Log::Trace("Cache::EraseEntryInt({}) called", _path);
-    std::filesystem::path p = _path;
+    const std::filesystem::path p = _path;
     assert(p.filename() != ""); // _path with no trailing slashes
     assert(p.is_absolute());
 

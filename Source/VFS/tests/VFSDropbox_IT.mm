@@ -79,7 +79,7 @@ TEST_CASE(PREFIX "stat on non existing file")
 TEST_CASE(PREFIX "stat on existing folder")
 {
     const auto filepath = "/TestSet01/";
-    std::shared_ptr<VFSHost> host = Spawn();
+    const std::shared_ptr<VFSHost> host = Spawn();
 
     VFSStat stat;
     REQUIRE(host->Stat(filepath, stat, 0) == 0);
@@ -101,7 +101,7 @@ TEST_CASE(PREFIX "directory iterating")
     const std::shared_ptr<VFSHost> host = Spawn();
 
     std::set<std::string> filenames;
-    int rc = host->IterateDirectoryListing(filepath, [&](const VFSDirEnt &_e) {
+    const int rc = host->IterateDirectoryListing(filepath, [&](const VFSDirEnt &_e) {
         filenames.emplace(_e.name);
         return true;
     });
@@ -112,9 +112,9 @@ TEST_CASE(PREFIX "directory iterating")
 TEST_CASE(PREFIX "large directory iterating")
 {
     const auto filepath = "/TestSet02/";
-    std::shared_ptr<VFSHost> host = Spawn();
+    const std::shared_ptr<VFSHost> host = Spawn();
     std::set<std::string> filenames;
-    int rc = host->IterateDirectoryListing(filepath, [&](const VFSDirEnt &_e) {
+    const int rc = host->IterateDirectoryListing(filepath, [&](const VFSDirEnt &_e) {
         filenames.emplace(_e.name);
         return true;
     });
@@ -126,7 +126,7 @@ TEST_CASE(PREFIX "large directory iterating")
 
 TEST_CASE(PREFIX "directory listing")
 {
-    std::shared_ptr<VFSHost> host = Spawn();
+    const std::shared_ptr<VFSHost> host = Spawn();
     VFSListingPtr listing;
     CHECK(host->FetchDirectoryListing("/", listing, 0) == VFSError::Ok);
 }
@@ -134,7 +134,7 @@ TEST_CASE(PREFIX "directory listing")
 TEST_CASE(PREFIX "large directory listing")
 {
     const auto dirpath = "/TestSet02/";
-    std::shared_ptr<VFSHost> host = Spawn();
+    const std::shared_ptr<VFSHost> host = Spawn();
     VFSListingPtr listing;
     REQUIRE(host->FetchDirectoryListing(dirpath, listing, Flags::F_NoDotDot) == VFSError::Ok);
 
@@ -150,7 +150,7 @@ TEST_CASE(PREFIX "large directory listing")
 TEST_CASE(PREFIX "basic file read")
 {
     const auto filepath = "/TestSet01/11778860-R3L8T8D-650-funny-jumping-cats-51__880.jpg";
-    std::shared_ptr<VFSHost> host = Spawn();
+    const std::shared_ptr<VFSHost> host = Spawn();
     std::shared_ptr<VFSFile> file;
     int rc = host->CreateFile(filepath, file);
     REQUIRE(rc == VFSError::Ok);
@@ -202,7 +202,7 @@ TEST_CASE(PREFIX "simple upload")
 {
     const auto to_upload = "Hello, world!"s;
     const auto filepath = "/FolderToModify/test.txt";
-    std::shared_ptr<VFSHost> host = Spawn();
+    const std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
@@ -227,15 +227,15 @@ TEST_CASE(PREFIX "upload with invalid name")
 {
     const auto to_upload = "Hello, world!"s;
     const auto filepath = R"(/FolderToModify/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/test.txt)";
-    std::shared_ptr<VFSHost> host = Spawn();
+    const std::shared_ptr<VFSHost> host = Spawn();
 
     std::shared_ptr<VFSFile> file;
     REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
 
-    bool op1 = file->Open(VFSFlags::OF_Write) == VFSError::Ok;
-    bool op2 = file->SetUploadSize(to_upload.size()) == VFSError::Ok;
-    bool op3 = file->WriteFile(std::data(to_upload), std::size(to_upload)) == VFSError::Ok;
-    bool op4 = file->Close() == VFSError::Ok;
+    const bool op1 = file->Open(VFSFlags::OF_Write) == VFSError::Ok;
+    const bool op2 = file->SetUploadSize(to_upload.size()) == VFSError::Ok;
+    const bool op3 = file->WriteFile(std::data(to_upload), std::size(to_upload)) == VFSError::Ok;
+    const bool op4 = file->Close() == VFSError::Ok;
     CHECK((!op1 || !op2 || !op3 || !op4));
 }
 
@@ -243,7 +243,7 @@ TEST_CASE(PREFIX "simple upload with overwrite")
 {
     const auto to_upload = "Hello, world!"s;
     const auto filepath = "/FolderToModify/test.txt";
-    std::shared_ptr<VFSHost> host = Spawn();
+    const std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
@@ -274,7 +274,7 @@ TEST_CASE(PREFIX "UnfinishedUpload")
 {
     const auto to_upload = "Hello, world!"s;
     const auto filepath = "/FolderToModify/test.txt";
-    std::shared_ptr<VFSHost> host = Spawn();
+    const std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
@@ -291,7 +291,7 @@ TEST_CASE(PREFIX "UnfinishedUpload")
 TEST_CASE(PREFIX "zero sized upload")
 {
     const auto filepath = "/FolderToModify/zero.txt";
-    std::shared_ptr<VFSHost> host = Spawn();
+    const std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
@@ -311,7 +311,7 @@ TEST_CASE(PREFIX "decent sized upload")
 {
     const auto length = 5 * 1024 * 1024; // 5Mb upload / download
     const auto filepath = "/FolderToModify/SomeRubbish.bin";
-    std::shared_ptr<VFSHost> host = Spawn();
+    const std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
@@ -338,7 +338,7 @@ TEST_CASE(PREFIX "two-chunk upload")
 {
     const auto length = 17 * 1024 * 1024; // 17MB upload / download
     const auto filepath = "/FolderToModify/SomeBigRubbish.bin";
-    std::shared_ptr<VFSHost> host = Spawn();
+    const std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
@@ -367,7 +367,7 @@ TEST_CASE(PREFIX "multi-chunks upload")
     const auto length = 17 * 1024 * 1024; // 17MB upload / download
 
     const auto filepath = "/FolderToModify/SomeBigRubbish.bin";
-    std::shared_ptr<VFSHost> host = Spawn();
+    const std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
@@ -398,7 +398,7 @@ TEST_CASE(PREFIX "upload edge cases")
         999'999, 1'000'000, 1'000'001, 1'999'999, 2'000'000, 2'000'001, 2'999'999, 3'000'000, 3'000'001};
     const auto filepath = "/FolderToModify/SomeBigRubbish.bin";
 
-    std::shared_ptr<VFSHost> host = Spawn();
+    const std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     for( auto length : lengths ) {
@@ -427,7 +427,7 @@ TEST_CASE(PREFIX "upload edge cases")
 TEST_CASE(PREFIX "folder creation and removal")
 {
     const auto filepath = "/FolderToModify/NewDirectory/";
-    std::shared_ptr<VFSHost> host = Spawn();
+    const std::shared_ptr<VFSHost> host = Spawn();
     host->RemoveDirectory(filepath);
 
     REQUIRE(host->CreateDirectory(filepath, 0) == VFSError::Ok);

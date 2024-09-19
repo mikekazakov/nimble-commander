@@ -110,7 +110,7 @@ TEST_CASE(PREFIX "Line breaks - LineStart/LineEnd")
 
     for( const auto &tc : tcs ) {
         REQUIRE(tc.starts.size() == tc.ends.size());
-        Document doc(tc.text);
+        const Document doc(tc.text);
 
         for( size_t l = 0; l < tc.starts.size(); ++l ) {
             CHECK(doc.LineStart(l) == tc.starts[l]);

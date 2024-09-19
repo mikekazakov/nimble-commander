@@ -59,8 +59,8 @@ static bool TurnOffBlockingMode(int _fd) noexcept
 static int EnumerateAttrs(int _fd, std::vector<std::pair<std::string, unsigned>> &_attrs)
 {
     constexpr size_t buf_sz = 65536;
-    std::unique_ptr<char[]> buf = std::make_unique<char[]>(buf_sz);
-    ssize_t used_size = flistxattr(_fd, buf.get(), buf_sz, 0);
+    const std::unique_ptr<char[]> buf = std::make_unique<char[]>(buf_sz);
+    const ssize_t used_size = flistxattr(_fd, buf.get(), buf_sz, 0);
     if( used_size < 0 ) // need to process ERANGE later. if somebody wanna mess with
                         // 65536/XATTR_MAXNAMELEN=512 xattrs per entry...
         return VFSError::FromErrno();
@@ -128,7 +128,7 @@ XAttrHost::XAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config)
         throw VFSErrorException(VFSError::FromErrno(EIO));
     }
 
-    int ret = EnumerateAttrs(fd, m_Attrs);
+    const int ret = EnumerateAttrs(fd, m_Attrs);
     if( ret != 0 ) {
         close(fd);
         throw VFSErrorException(ret);
@@ -167,11 +167,11 @@ bool XAttrHost::IsWritable() const
 int XAttrHost::Fetch()
 {
     std::vector<std::pair<std::string, unsigned>> info;
-    int ret = EnumerateAttrs(m_FD, info);
+    const int ret = EnumerateAttrs(m_FD, info);
     if( ret != 0 )
         return ret;
 
-    std::lock_guard<spinlock> lock(m_AttrsLock);
+    const std::lock_guard<spinlock> lock(m_AttrsLock);
     m_Attrs = std::move(info);
     return VFSError::Ok;
 }
@@ -201,7 +201,7 @@ int XAttrHost::FetchDirectoryListing(std::string_view _path,
     listing_source.mtimes[0] = m_Stat.st_mtime;
 
     {
-        std::lock_guard<spinlock> lock(m_AttrsLock);
+        const std::lock_guard<spinlock> lock(m_AttrsLock);
 
         if( !(_flags & VFSFlags::F_NoDotDot) ) {
             listing_source.filenames.emplace_back("..");
@@ -277,7 +277,7 @@ int XAttrHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelCh
         return VFSError::FromErrno(ENOENT);
 
     StackAllocator alloc;
-    std::pmr::string path(_path.substr(1), &alloc);
+    const std::pmr::string path(_path.substr(1), &alloc);
 
     if( fremovexattr(m_FD, path.c_str(), 0) == -1 )
         return VFSError::FromErrno();
@@ -442,7 +442,7 @@ ssize_t XAttrFile::Read(void *_buf, size_t _size)
     if( m_Position == m_Size )
         return 0;
 
-    ssize_t to_read = std::min(m_Size - m_Position, ssize_t(_size));
+    const ssize_t to_read = std::min(m_Size - m_Position, ssize_t(_size));
     if( to_read <= 0 )
         return 0;
 
@@ -506,7 +506,7 @@ ssize_t XAttrFile::Write(const void *_buf, size_t _size)
         return VFSError::FromErrno(EIO);
 
     if( m_Position < m_UploadSize ) {
-        ssize_t to_write = std::min(m_UploadSize - m_Position, static_cast<ssize_t>(_size));
+        const ssize_t to_write = std::min(m_UploadSize - m_Position, static_cast<ssize_t>(_size));
         memcpy(m_FileBuf.get() + m_Position, _buf, to_write);
         m_Position += to_write;
 

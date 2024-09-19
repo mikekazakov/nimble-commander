@@ -76,12 +76,12 @@ static Extracted read_stream(const uint64_t _max_bytes,
     st.cancel_checker = _cancel_checker;
 
     auto myread = [](struct archive *a, void *client_data, const void **buff) -> ssize_t {
-        State &st = *static_cast<State *>(client_data);
+        const State &st = *static_cast<State *>(client_data);
         if( st.cancel_checker && st.cancel_checker() ) {
             archive_set_error(a, ECANCELED, "user-canceled");
             return ARCHIVE_FATAL;
         }
-        ssize_t result = st.source_file->Read(st.inbuf.get(), buf_sz);
+        const ssize_t result = st.source_file->Read(st.inbuf.get(), buf_sz);
         if( result < 0 ) {
             archive_set_error(a, EIO, "I/O error");
             return ARCHIVE_FATAL; // handle somehow

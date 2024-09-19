@@ -29,7 +29,7 @@ static const auto g_AutomaticRefreshDelay = std::chrono::milliseconds(200);
 static utility::Encoding EncodingFromXAttr(const VFSFilePtr &_f)
 {
     char buf[128];
-    ssize_t r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
+    const ssize_t r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
     if( r < 0 || r >= static_cast<ssize_t>(sizeof(buf)) )
         return utility::Encoding::ENCODING_INVALID;
     buf[r] = 0;
@@ -665,7 +665,7 @@ int BackgroundFileOpener::Open(VFSHostPtr _vfs,
 {
     dispatch_assert_background_queue();
     assert(_vfs);
-    if( int vfs_err = _vfs->CreateFile(_path.c_str(), original_file, nullptr); vfs_err != VFSError::Ok )
+    if( const int vfs_err = _vfs->CreateFile(_path.c_str(), original_file, nullptr); vfs_err != VFSError::Ok )
         return vfs_err;
 
     if( original_file->GetReadParadigm() < VFSFile::ReadParadigm::Random ) {
@@ -687,16 +687,16 @@ int BackgroundFileOpener::Open(VFSHostPtr _vfs,
         work_file = wrapper;
     }
     else { // just open input file
-        if( int open_err = original_file->Open(VFSFlags::OF_Read); open_err != VFSError::Ok )
+        if( const int open_err = original_file->Open(VFSFlags::OF_Read); open_err != VFSError::Ok )
             return open_err;
         work_file = original_file;
     }
     viewer_file_window = std::make_shared<nc::vfs::FileWindow>();
-    if( int attach_err = viewer_file_window->Attach(work_file, _window_size); attach_err != VFSError::Ok )
+    if( const int attach_err = viewer_file_window->Attach(work_file, _window_size); attach_err != VFSError::Ok )
         return attach_err;
 
     search_file_window = std::make_shared<nc::vfs::FileWindow>();
-    if( int attach_err = search_file_window->Attach(work_file); attach_err != 0 )
+    if( const int attach_err = search_file_window->Attach(work_file); attach_err != 0 )
         return attach_err;
 
     using nc::vfs::SearchInFile;

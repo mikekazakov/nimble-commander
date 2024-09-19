@@ -4,7 +4,7 @@ Checks: >
   -*,
   -clang-diagnostic-c99-designator,
   misc-confusable-identifiers,
-  # misc-const-correctness, <-- should be enabled eventually
+  misc-const-correctness,
   misc-coroutine-hostile-raii,
   misc-definitions-in-headers,
   misc-header-include-cycle,

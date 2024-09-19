@@ -30,12 +30,12 @@ int FileWindow::Attach(const std::shared_ptr<VFSFile> &_file, int _window_size)
     m_WindowPos = 0;
 
     if( m_File->GetReadParadigm() == VFSFile::ReadParadigm::Random ) {
-        int ret = ReadFileWindowRandomPart(0, m_WindowSize);
+        const int ret = ReadFileWindowRandomPart(0, m_WindowSize);
         if( ret < 0 )
             return ret;
     }
     else {
-        int ret = ReadFileWindowSeqPart(0, m_WindowSize);
+        const int ret = ReadFileWindowSeqPart(0, m_WindowSize);
         if( ret < 0 )
             return ret;
     }
@@ -60,7 +60,7 @@ int FileWindow::ReadFileWindowRandomPart(size_t _offset, size_t _len)
     if( _offset + _len > m_WindowSize )
         return VFSError::InvalidCall;
 
-    ssize_t readret = m_File->ReadAt(m_WindowPos + _offset, m_Window.get() + _offset, _len);
+    const ssize_t readret = m_File->ReadAt(m_WindowPos + _offset, m_Window.get() + _offset, _len);
     if( readret < 0 )
         return static_cast<int>(readret);
 
@@ -81,7 +81,7 @@ int FileWindow::ReadFileWindowSeqPart(size_t _offset, size_t _len)
     if( _offset + _len > m_WindowSize )
         return VFSError::InvalidCall;
 
-    ssize_t readret = m_File->Read(m_Window.get() + _offset, _len);
+    const ssize_t readret = m_File->Read(m_Window.get() + _offset, _len);
     if( readret < 0 )
         return static_cast<int>(readret);
 
@@ -125,16 +125,16 @@ int FileWindow::DoMoveWindowRandom(size_t _offset)
     if( _offset >= m_WindowPos && _offset <= m_WindowPos + m_WindowSize ) {
         // the new offset is within current window, read only unknown data
         std::memmove(m_Window.get(), m_Window.get() + _offset - m_WindowPos, m_WindowSize - (_offset - m_WindowPos));
-        size_t off = m_WindowSize - (_offset - m_WindowPos);
-        size_t len = _offset - m_WindowPos;
+        const size_t off = m_WindowSize - (_offset - m_WindowPos);
+        const size_t len = _offset - m_WindowPos;
         m_WindowPos = _offset;
         return ReadFileWindowRandomPart(off, len);
     }
     else if( _offset + m_WindowSize >= m_WindowPos && _offset <= m_WindowPos ) {
         // the new offset is before current offset, but windows do overlap
         std::memmove(m_Window.get() + m_WindowPos - _offset, m_Window.get(), _offset + m_WindowSize - m_WindowPos);
-        size_t off = 0;
-        size_t len = m_WindowPos - _offset;
+        const size_t off = 0;
+        const size_t len = m_WindowPos - _offset;
         m_WindowPos = _offset;
         return ReadFileWindowRandomPart(off, len);
     }
@@ -148,7 +148,7 @@ int FileWindow::DoMoveWindowRandom(size_t _offset)
 int FileWindow::DoMoveWindowSeek(size_t _offset)
 {
     // TODO: not efficient implementation, update me
-    ssize_t ret = m_File->Seek(_offset, VFSFile::Seek_Set);
+    const ssize_t ret = m_File->Seek(_offset, VFSFile::Seek_Set);
     if( ret < 0 )
         return static_cast<int>(ret);
 
@@ -162,10 +162,10 @@ int FileWindow::DoMoveWindowSeqential(size_t _offset)
     if( _offset >= m_WindowPos && _offset <= m_WindowPos + m_WindowSize ) {
         // overlapping
         std::memmove(m_Window.get(), m_Window.get() + _offset - m_WindowPos, m_WindowSize - (_offset - m_WindowPos));
-        size_t off = m_WindowSize - (_offset - m_WindowPos);
-        size_t len = _offset - m_WindowPos;
+        const size_t off = m_WindowSize - (_offset - m_WindowPos);
+        const size_t len = _offset - m_WindowPos;
         m_WindowPos = _offset;
-        int ret = ReadFileWindowSeqPart(off, len);
+        const int ret = ReadFileWindowSeqPart(off, len);
         if( ret == 0 )
             assert(ssize_t(m_WindowPos + m_WindowSize) == m_File->Pos());
         return ret;
@@ -173,7 +173,7 @@ int FileWindow::DoMoveWindowSeqential(size_t _offset)
     else if( _offset >= m_WindowPos ) {
         // need to move forward
         assert(m_File->Pos() < ssize_t(_offset));
-        size_t to_skip = _offset - m_File->Pos();
+        const size_t to_skip = _offset - m_File->Pos();
 
         int ret = static_cast<int>(m_File->Skip(to_skip));
         if( ret < 0 )

@@ -40,7 +40,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
     if( _open_flags & VFSFlags::OF_NoExist )
         sftp_flags |= LIBSSH2_FXF_EXCL;
 
-    int mode = _open_flags & (S_IRWXU | S_IRWXG | S_IRWXO);
+    const int mode = _open_flags & (S_IRWXU | S_IRWXG | S_IRWXO);
 
     LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open_ex(
         conn->sftp, Path(), static_cast<unsigned>(std::strlen(Path())), sftp_flags, mode, LIBSSH2_SFTP_OPENFILE);
@@ -106,7 +106,7 @@ off_t File::Seek(off_t _off, int _basis)
         req = m_Size + _off;
 
     libssh2_sftp_seek64(m_Handle, req);
-    libssh2_uint64_t pos = libssh2_sftp_tell64(m_Handle);
+    const libssh2_uint64_t pos = libssh2_sftp_tell64(m_Handle);
     m_Position = pos;
 
     return pos;
@@ -117,7 +117,7 @@ ssize_t File::Read(void *_buf, size_t _size)
     if( !IsOpened() )
         return SetLastError(VFSError::InvalidCall);
 
-    ssize_t rc = libssh2_sftp_read(m_Handle, static_cast<char *>(_buf), _size);
+    const ssize_t rc = libssh2_sftp_read(m_Handle, static_cast<char *>(_buf), _size);
 
     if( rc >= 0 ) {
         m_Position += rc;
@@ -132,7 +132,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
     if( !IsOpened() )
         return SetLastError(VFSError::InvalidCall);
 
-    ssize_t rc = libssh2_sftp_write(m_Handle, static_cast<const char *>(_buf), _size);
+    const ssize_t rc = libssh2_sftp_write(m_Handle, static_cast<const char *>(_buf), _size);
 
     if( rc >= 0 ) {
         if( m_Position + rc > m_Size )

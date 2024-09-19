@@ -127,13 +127,13 @@ std::optional<std::vector<uint8_t>> VFSFile::ReadFile()
     if( Pos() != 0 && Seek(Seek_Set, 0) < 0 )
         return std::nullopt; // can't rewind file
 
-    uint64_t sz = Size();
+    const uint64_t sz = Size();
     auto buf = std::vector<uint8_t>(sz);
 
     uint8_t *buftmp = buf.data();
     uint64_t szleft = sz;
     while( szleft ) {
-        ssize_t r = Read(buftmp, szleft);
+        const ssize_t r = Read(buftmp, szleft);
         if( r < 0 )
             return std::nullopt;
         szleft -= r;
@@ -176,7 +176,7 @@ ssize_t VFSFile::Skip(size_t _size)
     size_t skipped = 0;
 
     while( _size > 0 ) {
-        ssize_t r = Read(trash, std::min(_size, trash_size));
+        const ssize_t r = Read(trash, std::min(_size, trash_size));
         if( r < 0 )
             return r;
         if( r == 0 )

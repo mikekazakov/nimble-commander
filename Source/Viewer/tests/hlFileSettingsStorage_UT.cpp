@@ -14,7 +14,7 @@ static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeo
 
 TEST_CASE(PREFIX "Check invalid inputs")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     SECTION("Base dir doesn't exist")
     {
         CHECK_THROWS_AS(FSL("blah-blah-blah", ""), std::invalid_argument);
@@ -80,7 +80,7 @@ TEST_CASE(PREFIX "Check invalid inputs")
 
 TEST_CASE(PREFIX "Language()")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     std::ofstream{dir.directory / "Main.json"} << R"({ "langs": [
         {"name": "C++", "settings": "a", "filemask":"*.cpp"},
         {"name": "C#", "settings": "a", "filemask":"*.cs"}
@@ -94,7 +94,7 @@ TEST_CASE(PREFIX "Language()")
 
 TEST_CASE(PREFIX "List()")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     std::ofstream{dir.directory / "Main.json"} << R"({ "langs": [
         {"name": "C++", "settings": "a", "filemask":"*.cpp"},
         {"name": "C#", "settings": "a", "filemask":"*.cs"}
@@ -105,7 +105,7 @@ TEST_CASE(PREFIX "List()")
 
 TEST_CASE(PREFIX "Settings()")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     std::ofstream{dir.directory / "Main.json"} << R"({ "langs": [
         {"name": "C++", "settings": "cpp.json", "filemask":"*.cpp"},
         {"name": "C#", "settings": "cs.json", "filemask":"*.cs"}
@@ -121,7 +121,7 @@ TEST_CASE(PREFIX "Settings()")
 
 TEST_CASE(PREFIX "Loads main settings from an override file")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     auto base = dir.directory / "base";
     auto ovr = dir.directory / "ovr";
     std::filesystem::create_directory(base);
@@ -162,7 +162,7 @@ TEST_CASE(PREFIX "Loads main settings from an override file")
 
 TEST_CASE(PREFIX "React to changes in the overrides directory")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     auto base = dir.directory / "base";
     auto ovr = dir.directory / "ovr";
     std::filesystem::create_directory(base);

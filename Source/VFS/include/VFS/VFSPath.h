@@ -83,5 +83,5 @@ template <>
 struct std::hash<nc::vfs::VFSPathStack> {
     typedef nc::vfs::VFSPathStack argument_type;
     typedef std::size_t value_type;
-    value_type operator()(argument_type const &_v) const;
+    value_type operator()(const argument_type &_v) const;
 };

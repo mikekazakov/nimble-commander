@@ -48,7 +48,7 @@ bool SFTPHost::Connection::Alive() const
     const auto socket_ok = [&] {
         int error = 0;
         socklen_t len = sizeof(error);
-        int retval = getsockopt(socket, SOL_SOCKET, SO_ERROR, &error, &len);
+        const int retval = getsockopt(socket, SOL_SOCKET, SO_ERROR, &error, &len);
         return retval == 0 && error == 0;
     }();
 
@@ -117,7 +117,7 @@ VFSMeta SFTPHost::Meta()
 SFTPHost::SFTPHost(const VFSConfiguration &_config)
     : Host(_config.Get<SFTPHostConfiguration>().server_url.c_str(), nullptr, UniqueTag), m_Config(_config)
 {
-    int rc = DoInit();
+    const int rc = DoInit();
     if( rc < 0 )
         throw VFSErrorException(rc);
 }
@@ -149,7 +149,7 @@ SFTPHost::SFTPHost(const std::string &_serv_url,
     : Host(_serv_url.c_str(), nullptr, UniqueTag),
       m_Config(ComposeConfguration(_serv_url, _user, _passwd, _keypath, _port, _home))
 {
-    int rc = DoInit();
+    const int rc = DoInit();
     if( rc < 0 )
         throw VFSErrorException(rc);
 }
@@ -158,7 +158,7 @@ int SFTPHost::DoInit()
 {
     static std::once_flag once;
     call_once(once, [] {
-        int rc = libssh2_init(0);
+        const int rc = libssh2_init(0);
         assert(rc == 0);
         if( rc != 0 )
             throw std::runtime_error("libssh2_init failed");
@@ -263,7 +263,7 @@ int SFTPHost::SpawnSSH2(std::unique_ptr<Connection> &_t)
 
     int rc;
 
-    in_addr_t hostaddr = InetAddr();
+    const in_addr_t hostaddr = InetAddr();
     connection->socket = socket(AF_INET, SOCK_STREAM, 0);
     sockaddr_in sin;
     sin.sin_family = AF_INET;
@@ -305,7 +305,8 @@ int SFTPHost::SpawnSSH2(std::unique_ptr<Connection> &_t)
     else {
         char *authlist =
             libssh2_userauth_list(connection->ssh, Config().user.c_str(), (unsigned)Config().user.length());
-        bool has_keyboard_interactive = authlist != nullptr && strstr(authlist, "keyboard-interactive") != nullptr;
+        const bool has_keyboard_interactive =
+            authlist != nullptr && strstr(authlist, "keyboard-interactive") != nullptr;
 
         int ret = LIBSSH2_ERROR_AUTHENTICATION_FAILED;
         if( has_keyboard_interactive ) // if supported - use keyboard interactive first
@@ -354,7 +355,7 @@ int SFTPHost::GetConnection(std::unique_ptr<Connection> &_t)
         }
     }
 
-    int rc = SpawnSSH2(_t);
+    const int rc = SpawnSSH2(_t);
     if( rc < 0 )
         return rc;
 
@@ -366,7 +367,7 @@ void SFTPHost::ReturnConnection(std::unique_ptr<Connection> _t)
     if( !_t->Alive() )
         return;
 
-    std::lock_guard<std::mutex> lock(m_ConnectionsLock);
+    const std::lock_guard<std::mutex> lock(m_ConnectionsLock);
 
     m_Connections.emplace_back(std::move(_t));
 }
@@ -386,7 +387,7 @@ int SFTPHost::FetchDirectoryListing(std::string_view _path,
     if( rc )
         return rc;
 
-    AutoConnectionReturn acr(conn, this);
+    const AutoConnectionReturn acr(conn, this);
 
     // setup of listing structure
     using nc::base::variable_container;
@@ -410,7 +411,7 @@ int SFTPHost::FetchDirectoryListing(std::string_view _path,
             return VFSErrorForConnection(*conn);
         auto close_sftp_handle = at_scope_end([=] { libssh2_sftp_closedir(sftp_handle); });
 
-        bool should_have_dot_dot = !(_flags & VFSFlags::F_NoDotDot) && listing_source.directories[0] != "/";
+        const bool should_have_dot_dot = !(_flags & VFSFlags::F_NoDotDot) && listing_source.directories[0] != "/";
         if( should_have_dot_dot ) {
             // create space for dot-dot entry in advance
             listing_source.filenames.emplace_back("..");
@@ -456,7 +457,7 @@ int SFTPHost::FetchDirectoryListing(std::string_view _path,
     // check for symlinks and read additional info
     for( int index = 0, index_e = (int)listing_source.filenames.size(); index != index_e; ++index )
         if( listing_source.unix_types[index] == DT_LNK ) {
-            std::string path = listing_source.directories[0] + listing_source.filenames[index];
+            const std::string path = listing_source.directories[0] + listing_source.filenames[index];
 
             // read where symlink points at
             char symlink[MAXPATHLEN];
@@ -489,7 +490,7 @@ int SFTPHost::Stat(std::string_view _path,
     if( rc )
         return rc;
 
-    AutoConnectionReturn acr(conn, this);
+    const AutoConnectionReturn acr(conn, this);
 
     LIBSSH2_SFTP_ATTRIBUTES attrs;
     rc = libssh2_sftp_stat_ex(conn->sftp,
@@ -541,7 +542,7 @@ int SFTPHost::IterateDirectoryListing(std::string_view _path,
     if( rc )
         return rc;
 
-    AutoConnectionReturn acr(conn, this);
+    const AutoConnectionReturn acr(conn, this);
 
     LIBSSH2_SFTP_HANDLE *sftp_handle = libssh2_sftp_open_ex(
         conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), 0, 0, LIBSSH2_SFTP_OPENDIR);
@@ -586,7 +587,7 @@ int SFTPHost::StatFS(std::string_view _path, VFSStatFS &_stat, [[maybe_unused]] 
     if( rc )
         return rc;
 
-    AutoConnectionReturn acr(conn, this);
+    const AutoConnectionReturn acr(conn, this);
 
     LIBSSH2_SFTP_STATVFS statfs;
     rc = libssh2_sftp_statvfs(conn->sftp, _path.data(), _path.length(), &statfs);
@@ -624,7 +625,7 @@ int SFTPHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChe
     if( rc )
         return rc;
 
-    AutoConnectionReturn acr(conn, this);
+    const AutoConnectionReturn acr(conn, this);
 
     rc = libssh2_sftp_unlink_ex(conn->sftp, _path.data(), static_cast<unsigned>(_path.length()));
 
@@ -637,11 +638,11 @@ int SFTPHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChe
 int SFTPHost::Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
-    int rc = GetConnection(conn);
+    const int rc = GetConnection(conn);
     if( rc != VFSError::Ok )
         return rc;
 
-    AutoConnectionReturn acr(conn, this);
+    const AutoConnectionReturn acr(conn, this);
 
     const auto rename_flags = LIBSSH2_SFTP_RENAME_OVERWRITE | LIBSSH2_SFTP_RENAME_ATOMIC | LIBSSH2_SFTP_RENAME_NATIVE;
     const auto rename_rc = libssh2_sftp_rename_ex(conn->sftp,
@@ -684,7 +685,7 @@ int SFTPHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFS
     if( rc )
         return rc;
 
-    AutoConnectionReturn acr(conn, this);
+    const AutoConnectionReturn acr(conn, this);
 
     rc = libssh2_sftp_rmdir_ex(conn->sftp, _path.data(), static_cast<unsigned>(_path.length()));
 
@@ -703,7 +704,7 @@ int SFTPHost::CreateDirectory(std::string_view _path,
     if( rc )
         return rc;
 
-    AutoConnectionReturn acr(conn, this);
+    const AutoConnectionReturn acr(conn, this);
 
     rc = libssh2_sftp_mkdir_ex(conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), _mode);
 
@@ -716,7 +717,7 @@ int SFTPHost::CreateDirectory(std::string_view _path,
 int SFTPHost::VFSErrorForConnection(Connection &_conn) const
 {
     using namespace VFSError;
-    int sess_errno = libssh2_session_last_errno(_conn.ssh);
+    const int sess_errno = libssh2_session_last_errno(_conn.ssh);
     if( sess_errno == 0 )
         return 0;
     if( sess_errno == LIBSSH2_ERROR_SFTP_PROTOCOL )
@@ -847,10 +848,10 @@ int SFTPHost::ReadSymlink(std::string_view _symlink_path,
                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
-    if( int rc = GetConnection(conn); rc < 0 )
+    if( const int rc = GetConnection(conn); rc < 0 )
         return rc;
 
-    AutoConnectionReturn acr(conn, this);
+    const AutoConnectionReturn acr(conn, this);
 
     const auto readlink_rc = libssh2_sftp_symlink_ex(conn->sftp,
                                                      _symlink_path.data(),
@@ -872,10 +873,10 @@ int SFTPHost::CreateSymlink(std::string_view _symlink_path,
                             [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
-    if( int rc = GetConnection(conn); rc < 0 )
+    if( const int rc = GetConnection(conn); rc < 0 )
         return rc;
 
-    AutoConnectionReturn acr(conn, this);
+    const AutoConnectionReturn acr(conn, this);
 
     const auto symlink_rc = m_ReversedSymlinkParameters
                                 ? libssh2_sftp_symlink_ex(conn->sftp,
@@ -901,10 +902,10 @@ int SFTPHost::SetPermissions(std::string_view _path,
                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
-    if( int rc = GetConnection(conn); rc < 0 )
+    if( const int rc = GetConnection(conn); rc < 0 )
         return rc;
 
-    AutoConnectionReturn acr(conn, this);
+    const AutoConnectionReturn acr(conn, this);
 
     LIBSSH2_SFTP_ATTRIBUTES attrs;
     memset(&attrs, 0, sizeof(attrs));
@@ -925,10 +926,10 @@ int SFTPHost::SetOwnership(std::string_view _path,
                            [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
-    if( int rc = GetConnection(conn); rc < 0 )
+    if( const int rc = GetConnection(conn); rc < 0 )
         return rc;
 
-    AutoConnectionReturn acr(conn, this);
+    const AutoConnectionReturn acr(conn, this);
 
     LIBSSH2_SFTP_ATTRIBUTES attrs;
     memset(&attrs, 0, sizeof(attrs));
@@ -958,10 +959,10 @@ int SFTPHost::SetTimes(std::string_view _path,
         return VFSError::Ok;
 
     std::unique_ptr<Connection> conn;
-    if( int rc = GetConnection(conn); rc < 0 )
+    if( const int rc = GetConnection(conn); rc < 0 )
         return rc;
 
-    AutoConnectionReturn acr(conn, this);
+    const AutoConnectionReturn acr(conn, this);
 
     if( !_mod_time || !_acc_time ) {
         LIBSSH2_SFTP_ATTRIBUTES attrs;
@@ -1000,10 +1001,10 @@ int SFTPHost::FetchUsers(std::vector<VFSUser> &_target, [[maybe_unused]] const V
         return VFSError::FromErrno(ENODEV);
 
     std::unique_ptr<Connection> conn;
-    if( int rc = GetConnection(conn); rc < 0 )
+    if( const int rc = GetConnection(conn); rc < 0 )
         return rc;
 
-    AutoConnectionReturn acr(conn, this);
+    const AutoConnectionReturn acr(conn, this);
 
     sftp::AccountsFetcher fetcher{conn->ssh, m_OSType};
     return fetcher.FetchUsers(_target);
@@ -1015,10 +1016,10 @@ int SFTPHost::FetchGroups(std::vector<VFSGroup> &_target, [[maybe_unused]] const
         return VFSError::FromErrno(ENODEV);
 
     std::unique_ptr<Connection> conn;
-    if( int rc = GetConnection(conn); rc < 0 )
+    if( const int rc = GetConnection(conn); rc < 0 )
         return rc;
 
-    AutoConnectionReturn acr(conn, this);
+    const AutoConnectionReturn acr(conn, this);
 
     sftp::AccountsFetcher fetcher{conn->ssh, m_OSType};
     return fetcher.FetchGroups(_target);

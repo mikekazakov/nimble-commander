@@ -190,7 +190,7 @@ void TextModeWorkingSetHighlighting::Commit(std::expected<std::vector<hl::Style>
     }
 
     {
-        std::lock_guard lock{m_StatusMut};
+        const std::lock_guard lock{m_StatusMut};
         m_Status = Status::Done;
     }
     m_StatusCV.notify_one();

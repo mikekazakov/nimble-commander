@@ -8,21 +8,21 @@ using nc::utility::UTIDBImpl;
 
 TEST_CASE("WorkspaceExtensionIconsCacheImpl is initially empty")
 {
-    UTIDBImpl utidb;
-    WorkspaceExtensionIconsCacheImpl cache{utidb};
+    const UTIDBImpl utidb;
+    const WorkspaceExtensionIconsCacheImpl cache{utidb};
     CHECK(cache.CachedIconForExtension("jpg") == nil);
 }
 
 TEST_CASE("WorkspaceExtensionIconsCacheImpl produces an image for a valid extension")
 {
-    UTIDBImpl utidb;
+    const UTIDBImpl utidb;
     WorkspaceExtensionIconsCacheImpl cache{utidb};
     CHECK(cache.IconForExtension("jpg") != nil);
 }
 
 TEST_CASE("WorkspaceExtensionIconsCacheImpl caches the produced result")
 {
-    UTIDBImpl utidb;
+    const UTIDBImpl utidb;
     WorkspaceExtensionIconsCacheImpl cache{utidb};
     cache.IconForExtension("jpg");
     CHECK(cache.CachedIconForExtension("jpg") != nil);
@@ -30,15 +30,15 @@ TEST_CASE("WorkspaceExtensionIconsCacheImpl caches the produced result")
 
 TEST_CASE("WorkspaceExtensionIconsCacheImpl doesn't produces an image for invalid extensions")
 {
-    UTIDBImpl utidb;
+    const UTIDBImpl utidb;
     WorkspaceExtensionIconsCacheImpl cache{utidb};
     CHECK(cache.IconForExtension("zxcdsfjkhsbvfwefuvksdvf34534sdf") == nil);
 }
 
 TEST_CASE("WorkspaceExtensionIconsCacheImpl provides default images")
 {
-    UTIDBImpl utidb;
-    WorkspaceExtensionIconsCacheImpl cache{utidb};
+    const UTIDBImpl utidb;
+    const WorkspaceExtensionIconsCacheImpl cache{utidb};
     CHECK(cache.GenericFileIcon() != nil);
     CHECK(cache.GenericFolderIcon() != nil);
 }

@@ -7,8 +7,8 @@
 
 TEST_CASE(PREFIX "tests")
 {
-    nc::utility::UTIDBImpl uti_db;
-    nc::vfsicon::ExtensionsWhitelistImpl whitelist(uti_db, {"public.image", "public.movie"});
+    const nc::utility::UTIDBImpl uti_db;
+    const nc::vfsicon::ExtensionsWhitelistImpl whitelist(uti_db, {"public.image", "public.movie"});
     CHECK(whitelist.AllowExtension("jpg"));
     CHECK(whitelist.AllowExtension("png"));
     CHECK(whitelist.AllowExtension("tiff"));

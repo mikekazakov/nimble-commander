@@ -22,10 +22,11 @@ static bool WaitUntilNativeFSManSeesVolumeAtPath(const std::filesystem::path &vo
 
 TEST_CASE(PREFIX "Reports case-insensitive on directory path")
 {
-    TestDir tmp_dir;
+    const TestDir tmp_dir;
     const auto dmg_path = tmp_dir.directory / "tmp_image.dmg";
-    const auto create_cmd =
-        "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " + dmg_path.native();
+    const auto create_cmd = "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname "
+                            "SomethingWickedThisWayComes12345 " +
+                            dmg_path.native();
     const auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path.native();
     const auto unmount_cmd = "/usr/bin/hdiutil detach /Volumes/SomethingWickedThisWayComes12345";
     const std::filesystem::path volume_path = "/Volumes/SomethingWickedThisWayComes12345";
@@ -46,7 +47,7 @@ TEST_CASE(PREFIX "Reports case-insensitive on directory path")
 
 TEST_CASE(PREFIX "Reports case-sensitive on directory path")
 {
-    TestDir tmp_dir;
+    const TestDir tmp_dir;
     const auto dmg_path = tmp_dir.directory / "tmp_image.dmg";
     const auto bin = "/usr/bin/hdiutil";
     const auto create_args = std::vector<std::string>{"create",
@@ -77,7 +78,7 @@ TEST_CASE(PREFIX "Reports case-sensitive on directory path")
 
 TEST_CASE(PREFIX "SetFlags")
 {
-    TestDir dir;
+    const TestDir dir;
     const auto host = TestEnv().vfs_native;
     struct ::stat st;
     SECTION("Regular file")
@@ -129,7 +130,7 @@ TEST_CASE(PREFIX "SetFlags")
 
 TEST_CASE(PREFIX "Fetching")
 {
-    TestDir test_dir_holder;
+    const TestDir test_dir_holder;
     std::filesystem::path test_dir = test_dir_holder.directory;
     ankerl::unordered_dense::set<std::string, nc::UnorderedStringHashEqual, nc::UnorderedStringHashEqual> to_visit;
     const uid_t uid = geteuid();
@@ -142,7 +143,8 @@ TEST_CASE(PREFIX "Fetching")
         return st.st_dev;
     }();
 
-    // spawn a bunch of regular files to ensure the batching mechanism can deal with the mass
+    // spawn a bunch of regular files to ensure the batching mechanism can deal
+    // with the mass
     for( size_t i = 0; i != 1000; ++i ) {
         auto filename = fmt::format("reg{}", i);
         REQUIRE(close(creat((test_dir / filename).c_str(), 0755)) == 0);

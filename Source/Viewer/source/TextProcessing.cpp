@@ -14,7 +14,7 @@ namespace nc::viewer {
 
 using utility::CharInfo;
 
-void CleanUnicodeControlSymbols(char16_t *const _characters, int const _characters_length, const char16_t _replacement)
+void CleanUnicodeControlSymbols(char16_t *const _characters, const int _characters_length, const char16_t _replacement)
 {
     if( _characters == nullptr || _characters_length < 0 )
         throw std::invalid_argument("CleanUnicodeControlSymbols: invalid input");
@@ -138,10 +138,10 @@ std::vector<std::pair<int, int>> SplitStringIntoLines(const char16_t *_character
     return starts_and_lengths;
 }
 
-std::vector<TextModeIndexedTextLine> SplitAttributedStringsIntoLines(CFAttributedStringRef const _attributed_string,
-                                                                     double const _wrapping_width,
-                                                                     double const _monospace_width,
-                                                                     double const _tab_width,
+std::vector<TextModeIndexedTextLine> SplitAttributedStringsIntoLines(const CFAttributedStringRef _attributed_string,
+                                                                     const double _wrapping_width,
+                                                                     const double _monospace_width,
+                                                                     const double _tab_width,
                                                                      const int *const _unichars_to_byte_indices)
 {
     assert(_wrapping_width > 0.);

@@ -223,7 +223,7 @@ TEST_CASE(PREFIX "refuses to validate an unexising key")
 
 TEST_CASE(PREFIX "validates an existing open RSA key")
 {
-    TestDir test_dir;
+    const TestDir test_dir;
     const auto path = test_dir.directory / "key";
     Save(path, std::string{g_OpenKey});
     CHECK(KeyValidator{path, ""}.Validate());
@@ -233,7 +233,7 @@ TEST_CASE(PREFIX "validates an existing open RSA key")
 
 TEST_CASE(PREFIX "validates an existing encrypted RSA-AES-128-CBC key")
 {
-    TestDir test_dir;
+    const TestDir test_dir;
     const auto path = test_dir.directory / "key";
     Save(path, std::string{g_EncryptedKey});
     CHECK(KeyValidator{path, ""}.Validate() == false);
@@ -244,7 +244,7 @@ TEST_CASE(PREFIX "validates an existing encrypted RSA-AES-128-CBC key")
 
 TEST_CASE(PREFIX "validates an existing encrypted OpenSSH-1024 key")
 {
-    TestDir test_dir;
+    const TestDir test_dir;
     const auto path = test_dir.directory / "key";
     Save(path, std::string{g_OpenSSH1024Encrypted});
     CHECK(KeyValidator{path, ""}.Validate() == false);
@@ -255,7 +255,7 @@ TEST_CASE(PREFIX "validates an existing encrypted OpenSSH-1024 key")
 
 TEST_CASE(PREFIX "validates an existing encrypted OpenSSH-2048 key")
 {
-    TestDir test_dir;
+    const TestDir test_dir;
     const auto path = test_dir.directory / "key";
     Save(path, std::string{g_OpenSSH2048Encrypted});
     CHECK(KeyValidator{path, ""}.Validate() == false);
@@ -266,7 +266,7 @@ TEST_CASE(PREFIX "validates an existing encrypted OpenSSH-2048 key")
 
 TEST_CASE(PREFIX "validates an existing encrypted OpenSSH-4096 key")
 {
-    TestDir test_dir;
+    const TestDir test_dir;
     const auto path = test_dir.directory / "key";
     Save(path, std::string{g_OpenSSH4096Encrypted});
     CHECK(KeyValidator{path, ""}.Validate() == false);
@@ -277,7 +277,7 @@ TEST_CASE(PREFIX "validates an existing encrypted OpenSSH-4096 key")
 
 TEST_CASE(PREFIX "validates an existing encrypted OpenSSH-1024 DSA key")
 {
-    TestDir test_dir;
+    const TestDir test_dir;
     const auto path = test_dir.directory / "key";
     Save(path, std::string{g_OpenSSH1024DSAEncrypted});
     CHECK(KeyValidator{path, ""}.Validate() == false);
@@ -288,7 +288,7 @@ TEST_CASE(PREFIX "validates an existing encrypted OpenSSH-1024 DSA key")
 
 TEST_CASE(PREFIX "validates an existing encrypted OpenSSH-ECDSA key")
 {
-    TestDir test_dir;
+    const TestDir test_dir;
     const auto path = test_dir.directory / "key";
     Save(path, std::string{g_OpenSSHECDSAEncrypted});
     CHECK(KeyValidator{path, ""}.Validate() == false);
@@ -299,7 +299,7 @@ TEST_CASE(PREFIX "validates an existing encrypted OpenSSH-ECDSA key")
 
 TEST_CASE(PREFIX "validates an existing encrypted OpenSSH-ED25519 key")
 {
-    TestDir test_dir;
+    const TestDir test_dir;
     const auto path = test_dir.directory / "key";
     Save(path, std::string{g_OpenSSHED25519Encrypted});
     CHECK(KeyValidator{path, ""}.Validate() == false);

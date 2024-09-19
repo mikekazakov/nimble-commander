@@ -45,7 +45,7 @@ void DisplayNamesCache::Commit_Locked(ino_t _ino, dev_t _dev, const std::string 
     Filename f;
     f.fs_filename = filename_dup(_path);
     f.display_filename = _dispay_name;
-    std::lock_guard<spinlock> guard(m_WriteLock);
+    const std::lock_guard<spinlock> guard(m_WriteLock);
     m_Devices[_dev].insert(std::make_pair(_ino, f));
 }
 

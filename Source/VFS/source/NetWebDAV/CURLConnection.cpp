@@ -147,7 +147,7 @@ void CURLConnection::Clear()
 int CURLConnection::SetCustomRequest(std::string_view _request)
 {
     StackAllocator alloc;
-    std::pmr::string request(_request, &alloc);
+    const std::pmr::string request(_request, &alloc);
 
     const auto rc = curl_easy_setopt(m_EasyHandle, CURLOPT_CUSTOMREQUEST, request.c_str());
     return CurlRCToVFSError(rc);
@@ -156,7 +156,7 @@ int CURLConnection::SetCustomRequest(std::string_view _request)
 int CURLConnection::SetURL(std::string_view _url)
 {
     StackAllocator alloc;
-    std::pmr::string url(_url, &alloc);
+    const std::pmr::string url(_url, &alloc);
     const auto rc = curl_easy_setopt(m_EasyHandle, CURLOPT_URL, url.c_str());
     return CurlRCToVFSError(rc);
 }

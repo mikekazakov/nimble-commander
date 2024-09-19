@@ -31,7 +31,7 @@ TEST_CASE(PREFIX "Allows cancellation on the phase of source items scanning")
         std::function<void(std::string_view _path)> on_iterate_directorying_listing;
     };
     auto native_host = std::make_shared<MyHost>(*TestEnv().native_fs_man, *TestEnv().fsevents_file_update);
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto &d = tmp_dir.directory;
     std::filesystem::create_directories(d / "top/first/second");
 

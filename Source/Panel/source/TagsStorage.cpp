@@ -31,7 +31,7 @@ std::vector<utility::Tags::Tag> TagsStorage::Get() const
 {
     std::vector<utility::Tags::Tag> copy;
     {
-        std::lock_guard lock{m_Mut};
+        const std::lock_guard lock{m_Mut};
         copy = m_Tags;
     }
 
@@ -41,7 +41,7 @@ std::vector<utility::Tags::Tag> TagsStorage::Get() const
 void TagsStorage::Set(std::span<const utility::Tags::Tag> _tags)
 {
     {
-        std::lock_guard lock{m_Mut};
+        const std::lock_guard lock{m_Mut};
         m_Tags.assign(_tags.begin(), _tags.end());
         m_Initialized = true;
     }
@@ -83,7 +83,7 @@ void TagsStorage::Store()
     using namespace rapidjson;
     nc::config::Value tags{kArrayType};
     {
-        std::lock_guard lock{m_Mut};
+        const std::lock_guard lock{m_Mut};
         for( auto &tag : m_Tags ) {
             tags.PushBack(nc::config::MakeStandaloneString(tag.Label()), nc::config::g_CrtAllocator);
             tags.PushBack(nc::config::MakeStandaloneString(std::to_string(std::to_underlying(tag.Color()))),

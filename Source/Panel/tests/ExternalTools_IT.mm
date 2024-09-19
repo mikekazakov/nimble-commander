@@ -39,7 +39,7 @@ static bool WaitForChildProcess(int _pid, std::chrono::nanoseconds _deadline, st
 
 TEST_CASE(PREFIX "execute a detached console app")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto basedir = dir.directory;
     const auto echopars_src = "#include <stdio.h>                     \n"  //
                               "int main(int argc, char **argv) {      \n"  //
@@ -109,7 +109,7 @@ TEST_CASE(PREFIX "execute a detached console app")
 
 TEST_CASE(PREFIX "execute a non-existing app")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
 
     VFSListingPtr listing;
     REQUIRE(TestEnv().vfs_native->FetchDirectoryListing("/", listing, VFSFlags::F_NoDotDot, {}) == 0);
@@ -144,7 +144,7 @@ TEST_CASE(PREFIX "execute a non-existing app")
 
 TEST_CASE(PREFIX "execute a ui app", "[!mayfail]")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto basedir = dir.directory;
 
     const auto minimal_src = "#include <Cocoa/Cocoa.h>                                                           \n" //

@@ -20,7 +20,7 @@ using FI = ExternalToolsParameters::FileInfo;
 
 static void touch(const std::filesystem::path &p)
 {
-    int fd = open(p.c_str(), O_RDWR | O_CREAT | S_IRUSR | S_IWUSR);
+    const int fd = open(p.c_str(), O_RDWR | O_CREAT | S_IRUSR | S_IWUSR);
     CHECK(fd > 0);
     close(fd);
 }
@@ -263,7 +263,7 @@ TEST_CASE(PREFIX "Parsing - selected filenames")
 
 TEST_CASE(PREFIX "ExternalToolExecution - generation of simple arguments")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     auto &root = dir.directory;
     std::filesystem::create_directory(root / "dir1");
     touch(root / "dir1/file1.txt");
@@ -391,7 +391,7 @@ TEST_CASE(PREFIX "ExternalToolExecution - generation of simple arguments")
         ExternalTool et;
         et.m_Parameters = tc.params_string;
 
-        ExternalToolExecution ex{ctx, et};
+        const ExternalToolExecution ex{ctx, et};
         auto args = ex.BuildArguments();
 
         CHECK(args == tc.args_expected);
@@ -400,7 +400,7 @@ TEST_CASE(PREFIX "ExternalToolExecution - generation of simple arguments")
 
 TEST_CASE(PREFIX "ExternalToolExecution - generation of lists as parameters")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     auto &root = dir.directory;
     std::filesystem::create_directory(root / "dir1");
     touch(root / "dir1/file1.txt");
@@ -513,7 +513,7 @@ TEST_CASE(PREFIX "ExternalToolExecution - generation of lists as parameters")
         ExternalTool et;
         et.m_Parameters = tc.params_string;
 
-        ExternalToolExecution ex{ctx, et};
+        const ExternalToolExecution ex{ctx, et};
         auto args = ex.BuildArguments();
 
         CHECK(args == tc.args_expected);
@@ -522,7 +522,7 @@ TEST_CASE(PREFIX "ExternalToolExecution - generation of lists as parameters")
 
 TEST_CASE(PREFIX "ExternalToolExecution - generation of lists as file")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     auto &root = dir.directory;
     std::filesystem::create_directory(root / "dir1");
     touch(root / "dir1/file1.txt");
@@ -624,20 +624,20 @@ TEST_CASE(PREFIX "ExternalToolExecution - generation of lists as file")
         ExternalTool et;
         et.m_Parameters = tc.params_string;
 
-        ExternalToolExecution ex{ctx, et};
+        const ExternalToolExecution ex{ctx, et};
         auto args = ex.BuildArguments();
         REQUIRE(args.size() == 1);
 
         std::ifstream file(args[0]);
         REQUIRE(!file.fail());
-        std::string contents((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        const std::string contents((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
         CHECK(contents == tc.contents_expected);
     }
 }
 
 TEST_CASE(PREFIX "ExternalToolExecution - user-input values")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     auto &root = dir.directory;
     std::filesystem::create_directory(root / "dir1");
     touch(root / "dir1/file1.txt");

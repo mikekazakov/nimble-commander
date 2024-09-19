@@ -615,7 +615,7 @@ std::vector<std::string> ExternalToolExecution::BuildArguments() const
         if( step.type == ExternalToolsParameters::ActionType::CurrentItem && num_files < max_files ) {
             const auto v = m_Params.GetCurrentItem(step.index);
             const auto [panel, idx] = panel_cursor_for_location(v.location);
-            if( VFSListingItem item = panel->EntryAtSortPosition(idx) ) {
+            if( const VFSListingItem item = panel->EntryAtSortPosition(idx) ) {
                 commit(info_from_item(item, v.what));
                 ++num_files;
             }
@@ -732,7 +732,7 @@ std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedFork()
 {
     auto args = BuildArguments();
 
-    int pid = nc::term::Task::RunDetachedProcess(m_ET.m_ExecutablePath, args);
+    const int pid = nc::term::Task::RunDetachedProcess(m_ET.m_ExecutablePath, args);
     if( pid < 0 ) {
         return std::unexpected(VFSError::FormatErrorCode(VFSError::FromErrno()));
     }
@@ -794,7 +794,7 @@ std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedUI()
     }
 
     std::unique_lock lk(ctx->mut);
-    bool done = ctx->cv.wait_for(lk, std::chrono::seconds{10}, [&] { return ctx->done; });
+    const bool done = ctx->cv.wait_for(lk, std::chrono::seconds{10}, [&] { return ctx->done; });
 
     if( !done ) {
         return std::unexpected<std::string>(

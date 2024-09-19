@@ -70,6 +70,6 @@ TEST_CASE(PREFIX "accidental operation wait")
 
 TEST_CASE(PREFIX "non-started operation behaviour")
 {
-    MyOperation myop;
+    const MyOperation myop;
     REQUIRE(myop.State() == OperationState::Cold);
 }

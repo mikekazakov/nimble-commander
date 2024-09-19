@@ -48,7 +48,7 @@ static void RunOperationAndCheckSuccess(nc::ops::Operation &operation)
 TEST_CASE(PREFIX "Verify that /Applications/ and temp dir are on the same fs")
 {
     const std::string target_dir = "/Applications/";
-    TempTestDir test_dir;
+    const TempTestDir test_dir;
     REQUIRE(TestEnv().native_fs_man->VolumeFromPath(test_dir.directory.native()) ==
             TestEnv().native_fs_man->VolumeFromPath(target_dir));
 }
@@ -61,7 +61,7 @@ TEST_CASE(PREFIX "Can rename a regular file across firmlink injection points")
     rm_result();
     auto clean_afterward = at_scope_end([&] { rm_result(); });
 
-    TempTestDir test_dir;
+    const TempTestDir test_dir;
 
     REQUIRE(close(creat((test_dir.directory / filename).c_str(), 0755)) == 0);
 
@@ -91,7 +91,7 @@ TEST_CASE(PREFIX "Can rename a directory across firmlink injection points")
     rm_result();
     auto clean_afterward = at_scope_end([&] { rm_result(); });
 
-    TempTestDir test_dir;
+    const TempTestDir test_dir;
 
     REQUIRE(mkdir((test_dir.directory / filename).c_str(), 0755) == 0);
 
@@ -125,7 +125,7 @@ TEST_CASE(PREFIX "Can rename a non-empty directory across firmlink injection poi
     rm_result();
     auto clean_afterward = at_scope_end([&] { rm_result(); });
 
-    TempTestDir test_dir;
+    const TempTestDir test_dir;
 
     REQUIRE(mkdir((test_dir.directory / filename).c_str(), 0755) == 0);
     REQUIRE(close(creat((test_dir.directory / filename / filename_in_dir).c_str(), 0755)) == 0);
@@ -156,7 +156,7 @@ TEST_CASE(PREFIX "Can rename a symlink across firmlink injection points")
     rm_result();
     auto clean_afterward = at_scope_end([&] { rm_result(); });
 
-    TempTestDir test_dir;
+    const TempTestDir test_dir;
 
     REQUIRE(symlink("/", (test_dir.directory / filename).c_str()) == 0);
 
@@ -190,7 +190,7 @@ TEST_CASE(PREFIX "Can rename a regular file on injected data volume")
     rm_result();
     auto clean_afterward = at_scope_end([&] { rm_result(); });
 
-    TempTestDir test_dir;
+    const TempTestDir test_dir;
 
     REQUIRE(close(creat((test_dir.directory / filename_src).c_str(), 0755)) == 0);
 
@@ -217,7 +217,7 @@ TEST_CASE(PREFIX "Correctly handles requests to rename into non-existing dir")
     const std::string filename = "__nc_rename_test__";
     const std::string target_dir = "a/b/c/d/";
 
-    TempTestDir test_dir;
+    const TempTestDir test_dir;
 
     REQUIRE(close(creat((test_dir.directory / filename).c_str(), 0755)) == 0);
 
@@ -242,7 +242,7 @@ TEST_CASE(PREFIX "Correctly handles requests to rename into non-existing dir")
 
 TEST_CASE(PREFIX "Reports item status")
 {
-    TempTestDir test_dir;
+    const TempTestDir test_dir;
     REQUIRE(mkdir((test_dir.directory / "A").c_str(), 0755) == 0);
     REQUIRE(close(creat((test_dir.directory / "A/f1").c_str(), 0755)) == 0);
     REQUIRE(close(creat((test_dir.directory / "A/f2").c_str(), 0755)) == 0);
@@ -265,7 +265,7 @@ TEST_CASE(PREFIX "Reports item status")
 TEST_CASE(PREFIX "Overwrite bug regression")
 {
     // ensures no-return of a bug introduced 30/01/15
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto dest = tmp_dir.directory / "dest.zzz";
     const auto host = TestEnv().vfs_native;
     const size_t size_big = 54598243;
@@ -303,7 +303,7 @@ TEST_CASE(PREFIX "Overwrite bug regression")
 TEST_CASE(PREFIX "Overwrite bug regression - revert")
 {
     // ensures no-return of a bug introduced 30/01/15
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto dest = tmp_dir.directory / "dest.zzz";
     const auto host = TestEnv().vfs_native;
     const size_t size_big = 54598243;
@@ -340,7 +340,7 @@ TEST_CASE(PREFIX "Overwrite bug regression - revert")
 
 TEST_CASE(PREFIX "case renaming")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto host = TestEnv().vfs_native;
     const auto dir = tmp_dir.directory;
 
@@ -376,9 +376,9 @@ TEST_CASE(PREFIX "case renaming")
 
 TEST_CASE(PREFIX "Modes - CopyToPrefix")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto host = TestEnv().vfs_native;
-    CopyingOptions opts;
+    const CopyingOptions opts;
     Copying op(FetchItems("/System/Applications/", {"Mail.app"}, *TestEnv().vfs_native), tmp_dir.directory, host, opts);
 
     op.Start();
@@ -395,13 +395,13 @@ TEST_CASE(PREFIX "Modes - CopyToPrefix")
 
 TEST_CASE(PREFIX "Modes - CopyToPrefix, with absent directories in path")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto host = TestEnv().vfs_native;
 
     // just like above, but file copy operation should build a destination path
     const auto dst_dir = tmp_dir.directory / "Some" / "Absent" / "Dir" / "Is" / "Here/";
 
-    CopyingOptions opts;
+    const CopyingOptions opts;
     Copying op(FetchItems("/System/Applications/", {"Mail.app"}, *TestEnv().vfs_native), dst_dir.native(), host, opts);
 
     op.Start();
@@ -420,13 +420,13 @@ TEST_CASE(PREFIX "Modes - CopyToPrefix, with absent directories in path")
 // absolute
 TEST_CASE(PREFIX "Modes - CopyToPrefix_WithLocalDir")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     auto host = TestEnv().vfs_native;
 
     REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host) ==
             0);
 
-    CopyingOptions opts;
+    const CopyingOptions opts;
     Copying op(FetchItems(tmp_dir.directory, {"Mail.app"}, *TestEnv().vfs_native),
                tmp_dir.directory / "SomeDirectoryName/",
                host,
@@ -449,7 +449,7 @@ TEST_CASE(PREFIX "Modes - CopyToPrefix_WithLocalDir")
 TEST_CASE(PREFIX "Modes - CopyToPathName_WithLocalDir")
 {
     // Copies "Mail.app" to "Mail2.app" in the same dir
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     auto host = TestEnv().vfs_native;
 
     REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host) ==
@@ -471,7 +471,7 @@ TEST_CASE(PREFIX "Modes - RenameToPathPreffix")
 {
     // works on single host - In and Out same as where source files are
     // Copies "Mail.app" to "Mail2.app" in the same dir
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     auto dir2 = tmp_dir.directory / "Some" / "Dir" / "Where" / "Files" / "Should" / "Be" / "Renamed/";
     auto host = TestEnv().vfs_native;
 
@@ -493,7 +493,7 @@ TEST_CASE(PREFIX "Modes - RenameToPathName")
 {
     // works on single host - In and Out same as where source files are
     // Copies "Mail.app" to "Mail2.app" in the same dir
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     auto host = TestEnv().vfs_native;
 
     REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host) ==
@@ -513,7 +513,7 @@ TEST_CASE(PREFIX "Modes - RenameToPathName")
 
 TEST_CASE(PREFIX "symlinks overwriting")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     symlink("old_symlink_value", (tmp_dir.directory / "file1").c_str());
     symlink("new_symlink_value", (tmp_dir.directory / "file2").c_str());
 
@@ -531,7 +531,7 @@ TEST_CASE(PREFIX "symlinks overwriting")
 
 TEST_CASE(PREFIX "overwriting of symlinks in subdir")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     mkdir((tmp_dir.directory / "D1").c_str(), 0755);
     symlink("old_symlink_value", (tmp_dir.directory / "D1" / "symlink").c_str());
     mkdir((tmp_dir.directory / "D2").c_str(), 0755);
@@ -552,7 +552,7 @@ TEST_CASE(PREFIX "overwriting of symlinks in subdir")
 
 TEST_CASE(PREFIX "symlink renaming")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     symlink("symlink_value", (tmp_dir.directory / "file1").c_str());
 
     CopyingOptions opts;
@@ -581,7 +581,7 @@ TEST_CASE(PREFIX "rename dir into existing dir")
     // DirA/TestDir
     // DirB/TestDir
     // DirB/TestDir/file.txt
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     mkdir((tmp_dir.directory / "DirA").c_str(), 0755);
     mkdir((tmp_dir.directory / "DirA" / "TestDir").c_str(), 0755);
     mkdir((tmp_dir.directory / "DirB").c_str(), 0755);
@@ -609,7 +609,7 @@ TEST_CASE(PREFIX "renaming dir into existing reg")
 {
     // DirA/item (file)
     // DirB/item (directory)
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     mkdir((tmp_dir.directory / "DirA").c_str(), 0755);
     close(open((tmp_dir.directory / "DirA" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
     mkdir((tmp_dir.directory / "DirB").c_str(), 0755);
@@ -635,7 +635,7 @@ TEST_CASE(PREFIX "renaming non-empty dir into existing reg")
     // DirA/item (file)
     // DirB/item (directory)
     // DirB/item/test
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     mkdir((tmp_dir.directory / "DirA").c_str(), 0755);
     close(open((tmp_dir.directory / "DirA" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
     mkdir((tmp_dir.directory / "DirB").c_str(), 0755);
@@ -661,7 +661,7 @@ TEST_CASE(PREFIX "renaming non-empty dir into existing reg")
 
 TEST_CASE(PREFIX "copied application has a valid signature")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     CopyingOptions opts;
     opts.docopy = true;
     auto host = TestEnv().vfs_native;
@@ -675,7 +675,7 @@ TEST_CASE(PREFIX "copied application has a valid signature")
 
 TEST_CASE(PREFIX "copying to existing item with KeepBoth results in orig copied with another name")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     // DirA/item (file)
     // DirB/item (file)
     mkdir((tmp_dir.directory / "DirA").c_str(), 0755);
@@ -698,7 +698,7 @@ TEST_CASE(PREFIX "copying to existing item with KeepBoth results in orig copied 
 
 TEST_CASE(PREFIX "renaming to existing item with KeepiBoth results in orig rename with another name")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     // DirA/item (file)
     // DirB/item (file)
     mkdir((tmp_dir.directory / "DirA").c_str(), 0755);
@@ -723,7 +723,7 @@ TEST_CASE(PREFIX "renaming to existing item with KeepiBoth results in orig renam
 
 TEST_CASE(PREFIX "copying symlink to existing item with KeepBoth results in orig copied with another name")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     // DirA/item (file)
     // DirB/item (simlink)
     mkdir((tmp_dir.directory / "DirA").c_str(), 0755);
@@ -746,7 +746,7 @@ TEST_CASE(PREFIX "copying symlink to existing item with KeepBoth results in orig
 
 TEST_CASE(PREFIX "renaming symlink to existing item with KeepBoth results in orig renamed with Another name")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     // DirA/item (file)
     // DirB/item (symink)
     mkdir((tmp_dir.directory / "DirA").c_str(), 0755);
@@ -771,7 +771,7 @@ TEST_CASE(PREFIX "renaming symlink to existing item with KeepBoth results in ori
 
 TEST_CASE(PREFIX "Copy native->xattr->xattr")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
 
     const auto native_host = TestEnv().vfs_native;
     const auto orig = tmp_dir.directory / "src";
@@ -817,7 +817,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part1")
 
     VFSEasyDelete(fn2, host);
 
-    CopyingOptions opts;
+    const CopyingOptions opts;
     Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *TestEnv().vfs_native),
                "/Public/!FilesTesting/",
                host,
@@ -843,7 +843,7 @@ TEST_CASE(PREFIX "Copy to local FTP")
 
     VFSEasyDelete("/Public", host);
 
-    CopyingOptions opts;
+    const CopyingOptions opts;
     Copying op(FetchItems("/System/Applications/Mail.app/Contents", {begin(files), end(files)}, *TestEnv().vfs_native),
                "/Public/!FilesTesting/",
                host,
@@ -874,7 +874,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part3")
 
     VFSEasyDelete("/Public/!FilesTesting/bin", host);
 
-    CopyingOptions opts;
+    const CopyingOptions opts;
     Copying op(FetchItems("/", {"bin"}, *TestEnv().vfs_native), "/Public/!FilesTesting/", host, opts);
 
     op.Start();
@@ -1044,7 +1044,7 @@ TEST_CASE(PREFIX "Overwriting a locked native regular item")
 {
     using LockedItemBehavior = CopyingOptions::LockedItemBehavior;
 
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     const auto filename_src = "source";
     const auto filename_dst = "destination";
@@ -1119,7 +1119,7 @@ TEST_CASE(PREFIX "Moving a locked native regular item to a separate volume")
     // creating/mounting a .dmg is rather slow, so this is a sequential test instead of multiple
     // sections.
     TempTestDir dir;
-    TempTestDmg dmg(dir);
+    const TempTestDmg dmg(dir);
     const auto host = TestEnv().vfs_native;
     const auto filename = "old_name", new_filename = "old_name";
     const auto path = dir.directory / filename, new_path = dmg.directory / new_filename;
@@ -1137,19 +1137,19 @@ TEST_CASE(PREFIX "Moving a locked native regular item to a separate volume")
         op->Wait();
         return op;
     };
-    std::vector<std::function<void()>> setups{[&] {
-                                                  REQUIRE(close(creat(path.c_str(), 0755)) == 0);
-                                                  REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
-                                              },
-                                              [&] {
-                                                  REQUIRE_NOTHROW(
-                                                      std::filesystem::create_symlink("some nonsense", path));
-                                                  REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
-                                              },
-                                              [&] {
-                                                  REQUIRE_NOTHROW(std::filesystem::create_directory(path));
-                                                  REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
-                                              }};
+    const std::vector<std::function<void()>> setups{[&] {
+                                                        REQUIRE(close(creat(path.c_str(), 0755)) == 0);
+                                                        REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
+                                                    },
+                                                    [&] {
+                                                        REQUIRE_NOTHROW(
+                                                            std::filesystem::create_symlink("some nonsense", path));
+                                                        REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
+                                                    },
+                                                    [&] {
+                                                        REQUIRE_NOTHROW(std::filesystem::create_directory(path));
+                                                        REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
+                                                    }};
     for( auto &setup : setups ) {
         CopyingOptions opts;
         opts.docopy = false;
@@ -1334,7 +1334,7 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> native)
         0x57, 0x8c, 0x82, 0x51, 0x30, 0x0a, 0x46, 0xc1, 0x28, 0xa0, 0x37, 0x00, 0x00, 0xd9, 0x11, 0xfa, 0x57, 0x00,
         0x14, 0x00, 0x00};
 
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto path = std::filesystem::path(dir.directory) / "arc";
     REQUIRE(nc::base::WriteAtomically(path, {reinterpret_cast<const std::byte *>(arc), std::size(arc)}));
     std::shared_ptr<nc::vfs::ArchiveHost> host;
@@ -1420,12 +1420,13 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> vfs)")
 
 TEST_CASE(PREFIX "Copying a native file that is being written to")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const std::filesystem::path p = dir.directory / "a";
     static constexpr size_t max_size = 100'000'000;
 
     std::mutex m;
-    std::condition_variable cv; // should be a std::latch instead, but isn't available on macosx10.15 :-(
+    std::condition_variable cv; // should be a std::latch instead, but isn't
+                                // available on macosx10.15 :-(
     std::atomic_bool started = false, stop = false;
     std::thread t([&] {
         const int f = open(p.c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR);
@@ -1509,7 +1510,7 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
     }
     else if( S_ISDIR(st1.mode) ) {
         _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
-            int ret = VFSCompareEntries(
+            const int ret = VFSCompareEntries(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
             if( ret != 0 )
                 return false;

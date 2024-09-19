@@ -18,7 +18,7 @@ QuickSearchHiglight::QuickSearchHiglight(std::span<const Range> _ranges) noexcep
             if( offset - position < 16 ) {
                 if( length < 16 ) {
                     // place this whole segment
-                    uint64_t t = (offset - position) | (length << 4);
+                    const uint64_t t = (offset - position) | (length << 4);
                     d |= t << (idx * 8);
                     ++idx;
                     if( idx == 8 )
@@ -28,7 +28,7 @@ QuickSearchHiglight::QuickSearchHiglight(std::span<const Range> _ranges) noexcep
                 }
                 else {
                     // place 15 characters of this segment
-                    uint64_t t = (offset - position) | (15 << 4);
+                    const uint64_t t = (offset - position) | (15 << 4);
                     d |= t << (idx * 8);
                     ++idx;
                     if( idx == 8 )
@@ -40,7 +40,7 @@ QuickSearchHiglight::QuickSearchHiglight(std::span<const Range> _ranges) noexcep
                 continue;
             }
             // place only an offset
-            uint64_t t = 15;
+            const uint64_t t = 15;
             d |= t << (idx * 8);
             ++idx;
             if( idx == 8 )

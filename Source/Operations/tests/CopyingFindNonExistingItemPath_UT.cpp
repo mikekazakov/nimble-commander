@@ -9,7 +9,7 @@ using nc::ops::copying::FindNonExistingItemPath;
 
 TEST_CASE(PREFIX "regular file without extension")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
 
     auto orig_path = dir.directory / "item";
     close(open((orig_path / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
@@ -21,7 +21,7 @@ TEST_CASE(PREFIX "regular file without extension")
 
 TEST_CASE(PREFIX "doesnt check the initial path")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     auto orig_path = dir.directory / "item";
 
     auto proposed_path = FindNonExistingItemPath(orig_path.native(), *TestEnv().vfs_native);
@@ -31,7 +31,7 @@ TEST_CASE(PREFIX "doesnt check the initial path")
 
 TEST_CASE(PREFIX "regular file without extension when possible targets already exists")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     auto orig_path = dir.directory / "item";
     close(open((dir.directory / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
     close(open((dir.directory / "item 2").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
@@ -45,7 +45,7 @@ TEST_CASE(PREFIX "regular file without extension when possible targets already e
 
 TEST_CASE(PREFIX "regular file with extension")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     auto orig_path = dir.directory / "item.zip";
 
     auto proposed_path = FindNonExistingItemPath(orig_path.native(), *TestEnv().vfs_native);
@@ -55,7 +55,7 @@ TEST_CASE(PREFIX "regular file with extension")
 
 TEST_CASE(PREFIX "regular file with extension when possible targets already exists")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     auto orig_path = dir.directory / "item.zip";
     close(open((dir.directory / "item.zip").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
     close(open((dir.directory / "item 2.zip").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
@@ -69,7 +69,7 @@ TEST_CASE(PREFIX "regular file with extension when possible targets already exis
 
 TEST_CASE(PREFIX "checks magnitudes of tens")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     auto orig_path = dir.directory / "item.zip";
     close(open((dir.directory / "item.zip").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
     for( int i = 2; i <= 9; ++i )
@@ -83,7 +83,7 @@ TEST_CASE(PREFIX "checks magnitudes of tens")
 
 TEST_CASE(PREFIX "checks magnitudes of hundreds")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     auto orig_path = dir.directory / "item.zip";
     close(open((dir.directory / "item.zip").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
     for( int i = 2; i <= 99; ++i )
@@ -97,7 +97,7 @@ TEST_CASE(PREFIX "checks magnitudes of hundreds")
 
 TEST_CASE(PREFIX "returns empty string on cancellation")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     auto orig_path = dir.directory / "item.zip";
     auto cancel = [] { return true; };
 

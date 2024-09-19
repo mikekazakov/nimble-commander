@@ -77,7 +77,7 @@ ProduceNonUniformDummyListing(const std::vector<std::tuple<std::string, std::str
 
 TEST_CASE(PREFIX "Empty model")
 {
-    Model model;
+    const Model model;
     CHECK(model.IsLoaded() == false);
     CHECK(model.Listing().Count() == 0);
     CHECK(model.RawEntriesCount() == 0);
@@ -124,7 +124,7 @@ TEST_CASE(PREFIX "RawIndicesForName")
     }
     SECTION("Empty")
     {
-        Model model;
+        const Model model;
         CHECK(model.RawIndicesForName("a").empty());
     }
 }
@@ -133,7 +133,7 @@ TEST_CASE(PREFIX "SortedIndexForRawIndex")
 {
     SECTION("Empty")
     {
-        Model model;
+        const Model model;
         CHECK(model.SortedIndexForRawIndex(-1) == -1);
         CHECK(model.SortedIndexForRawIndex(0) == -1);
     }
@@ -670,7 +670,7 @@ TEST_CASE(PREFIX "SetCalculatedSizesForDirectories")
 
 TEST_CASE(PREFIX "ReLoad a temporary listing")
 {
-    VFSListingPtr l1 = ProduceNonUniformDummyListing({{"/D1/", "meow.txt", 10}, {"/D2/", "bark.txt", 20}});
+    const VFSListingPtr l1 = ProduceNonUniformDummyListing({{"/D1/", "meow.txt", 10}, {"/D2/", "bark.txt", 20}});
     CHECK(l1->IsUniform() == false);
 
     data::Model data;
@@ -680,7 +680,7 @@ TEST_CASE(PREFIX "ReLoad a temporary listing")
 
     SECTION("Same items, Different order, updated size")
     {
-        VFSListingPtr l2 = ProduceNonUniformDummyListing({{"/D2/", "bark.txt", 21}, {"/D1/", "meow.txt", 11}});
+        const VFSListingPtr l2 = ProduceNonUniformDummyListing({{"/D2/", "bark.txt", 21}, {"/D1/", "meow.txt", 11}});
         data.ReLoad(l2);
         CHECK(data.EntryAtSortPosition(data.SortedIndexForName("bark.txt")).Size() == 21);
         CHECK(data.EntryAtSortPosition(data.SortedIndexForName("bark.txt")).Directory() == "/D2/");
@@ -706,7 +706,7 @@ TEST_CASE(PREFIX "ReLoad a temporary listing")
 #endif
     SECTION("One removed, updated size")
     {
-        VFSListingPtr l2 = ProduceNonUniformDummyListing({{"/D2/", "bark.txt", 21}});
+        const VFSListingPtr l2 = ProduceNonUniformDummyListing({{"/D2/", "bark.txt", 21}});
         data.ReLoad(l2);
         CHECK(data.EntryAtSortPosition(data.SortedIndexForName("bark.txt")).Size() == 21);
         CHECK(data.EntryAtSortPosition(data.SortedIndexForName("bark.txt")).Directory() == "/D2/");
@@ -715,7 +715,7 @@ TEST_CASE(PREFIX "ReLoad a temporary listing")
     }
     SECTION("Both removed")
     {
-        VFSListingPtr l2 = ProduceNonUniformDummyListing({});
+        const VFSListingPtr l2 = ProduceNonUniformDummyListing({});
         data.ReLoad(l2);
         CHECK(data.SortedIndexForName("bark.txt") == -1);
         CHECK(data.SortedIndexForName("meow.txt") == -1);

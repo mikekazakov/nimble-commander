@@ -19,7 +19,7 @@ FetchItems(const std::string &_directory_path, const std::vector<std::string> &_
 
 TEST_CASE(PREFIX "Regular removal")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     close(creat((dir.directory / "regular_file").c_str(), 0755));
 
@@ -33,7 +33,7 @@ TEST_CASE(PREFIX "Regular removal")
 
 TEST_CASE(PREFIX "Regular file removal - locked file")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     const auto path = dir.directory / "regular_file";
     REQUIRE(close(creat(path.c_str(), 0755)) == 0);
@@ -84,7 +84,7 @@ TEST_CASE(PREFIX "Regular file removal - locked file")
 
 TEST_CASE(PREFIX "Directory removal - locked file")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     const auto path = dir.directory / "directory";
     REQUIRE_NOTHROW(std::filesystem::create_directory(path));
@@ -135,7 +135,7 @@ TEST_CASE(PREFIX "Directory removal - locked file")
 
 TEST_CASE(PREFIX "Symlink removal - locked file")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     const auto path = dir.directory / "symlink";
     REQUIRE_NOTHROW(std::filesystem::create_symlink("/bin/sh", path));
@@ -186,7 +186,7 @@ TEST_CASE(PREFIX "Symlink removal - locked file")
 
 TEST_CASE(PREFIX "Directory removal")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     mkdir((dir.directory / "directory").c_str(), 0755);
 
@@ -200,7 +200,7 @@ TEST_CASE(PREFIX "Directory removal")
 
 TEST_CASE(PREFIX "Link removal")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     link((dir.directory / "link").c_str(), "/System/Library/Kernels/kernel");
 
@@ -214,7 +214,7 @@ TEST_CASE(PREFIX "Link removal")
 
 TEST_CASE(PREFIX "Nested removal")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     auto &d = dir.directory;
     const auto host = TestEnv().vfs_native;
     mkdir((d / "top").c_str(), 0755);
@@ -235,7 +235,7 @@ TEST_CASE(PREFIX "Nested removal")
 
 TEST_CASE(PREFIX "Nested trash")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     auto &d = dir.directory;
     const auto host = TestEnv().vfs_native;
     mkdir((d / "top").c_str(), 0755);
@@ -265,7 +265,7 @@ TEST_CASE(PREFIX "Failing removal")
 
 TEST_CASE(PREFIX "Complex deletion")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (dir.directory / "Mail.app").c_str(), host) == 0);
 

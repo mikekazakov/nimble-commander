@@ -12,7 +12,7 @@ using namespace std::literals;
 
 TEST_CASE(PREFIX "symlink creation")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = std::shared_ptr<nc::vfs::Host>(TestEnv().vfs_native);
     const auto path = (std::filesystem::path(dir.directory) / "symlink").native();
     const auto value = "pointing_somewhere"s;
@@ -33,7 +33,7 @@ TEST_CASE(PREFIX "symlink creation")
 
 TEST_CASE(PREFIX "symlink creation on invalid path")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = std::shared_ptr<nc::vfs::Host>(TestEnv().vfs_native);
     const auto path = (std::filesystem::path(dir.directory) / "not_existing_directory/symlink").native();
     const auto value = "pointing_somewhere"s;
@@ -45,7 +45,7 @@ TEST_CASE(PREFIX "symlink creation on invalid path")
 
 TEST_CASE(PREFIX "symlink alteration")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = std::shared_ptr<nc::vfs::Host>(TestEnv().vfs_native);
     const auto path = (std::filesystem::path(dir.directory) / "symlink").native();
     const auto value = "pointing_somewhere"s;
@@ -68,7 +68,7 @@ TEST_CASE(PREFIX "symlink alteration")
 
 TEST_CASE(PREFIX "hardlink creation")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = std::shared_ptr<nc::vfs::Host>(TestEnv().vfs_native);
     const auto path = (std::filesystem::path(dir.directory) / "node1").native();
     const auto value = (std::filesystem::path(dir.directory) / "node2").native();

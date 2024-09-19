@@ -222,7 +222,7 @@ TEST_CASE(PREFIX "Counter Placeholders")
 TEST_CASE(PREFIX "Text extraction")
 {
     {
-        BatchRenamingScheme::TextExtraction te;
+        const BatchRenamingScheme::TextExtraction te;
         auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
         REQUIRE([r isEqualToString:@"1234567890"]);
     }
@@ -386,7 +386,7 @@ TEST_CASE(PREFIX "DecomposeMaskIntoPlaceholders")
 
 TEST_CASE(PREFIX "Renaming - simple cases")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     auto item_dir = tmp_dir.directory / "grandparent_dir" / "parent_dir";
     REQUIRE(std::filesystem::create_directories(item_dir));
     const auto item = GetRegListingItem("filename.txt", item_dir);

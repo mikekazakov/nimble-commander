@@ -91,8 +91,8 @@ private:
         }
 
         template <typename C>
-        static auto VerboseJunctionImpl(const C &t, int) -> decltype(t.VerboseJunction(),
-                                                                     static_cast<const char *>(nullptr))
+        static auto VerboseJunctionImpl(const C &t, int)
+            -> decltype(t.VerboseJunction(), static_cast<const char *>(nullptr))
         {
             return t.VerboseJunction();
         }

@@ -8,7 +8,7 @@ if ! [ -x "$(command -v xcpretty)" ] ; then
     exit -1
 fi
 
-if ! [ -x "$(command -v /usr/local/opt/llvm/bin/clang-tidy)" ] ; then
+if ! [ -x "$(command -v /opt/homebrew/opt/llvm/bin/clang-tidy)" ] ; then
     echo 'clang-tidy is not found, aborting. Do brew install llvm.'
     exit -1
 fi
@@ -22,9 +22,9 @@ fi
 export LC_CTYPE=en_US.UTF-8
 
 # Tools from LLVM
-RUNTIDY=/usr/local/opt/llvm/bin/run-clang-tidy
-TIDY=/usr/local/opt/llvm/bin/clang-tidy
-APPLY=/usr/local/opt/llvm/bin/clang-apply-replacements
+RUNTIDY=/opt/homebrew/opt/llvm/bin/run-clang-tidy
+TIDY=/opt/homebrew/opt/llvm/bin/clang-tidy
+APPLY=/opt/homebrew/opt/llvm/bin/clang-apply-replacements
 
 # Get current directory
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"

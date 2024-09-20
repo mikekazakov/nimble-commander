@@ -41,14 +41,14 @@ Rules from `Source/.clang-format` are used in the process.
 ## `run_clang_tidy.sh`
 Executes `clang-tidy` against all source files in the `Source` directory, updating them in-place if necessary.  
 `xcodebuild`, `xcpretty` and `jq` must be available in the environment in order for this script to run.  
-`clang-tidy` must be installed via Brew and is expected to be located at `/usr/local/opt/llvm/bin/`.  
+`clang-tidy` must be installed via Brew and is expected to be located at `/opt/homebrew/opt/llvm/bin/`.  
 Rules from `Source/.clang-tidy` are used in the process.  
 It's recommended to execute `run_clang_format.sh` afterwards.
 
 ## Dependencies installation:
   * xcodebuild:
-    * XCode: https://download.developer.apple.com/Developer_Tools/Xcode_15.1/Xcode_15.1.xip
-    * Or just build tools: https://download.developer.apple.com/Developer_Tools/Command_Line_Tools_for_Xcode_15.1/Command_Line_Tools_for_Xcode_15.1.dmg
+    * XCode: https://download.developer.apple.com/Developer_Tools/Xcode_16/Xcode_16.xip             
+    * Or just build tools: https://download.developer.apple.com/Developer_Tools/Command_Line_Tools_for_Xcode_16/Command_Line_Tools_for_Xcode_16.dmg
   * [xcpretty](https://github.com/xcpretty/xcpretty): `gem install xcpretty`
   * [clang-format](https://clang.llvm.org/docs/ClangFormat.html): `brew install clang-format`
   * [clang-tidy](https://clang.llvm.org/extra/clang-tidy/): `brew install llvm`

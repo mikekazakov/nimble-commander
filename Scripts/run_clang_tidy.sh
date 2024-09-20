@@ -30,6 +30,13 @@ APPLY=/usr/local/opt/llvm/bin/clang-apply-replacements
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ROOT_DIR=$(cd "$SCRIPTS_DIR/.." && pwd)
 
+# Check if --check flag is provided
+check_mode=0
+if [ "$1" = "--check" ]; then
+    echo "Dry run - only checking the clang-tidy rules"
+    check_mode=1
+fi
+
 # Allocate a dir for build artifacts
 BUILD_DIR="${SCRIPTS_DIR}/run_clang_tidy.tmp"
 mkdir -p "${BUILD_DIR}"
@@ -78,13 +85,39 @@ for target in ${targets[@]}; do
     rm "compile_commands-${target}.json"
 done
 
+# Log file to capture the output of run-clang-tidy
+LOG_FILE="${BUILD_DIR}/run-clang-tidy.log"
+
 # Run clang-tidy in parallel via run-clang-tidy
-${RUNTIDY} \
- -p ${SCRIPTS_DIR} \
- -clang-tidy-binary ${TIDY} \
- -clang-apply-replacements-binary ${APPLY} \
- -j $(sysctl -n hw.activecpu) \
- -use-color 1 \
- -fix \
- -format \
- "${ROOT_DIR}/Source/.*"
+if [ $check_mode -eq 1 ]; then
+    echo "Running in check mode. No fixes will be applied."
+    ${RUNTIDY} \
+     -p ${SCRIPTS_DIR} \
+     -clang-tidy-binary ${TIDY} \
+     -clang-apply-replacements-binary ${APPLY} \
+     -j $(sysctl -n hw.activecpu) \
+     -use-color 1 \
+     "${ROOT_DIR}/Source/.*" 2>&1 | tee ${LOG_FILE}
+else
+    echo "Running in fix mode. Fixes will be applied."
+    ${RUNTIDY} \
+     -p ${SCRIPTS_DIR} \
+     -clang-tidy-binary ${TIDY} \
+     -clang-apply-replacements-binary ${APPLY} \
+     -j $(sysctl -n hw.activecpu) \
+     -use-color 1 \
+     -fix \
+     -format \
+     "${ROOT_DIR}/Source/.*" 2>&1 | tee ${LOG_FILE}
+fi
+
+# Exit with non-zero if in check mode and any issues were found
+if [ $check_mode -eq 1 ]; then
+    if grep -q "warning:" ${LOG_FILE} || grep -q "error:" ${LOG_FILE}; then
+        echo "Clang-tidy check failed. Please run Scripts/run_clang_tidy.sh before submitting your code."
+        exit 1
+    else
+        echo "Clang-tidy check passed."
+        exit 0
+    fi
+fi

@@ -72,6 +72,18 @@ jobs:
       run: "cd Scripts && ./run_clang_format.sh --check"
 
 
+  clang-tidy:
+    runs-on: macos-14
+    steps:
+    - name: Install deps
+      run: |
+        brew update
+        brew install llvm jq
+    - uses: actions/checkout@v4
+    - name: Run clang-tidy
+      run: "cd Scripts && ./run_clang_tidy.sh --check"
+
+
   build-unsigned:
     runs-on: macos-14
     steps:

@@ -494,7 +494,7 @@ void ParserImpl::SSOSCDiscard() noexcept
 void ParserImpl::SSOSCSubmit() noexcept
 {
     // parse the following format: Ps ; Pt
-    std::string_view s = m_OSCState.buffer;
+    const std::string_view s = m_OSCState.buffer;
     auto sc_pos = s.find(';');
     if( sc_pos == s.npos )
         return;
@@ -1442,7 +1442,7 @@ void ParserImpl::CSI_q() noexcept
     //  Ps = 4  ⇒  steady underline.
     //  Ps = 5  ⇒  blinking bar, xterm.
     //  Ps = 6  ⇒  steady bar, xterm.
-    std::string_view request = m_CSIState.buffer;
+    const std::string_view request = m_CSIState.buffer;
     const auto p = CSIParamsScanner::Parse(request);
     const auto is_sp = request.size() >= 2 && request[request.length() - 2] == ' ';
     if( is_sp ) {
@@ -1481,7 +1481,7 @@ void ParserImpl::CSI_r() noexcept
 {
     // CSI Ps ; Ps r
     //    Set Scrolling Region [top;bottom] (default = full size of window) (DECSTBM), VT100.
-    std::string_view request = m_CSIState.buffer;
+    const std::string_view request = m_CSIState.buffer;
     const auto p = CSIParamsScanner::Parse(request);
     if( p.count == 0 ) {
         input::ScrollingRegion scrolling_region;

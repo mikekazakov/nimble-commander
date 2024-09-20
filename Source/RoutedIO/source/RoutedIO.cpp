@@ -43,11 +43,11 @@ static PosixIOInterface &IOWrappedCreateProxy()
 
 static std::optional<std::vector<std::uint8_t>> ReadFile(const char *_path)
 {
-    int fd = open(_path, O_RDONLY);
+    const int fd = open(_path, O_RDONLY);
     if( fd < 0 )
         return std::nullopt;
 
-    long size = lseek(fd, 0, SEEK_END);
+    const long size = lseek(fd, 0, SEEK_END);
     lseek(fd, 0, SEEK_SET);
 
     auto buf = std::vector<std::uint8_t>(size);
@@ -55,7 +55,7 @@ static std::optional<std::vector<std::uint8_t>> ReadFile(const char *_path)
     uint8_t *buftmp = buf.data();
     uint64_t szleft = size;
     while( szleft ) {
-        ssize_t r = read(fd, buftmp, szleft);
+        const ssize_t r = read(fd, buftmp, szleft);
         if( r < 0 ) {
             close(fd);
             return std::nullopt;
@@ -71,13 +71,13 @@ static std::optional<std::vector<std::uint8_t>> ReadFile(const char *_path)
 static const char *InstalledPath()
 {
     using namespace std::string_literals;
-    [[clang::no_destroy]] static std::string s = "/Library/PrivilegedHelperTools/"s + g_HelperLabel;
+    [[clang::no_destroy]] static const std::string s = "/Library/PrivilegedHelperTools/"s + g_HelperLabel;
     return s.c_str();
 }
 
 static const char *BundledPath()
 {
-    [[clang::no_destroy]] static std::string s =
+    [[clang::no_destroy]] static const std::string s =
         nc::base::CommonPaths::AppBundle() + "Contents/Library/LaunchServices/" + g_HelperLabel;
     return s.c_str();
 }
@@ -225,8 +225,8 @@ bool RoutedIO::AskToInstallHelper()
     }
 
     AuthorizationItem auth_item = {kSMRightBlessPrivilegedHelper, 0, nullptr, 0};
-    AuthorizationRights auth_rights = {1, &auth_item};
-    AuthorizationFlags flags =
+    const AuthorizationRights auth_rights = {1, &auth_item};
+    const AuthorizationFlags flags =
         kAuthorizationFlagInteractionAllowed | kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
     AuthorizationRef auth_ref = nullptr;
 
@@ -418,8 +418,8 @@ void RoutedIO::InstallViaRootCLI()
     }
 
     AuthorizationItem auth_item = {kSMRightBlessPrivilegedHelper, 0, nullptr, 0};
-    AuthorizationRights auth_rights = {1, &auth_item};
-    AuthorizationFlags flags = kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
+    const AuthorizationRights auth_rights = {1, &auth_item};
+    const AuthorizationFlags flags = kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
     AuthorizationRef auth_ref = nullptr;
 
     // Obtain the right to install privileged helper tools (kSMRightBlessPrivilegedHelper).

@@ -44,7 +44,7 @@ static constexpr Exp g_Expectations[] = {
 
 TEST_CASE(PREFIX "Check expectations")
 {
-    VC vc;
+    VC const vc;
     for( const auto &exp : g_Expectations ) {
         INFO(exp.lhs);
         INFO(exp.rhs);

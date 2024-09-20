@@ -154,7 +154,7 @@ const std::string &VFSPathStack::path() const
 } // namespace nc::vfs
 
 std::hash<nc::vfs::VFSPathStack>::value_type
-std::hash<nc::vfs::VFSPathStack>::operator()(hash<nc::vfs::VFSPathStack>::argument_type const &_v) const
+std::hash<nc::vfs::VFSPathStack>::operator()(const hash<nc::vfs::VFSPathStack>::argument_type &_v) const
 {
     std::string str;
     for( auto &i : _v.m_Stack ) {

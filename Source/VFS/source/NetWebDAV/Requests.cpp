@@ -143,7 +143,7 @@ static std::vector<PropFindResponse> ParseDAVListing(const std::string &_xml_lis
     using namespace pugi;
 
     xml_document doc;
-    xml_parse_result result = doc.load_string(_xml_listing.c_str());
+    const xml_parse_result result = doc.load_string(_xml_listing.c_str());
     if( !result )
         return {};
 
@@ -249,7 +249,7 @@ static std::pair<long, long> ParseSpaceQouta(const std::string &_xml)
     using namespace pugi;
 
     xml_document doc;
-    xml_parse_result result = doc.load_string(_xml.c_str());
+    const xml_parse_result result = doc.load_string(_xml.c_str());
     if( !result )
         return {-1, -1};
 

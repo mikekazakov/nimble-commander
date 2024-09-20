@@ -59,7 +59,7 @@ TEST_CASE(PREFIX "can connect to localhost")
     REQUIRE_NOTHROW(host = spawnLocalHost());
 
     VFSListingPtr listing;
-    int rc = host->FetchDirectoryListing("/", listing, 0, nullptr);
+    const int rc = host->FetchDirectoryListing("/", listing, 0, nullptr);
     CHECK(rc == VFSError::Ok);
 }
 
@@ -88,7 +88,7 @@ static void TestFetchDirectoryListing(VFSHostPtr _host)
     VFSEasyDelete(p1, _host);
     REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
     REQUIRE(_host->CreateDirectory(pp1, 0) == VFSError::Ok);
-    std::string_view content = "Hello, World!";
+    const std::string_view content = "Hello, World!";
     WriteWholeFile(*_host, pp2, {reinterpret_cast<const std::byte *>(content.data()), content.size()});
     WriteWholeFile(*_host, ppp1, {reinterpret_cast<const std::byte *>(content.data()), content.size()});
 
@@ -153,7 +153,7 @@ static void TestSimpleFileWrite(VFSHostPtr _host)
     const auto open_rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create);
     REQUIRE(open_rc == VFSError::Ok);
 
-    std::string_view str{"Hello, world!"};
+    const std::string_view str{"Hello, world!"};
     REQUIRE(file->SetUploadSize(str.size()) == VFSError::Ok);
     const auto write_rc = file->WriteFile(str.data(), str.size());
     REQUIRE(write_rc == VFSError::Ok);
@@ -411,7 +411,8 @@ static void TestComplexCopy(VFSHostPtr _host)
     REQUIRE(copy_rc == VFSError::Ok);
 
     int res = 0;
-    int cmp_rc = VFSCompareNodes("/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host, res);
+    const int cmp_rc =
+        VFSCompareNodes("/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host, res);
 
     CHECK(cmp_rc == VFSError::Ok);
     CHECK(res == 0);

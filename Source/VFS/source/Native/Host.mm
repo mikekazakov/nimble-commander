@@ -310,7 +310,7 @@ int NativeHost::FetchSingleItemListing(std::string_view _path,
         ext_flags = _params.ext_flags;
     };
 
-    int ret = Fetching::ReadSingleEntryAttributesByPath(io, _path, cb_param);
+    const int ret = Fetching::ReadSingleEntryAttributesByPath(io, _path, cb_param);
     if( ret != 0 )
         return VFSError::FromErrno(ret);
 
@@ -461,7 +461,8 @@ ssize_t NativeHost::CalculateDirectorySize(std::string_view _path, const VFSCanc
     dispatch_queue stat_queue("VFSNativeHost.CalculateDirectoriesSizes");
 
     std::atomic_int64_t size{0};
-    int result = CalculateDirectoriesSizesHelper(path, strlen(path), iscancelling, _cancel_checker, stat_queue, size);
+    const int result =
+        CalculateDirectoriesSizesHelper(path, strlen(path), iscancelling, _cancel_checker, stat_queue, size);
     stat_queue.sync([] {});
     if( result >= 0 )
         return size;
@@ -475,14 +476,14 @@ bool NativeHost::IsDirectoryChangeObservationAvailable(std::string_view _path)
         return false;
 
     StackAllocator alloc;
-    std::pmr::string path(_path, &alloc);
+    const std::pmr::string path(_path, &alloc);
     return access(path.c_str(), R_OK) == 0; // should use _not_ routed I/O here!
 }
 
 HostDirObservationTicket NativeHost::ObserveDirectoryChanges(std::string_view _path, std::function<void()> _handler)
 {
     auto &inst = nc::utility::FSEventsDirUpdate::Instance();
-    uint64_t t = inst.AddWatchPath(_path, std::move(_handler));
+    const uint64_t t = inst.AddWatchPath(_path, std::move(_handler));
     return t ? HostDirObservationTicket(t, shared_from_this()) : HostDirObservationTicket();
 }
 
@@ -510,14 +511,14 @@ int NativeHost::Stat(std::string_view _path,
                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
-    std::pmr::string path(_path, &alloc);
+    const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::InterfaceForAccess(path.c_str(), R_OK);
     memset(&_st, 0, sizeof(_st));
 
     struct stat st;
 
-    int ret = (_flags & VFSFlags::F_NoFollow) ? io.lstat(path.c_str(), &st) : io.stat(path.c_str(), &st);
+    const int ret = (_flags & VFSFlags::F_NoFollow) ? io.lstat(path.c_str(), &st) : io.stat(path.c_str(), &st);
 
     if( ret == 0 ) {
         VFSStat::FromSysStat(st, _st);
@@ -531,7 +532,7 @@ int NativeHost::IterateDirectoryListing(std::string_view _path,
                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     StackAllocator alloc;
-    std::pmr::string path(_path, &alloc);
+    const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::InterfaceForAccess(path.c_str(), R_OK);
 
@@ -563,7 +564,7 @@ int NativeHost::StatFS(std::string_view _path,
                        [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
-    std::pmr::string path(_path, &alloc);
+    const std::pmr::string path(_path, &alloc);
 
     struct statfs info;
     if( statfs(path.c_str(), &info) < 0 )
@@ -586,9 +587,9 @@ int NativeHost::StatFS(std::string_view _path,
 int NativeHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
-    std::pmr::string path(_path, &alloc);
+    const std::pmr::string path(_path, &alloc);
     auto &io = routedio::RoutedIO::Default;
-    int ret = io.unlink(path.c_str());
+    const int ret = io.unlink(path.c_str());
     if( ret == 0 )
         return 0;
     return VFSError::FromErrno();
@@ -604,9 +605,9 @@ int NativeHost::CreateDirectory(std::string_view _path,
                                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
-    std::pmr::string path(_path, &alloc);
+    const std::pmr::string path(_path, &alloc);
     auto &io = routedio::RoutedIO::Default;
-    int ret = io.mkdir(path.c_str(), mode_t(_mode));
+    const int ret = io.mkdir(path.c_str(), mode_t(_mode));
     if( ret == 0 )
         return 0;
     return VFSError::FromErrno();
@@ -615,9 +616,9 @@ int NativeHost::CreateDirectory(std::string_view _path,
 int NativeHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
-    std::pmr::string path(_path, &alloc);
+    const std::pmr::string path(_path, &alloc);
     auto &io = routedio::RoutedIO::Default;
-    int ret = io.rmdir(path.c_str());
+    const int ret = io.rmdir(path.c_str());
     if( ret == 0 )
         return 0;
     return VFSError::FromErrno();
@@ -629,10 +630,10 @@ int NativeHost::ReadSymlink(std::string_view _path,
                             [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
-    std::pmr::string path(_path, &alloc);
+    const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
-    ssize_t sz = io.readlink(path.c_str(), _buffer, _buffer_size);
+    const ssize_t sz = io.readlink(path.c_str(), _buffer, _buffer_size);
     if( sz < 0 )
         return VFSError::FromErrno();
 
@@ -648,11 +649,11 @@ int NativeHost::CreateSymlink(std::string_view _symlink_path,
                               [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
-    std::pmr::string symlink_path(_symlink_path, &alloc);
-    std::pmr::string symlink_value(_symlink_value, &alloc);
+    const std::pmr::string symlink_path(_symlink_path, &alloc);
+    const std::pmr::string symlink_value(_symlink_value, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
-    int result = io.symlink(symlink_value.c_str(), symlink_path.c_str());
+    const int result = io.symlink(symlink_value.c_str(), symlink_path.c_str());
     if( result < 0 )
         return VFSError::FromErrno();
 
@@ -673,7 +674,7 @@ int NativeHost::SetTimes(std::string_view _path,
         return VFSError::Ok;
 
     StackAllocator alloc;
-    std::pmr::string path(_path, &alloc);
+    const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
     if( _birth_time && io.chbtime(path.c_str(), *_birth_time) != 0 )
@@ -693,11 +694,11 @@ int NativeHost::Rename(std::string_view _old_path,
                        [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
-    std::pmr::string old_path(_old_path, &alloc);
-    std::pmr::string new_path(_new_path, &alloc);
+    const std::pmr::string old_path(_old_path, &alloc);
+    const std::pmr::string new_path(_new_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
-    int ret = io.rename(old_path.c_str(), new_path.c_str());
+    const int ret = io.rename(old_path.c_str(), new_path.c_str());
     if( ret == 0 )
         return VFSError::Ok;
     return VFSError::FromErrno();
@@ -720,7 +721,7 @@ int NativeHost::Trash(std::string_view _path, [[maybe_unused]] const VFSCancelCh
         return VFSError::FromErrno(EINVAL);
 
     StackAllocator alloc;
-    std::pmr::string path(_path, &alloc);
+    const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
     const auto ret = io.trash(path.c_str());
@@ -737,7 +738,7 @@ int NativeHost::SetPermissions(std::string_view _path,
         return VFSError::FromErrno(EINVAL);
 
     StackAllocator alloc;
-    std::pmr::string path(_path, &alloc);
+    const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
     const auto ret = io.chmod(path.c_str(), _mode);
@@ -755,7 +756,7 @@ int NativeHost::SetFlags(std::string_view _path,
         return VFSError::FromErrno(EINVAL);
 
     StackAllocator alloc;
-    std::pmr::string path(_path, &alloc);
+    const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
     const bool no_follow = _vfs_options & Flags::F_NoFollow;
@@ -774,7 +775,7 @@ int NativeHost::SetOwnership(std::string_view _path,
         return VFSError::FromErrno(EINVAL);
 
     StackAllocator alloc;
-    std::pmr::string path(_path, &alloc);
+    const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
     const auto ret = io.chown(path.c_str(), _uid, _gid);

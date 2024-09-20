@@ -18,7 +18,7 @@ static bool IsLastResortFont(CTFontRef _font)
     if( !family )
         return false;
 
-    bool is_resort = CFStringCompare(family, CFSTR("LastResort"), 0) == kCFCompareEqualTo;
+    const bool is_resort = CFStringCompare(family, CFSTR("LastResort"), 0) == kCFCompareEqualTo;
 
     CFRelease(family);
     return is_resort;
@@ -143,7 +143,7 @@ cleanup:
 std::shared_ptr<FontCache> FontCache::FontCacheFromFont(CTFontRef _basic_font)
 {
     const auto full_name = base::CFPtr<CFStringRef>::adopt(CTFontCopyFullName(_basic_font));
-    double font_size = CTFontGetSize(_basic_font);
+    const double font_size = CTFontGetSize(_basic_font);
     for( auto &i : g_Caches ) {
         auto font = i.lock();
         const bool same_name = CFStringCompare(font->m_FontName.get(), full_name.get(), 0) == kCFCompareEqualTo;

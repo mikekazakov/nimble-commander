@@ -110,10 +110,10 @@ static std::string GetLocale()
     }
     CFRelease(loc);
 
-    std::string encoding = "UTF-8"; // hardcoded now. but how uses non-UTF8 nowdays?
+    const std::string encoding = "UTF-8"; // hardcoded now. but how uses non-UTF8 nowdays?
 
     // check if locale + encoding is valid
-    std::string test = locale + '.' + encoding;
+    const std::string test = locale + '.' + encoding;
     if( nullptr != setlocale(LC_CTYPE, test.c_str()) )
         locale = test;
 

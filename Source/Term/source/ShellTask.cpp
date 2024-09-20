@@ -654,7 +654,7 @@ void ShellTask::WriteChildInput(std::string_view _data)
 
     {
         const auto lock = std::lock_guard{I->master_write_lock};
-        ssize_t rc = write(I->master_fd, _data.data(), _data.size());
+        const ssize_t rc = write(I->master_fd, _data.data(), _data.size());
         if( rc < 0 || rc != static_cast<ssize_t>(_data.size()) )
             std::cerr << "write( m_MasterFD, _data.data(), _data.size() ) returned " << rc << '\n';
     }
@@ -688,7 +688,7 @@ void ShellTask::Impl::DoCleanUp()
 {
     // this method shall be called only on the io_queue.
     dispatch_assert_background_queue();
-    std::lock_guard lockg{lock};
+    const std::lock_guard lockg{lock};
 
     if( shell_pid > 0 ) {
         const int pid = shell_pid;
@@ -976,8 +976,8 @@ int ShellTask::ShellChildPID() const
     int child_pid = -1;
 
     for( size_t i = 0; i < proc_cnt; ++i ) {
-        int pid = proc_list[i].kp_proc.p_pid;
-        int ppid = proc_list[i].kp_eproc.e_ppid;
+        const int pid = proc_list[i].kp_proc.p_pid;
+        const int ppid = proc_list[i].kp_eproc.e_ppid;
         if( ppid == I->shell_pid ) {
             child_pid = pid;
             break;
@@ -990,7 +990,7 @@ int ShellTask::ShellChildPID() const
 
 std::string ShellTask::CWD() const
 {
-    std::lock_guard<std::mutex> lock(I->lock);
+    const std::lock_guard<std::mutex> lock(I->lock);
     return I->cwd;
 }
 

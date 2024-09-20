@@ -29,7 +29,7 @@ static int CopyNodeAttrs(const char *_src_full_path,
      */
 
     VFSStat st;
-    int result = _src_host->Stat(_src_full_path, st, VFSFlags::F_NoFollow, nullptr);
+    const int result = _src_host->Stat(_src_full_path, st, VFSFlags::F_NoFollow, nullptr);
     if( result < 0 )
         return result;
 
@@ -41,9 +41,9 @@ static int CopyNodeAttrs(const char *_src_full_path,
 static int CopyFileContentsSmall(std::shared_ptr<VFSFile> _src, std::shared_ptr<VFSFile> _dst)
 {
     constexpr uint64_t bufsz = 256 * 1024;
-    std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
+    const std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
     const uint64_t src_size = _src->Size();
-    uint64_t left_read = src_size;
+    const uint64_t left_read = src_size;
     ssize_t res_read = 0, total_wrote = 0;
 
     while( (res_read = _src->Read(buf.get(), std::min(bufsz, left_read))) > 0 ) {
@@ -72,7 +72,7 @@ static int CopyFileContentsSmall(std::shared_ptr<VFSFile> _src, std::shared_ptr<
 
 static int CopyFileContentsLarge(std::shared_ptr<VFSFile> _src, std::shared_ptr<VFSFile> _dst)
 {
-    nc::base::DispatchGroup io;
+    const nc::base::DispatchGroup io;
 
     // consider using variable-sized buffers depending on underlying media
     const int buffer_size = 1024 * 1024; // 1Mb
@@ -395,7 +395,7 @@ int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
     }
     else if( S_ISDIR(st1.mode) ) {
         _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
-            int ret = VFSCompareNodes(
+            const int ret = VFSCompareNodes(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
             if( ret != 0 )
                 return false;
@@ -448,7 +448,7 @@ std::optional<std::string> CopyFileToTempStorage(const std::string &_vfs_filepat
         return std::nullopt;
 
     vfs_file->XAttrIterateNames([&](const char *_name) {
-        ssize_t res = vfs_file->XAttrGet(_name, buf.get(), bufsz);
+        const ssize_t res = vfs_file->XAttrGet(_name, buf.get(), bufsz);
         if( res >= 0 )
             fsetxattr(native_file->file_descriptor, _name, buf.get(), res, 0, 0);
         return true;
@@ -553,7 +553,7 @@ static int ExtractRegFile(const std::string &_vfs_path,
     ssize_t res_read;
     while( (res_read = vfs_file->Read(buf.get(), bufsz)) > 0 ) {
         while( res_read > 0 ) {
-            ssize_t res_write = write(fd, buf.get(), res_read);
+            const ssize_t res_write = write(fd, buf.get(), res_read);
             if( res_write >= 0 )
                 res_read -= res_write;
             else {
@@ -566,7 +566,7 @@ static int ExtractRegFile(const std::string &_vfs_path,
     }
 
     vfs_file->XAttrIterateNames([&](const char *name) -> bool {
-        ssize_t res = vfs_file->XAttrGet(name, buf.get(), bufsz);
+        const ssize_t res = vfs_file->XAttrGet(name, buf.get(), bufsz);
         if( res >= 0 )
             fsetxattr(fd, name, buf.get(), res, 0, 0);
         return true;

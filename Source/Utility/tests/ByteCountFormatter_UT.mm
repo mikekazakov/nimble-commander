@@ -7,7 +7,7 @@
 
 TEST_CASE(PREFIX "Adaptive6")
 {
-    ByteCountFormatter f(false);
+    const ByteCountFormatter f(false);
     struct TC {
         uint64_t size;
         NSString *expected;
@@ -51,7 +51,7 @@ TEST_CASE(PREFIX "Adaptive6")
 
 TEST_CASE(PREFIX "Adaptive8")
 {
-    ByteCountFormatter f(false);
+    const ByteCountFormatter f(false);
     struct TC {
         uint64_t size;
         NSString *expected;
@@ -91,7 +91,7 @@ TEST_CASE(PREFIX "Adaptive8")
 
 TEST_CASE(PREFIX "Fixed6")
 {
-    ByteCountFormatter f(false);
+    const ByteCountFormatter f(false);
     struct TC {
         uint64_t size;
         NSString *expected;
@@ -122,7 +122,7 @@ TEST_CASE(PREFIX "Fixed6")
 
 TEST_CASE(PREFIX "SpaceSeparated")
 {
-    ByteCountFormatter f(false);
+    const ByteCountFormatter f(false);
     struct TC {
         uint64_t size;
         NSString *expected;

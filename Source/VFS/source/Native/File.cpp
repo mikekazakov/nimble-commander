@@ -38,7 +38,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
     if( _open_flags & VFSFlags::OF_NoExist )
         openflags |= O_EXCL;
 
-    int mode = _open_flags & (S_IRWXU | S_IRWXG | S_IRWXO);
+    const int mode = _open_flags & (S_IRWXU | S_IRWXG | S_IRWXO);
 
     m_FD = io.open(Path(), openflags, mode);
     if( m_FD < 0 ) {
@@ -82,7 +82,7 @@ ssize_t File::Read(void *_buf, size_t _size)
     if( Eof() )
         return 0;
 
-    ssize_t ret = read(m_FD, _buf, _size);
+    const ssize_t ret = read(m_FD, _buf, _size);
     if( ret >= 0 ) {
         m_Position += ret;
         return ret;
@@ -94,7 +94,7 @@ ssize_t File::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if( m_FD < 0 )
         return SetLastError(VFSError::InvalidCall);
-    ssize_t ret = pread(m_FD, _buf, _size, _pos);
+    const ssize_t ret = pread(m_FD, _buf, _size, _pos);
     if( ret < 0 )
         return SetLastError(VFSError::FromErrno(errno));
     return ret;
@@ -107,7 +107,7 @@ off_t File::Seek(off_t _off, int _basis)
     //    printf("seek:%lld/%d \n", _off, _basis);
     //    assert(m_FD >= 0);
 
-    off_t ret = lseek(m_FD, _off, _basis);
+    const off_t ret = lseek(m_FD, _off, _basis);
     if( ret >= 0 ) {
         m_Position = ret;
         return ret;
@@ -120,7 +120,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
     if( m_FD < 0 )
         return SetLastError(VFSError::InvalidCall);
 
-    ssize_t ret = write(m_FD, _buf, _size);
+    const ssize_t ret = write(m_FD, _buf, _size);
     if( ret >= 0 ) {
         if( m_Position + ret > m_Size )
             m_Size = m_Position + ret;
@@ -185,14 +185,14 @@ unsigned File::XAttrCount() const
     if( m_FD < 0 )
         return 0;
 
-    ssize_t bf_sz = flistxattr(m_FD, nullptr, 0, 0);
+    const ssize_t bf_sz = flistxattr(m_FD, nullptr, 0, 0);
     if( bf_sz <= 0 ) // on error or if there're no xattrs available for this file
         return 0;
 
     char *buf = static_cast<char *>(alloca(bf_sz));
     assert(buf != nullptr);
 
-    ssize_t ret = flistxattr(m_FD, buf, bf_sz, 0);
+    const ssize_t ret = flistxattr(m_FD, buf, bf_sz, 0);
     if( ret < 0 )
         return 0;
 
@@ -210,14 +210,14 @@ void File::XAttrIterateNames(const XAttrIterateNamesCallback &_handler) const
     if( m_FD < 0 || !_handler )
         return;
 
-    ssize_t bf_sz = flistxattr(m_FD, nullptr, 0, 0);
+    const ssize_t bf_sz = flistxattr(m_FD, nullptr, 0, 0);
     if( bf_sz <= 0 ) // on error or if there're no xattrs available for this file
         return;
 
     char *buf = static_cast<char *>(alloca(bf_sz));
     assert(buf != nullptr);
 
-    ssize_t ret = flistxattr(m_FD, buf, bf_sz, 0);
+    const ssize_t ret = flistxattr(m_FD, buf, bf_sz, 0);
     if( ret < 0 )
         return;
 
@@ -235,7 +235,7 @@ ssize_t File::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size)
     if( m_FD < 0 )
         return SetLastError(VFSError::InvalidCall);
 
-    ssize_t ret = fgetxattr(m_FD, _xattr_name, _buffer, _buf_size, 0, 0);
+    const ssize_t ret = fgetxattr(m_FD, _xattr_name, _buffer, _buf_size, 0, 0);
     if( ret < 0 )
         return SetLastError(VFSError::FromErrno(errno));
 

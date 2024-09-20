@@ -103,11 +103,11 @@ enum class State : uint8_t {
     m_Authenticator->PerformRequest(
         request,
         [weak_self](const Authenticator::Token &_token) {
-            if( DropboxAccountSheetController *me = weak_self )
+            if( DropboxAccountSheetController *const me = weak_self )
                 [me processAuthToken:_token];
         },
         [weak_self](int _vfs_error) {
-            if( DropboxAccountSheetController *me = weak_self )
+            if( DropboxAccountSheetController *const me = weak_self )
                 [me processAuthError:_vfs_error];
         });
 }

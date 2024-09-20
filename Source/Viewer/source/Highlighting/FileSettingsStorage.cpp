@@ -16,7 +16,7 @@ namespace nc::viewer::hl {
 static bool RegFileExists(const std::filesystem::path &_path) noexcept
 {
     std::error_code ec = {};
-    std::filesystem::file_status status = std::filesystem::status(_path, ec);
+    const std::filesystem::file_status status = std::filesystem::status(_path, ec);
     if( ec ) {
         return false;
     }
@@ -159,6 +159,7 @@ std::optional<std::string> FileSettingsStorage::Language(std::string_view _filen
 std::vector<std::string> FileSettingsStorage::List()
 {
     std::vector<std::string> list;
+    list.reserve(m_Langs.size());
     for( const Lang &lang : m_Langs ) {
         list.push_back(lang.name);
     }

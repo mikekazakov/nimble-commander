@@ -16,7 +16,7 @@ DataBackend::DataBackend(std::shared_ptr<nc::vfs::FileWindow> _fw, utility::Enco
 void DataBackend::DecodeBuffer()
 {
     assert(utility::BytesForCodeUnit(m_Encoding) <= 2); // TODO: support for UTF-32 in the future
-    bool odd = (utility::BytesForCodeUnit(m_Encoding) == 2) && ((m_FileWindow->WindowPos() & 1) == 1);
+    const bool odd = (utility::BytesForCodeUnit(m_Encoding) == 2) && ((m_FileWindow->WindowPos() & 1) == 1);
     utility::InterpretAsUnichar(m_Encoding,
                                 reinterpret_cast<const unsigned char *>(m_FileWindow->Window()) + (odd ? 1 : 0),
                                 m_FileWindow->WindowSize() - (odd ? 1 : 0),
@@ -44,7 +44,7 @@ int DataBackend::MoveWindowSync(uint64_t _pos)
     if( _pos == m_FileWindow->WindowPos() )
         return 0; // nothing to do
 
-    int ret = m_FileWindow->MoveWindow(_pos);
+    const int ret = m_FileWindow->MoveWindow(_pos);
     if( ret < 0 )
         return ret;
 

@@ -9,7 +9,7 @@ using namespace nc::viewer::hl;
 
 TEST_CASE(PREFIX "Load from a JSON")
 {
-    std::string json = R"({
+    const std::string json = R"({
         "lexer": "cpp",
         "wordlists": ["int float char", "enum class"],
         "properties": {

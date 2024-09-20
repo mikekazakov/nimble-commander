@@ -960,7 +960,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
             uint32_t has_written = 0; // amount of bytes written into destination this time
             int write_loops = 0;
             while( left_to_write > 0 ) {
-                int64_t n_written =
+                const int64_t n_written =
                     write(destination_fd, write_buffer + has_written, std::min(left_to_write, dst_preferred_io_size));
                 if( n_written > 0 ) {
                     has_written += n_written;
@@ -1331,7 +1331,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
             uint32_t has_written = 0; // amount of bytes written into destination this time
             int write_loops = 0;
             while( left_to_write > 0 ) {
-                int64_t n_written =
+                const int64_t n_written =
                     write(destination_fd, write_buffer + has_written, std::min(left_to_write, dst_preffered_io_size));
                 if( n_written > 0 ) {
                     has_written += n_written;
@@ -1362,7 +1362,8 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
         int read_loops = 0;                    // amount of zero-resulting reads
         std::optional<StepResult> read_return; // optional storage for error returning
         while( to_read != 0 ) {
-            int64_t read_result = src_file->Read(read_buffer + has_read, std::min(to_read, src_preffered_io_size));
+            const int64_t read_result =
+                src_file->Read(read_buffer + has_read, std::min(to_read, src_preffered_io_size));
             if( read_result > 0 ) {
                 if( _source_data_feedback )
                     _source_data_feedback(read_buffer + has_read, static_cast<unsigned>(read_result));
@@ -1658,7 +1659,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
             while( left_to_write > 0 ) {
                 //                int64_t n_written = write(destination_fd, write_buffer +
                 //                has_written, min(left_to_write, dst_preffered_io_size) );
-                int64_t n_written =
+                const int64_t n_written =
                     dst_file->Write(write_buffer + has_written, std::min(left_to_write, dst_preffered_io_size));
                 if( n_written > 0 ) {
                     has_written += n_written;
@@ -1690,7 +1691,8 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
         int read_loops = 0;                    // amount of zero-resulting reads
         std::optional<StepResult> read_return; // optional storage for error returning
         while( to_read != 0 ) {
-            int64_t read_result = src_file->Read(read_buffer + has_read, std::min(to_read, src_preffered_io_size));
+            const int64_t read_result =
+                src_file->Read(read_buffer + has_read, std::min(to_read, src_preffered_io_size));
             if( read_result > 0 ) {
                 if( _source_data_feedback )
                     _source_data_feedback(read_buffer + has_read, static_cast<unsigned>(read_result));
@@ -1777,7 +1779,7 @@ void CopyingJob::CopyXattrsFromVFSFileToNativeFD(VFSFile &_source, int _fd_to) c
     auto buf = m_Buffers[0].get();
     size_t buf_sz = m_BufferSize;
     _source.XAttrIterateNames([&](const char *name) {
-        ssize_t res = _source.XAttrGet(name, buf, buf_sz);
+        const ssize_t res = _source.XAttrGet(name, buf, buf_sz);
         if( res >= 0 )
             fsetxattr(_fd_to, name, buf, res, 0, 0);
         return true;
@@ -1790,7 +1792,7 @@ void CopyingJob::CopyXattrsFromVFSFileToPath(VFSFile &_file, const char *_fn_to)
     size_t buf_sz = m_BufferSize;
 
     _file.XAttrIterateNames([&](const char *name) {
-        ssize_t res = _file.XAttrGet(name, buf, buf_sz);
+        const ssize_t res = _file.XAttrGet(name, buf, buf_sz);
         if( res >= 0 )
             setxattr(_fn_to, name, buf, res, 0, 0);
         return true;
@@ -2442,7 +2444,7 @@ CopyingJob::StepResult CopyingJob::RenameVFSFile(VFSHost &_common_host,
 
 void CopyingJob::ClearSourceItems()
 {
-    for( unsigned int index : std::ranges::reverse_view(m_SourceItemsToDelete) ) {
+    for( const unsigned int index : std::ranges::reverse_view(m_SourceItemsToDelete) ) {
         auto mode = m_SourceItems.ItemMode(index);
         auto &host = m_SourceItems.ItemHost(index);
         auto source_path = m_SourceItems.ComposeFullPath(index);
@@ -2562,16 +2564,16 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation &_
 
     base::Hash hash(base::Hash::MD5);
 
-    uint64_t sz = file->Size();
+    const uint64_t sz = file->Size();
     uint64_t szleft = sz;
     void *buf = m_Buffers[0].get();
-    uint64_t buf_sz = m_BufferSize;
+    const uint64_t buf_sz = m_BufferSize;
 
     while( szleft > 0 ) {
         if( BlockIfPaused(); IsStopped() )
             return StepResult::Stop;
 
-        ssize_t r = file->Read(buf, std::min(szleft, buf_sz));
+        const ssize_t r = file->Read(buf, std::min(szleft, buf_sz));
         if( r < 0 ) {
             switch( m_OnDestinationFileReadError(static_cast<int>(r), _exp.destination_path, *m_DestinationHost) ) {
                 case DestinationFileReadErrorResolution::Skip:

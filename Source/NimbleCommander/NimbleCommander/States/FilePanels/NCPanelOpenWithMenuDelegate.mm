@@ -28,7 +28,7 @@ static void SortAndPurgeDuplicateHandlers(std::vector<LaunchServiceHandler> &_ha
         return [_1st.Name() localizedCompare:_2nd.Name()] < 0;
     });
 
-    nc::utility::VersionCompare ver_cmp;
+    const nc::utility::VersionCompare ver_cmp;
     for( int i = 0; i < static_cast<int>(_handlers.size()) - 1; ) {
         auto &first = _handlers[i];
         auto &second = _handlers[i + 1];
@@ -278,7 +278,7 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 
 static NSOpenPanel *BuildAppChoose()
 {
-    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    NSOpenPanel *const panel = [NSOpenPanel openPanel];
     panel.allowsMultipleSelection = false;
     panel.canChooseFiles = true;
     panel.canChooseDirectories = false;
@@ -301,7 +301,7 @@ static void ShowOpenPanel(NSOpenPanel *_panel, NSWindow *_window, std::function<
     if( const auto menu_item = nc::objc_cast<NSMenuItem>(sender) ) {
         ShowOpenPanel(BuildAppChoose(), self.target.window, [=](auto _path) {
             try {
-                LaunchServiceHandler handler{_path};
+                const LaunchServiceHandler handler{_path};
                 [self openItemsWithHandler:handler];
                 if( [self isAlwaysOpenWith:menu_item.menu] )
                     handler.SetAsDefaultHandlerForUTI(m_ItemsUTI);

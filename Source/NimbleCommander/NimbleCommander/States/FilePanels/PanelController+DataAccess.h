@@ -1,6 +1,5 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
-#import "PanelController.h"
 
 @interface PanelController (DataAccess)
 

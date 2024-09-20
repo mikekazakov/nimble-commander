@@ -146,7 +146,9 @@ TEST_CASE(PREFIX "renaming")
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
 
-    std::string fn1 = "/System/Library/Kernels/kernel", fn2 = "/kernel", fn3 = "/kernel34234234";
+    const std::string fn1 = "/System/Library/Kernels/kernel";
+    const std::string fn2 = "/kernel";
+    const std::string fn3 = "/kernel34234234";
 
     VFSStat stat;
 
@@ -219,7 +221,7 @@ static void WriteAll(VFSFile &_file, const std::span<const uint8_t> _bytes)
     ssize_t write_left = _bytes.size();
     const uint8_t *buf = _bytes.data();
     while( write_left > 0 ) {
-        ssize_t res = _file.Write(buf, write_left);
+        const ssize_t res = _file.Write(buf, write_left);
         REQUIRE(res >= 0);
         write_left -= res;
         buf += res;

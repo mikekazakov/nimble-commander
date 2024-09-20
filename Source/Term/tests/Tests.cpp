@@ -28,7 +28,7 @@ static void DumpLog()
 
 struct CatchEventsListener : Catch::TestEventListenerBase {
     using TestEventListenerBase::TestEventListenerBase; // inherit constructor
-    bool assertionEnded(Catch::AssertionStats const &stats) override
+    bool assertionEnded(const Catch::AssertionStats &stats) override
     {
         if( !stats.assertionResult.isOk() ) {
             DumpLog();
@@ -40,11 +40,11 @@ CATCH_REGISTER_LISTENER(CatchEventsListener);
 
 int main(int argc, char *argv[])
 {
-    nc::base::ExecutionDeadline deadline(nc::base::AmIBeingDebugged() ? std::chrono::hours(1)
-                                                                      : std::chrono::minutes(1));
+    const nc::base::ExecutionDeadline deadline(nc::base::AmIBeingDebugged() ? std::chrono::hours(1)
+                                                                            : std::chrono::minutes(1));
     g_Log->set_level(spdlog::level::debug);
     Log::Set(g_Log);
-    int result = Catch::Session().run(argc, argv);
+    const int result = Catch::Session().run(argc, argv);
     return result;
 }
 

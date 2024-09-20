@@ -95,7 +95,7 @@ void ChildrenTracker::Drain()
             ++meaningful;
             pid_t pids[4096];
             const int npids = proc_listchildpids(pid, pids, std::size(pids) * sizeof(pid_t));
-            for( pid_t child : std::span{pids, static_cast<size_t>(std::max(npids, 0))} ) {
+            for( const pid_t child : std::span{pids, static_cast<size_t>(std::max(npids, 0))} ) {
                 auto it = std::lower_bound(m_Tracked.begin(), m_Tracked.end(), child);
                 if( it == m_Tracked.end() || *it != child ) {
                     Subscribe(m_KQ, child);

@@ -221,14 +221,14 @@ int PosixIOInterfaceRouted::open(const char *_path, int _flags, int _mode) noexc
         return super::open(_path, _flags, _mode);
     }
 
-    if( int64_t err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const int64_t err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
         return -1;
     }
 
-    int fd = xpc_dictionary_dup_fd(reply, "fd");
+    const int fd = xpc_dictionary_dup_fd(reply, "fd");
     xpc_release(reply);
 
     if( fd > 0 && need_owner_fixup )
@@ -324,7 +324,7 @@ DIR *PosixIOInterfaceRouted::opendir(const char *_path) noexcept
     if( !inst.Enabled() )
         return super::opendir(_path);
 
-    int fd = this->open(_path, O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC, 0);
+    const int fd = this->open(_path, O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC, 0);
     if( fd < 0 )
         return nullptr;
 
@@ -618,7 +618,7 @@ ssize_t PosixIOInterfaceRouted::readlink(const char *_path, char *_symlink, size
         return -1;
     }
 
-    size_t sz = strlen(value);
+    const size_t sz = strlen(value);
     strncpy(_symlink, value, _buf_sz);
 
     xpc_release(reply);

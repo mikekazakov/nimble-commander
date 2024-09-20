@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/StringsBulk.h>
 #include "UnitTests_main.h"
 
@@ -9,11 +9,11 @@ using namespace std;
 
 TEST_CASE(PREFIX "empty")
 {
-    StringsBulk sb1;
+    const StringsBulk sb1;
     CHECK(sb1.size() == 0);
     CHECK(sb1.empty() == true);
 
-    StringsBulk sb2 = StringsBulk::Builder{}.Build();
+    const StringsBulk sb2 = StringsBulk::Builder{}.Build();
     CHECK(sb2.size() == 0);
     CHECK(sb2.empty() == true);
 }
@@ -48,7 +48,7 @@ TEST_CASE(PREFIX "empty strings")
 
 TEST_CASE(PREFIX "invalid at")
 {
-    StringsBulk sb;
+    const StringsBulk sb;
     CHECK_THROWS(sb.at(1));
 }
 

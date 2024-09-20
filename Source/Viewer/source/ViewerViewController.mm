@@ -29,7 +29,7 @@ static const auto g_AutomaticRefreshDelay = std::chrono::milliseconds(200);
 static utility::Encoding EncodingFromXAttr(const VFSFilePtr &_f)
 {
     char buf[128];
-    ssize_t r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
+    const ssize_t r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
     if( r < 0 || r >= static_cast<ssize_t>(sizeof(buf)) )
         return utility::Encoding::ENCODING_INVALID;
     buf[r] = 0;
@@ -198,7 +198,7 @@ struct BackgroundFileOpener {
         assert(m_VFS);
         __weak NCViewerViewController *weak_self = self;
         m_FileObservationToken = m_VFS->ObserveFileChanges(m_Path, [weak_self] {
-            if( NCViewerViewController *strong_self = weak_self )
+            if( NCViewerViewController *const strong_self = weak_self )
                 [strong_self onFileChanged];
         });
     }
@@ -564,7 +564,7 @@ struct BackgroundFileOpener {
     Log::Debug("refresh called");
     __weak NCViewerViewController *weak_self = self;
     dispatch_to_background([weak_self] {
-        NCViewerViewController *strong_self = weak_self;
+        NCViewerViewController *const strong_self = weak_self;
         if( !strong_self )
             return;
 
@@ -577,7 +577,7 @@ struct BackgroundFileOpener {
         }
 
         dispatch_to_main_queue([weak_self, opener = std::move(opener)] {
-            NCViewerViewController *strong_self = weak_self;
+            NCViewerViewController *const strong_self = weak_self;
             if( !strong_self )
                 return;
             [strong_self commitRefresh:*opener];
@@ -592,7 +592,7 @@ struct BackgroundFileOpener {
     m_AutomaticFileRefreshScheduled = true;
     __weak NCViewerViewController *weak_self = self;
     dispatch_to_main_queue_after(g_AutomaticRefreshDelay, [weak_self] {
-        if( NCViewerViewController *strong_self = weak_self ) {
+        if( NCViewerViewController *const strong_self = weak_self ) {
             strong_self->m_AutomaticFileRefreshScheduled = false;
             [strong_self onRefresh];
         }
@@ -665,12 +665,12 @@ int BackgroundFileOpener::Open(VFSHostPtr _vfs,
 {
     dispatch_assert_background_queue();
     assert(_vfs);
-    if( int vfs_err = _vfs->CreateFile(_path.c_str(), original_file, nullptr); vfs_err != VFSError::Ok )
+    if( const int vfs_err = _vfs->CreateFile(_path.c_str(), original_file, nullptr); vfs_err != VFSError::Ok )
         return vfs_err;
 
     if( original_file->GetReadParadigm() < VFSFile::ReadParadigm::Random ) {
         // we need to read a file into temporary mem/file storage to access it randomly
-        ProcessSheetController *proc = [ProcessSheetController new];
+        ProcessSheetController *const proc = [ProcessSheetController new];
         proc.title = NSLocalizedString(@"Opening file...", "Title for process sheet when opening a vfs file");
         [proc Show];
 
@@ -687,16 +687,16 @@ int BackgroundFileOpener::Open(VFSHostPtr _vfs,
         work_file = wrapper;
     }
     else { // just open input file
-        if( int open_err = original_file->Open(VFSFlags::OF_Read); open_err != VFSError::Ok )
+        if( const int open_err = original_file->Open(VFSFlags::OF_Read); open_err != VFSError::Ok )
             return open_err;
         work_file = original_file;
     }
     viewer_file_window = std::make_shared<nc::vfs::FileWindow>();
-    if( int attach_err = viewer_file_window->Attach(work_file, _window_size); attach_err != VFSError::Ok )
+    if( const int attach_err = viewer_file_window->Attach(work_file, _window_size); attach_err != VFSError::Ok )
         return attach_err;
 
     search_file_window = std::make_shared<nc::vfs::FileWindow>();
-    if( int attach_err = search_file_window->Attach(work_file); attach_err != 0 )
+    if( const int attach_err = search_file_window->Attach(work_file); attach_err != 0 )
         return attach_err;
 
     using nc::vfs::SearchInFile;

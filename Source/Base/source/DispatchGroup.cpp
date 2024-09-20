@@ -1,4 +1,4 @@
-/* Copyright (c) 2014-2023 Michael G. Kazakov
+/* Copyright (c) 2014-2024 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -40,21 +40,21 @@ int DispatchGroup::Count() const noexcept
 
 void DispatchGroup::SetOnDry(std::function<void()> _cb)
 {
-    std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>(std::move(_cb));
+    const std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>(std::move(_cb));
     const auto lock = std::lock_guard{m_CallbackLock};
     m_OnDry = cb;
 }
 
 void DispatchGroup::SetOnWet(std::function<void()> _cb)
 {
-    std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>(std::move(_cb));
+    const std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>(std::move(_cb));
     const auto lock = std::lock_guard{m_CallbackLock};
     m_OnWet = cb;
 }
 
 void DispatchGroup::SetOnChange(std::function<void()> _cb)
 {
-    std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>(std::move(_cb));
+    const std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>(std::move(_cb));
     const auto lock = std::lock_guard{m_CallbackLock};
     m_OnChange = cb;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/chained_strings.h>
 #include "UnitTests_main.h"
 #include <random>
@@ -21,7 +21,7 @@ TEST_CASE(PREFIX "basic")
     CHECK(strings.empty() == true);
     CHECK(strings.singleblock() == false);
 
-    string str("hello");
+    const string str("hello");
     strings.push_back(str, nullptr);
     CHECK(strings.empty() == false);
     CHECK(strings.size() == 1);
@@ -32,7 +32,8 @@ TEST_CASE(PREFIX "basic")
     for( auto i : strings )
         CHECK(str == i.c_str());
 
-    string long_str("this is a very long string which will presumably never fit into built-in buffer");
+    const string long_str("this is a very long string which will presumably "
+                          "never fit into built-in buffer");
     strings.push_back(long_str, nullptr);
     CHECK(strings.empty() == false);
     CHECK(strings.size() == 2);
@@ -51,7 +52,7 @@ TEST_CASE(PREFIX "blocks")
 {
     const int amount = 1000000;
 
-    string str("hello from the underworld of mallocs and frees");
+    const string str("hello from the underworld of mallocs and frees");
     chained_strings strings;
 
     for( int i = 0; i < amount; ++i )
@@ -77,7 +78,7 @@ TEST_CASE(PREFIX "prefix")
     string predicted_string;
     const int amount = 100;
     for( int i = 0; i < amount; ++i ) {
-        string rnd = to_string(dist(mt));
+        const string rnd = to_string(dist(mt));
 
         predicted_string += rnd;
         strings.push_back(rnd, pref);

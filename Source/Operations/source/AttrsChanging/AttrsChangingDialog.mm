@@ -683,9 +683,8 @@ static const auto g_MixedOwnageTitle = @"[???]";
 }
 
 template <class _InputIterator, class _Predicate>
-static auto optional_common_value(_InputIterator _first,
-                                  _InputIterator _last,
-                                  _Predicate _pred) -> std::optional<std::decay_t<decltype(_pred(*_first))>>
+static auto optional_common_value(_InputIterator _first, _InputIterator _last, _Predicate _pred)
+    -> std::optional<std::decay_t<decltype(_pred(*_first))>>
 {
     if( _first == _last )
         return std::nullopt;

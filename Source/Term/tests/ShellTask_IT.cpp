@@ -72,7 +72,7 @@ static std::vector<int> GetAllFileDescriptors()
 {
     // TODO: move this to nc::base and cover with tests
     const int pid = getpid();
-    int buffer_size = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, nullptr, 0);
+    const int buffer_size = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, nullptr, 0);
     if( buffer_size == -1 ) {
         abort();
     }

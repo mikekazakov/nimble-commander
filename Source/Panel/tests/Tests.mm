@@ -16,7 +16,7 @@ static auto g_TestDirPrefix = "_nc__panel__test_";
 
 int main(int argc, char *argv[])
 {
-    int result = Catch::Session().run(argc, argv);
+    const int result = Catch::Session().run(argc, argv);
     return result;
 }
 

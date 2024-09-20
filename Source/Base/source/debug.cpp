@@ -41,7 +41,7 @@ bool AmIBeingDebugged() noexcept
 
     // Call sysctl.
     size = sizeof(info);
-    [[maybe_unused]] int junk = sysctl(mib, sizeof(mib) / sizeof(*mib), &info, &size, nullptr, 0);
+    [[maybe_unused]] const int junk = sysctl(mib, sizeof(mib) / sizeof(*mib), &info, &size, nullptr, 0);
     assert(junk == 0);
 
     // We're being debugged if the P_TRACED flag is set.

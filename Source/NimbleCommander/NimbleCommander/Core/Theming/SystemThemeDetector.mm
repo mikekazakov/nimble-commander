@@ -101,7 +101,7 @@ ThemeAppearance SystemThemeDetector::SystemAppearance() const noexcept
 ThemeAppearance SystemThemeDetector::Impl::Detect()
 {
     // TODO: check me on different versions!
-    NSString *style = [NSUserDefaults.standardUserDefaults stringForKey:@"AppleInterfaceStyle"];
+    NSString *const style = [NSUserDefaults.standardUserDefaults stringForKey:@"AppleInterfaceStyle"];
     if( style == nil )
         return ThemeAppearance::Light;
     else {

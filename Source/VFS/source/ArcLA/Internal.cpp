@@ -9,7 +9,7 @@ ssize_t Mediator::myread([[maybe_unused]] struct archive *a, void *client_data, 
     Mediator *_this = static_cast<Mediator *>(client_data);
     *buff = &_this->buf[0];
 
-    ssize_t result = _this->file->Read(&_this->buf[0], bufsz);
+    const ssize_t result = _this->file->Read(&_this->buf[0], bufsz);
     if( result < 0 )
         return ARCHIVE_FATAL; // handle somehow
     return result;
@@ -18,7 +18,7 @@ ssize_t Mediator::myread([[maybe_unused]] struct archive *a, void *client_data, 
 off_t Mediator::myseek([[maybe_unused]] struct archive *a, void *client_data, off_t offset, int whence)
 {
     Mediator *_this = static_cast<Mediator *>(client_data);
-    off_t result = _this->file->Seek(offset, whence);
+    const off_t result = _this->file->Seek(offset, whence);
     if( result < 0 )
         return ARCHIVE_FATAL; // handle somehow
     return result;
@@ -59,7 +59,7 @@ ssize_t State::myread([[maybe_unused]] struct archive *a, void *client_data, con
     auto _this = static_cast<State *>(client_data);
     *buff = &_this->m_Buf;
 
-    ssize_t result = _this->m_File->Read(&_this->m_Buf[0], BufferSize);
+    const ssize_t result = _this->m_File->Read(&_this->m_Buf[0], BufferSize);
     if( result < 0 )
         return ARCHIVE_FATAL; // handle somehow
     return result;
@@ -68,7 +68,7 @@ ssize_t State::myread([[maybe_unused]] struct archive *a, void *client_data, con
 off_t State::myseek([[maybe_unused]] struct archive *a, void *client_data, off_t offset, int whence)
 {
     auto _this = static_cast<State *>(client_data);
-    off_t result = _this->m_File->Seek(offset, whence);
+    const off_t result = _this->m_File->Seek(offset, whence);
     if( result < 0 )
         return ARCHIVE_FATAL; // handle somehow
     return result;

@@ -232,19 +232,19 @@ PanelViewLayoutsStorage::PanelViewLayoutsStorage(const char *_config_path) : m_C
 
 int PanelViewLayoutsStorage::LayoutsCount() const
 {
-    std::lock_guard<spinlock> lock(m_LayoutsLock);
+    const std::lock_guard<spinlock> lock(m_LayoutsLock);
     return static_cast<int>(m_Layouts.size());
 }
 
 std::shared_ptr<const PanelViewLayout> PanelViewLayoutsStorage::GetLayout(int _index) const
 {
-    std::lock_guard<spinlock> lock(m_LayoutsLock);
+    const std::lock_guard<spinlock> lock(m_LayoutsLock);
     return (_index >= 0 && _index < static_cast<int>(m_Layouts.size())) ? m_Layouts[_index] : nullptr;
 }
 
 std::vector<std::shared_ptr<const PanelViewLayout>> PanelViewLayoutsStorage::GetAllLayouts() const
 {
-    std::lock_guard<spinlock> lock(m_LayoutsLock);
+    const std::lock_guard<spinlock> lock(m_LayoutsLock);
     return m_Layouts;
 }
 

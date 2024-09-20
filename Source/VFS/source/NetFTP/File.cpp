@@ -206,14 +206,14 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
         return VFSError::FromErrno(EIO);
 
     if( m_BufFileOffset < _file_offset ) {
-        uint64_t discard = std::min(m_ReadBuf.Size(), static_cast<size_t>(_file_offset - m_BufFileOffset));
+        const uint64_t discard = std::min(m_ReadBuf.Size(), static_cast<size_t>(_file_offset - m_BufFileOffset));
         m_ReadBuf.Discard(discard);
         m_BufFileOffset += discard;
     }
 
     assert(m_BufFileOffset >= _file_offset);
     const size_t available = m_BufFileOffset >= _file_offset ? m_ReadBuf.Size() + m_BufFileOffset - _file_offset : 0;
-    size_t size = _read_size > available ? available : _read_size;
+    const size_t size = _read_size > available ? available : _read_size;
 
     if( _read_to != nullptr && size > 0 ) {
         const size_t buf_offset = _file_offset - m_BufFileOffset;
@@ -231,7 +231,7 @@ ssize_t File::Read(void *_buf, size_t _size)
     if( Eof() )
         return 0;
 
-    ssize_t ret = ReadChunk(_buf, _size, m_FilePos, nullptr);
+    const ssize_t ret = ReadChunk(_buf, _size, m_FilePos, nullptr);
     if( ret < 0 )
         return ret;
 

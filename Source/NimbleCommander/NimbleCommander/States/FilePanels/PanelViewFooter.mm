@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewFooter.h"
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/ColoredSeparatorLine.h>
@@ -151,7 +151,7 @@ static NSString *FormHumanReadableBytesAndFiles(uint64_t _sz,
 
         __weak NCPanelViewFooter *weak_self = self;
         m_VolumeInfoFetcher.SetCallback([=](const VFSStatFS &) {
-            if( NCPanelViewFooter *strong_self = weak_self )
+            if( NCPanelViewFooter *const strong_self = weak_self )
                 [strong_self updateVolumeInfo];
         });
         m_Theme->ObserveChanges([weak_self] {
@@ -476,7 +476,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
     // thread
     __weak NCPanelViewFooter *weak_self = self;
     dispatch_to_main_queue([weak_self] {
-        if( NCPanelViewFooter *strong_self = weak_self )
+        if( NCPanelViewFooter *const strong_self = weak_self )
             [strong_self updateModTime];
     });
 }

@@ -233,7 +233,7 @@ bool ExternalEditorStartupInfo::IsValidForItem(const VFSListingItem &_item, bool
         return false;
 
     if( m_Mask != "*" ) {
-        nc::utility::FileMask mask{m_Mask};
+        const nc::utility::FileMask mask{m_Mask};
         if( !mask.MatchName(_item.Filename()) )
             return false;
     }
@@ -254,7 +254,7 @@ std::string ExternalEditorStartupInfo::SubstituteFileName(const std::string &_pa
         return esc_buf; // just return escaped file path
 
     std::string args = m_Arguments;
-    std::string path = " "s + esc_buf + " ";
+    const std::string path = " "s + esc_buf + " ";
 
     size_t start_pos;
     if( (start_pos = args.find("%%")) != std::string::npos )

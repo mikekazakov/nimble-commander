@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CFPtr.h"
 #include "UnitTests_main.h"
 
@@ -8,7 +8,7 @@ using nc::base::CFPtr;
 
 TEST_CASE(PREFIX "Is empty by default")
 {
-    CFPtr<CFArrayRef> p;
+    const CFPtr<CFArrayRef> p;
     CHECK(p.get() == nullptr);
     CHECK(static_cast<bool>(p) == false);
 }
@@ -19,7 +19,7 @@ TEST_CASE(PREFIX "Constructor with existing CoreFoundation object")
     CHECK(CFGetRetainCount(array) == 1);
 
     {
-        CFPtr<CFMutableArrayRef> p{array};
+        const CFPtr<CFMutableArrayRef> p{array};
         CHECK(CFGetRetainCount(array) == 2);
         CHECK(p.get() == array);
         CHECK(static_cast<bool>(p) == true);
@@ -55,7 +55,7 @@ TEST_CASE(PREFIX "Converting copy constructor")
     CFMutableArrayRef array = CFArrayCreateMutable(nullptr, 0, nullptr);
     auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
     CHECK(CFGetRetainCount(array) == 1);
-    CFPtr<CFArrayRef> p2(p1);
+    const CFPtr<CFArrayRef> p2(p1);
     CHECK(CFGetRetainCount(array) == 2);
     CHECK(p2.get() == array);
 }
@@ -75,7 +75,7 @@ TEST_CASE(PREFIX "Converting move constructor")
     CFMutableArrayRef array = CFArrayCreateMutable(nullptr, 0, nullptr);
     auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
     CHECK(CFGetRetainCount(array) == 1);
-    CFPtr<CFMutableArrayRef> p2(std::move(p1));
+    const CFPtr<CFMutableArrayRef> p2(std::move(p1));
     CHECK(CFGetRetainCount(array) == 1);
     CHECK(p1.get() == nullptr);
 }

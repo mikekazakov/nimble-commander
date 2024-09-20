@@ -73,23 +73,23 @@ void TrailingTagsInplaceDisplay::Draw(const double _offset_x,
     constexpr double radius = static_cast<double>(Diameter) / 2.;
     constexpr double spacing = static_cast<double>(Step);
     static NSBezierPath *const circle = [] {
-        NSBezierPath *circle = [NSBezierPath bezierPath];
+        NSBezierPath *const circle = [NSBezierPath bezierPath];
         [circle appendBezierPathWithArcWithCenter:NSMakePoint(0., 0.) radius:radius startAngle:0 endAngle:360];
         [circle setLineWidth:1.];
         return circle;
     }();
     static NSBezierPath *const shadow = [] {
-        NSBezierPath *shadow = [NSBezierPath bezierPath];
+        NSBezierPath *const shadow = [NSBezierPath bezierPath];
         [shadow appendBezierPathWithArcWithCenter:NSMakePoint(0., 0.) radius:radius + 1. startAngle:0 endAngle:360];
         [shadow setLineWidth:2.0];
         return shadow;
     }();
 
-    NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
+    NSGraphicsContext *const currentContext = [NSGraphicsContext currentContext];
     for( ssize_t i = num_colors_to_draw - 1; i >= 0; --i ) {
         [currentContext saveGraphicsState];
 
-        NSAffineTransform *tr = [NSAffineTransform transform];
+        NSAffineTransform *const tr = [NSAffineTransform transform];
         [tr translateXBy:_offset_x + static_cast<double>(i) * spacing yBy:_view_height / 2.];
         [tr concat];
 
@@ -121,14 +121,14 @@ const std::array<NSImage *, 8> &TagsMenuDisplay::Images() noexcept
             auto handler = ^(NSRect _rc) {
               if( i == 0 ) {
                   [NSColor.textColor setStroke];
-                  NSBezierPath *circle = [NSBezierPath bezierPathWithOvalInRect:NSInsetRect(_rc, 1., 1.)];
+                  NSBezierPath *const circle = [NSBezierPath bezierPathWithOvalInRect:NSInsetRect(_rc, 1., 1.)];
                   [circle stroke];
               }
               else {
                   auto colors = Color(static_cast<utility::Tags::Color>(i));
                   [colors.first setFill];
                   [colors.second setStroke];
-                  NSBezierPath *circle = [NSBezierPath bezierPathWithOvalInRect:NSInsetRect(_rc, 1., 1.)];
+                  NSBezierPath *const circle = [NSBezierPath bezierPathWithOvalInRect:NSInsetRect(_rc, 1., 1.)];
                   [circle setLineWidth:1.];
                   [circle fill];
                   [circle stroke];

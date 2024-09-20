@@ -101,7 +101,7 @@ void BlinkScheduler::Impl::Schedule()
     assert(m_Enabled == true);
 
     const auto after = NextFireAfter();
-    std::weak_ptr<Impl> impl = weak_from_this();
+    const std::weak_ptr<Impl> impl = weak_from_this();
     m_IO->Dispatch(after, [impl] {
         if( auto me = impl.lock() )
             me->Fire();

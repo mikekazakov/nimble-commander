@@ -110,7 +110,7 @@ SearchInFile::Response SearchInFile::SearchText(uint64_t *_offset, uint64_t *_by
 
         // get UniChars from this window using given encoding
         assert(utility::BytesForCodeUnit(m_TextSearchEncoding) <= 2); // TODO: support for UTF-32 in the future
-        bool isodd = (utility::BytesForCodeUnit(m_TextSearchEncoding) == 2) && ((m_File.WindowPos() & 1) == 1);
+        const bool isodd = (utility::BytesForCodeUnit(m_TextSearchEncoding) == 2) && ((m_File.WindowPos() & 1) == 1);
         utility::InterpretAsUnichar(m_TextSearchEncoding,
                                     static_cast<const unsigned char *>(m_File.Window()) + left_window_gap +
                                         (isodd ? 1 : 0),
@@ -128,7 +128,7 @@ SearchInFile::Response SearchInFile::SearchText(uint64_t *_offset, uint64_t *_by
             CFStringCreateWithCharactersNoCopy(nullptr, m_DecodedBuffer.get(), m_DecodedBufferSize, kCFAllocatorNull);
 
         const auto find_flags = m_SearchOptionsBits.case_sensitive ? 0 : kCFCompareCaseInsensitive;
-        CFRange result = CFStringFind(m_DecodedBufferString, m_RequestedTextSearch, find_flags);
+        const CFRange result = CFStringFind(m_DecodedBufferString, m_RequestedTextSearch, find_flags);
 
         if( result.location == kCFNotFound ) {
             // lets proceed further

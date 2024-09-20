@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "PanelDataPersistency.h"
 #include "PanelControllerActionsDispatcher.h"
@@ -12,7 +12,7 @@ using namespace nc::panel;
 static NSMenuItem *BuildMenuItem(const FavoriteLocationsStorage::Favorite &_favorite)
 {
     static const auto attributes = @{NSFontAttributeName: [NSFont menuFontOfSize:0]};
-    NSMenuItem *it = [[NSMenuItem alloc] init];
+    NSMenuItem *const it = [[NSMenuItem alloc] init];
     if( !_favorite.title.empty() ) {
         if( auto title = [NSString stringWithUTF8StdString:_favorite.title] )
             it.title = title;
@@ -30,7 +30,7 @@ static NSMenuItem *BuildMenuItem(const FavoriteLocationsStorage::Favorite &_favo
 
 static NSMenuItem *BuildMenuItem(const FavoriteLocationsStorage::Location &_location)
 {
-    NSMenuItem *it = [[NSMenuItem alloc] init];
+    NSMenuItem *const it = [[NSMenuItem alloc] init];
     if( auto title = [NSString stringWithUTF8StdString:_location.verbose_path] )
         it.title = title;
     it.target = nil;

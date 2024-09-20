@@ -21,15 +21,15 @@ static const CFAbsoluteTime g_FSEventsLatency = 0.05; // 50ms
 static std::string GetRealPath(std::string_view _path_in)
 {
     StackAllocator alloc;
-    std::pmr::string path_in(_path_in, &alloc);
+    const std::pmr::string path_in(_path_in, &alloc);
 
-    int tfd = open(path_in.c_str(), O_RDONLY);
+    const int tfd = open(path_in.c_str(), O_RDONLY);
     if( tfd == -1 ) {
         Log::Warn("GetRealPath() failed to open '{}'", _path_in);
         return {};
     }
     char path_buf[MAXPATHLEN];
-    int ret = fcntl(tfd, F_GETPATH, path_buf);
+    const int ret = fcntl(tfd, F_GETPATH, path_buf);
     close(tfd);
     if( ret == -1 ) {
         Log::Warn("GetRealPath() failed to F_GETPATH of '{}', errno: {}", _path_in, errno);

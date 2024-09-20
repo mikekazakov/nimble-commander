@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShellState.h"
 #include <Base/CommonPaths.h>
 #include <Utility/NativeFSManager.h>
@@ -88,7 +88,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
         m_Interpreter->SetBell([] { NSBeep(); });
         m_Interpreter->SetTitle([weak_self](const std::string &_title, Interpreter::TitleKind _kind) {
             dispatch_to_main_queue([weak_self, _title, _kind] {
-                if( NCTermShellState *me = weak_self ) {
+                if( NCTermShellState *const me = weak_self ) {
                     if( _kind == Interpreter::TitleKind::Icon )
                         me->m_IconTitle = _title;
                     if( _kind == Interpreter::TitleKind::Window )
@@ -99,25 +99,25 @@ static const auto g_CustomPath = "terminal.customShellPath";
         });
         m_Interpreter->SetInputTranslator(m_InputTranslator.get());
         m_Interpreter->SetShowCursorChanged([weak_self](bool _show) {
-            NCTermShellState *me = weak_self;
+            NCTermShellState *const me = weak_self;
             me->m_TermScrollView.view.showCursor = _show;
         });
         m_Interpreter->SetCursorStyleChanged([weak_self](std::optional<CursorMode> _mode) {
-            NCTermShellState *me = weak_self;
+            NCTermShellState *const me = weak_self;
             if( _mode )
                 me->m_TermScrollView.view.cursorMode = *_mode;
             else
                 me->m_TermScrollView.view.cursorMode = me->m_TermScrollView.view.settings->CursorMode();
         });
         m_Interpreter->SetRequstedMouseEventsChanged([weak_self](Interpreter::RequestedMouseEvents _events) {
-            NCTermShellState *me = weak_self;
+            NCTermShellState *const me = weak_self;
             me->m_TermScrollView.view.mouseEvents = _events;
         });
         m_Interpreter->SetScreenResizeAllowed(false);
 
         [m_TermScrollView.view AttachToInputTranslator:m_InputTranslator.get()];
         m_TermScrollView.onScreenResized = [weak_self](int _sx, int _sy) {
-            NCTermShellState *me = weak_self;
+            NCTermShellState *const me = weak_self;
             me->m_Interpreter->NotifyScreenResized();
             me->m_Task->ResizeWindow(_sx, _sy);
             [me updateTitle];

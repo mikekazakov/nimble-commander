@@ -19,7 +19,7 @@ static bool MkFile(const std::string &_file_path)
 
 TEST_CASE(PREFIX "Tests")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto dir = std::string(tmp_dir.directory);
     const auto native_host = TestEnv().vfs_native;
 

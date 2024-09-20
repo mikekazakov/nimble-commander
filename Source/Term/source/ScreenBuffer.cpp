@@ -54,7 +54,7 @@ std::span<ScreenBuffer::Space> ScreenBuffer::LineFromNo(int _line_number) noexce
         return {&m_OnScreenSpaces[l.start_index], l.line_length};
     }
     else if( _line_number < 0 && -_line_number <= static_cast<int>(m_BackScreenLines.size()) ) {
-        unsigned ind = unsigned(static_cast<int>(m_BackScreenLines.size()) + _line_number);
+        const unsigned ind = unsigned(static_cast<int>(m_BackScreenLines.size()) + _line_number);
         auto &l = m_BackScreenLines[ind];
         assert(l.start_index + l.line_length <= m_BackScreenSpaces.size());
         return {&m_BackScreenSpaces[l.start_index], l.line_length};
@@ -78,7 +78,7 @@ ScreenBuffer::LineMeta *ScreenBuffer::MetaFromLineNo(int _line_number)
     if( _line_number >= 0 && _line_number < static_cast<int>(m_OnScreenLines.size()) )
         return &m_OnScreenLines[_line_number];
     else if( _line_number < 0 && -_line_number <= static_cast<int>(m_BackScreenLines.size()) ) {
-        unsigned ind = unsigned(static_cast<signed>(m_BackScreenLines.size()) + _line_number);
+        const unsigned ind = unsigned(static_cast<signed>(m_BackScreenLines.size()) + _line_number);
         return &m_BackScreenLines[ind];
     }
     else
@@ -90,7 +90,7 @@ const ScreenBuffer::LineMeta *ScreenBuffer::MetaFromLineNo(int _line_number) con
     if( _line_number >= 0 && _line_number < static_cast<int>(m_OnScreenLines.size()) )
         return &m_OnScreenLines[_line_number];
     else if( _line_number < 0 && -_line_number <= static_cast<int>(m_BackScreenLines.size()) ) {
-        unsigned ind = unsigned(static_cast<signed>(m_BackScreenLines.size()) + _line_number);
+        const unsigned ind = unsigned(static_cast<signed>(m_BackScreenLines.size()) + _line_number);
         return &m_BackScreenLines[ind];
     }
     else
@@ -381,7 +381,7 @@ void ScreenBuffer::FeedBackscreen(const Space *_from, const Space *_to, bool _wr
 {
     // TODO: trimming and empty lines ?
     while( _from < _to ) {
-        unsigned line_len = std::min(m_Width, unsigned(_to - _from));
+        const unsigned line_len = std::min(m_Width, unsigned(_to - _from));
 
         m_BackScreenLines.emplace_back();
         m_BackScreenLines.back().start_index = static_cast<unsigned>(m_BackScreenSpaces.size());

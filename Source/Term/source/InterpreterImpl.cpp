@@ -669,7 +669,7 @@ void InterpreterImpl::UpdateCharacterAttributes()
 void InterpreterImpl::Response(std::string_view _text)
 {
     assert(m_Output);
-    Bytes bytes{reinterpret_cast<const std::byte *>(_text.data()), _text.length()};
+    const Bytes bytes{reinterpret_cast<const std::byte *>(_text.data()), _text.length()};
     m_Output(bytes);
 }
 

@@ -70,7 +70,7 @@ static void peer_event_handler(xpc_connection_t _peer, xpc_object_t _event) noex
     }
 
     try {
-        nc::viewer::hl::Highlighter highlighter{std::move(*parsed_settings)};
+        const nc::viewer::hl::Highlighter highlighter{std::move(*parsed_settings)};
         const std::string_view document{static_cast<const char *>(text), text_size};
         const std::vector<nc::viewer::hl::Style> styles = highlighter.Highlight(document);
         send_reply_styles(_peer, _event, styles);

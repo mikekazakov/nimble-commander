@@ -8,8 +8,8 @@ namespace nc::ops {
 static NSString *ExtractCopyToName(const std::string &_s)
 {
     char buff[MAXPATHLEN] = {0};
-    bool use_buff = GetDirectoryNameFromPath(_s.c_str(), buff, MAXPATHLEN);
-    NSString *to = [NSString stringWithUTF8String:(use_buff ? buff : _s.c_str())];
+    const bool use_buff = GetDirectoryNameFromPath(_s.c_str(), buff, MAXPATHLEN);
+    NSString *const to = [NSString stringWithUTF8String:(use_buff ? buff : _s.c_str())];
     return to;
 }
 

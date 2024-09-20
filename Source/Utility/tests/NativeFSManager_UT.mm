@@ -18,7 +18,7 @@ TEST_CASE(PREFIX "Fast lookup considers firmlinks")
     if( !std::filesystem::exists("/Applications/") )
         return; // on CI environment it's possible that this directory does not exist
 
-    NativeFSManagerImpl fsm;
+    const NativeFSManagerImpl fsm;
 
     auto root_volume = fsm.VolumeFromPathFast("/");
     REQUIRE(root_volume != nullptr);
@@ -42,7 +42,7 @@ TEST_CASE(PREFIX "VolumeFromFD")
     REQUIRE(fd2 >= 0);
     auto close_fd2 = at_scope_end([=] { close(fd2); });
 
-    NativeFSManagerImpl fsm;
+    const NativeFSManagerImpl fsm;
     const auto info1 = fsm.VolumeFromFD(fd1);
     REQUIRE(info1 != nullptr);
     CHECK(info1->mounted_at_path == "/");
@@ -61,7 +61,7 @@ TEST_CASE(PREFIX "VolumeFromFD")
 TEST_CASE(PREFIX "Can detect filesystem mounts and unmounts")
 {
     using namespace std::chrono_literals;
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto dmg_path = tmp_dir.directory / "tmp_image.dmg";
 
     NativeFSManagerImpl fsm;
@@ -102,7 +102,7 @@ TEST_CASE(PREFIX "Can detect filesystem mounts and unmounts")
 TEST_CASE(PREFIX "Can detect filesystem renames", "[!mayfail]")
 {
     using namespace std::chrono_literals;
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto dmg_path = tmp_dir.directory / "tmp_image.dmg";
 
     auto create_cmd =

@@ -107,7 +107,7 @@ ssize_t File::Read(void *_buf, size_t _size)
     assert(_buf != nullptr);
 
     m_State->ConsumeEntry();
-    ssize_t size = archive_read_data(m_State->Archive(), _buf, _size);
+    const ssize_t size = archive_read_data(m_State->Archive(), _buf, _size);
     if( size < 0 ) {
         // TODO: libarchive error - convert it into our errors
         fmt::println("libarchive error: {}", archive_error_string(m_State->Archive()));
@@ -144,7 +144,7 @@ ssize_t File::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size)
             if( _buffer == nullptr )
                 return i.data_sz;
 
-            size_t sz = std::min(i.data_sz, static_cast<uint32_t>(_buf_size));
+            const size_t sz = std::min(i.data_sz, static_cast<uint32_t>(_buf_size));
             std::memcpy(_buffer, i.data, sz);
             return sz;
         }

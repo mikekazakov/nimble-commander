@@ -27,8 +27,8 @@ int ListingComparatorBase::NaturalCompare(CFStringRef _1st, CFStringRef _2nd) no
     static const bool is_localizedStandardCompare_sane = isLocalizedStandardCompareSane();
     if( is_localizedStandardCompare_sane ) {
         // Use the recommended way, i.e. the blackbox 'localizedStandardCompare'.
-        NSString *lhs = (__bridge NSString *)(_1st);
-        NSString *rhs = (__bridge NSString *)(_2nd);
+        NSString *const lhs = (__bridge NSString *)(_1st);
+        NSString *const rhs = (__bridge NSString *)(_2nd);
         const NSComparisonResult cmp = [lhs localizedStandardCompare:rhs];
         return static_cast<int>(cmp);
     }

@@ -98,18 +98,18 @@ static const auto g_LongProcessDelay = 100ms;
         m_Interpreter->SetTitle([](const std::string &, Interpreter::TitleKind) { /* deliberately nothing*/ });
         m_Interpreter->SetInputTranslator(m_InputTranslator.get());
         m_Interpreter->SetShowCursorChanged([weak_self](bool _show) {
-            FilePanelOverlappedTerminal *me = weak_self;
+            FilePanelOverlappedTerminal *const me = weak_self;
             me->m_TermScrollView.view.showCursor = _show;
         });
         m_Interpreter->SetRequstedMouseEventsChanged([weak_self](Interpreter::RequestedMouseEvents _events) {
-            FilePanelOverlappedTerminal *me = weak_self;
+            FilePanelOverlappedTerminal *const me = weak_self;
             me->m_TermScrollView.view.mouseEvents = _events;
         });
         m_Interpreter->SetScreenResizeAllowed(false);
 
         [m_TermScrollView.view AttachToInputTranslator:m_InputTranslator.get()];
         m_TermScrollView.onScreenResized = [weak_self](int _sx, int _sy) {
-            FilePanelOverlappedTerminal *me = weak_self;
+            FilePanelOverlappedTerminal *const me = weak_self;
             me->m_Interpreter->NotifyScreenResized();
             me->m_Task->ResizeWindow(_sx, _sy);
         };
@@ -138,7 +138,7 @@ static const auto g_LongProcessDelay = 100ms;
     __weak FilePanelOverlappedTerminal *weak_self = self;
 
     dispatch_to_main_queue([weak_self, cmds = std::move(cmds)] {
-        FilePanelOverlappedTerminal *me = weak_self;
+        FilePanelOverlappedTerminal *const me = weak_self;
         if( auto lock = me->m_TermScrollView.screen.AcquireLock() )
             me->m_Interpreter->Interpret(cmds);
         [me->m_TermScrollView.view.fpsDrawer invalidate];
@@ -162,7 +162,7 @@ static const auto g_LongProcessDelay = 100ms;
 {
     if( _state == ShellTask::TaskState::ProgramInternal || _state == ShellTask::TaskState::ProgramExternal ) {
         dispatch_to_main_queue_after(g_TaskStartInputDelay, [=] {
-            int task_pid = m_Task->ShellChildPID();
+            const int task_pid = m_Task->ShellChildPID();
             if( task_pid >= 0 )
                 dispatch_to_main_queue_after(g_LongProcessDelay, [=] {
                     if( (m_Task->State() == ShellTask::TaskState::ProgramInternal ||
@@ -330,7 +330,7 @@ static const auto g_LongProcessDelay = 100ms;
     static NSCharacterSet *chars;
     static std::once_flag once;
     std::call_once(once, [] {
-        NSMutableCharacterSet *un = [NSMutableCharacterSet new];
+        NSMutableCharacterSet *const un = [NSMutableCharacterSet new];
         [un formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
         [un formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
         [un formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];

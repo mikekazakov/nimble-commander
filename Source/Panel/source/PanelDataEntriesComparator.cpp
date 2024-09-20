@@ -289,7 +289,7 @@ bool ExternalListingComparator::operator()(unsigned _1, const ExternalEntryKey &
             const bool second_has_extension =
                 !_val2.extension.empty() && (!sort_mode.extensionless_dirs || !_val2.is_dir);
             if( first_has_extension && second_has_extension ) {
-                int r = Compare(l.Extension(_1), _val2.extension.c_str());
+                const int r = Compare(l.Extension(_1), _val2.extension.c_str());
                 if( r < 0 )
                     return true;
                 if( r > 0 )
@@ -307,7 +307,7 @@ bool ExternalListingComparator::operator()(unsigned _1, const ExternalEntryKey &
             const bool second_has_extension =
                 !_val2.extension.empty() && (!sort_mode.extensionless_dirs || !_val2.is_dir);
             if( first_has_extension && second_has_extension ) {
-                int r = Compare(l.Extension(_1), _val2.extension.c_str());
+                const int r = Compare(l.Extension(_1), _val2.extension.c_str());
                 if( r < 0 )
                     return false;
                 if( r > 0 )

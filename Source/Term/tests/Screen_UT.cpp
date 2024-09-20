@@ -7,7 +7,7 @@ using namespace nc::term;
 
 TEST_CASE(PREFIX "Defaults")
 {
-    Screen screen(10, 10);
+    const Screen screen(10, 10);
     CHECK(screen.VideoReverse() == false);
 }
 

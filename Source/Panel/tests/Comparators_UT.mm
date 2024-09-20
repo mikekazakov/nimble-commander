@@ -144,7 +144,7 @@ TEST_CASE(PREFIX "SortByName, collation")
         sort.collation = SortMode::Collation::CaseSensitive;
         const IndirectListingComparator cmp(*listing, vd, sort);
         // clang-format off
-        bool v[5][5] = {
+        bool const v[5][5] = {
             /*        A 2 a 2 a 10 __42 42__ */
             /*A 2*/  {  0,  1,   1,   1,   0 },
             /*a 2*/  {  0,  0,   0,   0,   0 },
@@ -164,7 +164,7 @@ TEST_CASE(PREFIX "SortByName, collation")
         sort.collation = SortMode::Collation::CaseInsensitive;
         const IndirectListingComparator cmp(*listing, vd, sort);
         // clang-format off
-        bool v[5][5] = {
+        bool const v[5][5] = {
             /*        A 2 a 2 a 10 __42 42__ */
             /*A 2*/  {  0,  0,   0,   0,   0 },
             /*a 2*/  {  0,  0,   0,   0,   0 },
@@ -184,7 +184,7 @@ TEST_CASE(PREFIX "SortByName, collation")
         sort.collation = SortMode::Collation::Natural;
         const IndirectListingComparator cmp(*listing, vd, sort);
         // clang-format off
-        bool v[5][5] = {
+        bool const v[5][5] = {
             /*        A 2 a 2 a 10 __42 42__ */
             /*A 2*/  {  0,  0,   1,   0,   0 },
             /*a 2*/  {  1,  0,   1,   0,   0 },

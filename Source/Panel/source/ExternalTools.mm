@@ -615,7 +615,7 @@ std::vector<std::string> ExternalToolExecution::BuildArguments() const
         if( step.type == ExternalToolsParameters::ActionType::CurrentItem && num_files < max_files ) {
             const auto v = m_Params.GetCurrentItem(step.index);
             const auto [panel, idx] = panel_cursor_for_location(v.location);
-            if( VFSListingItem item = panel->EntryAtSortPosition(idx) ) {
+            if( const VFSListingItem item = panel->EntryAtSortPosition(idx) ) {
                 commit(info_from_item(item, v.what));
                 ++num_files;
             }
@@ -668,7 +668,7 @@ std::vector<std::string> ExternalToolExecution::BuildArguments() const
 
 bool ExternalToolExecution::IsBundle() const
 {
-    NSBundle *b = [NSBundle bundleWithPath:[NSString stringWithUTF8StdString:m_ET.m_ExecutablePath]];
+    NSBundle *const b = [NSBundle bundleWithPath:[NSString stringWithUTF8StdString:m_ET.m_ExecutablePath]];
     return b != nil;
 }
 
@@ -694,8 +694,8 @@ static bool IsRunnableExecutable(const std::string &_path)
 
 static std::filesystem::path GetExecutablePathForBundle(const std::string &_path)
 {
-    if( NSBundle *b = [NSBundle bundleWithPath:[NSString stringWithUTF8StdString:_path]] )
-        if( NSURL *u = b.executableURL )
+    if( NSBundle *const b = [NSBundle bundleWithPath:[NSString stringWithUTF8StdString:_path]] )
+        if( NSURL *const u = b.executableURL )
             if( const char *fsr = u.fileSystemRepresentation )
                 return fsr;
     return "";
@@ -732,7 +732,7 @@ std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedFork()
 {
     auto args = BuildArguments();
 
-    int pid = nc::term::Task::RunDetachedProcess(m_ET.m_ExecutablePath, args);
+    const int pid = nc::term::Task::RunDetachedProcess(m_ET.m_ExecutablePath, args);
     if( pid < 0 ) {
         return std::unexpected(VFSError::FormatErrorCode(VFSError::FromErrno()));
     }
@@ -742,12 +742,12 @@ std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedFork()
 
 std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedUI()
 {
-    NSURL *app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:m_ET.m_ExecutablePath]];
+    NSURL *const app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:m_ET.m_ExecutablePath]];
 
     const auto args = BuildArguments();
 
-    NSMutableArray *params_urls = [NSMutableArray new];
-    NSMutableArray *params_args = [NSMutableArray new];
+    NSMutableArray *const params_urls = [NSMutableArray new];
+    NSMutableArray *const params_args = [NSMutableArray new];
     const bool allow_urls =
         m_ET.m_GUIArgumentInterpretation == ExternalTool::GUIArgumentInterpretation::PassExistingPathsAsURLs;
     for( auto &s : args ) {
@@ -761,7 +761,7 @@ std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedUI()
         }
     }
 
-    NSWorkspaceOpenConfiguration *config = [NSWorkspaceOpenConfiguration new];
+    NSWorkspaceOpenConfiguration *const config = [NSWorkspaceOpenConfiguration new];
     config.promptsUserIfNeeded = false;
     config.arguments = params_args;
 
@@ -794,7 +794,7 @@ std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedUI()
     }
 
     std::unique_lock lk(ctx->mut);
-    bool done = ctx->cv.wait_for(lk, std::chrono::seconds{10}, [&] { return ctx->done; });
+    const bool done = ctx->cv.wait_for(lk, std::chrono::seconds{10}, [&] { return ctx->done; });
 
     if( !done ) {
         return std::unexpected<std::string>(

@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewFixedWidthLayoutEngine.h"
 #include <cmath>
 #include <numeric>
@@ -105,7 +105,7 @@ FixedWidthLayoutEngine::AttributesForItemsInRect(NSRect _rect) const noexcept
     const auto first_row = static_cast<int>(std::floor(_rect.origin.y / m_ItemHeight));
     const auto last_row =
         std::min(static_cast<int>(std::ceil((_rect.origin.y + _rect.size.height) / m_ItemHeight)), m_RowsNumber);
-    NSMutableArray *array = [[NSMutableArray alloc] init];
+    NSMutableArray *const array = [[NSMutableArray alloc] init];
     for( int column = first_column; column < last_column; ++column )
         for( int row = first_row; row < last_row; ++row ) {
             const auto index = column * m_RowsNumber + row;

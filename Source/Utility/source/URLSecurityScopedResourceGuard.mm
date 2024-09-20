@@ -22,7 +22,7 @@ URLSecurityScopedResourceGuard::URLSecurityScopedResourceGuard(URLSecurityScoped
 
 URLSecurityScopedResourceGuard::~URLSecurityScopedResourceGuard()
 {
-    for( NSURL *url : m_URLs ) {
+    for( NSURL *const &url : m_URLs ) {
         [url stopAccessingSecurityScopedResource];
         Log::Trace("Stopped accessing a security scoped resource: {}", url.fileSystemRepresentation);
     }

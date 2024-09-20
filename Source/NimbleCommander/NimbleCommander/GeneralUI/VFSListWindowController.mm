@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "VFSListWindowController.h"
 #include "../Core/VFSInstanceManager.h"
 #include "../Core/VFSInstancePromise.h"
@@ -37,7 +37,7 @@ using namespace std::literals;
     __weak VFSListWindowController *weak_self = self;
     auto cb = [=] {
         dispatch_to_main_queue([=] {
-            if( VFSListWindowController *me = weak_self )
+            if( VFSListWindowController *const me = weak_self )
                 [me updateData];
         });
     };

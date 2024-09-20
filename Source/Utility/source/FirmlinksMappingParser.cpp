@@ -6,7 +6,7 @@ namespace nc::utility {
 
 std::vector<FirmlinksMappingParser::Firmlink> FirmlinksMappingParser::Parse(std::string_view _mapping)
 {
-    std::vector<std::string> by_line = base::SplitByDelimiter(_mapping, '\x0A');
+    const std::vector<std::string> by_line = base::SplitByDelimiter(_mapping, '\x0A');
 
     std::vector<Firmlink> result;
 

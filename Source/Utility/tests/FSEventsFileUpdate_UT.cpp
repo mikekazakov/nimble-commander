@@ -18,7 +18,7 @@ static bool run_until_timeout_or_predicate(std::chrono::nanoseconds _timeout,
 
 TEST_CASE(PREFIX "Constructible/destructible")
 {
-    FSEventsFileUpdateImpl file_update;
+    const FSEventsFileUpdateImpl file_update;
 }
 
 TEST_CASE(PREFIX "AddWatchPath to a nonexistent path")
@@ -53,7 +53,7 @@ TEST_CASE(PREFIX "RemoveWatchPathWithToken")
 
 TEST_CASE(PREFIX "Notify from file events")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     FSEventsFileUpdateImpl file_update;
     bool fired = false;
     auto callback = [&] { fired = true; };
@@ -80,7 +80,7 @@ TEST_CASE(PREFIX "Notify from file events")
     SECTION("Existing file contents changed")
     {
         const auto path = tmp_dir.directory / "file_3.txt";
-        int file = open(path.c_str(), O_CREAT | O_RDWR, S_IRWXU);
+        const int file = open(path.c_str(), O_CREAT | O_RDWR, S_IRWXU);
         file_update.AddWatchPath(path, callback);
         write(file, "hello", 5);
         close(file);
@@ -88,7 +88,7 @@ TEST_CASE(PREFIX "Notify from file events")
     SECTION("Existing file contents changed, existing content")
     {
         const auto path = tmp_dir.directory / "file_4.txt";
-        int file = open(path.c_str(), O_CREAT | O_RDWR, S_IRWXU);
+        const int file = open(path.c_str(), O_CREAT | O_RDWR, S_IRWXU);
         write(file, "hello", 5);
         file_update.AddWatchPath(path, callback);
         write(file, "hello", 5);
@@ -97,7 +97,7 @@ TEST_CASE(PREFIX "Notify from file events")
     SECTION("Existing file contents changed, O_SHLOCK")
     {
         const auto path = tmp_dir.directory / "file_5.txt";
-        int file = open(path.c_str(), O_CREAT | O_RDWR | O_SHLOCK, S_IRWXU);
+        const int file = open(path.c_str(), O_CREAT | O_RDWR | O_SHLOCK, S_IRWXU);
         file_update.AddWatchPath(path, callback);
         write(file, "hello", 5);
         close(file);
@@ -105,7 +105,7 @@ TEST_CASE(PREFIX "Notify from file events")
     SECTION("Existing file contents changed, O_EXLOCK")
     {
         const auto path = tmp_dir.directory / "file_6.txt";
-        int file = open(path.c_str(), O_CREAT | O_RDWR | O_EXLOCK, S_IRWXU);
+        const int file = open(path.c_str(), O_CREAT | O_RDWR | O_EXLOCK, S_IRWXU);
         file_update.AddWatchPath(path, callback);
         write(file, "hello", 5);
         close(file);
@@ -121,7 +121,7 @@ TEST_CASE(PREFIX "Notify from file events")
     SECTION("Existing file contents changed, no closure")
     {
         const auto path = tmp_dir.directory / "file_8.txt";
-        int file = open(path.c_str(), O_CREAT | O_RDWR, S_IRWXU);
+        const int file = open(path.c_str(), O_CREAT | O_RDWR, S_IRWXU);
         write(file, "hello", 5);
         file_update.AddWatchPath(path, callback);
         std::vector<unsigned char> nonsense(1'000);

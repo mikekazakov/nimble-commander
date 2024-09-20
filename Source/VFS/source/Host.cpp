@@ -405,7 +405,7 @@ int Host::FetchSingleItemListing(std::string_view _path,
 
     VFSStat lstat;
 
-    int ret = Stat(_path, lstat, VFSFlags::F_NoFollow);
+    const int ret = Stat(_path, lstat, VFSFlags::F_NoFollow);
     if( ret != 0 )
         return ret;
 
@@ -472,7 +472,7 @@ int Host::FetchFlexibleListingItems(const std::string &_directory_path,
                                     const VFSCancelChecker &_cancel_checker)
 {
     VFSListingPtr listing;
-    int ret = FetchDirectoryListing(_directory_path.c_str(), listing, _flags, _cancel_checker);
+    const int ret = FetchDirectoryListing(_directory_path.c_str(), listing, _flags, _cancel_checker);
     if( ret != 0 )
         return ret;
 

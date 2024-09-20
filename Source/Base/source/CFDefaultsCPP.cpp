@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2023 Michael G. Kazakov
+/* Copyright (c) 2016-2024 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -86,7 +86,7 @@ bool CFDefaultsGetBool(CFStringRef _key) noexcept
 std::optional<bool> CFDefaultsGetOptionalBool(CFStringRef _key) noexcept
 {
     Boolean has = false;
-    Boolean v = CFPreferencesGetAppBooleanValue(_key, kCFPreferencesCurrentApplication, &has);
+    const Boolean v = CFPreferencesGetAppBooleanValue(_key, kCFPreferencesCurrentApplication, &has);
     if( !has )
         return {};
     return v ? true : false;

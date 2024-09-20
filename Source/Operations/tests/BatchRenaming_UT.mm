@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
 #include "TestEnv.h"
@@ -222,7 +222,7 @@ TEST_CASE(PREFIX "Counter Placeholders")
 TEST_CASE(PREFIX "Text extraction")
 {
     {
-        BatchRenamingScheme::TextExtraction te;
+        const BatchRenamingScheme::TextExtraction te;
         auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
         REQUIRE([r isEqualToString:@"1234567890"]);
     }
@@ -367,7 +367,7 @@ TEST_CASE(PREFIX "DecomposeMaskIntoPlaceholders")
     struct TC {
         NSString *input;
         std::optional<std::vector<MD>> expected;
-    } tcs[] = {
+    } const tcs[] = {
         {@"", std::vector<MD>{}},
         {@"[", std::nullopt},
         {@"]", std::nullopt},
@@ -386,7 +386,7 @@ TEST_CASE(PREFIX "DecomposeMaskIntoPlaceholders")
 
 TEST_CASE(PREFIX "Renaming - simple cases")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     auto item_dir = tmp_dir.directory / "grandparent_dir" / "parent_dir";
     REQUIRE(std::filesystem::create_directories(item_dir));
     const auto item = GetRegListingItem("filename.txt", item_dir);
@@ -434,7 +434,7 @@ TEST_CASE(PREFIX "Renaming - simple cases")
         const bool parsed = scheme.BuildActionsScript(test_case.pattern);
         REQUIRE(parsed == test_case.parsed);
         if( parsed ) {
-            NSString *renamed = scheme.Rename(file_info, 0);
+            NSString *const renamed = scheme.Rename(file_info, 0);
             INFO(test_case.expected.UTF8String);
             INFO(renamed.UTF8String);
             REQUIRE([renamed isEqualToString:test_case.expected]);

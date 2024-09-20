@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ChangeAttributes.h"
 #include <Base/algo.h>
 #include <Base/dispatch_cpp.h>
@@ -41,7 +41,7 @@ void ChangeAttributes::Perform(PanelController *_target, [[maybe_unused]] id _se
       __weak PanelController *weak_panel = _target;
       op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
           dispatch_to_main_queue([=] {
-              if( PanelController *pc = weak_panel )
+              if( PanelController *const pc = weak_panel )
                   [pc refreshPanel];
           });
       });

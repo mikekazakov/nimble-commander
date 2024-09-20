@@ -20,19 +20,19 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     static NSParagraphStyle *styles[3];
     static std::once_flag once;
     std::call_once(once, [] {
-        NSMutableParagraphStyle *p0 = [NSMutableParagraphStyle new];
+        NSMutableParagraphStyle *const p0 = [NSMutableParagraphStyle new];
         p0.alignment = NSTextAlignmentLeft;
         p0.lineBreakMode = NSLineBreakByTruncatingHead;
         p0.allowsDefaultTighteningForTruncation = false;
         styles[0] = p0;
 
-        NSMutableParagraphStyle *p1 = [NSMutableParagraphStyle new];
+        NSMutableParagraphStyle *const p1 = [NSMutableParagraphStyle new];
         p1.alignment = NSTextAlignmentLeft;
         p1.lineBreakMode = NSLineBreakByTruncatingTail;
         p1.allowsDefaultTighteningForTruncation = false;
         styles[1] = p1;
 
-        NSMutableParagraphStyle *p2 = [NSMutableParagraphStyle new];
+        NSMutableParagraphStyle *const p2 = [NSMutableParagraphStyle new];
         p2.alignment = NSTextAlignmentLeft;
         p2.lineBreakMode = NSLineBreakByTruncatingMiddle;
         p2.allowsDefaultTighteningForTruncation = false;

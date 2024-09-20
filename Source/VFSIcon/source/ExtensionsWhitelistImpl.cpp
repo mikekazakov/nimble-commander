@@ -14,7 +14,7 @@ ExtensionsWhitelistImpl::~ExtensionsWhitelistImpl() = default;
 
 bool ExtensionsWhitelistImpl::AllowExtension(const std::string &_extension) const
 {
-    std::lock_guard lock{m_WhitelistLock};
+    const std::lock_guard lock{m_WhitelistLock};
 
     if( const auto it = m_Whitelist.find(_extension); it != m_Whitelist.end() )
         return it->second;

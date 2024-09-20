@@ -9,7 +9,7 @@ namespace nc::vfs {
 static utility::Encoding EncodingFromXAttr(const VFSFilePtr &_f)
 {
     char buf[128];
-    ssize_t r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
+    const ssize_t r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
     if( r < 0 || r >= static_cast<ssize_t>(sizeof(buf)) )
         return utility::Encoding::ENCODING_INVALID;
     buf[r] = 0;
@@ -217,13 +217,13 @@ bool SearchForFiles::FilterByContent(const char *_full_path, VFSHost &_in_host, 
         return false;
 
     utility::Encoding encoding = m_FilterContent->encoding;
-    if( utility::Encoding xattr_enc = EncodingFromXAttr(file); xattr_enc != utility::Encoding::ENCODING_INVALID )
+    if( const utility::Encoding xattr_enc = EncodingFromXAttr(file); xattr_enc != utility::Encoding::ENCODING_INVALID )
         encoding = xattr_enc;
 
     using nc::vfs::SearchInFile;
     SearchInFile sif(fw);
 
-    base::CFString request{m_FilterContent->text};
+    const base::CFString request{m_FilterContent->text};
     sif.ToggleTextSearch(*request, encoding);
     const auto search_options = [&] {
         auto options = SearchInFile::Options::None;

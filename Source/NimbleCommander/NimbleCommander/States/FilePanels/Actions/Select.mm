@@ -22,7 +22,7 @@ public:
     FindFilesMask InitialMask(NSWindow *_for_window)
     {
         const auto num = ToNumber(_for_window);
-        std::lock_guard lock{m_Mut};
+        const std::lock_guard lock{m_Mut};
         if( m_InitialMasks.contains(num) ) {
             return m_InitialMasks[num];
         }
@@ -36,7 +36,7 @@ public:
 
     void ReportRecent(const nc::panel::FindFilesMask &_mask, NSWindow *_for_window)
     {
-        std::lock_guard lock{m_Mut};
+        const std::lock_guard lock{m_Mut};
         m_InitialMasks[ToNumber(_for_window)] = _mask;
     }
 
@@ -119,7 +119,7 @@ void SelectAllByMask::Perform(PanelController *_target, id) const
     view.onSelect = [wp, this](const nc::panel::FindFilesMask &_mask) {
         using utility::FileMask;
         CommitRecentFindFilesMask(_mask);
-        if( PanelController *panel = wp ) {
+        if( PanelController *const panel = wp ) {
             g_PerWindowMasks.ReportRecent(_mask, panel.window);
             FileMask match_mask;
             if( _mask.type == FindFilesMask::Classic ) {
@@ -141,7 +141,7 @@ void SelectAllByMask::Perform(PanelController *_target, id) const
     };
     view.onClearHistory = [] {
         using namespace nc::config;
-        Value arr(rapidjson::kArrayType);
+        const Value arr(rapidjson::kArrayType);
         StateConfig().Set(g_SelectWithMaskHistoryPath, arr);
     };
 

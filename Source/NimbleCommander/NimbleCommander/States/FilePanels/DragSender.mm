@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DragSender.h"
 #include "FilesDraggingSource.h"
 #include "PanelController.h"
@@ -143,7 +143,7 @@ BuildLabelComponent(PanelDraggingItem *_item, NSFont *_font, const utility::Font
     const auto height = _fi.LineHeight();
 
     static const auto attributes = [&] {
-        NSMutableParagraphStyle *item_text_pstyle = [NSMutableParagraphStyle new];
+        NSMutableParagraphStyle *const item_text_pstyle = [NSMutableParagraphStyle new];
         item_text_pstyle.alignment = NSTextAlignmentLeft;
         item_text_pstyle.lineBreakMode = NSLineBreakByTruncatingMiddle;
         const auto attrs = @{
@@ -179,7 +179,7 @@ BuildLabelComponent(PanelDraggingItem *_item, NSFont *_font, const utility::Font
 static NSArray *BuildImageComponentsForItem(PanelDraggingItem *_item)
 {
     static const auto font = [NSFont systemFontOfSize:13];
-    static utility::FontGeometryInfo font_info{(__bridge CTFontRef)font};
+    static const utility::FontGeometryInfo font_info{(__bridge CTFontRef)font};
 
     if( _item == nil || !_item.item )
         return nil;

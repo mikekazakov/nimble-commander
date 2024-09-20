@@ -17,7 +17,7 @@ CTCache::CTCache(base::CFPtr<CTFontRef> _font, const ExtendedCharRegistry &_reg)
     m_Fonts.push_back(std::move(_font));
     InitBasicLatinChars();
 
-    utility::FontGeometryInfo font_info(m_Fonts.front().get());
+    const utility::FontGeometryInfo font_info(m_Fonts.front().get());
 
     m_GeomSize = font_info.Size();
     m_GeomWidth = font_info.MonospaceWidth();
@@ -92,7 +92,7 @@ CTLineRef CTCache::Build(char32_t _code)
     base::CFPtr<CFStringRef> str;
     if( ExtendedCharRegistry::IsBase(_code) ) {
         uint16_t buf[2];
-        size_t len = CFStringGetSurrogatePairForLongCharacter(_code, buf) ? 2 : 1;
+        const size_t len = CFStringGetSurrogatePairForLongCharacter(_code, buf) ? 2 : 1;
         str = base::CFPtr<CFStringRef>::adopt(CFStringCreateWithCharacters(nullptr, buf, len));
     }
     else {
@@ -180,8 +180,8 @@ void CTCache::DrawCharacter(char32_t _code, CGContextRef _ctx)
         if( is_box )
             CGContextSetShouldAntialias(_ctx, false);
 
-        uint16_t glyph = s.glyph;
-        CGPoint pos{0., 0.};
+        const uint16_t glyph = s.glyph;
+        const CGPoint pos{0., 0.};
         CTFontDrawGlyphs(font, &glyph, &pos, 1, _ctx);
 
         if( is_box )

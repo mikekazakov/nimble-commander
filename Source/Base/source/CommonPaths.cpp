@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael G. Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael G. Kazakov. Subject to GNU General Public License version 3.
 #include <CoreFoundation/CoreFoundation.h>
 #include <sys/param.h>
 #include <pwd.h>
@@ -17,7 +17,7 @@ static std::string GetMainBundlePath()
 {
     CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
     char path[MAXPATHLEN];
-    bool result = CFURLGetFileSystemRepresentation(url, true, reinterpret_cast<UInt8 *>(path), MAXPATHLEN);
+    const bool result = CFURLGetFileSystemRepresentation(url, true, reinterpret_cast<UInt8 *>(path), MAXPATHLEN);
     CFRelease(url);
     return result ? std::string(path) : std::string("");
 }

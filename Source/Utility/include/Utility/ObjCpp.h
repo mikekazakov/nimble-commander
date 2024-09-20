@@ -12,7 +12,7 @@ namespace nc {
 // a compile-time lookup of Objective-C classes
 template <typename T>
 struct objc_class_lookup {
-    inline static Class const class_meta = [T class];
+    inline static const Class class_meta = [T class];
 };
 
 /**

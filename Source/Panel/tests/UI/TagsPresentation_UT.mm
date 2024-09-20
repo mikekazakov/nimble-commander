@@ -24,7 +24,7 @@ TEST_CASE(PREFIX "TrailingTagsInplaceDisplay::Place")
         std::vector<Tag> tags;
         int exp_width = 0;
         int exp_margin = 0;
-    } tcs[] = {
+    } const tcs[] = {
         {{}, 0, 0},
         {{Tag(&l, C::None)}, 0, 0},
         {{Tag(&l, C::Blue)}, D, M},

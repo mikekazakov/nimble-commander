@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #define _LIBCPP_DISABLE_DEPRECATION_WARNINGS
 #include <ParserImpl.h>
 #include <InterpreterImpl.h>
@@ -2762,7 +2762,8 @@ U"Weather report: Houston                                                       
 "                                                                                                                                  " ;
     // clang-format on
 
-    size_t h = 41, w = 130;
+    const size_t h = 41;
+    const size_t w = 130;
     ParserImpl parser;
     Screen screen(static_cast<int>(w), static_cast<int>(h));
     InterpreterImpl interpreter(screen);

@@ -327,7 +327,7 @@ GoToPopupsBase::GoToPopupsBase(NetworkConnectionsManager &_net_mgr,
 std::pair<NCCommandPopover *, GoToPopupListActionMediator *>
 GoToPopupsBase::BuidInitialPopover(MainWindowFilePanelState *_state, PanelController *_panel, NSString *_title) const
 {
-    NCCommandPopover *popover = [[NCCommandPopover alloc] initWithTitle:_title];
+    NCCommandPopover *const popover = [[NCCommandPopover alloc] initWithTitle:_title];
     auto mediator = [[GoToPopupListActionMediator alloc] initWithState:_state andPanel:_panel networkMgr:m_NetMgr];
     popover.delegate = mediator;
     return {popover, mediator};

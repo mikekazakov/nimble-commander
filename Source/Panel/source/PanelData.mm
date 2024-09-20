@@ -121,7 +121,7 @@ void Model::Load(const VFSListingPtr &_listing, PanelType _type)
     m_SoftFiltering.OnPanelDataLoad();
 
     // now sort our new data
-    base::DispatchGroup exec_group{base::DispatchGroup::High};
+    const base::DispatchGroup exec_group{base::DispatchGroup::High};
     exec_group.Run([this] { DoRawSort(*m_Listing, m_EntriesByRawName); });
     exec_group.Run([this] { DoSortWithHardFiltering(); });
     exec_group.Wait();
@@ -162,17 +162,17 @@ void Model::ReLoad(const VFSListingPtr &_listing)
         // assumes that there can't be more than one file with same filenamr
         unsigned dst_i = 0, dst_e = _listing->Count(), src_i = 0, src_e = m_Listing->Count();
         for( ; src_i != src_e && dst_i != dst_e; ++src_i ) {
-            int src = m_EntriesByRawName[src_i];
+            const int src = m_EntriesByRawName[src_i];
         check:
-            int dst = dirbyrawcname[dst_i];
-            int cmp = m_Listing->Filename(src).compare(_listing->Filename(dst));
+            const int dst = dirbyrawcname[dst_i];
+            const int cmp = m_Listing->Filename(src).compare(_listing->Filename(dst));
             if( cmp == 0 ) {
 
                 //                new_vd[ dst ] = m_VolatileData[ src ];
                 UpdateWithExisingVD(new_vd[dst], m_VolatileData[src]);
 
-                ++dst_i; // check this! we assume that normal directory can't hold two files with a
-                         // same name
+                ++dst_i; // check this! we assume that normal directory can't hold
+                         // two files with a same name
             }
             else if( cmp > 0 ) {
                 dst_i++;
@@ -192,10 +192,10 @@ void Model::ReLoad(const VFSListingPtr &_listing)
         unsigned dst_i = 0, dst_e = static_cast<unsigned>(dst_keys.size()), src_i = 0,
                  src_e = static_cast<unsigned>(src_keys.size());
         for( ; src_i != src_e && dst_i != dst_e; ++src_i ) {
-            int src = src_keys_ind[src_i];
+            const int src = src_keys_ind[src_i];
         check2:
-            int dst = dst_keys_ind[dst_i];
-            int cmp = src_keys[src].compare(dst_keys[dst]);
+            const int dst = dst_keys_ind[dst_i];
+            const int cmp = src_keys[src].compare(dst_keys[dst]);
             if( cmp == 0 ) {
                 //                new_vd[ dst ] = m_VolatileData[ src ];
                 UpdateWithExisingVD(new_vd[dst], m_VolatileData[src]);
@@ -360,7 +360,7 @@ std::string Model::DirectoryPathWithTrailingSlash() const
 
 std::string Model::DirectoryPathShort() const
 {
-    std::string tmp = DirectoryPathWithoutTrailingSlash();
+    const std::string tmp = DirectoryPathWithoutTrailingSlash();
     auto i = tmp.rfind('/');
     if( i != std::string::npos )
         return tmp.c_str() + i + 1;

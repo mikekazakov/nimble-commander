@@ -104,7 +104,7 @@ static int parse_dir_unix(const char *line, struct stat *sbuf, char *file, char 
     gmtime_r(&tt, &tm);
     tm.tm_sec = tm.tm_min = tm.tm_hour = 0;
     if( strchr(year, ':') ) {
-        int cur_mon = tm.tm_mon; // save current month
+        const int cur_mon = tm.tm_mon; // save current month
         strptime(date, "%H:%M,%b,%d", &tm);
         // Unix systems omit the year for the last six months
         if( cur_mon + 5 < tm.tm_mon ) { // month from last year
@@ -152,7 +152,7 @@ static int parse_dir_win(const char *line, struct stat *sbuf, char *file, char *
         sbuf->st_mode |= S_IFDIR;
     }
     else {
-        unsigned long long nsize = strtoull(size, nullptr, 0);
+        const unsigned long long nsize = strtoull(size, nullptr, 0);
         sbuf->st_mode |= S_IFREG;
         sbuf->st_size = nsize;
     }
@@ -257,7 +257,7 @@ CURLcode CURLInstance::PerformMulti()
 CURLMcode CURLInstance::Attach()
 {
     assert(!IsAttached());
-    CURLMcode e = curl_multi_add_handle(curlm, curl);
+    const CURLMcode e = curl_multi_add_handle(curlm, curl);
     if( e == CURLM_OK )
         attached = true;
 
@@ -267,7 +267,7 @@ CURLMcode CURLInstance::Attach()
 CURLMcode CURLInstance::Detach()
 {
     assert(IsAttached());
-    CURLMcode e = curl_multi_remove_handle(curlm, curl);
+    const CURLMcode e = curl_multi_remove_handle(curlm, curl);
     if( e == CURLM_OK )
         attached = false;
     return e;

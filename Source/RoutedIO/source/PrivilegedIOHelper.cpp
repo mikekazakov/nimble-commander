@@ -95,14 +95,14 @@ static bool HandleOpen(xpc_object_t _event) noexcept
     xpc_object_t xpc_flags = xpc_dictionary_get_value(_event, "flags");
     if( xpc_flags == nullptr || xpc_get_type(xpc_flags) != XPC_TYPE_INT64 )
         return false;
-    int flags = static_cast<int>(xpc_int64_get_value(xpc_flags));
+    const int flags = static_cast<int>(xpc_int64_get_value(xpc_flags));
 
     xpc_object_t xpc_mode = xpc_dictionary_get_value(_event, "mode");
     if( xpc_mode == nullptr || xpc_get_type(xpc_mode) != XPC_TYPE_INT64 )
         return false;
-    int mode = static_cast<int>(xpc_int64_get_value(xpc_mode));
+    const int mode = static_cast<int>(xpc_int64_get_value(xpc_mode));
 
-    int fd = open(path, flags, mode);
+    const int fd = open(path, flags, mode);
     if( fd >= 0 ) {
         send_reply_fd(_event, fd);
         close(fd);
@@ -121,7 +121,7 @@ static bool HandleStat(xpc_object_t _event) noexcept
 
     const char *path = xpc_string_get_string_ptr(xpc_path);
     struct stat st;
-    int ret = stat(path, &st);
+    const int ret = stat(path, &st);
     if( ret == 0 ) {
         xpc_connection_t remote = xpc_dictionary_get_remote_connection(_event);
         xpc_object_t reply = xpc_dictionary_create_reply(_event);
@@ -143,7 +143,7 @@ static bool HandleLStat(xpc_object_t _event) noexcept
 
     const char *path = xpc_string_get_string_ptr(xpc_path);
     struct stat st;
-    int ret = lstat(path, &st);
+    const int ret = lstat(path, &st);
     if( ret == 0 ) {
         xpc_connection_t remote = xpc_dictionary_get_remote_connection(_event);
         xpc_object_t reply = xpc_dictionary_create_reply(_event);
@@ -167,9 +167,9 @@ static bool HandleMkDir(xpc_object_t _event) noexcept
     xpc_object_t xpc_mode = xpc_dictionary_get_value(_event, "mode");
     if( xpc_mode == nullptr || xpc_get_type(xpc_mode) != XPC_TYPE_INT64 )
         return false;
-    int mode = static_cast<int>(xpc_int64_get_value(xpc_mode));
+    const int mode = static_cast<int>(xpc_int64_get_value(xpc_mode));
 
-    int result = mkdir(path, static_cast<mode_t>(mode));
+    const int result = mkdir(path, static_cast<mode_t>(mode));
     if( result == 0 ) {
         send_reply_ok(_event);
     }
@@ -189,14 +189,14 @@ static bool HandleChOwn(xpc_object_t _event) noexcept
     xpc_object_t xpc_uid = xpc_dictionary_get_value(_event, "uid");
     if( xpc_uid == nullptr || xpc_get_type(xpc_uid) != XPC_TYPE_INT64 )
         return false;
-    uid_t uid = static_cast<uid_t>(xpc_int64_get_value(xpc_uid));
+    const uid_t uid = static_cast<uid_t>(xpc_int64_get_value(xpc_uid));
 
     xpc_object_t xpc_gid = xpc_dictionary_get_value(_event, "gid");
     if( xpc_gid == nullptr || xpc_get_type(xpc_gid) != XPC_TYPE_INT64 )
         return false;
-    gid_t gid = static_cast<gid_t>(xpc_int64_get_value(xpc_gid));
+    const gid_t gid = static_cast<gid_t>(xpc_int64_get_value(xpc_gid));
 
-    int result = chown(path, uid, gid);
+    const int result = chown(path, uid, gid);
     if( result == 0 ) {
         send_reply_ok(_event);
     }
@@ -216,9 +216,9 @@ static bool HandleChFlags(xpc_object_t _event) noexcept
     xpc_object_t xpc_flags = xpc_dictionary_get_value(_event, "flags");
     if( xpc_flags == nullptr || xpc_get_type(xpc_flags) != XPC_TYPE_INT64 )
         return false;
-    u_int flags = static_cast<u_int>(xpc_int64_get_value(xpc_flags));
+    const u_int flags = static_cast<u_int>(xpc_int64_get_value(xpc_flags));
 
-    int result = chflags(path, flags);
+    const int result = chflags(path, flags);
     if( result == 0 ) {
         send_reply_ok(_event);
     }
@@ -238,9 +238,9 @@ static bool HandleLChFlags(xpc_object_t _event) noexcept
     xpc_object_t xpc_flags = xpc_dictionary_get_value(_event, "flags");
     if( xpc_flags == nullptr || xpc_get_type(xpc_flags) != XPC_TYPE_INT64 )
         return false;
-    u_int flags = static_cast<u_int>(xpc_int64_get_value(xpc_flags));
+    const u_int flags = static_cast<u_int>(xpc_int64_get_value(xpc_flags));
 
-    int result = lchflags(path, flags);
+    const int result = lchflags(path, flags);
     if( result == 0 ) {
         send_reply_ok(_event);
     }
@@ -260,9 +260,9 @@ static bool HandleChMod(xpc_object_t _event) noexcept
     xpc_object_t xpc_mode = xpc_dictionary_get_value(_event, "mode");
     if( xpc_mode == nullptr || xpc_get_type(xpc_mode) != XPC_TYPE_INT64 )
         return false;
-    mode_t mode = static_cast<mode_t>(xpc_int64_get_value(xpc_mode));
+    const mode_t mode = static_cast<mode_t>(xpc_int64_get_value(xpc_mode));
 
-    int result = chmod(path, mode);
+    const int result = chmod(path, mode);
     if( result == 0 ) {
         send_reply_ok(_event);
     }
@@ -284,7 +284,7 @@ static bool HandleChTime(xpc_object_t _event) noexcept
     xpc_object_t xpc_time = xpc_dictionary_get_value(_event, "time");
     if( xpc_time == nullptr || xpc_get_type(xpc_time) != XPC_TYPE_INT64 )
         return false;
-    time_t timesec = static_cast<time_t>(xpc_int64_get_value(xpc_time));
+    const time_t timesec = static_cast<time_t>(xpc_int64_get_value(xpc_time));
 
     struct attrlist attrs;
     memset(&attrs, 0, sizeof(attrs));
@@ -300,7 +300,7 @@ static bool HandleChTime(xpc_object_t _event) noexcept
 
     timespec time = {timesec, 0};
 
-    int result = setattrlist(path, &attrs, &time, sizeof(time), 0);
+    const int result = setattrlist(path, &attrs, &time, sizeof(time), 0);
     if( result == 0 ) {
         send_reply_ok(_event);
     }
@@ -317,7 +317,7 @@ static bool HandleRmDir(xpc_object_t _event) noexcept
         return false;
     const char *path = xpc_string_get_string_ptr(xpc_path);
 
-    int result = rmdir(path);
+    const int result = rmdir(path);
     if( result == 0 ) {
         send_reply_ok(_event);
     }
@@ -334,7 +334,7 @@ static bool HandleUnlink(xpc_object_t _event) noexcept
         return false;
     const char *path = xpc_string_get_string_ptr(xpc_path);
 
-    int result = unlink(path);
+    const int result = unlink(path);
     if( result == 0 ) {
         send_reply_ok(_event);
     }
@@ -356,7 +356,7 @@ static bool HandleRename(xpc_object_t _event) noexcept
         return false;
     const char *newpath = xpc_string_get_string_ptr(xpc_newpath);
 
-    int result = rename(oldpath, newpath);
+    const int result = rename(oldpath, newpath);
     if( result == 0 ) {
         send_reply_ok(_event);
     }
@@ -374,7 +374,7 @@ static bool HandleReadLink(xpc_object_t _event) noexcept
     const char *path = xpc_string_get_string_ptr(xpc_path);
 
     char symlink[MAXPATHLEN];
-    ssize_t result = readlink(path, symlink, MAXPATHLEN);
+    const ssize_t result = readlink(path, symlink, MAXPATHLEN);
     if( result < 0 ) {
         send_reply_error(_event, errno);
     }
@@ -401,7 +401,7 @@ static bool HandleSymlink(xpc_object_t _event) noexcept
         return false;
     const char *value = xpc_string_get_string_ptr(xpc_value);
 
-    int result = symlink(value, path);
+    const int result = symlink(value, path);
     if( result == 0 ) {
         send_reply_ok(_event);
     }
@@ -423,7 +423,7 @@ static bool HandleLink(xpc_object_t _event) noexcept
         return false;
     const char *newnode = xpc_string_get_string_ptr(xpc_newnode);
 
-    int result = link(exist, newnode);
+    const int result = link(exist, newnode);
     if( result == 0 ) {
         send_reply_ok(_event);
     }
@@ -438,14 +438,14 @@ static bool HandleKillPG(xpc_object_t _event) noexcept
     xpc_object_t xpc_pid = xpc_dictionary_get_value(_event, "pid");
     if( xpc_pid == nullptr || xpc_get_type(xpc_pid) != XPC_TYPE_INT64 )
         return false;
-    pid_t pid = static_cast<pid_t>(xpc_int64_get_value(xpc_pid));
+    const pid_t pid = static_cast<pid_t>(xpc_int64_get_value(xpc_pid));
 
     xpc_object_t xpc_signal = xpc_dictionary_get_value(_event, "signal");
     if( xpc_signal == nullptr || xpc_get_type(xpc_signal) != XPC_TYPE_INT64 )
         return false;
-    int signal = static_cast<int>(xpc_int64_get_value(xpc_signal));
+    const int signal = static_cast<int>(xpc_int64_get_value(xpc_signal));
 
-    int result = killpg(pid, signal);
+    const int result = killpg(pid, signal);
     if( result == 0 ) {
         send_reply_ok(_event);
     }
@@ -633,7 +633,8 @@ static bool CheckHardening(const pid_t _client_pid)
 
     // Get a reference to the running client's code
     SecCodeRef code_ref_input = nullptr;
-    if( OSStatus status = SecCodeCopyGuestWithAttributes(nullptr, attr.get(), kSecCSDefaultFlags, &code_ref_input);
+    if( const OSStatus status =
+            SecCodeCopyGuestWithAttributes(nullptr, attr.get(), kSecCSDefaultFlags, &code_ref_input);
         status != errSecSuccess || code_ref_input == nullptr ) {
         return false;
     }
@@ -641,7 +642,7 @@ static bool CheckHardening(const pid_t _client_pid)
 
     // Obtain it's dynamic signing information
     CFDictionaryRef csinfo_input = nullptr;
-    if( OSStatus status = SecCodeCopySigningInformation(code_ref.get(), kSecCSDynamicInformation, &csinfo_input);
+    if( const OSStatus status = SecCodeCopySigningInformation(code_ref.get(), kSecCSDynamicInformation, &csinfo_input);
         status != errSecSuccess || csinfo_input == nullptr ) {
         return false;
     }
@@ -663,7 +664,7 @@ static bool CheckHardening(const pid_t _client_pid)
 
 static void XPC_Connection_Handler(xpc_connection_t _connection)
 {
-    pid_t client_pid = xpc_connection_get_pid(_connection);
+    const pid_t client_pid = xpc_connection_get_pid(_connection);
     char client_path[1024] = {0};
     proc_pidpath(client_pid, client_path, sizeof(client_path));
     syslog_notice("Got an incoming connection from: %s", client_path);

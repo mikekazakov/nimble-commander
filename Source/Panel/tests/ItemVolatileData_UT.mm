@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataItemVolatileData.h"
 #include "Tests.h"
 
@@ -72,7 +72,7 @@ TEST_CASE(PREFIX "ranges constructor")
     {
         struct TC {
             R src, dst;
-        } tcs[] = {{
+        } const tcs[] = {{
             {0, 1000}, {0, 120},
             // TODO: more?
         }};

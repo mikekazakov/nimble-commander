@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QuickSearch.h"
 #include <Panel/PanelDataFilter.h>
 #include <Panel/PanelData.h>
@@ -335,7 +335,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 {
     __weak NCPanelQuickSearch *weak_self = self;
     auto clear_filtering = [=] {
-        if( NCPanelQuickSearch *strong_self = weak_self ) {
+        if( NCPanelQuickSearch *const strong_self = weak_self ) {
             if( strong_self->m_SoftFilteringLastAction + g_SoftFilteringTimeout <= nc::base::machtime() )
                 [strong_self setSearchCriteria:nil];
         }

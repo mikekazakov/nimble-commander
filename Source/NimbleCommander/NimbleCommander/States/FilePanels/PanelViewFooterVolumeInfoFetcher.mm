@@ -61,8 +61,8 @@ struct PanelViewFooterVolumeInfoFetcherInternals {
         if( _lp.scheduled )
             return;
 
-        VFSHostWeakPtr host = _lp.host;
-        std::string path = _lp.path;
+        const VFSHostWeakPtr host = _lp.host;
+        const std::string path = _lp.path;
 
         g_Queue.after(_hurry ? 0s : g_Delay, [=] {
             VFSStatFS stat;

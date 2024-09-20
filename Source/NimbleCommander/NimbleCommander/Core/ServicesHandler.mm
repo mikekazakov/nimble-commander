@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ServicesHandler.h"
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
@@ -59,7 +59,7 @@ ExtractFirstDirectoryAndFilenamesInside(const std::vector<std::string> &_paths)
         if( i.empty() )
             continue;
 
-        std::filesystem::path p = i;
+        const std::filesystem::path p = i;
         if( directory.empty() ) {
             directory = p.filename() == "" ? p.parent_path().parent_path() : // .../abra/cadabra/ -> .../abra/cadabra
                             p.parent_path();                                 // .../abra/cadabra  -> .../abra

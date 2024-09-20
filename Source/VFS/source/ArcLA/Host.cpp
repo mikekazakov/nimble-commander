@@ -84,7 +84,7 @@ static VFSConfiguration ComposeConfiguration(const std::string_view _path, std::
 
 static void DecodeStringToUTF8(const void *_bytes, size_t _sz, CFStringEncoding _enc, char *_buf, size_t _buf_sz)
 {
-    base::CFStackAllocator alloc;
+    const base::CFStackAllocator alloc;
     auto str = CFStringCreateWithBytesNoCopy(
         alloc, reinterpret_cast<const UInt8 *>(_bytes), _sz, _enc, false, kCFAllocatorNull);
     if( str ) {
@@ -107,7 +107,7 @@ ArchiveHost::ArchiveHost(const std::string_view _path,
       m_Configuration(ComposeConfiguration(_path, std::move(_password)))
 {
     assert(_parent);
-    int rc = DoInit(_cancel_checker);
+    const int rc = DoInit(_cancel_checker);
     if( rc < 0 ) {
         if( I->m_Arc != nullptr ) { // TODO: ugly
             archive_read_free(I->m_Arc);
@@ -122,7 +122,7 @@ ArchiveHost::ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_con
       m_Configuration(_config)
 {
     assert(_parent);
-    int rc = DoInit(_cancel_checker);
+    const int rc = DoInit(_cancel_checker);
     if( rc < 0 ) {
         if( I->m_Arc != nullptr ) { // TODO: ugly
             archive_read_free(I->m_Arc);
@@ -170,7 +170,7 @@ int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
     int res = 0;
 
     StackAllocator alloc;
-    std::pmr::string path(JunctionPath(), &alloc);
+    const std::pmr::string path(JunctionPath(), &alloc);
 
     {
         VFSStat st;
@@ -252,7 +252,7 @@ static bool SplitIntoFilenameAndParentPath(const char *_path,
         return false;
 
     if( slash == _path + path_sz - 1 ) {
-        std::string_view path(_path, path_sz - 1);
+        const std::string_view path(_path, path_sz - 1);
         const auto second_slash_pos = path.rfind('/');
         if( second_slash_pos == path.npos )
             return false;
@@ -354,7 +354,7 @@ int ArchiveHost::ReadArchiveListing()
         if( strcmp(path, "/.") == 0 )
             continue; // skip "." entry for ISO for example
 
-        int path_len = static_cast<int>(std::strlen(path));
+        const int path_len = static_cast<int>(std::strlen(path));
 
         const auto isdir = (stat->st_mode & S_IFMT) == S_IFDIR;
         const auto isreg = (stat->st_mode & S_IFMT) == S_IFREG;
@@ -535,7 +535,7 @@ int ArchiveHost::FetchDirectoryListing(std::string_view _path,
     StackAllocator alloc;
     std::pmr::string path(&alloc);
 
-    int res = ResolvePathIfNeeded(_path, path, _flags);
+    const int res = ResolvePathIfNeeded(_path, path, _flags);
     if( res < 0 )
         return res;
 
@@ -581,7 +581,7 @@ int ArchiveHost::FetchDirectoryListing(std::string_view _path,
         listing_source.filenames.emplace_back(entry.name);
         listing_source.unix_types.emplace_back(IFTODT(entry.st.st_mode));
 
-        int index = int(listing_source.filenames.size() - 1);
+        const int index = int(listing_source.filenames.size() - 1);
         auto stat = entry.st;
         if( S_ISLNK(entry.st.st_mode) )
             if( auto symlink = ResolvedSymlink(entry.aruid) ) {
@@ -638,7 +638,7 @@ int ArchiveHost::Stat(std::string_view _path, VFSStat &_st, unsigned long _flags
     StackAllocator alloc;
     std::pmr::string resolve_buf(&alloc);
 
-    int res = ResolvePathIfNeeded(_path, resolve_buf, _flags);
+    const int res = ResolvePathIfNeeded(_path, resolve_buf, _flags);
     if( res < 0 )
         return res;
 
@@ -657,7 +657,7 @@ int ArchiveHost::ResolvePathIfNeeded(std::string_view _path, std::pmr::string &_
     if( !I->m_NeedsPathResolving || (_flags & VFSFlags::F_NoFollow) )
         _resolved_path = _path;
     else {
-        int res = ResolvePath(_path, _resolved_path);
+        const int res = ResolvePath(_path, _resolved_path);
         if( res < 0 )
             return res;
     }
@@ -673,7 +673,7 @@ int ArchiveHost::IterateDirectoryListing(std::string_view _path,
     StackAllocator alloc;
     std::pmr::string buf(&alloc);
 
-    int ret = ResolvePathIfNeeded(_path, buf, 0);
+    const int ret = ResolvePathIfNeeded(_path, buf, 0);
     if( ret < 0 )
         return ret;
 
@@ -754,7 +754,7 @@ const DirEntry *ArchiveHost::FindEntry(std::string_view _path)
         return nullptr;
 
     // ok, found dir, now let's find item
-    size_t short_name_len = strlen(short_name);
+    const size_t short_name_len = strlen(short_name);
     for( const auto &it : i->second.entries )
         if( it.name.length() == short_name_len && it.name.compare(short_name) == 0 )
             return &it;
@@ -815,7 +815,7 @@ int ArchiveHost::ResolvePath(std::string_view _path, std::pmr::string &_resolved
 
 int ArchiveHost::StatFS(std::string_view /*_path*/, VFSStatFS &_stat, const VFSCancelChecker &)
 {
-    std::string_view vol_name = utility::PathManip::Filename(JunctionPath());
+    const std::string_view vol_name = utility::PathManip::Filename(JunctionPath());
     if( vol_name.empty() )
         return VFSError::InvalidCall;
     _stat.volume_name = vol_name;
@@ -836,13 +836,13 @@ std::unique_ptr<State> ArchiveHost::ClosestState(uint32_t _requested_item)
     if( _requested_item == 0 )
         return nullptr;
 
-    std::lock_guard<std::mutex> lock(I->m_StatesLock);
+    const std::lock_guard<std::mutex> lock(I->m_StatesLock);
 
     uint32_t best_delta = std::numeric_limits<uint32_t>::max();
     auto best = I->m_States.end();
     for( auto i = I->m_States.begin(), e = I->m_States.end(); i != e; ++i )
         if( (*i)->UID() < _requested_item || ((*i)->UID() == _requested_item && !(*i)->Consumed()) ) {
-            uint32_t delta = _requested_item - (*i)->UID();
+            const uint32_t delta = _requested_item - (*i)->UID();
             if( delta < best_delta ) {
                 best_delta = delta;
                 best = i;
@@ -867,7 +867,7 @@ void ArchiveHost::CommitState(std::unique_ptr<State> _state)
 
     // will throw away archives positioned at last item - they are useless
     if( _state->UID() < I->m_LastItemUID ) {
-        std::lock_guard<std::mutex> lock(I->m_StatesLock);
+        const std::lock_guard<std::mutex> lock(I->m_StatesLock);
         I->m_States.emplace_back(std::move(_state));
 
         if( I->m_States.size() > 32 ) { // purge the latest one
@@ -882,7 +882,7 @@ void ArchiveHost::CommitState(std::unique_ptr<State> _state)
 
 int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<State> &_target)
 {
-    uint32_t requested_item = ItemUID(_filename);
+    const uint32_t requested_item = ItemUID(_filename);
     if( requested_item == 0 )
         return VFSError::NotFound;
 
@@ -908,7 +908,7 @@ int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<Stat
 
         res = new_state->Open();
         if( res < 0 ) {
-            int rc = VFSError::FromLibarchive(new_state->Errno());
+            const int rc = VFSError::FromLibarchive(new_state->Errno());
             return rc;
         }
         state = std::move(new_state);
@@ -991,7 +991,7 @@ void ArchiveHost::ResolveSymlink(uint32_t _uid)
     if( iter == std::end(I->m_Symlinks) )
         return;
 
-    std::lock_guard<std::recursive_mutex> lock(I->m_SymlinksResolveLock);
+    const std::lock_guard<std::recursive_mutex> lock(I->m_SymlinksResolveLock);
     auto &symlink = iter->second;
     if( symlink.state != SymlinkState::Unresolved )
         return; // was resolved in race condition

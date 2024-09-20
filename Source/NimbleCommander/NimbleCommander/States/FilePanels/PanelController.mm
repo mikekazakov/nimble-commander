@@ -84,7 +84,7 @@ ActivityTicket &ActivityTicket::operator=(ActivityTicket &&_rhs) noexcept
 void ActivityTicket::Reset()
 {
     if( ticket )
-        if( PanelController *pc = panel )
+        if( PanelController *const pc = panel )
             [pc finishExtActivityWithTicket:ticket];
     panel = nil;
     ticket = 0;
@@ -254,7 +254,7 @@ static void HeatUpConfigValues()
         m_QuickSearch = [[NCPanelQuickSearch alloc] initWithData:m_Data delegate:self config:GlobalConfig()];
         __weak NCPanelQuickSearch *weak_qs = m_QuickSearch;
         auto callback = [weak_qs](NSString *_request) {
-            if( NCPanelQuickSearch *strong_qs = weak_qs )
+            if( NCPanelQuickSearch *const strong_qs = weak_qs )
                 strong_qs.searchCriteria = _request;
         };
         m_View.headerView.searchRequestChangeCallback = std::move(callback);
@@ -416,7 +416,7 @@ static void HeatUpConfigValues()
             if( m_DirectoryReLoadingQ.IsStopped() )
                 return;
             VFSListingPtr listing;
-            int ret = vfs->FetchDirectoryListing(
+            const int ret = vfs->FetchDirectoryListing(
                 dirpath.c_str(), listing, fetch_flags, [&] { return m_DirectoryReLoadingQ.IsStopped(); });
             if( ret >= 0 )
                 dispatch_to_main_queue([=] { [self reloadRefreshedListing:listing]; });
@@ -706,7 +706,7 @@ static void HeatUpConfigValues()
 
 static void ShowAlertAboutInvalidFilename(const std::string &_filename)
 {
-    Alert *a = [[Alert alloc] init];
+    Alert *const a = [[Alert alloc] init];
     auto fn = [NSString stringWithUTF8StdString:_filename];
     if( fn.length > 256 )
         fn = [[fn substringToIndex:256] stringByAppendingString:@"..."];
@@ -1121,7 +1121,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
         const auto timestamp = nc::base::machtime();
         __weak PanelController *weak_me = self;
         dispatch_to_main_queue_after(g_FilesystemHintTriggerDelay, [weak_me, timestamp] {
-            if( PanelController *me = weak_me ) {
+            if( PanelController *const me = weak_me ) {
                 // now check if our listing was created after we were hinted
                 if( me->m_Data.Listing().BuildTicksTimestamp() > timestamp )
                     return; // yep, fresh enough.

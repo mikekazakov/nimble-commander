@@ -91,7 +91,7 @@ static void print_argv_of_pid(int pid, std::string &_out)
     int mib[3], argmax, nargs, c = 0;
     size_t size;
     char *procargs, *sp, *np, *cp;
-    int show_args = 1;
+    const int show_args = 1;
 
     //    fprintf(stderr, "Getting argv of PID %d\n", pid);
 
@@ -280,7 +280,7 @@ std::shared_ptr<PSHost> PSHost::GetSharedOrNew()
     [[clang::no_destroy]] static std::mutex mt;
     [[clang::no_destroy]] static std::weak_ptr<PSHost> cache;
 
-    std::lock_guard<std::mutex> lock(mt);
+    const std::lock_guard<std::mutex> lock(mt);
     if( auto host = cache.lock() )
         return host;
 
@@ -367,7 +367,7 @@ void PSHost::EnsureUpdateRunning()
 
 void PSHost::CommitProcs(std::vector<ProcInfo> _procs)
 {
-    std::lock_guard<std::mutex> lock(m_Lock);
+    const std::lock_guard<std::mutex> lock(m_Lock);
 
     auto newdata = std::make_shared<Snapshot>();
 
@@ -493,7 +493,7 @@ int PSHost::CreateFile(std::string_view _path,
     if( _path.empty() )
         return VFSError::InvalidCall;
 
-    std::lock_guard<std::mutex> lock(m_Lock);
+    const std::lock_guard<std::mutex> lock(m_Lock);
 
     auto index = ProcIndexFromFilepath_Unlocked(_path);
 
@@ -524,7 +524,7 @@ int PSHost::Stat(std::string_view _path,
         m.btime = 1;
     });
 
-    std::lock_guard<std::mutex> lock(m_Lock);
+    const std::lock_guard<std::mutex> lock(m_Lock);
 
     if( _path.empty() )
         return VFSError::InvalidCall;
@@ -614,7 +614,7 @@ int PSHost::StatFS([[maybe_unused]] std::string_view _path,
     _stat.volume_name = "Processes List";
     _stat.avail_bytes = _stat.free_bytes = 0;
 
-    std::lock_guard<std::mutex> lock(m_Lock);
+    const std::lock_guard<std::mutex> lock(m_Lock);
     int total_size = 0;
     for_each(begin(m_Data->files), end(m_Data->files), [&](auto &i) { total_size += i.length(); });
     _stat.total_bytes = total_size;
@@ -625,7 +625,7 @@ int PSHost::StatFS([[maybe_unused]] std::string_view _path,
 // on any errors returns nullopt
 static std::optional<bool> WaitForProcessToDie(int pid)
 {
-    int kq = kqueue();
+    const int kq = kqueue();
     if( kq == -1 )
         return std::nullopt;
 
@@ -658,7 +658,7 @@ int PSHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelCheck
     int gid = -1;
     int pid = -1;
     {
-        std::lock_guard<std::mutex> lock(m_Lock);
+        const std::lock_guard<std::mutex> lock(m_Lock);
 
         auto index = ProcIndexFromFilepath_Unlocked(_path);
         if( index < 0 )

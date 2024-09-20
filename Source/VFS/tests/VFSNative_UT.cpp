@@ -56,8 +56,8 @@ TEST_CASE(PREFIX "Does produces unified Application directory")
 
 TEST_CASE(PREFIX "FetchUnifiedListing fetches contents from both directories")
 {
-    TestDir test_dir_holder;
-    std::string test_dir = test_dir_holder.directory;
+    const TestDir test_dir_holder;
+    const std::string test_dir = test_dir_holder.directory;
 
     REQUIRE(mkdir((test_dir + "A").c_str(), 0755) == 0);
     REQUIRE(mkdir((test_dir + "B").c_str(), 0755) == 0);
@@ -77,8 +77,8 @@ TEST_CASE(PREFIX "FetchUnifiedListing fetches contents from both directories")
 
 TEST_CASE(PREFIX "FetchUnifiedListing succeeds when user directory doesn't exist")
 {
-    TestDir test_dir_holder;
-    std::string test_dir = test_dir_holder.directory;
+    const TestDir test_dir_holder;
+    const std::string test_dir = test_dir_holder.directory;
 
     REQUIRE(mkdir((test_dir + "A").c_str(), 0755) == 0);
     REQUIRE(close(creat((test_dir + "A/a").c_str(), 0755)) == 0);
@@ -106,7 +106,7 @@ TEST_CASE(PREFIX "Loading tags")
                                         0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00,
                                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x11};
 
-    TestDir test_dir_holder;
+    const TestDir test_dir_holder;
     auto test_dir = test_dir_holder.directory;
     REQUIRE(close(creat((test_dir / "1.txt").c_str(), 0755)) == 0);
     REQUIRE(setxattr((test_dir / "1.txt").c_str(),

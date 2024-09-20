@@ -118,7 +118,7 @@ using namespace nc::panel;
 
 static std::string TabNameForController(PanelController *_controller)
 {
-    std::filesystem::path p = _controller.currentDirectoryPath;
+    const std::filesystem::path p = _controller.currentDirectoryPath;
     std::string name = p == "/" ? p.native() : p.parent_path().filename().native();
     if( name == "/" && _controller.isUniform && _controller.vfs->Parent() ) {
         // source file name for vfs like archives and xattr
@@ -452,7 +452,7 @@ static NSImage *ResizeImage(NSImage *_img, NSSize _new_size)
     if( !_img.valid )
         return nil;
 
-    NSImage *small_img = [[NSImage alloc] initWithSize:_new_size];
+    NSImage *const small_img = [[NSImage alloc] initWithSize:_new_size];
     [small_img lockFocus];
     _img.size = _new_size;
     NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;

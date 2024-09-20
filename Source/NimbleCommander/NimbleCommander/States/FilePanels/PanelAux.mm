@@ -70,10 +70,10 @@ static void RegisterRemoteFileUploading(const std::string &_original_path,
 
     __weak NCMainWindowController *origin_window = _origin.mainWindowController;
     __weak PanelController *origin_controller = _origin;
-    VFSHostWeakPtr weak_host(_original_vfs);
+    const VFSHostWeakPtr weak_host(_original_vfs);
 
     auto on_file_change = [=] {
-        NCMainWindowController *window = origin_window;
+        NCMainWindowController *const window = origin_window;
         if( !window )
             return;
 
@@ -121,7 +121,7 @@ void FileOpener::Open(std::string _filename,
                       PanelController *_panel)
 {
     if( _host->IsNativeFS() ) {
-        NSString *filename = [NSString stringWithUTF8String:_filename.c_str()];
+        NSString *const filename = [NSString stringWithUTF8String:_filename.c_str()];
 
         if( !_with_app_path.empty() ) {
             if( ![[NSWorkspace sharedWorkspace] openFile:filename
@@ -157,7 +157,7 @@ void FileOpener::Open(std::string _filename,
         if( auto tmp_path = CopyFileToTempStorage(_filename, *_host, m_TemporaryFileStorage) ) {
             RegisterRemoteFileUploading(_filename, _host, *tmp_path, _panel);
 
-            NSString *fn = [NSString stringWithUTF8StdString:*tmp_path];
+            NSString *const fn = [NSString stringWithUTF8StdString:*tmp_path];
             dispatch_to_main_queue([=] {
                 if( !_with_app_path.empty() ) {
                     if( ![NSWorkspace.sharedWorkspace openFile:fn
@@ -182,9 +182,9 @@ void FileOpener::Open(std::vector<std::string> _filenames,
                       PanelController *_panel)
 {
     if( _host->IsNativeFS() ) {
-        NSMutableArray *arr = [NSMutableArray arrayWithCapacity:_filenames.size()];
+        NSMutableArray *const arr = [NSMutableArray arrayWithCapacity:_filenames.size()];
         for( auto &i : _filenames )
-            if( NSString *s = [NSString stringWithUTF8String:i.c_str()] )
+            if( NSString *const s = [NSString stringWithUTF8String:i.c_str()] )
                 [arr addObject:[[NSURL alloc] initFileURLWithPath:s]];
 
         if( ![NSWorkspace.sharedWorkspace openURLs:arr
@@ -199,7 +199,7 @@ void FileOpener::Open(std::vector<std::string> _filenames,
 
     dispatch_to_default([=, this] {
         auto activity_ticket = [_panel registerExtActivity];
-        NSMutableArray *arr = [NSMutableArray arrayWithCapacity:_filenames.size()];
+        NSMutableArray *const arr = [NSMutableArray arrayWithCapacity:_filenames.size()];
         for( auto &i : _filenames ) {
             if( _host->IsDirectory(i.c_str(), 0, nullptr) )
                 continue;
@@ -213,7 +213,7 @@ void FileOpener::Open(std::vector<std::string> _filenames,
 
             if( auto tmp_path = CopyFileToTempStorage(i, *_host, m_TemporaryFileStorage) ) {
                 RegisterRemoteFileUploading(i, _host, *tmp_path, _panel);
-                if( NSString *s = [NSString stringWithUTF8StdString:*tmp_path] )
+                if( NSString *const s = [NSString stringWithUTF8StdString:*tmp_path] )
                     [arr addObject:[[NSURL alloc] initFileURLWithPath:s]];
             }
         }
@@ -283,7 +283,7 @@ bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item)
 
     // TODO: need more sophisticated executable handling here
     // THIS IS WRONG!
-    bool uexec = (_item.UnixMode() & S_IXUSR) || (_item.UnixMode() & S_IXGRP) || (_item.UnixMode() & S_IXOTH);
+    const bool uexec = (_item.UnixMode() & S_IXUSR) || (_item.UnixMode() & S_IXGRP) || (_item.UnixMode() & S_IXOTH);
 
     if( !uexec )
         return false;
@@ -300,7 +300,7 @@ bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item)
 static ops::CopyingOptions::ChecksumVerification DefaultChecksumVerificationSetting()
 {
     // TODO: make depencies on Config explicit
-    int v = GlobalConfig().GetInt(g_ConfigDefaultVerificationSetting);
+    const int v = GlobalConfig().GetInt(g_ConfigDefaultVerificationSetting);
     if( v == static_cast<int>(ops::CopyingOptions::ChecksumVerification::Always) )
         return ops::CopyingOptions::ChecksumVerification::Always;
     else if( v == static_cast<int>(ops::CopyingOptions::ChecksumVerification::WhenMoves) )

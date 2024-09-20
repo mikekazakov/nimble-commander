@@ -16,7 +16,7 @@ TEST_CASE(PREFIX "Generic cases", "[!mayfail]")
     QueuedAtomicHolder<int> ncalled{0};
     auto cb = [&ncalled, next = 1] mutable { ncalled.store(next++); };
 
-    ChildrenTracker tracker{p1, cb};
+    const ChildrenTracker tracker{p1, cb};
 
     SECTION("Nothing")
     {
@@ -177,7 +177,7 @@ TEST_CASE(PREFIX "Generic cases", "[!mayfail]")
 
 TEST_CASE(PREFIX "Invalid input")
 {
-    ChildrenTracker tracker{std::numeric_limits<int>::max(), [] { FAIL(); }};
+    const ChildrenTracker tracker{std::numeric_limits<int>::max(), [] { FAIL(); }};
     if( fork() == 0 ) {
         std::this_thread::sleep_for(1ms);
         exit(0);

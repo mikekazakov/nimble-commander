@@ -239,4 +239,4 @@ using ContextMenuProvider = std::function<NSMenu *(std::vector<VFSListingItem> _
 - (void)contextMenuDidClose:(NSMenu *)_menu;
 @end
 
-#import "PanelController+DataAccess.h"
+#include "PanelController+DataAccess.h"

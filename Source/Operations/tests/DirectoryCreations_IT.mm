@@ -16,7 +16,7 @@ using namespace nc::vfs;
 
 TEST_CASE(PREFIX "Simple creation")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     DirectoryCreation operation{"Test", dir.directory.native(), *host};
     operation.Start();
@@ -28,7 +28,7 @@ TEST_CASE(PREFIX "Simple creation")
 
 TEST_CASE(PREFIX "Multiple directories creation")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     DirectoryCreation operation{"Test1/Test2/Test3", dir.directory.native(), *host};
     operation.Start();
@@ -41,7 +41,7 @@ TEST_CASE(PREFIX "Multiple directories creation")
 
 TEST_CASE(PREFIX "Trailing slashes")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     DirectoryCreation operation{"Test///", dir.directory.native(), *host};
     operation.Start();
@@ -52,7 +52,7 @@ TEST_CASE(PREFIX "Trailing slashes")
 
 TEST_CASE(PREFIX "Heading slashes")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     DirectoryCreation operation{"///Test", dir.directory.native(), *host};
     operation.Start();
@@ -63,7 +63,7 @@ TEST_CASE(PREFIX "Heading slashes")
 
 TEST_CASE(PREFIX "Empty input")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     DirectoryCreation operation{"", dir.directory.native(), *host};
     operation.Start();
@@ -73,7 +73,7 @@ TEST_CASE(PREFIX "Empty input")
 
 TEST_CASE(PREFIX "Weird input")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     DirectoryCreation operation{"!@#$%^&*()_+", dir.directory.native(), *host};
     operation.Start();
@@ -84,7 +84,7 @@ TEST_CASE(PREFIX "Weird input")
 
 TEST_CASE(PREFIX "Alredy existing dir")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     mkdir((dir.directory / "Test1").c_str(), 0755);
     DirectoryCreation operation{"Test1/Test2/Test3", dir.directory.native(), *host};
@@ -98,7 +98,7 @@ TEST_CASE(PREFIX "Alredy existing dir")
 
 TEST_CASE(PREFIX "Alredy existing reg file")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     close(creat((dir.directory / "Test1").c_str(), 0755));
     DirectoryCreation operation{"Test1/Test2/Test3", dir.directory.native(), *host};

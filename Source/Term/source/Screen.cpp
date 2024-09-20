@@ -383,7 +383,7 @@ void Screen::ResizeScreen(const unsigned _new_sx, const unsigned _new_sy)
     if( _new_sx == 0 || _new_sy == 0 )
         throw std::invalid_argument("Screen::ResizeScreen sizes can't be zero");
 
-    bool feed_from_bs = m_PosY == Height() - 1; // questionable!
+    const bool feed_from_bs = m_PosY == Height() - 1; // questionable!
 
     m_Buffer.ResizeScreen(_new_sx, _new_sy, feed_from_bs && !m_AlternateScreen);
 

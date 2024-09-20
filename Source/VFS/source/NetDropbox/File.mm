@@ -72,7 +72,7 @@ int File::Close()
 
 NSURLRequest *File::BuildDownloadRequest() const
 {
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::Download];
+    NSMutableURLRequest *const request = [[NSMutableURLRequest alloc] initWithURL:api::Download];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
     InsertHTTPHeaderPathspec(request, Path());
@@ -160,7 +160,7 @@ void File::AppendDownloadedDataAsync(NSData *_data)
     if( !_data || _data.length == 0 || m_State != Downloading || !m_Download || m_FileSize < 0 )
         return;
 
-    std::lock_guard<std::mutex> lock{m_DataLock};
+    const std::lock_guard<std::mutex> lock{m_DataLock};
     [_data enumerateByteRangesUsingBlock:[this](const void *bytes, NSRange byteRange, [[maybe_unused]] BOOL *stop) {
         m_Download->fifo.insert(end(m_Download->fifo),
                                 static_cast<const uint8_t *>(bytes),
@@ -235,7 +235,7 @@ std::string File::BuildUploadPathspec() const
 
 NSURLRequest *File::BuildRequestForSinglePartUpload() const
 {
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::Upload];
+    NSMutableURLRequest *const request = [[NSMutableURLRequest alloc] initWithURL:api::Upload];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
@@ -287,7 +287,7 @@ void File::StartSmallUpload()
 
 NSURLRequest *File::BuildRequestForUploadSessionInit() const
 {
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionStart];
+    NSMutableURLRequest *const request = [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionStart];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
@@ -337,7 +337,7 @@ void File::StartSession()
 
 NSURLRequest *File::BuildRequestForUploadSessionAppend() const
 {
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionAppend];
+    NSMutableURLRequest *const request = [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionAppend];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
 
@@ -393,7 +393,7 @@ void File::StartSessionAppend()
 
 NSURLRequest *File::BuildRequestForUploadSessionFinish() const
 {
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionFinish];
+    NSMutableURLRequest *const request = [[NSMutableURLRequest alloc] initWithURL:api::UploadSessionFinish];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
 
@@ -477,7 +477,7 @@ ssize_t File::WaitForUploadBufferConsumption() const
         std::unique_lock<std::mutex> signal_lock(m_SignalLock);
         m_Signal.wait(signal_lock);
 
-        std::lock_guard<std::mutex> lock{m_DataLock};
+        const std::lock_guard<std::mutex> lock{m_DataLock};
         eaten = to_eat - m_Upload->fifo.size();
     }
     return eaten;
@@ -485,7 +485,7 @@ ssize_t File::WaitForUploadBufferConsumption() const
 
 void File::PushUploadDataIntoFIFOAndNotifyStream(const void *_buf, size_t _size)
 {
-    std::lock_guard<std::mutex> lock{m_DataLock};
+    const std::lock_guard<std::mutex> lock{m_DataLock};
     m_Upload->fifo.insert(
         std::end(m_Upload->fifo), static_cast<const uint8_t *>(_buf), static_cast<const uint8_t *>(_buf) + _size);
     [m_Upload->stream notifyAboutNewData];
@@ -516,7 +516,7 @@ void File::WaitForSessionIdOrError() const
     m_Signal.wait(lock, [this] {
         if( m_State != Uploading )
             return true;
-        std::lock_guard<std::mutex> lock{m_DataLock};
+        const std::lock_guard<std::mutex> lock{m_DataLock};
         return !m_Upload->session_id.empty();
     });
 }
@@ -527,7 +527,7 @@ void File::WaitForAppendToComplete() const
     m_Signal.wait(lock, [this] {
         if( m_State != Uploading )
             return true;
-        std::lock_guard<std::mutex> lock{m_DataLock};
+        const std::lock_guard<std::mutex> lock{m_DataLock};
         return bool(m_Upload->append_accepted);
     });
 }
@@ -620,7 +620,7 @@ bool File::HasDataToFeedUploadTaskAsync() const
 {
     if( m_State != Uploading )
         return false;
-    std::lock_guard<std::mutex> lock{m_DataLock};
+    const std::lock_guard<std::mutex> lock{m_DataLock};
     return !m_Upload->fifo.empty();
 }
 

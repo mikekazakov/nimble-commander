@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListViewTableHeaderCell.h"
 #include <NimbleCommander/Core/Theming/Theme.h>
 
@@ -53,7 +53,7 @@ static void FillRect(NSRect rc, NSColor *c)
         NSFontAttributeName: nc::CurrentTheme().FilePanelsListHeaderFont(),
         NSForegroundColorAttributeName: nc::CurrentTheme().FilePanelsListHeaderTextColor(),
         NSParagraphStyleAttributeName: [&]() -> NSParagraphStyle * {
-            NSMutableParagraphStyle *ps = NSParagraphStyle.defaultParagraphStyle.mutableCopy;
+            NSMutableParagraphStyle *const ps = NSParagraphStyle.defaultParagraphStyle.mutableCopy;
             ps.alignment = self.alignment;
             ps.lineBreakMode = NSLineBreakByClipping;
             return ps;

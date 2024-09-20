@@ -175,7 +175,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
             __weak NCViewerTextModeView *weak_self = self;
             m_WorkingSetHighlighting->Highlight(g_SyncHighlightingThreshold,
                                                 [weak_self](std::shared_ptr<const TextModeWorkingSetHighlighting> _hl) {
-                                                    NCViewerTextModeView *strong_self = weak_self;
+                                                    NCViewerTextModeView *const strong_self = weak_self;
                                                     if( !strong_self || _hl != strong_self->m_WorkingSetHighlighting )
                                                         return;
                                                     [strong_self highlightingHasChanged];

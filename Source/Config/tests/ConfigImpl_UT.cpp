@@ -13,20 +13,20 @@ static std::shared_ptr<NonPersistentOverwritesStorage> MakeDummyStorage(std::str
 
 TEST_CASE("Config accepts an empty defaults document")
 {
-    ConfigImpl config{"", MakeDummyStorage()};
+    const ConfigImpl config{"", MakeDummyStorage()};
 }
 
 TEST_CASE("Config accepts a valid defaults document")
 {
     auto json = "{\"abra\":42}";
-    ConfigImpl config{json, MakeDummyStorage()};
+    const ConfigImpl config{json, MakeDummyStorage()};
 }
 
 TEST_CASE("Config throws on ivalid defaults document")
 {
     auto json = "{\"abra\":42";
     try {
-        ConfigImpl config{json, MakeDummyStorage()};
+        const ConfigImpl config{json, MakeDummyStorage()};
         CHECK(false);
     } catch( ... ) {
         CHECK(true);
@@ -36,7 +36,7 @@ TEST_CASE("Config throws on ivalid defaults document")
 TEST_CASE("Config finds root-level objects")
 {
     auto json = "{\"abra\":42}";
-    ConfigImpl config{json, MakeDummyStorage()};
+    const ConfigImpl config{json, MakeDummyStorage()};
 
     CHECK(config.Has("abra") == true);
     CHECK(config.Has("abr") == false);
@@ -55,7 +55,7 @@ TEST_CASE("Config finds root-level objects")
 TEST_CASE("Config finds nested objects")
 {
     auto json = R"({"abra": {"cadabra": {"alakazam": 42} } })";
-    ConfigImpl config{json, MakeDummyStorage()};
+    const ConfigImpl config{json, MakeDummyStorage()};
 
     CHECK(config.Has("abra") == true);
     CHECK(config.Has("abra.cadabra") == true);
@@ -67,7 +67,7 @@ TEST_CASE("Config finds nested objects")
 TEST_CASE("Config.Get returns a valid value or kNullType")
 {
     auto json = R"({"abra": {"cadabra": {"alakazam": 42} } })";
-    ConfigImpl config{json, MakeDummyStorage()};
+    const ConfigImpl config{json, MakeDummyStorage()};
 
     CHECK(config.Get("abra").GetType() == rapidjson::Type::kObjectType);
     CHECK(config.Get("abra.cadabra").GetType() == rapidjson::Type::kObjectType);
@@ -82,7 +82,7 @@ TEST_CASE("Config.Get returns a valid value or kNullType")
 TEST_CASE("Config returns a valid boolean value or false")
 {
     auto json = R"({"abra": true, "cadabra": false, "alakazam": 42})";
-    ConfigImpl config{json, MakeDummyStorage()};
+    const ConfigImpl config{json, MakeDummyStorage()};
 
     CHECK(config.GetBool("abra") == true);
     CHECK(config.GetBool("cadabra") == false);
@@ -93,7 +93,7 @@ TEST_CASE("Config returns a valid boolean value or false")
 TEST_CASE("Config returns a valid int value or 0")
 {
     auto json = R"({"abra": 17, "cadabra": -79.5, "alakazam": false})";
-    ConfigImpl config{json, MakeDummyStorage()};
+    const ConfigImpl config{json, MakeDummyStorage()};
 
     CHECK(config.GetInt("abra") == 17);
     CHECK(config.GetInt("cadabra") == -79);
@@ -104,7 +104,7 @@ TEST_CASE("Config returns a valid int value or 0")
 TEST_CASE("Config returns a valid string value or an empty string")
 {
     auto json = R"({"abra": "abc", "cadabra": "", "alakazam": 42})";
-    ConfigImpl config{json, MakeDummyStorage()};
+    const ConfigImpl config{json, MakeDummyStorage()};
 
     CHECK(config.GetString("abra") == "abc");
     CHECK(config.GetString("cadabra") == "");
@@ -226,7 +226,7 @@ TEST_CASE("Config returns overwritten values")
 {
     auto json1 = "{\"abra\": 42}";
     auto json2 = "{\"abra\": 80}";
-    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    const ConfigImpl config{json1, MakeDummyStorage(json2)};
     CHECK(config.GetInt("abra") == 80);
 }
 
@@ -234,7 +234,7 @@ TEST_CASE("Config can returns default values when an overwrite exists")
 {
     auto json1 = "{\"abra\": 42}";
     auto json2 = "{\"abra\": 80}";
-    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    const ConfigImpl config{json1, MakeDummyStorage(json2)};
     REQUIRE(config.GetDefault("abra").GetType() == rapidjson::Type::kNumberType);
     CHECK(config.GetDefault("abra").GetInt() == 42);
 }
@@ -243,7 +243,7 @@ TEST_CASE("Config returns overwritten nested values")
 {
     auto json1 = R"({"abra": {"cadabra": {"alakazam": 42} } })";
     auto json2 = R"({"abra": {"cadabra": {"alakazam": 17} } })";
-    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    const ConfigImpl config{json1, MakeDummyStorage(json2)};
     CHECK(config.GetInt("abra.cadabra.alakazam") == 17);
 }
 
@@ -251,7 +251,7 @@ TEST_CASE("Config overwrites can add a new entry")
 {
     auto json1 = "{\"abra\": 42}";
     auto json2 = "{\"abra1\": 80}";
-    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    const ConfigImpl config{json1, MakeDummyStorage(json2)};
     CHECK(config.GetInt("abra") == 42);
     CHECK(config.GetInt("abra1") == 80);
 }
@@ -260,7 +260,7 @@ TEST_CASE("Config overwrites can add a new nested entry")
 {
     auto json1 = "{\"abra\": 42}";
     auto json2 = R"({"abra1": {"cadabra": {"alakazam": 90} } })";
-    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    const ConfigImpl config{json1, MakeDummyStorage(json2)};
     CHECK(config.GetInt("abra1.cadabra.alakazam") == 90);
 }
 
@@ -268,7 +268,7 @@ TEST_CASE("Config overwrites can change an entry type")
 {
     auto json1 = "{\"abra\": 42}";
     auto json2 = R"({"abra": "ttt"})";
-    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    const ConfigImpl config{json1, MakeDummyStorage(json2)};
     CHECK(config.GetString("abra") == "ttt");
 }
 
@@ -276,7 +276,7 @@ TEST_CASE("Config overwrites can change an entry type even to object type")
 {
     auto json1 = "{\"abra\": 42}";
     auto json2 = R"({"abra": {"cadabra": {"alakazam": 90} } })";
-    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    const ConfigImpl config{json1, MakeDummyStorage(json2)};
     CHECK(config.GetInt("abra.cadabra.alakazam") == 90);
 }
 
@@ -284,7 +284,7 @@ TEST_CASE("Config ignores broken overwrites data")
 {
     auto json1 = "{\"abra\": 42}";
     auto json2 = "sodfbjosbfljsegfogw!@@#%$**&(";
-    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    const ConfigImpl config{json1, MakeDummyStorage(json2)};
     CHECK(config.GetInt("abra") == 42);
 }
 
@@ -298,7 +298,7 @@ TEST_CASE("Config saves overwrites")
         config.Set("abra.cadabra.alakazam", 17);
     }
     {
-        ConfigImpl config{json, storage};
+        const ConfigImpl config{json, storage};
         CHECK(config.GetInt("abra.cadabra.alakazam") == 17);
     }
 }
@@ -314,7 +314,7 @@ TEST_CASE("Config saves overwritten entries which are absent in defaults")
         config.Set("abra2.cadabra.alakazam", 17);
     }
     {
-        ConfigImpl config{json1, storage};
+        const ConfigImpl config{json1, storage};
         CHECK(config.GetInt("abra2.cadabra.alakazam") == 17);
     }
 }

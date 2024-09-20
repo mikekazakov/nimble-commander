@@ -9,7 +9,7 @@ using nc::base::LRUCache;
 
 TEST_CASE(PREFIX "empty")
 {
-    LRUCache<std::string, std::string, 32> cache;
+    const LRUCache<std::string, std::string, 32> cache;
     CHECK(cache.size() == 0);
     CHECK(cache.max_size() == 32);
     CHECK(cache.empty() == true);

@@ -9,7 +9,7 @@ using nc::utility::ActionShortcut;
 #define PREFIX "nc::utility::ActionShortcut "
 TEST_CASE(PREFIX "Default constructor makes both unicode and modifiers zero")
 {
-    ActionShortcut as;
+    const ActionShortcut as;
     CHECK(as.unicode == 0);
     CHECK(as.modifiers.is_empty());
 }
@@ -88,7 +88,7 @@ TEST_CASE(PREFIX "PrettyString()")
 
 TEST_CASE(PREFIX "[NSMenuItem nc_setKeyEquivalentWithShortcut]")
 {
-    NSMenuItem *it = [[NSMenuItem alloc] initWithTitle:@"Hello" action:nil keyEquivalent:@""];
+    NSMenuItem *const it = [[NSMenuItem alloc] initWithTitle:@"Hello" action:nil keyEquivalent:@""];
     SECTION("Empty")
     {
         [it nc_setKeyEquivalentWithShortcut:ActionShortcut{u8"⌘1"}];

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "StatisticsFormatter.h"
 #include <Utility/ByteCountFormatter.h>
 #include "Statistics.h"
@@ -87,7 +87,7 @@ NSString *StatisticsFormatter::WithBytes() const
 static NSString *FormatETAString(std::chrono::nanoseconds _eta)
 {
     static const auto fmt = [] {
-        NSDateComponentsFormatter *fmt = [[NSDateComponentsFormatter alloc] init];
+        NSDateComponentsFormatter *const fmt = [[NSDateComponentsFormatter alloc] init];
         fmt.unitsStyle = NSDateComponentsFormatterUnitsStyleShort;
         fmt.includesApproximationPhrase = false;
         fmt.includesTimeRemainingPhrase = false;

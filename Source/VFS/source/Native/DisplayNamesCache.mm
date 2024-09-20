@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DisplayNamesCache.h"
 #include <Foundation/Foundation.h>
 #include <Utility/StringExtras.h>
@@ -45,7 +45,7 @@ void DisplayNamesCache::Commit_Locked(ino_t _ino, dev_t _dev, const std::string 
     Filename f;
     f.fs_filename = filename_dup(_path);
     f.display_filename = _dispay_name;
-    std::lock_guard<spinlock> guard(m_WriteLock);
+    const std::lock_guard<spinlock> guard(m_WriteLock);
     m_Devices[_dev].insert(std::make_pair(_ino, f));
 }
 
@@ -65,7 +65,7 @@ const char *DisplayNamesCache::DisplayName(const std::string &_path)
 static NSFileManager *filemanager = NSFileManager.defaultManager;
 static const char *Slow(const std::string &_path)
 {
-    NSString *path = [NSString stringWithUTF8StdStringNoCopy:_path];
+    NSString *const path = [NSString stringWithUTF8StdStringNoCopy:_path];
     if( path == nil )
         return nullptr; // can't create string for this path.
 

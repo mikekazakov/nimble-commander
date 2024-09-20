@@ -122,8 +122,8 @@ static bool HasNewlines(CFStringRef _src) noexcept
 }
 
 static const auto g_InfiniteRectPath = CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), nullptr);
-static void CalculateWidthsOfStringsBulk(CFStringRef const *_str_first,
-                                         CFStringRef const *_str_last,
+static void CalculateWidthsOfStringsBulk(const CFStringRef *_str_first,
+                                         const CFStringRef *_str_last,
                                          unsigned short *_out_width_first,
                                          [[maybe_unused]] unsigned short *_out_width_last,
                                          CFDictionaryRef _attributes)

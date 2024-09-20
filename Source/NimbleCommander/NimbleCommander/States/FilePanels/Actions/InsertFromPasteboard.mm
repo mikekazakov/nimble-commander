@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/Native.h>
 #include <Utility/PathManip.h>
 #include "../PanelController.h"
@@ -24,7 +24,7 @@ static std::vector<VFSListingItem> FetchVFSListingsItemsFromPaths(NSArray *_inpu
 
         if( const char *filepath = ns_filepath.fileSystemRepresentation ) {
             VFSListingPtr listing;
-            int rc = _native_host.FetchSingleItemListing(filepath, listing, 0, nullptr);
+            const int rc = _native_host.FetchSingleItemListing(filepath, listing, 0, nullptr);
             if( rc == 0 )
                 result.emplace_back(listing->Item(0));
         }
@@ -38,7 +38,7 @@ static std::vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard(vfs::Nati
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
     // check what's inside pasteboard
-    NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
+    NSPasteboard *const pasteboard = NSPasteboard.generalPasteboard;
     if( [pasteboard availableTypeFromArray:@[NSFilenamesPboardType]] ) {
         // input should be an array of filepaths as NSStrings
         auto filepaths = objc_cast<NSArray>([pasteboard propertyListForType:NSFilenamesPboardType]);
@@ -71,7 +71,7 @@ static void PasteOrMove(PanelController *_target, bool _paste, vfs::NativeHost &
         std::make_shared<nc::ops::Copying>(std::move(source_items), _target.currentDirectoryPath, _target.vfs, opts);
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=] {
         dispatch_to_main_queue([=] {
-            if( PanelController *pc = wpc )
+            if( PanelController *const pc = wpc )
                 [pc refreshPanel];
         });
     });

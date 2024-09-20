@@ -24,7 +24,7 @@ TEST_CASE(PREFIX "ListAPFSObjects returns a valid nonempty NSDictionary tree")
 
 TEST_CASE(PREFIX "APFSTree can find a container name from its volume")
 {
-    APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample10_14)};
+    const APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample10_14)};
 
     CHECK(tree.FindContainerOfVolume("disk1s1") == "disk1");
     CHECK(tree.FindContainerOfVolume("disk1s2") == "disk1");
@@ -42,7 +42,7 @@ TEST_CASE(PREFIX "APFSTree can find a container name from its volume")
 
 TEST_CASE(PREFIX "APFSTree can find volumes from their container name")
 {
-    APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample10_14)};
+    const APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample10_14)};
 
     const auto disk1_volumes = std::vector<std::string>{"disk1s1", "disk1s2", "disk1s3", "disk1s4"};
     CHECK(tree.FindVolumesOfContainer("disk1") == disk1_volumes);
@@ -60,7 +60,7 @@ TEST_CASE(PREFIX "APFSTree can find volumes from their container name")
 
 TEST_CASE(PREFIX "APFSTree can find physical stores from a container name")
 {
-    APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample10_14)};
+    const APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample10_14)};
 
     const auto disk1_stores = std::vector<std::string>{"disk0s2"};
     CHECK(tree.FindPhysicalStoresOfContainer("disk1") == disk1_stores);
@@ -78,7 +78,7 @@ TEST_CASE(PREFIX "APFSTree can find physical stores from a container name")
 
 TEST_CASE(PREFIX "APFSTree can find volumes by role from a container name (10_14)")
 {
-    APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample10_14)};
+    const APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample10_14)};
 
     const auto disk1_none = tree.FindVolumesInContainerWithRole("disk1", APFSTree::Role::None);
     REQUIRE(disk1_none);
@@ -132,7 +132,7 @@ TEST_CASE(PREFIX "APFSTree can find volumes by role from a container name (10_14
 
 TEST_CASE(PREFIX "APFSTree can find volumes by role from a container name (10_15)")
 {
-    APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample10_15)};
+    const APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample10_15)};
 
     const auto disk1_data = tree.FindVolumesInContainerWithRole("disk1", APFSTree::Role::Data);
     REQUIRE(disk1_data);
@@ -147,7 +147,7 @@ TEST_CASE(PREFIX "APFSTree can find volumes by role from a container name (10_15
 
 TEST_CASE(PREFIX "APFSTree can find volumes by role from a container name (11_1)")
 {
-    APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample11_1)};
+    const APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample11_1)};
 
     const auto disk1_data = tree.FindVolumesInContainerWithRole("disk3", APFSTree::Role::Data);
     REQUIRE(disk1_data);
@@ -162,17 +162,17 @@ TEST_CASE(PREFIX "APFSTree can find volumes by role from a container name (11_1)
 
 TEST_CASE(PREFIX "APFSTree can list containers names (11_1)")
 {
-    APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample11_1)};
+    const APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample11_1)};
 
     const auto names = tree.ContainersNames();
-    std::set<std::string> ordered_names(names.begin(), names.end());
+    const std::set<std::string> ordered_names(names.begin(), names.end());
     CHECK(ordered_names == std::set<std::string>{"disk1", "disk2", "disk3", "disk5"});
 }
 
 TEST_CASE(PREFIX "The system has volumes for both Data and System roles")
 {
     DiskUtility du;
-    APFSTree tree{du.ListAPFSObjects()};
+    const APFSTree tree{du.ListAPFSObjects()};
 
     bool has_data = false;
     bool has_system = false;

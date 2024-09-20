@@ -94,13 +94,13 @@ void SandboxManager::LoadSecurityScopeBookmarks_Unlocked()
         return;
 
     for( id obj : bookmarks )
-        if( auto *data = nc::objc_cast<NSData>(obj) ) {
-            NSURL *scoped_url = [NSURL URLByResolvingBookmarkData:data
-                                                          options:NSURLBookmarkResolutionWithoutMounting |
-                                                                  NSURLBookmarkResolutionWithSecurityScope
-                                                    relativeToURL:nil
-                                              bookmarkDataIsStale:nil
-                                                            error:nil];
+        if( auto *const data = nc::objc_cast<NSData>(obj) ) {
+            NSURL *const scoped_url = [NSURL URLByResolvingBookmarkData:data
+                                                                options:NSURLBookmarkResolutionWithoutMounting |
+                                                                        NSURLBookmarkResolutionWithSecurityScope
+                                                          relativeToURL:nil
+                                                    bookmarkDataIsStale:nil
+                                                                  error:nil];
             if( scoped_url ) {
                 // check that scoped_url is still valid
                 if( [scoped_url startAccessingSecurityScopedResource] ) {
@@ -150,7 +150,7 @@ bool SandboxManager::AskAccessForPathSync(const std::string &_path, bool _mandat
     [NSUserDefaults.standardUserDefaults setValue:[NSString stringWithUTF8StdString:reqired_path]
                                            forKey:@"NSNavLastRootDirectory"];
 
-    NSOpenPanel *openPanel = NSOpenPanel.openPanel;
+    NSOpenPanel *const openPanel = NSOpenPanel.openPanel;
     openPanel.message = NSLocalizedString(@"Click “Allow Access” to grant access to files in the selected directory",
                                           "Asking the user to grant filesystem access for NC");
     openPanel.prompt =
@@ -158,8 +158,8 @@ bool SandboxManager::AskAccessForPathSync(const std::string &_path, bool _mandat
     openPanel.canChooseFiles = false;
     openPanel.canChooseDirectories = true;
     openPanel.allowsMultipleSelection = false;
-    SandboxManagerPanelDelegate *delegate = [[SandboxManagerPanelDelegate alloc] initWithPath:reqired_path
-                                                                                    mandatory:_mandatory_path];
+    SandboxManagerPanelDelegate *const delegate = [[SandboxManagerPanelDelegate alloc] initWithPath:reqired_path
+                                                                                          mandatory:_mandatory_path];
     openPanel.delegate = delegate;
     openPanel.directoryURL = [NSURL fileURLWithFileSystemRepresentation:reqired_path.c_str()
                                                             isDirectory:true
@@ -167,17 +167,17 @@ bool SandboxManager::AskAccessForPathSync(const std::string &_path, bool _mandat
 
     const auto res = [openPanel runModal];
     if( res == NSModalResponseOK )
-        if( NSURL *url = openPanel.URL ) {
-            NSData *bookmark_data = [url bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope
-                                  includingResourceValuesForKeys:nil
-                                                   relativeToURL:nil
-                                                           error:nil];
+        if( NSURL *const url = openPanel.URL ) {
+            NSData *const bookmark_data = [url bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope
+                                        includingResourceValuesForKeys:nil
+                                                         relativeToURL:nil
+                                                                 error:nil];
             if( bookmark_data ) {
-                NSURL *scoped_url = [NSURL URLByResolvingBookmarkData:bookmark_data
-                                                              options:NSURLBookmarkResolutionWithSecurityScope
-                                                        relativeToURL:nil
-                                                  bookmarkDataIsStale:nil
-                                                                error:nil];
+                NSURL *const scoped_url = [NSURL URLByResolvingBookmarkData:bookmark_data
+                                                                    options:NSURLBookmarkResolutionWithSecurityScope
+                                                              relativeToURL:nil
+                                                        bookmarkDataIsStale:nil
+                                                                      error:nil];
                 if( scoped_url && [scoped_url startAccessingSecurityScopedResource] ) {
                     Bookmark bm;
                     bm.data = bookmark_data;

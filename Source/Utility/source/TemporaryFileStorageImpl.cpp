@@ -58,7 +58,7 @@ std::optional<TemporaryFileStorageImpl::OpenedFile> TemporaryFileStorageImpl::Op
     auto result_filepath = std::move(*temp_dir);
     result_filepath += filename;
 
-    int fd = open(result_filepath.c_str(), O_EXLOCK | O_NONBLOCK | O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
+    const int fd = open(result_filepath.c_str(), O_EXLOCK | O_NONBLOCK | O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
     if( fd < 0 )
         return std::nullopt;
     fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK);
@@ -86,7 +86,7 @@ std::optional<std::string> TemporaryFileStorageImpl::FindSuitableExistingTempDir
     if( _for_filename.empty() )
         return {};
 
-    std::lock_guard guard{m_TempDirectoriesLock};
+    const std::lock_guard guard{m_TempDirectoriesLock};
     std::vector<size_t> indices_to_remove;
     std::string chosen_dir;
 
@@ -133,7 +133,7 @@ std::optional<std::string> TemporaryFileStorageImpl::FindTempDir(std::string_vie
     }
 
     // memorize this new temp dir for later usage
-    std::lock_guard guard{m_TempDirectoriesLock};
+    const std::lock_guard guard{m_TempDirectoriesLock};
     m_TempDirectories.emplace_back(*new_dir);
 
     return new_dir;

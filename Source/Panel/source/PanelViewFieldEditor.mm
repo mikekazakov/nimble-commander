@@ -45,7 +45,7 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
 - (void)buildTextView
 {
     static const auto ps = []() -> NSParagraphStyle * {
-        NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
+        NSMutableParagraphStyle *const style = [[NSMutableParagraphStyle alloc] init];
         style.lineBreakMode = NSLineBreakByClipping;
         return style;
     }();

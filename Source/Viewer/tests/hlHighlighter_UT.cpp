@@ -44,7 +44,7 @@ int hello = 10;)";
 
     REQUIRE(src.length() == hl_exp.length());
 
-    Highlighter highlighter(set);
+    const Highlighter highlighter(set);
     std::vector<Style> hl = highlighter.Highlight(src);
     REQUIRE(hl.size() == hl_exp.size());
 
@@ -82,7 +82,7 @@ on:
 
     REQUIRE(src.length() == hl_exp.length());
 
-    Highlighter highlighter(set);
+    const Highlighter highlighter(set);
     std::vector<Style> hl = highlighter.Highlight(src);
     REQUIRE(hl.size() == hl_exp.size());
 
@@ -136,7 +136,7 @@ export LC_CTYPE=en_US.UTF-8)Z";
 
     REQUIRE(src.length() == hl_exp.length());
 
-    Highlighter highlighter(set);
+    const Highlighter highlighter(set);
     std::vector<Style> hl = highlighter.Highlight(src);
     REQUIRE(hl.size() == hl_exp.size());
 

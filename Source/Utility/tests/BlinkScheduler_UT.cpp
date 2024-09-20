@@ -37,13 +37,13 @@ TEST_CASE(PREFIX "Constructor throws on invalid parameters")
 
 TEST_CASE(PREFIX "Disabled by default")
 {
-    BlinkScheduler bs([] {});
+    const BlinkScheduler bs([] {});
     CHECK(bs.Enabled() == false);
 }
 
 TEST_CASE(PREFIX "Visible when disabled")
 {
-    BlinkScheduler bs([] {});
+    const BlinkScheduler bs([] {});
     CHECK(bs.Visible() == true);
 }
 

@@ -137,12 +137,12 @@ static std::pair<int, NSData *> SendInfiniteSynchronousRequest(NSURLSession *_se
     assert(_session != nil);
     assert(_request != nil);
     Log::Debug("Sending infinite sync request at {}", _request.URL.absoluteString.UTF8String);
-    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    const dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     __block NSData *data = nil;
     __block NSURLResponse *response = nil;
     __block NSError *error = nil;
 
-    NSURLSessionDataTask *task =
+    NSURLSessionDataTask *const task =
         [_session dataTaskWithRequest:_request
                     completionHandler:^(NSData *_data, NSURLResponse *_response, NSError *_error) {
                       error = _error;
@@ -174,7 +174,7 @@ SendSynchronousRequest(NSURLSession *_session, NSURLRequest *_request, const VFS
 
     Log::Debug("Sending finite sync request at {}", _request.URL.absoluteString.UTF8String);
     const auto timeout = 100 * NSEC_PER_MSEC; // wake up every 100ms
-    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    const dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     __block NSData *data = nil;
     __block NSURLResponse *response = nil;
     __block NSError *error = nil;
@@ -209,7 +209,7 @@ Metadata ParseMetadata(const rapidjson::Value &_value)
     using namespace std::literals;
     [[clang::no_destroy]] static const auto file_type = "file"s, folder_type = "folder"s;
     [[clang::no_destroy]] static const auto date_formatter = [] {
-        NSDateFormatter *df = [[NSDateFormatter alloc] init];
+        NSDateFormatter *const df = [[NSDateFormatter alloc] init];
         df.dateFormat = @"yyyy-MM-dd'T'HH:mm:ssZZZZZ";
         return df;
     }();
@@ -282,7 +282,7 @@ std::string EscapeString(std::string_view _original)
 
 std::string EscapeStringForJSONInHTTPHeader(const std::string &_original)
 {
-    NSString *str = [NSString stringWithUTF8String:_original.c_str()];
+    NSString *const str = [NSString stringWithUTF8String:_original.c_str()];
     if( !str )
         return {};
 
@@ -308,7 +308,7 @@ bool IsNormalJSONResponse(NSURLResponse *_response)
         if( http_resp.statusCode != 200 )
             return false;
 
-        if( id ct = http_resp.allHeaderFields[@"Content-Type"] )
+        if( const id ct = http_resp.allHeaderFields[@"Content-Type"] )
             if( auto t = objc_cast<NSString>(ct) )
                 return [t isEqualToString:@"application/json"];
     }
@@ -358,7 +358,7 @@ std::optional<rapidjson::Document> ParseJSON(NSData *_data)
 
     using namespace rapidjson;
     Document json;
-    ParseResult ok = json.Parse<kParseNoFlags>(static_cast<const char *>(_data.bytes), _data.length);
+    const ParseResult ok = json.Parse<kParseNoFlags>(static_cast<const char *>(_data.bytes), _data.length);
     if( !ok )
         return std::nullopt;
     return std::move(json);

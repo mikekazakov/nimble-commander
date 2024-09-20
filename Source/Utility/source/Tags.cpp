@@ -173,7 +173,7 @@ static const std::string *InternalizeString(std::string_view _str) noexcept
     [[clang::no_destroy]] static Set strings;
     [[clang::no_destroy]] static std::mutex mut;
 
-    std::lock_guard lock{mut};
+    const std::lock_guard lock{mut};
     if( auto it = strings.find(_str); it != strings.end() ) {
         return &*it;
     }
@@ -212,7 +212,7 @@ static std::optional<Tags::Tag> ParseTag(std::u16string_view _tag_rep) noexcept
         _tag_rep.remove_suffix(2);
     }
 
-    base::CFStackAllocator alloc;
+    const base::CFStackAllocator alloc;
     auto cf_str =
         base::CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(alloc,
                                                                       reinterpret_cast<const UInt8 *>(_tag_rep.data()),
@@ -480,7 +480,7 @@ static std::pmr::vector<std::byte> WritePListObject(const Tags::Tag &_tag, std::
     }
     else {
         // Build CF strings out of our label
-        base::CFStackAllocator alloc;
+        const base::CFStackAllocator alloc;
         auto cf_str =
             base::CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(alloc,
                                                                           reinterpret_cast<const UInt8 *>(label.data()),
@@ -573,7 +573,7 @@ std::vector<std::byte> Tags::BuildMDItemUserTags(const std::span<const Tag> _tag
     }
 
     // Deduce the stride of the offset table
-    size_t offset_int_size = 1;
+    const size_t offset_int_size = 1;
     if( const size_t max = *std::max_element(offsets.begin(), offsets.end()); max > 255 ) {
         abort(); // TODO: implement
     }
@@ -698,7 +698,7 @@ std::vector<std::filesystem::path> Tags::GatherAllItemsWithTags() noexcept
     std::vector<std::filesystem::path> result;
     for( long i = 0, e = MDQueryGetResultCount(query.get()); i < e; ++i ) {
         const MDItemRef item = static_cast<MDItemRef>(const_cast<void *>(MDQueryGetResultAtIndex(query.get(), i)));
-        base::CFPtr<CFStringRef> item_path =
+        const base::CFPtr<CFStringRef> item_path =
             base::CFPtr<CFStringRef>::adopt(static_cast<CFStringRef>(MDItemCopyAttribute(item, kMDItemPath)));
         if( item_path ) {
             result.emplace_back(base::CFStringGetUTF8StdString(item_path.get()));
@@ -740,7 +740,7 @@ std::vector<std::filesystem::path> Tags::GatherAllItemsWithTag(std::string_view 
     std::vector<std::filesystem::path> result;
     for( long i = 0, e = MDQueryGetResultCount(query.get()); i < e; ++i ) {
         const MDItemRef item = static_cast<MDItemRef>(const_cast<void *>(MDQueryGetResultAtIndex(query.get(), i)));
-        base::CFPtr<CFStringRef> item_path =
+        const base::CFPtr<CFStringRef> item_path =
             base::CFPtr<CFStringRef>::adopt(static_cast<CFStringRef>(MDItemCopyAttribute(item, kMDItemPath)));
         if( item_path ) {
             result.emplace_back(base::CFStringGetUTF8StdString(item_path.get()));

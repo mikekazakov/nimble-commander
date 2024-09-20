@@ -39,7 +39,7 @@ ssize_t GenericMemReadOnlyFile::Read(void *_buf, size_t _size)
     if( m_Pos == static_cast<long>(m_Size) )
         return 0;
 
-    size_t to_read = std::min(static_cast<size_t>(m_Size - m_Pos), _size);
+    const size_t to_read = std::min(static_cast<size_t>(m_Size - m_Pos), _size);
     memcpy(_buf, static_cast<const char *>(m_Mem) + m_Pos, to_read);
     m_Pos += to_read;
     assert(m_Pos <= static_cast<long>(m_Size)); // just a sanity check
@@ -56,7 +56,7 @@ ssize_t GenericMemReadOnlyFile::ReadAt(off_t _pos, void *_buf, size_t _size)
     if( _pos < 0 || _pos > static_cast<long>(m_Size) )
         return VFSError::InvalidCall;
 
-    ssize_t toread = std::min(static_cast<size_t>(m_Size - _pos), _size);
+    const ssize_t toread = std::min(static_cast<size_t>(m_Size - _pos), _size);
     memcpy(_buf, static_cast<const char *>(m_Mem) + _pos, toread);
     return toread;
 }

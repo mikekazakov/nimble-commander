@@ -83,7 +83,7 @@ using namespace std::literals;
     [self window];
     [m_Controller show];
     self.viewerView.focusRingType = NSFocusRingTypeNone;
-    if( id<NCViewerWindowDelegate> delegate = self.delegate )
+    if( const id<NCViewerWindowDelegate> delegate = self.delegate )
         if( [delegate respondsToSelector:@selector(viewerWindowWillShow:)] )
             [delegate viewerWindowWillShow:self];
 
@@ -95,7 +95,7 @@ using namespace std::literals;
     [m_Controller saveFileState];
     self.window.delegate = nil;
     dispatch_to_main_queue_after(10ms, [=] {
-        if( id<NCViewerWindowDelegate> delegate = self.delegate )
+        if( const id<NCViewerWindowDelegate> delegate = self.delegate )
             if( [delegate respondsToSelector:@selector(viewerWindowWillClose:)] )
                 [delegate viewerWindowWillClose:self];
     });

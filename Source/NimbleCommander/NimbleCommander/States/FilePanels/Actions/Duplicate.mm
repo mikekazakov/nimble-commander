@@ -67,7 +67,7 @@ static void CommonPerform(PanelController *_target, const std::vector<VFSListing
             __weak PanelController *weak_panel = _target;
             auto finish_handler = [weak_panel, duplicate] {
                 dispatch_to_main_queue([weak_panel, duplicate] {
-                    if( PanelController *panel = weak_panel ) {
+                    if( PanelController *const panel = weak_panel ) {
                         [panel hintAboutFilesystemChange];
                         nc::panel::DelayedFocusing req;
                         req.filename = duplicate;
@@ -163,7 +163,7 @@ static ankerl::unordered_dense::set<std::string> ExtractFilenames(const VFSListi
 
 static std::string ProduceFormCLowercase(std::string_view _string)
 {
-    base::CFStackAllocator allocator;
+    const base::CFStackAllocator allocator;
 
     CFStringRef original = CFStringCreateWithBytesNoCopy(allocator,
                                                          reinterpret_cast<const UInt8 *>(_string.data()),

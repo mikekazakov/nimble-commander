@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Helpers.h"
 #include "../PanelController.h"
 #include <NimbleCommander/Core/VFSInstancePromise.h>
@@ -110,7 +110,7 @@ void DeselectorViaOpNotification::Handle(nc::ops::ItemStateReport _report) const
 void DeselectorViaOpNotification::HandleImpl(nc::vfs::Host *_host, const std::string &_path) const
 {
     dispatch_assert_main_queue();
-    PanelController *panel = m_Panel;
+    PanelController *const panel = m_Panel;
     if( panel == nil ) {
         m_Cancelled = true;
         return; // stale weak pointer, bail out

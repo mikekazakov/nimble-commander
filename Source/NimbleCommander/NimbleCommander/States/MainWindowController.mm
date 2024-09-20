@@ -333,7 +333,7 @@ static int CountMainWindows()
             }
         }
         else { // as a window
-            if( auto *ex_window = [NCAppDelegate.me findInternalViewerWindowForPath:_filepath onVFS:_host] ) {
+            if( auto *const ex_window = [NCAppDelegate.me findInternalViewerWindowForPath:_filepath onVFS:_host] ) {
                 // already has this one
                 dispatch_to_main_queue([=] { [ex_window showWindow:self]; });
             }
@@ -485,7 +485,7 @@ static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu 
     __weak NCMainWindowController *weak_self = self;
     auto dialog_callback = [weak_self](NSWindow *_dlg, std::function<void(NSModalResponse)> _cb) {
         NSBeep();
-        if( NCMainWindowController *wnd = weak_self )
+        if( NCMainWindowController *const wnd = weak_self )
             [wnd beginSheet:_dlg
                 completionHandler:^(NSModalResponse rc) {
                   _cb(rc);
@@ -494,7 +494,7 @@ static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu 
     m_OperationsPool->SetDialogCallback(std::move(dialog_callback));
 
     auto completion_callback = [weak_self](const std::shared_ptr<nc::ops::Operation> &_op) {
-        if( NCMainWindowController *wnd = weak_self )
+        if( NCMainWindowController *const wnd = weak_self )
             dispatch_to_main_queue([=] {
                 auto &center = core::UserNotificationsCenter::Instance();
                 center.ReportCompletedOperation(*_op, wnd.window);

@@ -173,7 +173,7 @@ void AttrsChangingJob::DoChange()
             Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
 
             // for now reports only about successful processing
-            ItemStateReport report{*origin_item.Host(), path, ItemStatus::Processed};
+            const ItemStateReport report{*origin_item.Host(), path, ItemStatus::Processed};
             TellItemReport(report);
         }
 

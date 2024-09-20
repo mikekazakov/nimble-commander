@@ -29,7 +29,7 @@ FetchItems(const std::string &_directory_path, const std::vector<std::string> &_
 
 TEST_CASE(PREFIX "Empty archive building")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
     Compression operation{std::vector<VFSListingItem>{}, tmp_dir.directory, native_host};
     operation.Start();
@@ -45,7 +45,7 @@ TEST_CASE(PREFIX "Empty archive building")
 
 TEST_CASE(PREFIX "Compressing Mac kernel")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
 
     Compression operation{
@@ -71,7 +71,7 @@ TEST_CASE(PREFIX "Compressing Mac kernel")
 
 TEST_CASE(PREFIX "Compressing Bin utilities")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
 
     const std::vector<std::string> filenames = {
@@ -102,7 +102,7 @@ TEST_CASE(PREFIX "Compressing Bin utilities")
 
 TEST_CASE(PREFIX "Compressing Bin directory")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
 
     Compression operation{FetchItems("/", {"bin"}, *native_host), tmp_dir.directory, native_host};
@@ -123,7 +123,7 @@ TEST_CASE(PREFIX "Compressing Bin directory")
 
 TEST_CASE(PREFIX "Compressing Chess.app")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
 
     Compression operation{
@@ -147,7 +147,7 @@ TEST_CASE(PREFIX "Compressing Chess.app")
 
 TEST_CASE(PREFIX "Compressing kernel into encrypted archive")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
     const auto passwd = "This is a very secret password";
 
@@ -179,7 +179,7 @@ TEST_CASE(PREFIX "Compressing kernel into encrypted archive")
 
 TEST_CASE(PREFIX "Compressing /bin into encrypted archive")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
     const auto passwd = "This is a very secret password";
 
@@ -202,7 +202,7 @@ TEST_CASE(PREFIX "Compressing /bin into encrypted archive")
 
 TEST_CASE(PREFIX "Long compression stats (compressing Music.app)")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
     Compression operation{
         FetchItems("/System/Applications/", {"Music.app"}, *native_host), tmp_dir.directory, native_host};
@@ -233,7 +233,7 @@ TEST_CASE(PREFIX "Long compression stats (compressing Music.app)")
 
 TEST_CASE(PREFIX "Item reporting")
 {
-    TempTestDir tmp_dir;
+    const TempTestDir tmp_dir;
     REQUIRE(mkdir((tmp_dir.directory / "dir").c_str(), 0755) == 0);
     REQUIRE(close(creat((tmp_dir.directory / "dir/f1").c_str(), 0755)) == 0);
     REQUIRE(symlink("./f1", (tmp_dir.directory / "dir/f2").c_str()) == 0);
@@ -291,7 +291,7 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
     }
     else if( S_ISDIR(st1.mode) ) {
         _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
-            int ret = VFSCompareEntries(
+            const int ret = VFSCompareEntries(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
             if( ret != 0 )
                 return false;

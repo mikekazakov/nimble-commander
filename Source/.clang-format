@@ -27,6 +27,7 @@ SortIncludes: false
 SpaceBeforeParens: Never
 SpacesInConditionalStatement: true
 SpacesInContainerLiterals: false
+QualifierAlignment: Left
 ---
 Language: ObjC
 Standard: Cpp11
@@ -54,3 +55,4 @@ SortIncludes: false
 SpaceBeforeParens: Never
 SpacesInConditionalStatement: true
 SpacesInContainerLiterals: false
+QualifierAlignment: Left

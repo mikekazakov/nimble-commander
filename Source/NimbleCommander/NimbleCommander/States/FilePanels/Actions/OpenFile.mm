@@ -41,7 +41,7 @@ bool OpenFileWithSubmenu::Predicate(PanelController *_target) const
 bool OpenFileWithSubmenu::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
 {
     if( ShouldRebuildSubmenu(_item) ) {
-        NSMenu *menu = [[NSMenu alloc] init];
+        NSMenu *const menu = [[NSMenu alloc] init];
         menu.identifier = NCPanelOpenWithMenuDelegate.regularMenuIdentifier;
         menu.delegate = m_MenuDelegate;
         [m_MenuDelegate addManagedMenu:menu];
@@ -66,7 +66,7 @@ bool AlwaysOpenFileWithSubmenu::Predicate(PanelController *_target) const
 bool AlwaysOpenFileWithSubmenu::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
 {
     if( ShouldRebuildSubmenu(_item) ) {
-        NSMenu *menu = [[NSMenu alloc] init];
+        NSMenu *const menu = [[NSMenu alloc] init];
         menu.identifier = NCPanelOpenWithMenuDelegate.alwaysOpenWithMenuIdentifier;
         menu.delegate = m_MenuDelegate;
         [m_MenuDelegate addManagedMenu:menu];
@@ -128,7 +128,7 @@ static void PerformOpeningFilesWithDefaultHandler(const std::vector<VFSListingIt
     }
     else if( _items.size() == 1 ) {
         auto &item = _items.front();
-        std::string path = item.IsDotDot() ? item.Directory() : item.Path();
+        const std::string path = item.IsDotDot() ? item.Directory() : item.Path();
         _file_opener.Open(path, item.Host(), _target);
     }
 }

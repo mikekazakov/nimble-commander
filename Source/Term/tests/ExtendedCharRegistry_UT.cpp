@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <ExtendedCharRegistry.h>
 #include "Tests.h"
 
@@ -219,7 +219,7 @@ TEST_CASE(PREFIX "Append to an extended character")
     ExtendedCharRegistry r;
 
     {
-        char32_t invalid = static_cast<char32_t>((uint32_t(1) << 31) + 43634);
+        const char32_t invalid = static_cast<char32_t>((uint32_t(1) << 31) + 43634);
         auto ar = r.Append(u"\x200D", invalid);
         CHECK(ar.newchar == invalid);
         CHECK(ar.eaten == 0);
@@ -255,7 +255,7 @@ TEST_CASE(PREFIX "IsDoubleWidth")
     struct TC {
         std::u16string_view str;
         bool exp;
-    } cases[] = {
+    } const cases[] = {
         {u"a", false},
         {u"❆", false},
         {u"☁", false},

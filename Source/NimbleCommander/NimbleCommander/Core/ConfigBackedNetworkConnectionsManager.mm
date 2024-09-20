@@ -133,7 +133,7 @@ static std::optional<NetworkConnectionsManager::Connection> JSONObjectToConnecti
     if( !uuid )
         return std::nullopt;
 
-    std::string type = _object["type"].GetString();
+    const std::string type = _object["type"].GetString();
     if( type == "ftp" ) {
         if( !has_string("user") || !has_string("host") || !has_string("path") || !has_number("port") )
             return std::nullopt;
@@ -305,7 +305,7 @@ void ConfigBackedNetworkConnectionsManager::RemoveConnection(const Connection &_
 std::optional<NetworkConnectionsManager::Connection>
 ConfigBackedNetworkConnectionsManager::ConnectionByUUID(const base::UUID &_uuid) const
 {
-    std::lock_guard<std::mutex> lock(m_Lock);
+    const std::lock_guard<std::mutex> lock(m_Lock);
     auto t = find_if(begin(m_Connections), end(m_Connections), [&](auto &_c) { return _c.Uuid() == _uuid; });
     if( t != end(m_Connections) )
         return *t;
@@ -514,14 +514,14 @@ VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection(const 
 static std::string NetFSErrorString(int _code)
 {
     if( _code > 0 ) {
-        NSError *err = [NSError errorWithDomain:NSPOSIXErrorDomain code:_code userInfo:nil];
+        NSError *const err = [NSError errorWithDomain:NSPOSIXErrorDomain code:_code userInfo:nil];
         if( err && err.localizedFailureReason.UTF8String )
             return err.localizedFailureReason.UTF8String;
         else
             return "Unknown error";
     }
     else if( _code < 0 ) {
-        NSError *err = [NSError errorWithDomain:NSOSStatusErrorDomain code:_code userInfo:nil];
+        NSError *const err = [NSError errorWithDomain:NSOSStatusErrorDomain code:_code userInfo:nil];
         if( err && err.localizedFailureReason.UTF8String )
             return err.localizedFailureReason.UTF8String;
         else
@@ -548,7 +548,7 @@ void ConfigBackedNetworkConnectionsManager::NetFSCallback(int _status, void *_re
         // _mountpoints can contain a valid mounted path even if _status is not equal to zero
         if( _mountpoints != nullptr && CFArrayGetCount(_mountpoints) != 0 )
             if( auto str = objc_cast<NSString>(((__bridge NSArray *)_mountpoints).firstObject) ) {
-                std::string path = str.fileSystemRepresentationSafe;
+                const std::string path = str.fileSystemRepresentationSafe;
                 if( !path.empty() ) {
                     cb(path, "");
                     return;
@@ -603,7 +603,7 @@ TearDownSMBOrAFPMountName(const std::string &_name, std::string &_user, std::str
     if( !url_string )
         return false;
 
-    NSURL *url = [NSURL URLWithString:url_string];
+    NSURL *const url = [NSURL URLWithString:url_string];
     if( !url )
         return false;
 
@@ -726,15 +726,15 @@ bool ConfigBackedNetworkConnectionsManager::MountShareAsync(
     };
 
     AsyncRequestID request_id;
-    int result = NetFSMountURLAsync((__bridge CFURLRef)url,
-                                    (__bridge CFURLRef)mountpoint,
-                                    (__bridge CFStringRef)username,
-                                    (__bridge CFStringRef)passwd,
-                                    (__bridge CFMutableDictionaryRef)open_options,
-                                    (__bridge CFMutableDictionaryRef)mount_options,
-                                    &request_id,
-                                    dispatch_get_main_queue(),
-                                    callback);
+    const int result = NetFSMountURLAsync((__bridge CFURLRef)url,
+                                          (__bridge CFURLRef)mountpoint,
+                                          (__bridge CFStringRef)username,
+                                          (__bridge CFStringRef)passwd,
+                                          (__bridge CFMutableDictionaryRef)open_options,
+                                          (__bridge CFMutableDictionaryRef)mount_options,
+                                          &request_id,
+                                          dispatch_get_main_queue(),
+                                          callback);
 
     if( result != 0 ) {
         auto error = NetFSErrorString(result);

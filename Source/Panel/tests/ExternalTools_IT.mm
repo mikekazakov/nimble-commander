@@ -39,7 +39,7 @@ static bool WaitForChildProcess(int _pid, std::chrono::nanoseconds _deadline, st
 
 TEST_CASE(PREFIX "execute a detached console app")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto basedir = dir.directory;
     const auto echopars_src = "#include <stdio.h>                     \n"  //
                               "int main(int argc, char **argv) {      \n"  //
@@ -72,7 +72,7 @@ TEST_CASE(PREFIX "execute a detached console app")
     struct TC {
         std::string params;
         std::string expected;
-    } tcs[] = {
+    } const tcs[] = {
         {basedir / "test.txt",                                                          //
          "echopars\n" + (basedir / "test.txt").string() + "\n"},                        //
         {(basedir / "test.txt").string() + " Hello!",                                   //
@@ -109,7 +109,7 @@ TEST_CASE(PREFIX "execute a detached console app")
 
 TEST_CASE(PREFIX "execute a non-existing app")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
 
     VFSListingPtr listing;
     REQUIRE(TestEnv().vfs_native->FetchDirectoryListing("/", listing, VFSFlags::F_NoDotDot, {}) == 0);
@@ -144,7 +144,7 @@ TEST_CASE(PREFIX "execute a non-existing app")
 
 TEST_CASE(PREFIX "execute a ui app", "[!mayfail]")
 {
-    TempTestDir dir;
+    const TempTestDir dir;
     const auto basedir = dir.directory;
 
     const auto minimal_src = "#include <Cocoa/Cocoa.h>                                                           \n" //
@@ -203,7 +203,7 @@ TEST_CASE(PREFIX "execute a ui app", "[!mayfail]")
         std::string expected;
         ExternalTool::GUIArgumentInterpretation interp =
             ExternalTool::GUIArgumentInterpretation::PassExistingPathsAsURLs;
-    } tcs[] = {
+    } const tcs[] = {
         // one argument
         {basedir / "test.txt",
          fmt::format("A-{}\nA-{}\n",

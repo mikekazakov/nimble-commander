@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CLI.h"
 #include <vector>
 #include <string_view>
@@ -19,7 +19,7 @@ static const auto g_Message = "Command-line options:                            
 
 void ProcessCLIUsage(int argc, char *argv[])
 {
-    std::vector<std::string_view> args(argv, argv + argc);
+    const std::vector<std::string_view> args(argv, argv + argc);
     for( auto arg : args ) {
         if( arg == "--help" ) {
             std::cout << g_Message << std::flush;

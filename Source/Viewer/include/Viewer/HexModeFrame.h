@@ -146,7 +146,7 @@ public:
 
 private:
     const Source &m_Source;
-    int const m_RawBytesNumber;
+    const int m_RawBytesNumber;
     base::CFPtr<CFDictionaryRef> m_Attributes;
 };
 

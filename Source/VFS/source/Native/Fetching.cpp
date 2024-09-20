@@ -42,7 +42,7 @@ static mode_t VNodeToUnixMode(const fsobj_type_t _type)
 static int LStatByPath(nc::routedio::PosixIOInterface &_io, const char *_path, const Fetching::Callback &_cb_param)
 {
     struct stat stat_buffer;
-    int ret = _io.lstat(_path, &stat_buffer);
+    const int ret = _io.lstat(_path, &stat_buffer);
     if( ret != 0 )
         return ret;
 
@@ -99,11 +99,11 @@ int Fetching::ReadSingleEntryAttributesByPath(nc::routedio::PosixIOInterface &_i
     attr_list.forkattr = ATTR_CMNEXT_EXT_FLAGS;
 
     StackAllocator alloc;
-    std::pmr::string path(_path, &alloc);
+    const std::pmr::string path(_path, &alloc);
 
     const int fd = _io.open(path.c_str(), O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_CLOEXEC);
     if( fd < 0 ) {
-        int error = errno;
+        const int error = errno;
         if( error == ELOOP ) {
             // special treating for symlinks - they can't be opened by open(), so fall back to
             // regular stat():
@@ -281,7 +281,7 @@ int Fetching::ReadDirAttributesBulk(const int _dir_fd,
 
     constexpr uint64_t options = FSOPT_ATTR_CMN_EXTENDED;
     constexpr size_t attr_buf_size = 65536;
-    std::unique_ptr<char[]> attr_buf = std::make_unique<char[]>(attr_buf_size);
+    const std::unique_ptr<char[]> attr_buf = std::make_unique<char[]>(attr_buf_size);
     CallbackParams params;
     while( true ) {
         const int retcount = getattrlistbulk(_dir_fd, &attr_list, &attr_buf[0], attr_buf_size, options);

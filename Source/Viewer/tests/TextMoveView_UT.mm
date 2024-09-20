@@ -63,7 +63,7 @@ static const auto g_500x100 = NSMakeRect(0., 0., 500., 100.);
 TEST_CASE(PREFIX "Basic geomtery initialization")
 {
     const std::string data = "Hello, world!";
-    Context ctx{data};
+    Context ctx{data}; // NOLINT
     auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
                                                     backend:ctx.backend
                                                       theme:g_DummyTheme
@@ -92,7 +92,7 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
                                      "text4\n"
                                      "text5\n"
                                      "text6";
-            Context ctx{data};
+            Context ctx{data}; // NOLINT
             auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
                                                             backend:ctx.backend
                                                               theme:g_DummyTheme
@@ -110,7 +110,7 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
                                      "text5\n"
                                      "text6\n"
                                      "text7\n";
-            Context ctx{data};
+            Context ctx{data}; // NOLINT
             auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
                                                             backend:ctx.backend
                                                               theme:g_DummyTheme

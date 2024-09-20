@@ -190,9 +190,9 @@ static base::CFPtr<CFStringRef> MakeSubstring(const CFStringRef _string, const s
     return base::CFPtr<CFStringRef>::adopt(CFStringCreateWithSubstring(nullptr, _string, range));
 }
 
-HexModeFrame::Row HexModeFrame::RowsBuilder::Build(std::pair<int, int> const _chars_indices,
-                                                   std::pair<int, int> const _string_bytes,
-                                                   std::pair<int, int> const _row_bytes) const
+HexModeFrame::Row HexModeFrame::RowsBuilder::Build(const std::pair<int, int> _chars_indices,
+                                                   const std::pair<int, int> _string_bytes,
+                                                   const std::pair<int, int> _row_bytes) const
 {
     if( _row_bytes.first < 0 || _row_bytes.second < 0 || _row_bytes.first + _row_bytes.second > m_RawBytesNumber )
         throw std::out_of_range("HexModeFrame::RowsBuilder::Build invalid _row_bytes");

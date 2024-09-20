@@ -3,6 +3,19 @@
 Checks: >
   -*,
   -clang-diagnostic-c99-designator,
+  misc-confusable-identifiers,
+  misc-const-correctness,
+  misc-coroutine-hostile-raii,
+  misc-definitions-in-headers,
+  misc-header-include-cycle,
+  # misc-include-cleaner, <-- flaky
+  misc-misleading-bidirectional,
+  misc-misleading-identifier,
+  # misc-misplaced-const, <-- controversial, produces false positives
+  misc-new-delete-overloads,
+  # misc-no-recursion, <-- controversial
+  misc-non-copyable-objects,
+  misc-non-private-member-variables-in-classes,
   misc-redundant-expression,
   misc-static-assert,
   misc-throw-by-value-catch-by-reference,
@@ -11,6 +24,7 @@ Checks: >
   misc-unused-alias-decls,
   misc-unused-parameters,
   misc-unused-using-decls,
+  # misc-use-anonymous-namespace, <-- controversial, 'static' is fine
   misc-use-internal-linkage,
   modernize-avoid-bind,
   # modernize-avoid-c-arrays, <-- not yet looked into
@@ -88,6 +102,10 @@ CheckOptions:
     value:  fmt::println
   - key:    modernize-use-std-print.PrintHeader
     value:  <fmt/format.h>
+  - key:    misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+    value:  true
+  - key:    misc-header-include-cycle.IgnoredFilesList
+    value:  MMTabBarView.h;MMAttachedTabBarButton.h;curl.h
 
 ExtraArgs:
 - -Wno-unknown-pragmas

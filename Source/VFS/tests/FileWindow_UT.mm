@@ -62,7 +62,7 @@ ssize_t TestGenericMemReadOnlyFile::Read(void *_buf, size_t _size)
     if( m_Pos == static_cast<ssize_t>(m_Size) )
         return 0;
 
-    size_t to_read = MIN(m_Size - m_Pos, _size);
+    const size_t to_read = MIN(m_Size - m_Pos, _size);
     std::memcpy(_buf, static_cast<const char *>(m_Mem) + m_Pos, to_read);
     m_Pos += to_read;
     assert(m_Pos <= static_cast<ssize_t>(m_Size)); // just a sanity check
@@ -82,7 +82,7 @@ ssize_t TestGenericMemReadOnlyFile::ReadAt(off_t _pos, void *_buf, size_t _size)
     if( _pos < 0 || _pos > static_cast<ssize_t>(m_Size) )
         return VFSError::InvalidCall;
 
-    ssize_t toread = MIN(m_Size - _pos, _size);
+    const ssize_t toread = MIN(m_Size - _pos, _size);
     std::memcpy(_buf, static_cast<const char *>(m_Mem) + _pos, toread);
     return toread;
 }
@@ -154,7 +154,7 @@ int TestGenericMemReadOnlyFile::Close()
 TEST_CASE(PREFIX "random access")
 {
     const auto data_size = 1024 * 1024;
-    std::unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
+    const std::unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
     for( int i = 0; i < data_size; ++i )
         data[i] = static_cast<unsigned char>(rand() % 256);
 
@@ -163,7 +163,7 @@ TEST_CASE(PREFIX "random access")
     vfs_file->Open(0, nullptr);
 
     FileWindow fw;
-    int ret = fw.Attach(vfs_file);
+    const int ret = fw.Attach(vfs_file);
     REQUIRE(ret == 0);
 
     std::mt19937 mt((std::random_device())());
@@ -172,7 +172,7 @@ TEST_CASE(PREFIX "random access")
     for( int i = 0; i < 10000; ++i ) {
         auto pos = dist(mt);
         fw.MoveWindow(pos);
-        int cmp = memcmp(fw.Window(), &data[pos], fw.WindowSize());
+        const int cmp = memcmp(fw.Window(), &data[pos], fw.WindowSize());
         REQUIRE(cmp == 0);
     }
 }
@@ -180,7 +180,7 @@ TEST_CASE(PREFIX "random access")
 TEST_CASE(PREFIX "sequential access")
 {
     const auto data_size = 100 * 1024 * 1024;
-    std::unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
+    const std::unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
     for( int i = 0; i < data_size; ++i )
         data[i] = static_cast<unsigned char>(rand() % 256);
 
@@ -189,14 +189,14 @@ TEST_CASE(PREFIX "sequential access")
     vfs_file->Open(0, nullptr);
 
     FileWindow fw;
-    int ret = fw.Attach(vfs_file);
+    const int ret = fw.Attach(vfs_file);
     REQUIRE(ret == 0);
 
     std::mt19937 mt((std::random_device())());
     std::uniform_int_distribution<size_t> dist(0, fw.WindowSize() * 10);
 
     while( true ) {
-        int cmp = memcmp(fw.Window(), &data[fw.WindowPos()], fw.WindowSize());
+        const int cmp = memcmp(fw.Window(), &data[fw.WindowPos()], fw.WindowSize());
         REQUIRE(cmp == 0);
 
         auto off = dist(mt);
@@ -211,7 +211,7 @@ TEST_CASE(PREFIX "sequential access")
 TEST_CASE(PREFIX "seek access")
 {
     const auto data_size = 10 * 1024 * 1024;
-    std::unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
+    const std::unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
     for( int i = 0; i < data_size; ++i )
         data[i] = static_cast<unsigned char>(rand() % 256);
 
@@ -220,7 +220,7 @@ TEST_CASE(PREFIX "seek access")
     vfs_file->Open(0, nullptr);
 
     FileWindow fw;
-    int ret = fw.Attach(vfs_file);
+    const int ret = fw.Attach(vfs_file);
     REQUIRE(ret == 0);
 
     std::mt19937 mt((std::random_device())());
@@ -229,7 +229,7 @@ TEST_CASE(PREFIX "seek access")
     for( int i = 0; i < 10000; ++i ) {
         auto pos = dist(mt);
         fw.MoveWindow(pos);
-        int cmp = memcmp(fw.Window(), &data[pos], fw.WindowSize());
+        const int cmp = memcmp(fw.Window(), &data[pos], fw.WindowSize());
         REQUIRE(cmp == 0);
     }
 }

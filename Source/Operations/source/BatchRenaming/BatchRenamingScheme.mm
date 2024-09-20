@@ -8,17 +8,17 @@ namespace nc::ops {
 std::optional<std::vector<BatchRenamingScheme::MaskDecomposition>>
 BatchRenamingScheme::DecomposeMaskIntoPlaceholders(NSString *_mask)
 {
-    static NSString *escaped_open_br = [NSString stringWithFormat:@"%C", 0xE001];
-    static NSString *escaped_closed_br = [NSString stringWithFormat:@"%C", 0xE002];
-    static NSCharacterSet *open_br = [NSCharacterSet characterSetWithCharactersInString:@"["];
-    static NSCharacterSet *close_br = [NSCharacterSet characterSetWithCharactersInString:@"]"];
+    static NSString *const escaped_open_br = [NSString stringWithFormat:@"%C", 0xE001];
+    static NSString *const escaped_closed_br = [NSString stringWithFormat:@"%C", 0xE002];
+    static NSCharacterSet *const open_br = [NSCharacterSet characterSetWithCharactersInString:@"["];
+    static NSCharacterSet *const close_br = [NSCharacterSet characterSetWithCharactersInString:@"]"];
 
     assert(_mask != nil);
     NSString *mask = _mask;
     if( [mask containsString:@"[["] || [mask containsString:@"]]"] ) {
         // Escape double brackets by converting them into private characters.
         // Thats's rather brute-force and stupid, but since the masks are normally very short it shouldn't be a problem
-        NSMutableString *tmp = [[NSMutableString alloc] initWithString:mask];
+        NSMutableString *const tmp = [[NSMutableString alloc] initWithString:mask];
         [tmp replaceOccurrencesOfString:@"[["
                              withString:escaped_open_br
                                 options:NSLiteralSearch
@@ -591,8 +591,8 @@ NSString *BatchRenamingScheme::ExtractText(NSString *_from, const TextExtraction
     else {
         if( _te.to_last + 1 >= length )
             return @"";
-        unsigned start = _te.from_first;
-        unsigned end = length - _te.to_last - 1;
+        const unsigned start = _te.from_first;
+        const unsigned end = length - _te.to_last - 1;
         if( start > end )
             return @"";
 
@@ -668,12 +668,12 @@ static NSString *StringByTransform(NSString *_s, BatchRenamingScheme::CaseTransf
 
     static auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];
     auto r = [_s rangeOfCharacterFromSet:cs options:NSBackwardsSearch];
-    bool has_ext = (r.location != NSNotFound && r.location != 0 && r.location != _s.length - 1);
+    const bool has_ext = (r.location != NSNotFound && r.location != 0 && r.location != _s.length - 1);
     if( !has_ext )
         return StringByTransform(_s, _ct);
 
-    NSString *name = [_s substringWithRange:NSMakeRange(0, r.location)];
-    NSString *extension = [_s substringWithRange:NSMakeRange(r.location, _s.length - r.location)];
+    NSString *const name = [_s substringWithRange:NSMakeRange(0, r.location)];
+    NSString *const extension = [_s substringWithRange:NSMakeRange(r.location, _s.length - r.location)];
 
     return [StringByTransform(name, _ct) stringByAppendingString:extension];
 }
@@ -733,13 +733,13 @@ static NSString *FormatTimeYear4(const struct tm &_t)
 static NSString *FormatDate(time_t _t)
 {
     static auto formatter = []() {
-        NSDateFormatter *fmt = [NSDateFormatter new];
+        NSDateFormatter *const fmt = [NSDateFormatter new];
         fmt.dateStyle = NSDateFormatterShortStyle;
         fmt.timeStyle = NSDateFormatterNoStyle;
         return fmt;
     }();
 
-    NSMutableString *str =
+    NSMutableString *const str =
         [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:static_cast<double>(_t)]].mutableCopy;
     [str replaceOccurrencesOfString:@"/" withString:@"-" options:0 range:NSMakeRange(0, str.length)];
     [str replaceOccurrencesOfString:@"\\" withString:@"-" options:0 range:NSMakeRange(0, str.length)];
@@ -750,13 +750,13 @@ static NSString *FormatDate(time_t _t)
 static NSString *FormatTime(time_t _t)
 {
     static auto formatter = []() {
-        NSDateFormatter *fmt = [NSDateFormatter new];
+        NSDateFormatter *const fmt = [NSDateFormatter new];
         fmt.dateStyle = NSDateFormatterNoStyle;
         fmt.timeStyle = NSDateFormatterShortStyle;
         return fmt;
     }();
 
-    NSMutableString *str =
+    NSMutableString *const str =
         [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:static_cast<double>(_t)]].mutableCopy;
     [str replaceOccurrencesOfString:@"/" withString:@"." options:0 range:NSMakeRange(0, str.length)];
     [str replaceOccurrencesOfString:@"\\" withString:@"." options:0 range:NSMakeRange(0, str.length)];
@@ -780,7 +780,7 @@ NSString *BatchRenamingScheme::DoSearchReplace(const ReplaceOptions &_opts, NSSt
     if( !_opts.search_in_ext ) {
         static auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];
         auto r = [_source rangeOfCharacterFromSet:cs options:NSBackwardsSearch];
-        bool has_ext = (r.location != NSNotFound && r.location != 0 && r.location != _source.length - 1);
+        const bool has_ext = (r.location != NSNotFound && r.location != 0 && r.location != _source.length - 1);
         if( has_ext )
             range = NSMakeRange(0, r.location);
     }
@@ -845,7 +845,7 @@ void BatchRenamingScheme::AddInsertGrandparent(const TextExtraction &t)
 
 NSString *BatchRenamingScheme::Rename(const FileInfo &_fi, int _number) const
 {
-    NSMutableString *str = [[NSMutableString alloc] initWithCapacity:64];
+    NSMutableString *const str = [[NSMutableString alloc] initWithCapacity:64];
 
     CaseTransform case_transform = CaseTransform::Unchanged;
 
@@ -928,8 +928,8 @@ NSString *BatchRenamingScheme::Rename(const FileInfo &_fi, int _number) const
         }
     }
 
-    NSString *after_replacing = DoSearchReplace(m_SearchReplace, str);
-    NSString *after_case_trans = StringByTransform(after_replacing, m_CaseTransform, m_CaseTransformWithExt);
+    NSString *const after_replacing = DoSearchReplace(m_SearchReplace, str);
+    NSString *const after_case_trans = StringByTransform(after_replacing, m_CaseTransform, m_CaseTransformWithExt);
     return after_case_trans;
 }
 

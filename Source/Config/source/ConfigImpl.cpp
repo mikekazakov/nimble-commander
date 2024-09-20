@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConfigImpl.h"
 #include "Log.h"
 #include <rapidjson/error/en.h>
@@ -503,7 +503,8 @@ static rapidjson::Document ParseDefaultsOrThrow(std::string_view _default_docume
     }
 
     rapidjson::Document defaults;
-    rapidjson::ParseResult ok = defaults.Parse<g_ParseFlags>(_default_document.data(), _default_document.length());
+    const rapidjson::ParseResult ok =
+        defaults.Parse<g_ParseFlags>(_default_document.data(), _default_document.length());
     if( !ok ) {
         throw std::invalid_argument{rapidjson::GetParseError_En(ok.Code())};
     }
@@ -517,7 +518,7 @@ static rapidjson::Document ParseOverwritesOrReturnNull(std::string_view _overwri
         return rapidjson::Document{rapidjson::kNullType};
 
     rapidjson::Document overwrites;
-    rapidjson::ParseResult ok =
+    const rapidjson::ParseResult ok =
         overwrites.Parse<g_ParseFlags>(_overwrites_document.data(), _overwrites_document.length());
     if( !ok )
         return rapidjson::Document{rapidjson::kNullType};

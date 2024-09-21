@@ -206,7 +206,14 @@ private:
 class ExternalToolsStorage : public base::ObservableBase
 {
 public:
-    ExternalToolsStorage(const char *_config_path, nc::config::Config &_config);
+    enum class WriteChanges : uint8_t {
+        Immediate,
+        Background
+    };
+
+    ExternalToolsStorage(const char *_config_path,
+                         nc::config::Config &_config,
+                         WriteChanges _write_changes = WriteChanges::Background);
 
     size_t ToolsCount() const;
     std::shared_ptr<const ExternalTool> GetTool(size_t _no) const;              // will return nullptr on invalid index
@@ -235,6 +242,7 @@ private:
     const char *m_ConfigPath;
     nc::config::Config &m_Config;
     std::vector<nc::config::Token> m_ConfigObservations;
+    WriteChanges m_WriteChanges;
 };
 
 } // namespace nc::panel

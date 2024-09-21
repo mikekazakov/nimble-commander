@@ -417,8 +417,10 @@ static std::optional<ExternalTool> LoadTool(const nc::config::Value &_from)
     return et;
 }
 
-ExternalToolsStorage::ExternalToolsStorage(const char *_config_path, nc::config::Config &_config)
-    : m_ConfigPath(_config_path), m_Config(_config)
+ExternalToolsStorage::ExternalToolsStorage(const char *_config_path,
+                                           nc::config::Config &_config,
+                                           WriteChanges _write_changes)
+    : m_ConfigPath(_config_path), m_Config(_config), m_WriteChanges(_write_changes)
 {
     LoadToolsFromConfig();
 
@@ -436,9 +438,20 @@ void ExternalToolsStorage::LoadToolsFromConfig()
 
     auto lock = std::lock_guard{m_ToolsLock};
     m_Tools.clear();
-    for( auto i = tools.Begin(), e = tools.End(); i != e; ++i )
-        if( auto et = LoadTool(*i) )
+
+    ankerl::unordered_dense::set<base::UUID> uuids;
+    for( auto i = tools.Begin(), e = tools.End(); i != e; ++i ) {
+        if( auto et = LoadTool(*i) ) {
+
+            // Ensure that all uuids are unique
+            if( uuids.contains(et->m_UUID) ) {
+                et->m_UUID = base::UUID::Generate();
+            }
+            uuids.emplace(et->m_UUID);
+
             m_Tools.emplace_back(std::make_shared<ExternalTool>(std::move(*et)));
+        }
+    }
 }
 
 size_t ExternalToolsStorage::ToolsCount() const
@@ -489,7 +502,12 @@ void ExternalToolsStorage::WriteToolsToConfig() const
 void ExternalToolsStorage::CommitChanges()
 {
     FireObservers();
-    dispatch_to_background([=, this] { WriteToolsToConfig(); });
+    if( m_WriteChanges == WriteChanges::Background ) {
+        dispatch_to_background([=, this] { WriteToolsToConfig(); });
+    }
+    else {
+        WriteToolsToConfig();
+    }
 }
 
 void ExternalToolsStorage::ReplaceTool(ExternalTool _tool, size_t _at_index)
@@ -509,6 +527,9 @@ void ExternalToolsStorage::InsertTool(ExternalTool _tool)
 {
     {
         auto lock = std::lock_guard{m_ToolsLock};
+        if( std::ranges::any_of(m_Tools, [&](auto &_existing) { return _existing->m_UUID == _tool.m_UUID; }) ) {
+            throw std::invalid_argument("Duplicate UUID");
+        }
         m_Tools.emplace_back(std::make_shared<ExternalTool>(std::move(_tool)));
     }
     CommitChanges();

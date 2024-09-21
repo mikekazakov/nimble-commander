@@ -72,7 +72,6 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
 @property(nonatomic, readonly) NCMainWindowController *mainWindowController;
 @property(nonatomic, readonly) FilePanelMainSplitView *splitView;
-@property(nonatomic, readonly) nc::panel::ExternalToolsStorage &externalToolsStorage;
 @property(nonatomic, readonly) nc::ops::Pool &operationsPool;
 @property(nonatomic, readonly) bool isPanelActive;
 @property(nonatomic, readonly) bool goToForcesPanelActivation;

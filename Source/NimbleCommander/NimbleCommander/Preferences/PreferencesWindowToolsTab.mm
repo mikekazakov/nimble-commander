@@ -226,6 +226,8 @@ static bool AskUserToDeleteTool()
 {
     const auto segment = self.toolsAddRemove.selectedSegment;
     if( segment == 0 ) {
+        ExternalTool new_tool;
+        new_tool.m_UUID = nc::base::UUID::Generate();
         m_ToolsStorage().InsertTool(ExternalTool());
         dispatch_to_main_queue_after(10ms, [=] {
             if( self.toolsTable.numberOfRows > 0 ) {

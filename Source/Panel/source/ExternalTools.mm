@@ -12,6 +12,7 @@
 #include <any>
 #include <atomic>
 #include <filesystem>
+#include <algorithm>
 #include <sys/stat.h>
 
 namespace nc::panel {
@@ -23,6 +24,7 @@ static const auto g_PathKey = "path";
 static const auto g_ParametersKey = "parameters";
 static const auto g_ShortcutKey = "shortcut";
 static const auto g_StartupKey = "startup";
+static const auto g_UUIDKey = "uuid";
 
 ExternalToolsParameters::Step::Step(ActionType t, uint16_t i, bool _partial) : type(t), index(i), partial(_partial)
 {
@@ -371,6 +373,7 @@ static nc::config::Value SaveTool(const ExternalTool &_et)
         MakeStandaloneString(g_ShortcutKey), MakeStandaloneString(_et.m_Shorcut.ToPersString()), g_CrtAllocator);
     v.AddMember(
         MakeStandaloneString(g_StartupKey), nc::config::Value(static_cast<int>(_et.m_StartupMode)), g_CrtAllocator);
+    v.AddMember(MakeStandaloneString(g_UUIDKey), MakeStandaloneString(_et.m_UUID.ToString()), g_CrtAllocator);
 
     // TODO: save m_GUIArgumentInterpretation
     return v;
@@ -399,6 +402,14 @@ static std::optional<ExternalTool> LoadTool(const nc::config::Value &_from)
 
     if( _from.HasMember(g_StartupKey) && _from[g_StartupKey].IsInt() )
         et.m_StartupMode = static_cast<ExternalTool::StartupMode>(_from[g_StartupKey].GetInt());
+
+    if( _from.HasMember(g_UUIDKey) && _from[g_UUIDKey].IsString() &&
+        nc::base::UUID::FromString(_from[g_UUIDKey].GetString()) ) {
+        et.m_UUID = nc::base::UUID::FromString(_from[g_UUIDKey].GetString()).value();
+    }
+    else {
+        et.m_UUID = nc::base::UUID::Generate(); // Provide any "old" tool with a new uuid
+    }
 
     // TODO: load m_GUIArgumentInterpretation
     return et;
@@ -438,6 +449,14 @@ std::shared_ptr<const ExternalTool> ExternalToolsStorage::GetTool(size_t _no) co
 {
     auto guard = std::lock_guard{m_ToolsLock};
     return _no < m_Tools.size() ? m_Tools[_no] : nullptr;
+}
+
+std::shared_ptr<const ExternalTool> ExternalToolsStorage::GetTool(const base::UUID &_uuid) const
+{
+    auto guard = std::lock_guard{m_ToolsLock};
+
+    auto it = std::ranges::find_if(m_Tools, [&](auto &_tool) { return _tool->m_UUID == _uuid; });
+    return it == m_Tools.end() ? nullptr : *it;
 }
 
 std::vector<std::shared_ptr<const ExternalTool>> ExternalToolsStorage::GetAllTools() const

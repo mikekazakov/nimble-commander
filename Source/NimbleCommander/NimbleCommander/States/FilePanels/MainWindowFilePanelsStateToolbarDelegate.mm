@@ -12,10 +12,14 @@
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 #include <deque>
+#include <algorithm>
+#include <fmt/format.h>
+
+using nc::panel::ExternalTool;
 
 // do not change these strings, they are used for persistency in NSUserDefaults
 static auto g_ToolbarIdentifier = @"FilePanelsToolbar";
-static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
+static std::string_view g_ExternalToolsIdentifiersPrefix = "external_tool_";
 
 @implementation MainWindowFilePanelsStateToolbarDelegate {
     NSToolbar *m_Toolbar;
@@ -124,7 +128,25 @@ static NSImage *ImageForTool(const nc::panel::ExternalTool &_et)
     return img;
 }
 
-- (void)setupExternalToolItem:(NSToolbarItem *)_item forTool:(const nc::panel::ExternalTool &)_et no:(int)_no
+static NSString *EncodeToolIdentifier(const ExternalTool &_et)
+{
+    const std::string identifier = fmt::format("{}{}", g_ExternalToolsIdentifiersPrefix, _et.m_UUID.ToString());
+    return [NSString stringWithUTF8StdString:identifier];
+}
+
+- (std::shared_ptr<const ExternalTool>)findToolWithIdentifier:(NSString *)_identifier
+{
+    std::string_view identifier = _identifier.UTF8String;
+    if( identifier.starts_with(g_ExternalToolsIdentifiersPrefix) ) {
+        identifier.remove_prefix(g_ExternalToolsIdentifiersPrefix.length());
+        if( const auto uuid = nc::base::UUID::FromString(identifier) ) {
+            return m_Storage->GetTool(uuid.value());
+        }
+    }
+    return nullptr;
+}
+
+- (void)setupExternalToolItem:(NSToolbarItem *)_item forTool:(const nc::panel::ExternalTool &)_et
 {
     const auto title = [NSString stringWithUTF8StdString:_et.m_Title];
     _item.image = ImageForTool(_et);
@@ -132,7 +154,6 @@ static NSImage *ImageForTool(const nc::panel::ExternalTool &_et)
     _item.paletteLabel = title;
     _item.target = self;
     _item.action = @selector(onExternalToolAction:);
-    _item.tag = _no;
     _item.toolTip = [&] {
         const auto hotkey = _et.m_Shorcut.PrettyString();
         if( hotkey.length == 0 )
@@ -168,13 +189,10 @@ static NSImage *ImageForTool(const nc::panel::ExternalTool &_et)
         m_PoolViewToolbarItem = item;
         return item;
     }
-    if( [itemIdentifier hasPrefix:g_ExternalToolsIdentifiersPrefix] ) {
-        const int n = atoi(itemIdentifier.UTF8String + g_ExternalToolsIdentifiersPrefix.length);
-        if( const auto tool = m_Storage->GetTool(n) ) {
-            NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-            [self setupExternalToolItem:item forTool:*tool no:n];
-            return item;
-        }
+    if( const auto tool = [self findToolWithIdentifier:itemIdentifier] ) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
+        [self setupExternalToolItem:item forTool:*tool];
+        return item;
     }
 
     return nil;
@@ -208,7 +226,7 @@ static NSImage *ImageForTool(const nc::panel::ExternalTool &_et)
     return allowed_items;
 }
 
-- (NSArray *)toolbarAllowedItemIentifiers:(NSToolbar *) [[maybe_unused]] _toolbar
+- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar *) [[maybe_unused]] _toolbar
 {
     return m_AllowedToolbarItemsIdentifiers;
 }
@@ -222,9 +240,10 @@ static NSImage *ImageForTool(const nc::panel::ExternalTool &_et)
     [a addObject:@"filepanels_right_goto_button"];
     [a addObject:@"operations_pool"];
 
-    auto tools = m_Storage->GetAllTools();
-    for( int i = 0, e = static_cast<int>(tools.size()); i != e; ++i )
-        [a addObject:[NSString stringWithFormat:@"%@%d", g_ExternalToolsIdentifiersPrefix, i]];
+    const std::vector<std::shared_ptr<const ExternalTool>> tools = m_Storage->GetAllTools();
+    for( const auto &tool : tools ) {
+        [a addObject:EncodeToolIdentifier(*tool)];
+    }
 
     [a addObject:NSToolbarFlexibleSpaceItemIdentifier];
     [a addObject:NSToolbarSpaceItemIdentifier];
@@ -235,20 +254,22 @@ static NSImage *ImageForTool(const nc::panel::ExternalTool &_et)
 - (void)externalToolsChanged
 {
     dispatch_assert_main_queue();
-    std::deque<int> to_remove;
+    std::vector<int> to_remove;
     for( NSToolbarItem *i in m_Toolbar.items ) {
-        if( [i.itemIdentifier hasPrefix:g_ExternalToolsIdentifiersPrefix] ) {
-            const int n = atoi(i.itemIdentifier.UTF8String + g_ExternalToolsIdentifiersPrefix.length);
-            if( const auto tool = m_Storage->GetTool(n) ) {
-                [self setupExternalToolItem:i forTool:*tool no:n];
+        //        if( [i.itemIdentifier hasPrefix:g_ExternalToolsIdentifiersPrefix] ) {
+        if( std::string_view(i.itemIdentifier.UTF8String).starts_with(g_ExternalToolsIdentifiersPrefix) ) {
+            //            const int n = atoi(i.itemIdentifier.UTF8String + g_ExternalToolsIdentifiersPrefix.length);
+            if( const auto tool = [self findToolWithIdentifier:i.itemIdentifier] ) {
+                [self setupExternalToolItem:i forTool:*tool];
             }
             else
-                to_remove.push_front(static_cast<int>([m_Toolbar.items indexOfObject:i]));
+                to_remove.push_back(static_cast<int>([m_Toolbar.items indexOfObject:i]));
         }
     }
 
     // this will immediately trigger removing of same elements from other windows' toolbars.
     // this is intended and should work fine.
+    std::ranges::reverse(to_remove);
     for( auto i : to_remove )
         [m_Toolbar removeItemAtIndex:i];
 

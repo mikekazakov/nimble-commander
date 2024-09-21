@@ -935,7 +935,6 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window, std::function<v
     [m_SplitView.rightTabbedHolder addPanel:_pc.view];
 }
 
-
 - (void)revealPanel:(PanelController *)panel
 {
     if( [self isRightController:panel] ) {

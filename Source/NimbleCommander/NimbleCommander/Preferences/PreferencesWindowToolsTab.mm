@@ -129,8 +129,7 @@ static bool AskUserToDeleteTool()
     auto &tool = m_Tools[row];
 
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-    tf.stringValue = tool->m_Title.empty() ? [NSString stringWithFormat:@"Tool #%ld", row]
-                                           : [NSString stringWithUTF8StdString:tool->m_Title];
+    tf.stringValue = [NSString stringWithUTF8StdString:tool->m_Title];
     tf.bordered = false;
     tf.editable = false;
     tf.drawsBackground = false;
@@ -228,11 +227,13 @@ static bool AskUserToDeleteTool()
     if( segment == 0 ) {
         ExternalTool new_tool;
         new_tool.m_UUID = nc::base::UUID::Generate();
-        m_ToolsStorage().InsertTool(ExternalTool());
+        new_tool.m_Title = m_ToolsStorage().NewTitle();
+        m_ToolsStorage().InsertTool(new_tool);
         dispatch_to_main_queue_after(10ms, [=] {
-            if( self.toolsTable.numberOfRows > 0 ) {
-                [self.toolsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:self.toolsTable.numberOfRows - 1]
-                             byExtendingSelection:false];
+            if( const long rows = self.toolsTable.numberOfRows; rows > 0 ) {
+                const long new_row = rows - 1;
+                [self.toolsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:new_row] byExtendingSelection:false];
+                [self.toolsTable scrollRowToVisible:new_row];
                 [self.view.window makeFirstResponder:self.toolTitle];
             }
         });
@@ -375,10 +376,16 @@ static bool AskUserToDeleteTool()
         drag_to == drag_from + 1 ) // same index, below
         return false;
 
+    const bool selected = [self.toolsTable isRowSelected:drag_from];
+
     if( drag_from < drag_to )
         drag_to--;
 
     m_ToolsStorage().MoveTool(drag_from, drag_to);
+
+    if( selected ) {
+        [self.toolsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:drag_to] byExtendingSelection:false];
+    }
 
     return true;
 }

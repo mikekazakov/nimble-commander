@@ -1,5 +1,6 @@
 // Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalTools.h"
+#include "Internal.h"
 #include <Config/Config.h>
 #include <Config/RapidJSON.h>
 #include <Foundation/Foundation.h>
@@ -7,6 +8,7 @@
 #include <Utility/PathManip.h>
 #include <Term/Task.h>
 #include <Base/dispatch_cpp.h>
+#include <Base/UnorderedUtil.h>
 #include <VFS/VFSError.h>
 #include <fmt/core.h>
 #include <any>
@@ -539,6 +541,24 @@ void ExternalToolsStorage::RemoveTool(size_t _at_index)
         m_Tools.erase(next(begin(m_Tools), _at_index));
     }
     CommitChanges();
+}
+
+std::string ExternalToolsStorage::NewTitle() const
+{
+    auto lock = std::lock_guard{m_ToolsLock};
+    ankerl::unordered_dense::set<std::string> names;
+    for( const auto &et : m_Tools ) {
+        names.emplace(et->m_Title);
+    }
+
+    size_t idx = 0;
+    const std::string prefix = NSLocalizedString(@"New Tool", "A placeholder title for a new external tool").UTF8String;
+    while( true ) {
+        const std::string name = idx == 0 ? prefix : fmt::format("{} {}", prefix, idx + 1);
+        if( !names.contains(name) )
+            return name;
+        ++idx;
+    }
 }
 
 ExternalToolExecution::ExternalToolExecution(const Context &_ctx, const ExternalTool &_et) : m_Ctx(_ctx), m_ET(_et)

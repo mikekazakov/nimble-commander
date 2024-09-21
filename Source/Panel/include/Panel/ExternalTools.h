@@ -219,6 +219,9 @@ public:
     void RemoveTool(size_t _at_index);
     void MoveTool(size_t _at_index, size_t _to_index);
 
+    // Generates a new unique title for a new tool
+    std::string NewTitle() const;
+
     using ObservationTicket = ObservableBase::ObservationTicket;
     ObservationTicket ObserveChanges(std::function<void()> _callback);
 

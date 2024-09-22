@@ -15,6 +15,7 @@ Nimble Commander supports any Mac running the following versions of macOS:
 - macOS 12 Monterey
 - macOS 13 Ventura
 - macOS 14 Sonoma
+- macOS 15 Sequoia
 
 It runs natively on both Intel and Arm architectures.
 
@@ -230,7 +231,18 @@ The input query can be interpreted in different ways. There are 5 options for ma
 When filtered-out items are configured to still be shown, and a key modifier is set, it can be used to lock navigation within the matching files. Using normal keyboard navigation (Arrows, Home, End, etc.) while holding the modifier will restrict the cursor movement to only the matching files.
 
 ### View Modes
-_to be written_
+Nimble Commander can display the contents of a panel in two modes: Brief and List. The Brief mode shows only basic item information, such as the filename, icon, and tag colors, and arranges the items in consecutive columns. This allows more items to fit on the screen and enables the cursor to move both vertically and horizontally. The List mode, on the other hand, displays panel items in a table format, where each row represents a single item and each column represents an attribute. This mode allows only vertical cursor movement. The screenshot below shows how the same folder, `/usr/bin`, is displayed in Brief and List modes:
+
+![Brief and List modes](Help-panel-modes.png)
+
+By default, Nimble Commander has 4 preconfigured modes, which you can switch using the `View > View Mode` menu or via the hotkeys listed below:
+
+- `Ctrl + 1` - `Short`: A Brief mode that shows 3 equal-sized columns per panel.
+- `Ctrl + 2` - `Medium`: A Brief mode that uses dynamically sized columns depending on the widths of filenames.
+- `Ctrl + 3` - `Full`: A List mode that shows the following columns: filename, size, date created, date modified, and date added.
+- `Ctrl + 4` - `Wide`: A List mode that shows two columns: filename and size.
+
+You can fine-tune, rearrange, and add new custom panel layouts in the Settings dialog: `Settings > Panels > Layout`.
 
 ### Quick Lists
 _to be written_

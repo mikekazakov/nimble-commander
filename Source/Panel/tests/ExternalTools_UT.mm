@@ -1,7 +1,9 @@
-// Copyright (C) 2022-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalTools.h"
 #include "Tests.h"
 #include <VFS/Native.h>
+#include <Config/ConfigImpl.h>
+#include <Config/NonPersistentOverwritesStorage.h>
 #include <Utility/TemporaryFileStorageImpl.h>
 #include <string>
 #include <fstream>
@@ -698,4 +700,14 @@ TEST_CASE(PREFIX "ExternalToolExecution - user-input values")
         auto args = ex.BuildArguments();
         CHECK(args == tc.args_expected);
     }
+}
+
+TEST_CASE(PREFIX "Storage refuses duplicate UUIDs")
+{
+    nc::config::ConfigImpl config{"{}", std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
+    ExternalToolsStorage stor("tools", config, ExternalToolsStorage::WriteChanges::Immediate);
+    ExternalTool t;
+    t.m_Title = "hi";
+    REQUIRE_NOTHROW(stor.InsertTool(t));
+    REQUIRE_THROWS_AS(stor.InsertTool(t), std::invalid_argument);
 }

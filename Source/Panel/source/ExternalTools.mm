@@ -1,5 +1,6 @@
 // Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalTools.h"
+#include "Internal.h"
 #include <Config/Config.h>
 #include <Config/RapidJSON.h>
 #include <Foundation/Foundation.h>
@@ -7,11 +8,13 @@
 #include <Utility/PathManip.h>
 #include <Term/Task.h>
 #include <Base/dispatch_cpp.h>
+#include <Base/UnorderedUtil.h>
 #include <VFS/VFSError.h>
 #include <fmt/core.h>
 #include <any>
 #include <atomic>
 #include <filesystem>
+#include <algorithm>
 #include <sys/stat.h>
 
 namespace nc::panel {
@@ -23,6 +26,7 @@ static const auto g_PathKey = "path";
 static const auto g_ParametersKey = "parameters";
 static const auto g_ShortcutKey = "shortcut";
 static const auto g_StartupKey = "startup";
+static const auto g_UUIDKey = "uuid";
 
 ExternalToolsParameters::Step::Step(ActionType t, uint16_t i, bool _partial) : type(t), index(i), partial(_partial)
 {
@@ -371,6 +375,7 @@ static nc::config::Value SaveTool(const ExternalTool &_et)
         MakeStandaloneString(g_ShortcutKey), MakeStandaloneString(_et.m_Shorcut.ToPersString()), g_CrtAllocator);
     v.AddMember(
         MakeStandaloneString(g_StartupKey), nc::config::Value(static_cast<int>(_et.m_StartupMode)), g_CrtAllocator);
+    v.AddMember(MakeStandaloneString(g_UUIDKey), MakeStandaloneString(_et.m_UUID.ToString()), g_CrtAllocator);
 
     // TODO: save m_GUIArgumentInterpretation
     return v;
@@ -400,12 +405,22 @@ static std::optional<ExternalTool> LoadTool(const nc::config::Value &_from)
     if( _from.HasMember(g_StartupKey) && _from[g_StartupKey].IsInt() )
         et.m_StartupMode = static_cast<ExternalTool::StartupMode>(_from[g_StartupKey].GetInt());
 
+    if( _from.HasMember(g_UUIDKey) && _from[g_UUIDKey].IsString() &&
+        nc::base::UUID::FromString(_from[g_UUIDKey].GetString()) ) {
+        et.m_UUID = nc::base::UUID::FromString(_from[g_UUIDKey].GetString()).value();
+    }
+    else {
+        et.m_UUID = nc::base::UUID::Generate(); // Provide any "old" tool with a new uuid
+    }
+
     // TODO: load m_GUIArgumentInterpretation
     return et;
 }
 
-ExternalToolsStorage::ExternalToolsStorage(const char *_config_path, nc::config::Config &_config)
-    : m_ConfigPath(_config_path), m_Config(_config)
+ExternalToolsStorage::ExternalToolsStorage(const char *_config_path,
+                                           nc::config::Config &_config,
+                                           WriteChanges _write_changes)
+    : m_ConfigPath(_config_path), m_Config(_config), m_WriteChanges(_write_changes)
 {
     LoadToolsFromConfig();
 
@@ -423,9 +438,20 @@ void ExternalToolsStorage::LoadToolsFromConfig()
 
     auto lock = std::lock_guard{m_ToolsLock};
     m_Tools.clear();
-    for( auto i = tools.Begin(), e = tools.End(); i != e; ++i )
-        if( auto et = LoadTool(*i) )
+
+    ankerl::unordered_dense::set<base::UUID> uuids;
+    for( auto i = tools.Begin(), e = tools.End(); i != e; ++i ) {
+        if( auto et = LoadTool(*i) ) {
+
+            // Ensure that all uuids are unique
+            if( uuids.contains(et->m_UUID) ) {
+                et->m_UUID = base::UUID::Generate();
+            }
+            uuids.emplace(et->m_UUID);
+
             m_Tools.emplace_back(std::make_shared<ExternalTool>(std::move(*et)));
+        }
+    }
 }
 
 size_t ExternalToolsStorage::ToolsCount() const
@@ -438,6 +464,14 @@ std::shared_ptr<const ExternalTool> ExternalToolsStorage::GetTool(size_t _no) co
 {
     auto guard = std::lock_guard{m_ToolsLock};
     return _no < m_Tools.size() ? m_Tools[_no] : nullptr;
+}
+
+std::shared_ptr<const ExternalTool> ExternalToolsStorage::GetTool(const base::UUID &_uuid) const
+{
+    auto guard = std::lock_guard{m_ToolsLock};
+
+    auto it = std::ranges::find_if(m_Tools, [&](auto &_tool) { return _tool->m_UUID == _uuid; });
+    return it == m_Tools.end() ? nullptr : *it;
 }
 
 std::vector<std::shared_ptr<const ExternalTool>> ExternalToolsStorage::GetAllTools() const
@@ -468,7 +502,12 @@ void ExternalToolsStorage::WriteToolsToConfig() const
 void ExternalToolsStorage::CommitChanges()
 {
     FireObservers();
-    dispatch_to_background([=, this] { WriteToolsToConfig(); });
+    if( m_WriteChanges == WriteChanges::Background ) {
+        dispatch_to_background([=, this] { WriteToolsToConfig(); });
+    }
+    else {
+        WriteToolsToConfig();
+    }
 }
 
 void ExternalToolsStorage::ReplaceTool(ExternalTool _tool, size_t _at_index)
@@ -488,6 +527,9 @@ void ExternalToolsStorage::InsertTool(ExternalTool _tool)
 {
     {
         auto lock = std::lock_guard{m_ToolsLock};
+        if( std::ranges::any_of(m_Tools, [&](auto &_existing) { return _existing->m_UUID == _tool.m_UUID; }) ) {
+            throw std::invalid_argument("Duplicate UUID");
+        }
         m_Tools.emplace_back(std::make_shared<ExternalTool>(std::move(_tool)));
     }
     CommitChanges();
@@ -520,6 +562,24 @@ void ExternalToolsStorage::RemoveTool(size_t _at_index)
         m_Tools.erase(next(begin(m_Tools), _at_index));
     }
     CommitChanges();
+}
+
+std::string ExternalToolsStorage::NewTitle() const
+{
+    auto lock = std::lock_guard{m_ToolsLock};
+    ankerl::unordered_dense::set<std::string> names;
+    for( const auto &et : m_Tools ) {
+        names.emplace(et->m_Title);
+    }
+
+    size_t idx = 0;
+    const std::string prefix = NSLocalizedString(@"New Tool", "A placeholder title for a new external tool").UTF8String;
+    while( true ) {
+        const std::string name = idx == 0 ? prefix : fmt::format("{} {}", prefix, idx + 1);
+        if( !names.contains(name) )
+            return name;
+        ++idx;
+    }
 }
 
 ExternalToolExecution::ExternalToolExecution(const Context &_ctx, const ExternalTool &_et) : m_Ctx(_ctx), m_ET(_et)

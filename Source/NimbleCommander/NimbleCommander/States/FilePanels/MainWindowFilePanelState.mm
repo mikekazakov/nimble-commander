@@ -275,7 +275,9 @@ static NSString *TitleForData(const data::Model *_data);
     m_SeparatorLine.borderColor = nc::CurrentTheme().FilePanelsGeneralTopSeparatorColor();
     [self addSubview:m_SeparatorLine];
 
-    m_ToolbarDelegate = [[MainWindowFilePanelsStateToolbarDelegate alloc] initWithFilePanelsState:self];
+    m_ToolbarDelegate =
+        [[MainWindowFilePanelsStateToolbarDelegate alloc] initWithToolsStorage:NCAppDelegate.me.externalTools
+                                                             andOperationsPool:self.operationsPool];
 
     auto views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_SplitView);
     auto contraints = {@"V:|-(==0@250)-[m_SeparatorLine(==1)]-(==0)-[m_SplitView(>=150@500)]",
@@ -931,11 +933,6 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window, std::function<v
 {
     m_RightPanelControllers.emplace_back(_pc);
     [m_SplitView.rightTabbedHolder addPanel:_pc.view];
-}
-
-- (ExternalToolsStorage &)externalToolsStorage
-{
-    return NCAppDelegate.me.externalTools;
 }
 
 - (void)revealPanel:(PanelController *)panel

@@ -14,6 +14,7 @@
 #include "DisplayNamesCache.h"
 #include "File.h"
 #include <VFS/VFSError.h>
+#include <VFS/Log.h>
 #include "../ListingInput.h"
 #include "Fetching.h"
 #include <Base/DispatchGroup.h>
@@ -225,13 +226,16 @@ int NativeHost::FetchDirectoryListing(std::string_view _path,
                           // there's no point trying
 
             // TODO: is it worth routing the I/O here? guess not atm
-            const int entry_fd = openat(fd, listing_source.filenames[n].c_str(), O_RDONLY | O_NONBLOCK);
+            const std::string &filename = listing_source.filenames[n];
+            const int entry_fd = openat(fd, filename.c_str(), O_RDONLY | O_NONBLOCK);
             if( entry_fd < 0 )
                 continue; // guess silenty skipping the errors is ok here...
             auto close_entry_fd = at_scope_end([entry_fd] { close(entry_fd); });
 
-            if( auto tags = utility::Tags::ReadTags(entry_fd); !tags.empty() )
+            if( auto tags = utility::Tags::ReadTags(entry_fd); !tags.empty() ) {
+                Log::Debug("Extracted the tags of the file '{}': {}", filename, fmt::join(tags, ", "));
                 listing_source.tags.emplace(n, std::move(tags));
+            }
         }
     }
 

@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <optional>
 #include <utility>
+#include <fmt/format.h>
 
 namespace nc::utility {
 
@@ -105,6 +106,17 @@ private:
 };
 
 } // namespace nc::utility
+
+template <>
+struct fmt::formatter<nc::utility::Tags::Tag> : fmt::formatter<std::string> {
+    constexpr auto parse(fmt::format_parse_context &ctx) const { return ctx.begin(); }
+
+    template <typename FormatContext>
+    auto format(const nc::utility::Tags::Tag &_tag, FormatContext &_ctx) const
+    {
+        return fmt::format_to(_ctx.out(), "{} ({})", _tag.Label(), std::to_underlying(_tag.Color()));
+    }
+};
 
 namespace std {
 

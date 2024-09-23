@@ -1,0 +1,51 @@
+name: 📺 UI
+description: Found a visual glitch or need something polished?
+title: "[UI]: "
+labels: ["UI"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this report on the UI issue!
+  - type: markdown
+    attributes:
+      value: "Please make sure to read the [contributing guidelines](https://github.com/mikekazakov/nimble-commander/blob/main/CONTRIBUTING.md) before submitting an issue."
+  - type: checkboxes
+    id: agreement
+    attributes:
+      label: Confirmation
+      description: Please confirm before submitting
+      options:
+        - label: I have read the contributing guidelines.
+          required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version of Nimble Commander
+      description: Fill in below what version of Nimble Commander you are using, including your OS.
+      placeholder: ex. v1.5.0, MacOS 14
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Current Appearance
+      description: "Describe the visual issue you've found and attach a screenshot if possible."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Appearance
+      description: "Describe what you'd like to see instead, explain why it would be better, and attach examples if applicable."
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional Information
+      description: Provide any additional details or context that might help.
+      placeholder: "Any other details or context?"
+    validations:
+      required: false
+

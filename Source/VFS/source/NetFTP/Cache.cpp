@@ -1,7 +1,8 @@
 // Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Cache.h"
-#include <filesystem>
 #include <VFS/Log.h>
+#include <algorithm>
+#include <filesystem>
 
 namespace nc::vfs::ftp {
 
@@ -26,7 +27,7 @@ void Entry::ToStat(VFSStat &_stat) const
 
 const Entry *Directory::EntryByName(const std::string &_name) const
 {
-    auto i = find_if(begin(entries), end(entries), [&](auto &_e) { return _e.name == _name; });
+    auto i = std::ranges::find_if(entries, [&](auto &_e) { return _e.name == _name; });
     return i != end(entries) ? &(*i) : nullptr;
 }
 

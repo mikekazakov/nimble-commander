@@ -22,7 +22,7 @@ struct StubIO : BlinkScheduler::IO {
     std::chrono::nanoseconds Now() noexcept override { return now; }
     void Dispatch(std::chrono::nanoseconds _after, std::function<void()> _what) noexcept override
     {
-        dispatched = std::make_shared<Dispatched>(Dispatched{_after, std::move(_what)});
+        dispatched = std::make_shared<Dispatched>(Dispatched{.after = _after, .what = std::move(_what)});
     }
 };
 

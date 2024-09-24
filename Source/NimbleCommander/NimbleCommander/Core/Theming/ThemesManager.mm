@@ -1,16 +1,15 @@
 // Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ThemesManager.h"
 #include "Theme.h"
-#include <Config/RapidJSON.h>
 #include <Base/dispatch_cpp.h>
+#include <Config/RapidJSON.h>
+#include <algorithm>
 #include <ankerl/unordered_dense.h>
 #include <charconv>
 #include <fmt/core.h>
-#include <ranges>
-#include <ranges>
-#include <algorithm>
 #include <frozen/string.h>
 #include <frozen/unordered_map.h>
+#include <ranges>
 
 namespace nc {
 
@@ -551,7 +550,7 @@ bool ThemesManager::RenameTheme(const std::string &_theme_name, const std::strin
 
     m_Themes.erase(_theme_name);
     m_Themes.emplace(_to_name, std::make_shared<nc::config::Document>(std::move(doc)));
-    std::replace(m_OrderedThemeNames.begin(), m_OrderedThemeNames.end(), _theme_name, _to_name);
+    std::ranges::replace(m_OrderedThemeNames, _theme_name, _to_name);
 
     // TODO: move to background thread, delay execution
     WriteThemes();
@@ -577,7 +576,7 @@ void ThemesManager::SetAutomaticSwitching(const AutoSwitchingSettings &_as)
 
 ThemesManager::AutoSwitchingSettings ThemesManager::AutomaticSwitching() const
 {
-    return {m_AutomaticSwitchingEnabled, m_AutoLightThemeName, m_AutoDarkThemeName};
+    return {.enabled = m_AutomaticSwitchingEnabled, .light = m_AutoLightThemeName, .dark = m_AutoDarkThemeName};
 }
 
 void ThemesManager::NotifyAboutSystemAppearanceChange(ThemeAppearance _appearance)

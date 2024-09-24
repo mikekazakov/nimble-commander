@@ -1,13 +1,14 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Requests.h"
+#include "Connection.h"
+#include "DateTimeParser.h"
+#include "PathRoutines.h"
+#include "ReadBuffer.h"
 #include "WebDAVHost.h"
 #include <Base/algo.h>
-#include <pugixml/pugixml.hpp>
-#include "DateTimeParser.h"
-#include "Connection.h"
-#include "ReadBuffer.h"
-#include "PathRoutines.h"
 #include <CFNetwork/CFNetworkErrors.h>
+#include <algorithm>
+#include <pugixml/pugixml.hpp>
 
 namespace nc::vfs::webdav {
 
@@ -24,8 +25,8 @@ static HTTPRequests::Mask ParseSupportedRequests(std::string_view _options_respo
     HTTPRequests::Mask mask = HTTPRequests::None;
 
     const std::string_view allowed_prefix = "Allow: ";
-    const auto allowed = find_if(
-        begin(lines), end(lines), [allowed_prefix](const auto &_line) { return _line.starts_with(allowed_prefix); });
+    const auto allowed =
+        std::ranges::find_if(lines, [allowed_prefix](const auto &_line) { return _line.starts_with(allowed_prefix); });
     if( allowed != end(lines) ) {
         const auto requests_set = allowed->substr(allowed_prefix.size());
         const std::vector<std::string> requests = base::SplitByDelimiters(requests_set, ", ");
@@ -181,7 +182,7 @@ static std::vector<PropFindResponse> PruneFilepaths(std::vector<PropFindResponse
 
         return false;
     };
-    _items.erase(std::remove_if(std::begin(_items), std::end(_items), pred), std::end(_items));
+    std::erase_if(_items, pred);
     return _items;
 }
 
@@ -195,7 +196,7 @@ static bool FilepathsHavePathPrefix(const std::vector<PropFindResponse> &_items,
 
     const auto base_path = "/" + _path;
     const auto server_uses_prefixes =
-        all_of(begin(_items), end(_items), [&](const auto &_item) { return _item.filename.starts_with(base_path); });
+        std::ranges::all_of(_items, [&](const auto &_item) { return _item.filename.starts_with(base_path); });
     return server_uses_prefixes;
 }
 

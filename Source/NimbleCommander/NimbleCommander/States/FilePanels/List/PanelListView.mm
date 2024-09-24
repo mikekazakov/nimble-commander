@@ -9,19 +9,21 @@
 #include <Utility/ObjCpp.h>
 #include <Panel/PanelData.h>
 #include <Panel/PanelDataSortMode.h>
+
+#include "../Helpers/IconRepositoryCleaner.h"
 #include "../PanelView.h"
 #include "Layout.h"
-#include "PanelListViewNameView.h"
-#include "PanelListViewExtensionView.h"
-#include "PanelListViewRowView.h"
-#include "PanelListViewTableView.h"
-#include "PanelListViewTableHeaderView.h"
-#include "PanelListViewTableHeaderCell.h"
-#include "PanelListViewGeometry.h"
-#include "PanelListViewSizeView.h"
 #include "PanelListViewDateTimeView.h"
+#include "PanelListViewExtensionView.h"
+#include "PanelListViewGeometry.h"
+#include "PanelListViewNameView.h"
+#include "PanelListViewRowView.h"
+#include "PanelListViewSizeView.h"
+#include "PanelListViewTableHeaderCell.h"
+#include "PanelListViewTableHeaderView.h"
+#include "PanelListViewTableView.h"
 #include "PanelListViewTagsView.h"
-#include "../Helpers/IconRepositoryCleaner.h"
+#include <algorithm>
 
 using namespace nc;
 using namespace nc::panel;
@@ -1049,8 +1051,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
         auto layout = self.columnsLayout;
 
-        const auto t = std::find_if(
-            std::begin(layout.columns), std::end(layout.columns), [&](const auto &_i) { return _i.kind == kind; });
+        const auto t = std::ranges::find_if(layout.columns, [&](const auto &_i) { return _i.kind == kind; });
 
         if( t != std::end(layout.columns) ) {
             layout.columns.erase(t);

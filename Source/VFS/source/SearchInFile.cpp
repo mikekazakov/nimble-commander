@@ -61,7 +61,7 @@ SearchInFile::Result SearchInFile::Search(const CancelChecker &_checker)
         Result result;
         result.response = SearchText(&offset, &bytes_len, _checker);
         if( result.response == Response::Found )
-            result.location = {offset, bytes_len};
+            result.location = {.offset = offset, .bytes_len = bytes_len};
         return result;
     }
     else {

@@ -11,6 +11,8 @@
 #include <Utility/StringExtras.h>
 #include <Base/dispatch_cpp.h>
 
+#include <algorithm>
+
 namespace nc::panel::actions {
 
 static const auto g_ConfigSpotlightFormat = "filePanel.spotlight.format";
@@ -75,8 +77,8 @@ static std::vector<std::string> FetchSpotlightResults(const std::string &_query)
     }
 
     // make results unique - spotlight sometimes produces duplicates
-    sort(begin(result), end(result));
-    result.erase(unique(begin(result), end(result)), result.end());
+    std::ranges::sort(result);
+    result.erase(std::ranges::unique(result).begin(), result.end());
 
     return result;
 }

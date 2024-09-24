@@ -1,24 +1,25 @@
 // Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NativeFSManagerImpl.h"
 #include <AppKit/AppKit.h>
-#include <DiskArbitration/DiskArbitration.h>
-#include <sys/param.h>
-#include <sys/ucred.h>
-#include <sys/mount.h>
-#include <sys/stat.h>
-#include <Utility/SystemInformation.h>
-#include <Utility/FSEventsDirUpdate.h>
-#include <Utility/StringExtras.h>
-#include <Utility/PathManip.h>
-#include <Utility/Log.h>
-#include <Base/dispatch_cpp.h>
-#include <Base/algo.h>
 #include <Base/CFPtr.h>
 #include <Base/StackAllocator.h>
+#include <Base/algo.h>
+#include <Base/dispatch_cpp.h>
+#include <DiskArbitration/DiskArbitration.h>
+#include <Utility/FSEventsDirUpdate.h>
+#include <Utility/Log.h>
+#include <Utility/PathManip.h>
+#include <Utility/StringExtras.h>
+#include <Utility/SystemInformation.h>
+#include <algorithm>
+#include <fstream>
+#include <future>
 #include <iostream>
 #include <string_view>
-#include <future>
-#include <fstream>
+#include <sys/mount.h>
+#include <sys/param.h>
+#include <sys/stat.h>
+#include <sys/ucred.h>
 
 @interface NCUtilityNativeFSManagerNotificationsReceiver : NSObject
 @property(readwrite, nonatomic) std::function<void(NSNotification *)> onVolumeDidMount;
@@ -367,7 +368,7 @@ void NativeFSManagerImpl::InsertNewVolume_Unlocked(const std::shared_ptr<NativeF
     const auto pred = [=](const std::shared_ptr<NativeFileSystemInfo> &_v) {
         return _v->mounted_at_path == _volume->mounted_at_path;
     };
-    const auto it = std::find_if(std::begin(m_Volumes), std::end(m_Volumes), pred);
+    const auto it = std::ranges::find_if(m_Volumes, pred);
     if( it != std::end(m_Volumes) )
         *it = _volume;
     else
@@ -385,7 +386,7 @@ void NativeFSManagerImpl::OnDidUnmount(const std::string &_on_path)
     {
         const std::lock_guard lock{m_Lock};
         const auto pred = [=](std::shared_ptr<NativeFileSystemInfo> &_v) { return _v->mounted_at_path == _on_path; };
-        const auto it = std::find_if(std::begin(m_Volumes), std::end(m_Volumes), pred);
+        const auto it = std::ranges::find_if(m_Volumes, pred);
         if( it != std::end(m_Volumes) )
             m_Volumes.erase(it);
 
@@ -401,7 +402,7 @@ void NativeFSManagerImpl::OnDidRename(const std::string &_old_path, const std::s
         const std::lock_guard lock{m_Lock};
 
         const auto pred = [=](std::shared_ptr<NativeFileSystemInfo> &_v) { return _v->mounted_at_path == _old_path; };
-        auto it = std::find_if(std::begin(m_Volumes), std::end(m_Volumes), pred);
+        auto it = std::ranges::find_if(m_Volumes, pred);
         if( it != std::end(m_Volumes) ) {
             auto volume = *it;
             volume->mounted_at_path = _new_path;
@@ -479,8 +480,7 @@ NativeFSManagerImpl::VolumeFromMountPoint_Unlocked(std::string_view _mount_point
 {
     if( _mount_point.empty() )
         return nullptr;
-    const auto it = std::find_if(
-        std::begin(m_Volumes), std::end(m_Volumes), [=](auto &_) { return _->mounted_at_path == _mount_point; });
+    const auto it = std::ranges::find_if(m_Volumes, [=](auto &_) { return _->mounted_at_path == _mount_point; });
     if( it != std::end(m_Volumes) )
         return *it;
     return nullptr;
@@ -490,8 +490,7 @@ NativeFSManagerImpl::Info NativeFSManagerImpl::VolumeFromBSDName_Unlocked(std::s
 {
     // not sure how legit this is...
     const auto device = "/dev/" + std::string(_bsd_name);
-    const auto it = std::find_if(
-        std::begin(m_Volumes), std::end(m_Volumes), [&](auto &_) { return _->mounted_from_name == device; });
+    const auto it = std::ranges::find_if(m_Volumes, [&](auto &_) { return _->mounted_from_name == device; });
     if( it != std::end(m_Volumes) )
         return *it;
     return nullptr;
@@ -521,7 +520,7 @@ bool NativeFSManagerImpl::IsVolumeContainingPathEjectable(const std::string &_pa
     using namespace std::string_view_literals;
     static const auto excl_list = std::initializer_list<std::string_view>{"/net"sv, "/dev"sv, "/home"sv};
 
-    if( std::find(excl_list.begin(), excl_list.end(), volume->mounted_at_path) != excl_list.end() )
+    if( std::ranges::find(excl_list, volume->mounted_at_path) != excl_list.end() )
         return false;
 
     return volume->mount_flags.ejectable == true || volume->mount_flags.removable == true ||
@@ -750,7 +749,7 @@ static std::optional<std::string> GetBSDName(const NativeFileSystemInfo &_volume
 {
     const auto &source = _volume.mounted_from_name;
     const auto prefix = std::string_view{"/dev/"};
-    if( source.length() <= prefix.length() || source.compare(0, prefix.length(), prefix) != 0 )
+    if( source.length() <= prefix.length() || !source.starts_with(prefix) )
         return {};
 
     return source.substr(prefix.length());

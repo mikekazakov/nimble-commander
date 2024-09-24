@@ -54,13 +54,13 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
         hk_go_into, kh_go_outside;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
         std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
-            {&hk_file_open, "menu.file.enter"},
-            {&hk_file_open_native, "menu.file.open"},
-            {&hk_go_root, "panel.go_root"},
-            {&hk_go_home, "panel.go_home"},
-            {&hk_preview, "panel.show_preview"},
-            {&hk_go_into, "panel.go_into_folder"},
-            {&kh_go_outside, "panel.go_into_enclosing_folder"}});
+            {.shortcut = &hk_file_open, .action = "menu.file.enter"},
+            {.shortcut = &hk_file_open_native, .action = "menu.file.open"},
+            {.shortcut = &hk_go_root, .action = "panel.go_root"},
+            {.shortcut = &hk_go_home, .action = "panel.go_home"},
+            {.shortcut = &hk_preview, .action = "panel.show_preview"},
+            {.shortcut = &hk_go_into, .action = "panel.go_into_folder"},
+            {.shortcut = &kh_go_outside, .action = "panel.go_into_enclosing_folder"}});
 
     if( hk_preview.IsKeyDown(event_data) ) {
         if( _handle ) {

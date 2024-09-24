@@ -326,8 +326,7 @@ static constexpr std::pair<spdlog::level::level_enum, unsigned> unpackFromTag(NS
     auto menu = [[NSMenu alloc] init];
 
     const auto all_are = [&](level::level_enum _level) {
-        return std::all_of(
-            m_Loggers.begin(), m_Loggers.end(), [_level](auto logger) { return logger->Get().level() == _level; });
+        return std::ranges::all_of(m_Loggers, [_level](auto logger) { return logger->Get().level() == _level; });
     };
 
     for( unsigned idx = 0; idx <= m_Loggers.size(); ++idx ) {

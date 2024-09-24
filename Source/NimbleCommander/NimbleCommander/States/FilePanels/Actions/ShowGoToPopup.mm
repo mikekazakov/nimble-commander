@@ -32,6 +32,8 @@
 #include <fmt/printf.h>
 #include <pstld/pstld.h>
 
+#include <algorithm>
+
 using namespace nc::panel;
 
 static const auto g_ConfigShowNetworkConnections = "filePanel.general.showNetworkConnectionsInGoToMenu";
@@ -242,15 +244,9 @@ static std::vector<vfs::VFSPath> OtherWindowsPaths(MainWindowFilePanelState *_cu
             for( auto &p : state.filePanelsCurrentPaths )
                 other_paths.emplace_back(std::get<1>(p), std::get<0>(p));
 
-    other_paths.erase(
-        remove_if(begin(other_paths),
-                  end(other_paths),
-                  [&](auto &_p) { return find(begin(current_paths), end(current_paths), _p) != end(current_paths); }),
-        end(other_paths));
-
-    sort(begin(other_paths), end(other_paths));
-
-    other_paths.erase(unique(begin(other_paths), end(other_paths)), end(other_paths));
+    std::erase_if(other_paths, [&](auto &_p) { return std::ranges::find(current_paths, _p) != current_paths.end(); });
+    std::ranges::sort(other_paths);
+    other_paths.erase(std::ranges::unique(other_paths).begin(), other_paths.end());
 
     return other_paths;
 }
@@ -466,7 +462,7 @@ GoToPopupsBase::BuildHistoryQuickList(PanelController *_panel) const
     auto history = _panel.history.All();
     if( !history.empty() && _panel.history.IsRecording() )
         history.pop_back();
-    reverse(begin(history), end(history));
+    std::ranges::reverse(history);
 
     CommandItemBuilder builder{m_NetMgr, mediator};
 

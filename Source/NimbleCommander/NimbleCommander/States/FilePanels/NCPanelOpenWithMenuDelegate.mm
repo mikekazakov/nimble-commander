@@ -10,6 +10,8 @@
 #include <Base/SerialQueue.h>
 #include <ankerl/unordered_dense.h>
 
+#include <algorithm>
+
 using namespace nc::core;
 using namespace nc::panel;
 using nc::utility::UTIDB;
@@ -24,9 +26,8 @@ struct FetchResult {
 
 static void SortAndPurgeDuplicateHandlers(std::vector<LaunchServiceHandler> &_handlers)
 {
-    std::sort(std::begin(_handlers), std::end(_handlers), [](const auto &_1st, const auto &_2nd) {
-        return [_1st.Name() localizedCompare:_2nd.Name()] < 0;
-    });
+    std::ranges::sort(
+        _handlers, [](const auto &_1st, const auto &_2nd) { return [_1st.Name() localizedCompare:_2nd.Name()] < 0; });
 
     const nc::utility::VersionCompare ver_cmp;
     for( int i = 0; i < static_cast<int>(_handlers.size()) - 1; ) {
@@ -66,9 +67,8 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 
     SortAndPurgeDuplicateHandlers(handlers);
 
-    stable_partition(begin(handlers), end(handlers), [&](const auto &_i) {
-        return _i.Path() == items_handlers.DefaultHandlerPath();
-    });
+    std::ranges::stable_partition(handlers,
+                                  [&](const auto &_i) { return _i.Path() == items_handlers.DefaultHandlerPath(); });
 
     FetchResult result;
     result.handlers = std::move(handlers);
@@ -317,9 +317,8 @@ static void ShowOpenPanel(NSOpenPanel *_panel, NSWindow *_window, std::function<
         m_ContextItems.empty() && self.target != nil ? self.target.selectedEntriesOrFocusedEntry : m_ContextItems;
 
     if( source_items.size() > 1 ) {
-        const auto same_host = all_of(begin(source_items), end(source_items), [&](const auto &i) {
-            return i.Host() == source_items.front().Host();
-        });
+        const auto same_host =
+            std::ranges::all_of(source_items, [&](const auto &i) { return i.Host() == source_items.front().Host(); });
         if( same_host ) {
             std::vector<std::string> items;
             items.reserve(source_items.size());

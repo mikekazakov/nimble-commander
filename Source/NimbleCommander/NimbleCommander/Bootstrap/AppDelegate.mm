@@ -15,8 +15,9 @@
 #include "NCE.h"
 
 #include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
-#include <spdlog/sinks/stdout_sinks.h>
+#include <algorithm>
 #include <magic_enum.hpp>
+#include <spdlog/sinks/stdout_sinks.h>
 
 #include <Base/CommonPaths.h>
 #include <Base/CFDefaultsCPP.h>
@@ -530,7 +531,7 @@ static NCAppDelegate *g_Me = nil;
 
 - (void)removeMainWindow:(NCMainWindowController *)_wnd
 {
-    auto it = find(begin(m_MainWindows), end(m_MainWindows), _wnd);
+    auto it = std::ranges::find(m_MainWindows, _wnd);
     if( it != end(m_MainWindows) )
         m_MainWindows.erase(it);
 }
@@ -743,7 +744,7 @@ static NCAppDelegate *g_Me = nil;
 - (void)removeInternalViewerWindow:(InternalViewerWindowController *)_wnd
 {
     auto lock = std::lock_guard{m_ViewerWindowsLock};
-    auto i = std::find(std::begin(m_ViewerWindows), std::end(m_ViewerWindows), _wnd);
+    auto i = std::ranges::find(m_ViewerWindows, _wnd);
     if( i != std::end(m_ViewerWindows) )
         m_ViewerWindows.erase(i);
 }
@@ -752,7 +753,7 @@ static NCAppDelegate *g_Me = nil;
                                                               onVFS:(const VFSHostPtr &)_vfs
 {
     auto lock = std::lock_guard{m_ViewerWindowsLock};
-    auto i = std::find_if(std::begin(m_ViewerWindows), std::end(m_ViewerWindows), [&](auto v) {
+    auto i = std::ranges::find_if(m_ViewerWindows, [&](auto v) {
         return v.internalViewerController.filePath == _path && v.internalViewerController.fileVFS == _vfs;
     });
     return i != std::end(m_ViewerWindows) ? *i : nil;

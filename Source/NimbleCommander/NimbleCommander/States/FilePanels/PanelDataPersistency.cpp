@@ -1,19 +1,20 @@
 // Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma clang diagnostic push
-#include <boost/container/static_vector.hpp>
-#include <VFS/Native.h>
-#include <VFS/ArcLA.h>
-#include <VFS/ArcLARaw.h>
-#include <VFS/PS.h>
-#include <VFS/XAttr.h>
-#include <VFS/NetFTP.h>
-#include <VFS/NetSFTP.h>
-#include <VFS/NetDropbox.h>
-#include <VFS/NetWebDAV.h>
+#include "PanelDataPersistency.h"
+#include <Config/RapidJSON.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
-#include <Config/RapidJSON.h>
-#include "PanelDataPersistency.h"
+#include <VFS/ArcLA.h>
+#include <VFS/ArcLARaw.h>
+#include <VFS/Native.h>
+#include <VFS/NetDropbox.h>
+#include <VFS/NetFTP.h>
+#include <VFS/NetSFTP.h>
+#include <VFS/NetWebDAV.h>
+#include <VFS/PS.h>
+#include <VFS/XAttr.h>
+#include <algorithm>
+#include <boost/container/static_vector.hpp>
 
 // THIS IS TEMPORARY!!!
 #include <NimbleCommander/Bootstrap/AppDelegateCPP.h>
@@ -145,7 +146,7 @@ std::optional<PersistentLocation> PanelDataPersisency::EncodeLocation(const VFSH
             host_rec = host_rec->Parent().get();
         }
 
-        reverse(begin(hosts), end(hosts));
+        std::ranges::reverse(hosts);
 
         for( auto h : hosts ) {
             auto encoded = EncodeState(*h);
@@ -179,7 +180,7 @@ Value PanelDataPersisency::EncodeVFSPath(const VFSHost &_vfs, const std::string 
         host_rec = host_rec->Parent().get();
     }
 
-    reverse(begin(hosts), end(hosts));
+    std::ranges::reverse(hosts);
 
     Value json(rapidjson::kObjectType);
     Value json_hosts(rapidjson::kArrayType);

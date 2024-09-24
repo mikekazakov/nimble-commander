@@ -117,7 +117,7 @@ static void PerformOpeningFilesWithDefaultHandler(const std::vector<VFSListingIt
 
     if( _items.size() > 1 ) {
         const auto same_host =
-            all_of(begin(_items), end(_items), [&](const auto &i) { return i.Host() == _items.front().Host(); });
+            std::ranges::all_of(_items, [&](const auto &i) { return i.Host() == _items.front().Host(); });
         if( same_host ) {
             std::vector<std::string> items;
             items.reserve(_items.size());
@@ -141,11 +141,11 @@ context::OpenFileWithDefaultHandler::OpenFileWithDefaultHandler(const std::vecto
 
 bool context::OpenFileWithDefaultHandler::Predicate([[maybe_unused]] PanelController *_target) const
 {
-    const auto has_reg_files = any_of(begin(m_Items), end(m_Items), [](auto &_i) { return _i.IsReg(); });
+    const auto has_reg_files = std::ranges::any_of(m_Items, [](auto &_i) { return _i.IsReg(); });
     if( has_reg_files )
         return true;
 
-    const auto all_are_native = all_of(begin(m_Items), end(m_Items), [](auto &_i) { return _i.Host()->IsNativeFS(); });
+    const auto all_are_native = std::ranges::all_of(m_Items, [](auto &_i) { return _i.Host()->IsNativeFS(); });
     return all_are_native;
 }
 

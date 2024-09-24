@@ -12,6 +12,8 @@
 #include <ankerl/unordered_dense.h>
 #include <Base/dispatch_cpp.h>
 
+#include <algorithm>
+
 namespace nc::panel::actions {
 
 static bool CommonDeletePredicate(PanelController *_target);
@@ -112,7 +114,7 @@ void context::MoveToTrash::Perform(PanelController *_target, id) const
 
 context::DeletePermanently::DeletePermanently(const std::vector<VFSListingItem> &_items) : m_Items(_items)
 {
-    m_AllWriteable = all_of(begin(m_Items), end(m_Items), [](const auto &i) { return i.Host()->IsWritable(); });
+    m_AllWriteable = std::ranges::all_of(m_Items, [](const auto &i) { return i.Host()->IsWritable(); });
 }
 
 bool context::DeletePermanently::Predicate(PanelController *) const
@@ -137,7 +139,7 @@ static bool CommonDeletePredicate(PanelController *_target)
 
 static bool AllAreNative(const std::vector<VFSListingItem> &_c)
 {
-    return std::all_of(std::begin(_c), std::end(_c), [&](auto &i) { return i.Host()->IsNativeFS(); });
+    return std::ranges::all_of(_c, [&](auto &i) { return i.Host()->IsNativeFS(); });
 }
 
 static ankerl::unordered_dense::set<std::string> ExtractDirectories(const std::vector<VFSListingItem> &_c)
@@ -152,19 +154,18 @@ static bool TryTrash(const std::vector<VFSListingItem> &_c, utility::NativeFSMan
 {
     const auto directories = ExtractDirectories(_c);
 
-    const bool all_have_trash =
-        std::all_of(std::begin(directories), std::end(directories), [&](const std::string &dir) {
-            if( auto vol = _fsman.VolumeFromPath(dir); vol && vol->interfaces.has_trash )
-                return true;
-            return false;
-        });
+    const bool all_have_trash = std::ranges::all_of(directories, [&](const std::string &dir) {
+        if( auto vol = _fsman.VolumeFromPath(dir); vol && vol->interfaces.has_trash )
+            return true;
+        return false;
+    });
 
     // if we already know that each volume have a trash folder - just say yes
     if( all_have_trash )
         return true;
 
     // otherwise, speculate a bit and try doing trash on locally-mounted volumes as well
-    const bool all_are_local = std::all_of(std::begin(directories), std::end(directories), [&](const std::string &dir) {
+    const bool all_are_local = std::ranges::all_of(directories, [&](const std::string &dir) {
         if( auto vol = _fsman.VolumeFromPath(dir); vol && vol->mount_flags.local )
             return true;
         return false;

@@ -171,9 +171,10 @@ void CompressionJob::ProcessItem(const base::chained_strings::node &_node, int _
         result = ProcessRegularItem(_index, rel_path, full_path);
 
     if( result == StepResult::Done || result == StepResult::Skipped ) {
-        const ItemStateReport report{*m_Source->base_hosts[meta.base_vfs_indx],
-                                     std::string_view(full_path),
-                                     (result == StepResult::Done ? ItemStatus::Processed : ItemStatus::Skipped)};
+        const ItemStateReport report{.host = *m_Source->base_hosts[meta.base_vfs_indx],
+                                     .path = std::string_view(full_path),
+                                     .status =
+                                         (result == StepResult::Done ? ItemStatus::Processed : ItemStatus::Skipped)};
         TellItemReport(report);
     }
 }

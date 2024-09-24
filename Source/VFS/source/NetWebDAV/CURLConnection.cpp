@@ -220,7 +220,7 @@ Connection::BlockRequestResult CURLConnection::PerformBlockingRequest()
 {
     const auto curl_rc = curl_easy_perform(m_EasyHandle);
     const auto http_rc = curl_easy_get_response_code(m_EasyHandle);
-    return {CurlRCToVFSError(curl_rc), http_rc};
+    return {.vfs_error = CurlRCToVFSError(curl_rc), .http_code = http_rc};
 }
 
 int CURLConnection::ReadBodyUpToSize(size_t _target)

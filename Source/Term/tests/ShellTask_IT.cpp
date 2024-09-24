@@ -1,26 +1,26 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
 #include "AtomicHolder.h"
 
-#include <ShellTask.h>
-#include <Screen.h>
-#include <ParserImpl.h>
-#include <InterpreterImpl.h>
 #include <Base/CommonPaths.h>
-#include <Base/mach_time.h>
 #include <Base/dispatch_cpp.h>
+#include <Base/mach_time.h>
+#include <InterpreterImpl.h>
+#include <ParserImpl.h>
+#include <Screen.h>
+#include <ShellTask.h>
 #include <Utility/SystemInformation.h>
-#include <magic_enum.hpp>
-#include <sys/param.h>
-#include <unordered_map>
 #include <algorithm>
-#include <numeric>
-#include <fstream>
 #include <fmt/format.h>
 #include <fmt/std.h>
+#include <fstream>
 #include <libproc.h>
+#include <magic_enum.hpp>
+#include <numeric>
+#include <sys/param.h>
 #include <sys/proc_info.h>
+#include <unordered_map>
 
 #pragma clang diagnostic ignored "-Wframe-larger-than="
 
@@ -90,7 +90,7 @@ static std::vector<int> GetAllFileDescriptors()
             info.proc_fdtype == PROX_FDTYPE_SOCKET )
             res.emplace_back(info.proc_fd);
 
-    std::sort(res.begin(), res.end());
+    std::ranges::sort(res);
 
     return res;
 }

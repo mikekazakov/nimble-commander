@@ -262,8 +262,8 @@ static constexpr auto g_DividerThickness = 1.;
     static ActionsShortcutsManager::ShortCut hk_move_left, hk_move_right;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
         std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
-            {&hk_move_left, "menu.view.panels_position.move_left"},
-            {&hk_move_right, "menu.view.panels_position.move_right"}});
+            {.shortcut = &hk_move_left, .action = "menu.view.panels_position.move_left"},
+            {.shortcut = &hk_move_right, .action = "menu.view.panels_position.move_right"}});
 
     if( hk_move_left.IsKeyDown(event_data) ) {
         [self OnViewPanelsPositionMoveLeft:self];

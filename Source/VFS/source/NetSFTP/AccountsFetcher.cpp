@@ -1,7 +1,8 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AccountsFetcher.h"
-#include <VFS/VFSError.h>
 #include <Base/algo.h>
+#include <VFS/VFSError.h>
+#include <algorithm>
 #include <unordered_map>
 
 // libssh2 has macros with C-style casts
@@ -28,12 +29,10 @@ int AccountsFetcher::FetchUsers(std::vector<VFSUser> &_target)
     if( rc != VFSError::Ok )
         return rc;
 
-    std::sort(std::begin(_target), std::end(_target), [](const auto &_1, const auto &_2) {
+    std::ranges::sort(_target, [](const auto &_1, const auto &_2) {
         return static_cast<signed>(_1.uid) < static_cast<signed>(_2.uid);
     });
-    _target.erase(std::unique(std::begin(_target),
-                              std::end(_target),
-                              [](const auto &_1, const auto &_2) { return _1.uid == _2.uid; }),
+    _target.erase(std::ranges::unique(_target, [](const auto &_1, const auto &_2) { return _1.uid == _2.uid; }).begin(),
                   std::end(_target));
 
     return VFSError::Ok;
@@ -54,12 +53,10 @@ int AccountsFetcher::FetchGroups(std::vector<VFSGroup> &_target)
     if( rc != VFSError::Ok )
         return rc;
 
-    std::sort(std::begin(_target), std::end(_target), [](const auto &_1, const auto &_2) {
+    std::ranges::sort(_target, [](const auto &_1, const auto &_2) {
         return static_cast<signed>(_1.gid) < static_cast<signed>(_2.gid);
     });
-    _target.erase(std::unique(std::begin(_target),
-                              std::end(_target),
-                              [](const auto &_1, const auto &_2) { return _1.gid == _2.gid; }),
+    _target.erase(std::ranges::unique(_target, [](const auto &_1, const auto &_2) { return _1.gid == _2.gid; }).begin(),
                   std::end(_target));
 
     return VFSError::Ok;

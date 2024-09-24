@@ -1,13 +1,14 @@
 // Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelData.h"
-#include "PanelDataItemVolatileData.h"
+#include "Log.h"
 #include "PanelDataEntriesComparator.h"
+#include "PanelDataExternalEntryKey.h"
+#include "PanelDataItemVolatileData.h"
 #include <Base/DispatchGroup.h>
 #include <VFS/VFS.h>
-#include "PanelDataExternalEntryKey.h"
-#include "Log.h"
-#include <numeric>
+#include <algorithm>
 #include <magic_enum.hpp>
+#include <numeric>
 #include <pstld/pstld.h>
 
 namespace nc::panel::data {
@@ -59,8 +60,8 @@ static std::vector<std::string> ProduceLongKeysForListing(const VFSListing &_l)
 static std::vector<unsigned> ProduceSortedIndirectIndecesForLongKeys(const std::vector<std::string> &_keys)
 {
     std::vector<unsigned> src_keys_ind(_keys.size());
-    std::iota(begin(src_keys_ind), end(src_keys_ind), 0);
-    std::sort(begin(src_keys_ind), end(src_keys_ind), [&_keys](auto _1, auto _2) { return _keys[_1] < _keys[_2]; });
+    std::iota(src_keys_ind.begin(), src_keys_ind.end(), 0); // NOLINT - Xcode16 doesn't have std::ranges::iota
+    std::ranges::sort(src_keys_ind, [&_keys](auto _1, auto _2) { return _keys[_1] < _keys[_2]; });
     return src_keys_ind;
 }
 
@@ -392,8 +393,8 @@ std::string Model::VerboseDirectoryFullPath() const
 static void DoRawSort(const VFSListing &_from, std::vector<unsigned> &_to)
 {
     _to.resize(_from.Count());
-    iota(begin(_to), end(_to), 0);
-    sort(begin(_to), end(_to), [&_from](unsigned _1, unsigned _2) { return _from.Filename(_1) < _from.Filename(_2); });
+    std::iota(_to.begin(), _to.end(), 0); // NOLINT - Xcode16 doesn't have std::ranges::iota
+    std::ranges::sort(_to, [&_from](unsigned _1, unsigned _2) { return _from.Filename(_1) < _from.Filename(_2); });
 }
 
 void Model::SetSortMode(struct SortMode _mode)
@@ -797,7 +798,9 @@ void Model::DoSortWithHardFiltering()
     }
     else {
         m_EntriesByCustomSort.resize(m_Listing->Count());
-        std::iota(std::begin(m_EntriesByCustomSort), std::end(m_EntriesByCustomSort), 0);
+        std::iota(m_EntriesByCustomSort.begin(),
+                  m_EntriesByCustomSort.end(),
+                  0); // NOLINT - Xcode16 doesn't have std::ranges::iota
     }
 
     if( m_EntriesByCustomSort.empty() || m_CustomSortMode.sort == SortMode::SortNoSort )
@@ -814,7 +817,7 @@ void Model::DoSortWithHardFiltering()
         pstld::sort(first, last, IndirectListingComparator{*m_Listing, m_VolatileData, m_CustomSortMode});
 
     m_ReverseToCustomSort.resize(size);
-    std::fill(m_ReverseToCustomSort.begin(), m_ReverseToCustomSort.end(), std::numeric_limits<unsigned>::max());
+    std::ranges::fill(m_ReverseToCustomSort, std::numeric_limits<unsigned>::max());
     for( unsigned i = 0, e = static_cast<unsigned>(m_EntriesByCustomSort.size()); i != e; ++i ) {
         const unsigned forward_index = m_EntriesByCustomSort[i];
         assert(forward_index < size);
@@ -858,7 +861,9 @@ void Model::BuildSoftFilteringIndeces()
     }
     else {
         m_EntriesBySoftFiltering.resize(m_EntriesByCustomSort.size());
-        iota(begin(m_EntriesBySoftFiltering), end(m_EntriesBySoftFiltering), 0);
+        std::iota(m_EntriesBySoftFiltering.begin(),
+                  m_EntriesBySoftFiltering.end(),
+                  0); // NOLINT - Xcode16 doesn't have std::ranges::iota
     }
 }
 
@@ -878,7 +883,7 @@ int Model::SortLowerBoundForEntrySortKeys(const ExternalEntryKey &_keys) const
     auto it = std::lower_bound(std::begin(m_EntriesByCustomSort),
                                std::end(m_EntriesByCustomSort),
                                _keys,
-                               ExternalListingComparator(*m_Listing, m_VolatileData, m_CustomSortMode));
+                               ExternalListingComparator(*m_Listing, m_VolatileData, m_CustomSortMode)); // NOLINT
     if( it != std::end(m_EntriesByCustomSort) )
         return static_cast<int>(std::distance(std::begin(m_EntriesByCustomSort), it));
     return -1;

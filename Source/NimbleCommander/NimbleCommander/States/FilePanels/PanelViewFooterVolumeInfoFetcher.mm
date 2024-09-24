@@ -1,7 +1,9 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/SerialQueue.h>
 #include <Base/CommonPaths.h>
+
 #include "PanelViewFooterVolumeInfoFetcher.h"
+#include <algorithm>
 
 namespace nc::panel {
 
@@ -119,8 +121,8 @@ struct PanelViewFooterVolumeInfoFetcherInternals {
     {
         dispatch_assert_main_queue();
 
-        const auto it = find_if(
-            begin(g_Context), end(g_Context), [&](auto &lp) { return equals(lp.host, _host) && lp.path == _path; });
+        const auto it =
+            std::ranges::find_if(g_Context, [&](auto &lp) { return equals(lp.host, _host) && lp.path == _path; });
         if( it != end(g_Context) ) {
             const auto i = find(begin(it->watchers), end(it->watchers), _w);
             if( i != end(it->watchers) )

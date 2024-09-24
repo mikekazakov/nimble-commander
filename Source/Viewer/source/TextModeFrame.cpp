@@ -2,6 +2,7 @@
 #include "TextModeFrame.h"
 #include <Base/algo.h>
 #include <Base/dispatch_cpp.h>
+#include <algorithm>
 #include <cmath>
 
 namespace nc::viewer {
@@ -68,7 +69,7 @@ TextModeFrame::TextModeFrame(const Source &_source)
     m_LinesWidths.resize(m_Lines.size());
     CalculateLinesWidths(m_Lines.data(), m_Lines.data() + m_Lines.size(), m_LinesWidths.data());
 
-    const auto width = m_LinesWidths.empty() ? 0.f : *std::max_element(m_LinesWidths.begin(), m_LinesWidths.end());
+    const auto width = m_LinesWidths.empty() ? 0.f : *std::ranges::max_element(m_LinesWidths);
     const auto height = m_FontInfo.LineHeight() * static_cast<double>(m_Lines.size());
     m_Bounds = CGSizeMake(std::min(static_cast<double>(width), m_WrappingWidth), height);
 }

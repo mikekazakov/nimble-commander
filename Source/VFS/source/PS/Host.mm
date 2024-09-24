@@ -11,6 +11,8 @@
 #include "File.h"
 #include <fmt/format.h>
 
+#include <algorithm>
+
 namespace nc::vfs {
 using namespace std::literals;
 
@@ -578,8 +580,7 @@ HostDirObservationTicket PSHost::ObserveDirectoryChanges(std::string_view, std::
 
 void PSHost::StopDirChangeObserving(unsigned long _ticket)
 {
-    auto it =
-        find_if(begin(m_UpdateHandlers), end(m_UpdateHandlers), [=](const auto &i) { return i.first == _ticket; });
+    auto it = std::ranges::find_if(m_UpdateHandlers, [=](const auto &i) { return i.first == _ticket; });
     if( it != end(m_UpdateHandlers) )
         m_UpdateHandlers.erase(it);
 }

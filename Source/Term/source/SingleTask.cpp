@@ -149,7 +149,7 @@ void SingleTask::ReadChildOutput()
     fd_set fd_in, fd_err;
 
     // just for cases when select() don't catch child death - we force to ask it for every 2 seconds
-    struct timeval timeout = {2, 0};
+    struct timeval timeout = {.tv_sec = 2, .tv_usec = 0};
 
     constexpr size_t input_sz = 65536;
     const std::unique_ptr<char[]> input = std::make_unique<char[]>(input_sz);

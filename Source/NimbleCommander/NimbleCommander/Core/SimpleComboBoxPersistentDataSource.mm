@@ -1,7 +1,8 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NimbleCommander/Bootstrap/Config.h>
-#include <Config/RapidJSON.h>
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SimpleComboBoxPersistentDataSource.h"
+#include <Config/RapidJSON.h>
+#include <NimbleCommander/Bootstrap/Config.h>
+#include <algorithm>
 #include <vector>
 
 @implementation SimpleComboBoxPersistentDataSource {
@@ -47,9 +48,7 @@
 {
     if( item == nil || item.length == 0 )
         return;
-
-    m_Items.erase(remove_if(begin(m_Items), end(m_Items), [=](auto _t) { return [_t isEqualToString:item]; }),
-                  end(m_Items));
+    std::erase_if(m_Items, [=](const auto &_t) { return [_t isEqualToString:item]; });
     m_Items.insert(begin(m_Items), item);
     if( static_cast<int>(m_Items.size()) > m_MaxItems )
         m_Items.resize(m_MaxItems);

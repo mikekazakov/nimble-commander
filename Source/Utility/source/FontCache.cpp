@@ -1,6 +1,7 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <CoreText/CoreText.h>
 #include <Utility/FontCache.h>
+#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <cstdlib>
@@ -170,9 +171,7 @@ FontCache::FontCache(CTFontRef _basic_font) : m_FontInfo(_basic_font)
 
 FontCache::~FontCache()
 {
-    g_Caches.erase(
-        std::remove_if(std::begin(g_Caches), std::end(g_Caches), [](auto _t) { return _t.lock() == nullptr; }),
-        std::end(g_Caches));
+    std::erase_if(g_Caches, [](const auto &_t) { return _t.lock() == nullptr; });
 }
 
 FontCache::Pair FontCache::DoGetBMP(uint16_t _c)

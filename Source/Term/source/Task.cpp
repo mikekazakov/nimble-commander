@@ -184,7 +184,7 @@ std::string Task::EscapeShellFeed(const std::string &_feed)
     std::string result;
     result.reserve(_feed.length());
     for( auto c : _feed ) {
-        if( std::any_of(std::begin(to_esc), std::end(to_esc), [=](auto e) { return c == e; }) )
+        if( std::ranges::any_of(to_esc, [=](auto e) { return c == e; }) )
             result += '\\';
         result += c;
     }

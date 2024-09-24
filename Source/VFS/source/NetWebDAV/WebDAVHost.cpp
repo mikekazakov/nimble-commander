@@ -11,8 +11,8 @@
 #include <sys/dirent.h>
 #include <fmt/core.h>
 
-#include <memory>
 #include <algorithm>
+#include <memory>
 
 namespace nc::vfs {
 
@@ -121,11 +121,9 @@ int WebDAVHost::FetchDirectoryListing(std::string_view _path,
     }
 
     if( (_flags & VFSFlags::F_NoDotDot) || path == "/" )
-        items.erase(std::remove_if(
-                        std::begin(items), std::end(items), [](const auto &_item) { return _item.filename == ".."; }),
-                    std::end(items));
+        std::erase_if(items, [](const auto &_item) { return _item.filename == ".."; });
     else
-        std::partition(std::begin(items), std::end(items), [](const auto &_i) { return _i.filename == ".."; });
+        std::ranges::partition(items, [](const auto &_i) { return _i.filename == ".."; });
 
     using nc::base::variable_container;
     ListingInput listing_source;
@@ -179,8 +177,7 @@ int WebDAVHost::IterateDirectoryListing(std::string_view _path,
             return VFSError::GenericError;
     }
 
-    items.erase(remove_if(begin(items), end(items), [](const auto &_item) { return _item.filename == ".."; }),
-                end(items));
+    std::erase_if(items, [](const auto &_item) { return _item.filename == ".."; });
 
     for( const auto &i : items ) {
         VFSDirEnt e;

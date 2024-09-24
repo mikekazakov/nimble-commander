@@ -1,5 +1,6 @@
-// Copyright (C) 2021-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/CloseFrom.h>
+#include <algorithm>
 #include <cassert>
 #include <libproc.h>
 #include <optional>
@@ -62,9 +63,7 @@ void CloseFromExcept(int _lowfd, int _except) noexcept
 
 void CloseFromExcept(int _lowfd, std::span<const int> _except) noexcept
 {
-    const auto skip = [_except](int _fd) -> bool {
-        return std::find(_except.begin(), _except.end(), _fd) != _except.end();
-    };
+    const auto skip = [_except](int _fd) -> bool { return std::ranges::find(_except, _fd) != _except.end(); };
     if( const auto fds = GetFDs() ) {
         for( auto &info : *fds ) {
             if( info.proc_fd >= _lowfd && !skip(info.proc_fd) )

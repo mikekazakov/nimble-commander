@@ -1,9 +1,9 @@
 // Copyright (C) 2023-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CTCache.h"
 #include <Utility/FontExtras.h>
-#include <memory_resource>
-#include <iostream>
 #include <algorithm>
+#include <iostream>
+#include <memory_resource>
 
 namespace nc::term {
 
@@ -124,12 +124,12 @@ CTCache::DisplayChar CTCache::Internalize(CTLineRef _line)
 
     auto insert_full = [=, this] -> DisplayChar {
         m_Complexes.emplace_back(_line);
-        return {Kind::Complex, static_cast<uint32_t>(m_Complexes.size() - 1)};
+        return {.kind = Kind::Complex, .index = static_cast<uint32_t>(m_Complexes.size() - 1)};
     };
 
     CFArrayRef runs = static_cast<CFArrayRef>(CTLineGetGlyphRuns(_line));
     if( runs == nullptr )
-        return {Kind::Empty, 0};
+        return {.kind = Kind::Empty, .index = 0};
 
     const long runs_count = CFArrayGetCount(runs);
     if( runs_count != 1 )
@@ -137,14 +137,14 @@ CTCache::DisplayChar CTCache::Internalize(CTLineRef _line)
 
     CTRunRef run = static_cast<CTRunRef>(CFArrayGetValueAtIndex(runs, 0));
     if( run == nullptr )
-        return {Kind::Empty, 0};
+        return {.kind = Kind::Empty, .index = 0};
 
     if( CTRunGetStatus(run) & kCTRunStatusHasNonIdentityMatrix )
         return insert_full();
 
     const long glyphs_count = CTRunGetGlyphCount(run);
     if( glyphs_count == 0 )
-        return {Kind::Empty, 0};
+        return {.kind = Kind::Empty, .index = 0};
     if( glyphs_count > 1 )
         return insert_full();
 
@@ -153,16 +153,16 @@ CTCache::DisplayChar CTCache::Internalize(CTLineRef _line)
 
     CFDictionaryRef run_attrs = CTRunGetAttributes(run);
     if( run_attrs == nullptr )
-        return {Kind::Empty, 0};
+        return {.kind = Kind::Empty, .index = 0};
 
     CTFontRef font = static_cast<CTFontRef>(CFDictionaryGetValue(run_attrs, CFSTR("NSFont")));
     if( font == nullptr )
-        return {Kind::Empty, 0};
+        return {.kind = Kind::Empty, .index = 0};
 
     const uint16_t font_idx = FindOrInsert(font);
     m_Singles.push_back({glyphs[0], font_idx});
 
-    return {Kind::Single, static_cast<uint32_t>(m_Singles.size() - 1)};
+    return {.kind = Kind::Single, .index = static_cast<uint32_t>(m_Singles.size() - 1)};
 }
 
 void CTCache::DrawCharacter(char32_t _code, CGContextRef _ctx)
@@ -247,8 +247,8 @@ void CTCache::DrawCharacters(const char32_t *_codes, const CGPoint *_positions, 
 
     // 2nd sort simple glyphs by their font number
     auto less_font = [](auto &_lhs, auto &_rhs) { return _lhs.font < _rhs.font; };
-    std::sort(simple_glyphs.begin(), simple_glyphs.end(), less_font);
-    std::sort(simple_box_glyphs.begin(), simple_box_glyphs.end(), less_font);
+    std::ranges::sort(simple_glyphs, less_font);
+    std::ranges::sort(simple_box_glyphs, less_font);
 
     // 3rd - draw normal simple glyphs, font by font
     std::pmr::vector<uint16_t> glyphs_to_ct(&mem_resource);
@@ -321,8 +321,8 @@ std::shared_ptr<CTCache> CTCacheRegistry::CacheForFont(base::CFPtr<CTFontRef> _f
     std::erase_if(m_Caches, [](auto &ptr) { return ptr.expired(); });
 
     // 2nd pass - try to find an existing cache, O(n)
-    auto it = std::find_if(
-        m_Caches.begin(), m_Caches.end(), [&](auto &ptr) { return CFEqual(ptr.lock()->GetBaseFont(), _font.get()); });
+    auto it =
+        std::ranges::find_if(m_Caches, [&](auto &ptr) { return CFEqual(ptr.lock()->GetBaseFont(), _font.get()); });
     if( it != m_Caches.end() )
         return it->lock();
 

@@ -6,6 +6,8 @@
 #include <Utility/Encodings.h>
 #include <Base/algo.h>
 
+#include <algorithm>
+
 using namespace nc::viewer;
 
 static std::shared_ptr<const TextModeWorkingSet>
@@ -88,7 +90,7 @@ TEST_CASE(PREFIX "Verify RowsBuilder against Hello, World!")
 ProduceWorkingSet(const char16_t *_chars, const int _chars_number, long _ws_offset)
 {
     std::vector<int> offsets(_chars_number, 0);
-    std::generate(offsets.begin(), offsets.end(), [offset = -2]() mutable { return offset += 2; });
+    std::ranges::generate(offsets, [offset = -2]() mutable { return offset += 2; });
     TextModeWorkingSet::Source source;
     source.unprocessed_characters = _chars;
     source.mapping_to_byte_offsets = offsets.data();

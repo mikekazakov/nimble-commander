@@ -486,7 +486,7 @@ Traverse(const std::string &_vfs_dirpath, VFSHost &_host, const std::function<bo
     std::vector<TraversedFSEntry> result;
     std::stack<TraversedFSEntry> traverse;
 
-    result.emplace_back(TraversedFSEntry{vfs_dirpath, top_level_name, st_src_dir});
+    result.emplace_back(TraversedFSEntry{.src_full_path = vfs_dirpath, .rel_path = top_level_name, .st = st_src_dir});
     traverse.push(result.back());
 
     while( !traverse.empty() ) {
@@ -503,7 +503,8 @@ Traverse(const std::string &_vfs_dirpath, VFSHost &_host, const std::function<bo
             if( stat_rc != VFSError::Ok )
                 return false;
 
-            result.emplace_back(TraversedFSEntry{full_entry_path, current.rel_path + "/" + _dirent.name, st});
+            result.emplace_back(TraversedFSEntry{
+                .src_full_path = full_entry_path, .rel_path = current.rel_path + "/" + _dirent.name, .st = st});
             if( st.mode_bits.dir )
                 traverse.push(result.back());
 

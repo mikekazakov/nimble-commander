@@ -49,13 +49,50 @@ TEST_CASE(PREFIX "ranges constructor")
     SECTION("Multiple segments")
     {
         const QuickSearchHiglight::Ranges test_cases[] = {
-            {{{0, 1}, {16, 1}}, 2},
-            {{{0, 1}, {5, 1}, {10, 1}, {15, 1}, {20, 1}, {25, 1}}, 6},
-            {{{0, 1}, {5, 1}, {10, 1}, {15, 1}, {20, 1}, {25, 1}, {30, 1}}, 7},
-            {{{0, 1}, {5, 1}, {10, 1}, {15, 1}, {20, 1}, {25, 1}, {30, 1}, {35, 1}}, 8},
-            {{{0, 2}, {5, 2}, {10, 2}, {15, 2}, {20, 2}, {25, 2}, {30, 2}, {35, 2}}, 8},
-            {{{0, 4}, {5, 4}, {10, 4}, {15, 4}, {20, 4}, {25, 4}, {30, 4}, {35, 4}}, 8},
-            {{{0, 20}, {50, 20}}, 2},
+            {.segments = {{.offset = 0, .length = 1}, {.offset = 16, .length = 1}}, .count = 2},
+            {.segments = {{.offset = 0, .length = 1},
+                          {.offset = 5, .length = 1},
+                          {.offset = 10, .length = 1},
+                          {.offset = 15, .length = 1},
+                          {.offset = 20, .length = 1},
+                          {.offset = 25, .length = 1}},
+             .count = 6},
+            {.segments = {{.offset = 0, .length = 1},
+                          {.offset = 5, .length = 1},
+                          {.offset = 10, .length = 1},
+                          {.offset = 15, .length = 1},
+                          {.offset = 20, .length = 1},
+                          {.offset = 25, .length = 1},
+                          {.offset = 30, .length = 1}},
+             .count = 7},
+            {.segments = {{.offset = 0, .length = 1},
+                          {.offset = 5, .length = 1},
+                          {.offset = 10, .length = 1},
+                          {.offset = 15, .length = 1},
+                          {.offset = 20, .length = 1},
+                          {.offset = 25, .length = 1},
+                          {.offset = 30, .length = 1},
+                          {.offset = 35, .length = 1}},
+             .count = 8},
+            {.segments = {{.offset = 0, .length = 2},
+                          {.offset = 5, .length = 2},
+                          {.offset = 10, .length = 2},
+                          {.offset = 15, .length = 2},
+                          {.offset = 20, .length = 2},
+                          {.offset = 25, .length = 2},
+                          {.offset = 30, .length = 2},
+                          {.offset = 35, .length = 2}},
+             .count = 8},
+            {.segments = {{.offset = 0, .length = 4},
+                          {.offset = 5, .length = 4},
+                          {.offset = 10, .length = 4},
+                          {.offset = 15, .length = 4},
+                          {.offset = 20, .length = 4},
+                          {.offset = 25, .length = 4},
+                          {.offset = 30, .length = 4},
+                          {.offset = 35, .length = 4}},
+             .count = 8},
+            {.segments = {{.offset = 0, .length = 20}, {.offset = 50, .length = 20}}, .count = 2},
         };
 
         for( auto tc : test_cases ) {
@@ -73,7 +110,7 @@ TEST_CASE(PREFIX "ranges constructor")
         struct TC {
             R src, dst;
         } const tcs[] = {{
-            {0, 1000}, {0, 120},
+            .src = {0, 1000}, .dst = {0, 120},
             // TODO: more?
         }};
         for( auto test_case : tcs ) {

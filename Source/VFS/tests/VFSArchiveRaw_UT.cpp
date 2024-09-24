@@ -68,15 +68,15 @@ struct Case {
     size_t size;
     const char *name;
 
-} static const g_Cases[] = {{__hello_txt_gz, __hello_txt_gz_len, "hello.txt.gz"},
-                            {__hello_txt_bz2, __hello_txt_bz2_len, "hello.txt.bz2"},
-                            {__hello_txt_zst, __hello_txt_zst_len, "hello.txt.zst"},
-                            {__hello_txt_lz4, __hello_txt_lz4_len, "hello.txt.lz4"},
-                            {__hello_txt_lzma, __hello_txt_lzma_len, "hello.txt.lzma"},
-                            {__hello_txt_Z, __hello_txt_Z_len, "hello.txt.Z"},
-                            {__hello_txt_xz, __hello_txt_xz_len, "hello.txt.xz"},
-                            {__hello_txt_lz, __hello_txt_lz_len, "hello.txt.lz"},
-                            {__hello_txt_lzo, __hello_txt_lzo_len, "hello.txt.lzo"}};
+} static const g_Cases[] = {{.bytes = __hello_txt_gz, .size = __hello_txt_gz_len, .name = "hello.txt.gz"},
+                            {.bytes = __hello_txt_bz2, .size = __hello_txt_bz2_len, .name = "hello.txt.bz2"},
+                            {.bytes = __hello_txt_zst, .size = __hello_txt_zst_len, .name = "hello.txt.zst"},
+                            {.bytes = __hello_txt_lz4, .size = __hello_txt_lz4_len, .name = "hello.txt.lz4"},
+                            {.bytes = __hello_txt_lzma, .size = __hello_txt_lzma_len, .name = "hello.txt.lzma"},
+                            {.bytes = __hello_txt_Z, .size = __hello_txt_Z_len, .name = "hello.txt.Z"},
+                            {.bytes = __hello_txt_xz, .size = __hello_txt_xz_len, .name = "hello.txt.xz"},
+                            {.bytes = __hello_txt_lz, .size = __hello_txt_lz_len, .name = "hello.txt.lz"},
+                            {.bytes = __hello_txt_lzo, .size = __hello_txt_lzo_len, .name = "hello.txt.lzo"}};
 
 TEST_CASE(PREFIX "Deduces a proper filename")
 {
@@ -84,11 +84,11 @@ TEST_CASE(PREFIX "Deduces a proper filename")
         const char *path;
         const char *expected;
     } const tcs[]{
-        {"hello.txt.gz", "hello.txt"},
-        {"/hello.txt.gz", "hello.txt"},
-        {"/foo/bar/hello.txt.gz", "hello.txt"},
-        {"hello.txt.bz2", "hello.txt"},
-        {"hello.txt.blah", ""},
+        {.path = "hello.txt.gz", .expected = "hello.txt"},
+        {.path = "/hello.txt.gz", .expected = "hello.txt"},
+        {.path = "/foo/bar/hello.txt.gz", .expected = "hello.txt"},
+        {.path = "hello.txt.bz2", .expected = "hello.txt"},
+        {.path = "hello.txt.blah", .expected = ""},
     };
     for( auto tc : tcs )
         CHECK(ArchiveRawHost::DeduceFilename(tc.path) == tc.expected);

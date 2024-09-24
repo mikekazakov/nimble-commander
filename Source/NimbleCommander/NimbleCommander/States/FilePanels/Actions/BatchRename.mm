@@ -32,7 +32,7 @@ void BatchRename::Perform(PanelController *_target, id) const
         return;
 
     const auto host = items.front().Host();
-    if( !all_of(begin(items), end(items), [=](auto &i) { return i.Host() == host; }) )
+    if( !std::ranges::all_of(items, [=](auto &i) { return i.Host() == host; }) )
         return; // currently BatchRenameOperation supports only single host for items
 
     const auto sheet = [[NCOpsBatchRenamingDialog alloc] initWithItems:items];

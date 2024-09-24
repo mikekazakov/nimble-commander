@@ -6,6 +6,8 @@
 #include <Base/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
 
+#include <algorithm>
+
 using namespace nc::ops;
 using namespace std::literals;
 
@@ -56,8 +58,7 @@ static const auto g_ViewAppearTimeout = 100ms;
 - (void)syncWithOperations:(const std::vector<std::shared_ptr<Operation>> &)_operations
 {
     const auto find_existing = [=](const std::shared_ptr<Operation> &_op) {
-        const auto existing =
-            std::find_if(m_BriefViews.begin(), m_BriefViews.end(), [_op](auto &v) { return v.operation == _op; });
+        const auto existing = std::ranges::find_if(m_BriefViews, [_op](auto &v) { return v.operation == _op; });
         return existing != m_BriefViews.end() ? *existing : nullptr;
     };
 
@@ -73,8 +74,7 @@ static const auto g_ViewAppearTimeout = 100ms;
         }
 
     const auto index_of = [=](const std::shared_ptr<Operation> &_op) -> int {
-        const auto it = std::find_if(
-            std::begin(m_BriefViews), std::end(m_BriefViews), [_op](auto &v) { return v.operation == _op; });
+        const auto it = std::ranges::find_if(m_BriefViews, [_op](auto &v) { return v.operation == _op; });
         return it != m_BriefViews.end() ? static_cast<int>(std::distance(m_BriefViews.begin(), it)) : -1;
     };
 

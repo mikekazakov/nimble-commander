@@ -38,39 +38,39 @@ TEST_CASE(PREFIX "Check integration with a lexer")
         std::string text;
         std::string styles;
     } const tcs[] = {
-        {"",
-         ""},
-        {"int",
-         "WWW" },
-        {"hello",
-         "IIIII"},
-        {"#pragma once\x0A/*Hey!*/ int hello = 10;",
-         "PPPPPPPPPPPPP" "CCCCCCCCDWWWDIIIIIDODNNO"
+        {.text="",
+         .styles=""},
+        {.text="int",
+         .styles="WWW" },
+        {.text="hello",
+         .styles="IIIII"},
+        {.text="#pragma once\x0A/*Hey!*/ int hello = 10;",
+         .styles="PPPPPPPPPPPPP" "CCCCCCCCDWWWDIIIIIDODNNO"
         },
-        {"//hi!",
-         "LLLLL"},
-        {"\"hi!\"",
-         "SSSSS"},
-        {"//line 1\x0Ahi2;\x0A//line 3\x0Ahi4",
-         "LLLLLLLLL" "IIIOD" "LLLLLLLLL" "III"
+        {.text="//hi!",
+         .styles="LLLLL"},
+        {.text="\"hi!\"",
+         .styles="SSSSS"},
+        {.text="//line 1\x0Ahi2;\x0A//line 3\x0Ahi4",
+         .styles="LLLLLLLLL" "IIIOD" "LLLLLLLLL" "III"
         },
-        {"//line 1\x0D\x0Ahi2;\x0D\x0A//line 3\x0D\x0Ahi4",
-         "LLLLLLLLLL"    "IIIODD"    "LLLLLLLLLL"    "III"
+        {.text="//line 1\x0D\x0Ahi2;\x0D\x0A//line 3\x0D\x0Ahi4",
+         .styles="LLLLLLLLLL"    "IIIODD"    "LLLLLLLLLL"    "III"
         },
-        {"/*line 1*/\x0D\x0A",
-         "CCCCCCCCCCDD"
+        {.text="/*line 1*/\x0D\x0A",
+         .styles="CCCCCCCCCCDD"
         },
-        {"\x0A\x0A\x0A\x0A!",
-         "D" "D" "D" "D" "O"
+        {.text="\x0A\x0A\x0A\x0A!",
+         .styles="D" "D" "D" "D" "O"
         },
-        {"int привет=10;",
-         "WWWDIIIIIIIIIIIIONNO"
+        {.text="int привет=10;",
+         .styles="WWWDIIIIIIIIIIIIONNO"
         },
-        {"int ꮚ=10;",
-         "WWWDIIIONNO"
+        {.text="int ꮚ=10;",
+         .styles="WWWDIIIONNO"
         },
-        {"int 🤡=10;",
-         "WWWDIIIIONNO"
+        {.text="int 🤡=10;",
+         .styles="WWWDIIIIONNO"
         },
     };
     // clang-format on
@@ -93,19 +93,19 @@ TEST_CASE(PREFIX "Line breaks - LineStart/LineEnd")
         std::vector<long> starts;
         std::vector<long> ends;
     } const tcs[] = {
-        {"", {}, {}},
-        {"a", {0}, {1}},
-        {"aa", {0}, {2}},
-        {"Ц", {0}, {2}},
-        {"aaa", {0}, {3}},
-        {"a\x0A", {0}, {2}}, // wrong??
-        {"\x0A", {0}, {1}},  // wrong??
-        {"\x0A\x0A", {0, 1}, {0, 2}},
-        {"\x0D\x0A\x0D\x0A", {0, 2}, {0, 4}},
-        {"a\x0Az", {0, 2}, {1, 3}},
-        {"a\x0D\x0Az", {0, 3}, {1, 4}},
-        {"xyz\x0Axyz\x0Axyz", {0, 4, 8}, {3, 7, 11}},
-        {"xyz\x0D\x0Axyz\x0D\x0Axyz", {0, 5, 10}, {3, 8, 13}},
+        {.text = "", .starts = {}, .ends = {}},
+        {.text = "a", .starts = {0}, .ends = {1}},
+        {.text = "aa", .starts = {0}, .ends = {2}},
+        {.text = "Ц", .starts = {0}, .ends = {2}},
+        {.text = "aaa", .starts = {0}, .ends = {3}},
+        {.text = "a\x0A", .starts = {0}, .ends = {2}}, // wrong??
+        {.text = "\x0A", .starts = {0}, .ends = {1}},  // wrong??
+        {.text = "\x0A\x0A", .starts = {0, 1}, .ends = {0, 2}},
+        {.text = "\x0D\x0A\x0D\x0A", .starts = {0, 2}, .ends = {0, 4}},
+        {.text = "a\x0Az", .starts = {0, 2}, .ends = {1, 3}},
+        {.text = "a\x0D\x0Az", .starts = {0, 3}, .ends = {1, 4}},
+        {.text = "xyz\x0Axyz\x0Axyz", .starts = {0, 4, 8}, .ends = {3, 7, 11}},
+        {.text = "xyz\x0D\x0Axyz\x0D\x0Axyz", .starts = {0, 5, 10}, .ends = {3, 8, 13}},
     };
 
     for( const auto &tc : tcs ) {

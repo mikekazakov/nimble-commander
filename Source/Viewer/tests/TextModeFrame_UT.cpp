@@ -5,8 +5,9 @@
 #include <Utility/Encodings.h>
 #include <Base/algo.h>
 
-#include <vector>
+#include <algorithm>
 #include <numeric>
+#include <vector>
 
 using nc::viewer::TextModeFrame;
 using nc::viewer::TextModeWorkingSet;
@@ -91,7 +92,7 @@ static std::shared_ptr<const TextModeFrame> ProduceFrame(std::shared_ptr<const T
 static std::shared_ptr<const TextModeWorkingSet> ProduceWorkingSet(const char16_t *_chars, const int _chars_number)
 {
     std::vector<int> offsets(_chars_number, 0);
-    std::generate(offsets.begin(), offsets.end(), [offset = -2]() mutable { return offset += 2; });
+    std::ranges::generate(offsets, [offset = -2]() mutable { return offset += 2; });
     TextModeWorkingSet::Source source;
     source.unprocessed_characters = _chars;
     source.mapping_to_byte_offsets = offsets.data();

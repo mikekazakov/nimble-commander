@@ -92,8 +92,8 @@
 
     const auto dirty_start = static_cast<int>(_dirty_rect.origin.x);
     const auto dirty_end = dirty_start + static_cast<int>(_dirty_rect.size.width);
-    const auto first = std::lower_bound(column_origins.begin(), column_origins.end(), dirty_start);
-    const auto last = std::lower_bound(column_origins.begin(), column_origins.end(), dirty_end);
+    const auto first = std::ranges::lower_bound(column_origins, dirty_start);
+    const auto last = std::ranges::lower_bound(column_origins, dirty_end);
     for( auto it = first; it < last; ++it )
         draw_vline_at(*it - 1);
 

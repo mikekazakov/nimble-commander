@@ -10,6 +10,8 @@
 #include <fmt/format.h>
 #include <VFS/Log.h>
 
+#include <algorithm>
+
 namespace nc::vfs {
 
 using namespace ftp;
@@ -579,9 +581,7 @@ HostDirObservationTicket FTPHost::ObserveDirectoryChanges(std::string_view _path
 void FTPHost::StopDirChangeObserving(unsigned long _ticket)
 {
     const std::lock_guard<std::mutex> lock(m_UpdateHandlersLock);
-    m_UpdateHandlers.erase(
-        remove_if(begin(m_UpdateHandlers), end(m_UpdateHandlers), [=](auto &_h) { return _h.ticket == _ticket; }),
-        m_UpdateHandlers.end());
+    std::erase_if(m_UpdateHandlers, [=](auto &_h) { return _h.ticket == _ticket; });
 }
 
 void FTPHost::InformDirectoryChanged(const std::string &_dir_wth_sl)

@@ -256,30 +256,30 @@ TEST_CASE(PREFIX "IsDoubleWidth")
         std::u16string_view str;
         bool exp;
     } const cases[] = {
-        {u"a", false},
-        {u"❆", false},
-        {u"☁", false},
-        {u"☀", false},             // ☀ 2600
-        {u"☀\xfe0e", false},       // ☀ 2600 fe0e
-        {u"☀\xfe0e\xfe0f", false}, // ☀ 2600 fe0e fe0f
-        {u"☀\xfe0f", true},        // ☀️ 2600 fe0f
-        {u"☀\xfe0f\xfe0e", true},  // ☀️ 2600 fe0f fe0e
-        {u"🌦️", true},             // 🌦️ d83c df26
-        {u"🌦️", true},             // 🌦️ d83c df26
-        {u"⚡", true},             // ⚡ 26a1
-        {u"😹", true},             // 😹 D83D DE39
-        {u"🦄", true},             // 🦄 d83e dd84
-        {u"🧜🏾‍♀️", true},             // 🧜🏾‍♀️ d83e dddc d83c dffe 200d 2640 fe0f
-        {u"🇬🇧", true},             // 🇬🇧 d83c ddec d83c dde7
-        {u"👩🏿‍❤️‍👩🏼", true},             // 👩🏿‍❤️‍👩🏼 ud83d dc69 d83c dfff 200d 2764 fe0f 200d d83d dc69 d83c dffc
-        {u"⏏", false},             // ⏏ 23cf
-        {u"⏏\xfe0f", true},        // ⏏️ 23cf fe0f
-        {u"Ｍ", true},             // Ｍ ff2d
-        {u"ね", true},             // ね 306d
-        {u"е\x0308", false},       // е◌̈ 0435 0308
-        {u"Ｅ́", true},             // Ｅ́ ff25 0301
-        {u"𐅐", false},             // 𐅐 d800 dd50
-        {u"🏾", true},             // 🏾 feff d83c dffe
+        {.str=u"a", .exp=false},
+        {.str=u"❆", .exp=false},
+        {.str=u"☁", .exp=false},
+        {.str=u"☀", .exp=false},             // ☀ 2600
+        {.str=u"☀\xfe0e", .exp=false},       // ☀ 2600 fe0e
+        {.str=u"☀\xfe0e\xfe0f", .exp=false}, // ☀ 2600 fe0e fe0f
+        {.str=u"☀\xfe0f", .exp=true},        // ☀️ 2600 fe0f
+        {.str=u"☀\xfe0f\xfe0e", .exp=true},  // ☀️ 2600 fe0f fe0e
+        {.str=u"🌦️", .exp=true},             // 🌦️ d83c df26
+        {.str=u"🌦️", .exp=true},             // 🌦️ d83c df26
+        {.str=u"⚡", .exp=true},             // ⚡ 26a1
+        {.str=u"😹", .exp=true},             // 😹 D83D DE39
+        {.str=u"🦄", .exp=true},             // 🦄 d83e dd84
+        {.str=u"🧜🏾‍♀️", .exp=true},             // 🧜🏾‍♀️ d83e dddc d83c dffe 200d 2640 fe0f
+        {.str=u"🇬🇧", .exp=true},             // 🇬🇧 d83c ddec d83c dde7
+        {.str=u"👩🏿‍❤️‍👩🏼", .exp=true},             // 👩🏿‍❤️‍👩🏼 ud83d dc69 d83c dfff 200d 2764 fe0f 200d d83d dc69 d83c dffc
+        {.str=u"⏏", .exp=false},             // ⏏ 23cf
+        {.str=u"⏏\xfe0f", .exp=true},        // ⏏️ 23cf fe0f
+        {.str=u"Ｍ", .exp=true},             // Ｍ ff2d
+        {.str=u"ね", .exp=true},             // ね 306d
+        {.str=u"е\x0308", .exp=false},       // е◌̈ 0435 0308
+        {.str=u"Ｅ́", .exp=true},             // Ｅ́ ff25 0301
+        {.str=u"𐅐", .exp=false},             // 𐅐 d800 dd50
+        {.str=u"🏾", .exp=true},             // 🏾 feff d83c dffe
     };
     // clang-format on
     for( auto tc : cases ) {

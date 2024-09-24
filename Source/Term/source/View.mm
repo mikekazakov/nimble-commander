@@ -13,9 +13,10 @@
 #include "CTCache.h"
 #include "ColorMap.h"
 
-#include <iostream>
-#include <cmath>
+#include <algorithm>
 #include <array>
+#include <cmath>
+#include <iostream>
 #include <memory_resource>
 
 using namespace nc;
@@ -1010,7 +1011,7 @@ ANSI_COLOR(ansiColorF, setAnsiColorF, 15);
 
 static constexpr bool LineHasBlinkingCharacters(std::span<const ScreenBuffer::Space> _range) noexcept
 {
-    return std::any_of(std::begin(_range), std::end(_range), [](const auto &space) { return space.blink; });
+    return std::ranges::any_of(_range, [](const auto &space) { return space.blink; });
 }
 
 - (bool)visibleLinesHaveBlinkingCharacters

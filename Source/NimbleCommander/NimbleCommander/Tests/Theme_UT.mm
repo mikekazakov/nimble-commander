@@ -7,6 +7,8 @@
 #include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 #include <rapidjson/error/en.h>
 
+#include <algorithm>
+
 using nc::Theme;
 
 #define PREFIX "Theme "
@@ -14,7 +16,7 @@ using nc::Theme;
 static std::string ReplQuotes(std::string_view src)
 {
     std::string s(src);
-    std::replace(s.begin(), s.end(), '\'', '\"');
+    std::ranges::replace(s, '\'', '\"');
     return s;
 }
 

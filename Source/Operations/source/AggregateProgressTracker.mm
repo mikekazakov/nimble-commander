@@ -1,9 +1,9 @@
 // Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AggregateProgressTracker.h"
 #include "Statistics.h"
-#include <iostream>
 #include <Base/dispatch_cpp.h>
 #include <algorithm>
+#include <iostream>
 
 namespace nc::ops {
 
@@ -26,7 +26,7 @@ void AggregateProgressTracker::AddPool(Pool &_pool)
 
     const auto lock = std::lock_guard{m_Lock};
 
-    if( any_of(begin(m_Pools), end(m_Pools), [=](const auto &_i) { return _i.lock() == p; }) )
+    if( std::ranges::any_of(m_Pools, [=](const auto &_i) { return _i.lock() == p; }) )
         return;
     m_Pools.emplace_back(p);
 
@@ -129,7 +129,7 @@ void AggregateProgressTracker::SetProgressCallback(std::function<void(double _pr
 void AggregateProgressTracker::Purge()
 {
     const auto lock = std::lock_guard{m_Lock};
-    m_Pools.erase(remove_if(begin(m_Pools), end(m_Pools), [](auto &v) { return v.expired(); }), end(m_Pools));
+    std::erase_if(m_Pools, [](auto &v) { return v.expired(); });
 }
 
 } // namespace nc::ops

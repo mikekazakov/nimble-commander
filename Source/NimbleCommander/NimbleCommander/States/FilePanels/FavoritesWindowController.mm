@@ -1,17 +1,18 @@
 // Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Carbon/Carbon.h>
-#include <Base/algo.h>
-#include <Utility/SheetWithHotkeys.h>
-#include <NimbleCommander/Core/Alert.h>
-#include <NimbleCommander/States/MainWindowController.h>
-#include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include "FavoritesWindowController.h"
-#include "Favorites.h"
 #include "FavoriteComposing.h"
+#include "Favorites.h"
 #include "FilesDraggingSource.h"
-#include <Utility/ObjCpp.h>
-#include <Utility/StringExtras.h>
+#include <Base/algo.h>
 #include <Base/dispatch_cpp.h>
+#include <Carbon/Carbon.h>
+#include <NimbleCommander/Core/Alert.h>
+#include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
+#include <NimbleCommander/States/MainWindowController.h>
+#include <Utility/ObjCpp.h>
+#include <Utility/SheetWithHotkeys.h>
+#include <Utility/StringExtras.h>
+#include <algorithm>
 #include <unordered_map>
 
 using namespace nc::panel;
@@ -191,7 +192,7 @@ static const auto g_FavoritesWindowControllerDragDataType = @"com.magnumbytes.nc
 
 - (bool)hasFavorite:(const FavoriteLocationsStorage::Favorite &)_f
 {
-    return any_of(begin(m_Favorites), end(m_Favorites), [&](auto &_i) { return _i.footprint == _f.footprint; });
+    return std::ranges::any_of(m_Favorites, [&](auto &_i) { return _i.footprint == _f.footprint; });
 }
 
 - (BOOL)tableView:(NSTableView *) [[maybe_unused]] aTableView

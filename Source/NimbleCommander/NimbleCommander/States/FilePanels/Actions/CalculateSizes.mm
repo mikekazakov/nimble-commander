@@ -1,9 +1,11 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CalculateSizes.h"
 #include "../PanelController.h"
 #include <Panel/PanelData.h>
 #include "../PanelView.h"
 #include <VFS/VFS.h>
+
+#include <algorithm>
 
 namespace nc::panel::actions {
 
@@ -16,7 +18,7 @@ bool CalculateSizes::Predicate(PanelController *_target) const
 void CalculateSizes::Perform(PanelController *_target, id) const
 {
     auto selected = _target.selectedEntriesOrFocusedEntryWithDotDot;
-    selected.erase(remove_if(begin(selected), end(selected), [](auto &v) { return !v.IsDir(); }), end(selected));
+    std::erase_if(selected, [](auto &v) { return !v.IsDir(); });
     [_target calculateSizesOfItems:selected];
 }
 

@@ -136,7 +136,7 @@
                         </textFieldCell>
                     </textField>
                     <button toolTip="^O" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="B89-N8-gQP">
-                        <rect key="frame" x="404" y="13" width="94" height="32"/>
+                        <rect key="frame" x="396" y="13" width="94" height="32"/>
                         <buttonCell key="cell" type="push" title="Overwrite" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="8Xz-24-O4V">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -153,7 +153,7 @@ DQ
                         </connections>
                     </button>
                     <button toolTip="^S" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="10">
-                        <rect key="frame" x="312" y="13" width="94" height="32"/>
+                        <rect key="frame" x="304" y="13" width="94" height="32"/>
                         <buttonCell key="cell" type="push" title="Skip" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="12">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -193,7 +193,7 @@ DQ
                         </connections>
                     </popUpButton>
                     <button toolTip="^K" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Kp-zw-kW9">
-                        <rect key="frame" x="217" y="13" width="97" height="32"/>
+                        <rect key="frame" x="209" y="13" width="97" height="32"/>
                         <buttonCell key="cell" type="push" title="Keep Both" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4JC-am-dBk">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -208,7 +208,7 @@ DQ
                         </connections>
                     </button>
                     <button toolTip="^P" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="15">
-                        <rect key="frame" x="125" y="13" width="94" height="32"/>
+                        <rect key="frame" x="117" y="13" width="94" height="32"/>
                         <buttonCell key="cell" type="push" title="Append" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="16">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -223,7 +223,7 @@ DQ
                         </connections>
                     </button>
                     <button toolTip="⌘⎋" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="30">
-                        <rect key="frame" x="33" y="13" width="94" height="32"/>
+                        <rect key="frame" x="25" y="13" width="94" height="32"/>
                         <buttonCell key="cell" type="push" title="Abort" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="31">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -280,7 +280,7 @@ Gw
                     <constraint firstItem="0Kp-zw-kW9" firstAttribute="leading" secondItem="15" secondAttribute="trailing" constant="12" symbolic="YES" id="pWE-p6-eJq"/>
                     <constraint firstItem="10" firstAttribute="baseline" secondItem="30" secondAttribute="baseline" id="rgY-iW-dqY"/>
                     <constraint firstItem="112" firstAttribute="top" secondItem="119" secondAttribute="bottom" constant="8" symbolic="YES" id="sro-GF-jVA"/>
-                    <constraint firstItem="JQp-jj-wv1" firstAttribute="leading" secondItem="B89-N8-gQP" secondAttribute="trailing" id="t56-gU-f3L"/>
+                    <constraint firstItem="JQp-jj-wv1" firstAttribute="leading" secondItem="B89-N8-gQP" secondAttribute="trailing" constant="8" symbolic="YES" id="t56-gU-f3L"/>
                     <constraint firstAttribute="trailing" secondItem="119" secondAttribute="trailing" constant="20" symbolic="YES" id="wiG-HL-nKq"/>
                     <constraint firstItem="30" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="yA8-k7-dlI"/>
                     <constraint firstItem="37" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="zxW-7I-AcK"/>

@@ -798,9 +798,8 @@ void Model::DoSortWithHardFiltering()
     }
     else {
         m_EntriesByCustomSort.resize(m_Listing->Count());
-        std::iota(m_EntriesByCustomSort.begin(),
-                  m_EntriesByCustomSort.end(),
-                  0); // NOLINT - Xcode16 doesn't have std::ranges::iota
+        // NOLINTNEXTLINE - Xcode16 doesn't have std::ranges::iota
+        std::iota(m_EntriesByCustomSort.begin(), m_EntriesByCustomSort.end(), 0);
     }
 
     if( m_EntriesByCustomSort.empty() || m_CustomSortMode.sort == SortMode::SortNoSort )
@@ -861,9 +860,8 @@ void Model::BuildSoftFilteringIndeces()
     }
     else {
         m_EntriesBySoftFiltering.resize(m_EntriesByCustomSort.size());
-        std::iota(m_EntriesBySoftFiltering.begin(),
-                  m_EntriesBySoftFiltering.end(),
-                  0); // NOLINT - Xcode16 doesn't have std::ranges::iota
+        // NOLINTNEXTLINE - Xcode16 doesn't have std::ranges::iota
+        std::iota(m_EntriesBySoftFiltering.begin(), m_EntriesBySoftFiltering.end(), 0);
     }
 }
 
@@ -880,10 +878,11 @@ int Model::SortLowerBoundForEntrySortKeys(const ExternalEntryKey &_keys) const
     if( !_keys.is_valid() )
         return -1;
 
+    // NOLINTNEXTLINE
     auto it = std::lower_bound(std::begin(m_EntriesByCustomSort),
                                std::end(m_EntriesByCustomSort),
                                _keys,
-                               ExternalListingComparator(*m_Listing, m_VolatileData, m_CustomSortMode)); // NOLINT
+                               ExternalListingComparator(*m_Listing, m_VolatileData, m_CustomSortMode));
     if( it != std::end(m_EntriesByCustomSort) )
         return static_cast<int>(std::distance(std::begin(m_EntriesByCustomSort), it));
     return -1;

@@ -91,7 +91,7 @@ static void RegisterRemoteFileUploading(const std::string &_original_path,
             auto opts = panel::MakeDefaultFileCopyOptions();
             opts.exist_behavior = nc::ops::CopyingOptions::ExistBehavior::OverwriteAll;
             const auto op = std::make_shared<nc::ops::Copying>(listing_items, _original_path, vfs, opts);
-            if( auto pc = static_cast<PanelController *>(origin_controller) )
+            if( static_cast<PanelController *>(origin_controller) )
                 op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
                     dispatch_to_main_queue([=] {
                         // TODO: perhaps need to check that path didn't changed

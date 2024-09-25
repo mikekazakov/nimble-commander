@@ -104,7 +104,7 @@ static GoToPopupListActionMediator *g_CurrentMediator = nil;
         request->InitiatedByUser = true;
         [m_Panel GoToDirWithContext:request];
     }
-    else if( auto connection = std::any_cast<NetworkConnectionsManager::Connection>(&_context) )
+    else if( std::any_cast<NetworkConnectionsManager::Connection>(&_context) )
         nc::panel::actions::OpenExistingNetworkConnection(*m_NetMgr).Perform(m_Panel, sender);
     else if( auto vfs_path = std::any_cast<nc::vfs::VFSPath>(&_context) ) {
         auto request = std::make_shared<DirectoryChangeRequest>();

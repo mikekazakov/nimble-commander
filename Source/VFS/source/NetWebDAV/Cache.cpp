@@ -71,10 +71,12 @@ std::pair<std::optional<PropFindResponse>, Cache::E> Cache::Item(std::string_vie
     if( IsOutdated(listing) )
         return {std::nullopt, E::Unknown};
 
+    // NOLINTBEGIN
     const auto item =
         std::lower_bound(std::begin(listing.items), std::end(listing.items), filename, [](auto &_1, auto &_2) {
             return _1.filename < _2;
-        }); // NOLINT
+        });
+    // NOLINTEND
     if( item == std::end(listing.items) || item->filename != filename )
         return {std::nullopt, E::NonExist};
 
@@ -111,9 +113,10 @@ void Cache::CommitMkDir(const std::string &_at_path)
             return;
 
         auto &listing = dir_it->second;
-        const auto item_it = lower_bound(begin(listing.items), end(listing.items), filename, [](auto &_1, auto &_2) {
-            return _1.filename < _2;
-        }); // NOLINT
+        // NOLINTBEGIN
+        const auto item_it = lower_bound(
+            begin(listing.items), end(listing.items), filename, [](auto &_1, auto &_2) { return _1.filename < _2; });
+        // NOLINTEND
         if( item_it == end(listing.items) || item_it->filename != filename ) {
             PropFindResponse r;
             r.filename = filename;
@@ -147,9 +150,10 @@ void Cache::CommitMkFile(const std::string &_at_path)
             return;
 
         auto &listing = dir_it->second;
-        const auto item_it = lower_bound(begin(listing.items), end(listing.items), filename, [](auto &_1, auto &_2) {
-            return _1.filename < _2;
-        }); // NOLINT
+        // NOLINTBEGIN
+        const auto item_it = lower_bound(
+            begin(listing.items), end(listing.items), filename, [](auto &_1, auto &_2) { return _1.filename < _2; });
+        // NOLINTEND
         const auto index = distance(begin(listing.items), item_it);
         if( item_it == end(listing.items) || item_it->filename != filename ) {
             PropFindResponse r;
@@ -188,9 +192,10 @@ void Cache::CommitUnlink(std::string_view _at_path)
             return;
 
         auto &listing = dir_it->second;
-        const auto item_it = lower_bound(begin(listing.items), end(listing.items), filename, [](auto &_1, auto &_2) {
-            return _1.filename < _2;
-        }); // NOLINT
+        // NOLINTBEGIN
+        const auto item_it = lower_bound(
+            begin(listing.items), end(listing.items), filename, [](auto &_1, auto &_2) { return _1.filename < _2; });
+        // NOLINTEND
         if( item_it != end(listing.items) && item_it->filename == filename ) {
             const auto index = distance(begin(listing.items), item_it);
             listing.items.erase(item_it);
@@ -227,10 +232,12 @@ void Cache::CommitMove(std::string_view _old_path, std::string_view _new_path)
             return;
 
         auto &listing = dir_it->second;
+        // NOLINTBEGIN
         const auto item_it =
             lower_bound(begin(listing.items), end(listing.items), old_filename, [](auto &_1, auto &_2) {
                 return _1.filename < _2;
-            }); // NOLINT
+            });
+        // NOLINTEND
         if( item_it != end(listing.items) && item_it->filename == old_filename ) {
             entry = std::move(*item_it);
             const auto index = distance(begin(listing.items), item_it);
@@ -255,10 +262,12 @@ void Cache::CommitMove(std::string_view _old_path, std::string_view _new_path)
 
         if( entry ) {
             entry->filename = new_filename;
+            // NOLINTBEGIN
             const auto item_it = std::lower_bound(std::begin(listing.items),
                                                   std::end(listing.items),
                                                   new_filename,
-                                                  [](auto &_1, auto &_2) { return _1.filename < _2; }); // NOLINT
+                                                  [](auto &_1, auto &_2) { return _1.filename < _2; });
+            // NOLINTEND
             const auto index = std::distance(std::begin(listing.items), item_it);
             if( item_it == std::end(listing.items) || item_it->filename != new_filename ) {
                 listing.items.insert(item_it, std::move(*entry));

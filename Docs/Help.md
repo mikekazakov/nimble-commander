@@ -245,7 +245,18 @@ By default, Nimble Commander has 4 preconfigured modes, which you can switch usi
 You can fine-tune, rearrange, and add new custom panel layouts in the Settings dialog: `Settings > Panels > Layout`.
 
 ### Quick Lists
-_to be written_
+Quick Lists is another mechanism in Nimble Commander for accessing specific locations with minimal keypresses, tailored for keyboard use. It is similar to the Go To popup but provides more locations and does not mix different types of locations. A Quick List popup is shown inside the focused panel, and its content can depend on the panel itself. There are 6 kinds of Quick Lists, which can be accessed via the menu `Go > Quick Lists` or via the hotkeys below:
+
+- `Cmd + 1` - `Parent Folders`: A list of parent folders up to the root of the filesystem.
+- `Cmd + 2` - `History`: A history of recent locations visited in this panel.
+- `Cmd + 3` - `Favorites`: Favorite and frequently visited locations.
+- `Cmd + 4` - `Volumes`: Currently attached system volumes.
+- `Cmd + 5` - `Connections`: Network locations that Nimble Commander can connect to. Clicking on a connection establishes it and navigates the panel to the default location on that remote resource.
+- `Cmd + 6` - `Tags`: A list of known file tags. Clicking on a tag shows all items with the selected tag in the panel.
+
+This screenshot shows a `Volumes` Quick List:
+
+![Quick List](Help-panel-quicklist.png)
 
 ### Tabs
 _to be written_

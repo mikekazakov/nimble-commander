@@ -1,4 +1,6 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+#include <algorithm>
+
 #include "../include/VFS/Host.h"
 #include "../include/VFS/VFSPath.h"
 
@@ -91,7 +93,7 @@ VFSPathStack::VFSPathStack(const VFSHostPtr &_vfs, const std::string &_path) : m
         m_Stack.emplace_back(*curr_host);
         curr_host = curr_host->Parent().get();
     }
-    reverse(begin(m_Stack), end(m_Stack));
+    std::ranges::reverse(m_Stack);
 }
 
 bool VFSPathStack::weak_equal(const VFSPathStack &_r) const

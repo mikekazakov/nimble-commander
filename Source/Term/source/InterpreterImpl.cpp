@@ -908,7 +908,7 @@ void InterpreterImpl::ProcessTitleManipulation(const input::TitleManipulation &_
         if( _title_manipulation.target == input::TitleManipulation::Icon ||
             _title_manipulation.target == input::TitleManipulation::Both ) {
             if( not m_Titles.saved_icon.empty() ) {
-                const input::Title cmd{input::Title::Icon, m_Titles.saved_icon.back()};
+                const input::Title cmd{.kind = input::Title::Icon, .title = m_Titles.saved_icon.back()};
                 m_Titles.saved_icon.pop_back();
                 ProcessChangeTitle(cmd);
             }
@@ -916,7 +916,7 @@ void InterpreterImpl::ProcessTitleManipulation(const input::TitleManipulation &_
         if( _title_manipulation.target == input::TitleManipulation::Window ||
             _title_manipulation.target == input::TitleManipulation::Both ) {
             if( not m_Titles.saved_window.empty() ) {
-                const input::Title cmd{input::Title::Window, m_Titles.saved_window.back()};
+                const input::Title cmd{.kind = input::Title::Window, .title = m_Titles.saved_window.back()};
                 m_Titles.saved_window.pop_back();
                 ProcessChangeTitle(cmd);
             }

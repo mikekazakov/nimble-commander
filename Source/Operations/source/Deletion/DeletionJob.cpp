@@ -16,7 +16,7 @@ DeletionJob::DeletionJob(std::vector<VFSListingItem> _items, DeletionType _type)
     m_SourceItems = std::move(_items);
     m_Type = _type;
     if( _type == DeletionType::Trash &&
-        !all_of(begin(m_SourceItems), end(m_SourceItems), [](auto &i) { return i.Host()->IsNativeFS(); }) )
+        !std::ranges::all_of(m_SourceItems, [](auto &i) { return i.Host()->IsNativeFS(); }) )
         throw std::invalid_argument("DeletionJob: invalid work mode for the provided items");
     Statistics().SetPreferredSource(Statistics::SourceType::Items);
 }

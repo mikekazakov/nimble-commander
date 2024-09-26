@@ -8,6 +8,8 @@
 #include <Base/dispatch_cpp.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 
+#include <algorithm>
+
 static std::optional<std::vector<uint8_t>> CalculateFileHash(const std::string &_path)
 {
     const int chunk_sz = 1 * 1024 * 1024;
@@ -86,7 +88,7 @@ bool TemporaryNativeFileChangesSentinel::StopFileWatch(const std::string &_path)
 {
     auto &dir_update = nc::utility::FSEventsDirUpdate::Instance();
     auto lock = std::lock_guard{m_WatchesLock};
-    auto it = find_if(begin(m_Watches), end(m_Watches), [&](const auto &_i) { return _i->path == _path; });
+    auto it = std::ranges::find_if(m_Watches, [&](const auto &_i) { return _i->path == _path; });
     if( it != end(m_Watches) ) {
         auto meta = *it;
         dir_update.RemoveWatchPathWithTicket(meta->fswatch_ticket);

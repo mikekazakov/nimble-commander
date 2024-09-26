@@ -300,7 +300,7 @@ static NSMenu *BuildTagColorMenu()
     }
     if( _table == self.layoutsListColumnsTable ) {
         if( auto layout = self.selectedLayout ) {
-            if( auto list = layout->list() ) {
+            if( layout->list() ) {
                 if( _row < static_cast<int>(m_LayoutListColumns.size()) ) {
                     auto &col = m_LayoutListColumns[_row];
                     if( [_column.identifier isEqualToString:@"enabled"] ) {
@@ -869,7 +869,7 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
 {
     __weak PreferencesWindowPanelsTab *weak_self = self;
     m_TagOperationsQue.async([weak_self] {
-        if( PreferencesWindowPanelsTab *const me = weak_self ) {
+        if( weak_self ) {
             auto all_tags = nc::utility::Tags::GatherAllItemsTags();
             dispatch_to_main_queue([all_tags = std::move(all_tags), weak_self] {
                 if( PreferencesWindowPanelsTab *const me = weak_self )

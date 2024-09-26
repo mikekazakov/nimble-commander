@@ -26,7 +26,7 @@ std::string UUID::ToString() const noexcept
     tmp.fill(0);
 
     uuid_t u;
-    std::copy(m_Data.begin(), m_Data.end(), &u[0]);
+    std::ranges::copy(m_Data, &u[0]);
 
     uuid_unparse_lower(u, tmp.data());
     return tmp.data();
@@ -39,7 +39,7 @@ std::optional<UUID> UUID::FromString(std::string_view _str) noexcept
 
     std::array<char, 37> tmp;
     tmp.fill(0);
-    std::copy(_str.begin(), _str.end(), tmp.begin());
+    std::ranges::copy(_str, tmp.begin());
 
     UUID u;
     if( uuid_parse(tmp.data(), *reinterpret_cast<uuid_t *>(&u)) != 0 )

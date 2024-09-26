@@ -1,24 +1,24 @@
 // Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FindFilesSheetController.h"
-#include <Base/dispatch_cpp.h>
 #include <Base/DispatchGroup.h>
-#include <Utility/NSTimer+Tolerance.h>
-#include <Utility/SheetWithHotkeys.h>
-#include <Utility/Encodings.h>
-#include <Utility/StringExtras.h>
-#include <Utility/PathManip.h>
-#include <VFS/SearchForFiles.h>
-#include <Utility/ByteCountFormatter.h>
-#include <NimbleCommander/States/FilePanels/PanelAux.h>
-#include <NimbleCommander/Bootstrap/Config.h>
+#include <Base/dispatch_cpp.h>
 #include <Config/RapidJSON.h>
+#include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
 #include <NimbleCommander/Core/VFSInstancePromise.h>
-#include <Utility/StringExtras.h>
-#include <Utility/ObjCpp.h>
+#include <NimbleCommander/States/FilePanels/PanelAux.h>
 #include <Panel/FindFilesData.h>
-#include <iostream>
+#include <Utility/ByteCountFormatter.h>
+#include <Utility/Encodings.h>
+#include <Utility/NSTimer+Tolerance.h>
+#include <Utility/ObjCpp.h>
+#include <Utility/PathManip.h>
+#include <Utility/SheetWithHotkeys.h>
+#include <Utility/StringExtras.h>
+#include <VFS/SearchForFiles.h>
+#include <algorithm>
 #include <fmt/format.h>
+#include <iostream>
 
 static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";
 static const auto g_StateTextHistory = "filePanel.findFilesSheet.textHistory";
@@ -82,7 +82,7 @@ public:
 
     void insert_unique(const std::string &_value)
     {
-        erase(std::remove_if(begin(), end(), [&](auto &_s) { return _s == _value; }), end());
+        std::erase_if(*this, [&](auto &_s) { return _s == _value; });
         insert(begin(), _value);
         while( size() > static_cast<size_t>(m_Max) )
             pop_back();
@@ -996,7 +996,7 @@ private:
 - (void)insertFindFilesMaskIntoHistory:(const FindFilesMask &)_mask
 {
     // update the search history - remove the entry if it was already there
-    if( auto it = std::find(m_MaskHistory.begin(), m_MaskHistory.end(), _mask); it != m_MaskHistory.end() )
+    if( auto it = std::ranges::find(m_MaskHistory, _mask); it != m_MaskHistory.end() )
         m_MaskHistory.erase(it);
 
     // ... and place it to the front

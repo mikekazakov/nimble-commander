@@ -1,9 +1,9 @@
 // Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+#include <Base/UnorderedUtil.h>
 #include <Utility/HexadecimalColor.h>
 #include <Utility/SystemInformation.h>
-#include <Base/UnorderedUtil.h>
-#include <vector>
 #include <algorithm>
+#include <vector>
 
 // In some contexts, primarily OpenGL, the term "RGBA" actually means the colors are stored in
 // memory such that R is at the lowest address, G after it, B after that, and A last. This is not
@@ -241,7 +241,7 @@ static std::span<const std::string_view> SystemColorNames() noexcept
         v.reserve(g_SystemColors.size());
         for( const auto &kv : g_SystemColors )
             v.push_back(kv.first);
-        std::sort(v.begin(), v.end());
+        std::ranges::sort(v);
         return std::span<const std::string_view>(v);
     }();
     return names;

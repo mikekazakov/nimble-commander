@@ -1,5 +1,6 @@
 // Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/NativeFSManagerVolumeLookup.h>
+#include <algorithm>
 #include <cassert>
 
 namespace nc::utility {
@@ -14,7 +15,7 @@ void NativeFSManagerVolumeLookup::Insert(const std::shared_ptr<const NativeFileS
     if( _at.back() != '/' )
         throw std::invalid_argument("VolumeLookup::Insert(): _at must end with /");
 
-    const auto it = std::find(m_Targets.begin(), m_Targets.end(), _at);
+    const auto it = std::ranges::find(m_Targets, _at);
     if( it == m_Targets.end() ) {
         m_Targets.emplace_back(_at);
         m_Sources.push_back(_volume);
@@ -33,7 +34,7 @@ void NativeFSManagerVolumeLookup::Remove(std::string_view _from)
     if( _from.back() != '/' )
         throw std::invalid_argument("VolumeLookup::Remove(): _from must end with /");
 
-    const auto it = std::find(m_Targets.begin(), m_Targets.end(), _from);
+    const auto it = std::ranges::find(m_Targets, _from);
     if( it != m_Targets.end() ) {
         const auto dist = std::distance(m_Targets.begin(), it);
         m_Targets.erase(it);

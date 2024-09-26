@@ -98,8 +98,8 @@ void FixedNumberLayoutEngine::PerformSingularLayout()
         m_Attributes[index] = attributes;
     }
 
-    std::fill(m_ColumnsPositions.begin(), m_ColumnsPositions.end(), 0);
-    std::fill(m_ColumnsWidths.begin(), m_ColumnsWidths.end(), m_BaseColumnWidth);
+    std::ranges::fill(m_ColumnsPositions, 0);
+    std::ranges::fill(m_ColumnsWidths, m_BaseColumnWidth);
     m_ContentSize = NSMakeSize(m_ColumnsNumber * m_BaseColumnWidth, m_ItemHeight);
 }
 

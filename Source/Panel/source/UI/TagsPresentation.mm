@@ -46,7 +46,7 @@ TrailingTagsInplaceDisplay::Place(const std::span<const utility::Tags::Tag> _tag
     auto count = std::ranges::count_if(_tags, [](auto &_tag) { return _tag.Color() != utility::Tags::Color::None; });
     if( count == 0 )
         return {};
-    return {Diameter + (std::min(static_cast<int>(count), MaxDrawn) - 1) * Step, Margin};
+    return {.width = Diameter + (std::min(static_cast<int>(count), MaxDrawn) - 1) * Step, .margin = Margin};
 }
 
 void TrailingTagsInplaceDisplay::Draw(const double _offset_x,

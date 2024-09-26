@@ -73,22 +73,22 @@ TEST_CASE(PREFIX "execute a detached console app")
         std::string params;
         std::string expected;
     } const tcs[] = {
-        {basedir / "test.txt",                                                          //
-         "echopars\n" + (basedir / "test.txt").string() + "\n"},                        //
-        {(basedir / "test.txt").string() + " Hello!",                                   //
-         "echopars\n" + (basedir / "test.txt").string() + "\nHello!\n"},                //
-        {(basedir / "test.txt").string() + " Hello, World!",                            //
-         "echopars\n" + (basedir / "test.txt").string() + "\nHello,\nWorld!\n"},        //
-        {(basedir / "test.txt").string() + " first second",                             //
-         "echopars\n" + (basedir / "test.txt").string() + "\nfirst\nsecond\n"},         //
-        {(basedir / "test.txt").string() + R"( "first" "second")",                      //
-         "echopars\n" + (basedir / "test.txt").string() + "\n\"first\"\n\"second\"\n"}, //
-        {(basedir / "test.txt").string() + " first\\ second",                           //
-         "echopars\n" + (basedir / "test.txt").string() + "\nfirst second\n"},          //
-        {(basedir / "test.txt").string() + " %f",                                       //
-         "echopars\n" + (basedir / "test.txt").string() + "\na.c\n"},                   //
-        {(basedir / "test.txt").string() + " %-f",                                      //
-         "echopars\n" + (basedir / "test.txt").string() + "\nz z\n"},                   //
+        {.params = basedir / "test.txt",                                                            //
+         .expected = "echopars\n" + (basedir / "test.txt").string() + "\n"},                        //
+        {.params = (basedir / "test.txt").string() + " Hello!",                                     //
+         .expected = "echopars\n" + (basedir / "test.txt").string() + "\nHello!\n"},                //
+        {.params = (basedir / "test.txt").string() + " Hello, World!",                              //
+         .expected = "echopars\n" + (basedir / "test.txt").string() + "\nHello,\nWorld!\n"},        //
+        {.params = (basedir / "test.txt").string() + " first second",                               //
+         .expected = "echopars\n" + (basedir / "test.txt").string() + "\nfirst\nsecond\n"},         //
+        {.params = (basedir / "test.txt").string() + R"( "first" "second")",                        //
+         .expected = "echopars\n" + (basedir / "test.txt").string() + "\n\"first\"\n\"second\"\n"}, //
+        {.params = (basedir / "test.txt").string() + " first\\ second",                             //
+         .expected = "echopars\n" + (basedir / "test.txt").string() + "\nfirst second\n"},          //
+        {.params = (basedir / "test.txt").string() + " %f",                                         //
+         .expected = "echopars\n" + (basedir / "test.txt").string() + "\na.c\n"},                   //
+        {.params = (basedir / "test.txt").string() + " %-f",                                        //
+         .expected = "echopars\n" + (basedir / "test.txt").string() + "\nz z\n"},                   //
     };
 
     auto run = [&] {
@@ -205,31 +205,31 @@ TEST_CASE(PREFIX "execute a ui app", "[!mayfail]")
             ExternalTool::GUIArgumentInterpretation::PassExistingPathsAsURLs;
     } const tcs[] = {
         // one argument
-        {basedir / "test.txt",
-         fmt::format("A-{}\nA-{}\n",
-                     (basedir / "minimal.app/Contents/MacOS/minimal").string(),
-                     (basedir / "test.txt").string())},
+        {.params = basedir / "test.txt",
+         .expected = fmt::format("A-{}\nA-{}\n",
+                                 (basedir / "minimal.app/Contents/MacOS/minimal").string(),
+                                 (basedir / "test.txt").string())},
         // two arguments
-        {(basedir / "test.txt").string() + " Hello!",
-         fmt::format("A-{}\nA-{}\nA-Hello!\n",
-                     (basedir / "minimal.app/Contents/MacOS/minimal").string(),
-                     (basedir / "test.txt").string())},
+        {.params = (basedir / "test.txt").string() + " Hello!",
+         .expected = fmt::format("A-{}\nA-{}\nA-Hello!\n",
+                                 (basedir / "minimal.app/Contents/MacOS/minimal").string(),
+                                 (basedir / "test.txt").string())},
         // one argument and an url
-        {basedir / "test.txt /bin",
-         fmt::format("A-{}\nA-{}\nU-/bin\n",
-                     (basedir / "minimal.app/Contents/MacOS/minimal").string(),
-                     (basedir / "test.txt").string())},
+        {.params = basedir / "test.txt /bin",
+         .expected = fmt::format("A-{}\nA-{}\nU-/bin\n",
+                                 (basedir / "minimal.app/Contents/MacOS/minimal").string(),
+                                 (basedir / "test.txt").string())},
         // one argument and two urls
-        {basedir / "test.txt /bin /System",
-         fmt::format("A-{}\nA-{}\nU-/bin\nU-/System\n",
-                     (basedir / "minimal.app/Contents/MacOS/minimal").string(),
-                     (basedir / "test.txt").string())},
+        {.params = basedir / "test.txt /bin /System",
+         .expected = fmt::format("A-{}\nA-{}\nU-/bin\nU-/System\n",
+                                 (basedir / "minimal.app/Contents/MacOS/minimal").string(),
+                                 (basedir / "test.txt").string())},
         // one argument and two path, but paths are interpreted as arguments
-        {basedir / "test.txt /bin /System",
-         fmt::format("A-{}\nA-{}\nA-/bin\nA-/System\n",
-                     (basedir / "minimal.app/Contents/MacOS/minimal").string(),
-                     (basedir / "test.txt").string()),
-         ExternalTool::GUIArgumentInterpretation::PassAllAsArguments},
+        {.params = basedir / "test.txt /bin /System",
+         .expected = fmt::format("A-{}\nA-{}\nA-/bin\nA-/System\n",
+                                 (basedir / "minimal.app/Contents/MacOS/minimal").string(),
+                                 (basedir / "test.txt").string()),
+         .interp = ExternalTool::GUIArgumentInterpretation::PassAllAsArguments},
     };
 
     auto run = [&] {

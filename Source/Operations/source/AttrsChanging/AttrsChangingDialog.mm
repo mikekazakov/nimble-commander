@@ -8,6 +8,8 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 
+#include <algorithm>
+
 using namespace nc::ops;
 
 @interface NCOpsAttrsChangingDialog ()
@@ -152,7 +154,7 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
         return nil;
 
     m_Items = std::move(_items);
-    m_ItemsHaveDirectories = any_of(begin(m_Items), end(m_Items), [](auto &i) { return i.IsDir(); });
+    m_ItemsHaveDirectories = std::ranges::any_of(m_Items, [](auto &i) { return i.IsDir(); });
     m_CommonItemsPermissions = ExtractCommonPermissions(m_Items);
     m_CommonItemsOwnage = ExtractCommonOwnage(m_Items);
     m_CommonItemsFlags = ExtractCommonFlags(m_Items);

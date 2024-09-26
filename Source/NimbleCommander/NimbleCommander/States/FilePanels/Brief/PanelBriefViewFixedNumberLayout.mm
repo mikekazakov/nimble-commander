@@ -1,9 +1,9 @@
-// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewFixedNumberLayout.h"
 #include "PanelBriefViewFixedNumberLayoutEngine.h"
-#include <optional>
 #include <Panel/Log.h>
 #include <algorithm>
+#include <optional>
 
 using nc::panel::Log;
 using nc::panel::view::brief::FixedNumberLayoutEngine;
@@ -159,7 +159,7 @@ struct ColumnAnchor {
     const auto scroll_view = self.collectionView.enclosingScrollView;
     const auto visible_rect = scroll_view.documentVisibleRect;
     const auto left_border = static_cast<int>(visible_rect.origin.x);
-    const auto col_it = std::lower_bound(col_positions.begin(), col_positions.end(), left_border);
+    const auto col_it = std::ranges::lower_bound(col_positions, left_border);
     if( col_it == col_positions.end() )
         return std::nullopt;
 

@@ -1,5 +1,6 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #define CATCH_CONFIG_RUNNER
+#include <algorithm>
 #include <catch2/catch.hpp>
 
 #define GTEST_DONT_DEFINE_FAIL 1
@@ -114,9 +115,8 @@ static bool WaitUntilNativeFSManSeesVolumeAtPath(const std::filesystem::path &vo
 {
     auto predicate = [volume_path] {
         auto volumes = TestEnv().native_fs_man->Volumes();
-        return std::any_of(volumes.begin(), volumes.end(), [volume_path](auto _fs_info) {
-            return _fs_info->mounted_at_path == volume_path;
-        });
+        return std::ranges::any_of(volumes,
+                                   [volume_path](auto _fs_info) { return _fs_info->mounted_at_path == volume_path; });
     };
     return RunMainLoopUntilExpectationOrTimeout(_time_limit, predicate);
 }

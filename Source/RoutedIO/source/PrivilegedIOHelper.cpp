@@ -298,7 +298,7 @@ static bool HandleChTime(xpc_object_t _event) noexcept
     else if( strcmp(operation, "chatime") == 0 )
         attrs.commonattr = ATTR_CMN_ACCTIME;
 
-    timespec time = {timesec, 0};
+    timespec time = {.tv_sec = timesec, .tv_nsec = 0};
 
     const int result = setattrlist(path, &attrs, &time, sizeof(time), 0);
     if( result == 0 ) {

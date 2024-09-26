@@ -368,15 +368,15 @@ TEST_CASE(PREFIX "DecomposeMaskIntoPlaceholders")
         NSString *input;
         std::optional<std::vector<MD>> expected;
     } const tcs[] = {
-        {@"", std::vector<MD>{}},
-        {@"[", std::nullopt},
-        {@"]", std::nullopt},
-        {@"a", std::vector<MD>{{@"a", false}}},
-        {@"[[", std::vector<MD>{{@"[", false}}},
-        {@"[[[[", std::vector<MD>{{@"[[", false}}},
-        {@"]]", std::vector<MD>{{@"]", false}}},
-        {@"]]]]", std::vector<MD>{{@"]]", false}}},
-        {@"[[[[]]]]", std::vector<MD>{{@"[[]]", false}}},
+        {.input = @"", .expected = std::vector<MD>{}},
+        {.input = @"[", .expected = std::nullopt},
+        {.input = @"]", .expected = std::nullopt},
+        {.input = @"a", .expected = std::vector<MD>{{@"a", false}}},
+        {.input = @"[[", .expected = std::vector<MD>{{@"[", false}}},
+        {.input = @"[[[[", .expected = std::vector<MD>{{@"[[", false}}},
+        {.input = @"]]", .expected = std::vector<MD>{{@"]", false}}},
+        {.input = @"]]]]", .expected = std::vector<MD>{{@"]]", false}}},
+        {.input = @"[[[[]]]]", .expected = std::vector<MD>{{@"[[]]", false}}},
     };
     for( const auto &tc : tcs ) {
         auto decomposed = BatchRenamingScheme::DecomposeMaskIntoPlaceholders(tc.input);
@@ -396,35 +396,35 @@ TEST_CASE(PREFIX "Renaming - simple cases")
         NSString *expected;
     };
     const Case test_cases[] = {
-        {@"", false, @""},
+        {.pattern = @"", .parsed = false, .expected = @""},
         // A - filename
-        {@"[A]", true, @"filename.txt"},
-        {@"[A-5-2]", true, @"e.tx"},
-        {@"[A-5,100]", true, @"e.txt"},
-        {@"[A05-14]", true, @"00name.txt"},
-        {@"[A 5-14]", true, @"  name.txt"},
+        {.pattern = @"[A]", .parsed = true, .expected = @"filename.txt"},
+        {.pattern = @"[A-5-2]", .parsed = true, .expected = @"e.tx"},
+        {.pattern = @"[A-5,100]", .parsed = true, .expected = @"e.txt"},
+        {.pattern = @"[A05-14]", .parsed = true, .expected = @"00name.txt"},
+        {.pattern = @"[A 5-14]", .parsed = true, .expected = @"  name.txt"},
         // N - name
-        {@"[N]", true, @"filename"},
-        {@"[N2-]", true, @"ilename"},
-        {@"[N2-3]", true, @"il"},
-        {@"[N-4-]", true, @"name"},
-        {@"[N5]", true, @"n"},
-        {@"[N-5,4]", true, @"enam"},
+        {.pattern = @"[N]", .parsed = true, .expected = @"filename"},
+        {.pattern = @"[N2-]", .parsed = true, .expected = @"ilename"},
+        {.pattern = @"[N2-3]", .parsed = true, .expected = @"il"},
+        {.pattern = @"[N-4-]", .parsed = true, .expected = @"name"},
+        {.pattern = @"[N5]", .parsed = true, .expected = @"n"},
+        {.pattern = @"[N-5,4]", .parsed = true, .expected = @"enam"},
         // E - extension
-        {@"[E]", true, @"txt"},
-        {@"[E-2-]", true, @"xt"},
-        {@"[E3-]", true, @"t"},
-        {@"[E4-]", true, @""},
+        {.pattern = @"[E]", .parsed = true, .expected = @"txt"},
+        {.pattern = @"[E-2-]", .parsed = true, .expected = @"xt"},
+        {.pattern = @"[E3-]", .parsed = true, .expected = @"t"},
+        {.pattern = @"[E4-]", .parsed = true, .expected = @""},
         // E - parent filename
-        {@"[P]", true, @"parent_dir"},
-        {@"[P1-6]", true, @"parent"},
+        {.pattern = @"[P]", .parsed = true, .expected = @"parent_dir"},
+        {.pattern = @"[P1-6]", .parsed = true, .expected = @"parent"},
         // E - grandparent filename
-        {@"[G]", true, @"grandparent_dir"},
-        {@"[G1-5]", true, @"grand"},
+        {.pattern = @"[G]", .parsed = true, .expected = @"grandparent_dir"},
+        {.pattern = @"[G1-5]", .parsed = true, .expected = @"grand"},
         // Escaping
-        {@"[[", true, @"["},
-        {@"]]", true, @"]"},
-        {@"[N][[1]]", true, @"filename[1]"},
+        {.pattern = @"[[", .parsed = true, .expected = @"["},
+        {.pattern = @"]]", .parsed = true, .expected = @"]"},
+        {.pattern = @"[N][[1]]", .parsed = true, .expected = @"filename[1]"},
     };
 
     const BatchRenamingScheme::FileInfo file_info(item);

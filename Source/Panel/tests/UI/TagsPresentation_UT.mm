@@ -25,22 +25,28 @@ TEST_CASE(PREFIX "TrailingTagsInplaceDisplay::Place")
         int exp_width = 0;
         int exp_margin = 0;
     } const tcs[] = {
-        {{}, 0, 0},
-        {{Tag(&l, C::None)}, 0, 0},
-        {{Tag(&l, C::Blue)}, D, M},
-        {{Tag(&l, C::None), Tag(&l, C::None)}, 0, 0},
-        {{Tag(&l, C::None), Tag(&l, C::None), Tag(&l, C::None)}, 0, 0},
-        {{Tag(&l, C::None), Tag(&l, C::Blue)}, D, M},
-        {{Tag(&l, C::Blue), Tag(&l, C::None)}, D, M},
-        {{Tag(&l, C::None), Tag(&l, C::Blue), Tag(&l, C::None)}, D, M},
-        {{Tag(&l, C::Blue), Tag(&l, C::Blue)}, D + S, M},
-        {{Tag(&l, C::Blue), Tag(&l, C::None), Tag(&l, C::Blue)}, D + S, M},
-        {{Tag(&l, C::None), Tag(&l, C::Blue), Tag(&l, C::Blue)}, D + S, M},
-        {{Tag(&l, C::Blue), Tag(&l, C::Blue), Tag(&l, C::None)}, D + S, M},
-        {{Tag(&l, C::None), Tag(&l, C::Blue), Tag(&l, C::Blue), Tag(&l, C::None)}, D + S, M},
-        {{Tag(&l, C::Blue), Tag(&l, C::Blue), Tag(&l, C::Blue)}, D + S + S, M},
-        {{Tag(&l, C::Blue), Tag(&l, C::Blue), Tag(&l, C::Blue), Tag(&l, C::Blue)}, D + S + S, M},
-        {{Tag(&l, C::Blue), Tag(&l, C::None), Tag(&l, C::Blue), Tag(&l, C::Blue), Tag(&l, C::Blue)}, D + S + S, M}};
+        {.tags = {}, .exp_width = 0, .exp_margin = 0},
+        {.tags = {Tag(&l, C::None)}, .exp_width = 0, .exp_margin = 0},
+        {.tags = {Tag(&l, C::Blue)}, .exp_width = D, .exp_margin = M},
+        {.tags = {Tag(&l, C::None), Tag(&l, C::None)}, .exp_width = 0, .exp_margin = 0},
+        {.tags = {Tag(&l, C::None), Tag(&l, C::None), Tag(&l, C::None)}, .exp_width = 0, .exp_margin = 0},
+        {.tags = {Tag(&l, C::None), Tag(&l, C::Blue)}, .exp_width = D, .exp_margin = M},
+        {.tags = {Tag(&l, C::Blue), Tag(&l, C::None)}, .exp_width = D, .exp_margin = M},
+        {.tags = {Tag(&l, C::None), Tag(&l, C::Blue), Tag(&l, C::None)}, .exp_width = D, .exp_margin = M},
+        {.tags = {Tag(&l, C::Blue), Tag(&l, C::Blue)}, .exp_width = D + S, .exp_margin = M},
+        {.tags = {Tag(&l, C::Blue), Tag(&l, C::None), Tag(&l, C::Blue)}, .exp_width = D + S, .exp_margin = M},
+        {.tags = {Tag(&l, C::None), Tag(&l, C::Blue), Tag(&l, C::Blue)}, .exp_width = D + S, .exp_margin = M},
+        {.tags = {Tag(&l, C::Blue), Tag(&l, C::Blue), Tag(&l, C::None)}, .exp_width = D + S, .exp_margin = M},
+        {.tags = {Tag(&l, C::None), Tag(&l, C::Blue), Tag(&l, C::Blue), Tag(&l, C::None)},
+         .exp_width = D + S,
+         .exp_margin = M},
+        {.tags = {Tag(&l, C::Blue), Tag(&l, C::Blue), Tag(&l, C::Blue)}, .exp_width = D + S + S, .exp_margin = M},
+        {.tags = {Tag(&l, C::Blue), Tag(&l, C::Blue), Tag(&l, C::Blue), Tag(&l, C::Blue)},
+         .exp_width = D + S + S,
+         .exp_margin = M},
+        {.tags = {Tag(&l, C::Blue), Tag(&l, C::None), Tag(&l, C::Blue), Tag(&l, C::Blue), Tag(&l, C::Blue)},
+         .exp_width = D + S + S,
+         .exp_margin = M}};
     for( const auto &tc : tcs ) {
         auto geom = TrailingTagsInplaceDisplay::Place(tc.tags);
         CHECK(geom.width == tc.exp_width);

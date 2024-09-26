@@ -10,6 +10,8 @@
 #include "../Internal.h"
 #include <Base/UnorderedUtil.h>
 
+#include <algorithm>
+
 using namespace nc::ops;
 
 static auto g_MyPrivateTableViewDataType = @"com.magnumbytes.nc.ops.BatchRenameSheetControllerPrivateTableViewDataType";
@@ -423,12 +425,10 @@ using SourceReverseMappingStorage =
     }
     else {
         // pick the longest filename
-        const auto longest_it =
-            std::max_element(m_FileInfos.begin(),
-                             m_FileInfos.end(),
-                             [](const BatchRenamingScheme::FileInfo &lhs, const BatchRenamingScheme::FileInfo &rhs) {
-                                 return lhs.name.length < rhs.name.length;
-                             });
+        const auto longest_it = std::ranges::max_element(
+            m_FileInfos, [](const BatchRenamingScheme::FileInfo &lhs, const BatchRenamingScheme::FileInfo &rhs) {
+                return lhs.name.length < rhs.name.length;
+            });
         pc.string = longest_it->name;
     }
 

@@ -36,12 +36,12 @@ static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelSt
         m_AM = &_actions_map;
         m_ShortCutsUpdater = std::make_unique<ActionsShortcutsManager::ShortCutsUpdater>(
             std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
-                {&m_HKFocusLeft, "panel.focus_left_panel"},
-                {&m_HKFocusRight, "panel.focus_right_panel"},
-                {&m_HKMoveUp, "menu.view.panels_position.move_up"},
-                {&m_HKMoveDown, "menu.view.panels_position.move_down"},
-                {&m_HKShow, "menu.view.panels_position.showpanels"},
-                {&m_HKFocusTerminal, "menu.view.panels_position.focusterminal"}});
+                {.shortcut = &m_HKFocusLeft, .action = "panel.focus_left_panel"},
+                {.shortcut = &m_HKFocusRight, .action = "panel.focus_right_panel"},
+                {.shortcut = &m_HKMoveUp, .action = "menu.view.panels_position.move_up"},
+                {.shortcut = &m_HKMoveDown, .action = "menu.view.panels_position.move_down"},
+                {.shortcut = &m_HKShow, .action = "menu.view.panels_position.showpanels"},
+                {.shortcut = &m_HKFocusTerminal, .action = "menu.view.panels_position.focusterminal"}});
     }
     return self;
 }

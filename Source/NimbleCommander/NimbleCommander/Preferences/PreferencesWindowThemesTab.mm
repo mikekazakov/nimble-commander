@@ -1,23 +1,24 @@
 // Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowThemesTab.h"
+#include "PreferencesWindowThemesControls.h"
+#include "PreferencesWindowThemesTabAutomaticSwitchingSheet.h"
+#include "PreferencesWindowThemesTabImportSheet.h"
+#include "PreferencesWindowThemesTabModel.h"
 #include <Config/RapidJSON.h>
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Core/Theming/ThemePersistence.h>
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
+#include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
+#include <Utility/VerticallyCenteredTextFieldCell.h>
+#include <algorithm>
 #include <fstream>
 #include <rapidjson/error/en.h>
 #include <rapidjson/memorystream.h>
-#include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
-#include <NimbleCommander/Bootstrap/Config.h>
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
-#include <NimbleCommander/Core/Theming/ThemesManager.h>
-#include <NimbleCommander/Core/Theming/ThemePersistence.h>
-#include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
-#include "PreferencesWindowThemesControls.h"
-#include "PreferencesWindowThemesTabModel.h"
-#include "PreferencesWindowThemesTabImportSheet.h"
-#include "PreferencesWindowThemesTabAutomaticSwitchingSheet.h"
-#include <Utility/StringExtras.h>
-#include <Utility/ObjCpp.h>
-#include <Utility/VerticallyCenteredTextFieldCell.h>
+#include <rapidjson/stringbuffer.h>
 
 using namespace std::literals;
 using nc::ThemePersistence;
@@ -120,7 +121,7 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
     m_ThemeNames = m_Manager->ThemeNames();
     assert(!m_ThemeNames.empty()); // there should be at least 3 default themes!
     m_SelectedTheme = 0;
-    auto it = std::find(std::begin(m_ThemeNames), std::end(m_ThemeNames), m_Manager->SelectedThemeName());
+    auto it = std::ranges::find(m_ThemeNames, m_Manager->SelectedThemeName());
     if( it != std::end(m_ThemeNames) )
         m_SelectedTheme = static_cast<size_t>(std::distance(std::begin(m_ThemeNames), it));
     [self.themesTable selectRowIndexes:[NSIndexSet indexSetWithIndex:m_SelectedTheme] byExtendingSelection:false];
@@ -179,7 +180,7 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
     if( new_theme_name == m_ThemeNames[m_SelectedTheme] )
         return; // no so new, huh?
 
-    auto it = std::find(std::begin(m_ThemeNames), std::end(m_ThemeNames), new_theme_name);
+    auto it = std::ranges::find(m_ThemeNames, new_theme_name);
     if( it == std::end(m_ThemeNames) )
         return;
     m_SelectedTheme = static_cast<size_t>(std::distance(std::begin(m_ThemeNames), it));

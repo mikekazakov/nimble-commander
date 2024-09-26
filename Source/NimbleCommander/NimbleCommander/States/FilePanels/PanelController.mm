@@ -37,6 +37,8 @@
 #include <Utility/PathManip.h>
 #include <Base/mach_time.h>
 
+#include <algorithm>
+
 using namespace nc;
 using namespace nc::core;
 using namespace nc::panel;
@@ -537,21 +539,17 @@ static void HeatUpConfigValues()
             if( &m_Data.Listing() == calculated.items.front().Listing().get() ) {
                 // the listing is the same, can use indices directly
                 std::vector<unsigned> raw_indices(calculated.items.size());
-                std::transform(calculated.items.begin(), calculated.items.end(), raw_indices.begin(), [](auto &i) {
-                    return i.Index();
-                });
+                std::ranges::transform(calculated.items, raw_indices.begin(), [](auto &i) { return i.Index(); });
                 num_set = m_Data.SetCalculatedSizesForDirectories(raw_indices, calculated.sizes);
             }
             else {
                 // the listing has changed, need to use indirects: filename and directory
                 std::vector<std::string_view> filenames(calculated.items.size());
                 std::vector<std::string_view> directories(calculated.items.size());
-                std::transform(calculated.items.begin(), calculated.items.end(), filenames.begin(), [](auto &i) {
-                    return std::string_view{i.Filename()};
-                });
-                std::transform(calculated.items.begin(), calculated.items.end(), directories.begin(), [](auto &i) {
-                    return std::string_view{i.Directory()};
-                });
+                std::ranges::transform(
+                    calculated.items, filenames.begin(), [](auto &i) { return std::string_view{i.Filename()}; });
+                std::ranges::transform(
+                    calculated.items, directories.begin(), [](auto &i) { return std::string_view{i.Directory()}; });
                 num_set = m_Data.SetCalculatedSizesForDirectories(filenames, directories, calculated.sizes);
             }
             if( num_set != 0 ) {
@@ -793,7 +791,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
 {
     {
         auto lock = std::lock_guard{m_ActivitiesTicketsLock};
-        auto i = find(begin(m_ActivitiesTickets), end(m_ActivitiesTickets), _ticket);
+        auto i = std::ranges::find(m_ActivitiesTickets, _ticket);
         if( i == end(m_ActivitiesTickets) )
             return;
         m_ActivitiesTickets.erase(i);

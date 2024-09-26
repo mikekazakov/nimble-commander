@@ -20,7 +20,7 @@ bool ExtensionsWhitelistImpl::AllowExtension(const std::string &_extension) cons
         return it->second;
 
     const auto uti = m_UTIDB.UTIForExtension(_extension);
-    const bool allow = std::any_of(m_Allowed_UTIs.begin(), m_Allowed_UTIs.end(), [&](const auto &allowed_uti) {
+    const bool allow = std::ranges::any_of(m_Allowed_UTIs, [&](const auto &allowed_uti) {
         return uti == allowed_uti || m_UTIDB.ConformsTo(uti, allowed_uti);
     });
 

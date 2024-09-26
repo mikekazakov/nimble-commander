@@ -6,6 +6,8 @@
 #include <sys/stat.h>
 #include <sys/xattr.h>
 
+#include <algorithm>
+
 using namespace nc;
 using namespace nc::vfs;
 using namespace nc::vfs::native;
@@ -18,7 +20,7 @@ static VFSNativeHost &host()
 
 static bool ListingHas(const Listing &listing, const std::string &_filename)
 {
-    return std::any_of(listing.begin(), listing.end(), [&](auto &item) { return item.Filename() == _filename; });
+    return std::ranges::any_of(listing, [&](auto &item) { return item.Filename() == _filename; });
 };
 
 static bool ListingHas(const VFSListingPtr &listing, const std::string &_filename)

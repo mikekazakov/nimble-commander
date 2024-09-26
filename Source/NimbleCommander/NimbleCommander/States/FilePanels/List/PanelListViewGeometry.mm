@@ -1,6 +1,7 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Utility/FontExtras.h>
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListViewGeometry.h"
+#include <Utility/FontExtras.h>
+#include <algorithm>
 #include <array>
 #include <cmath>
 
@@ -46,9 +47,8 @@ static std::tuple<short, short, short> GrabGeometryFromSystemFont(NSFont *_font,
     const int font_size = static_cast<int>(std::floor(_font.pointSize + 0.5));
 
     // check predefined values
-    auto pit = find_if(begin(g_FixedLayoutData), end(g_FixedLayoutData), [&](auto &l) {
-        return std::get<0>(l) == font_size && std::get<1>(l) == _icon_scale;
-    });
+    auto pit = std::ranges::find_if(
+        g_FixedLayoutData, [&](auto &l) { return std::get<0>(l) == font_size && std::get<1>(l) == _icon_scale; });
 
     if( pit != end(g_FixedLayoutData) ) {
         // use hardcoded stuff to mimic Finder's layout

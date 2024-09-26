@@ -1,9 +1,10 @@
 // Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Base/algo.h>
 #include "VFSInstanceManagerImpl.h"
-#include <VFS/VFS.h>
-#include <iostream>
+#include <Base/algo.h>
 #include <Base/dispatch_cpp.h>
+#include <VFS/VFS.h>
+#include <algorithm>
+#include <iostream>
 
 namespace nc::core {
 
@@ -209,10 +210,7 @@ void VFSInstanceManagerImpl::SweepDeadMemory()
     {
         auto lock = std::lock_guard{m_MemoryLock};
         auto old_size = m_Memory.size();
-        m_Memory.erase(remove_if(begin(m_Memory),
-                                 end(m_Memory),
-                                 [](const auto &i) { return i.m_WeakHost.expired() && i.m_PromisesCount == 0; }),
-                       end(m_Memory));
+        std::erase_if(m_Memory, [](const auto &i) { return i.m_WeakHost.expired() && i.m_PromisesCount == 0; });
 
         for( auto &i : m_Memory )
             if( i.m_WeakHost.expired() )
@@ -232,9 +230,8 @@ void VFSInstanceManagerImpl::EnrollAliveHost(const VFSHostPtr &_inst)
 
     {
         auto lock = std::lock_guard{m_AliveHostsLock};
-        if( any_of(begin(m_AliveHosts), end(m_AliveHosts), [&](auto &_i) {
-                return !_i.owner_before(_inst) && !_inst.owner_before(_i);
-            }) )
+        if( std::ranges::any_of(m_AliveHosts,
+                                [&](auto &_i) { return !_i.owner_before(_inst) && !_inst.owner_before(_i); }) )
             return;
 
         m_AliveHosts.emplace_back(_inst);
@@ -251,8 +248,7 @@ void VFSInstanceManagerImpl::SweepDeadReferences()
     {
         auto lock = std::lock_guard{m_AliveHostsLock};
         auto old_size = m_AliveHosts.size();
-        m_AliveHosts.erase(remove_if(begin(m_AliveHosts), end(m_AliveHosts), [](auto &i) { return i.expired(); }),
-                           end(m_AliveHosts));
+        std::erase_if(m_AliveHosts, [](auto &i) { return i.expired(); });
         if( old_size == m_AliveHosts.size() )
             return; // no changes
     }

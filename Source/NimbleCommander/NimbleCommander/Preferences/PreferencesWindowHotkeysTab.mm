@@ -1,15 +1,16 @@
 // Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowHotkeysTab.h"
-#include <Utility/NSMenu+Hierarchical.h>
-#include <Utility/FunctionKeysPass.h>
-#import <GTMHotKeyTextField/GTMHotKeyTextField.h>
 #include "../Core/ActionsShortcutsManager.h"
-#include <Panel/ExternalTools.h>
-#include <any>
-#include <Base/dispatch_cpp.h>
 #include <Base/debug.h>
+#include <Base/dispatch_cpp.h>
+#import <GTMHotKeyTextField/GTMHotKeyTextField.h>
+#include <Panel/ExternalTools.h>
+#include <Utility/FunctionKeysPass.h>
+#include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
+#include <algorithm>
+#include <any>
 
 using nc::panel::ExternalTool;
 
@@ -96,7 +97,7 @@ enum class SourceType : uint8_t {
             const auto menu_item = [NSApp.mainMenu itemWithTagHierarchical:_t.second];
             return menu_item == nil || menu_item.isHidden == true;
         };
-        m_Shortcuts.erase(remove_if(begin(m_Shortcuts), end(m_Shortcuts), absent), end(m_Shortcuts));
+        std::erase_if(m_Shortcuts, absent);
     }
     return self;
 }

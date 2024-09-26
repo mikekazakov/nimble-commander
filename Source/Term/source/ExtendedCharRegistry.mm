@@ -40,7 +40,7 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
 {
     // No input
     if( _input.data() == nullptr || _input.length() == 0 ) {
-        return {_initial, 0};
+        return {.newchar = _initial, .eaten = 0};
     }
 
     // Fast path bypassing the heavy machinery of Core Foundation
@@ -50,14 +50,16 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
             const bool first_potentially_composable = IsPotentiallyComposableCharacter(_input[0]);
             if( first_potentially_composable == false ) {
                 // 99.99% of cases should fall into this branch.
-                return _initial == 0 ? AppendResult{_input[0], 1} : AppendResult{_initial, 0};
+                return _initial == 0 ? AppendResult{.newchar = _input[0], .eaten = 1}
+                                     : AppendResult{.newchar = _initial, .eaten = 0};
             }
         }
     }
     else if( _input.length() == 1 ) {
         const bool first_potentially_composable = IsPotentiallyComposableCharacter(_input[0]);
         if( first_potentially_composable == false ) {
-            return _initial == 0 ? AppendResult{_input[0], 1} : AppendResult{_initial, 0};
+            return _initial == 0 ? AppendResult{.newchar = _input[0], .eaten = 1}
+                                 : AppendResult{.newchar = _initial, .eaten = 0};
         }
     }
 
@@ -69,23 +71,23 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
             nullptr, reinterpret_cast<const UniChar *>(_input.data()), _input.length(), kCFAllocatorNull));
         if( !cf_str ) {
             // discard incorrect input
-            return {_initial, _input.length()};
+            return {.newchar = _initial, .eaten = _input.length()};
         }
 
         const CFIndex grapheme_len = CFStringGetRangeOfComposedCharactersAtIndex(cf_str.get(), 0).length;
 
         if( grapheme_len == 1 ) {
-            return {_input[0], 1};
+            return {.newchar = _input[0], .eaten = 1};
         }
         else if( grapheme_len == 2 && CFStringIsSurrogateHighCharacter(_input[0]) &&
                  CFStringIsSurrogateLowCharacter(_input[1]) ) {
             const uint32_t utf32 = CFStringGetLongCharacterForSurrogatePair(_input[0], _input[1]);
-            return {utf32, 2};
+            return {.newchar = utf32, .eaten = 2};
         }
         else {
             const std::lock_guard lock{m_Lock};
             const uint32_t idx = FindOrAdd_Unlocked(_input.substr(0, grapheme_len));
-            return {ToExtChar(idx), static_cast<size_t>(grapheme_len)};
+            return {.newchar = ToExtChar(idx), .eaten = static_cast<size_t>(grapheme_len)};
         }
     }
     else if( IsBase(_initial) ) {
@@ -101,19 +103,19 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
             base::CFPtr<CFStringRef>::adopt(CFStringCreateWithCharactersNoCopy(nullptr, buf, len, kCFAllocatorNull));
         if( !cf_str ) {
             // discard incorrect input
-            return {_initial, _input.length()};
+            return {.newchar = _initial, .eaten = _input.length()};
         }
 
         const CFIndex grapheme_len = CFStringGetRangeOfComposedCharactersAtIndex(cf_str.get(), 0).length;
         assert(static_cast<size_t>(grapheme_len) >= initial_len);
         if( static_cast<size_t>(grapheme_len) == initial_len ) {
-            return {_initial, 0}; // can't be composed with _initial
+            return {.newchar = _initial, .eaten = 0}; // can't be composed with _initial
         }
         else {
             const std::lock_guard lock{m_Lock};
             const uint32_t idx =
                 FindOrAdd_Unlocked({reinterpret_cast<const char16_t *>(buf), static_cast<size_t>(grapheme_len)});
-            return {ToExtChar(idx), grapheme_len - initial_len};
+            return {.newchar = ToExtChar(idx), .eaten = grapheme_len - initial_len};
         }
     }
     else {
@@ -123,13 +125,15 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
         // look up the initial extended character
         const uint32_t initial_ex_idx = ToExtIdx(_initial);
         if( initial_ex_idx >= m_Chars.size() ) {
-            return {_initial, 0}; // corrupted external char? report that we can't compose with it
+            return {.newchar = _initial, .eaten = 0}; // corrupted external char? report that we can't
+                                                      // compose with it
         }
 
         uint16_t buf[g_MaxGraphemeLen];
         const size_t initial_len = m_Chars[initial_ex_idx].str.length();
         if( initial_len == g_MaxGraphemeLen ) {
-            return {_initial, 0}; // we're full, can't combine more. don't allow too crazy Zalgo text...
+            return {.newchar = _initial, .eaten = 0}; // we're full, can't combine more. don't allow
+                                                      // too crazy Zalgo text...
         }
 
         memcpy(buf, m_Chars[initial_ex_idx].str.data(), initial_len * sizeof(char16_t));
@@ -142,18 +146,18 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
             base::CFPtr<CFStringRef>::adopt(CFStringCreateWithCharactersNoCopy(nullptr, buf, len, kCFAllocatorNull));
         if( !cf_str ) {
             // discard incorrect input
-            return {_initial, _input.length()};
+            return {.newchar = _initial, .eaten = _input.length()};
         }
 
         const CFIndex grapheme_len = CFStringGetRangeOfComposedCharactersAtIndex(cf_str.get(), 0).length;
         assert(static_cast<size_t>(grapheme_len) >= initial_len);
         if( static_cast<size_t>(grapheme_len) == initial_len ) {
-            return {_initial, 0}; // can't be composed with _initial
+            return {.newchar = _initial, .eaten = 0}; // can't be composed with _initial
         }
         else {
             const uint32_t idx =
                 FindOrAdd_Unlocked({reinterpret_cast<const char16_t *>(buf), static_cast<size_t>(grapheme_len)});
-            return {ToExtChar(idx), grapheme_len - initial_len};
+            return {.newchar = ToExtChar(idx), .eaten = grapheme_len - initial_len};
         }
     }
 }

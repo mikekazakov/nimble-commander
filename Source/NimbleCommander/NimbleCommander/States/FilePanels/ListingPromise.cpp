@@ -1,8 +1,8 @@
 // Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ListingPromise.h"
 #include <VFS/VFSListingInput.h>
-#include <unordered_map>
 #include <algorithm>
+#include <unordered_map>
 
 namespace nc::panel {
 
@@ -60,7 +60,7 @@ ListingPromise::NonUniformListing ListingPromise::FromNonUniformListing(const VF
 
         for( auto &directory : vfs.second )
             per_vfs.entries.emplace_back(directory.second.Build());
-        sort(begin(per_vfs.entries), end(per_vfs.entries));
+        std::ranges::sort(per_vfs.entries);
 
         info.per_vfs.emplace_back(std::move(per_vfs));
     }

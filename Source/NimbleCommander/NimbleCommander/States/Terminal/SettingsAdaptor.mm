@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SettingsAdaptor.h"
 #include <Term/Settings.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -6,6 +6,8 @@
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Base/dispatch_cpp.h>
+
+#include <algorithm>
 
 namespace nc::term {
 
@@ -45,10 +47,7 @@ public:
     {
         dispatch_assert_main_queue();
         if( _ticket > 0 )
-            m_Callbacks.erase(remove_if(begin(m_Callbacks),
-                                        end(m_Callbacks),
-                                        [_ticket](const auto &v) { return v.first == _ticket; }),
-                              end(m_Callbacks));
+            std::erase_if(m_Callbacks, [_ticket](const auto &v) { return v.first == _ticket; });
     }
 
     void FireNotification() const

@@ -1,8 +1,9 @@
 // Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DiskUtility.h"
+#include "ObjCpp.h"
+#include <algorithm>
 #include <boost/process.hpp>
 #include <iostream>
-#include "ObjCpp.h"
 
 static const auto g_APFSListCommand = "/usr/sbin/diskutil apfs list -plist";
 
@@ -237,8 +238,8 @@ std::vector<std::string> APFSTree::VolumesOfContainerWithRole(NSDictionary *_con
         }
     }
 
-    std::sort(volumes_bsd_names.begin(), volumes_bsd_names.end());
-    volumes_bsd_names.erase(std::unique(volumes_bsd_names.begin(), volumes_bsd_names.end()), volumes_bsd_names.end());
+    std::ranges::sort(volumes_bsd_names);
+    volumes_bsd_names.erase(std::ranges::unique(volumes_bsd_names).begin(), volumes_bsd_names.end());
     return volumes_bsd_names;
 }
 

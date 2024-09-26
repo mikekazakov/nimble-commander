@@ -1,12 +1,12 @@
-// Copyright (C) 2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ChildrenTracker.h"
 #include <Base/dispatch_cpp.h>
-#include <libproc.h>
-#include <vector>
-#include <array>
-#include <span>
 #include <algorithm>
+#include <array>
+#include <libproc.h>
 #include <memory_resource>
+#include <span>
+#include <vector>
 
 namespace nc::term {
 
@@ -25,7 +25,7 @@ static std::vector<pid_t> InitialPIDs(pid_t _root_pid)
         res.reserve(cnt + 1);
         res.push_back(_root_pid);
         res.insert(res.end(), &child_pids[0], &child_pids[cnt]);
-        std::sort(res.begin(), res.end());
+        std::ranges::sort(res);
         return res;
     }
 }
@@ -96,7 +96,7 @@ void ChildrenTracker::Drain()
             pid_t pids[4096];
             const int npids = proc_listchildpids(pid, pids, std::size(pids) * sizeof(pid_t));
             for( const pid_t child : std::span{pids, static_cast<size_t>(std::max(npids, 0))} ) {
-                auto it = std::lower_bound(m_Tracked.begin(), m_Tracked.end(), child);
+                auto it = std::ranges::lower_bound(m_Tracked, child);
                 if( it == m_Tracked.end() || *it != child ) {
                     Subscribe(m_KQ, child);
                     m_Tracked.insert(it, child);
@@ -109,7 +109,7 @@ void ChildrenTracker::Drain()
         if( event.fflags & NOTE_EXIT ) {
             ++meaningful;
             Unsubscribe(m_KQ, pid);
-            auto it = std::lower_bound(m_Tracked.begin(), m_Tracked.end(), pid);
+            auto it = std::ranges::lower_bound(m_Tracked, pid);
             if( it != m_Tracked.end() && *it == pid )
                 m_Tracked.erase(it);
         }

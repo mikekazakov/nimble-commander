@@ -12,6 +12,8 @@
 #include <NimbleCommander/Core/Alert.h>
 #include <Carbon/Carbon.h>
 
+#include <algorithm>
+
 namespace {
 class SheetsDispatcher : public NetworkConnectionsManager::ConnectionVisitor
 {
@@ -253,7 +255,7 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 
 - (void)focusConnection:(const NetworkConnectionsManager::Connection &)_connection
 {
-    const auto new_it = find(begin(m_Connections), end(m_Connections), _connection);
+    const auto new_it = std::ranges::find(m_Connections, _connection);
     if( new_it != end(m_Connections) ) {
         const auto new_ind = distance(begin(m_Connections), new_it);
         [self.connectionsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:new_ind] byExtendingSelection:false];

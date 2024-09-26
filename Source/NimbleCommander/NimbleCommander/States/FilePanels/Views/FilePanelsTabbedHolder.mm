@@ -232,18 +232,18 @@
         hk_t9, hk_t10;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
         std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
-            {&hk_prev, "panel.show_previous_tab"},
-            {&hk_next, "panel.show_next_tab"},
-            {&hk_t1, "panel.show_tab_no_1"},
-            {&hk_t2, "panel.show_tab_no_2"},
-            {&hk_t3, "panel.show_tab_no_3"},
-            {&hk_t4, "panel.show_tab_no_4"},
-            {&hk_t5, "panel.show_tab_no_5"},
-            {&hk_t6, "panel.show_tab_no_6"},
-            {&hk_t7, "panel.show_tab_no_7"},
-            {&hk_t8, "panel.show_tab_no_8"},
-            {&hk_t9, "panel.show_tab_no_9"},
-            {&hk_t10, "panel.show_tab_no_10"}});
+            {.shortcut = &hk_prev, .action = "panel.show_previous_tab"},
+            {.shortcut = &hk_next, .action = "panel.show_next_tab"},
+            {.shortcut = &hk_t1, .action = "panel.show_tab_no_1"},
+            {.shortcut = &hk_t2, .action = "panel.show_tab_no_2"},
+            {.shortcut = &hk_t3, .action = "panel.show_tab_no_3"},
+            {.shortcut = &hk_t4, .action = "panel.show_tab_no_4"},
+            {.shortcut = &hk_t5, .action = "panel.show_tab_no_5"},
+            {.shortcut = &hk_t6, .action = "panel.show_tab_no_6"},
+            {.shortcut = &hk_t7, .action = "panel.show_tab_no_7"},
+            {.shortcut = &hk_t8, .action = "panel.show_tab_no_8"},
+            {.shortcut = &hk_t9, .action = "panel.show_tab_no_9"},
+            {.shortcut = &hk_t10, .action = "panel.show_tab_no_10"}});
 
     if( hk_prev.IsKeyDown(event_data) ) {
         [self selectPreviousFilePanelTab];

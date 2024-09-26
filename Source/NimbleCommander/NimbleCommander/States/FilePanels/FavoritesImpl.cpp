@@ -9,7 +9,9 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include <Utility/PathManip.h>
+
 #include "FavoriteComposing.h"
+#include <algorithm>
 
 namespace nc::panel {
 
@@ -60,7 +62,7 @@ void FavoriteLocationsStorageImpl::AddFavoriteLocation(Favorite _favorite)
     _favorite.footprint = PanelDataPersisency::MakeFootprintStringHash(_favorite.location->hosts_stack);
 
     const auto has_already =
-        any_of(begin(m_Favorites), end(m_Favorites), [&](auto &i) { return i.footprint == _favorite.footprint; });
+        std::ranges::any_of(m_Favorites, [&](auto &i) { return i.footprint == _favorite.footprint; });
     if( has_already )
         return;
 
@@ -122,9 +124,8 @@ FavoriteLocationsStorageImpl::FrecentlyUsed(int _amount) const
     const auto last_date = now - g_MaxTimeRange;
 
     auto is_favorite = [this](size_t footprint) { // O(n), n = number of favorites
-        return find_if(begin(m_Favorites), end(m_Favorites), [footprint](auto &f) {
-                   return f.footprint == footprint;
-               }) != end(m_Favorites);
+        return std::ranges::find_if(m_Favorites, [footprint](auto &f) { return f.footprint == footprint; }) !=
+               end(m_Favorites);
     };
 
     // visit #, visits count, last visit, frecency score
@@ -136,9 +137,10 @@ FavoriteLocationsStorageImpl::FrecentlyUsed(int _amount) const
     if( recent_visits.empty() )
         return {};
 
-    const auto max_visits_it = std::max_element(std::begin(recent_visits),
-                                                std::end(recent_visits),
-                                                [](auto &l, auto &r) { return std::get<1>(l) < std::get<1>(r); });
+    const auto max_visits_it =
+        std::ranges::max_element(recent_visits,
+
+                                 [](auto &l, auto &r) { return std::get<1>(l) < std::get<1>(r); });
     const auto max_visits = float(std::get<1>(*max_visits_it));
 
     for( auto &v : recent_visits ) {
@@ -149,7 +151,7 @@ FavoriteLocationsStorageImpl::FrecentlyUsed(int _amount) const
         std::get<3>(v) = static_cast<float>(score);
     }
 
-    std::sort(std::begin(recent_visits), std::end(recent_visits), [](auto &_1, auto _2) {
+    std::ranges::sort(recent_visits, [](auto &_1, auto _2) {
         return std::get<3>(_1) > std::get<3>(_2); // sorting in descending order
     });
 

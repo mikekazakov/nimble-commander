@@ -1,10 +1,11 @@
 // Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ParserImpl.h"
-#include <Utility/Encodings.h>
+#include "TranslateMaps.h"
 #include <Base/CFPtr.h>
 #include <Carbon/Carbon.h>
 #include <CoreFoundation/CoreFoundation.h>
-#include "TranslateMaps.h"
+#include <Utility/Encodings.h>
+#include <algorithm>
 #include <charconv>
 
 #include <iostream>
@@ -508,15 +509,15 @@ void ParserImpl::SSOSCSubmit() noexcept
     // currently the parser ignores any OSC other than 0, 1, 3.
     if( ps == 0 ) {
         // Ps = 0  ⇒  Change Icon Name and Window Title to Pt.
-        m_Output.emplace_back(Type::change_title, Title{Title::IconAndWindow, std::string(pt)});
+        m_Output.emplace_back(Type::change_title, Title{.kind = Title::IconAndWindow, .title = std::string(pt)});
     }
     else if( ps == 1 ) {
         // Ps = 1  ⇒  Change Icon Name to Pt.
-        m_Output.emplace_back(Type::change_title, Title{Title::Icon, std::string(pt)});
+        m_Output.emplace_back(Type::change_title, Title{.kind = Title::Icon, .title = std::string(pt)});
     }
     else if( ps == 2 ) {
         // Ps = 2  ⇒  Change Window Title to Pt.
-        m_Output.emplace_back(Type::change_title, Title{Title::Window, std::string(pt)});
+        m_Output.emplace_back(Type::change_title, Title{.kind = Title::Window, .title = std::string(pt)});
     }
     else {
         LogMissedOSCRequest(ps, pt);
@@ -545,7 +546,7 @@ void ParserImpl::SSCSIExit() noexcept
 constexpr static std::array<bool, 256> Make8BitBoolTable(std::string_view _on)
 {
     std::array<bool, 256> flags{};
-    std::fill(flags.begin(), flags.end(), false);
+    std::ranges::fill(flags, false);
     for( auto c : _on )
         flags[static_cast<unsigned char>(c)] = true;
     return flags;
@@ -1490,8 +1491,8 @@ void ParserImpl::CSI_r() noexcept
     else if( p.count == 2 ) {
         input::ScrollingRegion scrolling_region;
         if( p.values[0] >= 1 && p.values[1] >= 1 && p.values[1] > p.values[0] )
-            scrolling_region.range =
-                input::ScrollingRegion::Range{static_cast<int>(p.values[0] - 1), static_cast<int>(p.values[1])};
+            scrolling_region.range = input::ScrollingRegion::Range{.top = static_cast<int>(p.values[0] - 1),
+                                                                   .bottom = static_cast<int>(p.values[1])};
         m_Output.emplace_back(input::Type::set_scrolling_region, scrolling_region);
     }
     else {

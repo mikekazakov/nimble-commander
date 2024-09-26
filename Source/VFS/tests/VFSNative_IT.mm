@@ -1,14 +1,15 @@
 // Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "Tests.h"
+#include "../../source/Native/Fetching.h" // EVIL!
 #include "TestEnv.h"
+#include "Tests.h"
+#include <Base/UnorderedUtil.h>
 #include <Base/algo.h>
 #include <Base/dispatch_cpp.h>
-#include "../../source/Native/Fetching.h" // EVIL!
-#include <fmt/core.h>
-#include <unistd.h>
-#include <fstream>
-#include <Base/UnorderedUtil.h>
+#include <algorithm>
 #include <boost/process.hpp>
+#include <fmt/core.h>
+#include <fstream>
+#include <unistd.h>
 
 using namespace nc::vfs;
 using namespace nc::vfs::native;
@@ -292,9 +293,8 @@ static bool WaitUntilNativeFSManSeesVolumeAtPath(const std::filesystem::path &vo
 {
     auto predicate = [volume_path] {
         auto volumes = TestEnv().native_fs_man->Volumes();
-        return std::any_of(volumes.begin(), volumes.end(), [volume_path](auto _fs_info) {
-            return _fs_info->mounted_at_path == volume_path;
-        });
+        return std::ranges::any_of(volumes,
+                                   [volume_path](auto _fs_info) { return _fs_info->mounted_at_path == volume_path; });
     };
     return RunMainLoopUntilExpectationOrTimeout(_time_limit, predicate);
 }

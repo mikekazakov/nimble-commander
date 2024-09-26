@@ -10,6 +10,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <Utility/PathManip.h>
 #include <Utility/SystemInformation.h>
+#include <algorithm>
 #include <cerrno>
 #include <csignal>
 #include <cstdio>
@@ -911,7 +912,9 @@ std::vector<std::string> ShellTask::ChildrenList() const
     };
     std::pmr::vector<Proc> procs(&mem_resource);
     for( size_t i = 0; i < proc_cnt; ++i ) {
-        procs.emplace_back(Proc{proc_list[i].kp_proc.p_pid, proc_list[i].kp_eproc.e_ppid, proc_list[i].kp_proc.p_comm});
+        procs.emplace_back(Proc{.pid = proc_list[i].kp_proc.p_pid,
+                                .ppid = proc_list[i].kp_eproc.e_ppid,
+                                .name = proc_list[i].kp_proc.p_comm});
     }
 
     struct PPidLess {
@@ -921,7 +924,7 @@ std::vector<std::string> ShellTask::ChildrenList() const
     };
 
     // sort by parent pid O(nlogn)
-    std::sort(procs.begin(), procs.end(), PPidLess{});
+    std::ranges::sort(procs, PPidLess{});
 
     // names of the sub-processes, sorted by depth
     std::vector<std::string> result;
@@ -935,7 +938,7 @@ std::vector<std::string> ShellTask::ChildrenList() const
 
         // find all processes with this specific ppid, O(logn), get their names and add their pids at the tail of the
         // queue
-        const auto range = std::equal_range(procs.begin(), procs.end(), ppid, PPidLess{});
+        const auto range = std::equal_range(procs.begin(), procs.end(), ppid, PPidLess{}); // NOLINT
         for( auto it = range.first; it != range.second; ++it ) {
             const pid_t pid = it->pid;
             char path_buffer[PROC_PIDPATHINFO_MAXSIZE] = {0};

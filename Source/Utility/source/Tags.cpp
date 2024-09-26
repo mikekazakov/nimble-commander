@@ -7,6 +7,7 @@
 #include <Base/algo.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreServices/CoreServices.h>
+#include <algorithm>
 #include <bit>
 #include <cassert>
 #include <fmt/format.h>
@@ -272,10 +273,10 @@ static std::optional<VarLen> ExtractVarLen(const std::byte *_byte_marker_ptr) no
         const uint64_t len_size = 1 << (len_marker & 0x0F);
         const std::byte *const len_ptr = len_marker_ptr + 1;
         const uint64_t len = GetSizedInt(len_ptr, len_size);
-        return VarLen{len, len_ptr + len_size};
+        return VarLen{.length = len, .start = len_ptr + len_size};
     }
     else {
-        return VarLen{builtin_length, _byte_marker_ptr + 1};
+        return VarLen{.length = builtin_length, .start = _byte_marker_ptr + 1};
     }
 }
 
@@ -574,7 +575,7 @@ std::vector<std::byte> Tags::BuildMDItemUserTags(const std::span<const Tag> _tag
 
     // Deduce the stride of the offset table
     const size_t offset_int_size = 1;
-    if( const size_t max = *std::max_element(offsets.begin(), offsets.end()); max > 255 ) {
+    if( const size_t max = *std::ranges::max_element(offsets); max > 255 ) {
         abort(); // TODO: implement
     }
 
@@ -713,7 +714,7 @@ static std::string EscapeForMD(std::string_view _tag) noexcept
     constexpr char to_esc[] = {'\'', '\\', '\"'};
     std::string escaped_tag;
     for( auto c : _tag ) {
-        if( std::any_of(std::begin(to_esc), std::end(to_esc), [=](auto e) { return c == e; }) )
+        if( std::ranges::any_of(to_esc, [=](auto e) { return c == e; }) )
             escaped_tag += '\\';
         escaped_tag += c;
     }
@@ -769,7 +770,7 @@ std::vector<Tags::Tag> Tags::GatherAllItemsTags() noexcept
     }
 
     std::vector<Tag> res{tags.begin(), tags.end()};
-    std::sort(res.begin(), res.end(), [](const Tag &_lhs, const Tag &_rhs) {
+    std::ranges::sort(res, [](const Tag &_lhs, const Tag &_rhs) {
         const auto &ll = _lhs.Label();
         const auto &rl = _rhs.Label();
         if( ll != rl )

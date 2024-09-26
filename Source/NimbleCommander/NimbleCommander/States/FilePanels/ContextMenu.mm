@@ -12,6 +12,7 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include <VFS/VFS.h>
+#include <algorithm>
 #include <memory>
 #include <pstld/pstld.h>
 #include <ranges>
@@ -182,8 +183,7 @@ using namespace nc::panel;
     // Share stuff
     {
         const auto share_submenu = [NSMenu new];
-        const auto eligible =
-            all_of(begin(m_Items), end(m_Items), [](const auto &_i) { return _i.Host()->IsNativeFS(); });
+        const auto eligible = std::ranges::all_of(m_Items, [](const auto &_i) { return _i.Host()->IsNativeFS(); });
         if( eligible ) {
             m_ShareItemsURLs = [NSMutableArray new];
             for( auto &i : m_Items )

@@ -9,6 +9,8 @@
 
 #include <rapidjson/error/en.h>
 
+#include <algorithm>
+
 using nc::ThemeAppearance;
 using nc::ThemesManager;
 using nc::config::ConfigImpl;
@@ -24,7 +26,7 @@ static std::shared_ptr<NonPersistentOverwritesStorage> MakeDummyStorage()
 static std::string ReplQuotes(std::string_view src)
 {
     std::string s(src);
-    std::replace(s.begin(), s.end(), '\'', '\"');
+    std::ranges::replace(s, '\'', '\"');
     return s;
 }
 

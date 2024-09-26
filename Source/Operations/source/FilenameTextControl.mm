@@ -1,12 +1,12 @@
 // Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilenameTextControl.h"
 #include <AppKit/AppKit.h>
-#include <Utility/ObjCpp.h>
 #include <Utility/FilenameTextNavigation.h>
-#include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 #include <Utility/PathManip.h>
-#include <filesystem>
+#include <Utility/StringExtras.h>
 #include <algorithm>
+#include <filesystem>
 
 @interface NCFilenameTextStorage ()
 @property(nonatomic, strong) NSMutableAttributedString *backingStore;
@@ -140,7 +140,7 @@
     for( const auto &suggestion : _suggestions )
         directories.emplace_back([NSString stringWithUTF8StdString:suggestion]);
 
-    std::sort(std::begin(directories), std::end(directories), [](auto _1st, auto _2nd) {
+    std::ranges::sort(directories, [](auto _1st, auto _2nd) {
         const auto opts = NSCaseInsensitiveSearch | NSNumericSearch | NSWidthInsensitiveSearch | NSForcedOrderingSearch;
         return [_1st compare:_2nd options:opts] < 0;
     });
@@ -217,7 +217,7 @@ std::vector<std::string> DirectoryPathAutoCompletionImpl::PossibleCompletions(co
         for( auto index : indices )
             directories.emplace_back(listing->Filename(index));
 
-        std::sort(std::begin(directories), std::end(directories));
+        std::ranges::sort(directories);
 
         return directories;
     }

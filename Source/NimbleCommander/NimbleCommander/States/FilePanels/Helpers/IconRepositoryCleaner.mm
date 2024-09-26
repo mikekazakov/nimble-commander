@@ -1,6 +1,8 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "IconRepositoryCleaner.h"
 #include <Panel/PanelDataItemVolatileData.h>
+
+#include <algorithm>
 
 namespace nc::panel {
 
@@ -17,7 +19,7 @@ void IconRepositoryCleaner::SweepUnusedSlots()
     for( auto i = 0, e = static_cast<int>(m_Data.RawEntriesCount()); i < e; ++i ) {
         auto &vd = m_Data.VolatileDataAtRawPosition(i);
         if( vd.icon != vfsicon::IconRepository::InvalidKey ) {
-            auto it = std::lower_bound(std::begin(used_slots), std::end(used_slots), vd.icon);
+            auto it = std::ranges::lower_bound(used_slots, vd.icon);
             if( it != std::end(used_slots) && *it == vd.icon )
                 still_in_use[std::distance(std::begin(used_slots), it)] = true;
         }

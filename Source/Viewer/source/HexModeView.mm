@@ -186,8 +186,8 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
             [self pageUp:_sender];
             break;
         case NSScrollerKnob: {
-            auto scroller_pos =
-                HexModeLayout::ScrollerPosition{m_VerticalScroller.doubleValue, m_VerticalScroller.knobProportion};
+            auto scroller_pos = HexModeLayout::ScrollerPosition{.position = m_VerticalScroller.doubleValue,
+                                                                .proportion = m_VerticalScroller.knobProportion};
             const auto offset = m_Layout->CalcGlobalOffsetForScrollerPosition(scroller_pos);
             [self scrollToGlobalBytesOffset:offset];
             break;
@@ -314,7 +314,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
 
     if( probe_instant != std::nullopt ) {
         // great, can satisfy the request instantly
-        m_Layout->SetOffset({*probe_instant, 0.});
+        m_Layout->SetOffset({.row = *probe_instant, .smooth = 0.});
 
         [self setNeedsDisplay:true];
         [self scrollPositionDidChange];
@@ -335,7 +335,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
 
         auto second_probe = m_Layout->FindRowToScrollWithGlobalOffset(_offset);
         if( second_probe != std::nullopt ) {
-            m_Layout->SetOffset({*second_probe, 0.});
+            m_Layout->SetOffset({.row = *second_probe, .smooth = 0.});
 
             [self setNeedsDisplay:true];
             [self scrollPositionDidChange];
@@ -432,7 +432,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
         if( new_offset > 0 )
             new_offset--;
 
-        m_Layout->SetOffset({new_offset, scroll_offset.smooth});
+        m_Layout->SetOffset({.row = new_offset, .smooth = scroll_offset.smooth});
         [self setNeedsDisplay:true];
 
         return true;
@@ -477,7 +477,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
         if( scroll_offset.row + m_Layout->RowsInView() < m_Frame->NumberOfRows() )
             new_offset++;
 
-        m_Layout->SetOffset({new_offset, scroll_offset.smooth});
+        m_Layout->SetOffset({.row = new_offset, .smooth = scroll_offset.smooth});
         [self setNeedsDisplay:true];
 
         return true;
@@ -506,7 +506,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
         else {
             smooth_offset = std::max(smooth_offset - delta_y, 0.0);
         }
-        m_Layout->SetOffset({m_Layout->GetOffset().row, smooth_offset});
+        m_Layout->SetOffset({.row = m_Layout->GetOffset().row, .smooth = smooth_offset});
     }
     if( delta_y < 0 ) { // going down
         double smooth_offset = m_Layout->GetOffset().smooth;
@@ -523,7 +523,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
         else {
             smooth_offset = std::clamp(smooth_offset - delta_y, -m_FontInfo.LineHeight(), 0.);
         }
-        m_Layout->SetOffset({m_Layout->GetOffset().row, smooth_offset});
+        m_Layout->SetOffset({.row = m_Layout->GetOffset().row, .smooth = smooth_offset});
     }
 }
 
@@ -668,7 +668,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
     m_Frame = [self buildFrame];
     m_Layout->SetFrame(m_Frame);
     auto new_offset = HexModeLayout::FindEqualVerticalOffsetForRebuiltFrame(*old_frame, scroll_offset.row, *m_Frame);
-    m_Layout->SetOffset({new_offset, scroll_offset.smooth});
+    m_Layout->SetOffset({.row = new_offset, .smooth = scroll_offset.smooth});
     [self scrollPositionDidChange];
     [self setNeedsDisplay:true];
 }

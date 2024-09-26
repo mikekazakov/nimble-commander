@@ -23,6 +23,8 @@
 #include <Utility/Tags.h>
 #include <sys/mount.h>
 
+#include <algorithm>
+
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking
 struct dirent *_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
@@ -831,12 +833,10 @@ int NativeHost::FetchUsers(std::vector<VFSUser> &_target, [[maybe_unused]] const
         _target.emplace_back(std::move(user));
     }
 
-    std::sort(std::begin(_target), std::end(_target), [](const auto &_1, const auto &_2) {
+    std::ranges::sort(_target, [](const auto &_1, const auto &_2) {
         return static_cast<signed>(_1.uid) < static_cast<signed>(_2.uid);
     });
-    _target.erase(std::unique(std::begin(_target),
-                              std::end(_target),
-                              [](const auto &_1, const auto &_2) { return _1.uid == _2.uid; }),
+    _target.erase(std::ranges::unique(_target, [](const auto &_1, const auto &_2) { return _1.uid == _2.uid; }).begin(),
                   std::end(_target));
 
     return VFSError::Ok;
@@ -885,12 +885,10 @@ int NativeHost::FetchGroups(std::vector<VFSGroup> &_target, [[maybe_unused]] con
         _target.emplace_back(std::move(group));
     }
 
-    std::sort(std::begin(_target), std::end(_target), [](const auto &_1, const auto &_2) {
+    std::ranges::sort(_target, [](const auto &_1, const auto &_2) {
         return static_cast<signed>(_1.gid) < static_cast<signed>(_2.gid);
     });
-    _target.erase(std::unique(std::begin(_target),
-                              std::end(_target),
-                              [](const auto &_1, const auto &_2) { return _1.gid == _2.gid; }),
+    _target.erase(std::ranges::unique(_target, [](const auto &_1, const auto &_2) { return _1.gid == _2.gid; }).begin(),
                   std::end(_target));
 
     return VFSError::Ok;

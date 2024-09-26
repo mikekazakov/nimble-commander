@@ -198,7 +198,7 @@ const char *Document::BufferPointer() noexcept
 Sci_Position Document::LineFromPosition(Sci_Position _pos) const noexcept
 {
     // O(nlogn)
-    const auto it = std::lower_bound(m_Lines.begin(), m_Lines.end(), _pos);
+    const auto it = std::ranges::lower_bound(m_Lines, _pos);
     if( it == m_Lines.end() ) {
         return m_Lines.size() - 1;
     }

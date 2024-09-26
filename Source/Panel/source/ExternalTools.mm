@@ -233,7 +233,8 @@ Eat(const std::string_view _source) noexcept
                 if( prompt || number || list )
                     return error(); // malformed string, aborting
                 result.emplace_back(
-                    ExternalToolsParameters::CurrentItem{location(), ExternalToolsParameters::FileInfo::DirectoryPath},
+                    ExternalToolsParameters::CurrentItem{.location = location(),
+                                                         .what = ExternalToolsParameters::FileInfo::DirectoryPath},
                     true);
                 reset_placeholder();
                 continue;
@@ -242,7 +243,9 @@ Eat(const std::string_view _source) noexcept
                 if( prompt || number || list )
                     return error(); // malformed string, aborting
                 result.emplace_back(
-                    ExternalToolsParameters::CurrentItem{location(), ExternalToolsParameters::FileInfo::Path}, true);
+                    ExternalToolsParameters::CurrentItem{.location = location(),
+                                                         .what = ExternalToolsParameters::FileInfo::Path},
+                    true);
                 reset_placeholder();
                 continue;
             }
@@ -250,7 +253,8 @@ Eat(const std::string_view _source) noexcept
                 if( prompt || number || list )
                     return error(); // malformed string, aborting
                 result.emplace_back(
-                    ExternalToolsParameters::CurrentItem{location(), ExternalToolsParameters::FileInfo::Filename},
+                    ExternalToolsParameters::CurrentItem{.location = location(),
+                                                         .what = ExternalToolsParameters::FileInfo::Filename},
                     true);
                 reset_placeholder();
                 continue;
@@ -259,8 +263,8 @@ Eat(const std::string_view _source) noexcept
                 if( prompt || number || list )
                     return error(); // malformed string, aborting
                 result.emplace_back(
-                    ExternalToolsParameters::CurrentItem{location(),
-                                                         ExternalToolsParameters::FileInfo::FilenameWithoutExtension},
+                    ExternalToolsParameters::CurrentItem{
+                        .location = location(), .what = ExternalToolsParameters::FileInfo::FilenameWithoutExtension},
                     true);
                 reset_placeholder();
                 continue;
@@ -269,7 +273,8 @@ Eat(const std::string_view _source) noexcept
                 if( prompt || number || list )
                     return error(); // malformed string, aborting
                 result.emplace_back(
-                    ExternalToolsParameters::CurrentItem{location(), ExternalToolsParameters::FileInfo::FileExtension},
+                    ExternalToolsParameters::CurrentItem{.location = location(),
+                                                         .what = ExternalToolsParameters::FileInfo::FileExtension},
                     true);
                 reset_placeholder();
                 continue;
@@ -278,8 +283,10 @@ Eat(const std::string_view _source) noexcept
                 if( prompt )
                     return error(); // malformed string, aborting
                 result.emplace_back(
-                    ExternalToolsParameters::SelectedItems{
-                        location(), ExternalToolsParameters::FileInfo::Filename, number.value_or(0), !list},
+                    ExternalToolsParameters::SelectedItems{.location = location(),
+                                                           .what = ExternalToolsParameters::FileInfo::Filename,
+                                                           .max = number.value_or(0),
+                                                           .as_parameters = !list},
                     true);
                 reset_placeholder();
                 continue;
@@ -288,8 +295,10 @@ Eat(const std::string_view _source) noexcept
                 if( prompt )
                     return error(); // malformed string, aborting
                 result.emplace_back(
-                    ExternalToolsParameters::SelectedItems{
-                        location(), ExternalToolsParameters::FileInfo::Path, number.value_or(0), !list},
+                    ExternalToolsParameters::SelectedItems{.location = location(),
+                                                           .what = ExternalToolsParameters::FileInfo::Path,
+                                                           .max = number.value_or(0),
+                                                           .as_parameters = !list},
                     true);
                 reset_placeholder();
                 continue;

@@ -2,12 +2,13 @@
 #include "ViewerFooter.h"
 #include "Highlighting/SettingsStorage.h"
 #include "Internal.h"
-#include <Utility/ObjCpp.h>
-#include <Utility/ColoredSeparatorLine.h>
-#include <Utility/VerticallyCenteredTextFieldCell.h>
 #include <Utility/ByteCountFormatter.h>
+#include <Utility/ColoredSeparatorLine.h>
 #include <Utility/Encodings.h>
+#include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
+#include <Utility/VerticallyCenteredTextFieldCell.h>
+#include <algorithm>
 #include <utility>
 
 using namespace nc;
@@ -383,8 +384,7 @@ using namespace nc::viewer;
     if( m_HighlightingLanguage == "" ) {
         tag = 0;
     }
-    else if( auto it = std::find(m_Languages.begin(), m_Languages.end(), m_HighlightingLanguage);
-             it != m_Languages.end() ) {
+    else if( auto it = std::ranges::find(m_Languages, m_HighlightingLanguage); it != m_Languages.end() ) {
         tag = std::distance(m_Languages.begin(), it);
     }
     [m_LanguageButton selectItemWithTag:tag];

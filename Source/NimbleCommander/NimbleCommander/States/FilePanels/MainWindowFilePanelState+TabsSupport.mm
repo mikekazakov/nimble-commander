@@ -20,6 +20,8 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 
+#include <algorithm>
+
 using namespace nc::panel;
 
 @implementation MainWindowFilePanelState (TabsSupport)
@@ -95,14 +97,14 @@ using namespace nc::panel;
         return;
 
     if( [self isRightController:dropped_panel_controller] ) {
-        const auto it = find(begin(m_RightPanelControllers), end(m_RightPanelControllers), dropped_panel_controller);
+        const auto it = std::ranges::find(m_RightPanelControllers, dropped_panel_controller);
         if( it == end(m_RightPanelControllers) )
             return;
         m_RightPanelControllers.erase(it);
     }
 
     if( [self isLeftController:dropped_panel_controller] ) {
-        const auto it = find(begin(m_LeftPanelControllers), end(m_LeftPanelControllers), dropped_panel_controller);
+        const auto it = std::ranges::find(m_LeftPanelControllers, dropped_panel_controller);
         if( it == end(m_LeftPanelControllers) )
             return;
         m_LeftPanelControllers.erase(it);
@@ -269,7 +271,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
 {
     PanelController *pc = nc::objc_cast<PanelController>(nc::objc_cast<PanelView>(tabViewItem.view).delegate);
     if( [self isLeftController:pc] ) {
-        auto it = find(begin(m_LeftPanelControllers), end(m_LeftPanelControllers), pc);
+        auto it = std::ranges::find(m_LeftPanelControllers, pc);
         if( it == end(m_LeftPanelControllers) )
             return;
 
@@ -277,7 +279,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
         m_LeftPanelControllers.insert(begin(m_LeftPanelControllers) + index, pc);
     }
     else if( [self isRightController:pc] ) {
-        auto it = find(begin(m_RightPanelControllers), end(m_RightPanelControllers), pc);
+        auto it = std::ranges::find(m_RightPanelControllers, pc);
         if( it == end(m_RightPanelControllers) )
             return;
 

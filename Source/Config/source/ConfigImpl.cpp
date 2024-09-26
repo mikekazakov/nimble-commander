@@ -6,6 +6,7 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
 #include <Base/algo.h>
+#include <algorithm>
 
 namespace nc::config {
 
@@ -364,8 +365,8 @@ void ConfigImpl::DropToken(unsigned long _number)
         auto &path = *observers_it;
         auto &observers = path.second->observers;
 
-        const auto to_drop_it = std::find_if(
-            begin(observers), end(observers), [_number](auto &observer) { return observer->token == _number; });
+        const auto to_drop_it =
+            std::ranges::find_if(observers, [_number](auto &observer) { return observer->token == _number; });
         if( to_drop_it != end(observers) ) {
             const auto observer = *to_drop_it; // NOLINT - holding by a *strong* shared pointer
 

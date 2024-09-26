@@ -1,19 +1,20 @@
 // Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma clang diagnostic push
-#include <boost/container/static_vector.hpp>
-#include <VFS/Native.h>
-#include <VFS/ArcLA.h>
-#include <VFS/ArcLARaw.h>
-#include <VFS/PS.h>
-#include <VFS/XAttr.h>
-#include <VFS/NetFTP.h>
-#include <VFS/NetSFTP.h>
-#include <VFS/NetDropbox.h>
-#include <VFS/NetWebDAV.h>
+#include "PanelDataPersistency.h"
+#include <Config/RapidJSON.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
-#include <Config/RapidJSON.h>
-#include "PanelDataPersistency.h"
+#include <VFS/ArcLA.h>
+#include <VFS/ArcLARaw.h>
+#include <VFS/Native.h>
+#include <VFS/NetDropbox.h>
+#include <VFS/NetFTP.h>
+#include <VFS/NetSFTP.h>
+#include <VFS/NetWebDAV.h>
+#include <VFS/PS.h>
+#include <VFS/XAttr.h>
+#include <algorithm>
+#include <boost/container/static_vector.hpp>
 
 // THIS IS TEMPORARY!!!
 #include <NimbleCommander/Bootstrap/AppDelegateCPP.h>
@@ -145,7 +146,7 @@ std::optional<PersistentLocation> PanelDataPersisency::EncodeLocation(const VFSH
             host_rec = host_rec->Parent().get();
         }
 
-        reverse(begin(hosts), end(hosts));
+        std::ranges::reverse(hosts);
 
         for( auto h : hosts ) {
             auto encoded = EncodeState(*h);
@@ -179,7 +180,7 @@ Value PanelDataPersisency::EncodeVFSPath(const VFSHost &_vfs, const std::string 
         host_rec = host_rec->Parent().get();
     }
 
-    reverse(begin(hosts), end(hosts));
+    std::ranges::reverse(hosts);
 
     Value json(rapidjson::kObjectType);
     Value json_hosts(rapidjson::kArrayType);
@@ -287,13 +288,13 @@ std::optional<PersistentLocation> PanelDataPersisency::JSONToLocation(const json
 
 static const char *VFSTagForNetworkConnection(const NetworkConnectionsManager::Connection &_conn)
 {
-    if( auto ftp = _conn.Cast<NetworkConnectionsManager::FTP>() )
+    if( _conn.Cast<NetworkConnectionsManager::FTP>() )
         return vfs::FTPHost::UniqueTag;
-    else if( auto sftp = _conn.Cast<NetworkConnectionsManager::SFTP>() )
+    else if( _conn.Cast<NetworkConnectionsManager::SFTP>() )
         return vfs::SFTPHost::UniqueTag;
-    else if( auto dropbox = _conn.Cast<NetworkConnectionsManager::Dropbox>() )
+    else if( _conn.Cast<NetworkConnectionsManager::Dropbox>() )
         return vfs::DropboxHost::UniqueTag;
-    else if( auto webdav = _conn.Cast<NetworkConnectionsManager::WebDAV>() )
+    else if( _conn.Cast<NetworkConnectionsManager::WebDAV>() )
         return vfs::WebDAVHost::UniqueTag;
     else
         return "<unknown_vfs>";
@@ -307,11 +308,11 @@ std::string PanelDataPersisency::MakeFootprintString(const PersistentLocation &_
         footprint += "||";
     }
     for( auto &h : _loc.hosts ) {
-        if( auto native = std::any_cast<Native>(&h) ) {
+        if( std::any_cast<Native>(&h) ) {
             footprint += VFSNativeHost::UniqueTag;
             footprint += "|";
         }
-        else if( auto psfs = std::any_cast<PSFS>(&h) ) {
+        else if( std::any_cast<PSFS>(&h) ) {
             footprint += vfs::PSHost::UniqueTag;
             footprint += "|[psfs]:";
         }
@@ -354,7 +355,7 @@ std::string PanelDataPersisency::MakeVerbosePathString(const PersistentLocation 
 {
     std::string verbose;
     for( auto &h : _loc.hosts ) {
-        if( auto psfs = std::any_cast<PSFS>(&h) )
+        if( std::any_cast<PSFS>(&h) )
             verbose += "[psfs]:";
         else if( auto xattr = std::any_cast<XAttr>(&h) )
             verbose += xattr->junction;
@@ -439,12 +440,12 @@ static Value EncodeAny(const std::any &_host)
     using namespace rapidjson;
     using namespace nc::config;
     Value json(rapidjson::kObjectType);
-    if( auto native = std::any_cast<Native>(&_host) ) {
+    if( std::any_cast<Native>(&_host) ) {
         json.AddMember(
             MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(VFSNativeHost::UniqueTag), g_CrtAllocator);
         return json;
     }
-    else if( auto psfs = std::any_cast<PSFS>(&_host) ) {
+    else if( std::any_cast<PSFS>(&_host) ) {
         json.AddMember(
             MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(vfs::PSHost::UniqueTag), g_CrtAllocator);
         return json;
@@ -550,10 +551,10 @@ int PanelDataPersisency::CreateVFSFromLocation(const PersistentLocation &_state,
             }
             // no luck - have to build this layer from scratch
 
-            if( auto native = std::any_cast<Native>(&h) ) {
+            if( std::any_cast<Native>(&h) ) {
                 vfs.emplace_back(nc::bootstrap::NativeVFSHostInstance().SharedPtr());
             }
-            else if( auto psfs = std::any_cast<PSFS>(&h) ) {
+            else if( std::any_cast<PSFS>(&h) ) {
                 vfs.emplace_back(vfs::PSHost::GetSharedOrNew());
             }
             else if( auto xattr = std::any_cast<XAttr>(&h) ) {

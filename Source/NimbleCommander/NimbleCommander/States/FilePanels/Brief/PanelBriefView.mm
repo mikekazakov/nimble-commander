@@ -24,6 +24,8 @@
 #include <Utility/ObjCpp.h>
 #include <ankerl/unordered_dense.h>
 
+#include <algorithm>
+
 using namespace ::nc::panel;
 using ::nc::vfsicon::IconRepository;
 
@@ -66,7 +68,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font, PanelBr
     const int font_size = static_cast<int>(std::floor(_font.pointSize + 0.5));
 
     // check predefined values
-    auto pit = find_if(begin(g_FixedLayoutData), end(g_FixedLayoutData), [&](auto &l) {
+    auto pit = std::ranges::find_if(g_FixedLayoutData, [&](auto &l) {
         return std::get<0>(l) == font_size && std::get<1>(l) == _layout.icon_scale;
     });
 
@@ -321,10 +323,10 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
     if( m_ColumnsLayout.dynamic_width_equal ) {
         const auto max_width = *std::max_element(widths.begin(), widths.begin());
         const unsigned short width = max_width + width_addition;
-        std::fill(widths.begin(), widths.end(), width);
+        std::ranges::fill(widths, width);
     }
     else {
-        std::for_each(widths.begin(), widths.end(), [width_addition](auto &width) { width += width_addition; });
+        std::ranges::for_each(widths, [width_addition](auto &width) { width += width_addition; });
     }
     m_IntrinsicItemsWidths = std::move(widths);
 }
@@ -646,8 +648,8 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
         if( visible_item_columns.empty() )
             return items_per_column;
 
-        const auto mm = minmax_element(begin(visible_item_columns), end(visible_item_columns));
-        const auto delta = *mm.second - *mm.first;
+        const auto mm = std::ranges::minmax_element(visible_item_columns);
+        const auto delta = *mm.max - *mm.min;
         return (delta + 1) * items_per_column;
     }
 }

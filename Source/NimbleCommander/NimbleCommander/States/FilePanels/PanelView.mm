@@ -536,20 +536,20 @@ struct StateStorage {
         hk_inv_and_move, hk_inv, hk_scrdown, hk_scrup, hk_scrhome, hk_scrend;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
         std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
-            {&hk_up, "panel.move_up"},
-            {&hk_down, "panel.move_down"},
-            {&hk_left, "panel.move_left"},
-            {&hk_right, "panel.move_right"},
-            {&hk_first, "panel.move_first"},
-            {&hk_last, "panel.move_last"},
-            {&hk_pgdown, "panel.move_next_page"},
-            {&hk_pgup, "panel.move_prev_page"},
-            {&hk_inv_and_move, "panel.move_next_and_invert_selection"},
-            {&hk_inv, "panel.invert_item_selection"},
-            {&hk_scrdown, "panel.scroll_next_page"},
-            {&hk_scrup, "panel.scroll_prev_page"},
-            {&hk_scrhome, "panel.scroll_first"},
-            {&hk_scrend, "panel.scroll_last"}});
+            {.shortcut = &hk_up, .action = "panel.move_up"},
+            {.shortcut = &hk_down, .action = "panel.move_down"},
+            {.shortcut = &hk_left, .action = "panel.move_left"},
+            {.shortcut = &hk_right, .action = "panel.move_right"},
+            {.shortcut = &hk_first, .action = "panel.move_first"},
+            {.shortcut = &hk_last, .action = "panel.move_last"},
+            {.shortcut = &hk_pgdown, .action = "panel.move_next_page"},
+            {.shortcut = &hk_pgup, .action = "panel.move_prev_page"},
+            {.shortcut = &hk_inv_and_move, .action = "panel.move_next_and_invert_selection"},
+            {.shortcut = &hk_inv, .action = "panel.invert_item_selection"},
+            {.shortcut = &hk_scrdown, .action = "panel.scroll_next_page"},
+            {.shortcut = &hk_scrup, .action = "panel.scroll_prev_page"},
+            {.shortcut = &hk_scrhome, .action = "panel.scroll_first"},
+            {.shortcut = &hk_scrend, .action = "panel.scroll_last"}});
 
     const auto event_data = nc::utility::ActionShortcut::EventData(event);
     auto event_data_wo_shift = event_data;

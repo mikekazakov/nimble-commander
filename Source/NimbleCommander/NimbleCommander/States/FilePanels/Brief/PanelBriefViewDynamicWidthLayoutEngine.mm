@@ -89,8 +89,8 @@ void DynamicWidthLayoutEngine::PerformSingularLayout()
         m_Attributes[index] = attributes;
     }
 
-    std::fill(m_ColumnsPositions.begin(), m_ColumnsPositions.end(), 0);
-    std::fill(m_ColumnsWidths.begin(), m_ColumnsWidths.end(), m_ItemMinWidth);
+    std::ranges::fill(m_ColumnsPositions, 0);
+    std::ranges::fill(m_ColumnsWidths, m_ItemMinWidth);
     m_ContentSize = NSMakeSize(m_ColumnsNumber * m_ItemMinWidth, m_ItemHeight);
 }
 

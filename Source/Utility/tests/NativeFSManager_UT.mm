@@ -1,10 +1,11 @@
 // Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NativeFSManagerImpl.h>
+#include "UnitTests_main.h"
 #include <Base/algo.h>
 #include <Base/dispatch_cpp.h>
+#include <NativeFSManagerImpl.h>
+#include <algorithm>
 #include <boost/process.hpp>
 #include <filesystem>
-#include "UnitTests_main.h"
 
 using nc::utility::NativeFileSystemInfo;
 using nc::utility::NativeFSManagerImpl;
@@ -78,9 +79,8 @@ TEST_CASE(PREFIX "Can detect filesystem mounts and unmounts")
 
         auto predicate = [&]() -> bool {
             auto volumes = fsm.Volumes();
-            return std::any_of(volumes.begin(), volumes.end(), [&](const auto &volume) {
-                return volume->mounted_at_path == volume_path;
-            });
+            return std::ranges::any_of(volumes,
+                                       [&](const auto &volume) { return volume->mounted_at_path == volume_path; });
         };
         REQUIRE(runMainLoopUntilExpectationOrTimeout(10s, predicate));
 
@@ -93,8 +93,8 @@ TEST_CASE(PREFIX "Can detect filesystem mounts and unmounts")
 
     auto predicate = [&]() -> bool {
         auto volumes = fsm.Volumes();
-        return std::none_of(
-            volumes.begin(), volumes.end(), [&](const auto &volume) { return volume->mounted_at_path == volume_path; });
+        return std::ranges::none_of(volumes,
+                                    [&](const auto &volume) { return volume->mounted_at_path == volume_path; });
     };
     REQUIRE(runMainLoopUntilExpectationOrTimeout(10s, predicate));
 }
@@ -119,15 +119,13 @@ TEST_CASE(PREFIX "Can detect filesystem renames", "[!mayfail]")
     NativeFSManagerImpl fsm;
     auto predicate_old = [&]() -> bool {
         auto volumes = fsm.Volumes();
-        return std::any_of(volumes.begin(), volumes.end(), [&](const auto &volume) {
-            return volume->mounted_at_path == volume_path_old;
-        });
+        return std::ranges::any_of(volumes,
+                                   [&](const auto &volume) { return volume->mounted_at_path == volume_path_old; });
     };
     auto predicate_new = [&]() -> bool {
         auto volumes = fsm.Volumes();
-        return std::any_of(volumes.begin(), volumes.end(), [&](const auto &volume) {
-            return volume->mounted_at_path == volume_path_new;
-        });
+        return std::ranges::any_of(volumes,
+                                   [&](const auto &volume) { return volume->mounted_at_path == volume_path_new; });
     };
     REQUIRE(predicate_old() == false);
     REQUIRE(predicate_new() == false);

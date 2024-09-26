@@ -172,7 +172,7 @@ int PosixIOInterfaceNative::ApplyTimeChange(const char *_path, time_t _time, uin
     memset(&attrs, 0, sizeof(attrs));
     attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
     attrs.commonattr = _attr;
-    timespec time = {_time, 0};
+    timespec time = {.tv_sec = _time, .tv_nsec = 0};
     return setattrlist(_path, &attrs, &time, sizeof(time), 0);
 }
 

@@ -9,6 +9,8 @@
 #include <Utility/PathManip.h>
 #include <Utility/StringExtras.h>
 #include <VFS/Native.h>
+#include <algorithm>
+#include <fmt/format.h>
 #include <iostream>
 #include <ranges>
 #include <sys/mount.h>
@@ -16,7 +18,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/xattr.h>
-#include <fmt/format.h>
 
 using namespace nc::ops::copying;
 
@@ -298,7 +299,7 @@ CopyingJob::StepResult CopyingJob::ProcessItemNo(int _item_number)
 
     if( step_result == StepResult::Ok || step_result == StepResult::Skipped ) {
         const ItemStatus status = step_result == StepResult::Ok ? ItemStatus::Processed : ItemStatus::Skipped;
-        const ItemStateReport report{source_host, std::string_view(source_path), status};
+        const ItemStateReport report{.host = source_host, .path = std::string_view(source_path), .status = status};
         TellItemReport(report);
     }
 
@@ -551,7 +552,7 @@ CopyingJob::StepResult CopyingJob::BuildDestinationDirectory() const
     });
 
     // found directories are in a reverse order, so reverse this list
-    reverse(begin(paths_to_build), end(paths_to_build));
+    std::ranges::reverse(paths_to_build);
 
     // build absent directories. no skipping here - all or nothing.
     for( auto &path : paths_to_build ) {

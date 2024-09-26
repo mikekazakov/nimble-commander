@@ -1,14 +1,15 @@
 // Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileMask.h"
+#include <Base/CFPtr.h>
+#include <Base/CFStackAllocator.h>
+#include <Base/algo.h>
+#include <algorithm>
+#include <optional>
+#include <ranges>
+#include <regex>
+#include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/param.h>
-#include <optional>
-#include <regex>
-#include <ranges>
-#include <Base/CFStackAllocator.h>
-#include <Base/CFPtr.h>
-#include <Base/algo.h>
 
 namespace nc::utility {
 
@@ -246,7 +247,7 @@ bool FileMask::MatchName(std::string_view _name) const noexcept
 
 bool FileMask::IsWildCard(const std::string &_mask)
 {
-    return std::any_of(std::begin(_mask), std::end(_mask), [](char c) { return c == '*' || c == '?'; });
+    return std::ranges::any_of(_mask, [](char c) { return c == '*' || c == '?'; });
 }
 
 static std::string ToWildCard(const std::string &_mask, const bool _for_extension)

@@ -66,7 +66,7 @@ void Screen::DoEraseScreen(int _mode)
         for( int i = 0; i < Height(); ++i ) {
             auto l = m_Buffer.LineFromNo(i);
             if( i != m_PosY )
-                std::fill(std::begin(l), std::end(l), m_EraseChar);
+                std::ranges::fill(l, m_EraseChar);
             else {
                 std::fill(std::begin(l), std::min(std::begin(l) + m_PosX + 1, std::end(l)), m_EraseChar);
                 return;
@@ -77,7 +77,7 @@ void Screen::DoEraseScreen(int _mode)
     else if( _mode == 2 ) { // clear all screen
         for( int i = 0; i < Height(); ++i ) {
             auto l = m_Buffer.LineFromNo(i);
-            std::fill(std::begin(l), std::end(l), m_EraseChar);
+            std::ranges::fill(l, m_EraseChar);
             m_Buffer.SetLineWrapped(i, false);
         }
     }
@@ -321,7 +321,7 @@ void Screen::CopyLineChars(int _from, int _to)
 void Screen::ClearLine(int _ind)
 {
     if( auto line = m_Buffer.LineFromNo(_ind); !line.empty() ) {
-        std::fill(std::begin(line), std::end(line), m_EraseChar);
+        std::ranges::fill(line, m_EraseChar);
         m_Buffer.SetLineWrapped(_ind, false);
     }
 }

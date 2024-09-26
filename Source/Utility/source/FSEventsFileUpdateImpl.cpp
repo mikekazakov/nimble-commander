@@ -1,13 +1,13 @@
 // Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FSEventsFileUpdateImpl.h"
-#include <Utility/StringExtras.h>
-#include <Utility/Log.h>
 #include <Base/CFPtr.h>
 #include <Base/dispatch_cpp.h>
 #include <Base/mach_time.h>
-#include <iostream>
+#include <Utility/Log.h>
+#include <Utility/StringExtras.h>
 #include <algorithm>
 #include <fmt/std.h>
+#include <iostream>
 
 namespace nc::utility {
 
@@ -175,7 +175,7 @@ void FSEventsFileUpdateImpl::Callback([[maybe_unused]] ConstFSEventStreamRef _st
     // remove any adjacent duplicates if any. we don't care about flags and ids.
     auto cpaths = reinterpret_cast<const char **>(_paths);
     std::vector<std::string_view> paths(cpaths, cpaths + _num);
-    paths.erase(std::unique(paths.begin(), paths.end()), paths.end());
+    paths.erase(std::ranges::unique(paths).begin(), paths.end());
 
     auto lock = std::lock_guard{m_Lock};
     const auto now = base::machtime();

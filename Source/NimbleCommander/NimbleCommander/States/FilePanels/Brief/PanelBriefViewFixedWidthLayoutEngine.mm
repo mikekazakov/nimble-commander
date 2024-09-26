@@ -1,8 +1,8 @@
 // Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewFixedWidthLayoutEngine.h"
+#include <algorithm>
 #include <cmath>
 #include <numeric>
-#include <algorithm>
 
 namespace nc::panel::view::brief {
 
@@ -30,13 +30,13 @@ static void FillColumnsPositions(std::vector<int> &_pos, int _number, int _item_
         return ret;
     };
     _pos.resize(_number);
-    std::generate(_pos.begin(), _pos.end(), generator);
+    std::ranges::generate(_pos, generator);
 }
 
 static void FillColumnsWidths(std::vector<int> &_widths, int _number, int _item_width)
 {
     _widths.resize(_number);
-    std::fill(_widths.begin(), _widths.end(), _item_width);
+    std::ranges::fill(_widths, _item_width);
 }
 
 void FixedWidthLayoutEngine::BuildGrid(const Params &_params)

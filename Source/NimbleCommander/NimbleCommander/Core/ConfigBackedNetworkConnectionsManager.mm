@@ -17,6 +17,8 @@
 #include <Base/spinlock.h>
 #include <Base/dispatch_cpp.h>
 
+#include <algorithm>
+
 using namespace nc;
 using namespace std::literals;
 
@@ -27,11 +29,11 @@ static void SortByMRU(std::vector<NetworkConnectionsManager::Connection> &_value
 {
     std::vector<std::pair<NetworkConnectionsManager::Connection, decltype(begin(_mru))>> v;
     for( auto &i : _values ) {
-        auto it = find(begin(_mru), end(_mru), i.Uuid());
+        auto it = std::ranges::find(_mru, i.Uuid());
         v.emplace_back(std::move(i), it);
     }
 
-    std::sort(std::begin(v), std::end(v), [](auto &_1st, auto &_2nd) { return _1st.second < _2nd.second; });
+    std::ranges::sort(v, [](auto &_1st, auto &_2nd) { return _1st.second < _2nd.second; });
 
     for( size_t i = 0, e = v.size(); i != e; ++i )
         _values[i] = std::move(v[i].first);
@@ -277,7 +279,7 @@ void ConfigBackedNetworkConnectionsManager::InsertConnection(const NetworkConnec
 {
     {
         auto lock = std::lock_guard{m_Lock};
-        auto t = find_if(begin(m_Connections), end(m_Connections), [&](auto &_c) { return _c.Uuid() == _conn.Uuid(); });
+        auto t = std::ranges::find_if(m_Connections, [&](auto &_c) { return _c.Uuid() == _conn.Uuid(); });
         if( t != end(m_Connections) )
             *t = _conn;
         else
@@ -290,12 +292,11 @@ void ConfigBackedNetworkConnectionsManager::RemoveConnection(const Connection &_
 {
     {
         auto lock = std::lock_guard{m_Lock};
-        auto t = find_if(
-            begin(m_Connections), end(m_Connections), [&](auto &_c) { return _c.Uuid() == _connection.Uuid(); });
+        auto t = std::ranges::find_if(m_Connections, [&](auto &_c) { return _c.Uuid() == _connection.Uuid(); });
         if( t != end(m_Connections) )
             m_Connections.erase(t);
 
-        auto i = find_if(begin(m_MRU), end(m_MRU), [&](auto &_c) { return _c == _connection.Uuid(); });
+        auto i = std::ranges::find_if(m_MRU, [&](auto &_c) { return _c == _connection.Uuid(); });
         if( i != end(m_MRU) )
             m_MRU.erase(i);
     }
@@ -306,7 +307,7 @@ std::optional<NetworkConnectionsManager::Connection>
 ConfigBackedNetworkConnectionsManager::ConnectionByUUID(const base::UUID &_uuid) const
 {
     const std::lock_guard<std::mutex> lock(m_Lock);
-    auto t = find_if(begin(m_Connections), end(m_Connections), [&](auto &_c) { return _c.Uuid() == _uuid; });
+    auto t = std::ranges::find_if(m_Connections, [&](auto &_c) { return _c.Uuid() == _uuid; });
     if( t != end(m_Connections) )
         return *t;
     return std::nullopt;
@@ -360,7 +361,7 @@ void ConfigBackedNetworkConnectionsManager::ReportUsage(const Connection &_conne
 {
     {
         auto lock = std::lock_guard{m_Lock};
-        auto it = find_if(begin(m_MRU), end(m_MRU), [&](auto &i) { return i == _connection.Uuid(); });
+        auto it = std::ranges::find_if(m_MRU, [&](auto &i) { return i == _connection.Uuid(); });
         if( it != end(m_MRU) )
             rotate(begin(m_MRU), it, it + 1);
         else
@@ -469,7 +470,7 @@ ConfigBackedNetworkConnectionsManager::ConnectionForVFS(const VFSHost &_vfs) con
         return std::nullopt;
 
     auto lock = std::lock_guard{m_Lock};
-    const auto it = find_if(begin(m_Connections), end(m_Connections), pred);
+    const auto it = std::ranges::find_if(m_Connections, pred);
     if( it != end(m_Connections) )
         return *it;
 
@@ -535,9 +536,7 @@ void ConfigBackedNetworkConnectionsManager::NetFSCallback(int _status, void *_re
     std::function<void(const std::string &_mounted_path, const std::string &_error)> cb;
     {
         auto lock = std::lock_guard{m_PendingMountRequestsLock};
-        auto i = std::find_if(begin(m_PendingMountRequests), end(m_PendingMountRequests), [=](auto &_v) {
-            return _v.first == _requestID;
-        });
+        auto i = std::ranges::find_if(m_PendingMountRequests, [=](auto &_v) { return _v.first == _requestID; });
         if( i != std::end(m_PendingMountRequests) ) {
             cb = std::move(i->second);
             m_PendingMountRequests.erase(i);

@@ -50,7 +50,7 @@ Checks: >
   modernize-use-bool-literals,
   modernize-use-constraints,
   modernize-use-default-member-init,
-  modernize-use-designated-initializers,
+  # modernize-use-designated-initializers, <-- nice, but clang-tidy@19 crashes on ShowVolumeInformation.mm
   modernize-use-emplace,
   modernize-use-equals-default,
   modernize-use-equals-delete,

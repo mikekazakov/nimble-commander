@@ -85,7 +85,7 @@ static bool IsDark(NSColor *_color);
         m_SearchMatchesField.usesSingleLineMode = true;
         m_SearchMatchesField.alignment = NSTextAlignmentRight;
         m_SearchMatchesField.font = [NSFont labelFontOfSize:11];
-        m_SearchMatchesField.textColor = [NSColor disabledControlTextColor];
+        m_SearchMatchesField.textColor = [NSColor systemGrayColor];
         [self addSubview:m_SearchMatchesField];
 
         m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
@@ -202,7 +202,7 @@ static bool IsDark(NSColor *_color);
                                                                  options:0
                                                                  metrics:nil
                                                                    views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_SearchMatchesField(==50)]-(20)-|"
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_SearchMatchesField(==50)]-(25)-|"
                                                                  options:0
                                                                  metrics:nil
                                                                    views:views]];

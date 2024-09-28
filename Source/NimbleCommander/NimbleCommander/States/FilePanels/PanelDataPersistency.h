@@ -1,8 +1,8 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
-#include <NimbleCommander/Core/NetworkConnectionsManager.h>
+#include <Panel/NetworkConnectionsManager.h>
 #include <Config/RapidJSON_fwd.h>
 #include <any>
 #include <vector>

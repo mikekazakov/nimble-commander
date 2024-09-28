@@ -1,8 +1,10 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/UUID.h>
 #include <VFS/VFS.h>
+
+namespace nc::panel {
 
 class NetworkConnectionsManager
 {
@@ -219,3 +221,5 @@ struct NetworkConnectionsManager::Connection::Model final : NetworkConnectionsMa
         return TypeID() == _rhs.TypeID() && obj == static_cast<const Model<T> &>(_rhs).obj;
     }
 };
+
+} // namespace nc::panel

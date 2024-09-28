@@ -8,7 +8,7 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <NimbleCommander/Core/AnyHolder.h>
-#include <NimbleCommander/Core/NetworkConnectionsManager.h>
+#include <Panel/NetworkConnectionsManager.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/States/FilePanels/PanelViewHeader.h>

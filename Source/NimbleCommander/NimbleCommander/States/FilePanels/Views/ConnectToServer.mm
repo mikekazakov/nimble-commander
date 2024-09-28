@@ -15,10 +15,10 @@
 #include <algorithm>
 
 namespace {
-class SheetsDispatcher : public NetworkConnectionsManager::ConnectionVisitor
+class SheetsDispatcher : public nc::panel::NetworkConnectionsManager::ConnectionVisitor
 {
 public:
-    SheetsDispatcher(NetworkConnectionsManager::Connection _connection) : m_Connection(_connection) {}
+    SheetsDispatcher(nc::panel::NetworkConnectionsManager::Connection _connection) : m_Connection(_connection) {}
 
     SheetController<ConnectionSheetProtocol> *CreateSheet()
     {
@@ -29,32 +29,32 @@ public:
     }
 
 private:
-    void Visit(const NetworkConnectionsManager::FTP &) override
+    void Visit(const nc::panel::NetworkConnectionsManager::FTP &) override
     {
         m_Sheet = [[FTPConnectionSheetController alloc] init];
     }
 
-    void Visit(const NetworkConnectionsManager::SFTP &) override
+    void Visit(const nc::panel::NetworkConnectionsManager::SFTP &) override
     {
         m_Sheet = [[SFTPConnectionSheetController alloc] init];
     }
 
-    void Visit(const NetworkConnectionsManager::LANShare &) override
+    void Visit(const nc::panel::NetworkConnectionsManager::LANShare &) override
     {
         m_Sheet = [[NetworkShareSheetController alloc] init];
     }
 
-    void Visit(const NetworkConnectionsManager::Dropbox &) override
+    void Visit(const nc::panel::NetworkConnectionsManager::Dropbox &) override
     {
         m_Sheet = [[DropboxAccountSheetController alloc] init];
     }
 
-    void Visit(const NetworkConnectionsManager::WebDAV &) override
+    void Visit(const nc::panel::NetworkConnectionsManager::WebDAV &) override
     {
         m_Sheet = [[WebDAVConnectionSheetController alloc] init];
     }
 
-    NetworkConnectionsManager::Connection m_Connection;
+    nc::panel::NetworkConnectionsManager::Connection m_Connection;
     SheetController<ConnectionSheetProtocol> *m_Sheet;
 };
 
@@ -79,9 +79,9 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 @end
 
 @implementation ConnectToServer {
-    NetworkConnectionsManager *m_Manager;
-    std::vector<NetworkConnectionsManager::Connection> m_Connections;
-    std::optional<NetworkConnectionsManager::Connection> m_OutputConnection;
+    nc::panel::NetworkConnectionsManager *m_Manager;
+    std::vector<nc::panel::NetworkConnectionsManager::Connection> m_Connections;
+    std::optional<nc::panel::NetworkConnectionsManager::Connection> m_OutputConnection;
     bool m_Shown;
 }
 
@@ -91,7 +91,7 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 @synthesize addNewConnectionMenu;
 @synthesize connectButton;
 
-- (instancetype)initWithNetworkConnectionsManager:(NetworkConnectionsManager &)_manager
+- (instancetype)initWithNetworkConnectionsManager:(nc::panel::NetworkConnectionsManager &)_manager
 {
     self = [super init];
     if( self ) {
@@ -147,7 +147,7 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
     return m_Connections.size();
 }
 
-- (NSView *)makeTitleTableViewForConnection:(const NetworkConnectionsManager::Connection &)_c
+- (NSView *)makeTitleTableViewForConnection:(const nc::panel::NetworkConnectionsManager::Connection &)_c
 {
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     if( auto l = [NSString stringWithUTF8StdString:_c.Title()] )
@@ -160,7 +160,7 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
     return tf;
 }
 
-- (NSView *)makePathTableViewForConnection:(const NetworkConnectionsManager::Connection &)_c
+- (NSView *)makePathTableViewForConnection:(const nc::panel::NetworkConnectionsManager::Connection &)_c
 {
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     if( auto l = [NSString stringWithUTF8StdString:m_Manager->MakeConnectionPath(_c)] )
@@ -253,7 +253,7 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
              }];
 }
 
-- (void)focusConnection:(const NetworkConnectionsManager::Connection &)_connection
+- (void)focusConnection:(const nc::panel::NetworkConnectionsManager::Connection &)_connection
 {
     const auto new_it = std::ranges::find(m_Connections, _connection);
     if( new_it != end(m_Connections) ) {
@@ -263,7 +263,7 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
     }
 }
 
-- (void)insertCreatedConnection:(NetworkConnectionsManager::Connection)_connection
+- (void)insertCreatedConnection:(nc::panel::NetworkConnectionsManager::Connection)_connection
                    withPassword:(const std::string &)_password
 {
     m_Manager->InsertConnection(_connection);

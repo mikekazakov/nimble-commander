@@ -28,7 +28,7 @@ const std::filesystem::path &AppDelegate::SupportDirectory()
     return support_dir;
 }
 
-const std::shared_ptr<NetworkConnectionsManager> &AppDelegate::NetworkConnectionsManager()
+const std::shared_ptr<nc::panel::NetworkConnectionsManager> &AppDelegate::NetworkConnectionsManager()
 {
     return NCAppDelegate.me.networkConnectionsManager;
 }

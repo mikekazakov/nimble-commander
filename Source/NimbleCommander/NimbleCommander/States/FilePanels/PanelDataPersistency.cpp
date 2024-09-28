@@ -2,7 +2,7 @@
 #pragma clang diagnostic push
 #include "PanelDataPersistency.h"
 #include <Config/RapidJSON.h>
-#include <NimbleCommander/Core/NetworkConnectionsManager.h>
+#include <Panel/NetworkConnectionsManager.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
 #include <VFS/ArcLA.h>
 #include <VFS/ArcLARaw.h>
@@ -19,7 +19,7 @@
 // THIS IS TEMPORARY!!!
 #include <NimbleCommander/Bootstrap/AppDelegateCPP.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
-static NetworkConnectionsManager &ConnectionsManager()
+static nc::panel::NetworkConnectionsManager &ConnectionsManager()
 {
     return *nc::AppDelegate::NetworkConnectionsManager();
 }

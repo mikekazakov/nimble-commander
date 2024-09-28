@@ -7,7 +7,6 @@
 #include <functional>
 #include <ankerl/unordered_dense.h>
 
-class NetworkConnectionsManager;
 @class NCPanelOpenWithMenuDelegate;
 @class NCViewerView;
 @class NCViewerViewController;
@@ -19,11 +18,12 @@ class NativeHost;
 namespace nc::panel {
 class FileOpener;
 class TagsStorage;
+class NetworkConnectionsManager;
 
 using PanelActionsMap = ankerl::unordered_dense::map<SEL, std::unique_ptr<const actions::PanelAction>>;
 
 PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
-                                     NetworkConnectionsManager &_net_mgr,
+                                     nc::panel::NetworkConnectionsManager &_net_mgr,
                                      nc::utility::NativeFSManager &_native_fs_mgr,
                                      nc::vfs::NativeHost &_native_host,
                                      const nc::panel::TagsStorage &_tags_storage,

@@ -40,7 +40,7 @@ namespace nc::panel {
 using namespace actions;
 
 PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
-                                     NetworkConnectionsManager &_net_mgr,
+                                     nc::panel::NetworkConnectionsManager &_net_mgr,
                                      utility::NativeFSManager &_native_fs_mgr,
                                      nc::vfs::NativeHost &_native_host,
                                      const nc::panel::TagsStorage &_tags_storage,

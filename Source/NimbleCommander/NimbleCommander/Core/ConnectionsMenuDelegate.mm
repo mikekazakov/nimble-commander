@@ -1,9 +1,9 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConnectionsMenuDelegate.h"
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.h>
 #include <NimbleCommander/Core/AnyHolder.h>
-#include "NetworkConnectionsManager.h"
+#include <Panel/NetworkConnectionsManager.h>
 #include <Utility/StringExtras.h>
 
 @interface ConnectionsMenuDelegate ()
@@ -11,12 +11,12 @@
 @end
 
 @implementation ConnectionsMenuDelegate {
-    std::vector<NetworkConnectionsManager::Connection> m_Connections;
-    std::function<NetworkConnectionsManager &()> m_Manager;
+    std::vector<nc::panel::NetworkConnectionsManager::Connection> m_Connections;
+    std::function<nc::panel::NetworkConnectionsManager &()> m_Manager;
     int m_InitialElementsCount;
 }
 
-- (instancetype)initWithManager:(std::function<NetworkConnectionsManager &()>)_callback
+- (instancetype)initWithManager:(std::function<nc::panel::NetworkConnectionsManager &()>)_callback
 {
     self = [super init];
     if( self ) {

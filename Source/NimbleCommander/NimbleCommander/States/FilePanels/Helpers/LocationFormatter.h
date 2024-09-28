@@ -3,7 +3,7 @@
 
 #include <Utility/NativeFSManager.h>
 #include <Utility/Tags.h>
-#include <NimbleCommander/Core/NetworkConnectionsManager.h>
+#include <Panel/NetworkConnectionsManager.h>
 #include <NimbleCommander/Core/VFSInstancePromise.h>
 
 // TODO: extract favorite and location

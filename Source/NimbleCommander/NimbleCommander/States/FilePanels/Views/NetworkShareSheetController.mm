@@ -18,8 +18,8 @@
 @end
 
 @implementation NetworkShareSheetController {
-    std::optional<NetworkConnectionsManager::Connection> m_Original;
-    NetworkConnectionsManager::LANShare m_Connection;
+    std::optional<nc::panel::NetworkConnectionsManager::Connection> m_Original;
+    nc::panel::NetworkConnectionsManager::LANShare m_Connection;
 }
 @synthesize setupMode;
 @synthesize title;
@@ -42,7 +42,7 @@
     return self;
 }
 
-- (instancetype)initWithConnection:(NetworkConnectionsManager::Connection)_connection
+- (instancetype)initWithConnection:(nc::panel::NetworkConnectionsManager::Connection)_connection
 {
     if( self = [self init] ) {
         m_Original = _connection;
@@ -58,7 +58,7 @@
         self.connectButton.title = self.connectButton.alternateTitle;
 
     if( m_Original ) {
-        auto &c = m_Original->Get<NetworkConnectionsManager::LANShare>();
+        auto &c = m_Original->Get<nc::panel::NetworkConnectionsManager::LANShare>();
         self.title = [NSString stringWithUTF8StdString:c.title];
         self.server = [NSString stringWithUTF8StdString:c.host];
         self.username = [NSString stringWithUTF8StdString:c.user];
@@ -80,7 +80,7 @@
     if( m_Original )
         m_Connection.uuid = m_Original->Uuid();
     else
-        m_Connection.uuid = NetworkConnectionsManager::MakeUUID();
+        m_Connection.uuid = nc::panel::NetworkConnectionsManager::MakeUUID();
 
     auto extract_string = [](NSString *s) { return s.UTF8String ? s.UTF8String : ""; };
 
@@ -89,17 +89,17 @@
     m_Connection.host = extract_string(self.server);
     m_Connection.user = extract_string(self.username);
     m_Connection.mountpoint = extract_string(self.mountpath);
-    m_Connection.proto = NetworkConnectionsManager::LANShare::Protocol(self.protocol.selectedTag);
+    m_Connection.proto = nc::panel::NetworkConnectionsManager::LANShare::Protocol(self.protocol.selectedTag);
 
     [self endSheet:NSModalResponseOK];
 }
 
-- (NetworkConnectionsManager::Connection)connection
+- (nc::panel::NetworkConnectionsManager::Connection)connection
 {
-    return NetworkConnectionsManager::Connection(m_Connection);
+    return nc::panel::NetworkConnectionsManager::Connection(m_Connection);
 }
 
-- (void)setConnection:(NetworkConnectionsManager::Connection)connection
+- (void)setConnection:(nc::panel::NetworkConnectionsManager::Connection)connection
 {
     m_Original = connection;
 }
@@ -164,7 +164,7 @@
 {
     self.valid = [self isValid];
     self.nfsSelected =
-        self.protocol.selectedTag == static_cast<int>(NetworkConnectionsManager::LANShare::Protocol::NFS);
+        self.protocol.selectedTag == static_cast<int>(nc::panel::NetworkConnectionsManager::LANShare::Protocol::NFS);
 }
 
 - (bool)isValid

@@ -1,6 +1,6 @@
 // Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Alert.h>
-#include <NimbleCommander/Core/NetworkConnectionsManager.h>
+#include <Panel/NetworkConnectionsManager.h>
 #include "FTPConnectionSheetController.h"
 #include <Utility/StringExtras.h>
 
@@ -17,8 +17,8 @@
 @end
 
 @implementation FTPConnectionSheetController {
-    std::optional<NetworkConnectionsManager::Connection> m_Original;
-    NetworkConnectionsManager::FTP m_Connection;
+    std::optional<nc::panel::NetworkConnectionsManager::Connection> m_Original;
+    nc::panel::NetworkConnectionsManager::FTP m_Connection;
 }
 @synthesize setupMode;
 @synthesize title;
@@ -49,7 +49,7 @@
         self.connectButton.title = self.connectButton.alternateTitle;
 
     if( m_Original ) {
-        auto &c = m_Original->Get<NetworkConnectionsManager::FTP>();
+        auto &c = m_Original->Get<nc::panel::NetworkConnectionsManager::FTP>();
         self.title = [NSString stringWithUTF8StdString:c.title];
         self.server = [NSString stringWithUTF8StdString:c.host];
         self.username = [NSString stringWithUTF8StdString:c.user];
@@ -65,7 +65,7 @@
     if( m_Original )
         m_Connection.uuid = m_Original->Uuid();
     else
-        m_Connection.uuid = NetworkConnectionsManager::MakeUUID();
+        m_Connection.uuid = nc::panel::NetworkConnectionsManager::MakeUUID();
 
     m_Connection.title = self.title.UTF8String ? self.title.UTF8String : "";
     m_Connection.host = self.server.UTF8String ? self.server.UTF8String : "";
@@ -86,19 +86,19 @@
     [self endSheet:NSModalResponseCancel];
 }
 
-- (NetworkConnectionsManager::Connection)result
+- (nc::panel::NetworkConnectionsManager::Connection)result
 {
-    return NetworkConnectionsManager::Connection(m_Connection);
+    return nc::panel::NetworkConnectionsManager::Connection(m_Connection);
 }
 
-- (void)setConnection:(NetworkConnectionsManager::Connection)connection
+- (void)setConnection:(nc::panel::NetworkConnectionsManager::Connection)connection
 {
     m_Original = connection;
 }
 
-- (NetworkConnectionsManager::Connection)connection
+- (nc::panel::NetworkConnectionsManager::Connection)connection
 {
-    return NetworkConnectionsManager::Connection(m_Connection);
+    return nc::panel::NetworkConnectionsManager::Connection(m_Connection);
 }
 
 - (void)setPassword:(std::string)password

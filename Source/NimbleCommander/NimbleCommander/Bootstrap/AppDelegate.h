@@ -43,6 +43,7 @@ class ClosedPanelsHistory;
 class ExternalToolsStorage;
 class TagsStorage;
 class NetworkConnectionsManager;
+class PanelDataPersistency;
 } // namespace panel
 
 namespace viewer {
@@ -145,5 +146,7 @@ class NativeHost;
 @property(nonatomic, readonly) nc::panel::TagsStorage &tagsStorage;
 
 @property(nonatomic, readonly) nc::viewer::hl::SettingsStorage &syntaxHighlightingSettingsStorage;
+
+@property(nonatomic, readonly) nc::panel::PanelDataPersistency &panelDataPersistency;
 
 @end

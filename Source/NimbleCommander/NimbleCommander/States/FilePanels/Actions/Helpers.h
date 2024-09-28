@@ -1,9 +1,10 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFSDeclarations.h>
 #include <Operations/Operation.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
+#include <Panel/NetworkConnectionsManager.h>
 #include "../PanelDataPersistency.h"
 #include <memory>
 
@@ -42,7 +43,9 @@ private:
 class AsyncPersistentLocationRestorer
 {
 public:
-    AsyncPersistentLocationRestorer(PanelController *_panel, nc::core::VFSInstanceManager &_instance_mgr);
+    AsyncPersistentLocationRestorer(PanelController *_panel,
+                                    nc::core::VFSInstanceManager &_instance_mgr,
+                                    nc::panel::NetworkConnectionsManager &_net_mgr);
 
     using SuccessHandler = std::function<void(VFSHostPtr)>;
     using FailureHandler = std::function<void(int)>;
@@ -53,6 +56,7 @@ public:
 private:
     PanelController *m_Panel = nil;
     nc::core::VFSInstanceManager &m_InstanceManager;
+    nc::panel::NetworkConnectionsManager &m_NetConnManager;
 };
 
 // Actions that trigger operations can spawn these objects and hook them up with the operation.

@@ -139,7 +139,8 @@ static std::vector<std::string> CommaSeparatedStrings(const nc::config::Config &
 
 - (nc::panel::ControllerStateJSONDecoder &)controllerStateJSONDecoder
 {
-    static auto decoder = nc::panel::ControllerStateJSONDecoder(self.nativeFSManager, self.vfsInstanceManager);
+    static auto decoder =
+        nc::panel::ControllerStateJSONDecoder(self.nativeFSManager, self.vfsInstanceManager, self.panelDataPersistency);
     return decoder;
 }
 

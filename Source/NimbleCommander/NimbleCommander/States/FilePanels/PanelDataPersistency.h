@@ -24,41 +24,40 @@ struct PersistentLocation {
     std::string path;
 };
 
-class PanelDataPersisency
+class PanelDataPersistency
 {
 public:
-    PanelDataPersisency(const NetworkConnectionsManager &_conn_manager);
+    PanelDataPersistency(NetworkConnectionsManager &_conn_manager);
 
-    static std::string MakeFootprintString(const PersistentLocation &_loc);
-    static size_t MakeFootprintStringHash(const PersistentLocation &PersistentLocation);
+    std::string MakeFootprintString(const PersistentLocation &_loc);
+    size_t MakeFootprintStringHash(const PersistentLocation &PersistentLocation);
 
     // NB! these functions theat paths as a directory regardless, and resulting path will
     // containt a trailing slash.
-    static std::string MakeVerbosePathString(const PersistentLocation &_loc);
-    static std::string MakeVerbosePathString(const VFSHost &_host, const std::string &_directory);
+    std::string MakeVerbosePathString(const PersistentLocation &_loc);
+    std::string MakeVerbosePathString(const VFSHost &_host, const std::string &_directory);
 
-    static std::optional<PersistentLocation> EncodeLocation(const VFSHost &_vfs, const std::string &_path);
+    std::optional<PersistentLocation> EncodeLocation(const VFSHost &_vfs, const std::string &_path);
 
     std::optional<NetworkConnectionsManager::Connection>
     ExtractConnectionFromLocation(const PersistentLocation &_location);
 
     // the following functions will return kNullType in case of error
     using json = nc::config::Value;
-    static json EncodeVFSPath(const VFSHost &_vfs, const std::string &_path);
-    static json EncodeVFSPath(const VFSListing &_listing);
+    json EncodeVFSPath(const VFSHost &_vfs, const std::string &_path);
+    json EncodeVFSPath(const VFSListing &_listing);
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ these functions should be replaced by the following chain:
     // VFSHost+Path or VFSListing => PersistentLocation => JSON representation
 
-    static std::optional<PersistentLocation> JSONToLocation(const json &_json);
-    static json LocationToJSON(const PersistentLocation &_location);
+    std::optional<PersistentLocation> JSONToLocation(const json &_json);
+    json LocationToJSON(const PersistentLocation &_location);
 
     // LocationToJSON( *EncodeLocation(host, path) ) == EncodeVFSPath(host, path)
 
     // uses current state to retrieve existing vfs if possible
-    static int
-    CreateVFSFromLocation(const PersistentLocation &_state, VFSHostPtr &_host, core::VFSInstanceManager &_inst_mgr);
+    int CreateVFSFromLocation(const PersistentLocation &_state, VFSHostPtr &_host, core::VFSInstanceManager &_inst_mgr);
 
-    static std::string GetPathFromState(const json &_state);
+    std::string GetPathFromState(const json &_state);
 
     /**
     {
@@ -66,7 +65,7 @@ public:
      path: "/erere/rere/trtr"
     }
     */
-    static json EncodeVFSHostInfo(const VFSHost &_host);
+    json EncodeVFSHostInfo(const VFSHost &_host);
 
     /*
     Host info:
@@ -86,7 +85,15 @@ public:
      */
 
 private:
-    const NetworkConnectionsManager &m_ConnectionsManager;
+    std::any EncodeState(const VFSHost &_host);
+
+    bool Fits(VFSHost &_alive, const std::any &_encoded);
+
+    VFSHostPtr FindFitting(const std::vector<std::weak_ptr<VFSHost>> &_hosts,
+                           const std::any &_encoded,
+                           const VFSHost *_parent /* may be nullptr */);
+
+    NetworkConnectionsManager &m_ConnectionsManager;
 };
 
 } // namespace nc::panel

@@ -124,7 +124,7 @@ PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
     add(@selector(OnGoToQuickListsConnections:), new ShowConnectionsQuickList{_net_mgr, _native_fs_mgr, _tags_storage});
     add(@selector(OnGoToQuickListsTags:),
         new ShowTagsQuickList{_net_mgr, _native_fs_mgr, _tags_storage, _global_config});
-    add(@selector(OnGoToFavoriteLocation:), new GoToFavoriteLocation);
+    add(@selector(OnGoToFavoriteLocation:), new GoToFavoriteLocation{_net_mgr});
     add(@selector(OnFileViewCommand:), new ShowQuickLook);
     add(@selector(OnBriefSystemOverviewCommand:), new ShowSystemOverview);
     add(@selector(OnFileInternalBigViewCommand:), new ViewFile);

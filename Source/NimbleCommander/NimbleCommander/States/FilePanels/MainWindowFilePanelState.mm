@@ -532,13 +532,14 @@ static nc::config::Value EncodePanelsStates(const std::vector<PanelController *>
     nc::config::Value right{kArrayType};
 
     const auto encoding_opts = ControllerStateEncoding::EncodeEverything;
+    PanelDataPersistency persistency(*NCAppDelegate.me.networkConnectionsManager); // TODO: evil, fix
 
     for( auto pc : _left )
-        if( auto v = ControllerStateJSONEncoder{pc}.Encode(encoding_opts); v.GetType() != kNullType )
+        if( auto v = ControllerStateJSONEncoder{pc, persistency}.Encode(encoding_opts); v.GetType() != kNullType )
             left.PushBack(std::move(v), nc::config::g_CrtAllocator);
 
     for( auto pc : _right )
-        if( auto v = ControllerStateJSONEncoder{pc}.Encode(encoding_opts); v.GetType() != kNullType )
+        if( auto v = ControllerStateJSONEncoder{pc, persistency}.Encode(encoding_opts); v.GetType() != kNullType )
             right.PushBack(std::move(v), nc::config::g_CrtAllocator);
 
     json.PushBack(std::move(left), nc::config::g_CrtAllocator);
@@ -673,11 +674,13 @@ static nc::config::Value EncodeUIState(MainWindowFilePanelState *_state)
     const auto to_encode = static_cast<ControllerStateEncoding::Options>(ControllerStateEncoding::EncodeDataOptions |
                                                                          ControllerStateEncoding::EncodeViewOptions);
 
-    auto left_panel_options = ControllerStateJSONEncoder{left_panel}.Encode(to_encode);
+    PanelDataPersistency persistency(*NCAppDelegate.me.networkConnectionsManager); // TODO: evil, fix
+
+    auto left_panel_options = ControllerStateJSONEncoder{left_panel, persistency}.Encode(to_encode);
     if( left_panel_options.GetType() == rapidjson::kNullType )
         return;
 
-    auto right_panel_options = ControllerStateJSONEncoder{right_panel}.Encode(to_encode);
+    auto right_panel_options = ControllerStateJSONEncoder{right_panel, persistency}.Encode(to_encode);
     if( right_panel_options.GetType() == rapidjson::kNullType )
         return;
 

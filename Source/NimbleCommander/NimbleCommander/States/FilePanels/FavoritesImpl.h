@@ -7,11 +7,13 @@
 
 namespace nc::panel {
 
+class PanelDataPersistency;
+
 // STA API design at the moment, call it only from main thread!
 class FavoriteLocationsStorageImpl : public FavoriteLocationsStorage
 {
 public:
-    FavoriteLocationsStorageImpl(config::Config &_config, const char *_path);
+    FavoriteLocationsStorageImpl(config::Config &_config, const char *_path, PanelDataPersistency &_persistency);
     void StoreData(config::Config &_config, const char *_path);
 
     void AddFavoriteLocation(Favorite _favorite) override;
@@ -44,13 +46,18 @@ private:
     std::shared_ptr<const Location>
     FindInVisitsOrEncode(size_t _footprint, VFSHost &_host, const std::string &_directory);
 
+    std::shared_ptr<const FavoriteLocationsStorage::Location> Encode(const VFSHost &_host,
+                                                                     const std::string &_directory) const;
+
     void LoadData(config::Config &_config, const char *_path);
 
-    static nc::config::Value VisitToJSON(const Visit &_visit);
-    static std::optional<Visit> JSONToVisit(const nc::config::Value &_json);
+    nc::config::Value VisitToJSON(const Visit &_visit);
+    std::optional<Visit> JSONToVisit(const nc::config::Value &_json);
 
-    static nc::config::Value FavoriteToJSON(const Favorite &_favorite);
-    static std::optional<Favorite> JSONToFavorite(const nc::config::Value &_json);
+    nc::config::Value FavoriteToJSON(const Favorite &_favorite);
+    std::optional<Favorite> JSONToFavorite(const nc::config::Value &_json);
+
+    PanelDataPersistency &m_Persistency;
 
     ankerl::unordered_dense::map<size_t, Visit> m_Visits;
     std::vector<Favorite> m_Favorites;

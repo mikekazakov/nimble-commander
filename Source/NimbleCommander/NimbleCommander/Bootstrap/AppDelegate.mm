@@ -719,7 +719,7 @@ static NCAppDelegate *g_Me = nil;
     static std::once_flag once;
     std::call_once(once, [&] {
         using t = nc::panel::FavoriteLocationsStorageImpl;
-        m_Favorites = std::make_shared<t>(StateConfig(), "filePanel.favorites");
+        m_Favorites = std::make_shared<t>(StateConfig(), "filePanel.favorites", self.panelDataPersistency);
     });
 
     [[clang::no_destroy]] static const std::shared_ptr<nc::panel::FavoriteLocationsStorage> inst = m_Favorites;
@@ -987,6 +987,12 @@ static void DoTemporaryFileStoragePurge()
         self.supportDirectory / "SyntaxHighlighting"};
 
     return storage;
+}
+
+- (nc::panel::PanelDataPersistency &)panelDataPersistency
+{
+    [[clang::no_destroy]] static nc::panel::PanelDataPersistency persistency{*self.networkConnectionsManager};
+    return persistency;
 }
 
 @end

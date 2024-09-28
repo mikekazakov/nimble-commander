@@ -127,6 +127,10 @@ void GoToProcessesList::Perform(PanelController *_target, id) const
     [_target GoToDirWithContext:request];
 }
 
+GoToFavoriteLocation::GoToFavoriteLocation(NetworkConnectionsManager &_net_mgr) : m_NetMgr(_net_mgr)
+{
+}
+
 void GoToFavoriteLocation::Perform(PanelController *_target, id _sender) const
 {
     auto menuitem = objc_cast<NSMenuItem>(_sender);
@@ -139,7 +143,7 @@ void GoToFavoriteLocation::Perform(PanelController *_target, id _sender) const
     if( location == nil )
         return;
 
-    auto restorer = AsyncPersistentLocationRestorer(_target, _target.vfsInstanceManager);
+    auto restorer = AsyncPersistentLocationRestorer(_target, _target.vfsInstanceManager, m_NetMgr);
     auto handler = [path = location->path, panel = _target](VFSHostPtr _host) {
         dispatch_to_main_queue([=] {
             auto request = std::make_shared<DirectoryChangeRequest>();

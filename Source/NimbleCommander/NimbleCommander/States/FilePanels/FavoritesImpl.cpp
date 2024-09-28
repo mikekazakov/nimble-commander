@@ -72,7 +72,18 @@ FavoriteLocationsStorageImpl::ComposeFavoriteLocation(VFSHost &_host,
     f.location = location;
     f.footprint = _host.FullHashForPath(_directory);
     if( _title.empty() ) {
-        f.title = std::filesystem::path(EnsureNoTrailingSlash(_directory)).filename();
+        if( _directory == "/" ) {
+            VFSStatFS statfs;
+            if( _host.StatFS(_directory, statfs) == VFSError::Ok && !statfs.volume_name.empty() ) {
+                f.title = statfs.volume_name;
+            }
+            else {
+                f.title = _host.MakePathVerbose(_directory);
+            }
+        }
+        else {
+            f.title = std::filesystem::path(EnsureNoTrailingSlash(_directory)).filename();
+        }
     }
     else {
         f.title = _title;

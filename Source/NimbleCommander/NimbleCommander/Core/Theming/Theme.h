@@ -6,6 +6,7 @@
 #include <vector>
 #include <Cocoa/Cocoa.h>
 #include "Appearance.h"
+#include <swift/bridging>
 
 namespace rapidjson {
 template <typename E, typename A>
@@ -34,7 +35,7 @@ class ThemesManager;
  */
 const Theme &CurrentTheme() noexcept;
 
-class Theme
+class SWIFT_UNSAFE_REFERENCE Theme
 {
 public:
     Theme(const nc::config::Value &_theme_data, const nc::config::Value &_backup_theme_data);

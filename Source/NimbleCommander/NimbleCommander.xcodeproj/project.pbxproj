@@ -148,7 +148,6 @@
 		CF0A48662BDDA3E600833160 /* PanelListViewNameView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2B31DC1934D00F0DF0F /* PanelListViewNameView.mm */; };
 		CF0A48672BDDA3EB00833160 /* PanelListViewRowView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2B51DC1934D00F0DF0F /* PanelListViewRowView.mm */; };
 		CF0A48682BDDA3F000833160 /* PanelListViewSizeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2CE1DC35E8B00F0DF0F /* PanelListViewSizeView.mm */; };
-		CF0A48692BDDA3F500833160 /* PanelListViewTableHeaderCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE80A1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm */; };
 		CF0A486A2BDDA3FA00833160 /* PanelListViewTableHeaderView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */; };
 		CF0A486B2BDDA3FF00833160 /* PanelListViewTableView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2B71DC1934D00F0DF0F /* PanelListViewTableView.mm */; };
 		CF0A486C2BDDA40600833160 /* PanelListViewTagsView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAA4D1F2BC6A330003073A2 /* PanelListViewTagsView.mm */; };
@@ -194,6 +193,7 @@
 		CF0B78F225739F61003061D0 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
 		CF0B78F325739F61003061D0 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
 		CF0B78F425739F61003061D0 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
+		CF1257552CA96CAD003906C6 /* PanelListViewTableHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1257542CA96CAD003906C6 /* PanelListViewTableHeaderCell.swift */; };
 		CF3120C41A510F640062185A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
 		CF3120C51A510F640062185A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
 		CF36DBE01F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
@@ -884,6 +884,8 @@
 		CF0A46F92BDD830D00833160 /* PFMoveToApplicationsShim.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PFMoveToApplicationsShim.mm; path = NimbleCommander/Bootstrap/PFMoveToApplicationsShim.mm; sourceTree = "<group>"; };
 		CF0B78D925739F61003061D0 /* SparkleShim.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SparkleShim.m; path = NimbleCommander/Bootstrap/SparkleShim.m; sourceTree = "<group>"; };
 		CF0B78F825739F79003061D0 /* SparkleShim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SparkleShim.h; path = NimbleCommander/Bootstrap/SparkleShim.h; sourceTree = "<group>"; };
+		CF1257542CA96CAD003906C6 /* PanelListViewTableHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PanelListViewTableHeaderCell.swift; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderCell.swift; sourceTree = "<group>"; };
+		CF12575A2CA97D87003906C6 /* NimbleCommanderCommon-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NimbleCommanderCommon-Bridging-Header.h"; path = "NimbleCommander/Bootstrap/NimbleCommanderCommon-Bridging-Header.h"; sourceTree = "<group>"; };
 		CF15D0811E8E1E7A00FEAA04 /* OpenWithExternalEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenWithExternalEditor.h; path = NimbleCommander/States/FilePanels/Actions/OpenWithExternalEditor.h; sourceTree = SOURCE_ROOT; };
 		CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenWithExternalEditor.mm; path = NimbleCommander/States/FilePanels/Actions/OpenWithExternalEditor.mm; sourceTree = SOURCE_ROOT; };
 		CF197C411FB81ACA009F6C59 /* ToggleSingleOrDualMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToggleSingleOrDualMode.h; path = NimbleCommander/States/FilePanels/Actions/ToggleSingleOrDualMode.h; sourceTree = SOURCE_ROOT; };
@@ -1059,8 +1061,6 @@
 		CF5FE8001E14A00C00CD83B4 /* Theme.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Theme.mm; path = NimbleCommander/Core/Theming/Theme.mm; sourceTree = SOURCE_ROOT; };
 		CF5FE8021E14A08500CD83B4 /* ThemesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThemesManager.h; path = NimbleCommander/Core/Theming/ThemesManager.h; sourceTree = SOURCE_ROOT; };
 		CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ThemesManager.mm; path = NimbleCommander/Core/Theming/ThemesManager.mm; sourceTree = SOURCE_ROOT; };
-		CF5FE8091E163DD200CD83B4 /* PanelListViewTableHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewTableHeaderCell.h; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderCell.h; sourceTree = SOURCE_ROOT; };
-		CF5FE80A1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewTableHeaderCell.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderCell.mm; sourceTree = SOURCE_ROOT; };
 		CF5FE80C1E16461600CD83B4 /* PanelListViewTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewTableHeaderView.h; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderView.h; sourceTree = SOURCE_ROOT; };
 		CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewTableHeaderView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderView.mm; sourceTree = SOURCE_ROOT; };
 		CF67F19A2952034200B92944 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Icon.icns; path = NimbleCommander/Resources/Icon.icns; sourceTree = "<group>"; };
@@ -1850,8 +1850,7 @@
 				CF56C2B51DC1934D00F0DF0F /* PanelListViewRowView.mm */,
 				CF56C2CD1DC35E8B00F0DF0F /* PanelListViewSizeView.h */,
 				CF56C2CE1DC35E8B00F0DF0F /* PanelListViewSizeView.mm */,
-				CF5FE8091E163DD200CD83B4 /* PanelListViewTableHeaderCell.h */,
-				CF5FE80A1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm */,
+				CF1257542CA96CAD003906C6 /* PanelListViewTableHeaderCell.swift */,
 				CF5FE80C1E16461600CD83B4 /* PanelListViewTableHeaderView.h */,
 				CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */,
 				CF56C2B61DC1934D00F0DF0F /* PanelListViewTableView.h */,
@@ -1865,6 +1864,7 @@
 		CF876D161D51DFD0009C0CCE /* Bootstrap */ = {
 			isa = PBXGroup;
 			children = (
+				CF12575A2CA97D87003906C6 /* NimbleCommanderCommon-Bridging-Header.h */,
 				CFDAC2371DFBDEBA0039A104 /* AppDelegate.h */,
 				CFDAC2381DFBDEBA0039A104 /* AppDelegate.mm */,
 				CFA1716420196CF600F507D5 /* AppDelegate.Private.h */,
@@ -1878,8 +1878,8 @@
 				CFDAC23A1DFBDEBA0039A104 /* AppDelegateCPP.mm */,
 				CFDAC2341DFBDE560039A104 /* Application.h */,
 				CFDAC2351DFBDE560039A104 /* Application.mm */,
-				CFA999D9264F17A800F72E93 /* CLI.cpp */,
 				CFA999F2264F17A800F72E93 /* CLI.h */,
+				CFA999D9264F17A800F72E93 /* CLI.cpp */,
 				CFDAC22E1DFBDBCB0039A104 /* Config.h */,
 				CFFA943A1F3E9C4D0035E606 /* ConfigWiring.h */,
 				CFFA943B1F3E9C4D0035E606 /* ConfigWiring.mm */,
@@ -2418,7 +2418,7 @@
 				TargetAttributes = {
 					CF5DE07D2583E73300604DEE = {
 						CreatedOnToolsVersion = 12.2;
-						LastSwiftMigration = 1510;
+						LastSwiftMigration = 1600;
 					};
 					CF5DE0B1258414CA00604DEE = {
 						CreatedOnToolsVersion = 12.2;
@@ -3056,6 +3056,7 @@
 				CF0A48062BDD9F6800833160 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF0A47582BDD8FB100833160 /* Pasteboard.mm in Sources */,
 				CF0A488B2BDDA59C00833160 /* RecentlyClosedMenuDelegate.mm in Sources */,
+				CF1257552CA96CAD003906C6 /* PanelListViewTableHeaderCell.swift in Sources */,
 				CF0A48642BDDA3DC00833160 /* PanelListViewExtensionView.mm in Sources */,
 				CF0A48652BDDA3E200833160 /* PanelListViewGeometry.mm in Sources */,
 				CF0A48102BDD9F9D00833160 /* PreferencesWindowViewerTab.mm in Sources */,
@@ -3186,7 +3187,6 @@
 				CF0A48472BDDA28600833160 /* RenameInPlace.mm in Sources */,
 				CF0A48202BDDA03A00833160 /* PanelControllerActionsDispatcher.mm in Sources */,
 				CF0A484D2BDDA2A300833160 /* ShowTabs.mm in Sources */,
-				CF0A48692BDDA3F500833160 /* PanelListViewTableHeaderCell.mm in Sources */,
 				CF0A48672BDDA3EB00833160 /* PanelListViewRowView.mm in Sources */,
 				CF0A48852BDDA57100833160 /* AskForPasswordWindowController.mm in Sources */,
 				CF0A48842BDDA56400833160 /* TabBarStyle.mm in Sources */,
@@ -3729,18 +3729,23 @@
 		CF5DE0802583E73300604DEE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "NimbleCommander/Bootstrap/NimbleCommanderCommon-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		CF5DE0812583E73300604DEE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "NimbleCommander/Bootstrap/NimbleCommanderCommon-Bridging-Header.h";
 			};
 			name = Release;
 		};

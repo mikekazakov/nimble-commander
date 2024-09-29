@@ -1,7 +1,7 @@
 #include "../XCConfig/common.xcconfig"
 HEADER_SEARCH_PATHS = $(inherited) $(THRDPTY) $(LIBS)/Base/include $(LIBS)/Utility/include $(LIBS)/RoutedIO/include $(LIBS)/VFS/include $(LIBS)/VFSIcon/include $(LIBS)/Config/include $(LIBS)/Operations/include $(LIBS)/Term/include $(LIBS)/CUI/include $(LIBS)/Viewer/include $(LIBS)/Panel/include $(PROJECT_DIR) $(HOME)
 
-LD_RUNPATH_SEARCH_PATHS = @executable_path/../Frameworks
+LD_RUNPATH_SEARCH_PATHS = /usr/lib/swift @executable_path/../Frameworks
 
 FRAMEWORK_SEARCH_PATHS = $(THRDPTY)/Sparkle $(THRDPTY)/LetsMove
 
@@ -10,3 +10,5 @@ WRAPPER_EXTENSION = app
 LIBRARY_SEARCH_PATHS = $(inherited) $(BUILD_DIR)/$(CONFIGURATION)
 
 OTHER_LDFLAGS = $(inherited) -lBase -lUtility -lConfig -lCUI -lOperations -lPanel -lRoutedIO -lTerm -lVFS -lVFSIcon -lViewer -lMMTabBarViewLib
+
+ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES

@@ -342,7 +342,7 @@ static NCAppDelegate *g_Me = nil;
 
     const auto connections_menu_item = item_for_action("menu.go.connect.network_server");
     static const auto conn_delegate = [[ConnectionsMenuDelegate alloc]
-        initWithManager:[]() -> NetworkConnectionsManager & { return *g_Me.networkConnectionsManager; }];
+        initWithManager:[]() -> nc::panel::NetworkConnectionsManager & { return *g_Me.networkConnectionsManager; }];
     connections_menu_item.menu.delegate = conn_delegate;
 
     auto panels_locator = []() -> MainWindowFilePanelState * {
@@ -719,7 +719,7 @@ static NCAppDelegate *g_Me = nil;
     static std::once_flag once;
     std::call_once(once, [&] {
         using t = nc::panel::FavoriteLocationsStorageImpl;
-        m_Favorites = std::make_shared<t>(StateConfig(), "filePanel.favorites");
+        m_Favorites = std::make_shared<t>(StateConfig(), "filePanel.favorites", self.panelDataPersistency);
     });
 
     [[clang::no_destroy]] static const std::shared_ptr<nc::panel::FavoriteLocationsStorage> inst = m_Favorites;
@@ -814,11 +814,11 @@ static NCAppDelegate *g_Me = nil;
     existing_window = window;
 }
 
-- (const std::shared_ptr<NetworkConnectionsManager> &)networkConnectionsManager
+- (const std::shared_ptr<nc::panel::NetworkConnectionsManager> &)networkConnectionsManager
 {
     [[clang::no_destroy]] static const auto mgr =
         std::make_shared<ConfigBackedNetworkConnectionsManager>(*g_NetworkConnectionsConfig, self.nativeFSManager);
-    [[clang::no_destroy]] static const std::shared_ptr<NetworkConnectionsManager> int_ptr = mgr;
+    [[clang::no_destroy]] static const std::shared_ptr<nc::panel::NetworkConnectionsManager> int_ptr = mgr;
     return int_ptr;
 }
 
@@ -987,6 +987,12 @@ static void DoTemporaryFileStoragePurge()
         self.supportDirectory / "SyntaxHighlighting"};
 
     return storage;
+}
+
+- (nc::panel::PanelDataPersistency &)panelDataPersistency
+{
+    [[clang::no_destroy]] static nc::panel::PanelDataPersistency persistency{*self.networkConnectionsManager};
+    return persistency;
 }
 
 @end

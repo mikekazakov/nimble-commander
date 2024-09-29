@@ -2,12 +2,12 @@
 #pragma once
 
 #include <Utility/SheetController.h>
-#include <NimbleCommander/Core/NetworkConnectionsManager.h>
+#include <Panel/NetworkConnectionsManager.h>
 
 @interface ConnectToServer : SheetController <NSTableViewDataSource, NSTableViewDelegate>
 
-- (instancetype)initWithNetworkConnectionsManager:(NetworkConnectionsManager &)_manager;
+- (instancetype)initWithNetworkConnectionsManager:(nc::panel::NetworkConnectionsManager &)_manager;
 
-@property(readonly, nonatomic) std::optional<NetworkConnectionsManager::Connection> connection;
+@property(readonly, nonatomic) std::optional<nc::panel::NetworkConnectionsManager::Connection> connection;
 
 @end

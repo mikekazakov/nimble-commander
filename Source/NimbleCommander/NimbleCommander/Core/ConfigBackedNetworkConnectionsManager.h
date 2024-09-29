@@ -1,7 +1,7 @@
 // Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include "NetworkConnectionsManager.h"
+#include <Panel/NetworkConnectionsManager.h>
 #include <VFS/VFS.h>
 #include <Config/Config.h>
 #include <mutex>
@@ -10,7 +10,7 @@ namespace nc::utility {
 class NativeFSManager;
 }
 
-class ConfigBackedNetworkConnectionsManager : public NetworkConnectionsManager
+class ConfigBackedNetworkConnectionsManager : public nc::panel::NetworkConnectionsManager
 {
 public:
     ConfigBackedNetworkConnectionsManager(nc::config::Config &_config, nc::utility::NativeFSManager &_native_fs_man);

@@ -40,6 +40,7 @@
 		CF60DF252A6D3BAB00478BA0 /* libTerm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF60DF242A6D3BAB00478BA0 /* libTerm.a */; };
 		CF60DF272A6D47CB00478BA0 /* ExternalTools_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF60DF262A6D47CB00478BA0 /* ExternalTools_IT.mm */; };
 		CF739C3D295644CD004758C5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF739C3B295644CD004758C5 /* Localizable.strings */; };
+		CF8B0FAF2CA7FF440098C4D6 /* NetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B0FAE2CA7FF440098C4D6 /* NetworkConnectionsManager.mm */; };
 		CF96DC7629CF4610003EC4EB /* ItemVolatileData_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF96DC7529CF460F003EC4EB /* ItemVolatileData_UT.mm */; };
 		CF96DC7829E7099A003EC4EB /* PanelDataFilter_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF96DC7729E7099A003EC4EB /* PanelDataFilter_UT.mm */; };
 		CFA89D822804C86E00BEA127 /* FindFilesData.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA89D812804C86E00BEA127 /* FindFilesData.h */; };
@@ -140,6 +141,8 @@
 		CF60DF242A6D3BAB00478BA0 /* libTerm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libTerm.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF60DF262A6D47CB00478BA0 /* ExternalTools_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalTools_IT.mm; path = tests/ExternalTools_IT.mm; sourceTree = "<group>"; };
 		CF739C3C295644CD004758C5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		CF8B0FAD2CA7FF300098C4D6 /* NetworkConnectionsManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkConnectionsManager.h; path = include/Panel/NetworkConnectionsManager.h; sourceTree = "<group>"; };
+		CF8B0FAE2CA7FF440098C4D6 /* NetworkConnectionsManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkConnectionsManager.mm; path = source/NetworkConnectionsManager.mm; sourceTree = "<group>"; };
 		CF96DC7529CF460F003EC4EB /* ItemVolatileData_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ItemVolatileData_UT.mm; path = tests/ItemVolatileData_UT.mm; sourceTree = "<group>"; };
 		CF96DC7729E7099A003EC4EB /* PanelDataFilter_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataFilter_UT.mm; path = tests/PanelDataFilter_UT.mm; sourceTree = "<group>"; };
 		CFA89D812804C86E00BEA127 /* FindFilesData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FindFilesData.h; path = include/Panel/FindFilesData.h; sourceTree = "<group>"; };
@@ -298,6 +301,7 @@
 				CFA89D812804C86E00BEA127 /* FindFilesData.h */,
 				CF0B040D281F029A00076FDF /* Internal.h */,
 				CF465228268D163E0085840A /* Log.h */,
+				CF8B0FAD2CA7FF300098C4D6 /* NetworkConnectionsManager.h */,
 				CFF33F952556941B00B3C92C /* PanelData.h */,
 				CFF33FB42556958C00B3C92C /* PanelDataEntriesComparator.h */,
 				CFF33FBA255695B800B3C92C /* PanelDataExternalEntryKey.h */,
@@ -324,6 +328,7 @@
 				CFA89D832804C87700BEA127 /* FindFilesData.cpp */,
 				CF0B0409281F027900076FDF /* Internal.mm */,
 				CF46522C268D16500085840A /* Log.cpp */,
+				CF8B0FAE2CA7FF440098C4D6 /* NetworkConnectionsManager.mm */,
 				CFF33F982556942600B3C92C /* PanelData.mm */,
 				CFF33FB72556959400B3C92C /* PanelDataEntriesComparator.cpp */,
 				CF13B60A2C8C6FE7004C1879 /* PanelDataEntriesComparator.mm */,
@@ -559,6 +564,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF0B0408281F016300076FDF /* SelectionWithMaskPopupViewController.mm in Sources */,
+				CF8B0FAF2CA7FF440098C4D6 /* NetworkConnectionsManager.mm in Sources */,
 				CFCF43E42B8B644B00B513C7 /* TagsStorage.cpp in Sources */,
 				CFF33F992556942700B3C92C /* PanelData.mm in Sources */,
 				CF22060727B851B5008EDE3A /* ExternalTools.mm in Sources */,

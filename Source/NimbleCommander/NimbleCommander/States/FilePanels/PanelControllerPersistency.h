@@ -1,9 +1,10 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Config/RapidJSON_fwd.h>
 #include <Utility/NativeFSManager.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
+#include "PanelDataPersistency.h"
 
 @class PanelController;
 
@@ -27,19 +28,21 @@ struct ControllerStateEncoding {
 class ControllerStateJSONEncoder
 {
 public:
-    ControllerStateJSONEncoder(PanelController *_panel);
+    ControllerStateJSONEncoder(PanelController *_panel, PanelDataPersistency &_persistency);
 
     config::Value Encode(ControllerStateEncoding::Options _options);
 
 private:
     PanelController *m_Panel;
+    PanelDataPersistency &m_Persistency;
 };
 
 class ControllerStateJSONDecoder
 {
 public:
     ControllerStateJSONDecoder(const utility::NativeFSManager &_fs_manager,
-                               nc::core::VFSInstanceManager &_vfs_instance_manager);
+                               nc::core::VFSInstanceManager &_vfs_instance_manager,
+                               PanelDataPersistency &_persistency);
 
     void Decode(const config::Value &_state, PanelController *_panel);
 
@@ -51,6 +54,7 @@ private:
 
     const utility::NativeFSManager &m_NativeFSManager;
     nc::core::VFSInstanceManager &m_VFSInstanceManager;
+    PanelDataPersistency &m_Persistency;
 };
 
 } // namespace nc::panel

@@ -10,7 +10,6 @@
 @class NCMainWindowController;
 @class InternalViewerWindowController;
 class ExternalEditorsStorage;
-class NetworkConnectionsManager;
 
 namespace nc {
 
@@ -43,6 +42,8 @@ class FavoriteLocationsStorage;
 class ClosedPanelsHistory;
 class ExternalToolsStorage;
 class TagsStorage;
+class NetworkConnectionsManager;
+class PanelDataPersistency;
 } // namespace panel
 
 namespace viewer {
@@ -116,7 +117,7 @@ class NativeHost;
 
 @property(nonatomic, readonly) const std::shared_ptr<nc::panel::FavoriteLocationsStorage> &favoriteLocationsStorage;
 
-@property(nonatomic, readonly) const std::shared_ptr<NetworkConnectionsManager> &networkConnectionsManager;
+@property(nonatomic, readonly) const std::shared_ptr<nc::panel::NetworkConnectionsManager> &networkConnectionsManager;
 
 @property(nonatomic, readonly) nc::ops::AggregateProgressTracker &operationsProgressTracker;
 
@@ -145,5 +146,7 @@ class NativeHost;
 @property(nonatomic, readonly) nc::panel::TagsStorage &tagsStorage;
 
 @property(nonatomic, readonly) nc::viewer::hl::SettingsStorage &syntaxHighlightingSettingsStorage;
+
+@property(nonatomic, readonly) nc::panel::PanelDataPersistency &panelDataPersistency;
 
 @end

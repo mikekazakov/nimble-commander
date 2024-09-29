@@ -34,7 +34,6 @@
 		CF0A47542BDD8E7700833160 /* ConfigBackedNetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2AD1DFD096E0039A104 /* ConfigBackedNetworkConnectionsManager.mm */; };
 		CF0A47552BDD8EEB00833160 /* NetworkConnectionIconProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */; };
 		CF0A47562BDD8F0F00833160 /* LocationFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA1715C20174C9A00F507D5 /* LocationFormatter.mm */; };
-		CF0A47572BDD8F7400833160 /* NetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F43551EAF395900AA031A /* NetworkConnectionsManager.mm */; };
 		CF0A47582BDD8FB100833160 /* Pasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */; };
 		CF0A47E72BDD9E6D00833160 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2381DFBDEBA0039A104 /* AppDelegate.mm */; };
 		CF0A47F62BDD9E7200833160 /* AppDelegate+MainWindowCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA1716220196CB400F507D5 /* AppDelegate+MainWindowCreation.mm */; };
@@ -931,7 +930,6 @@
 		CF2F43441EAF345400AA031A /* ConnectToServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectToServer.h; path = NimbleCommander/States/FilePanels/Views/ConnectToServer.h; sourceTree = SOURCE_ROOT; };
 		CF2F43451EAF345400AA031A /* ConnectToServer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ConnectToServer.mm; path = NimbleCommander/States/FilePanels/Views/ConnectToServer.mm; sourceTree = SOURCE_ROOT; };
 		CF2F434F1EAF37E800AA031A /* ConfigBackedNetworkConnectionsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigBackedNetworkConnectionsManager.h; path = NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h; sourceTree = SOURCE_ROOT; };
-		CF2F43551EAF395900AA031A /* NetworkConnectionsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkConnectionsManager.mm; path = NimbleCommander/Core/NetworkConnectionsManager.mm; sourceTree = SOURCE_ROOT; };
 		CF3120B21A507BB70062185A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		CF3120B31A507BFC0062185A /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = Base; path = Base.lproj/Credits.rtf; sourceTree = "<group>"; };
 		CF3120B41A507C0A0062185A /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1330,7 +1328,6 @@
 		CFDAC2A81DFD093E0039A104 /* ToolsMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ToolsMenuDelegate.mm; path = NimbleCommander/States/FilePanels/ToolsMenuDelegate.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2AA1DFD096E0039A104 /* ConnectionsMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectionsMenuDelegate.h; path = NimbleCommander/Core/ConnectionsMenuDelegate.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2AB1DFD096E0039A104 /* ConnectionsMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ConnectionsMenuDelegate.mm; path = NimbleCommander/Core/ConnectionsMenuDelegate.mm; sourceTree = SOURCE_ROOT; };
-		CFDAC2AC1DFD096E0039A104 /* NetworkConnectionsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkConnectionsManager.h; path = NimbleCommander/Core/NetworkConnectionsManager.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2AD1DFD096E0039A104 /* ConfigBackedNetworkConnectionsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ConfigBackedNetworkConnectionsManager.mm; path = NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2B01DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleComboBoxPersistentDataSource.h; path = NimbleCommander/Core/SimpleComboBoxPersistentDataSource.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2B11DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SimpleComboBoxPersistentDataSource.mm; path = NimbleCommander/Core/SimpleComboBoxPersistentDataSource.mm; sourceTree = SOURCE_ROOT; };
@@ -1947,8 +1944,6 @@
 				CFA1715C20174C9A00F507D5 /* LocationFormatter.mm */,
 				CF90C0081EBAE3190056E3B8 /* NetworkConnectionIconProvider.h */,
 				CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */,
-				CFDAC2AC1DFD096E0039A104 /* NetworkConnectionsManager.h */,
-				CF2F43551EAF395900AA031A /* NetworkConnectionsManager.mm */,
 				CF818B6F1EA07A5B00BC28E6 /* Pasteboard.h */,
 				CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */,
 				CFB9F10D201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.h */,
@@ -3104,7 +3099,6 @@
 				CF0A488C2BDDA5A000833160 /* ToolsMenuDelegate.mm in Sources */,
 				CF0A47532BDD8E5E00833160 /* ClosedPanelsHistoryImpl.cpp in Sources */,
 				CF0A486A2BDDA3FA00833160 /* PanelListViewTableHeaderView.mm in Sources */,
-				CF0A47572BDD8F7400833160 /* NetworkConnectionsManager.mm in Sources */,
 				CF0A486C2BDDA40600833160 /* PanelListViewTagsView.mm in Sources */,
 				CFD2D27C28A05E1D003C18F9 /* ThemesManager.mm in Sources */,
 				CF0A47222BDD884D00833160 /* VFSInstanceManagerImpl.cpp in Sources */,

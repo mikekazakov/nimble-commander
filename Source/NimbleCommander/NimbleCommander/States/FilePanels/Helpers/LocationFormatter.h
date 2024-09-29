@@ -3,7 +3,7 @@
 
 #include <Utility/NativeFSManager.h>
 #include <Utility/Tags.h>
-#include <NimbleCommander/Core/NetworkConnectionsManager.h>
+#include <Panel/NetworkConnectionsManager.h>
 #include <NimbleCommander/Core/VFSInstancePromise.h>
 
 // TODO: extract favorite and location
@@ -42,23 +42,23 @@ public:
 class FavoriteLocationFormatter : public Formatter
 {
 public:
-    FavoriteLocationFormatter(const NetworkConnectionsManager &_conn_mgr);
+    FavoriteLocationFormatter(NetworkConnectionsManager &_conn_mgr);
 
     Representation Render(RenderOptions _options, const FavoriteLocationsStorage::Location &_location);
 
 private:
-    const NetworkConnectionsManager &m_NetworkConnectionsManager;
+    NetworkConnectionsManager &m_NetworkConnectionsManager;
 };
 
 class FavoriteFormatter : public Formatter
 {
 public:
-    FavoriteFormatter(const NetworkConnectionsManager &_conn_mgr);
+    FavoriteFormatter(NetworkConnectionsManager &_conn_mgr);
 
     Representation Render(RenderOptions _options, const FavoriteLocationsStorage::Favorite &_favorite);
 
 private:
-    const NetworkConnectionsManager &m_NetworkConnectionsManager;
+    NetworkConnectionsManager &m_NetworkConnectionsManager;
 };
 
 class NetworkConnectionFormatter : public Formatter
@@ -82,7 +82,11 @@ public:
 class VFSPathFormatter : public Formatter
 {
 public:
+    VFSPathFormatter(NetworkConnectionsManager &_conn_mgr);
     Representation Render(RenderOptions _options, const VFSHost &_vfs, const std::string &_path);
+
+private:
+    NetworkConnectionsManager &m_NetworkConnectionsManager;
 };
 
 class VFSFinderTagsFormatter : public Formatter

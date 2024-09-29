@@ -26,8 +26,8 @@ static bool ValidateFileExistence(const std::string &_filepath)
 }
 
 @implementation SFTPConnectionSheetController {
-    std::optional<NetworkConnectionsManager::Connection> m_Original;
-    NetworkConnectionsManager::SFTP m_Connection;
+    std::optional<nc::panel::NetworkConnectionsManager::Connection> m_Original;
+    nc::panel::NetworkConnectionsManager::SFTP m_Connection;
 }
 @synthesize setupMode;
 @synthesize title;
@@ -69,7 +69,7 @@ static bool ValidateFileExistence(const std::string &_filepath)
         self.connectButton.title = self.connectButton.alternateTitle;
 
     if( m_Original ) {
-        auto &c = m_Original->Get<NetworkConnectionsManager::SFTP>();
+        auto &c = m_Original->Get<nc::panel::NetworkConnectionsManager::SFTP>();
         self.title = [NSString stringWithUTF8StdString:c.title];
         self.server = [NSString stringWithUTF8StdString:c.host];
         self.username = [NSString stringWithUTF8StdString:c.user];
@@ -85,7 +85,7 @@ static bool ValidateFileExistence(const std::string &_filepath)
     if( m_Original )
         m_Connection.uuid = m_Original->Uuid();
     else
-        m_Connection.uuid = NetworkConnectionsManager::MakeUUID();
+        m_Connection.uuid = nc::panel::NetworkConnectionsManager::MakeUUID();
 
     m_Connection.title = self.title.UTF8String ? self.title.UTF8String : "";
     m_Connection.host = self.server.UTF8String ? self.server.UTF8String : "";
@@ -121,14 +121,14 @@ static bool ValidateFileExistence(const std::string &_filepath)
                   }];
 }
 
-- (void)setConnection:(NetworkConnectionsManager::Connection)connection
+- (void)setConnection:(nc::panel::NetworkConnectionsManager::Connection)connection
 {
     m_Original = connection;
 }
 
-- (NetworkConnectionsManager::Connection)connection
+- (nc::panel::NetworkConnectionsManager::Connection)connection
 {
-    return NetworkConnectionsManager::Connection(m_Connection);
+    return nc::panel::NetworkConnectionsManager::Connection(m_Connection);
 }
 
 - (void)setPassword:(std::string)password

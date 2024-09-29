@@ -3,7 +3,9 @@
 
 #include "DefaultAction.h"
 
+namespace nc::panel {
 class NetworkConnectionsManager;
+}
 
 namespace nc::panel::actions {
 

@@ -37,8 +37,8 @@ enum class State : uint8_t {
 @implementation DropboxAccountSheetController {
     std::shared_ptr<Authenticator> m_Authenticator;
     std::string m_Token;
-    std::optional<NetworkConnectionsManager::Connection> m_Original;
-    NetworkConnectionsManager::Dropbox m_Connection;
+    std::optional<nc::panel::NetworkConnectionsManager::Connection> m_Original;
+    nc::panel::NetworkConnectionsManager::Dropbox m_Connection;
     State m_State;
 }
 @synthesize setupMode;
@@ -56,7 +56,7 @@ enum class State : uint8_t {
     self = [super init];
     if( self ) {
         self.isValid = true;
-        m_Connection.uuid = NetworkConnectionsManager::MakeUUID();
+        m_Connection.uuid = nc::panel::NetworkConnectionsManager::MakeUUID();
     }
     return self;
 }
@@ -66,7 +66,7 @@ enum class State : uint8_t {
     [super windowDidLoad];
 
     if( m_Original ) {
-        auto &original = m_Original->Get<NetworkConnectionsManager::Dropbox>();
+        auto &original = m_Original->Get<nc::panel::NetworkConnectionsManager::Dropbox>();
         m_Connection = original;
     }
 
@@ -161,12 +161,12 @@ enum class State : uint8_t {
     return m_Token;
 }
 
-- (NetworkConnectionsManager::Connection)connection
+- (nc::panel::NetworkConnectionsManager::Connection)connection
 {
-    return NetworkConnectionsManager::Connection{m_Connection};
+    return nc::panel::NetworkConnectionsManager::Connection{m_Connection};
 }
 
-- (void)setConnection:(NetworkConnectionsManager::Connection)connection
+- (void)setConnection:(nc::panel::NetworkConnectionsManager::Connection)connection
 {
     m_Original = connection;
 }

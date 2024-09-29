@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerPersistency.h"
 #include "PanelController.h"
 #include <Panel/PanelData.h>
@@ -17,7 +17,8 @@ static const auto g_RestorationDataKey = "data";
 static const auto g_RestorationSortingKey = "sorting";
 static const auto g_RestorationLayoutKey = "layout";
 
-ControllerStateJSONEncoder::ControllerStateJSONEncoder(PanelController *_panel) : m_Panel(_panel)
+ControllerStateJSONEncoder::ControllerStateJSONEncoder(PanelController *_panel, PanelDataPersistency &_persistency)
+    : m_Panel(_panel), m_Persistency(_persistency)
 {
 }
 
@@ -27,7 +28,7 @@ config::Value ControllerStateJSONEncoder::Encode(ControllerStateEncoding::Option
     config::Value json(rapidjson::kObjectType);
 
     if( _options & ControllerStateEncoding::EncodeContentState ) {
-        if( auto v = PanelDataPersisency::EncodeVFSPath(m_Panel.data.Listing()); v.GetType() != rapidjson::kNullType )
+        if( auto v = m_Persistency.EncodeVFSPath(m_Panel.data.Listing()); v.GetType() != rapidjson::kNullType )
             json.AddMember(config::MakeStandaloneString(g_RestorationDataKey), std::move(v), config::g_CrtAllocator);
         else
             return config::Value{rapidjson::kNullType};
@@ -49,8 +50,9 @@ config::Value ControllerStateJSONEncoder::Encode(ControllerStateEncoding::Option
 }
 
 ControllerStateJSONDecoder::ControllerStateJSONDecoder(const utility::NativeFSManager &_fs_manager,
-                                                       nc::core::VFSInstanceManager &_vfs_instance_manager)
-    : m_NativeFSManager(_fs_manager), m_VFSInstanceManager(_vfs_instance_manager)
+                                                       nc::core::VFSInstanceManager &_vfs_instance_manager,
+                                                       PanelDataPersistency &_persistency)
+    : m_NativeFSManager(_fs_manager), m_VFSInstanceManager(_vfs_instance_manager), m_Persistency(_persistency)
 {
 }
 
@@ -126,7 +128,7 @@ bool ControllerStateJSONDecoder::AllowSyncRecovery(const PersistentLocation &_lo
 void ControllerStateJSONDecoder::RecoverSavedContentSync(const PersistentLocation &_location, PanelController *_panel)
 {
     VFSHostPtr host;
-    const auto rc = PanelDataPersisency::CreateVFSFromLocation(_location, host, m_VFSInstanceManager);
+    const auto rc = m_Persistency.CreateVFSFromLocation(_location, host, m_VFSInstanceManager);
     if( rc != VFSError::Ok ) {
         EnsureNonEmptyStateAsync(_panel);
         return;
@@ -161,7 +163,7 @@ void ControllerStateJSONDecoder::RecoverSavedContentAsync(PersistentLocation _lo
     auto workload =
         [this, _panel, location = std::move(_location)]([[maybe_unused]] const std::function<bool()> &_cancel_checker) {
             VFSHostPtr host;
-            const auto rc = PanelDataPersisency::CreateVFSFromLocation(location, host, m_VFSInstanceManager);
+            const auto rc = m_Persistency.CreateVFSFromLocation(location, host, m_VFSInstanceManager);
             if( rc == VFSError::Ok && host != nullptr ) {
                 // the VFS was recovered, lets go inside it.
                 auto path = location.path;
@@ -177,7 +179,7 @@ void ControllerStateJSONDecoder::RecoverSavedContentAsync(PersistentLocation _lo
 
 void ControllerStateJSONDecoder::RecoverSavedContent(const config::Value &_saved_state, PanelController *_panel)
 {
-    auto location = PanelDataPersisency::JSONToLocation(_saved_state);
+    auto location = m_Persistency.JSONToLocation(_saved_state);
     if( location == std::nullopt )
         return;
 

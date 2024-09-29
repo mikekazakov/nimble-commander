@@ -8,7 +8,7 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <NimbleCommander/Core/AnyHolder.h>
-#include <NimbleCommander/Core/NetworkConnectionsManager.h>
+#include <Panel/NetworkConnectionsManager.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/States/FilePanels/PanelViewHeader.h>
@@ -128,7 +128,7 @@ static GoToPopupListActionMediator *g_CurrentMediator = nil;
 - (void)handlePersistentLocation:(const PersistentLocation &)_location
 {
     using nc::panel::actions::AsyncPersistentLocationRestorer;
-    auto restorer = AsyncPersistentLocationRestorer(m_Panel, m_Panel.vfsInstanceManager);
+    auto restorer = AsyncPersistentLocationRestorer(m_Panel, m_Panel.vfsInstanceManager, *m_NetMgr);
     auto handler = [path = _location.path, panel = m_Panel](VFSHostPtr _host) {
         dispatch_to_main_queue([=] {
             auto request = std::make_shared<DirectoryChangeRequest>();
@@ -292,7 +292,7 @@ namespace {
 class CommandItemBuilder
 {
 public:
-    CommandItemBuilder(const NetworkConnectionsManager &_conn_manager, id _action_target);
+    CommandItemBuilder(NetworkConnectionsManager &_conn_manager, id _action_target);
     NCCommandPopoverItem *ItemForFavorite(const FavoriteLocationsStorage::Favorite &_f);
     NCCommandPopoverItem *ItemForLocation(const FavoriteLocationsStorage::Location &_f);
     NCCommandPopoverItem *ItemForVolume(const utility::NativeFileSystemInfo &_i);
@@ -304,7 +304,7 @@ public:
     NCCommandPopoverItem *ItemForFinderTags(const utility::Tags::Tag &_tag);
 
 private:
-    const NetworkConnectionsManager &m_ConnectionManager;
+    NetworkConnectionsManager &m_ConnectionManager;
     id m_ActionTarget;
     loc_fmt::Formatter::RenderOptions m_FmtOpts = static_cast<loc_fmt::Formatter::RenderOptions>(
         loc_fmt::Formatter::RenderMenuTitle | loc_fmt::Formatter::RenderMenuTooltip |
@@ -613,7 +613,7 @@ void ShowTagsQuickList::Perform(PanelController *_target, id) const
     PopupQuickList(menu.first, menu.second, _target);
 }
 
-CommandItemBuilder::CommandItemBuilder(const NetworkConnectionsManager &_conn_manager, id _action_target)
+CommandItemBuilder::CommandItemBuilder(NetworkConnectionsManager &_conn_manager, id _action_target)
     : m_ConnectionManager(_conn_manager), m_ActionTarget(_action_target)
 {
 }
@@ -676,7 +676,7 @@ NCCommandPopoverItem *CommandItemBuilder::ItemForPath(const vfs::VFSPath &_p)
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_p}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    auto rep = loc_fmt::VFSPathFormatter{}.Render(m_FmtOpts, *_p.Host(), _p.Path());
+    auto rep = loc_fmt::VFSPathFormatter{m_ConnectionManager}.Render(m_FmtOpts, *_p.Host(), _p.Path());
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;

@@ -21,6 +21,7 @@
 
 using namespace nc;
 using namespace std::literals;
+using nc::panel::NetworkConnectionsManager;
 
 static const auto g_ConnectionsKey = "connections";
 static const auto g_MRUKey = "mostRecentlyUsed";

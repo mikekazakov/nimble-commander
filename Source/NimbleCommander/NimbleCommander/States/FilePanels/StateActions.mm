@@ -19,7 +19,7 @@ namespace nc::panel {
 using namespace actions;
 
 StateActionsMap BuildStateActionsMap(nc::config::Config &_global_config,
-                                     NetworkConnectionsManager &_net_mgr,
+                                     nc::panel::NetworkConnectionsManager &_net_mgr,
                                      nc::utility::TemporaryFileStorage &_temp_file_storage,
                                      nc::utility::NativeFSManager &_native_fs_manager,
                                      const nc::panel::TagsStorage &_tags_storage)

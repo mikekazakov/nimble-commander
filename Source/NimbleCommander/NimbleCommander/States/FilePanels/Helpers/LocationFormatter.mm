@@ -16,7 +16,7 @@ namespace nc::panel::loc_fmt {
 static const auto g_IconSize = NSMakeSize(16, 16);
 
 static NSImage *ImageForPromiseAndPath(const core::VFSInstancePromise &_promise, const std::string &_path);
-static NSImage *ImageForLocation(const PersistentLocation &_location, const NetworkConnectionsManager &_conn_mgr);
+static NSImage *ImageForLocation(const PersistentLocation &_location, NetworkConnectionsManager &_conn_mgr);
 static NSImage *ImageForVFSPath(const VFSHost &_vfs, const std::string &_path);
 static NSString *NonNull(NSString *_string);
 
@@ -61,7 +61,7 @@ ListingPromiseFormatter::Representation ListingPromiseFormatter::Render(RenderOp
     return rep;
 }
 
-FavoriteLocationFormatter::FavoriteLocationFormatter(const NetworkConnectionsManager &_conn_mgr)
+FavoriteLocationFormatter::FavoriteLocationFormatter(NetworkConnectionsManager &_conn_mgr)
     : m_NetworkConnectionsManager(_conn_mgr)
 {
 }
@@ -83,8 +83,7 @@ FavoriteLocationFormatter::Render(RenderOptions _options, const FavoriteLocation
     return rep;
 }
 
-FavoriteFormatter::FavoriteFormatter(const NetworkConnectionsManager &_conn_mgr)
-    : m_NetworkConnectionsManager(_conn_mgr)
+FavoriteFormatter::FavoriteFormatter(NetworkConnectionsManager &_conn_mgr) : m_NetworkConnectionsManager(_conn_mgr)
 {
 }
 
@@ -172,13 +171,18 @@ VFSPromiseFormatter::Render(RenderOptions _options, const core::VFSInstancePromi
     return rep;
 }
 
+VFSPathFormatter::VFSPathFormatter(NetworkConnectionsManager &_conn_mgr) : m_NetworkConnectionsManager(_conn_mgr)
+{
+}
+
 VFSPathFormatter::Representation
 VFSPathFormatter::Render(RenderOptions _options, const VFSHost &_vfs, const std::string &_path)
 {
     Representation rep;
 
     if( (_options & RenderMenuTitle) || (_options & RenderMenuTooltip) ) {
-        auto str = PanelDataPersisency::MakeVerbosePathString(_vfs, _path);
+        PanelDataPersistency persistency(m_NetworkConnectionsManager);
+        auto str = persistency.MakeVerbosePathString(_vfs, _path);
         rep.menu_title = NonNull([NSString stringWithUTF8StdString:str]);
         rep.menu_tooltip = rep.menu_title;
     }
@@ -251,7 +255,7 @@ static NSImage *ImageForVFSPath(const VFSHost &_vfs, const std::string &_path)
     return fallback;
 }
 
-static NSImage *ImageForLocation(const PersistentLocation &_location, const NetworkConnectionsManager &_conn_mgr)
+static NSImage *ImageForLocation(const PersistentLocation &_location, NetworkConnectionsManager &_conn_mgr)
 {
     if( _location.is_native() ) {
         auto url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:_location.path.c_str()
@@ -267,7 +271,7 @@ static NSImage *ImageForLocation(const PersistentLocation &_location, const Netw
         }
     }
     else if( _location.is_network() ) {
-        auto persistancy = PanelDataPersisency{_conn_mgr};
+        auto persistancy = PanelDataPersistency{_conn_mgr};
         if( auto connection = persistancy.ExtractConnectionFromLocation(_location) )
             return NetworkConnectionIconProvider{}.Icon16px(*connection);
         else {

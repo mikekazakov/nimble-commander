@@ -1,5 +1,7 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NetworkConnectionsManager.h"
+
+namespace nc::panel {
 
 using namespace std::literals;
 
@@ -140,3 +142,5 @@ bool NetworkConnectionsManager::WebDAV::operator==(const WebDAV &_rhs) const noe
     return BaseConnection::operator==(_rhs) && host == _rhs.host && path == _rhs.path && user == _rhs.user &&
            port == _rhs.port && https == _rhs.https;
 }
+
+} // namespace nc::panel

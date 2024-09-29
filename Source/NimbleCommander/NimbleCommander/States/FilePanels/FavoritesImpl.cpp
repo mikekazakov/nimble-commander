@@ -17,21 +17,10 @@ namespace nc::panel {
 
 static const auto g_MaxTimeRange = 60 * 60 * 24 * 14; // 14 days range for bothering with visits
 
-static std::shared_ptr<const FavoriteLocationsStorage::Location> Encode(const VFSHost &_host,
-                                                                        const std::string &_directory)
-{
-    auto location = PanelDataPersisency::EncodeLocation(_host, _directory);
-    if( !location )
-        return nullptr;
-
-    auto v = std::make_shared<FavoriteLocationsStorage::Location>();
-    v->hosts_stack = std::move(*location);
-    v->verbose_path = PanelDataPersisency::MakeVerbosePathString(_host, _directory);
-
-    return v;
-}
-
-FavoriteLocationsStorageImpl::FavoriteLocationsStorageImpl(config::Config &_config, const char *_path)
+FavoriteLocationsStorageImpl::FavoriteLocationsStorageImpl(config::Config &_config,
+                                                           const char *_path,
+                                                           PanelDataPersistency &_persistency)
+    : m_Persistency(_persistency)
 {
     LoadData(_config, _path);
 
@@ -59,7 +48,7 @@ void FavoriteLocationsStorageImpl::AddFavoriteLocation(Favorite _favorite)
     dispatch_assert_main_queue();
 
     // refresh hash regardless to enforce consistency
-    _favorite.footprint = PanelDataPersisency::MakeFootprintStringHash(_favorite.location->hosts_stack);
+    _favorite.footprint = m_Persistency.MakeFootprintStringHash(_favorite.location->hosts_stack);
 
     const auto has_already =
         std::ranges::any_of(m_Favorites, [&](auto &i) { return i.footprint == _favorite.footprint; });
@@ -83,7 +72,18 @@ FavoriteLocationsStorageImpl::ComposeFavoriteLocation(VFSHost &_host,
     f.location = location;
     f.footprint = _host.FullHashForPath(_directory);
     if( _title.empty() ) {
-        f.title = std::filesystem::path(EnsureNoTrailingSlash(_directory)).filename();
+        if( _directory == "/" ) {
+            VFSStatFS statfs;
+            if( _host.StatFS(_directory, statfs) == VFSError::Ok && !statfs.volume_name.empty() ) {
+                f.title = statfs.volume_name;
+            }
+            else {
+                f.title = _host.MakePathVerbose(_directory);
+            }
+        }
+        else {
+            f.title = std::filesystem::path(EnsureNoTrailingSlash(_directory)).filename();
+        }
     }
     else {
         f.title = _title;
@@ -175,7 +175,7 @@ config::Value FavoriteLocationsStorageImpl::VisitToJSON(const Visit &_visit)
 
     Value json(kObjectType);
 
-    if( auto l = PanelDataPersisency::LocationToJSON(_visit.location->hosts_stack); l.GetType() != kNullType )
+    if( auto l = m_Persistency.LocationToJSON(_visit.location->hosts_stack); l.GetType() != kNullType )
         json.AddMember(MakeStandaloneString("location"), std::move(l), g_CrtAllocator);
     else
         return Value{kNullType};
@@ -196,9 +196,9 @@ std::optional<FavoriteLocationsStorageImpl::Visit> FavoriteLocationsStorageImpl:
 
     if( !_json.HasMember("location") )
         return std::nullopt;
-    if( auto l = PanelDataPersisency::JSONToLocation(_json["location"]) ) {
+    if( auto l = m_Persistency.JSONToLocation(_json["location"]) ) {
         auto location = std::make_shared<Location>();
-        location->verbose_path = PanelDataPersisency::MakeVerbosePathString(*l);
+        location->verbose_path = m_Persistency.MakeVerbosePathString(*l);
         location->hosts_stack = std::move(*l);
         v.location = location;
     }
@@ -222,7 +222,7 @@ config::Value FavoriteLocationsStorageImpl::FavoriteToJSON(const Favorite &_favo
     using namespace nc::config;
     Value json(kObjectType);
 
-    if( auto l = PanelDataPersisency::LocationToJSON(_favorite.location->hosts_stack); l.GetType() != kNullType )
+    if( auto l = m_Persistency.LocationToJSON(_favorite.location->hosts_stack); l.GetType() != kNullType )
         json.AddMember(MakeStandaloneString("location"), std::move(l), g_CrtAllocator);
     else
         return Value{kNullType};
@@ -243,9 +243,9 @@ FavoriteLocationsStorageImpl::JSONToFavorite(const config::Value &_json)
 
     if( !_json.HasMember("location") )
         return std::nullopt;
-    if( auto l = PanelDataPersisency::JSONToLocation(_json["location"]) ) {
+    if( auto l = m_Persistency.JSONToLocation(_json["location"]) ) {
         auto location = std::make_shared<Location>();
-        location->verbose_path = PanelDataPersisency::MakeVerbosePathString(*l);
+        location->verbose_path = m_Persistency.MakeVerbosePathString(*l);
         location->hosts_stack = std::move(*l);
         f.location = location;
     }
@@ -255,7 +255,7 @@ FavoriteLocationsStorageImpl::JSONToFavorite(const config::Value &_json)
     if( _json.HasMember("title") && _json["title"].IsString() )
         f.title = _json["title"].GetString();
 
-    auto fp_string = PanelDataPersisency::MakeFootprintString(f.location->hosts_stack);
+    auto fp_string = m_Persistency.MakeFootprintString(f.location->hosts_stack);
     f.footprint = std::hash<std::string>()(fp_string);
     return std::move(f);
 }
@@ -300,7 +300,7 @@ void FavoriteLocationsStorageImpl::LoadData(config::Config &_config, const char 
         auto &automatic = json["automatic"];
         for( int i = 0, e = automatic.Size(); i != e; ++i )
             if( auto v = JSONToVisit(automatic[i]) ) {
-                auto fp_string = PanelDataPersisency::MakeFootprintString(v->location->hosts_stack);
+                auto fp_string = m_Persistency.MakeFootprintString(v->location->hosts_stack);
                 auto fp = std::hash<std::string>()(fp_string);
                 m_Visits[fp] = std::move(*v);
             }
@@ -324,7 +324,7 @@ void FavoriteLocationsStorageImpl::SetFavorites(const std::vector<Favorite> &_ne
             continue;
 
         Favorite new_favorite = f;
-        new_favorite.footprint = PanelDataPersisency::MakeFootprintStringHash(new_favorite.location->hosts_stack);
+        new_favorite.footprint = m_Persistency.MakeFootprintStringHash(new_favorite.location->hosts_stack);
         m_Favorites.emplace_back(std::move(new_favorite));
     }
 
@@ -341,6 +341,20 @@ void FavoriteLocationsStorageImpl::ClearVisitedLocations()
 {
     dispatch_assert_main_queue();
     m_Visits.clear();
+}
+
+std::shared_ptr<const FavoriteLocationsStorage::Location>
+FavoriteLocationsStorageImpl::Encode(const VFSHost &_host, const std::string &_directory) const
+{
+    auto location = m_Persistency.EncodeLocation(_host, _directory);
+    if( !location )
+        return nullptr;
+
+    auto v = std::make_shared<FavoriteLocationsStorage::Location>();
+    v->hosts_stack = std::move(*location);
+    v->verbose_path = m_Persistency.MakeVerbosePathString(_host, _directory);
+
+    return v;
 }
 
 } // namespace nc::panel

@@ -5,7 +5,6 @@
 
 #include <vector>
 
-class NetworkConnectionsManager;
 @class GoToPopupListActionMediator;
 @class NCCommandPopover;
 @class NCCommandPopoverItem;
@@ -20,7 +19,8 @@ class NativeFSManager;
 
 namespace nc::panel {
 class TagsStorage;
-}
+class NetworkConnectionsManager;
+} // namespace nc::panel
 
 namespace nc::panel::actions {
 

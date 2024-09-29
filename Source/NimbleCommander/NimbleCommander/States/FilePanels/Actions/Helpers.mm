@@ -42,8 +42,9 @@ void AsyncVFSPromiseRestorer::Restore(const nc::core::VFSInstanceManager::Promis
 }
 
 AsyncPersistentLocationRestorer::AsyncPersistentLocationRestorer(PanelController *_panel,
-                                                                 nc::core::VFSInstanceManager &_instance_mgr)
-    : m_Panel(_panel), m_InstanceManager(_instance_mgr)
+                                                                 nc::core::VFSInstanceManager &_instance_mgr,
+                                                                 nc::panel::NetworkConnectionsManager &_net_mgr)
+    : m_Panel(_panel), m_InstanceManager(_instance_mgr), m_NetConnManager(_net_mgr)
 {
 }
 
@@ -52,11 +53,13 @@ void AsyncPersistentLocationRestorer::Restore(const nc::panel::PersistentLocatio
                                               FailureHandler _failure_handler)
 {
     auto task = [&manager = m_InstanceManager,
+                 &netmgr = m_NetConnManager,
                  location = _location,
                  success = std::move(_success_handler),
                  failure = std::move(_failure_handler)]([[maybe_unused]] const std::function<bool()> &_is_cancelled) {
         VFSHostPtr host;
-        const auto rc = PanelDataPersisency::CreateVFSFromLocation(location, host, manager);
+        PanelDataPersistency persistency(netmgr);
+        const auto rc = persistency.CreateVFSFromLocation(location, host, manager);
 
         if( rc != VFSError::Ok ) {
             if( failure != nullptr )

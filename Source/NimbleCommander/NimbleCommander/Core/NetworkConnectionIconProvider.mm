@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NetworkConnectionIconProvider.h"
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
@@ -38,11 +38,12 @@ static NSImage *Dropbox()
     return image;
 }
 
-NSImage *NetworkConnectionIconProvider::Icon16px(const NetworkConnectionsManager::Connection &_connection) const
+NSImage *
+NetworkConnectionIconProvider::Icon16px(const nc::panel::NetworkConnectionsManager::Connection &_connection) const
 {
-    if( _connection.IsType<NetworkConnectionsManager::LANShare>() )
+    if( _connection.IsType<nc::panel::NetworkConnectionsManager::LANShare>() )
         return Share();
-    if( _connection.IsType<NetworkConnectionsManager::Dropbox>() )
+    if( _connection.IsType<nc::panel::NetworkConnectionsManager::Dropbox>() )
         return Dropbox();
 
     return Generic();

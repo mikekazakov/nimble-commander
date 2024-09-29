@@ -4,7 +4,9 @@
 #include <filesystem>
 #include <memory>
 
+namespace nc::panel {
 class NetworkConnectionsManager;
+}
 
 namespace nc {
 
@@ -14,7 +16,7 @@ public:
     static const std::filesystem::path &ConfigDirectory();
     static const std::filesystem::path &StateDirectory();
     static const std::filesystem::path &SupportDirectory();
-    static const std::shared_ptr<NetworkConnectionsManager> &NetworkConnectionsManager();
+    static const std::shared_ptr<panel::NetworkConnectionsManager> &NetworkConnectionsManager();
 };
 
 } // namespace nc

@@ -2,13 +2,13 @@
 #pragma once
 
 #include "DefaultAction.h"
+#include <Panel/NetworkConnectionsManager.h>
 
 @class PanelController;
 
 namespace nc::panel::actions {
 
 // external dependencies:
-// - SanboxManager
 // - nc::bootstrap::NativeVFSHostInstance()
 
 struct GoToFolder final : PanelAction {
@@ -52,7 +52,11 @@ struct GoToProcessesList final : PanelAction {
 };
 
 struct GoToFavoriteLocation final : PanelAction {
+    GoToFavoriteLocation(NetworkConnectionsManager &_net_mgr);
     void Perform(PanelController *_target, id _sender) const override;
+
+private:
+    NetworkConnectionsManager &m_NetMgr;
 };
 
 struct GoToEnclosingFolder final : PanelAction {

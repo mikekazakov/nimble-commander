@@ -14,7 +14,6 @@
 #include "NativeVFSHostInstance.h"
 #include "NCE.h"
 
-#include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include <algorithm>
 #include <magic_enum.hpp>
 #include <spdlog/sinks/stdout_sinks.h>
@@ -100,8 +99,8 @@ using namespace nc::bootstrap;
 
 static std::optional<std::string> Load(const std::string &_filepath);
 
-static auto g_ConfigDirPostfix = @"/Config/";
-static auto g_StateDirPostfix = @"/State/";
+static auto g_ConfigDirPostfix = "Config/";
+static auto g_StateDirPostfix = "State/";
 
 static nc::config::ConfigImpl *g_Config = nullptr;
 static nc::config::ConfigImpl *g_State = nullptr;
@@ -263,8 +262,7 @@ static NCAppDelegate *g_Me = nil;
         m_NativeFSManager = std::make_unique<nc::utility::NativeFSManagerImpl>();
         m_NativeHost = std::make_shared<nc::vfs::NativeHost>(*m_NativeFSManager, *m_FSEventsFileUpdate);
         CheckDefaultsReset();
-        m_SupportDirectory =
-            EnsureTrailingSlash(NSFileManager.defaultManager.applicationSupportDirectory.fileSystemRepresentationSafe);
+        m_SupportDirectory = nc::AppDelegate::SupportDirectory();
         [self setupConfigs];
         m_SystemThemeDetector = std::make_unique<nc::SystemThemeDetector>();
     }
@@ -447,17 +445,14 @@ static NCAppDelegate *g_Me = nil;
 - (void)setupConfigs
 {
     assert(g_Config == nullptr && g_State == nullptr);
-    auto fm = NSFileManager.defaultManager;
 
-    NSString *config = [fm.applicationSupportDirectory stringByAppendingString:g_ConfigDirPostfix];
-    if( ![fm fileExistsAtPath:config] )
-        [fm createDirectoryAtPath:config withIntermediateDirectories:true attributes:nil error:nil];
-    m_ConfigDirectory = config.fileSystemRepresentationSafe;
+    m_ConfigDirectory = m_SupportDirectory / g_ConfigDirPostfix;
+    if( !std::filesystem::exists(m_ConfigDirectory) )
+        std::filesystem::create_directories(m_ConfigDirectory);
 
-    NSString *state = [fm.applicationSupportDirectory stringByAppendingString:g_StateDirPostfix];
-    if( ![fm fileExistsAtPath:state] )
-        [fm createDirectoryAtPath:state withIntermediateDirectories:true attributes:nil error:nil];
-    m_StateDirectory = state.fileSystemRepresentationSafe;
+    m_StateDirectory = m_SupportDirectory / g_StateDirPostfix;
+    if( !std::filesystem::exists(m_StateDirectory) )
+        std::filesystem::create_directories(m_StateDirectory);
 
     const auto bundle = NSBundle.mainBundle;
     const auto config_defaults_path = [bundle pathForResource:@"Config" ofType:@"json"].fileSystemRepresentationSafe;

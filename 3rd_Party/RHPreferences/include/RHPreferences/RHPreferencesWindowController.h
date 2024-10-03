@@ -32,17 +32,28 @@
 
 @protocol RHPreferencesViewControllerProtocol;
 
-@interface RHPreferencesWindowController : NSWindowController <NSToolbarDelegate>
+@interface RHPreferencesWindowController : NSWindowController <NSToolbarDelegate>{
+
+    NSArray *_viewControllers;
+    NSToolbar *_toolbar;
+    NSArray *_toolbarItems;
+    
+    NSViewController<RHPreferencesViewControllerProtocol> *_selectedViewController;
+    NSString *_unloadedWindowTitle;
+    BOOL _windowTitleShouldAutomaticlyUpdateToReflectSelectedViewController;
+
+}
+
 //init
 -(id)initWithViewControllers:(NSArray*)controllers;
 -(id)initWithViewControllers:(NSArray*)controllers andTitle:(NSString*)title;
 
 //properties
 @property (copy) NSString *windowTitle;
-@property (nonatomic, assign) BOOL windowTitleShouldAutomaticlyUpdateToReflectSelectedViewController; //defaults to YES
+@property (assign) BOOL windowTitleShouldAutomaticlyUpdateToReflectSelectedViewController; //defaults to YES
 
-@property (nonatomic, retain) IBOutlet NSToolbar *toolbar;
-@property (nonatomic, retain) IBOutlet NSArray *viewControllers; //controllers should implement RHPreferencesViewControllerProtocol
+@property (retain) IBOutlet NSToolbar *toolbar;
+@property (retain) IBOutlet NSArray *viewControllers; //controllers should implement RHPreferencesViewControllerProtocol
 
 @property (assign) NSUInteger selectedIndex;
 @property (assign) NSViewController <RHPreferencesViewControllerProtocol> *selectedViewController;

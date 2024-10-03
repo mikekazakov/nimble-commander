@@ -24,7 +24,8 @@
 #include "PanelListViewTagsView.h"
 #include <algorithm>
 
-#include "NimbleCommanderCommon-Swift.h"
+#include <swiftToCxx/_SwiftCxxInteroperability.h>
+#include <NimbleCommanderCommon-Swift.h>
 
 using namespace nc;
 using namespace nc::panel;

@@ -188,8 +188,6 @@
 		CF0A488F2BDDA5AD00833160 /* ShellState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27A1DFBF9260039A104 /* ShellState.mm */; };
 		CF0A48902BDDA64700833160 /* PFMoveToApplicationsShim.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A46F92BDD830D00833160 /* PFMoveToApplicationsShim.mm */; };
 		CF0A48912BDDA64A00833160 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
-		CF0A48922BDDA69C00833160 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
-		CF0A48A32BDDA98100833160 /* RHPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CF0B78F225739F61003061D0 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
 		CF0B78F325739F61003061D0 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
 		CF0B78F425739F61003061D0 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
@@ -867,10 +865,7 @@
 		CF0260C91E9DF45D0025B50F /* BatchRename.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRename.mm; path = NimbleCommander/States/FilePanels/Actions/BatchRename.mm; sourceTree = SOURCE_ROOT; };
 		CF0260D01E9F10060025B50F /* ToggleLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToggleLayout.h; path = NimbleCommander/States/FilePanels/Actions/ToggleLayout.h; sourceTree = SOURCE_ROOT; };
 		CF0260D11E9F10060025B50F /* ToggleLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ToggleLayout.mm; path = NimbleCommander/States/FilePanels/Actions/ToggleLayout.mm; sourceTree = SOURCE_ROOT; };
-		CF039EA21791112900DC85D6 /* RHPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RHPreferences.h; path = ../../3rd_Party/RHPreferences/RHPreferences/RHPreferences.h; sourceTree = SOURCE_ROOT; };
-		CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RHPreferencesWindow.xib; path = ../../3rd_Party/RHPreferences/RHPreferences/RHPreferencesWindow.xib; sourceTree = SOURCE_ROOT; };
-		CF039EA41791112900DC85D6 /* RHPreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RHPreferencesWindowController.h; path = ../../3rd_Party/RHPreferences/RHPreferences/RHPreferencesWindowController.h; sourceTree = SOURCE_ROOT; };
-		CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RHPreferencesWindowController.m; path = ../../3rd_Party/RHPreferences/RHPreferences/RHPreferencesWindowController.m; sourceTree = SOURCE_ROOT; };
+		CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RHPreferencesWindow.xib; path = ../../3rd_Party/RHPreferences/lib/RHPreferencesWindow.xib; sourceTree = SOURCE_ROOT; };
 		CF04DDE31E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowThemesTab.h; path = NimbleCommander/Preferences/PreferencesWindowThemesTab.h; sourceTree = SOURCE_ROOT; };
 		CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowThemesTab.mm; path = NimbleCommander/Preferences/PreferencesWindowThemesTab.mm; sourceTree = SOURCE_ROOT; };
 		CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Preferences.mm; path = NimbleCommander/Preferences/Preferences.mm; sourceTree = SOURCE_ROOT; };
@@ -1008,8 +1003,6 @@
 		CF4E56D01D506B9200452912 /* FindFilesSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FindFilesSheetController.mm; path = NimbleCommander/States/FilePanels/FindFilesSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CF4E56DE1D506BA100452912 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FindFilesSheetController.xib; sourceTree = "<group>"; };
 		CF4E56E11D506BA700452912 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FindFilesSheetController.strings; sourceTree = "<group>"; };
-		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"; sourceTree = SOURCE_ROOT; };
-		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.m"; sourceTree = SOURCE_ROOT; };
 		CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSInstancePromise.cpp; path = NimbleCommander/Core/VFSInstancePromise.cpp; sourceTree = SOURCE_ROOT; };
 		CF50925B201C3025004D9CF5 /* VFSInstancePromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInstancePromise.h; path = NimbleCommander/Core/VFSInstancePromise.h; sourceTree = SOURCE_ROOT; };
 		CF50926F201C3476004D9CF5 /* VFSInstanceManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInstanceManagerImpl.h; path = NimbleCommander/Core/VFSInstanceManagerImpl.h; sourceTree = SOURCE_ROOT; };
@@ -1523,10 +1516,7 @@
 		CF039E981791109000DC85D6 /* RHPreferences */ = {
 			isa = PBXGroup;
 			children = (
-				CF039EA21791112900DC85D6 /* RHPreferences.h */,
 				CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */,
-				CF039EA41791112900DC85D6 /* RHPreferencesWindowController.h */,
-				CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */,
 			);
 			name = RHPreferences;
 			sourceTree = "<group>";
@@ -2250,8 +2240,6 @@
 			children = (
 				CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */,
 				CF039E981791109000DC85D6 /* RHPreferences */,
-				CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */,
-				CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */,
 			);
 			name = 3rd_party;
 			path = ../../3rd_Party;
@@ -3074,7 +3062,6 @@
 				CF0A48702BDDA41A00833160 /* PanelViewFooterThemeImpl.mm in Sources */,
 				CF0A48272BDDA06400833160 /* StateActions.mm in Sources */,
 				CF0A48392BDDA19100833160 /* ExecuteInTerminal.mm in Sources */,
-				CF0A48A32BDDA98100833160 /* RHPreferencesWindowController.m in Sources */,
 				CF0A486B2BDDA3FF00833160 /* PanelListViewTableView.mm in Sources */,
 				CF764CE2258765E600D7ED17 /* DragReceiver.mm in Sources */,
 				CF0A48362BDDA17300833160 /* EjectVolume.mm in Sources */,
@@ -3083,7 +3070,6 @@
 				CF0A48172BDDA00C00833160 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CF0A48002BDD9F3200833160 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CF0A47042BDD866700833160 /* LaunchServices.mm in Sources */,
-				CF0A48922BDDA69C00833160 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF0A48372BDDA17C00833160 /* Enter.mm in Sources */,
 				CF0A48862BDDA57B00833160 /* ConnectionsMenuDelegate.mm in Sources */,
 				CF0A47542BDD8E7700833160 /* ConfigBackedNetworkConnectionsManager.mm in Sources */,

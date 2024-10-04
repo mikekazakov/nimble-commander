@@ -19,11 +19,13 @@
 #include "PanelListViewNameView.h"
 #include "PanelListViewRowView.h"
 #include "PanelListViewSizeView.h"
-#include "PanelListViewTableHeaderCell.h"
 #include "PanelListViewTableHeaderView.h"
 #include "PanelListViewTableView.h"
 #include "PanelListViewTagsView.h"
 #include <algorithm>
+
+#include <swiftToCxx/_SwiftCxxInteroperability.h>
+#include <NimbleCommanderCommon-Swift.h>
 
 using namespace nc;
 using namespace nc::panel;

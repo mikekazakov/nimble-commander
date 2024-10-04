@@ -1,5 +1,5 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
-#import <RHPreferences/RHPreferences/RHPreferences.h>
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+#import <RHPreferences/RHPreferences.h>
 
 class ExternalEditorsStorage;
 

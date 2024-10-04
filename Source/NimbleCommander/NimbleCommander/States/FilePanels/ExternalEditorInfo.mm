@@ -1,6 +1,5 @@
 // Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalEditorInfo.h"
-#include "../../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include <VFS/VFS.h>
 #include <Term/SingleTask.h>
 #include <Utility/FileMask.h>

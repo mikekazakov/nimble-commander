@@ -85,6 +85,20 @@ for target in ${targets[@]}; do
     rm "compile_commands-${target}.json"
 done
 
+# Extract all unique response files into an array, removing the '@' symbol
+response_files=($(jq -r '.[].command' "compile_commands.json" | grep -o '@[^ ]*' | sed 's/^@//' | sort | uniq))
+# Process each response file
+for file in "${response_files[@]}"; do
+  # Use sed to modify the file in-place and remove -fmodules and -fmodules-cache-path=...
+  sed -i '' -E "s/'?-fmodules-cache-path=[^ ]+'?//g; s/'?-fmodules'?//g" "$file"
+done
+
+# Find all files ending with "-Swift.h" and search for "@import" statements
+find "$BUILD_DIR" -type f -name '*-Swift.h' | while read file; do
+  # Use sed to comment out the lines in place
+  sed -i '' -E 's/^(@import [A-Za-z]+;)/\/\/ \1/' "$file"
+done
+
 # Log file to capture the output of run-clang-tidy
 LOG_FILE="${BUILD_DIR}/run-clang-tidy.log"
 

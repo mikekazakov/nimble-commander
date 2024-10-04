@@ -2,8 +2,8 @@
 #include "AppDelegateCPP.h"
 #include <Utility/PathManip.h>
 #include <Utility/StringExtras.h>
-#include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include "AppDelegate.h"
+#include <fmt/format.h>
 
 namespace nc {
 
@@ -19,11 +19,23 @@ const std::filesystem::path &AppDelegate::StateDirectory()
 
 const std::filesystem::path &AppDelegate::SupportDirectory()
 {
-    // this is a duplicate of NCAppDelegate.supportDirectory,
-    // but it has to be here to break down an initialization dependency circle
     [[clang::no_destroy]] static const std::filesystem::path support_dir = [] {
-        auto path = NSFileManager.defaultManager.applicationSupportDirectory;
-        return EnsureTrailingSlash(path.fileSystemRepresentationSafe);
+        // Build the path to the support directory
+        NSString *const executableName = [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleExecutable"];
+        NSArray *const paths =
+            NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, true);
+        if( paths.count == 0 ) {
+            fmt::println(stderr, "Unable to locate the Application Support directory");
+            exit(-1);
+        }
+        NSString *const ns_path = [paths objectAtIndex:0];
+        const std::filesystem::path path = std::filesystem::path(ns_path.fileSystemRepresentation) /
+                                           std::filesystem::path(executableName.fileSystemRepresentation);
+
+        // Create it if it's not there
+        std::filesystem::create_directories(path);
+
+        return EnsureTrailingSlash(path);
     }();
     return support_dir;
 }

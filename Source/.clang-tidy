@@ -110,5 +110,7 @@ CheckOptions:
 ExtraArgs:
 - -Wno-unknown-pragmas
 - -Wno-missing-field-initializers
+# breaks on swift interop otherwise
+- -Wno-explicit-specialization-storage-class
 
 FormatStyle: file

@@ -33,7 +33,7 @@ import Cocoa
 
     func drawVerticalSeparator(in rect: NSRect, inView view: NSView) {
         if NSMaxX(rect) < view.bounds.size.width {
-            fill(rect: NSRect(x: NSMaxX(rect) - 1, y: NSMinY(rect) + 3, width: 1, height: rect.size.height - 6),
+            fill(rect: NSRect(x: NSMaxX(rect) - 1, y: NSMinY(rect) + 4, width: 1, height: rect.size.height - 8),
                  withColor: nc.CurrentTheme().FilePanelsListHeaderSeparatorColor())
         }
     }

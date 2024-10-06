@@ -111,11 +111,10 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
         m_ScrollView.hasHorizontalScroller = true;
         m_ScrollView.borderType = NSNoBorder;
         m_ScrollView.drawsBackground = true;
-        m_ScrollView.backgroundColor = CurrentTheme().FilePanelsListRegularEvenRowBackgroundColor();
         [self addSubview:m_ScrollView];
 
         NSDictionary *views = NSDictionaryOfVariableBindings(m_ScrollView);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(-1)-[m_ScrollView]-(0)-|"
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(0)-[m_ScrollView]-(0)-|"
                                                                      options:0
                                                                      metrics:nil
                                                                        views:views]];
@@ -140,7 +139,6 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
         // is enabled, so instead the PanelListViewTableView draws it manually in
         // drawBackgroundInClipRect:
         m_TableView.gridStyleMask = NSTableViewGridNone;
-        m_TableView.gridColor = CurrentTheme().FilePanelsListGridColor();
         if( @available(macOS 11.0, *) )
             m_TableView.style = NSTableViewStylePlain;
         m_TableView.headerView = [[PanelListViewTableHeaderView alloc] init];
@@ -168,6 +166,8 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
                                                selector:@selector(dateDidChange:)
                                                    name:NSCalendarDayChangedNotification
                                                  object:nil];
+
+        [self handleThemeChanges];
     }
     return self;
 }
@@ -1077,6 +1077,22 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     self.cursorPosition = cp;
     m_TableView.gridColor = CurrentTheme().FilePanelsListGridColor();
     m_ScrollView.backgroundColor = CurrentTheme().FilePanelsListRegularEvenRowBackgroundColor();
+
+    for( NSTableColumn *col : {m_NameColumn,
+                               m_ExtensionColumn,
+                               m_SizeColumn,
+                               m_DateCreatedColumn,
+                               m_DateAddedColumn,
+                               m_DateModifiedColumn,
+                               m_DateAccessedColumn,
+                               m_TagsColumn} ) {
+        if( PanelListViewTableHeaderCell *cell = objc_cast<PanelListViewTableHeaderCell>(col.headerCell) ) {
+            [cell updateThemeWithTextFont:CurrentTheme().FilePanelsListHeaderFont()
+                                textColor:CurrentTheme().FilePanelsListHeaderTextColor()
+                           separatorColor:CurrentTheme().FilePanelsListHeaderSeparatorColor()
+                          backgroundColor:CurrentTheme().FilePanelsListHeaderBackgroundColor()];
+        }
+    }
 }
 
 - (void)dateDidChange:(NSNotification *) [[maybe_unused]] _notification

@@ -28,7 +28,7 @@ public class PanelListViewTableHeaderCell: NSTableHeaderCell {
             rc.fill(using: NSCompositingOperation.sourceOver)
         }
     }
-
+    
     func drawBackground(cellFrame rect: NSRect) {
         if let color = self.backgroundColor {
             color.set()
@@ -44,18 +44,18 @@ public class PanelListViewTableHeaderCell: NSTableHeaderCell {
             }
         }
     }
-
+    
     func drawHorizontalSeparator(in rect: NSRect) {
         fill(rect: NSMakeRect(rect.origin.x, NSMaxY(rect) - 1, rect.size.width, 1), withColor: separatorColor)
     }
-
+    
     func drawVerticalSeparator(in rect: NSRect, inView view: NSView) {
         if NSMaxX(rect) < view.bounds.size.width {
             fill(rect: NSRect(x: NSMaxX(rect) - 1, y: NSMinY(rect) + 4, width: 1, height: rect.size.height - 8),
                  withColor: separatorColor)
         }
     }
-
+    
     public override func draw(withFrame cellFrame: NSRect, in view: NSView) {
         drawBackground(cellFrame: cellFrame)
         drawHorizontalSeparator(in: cellFrame)
@@ -115,8 +115,19 @@ public class PanelListViewTableHeaderCell: NSTableHeaderCell {
         }
         trc.origin.y += font.ascender
         
+        // Get the attributed string of the title
+        var string = self.attributedStringValue
+        
+        // Transform the string to use the bold font if the column is used for sorting
+        if sortIndicatorRect != nil {
+            let bold = NSFontManager.shared.convert(font, toHaveTrait: .boldFontMask)
+            let mutable = NSMutableAttributedString(attributedString: string)
+            mutable.addAttributes([.font: bold], range: NSRange(location: 0, length: string.length))
+            string = mutable
+        }
+        
         // Finally, draw it
-        self.attributedStringValue.draw(with: trc)
+        string.draw(with: trc)
     }
     
     @objc public func updateTheme(withTextFont font: NSFont,
@@ -136,7 +147,7 @@ public class PanelListViewTableHeaderCell: NSTableHeaderCell {
         let ps = NSParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
         ps.alignment = self.alignment
         ps.lineBreakMode = NSLineBreakMode.byClipping
-
+        
         let attrs: [NSAttributedString.Key: Any] = [
             NSAttributedString.Key.font: font ?? NSFont.systemFont(ofSize: 11),
             NSAttributedString.Key.foregroundColor: textColor ?? NSColor.textColor,

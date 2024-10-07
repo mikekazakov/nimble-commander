@@ -19,6 +19,9 @@ public:
     short RightInset() const { return 5; }
     short BottomInset() const { return 1; }
 
+    // Returns the the left offset of the filename text in its column
+    short FilenameOffsetInColumn() const noexcept;
+
 private:
     short m_LineHeight;
     short m_TextBaseLine;

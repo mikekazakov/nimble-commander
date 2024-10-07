@@ -354,6 +354,23 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
 
     if( m_TableView )
         m_TableView.rowHeight = m_Geometry.LineHeight();
+
+    // By default the offset of the title in the header cell is the same as the default offset in the geometry
+    for( auto column : {m_ExtensionColumn,
+                        m_SizeColumn,
+                        m_DateCreatedColumn,
+                        m_DateAddedColumn,
+                        m_DateModifiedColumn,
+                        m_DateAccessedColumn,
+                        m_TagsColumn} ) {
+        if( auto cell = objc_cast<PanelListViewTableHeaderCell>(column.headerCell) ) {
+            cell.leftOffset = static_cast<double>(m_Geometry.LeftInset());
+        }
+    }
+    // But for the filename column the offset is special
+    if( auto cell = objc_cast<PanelListViewTableHeaderCell>(m_NameColumn.headerCell) ) {
+        cell.leftOffset = static_cast<double>(m_Geometry.FilenameOffsetInColumn());
+    }
 }
 
 - (void)setupIconsPxSize

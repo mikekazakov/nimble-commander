@@ -6,6 +6,7 @@ public class PanelListViewTableHeaderCell: NSTableHeaderCell {
     var separatorColor: NSColor = NSColor.black
     var sortIndicator: NSImage?
     var tintedSortIndicator: NSImage?
+    @objc public var leftOffset: Double = 4.0
     
     // RTFM "NSCopyObject() + NSCell + crash" to learn why this abomination is required
     public override func copy(with zone: NSZone? = nil) -> Any {
@@ -90,7 +91,6 @@ public class PanelListViewTableHeaderCell: NSTableHeaderCell {
         }
         
         // Now draw the column title
-        let left_padding = Double(4)
         var trc = drawingRect(forBounds: cellFrame)
         trc.size.height -= 1 // eaten by the horizontal separator at the bottom
         trc.size.width -= 1 // eatern by the vertical separator at the right
@@ -109,7 +109,7 @@ public class PanelListViewTableHeaderCell: NSTableHeaderCell {
         if self.alignment == NSTextAlignment.right {
             trc = NSMakeRect(trc.origin.x, top, trc.size.width, height)
         } else if self.alignment == NSTextAlignment.left {
-            trc = NSMakeRect(trc.origin.x + left_padding, top, trc.size.width - left_padding, height)
+            trc = NSMakeRect(trc.origin.x + leftOffset, top, trc.size.width - leftOffset, height)
         } else {  // center
             trc = NSMakeRect(trc.origin.x, top, trc.size.width, height)
         }

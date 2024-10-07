@@ -101,7 +101,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 
 - (NSRect)calculateTextSegmentFromBounds:(NSRect)bounds andGeometry:(const PanelListViewGeometry &)g
 {
-    const int origin = g.IconSize() ? 2 * g.LeftInset() + g.IconSize() : g.LeftInset();
+    const int origin = g.FilenameOffsetInColumn();
     const auto tags_geom = TrailingTagsInplaceDisplay::Place(m_Tags);
     const auto width = bounds.size.width - origin - g.RightInset() - tags_geom.margin - tags_geom.width;
 

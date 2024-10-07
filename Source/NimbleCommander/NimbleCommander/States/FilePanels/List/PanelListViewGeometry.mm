@@ -80,4 +80,9 @@ PanelListViewGeometry::PanelListViewGeometry(NSFont *_font, int _icon_scale)
     std::tie(m_LineHeight, m_TextBaseLine, m_IconSize) = GrabGeometryFromSystemFont(_font, _icon_scale);
 }
 
+short PanelListViewGeometry::FilenameOffsetInColumn() const noexcept
+{
+    return static_cast<short>(IconSize() ? 2 * LeftInset() + IconSize() : LeftInset());
+}
+
 } // namespace nc::panel

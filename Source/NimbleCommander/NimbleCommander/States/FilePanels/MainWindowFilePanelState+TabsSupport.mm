@@ -211,19 +211,25 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
 
 - (void)respawnRecentlyClosedCallout:(id)sender
 {
-    if( auto menu_item = nc::objc_cast<NCCommandPopoverItem>(sender) ) {
-        auto any_holder = nc::objc_cast<AnyHolder>(menu_item.representedObject);
-        if( !any_holder )
-            return;
+    AnyHolder *payload = nil;
 
-        if( auto request = std::any_cast<RestoreClosedTabRequest>(&any_holder.any) ) {
-            const auto tab_view = request->side == RestoreClosedTabRequest::Side::Left
-                                      ? m_SplitView.leftTabbedHolder.tabView
-                                      : m_SplitView.rightTabbedHolder.tabView;
-            [self spawnNewTabInTabView:tab_view loadingListingPromise:request->promise activateNewPanel:true];
-            if( m_ClosedPanelsHistory )
-                m_ClosedPanelsHistory->RemoveListing(request->promise);
-        }
+    if( auto popover_item = nc::objc_cast<NCCommandPopoverItem>(sender) ) {
+        payload = nc::objc_cast<AnyHolder>(popover_item.representedObject);
+    }
+    else if( auto menu_item = nc::objc_cast<NSMenuItem>(sender) ) {
+        payload = nc::objc_cast<AnyHolder>(menu_item.representedObject);
+    }
+
+    if( !payload )
+        return;
+
+    if( auto request = std::any_cast<RestoreClosedTabRequest>(&payload.any) ) {
+        const auto tab_view = request->side == RestoreClosedTabRequest::Side::Left
+                                  ? m_SplitView.leftTabbedHolder.tabView
+                                  : m_SplitView.rightTabbedHolder.tabView;
+        [self spawnNewTabInTabView:tab_view loadingListingPromise:request->promise activateNewPanel:true];
+        if( m_ClosedPanelsHistory )
+            m_ClosedPanelsHistory->RemoveListing(request->promise);
     }
 }
 

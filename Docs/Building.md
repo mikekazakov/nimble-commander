@@ -16,7 +16,7 @@ After obtaining the source code, you'll need Xcode 16.0 to open and compile the 
 Make sure to select the `NimbleCommander-Unsigned` schema in Xcode. Now, you are ready to build the project. Use `Cmd+B` to build and `Cmd+R` to run the project under Xcode's debugger.
 
 ## Exploring the Source Code
-Nimble Commander has a medium-sized codebase (~150KSloC) written primarily in two languages: C++ and Objective-C++. The project includes the main application and 10 sub-projects:
+Nimble Commander has a medium-sized codebase (~150KSloC) written in C++, Objective-C++ and Swift. The project includes the main application and 10 sub-projects:
   * Base: Foundational, general-purpose tools.
   * Config: Configuration management.
   * CUI: Shared UI components.

@@ -9,6 +9,6 @@ WRAPPER_EXTENSION = app
 
 LIBRARY_SEARCH_PATHS = $(inherited) $(BUILD_DIR)/$(CONFIGURATION)
 
-OTHER_LDFLAGS = $(inherited) -lBase -lUtility -lConfig -lCUI -lOperations -lPanel -lRoutedIO -lTerm -lVFS -lVFSIcon -lViewer -lMMTabBarViewLib -lRHPreferences
+OTHER_LDFLAGS = $(inherited) -lBase -lUtility -lConfig -lCUI -lOperations -lPanel -lRoutedIO -lTerm -lVFS -lVFSIcon -lViewer -lMMTabBarViewLib
 
 ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES

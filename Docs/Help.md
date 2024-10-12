@@ -259,7 +259,28 @@ This screenshot shows a `Volumes` Quick List:
 ![Quick List](Help-panel-quicklist.png)
 
 ### Tabs
-_to be written_
+
+File panels support a tabbed interface, allowing multiple locations to be opened simultaneously on either the left or right pane. The tab bar appears automatically if more than one tab is open in a pane, but it can also be forced to always show via the menu `View > Show Tab Bar` or by using the hotkey `Cmd + Shift + T`. The screenshot below shows Nimble Commander's window with two tabs in the left pane and three tabs in the right pane:
+
+![Tabbed Interface](Help-panel-tabs.png)
+
+A new tab can be opened in several ways:
+
+- Menu `File > New Tab` or the `Cmd + T` hotkey creates a new tab with the same location.
+- Pressing the "+" button next to the tab bar. A long click or right click will display a list of recently closed locations.
+- Hitting the `Shift + Cmd + R` hotkey restores the last closed tab and activates it.
+- `Alt + Cmd + Return` reveals the currently focused item in a new tab on the opposite pane.
+
+To switch the active tab, the following hotkeys can be used:
+
+- `Shift + Cmd + ]` or `Ctrl + Tab` to switch to the next tab.
+- `Shift + Cmd + [` or `Ctrl + Shift + Tab` to switch to the previous tab.
+- The `File Panels > Show Tab №1..№10` hotkeys can be assigned to activate a specific tab.
+
+To close tabs, you can use the following hotkeys:
+
+- `Cmd + W` - closes the current tab.
+- `Alt + Cmd + W` - closes all other tabs.
 
 ### Favorites
 _to be written_

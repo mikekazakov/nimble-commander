@@ -1,7 +1,11 @@
 // Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#import <RHPreferences/RHPreferences.h>
+#pragma once
 
-@interface PreferencesWindowTerminalTab : NSViewController <RHPreferencesViewControllerProtocol>
+#include <Cocoa/Cocoa.h>
+#include <swiftToCxx/_SwiftCxxInteroperability.h>
+#include <NimbleCommanderCommon-Swift.h>
+
+@interface PreferencesWindowTerminalTab : NSViewController <PreferencesViewControllerProtocol>
 
 - (instancetype)init;
 

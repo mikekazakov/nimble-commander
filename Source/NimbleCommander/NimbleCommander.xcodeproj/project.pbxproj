@@ -192,6 +192,7 @@
 		CF0B78F325739F61003061D0 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
 		CF0B78F425739F61003061D0 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
 		CF1257552CA96CAD003906C6 /* PanelListViewTableHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1257542CA96CAD003906C6 /* PanelListViewTableHeaderCell.swift */; };
+		CF12580E2CB5C1B4003906C6 /* PreferencesWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF12580D2CB5C1B4003906C6 /* PreferencesWindow.swift */; };
 		CF3120C41A510F640062185A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
 		CF3120C51A510F640062185A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
 		CF36DBE01F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
@@ -881,6 +882,7 @@
 		CF0B78F825739F79003061D0 /* SparkleShim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SparkleShim.h; path = NimbleCommander/Bootstrap/SparkleShim.h; sourceTree = "<group>"; };
 		CF1257542CA96CAD003906C6 /* PanelListViewTableHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PanelListViewTableHeaderCell.swift; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderCell.swift; sourceTree = "<group>"; };
 		CF12575A2CA97D87003906C6 /* NimbleCommanderCommon-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NimbleCommanderCommon-Bridging-Header.h"; path = "NimbleCommander/Bootstrap/NimbleCommanderCommon-Bridging-Header.h"; sourceTree = "<group>"; };
+		CF12580D2CB5C1B4003906C6 /* PreferencesWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesWindow.swift; path = NimbleCommander/Preferences/PreferencesWindow.swift; sourceTree = "<group>"; };
 		CF15D0811E8E1E7A00FEAA04 /* OpenWithExternalEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenWithExternalEditor.h; path = NimbleCommander/States/FilePanels/Actions/OpenWithExternalEditor.h; sourceTree = SOURCE_ROOT; };
 		CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenWithExternalEditor.mm; path = NimbleCommander/States/FilePanels/Actions/OpenWithExternalEditor.mm; sourceTree = SOURCE_ROOT; };
 		CF197C411FB81ACA009F6C59 /* ToggleSingleOrDualMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToggleSingleOrDualMode.h; path = NimbleCommander/States/FilePanels/Actions/ToggleSingleOrDualMode.h; sourceTree = SOURCE_ROOT; };
@@ -1465,6 +1467,7 @@
 				CF4E569D1D50687A00452912 /* Preferences.h */,
 				CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */,
 				CFEF4E3B1A6BB409009A1524 /* Preferences.strings */,
+				CF12580D2CB5C1B4003906C6 /* PreferencesWindow.swift */,
 				CF4E562E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.h */,
 				CF4E562F1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm */,
 				CF4E56721D50667300452912 /* PreferencesWindowExternalEditorsTab.xib */,
@@ -3032,6 +3035,7 @@
 				CF0A483B2BDDA19E00833160 /* FocusPanel.mm in Sources */,
 				CF0A48192BDDA01800833160 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CF0A48622BDDA3D200833160 /* PanelListView.mm in Sources */,
+				CF12580E2CB5C1B4003906C6 /* PreferencesWindow.swift in Sources */,
 				CF0A47F62BDD9E7200833160 /* AppDelegate+MainWindowCreation.mm in Sources */,
 				CF0A481A2BDDA01D00833160 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF0A48282BDDA06900833160 /* StateActionsDispatcher.mm in Sources */,

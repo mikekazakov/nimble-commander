@@ -10,7 +10,7 @@
 #include "PreferencesWindowThemesTab.h"
 #include "Preferences.h"
 
-static RHPreferencesWindowController *CreatePrefWindow()
+static PreferencesWindowController *CreatePrefWindow()
 {
     auto tools_storage = []() -> nc::panel::ExternalToolsStorage & { return NCAppDelegate.me.externalTools; };
     auto app_del = NCAppDelegate.me;
@@ -24,7 +24,7 @@ static RHPreferencesWindowController *CreatePrefWindow()
         [[PreferencesWindowHotkeysTab alloc] initWithToolsStorage:tools_storage],
         [[PreferencesWindowToolsTab alloc] initWithToolsStorage:tools_storage]
     ];
-    return [[RHPreferencesWindowController alloc] initWithViewControllers:tabs andTitle:@"Preferences"];
+    return [[PreferencesWindowController alloc] initWithControllers:tabs title:@"Preferences"];
 }
 
 void ShowPreferencesWindow()

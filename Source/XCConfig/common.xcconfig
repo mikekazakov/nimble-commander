@@ -62,7 +62,7 @@ DEAD_CODE_STRIPPING = YES
 OTHER_CFLAGS = -fvisibility=hidden -Wframe-larger-than=32768 -fbracket-depth=512
 
 // C++
-OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2b -Wall -Wextra -Wold-style-cast -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include -cxx-isystem$(THRDPTY)/googletest/include -cxx-isystem$(THRDPTY)/frozen/include -cxx-isystem$(THRDPTY)/RHPreferences/include
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2b -Wall -Wextra -Wold-style-cast -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include -cxx-isystem$(THRDPTY)/googletest/include -cxx-isystem$(THRDPTY)/frozen/include
 
 // Linker
 OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework Quartz -framework QuartzCore -framework DiskArbitration -framework OpenDirectory -framework ServiceManagement -framework Security -framework Carbon -framework NetFS -weak_framework UniformTypeIdentifiers -weak_framework QuickLookUI -lxml2 -larchive -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lcurl -lpugixml -liconv -lAppAuth-macOS -lpstld -lzstd -llz4 -llzo2 -lre2 -lfmt -lcxxbackport -llexilla -v -ld_classic
@@ -82,7 +82,7 @@ USE_HEADERMAP = NO
 HEADER_SEARCH_PATHS = $(TOOLCHAIN_DIR)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/include $(THRDPTY)/magic_enum/include $(THRDPTY)/Catch2/include $(THRDPTY)/rapidjson/include $(THRDPTY)/libssh2/include $(THRDPTY)/pugixml/include $(THRDPTY)/zlib/include $(THRDPTY)/bz2/include $(THRDPTY)/libcurl/include $(THRDPTY)/MMTabBarView $(THRDPTY)/AppAuth/include $(THRDPTY)/pstld/include $(THRDPTY)/re2/include $(THRDPTY)/fmt/include $(THRDPTY)/lexilla/include $(THRDPTY)/nlohmann/include $(THRDPTY)/unordered_dense/include
 
 // Paths - libraries
-LIBRARY_SEARCH_PATHS = $(THRDPTY)/spdlog/lib $(THRDPTY)/googletest/lib $(THRDPTY)/z/lib $(THRDPTY)/OpenSSL/lib $(THRDPTY)/libarchive/lib $(THRDPTY)/lzma/lib $(THRDPTY)/bz2/lib $(THRDPTY)/libssh2/lib  $(THRDPTY)/libcurl/lib $(THRDPTY)/pugixml/lib $(THRDPTY)/AppAuth/built $(THRDPTY)/pstld/lib $(THRDPTY)/zstd/lib $(THRDPTY)/lz4/lib $(THRDPTY)/lzo/lib $(THRDPTY)/re2/lib $(THRDPTY)/fmt/lib $(THRDPTY)/libcxxbackport/lib $(THRDPTY)/lexilla/lib $(THRDPTY)/RHPreferences/lib
+LIBRARY_SEARCH_PATHS = $(THRDPTY)/spdlog/lib $(THRDPTY)/googletest/lib $(THRDPTY)/z/lib $(THRDPTY)/OpenSSL/lib $(THRDPTY)/libarchive/lib $(THRDPTY)/lzma/lib $(THRDPTY)/bz2/lib $(THRDPTY)/libssh2/lib  $(THRDPTY)/libcurl/lib $(THRDPTY)/pugixml/lib $(THRDPTY)/AppAuth/built $(THRDPTY)/pstld/lib $(THRDPTY)/zstd/lib $(THRDPTY)/lz4/lib $(THRDPTY)/lzo/lib $(THRDPTY)/re2/lib $(THRDPTY)/fmt/lib $(THRDPTY)/libcxxbackport/lib $(THRDPTY)/lexilla/lib
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Warnings

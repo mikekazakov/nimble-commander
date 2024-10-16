@@ -14,11 +14,13 @@ CursorBackup::CursorBackup(int _current_cursor_pos, const data::Model &_data) no
         assert(item);
         m_OldCursorName = item.Filename();
         m_OldEntrySortKeys = _data.EntrySortKeysAtSortPosition(_current_cursor_pos);
+        Log::Trace("Saved sort keys: {}", m_OldEntrySortKeys);
     }
 }
 
 int CursorBackup::RestoredCursorPosition() const noexcept
 {
+    Log::Trace("Restoring cursor position from the keys {}", m_OldEntrySortKeys);
     const int restored_pos = FindRestoredCursorPosition();
     Log::Trace("Restored cursor position: {}", restored_pos);
     return restored_pos;

@@ -20,7 +20,7 @@ private:
     int FindRestoredCursorPosition() const noexcept;
 
     const data::Model &m_Data;
-    std::string m_OldCursorName;
+    std::string m_OldCursorName; // reduntant? it's already in m_OldEntrySortKeys
     data::ExternalEntryKey m_OldEntrySortKeys;
 };
 

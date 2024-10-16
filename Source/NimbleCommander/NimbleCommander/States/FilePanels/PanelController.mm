@@ -399,13 +399,23 @@ static void HeatUpConfigValues()
 
 - (void)refreshPanelDiscardingCaches:(bool)_force
 {
+    Log::Debug("refreshPanelDiscardingCaches:{} was called", _force);
+
     if( m_View == nil )
         return; // guard agains calls from init process
     if( &m_Data.Listing() == VFSListing::EmptyListing().get() )
         return; // guard agains calls from init process
 
-    if( !m_DirectoryLoadingQ.Empty() )
+    if( !m_DirectoryLoadingQ.Empty() ) {
+        Log::Debug("Discarding the refresh request as there is a load request in place");
         return; // reducing overhead
+    }
+
+    if( m_DirectoryReLoadingQ.Length() >= 2 ) {
+        Log::Debug("Discarding the refresh request as the current length of reload queue is {}",
+                   m_DirectoryReLoadingQ.Length());
+        return; // reducing overhead
+    }
 
     // later: maybe check PanelType somehow
 
@@ -415,15 +425,30 @@ static void HeatUpConfigValues()
         const auto vfs = self.vfs;
 
         m_DirectoryReLoadingQ.Run([=] {
-            if( m_DirectoryReLoadingQ.IsStopped() )
+            if( m_DirectoryReLoadingQ.IsStopped() ) {
+                Log::Trace("[PanelController refreshPanelDiscardingCaches] cancelled the refresh");
                 return;
+            }
             VFSListingPtr listing;
             const int ret = vfs->FetchDirectoryListing(
-                dirpath.c_str(), listing, fetch_flags, [&] { return m_DirectoryReLoadingQ.IsStopped(); });
-            if( ret >= 0 )
-                dispatch_to_main_queue([=] { [self reloadRefreshedListing:listing]; });
-            else
-                dispatch_to_main_queue([=] { [self recoverFromInvalidDirectory]; });
+                dirpath, listing, fetch_flags, [&] { return m_DirectoryReLoadingQ.IsStopped(); });
+            if( m_DirectoryReLoadingQ.IsStopped() ) {
+                Log::Trace("[PanelController refreshPanelDiscardingCaches] cancelled the refresh");
+                return;
+            }
+            dispatch_to_main_queue([=] {
+                if( self.currentDirectoryPath != dirpath ) {
+                    Log::Debug(
+                        "[PanelController refreshPanelDiscardingCaches]: discarding a stale request to refresh '{}'",
+                        dirpath);
+                    return;
+                }
+
+                if( ret >= 0 )
+                    [self reloadRefreshedListing:listing];
+                else
+                    [self recoverFromInvalidDirectory];
+            });
         });
     }
     else {
@@ -440,11 +465,13 @@ static void HeatUpConfigValues()
 
 - (void)refreshPanel
 {
+    Log::Trace("[Panel refreshPanel] was called");
     [self refreshPanelDiscardingCaches:false];
 }
 
 - (void)forceRefreshPanel
 {
+    Log::Trace("[Panel forceRefreshPanel] was called");
     [self refreshPanelDiscardingCaches:true];
 }
 
@@ -515,9 +542,8 @@ static void HeatUpConfigValues()
             if( !i.IsDir() )
                 continue;
 
-            const auto result =
-                i.Host()->CalculateDirectorySize(!i.IsDotDot() ? i.Path().c_str() : i.Directory().c_str(),
-                                                 [=] { return m_DirectorySizeCountingQ.IsStopped(); });
+            const auto result = i.Host()->CalculateDirectorySize(!i.IsDotDot() ? i.Path() : i.Directory(),
+                                                                 [=] { return m_DirectorySizeCountingQ.IsStopped(); });
 
             if( result < 0 )
                 continue; // silently skip items that caused erros while calculating size
@@ -597,7 +623,7 @@ static void HeatUpConfigValues()
 - (void)selectEntriesWithFilenames:(const std::vector<std::string> &)_filenames
 {
     for( auto &i : _filenames )
-        m_Data.CustomFlagsSelectSorted(m_Data.SortedIndexForName(i.c_str()), true);
+        m_Data.CustomFlagsSelectSorted(m_Data.SortedIndexForName(i), true);
     [m_View volatileDataChanged];
 }
 
@@ -617,15 +643,27 @@ static void HeatUpConfigValues()
 
 - (void)onPathChanged
 {
+    Log::Trace("[PanelController onPathChanged] was called");
     // update directory changes notification ticket
     __weak PanelController *weakself = self;
     m_UpdatesObservationTicket.reset();
     if( self.isUniform ) {
+        const std::string current_directory_path = self.currentDirectoryPath;
         auto dir_change_callback = [=] {
-            dispatch_to_main_queue([=] { [static_cast<PanelController *>(weakself) refreshPanel]; });
+            dispatch_to_main_queue([=] {
+                Log::Debug("Got a notification about a directory change: '{}'", current_directory_path);
+                if( PanelController *pc = weakself ) {
+                    if( pc.currentDirectoryPath == current_directory_path ) {
+                        [pc refreshPanel];
+                    }
+                    else {
+                        Log::Debug("Discarded a stale directory change notification");
+                    }
+                }
+            });
         };
         m_UpdatesObservationTicket =
-            self.vfs->ObserveDirectoryChanges(self.currentDirectoryPath.c_str(), std::move(dir_change_callback));
+            self.vfs->ObserveDirectoryChanges(current_directory_path, std::move(dir_change_callback));
     }
 
     [self clearFocusingRequest];
@@ -728,7 +766,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
     const auto &target_fn = _filename;
 
     // checking for invalid symbols
-    if( !_item.Host()->ValidateFilename(target_fn.c_str()) ) {
+    if( !_item.Host()->ValidateFilename(target_fn) ) {
         ShowAlertAboutInvalidFilename(target_fn);
         return;
     }
@@ -864,6 +902,10 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
 
 - (void)doGoToDirWithContext:(std::shared_ptr<DirectoryChangeRequest>)_request
 {
+    assert(_request != nullptr);
+    assert(_request->VFS != nullptr);
+    Log::Debug("[PanelController doGoToDirWithContext] was called with {}", *_request);
+
     try {
         if( [self probeDirectoryAccessForRequest:*_request] == false ) {
             _request->LoadingResultCode = VFSError::FromErrno(EPERM);
@@ -874,7 +916,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
         auto &vfs = *_request->VFS;
         const auto canceller = VFSCancelChecker([&] { return m_DirectoryLoadingQ.IsStopped(); });
         VFSListingPtr listing;
-        const auto fetch_result = vfs.FetchDirectoryListing(directory.c_str(), listing, m_VFSFetchingFlags, canceller);
+        const auto fetch_result = vfs.FetchDirectoryListing(directory, listing, m_VFSFetchingFlags, canceller);
         _request->LoadingResultCode = fetch_result;
         if( _request->LoadingResultCallback )
             _request->LoadingResultCallback(fetch_result);
@@ -889,7 +931,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
             [m_View savePathState];
             m_Data.Load(listing, data::Model::PanelType::Directory);
             for( auto &i : _request->RequestSelectedEntries )
-                m_Data.CustomFlagsSelectSorted(m_Data.SortedIndexForName(i.c_str()), true);
+                m_Data.CustomFlagsSelectSorted(m_Data.SortedIndexForName(i), true);
             m_DataGeneration++;
             [m_View dataUpdated];
             [m_View panelChangedWithFocusedFilename:_request->RequestFocusedEntry
@@ -911,6 +953,10 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
     if( _request->RequestedDirectory.empty() || _request->RequestedDirectory.front() != '/' ||
         _request->VFS == nullptr )
         return VFSError::InvalidCall;
+
+    assert(_request != nullptr);
+    assert(_request->VFS != nullptr);
+    Log::Debug("[PanelController GoToDirWithContext] was called with {}", *_request);
 
     if( _request->PerformAsynchronous == false ) {
         assert(dispatch_is_main_queue());
@@ -955,7 +1001,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
         const auto &vfs = initial_vfs;
 
         while( true ) {
-            if( vfs->IterateDirectoryListing(path.c_str(), [](const VFSDirEnt &) { return false; }) >= 0 ) {
+            if( vfs->IterateDirectoryListing(path.native(), [](const VFSDirEnt &) { return false; }) >= 0 ) {
                 dispatch_to_main_queue([=] {
                     auto request = std::make_shared<DirectoryChangeRequest>();
                     request->RequestedDirectory = path.native();
@@ -1113,6 +1159,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
 
 - (void)hintAboutFilesystemChange
 {
+    Log::Trace("[PanelController hintAboutFilesystemChange] was called");
     dispatch_assert_main_queue(); // to preserve against fancy threading stuff
     if( self.receivesUpdateNotifications ) {
         // check in some future that the notification actually came

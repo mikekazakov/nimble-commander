@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Panel/PanelDataExternalEntryKey.h>
@@ -20,8 +20,7 @@ private:
     int FindRestoredCursorPosition() const noexcept;
 
     const data::Model &m_Data;
-    std::string m_OldCursorName; // reduntant? it's already in m_OldEntrySortKeys
-    data::ExternalEntryKey m_OldEntrySortKeys;
+    data::ExternalEntryKey m_Keys;
 };
 
 } // namespace nc::panel

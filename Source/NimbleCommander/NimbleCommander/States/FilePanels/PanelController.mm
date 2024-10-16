@@ -652,7 +652,7 @@ static void HeatUpConfigValues()
         auto dir_change_callback = [=] {
             dispatch_to_main_queue([=] {
                 Log::Debug("Got a notification about a directory change: '{}'", current_directory_path);
-                if( PanelController *pc = weakself ) {
+                if( PanelController *const pc = weakself ) {
                     if( pc.currentDirectoryPath == current_directory_path ) {
                         [pc refreshPanel];
                     }

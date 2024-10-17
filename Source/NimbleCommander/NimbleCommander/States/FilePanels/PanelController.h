@@ -7,6 +7,8 @@
 #include <Panel/PanelViewKeystrokeSink.h>
 #include <Panel/QuickSearch.h>
 #include <VFS/VFS.h>
+#include <fmt/format.h>
+#include <fmt/ranges.h>
 
 @class PanelController;
 @class PanelView;
@@ -240,3 +242,25 @@ using ContextMenuProvider = std::function<NSMenu *(std::vector<VFSListingItem> _
 @end
 
 #include "PanelController+DataAccess.h"
+
+template <>
+struct fmt::formatter<nc::panel::DirectoryChangeRequest> : fmt::formatter<std::string> {
+    constexpr auto parse(fmt::format_parse_context &ctx) { return ctx.begin(); }
+
+    template <typename FormatContext>
+    auto format(const nc::panel::DirectoryChangeRequest &_req, FormatContext &_ctx)
+    {
+
+        return fmt::format_to(
+            _ctx.out(),
+            "(RequestedDirectory='{}', VFS='{}', RequestFocusedEntry='{}', RequestSelectedEntries='{}', "
+            "PerformAsynchronous={}, LoadPreviousViewState={}, InitiatedByUser={})",
+            _req.RequestedDirectory,
+            _req.VFS->Tag(),
+            _req.RequestFocusedEntry,
+            _req.RequestSelectedEntries,
+            _req.PerformAsynchronous,
+            _req.LoadPreviousViewState,
+            _req.InitiatedByUser);
+    }
+};

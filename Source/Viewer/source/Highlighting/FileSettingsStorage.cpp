@@ -68,7 +68,7 @@ std::vector<FileSettingsStorage::Lang> FileSettingsStorage::LoadLangs(const std:
     try {
         data = json::parse(f);
     } catch( std::exception &ex ) {
-        Log::Error("Unable to parse '{}': {}", _path.native());
+        Log::Error("Unable to parse '{}': {}", _path.native(), ex.what());
         throw std::invalid_argument(fmt::format("Unable to parse '{}': {}", _path.native(), ex.what()));
     }
 

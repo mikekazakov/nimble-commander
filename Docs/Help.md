@@ -115,6 +115,21 @@ To navigate to an arbitrary location on the filesystem, you can use the GoTo dia
 
 If the cursor is currently pointing to a file that is a symbolic link, the `Cmd + Right` hotkey can be used to navigate to the location the symlink points to.
 
+### Opening Items
+The `Return` key does more than just navigate into folders.
+The action performed when you press `Return` depends on the type of item:
+
+- For regular folders, it navigates into them.
+- For archive files, it opens the archive and takes you to its root directory.
+- For executable items, it runs the file inside the built-in terminal emulator.
+- For all other items, the default macOS association is used to open them.
+
+If you need to open an archive with a non-standard extension (.xlsx, .pak etc), you can force Nimble Commander to navigate into it instead of opening the item with an external application by using the `Cmd + Down` hotkey or the `Go > Enter` menu item.
+
+The `Shift + Return` hotkey opens an item in macOS using its default association, regardless of the item type.
+
+To open an item outside of Nimble Commander using a specific application, select the application from the `Open With` menu, which is available in the context menu or the `File` menu.
+
 ### Panel Management
 You can swap the contents of the left and right panels using the `Cmd + U` hotkey or the menu item `View > Swap Panels`. This operation also transfers the focus to the opposite panel.  
 To sync the contents of the opposite panel with the contents of the current panel, you can use the `Opt + Cmd + U` hotkey or the menu item `View > Sync Panels`.  

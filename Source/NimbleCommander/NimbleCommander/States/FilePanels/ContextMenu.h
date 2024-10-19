@@ -3,6 +3,8 @@
 
 #include <Cocoa/Cocoa.h>
 #include <VFS/VFS.h>
+#include <span>
+
 @class PanelController;
 
 namespace nc::utility {
@@ -18,5 +20,7 @@ class FileOpener;
                       ofPanel:(PanelController *)_panel
                withFileOpener:(nc::panel::FileOpener &)_file_opener
                     withUTIDB:(const nc::utility::UTIDB &)_uti_db;
+
+- (std::span<VFSListingItem>)items;
 
 @end

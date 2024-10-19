@@ -1,8 +1,8 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "PanelViewTypes.h"
-
+#include <optional>
 #include <Cocoa/Cocoa.h>
 
 namespace nc::panel::data {
@@ -33,5 +33,7 @@ class Model;
 - (void)onPageDown:(NSEvent *)_event;
 
 - (int)sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(nc::panel::PanelViewHitTest::Options)_options;
+
+- (std::optional<NSRect>)frameOfItemAtIndex:(int)_sorted_item_index;
 
 @end

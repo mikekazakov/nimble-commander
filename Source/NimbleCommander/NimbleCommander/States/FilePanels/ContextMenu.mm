@@ -345,6 +345,11 @@ using namespace nc::panel;
     });
 }
 
+- (std::span<VFSListingItem>)items
+{
+    return m_Items;
+}
+
 @end
 
 @implementation NCPanelContextMenuSharingDelegate {

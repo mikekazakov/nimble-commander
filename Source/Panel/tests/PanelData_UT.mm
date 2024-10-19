@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/dirent.h>
 #include <VFS/VFS.h>
 #include <VFS/VFSListingInput.h>
@@ -189,6 +189,38 @@ TEST_CASE(PREFIX "SortedIndexForRawIndex")
         CHECK(model.SortedIndexForRawIndex(8) == 4);
         CHECK(model.SortedIndexForRawIndex(9) == -1);
     }
+}
+
+TEST_CASE(PREFIX "SortPositionOfEntry")
+{
+    const auto l1 = ProduceDummyListing(std::vector<std::string>{"c", "b", "a"});
+    const auto l2 = ProduceDummyListing(std::vector<std::string>{"c", "b", "a"});
+    data::SortMode sorting;
+    sorting.sort = data::SortMode::SortByName;
+
+    // first no filtering, sort by name
+    Model model;
+    model.SetSortMode(sorting);
+    model.Load(l1, Model::PanelType::Directory);
+    CHECK(model.SortPositionOfEntry(l1->Item(0)) == 2);
+    CHECK(model.SortPositionOfEntry(l1->Item(1)) == 1);
+    CHECK(model.SortPositionOfEntry(l1->Item(2)) == 0);
+    CHECK(model.SortPositionOfEntry(l2->Item(0)) == -1);
+    CHECK(model.SortPositionOfEntry(l2->Item(1)) == -1);
+    CHECK(model.SortPositionOfEntry(l2->Item(2)) == -1);
+
+    // then check with hard filtering
+    data::TextualFilter textual_filter;
+    textual_filter.text = @"b";
+    data::HardFilter filter;
+    filter.text = textual_filter;
+    model.SetHardFiltering(filter);
+    CHECK(model.SortPositionOfEntry(l1->Item(0)) == -1);
+    CHECK(model.SortPositionOfEntry(l1->Item(1)) == 0);
+    CHECK(model.SortPositionOfEntry(l1->Item(2)) == -1);
+    CHECK(model.SortPositionOfEntry(l2->Item(0)) == -1);
+    CHECK(model.SortPositionOfEntry(l2->Item(1)) == -1);
+    CHECK(model.SortPositionOfEntry(l2->Item(2)) == -1);
 }
 
 TEST_CASE(PREFIX "Basic")

@@ -20,6 +20,7 @@
 #include <Panel/PanelData.h>
 #include "PanelView.h"
 #include "DragReceiver.h"
+#include "ContextMenu.h"
 #include <Panel/PanelDataExternalEntryKey.h>
 #include "PanelDataPersistency.h"
 #include <NimbleCommander/Core/VFSInstanceManager.h>
@@ -710,7 +711,7 @@ static void HeatUpConfigValues()
     [self onCursorChanged];
 }
 
-- (NSMenu *)panelView:(PanelView *)_view requestsContextMenuForItemNo:(int)_sort_pos
+- (NCPanelContextMenu *)panelView:(PanelView *)_view requestsContextMenuForItemNo:(int)_sort_pos
 {
     dispatch_assert_main_queue();
 
@@ -724,13 +725,13 @@ static void HeatUpConfigValues()
     if( clicked_item_vd.is_selected() == false )
         vfs_items.emplace_back(clicked_item); // only clicked item
     else
-        vfs_items = m_Data.SelectedEntriesUnsorted(); // all selected items
+        vfs_items = m_Data.SelectedEntriesSorted(); // all selected items
 
     for( auto &i : vfs_items )
         m_Data.VolatileDataAtRawPosition(i.Index()).toggle_highlight(true);
     [_view volatileDataChanged];
 
-    const auto menu = m_ContextMenuProvider(std::move(vfs_items), self);
+    NCPanelContextMenu *const menu = m_ContextMenuProvider(std::move(vfs_items), self);
     return menu;
 }
 

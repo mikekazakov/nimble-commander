@@ -60,4 +60,9 @@
     return -1;
 }
 
+- (std::optional<NSRect>)frameOfItemAtIndex:(int)_sorted_item_index
+{
+    return {};
+}
+
 @end

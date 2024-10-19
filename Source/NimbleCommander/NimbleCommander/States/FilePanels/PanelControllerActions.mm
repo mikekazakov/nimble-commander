@@ -34,6 +34,7 @@
 #include "Actions/ShowQuickLook.h"
 #include "Actions/ShowSystemOverview.h"
 #include "Actions/FollowSymlink.h"
+#include "Actions/ShowContextMenu.h"
 
 namespace nc::panel {
 
@@ -151,6 +152,7 @@ PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
     add(@selector(OnCreateSymbolicLinkCommand:), new CreateSymlink);
     add(@selector(OnEditSymbolicLinkCommand:), new AlterSymlink);
     add(@selector(OnCreateHardLinkCommand:), new CreateHardlink);
+    add(@selector(onShowContextMenu:), new ShowContextMenu);
 
     return m;
 }

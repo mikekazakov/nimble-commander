@@ -546,7 +546,7 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
 
 static NSString *ComposeVerboseNonMenuActionTitle(const std::string &_action)
 {
-    [[clang::no_destroy]] static const std::vector<std::pair<const char *, NSString *>> titles = {
+    [[clang::no_destroy]] static const ankerl::unordered_dense::map<std::string, NSString *> titles = {
         {"panel.move_up", NSLocalizedString(@"File Panels ▶ Move Up", "")},
         {"panel.move_down", NSLocalizedString(@"File Panels ▶ Move Down", "")},
         {"panel.move_left", NSLocalizedString(@"File Panels ▶ Move Left", "")},
@@ -581,6 +581,7 @@ static NSString *ComposeVerboseNonMenuActionTitle(const std::string &_action)
         {"panel.show_tab_no_10", NSLocalizedString(@"File Panels ▶ Show Tab №10", "")},
         {"panel.focus_left_panel", NSLocalizedString(@"File Panels ▶ Focus Left Panel", "")},
         {"panel.focus_right_panel", NSLocalizedString(@"File Panels ▶ Focus Right Panel", "")},
+        {"panel.show_context_menu", NSLocalizedString(@"File Panels ▶ Show Context Menu", "")},
         {"viewer.toggle_text", NSLocalizedString(@"Viewer ▶ Toggle Text", "")},
         {"viewer.toggle_hex", NSLocalizedString(@"Viewer ▶ Toggle Hex", "")},
         {"viewer.toggle_preview", NSLocalizedString(@"Viewer ▶ Toggle Preview", "")},
@@ -589,9 +590,8 @@ static NSString *ComposeVerboseNonMenuActionTitle(const std::string &_action)
         {"viewer.refresh", NSLocalizedString(@"Viewer ▶ Refresh", "")},
     };
 
-    for( auto &i : titles )
-        if( i.first == _action )
-            return i.second;
+    if( const auto it = titles.find(_action); it != titles.end() )
+        return it->second;
 
     return nil;
 }

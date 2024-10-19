@@ -120,5 +120,6 @@ using PanelActionsMap = ankerl::unordered_dense::map<SEL, std::unique_ptr<const 
 - (IBAction)OnCreateHardLinkCommand:(id)sender;
 - (IBAction)OnFileViewCommand:(id)sender;
 - (IBAction)onFollowSymlink:(id)sender;
+- (IBAction)onShowContextMenu:(id)sender;
 
 @end

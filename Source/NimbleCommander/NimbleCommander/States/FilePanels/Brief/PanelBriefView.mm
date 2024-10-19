@@ -673,4 +673,13 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
         [m_CollectionView.backgroundView setNeedsDisplay:true];
 }
 
+- (std::optional<NSRect>)frameOfItemAtIndex:(int)_sorted_item_index
+{
+    const auto index_path = [NSIndexPath indexPathForItem:_sorted_item_index inSection:0];
+    NSCollectionViewLayoutAttributes *const attrs = [m_CollectionView layoutAttributesForItemAtIndexPath:index_path];
+    if( attrs == nil )
+        return {};
+    return [self convertRect:attrs.frame fromView:m_CollectionView];
+}
+
 @end

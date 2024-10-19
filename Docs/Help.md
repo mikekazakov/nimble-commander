@@ -514,6 +514,7 @@ Available hotkeys are listed below. These are the default values, which can be a
 | &nbsp; &nbsp; Show Tab №10                   |                           |
 | &nbsp; &nbsp; Focus Left Panel               | Shift + Cmd + Left        |
 | &nbsp; &nbsp; Focus Right Panel              | Shift + Cmd + Right       |
+| &nbsp; &nbsp; Show Context Menu              | Ctrl + Return             |
 | &nbsp; _**Viewer**_                          |                           |
 | &nbsp; &nbsp; Toggle Text                    | Cmd + 1                   |
 | &nbsp; &nbsp; Toggle Hex                     | Cmd + 2                   |

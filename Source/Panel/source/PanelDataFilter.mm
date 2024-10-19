@@ -10,11 +10,6 @@ namespace nc::panel::data {
 static_assert(sizeof(TextualFilter) == 10);
 static_assert(sizeof(HardFilter) == 11);
 
-TextualFilter::TextualFilter() noexcept
-    : text{nil}, type{Anywhere}, ignore_dot_dot{true}, clear_on_new_listing{false}, hightlight_results{true}
-{
-}
-
 bool TextualFilter::operator==(const TextualFilter &_r) const noexcept
 {
     if( type != _r.type )

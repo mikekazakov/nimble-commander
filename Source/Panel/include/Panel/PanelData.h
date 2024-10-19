@@ -116,16 +116,24 @@ public:
     // will throw an exception upon invalid index
     const ItemVolatileData &VolatileDataAtSortPosition(int _pos) const;
 
+    // Syntax sugar around SortedIndexForRawIndex(_item.Index()), but also checks
+    // if the item's listing is the same as the model's.
+    // Returns "-1" if the item is not found in the sorted representation.
+    // O(1) complexity.
+    int SortPositionOfEntry(const VFSListingItem &_item) const noexcept;
+
     std::vector<std::string> SelectedEntriesFilenames() const;
 
     /**
      * Returns a list of selected VFS items, without a specific order,
      * according to the raw structure of a listing.
+     * O(N) complexity.
      */
     std::vector<VFSListingItem> SelectedEntriesUnsorted() const;
 
     /**
      * Returns a list of selected VFS items, ordered according to the selected sort mode.
+     * O(N) complexity.
      */
     std::vector<VFSListingItem> SelectedEntriesSorted() const;
 

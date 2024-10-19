@@ -279,7 +279,8 @@ static const auto g_FavoritesWindowControllerDragDataType = @"com.magnumbytes.nc
         return;
     }
 
-    return [super keyDown:event];
+    [super keyDown:event];
+    return;
 }
 
 - (IBAction)onButtonClicked:(id)sender

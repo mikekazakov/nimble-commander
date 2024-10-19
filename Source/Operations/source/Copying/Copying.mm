@@ -458,8 +458,10 @@ Copying::OnCantDeleteDestinationFile(int _err, const std::string &_path, VFSHost
 
 void Copying::OnFileVerificationFailed(const std::string &_path, VFSHost &_vfs)
 {
-    if( m_CallbackHooks && m_CallbackHooks->m_OnFileVerificationFailed )
-        return m_CallbackHooks->m_OnFileVerificationFailed(_path, _vfs);
+    if( m_CallbackHooks && m_CallbackHooks->m_OnFileVerificationFailed ) {
+        m_CallbackHooks->m_OnFileVerificationFailed(_path, _vfs);
+        return;
+    }
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::Continue,

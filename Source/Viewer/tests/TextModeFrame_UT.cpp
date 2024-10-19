@@ -12,7 +12,7 @@
 using nc::viewer::TextModeFrame;
 using nc::viewer::TextModeWorkingSet;
 
-static std::shared_ptr<const TextModeWorkingSet> ProduceWorkingSet(const char16_t *_chars, const int _chars_number);
+static std::shared_ptr<const TextModeWorkingSet> ProduceWorkingSet(const char16_t *_chars, int _chars_number);
 static std::shared_ptr<const TextModeFrame> ProduceFrame(std::shared_ptr<const TextModeWorkingSet> _working_set,
                                                          double _wrapping_width,
                                                          int _tab_spaces,

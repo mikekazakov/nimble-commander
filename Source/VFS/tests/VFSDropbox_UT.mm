@@ -95,8 +95,10 @@ const Reaction *URLSessionMockFactory::NextReaction()
 
 void URLSessionMockFactory::PopReaction()
 {
-    if( !m_Reactions.empty() )
-        return m_Reactions.pop();
+    if( !m_Reactions.empty() ) {
+        m_Reactions.pop();
+        return;
+    }
 }
 
 @implementation NCVFSDropboxMockURLSession {

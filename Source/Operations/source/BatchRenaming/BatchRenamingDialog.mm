@@ -634,7 +634,8 @@ using SourceReverseMappingStorage =
         return;
     }
 
-    return [super keyDown:event];
+    [super keyDown:event];
+    return;
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item

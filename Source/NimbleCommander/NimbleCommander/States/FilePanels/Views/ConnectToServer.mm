@@ -353,7 +353,8 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
         return;
     }
 
-    return [super keyDown:event];
+    [super keyDown:event];
+    return;
 }
 
 - (bool)LANSharesEnabled

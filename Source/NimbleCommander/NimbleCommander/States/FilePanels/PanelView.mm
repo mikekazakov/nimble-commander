@@ -17,6 +17,7 @@
 #include "PanelViewDelegate.h"
 #include "DragReceiver.h"
 #include "DragSender.h"
+#include "ContextMenu.h"
 #include <Panel/PanelViewFieldEditor.h>
 #include <Panel/PanelViewKeystrokeSink.h>
 #include "PanelViewDummyPresentation.h"
@@ -1133,6 +1134,14 @@ struct StateStorage {
 - (void)removeKeystrokeSink:(id<NCPanelViewKeystrokeSink>)_sink
 {
     std::erase(m_KeystrokeSinks, _sink);
+}
+
+- (std::optional<NSRect>)frameOfItemAtSortPos:(int)_sorted_position
+{
+    const std::optional<NSRect> frame = [m_ItemsView frameOfItemAtIndex:_sorted_position];
+    if( !frame )
+        return {};
+    return [self convertRect:*frame fromView:m_ItemsView];
 }
 
 @end

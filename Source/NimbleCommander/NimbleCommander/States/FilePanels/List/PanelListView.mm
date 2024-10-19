@@ -1141,6 +1141,14 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     [m_TableView enumerateAvailableRowViewsUsingBlock:block];
 }
 
+- (std::optional<NSRect>)frameOfItemAtIndex:(int)_sorted_item_index
+{
+    const NSRect rc = [m_TableView rectOfRow:_sorted_item_index];
+    if( rc.size.height == 0. )
+        return {};
+    return [self convertRect:rc fromView:m_TableView];
+}
+
 @end
 
 static PanelListViewColumns IdentifierToKind(char _letter) noexcept

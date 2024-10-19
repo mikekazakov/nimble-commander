@@ -11,6 +11,7 @@
 #include <fmt/ranges.h>
 
 @class PanelController;
+@class NCPanelContextMenu;
 @class PanelView;
 @class BriefSystemOverview;
 @class MainWindowFilePanelState;
@@ -115,7 +116,8 @@ struct DirectoryChangeRequest {
     int LoadingResultCode = 0;
 };
 
-using ContextMenuProvider = std::function<NSMenu *(std::vector<VFSListingItem> _items, PanelController *_panel)>;
+using ContextMenuProvider =
+    std::function<NCPanelContextMenu *(std::vector<VFSListingItem> _items, PanelController *_panel)>;
 
 } // namespace panel
 } // namespace nc

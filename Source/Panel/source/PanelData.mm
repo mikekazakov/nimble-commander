@@ -490,6 +490,15 @@ VFSListingItem Model::EntryAtSortPosition(int _pos) const noexcept
     return EntryAtRawPosition(RawIndexForSortIndex(_pos));
 }
 
+int Model::SortPositionOfEntry(const VFSListingItem &_item) const noexcept
+{
+    if( _item.Listing() != m_Listing ) {
+        Log::Warn("Model::SortPositionOfEntry has been provided with an unrelated vfs item");
+        return -1;
+    }
+    return SortedIndexForRawIndex(_item.Index());
+}
+
 void Model::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
 {
     if( _at_raw_pos < 0 || _at_raw_pos >= static_cast<int>(m_Listing->Count()) )

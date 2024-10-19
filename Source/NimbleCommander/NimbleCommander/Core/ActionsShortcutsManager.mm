@@ -210,6 +210,7 @@ static constexpr std::pair<const char*,int> g_ActionsTags[] = {
     {"panel.show_tab_no_10",                            100'169},
     {"panel.focus_left_panel",                          100'170},
     {"panel.focus_right_panel",                         100'171},
+    {"panel.show_context_menu",                         100'180},
         
     {"viewer.toggle_text",                              101'000},
     {"viewer.toggle_hex",                               101'001},
@@ -410,6 +411,7 @@ static constinit std::pair<const char*, const char8_t*> g_DefaultShortcuts[] = {
     {"panel.show_tab_no_10",                                u8""        },
     {"panel.focus_left_panel",                              u8"⇧⌘\uF702"}, // shift+cmd+left
     {"panel.focus_right_panel",                             u8"⇧⌘\uF703"}, // shift+cmd+right
+    {"panel.show_context_menu",                             u8"^\\r"    }, // ctrl+↵
     
     {"viewer.toggle_text",                                  u8"⌘1"      }, // cmd+1
     {"viewer.toggle_hex",                                   u8"⌘2"      }, // cmd+2

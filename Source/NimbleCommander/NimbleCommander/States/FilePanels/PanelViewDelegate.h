@@ -4,6 +4,7 @@
 #include <memory>
 
 @class PanelView;
+@class NCPanelContextMenu;
 
 namespace nc::panel {
 class DragReceiver;
@@ -13,7 +14,7 @@ class DragReceiver;
 @required
 - (void)panelViewCursorChanged:(PanelView *)_view;
 
-- (NSMenu *)panelView:(PanelView *)_view requestsContextMenuForItemNo:(int)_sort_pos;
+- (NCPanelContextMenu *)panelView:(PanelView *)_view requestsContextMenuForItemNo:(int)_sort_pos;
 
 - (std::unique_ptr<nc::panel::DragReceiver>)panelView:(PanelView *)_view
                       requestsDragReceiverForDragging:(id<NSDraggingInfo>)_dragging

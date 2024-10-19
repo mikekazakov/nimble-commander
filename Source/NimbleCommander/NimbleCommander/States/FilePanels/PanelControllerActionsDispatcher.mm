@@ -50,8 +50,15 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 {
     const auto event_data = nc::utility::ActionShortcut::EventData(_event);
 
-    static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native, hk_go_root, hk_go_home, hk_preview,
-        hk_go_into, kh_go_outside;
+    static ActionsShortcutsManager::ShortCut //
+        hk_file_open,                        //
+        hk_file_open_native,                 //
+        hk_go_root,                          //
+        hk_go_home,                          //
+        hk_preview,                          //
+        hk_go_into,                          //
+        hk_go_outside,                       //
+        hk_show_context_menu;                //
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
         std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
             {.shortcut = &hk_file_open, .action = "menu.file.enter"},
@@ -60,7 +67,8 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
             {.shortcut = &hk_go_home, .action = "panel.go_home"},
             {.shortcut = &hk_preview, .action = "panel.show_preview"},
             {.shortcut = &hk_go_into, .action = "panel.go_into_folder"},
-            {.shortcut = &kh_go_outside, .action = "panel.go_into_enclosing_folder"}});
+            {.shortcut = &hk_go_outside, .action = "panel.go_into_enclosing_folder"},
+            {.shortcut = &hk_show_context_menu, .action = "panel.show_context_menu"}});
 
     if( hk_preview.IsKeyDown(event_data) ) {
         if( _handle ) {
@@ -96,7 +104,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
         return view::BiddingPriority::High;
     }
 
-    if( kh_go_outside.IsKeyDown(event_data) ) {
+    if( hk_go_outside.IsKeyDown(event_data) ) {
         if( _handle ) {
             static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.enclosing_folder");
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
@@ -111,9 +119,17 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
         }
         return view::BiddingPriority::High;
     }
+
     if( hk_file_open_native.IsKeyDown(event_data) ) {
         if( _handle ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnOpenNatively:) withSender:self];
+        }
+        return view::BiddingPriority::High;
+    }
+
+    if( hk_show_context_menu.IsKeyDown(event_data) ) {
+        if( _handle ) {
+            [self executeBySelectorIfValidOrBeep:@selector(onShowContextMenu:) withSender:self];
         }
         return view::BiddingPriority::High;
     }
@@ -571,6 +587,10 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
     PERFORM;
 }
 - (IBAction)onFollowSymlink:(id)sender
+{
+    PERFORM;
+}
+- (IBAction)onShowContextMenu:(id)sender
 {
     PERFORM;
 }

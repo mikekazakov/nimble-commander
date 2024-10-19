@@ -346,6 +346,8 @@
 		CFC7066B2B4986150045D2C9 /* info.filesmanager.Files.PrivilegedIOHelperV2 in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFC705DF2B497D1A0045D2C9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CFC7066D2B49AF480045D2C9 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC706482B497F6A0045D2C9 /* LetsMove.framework */; };
 		CFC7066E2B49AF6D0045D2C9 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC706462B497F5C0045D2C9 /* Sparkle.framework */; };
+		CFCBA8BB2CC3B1B4009ABD2C /* ShowContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = CFCBA8B92CC3B1B4009ABD2C /* ShowContextMenu.h */; };
+		CFCBA8BC2CC3B1B4009ABD2C /* ShowContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCBA8BA2CC3B1B4009ABD2C /* ShowContextMenu.mm */; };
 		CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
 		CFCCFBAF1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
 		CFCCFBB81A5D687600313845 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */; };
@@ -1215,6 +1217,8 @@
 		CFC705FA2B497D600045D2C9 /* VFSIcon.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VFSIcon.xcodeproj; path = ../VFSIcon/VFSIcon.xcodeproj; sourceTree = "<group>"; };
 		CFC706462B497F5C0045D2C9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = ../../../3rd_Party/Sparkle/Sparkle.framework; sourceTree = "<group>"; };
 		CFC706482B497F6A0045D2C9 /* LetsMove.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LetsMove.framework; path = ../../../3rd_Party/LetsMove/LetsMove.framework; sourceTree = "<group>"; };
+		CFCBA8B92CC3B1B4009ABD2C /* ShowContextMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ShowContextMenu.h; path = NimbleCommander/States/FilePanels/Actions/ShowContextMenu.h; sourceTree = "<group>"; };
+		CFCBA8BA2CC3B1B4009ABD2C /* ShowContextMenu.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = ShowContextMenu.mm; path = NimbleCommander/States/FilePanels/Actions/ShowContextMenu.mm; sourceTree = "<group>"; };
 		CFCCFBB11A5D340000313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SFTPConnectionSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBBB1A5D687600313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FTPConnectionSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBC51A5D7F0E00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/GoToFolderSheetController.xib; sourceTree = "<group>"; };
@@ -1765,6 +1769,8 @@
 				CF197C4B1FB960CC009F6C59 /* RevealInOppositePanel.mm */,
 				CF6ECDB41E9F7353008FA79E /* Select.h */,
 				CF6ECDB51E9F7353008FA79E /* Select.mm */,
+				CFCBA8B92CC3B1B4009ABD2C /* ShowContextMenu.h */,
+				CFCBA8BA2CC3B1B4009ABD2C /* ShowContextMenu.mm */,
 				CF0139B61E9B156500E44F2D /* ShowGoToPopup.h */,
 				CF0139B71E9B156500E44F2D /* ShowGoToPopup.mm */,
 				CF5E9A511FCBF57A005608F5 /* ShowQuickLook.h */,
@@ -2253,6 +2259,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFCBA8BB2CC3B1B4009ABD2C /* ShowContextMenu.h in Headers */,
 				CFCF44012BA2418100B513C7 /* ConfigBinder.h in Headers */,
 				CFEADD49259CF60D009ECA14 /* ChangePanelsPosition.h in Headers */,
 				CFEADD54259D01AD009ECA14 /* FocusOverlappedTerminal.h in Headers */,
@@ -3164,6 +3171,7 @@
 				CF0A48672BDDA3EB00833160 /* PanelListViewRowView.mm in Sources */,
 				CF0A48852BDDA57100833160 /* AskForPasswordWindowController.mm in Sources */,
 				CF0A48842BDDA56400833160 /* TabBarStyle.mm in Sources */,
+				CFCBA8BC2CC3B1B4009ABD2C /* ShowContextMenu.mm in Sources */,
 				CFA999F3264F17A800F72E93 /* CLI.cpp in Sources */,
 				CF0A482E2BDDA0C200833160 /* ChangeAttributes.mm in Sources */,
 				CF0A48492BDDA29000833160 /* Select.mm in Sources */,

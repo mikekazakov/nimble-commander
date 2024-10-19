@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -89,6 +89,10 @@ class Model;
 // PanelViewLayout
 - (std::any)presentationLayout;
 - (void)setPresentationLayout:(const nc::panel::PanelViewLayout &)_layout;
+
+// Returns a frame of the view representing the item at the specified sorted position.
+// Will return std::nullopt if the position is invalid.
+- (std::optional<NSRect>)frameOfItemAtSortPos:(int)_sorted_position;
 
 /*
  * PanelView implementation hooks.

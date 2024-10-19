@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFSDeclarations.h>
@@ -22,12 +22,18 @@ struct TextualFilter {
     };
 
     NSString *text;
-    Where type;
-    bool ignore_dot_dot : 1;       // will not apply filter on dot-dot entries
-    bool clear_on_new_listing : 1; // if true then PanelData will automatically set text to nil on Load method call
-    bool hightlight_results : 1;   // option for PanelData to mark QS hightlight
+    Where type = Where::Anywhere;
 
-    TextualFilter() noexcept;
+    // will not apply filter on dot-dot entries
+    bool ignore_dot_dot : 1 = true;
+
+    // if true then PanelData will automatically set text to nil on Load method call
+    bool clear_on_new_listing : 1 = false;
+
+    // option for PanelData to mark QS hightlight
+    bool hightlight_results : 1 = true;
+
+    constexpr TextualFilter() noexcept = default;
     bool operator==(const TextualFilter &_r) const noexcept;
     bool operator!=(const TextualFilter &_r) const noexcept;
     static Where WhereFromInt(int _v) noexcept;

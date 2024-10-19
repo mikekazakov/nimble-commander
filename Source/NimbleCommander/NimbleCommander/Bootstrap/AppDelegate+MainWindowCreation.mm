@@ -309,7 +309,7 @@ static PanelController *PanelFactory()
 
 - (nc::panel::ContextMenuProvider)makePanelContextMenuProvider
 {
-    auto provider = [self](std::vector<VFSListingItem> _items, PanelController *_panel) -> NSMenu * {
+    auto provider = [self](std::vector<VFSListingItem> _items, PanelController *_panel) -> NCPanelContextMenu * {
         return [[NCPanelContextMenu alloc] initWithItems:std::move(_items)
                                                  ofPanel:_panel
                                           withFileOpener:self.fileOpener

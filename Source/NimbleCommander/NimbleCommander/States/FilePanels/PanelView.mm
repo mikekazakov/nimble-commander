@@ -471,7 +471,7 @@ struct StateStorage {
 {
     dispatch_assert_main_queue();
 
-    const auto clipped_pos = (m_Data->SortedDirectoryEntries().size() > 0 && _pos >= 0 &&
+    const auto clipped_pos = (!m_Data->SortedDirectoryEntries().empty() && _pos >= 0 &&
                               _pos < static_cast<int>(m_Data->SortedDirectoryEntries().size()))
                                  ? _pos
                                  : -1;
@@ -830,7 +830,7 @@ struct StateStorage {
         [self setCurpos:cur];
     }
 
-    if( m_CursorPos < 0 && m_Data->SortedDirectoryEntries().size() > 0 ) {
+    if( m_CursorPos < 0 && !m_Data->SortedDirectoryEntries().empty() ) {
         [self setCurpos:0];
     }
 

@@ -10,11 +10,11 @@ using namespace std;
 TEST_CASE(PREFIX "empty")
 {
     const StringsBulk sb1;
-    CHECK(sb1.size() == 0);
+    CHECK(sb1.size() == 0); // NOLINT
     CHECK(sb1.empty() == true);
 
     const StringsBulk sb2 = StringsBulk::Builder{}.Build();
-    CHECK(sb2.size() == 0);
+    CHECK(sb2.size() == 0); // NOLINT
     CHECK(sb2.empty() == true);
 }
 
@@ -43,7 +43,7 @@ TEST_CASE(PREFIX "empty strings")
     std::string out;
     for( int i = 0; i < n; ++i )
         out += sb[i];
-    CHECK(out == "");
+    CHECK(out == ""); // NOLINT
 }
 
 TEST_CASE(PREFIX "invalid at")

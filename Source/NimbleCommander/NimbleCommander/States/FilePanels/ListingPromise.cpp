@@ -154,7 +154,7 @@ size_t ListingPromise::NonUniformListing::EntriesCount() const noexcept
     size_t count = 0;
     for( auto &vfs : per_vfs )
         for( auto &dir : vfs.entries ) {
-            assert(dir.size() != 0);
+            assert(!dir.empty());
             count += dir.size() - 1;
         }
     return count;

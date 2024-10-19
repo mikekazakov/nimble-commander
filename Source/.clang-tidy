@@ -94,11 +94,11 @@ Checks: >
   readability-avoid-nested-conditional-operator,
   readability-avoid-return-with-void-value,
   # readability-avoid-unconditional-preprocessor-if, <-- sometimes is still usefull, can't blanketly disallow
-  # readability-braces-around-statements,
-  # readability-const-return-type,
-  # readability-container-contains,
-  # readability-container-data-pointer,
-  # readability-container-size-empty,
+  # readability-braces-around-statements, <-- maybe a good idea, but is a rather huge change to apply
+  readability-const-return-type,
+  readability-container-contains,
+  readability-container-data-pointer,
+  readability-container-size-empty,
   # readability-convert-member-functions-to-static,
   # readability-delete-null-pointer,
   # readability-duplicate-include,

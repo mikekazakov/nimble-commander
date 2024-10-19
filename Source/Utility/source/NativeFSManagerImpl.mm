@@ -778,7 +778,7 @@ static std::vector<FirmlinksMappingParser::Firmlink> FetchFirmlinks() noexcept
         in.seekg(0, std::ios::end);
         mapping.resize(in.tellg());
         in.seekg(0, std::ios::beg);
-        in.read(&mapping[0], mapping.size());
+        in.read(mapping.data(), mapping.size());
         in.close();
 
         FirmlinksMappingParser parser;

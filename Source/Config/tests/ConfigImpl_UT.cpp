@@ -107,9 +107,9 @@ TEST_CASE("Config returns a valid string value or an empty string")
     const ConfigImpl config{json, MakeDummyStorage()};
 
     CHECK(config.GetString("abra") == "abc");
-    CHECK(config.GetString("cadabra") == "");
-    CHECK(config.GetString("alakazam") == "");
-    CHECK(config.GetString("foobar") == "");
+    CHECK(config.GetString("cadabra").empty());
+    CHECK(config.GetString("alakazam").empty());
+    CHECK(config.GetString("foobar").empty());
 }
 
 TEST_CASE("Config overwrites existing values with proper types and values")

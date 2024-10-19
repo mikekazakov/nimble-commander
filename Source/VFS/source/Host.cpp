@@ -578,8 +578,10 @@ std::string Host::MakePathVerbose(std::string_view _path) const
     }
 
     // make one and only one memory allocation
-    const size_t total_len = std::accumulate(
-        &strings[0], &strings[0] + strings_n, size_t(0), [](auto sum, auto string) { return sum + string.length(); });
+    const size_t total_len =
+        std::accumulate(strings.data(), strings.data() + strings_n, size_t(0), [](auto sum, auto string) {
+            return sum + string.length();
+        });
     std::string verbose_path;
     verbose_path.reserve(total_len);
     for( size_t index = strings_n - 1; index < strings_n; --index )

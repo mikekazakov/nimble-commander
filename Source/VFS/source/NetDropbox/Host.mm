@@ -372,7 +372,7 @@ int DropboxHost::FetchDirectoryListing(std::string_view _path,
     listing_source.ctimes.reset(variable_container<>::type::sparse);
     listing_source.mtimes.reset(variable_container<>::type::sparse);
     int listing_index = 0;
-    if( !(_flags & VFSFlags::F_NoDotDot) && path != "" ) {
+    if( !(_flags & VFSFlags::F_NoDotDot) && !path.empty() ) {
         listing_source.filenames.emplace_back("..");
         listing_source.unix_modes.emplace_back(DirectoryAccessMode);
         listing_source.unix_types.emplace_back(DT_DIR);

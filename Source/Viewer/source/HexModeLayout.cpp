@@ -75,7 +75,7 @@ std::optional<int> HexModeLayout::FindRowToScrollWithGlobalOffset(int64_t _globa
     if( _global_offset >= working_set_pos && _global_offset < working_set_pos + working_set_len ) {
         // seems that we can satisfy this request immediately, without I/O
         const auto local_offset = static_cast<int>(_global_offset - working_set_pos);
-        const auto first_row = &m_Frame->Rows()[0];
+        const auto first_row = m_Frame->Rows().data();
         const auto last_row = first_row + number_of_rows;
         const int closest = HexModeFrame::FindFloorClosest(first_row, last_row, local_offset);
         if( closest + rows_in_view < number_of_rows ) {

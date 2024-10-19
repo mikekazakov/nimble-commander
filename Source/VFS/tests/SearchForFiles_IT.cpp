@@ -66,7 +66,7 @@ TEST_CASE(PREFIX "Test basic searching")
     {
         search.SetFilterName(FileMask("*.jpg"));
         do_search(Options::GoIntoSubDirs | Options::SearchForDirs | Options::SearchForFiles);
-        CHECK(filenames == set{});
+        CHECK(filenames.empty());
     }
     SECTION("search for all entries with mask='*filename*'")
     {
@@ -176,7 +176,7 @@ TEST_CASE(PREFIX "Test content filter")
         filter.case_sensitive = true;
         search.SetFilterContent(filter);
         do_search(Options::GoIntoSubDirs | Options::SearchForFiles | Options::SearchForDirs);
-        CHECK(filenames == set{});
+        CHECK(filenames.empty());
     }
     SECTION("hello, not containing")
     {
@@ -203,7 +203,7 @@ TEST_CASE(PREFIX "Test content filter")
         filter.whole_phrase = true;
         search.SetFilterContent(filter);
         do_search(Options::GoIntoSubDirs | Options::SearchForFiles | Options::SearchForDirs);
-        CHECK(filenames == set{});
+        CHECK(filenames.empty());
     }
     SECTION("мир, UTF8")
     {
@@ -220,7 +220,7 @@ TEST_CASE(PREFIX "Test content filter")
         filter.encoding = nc::utility::Encoding::ENCODING_MACOS_ROMAN_WESTERN;
         search.SetFilterContent(filter);
         do_search(Options::GoIntoSubDirs | Options::SearchForFiles | Options::SearchForDirs);
-        CHECK(filenames == set{});
+        CHECK(filenames.empty());
     }
 }
 

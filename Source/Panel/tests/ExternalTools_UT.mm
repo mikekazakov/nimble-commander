@@ -83,7 +83,7 @@ TEST_CASE(PREFIX "Parsing - dialog value")
         const auto p = ExternalToolsParametersParser{}.Parse("%?").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::EnterValue, 0});
-        REQUIRE(p.GetEnterValue(0).name == "");
+        REQUIRE(p.GetEnterValue(0).name.empty());
     }
     {
         const auto p = ExternalToolsParametersParser{}.Parse("%\"hello\"?").value();

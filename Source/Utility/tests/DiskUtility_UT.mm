@@ -127,7 +127,7 @@ TEST_CASE(PREFIX "APFSTree can find volumes by role from a container name (10_14
 
     const auto disk6_data = tree.FindVolumesInContainerWithRole("disk6", APFSTree::Role::Data);
     REQUIRE(disk6_data);
-    CHECK(disk6_data->size() == 0);
+    CHECK(disk6_data->empty());
 }
 
 TEST_CASE(PREFIX "APFSTree can find volumes by role from a container name (10_15)")

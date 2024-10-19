@@ -245,7 +245,7 @@ std::optional<PersistentLocation> PanelDataPersistency::JSONToLocation(const jso
             else if( tag == vfs::XAttrHost::UniqueTag ) {
                 if( !has_string(g_HostInfoJunctionKey) )
                     return std::nullopt; // invalid data
-                if( result.hosts.size() < 1 )
+                if( result.hosts.empty() )
                     return std::nullopt; // invalid data
 
                 result.hosts.emplace_back(XAttr{h[g_HostInfoJunctionKey].GetString()});
@@ -262,7 +262,7 @@ std::optional<PersistentLocation> PanelDataPersistency::JSONToLocation(const jso
             else if( tag == vfs::ArchiveHost::UniqueTag ) {
                 if( !has_string(g_HostInfoJunctionKey) )
                     return std::nullopt; // invalid data
-                if( result.hosts.size() < 1 )
+                if( result.hosts.empty() )
                     return std::nullopt; // invalid data
 
                 result.hosts.emplace_back(ArcLA{h[g_HostInfoJunctionKey].GetString()});
@@ -270,7 +270,7 @@ std::optional<PersistentLocation> PanelDataPersistency::JSONToLocation(const jso
             else if( tag == vfs::ArchiveRawHost::UniqueTag ) {
                 if( !has_string(g_HostInfoJunctionKey) )
                     return std::nullopt; // invalid data
-                if( result.hosts.size() < 1 )
+                if( result.hosts.empty() )
                     return std::nullopt; // invalid data
 
                 result.hosts.emplace_back(ArcLARaw{h[g_HostInfoJunctionKey].GetString()});
@@ -551,7 +551,7 @@ int PanelDataPersistency::CreateVFSFromLocation(const PersistentLocation &_state
                 vfs.emplace_back(vfs::PSHost::GetSharedOrNew());
             }
             else if( auto xattr = std::any_cast<XAttr>(&h) ) {
-                if( vfs.size() < 1 )
+                if( vfs.empty() )
                     return VFSError::GenericError; // invalid data
 
                 auto xattr_vfs = std::make_shared<vfs::XAttrHost>(xattr->junction.c_str(), vfs.back());
@@ -568,14 +568,14 @@ int PanelDataPersistency::CreateVFSFromLocation(const PersistentLocation &_state
                     return VFSError::GenericError; // failed to find connection by uuid
             }
             else if( auto la = std::any_cast<ArcLA>(&h) ) {
-                if( vfs.size() < 1 )
+                if( vfs.empty() )
                     return VFSError::GenericError; // invalid data
 
                 auto host = std::make_shared<vfs::ArchiveHost>(la->junction.c_str(), vfs.back());
                 vfs.emplace_back(host);
             }
             else if( auto la_raw = std::any_cast<ArcLARaw>(&h) ) {
-                if( vfs.size() < 1 )
+                if( vfs.empty() )
                     return VFSError::GenericError; // invalid data
 
                 auto host = std::make_shared<vfs::ArchiveRawHost>(la_raw->junction.c_str(), vfs.back());

@@ -161,7 +161,7 @@ TEST_CASE("IconRepositoryImpl makes an unregistered key invalid")
     repository.Unregister(key);
 
     CHECK(repository.IsValidSlot(key) == false);
-    CHECK(repository.AllSlots().size() == 0);
+    CHECK(repository.AllSlots().empty());
 }
 
 TEST_CASE("IconRepositoryImpl reuses unregistered keys")

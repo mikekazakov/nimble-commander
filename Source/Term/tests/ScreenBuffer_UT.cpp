@@ -44,8 +44,8 @@ TEST_CASE(PREFIX "Init")
         auto l1 = buffer.LineFromNo(0);
         auto l2 = buffer.LineFromNo(1);
         REQUIRE(l1.data() == l1.data());
-        REQUIRE(l1.size() == 0);
-        REQUIRE(l2.size() == 0);
+        REQUIRE(l1.empty());
+        REQUIRE(l2.empty());
     }
 }
 

@@ -1086,7 +1086,7 @@ static std::optional<int> FindVerticalLineToScrollToBytesOffsetWithFrame(const T
     if( _global_offset >= working_set_pos && _global_offset < working_set_pos + working_set_len ) {
         // seems that we can satisfy this request immediately, without I/O
         const auto local_offset = static_cast<int>(_global_offset - working_set_pos);
-        const auto first_line = &_frame.Lines()[0];
+        const auto first_line = _frame.Lines().data();
         const auto last_line = first_line + _frame.LinesNumber();
         const int closest = FindFloorClosestLineIndex(first_line, last_line, local_offset);
         if( closest + lines_per_view < _frame.LinesNumber() ) {

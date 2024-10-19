@@ -129,7 +129,7 @@ TEST_CASE(PREFIX "XNUSource - TAR")
           std::this_thread::sleep_for(std::chrono::milliseconds(5));
           auto d = file->ReadFile();
           REQUIRE(d);
-          REQUIRE(d->size() > 0);
+          REQUIRE(!d->empty());
           REQUIRE(d->size() == local_st.size);
         });
 

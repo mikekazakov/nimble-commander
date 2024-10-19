@@ -404,7 +404,7 @@ void NativeFSManagerImpl::OnDidRename(const std::string &_old_path, const std::s
         const auto pred = [=](std::shared_ptr<NativeFileSystemInfo> &_v) { return _v->mounted_at_path == _old_path; };
         auto it = std::ranges::find_if(m_Volumes, pred);
         if( it != std::end(m_Volumes) ) {
-            auto volume = *it;
+            const auto &volume = *it;
             volume->mounted_at_path = _new_path;
             GetVerboseInfo(*volume.get());
             m_VolumeLookup.Remove(EnsureTrailingSlash(_old_path));

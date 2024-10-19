@@ -90,7 +90,7 @@ bool TemporaryNativeFileChangesSentinel::StopFileWatch(const std::string &_path)
     auto lock = std::lock_guard{m_WatchesLock};
     auto it = std::ranges::find_if(m_Watches, [&](const auto &_i) { return _i->path == _path; });
     if( it != end(m_Watches) ) {
-        auto meta = *it;
+        const auto &meta = *it;
         dir_update.RemoveWatchPathWithTicket(meta->fswatch_ticket);
         meta->fswatch_ticket = 0;
         m_Watches.erase(it);

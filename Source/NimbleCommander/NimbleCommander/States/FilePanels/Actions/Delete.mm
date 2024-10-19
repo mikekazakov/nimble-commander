@@ -42,9 +42,12 @@ void Delete::Perform(PanelController *_target, id) const
     if( AllAreNative(*items) ) {
         const auto try_trash = TryTrash(*items, m_NativeFSManager);
         sheet.allowMoveToTrash = try_trash;
-        sheet.defaultType = m_Permanently
-                                ? nc::ops::DeletionType::Permanent
-                                : (try_trash ? nc::ops::DeletionType::Trash : nc::ops::DeletionType::Permanent);
+        sheet.defaultType = [&] {
+            if( m_Permanently )
+                return nc::ops::DeletionType::Permanent;
+            else
+                return try_trash ? nc::ops::DeletionType::Trash : nc::ops::DeletionType::Permanent;
+        }();
     }
     else {
         sheet.allowMoveToTrash = false;

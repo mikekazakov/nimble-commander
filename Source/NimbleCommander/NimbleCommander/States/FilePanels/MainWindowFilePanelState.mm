@@ -222,7 +222,8 @@ static NSString *TitleForData(const data::Model *_data);
     using nc::utility::PathManip;
     auto left_controller = m_LeftPanelControllers.front();
     auto right_controller = m_RightPanelControllers.front();
-    std::vector<std::string> left_panel_desired_paths, right_panel_desired_paths;
+    std::vector<std::string> left_panel_desired_paths;
+    std::vector<std::string> right_panel_desired_paths;
 
     // 1st attempt - load editable default path from config
     left_panel_desired_paths.emplace_back(EnsureTrailingSlash(

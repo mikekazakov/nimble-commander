@@ -207,7 +207,8 @@ SendSynchronousRequest(NSURLSession *_session, NSURLRequest *_request, const VFS
 Metadata ParseMetadata(const rapidjson::Value &_value)
 {
     using namespace std::literals;
-    [[clang::no_destroy]] static const auto file_type = "file"s, folder_type = "folder"s;
+    [[clang::no_destroy]] static const auto file_type = "file"s;
+    [[clang::no_destroy]] static const auto folder_type = "folder"s;
     [[clang::no_destroy]] static const auto date_formatter = [] {
         NSDateFormatter *const df = [[NSDateFormatter alloc] init];
         df.dateFormat = @"yyyy-MM-dd'T'HH:mm:ssZZZZZ";

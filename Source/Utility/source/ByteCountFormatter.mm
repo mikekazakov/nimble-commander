@@ -354,7 +354,9 @@ int ByteCountFormatter::Adaptive6_Impl(uint64_t _size, unsigned short _buf[6]) c
         return len + 2;
     }
 
-    unsigned int remainer = 0, hrem = 0, expo = 1;
+    unsigned int remainer = 0;
+    unsigned int hrem = 0;
+    unsigned int expo = 1;
     for( ;; expo++ ) {
         remainer = _size % 1024ULL;
         _size = _size / 1024ULL;

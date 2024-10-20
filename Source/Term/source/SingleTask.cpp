@@ -145,7 +145,8 @@ void SingleTask::WriteChildInput(const void *_d, size_t _sz)
 void SingleTask::ReadChildOutput()
 {
     int rc;
-    fd_set fd_in, fd_err;
+    fd_set fd_in;
+    fd_set fd_err;
 
     // just for cases when select() don't catch child death - we force to ask it for every 2 seconds
     struct timeval timeout = {.tv_sec = 2, .tv_usec = 0};
@@ -232,7 +233,8 @@ void SingleTask::CleanUp()
         kill(pid, SIGKILL);
 
         // possible and very bad workaround for sometimes appearing ZOMBIE BASHes
-        struct timespec tm, tm2;
+        struct timespec tm;
+        struct timespec tm2;
         tm.tv_sec = 0;
         tm.tv_nsec = 10000000L; // 10 ms
         nanosleep(&tm, &tm2);

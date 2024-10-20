@@ -395,7 +395,9 @@ int Host::FetchSingleItemListing(std::string_view _path,
         return VFSError::Cancelled;
 
     // TODO: rewriting without using C-style strings
-    char path[MAXPATHLEN], directory[MAXPATHLEN], filename[MAXPATHLEN];
+    char path[MAXPATHLEN];
+    char directory[MAXPATHLEN];
+    char filename[MAXPATHLEN];
     memcpy(path, _path.data(), _path.length());
     path[_path.length()] = 0;
 

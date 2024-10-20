@@ -305,7 +305,8 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
         // draw the selection background
         if( selection.location >= 0 ) {
             const auto selection_end = selection.location + selection.length;
-            double x1 = 0, x2 = -1;
+            double x1 = 0;
+            double x2 = -1;
             if( line.UniCharsStart() <= selection.location && line.UniCharsEnd() > selection.location ) {
                 x1 = line_pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection.location, nullptr);
                 x2 = ((selection_end <= line.UniCharsEnd())

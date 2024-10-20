@@ -259,7 +259,8 @@ static constexpr auto g_DividerThickness = 1.;
 {
     const auto event_data = nc::utility::ActionShortcut::EventData(_event);
 
-    static ActionsShortcutsManager::ShortCut hk_move_left, hk_move_right;
+    static ActionsShortcutsManager::ShortCut hk_move_left;
+    static ActionsShortcutsManager::ShortCut hk_move_right;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
         std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
             {.shortcut = &hk_move_left, .action = "menu.view.panels_position.move_left"},

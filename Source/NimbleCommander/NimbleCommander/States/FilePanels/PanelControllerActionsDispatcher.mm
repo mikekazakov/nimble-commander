@@ -50,15 +50,14 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 {
     const auto event_data = nc::utility::ActionShortcut::EventData(_event);
 
-    static ActionsShortcutsManager::ShortCut //
-        hk_file_open,                        //
-        hk_file_open_native,                 //
-        hk_go_root,                          //
-        hk_go_home,                          //
-        hk_preview,                          //
-        hk_go_into,                          //
-        hk_go_outside,                       //
-        hk_show_context_menu;                //
+    static ActionsShortcutsManager::ShortCut hk_file_open;         //
+    static ActionsShortcutsManager::ShortCut hk_file_open_native;  //
+    static ActionsShortcutsManager::ShortCut hk_go_root;           //
+    static ActionsShortcutsManager::ShortCut hk_go_home;           //
+    static ActionsShortcutsManager::ShortCut hk_preview;           //
+    static ActionsShortcutsManager::ShortCut hk_go_into;           //
+    static ActionsShortcutsManager::ShortCut hk_go_outside;        //
+    static ActionsShortcutsManager::ShortCut hk_show_context_menu; //
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
         std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
             {.shortcut = &hk_file_open, .action = "menu.file.enter"},

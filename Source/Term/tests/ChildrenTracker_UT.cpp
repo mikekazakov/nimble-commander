@@ -35,7 +35,8 @@ TEST_CASE(PREFIX "Generic cases", "[!mayfail]")
     }
     SECTION("Two sequent forks")
     {
-        int p2 = 0, p3 = 0;
+        int p2 = 0;
+        int p3 = 0;
         if( (p2 = fork()) == 0 ) {
             std::this_thread::sleep_for(1ms);
             exit(0);
@@ -103,7 +104,8 @@ TEST_CASE(PREFIX "Generic cases", "[!mayfail]")
     }
     SECTION("2 x two recursive forks")
     {
-        int p2 = 0, p4 = 0;
+        int p2 = 0;
+        int p4 = 0;
         if( (p2 = fork()) == 0 ) {
             std::this_thread::sleep_for(1ms);
             if( int p3; (p3 = fork()) == 0 ) {

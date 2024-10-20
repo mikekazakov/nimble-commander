@@ -90,9 +90,15 @@ static const std::string &ArchType(int _type)
 // from https://gist.github.com/nonowarn/770696
 static void print_argv_of_pid(int pid, std::string &_out)
 {
-    int mib[3], argmax, nargs, c = 0;
+    int mib[3];
+    int argmax;
+    int nargs;
+    int c = 0;
     size_t size;
-    char *procargs, *sp, *np, *cp;
+    char *procargs;
+    char *sp;
+    char *np;
+    char *cp;
     const int show_args = 1;
 
     //    fprintf(stderr, "Getting argv of PID %d\n", pid);

@@ -102,7 +102,8 @@ bool IndirectListingComparator::IsLessByFilesystemRepresentation(unsigned _1, un
 bool IndirectListingComparator::IsLessBySizeReversed(unsigned _1, unsigned _2) const
 {
     constexpr auto invalid_size = ItemVolatileData::invalid_size;
-    const auto s1 = vd[_1].size, s2 = vd[_2].size;
+    const auto s1 = vd[_1].size;
+    const auto s2 = vd[_2].size;
     if( s1 != invalid_size && s2 != invalid_size )
         if( s1 != s2 )
             return s1 < s2;
@@ -116,7 +117,8 @@ bool IndirectListingComparator::IsLessBySizeReversed(unsigned _1, unsigned _2) c
 bool IndirectListingComparator::IsLessBySize(unsigned _1, unsigned _2) const
 {
     constexpr auto invalid_size = ItemVolatileData::invalid_size;
-    const auto s1 = vd[_1].size, s2 = vd[_2].size;
+    const auto s1 = vd[_1].size;
+    const auto s2 = vd[_2].size;
     if( s1 != invalid_size && s2 != invalid_size )
         if( s1 != s2 )
             return s1 > s2;
@@ -129,9 +131,11 @@ bool IndirectListingComparator::IsLessBySize(unsigned _1, unsigned _2) const
 
 bool IndirectListingComparator::IsLessByAddedTimeReversed(unsigned _1, unsigned _2) const
 {
-    const auto h1 = l.HasAddTime(_1), h2 = l.HasAddTime(_2);
+    const auto h1 = l.HasAddTime(_1);
+    const auto h2 = l.HasAddTime(_2);
     if( h1 && h2 ) {
-        const auto v1 = l.AddTime(_1), v2 = l.AddTime(_2);
+        const auto v1 = l.AddTime(_1);
+        const auto v2 = l.AddTime(_2);
         if( v1 != v2 )
             return v1 < v2;
     }
@@ -144,9 +148,11 @@ bool IndirectListingComparator::IsLessByAddedTimeReversed(unsigned _1, unsigned 
 
 bool IndirectListingComparator::IsLessByAddedTime(unsigned _1, unsigned _2) const
 {
-    const auto h1 = l.HasAddTime(_1), h2 = l.HasAddTime(_2);
+    const auto h1 = l.HasAddTime(_1);
+    const auto h2 = l.HasAddTime(_2);
     if( h1 && h2 ) {
-        const auto v1 = l.AddTime(_1), v2 = l.AddTime(_2);
+        const auto v1 = l.AddTime(_1);
+        const auto v2 = l.AddTime(_2);
         if( v1 != v2 )
             return v1 > v2;
     }
@@ -159,7 +165,8 @@ bool IndirectListingComparator::IsLessByAddedTime(unsigned _1, unsigned _2) cons
 
 bool IndirectListingComparator::IsLessByAccessTime(unsigned _1, unsigned _2) const
 {
-    const auto v1 = l.ATime(_1), v2 = l.ATime(_2);
+    const auto v1 = l.ATime(_1);
+    const auto v2 = l.ATime(_2);
     if( v1 != v2 )
         return v1 > v2;
     return CompareNames(_1, _2) < 0;
@@ -167,7 +174,8 @@ bool IndirectListingComparator::IsLessByAccessTime(unsigned _1, unsigned _2) con
 
 bool IndirectListingComparator::IsLessByAccessTimeReversed(unsigned _1, unsigned _2) const
 {
-    const auto v1 = l.ATime(_1), v2 = l.ATime(_2);
+    const auto v1 = l.ATime(_1);
+    const auto v2 = l.ATime(_2);
     if( v1 != v2 )
         return v1 < v2;
     return CompareNames(_1, _2) > 0;
@@ -175,7 +183,8 @@ bool IndirectListingComparator::IsLessByAccessTimeReversed(unsigned _1, unsigned
 
 bool IndirectListingComparator::IsLessByBirthTimeReversed(unsigned _1, unsigned _2) const
 {
-    const auto v1 = l.BTime(_1), v2 = l.BTime(_2);
+    const auto v1 = l.BTime(_1);
+    const auto v2 = l.BTime(_2);
     if( v1 != v2 )
         return v1 < v2;
     return CompareNames(_1, _2) > 0;
@@ -183,7 +192,8 @@ bool IndirectListingComparator::IsLessByBirthTimeReversed(unsigned _1, unsigned 
 
 bool IndirectListingComparator::IsLessByBirthTime(unsigned _1, unsigned _2) const
 {
-    const auto v1 = l.BTime(_1), v2 = l.BTime(_2);
+    const auto v1 = l.BTime(_1);
+    const auto v2 = l.BTime(_2);
     if( v1 != v2 )
         return v1 > v2;
     return CompareNames(_1, _2) < 0;
@@ -191,7 +201,8 @@ bool IndirectListingComparator::IsLessByBirthTime(unsigned _1, unsigned _2) cons
 
 bool IndirectListingComparator::IsLessByModificationTimeReversed(unsigned _1, unsigned _2) const
 {
-    const auto v1 = l.MTime(_1), v2 = l.MTime(_2);
+    const auto v1 = l.MTime(_1);
+    const auto v2 = l.MTime(_2);
     if( v1 != v2 )
         return v1 < v2;
     return CompareNames(_1, _2) > 0;
@@ -199,7 +210,8 @@ bool IndirectListingComparator::IsLessByModificationTimeReversed(unsigned _1, un
 
 bool IndirectListingComparator::IsLessByModificationTime(unsigned _1, unsigned _2) const
 {
-    const auto v1 = l.MTime(_1), v2 = l.MTime(_2);
+    const auto v1 = l.MTime(_1);
+    const auto v2 = l.MTime(_2);
     if( v1 != v2 )
         return v1 > v2;
     return CompareNames(_1, _2) < 0;
@@ -341,7 +353,8 @@ bool ExternalListingComparator::operator()(unsigned _1, const ExternalEntryKey &
             return by_name() > 0;
         }
         case _::SortByAddTime: {
-            const auto h1 = l.HasAddTime(_1), h2 = _val2.add_time >= 0;
+            const auto h1 = l.HasAddTime(_1);
+            const auto h2 = _val2.add_time >= 0;
             if( h1 && h2 )
                 if( l.AddTime(_1) != _val2.add_time )
                     return l.AddTime(_1) > _val2.add_time;
@@ -352,7 +365,8 @@ bool ExternalListingComparator::operator()(unsigned _1, const ExternalEntryKey &
             return by_name() < 0; // fallback case
         }
         case _::SortByAddTimeRev: {
-            const auto h1 = l.HasAddTime(_1), h2 = _val2.add_time >= 0;
+            const auto h1 = l.HasAddTime(_1);
+            const auto h2 = _val2.add_time >= 0;
             if( h1 && h2 )
                 if( l.AddTime(_1) != _val2.add_time )
                     return l.AddTime(_1) < _val2.add_time;

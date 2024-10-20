@@ -350,7 +350,9 @@ BatchRenamingScheme::ParsePlaceholder_TextExtraction(NSString *_ph, unsigned lon
     if( l == _pos ) // [N]
         return std::make_pair(TextExtraction(), 0);
 
-    auto zero_flag = false, minus_flag = false, space_flag = false;
+    auto zero_flag = false;
+    auto minus_flag = false;
+    auto space_flag = false;
 
     auto n = 0;
     auto c = [_ph characterAtIndex:_pos + n];

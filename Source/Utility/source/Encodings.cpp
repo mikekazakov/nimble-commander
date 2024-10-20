@@ -1192,7 +1192,8 @@ void InterpretUTF8BufferAsIndexedUTF16(const unsigned char *_input,
                                        unsigned short _bad_symb     // something like '?' or U+FFFD
 )
 {
-    const unsigned char *end = _input + _input_size, *start = _input;
+    const unsigned char *end = _input + _input_size;
+    const unsigned char *start = _input;
 
     size_t total = 0;
 
@@ -1485,7 +1486,8 @@ void InterpretUnicharsAsUTF8(const uint16_t *_input,
         const uint16_t val = *cur;
         uint32_t codepoint;
         unsigned char utf8[4];
-        unsigned utf8_sz, input_delta = 1;
+        unsigned utf8_sz;
+        unsigned input_delta = 1;
 
         // decode UTF16 aka Unichars
         if( val <= 0xD7FF || (val >= 0xE000 && val <= 0xFFFF) ) // BMP - just use it

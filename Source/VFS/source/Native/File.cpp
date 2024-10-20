@@ -196,7 +196,8 @@ unsigned File::XAttrCount() const
     if( ret < 0 )
         return 0;
 
-    char *s = buf, *e = buf + ret;
+    char *s = buf;
+    char *e = buf + ret;
     unsigned count = 0;
     while( s < e ) {
         ++count;
@@ -221,7 +222,8 @@ void File::XAttrIterateNames(const XAttrIterateNamesCallback &_handler) const
     if( ret < 0 )
         return;
 
-    char *s = buf, *e = buf + ret;
+    char *s = buf;
+    char *e = buf + ret;
     while( s < e ) {
         if( !_handler(s) )
             break;

@@ -671,7 +671,8 @@ static void TestWriteFlagsSemantics(VFSHostPtr _host)
     }
     SECTION("Opening an existing file for writing overwrites it")
     {
-        const std::string old_data = "123456", new_data = "0987654321";
+        const std::string old_data = "123456";
+        const std::string new_data = "0987654321";
         {
             VFSFilePtr file;
             REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);

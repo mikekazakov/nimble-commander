@@ -79,7 +79,8 @@ TEST_CASE(PREFIX "hardlink creation")
     operation.Wait();
     REQUIRE(operation.State() == OperationState::Completed);
 
-    VFSStat st1, st2;
+    VFSStat st1;
+    VFSStat st2;
     REQUIRE(host->Stat(path.c_str(), st1, 0) == VFSError::Ok);
     REQUIRE(host->Stat(value.c_str(), st2, 0) == VFSError::Ok);
     REQUIRE(st1.inode == st2.inode);

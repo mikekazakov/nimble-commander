@@ -178,7 +178,8 @@ int DoStaticDataBlockAnalysis(const void *_data, size_t _bytes_amount, StaticDat
     const int inv_utf8 = UTF8Errors(bytes, _bytes_amount);        // invalid utf-8 sequences appearances
     const int inv_utf16le = UTF16LEErrors(bytes, _bytes_amount);  // invalid utf-16 le sequences appearances
     const int inv_utf16be = UTF16BEErrors(bytes, _bytes_amount);  // invalid utf-16 be sequences appearances
-    int utf16le_spaces, utf16be_spaces;
+    int utf16le_spaces;
+    int utf16be_spaces;
     SpacesForUTF16(bytes, _bytes_amount, &utf16le_spaces, &utf16be_spaces);
 
     _output->can_be_utf8 = inv_utf8 == 0;

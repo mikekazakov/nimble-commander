@@ -722,7 +722,8 @@ const DirEntry *ArchiveHost::FindEntry(std::string_view _path)
     // TODO: rewrite without using C-style strings
 
     // 1st - try to find _path directly (assume it's directory)
-    char buf[1024], short_name[256];
+    char buf[1024];
+    char short_name[256];
     memcpy(buf, _path.data(), _path.length());
     buf[_path.length()] = 0;
 

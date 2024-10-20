@@ -707,7 +707,8 @@ static AttrsChangingCommand::Permissions ExtractCommonPermissions(const std::vec
 
     AttrsChangingCommand::Permissions p;
 
-    const auto first = begin(modes), last = end(modes);
+    const auto first = begin(modes);
+    const auto last = end(modes);
     p.usr_r = optional_common_value(first, last, [](auto m) -> bool { return m & S_IRUSR; });
     p.usr_w = optional_common_value(first, last, [](auto m) -> bool { return m & S_IWUSR; });
     p.usr_x = optional_common_value(first, last, [](auto m) -> bool { return m & S_IXUSR; });
@@ -740,7 +741,8 @@ static AttrsChangingCommand::Flags ExtractCommonFlags(const std::vector<VFSListi
         flags.emplace_back(i.UnixFlags());
 
     AttrsChangingCommand::Flags f;
-    const auto b = begin(flags), e = end(flags);
+    const auto b = begin(flags);
+    const auto e = end(flags);
     f.u_nodump = optional_common_value(b, e, [](auto m) -> bool { return m & UF_NODUMP; });
     f.u_immutable = optional_common_value(b, e, [](auto m) -> bool { return m & UF_IMMUTABLE; });
     f.u_append = optional_common_value(b, e, [](auto m) -> bool { return m & UF_APPEND; });
@@ -764,7 +766,8 @@ static AttrsChangingCommand::Times ExtractCommonTimes(const std::vector<VFSListi
 {
     AttrsChangingCommand::Times t;
 
-    const auto b = begin(_items), e = end(_items);
+    const auto b = begin(_items);
+    const auto e = end(_items);
     t.atime = optional_common_value(b, e, [](auto &i) { return i.ATime(); });
     t.mtime = optional_common_value(b, e, [](auto &i) { return i.MTime(); });
     t.ctime = optional_common_value(b, e, [](auto &i) { return i.CTime(); });

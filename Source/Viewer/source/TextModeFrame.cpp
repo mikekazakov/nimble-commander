@@ -18,7 +18,8 @@ static void ApplyStyles(CFMutableAttributedStringRef _str,
     const size_t str_len = CFAttributedStringGetLength(_str);
     const std::span<const hl::Style> styles = _styles.Styles();
 
-    size_t start = 0, i = 0;
+    size_t start = 0;
+    size_t i = 0;
     hl::Style current = hl::Style::Default;
     auto commit = [&] {
         if( start == i )

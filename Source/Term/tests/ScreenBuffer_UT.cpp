@@ -85,7 +85,8 @@ TEST_CASE(PREFIX "ComposeContinuousLines")
 
 TEST_CASE(PREFIX "Space::HaveSameAttributes")
 {
-    ScreenBuffer::Space s1, s2;
+    ScreenBuffer::Space s1;
+    ScreenBuffer::Space s2;
     std::memset(&s1, 0, sizeof(s1));
     std::memset(&s2, 0, sizeof(s2));
     SECTION("")

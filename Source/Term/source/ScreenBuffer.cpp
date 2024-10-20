@@ -526,7 +526,8 @@ void ScreenBuffer::RevertToSnapshot(const Snapshot &_snapshot)
 
 std::optional<std::pair<int, int>> ScreenBuffer::OccupiedOnScreenLines() const
 {
-    int first = std::numeric_limits<int>::max(), last = std::numeric_limits<int>::min();
+    int first = std::numeric_limits<int>::max();
+    int last = std::numeric_limits<int>::min();
     for( int i = 0, e = Height(); i < e; ++i )
         if( HasOccupiedChars(i) ) {
             first = std::min(first, i);

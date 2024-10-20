@@ -274,10 +274,12 @@ TEST_CASE(PREFIX "ExternalToolExecution - generation of simple arguments")
     touch(root / "dir2/file3.txt");
     touch(root / "dir2/file4.txt");
 
-    VFSListingPtr l1, l2;
+    VFSListingPtr l1;
+    VFSListingPtr l2;
     REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir1").c_str(), l1, VFSFlags::F_NoDotDot, {}) == 0);
     REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir2").c_str(), l2, VFSFlags::F_NoDotDot, {}) == 0);
-    data::Model left, right;
+    data::Model left;
+    data::Model right;
     left.Load(l1, data::Model::PanelType::Directory);
     right.Load(l2, data::Model::PanelType::Directory);
     nc::utility::TemporaryFileStorageImpl temp_storage(root.native(), "temp");
@@ -431,10 +433,12 @@ TEST_CASE(PREFIX "ExternalToolExecution - generation of lists as parameters")
     touch(root / "dir2/file5.txt");
     touch(root / "dir2/file6.txt");
 
-    VFSListingPtr l1, l2;
+    VFSListingPtr l1;
+    VFSListingPtr l2;
     REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir1").c_str(), l1, VFSFlags::F_NoDotDot, {}) == 0);
     REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir2").c_str(), l2, VFSFlags::F_NoDotDot, {}) == 0);
-    data::Model left, right;
+    data::Model left;
+    data::Model right;
     left.Load(l1, data::Model::PanelType::Directory);
     right.Load(l2, data::Model::PanelType::Directory);
     nc::utility::TemporaryFileStorageImpl temp_storage(root.native(), "temp");
@@ -655,10 +659,12 @@ TEST_CASE(PREFIX "ExternalToolExecution - generation of lists as file")
     touch(root / "dir2/file5.txt");
     touch(root / "dir2/file6.txt");
 
-    VFSListingPtr l1, l2;
+    VFSListingPtr l1;
+    VFSListingPtr l2;
     REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir1").c_str(), l1, VFSFlags::F_NoDotDot, {}) == 0);
     REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir2").c_str(), l2, VFSFlags::F_NoDotDot, {}) == 0);
-    data::Model left, right;
+    data::Model left;
+    data::Model right;
     left.Load(l1, data::Model::PanelType::Directory);
     right.Load(l2, data::Model::PanelType::Directory);
     nc::utility::TemporaryFileStorageImpl temp_storage(root.native(), "temp");
@@ -843,10 +849,12 @@ TEST_CASE(PREFIX "ExternalToolExecution - user-input values")
     touch(root / "dir2/file3.txt");
     touch(root / "dir2/file4.txt");
 
-    VFSListingPtr l1, l2;
+    VFSListingPtr l1;
+    VFSListingPtr l2;
     REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir1").c_str(), l1, VFSFlags::F_NoDotDot, {}) == 0);
     REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir2").c_str(), l2, VFSFlags::F_NoDotDot, {}) == 0);
-    data::Model left, right;
+    data::Model left;
+    data::Model right;
     left.Load(l1, data::Model::PanelType::Directory);
     right.Load(l2, data::Model::PanelType::Directory);
     nc::utility::TemporaryFileStorageImpl temp_storage(root.native(), "temp");

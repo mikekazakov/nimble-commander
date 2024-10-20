@@ -429,7 +429,8 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
 
 - (void)updateTabBarsVisibility
 {
-    unsigned lc = m_SplitView.leftTabbedHolder.tabsCount, rc = m_SplitView.rightTabbedHolder.tabsCount;
+    unsigned lc = m_SplitView.leftTabbedHolder.tabsCount;
+    unsigned rc = m_SplitView.rightTabbedHolder.tabsCount;
     bool should_be_shown = m_ShowTabs ? true : (lc > 1 || rc > 1);
     m_SplitView.leftTabbedHolder.tabBarShown = should_be_shown;
     m_SplitView.rightTabbedHolder.tabBarShown = should_be_shown;

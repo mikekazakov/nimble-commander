@@ -2,9 +2,8 @@
 #include <sys/ioctl.h>
 #include <sys/sysctl.h>
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #include <Base/CloseFrom.h>
 #include <Base/dispatch_cpp.h>

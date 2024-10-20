@@ -30,7 +30,7 @@ private:
     };
 
     // Loads and parses the contents of the "Main.json" file
-    std::vector<Lang> LoadLangs(const std::filesystem::path &_path) const;
+    static std::vector<Lang> LoadLangs(const std::filesystem::path &_path);
 
     void ReloadLangs();
 

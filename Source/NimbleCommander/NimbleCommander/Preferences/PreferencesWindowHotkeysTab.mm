@@ -87,7 +87,7 @@ enum class SourceType : uint8_t {
     if( self ) {
         m_SourceType = SourceType::All;
         m_ToolsStorage = _tool_storage;
-        const auto &all_shortcuts = ActionsShortcutsManager::Instance().AllShortcuts();
+        const auto &all_shortcuts = ActionsShortcutsManager::AllShortcuts();
         m_Shortcuts.assign(begin(all_shortcuts), end(all_shortcuts));
 
         // remove shortcuts whichs are absent in main menu
@@ -392,7 +392,7 @@ static NSImageView *SpawnCautionSign()
         if( auto gtm_hk = nc::objc_cast<GTMHotKeyTextFieldCell>(tf.cell).hotKey ) {
             auto tag = int(tf.tag);
             auto hk = [self shortcutFromGTMHotKey:gtm_hk];
-            auto action = am.ActionFromTag(tag);
+            auto action = ActionsShortcutsManager::ActionFromTag(tag);
             if( am.SetShortCutOverride(action, hk) ) {
                 am.SetMenuShortCuts(NSApp.mainMenu);
                 [self rebuildAll];

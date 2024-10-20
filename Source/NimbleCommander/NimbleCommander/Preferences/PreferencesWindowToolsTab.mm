@@ -208,7 +208,7 @@ static bool AskUserToDeleteTool()
             changed_tool.m_Parameters = self.toolParameters.stringValue.UTF8String;
             [self commitToolChanges:changed_tool];
 
-            auto parsed = nc::panel::ExternalToolsParametersParser().Parse(changed_tool.m_Parameters);
+            auto parsed = nc::panel::ExternalToolsParametersParser::Parse(changed_tool.m_Parameters);
             if( !parsed ) {
                 NSHelpManager *helpManager = [NSHelpManager sharedHelpManager];
                 [helpManager setContextHelp:[[NSAttributedString alloc]

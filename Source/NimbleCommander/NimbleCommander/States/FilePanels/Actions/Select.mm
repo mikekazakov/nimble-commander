@@ -43,7 +43,7 @@ public:
 private:
     using MapT = ankerl::unordered_dense::map<ptrdiff_t, nc::panel::FindFilesMask>;
 
-    ptrdiff_t ToNumber(NSWindow *_wnd) noexcept
+    static ptrdiff_t ToNumber(NSWindow *_wnd) noexcept
     {
         // mb mix in the window number here as well? i.e. .windowNumber
         return reinterpret_cast<ptrdiff_t>((__bridge void *)_wnd);

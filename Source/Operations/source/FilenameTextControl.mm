@@ -236,7 +236,7 @@ std::string DirectoryPathAutoCompletionImpl::Complete(const std::string &_path, 
     return EnsureTrailingSlash(path.native());
 }
 
-std::string DirectoryPathAutoCompletionImpl::ExtractDirectory(const std::string &_path) const
+std::string DirectoryPathAutoCompletionImpl::ExtractDirectory(const std::string &_path)
 {
     const std::filesystem::path path = _path;
     if( path == "/" )
@@ -248,7 +248,7 @@ std::string DirectoryPathAutoCompletionImpl::ExtractDirectory(const std::string 
     return path.native();
 }
 
-std::string DirectoryPathAutoCompletionImpl::ExtractFilename(const std::string &_path) const
+std::string DirectoryPathAutoCompletionImpl::ExtractFilename(const std::string &_path)
 {
     const std::filesystem::path path = _path;
 

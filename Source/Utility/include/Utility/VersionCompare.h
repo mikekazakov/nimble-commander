@@ -12,9 +12,9 @@ namespace nc::utility {
 class VersionCompare
 {
 public:
-    int Compare(std::string_view _lhs, std::string_view _rhs) const noexcept;
+    static int Compare(std::string_view _lhs, std::string_view _rhs) noexcept;
 #ifdef __OBJC__
-    int Compare(NSString *_lhs, NSString *_rhs) const noexcept;
+    static int Compare(NSString *_lhs, NSString *_rhs) noexcept;
 #endif
 };
 

@@ -137,7 +137,7 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     if( const auto rules_it = doc.FindMember("filePanelsColoringRules_v1"); rules_it != doc.MemberEnd() ) {
         if( const auto &cr = rules_it->value; cr.IsArray() ) {
             for( auto i = cr.Begin(), e = cr.End(); i != e; ++i ) {
-                auto rule = nc::panel::PresentationItemsColoringRulePersistence{}.FromJSON(*i);
+                auto rule = nc::panel::PresentationItemsColoringRulePersistence::FromJSON(*i);
                 I->m_ColoringRules.emplace_back(std::move(rule));
             }
         }

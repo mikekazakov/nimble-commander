@@ -15,8 +15,8 @@ public:
 
     std::string TitleForPreparing() const;
     std::string TitleForProcessing() const;
-    std::string TitleForVerifying() const;
-    std::string TitleForCleanup() const;
+    static std::string TitleForVerifying();
+    static std::string TitleForCleanup();
 
 private:
     const std::vector<VFSListingItem> &m_SourceFiles;

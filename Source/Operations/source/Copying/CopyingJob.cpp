@@ -524,9 +524,9 @@ CopyingJob::PathCompositionType CopyingJob::AnalyzeInitialDestination(std::strin
 template <class T>
 static void ReverseForEachDirectoryInString(const std::string &_path, T _callable)
 {
-    size_t range_end = _path.npos;
+    size_t range_end = std::string::npos;
     size_t last_slash;
-    while( (last_slash = _path.find_last_of('/', range_end)) != _path.npos ) {
+    while( (last_slash = _path.find_last_of('/', range_end)) != std::string::npos ) {
         if( !_callable(_path.substr(0, last_slash + 1)) )
             break;
         if( last_slash == 0 )
@@ -2921,7 +2921,7 @@ const CopyingOptions &CopyingJob::Options() const noexcept
     return m_Options;
 }
 
-bool CopyingJob::IsNativeLockedItemNoFollow(int vfs_error, const std::string &_path) const
+bool CopyingJob::IsNativeLockedItemNoFollow(int vfs_error, const std::string &_path)
 {
     if( vfs_error != VFSError::FromErrno(EPERM) )
         return false;

@@ -23,7 +23,7 @@ private:
     std::optional<std::string> FindSuitableExistingTempDir(std::string_view _for_filename);
     std::optional<std::string> FindTempDir(std::string_view _for_filename);
     std::vector<std::string> FindExistingTempDirectories() const;
-    bool PurgeSubDirectory(const std::string &_path, time_t _older_than);
+    static bool PurgeSubDirectory(const std::string &_path, time_t _older_than);
 
     std::string m_BaseDirectory;
     std::string m_SubDirectoriesPrefix;

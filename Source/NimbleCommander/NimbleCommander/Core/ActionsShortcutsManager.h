@@ -27,12 +27,12 @@ public:
     /**
      * Return -1 on if tag corresponing _action wasn't found.
      */
-    int TagFromAction(std::string_view _action) const noexcept;
+    static int TagFromAction(std::string_view _action) noexcept;
 
     /**
      * return "" on if action corresponing _tag wasn't found.
      */
-    std::string_view ActionFromTag(int _tag) const noexcept;
+    static std::string_view ActionFromTag(int _tag) noexcept;
 
     /**
      * Return default if can't be found.
@@ -57,7 +57,7 @@ public:
 
     void SetMenuShortCuts(NSMenu *_menu) const;
 
-    std::span<const std::pair<const char *, int>> AllShortcuts() const;
+    static std::span<const std::pair<const char *, int>> AllShortcuts();
 
     using ObservationTicket = ObservableBase::ObservationTicket;
     ObservationTicket ObserveChanges(std::function<void()> _callback);

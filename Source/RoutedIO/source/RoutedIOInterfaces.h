@@ -38,7 +38,7 @@ public:
     int trash(const char *_path) noexcept override;
 
 private:
-    int ApplyTimeChange(const char *_path, time_t _time, uint32_t _attr);
+    static int ApplyTimeChange(const char *_path, time_t _time, uint32_t _attr);
 };
 
 class PosixIOInterfaceRouted : public PosixIOInterfaceNative

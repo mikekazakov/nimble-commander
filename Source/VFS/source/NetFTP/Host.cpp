@@ -30,7 +30,7 @@ public:
     long port = 21;
     bool active = false;
 
-    [[nodiscard]] const char *Tag() const { return FTPHost::UniqueTag; }
+    [[nodiscard]] static const char *Tag() { return FTPHost::UniqueTag; }
 
     [[nodiscard]] const char *Junction() const { return server_url.c_str(); }
 

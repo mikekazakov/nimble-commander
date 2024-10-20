@@ -47,7 +47,7 @@ private:
     TextWidthsCache();
     ~TextWidthsCache();
     Cache &ForFont(NSFont *_font);
-    void PurgeIfNeeded(Cache &_cache);
+    static void PurgeIfNeeded(Cache &_cache);
     static void Purge(Cache &_cache);
 
     CachesPerFontT m_CachesPerFont;

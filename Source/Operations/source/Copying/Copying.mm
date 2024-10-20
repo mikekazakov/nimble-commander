@@ -646,10 +646,10 @@ void Copying::OnStageChanged()
             title = b.TitleForPreparing();
             break;
         case CopyingJob::Stage::Verify:
-            title = b.TitleForVerifying();
+            title = nc::ops::CopyingTitleBuilder::TitleForVerifying();
             break;
         case CopyingJob::Stage::Cleaning:
-            title = b.TitleForCleanup();
+            title = nc::ops::CopyingTitleBuilder::TitleForCleanup();
             break;
     }
     SetTitle(std::move(title));

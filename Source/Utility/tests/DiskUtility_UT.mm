@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UnitTests_main.h"
 #include "DiskUtility.h"
 #include "ObjCpp.h"
@@ -15,8 +15,7 @@ extern const std::string_view g_APFSListExample11_1;
 // another test suite later.
 TEST_CASE(PREFIX "ListAPFSObjects returns a valid nonempty NSDictionary tree")
 {
-    DiskUtility du;
-    const auto dict = du.ListAPFSObjects();
+    const auto dict = nc::utility::DiskUtility::ListAPFSObjects();
     REQUIRE(dict != nil);
     REQUIRE(dict[@"Containers"] != nil);
     REQUIRE(nc::objc_cast<NSArray>(dict[@"Containers"]) != nil);
@@ -171,8 +170,7 @@ TEST_CASE(PREFIX "APFSTree can list containers names (11_1)")
 
 TEST_CASE(PREFIX "The system has volumes for both Data and System roles")
 {
-    DiskUtility du;
-    const APFSTree tree{du.ListAPFSObjects()};
+    const APFSTree tree{nc::utility::DiskUtility::ListAPFSObjects()};
 
     bool has_data = false;
     bool has_system = false;

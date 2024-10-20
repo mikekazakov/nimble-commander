@@ -1424,7 +1424,7 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> vfs)")
     REQUIRE(chmod((dir.directory / "dir").c_str(), S_IRUSR | S_IXUSR) == 0);
     auto revert_mod = at_scope_end([&] { chmod((dir.directory / "dir").c_str(), S_IRWXU); });
 
-    auto host = TestEnv().SpawnSFTPHost();
+    auto host = TestEnvironment::SpawnSFTPHost();
     REQUIRE(host);
     const std::filesystem::path target_dir = std::filesystem::path(host->HomeDir()) / "__nc_operations_test";
     VFSEasyDelete(target_dir.c_str(), host);

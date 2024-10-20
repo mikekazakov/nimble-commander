@@ -597,7 +597,7 @@ ExternalToolExecution::ExternalToolExecution(const Context &_ctx, const External
     assert(m_Ctx.right_data);
     assert(m_Ctx.temp_storage);
 
-    if( auto params = ExternalToolsParametersParser().Parse(m_ET.m_Parameters) )
+    if( auto params = ExternalToolsParametersParser::Parse(m_ET.m_Parameters) )
         m_Params = std::move(params.value());
     else
         throw std::invalid_argument(params.error());

@@ -8,9 +8,8 @@
 #include <algorithm>
 #include <charconv>
 
-#include <iostream>
-#include <algorithm>
 #include <fmt/format.h>
+#include <iostream>
 
 namespace nc::term {
 
@@ -83,7 +82,7 @@ bool ParserImpl::SSTextConsume(unsigned char _byte) noexcept
 void ParserImpl::ConsumeNextUTF8TextChar(unsigned char _byte)
 {
     auto &ts = m_TextState;
-    if( ts.UTF8StockLen < ts.UTF8CharsStockSize ) {
+    if( ts.UTF8StockLen < SS_Text::UTF8CharsStockSize ) {
         ts.UTF8CharsStock[ts.UTF8StockLen++] = static_cast<char>(_byte);
     }
 }
@@ -497,7 +496,7 @@ void ParserImpl::SSOSCSubmit() noexcept
     // parse the following format: Ps ; Pt
     const std::string_view s = m_OSCState.buffer;
     auto sc_pos = s.find(';');
-    if( sc_pos == s.npos )
+    if( sc_pos == std::string_view::npos )
         return;
     const std::string_view pt = s.substr(sc_pos + 1);
 

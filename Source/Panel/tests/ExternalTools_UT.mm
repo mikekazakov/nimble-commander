@@ -29,7 +29,7 @@ static void touch(const std::filesystem::path &p)
 
 TEST_CASE(PREFIX "Parsing empty produces no parameters")
 {
-    const auto params = ExternalToolsParametersParser{}.Parse("").value();
+    const auto params = ExternalToolsParametersParser::Parse("").value();
     CHECK(params.StepsAmount() == 0);
     CHECK(params.Steps().empty());
 }
@@ -43,7 +43,7 @@ TEST_CASE(PREFIX "Parsing - errors")
     };
     for( auto invalid : invalids ) {
         INFO(invalid);
-        auto r = ExternalToolsParametersParser{}.Parse(invalid);
+        auto r = ExternalToolsParametersParser::Parse(invalid);
         CHECK(!r);
         CHECK(!r.error().empty());
     }
@@ -52,25 +52,25 @@ TEST_CASE(PREFIX "Parsing - errors")
 TEST_CASE(PREFIX "Parsing - text")
 {
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("blah").value();
+        const auto p = ExternalToolsParametersParser::Parse("blah").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::UserDefined, 0});
         REQUIRE(p.GetUserDefined(0).text == "blah");
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("foo\\ blah\\ !").value();
+        const auto p = ExternalToolsParametersParser::Parse("foo\\ blah\\ !").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::UserDefined, 0});
         REQUIRE(p.GetUserDefined(0).text == "foo blah !");
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%%").value();
+        const auto p = ExternalToolsParametersParser::Parse("%%").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::UserDefined, 0});
         REQUIRE(p.GetUserDefined(0).text == "%");
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("foo%%bar").value();
+        const auto p = ExternalToolsParametersParser::Parse("foo%%bar").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::UserDefined, 0});
         REQUIRE(p.GetUserDefined(0).text == "foo%bar");
@@ -80,13 +80,13 @@ TEST_CASE(PREFIX "Parsing - text")
 TEST_CASE(PREFIX "Parsing - dialog value")
 {
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%?").value();
+        const auto p = ExternalToolsParametersParser::Parse("%?").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::EnterValue, 0});
         REQUIRE(p.GetEnterValue(0).name.empty());
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%\"hello\"?").value();
+        const auto p = ExternalToolsParametersParser::Parse("%\"hello\"?").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::EnterValue, 0});
         REQUIRE(p.GetEnterValue(0).name == "hello");
@@ -96,28 +96,28 @@ TEST_CASE(PREFIX "Parsing - dialog value")
 TEST_CASE(PREFIX "Parsing - directory path")
 {
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%r").value();
+        const auto p = ExternalToolsParametersParser::Parse("%r").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::DirectoryPath);
         REQUIRE(p.GetCurrentItem(0).location == Location::Source);
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%-r").value();
+        const auto p = ExternalToolsParametersParser::Parse("%-r").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::DirectoryPath);
         REQUIRE(p.GetCurrentItem(0).location == Location::Target);
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%- %r").value();
+        const auto p = ExternalToolsParametersParser::Parse("%- %r").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::DirectoryPath);
         REQUIRE(p.GetCurrentItem(0).location == Location::Left);
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%- %-r").value();
+        const auto p = ExternalToolsParametersParser::Parse("%- %-r").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::DirectoryPath);
@@ -128,28 +128,28 @@ TEST_CASE(PREFIX "Parsing - directory path")
 TEST_CASE(PREFIX "Parsing - current path")
 {
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%p").value();
+        const auto p = ExternalToolsParametersParser::Parse("%p").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::Path);
         REQUIRE(p.GetCurrentItem(0).location == Location::Source);
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%-p").value();
+        const auto p = ExternalToolsParametersParser::Parse("%-p").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::Path);
         REQUIRE(p.GetCurrentItem(0).location == Location::Target);
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%- %p").value();
+        const auto p = ExternalToolsParametersParser::Parse("%- %p").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::Path);
         REQUIRE(p.GetCurrentItem(0).location == Location::Left);
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%- %-p").value();
+        const auto p = ExternalToolsParametersParser::Parse("%- %-p").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::Path);
@@ -160,28 +160,28 @@ TEST_CASE(PREFIX "Parsing - current path")
 TEST_CASE(PREFIX "Parsing - filename")
 {
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%f").value();
+        const auto p = ExternalToolsParametersParser::Parse("%f").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::Filename);
         REQUIRE(p.GetCurrentItem(0).location == Location::Source);
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%-f").value();
+        const auto p = ExternalToolsParametersParser::Parse("%-f").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::Filename);
         REQUIRE(p.GetCurrentItem(0).location == Location::Target);
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%- %f").value();
+        const auto p = ExternalToolsParametersParser::Parse("%- %f").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::Filename);
         REQUIRE(p.GetCurrentItem(0).location == Location::Left);
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%- %-f").value();
+        const auto p = ExternalToolsParametersParser::Parse("%- %-f").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::Filename);
@@ -192,28 +192,28 @@ TEST_CASE(PREFIX "Parsing - filename")
 TEST_CASE(PREFIX "Parsing - filename without extension")
 {
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%n").value();
+        const auto p = ExternalToolsParametersParser::Parse("%n").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::FilenameWithoutExtension);
         REQUIRE(p.GetCurrentItem(0).location == Location::Source);
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%-n").value();
+        const auto p = ExternalToolsParametersParser::Parse("%-n").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::FilenameWithoutExtension);
         REQUIRE(p.GetCurrentItem(0).location == Location::Target);
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%- %n").value();
+        const auto p = ExternalToolsParametersParser::Parse("%- %n").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::FilenameWithoutExtension);
         REQUIRE(p.GetCurrentItem(0).location == Location::Left);
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%- %-n").value();
+        const auto p = ExternalToolsParametersParser::Parse("%- %-n").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::FilenameWithoutExtension);
@@ -224,28 +224,28 @@ TEST_CASE(PREFIX "Parsing - filename without extension")
 TEST_CASE(PREFIX "Parsing - filename extension")
 {
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%e").value();
+        const auto p = ExternalToolsParametersParser::Parse("%e").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::FileExtension);
         REQUIRE(p.GetCurrentItem(0).location == Location::Source);
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%-e").value();
+        const auto p = ExternalToolsParametersParser::Parse("%-e").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::FileExtension);
         REQUIRE(p.GetCurrentItem(0).location == Location::Target);
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%- %e").value();
+        const auto p = ExternalToolsParametersParser::Parse("%- %e").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::FileExtension);
         REQUIRE(p.GetCurrentItem(0).location == Location::Left);
     }
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%- %-e").value();
+        const auto p = ExternalToolsParametersParser::Parse("%- %-e").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::CurrentItem, 0});
         REQUIRE(p.GetCurrentItem(0).what == FI::FileExtension);
@@ -256,7 +256,7 @@ TEST_CASE(PREFIX "Parsing - filename extension")
 TEST_CASE(PREFIX "Parsing - selected filenames")
 {
     {
-        const auto p = ExternalToolsParametersParser{}.Parse("%F").value();
+        const auto p = ExternalToolsParametersParser::Parse("%F").value();
         REQUIRE(p.StepsAmount() == 1);
         REQUIRE(p.Steps()[0] == Step{Params::ActionType::SelectedItems, 0});
         REQUIRE(p.GetSelectedItems(0) == SelectedItems{Location::Source, FI::Filename, 0, true});

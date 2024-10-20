@@ -193,7 +193,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
         const auto options = static_cast<loc_fmt::Formatter::RenderOptions>(loc_fmt::Formatter::RenderMenuTitle |
                                                                             loc_fmt::Formatter::RenderMenuTooltip |
                                                                             loc_fmt::Formatter::RenderMenuIcon);
-        const auto rep = loc_fmt::ListingPromiseFormatter{}.Render(options, v);
+        const auto rep = loc_fmt::ListingPromiseFormatter::Render(options, v);
         NCCommandPopoverItem *item = [[NCCommandPopoverItem alloc] init];
         item.title = ShrinkTitleForRecentlyClosedMenu(rep.menu_title);
         item.toolTip = rep.menu_tooltip;
@@ -238,7 +238,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
             activateNewPanel:(bool)_activate
 {
     auto pc = [self spawnNewTabInTabView:_aTabView autoDirectoryLoading:true activateNewPanel:_activate];
-    ListingPromiseLoader{}.Load(_promise, pc);
+    ListingPromiseLoader::Load(_promise, pc);
 }
 
 - (PanelController *)spawnNewTabInTabView:(NSTabView *)aTabView

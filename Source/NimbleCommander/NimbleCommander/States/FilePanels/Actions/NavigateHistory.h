@@ -24,7 +24,7 @@ class ListingPromise;
 class ListingPromiseLoader
 {
 public:
-    void Load(const ListingPromise &_promise, PanelController *_panel);
+    static void Load(const ListingPromise &_promise, PanelController *_panel);
 };
 
 } // namespace nc::panel

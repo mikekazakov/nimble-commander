@@ -152,7 +152,7 @@ static void UpdateMenuItemsPlaceholders(int _tag)
 
 static void UpdateMenuItemsPlaceholders(const char *_action)
 {
-    UpdateMenuItemsPlaceholders(ActionsShortcutsManager::Instance().TagFromAction(_action));
+    UpdateMenuItemsPlaceholders(ActionsShortcutsManager::TagFromAction(_action));
 }
 
 static void CheckDefaultsReset()
@@ -319,7 +319,7 @@ static NCAppDelegate *g_Me = nil;
 {
     // set up menu delegates. do this via DI to reduce links to AppDelegate in whole codebase
     auto item_for_action = [](const char *_action) {
-        auto tag = ActionsShortcutsManager::Instance().TagFromAction(_action);
+        auto tag = ActionsShortcutsManager::TagFromAction(_action);
         return [NSApp.mainMenu itemWithTagHierarchical:tag];
     };
 
@@ -371,7 +371,7 @@ static NCAppDelegate *g_Me = nil;
 - (void)updateMainMenuFeaturesByVersionAndState
 {
     // disable some features available in menu by configuration limitation
-    auto tag_from_lit = [](const char *s) { return ActionsShortcutsManager::Instance().TagFromAction(s); };
+    auto tag_from_lit = [](const char *s) { return ActionsShortcutsManager::TagFromAction(s); };
     auto current_menuitem = [&](const char *s) { return [NSApp.mainMenu itemWithTagHierarchical:tag_from_lit(s)]; };
     auto hide = [&](const char *s) {
         auto item = current_menuitem(s);

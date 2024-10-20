@@ -121,7 +121,7 @@ private:
 class ExternalToolsParametersParser
 {
 public:
-    std::expected<ExternalToolsParameters, std::string> Parse(std::string_view _source);
+    static std::expected<ExternalToolsParameters, std::string> Parse(std::string_view _source);
 
 private:
 };

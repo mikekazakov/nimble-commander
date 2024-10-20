@@ -47,7 +47,8 @@
 
         for( auto &c : m_Connections ) {
             NSMenuItem *regular_item = [[NSMenuItem alloc] init];
-            regular_item.title = [NSString stringWithUTF8StdString:ncm.TitleForConnection(c)];
+            regular_item.title =
+                [NSString stringWithUTF8StdString:nc::panel::NetworkConnectionsManager::TitleForConnection(c)];
             regular_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{c}];
             regular_item.action = @selector(OnGoToSavedConnectionItem:);
             [menu addItem:regular_item];

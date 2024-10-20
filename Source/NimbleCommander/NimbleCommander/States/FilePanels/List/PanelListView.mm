@@ -305,21 +305,24 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
 
 - (void)widthDidChangeForColumn:(NSTableColumn *)_column
 {
-    auto df = AdaptiveDateFormatting{};
     if( _column == m_DateCreatedColumn ) {
-        const auto style = df.SuitableStyleForWidth(static_cast<int>(m_DateCreatedColumn.width), self.font);
+        const auto style = nc::utility::AdaptiveDateFormatting::SuitableStyleForWidth(
+            static_cast<int>(m_DateCreatedColumn.width), self.font);
         self.dateCreatedFormattingStyle = style;
     }
     if( _column == m_DateAddedColumn ) {
-        const auto style = df.SuitableStyleForWidth(static_cast<int>(m_DateAddedColumn.width), self.font);
+        const auto style = nc::utility::AdaptiveDateFormatting::SuitableStyleForWidth(
+            static_cast<int>(m_DateAddedColumn.width), self.font);
         self.dateAddedFormattingStyle = style;
     }
     if( _column == m_DateModifiedColumn ) {
-        const auto style = df.SuitableStyleForWidth(static_cast<int>(m_DateModifiedColumn.width), self.font);
+        const auto style = nc::utility::AdaptiveDateFormatting::SuitableStyleForWidth(
+            static_cast<int>(m_DateModifiedColumn.width), self.font);
         self.dateModifiedFormattingStyle = style;
     }
     if( _column == m_DateAccessedColumn ) {
-        const auto style = df.SuitableStyleForWidth(static_cast<int>(m_DateAccessedColumn.width), self.font);
+        const auto style = nc::utility::AdaptiveDateFormatting::SuitableStyleForWidth(
+            static_cast<int>(m_DateAccessedColumn.width), self.font);
         self.dateAccessedFormattingStyle = style;
     }
     [self notifyLastColumnToRedraw];

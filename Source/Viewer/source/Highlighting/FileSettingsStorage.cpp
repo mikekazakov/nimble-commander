@@ -54,7 +54,7 @@ FileSettingsStorage::~FileSettingsStorage()
     UnsubscribeFromOverridesChanges();
 }
 
-std::vector<FileSettingsStorage::Lang> FileSettingsStorage::LoadLangs(const std::filesystem::path &_path) const
+std::vector<FileSettingsStorage::Lang> FileSettingsStorage::LoadLangs(const std::filesystem::path &_path)
 {
     Log::Debug("Loading languages definitions from '{}'", _path.native());
 

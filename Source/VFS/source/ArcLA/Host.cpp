@@ -64,7 +64,7 @@ public:
     std::string path;
     std::optional<std::string> password;
 
-    [[nodiscard]] const char *Tag() const { return ArchiveHost::UniqueTag; }
+    [[nodiscard]] static const char *Tag() { return ArchiveHost::UniqueTag; }
 
     [[nodiscard]] const char *Junction() const { return path.c_str(); }
 
@@ -177,7 +177,7 @@ int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
         res = Parent()->Stat(path.c_str(), st, 0);
         if( res < 0 )
             return res;
-        st.ToSysStat(st, I->m_SrcFileStat);
+        VFSStat::ToSysStat(st, I->m_SrcFileStat);
     }
 
     VFSFilePtr source_file;
@@ -254,7 +254,7 @@ static bool SplitIntoFilenameAndParentPath(const char *_path,
     if( slash == _path + path_sz - 1 ) {
         const std::string_view path(_path, path_sz - 1);
         const auto second_slash_pos = path.rfind('/');
-        if( second_slash_pos == path.npos )
+        if( second_slash_pos == std::string_view::npos )
             return false;
         const auto filename_sz = path_sz - second_slash_pos - 2;
         const auto parent_path_sz = second_slash_pos + 1;

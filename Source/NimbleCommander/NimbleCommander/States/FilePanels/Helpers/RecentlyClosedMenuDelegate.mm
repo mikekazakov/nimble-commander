@@ -64,7 +64,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
 {
     const auto options = static_cast<loc_fmt::Formatter::RenderOptions>(loc_fmt::Formatter::RenderMenuTitle |
                                                                         loc_fmt::Formatter::RenderMenuTooltip);
-    const auto rep = loc_fmt::ListingPromiseFormatter{}.Render(options, _listing_promise);
+    const auto rep = nc::panel::loc_fmt::ListingPromiseFormatter::Render(options, _listing_promise);
 
     NSMenuItem *item = [[NSMenuItem alloc] init];
     item.title = ShrinkTitleForRecentlyClosedMenu(rep.menu_title);

@@ -19,9 +19,9 @@ public:
     /**
      * May return nil!
      */
-    NSString *Format(Style _style, time_t _time);
+    static NSString *Format(Style _style, time_t _time);
 
-    Style SuitableStyleForWidth(int _width, NSFont *_font);
+    static Style SuitableStyleForWidth(int _width, NSFont *_font);
 
 private:
     static Style StyleForWidthHardcodedLikeFinder(int _width, int _font_size);

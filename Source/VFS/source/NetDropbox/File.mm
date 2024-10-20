@@ -93,7 +93,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
         delegate.handleError = [this](int _error) { HandleDownloadError(_error); };
 
         auto request = BuildDownloadRequest();
-        auto session = [NSURLSession sessionWithConfiguration:DropboxHost().GenericConfiguration()
+        auto session = [NSURLSession sessionWithConfiguration:DropboxHost::GenericConfiguration()
                                                      delegate:delegate
                                                 delegateQueue:nil];
         auto task = [session dataTaskWithRequest:request];
@@ -272,7 +272,7 @@ void File::StartSmallUpload()
     };
 
     auto request = BuildRequestForSinglePartUpload();
-    auto session = [NSURLSession sessionWithConfiguration:DropboxHost().GenericConfiguration()
+    auto session = [NSURLSession sessionWithConfiguration:DropboxHost::GenericConfiguration()
                                                  delegate:delegate
                                             delegateQueue:nil];
     auto task = [session uploadTaskWithStreamedRequest:request];
@@ -318,7 +318,7 @@ void File::StartSession()
     };
 
     auto request = BuildRequestForUploadSessionInit();
-    auto session = [NSURLSession sessionWithConfiguration:DropboxHost().GenericConfiguration()
+    auto session = [NSURLSession sessionWithConfiguration:DropboxHost::GenericConfiguration()
                                                  delegate:delegate
                                             delegateQueue:nil];
     auto task = [session uploadTaskWithStreamedRequest:request];
@@ -378,7 +378,7 @@ void File::StartSessionAppend()
     };
 
     auto request = BuildRequestForUploadSessionAppend();
-    auto session = [NSURLSession sessionWithConfiguration:DropboxHost().GenericConfiguration()
+    auto session = [NSURLSession sessionWithConfiguration:DropboxHost::GenericConfiguration()
                                                  delegate:delegate
                                             delegateQueue:nil];
     auto task = [session uploadTaskWithStreamedRequest:request];
@@ -441,7 +441,7 @@ void File::StartSessionFinish()
     };
 
     auto request = BuildRequestForUploadSessionFinish();
-    auto session = [NSURLSession sessionWithConfiguration:DropboxHost().GenericConfiguration()
+    auto session = [NSURLSession sessionWithConfiguration:DropboxHost::GenericConfiguration()
                                                  delegate:delegate
                                             delegateQueue:nil];
     auto task = [session uploadTaskWithStreamedRequest:request];

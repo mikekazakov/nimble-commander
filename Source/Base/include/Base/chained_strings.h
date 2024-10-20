@@ -130,7 +130,7 @@ public:
     chained_strings &operator=(chained_strings &&) noexcept;
 
 private:
-    void insert_into(block *_to, const char *_str, unsigned _len, const node *_prefix);
+    static void insert_into(block *_to, const char *_str, unsigned _len, const node *_prefix);
     void construct();
     void destroy();
     void grow();

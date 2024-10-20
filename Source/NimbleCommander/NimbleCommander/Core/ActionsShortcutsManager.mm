@@ -453,7 +453,7 @@ ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater(std::span<const Upda
     auto &am = ActionsShortcutsManager::Instance();
     m_Targets.reserve(_targets.size());
     for( auto target : _targets )
-        m_Targets.emplace_back(target.shortcut, am.TagFromAction(target.action));
+        m_Targets.emplace_back(target.shortcut, ActionsShortcutsManager::TagFromAction(target.action));
     m_Ticket = am.ObserveChanges([this] { CheckAndUpdate(); });
 
     CheckAndUpdate();
@@ -487,13 +487,13 @@ ActionsShortcutsManager &ActionsShortcutsManager::Instance()
     return *manager;
 }
 
-int ActionsShortcutsManager::TagFromAction(std::string_view _action) const noexcept
+int ActionsShortcutsManager::TagFromAction(std::string_view _action) noexcept
 {
     const auto it = g_ActionToTag.find(_action);
     return it == g_ActionToTag.end() ? -1 : it->second;
 }
 
-std::string_view ActionsShortcutsManager::ActionFromTag(int _tag) const noexcept
+std::string_view ActionsShortcutsManager::ActionFromTag(int _tag) noexcept
 {
     const auto it = g_TagToAction.find(_tag);
     return it == g_TagToAction.end() ? "" : std::string_view{it->second.data(), it->second.size()};
@@ -628,7 +628,7 @@ void ActionsShortcutsManager::WriteOverridesToConfig() const
     GlobalConfig().Set(g_OverridesConfigPath, overrides);
 }
 
-std::span<const std::pair<const char *, int>> ActionsShortcutsManager::AllShortcuts() const
+std::span<const std::pair<const char *, int>> ActionsShortcutsManager::AllShortcuts()
 {
     return g_ActionsTags;
 }

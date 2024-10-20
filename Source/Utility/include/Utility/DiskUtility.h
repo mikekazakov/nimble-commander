@@ -10,7 +10,7 @@ namespace nc::utility {
 class DiskUtility
 {
 public:
-    NSDictionary *ListAPFSObjects();
+    static NSDictionary *ListAPFSObjects();
 
     static NSDictionary *DiskUtilityOutputToDictionary(std::string_view _text);
 };

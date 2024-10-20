@@ -689,7 +689,7 @@ void NativeFSManagerImpl::PerformAPFSUnmounting(const Info &_volume)
     auto release_disk = at_scope_end([=] { CFRelease(disk); });
 
     if( _volume->mount_flags.ejectable ) {
-        const auto apfs_plist = nc::utility::DiskUtility{}.ListAPFSObjects();
+        const auto apfs_plist = nc::utility::DiskUtility::ListAPFSObjects();
         if( apfs_plist == nil )
             return;
 
@@ -758,8 +758,7 @@ static std::optional<std::string> GetBSDName(const NativeFileSystemInfo &_volume
 static std::optional<APFSTree> FetchAPFSTree() noexcept
 {
     try {
-        DiskUtility du;
-        auto dictionary = du.ListAPFSObjects();
+        auto dictionary = nc::utility::DiskUtility::ListAPFSObjects();
         if( dictionary == nil )
             return std::nullopt;
         return APFSTree{dictionary};
@@ -781,8 +780,7 @@ static std::vector<FirmlinksMappingParser::Firmlink> FetchFirmlinks() noexcept
         in.read(mapping.data(), mapping.size());
         in.close();
 
-        FirmlinksMappingParser parser;
-        return parser.Parse(mapping);
+        return nc::utility::FirmlinksMappingParser::Parse(mapping);
     } catch( ... ) {
         return {};
     }

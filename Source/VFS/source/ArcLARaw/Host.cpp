@@ -156,7 +156,7 @@ class VFSArchiveRawHostConfiguration
 public:
     std::string path;
 
-    [[nodiscard]] const char *Tag() const noexcept { return ArchiveRawHost::UniqueTag; }
+    [[nodiscard]] static const char *Tag() noexcept { return ArchiveRawHost::UniqueTag; }
 
     [[nodiscard]] const char *Junction() const noexcept { return path.c_str(); }
 

@@ -21,7 +21,7 @@ std::vector<std::filesystem::path> WhereIs(std::string_view name)
 {
     if( name.empty() )
         return {};
-    if( name.find('/') != name.npos )
+    if( name.find('/') != std::string_view::npos )
         return {};
 
     const auto directories = GetDirectories();

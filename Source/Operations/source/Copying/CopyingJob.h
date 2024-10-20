@@ -169,7 +169,7 @@ private:
     void CopyXattrsFromVFSFileToNativeFD(VFSFile &_source, int _fd_to) const;
     void CopyXattrsFromVFSFileToPath(VFSFile &_file, const char *_fn_to) const;
 
-    bool IsNativeLockedItemNoFollow(int vfs_error, const std::string &_path) const;
+    static bool IsNativeLockedItemNoFollow(int vfs_error, const std::string &_path);
     StepResult UnlockNativeItemNoFollow(const std::string &_path, vfs::NativeHost &_native_host) const;
 
     StepResult OnCantOpenDestinationFile(int _vfs_error, const std::string &_path, VFSHost &_vfs);

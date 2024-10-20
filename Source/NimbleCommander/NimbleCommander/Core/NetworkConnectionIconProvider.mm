@@ -38,8 +38,7 @@ static NSImage *Dropbox()
     return image;
 }
 
-NSImage *
-NetworkConnectionIconProvider::Icon16px(const nc::panel::NetworkConnectionsManager::Connection &_connection) const
+NSImage *NetworkConnectionIconProvider::Icon16px(const nc::panel::NetworkConnectionsManager::Connection &_connection)
 {
     if( _connection.IsType<nc::panel::NetworkConnectionsManager::LANShare>() )
         return Share();
@@ -61,12 +60,12 @@ static NSImage *ImageFromTag(const char *_tag)
     return nil;
 }
 
-NSImage *NetworkConnectionIconProvider::Icon16px(const nc::core::VFSInstancePromise &_promise) const
+NSImage *NetworkConnectionIconProvider::Icon16px(const nc::core::VFSInstancePromise &_promise)
 {
     return ImageFromTag(_promise.tag());
 }
 
-NSImage *NetworkConnectionIconProvider::Icon16px(const VFSHost &_host) const
+NSImage *NetworkConnectionIconProvider::Icon16px(const VFSHost &_host)
 {
     return ImageFromTag(_host.Tag());
 }

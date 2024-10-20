@@ -77,7 +77,7 @@ public:
 #ifdef __OBJC__
     void FillAuth(NSMutableURLRequest *_request) const;
     NSURLSession *GenericSession() const;
-    NSURLSessionConfiguration *GenericConfiguration() const;
+    static NSURLSessionConfiguration *GenericConfiguration();
 #endif
 
     static std::pair<int, std::string> CheckTokenAndRetrieveAccountEmail(const std::string &_token);

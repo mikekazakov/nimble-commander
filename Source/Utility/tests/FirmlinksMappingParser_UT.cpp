@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FirmlinksMappingParser.h"
 #include "UnitTests_main.h"
 #include <fstream>
@@ -45,8 +45,7 @@ TEST_CASE(PREFIX "Works against predefined mapping")
                          "/usr/share/snmp\x09"
                          "usr/share/snmp";
 
-    FirmlinksMappingParser parser;
-    auto parsed = parser.Parse(mapping);
+    auto parsed = FirmlinksMappingParser::Parse(mapping);
 
     REQUIRE(parsed.size() == 18);
     using L = FirmlinksMappingParser::Firmlink;
@@ -84,8 +83,7 @@ TEST_CASE(PREFIX "Works against system mapping")
     in.read(mapping.data(), mapping.size());
     in.close();
 
-    FirmlinksMappingParser parser;
-    auto parsed = parser.Parse(mapping);
+    auto parsed = FirmlinksMappingParser::Parse(mapping);
 
     CHECK(!parsed.empty());
 }

@@ -111,9 +111,9 @@ const char *Host::UniqueTag = "nullfs";
 class VFSHostConfiguration
 {
 public:
-    [[nodiscard]] const char *Tag() const { return Host::UniqueTag; }
+    [[nodiscard]] static const char *Tag() { return Host::UniqueTag; }
 
-    [[nodiscard]] const char *Junction() const { return ""; }
+    [[nodiscard]] static const char *Junction() { return ""; }
 
     bool operator==(const VFSHostConfiguration &) const { return true; }
 };
@@ -369,7 +369,7 @@ bool Host::ValidateFilename(std::string_view _filename) const
         return false;
 
     constexpr std::string_view invalid_chars = ":\\/\r\t\n";
-    return _filename.find_first_of(invalid_chars) == _filename.npos;
+    return _filename.find_first_of(invalid_chars) == std::string_view::npos;
 }
 
 int Host::FetchDirectoryListing([[maybe_unused]] std::string_view _path,

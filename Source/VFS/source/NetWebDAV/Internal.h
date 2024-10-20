@@ -20,7 +20,7 @@ public:
     bool https;
     int port;
 
-    const char *Tag() const;
+    static const char *Tag();
     const char *Junction() const;
     const char *VerboseJunction() const;
     bool operator==(const HostConfiguration &_rhs) const;

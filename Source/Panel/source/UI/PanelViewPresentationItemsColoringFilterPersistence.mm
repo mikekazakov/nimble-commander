@@ -35,7 +35,7 @@ static NSColor *ColorFromJSON(const config::Value &_v)
     return [NSColor colorWithHexString:_v.IsString() ? _v.GetString() : ""];
 }
 
-config::Value PresentationItemsColoringFilterPersitence::ToJSON(const PresentationItemsColoringFilter &_filter) const
+config::Value PresentationItemsColoringFilterPersitence::ToJSON(const PresentationItemsColoringFilter &_filter)
 {
     auto &allocator = config::g_CrtAllocator;
     config::Value v(rapidjson::kObjectType);
@@ -56,7 +56,7 @@ config::Value PresentationItemsColoringFilterPersitence::ToJSON(const Presentati
     return v;
 }
 
-PresentationItemsColoringFilter PresentationItemsColoringFilterPersitence::FromJSON(const config::Value &_v) const
+PresentationItemsColoringFilter PresentationItemsColoringFilterPersitence::FromJSON(const config::Value &_v)
 {
     PresentationItemsColoringFilter f;
 
@@ -84,7 +84,7 @@ PresentationItemsColoringFilter PresentationItemsColoringFilterPersitence::FromJ
     return f;
 }
 
-config::Value PresentationItemsColoringRulePersistence::ToJSON(const PresentationItemsColoringRule &_rule) const
+config::Value PresentationItemsColoringRulePersistence::ToJSON(const PresentationItemsColoringRule &_rule)
 {
     using Value = config::Value;
     auto &allocator = config::g_CrtAllocator;
@@ -92,13 +92,13 @@ config::Value PresentationItemsColoringRulePersistence::ToJSON(const Presentatio
     v.AddMember("name", Value(_rule.name.c_str(), allocator), allocator);
     v.AddMember("regular", Value(_rule.regular.toHexStdString.c_str(), allocator), allocator);
     v.AddMember("focused", Value(_rule.focused.toHexStdString.c_str(), allocator), allocator);
-    auto f = PresentationItemsColoringFilterPersitence{}.ToJSON(_rule.filter);
+    auto f = PresentationItemsColoringFilterPersitence::ToJSON(_rule.filter);
     if( !f.ObjectEmpty() )
         v.AddMember("filter", f, allocator);
     return v;
 }
 
-PresentationItemsColoringRule PresentationItemsColoringRulePersistence::FromJSON(const config::Value &_v) const
+PresentationItemsColoringRule PresentationItemsColoringRulePersistence::FromJSON(const config::Value &_v)
 {
     PresentationItemsColoringRule f;
 
@@ -106,7 +106,7 @@ PresentationItemsColoringRule PresentationItemsColoringRulePersistence::FromJSON
         return f;
 
     if( _v.HasMember("filter") )
-        f.filter = PresentationItemsColoringFilterPersitence{}.FromJSON(_v["filter"]);
+        f.filter = PresentationItemsColoringFilterPersitence::FromJSON(_v["filter"]);
     if( _v.HasMember("name") && _v["name"].IsString() )
         f.name = _v["name"].GetString();
     if( _v.HasMember("regular") )

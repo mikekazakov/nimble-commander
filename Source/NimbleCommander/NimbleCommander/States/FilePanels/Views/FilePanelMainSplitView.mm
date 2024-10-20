@@ -431,10 +431,8 @@ static constexpr auto g_DividerThickness = 1.;
 
 - (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)_item
 {
-    static const long move_left_tag =
-        ActionsShortcutsManager::Instance().TagFromAction("menu.view.panels_position.move_left");
-    static const long move_right_tag =
-        ActionsShortcutsManager::Instance().TagFromAction("menu.view.panels_position.move_right");
+    static const long move_left_tag = ActionsShortcutsManager::TagFromAction("menu.view.panels_position.move_left");
+    static const long move_right_tag = ActionsShortcutsManager::TagFromAction("menu.view.panels_position.move_right");
 
     const long item_tag = _item.tag;
     if( item_tag == move_left_tag ) {

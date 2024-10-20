@@ -66,12 +66,12 @@ std::string CopyingTitleBuilder::TitleForProcessing() const
             .UTF8String;
 }
 
-std::string CopyingTitleBuilder::TitleForVerifying() const
+std::string CopyingTitleBuilder::TitleForVerifying()
 {
     return NSLocalizedString(@"Verifying operation result..", "").UTF8String;
 }
 
-std::string CopyingTitleBuilder::TitleForCleanup() const
+std::string CopyingTitleBuilder::TitleForCleanup()
 {
     return NSLocalizedString(@"Cleaning up..", "").UTF8String;
 }

@@ -25,7 +25,7 @@ static bool IsSeparator(char _c) noexcept;
 static bool IsAlpha(char _c) noexcept;
 static ParseResult ParseNext(std::string_view _string) noexcept;
 
-int VersionCompare::Compare(std::string_view _lhs, std::string_view _rhs) const noexcept
+int VersionCompare::Compare(std::string_view _lhs, std::string_view _rhs) noexcept
 {
     while( true ) {
         const auto left = ParseNext(_lhs);
@@ -96,7 +96,7 @@ int VersionCompare::Compare(std::string_view _lhs, std::string_view _rhs) const 
     }
 }
 
-int VersionCompare::Compare(NSString *_lhs, NSString *_rhs) const noexcept
+int VersionCompare::Compare(NSString *_lhs, NSString *_rhs) noexcept
 {
     return Compare(_lhs.UTF8String, _rhs.UTF8String);
 }

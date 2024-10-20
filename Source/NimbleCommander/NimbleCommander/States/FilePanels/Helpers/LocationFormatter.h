@@ -36,7 +36,7 @@ public:
 class ListingPromiseFormatter : public Formatter
 {
 public:
-    Representation Render(RenderOptions _options, const ListingPromise &_promise);
+    static Representation Render(RenderOptions _options, const ListingPromise &_promise);
 };
 
 class FavoriteLocationFormatter : public Formatter
@@ -64,19 +64,20 @@ private:
 class NetworkConnectionFormatter : public Formatter
 {
 public:
-    Representation Render(RenderOptions _options, const NetworkConnectionsManager::Connection &_connection);
+    static Representation Render(RenderOptions _options, const NetworkConnectionsManager::Connection &_connection);
 };
 
 class VolumeFormatter : public Formatter
 {
 public:
-    Representation Render(RenderOptions _options, const utility::NativeFileSystemInfo &_volume);
+    static Representation Render(RenderOptions _options, const utility::NativeFileSystemInfo &_volume);
 };
 
 class VFSPromiseFormatter : public Formatter
 {
 public:
-    Representation Render(RenderOptions _options, const core::VFSInstancePromise &_promise, const std::string &_path);
+    static Representation
+    Render(RenderOptions _options, const core::VFSInstancePromise &_promise, const std::string &_path);
 };
 
 class VFSPathFormatter : public Formatter
@@ -92,7 +93,7 @@ private:
 class VFSFinderTagsFormatter : public Formatter
 {
 public:
-    Representation Render(RenderOptions _options, const utility::Tags::Tag &_tag);
+    static Representation Render(RenderOptions _options, const utility::Tags::Tag &_tag);
 };
 
 }; // namespace nc::panel::loc_fmt

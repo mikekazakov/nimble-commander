@@ -50,9 +50,9 @@ private:
     void InsertNewVolume_Unlocked(const std::shared_ptr<NativeFileSystemInfo> &_volume);
     Info VolumeFromMountPoint_Unlocked(std::string_view _mount_point) const noexcept;
     Info VolumeFromBSDName_Unlocked(std::string_view _bsd_name) const noexcept;
-    void PerformUnmounting(const Info &_volume);
-    void PerformGenericUnmounting(const Info &_volume);
-    void PerformAPFSUnmounting(const Info &_volume);
+    static void PerformUnmounting(const Info &_volume);
+    static void PerformGenericUnmounting(const Info &_volume);
+    static void PerformAPFSUnmounting(const Info &_volume);
     void SubscribeToWorkspaceNotifications();
     void UnsubscribeFromWorkspaceNotifications();
     void InjectRootFirmlinks(const APFSTree &_tree);

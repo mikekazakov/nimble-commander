@@ -2,11 +2,10 @@
 #include "BriefOperationViewController.h"
 #include "Internal.h"
 #include "Operation.h"
-#include <Utility/ByteCountFormatter.h>
-#include "StatisticsFormatter.h"
 #include "Statistics.h"
-#include "Internal.h"
+#include "StatisticsFormatter.h"
 #include <Base/dispatch_cpp.h>
+#include <Utility/ByteCountFormatter.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 

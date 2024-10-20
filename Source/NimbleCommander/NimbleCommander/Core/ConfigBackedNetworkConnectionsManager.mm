@@ -420,13 +420,13 @@ std::vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnection
 
 bool ConfigBackedNetworkConnectionsManager::SetPassword(const Connection &_conn, const std::string &_password)
 {
-    return KeychainServices::Instance().SetPassword(
+    return KeychainServices::SetPassword(
         KeychainWhereFromConnection(_conn), KeychainAccountFromConnection(_conn), _password);
 }
 
 bool ConfigBackedNetworkConnectionsManager::GetPassword(const Connection &_conn, std::string &_password)
 {
-    return KeychainServices::Instance().GetPassword(
+    return KeychainServices::GetPassword(
         KeychainWhereFromConnection(_conn), KeychainAccountFromConnection(_conn), _password);
 }
 
@@ -627,7 +627,7 @@ static bool TearDownNFSMountName(const std::string &_name, std::string &_host, s
 {
     [[clang::no_destroy]] static const auto delimiter = ":/"s;
     auto pos = _name.find(delimiter);
-    if( pos == _name.npos )
+    if( pos == std::string::npos )
         return false;
     _host = _name.substr(0, pos);
     _share = _name.substr(pos + delimiter.size());

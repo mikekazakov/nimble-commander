@@ -24,7 +24,7 @@ public:
     std::string client_id;
     std::string client_secret;
 
-    [[nodiscard]] const char *Tag() const { return DropboxHost::UniqueTag; }
+    [[nodiscard]] static const char *Tag() { return DropboxHost::UniqueTag; }
 
     [[nodiscard]] const char *Junction() const { return account.c_str(); }
 
@@ -200,7 +200,7 @@ NSURLSession *DropboxHost::GenericSession() const
     return I->m_GenericSession;
 }
 
-NSURLSessionConfiguration *DropboxHost::GenericConfiguration() const
+NSURLSessionConfiguration *DropboxHost::GenericConfiguration()
 {
     return NSURLSessionConfiguration.defaultSessionConfiguration;
 }

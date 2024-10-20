@@ -145,8 +145,7 @@ void TextModeWorkingSetHighlighting::Highlight(
     Log::Trace("TextModeWorkingSetHighlighting: sending async highlighting request");
     const auto timepoint_start = std::chrono::steady_clock::now();
 
-    hl::Client client;
-    client.HighlightAsync(
+    nc::viewer::hl::Client::HighlightAsync(
         {utf8.data(), utf8.size()},
         *m_HighlightingOptions,
         [me](std::expected<std::vector<hl::Style>, std::string> _result) { me->Commit(std::move(_result)); },

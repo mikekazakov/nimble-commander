@@ -195,6 +195,7 @@ Value PanelDataPersistency::EncodeVFSPath(const VFSHost &_vfs, const std::string
     return json;
 }
 
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 Value PanelDataPersistency::LocationToJSON(const PersistentLocation &_location)
 {
     Value json(rapidjson::kObjectType);
@@ -215,6 +216,7 @@ Value PanelDataPersistency::LocationToJSON(const PersistentLocation &_location)
     return json;
 }
 
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 std::optional<PersistentLocation> PanelDataPersistency::JSONToLocation(const json &_json)
 {
     if( !_json.IsObject() || !_json.HasMember(g_StackPathKey) || !_json[g_StackPathKey].IsString() )
@@ -369,6 +371,7 @@ std::string PanelDataPersistency::MakeVerbosePathString(const PersistentLocation
     return verbose;
 }
 
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 std::string PanelDataPersistency::MakeVerbosePathString(const VFSHost &_host, const std::string &_directory)
 {
     std::array<const VFSHost *, 32> hosts;
@@ -594,6 +597,7 @@ int PanelDataPersistency::CreateVFSFromLocation(const PersistentLocation &_state
         return VFSError::GenericError;
 }
 
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 std::string PanelDataPersistency::GetPathFromState(const Value &_state)
 {
     if( _state.IsObject() && _state.HasMember(g_StackPathKey) && _state[g_StackPathKey].IsString() )

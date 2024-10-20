@@ -33,7 +33,7 @@ private:
     NSImage *GetGenericIcon(const VFSListingItem &_item) const;
     bool ShouldTryProducingQLThumbnailOnNativeFS(const VFSListingItem &_item) const;
     bool ShouldTryProducingQLThumbnailOnVFS(const VFSListingItem &_item) const;
-    bool ShouldTryProducingBundleIconOnVFS(const VFSListingItem &_item) const;
+    static bool ShouldTryProducingBundleIconOnVFS(const VFSListingItem &_item);
 
     std::shared_ptr<QLThumbnailsCache> m_QLThumbnailsCache;
     std::shared_ptr<WorkspaceIconsCache> m_WorkspaceIconsCache;

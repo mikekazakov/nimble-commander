@@ -97,7 +97,7 @@ public:
         int socket = -1;
     };
 
-    int VFSErrorForConnection(Connection &_conn) const;
+    static int VFSErrorForConnection(Connection &_conn);
     int GetConnection(std::unique_ptr<Connection> &_t);
     void ReturnConnection(std::unique_ptr<Connection> _t);
 
@@ -120,7 +120,7 @@ private:
                                       void **abstract);
     int DoInit();
     int SpawnSSH2(std::unique_ptr<Connection> &_t);
-    int SpawnSFTP(std::unique_ptr<Connection> &_t);
+    static int SpawnSFTP(std::unique_ptr<Connection> &_t);
 
     in_addr_t InetAddr() const;
     const class SFTPHostConfiguration &Config() const;

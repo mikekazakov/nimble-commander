@@ -69,11 +69,11 @@ size_t WriteBuffer::Discard(size_t _bytes) noexcept
     return to_discard;
 }
 
-size_t WriteBuffer::ReadCURL(void *_ptr, size_t _size, size_t _nmemb, void *_userp) noexcept
+size_t WriteBuffer::ReadCURL(void *_ptr, size_t _elements, size_t _nmemb, void *_data) noexcept
 {
-    WriteBuffer &buffer = *static_cast<WriteBuffer *>(_userp);
+    WriteBuffer &buffer = *static_cast<WriteBuffer *>(_data);
 
-    const auto total_bytes = _size * _nmemb;
+    const auto total_bytes = _elements * _nmemb;
 
     return buffer.Read(_ptr, total_bytes);
 }

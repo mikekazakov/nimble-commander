@@ -539,12 +539,12 @@ void Model::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
     vd.toggle_selected(_is_selected);
 }
 
-void Model::CustomFlagsSelectSorted(int _at_pos, bool _is_selected)
+void Model::CustomFlagsSelectSorted(int _at_sorted_pos, bool _is_selected)
 {
-    if( _at_pos < 0 || _at_pos >= static_cast<int>(m_EntriesByCustomSort.size()) )
+    if( _at_sorted_pos < 0 || _at_sorted_pos >= static_cast<int>(m_EntriesByCustomSort.size()) )
         return;
 
-    CustomFlagsSelectRaw(m_EntriesByCustomSort[_at_pos], _is_selected);
+    CustomFlagsSelectRaw(m_EntriesByCustomSort[_at_sorted_pos], _is_selected);
 }
 
 bool Model::CustomFlagsSelectSorted(const std::vector<bool> &_is_selected)

@@ -339,10 +339,10 @@ void WriteBuffer::Write(const void *_mem, size_t _size)
     m_Buf.insert(m_Buf.end(), static_cast<const std::byte *>(_mem), static_cast<const std::byte *>(_mem) + _size);
 }
 
-size_t WriteBuffer::Read(void *ptr, size_t size, size_t nmemb, void *_this)
+size_t WriteBuffer::Read(void *_dest, size_t size, size_t nmemb, void *_this)
 {
     assert(_this != nullptr);
-    return static_cast<WriteBuffer *>(_this)->DoRead(ptr, size, nmemb);
+    return static_cast<WriteBuffer *>(_this)->DoRead(_dest, size, nmemb);
 }
 
 size_t WriteBuffer::DoRead(void *_dest, size_t _size, size_t _nmemb)

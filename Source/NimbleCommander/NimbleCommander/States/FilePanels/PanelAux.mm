@@ -110,18 +110,18 @@ FileOpener::FileOpener(nc::utility::TemporaryFileStorage &_temp_storage) : m_Tem
 {
 }
 
-void FileOpener::Open(std::string _filename, std::shared_ptr<VFSHost> _host, PanelController *_panel)
+void FileOpener::Open(std::string _filepath, std::shared_ptr<VFSHost> _host, PanelController *_panel)
 {
-    Open(_filename, _host, "", _panel);
+    Open(_filepath, _host, "", _panel);
 }
 
-void FileOpener::Open(std::string _filename,
+void FileOpener::Open(std::string _filepath,
                       std::shared_ptr<VFSHost> _host,
                       std::string _with_app_path,
                       PanelController *_panel)
 {
     if( _host->IsNativeFS() ) {
-        NSString *const filename = [NSString stringWithUTF8String:_filename.c_str()];
+        NSString *const filename = [NSString stringWithUTF8String:_filepath.c_str()];
 
         if( !_with_app_path.empty() ) {
             if( ![[NSWorkspace sharedWorkspace] openFile:filename
@@ -138,13 +138,13 @@ void FileOpener::Open(std::string _filename,
 
     dispatch_to_default([=, this] {
         auto activity_ticket = [_panel registerExtActivity];
-        if( _host->IsDirectory(_filename.c_str(), 0, nullptr) ) {
+        if( _host->IsDirectory(_filepath.c_str(), 0, nullptr) ) {
             NSBeep();
             return;
         }
 
         VFSStat st;
-        if( _host->Stat(_filename.c_str(), st, 0, nullptr) < 0 ) {
+        if( _host->Stat(_filepath.c_str(), st, 0, nullptr) < 0 ) {
             NSBeep();
             return;
         }
@@ -154,8 +154,8 @@ void FileOpener::Open(std::string _filename,
             return;
         }
 
-        if( auto tmp_path = CopyFileToTempStorage(_filename, *_host, m_TemporaryFileStorage) ) {
-            RegisterRemoteFileUploading(_filename, _host, *tmp_path, _panel);
+        if( auto tmp_path = CopyFileToTempStorage(_filepath, *_host, m_TemporaryFileStorage) ) {
+            RegisterRemoteFileUploading(_filepath, _host, *tmp_path, _panel);
 
             NSString *const fn = [NSString stringWithUTF8StdString:*tmp_path];
             dispatch_to_main_queue([=] {
@@ -176,14 +176,14 @@ void FileOpener::Open(std::string _filename,
 }
 
 // TODO: write version with FlexListingItem as an input - it would be much simplier
-void FileOpener::Open(std::vector<std::string> _filenames,
+void FileOpener::Open(std::vector<std::string> _filepaths,
                       std::shared_ptr<VFSHost> _host,
                       NSString *_with_app_bundle, // can be nil, use default app in such case
                       PanelController *_panel)
 {
     if( _host->IsNativeFS() ) {
-        NSMutableArray *const arr = [NSMutableArray arrayWithCapacity:_filenames.size()];
-        for( auto &i : _filenames )
+        NSMutableArray *const arr = [NSMutableArray arrayWithCapacity:_filepaths.size()];
+        for( auto &i : _filepaths )
             if( NSString *const s = [NSString stringWithUTF8String:i.c_str()] )
                 [arr addObject:[[NSURL alloc] initFileURLWithPath:s]];
 
@@ -199,8 +199,8 @@ void FileOpener::Open(std::vector<std::string> _filenames,
 
     dispatch_to_default([=, this] {
         auto activity_ticket = [_panel registerExtActivity];
-        NSMutableArray *const arr = [NSMutableArray arrayWithCapacity:_filenames.size()];
-        for( auto &i : _filenames ) {
+        NSMutableArray *const arr = [NSMutableArray arrayWithCapacity:_filepaths.size()];
+        for( auto &i : _filepaths ) {
             if( _host->IsDirectory(i.c_str(), 0, nullptr) )
                 continue;
 

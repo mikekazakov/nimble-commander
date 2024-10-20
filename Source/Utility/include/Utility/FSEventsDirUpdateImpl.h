@@ -36,10 +36,10 @@ private:
 
     static void DiskDisappeared(DADiskRef disk, void *context);
     static void FSEventsDirUpdateCallback(ConstFSEventStreamRef streamRef,
-                                          void *userData,
-                                          size_t numEvents,
-                                          void *eventPaths,
-                                          const FSEventStreamEventFlags eventFlags[],
+                                          void *_user_data,
+                                          size_t _num,
+                                          void *_paths,
+                                          const FSEventStreamEventFlags _flags[],
                                           const FSEventStreamEventId eventIds[]);
     static FSEventStreamRef CreateEventStream(const std::string &path, void *context);
 

@@ -28,7 +28,8 @@ static const auto g_ShortcutKey = "shortcut";
 static const auto g_StartupKey = "startup";
 static const auto g_UUIDKey = "uuid";
 
-ExternalToolsParameters::Step::Step(ActionType t, uint16_t i, bool _partial) : type(t), index(i), partial(_partial)
+ExternalToolsParameters::Step::Step(ActionType _type, uint16_t _index, bool _partial)
+    : type(_type), index(_index), partial(_partial)
 {
 }
 

@@ -295,7 +295,7 @@ public:
     CommandItemBuilder(NetworkConnectionsManager &_conn_manager, id _action_target);
     NCCommandPopoverItem *ItemForFavorite(const FavoriteLocationsStorage::Favorite &_f);
     NCCommandPopoverItem *ItemForLocation(const FavoriteLocationsStorage::Location &_f);
-    NCCommandPopoverItem *ItemForVolume(const utility::NativeFileSystemInfo &_i);
+    NCCommandPopoverItem *ItemForVolume(const utility::NativeFileSystemInfo &_volume);
     NCCommandPopoverItem *ItemForConnection(const NetworkConnectionsManager::Connection &_c);
     NCCommandPopoverItem *ItemForPath(const vfs::VFSPath &_p);
     NCCommandPopoverItem *ItemForPromiseAndPath(const core::VFSInstanceManager::Promise &_promise,

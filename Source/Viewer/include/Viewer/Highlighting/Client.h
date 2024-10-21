@@ -13,15 +13,15 @@ class Client
 public:
     // Synchronously highlights the specified text given the specified settings.
     // Returns either styles for the text or an error message.
-    std::expected<std::vector<Style>, std::string> Highlight(std::string_view _text, std::string_view _settings);
+    static std::expected<std::vector<Style>, std::string> Highlight(std::string_view _text, std::string_view _settings);
 
     // Asynchronously highlights the specified text given the specified settings.
     // The callback will be executed once the request is fulfilled, providing either styles for the text or an error
     // message. A queue for the callback can be optionally provided, by default the main queue will be used.
-    void HighlightAsync(std::string_view _text,
-                        std::string_view _settings,
-                        std::function<void(std::expected<std::vector<Style>, std::string>)> _done,
-                        dispatch_queue_t _queue = nullptr);
+    static void HighlightAsync(std::string_view _text,
+                               std::string_view _settings,
+                               std::function<void(std::expected<std::vector<Style>, std::string>)> _done,
+                               dispatch_queue_t _queue = nullptr);
 };
 
 } // namespace nc::viewer::hl

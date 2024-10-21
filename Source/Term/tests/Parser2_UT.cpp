@@ -257,7 +257,7 @@ TEST_CASE(PREFIX "Handles control characters")
         {
             r = parser.Parse(to_bytes("\x1F"));
         }
-        CHECK(r.size() == 0);
+        CHECK(r.empty());
     }
     SECTION("linefeed")
     {
@@ -829,7 +829,7 @@ TEST_CASE(PREFIX "CSI J")
     {
         auto r = parser.Parse(to_bytes("\x1B"
                                        "[4J"));
-        REQUIRE(r.size() == 0);
+        REQUIRE(r.empty());
     }
     CHECK(parser.GetEscState() == ParserImpl::EscState::Text);
 }
@@ -874,7 +874,7 @@ TEST_CASE(PREFIX "CSI K")
     {
         auto r = parser.Parse(to_bytes("\x1B"
                                        "[3K"));
-        REQUIRE(r.size() == 0);
+        REQUIRE(r.empty());
     }
     CHECK(parser.GetEscState() == ParserImpl::EscState::Text);
 }
@@ -1225,13 +1225,13 @@ TEST_CASE(PREFIX "CSI g")
     {
         auto r = parser.Parse(to_bytes("\x1B"
                                        "[1g"));
-        CHECK(r.size() == 0);
+        CHECK(r.empty());
     }
     SECTION("ESC [ 2 g")
     {
         auto r = parser.Parse(to_bytes("\x1B"
                                        "[2g"));
-        CHECK(r.size() == 0);
+        CHECK(r.empty());
     }
     SECTION("ESC [ 3 g")
     {
@@ -1873,13 +1873,13 @@ TEST_CASE(PREFIX "CSI n")
     {
         auto r = parser.Parse(to_bytes("\x1B"
                                        "[n"));
-        REQUIRE(r.size() == 0);
+        REQUIRE(r.empty());
     }
     SECTION("ESC [ 0 n")
     {
         auto r = parser.Parse(to_bytes("\x1B"
                                        "[0n"));
-        REQUIRE(r.size() == 0);
+        REQUIRE(r.empty());
     }
     CHECK(parser.GetEscState() == ParserImpl::EscState::Text);
 }
@@ -2232,7 +2232,7 @@ TEST_CASE(PREFIX "Properly handles torn sequences")
     SECTION("ESC [ 34 P")
     {
         auto r1 = parser.Parse(to_bytes("\x1B"));
-        REQUIRE(r1.size() == 0);
+        REQUIRE(r1.empty());
         auto r2 = parser.Parse(to_bytes("[34P"));
         REQUIRE(r2.size() == 1);
         CHECK(r2[0].type == Type::delete_characters);
@@ -2241,7 +2241,7 @@ TEST_CASE(PREFIX "Properly handles torn sequences")
     SECTION("\xf0\x9f\x98\xb1")
     { // 😱
         auto r1 = parser.Parse(to_bytes("\xf0\x9f"));
-        REQUIRE(r1.size() == 0);
+        REQUIRE(r1.empty());
         auto r2 = parser.Parse(to_bytes("\x98\xb1\xf0\x9f\x98"));
         REQUIRE(r2.size() == 1);
         CHECK(r2[0].type == Type::text);

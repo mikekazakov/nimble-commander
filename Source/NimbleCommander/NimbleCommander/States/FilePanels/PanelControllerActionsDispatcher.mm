@@ -50,15 +50,14 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 {
     const auto event_data = nc::utility::ActionShortcut::EventData(_event);
 
-    static ActionsShortcutsManager::ShortCut //
-        hk_file_open,                        //
-        hk_file_open_native,                 //
-        hk_go_root,                          //
-        hk_go_home,                          //
-        hk_preview,                          //
-        hk_go_into,                          //
-        hk_go_outside,                       //
-        hk_show_context_menu;                //
+    static ActionsShortcutsManager::ShortCut hk_file_open;         //
+    static ActionsShortcutsManager::ShortCut hk_file_open_native;  //
+    static ActionsShortcutsManager::ShortCut hk_go_root;           //
+    static ActionsShortcutsManager::ShortCut hk_go_home;           //
+    static ActionsShortcutsManager::ShortCut hk_preview;           //
+    static ActionsShortcutsManager::ShortCut hk_go_into;           //
+    static ActionsShortcutsManager::ShortCut hk_go_outside;        //
+    static ActionsShortcutsManager::ShortCut hk_show_context_menu; //
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
         std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
             {.shortcut = &hk_file_open, .action = "menu.file.enter"},
@@ -82,7 +81,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 
     if( hk_go_home.IsKeyDown(event_data) ) {
         if( _handle ) {
-            static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.home");
+            static auto tag = ActionsShortcutsManager::TagFromAction("menu.go.home");
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
@@ -90,7 +89,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 
     if( hk_go_root.IsKeyDown(event_data) ) {
         if( _handle ) {
-            static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.root");
+            static auto tag = ActionsShortcutsManager::TagFromAction("menu.go.root");
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
@@ -98,7 +97,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 
     if( hk_go_into.IsKeyDown(event_data) ) {
         if( _handle ) {
-            static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.into_folder");
+            static auto tag = ActionsShortcutsManager::TagFromAction("menu.go.into_folder");
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
@@ -106,7 +105,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 
     if( hk_go_outside.IsKeyDown(event_data) ) {
         if( _handle ) {
-            static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.enclosing_folder");
+            static auto tag = ActionsShortcutsManager::TagFromAction("menu.go.enclosing_folder");
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;

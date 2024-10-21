@@ -135,8 +135,10 @@ const chained_strings::node &chained_strings::back() const
 
 void chained_strings::node::str_with_pref(char *_buf) const
 {
-    const node *nodes[max_depth], *n = this;
-    int bufsz = 0, nodes_n = 0;
+    const node *nodes[max_depth];
+    const node *n = this;
+    int bufsz = 0;
+    int nodes_n = 0;
     do {
         nodes[nodes_n++] = n;
         assert(nodes_n < max_depth);
@@ -151,8 +153,10 @@ void chained_strings::node::str_with_pref(char *_buf) const
 
 std::string chained_strings::node::to_str_with_pref() const
 {
-    const node *nodes[max_depth], *n = this;
-    int bufsz = 0, nodes_n = 0;
+    const node *nodes[max_depth];
+    const node *n = this;
+    int bufsz = 0;
+    int nodes_n = 0;
     do {
         bufsz += n->len;
         nodes[nodes_n++] = n;

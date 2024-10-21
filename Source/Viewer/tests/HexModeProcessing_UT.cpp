@@ -9,10 +9,10 @@
 using namespace nc::viewer;
 
 static std::shared_ptr<const TextModeWorkingSet>
-ProduceWorkingSet(const char16_t *_chars, const int _chars_number, long _ws_offset = 0);
+ProduceWorkingSet(const char16_t *_chars, int _chars_number, long _ws_offset = 0);
 
 static std::shared_ptr<const TextModeWorkingSet>
-ProduceWorkingSet(const char *_chars, const int _chars_number, long _ws_offset = 0);
+ProduceWorkingSet(const char *_chars, int _chars_number, long _ws_offset = 0);
 
 static bool Equal(CFStringRef _lhs, CFStringRef _rhs);
 

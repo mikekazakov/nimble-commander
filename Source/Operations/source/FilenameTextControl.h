@@ -22,8 +22,8 @@ public:
     std::string Complete(const std::string &_path, const std::string &_completion) override;
 
 private:
-    std::string ExtractDirectory(const std::string &_path) const;
-    std::string ExtractFilename(const std::string &_path) const;
+    static std::string ExtractDirectory(const std::string &_path);
+    static std::string ExtractFilename(const std::string &_path);
     VFSListingPtr ListingForDir(const std::string &_path);
     static std::vector<unsigned> ListDirsWithPrefix(const VFSListing &_listing, const std::string &_prefix);
 

@@ -89,7 +89,7 @@ public:
     const std::string path;
     const std::string verbose_junction;
 
-    [[nodiscard]] const char *Tag() const { return XAttrHost::UniqueTag; }
+    [[nodiscard]] static const char *Tag() { return XAttrHost::UniqueTag; }
 
     [[nodiscard]] const char *Junction() const { return path.c_str(); }
 

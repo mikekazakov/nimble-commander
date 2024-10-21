@@ -117,7 +117,7 @@ static GoToPopupListActionMediator *g_CurrentMediator = nil;
     else if( auto promise = std::any_cast<std::pair<nc::core::VFSInstancePromise, std::string>>(&_context) )
         [self handleVFSPromiseInstance:promise->first path:promise->second];
     else if( auto listing_promise = std::any_cast<nc::panel::ListingPromise>(&_context) )
-        nc::panel::ListingPromiseLoader{}.Load(*listing_promise, m_Panel);
+        nc::panel::ListingPromiseLoader::Load(*listing_promise, m_Panel);
     else if( auto tag = std::any_cast<nc::utility::Tags::Tag>(&_context) )
         [self handleTag:*tag];
     else
@@ -295,7 +295,7 @@ public:
     CommandItemBuilder(NetworkConnectionsManager &_conn_manager, id _action_target);
     NCCommandPopoverItem *ItemForFavorite(const FavoriteLocationsStorage::Favorite &_f);
     NCCommandPopoverItem *ItemForLocation(const FavoriteLocationsStorage::Location &_f);
-    NCCommandPopoverItem *ItemForVolume(const utility::NativeFileSystemInfo &_i);
+    NCCommandPopoverItem *ItemForVolume(const utility::NativeFileSystemInfo &_volume);
     NCCommandPopoverItem *ItemForConnection(const NetworkConnectionsManager::Connection &_c);
     NCCommandPopoverItem *ItemForPath(const vfs::VFSPath &_p);
     NCCommandPopoverItem *ItemForPromiseAndPath(const core::VFSInstanceManager::Promise &_promise,
@@ -650,7 +650,7 @@ NCCommandPopoverItem *CommandItemBuilder::ItemForVolume(const utility::NativeFil
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_volume.mounted_at_path}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    auto rep = loc_fmt::VolumeFormatter{}.Render(m_FmtOpts, _volume);
+    auto rep = nc::panel::loc_fmt::VolumeFormatter::Render(m_FmtOpts, _volume);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;
@@ -663,7 +663,7 @@ NCCommandPopoverItem *CommandItemBuilder::ItemForConnection(const NetworkConnect
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_c}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    auto rep = loc_fmt::NetworkConnectionFormatter{}.Render(m_FmtOpts, _c);
+    auto rep = nc::panel::loc_fmt::NetworkConnectionFormatter::Render(m_FmtOpts, _c);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;
@@ -691,7 +691,7 @@ NCCommandPopoverItem *CommandItemBuilder::ItemForPromiseAndPath(const core::VFSI
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{std::move(data)}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    auto rep = loc_fmt::VFSPromiseFormatter{}.Render(m_FmtOpts, _promise, _path);
+    auto rep = nc::panel::loc_fmt::VFSPromiseFormatter::Render(m_FmtOpts, _promise, _path);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;
@@ -704,7 +704,7 @@ NCCommandPopoverItem *CommandItemBuilder::ItemForListingPromise(const ListingPro
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_promise}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    auto rep = loc_fmt::ListingPromiseFormatter{}.Render(m_FmtOpts, _promise);
+    auto rep = nc::panel::loc_fmt::ListingPromiseFormatter::Render(m_FmtOpts, _promise);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;
@@ -717,7 +717,7 @@ NCCommandPopoverItem *CommandItemBuilder::ItemForFinderTags(const utility::Tags:
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_tag}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    auto rep = loc_fmt::VFSFinderTagsFormatter{}.Render(m_FmtOpts, _tag);
+    auto rep = nc::panel::loc_fmt::VFSFinderTagsFormatter::Render(m_FmtOpts, _tag);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;

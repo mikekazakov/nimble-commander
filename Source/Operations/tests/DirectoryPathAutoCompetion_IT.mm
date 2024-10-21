@@ -51,31 +51,31 @@ TEST_CASE(PREFIX "Tests")
     }
     { // starting with 'z'
         const auto completions = auto_completion.PossibleCompletions(dir + "z");
-        CHECK(completions == std::vector<std::string>{});
+        CHECK(completions.empty());
     }
     { // starting with 'adjagdjafgsdad'
         const auto completions = auto_completion.PossibleCompletions(dir + "adjagdjafgsdad");
-        CHECK(completions == std::vector<std::string>{});
+        CHECK(completions.empty());
     }
     { // starting with 'file'
         const auto completions = auto_completion.PossibleCompletions(dir + "file");
-        CHECK(completions == std::vector<std::string>{});
+        CHECK(completions.empty());
     }
     { // invalid dir
         const auto completions = auto_completion.PossibleCompletions(dir + "adasdadsa/");
-        CHECK(completions == std::vector<std::string>{});
+        CHECK(completions.empty());
     }
     { // invalid dir + invalid filename
         const auto completions = auto_completion.PossibleCompletions(dir + "adasdadsa/asdasdasd");
-        CHECK(completions == std::vector<std::string>{});
+        CHECK(completions.empty());
     }
     { // empty dir
         const auto completions = auto_completion.PossibleCompletions("");
-        CHECK(completions == std::vector<std::string>{});
+        CHECK(completions.empty());
     }
     { // some gibberish
         const auto completions = auto_completion.PossibleCompletions("sidfogsodyfgosdufg");
-        CHECK(completions == std::vector<std::string>{});
+        CHECK(completions.empty());
     }
 
     // completions

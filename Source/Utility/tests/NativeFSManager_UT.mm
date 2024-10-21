@@ -11,7 +11,7 @@ using nc::utility::NativeFileSystemInfo;
 using nc::utility::NativeFSManagerImpl;
 #define PREFIX "nc::utility::NativeFSManager "
 
-static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expection);
+static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation);
 static int Execute(const std::string &_command);
 
 TEST_CASE(PREFIX "Fast lookup considers firmlinks")

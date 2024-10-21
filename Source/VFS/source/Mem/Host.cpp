@@ -7,13 +7,13 @@ const char *MemHost::UniqueTag = "memfs";
 class VFSMemHostConfiguration
 {
 public:
-    [[nodiscard]] const char *Tag() const { return MemHost::UniqueTag; }
+    [[nodiscard]] static const char *Tag() { return MemHost::UniqueTag; }
 
-    [[nodiscard]] const char *Junction() const { return ""; }
+    [[nodiscard]] static const char *Junction() { return ""; }
 
     bool operator==(const VFSMemHostConfiguration &) const { return true; }
 
-    [[nodiscard]] const char *VerboseJunction() const { return "[memfs]:"; }
+    [[nodiscard]] static const char *VerboseJunction() { return "[memfs]:"; }
 };
 
 MemHost::MemHost() : Host("", std::shared_ptr<Host>(nullptr), UniqueTag)

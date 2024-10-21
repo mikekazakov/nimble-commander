@@ -183,9 +183,8 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
     if( _toolbar )
         _toolbar.visible = _toolbar_visible;
 
-    self.window.titleVisibility = _needs_title
-                                      ? NSWindowTitleVisible
-                                      : ((_toolbar && _toolbar_visible) ? NSWindowTitleHidden : NSWindowTitleVisible);
+    self.window.titleVisibility =
+        _needs_title || !(_toolbar && _toolbar_visible) ? NSWindowTitleVisible : NSWindowTitleHidden;
 
     m_ToolbarVisible = _toolbar_visible;
 }

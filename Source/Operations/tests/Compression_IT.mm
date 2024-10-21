@@ -263,7 +263,8 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
 {
     // not comparing flags, perm, times, xattrs, acls etc now
 
-    VFSStat st1, st2;
+    VFSStat st1;
+    VFSStat st2;
     int ret;
     if( (ret = _file1_host->Stat(_file1_full_path.c_str(), st1, VFSFlags::F_NoFollow, nullptr)) < 0 )
         return ret;
@@ -281,7 +282,8 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
             _result = int(int64_t(st1.size) - int64_t(st2.size));
     }
     else if( S_ISLNK(st1.mode) ) {
-        char link1[MAXPATHLEN], link2[MAXPATHLEN];
+        char link1[MAXPATHLEN];
+        char link2[MAXPATHLEN];
         if( (ret = _file1_host->ReadSymlink(_file1_full_path.c_str(), link1, MAXPATHLEN, nullptr)) < 0 )
             return ret;
         if( (ret = _file2_host->ReadSymlink(_file2_full_path.c_str(), link2, MAXPATHLEN, nullptr)) < 0 )

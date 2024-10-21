@@ -7,7 +7,7 @@
 
 namespace nc::vfs::webdav {
 
-const char *HostConfiguration::Tag() const
+const char *HostConfiguration::Tag()
 {
     return WebDAVHost::UniqueTag;
 }

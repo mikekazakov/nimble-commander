@@ -9,10 +9,10 @@ using namespace nc::base;
 TEST_CASE(PREFIX "SplitByDelimiters")
 {
     using VS = std::vector<std::string>;
-    CHECK(SplitByDelimiters("", "", true) == VS{});
-    CHECK(SplitByDelimiters("", "", false) == VS{});
-    CHECK(SplitByDelimiters("", ",", true) == VS{});
-    CHECK(SplitByDelimiters("", ",", false) == VS{});
+    CHECK(SplitByDelimiters("", "", true).empty());
+    CHECK(SplitByDelimiters("", "", false).empty());
+    CHECK(SplitByDelimiters("", ",", true).empty());
+    CHECK(SplitByDelimiters("", ",", false).empty());
     CHECK(SplitByDelimiters("1", "", true) == VS{"1"});
     CHECK(SplitByDelimiters("1", "", false) == VS{"1"});
     CHECK(SplitByDelimiters("12", "", true) == VS{"12"});
@@ -23,23 +23,23 @@ TEST_CASE(PREFIX "SplitByDelimiters")
     CHECK(SplitByDelimiters(",1,2,3,", ",", false) == VS{"", "1", "2", "3", ""});
     CHECK(SplitByDelimiters(",,1,,2,,3,,", ",", true) == VS{"1", "2", "3"});
     CHECK(SplitByDelimiters(",,1,,2,,3,,", ",", false) == VS{"", "", "1", "", "2", "", "3", "", ""});
-    CHECK(SplitByDelimiters(",", ",", true) == VS{});
+    CHECK(SplitByDelimiters(",", ",", true).empty());
     CHECK(SplitByDelimiters(",", ",", false) == VS{"", ""});
-    CHECK(SplitByDelimiters(",,", ",", true) == VS{});
+    CHECK(SplitByDelimiters(",,", ",", true).empty());
     CHECK(SplitByDelimiters(",,", ",", false) == VS{"", "", ""});
     CHECK(SplitByDelimiters(",1.2,3,", ",.", true) == VS{"1", "2", "3"});
     CHECK(SplitByDelimiters(",1.2,3,", ",.", false) == VS{"", "1", "2", "3", ""});
-    CHECK(SplitByDelimiters(",,..", ",.", true) == VS{});
+    CHECK(SplitByDelimiters(",,..", ",.", true).empty());
     CHECK(SplitByDelimiters(",,..", ",.", false) == VS{"", "", "", "", ""});
 }
 
 TEST_CASE(PREFIX "SplitByDelimiter")
 {
     using VS = std::vector<std::string>;
-    CHECK(SplitByDelimiter("", '\0', true) == VS{});
-    CHECK(SplitByDelimiter("", '\0', false) == VS{});
-    CHECK(SplitByDelimiter("", ',', true) == VS{});
-    CHECK(SplitByDelimiter("", ',', false) == VS{});
+    CHECK(SplitByDelimiter("", '\0', true).empty());
+    CHECK(SplitByDelimiter("", '\0', false).empty());
+    CHECK(SplitByDelimiter("", ',', true).empty());
+    CHECK(SplitByDelimiter("", ',', false).empty());
     CHECK(SplitByDelimiter("1", '\0', true) == VS{"1"});
     CHECK(SplitByDelimiter("1", '\0', false) == VS{"1"});
     CHECK(SplitByDelimiter("12", '\0', true) == VS{"12"});
@@ -50,9 +50,9 @@ TEST_CASE(PREFIX "SplitByDelimiter")
     CHECK(SplitByDelimiter(",1,2,3,", ',', false) == VS{"", "1", "2", "3", ""});
     CHECK(SplitByDelimiter(",,1,,2,,3,,", ',', true) == VS{"1", "2", "3"});
     CHECK(SplitByDelimiter(",,1,,2,,3,,", ',', false) == VS{"", "", "1", "", "2", "", "3", "", ""});
-    CHECK(SplitByDelimiter(",", ',', true) == VS{});
+    CHECK(SplitByDelimiter(",", ',', true).empty());
     CHECK(SplitByDelimiter(",", ',', false) == VS{"", ""});
-    CHECK(SplitByDelimiter(",,", ',', true) == VS{});
+    CHECK(SplitByDelimiter(",,", ',', true).empty());
     CHECK(SplitByDelimiter(",,", ',', false) == VS{"", "", ""});
     CHECK(SplitByDelimiter(",1.2,3,", '.', true) == VS{",1", "2,3,"});
     CHECK(SplitByDelimiter(",1.2,3,", '.', false) == VS{",1", "2,3,"});
@@ -62,13 +62,13 @@ TEST_CASE(PREFIX "SplitByDelimiter")
 
 TEST_CASE(PREFIX "ReplaceAll(..., std::string_view, ...)")
 {
-    CHECK(ReplaceAll("", "", "") == "");
+    CHECK(ReplaceAll("", "", "").empty());
     CHECK(ReplaceAll("a", "", "") == "a");
     CHECK(ReplaceAll("a", "", "b") == "a");
     CHECK(ReplaceAll("a", "b", "c") == "a");
     CHECK(ReplaceAll("a", "a", "b") == "b");
-    CHECK(ReplaceAll("a", "a", "") == "");
-    CHECK(ReplaceAll("aaaa", "a", "") == "");
+    CHECK(ReplaceAll("a", "a", "").empty());
+    CHECK(ReplaceAll("aaaa", "a", "").empty());
     CHECK(ReplaceAll("aaaa", "a", "b") == "bbbb");
     CHECK(ReplaceAll("aaaa", "aa", "b") == "bb");
     CHECK(ReplaceAll("aaaaa", "aa", "b") == "bba");

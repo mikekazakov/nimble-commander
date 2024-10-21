@@ -17,7 +17,7 @@ const TestEnvironment &TestEnv() noexcept
     return *env;
 }
 
-std::shared_ptr<nc::vfs::SFTPHost> TestEnvironment::SpawnSFTPHost() const
+std::shared_ptr<nc::vfs::SFTPHost> TestEnvironment::SpawnSFTPHost()
 {
     // TODO: remove the evil copy&paste of the config
     const auto ubuntu2004_address = "127.0.0.1";

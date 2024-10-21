@@ -161,7 +161,10 @@ void Model::ReLoad(const VFSListingPtr &_listing)
     if( _listing->IsUniform() && m_Listing->IsUniform() ) {
         // transfer custom data to new array using sorted indeces arrays based in raw C filename.
         // assumes that there can't be more than one file with same filenamr
-        unsigned dst_i = 0, dst_e = _listing->Count(), src_i = 0, src_e = m_Listing->Count();
+        unsigned dst_i = 0;
+        const unsigned dst_e = _listing->Count();
+        unsigned src_i = 0;
+        const unsigned src_e = m_Listing->Count();
         for( ; src_i != src_e && dst_i != dst_e; ++src_i ) {
             const int src = m_EntriesByRawName[src_i];
         check:
@@ -190,8 +193,10 @@ void Model::ReLoad(const VFSListingPtr &_listing)
         auto dst_keys_ind = ProduceSortedIndirectIndecesForLongKeys(dst_keys);
 
         // TODO: consider moving into separate algorithm
-        unsigned dst_i = 0, dst_e = static_cast<unsigned>(dst_keys.size()), src_i = 0,
-                 src_e = static_cast<unsigned>(src_keys.size());
+        unsigned dst_i = 0;
+        const unsigned dst_e = static_cast<unsigned>(dst_keys.size());
+        unsigned src_i = 0;
+        const unsigned src_e = static_cast<unsigned>(src_keys.size());
         for( ; src_i != src_e && dst_i != dst_e; ++src_i ) {
             const int src = src_keys_ind[src_i];
         check2:
@@ -309,7 +314,8 @@ int Model::RawIndexForName(std::string_view _filename) const noexcept
     assert(listing != nullptr);
 
     // performing binary search on m_EntriesByRawName
-    const auto begin = m_EntriesByRawName.begin(), end = m_EntriesByRawName.end();
+    const auto begin = m_EntriesByRawName.begin();
+    const auto end = m_EntriesByRawName.end();
     const auto i = std::lower_bound(
         begin, end, _filename, [listing](unsigned _i, std::string_view _s) { return listing->Filename(_i) < _s; });
     if( i < end && listing->Filename(*i) == _filename )
@@ -331,7 +337,8 @@ std::span<const unsigned> Model::RawIndicesForName(std::string_view _filename) c
         bool operator()(std::string_view _s, unsigned _i) const noexcept { return _s < listing->Filename(_i); }
     };
 
-    const auto begin = m_EntriesByRawName.begin(), end = m_EntriesByRawName.end();
+    const auto begin = m_EntriesByRawName.begin();
+    const auto end = m_EntriesByRawName.end();
 
     // O( 2 * logN )
     const auto [first, last] = std::equal_range(begin, end, _filename, Cmp{m_Listing.get()});
@@ -539,12 +546,12 @@ void Model::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
     vd.toggle_selected(_is_selected);
 }
 
-void Model::CustomFlagsSelectSorted(int _at_pos, bool _is_selected)
+void Model::CustomFlagsSelectSorted(int _at_sorted_pos, bool _is_selected)
 {
-    if( _at_pos < 0 || _at_pos >= static_cast<int>(m_EntriesByCustomSort.size()) )
+    if( _at_sorted_pos < 0 || _at_sorted_pos >= static_cast<int>(m_EntriesByCustomSort.size()) )
         return;
 
-    CustomFlagsSelectRaw(m_EntriesByCustomSort[_at_pos], _is_selected);
+    CustomFlagsSelectRaw(m_EntriesByCustomSort[_at_sorted_pos], _is_selected);
 }
 
 bool Model::CustomFlagsSelectSorted(const std::vector<bool> &_is_selected)
@@ -855,7 +862,8 @@ void Model::BuildSoftFilteringIndeces()
         m_EntriesBySoftFiltering.clear();
         m_EntriesBySoftFiltering.reserve(m_EntriesByCustomSort.size());
 
-        int i = 0, e = static_cast<int>(m_EntriesByCustomSort.size());
+        int i = 0;
+        const int e = static_cast<int>(m_EntriesByCustomSort.size());
         for( ; i != e; ++i ) {
             QuickSearchHiglight found_range;
             const int raw_index = m_EntriesByCustomSort[i];

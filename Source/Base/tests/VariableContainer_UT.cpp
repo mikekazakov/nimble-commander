@@ -14,8 +14,8 @@ TEST_CASE(PREFIX "Common storage")
     variable_container<std::string> vc(variable_container<>::type::common);
     CHECK(vc.size() == 1);
     CHECK(vc.empty() == false);
-    CHECK(vc.at(0) == ""); // default-constructed
-    CHECK(vc[0] == "");
+    CHECK(vc.at(0) == ""); // NOLINT default-constructed
+    CHECK(vc[0] == "");    // NOLINT
 
     vc.at(0) = "Meow";
     CHECK(vc.at(0) == "Meow");
@@ -25,7 +25,7 @@ TEST_CASE(PREFIX "Common storage")
 TEST_CASE(PREFIX "Sparse storage")
 {
     variable_container<std::string> vc(variable_container<>::type::sparse);
-    CHECK(vc.size() == 0);
+    CHECK(vc.size() == 0); // NOLINT
     CHECK(vc.empty() == true);
 
     vc.insert(5, "abra");
@@ -60,7 +60,7 @@ TEST_CASE(PREFIX "Dense storage")
     CHECK(vc.has(6));
     CHECK(!vc.has(7));
 
-    CHECK(vc.at(0) == "");
+    CHECK(vc.at(0) == ""); // NOLINT
 
     variable_container<std::string> vc2(vc);
     CHECK(vc2.at(5) == "abra!");

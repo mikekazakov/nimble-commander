@@ -38,7 +38,7 @@ std::vector<nc::panel::PresentationItemsColoringRule> ThemePersistence::ExtractR
     auto cr = &_doc.FindMember(_path)->value;
     if( cr->IsArray() )
         for( auto i = cr->Begin(), e = cr->End(); i != e; ++i ) {
-            r.emplace_back(nc::panel::PresentationItemsColoringRulePersistence{}.FromJSON(*i));
+            r.emplace_back(nc::panel::PresentationItemsColoringRulePersistence::FromJSON(*i));
         }
     return r;
 }
@@ -59,7 +59,7 @@ ThemePersistence::EncodeRules(const std::vector<nc::panel::PresentationItemsColo
     Value cr(rapidjson::kArrayType);
     cr.Reserve(static_cast<unsigned>(_rules.size()), nc::config::g_CrtAllocator);
     for( const auto &r : _rules )
-        cr.PushBack(nc::panel::PresentationItemsColoringRulePersistence{}.ToJSON(r), nc::config::g_CrtAllocator);
+        cr.PushBack(nc::panel::PresentationItemsColoringRulePersistence::ToJSON(r), nc::config::g_CrtAllocator);
     return cr;
 }
 

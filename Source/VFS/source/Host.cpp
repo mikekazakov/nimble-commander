@@ -111,9 +111,9 @@ const char *Host::UniqueTag = "nullfs";
 class VFSHostConfiguration
 {
 public:
-    [[nodiscard]] const char *Tag() const { return Host::UniqueTag; }
+    [[nodiscard]] static const char *Tag() { return Host::UniqueTag; }
 
-    [[nodiscard]] const char *Junction() const { return ""; }
+    [[nodiscard]] static const char *Junction() { return ""; }
 
     bool operator==(const VFSHostConfiguration &) const { return true; }
 };
@@ -369,7 +369,7 @@ bool Host::ValidateFilename(std::string_view _filename) const
         return false;
 
     constexpr std::string_view invalid_chars = ":\\/\r\t\n";
-    return _filename.find_first_of(invalid_chars) == _filename.npos;
+    return _filename.find_first_of(invalid_chars) == std::string_view::npos;
 }
 
 int Host::FetchDirectoryListing([[maybe_unused]] std::string_view _path,
@@ -395,7 +395,9 @@ int Host::FetchSingleItemListing(std::string_view _path,
         return VFSError::Cancelled;
 
     // TODO: rewriting without using C-style strings
-    char path[MAXPATHLEN], directory[MAXPATHLEN], filename[MAXPATHLEN];
+    char path[MAXPATHLEN];
+    char directory[MAXPATHLEN];
+    char filename[MAXPATHLEN];
     memcpy(path, _path.data(), _path.length());
     path[_path.length()] = 0;
 
@@ -578,8 +580,10 @@ std::string Host::MakePathVerbose(std::string_view _path) const
     }
 
     // make one and only one memory allocation
-    const size_t total_len = std::accumulate(
-        &strings[0], &strings[0] + strings_n, size_t(0), [](auto sum, auto string) { return sum + string.length(); });
+    const size_t total_len =
+        std::accumulate(strings.data(), strings.data() + strings_n, size_t(0), [](auto sum, auto string) {
+            return sum + string.length();
+        });
     std::string verbose_path;
     verbose_path.reserve(total_len);
     for( size_t index = strings_n - 1; index < strings_n; --index )

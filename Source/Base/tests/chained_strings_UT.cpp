@@ -13,7 +13,7 @@ TEST_CASE(PREFIX "basic")
     chained_strings strings;
 
     CHECK(strings.empty() == true);
-    CHECK(strings.size() == 0);
+    CHECK(strings.size() == 0); // NOLINT
     CHECK_THROWS(strings.front());
     CHECK_THROWS(strings.back());
     CHECK_THROWS(strings.push_back(nullptr, 0, nullptr));
@@ -45,7 +45,7 @@ TEST_CASE(PREFIX "basic")
     chained_strings empty;
     strings.swap(empty);
     CHECK(strings.empty() == true);
-    CHECK(strings.size() == 0);
+    CHECK(strings.size() == 0); // NOLINT
 }
 
 TEST_CASE(PREFIX "blocks")

@@ -30,7 +30,7 @@ public:
     long port = 21;
     bool active = false;
 
-    [[nodiscard]] const char *Tag() const { return FTPHost::UniqueTag; }
+    [[nodiscard]] static const char *Tag() { return FTPHost::UniqueTag; }
 
     [[nodiscard]] const char *Junction() const { return server_url.c_str(); }
 
@@ -662,9 +662,9 @@ void FTPHost::BasicOptsSetup(CURLInstance *_inst)
     _inst->EasySetOpt(CURLOPT_VERBOSE, g_CURLVerbose);
     _inst->EasySetOpt(CURLOPT_FTP_FILEMETHOD, g_CURLFTPMethod);
 
-    if( Config().user != "" )
+    if( !Config().user.empty() )
         _inst->EasySetOpt(CURLOPT_USERNAME, Config().user.c_str());
-    if( Config().passwd != "" )
+    if( !Config().passwd.empty() )
         _inst->EasySetOpt(CURLOPT_PASSWORD, Config().passwd.c_str());
     if( Config().port > 0 )
         _inst->EasySetOpt(CURLOPT_PORT, Config().port);

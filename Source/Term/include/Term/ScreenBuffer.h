@@ -141,7 +141,7 @@ private:
     static std::unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width, unsigned _height);
     static std::unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width, unsigned _height, Space _initial_char);
     static std::vector<std::tuple<std::vector<Space>, bool>>
-    DecomposeContinuousLines(const std::vector<std::vector<Space>> &_scr,
+    DecomposeContinuousLines(const std::vector<std::vector<Space>> &_src,
                              unsigned _width); // <spaces, is wrapped>
 
     unsigned m_Width = 0;  // onscreen and backscreen width

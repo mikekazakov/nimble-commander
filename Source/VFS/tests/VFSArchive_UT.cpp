@@ -283,7 +283,7 @@ TEST_CASE(PREFIX "Can unrar a file with japanese filenames")
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
     auto bytes = file->ReadFile();
     REQUIRE(bytes);
-    REQUIRE(bytes->size() == 0);
+    REQUIRE(bytes->empty());
 
     REQUIRE(host->CreateFile(reinterpret_cast<const char *>(u8"/表だよ/漢字長いファイル名long-filename-in-漢字.txt"),
                              file,

@@ -128,7 +128,7 @@ NetworkConnectionFormatter::Render(RenderOptions _options, const NetworkConnecti
     }
 
     if( _options & RenderMenuIcon )
-        rep.menu_icon = NetworkConnectionIconProvider{}.Icon16px(_connection);
+        rep.menu_icon = NetworkConnectionIconProvider::Icon16px(_connection);
 
     return rep;
 }
@@ -223,7 +223,7 @@ static NSImage *ImageForPromiseAndPath(const core::VFSInstancePromise &_promise,
         }
     }
 
-    if( auto image = NetworkConnectionIconProvider{}.Icon16px(_promise) )
+    if( auto image = NetworkConnectionIconProvider::Icon16px(_promise) )
         return image;
 
     static const auto fallback = [] {
@@ -244,7 +244,7 @@ static NSImage *ImageForVFSPath(const VFSHost &_vfs, const std::string &_path)
         }
     }
 
-    if( auto image = NetworkConnectionIconProvider{}.Icon16px(_vfs) )
+    if( auto image = NetworkConnectionIconProvider::Icon16px(_vfs) )
         return image;
 
     static const auto fallback = [] {
@@ -273,7 +273,7 @@ static NSImage *ImageForLocation(const PersistentLocation &_location, NetworkCon
     else if( _location.is_network() ) {
         auto persistancy = PanelDataPersistency{_conn_mgr};
         if( auto connection = persistancy.ExtractConnectionFromLocation(_location) )
-            return NetworkConnectionIconProvider{}.Icon16px(*connection);
+            return NetworkConnectionIconProvider::Icon16px(*connection);
         else {
             auto img = [NSImage imageNamed:NSImageNameNetwork];
             img.size = g_IconSize;

@@ -9,11 +9,11 @@ public:
     static KeychainServices &Instance();
 
     // will override on duplicate
-    bool SetPassword(const std::string &_where, const std::string &_account, const std::string &_password);
+    static bool SetPassword(const std::string &_where, const std::string &_account, const std::string &_password);
 
-    bool GetPassword(const std::string &_where, const std::string &_account, std::string &_password);
+    static bool GetPassword(const std::string &_where, const std::string &_account, std::string &_password);
 
-    bool ErasePassword(const std::string &_where, const std::string &_account);
+    static bool ErasePassword(const std::string &_where, const std::string &_account);
 
 private:
     KeychainServices();

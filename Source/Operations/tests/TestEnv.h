@@ -15,7 +15,7 @@ struct TestEnvironment {
     std::shared_ptr<nc::utility::NativeFSManager> native_fs_man;
     std::shared_ptr<nc::vfs::NativeHost> vfs_native;
 
-    std::shared_ptr<nc::vfs::SFTPHost> SpawnSFTPHost() const;
+    static std::shared_ptr<nc::vfs::SFTPHost> SpawnSFTPHost();
 };
 
 const TestEnvironment &TestEnv() noexcept;

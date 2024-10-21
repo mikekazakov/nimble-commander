@@ -186,7 +186,8 @@ void Cache::CommitMKD(const std::string &_path)
 void Cache::CommitRename(const std::string &_old_path, const std::string &_new_path)
 {
     Log::Trace("Cache::CommitRename({}, {}) called", _old_path, _new_path);
-    std::filesystem::path old_path = _old_path, new_path = _new_path;
+    std::filesystem::path old_path = _old_path;
+    std::filesystem::path new_path = _new_path;
     assert(old_path.is_absolute() && new_path.is_absolute());
 
     const std::lock_guard<std::mutex> lock(m_CacheLock);

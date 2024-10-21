@@ -30,7 +30,7 @@ public:
     PanelDataPersistency(NetworkConnectionsManager &_conn_manager);
 
     std::string MakeFootprintString(const PersistentLocation &_loc);
-    size_t MakeFootprintStringHash(const PersistentLocation &PersistentLocation);
+    size_t MakeFootprintStringHash(const PersistentLocation &_loc);
 
     // NB! these functions theat paths as a directory regardless, and resulting path will
     // containt a trailing slash.

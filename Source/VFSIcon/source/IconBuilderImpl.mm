@@ -181,7 +181,7 @@ static bool MightBeBundle(const VFSListingItem &_item)
     return "app"sv == extension;
 }
 
-bool IconBuilderImpl::ShouldTryProducingBundleIconOnVFS(const VFSListingItem &_item) const
+bool IconBuilderImpl::ShouldTryProducingBundleIconOnVFS(const VFSListingItem &_item)
 {
     return MightBeBundle(_item);
 }

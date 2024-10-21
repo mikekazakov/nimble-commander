@@ -243,10 +243,10 @@ std::vector<std::string> APFSTree::VolumesOfContainerWithRole(NSDictionary *_con
     return volumes_bsd_names;
 }
 
-NSDictionary *DiskUtility::DiskUtilityOutputToDictionary(std::string_view _str)
+NSDictionary *DiskUtility::DiskUtilityOutputToDictionary(std::string_view _text)
 {
-    const auto data = [[NSData alloc] initWithBytesNoCopy:const_cast<void *>(static_cast<const void *>(_str.data()))
-                                                   length:_str.length()
+    const auto data = [[NSData alloc] initWithBytesNoCopy:const_cast<void *>(static_cast<const void *>(_text.data()))
+                                                   length:_text.length()
                                              freeWhenDone:false];
 
     NSError *error = nil;

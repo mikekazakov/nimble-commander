@@ -103,5 +103,5 @@ TEST_CASE(PREFIX "returns empty string on cancellation")
 
     auto proposed_path = FindNonExistingItemPath(orig_path.native(), *TestEnv().vfs_native, cancel);
 
-    CHECK(proposed_path == "");
+    CHECK(proposed_path.empty());
 }

@@ -40,9 +40,9 @@ const char *NativeHost::UniqueTag = "native";
 class VFSNativeHostConfiguration
 {
 public:
-    [[nodiscard]] const char *Tag() const { return VFSNativeHost::UniqueTag; }
+    [[nodiscard]] static const char *Tag() { return VFSNativeHost::UniqueTag; }
 
-    [[nodiscard]] const char *Junction() const { return ""; }
+    [[nodiscard]] static const char *Junction() { return ""; }
 
     bool operator==(const VFSNativeHostConfiguration &) const { return true; }
 };
@@ -258,7 +258,9 @@ int NativeHost::FetchSingleItemListing(std::string_view _path,
         return VFSError::Cancelled;
 
     // TODO: rewrite without using C-style strings
-    char path[MAXPATHLEN], directory[MAXPATHLEN], filename[MAXPATHLEN];
+    char path[MAXPATHLEN];
+    char directory[MAXPATHLEN];
+    char filename[MAXPATHLEN];
     memcpy(path, _path.data(), _path.length());
     path[_path.length()] = 0;
 

@@ -354,11 +354,15 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         LazyLineRectFiller filler(_context, 0., _y * height, width, height);
         const auto bg = m_Colors.GetSpecialColor(ColorMap::Special::Background);
         for( int x = 0; auto char_space : _line ) {
-            const auto fg_fill_color =
-                char_space.reverse ? (char_space.customfg ? m_Colors.GetColor(char_space.foreground.c)
-                                                          : m_Colors.GetSpecialColor(ColorMap::Special::Foreground))
-                                   : (char_space.custombg ? m_Colors.GetColor(char_space.background.c)
-                                                          : m_Colors.GetSpecialColor(ColorMap::Special::Background));
+            const auto fg_fill_color = [&] {
+                if( char_space.reverse )
+                    return char_space.customfg ? m_Colors.GetColor(char_space.foreground.c)
+                                               : m_Colors.GetSpecialColor(ColorMap::Special::Foreground);
+                else if( char_space.custombg )
+                    return m_Colors.GetColor(char_space.background.c);
+                else
+                    return m_Colors.GetSpecialColor(ColorMap::Special::Background);
+            }();
 
             if( fg_fill_color != bg ) {
                 filler.draw(fg_fill_color, x);
@@ -441,8 +445,12 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         CGContextSetFillColorWithColor(_context, c);
 
         // pick the cells' effective font
-        CTCache &font = attr.bold ? (attr.italic ? *m_BoldItalicFontCache : *m_BoldFontCache)
-                                  : (attr.italic ? *m_ItalicFontCache : *m_FontCache);
+        CTCache &font = [&]() -> CTCache & {
+            if( attr.bold )
+                return attr.italic ? *m_BoldItalicFontCache : *m_BoldFontCache;
+            else
+                return attr.italic ? *m_ItalicFontCache : *m_FontCache;
+        }();
 
         // Now draw the characters
         font.DrawCharacters(codes.data(), positions.data(), codes.size(), _context);

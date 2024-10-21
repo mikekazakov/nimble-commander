@@ -524,9 +524,9 @@ CopyingJob::PathCompositionType CopyingJob::AnalyzeInitialDestination(std::strin
 template <class T>
 static void ReverseForEachDirectoryInString(const std::string &_path, T _callable)
 {
-    size_t range_end = _path.npos;
+    size_t range_end = std::string::npos;
     size_t last_slash;
-    while( (last_slash = _path.find_last_of('/', range_end)) != _path.npos ) {
+    while( (last_slash = _path.find_last_of('/', range_end)) != std::string::npos ) {
         if( !_callable(_path.substr(0, last_slash + 1)) )
             break;
         if( last_slash == 0 )
@@ -773,10 +773,16 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
 
     // setting up copying scenario
     int dst_open_flags = 0;
-    bool do_erase_xattrs = false, do_copy_xattrs = true, do_unlink_on_stop = false, do_set_times = true,
-         do_set_unix_flags = true, need_dst_truncate = false;
-    int64_t dst_size_on_stop = 0, total_dst_size = src_stat_buffer.st_size, preallocate_delta = 0,
-            initial_writing_offset = 0;
+    bool do_erase_xattrs = false;
+    bool do_copy_xattrs = true;
+    bool do_unlink_on_stop = false;
+    bool do_set_times = true;
+    bool do_set_unix_flags = true;
+    bool need_dst_truncate = false;
+    int64_t dst_size_on_stop = 0;
+    int64_t total_dst_size = src_stat_buffer.st_size;
+    int64_t preallocate_delta = 0;
+    int64_t initial_writing_offset = 0;
 
     const auto setup_new = [&] {
         dst_open_flags = O_WRONLY | O_CREAT | O_EXCL;
@@ -929,7 +935,8 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
         }
     }
 
-    auto read_buffer = m_Buffers[0].get(), write_buffer = m_Buffers[1].get();
+    auto read_buffer = m_Buffers[0].get();
+    auto write_buffer = m_Buffers[1].get();
     const uint32_t src_preferred_io_size =
         src_fs_info.basic.io_size < m_BufferSize ? src_fs_info.basic.io_size : m_BufferSize;
     const uint32_t dst_preferred_io_size =
@@ -1142,10 +1149,16 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
 
     // setting up the copying scenario
     int dst_open_flags = 0;
-    bool do_erase_xattrs = false, do_copy_xattrs = true, do_unlink_on_stop = false, do_set_times = true,
-         do_set_unix_flags = true, need_dst_truncate = false;
-    int64_t dst_size_on_stop = 0, total_dst_size = src_stat_buffer.size, preallocate_delta = 0,
-            initial_writing_offset = 0;
+    bool do_erase_xattrs = false;
+    bool do_copy_xattrs = true;
+    bool do_unlink_on_stop = false;
+    bool do_set_times = true;
+    bool do_set_unix_flags = true;
+    bool need_dst_truncate = false;
+    int64_t dst_size_on_stop = 0;
+    int64_t total_dst_size = src_stat_buffer.size;
+    int64_t preallocate_delta = 0;
+    int64_t initial_writing_offset = 0;
 
     const auto setup_new = [&] {
         dst_open_flags = O_WRONLY | O_CREAT | O_EXCL;
@@ -1299,7 +1312,8 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
         }
     }
 
-    auto read_buffer = m_Buffers[0].get(), write_buffer = m_Buffers[1].get();
+    auto read_buffer = m_Buffers[0].get();
+    auto write_buffer = m_Buffers[1].get();
     const uint32_t dst_preffered_io_size =
         dst_fs_info.basic.io_size < m_BufferSize ? dst_fs_info.basic.io_size : m_BufferSize;
     const uint32_t src_preffered_io_size =
@@ -1504,9 +1518,15 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
 
     // setting up copying scenario
     int dst_open_flags = 0;
-    bool do_erase_xattrs = false, do_copy_xattrs = true, do_unlink_on_stop = false, do_set_times = true,
-         do_set_unix_flags = true, need_dst_truncate = false;
-    int64_t dst_size_on_stop = 0, total_dst_size = src_stat_buffer.size, initial_writing_offset = 0;
+    bool do_erase_xattrs = false;
+    bool do_copy_xattrs = true;
+    bool do_unlink_on_stop = false;
+    bool do_set_times = true;
+    bool do_set_unix_flags = true;
+    bool need_dst_truncate = false;
+    int64_t dst_size_on_stop = 0;
+    int64_t total_dst_size = src_stat_buffer.size;
+    int64_t initial_writing_offset = 0;
 
     const auto setup_new = [&] {
         dst_open_flags = VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoCache;
@@ -1629,7 +1649,8 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
         }
     }
 
-    auto read_buffer = m_Buffers[0].get(), write_buffer = m_Buffers[1].get();
+    auto read_buffer = m_Buffers[0].get();
+    auto write_buffer = m_Buffers[1].get();
     const uint32_t dst_preffered_io_size = m_BufferSize;
     const uint32_t src_preffered_io_size = m_BufferSize;
     constexpr int max_io_loops = 5; // looked in Apple's copyfile() - treat 5 zero-resulting reads/writes as an error
@@ -2839,7 +2860,8 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
 
         // different objects, need to erase destination before calling symlink()
         // need to ask user what to do
-        struct stat posix_src_stat_buffer, posix_dst_stat_buffer;
+        struct stat posix_src_stat_buffer;
+        struct stat posix_dst_stat_buffer;
         VFSStat::ToSysStat(src_stat_buffer, posix_src_stat_buffer);
         VFSStat::ToSysStat(dst_stat_buffer, posix_dst_stat_buffer);
         const auto res = m_OnRenameDestinationAlreadyExists(posix_src_stat_buffer, posix_dst_stat_buffer, _dst_path);
@@ -2921,7 +2943,7 @@ const CopyingOptions &CopyingJob::Options() const noexcept
     return m_Options;
 }
 
-bool CopyingJob::IsNativeLockedItemNoFollow(int vfs_error, const std::string &_path) const
+bool CopyingJob::IsNativeLockedItemNoFollow(int vfs_error, const std::string &_path)
 {
     if( vfs_error != VFSError::FromErrno(EPERM) )
         return false;

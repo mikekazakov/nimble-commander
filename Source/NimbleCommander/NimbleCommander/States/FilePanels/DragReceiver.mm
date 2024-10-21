@@ -34,7 +34,7 @@ static NSArray<NSURL *> *ExtractURLs(NSPasteboard *_source);
 static int CountItemsWithType(id<NSDraggingInfo> _sender, NSString *_type);
 static NSString *URLs_Promise_UTI();
 static NSString *URLs_UTI();
-static std::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray<NSURL *> *_items, VFSHost &_host);
+static std::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray<NSURL *> *_input, VFSHost &_host);
 
 static void AddPanelRefreshIfNecessary(PanelController *_target, ops::Operation &_operation);
 static void AddPanelRefreshIfNecessary(PanelController *_target, PanelController *_source, ops::Operation &_operation);

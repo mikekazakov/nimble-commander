@@ -215,7 +215,10 @@ static std::optional<NetworkConnectionsManager::Connection> JSONObjectToConnecti
 
 static const std::string &PrefixForShareProtocol(NetworkConnectionsManager::LANShare::Protocol p)
 {
-    [[clang::no_destroy]] static const auto smb = "smb"s, afp = "afp"s, nfs = "nfs"s, unknown = ""s;
+    [[clang::no_destroy]] static const auto smb = "smb"s;
+    [[clang::no_destroy]] static const auto afp = "afp"s;
+    [[clang::no_destroy]] static const auto nfs = "nfs"s;
+    [[clang::no_destroy]] static const auto unknown = ""s;
     if( p == NetworkConnectionsManager::LANShare::Protocol::SMB )
         return smb;
     if( p == NetworkConnectionsManager::LANShare::Protocol::AFP )
@@ -420,13 +423,13 @@ std::vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnection
 
 bool ConfigBackedNetworkConnectionsManager::SetPassword(const Connection &_conn, const std::string &_password)
 {
-    return KeychainServices::Instance().SetPassword(
+    return KeychainServices::SetPassword(
         KeychainWhereFromConnection(_conn), KeychainAccountFromConnection(_conn), _password);
 }
 
 bool ConfigBackedNetworkConnectionsManager::GetPassword(const Connection &_conn, std::string &_password)
 {
-    return KeychainServices::Instance().GetPassword(
+    return KeychainServices::GetPassword(
         KeychainWhereFromConnection(_conn), KeychainAccountFromConnection(_conn), _password);
 }
 
@@ -627,7 +630,7 @@ static bool TearDownNFSMountName(const std::string &_name, std::string &_host, s
 {
     [[clang::no_destroy]] static const auto delimiter = ":/"s;
     auto pos = _name.find(delimiter);
-    if( pos == _name.npos )
+    if( pos == std::string::npos )
         return false;
     _host = _name.substr(0, pos);
     _share = _name.substr(pos + delimiter.size());
@@ -637,7 +640,9 @@ static bool TearDownNFSMountName(const std::string &_name, std::string &_host, s
 static std::vector<std::shared_ptr<const nc::utility::NativeFileSystemInfo>>
 GetMountedRemoteFilesystems(nc::utility::NativeFSManager &_native_fs_man)
 {
-    [[clang::no_destroy]] static const auto smb = "smbfs"s, afp = "afpfs"s, nfs = "nfs"s;
+    [[clang::no_destroy]] static const auto smb = "smbfs"s;
+    [[clang::no_destroy]] static const auto afp = "afpfs"s;
+    [[clang::no_destroy]] static const auto nfs = "nfs"s;
     std::vector<std::shared_ptr<const nc::utility::NativeFileSystemInfo>> remotes;
 
     for( const auto &v : _native_fs_man.Volumes() ) {
@@ -659,11 +664,15 @@ GetMountedRemoteFilesystems(nc::utility::NativeFSManager &_native_fs_man)
 static bool MatchVolumeWithShare(const nc::utility::NativeFileSystemInfo &_volume,
                                  const NetworkConnectionsManager::LANShare &_share)
 {
-    [[clang::no_destroy]] static const auto smb = "smbfs"s, afp = "afpfs"s, nfs = "nfs"s;
+    [[clang::no_destroy]] static const auto smb = "smbfs"s;
+    [[clang::no_destroy]] static const auto afp = "afpfs"s;
+    [[clang::no_destroy]] static const auto nfs = "nfs"s;
     using protocols = NetworkConnectionsManager::LANShare::Protocol;
     if( (_share.proto == protocols::SMB && _volume.fs_type_name == smb) ||
         (_share.proto == protocols::AFP && _volume.fs_type_name == afp) ) {
-        std::string user, host, share;
+        std::string user;
+        std::string host;
+        std::string share;
         if( TearDownSMBOrAFPMountName(_volume.mounted_from_name, user, host, share) ) {
             auto same_host = strcasecmp(host.c_str(), _share.host.c_str()) == 0;
             auto same_share = strcasecmp(share.c_str(), _share.share.c_str()) == 0;
@@ -673,7 +682,8 @@ static bool MatchVolumeWithShare(const nc::utility::NativeFileSystemInfo &_volum
         }
     }
     else if( _share.proto == protocols::NFS && _volume.fs_type_name == nfs ) {
-        std::string host, share;
+        std::string host;
+        std::string share;
         if( TearDownNFSMountName(_volume.mounted_from_name, host, share) ) {
             auto same_host = strcasecmp(host.c_str(), _share.host.c_str()) == 0;
             auto same_share = strcasecmp(share.c_str(), _share.share.c_str()) == 0;

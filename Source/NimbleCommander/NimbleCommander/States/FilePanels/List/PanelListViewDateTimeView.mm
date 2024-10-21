@@ -121,7 +121,7 @@ using nc::utility::AdaptiveDateFormatting;
 {
     const auto new_string = [&] {
         if( m_Time >= 0 ) {
-            auto dts = AdaptiveDateFormatting{}.Format(m_Style, m_Time);
+            auto dts = AdaptiveDateFormatting::Format(m_Style, m_Time);
             return dts ? dts : @"";
         }
         else

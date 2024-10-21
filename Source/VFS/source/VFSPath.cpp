@@ -102,7 +102,9 @@ bool VFSPathStack::weak_equal(const VFSPathStack &_r) const
         return false;
     if( m_Path != _r.m_Path )
         return false;
-    auto i = begin(m_Stack), j = begin(_r.m_Stack), e = end(m_Stack);
+    auto i = begin(m_Stack);
+    auto j = begin(_r.m_Stack);
+    auto e = end(m_Stack);
     for( ; i != e; ++i, ++j )
         if( !i->weak_equal(*j) )
             return false;

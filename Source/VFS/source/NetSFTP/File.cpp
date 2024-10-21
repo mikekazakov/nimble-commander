@@ -45,7 +45,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
     LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open_ex(
         conn->sftp, Path(), static_cast<unsigned>(std::strlen(Path())), sftp_flags, mode, LIBSSH2_SFTP_OPENFILE);
     if( handle == nullptr ) {
-        rc = sftp_host->VFSErrorForConnection(*conn);
+        rc = SFTPHost::VFSErrorForConnection(*conn);
         sftp_host->ReturnConnection(std::move(conn));
         return rc;
     }
@@ -53,7 +53,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
     LIBSSH2_SFTP_ATTRIBUTES attrs;
     const int fstat_rc = libssh2_sftp_fstat_ex(handle, &attrs, 0);
     if( fstat_rc < 0 ) {
-        const int conn_err = sftp_host->VFSErrorForConnection(*conn);
+        const int conn_err = SFTPHost::VFSErrorForConnection(*conn);
         return conn_err;
     }
 
@@ -124,7 +124,7 @@ ssize_t File::Read(void *_buf, size_t _size)
         return rc;
     }
     else
-        return SetLastError(std::dynamic_pointer_cast<SFTPHost>(Host())->VFSErrorForConnection(*m_Connection));
+        return SetLastError(SFTPHost::VFSErrorForConnection(*m_Connection));
 }
 
 ssize_t File::Write(const void *_buf, size_t _size)
@@ -141,7 +141,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
         return rc;
     }
     else
-        return SetLastError(std::dynamic_pointer_cast<SFTPHost>(Host())->VFSErrorForConnection(*m_Connection));
+        return SetLastError(SFTPHost::VFSErrorForConnection(*m_Connection));
 }
 
 ssize_t File::Pos() const

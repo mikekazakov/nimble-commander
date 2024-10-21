@@ -813,7 +813,8 @@ TEST_CASE(PREFIX "Copy to local FTP, part1")
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = std::make_shared<nc::vfs::FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
 
-    const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/kernel";
+    const char *fn1 = "/System/Library/Kernels/kernel";
+    const char *fn2 = "/Public/!FilesTesting/kernel";
 
     VFSEasyDelete(fn2, host);
 
@@ -893,8 +894,9 @@ TEST_CASE(PREFIX "Copy to local FTP part4")
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = std::make_shared<nc::vfs::FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
 
-    const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/kernel",
-               *fn3 = "/Public/!FilesTesting/kernel copy";
+    const char *fn1 = "/System/Library/Kernels/kernel";
+    const char *fn2 = "/Public/!FilesTesting/kernel";
+    const char *fn3 = "/Public/!FilesTesting/kernel copy";
 
     VFSEasyDelete(fn2, host);
     VFSEasyDelete(fn3, host);
@@ -1161,8 +1163,10 @@ TEST_CASE(PREFIX "Moving a locked native regular item to a separate volume")
     TempTestDir dir;
     const TempTestDmg dmg(dir);
     const auto host = TestEnv().vfs_native;
-    const auto filename = "old_name", new_filename = "old_name";
-    const auto path = dir.directory / filename, new_path = dmg.directory / new_filename;
+    const auto filename = "old_name";
+    const auto new_filename = "old_name";
+    const auto path = dir.directory / filename;
+    const auto new_path = dmg.directory / new_filename;
 
     auto exists = [](const std::string &_path) -> bool {
         struct stat st;
@@ -1255,7 +1259,8 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (native -> nati
 
     CopyingOptions opts;
     opts.docopy = true;
-    struct stat st1, st2;
+    struct stat st1;
+    struct stat st2;
     SECTION("Copy flags and times")
     {
         opts.copy_unix_flags = true;
@@ -1424,7 +1429,7 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> vfs)")
     REQUIRE(chmod((dir.directory / "dir").c_str(), S_IRUSR | S_IXUSR) == 0);
     auto revert_mod = at_scope_end([&] { chmod((dir.directory / "dir").c_str(), S_IRWXU); });
 
-    auto host = TestEnv().SpawnSFTPHost();
+    auto host = TestEnvironment::SpawnSFTPHost();
     REQUIRE(host);
     const std::filesystem::path target_dir = std::filesystem::path(host->HomeDir()) / "__nc_operations_test";
     VFSEasyDelete(target_dir.c_str(), host);
@@ -1467,7 +1472,8 @@ TEST_CASE(PREFIX "Copying a native file that is being written to")
     std::mutex m;
     std::condition_variable cv; // should be a std::latch instead, but isn't
                                 // available on macosx10.15 :-(
-    std::atomic_bool started = false, stop = false;
+    std::atomic_bool started = false;
+    std::atomic_bool stop = false;
     std::thread t([&] {
         const int f = open(p.c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR);
         REQUIRE(f >= 0);
@@ -1531,7 +1537,8 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
     // TODO: rewrite this!
     // not comparing contents, flags, perm, times, xattrs, acls etc now
 
-    VFSStat st1, st2;
+    VFSStat st1;
+    VFSStat st2;
     int ret;
     if( (ret = _file1_host->Stat(_file1_full_path.c_str(), st1, 0, nullptr)) != 0 )
         return ret;

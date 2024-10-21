@@ -43,7 +43,7 @@ TEST_CASE(PREFIX "can read info about kernel_task")
     REQUIRE(file->Open(Flags::OF_Read) == 0);
     const auto file_contents = file->ReadFile();
     REQUIRE(file_contents != std::nullopt);
-    REQUIRE(file_contents->size() != 0);
+    REQUIRE(!file_contents->empty());
     const std::string_view proc_info(reinterpret_cast<const char *>(file_contents->data()), file_contents->size());
 
     CHECK(proc_info.find("Name: kernel_task") != std::string_view::npos);

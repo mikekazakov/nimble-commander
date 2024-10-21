@@ -469,7 +469,7 @@ static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
 
 static bool IsValidInputPath(std::string_view _path)
 {
-    return _path.length() > 0 && _path[0] == '/';
+    return !_path.empty() && _path[0] == '/';
 }
 
 } // namespace nc::vfs

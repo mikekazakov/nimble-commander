@@ -44,8 +44,8 @@ TEST_CASE(PREFIX "Init")
         auto l1 = buffer.LineFromNo(0);
         auto l2 = buffer.LineFromNo(1);
         REQUIRE(l1.data() == l1.data());
-        REQUIRE(l1.size() == 0);
-        REQUIRE(l2.size() == 0);
+        REQUIRE(l1.empty());
+        REQUIRE(l2.empty());
     }
 }
 
@@ -85,7 +85,8 @@ TEST_CASE(PREFIX "ComposeContinuousLines")
 
 TEST_CASE(PREFIX "Space::HaveSameAttributes")
 {
-    ScreenBuffer::Space s1, s2;
+    ScreenBuffer::Space s1;
+    ScreenBuffer::Space s2;
     std::memset(&s1, 0, sizeof(s1));
     std::memset(&s2, 0, sizeof(s2));
     SECTION("")

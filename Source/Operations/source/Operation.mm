@@ -164,7 +164,7 @@ Operation::ObservationTicket Operation::Observe(uint64_t _notification_mask, std
 
 void Operation::ObserveUnticketed(uint64_t _notification_mask, std::function<void()> _callback)
 {
-    return AddUnticketedObserver(std::move(_callback), _notification_mask);
+    AddUnticketedObserver(std::move(_callback), _notification_mask);
 }
 
 void Operation::SetDialogCallback(std::function<bool(NSWindow *, std::function<void(NSModalResponse)>)> _callback)
@@ -239,8 +239,10 @@ void Operation::ShowGenericDialog(GenericDialog _dialog_type,
                                   vfs::VFSPath _path,
                                   std::shared_ptr<AsyncDialogResponse> _ctx)
 {
-    if( !dispatch_is_main_queue() )
-        return dispatch_to_main_queue([=, this] { ShowGenericDialog(_dialog_type, _message, _err, _path, _ctx); });
+    if( !dispatch_is_main_queue() ) {
+        dispatch_to_main_queue([=, this] { ShowGenericDialog(_dialog_type, _message, _err, _path, _ctx); });
+        return;
+    }
 
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
     sheet.style = GenericErrorDialogStyle::Caution;

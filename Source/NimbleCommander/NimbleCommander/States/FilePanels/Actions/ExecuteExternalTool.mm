@@ -82,7 +82,7 @@ void ExecuteExternalTool::Execute(const ExternalTool &_tool, MainWindowFilePanel
     }
 }
 
-void ExecuteExternalTool::RunExtTool(std::shared_ptr<Payload> _payload) const
+void ExecuteExternalTool::RunExtTool(std::shared_ptr<Payload> _payload)
 {
     assert(_payload);
     dispatch_assert_main_queue();

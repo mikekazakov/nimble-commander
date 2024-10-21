@@ -64,7 +64,7 @@ public:
     std::string path;
     std::optional<std::string> password;
 
-    [[nodiscard]] const char *Tag() const { return ArchiveHost::UniqueTag; }
+    [[nodiscard]] static const char *Tag() { return ArchiveHost::UniqueTag; }
 
     [[nodiscard]] const char *Junction() const { return path.c_str(); }
 
@@ -177,7 +177,7 @@ int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
         res = Parent()->Stat(path.c_str(), st, 0);
         if( res < 0 )
             return res;
-        st.ToSysStat(st, I->m_SrcFileStat);
+        VFSStat::ToSysStat(st, I->m_SrcFileStat);
     }
 
     VFSFilePtr source_file;
@@ -254,7 +254,7 @@ static bool SplitIntoFilenameAndParentPath(const char *_path,
     if( slash == _path + path_sz - 1 ) {
         const std::string_view path(_path, path_sz - 1);
         const auto second_slash_pos = path.rfind('/');
-        if( second_slash_pos == path.npos )
+        if( second_slash_pos == std::string_view::npos )
             return false;
         const auto filename_sz = path_sz - second_slash_pos - 2;
         const auto parent_path_sz = second_slash_pos + 1;
@@ -722,7 +722,8 @@ const DirEntry *ArchiveHost::FindEntry(std::string_view _path)
     // TODO: rewrite without using C-style strings
 
     // 1st - try to find _path directly (assume it's directory)
-    char buf[1024], short_name[256];
+    char buf[1024];
+    char short_name[256];
     memcpy(buf, _path.data(), _path.length());
     buf[_path.length()] = 0;
 

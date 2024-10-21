@@ -298,6 +298,7 @@ const Theme &CurrentTheme() noexcept
     return *g_CurrentTheme;
 }
 
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 const Theme &ThemesManager::SelectedTheme() const
 {
     assert(g_CurrentTheme != nullptr);

@@ -21,7 +21,7 @@ struct ExecuteExternalTool : StateAction {
 private:
     struct Payload;
     void Execute(const ExternalTool &_tool, MainWindowFilePanelState *_target) const;
-    void RunExtTool(std::shared_ptr<Payload> _payload) const;
+    static void RunExtTool(std::shared_ptr<Payload> _payload);
     nc::utility::TemporaryFileStorage &m_TempFileStorage;
 };
 

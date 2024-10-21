@@ -328,7 +328,7 @@ TEST_CASE(PREFIX "Picking a new name for a duplicate theme")
     CHECK(man.SuitableNameForNewTheme("1") == "1");
     CHECK(man.SuitableNameForNewTheme(" 1") == " 1");
     CHECK(man.SuitableNameForNewTheme("1 ") == "1 ");
-    CHECK(man.SuitableNameForNewTheme("") == "");
+    CHECK(man.SuitableNameForNewTheme("").empty());
     CHECK(man.SuitableNameForNewTheme(" ") == " ");
 }
 

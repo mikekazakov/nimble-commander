@@ -12,7 +12,10 @@ nc::base::UUID NetworkConnectionsManager::MakeUUID()
 
 static const std::string &PrefixForShareProtocol(NetworkConnectionsManager::LANShare::Protocol p)
 {
-    [[clang::no_destroy]] static const auto smb = "smb"s, afp = "afp"s, nfs = "nfs"s, unknown = ""s;
+    [[clang::no_destroy]] static const auto smb = "smb"s;
+    [[clang::no_destroy]] static const auto afp = "afp"s;
+    [[clang::no_destroy]] static const auto nfs = "nfs"s;
+    [[clang::no_destroy]] static const auto unknown = ""s;
     if( p == NetworkConnectionsManager::LANShare::Protocol::SMB )
         return smb;
     if( p == NetworkConnectionsManager::LANShare::Protocol::AFP )

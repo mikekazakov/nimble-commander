@@ -1030,17 +1030,24 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
     const NSRect rect_on_screen = [_positioning_view.window convertRectToScreen:rect_in_window];
     const double sx = m_ContentSize.width;
     const double sy = m_ContentSize.height;
-    const double initial_x = _alignment == NCCommandPopoverAlignment::Left
-                                 ? NSMinX(rect_on_screen)
-                                 : (_alignment == NCCommandPopoverAlignment::Right
-                                        ? NSMaxX(rect_on_screen) - sx
-                                        : NSMinX(rect_on_screen) + (rect_on_screen.size.width - sx) / 2.);
+    const double initial_x = [&] {
+        if( _alignment == NCCommandPopoverAlignment::Left )
+            return NSMinX(rect_on_screen);
+        else if( _alignment == NCCommandPopoverAlignment::Right )
+            return NSMaxX(rect_on_screen) - sx;
+        else
+            return NSMinX(rect_on_screen) + (rect_on_screen.size.width - sx) / 2.;
+    }();
     const double y = NSMinY(rect_on_screen) - m_ContentSize.height;
-
     NSScreen *screen = _positioning_view.window.screen;
-    const double x =
-        initial_x < 0. ? 0. : (initial_x + sx > screen.frame.size.width ? screen.frame.size.width - sx : initial_x);
-
+    const double x = [&] {
+        if( initial_x < 0. )
+            return 0.;
+        else if( initial_x + sx > screen.frame.size.width )
+            return screen.frame.size.width - sx;
+        else
+            return initial_x;
+    }();
     m_Window = [[NCCommandPopoverWindow alloc] initWithContentRect:NSMakeRect(x, y, sx, sy)];
     m_Window.contentView = view;
     m_Window.delegate = self;

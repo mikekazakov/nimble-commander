@@ -305,7 +305,7 @@ int DeletionJob::ItemsInScript() const
     return static_cast<int>(m_Script.size());
 }
 
-bool DeletionJob::IsNativeLockedItem(int vfs_err, const std::string &_path, VFSHost &_vfs) const
+bool DeletionJob::IsNativeLockedItem(int vfs_err, const std::string &_path, VFSHost &_vfs)
 {
     if( vfs_err != VFSError::FromErrno(EPERM) )
         return false;
@@ -321,7 +321,7 @@ bool DeletionJob::IsNativeLockedItem(int vfs_err, const std::string &_path, VFSH
     return st.flags & UF_IMMUTABLE;
 }
 
-int DeletionJob::UnlockItem(const std::string &_path, VFSHost &_vfs) const
+int DeletionJob::UnlockItem(const std::string &_path, VFSHost &_vfs)
 {
     // this is kind of stupid to call stat() essentially twice :-|
 

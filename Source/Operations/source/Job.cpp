@@ -32,7 +32,7 @@ void Job::Execute()
     const auto thread_title = "com.magnumbytes.nimblecommander." + boost::core::demangle(typeid(*this).name());
     pthread_setname_np(thread_title.c_str());
 
-    const auto sleep_preventer = base::IdleSleepPreventer::Instance().GetPromise();
+    const auto sleep_preventer = base::IdleSleepPreventer::GetPromise();
     m_Stats.StartTiming();
 
     try {

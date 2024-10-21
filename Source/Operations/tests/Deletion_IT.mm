@@ -282,7 +282,8 @@ TEST_CASE(PREFIX "Simple delete from FTP")
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = std::make_shared<nc::vfs::FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
 
-    const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/mach_kernel";
+    const char *fn1 = "/System/Library/Kernels/kernel";
+    const char *fn2 = "/Public/!FilesTesting/mach_kernel";
     host->CreateDirectory("/Public", 0755);
     host->CreateDirectory("/Public/!FilesTesting", 0755);
     VFSStat stat;
@@ -305,7 +306,8 @@ TEST_CASE(PREFIX "Deleting from FTP directory")
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = std::make_shared<nc::vfs::FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
 
-    const char *fn1 = "/bin", *fn2 = "/Public/!FilesTesting/bin";
+    const char *fn1 = "/bin";
+    const char *fn2 = "/Public/!FilesTesting/bin";
     host->CreateDirectory("/Public", 0755);
     host->CreateDirectory("/Public/!FilesTesting", 0755);
     VFSStat stat;

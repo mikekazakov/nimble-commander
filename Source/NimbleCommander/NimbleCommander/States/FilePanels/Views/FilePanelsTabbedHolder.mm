@@ -228,8 +228,18 @@
 
     const auto event_data = nc::utility::ActionShortcut::EventData(_event);
 
-    static ActionsShortcutsManager::ShortCut hk_prev, hk_next, hk_t1, hk_t2, hk_t3, hk_t4, hk_t5, hk_t6, hk_t7, hk_t8,
-        hk_t9, hk_t10;
+    static ActionsShortcutsManager::ShortCut hk_prev;
+    static ActionsShortcutsManager::ShortCut hk_next;
+    static ActionsShortcutsManager::ShortCut hk_t1;
+    static ActionsShortcutsManager::ShortCut hk_t2;
+    static ActionsShortcutsManager::ShortCut hk_t3;
+    static ActionsShortcutsManager::ShortCut hk_t4;
+    static ActionsShortcutsManager::ShortCut hk_t5;
+    static ActionsShortcutsManager::ShortCut hk_t6;
+    static ActionsShortcutsManager::ShortCut hk_t7;
+    static ActionsShortcutsManager::ShortCut hk_t8;
+    static ActionsShortcutsManager::ShortCut hk_t9;
+    static ActionsShortcutsManager::ShortCut hk_t10;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
         std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
             {.shortcut = &hk_prev, .action = "panel.show_previous_tab"},

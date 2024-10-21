@@ -331,7 +331,8 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
         if( BlockIfPaused(); IsStopped() )
             return StepResult::Stopped;
 
-        ssize_t to_write = source_read_rc, la_rc = 0;
+        ssize_t to_write = source_read_rc;
+        ssize_t la_rc = 0;
         do {
             la_rc = archive_write_data(m_Archive, buf.get(), to_write);
             if( la_rc >= 0 )
@@ -598,7 +599,8 @@ static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source
     if( metadata == nullptr )
         return true;
 
-    char item_path[MAXPATHLEN], item_name[MAXPATHLEN];
+    char item_path[MAXPATHLEN];
+    char item_name[MAXPATHLEN];
     if( GetFilenameFromRelPath(_source_fn, item_name) &&
         GetDirectoryContainingItemFromRelPath(_source_fn, item_path) ) {
         const bool ret = WriteEAs(_a, metadata, metadata_sz, item_path, item_name);

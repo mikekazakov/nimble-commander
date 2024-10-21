@@ -193,7 +193,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
         const auto options = static_cast<loc_fmt::Formatter::RenderOptions>(loc_fmt::Formatter::RenderMenuTitle |
                                                                             loc_fmt::Formatter::RenderMenuTooltip |
                                                                             loc_fmt::Formatter::RenderMenuIcon);
-        const auto rep = loc_fmt::ListingPromiseFormatter{}.Render(options, v);
+        const auto rep = loc_fmt::ListingPromiseFormatter::Render(options, v);
         NCCommandPopoverItem *item = [[NCCommandPopoverItem alloc] init];
         item.title = ShrinkTitleForRecentlyClosedMenu(rep.menu_title);
         item.toolTip = rep.menu_tooltip;
@@ -238,7 +238,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
             activateNewPanel:(bool)_activate
 {
     auto pc = [self spawnNewTabInTabView:_aTabView autoDirectoryLoading:true activateNewPanel:_activate];
-    ListingPromiseLoader{}.Load(_promise, pc);
+    ListingPromiseLoader::Load(_promise, pc);
 }
 
 - (PanelController *)spawnNewTabInTabView:(NSTabView *)aTabView
@@ -429,7 +429,8 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
 
 - (void)updateTabBarsVisibility
 {
-    unsigned lc = m_SplitView.leftTabbedHolder.tabsCount, rc = m_SplitView.rightTabbedHolder.tabsCount;
+    unsigned lc = m_SplitView.leftTabbedHolder.tabsCount;
+    unsigned rc = m_SplitView.rightTabbedHolder.tabsCount;
     bool should_be_shown = m_ShowTabs ? true : (lc > 1 || rc > 1);
     m_SplitView.leftTabbedHolder.tabBarShown = should_be_shown;
     m_SplitView.rightTabbedHolder.tabBarShown = should_be_shown;

@@ -49,12 +49,12 @@ DragSender::DragSender(PanelController *_panel, IconCallback _icon_callback, nc:
 
 DragSender::~DragSender() = default;
 
-void DragSender::Start(NSView *_from_view, NSEvent *_via_event, int _dragged_panel_item_index)
+void DragSender::Start(NSView *_from_view, NSEvent *_via_event, int _dragged_panel_item_sorted_index)
 {
     static const auto pasteboard_types =
         @[FilesDraggingSource.fileURLsPromiseDragUTI, FilesDraggingSource.privateDragUTI];
 
-    const auto vfs_items = Impl::ComposeItemsForDragging(_dragged_panel_item_index, m_Panel.data);
+    const auto vfs_items = Impl::ComposeItemsForDragging(_dragged_panel_item_sorted_index, m_Panel.data);
     if( vfs_items.empty() )
         return;
 

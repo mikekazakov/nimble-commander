@@ -404,7 +404,7 @@ void NativeFSManagerImpl::OnDidRename(const std::string &_old_path, const std::s
         const auto pred = [=](std::shared_ptr<NativeFileSystemInfo> &_v) { return _v->mounted_at_path == _old_path; };
         auto it = std::ranges::find_if(m_Volumes, pred);
         if( it != std::end(m_Volumes) ) {
-            auto volume = *it;
+            const auto &volume = *it;
             volume->mounted_at_path = _new_path;
             GetVerboseInfo(*volume.get());
             m_VolumeLookup.Remove(EnsureTrailingSlash(_old_path));
@@ -689,7 +689,7 @@ void NativeFSManagerImpl::PerformAPFSUnmounting(const Info &_volume)
     auto release_disk = at_scope_end([=] { CFRelease(disk); });
 
     if( _volume->mount_flags.ejectable ) {
-        const auto apfs_plist = nc::utility::DiskUtility{}.ListAPFSObjects();
+        const auto apfs_plist = nc::utility::DiskUtility::ListAPFSObjects();
         if( apfs_plist == nil )
             return;
 
@@ -758,8 +758,7 @@ static std::optional<std::string> GetBSDName(const NativeFileSystemInfo &_volume
 static std::optional<APFSTree> FetchAPFSTree() noexcept
 {
     try {
-        DiskUtility du;
-        auto dictionary = du.ListAPFSObjects();
+        auto dictionary = nc::utility::DiskUtility::ListAPFSObjects();
         if( dictionary == nil )
             return std::nullopt;
         return APFSTree{dictionary};
@@ -778,11 +777,10 @@ static std::vector<FirmlinksMappingParser::Firmlink> FetchFirmlinks() noexcept
         in.seekg(0, std::ios::end);
         mapping.resize(in.tellg());
         in.seekg(0, std::ios::beg);
-        in.read(&mapping[0], mapping.size());
+        in.read(mapping.data(), mapping.size());
         in.close();
 
-        FirmlinksMappingParser parser;
-        return parser.Parse(mapping);
+        return nc::utility::FirmlinksMappingParser::Parse(mapping);
     } catch( ... ) {
         return {};
     }

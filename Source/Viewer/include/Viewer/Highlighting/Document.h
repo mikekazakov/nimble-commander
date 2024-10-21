@@ -38,9 +38,9 @@ public:
 
     Sci_Position LineEnd(Sci_Position line) const noexcept override;
 
-    Sci_Position GetRelativePosition(Sci_Position positionStart, Sci_Position characterOffset) const noexcept override;
+    Sci_Position GetRelativePosition(Sci_Position _position, Sci_Position _offset) const noexcept override;
 
-    int GetCharacterAndWidth(Sci_Position position, Sci_Position *pWidth) const noexcept override;
+    int GetCharacterAndWidth(Sci_Position position, Sci_Position *_width) const noexcept override;
 
     int Version() const noexcept override;
 
@@ -48,7 +48,7 @@ public:
 
     Sci_Position Length() const noexcept override;
 
-    void GetCharRange(char *buffer, Sci_Position position, Sci_Position lengthRetrieve) const noexcept override;
+    void GetCharRange(char *buffer, Sci_Position position, Sci_Position _length) const noexcept override;
 
     const char *BufferPointer() noexcept override;
 

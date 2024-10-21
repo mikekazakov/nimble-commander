@@ -381,7 +381,7 @@ using namespace nc::viewer;
     [self didChangeValueForKey:@"highlightingLanguage"];
 
     long tag = -1;
-    if( m_HighlightingLanguage == "" ) {
+    if( m_HighlightingLanguage.empty() ) {
         tag = 0;
     }
     else if( auto it = std::ranges::find(m_Languages, m_HighlightingLanguage); it != m_Languages.end() ) {

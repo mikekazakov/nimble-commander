@@ -471,7 +471,7 @@ struct StateStorage {
 {
     dispatch_assert_main_queue();
 
-    const auto clipped_pos = (m_Data->SortedDirectoryEntries().size() > 0 && _pos >= 0 &&
+    const auto clipped_pos = (!m_Data->SortedDirectoryEntries().empty() && _pos >= 0 &&
                               _pos < static_cast<int>(m_Data->SortedDirectoryEntries().size()))
                                  ? _pos
                                  : -1;
@@ -533,8 +533,20 @@ struct StateStorage {
 
     [self checkKeyboardModifierFlags:event.modifierFlags];
 
-    static ActionsShortcutsManager::ShortCut hk_up, hk_down, hk_left, hk_right, hk_first, hk_last, hk_pgdown, hk_pgup,
-        hk_inv_and_move, hk_inv, hk_scrdown, hk_scrup, hk_scrhome, hk_scrend;
+    static ActionsShortcutsManager::ShortCut hk_up;
+    static ActionsShortcutsManager::ShortCut hk_down;
+    static ActionsShortcutsManager::ShortCut hk_left;
+    static ActionsShortcutsManager::ShortCut hk_right;
+    static ActionsShortcutsManager::ShortCut hk_first;
+    static ActionsShortcutsManager::ShortCut hk_last;
+    static ActionsShortcutsManager::ShortCut hk_pgdown;
+    static ActionsShortcutsManager::ShortCut hk_pgup;
+    static ActionsShortcutsManager::ShortCut hk_inv_and_move;
+    static ActionsShortcutsManager::ShortCut hk_inv;
+    static ActionsShortcutsManager::ShortCut hk_scrdown;
+    static ActionsShortcutsManager::ShortCut hk_scrup;
+    static ActionsShortcutsManager::ShortCut hk_scrhome;
+    static ActionsShortcutsManager::ShortCut hk_scrend;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
         std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
             {.shortcut = &hk_up, .action = "panel.move_up"},
@@ -830,7 +842,7 @@ struct StateStorage {
         [self setCurpos:cur];
     }
 
-    if( m_CursorPos < 0 && m_Data->SortedDirectoryEntries().size() > 0 ) {
+    if( m_CursorPos < 0 && !m_Data->SortedDirectoryEntries().empty() ) {
         [self setCurpos:0];
     }
 

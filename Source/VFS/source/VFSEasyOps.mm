@@ -44,7 +44,8 @@ static int CopyFileContentsSmall(std::shared_ptr<VFSFile> _src, std::shared_ptr<
     const std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
     const uint64_t src_size = _src->Size();
     const uint64_t left_read = src_size;
-    ssize_t res_read = 0, total_wrote = 0;
+    ssize_t res_read = 0;
+    ssize_t total_wrote = 0;
 
     while( (res_read = _src->Read(buf.get(), std::min(bufsz, left_read))) > 0 ) {
         ssize_t res_write = 0;
@@ -148,7 +149,8 @@ int VFSEasyCopyFile(const char *_src_full_path,
 
     int result = 0;
 
-    VFSFilePtr source_file, dest_file;
+    VFSFilePtr source_file;
+    VFSFilePtr dest_file;
     result = _src_host->CreateFile(_src_full_path, source_file, nullptr);
     if( result != 0 )
         return result;
@@ -288,8 +290,10 @@ int VFSEasyCompareFiles(const char *_file1_full_path,
         return VFSError::InvalidCall;
 
     int ret;
-    VFSFilePtr file1, file2;
-    std::optional<std::vector<uint8_t>> data1, data2;
+    VFSFilePtr file1;
+    VFSFilePtr file2;
+    std::optional<std::vector<uint8_t>> data1;
+    std::optional<std::vector<uint8_t>> data2;
 
     if( (ret = _file1_host->CreateFile(_file1_full_path, file1, nullptr)) != 0 )
         return ret;
@@ -367,7 +371,8 @@ int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
 {
     // not comparing flags, perm, times, xattrs, acls etc now
 
-    VFSStat st1, st2;
+    VFSStat st1;
+    VFSStat st2;
     int ret;
     if( (ret = _file1_host->Stat(_file1_full_path.c_str(), st1, VFSFlags::F_NoFollow, nullptr)) < 0 )
         return ret;
@@ -385,7 +390,8 @@ int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
             _result = int(int64_t(st1.size) - int64_t(st2.size));
     }
     else if( S_ISLNK(st1.mode) ) {
-        char link1[MAXPATHLEN], link2[MAXPATHLEN];
+        char link1[MAXPATHLEN];
+        char link2[MAXPATHLEN];
         if( (ret = _file1_host->ReadSymlink(_file1_full_path.c_str(), link1, MAXPATHLEN, nullptr)) < 0 )
             return ret;
         if( (ret = _file2_host->ReadSymlink(_file2_full_path.c_str(), link2, MAXPATHLEN, nullptr)) < 0 )

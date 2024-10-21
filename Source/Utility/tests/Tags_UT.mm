@@ -762,7 +762,7 @@ TEST_CASE(PREFIX "RemoveTagFromAllItems")
     Tags::RemoveTagFromAllItems(label1);
 
     // Verify the change
-    CHECK(Tags::ReadTags(p1) == std::vector<Tags::Tag>{});
+    CHECK(Tags::ReadTags(p1).empty());
     CHECK(Tags::ReadTags(p2) == std::vector<Tags::Tag>{{&label2, color2}});
     CHECK(Tags::ReadTags(p3) == std::vector<Tags::Tag>{{&label2, color2}});
 }

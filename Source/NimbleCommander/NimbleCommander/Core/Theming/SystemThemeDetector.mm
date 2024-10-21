@@ -61,13 +61,13 @@ struct SystemThemeDetector::Impl {
     NCSystemThemeDetectorObjCShim *shim;
     ThemeAppearance appearance = ThemeAppearance::Light;
 
-    ThemeAppearance Detect();
+    static ThemeAppearance Detect();
     void OnChanged();
 };
 
 SystemThemeDetector::SystemThemeDetector() : I(std::make_unique<Impl>())
 {
-    I->appearance = I->Detect();
+    I->appearance = Impl::Detect();
     I->shim = [[NCSystemThemeDetectorObjCShim alloc] init];
     I->shim.onChange = [this] {
         // The 30ms delay is to partially mitigate a race condition between the 'AppleInterfaceThemeChangedNotification'
@@ -114,7 +114,7 @@ ThemeAppearance SystemThemeDetector::Impl::Detect()
 
 void SystemThemeDetector::OnChanged()
 {
-    const auto new_app = I->Detect();
+    const auto new_app = Impl::Detect();
     if( new_app == I->appearance )
         return;
     I->appearance = new_app;

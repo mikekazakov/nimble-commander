@@ -20,7 +20,7 @@ void GoBack::Perform(PanelController *_target, id) const
     history.MoveBack();
 
     if( auto listing_promise = history.CurrentPlaying() )
-        ListingPromiseLoader{}.Load(*listing_promise, _target);
+        nc::panel::ListingPromiseLoader::Load(*listing_promise, _target);
 }
 
 bool GoForward::Predicate(PanelController *_target) const
@@ -36,7 +36,7 @@ void GoForward::Perform(PanelController *_target, id) const
     history.MoveForth();
 
     if( auto listing_promise = history.CurrentPlaying() )
-        ListingPromiseLoader{}.Load(*listing_promise, _target);
+        nc::panel::ListingPromiseLoader::Load(*listing_promise, _target);
 }
 
 } // namespace nc::panel::actions

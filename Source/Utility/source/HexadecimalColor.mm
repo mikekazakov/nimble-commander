@@ -270,7 +270,10 @@ static std::span<const std::string_view> SystemColorNames() noexcept
 
 - (uint32_t)toRGBA
 {
-    double r, g, b, a;
+    double r;
+    double g;
+    double b;
+    double a;
     if( !IsNamed(self) && self.colorSpace == NSColorSpace.genericRGBColorSpace )
         [self getRed:&r green:&g blue:&b alpha:&a];
     else

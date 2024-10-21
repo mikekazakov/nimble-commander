@@ -33,7 +33,7 @@ static std::string CookSpotlightSearchQuery(const std::string &_format, const st
 
     std::string result = _format;
     result = base::ReplaceAll(result, "#{query}", _input);
-    result = base::ReplaceAll(result, "#{query1}", words.size() > 0 ? words[0] : "");
+    result = base::ReplaceAll(result, "#{query1}", !words.empty() ? words[0] : "");
     result = base::ReplaceAll(result, "#{query2}", words.size() > 1 ? words[1] : "");
     result = base::ReplaceAll(result, "#{query3}", words.size() > 2 ? words[2] : "");
     result = base::ReplaceAll(result, "#{query4}", words.size() > 3 ? words[3] : "");

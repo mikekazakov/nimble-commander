@@ -29,13 +29,12 @@ static void SortAndPurgeDuplicateHandlers(std::vector<LaunchServiceHandler> &_ha
     std::ranges::sort(
         _handlers, [](const auto &_1st, const auto &_2nd) { return [_1st.Name() localizedCompare:_2nd.Name()] < 0; });
 
-    const nc::utility::VersionCompare ver_cmp;
     for( int i = 0; i < static_cast<int>(_handlers.size()) - 1; ) {
         auto &first = _handlers[i];
         auto &second = _handlers[i + 1];
         if( [first.Name() isEqualToString:second.Name()] && [first.Identifier() isEqualToString:second.Identifier()] ) {
             // choose the latest version
-            if( ver_cmp.Compare(first.Version(), second.Version()) >= 0 ) {
+            if( nc::utility::VersionCompare::Compare(first.Version(), second.Version()) >= 0 ) {
                 // _handlers[i] has later version or they are the same, remove the second
                 _handlers.erase(_handlers.begin() + i + 1);
             }

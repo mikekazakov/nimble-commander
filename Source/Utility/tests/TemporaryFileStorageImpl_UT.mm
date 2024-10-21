@@ -288,7 +288,7 @@ static std::optional<std::string> Load(const std::string &_filepath)
     in.seekg(0, std::ios::end);
     contents.resize(in.tellg());
     in.seekg(0, std::ios::beg);
-    in.read(&contents[0], contents.size());
+    in.read(contents.data(), contents.size());
     in.close();
     return contents;
 }

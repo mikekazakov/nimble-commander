@@ -33,8 +33,8 @@ private:
     void DoTrash(const std::string &_path, VFSHost &_vfs, SourceItem _src);
     bool DoUnlock(const std::string &_path, VFSHost &_vfs);
     void ScanDirectory(const std::string &_path, int _listing_item_index, const base::chained_strings::node *_prefix);
-    bool IsNativeLockedItem(int vfs_err, const std::string &_path, VFSHost &_vfs) const;
-    int UnlockItem(const std::string &_path, VFSHost &_vfs) const;
+    static bool IsNativeLockedItem(int vfs_err, const std::string &_path, VFSHost &_vfs);
+    static int UnlockItem(const std::string &_path, VFSHost &_vfs);
 
     std::vector<VFSListingItem> m_SourceItems;
     DeletionType m_Type;

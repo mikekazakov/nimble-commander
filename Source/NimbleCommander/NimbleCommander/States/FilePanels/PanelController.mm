@@ -862,7 +862,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
             [m_View setPresentationLayout:*l];
         }
         else {
-            m_AssignedViewLayout = m_Layouts->LastResortLayout();
+            m_AssignedViewLayout = nc::panel::PanelViewLayoutsStorage::LastResortLayout();
             [m_View setPresentationLayout:*m_AssignedViewLayout];
         }
     }

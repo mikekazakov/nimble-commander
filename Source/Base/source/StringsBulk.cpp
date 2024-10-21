@@ -266,9 +266,9 @@ const char *StringsBulk::Iterator::operator*() const noexcept
     return m_Ctrl->Get(m_Index);
 }
 
-const char *StringsBulk::Iterator::operator[](long _d) const noexcept
+const char *StringsBulk::Iterator::operator[](long _index) const noexcept
 {
-    return *(*this + _d);
+    return *(*this + _index);
 }
 
 StringsBulk::Iterator &StringsBulk::Iterator::operator++() noexcept

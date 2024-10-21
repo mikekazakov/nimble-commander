@@ -345,7 +345,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
 {
     if( m_ItemMTime > 0 ) {
         const auto style = AdaptiveDateFormatting::Style::Medium;
-        m_ModTime.stringValue = AdaptiveDateFormatting{}.Format(style, m_ItemMTime);
+        m_ModTime.stringValue = AdaptiveDateFormatting::Format(style, m_ItemMTime);
     }
     else {
         m_ModTime.stringValue = @"";

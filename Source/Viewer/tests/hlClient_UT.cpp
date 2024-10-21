@@ -57,8 +57,7 @@ int hello = 10;)";
                                "WWWDIIIIIDODNNO";
     REQUIRE(text.length() == hl_exp.length());
 
-    Client cl;
-    auto hl = cl.Highlight(text, settings).value();
+    auto hl = Client::Highlight(text, settings).value();
 
     REQUIRE(hl.size() == hl_exp.size());
 
@@ -93,8 +92,7 @@ int hello = 10;)";
     std::expected<std::vector<nc::viewer::hl::Style>, std::string> hl;
     bool done = false;
 
-    Client cl;
-    cl.HighlightAsync(text, settings, [&](std::expected<std::vector<nc::viewer::hl::Style>, std::string> _styles) {
+    Client::HighlightAsync(text, settings, [&](std::expected<std::vector<nc::viewer::hl::Style>, std::string> _styles) {
         hl = std::move(_styles);
         done = true;
     });
@@ -111,8 +109,7 @@ TEST_CASE(PREFIX "Reacting to broken JSON")
 {
     const std::string settings = "definitely not a JSON";
     const std::string text = "";
-    Client cl;
-    auto hl = cl.Highlight(text, settings);
+    auto hl = Client::Highlight(text, settings);
     REQUIRE(!hl.has_value());
     CHECK(hl.error().contains("Unable to parse the lexing settings"));
 }
@@ -123,8 +120,7 @@ TEST_CASE(PREFIX "Reacting to non-existing lexer")
         "lexer": "I don't exist!"
     })";
     const std::string text = "";
-    Client cl;
-    auto hl = cl.Highlight(text, settings);
+    auto hl = Client::Highlight(text, settings);
     REQUIRE(!hl.has_value());
     CHECK(hl.error().contains("Unable to highlight the document"));
 }
@@ -148,8 +144,7 @@ TEST_CASE(PREFIX "Reacting to non-existing option")
         }
     })";
     const std::string text = "";
-    Client cl;
-    auto hl = cl.Highlight(text, settings);
+    auto hl = Client::Highlight(text, settings);
     REQUIRE(!hl.has_value());
     CHECK(hl.error().contains("Unable to highlight the document"));
 }
@@ -163,8 +158,7 @@ TEST_CASE(PREFIX "Reacting to non-existing mapping source")
         }
     })";
     const std::string text = "";
-    Client cl;
-    auto hl = cl.Highlight(text, settings);
+    auto hl = Client::Highlight(text, settings);
     REQUIRE(!hl.has_value());
     CHECK(hl.error().contains("Unable to parse the lexing settings"));
 }
@@ -178,8 +172,7 @@ TEST_CASE(PREFIX "Reacting to non-existing mapping target")
         }
     })";
     const std::string text = "";
-    Client cl;
-    auto hl = cl.Highlight(text, settings);
+    auto hl = Client::Highlight(text, settings);
     REQUIRE(!hl.has_value());
     CHECK(hl.error().contains("Unable to parse the lexing settings"));
 }

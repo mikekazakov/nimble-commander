@@ -69,7 +69,7 @@ public:
 
 protected:
     Promise SpawnPromise(uint64_t _inst_id);
-    VFSInstanceManager *InstanceFromPromise(const Promise &_promise);
+    static VFSInstanceManager *InstanceFromPromise(const Promise &_promise);
 
 private:
     virtual void IncPromiseCount(uint64_t _inst_id) = 0;

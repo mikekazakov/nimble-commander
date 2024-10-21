@@ -239,13 +239,13 @@ std::string ScreenBuffer::DumpScreenAsANSIBreaked() const
     return result;
 }
 
-std::u32string ScreenBuffer::DumpScreenAsUTF32(const int _opts) const
+std::u32string ScreenBuffer::DumpScreenAsUTF32(const int _options) const
 {
     std::u32string result;
     for( auto &l : m_OnScreenLines ) {
         for( auto *i = &m_OnScreenSpaces[l.start_index], *e = i + l.line_length; i != e; ++i ) {
             if( i->l == MultiCellGlyph ) {
-                if( _opts & DumpOptions::ReportMultiCellGlyphs )
+                if( _options & DumpOptions::ReportMultiCellGlyphs )
                     result += ' ';
             }
             else if( i->l >= 32 ) {
@@ -262,7 +262,7 @@ std::u32string ScreenBuffer::DumpScreenAsUTF32(const int _opts) const
                 result += ' ';
             }
         }
-        if( _opts & DumpOptions::BreakLines )
+        if( _options & DumpOptions::BreakLines )
             result += '\r';
     }
     return result;
@@ -526,7 +526,8 @@ void ScreenBuffer::RevertToSnapshot(const Snapshot &_snapshot)
 
 std::optional<std::pair<int, int>> ScreenBuffer::OccupiedOnScreenLines() const
 {
-    int first = std::numeric_limits<int>::max(), last = std::numeric_limits<int>::min();
+    int first = std::numeric_limits<int>::max();
+    int last = std::numeric_limits<int>::min();
     for( int i = 0, e = Height(); i < e; ++i )
         if( HasOccupiedChars(i) ) {
             first = std::min(first, i);

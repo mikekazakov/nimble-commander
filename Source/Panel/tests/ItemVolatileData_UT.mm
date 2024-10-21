@@ -13,7 +13,7 @@ using R = QuickSearchHiglight::Range;
 TEST_CASE(PREFIX "empty constructor")
 {
     const QuickSearchHiglight hl;
-    CHECK(hl.size() == 0);
+    CHECK(hl.size() == 0); // NOLINT
     CHECK(hl.empty() == true);
     const auto r = hl.unpack();
     CHECK(r.count == 0);
@@ -24,7 +24,7 @@ TEST_CASE(PREFIX "ranges constructor")
     SECTION("Empty")
     {
         const QuickSearchHiglight hl(std::span<const R>{});
-        CHECK(hl.size() == 0);
+        CHECK(hl.size() == 0); // NOLINT
         CHECK(hl.empty() == true);
         const auto r = hl.unpack();
         CHECK(r.count == 0);

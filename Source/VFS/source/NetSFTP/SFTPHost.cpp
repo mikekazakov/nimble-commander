@@ -84,7 +84,7 @@ public:
     long port;
     std::string home; // optional ftp ssh servers, mandatory for sftp-only servers
 
-    [[nodiscard]] const char *Tag() const { return SFTPHost::UniqueTag; }
+    [[nodiscard]] static const char *Tag() { return SFTPHost::UniqueTag; }
 
     [[nodiscard]] const char *Junction() const { return server_url.c_str(); }
 
@@ -714,7 +714,7 @@ int SFTPHost::CreateDirectory(std::string_view _path,
     return 0;
 }
 
-int SFTPHost::VFSErrorForConnection(Connection &_conn) const
+int SFTPHost::VFSErrorForConnection(Connection &_conn)
 {
     using namespace VFSError;
     const int sess_errno = libssh2_session_last_errno(_conn.ssh);

@@ -386,7 +386,8 @@ static base::CFString UTF8WithFallback(const std::string &_s)
 
 void Listing::BuildFilenames()
 {
-    size_t i = 0, e = m_ItemsCount;
+    size_t i = 0;
+    const size_t e = m_ItemsCount;
 
     m_FilenamesCF = std::make_unique<base::CFString[]>(e);
     m_ExtensionOffsets = std::make_unique<uint16_t[]>(e);

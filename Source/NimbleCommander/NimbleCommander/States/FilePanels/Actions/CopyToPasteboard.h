@@ -12,7 +12,7 @@ struct CopyToPasteboard : PanelAction {
     void Perform(PanelController *_target, id _sender) const override;
 
 protected:
-    void PerformWithItems(const std::vector<VFSListingItem> &_items) const;
+    static void PerformWithItems(const std::vector<VFSListingItem> &_items);
 };
 
 namespace context {

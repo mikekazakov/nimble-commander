@@ -28,7 +28,8 @@ static const auto g_ShortcutKey = "shortcut";
 static const auto g_StartupKey = "startup";
 static const auto g_UUIDKey = "uuid";
 
-ExternalToolsParameters::Step::Step(ActionType t, uint16_t i, bool _partial) : type(t), index(i), partial(_partial)
+ExternalToolsParameters::Step::Step(ActionType _type, uint16_t _index, bool _partial)
+    : type(_type), index(_index), partial(_partial)
 {
 }
 
@@ -597,7 +598,7 @@ ExternalToolExecution::ExternalToolExecution(const Context &_ctx, const External
     assert(m_Ctx.right_data);
     assert(m_Ctx.temp_storage);
 
-    if( auto params = ExternalToolsParametersParser().Parse(m_ET.m_Parameters) )
+    if( auto params = ExternalToolsParametersParser::Parse(m_ET.m_Parameters) )
         m_Params = std::move(params.value());
     else
         throw std::invalid_argument(params.error());

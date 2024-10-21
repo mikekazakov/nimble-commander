@@ -305,7 +305,8 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
         // draw the selection background
         if( selection.location >= 0 ) {
             const auto selection_end = selection.location + selection.length;
-            double x1 = 0, x2 = -1;
+            double x1 = 0;
+            double x2 = -1;
             if( line.UniCharsStart() <= selection.location && line.UniCharsEnd() > selection.location ) {
                 x1 = line_pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection.location, nullptr);
                 x2 = ((selection_end <= line.UniCharsEnd())
@@ -1086,7 +1087,7 @@ static std::optional<int> FindVerticalLineToScrollToBytesOffsetWithFrame(const T
     if( _global_offset >= working_set_pos && _global_offset < working_set_pos + working_set_len ) {
         // seems that we can satisfy this request immediately, without I/O
         const auto local_offset = static_cast<int>(_global_offset - working_set_pos);
-        const auto first_line = &_frame.Lines()[0];
+        const auto first_line = _frame.Lines().data();
         const auto last_line = first_line + _frame.LinesNumber();
         const int closest = FindFloorClosestLineIndex(first_line, last_line, local_offset);
         if( closest + lines_per_view < _frame.LinesNumber() ) {

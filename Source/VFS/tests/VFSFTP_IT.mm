@@ -24,7 +24,8 @@ TEST_CASE(PREFIX "upload and compare")
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
 
-    const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/kernel";
+    const char *fn1 = "/System/Library/Kernels/kernel";
+    const char *fn2 = "/kernel";
     VFSStat stat;
 
     // if there's a trash from previous runs - remove it
@@ -80,7 +81,8 @@ TEST_CASE(PREFIX "empty file test")
 
 TEST_CASE(PREFIX "MKD RMD")
 {
-    VFSHostPtr host, shadowhost;
+    VFSHostPtr host;
+    VFSHostPtr shadowhost;
     REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
     REQUIRE_NOTHROW(shadowhost = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
     for( const auto &dir : std::vector<std::string>{"/" + nc::base::UUID::Generate().ToString(),

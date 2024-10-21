@@ -39,7 +39,7 @@ constexpr char32_t ExtendedCharRegistry::ToExtChar(uint32_t _idx) noexcept
 ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16string_view _input, char32_t _initial)
 {
     // No input
-    if( _input.data() == nullptr || _input.length() == 0 ) {
+    if( _input.data() == nullptr || _input.empty() ) {
         return {.newchar = _initial, .eaten = 0};
     }
 

@@ -379,10 +379,10 @@ bool GetSystemOverview(SystemOverview &_overview)
             return;
         coded_model = hw_model;
 
-        if( auto name1 = ExtractReadableModelNameFromFrameworks(coded_model); name1 != "" ) {
+        if( auto name1 = ExtractReadableModelNameFromFrameworks(coded_model); !name1.empty() ) {
             human_model = name1;
         }
-        else if( auto name2 = ExtractReadableModelNameFromSystemProfiler(); name2 != "" ) {
+        else if( auto name2 = ExtractReadableModelNameFromSystemProfiler(); !name2.empty() ) {
             human_model = name2;
         }
     });

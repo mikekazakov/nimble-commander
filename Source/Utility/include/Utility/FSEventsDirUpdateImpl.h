@@ -35,12 +35,12 @@ private:
     void OnVolumeDidUnmount(const std::string &_on_path) override;
 
     static void DiskDisappeared(DADiskRef disk, void *context);
-    static void FSEventsDirUpdateCallback(ConstFSEventStreamRef streamRef,
+    static void FSEventsDirUpdateCallback(ConstFSEventStreamRef _stream_ref,
                                           void *_user_data,
                                           size_t _num,
                                           void *_paths,
                                           const FSEventStreamEventFlags _flags[],
-                                          const FSEventStreamEventId eventIds[]);
+                                          const FSEventStreamEventId _ids[]);
     static FSEventStreamRef CreateEventStream(const std::string &path, void *context);
 
     spinlock m_Lock;

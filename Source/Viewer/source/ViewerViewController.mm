@@ -665,7 +665,7 @@ int BackgroundFileOpener::Open(VFSHostPtr _vfs,
 {
     dispatch_assert_background_queue();
     assert(_vfs);
-    if( const int vfs_err = _vfs->CreateFile(_path.c_str(), original_file, nullptr); vfs_err != VFSError::Ok )
+    if( const int vfs_err = _vfs->CreateFile(_path, original_file, nullptr); vfs_err != VFSError::Ok )
         return vfs_err;
 
     if( original_file->GetReadParadigm() < VFSFile::ReadParadigm::Random ) {

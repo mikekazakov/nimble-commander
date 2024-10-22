@@ -270,7 +270,7 @@ VFSListingPtr DirectoryPathAutoCompletionImpl::ListingForDir(const std::string &
         return m_LastListing;
 
     VFSListingPtr listing;
-    const int rc = m_VFS->FetchDirectoryListing(path.c_str(), listing, VFSFlags::F_NoDotDot);
+    const int rc = m_VFS->FetchDirectoryListing(path, listing, VFSFlags::F_NoDotDot);
     if( rc == VFSError::Ok ) {
         m_LastListing = listing;
         return m_LastListing;

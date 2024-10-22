@@ -14,7 +14,7 @@ static std::optional<std::vector<uint8_t>> CalculateFileHash(const std::string &
 {
     const int chunk_sz = 1 * 1024 * 1024;
     VFSFilePtr file;
-    int rc = nc::bootstrap::NativeVFSHostInstance().CreateFile(_path.c_str(), file, nullptr);
+    int rc = nc::bootstrap::NativeVFSHostInstance().CreateFile(_path, file, nullptr);
     if( rc != 0 )
         return std::nullopt;
 

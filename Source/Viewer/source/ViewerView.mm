@@ -10,12 +10,14 @@
 #include "DataBackend.h"
 #include <Base/dispatch_cpp.h>
 #include <VFS/VFS.h>
-#include "Theme.h"
-#include "TextModeView.h"
+
 #include "HexModeView.h"
 #include "PreviewModeView.h"
+#include "TextModeView.h"
+#include "Theme.h"
 #include "ViewerFooter.h"
 #include "ViewerSearchView.h"
+#include <algorithm>
 
 static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 static const auto g_ConfigAutoDetectEncoding = "viewer.autoDetectEncoding";
@@ -454,10 +456,8 @@ using namespace nc::viewer;
     uint64_t start = m_SelectionInFile.location;
     uint64_t end = start + m_SelectionInFile.length;
 
-    if( end > window_pos + window_size )
-        end = window_pos + window_size;
-    if( start < window_pos )
-        start = window_pos;
+    end = std::min(end, window_pos + window_size);
+    start = std::max(start, window_pos);
 
     if( start >= end ) {
         m_SelectionInWindow = CFRangeMake(-1, 0);

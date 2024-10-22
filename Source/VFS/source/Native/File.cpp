@@ -2,8 +2,10 @@
 #include <sys/xattr.h>
 #include <Utility/NativeFSManager.h>
 #include <RoutedIO/RoutedIO.h>
+
 #include "File.h"
 #include "Host.h"
+#include <algorithm>
 
 namespace nc::vfs::native {
 
@@ -122,8 +124,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
 
     const ssize_t ret = write(m_FD, _buf, _size);
     if( ret >= 0 ) {
-        if( m_Position + ret > m_Size )
-            m_Size = m_Position + ret;
+        m_Size = std::max(m_Position + ret, m_Size);
         m_Position += ret;
         return ret;
     }

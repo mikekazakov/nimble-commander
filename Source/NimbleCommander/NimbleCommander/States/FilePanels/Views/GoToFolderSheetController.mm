@@ -252,7 +252,7 @@ static std::vector<unsigned> ListDirsWithPrefix(const VFSListing &_listing, cons
     auto vfs = self.panel.vfs;
 
     VFSListingPtr listing;
-    int ret = vfs->FetchDirectoryListing(path.c_str(), listing, VFSFlags::F_NoDotDot, nullptr);
+    int ret = vfs->FetchDirectoryListing(path, listing, VFSFlags::F_NoDotDot, nullptr);
     if( ret == 0 ) {
         m_LastListing = listing;
         return m_LastListing.get();

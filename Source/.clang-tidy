@@ -129,7 +129,7 @@ Checks: >
   # readability-redundant-member-init,
   # readability-redundant-preprocessor,
   # readability-redundant-smartptr-get,
-  # readability-redundant-string-cstr,
+  readability-redundant-string-cstr,
   # readability-redundant-string-init,
   # readability-reference-to-constructed-temporary,
   # readability-simplify-boolean-expr,
@@ -140,8 +140,8 @@ Checks: >
   # readability-suspicious-call-argument,
   # readability-uniqueptr-delete-release,
   # readability-uppercase-literal-suffix,
-  # readability-use-anyofallof,
-  # readability-use-std-min-max,
+  readability-use-anyofallof,
+  readability-use-std-min-max,
 
 CheckOptions:
   - key:    modernize-loop-convert.MinConfidence

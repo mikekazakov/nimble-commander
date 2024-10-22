@@ -40,7 +40,7 @@
         Value arr(rapidjson::kArrayType);
         for( auto &s : m_Items )
             arr.PushBack(Value(s.UTF8String, g_CrtAllocator), g_CrtAllocator);
-        StateConfig().Set(m_ConfigPath.c_str(), arr);
+        StateConfig().Set(m_ConfigPath, arr);
     }
 }
 

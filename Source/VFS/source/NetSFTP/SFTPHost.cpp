@@ -115,7 +115,7 @@ VFSMeta SFTPHost::Meta()
 }
 
 SFTPHost::SFTPHost(const VFSConfiguration &_config)
-    : Host(_config.Get<SFTPHostConfiguration>().server_url.c_str(), nullptr, UniqueTag), m_Config(_config)
+    : Host(_config.Get<SFTPHostConfiguration>().server_url, nullptr, UniqueTag), m_Config(_config)
 {
     const int rc = DoInit();
     if( rc < 0 )
@@ -146,7 +146,7 @@ SFTPHost::SFTPHost(const std::string &_serv_url,
                    const std::string &_keypath,
                    long _port,
                    const std::string &_home)
-    : Host(_serv_url.c_str(), nullptr, UniqueTag),
+    : Host(_serv_url, nullptr, UniqueTag),
       m_Config(ComposeConfguration(_serv_url, _user, _passwd, _keypath, _port, _home))
 {
     const int rc = DoInit();

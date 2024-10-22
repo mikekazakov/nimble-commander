@@ -549,15 +549,13 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 - (SelPoint)projectPoint:(NSPoint)_point
 {
     auto y_pos = _point.y;
-    if( y_pos < 0 )
-        y_pos = 0;
+    y_pos = std::max<CGFloat>(y_pos, 0);
 
     const int line_predict =
         static_cast<int>(std::floor(y_pos / m_FontCache->Height()) - m_Screen->Buffer().BackScreenLines());
 
     auto x_pos = _point.x;
-    if( x_pos < 0 )
-        x_pos = 0;
+    x_pos = std::max<CGFloat>(x_pos, 0);
     const int col_predict = static_cast<int>(std::floor(x_pos / m_FontCache->Width()));
     return SelPoint{col_predict, line_predict};
 }

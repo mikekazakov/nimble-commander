@@ -118,7 +118,7 @@ ArchiveHost::ArchiveHost(const std::string_view _path,
 }
 
 ArchiveHost::ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker)
-    : Host(_config.Get<VFSArchiveHostConfiguration>().path.c_str(), _parent, UniqueTag), I(std::make_unique<Impl>()),
+    : Host(_config.Get<VFSArchiveHostConfiguration>().path, _parent, UniqueTag), I(std::make_unique<Impl>()),
       m_Configuration(_config)
 {
     assert(_parent);
@@ -174,14 +174,14 @@ int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
 
     {
         VFSStat st;
-        res = Parent()->Stat(path.c_str(), st, 0);
+        res = Parent()->Stat(path, st, 0);
         if( res < 0 )
             return res;
         VFSStat::ToSysStat(st, I->m_SrcFileStat);
     }
 
     VFSFilePtr source_file;
-    res = Parent()->CreateFile(path.c_str(), source_file, {});
+    res = Parent()->CreateFile(path, source_file, {});
     if( res < 0 )
         return res;
 
@@ -642,7 +642,7 @@ int ArchiveHost::Stat(std::string_view _path, VFSStat &_st, unsigned long _flags
     if( res < 0 )
         return res;
 
-    if( auto it = FindEntry(resolve_buf.c_str()) ) {
+    if( auto it = FindEntry(resolve_buf) ) {
         VFSStat::FromSysStat(it->st, _st);
         return VFSError::Ok;
     }

@@ -10,6 +10,8 @@
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <ranges>
+#include <algorithm>
 
 namespace nc::utility {
 
@@ -50,13 +52,11 @@ static std::vector<std::string> sub_masks(std::string_view _source)
     return masks;
 }
 
-static bool string_needs_normalization(std::string_view _string)
+static bool string_needs_normalization(std::string_view _string) noexcept
 {
-    for( const unsigned char c : _string )
-        if( c > 127 || (c >= 0x41 && c <= 0x5A) ) // >= 'A' && <= 'Z'
-            return true;
-
-    return false;
+    return std::ranges::any_of(_string, [](const unsigned char _c) {
+        return _c > 127 || (_c >= 0x41 && _c <= 0x5A); // >= 'A' && <= 'Z'
+    });
 }
 
 class InplaceFormCLowercaseString
@@ -230,7 +230,7 @@ bool FileMask::MatchName(std::string_view _name) const noexcept
         return false;
 
     const InplaceFormCLowercaseString normalized_name(_name);
-    for( auto &m : m_Masks )
+    return std::ranges::any_of(m_Masks, [&](auto &m) {
         if( m.index() == 0 ) {
             const auto &re = std::get<std::shared_ptr<const re2::RE2>>(m);
             if( re2::RE2::FullMatch(normalized_name.str(), *re) )
@@ -241,8 +241,8 @@ bool FileMask::MatchName(std::string_view _name) const noexcept
             if( CompareAgainstSimpleMask(simple_mask, _name) ) // TODO: why the original string here??
                 return true;
         }
-
-    return false;
+        return false;
+    });
 }
 
 bool FileMask::IsWildCard(const std::string &_mask)

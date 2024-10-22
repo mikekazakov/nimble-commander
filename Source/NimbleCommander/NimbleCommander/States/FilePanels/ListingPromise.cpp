@@ -93,7 +93,7 @@ VFSListingPtr ListingPromise::RestoreUniform(unsigned long _fetch_flags,
         return nullptr;
 
     VFSListingPtr listing;
-    const auto rc = host->FetchDirectoryListing(info->directory.c_str(), listing, _fetch_flags, _cancel_checker);
+    const auto rc = host->FetchDirectoryListing(info->directory, listing, _fetch_flags, _cancel_checker);
     if( rc != VFSError::Ok )
         throw VFSErrorException{rc};
 
@@ -125,7 +125,7 @@ VFSListingPtr ListingPromise::RestoreNonUniform(unsigned long _fetch_flags,
                     return nullptr;
                 const auto path = directory + entries[i];
                 VFSListingPtr listing;
-                const auto rc = host->FetchSingleItemListing(path.c_str(), listing, _fetch_flags, _cancel_checker);
+                const auto rc = host->FetchSingleItemListing(path, listing, _fetch_flags, _cancel_checker);
                 if( rc == VFSError::Ok && listing != nullptr )
                     listings.emplace_back(std::move(listing));
             }

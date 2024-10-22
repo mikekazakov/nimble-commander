@@ -69,7 +69,7 @@ NSImage *QLVFSThumbnailsCacheImpl::ProduceThumbnail(const std::string &_path,
 
 std::string QLVFSThumbnailsCacheImpl::MakeKey(const std::string &_file_path, VFSHost &_host, int _px_size)
 {
-    auto key = _host.MakePathVerbose(_file_path.c_str());
+    auto key = _host.MakePathVerbose(_file_path);
     key += "\x01";
     key += std::to_string(_px_size);
     return key;
@@ -96,7 +96,7 @@ static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_pa
 {
     VFSFilePtr vfs_file;
 
-    if( _host.CreateFile(_path.c_str(), vfs_file, nullptr) < 0 )
+    if( _host.CreateFile(_path, vfs_file, nullptr) < 0 )
         return std::nullopt;
 
     if( vfs_file->Open(VFSFlags::OF_Read) < 0 )

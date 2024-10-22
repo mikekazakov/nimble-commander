@@ -36,7 +36,7 @@ bool DirectoryCreationJob::MakeDir(const std::string &_path)
 {
     while( true ) {
         VFSStat st;
-        const auto stat_rc = m_VFS->Stat(_path.c_str(), st, 0);
+        const auto stat_rc = m_VFS->Stat(_path, st, 0);
         if( stat_rc != VFSError::Ok )
             break;
         if( st.mode_bits.dir ) {
@@ -54,7 +54,7 @@ bool DirectoryCreationJob::MakeDir(const std::string &_path)
     }
 
     while( true ) {
-        const auto mkdir_rc = m_VFS->CreateDirectory(_path.c_str(), g_CreateMode);
+        const auto mkdir_rc = m_VFS->CreateDirectory(_path, g_CreateMode);
         if( mkdir_rc == VFSError::Ok )
             return true;
         switch( m_OnError(mkdir_rc, _path, *m_VFS) ) {

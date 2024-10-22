@@ -8,6 +8,8 @@
 #include <dirent.h>
 #include <fmt/format.h>
 
+#include <algorithm>
+
 using namespace std::literals;
 
 namespace nc::vfs {
@@ -427,8 +429,7 @@ off_t XAttrFile::Seek(off_t _off, int _basis)
 
     if( req_pos < 0 )
         return VFSError::InvalidCall;
-    if( req_pos > m_Size )
-        req_pos = m_Size;
+    req_pos = std::min<off_t>(req_pos, m_Size);
     m_Position = req_pos;
 
     return m_Position;

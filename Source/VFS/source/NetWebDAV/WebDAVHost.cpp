@@ -41,14 +41,14 @@ WebDAVHost::WebDAVHost(const std::string &_serv_url,
                        const std::string &_path,
                        bool _https,
                        int _port)
-    : VFSHost(_serv_url.c_str(), nullptr, UniqueTag),
+    : VFSHost(_serv_url, nullptr, UniqueTag),
       m_Configuration(ComposeConfiguration(_serv_url, _user, _passwd, _path, _https, _port))
 {
     Init();
 }
 
 WebDAVHost::WebDAVHost(const VFSConfiguration &_config)
-    : VFSHost(_config.Get<HostConfiguration>().server_url.c_str(), nullptr, UniqueTag), m_Configuration(_config)
+    : VFSHost(_config.Get<HostConfiguration>().server_url, nullptr, UniqueTag), m_Configuration(_config)
 {
     Init();
 }

@@ -888,7 +888,7 @@ void ShellTask::ExecuteWithFullPath(const std::filesystem::path &_binary_path, s
     cmd += "\n";
 
     I->SetState(TaskState::ProgramExternal);
-    WriteChildInput(cmd.c_str());
+    WriteChildInput(cmd);
 }
 
 std::vector<std::string> ShellTask::ChildrenList() const

@@ -69,7 +69,7 @@ FTPHost::FTPHost(const std::string &_serv_url,
                  const std::string &_start_dir,
                  long _port,
                  bool _active)
-    : Host(_serv_url.c_str(), nullptr, UniqueTag), m_Cache(std::make_unique<ftp::Cache>()),
+    : Host(_serv_url, nullptr, UniqueTag), m_Cache(std::make_unique<ftp::Cache>()),
       m_Configuration(ComposeConfiguration(_serv_url, _user, _passwd, _start_dir, _port, _active))
 {
     const int rc = DoInit();
@@ -78,7 +78,7 @@ FTPHost::FTPHost(const std::string &_serv_url,
 }
 
 FTPHost::FTPHost(const VFSConfiguration &_config)
-    : Host(_config.Get<VFSNetFTPHostConfiguration>().server_url.c_str(), nullptr, UniqueTag),
+    : Host(_config.Get<VFSNetFTPHostConfiguration>().server_url, nullptr, UniqueTag),
       m_Cache(std::make_unique<ftp::Cache>()), m_Configuration(_config)
 {
     const int rc = DoInit();
@@ -163,7 +163,7 @@ int FTPHost::DownloadListing(CURLInstance *_inst,
     if( path.back() != '/' )
         path += '/';
 
-    const std::string request = BuildFullURLString(path.c_str());
+    const std::string request = BuildFullURLString(path);
     Log::Trace("Request: {}", request);
 
     std::string response;

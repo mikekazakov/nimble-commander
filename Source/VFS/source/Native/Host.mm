@@ -165,7 +165,7 @@ int NativeHost::FetchDirectoryListing(std::string_view _path,
     auto cb_param = [&](const Fetching::CallbackParams &_params) { fill(next_entry_index++, _params); };
 
     if( need_to_add_dot_dot ) {
-        Fetching::ReadSingleEntryAttributesByPath(io, path.c_str(), cb_param);
+        Fetching::ReadSingleEntryAttributesByPath(io, path, cb_param);
         listing_source.filenames[0] = "..";
     }
 

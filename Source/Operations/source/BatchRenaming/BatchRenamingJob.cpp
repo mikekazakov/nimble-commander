@@ -35,13 +35,13 @@ void BatchRenamingJob::Rename(const std::string &_src, const std::string &_dst)
     }
 
     while( true ) {
-        const auto dst_exists = m_VFS->Exists(_dst.c_str());
+        const auto dst_exists = m_VFS->Exists(_dst);
 
         int rc = VFSError::Ok;
         if( dst_exists && LowercaseEqual(_src, _dst) == false )
             rc = VFSError::FromErrno(EEXIST);
         else
-            rc = m_VFS->Rename(_src.c_str(), _dst.c_str());
+            rc = m_VFS->Rename(_src, _dst);
 
         if( rc == VFSError::Ok )
             break;

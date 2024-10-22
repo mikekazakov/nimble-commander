@@ -39,7 +39,7 @@ TEST_CASE(PREFIX "can read info about kernel_task")
     const auto &kernel_task_listing_item = *it;
 
     VFSFilePtr file;
-    REQUIRE(host->CreateFile(kernel_task_listing_item.Path().c_str(), file, {}) == 0);
+    REQUIRE(host->CreateFile(kernel_task_listing_item.Path(), file, {}) == 0);
     REQUIRE(file->Open(Flags::OF_Read) == 0);
     const auto file_contents = file->ReadFile();
     REQUIRE(file_contents != std::nullopt);

@@ -474,7 +474,7 @@ int Host::FetchFlexibleListingItems(const std::string &_directory_path,
                                     const VFSCancelChecker &_cancel_checker)
 {
     VFSListingPtr listing;
-    const int ret = FetchDirectoryListing(_directory_path.c_str(), listing, _flags, _cancel_checker);
+    const int ret = FetchDirectoryListing(_directory_path, listing, _flags, _cancel_checker);
     if( ret != 0 )
         return ret;
 

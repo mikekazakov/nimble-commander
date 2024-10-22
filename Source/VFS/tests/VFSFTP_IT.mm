@@ -88,12 +88,12 @@ TEST_CASE(PREFIX "MKD RMD")
     for( const auto &dir : std::vector<std::string>{"/" + nc::base::UUID::Generate().ToString(),
                                                     "/В лесу родилась елочка, В лесу она росла",
                                                     "/北京市 >≥±§ 😱"} ) {
-        REQUIRE(host->CreateDirectory(dir.c_str(), 0755) == 0);
-        REQUIRE(host->IsDirectory(dir.c_str(), 0) == true);                              // cached
-        REQUIRE(shadowhost->IsDirectory(dir.c_str(), VFSFlags::F_ForceRefresh) == true); // non-cached
-        REQUIRE(host->RemoveDirectory(dir.c_str()) == 0);
-        REQUIRE(host->IsDirectory(dir.c_str(), 0) == false);                              // cached
-        REQUIRE(shadowhost->IsDirectory(dir.c_str(), VFSFlags::F_ForceRefresh) == false); // non-cached
+        REQUIRE(host->CreateDirectory(dir, 0755) == 0);
+        REQUIRE(host->IsDirectory(dir, 0) == true);                              // cached
+        REQUIRE(shadowhost->IsDirectory(dir, VFSFlags::F_ForceRefresh) == true); // non-cached
+        REQUIRE(host->RemoveDirectory(dir) == 0);
+        REQUIRE(host->IsDirectory(dir, 0) == false);                              // cached
+        REQUIRE(shadowhost->IsDirectory(dir, VFSFlags::F_ForceRefresh) == false); // non-cached
     }
 
     {
@@ -137,9 +137,9 @@ TEST_CASE(PREFIX "MKD RMD")
 
     for( const auto &dir : std::vector<std::string>{
              "/some / very / bad / filename", "/some/another/invalid/path", "not even an absolute path"} ) {
-        REQUIRE(host->CreateDirectory(dir.c_str(), 0755) != 0);
-        REQUIRE(host->IsDirectory(dir.c_str(), 0) == false);
-        REQUIRE(shadowhost->IsDirectory(dir.c_str(), VFSFlags::F_ForceRefresh) == false); // non-cached
+        REQUIRE(host->CreateDirectory(dir, 0755) != 0);
+        REQUIRE(host->IsDirectory(dir, 0) == false);
+        REQUIRE(shadowhost->IsDirectory(dir, VFSFlags::F_ForceRefresh) == false); // non-cached
     }
 }
 
@@ -155,13 +155,13 @@ TEST_CASE(PREFIX "renaming")
     VFSStat stat;
 
     // if there's a trash from previous runs - remove it
-    if( host->Stat(fn2.c_str(), stat, 0) == 0 )
-        REQUIRE(host->Unlink(fn2.c_str()) == 0);
+    if( host->Stat(fn2, stat, 0) == 0 )
+        REQUIRE(host->Unlink(fn2) == 0);
 
     REQUIRE(VFSEasyCopyFile(fn1.c_str(), TestEnv().vfs_native, fn2.c_str(), host) == 0);
-    REQUIRE(host->Rename(fn2.c_str(), fn3.c_str()) == 0);
-    REQUIRE(host->Stat(fn3.c_str(), stat, 0) == 0);
-    REQUIRE(host->Unlink(fn3.c_str()) == 0);
+    REQUIRE(host->Rename(fn2, fn3) == 0);
+    REQUIRE(host->Stat(fn3, stat, 0) == 0);
+    REQUIRE(host->Unlink(fn3) == 0);
 
     if( host->Stat("/DirectoryName1", stat, 0) == 0 )
         REQUIRE(host->RemoveDirectory("/DirectoryName1") == 0);

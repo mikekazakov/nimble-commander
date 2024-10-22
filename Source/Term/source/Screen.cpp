@@ -97,12 +97,10 @@ void Screen::GoTo(int _x, int _y)
 
     m_PosX = _x;
     m_PosY = _y;
-    if( m_PosX < 0 )
-        m_PosX = 0;
+    m_PosX = std::max(m_PosX, 0);
     if( m_PosX >= Width() )
         m_PosX = Width() - 1;
-    if( m_PosY < 0 )
-        m_PosY = 0;
+    m_PosY = std::max(m_PosY, 0);
     if( m_PosY >= Height() )
         m_PosY = Height() - 1;
     m_LineOverflown = false;

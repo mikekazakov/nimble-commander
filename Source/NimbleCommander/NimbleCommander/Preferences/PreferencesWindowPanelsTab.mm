@@ -1,21 +1,21 @@
 // Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowPanelsTab.h"
-#include <Utility/HexadecimalColor.h>
-#include <Utility/FontExtras.h>
+#include "ConfigBinder.h"
+#include "PreferencesWindowPanelsTabOperationsConcurrencySheet.h"
+#include <Base/dispatch_cpp.h>
+#include <Config/Config.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/States/FilePanels/PanelViewLayoutSupport.h>
-#include "PreferencesWindowPanelsTabOperationsConcurrencySheet.h"
-#include <Utility/ByteCountFormatter.h>
-#include <Utility/ObjCpp.h>
-#include <Utility/StringExtras.h>
-#include <Config/Config.h>
 #include <Panel/TagsStorage.h>
 #include <Panel/UI/TagsPresentation.h>
-#include <Base/dispatch_cpp.h>
-#include <ranges>
+#include <Utility/ByteCountFormatter.h>
+#include <Utility/FontExtras.h>
+#include <Utility/HexadecimalColor.h>
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
 #include <algorithm>
 #include <fmt/format.h>
-#include "ConfigBinder.h"
+#include <ranges>
 
 using namespace nc::panel;
 
@@ -693,20 +693,11 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
     if( self.layoutsBriefDynamicRadioChoosen )
         l.mode = PanelBriefViewColumnsLayout::Mode::DynamicWidth;
 
-    l.fixed_mode_width = static_cast<short>(self.layoutsBriefFixedValueTextField.intValue);
-    if( l.fixed_mode_width < 40 )
-        l.fixed_mode_width = 40;
-    l.fixed_amount_value = static_cast<short>(self.layoutsBriefAmountValueTextField.intValue);
-    if( l.fixed_amount_value < 1 )
-        l.fixed_amount_value = 1;
-    l.dynamic_width_min = static_cast<short>(self.layoutsBriefDynamicMinValueTextField.intValue);
-    if( l.dynamic_width_min < 40 )
-        l.dynamic_width_min = 40;
-    l.dynamic_width_max = static_cast<short>(self.layoutsBriefDynamicMaxValueTextField.intValue);
-    if( l.dynamic_width_max < 40 )
-        l.dynamic_width_max = 40;
-    if( l.dynamic_width_max < l.dynamic_width_min )
-        l.dynamic_width_max = l.dynamic_width_min;
+    l.fixed_mode_width = static_cast<short>(std::max(self.layoutsBriefFixedValueTextField.intValue, 40));
+    l.fixed_amount_value = static_cast<short>(std::max(self.layoutsBriefAmountValueTextField.intValue, 1));
+    l.dynamic_width_min = static_cast<short>(std::max(self.layoutsBriefDynamicMinValueTextField.intValue, 40));
+    l.dynamic_width_max =
+        std::max(static_cast<short>(self.layoutsBriefDynamicMaxValueTextField.intValue), l.dynamic_width_min);
     l.dynamic_width_equal = self.layoutsBriefDynamicEqualCheckbox.state;
     l.icon_scale = [&]() -> uint8_t {
         if( self.layoutsBriefIcon2x.state )

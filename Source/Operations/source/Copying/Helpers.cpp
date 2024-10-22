@@ -21,7 +21,7 @@ FindNonExistingItemPath(const std::string &_orig_existing_path, VFSHost &_host, 
         if( _cancel_checker && _cancel_checker() )
             return "";
         auto path = fmt::format("{}{}{}", epilog, check_index, prologue);
-        if( _host.Exists(path.c_str(), _cancel_checker) == false ) {
+        if( _host.Exists(path, _cancel_checker) == false ) {
             if( _cancel_checker && _cancel_checker() )
                 return "";
             return path;

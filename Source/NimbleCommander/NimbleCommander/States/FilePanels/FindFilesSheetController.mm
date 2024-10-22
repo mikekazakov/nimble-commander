@@ -499,7 +499,7 @@ private:
         // TODO: need some decent cancelling mechanics here
         auto stat_block = [self, it = std::move(it)]() mutable {
             // doing stat()'ing item in async background thread
-            it.host->Stat(it.full_filename.c_str(), it.st, 0, nullptr);
+            it.host->Stat(it.full_filename, it.st, 0, nullptr);
 
             FindFilesSheetFoundItem *const item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:std::move(it)];
             m_BatchQueue.Run([self, item] {

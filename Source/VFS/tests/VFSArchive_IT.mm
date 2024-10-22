@@ -123,10 +123,10 @@ TEST_CASE(PREFIX "XNUSource - TAR")
           const std::string &fn = filenames[std::rand() % filenames.size()];
 
           VFSStat local_st;
-          REQUIRE(host->Stat(fn.c_str(), local_st, 0, nullptr) == 0);
+          REQUIRE(host->Stat(fn, local_st, 0, nullptr) == 0);
 
           VFSFilePtr file;
-          REQUIRE(host->CreateFile(fn.c_str(), file, nullptr) == 0);
+          REQUIRE(host->CreateFile(fn, file, nullptr) == 0);
           REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
           std::this_thread::sleep_for(std::chrono::milliseconds(5));
           auto d = file->ReadFile();

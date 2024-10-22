@@ -660,7 +660,7 @@ static NSTextField *CreateStockTF()
 
     m_StatFS = {};
     if( !m_TargetVFSPath.empty() && m_TargetVFSHost.get() )
-        m_TargetVFSHost->StatFS(m_TargetVFSPath.c_str(), m_StatFS, nullptr);
+        m_TargetVFSHost->StatFS(m_TargetVFSPath, m_StatFS, nullptr);
 }
 
 - (void)updateControls
@@ -711,7 +711,7 @@ static NSTextField *CreateStockTF()
     // traversing in /Volumes
     m_StatFS = {};
     if( !m_TargetVFSPath.empty() && m_TargetVFSHost.get() )
-        m_TargetVFSHost->StatFS(m_TargetVFSPath.c_str(), m_StatFS, nullptr);
+        m_TargetVFSHost->StatFS(m_TargetVFSPath, m_StatFS, nullptr);
 
     [self updateControls];
 }

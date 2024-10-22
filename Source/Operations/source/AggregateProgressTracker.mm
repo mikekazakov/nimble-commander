@@ -4,6 +4,7 @@
 #include <Base/dispatch_cpp.h>
 #include <algorithm>
 #include <iostream>
+#include <ranges>
 
 namespace nc::ops {
 
@@ -67,11 +68,10 @@ void AggregateProgressTracker::PoolsChanged()
 bool AggregateProgressTracker::ArePoolsEmpty() const
 {
     const auto lock = std::lock_guard{m_Lock};
-    for( const auto &wp : m_Pools )
-        if( const auto p = wp.lock() )
-            if( !p->Empty() )
-                return false;
-    return true;
+    return std::ranges::all_of(m_Pools, [](auto &wp) {
+        const auto p = wp.lock();
+        return p ? p->Empty() : true;
+    });
 }
 
 std::tuple<int, double> AggregateProgressTracker::OperationsAmountAndProgress() const

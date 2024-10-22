@@ -49,14 +49,14 @@ NSImage *VFSBundleIconsCacheImpl::ProduceIcon(const std::string &_file_path, VFS
 
 std::string VFSBundleIconsCacheImpl::MakeKey(const std::string &_file_path, VFSHost &_host)
 {
-    return _host.MakePathVerbose(_file_path.c_str());
+    return _host.MakePathVerbose(_file_path);
 }
 
 static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_path, VFSHost &_host)
 {
     VFSFilePtr vfs_file;
 
-    if( _host.CreateFile(_path.c_str(), vfs_file, nullptr) < 0 )
+    if( _host.CreateFile(_path, vfs_file, nullptr) < 0 )
         return std::nullopt;
 
     if( vfs_file->Open(VFSFlags::OF_Read) < 0 )

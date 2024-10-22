@@ -3,6 +3,8 @@
 #include <Utility/StringExtras.h>
 #include <fmt/format.h>
 
+#include <algorithm>
+
 namespace nc::ops {
 
 std::optional<std::vector<BatchRenamingScheme::MaskDecomposition>>
@@ -540,9 +542,7 @@ BatchRenamingScheme::ParsePlaceholder_Counter(NSString *_ph,
         n += stripe->second;
     }
     if( auto width = EatIntWithPreffix(_ph, _pos + n, ':') ) {
-        counter.width = width->first;
-        if( counter.width > 30 )
-            counter.width = 30;
+        counter.width = std::min<unsigned int>(width->first, 30);
         n += width->second;
     }
 
@@ -565,8 +565,7 @@ NSString *BatchRenamingScheme::ExtractText(NSString *_from, const TextExtraction
         auto str = [_from substringWithRange:res.toNSRange()];
         if( (_te.zero_flag || _te.space_flag) && rr.length != Range::max_length() && str.length < rr.length ) {
             auto insufficient = rr.length - str.length;
-            if( insufficient > 300 )
-                insufficient = 300;
+            insufficient = std::min<NSUInteger>(insufficient, 300);
 
             auto padding = [@"" stringByPaddingToLength:insufficient
                                              withString:(_te.zero_flag ? @"0" : @" ")startingAtIndex:0];

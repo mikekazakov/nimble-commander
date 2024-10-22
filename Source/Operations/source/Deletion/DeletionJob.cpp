@@ -83,7 +83,7 @@ void DeletionJob::ScanDirectory(const std::string &_path,
         if( BlockIfPaused(); IsStopped() )
             return;
 
-        if( auto rc = vfs.IterateDirectoryListing(_path.c_str(), it_callback); rc == VFSError::Ok )
+        if( auto rc = vfs.IterateDirectoryListing(_path, it_callback); rc == VFSError::Ok )
             break;
         else
             switch( m_OnReadDirError(rc, _path, vfs) ) {
@@ -175,7 +175,7 @@ bool DeletionJob::DoUnlock(const std::string &_path, VFSHost &_vfs)
 void DeletionJob::DoUnlink(const std::string &_path, VFSHost &_vfs)
 {
     while( true ) {
-        const auto rc = _vfs.Unlink(_path.c_str());
+        const auto rc = _vfs.Unlink(_path);
         if( rc == VFSError::Ok ) {
             Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
             break;
@@ -215,7 +215,7 @@ void DeletionJob::DoUnlink(const std::string &_path, VFSHost &_vfs)
 void DeletionJob::DoRmDir(const std::string &_path, VFSHost &_vfs)
 {
     while( true ) {
-        const auto rc = _vfs.RemoveDirectory(_path.c_str());
+        const auto rc = _vfs.RemoveDirectory(_path);
         if( rc == VFSError::Ok ) {
             Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
             break;
@@ -255,7 +255,7 @@ void DeletionJob::DoRmDir(const std::string &_path, VFSHost &_vfs)
 void DeletionJob::DoTrash(const std::string &_path, VFSHost &_vfs, SourceItem _src)
 {
     while( true ) {
-        const auto rc = _vfs.Trash(_path.c_str());
+        const auto rc = _vfs.Trash(_path);
         if( rc == VFSError::Ok ) {
             Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
         }
@@ -314,7 +314,7 @@ bool DeletionJob::IsNativeLockedItem(int vfs_err, const std::string &_path, VFSH
         return false;
 
     VFSStat st;
-    const int stat_rc = _vfs.Stat(_path.c_str(), st, nc::vfs::Flags::F_NoFollow);
+    const int stat_rc = _vfs.Stat(_path, st, nc::vfs::Flags::F_NoFollow);
     if( stat_rc != VFSError::Ok )
         return false;
 
@@ -326,12 +326,12 @@ int DeletionJob::UnlockItem(const std::string &_path, VFSHost &_vfs)
     // this is kind of stupid to call stat() essentially twice :-|
 
     VFSStat st;
-    const int stat_rc = _vfs.Stat(_path.c_str(), st, nc::vfs::Flags::F_NoFollow);
+    const int stat_rc = _vfs.Stat(_path, st, nc::vfs::Flags::F_NoFollow);
     if( stat_rc != VFSError::Ok )
         return stat_rc;
 
     st.flags = (st.flags & ~UF_IMMUTABLE);
-    const int chflags_rc = _vfs.SetFlags(_path.c_str(), st.flags, vfs::Flags::F_NoFollow);
+    const int chflags_rc = _vfs.SetFlags(_path, st.flags, vfs::Flags::F_NoFollow);
     return chflags_rc;
 }
 

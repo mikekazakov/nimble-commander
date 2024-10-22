@@ -862,7 +862,7 @@ TEST_CASE(PREFIX "Copy to local FTP")
                                     host,
                                     compare) == 0);
         REQUIRE(compare == 0);
-        REQUIRE(host->Unlink(("/Public/!FilesTesting/" + i).c_str(), nullptr) == 0);
+        REQUIRE(host->Unlink("/Public/!FilesTesting/" + i, nullptr) == 0);
     }
 
     VFSEasyDelete("/Public", host);

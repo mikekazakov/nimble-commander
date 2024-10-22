@@ -36,7 +36,7 @@ static VFSListingPtr FetchSearchResultsAsListing(const std::vector<vfs::VFSPath>
 
     for( auto &p : _filepaths ) {
         VFSListingPtr listing;
-        const int ret = p.Host()->FetchSingleItemListing(p.Path().c_str(), listing, _fetch_flags, _cancel_checker);
+        const int ret = p.Host()->FetchSingleItemListing(p.Path(), listing, _fetch_flags, _cancel_checker);
         if( ret == 0 )
             listings.emplace_back(listing);
 

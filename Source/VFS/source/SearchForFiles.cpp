@@ -127,7 +127,7 @@ void SearchForFiles::AsyncProc(const char *_from_path, VFSHost &_in_host)
 
         NotifyLookingIn(path.Path().c_str(), *path.Host());
 
-        path.Host()->IterateDirectoryListing(path.Path().c_str(), [&](const VFSDirEnt &_dirent) {
+        path.Host()->IterateDirectoryListing(path.Path(), [&](const VFSDirEnt &_dirent) {
             if( m_Queue.IsStopped() )
                 return false;
 

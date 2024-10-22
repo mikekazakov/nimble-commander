@@ -188,7 +188,7 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
     rc.size.height -= g_Insets.top + g_Insets.bottom;
     rc.size.width -= g_Insets.left + g_Insets.right;
 
-    const auto rest = rc.size.height - std::floor(rc.size.height / m_View.charHeight) * m_View.charHeight;
+    const auto rest = rc.size.height - (std::floor(rc.size.height / m_View.charHeight) * m_View.charHeight);
     rc.size.height -= rest;
 
     self.contentView.frame = rc;

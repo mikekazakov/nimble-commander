@@ -1076,7 +1076,7 @@ static NSString *TrimmedTitleForWindow(NSString *_title, NSWindow *_window)
     const auto left = NSMaxX([_window standardWindowButton:NSWindowZoomButton].frame);
     const auto right = _window.frame.size.width;
     const auto padding = 8.;
-    const auto width = right - left - 2 * padding;
+    const auto width = right - left - (2 * padding);
     return StringByTruncatingToWidth(_title, static_cast<float>(width), kTruncateAtStart, attributes);
 }
 

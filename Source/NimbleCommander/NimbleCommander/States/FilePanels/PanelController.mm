@@ -525,7 +525,7 @@ static void HeatUpConfigValues()
     const size_t items_count = _items.size();
     const size_t batches = std::min(g_MaxSizeCalculationCommitBatches, items_count);
     const size_t items_per_batch = items_count / batches;
-    const size_t items_leftover = items_count - items_per_batch * batches;
+    const size_t items_leftover = items_count - (items_per_batch * batches);
 
     for( size_t batch = 0, items_first = 0, items_last = 0; batch != batches; ++batch ) {
         items_first = items_last;

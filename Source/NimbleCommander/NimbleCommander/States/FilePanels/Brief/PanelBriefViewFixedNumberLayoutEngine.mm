@@ -37,7 +37,7 @@ void FixedNumberLayoutEngine::BuildGrid(const Params &_params)
     }
     else {
         m_ColumnsNumber =
-            (m_ItemsNumber % m_RowsNumber != 0) ? (m_ItemsNumber / m_RowsNumber + 1) : (m_ItemsNumber / m_RowsNumber);
+            (m_ItemsNumber % m_RowsNumber != 0) ? ((m_ItemsNumber / m_RowsNumber) + 1) : (m_ItemsNumber / m_RowsNumber);
     }
 }
 
@@ -63,7 +63,7 @@ void FixedNumberLayoutEngine::PerformNormalLayout()
         const auto column_width = base_width + (index_in_chunk < screen_remainder ? 1 : 0);
 
         for( int row_index = 0; row_index < rows_number; ++row_index ) {
-            const auto index = column_index * rows_number + row_index;
+            const auto index = (column_index * rows_number) + row_index;
             if( index == items_number )
                 break;
 

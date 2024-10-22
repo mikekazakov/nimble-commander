@@ -14,7 +14,7 @@ void DynamicWidthLayoutEngine::Layout(const Params &_params)
     }
     else {
         m_ColumnsNumber =
-            (m_ItemsNumber % m_RowsNumber != 0) ? (m_ItemsNumber / m_RowsNumber + 1) : (m_ItemsNumber / m_RowsNumber);
+            (m_ItemsNumber % m_RowsNumber != 0) ? ((m_ItemsNumber / m_RowsNumber) + 1) : (m_ItemsNumber / m_RowsNumber);
         PerformNormalLayout(_params);
     }
 }

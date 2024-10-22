@@ -46,7 +46,7 @@ TrailingTagsInplaceDisplay::Place(const std::span<const utility::Tags::Tag> _tag
     auto count = std::ranges::count_if(_tags, [](auto &_tag) { return _tag.Color() != utility::Tags::Color::None; });
     if( count == 0 )
         return {};
-    return {.width = Diameter + (std::min(static_cast<int>(count), MaxDrawn) - 1) * Step, .margin = Margin};
+    return {.width = Diameter + ((std::min(static_cast<int>(count), MaxDrawn) - 1) * Step), .margin = Margin};
 }
 
 void TrailingTagsInplaceDisplay::Draw(const double _offset_x,
@@ -90,7 +90,7 @@ void TrailingTagsInplaceDisplay::Draw(const double _offset_x,
         [currentContext saveGraphicsState];
 
         NSAffineTransform *const tr = [NSAffineTransform transform];
-        [tr translateXBy:_offset_x + static_cast<double>(i) * spacing yBy:_view_height / 2.];
+        [tr translateXBy:_offset_x + (static_cast<double>(i) * spacing) yBy:_view_height / 2.];
         [tr concat];
 
         if( i < static_cast<ssize_t>(num_colors_to_draw) - 1 ) {

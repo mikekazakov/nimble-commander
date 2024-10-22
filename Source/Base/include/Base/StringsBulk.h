@@ -74,7 +74,7 @@ public:
     Iterator operator--(int) noexcept;
     Iterator &operator+=(long) noexcept;
     Iterator &operator-=(long) noexcept;
-    long operator-(const Iterator &) noexcept;
+    long operator-(const Iterator &) const noexcept;
 
     bool operator==(const Iterator &) const noexcept;
     bool operator!=(const Iterator &) const noexcept;

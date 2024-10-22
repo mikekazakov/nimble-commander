@@ -319,7 +319,7 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
     assert(static_cast<int>(widths.size()) == count);
 
     const auto &layout = m_ItemLayout;
-    const unsigned short width_addition = 2 * layout.inset_left + layout.icon_size + layout.inset_right;
+    const unsigned short width_addition = (2 * layout.inset_left) + layout.icon_size + layout.inset_right;
     if( m_ColumnsLayout.dynamic_width_equal ) {
         const auto max_width = *std::max_element(widths.begin(), widths.begin());
         const unsigned short width = max_width + width_addition;
@@ -480,7 +480,7 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
         }
         else {
             // center
-            scroll_to(NSMakePoint(item_rect.origin.x - (visible_rect.size.width - item_rect.size.width) / 2., 0.));
+            scroll_to(NSMakePoint(item_rect.origin.x - ((visible_rect.size.width - item_rect.size.width) / 2.), 0.));
         }
     }
     else {

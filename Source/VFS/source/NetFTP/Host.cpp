@@ -153,7 +153,7 @@ int FTPHost::DownloadAndCacheListing(CURLInstance *_inst,
 int FTPHost::DownloadListing(CURLInstance *_inst,
                              const char *_path,
                              std::string &_buffer,
-                             const VFSCancelChecker &_cancel_checker)
+                             const VFSCancelChecker &_cancel_checker) const
 {
     Log::Trace("FTPHost::DownloadListing({}, {}) called", static_cast<void *>(_inst), _path);
     if( _path == nullptr || _path[0] != '/' )

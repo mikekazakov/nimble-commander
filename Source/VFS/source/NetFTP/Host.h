@@ -97,7 +97,7 @@ private:
     int DownloadListing(ftp::CURLInstance *_inst,
                         const char *_path,
                         std::string &_buffer,
-                        const VFSCancelChecker &_cancel_checker);
+                        const VFSCancelChecker &_cancel_checker) const;
 
     void InformDirectoryChanged(const std::string &_dir_wth_sl);
 

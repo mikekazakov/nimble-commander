@@ -184,7 +184,7 @@ void SearchInFile::SetSearchOptions(Options _options)
     m_SearchOptions = _options;
 }
 
-SearchInFile::Options SearchInFile::SearchOptions()
+SearchInFile::Options SearchInFile::SearchOptions() const
 {
     return m_SearchOptions;
 }

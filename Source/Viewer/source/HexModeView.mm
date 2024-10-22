@@ -205,7 +205,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
 {
     const auto origin = CGPointMake(m_Layout->GetGaps().left_inset, g_TopInset);
     const auto offset = m_Layout->GetOffset();
-    const auto vertical_shift = offset.row * m_FontInfo.LineHeight() + offset.smooth;
+    const auto vertical_shift = (offset.row * m_FontInfo.LineHeight()) + offset.smooth;
     return CGPointMake(origin.x, origin.y - vertical_shift);
 }
 
@@ -240,7 +240,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
     const auto offsets = m_Layout->CalcHorizontalOffsets();
     const auto line_height = m_Frame->FontInfo().LineHeight();
 
-    auto line_pos = CGPointMake(origin.x, origin.y + lines_start * m_FontInfo.LineHeight());
+    auto line_pos = CGPointMake(origin.x, origin.y + (lines_start * m_FontInfo.LineHeight()));
     for( int row_index = lines_start; row_index < lines_end; ++row_index, line_pos.y += line_height ) {
         if( row_index < 0 || row_index >= m_Frame->NumberOfRows() )
             continue;
@@ -323,7 +323,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
     else {
         // nope, we need to perform I/O to move the file window
         const auto desired_wnd_pos =
-            std::clamp(_offset - static_cast<int64_t>(m_Backend->RawSize()) / 2,
+            std::clamp(_offset - (static_cast<int64_t>(m_Backend->RawSize()) / 2),
                        static_cast<int64_t>(0),
                        static_cast<int64_t>(m_Backend->FileSize()) - static_cast<int64_t>(m_Backend->RawSize()));
 
@@ -417,7 +417,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
             old_frame->WorkingSet().GlobalOffset();
         const auto desired_window_offset =
             std::clamp(old_anchor_glob_offset - static_cast<int64_t>(m_Backend->RawSize()) +
-                           static_cast<int64_t>(m_Backend->RawSize()) / 4,
+                           (static_cast<int64_t>(m_Backend->RawSize()) / 4),
                        static_cast<int64_t>(0),
                        static_cast<int64_t>(m_Backend->FileSize() - m_Backend->RawSize()));
 
@@ -459,7 +459,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
             old_frame->WorkingSet().GlobalOffset();
         const auto desired_window_offset =
             std::clamp(old_anchor_glob_offset + static_cast<int64_t>(m_Backend->RawSize()) -
-                           static_cast<int64_t>(m_Backend->RawSize()) / 4,
+                           (static_cast<int64_t>(m_Backend->RawSize()) / 4),
                        static_cast<int64_t>(0),
                        static_cast<int64_t>(m_Backend->FileSize() - m_Backend->RawSize()));
 

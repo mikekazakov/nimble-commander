@@ -196,7 +196,7 @@ Eat(const std::string_view _source) noexcept
 
         if( placeholder ) {
             if( c >= '0' && c <= '9' ) {
-                number = number.value_or(0) * 10 + c - '0';
+                number = (number.value_or(0) * 10) + c - '0';
                 continue;
             }
 
@@ -798,7 +798,7 @@ std::expected<pid_t, std::string> ExternalToolExecution::StartDetached()
         return StartDetachedFork();
 }
 
-std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedFork()
+std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedFork() const
 {
     auto args = BuildArguments();
 

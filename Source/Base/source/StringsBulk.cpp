@@ -189,7 +189,7 @@ StringsBulk::Ctrl *StringsBulk::Allocate(size_t _number_of_strings, size_t _tota
 {
     assert(_number_of_strings != 0);
 
-    const size_t bytes = sizeof(Ctrl) + sizeof(uint32_t) * _number_of_strings + _total_chars;
+    const size_t bytes = sizeof(Ctrl) + (sizeof(uint32_t) * _number_of_strings) + _total_chars;
 
     const auto ctrl = reinterpret_cast<Ctrl *>(malloc(bytes));
     if( ctrl == nullptr )
@@ -349,7 +349,7 @@ StringsBulk::Iterator &StringsBulk::Iterator::operator-=(long _d) noexcept
     return *this;
 }
 
-long StringsBulk::Iterator::operator-(const Iterator &_rhs) noexcept
+long StringsBulk::Iterator::operator-(const Iterator &_rhs) const noexcept
 {
     return long(m_Index) - long(_rhs.m_Index);
 }
@@ -400,7 +400,7 @@ StringsBulk StringsBulk::NonOwningBuilder::Build() const
 
     const auto ctrl = StringsBulk::Allocate(strings_num, total_chars);
     auto offsets = reinterpret_cast<uint32_t *>(reinterpret_cast<char *>(ctrl) + sizeof(StringsBulk::Ctrl));
-    char *storage = reinterpret_cast<char *>(ctrl) + sizeof(StringsBulk::Ctrl) + sizeof(uint32_t) * strings_num;
+    char *storage = reinterpret_cast<char *>(ctrl) + sizeof(StringsBulk::Ctrl) + (sizeof(uint32_t) * strings_num);
     for( size_t index = 0; index < strings_num; ++index ) {
         offsets[index] = uint32_t(storage - reinterpret_cast<char *>(ctrl));
         const auto string_bytes = m_Strings[index].length();
@@ -448,7 +448,7 @@ StringsBulk StringsBulk::Builder::Build() const
 
     const auto ctrl = StringsBulk::Allocate(strings_num, total_chars);
     auto offsets = reinterpret_cast<uint32_t *>(reinterpret_cast<char *>(ctrl) + sizeof(StringsBulk::Ctrl));
-    char *storage = reinterpret_cast<char *>(ctrl) + sizeof(StringsBulk::Ctrl) + sizeof(uint32_t) * strings_num;
+    char *storage = reinterpret_cast<char *>(ctrl) + sizeof(StringsBulk::Ctrl) + (sizeof(uint32_t) * strings_num);
     for( size_t index = 0; index < strings_num; ++index ) {
         offsets[index] = uint32_t(storage - reinterpret_cast<char *>(ctrl));
         const auto string_bytes = m_Strings[index].length() + 1;

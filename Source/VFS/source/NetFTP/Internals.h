@@ -34,8 +34,8 @@ struct CURLInstance {
     bool IsAttached() const { return attached; }
     CURLMcode Attach();
     CURLMcode Detach();
-    CURLcode PerformEasy();
-    CURLcode PerformMulti();
+    CURLcode PerformEasy() const;
+    CURLcode PerformMulti() const;
 
     void EasySetupProgFunc(); // after this call client code can set/change prog_func, that will be
                               // called upon curl work and thus control it's flow

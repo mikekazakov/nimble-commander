@@ -50,7 +50,7 @@ void FixedWidthLayoutEngine::BuildGrid(const Params &_params)
     }
     else {
         m_ColumnsNumber =
-            (m_ItemsNumber % m_RowsNumber != 0) ? (m_ItemsNumber / m_RowsNumber + 1) : (m_ItemsNumber / m_RowsNumber);
+            (m_ItemsNumber % m_RowsNumber != 0) ? ((m_ItemsNumber / m_RowsNumber) + 1) : (m_ItemsNumber / m_RowsNumber);
         m_ContentSize = NSMakeSize(m_ColumnsNumber * m_ItemWidth, m_RowsNumber * m_ItemHeight);
         FillColumnsPositions(m_ColumnsPositions, m_ColumnsNumber, m_ItemWidth);
         FillColumnsWidths(m_ColumnsWidths, m_ColumnsNumber, m_ItemWidth);
@@ -108,7 +108,7 @@ FixedWidthLayoutEngine::AttributesForItemsInRect(NSRect _rect) const noexcept
     NSMutableArray *const array = [[NSMutableArray alloc] init];
     for( int column = first_column; column < last_column; ++column )
         for( int row = first_row; row < last_row; ++row ) {
-            const auto index = column * m_RowsNumber + row;
+            const auto index = (column * m_RowsNumber) + row;
             if( index >= 0 && index < m_ItemsNumber ) {
                 [array addObject:m_Attributes[index]];
             }

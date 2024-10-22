@@ -323,7 +323,8 @@ struct LazyLineRectFiller {
     {
         if( clr ) {
             CGContextSetFillColorWithColor(ctx, clr);
-            auto rc = CGRectMake(origin_x + start * cell_width, origin_y, (end - start + 1) * cell_width, cell_height);
+            auto rc =
+                CGRectMake(origin_x + (start * cell_width), origin_y, (end - start + 1) * cell_width, cell_height);
             CGContextFillRect(ctx, rc);
             clr = nullptr;
         }
@@ -379,7 +380,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         else if( _sel_y < m_SelEnd.y && _sel_y > m_SelStart.y )
             rc = CGRectMake(0, _y * height, self.frame.size.width, height);
         else if( _sel_y == m_SelStart.y )
-            rc = CGRectMake(m_SelStart.x * width, _y * height, self.frame.size.width - m_SelStart.x * width, height);
+            rc = CGRectMake(m_SelStart.x * width, _y * height, self.frame.size.width - (m_SelStart.x * width), height);
         else if( _sel_y == m_SelEnd.y )
             rc = CGRectMake(0, _y * height, m_SelEnd.x * width, height);
 
@@ -415,7 +416,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             if( !draw_glyph )
                 continue;
             const double rx = x * width;
-            const double ry = _y * height + height - descent;
+            const double ry = (_y * height) + height - descent;
             codes.push_back(cs.l);
             positions.push_back({rx, ry});
         }
@@ -534,7 +535,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 - (NSRect)adjustScroll:(NSRect)proposedVisibleRect
 {
     const auto font_height = m_FontCache->Height();
-    proposedVisibleRect.origin.y = floor(proposedVisibleRect.origin.y / font_height + 0.5) * font_height;
+    proposedVisibleRect.origin.y = floor((proposedVisibleRect.origin.y / font_height) + 0.5) * font_height;
     return proposedVisibleRect;
 }
 

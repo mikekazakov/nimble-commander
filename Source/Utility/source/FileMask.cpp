@@ -10,8 +10,6 @@
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <ranges>
-#include <algorithm>
 
 namespace nc::utility {
 

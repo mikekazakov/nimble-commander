@@ -133,7 +133,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 
 - (NSRect)calculateTextSegmentFromBounds:(NSRect)bounds
 {
-    const int origin = m_LayoutConstants.icon_size ? 2 * m_LayoutConstants.inset_left + m_LayoutConstants.icon_size
+    const int origin = m_LayoutConstants.icon_size ? (2 * m_LayoutConstants.inset_left) + m_LayoutConstants.icon_size
                                                    : m_LayoutConstants.inset_left;
     const auto tags = m_Controller.item.Tags();
     const auto tags_geom = TrailingTagsInplaceDisplay::Place(tags);
@@ -152,9 +152,9 @@ static NSColor *Blend(NSColor *_front, NSColor *_back)
     const auto cs = NSColorSpace.genericRGBColorSpace;
     _front = [_front colorUsingColorSpace:cs];
     _back = [_back colorUsingColorSpace:cs];
-    const auto r = _front.redComponent * alpha + _back.redComponent * (1. - alpha);
-    const auto g = _front.greenComponent * alpha + _back.greenComponent * (1. - alpha);
-    const auto b = _front.blueComponent * alpha + _back.blueComponent * (1. - alpha);
+    const auto r = (_front.redComponent * alpha) + (_back.redComponent * (1. - alpha));
+    const auto g = (_front.greenComponent * alpha) + (_back.greenComponent * (1. - alpha));
+    const auto b = (_front.blueComponent * alpha) + (_back.blueComponent * (1. - alpha));
     return [NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.];
 }
 
@@ -196,7 +196,7 @@ static NSColor *Blend(NSColor *_front, NSColor *_back)
     [m_AttrString drawWithRect:text_rect options:0];
 
     const auto icon_rect = NSMakeRect(m_LayoutConstants.inset_left,
-                                      (bounds.size.height - m_LayoutConstants.icon_size) / 2. + 0.5,
+                                      ((bounds.size.height - m_LayoutConstants.icon_size) / 2.) + 0.5,
                                       m_LayoutConstants.icon_size,
                                       m_LayoutConstants.icon_size);
     [m_Icon drawInRect:icon_rect

@@ -612,7 +612,7 @@ NSString *BatchRenamingScheme::FormatCounter(const Counter &_c, int _file_number
     char *buf = static_cast<char *>(alloca(_c.width + 32)); // no heap allocs, for great justice!
     if( !buf )
         return @"";
-    *fmt::format_to(buf, "{:0{}}", _c.start + _c.step * (_file_number / _c.stripe), _c.width) = 0;
+    *fmt::format_to(buf, "{:0{}}", _c.start + (_c.step * (_file_number / _c.stripe)), _c.width) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 

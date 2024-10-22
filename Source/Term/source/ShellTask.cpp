@@ -239,7 +239,7 @@ struct ShellTask::Impl {
     std::shared_ptr<OnChildOutput> on_child_output;
 
     void OnMasterSourceData();
-    void OnMasterSourceCancellation();
+    void OnMasterSourceCancellation() const;
     void OnCwdSourceData();
     void OnCwdSourceCancellation();
     void OnShellDied();
@@ -567,7 +567,7 @@ void ShellTask::Impl::OnCwdSourceData()
     }
 }
 
-void ShellTask::Impl::OnMasterSourceCancellation()
+void ShellTask::Impl::OnMasterSourceCancellation() const
 {
     dispatch_assert_background_queue(); // must be called on io_queue
     Log::Trace("ShellTask::Impl::OnMasterSourceCancellation() called");

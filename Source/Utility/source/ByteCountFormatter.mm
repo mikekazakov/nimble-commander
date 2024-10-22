@@ -247,7 +247,7 @@ int ByteCountFormatter::Fixed6_Impl(uint64_t _size, unsigned short _buf[6]) cons
     else if( _size < 9999lu * m_Exponent[1] ) { // kilobytes
         constexpr uint64_t div = m_Exponent[1];
         const uint64_t res = _size / div;
-        const int len = static_cast<int>(fmt::format_to(buf, "{}", res + (_size - res * div) / (div / 2)) - buf);
+        const int len = static_cast<int>(fmt::format_to(buf, "{}", res + ((_size - res * div) / (div / 2))) - buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[1];
@@ -256,7 +256,7 @@ int ByteCountFormatter::Fixed6_Impl(uint64_t _size, unsigned short _buf[6]) cons
     else if( _size < 9999lu * m_Exponent[2] ) { // megabytes
         constexpr uint64_t div = m_Exponent[2];
         const uint64_t res = _size / div;
-        const int len = static_cast<int>(fmt::format_to(buf, "{}", res + (_size - res * div) / (div / 2)) - buf);
+        const int len = static_cast<int>(fmt::format_to(buf, "{}", res + ((_size - res * div) / (div / 2))) - buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[2];
@@ -265,7 +265,7 @@ int ByteCountFormatter::Fixed6_Impl(uint64_t _size, unsigned short _buf[6]) cons
     else if( _size < 9999lu * m_Exponent[3] ) { // gigabytes
         constexpr uint64_t div = m_Exponent[3];
         const uint64_t res = _size / div;
-        const int len = static_cast<int>(fmt::format_to(buf, "{}", res + (_size - res * div) / (div / 2)) - buf);
+        const int len = static_cast<int>(fmt::format_to(buf, "{}", res + ((_size - res * div) / (div / 2))) - buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[3];
@@ -274,7 +274,7 @@ int ByteCountFormatter::Fixed6_Impl(uint64_t _size, unsigned short _buf[6]) cons
     else if( _size < 9999lu * m_Exponent[4] ) { // terabytes
         constexpr uint64_t div = m_Exponent[4];
         const uint64_t res = _size / div;
-        const int len = static_cast<int>(fmt::format_to(buf, "{}", res + (_size - res * div) / (div / 2)) - buf);
+        const int len = static_cast<int>(fmt::format_to(buf, "{}", res + ((_size - res * div) / (div / 2))) - buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[4];
@@ -283,7 +283,7 @@ int ByteCountFormatter::Fixed6_Impl(uint64_t _size, unsigned short _buf[6]) cons
     else if( _size < 9999lu * m_Exponent[5] ) { // petabytes
         constexpr uint64_t div = m_Exponent[5];
         const uint64_t res = _size / div;
-        const int len = static_cast<int>(fmt::format_to(buf, "{}", res + (_size - res * div) / (div / 2)) - buf);
+        const int len = static_cast<int>(fmt::format_to(buf, "{}", res + ((_size - res * div) / (div / 2))) - buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[5];

@@ -19,8 +19,8 @@ HexModeLayout::ScrollerPosition HexModeLayout::CalcScrollerPosition() const noex
     if( m_FileSize > bytes_in_view ) {
         const auto &working_set = m_Frame->WorkingSet();
         ScrollerPosition position;
-        position.position = double(working_set.GlobalOffset() +
-                                   static_cast<long>(m_ScrollOffset.row) * static_cast<long>(m_Frame->BytesPerRow())) /
+        position.position = double(working_set.GlobalOffset() + (static_cast<long>(m_ScrollOffset.row) *
+                                                                 static_cast<long>(m_Frame->BytesPerRow()))) /
                             double(m_FileSize - bytes_in_view);
         position.proportion = double(bytes_in_view) / double(m_FileSize);
         return position;
@@ -186,7 +186,7 @@ HexModeLayout::HorizontalOffsets HexModeLayout::CalcHorizontalOffsets() const no
 
     const auto symb_width = m_Frame->FontInfo().PreciseMonospaceWidth();
     const auto address_width = m_Frame->DigitsInAddress() * symb_width;
-    const auto column_width = m_Frame->BytesPerColumn() * (symb_width * 3) - symb_width;
+    const auto column_width = (m_Frame->BytesPerColumn() * (symb_width * 3)) - symb_width;
     const auto number_of_columns = m_Frame->NumberOfColumns();
 
     double x = offsets.address + address_width + m_Gaps.address_columns_gap;
@@ -220,7 +220,7 @@ HexModeLayout::HitPart HexModeLayout::HitTest(double _x) const
 
 int HexModeLayout::RowIndexFromYCoordinate(const double _y) const
 {
-    const auto scrolled = _y + m_ScrollOffset.row * m_Frame->FontInfo().LineHeight() + m_ScrollOffset.smooth;
+    const auto scrolled = _y + (m_ScrollOffset.row * m_Frame->FontInfo().LineHeight()) + m_ScrollOffset.smooth;
     const auto index = static_cast<int>(std::floor(scrolled / m_Frame->FontInfo().LineHeight()));
     if( index < 0 )
         return -1;
@@ -247,7 +247,7 @@ int HexModeLayout::ByteOffsetFromColumnHit(CGPoint _position) const
 
     const auto symb_width = m_Frame->FontInfo().PreciseMonospaceWidth();
     const auto bytes_per_column = m_Frame->BytesPerColumn();
-    const auto column_width = m_Frame->BytesPerColumn() * (symb_width * 3) - symb_width;
+    const auto column_width = (m_Frame->BytesPerColumn() * (symb_width * 3)) - symb_width;
 
     for( int i = 0; i < row.ColumnsNumber(); ++i ) {
         if( i != row.ColumnsNumber() - 1 && x >= x_offsets.columns[i + 1] )
@@ -263,7 +263,7 @@ int HexModeLayout::ByteOffsetFromColumnHit(CGPoint _position) const
             const auto triplet_fract = local_x / (symb_width * 3);
             const auto round_up = std::floor(triplet_fract) != std::floor(triplet_fract + 0.33);
             const auto local_byte = static_cast<int>(std::floor(triplet_fract)) + (round_up ? 1 : 0);
-            return row.BytesStart() + std::min(bytes_per_column * i + local_byte, row.BytesNum());
+            return row.BytesStart() + std::min((bytes_per_column * i) + local_byte, row.BytesNum());
         }
     }
     return row.BytesEnd();
@@ -297,17 +297,18 @@ std::pair<double, double> HexModeLayout::CalcColumnSelectionBackground(const CFR
     const auto &row = m_Frame->RowAtIndex(_row_index);
 
     const auto bytes_range =
-        CFRangeMake(row.BytesStart() + _columm_index * m_Frame->BytesPerColumn(), row.BytesInColum(_columm_index));
+        CFRangeMake(row.BytesStart() + (_columm_index * m_Frame->BytesPerColumn()), row.BytesInColum(_columm_index));
     const auto sel_range = base::CFRangeIntersect(_bytes_selection, bytes_range);
     if( sel_range.length <= 0 )
         return {0., 0.};
 
-    const auto local_start_byte = int(sel_range.location - row.BytesStart() -
-                                      static_cast<long>(_columm_index) * static_cast<long>(m_Frame->BytesPerColumn()));
+    const auto local_start_byte =
+        int(sel_range.location - row.BytesStart() -
+            (static_cast<long>(_columm_index) * static_cast<long>(m_Frame->BytesPerColumn())));
 
     const auto symb_width = m_Frame->FontInfo().PreciseMonospaceWidth();
-    auto x1 = _offsets.columns.at(_columm_index) + local_start_byte * symb_width * 3;
-    auto x2 = x1 + static_cast<double>(sel_range.length) * symb_width * 3 - symb_width;
+    auto x1 = _offsets.columns.at(_columm_index) + (local_start_byte * symb_width * 3);
+    auto x2 = x1 + (static_cast<double>(sel_range.length) * symb_width * 3) - symb_width;
     return {std::floor(x1), std::ceil(x2)};
 }
 

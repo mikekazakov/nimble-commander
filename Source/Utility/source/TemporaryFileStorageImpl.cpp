@@ -221,7 +221,7 @@ static std::string MakeRandomFilename()
     // TODO: write something more reasonable
     std::string filename;
     for( int i = 0; i < 6; ++i )
-        filename += 'A' + rand() % ('Z' - 'A');
+        filename += 'A' + (rand() % ('Z' - 'A'));
     return filename;
 }
 

@@ -1341,7 +1341,7 @@ void InterpretUTF16LEBufferAsUniChar(const unsigned char *_input,
 )
 {
     const uint16_t *cur = reinterpret_cast<const uint16_t *>(_input);
-    const uint16_t *end = cur + _input_size / sizeof(uint16_t);
+    const uint16_t *end = cur + (_input_size / sizeof(uint16_t));
 
     unsigned total = 0;
 
@@ -1396,7 +1396,7 @@ void InterpretUTF16BEBufferAsUniChar(const unsigned char *_input,
 )
 {
     const uint16_t *cur = reinterpret_cast<const uint16_t *>(_input);
-    const uint16_t *end = cur + _input_size / sizeof(uint16_t);
+    const uint16_t *end = cur + (_input_size / sizeof(uint16_t));
 
     unsigned total = 0;
 

@@ -60,13 +60,13 @@ bool SFTPHost::Connection::Alive() const
 struct SFTPHost::AutoConnectionReturn // classic RAII stuff to prevent connections leaking in
                                       // operations
 {
-    inline AutoConnectionReturn(std::unique_ptr<Connection> &_conn, SFTPHost *_this) : m_Conn(_conn), m_This(_this)
+    AutoConnectionReturn(std::unique_ptr<Connection> &_conn, SFTPHost *_this) : m_Conn(_conn), m_This(_this)
     {
         assert(_conn != nullptr);
         assert(_this != nullptr);
     }
 
-    inline ~AutoConnectionReturn() { m_This->ReturnConnection(std::move(m_Conn)); }
+    ~AutoConnectionReturn() { m_This->ReturnConnection(std::move(m_Conn)); }
     std::unique_ptr<Connection> &m_Conn;
     SFTPHost *m_This;
 };

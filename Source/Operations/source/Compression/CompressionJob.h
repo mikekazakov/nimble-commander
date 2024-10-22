@@ -77,7 +77,7 @@ private:
     std::string FindSuitableFilename(const std::string &_proposed_arcname) const;
     bool IsEncrypted() const noexcept;
 
-    static ssize_t WriteCallback(struct archive *, void *_client_data, const void *_buffer, size_t _length);
+    static ssize_t WriteCallback(struct archive *_archive, void *_client_data, const void *_buffer, size_t _length);
 
     std::vector<VFSListingItem> m_InitialListingItems;
     std::string m_DstRoot;

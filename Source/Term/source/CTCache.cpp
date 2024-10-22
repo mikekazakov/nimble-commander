@@ -127,7 +127,7 @@ CTCache::DisplayChar CTCache::Internalize(CTLineRef _line)
         return {.kind = Kind::Complex, .index = static_cast<uint32_t>(m_Complexes.size() - 1)};
     };
 
-    CFArrayRef runs = static_cast<CFArrayRef>(CTLineGetGlyphRuns(_line));
+    CFArrayRef runs = CTLineGetGlyphRuns(_line);
     if( runs == nullptr )
         return {.kind = Kind::Empty, .index = 0};
 

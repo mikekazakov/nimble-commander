@@ -88,7 +88,7 @@ static void CommonPerform(PanelController *_target, const std::vector<VFSListing
     }
 }
 
-void Duplicate::Perform(PanelController *_target, id) const
+void Duplicate::Perform(PanelController *_target, id /*_sender*/) const
 {
     CommonPerform(_target, _target.selectedEntriesOrFocusedEntry, m_Config.GetBool(g_DeselectConfigFlag));
 }
@@ -106,7 +106,7 @@ bool context::Duplicate::Predicate(PanelController *_target) const
     return _target.vfs->IsWritable();
 }
 
-void context::Duplicate::Perform(PanelController *_target, id) const
+void context::Duplicate::Perform(PanelController *_target, id /*_sender*/) const
 {
     CommonPerform(_target, m_Items, m_Config.GetBool(g_DeselectConfigFlag));
 }

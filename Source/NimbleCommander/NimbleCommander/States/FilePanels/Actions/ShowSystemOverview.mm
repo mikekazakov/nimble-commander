@@ -10,7 +10,7 @@ bool ShowSystemOverview::Predicate(PanelController *_target) const
     return !_target.state.anyPanelCollapsed;
 }
 
-void ShowSystemOverview::Perform(PanelController *_target, id) const
+void ShowSystemOverview::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto state = _target.state;
 

@@ -2,9 +2,9 @@
 #include "../include/VFS/VFSConfiguration.h"
 
 struct VFSConfigurationDummyModel {
-    [[nodiscard]] static inline const char *Tag() { return ""; }
-    [[nodiscard]] static inline const char *Junction() { return ""; }
-    inline bool operator==(const VFSConfigurationDummyModel &) const { return false; }
+    [[nodiscard]] static const char *Tag() { return ""; }
+    [[nodiscard]] static const char *Junction() { return ""; }
+    bool operator==(const VFSConfigurationDummyModel & /*unused*/) const { return false; }
 };
 
 const char *VFSConfiguration::Tag() const

@@ -824,7 +824,7 @@ static NCAppDelegate *g_Me = nil;
         apt->SetProgressCallback([](double _progress) { g_Me.dock.SetProgress(_progress); });
         return apt;
     }();
-    return *apt.get();
+    return *apt;
 }
 
 - (nc::core::Dock &)dock

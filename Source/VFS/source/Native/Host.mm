@@ -44,7 +44,7 @@ public:
 
     [[nodiscard]] static const char *Junction() { return ""; }
 
-    bool operator==(const VFSNativeHostConfiguration &) const { return true; }
+    bool operator==(const VFSNativeHostConfiguration & /*unused*/) const { return true; }
 };
 
 VFSMeta NativeHost::Meta()

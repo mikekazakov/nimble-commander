@@ -16,18 +16,18 @@ struct StringsBulk::Ctrl {
     // offsets: count * 4 bytes
     // null-terminated strings
 
-    [[nodiscard]] inline const uint32_t *Offsets() const noexcept
+    [[nodiscard]] const uint32_t *Offsets() const noexcept
     {
         const auto raw = reinterpret_cast<const char *>(this);
         return reinterpret_cast<const uint32_t *>(raw + sizeof(Ctrl));
     }
 
-    [[nodiscard]] inline const char *Get(size_t _index) const noexcept
+    [[nodiscard]] const char *Get(size_t _index) const noexcept
     {
         return reinterpret_cast<const char *>(this) + Offsets()[_index];
     }
 
-    [[nodiscard]] inline size_t StrLen(size_t _index) const noexcept
+    [[nodiscard]] size_t StrLen(size_t _index) const noexcept
     {
         if( _index + 1 < count )
             return Offsets()[_index + 1] - Offsets()[_index] - 1;

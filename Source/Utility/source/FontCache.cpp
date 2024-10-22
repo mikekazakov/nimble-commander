@@ -110,7 +110,7 @@ static base::CFPtr<CTFontRef> CreateFallbackFontHardway(uint32_t _unicode, CTFon
     if( line == nullptr )
         goto cleanup;
 
-    runs = static_cast<CFArrayRef>(CTLineGetGlyphRuns(line));
+    runs = CTLineGetGlyphRuns(line);
     if( runs == nullptr || CFArrayGetCount(runs) == 0 )
         goto cleanup;
 

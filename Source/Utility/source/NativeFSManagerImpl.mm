@@ -60,7 +60,7 @@ NativeFSManagerImpl::NativeFSManagerImpl()
         const auto volume = std::make_shared<NativeFileSystemInfo>();
         volume->mounted_at_path = mount_path;
         m_Volumes.emplace_back(volume);
-        GetAllInfos(*volume.get());
+        GetAllInfos(*volume);
 
         m_VolumeLookup.Insert(volume, EnsureTrailingSlash(mount_path));
     }
@@ -356,7 +356,7 @@ void NativeFSManagerImpl::OnDidMount(const std::string &_on_path)
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), [=, this] {
         auto volume = std::make_shared<NativeFileSystemInfo>();
         volume->mounted_at_path = _on_path;
-        GetAllInfos(*volume.get());
+        GetAllInfos(*volume);
 
         const std::lock_guard<std::mutex> lock(m_Lock);
         InsertNewVolume_Unlocked(volume);
@@ -406,7 +406,7 @@ void NativeFSManagerImpl::OnDidRename(const std::string &_old_path, const std::s
         if( it != std::end(m_Volumes) ) {
             const auto &volume = *it;
             volume->mounted_at_path = _new_path;
-            GetVerboseInfo(*volume.get());
+            GetVerboseInfo(*volume);
             m_VolumeLookup.Remove(EnsureTrailingSlash(_old_path));
             m_VolumeLookup.Insert(volume, EnsureTrailingSlash(_new_path));
         }

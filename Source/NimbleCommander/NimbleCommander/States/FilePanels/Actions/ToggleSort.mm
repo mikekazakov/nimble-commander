@@ -70,7 +70,7 @@ bool ToggleSortingByName::ValidateMenuItem(PanelController *_target, NSMenuItem 
     return Predicate(_target);
 }
 
-void ToggleSortingByName::Perform(PanelController *_target, id) const
+void ToggleSortingByName::Perform(PanelController *_target, id /*_sender*/) const
 {
     [_target changeSortingModeTo:EnforceAndSwitch(_target.data.SortMode(),
                                                   data::SortMode::SortByName,
@@ -83,7 +83,7 @@ bool ToggleSortingByExtension::ValidateMenuItem(PanelController *_target, NSMenu
     return Predicate(_target);
 }
 
-void ToggleSortingByExtension::Perform(PanelController *_target, id) const
+void ToggleSortingByExtension::Perform(PanelController *_target, id /*_sender*/) const
 {
     [_target changeSortingModeTo:EnforceAndSwitch(
                                      _target.data.SortMode(), data::SortMode::SortByExt, data::SortMode::SortByExtRev)];
@@ -95,7 +95,7 @@ bool ToggleSortingBySize::ValidateMenuItem(PanelController *_target, NSMenuItem 
     return Predicate(_target);
 }
 
-void ToggleSortingBySize::Perform(PanelController *_target, id) const
+void ToggleSortingBySize::Perform(PanelController *_target, id /*_sender*/) const
 {
     [_target changeSortingModeTo:EnforceAndSwitch(_target.data.SortMode(),
                                                   data::SortMode::SortBySize,
@@ -108,7 +108,7 @@ bool ToggleSortingByModifiedTime::ValidateMenuItem(PanelController *_target, NSM
     return Predicate(_target);
 }
 
-void ToggleSortingByModifiedTime::Perform(PanelController *_target, id) const
+void ToggleSortingByModifiedTime::Perform(PanelController *_target, id /*_sender*/) const
 {
     [_target changeSortingModeTo:EnforceAndSwitch(_target.data.SortMode(),
                                                   data::SortMode::SortByModTime,
@@ -122,7 +122,7 @@ bool ToggleSortingByCreatedTime::ValidateMenuItem(PanelController *_target, NSMe
     return Predicate(_target);
 }
 
-void ToggleSortingByCreatedTime::Perform(PanelController *_target, id) const
+void ToggleSortingByCreatedTime::Perform(PanelController *_target, id /*_sender*/) const
 {
     [_target changeSortingModeTo:EnforceAndSwitch(_target.data.SortMode(),
                                                   data::SortMode::SortByBirthTime,
@@ -135,7 +135,7 @@ bool ToggleSortingByAddedTime::ValidateMenuItem(PanelController *_target, NSMenu
     return Predicate(_target);
 }
 
-void ToggleSortingByAddedTime::Perform(PanelController *_target, id) const
+void ToggleSortingByAddedTime::Perform(PanelController *_target, id /*_sender*/) const
 {
     [_target changeSortingModeTo:EnforceAndSwitch(_target.data.SortMode(),
                                                   data::SortMode::SortByAddTime,
@@ -149,7 +149,7 @@ bool ToggleSortingByAccessedTime::ValidateMenuItem(PanelController *_target, NSM
     return Predicate(_target);
 }
 
-void ToggleSortingByAccessedTime::Perform(PanelController *_target, id) const
+void ToggleSortingByAccessedTime::Perform(PanelController *_target, id /*_sender*/) const
 {
     [_target changeSortingModeTo:EnforceAndSwitch(_target.data.SortMode(),
                                                   data::SortMode::SortByAccessTime,
@@ -162,7 +162,7 @@ bool ToggleSortingNaturalCollation::ValidateMenuItem(PanelController *_target, N
     return Predicate(_target);
 }
 
-void ToggleSortingNaturalCollation::Perform(PanelController *_target, id) const
+void ToggleSortingNaturalCollation::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto mode = _target.data.SortMode();
     mode.collation = data::SortMode::Collation::Natural;
@@ -175,7 +175,7 @@ bool ToggleSortingCaseInsensitiveCollation::ValidateMenuItem(PanelController *_t
     return Predicate(_target);
 }
 
-void ToggleSortingCaseInsensitiveCollation::Perform(PanelController *_target, id) const
+void ToggleSortingCaseInsensitiveCollation::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto mode = _target.data.SortMode();
     mode.collation = data::SortMode::Collation::CaseInsensitive;
@@ -188,7 +188,7 @@ bool ToggleSortingCaseSensitiveCollation::ValidateMenuItem(PanelController *_tar
     return Predicate(_target);
 }
 
-void ToggleSortingCaseSensitiveCollation::Perform(PanelController *_target, id) const
+void ToggleSortingCaseSensitiveCollation::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto mode = _target.data.SortMode();
     mode.collation = data::SortMode::Collation::CaseSensitive;
@@ -201,7 +201,7 @@ bool ToggleSortingFoldersSeparation::ValidateMenuItem(PanelController *_target, 
     return Predicate(_target);
 }
 
-void ToggleSortingFoldersSeparation::Perform(PanelController *_target, id) const
+void ToggleSortingFoldersSeparation::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto mode = _target.data.SortMode();
     mode.sep_dirs = !mode.sep_dirs;
@@ -214,7 +214,7 @@ bool ToggleSortingExtensionlessFolders::ValidateMenuItem(PanelController *_targe
     return Predicate(_target);
 }
 
-void ToggleSortingExtensionlessFolders::Perform(PanelController *_target, id) const
+void ToggleSortingExtensionlessFolders::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto mode = _target.data.SortMode();
     mode.extensionless_dirs = !mode.extensionless_dirs;
@@ -227,7 +227,7 @@ bool ToggleSortingShowHidden::ValidateMenuItem(PanelController *_target, NSMenuI
     return Predicate(_target);
 }
 
-void ToggleSortingShowHidden::Perform(PanelController *_target, id) const
+void ToggleSortingShowHidden::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto filtering = _target.data.HardFiltering();
     filtering.show_hidden = !filtering.show_hidden;

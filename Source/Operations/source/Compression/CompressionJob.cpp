@@ -541,7 +541,8 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
     return true;
 }
 
-ssize_t CompressionJob::WriteCallback(struct archive *, void *_client_data, const void *_buffer, size_t _length)
+ssize_t
+CompressionJob::WriteCallback(struct archive * /*_archive*/, void *_client_data, const void *_buffer, size_t _length)
 {
     const auto me = static_cast<CompressionJob *>(_client_data);
     const ssize_t ret = me->m_TargetFile->Write(_buffer, _length);

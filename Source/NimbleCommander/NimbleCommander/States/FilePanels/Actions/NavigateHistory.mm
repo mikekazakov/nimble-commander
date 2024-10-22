@@ -12,7 +12,7 @@ bool GoBack::Predicate(PanelController *_target) const
     return _target.history.CanMoveBack();
 }
 
-void GoBack::Perform(PanelController *_target, id) const
+void GoBack::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto &history = _target.history;
     if( !history.CanMoveBack() )
@@ -28,7 +28,7 @@ bool GoForward::Predicate(PanelController *_target) const
     return _target.history.CanMoveForth();
 }
 
-void GoForward::Perform(PanelController *_target, id) const
+void GoForward::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto &history = _target.history;
     if( !history.CanMoveForth() )

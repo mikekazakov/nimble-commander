@@ -29,27 +29,27 @@ public:
     }
 
 private:
-    void Visit(const nc::panel::NetworkConnectionsManager::FTP &) override
+    void Visit(const nc::panel::NetworkConnectionsManager::FTP & /*_ftp*/) override
     {
         m_Sheet = [[FTPConnectionSheetController alloc] init];
     }
 
-    void Visit(const nc::panel::NetworkConnectionsManager::SFTP &) override
+    void Visit(const nc::panel::NetworkConnectionsManager::SFTP & /*_sftp*/) override
     {
         m_Sheet = [[SFTPConnectionSheetController alloc] init];
     }
 
-    void Visit(const nc::panel::NetworkConnectionsManager::LANShare &) override
+    void Visit(const nc::panel::NetworkConnectionsManager::LANShare & /*_share*/) override
     {
         m_Sheet = [[NetworkShareSheetController alloc] init];
     }
 
-    void Visit(const nc::panel::NetworkConnectionsManager::Dropbox &) override
+    void Visit(const nc::panel::NetworkConnectionsManager::Dropbox & /*_account*/) override
     {
         m_Sheet = [[DropboxAccountSheetController alloc] init];
     }
 
-    void Visit(const nc::panel::NetworkConnectionsManager::WebDAV &) override
+    void Visit(const nc::panel::NetworkConnectionsManager::WebDAV & /*_webdav*/) override
     {
         m_Sheet = [[WebDAVConnectionSheetController alloc] init];
     }

@@ -4,7 +4,7 @@
 
 namespace nc::panel::actions {
 
-void RefreshPanel::Perform(PanelController *_target, id) const
+void RefreshPanel::Perform(PanelController *_target, id /*_sender*/) const
 {
     [_target forceRefreshPanel];
 }

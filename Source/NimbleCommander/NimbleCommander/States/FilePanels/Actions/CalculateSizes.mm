@@ -15,14 +15,14 @@ bool CalculateSizes::Predicate(PanelController *_target) const
     return i && (i.IsDir() || _target.data.Stats().selected_dirs_amount > 0);
 }
 
-void CalculateSizes::Perform(PanelController *_target, id) const
+void CalculateSizes::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto selected = _target.selectedEntriesOrFocusedEntryWithDotDot;
     std::erase_if(selected, [](auto &v) { return !v.IsDir(); });
     [_target calculateSizesOfItems:selected];
 }
 
-void CalculateAllSizes::Perform(PanelController *_target, id) const
+void CalculateAllSizes::Perform(PanelController *_target, id /*_sender*/) const
 {
     std::vector<VFSListingItem> items;
     auto &data = _target.data;

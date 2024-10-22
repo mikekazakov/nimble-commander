@@ -62,7 +62,7 @@ bool CopyTo::Predicate(MainWindowFilePanelState *_target) const
     return true;
 }
 
-void CopyTo::Perform(MainWindowFilePanelState *_target, id) const
+void CopyTo::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     const auto act_pc = _target.activePanelController;
     const auto opp_pc = _target.oppositePanelController;
@@ -126,7 +126,7 @@ bool CopyAs::Predicate(MainWindowFilePanelState *_target) const
     return true;
 }
 
-void CopyAs::Perform(MainWindowFilePanelState *_target, id) const
+void CopyAs::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     const auto act_pc = _target.activePanelController;
     if( !act_pc )
@@ -203,7 +203,7 @@ bool MoveTo::Predicate(MainWindowFilePanelState *_target) const
     return true;
 }
 
-void MoveTo::Perform(MainWindowFilePanelState *_target, id) const
+void MoveTo::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     const auto act_pc = _target.activePanelController;
     const auto opp_pc = _target.oppositePanelController;
@@ -264,7 +264,7 @@ bool MoveAs::Predicate(MainWindowFilePanelState *_target) const
     return true;
 }
 
-void MoveAs::Perform(MainWindowFilePanelState *_target, id) const
+void MoveAs::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     const auto act_pc = _target.activePanelController;
     if( !act_pc )

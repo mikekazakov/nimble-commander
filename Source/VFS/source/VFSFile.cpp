@@ -60,7 +60,7 @@ bool VFSFile::IsOpened() const
     return false;
 }
 
-int VFSFile::Open(unsigned long, const VFSCancelChecker &)
+int VFSFile::Open(unsigned long /*unused*/, const VFSCancelChecker & /*unused*/)
 {
     return SetLastError(VFSError::NotSupported);
 }
@@ -68,7 +68,7 @@ int VFSFile::Close()
 {
     return SetLastError(VFSError::NotSupported);
 }
-off_t VFSFile::Seek(off_t, int)
+off_t VFSFile::Seek(off_t /*unused*/, int /*unused*/)
 {
     return SetLastError(VFSError::NotSupported);
 }

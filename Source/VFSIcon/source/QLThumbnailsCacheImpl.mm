@@ -7,7 +7,7 @@
 
 namespace nc::vfsicon {
 
-static inline void hash_combine(size_t &)
+static inline void hash_combine(size_t & /*unused*/)
 {
 }
 
@@ -59,7 +59,7 @@ QLThumbnailsCacheImpl::Key::Key(Key &&_key) noexcept
     hash = _key.hash;
 }
 
-inline QLThumbnailsCacheImpl::Key::Key(std::string_view _path, int _px_size, no_ownership_tag)
+inline QLThumbnailsCacheImpl::Key::Key(std::string_view _path, int _px_size, no_ownership_tag /*unused*/)
 {
     px_size = _px_size;
     path = _path;

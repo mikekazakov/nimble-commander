@@ -18,7 +18,7 @@ static const auto g_NameKey = "themeName";
 [[clang::no_destroy]] static std::shared_ptr<const Theme> g_CurrentTheme;
 
 template <size_t size, typename T, size_t... indexes>
-static constexpr auto make_array_n_impl(T &&value, std::index_sequence<indexes...>)
+static constexpr auto make_array_n_impl(T &&value, std::index_sequence<indexes...> /*unused*/)
 {
     return std::array<std::decay_t<T>, size>{(static_cast<void>(indexes), value)..., std::forward<T>(value)};
 }

@@ -129,7 +129,7 @@ TEST_CASE(PREFIX "execute a non-existing app")
     et.m_ExecutablePath = "/i/do/no/exist/hi";
 
     {
-        ExternalToolExecution ex{ctx, et};
+        const ExternalToolExecution ex{ctx, et};
         auto pid = ex.StartDetachedFork();
         CHECK(pid.has_value() == false);
         CHECK(pid.error().empty() == false);

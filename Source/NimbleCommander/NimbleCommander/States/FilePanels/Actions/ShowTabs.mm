@@ -14,7 +14,7 @@ bool ShowTabs::ValidateMenuItem(MainWindowFilePanelState *_target, NSMenuItem *_
     return Predicate(_target);
 }
 
-void ShowTabs::Perform([[maybe_unused]] MainWindowFilePanelState *_target, id) const
+void ShowTabs::Perform([[maybe_unused]] MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     const auto shown = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
     GlobalConfig().Set(g_ConfigGeneralShowTabs, !shown);

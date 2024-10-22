@@ -57,17 +57,17 @@ static constexpr size_t g_MaximumSelectWithMaskHistoryElements = 16;
 static const auto g_SelectWithMaskHistoryPath = "filePanel.selectWithMaskPopup.masks";
 [[clang::no_destroy]] static PerWindowMaskStorage g_PerWindowMasks;
 
-void SelectAll::Perform(PanelController *_target, id) const
+void SelectAll::Perform(PanelController *_target, id /*_sender*/) const
 {
     [_target setEntriesSelection:std::vector<bool>(_target.data.SortedEntriesCount(), true)];
 }
 
-void DeselectAll::Perform(PanelController *_target, id) const
+void DeselectAll::Perform(PanelController *_target, id /*_sender*/) const
 {
     [_target setEntriesSelection:std::vector<bool>(_target.data.SortedEntriesCount(), false)];
 }
 
-void InvertSelection::Perform(PanelController *_target, id) const
+void InvertSelection::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto selector = data::SelectionBuilder(_target.data);
     [_target setEntriesSelection:selector.InvertSelection()];
@@ -82,7 +82,7 @@ bool SelectAllByExtension::Predicate(PanelController *_target) const
     return _target.view.item;
 }
 
-void SelectAllByExtension::Perform(PanelController *_target, id) const
+void SelectAllByExtension::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto item = _target.view.item;
     if( !item )
@@ -108,7 +108,7 @@ static void CommitRecentFindFilesMask(const nc::panel::FindFilesMask &_mask)
     StoreFindFilesMasks(StateConfig(), g_SelectWithMaskHistoryPath, history);
 }
 
-void SelectAllByMask::Perform(PanelController *_target, id) const
+void SelectAllByMask::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto history = LoadFindFilesMasks(StateConfig(), g_SelectWithMaskHistoryPath);
     const auto initial = g_PerWindowMasks.InitialMask(_target.window);

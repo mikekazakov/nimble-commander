@@ -57,7 +57,7 @@ bool CompressHere::Predicate(PanelController *_target) const
     return !i.IsDotDot() || _target.data.Stats().selected_entries_amount > 0;
 }
 
-void CompressHere::Perform(PanelController *_target, id) const
+void CompressHere::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto entries = _target.selectedEntriesOrFocusedEntry;
     if( entries.empty() )
@@ -105,7 +105,7 @@ bool CompressToOpposite::Predicate(PanelController *_target) const
     return opposite.isUniform && opposite.vfs->IsWritable();
 }
 
-void CompressToOpposite::Perform(PanelController *_target, id) const
+void CompressToOpposite::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto opposite_panel = FindVisibleOppositeController(_target);
     if( !opposite_panel.isUniform || !opposite_panel.vfs->IsWritable() )
@@ -165,7 +165,7 @@ bool context::CompressHere::ValidateMenuItem(PanelController *_target, NSMenuIte
     return Predicate(_target);
 }
 
-void context::CompressHere::Perform(PanelController *_target, id) const
+void context::CompressHere::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto entries = m_Items;
     auto op = std::make_shared<nc::ops::Compression>(std::move(entries), _target.currentDirectoryPath, _target.vfs);
@@ -212,7 +212,7 @@ bool context::CompressToOpposite::ValidateMenuItem(PanelController *_target, NSM
     return Predicate(_target);
 }
 
-void context::CompressToOpposite::Perform(PanelController *_target, id) const
+void context::CompressToOpposite::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto opposite_panel = FindVisibleOppositeController(_target);
     if( !opposite_panel.isUniform || !opposite_panel.vfs->IsWritable() )

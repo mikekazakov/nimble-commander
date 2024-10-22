@@ -34,7 +34,7 @@ struct DummyTheme : Theme {
     [[nodiscard]] NSColor *TextSyntaxStringColor() const override;
     [[nodiscard]] NSColor *ViewerSelectionColor() const override;
     [[nodiscard]] NSColor *ViewerBackgroundColor() const override;
-    void ObserveChanges(std::function<void()>) override;
+    void ObserveChanges(std::function<void()> /*_callback*/) override;
 };
 
 struct Context {
@@ -261,7 +261,7 @@ NSColor *DummyTheme::ViewerBackgroundColor() const
     return NSColor.blackColor;
 }
 
-void DummyTheme::ObserveChanges(std::function<void()>)
+void DummyTheme::ObserveChanges(std::function<void()> /*_callback*/)
 {
 }
 

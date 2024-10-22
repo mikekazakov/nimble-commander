@@ -12,7 +12,7 @@ bool RenameInPlace::Predicate(PanelController *_target) const
     return item && !item.IsDotDot() && item.Host()->IsWritable();
 }
 
-void RenameInPlace::Perform(PanelController *_target, id) const
+void RenameInPlace::Perform(PanelController *_target, id /*_sender*/) const
 {
     [_target.view startFieldEditorRenaming];
 }

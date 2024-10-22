@@ -255,7 +255,7 @@ public:
 
     [[nodiscard]] static const char *Junction() { return ""; }
 
-    bool operator==(const VFSPSHostConfiguration &) const { return true; }
+    bool operator==(const VFSPSHostConfiguration & /*unused*/) const { return true; }
 
     [[nodiscard]] static const char *VerboseJunction() { return "[psfs]:"; }
 };
@@ -576,7 +576,7 @@ bool PSHost::IsDirectoryChangeObservationAvailable([[maybe_unused]] std::string_
     return true;
 }
 
-HostDirObservationTicket PSHost::ObserveDirectoryChanges(std::string_view, std::function<void()> _handler)
+HostDirObservationTicket PSHost::ObserveDirectoryChanges(std::string_view /*_path*/, std::function<void()> _handler)
 {
     // currently we don't care about _path, since this fs has only one directory - root
     auto ticket = m_LastTicket++;

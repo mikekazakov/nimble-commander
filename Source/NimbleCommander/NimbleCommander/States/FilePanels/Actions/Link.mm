@@ -39,7 +39,7 @@ bool CreateSymlink::Predicate(PanelController *_target) const
     return true;
 }
 
-void CreateSymlink::Perform(PanelController *_target, id) const
+void CreateSymlink::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto item = _target.view.item;
     if( !item )
@@ -81,7 +81,7 @@ bool AlterSymlink::Predicate(PanelController *_target) const
     return item && item.IsSymlink() && item.Host()->IsWritable();
 }
 
-void AlterSymlink::Perform(PanelController *_target, id) const
+void AlterSymlink::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto item = _target.view.item;
     if( !item || !item.IsSymlink() )
@@ -113,7 +113,7 @@ bool CreateHardlink::Predicate(PanelController *_target) const
     return item && !item.IsDir() && item.Host()->IsNativeFS();
 }
 
-void CreateHardlink::Perform(PanelController *_target, id) const
+void CreateHardlink::Perform(PanelController *_target, id /*_sender*/) const
 {
     if( !Predicate(_target) )
         return;

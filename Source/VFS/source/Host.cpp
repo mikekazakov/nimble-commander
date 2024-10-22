@@ -14,7 +14,7 @@
 
 namespace nc::vfs {
 
-HostDirObservationTicket::HostDirObservationTicket() noexcept : m_Ticket(0), m_Host()
+HostDirObservationTicket::HostDirObservationTicket() noexcept : m_Ticket(0)
 {
 }
 
@@ -115,7 +115,7 @@ public:
 
     [[nodiscard]] static const char *Junction() { return ""; }
 
-    bool operator==(const VFSHostConfiguration &) const { return true; }
+    bool operator==(const VFSHostConfiguration & /*unused*/) const { return true; }
 };
 
 Host::Host(const std::string_view _junction_path, const std::shared_ptr<Host> &_parent, const char *_fs_tag)

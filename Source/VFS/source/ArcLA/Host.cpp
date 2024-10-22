@@ -530,7 +530,7 @@ int ArchiveHost::CreateFile(std::string_view _path,
 int ArchiveHost::FetchDirectoryListing(std::string_view _path,
                                        VFSListingPtr &_target,
                                        unsigned long _flags,
-                                       const VFSCancelChecker &)
+                                       const VFSCancelChecker & /*_cancel_checker*/)
 {
     StackAllocator alloc;
     std::pmr::string path(&alloc);
@@ -621,7 +621,10 @@ bool ArchiveHost::IsDirectory(std::string_view _path, unsigned long _flags, cons
     return Host::IsDirectory(_path, _flags, _cancel_checker);
 }
 
-int ArchiveHost::Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &)
+int ArchiveHost::Stat(std::string_view _path,
+                      VFSStat &_st,
+                      unsigned long _flags,
+                      const VFSCancelChecker & /*_cancel_checker*/)
 {
     if( _path.empty() )
         return VFSError::InvalidCall;
@@ -814,7 +817,7 @@ int ArchiveHost::ResolvePath(std::string_view _path, std::pmr::string &_resolved
     return result_uid;
 }
 
-int ArchiveHost::StatFS(std::string_view /*_path*/, VFSStatFS &_stat, const VFSCancelChecker &)
+int ArchiveHost::StatFS(std::string_view /*_path*/, VFSStatFS &_stat, const VFSCancelChecker & /*_cancel_checker*/)
 {
     const std::string_view vol_name = utility::PathManip::Filename(JunctionPath());
     if( vol_name.empty() )
@@ -1086,7 +1089,7 @@ const ArchiveHost::Symlink *ArchiveHost::ResolvedSymlink(uint32_t _uid)
 int ArchiveHost::ReadSymlink(std::string_view _symlink_path,
                              char *_buffer,
                              size_t _buffer_size,
-                             const VFSCancelChecker &)
+                             const VFSCancelChecker & /*_cancel_checker*/)
 {
     auto entry = FindEntry(_symlink_path);
     if( !entry )

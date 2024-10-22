@@ -16,12 +16,12 @@ bool ShowNextTab::Predicate(MainWindowFilePanelState *_target) const
     return _target.currentSideTabsCount > 1;
 }
 
-bool ShowNextTab::ValidateMenuItem(MainWindowFilePanelState *_target, NSMenuItem *) const
+bool ShowNextTab::ValidateMenuItem(MainWindowFilePanelState *_target, NSMenuItem * /*_item*/) const
 {
     return Predicate(_target);
 }
 
-void ShowNextTab::Perform(MainWindowFilePanelState *_target, id) const
+void ShowNextTab::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     [_target selectNextFilePanelTab];
 }
@@ -31,12 +31,12 @@ bool ShowPreviousTab::Predicate(MainWindowFilePanelState *_target) const
     return _target.currentSideTabsCount > 1;
 }
 
-bool ShowPreviousTab::ValidateMenuItem(MainWindowFilePanelState *_target, NSMenuItem *) const
+bool ShowPreviousTab::ValidateMenuItem(MainWindowFilePanelState *_target, NSMenuItem * /*_item*/) const
 {
     return Predicate(_target);
 }
 
-void ShowPreviousTab::Perform(MainWindowFilePanelState *_target, id) const
+void ShowPreviousTab::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     [_target selectPreviousFilePanelTab];
 }
@@ -123,7 +123,7 @@ bool CloseOtherTabs::Predicate(MainWindowFilePanelState *_target) const
     return amount_of_tab_on_this_side > 1;
 }
 
-void CloseOtherTabs::Perform(MainWindowFilePanelState *_target, id) const
+void CloseOtherTabs::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     if( !Predicate(_target) )
         return;
@@ -141,7 +141,7 @@ void CloseWindow::Perform(MainWindowFilePanelState *_target, id _sender) const
     [_target.window performClose:_sender];
 }
 
-void AddNewTab::Perform(MainWindowFilePanelState *_target, id) const
+void AddNewTab::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     const auto active_pc = _target.activePanelController;
     if( !active_pc )
@@ -164,7 +164,7 @@ context::AddNewTab::AddNewTab(PanelController *_current_pc) : m_CurrentPC(_curre
 {
 }
 
-void context::AddNewTab::Perform(MainWindowFilePanelState *_target, id) const
+void context::AddNewTab::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     NSTabView *target_tab_view = nil;
 
@@ -192,7 +192,7 @@ bool context::CloseTab::Predicate(MainWindowFilePanelState *_target) const
     return false;
 }
 
-void context::CloseTab::Perform(MainWindowFilePanelState *_target, id) const
+void context::CloseTab::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     [_target closeTabForController:m_CurrentPC];
 }
@@ -210,7 +210,7 @@ bool context::CloseOtherTabs::Predicate(MainWindowFilePanelState *_target) const
     return false;
 }
 
-void context::CloseOtherTabs::Perform(MainWindowFilePanelState *_target, id) const
+void context::CloseOtherTabs::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     [_target closeOtherTabsForController:m_CurrentPC];
 }

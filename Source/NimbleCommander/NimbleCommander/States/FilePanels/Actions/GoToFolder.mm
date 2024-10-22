@@ -22,7 +22,7 @@ namespace nc::panel::actions {
 
 using namespace std::literals;
 
-void GoToFolder::Perform(PanelController *_target, id) const
+void GoToFolder::Perform(PanelController *_target, id /*_sender*/) const
 {
     GoToFolderSheetController *const sheet = [GoToFolderSheetController new];
     sheet.panel = _target;
@@ -51,27 +51,27 @@ static void GoToNativeDir(const std::string &_path, PanelController *_target)
     [_target GoToDirWithContext:request];
 }
 
-void GoToHomeFolder::Perform(PanelController *_target, id) const
+void GoToHomeFolder::Perform(PanelController *_target, id /*_sender*/) const
 {
     GoToNativeDir(base::CommonPaths::Home(), _target);
 }
 
-void GoToDocumentsFolder::Perform(PanelController *_target, id) const
+void GoToDocumentsFolder::Perform(PanelController *_target, id /*_sender*/) const
 {
     GoToNativeDir(base::CommonPaths::Documents(), _target);
 }
 
-void GoToDesktopFolder::Perform(PanelController *_target, id) const
+void GoToDesktopFolder::Perform(PanelController *_target, id /*_sender*/) const
 {
     GoToNativeDir(base::CommonPaths::Desktop(), _target);
 }
 
-void GoToDownloadsFolder::Perform(PanelController *_target, id) const
+void GoToDownloadsFolder::Perform(PanelController *_target, id /*_sender*/) const
 {
     GoToNativeDir(base::CommonPaths::Downloads(), _target);
 }
 
-void GoToApplicationsFolder::Perform(PanelController *_target, id) const
+void GoToApplicationsFolder::Perform(PanelController *_target, id /*_sender*/) const
 {
     if( utility::GetOSXVersion() < utility::OSXVersion::OSX_15 ) {
         GoToNativeDir(base::CommonPaths::Applications(), _target);
@@ -89,7 +89,7 @@ void GoToApplicationsFolder::Perform(PanelController *_target, id) const
     }
 }
 
-void GoToUtilitiesFolder::Perform(PanelController *_target, id) const
+void GoToUtilitiesFolder::Perform(PanelController *_target, id /*_sender*/) const
 {
     if( utility::GetOSXVersion() < utility::OSXVersion::OSX_15 ) {
         GoToNativeDir(base::CommonPaths::Utilities(), _target);
@@ -107,17 +107,17 @@ void GoToUtilitiesFolder::Perform(PanelController *_target, id) const
     }
 }
 
-void GoToLibraryFolder::Perform(PanelController *_target, id) const
+void GoToLibraryFolder::Perform(PanelController *_target, id /*_sender*/) const
 {
     GoToNativeDir(base::CommonPaths::Library(), _target);
 }
 
-void GoToRootFolder::Perform(PanelController *_target, id) const
+void GoToRootFolder::Perform(PanelController *_target, id /*_sender*/) const
 {
     GoToNativeDir(base::CommonPaths::Root(), _target);
 }
 
-void GoToProcessesList::Perform(PanelController *_target, id) const
+void GoToProcessesList::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto request = std::make_shared<DirectoryChangeRequest>();
     request->RequestedDirectory = "/";
@@ -256,7 +256,7 @@ bool GoIntoFolder::ValidateMenuItem(PanelController *_target, NSMenuItem *_item)
     return Predicate(_target);
 }
 
-void GoIntoFolder::Perform(PanelController *_target, id) const
+void GoIntoFolder::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto item = _target.view.item;
     if( !item )

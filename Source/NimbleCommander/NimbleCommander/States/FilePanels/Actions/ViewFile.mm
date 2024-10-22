@@ -18,7 +18,7 @@ bool ViewFile::Predicate(PanelController *_target) const
     return true;
 }
 
-void ViewFile::Perform(PanelController *_target, id) const
+void ViewFile::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto item = _target.view.item;
     if( !item )

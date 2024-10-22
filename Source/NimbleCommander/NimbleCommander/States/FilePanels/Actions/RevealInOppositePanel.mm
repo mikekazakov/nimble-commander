@@ -39,7 +39,7 @@ static void RevealItem(const VFSListingItem &_item, PanelController *_panel)
     [_panel GoToDirWithContext:request];
 }
 
-void RevealInOppositePanel::Perform(MainWindowFilePanelState *_target, id) const
+void RevealInOppositePanel::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     const auto current = _target.activePanelController;
     const auto opposite = _target.oppositePanelController;
@@ -81,7 +81,7 @@ static PanelController *SpawnOppositeTab(MainWindowFilePanelState *_target, Pane
     return nil;
 }
 
-void RevealInOppositePanelTab::Perform(MainWindowFilePanelState *_target, id) const
+void RevealInOppositePanelTab::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     const auto current = _target.activePanelController;
     if( !current )

@@ -100,7 +100,7 @@ static VFSListingPtr FetchSearchResultsAsListing(const std::vector<std::string> 
     return VFSListing::Build(VFSListing::Compose(listings));
 }
 
-void SpotlightSearch::Perform(PanelController *_target, id) const
+void SpotlightSearch::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto view = [[SpotlightSearchPopupViewController alloc] init];
     __weak PanelController *wp = _target;

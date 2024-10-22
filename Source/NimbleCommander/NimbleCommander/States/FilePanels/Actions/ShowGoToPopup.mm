@@ -559,19 +559,19 @@ static void PopupQuickList(NCCommandPopover *_popover, GoToPopupListActionMediat
                        alignment:NCCommandPopoverAlignment::Center];
 }
 
-void ShowConnectionsQuickList::Perform(PanelController *_target, id) const
+void ShowConnectionsQuickList::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto menu = BuildConnectionsQuickList(_target);
     PopupQuickList(menu.first, menu.second, _target);
 }
 
-void ShowFavoritesQuickList::Perform(PanelController *_target, id) const
+void ShowFavoritesQuickList::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto menu = BuildFavoritesQuickList(_target);
     PopupQuickList(menu.first, menu.second, _target);
 }
 
-void ShowVolumesQuickList::Perform(PanelController *_target, id) const
+void ShowVolumesQuickList::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto menu = BuildVolumesQuickList(_target);
     PopupQuickList(menu.first, menu.second, _target);
@@ -582,13 +582,13 @@ bool ShowParentFoldersQuickList::Predicate(PanelController *_target) const
     return _target.isUniform;
 }
 
-void ShowParentFoldersQuickList::Perform(PanelController *_target, id) const
+void ShowParentFoldersQuickList::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto menu = BuildParentFoldersQuickList(_target);
     PopupQuickList(menu.first, menu.second, _target);
 }
 
-void ShowHistoryQuickList::Perform(PanelController *_target, id) const
+void ShowHistoryQuickList::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto menu = BuildHistoryQuickList(_target);
     PopupQuickList(menu.first, menu.second, _target);
@@ -602,12 +602,12 @@ ShowTagsQuickList::ShowTagsQuickList(NetworkConnectionsManager &_net_mgr,
 {
 }
 
-bool ShowTagsQuickList::Predicate(PanelController *) const
+bool ShowTagsQuickList::Predicate(PanelController * /*_target*/) const
 {
     return m_Config.GetBool("filePanel.FinderTags.enable");
 }
 
-void ShowTagsQuickList::Perform(PanelController *_target, id) const
+void ShowTagsQuickList::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto menu = BuildTagsQuickList(_target);
     PopupQuickList(menu.first, menu.second, _target);

@@ -19,7 +19,7 @@ bool SyncPanels::Predicate(MainWindowFilePanelState *_target) const
     return true;
 }
 
-void SyncPanels::Perform(MainWindowFilePanelState *_target, id) const
+void SyncPanels::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     if( _target.splitView.anyCollapsedOrOverlayed )
         return;
@@ -48,7 +48,7 @@ bool SwapPanels::Predicate(MainWindowFilePanelState *_target) const
     return _target.isPanelActive && !_target.splitView.anyCollapsedOrOverlayed;
 }
 
-void SwapPanels::Perform(MainWindowFilePanelState *_target, id) const
+void SwapPanels::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     [_target swapPanels];
 }

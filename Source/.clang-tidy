@@ -137,9 +137,9 @@ Checks: >
   readability-static-accessed-through-instance,
   readability-static-definition-in-anonymous-namespace,
   readability-string-compare,
-  # readability-suspicious-call-argument,
-  # readability-uniqueptr-delete-release,
-  # readability-uppercase-literal-suffix,
+  readability-suspicious-call-argument,
+  readability-uniqueptr-delete-release,
+  # readability-uppercase-literal-suffix, <-- controversial
   readability-use-anyofallof,
   readability-use-std-min-max,
 

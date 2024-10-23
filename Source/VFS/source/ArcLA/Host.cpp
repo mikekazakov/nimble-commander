@@ -725,18 +725,18 @@ const DirEntry *ArchiveHost::FindEntry(std::string_view _path)
     // TODO: rewrite without using C-style strings
 
     // 1st - try to find _path directly (assume it's directory)
-    char buf[1024];
+    char full_path[1024];
     char short_name[256];
-    memcpy(buf, _path.data(), _path.length());
-    buf[_path.length()] = 0;
+    memcpy(full_path, _path.data(), _path.length());
+    full_path[_path.length()] = 0;
 
-    char *last_sl = strrchr(buf, '/');
+    char *last_sl = strrchr(full_path, '/');
 
-    if( last_sl == buf && strlen(buf) == 1 )
+    if( last_sl == full_path && strlen(full_path) == 1 )
         return nullptr; // we have no info about root dir
-    if( last_sl == buf + strlen(buf) - 1 ) {
+    if( last_sl == full_path + strlen(full_path) - 1 ) {
         *last_sl = 0; // cut trailing slash
-        last_sl = strrchr(buf, '/');
+        last_sl = strrchr(full_path, '/');
         assert(last_sl != nullptr); // sanity check
     }
 
@@ -747,13 +747,13 @@ const DirEntry *ArchiveHost::FindEntry(std::string_view _path)
     // short_name - entry name within that directory
 
     if( strcmp(short_name, "..") == 0 ) { // special treatment for dot-dot
-        char tmp[1024];
-        if( !GetDirectoryContainingItemFromPath(buf, tmp) )
+        char directory[1024];
+        if( !GetDirectoryContainingItemFromPath(full_path, directory) )
             return nullptr;
-        return FindEntry(tmp);
+        return FindEntry(directory);
     }
 
-    const auto i = I->m_PathToDir.find(buf);
+    const auto i = I->m_PathToDir.find(full_path);
     if( i == I->m_PathToDir.end() )
         return nullptr;
 

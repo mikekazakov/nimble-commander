@@ -151,20 +151,20 @@ void SearchForFiles::ProcessDirent(const char *_full_path,
     bool failed_filtering = false;
 
     // Filter by being a directory
-    if( failed_filtering == false && _dirent.type == VFSDirEnt::Dir && (m_SearchOptions & Options::SearchForDirs) == 0 )
+    if( !failed_filtering && _dirent.type == VFSDirEnt::Dir && (m_SearchOptions & Options::SearchForDirs) == 0 )
         failed_filtering = true;
 
     // Filter by being a reg or link
-    if( failed_filtering == false && (_dirent.type == VFSDirEnt::Reg || _dirent.type == VFSDirEnt::Link) &&
+    if( !failed_filtering && (_dirent.type == VFSDirEnt::Reg || _dirent.type == VFSDirEnt::Link) &&
         (m_SearchOptions & Options::SearchForFiles) == 0 )
         failed_filtering = true;
 
     // Filter by filename
-    if( failed_filtering == false && !m_FilterName.IsEmpty() && !FilterByFilename(_dirent.name) )
+    if( !failed_filtering && !m_FilterName.IsEmpty() && !FilterByFilename(_dirent.name) )
         failed_filtering = true;
 
     // Filter by filesize
-    if( failed_filtering == false && m_FilterSize ) {
+    if( !failed_filtering && m_FilterSize ) {
         if( _dirent.type == VFSDirEnt::Reg ) {
             VFSStat st;
             if( _in_host.Stat(_full_path, st, 0, nullptr) == 0 ) {
@@ -180,12 +180,12 @@ void SearchForFiles::ProcessDirent(const char *_full_path,
 
     // Filter by file content
     CFRange content_pos{-1, 0};
-    if( failed_filtering == false && m_FilterContent ) {
+    if( !failed_filtering && m_FilterContent ) {
         if( _dirent.type != VFSDirEnt::Reg || !FilterByContent(_full_path, _in_host, content_pos) )
             failed_filtering = true;
     }
 
-    if( failed_filtering == false )
+    if( !failed_filtering )
         ProcessValidEntry(_full_path, _dir_path, _dirent, _in_host, content_pos);
 
     if( m_SearchOptions & Options::GoIntoSubDirs )
@@ -238,10 +238,10 @@ bool SearchForFiles::FilterByContent(const char *_full_path, VFSHost &_in_host, 
     const auto result = sif.Search([this] { return m_Queue.IsStopped(); });
     if( result.response == SearchInFile::Response::Found ) {
         _r = CFRangeMake(result.location->offset, result.location->bytes_len);
-        return m_FilterContent->not_containing == false;
+        return !m_FilterContent->not_containing;
     }
     if( result.response == SearchInFile::Response::NotFound ) {
-        return m_FilterContent->not_containing == true;
+        return m_FilterContent->not_containing;
     }
 
     return false;
@@ -264,7 +264,7 @@ void SearchForFiles::ProcessValidEntry([[maybe_unused]] const char *_full_path,
 
 bool SearchForFiles::IsRunning() const noexcept
 {
-    return m_Queue.Empty() == false;
+    return !m_Queue.Empty();
 }
 
 } // namespace nc::vfs

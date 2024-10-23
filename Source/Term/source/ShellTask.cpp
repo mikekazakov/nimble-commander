@@ -218,8 +218,8 @@ struct ShellTask::Impl {
     std::string tcsh_semaphore_path;
 
     bool temporary_suppressed = false; // will give no output until a next bash prompt will show the requested_cwd path
-    std::string requested_cwd = "";
-    std::string cwd = "";
+    std::string requested_cwd;
+    std::string cwd;
 
     // accessible from main thread only (presumably)
     int term_sx = 80;
@@ -599,7 +599,7 @@ void ShellTask::Impl::ProcessPwdPrompt(const void *_d, int _sz)
     bool current_wd_changed = false;
 
     std::string new_cwd(static_cast<const char *>(_d), _sz);
-    while( new_cwd.empty() == false && (new_cwd.back() == '\n' || new_cwd.back() == '\r') )
+    while( !new_cwd.empty() && (new_cwd.back() == '\n' || new_cwd.back() == '\r') )
         new_cwd.pop_back();
     new_cwd = EnsureTrailingSlash(new_cwd);
     Log::Info("pwd prompt from shell_pid={}: {}", shell_pid.load(), new_cwd);

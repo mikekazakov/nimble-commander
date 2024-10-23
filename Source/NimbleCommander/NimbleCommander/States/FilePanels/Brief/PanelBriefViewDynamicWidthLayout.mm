@@ -68,7 +68,7 @@ using nc::panel::view::brief::DynamicWidthLayoutEngine;
 {
     const auto delegate = self.layoutDelegate;
     const auto selector = @selector(collectionViewProvideIntrinsicItemsWidths:);
-    if( [delegate respondsToSelector:selector] == false ) {
+    if( ![delegate respondsToSelector:selector] ) {
         static std::once_flag once;
         std::call_once(once, [] {
             NSLog(@"A delegate doesn't provide collectionViewProvideIntrinsicItemsWidths:, "
@@ -81,7 +81,7 @@ using nc::panel::view::brief::DynamicWidthLayoutEngine;
 
 - (void)prepareLayout
 {
-    if( [self delegateProvidesIntrinsicWidths] == false )
+    if( ![self delegateProvidesIntrinsicWidths] )
         return;
 
     const auto collection_view = self.collectionView;

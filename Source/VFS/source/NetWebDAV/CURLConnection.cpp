@@ -225,7 +225,7 @@ Connection::BlockRequestResult CURLConnection::PerformBlockingRequest()
 
 int CURLConnection::ReadBodyUpToSize(size_t _target)
 {
-    if( m_MultiHandle == nullptr || m_MultiHandleAttached == false )
+    if( m_MultiHandle == nullptr || !m_MultiHandleAttached )
         return VFSError::InvalidCall;
 
     const auto multi = m_MultiHandle;
@@ -276,7 +276,7 @@ size_t CURLConnection::ReadFromWriteBuffer(void *_ptr, size_t _size, size_t _nme
 
 int CURLConnection::WriteBodyUpToSize(size_t _target)
 {
-    if( m_MultiHandle == nullptr || m_MultiHandleAttached == false )
+    if( m_MultiHandle == nullptr || !m_MultiHandleAttached )
         return VFSError::InvalidCall;
 
     const auto multi = m_MultiHandle;
@@ -285,7 +285,7 @@ int CURLConnection::WriteBodyUpToSize(size_t _target)
         if( _target == AbortBodyWrite )
             SetProgreessCallback([](long, long, long, long) { return false; });
 
-        if( m_Paused == true ) {
+        if( m_Paused ) {
             curl_easy_pause(m_EasyHandle, CURLPAUSE_CONT);
             m_Paused = false;
         }
@@ -314,7 +314,7 @@ int CURLConnection::WriteBodyUpToSize(size_t _target)
 
     const size_t target_buffer_size = m_RequestBody.Size() - _target;
 
-    if( m_Paused == true ) {
+    if( m_Paused ) {
         curl_easy_pause(m_EasyHandle, CURLPAUSE_CONT);
         m_Paused = false;
     }

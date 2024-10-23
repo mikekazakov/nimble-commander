@@ -1477,7 +1477,7 @@ TEST_CASE(PREFIX "Copying a native file that is being written to")
     std::thread t([&] {
         const int f = open(p.c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR);
         REQUIRE(f >= 0);
-        for( size_t i = 0; stop == false && i < max_size; ++i ) {
+        for( size_t i = 0; !stop && i < max_size; ++i ) {
             write(f, &f, 1);
 
             if( i == 0 ) {
@@ -1559,9 +1559,7 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
         _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
             const int ret = VFSCompareEntries(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
-            if( ret != 0 )
-                return false;
-            return true;
+            return ret == 0;
         });
     }
     return 0;

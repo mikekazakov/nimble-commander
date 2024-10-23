@@ -191,7 +191,7 @@ TEST_CASE(PREFIX "attachToNewBackend")
     }
     SECTION("Empty")
     {
-        const std::string data2 = "";
+        const std::string data2;
         ctx.Reload(data2);
         [view attachToNewBackend:ctx.backend];
         [view scrollToGlobalBytesOffset:0]; // TODO: a view shouldn't need this!

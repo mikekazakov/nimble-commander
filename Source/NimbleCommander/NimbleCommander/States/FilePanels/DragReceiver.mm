@@ -329,7 +329,7 @@ bool DragReceiver::PerformWithURLsSource(NSArray<NSURL *> *_source, const vfs::V
     // currently fetching listings synchronously in main thread, which is BAAAD
     auto source_items = FetchListingItems(_source, m_NativeHost);
 
-    if( source_items.has_value() == false ) {
+    if( !source_items.has_value() ) {
         // failed to fetch the source items.
         // refuse the drag and show an error message asynchronously.
         const int vfs_error = source_items.error();

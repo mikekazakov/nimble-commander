@@ -57,11 +57,11 @@ NSImage *QLVFSThumbnailsCacheImpl::ProduceThumbnail(const std::string &_path,
                                                     CGSize _sz)
 {
     auto data = ReadEntireFile(_path, _host);
-    if( data.has_value() == false )
+    if( !data.has_value() )
         return nil;
 
     auto placement_result = m_TempStorage->PlaceWithExtension(data->data(), data->size(), _ext);
-    if( placement_result.has_value() == false )
+    if( !placement_result.has_value() )
         return nil;
 
     return ProduceThumbnailForTempFile(placement_result->Path(), _sz);

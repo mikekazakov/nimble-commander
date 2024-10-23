@@ -528,7 +528,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
             m_PxOffset.y = 0;
             while( px_offset <= -m_FontInfo.LineHeight() ) {
                 const auto did_move = [self doMoveUpByOneLine];
-                if( did_move == false )
+                if( !did_move )
                     break;
                 px_offset += m_FontInfo.LineHeight();
             }
@@ -546,7 +546,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
             m_PxOffset.y = 0;
             while( px_offset >= m_FontInfo.LineHeight() ) {
                 const auto did_move = [self doMoveDownByOneLine];
-                if( did_move == false )
+                if( !did_move )
                     break;
                 px_offset -= m_FontInfo.LineHeight();
             }

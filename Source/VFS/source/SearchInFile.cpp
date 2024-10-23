@@ -31,7 +31,7 @@ SearchInFile::~SearchInFile()
 void SearchInFile::MoveCurrentPosition(uint64_t _pos)
 {
     const auto is_valid = (m_File.FileSize() > 0 && _pos < m_File.FileSize()) || _pos == 0;
-    if( is_valid == false )
+    if( !is_valid )
         throw std::out_of_range("SearchInFile::MoveCurrentPosition: invalid index");
     ;
 

@@ -337,7 +337,7 @@ bool DirectoryAccessProviderImpl::HasAccess([[maybe_unused]] PanelController *_p
                                             VFSHost &_host)
 {
     // at this moment we (thankfully) care only about sanboxed versions
-    if( nc::base::AmISandboxed() == false )
+    if( !nc::base::AmISandboxed() )
         return true;
 
     if( _host.IsNativeFS() )
@@ -350,7 +350,7 @@ bool DirectoryAccessProviderImpl::RequestAccessSync([[maybe_unused]] PanelContro
                                                     const std::string &_directory_path,
                                                     VFSHost &_host)
 {
-    if( nc::base::AmISandboxed() == false )
+    if( !nc::base::AmISandboxed() )
         return true;
 
     if( _host.IsNativeFS() )

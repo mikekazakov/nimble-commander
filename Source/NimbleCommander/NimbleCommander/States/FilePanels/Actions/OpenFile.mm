@@ -26,7 +26,7 @@ static bool CommonPredicate(PanelController *_target)
 
 static bool ShouldRebuildSubmenu(NSMenuItem *_item) noexcept
 {
-    return _item.hasSubmenu == false || objc_cast<NCPanelOpenWithMenuDelegate>(_item.submenu.delegate) == nil;
+    return !_item.hasSubmenu || objc_cast<NCPanelOpenWithMenuDelegate>(_item.submenu.delegate) == nil;
 }
 
 OpenFileWithSubmenu::OpenFileWithSubmenu(NCPanelOpenWithMenuDelegate *_menu_delegate) : m_MenuDelegate(_menu_delegate)

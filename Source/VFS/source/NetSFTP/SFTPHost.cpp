@@ -657,7 +657,7 @@ int SFTPHost::Rename(std::string_view _old_path, std::string_view _new_path, con
     const auto rename_vfs_rc = VFSErrorForConnection(*conn);
 
     if( rename_rc == LIBSSH2_ERROR_SFTP_PROTOCOL && libssh2_sftp_last_error(conn->sftp) == LIBSSH2_FX_FAILURE &&
-        Exists(_new_path, _cancel_checker) == true ) {
+        Exists(_new_path, _cancel_checker) ) {
         // it's likely that a SSH server forbids a direct usage of overwriting semantics
         // lets try to fallback to "rm + mv" scheme
         const auto unlink_rc = Unlink(_new_path, _cancel_checker);

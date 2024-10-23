@@ -92,7 +92,7 @@ static NSBundle *Bundle() noexcept
 {
     // consider using modal dialog here.
 
-    if( m_Running == true )
+    if( m_Running )
         return;
     dispatch_to_main_queue_after(g_ShowDelay, [=] {
         if( m_ClientClosed )
@@ -110,7 +110,7 @@ static NSBundle *Bundle() noexcept
 
 - (void)Discard
 {
-    if( m_Running == false )
+    if( !m_Running )
         return;
 
     dispatch_to_main_queue([=] { [self.window close]; });

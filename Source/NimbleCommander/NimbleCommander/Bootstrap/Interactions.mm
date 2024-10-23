@@ -19,9 +19,7 @@ bool AskUserToResetDefaults()
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     [alert.buttons objectAtIndex:0].keyEquivalent = @"";
-    if( [alert runModal] == NSAlertFirstButtonReturn )
-        return true;
-    return false;
+    return [alert runModal] == NSAlertFirstButtonReturn;
 }
 
 bool AskToExitWithRunningOperations()

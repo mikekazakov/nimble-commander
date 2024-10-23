@@ -52,10 +52,7 @@ static bool TurnOffBlockingMode(int _fd) noexcept
         return false;
 
     fcntl_ret = fcntl(_fd, F_SETFL, fcntl_ret & ~O_NONBLOCK);
-    if( fcntl_ret < 0 )
-        return false;
-
-    return true;
+    return fcntl_ret >= 0;
 }
 
 static int EnumerateAttrs(int _fd, std::vector<std::pair<std::string, unsigned>> &_attrs)

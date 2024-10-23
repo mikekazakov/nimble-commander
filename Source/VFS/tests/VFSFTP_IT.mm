@@ -322,7 +322,7 @@ TEST_CASE(PREFIX "big files reading cancellation")
     }};
 
     const auto deadline = std::chrono::system_clock::now() + std::chrono::seconds(1);
-    while( finished == false ) {
+    while( !finished ) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         REQUIRE((std::chrono::system_clock::now() < deadline));
     }

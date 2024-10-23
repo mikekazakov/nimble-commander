@@ -259,7 +259,7 @@ CompressionJob::ProcessDirectoryItem(int _index, const std::string &_relative_pa
         Stop();
     }
 
-    if( IsEncrypted() == false ) {
+    if( !IsEncrypted() ) {
         // we can't support encrypted EAs due to lack of read support in LA
         VFSFilePtr src_file;
         vfs.CreateFile(_full_path, src_file);
@@ -359,7 +359,7 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
                 return StepResult::Skipped;
         }
 
-    if( IsEncrypted() == false ) {
+    if( !IsEncrypted() ) {
         // we can't support encrypted EAs due to lack of read support in LA
         WriteEAsIfAny(*src_file, m_Archive, _relative_path.c_str());
     }
@@ -553,7 +553,7 @@ CompressionJob::WriteCallback(struct archive * /*_archive*/, void *_client_data,
 
 bool CompressionJob::IsEncrypted() const noexcept
 {
-    return m_Password.empty() == false;
+    return !m_Password.empty();
 }
 
 static void archive_entry_copy_stat(struct archive_entry *_ae, const VFSStat &_vfs_stat)

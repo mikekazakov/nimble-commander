@@ -299,7 +299,7 @@ int DropboxHost::IterateDirectoryListing(std::string_view _path,
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-    std::string cursor_token = "";
+    std::string cursor_token;
     do {
         NSMutableURLRequest *const req =
             [[NSMutableURLRequest alloc] initWithURL:cursor_token.empty() ? api::ListFolder : api::ListFolderContinue];
@@ -360,7 +360,7 @@ int DropboxHost::FetchDirectoryListing(std::string_view _path,
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-    std::string cursor_token = "";
+    std::string cursor_token;
     using nc::base::variable_container;
 
     ListingInput listing_source;

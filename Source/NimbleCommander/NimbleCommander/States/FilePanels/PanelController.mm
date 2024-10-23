@@ -279,17 +279,17 @@ static void HeatUpConfigValues()
 
 - (void)configVFSFetchFlagsChanged
 {
-    if( ConfigShowDotDotEntry() == false )
+    if( !ConfigShowDotDotEntry() )
         m_VFSFetchingFlags |= VFSFlags::F_NoDotDot;
     else
         m_VFSFetchingFlags &= ~VFSFlags::F_NoDotDot;
 
-    if( ConfigShowLocalizedFilenames() == true )
+    if( ConfigShowLocalizedFilenames() )
         m_VFSFetchingFlags |= VFSFlags::F_LoadDisplayNames;
     else
         m_VFSFetchingFlags &= ~VFSFlags::F_LoadDisplayNames;
 
-    if( ConfigEnableFinderTags() == true )
+    if( ConfigEnableFinderTags() )
         m_VFSFetchingFlags |= VFSFlags::F_LoadTags;
     else
         m_VFSFetchingFlags &= ~VFSFlags::F_LoadTags;
@@ -722,7 +722,7 @@ static void HeatUpConfigValues()
     const auto clicked_item_vd = m_Data.VolatileDataAtSortPosition(_sort_pos);
 
     std::vector<VFSListingItem> vfs_items;
-    if( clicked_item_vd.is_selected() == false )
+    if( !clicked_item_vd.is_selected() )
         vfs_items.emplace_back(clicked_item); // only clicked item
     else
         vfs_items = m_Data.SelectedEntriesSorted(); // all selected items
@@ -890,11 +890,11 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
     auto &vfs = *_request.VFS;
     auto &access_provider = *m_DirectoryAccessProvider;
     const auto has_access = access_provider.HasAccess(self, directory, vfs);
-    if( has_access == true ) {
+    if( has_access ) {
         return true;
     }
     else {
-        if( _request.InitiatedByUser == true )
+        if( _request.InitiatedByUser )
             return access_provider.RequestAccessSync(self, directory, vfs);
         else
             return false;
@@ -908,7 +908,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
     Log::Debug("[PanelController doGoToDirWithContext] was called with {}", *_request);
 
     try {
-        if( [self probeDirectoryAccessForRequest:*_request] == false ) {
+        if( ![self probeDirectoryAccessForRequest:*_request] ) {
             _request->LoadingResultCode = VFSError::FromErrno(EPERM);
             return;
         }
@@ -959,7 +959,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
     assert(_request->VFS != nullptr);
     Log::Debug("[PanelController GoToDirWithContext] was called with {}", *_request);
 
-    if( _request->PerformAsynchronous == false ) {
+    if( !_request->PerformAsynchronous ) {
         assert(dispatch_is_main_queue());
         m_DirectoryLoadingQ.Stop();
         m_DirectoryLoadingQ.Wait();
@@ -1147,7 +1147,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
 
 - (bool)isDoingBackgroundLoading
 {
-    return m_DirectoryLoadingQ.Empty() == false;
+    return !m_DirectoryLoadingQ.Empty();
 }
 
 - (std::unique_ptr<nc::panel::DragReceiver>)panelView:(PanelView *) [[maybe_unused]] _view

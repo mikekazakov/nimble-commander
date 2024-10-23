@@ -169,7 +169,7 @@ static const auto g_ConfigGapPath = "filePanel.general.bottomGapForOverlappedTer
     if( m_OverlappedTerminal->terminal == nullptr )
         return;
 
-    if( m_OverlappedTerminal->bottom_gap == 0 && m_SplitView.hidden == false ) {
+    if( m_OverlappedTerminal->bottom_gap == 0 && !m_SplitView.hidden ) {
         m_OverlappedTerminal->terminal.hidden = true;
     }
     else {
@@ -194,7 +194,7 @@ static const auto g_ConfigGapPath = "filePanel.general.bottomGapForOverlappedTer
 - (void)synchronizeOverlappedTerminalWithPanel:(PanelController *)_pc
 {
     if( _pc.isUniform && _pc.vfs->IsNativeFS() && self.overlappedTerminalVisible &&
-        m_OverlappedTerminal->terminal.isShellVirgin == true )
+        m_OverlappedTerminal->terminal.isShellVirgin )
         [m_OverlappedTerminal->terminal changeWorkingDirectory:_pc.currentDirectoryPath];
 }
 
@@ -261,7 +261,7 @@ static const auto g_ConfigGapPath = "filePanel.general.bottomGapForOverlappedTer
                                            at:(const std::string &) [[maybe_unused]] _path
 {
     if( self.overlappedTerminalVisible && m_OverlappedTerminal->terminal.state == ShellTask::TaskState::Shell &&
-        m_OverlappedTerminal->terminal.isShellVirgin == true ) {
+        m_OverlappedTerminal->terminal.isShellVirgin ) {
         // assumes that _filename is eligible to execute in terminal (should be check by PanelController before)
         [m_OverlappedTerminal->terminal feedShellWithInput:"./"s + _filename];
         [m_OverlappedTerminal->terminal commitShell];
@@ -286,7 +286,7 @@ static const auto g_ConfigGapPath = "filePanel.general.bottomGapForOverlappedTer
     const auto keycode = _event.keyCode;
     if( keycode == 36 ) { // Return button
         if( m_OverlappedTerminal->terminal.state == ShellTask::TaskState::Shell &&
-            m_OverlappedTerminal->terminal.isShellVirgin == false ) {
+            !m_OverlappedTerminal->terminal.isShellVirgin ) {
             // if user has entered something in overlapped terminal, then executing this stuff
             // via Enter should be in high priority
             return nc::panel::view::BiddingPriority::Max;
@@ -304,7 +304,7 @@ static const auto g_ConfigGapPath = "filePanel.general.bottomGapForOverlappedTer
     const auto keycode = _event.keyCode;
     if( keycode == 36 ) { // Return button
         if( m_OverlappedTerminal->terminal.state == ShellTask::TaskState::Shell &&
-            m_OverlappedTerminal->terminal.isShellVirgin == false ) {
+            !m_OverlappedTerminal->terminal.isShellVirgin ) {
             [m_OverlappedTerminal->terminal commitShell];
             return;
         }

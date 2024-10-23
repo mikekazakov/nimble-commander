@@ -537,7 +537,7 @@ static void XPC_Peer_Event_Handler(xpc_connection_t _peer, xpc_object_t _event)
         }
 
         if( xpc_dictionary_get_value(_event, "auth") != nullptr ) {
-            if( xpc_dictionary_get_bool(_event, "auth") == true ) {
+            if( xpc_dictionary_get_bool(_event, "auth") ) {
                 context->authenticated = true;
                 send_reply_ok(_event);
             }

@@ -164,7 +164,7 @@ Eat(const std::string_view _source) noexcept
             source.remove_prefix(1);
         }
 
-        if( user_defined != std::nullopt && (c == '%' || c == ' ') && escaped == false ) {
+        if( user_defined != std::nullopt && (c == '%' || c == ' ') && !escaped ) {
             // flush existing arg and continue parsing
             result.emplace_back(ExternalToolsParameters::UserDefined{std::move(*user_defined)}, true);
             user_defined.reset();

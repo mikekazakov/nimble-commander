@@ -497,7 +497,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
             smooth_offset -= delta_y;
             while( smooth_offset <= -m_FontInfo.LineHeight() ) {
                 const auto did_move = [self doMoveUpByOneLine];
-                if( did_move == false )
+                if( !did_move )
                     break;
                 smooth_offset += m_FontInfo.LineHeight();
             }
@@ -514,7 +514,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
             smooth_offset -= delta_y;
             while( smooth_offset >= m_FontInfo.LineHeight() ) {
                 const auto did_move = [self doMoveDownByOneLine];
-                if( did_move == false )
+                if( !did_move )
                     break;
                 smooth_offset -= m_FontInfo.LineHeight();
             }

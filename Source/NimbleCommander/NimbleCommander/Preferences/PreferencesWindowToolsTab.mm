@@ -38,9 +38,7 @@ static bool AskUserToDeleteTool()
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     [alert.buttons objectAtIndex:0].keyEquivalent = @"";
-    if( [alert runModal] == NSAlertFirstButtonReturn )
-        return true;
-    return false;
+    return [alert runModal] == NSAlertFirstButtonReturn;
 }
 
 @implementation PreferencesWindowToolsTab {
@@ -392,7 +390,7 @@ static bool AskUserToDeleteTool()
 
 - (bool)haveCommandLineTools
 {
-    return nc::base::AmISandboxed() == false;
+    return !nc::base::AmISandboxed();
 }
 
 @end

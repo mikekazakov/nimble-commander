@@ -195,7 +195,7 @@ FontCache::Pair FontCache::DoGetBMP(uint16_t _c)
         auto ctfont = CreateFallbackFontStraight(_c, m_CTFonts[0].get());
         if( ctfont ) {
             r = CTFontGetGlyphsForCharacters(ctfont.get(), &_c, &g, 1);
-            if( r == true ) // it should be true always, but for confidence...
+            if( r ) // it should be true always, but for confidence...
             {
                 // check if this font is new one, or we already have this one in dictionary
                 for( size_t i = 1; i < m_CTFonts.size(); ++i ) {

@@ -73,7 +73,7 @@
 - (NSTextView *)fieldEditorForView:(NSView *)aControlView
 {
     if( !m_FieldEditor ) {
-        if( m_IsBuilding == true )
+        if( m_IsBuilding )
             return nil;
         m_IsBuilding = true;
 

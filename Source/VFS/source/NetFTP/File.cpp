@@ -279,7 +279,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
         }
     }
 
-    if( error == true )
+    if( error )
         return VFSError::FromErrno(EIO);
 
     m_FilePos += m_WriteBuf.Consumed();

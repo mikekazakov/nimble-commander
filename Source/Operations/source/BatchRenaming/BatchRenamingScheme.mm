@@ -955,7 +955,7 @@ NSString *BatchRenamingScheme::FileInfo::ParentFilename() const
 {
     std::filesystem::path parent_path(item.Directory());
     if( parent_path.filename().empty() ) { // play around trailing slash
-        if( parent_path.has_parent_path() == false )
+        if( !parent_path.has_parent_path() )
             return @""; // wtf?
         parent_path = parent_path.parent_path();
     }
@@ -966,7 +966,7 @@ NSString *BatchRenamingScheme::FileInfo::GrandparentFilename() const
 {
     std::filesystem::path parent_path(item.Directory());
     if( parent_path.filename().empty() ) { // play around trailing slash
-        if( parent_path.has_parent_path() == false )
+        if( !parent_path.has_parent_path() )
             return @""; // wtf?
         parent_path = parent_path.parent_path();
     }

@@ -112,7 +112,7 @@ void BlinkScheduler::Impl::Schedule()
 void BlinkScheduler::Impl::Fire()
 {
     m_Scheduled = false;
-    if( m_Enabled == false ) {
+    if( !m_Enabled ) {
         // was disabled after scheduled - don't do anything
         return;
     }
@@ -121,7 +121,7 @@ void BlinkScheduler::Impl::Fire()
 
     m_OnBlink();
 
-    if( m_Enabled == false ) {
+    if( !m_Enabled ) {
         // now check for reentrancy shenenigans
         return;
     }

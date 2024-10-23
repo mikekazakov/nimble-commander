@@ -10,17 +10,14 @@ namespace nc::panel::actions {
 
 bool ShowQuickLook::Predicate(PanelController *_target) const
 {
-    if( !_target.view.item )
-        return false;
-
-    return true;
+    return _target.view.item;
 }
 
 void ShowQuickLook::Perform(PanelController *_target, [[maybe_unused]] id _sender) const
 {
     const auto state = _target.state;
 
-    if( ShowQuickLookAsFloatingPanel() == false ) {
+    if( !ShowQuickLookAsFloatingPanel() ) {
         if( state.anyPanelCollapsed ) {
             if( [state isLeftController:_target] )
                 [state.splitView expandRightView];

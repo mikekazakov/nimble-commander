@@ -38,7 +38,7 @@ void BatchRenamingJob::Rename(const std::string &_src, const std::string &_dst)
         const auto dst_exists = m_VFS->Exists(_dst);
 
         int rc = VFSError::Ok;
-        if( dst_exists && LowercaseEqual(_src, _dst) == false )
+        if( dst_exists && !LowercaseEqual(_src, _dst) )
             rc = VFSError::FromErrno(EEXIST);
         else
             rc = m_VFS->Rename(_src, _dst);

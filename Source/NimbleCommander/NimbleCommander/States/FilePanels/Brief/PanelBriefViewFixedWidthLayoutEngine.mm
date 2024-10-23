@@ -90,10 +90,7 @@ bool FixedWidthLayoutEngine::ShouldRelayoutForNewBounds(const NSRect clip_view_b
 {
     const auto height = clip_view_bounds.size.height;
     const auto projected_rows_number = NumberOfRowsForViewHeight(height, m_ItemHeight);
-    if( projected_rows_number != m_RowsNumber )
-        return true;
-    else
-        return false;
+    return projected_rows_number != m_RowsNumber;
 }
 
 NSArray<NSCollectionViewLayoutAttributes *> *

@@ -25,7 +25,7 @@ IconBuilderImpl::~IconBuilderImpl() = default;
 
 IconBuilder::LookupResult IconBuilderImpl::LookupExistingIcon(const VFSListingItem &_item, int _icon_px_size)
 {
-    if( bool(_item) == false || _icon_px_size <= 0 ) {
+    if( !_item || _icon_px_size <= 0 ) {
         Log::Warn("LookupExistingIcon(): invalid lookup request");
         return {};
     }
@@ -83,7 +83,7 @@ IconBuilder::LookupResult IconBuilderImpl::LookupExistingIcon(const VFSListingIt
 IconBuilder::BuildResult
 IconBuilderImpl::BuildRealIcon(const VFSListingItem &_item, int _icon_px_size, const CancelChecker &_cancel_checker)
 {
-    if( bool(_item) == false || _icon_px_size <= 0 ) {
+    if( !_item || _icon_px_size <= 0 ) {
         Log::Warn("BuildRealIcon(): invalid lookup request");
         return {};
     }
@@ -129,7 +129,7 @@ IconBuilderImpl::BuildRealIcon(const VFSListingItem &_item, int _icon_px_size, c
         return result;
     }
     else {
-        if( _item.Host()->ShouldProduceThumbnails() == false )
+        if( !_item.Host()->ShouldProduceThumbnails() )
             return {};
 
         // special case for for bundles
@@ -161,19 +161,19 @@ NSImage *IconBuilderImpl::GetGenericIcon(const VFSListingItem &_item) const
 
 bool IconBuilderImpl::ShouldTryProducingQLThumbnailOnNativeFS(const VFSListingItem &_item) const
 {
-    return _item.IsDir() == false && _item.Size() > 0 && long(_item.Size()) < m_MaxFilesizeForThumbnailsOnNativeFS &&
+    return !_item.IsDir() && _item.Size() > 0 && long(_item.Size()) < m_MaxFilesizeForThumbnailsOnNativeFS &&
            _item.HasExtension() && m_ExtensionsWhitelist->AllowExtension(_item.Extension());
 }
 
 bool IconBuilderImpl::ShouldTryProducingQLThumbnailOnVFS(const VFSListingItem &_item) const
 {
-    return _item.IsDir() == false && _item.Size() > 0 && long(_item.Size()) < m_MaxFilesizeForThumbnailsOnVFS &&
+    return !_item.IsDir() && _item.Size() > 0 && long(_item.Size()) < m_MaxFilesizeForThumbnailsOnVFS &&
            _item.HasExtension() && m_ExtensionsWhitelist->AllowExtension(_item.Extension());
 }
 
 static bool MightBeBundle(const VFSListingItem &_item)
 {
-    if( _item.HasExtension() == false )
+    if( !_item.HasExtension() )
         return false;
 
     const auto extension = _item.Extension();

@@ -357,7 +357,7 @@ int PosixIOInterfaceRouted::mkdir(const char *_path, mode_t _mode) noexcept
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;
@@ -398,7 +398,7 @@ int PosixIOInterfaceRouted::chown(const char *_path, uid_t _uid, gid_t _gid) noe
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;
@@ -434,7 +434,7 @@ int PosixIOInterfaceRouted::chflags(const char *_path, u_int _flags) noexcept
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;
@@ -470,7 +470,7 @@ int PosixIOInterfaceRouted::lchflags(const char *_path, u_int _flags) noexcept
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;
@@ -505,7 +505,7 @@ int PosixIOInterfaceRouted::rmdir(const char *_path) noexcept
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;
@@ -540,7 +540,7 @@ int PosixIOInterfaceRouted::unlink(const char *_path) noexcept
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;
@@ -576,7 +576,7 @@ int PosixIOInterfaceRouted::rename(const char *_old, const char *_new) noexcept
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;
@@ -652,7 +652,7 @@ int PosixIOInterfaceRouted::symlink(const char *_value, const char *_symlink_pat
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;
@@ -688,7 +688,7 @@ int PosixIOInterfaceRouted::link(const char *_path_exist, const char *_path_newn
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;
@@ -724,7 +724,7 @@ int PosixIOInterfaceRouted::chmod(const char *_path, mode_t _mode) noexcept
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;
@@ -760,7 +760,7 @@ int PosixIOInterfaceRouted::chmtime(const char *_path, time_t _time) noexcept
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;
@@ -796,7 +796,7 @@ int PosixIOInterfaceRouted::chatime(const char *_path, time_t _time) noexcept
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;
@@ -832,7 +832,7 @@ int PosixIOInterfaceRouted::chbtime(const char *_path, time_t _time) noexcept
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;
@@ -868,7 +868,7 @@ int PosixIOInterfaceRouted::chctime(const char *_path, time_t _time) noexcept
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;
@@ -905,7 +905,7 @@ int PosixIOInterfaceRouted::killpg(int _pid, int _signal) noexcept
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;
@@ -940,7 +940,7 @@ int PosixIOInterfaceRouted::trash(const char *_path) noexcept
         return -1;
     }
 
-    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+    if( !xpc_dictionary_get_bool(reply, "ok") ) {
         xpc_release(reply);
         errno = EIO;
         return -1;

@@ -51,7 +51,7 @@ void DeletionJob::DoScan()
             m_Script.emplace(si);
 
             const auto nonempty_rm = bool(item.Host()->Features() & vfs::HostFeatures::NonEmptyRmDir);
-            if( m_Type == DeletionType::Permanent && nonempty_rm == false )
+            if( m_Type == DeletionType::Permanent && !nonempty_rm )
                 ScanDirectory(item.Path(), i, si.filename);
         }
         else {
@@ -183,7 +183,7 @@ void DeletionJob::DoUnlink(const std::string &_path, VFSHost &_vfs)
         else if( IsNativeLockedItem(rc, _path, _vfs) ) {
             switch( m_OnLockedItem(rc, _path, _vfs, DeletionType::Permanent) ) {
                 case LockedItemResolution::Unlock: {
-                    if( DoUnlock(_path, _vfs) == false )
+                    if( !DoUnlock(_path, _vfs) )
                         return;
                     continue;
                 }
@@ -223,7 +223,7 @@ void DeletionJob::DoRmDir(const std::string &_path, VFSHost &_vfs)
         else if( IsNativeLockedItem(rc, _path, _vfs) ) {
             switch( m_OnLockedItem(rc, _path, _vfs, DeletionType::Permanent) ) {
                 case LockedItemResolution::Unlock: {
-                    if( DoUnlock(_path, _vfs) == false )
+                    if( !DoUnlock(_path, _vfs) )
                         return;
                     continue;
                 }
@@ -262,7 +262,7 @@ void DeletionJob::DoTrash(const std::string &_path, VFSHost &_vfs, SourceItem _s
         else if( IsNativeLockedItem(rc, _path, _vfs) ) {
             switch( m_OnLockedItem(rc, _path, _vfs, DeletionType::Trash) ) {
                 case LockedItemResolution::Unlock: {
-                    if( DoUnlock(_path, _vfs) == false )
+                    if( !DoUnlock(_path, _vfs) )
                         return;
                     continue;
                 }
@@ -310,7 +310,7 @@ bool DeletionJob::IsNativeLockedItem(int vfs_err, const std::string &_path, VFSH
     if( vfs_err != VFSError::FromErrno(EPERM) )
         return false;
 
-    if( _vfs.IsNativeFS() == false )
+    if( !_vfs.IsNativeFS() )
         return false;
 
     VFSStat st;

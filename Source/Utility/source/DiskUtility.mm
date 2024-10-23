@@ -280,7 +280,7 @@ static std::string Execute(const std::string &_command)
 
 static std::string_view RoleToDiskUtilRepr(APFSTree::Role _role) noexcept
 {
-    static const std::string_view none = "";
+    static const std::string_view none;
     static const std::string_view system = "System";
     static const std::string_view user = "User";
     static const std::string_view recovery = "Recovery";

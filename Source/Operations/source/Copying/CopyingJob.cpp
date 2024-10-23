@@ -166,7 +166,7 @@ void CopyingJob::ProcessItems()
         for( auto &item : m_Checksums ) {
             bool matched = false;
             auto step_result = VerifyCopiedFile(item, matched);
-            if( step_result != StepResult::Ok || matched != true ) {
+            if( step_result != StepResult::Ok || !matched ) {
                 m_OnFileVerificationFailed(item.destination_path, *m_DestinationHost);
                 all_matched = false;
             }
@@ -193,7 +193,7 @@ CopyingJob::StepResult CopyingJob::ProcessItemNo(int _item_number)
     auto source_path = m_SourceItems.ComposeFullPath(_item_number);
     const auto nonexistent_dst_req_handler = RequestNonexistentDst([&] {
         auto new_path = FindNonExistingItemPath(destination_path, *m_DestinationHost, [&] { return IsStopped(); });
-        if( new_path.empty() == false )
+        if( !new_path.empty() )
             destination_path = std::move(new_path);
     });
     const auto is_same_native_volume = [&]() {
@@ -260,7 +260,7 @@ CopyingJob::StepResult CopyingJob::ProcessItemNo(int _item_number)
                                                   destination_path,
                                                   data_feedback,
                                                   nonexistent_dst_req_handler);
-            if( m_Options.docopy == false ) { // move
+            if( !m_Options.docopy ) { // move
                 if( step_result == StepResult::Ok )
                     m_SourceItemsToDelete.emplace_back(_item_number); // mark source file for deletion
             }
@@ -409,13 +409,13 @@ CopyingJob::StepResult CopyingJob::ProcessSymlinkItem(VFSHost &_source_host,
                                                    dynamic_cast<vfs::NativeHost &>(*m_DestinationHost),
                                                    _destination_path,
                                                    _new_dst_callback);
-        if( m_Options.docopy == false && result == StepResult::Ok )
+        if( !m_Options.docopy && result == StepResult::Ok )
             m_SourceItemsToDelete.emplace_back(m_CurrentlyProcessingSourceItemIndex);
         return result;
     }
     else { // vfs -> vfs
         const auto result = CopyVFSSymlinkToVFS(_source_host, _source_path, _destination_path, _new_dst_callback);
-        if( m_Options.docopy == false && result == StepResult::Ok )
+        if( !m_Options.docopy && result == StepResult::Ok )
             m_SourceItemsToDelete.emplace_back(m_CurrentlyProcessingSourceItemIndex);
         return result;
     }
@@ -474,10 +474,10 @@ static bool IsSingleDirectoryCaseRenaming(const CopyingOptions &_options,
             return false;
     }
     else {
-        if( _dest_host.IsCaseSensitiveAtPath(_dest_path) == true )
+        if( _dest_host.IsCaseSensitiveAtPath(_dest_path) )
             return false;
 
-        if( LowercaseEqual(_dest_path, item.Path()) == false )
+        if( !LowercaseEqual(_dest_path, item.Path()) )
             return false;
     }
     return true;
@@ -1624,7 +1624,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
             // we need to revert what we've done
             dst_file->Close();
             dst_file.reset();
-            if( do_unlink_on_stop == true )
+            if( do_unlink_on_stop )
                 m_DestinationHost->Unlink(_dst_path, nullptr);
         }
     });
@@ -2239,7 +2239,7 @@ CopyingJob::RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_pa
     if( dst_exists ) {
         // Destination file already exists.
         const auto case_renaming =
-            _common_host.IsCaseSensitiveAtPath(_dst_path) == false && LowercaseEqual(_dst_path, _src_path) == true;
+            !_common_host.IsCaseSensitiveAtPath(_dst_path) && LowercaseEqual(_dst_path, _src_path);
         if( !case_renaming ) {
             VFSStat src_stat;
             while( true ) {
@@ -2682,7 +2682,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeSymlinkToNative(vfs::NativeHost &_n
                 return StepResult::Stop;
         }
 
-        if( new_path == false ) {
+        if( !new_path ) {
             if( io.trash(_dst_path.c_str()) != 0 ) {
                 while( true ) {
                     const auto rc =
@@ -2782,7 +2782,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
                 return StepResult::Stop;
         }
 
-        if( new_dst_path == false ) {
+        if( !new_dst_path ) {
             if( io.trash(_dst_path.c_str()) != 0 ) {
                 while( true ) {
                     const auto rc =
@@ -2883,7 +2883,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
                 return StepResult::Stop;
         }
 
-        if( new_path == false ) {
+        if( !new_path ) {
             if( dst_host.Trash(_dst_path, nullptr) != VFSError::Ok ) {
                 while( true ) {
                     const auto rc = dst_stat_buffer.mode_bits.dir ? dst_host.RemoveDirectory(_dst_path)

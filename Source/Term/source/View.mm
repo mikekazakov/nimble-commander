@@ -223,7 +223,7 @@ using SelPoint = term::ScreenPoint;
 - (void)adjustSizes:(bool)_mandatory
 {
     const int full_lines_height = self.fullScreenLinesHeight;
-    if( full_lines_height == m_LastScreenFullHeight && _mandatory == false )
+    if( full_lines_height == m_LastScreenFullHeight && !_mandatory )
         return;
 
     m_LastScreenFullHeight = full_lines_height;
@@ -402,7 +402,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         const ScreenBuffer::Space attr = _line[_first];
         if( attr.invisible )
             return;
-        if( attr.blink && blink_visible == false )
+        if( attr.blink && !blink_visible )
             return;
 
         // gather all char codes and their coordinates from the run
@@ -491,7 +491,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
 - (void)drawCursor:(NSRect)_char_rect context:(CGContextRef)_context
 {
-    if( m_ShowCursor == false )
+    if( !m_ShowCursor )
         return;
 
     const bool is_wnd_active = self.window.isKeyWindow;
@@ -718,7 +718,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 {
     // TODO: not a precise selection modification. look at viewer, it has better implementation.
 
-    bool modifying_existing_selection = ([event modifierFlags] & NSEventModifierFlagShift) ? true : false;
+    bool modifying_existing_selection = ([event modifierFlags] & NSEventModifierFlagShift) != 0;
     NSPoint first_loc = [self convertPoint:[event locationInWindow] fromView:nil];
 
     while( [event type] != NSEventTypeLeftMouseUp ) {
@@ -1144,7 +1144,7 @@ static constexpr InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(N
         if( !has(types, type) )
             return;
 
-        if( location_cell_changed == false && has(movement_types, type) )
+        if( !location_cell_changed && has(movement_types, type) )
             return;
 
         InputTranslator::MouseEvent evt;
@@ -1173,7 +1173,7 @@ static constexpr InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(N
         if( !has(types, type) )
             return;
 
-        if( location_cell_changed == false && has(movement_types, type) )
+        if( !location_cell_changed && has(movement_types, type) )
             return;
 
         InputTranslator::MouseEvent evt;

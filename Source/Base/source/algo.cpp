@@ -110,7 +110,7 @@ std::vector<std::string> SplitByDelimiters(std::string_view _str, std::string_vi
     std::string next;
     for( auto c : _str ) {
         if( _delims.contains(c) ) {
-            if( !next.empty() || _compress == false ) {
+            if( !next.empty() || !_compress ) {
                 res.emplace_back(std::move(next));
                 next = {};
             }
@@ -120,7 +120,7 @@ std::vector<std::string> SplitByDelimiters(std::string_view _str, std::string_vi
         }
     }
 
-    if( !next.empty() || (_compress == false && !_str.empty()) ) {
+    if( !next.empty() || (!_compress && !_str.empty()) ) {
         res.emplace_back(std::move(next));
     }
 
@@ -133,7 +133,7 @@ std::vector<std::string> SplitByDelimiter(std::string_view _str, char _delim, bo
     std::string next;
     for( auto c : _str ) {
         if( c == _delim ) {
-            if( !next.empty() || _compress == false ) {
+            if( !next.empty() || !_compress ) {
                 res.emplace_back(std::move(next));
                 next = {};
             }
@@ -143,7 +143,7 @@ std::vector<std::string> SplitByDelimiter(std::string_view _str, char _delim, bo
         }
     }
 
-    if( !next.empty() || (_compress == false && !_str.empty()) ) {
+    if( !next.empty() || (!_compress && !_str.empty()) ) {
         res.emplace_back(std::move(next));
     }
 

@@ -30,7 +30,7 @@ void OpenWithExternalEditor::Perform(PanelController *_target, id /*_sender*/) c
         return;
     }
 
-    if( ed->OpenInTerminal() == false )
+    if( !ed->OpenInTerminal() )
         m_FileOpener.Open(item.Path(), item.Host(), ed->Path(), _target);
     else
         m_FileOpener.OpenInExternalEditorTerminal(item.Path(), item.Host(), ed, item.Filename(), _target);

@@ -367,7 +367,7 @@ void PSHost::UpdateCycle()
 
 void PSHost::EnsureUpdateRunning()
 {
-    if( m_UpdateStarted == false ) {
+    if( !m_UpdateStarted ) {
         m_UpdateStarted = true;
         UpdateCycle();
     }
@@ -489,9 +489,7 @@ bool PSHost::IsDirectory(std::string_view _path,
                          [[maybe_unused]] unsigned long _flags,
                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _path.empty() || _path != "/" )
-        return false;
-    return true;
+    return !(_path.empty() || _path != "/");
 }
 
 int PSHost::CreateFile(std::string_view _path,

@@ -215,7 +215,7 @@ VolumesToShow(utility::NativeFSManager &_native_fs_manager)
 {
     std::vector<std::shared_ptr<const utility::NativeFileSystemInfo>> volumes;
     for( auto &i : _native_fs_manager.Volumes() )
-        if( i->mount_flags.dont_browse == false )
+        if( !i->mount_flags.dont_browse )
             volumes.emplace_back(i);
     return volumes;
 }

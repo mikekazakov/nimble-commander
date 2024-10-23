@@ -84,7 +84,7 @@ void Pool::StartPendingOperations()
         const auto guard = std::lock_guard{m_Lock};
         for( auto &operation : m_PendingOperations ) {
             assert(operation != nullptr);
-            if( m_ShouldBeQueuedCallback(*operation) == false ) {
+            if( !m_ShouldBeQueuedCallback(*operation) ) {
                 to_start.emplace_back(operation);
                 m_RunningOperations.emplace_back(operation);
                 operation.reset();

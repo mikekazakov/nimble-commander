@@ -104,7 +104,7 @@ static base::CFPtr<CFStringRef> ReplaceNewlines(CFStringRef _src, CFStringRef _w
     while( search_range.length > 0 ) {
         CFRange found_range;
         const bool found = CFStringFindCharacterFromSet(str.get(), newline_cs, search_range, 0, &found_range);
-        if( found == false )
+        if( !found )
             break;
         CFStringReplace(str.get(), found_range, _with);
         search_range.location = found_range.location + replacement_length;

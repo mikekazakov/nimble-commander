@@ -64,7 +64,7 @@ static void TraverseConformingUTIs(
             if( object != nullptr && CFGetTypeID(object) == CFStringGetTypeID() ) {
                 const auto conforming_cf_string = static_cast<CFStringRef>(object);
                 const auto conforming_std_string = base::CFStringGetUTF8StdString(conforming_cf_string);
-                if( _target.contains(conforming_std_string) == false ) {
+                if( !_target.contains(conforming_std_string) ) {
                     _target.emplace(conforming_std_string);
                     TraverseConformingUTIs(conforming_std_string, _target);
                 }
@@ -74,7 +74,7 @@ static void TraverseConformingUTIs(
     else if( CFGetTypeID(conforms_to) == CFStringGetTypeID() ) {
         const auto conforming_cf_string = static_cast<CFStringRef>(conforms_to);
         const auto conforming_std_string = base::CFStringGetUTF8StdString(conforming_cf_string);
-        if( _target.contains(conforming_std_string) == false ) {
+        if( !_target.contains(conforming_std_string) ) {
             _target.emplace(conforming_std_string);
             TraverseConformingUTIs(conforming_std_string, _target);
         }

@@ -38,7 +38,7 @@
 
 - (void)mouseEntered:(NSEvent *) [[maybe_unused]] _event
 {
-    if( m_MouseOver == true )
+    if( m_MouseOver )
         return;
 
     [self willChangeValueForKey:@"isMouseOver"];
@@ -48,7 +48,7 @@
 
 - (void)mouseExited:(NSEvent *) [[maybe_unused]] _event
 {
-    if( m_MouseOver == false )
+    if( !m_MouseOver )
         return;
 
     [self willChangeValueForKey:@"isMouseOver"];

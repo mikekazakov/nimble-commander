@@ -89,7 +89,7 @@ std::optional<bool> CFDefaultsGetOptionalBool(CFStringRef _key) noexcept
     const Boolean v = CFPreferencesGetAppBooleanValue(_key, kCFPreferencesCurrentApplication, &has);
     if( !has )
         return {};
-    return v ? true : false;
+    return v != 0;
 }
 
 void CFDefaultsSetBool(CFStringRef _key, bool _value) noexcept

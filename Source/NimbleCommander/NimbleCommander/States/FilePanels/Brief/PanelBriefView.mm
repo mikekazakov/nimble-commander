@@ -250,10 +250,10 @@ bool PanelBriefViewItemLayoutConstants::operator!=(const PanelBriefViewItemLayou
 
             auto &vd = m_Data->VolatileDataAtSortPosition(index);
 
-            if( m_IconsRepository->IsValidSlot(vd.icon) == false )
+            if( !m_IconsRepository->IsValidSlot(vd.icon) )
                 vd.icon = m_IconsRepository->Register(vfs_item);
 
-            if( m_IconsRepository->IsValidSlot(vd.icon) == true ) {
+            if( m_IconsRepository->IsValidSlot(vd.icon) ) {
                 [item setIcon:m_IconsRepository->AvailableIconForSlot(vd.icon)];
                 m_IconsRepository->ScheduleIconProduction(vd.icon, vfs_item);
                 m_IconSlotToItemIndexMapping[vd.icon] = index;

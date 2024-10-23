@@ -222,13 +222,13 @@ bool ExternalEditorStartupInfo::OpenInTerminal() const noexcept
 
 bool ExternalEditorStartupInfo::IsValidForItem(const VFSListingItem &_item, bool _allow_terminal) const
 {
-    if( _allow_terminal == false && m_OpenInTerminal )
+    if( !_allow_terminal && m_OpenInTerminal )
         return false;
 
     if( m_Mask.empty() ) // why is this?
         return false;
 
-    if( m_OnlyFiles == true && _item.IsReg() == false )
+    if( m_OnlyFiles && !_item.IsReg() )
         return false;
 
     if( m_Mask != "*" ) {
@@ -237,7 +237,7 @@ bool ExternalEditorStartupInfo::IsValidForItem(const VFSListingItem &_item, bool
             return false;
     }
 
-    if( m_OnlyFiles == true && m_MaxFileSize > 0 && _item.Size() > m_MaxFileSize )
+    if( m_OnlyFiles && m_MaxFileSize > 0 && _item.Size() > m_MaxFileSize )
         return false;
 
     return true;
@@ -292,7 +292,7 @@ void ExternalEditorsStorage::SaveToConfig()
 std::shared_ptr<ExternalEditorStartupInfo>
 ExternalEditorsStorage::ViableEditorForItem(const VFSListingItem &_item) const
 {
-    const auto has_terminal = nc::base::AmISandboxed() == false;
+    const auto has_terminal = !nc::base::AmISandboxed();
     for( auto &ed : m_ExternalEditors )
         if( ed->IsValidForItem(_item, has_terminal) )
             return ed;

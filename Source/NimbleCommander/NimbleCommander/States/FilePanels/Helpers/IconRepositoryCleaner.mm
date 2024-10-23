@@ -26,7 +26,7 @@ void IconRepositoryCleaner::SweepUnusedSlots()
     }
 
     for( int i = 0, e = static_cast<int>(used_slots.size()); i < e; ++i )
-        if( still_in_use[i] == false ) {
+        if( !still_in_use[i] ) {
             m_Repository.Unregister(used_slots[i]);
         }
 }

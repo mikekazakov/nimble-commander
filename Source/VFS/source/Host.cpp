@@ -93,7 +93,7 @@ FileObservationToken &FileObservationToken::operator=(FileObservationToken &&_rh
 
 FileObservationToken::operator bool() const noexcept
 {
-    return m_Token != 0 && m_Host.expired() == false;
+    return m_Token != 0 && !m_Host.expired();
 }
 
 void FileObservationToken::reset() noexcept

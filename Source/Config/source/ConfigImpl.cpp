@@ -280,7 +280,7 @@ void ConfigImpl::SetInternal(std::string_view _path, const Value &_value)
     if( _path.empty() )
         return;
 
-    if( ReplaceOrInsert(_path, _value) == true ) {
+    if( ReplaceOrInsert(_path, _value) ) {
         FireObservers(_path);
         MarkDirty();
     }
@@ -401,7 +401,7 @@ void ConfigImpl::FireObservers(std::string_view _path) const
     if( const auto observers = FindObservers(_path) ) {
         for( const auto &observer : observers->observers ) {
             const auto lock = std::lock_guard{observer->lock};
-            if( observer->was_removed == false ) {
+            if( !observer->was_removed ) {
                 observer->callback();
             }
         }
@@ -419,7 +419,7 @@ base::intrusive_ptr<const ConfigImpl::Observers> ConfigImpl::FindObservers(std::
 
 void ConfigImpl::MarkDirty()
 {
-    if( m_WriteScheduled.test_and_set() == false ) {
+    if( !m_WriteScheduled.test_and_set() ) {
         m_OverwritesDumpExecutor->Execute([this] { WriteOverwrites(); });
     }
 }
@@ -456,14 +456,14 @@ void ConfigImpl::ResetToDefaults()
 
 void ConfigImpl::Commit()
 {
-    if( m_WriteScheduled.test_and_set() == true ) {
+    if( m_WriteScheduled.test_and_set() ) {
         WriteOverwrites();
     }
 }
 
 void ConfigImpl::OverwritesDidChange()
 {
-    if( m_ReadScheduled.test_and_set() == false ) {
+    if( !m_ReadScheduled.test_and_set() ) {
         m_OverwritesReloadExecutor->Execute([this] { ReloadOverwrites(); });
     }
 }

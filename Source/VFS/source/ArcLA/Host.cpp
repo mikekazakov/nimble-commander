@@ -760,7 +760,7 @@ const DirEntry *ArchiveHost::FindEntry(std::string_view _path)
     // ok, found dir, now let's find item
     const size_t short_name_len = strlen(short_name);
     for( const auto &it : i->second.entries )
-        if( it.name.length() == short_name_len && it.name.compare(short_name) == 0 )
+        if( it.name.length() == short_name_len && it.name == short_name )
             return &it;
 
     return nullptr;

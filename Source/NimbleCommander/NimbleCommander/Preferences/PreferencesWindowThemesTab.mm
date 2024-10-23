@@ -331,7 +331,7 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
                  It (hopefuly) will reduce astonishment when user changes UI appearance of *current*
                  theme instead of choosing a needed theme instead.
                  */
-                v.enabled = m_SelectedThemeCanBeReverted == false;
+                v.enabled = !m_SelectedThemeCanBeReverted;
 
                 return v;
             }

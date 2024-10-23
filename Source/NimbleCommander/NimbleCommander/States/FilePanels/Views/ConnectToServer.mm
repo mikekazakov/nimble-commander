@@ -359,7 +359,7 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 
 - (bool)LANSharesEnabled
 {
-    return nc::base::AmISandboxed() == false;
+    return !nc::base::AmISandboxed();
 }
 
 @end

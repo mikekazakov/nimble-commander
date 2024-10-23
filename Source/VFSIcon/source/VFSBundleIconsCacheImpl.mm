@@ -67,7 +67,7 @@ static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_pa
 
 static NSData *ToTempNSData(const std::optional<std::vector<uint8_t>> &_data)
 {
-    if( _data.has_value() == false )
+    if( !_data.has_value() )
         return nil;
     return [NSData dataWithBytesNoCopy:const_cast<void *>(reinterpret_cast<const void *>(_data->data()))
                                 length:_data->size()
@@ -77,7 +77,7 @@ static NSData *ToTempNSData(const std::optional<std::vector<uint8_t>> &_data)
 static NSDictionary *ReadDictionary(const std::string &_path, VFSHost &_host)
 {
     const auto data = ReadEntireFile(_path, _host);
-    if( data.has_value() == false )
+    if( !data.has_value() )
         return nil;
 
     const auto objc_data = ToTempNSData(data);
@@ -94,7 +94,7 @@ static NSDictionary *ReadDictionary(const std::string &_path, VFSHost &_host)
 static NSImage *ReadImageFromFile(const std::string &_path, VFSHost &_host)
 {
     const auto data = ReadEntireFile(_path, _host);
-    if( data.has_value() == false )
+    if( !data.has_value() )
         return nil;
 
     const auto objc_data = ToTempNSData(data);

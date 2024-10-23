@@ -345,7 +345,7 @@ std::pair<int, int> HexModeLayout::MergeSelection(const CFRange _existing_select
                                                   const int _first_mouse_hit_index,
                                                   const int _current_mouse_hit_index) noexcept
 {
-    if( _modifiying_existing == false || _existing_selection.location < 0 || _existing_selection.length <= 0 ) {
+    if( !_modifiying_existing || _existing_selection.location < 0 || _existing_selection.length <= 0 ) {
         return {std::min(_first_mouse_hit_index, _current_mouse_hit_index),
                 std::max(_first_mouse_hit_index, _current_mouse_hit_index)};
     }

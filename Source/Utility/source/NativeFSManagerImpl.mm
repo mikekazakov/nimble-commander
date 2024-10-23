@@ -523,8 +523,8 @@ bool NativeFSManagerImpl::IsVolumeContainingPathEjectable(const std::string &_pa
     if( std::ranges::find(excl_list, volume->mounted_at_path) != excl_list.end() )
         return false;
 
-    return volume->mount_flags.ejectable == true || volume->mount_flags.removable == true ||
-           volume->mount_flags.internal == false || volume->mount_flags.local == false;
+    return volume->mount_flags.ejectable || volume->mount_flags.removable || !volume->mount_flags.internal ||
+           !volume->mount_flags.local;
 }
 
 void NativeFSManagerImpl::EjectVolumeContainingPath(const std::string &_path)

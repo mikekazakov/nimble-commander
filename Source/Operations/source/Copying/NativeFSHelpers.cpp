@@ -28,10 +28,7 @@ bool TryToPreallocateSpace(int64_t _preallocate_delta, int _file_des) noexcept
 
     // now try to preallocate the space in some chunks
     preallocstore.fst_flags = F_ALLOCATEALL;
-    if( fcntl(_file_des, F_PREALLOCATE, &preallocstore) == 0 )
-        return true;
-
-    return false;
+    return fcntl(_file_des, F_PREALLOCATE, &preallocstore) == 0;
 }
 
 bool SupportsFastTruncationAfterPreallocation(const utility::NativeFileSystemInfo &_fs_info) noexcept
@@ -100,7 +97,7 @@ bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
     // check if current filesystem uses external eas
     assert(_native_fs_man);
     auto fs_info = _native_fs_man->VolumeFromPath(_path);
-    if( !fs_info || fs_info->interfaces.extended_attr == true )
+    if( !fs_info || fs_info->interfaces.extended_attr )
         return false;
 
     // check if a 'main' file exists

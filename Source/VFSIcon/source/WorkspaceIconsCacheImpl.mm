@@ -56,12 +56,12 @@ NSImage *WorkspaceIconsCacheImpl::ProduceIcon(const std::string &_file_path)
 
 void WorkspaceIconsCacheImpl::UpdateIfNeeded(const std::string &_file_path, Info &_info)
 {
-    if( _info.is_in_work.test_and_set() == false ) {
+    if( !_info.is_in_work.test_and_set() ) {
         auto clear_lock = at_scope_end([&] { _info.is_in_work.clear(); });
         // we're first to take control of this item
 
         const auto file_state_hint = m_FileStateReader.ReadState(_file_path);
-        if( file_state_hint.has_value() == false )
+        if( !file_state_hint.has_value() )
             return; // can't proceed without recent information about the file.
 
         // check if cache is up-to-date
@@ -98,7 +98,7 @@ void WorkspaceIconsCacheImpl::ProduceNew(const std::string &_file_path, Info &_i
 
     // file must exist and be accessible
     const auto file_state_hint = m_FileStateReader.ReadState(_file_path);
-    if( file_state_hint.has_value() == false ) {
+    if( !file_state_hint.has_value() ) {
         Log::Warn("failed to get a file state hint for '{}'", _file_path);
         return;
     }

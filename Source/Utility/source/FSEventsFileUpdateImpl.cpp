@@ -86,7 +86,7 @@ uint64_t FSEventsFileUpdateImpl::AddWatchPath(const std::filesystem::path &_path
         m_Watches.emplace(_path, std::move(watch));
     }
 
-    if( was_empty == true && m_KickstartIsOnline == false )
+    if( was_empty && !m_KickstartIsOnline )
         ScheduleScannerKickstart();
 
     return token;

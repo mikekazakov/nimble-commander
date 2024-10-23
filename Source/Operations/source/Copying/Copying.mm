@@ -603,7 +603,7 @@ void Copying::OnLockedItemIssueUI(int _err,
             break;
     }
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
-    sheet.showApplyToAll = m_Job->IsSingleScannedItemProcessing() == false;
+    sheet.showApplyToAll = !m_Job->IsSingleScannedItemProcessing();
     sheet.errorNo = _err;
     [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
     [sheet addButtonWithTitle:NSLocalizedString(@"Unlock", "") responseCode:NSModalResponseUnlock];
@@ -642,7 +642,7 @@ CB::UnlockErrorResolution Copying::OnUnlockError(int _vfs_error, const std::stri
 void Copying::OnStageChanged()
 {
     const CopyingTitleBuilder b{m_Job->SourceItems(), m_Job->DestinationPath(), m_Job->Options()};
-    std::string title = "";
+    std::string title;
     switch( m_Job->Stage() ) {
         case CopyingJob::Stage::Default:
         case CopyingJob::Stage::Process:

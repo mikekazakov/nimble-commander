@@ -462,7 +462,7 @@ std::string ThemesManager::SuitableNameForNewTheme(const std::string &_current_t
     const auto themes = ThemeNames();
     const ankerl::unordered_dense::set<std::string> names(themes.begin(), themes.end());
 
-    if( names.contains(_current_theme_name) == false ) {
+    if( !names.contains(_current_theme_name) ) {
         // no collision, accept as-is
         return _current_theme_name;
     }
@@ -475,14 +475,14 @@ std::string ThemesManager::SuitableNameForNewTheme(const std::string &_current_t
         std::from_chars(cn.data() + sp_idx + 1, cn.data() + cn.length(), current_idx).ec == std::errc{} ) {
         for( ; current_idx < 99; ++current_idx ) {
             auto name = fmt::format("{} {}", std::string_view(cn.data(), sp_idx), current_idx);
-            if( names.contains(name) == false )
+            if( !names.contains(name) )
                 return name;
         }
     }
     else {
         for( ; current_idx < 99; ++current_idx ) {
             auto name = fmt::format("{} {}", cn, current_idx);
-            if( names.contains(name) == false )
+            if( !names.contains(name) )
                 return name;
         }
     }
@@ -582,7 +582,7 @@ ThemesManager::AutoSwitchingSettings ThemesManager::AutomaticSwitching() const
 
 void ThemesManager::NotifyAboutSystemAppearanceChange(ThemeAppearance _appearance)
 {
-    if( m_AutomaticSwitchingEnabled == false )
+    if( !m_AutomaticSwitchingEnabled )
         return; // nothing to do, ignore the notification
 
     if( _appearance == ThemeAppearance::Light ) {

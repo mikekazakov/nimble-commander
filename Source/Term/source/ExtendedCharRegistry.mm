@@ -46,9 +46,9 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
     // Fast path bypassing the heavy machinery of Core Foundation
     if( _input.length() > 1 ) {
         const bool second_potentially_composable = IsPotentiallyComposableCharacter(_input[1]);
-        if( second_potentially_composable == false ) {
+        if( !second_potentially_composable ) {
             const bool first_potentially_composable = IsPotentiallyComposableCharacter(_input[0]);
-            if( first_potentially_composable == false ) {
+            if( !first_potentially_composable ) {
                 // 99.99% of cases should fall into this branch.
                 return _initial == 0 ? AppendResult{.newchar = _input[0], .eaten = 1}
                                      : AppendResult{.newchar = _initial, .eaten = 0};
@@ -57,7 +57,7 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
     }
     else if( _input.length() == 1 ) {
         const bool first_potentially_composable = IsPotentiallyComposableCharacter(_input[0]);
-        if( first_potentially_composable == false ) {
+        if( !first_potentially_composable ) {
             return _initial == 0 ? AppendResult{.newchar = _input[0], .eaten = 1}
                                  : AppendResult{.newchar = _initial, .eaten = 0};
         }
@@ -232,7 +232,7 @@ ExtendedCharRegistry::ExtendedChar::ExtendedChar(std::u16string_view _str)
         is_double_width = utility::CharInfo::WCWidthMin1(static_cast<uint32_t>(chars[0])) == 2;
     }
 
-    if( is_double_width == false ) {
+    if( !is_double_width ) {
         // also check for presense of variation selectors
         for( const char16_t c : str ) {
             if( c == g_VariationSelectorEmoji ) {

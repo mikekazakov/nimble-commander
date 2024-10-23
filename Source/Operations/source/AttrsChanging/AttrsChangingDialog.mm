@@ -677,11 +677,9 @@ static const auto g_MixedOwnageTitle = @"[???]";
 
     const auto &vfs = _items.front().Host();
     const auto vfs_features = vfs->Features();
-    if( (vfs_features & nc::vfs::HostFeatures::SetPermissions) ||
-        (vfs_features & nc::vfs::HostFeatures::SetOwnership) || (vfs_features & nc::vfs::HostFeatures::SetFlags) ||
-        (vfs_features & nc::vfs::HostFeatures::SetTimes) )
-        return true;
-    return false;
+    return (vfs_features & nc::vfs::HostFeatures::SetPermissions) ||
+           (vfs_features & nc::vfs::HostFeatures::SetOwnership) || (vfs_features & nc::vfs::HostFeatures::SetFlags) ||
+           (vfs_features & nc::vfs::HostFeatures::SetTimes);
 }
 
 template <class _InputIterator, class _Predicate>

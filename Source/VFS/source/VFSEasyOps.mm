@@ -403,9 +403,7 @@ int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
         _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
             const int ret = VFSCompareNodes(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
-            if( ret != 0 )
-                return false;
-            return true;
+            return ret == 0;
         });
     }
     return 0;
@@ -635,7 +633,7 @@ std::optional<std::string> CopyDirectoryToTempStorage(const std::string &_vfs_di
 
         const auto &entry = *i;
 
-        if( ExtractEntry(entry, _host, base_path, _cancel_checker) != true )
+        if( !ExtractEntry(entry, _host, base_path, _cancel_checker) )
             return {};
     }
 

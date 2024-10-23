@@ -45,7 +45,7 @@ TEST_CASE(PREFIX "Enques and reports the operation back as running")
     struct MyJob : public Job {
         void Perform() override
         {
-            while( done == false )
+            while( !done )
                 std::this_thread::sleep_for(std::chrono::microseconds{100});
             SetCompleted();
         }
@@ -89,7 +89,7 @@ TEST_CASE(PREFIX "Obeys concurrency settings")
     struct MyJob : public Job {
         void Perform() override
         {
-            while( done == false )
+            while( !done )
                 std::this_thread::sleep_for(std::chrono::microseconds{100});
             SetCompleted();
         }
@@ -161,7 +161,7 @@ TEST_CASE(PREFIX "Drains pending queues as operation complete")
     struct MyJob : public Job {
         void Perform() override
         {
-            while( done == false )
+            while( !done )
                 std::this_thread::sleep_for(std::chrono::microseconds{100});
             SetCompleted();
         }
@@ -209,7 +209,7 @@ TEST_CASE(PREFIX "Does enqueueing as the callback says")
     struct MyJob : public Job {
         void Perform() override
         {
-            while( done == false )
+            while( !done )
                 std::this_thread::sleep_for(std::chrono::microseconds{100});
             SetCompleted();
         }

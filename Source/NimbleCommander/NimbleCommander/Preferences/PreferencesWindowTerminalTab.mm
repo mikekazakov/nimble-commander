@@ -45,7 +45,7 @@
     NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:self.identifier];
     item.image = self.toolbarItemImage;
     item.label = self.toolbarItemLabel;
-    item.enabled = nc::base::AmISandboxed() == false;
+    item.enabled = !nc::base::AmISandboxed();
     return item;
 }
 

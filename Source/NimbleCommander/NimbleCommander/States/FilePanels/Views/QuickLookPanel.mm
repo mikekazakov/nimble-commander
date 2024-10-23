@@ -81,7 +81,7 @@ static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
 
 - (bool)registerExistingQLPreviewPanelFor:(id)_controller
 {
-    if( QLPreviewPanel.sharedPreviewPanelExists == false )
+    if( !QLPreviewPanel.sharedPreviewPanelExists )
         return false;
     auto ql_panel = QLPreviewPanel.sharedPreviewPanel;
 

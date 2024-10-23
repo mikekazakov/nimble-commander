@@ -664,10 +664,7 @@ bool Tags::WriteTags(int _fd, std::span<const Tag> _tags) noexcept
     }
     SetFinderInfoLabel(finder_info, _tags.front().Color());
 
-    if( fsetxattr(_fd, g_FinderInfo, finder_info.data(), finder_info.size(), 0, 0) != 0 )
-        return false;
-
-    return true;
+    return fsetxattr(_fd, g_FinderInfo, finder_info.data(), finder_info.size(), 0, 0) == 0;
 }
 
 bool Tags::WriteTags(const std::filesystem::path &_path, std::span<const Tag> _tags) noexcept

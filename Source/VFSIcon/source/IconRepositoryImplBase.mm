@@ -65,7 +65,7 @@ void Base::GCDLimitedConcurrentQueue::RunBlock(const std::function<void()> &_cli
 
     auto lock = std::lock_guard{m_AwaitingLock};
 
-    if( m_Awaiting.empty() == false ) {
+    if( !m_Awaiting.empty() ) {
         auto new_client_block = std::move(m_Awaiting.front());
         m_Awaiting.pop();
         DispatchForAsynExecution(std::move(new_client_block));

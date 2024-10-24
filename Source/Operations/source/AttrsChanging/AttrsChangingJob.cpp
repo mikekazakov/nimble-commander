@@ -54,7 +54,7 @@ void AttrsChangingJob::ScanItem(unsigned _origin_item)
     auto &vfs = *item.Host();
     VFSStat st;
     while( true ) {
-        const auto stat_rc = vfs.Stat(path.c_str(), st, 0);
+        const auto stat_rc = vfs.Stat(path, st, 0);
         if( stat_rc == VFSError::Ok )
             break;
         switch( m_OnSourceAccessError(stat_rc, path, vfs) ) {
@@ -82,7 +82,7 @@ void AttrsChangingJob::ScanItem(unsigned _origin_item)
                 dir_entries.emplace_back(_entry);
                 return true;
             };
-            const auto list_rc = vfs.IterateDirectoryListing(path.c_str(), callback);
+            const auto list_rc = vfs.IterateDirectoryListing(path, callback);
             if( list_rc == VFSError::Ok )
                 break;
             switch( m_OnSourceAccessError(list_rc, path, vfs) ) {
@@ -112,7 +112,7 @@ void AttrsChangingJob::ScanItem(const std::string &_full_path,
 
     VFSStat st;
     while( true ) {
-        const auto stat_rc = vfs.Stat(_full_path.c_str(), st, 0);
+        const auto stat_rc = vfs.Stat(_full_path, st, 0);
         if( stat_rc == VFSError::Ok )
             break;
         switch( m_OnSourceAccessError(stat_rc, _full_path, vfs) ) {
@@ -140,7 +140,7 @@ void AttrsChangingJob::ScanItem(const std::string &_full_path,
                 dir_entries.emplace_back(_entry);
                 return true;
             };
-            const auto list_rc = vfs.IterateDirectoryListing(_full_path.c_str(), callback);
+            const auto list_rc = vfs.IterateDirectoryListing(_full_path, callback);
             if( list_rc == VFSError::Ok )
                 break;
             switch( m_OnSourceAccessError(list_rc, _full_path, vfs) ) {
@@ -211,7 +211,7 @@ bool AttrsChangingJob::ChmodSingleItem(const std::string &_path, VFSHost &_vfs, 
         return true;
 
     while( true ) {
-        const auto chmod_rc = _vfs.SetPermissions(_path.c_str(), mode);
+        const auto chmod_rc = _vfs.SetPermissions(_path, mode);
         if( chmod_rc == VFSError::Ok )
             break;
         switch( m_OnChmodError(chmod_rc, _path, _vfs) ) {
@@ -237,7 +237,7 @@ bool AttrsChangingJob::ChownSingleItem(const std::string &_path, VFSHost &_vfs, 
         return true;
 
     while( true ) {
-        const auto chown_rc = _vfs.SetOwnership(_path.c_str(), new_uid, new_gid);
+        const auto chown_rc = _vfs.SetOwnership(_path, new_uid, new_gid);
         if( chown_rc == VFSError::Ok )
             break;
         switch( m_OnChownError(chown_rc, _path, _vfs) ) {
@@ -263,7 +263,7 @@ bool AttrsChangingJob::ChflagSingleItem(const std::string &_path, VFSHost &_vfs,
         return true;
 
     while( true ) {
-        const auto chflags_rc = _vfs.SetFlags(_path.c_str(), flags, vfs::Flags::None);
+        const auto chflags_rc = _vfs.SetFlags(_path, flags, vfs::Flags::None);
         if( chflags_rc == VFSError::Ok )
             break;
         switch( m_OnFlagsError(chflags_rc, _path, _vfs) ) {
@@ -284,11 +284,8 @@ bool AttrsChangingJob::ChflagSingleItem(const std::string &_path, VFSHost &_vfs,
 bool AttrsChangingJob::ChtimesSingleItem(const std::string &_path, VFSHost &_vfs, [[maybe_unused]] const VFSStat &_stat)
 {
     while( true ) {
-        const auto set_times_rc = _vfs.SetTimes(_path.c_str(),
-                                                m_Command.times->btime,
-                                                m_Command.times->mtime,
-                                                m_Command.times->ctime,
-                                                m_Command.times->atime);
+        const auto set_times_rc = _vfs.SetTimes(
+            _path, m_Command.times->btime, m_Command.times->mtime, m_Command.times->ctime, m_Command.times->atime);
         if( set_times_rc == VFSError::Ok )
             break;
         switch( m_OnTimesError(set_times_rc, _path, _vfs) ) {

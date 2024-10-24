@@ -18,7 +18,7 @@ static const auto g_NameKey = "themeName";
 [[clang::no_destroy]] static std::shared_ptr<const Theme> g_CurrentTheme;
 
 template <size_t size, typename T, size_t... indexes>
-static constexpr auto make_array_n_impl(T &&value, std::index_sequence<indexes...>)
+static constexpr auto make_array_n_impl(T &&value, std::index_sequence<indexes...> /*unused*/)
 {
     return std::array<std::decay_t<T>, size>{(static_cast<void>(indexes), value)..., std::forward<T>(value)};
 }
@@ -462,7 +462,7 @@ std::string ThemesManager::SuitableNameForNewTheme(const std::string &_current_t
     const auto themes = ThemeNames();
     const ankerl::unordered_dense::set<std::string> names(themes.begin(), themes.end());
 
-    if( names.contains(_current_theme_name) == false ) {
+    if( !names.contains(_current_theme_name) ) {
         // no collision, accept as-is
         return _current_theme_name;
     }
@@ -475,14 +475,14 @@ std::string ThemesManager::SuitableNameForNewTheme(const std::string &_current_t
         std::from_chars(cn.data() + sp_idx + 1, cn.data() + cn.length(), current_idx).ec == std::errc{} ) {
         for( ; current_idx < 99; ++current_idx ) {
             auto name = fmt::format("{} {}", std::string_view(cn.data(), sp_idx), current_idx);
-            if( names.contains(name) == false )
+            if( !names.contains(name) )
                 return name;
         }
     }
     else {
         for( ; current_idx < 99; ++current_idx ) {
             auto name = fmt::format("{} {}", cn, current_idx);
-            if( names.contains(name) == false )
+            if( !names.contains(name) )
                 return name;
         }
     }
@@ -582,7 +582,7 @@ ThemesManager::AutoSwitchingSettings ThemesManager::AutomaticSwitching() const
 
 void ThemesManager::NotifyAboutSystemAppearanceChange(ThemeAppearance _appearance)
 {
-    if( m_AutomaticSwitchingEnabled == false )
+    if( !m_AutomaticSwitchingEnabled )
         return; // nothing to do, ignore the notification
 
     if( _appearance == ThemeAppearance::Light ) {

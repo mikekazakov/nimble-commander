@@ -108,7 +108,7 @@ int hello = 10;)";
 TEST_CASE(PREFIX "Reacting to broken JSON")
 {
     const std::string settings = "definitely not a JSON";
-    const std::string text = "";
+    const std::string text;
     auto hl = Client::Highlight(text, settings);
     REQUIRE(!hl.has_value());
     CHECK(hl.error().contains("Unable to parse the lexing settings"));
@@ -119,7 +119,7 @@ TEST_CASE(PREFIX "Reacting to non-existing lexer")
     const std::string settings = R"({
         "lexer": "I don't exist!"
     })";
-    const std::string text = "";
+    const std::string text;
     auto hl = Client::Highlight(text, settings);
     REQUIRE(!hl.has_value());
     CHECK(hl.error().contains("Unable to highlight the document"));
@@ -143,7 +143,7 @@ TEST_CASE(PREFIX "Reacting to non-existing option")
             "SCE_C_COMMENT": "comment"
         }
     })";
-    const std::string text = "";
+    const std::string text;
     auto hl = Client::Highlight(text, settings);
     REQUIRE(!hl.has_value());
     CHECK(hl.error().contains("Unable to highlight the document"));
@@ -157,7 +157,7 @@ TEST_CASE(PREFIX "Reacting to non-existing mapping source")
             "Hey!": "keyword"
         }
     })";
-    const std::string text = "";
+    const std::string text;
     auto hl = Client::Highlight(text, settings);
     REQUIRE(!hl.has_value());
     CHECK(hl.error().contains("Unable to parse the lexing settings"));
@@ -171,7 +171,7 @@ TEST_CASE(PREFIX "Reacting to non-existing mapping target")
             "SCE_C_COMMENT": "Hey!"
         }
     })";
-    const std::string text = "";
+    const std::string text;
     auto hl = Client::Highlight(text, settings);
     REQUIRE(!hl.has_value());
     CHECK(hl.error().contains("Unable to parse the lexing settings"));

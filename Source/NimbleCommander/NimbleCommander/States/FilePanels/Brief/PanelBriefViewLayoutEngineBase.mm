@@ -50,7 +50,7 @@ LayoutEngineBase::LogarithmicSearchForItemsInRect(NSRect _rect) const noexcept
     NSMutableArray *const array = [[NSMutableArray alloc] init];
     for( int column = first_col_index; column < last_col_index; ++column ) {
         for( int row = first_row_index; row < last_row_index; ++row ) {
-            const auto index = column * m_RowsNumber + row;
+            const auto index = (column * m_RowsNumber) + row;
             if( index >= 0 && index < m_ItemsNumber ) {
                 [array addObject:m_Attributes[index]];
             }

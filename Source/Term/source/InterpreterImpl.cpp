@@ -185,7 +185,7 @@ void InterpreterImpl::ProcessText(const input::UTF8Text &_text)
             continue;
         }
 
-        if( m_AutoWrapMode == true && m_Screen.LineOverflown() &&
+        if( m_AutoWrapMode && m_Screen.LineOverflown() &&
             (m_Screen.CursorX() >= sx - 1 || (m_Screen.CursorX() == sx - 2 && curr_line_ends_with_mcg())) ) {
             m_Screen.PutWrap();
             ProcessCR();
@@ -457,41 +457,41 @@ void InterpreterImpl::ProcessChangeMode(const input::ModeChange _mode_change)
             }
             break;
         case Kind::SendMouseXYOnPress:
-            if( _mode_change.status == true && m_RequestedMouseEvents != RequestedMouseEvents::X10 ) {
+            if( _mode_change.status && m_RequestedMouseEvents != RequestedMouseEvents::X10 ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::X10;
                 RequestMouseEventsChanged();
             }
-            if( _mode_change.status == false && m_RequestedMouseEvents == RequestedMouseEvents::X10 ) {
+            if( !_mode_change.status && m_RequestedMouseEvents == RequestedMouseEvents::X10 ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::None;
                 RequestMouseEventsChanged();
             }
             break;
         case Kind::SendMouseXYOnPressAndRelease:
-            if( _mode_change.status == true && m_RequestedMouseEvents != RequestedMouseEvents::Normal ) {
+            if( _mode_change.status && m_RequestedMouseEvents != RequestedMouseEvents::Normal ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::Normal;
                 RequestMouseEventsChanged();
             }
-            if( _mode_change.status == false && m_RequestedMouseEvents == RequestedMouseEvents::Normal ) {
+            if( !_mode_change.status && m_RequestedMouseEvents == RequestedMouseEvents::Normal ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::None;
                 RequestMouseEventsChanged();
             }
             break;
         case Kind::SendMouseXYOnPressDragAndRelease:
-            if( _mode_change.status == true && m_RequestedMouseEvents != RequestedMouseEvents::ButtonTracking ) {
+            if( _mode_change.status && m_RequestedMouseEvents != RequestedMouseEvents::ButtonTracking ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::ButtonTracking;
                 RequestMouseEventsChanged();
             }
-            if( _mode_change.status == false && m_RequestedMouseEvents == RequestedMouseEvents::ButtonTracking ) {
+            if( !_mode_change.status && m_RequestedMouseEvents == RequestedMouseEvents::ButtonTracking ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::None;
                 RequestMouseEventsChanged();
             }
             break;
         case Kind::SendMouseXYAnyEvent:
-            if( _mode_change.status == true && m_RequestedMouseEvents != RequestedMouseEvents::Any ) {
+            if( _mode_change.status && m_RequestedMouseEvents != RequestedMouseEvents::Any ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::Any;
                 RequestMouseEventsChanged();
             }
-            if( _mode_change.status == false && m_RequestedMouseEvents == RequestedMouseEvents::Any ) {
+            if( !_mode_change.status && m_RequestedMouseEvents == RequestedMouseEvents::Any ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::None;
                 RequestMouseEventsChanged();
             }
@@ -503,7 +503,7 @@ void InterpreterImpl::ProcessChangeMode(const input::ModeChange _mode_change)
 
 void InterpreterImpl::ProcessChangeColumnMode132(bool _on)
 {
-    if( m_AllowScreenResize == false )
+    if( !m_AllowScreenResize )
         return;
 
     const auto height = m_Screen.Height();

@@ -79,7 +79,7 @@ TEST_CASE(PREFIX "Compressing an item with big xattrs")
 
     const auto host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), TestEnv().vfs_native);
     VFSFilePtr file;
-    REQUIRE(host->CreateFile(("/"s + source_fn).c_str(), file, {}) == 0);
+    REQUIRE(host->CreateFile("/"s + source_fn, file, {}) == 0);
     REQUIRE(file != nullptr);
     REQUIRE(file->Open(nc::vfs::Flags::OF_Read) == 0);
     CHECK(file->Size() == 0);
@@ -128,9 +128,7 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
         _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
             const int ret = VFSCompareEntries(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
-            if( ret != 0 )
-                return false;
-            return true;
+            return ret == 0;
         });
     }
     return 0;

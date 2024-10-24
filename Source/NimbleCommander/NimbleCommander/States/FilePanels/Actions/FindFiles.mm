@@ -36,7 +36,7 @@ static VFSListingPtr FetchSearchResultsAsListing(const std::vector<vfs::VFSPath>
 
     for( auto &p : _filepaths ) {
         VFSListingPtr listing;
-        const int ret = p.Host()->FetchSingleItemListing(p.Path().c_str(), listing, _fetch_flags, _cancel_checker);
+        const int ret = p.Host()->FetchSingleItemListing(p.Path(), listing, _fetch_flags, _cancel_checker);
         if( ret == 0 )
             listings.emplace_back(listing);
 
@@ -47,7 +47,7 @@ static VFSListingPtr FetchSearchResultsAsListing(const std::vector<vfs::VFSPath>
     return VFSListing::Build(VFSListing::Compose(listings));
 }
 
-void FindFiles::Perform(PanelController *_target, id) const
+void FindFiles::Perform(PanelController *_target, id /*_sender*/) const
 {
     FindFilesSheetController *const sheet = [FindFilesSheetController new];
     sheet.vfsInstanceManager = &_target.vfsInstanceManager;

@@ -95,7 +95,7 @@ enum class SourceType : uint8_t {
             if( _t.first.find_first_of("menu.") != 0 )
                 return false;
             const auto menu_item = [NSApp.mainMenu itemWithTagHierarchical:_t.second];
-            return menu_item == nil || menu_item.isHidden == true;
+            return menu_item == nil || menu_item.isHidden;
         };
         std::erase_if(m_Shortcuts, absent);
     }
@@ -162,7 +162,7 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
     int conflicts_amount = 0;
     for( auto &v : m_AllNodes ) {
         if( auto node = std::any_cast<ActionShortcutNode>(&v) ) {
-            if( node->participates_in_conflicts == false )
+            if( !node->participates_in_conflicts )
                 continue;
 
             node->is_conflicted = node->current_shortcut && counts[node->current_shortcut] > 1;
@@ -446,10 +446,7 @@ static bool ValidateNodeForFilter(const std::any &_node, NSString *_filter)
             return true;
 
         const auto prettry_hotkey = node->current_shortcut.PrettyString();
-        if( [prettry_hotkey rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0 )
-            return true;
-
-        return false;
+        return [prettry_hotkey rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0;
     }
     if( auto node = std::any_cast<ToolShortcutNode>(&_node) ) {
         const auto label = node->label;
@@ -461,10 +458,7 @@ static bool ValidateNodeForFilter(const std::any &_node, NSString *_filter)
             return true;
 
         const auto app_path = [NSString stringWithUTF8StdString:node->tool->m_ExecutablePath];
-        if( [app_path rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0 )
-            return true;
-
-        return false;
+        return [app_path rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0;
     }
 
     return false;

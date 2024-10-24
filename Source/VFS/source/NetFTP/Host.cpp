@@ -69,7 +69,7 @@ FTPHost::FTPHost(const std::string &_serv_url,
                  const std::string &_start_dir,
                  long _port,
                  bool _active)
-    : Host(_serv_url.c_str(), nullptr, UniqueTag), m_Cache(std::make_unique<ftp::Cache>()),
+    : Host(_serv_url, nullptr, UniqueTag), m_Cache(std::make_unique<ftp::Cache>()),
       m_Configuration(ComposeConfiguration(_serv_url, _user, _passwd, _start_dir, _port, _active))
 {
     const int rc = DoInit();
@@ -78,7 +78,7 @@ FTPHost::FTPHost(const std::string &_serv_url,
 }
 
 FTPHost::FTPHost(const VFSConfiguration &_config)
-    : Host(_config.Get<VFSNetFTPHostConfiguration>().server_url.c_str(), nullptr, UniqueTag),
+    : Host(_config.Get<VFSNetFTPHostConfiguration>().server_url, nullptr, UniqueTag),
       m_Cache(std::make_unique<ftp::Cache>()), m_Configuration(_config)
 {
     const int rc = DoInit();
@@ -153,7 +153,7 @@ int FTPHost::DownloadAndCacheListing(CURLInstance *_inst,
 int FTPHost::DownloadListing(CURLInstance *_inst,
                              const char *_path,
                              std::string &_buffer,
-                             const VFSCancelChecker &_cancel_checker)
+                             const VFSCancelChecker &_cancel_checker) const
 {
     Log::Trace("FTPHost::DownloadListing({}, {}) called", static_cast<void *>(_inst), _path);
     if( _path == nullptr || _path[0] != '/' )
@@ -163,7 +163,7 @@ int FTPHost::DownloadListing(CURLInstance *_inst,
     if( path.back() != '/' )
         path += '/';
 
-    const std::string request = BuildFullURLString(path.c_str());
+    const std::string request = BuildFullURLString(path);
     Log::Trace("Request: {}", request);
 
     std::string response;
@@ -381,7 +381,7 @@ int FTPHost::CreateFile(std::string_view _path,
 int FTPHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     const std::filesystem::path path = _path;
-    if( path.is_absolute() == false || path.native().back() == '/' )
+    if( !path.is_absolute() || path.native().back() == '/' )
         return VFSError::InvalidCall;
 
     const std::filesystem::path parent_path = utility::PathManip::EnsureTrailingSlash(path.parent_path());
@@ -424,7 +424,7 @@ int FTPHost::CreateDirectory(std::string_view _path,
                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     const std::filesystem::path path = EnsureNoTrailingSlash(std::string(_path));
-    if( path.is_absolute() == false || path == "/" )
+    if( !path.is_absolute() || path == "/" )
         return VFSError::InvalidCall;
 
     const std::filesystem::path parent_path = utility::PathManip::EnsureTrailingSlash(path.parent_path());
@@ -465,7 +465,7 @@ int FTPHost::CreateDirectory(std::string_view _path,
 int FTPHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     const std::filesystem::path path = EnsureNoTrailingSlash(std::string(_path));
-    if( path.is_absolute() == false )
+    if( !path.is_absolute() )
         return VFSError::InvalidCall;
 
     const std::filesystem::path parent_path = utility::PathManip::EnsureTrailingSlash(path.parent_path());
@@ -507,7 +507,7 @@ int FTPHost::Rename(std::string_view _old_path,
 {
     const std::filesystem::path old_path = EnsureNoTrailingSlash(std::string(_old_path));
     const std::filesystem::path new_path = EnsureNoTrailingSlash(std::string(_new_path));
-    if( old_path.is_absolute() == false || new_path.is_absolute() == false )
+    if( !old_path.is_absolute() || !new_path.is_absolute() )
         return VFSError::InvalidCall;
 
     const std::filesystem::path old_parent_path = utility::PathManip::EnsureTrailingSlash(old_path.parent_path());
@@ -668,7 +668,7 @@ void FTPHost::BasicOptsSetup(CURLInstance *_inst)
         _inst->EasySetOpt(CURLOPT_PASSWORD, Config().passwd.c_str());
     if( Config().port > 0 )
         _inst->EasySetOpt(CURLOPT_PORT, Config().port);
-    if( Config().active == true )
+    if( Config().active )
         _inst->EasySetOpt(CURLOPT_FTPPORT, "-");
 
     // TODO: SSL support

@@ -54,7 +54,7 @@
 static NSString *Bool2ToString(const bool b[2])
 {
     // guess that if FS don't support something on interface level then it also doesn't support it on layout level
-    if( b[0] == false )
+    if( !b[0] )
         return @"no";
     return [NSString stringWithFormat:@"yes native: %@", b[1] ? @"yes" : @"no"];
 }

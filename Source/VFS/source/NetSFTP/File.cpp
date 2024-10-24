@@ -2,7 +2,9 @@
 #include "File.h"
 #include <libssh2.h>
 #include <libssh2_sftp.h>
+
 #include "SFTPHost.h"
+#include <algorithm>
 
 namespace nc::vfs::sftp {
 
@@ -135,8 +137,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
     const ssize_t rc = libssh2_sftp_write(m_Handle, static_cast<const char *>(_buf), _size);
 
     if( rc >= 0 ) {
-        if( m_Position + rc > m_Size )
-            m_Size = m_Position + rc;
+        m_Size = std::max(m_Position + rc, m_Size);
         m_Position += rc;
         return rc;
     }

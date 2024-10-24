@@ -4,6 +4,7 @@
 #include <Base/CommonPaths.h>
 #include <Base/algo.h>
 #include <Utility/SystemInformation.h>
+#include <algorithm>
 #include <cerrno>
 #include <climits>
 #include <cstddef>
@@ -248,8 +249,7 @@ off_t VFSSeqToRandomROWrapperFile::Seek(off_t _off, int _basis)
 
     if( req_pos < 0 )
         return VFSError::InvalidCall;
-    if( req_pos > m_Backend->m_Size )
-        req_pos = m_Backend->m_Size;
+    req_pos = std::min<off_t>(req_pos, m_Backend->m_Size);
     m_Pos = req_pos;
 
     return m_Pos;

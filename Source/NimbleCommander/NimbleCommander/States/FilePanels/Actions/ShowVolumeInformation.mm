@@ -16,7 +16,7 @@ bool ShowVolumeInformation::Predicate(PanelController *_target) const
     return _target.isUniform && _target.vfs->IsNativeFS();
 }
 
-void ShowVolumeInformation::Perform(PanelController *_target, id) const
+void ShowVolumeInformation::Perform(PanelController *_target, id /*_sender*/) const
 {
     std::string path;
     if( auto i = _target.view.item ) {

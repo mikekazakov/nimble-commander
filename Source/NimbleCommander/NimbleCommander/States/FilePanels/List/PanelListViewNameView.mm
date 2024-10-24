@@ -131,7 +131,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     [m_AttrString drawWithRect:text_rect options:0];
 
     const auto icon_rect = NSMakeRect(geometry.LeftInset(),
-                                      (bounds.size.height - geometry.IconSize()) / 2. + 0.5,
+                                      ((bounds.size.height - geometry.IconSize()) / 2.) + 0.5,
                                       geometry.IconSize(),
                                       geometry.IconSize());
     [m_Icon drawInRect:icon_rect
@@ -229,7 +229,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
         NSMakeRect(text_segment_rect.origin.x - line_padding,
                    geometry.TextBaseLine() - fi.Descent(),
                    text_segment_rect.size.width + 1, // cover for any roundings potentially caused by compressing
-                   bounds.size.height - (geometry.TextBaseLine() - fi.Descent()) * 2.);
+                   bounds.size.height - ((geometry.TextBaseLine() - fi.Descent()) * 2.));
     _editor.frame = rc;
 
     NSTextView *tv = _editor.documentView;

@@ -367,7 +367,7 @@ void PanelViewLayoutsStorage::CommitChanges(bool _fire_observers)
     if( m_IsDirty && (menu.propertiesToUpdate & NSMenuPropertyItemTitle) ) {
         int index = 0;
         for( NSMenuItem *item in menu.itemArray ) {
-            if( auto l = m_Storage->GetLayout(static_cast<int>(index)) ) {
+            if( auto l = m_Storage->GetLayout(index) ) {
                 item.title = l->name.empty() ? [NSString stringWithFormat:@"Layout #%d", index + 1]
                                              : [NSString stringWithUTF8StdString:l->name];
             }

@@ -70,7 +70,7 @@ struct PanelViewFooterVolumeInfoFetcherInternals {
             VFSStatFS stat;
             int result = -1;
             if( auto h = host.lock() )
-                result = h->StatFS(path.c_str(), stat, nullptr);
+                result = h->StatFS(path, stat, nullptr);
             dispatch_to_main_queue(
                 [=] { AcceptResult(host, path, result == 0 ? std::optional<VFSStatFS>{stat} : std::nullopt); });
         });

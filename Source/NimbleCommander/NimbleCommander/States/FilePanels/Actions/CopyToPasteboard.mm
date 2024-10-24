@@ -45,7 +45,7 @@ void CopyToPasteboard::PerformWithItems(const std::vector<VFSListingItem> &_item
         NSBeep();
 }
 
-void CopyToPasteboard::Perform(PanelController *_target, id) const
+void CopyToPasteboard::Perform(PanelController *_target, id /*_sender*/) const
 {
     PerformWithItems(_target.selectedEntriesOrFocusedEntryWithDotDot);
 }
@@ -77,7 +77,7 @@ bool context::CopyToPasteboard::ValidateMenuItem(PanelController *_target, NSMen
     return Predicate(_target);
 }
 
-void context::CopyToPasteboard::Perform([[maybe_unused]] PanelController *_target, id) const
+void context::CopyToPasteboard::Perform([[maybe_unused]] PanelController *_target, id /*_sender*/) const
 {
     PerformWithItems(m_Items);
 }

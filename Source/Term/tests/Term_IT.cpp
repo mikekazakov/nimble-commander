@@ -2773,8 +2773,8 @@ U"Weather report: Houston                                                       
     REQUIRE(result.size() == h * w);
     REQUIRE(std::u32string_view(expectation).length() == h * w);
     for( size_t line = 0; line < h; ++line ) {
-        auto lhs = std::u32string_view(result.data() + line * w, w);
-        auto rhs = std::u32string_view(expectation + line * w, w);
+        auto lhs = std::u32string_view(result.data() + (line * w), w);
+        auto rhs = std::u32string_view(expectation + (line * w), w);
         INFO(std::to_string(line));
         CHECK(lhs == rhs);
     }

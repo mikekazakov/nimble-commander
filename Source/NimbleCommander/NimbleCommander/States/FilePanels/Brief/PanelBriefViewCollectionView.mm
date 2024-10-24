@@ -75,7 +75,7 @@ static NSEvent *SwapScrollAxis(NSEvent *_event)
 - (void)scrollWheel:(NSEvent *)event
 {
     if( event.phase == NSEventPhaseNone && event.momentumPhase == NSEventPhaseNone &&
-        event.hasPreciseScrollingDeltas == false && event.deltaX == 0.0 && event.deltaY != 0.0 ) {
+        !event.hasPreciseScrollingDeltas && event.deltaX == 0.0 && event.deltaY != 0.0 ) {
         // for vertical scroll coming from USB PC mice we swap the scroll asix, so user
         // can use mouse wheel without holding a Shift button
         if( auto new_event = SwapScrollAxis(event) )

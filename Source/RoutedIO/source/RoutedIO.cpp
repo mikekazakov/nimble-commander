@@ -210,7 +210,7 @@ bool RoutedIO::SayImAuthenticated(xpc_connection_t _connection) noexcept
 
     bool result = false;
     if( xpc_get_type(reply) != XPC_TYPE_ERROR )
-        if( xpc_dictionary_get_bool(reply, "ok") == true )
+        if( xpc_dictionary_get_bool(reply, "ok") )
             result = true;
 
     xpc_release(reply);
@@ -320,7 +320,7 @@ bool RoutedIO::Connect()
     if( m_Connection )
         return true;
 
-    if( m_AuthenticatedAsAdmin == false ) {
+    if( !m_AuthenticatedAsAdmin ) {
         Log::Error("RoutedIO::Connect() was called without being authenticated as admin");
         return false;
     }
@@ -381,7 +381,7 @@ bool RoutedIO::IsHelperAlive()
 
     bool result = false;
     if( xpc_get_type(reply) != XPC_TYPE_ERROR )
-        if( xpc_dictionary_get_bool(reply, "ok") == true )
+        if( xpc_dictionary_get_bool(reply, "ok") )
             result = true;
 
     xpc_release(reply);

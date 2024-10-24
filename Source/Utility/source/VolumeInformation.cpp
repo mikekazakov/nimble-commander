@@ -335,8 +335,8 @@ int FetchVolumeAttributesInformation(const char *_path,
     CFURLRef cfurl = CFURLCreateFromFileSystemRepresentation(
         nullptr, reinterpret_cast<const UInt8 *>(_path), std::strlen(_path), false);
     CFStringRef fsverbname;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, &fsverbname, nullptr) ==
-        false ) {
+    if( !static_cast<bool>(
+            CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, &fsverbname, nullptr)) ) {
         CFRelease(cfurl);
         return -1; // what to return???
     }

@@ -642,10 +642,7 @@ using SourceReverseMappingStorage =
 {
     if( item.menu == self.FilenamesTable.menu ) {
         auto clicked_row = self.FilenamesTable.clickedRow;
-        if( clicked_row >= 0 && clicked_row < self.FilenamesTable.numberOfRows )
-            return true;
-        else
-            return false;
+        return clicked_row >= 0 && clicked_row < self.FilenamesTable.numberOfRows;
     }
 
     return true;

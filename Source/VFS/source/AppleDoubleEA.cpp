@@ -195,12 +195,9 @@ static void swap_attrhdr(attr_header_t *ah)
 static bool IsAppleDouble(const void *_memory_buf, size_t _memory_size)
 {
     const apple_double_header_t *adhdr = static_cast<const apple_double_header_t *>(_memory_buf);
-    if( _memory_size < sizeof(apple_double_header_t) - 2 || SWAP32(adhdr->magic) != ADH_MAGIC ||
-        SWAP32(adhdr->version) != ADH_VERSION || SWAP16(adhdr->numEntries) != 2 ||
-        SWAP32(adhdr->entries[0].type) != AD_FINDERINFO )
-        return false;
-
-    return true;
+    return _memory_size >= sizeof(apple_double_header_t) - 2 && SWAP32(adhdr->magic) == ADH_MAGIC &&
+           SWAP32(adhdr->version) == ADH_VERSION && SWAP16(adhdr->numEntries) == 2 &&
+           SWAP32(adhdr->entries[0].type) == AD_FINDERINFO;
 }
 
 std::vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, size_t _memory_size)

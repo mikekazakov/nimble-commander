@@ -821,7 +821,7 @@ struct StateStorage {
         return;
 
     const auto &storage = it->second;
-    int cursor = m_Data->SortedIndexForName(storage.focused_item.c_str());
+    int cursor = m_Data->SortedIndexForName(storage.focused_item);
     if( cursor < 0 )
         return;
 
@@ -837,7 +837,7 @@ struct StateStorage {
     if( _load )
         [self loadPathState];
 
-    const int cur = m_Data->SortedIndexForName(_focused_filename.c_str());
+    const int cur = m_Data->SortedIndexForName(_focused_filename);
     if( cur >= 0 ) {
         [self setCurpos:cur];
     }

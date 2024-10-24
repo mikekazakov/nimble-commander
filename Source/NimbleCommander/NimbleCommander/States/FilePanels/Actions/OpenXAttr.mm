@@ -13,7 +13,7 @@ bool OpenXAttr::Predicate(PanelController *_target) const
     return i && i.Host()->IsNativeFS();
 }
 
-void OpenXAttr::Perform(PanelController *_target, id) const
+void OpenXAttr::Perform(PanelController *_target, id /*_sender*/) const
 {
     if( !Predicate(_target) )
         return;

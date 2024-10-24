@@ -31,7 +31,7 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 - (id)reverseTransformedValue:(id)value
 {
     if( auto n = nc::objc_cast<NSNumber>(value) )
-        return [NSNumber numberWithBool:n.intValue == 0 ? false : true];
+        return [NSNumber numberWithBool:n.intValue != 0];
     return nil;
 }
 @end

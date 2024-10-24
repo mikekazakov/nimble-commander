@@ -34,7 +34,7 @@ struct DummyTheme : Theme {
     [[nodiscard]] NSColor *TextSyntaxStringColor() const override;
     [[nodiscard]] NSColor *ViewerSelectionColor() const override;
     [[nodiscard]] NSColor *ViewerBackgroundColor() const override;
-    void ObserveChanges(std::function<void()>) override;
+    void ObserveChanges(std::function<void()> /*_callback*/) override;
 };
 
 struct Context {
@@ -191,7 +191,7 @@ TEST_CASE(PREFIX "attachToNewBackend")
     }
     SECTION("Empty")
     {
-        const std::string data2 = "";
+        const std::string data2;
         ctx.Reload(data2);
         [view attachToNewBackend:ctx.backend];
         [view scrollToGlobalBytesOffset:0]; // TODO: a view shouldn't need this!
@@ -261,7 +261,7 @@ NSColor *DummyTheme::ViewerBackgroundColor() const
     return NSColor.blackColor;
 }
 
-void DummyTheme::ObserveChanges(std::function<void()>)
+void DummyTheme::ObserveChanges(std::function<void()> /*_callback*/)
 {
 }
 

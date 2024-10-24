@@ -230,8 +230,8 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 - (CGPoint)textOrigin
 {
     const auto origin = CGPointMake(g_LeftInset, g_TopInset);
-    const auto vertical_shift = m_VerticalLineOffset * m_FontInfo.LineHeight() + m_PxOffset.y;
-    const auto horizontal_shift = m_HorizontalCharsOffset * m_FontInfo.PreciseMonospaceWidth() + m_PxOffset.x;
+    const auto vertical_shift = (m_VerticalLineOffset * m_FontInfo.LineHeight()) + m_PxOffset.y;
+    const auto horizontal_shift = (m_HorizontalCharsOffset * m_FontInfo.PreciseMonospaceWidth()) + m_PxOffset.x;
     return CGPointMake(origin.x - horizontal_shift, origin.y - vertical_shift);
 }
 
@@ -292,7 +292,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     // +1 to ensure that selection of a following line is also visible
     const int lines_end = lines_start + lines_per_screen + 1;
 
-    auto line_pos = CGPointMake(origin.x, origin.y + lines_start * m_FontInfo.LineHeight());
+    auto line_pos = CGPointMake(origin.x, origin.y + (lines_start * m_FontInfo.LineHeight()));
 
     const auto selection = [self localSelection];
 
@@ -363,7 +363,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
                                             old_frame->WorkingSet().GlobalOffset();
         const auto desired_window_offset =
             std::clamp(old_anchor_glob_offset - static_cast<int64_t>(m_Backend->RawSize()) +
-                           static_cast<int64_t>(m_Backend->RawSize()) / 4,
+                           (static_cast<int64_t>(m_Backend->RawSize()) / 4),
                        static_cast<int64_t>(0),
                        static_cast<int64_t>(m_Backend->FileSize() - m_Backend->RawSize()));
 
@@ -408,7 +408,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
         const auto old_anchor_glob_offset = static_cast<long>(old_frame->Line(old_anchor_line_index).BytesStart()) +
                                             old_frame->WorkingSet().GlobalOffset();
         const auto desired_window_offset =
-            std::clamp(old_anchor_glob_offset - static_cast<int64_t>(m_Backend->RawSize()) / 4,
+            std::clamp(old_anchor_glob_offset - (static_cast<int64_t>(m_Backend->RawSize()) / 4),
                        static_cast<int64_t>(0),
                        static_cast<int64_t>(m_Backend->FileSize() - m_Backend->RawSize()));
         if( desired_window_offset <= static_cast<int64_t>(m_Backend->FilePos()) )
@@ -528,7 +528,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
             m_PxOffset.y = 0;
             while( px_offset <= -m_FontInfo.LineHeight() ) {
                 const auto did_move = [self doMoveUpByOneLine];
-                if( did_move == false )
+                if( !did_move )
                     break;
                 px_offset += m_FontInfo.LineHeight();
             }
@@ -546,7 +546,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
             m_PxOffset.y = 0;
             while( px_offset >= m_FontInfo.LineHeight() ) {
                 const auto did_move = [self doMoveDownByOneLine];
-                if( did_move == false )
+                if( !did_move )
                     break;
                 px_offset -= m_FontInfo.LineHeight();
             }
@@ -682,7 +682,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
             return false;
 
         const auto desired_wnd_pos =
-            std::clamp(_offset - static_cast<int64_t>(m_Backend->RawSize()) / 2,
+            std::clamp(_offset - (static_cast<int64_t>(m_Backend->RawSize()) / 2),
                        static_cast<int64_t>(0),
                        static_cast<int64_t>(m_Backend->FileSize()) - static_cast<int64_t>(m_Backend->RawSize()));
 

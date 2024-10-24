@@ -254,7 +254,7 @@ std::chrono::seconds GetUptime() noexcept
     if( sysctl(mib, 2, &boottime_raw, &len, nullptr, 0) != 0 )
         return {};
     const auto boottime = std::chrono::system_clock::time_point(
-        std::chrono::microseconds(boottime_raw.tv_usec + boottime_raw.tv_sec * 1000000));
+        std::chrono::microseconds(boottime_raw.tv_usec + (boottime_raw.tv_sec * 1000000)));
     const auto uptime = std::chrono::system_clock::now() - boottime;
     return std::chrono::duration_cast<std::chrono::seconds>(uptime);
 }

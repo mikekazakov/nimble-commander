@@ -11,7 +11,7 @@ public:
 
     [[nodiscard]] static const char *Junction() { return ""; }
 
-    bool operator==(const VFSMemHostConfiguration &) const { return true; }
+    bool operator==(const VFSMemHostConfiguration & /*unused*/) const { return true; }
 
     [[nodiscard]] static const char *VerboseJunction() { return "[memfs]:"; }
 };

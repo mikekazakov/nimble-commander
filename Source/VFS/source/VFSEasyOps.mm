@@ -403,9 +403,7 @@ int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
         _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
             const int ret = VFSCompareNodes(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
-            if( ret != 0 )
-                return false;
-            return true;
+            return ret == 0;
         });
     }
     return 0;
@@ -419,7 +417,7 @@ std::optional<std::string> CopyFileToTempStorage(const std::string &_vfs_filepat
                                                  const std::function<bool()> &_cancel_checker)
 {
     VFSFilePtr vfs_file;
-    if( _host.CreateFile(_vfs_filepath.c_str(), vfs_file, _cancel_checker) < 0 )
+    if( _host.CreateFile(_vfs_filepath, vfs_file, _cancel_checker) < 0 )
         return std::nullopt;
 
     if( vfs_file->Open(VFSFlags::OF_Read, _cancel_checker) < 0 )
@@ -480,7 +478,7 @@ Traverse(const std::string &_vfs_dirpath, VFSHost &_host, const std::function<bo
     auto vfs_dirpath = EnsureNoTrailingSlash(_vfs_dirpath);
 
     VFSStat st_src_dir;
-    const auto src_dir_stat_rc = _host.Stat(vfs_dirpath.c_str(), st_src_dir, VFSFlags::F_NoFollow, _cancel_checker);
+    const auto src_dir_stat_rc = _host.Stat(vfs_dirpath, st_src_dir, VFSFlags::F_NoFollow, _cancel_checker);
     if( src_dir_stat_rc != VFSError::Ok )
         return {};
 
@@ -505,7 +503,7 @@ Traverse(const std::string &_vfs_dirpath, VFSHost &_host, const std::function<bo
 
             auto full_entry_path = current.src_full_path + "/" + _dirent.name;
             VFSStat st;
-            const auto stat_rc = _host.Stat(full_entry_path.c_str(), st, VFSFlags::F_NoFollow, _cancel_checker);
+            const auto stat_rc = _host.Stat(full_entry_path, st, VFSFlags::F_NoFollow, _cancel_checker);
             if( stat_rc != VFSError::Ok )
                 return false;
 
@@ -517,7 +515,7 @@ Traverse(const std::string &_vfs_dirpath, VFSHost &_host, const std::function<bo
             return true;
         };
 
-        const auto rc = _host.IterateDirectoryListing(current.src_full_path.c_str(), block);
+        const auto rc = _host.IterateDirectoryListing(current.src_full_path, block);
         if( rc != VFSError::Ok )
             return {};
     }
@@ -538,7 +536,7 @@ static int ExtractRegFile(const std::string &_vfs_path,
                           const std::function<bool()> &_cancel_checker)
 {
     VFSFilePtr vfs_file;
-    const auto create_file_rc = _host.CreateFile(_vfs_path.c_str(), vfs_file, _cancel_checker);
+    const auto create_file_rc = _host.CreateFile(_vfs_path, vfs_file, _cancel_checker);
     if( create_file_rc != VFSError::Ok )
         return create_file_rc;
 
@@ -635,7 +633,7 @@ std::optional<std::string> CopyDirectoryToTempStorage(const std::string &_vfs_di
 
         const auto &entry = *i;
 
-        if( ExtractEntry(entry, _host, base_path, _cancel_checker) != true )
+        if( !ExtractEntry(entry, _host, base_path, _cancel_checker) )
             return {};
     }
 

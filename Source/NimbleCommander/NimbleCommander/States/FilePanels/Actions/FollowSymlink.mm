@@ -30,7 +30,7 @@ void FollowSymlink::Perform(PanelController *_target, [[maybe_unused]] id _sende
     if( !item )
         return;
 
-    if( item.IsSymlink() == false || item.HasSymlink() == false )
+    if( !item.IsSymlink() || !item.HasSymlink() )
         return;
 
     // poor man's symlink resolution:

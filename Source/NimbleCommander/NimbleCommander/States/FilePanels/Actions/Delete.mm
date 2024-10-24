@@ -32,7 +32,7 @@ bool Delete::Predicate(PanelController *_target) const
     return CommonDeletePredicate(_target);
 }
 
-void Delete::Perform(PanelController *_target, id) const
+void Delete::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto items = to_shared_ptr(_target.selectedEntriesOrFocusedEntry);
     if( items->empty() )
@@ -103,12 +103,12 @@ context::MoveToTrash::MoveToTrash(const std::vector<VFSListingItem> &_items) : m
     m_AllAreNative = AllAreNative(m_Items);
 }
 
-bool context::MoveToTrash::Predicate(PanelController *) const
+bool context::MoveToTrash::Predicate(PanelController * /*_target*/) const
 {
     return m_AllAreNative;
 }
 
-void context::MoveToTrash::Perform(PanelController *_target, id) const
+void context::MoveToTrash::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto operation = std::make_shared<nc::ops::Deletion>(m_Items, nc::ops::DeletionType::Trash);
     AddPanelRefreshEpilog(_target, *operation);
@@ -120,12 +120,12 @@ context::DeletePermanently::DeletePermanently(const std::vector<VFSListingItem> 
     m_AllWriteable = std::ranges::all_of(m_Items, [](const auto &i) { return i.Host()->IsWritable(); });
 }
 
-bool context::DeletePermanently::Predicate(PanelController *) const
+bool context::DeletePermanently::Predicate(PanelController * /*_target*/) const
 {
     return m_AllWriteable;
 }
 
-void context::DeletePermanently::Perform(PanelController *_target, id) const
+void context::DeletePermanently::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto operation = std::make_shared<nc::ops::Deletion>(m_Items, nc::ops::DeletionType::Permanent);
     AddPanelRefreshEpilog(_target, *operation);

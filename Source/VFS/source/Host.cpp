@@ -14,7 +14,7 @@
 
 namespace nc::vfs {
 
-HostDirObservationTicket::HostDirObservationTicket() noexcept : m_Ticket(0), m_Host()
+HostDirObservationTicket::HostDirObservationTicket() noexcept : m_Ticket(0)
 {
 }
 
@@ -93,7 +93,7 @@ FileObservationToken &FileObservationToken::operator=(FileObservationToken &&_rh
 
 FileObservationToken::operator bool() const noexcept
 {
-    return m_Token != 0 && m_Host.expired() == false;
+    return m_Token != 0 && !m_Host.expired();
 }
 
 void FileObservationToken::reset() noexcept
@@ -115,7 +115,7 @@ public:
 
     [[nodiscard]] static const char *Junction() { return ""; }
 
-    bool operator==(const VFSHostConfiguration &) const { return true; }
+    bool operator==(const VFSHostConfiguration & /*unused*/) const { return true; }
 };
 
 Host::Host(const std::string_view _junction_path, const std::shared_ptr<Host> &_parent, const char *_fs_tag)
@@ -474,7 +474,7 @@ int Host::FetchFlexibleListingItems(const std::string &_directory_path,
                                     const VFSCancelChecker &_cancel_checker)
 {
     VFSListingPtr listing;
-    const int ret = FetchDirectoryListing(_directory_path.c_str(), listing, _flags, _cancel_checker);
+    const int ret = FetchDirectoryListing(_directory_path, listing, _flags, _cancel_checker);
     if( ret != 0 )
         return ret;
 

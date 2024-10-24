@@ -17,7 +17,7 @@ bool ToggleSingleOrDualMode::ValidateMenuItem(MainWindowFilePanelState *_target,
     return Predicate(_target);
 }
 
-void ToggleSingleOrDualMode::Perform(MainWindowFilePanelState *_target, id) const
+void ToggleSingleOrDualMode::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
 {
     const auto split_view = _target.splitView;
     if( split_view.anyCollapsed ) {

@@ -239,10 +239,10 @@ using namespace nc::viewer;
     m_LineWrapButton.hidden = !(m_Mode == ViewMode::Text);
     m_VSep2.hidden = !(m_Mode == ViewMode::Text);
     m_LanguageButton.hidden = !(m_Mode == ViewMode::Text);
-    m_VSep3.hidden = !(m_Mode == ViewMode::Text || m_Mode == ViewMode::Hex);
-    m_EncodingButton.hidden = !(m_Mode == ViewMode::Text || m_Mode == ViewMode::Hex);
-    m_VSep4.hidden = !(m_Mode == ViewMode::Text || m_Mode == ViewMode::Hex);
-    m_LinePositionButton.hidden = !(m_Mode == ViewMode::Text || m_Mode == ViewMode::Hex);
+    m_VSep3.hidden = m_Mode != ViewMode::Text && m_Mode != ViewMode::Hex;
+    m_EncodingButton.hidden = m_Mode != ViewMode::Text && m_Mode != ViewMode::Hex;
+    m_VSep4.hidden = m_Mode != ViewMode::Text && m_Mode != ViewMode::Hex;
+    m_LinePositionButton.hidden = m_Mode != ViewMode::Text && m_Mode != ViewMode::Hex;
 }
 
 - (void)setMode:(ViewMode)_mode

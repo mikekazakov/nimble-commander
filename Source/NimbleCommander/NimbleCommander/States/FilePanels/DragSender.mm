@@ -102,7 +102,7 @@ std::vector<VFSListingItem> DragSender::Impl::ComposeItemsForDragging(int _sorte
 
     std::vector<VFSListingItem> items;
 
-    if( dragged_item_vd.is_selected() == false )
+    if( !dragged_item_vd.is_selected() )
         items.emplace_back(dragged_item); // drag only clicked item
     else
         items = _data.SelectedEntriesSorted(); // drag all selected items

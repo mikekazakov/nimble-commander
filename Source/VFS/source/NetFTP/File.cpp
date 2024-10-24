@@ -7,6 +7,8 @@
 #include <fmt/format.h>
 #include <VFS/Log.h>
 
+#include <algorithm>
+
 namespace nc::vfs::ftp {
 
 File::File(std::string_view _relative_path, std::shared_ptr<FTPHost> _host) : VFSFile(_relative_path, _host)
@@ -277,7 +279,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
         }
     }
 
-    if( error == true )
+    if( error )
         return VFSError::FromErrno(EIO);
 
     m_FilePos += m_WriteBuf.Consumed();
@@ -337,8 +339,7 @@ off_t File::Seek(off_t _off, int _basis)
 
     if( req_pos < 0 )
         return VFSError::InvalidCall;
-    if( req_pos > static_cast<off_t>(m_FileSize) )
-        req_pos = static_cast<off_t>(m_FileSize);
+    req_pos = std::min(req_pos, static_cast<off_t>(m_FileSize));
 
     m_FilePos = req_pos;
 

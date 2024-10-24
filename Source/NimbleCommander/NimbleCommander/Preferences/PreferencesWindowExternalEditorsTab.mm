@@ -30,9 +30,7 @@ static bool AskUserToDeleteEditor()
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     [alert.buttons objectAtIndex:0].keyEquivalent = @"";
-    if( [alert runModal] == NSAlertFirstButtonReturn )
-        return true;
-    return false;
+    return [alert runModal] == NSAlertFirstButtonReturn;
 }
 
 @implementation PreferencesWindowExternalEditorsTab {
@@ -108,7 +106,7 @@ static bool AskUserToDeleteEditor()
 - (PreferencesWindowExternalEditorsTabNewEditorSheet *)createEditor
 {
     PreferencesWindowExternalEditorsTabNewEditorSheet *sheet = [PreferencesWindowExternalEditorsTabNewEditorSheet new];
-    sheet.hasTerminal = nc::base::AmISandboxed() == false;
+    sheet.hasTerminal = !nc::base::AmISandboxed();
     ;
     return sheet;
 }

@@ -216,14 +216,14 @@ CURLInstance::~CURLInstance()
         curl_multi_cleanup(curlm);
 }
 
-CURLcode CURLInstance::PerformEasy()
+CURLcode CURLInstance::PerformEasy() const
 {
     Log::Trace("CURLInstance::PerformEasy() called");
     assert(!IsAttached());
     return curl_easy_perform(curl);
 }
 
-CURLcode CURLInstance::PerformMulti()
+CURLcode CURLInstance::PerformMulti() const
 {
     int still_running = 0;
     do {

@@ -36,7 +36,7 @@ TEST_CASE(PREFIX "Empty archive building")
     operation.Wait();
 
     REQUIRE(operation.State() == OperationState::Completed);
-    REQUIRE(native_host->Exists(operation.ArchivePath().c_str()));
+    REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
     REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
@@ -57,7 +57,7 @@ TEST_CASE(PREFIX "Compressing Mac kernel")
     REQUIRE(operation.State() == OperationState::Completed);
     CHECK(operation.Statistics().ElapsedTime() > 1ms);
     CHECK(operation.Statistics().ElapsedTime() < 5s);
-    REQUIRE(native_host->Exists(operation.ArchivePath().c_str()));
+    REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
     REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
@@ -85,7 +85,7 @@ TEST_CASE(PREFIX "Compressing Bin utilities")
     operation.Wait();
 
     REQUIRE(operation.State() == OperationState::Completed);
-    REQUIRE(native_host->Exists(operation.ArchivePath().c_str()));
+    REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
     REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
@@ -111,7 +111,7 @@ TEST_CASE(PREFIX "Compressing Bin directory")
     operation.Wait();
 
     REQUIRE(operation.State() == OperationState::Completed);
-    REQUIRE(native_host->Exists(operation.ArchivePath().c_str()));
+    REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
     REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
@@ -133,7 +133,7 @@ TEST_CASE(PREFIX "Compressing Chess.app")
     operation.Wait();
 
     REQUIRE(operation.State() == OperationState::Completed);
-    REQUIRE(native_host->Exists(operation.ArchivePath().c_str()));
+    REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
     REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
@@ -158,7 +158,7 @@ TEST_CASE(PREFIX "Compressing kernel into encrypted archive")
     operation.Wait();
 
     REQUIRE(operation.State() == OperationState::Completed);
-    REQUIRE(native_host->Exists(operation.ArchivePath().c_str()));
+    REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     try {
         std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host);
@@ -189,7 +189,7 @@ TEST_CASE(PREFIX "Compressing /bin into encrypted archive")
     operation.Wait();
 
     REQUIRE(operation.State() == OperationState::Completed);
-    REQUIRE(native_host->Exists(operation.ArchivePath().c_str()));
+    REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
     REQUIRE_NOTHROW(arc_host =
@@ -220,7 +220,7 @@ TEST_CASE(PREFIX "Long compression stats (compressing Music.app)")
     operation.Resume();
     operation.Wait();
     REQUIRE(operation.State() == OperationState::Completed);
-    REQUIRE(native_host->Exists(operation.ArchivePath().c_str()));
+    REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
     REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
@@ -295,9 +295,7 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
         _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
             const int ret = VFSCompareEntries(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
-            if( ret != 0 )
-                return false;
-            return true;
+            return ret == 0;
         });
     }
     return 0;

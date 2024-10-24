@@ -254,11 +254,9 @@ static NSURL *ExtractPromiseDropLocation(NSPasteboard *_pasteboard)
     if( !item.item )
         return;
 
-    if( false )
-        ;
     //    else if( [type isEqualToString:g_PasteboardFilenamesUTI] )
     //        [self provideFilenamesPasteboard:sender item:item];
-    else if( [type isEqualToString:g_PasteboardFileURLPromiseUTI] )
+    if( [type isEqualToString:g_PasteboardFileURLPromiseUTI] )
         [self provideURLPromisePasteboard:sender item:item];
     //    else if( [type isEqualToString:g_PasteboardFileURLUTI] )
     //        [self provideFilenamesURLsPasteboard:sender item:item];

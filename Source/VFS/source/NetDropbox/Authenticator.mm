@@ -137,7 +137,7 @@ std::string TokenMangler::ToMangledRefreshToken(std::string_view _token) noexcep
 
 std::string TokenMangler::FromMangledRefreshToken(std::string_view _token) noexcept
 {
-    if( IsMangledRefreshToken(_token) == false )
+    if( !IsMangledRefreshToken(_token) )
         return {};
     _token.remove_prefix(std::string_view(refresh_token_tag).length());
     return std::string(_token);

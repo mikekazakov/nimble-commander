@@ -512,7 +512,7 @@ static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu 
      * This leads to situation when dialogs look weird - like thay are placed wrongly.
      * To fix it - just offset the opening dialog window by 1px down.
      */
-    if( self.window.toolbar != nil && self.window.toolbar.visible == true ) {
+    if( self.window.toolbar != nil && self.window.toolbar.visible ) {
         rect.origin.y -= 1.;
     }
     return rect;

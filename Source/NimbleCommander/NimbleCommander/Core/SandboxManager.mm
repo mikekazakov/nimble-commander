@@ -225,10 +225,7 @@ bool SandboxManager::HasAccessToFolder_Unlocked(const std::string &_p) const
             return true;
 
     // special treating for /Volumes dir - can browse it by default, but not dirs inside it
-    if( p == "/Volumes" )
-        return true;
-
-    return false;
+    return p == "/Volumes";
 }
 
 bool SandboxManager::CanAccessFolder(const std::string &_path) const
@@ -270,7 +267,5 @@ void SandboxManager::StopUsingBookmarks()
 
 bool SandboxManager::EnsurePathAccess(const std::string &_path)
 {
-    if( !SandboxManager::Instance().CanAccessFolder(_path) && !SandboxManager::Instance().AskAccessForPathSync(_path) )
-        return false;
-    return true;
+    return SandboxManager::Instance().CanAccessFolder(_path) || SandboxManager::Instance().AskAccessForPathSync(_path);
 }

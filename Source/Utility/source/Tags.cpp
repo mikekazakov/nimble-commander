@@ -502,7 +502,7 @@ static std::pmr::vector<std::byte> WritePListObject(const Tags::Tag &_tag, std::
 
         assert(target_size % 2 == 0);
         const size_t len_color = _tag.Color() == Tags::Color::None ? 0 : 2;
-        const size_t len = target_size / 2 + len_color;
+        const size_t len = (target_size / 2) + len_color;
 
         // write the byte marker and size
         WriteVarSize(0x60, len, dst);
@@ -664,10 +664,7 @@ bool Tags::WriteTags(int _fd, std::span<const Tag> _tags) noexcept
     }
     SetFinderInfoLabel(finder_info, _tags.front().Color());
 
-    if( fsetxattr(_fd, g_FinderInfo, finder_info.data(), finder_info.size(), 0, 0) != 0 )
-        return false;
-
-    return true;
+    return fsetxattr(_fd, g_FinderInfo, finder_info.data(), finder_info.size(), 0, 0) == 0;
 }
 
 bool Tags::WriteTags(const std::filesystem::path &_path, std::span<const Tag> _tags) noexcept

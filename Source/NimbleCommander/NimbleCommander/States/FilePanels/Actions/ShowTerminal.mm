@@ -17,7 +17,7 @@ bool ShowTerminal::ValidateMenuItem(MainWindowFilePanelState *_target, NSMenuIte
 
 void ShowTerminal::Perform(MainWindowFilePanelState *_target, [[maybe_unused]] id _sender) const
 {
-    std::string path = "";
+    std::string path;
 
     if( auto pc = _target.activePanelController )
         if( pc.isUniform && pc.vfs->IsNativeFS() )

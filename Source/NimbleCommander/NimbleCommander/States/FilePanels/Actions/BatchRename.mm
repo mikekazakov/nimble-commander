@@ -25,7 +25,7 @@ bool BatchRename::Predicate(PanelController *_target) const
     return true;
 }
 
-void BatchRename::Perform(PanelController *_target, id) const
+void BatchRename::Perform(PanelController *_target, id /*_sender*/) const
 {
     const auto items = _target.selectedEntriesOrFocusedEntry;
     if( items.empty() )

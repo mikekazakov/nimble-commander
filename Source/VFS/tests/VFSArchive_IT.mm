@@ -52,9 +52,7 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
         _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
             const int ret = VFSCompareEntries(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
-            if( ret != 0 )
-                return false;
-            return true;
+            return ret == 0;
         });
     }
     return 0;
@@ -123,10 +121,10 @@ TEST_CASE(PREFIX "XNUSource - TAR")
           const std::string &fn = filenames[std::rand() % filenames.size()];
 
           VFSStat local_st;
-          REQUIRE(host->Stat(fn.c_str(), local_st, 0, nullptr) == 0);
+          REQUIRE(host->Stat(fn, local_st, 0, nullptr) == 0);
 
           VFSFilePtr file;
-          REQUIRE(host->CreateFile(fn.c_str(), file, nullptr) == 0);
+          REQUIRE(host->CreateFile(fn, file, nullptr) == 0);
           REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
           std::this_thread::sleep_for(std::chrono::milliseconds(5));
           auto d = file->ReadFile();

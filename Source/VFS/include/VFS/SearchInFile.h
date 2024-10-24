@@ -41,7 +41,7 @@ public:
     void MoveCurrentPosition(uint64_t _pos);
 
     void SetSearchOptions(Options _options);
-    Options SearchOptions();
+    Options SearchOptions() const;
 
     bool IsEOF() const;
 

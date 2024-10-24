@@ -60,7 +60,7 @@ static Extracted read_stream(const uint64_t _max_bytes,
     } st;
 
     int rc = 0;
-    rc = _parent.CreateFile(_path.c_str(), st.source_file, _cancel_checker);
+    rc = _parent.CreateFile(_path, st.source_file, _cancel_checker);
     if( rc < 0 )
         return rc;
     rc = st.source_file->Open(VFSFlags::OF_Read);
@@ -174,7 +174,7 @@ ArchiveRawHost::ArchiveRawHost(const std::string_view _path,
 ArchiveRawHost::ArchiveRawHost(const VFSHostPtr &_parent,
                                const VFSConfiguration &_config,
                                VFSCancelChecker _cancel_checker)
-    : Host(_config.Get<VFSArchiveRawHostConfiguration>().path.c_str(), _parent, UniqueTag), m_Configuration(_config)
+    : Host(_config.Get<VFSArchiveRawHostConfiguration>().path, _parent, UniqueTag), m_Configuration(_config)
 {
     Init(_cancel_checker);
 }
@@ -213,7 +213,7 @@ void ArchiveRawHost::Init(const VFSCancelChecker &_cancel_checker)
     m_MTime.tv_sec = extracted.mtime;
     if( m_MTime.tv_sec == 0 ) {
         VFSStat st;
-        const auto st_rc = Parent()->Stat(path.c_str(), st, Flags::None, _cancel_checker);
+        const auto st_rc = Parent()->Stat(path, st, Flags::None, _cancel_checker);
         if( st_rc != VFSError::Ok )
             throw VFSErrorException(st_rc);
         m_MTime = st.mtime;

@@ -98,7 +98,7 @@ ExtensionsLowercaseList::ExtensionsLowercaseList(std::string_view _comma_separat
         if( auto trimmed = base::Trim(std::string_view{ext}); !trimmed.empty() )
             exts.emplace_back(trimmed);
     for( auto &ext : exts ) {
-        if( ext.empty() == false )
+        if( !ext.empty() )
             m_List.emplace(i.ExtensionToLowercase(ext));
     }
 }

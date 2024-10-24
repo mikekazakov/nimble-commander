@@ -24,7 +24,7 @@ TemporaryFileStorageImpl::TemporaryFileStorageImpl(std::string_view _base_direct
     : m_BaseDirectory{EnsureTrailingSlash(std::string{_base_directory})},
       m_SubDirectoriesPrefix{_sub_directories_prefix}
 {
-    if( CheckRWAccess(m_BaseDirectory) == false )
+    if( !CheckRWAccess(m_BaseDirectory) )
         throw std::invalid_argument("TemporaryFileStorageImpl: can't access the base directory");
     if( m_SubDirectoriesPrefix.empty() )
         throw std::invalid_argument("TemporaryFileStorageImpl: empty sub directories prefix");
@@ -93,14 +93,14 @@ std::optional<std::string> TemporaryFileStorageImpl::FindSuitableExistingTempDir
     // traverse each temp dir to check if this entry is already in there
     for( size_t i = 0, e = m_TempDirectories.size(); i != e; ++i ) {
         auto &directory = m_TempDirectories[i];
-        if( CheckRWAccess(directory) == false ) {
+        if( !CheckRWAccess(directory) ) {
             // either this directory was purged or tampered in some other way - so remove it
             indices_to_remove.push_back(i);
             continue;
         }
         auto full_path = directory;
         full_path += _for_filename;
-        if( CheckExistence(full_path) == false ) {
+        if( !CheckExistence(full_path) ) {
             // there's no such entry in this directory - use this one then
             chosen_dir = directory;
             break;
@@ -143,7 +143,7 @@ void TemporaryFileStorageImpl::Purge(time_t _older_than)
 {
     const auto directories = FindExistingTempDirectories();
     for( const auto &directory : directories ) {
-        if( PurgeSubDirectory(directory, _older_than) == true )
+        if( PurgeSubDirectory(directory, _older_than) )
             RMRF(directory);
     }
 }
@@ -221,7 +221,7 @@ static std::string MakeRandomFilename()
     // TODO: write something more reasonable
     std::string filename;
     for( int i = 0; i < 6; ++i )
-        filename += 'A' + rand() % ('Z' - 'A');
+        filename += 'A' + (rand() % ('Z' - 'A'));
     return filename;
 }
 

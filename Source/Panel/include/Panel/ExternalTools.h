@@ -190,7 +190,7 @@ public:
     // (StartDetachedFork)
     std::expected<pid_t, std::string> StartDetached();
 
-    std::expected<pid_t, std::string> StartDetachedFork();
+    std::expected<pid_t, std::string> StartDetachedFork() const;
 
     std::expected<pid_t, std::string> StartDetachedUI();
 

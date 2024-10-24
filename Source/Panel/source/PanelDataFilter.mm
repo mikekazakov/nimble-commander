@@ -71,9 +71,8 @@ static bool FuzzySearchSatisfiable(CFStringRef _hay,
         CFRange result = {0, 0};
         const bool found = CFStringFindWithOptions(
             _hay, cs.get(), CFRangeMake(pos, _hay_len - pos), kCFCompareCaseInsensitive, &result);
-        if( found == false )
-            return false; // cannot be satisfied - filename doesn't contain a sparse
-                          // sequence of chars from text
+        if( !found )
+            return false; // cannot be satisfied - filename doesn't contain a sparse sequence of chars from text
         pos = result.location + 1;
     }
     return true;
@@ -248,7 +247,7 @@ bool TextualFilter::IsFiltering() const noexcept
 
 bool HardFilter::IsValidItem(const VFSListingItem &_item, QuickSearchHiglight &_found_range) const
 {
-    if( show_hidden == false && _item.IsHidden() )
+    if( !show_hidden && _item.IsHidden() )
         return false;
 
     return text.IsValidItem(_item, _found_range);

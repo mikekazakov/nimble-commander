@@ -144,7 +144,7 @@ using namespace nc::panel;
                                    "Menu item title to delete file, for English is 'Delete Permanently'");
     delete_item.target = self;
     delete_item.action = @selector(OnDeletePermanently:);
-    delete_item.alternate = trash_item.hidden ? false : true;
+    delete_item.alternate = !trash_item.hidden;
     delete_item.keyEquivalent = @"";
     delete_item.keyEquivalentModifierMask = trash_item.hidden ? 0 : NSEventModifierFlagOption;
     [self addItem:delete_item];

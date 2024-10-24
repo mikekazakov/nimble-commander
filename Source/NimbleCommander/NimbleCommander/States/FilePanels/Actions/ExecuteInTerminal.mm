@@ -30,7 +30,7 @@ bool ExecuteInTerminal::ValidateMenuItem(PanelController *_target, NSMenuItem *_
     return Predicate(_target);
 }
 
-void ExecuteInTerminal::Perform(PanelController *_target, id) const
+void ExecuteInTerminal::Perform(PanelController *_target, id /*_sender*/) const
 {
     if( !Predicate(_target) )
         return;

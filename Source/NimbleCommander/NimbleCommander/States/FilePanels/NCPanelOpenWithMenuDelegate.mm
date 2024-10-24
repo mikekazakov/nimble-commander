@@ -24,7 +24,7 @@ struct FetchResult {
     std::string uti;
 };
 
-static void SortAndPurgeDuplicateHandlers(std::vector<LaunchServiceHandler> &_handlers)
+void SortAndPurgeDuplicateHandlers(std::vector<LaunchServiceHandler> &_handlers)
 {
     std::ranges::sort(
         _handlers, [](const auto &_1st, const auto &_2nd) { return [_1st.Name() localizedCompare:_2nd.Name()] < 0; });
@@ -48,7 +48,7 @@ static void SortAndPurgeDuplicateHandlers(std::vector<LaunchServiceHandler> &_ha
     }
 }
 
-static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, const UTIDB &_db)
+FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, const UTIDB &_db)
 {
     std::vector<LauchServicesHandlers> per_item_handlers;
     per_item_handlers.reserve(_items.size());

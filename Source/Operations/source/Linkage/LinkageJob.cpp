@@ -31,7 +31,7 @@ void LinkageJob::Perform()
 
 void LinkageJob::DoSymlinkCreation()
 {
-    const auto rc = m_VFS->CreateSymlink(m_LinkPath.c_str(), m_LinkValue.c_str());
+    const auto rc = m_VFS->CreateSymlink(m_LinkPath, m_LinkValue);
     if( rc == VFSError::Ok ) {
         Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
     }
@@ -44,7 +44,7 @@ void LinkageJob::DoSymlinkCreation()
 void LinkageJob::DoSymlinkAlteration()
 {
     VFSStat st;
-    const auto stat_rc = m_VFS->Stat(m_LinkPath.c_str(), st, VFSFlags::F_NoFollow);
+    const auto stat_rc = m_VFS->Stat(m_LinkPath, st, VFSFlags::F_NoFollow);
     if( stat_rc != VFSError::Ok ) {
         m_OnAlterSymlinkError(stat_rc, m_LinkPath, *m_VFS);
         Stop();
@@ -57,14 +57,14 @@ void LinkageJob::DoSymlinkAlteration()
         return;
     }
 
-    const auto unlink_rc = m_VFS->Unlink(m_LinkPath.c_str());
+    const auto unlink_rc = m_VFS->Unlink(m_LinkPath);
     if( unlink_rc != VFSError::Ok ) {
         m_OnAlterSymlinkError(unlink_rc, m_LinkPath, *m_VFS);
         Stop();
         return;
     }
 
-    const auto link_rc = m_VFS->CreateSymlink(m_LinkPath.c_str(), m_LinkValue.c_str());
+    const auto link_rc = m_VFS->CreateSymlink(m_LinkPath, m_LinkValue);
     if( link_rc == VFSError::Ok ) {
         Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
     }

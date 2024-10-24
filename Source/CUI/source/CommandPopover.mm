@@ -1036,7 +1036,7 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
         else if( _alignment == NCCommandPopoverAlignment::Right )
             return NSMaxX(rect_on_screen) - sx;
         else
-            return NSMinX(rect_on_screen) + (rect_on_screen.size.width - sx) / 2.;
+            return NSMinX(rect_on_screen) + ((rect_on_screen.size.width - sx) / 2.);
     }();
     const double y = NSMinY(rect_on_screen) - m_ContentSize.height;
     NSScreen *screen = _positioning_view.window.screen;

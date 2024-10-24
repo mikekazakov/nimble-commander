@@ -254,7 +254,7 @@ bool ParserImpl::SSEscConsume(unsigned char _byte) noexcept
             return true;
 
         case '8':
-            if( m_EscState.hash == true )
+            if( m_EscState.hash )
                 /* DECALN – Screen Alignment Display (DEC Private)
                  ESC # 8
                  This command fills the entire screen area with uppercase Es for screen focus and

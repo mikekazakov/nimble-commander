@@ -223,7 +223,7 @@ using SelPoint = term::ScreenPoint;
 - (void)adjustSizes:(bool)_mandatory
 {
     const int full_lines_height = self.fullScreenLinesHeight;
-    if( full_lines_height == m_LastScreenFullHeight && _mandatory == false )
+    if( full_lines_height == m_LastScreenFullHeight && !_mandatory )
         return;
 
     m_LastScreenFullHeight = full_lines_height;
@@ -323,7 +323,8 @@ struct LazyLineRectFiller {
     {
         if( clr ) {
             CGContextSetFillColorWithColor(ctx, clr);
-            auto rc = CGRectMake(origin_x + start * cell_width, origin_y, (end - start + 1) * cell_width, cell_height);
+            auto rc =
+                CGRectMake(origin_x + (start * cell_width), origin_y, (end - start + 1) * cell_width, cell_height);
             CGContextFillRect(ctx, rc);
             clr = nullptr;
         }
@@ -379,7 +380,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         else if( _sel_y < m_SelEnd.y && _sel_y > m_SelStart.y )
             rc = CGRectMake(0, _y * height, self.frame.size.width, height);
         else if( _sel_y == m_SelStart.y )
-            rc = CGRectMake(m_SelStart.x * width, _y * height, self.frame.size.width - m_SelStart.x * width, height);
+            rc = CGRectMake(m_SelStart.x * width, _y * height, self.frame.size.width - (m_SelStart.x * width), height);
         else if( _sel_y == m_SelEnd.y )
             rc = CGRectMake(0, _y * height, m_SelEnd.x * width, height);
 
@@ -401,7 +402,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         const ScreenBuffer::Space attr = _line[_first];
         if( attr.invisible )
             return;
-        if( attr.blink && blink_visible == false )
+        if( attr.blink && !blink_visible )
             return;
 
         // gather all char codes and their coordinates from the run
@@ -415,7 +416,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             if( !draw_glyph )
                 continue;
             const double rx = x * width;
-            const double ry = _y * height + height - descent;
+            const double ry = (_y * height) + height - descent;
             codes.push_back(cs.l);
             positions.push_back({rx, ry});
         }
@@ -490,7 +491,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
 - (void)drawCursor:(NSRect)_char_rect context:(CGContextRef)_context
 {
-    if( m_ShowCursor == false )
+    if( !m_ShowCursor )
         return;
 
     const bool is_wnd_active = self.window.isKeyWindow;
@@ -534,7 +535,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 - (NSRect)adjustScroll:(NSRect)proposedVisibleRect
 {
     const auto font_height = m_FontCache->Height();
-    proposedVisibleRect.origin.y = floor(proposedVisibleRect.origin.y / font_height + 0.5) * font_height;
+    proposedVisibleRect.origin.y = floor((proposedVisibleRect.origin.y / font_height) + 0.5) * font_height;
     return proposedVisibleRect;
 }
 
@@ -549,15 +550,13 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 - (SelPoint)projectPoint:(NSPoint)_point
 {
     auto y_pos = _point.y;
-    if( y_pos < 0 )
-        y_pos = 0;
+    y_pos = std::max<CGFloat>(y_pos, 0);
 
     const int line_predict =
         static_cast<int>(std::floor(y_pos / m_FontCache->Height()) - m_Screen->Buffer().BackScreenLines());
 
     auto x_pos = _point.x;
-    if( x_pos < 0 )
-        x_pos = 0;
+    x_pos = std::max<CGFloat>(x_pos, 0);
     const int col_predict = static_cast<int>(std::floor(x_pos / m_FontCache->Width()));
     return SelPoint{col_predict, line_predict};
 }
@@ -719,7 +718,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 {
     // TODO: not a precise selection modification. look at viewer, it has better implementation.
 
-    bool modifying_existing_selection = ([event modifierFlags] & NSEventModifierFlagShift) ? true : false;
+    bool modifying_existing_selection = ([event modifierFlags] & NSEventModifierFlagShift) != 0;
     NSPoint first_loc = [self convertPoint:[event locationInWindow] fromView:nil];
 
     while( [event type] != NSEventTypeLeftMouseUp ) {
@@ -1145,7 +1144,7 @@ static constexpr InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(N
         if( !has(types, type) )
             return;
 
-        if( location_cell_changed == false && has(movement_types, type) )
+        if( !location_cell_changed && has(movement_types, type) )
             return;
 
         InputTranslator::MouseEvent evt;
@@ -1174,7 +1173,7 @@ static constexpr InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(N
         if( !has(types, type) )
             return;
 
-        if( location_cell_changed == false && has(movement_types, type) )
+        if( !location_cell_changed && has(movement_types, type) )
             return;
 
         InputTranslator::MouseEvent evt;

@@ -437,10 +437,10 @@ static constexpr auto g_DividerThickness = 1.;
 
     const long item_tag = _item.tag;
     if( item_tag == move_left_tag ) {
-        return self.isLeftCollapsed == false;
+        return !self.isLeftCollapsed;
     }
     if( item_tag == move_right_tag ) {
-        return self.isRightCollapsed == false;
+        return !self.isRightCollapsed;
     }
 
     return true;

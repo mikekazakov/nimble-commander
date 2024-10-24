@@ -145,9 +145,9 @@ FavoriteLocationsStorageImpl::FrecentlyUsed(int _amount) const
 
     for( auto &v : recent_visits ) {
         // this is actually not a real frequency, but a normalized value of a visits count.
-        const auto frequency = static_cast<float>(std::get<1>(v)) / max_visits;        // [0..1]
-        const auto recency = 1. - float(now - std::get<2>(v)) / float(g_MaxTimeRange); // [0..1]
-        const auto score = frequency + recency;                                        // [0..2]
+        const auto frequency = static_cast<float>(std::get<1>(v)) / max_visits;          // [0..1]
+        const auto recency = 1. - (float(now - std::get<2>(v)) / float(g_MaxTimeRange)); // [0..1]
+        const auto score = frequency + recency;                                          // [0..2]
         std::get<3>(v) = static_cast<float>(score);
     }
 

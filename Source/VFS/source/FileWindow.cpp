@@ -13,7 +13,7 @@ FileWindow::FileWindow(const std::shared_ptr<VFSFile> &_file, int _window_size)
 
 bool FileWindow::FileOpened() const
 {
-    return m_Window.get() != nullptr;
+    return m_Window != nullptr;
 }
 
 int FileWindow::Attach(const std::shared_ptr<VFSFile> &_file, int _window_size)

@@ -14,7 +14,7 @@ void DynamicWidthLayoutEngine::Layout(const Params &_params)
     }
     else {
         m_ColumnsNumber =
-            (m_ItemsNumber % m_RowsNumber != 0) ? (m_ItemsNumber / m_RowsNumber + 1) : (m_ItemsNumber / m_RowsNumber);
+            (m_ItemsNumber % m_RowsNumber != 0) ? ((m_ItemsNumber / m_RowsNumber) + 1) : (m_ItemsNumber / m_RowsNumber);
         PerformNormalLayout(_params);
     }
 }
@@ -98,10 +98,7 @@ bool DynamicWidthLayoutEngine::ShouldRelayoutForNewBounds(const NSRect clip_view
 {
     const auto height = clip_view_bounds.size.height;
     const auto projected_rows_number = NumberOfRowsForViewHeight(height, m_ItemHeight);
-    if( projected_rows_number != m_RowsNumber )
-        return true;
-    else
-        return false;
+    return projected_rows_number != m_RowsNumber;
 }
 
 NSArray<NSCollectionViewLayoutAttributes *> *

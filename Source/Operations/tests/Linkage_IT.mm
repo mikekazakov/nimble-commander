@@ -22,12 +22,12 @@ TEST_CASE(PREFIX "symlink creation")
     REQUIRE(operation.State() == OperationState::Completed);
 
     VFSStat st;
-    const auto st_rc = host->Stat(path.c_str(), st, VFSFlags::F_NoFollow);
+    const auto st_rc = host->Stat(path, st, VFSFlags::F_NoFollow);
     REQUIRE(st_rc == VFSError::Ok);
     REQUIRE((st.mode & S_IFMT) == S_IFLNK);
 
     char buf[MAXPATHLEN];
-    REQUIRE(host->ReadSymlink(path.c_str(), buf, sizeof(buf)) == VFSError::Ok);
+    REQUIRE(host->ReadSymlink(path, buf, sizeof(buf)) == VFSError::Ok);
     REQUIRE(buf == value);
 }
 
@@ -57,12 +57,12 @@ TEST_CASE(PREFIX "symlink alteration")
     REQUIRE(operation.State() == OperationState::Completed);
 
     VFSStat st;
-    const auto st_rc = host->Stat(path.c_str(), st, VFSFlags::F_NoFollow);
+    const auto st_rc = host->Stat(path, st, VFSFlags::F_NoFollow);
     REQUIRE(st_rc == VFSError::Ok);
     REQUIRE((st.mode & S_IFMT) == S_IFLNK);
 
     char buf[MAXPATHLEN];
-    REQUIRE(host->ReadSymlink(path.c_str(), buf, sizeof(buf)) == VFSError::Ok);
+    REQUIRE(host->ReadSymlink(path, buf, sizeof(buf)) == VFSError::Ok);
     REQUIRE(buf == value);
 }
 
@@ -81,7 +81,7 @@ TEST_CASE(PREFIX "hardlink creation")
 
     VFSStat st1;
     VFSStat st2;
-    REQUIRE(host->Stat(path.c_str(), st1, 0) == VFSError::Ok);
-    REQUIRE(host->Stat(value.c_str(), st2, 0) == VFSError::Ok);
+    REQUIRE(host->Stat(path, st1, 0) == VFSError::Ok);
+    REQUIRE(host->Stat(value, st2, 0) == VFSError::Ok);
     REQUIRE(st1.inode == st2.inode);
 }

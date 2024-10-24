@@ -423,7 +423,7 @@ static constinit std::pair<const char*, const char8_t*> g_DefaultShortcuts[] = {
 // clang-format on
 
 template <size_t size, typename T, size_t... indexes>
-static constexpr auto make_array_n_impl(T &&value, std::index_sequence<indexes...>)
+static constexpr auto make_array_n_impl(T &&value, std::index_sequence<indexes...> /*unused*/)
 {
     return std::array<std::decay_t<T>, size>{(static_cast<void>(indexes), value)..., std::forward<T>(value)};
 }

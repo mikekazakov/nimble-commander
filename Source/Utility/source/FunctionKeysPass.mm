@@ -165,7 +165,7 @@ bool FunctionalKeysPass::Enable()
     dispatch_assert_main_queue();
 
     if( m_Port == nullptr ) {
-        if( ObtainAccessiblityRights() == false )
+        if( !ObtainAccessiblityRights() )
             return false;
 
         const auto interested_events =

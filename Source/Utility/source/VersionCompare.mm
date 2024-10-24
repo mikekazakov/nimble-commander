@@ -78,12 +78,12 @@ int VersionCompare::Compare(std::string_view _lhs, std::string_view _rhs) noexce
         }
         else {
             // different part
-            if( std::holds_alternative<std::string_view>(left_token) == true &&
-                std::holds_alternative<std::string_view>(right_token) == false ) {
+            if( std::holds_alternative<std::string_view>(left_token) &&
+                !std::holds_alternative<std::string_view>(right_token) ) {
                 return -1;
             }
-            else if( std::holds_alternative<std::string_view>(left_token) == false &&
-                     std::holds_alternative<std::string_view>(right_token) == true ) {
+            else if( !std::holds_alternative<std::string_view>(left_token) &&
+                     std::holds_alternative<std::string_view>(right_token) ) {
                 return 1;
             }
             else if( std::holds_alternative<std::uint64_t>(left_token) ) {

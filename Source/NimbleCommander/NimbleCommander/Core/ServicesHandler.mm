@@ -73,7 +73,7 @@ ExtractFirstDirectoryAndFilenamesInside(const std::vector<std::string> &_paths)
 
 static bool IsASingleDirectoryPath(const std::vector<std::string> &_paths, VFSHost &_native_host)
 {
-    return _paths.size() == 1 && _native_host.IsDirectory(_paths[0].c_str(), 0);
+    return _paths.size() == 1 && _native_host.IsDirectory(_paths[0], 0);
 }
 
 void ServicesHandler::RevealItem(NSPasteboard *_pboard,

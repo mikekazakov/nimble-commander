@@ -97,23 +97,23 @@ void NetworkConnectionsManager::Connection::Accept(NetworkConnectionsManager::Co
 
 NetworkConnectionsManager::ConnectionVisitor::~ConnectionVisitor() = default;
 
-void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::FTP &)
+void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::FTP & /*unused*/)
 {
 }
 
-void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::SFTP &)
+void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::SFTP & /*unused*/)
 {
 }
 
-void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::LANShare &)
+void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::LANShare & /*unused*/)
 {
 }
 
-void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::Dropbox &)
+void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::Dropbox & /*unused*/)
 {
 }
 
-void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::WebDAV &)
+void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::WebDAV & /*unused*/)
 {
 }
 

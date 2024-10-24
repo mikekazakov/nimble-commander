@@ -82,7 +82,7 @@ PanelListViewGeometry::PanelListViewGeometry(NSFont *_font, int _icon_scale)
 
 short PanelListViewGeometry::FilenameOffsetInColumn() const noexcept
 {
-    return static_cast<short>(IconSize() ? 2 * LeftInset() + IconSize() : LeftInset());
+    return static_cast<short>(IconSize() ? (2 * LeftInset()) + IconSize() : LeftInset());
 }
 
 } // namespace nc::panel

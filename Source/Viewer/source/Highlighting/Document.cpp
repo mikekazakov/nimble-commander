@@ -106,7 +106,7 @@ int Document::CodePage() const noexcept
     return 65001; // UTF8
 }
 
-bool Document::IsDBCSLeadByte(char) const noexcept
+bool Document::IsDBCSLeadByte(char /*ch*/) const noexcept
 {
     return false;
 }

@@ -138,13 +138,13 @@ void FileOpener::Open(std::string _filepath,
 
     dispatch_to_default([=, this] {
         auto activity_ticket = [_panel registerExtActivity];
-        if( _host->IsDirectory(_filepath.c_str(), 0, nullptr) ) {
+        if( _host->IsDirectory(_filepath, 0, nullptr) ) {
             NSBeep();
             return;
         }
 
         VFSStat st;
-        if( _host->Stat(_filepath.c_str(), st, 0, nullptr) < 0 ) {
+        if( _host->Stat(_filepath, st, 0, nullptr) < 0 ) {
             NSBeep();
             return;
         }
@@ -201,11 +201,11 @@ void FileOpener::Open(std::vector<std::string> _filepaths,
         auto activity_ticket = [_panel registerExtActivity];
         NSMutableArray *const arr = [NSMutableArray arrayWithCapacity:_filepaths.size()];
         for( auto &i : _filepaths ) {
-            if( _host->IsDirectory(i.c_str(), 0, nullptr) )
+            if( _host->IsDirectory(i, 0, nullptr) )
                 continue;
 
             VFSStat st;
-            if( _host->Stat(i.c_str(), st, 0, nullptr) < 0 )
+            if( _host->Stat(i, st, 0, nullptr) < 0 )
                 continue;
 
             if( st.size > g_MaxFileSizeForVFSOpen )
@@ -246,13 +246,13 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
                              this] { // do downloading down in a background thread
             auto activity_ticket = [_panel registerExtActivity];
 
-            if( _host->IsDirectory(_filepath.c_str(), 0, nullptr) ) {
+            if( _host->IsDirectory(_filepath, 0, nullptr) ) {
                 NSBeep();
                 return;
             }
 
             VFSStat st;
-            if( _host->Stat(_filepath.c_str(), st, 0, nullptr) < 0 ) {
+            if( _host->Stat(_filepath, st, 0, nullptr) < 0 ) {
                 NSBeep();
                 return;
             }

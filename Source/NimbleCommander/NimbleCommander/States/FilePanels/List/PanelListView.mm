@@ -515,13 +515,13 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 {
     [_view setFilename:_item.DisplayNameNS() andTags:_item.Tags()];
 
-    if( m_IconRepository->IsValidSlot(_vd.icon) == true ) {
+    if( m_IconRepository->IsValidSlot(_vd.icon) ) {
         [_view setIcon:m_IconRepository->AvailableIconForSlot(_vd.icon)];
         m_IconRepository->ScheduleIconProduction(_vd.icon, _item);
     }
     else {
         _vd.icon = m_IconRepository->Register(_item);
-        if( m_IconRepository->IsValidSlot(_vd.icon) == true ) {
+        if( m_IconRepository->IsValidSlot(_vd.icon) ) {
             [_view setIcon:m_IconRepository->AvailableIconForSlot(_vd.icon)];
             m_IconRepository->ScheduleIconProduction(_vd.icon, _item);
         }
@@ -1038,7 +1038,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     shouldReorderColumn:(NSInteger)columnIndex
                toColumn:(NSInteger)newColumnIndex
 {
-    return !(columnIndex == 0 || newColumnIndex == 0);
+    return columnIndex != 0 && newColumnIndex != 0;
 }
 
 - (NSMenu *)columnsSelectionMenu

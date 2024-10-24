@@ -18,7 +18,7 @@ bool OpenWithExternalEditor::Predicate(PanelController *_target) const
     return i && !i.IsDotDot();
 }
 
-void OpenWithExternalEditor::Perform(PanelController *_target, id) const
+void OpenWithExternalEditor::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto item = _target.view.item;
     if( !item || item.IsDotDot() )
@@ -30,7 +30,7 @@ void OpenWithExternalEditor::Perform(PanelController *_target, id) const
         return;
     }
 
-    if( ed->OpenInTerminal() == false )
+    if( !ed->OpenInTerminal() )
         m_FileOpener.Open(item.Path(), item.Host(), ed->Path(), _target);
     else
         m_FileOpener.OpenInExternalEditorTerminal(item.Path(), item.Host(), ed, item.Filename(), _target);

@@ -8,6 +8,8 @@
 #include <dirent.h>
 #include <fmt/format.h>
 
+#include <algorithm>
+
 using namespace std::literals;
 
 namespace nc::vfs {
@@ -50,10 +52,7 @@ static bool TurnOffBlockingMode(int _fd) noexcept
         return false;
 
     fcntl_ret = fcntl(_fd, F_SETFL, fcntl_ret & ~O_NONBLOCK);
-    if( fcntl_ret < 0 )
-        return false;
-
-    return true;
+    return fcntl_ret >= 0;
 }
 
 static int EnumerateAttrs(int _fd, std::vector<std::pair<std::string, unsigned>> &_attrs)
@@ -427,8 +426,7 @@ off_t XAttrFile::Seek(off_t _off, int _basis)
 
     if( req_pos < 0 )
         return VFSError::InvalidCall;
-    if( req_pos > m_Size )
-        req_pos = m_Size;
+    req_pos = std::min<off_t>(req_pos, m_Size);
     m_Position = req_pos;
 
     return m_Position;

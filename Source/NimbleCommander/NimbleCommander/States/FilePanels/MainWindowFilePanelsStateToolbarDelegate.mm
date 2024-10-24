@@ -107,7 +107,7 @@ static NSImage *MakeBackupToolImage()
 static NSImage *ImageForTool(const nc::panel::ExternalTool &_et)
 {
     std::filesystem::path tool_path = _et.m_ExecutablePath;
-    if( std::filesystem::exists(tool_path) == false ) {
+    if( !std::filesystem::exists(tool_path) ) {
         // presumably this is a short name of a CLI tool, i.e. 'zip'. let's resolve it
         const auto paths = nc::base::WhereIs(_et.m_ExecutablePath);
         if( paths.empty() )

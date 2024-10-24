@@ -54,7 +54,7 @@ static int UTF8Errors(const unsigned char *_bytes, size_t _n)
 static int UTF16LEErrors(const unsigned char *_bytes, size_t _n)
 {
     const uint16_t *cur = reinterpret_cast<const uint16_t *>(_bytes);
-    const uint16_t *end = cur + _n / sizeof(uint16_t);
+    const uint16_t *end = cur + (_n / sizeof(uint16_t));
 
     int errors = 0;
 
@@ -87,7 +87,7 @@ static int UTF16LEErrors(const unsigned char *_bytes, size_t _n)
 static int UTF16BEErrors(const unsigned char *_bytes, size_t _n)
 {
     const uint16_t *cur = reinterpret_cast<const uint16_t *>(_bytes);
-    const uint16_t *end = cur + _n / sizeof(uint16_t);
+    const uint16_t *end = cur + (_n / sizeof(uint16_t));
 
     int errors = 0;
 

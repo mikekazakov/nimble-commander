@@ -255,7 +255,7 @@ public:
 
     [[nodiscard]] static const char *Junction() { return ""; }
 
-    bool operator==(const VFSPSHostConfiguration &) const { return true; }
+    bool operator==(const VFSPSHostConfiguration & /*unused*/) const { return true; }
 
     [[nodiscard]] static const char *VerboseJunction() { return "[psfs]:"; }
 };
@@ -367,7 +367,7 @@ void PSHost::UpdateCycle()
 
 void PSHost::EnsureUpdateRunning()
 {
-    if( m_UpdateStarted == false ) {
+    if( !m_UpdateStarted ) {
         m_UpdateStarted = true;
         UpdateCycle();
     }
@@ -489,9 +489,7 @@ bool PSHost::IsDirectory(std::string_view _path,
                          [[maybe_unused]] unsigned long _flags,
                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _path.empty() || _path != "/" )
-        return false;
-    return true;
+    return !(_path.empty() || _path != "/");
 }
 
 int PSHost::CreateFile(std::string_view _path,
@@ -576,7 +574,7 @@ bool PSHost::IsDirectoryChangeObservationAvailable([[maybe_unused]] std::string_
     return true;
 }
 
-HostDirObservationTicket PSHost::ObserveDirectoryChanges(std::string_view, std::function<void()> _handler)
+HostDirObservationTicket PSHost::ObserveDirectoryChanges(std::string_view /*_path*/, std::function<void()> _handler)
 {
     // currently we don't care about _path, since this fs has only one directory - root
     auto ticket = m_LastTicket++;

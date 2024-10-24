@@ -677,7 +677,7 @@ TEST_CASE(PREFIX "RandomWrappers")
     auto host = hostForUbuntu2004_User2_RSA();
 
     VFSFilePtr seq_file;
-    REQUIRE(host->CreateFile((host->HomeDir() + "/.ssh/authorized_keys").c_str(), seq_file, nullptr) == VFSError::Ok);
+    REQUIRE(host->CreateFile(host->HomeDir() + "/.ssh/authorized_keys", seq_file, nullptr) == VFSError::Ok);
 
     auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(seq_file);
     REQUIRE(wrapper->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock, nullptr, nullptr) == VFSError::Ok);

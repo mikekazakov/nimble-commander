@@ -321,7 +321,7 @@ VFSListingPtr Listing::ProduceUpdatedTemporaryPanelListing(const Listing &_origi
 
         VFSStat st;
         auto stat_flags = _original.IsSymlink(i) ? VFSFlags::F_NoFollow : 0;
-        if( _original.Host(i)->Stat(path.c_str(), st, stat_flags, _cancel_checker) == 0 ) {
+        if( _original.Host(i)->Stat(path, st, stat_flags, _cancel_checker) == 0 ) {
 
             result.filenames.emplace_back(_original.Filename(i));
             result.unix_modes.emplace_back(_original.UnixMode(i));

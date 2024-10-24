@@ -299,7 +299,7 @@ static NSString *TitleForData(const data::Model *_data);
     m_MainSplitViewBottomConstraint.priority = NSLayoutPriorityDragThatCannotResizeWindow;
     [self addConstraint:m_MainSplitViewBottomConstraint];
 
-    if( nc::base::AmISandboxed() == false ) {
+    if( !nc::base::AmISandboxed() ) {
         m_OverlappedTerminal->terminal = [[FilePanelOverlappedTerminal alloc] initWithFrame:self.bounds];
         m_OverlappedTerminal->terminal.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_OverlappedTerminal->terminal positioned:NSWindowBelow relativeTo:nil];
@@ -1076,7 +1076,7 @@ static NSString *TrimmedTitleForWindow(NSString *_title, NSWindow *_window)
     const auto left = NSMaxX([_window standardWindowButton:NSWindowZoomButton].frame);
     const auto right = _window.frame.size.width;
     const auto padding = 8.;
-    const auto width = right - left - 2 * padding;
+    const auto width = right - left - (2 * padding);
     return StringByTruncatingToWidth(_title, static_cast<float>(width), kTruncateAtStart, attributes);
 }
 

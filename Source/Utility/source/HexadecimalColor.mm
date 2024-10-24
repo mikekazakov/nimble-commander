@@ -32,7 +32,7 @@ static constexpr int HexToInt(char _c) noexcept
 
 static constexpr int DupHex(int _h) noexcept
 {
-    return _h * 16 + _h;
+    return (_h * 16) + _h;
 }
 
 static constexpr uint32_t HexadecimalColorStringToRGBA(std::string_view _string) noexcept
@@ -41,14 +41,14 @@ static constexpr uint32_t HexadecimalColorStringToRGBA(std::string_view _string)
         return g_BlackColor;
 
     if( _string.length() >= 9 ) // #RRGGBBAA
-        return MakeRGBA(static_cast<uint8_t>(HexToInt(_string[1]) * 16 + HexToInt(_string[2])),
-                        static_cast<uint8_t>(HexToInt(_string[3]) * 16 + HexToInt(_string[4])),
-                        static_cast<uint8_t>(HexToInt(_string[5]) * 16 + HexToInt(_string[6])),
-                        static_cast<uint8_t>(HexToInt(_string[7]) * 16 + HexToInt(_string[8])));
+        return MakeRGBA(static_cast<uint8_t>((HexToInt(_string[1]) * 16) + HexToInt(_string[2])),
+                        static_cast<uint8_t>((HexToInt(_string[3]) * 16) + HexToInt(_string[4])),
+                        static_cast<uint8_t>((HexToInt(_string[5]) * 16) + HexToInt(_string[6])),
+                        static_cast<uint8_t>((HexToInt(_string[7]) * 16) + HexToInt(_string[8])));
     if( _string.length() >= 7 ) // #RRGGBB
-        return MakeRGBA(static_cast<uint8_t>(HexToInt(_string[1]) * 16 + HexToInt(_string[2])),
-                        static_cast<uint8_t>(HexToInt(_string[3]) * 16 + HexToInt(_string[4])),
-                        static_cast<uint8_t>(HexToInt(_string[5]) * 16 + HexToInt(_string[6])),
+        return MakeRGBA(static_cast<uint8_t>((HexToInt(_string[1]) * 16) + HexToInt(_string[2])),
+                        static_cast<uint8_t>((HexToInt(_string[3]) * 16) + HexToInt(_string[4])),
+                        static_cast<uint8_t>((HexToInt(_string[5]) * 16) + HexToInt(_string[6])),
                         255);
     if( _string.length() >= 5 ) // #RGBA
         return MakeRGBA(static_cast<uint8_t>(DupHex(HexToInt(_string[1]))),

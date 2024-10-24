@@ -517,9 +517,9 @@ void ScreenBuffer::RevertToSnapshot(const Snapshot &_snapshot)
     else { // TODO: anchor?
         std::fill_n(m_OnScreenSpaces.get(), m_Width * m_Height, m_EraseChar);
         for( int y = 0, e = std::min(_snapshot.height, m_Height); y != e; ++y ) {
-            std::copy_n(_snapshot.chars.get() + y * _snapshot.width,
+            std::copy_n(_snapshot.chars.get() + (y * _snapshot.width),
                         std::min(_snapshot.width, m_Width),
-                        m_OnScreenSpaces.get() + y * m_Width);
+                        m_OnScreenSpaces.get() + (y * m_Width));
         }
     }
 }

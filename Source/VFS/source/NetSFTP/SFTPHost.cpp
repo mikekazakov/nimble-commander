@@ -60,13 +60,13 @@ bool SFTPHost::Connection::Alive() const
 struct SFTPHost::AutoConnectionReturn // classic RAII stuff to prevent connections leaking in
                                       // operations
 {
-    inline AutoConnectionReturn(std::unique_ptr<Connection> &_conn, SFTPHost *_this) : m_Conn(_conn), m_This(_this)
+    AutoConnectionReturn(std::unique_ptr<Connection> &_conn, SFTPHost *_this) : m_Conn(_conn), m_This(_this)
     {
         assert(_conn != nullptr);
         assert(_this != nullptr);
     }
 
-    inline ~AutoConnectionReturn() { m_This->ReturnConnection(std::move(m_Conn)); }
+    ~AutoConnectionReturn() { m_This->ReturnConnection(std::move(m_Conn)); }
     std::unique_ptr<Connection> &m_Conn;
     SFTPHost *m_This;
 };
@@ -115,7 +115,7 @@ VFSMeta SFTPHost::Meta()
 }
 
 SFTPHost::SFTPHost(const VFSConfiguration &_config)
-    : Host(_config.Get<SFTPHostConfiguration>().server_url.c_str(), nullptr, UniqueTag), m_Config(_config)
+    : Host(_config.Get<SFTPHostConfiguration>().server_url, nullptr, UniqueTag), m_Config(_config)
 {
     const int rc = DoInit();
     if( rc < 0 )
@@ -146,7 +146,7 @@ SFTPHost::SFTPHost(const std::string &_serv_url,
                    const std::string &_keypath,
                    long _port,
                    const std::string &_home)
-    : Host(_serv_url.c_str(), nullptr, UniqueTag),
+    : Host(_serv_url, nullptr, UniqueTag),
       m_Config(ComposeConfguration(_serv_url, _user, _passwd, _keypath, _port, _home))
 {
     const int rc = DoInit();
@@ -657,7 +657,7 @@ int SFTPHost::Rename(std::string_view _old_path, std::string_view _new_path, con
     const auto rename_vfs_rc = VFSErrorForConnection(*conn);
 
     if( rename_rc == LIBSSH2_ERROR_SFTP_PROTOCOL && libssh2_sftp_last_error(conn->sftp) == LIBSSH2_FX_FAILURE &&
-        Exists(_new_path, _cancel_checker) == true ) {
+        Exists(_new_path, _cancel_checker) ) {
         // it's likely that a SSH server forbids a direct usage of overwriting semantics
         // lets try to fallback to "rm + mv" scheme
         const auto unlink_rc = Unlink(_new_path, _cancel_checker);

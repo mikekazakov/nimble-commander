@@ -7,7 +7,7 @@
 
 namespace nc::vfsicon {
 
-static inline void hash_combine(size_t &)
+static inline void hash_combine(size_t & /*unused*/)
 {
 }
 
@@ -59,7 +59,7 @@ QLThumbnailsCacheImpl::Key::Key(Key &&_key) noexcept
     hash = _key.hash;
 }
 
-inline QLThumbnailsCacheImpl::Key::Key(std::string_view _path, int _px_size, no_ownership_tag)
+inline QLThumbnailsCacheImpl::Key::Key(std::string_view _path, int _px_size, no_ownership_tag /*unused*/)
 {
     px_size = _px_size;
     path = _path;
@@ -194,12 +194,12 @@ void QLThumbnailsCacheImpl::CheckCacheAndUpdateIfNeeded(const std::string &_file
                                                         const std::optional<FileStateHint> &_hint)
 {
     Log::Trace("CheckCacheAndUpdateIfNeeded(): called for '{}' ({}px)", _filename, _px_size);
-    if( _info.is_in_work.test_and_set() == false ) {
+    if( !_info.is_in_work.test_and_set() ) {
         auto clear_lock = at_scope_end([&] { _info.is_in_work.clear(); });
         // we're first to take control of this item
 
         const auto file_state_hint = _hint ? _hint : ReadFileState(_filename);
-        if( file_state_hint.has_value() == false ) {
+        if( !file_state_hint.has_value() ) {
             Log::Warn("CheckCacheAndUpdateIfNeeded(): can't get a file state hint for '{}'", _filename);
             return; // can't proceed without information about the file.
         }

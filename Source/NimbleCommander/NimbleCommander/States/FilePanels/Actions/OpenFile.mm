@@ -26,7 +26,7 @@ static bool CommonPredicate(PanelController *_target)
 
 static bool ShouldRebuildSubmenu(NSMenuItem *_item) noexcept
 {
-    return _item.hasSubmenu == false || objc_cast<NCPanelOpenWithMenuDelegate>(_item.submenu.delegate) == nil;
+    return !_item.hasSubmenu || objc_cast<NCPanelOpenWithMenuDelegate>(_item.submenu.delegate) == nil;
 }
 
 OpenFileWithSubmenu::OpenFileWithSubmenu(NCPanelOpenWithMenuDelegate *_menu_delegate) : m_MenuDelegate(_menu_delegate)
@@ -97,7 +97,7 @@ bool OpenFilesWithDefaultHandler::ValidateMenuItem(PanelController *_target, NSM
     return Predicate(_target);
 }
 
-void OpenFilesWithDefaultHandler::Perform(PanelController *_target, id) const
+void OpenFilesWithDefaultHandler::Perform(PanelController *_target, id /*_sender*/) const
 {
     if( !Predicate(_target) ) {
         NSBeep();
@@ -149,7 +149,7 @@ bool context::OpenFileWithDefaultHandler::Predicate([[maybe_unused]] PanelContro
     return all_are_native;
 }
 
-void context::OpenFileWithDefaultHandler::Perform(PanelController *_target, id) const
+void context::OpenFileWithDefaultHandler::Perform(PanelController *_target, id /*_sender*/) const
 {
     PerformOpeningFilesWithDefaultHandler(m_Items, _target, m_FileOpener);
 }

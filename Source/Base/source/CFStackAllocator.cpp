@@ -28,7 +28,7 @@ CFAllocatorRef CFStackAllocator::Construct() noexcept
     return CFAllocatorCreate(kCFAllocatorUseContext, &context);
 }
 
-void *CFStackAllocator::DoAlloc(CFIndex _alloc_size, CFOptionFlags, void *_info) noexcept
+void *CFStackAllocator::DoAlloc(CFIndex _alloc_size, CFOptionFlags /*_hint*/, void *_info) noexcept
 {
     assert(_alloc_size >= 0);
     constexpr long alignment = 16;

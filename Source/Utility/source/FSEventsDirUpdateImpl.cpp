@@ -199,7 +199,7 @@ uint64_t FSEventsDirUpdateImpl::AddWatchPath(std::string_view _path, std::functi
     Log::Trace("Creating a new watcher for '{}'", _path);
     auto ep = m_Watches.emplace(dir_path, std::make_unique<WatchData>());
     assert(ep.second == true);
-    WatchData &w = *ep.first->second.get();
+    WatchData &w = *ep.first->second;
     w.stream = CreateEventStream(dir_path, &w);
     if( w.stream == nullptr ) {
         // failed to creat the event stream, roll back the changes and return a failure indication

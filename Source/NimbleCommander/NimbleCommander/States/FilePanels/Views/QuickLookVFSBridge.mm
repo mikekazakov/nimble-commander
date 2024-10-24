@@ -16,11 +16,11 @@ QuickLookVFSBridge::QuickLookVFSBridge(nc::utility::TemporaryFileStorage &_stora
 
 NSURL *QuickLookVFSBridge::FetchItem(const std::string &_path, VFSHost &_host)
 {
-    const auto is_dir = _host.IsDirectory(_path.c_str(), 0);
+    const auto is_dir = _host.IsDirectory(_path, 0);
 
     if( !is_dir ) {
         VFSStat st;
-        if( _host.Stat(_path.c_str(), st, 0, nullptr) < 0 )
+        if( _host.Stat(_path, st, 0, nullptr) < 0 )
             return nil;
         if( st.size > m_MaxSize )
             return nil;

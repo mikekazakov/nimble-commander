@@ -83,7 +83,7 @@ std::vector<IconRepositoryImpl::SlotKey> IconRepositoryImpl::AllSlots() const
 
 void IconRepositoryImpl::Unregister(SlotKey _key)
 {
-    if( IsValidSlot(_key) == false )
+    if( !IsValidSlot(_key) )
         return;
     const auto index = ToIndex(_key);
     auto &slot = m_Slots[index];
@@ -95,7 +95,7 @@ void IconRepositoryImpl::Unregister(SlotKey _key)
 
 void IconRepositoryImpl::ScheduleIconProduction(SlotKey _key, const VFSListingItem &_item)
 {
-    if( IsValidSlot(_key) == false )
+    if( !IsValidSlot(_key) )
         return;
 
     auto slot_index = ToIndex(_key);
@@ -104,7 +104,7 @@ void IconRepositoryImpl::ScheduleIconProduction(SlotKey _key, const VFSListingIt
     if( slot.production != nullptr )
         return; // there is an already ongoing production for this slot
 
-    if( slot.state == SlotState::Production && HasFileChanged(slot, _item) == false )
+    if( slot.state == SlotState::Production && !HasFileChanged(slot, _item) )
         return; // nothing to do
 
     if( m_ProductionQueue->QueueLength() >= m_MaxQueueLength )
@@ -120,12 +120,12 @@ void IconRepositoryImpl::ScheduleIconProduction(SlotKey _key, const VFSListingIt
     slot.state = SlotState::Production;
 
     auto work_block = [this, slot_index, context] {
-        if( context->must_stop == true )
+        if( context->must_stop )
             return;
 
         ProduceRealIcon(*context);
 
-        if( context->must_stop == true )
+        if( context->must_stop )
             return;
 
         auto commit_block = [this, slot_index, context] { CommitProductionResult(slot_index, *context); };
@@ -143,7 +143,7 @@ void IconRepositoryImpl::ProduceRealIcon(WorkerContext &_ctx)
 
 void IconRepositoryImpl::CommitProductionResult(int _slot_index, WorkerContext &_ctx)
 {
-    if( _ctx.must_stop == true )
+    if( _ctx.must_stop )
         return;
 
     auto &slot = m_Slots[_slot_index];
@@ -152,7 +152,7 @@ void IconRepositoryImpl::CommitProductionResult(int _slot_index, WorkerContext &
     slot.production.reset();
     const bool updated = RefreshImages(slot, _ctx);
 
-    if( updated == true ) {
+    if( updated ) {
         auto callback = m_IconUpdatedCallback;
         if( callback && *callback )
             (*callback)(FromIndex(_slot_index), slot.icon);
@@ -178,7 +178,7 @@ int IconRepositoryImpl::NumberOfUsedSlots() const
 
 int IconRepositoryImpl::AllocateSlot()
 {
-    if( m_FreeSlotsIndices.empty() == false ) {
+    if( !m_FreeSlotsIndices.empty() ) {
         const auto free_slot_index = m_FreeSlotsIndices.top();
         m_FreeSlotsIndices.pop();
         return free_slot_index;

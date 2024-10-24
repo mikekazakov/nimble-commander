@@ -3,6 +3,8 @@
 #include <Utility/StringExtras.h>
 #include <fmt/format.h>
 
+#include <algorithm>
+
 namespace nc::ops {
 
 std::optional<std::vector<BatchRenamingScheme::MaskDecomposition>>
@@ -540,9 +542,7 @@ BatchRenamingScheme::ParsePlaceholder_Counter(NSString *_ph,
         n += stripe->second;
     }
     if( auto width = EatIntWithPreffix(_ph, _pos + n, ':') ) {
-        counter.width = width->first;
-        if( counter.width > 30 )
-            counter.width = 30;
+        counter.width = std::min<unsigned int>(width->first, 30);
         n += width->second;
     }
 
@@ -565,8 +565,7 @@ NSString *BatchRenamingScheme::ExtractText(NSString *_from, const TextExtraction
         auto str = [_from substringWithRange:res.toNSRange()];
         if( (_te.zero_flag || _te.space_flag) && rr.length != Range::max_length() && str.length < rr.length ) {
             auto insufficient = rr.length - str.length;
-            if( insufficient > 300 )
-                insufficient = 300;
+            insufficient = std::min<NSUInteger>(insufficient, 300);
 
             auto padding = [@"" stringByPaddingToLength:insufficient
                                              withString:(_te.zero_flag ? @"0" : @" ")startingAtIndex:0];
@@ -613,7 +612,7 @@ NSString *BatchRenamingScheme::FormatCounter(const Counter &_c, int _file_number
     char *buf = static_cast<char *>(alloca(_c.width + 32)); // no heap allocs, for great justice!
     if( !buf )
         return @"";
-    *fmt::format_to(buf, "{:0{}}", _c.start + _c.step * (_file_number / _c.stripe), _c.width) = 0;
+    *fmt::format_to(buf, "{:0{}}", _c.start + (_c.step * (_file_number / _c.stripe)), _c.width) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 
@@ -956,7 +955,7 @@ NSString *BatchRenamingScheme::FileInfo::ParentFilename() const
 {
     std::filesystem::path parent_path(item.Directory());
     if( parent_path.filename().empty() ) { // play around trailing slash
-        if( parent_path.has_parent_path() == false )
+        if( !parent_path.has_parent_path() )
             return @""; // wtf?
         parent_path = parent_path.parent_path();
     }
@@ -967,7 +966,7 @@ NSString *BatchRenamingScheme::FileInfo::GrandparentFilename() const
 {
     std::filesystem::path parent_path(item.Directory());
     if( parent_path.filename().empty() ) { // play around trailing slash
-        if( parent_path.has_parent_path() == false )
+        if( !parent_path.has_parent_path() )
             return @""; // wtf?
         parent_path = parent_path.parent_path();
     }

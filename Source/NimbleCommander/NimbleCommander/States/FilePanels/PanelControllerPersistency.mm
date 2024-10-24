@@ -109,7 +109,7 @@ static void RecoverSavedPathAtVFSAsync(const VFSHostPtr &_host, const std::strin
  */
 bool ControllerStateJSONDecoder::AllowSyncRecovery(const PersistentLocation &_location) const
 {
-    if( _location.is_native() == false )
+    if( !_location.is_native() )
         return false;
 
     const auto &path = _location.path;
@@ -118,11 +118,7 @@ bool ControllerStateJSONDecoder::AllowSyncRecovery(const PersistentLocation &_lo
         return false;
 
     const auto mount_flags = fs_info->mount_flags;
-    if( mount_flags.ejectable == false && mount_flags.removable == false && mount_flags.local == true &&
-        mount_flags.internal == true )
-        return true;
-
-    return false;
+    return !mount_flags.ejectable && !mount_flags.removable && mount_flags.local && mount_flags.internal;
 }
 
 void ControllerStateJSONDecoder::RecoverSavedContentSync(const PersistentLocation &_location, PanelController *_panel)

@@ -236,17 +236,17 @@ TEST_CASE(PREFIX "Basic")
 
     // testing raw C sorting facility
     for( unsigned i = 0; i < listing->Count(); ++i )
-        CHECK(data.RawIndexForName(listing->Filename(i).c_str()) == static_cast<int>(i));
+        CHECK(data.RawIndexForName(listing->Filename(i)) == static_cast<int>(i));
 
     // testing basic sorting (direct by filename)
     auto sorting = data.SortMode();
     sorting.sort = data::SortMode::SortByName;
     data.SetSortMode(sorting);
 
-    CHECK(data.SortedIndexForName(listing->Filename(0).c_str()) == 0);
-    CHECK(data.SortedIndexForName(listing->Filename(2).c_str()) == 1);
-    CHECK(data.SortedIndexForName(listing->Filename(3).c_str()) == 2);
-    CHECK(data.SortedIndexForName(listing->Filename(1).c_str()) == 3);
+    CHECK(data.SortedIndexForName(listing->Filename(0)) == 0);
+    CHECK(data.SortedIndexForName(listing->Filename(2)) == 1);
+    CHECK(data.SortedIndexForName(listing->Filename(3)) == 2);
+    CHECK(data.SortedIndexForName(listing->Filename(1)) == 3);
 }
 
 TEST_CASE(PREFIX "SortingWithCases")

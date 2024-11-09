@@ -41,6 +41,7 @@ jobs:
         find /usr/local/bin -lname '*/Library/Frameworks/Python.framework/*' -delete
         sudo rm -rf /Library/Frameworks/Python.framework/
         brew update
+        brew install qemu
         brew install docker
         brew install colima
         LIMACTL_PATH=$(brew --prefix)/bin/limactl

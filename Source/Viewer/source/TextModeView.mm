@@ -85,7 +85,8 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
          highlightingSettings:(nc::viewer::hl::SettingsStorage &)_hl_settings
            enableHighlighting:(bool)_highlighting_enabled
 {
-    if( self = [super initWithFrame:_frame] ) {
+    self = [super initWithFrame:_frame];
+    if( self ) {
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.clipsToBounds = true;
         m_Backend = _backend;

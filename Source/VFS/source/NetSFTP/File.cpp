@@ -24,8 +24,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
 
     auto sftp_host = std::dynamic_pointer_cast<SFTPHost>(Host());
     std::unique_ptr<SFTPHost::Connection> conn;
-    int rc;
-    if( (rc = sftp_host->GetConnection(conn)) != 0 )
+    if( const int rc = sftp_host->GetConnection(conn); rc != 0 )
         return rc;
 
     int sftp_flags = 0;
@@ -47,7 +46,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
     LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open_ex(
         conn->sftp, Path(), static_cast<unsigned>(std::strlen(Path())), sftp_flags, mode, LIBSSH2_SFTP_OPENFILE);
     if( handle == nullptr ) {
-        rc = SFTPHost::VFSErrorForConnection(*conn);
+        const int rc = SFTPHost::VFSErrorForConnection(*conn);
         sftp_host->ReturnConnection(std::move(conn));
         return rc;
     }

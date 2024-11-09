@@ -2567,8 +2567,7 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation &_
 {
     _matched = false;
     VFSFilePtr file;
-    int rc;
-    if( (rc = m_DestinationHost->CreateFile(_exp.destination_path, file, nullptr)) != 0 )
+    if( const int rc = m_DestinationHost->CreateFile(_exp.destination_path, file, nullptr); rc != 0 )
         switch( m_OnDestinationFileReadError(rc, _exp.destination_path, *m_DestinationHost) ) {
             case DestinationFileReadErrorResolution::Skip:
                 return StepResult::Skipped;
@@ -2576,7 +2575,7 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation &_
                 return StepResult::Stop;
         }
 
-    if( (rc = file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache)) != 0 )
+    if( const int rc = file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache); rc != 0 )
         switch( m_OnDestinationFileReadError(rc, _exp.destination_path, *m_DestinationHost) ) {
             case DestinationFileReadErrorResolution::Skip:
                 return StepResult::Skipped;

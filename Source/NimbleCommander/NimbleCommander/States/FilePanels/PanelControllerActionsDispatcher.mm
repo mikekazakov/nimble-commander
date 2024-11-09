@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerActionsDispatcher.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/Alert.h>
@@ -27,7 +27,8 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 - (instancetype)initWithController:(PanelController *)_controller
                      andActionsMap:(const nc::panel::PanelActionsMap &)_actions_map
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_PC = _controller;
         m_AM = &_actions_map;
     }

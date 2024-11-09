@@ -28,11 +28,11 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
 {
     const auto flags = NSWindowStyleMaskResizable | NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
                        NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskFullSizeContentView;
-
-    if( self = [super initWithContentRect:g_InitialWindowContentRect
-                                styleMask:flags
-                                  backing:NSBackingStoreBuffered
-                                    defer:true] ) {
+    self = [super initWithContentRect:g_InitialWindowContentRect
+                            styleMask:flags
+                              backing:NSBackingStoreBuffered
+                                defer:true];
+    if( self ) {
         self.minSize = g_MinWindowSize;
         self.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
         self.restorable = true;

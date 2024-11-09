@@ -47,7 +47,8 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
                     delegate:(NSObject<NCPanelQuickSearchDelegate> *)_delegate
                       config:(nc::config::Config &)_config
 {
-    if( !(self = [super init]) )
+    self = [super init];
+    if( !self )
         return nil;
     m_Delegate = _delegate;
     m_Data = &_data;

@@ -31,7 +31,8 @@ static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelSt
 - (instancetype)initWithState:(MainWindowFilePanelState *)_state
                 andActionsMap:(const nc::panel::StateActionsMap &)_actions_map
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_FS = _state;
         m_AM = &_actions_map;
         m_ShortCutsUpdater = std::make_unique<ActionsShortcutsManager::ShortCutsUpdater>(

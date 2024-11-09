@@ -107,7 +107,8 @@ void SpdLogUISink::DoFlush()
 - (instancetype)initWithLogs:(std::span<nc::base::SpdLogger *const>)_loggers
 {
     auto wnd = [NCSpdLogWindowController makeWindow];
-    if( self = [super initWithWindow:wnd] ) {
+    self = [super initWithWindow:wnd];
+    if( self ) {
         wnd.delegate = self;
         m_AutoScroll = true;
         m_Loggers = _loggers;

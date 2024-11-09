@@ -53,7 +53,8 @@ static constexpr double g_ContentViewCornerRadius = 10.;
 
 - (NCCommandPopoverItem *_Nonnull)init
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_Title = @"";
         m_Tag = 0;
         m_IsSeparator = false;
@@ -144,7 +145,8 @@ static constexpr double g_ContentViewCornerRadius = 10.;
 
 - (instancetype _Nonnull)initWithPopover:(NCCommandPopover *)_popover andTitle:(NSString *)_title
 {
-    if( self = [super initWithNibName:nil bundle:nil] ) {
+    self = [super initWithNibName:nil bundle:nil];
+    if( self ) {
         m_Parent = _popover;
         m_Title = _title;
         m_LabelFont = [NSFont menuFontOfSize:0.0];
@@ -775,7 +777,8 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
 
 - (instancetype)initWithFrame:(NSRect)_frame
 {
-    if( self = [super initWithFrame:_frame] ) {
+    self = [super initWithFrame:_frame];
+    if( self ) {
         m_TrackingArea = [[NSTrackingArea alloc] initWithRect:self.bounds
                                                       options:g_TrackingOptions
                                                         owner:self
@@ -965,7 +968,8 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
 
 - (instancetype)initWithFrame:(NSRect)_rect
 {
-    if( self = [super initWithFrame:_rect] ) {
+    self = [super initWithFrame:_rect];
+    if( self ) {
         self.wantsLayer = true;
         self.layer.cornerRadius = g_ContentViewCornerRadius;
         self.layer.masksToBounds = true;
@@ -999,7 +1003,8 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
 
 - (instancetype _Nonnull)initWithTitle:(NSString *_Nonnull)_title
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_Controller = [[NCCommandPopoverViewController alloc] initWithPopover:self andTitle:_title];
     }
     return self;

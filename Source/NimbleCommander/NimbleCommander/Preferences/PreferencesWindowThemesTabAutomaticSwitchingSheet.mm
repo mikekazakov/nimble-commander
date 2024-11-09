@@ -27,7 +27,8 @@
 - (instancetype)initWithSwitchingSettings:(const nc::ThemesManager::AutoSwitchingSettings &)_autoswitching
                             andThemeNames:(std::span<const std::string>)_names
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_ThemeNames.insert(m_ThemeNames.end(), _names.begin(), _names.end());
         m_OrigSettings = _autoswitching;
         self.autoSwitchingEnabled = false;

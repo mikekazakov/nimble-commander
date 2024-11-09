@@ -86,7 +86,8 @@ static NSString *TitleForData(const data::Model *_data);
                    QLPanelAdaptor:(NCPanelQLPanelAdaptor *)_ql_panel_adaptor
 {
     assert(_panel_factory);
-    if( self = [super initWithFrame:frameRect] ) {
+    self = [super initWithFrame:frameRect];
+    if( self ) {
         m_PanelFactory = std::move(_panel_factory);
         m_ControllerStateJSONDecoder = &_controller_json_decoder;
         m_ClosedPanelsHistory = nullptr;

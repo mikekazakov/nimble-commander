@@ -92,7 +92,8 @@ FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, const UTIDB
 
 - (instancetype)initWithFileOpener:(nc::panel::FileOpener &)_file_opener utiDB:(const nc::utility::UTIDB &)_uti_db
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_FileOpener = &_file_opener;
         m_UTIDB = &_uti_db;
     }

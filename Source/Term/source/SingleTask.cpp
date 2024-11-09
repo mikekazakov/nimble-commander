@@ -91,10 +91,9 @@ void SingleTask::Launch(const char *_full_binary_path, const char *_params, int 
 
     const int slave_fd = open(ptsname(m_MasterFD), O_RDWR);
 
-    int rc;
-
     // Create the child process
-    if( (rc = fork()) ) { // master
+    const int rc = fork();
+    if( rc ) { // master
         m_TaskPID = rc;
         close(slave_fd);
 

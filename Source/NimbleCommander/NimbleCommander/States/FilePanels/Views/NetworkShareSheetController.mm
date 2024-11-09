@@ -35,7 +35,8 @@
 
 - (instancetype)init
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         self.valid = true;
         self.nfsSelected = false;
     }
@@ -44,7 +45,8 @@
 
 - (instancetype)initWithConnection:(nc::panel::NetworkConnectionsManager::Connection)_connection
 {
-    if( self = [self init] ) {
+    self = [self init];
+    if( self ) {
         m_Original = _connection;
     }
     return self;

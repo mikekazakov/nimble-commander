@@ -37,7 +37,8 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
                       backend:(std::shared_ptr<const nc::viewer::DataBackend>)_backend
                         theme:(const nc::viewer::Theme &)_theme
 {
-    if( self = [super initWithFrame:_frame] ) {
+    self = [super initWithFrame:_frame];
+    if( self ) {
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.clipsToBounds = true;
         m_Backend = _backend;

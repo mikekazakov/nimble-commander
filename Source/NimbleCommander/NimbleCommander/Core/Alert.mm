@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Alert.h"
 #include <Base/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
@@ -39,7 +39,8 @@
 
 - (instancetype)initWithAlert:(NSAlert *)_alert
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_Alert = _alert;
 
         // m_Alert.window has no controller set, at least in 10.12/13.

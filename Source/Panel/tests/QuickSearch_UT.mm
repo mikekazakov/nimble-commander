@@ -37,7 +37,8 @@ static NSString *SingleCharStr(unichar _c);
 @implementation QuickSearch_MockDelegate
 - (instancetype)init
 {
-    if( self = [super init] )
+    self = [super init];
+    if( self )
         self.cursorPosition = -1;
     return self;
 }

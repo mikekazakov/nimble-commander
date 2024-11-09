@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "RecentlyClosedMenuDelegate.h"
 #include "../ListingPromise.h"
 #include "LocationFormatter.h"
@@ -26,7 +26,8 @@ using namespace nc::panel;
     assert(_menu);
     assert(_storage);
     assert(_locator);
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_Menu = _menu;
         m_Menu.delegate = self;
 

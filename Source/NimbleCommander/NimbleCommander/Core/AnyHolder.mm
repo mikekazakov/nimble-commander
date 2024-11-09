@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AnyHolder.h"
 
 @implementation AnyHolder {
@@ -7,7 +7,8 @@
 
 - (instancetype)initWithAny:(std::any)_any
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_Object = std::move(_any);
     }
     return self;

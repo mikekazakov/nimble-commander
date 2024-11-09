@@ -41,6 +41,9 @@ jobs:
         find /usr/local/bin -lname '*/Library/Frameworks/Python.framework/*' -delete
         sudo rm -rf /Library/Frameworks/Python.framework/
         brew update
+        # specifically install an outdated version of lima - 0.23.2 as with 1.0.1 there are network connectivity issues
+        curl https://raw.githubusercontent.com/Homebrew/homebrew-core/45464b6c4788a80be3f131ab5e2a4468cdfa960c/Formula/l/lima.rb > lima.rb
+        brew install lima.rb
         brew install qemu
         brew install docker
         brew install colima

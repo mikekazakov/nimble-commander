@@ -218,10 +218,10 @@ CopyingJob::StepResult CopyingJob::ProcessItemNo(int _item_number)
         };
 
         std::function<void(const void *_data, unsigned _sz)> data_feedback = nullptr;
-        if( m_Options.verification == ChecksumVerification::Always )
+        if( m_Options.verification == ChecksumVerification::Always ||
+            (!m_Options.docopy && m_Options.verification >= ChecksumVerification::WhenMoves) ) {
             data_feedback = hash_feedback;
-        else if( !m_Options.docopy && m_Options.verification >= ChecksumVerification::WhenMoves )
-            data_feedback = hash_feedback;
+        }
 
         if( source_host.IsNativeFS() && m_IsDestinationHostNative ) { // native -> native ///////////////////////
             // native fs processing

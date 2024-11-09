@@ -3,6 +3,7 @@
 #include "Tests.h"
 
 #include <ScreenBuffer.h>
+#include <bit>
 
 using namespace nc::term;
 #define PREFIX "nc::term::ScreenBuffer "
@@ -146,9 +147,9 @@ TEST_CASE(PREFIX "Space::HaveSameAttributes")
     }
     SECTION("")
     {
-        (*static_cast<uint64_t *>(static_cast<void *>(&s1))) |= (1ULL << 58);
+        s1 = std::bit_cast<ScreenBuffer::Space>(1ULL << 58);
         CHECK(s1.HaveSameAttributes(s2));
-        (*static_cast<uint64_t *>(static_cast<void *>(&s1))) |= (1ULL << 63);
+        s1 = std::bit_cast<ScreenBuffer::Space>(1ULL << 63);
         CHECK(s1.HaveSameAttributes(s2));
     }
 }

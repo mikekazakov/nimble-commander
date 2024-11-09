@@ -1032,14 +1032,8 @@ static constexpr bool LineHasBlinkingCharacters(std::span<const ScreenBuffer::Sp
     auto lock = m_Screen->AcquireLock(); // WTF??
     const auto bsl = static_cast<int>(buffer.BackScreenLines());
     for( int line_index = line_start; line_index != line_end; ++line_index ) {
-        if( line_index < bsl ) { // scrollback
-            if( LineHasBlinkingCharacters(buffer.LineFromNo(line_index - bsl)) )
-                return true;
-        }
-        else { // real screen
-            if( LineHasBlinkingCharacters(buffer.LineFromNo(line_index - bsl)) )
-                return true;
-        }
+        if( LineHasBlinkingCharacters(buffer.LineFromNo(line_index - bsl)) )
+            return true;
     }
     return false;
 }

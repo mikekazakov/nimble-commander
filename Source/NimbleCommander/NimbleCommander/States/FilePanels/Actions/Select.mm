@@ -13,6 +13,7 @@
 #include <Config/RapidJSON.h>
 #include <ankerl/unordered_dense.h>
 #include <mutex>
+#include <bit>
 
 namespace nc::panel::actions {
 
@@ -46,7 +47,7 @@ private:
     static ptrdiff_t ToNumber(NSWindow *_wnd) noexcept
     {
         // mb mix in the window number here as well? i.e. .windowNumber
-        return reinterpret_cast<ptrdiff_t>((__bridge void *)_wnd);
+        return std::bit_cast<ptrdiff_t>((__bridge void *)_wnd);
     }
 
     MapT m_InitialMasks;

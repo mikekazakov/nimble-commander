@@ -82,16 +82,14 @@ int VersionCompare::Compare(std::string_view _lhs, std::string_view _rhs) noexce
                 !std::holds_alternative<std::string_view>(right_token) ) {
                 return -1;
             }
-            else if( !std::holds_alternative<std::string_view>(left_token) &&
-                     std::holds_alternative<std::string_view>(right_token) ) {
+            if( !std::holds_alternative<std::string_view>(left_token) &&
+                std::holds_alternative<std::string_view>(right_token) ) {
                 return 1;
             }
-            else if( std::holds_alternative<std::uint64_t>(left_token) ) {
+            if( std::holds_alternative<std::uint64_t>(left_token) ) {
                 return -1;
             }
-            else {
-                return 1;
-            }
+            return 1;
         }
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Trash.h"
 #include <Security/Security.h>
 #include <cerrno>
@@ -516,20 +516,7 @@ static void XPC_Peer_Event_Handler(xpc_connection_t _peer, xpc_object_t _event)
 
     xpc_type_t type = xpc_get_type(_event);
 
-    if( type == XPC_TYPE_ERROR ) {
-        if( _event == XPC_ERROR_CONNECTION_INVALID ) {
-            // The client process on the other end of the connection has either
-            // crashed or cancelled the connection. After receiving this error,
-            // the connection is in an invalid state, and you do not need to
-            // call xpc_connection_cancel(). Just tear down any associated state
-            // here.
-        }
-        else if( _event == XPC_ERROR_TERMINATION_IMMINENT ) {
-            // Handle per-connection termination cleanup.
-        }
-        //        xpc_release(_peer);
-    }
-    else if( type == XPC_TYPE_DICTIONARY ) {
+    if( type == XPC_TYPE_DICTIONARY ) {
         ConnectionContext *context = static_cast<ConnectionContext *>(xpc_connection_get_context(_peer));
         if( !context ) {
             send_reply_error(_event, EINVAL);

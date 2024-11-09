@@ -39,9 +39,7 @@ static std::string ToString(const Command::Payload &_payload)
             using namespace std::string_literals;
             if constexpr( std::is_same_v<T, None> )
                 return ""s;
-            else if constexpr( std::is_same_v<T, signed> )
-                return std::to_string(arg);
-            else if constexpr( std::is_same_v<T, unsigned> )
+            else if constexpr( std::is_same_v<T, signed> || std::is_same_v<T, unsigned> )
                 return std::to_string(arg);
             else if constexpr( std::is_same_v<T, UTF8Text> )
                 return "'" + arg.characters + "'";
@@ -51,22 +49,17 @@ static std::string ToString(const Command::Payload &_payload)
                 return "positioning="s + std::string(magic_enum::enum_name(arg.positioning)) + ", x="s +
                        (arg.x ? std::to_string(*arg.x) : "none"s) + ", y="s +
                        (arg.y ? std::to_string(*arg.y) : "none"s);
-            else if constexpr( std::is_same_v<T, DisplayErasure> )
-                return "what_to_erase="s + std::string(magic_enum::enum_name(arg.what_to_erase));
-            else if constexpr( std::is_same_v<T, LineErasure> )
+            else if constexpr( std::is_same_v<T, DisplayErasure> || std::is_same_v<T, LineErasure> )
                 return "what_to_erase="s + std::string(magic_enum::enum_name(arg.what_to_erase));
             else if constexpr( std::is_same_v<T, ModeChange> )
                 return "mode="s + std::string(magic_enum::enum_name(arg.mode)) +
                        ", status=" + (arg.status ? "on" : "off");
-            else if constexpr( std::is_same_v<T, DeviceReport> )
-                return "mode="s + std::string(magic_enum::enum_name(arg.mode));
             else if constexpr( std::is_same_v<T, ScrollingRegion> )
                 return "range=" + (arg.range
                                        ? (std::to_string(arg.range->top) + "," + std::to_string(arg.range->bottom))
                                        : "none");
-            else if constexpr( std::is_same_v<T, TabClear> )
-                return "mode="s + std::string(magic_enum::enum_name(arg.mode));
-            else if constexpr( std::is_same_v<T, CharacterAttributes> )
+            else if constexpr( std::is_same_v<T, DeviceReport> || std::is_same_v<T, TabClear> ||
+                               std::is_same_v<T, CharacterAttributes> )
                 return "mode="s + std::string(magic_enum::enum_name(arg.mode));
             else if constexpr( std::is_same_v<T, CharacterSetDesignation> )
                 return "target="s + std::to_string(arg.target) + ", set=" + std::string(magic_enum::enum_name(arg.set));

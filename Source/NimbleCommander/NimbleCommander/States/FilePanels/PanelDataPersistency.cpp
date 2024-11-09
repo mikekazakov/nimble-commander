@@ -398,18 +398,9 @@ Value PanelDataPersistency::EncodeVFSHostInfo(const VFSHost &_host)
     using namespace nc::config;
     auto tag = _host.Tag();
     Value json(rapidjson::kObjectType);
-    if( tag == VFSNativeHost::UniqueTag ) {
+    if( tag == VFSNativeHost::UniqueTag || //
+        tag == vfs::PSHost::UniqueTag ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator);
-        return json;
-    }
-    else if( tag == vfs::PSHost::UniqueTag ) {
-        json.AddMember(MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator);
-        return json;
-    }
-    else if( tag == vfs::XAttrHost::UniqueTag ) {
-        json.AddMember(MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator);
-        json.AddMember(
-            MakeStandaloneString(g_HostInfoJunctionKey), MakeStandaloneString(_host.JunctionPath()), g_CrtAllocator);
         return json;
     }
     else if( IsNetworkVFS(_host) ) {
@@ -422,7 +413,9 @@ Value PanelDataPersistency::EncodeVFSHostInfo(const VFSHost &_host)
             return json;
         }
     }
-    else if( tag == vfs::ArchiveHost::UniqueTag || tag == vfs::ArchiveRawHost::UniqueTag ) {
+    else if( tag == vfs::ArchiveHost::UniqueTag ||    //
+             tag == vfs::ArchiveRawHost::UniqueTag || //
+             tag == vfs::XAttrHost::UniqueTag ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator);
         json.AddMember(
             MakeStandaloneString(g_HostInfoJunctionKey), MakeStandaloneString(_host.JunctionPath()), g_CrtAllocator);

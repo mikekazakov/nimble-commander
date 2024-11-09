@@ -127,7 +127,6 @@ int HTTPRCToVFSError(int _http_rc) noexcept
         case 400:
             return VFSError::FromErrno(EINVAL);
         case 401:
-            return VFSError::FromErrno(EAUTH);
         case 402:
             return VFSError::FromErrno(EAUTH);
         case 403:
@@ -147,7 +146,6 @@ int HTTPRCToVFSError(int _http_rc) noexcept
         case 410:
             return VFSError::FromErrno(ENOENT);
         case 411:
-            return VFSError::FromErrno(EINVAL);
         case 412:
             return VFSError::FromErrno(EINVAL);
         case 413:
@@ -155,9 +153,7 @@ int HTTPRCToVFSError(int _http_rc) noexcept
         case 414:
             return VFSError::FromErrno(ENAMETOOLONG);
         case 415:
-            return VFSError::FromErrno(EINVAL);
         case 416:
-            return VFSError::FromErrno(EINVAL);
         case 417:
             return VFSError::FromErrno(EINVAL);
         case 421:
@@ -167,7 +163,6 @@ int HTTPRCToVFSError(int _http_rc) noexcept
         case 423:
             return VFSError::FromErrno(EPERM);
         case 424:
-            return VFSError::FromErrno(EINVAL);
         case 428:
             return VFSError::FromErrno(EINVAL);
         case 429:

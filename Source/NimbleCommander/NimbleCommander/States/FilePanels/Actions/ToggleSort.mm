@@ -10,6 +10,7 @@ static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndica
 
 static NSImage *ImageFromSortMode(data::SortMode::Mode _mode)
 {
+    // NOLINTBEGIN(bugprone-branch-clone)
     switch( _mode ) {
         case data::SortMode::SortByName:
             return g_SortAscImage;
@@ -42,6 +43,7 @@ static NSImage *ImageFromSortMode(data::SortMode::Mode _mode)
         default:
             return nil;
     }
+    // NOLINTEND(bugprone-branch-clone)
 }
 
 static void

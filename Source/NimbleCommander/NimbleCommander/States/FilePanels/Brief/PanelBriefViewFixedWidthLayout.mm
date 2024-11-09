@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewFixedWidthLayout.h"
 #include "PanelBriefViewFixedWidthLayoutEngine.h"
 
@@ -16,7 +16,8 @@ using nc::panel::view::brief::FixedWidthLayoutEngine;
 
 - (instancetype)init
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_ItemWidth = 150;
         m_ItemHeight = 20;
         self.scrollDirection = NSCollectionViewScrollDirectionHorizontal;

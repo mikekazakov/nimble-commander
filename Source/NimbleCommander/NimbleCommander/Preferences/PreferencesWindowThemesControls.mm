@@ -48,7 +48,8 @@ using nc::ThemeAppearance;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
-    if( self = [super initWithFrame:frameRect] ) {
+    self = [super initWithFrame:frameRect];
+    if( self ) {
         m_Color = NSColor.blackColor;
 
         m_ColorWell = [[NCPreferencesAlphaColorWell alloc] initWithFrame:NSRect()];
@@ -150,7 +151,8 @@ using nc::ThemeAppearance;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
-    if( self = [super initWithFrame:frameRect] ) {
+    self = [super initWithFrame:frameRect];
+    if( self ) {
         m_Font = [NSFont systemFontOfSize:NSFont.systemFontSize];
         m_DummyCustomFont = [NSFont fontWithName:@"Helvetica Neue" size:NSFont.systemFontSize];
 
@@ -316,7 +318,8 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
 
 - (id)initWithFrame:(NSRect)frameRect
 {
-    if( self = [super initWithFrame:frameRect] ) {
+    self = [super initWithFrame:frameRect];
+    if( self ) {
 
         NSNib *nib = [[NSNib alloc] initWithNibNamed:@"PreferencesWindowThemesTabColoringRulesControl" bundle:nil];
         [nib instantiateWithOwner:self topLevelObjects:nil];
@@ -613,7 +616,8 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
 
 - (id)initWithFrame:(NSRect)frameRect
 {
-    if( self = [super initWithFrame:frameRect] ) {
+    self = [super initWithFrame:frameRect];
+    if( self ) {
         m_ThemeAppearance = ThemeAppearance::Light;
         m_Button = [[NSPopUpButton alloc] initWithFrame:NSRect()];
         m_Button.translatesAutoresizingMaskIntoConstraints = false;

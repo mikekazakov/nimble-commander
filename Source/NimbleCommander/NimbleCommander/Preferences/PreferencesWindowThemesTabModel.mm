@@ -13,7 +13,8 @@
                      forEntry:(const std::string &)_entry
                        ofType:(PreferencesWindowThemesTabItemType)_type
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_Entry = _entry;
         title = _title;
         type = _type;
@@ -29,7 +30,8 @@
 
 - (instancetype)initWithTitle:(NSString *)_title andChildren:(NSArray *)_children
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         title = _title;
         children = _children;
     }

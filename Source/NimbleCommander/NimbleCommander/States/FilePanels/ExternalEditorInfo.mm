@@ -107,7 +107,8 @@ struct ExternalEditorsPersistence {
 @synthesize max_size = m_MaxSize;
 - (id)init
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         self.name = @"";
         self.path = @"";
         self.arguments = @"";
@@ -134,7 +135,8 @@ struct ExternalEditorsPersistence {
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         // redundant, rewrite
         self.name = @"";
         self.path = @"";
@@ -255,8 +257,7 @@ std::string ExternalEditorStartupInfo::SubstituteFileName(const std::string &_pa
     std::string args = m_Arguments;
     const std::string path = " "s + esc_buf + " ";
 
-    size_t start_pos;
-    if( (start_pos = args.find("%%")) != std::string::npos )
+    if( const size_t start_pos = args.find("%%"); start_pos != std::string::npos )
         args.replace(start_pos, 2, path);
 
     return args;

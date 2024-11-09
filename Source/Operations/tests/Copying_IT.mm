@@ -1539,11 +1539,10 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
 
     VFSStat st1;
     VFSStat st2;
-    int ret;
-    if( (ret = _file1_host->Stat(_file1_full_path.c_str(), st1, 0, nullptr)) != 0 )
+    if( const int ret = _file1_host->Stat(_file1_full_path.c_str(), st1, 0, nullptr); ret != 0 )
         return ret;
 
-    if( (ret = _file2_host->Stat(_file2_full_path.c_str(), st2, 0, nullptr)) != 0 )
+    if( const int ret = _file2_host->Stat(_file2_full_path.c_str(), st2, 0, nullptr); ret != 0 )
         return ret;
 
     if( (st1.mode & S_IFMT) != (st2.mode & S_IFMT) ) {

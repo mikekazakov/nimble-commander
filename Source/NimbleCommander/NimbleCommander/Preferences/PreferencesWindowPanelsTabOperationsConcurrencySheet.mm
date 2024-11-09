@@ -34,7 +34,8 @@
 
 - (instancetype)initWithConcurrencyExclusionList:(const std::string &)_list
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_OriginalExclusionList = _list;
     }
     return self;

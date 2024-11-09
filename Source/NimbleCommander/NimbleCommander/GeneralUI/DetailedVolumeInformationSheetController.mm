@@ -61,7 +61,8 @@ static NSString *Bool2ToString(const bool b[2])
 
 - (instancetype)initWithFSManager:(nc::utility::NativeFSManager &)_native_fs_manager
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_NativeFSManager = &_native_fs_manager;
     }
     return self;

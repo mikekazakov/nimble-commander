@@ -41,7 +41,8 @@ using namespace nc::viewer;
 
 - (instancetype)initWithFrame:(NSRect)_frame andHighlightingSyntaxStorage:(nc::viewer::hl::SettingsStorage &)_stor
 {
-    if( self = [super initWithFrame:_frame] ) {
+    self = [super initWithFrame:_frame];
+    if( self ) {
         m_SettingsStorage = &_stor;
         m_Mode = ViewMode::Text;
         m_Encoding = utility::Encoding::ENCODING_UTF8;

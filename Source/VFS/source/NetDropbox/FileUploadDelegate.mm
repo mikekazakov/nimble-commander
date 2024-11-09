@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFSError.h>
 #include "FileUploadDelegate.h"
 #include "Aux.h"
@@ -17,7 +17,8 @@ using namespace nc::vfs::dropbox;
 
 - (instancetype)initWithStream:(NSInputStream *)_stream
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         assert(_stream);
         m_Stream = _stream;
     }

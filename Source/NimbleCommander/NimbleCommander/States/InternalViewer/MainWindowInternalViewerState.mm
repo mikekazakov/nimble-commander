@@ -28,7 +28,8 @@
          controller:(NCViewerViewController *)_viewer_controller
 {
     dispatch_assert_main_queue();
-    if( self = [super initWithFrame:_frame_rect] ) {
+    self = [super initWithFrame:_frame_rect];
+    if( self ) {
         self.translatesAutoresizingMaskIntoConstraints = false;
 
         auto viewer = _viewer_factory(NSMakeRect(0, 0, 100, 100));

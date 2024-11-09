@@ -49,7 +49,8 @@ static NSMenuItem *BuildMenuItem(const FavoriteLocationsStorage::Location &_loca
 
 - (instancetype)initWithStorage:(FavoriteLocationsStorage &)_storage andManageMenuItem:(NSMenuItem *)_item
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         assert(_item);
         m_Storage = &_storage;
         m_ManageItem = _item;
@@ -93,7 +94,8 @@ static NSMenuItem *BuildMenuItem(const FavoriteLocationsStorage::Location &_loca
 
 - (instancetype)initWithStorage:(FavoriteLocationsStorage &)_storage andClearMenuItem:(NSMenuItem *)_item
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         assert(_item);
         m_Storage = &_storage;
         m_ClearItem = _item;

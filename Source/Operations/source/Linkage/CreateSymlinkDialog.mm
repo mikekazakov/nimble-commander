@@ -27,7 +27,8 @@ using namespace nc::ops;
 - (instancetype)initWithSourcePath:(const std::string &)_src_path andDestPath:(const std::string &)_link_path
 {
     const auto nib_path = [Bundle() pathForResource:@"CreateSymlinkDialog" ofType:@"nib"];
-    if( self = [super initWithWindowNibPath:nib_path owner:self] ) {
+    self = [super initWithWindowNibPath:nib_path owner:self];
+    if( self ) {
         self.isValid = false;
         m_SrcPath = _src_path;
         m_LinkPath = _link_path;

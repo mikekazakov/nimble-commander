@@ -359,7 +359,8 @@ using namespace nc::panel;
 
 - (instancetype)init
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_Self = self;
     }
     return self;

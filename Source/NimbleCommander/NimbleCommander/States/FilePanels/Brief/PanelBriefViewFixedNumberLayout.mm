@@ -29,7 +29,8 @@ struct ColumnAnchor {
 
 - (instancetype)init
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_ItemHeight = 20;
         m_ColumnsPerScreen = 3;
         self.scrollDirection = NSCollectionViewScrollDirectionHorizontal;

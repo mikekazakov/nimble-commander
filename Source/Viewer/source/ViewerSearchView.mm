@@ -14,7 +14,8 @@ using namespace nc::viewer;
 
 - (instancetype)initWithFrame:(NSRect)_frame
 {
-    if( self = [super initWithFrame:_frame] ) {
+    self = [super initWithFrame:_frame];
+    if( self ) {
         m_BorderColor = NSColor.placeholderTextColor;
 
         m_SearchField = [[NSSearchField alloc] initWithFrame:NSRect()];

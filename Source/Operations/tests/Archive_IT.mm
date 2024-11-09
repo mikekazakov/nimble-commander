@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/Native.h>
@@ -98,11 +98,10 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
 
     VFSStat st1;
     VFSStat st2;
-    int ret;
-    if( (ret = _file1_host->Stat(_file1_full_path.c_str(), st1, VFSFlags::F_NoFollow, nullptr)) < 0 )
+    if( const int ret = _file1_host->Stat(_file1_full_path.c_str(), st1, VFSFlags::F_NoFollow, nullptr); ret < 0 )
         return ret;
 
-    if( (ret = _file2_host->Stat(_file2_full_path.c_str(), st2, VFSFlags::F_NoFollow, nullptr)) < 0 )
+    if( const int ret = _file2_host->Stat(_file2_full_path.c_str(), st2, VFSFlags::F_NoFollow, nullptr); ret < 0 )
         return ret;
 
     if( (st1.mode & S_IFMT) != (st2.mode & S_IFMT) ) {
@@ -117,9 +116,9 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
     else if( S_ISLNK(st1.mode) ) {
         char link1[MAXPATHLEN];
         char link2[MAXPATHLEN];
-        if( (ret = _file1_host->ReadSymlink(_file1_full_path.c_str(), link1, MAXPATHLEN, nullptr)) < 0 )
+        if( const int ret = _file1_host->ReadSymlink(_file1_full_path.c_str(), link1, MAXPATHLEN, nullptr); ret < 0 )
             return ret;
-        if( (ret = _file2_host->ReadSymlink(_file2_full_path.c_str(), link2, MAXPATHLEN, nullptr)) < 0 )
+        if( const int ret = _file2_host->ReadSymlink(_file2_full_path.c_str(), link2, MAXPATHLEN, nullptr); ret < 0 )
             return ret;
         if( strcmp(link1, link2) != 0 )
             _result = strcmp(link1, link2);

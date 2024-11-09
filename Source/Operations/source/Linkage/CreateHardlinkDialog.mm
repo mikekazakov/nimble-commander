@@ -27,7 +27,8 @@ using namespace nc::ops;
 - (instancetype)initWithSourceName:(const std::string &)_src
 {
     const auto nib_path = [Bundle() pathForResource:@"CreateHardlinkDialog" ofType:@"nib"];
-    if( self = [super initWithWindowNibPath:nib_path owner:self] ) {
+    self = [super initWithWindowNibPath:nib_path owner:self];
+    if( self ) {
         m_SourceName = _src;
         self.isValid = false;
     }

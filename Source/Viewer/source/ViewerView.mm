@@ -67,7 +67,8 @@ using namespace nc::viewer;
                    theme:(std::unique_ptr<nc::viewer::Theme>)_theme
     highlightingSettings:(nc::viewer::hl::SettingsStorage &)_hl_settings
 {
-    if( self = [super initWithFrame:frame] ) {
+    self = [super initWithFrame:frame];
+    if( self ) {
 
         m_TempFileStorage = &_temp_storage;
         m_Config = &_config;

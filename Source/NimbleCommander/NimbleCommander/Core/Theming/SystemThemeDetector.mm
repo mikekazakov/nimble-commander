@@ -19,7 +19,8 @@
 
 - (instancetype)init
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         [NSDistributedNotificationCenter.defaultCenter addObserver:self
                                                           selector:@selector(themeChanged:)
                                                               name:@"AppleInterfaceThemeChangedNotification"

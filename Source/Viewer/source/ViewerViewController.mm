@@ -237,10 +237,12 @@ struct BackgroundFileOpener {
     }
     else {
         [m_View setFile:m_ViewerFileWindow];
-        utility::Encoding encoding = utility::Encoding::ENCODING_INVALID;
-        if( m_Config->GetBool(g_ConfigRespectComAppleTextEncoding) &&
-            (encoding = EncodingFromXAttr(m_OriginalFile)) != utility::Encoding::ENCODING_INVALID )
-            m_View.encoding = encoding;
+        if( m_Config->GetBool(g_ConfigRespectComAppleTextEncoding) ) {
+            if( const utility::Encoding encoding = EncodingFromXAttr(m_OriginalFile);
+                encoding != utility::Encoding::ENCODING_INVALID ) {
+                m_View.encoding = encoding;
+            }
+        }
     }
 
     m_View.hotkeyDelegate = self;

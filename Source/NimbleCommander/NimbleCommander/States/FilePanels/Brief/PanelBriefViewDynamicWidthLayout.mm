@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewDynamicWidthLayout.h"
 #include "PanelBriefViewDynamicWidthLayoutEngine.h"
 #include <mutex>
@@ -19,7 +19,8 @@ using nc::panel::view::brief::DynamicWidthLayoutEngine;
 
 - (instancetype)init
 {
-    if( self = [super init] ) {
+    self = [super init];
+    if( self ) {
         m_ItemHeight = 20;
         m_ItemMinWidth = 140;
         m_ItemMaxWidth = 400;

@@ -207,8 +207,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
         auto cmds = strongself->m_Parser->Parse(bytes);
         if( cmds.empty() )
-
             return;
+
         dispatch_to_main_queue([=, cmds = std::move(cmds)] {
             if( Log::Level() <= spdlog::level::debug )
                 nc::term::input::LogCommands(cmds);

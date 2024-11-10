@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
@@ -66,9 +66,9 @@ public:
                  unsigned _height,
                  ExtendedCharRegistry &_reg = ExtendedCharRegistry::SharedInstance());
 
-    inline unsigned Width() const { return m_Width; }
-    inline unsigned Height() const { return m_Height; }
-    inline unsigned BackScreenLines() const { return static_cast<unsigned>(m_BackScreenLines.size()); }
+    unsigned Width() const;
+    unsigned Height() const;
+    unsigned BackScreenLines() const;
 
     // negative _line_number means backscreen, zero and positive - current screen
     // backscreen: [-BackScreenLines(), -1]
@@ -79,11 +79,14 @@ public:
     std::span<const Space> LineFromNo(int _line_number) const noexcept;
     std::span<Space> LineFromNo(int _line_number) noexcept;
 
+    // Returns a value at the specified column (x) of the specified line (y).
+    // Line number can be negative, same as with LineFromNo().
+    // Throws an exception on invalid position.
     Space At(int x, int y) const;
 
     void ResizeScreen(unsigned _new_sx, unsigned _new_sy, bool _merge_with_backscreen);
 
-    void FeedBackscreen(const Space *_from, const Space *_to, bool _wrapped);
+    void FeedBackscreen(std::span<const Space> _with_spaces, bool _wrapped);
 
     bool LineWrapped(int _line_number) const;
     void SetLineWrapped(int _line_number, bool _wrapped);

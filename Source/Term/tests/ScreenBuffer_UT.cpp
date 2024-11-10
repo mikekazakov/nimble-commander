@@ -153,3 +153,129 @@ TEST_CASE(PREFIX "Space::HaveSameAttributes")
         CHECK(s1.HaveSameAttributes(s2));
     }
 }
+
+TEST_CASE(PREFIX "ResizeScreen")
+{
+    ScreenBuffer buffer(4, 4);
+
+    const std::string_view init = "1234"  //
+                                  "qwer"  //
+                                  "asdf"  //
+                                  "zxcv"; //
+    buffer.LoadScreenFromANSI(init);
+
+    SECTION("Extend horizontally by 1")
+    {
+        SECTION("No backscreen")
+        {
+            SECTION("Merge")
+            {
+                buffer.ResizeScreen(5, 4, true);
+            }
+            SECTION("Don't merge")
+            {
+                buffer.ResizeScreen(5, 4, false);
+            }
+            CHECK(buffer.DumpScreenAsANSI() == "1234 "
+                                               "qwer "
+                                               "asdf "
+                                               "zxcv ");
+        }
+        SECTION("With backscreen")
+        {
+            buffer.FeedBackscreen(buffer.LineFromNo(0), true);
+
+            SECTION("Merge")
+            {
+                buffer.ResizeScreen(5, 4, true);
+                // This behaviour is strange, but currently only capturing the status quo with unit tests
+                CHECK(buffer.DumpScreenAsANSI() == "234  "
+                                                   "qwer "
+                                                   "asdf "
+                                                   "zxcv ");
+            }
+            SECTION("Don't merge")
+            {
+                buffer.ResizeScreen(5, 4, false);
+                CHECK(buffer.DumpScreenAsANSI() == "1234 "
+                                                   "qwer "
+                                                   "asdf "
+                                                   "zxcv ");
+            }
+
+            CHECK(!buffer.LineFromNo(-1).empty());
+        }
+    }
+    SECTION("Extend vertically by 1")
+    {
+        SECTION("No backscreen")
+        {
+            SECTION("Merge")
+            {
+                buffer.ResizeScreen(4, 5, true);
+            }
+            SECTION("Don't merge")
+            {
+                buffer.ResizeScreen(4, 5, false);
+            }
+            CHECK(buffer.DumpScreenAsANSI() == "1234"
+                                               "qwer"
+                                               "asdf"
+                                               "zxcv"
+                                               "    ");
+        }
+        SECTION("With backscreen")
+        {
+            buffer.FeedBackscreen(buffer.LineFromNo(0), true);
+
+            SECTION("Merge")
+            {
+                buffer.ResizeScreen(4, 5, true);
+                CHECK(buffer.DumpScreenAsANSI() == "1234"
+                                                   "1234"
+                                                   "qwer"
+                                                   "asdf"
+                                                   "zxcv");
+                CHECK(buffer.DumpBackScreenAsANSI() == "");
+                CHECK(buffer.LineFromNo(-1).empty());
+            }
+            SECTION("Don't merge")
+            {
+                buffer.ResizeScreen(4, 5, false);
+                CHECK(buffer.DumpScreenAsANSI() == "1234"
+                                                   "qwer"
+                                                   "asdf"
+                                                   "zxcv"
+                                                   "    ");
+                CHECK(buffer.DumpBackScreenAsANSI() == "1234");
+                CHECK(!buffer.LineFromNo(-1).empty());
+            }
+        }
+    }
+    SECTION("Shrink horizontally by 1")
+    {
+        // This behaviour is strange, but currently only capturing the status quo with unit tests
+        buffer.ResizeScreen(3, 4, false);
+        CHECK(buffer.DumpScreenAsANSI() == "123"
+                                           "4  "
+                                           "qwe"
+                                           "r  ");
+    }
+    SECTION("Shrink vertically by 1")
+    {
+        // This behaviour is strange, but currently only capturing the status quo with unit tests
+        buffer.ResizeScreen(4, 3, false);
+        CHECK(buffer.DumpScreenAsANSI() == "1234"
+                                           "qwer"
+                                           "asdf");
+    }
+}
+
+// Repro for https://github.com/mikekazakov/nimble-commander/issues/426
+TEST_CASE(PREFIX "ResizeScreen, empty with a backscreen")
+{
+    ScreenBuffer buffer(4, 4);
+    buffer.FeedBackscreen(buffer.LineFromNo(0), true);
+    buffer.ResizeScreen(4, 5, false);
+    CHECK(buffer.LineFromNo(-1).empty());
+}

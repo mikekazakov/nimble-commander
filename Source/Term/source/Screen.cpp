@@ -362,7 +362,7 @@ void Screen::DoScrollUp(const unsigned _top, const unsigned _bottom, const unsig
             // we're scrolling up the whole screen - let's feed scrollback with leftover
             auto line = m_Buffer.LineFromNo(i);
             assert(!line.empty());
-            m_Buffer.FeedBackscreen(line.data(), line.data() + line.size(), m_Buffer.LineWrapped(i));
+            m_Buffer.FeedBackscreen(line, m_Buffer.LineWrapped(i));
         }
 
     for( int n_src = top + lines, n_dst = top; n_src < bottom && n_dst < bottom; ++n_src, ++n_dst ) {

@@ -108,21 +108,25 @@ base::CFPtr<CFStringRef> HexModeSplitter::MakeBytesHexString(const std::byte *co
                                                              const std::byte *const _last,
                                                              const char16_t _gap_symbol)
 {
-    const auto size = static_cast<int>(_last - _first);
-    const auto chars_per_byte = 3;
-    const auto max_bytes_via_alloca = 1024;
-    if( size * chars_per_byte * sizeof(char16_t) < max_bytes_via_alloca ) {
+    const size_t size = static_cast<size_t>(_last - _first);
+    constexpr size_t chars_per_byte = 3;
+    constexpr size_t max_bytes_via_alloca = 1024;
+    if( size == 0 ) {
+        const auto str = CFStringCreateWithCharacters(nullptr, nullptr, 0ull);
+        return base::CFPtr<CFStringRef>::adopt(str);
+    }
+    else if( size * chars_per_byte * sizeof(char16_t) < max_bytes_via_alloca ) {
         auto buffer = static_cast<char16_t *>(alloca(size * chars_per_byte * sizeof(char16_t)));
         Fill(_first, _last, buffer, _gap_symbol);
         const auto str = CFStringCreateWithCharacters(
-            nullptr, reinterpret_cast<const UniChar *>(buffer), std::max((size * chars_per_byte) - 1, 0));
+            nullptr, reinterpret_cast<const UniChar *>(buffer), (size * chars_per_byte) - 1);
         return base::CFPtr<CFStringRef>::adopt(str);
     }
     else {
         std::u16string buffer(size * chars_per_byte, static_cast<char16_t>(0));
         Fill(_first, _last, buffer.data(), _gap_symbol);
         const auto str = CFStringCreateWithCharacters(
-            nullptr, reinterpret_cast<const UniChar *>(buffer.data()), std::max((size * chars_per_byte) - 1, 0));
+            nullptr, reinterpret_cast<const UniChar *>(buffer.data()), (size * chars_per_byte) - 1);
         return base::CFPtr<CFStringRef>::adopt(str);
     }
 }

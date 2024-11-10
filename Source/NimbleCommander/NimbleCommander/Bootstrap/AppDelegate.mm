@@ -876,7 +876,7 @@ static NCAppDelegate *g_Me = nil;
 static void DoTemporaryFileStoragePurge()
 {
     assert(g_TemporaryFileStorage != nullptr);
-    const auto deadline = time(nullptr) - (60 * 60 * 24); // 24 hours back
+    const auto deadline = time(nullptr) - (60l * 60l * 24l); // 24 hours back
     g_TemporaryFileStorage->Purge(deadline);
 
     dispatch_after(6h, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), DoTemporaryFileStoragePurge);

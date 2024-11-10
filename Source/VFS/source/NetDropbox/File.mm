@@ -628,7 +628,7 @@ int File::SetChunkSize(size_t _size)
 {
     if( m_State != Cold )
         return VFSError::InvalidCall;
-    if( _size >= 1 * 1000 * 1000 && _size <= 150 * 1000 * 1000 ) {
+    if( _size >= 1l * 1000l * 1000l && _size <= 150l * 1000l * 1000l ) {
         m_ChunkSize = _size;
         return VFSError::Ok;
     }

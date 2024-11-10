@@ -237,7 +237,7 @@ TEST_CASE(PREFIX "ResizeScreen")
                                                    "qwer"
                                                    "asdf"
                                                    "zxcv");
-                CHECK(buffer.DumpBackScreenAsANSI() == "");
+                CHECK(buffer.DumpBackScreenAsANSI().empty());
                 CHECK(buffer.LineFromNo(-1).empty());
             }
             SECTION("Don't merge")

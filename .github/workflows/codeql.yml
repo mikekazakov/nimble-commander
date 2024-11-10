@@ -11,7 +11,7 @@ env:
 jobs:
   analyze:
     name: Analyze
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 120
     permissions:
       security-events: write

@@ -29,3 +29,5 @@ set -e
 ./lexilla/bootstrap.sh
 ./nlohmann/bootstrap.sh
 ./unordered_dense/bootstrap.sh
+./Catch2/bootstrap.sh
+./rapidjson/bootstrap.sh

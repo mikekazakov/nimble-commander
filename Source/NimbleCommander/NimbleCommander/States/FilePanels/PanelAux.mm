@@ -29,7 +29,7 @@ static const auto g_ConfigDefaultVerificationSetting = "filePanel.operations.def
 static const auto g_CheckDelay = "filePanel.operations.vfsShadowUploadChangesCheckDelay";
 static const auto g_DropDelay = "filePanel.operations.vfsShadowUploadObservationDropDelay";
 static const auto g_QLPanel = "filePanel.presentation.showQuickLookAsFloatingPanel";
-static const uint64_t g_MaxFileSizeForVFSOpen = 64 * 1024 * 1024; // 64mb
+static const uint64_t g_MaxFileSizeForVFSOpen = 64ull * 1024ull * 1024ull; // 64mb
 
 static std::chrono::milliseconds UploadingCheckDelay()
 {

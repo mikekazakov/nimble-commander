@@ -422,13 +422,13 @@ private:
     uint64_t value = self.SizeTextFieldValue.integerValue;
     switch( self.SizeMetricPopUp.selectedTag ) {
         case 1:
-            value *= 1024;
+            value *= 1024ULL;
             break;
         case 2:
-            value *= 1024 * 1024;
+            value *= 1024ULL * 1024ULL;
             break;
         case 3:
-            value *= 1024 * 1024 * 1024;
+            value *= 1024ULL * 1024ULL * 1024ULL;
             break;
         default:
             break;

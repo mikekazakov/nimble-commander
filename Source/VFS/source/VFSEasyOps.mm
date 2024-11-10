@@ -40,7 +40,7 @@ static int CopyNodeAttrs(const char *_src_full_path,
 
 static int CopyFileContentsSmall(std::shared_ptr<VFSFile> _src, std::shared_ptr<VFSFile> _dst)
 {
-    constexpr uint64_t bufsz = 256 * 1024;
+    constexpr uint64_t bufsz = 256ULL * 1024ULL;
     const std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
     const uint64_t src_size = _src->Size();
     const uint64_t left_read = src_size;
@@ -130,7 +130,7 @@ static int CopyFileContentsLarge(std::shared_ptr<VFSFile> _src, std::shared_ptr<
 
 static int CopyFileContents(std::shared_ptr<VFSFile> _src, std::shared_ptr<VFSFile> _dst)
 {
-    const ssize_t small_large_tresh = 16 * 1024 * 1024; // 16mb
+    const ssize_t small_large_tresh = 16LL * 1024LL * 1024LL; // 16mb
 
     if( _src->Size() > small_large_tresh )
         return CopyFileContentsLarge(_src, _dst);
@@ -432,7 +432,7 @@ std::optional<std::string> CopyFileToTempStorage(const std::string &_vfs_filepat
         return std::nullopt;
     auto do_unlink = at_scope_end([&] { unlink(native_file->path.c_str()); });
 
-    constexpr size_t bufsz = 256 * 1024;
+    constexpr size_t bufsz = 256ULL * 1024ULL;
     std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
     ssize_t res_read;
     while( (res_read = vfs_file->Read(buf.get(), bufsz)) > 0 ) {
@@ -553,7 +553,7 @@ static int ExtractRegFile(const std::string &_vfs_path,
 
     fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK);
 
-    constexpr size_t bufsz = 256 * 1024;
+    constexpr size_t bufsz = 256ULL * 1024ULL;
     std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
     ssize_t res_read;
     while( (res_read = vfs_file->Read(buf.get(), bufsz)) > 0 ) {

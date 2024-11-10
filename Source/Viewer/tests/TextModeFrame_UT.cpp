@@ -98,6 +98,6 @@ static std::shared_ptr<const TextModeWorkingSet> ProduceWorkingSet(const char16_
     source.mapping_to_byte_offsets = offsets.data();
     source.characters_number = _chars_number;
     source.bytes_offset = 0;
-    source.bytes_offset = _chars_number * 2;
+    source.bytes_offset = static_cast<long>(_chars_number) * 2l;
     return std::make_shared<TextModeWorkingSet>(source);
 }

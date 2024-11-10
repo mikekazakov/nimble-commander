@@ -20,7 +20,7 @@ const char *const ArchiveRawHost::UniqueTag = "arc_libarchive_raw";
 
 // An arbitrary picked value, invented out of a blue. Should presumably cover reasonable uses cases
 // while giving a protection about potential traps, like accidentally expanding a 100GB .gz file.
-static constexpr uint64_t g_MaxBytes = 64 * 1024 * 1024;
+static constexpr uint64_t g_MaxBytes = 64ULL * 1024ULL * 1024ULL;
 
 // A filename to be used if we failed to deduce or extract it
 static constexpr const char *g_LastResortFilename = "data";
@@ -51,7 +51,7 @@ static Extracted read_stream(const uint64_t _max_bytes,
                              VFSHost &_parent,
                              const VFSCancelChecker &_cancel_checker)
 {
-    static constexpr size_t buf_sz = 256 * 1024;
+    static constexpr size_t buf_sz = 256ULL * 1024ULL;
     struct State {
         VFSFilePtr source_file;
         std::unique_ptr<std::byte[]> inbuf;

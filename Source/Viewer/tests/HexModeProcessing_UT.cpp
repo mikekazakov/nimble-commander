@@ -372,7 +372,7 @@ ProduceWorkingSet(const char16_t *_chars, const int _chars_number, long _ws_offs
     source.mapping_to_byte_offsets = offsets.data();
     source.characters_number = _chars_number;
     source.bytes_offset = _ws_offset;
-    source.bytes_offset = _chars_number * 2;
+    source.bytes_offset = static_cast<long>(_chars_number) * 2l;
     return std::make_shared<TextModeWorkingSet>(source);
 }
 

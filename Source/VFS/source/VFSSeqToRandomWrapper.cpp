@@ -73,7 +73,7 @@ int VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
         backend->m_Size = m_SeqFile->Size();
         backend->m_DataBuf = std::make_unique<uint8_t[]>(backend->m_Size);
 
-        const size_t max_io = 256 * 1024;
+        const size_t max_io = 256ULL * 1024ULL;
         uint8_t *d = &backend->m_DataBuf[0];
         uint8_t *e = d + backend->m_Size;
         ssize_t res = 0;
@@ -113,7 +113,7 @@ int VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
         backend->m_FD = fd;
         backend->m_Size = m_SeqFile->Size();
 
-        constexpr uint64_t bufsz = 256 * 1024;
+        constexpr uint64_t bufsz = 256ULL * 1024ULL;
         const std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
         const uint64_t left_read = backend->m_Size;
         ssize_t res_read;

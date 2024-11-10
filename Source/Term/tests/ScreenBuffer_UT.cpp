@@ -36,6 +36,7 @@ TEST_CASE(PREFIX "Init")
         REQUIRE(l2.empty());
         auto l3 = buffer.LineFromNo(-1);
         REQUIRE(l3.empty());
+        REQUIRE(l3.data() == nullptr);
     }
     SECTION("Zero width")
     {
@@ -278,4 +279,5 @@ TEST_CASE(PREFIX "ResizeScreen, empty with a backscreen")
     buffer.FeedBackscreen(buffer.LineFromNo(0), true);
     buffer.ResizeScreen(4, 5, false);
     CHECK(buffer.LineFromNo(-1).empty());
+    CHECK(buffer.LineFromNo(-1).data() != nullptr); // NB! empty but still points into the buffer
 }

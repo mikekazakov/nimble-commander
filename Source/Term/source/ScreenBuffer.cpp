@@ -52,17 +52,14 @@ std::span<ScreenBuffer::Space> ScreenBuffer::LineFromNo(int _line_number) noexce
     if( _line_number >= 0 && _line_number < static_cast<int>(m_OnScreenLines.size()) ) {
         const LineMeta line = m_OnScreenLines[_line_number];
         assert(line.start_index + line.line_length <= m_Height * m_Width);
-        if( line.line_length == 0 )
-            return {}; // &[0] of an empty container is UB, thus explicitly handle this edge-case
-        return {&m_OnScreenSpaces[line.start_index], line.line_length};
+        return {m_OnScreenSpaces.get() + line.start_index, line.line_length};
     }
     else if( _line_number < 0 && -_line_number <= static_cast<int>(m_BackScreenLines.size()) ) {
         const unsigned ind = unsigned(static_cast<int>(m_BackScreenLines.size()) + _line_number);
         const LineMeta line = m_BackScreenLines[ind];
         assert(line.start_index + line.line_length <= m_BackScreenSpaces.size());
-        if( line.line_length == 0 )
-            return {}; // &[0] of an empty container is UB, thus explicitly handle this edge-case
-        return {&m_BackScreenSpaces[line.start_index], line.line_length};
+        // NB! use .data() + offset instead of operator[] since &[size] is UB
+        return {m_BackScreenSpaces.data() + line.start_index, line.line_length};
     }
     else
         return {};

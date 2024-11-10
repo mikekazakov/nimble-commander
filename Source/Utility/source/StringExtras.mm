@@ -23,13 +23,6 @@ static void StringTruncateTo(NSMutableString *str, unsigned maxCharacters, ETrun
         case kTruncateAtEnd:
             replaceRange.location = maxCharacters;
             break;
-
-        default:
-#if DEBUG
-            NSLog(@"Unknown truncation type in stringByTruncatingTo::");
-#endif
-            replaceRange.location = maxCharacters;
-            break;
     }
 
     static NSString *sEllipsisString = nil;

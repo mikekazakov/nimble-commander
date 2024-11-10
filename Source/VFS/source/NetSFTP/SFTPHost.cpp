@@ -769,57 +769,7 @@ int SFTPHost::VFSErrorForConnection(Connection &_conn)
             default:
                 return NetSFTPFailure;
         }
-    switch( sess_errno ) {
-        case LIBSSH2_ERROR_BANNER_RECV:
-        case LIBSSH2_ERROR_BANNER_SEND:
-        case LIBSSH2_ERROR_INVALID_MAC:
-        case LIBSSH2_ERROR_KEX_FAILURE:
-        case LIBSSH2_ERROR_ALLOC:
-        case LIBSSH2_ERROR_SOCKET_SEND:
-        case LIBSSH2_ERROR_KEY_EXCHANGE_FAILURE:
-        case LIBSSH2_ERROR_TIMEOUT:
-        case LIBSSH2_ERROR_HOSTKEY_INIT:
-        case LIBSSH2_ERROR_HOSTKEY_SIGN:
-        case LIBSSH2_ERROR_DECRYPT:
-        case LIBSSH2_ERROR_SOCKET_DISCONNECT:
-        case LIBSSH2_ERROR_PROTO:
-        case LIBSSH2_ERROR_PASSWORD_EXPIRED:
-        case LIBSSH2_ERROR_FILE:
-        case LIBSSH2_ERROR_METHOD_NONE:
-        case LIBSSH2_ERROR_AUTHENTICATION_FAILED:
-        case LIBSSH2_ERROR_PUBLICKEY_UNVERIFIED:
-        case LIBSSH2_ERROR_CHANNEL_OUTOFORDER:
-        case LIBSSH2_ERROR_CHANNEL_FAILURE:
-        case LIBSSH2_ERROR_CHANNEL_REQUEST_DENIED:
-        case LIBSSH2_ERROR_CHANNEL_UNKNOWN:
-        case LIBSSH2_ERROR_CHANNEL_WINDOW_EXCEEDED:
-        case LIBSSH2_ERROR_CHANNEL_PACKET_EXCEEDED:
-        case LIBSSH2_ERROR_CHANNEL_CLOSED:
-        case LIBSSH2_ERROR_CHANNEL_EOF_SENT:
-        case LIBSSH2_ERROR_ZLIB:
-        case LIBSSH2_ERROR_SOCKET_TIMEOUT:
-        case LIBSSH2_ERROR_SFTP_PROTOCOL:
-        case LIBSSH2_ERROR_REQUEST_DENIED:
-        case LIBSSH2_ERROR_METHOD_NOT_SUPPORTED:
-        case LIBSSH2_ERROR_INVAL:
-        case LIBSSH2_ERROR_INVALID_POLL_TYPE:
-        case LIBSSH2_ERROR_PUBLICKEY_PROTOCOL:
-        case LIBSSH2_ERROR_EAGAIN:
-        case LIBSSH2_ERROR_BUFFER_TOO_SMALL:
-        case LIBSSH2_ERROR_BAD_USE:
-        case LIBSSH2_ERROR_COMPRESS:
-        case LIBSSH2_ERROR_OUT_OF_BOUNDARY:
-        case LIBSSH2_ERROR_AGENT_PROTOCOL:
-        case LIBSSH2_ERROR_SOCKET_RECV:
-        case LIBSSH2_ERROR_ENCRYPT:
-        case LIBSSH2_ERROR_BAD_SOCKET:
-        case LIBSSH2_ERROR_KNOWN_HOSTS:
-            return NetSFTPErrorSSH; // until the better times we dont have a better errors
-                                    // explanation
-        default:
-            return NetSFTPErrorSSH;
-    }
-    return NetSFTPErrorSSH;
+    return NetSFTPErrorSSH; // until the better times we dont have a better errors explanation
 }
 
 const std::string &SFTPHost::ServerUrl() const noexcept

@@ -777,16 +777,11 @@ std::filesystem::path ExternalToolExecution::ExecutablePath() const
         if( IsRunnableExecutable(m_ET.m_ExecutablePath) ) {
             return m_ET.m_ExecutablePath;
         }
-        else if( auto p = GetExecutablePathForBundle(m_ET.m_ExecutablePath); !p.empty() ) {
+        if( auto p = GetExecutablePathForBundle(m_ET.m_ExecutablePath); !p.empty() ) {
             return p;
         }
-        else {
-            return m_ET.m_ExecutablePath; // fallback - not actually found
-        }
     }
-    else {
-        return m_ET.m_ExecutablePath; // TODO: whereis?
-    }
+    return m_ET.m_ExecutablePath; // TODO: whereis?
 }
 
 std::expected<pid_t, std::string> ExternalToolExecution::StartDetached()

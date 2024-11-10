@@ -333,7 +333,7 @@ off_t File::Seek(off_t _off, int _basis)
     else if( _basis == VFSFile::Seek_End )
         req_pos = m_FileSize + _off;
     else if( _basis == VFSFile::Seek_Cur )
-        req_pos = m_FileSize + _off;
+        req_pos = m_FilePos + _off;
     else
         return VFSError::InvalidCall;
 

@@ -241,7 +241,6 @@ bool ParserImpl::SSEscConsume(unsigned char _byte) noexcept
             SwitchTo(EscState::OSC);
             return true;
         case '>': /* Numeric keypad - ignoring now */
-            return true;
         case '=': /* Appl. keypad - ignoring now */
             return true;
 
@@ -339,23 +338,11 @@ bool ParserImpl::SSControlConsume(unsigned char _byte) noexcept
     if( c < 32 ) {
         switch( c ) {
             case 0:
-                SwitchTo(EscState::Text);
-                return true;
             case 1:
-                SwitchTo(EscState::Text);
-                return true;
             case 2:
-                SwitchTo(EscState::Text);
-                return true;
             case 3:
-                SwitchTo(EscState::Text);
-                return true;
             case 4:
-                SwitchTo(EscState::Text);
-                return true;
             case 5:
-                SwitchTo(EscState::Text);
-                return true;
             case 6:
                 SwitchTo(EscState::Text);
                 return true;
@@ -390,35 +377,15 @@ bool ParserImpl::SSControlConsume(unsigned char _byte) noexcept
                 SI();
                 return true;
             case 16:
-                SwitchTo(EscState::Text);
-                return true;
-            case 17:
-                SwitchTo(EscState::Text);
-                return true; // xon
+            case 17: // xon
             case 18:
-                SwitchTo(EscState::Text);
-                return true;
-            case 19:
-                SwitchTo(EscState::Text);
-                return true; // xoff
+            case 19: // xoff
             case 20:
-                SwitchTo(EscState::Text);
-                return true;
             case 21:
-                SwitchTo(EscState::Text);
-                return true;
             case 22:
-                SwitchTo(EscState::Text);
-                return true;
             case 23:
-                SwitchTo(EscState::Text);
-                return true;
             case 24:
-                SwitchTo(EscState::Text);
-                return true;
             case 25:
-                SwitchTo(EscState::Text);
-                return true;
             case 26:
                 SwitchTo(EscState::Text);
                 return true;
@@ -426,14 +393,8 @@ bool ParserImpl::SSControlConsume(unsigned char _byte) noexcept
                 SwitchTo(EscState::Esc);
                 return true;
             case 28:
-                SwitchTo(EscState::Text);
-                return true;
             case 29:
-                SwitchTo(EscState::Text);
-                return true;
             case 30:
-                SwitchTo(EscState::Text);
-                return true;
             case 31:
                 SwitchTo(EscState::Text);
                 return true;
@@ -708,8 +669,6 @@ void ParserImpl::SSCSISubmit() noexcept
             CSI_g();
             break;
         case 'h':
-            CSI_hl();
-            break;
         case 'l':
             CSI_hl();
             break;

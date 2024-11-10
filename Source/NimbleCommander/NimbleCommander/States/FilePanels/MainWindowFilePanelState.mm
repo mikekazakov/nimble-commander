@@ -450,12 +450,12 @@ static NSString *TitleForData(const data::Model *_data);
     return m_RightPanelControllers;
 }
 
-static bool Has(const std::vector<PanelController *> &_c, PanelController *_p) noexcept
+static bool Has(std::span<PanelController *> _c, PanelController *_p) noexcept
 {
     // this is called very often, so in order to help optimizer I manually removed all
     // Objective-C / ARC related semantics by casting everything to raw void*.
     // the difference between assembly outputs is huge.
-    const void *const *first = reinterpret_cast<const void *const *>(static_cast<const void *>(_c.data()));
+    const void *const *first = std::bit_cast<const void *const *>(_c.data());
     const void *const *last = first + _c.size();
     const void *value = (__bridge const void *)_p;
     return std::find(first, last, value) != last;

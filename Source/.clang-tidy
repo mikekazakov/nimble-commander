@@ -7,13 +7,13 @@ Checks: >
   bugprone-assert-side-effect,
   bugprone-assignment-in-if-condition,
   bugprone-bad-signal-to-kill-thread,
-  # bugprone-bitwise-pointer-cast,
-  # bugprone-bool-pointer-implicit-conversion,
-  # bugprone-branch-clone,
-  # bugprone-casting-through-void,
-  # bugprone-chained-comparison,
-  # bugprone-compare-pointer-to-member-virtual-function,
-  # bugprone-copy-constructor-init,
+  bugprone-bitwise-pointer-cast,
+  bugprone-bool-pointer-implicit-conversion,
+  bugprone-branch-clone,
+  bugprone-casting-through-void,
+  # bugprone-chained-comparison,                        <-- causes a lot of noise from Catch2
+  bugprone-compare-pointer-to-member-virtual-function,
+  bugprone-copy-constructor-init,
   # bugprone-crtp-constructor-accessibility,
   # bugprone-dangling-handle,
   # bugprone-dynamic-static-initializers,
@@ -96,12 +96,12 @@ Checks: >
   misc-coroutine-hostile-raii,
   misc-definitions-in-headers,
   misc-header-include-cycle,
-  # misc-include-cleaner, <-- flaky
+  # misc-include-cleaner,                               <-- flaky
   misc-misleading-bidirectional,
   misc-misleading-identifier,
-  # misc-misplaced-const, <-- controversial, produces false positives
+  # misc-misplaced-const,                               <-- controversial, produces false positives
   misc-new-delete-overloads,
-  # misc-no-recursion, <-- controversial
+  # misc-no-recursion,                                  <-- controversial
   misc-non-copyable-objects,
   misc-non-private-member-variables-in-classes,
   misc-redundant-expression,
@@ -112,10 +112,10 @@ Checks: >
   misc-unused-alias-decls,
   misc-unused-parameters,
   misc-unused-using-decls,
-  # misc-use-anonymous-namespace, <-- controversial, 'static' is fine
+  # misc-use-anonymous-namespace,                       <-- controversial, 'static' is fine
   misc-use-internal-linkage,
   modernize-avoid-bind,
-  # modernize-avoid-c-arrays, <-- not yet looked into
+  # modernize-avoid-c-arrays,                           <-- not yet looked into
   modernize-concat-nested-namespaces,
   modernize-deprecated-headers,
   modernize-deprecated-ios-base-aliases,
@@ -124,7 +124,7 @@ Checks: >
   modernize-make-shared,
   modernize-make-unique,
   modernize-min-max-use-initializer-list,
-  # modernize-pass-by-value, <-- controversial, changes the API
+  # modernize-pass-by-value,                            <-- controversial, changes the API
   modernize-raw-string-literal,
   modernize-redundant-void-arg,
   modernize-replace-auto-ptr,
@@ -134,7 +134,7 @@ Checks: >
   modernize-shrink-to-fit,
   modernize-type-traits,
   modernize-unary-static-assert,
-  # modernize-use-auto, <-- controversial, not some cases explicit types greatly improves readability
+  # modernize-use-auto,                                 <-- controversial, in some cases explicit types greatly improves readability
   modernize-use-bool-literals,
   modernize-use-constraints,
   modernize-use-default-member-init,
@@ -151,7 +151,7 @@ Checks: >
   modernize-use-std-format,
   modernize-use-std-numbers,
   modernize-use-std-print,
-  # modernize-use-trailing-return-type, <-- makes it harder to read the source code
+  # modernize-use-trailing-return-type,                 <-- makes it harder to read the source code
   modernize-use-transparent-functors,
   modernize-use-uncaught-exceptions,
   modernize-use-using,
@@ -182,7 +182,7 @@ Checks: >
   performance-trivially-destructible,
   performance-type-promotion-in-math-fn,
   performance-unnecessary-copy-initialization,
-  # performance-unnecessary-value-param <-- a bit too dangerous to apply blindly, need to carefully sift through
+  # performance-unnecessary-value-param                 <-- a bit too dangerous to apply blindly, need to carefully sift through
   portability-restrict-system-includes,
   portability-simd-intrinsics,
   portability-std-allocator-const,
@@ -190,8 +190,8 @@ Checks: >
   readability-avoid-const-params-in-decls,
   readability-avoid-nested-conditional-operator,
   readability-avoid-return-with-void-value,
-  # readability-avoid-unconditional-preprocessor-if, <-- sometimes is still usefull, can't blanketly disallow
-  # readability-braces-around-statements, <-- maybe a good idea, but is a rather huge change to apply
+  # readability-avoid-unconditional-preprocessor-if,    <-- sometimes is still usefull, can't blanketly disallow
+  # readability-braces-around-statements,               <-- maybe a good idea, but is a rather huge change to apply
   readability-const-return-type,
   readability-container-contains,
   readability-container-data-pointer,
@@ -199,24 +199,24 @@ Checks: >
   readability-convert-member-functions-to-static,
   readability-delete-null-pointer,
   readability-duplicate-include,
-  # readability-else-after-return, <-- a bit controversial, leave for now
+  # readability-else-after-return,                      <-- a bit controversial, leave for now
   readability-enum-initial-value,
-  # readability-function-cognitive-complexity, <-- unrealistic
+  # readability-function-cognitive-complexity,          <-- unrealistic
   readability-function-size,
-  # readability-identifier-length, <-- would be nice some day, but that's massive
-  # readability-identifier-naming, <-- would be nice some day, but that's massive
+  # readability-identifier-length,                      <-- would be nice some day, but that's massive
+  # readability-identifier-naming,                      <-- would be nice some day, but that's massive
   readability-implicit-bool-conversion,
   readability-inconsistent-declaration-parameter-name,
   readability-isolate-declaration,
-  # readability-magic-numbers,            <-- large
+  # readability-magic-numbers,                          <-- large
   readability-make-member-function-const,
   readability-math-missing-parentheses,
   readability-misleading-indentation,
   readability-misplaced-array-index,
   readability-named-parameter,
-  # readability-non-const-parameter,      <-- would be nice some day, but that's massive
-  # readability-operators-representation, <-- not sure about the benefits
-  # readability-qualified-auto,           <-- would be nice some day, but that's massive
+  # readability-non-const-parameter,                    <-- would be nice some day, but that's massive
+  # readability-operators-representation,               <-- not sure about the benefits
+  # readability-qualified-auto,                         <-- would be nice some day, but that's massive
   readability-redundant-access-specifiers,
   readability-redundant-casting,
   readability-redundant-control-flow,
@@ -236,7 +236,7 @@ Checks: >
   readability-string-compare,
   readability-suspicious-call-argument,
   readability-uniqueptr-delete-release,
-  # readability-uppercase-literal-suffix, <-- controversial
+  # readability-uppercase-literal-suffix,               <-- controversial
   readability-use-anyofallof,
   readability-use-std-min-max,
 

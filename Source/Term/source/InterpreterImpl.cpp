@@ -351,11 +351,8 @@ void InterpreterImpl::ProcessEraseInDisplay(const input::DisplayErasure _display
         case input::DisplayErasure::Area::FromDisplayStartToCursor:
             m_Screen.DoEraseScreen(1);
             break;
+        case input::DisplayErasure::Area::WholeDisplayWithScrollback: // TODO: need a real implementation
         case input::DisplayErasure::Area::WholeDisplay:
-            m_Screen.DoEraseScreen(2);
-            break;
-        case input::DisplayErasure::Area::WholeDisplayWithScrollback:
-            // TODO: need a real implementation
             m_Screen.DoEraseScreen(2);
             break;
     }
@@ -622,8 +619,6 @@ void InterpreterImpl::ProcessSetCharacterAttributes(input::CharacterAttributes _
             set_blink(false);
             break;
         case Kind::Underlined:
-            set_underline(true);
-            break;
         case Kind::DoublyUnderlined:
             set_underline(true);
             break;

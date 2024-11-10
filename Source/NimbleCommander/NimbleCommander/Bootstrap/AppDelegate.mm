@@ -544,11 +544,7 @@ static NCAppDelegate *g_Me = nil;
     bool has_running_ops = false;
     auto controllers = self.mainWindowControllers;
     for( const auto &wincont : controllers )
-        if( !wincont.operationsPool.Empty() ) {
-            has_running_ops = true;
-            break;
-        }
-        else if( wincont.terminalState && wincont.terminalState.isAnythingRunning ) {
+        if( !wincont.operationsPool.Empty() || (wincont.terminalState && wincont.terminalState.isAnythingRunning) ) {
             has_running_ops = true;
             break;
         }

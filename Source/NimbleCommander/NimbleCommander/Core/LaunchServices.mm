@@ -20,14 +20,14 @@ template <class InputIterator, class UnaryPredicate, class T>
 inline T all_equal_or_default(InputIterator _first, InputIterator _last, UnaryPredicate _pred, T &&_default)
 {
     if( _first == _last )
-        return std::move(_default);
+        return std::forward<T>(_default);
 
     T &&val = _pred(*_first);
     _first++;
 
     while( _first != _last ) {
         if( _pred(*_first) != val )
-            return std::move(_default);
+            return std::forward<T>(_default);
         ++_first;
     }
     return std::move(val);

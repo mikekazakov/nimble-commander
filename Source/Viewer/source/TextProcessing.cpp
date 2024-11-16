@@ -78,7 +78,7 @@ CTParagraphStyleRef CreateParagraphStyleWithRegularTabs(double _tab_width)
     settings[0].value = &tab_width;
     settings[1].spec = kCTParagraphStyleSpecifierTabStops;
     settings[1].valueSize = sizeof(tab_stops);
-    settings[1].value = &tab_stops;
+    settings[1].value = static_cast<const void *>(&tab_stops);
     return CTParagraphStyleCreate(settings, 2);
 }
 

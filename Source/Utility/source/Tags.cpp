@@ -584,7 +584,7 @@ std::vector<std::byte> Tags::BuildMDItemUserTags(const std::span<const Tag> _tag
     memset(&trailer, 0, sizeof(trailer));
     trailer.offset_int_size = static_cast<uint8_t>(offset_int_size);
     trailer.object_ref_size = 1;
-    trailer.num_objects = std::byteswap(static_cast<uint64_t>(objects.size() + 1));
+    trailer.num_objects = std::byteswap(static_cast<uint64_t>(objects.size()) + 1);
     trailer.offset_table_offset = std::byteswap(static_cast<uint64_t>(plist.size()));
 
     // Write the offset table

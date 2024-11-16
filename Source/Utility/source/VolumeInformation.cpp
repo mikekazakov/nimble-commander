@@ -62,8 +62,8 @@ int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInfo
         _c->intr.named_strems = CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_NAMEDSTREAMS);
 #undef CAPAB
 #define ATTRIB(_a, _b, _d)                                                                                             \
-    _c->attr._a[0] = info.a.validattr._b & _d;                                                                         \
-    _c->attr._a[1] = info.a.nativeattr._b & _d;
+    _c->attr._a[0] = info.a.validattr._b & (_d);                                                                       \
+    _c->attr._a[1] = info.a.nativeattr._b & (_d);
 
         ATTRIB(cmn.name, commonattr, ATTR_CMN_NAME);
         ATTRIB(cmn.dev_id, commonattr, ATTR_CMN_DEVID);

@@ -17,7 +17,7 @@ static constexpr void strsubst(char *_s, char _what, char _to) noexcept
 static constexpr unsigned chartouni(const char *_from, unsigned short *_to, unsigned _amount) noexcept
 {
     for( unsigned i = 0; i < _amount; ++i )
-        _to[i] = _from[i];
+        _to[i] = static_cast<unsigned char>(_from[i]);
     return _amount;
 }
 
@@ -329,7 +329,7 @@ int ByteCountFormatter::SpaceSeparated_Impl(uint64_t _size, unsigned short _buf[
 #undef __1000_5
     assert(len >= 0 && len < 50);
     for( int i = 0; i < len; ++i )
-        _buf[i] = buf[i];
+        _buf[i] = static_cast<unsigned char>(buf[i]);
     for( int i = 0; i < static_cast<int>(m_Bytes.size()); ++i )
         _buf[i + len] = m_Bytes[i];
     len += m_Bytes.size();

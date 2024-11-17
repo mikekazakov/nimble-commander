@@ -349,8 +349,9 @@ std::vector<Tags::Tag> Tags::ParseFinderInfo(std::span<const std::byte> _bytes) 
             return {Tag{&g_LabelRed, Color::Red}};
         case 7:
             return {Tag{&g_LabelOrange, Color::Orange}};
+        default:
+            return {};
     }
-    return {};
 }
 
 static void SetFinderInfoLabel(std::span<uint8_t, 32> _bytes, Tags::Color _color) noexcept

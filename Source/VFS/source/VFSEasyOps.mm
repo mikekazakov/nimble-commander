@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSEasyOps.h"
 #include "../include/VFS/VFSError.h"
 #include <Base/SerialQueue.h>
@@ -274,9 +274,10 @@ int VFSEasyCopyNode(const char *_src_full_path,
 
         case S_IFLNK:
             return VFSEasyCopySymlink(_src_full_path, _src_host, _dst_full_path, _dst_host);
-    }
 
-    return VFSError::GenericError;
+        default:
+            return VFSError::GenericError;
+    }
 }
 
 int VFSEasyCompareFiles(const char *_file1_full_path,

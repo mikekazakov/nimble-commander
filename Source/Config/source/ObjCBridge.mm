@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ObjCBridge.h"
 #include "RapidJSON.h"
 #include <Utility/ObjCpp.h>
@@ -126,6 +126,8 @@ using nc::config::Config;
             case 'f': // @encode(float)
                 _config.Set(_key_path, n.floatValue);
                 break;
+            default:
+                /* do nothing */;
         }
     }
     else if( const auto s = nc::objc_cast<NSString>(value) ) {

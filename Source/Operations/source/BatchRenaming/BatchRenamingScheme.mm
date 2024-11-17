@@ -248,6 +248,8 @@ bool BatchRenamingScheme::ParsePlaceholder(NSString *_ph)
                 position += v->second;
                 continue;
             }
+            default:
+                break;
         }
         return false;
     }

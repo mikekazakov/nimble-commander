@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InputTranslatorImpl.h"
 #include <cassert>
 #include <string>
@@ -110,6 +110,8 @@ void InputTranslatorImpl::ProcessKeyDown(NSEvent *_event)
             else
                 seq_resp = "\011";
             break;
+        default:
+            /* do nothing */;
     }
 
     if( seq_resp ) {

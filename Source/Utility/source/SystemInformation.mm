@@ -272,6 +272,8 @@ static const OSXVersion g_Version = [] {
             case 15:
                 return OSXVersion::OSX_15;
                 // MacOSX older that 10.15 are unsupported
+            default:
+                break;
         }
     return OSXVersion::OSX_Unknown;
 }();

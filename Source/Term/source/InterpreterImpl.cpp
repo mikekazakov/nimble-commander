@@ -923,7 +923,7 @@ void InterpreterImpl::ProcessCursorStyle(const input::CursorStyle &_style)
 {
     assert(m_OnCursorStyleChanged);
     if( _style.style )
-        m_OnCursorStyleChanged(*_style.style);
+        m_OnCursorStyleChanged(_style.style);
     else
         m_OnCursorStyleChanged(std::nullopt);
 }

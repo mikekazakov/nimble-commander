@@ -63,7 +63,7 @@
     if( _event.type == NSEventTypeKeyDown && (_event.modifierFlags & NSEventModifierFlagControl) ) {
         const unsigned short keycode = _event.keyCode;
 #define trigger(KEYCODE, ACTION)                                                                                       \
-    if( keycode == KEYCODE && ACTION ) {                                                                               \
+    if( keycode == (KEYCODE) && (ACTION) ) {                                                                           \
         ACTION();                                                                                                      \
         return true;                                                                                                   \
     }

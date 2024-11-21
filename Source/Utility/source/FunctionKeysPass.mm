@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <FunctionKeysPass.h>
 #include <Carbon/Carbon.h>
 #include <AppKit/AppKit.h>
@@ -115,6 +115,8 @@ CGEventRef FunctionalKeysPass::HandleRegularKeyEvents(CGEventType _type, CGEvent
             return substitute(kVK_F18);
         case 80:
             return substitute(kVK_F19);
+        default:
+            break;
     };
     return _event;
 }
@@ -155,6 +157,8 @@ CGEventRef FunctionalKeysPass::HandleControlButtons([[maybe_unused]] CGEventType
             return substitute(kVK_F11);
         case NX_KEYTYPE_SOUND_UP:
             return substitute(kVK_F12);
+        default:
+            break;
     }
 
     return _event;

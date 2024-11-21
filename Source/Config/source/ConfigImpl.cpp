@@ -537,7 +537,9 @@ static const rapidjson::Value *FindNode(const std::string_view _path, const rapi
     size_t p;
 
     while( (p = path.find_first_of('.')) != std::string_view::npos ) {
+        // NOLINTBEGIN(bugprone-suspicious-stringview-data-usage)
         const auto part_name = rapidjson::Value{rapidjson::StringRef(path.data(), p)};
+        // NOLINTEND(bugprone-suspicious-stringview-data-usage)
         const auto member_it = root->FindMember(part_name);
         if( member_it == root->MemberEnd() )
             return nullptr;
@@ -565,7 +567,9 @@ static std::pair<const rapidjson::Value *, std::string_view> FindParentNode(std:
     size_t p;
 
     while( (p = path.find_first_of('.')) != std::string_view::npos ) {
+        // NOLINTBEGIN(bugprone-suspicious-stringview-data-usage)
         const auto part_name = rapidjson::Value{rapidjson::StringRef(path.data(), p)};
+        // NOLINTEND(bugprone-suspicious-stringview-data-usage)
         const auto member_it = root->FindMember(part_name);
         if( member_it == root->MemberEnd() )
             return {nullptr, ""};

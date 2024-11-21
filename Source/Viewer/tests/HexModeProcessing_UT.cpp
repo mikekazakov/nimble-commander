@@ -355,7 +355,9 @@ TEST_CASE(PREFIX "Check hex conversions")
     }
     SECTION("Doesn't crash on 16 megabytes")
     {
-        const auto data = std::string(16'000'000, static_cast<char16_t>(' '));
+        // NOLINTBEGIN(bugprone-string-constructor)
+        const auto data = std::string(16'000'000, ' ');
+        // NOLINTEND(bugprone-string-constructor)
         const auto hex =
             HexModeSplitter::MakeBytesHexString(reinterpret_cast<const std::byte *>(data.data()),
                                                 reinterpret_cast<const std::byte *>(data.data()) + data.size());

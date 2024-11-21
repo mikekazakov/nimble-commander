@@ -952,6 +952,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     }
 }
 
+// NOLINTBEGIN(bugprone-macro-parentheses)
 #define ANSI_COLOR(getter, setter, index)                                                                              \
     -(NSColor *)getter                                                                                                 \
     {                                                                                                                  \
@@ -964,6 +965,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             self.needsDisplay = true;                                                                                  \
         }                                                                                                              \
     }
+// NOLINTEND(bugprone-macro-parentheses)
 
 ANSI_COLOR(ansiColor0, setAnsiColor0, 0);
 ANSI_COLOR(ansiColor1, setAnsiColor1, 1);

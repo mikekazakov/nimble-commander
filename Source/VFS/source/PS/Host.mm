@@ -311,10 +311,10 @@ std::vector<PSHost::ProcInfo> PSHost::GetProcs()
         curr.pid = kip.kp_proc.p_pid;
         curr.ppid = kip.kp_eproc.e_ppid;
         curr.gid = kip.kp_eproc.e_pgid;
-        curr.status = kip.kp_proc.p_stat;
+        curr.status = static_cast<unsigned char>(kip.kp_proc.p_stat);
         curr.start_time = kip.kp_proc.p_starttime.tv_sec;
         curr.priority = kip.kp_proc.p_priority;
-        curr.nice = kip.kp_proc.p_nice;
+        curr.nice = static_cast<unsigned char>(kip.kp_proc.p_nice);
         curr.p_uid = kip.kp_eproc.e_pcred.p_ruid;
         curr.c_uid = kip.kp_eproc.e_ucred.cr_uid;
         curr.cpu_type = ArchTypeFromPID(curr.pid);

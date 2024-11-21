@@ -349,8 +349,9 @@ std::vector<Tags::Tag> Tags::ParseFinderInfo(std::span<const std::byte> _bytes) 
             return {Tag{&g_LabelRed, Color::Red}};
         case 7:
             return {Tag{&g_LabelOrange, Color::Orange}};
+        default:
+            return {};
     }
-    return {};
 }
 
 static void SetFinderInfoLabel(std::span<uint8_t, 32> _bytes, Tags::Color _color) noexcept
@@ -584,7 +585,7 @@ std::vector<std::byte> Tags::BuildMDItemUserTags(const std::span<const Tag> _tag
     memset(&trailer, 0, sizeof(trailer));
     trailer.offset_int_size = static_cast<uint8_t>(offset_int_size);
     trailer.object_ref_size = 1;
-    trailer.num_objects = std::byteswap(static_cast<uint64_t>(objects.size() + 1));
+    trailer.num_objects = std::byteswap(static_cast<uint64_t>(objects.size()) + 1);
     trailer.offset_table_offset = std::byteswap(static_cast<uint64_t>(plist.size()));
 
     // Write the offset table

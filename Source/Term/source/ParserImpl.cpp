@@ -230,6 +230,8 @@ bool ParserImpl::SSEscConsume(unsigned char _byte) noexcept
         case '#':
             m_EscState.hash = true;
             return true;
+        default:
+            break;
     }
 
     SwitchTo(EscState::Text);
@@ -398,6 +400,8 @@ bool ParserImpl::SSControlConsume(unsigned char _byte) noexcept
             case 31:
                 SwitchTo(EscState::Text);
                 return true;
+            default:
+                break;
         }
     }
     SwitchTo(EscState::Text);
@@ -462,7 +466,9 @@ void ParserImpl::SSOSCSubmit() noexcept
     const std::string_view pt = s.substr(sc_pos + 1);
 
     unsigned ps = std::numeric_limits<unsigned>::max();
+    // NOLINTBEGIN(bugprone-suspicious-stringview-data-usage)
     if( std::from_chars(s.data(), s.data() + sc_pos, ps).ec != std::errc() )
+        // NOLINTEND(bugprone-suspicious-stringview-data-usage)
         return;
 
     using namespace input;

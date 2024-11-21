@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <CoreFoundation/CoreFoundation.h>
 #include <Utility/VolumeInformation.h>
 #include <cerrno>
@@ -62,8 +62,8 @@ int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInfo
         _c->intr.named_strems = CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_NAMEDSTREAMS);
 #undef CAPAB
 #define ATTRIB(_a, _b, _d)                                                                                             \
-    _c->attr._a[0] = info.a.validattr._b & _d;                                                                         \
-    _c->attr._a[1] = info.a.nativeattr._b & _d;
+    _c->attr._a[0] = info.a.validattr._b & (_d);                                                                       \
+    _c->attr._a[1] = info.a.nativeattr._b & (_d);
 
         ATTRIB(cmn.name, commonattr, ATTR_CMN_NAME);
         ATTRIB(cmn.dev_id, commonattr, ATTR_CMN_DEVID);
@@ -335,8 +335,8 @@ int FetchVolumeAttributesInformation(const char *_path,
     CFURLRef cfurl = CFURLCreateFromFileSystemRepresentation(
         nullptr, reinterpret_cast<const UInt8 *>(_path), std::strlen(_path), false);
     CFStringRef fsverbname;
-    if( !static_cast<bool>(
-            CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, &fsverbname, nullptr)) ) {
+    if( !static_cast<bool>(CFURLCopyResourcePropertyForKey(
+            cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, static_cast<void *>(&fsverbname), nullptr)) ) {
         CFRelease(cfurl);
         return -1; // what to return???
     }
@@ -347,25 +347,31 @@ int FetchVolumeAttributesInformation(const char *_path,
     CFRelease(fsverbname);
 
     CFBooleanRef isejectable = nullptr;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsEjectableKey, &isejectable, nullptr) && isejectable ) {
+    if( CFURLCopyResourcePropertyForKey(
+            cfurl, kCFURLVolumeIsEjectableKey, static_cast<void *>(&isejectable), nullptr) &&
+        isejectable ) {
         _a->is_sw_ejectable = CFBooleanGetValue(isejectable);
         CFRelease(isejectable);
     }
 
     CFBooleanRef isremovable = nullptr;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsRemovableKey, &isremovable, nullptr) && isremovable ) {
+    if( CFURLCopyResourcePropertyForKey(
+            cfurl, kCFURLVolumeIsRemovableKey, static_cast<void *>(&isremovable), nullptr) &&
+        isremovable ) {
         _a->is_sw_removable = CFBooleanGetValue(isremovable);
         CFRelease(isremovable);
     }
 
     CFBooleanRef islocal = nullptr;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsLocalKey, &islocal, nullptr) && islocal ) {
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsLocalKey, static_cast<void *>(&islocal), nullptr) &&
+        islocal ) {
         _a->is_local = CFBooleanGetValue(islocal);
         CFRelease(islocal);
     }
 
     CFBooleanRef isinternal = nullptr;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsInternalKey, &isinternal, nullptr) && isinternal ) {
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsInternalKey, static_cast<void *>(&isinternal), nullptr) &&
+        isinternal ) {
         _a->is_internal = CFBooleanGetValue(isinternal);
         CFRelease(isinternal);
     }

@@ -359,6 +359,8 @@ static bool IsDark(NSColor *_color);
                     i.state = m_SortMode.collation == data::SortMode::Collation::CaseSensitive ? NSControlStateValueOn
                                                                                                : NSControlStateValueOff;
                     break;
+                default:
+                    /* do nothing */;
             }
     }
 
@@ -411,6 +413,8 @@ static bool IsDark(NSColor *_color);
             case 5:
                 proposed.collation = data::SortMode::Collation::CaseSensitive;
                 break;
+            default:
+                /* do nothing */;
         }
 
         if( proposed != m_SortMode && m_SortModeChangeCallback )

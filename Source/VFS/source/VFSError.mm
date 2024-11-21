@@ -296,8 +296,9 @@ static NSString *TextForCode(int _code)
             return @"Link loop";
         case NetSFTPCouldntReadKey:
             return @"Coundn't open the private key";
+        default:
+            return [NSString stringWithFormat:@"Error code %d", _code];
     }
-    return [NSString stringWithFormat:@"Error code %d", _code];
 }
 
 NSError *ToNSError(int _code)

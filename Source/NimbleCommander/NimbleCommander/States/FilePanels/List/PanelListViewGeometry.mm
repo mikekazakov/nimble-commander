@@ -12,7 +12,7 @@ using nc::utility::FontGeometryInfo;
 constexpr short insets[4] = {7, 1, 5, 1};
 
 // font_size, double_icon, icon_size, line_height, text_baseline
-using LayoutDataT = std::tuple<int8_t, int8_t, int8_t, int8_t, int8_t>;
+using LayoutDataT = std::tuple<uint8_t, uint8_t, uint8_t, uint8_t, uint8_t>;
 static const std::array<LayoutDataT, 21> g_FixedLayoutData = {{
     std::make_tuple(10, 0, 0, 17, 5),   //
     std::make_tuple(10, 1, 16, 17, 5),  //

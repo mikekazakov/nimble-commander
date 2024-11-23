@@ -62,22 +62,26 @@ TEST_CASE(PREFIX "Converting copy constructor")
 
 TEST_CASE(PREFIX "Move constructor")
 {
+    // NOLINTBEGIN(bugprone-use-after-move)
     CFMutableArrayRef array = CFArrayCreateMutable(nullptr, 0, nullptr);
     auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
     CHECK(CFGetRetainCount(array) == 1);
     auto p2 = std::move(p1);
     CHECK(CFGetRetainCount(array) == 1);
     CHECK(p1.get() == nullptr);
+    // NOLINTEND(bugprone-use-after-move)
 }
 
 TEST_CASE(PREFIX "Converting move constructor")
 {
+    // NOLINTBEGIN(bugprone-use-after-move)
     CFMutableArrayRef array = CFArrayCreateMutable(nullptr, 0, nullptr);
     auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
     CHECK(CFGetRetainCount(array) == 1);
     const CFPtr<CFMutableArrayRef> p2(std::move(p1));
     CHECK(CFGetRetainCount(array) == 1);
     CHECK(p1.get() == nullptr);
+    // NOLINTEND(bugprone-use-after-move)
 }
 
 TEST_CASE(PREFIX "Assignment operator")
@@ -107,6 +111,7 @@ TEST_CASE(PREFIX "Converting assignment operator")
 
 TEST_CASE(PREFIX "Move assignment operator")
 {
+    // NOLINTBEGIN(bugprone-use-after-move)
     CFMutableArrayRef array = CFArrayCreateMutable(nullptr, 0, nullptr);
     auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
     CHECK(CFGetRetainCount(array) == 1);
@@ -118,10 +123,12 @@ TEST_CASE(PREFIX "Move assignment operator")
     p2.operator=(p2);
     CHECK(CFGetRetainCount(array) == 1);
     CHECK(p2.get() == array);
+    // NOLINTEND(bugprone-use-after-move)
 }
 
 TEST_CASE(PREFIX "Converting move assignment operator")
 {
+    // NOLINTBEGIN(bugprone-use-after-move)
     CFMutableArrayRef array = CFArrayCreateMutable(nullptr, 0, nullptr);
     auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
     CHECK(CFGetRetainCount(array) == 1);
@@ -133,6 +140,7 @@ TEST_CASE(PREFIX "Converting move assignment operator")
     p2.operator=(p2);
     CHECK(CFGetRetainCount(array) == 1);
     CHECK(p2.get() == array);
+    // NOLINTEND(bugprone-use-after-move)
 }
 
 TEST_CASE(PREFIX "swap")

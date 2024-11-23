@@ -267,75 +267,59 @@ std::vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, siz
     return eas;
 }
 
-void *BuildAppleDoubleFromEA(VFSFile &_file, size_t *_buf_sz)
+std::vector<std::byte> BuildAppleDoubleFromEA(VFSFile &_file)
 {
     const unsigned ret_xattr_count = _file.XAttrCount();
     if( ret_xattr_count == 0 )
-        return nullptr;
+        return {};
 
-    static const int max_eas = 64;
-    struct {
-        char name[256];
-        int name_len;
+    struct EA {
+        std::string name;
         std::unique_ptr<char[]> data;
-        unsigned data_sz;
-        bool isfinfo;
-        unsigned attr_hdr_offset;
-        unsigned attr_data_offset;
-    } file_eas_s[max_eas];
-    auto *file_eas = &file_eas_s[0]; // to bypass block prohibition of arrays modification
-    memset(file_eas, 0, sizeof(file_eas_s));
+        unsigned data_sz = 0;
+        bool isfinfo = false;
+        unsigned attr_hdr_offset = 0;
+        unsigned attr_data_offset = 0;
+    };
+    std::vector<EA> file_eas;
 
-    assert(ret_xattr_count < max_eas); // anti-crash protection;
-
-    int eas_count = 0;
-
-    bool has_finfo = false;
-
-    _file.XAttrIterateNames([&](auto _name) {
-        assert(eas_count < max_eas);
-        file_eas[eas_count].name_len = (int)strlen(_name);
-        assert(file_eas[eas_count].name_len < 256);
-        strcpy(file_eas[eas_count].name, _name);
-        if( strcmp(_name, XATTR_FINDERINFO_NAME) == 0 ) {
-            has_finfo = true;
-            file_eas[eas_count].isfinfo = true;
-        }
-        eas_count++;
+    _file.XAttrIterateNames([&](const char *_name) {
+        file_eas.emplace_back();
+        EA &ea = file_eas.back();
+        ea.name = _name;
+        ea.isfinfo = ea.name == XATTR_FINDERINFO_NAME;
         return true;
     });
 
-    for( int i = 0; i < eas_count; ++i ) {
-        const ssize_t sz = _file.XAttrGet(file_eas[i].name, nullptr, 0);
+    for( EA &ea : file_eas ) {
+        const ssize_t sz = _file.XAttrGet(ea.name.c_str(), nullptr, 0);
         if( sz > 0 ) {
-            file_eas[i].data = std::make_unique<char[]>(sz);
-            assert(file_eas[i].data);
-            file_eas[i].data_sz = (unsigned)sz;
-            _file.XAttrGet(file_eas[i].name, file_eas[i].data.get(), file_eas[i].data_sz);
+            ea.data = std::make_unique<char[]>(sz);
+            ea.data_sz = (unsigned)sz;
+            _file.XAttrGet(ea.name.c_str(), ea.data.get(), ea.data_sz);
         }
     }
 
     unsigned attrs_hdrs_size = 0;
     uint16_t attrs_hdrs_count = 0;
-    for( int i = 0; i < eas_count; ++i )
-        if( !file_eas[i].isfinfo ) {
-            file_eas[i].attr_hdr_offset = sizeof(attr_header) + attrs_hdrs_size;
-            attrs_hdrs_size += ATTR_ENTRY_LENGTH(file_eas[i].name_len + 1); // namelen with zero-terminator
+    for( EA &ea : file_eas )
+        if( !ea.isfinfo ) {
+            ea.attr_hdr_offset = sizeof(attr_header) + attrs_hdrs_size;
+            attrs_hdrs_size += ATTR_ENTRY_LENGTH(ea.name.length() + 1); // namelen with zero-terminator
             ++attrs_hdrs_count;
         }
 
     unsigned attrs_data_size = 0;
-    for( int i = 0; i < eas_count; ++i )
-        if( !file_eas[i].isfinfo ) {
-            file_eas[i].attr_data_offset = sizeof(attr_header) + attrs_hdrs_size + attrs_data_size;
-            attrs_data_size += (file_eas[i].data_sz + ATTR_ALIGN) & (~ATTR_ALIGN);
+    for( EA &ea : file_eas )
+        if( !ea.isfinfo ) {
+            ea.attr_data_offset = sizeof(attr_header) + attrs_hdrs_size + attrs_data_size;
+            attrs_data_size += (ea.data_sz + ATTR_ALIGN) & (~ATTR_ALIGN);
         }
 
     const unsigned full_ad_size = sizeof(attr_header) + attrs_hdrs_size + attrs_data_size;
-    void *apple_double = malloc(full_ad_size);
-    memset(apple_double, 0, full_ad_size);
+    std::vector<std::byte> apple_double(full_ad_size, std::byte{});
 
-    attr_header *attr_header_p = (attr_header *)apple_double;
+    attr_header *attr_header_p = reinterpret_cast<attr_header *>(apple_double.data());
     attr_header_p->appledouble.magic = SWAP32(ADH_MAGIC);
     attr_header_p->appledouble.version = SWAP32(ADH_VERSION);
     memcpy(attr_header_p->appledouble.filler, ADH_MACOSX, sizeof(attr_header_p->appledouble.filler));
@@ -354,22 +338,20 @@ void *BuildAppleDoubleFromEA(VFSFile &_file, size_t *_buf_sz)
     /*attr_header_p->flags                            = SWAP32(0);*/
     attr_header_p->num_attrs = SWAP16(attrs_hdrs_count);
 
-    for( int i = 0; i < eas_count; ++i ) {
-        const auto &ea = file_eas[i];
-        if( !ea.isfinfo ) {
-            attr_entry_t *entry = (attr_entry_t *)((char *)apple_double + ea.attr_hdr_offset);
-            entry->offset = SWAP32(ea.attr_data_offset);
-            entry->length = SWAP32(ea.data_sz);
-            entry->namelen = uint8_t(ea.name_len + 1);
-            strcpy((char *)&entry->name[0], ea.name);
-            memcpy((char *)apple_double + ea.attr_data_offset, ea.data.get(), ea.data_sz);
+    for( const EA &ea : file_eas ) {
+        if( ea.isfinfo ) {
+            memcpy(&attr_header_p->appledouble.finfo[0], ea.data.get(), std::min(32u, ea.data_sz));
         }
         else {
-            memcpy(&attr_header_p->appledouble.finfo[0], ea.data.get(), std::min(32u, ea.data_sz));
+            attr_entry_t *entry = reinterpret_cast<attr_entry_t *>(apple_double.data() + ea.attr_hdr_offset);
+            entry->offset = SWAP32(ea.attr_data_offset);
+            entry->length = SWAP32(ea.data_sz);
+            entry->namelen = uint8_t(ea.name.length() + 1);
+            strcpy((char *)&entry->name[0], ea.name.c_str());
+            memcpy(apple_double.data() + ea.attr_data_offset, ea.data.get(), ea.data_sz);
         }
     }
 
-    *_buf_sz = full_ad_size;
     return apple_double;
 }
 

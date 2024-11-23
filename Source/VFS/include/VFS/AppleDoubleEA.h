@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #pragma once
 
@@ -21,6 +21,6 @@ struct AppleDoubleEA {
  */
 std::vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, size_t _memory_size);
 
-void *BuildAppleDoubleFromEA(VFSFile &_file, size_t *_buf_sz);
+std::vector<std::byte> BuildAppleDoubleFromEA(VFSFile &_file);
 
 } // namespace nc::vfs

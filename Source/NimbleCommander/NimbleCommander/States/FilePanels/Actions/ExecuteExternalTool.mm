@@ -5,6 +5,7 @@
 #include "../MainWindowFilePanelState.h"
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/Core/AnyHolder.h>
+#include <NimbleCommander/Core/Alert.h>
 #include <Panel/ExternalTools.h>
 #include "../ExternalToolParameterValueSheetController.h"
 #include <Utility/ObjCpp.h>
@@ -89,6 +90,7 @@ void ExecuteExternalTool::RunExtTool(std::shared_ptr<Payload> _payload)
 
     const auto startup_mode = _payload->exec.DeduceStartupMode();
     if( startup_mode == ExternalTool::StartupMode::RunInTerminal ) {
+        // TODO: error handling
         if( base::AmISandboxed() )
             return;
         const auto path = _payload->exec.ExecutablePath();
@@ -97,7 +99,18 @@ void ExecuteExternalTool::RunExtTool(std::shared_ptr<Payload> _payload)
             [ctrl requestTerminalExecutionWithFullPath:path andArguments:args];
     }
     else if( startup_mode == ExternalTool::StartupMode::RunDeatached ) {
-        _payload->exec.StartDetached();
+        const std::expected<pid_t, std::string> result = _payload->exec.StartDetached();
+        if( !result.has_value() ) {
+            Alert *const alert = [[Alert alloc] init];
+            alert.alertStyle = NSAlertStyleWarning;
+            alert.messageText =
+                [NSString localizedStringWithFormat:NSLocalizedString(
+                                                        @"Unable to run the external tool \"%s\"",
+                                                        "Message text alerting the inability to run an external tool"),
+                                                    _payload->tool.m_Title.c_str()];
+            alert.informativeText = [NSString stringWithUTF8String:result.error().c_str()];
+            [alert runModal];
+        }
     }
 }
 

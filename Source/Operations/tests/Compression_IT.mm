@@ -3,6 +3,7 @@
 #include "TestEnv.h"
 #include <filesystem>
 #include <sys/stat.h>
+#include <sys/xattr.h>
 #include <set>
 
 #include "../source/Compression/Compression.h"
@@ -26,6 +27,7 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
 
 static std::vector<VFSListingItem>
 FetchItems(const std::string &_directory_path, const std::vector<std::string> &_filenames, VFSHost &_host);
+static bool touch(const std::filesystem::path &_path);
 
 TEST_CASE(PREFIX "Empty archive building")
 {
@@ -200,6 +202,77 @@ TEST_CASE(PREFIX "Compressing /bin into encrypted archive")
     CHECK(cmp_result == 0);
 }
 
+TEST_CASE(PREFIX "Compressing an item with xattrs")
+{
+    const TempTestDir tmp_dir;
+    const auto native_host = TestEnv().vfs_native;
+    auto str_to_bytes = [](std::string_view _str) -> std::vector<std::byte> {
+        return {reinterpret_cast<const std::byte *>(_str.data()),
+                reinterpret_cast<const std::byte *>(_str.data()) + _str.length()};
+    };
+
+    struct EA {
+        std::string name;
+        std::vector<std::byte> bytes;
+    };
+    struct TC {
+        std::vector<EA> eas;
+    } const tcs[] = {
+        {{EA{.name = "hello", .bytes = str_to_bytes("hello")}}},
+        {{EA{.name = "hello", .bytes = str_to_bytes("hello")}, EA{.name = "hi", .bytes = str_to_bytes("privet")}}},
+        {{EA{.name = "hello", .bytes = str_to_bytes("hello")},
+          EA{.name = "hi", .bytes = str_to_bytes("privet")},
+          EA{.name = "another", .bytes = str_to_bytes("hola")}}},
+        {{EA{.name = "empty", .bytes = str_to_bytes("")}}},
+        {{EA{.name = std::string(XATTR_MAXNAMELEN, 'X'), .bytes = str_to_bytes("an xattr with a very long name")}}},
+        {{EA{.name = "an xattr with a 128KB content",
+             .bytes = std::vector<std::byte>(128ull * 1024ull, std::byte{0xFE})}}},
+    };
+
+    const std::filesystem::path filepath = tmp_dir.directory / "a";
+    for( const TC &tc : tcs ) {
+        // create the file to compress
+        REQUIRE(touch(filepath));
+
+        // write the extended attributes into the file
+        for( const EA &ea : tc.eas ) {
+            setxattr(filepath.c_str(), ea.name.c_str(), ea.bytes.data(), ea.bytes.size(), 0, 0);
+        }
+
+        // compress
+        Compression operation{
+            FetchItems(tmp_dir.directory, {filepath.filename()}, *native_host), tmp_dir.directory, native_host};
+        operation.Start();
+        operation.Wait();
+        REQUIRE(operation.State() == OperationState::Completed);
+        REQUIRE(native_host->Exists(operation.ArchivePath()));
+
+        // open the archive
+        std::shared_ptr<vfs::ArchiveHost> arc_host;
+        REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
+
+        // open the compressed file in the archive
+        std::shared_ptr<VFSFile> file;
+        REQUIRE(arc_host->CreateFile("/" + filepath.filename().native(), file) == VFSError::Ok);
+        REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
+
+        // check the number of compressed extended attributes is the same as in the original file
+        REQUIRE(file->XAttrCount() == tc.eas.size());
+
+        // check that each extracted extended attribute is equal to the original
+        for( const EA &ea : tc.eas ) {
+            REQUIRE(static_cast<size_t>(file->XAttrGet(ea.name.c_str(), nullptr, 0)) == ea.bytes.size());
+            std::vector<std::byte> bytes(ea.bytes.size());
+            REQUIRE(static_cast<size_t>(file->XAttrGet(ea.name.c_str(), bytes.data(), bytes.size())) ==
+                    ea.bytes.size());
+            REQUIRE(bytes == ea.bytes);
+        }
+
+        // cleanup the file that was compressed
+        REQUIRE(std::filesystem::remove(filepath));
+    }
+}
+
 TEST_CASE(PREFIX "Long compression stats (compressing Music.app)")
 {
     const TempTestDir tmp_dir;
@@ -306,4 +379,9 @@ FetchItems(const std::string &_directory_path, const std::vector<std::string> &_
     std::vector<VFSListingItem> items;
     _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
     return items;
+}
+
+static bool touch(const std::filesystem::path &_path)
+{
+    return close(open(_path.c_str(), O_CREAT | O_RDWR, S_IRWXU)) == 0;
 }

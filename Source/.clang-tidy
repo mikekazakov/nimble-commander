@@ -83,12 +83,12 @@ Checks: >
   # bugprone-unhandled-exception-at-new,                <-- very controversial
   bugprone-unhandled-self-assignment,
   bugprone-unique-ptr-array-mismatch,
-  # bugprone-unsafe-functions,
-  # bugprone-unused-local-non-trivial-variable,
-  # bugprone-unused-raii,
-  # bugprone-unused-return-value,
-  # bugprone-use-after-move,
-  # bugprone-virtual-near-miss,
+  # bugprone-unsafe-functions,                          <-- nice, but massive
+  bugprone-unused-local-non-trivial-variable,
+  bugprone-unused-raii,
+  bugprone-unused-return-value,
+  bugprone-use-after-move,
+  bugprone-virtual-near-miss,
   # darwin-avoid-spinlock,
   # darwin-dispatch-once-nonstatic,
   misc-confusable-identifiers,

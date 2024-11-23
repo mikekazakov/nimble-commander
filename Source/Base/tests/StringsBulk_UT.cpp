@@ -133,8 +133,10 @@ TEST_CASE(PREFIX "equality")
     CHECK(d == b);
     CHECK(d != a);
 
+    // NOLINTBEGIN(bugprone-use-after-move)
     StringsBulk e;
     e = std::move(d);
     CHECK(e == c);
     CHECK(d.empty());
+    // NOLINTEND(bugprone-use-after-move)
 }

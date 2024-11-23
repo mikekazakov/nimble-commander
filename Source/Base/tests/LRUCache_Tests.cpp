@@ -73,6 +73,7 @@ TEST_CASE(PREFIX "eviction")
 
 TEST_CASE(PREFIX "copy")
 {
+    // NOLINTBEGIN(bugprone-use-after-move)
     LRUCache<std::string, std::string, 2> cache;
     cache["a"] = "A";
     cache["b"] = "B";
@@ -96,6 +97,7 @@ TEST_CASE(PREFIX "copy")
     CHECK(copy2.empty() == true);
     CHECK(copy["a"] == "A");
     CHECK(copy["b"] == "B");
+    // NOLINTEND(bugprone-use-after-move)
 }
 
 TEST_CASE(PREFIX "big cache")

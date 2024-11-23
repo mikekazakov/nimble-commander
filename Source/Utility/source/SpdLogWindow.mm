@@ -14,7 +14,7 @@ class SpdLogUISink : public spdlog::sinks::base_sink<std::mutex>, public std::en
 {
 public:
     SpdLogUISink(std::function<void(NSString *)> _feedcb);
-    void Flush();
+    void FlushFromUIThread();
 
 private:
     void sink_it_(const spdlog::details::log_msg &msg) override;
@@ -60,7 +60,7 @@ void SpdLogUISink::flush_()
     // ignore, being drained manually via Flush()
 }
 
-void SpdLogUISink::Flush()
+void SpdLogUISink::FlushFromUIThread()
 {
     dispatch_assert_main_queue();
     dispatch_async(m_Que, [wp = std::weak_ptr<SpdLogUISink>(shared_from_this())] {
@@ -297,7 +297,7 @@ void SpdLogUISink::DoFlush()
 
 - (void)drain:(NSTimer *)_timer
 {
-    m_Sink->Flush();
+    m_Sink->FlushFromUIThread();
 }
 
 - (void)onNowButtonClicked:(id)_sender

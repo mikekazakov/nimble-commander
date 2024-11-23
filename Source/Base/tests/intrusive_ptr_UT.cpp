@@ -8,6 +8,7 @@
 #define PREFIX "nc::base::intrusive_ptr "
 
 using nc::base::intrusive_ptr;
+// NOLINTBEGIN(bugprone-use-after-move)
 
 namespace {
 
@@ -405,3 +406,5 @@ TEST_CASE(PREFIX "Memory order correctness")
 
     CHECK(Counted::alive == 0);
 }
+
+// NOLINTEND(bugprone-use-after-move)

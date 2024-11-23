@@ -298,7 +298,17 @@ To close tabs, you can use the following hotkeys:
 - `Alt + Cmd + W` - closes all other tabs.
 
 ### Favorites
-_to be written_
+Favorites is a list of frequently accessed locations, similar to those in other software. Nimble Commander provides quick access to these locations through the following:
+
+- The `Go > Favorites` menu.
+- Go To popups (`F1`/`F2`).
+- The Favorites quick list (`Cmd + 3`).
+
+You can manage the list of favorite locations in the Favorites window, which can be opened via the `Go > Favorites > Manage Favorites...` menu or the hotkey `Ctrl + Cmd + B`. To add a directory to the list, use this window, click the `+` button, and select a path from the drop-down list. Alternatively, you can add a directory with the hotkey `Cmd + B` or the `File > Add to Favorites` menu item. Use the `-` button in the Favorites window to remove a location. The Favorites window also allows you to synchronize the list with Finder Favorites or reset it to the default set of location. A favorite location can represent any path available in the macOS filesystem or any virtual filesystem supported by Nimble Commander, such as network filesystems, archive contents, file extended attributes, or the process list.
+
+This screenshot shows the `Favorites` window:
+
+![Favorites Window](Help-panel-favorites.png)
 
 ## Operations
 _to be written_

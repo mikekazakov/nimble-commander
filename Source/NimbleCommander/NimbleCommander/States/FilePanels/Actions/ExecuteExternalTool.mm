@@ -101,7 +101,7 @@ void ExecuteExternalTool::RunExtTool(std::shared_ptr<Payload> _payload)
     else if( startup_mode == ExternalTool::StartupMode::RunDeatached ) {
         const std::expected<pid_t, std::string> result = _payload->exec.StartDetached();
         if( !result.has_value() ) {
-            Alert *alert = [[Alert alloc] init];
+            Alert *const alert = [[Alert alloc] init];
             alert.alertStyle = NSAlertStyleWarning;
             alert.messageText =
                 [NSString localizedStringWithFormat:NSLocalizedString(

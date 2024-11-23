@@ -4,7 +4,10 @@
 
 ### Introduction
 
-Nimble Commander is a free dual-pane file manager for macOS, designed with a focus on speed, keyboard-based navigation, and flexibility. The project aims to blend the user experience of classic file managers from the '80s and '90s with the modern look and feel of Mac computers. Nimble Commander follows the design principles of [orthodox file managers](https://en.wikipedia.org/wiki/File_manager#Orthodox_file_managers), specifically dual-pane file managers. This website contains an in-depth study of this kind of software: [Less is More: Orthodox File Managers as Sysadmin IDE](https://softpanorama.org/OFM/index.shtml).
+Nimble Commander is a free dual-pane file manager for macOS, designed with a focus on speed, keyboard-based navigation, and flexibility.
+The project aims to blend the user experience of classic file managers from the '80s and '90s with the modern look and feel of Mac computers.
+Nimble Commander follows the design principles of [orthodox file managers](https://en.wikipedia.org/wiki/File_manager#Orthodox_file_managers), specifically dual-pane file managers.
+This website contains an in-depth study of this kind of software: [Less is More: Orthodox File Managers as Sysadmin IDE](https://softpanorama.org/OFM/index.shtml).
 
 ### System Requirements
 
@@ -21,7 +24,10 @@ It runs natively on both Intel and Arm architectures.
 
 ### Installation
 
-Nimble Commander is portable; it doesn't require the installation of additional components and can run from any folder. When downloaded from the Mac App Store, Nimble Commander is automatically placed in the `/Applications` folder. If it was downloaded from the website, it can be copied into the `/Applications` folder by dragging the icon there. You can also run Nimble Commander directly from a `.dmg` disk image; in this case, Nimble Commander will offer to move itself to the `/Applications` folder.
+Nimble Commander is portable; it doesn't require the installation of additional components and can run from any folder.
+When downloaded from the Mac App Store, Nimble Commander is automatically placed in the `/Applications` folder.
+If it was downloaded from the website, it can be copied into the `/Applications` folder by dragging the icon there.
+You can also run Nimble Commander directly from a `.dmg` disk image; in this case, Nimble Commander will offer to move itself to the `/Applications` folder.
 
 ![Copying NC from a dmg](Help-install-dmg.png)
 
@@ -31,11 +37,15 @@ Simply double-click on the Nimble Commander icon to start it.
 
 ### Access Permissions
 
-If you downloaded Nimble Commander from the Mac App Store, the application will request permissions when navigating to a new location. This requirement is imposed on all applications published in the Mac App Store as a safety measure to prevent unauthorized access outside of the sandbox container. You can revoke granted access permissions at any time by clicking `Settings > General > Granted filesystem access > Reset`. The permission request will appear as shown below:
+If you downloaded Nimble Commander from the Mac App Store, the application will request permissions when navigating to a new location.
+This requirement is imposed on all applications published in the Mac App Store as a safety measure to prevent unauthorized access outside of the sandbox container.
+You can revoke granted access permissions at any time by clicking `Settings > General > Granted filesystem access > Reset`.
+The permission request will appear as shown below:
 
 ![NC asking for an access permission](Help-sandbox-perm.png)
 
-Even if you downloaded Nimble Commander outside of the Mac App Store, accessing certain locations will require granting permissions. As of this writing, the list of such locations includes:
+Even if you downloaded Nimble Commander outside of the Mac App Store, accessing certain locations will require granting permissions.
+As of this writing, the list of such locations includes:
 
 - Desktop Folder
 - Documents Folder
@@ -43,11 +53,15 @@ Even if you downloaded Nimble Commander outside of the Mac App Store, accessing 
 - Network Volumes
 - iCloud Drive
 
-To use Nimble Commander in these locations, you need to grant the necessary permissions in System Settings under `Privacy & Security > Files and Folders` section. Alternatively, you can grant Nimble Commander Full Disk Access in System Settings under `Privacy & Security > Full Disk Access` section.
+To use Nimble Commander in these locations, you need to grant the necessary permissions in System Settings under `Privacy & Security > Files and Folders` section.
+Alternatively, you can grant Nimble Commander Full Disk Access in System Settings under `Privacy & Security > Full Disk Access` section.
 
 ### Version Differences
 
-There are two existing versions of Nimble Commander: the sandboxed version available in the Mac App Store, and the standalone version available for direct download from the website. Both versions are mostly equal in terms of functionality. The sandboxed version consumes slightly more resources due to sandboxing, but it provides an additional layer of protection. The notable features missing from the sandboxed version are:
+There are two existing versions of Nimble Commander: the sandboxed version available in the Mac App Store, and the standalone version available for direct download from the website.
+Both versions are mostly equal in terms of functionality.
+The sandboxed version consumes slightly more resources due to sandboxing, but it provides an additional layer of protection.
+The notable features missing from the sandboxed version are:
 
 - Admin mode, as sandboxed applications are not allowed to install privileged helper tools.
 - Integrated terminal, as sandboxed applications are not allowed to send termination signals to other applications.
@@ -61,13 +75,18 @@ Below is a screenshot of a typical interface of Nimble Commander:
 
 ![Example of the interface](Help-main-ui.png)
 
-The main window is typically split vertically between the two panels. Sometimes these panels are called panes; both words will be used interchangeably later on. Only one panel is active at a time, which is indicated by highlighting. To change the active panel, you can click on the desired panel or use hotkeys:
+The main window is typically split vertically between the two panels.
+Sometimes these panels are called panes; both words will be used interchangeably later on.
+Only one panel is active at a time, which is indicated by highlighting.
+To change the active panel, you can click on the desired panel or use hotkeys:
 
 - `Tab`: focuses on the opposite panel
 - `Shift + Cmd + Left`: focuses on the left panel
 - `Shift + Cmd + Right`: focuses on the right panel
 
-The proportion between the left and right panels can be changed by either dragging a vertical separator line or by using the hotkeys: `Ctrl + Alt + Left` and `Ctrl + Alt + Right`. A panel can also be collapsed entirely so that only one is visible. This can be achieved by changing the width proportion until one panel is completely removed or by using the hotkey `Shift + Cmd + P`, which toggles between dual-pane and single-pane modes.
+The proportion between the left and right panels can be changed by either dragging a vertical separator line or by using the hotkeys: `Ctrl + Alt + Left` and `Ctrl + Alt + Right`.
+A panel can also be collapsed entirely so that only one is visible.
+This can be achieved by changing the width proportion until one panel is completely removed or by using the hotkey `Shift + Cmd + P`, which toggles between dual-pane and single-pane modes.
 
 Each panel is vertically divided into three logical parts:
 
@@ -76,7 +95,9 @@ Each panel is vertically divided into three logical parts:
 - Footer: shows the filename of the focused item, its size and modification date, the total number of items in the panel, and the free space available on this storage.
 
 ### Navigation
-Nimble Commander supports both mouse-based and keyboard-based navigation inside the file panel, although the keyboard is preferred. Use a single mouse click to change the cursor position (i.e., the focused item) and scroll gestures to scroll through the contents of the file panel without changing the cursor position. The navigation hotkeys are the following:
+Nimble Commander supports both mouse-based and keyboard-based navigation inside the file panel, although the keyboard is preferred.
+Use a single mouse click to change the cursor position (i.e., the focused item) and scroll gestures to scroll through the contents of the file panel without changing the cursor position.
+The navigation hotkeys are the following:
 
 - `Up`: moves the cursor up
 - `Down`: moves the cursor down
@@ -91,9 +112,13 @@ Nimble Commander supports both mouse-based and keyboard-based navigation inside 
 - `Page Down`: moves the cursor to the next page
 - `Opt + Page Down`: scrolls the contents to the next page
 
-To navigate to a different folder inside the file panel, either double-click on it or press `Return` when the folder is focused. To go to a parent folder, do the same with the `..` [pseudo-folder](https://en.wikipedia.org/wiki/Path_(computing)#Representations_of_paths_by_operating_system_and_shell) located at the beginning of the items. Displaying the `..` folder is optional and can be turned off in the Settings dialog. Pressing `Backward Delete` (Backspace) or `Cmd + Up` navigates to the parent folder, regardless of the current cursor position.
+To navigate to a different folder inside the file panel, either double-click on it or press `Return` when the folder is focused.
+To go to a parent folder, do the same with the `..` [pseudo-folder](https://en.wikipedia.org/wiki/Path_(computing)#Representations_of_paths_by_operating_system_and_shell) located at the beginning of the items.
+Displaying the `..` folder is optional and can be turned off in the Settings dialog.
+Pressing `Backward Delete` (Backspace) or `Cmd + Up` navigates to the parent folder, regardless of the current cursor position.
 
-Nimble Commander stores location history for each file panel. To navigate the history back and forth, use the `Cmd + [` and `Cmd + ]` hotkeys.
+Nimble Commander stores location history for each file panel.
+To navigate the history back and forth, use the `Cmd + [` and `Cmd + ]` hotkeys.
 
 There are some locations that can be navigated to using hotkeys:
 
@@ -105,11 +130,18 @@ There are some locations that can be navigated to using hotkeys:
 - `Shift + Cmd + A`: Applications folder
 - `Shift + Cmd + U`: Utilities folder
 
-To navigate to a commonly used location, you can use the Go To popup, which can be opened by pressing the `F1` / `F2` hotkey or via the menu: `Go > Left Panel...` / `Go > Right Panel...`. This popup provides quick access to favorite locations, volumes, connections, and locations of other panels. Elements of this popup have hotkeys associated with them in the order of appearance: `0`, `1`, ..., `9`, `0`, `-`, `=`. Any text typed while the Go To popup is open will act as a filter, hiding locations that do not contain the typed text in their names.  Once you click on the selected location, the panel will navigate there and become focused if it wasn’t already. Here is what the popup looks like:
+To navigate to a commonly used location, you can use the Go To popup, which can be opened by pressing the `F1` / `F2` hotkey or via the menu: `Go > Left Panel...` / `Go > Right Panel...`.
+This popup provides quick access to favorite locations, volumes, connections, and locations of other panels.
+Elements of this popup have hotkeys associated with them in the order of appearance: `0`, `1`, ..., `9`, `0`, `-`, `=`.
+Any text typed while the Go To popup is open will act as a filter, hiding locations that do not contain the typed text in their names.
+Once you click on the selected location, the panel will navigate there and become focused if it wasn’t already.
+Here is what the popup looks like:
 
 ![GoTo popup](Help-goto-popup.png)
 
-To navigate to an arbitrary location on the filesystem, you can use the GoTo dialog opened by the `Shift + Cmd + G` hotkey or through the menu: `Go > Go To Folder...`. In this dialog, you can type any path, and after clicking the Go button Nimble Commander will navigate to the specified folder. Below is the view of this dialog box:
+To navigate to an arbitrary location on the filesystem, you can use the GoTo dialog opened by the `Shift + Cmd + G` hotkey or through the menu: `Go > Go To Folder...`.
+In this dialog, you can type any path, and after clicking the Go button Nimble Commander will navigate to the specified folder.
+Below is the view of this dialog box:
 
 ![GoTo dialog](Help-goto-dialog.png)
 
@@ -131,20 +163,30 @@ The `Shift + Return` hotkey opens an item in macOS using its default association
 To open an item outside of Nimble Commander using a specific application, select the application from the `Open With` menu, which is available in the context menu or the `File` menu.
 
 ### Panel Management
-You can swap the contents of the left and right panels using the `Cmd + U` hotkey or the menu item `View > Swap Panels`. This operation also transfers the focus to the opposite panel.  
+You can swap the contents of the left and right panels using the `Cmd + U` hotkey or the menu item `View > Swap Panels`.
+This operation also transfers the focus to the opposite panel.  
 To sync the contents of the opposite panel with the contents of the current panel, you can use the `Opt + Cmd + U` hotkey or the menu item `View > Sync Panels`.  
-In most cases, Nimble Commander will automatically refresh the contents of the file panel whenever the underlying part of the filesystem changes. Sometimes, however, it's not possible to automatically detect these changes. In such cases, the panel can be manually refreshed using the `Cmd + R` hotkey or the menu item `View > Refresh`.
+In most cases, Nimble Commander will automatically refresh the contents of the file panel whenever the underlying part of the filesystem changes.
+Sometimes, however, it's not possible to automatically detect these changes.
+In such cases, the panel can be manually refreshed using the `Cmd + R` hotkey or the menu item `View > Refresh`.
 
-The two panels in a Nimble Commander's window normally have the same width. If needed this proportion can be changed by either dragging the splitter located between them or by using the `Ctrl + Opt + Left` / `Ctrl + Opt + Right` hotkeys. Here is an example of panels with different widths:
+The two panels in a Nimble Commander's window normally have the same width.
+If needed this proportion can be changed by either dragging the splitter located between them or by using the `Ctrl + Opt + Left` / `Ctrl + Opt + Right` hotkeys.
+Here is an example of panels with different widths:
 
 ![Panels proportion](Help-panel-proportion.png)
 
-A panel can be collapsed entirely, turning the UI into single-pane mode. This can also be done via the  `Shift + Cmd + P` hotkey or the `View > Toggle Single-Pane Mode` menu item. To return to dual-pane mode, expand the collapsed panel the same way it was previously collapsed, or use the `Shift + Cmd + P` hotkey or the `View > Toggle Dual-Pane Mode` menu item. The following screenshot provides an example of how single-pane mode looks:
+A panel can be collapsed entirely, turning the UI into single-pane mode.
+This can also be done via the  `Shift + Cmd + P` hotkey or the `View > Toggle Single-Pane Mode` menu item.
+To return to dual-pane mode, expand the collapsed panel the same way it was previously collapsed, or use the `Shift + Cmd + P` hotkey or the `View > Toggle Dual-Pane Mode` menu item.
+The following screenshot provides an example of how single-pane mode looks:
 
 ![Single-pane mode](Help-panel-collapsed.png)
 
 ### Selection
-Nimble Commander follows the UX of orthodox file managers and diverges from the typical MacOS UX when it comes to item selection. It treats item selection and cursor position separately, which means moving the cursor does not change the selection of items in the panel. Below is an example of a panel with some selected items and the cursor focused on an item that is not selected:
+Nimble Commander follows the UX of orthodox file managers and diverges from the typical MacOS UX when it comes to item selection.
+It treats item selection and cursor position separately, which means moving the cursor does not change the selection of items in the panel.
+Below is an example of a panel with some selected items and the cursor focused on an item that is not selected:
 
 ![Items selection](Help-panel-selection.png)
 
@@ -207,7 +249,8 @@ You can change the sorting order by clicking on the indicator and selecting a ne
 - `Ctrl + Cmd + 6`: Sort by Added Time.
 - `Ctrl + Cmd + 7`: Sort by Accessed Time.
 
-When changing the sorting order via hotkeys or the menu, the behavior depends on the previous sorting order. If the criteria are different, it will switch to the selected criteria with its default order (as shown in the table above). 
+When changing the sorting order via hotkeys or the menu, the behavior depends on the previous sorting order.
+If the criteria are different, it will switch to the selected criteria with its default order (as shown in the table above). 
 Selecting the same sorting criteria again will toggle the order between ascending and descending.
 
 Nimble Commander also provides some customization options to fine-tune sorting:
@@ -221,13 +264,19 @@ Nimble Commander also provides some customization options to fine-tune sorting:
 
 ### Quick Search
 
-Nimble Commander offers a fast way to locate a file in a folder by typing a few letters from its name. This keyboard-based navigation is called Quick Search. It's highly customizable and can behave differently based on your settings, but at its core, the idea is simple: any keyboard input can be used to filter folder items. To remove the filtering, press the `Esc` button to clear the search query.
+Nimble Commander offers a fast way to locate a file in a folder by typing a few letters from its name.
+This keyboard-based navigation is called Quick Search.
+It's highly customizable and can behave differently based on your settings, but at its core, the idea is simple: any keyboard input can be used to filter folder items.
+To remove the filtering, press the `Esc` button to clear the search query.
 
-Quick Search underscores the items with matching filenames and offers two ways to handle non-matching items: either continue showing them or hide them from the listing. This behavior can be changed in the `Settings` dialog: `Panel > Quick Search > When searching`: `Show all items` or `Show only matching items`. The following screenshot shows how Quick Search filters out all items except the two that match the input query 'color':
+Quick Search underscores the items with matching filenames and offers two ways to handle non-matching items: either continue showing them or hide them from the listing.
+This behavior can be changed in the `Settings` dialog: `Panel > Quick Search > When searching`: `Show all items` or `Show only matching items`.
+The following screenshot shows how Quick Search filters out all items except the two that match the input query 'color':
 
 ![Quick search](Help-panel-quicksearch.png)
 
-An optional key modifier can be specified so that only keypresses with the chosen modifier will be registered as input for Quick Search. There are 5 different options for the modifiers that can be chosen in `Panel > Quick Search > Key modifier`:
+An optional key modifier can be specified so that only keypresses with the chosen modifier will be registered as input for Quick Search.
+There are 5 different options for the modifiers that can be chosen in `Panel > Quick Search > Key modifier`:
 
 - `Opt`
 - `Ctrl + Opt`
@@ -235,7 +284,8 @@ An optional key modifier can be specified so that only keypresses with the chose
 - `No modifier` (default)
 - `Disabled` (turns off Quick Search altogether)
 
-The input query can be interpreted in different ways. There are 5 options for matching filenames against it, configurable in `Panel > Quick Search > Where to search`:
+The input query can be interpreted in different ways.
+There are 5 options for matching filenames against it, configurable in `Panel > Quick Search > Where to search`:
 
 - `Fuzzy`: Letters from the input query must appear anywhere in the filename, in the same order.
 - `Anywhere` (default): The input query must appear as a whole anywhere in the filename.
@@ -243,10 +293,16 @@ The input query can be interpreted in different ways. There are 5 options for ma
 - `Ending`: The filename must end with the input query.
 - `Beginning or ending`: The filename must start or end with the input query.
 
-When filtered-out items are configured to still be shown, and a key modifier is set, it can be used to lock navigation within the matching files. Using normal keyboard navigation (Arrows, Home, End, etc.) while holding the modifier will restrict the cursor movement to only the matching files.
+When filtered-out items are configured to still be shown, and a key modifier is set, it can be used to lock navigation within the matching files.
+Using normal keyboard navigation (Arrows, Home, End, etc.) while holding the modifier will restrict the cursor movement to only the matching files.
 
 ### View Modes
-Nimble Commander can display the contents of a panel in two modes: Brief and List. The Brief mode shows only basic item information, such as the filename, icon, and tag colors, and arranges the items in consecutive columns. This allows more items to fit on the screen and enables the cursor to move both vertically and horizontally. The List mode, on the other hand, displays panel items in a table format, where each row represents a single item and each column represents an attribute. This mode allows only vertical cursor movement. The screenshot below shows how the same folder, `/usr/bin`, is displayed in Brief and List modes:
+Nimble Commander can display the contents of a panel in two modes: Brief and List.
+The Brief mode shows only basic item information, such as the filename, icon, and tag colors, and arranges the items in consecutive columns.
+This allows more items to fit on the screen and enables the cursor to move both vertically and horizontally.
+The List mode, on the other hand, displays panel items in a table format, where each row represents a single item and each column represents an attribute.
+This mode allows only vertical cursor movement.
+The screenshot below shows how the same folder, `/usr/bin`, is displayed in Brief and List modes:
 
 ![Brief and List modes](Help-panel-modes.png)
 
@@ -260,7 +316,10 @@ By default, Nimble Commander has 4 preconfigured modes, which you can switch usi
 You can fine-tune, rearrange, and add new custom panel layouts in the Settings dialog: `Settings > Panels > Layout`.
 
 ### Quick Lists
-Quick Lists is another mechanism in Nimble Commander for accessing specific locations with minimal keypresses, tailored for keyboard use. It is similar to the Go To popup but provides more locations and does not mix different types of locations. A Quick List popup is shown inside the focused panel, and its content can depend on the panel itself. There are 6 kinds of Quick Lists, which can be accessed via the menu `Go > Quick Lists` or via the hotkeys below:
+Quick Lists is another mechanism in Nimble Commander for accessing specific locations with minimal keypresses, tailored for keyboard use.
+It is similar to the Go To popup but provides more locations and does not mix different types of locations.
+A Quick List popup is shown inside the focused panel, and its content can depend on the panel itself.
+There are 6 kinds of Quick Lists, which can be accessed via the menu `Go > Quick Lists` or via the hotkeys below:
 
 - `Cmd + 1` - `Parent Folders`: A list of parent folders up to the root of the filesystem.
 - `Cmd + 2` - `History`: A history of recent locations visited in this panel.
@@ -275,7 +334,9 @@ This screenshot shows a `Volumes` Quick List:
 
 ### Tabs
 
-File panels support a tabbed interface, allowing multiple locations to be opened simultaneously on either the left or right pane. The tab bar appears automatically if more than one tab is open in a pane, but it can also be forced to always show via the menu `View > Show Tab Bar` or by using the hotkey `Cmd + Shift + T`. The screenshot below shows Nimble Commander's window with two tabs in the left pane and three tabs in the right pane:
+File panels support a tabbed interface, allowing multiple locations to be opened simultaneously on either the left or right pane.
+The tab bar appears automatically if more than one tab is open in a pane, but it can also be forced to always show via the menu `View > Show Tab Bar` or by using the hotkey `Cmd + Shift + T`.
+The screenshot below shows Nimble Commander's window with two tabs in the left pane and three tabs in the right pane:
 
 ![Tabbed Interface](Help-panel-tabs.png)
 
@@ -304,7 +365,12 @@ Favorites is a list of frequently accessed locations, similar to those in other 
 - Go To popups (`F1`/`F2`).
 - The Favorites quick list (`Cmd + 3`).
 
-You can manage the list of favorite locations in the Favorites window, which can be opened via the `Go > Favorites > Manage Favorites...` menu or the hotkey `Ctrl + Cmd + B`. To add a directory to the list, use this window, click the `+` button, and select a path from the drop-down list. Alternatively, you can add a directory with the hotkey `Cmd + B` or the `File > Add to Favorites` menu item. Use the `-` button in the Favorites window to remove a location. The Favorites window also allows you to synchronize the list with Finder Favorites or reset it to the default set of location. A favorite location can represent any path available in the macOS filesystem or any virtual filesystem supported by Nimble Commander, such as network filesystems, archive contents, file extended attributes, or the process list.
+You can manage the list of favorite locations in the Favorites window, which can be opened via the `Go > Favorites > Manage Favorites...` menu or the hotkey `Ctrl + Cmd + B`.
+To add a directory to the list, use this window, click the `+` button, and select a path from the drop-down list.
+Alternatively, you can add a directory with the hotkey `Cmd + B` or the `File > Add to Favorites` menu item.
+Use the `-` button in the Favorites window to remove a location.
+The Favorites window also allows you to synchronize the list with Finder Favorites or reset it to the default set of location.
+A favorite location can represent any path available in the macOS filesystem or any virtual filesystem supported by Nimble Commander, such as network filesystems, archive contents, file extended attributes, or the process list.
 
 This screenshot shows the `Favorites` window:
 

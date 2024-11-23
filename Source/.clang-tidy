@@ -77,12 +77,12 @@ Checks: >
   bugprone-terminating-continue,
   bugprone-throw-keyword-missing,
   bugprone-too-small-loop-variable,
-  # bugprone-unchecked-optional-access,
-  # bugprone-undefined-memory-manipulation,
-  # bugprone-undelegated-constructor,
-  # bugprone-unhandled-exception-at-new,
-  # bugprone-unhandled-self-assignment,
-  # bugprone-unique-ptr-array-mismatch,
+  # bugprone-unchecked-optional-access,                 <-- not allowing naked value() is very controversial
+  bugprone-undefined-memory-manipulation,
+  bugprone-undelegated-constructor,
+  # bugprone-unhandled-exception-at-new,                <-- very controversial
+  bugprone-unhandled-self-assignment,
+  bugprone-unique-ptr-array-mismatch,
   # bugprone-unsafe-functions,
   # bugprone-unused-local-non-trivial-variable,
   # bugprone-unused-raii,

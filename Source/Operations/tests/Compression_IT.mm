@@ -218,12 +218,15 @@ TEST_CASE(PREFIX "Compressing an item with xattrs")
     struct TC {
         std::vector<EA> eas;
     } const tcs[] = {
-        {{EA{"hello", str_to_bytes("hello")}}},
-        {{EA{"hello", str_to_bytes("hello")}, EA{"hi", str_to_bytes("privet")}}},
-        {{EA{"hello", str_to_bytes("hello")}, EA{"hi", str_to_bytes("privet")}, EA{"another", str_to_bytes("hola")}}},
-        {{EA{"empty", str_to_bytes("")}}},
-        {{EA{std::string(XATTR_MAXNAMELEN, 'X'), str_to_bytes("an xattr with a very long name")}}},
-        {{EA{"an xattr with a 128KB content", std::vector<std::byte>(128ull * 1024ull, std::byte{0xFE})}}},
+        {{EA{.name = "hello", .bytes = str_to_bytes("hello")}}},
+        {{EA{.name = "hello", .bytes = str_to_bytes("hello")}, EA{.name = "hi", .bytes = str_to_bytes("privet")}}},
+        {{EA{.name = "hello", .bytes = str_to_bytes("hello")},
+          EA{.name = "hi", .bytes = str_to_bytes("privet")},
+          EA{.name = "another", .bytes = str_to_bytes("hola")}}},
+        {{EA{.name = "empty", .bytes = str_to_bytes("")}}},
+        {{EA{.name = std::string(XATTR_MAXNAMELEN, 'X'), .bytes = str_to_bytes("an xattr with a very long name")}}},
+        {{EA{.name = "an xattr with a 128KB content",
+             .bytes = std::vector<std::byte>(128ull * 1024ull, std::byte{0xFE})}}},
     };
 
     const std::filesystem::path filepath = tmp_dir.directory / "a";

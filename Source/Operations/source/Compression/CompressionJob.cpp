@@ -575,7 +575,7 @@ static void WriteEmptyArchiveEntry(struct ::archive *_archive)
     archive_entry_free(entry);
 }
 
-static bool WriteEAs(struct archive *_a, void *_md, size_t _md_s, const char *_path, const char *_name)
+static bool WriteEAs(struct archive *_a, const void *_md, size_t _md_s, const char *_path, const char *_name)
 {
     const std::string metadata_path = fmt::format("__MACOSX/{}._{}", _path, _name);
     struct archive_entry *entry = archive_entry_new();
@@ -594,22 +594,19 @@ static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source
 {
     assert(!IsPathWithTrailingSlash(_source_fn));
 
-    size_t metadata_sz = 0;
-    // will quick almost immediately if there's no EAs
-    void *metadata = vfs::BuildAppleDoubleFromEA(_src, &metadata_sz);
-    if( metadata == nullptr )
+    // will quit almost immediately if there's no EAs
+    const std::vector<std::byte> metadata = vfs::BuildAppleDoubleFromEA(_src);
+    if( metadata.empty() )
         return true;
 
     char item_path[MAXPATHLEN];
     char item_name[MAXPATHLEN];
     if( GetFilenameFromRelPath(_source_fn, item_name) &&
         GetDirectoryContainingItemFromRelPath(_source_fn, item_path) ) {
-        const bool ret = WriteEAs(_a, metadata, metadata_sz, item_path, item_name);
-        free(metadata);
+        const bool ret = WriteEAs(_a, metadata.data(), metadata.size(), item_path, item_name);
         return ret;
     }
 
-    free(metadata);
     return true;
 }
 

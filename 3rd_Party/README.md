@@ -31,32 +31,32 @@ Verify the Xcode version with `xcode-select -p`.
 
 ## Libraries
 
-| Library         | Version    | Source Code
-| --------------- | ---------- | -----------------------------------------
-| appauth         | 1.7.5      | https://github.com/openid/AppAuth-iOS.git
-| boost           | 1.85.0     | https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.gz
-| bz2             | 1.0.8      | https://sourceware.org/git/bzip2.git
-| Catch2          | v2.13.3    | https://github.com/catchorg/Catch2
-| curl            | 8.7.1      | https://github.com/curl/curl.git
-| fmt             | 10.2.1     | https://github.com/fmtlib/fmt.git
-| frozen          | 1.1.1      | https://github.com/serge-sans-paille/frozen
-| gtest           | 1.14.0     | https://github.com/google/googletest.git
-| letsmove        | 1.25       | https://github.com/potionfactory/LetsMove.git
-| lexilla         | 5.3.2      | https://github.com/ScintillaOrg/lexilla.git
-| libarchive      | 3.7.4      | https://github.com/libarchive/libarchive.git
-| libcxx          | 18.x       | https://github.com/llvm/llvm-project.git
-| libssh2         | 1.11.0     | https://github.com/libssh2/libssh2.git
-| lz4             | 1.9.4      | https://github.com/lz4/lz4.git
-| lzma(xz)        | 5.4.6      | https://github.com/tukaani-project/xz.git
-| lzo             | 2.10       | http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz
-| nlohmann        | 3.11.3     | https://github.com/nlohmann/json.git
-| openssl         | 1.1.1v     | https://github.com/openssl/openssl.git
-| pstld           | head       | https://github.com/mikekazakov/pstld
-| pugixml         | 1.14       | https://github.com/zeux/pugixml.git
-| rapidjson       | head       | https://github.com/Tencent/rapidjson
-| re2             | 2023-03-01 | https://github.com/google/re2.git
-| sparkle         | 2.6.1      | https://github.com/sparkle-project/Sparkle.git
-| spdlog          | 1.14.1     | https://github.com/gabime/spdlog.git
-| unordered_dense | 4.4.0      | https://github.com/martinus/unordered_dense.git
-| zlib            | 1.3.1      | https://zlib.net/zlib-1.3.1.tar.gz
-| zstd            | 1.5.6      | https://github.com/facebook/zstd.git
+| Library         | Version    | Released   | Source Code
+| --------------- | ---------- | ---------- | -----------------------------------------
+| appauth         | 1.7.5      | 2024.04.23 | https://github.com/openid/AppAuth-iOS.git
+| boost           | 1.85.0     | 2024.04.15 | https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.gz
+| bz2             | 1.0.8      | 2019.07.13 | https://sourceware.org/git/bzip2.git
+| Catch2          | 2.13.3     | 2020.10.31 | https://github.com/catchorg/Catch2
+| curl            | 8.7.1      | 2024.03.27 | https://github.com/curl/curl.git
+| fmt             | 10.2.1     | 2024.01.04 | https://github.com/fmtlib/fmt.git
+| frozen          | 1.1.1      | 2022.03.31 | https://github.com/serge-sans-paille/frozen
+| gtest           | 1.14.0     | 2023.08.02 | https://github.com/google/googletest.git
+| letsmove        | 1.25       | 2020.07.09 | https://github.com/potionfactory/LetsMove.git
+| lexilla         | 5.3.2      | 2024.04.19 | https://github.com/ScintillaOrg/lexilla.git
+| libarchive      | 3.7.4      | 2024.04.26 | https://github.com/libarchive/libarchive.git
+| libcxx          | 18.x       | 2024.03.05 | https://github.com/llvm/llvm-project.git
+| libssh2         | 1.11.0     | 2023.05.30 | https://github.com/libssh2/libssh2.git
+| lz4             | 1.9.4      | 2022.08.15 | https://github.com/lz4/lz4.git
+| lzma(xz)        | 5.4.6      | 2024.01.26 | https://github.com/tukaani-project/xz.git
+| lzo             | 2.10       | 2017.03.01 | http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz
+| nlohmann        | 3.11.3     | 2023.11.28 | https://github.com/nlohmann/json.git
+| openssl         | 1.1.1v     | 2023.08.01 | https://github.com/openssl/openssl.git
+| pstld           | head       | 2024.06.21 | https://github.com/mikekazakov/pstld
+| pugixml         | 1.14       | 2023.10.01 | https://github.com/zeux/pugixml.git
+| rapidjson       | head       | 2024.10.07 | https://github.com/Tencent/rapidjson
+| re2             | 2023-03-01 | 2023.03.01 | https://github.com/google/re2.git
+| sparkle         | 2.6.1      | 2024.06.02 | https://github.com/sparkle-project/Sparkle.git
+| spdlog          | 1.14.1     | 2024.04.30 | https://github.com/gabime/spdlog.git
+| unordered_dense | 4.4.0      | 2023.12.24 | https://github.com/martinus/unordered_dense.git
+| zlib            | 1.3.1      | 2024.01.22 | https://zlib.net/zlib-1.3.1.tar.gz
+| zstd            | 1.5.6      | 2024.03.30 | https://github.com/facebook/zstd.git

@@ -377,6 +377,55 @@ This screenshot shows the `Favorites` window:
 ![Favorites Window](Help-panel-favorites.png)
 
 ## Operations
+
+### Introduction
+Nimble Commander executes file operations in the background whenever possible to ensure the user interface remains responsive.
+Most operations are tied to the window where they originated, allowing you to monitor progress and providing options to pause or cancel as needed.
+When file operations are in progress, they are displayed in the central part of the window, just above the file panels: 
+
+![File Operations](Help-file-operations.png)
+
+### Copy
+You can initiate the copying of filesystem items in several ways:
+
+- Using the `F5` hotkey or selecting the menu item `Command > Copy To...`: This opens the Copy dialog, where you can choose the destination (defaulting to the location of the opposite panel), select which file attributes to retain, and decide whether the copy should be verified.
+- Using the `Shift + F5` hotkey or selecting the menu item `Command > Copy As...`: Similar to the option above, but it pre-fills the dialog with the original item's name, allowing you to quickly duplicate the item with a new name.
+- Using the `Cmd + V` hotkey: If the pasteboard currently holds a path to a filesystem object, pressing this hotkey will copy that item into the folder displayed in the active file panel.
+- Dragging items with the mouse while holding the `Opt` key: This action copies the selected item(s) to the destination.
+
+### Duplicate
+Pressing the `Cmd + D` hotkey or selecting the menu item `File > Duplicate` duplicates the selected item(s) in the active panel within their current folder.
+
+### Move
+To move items from one location to another, you can use the following methods:
+
+- Using the `F6` hotkey or selecting the menu item `Command > Rename / Move To...`: This opens the Move dialog. Similar to copying, it allows you to select which file attributes to preserve when moving between different filesystems and whether the result should be verified.
+- Using the `Shift + F6` hotkey or selecting the menu item `Command > Rename / Move As...`: Similar to the option above, but it pre-fills the dialog with the original item's name. This allows you to quickly rename the item or move it into a sub-folder.
+- Using the `Opt + Cmd + V` hotkey: If the pasteboard currently contains a path to a filesystem object, pressing this hotkey moves that item into the folder displayed in the active file panel.
+- Dragging items with the mouse: This action moves the selected item(s) to the destination.
+
+### Rename
+_to be written_
+
+### Batch Rename
+_to be written_
+
+### Delete
+_to be written_
+
+### Create Folder
+_to be written_
+
+### Create File
+_to be written_
+
+### Change Permissions
+_to be written_
+
+### Compress
+_to be written_
+
+### Manage Links
 _to be written_
 
 ## Virtual File Systems

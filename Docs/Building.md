@@ -40,3 +40,4 @@ While this source code mirrors that of the official Nimble Commander builds, the
   
 ## Implementation Notes
   * [Syntax Highlighting](SyntaxHighlighting.md)
+  * [Creating Image Templates from SF Symbols](ImageTemplatesFromSFSymbols.md)

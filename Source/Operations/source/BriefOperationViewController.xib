@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23094" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23094"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -26,14 +26,15 @@
                     <rect key="frame" x="9" y="11" width="459" height="16"/>
                 </progressIndicator>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="u1r-Ni-BYr">
-                    <rect key="frame" x="485" y="12" width="14" height="15"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="14" id="aaZ-ft-0zo"/>
-                    </constraints>
-                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="NSStopProgressFreestandingTemplate" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="V8u-DR-Bgx">
+                    <rect key="frame" x="485" y="12" width="14" height="14"/>
+                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="xmark.circle.fill.14" imagePosition="overlaps" alignment="center" inset="2" id="V8u-DR-Bgx">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="14" id="ZiA-dX-gt1"/>
+                        <constraint firstAttribute="width" constant="14" id="aaZ-ft-0zo"/>
+                    </constraints>
                     <connections>
                         <action selector="onStop:" target="-2" id="xTB-gy-wxJ"/>
                         <binding destination="-2" name="hidden" keyPath="self.view.isMouseOver" id="SrF-a9-Ek1">
@@ -43,7 +44,7 @@
                         </binding>
                     </connections>
                 </button>
-                <textField horizontalHuggingPriority="100" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XAR-0B-qc5">
+                <textField focusRingType="none" horizontalHuggingPriority="100" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XAR-0B-qc5">
                     <rect key="frame" x="-2" y="-1" width="481" height="13"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" usesSingleLineMode="YES" id="CR9-6H-mVg">
                         <font key="font" metaFont="system" size="10"/>
@@ -51,7 +52,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField horizontalHuggingPriority="100" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fbb-24-X5f">
+                <textField focusRingType="none" horizontalHuggingPriority="100" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fbb-24-X5f">
                     <rect key="frame" x="-2" y="24" width="480" height="14"/>
                     <textFieldCell key="cell" lineBreakMode="truncatingMiddle" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" usesSingleLineMode="YES" id="ezh-Od-Adz">
                         <font key="font" metaFont="smallSystem"/>
@@ -60,14 +61,15 @@
                     </textFieldCell>
                 </textField>
                 <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ATK-3S-9FN">
-                    <rect key="frame" x="469" y="12" width="14" height="15"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="14" id="EAE-TQ-w4h"/>
-                    </constraints>
-                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="NSRefreshFreestandingTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="j88-me-U2Q">
+                    <rect key="frame" x="469" y="12" width="14" height="14"/>
+                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="arrow.clockwise.circle.fill.14" imagePosition="only" alignment="center" inset="2" id="j88-me-U2Q">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="14" id="4QO-Cu-t6W"/>
+                        <constraint firstAttribute="width" constant="14" id="EAE-TQ-w4h"/>
+                    </constraints>
                     <connections>
                         <action selector="onResume:" target="-2" id="G8w-iz-s1U"/>
                         <binding destination="-2" name="hidden2" keyPath="self.isPaused" previousBinding="TDP-Ox-XzS" id="ERo-pf-zHM">
@@ -88,13 +90,14 @@
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rVN-yV-10b">
                     <rect key="frame" x="469" y="12" width="14" height="14"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="14" id="Gyh-Fb-JZZ"/>
-                    </constraints>
-                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="PauseFreestandingTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="DBA-Id-kzc">
+                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="pause.circle.fill.14" imagePosition="only" alignment="center" inset="2" id="DBA-Id-kzc">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="14" id="Gyh-Fb-JZZ"/>
+                        <constraint firstAttribute="height" constant="14" id="eTq-s3-pU2"/>
+                    </constraints>
                     <connections>
                         <action selector="onPause:" target="-2" id="0VB-qA-cij"/>
                         <binding destination="-2" name="enabled" keyPath="self.isCold" id="e6N-vc-eLV">
@@ -141,8 +144,8 @@
         <userDefaultsController representsSharedInstance="YES" id="9if-ej-0Vy"/>
     </objects>
     <resources>
-        <image name="NSRefreshFreestandingTemplate" width="15" height="15"/>
-        <image name="NSStopProgressFreestandingTemplate" width="15" height="15"/>
-        <image name="PauseFreestandingTemplate" width="14" height="14"/>
+        <image name="arrow.clockwise.circle.fill.14" width="14" height="14"/>
+        <image name="pause.circle.fill.14" width="14" height="14"/>
+        <image name="xmark.circle.fill.14" width="14" height="14"/>
     </resources>
 </document>

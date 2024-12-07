@@ -439,6 +439,13 @@ DQ
                                 </items>
                             </menu>
                         </popUpButtonCell>
+                        <connections>
+                            <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="qy0-Ft-VP6">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                        </connections>
                     </popUpButton>
                     <searchField toolTip="^M" wantsLayer="YES" focusRingType="none" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2em-D1-cWh">
                         <rect key="frame" x="250" y="654" width="250" height="22"/>
@@ -451,6 +458,11 @@ DQ
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </searchFieldCell>
                         <connections>
+                            <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="399-HZ-ahU">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
                             <outlet property="delegate" destination="-2" id="3Cn-zG-PAc"/>
                             <outlet property="nextKeyView" destination="JW2-j0-Voo" id="rNV-Sd-fQQ"/>
                         </connections>
@@ -474,6 +486,11 @@ DQ
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </searchFieldCell>
                         <connections>
+                            <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="q1Q-Cl-qir">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
                             <outlet property="delegate" destination="-2" id="iHq-Ds-Cmm"/>
                         </connections>
                     </searchField>

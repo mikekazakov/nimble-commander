@@ -405,10 +405,81 @@ To move items from one location to another, you can use the following methods:
 - Dragging items with the mouse: This action moves the selected item(s) to the destination.
 
 ### Rename
-_to be written_
+To quickly rename an item in place, single-click its filename or press Ctrl + F6.
 
 ### Batch Rename
-_to be written_
+Nimble Commander allows you to rename multiple items at once by applying a rename pattern. To open the Batch Rename dialog, select the items you want to rename, then press the `Ctrl + M` hotkey or choose `Command > Batch Rename` from the menu:
+
+![Batch Rename](Help-batch-rename.png)
+
+The renaming process consists of the following steps:
+
+  1. Decomposing the original filename and constructing a new one by combining a sequence of placeholders.
+  2. (Optional) Searching and replacing parts of the filename.
+  3. (Optional) Transforming the letter case.
+
+The placeholders mini-language includes the following elements:
+
+  - Based on the original filename:
+    - `[N]`: File name (e.g., `example.txt` -> `example`).
+    - `[E]`: File extension (e.g., `example.txt` -> `txt`).
+    - `[A]`: Full filename (e.g., `example.txt` -> `example.txt`).
+    - `[P]`: Parent filename (e.g., `Parent/example.txt` -> `Parent`).
+    - `[G]`: Grandparent filename (e.g., `Grandparent/Parent/example.txt` -> `Grandparent`).
+    - All these placeholders have options to query substrings:
+      - `[Nx]`: The **x**th character of the string.  
+        `example.txt → [N4] → m`
+      - `[Nx-y]`: Characters from the **x**th to the **y**th position.  
+        `example.txt → [N2-4] → xam`
+      - `[Nx,y]`: **y** characters starting from the **x**th position.  
+        `example.txt → [N5,2] → pl`
+      - `[Nx-]`: Characters starting from the **x**th position to the end.  
+        `example.txt → [N5-] → ple`
+      - `[NOx-y]`: Characters from the **x**th to the **y**th position, padded with zeros.  
+        `example.txt → [N05-10] → 000ple`
+      - `[N x-y]`: Characters from the **x**th to the **y**th position, padded with spaces.  
+        `example.txt → [N 5-10] → ␣␣␣ple`
+      - `[N-x,y]`: **y** characters starting from the **x**th-last position.  
+        `example.txt → [N-5,3] → amp`
+      - `[N-x-y]`: Characters from the **x**-last to the **y**-last position.  
+        `example.txt → [N-5-2] → ampl`
+      - `[Nx--y]`: Characters from the **x**th to the **y**th-last position.  
+        `example.txt → [N2--2] → xampl`
+      - `[N-x-]`: Characters starting from the **x**th-last position to the end.  
+        `example.txt → [N-4-] → mple`
+  - Based on the file's modification time:
+    - `[d]`: Localized date (e.g., `07-12-2024`).
+    - `[Y]`: Year in 4-digit format (e.g., `2024`).
+    - `[y]`: Year in 2-digit format (e.g., `24`).
+    - `[M]`: Month in 2-digit format (e.g., `12`).
+    - `[D]`: Day in 2-digit format (e.g., `07`).
+    - `[t]`: Localized time (e.g., `13.58`).
+    - `[h]`: Hours in 2-digit, 24-hour format (e.g., `13`).
+    - `[m]`: Minutes in 2-digit format (e.g., `58`).
+    - `[s]`: Seconds in 2-digit format (e.g., `43`).
+  - Based on the counter settings:
+    - `[C]`: Default counter; all settings are taken from the dialog.  
+      `[C] → 1, 2, 3, 4, 5...`
+    - `[Cx]`: Counter starting at **x**.  
+      `[C5] → 5, 6, 7, 8, 9...`
+    - `[Cx+y]`: Counter starting at **x** and incrementing by **y**.  
+      `[C5+5] → 5, 10, 15, 20, 25...`
+    - `[Cx+y/z]`: Counter starting at **x**, incrementing by **y**, and grouping every **z** items.  
+      `[C5+5/2] → 5, 5, 10, 10, 15...`
+    - `[Cx+y/z:w]`: Counter starting at **x**, incrementing by **y**, grouping every **z** items, and padding to **w** digits.  
+      `[C5+5/2:3] → 005, 005, 010, 010, 015...`
+    - Custom settings are optional and can be omitted. For instance, `[C:w]` or `[C+y:w]` are valid.
+  - Capitalization commands:
+    - `[U]`: Converts the following text to UPPERCASE.
+    - `[L]`: Converts the following text to lowercase.
+    - `[F]`: Capitalizes the first letter of each word in the following text.
+    - `[n]`: Resets capitalization; the following text retains its original case.
+  - Other placeholders:
+    - `[[`: Inserts an opening square bracket (`[`).
+    - `]]`: Inserts a closing square bracket (`]`).
+
+The Rename Dialog provides a preview of how the renamed list of files will look.
+No renaming will take place until you click the `OK` button or press `Cmd + Return`.
 
 ### Delete
 _to be written_

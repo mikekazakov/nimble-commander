@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23094" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23094"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -33,7 +33,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="622" height="696"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="480" height="400"/>
             <view key="contentView" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="622" height="696"/>
@@ -308,9 +308,8 @@ DQ
                             <outlet property="nextKeyView" destination="Mrn-CD-zhD" id="7QI-iI-OVa"/>
                         </connections>
                     </button>
-                    <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="o7G-2J-2qr">
-                        <rect key="frame" x="586" y="531" width="16" height="16"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="o7G-2J-2qr">
+                        <rect key="frame" x="586" y="546" width="16" height="16"/>
                         <connections>
                             <binding destination="-2" name="animate" keyPath="self.SearchButton.state" id="N5I-LM-aRW"/>
                         </connections>
@@ -327,7 +326,7 @@ DQ
                         <rect key="frame" x="247" y="540" width="48" height="25"/>
                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="fPn-ZK-SEq">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="menu"/>
+                            <font key="font" metaFont="message"/>
                             <menu key="menu" id="10X-cZ-a2S">
                                 <items>
                                     <menuItem title="≥" id="ydK-d2-gsz">
@@ -482,7 +481,7 @@ DQ
                         <rect key="frame" x="364" y="540" width="59" height="25"/>
                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="kh9-Bc-dmG">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="menu"/>
+                            <font key="font" metaFont="message"/>
                             <menu key="menu" id="8sA-yU-MON">
                                 <items>
                                     <menuItem title="b" id="Tt9-8O-AZV">
@@ -518,6 +517,7 @@ DQ
                     <constraint firstItem="NVP-CR-YO4" firstAttribute="leading" secondItem="XFM-mL-fme" secondAttribute="trailing" constant="12" symbolic="YES" id="3SZ-Ca-uaY"/>
                     <constraint firstItem="NWO-0P-f1V" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="3mv-gM-pWl"/>
                     <constraint firstItem="Mrn-CD-zhD" firstAttribute="top" secondItem="JW2-j0-Voo" secondAttribute="bottom" constant="4" id="4JX-c1-JNF"/>
+                    <constraint firstItem="o7G-2J-2qr" firstAttribute="centerY" secondItem="WTz-uI-fN2" secondAttribute="centerY" id="6rD-G0-jM6"/>
                     <constraint firstItem="40b-pd-d3f" firstAttribute="baseline" secondItem="g6m-zK-tE9" secondAttribute="baseline" id="7mH-JL-ILg"/>
                     <constraint firstItem="kfR-KH-AUs" firstAttribute="leading" secondItem="TQe-Ao-p2i" secondAttribute="leading" id="8re-A7-kyg"/>
                     <constraint firstItem="g6m-zK-tE9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="rT5-dE-JF7" secondAttribute="trailing" constant="8" symbolic="YES" id="9J0-YV-1Ay"/>
@@ -556,6 +556,7 @@ DQ
                     <constraint firstItem="a2f-4v-JJC" firstAttribute="firstBaseline" secondItem="kfR-KH-AUs" secondAttribute="firstBaseline" id="c4A-oi-o6s"/>
                     <constraint firstItem="w87-Kl-zeY" firstAttribute="leading" secondItem="Mrn-CD-zhD" secondAttribute="leading" id="cEC-kq-uqO"/>
                     <constraint firstAttribute="bottom" secondItem="00I-4I-INo" secondAttribute="bottom" constant="20" symbolic="YES" id="dgX-2Y-QXz"/>
+                    <constraint firstAttribute="trailing" secondItem="o7G-2J-2qr" secondAttribute="trailing" constant="20" symbolic="YES" id="ekE-Ur-q2X"/>
                     <constraint firstAttribute="trailing" secondItem="00I-4I-INo" secondAttribute="trailing" constant="20" symbolic="YES" id="f0v-6e-fOK"/>
                     <constraint firstItem="axX-0L-v6g" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="g2D-tB-Ab3"/>
                     <constraint firstItem="kfR-KH-AUs" firstAttribute="leading" secondItem="NWO-0P-f1V" secondAttribute="trailing" constant="8" symbolic="YES" id="jeY-7j-sba"/>

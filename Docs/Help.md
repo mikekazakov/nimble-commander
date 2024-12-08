@@ -490,10 +490,18 @@ When applicable, the dialog provides an option to choose between deleting and mo
 The difference between the two commands lies in the default selection presented in the dialog.
 
 ### Create Folder
-_to be written_
+There are two ways to create a folder in Nimble Commander:
+
+  - Using the `F7` hotkey or the menu item `Command > Create Directory`. 
+    This command opens the Create Directory dialog, where you can specify the name of the new folder before making any changes to the filesystem.
+    This method also allows you to create missing folders in a nested path.
+    For example, entering `New 1/New 2/New 3` will create three nested folders if they do not already exist on the filesystem.
+  - Using the `Shift + Cmd + N` hotkey or the menu item `File > New Folder`.
+    This command creates a new empty folder with a temporary name and opens an in-place rename editor, allowing you to change the name immediately.
 
 ### Create File
-_to be written_
+Press `Alt + Cmd + N` or select the menu item `File > New File` to create a new, empty file with a temporary name.
+An in-place rename editor will appear, allowing you to rename the file immediately.
 
 ### Change Permissions
 _to be written_

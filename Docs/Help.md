@@ -482,7 +482,12 @@ The Rename Dialog provides a preview of how the renamed list of files will look.
 No renaming will take place until you click the `OK` button or press `Cmd + Return`.
 
 ### Delete
-_to be written_
+Nimble Commander allows you to delete filesystem items or move them to the Trash, where supported.
+To quickly move an item to the Trash, press the `Cmd + Backspace` hotkey or select the menu item `Command > Move to Trash`.
+If the Trash functionality is not supported on the current volume, a Delete dialog will appear, asking you to confirm whether you want to delete the item permanently.
+You can also invoke the Delete dialog using the `F8` / `Shift + F8` hotkeys or their corresponding menu items: `Command > Delete...` and `Command > Delete Permanently...`.
+When applicable, the dialog provides an option to choose between deleting and moving to the Trash.
+The difference between the two commands lies in the default selection presented in the dialog.
 
 ### Create Folder
 _to be written_

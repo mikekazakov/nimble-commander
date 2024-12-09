@@ -503,14 +503,37 @@ There are two ways to create a folder in Nimble Commander:
 Press `Alt + Cmd + N` or select the menu item `File > New File` to create a new, empty file with a temporary name.
 An in-place rename editor will appear, allowing you to rename the file immediately.
 
-### Change Permissions
-_to be written_
+### Change Attributes
+
+You can change an item's attributes using the `Ctrl + A` hotkey or by selecting the `Command > File Attributes` menu item:
+
+![Attributes](Help-attr-change.png)
+
+This dialog displays the current permissions, flags, ownership, and timestamps.
+It supports changing these attributes for multiple items simultaneously.
+In such cases, differences between the items will be indicated by indeterminate checkbox states.
+
+If any of the selected items is a folder, the dialog provides an option to apply the changes recursively to all nested items.
+
+Please note that changing certain attributes requires administrator rights and will fail if executed without enabling Admin Mode.
 
 ### Compress
-_to be written_
+
+Nimble Commander includes a built-in compression tool that allows you to archive files.
+Currently, only the ZIP archive format is supported.
+Archives can be password-protected using AES-256 encryption.
+
+To create an archive in the same location as the source items, press `F9` or select `Command > Compress...` from the menu.
+To place the resulting archive in the location of the opposite panel, press `Shift + F9` or select `Command > Compress To...`.
 
 ### Manage Links
-_to be written_
+In Nimble Commander, you can create new hard links and create or edit symbolic links.
+By default, these actions do not have assigned hotkeys.
+They can be accessed via the `Command > Links` menu, which includes the following options:
+
+- `Create Hard Link`.
+- `Create Symbolic Link`.
+- `Edit Symbolic Link`.
 
 ## Virtual File Systems
 _to be written_

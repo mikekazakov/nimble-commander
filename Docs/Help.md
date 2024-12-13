@@ -536,6 +536,40 @@ They can be accessed via the `Command > Links` menu, which includes the followin
 - `Edit Symbolic Link`.
 
 ## Virtual File Systems
+In addition to browsing the "real" filesystem available on MacOS, Nimble Commander allows you to interact with other resources as if they were part of the normal filesystem.
+Most operations, such as browsing, searching, viewing, and modifying, work seamlessly with these virtual filesystems (VFS).
+When a file on a VFS is modified using an external editor, Nimble Commander automatically reflects the changes in the underlying VFS.
+
+Currently, the following virtual filesystems are supported:
+
+- **Archives and Compressed files**  
+  File types include ar, bz2, bzip2, cab, cpgz, cpio, gz, gzip, iso, jar, lha, lz, lzma, lzo, lz4,  mtree, pax, rar, tar, xar, xz, z, zip, zst, 7z.
+  Archives can be opened in read-only mode, and modifications are not allowed.
+  Paths of archived folders will include a prefix derived from the archive’s own path.
+- **Network protocols**
+  - FTP.  
+    Enables connection to FTP servers.
+    Paths for these resources will have an `ftp://` prefix.
+  - SFTP
+    Enables connection via the `SSH` protocol when the `SSH File Transfer Protocol` is enabled.    
+    Paths for these resources will have an `sftp://` prefix.
+  - WebDAV  
+    Enables connection to WebDAV servers.
+    Paths for these resources will have `http://` or `https://` prefixes.
+  - DropBox  
+    Enables direct connection to Dropbox storage.
+    Paths for these resources will have a `dropbox://` prefix.
+- **Extended attributes**  
+  You can open an item’s [extended attributes (xattrs)](https://en.wikipedia.org/wiki/Extended_file_attributes#macOS) as a read-write folder and interact with these attributes as though they were regular files.
+- **Process list**  
+  This VFS displays all processes running on the computer as files in a folder.
+  Each file represents a process and contains textual information about that process.
+  Deleting a file from this VFS will terminate the corresponding process.
+
+## External Editors
+_to be written_
+
+## Tools
 _to be written_
 
 ## Integrated Viewer

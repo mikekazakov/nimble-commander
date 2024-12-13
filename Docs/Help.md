@@ -638,21 +638,42 @@ Supported placeholders:
   - `%xT`: Limits the total number of files passed to the tool to **x**.
 
 ## Integrated Viewer
-_to be written_
+Nimble Commander features a built-in viewer that lets you examine files without leaving the application:
+
+![Integrated Viewer](Help-intergrated-viewer.png)
+
+The viewer works seamlessly with both real and virtual filesystems. For instance, you can view compressed files without unpacking the archive first.  
+When viewing large files, the integrated viewer loads only a small portion of the file at a time, keeping memory usage minimal.  
+If a file is modified while being displayed, the viewer automatically refreshes its contents.  
+When viewing the tail of a file, such as an actively updating log file, the viewer adjusts the scroll position automatically to follow new appended data.
+
+The built-in viewer supports three modes:
+
+  - Text Mode (`Cmd+1`)  
+    Displays the file contents as readable text based on the selected encoding.  
+    When applicable, syntax highlighting is applied according to the file’s extension.
+  - Hex Mode (`Cmd+2`)  
+    Displays the file contents in 16-byte rows as hexadecimal values.  
+    Each row includes:
+    - Its offset.
+    - Two 8-byte blocks of hexadecimal data.
+    - A textual representation of the bytes.  
+      The selected encoding is used to interpret the file’s bytes as human-readable text.
+  - Preview Mode (`Cmd+3`)  
+    Renders the file contents using Quick Look for a graphical or more detailed preview.
+
+The viewer can operate within the application window where it was launched, replacing the file panels with its interface. Alternatively, it can be configured to appear as a separate floating window.
+
+To open the built-in viewer, press the `Alt + F3` hotkey or select the `Command > Internal Viewer` menu item. To close it, simply press `Esc`.
 
 ## Integrated Terminal
 _to be written_
 
-## Customization
-_to be written_
+## Hotkeys
 
-### Themes
-_to be written_
-
-### Hotkeys
-_to be written_
-
-Available hotkeys are listed below. These are the default values, which can be altered later. Some actions do not have a default hotkey, but they can still be accessed via the application’s menu.
+The available hotkeys are listed below. 
+These are the default settings, which can be customized as needed. 
+Some actions do not have default hotkeys but can still be accessed through the application’s menu.
 
 | Action                                       | Key Equivalent            |
 | -----------------------------------------    | ------------------------- |
@@ -852,29 +873,6 @@ Available hotkeys are listed below. These are the default values, which can be a
 | &nbsp; &nbsp; Toggle Preview                 | Cmd + 3                   |
 | &nbsp; &nbsp; Show GoTo                      | Cmd + L                   |
 | &nbsp; &nbsp; Refresh                        | Cmd + R                   |
-
-### External Editors
-_to be written_
-
-### External Tools
-_to be written_
-
-### Syntax Highlighting
-_to be written_
-
-## Advanced
-
-### Command-line Options
-_to be written_
-
-### File Locations
-_to be written_
-
-### Admin Mode
-_to be written_
-
-### Logging
-_to be written_
 
 ## Frequently Asked Questions
 

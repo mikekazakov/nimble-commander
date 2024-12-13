@@ -573,7 +573,69 @@ When you press `F4` or select the `Command > External Editor` menu item, Nimble 
 External editors can be executed either as standalone macOS applications or as command-line tools within Nimble Commander’s terminal emulator.
 
 ## Tools
-_to be written_
+Similar to external editors, tools allow you to define a set of applications that Nimble Commander can execute.
+The key difference is that, with tools, you have full control over the parameters passed to the application at startup.  
+Additionally, tools can be assigned a designated hotkey, and their icons can be placed on the toolbar for easy access.
+To define external tools, navigate to `Nimble Commander > Settings > Tools`.  
+
+To execute a tool, you can:
+
+  - Press its hotkey (if specified).
+  - Click its icon in the toolbar (if added).
+  - Select its menu item from the `Command > Tools` menu.
+
+External tools can only be executed when a panel points to a location on the macOS filesystem.
+Virtual File Systems (VFS) are not supported.
+
+When called, tools can run in one of two modes, depending on the `Startup Mode` setting:
+
+  - `Run Detached`: Executes the tool as a standalone macOS application.
+  - `Run in Terminal`: Executes the tool as a command-line utility within Nimble Commander’s terminal emulator.
+
+The parameters passed to an external tool are defined using placeholders.
+Nimble Commander replaces these placeholders with specific values when the tool is executed.
+
+Supported placeholders:
+
+- Insert the focused item:
+  - From the source (current) panel:
+    - `%p`: Item's path.
+    - `%f`: Item's filename.
+    - `%n`: Item's filename without the extension.
+    - `%e`: Item's extension.
+    - `%r`: Panel's path.
+  - From the target (opposite) panel:
+    - `%-p`: Item's path.
+    - `%-f`: Item's filename.
+    - `%-n`: Item filename without the extension.
+    - `%-e`: Item extension.
+    - `%-r`: Panel's path.
+- Insert the selected items:
+  - From the source (current) panel:
+    - `%P`:  File paths as parameters.
+    - `%xP`:  File paths as parameters, limited to **x** files.
+    - `%LP`: File paths in a temporary text file.
+    - `%xLP`: File paths in a temporary text file, limited to **x** files.
+    - `%F`: Filenames as parameters.
+    - `%xF`: Filenames as parameters, limited to **x** files.
+    - `%LF`: Filenames in a temporary text file.
+    - `%xLF`: Filenames in a temporary text file, limited to **x** files.
+  - From the target (opposite) panel:
+    - `%-P`:  File paths as parameters.
+    - `%-xP`: File paths as parameters, limited to **x** files.
+    - `%-LP`: File paths in a temporary text file.
+    - `%-xLP`: File paths in a temporary text file, limited to **x** files.
+    - `%-F`: Filenames as parameters.
+    - `%-xF`: Filenames as parameters, limited to **x** files.
+    - `%-LF`: Filenames in a temporary text file.
+    - `%-xLF`: Filenames in a temporary text file, limited to **x** files.
+- Ask for a value when executed:
+  - `%?`: Prompts for the parameter value.
+  - `%"message"?`: Prompts for the parameter value with a custom **message**.
+- Other placeholders:
+  - `%%`: Inserts the `%` character (escaping).
+  - `%-`: Switches between source/target panels and left/right panels.
+  - `%xT`: Limits the total number of files passed to the tool to **x**.
 
 ## Integrated Viewer
 _to be written_

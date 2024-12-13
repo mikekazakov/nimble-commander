@@ -547,7 +547,7 @@ Currently, the following virtual filesystems are supported:
   Archives can be opened in read-only mode, and modifications are not allowed.
   Paths of archived folders will include a prefix derived from the archive’s own path.
 - **Network protocols**
-  - FTP.  
+  - FTP  
     Enables connection to FTP servers.
     Paths for these resources will have an `ftp://` prefix.
   - SFTP
@@ -567,7 +567,10 @@ Currently, the following virtual filesystems are supported:
   Deleting a file from this VFS will terminate the corresponding process.
 
 ## External Editors
-_to be written_
+You can configure a list of editor applications in the `Settings` dialog.
+To modify these settings, navigate to `Nimble Commander > Settings > Editors`.
+When you press `F4` or select the `Command > External Editor` menu item, Nimble Commander selects an appropriate editor based on the file extension of the currently focused file and opens the file in that editor.
+External editors can be executed either as standalone macOS applications or as command-line tools within Nimble Commander’s terminal emulator.
 
 ## Tools
 _to be written_

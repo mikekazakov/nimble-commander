@@ -536,7 +536,106 @@ They can be accessed via the `Command > Links` menu, which includes the followin
 - `Edit Symbolic Link`.
 
 ## Virtual File Systems
-_to be written_
+In addition to browsing the "real" filesystem available on MacOS, Nimble Commander allows you to interact with other resources as if they were part of the normal filesystem.
+Most operations, such as browsing, searching, viewing, and modifying, work seamlessly with these virtual filesystems (VFS).
+When a file on a VFS is modified using an external editor, Nimble Commander automatically reflects the changes in the underlying VFS.
+
+Currently, the following virtual filesystems are supported:
+
+- **Archives and Compressed files**  
+  File types include ar, bz2, bzip2, cab, cpgz, cpio, gz, gzip, iso, jar, lha, lz, lzma, lzo, lz4,  mtree, pax, rar, tar, xar, xz, z, zip, zst, 7z.
+  Archives can be opened in read-only mode, and modifications are not allowed.
+  Paths of archived folders will include a prefix derived from the archive’s own path.
+- **Network protocols**
+  - FTP  
+    Enables connection to FTP servers.
+    Paths for these resources will have an `ftp://` prefix.
+  - SFTP
+    Enables connection via the `SSH` protocol when the `SSH File Transfer Protocol` is enabled.    
+    Paths for these resources will have an `sftp://` prefix.
+  - WebDAV  
+    Enables connection to WebDAV servers.
+    Paths for these resources will have `http://` or `https://` prefixes.
+  - DropBox  
+    Enables direct connection to Dropbox storage.
+    Paths for these resources will have a `dropbox://` prefix.
+- **Extended attributes**  
+  You can open an item’s [extended attributes (xattrs)](https://en.wikipedia.org/wiki/Extended_file_attributes#macOS) as a read-write folder and interact with these attributes as though they were regular files.
+- **Process list**  
+  This VFS displays all processes running on the computer as files in a folder.
+  Each file represents a process and contains textual information about that process.
+  Deleting a file from this VFS will terminate the corresponding process.
+
+## External Editors
+You can configure a list of editor applications in the `Settings` dialog.
+To modify these settings, navigate to `Nimble Commander > Settings > Editors`.
+When you press `F4` or select the `Command > External Editor` menu item, Nimble Commander selects an appropriate editor based on the file extension of the currently focused file and opens the file in that editor.
+External editors can be executed either as standalone macOS applications or as command-line tools within Nimble Commander’s terminal emulator.
+
+## Tools
+Similar to external editors, tools allow you to define a set of applications that Nimble Commander can execute.
+The key difference is that, with tools, you have full control over the parameters passed to the application at startup.  
+Additionally, tools can be assigned a designated hotkey, and their icons can be placed on the toolbar for easy access.
+To define external tools, navigate to `Nimble Commander > Settings > Tools`.  
+
+To execute a tool, you can:
+
+  - Press its hotkey (if specified).
+  - Click its icon in the toolbar (if added).
+  - Select its menu item from the `Command > Tools` menu.
+
+External tools can only be executed when a panel points to a location on the macOS filesystem.
+Virtual File Systems (VFS) are not supported.
+
+When called, tools can run in one of two modes, depending on the `Startup Mode` setting:
+
+  - `Run Detached`: Executes the tool as a standalone macOS application.
+  - `Run in Terminal`: Executes the tool as a command-line utility within Nimble Commander’s terminal emulator.
+
+The parameters passed to an external tool are defined using placeholders.
+Nimble Commander replaces these placeholders with specific values when the tool is executed.
+
+Supported placeholders:
+
+- Insert the focused item:
+  - From the source (current) panel:
+    - `%p`: Item's path.
+    - `%f`: Item's filename.
+    - `%n`: Item's filename without the extension.
+    - `%e`: Item's extension.
+    - `%r`: Panel's path.
+  - From the target (opposite) panel:
+    - `%-p`: Item's path.
+    - `%-f`: Item's filename.
+    - `%-n`: Item filename without the extension.
+    - `%-e`: Item extension.
+    - `%-r`: Panel's path.
+- Insert the selected items:
+  - From the source (current) panel:
+    - `%P`:  File paths as parameters.
+    - `%xP`:  File paths as parameters, limited to **x** files.
+    - `%LP`: File paths in a temporary text file.
+    - `%xLP`: File paths in a temporary text file, limited to **x** files.
+    - `%F`: Filenames as parameters.
+    - `%xF`: Filenames as parameters, limited to **x** files.
+    - `%LF`: Filenames in a temporary text file.
+    - `%xLF`: Filenames in a temporary text file, limited to **x** files.
+  - From the target (opposite) panel:
+    - `%-P`:  File paths as parameters.
+    - `%-xP`: File paths as parameters, limited to **x** files.
+    - `%-LP`: File paths in a temporary text file.
+    - `%-xLP`: File paths in a temporary text file, limited to **x** files.
+    - `%-F`: Filenames as parameters.
+    - `%-xF`: Filenames as parameters, limited to **x** files.
+    - `%-LF`: Filenames in a temporary text file.
+    - `%-xLF`: Filenames in a temporary text file, limited to **x** files.
+- Ask for a value when executed:
+  - `%?`: Prompts for the parameter value.
+  - `%"message"?`: Prompts for the parameter value with a custom **message**.
+- Other placeholders:
+  - `%%`: Inserts the `%` character (escaping).
+  - `%-`: Switches between source/target panels and left/right panels.
+  - `%xT`: Limits the total number of files passed to the tool to **x**.
 
 ## Integrated Viewer
 _to be written_

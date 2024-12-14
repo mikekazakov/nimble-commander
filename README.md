@@ -23,8 +23,7 @@ Install via Homebrew: `brew install nimble-commander`.
 Access all previous releases at https://github.com/mikekazakov/nimble-commander-releases. 
 
 # Documentation
-The user guide can be found here: [Help.md](Docs/Help.md).  
-**Note**: This is a work in progress. The documentation is in its early stages and is being gradually developed.
+The user guide can be found here: [Help.md](Docs/Help.md).
 
 # Building from Source
 For build instructions and an overview of the source code, please refer to the [Building.md](Docs/Building.md) document.

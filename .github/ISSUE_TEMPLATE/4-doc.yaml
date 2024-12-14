@@ -1,0 +1,19 @@
+name: 📚 Documentation
+description: Something is incorrect or missing in the documentation?
+title: "[Doc]: "
+labels: ["documentation"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What is the documentation issue?
+      description: Describe the problem or provide your suggestions for improving the documentation.
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Proposed Solution
+      description: What changes would resolve this issue? Where should these updates appear? Sharing ideas helps ensure the documentation meets user needs effectively.
+    validations:
+      required: false

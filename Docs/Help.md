@@ -1,15 +1,13 @@
-# Nimble Commander Help
+# Getting Started
 
-## Getting Started
-
-### Introduction
+## Introduction
 
 Nimble Commander is a free dual-pane file manager for macOS, designed with a focus on speed, keyboard-based navigation, and flexibility.
 The project aims to blend the user experience of classic file managers from the '80s and '90s with the modern look and feel of Mac computers.
 Nimble Commander follows the design principles of [orthodox file managers](https://en.wikipedia.org/wiki/File_manager#Orthodox_file_managers), specifically dual-pane file managers.
 This website contains an in-depth study of this kind of software: [Less is More: Orthodox File Managers as Sysadmin IDE](https://softpanorama.org/OFM/index.shtml).
 
-### System Requirements
+## System Requirements
 
 Nimble Commander supports any Mac running the following versions of macOS:
 
@@ -22,7 +20,7 @@ Nimble Commander supports any Mac running the following versions of macOS:
 
 It runs natively on both Intel and Arm architectures.
 
-### Installation
+## Installation
 
 Nimble Commander is portable; it doesn't require the installation of additional components and can run from any folder.
 When downloaded from the Mac App Store, Nimble Commander is automatically placed in the `/Applications` folder.
@@ -31,11 +29,11 @@ You can also run Nimble Commander directly from a `.dmg` disk image; in this cas
 
 ![Copying NC from a dmg](Help-install-dmg.png)
 
-### Running the Application
+## Running the Application
 
 Simply double-click on the Nimble Commander icon to start it.
 
-### Access Permissions
+## Access Permissions
 
 If you downloaded Nimble Commander from the Mac App Store, the application will request permissions when navigating to a new location.
 This requirement is imposed on all applications published in the Mac App Store as a safety measure to prevent unauthorized access outside of the sandbox container.
@@ -56,7 +54,7 @@ As of this writing, the list of such locations includes:
 To use Nimble Commander in these locations, you need to grant the necessary permissions in System Settings under `Privacy & Security > Files and Folders` section.
 Alternatively, you can grant Nimble Commander Full Disk Access in System Settings under `Privacy & Security > Full Disk Access` section.
 
-### Version Differences
+## Version Differences
 
 There are two existing versions of Nimble Commander: the sandboxed version available in the Mac App Store, and the standalone version available for direct download from the website.
 Both versions are mostly equal in terms of functionality.
@@ -68,9 +66,9 @@ The notable features missing from the sandboxed version are:
 - Mounting network shares, as sandboxed applications are not allowed to use the NetFS framework.
 - Interceping F1..F19 keystrokes as functional without holding the Fn modifier, as sandboxed applications cannot ask for accessbility permissions.
 
-## File Panels
+# File Panels
 
-### Introduction
+## Introduction
 Below is a screenshot of a typical interface of Nimble Commander:
 
 ![Example of the interface](Help-main-ui.png)
@@ -94,7 +92,7 @@ Each panel is vertically divided into three logical parts:
 - File items: displays a list of the file items in the location of this panel.
 - Footer: shows the filename of the focused item, its size and modification date, the total number of items in the panel, and the free space available on this storage.
 
-### Navigation
+## Navigation
 Nimble Commander supports both mouse-based and keyboard-based navigation inside the file panel, although the keyboard is preferred.
 Use a single mouse click to change the cursor position (i.e., the focused item) and scroll gestures to scroll through the contents of the file panel without changing the cursor position.
 The navigation hotkeys are the following:
@@ -147,7 +145,7 @@ Below is the view of this dialog box:
 
 If the cursor is currently pointing to a file that is a symbolic link, the `Cmd + Right` hotkey can be used to navigate to the location the symlink points to.
 
-### Opening Items
+## Opening Items
 The `Return` key does more than just navigate into folders.
 The action performed when you press `Return` depends on the type of item:
 
@@ -162,7 +160,7 @@ The `Shift + Return` hotkey opens an item in macOS using its default association
 
 To open an item outside of Nimble Commander using a specific application, select the application from the `Open With` menu, which is available in the context menu or the `File` menu.
 
-### Panel Management
+## Panel Management
 You can swap the contents of the left and right panels using the `Cmd + U` hotkey or the menu item `View > Swap Panels`.
 This operation also transfers the focus to the opposite panel.  
 To sync the contents of the opposite panel with the contents of the current panel, you can use the `Opt + Cmd + U` hotkey or the menu item `View > Sync Panels`.  
@@ -183,7 +181,7 @@ The following screenshot provides an example of how single-pane mode looks:
 
 ![Single-pane mode](Help-panel-collapsed.png)
 
-### Selection
+## Selection
 Nimble Commander follows the UX of orthodox file managers and diverges from the typical MacOS UX when it comes to item selection.
 It treats item selection and cursor position separately, which means moving the cursor does not change the selection of items in the panel.
 Below is an example of a panel with some selected items and the cursor focused on an item that is not selected:
@@ -204,7 +202,7 @@ There are numerous ways to manipulate the item selection using the keyboard or m
 - `Alt + Cmd + =`: selects all items with the same extension as the currently focused item.
 - `Alt + Cmd + -`: deselects all items with the same extension as the currently focused item.
 
-### Sorting Modes
+## Sorting Modes
 Nimble Commander offers various ways to organize items in a folder.
 You can sort the items in ascending or descending order based on the following properties:
 
@@ -262,8 +260,7 @@ Nimble Commander also provides some customization options to fine-tune sorting:
   - `Case-Insensitive`: A Unicode-based comparison that ignores the case of letters in filenames.
   - `Case-Sensitive`:  A simple Unicode-based comparison that compares characters one by one without transformations. The fastest of the three.
 
-### Quick Search
-
+## Quick Search
 Nimble Commander offers a fast way to locate a file in a folder by typing a few letters from its name.
 This keyboard-based navigation is called Quick Search.
 It's highly customizable and can behave differently based on your settings, but at its core, the idea is simple: any keyboard input can be used to filter folder items.
@@ -296,7 +293,7 @@ There are 5 options for matching filenames against it, configurable in `Panel > 
 When filtered-out items are configured to still be shown, and a key modifier is set, it can be used to lock navigation within the matching files.
 Using normal keyboard navigation (Arrows, Home, End, etc.) while holding the modifier will restrict the cursor movement to only the matching files.
 
-### View Modes
+## View Modes
 Nimble Commander can display the contents of a panel in two modes: Brief and List.
 The Brief mode shows only basic item information, such as the filename, icon, and tag colors, and arranges the items in consecutive columns.
 This allows more items to fit on the screen and enables the cursor to move both vertically and horizontally.
@@ -315,7 +312,7 @@ By default, Nimble Commander has 4 preconfigured modes, which you can switch usi
 
 You can fine-tune, rearrange, and add new custom panel layouts in the Settings dialog: `Settings > Panels > Layout`.
 
-### Quick Lists
+## Quick Lists
 Quick Lists is another mechanism in Nimble Commander for accessing specific locations with minimal keypresses, tailored for keyboard use.
 It is similar to the Go To popup but provides more locations and does not mix different types of locations.
 A Quick List popup is shown inside the focused panel, and its content can depend on the panel itself.
@@ -332,8 +329,7 @@ This screenshot shows a `Volumes` Quick List:
 
 ![Quick List](Help-panel-quicklist.png)
 
-### Tabs
-
+## Tabs
 File panels support a tabbed interface, allowing multiple locations to be opened simultaneously on either the left or right pane.
 The tab bar appears automatically if more than one tab is open in a pane, but it can also be forced to always show via the menu `View > Show Tab Bar` or by using the hotkey `Cmd + Shift + T`.
 The screenshot below shows Nimble Commander's window with two tabs in the left pane and three tabs in the right pane:
@@ -358,7 +354,7 @@ To close tabs, you can use the following hotkeys:
 - `Cmd + W` - closes the current tab.
 - `Alt + Cmd + W` - closes all other tabs.
 
-### Favorites
+## Favorites
 Favorites is a list of frequently accessed locations, similar to those in other software. Nimble Commander provides quick access to these locations through the following:
 
 - The `Go > Favorites` menu.
@@ -376,16 +372,38 @@ This screenshot shows the `Favorites` window:
 
 ![Favorites Window](Help-panel-favorites.png)
 
-## Operations
+## Searching for Files
+To recursively search for filesystem items that meet specific criteria, you can use the `Find Files` dialog. Press `Cmd + F` or select the `File > Find` menu item to open it.
 
-### Introduction
+![Find Files](Help-panel-findfiles.png)
+
+This dialog allows you to search for files based on various criteria:
+
+- Filename Matching.  
+  Search for files whose names match a specified pattern. Both file masks and regular expressions are supported.
+- Content Search.  
+  Find files containing or not containing specific text.
+  You can customize the search’s case sensitivity, specify whether an exact phrase match is required, and set the appropriate text encoding.
+- File Size.  
+  Search for files of a specific size.
+  You can specify the size and indicate whether it should be smaller than, equal to, or larger than the specified value.
+
+Once files are found, you can:
+
+- Quickly view a selected file with the built-in viewer while keeping the dialog open.
+- Navigate to a selected item in the file panel, which closes the dialog automatically.
+- Reveal all found items in a temporary file panel for further actions, also closing the dialog in the process.
+
+# Operations
+
+## Introduction
 Nimble Commander executes file operations in the background whenever possible to ensure the user interface remains responsive.
 Most operations are tied to the window where they originated, allowing you to monitor progress and providing options to pause or cancel as needed.
 When file operations are in progress, they are displayed in the central part of the window, just above the file panels: 
 
 ![File Operations](Help-file-operations.png)
 
-### Copy
+## Copy
 You can initiate the copying of filesystem items in several ways:
 
 - Using the `F5` hotkey or selecting the menu item `Command > Copy To...`: This opens the Copy dialog, where you can choose the destination (defaulting to the location of the opposite panel), select which file attributes to retain, and decide whether the copy should be verified.
@@ -393,10 +411,10 @@ You can initiate the copying of filesystem items in several ways:
 - Using the `Cmd + V` hotkey: If the pasteboard currently holds a path to a filesystem object, pressing this hotkey will copy that item into the folder displayed in the active file panel.
 - Dragging items with the mouse while holding the `Opt` key: This action copies the selected item(s) to the destination.
 
-### Duplicate
+## Duplicate
 Pressing the `Cmd + D` hotkey or selecting the menu item `File > Duplicate` duplicates the selected item(s) in the active panel within their current folder.
 
-### Move
+## Move
 To move items from one location to another, you can use the following methods:
 
 - Using the `F6` hotkey or selecting the menu item `Command > Rename / Move To...`: This opens the Move dialog. Similar to copying, it allows you to select which file attributes to preserve when moving between different filesystems and whether the result should be verified.
@@ -404,10 +422,10 @@ To move items from one location to another, you can use the following methods:
 - Using the `Opt + Cmd + V` hotkey: If the pasteboard currently contains a path to a filesystem object, pressing this hotkey moves that item into the folder displayed in the active file panel.
 - Dragging items with the mouse: This action moves the selected item(s) to the destination.
 
-### Rename
+## Rename
 To quickly rename an item in place, single-click its filename or press Ctrl + F6.
 
-### Batch Rename
+## Batch Rename
 Nimble Commander allows you to rename multiple items at once by applying a rename pattern. To open the Batch Rename dialog, select the items you want to rename, then press the `Ctrl + M` hotkey or choose `Command > Batch Rename` from the menu:
 
 ![Batch Rename](Help-batch-rename.png)
@@ -481,7 +499,7 @@ The placeholders mini-language includes the following elements:
 The Rename Dialog provides a preview of how the renamed list of files will look.
 No renaming will take place until you click the `OK` button or press `Cmd + Return`.
 
-### Delete
+## Delete
 Nimble Commander allows you to delete filesystem items or move them to the Trash, where supported.
 To quickly move an item to the Trash, press the `Cmd + Backspace` hotkey or select the menu item `Command > Move to Trash`.
 If the Trash functionality is not supported on the current volume, a Delete dialog will appear, asking you to confirm whether you want to delete the item permanently.
@@ -489,7 +507,7 @@ You can also invoke the Delete dialog using the `F8` / `Shift + F8` hotkeys or t
 When applicable, the dialog provides an option to choose between deleting and moving to the Trash.
 The difference between the two commands lies in the default selection presented in the dialog.
 
-### Create Folder
+## Create Folder
 There are two ways to create a folder in Nimble Commander:
 
   - Using the `F7` hotkey or the menu item `Command > Create Directory`. 
@@ -499,12 +517,11 @@ There are two ways to create a folder in Nimble Commander:
   - Using the `Shift + Cmd + N` hotkey or the menu item `File > New Folder`.
     This command creates a new empty folder with a temporary name and opens an in-place rename editor, allowing you to change the name immediately.
 
-### Create File
+## Create File
 Press `Alt + Cmd + N` or select the menu item `File > New File` to create a new, empty file with a temporary name.
 An in-place rename editor will appear, allowing you to rename the file immediately.
 
-### Change Attributes
-
+## Change Attributes
 You can change an item's attributes using the `Ctrl + A` hotkey or by selecting the `Command > File Attributes` menu item:
 
 ![Attributes](Help-attr-change.png)
@@ -517,8 +534,7 @@ If any of the selected items is a folder, the dialog provides an option to apply
 
 Please note that changing certain attributes requires administrator rights and will fail if executed without enabling Admin Mode.
 
-### Compress
-
+## Compress
 Nimble Commander includes a built-in compression tool that allows you to archive files.
 Currently, only the ZIP archive format is supported.
 Archives can be password-protected using AES-256 encryption.
@@ -526,7 +542,7 @@ Archives can be password-protected using AES-256 encryption.
 To create an archive in the same location as the source items, press `F9` or select `Command > Compress...` from the menu.
 To place the resulting archive in the location of the opposite panel, press `Shift + F9` or select `Command > Compress To...`.
 
-### Manage Links
+## Manage Links
 In Nimble Commander, you can create new hard links and create or edit symbolic links.
 By default, these actions do not have assigned hotkeys.
 They can be accessed via the `Command > Links` menu, which includes the following options:
@@ -535,7 +551,7 @@ They can be accessed via the `Command > Links` menu, which includes the followin
 - `Create Symbolic Link`.
 - `Edit Symbolic Link`.
 
-## Virtual File Systems
+# Virtual File Systems
 In addition to browsing the "real" filesystem available on MacOS, Nimble Commander allows you to interact with other resources as if they were part of the normal filesystem.
 Most operations, such as browsing, searching, viewing, and modifying, work seamlessly with these virtual filesystems (VFS).
 When a file on a VFS is modified using an external editor, Nimble Commander automatically reflects the changes in the underlying VFS.
@@ -566,13 +582,13 @@ Currently, the following virtual filesystems are supported:
   Each file represents a process and contains textual information about that process.
   Deleting a file from this VFS will terminate the corresponding process.
 
-## External Editors
+# External Editors
 You can configure a list of editor applications in the `Settings` dialog.
 To modify these settings, navigate to `Nimble Commander > Settings > Editors`.
 When you press `F4` or select the `Command > External Editor` menu item, Nimble Commander selects an appropriate editor based on the file extension of the currently focused file and opens the file in that editor.
 External editors can be executed either as standalone macOS applications or as command-line tools within Nimble Commander’s terminal emulator.
 
-## Tools
+# Tools
 Similar to external editors, tools allow you to define a set of applications that Nimble Commander can execute.
 The key difference is that, with tools, you have full control over the parameters passed to the application at startup.  
 Additionally, tools can be assigned a designated hotkey, and their icons can be placed on the toolbar for easy access.
@@ -637,7 +653,7 @@ Supported placeholders:
   - `%-`: Switches between source/target panels and left/right panels.
   - `%xT`: Limits the total number of files passed to the tool to **x**.
 
-## Integrated Viewer
+# Integrated Viewer
 Nimble Commander features a built-in viewer that lets you examine files without leaving the application:
 
 ![Integrated Viewer](Help-intergrated-viewer.png)
@@ -649,28 +665,49 @@ When viewing the tail of a file, such as an actively updating log file, the view
 
 The built-in viewer supports three modes:
 
-  - Text Mode (`Cmd+1`)  
+  - Text Mode (`Cmd + 1`)  
     Displays the file contents as readable text based on the selected encoding.  
     When applicable, syntax highlighting is applied according to the file’s extension.
-  - Hex Mode (`Cmd+2`)  
+  - Hex Mode (`Cmd + 2`)  
     Displays the file contents in 16-byte rows as hexadecimal values.  
     Each row includes:
     - Its offset.
     - Two 8-byte blocks of hexadecimal data.
     - A textual representation of the bytes.  
       The selected encoding is used to interpret the file’s bytes as human-readable text.
-  - Preview Mode (`Cmd+3`)  
+  - Preview Mode (`Cmd + 3`)  
     Renders the file contents using Quick Look for a graphical or more detailed preview.
 
 The viewer can operate within the application window where it was launched, replacing the file panels with its interface. Alternatively, it can be configured to appear as a separate floating window.
 
 To open the built-in viewer, press the `Alt + F3` hotkey or select the `Command > Internal Viewer` menu item. To close it, simply press `Esc`.
 
-## Integrated Terminal
-_to be written_
+# Integrated Terminal
+Nimble Commander includes a built-in terminal emulator, allowing you to run command-line utilities without switching to another application.
+The terminal emulator supports most VT100 commands and many extensions, such as 256 colors and mouse support.
 
-## Hotkeys
+![Terminal Emulator](Help-terminal.png)
 
+The terminal is context-aware and synchronizes the current panel's folder with the shell's path.
+This synchronization is bi-directional, executing `cd` in the terminal updates the panel path, and changing the folder in the panel updates the terminal’s working directory.
+Supported terminal shells include `bash`, `zsh`, `csh`, and `tcsh`.
+
+There are two ways to use the terminal emulator in Nimble Commander:
+
+- Full-Window Mode.  
+  In full-window mode, the terminal occupies the entire application window, temporarily hiding the file panels.
+  This mode is ideal when you need to focus exclusively on command-line tasks.
+  You can toggle this mode by pressing `Alt + Cmd + O` or selecting the `View > Show Terminal` menu item.
+  To exit and return to the file panels, press `Alt + Cmd + O` again or select the `View > Hide Terminal` menu item.
+- Overlapped Mode.  
+  In overlapped mode, the terminal is positioned below the file panels, allowing both to remain visible simultaneously.
+  This configuration is particularly useful for users familiar with orthodox dual-pane file managers, where a command-line interface is always accessible.
+  If desired, you can configure Nimble Commander to redirect keyboard input directly to the overlapped terminal even when it isn’t focused by enabling the option under `Settings > Panels > Behavior > Redirect keyboard input to the overlapped terminal`.
+  To reveal the terminal in overlapped mode, press `Ctrl + Alt + Up` to move the file panels upward.
+  You can hide it again by pressing `Ctrl + Alt + Down`.
+  For a clearer view of the terminal, you can fully hide the file panels by pressing `Ctrl + Alt + O`, and press the same shortcut again to bring the panels back into view.
+
+# Hotkeys
 The available hotkeys are listed below. 
 These are the default settings, which can be customized as needed. 
 Some actions do not have default hotkeys but can still be accessed through the application’s menu.
@@ -874,7 +911,7 @@ Some actions do not have default hotkeys but can still be accessed through the a
 | &nbsp; &nbsp; Show GoTo                      | Cmd + L                   |
 | &nbsp; &nbsp; Refresh                        | Cmd + R                   |
 
-## Frequently Asked Questions
+# Frequently Asked Questions
 
 **Q**: I have an idea for Nimble Commander!  
 **A**: That’s fantastic! Feel free to contribute your ideas. The entire source code and build instructions for Nimble Commander are available in [this repository](https://github.com/mikekazakov/nimble-commander). Be sure to read through the [CONTRIBUTING](https://github.com/mikekazakov/nimble-commander/blob/main/CONTRIBUTING.md) guidelines carefully before you start.

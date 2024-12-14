@@ -26,6 +26,8 @@ pandoc \
  --pdf-engine=xelatex \
  --fail-if-warnings=true \
  -f markdown-implicit_figures \
+ --toc \
+ -V toc-title:"Nimble Commander User Guide" \
  -V colorlinks=true \
  -V linkcolor=blue \
  -V urlcolor=blue \

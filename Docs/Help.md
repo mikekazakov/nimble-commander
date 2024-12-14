@@ -649,17 +649,17 @@ When viewing the tail of a file, such as an actively updating log file, the view
 
 The built-in viewer supports three modes:
 
-  - Text Mode (`Cmd+1`)  
+  - Text Mode (`Cmd + 1`)  
     Displays the file contents as readable text based on the selected encoding.  
     When applicable, syntax highlighting is applied according to the file’s extension.
-  - Hex Mode (`Cmd+2`)  
+  - Hex Mode (`Cmd + 2`)  
     Displays the file contents in 16-byte rows as hexadecimal values.  
     Each row includes:
     - Its offset.
     - Two 8-byte blocks of hexadecimal data.
     - A textual representation of the bytes.  
       The selected encoding is used to interpret the file’s bytes as human-readable text.
-  - Preview Mode (`Cmd+3`)  
+  - Preview Mode (`Cmd + 3`)  
     Renders the file contents using Quick Look for a graphical or more detailed preview.
 
 The viewer can operate within the application window where it was launched, replacing the file panels with its interface. Alternatively, it can be configured to appear as a separate floating window.
@@ -667,7 +667,29 @@ The viewer can operate within the application window where it was launched, repl
 To open the built-in viewer, press the `Alt + F3` hotkey or select the `Command > Internal Viewer` menu item. To close it, simply press `Esc`.
 
 ## Integrated Terminal
-_to be written_
+Nimble Commander includes a built-in terminal emulator, allowing you to run command-line utilities without switching to another application.
+The terminal emulator supports most VT100 commands and many extensions, such as 256 colors and mouse support.
+
+![Terminal Emulator](Help-terminal.png)
+
+The terminal is context-aware and synchronizes the current panel's folder with the shell's path.
+This synchronization is bi-directional, executing `cd` in the terminal updates the panel path, and changing the folder in the panel updates the terminal’s working directory.
+Supported terminal shells include `bash`, `zsh`, `csh`, and `tcsh`.
+
+There are two ways to use the terminal emulator in Nimble Commander:
+
+- Full-Window Mode.  
+  In full-window mode, the terminal occupies the entire application window, temporarily hiding the file panels.
+  This mode is ideal when you need to focus exclusively on command-line tasks.
+  You can toggle this mode by pressing `Alt + Cmd + O` or selecting the `View > Show Terminal` menu item.
+  To exit and return to the file panels, press `Alt + Cmd + O` again or select the `View > Hide Terminal` menu item.
+- Overlapped Mode.  
+  In overlapped mode, the terminal is positioned below the file panels, allowing both to remain visible simultaneously.
+  This configuration is particularly useful for users familiar with orthodox dual-pane file managers, where a command-line interface is always accessible.
+  If desired, you can configure Nimble Commander to redirect keyboard input directly to the overlapped terminal even when it isn’t focused by enabling the option under `Settings > Panels > Behavior > Redirect keyboard input to the overlapped terminal`.
+  To reveal the terminal in overlapped mode, press `Ctrl + Alt + Up` to move the file panels upward.
+  You can hide it again by pressing `Ctrl + Alt + Down`.
+  For a clearer view of the terminal, you can fully hide the file panels by pressing `Ctrl + Alt + O`, and press the same shortcut again to bring the panels back into view.
 
 ## Hotkeys
 

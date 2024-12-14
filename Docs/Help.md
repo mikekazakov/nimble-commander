@@ -376,6 +376,28 @@ This screenshot shows the `Favorites` window:
 
 ![Favorites Window](Help-panel-favorites.png)
 
+### Searching for Files
+To recursively search for filesystem items that meet specific criteria, you can use the `Find Files` dialog. Press `Cmd + F` or select the `File > Find` menu item to open it.
+
+![Find Files](Help-panel-findfiles.png)
+
+This dialog allows you to search for files based on various criteria:
+
+- Filename Matching.  
+  Search for files whose names match a specified pattern. Both file masks and regular expressions are supported.
+- Content Search.  
+  Find files containing or not containing specific text.
+  You can customize the search’s case sensitivity, specify whether an exact phrase match is required, and set the appropriate text encoding.
+- File Size.  
+  Search for files of a specific size.
+  You can specify the size and indicate whether it should be smaller than, equal to, or larger than the specified value.
+
+Once files are found, you can:
+
+- Quickly view a selected file with the built-in viewer while keeping the dialog open.
+- Navigate to a selected item in the file panel, which closes the dialog automatically.
+- Reveal all found items in a temporary file panel for further actions, also closing the dialog in the process.
+
 ## Operations
 
 ### Introduction

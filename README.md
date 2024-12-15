@@ -25,6 +25,9 @@ Access all previous releases at https://github.com/mikekazakov/nimble-commander-
 # Documentation
 The user guide can be found here: [Help.md](Docs/Help.md).
 
+# Changelog
+Details about each released version can be found in the [WHATS_NEW.md](WHATS_NEW.md) file.
+
 # Building from Source
 For build instructions and an overview of the source code, please refer to the [Building.md](Docs/Building.md) document.
 

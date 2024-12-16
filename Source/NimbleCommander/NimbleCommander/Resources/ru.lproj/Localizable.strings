@@ -107,7 +107,7 @@
 "Close Viewer" = "Закрыть просмотрщик";
 
 /* Menu item title
-   Menu item title for closing current window */
+Menu item title for closing current window */
 "Close Window" = "Закрыть окно";
 
 /* Informing when closing with running terminal processes */
@@ -229,6 +229,9 @@
 
 /* No comment provided by engineer. */
 "File Panels ▶ Scroll to the Previous Page" = "Файловые панели ▶ Прокрутить к предыдущей странице";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Show Context Menu" = "Файловые панели ▶ Показать контекстное меню";
 
 /* No comment provided by engineer. */
 "File Panels ▶ Show Next Tab" = "Файловые панели ▶ Показать предыдущую вкладку";
@@ -501,7 +504,7 @@
 "Theme" = "Тема";
 
 /* Asking the user for confirmation on deleting the external editor - informative text
-   Asking the user for confirmation on deleting the external tool - message */
+Asking the user for confirmation on deleting the external tool - message */
 "This operation is not reversible." = "Эта операция необратима.";
 
 /* Asking user for confirmation on erasing custom settings - informative text */
@@ -598,7 +601,7 @@
 "Yes" = "Да";
 
 /* Alert shown when a user removes a tag - message
-   Asking user for confirmation on erasing custom theme - informative text
-   Asking user for confirmation on reverting a standard theme - informative text */
+Asking user for confirmation on erasing custom theme - informative text
+Asking user for confirmation on reverting a standard theme - informative text */
 "You can’t undo this action." = "Вы не сможете отменить эту операцию.";
 

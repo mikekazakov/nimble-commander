@@ -22,3 +22,32 @@
 /* Placeholder for search text field in internal viewer */
 "Search in file" = "Искать в файле";
 
+/* Tooltip for the footer element */
+"File encoding" = "Кодировка файла";
+
+/* Tooltip for the footer element */
+"File position" = "Позиция файла";
+
+/* Tooltip for the footer element */
+"File size" = "Размер файла";
+
+/* Tooltip for menu element */
+"Hex" = "Шестнадцатеричный";
+
+/* Tooltip for the footer element */
+"Language highlighting" = "Язык подсветки";
+
+/* Menu element of language selection */
+"Plain Text" = "Простой текст";
+
+/* Tooltip for menu element */
+"Preview" = "Просмотр";
+
+/* Tooltip for menu element */
+"Text" = "Текст";
+
+/* Tooltip for the footer element */
+"View mode" = "Вид";
+
+/* Tooltip for the footer element */
+"Wrap lines" = "Заворачивать строки";

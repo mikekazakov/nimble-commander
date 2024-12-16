@@ -4,9 +4,6 @@
 /* Class = "NSMenuItem"; title = "Show Logs..."; ObjectID = "0UC-Ke-PdY"; */
 "0UC-Ke-PdY.title" = "Показать журналы...";
 
-/* Class = "NSMenuItem"; title = "Restore Purchases"; ObjectID = "0Y5-VP-Vjw"; */
-"0Y5-VP-Vjw.title" = "Восстановить покупки";
-
 /* Class = "NSMenu"; title = "Go"; ObjectID = "01c-vh-In9"; */
 "01c-vh-In9.title" = "Переход";
 
@@ -238,14 +235,8 @@
 /* Class = "NSMenuItem"; title = "Deselect All"; ObjectID = "899"; */
 "899.title" = "Убрать выделение";
 
-/* Class = "NSMenuItem"; title = "Natural Comparison"; ObjectID = "TCl-Dh-lAh"; */
-"TCl-Dh-lAh.title" = "Естественное сравнение";
-
 /* Class = "NSMenuItem"; title = "Case-Insensitive Comparison"; ObjectID = "902"; */
 "902.title" = "Сравнение без учета регистра";
-
-/* Class = "NSMenuItem"; title = "Case-Sensitive Comparison"; ObjectID = "ES4-0D-t9Y"; */
-"ES4-0D-t9Y.title" = "Сравнение с учетом регистра";
 
 /* Class = "NSMenuItem"; title = "Internal Viewer"; ObjectID = "905"; */
 "905.title" = "Встроенный просмотрщик";
@@ -270,9 +261,6 @@
 
 /* Class = "NSMenuItem"; title = "Deselect by Mask..."; ObjectID = "920"; */
 "920.title" = "Снять выделение с маской...";
-
-/* Class = "NSMenuItem"; title = "Numeric Comparison"; ObjectID = "923"; */
-"923.title" = "Численное сравнение";
 
 /* Class = "NSMenuItem"; title = "Delete Permanently..."; ObjectID = "926"; */
 "926.title" = "Удалить необратимо...";
@@ -304,9 +292,6 @@
 /* Class = "NSMenuItem"; title = "Compress..."; ObjectID = "CEQ-U0-LN9"; */
 "CEQ-U0-LN9.title" = "Сжать...";
 
-/* Class = "NSMenuItem"; title = "Purchase Pro Features"; ObjectID = "chd-VR-dSN"; */
-"chd-VR-dSN.title" = "Купить расширенный функционал";
-
 /* Class = "NSMenuItem"; title = "Open With"; ObjectID = "db8-IO-kEa"; */
 "db8-IO-kEa.title" = "Открыть в программе";
 
@@ -324,6 +309,9 @@
 
 /* Class = "NSMenuItem"; title = "Rename In Place"; ObjectID = "eqV-zA-nvJ"; */
 "eqV-zA-nvJ.title" = "Переименовать на месте";
+
+/* Class = "NSMenuItem"; title = "Case-Sensitive Comparison"; ObjectID = "ES4-0D-t9Y"; */
+"ES4-0D-t9Y.title" = "Сравнение с учетом регистра";
 
 /* Class = "NSMenuItem"; title = "New File"; ObjectID = "FeM-q9-Bc2"; */
 "FeM-q9-Bc2.title" = "Новый файл";
@@ -433,9 +421,6 @@
 /* Class = "NSMenu"; title = "Favorites"; ObjectID = "Mxc-IY-UlD"; */
 "Mxc-IY-UlD.title" = "Избранные";
 
-/* Class = "NSMenuItem"; title = "Calculate Checksum"; ObjectID = "mz4-ml-xw1"; */
-"mz4-ml-xw1.title" = "Вычислить контрольную сумму";
-
 /* Class = "NSMenuItem"; title = "New Folder with Selection"; ObjectID = "n1z-q2-heV"; */
 "n1z-q2-heV.title" = "Новая папка из выделения";
 
@@ -448,26 +433,17 @@
 /* Class = "NSMenuItem"; title = "Show/Hide Tab Bar"; ObjectID = "NK3-hW-YDx"; */
 "NK3-hW-YDx.title" = "Показать/скрыть панель вкладок";
 
-/* Class = "NSMenuItem"; title = "Purchase License"; ObjectID = "NOq-ty-cHI"; */
-"NOq-ty-cHI.title" = "Купить лицензию";
-
 /* Class = "NSMenuItem"; title = "Open Extended Attributes"; ObjectID = "o44-xu-Cyg"; */
 "o44-xu-Cyg.title" = "Показать расширенные атрибуты";
 
 /* Class = "NSMenuItem"; title = "Follow Symlink"; ObjectID = "Ob2-ob-NxB"; */
 "Ob2-ob-NxB.title" = "Следовать за ссылкой";
 
-/* Class = "NSMenuItem"; title = "Activate License..."; ObjectID = "Obg-B8-YTv"; */
-"Obg-B8-YTv.title" = "Активировать лицензию...";
-
 /* Class = "NSMenuItem"; title = "Processes List"; ObjectID = "ooW-Y5-gXA"; */
 "ooW-Y5-gXA.title" = "Список процессов";
 
 /* Class = "NSMenuItem"; title = "Undo"; ObjectID = "oWo-PV-HvD"; */
 "oWo-PV-HvD.title" = "Отменить";
-
-/* Class = "NSMenuItem"; title = "Registration Info..."; ObjectID = "p5z-kC-qPf"; */
-"p5z-kC-qPf.title" = "Информация о лицензии...";
 
 /* Class = "NSMenuItem"; title = "Batch Rename..."; ObjectID = "PDv-pQ-u5w"; */
 "PDv-pQ-u5w.title" = "Групповое переименование...";
@@ -519,6 +495,9 @@
 
 /* Class = "NSMenuItem"; title = "Root"; ObjectID = "tbO-TV-6y7"; */
 "tbO-TV-6y7.title" = "Корень";
+
+/* Class = "NSMenuItem"; title = "Natural Comparison"; ObjectID = "TCl-Dh-lAh"; */
+"TCl-Dh-lAh.title" = "Естественное сравнение";
 
 /* Class = "NSMenuItem"; title = "Quick Lists"; ObjectID = "ToO-KH-35P"; */
 "ToO-KH-35P.title" = "Быстрые списки";

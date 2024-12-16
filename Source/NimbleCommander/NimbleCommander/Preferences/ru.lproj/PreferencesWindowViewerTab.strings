@@ -55,11 +55,17 @@
 /* Class = "NSButtonCell"; title = "Check com.apple.TextEncoding"; ObjectID = "dec-0H-tCg"; */
 "dec-0H-tCg.title" = "Проверять com.apple.TextEncoding";
 
+/* Class = "NSButtonCell"; title = "Save language"; ObjectID = "hZn-wm-Xh0"; */
+"hZn-wm-Xh0.title" = "Сохранять язык";
+
 /* Class = "NSMenuItem"; title = "Separate window"; ObjectID = "Mav-lu-obi"; */
 "Mav-lu-obi.title" = "Отдельном окне";
 
 /* Class = "NSTextFieldCell"; title = "Show viewer in:"; ObjectID = "R3d-db-TY3"; */
 "R3d-db-TY3.title" = "Показывать просмотрщик в:";
+
+/* Class = "NSButtonCell"; title = "Enable syntax highlighting"; ObjectID = "tgW-Zz-ajT"; */
+"tgW-Zz-ajT.title" = "Включить подсветку синтаксиса";
 
 /* Class = "NSButtonCell"; title = "Reload automatically"; ObjectID = "UJD-ca-RTx"; */
 "UJD-ca-RTx.title" = "Обновлять автоматически";

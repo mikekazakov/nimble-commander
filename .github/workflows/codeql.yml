@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  XC_VERSION: ${{ '16' }}
+  XC_VERSION: ${{ '16.2' }}
 
 jobs:
   analyze:

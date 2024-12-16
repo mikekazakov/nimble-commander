@@ -51,7 +51,7 @@ Verify the Xcode version with `xcode-select -p`.
 | lzma(xz)        | 5.4.6      | 2024.01.26 | https://github.com/tukaani-project/xz.git
 | lzo             | 2.10       | 2017.03.01 | http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz
 | nlohmann        | 3.11.3     | 2023.11.28 | https://github.com/nlohmann/json.git
-| openssl         | 1.1.1v     | 2023.08.01 | https://github.com/openssl/openssl.git
+| openssl         | 1.1.1w     | 2023.09.11 | https://github.com/openssl/openssl.git
 | pstld           | head       | 2024.06.21 | https://github.com/mikekazakov/pstld
 | pugixml         | 1.14       | 2023.10.01 | https://github.com/zeux/pugixml.git
 | rapidjson       | head       | 2024.12.10 | https://github.com/Tencent/rapidjson

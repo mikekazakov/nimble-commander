@@ -127,7 +127,7 @@
 /* Class = "NSTextFieldCell"; title = "Default paths (L/R):"; ObjectID = "GnB-SA-FAJ"; */
 "GnB-SA-FAJ.title" = "Пути по-умолчанию (Л/П):";
 
-/* Class = "NSTextFieldCell"; title = "simulateneous file operations per window"; ObjectID = "gnX-Dl-80b"; */
+/* Class = "NSTextFieldCell"; title = "simultaneous file operations per window"; ObjectID = "gnX-Dl-80b"; */
 "gnX-Dl-80b.title" = "параллельных файловых операций на окно";
 
 /* Class = "NSMenuItem"; title = "Ending"; ObjectID = "GOP-4J-s2Y"; */

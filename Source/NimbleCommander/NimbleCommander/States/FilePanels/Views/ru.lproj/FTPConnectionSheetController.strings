@@ -37,11 +37,11 @@
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "21"; ObjectID = "Oei-y6-cIo"; */
 "Oei-y6-cIo.ibShadowedIsNilPlaceholder" = "21";
 
-/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "ftp.example.com"; ObjectID = "P18-Nd-gLg"; */
-"P18-Nd-gLg.ibShadowedIsNilPlaceholder" = "ftp.example.com";
-
 /* Class = "NSTextFieldCell"; placeholderString = "anonymous"; ObjectID = "p3m-p9-Z9X"; */
 "p3m-p9-Z9X.placeholderString" = "anonymous";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "ftp.example.com"; ObjectID = "P18-Nd-gLg"; */
+"P18-Nd-gLg.ibShadowedIsNilPlaceholder" = "ftp.example.com";
 
 /* Class = "NSTextFieldCell"; placeholderString = "21"; ObjectID = "Sp1-bt-rdp"; */
 "Sp1-bt-rdp.placeholderString" = "21";

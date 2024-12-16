@@ -25,17 +25,14 @@
 /* Class = "NSMenuItem"; title = "Size ↓"; ObjectID = "hdq-ge-Odh"; */
 "hdq-ge-Odh.title" = "Размеру ↓";
 
+/* Class = "NSMenuItem"; title = "Natural"; ObjectID = "ikn-C4-NbT"; */
+"ikn-C4-NbT.title" = "Естественное";
+
 /* Class = "NSMenuItem"; title = "Size ↑"; ObjectID = "kDo-Q7-LNI"; */
 "kDo-Q7-LNI.title" = "Размеру ↑";
 
 /* Class = "NSMenuItem"; title = "Case-Sensitive"; ObjectID = "mJ3-ls-nKo"; */
 "mJ3-ls-nKo.title" = "С учетом регистра";
-
-/* Class = "NSMenuItem"; title = "Natural"; ObjectID = "ikn-C4-NbT"; */
-"ikn-C4-NbT.title" = "Естественное";
-
-/* Class = "NSMenuItem"; title = "Comparison"; ObjectID = "ysh-wj-wqx"; */
-"ysh-wj-wqx.title" = "Cравнение";
 
 /* Class = "NSMenuItem"; title = "Modified Time ↑"; ObjectID = "Nl7-FN-dds"; */
 "Nl7-FN-dds.title" = "Времени модификации ↑";
@@ -60,6 +57,9 @@
 
 /* Class = "NSMenuItem"; title = "Name ↓"; ObjectID = "VRa-0i-JUb"; */
 "VRa-0i-JUb.title" = "Имени ↓";
+
+/* Class = "NSMenuItem"; title = "Comparison"; ObjectID = "ysh-wj-wqx"; */
+"ysh-wj-wqx.title" = "Cравнение";
 
 /* Class = "NSMenuItem"; title = "Extensionless Folders"; ObjectID = "Zk6-zX-sSG"; */
 "Zk6-zX-sSG.title" = "Папки без расширения";

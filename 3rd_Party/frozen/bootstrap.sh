@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/frozen.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b 1.1.1 --single-branch https://github.com/serge-sans-paille/frozen
+git clone -b 1.2.0 --single-branch https://github.com/serge-sans-paille/frozen
 
 cd ..
 

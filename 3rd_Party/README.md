@@ -40,7 +40,7 @@ Verify the Xcode version with `xcode-select -p`.
 | Catch2          | 2.13.3     | 2020.10.31 | https://github.com/catchorg/Catch2
 | curl            | 8.7.1      | 2024.03.27 | https://github.com/curl/curl.git
 | fmt             | 10.2.1     | 2024.01.04 | https://github.com/fmtlib/fmt.git
-| frozen          | 1.1.1      | 2022.03.31 | https://github.com/serge-sans-paille/frozen
+| frozen          | 1.2.0      | 2024.06.02 | https://github.com/serge-sans-paille/frozen
 | gtest           | 1.14.0     | 2023.08.02 | https://github.com/google/googletest.git
 | letsmove        | 1.25       | 2020.07.09 | https://github.com/potionfactory/LetsMove.git
 | lexilla         | 5.4.1      | 2024.10.19 | https://github.com/ScintillaOrg/lexilla.git

@@ -204,6 +204,8 @@
 		CF4AC4F22C10F90300475EDC /* Highlighter.xpc in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF5BF7DD2C0B8D230057C92E /* Highlighter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CF4AC4F62C11067500475EDC /* Highlighter.xpc in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF5BF7DD2C0B8D230057C92E /* Highlighter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CF4AC4F72C1106E100475EDC /* SyntaxHighlighting in Resources */ = {isa = PBXBuildFile; fileRef = CF5BF7EC2C0C8FA30057C92E /* SyntaxHighlighting */; };
+		CF4CBD3C2D0EFCC30072AE8A /* Highlighter.xpc in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF5BF7DD2C0B8D230057C92E /* Highlighter.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		CF4CBD3D2D0EFCE70072AE8A /* SyntaxHighlighting in Resources */ = {isa = PBXBuildFile; fileRef = CF5BF7EC2C0C8FA30057C92E /* SyntaxHighlighting */; };
 		CF4E56701D50667300452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56721D50667300452912 /* PreferencesWindowExternalEditorsTab.xib */; };
 		CF4E56751D50668A00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56771D50668A00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
 		CF4E56781D50668E00452912 /* PreferencesWindowGeneralTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E567A1D50668E00452912 /* PreferencesWindowGeneralTab.xib */; };
@@ -789,6 +791,16 @@
 			dstSubfolderSpec = 16;
 			files = (
 				CF4AC4F62C11067500475EDC /* Highlighter.xpc in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF4CBD3B2D0EFCA70072AE8A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
+			dstSubfolderSpec = 16;
+			files = (
+				CF4CBD3C2D0EFCC30072AE8A /* Highlighter.xpc in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2329,6 +2341,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CF6D9997196675290077B146 /* Build configuration list for PBXNativeTarget "NimbleCommander-MAS" */;
 			buildPhases = (
+				CF4CBD3B2D0EFCA70072AE8A /* CopyFiles */,
 				CF6D9979196675290077B146 /* Sources */,
 				CF6D997A196675290077B146 /* Frameworks */,
 				CF6D997B196675290077B146 /* Resources */,
@@ -2747,6 +2760,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF4CBD3D2D0EFCE70072AE8A /* SyntaxHighlighting in Resources */,
 				CFC706552B497FB00045D2C9 /* OperationsResources.bundle in Resources */,
 				CFC706562B497FB20045D2C9 /* PanelResources.bundle in Resources */,
 				CFC706582B497FB90045D2C9 /* ViewerResources.bundle in Resources */,

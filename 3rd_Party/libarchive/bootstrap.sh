@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/libarchive.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v3.7.4 --depth 1 https://github.com/libarchive/libarchive.git
+git clone -b v3.7.7 --depth 1 https://github.com/libarchive/libarchive.git
 
 cd libarchive
 

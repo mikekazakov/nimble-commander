@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/lz4.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v1.9.4 --single-branch https://github.com/lz4/lz4.git
+git clone -b v1.10.0 --single-branch https://github.com/lz4/lz4.git
 
 cd lz4/build/cmake
 mkdir builddir

@@ -47,7 +47,7 @@ Verify the Xcode version with `xcode-select -p`.
 | libarchive      | 3.7.4      | 2024.04.26 | https://github.com/libarchive/libarchive.git
 | libcxx          | 18.x       | 2024.03.05 | https://github.com/llvm/llvm-project.git
 | libssh2         | 1.11.1     | 2024.10.16 | https://github.com/libssh2/libssh2.git
-| lz4             | 1.9.4      | 2022.08.15 | https://github.com/lz4/lz4.git
+| lz4             | 1.10.0     | 2024.07.22 | https://github.com/lz4/lz4.git
 | lzma(xz)        | 5.6.3      | 2024.10.01 | https://github.com/tukaani-project/xz.git
 | lzo             | 2.10       | 2017.03.01 | http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz
 | nlohmann        | 3.11.3     | 2023.11.28 | https://github.com/nlohmann/json.git

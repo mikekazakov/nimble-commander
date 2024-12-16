@@ -231,6 +231,9 @@ Menu item title for closing current window */
 "File Panels ▶ Scroll to the Previous Page" = "Файловые панели ▶ Прокрутить к предыдущей странице";
 
 /* No comment provided by engineer. */
+"File Panels ▶ Show Context Menu" = "Файловые панели ▶ Показать контекстное меню";
+
+/* No comment provided by engineer. */
 "File Panels ▶ Show Next Tab" = "Файловые панели ▶ Показать предыдущую вкладку";
 
 /* No comment provided by engineer. */

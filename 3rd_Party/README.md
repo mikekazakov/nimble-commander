@@ -33,6 +33,7 @@ Verify the Xcode version with `xcode-select -p`.
 
 | Library         | Version    | Released   | Source Code
 | --------------- | ---------- | ---------- | -----------------------------------------
+| abseil          | 2024.07.22 | 2024.08.01 | https://github.com/abseil/abseil-cpp.git
 | appauth         | 1.7.5      | 2024.04.23 | https://github.com/openid/AppAuth-iOS.git
 | boost           | 1.85.0     | 2024.04.15 | https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.gz
 | bz2             | 1.0.8      | 2019.07.13 | https://sourceware.org/git/bzip2.git

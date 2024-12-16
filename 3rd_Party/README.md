@@ -54,7 +54,7 @@ Verify the Xcode version with `xcode-select -p`.
 | openssl         | 1.1.1v     | 2023.08.01 | https://github.com/openssl/openssl.git
 | pstld           | head       | 2024.06.21 | https://github.com/mikekazakov/pstld
 | pugixml         | 1.14       | 2023.10.01 | https://github.com/zeux/pugixml.git
-| rapidjson       | head       | 2024.10.07 | https://github.com/Tencent/rapidjson
+| rapidjson       | head       | 2024.12.10 | https://github.com/Tencent/rapidjson
 | re2             | 2024-07-02 | 2024.07.02 | https://github.com/google/re2.git
 | sparkle         | 2.6.4      | 2024.07.01 | https://github.com/sparkle-project/Sparkle.git
 | spdlog          | 1.15.0     | 2024.11.09 | https://github.com/gabime/spdlog.git

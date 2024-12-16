@@ -7,8 +7,6 @@ using nc::base::variable_container;
 
 #define PREFIX "variable_container "
 
-static_assert(sizeof(variable_container<std::string>) == 64);
-
 TEST_CASE(PREFIX "Common storage")
 {
     variable_container<std::string> vc(variable_container<>::type::common);

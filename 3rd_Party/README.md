@@ -38,7 +38,7 @@ Verify the Xcode version with `xcode-select -p`.
 | boost           | 1.85.0     | 2024.04.15 | https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.gz
 | bz2             | 1.0.8      | 2019.07.13 | https://sourceware.org/git/bzip2.git
 | Catch2          | 2.13.3     | 2020.10.31 | https://github.com/catchorg/Catch2
-| curl            | 8.7.1      | 2024.03.27 | https://github.com/curl/curl.git
+| curl            | 8.11.1     | 2024.12.11 | https://github.com/curl/curl.git
 | fmt             | 11.0.2     | 2024.07.20 | https://github.com/fmtlib/fmt.git
 | frozen          | 1.2.0      | 2024.06.02 | https://github.com/serge-sans-paille/frozen
 | gtest           | 1.14.0     | 2023.08.02 | https://github.com/google/googletest.git

@@ -250,7 +250,7 @@ struct fmt::formatter<nc::panel::DirectoryChangeRequest> : fmt::formatter<std::s
     constexpr auto parse(fmt::format_parse_context &ctx) { return ctx.begin(); }
 
     template <typename FormatContext>
-    auto format(const nc::panel::DirectoryChangeRequest &_req, FormatContext &_ctx)
+    auto format(const nc::panel::DirectoryChangeRequest &_req, FormatContext &_ctx) const
     {
 
         return fmt::format_to(

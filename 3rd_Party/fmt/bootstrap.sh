@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/fmt.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b 10.2.1 --single-branch --depth=1 https://github.com/fmtlib/fmt.git
+git clone -b 11.0.2 --single-branch --depth=1 https://github.com/fmtlib/fmt.git
 
 cd fmt
 mkdir build
@@ -24,6 +24,7 @@ cmake \
   -D BUILD_SHARED_LIBS="OFF" \
   ..
 make -j
+make test
 
 cd ./../../..
 rm -rf ./include/

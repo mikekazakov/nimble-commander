@@ -8,6 +8,9 @@ Builds tests and the main application without running so that CodeQL can interce
 ## `build_help.sh`
 Converts the markdown documention into a pdf placed in `build_help.tmp/Help.pdf`
 
+## `build_mas_archive.sh`
+Builds and archive Nimble Commander for submission to MacAppStore.
+
 ## `build_nightly.sh`
 Builds Nimble Commander with the `NimbleCommander-NonMAS` scheme / `Release` configuration, signs it, packages the runnable build into a `.dmg` image and notarizes the final image.  
 `xcodebuild`, `xcpretty` and `create-dmg` must be available in the environment in order for this script to run.  

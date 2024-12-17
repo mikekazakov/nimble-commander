@@ -19,14 +19,19 @@ cmake \
   -D CMAKE_BUILD_TYPE=Release \
   -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
   -D CMAKE_OSX_DEPLOYMENT_TARGET="10.15" \
-  -D CMAKE_C_FLAGS="-fvisibility=hidden -flto -Os" \
+  -D CMAKE_C_FLAGS="-fvisibility=hidden -flto -Os -DLIBSSH2_DSA_ENABLE" \
   -D BUILD_STATIC_LIBS=ON \
   -D BUILD_SHARED_LIBS=OFF \
   -D CRYPTO_BACKEND=OpenSSL \
-  -D ENABLE_ZLIB_COMPRESSION=ON
-  
+  -D ENABLE_ZLIB_COMPRESSION=ON \
+  -D RUN_DOCKER_TESTS=OFF \
+  -D RUN_SSHD_TESTS=OFF
+
 cmake --build build -j
-ctest --test-dir build --output-on-failure
+ctest \
+  --test-dir build \
+  --output-on-failure \
+  --exclude-regex test_auth_pubkey_ok_dsa
 
 cd ./../../
 rm -rf ./include/

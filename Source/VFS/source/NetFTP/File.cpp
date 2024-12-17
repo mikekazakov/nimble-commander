@@ -370,7 +370,7 @@ void File::FinishReading()
     assert(m_Mode == Mode::Read);
 
     // tell curl to cancel any going reading if any
-    m_CURL->prog_func = ^(double, double, double, double) {
+    m_CURL->prog_func = ^(curl_off_t, curl_off_t, curl_off_t, curl_off_t) {
       return 1;
     };
 

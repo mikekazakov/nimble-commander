@@ -47,9 +47,7 @@ template <std::size_t size> class knuth_morris_pratt_searcher {
   static constexpr bits::carray<std::ptrdiff_t, size>
   build_kmp_cache(char const (&needle)[size + 1]) {
     std::ptrdiff_t cnd = 0;
-    bits::carray<std::ptrdiff_t, size> cache;
-
-    cache.fill(-1);
+    bits::carray<std::ptrdiff_t, size> cache(-1);
     for (std::size_t pos = 1; pos < size; ++pos) {
       if (needle[pos] == needle[cnd]) {
         cache[pos] = cache[cnd];
@@ -109,9 +107,7 @@ template <std::size_t size> class boyer_moore_searcher {
   bits::carray<char, size> needle_;
 
   constexpr auto build_skip_table(char const (&needle)[size + 1]) {
-    skip_table_type skip_table;
-
-    skip_table.fill(size);
+    skip_table_type skip_table(size);
     for (std::size_t i = 0; i < size - 1; ++i)
       skip_table[needle[i]] -= i + 1;
     return skip_table;
@@ -166,24 +162,29 @@ public:
       suffix_table_{build_suffix_table(needle)},
       needle_(needle) {}
 
-  template <class ForwardIterator>
-  constexpr std::pair<ForwardIterator, ForwardIterator> operator()(ForwardIterator first, ForwardIterator last) const {
+  template <class RandomAccessIterator>
+  constexpr std::pair<RandomAccessIterator, RandomAccessIterator> operator()(RandomAccessIterator first, RandomAccessIterator last) const {
     if (size == 0)
-      return { first, first + size };
+      return { first, first };
 
-    ForwardIterator iter = first + size - 1;
-    while (iter < last) {
+    if (size > size_t(last - first))
+      return { last, last };
+
+    RandomAccessIterator iter = first + size - 1;
+    while (true) {
       std::ptrdiff_t j = size - 1;
       while (j > 0 && (*iter == needle_[j])) {
         --iter;
         --j;
       }
-      if (*iter == needle_[0])
+      if (j == 0 && *iter == needle_[0])
         return { iter, iter + size};
 
-      iter += std::max(skip_table_[*iter], suffix_table_[j]);
+      std::ptrdiff_t jump = std::max(skip_table_[*iter], suffix_table_[j]);
+      if (jump >= last - iter)
+        return { last, last };
+      iter += jump;
     }
-    return { last, last + size};
   }
 };
 

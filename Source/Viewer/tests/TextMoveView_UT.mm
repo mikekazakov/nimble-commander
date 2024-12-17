@@ -18,6 +18,7 @@
 #define PREFIX "NCViewerTextModeView "
 
 using namespace nc::viewer;
+using Catch::Approx;
 
 namespace {
 

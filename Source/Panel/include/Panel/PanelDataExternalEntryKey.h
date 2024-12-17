@@ -32,7 +32,7 @@ struct fmt::formatter<nc::panel::data::ExternalEntryKey> : fmt::formatter<std::s
     constexpr auto parse(fmt::format_parse_context &ctx) { return ctx.begin(); }
 
     template <typename FormatContext>
-    auto format(const nc::panel::data::ExternalEntryKey &_key, FormatContext &_ctx)
+    auto format(const nc::panel::data::ExternalEntryKey &_key, FormatContext &_ctx) const
     {
 
         return fmt::format_to(_ctx.out(),

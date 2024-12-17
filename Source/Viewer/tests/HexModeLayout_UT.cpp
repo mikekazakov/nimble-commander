@@ -8,6 +8,7 @@
 #include <Base/algo.h>
 
 using namespace nc::viewer;
+using Catch::Approx;
 
 static std::shared_ptr<const TextModeWorkingSet>
 ProduceWorkingSet(const char *_chars, int _chars_number, long _ws_offset = 0);

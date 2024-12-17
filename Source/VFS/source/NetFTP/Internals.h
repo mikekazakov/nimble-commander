@@ -44,11 +44,12 @@ struct CURLInstance {
     CURL *curl = nullptr;
     CURLM *curlm = nullptr;
     bool attached = false;
-    int (^prog_func)(double dltotal, double dlnow, double ultotal, double ulnow) = nil;
+    int (^prog_func)(curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) = nil;
     std::mutex call_lock;
 
 private:
-    static int ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
+    static int
+    ProgressCallback(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow);
 };
 
 // ReadBuffer provides an intermediatery storage where CURL can write to so that a File can read from afterwards

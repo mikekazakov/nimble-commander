@@ -172,7 +172,7 @@ int FTPHost::DownloadListing(CURLInstance *_inst,
     _inst->EasySetOpt(CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
     _inst->EasySetOpt(CURLOPT_WRITEDATA, &response);
     _inst->EasySetupProgFunc();
-    _inst->prog_func = ^(double, double, double, double) {
+    _inst->prog_func = ^(curl_off_t, curl_off_t, curl_off_t, curl_off_t) {
       if( _cancel_checker == nil )
           return 0;
       return _cancel_checker() ? 1 : 0;

@@ -23,6 +23,7 @@
 #include <Utility/Tags.h>
 #include <sys/mount.h>
 
+#include <fmt/ranges.h>
 #include <algorithm>
 
 // hack to access function from libc implementation directly.

@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/appauth.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b 1.7.5 --single-branch --depth=1 https://github.com/openid/AppAuth-iOS.git
+git clone -b 1.7.6 --single-branch --depth=1 https://github.com/openid/AppAuth-iOS.git
 
 cd AppAuth-iOS
 

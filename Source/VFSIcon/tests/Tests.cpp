@@ -1,6 +1,5 @@
 // Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#define CATCH_CONFIG_RUNNER
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 
 #define GTEST_DONT_DEFINE_FAIL 1
 #define GTEST_DONT_DEFINE_SUCCEED 1

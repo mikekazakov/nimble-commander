@@ -2,6 +2,7 @@
 #include "Tests.h"
 #include <NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedNumberLayoutEngine.h>
 
+using Catch::Approx;
 using nc::panel::view::brief::FixedNumberLayoutEngine;
 
 #define PREFIX "nc::panel::view::brief::FixedNumberLayoutEngine "

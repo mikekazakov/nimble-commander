@@ -12,7 +12,7 @@ cd ${TMP_DIR}
 wget https://www.scintilla.org/scintilla550.zip
 unzip scintilla550.zip
 
-git clone -b rel-5-3-2 --single-branch --depth=1 https://github.com/ScintillaOrg/lexilla.git
+git clone -b rel-5-4-1 --single-branch --depth=1 https://github.com/ScintillaOrg/lexilla.git
 cd lexilla
 
 source_files=""

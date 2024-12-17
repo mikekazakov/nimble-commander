@@ -24,6 +24,7 @@ set -e
 ./LetsMove/bootstrap.sh
 ./frozen/bootstrap.sh
 ./pstld/bootstrap.sh
+./abseil/bootstrap.sh
 ./re2/bootstrap.sh
 ./libcxxbackport/bootstrap.sh
 ./lexilla/bootstrap.sh

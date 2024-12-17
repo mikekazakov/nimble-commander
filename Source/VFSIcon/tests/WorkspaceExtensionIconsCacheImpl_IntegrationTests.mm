@@ -1,7 +1,8 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include <VFSIcon/WorkspaceExtensionIconsCacheImpl.h>
 #include <Utility/UTIImpl.h>
+#include <Cocoa/Cocoa.h>
 
 using namespace nc::vfsicon;
 using nc::utility::UTIDBImpl;

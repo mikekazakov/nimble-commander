@@ -2,8 +2,8 @@
 #include "Tests.h"
 #include <NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedWidthLayoutEngine.h>
 
-using nc::panel::view::brief::FixedWidthLayoutEngine;
 using Catch::Approx;
+using nc::panel::view::brief::FixedWidthLayoutEngine;
 
 #define PREFIX "nc::panel::view::brief::FixedWidthLayoutEngine "
 

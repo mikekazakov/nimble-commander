@@ -92,10 +92,5 @@ All rights reserved.</string>
 	<string>https://magnumbytes.com/downloads/releases/sparkle-nimble-commander.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>+YiqopcJYs/3V0iERkxnA2NdWhDOCEdZjl/WdK1ljz8=</string>
-	<key>XPCServices</key>
-	<dict>
-		<key>com.magnumbytes.NimbleCommander.Highlighter</key>
-		<string>Contents/XPCServices/Highlighter.xpc</string>
-	</dict>
 </dict>
 </plist>

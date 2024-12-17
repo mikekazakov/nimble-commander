@@ -1,7 +1,8 @@
-// Copyright (C) 2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include <VFS/VFSError.h>
 #include <sys/errno.h>
+#include <Cocoa/Cocoa.h>
 
 #define PREFIX "VFSError "
 

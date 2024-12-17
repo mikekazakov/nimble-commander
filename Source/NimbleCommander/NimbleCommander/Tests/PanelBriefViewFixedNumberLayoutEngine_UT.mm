@@ -3,6 +3,7 @@
 #include <NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedNumberLayoutEngine.h>
 
 using nc::panel::view::brief::FixedNumberLayoutEngine;
+using Catch::Approx;
 
 #define PREFIX "nc::panel::view::brief::FixedNumberLayoutEngine "
 

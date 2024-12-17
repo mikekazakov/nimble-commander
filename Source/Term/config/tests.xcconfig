@@ -1,2 +1,2 @@
-OTHER_LDFLAGS = $(inherited) -framework Foundation -framework Cocoa -lTerm -lUtility -lBase
+OTHER_LDFLAGS = $(inherited) -framework Foundation -framework Cocoa -lTerm -lUtility -lBase -lCatch2
 ONLY_ACTIVE_ARCH=YES

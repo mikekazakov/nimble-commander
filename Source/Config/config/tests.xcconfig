@@ -1,5 +1,5 @@
 #include "default.xcconfig"
 
-OTHER_LDFLAGS = $(inherited) -lConfig -lBase -framework Foundation -framework Cocoa 
+OTHER_LDFLAGS = $(inherited) -lConfig -lBase -framework Foundation -framework Cocoa -lCatch2
 EXECUTABLE_PREFIX=
 ONLY_ACTIVE_ARCH=YES

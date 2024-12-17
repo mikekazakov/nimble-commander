@@ -1,8 +1,9 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include <NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedWidthLayoutEngine.h>
 
 using nc::panel::view::brief::FixedWidthLayoutEngine;
+using Catch::Approx;
 
 #define PREFIX "nc::panel::view::brief::FixedWidthLayoutEngine "
 

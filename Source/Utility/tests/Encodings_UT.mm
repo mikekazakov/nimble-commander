@@ -2,6 +2,7 @@
 #include "UnitTests_main.h"
 #include "Encodings.h"
 #include <string_view>
+#include <Cocoa/Cocoa.h>
 
 #define PREFIX "Encodings "
 

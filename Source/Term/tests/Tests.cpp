@@ -1,6 +1,5 @@
-// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
-#define CATCH_CONFIG_RUNNER
-#include <catch2/catch.hpp>
+// Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+#include <catch2/catch_all.hpp>
 #include <Base/CommonPaths.h>
 #include <Base/ExecutionDeadline.h>
 #include <Base/debug.h>
@@ -11,6 +10,7 @@
 #include <Log.h>
 #include <spdlog/sinks/stdout_sinks.h>
 #include <spdlog/sinks/ringbuffer_sink.h>
+#include <iostream>
 
 using namespace nc::term;
 
@@ -26,14 +26,13 @@ static void DumpLog()
     std::cout << '\n';
 }
 
-struct CatchEventsListener : Catch::TestEventListenerBase {
-    using TestEventListenerBase::TestEventListenerBase; // inherit constructor
-    bool assertionEnded(const Catch::AssertionStats &stats) override
+struct CatchEventsListener : Catch::EventListenerBase {
+    using EventListenerBase::EventListenerBase; // inherit constructor
+    void assertionEnded(const Catch::AssertionStats &stats) override
     {
         if( !stats.assertionResult.isOk() ) {
             DumpLog();
         }
-        return true;
     }
 };
 CATCH_REGISTER_LISTENER(CatchEventsListener);
@@ -52,7 +51,7 @@ static std::string MakeTempFilesStorage()
 {
     const auto base_path = nc::base::CommonPaths::AppTemporaryDirectory();
     const auto tmp_path = base_path + g_TestDirPrefix + "/";
-    if( access(tmp_path.c_str(), F_OK) == 0 )
+    if( std::filesystem::exists(tmp_path) )
         std::filesystem::remove_all(tmp_path);
     if( mkdir(tmp_path.c_str(), S_IRWXU) != 0 )
         throw std::runtime_error("mkdir failed");

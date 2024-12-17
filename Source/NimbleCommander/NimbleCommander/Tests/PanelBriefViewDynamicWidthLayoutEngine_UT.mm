@@ -3,6 +3,7 @@
 #include <NimbleCommander/States/FilePanels/Brief/PanelBriefViewDynamicWidthLayoutEngine.h>
 
 using nc::panel::view::brief::DynamicWidthLayoutEngine;
+using Catch::Approx;
 
 #define PREFIX "nc::panel::view::brief::DynamicWidthLayoutEngine "
 

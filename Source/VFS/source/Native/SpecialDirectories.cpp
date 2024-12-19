@@ -47,9 +47,9 @@ int FetchUnifiedListing(NativeHost &_host,
             if( (_flags & VFSFlags::F_LoadDisplayNames) != 0 ) {
                 auto &cache = DisplayNamesCache::Instance();
                 if( auto userpath_name = cache.DisplayName(_user_path) )
-                    input.title = userpath_name;
+                    input.title = *userpath_name;
                 else if( auto systempath_name = cache.DisplayName(_system_path) )
-                    input.title = systempath_name;
+                    input.title = *systempath_name;
                 else if( auto nonloc_name = MakeNonLocalizedTitle(_user_path) )
                     input.title = nonloc_name;
             }

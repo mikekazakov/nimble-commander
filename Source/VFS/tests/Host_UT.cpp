@@ -8,10 +8,6 @@
 using namespace nc;
 using namespace nc::vfs;
 using ::testing::_;
-using ::testing::AnyNumber;
-using ::testing::Invoke;
-using ::testing::NiceMock;
-using ::testing::Return;
 
 TEST_CASE(PREFIX "FetchSingleItemListing")
 {

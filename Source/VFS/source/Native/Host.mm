@@ -156,7 +156,7 @@ int NativeHost::FetchDirectoryListing(std::string_view _path,
                 static auto &dnc = DisplayNamesCache::Instance();
                 if( auto display_name = dnc.DisplayName(
                         _params.inode, _params.dev, listing_source.directories[0] + listing_source.filenames[_n]) )
-                    listing_source.display_filenames.insert(_n, display_name);
+                    listing_source.display_filenames.insert(_n, std::string(*display_name));
             }
 
         ext_flags[_n] = _params.ext_flags;
@@ -258,18 +258,21 @@ int NativeHost::FetchSingleItemListing(std::string_view _path,
     if( _cancel_checker && _cancel_checker() )
         return VFSError::Cancelled;
 
-    // TODO: rewrite without using C-style strings
-    char path[MAXPATHLEN];
-    char directory[MAXPATHLEN];
-    char filename[MAXPATHLEN];
-    memcpy(path, _path.data(), _path.length());
-    path[_path.length()] = 0;
-
-    if( !EliminateTrailingSlashInPath(path) || !GetDirectoryContainingItemFromPath(path, directory) ||
-        !GetFilenameFromPath(path, filename) )
+    std::array<char, 512> mem_buffer;
+    std::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
+    const std::pmr::string path(utility::PathManip::WithoutTrailingSlashes(_path), &mem_resource);
+    if( path.empty() )
         return VFSError::InvalidCall;
 
-    auto &io = routedio::RoutedIO::InterfaceForAccess(path, R_OK);
+    const std::string_view directory = utility::PathManip::Parent(path);
+    if( directory.empty() )
+        return VFSError::InvalidCall;
+
+    const std::string_view filename = utility::PathManip::Filename(path);
+    if( filename.empty() )
+        return VFSError::InvalidCall;
+
+    auto &io = routedio::RoutedIO::InterfaceForAccess(path.c_str(), R_OK);
 
     using nc::base::variable_container;
     uint64_t ext_flags = 0;
@@ -312,8 +315,8 @@ int NativeHost::FetchSingleItemListing(std::string_view _path,
             if( S_ISDIR(listing_source.unix_modes[0]) && !listing_source.filenames[0].empty() &&
                 listing_source.filenames[0] != ".." ) {
                 static auto &dnc = DisplayNamesCache::Instance();
-                if( auto display_name = dnc.DisplayName(_params.inode, _params.dev, path) )
-                    listing_source.display_filenames.insert(0, display_name);
+                if( std::optional<std::string_view> display_name = dnc.DisplayName(_params.inode, _params.dev, path) )
+                    listing_source.display_filenames.insert(0, std::string(*display_name));
             }
 
         ext_flags = _params.ext_flags;
@@ -327,7 +330,7 @@ int NativeHost::FetchSingleItemListing(std::string_view _path,
     if( listing_source.unix_types[0] == DT_LNK ) {
         // read an actual link path
         char linkpath[MAXPATHLEN];
-        const ssize_t sz = io.readlink(path, linkpath, MAXPATHLEN);
+        const ssize_t sz = io.readlink(path.c_str(), linkpath, MAXPATHLEN);
         if( sz != -1 ) {
             linkpath[sz] = 0;
             listing_source.symlinks.insert(0, linkpath);
@@ -335,7 +338,7 @@ int NativeHost::FetchSingleItemListing(std::string_view _path,
 
         // stat the target file
         struct stat stat_buffer;
-        const auto stat_ret = io.stat(path, &stat_buffer);
+        const auto stat_ret = io.stat(path.c_str(), &stat_buffer);
         if( stat_ret == 0 ) {
             listing_source.unix_modes[0] = stat_buffer.st_mode;
             listing_source.unix_flags[0] = MergeUnixFlags(listing_source.unix_flags[0], stat_buffer.st_flags);
@@ -349,7 +352,7 @@ int NativeHost::FetchSingleItemListing(std::string_view _path,
     // syscalls).
     if( (_flags & Flags::F_LoadTags) && !(ext_flags & EF_NO_XATTRS) ) {
         // TODO: is it worth routing the I/O here? guess not atm
-        const int entry_fd = open(path, O_RDONLY | O_NONBLOCK);
+        const int entry_fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
         if( entry_fd >= 0 ) {
             auto close_entry_fd = at_scope_end([entry_fd] { close(entry_fd); });
             if( auto tags = utility::Tags::ReadTags(entry_fd); !tags.empty() )

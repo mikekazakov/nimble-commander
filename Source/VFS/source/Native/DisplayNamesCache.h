@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <sys/stat.h>
@@ -17,18 +17,18 @@ class DisplayNamesCache
 public:
     static DisplayNamesCache &Instance();
 
-    // nullptr string means that there's no dispay string for this
-    const char *DisplayName(const std::string &_path);
-    const char *DisplayName(const struct stat &_st, const std::string &_path);
-    const char *DisplayName(ino_t _ino, dev_t _dev, const std::string &_path);
+    // nullopt string means that there's no dispay string for this
+    std::optional<std::string_view> DisplayName(std::string_view _path);
+    std::optional<std::string_view> DisplayName(const struct stat &_st, std::string_view _path);
+    std::optional<std::string_view> DisplayName(ino_t _ino, dev_t _dev, std::string_view _path);
 
 private:
-    std::optional<const char *> Fast_Unlocked(ino_t _ino, dev_t _dev, const std::string &_path) const noexcept;
-    void Commit_Locked(ino_t _ino, dev_t _dev, const std::string &_path, const char *_dispay_name);
+    std::optional<std::string_view> Fast_Unlocked(ino_t _ino, dev_t _dev, std::string_view _path) const noexcept;
+    void Commit_Locked(ino_t _ino, dev_t _dev, std::string_view _path, std::string_view _dispay_name);
 
     struct Filename {
-        const char *fs_filename;
-        const char *display_filename;
+        std::string_view fs_filename;
+        std::string_view display_filename; // empty string means that there's no display name for this item
     };
     using Inodes = std::unordered_multimap<ino_t, Filename>;
     using Devices = std::unordered_map<dev_t, Inodes>;

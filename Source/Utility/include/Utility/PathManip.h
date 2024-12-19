@@ -5,19 +5,6 @@
 #include <filesystem>
 
 /**
- * Converts path like "/Dir/Abra/" to "/Dir/Abra".
- * Will preserve "/" as "/".
- * Will return false on NULL and on empty paths and on paths not starting with slash.
- */
-bool EliminateTrailingSlashInPath(char *_path);
-
-/**
- * GetFilenameFromPath assumes that _path is absolute and there's a leading slash in it.
- * Also assume, that it is not a directory path, like /Dir/, it will return false on such case.
- */
-bool GetFilenameFromPath(const char *_path, char *_buf);
-
-/**
  * GetDirectoryNameFromPath returns a rightmost directory name.
  * Assuming that path has a form /Abra/Cadabra/ or /Abra/Cadabra/1.txt, function will return
  * Cadabra.

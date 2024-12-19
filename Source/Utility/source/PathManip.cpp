@@ -4,37 +4,6 @@
 #include <cstdlib>
 #include <cstring>
 
-bool EliminateTrailingSlashInPath(char *_path)
-{
-    if( _path == nullptr )
-        return false;
-
-    const size_t len = strlen(_path);
-    if( len == 0 || _path[0] != '/' )
-        return false;
-
-    if( len == 1 )
-        return true;
-
-    if( _path[len - 1] == '/' )
-        _path[len - 1] = 0;
-
-    return true;
-}
-
-bool GetFilenameFromPath(const char *_path, char *_buf)
-{
-    if( _path[0] != '/' )
-        return false;
-    const char *last_sl = strrchr(_path, '/');
-    if( !last_sl )
-        return false;
-    if( last_sl == _path + strlen(_path) - 1 )
-        return false;
-    strcpy(_buf, last_sl + 1);
-    return true;
-}
-
 bool GetDirectoryContainingItemFromPath(const char *_path, char *_buf)
 {
     if( _path[0] != '/' )

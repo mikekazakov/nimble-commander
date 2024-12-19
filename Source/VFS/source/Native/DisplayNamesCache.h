@@ -8,6 +8,10 @@
 #include <ankerl/unordered_dense.h>
 #include <Base/spinlock.h>
 
+#ifdef __OBJC__
+#include <Foundation/Foundation.h>
+#endif
+
 namespace nc::vfs::native {
 
 /**
@@ -16,6 +20,11 @@ namespace nc::vfs::native {
 class DisplayNamesCache
 {
 public:
+    struct IO;
+    static IO &DefaultIO();
+
+    DisplayNamesCache(IO &_io = DefaultIO());
+
     static DisplayNamesCache &Instance();
 
     // nullopt string means that there's no dispay string for this
@@ -25,6 +34,7 @@ public:
 
 private:
     std::optional<std::string_view> Fast_Unlocked(ino_t _ino, dev_t _dev, std::string_view _path) const noexcept;
+    std::string_view Slow_Locked(std::string_view _path) const;
     void Commit_Locked(ino_t _ino, dev_t _dev, std::string_view _path, std::string_view _dispay_name);
 
     struct Filename {
@@ -39,6 +49,16 @@ private:
     spinlock m_ReadLock;
     spinlock m_WriteLock;
     Devices m_Devices;
+    IO &m_IO;
 };
+
+#ifdef __OBJC__
+// Support for testability with mocks
+struct DisplayNamesCache::IO {
+    virtual ~IO();
+    virtual NSString *DisplayNameAtPath(NSString *_path);
+    virtual int Stat(const char *_path, struct stat *_st);
+};
+#endif
 
 } // namespace nc::vfs::native

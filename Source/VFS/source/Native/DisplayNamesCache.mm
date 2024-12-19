@@ -25,6 +25,10 @@ static std::string_view Internalize(std::string_view _string) noexcept
     }
 }
 
+DisplayNamesCache::DisplayNamesCache(IO &_io) : m_IO(_io)
+{
+}
+
 DisplayNamesCache &DisplayNamesCache::Instance()
 {
     [[clang::no_destroy]] static DisplayNamesCache inst;
@@ -46,7 +50,7 @@ DisplayNamesCache::Fast_Unlocked(ino_t _ino, dev_t _dev, std::string_view _path)
 
     // O(N), N = amount of times the same inode was used and encountered with a different filename, normally N ~= 1
     const std::string_view filename = utility::PathManip::Filename(_path);
-    if( const Filename * f = std::get_if<Filename>(&filenames->second) ) {
+    if( const Filename *f = std::get_if<Filename>(&filenames->second) ) {
         // There is only one entry for this inode
         if( f->fs_filename == filename ) {
             return f->display_filename;
@@ -67,15 +71,15 @@ void DisplayNamesCache::Commit_Locked(ino_t _ino, dev_t _dev, std::string_view _
     Filename f;
     f.fs_filename = Internalize(utility::PathManip::Filename(_path));
     f.display_filename = _dispay_name;
-    
+
     const std::lock_guard<spinlock> guard(m_WriteLock);
-    
+
     // O(1) - find or create a per-device inode map
     Inodes &inodes = m_Devices[_dev];
-    
+
     // O(1) - find an entry for this inode
     if( auto it = inodes.find(_ino); it != inodes.end() ) {
-        if( const Filename * existing_filename = std::get_if<Filename>(&it->second) ) {
+        if( const Filename *existing_filename = std::get_if<Filename>(&it->second) ) {
             // There is one entry there already, we need to convert it to a vector with two elements
             std::vector<Filename> vec{*existing_filename, f};
             it->second = std::move(vec);
@@ -104,19 +108,18 @@ std::optional<std::string_view> DisplayNamesCache::DisplayName(std::string_view 
     const std::pmr::string path(_path, &mem_resource);
 
     struct stat st;
-    if( stat(path.c_str(), &st) != 0 )
+    if( m_IO.Stat(path.c_str(), &st) != 0 )
         return std::nullopt;
     return DisplayName(st, _path);
 }
 
-static NSFileManager *filemanager = NSFileManager.defaultManager;
-static std::string_view Slow(std::string_view _path)
+std::string_view DisplayNamesCache::Slow_Locked(std::string_view _path) const
 {
     NSString *const path = [NSString stringWithUTF8StdStringView:_path];
     if( path == nil )
         return {}; // can't create string for this path.
 
-    NSString *display_name = [filemanager displayNameAtPath:path];
+    NSString *display_name = m_IO.DisplayNameAtPath(path);
     if( display_name == nil )
         return {}; // something strange has happen
 
@@ -126,6 +129,10 @@ static std::string_view Slow(std::string_view _path)
 
     if( display_utf8_name.empty() )
         return {}; // ignore empty display names
+
+    if( _path == display_utf8_name )
+        return {}; // this means error: "If there is no file or directory at path, or if an error occurs, returns path
+                   // as is."
 
     if( utility::PathManip::Filename(_path) == display_utf8_name )
         return {}; // this display name is exactly like the filesystem one
@@ -161,7 +168,7 @@ std::optional<std::string_view> DisplayNamesCache::DisplayName(ino_t _ino, dev_t
     // FAST PATH ENDS
 
     // SLOW PATH BEGINS
-    const std::string_view internalized_str = Slow(_path);
+    const std::string_view internalized_str = Slow_Locked(_path);
     Commit_Locked(_ino, _dev, _path, internalized_str);
     if( internalized_str.empty() ) {
         return std::nullopt;
@@ -170,6 +177,25 @@ std::optional<std::string_view> DisplayNamesCache::DisplayName(ino_t _ino, dev_t
         return internalized_str;
     }
     // SLOW PATH ENDS
+}
+
+DisplayNamesCache::IO &DisplayNamesCache::DefaultIO()
+{
+    [[clang::no_destroy]] static IO io;
+    return io;
+}
+
+DisplayNamesCache::IO::~IO() = default;
+
+NSString *DisplayNamesCache::IO::DisplayNameAtPath(NSString *_path)
+{
+    static NSFileManager *filemanager = NSFileManager.defaultManager;
+    return [filemanager displayNameAtPath:_path];
+}
+
+int DisplayNamesCache::IO::Stat(const char *_path, struct stat *_st)
+{
+    return stat(_path, _st);
 }
 
 } // namespace nc::vfs::native

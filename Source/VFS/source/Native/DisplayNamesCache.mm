@@ -16,7 +16,7 @@ static std::string_view Internalize(std::string_view _string) noexcept
     [[clang::no_destroy]] static ankerl::unordered_dense::
         segmented_set<std::string, UnorderedStringHashEqual, UnorderedStringHashEqual> strings;
 
-    std::lock_guard lock{mtx};
+    const std::lock_guard lock{mtx};
     if( auto it = strings.find(_string); it != strings.end() ) {
         return *it;
     }
@@ -162,7 +162,7 @@ std::optional<std::string_view> DisplayNamesCache::DisplayName(ino_t _ino, dev_t
             return std::nullopt;
         }
         else {
-            return *existed;
+            return existed;
         }
     }
     // FAST PATH ENDS

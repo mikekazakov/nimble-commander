@@ -1,6 +1,7 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFS.h>
 #include <Operations/CopyingOptions.h>
+#include <string_view>
 
 @class PanelController;
 class ExternalEditorStartupInfo;
@@ -45,7 +46,7 @@ private:
 bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item);
 nc::ops::CopyingOptions MakeDefaultFileCopyOptions();
 nc::ops::CopyingOptions MakeDefaultFileMoveOptions();
-bool IsExtensionInArchivesWhitelist(const char *_ext) noexcept;
+bool IsExtensionInArchivesWhitelist(std::string_view _ext) noexcept;
 bool ShowQuickLookAsFloatingPanel() noexcept;
 
 } // namespace nc::panel

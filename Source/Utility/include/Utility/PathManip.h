@@ -29,12 +29,6 @@ bool GetFilenameFromRelPath(const char *_path, char *_buf);
  */
 bool GetDirectoryContainingItemFromRelPath(const char *_path, char *_buf);
 
-/**
- * GetExtensionFromPath works with absolute paths and will not work with some relative paths like
- * "filename.txt". It will not extract extensions from filenames like ".filename" or "filename."
- */
-bool GetExtensionFromPath(const char *_path, char *_buf);
-
 // prefer PathManip::EnsureTrailingSlash() instead, semantically equal
 inline std::string EnsureTrailingSlash(std::string _s)
 {

@@ -592,7 +592,7 @@ static bool WriteEAs(struct archive *_a, const void *_md, size_t _md_s, const ch
 
 static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source_fn)
 {
-    assert(!IsPathWithTrailingSlash(_source_fn));
+    assert(!utility::PathManip::HasTrailingSlash(_source_fn));
 
     // will quit almost immediately if there's no EAs
     const std::vector<std::byte> metadata = vfs::BuildAppleDoubleFromEA(_src);

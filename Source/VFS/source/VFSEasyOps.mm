@@ -587,7 +587,7 @@ static bool ExtractEntry(const TraversedFSEntry &_entry,
                          const std::string &_base_path,
                          const std::function<bool()> &_cancel_checker)
 {
-    assert(IsPathWithTrailingSlash(_base_path));
+    assert(utility::PathManip::HasTrailingSlash(_base_path));
 
     const auto target_tmp_path = _base_path + _entry.rel_path;
 

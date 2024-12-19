@@ -159,7 +159,12 @@ namespace nc::utility {
 
 bool PathManip::IsAbsolute(std::string_view _path) noexcept
 {
-    return !_path.empty() && _path.front() == '/';
+    return _path.starts_with('/');
+}
+
+bool PathManip::HasTrailingSlash(std::string_view _path) noexcept
+{
+    return _path.ends_with('/');
 }
 
 std::string_view PathManip::Filename(std::string_view _path) noexcept

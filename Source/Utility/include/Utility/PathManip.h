@@ -54,18 +54,6 @@ bool GetExtensionFromPath(const char *_path, char *_buf);
  */
 bool GetExtensionFromRelPath(const char *_path, char *_buf);
 
-/**
- * IsPathWithTrailingSlash actually does _path[strlen(_path)-1] == '/' and some prior checking.
- * Will return true on "/" path.
- */
-inline bool IsPathWithTrailingSlash(const char *_path)
-{
-    if( _path[0] == 0 )
-        return false;
-
-    return _path[strlen(_path) - 1] == '/';
-}
-
 inline bool strisdot(const char *s) noexcept
 {
     return s && s[0] == '.' && s[1] == 0;
@@ -94,18 +82,24 @@ inline std::string EnsureNoTrailingSlash(std::string _s)
     return _s;
 }
 
-inline bool IsPathWithTrailingSlash(const std::string &_path)
-{
-    return !_path.empty() && _path.back() == '/';
-}
-
 namespace nc::utility {
 
 struct PathManip {
+    // Returns true if the path starts with a forward slash.
     static bool IsAbsolute(std::string_view _path) noexcept;
+
+    // Returns true if the path ends with a forward slash.
+    static bool HasTrailingSlash(std::string_view _path) noexcept;
+
+    // Returns the filename portion of the path.
     static std::string_view Filename(std::string_view _path) noexcept;
+
+    // Returns the extension of the filename portion of the path.
     static std::string_view Extension(std::string_view _path) noexcept;
+
+    // Returns the parent path of the path.
     static std::string_view Parent(std::string_view _path) noexcept;
+
     static std::filesystem::path Expand(std::string_view _path, std::string_view _home, std::string_view _cwd) noexcept;
     static std::filesystem::path EnsureTrailingSlash(std::filesystem::path _path) noexcept;
 };

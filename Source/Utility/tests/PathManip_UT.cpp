@@ -198,3 +198,47 @@ TEST_CASE(PREFIX "EnsureTrailingSlash")
         CHECK(PM::EnsureTrailingSlash(tc.path).native() == tc.expected);
     }
 }
+
+TEST_CASE(PREFIX "IsAbsolute")
+{
+    struct TC {
+        std::string_view path;
+        bool expected;
+    } const tcs[] = {
+        {.path = "", .expected = false},
+        {.path = "/", .expected = true},
+        {.path = "//", .expected = true},
+        {.path = "/a", .expected = true},
+        {.path = "/a/", .expected = true},
+        {.path = "/a/b", .expected = true},
+        {.path = "/a/b/", .expected = true},
+        {.path = "a", .expected = false},
+        {.path = "a/", .expected = false},
+    };
+    for( auto &tc : tcs ) {
+        INFO(tc.path);
+        CHECK(PM::IsAbsolute(tc.path) == tc.expected);
+    }
+}
+
+TEST_CASE(PREFIX "HasTrailingSlash")
+{
+    struct TC {
+        std::string_view path;
+        bool expected;
+    } const tcs[] = {
+        {.path = "", .expected = false},
+        {.path = "/", .expected = true},
+        {.path = "//", .expected = true},
+        {.path = "/a", .expected = false},
+        {.path = "/a/", .expected = true},
+        {.path = "/a/b", .expected = false},
+        {.path = "/a/b/", .expected = true},
+        {.path = "a", .expected = false},
+        {.path = "a/", .expected = true},
+    };
+    for( auto &tc : tcs ) {
+        INFO(tc.path);
+        CHECK(PM::HasTrailingSlash(tc.path) == tc.expected);
+    }
+}

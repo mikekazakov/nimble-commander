@@ -471,7 +471,7 @@ uint64_t ArchiveHost::UpdateDirectorySize(Dir &_directory, const std::string &_p
 
 Dir *ArchiveHost::FindOrBuildDir(const char *_path_with_tr_sl)
 {
-    assert(IsPathWithTrailingSlash(_path_with_tr_sl));
+    assert(utility::PathManip::HasTrailingSlash(_path_with_tr_sl));
     if( const auto i = I->m_PathToDir.find(_path_with_tr_sl); i != I->m_PathToDir.end() )
         return &(*i).second;
 

@@ -140,7 +140,7 @@ void DeletionJob::DoDelete()
         const auto type = entry.type;
 
         if( type == DeletionType::Permanent ) {
-            const auto is_dir = IsPathWithTrailingSlash(path);
+            const auto is_dir = utility::PathManip::HasTrailingSlash(path);
             if( is_dir )
                 DoRmDir(path, *vfs);
             else
@@ -288,7 +288,7 @@ void DeletionJob::DoTrash(const std::string &_path, VFSHost &_vfs, SourceItem _s
                 SourceItem si = _src;
                 si.type = DeletionType::Permanent;
                 m_Script.emplace(si);
-                const auto is_dir = IsPathWithTrailingSlash(_path);
+                const auto is_dir = utility::PathManip::HasTrailingSlash(_path);
                 if( is_dir )
                     ScanDirectory(_path, si.listing_item_index, si.filename);
             }
@@ -342,7 +342,7 @@ static bool IsEAStorage(VFSHost &_host, const std::string &_directory, const cha
 
     char origin_file_path[MAXPATHLEN];
     strcpy(origin_file_path, _directory.c_str());
-    if( !IsPathWithTrailingSlash(origin_file_path) )
+    if( !utility::PathManip::HasTrailingSlash(origin_file_path) )
         strcat(origin_file_path, "/");
     strcat(origin_file_path, _filename + 2);
     return _host.Exists(origin_file_path);

@@ -167,6 +167,14 @@ bool PathManip::HasTrailingSlash(std::string_view _path) noexcept
     return _path.ends_with('/');
 }
 
+std::string_view PathManip::WithoutTrailingSlashes(std::string_view _path) noexcept
+{
+    while( _path.size() > 1 && _path.back() == '/' ) {
+        _path.remove_suffix(1);
+    }
+    return _path;
+}
+
 std::string_view PathManip::Filename(std::string_view _path) noexcept
 {
     const char *const first = _path.data();

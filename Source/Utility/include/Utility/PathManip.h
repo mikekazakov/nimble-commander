@@ -78,6 +78,9 @@ struct PathManip {
     // Returns true if the path ends with a forward slash.
     static bool HasTrailingSlash(std::string_view _path) noexcept;
 
+    // Returns the path without trailing slashes. NB! The root path "/" will be returned as-is.
+    static std::string_view WithoutTrailingSlashes(std::string_view _path) noexcept;
+
     // Returns the filename portion of the path.
     static std::string_view Filename(std::string_view _path) noexcept;
 

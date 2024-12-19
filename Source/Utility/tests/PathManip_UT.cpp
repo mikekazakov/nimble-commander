@@ -242,3 +242,30 @@ TEST_CASE(PREFIX "HasTrailingSlash")
         CHECK(PM::HasTrailingSlash(tc.path) == tc.expected);
     }
 }
+
+TEST_CASE(PREFIX "WithoutTrailingSlashes")
+{
+    struct TC {
+        std::string_view path;
+        std::string_view expected;
+    } const tcs[] = {
+        {.path = "", .expected = ""},
+        {.path = "/", .expected = "/"},
+        {.path = "//", .expected = "/"},
+        {.path = "///", .expected = "/"},
+        {.path = "/a", .expected = "/a"},
+        {.path = "/a/", .expected = "/a"},
+        {.path = "/a//", .expected = "/a"},
+        {.path = "/a///", .expected = "/a"},
+        {.path = "/a/b", .expected = "/a/b"},
+        {.path = "/a/b/", .expected = "/a/b"},
+        {.path = "/a/b//", .expected = "/a/b"},
+        {.path = "a", .expected = "a"},
+        {.path = "a/", .expected = "a"},
+        {.path = "a//", .expected = "a"},
+    };
+    for( auto &tc : tcs ) {
+        INFO(tc.path);
+        CHECK(PM::WithoutTrailingSlashes(tc.path) == tc.expected);
+    }
+}

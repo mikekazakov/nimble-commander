@@ -394,20 +394,20 @@ int Host::FetchSingleItemListing(std::string_view _path,
     if( _cancel_checker && _cancel_checker() )
         return VFSError::Cancelled;
 
-    // TODO: rewriting without using C-style strings
-    char path[MAXPATHLEN];
-    char directory[MAXPATHLEN];
-    char filename[MAXPATHLEN];
-    memcpy(path, _path.data(), _path.length());
-    path[_path.length()] = 0;
+    const std::string_view directory = utility::PathManip::Parent(_path);
+    if( directory.empty() )
+        return VFSError::InvalidCall;
 
-    if( !EliminateTrailingSlashInPath(path) || !GetDirectoryContainingItemFromPath(path, directory) ||
-        !GetFilenameFromPath(path, filename) )
+    const std::string_view filename = utility::PathManip::Filename(_path);
+    if( filename.empty() )
+        return VFSError::InvalidCall;
+
+    const std::string_view path_wo_trailing_slash = utility::PathManip::WithoutTrailingSlashes(_path);
+    if( path_wo_trailing_slash.empty() )
         return VFSError::InvalidCall;
 
     VFSStat lstat;
-
-    const int ret = Stat(_path, lstat, VFSFlags::F_NoFollow);
+    const int ret = Stat(path_wo_trailing_slash, lstat, VFSFlags::F_NoFollow);
     if( ret != 0 )
         return ret;
 
@@ -447,16 +447,15 @@ int Host::FetchSingleItemListing(std::string_view _path,
     if( listing_source.unix_types[0] == DT_LNK ) {
         // read an actual link path
         char linkpath[MAXPATHLEN];
-        if( ReadSymlink(path, linkpath, MAXPATHLEN) == 0 )
+        if( ReadSymlink(path_wo_trailing_slash, linkpath, MAXPATHLEN) == 0 )
             listing_source.symlinks.insert(0, linkpath);
 
         // stat the target file
         VFSStat stat;
-        if( Stat(_path, stat, 0) == 0 ) {
+        if( Stat(path_wo_trailing_slash, stat, 0) == 0 ) {
             listing_source.unix_modes[0] = stat.mode;
             listing_source.unix_flags[0] = stat.flags;
             listing_source.uids[0] = stat.uid;
-            ;
             listing_source.gids[0] = stat.gid;
             listing_source.sizes[0] = stat.size;
         }

@@ -64,33 +64,6 @@ bool GetExtensionFromPath(const char *_path, char *_buf)
     return true;
 }
 
-bool GetExtensionFromRelPath(const char *_path, char *_buf)
-{
-    const char *last_sl = strrchr(_path, '/');
-    const char *last_dot = strrchr(_path, '.');
-    if( last_dot == nullptr )
-        return false;
-
-    if( last_sl ) {
-        if( last_dot == last_sl + 1 )
-            return false;
-        if( last_dot == _path + strlen(_path) - 1 )
-            return false;
-        if( last_dot < last_sl )
-            return false;
-        strcpy(_buf, last_dot + 1);
-        return true;
-    }
-    else {
-        if( last_dot == _path )
-            return false;
-        if( last_dot == _path + strlen(_path) - 1 )
-            return false;
-        strcpy(_buf, last_dot + 1);
-        return true;
-    }
-}
-
 bool GetDirectoryNameFromPath(const char *_path, char *_dir_out, [[maybe_unused]] size_t _dir_size)
 {
     const char *second_sep = strrchr(_path, '/');

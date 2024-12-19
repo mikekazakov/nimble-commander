@@ -54,19 +54,6 @@ bool GetExtensionFromPath(const char *_path, char *_buf);
  */
 bool GetExtensionFromRelPath(const char *_path, char *_buf);
 
-inline bool strisdot(const char *s) noexcept
-{
-    return s && s[0] == '.' && s[1] == 0;
-}
-inline bool strisdotdot(const char *s) noexcept
-{
-    return s && s[0] == '.' && s[1] == '.' && s[2] == 0;
-}
-inline bool strisdotdot(const std::string &s) noexcept
-{
-    return strisdotdot(s.c_str());
-}
-
 // prefer PathManip::EnsureTrailingSlash() instead, semantically equal
 inline std::string EnsureTrailingSlash(std::string _s)
 {

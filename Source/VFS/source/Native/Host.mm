@@ -152,7 +152,7 @@ int NativeHost::FetchDirectoryListing(std::string_view _path,
 
         if( _flags & VFSFlags::F_LoadDisplayNames )
             if( S_ISDIR(listing_source.unix_modes[_n]) && !listing_source.filenames[_n].empty() &&
-                !strisdotdot(listing_source.filenames[_n]) ) {
+                listing_source.filenames[_n] != ".." ) {
                 static auto &dnc = DisplayNamesCache::Instance();
                 if( auto display_name = dnc.DisplayName(
                         _params.inode, _params.dev, listing_source.directories[0] + listing_source.filenames[_n]) )
@@ -310,7 +310,7 @@ int NativeHost::FetchSingleItemListing(std::string_view _path,
 
         if( _flags & VFSFlags::F_LoadDisplayNames )
             if( S_ISDIR(listing_source.unix_modes[0]) && !listing_source.filenames[0].empty() &&
-                !strisdotdot(listing_source.filenames[0]) ) {
+                listing_source.filenames[0] != ".." ) {
                 static auto &dnc = DisplayNamesCache::Instance();
                 if( auto display_name = dnc.DisplayName(_params.inode, _params.dev, path) )
                     listing_source.display_filenames.insert(0, display_name);

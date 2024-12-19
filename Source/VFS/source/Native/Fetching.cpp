@@ -216,9 +216,9 @@ int Fetching::ReadDirAttributesStat(const int _dir_fd,
         static const auto dirents_reserve_amount = 64;
         dirents.reserve(dirents_reserve_amount);
         while( auto entp = ::_readdir_unlocked(dirp, 1) ) {
-            if( entp->d_ino == 0 ||         // apple's documentation suggest to skip such files
-                strisdot(entp->d_name) ||   // do not process self entry
-                strisdotdot(entp->d_name) ) // do not process parent entry
+            if( entp->d_ino == 0 ||                      // apple's documentation suggest to skip such files
+                entp->d_name == std::string_view{"."} || // do not process self entry
+                entp->d_name == std::string_view{".."} ) // do not process parent entry
                 continue;
 
             dirents.emplace_back(std::string(entp->d_name, entp->d_namlen), entp->d_ino, entp->d_type);

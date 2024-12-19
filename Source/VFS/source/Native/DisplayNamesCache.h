@@ -3,8 +3,9 @@
 
 #include <sys/stat.h>
 #include <optional>
-#include <unordered_map>
+#include <variant>
 #include <atomic>
+#include <ankerl/unordered_dense.h>
 #include <Base/spinlock.h>
 
 namespace nc::vfs::native {
@@ -30,8 +31,9 @@ private:
         std::string_view fs_filename;
         std::string_view display_filename; // empty string means that there's no display name for this item
     };
-    using Inodes = std::unordered_multimap<ino_t, Filename>;
-    using Devices = std::unordered_map<dev_t, Inodes>;
+    using InodeFilenames = std::variant<Filename, std::vector<Filename>>;
+    using Inodes = ankerl::unordered_dense::map<ino_t, InodeFilenames>;
+    using Devices = ankerl::unordered_dense::map<dev_t, Inodes>;
 
     std::atomic_int m_Readers{0};
     spinlock m_ReadLock;

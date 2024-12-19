@@ -5,6 +5,8 @@
 #include <Utility/PathManip.h>
 #include <ankerl/unordered_dense.h>
 #include <Base/UnorderedUtil.h>
+#include <ranges>
+#include <algorithm>
 
 namespace nc::vfs::native {
 
@@ -32,27 +34,62 @@ DisplayNamesCache &DisplayNamesCache::Instance()
 std::optional<std::string_view>
 DisplayNamesCache::Fast_Unlocked(ino_t _ino, dev_t _dev, std::string_view _path) const noexcept
 {
+    // O(1)
     const auto inodes = m_Devices.find(_dev);
     if( inodes == m_Devices.end() )
         return std::nullopt;
 
+    // O(1)
+    const auto filenames = inodes->second.find(_ino);
+    if( filenames == inodes->second.end() )
+        return std::nullopt;
+
+    // O(N), N = amount of times the same inode was used and encountered with a different filename, normally N ~= 1
     const std::string_view filename = utility::PathManip::Filename(_path);
-
-    const auto range = inodes->second.equal_range(_ino);
-    for( auto i = range.first; i != range.second; ++i )
-        if( i->second.fs_filename == filename )
-            return i->second.display_filename;
-
+    if( const Filename * f = std::get_if<Filename>(&filenames->second) ) {
+        // There is only one entry for this inode
+        if( f->fs_filename == filename ) {
+            return f->display_filename;
+        }
+    }
+    else if( const std::vector<Filename> *ff = std::get_if<std::vector<Filename>>(&filenames->second) ) {
+        // There are multiple entries for this inode, need to check the one by one
+        const auto found = std::ranges::find_if(*ff, [&](const Filename &f) { return f.fs_filename == filename; });
+        if( found != ff->end() )
+            return found->display_filename;
+    }
     return std::nullopt;
 }
 
 void DisplayNamesCache::Commit_Locked(ino_t _ino, dev_t _dev, std::string_view _path, std::string_view _dispay_name)
 {
+    // Prepare the entry to insert into the cache
     Filename f;
     f.fs_filename = Internalize(utility::PathManip::Filename(_path));
     f.display_filename = _dispay_name;
+    
     const std::lock_guard<spinlock> guard(m_WriteLock);
-    m_Devices[_dev].insert(std::make_pair(_ino, f));
+    
+    // O(1) - find or create a per-device inode map
+    Inodes &inodes = m_Devices[_dev];
+    
+    // O(1) - find an entry for this inode
+    if( auto it = inodes.find(_ino); it != inodes.end() ) {
+        if( const Filename * existing_filename = std::get_if<Filename>(&it->second) ) {
+            // There is one entry there already, we need to convert it to a vector with two elements
+            std::vector<Filename> vec{*existing_filename, f};
+            it->second = std::move(vec);
+        }
+        else {
+            // This inode was already encountered with a different filename, add a new entry to the vector
+            std::vector<Filename> &filenames = std::get<std::vector<Filename>>(it->second);
+            filenames.push_back(f);
+        }
+    }
+    else {
+        // Not there, therefore insert as a single entry
+        inodes.emplace(_ino, f);
+    }
 }
 
 std::optional<std::string_view> DisplayNamesCache::DisplayName(const struct stat &_st, std::string_view _path)

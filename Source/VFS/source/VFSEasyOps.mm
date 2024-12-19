@@ -424,8 +424,8 @@ std::optional<std::string> CopyFileToTempStorage(const std::string &_vfs_filepat
     if( vfs_file->Open(VFSFlags::OF_Read, _cancel_checker) < 0 )
         return std::nullopt;
 
-    char name[MAXPATHLEN];
-    if( !GetFilenameFromPath(_vfs_filepath.c_str(), name) )
+    const std::string_view name = utility::PathManip::Filename(_vfs_filepath);
+    if( name.empty() )
         return std::nullopt;
 
     auto native_file = _temp_storage.OpenFile(name);

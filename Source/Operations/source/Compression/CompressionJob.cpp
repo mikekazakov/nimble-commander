@@ -54,7 +54,7 @@ struct CompressionJob::Source {
 };
 
 static void WriteEmptyArchiveEntry(struct ::archive *_archive);
-static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source_fn);
+static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, std::string_view _source_fn);
 static void archive_entry_copy_stat(struct archive_entry *_ae, const VFSStat &_vfs_stat);
 
 CompressionJob::CompressionJob(std::vector<VFSListingItem> _src_files,
@@ -265,7 +265,7 @@ CompressionJob::ProcessDirectoryItem(int _index, const std::string &_relative_pa
         vfs.CreateFile(_full_path, src_file);
         if( src_file->Open(VFSFlags::OF_Read) == VFSError::Ok ) {
             const std::string name_wo_slash = {std::begin(_relative_path), std::end(_relative_path) - 1};
-            WriteEAsIfAny(*src_file, m_Archive, name_wo_slash.c_str());
+            WriteEAsIfAny(*src_file, m_Archive, name_wo_slash);
         }
     }
 
@@ -575,22 +575,22 @@ static void WriteEmptyArchiveEntry(struct ::archive *_archive)
     archive_entry_free(entry);
 }
 
-static bool WriteEAs(struct archive *_a, const void *_md, size_t _md_s, const char *_path, const char *_name)
+static bool WriteEAs(struct archive *_a, std::span<const std::byte> _md, std::string_view _path, std::string_view _name)
 {
     const std::string metadata_path = fmt::format("__MACOSX/{}._{}", _path, _name);
     struct archive_entry *entry = archive_entry_new();
     archive_entry_set_pathname(entry, metadata_path.c_str());
-    archive_entry_set_size(entry, _md_s);
+    archive_entry_set_size(entry, _md.size());
     archive_entry_set_filetype(entry, AE_IFREG);
     archive_entry_set_perm(entry, 0644);
     archive_write_header(_a, entry);
-    const ssize_t ret = archive_write_data(_a, _md, _md_s); // we may need cycle here
+    const ssize_t ret = archive_write_data(_a, _md.data(), _md.size()); // we may need to cycle here
     archive_entry_free(entry);
 
-    return ret == static_cast<ssize_t>(_md_s);
+    return ret == static_cast<ssize_t>(_md.size());
 }
 
-static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source_fn)
+static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, std::string_view _source_fn)
 {
     assert(!utility::PathManip::HasTrailingSlash(_source_fn));
 
@@ -599,15 +599,14 @@ static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source
     if( metadata.empty() )
         return true;
 
-    char item_path[MAXPATHLEN];
-    char item_name[MAXPATHLEN];
-    if( GetFilenameFromRelPath(_source_fn, item_name) &&
-        GetDirectoryContainingItemFromRelPath(_source_fn, item_path) ) {
-        const bool ret = WriteEAs(_a, metadata.data(), metadata.size(), item_path, item_name);
-        return ret;
-    }
+    const std::string_view item_name = utility::PathManip::Filename(_source_fn);
+    if( item_name.empty() )
+        return false;
 
-    return true;
+    const std::string_view parent_path = utility::PathManip::Parent(_source_fn);
+    // NB! an empty parent path is ok here
+
+    return WriteEAs(_a, metadata, parent_path, item_name);
 }
 
 } // namespace nc::ops

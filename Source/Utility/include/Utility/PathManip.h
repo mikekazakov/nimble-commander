@@ -18,17 +18,6 @@ bool GetDirectoryNameFromPath(const char *_path, char *_dir_out, size_t _dir_siz
  */
 bool GetDirectoryContainingItemFromPath(const char *_path, char *_buf);
 
-/**
- * GetFilenameFromRelPath can work with relative paths like "Filename".
- */
-bool GetFilenameFromRelPath(const char *_path, char *_buf);
-
-/**
- * GetDirectoryContainingItemFromRelPath can work on paths like "Filename", will simply return "".
- * Assume that it's not a directory path like "/Dir/"
- */
-bool GetDirectoryContainingItemFromRelPath(const char *_path, char *_buf);
-
 // prefer PathManip::EnsureTrailingSlash() instead, semantically equal
 inline std::string EnsureTrailingSlash(std::string _s)
 {
@@ -63,6 +52,7 @@ struct PathManip {
     static std::string_view Extension(std::string_view _path) noexcept;
 
     // Returns the parent path of the path.
+    // Includes a trailing slash.
     static std::string_view Parent(std::string_view _path) noexcept;
 
     static std::filesystem::path Expand(std::string_view _path, std::string_view _home, std::string_view _cwd) noexcept;

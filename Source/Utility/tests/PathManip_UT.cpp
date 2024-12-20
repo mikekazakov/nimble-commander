@@ -104,6 +104,10 @@ TEST_CASE(PREFIX "Parent")
         {.path = "///", .expected = ""},
         {.path = "a/", .expected = ""},
         {.path = "a//", .expected = ""},
+        {.path = "a/b/c", .expected = "a/b/"},
+        {.path = "a/b/c/", .expected = "a/b/"},
+        {.path = "a/b/c//", .expected = "a/b/"},
+        {.path = "a/b/c///", .expected = "a/b/"},
         {.path = "foo/a/", .expected = "foo/"},
         {.path = "foo/a//", .expected = "foo/"},
     };
@@ -196,5 +200,76 @@ TEST_CASE(PREFIX "EnsureTrailingSlash")
     for( auto &tc : tcs ) {
         INFO(tc.path);
         CHECK(PM::EnsureTrailingSlash(tc.path).native() == tc.expected);
+    }
+}
+
+TEST_CASE(PREFIX "IsAbsolute")
+{
+    struct TC {
+        std::string_view path;
+        bool expected;
+    } const tcs[] = {
+        {.path = "", .expected = false},
+        {.path = "/", .expected = true},
+        {.path = "//", .expected = true},
+        {.path = "/a", .expected = true},
+        {.path = "/a/", .expected = true},
+        {.path = "/a/b", .expected = true},
+        {.path = "/a/b/", .expected = true},
+        {.path = "a", .expected = false},
+        {.path = "a/", .expected = false},
+    };
+    for( auto &tc : tcs ) {
+        INFO(tc.path);
+        CHECK(PM::IsAbsolute(tc.path) == tc.expected);
+    }
+}
+
+TEST_CASE(PREFIX "HasTrailingSlash")
+{
+    struct TC {
+        std::string_view path;
+        bool expected;
+    } const tcs[] = {
+        {.path = "", .expected = false},
+        {.path = "/", .expected = true},
+        {.path = "//", .expected = true},
+        {.path = "/a", .expected = false},
+        {.path = "/a/", .expected = true},
+        {.path = "/a/b", .expected = false},
+        {.path = "/a/b/", .expected = true},
+        {.path = "a", .expected = false},
+        {.path = "a/", .expected = true},
+    };
+    for( auto &tc : tcs ) {
+        INFO(tc.path);
+        CHECK(PM::HasTrailingSlash(tc.path) == tc.expected);
+    }
+}
+
+TEST_CASE(PREFIX "WithoutTrailingSlashes")
+{
+    struct TC {
+        std::string_view path;
+        std::string_view expected;
+    } const tcs[] = {
+        {.path = "", .expected = ""},
+        {.path = "/", .expected = "/"},
+        {.path = "//", .expected = "/"},
+        {.path = "///", .expected = "/"},
+        {.path = "/a", .expected = "/a"},
+        {.path = "/a/", .expected = "/a"},
+        {.path = "/a//", .expected = "/a"},
+        {.path = "/a///", .expected = "/a"},
+        {.path = "/a/b", .expected = "/a/b"},
+        {.path = "/a/b/", .expected = "/a/b"},
+        {.path = "/a/b//", .expected = "/a/b"},
+        {.path = "a", .expected = "a"},
+        {.path = "a/", .expected = "a"},
+        {.path = "a//", .expected = "a"},
+    };
+    for( auto &tc : tcs ) {
+        INFO(tc.path);
+        CHECK(PM::WithoutTrailingSlashes(tc.path) == tc.expected);
     }
 }

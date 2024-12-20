@@ -471,7 +471,7 @@ uint64_t ArchiveHost::UpdateDirectorySize(Dir &_directory, const std::string &_p
 
 Dir *ArchiveHost::FindOrBuildDir(const char *_path_with_tr_sl)
 {
-    assert(IsPathWithTrailingSlash(_path_with_tr_sl));
+    assert(utility::PathManip::HasTrailingSlash(_path_with_tr_sl));
     if( const auto i = I->m_PathToDir.find(_path_with_tr_sl); i != I->m_PathToDir.end() )
         return &(*i).second;
 
@@ -747,9 +747,7 @@ const DirEntry *ArchiveHost::FindEntry(std::string_view _path)
     // short_name - entry name within that directory
 
     if( strcmp(short_name, "..") == 0 ) { // special treatment for dot-dot
-        char directory[1024];
-        if( !GetDirectoryContainingItemFromPath(full_path, directory) )
-            return nullptr;
+        const std::string_view directory = utility::PathManip::Parent(full_path);
         return FindEntry(directory);
     }
 

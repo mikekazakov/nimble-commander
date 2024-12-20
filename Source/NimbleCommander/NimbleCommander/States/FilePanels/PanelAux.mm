@@ -327,9 +327,9 @@ ops::CopyingOptions MakeDefaultFileMoveOptions()
     return options;
 }
 
-bool IsExtensionInArchivesWhitelist(const char *_ext) noexcept
+bool IsExtensionInArchivesWhitelist(std::string_view _ext) noexcept
 {
-    if( !_ext )
+    if( _ext.empty() )
         return false;
     [[clang::no_destroy]] static const utility::ExtensionsLowercaseList archive_extensions(
         GlobalConfig().GetString(g_ConfigArchivesExtensionsWhiteList));

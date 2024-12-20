@@ -423,9 +423,9 @@ int SFTPHost::FetchDirectoryListing(std::string_view _path,
         LIBSSH2_SFTP_ATTRIBUTES attrs;
         while( libssh2_sftp_readdir_ex(sftp_handle, filename, sizeof(filename), nullptr, 0, &attrs) > 0 ) {
             int index = 0;
-            if( strisdot(filename) )
-                continue;                      // do not process self entry
-            else if( strisdotdot(filename) ) { // special case for dot-dot directory
+            if( filename == std::string_view{"."} )
+                continue;                                   // do not process self entry
+            else if( filename == std::string_view{".."} ) { // special case for dot-dot directory
                 if( !should_have_dot_dot )
                     continue; // skip .. for root directory or if there's an option to exclude
                               // dot-dot entries

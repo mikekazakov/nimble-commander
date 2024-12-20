@@ -817,7 +817,7 @@ bool ShellTask::IsCurrentWD(const char *_what) const
     char cwd[MAXPATHLEN];
     strcpy(cwd, _what);
 
-    if( !IsPathWithTrailingSlash(cwd) )
+    if( !utility::PathManip::HasTrailingSlash(cwd) )
         strcat(cwd, "/");
 
     return I->cwd == cwd;
@@ -835,7 +835,7 @@ void ShellTask::Execute(const char *_short_fn, const char *_at, const char *_par
     cwd[0] = 0;
     if( _at != nullptr ) {
         strcpy(cwd, _at);
-        if( IsPathWithTrailingSlash(cwd) && strlen(cwd) > 1 ) // cd command don't like trailing slashes
+        if( utility::PathManip::HasTrailingSlash(cwd) && strlen(cwd) > 1 ) // cd command don't like trailing slashes
             cwd[strlen(cwd) - 1] = 0;
 
         if( IsCurrentWD(cwd) ) {

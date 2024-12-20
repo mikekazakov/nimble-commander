@@ -554,8 +554,8 @@ private:
 
 - (VFSHostPtr)spawnArchiveFromPath:(const char *)_path inVFS:(const VFSHostPtr &)_host
 {
-    char extension[MAXPATHLEN];
-    if( !GetExtensionFromPath(_path, extension) )
+    const std::string_view extension = nc::utility::PathManip::Extension(_path);
+    if( extension.empty() )
         return nullptr;
 
     if( !nc::panel::IsExtensionInArchivesWhitelist(extension) )

@@ -311,7 +311,7 @@ TEST_CASE(PREFIX "Compressing multiple items with xattrs")
 
     for( const auto &p : {file0, file1, file2, dir1, dir2} ) {
         // open the compressed file in the archive
-        std::filesystem::path path = std::filesystem::path("/") / p;
+        const std::filesystem::path path = std::filesystem::path("/") / p;
         std::shared_ptr<VFSFile> file;
         REQUIRE(arc_host->CreateFile(path.native(), file) == VFSError::Ok);
         REQUIRE(file->Open(p.native().ends_with(".txt")

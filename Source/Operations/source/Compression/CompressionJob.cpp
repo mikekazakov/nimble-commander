@@ -361,7 +361,7 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
 
     if( !IsEncrypted() ) {
         // we can't support encrypted EAs due to lack of read support in LA
-        WriteEAsIfAny(*src_file, m_Archive, _relative_path.c_str());
+        WriteEAsIfAny(*src_file, m_Archive, _relative_path);
     }
 
     return StepResult::Done;

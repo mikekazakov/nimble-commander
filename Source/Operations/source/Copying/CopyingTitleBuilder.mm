@@ -1,16 +1,22 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CopyingTitleBuilder.h"
 #include <Utility/PathManip.h>
+#include <Utility/StringExtras.h>
 #include "../Internal.h"
 
 namespace nc::ops {
 
-static NSString *ExtractCopyToName(const std::string &_s)
+static NSString *ExtractCopyToName(std::string_view _s)
 {
-    char buff[MAXPATHLEN] = {0};
-    const bool use_buff = GetDirectoryNameFromPath(_s.c_str(), buff, MAXPATHLEN);
-    NSString *const to = [NSString stringWithUTF8String:(use_buff ? buff : _s.c_str())];
-    return to;
+    using PM = utility::PathManip;
+    if( PM::HasTrailingSlash(_s) ) {
+        // "/hiss/meow/" -> "meow"
+        return [NSString stringWithUTF8StdStringView:PM::Filename(_s)];
+    }
+    else {
+        // "/hiss/meow.txt" -> "hiss"
+        return [NSString stringWithUTF8StdStringView:PM::Filename(PM::Parent(_s))];
+    }
 }
 
 static NSString *OpTitlePreffix(bool _copying)

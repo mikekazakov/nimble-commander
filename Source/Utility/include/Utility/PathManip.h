@@ -5,13 +5,6 @@
 #include <filesystem>
 
 /**
- * GetDirectoryNameFromPath returns a rightmost directory name.
- * Assuming that path has a form /Abra/Cadabra/ or /Abra/Cadabra/1.txt, function will return
- * Cadabra.
- */
-bool GetDirectoryNameFromPath(const char *_path, char *_dir_out, size_t _dir_size);
-
-/**
  * GetDirectoryContainingItemFromPath will parse path like /Dir/wtf and return /Dir/.
  * For paths like /Dir/wtf/ will return /Dir/.
  * Will return false on relative paths.
@@ -40,6 +33,7 @@ struct PathManip {
     static bool IsAbsolute(std::string_view _path) noexcept;
 
     // Returns true if the path ends with a forward slash.
+    // Will return true on the root "/" path.
     static bool HasTrailingSlash(std::string_view _path) noexcept;
 
     // Returns the path without trailing slashes. NB! The root path "/" will be returned as-is.

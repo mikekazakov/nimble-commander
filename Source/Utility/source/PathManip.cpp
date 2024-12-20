@@ -21,39 +21,6 @@ bool GetDirectoryContainingItemFromPath(const char *_path, char *_buf)
     return true;
 }
 
-bool GetDirectoryNameFromPath(const char *_path, char *_dir_out, [[maybe_unused]] size_t _dir_size)
-{
-    const char *second_sep = strrchr(_path, '/');
-    if( !second_sep )
-        return false;
-
-    // Path contains single / in the beginning.
-    if( second_sep == _path ) {
-        assert(_dir_size >= 2);
-        _dir_out[0] = '/';
-        _dir_out[1] = 0;
-        return true;
-    }
-
-    // Searching for the second separator.
-    const char *first_sep = second_sep - 1;
-    for( ; first_sep != _path && *first_sep != '/'; --first_sep )
-        ;
-
-    if( *first_sep != '/' ) {
-        // Peculiar situation. Path contains only one /, and it is in the middle of the path.
-        // Assume that directory name is part of the path located to the left of the /.
-        first_sep = _path - 1;
-    }
-
-    const size_t len = second_sep - first_sep - 1;
-    assert(len + 1 <= _dir_size);
-    memcpy(_dir_out, first_sep + 1, len);
-    _dir_out[len + 1] = 0;
-
-    return true;
-}
-
 namespace nc::utility {
 
 bool PathManip::IsAbsolute(std::string_view _path) noexcept

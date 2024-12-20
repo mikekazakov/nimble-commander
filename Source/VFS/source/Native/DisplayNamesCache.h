@@ -34,12 +34,12 @@ public:
 
 private:
     std::optional<std::string_view> Fast_Unlocked(ino_t _ino, dev_t _dev, std::string_view _path) const noexcept;
-    std::string_view Slow_Locked(std::string_view _path) const;
-    void Commit_Locked(ino_t _ino, dev_t _dev, std::string_view _path, std::string_view _dispay_name);
+    const std::string *Slow_Locked(std::string_view _path) const;
+    void Commit_Locked(ino_t _ino, dev_t _dev, std::string_view _path, const std::string *_dispay_name);
 
     struct Filename {
         std::string_view fs_filename;
-        std::string_view display_filename; // empty string means that there's no display name for this item
+        const std::string *display_filename = nullptr; // nullptr means that there's no display name for this item
     };
     using InodeFilenames = std::variant<Filename, std::vector<Filename>>;
     using Inodes = ankerl::unordered_dense::map<ino_t, InodeFilenames>;

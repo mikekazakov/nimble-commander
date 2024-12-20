@@ -5,28 +5,33 @@
 #include <Utility/PathManip.h>
 #include <ankerl/unordered_dense.h>
 #include <Base/UnorderedUtil.h>
+#include <VFS/Log.h>
 #include <ranges>
 #include <algorithm>
 
 namespace nc::vfs::native {
 
-static std::string_view Internalize(std::string_view _string) noexcept
+static const std::string *Internalize(std::string_view _string) noexcept
 {
     [[clang::no_destroy]] static constinit std::mutex mtx;
     [[clang::no_destroy]] static ankerl::unordered_dense::
         segmented_set<std::string, UnorderedStringHashEqual, UnorderedStringHashEqual> strings;
 
+    assert(!_string.empty());
+
     const std::lock_guard lock{mtx};
     if( auto it = strings.find(_string); it != strings.end() ) {
-        return *it;
+        return &*it;
     }
     else {
-        return *strings.emplace(_string).first;
+        return &*strings.emplace(_string).first;
     }
 }
 
 DisplayNamesCache::DisplayNamesCache(IO &_io) : m_IO(_io)
 {
+    static_assert(sizeof(Filename) == 24);
+    static_assert(sizeof(InodeFilenames) == 32); // 24b + 8b of variant discriminator
 }
 
 DisplayNamesCache &DisplayNamesCache::Instance()
@@ -53,23 +58,23 @@ DisplayNamesCache::Fast_Unlocked(ino_t _ino, dev_t _dev, std::string_view _path)
     if( const Filename *f = std::get_if<Filename>(&filenames->second) ) {
         // There is only one entry for this inode
         if( f->fs_filename == filename ) {
-            return f->display_filename;
+            return f->display_filename ? std::string_view{*f->display_filename} : std::string_view{};
         }
     }
     else if( const std::vector<Filename> *ff = std::get_if<std::vector<Filename>>(&filenames->second) ) {
         // There are multiple entries for this inode, need to check the one by one
         const auto found = std::ranges::find_if(*ff, [&](const Filename &f) { return f.fs_filename == filename; });
         if( found != ff->end() )
-            return found->display_filename;
+            return found->display_filename ? std::string_view{*found->display_filename} : std::string_view{};
     }
     return std::nullopt;
 }
 
-void DisplayNamesCache::Commit_Locked(ino_t _ino, dev_t _dev, std::string_view _path, std::string_view _dispay_name)
+void DisplayNamesCache::Commit_Locked(ino_t _ino, dev_t _dev, std::string_view _path, const std::string *_dispay_name)
 {
     // Prepare the entry to insert into the cache
     Filename f;
-    f.fs_filename = Internalize(utility::PathManip::Filename(_path));
+    f.fs_filename = *Internalize(utility::PathManip::Filename(_path));
     f.display_filename = _dispay_name;
 
     const std::lock_guard<spinlock> guard(m_WriteLock);
@@ -94,6 +99,13 @@ void DisplayNamesCache::Commit_Locked(ino_t _ino, dev_t _dev, std::string_view _
         // Not there, therefore insert as a single entry
         inodes.emplace(_ino, f);
     }
+
+    Log::Trace("DisplayNamesCache::Commit_Locked: cached `{}` / inode={} / dev={} -> `{}`",
+               _path,
+               _ino,
+               _dev,
+               _dispay_name ? _dispay_name->c_str() : "");
+    Log::Trace("DisplayNamesCache::Commit_Locked: total amount of cached entries on dev={}: {}", _dev, inodes.size());
 }
 
 std::optional<std::string_view> DisplayNamesCache::DisplayName(const struct stat &_st, std::string_view _path)
@@ -113,29 +125,30 @@ std::optional<std::string_view> DisplayNamesCache::DisplayName(std::string_view 
     return DisplayName(st, _path);
 }
 
-std::string_view DisplayNamesCache::Slow_Locked(std::string_view _path) const
+const std::string *DisplayNamesCache::Slow_Locked(std::string_view _path) const
 {
+    Log::Trace("DisplayNamesCache::Slow_Locked: looking up a display filename for `{}`", _path);
     NSString *const path = [NSString stringWithUTF8StdStringView:_path];
     if( path == nil )
-        return {}; // can't create string for this path.
+        return nullptr; // can't create string for this path.
 
     NSString *display_name = m_IO.DisplayNameAtPath(path);
     if( display_name == nil )
-        return {}; // something strange has happen
+        return nullptr; // something strange has happen
 
     display_name = [display_name decomposedStringWithCanonicalMapping];
     assert(display_name.UTF8String != nullptr);
     const std::string_view display_utf8_name = display_name.UTF8String;
 
     if( display_utf8_name.empty() )
-        return {}; // ignore empty display names
+        return nullptr; // ignore empty display names
 
     if( _path == display_utf8_name )
-        return {}; // this means error: "If there is no file or directory at path, or if an error occurs, returns path
-                   // as is."
+        return nullptr; // this means error: "If there is no file or directory at path, or if an error occurs, returns
+                        // path as is."
 
     if( utility::PathManip::Filename(_path) == display_utf8_name )
-        return {}; // this display name is exactly like the filesystem one
+        return nullptr; // this display name is exactly like the filesystem one
 
     return Internalize(display_utf8_name);
 }
@@ -168,13 +181,14 @@ std::optional<std::string_view> DisplayNamesCache::DisplayName(ino_t _ino, dev_t
     // FAST PATH ENDS
 
     // SLOW PATH BEGINS
-    const std::string_view internalized_str = Slow_Locked(_path);
+    const std::string *internalized_str = Slow_Locked(_path);
     Commit_Locked(_ino, _dev, _path, internalized_str);
-    if( internalized_str.empty() ) {
-        return std::nullopt;
+    if( internalized_str ) {
+        assert(!internalized_str->empty());
+        return *internalized_str;
     }
     else {
-        return internalized_str;
+        return std::nullopt;
     }
     // SLOW PATH ENDS
 }

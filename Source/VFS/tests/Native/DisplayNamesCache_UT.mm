@@ -12,7 +12,7 @@ TEST_CASE(PREFIX "Empty cache, erroring out the IO")
     struct IO : DNC::IO {
         NSString *next;
 
-        NSString *DisplayNameAtPath(NSString *) override
+        NSString *DisplayNameAtPath(NSString * /*_path*/) override
         {
             if( !next ) {
                 FAIL();
@@ -20,7 +20,7 @@ TEST_CASE(PREFIX "Empty cache, erroring out the IO")
             }
             return next;
         };
-        int Stat(const char *, struct stat *) override
+        int Stat(const char * /*_path*/, struct stat * /*_st*/) override
         {
             FAIL();
             abort();
@@ -48,7 +48,7 @@ TEST_CASE(PREFIX "Different devices")
 {
     struct IO : DNC::IO {
         NSString *next;
-        NSString *DisplayNameAtPath(NSString *) override
+        NSString *DisplayNameAtPath(NSString * /*_path*/) override
         {
             if( !next ) {
                 FAIL();
@@ -56,7 +56,7 @@ TEST_CASE(PREFIX "Different devices")
             }
             return next;
         };
-        int Stat(const char *, struct stat *) override
+        int Stat(const char * /*_path*/, struct stat * /*_st*/) override
         {
             FAIL();
             abort();
@@ -83,7 +83,7 @@ TEST_CASE(PREFIX "Different inodes")
 {
     struct IO : DNC::IO {
         NSString *next;
-        NSString *DisplayNameAtPath(NSString *) override
+        NSString *DisplayNameAtPath(NSString * /*_path*/) override
         {
             if( !next ) {
                 FAIL();
@@ -91,7 +91,7 @@ TEST_CASE(PREFIX "Different inodes")
             }
             return next;
         };
-        int Stat(const char *, struct stat *) override
+        int Stat(const char * /*_path*/, struct stat * /*_st*/) override
         {
             FAIL();
             abort();
@@ -118,7 +118,7 @@ TEST_CASE(PREFIX "Per-inode collision")
 {
     struct IO : DNC::IO {
         NSString *next;
-        NSString *DisplayNameAtPath(NSString *) override
+        NSString *DisplayNameAtPath(NSString * /*_path*/) override
         {
             if( !next ) {
                 FAIL();
@@ -126,7 +126,7 @@ TEST_CASE(PREFIX "Per-inode collision")
             }
             return next;
         };
-        int Stat(const char *, struct stat *) override
+        int Stat(const char * /*_path*/, struct stat * /*_st*/) override
         {
             FAIL();
             abort();

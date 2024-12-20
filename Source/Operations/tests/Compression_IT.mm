@@ -273,6 +273,59 @@ TEST_CASE(PREFIX "Compressing an item with xattrs")
     }
 }
 
+TEST_CASE(PREFIX "Compressing multiple items with xattrs")
+{
+    const TempTestDir tmp_dir;
+    const auto native_host = TestEnv().vfs_native;
+
+    // arrange the file structure to compress
+    const std::filesystem::path file0 = "file0.txt";
+    const std::filesystem::path dir1 = "dir1";
+    const std::filesystem::path file1 = "dir1/file1.txt";
+    const std::filesystem::path dir2 = "dir2";
+    const std::filesystem::path file2 = "dir2/file2.txt";
+    REQUIRE(std::filesystem::create_directory(tmp_dir.directory / dir1));
+    REQUIRE(std::filesystem::create_directory(tmp_dir.directory / dir2));
+    REQUIRE(touch(tmp_dir.directory / file0));
+    REQUIRE(touch(tmp_dir.directory / file1));
+    REQUIRE(touch(tmp_dir.directory / file2));
+    for( const auto &p : {file0, file1, file2, dir1, dir2} ) {
+        // write a single xattr to each file - the filename as a string
+        const std::string val = p.filename().native();
+        setxattr((tmp_dir.directory / p).c_str(), "attr", val.c_str(), val.length(), 0, 0);
+    }
+
+    // compress
+    Compression operation{
+        FetchItems(tmp_dir.directory, {file0.filename(), dir1.filename(), dir2.filename()}, *native_host),
+        tmp_dir.directory,
+        native_host};
+    operation.Start();
+    operation.Wait();
+    REQUIRE(operation.State() == OperationState::Completed);
+    REQUIRE(native_host->Exists(operation.ArchivePath()));
+
+    // open the archive
+    std::shared_ptr<vfs::ArchiveHost> arc_host;
+    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
+
+    for( const auto &p : {file0, file1, file2, dir1, dir2} ) {
+        // open the compressed file in the archive
+        std::filesystem::path path = std::filesystem::path("/") / p;
+        std::shared_ptr<VFSFile> file;
+        REQUIRE(arc_host->CreateFile(path.native(), file) == VFSError::Ok);
+        REQUIRE(file->Open(p.native().ends_with(".txt")
+                               ? VFSFlags::OF_Read
+                               : (VFSFlags::OF_Read | VFSFlags::OF_Directory)) == VFSError::Ok);
+        // read the xattr and check its value
+        REQUIRE(file->XAttrCount() == 1);
+        REQUIRE(file->XAttrGet("attr", nullptr, 0) > 0);
+        std::string val(file->XAttrGet("attr", nullptr, 0), '\0');
+        REQUIRE(file->XAttrGet("attr", val.data(), val.size()) > 0);
+        REQUIRE(val == p.filename().native());
+    }
+}
+
 TEST_CASE(PREFIX "Long compression stats (compressing Music.app)")
 {
     const TempTestDir tmp_dir;

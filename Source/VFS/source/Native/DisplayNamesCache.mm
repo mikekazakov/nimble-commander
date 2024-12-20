@@ -203,7 +203,7 @@ DisplayNamesCache::IO::~IO() = default;
 
 NSString *DisplayNamesCache::IO::DisplayNameAtPath(NSString *_path)
 {
-    static NSFileManager *filemanager = NSFileManager.defaultManager;
+    static NSFileManager *const filemanager = NSFileManager.defaultManager;
     return [filemanager displayNameAtPath:_path];
 }
 

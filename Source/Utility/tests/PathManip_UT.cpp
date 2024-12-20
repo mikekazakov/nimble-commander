@@ -104,6 +104,10 @@ TEST_CASE(PREFIX "Parent")
         {.path = "///", .expected = ""},
         {.path = "a/", .expected = ""},
         {.path = "a//", .expected = ""},
+        {.path = "a/b/c", .expected = "a/b/"},
+        {.path = "a/b/c/", .expected = "a/b/"},
+        {.path = "a/b/c//", .expected = "a/b/"},
+        {.path = "a/b/c///", .expected = "a/b/"},
         {.path = "foo/a/", .expected = "foo/"},
         {.path = "foo/a//", .expected = "foo/"},
     };

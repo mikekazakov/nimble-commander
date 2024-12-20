@@ -4,23 +4,6 @@
 #include <cstdlib>
 #include <cstring>
 
-bool GetDirectoryContainingItemFromPath(const char *_path, char *_buf)
-{
-    if( _path[0] != '/' )
-        return false;
-    const size_t sz = strlen(_path);
-    if( sz == 1 )
-        return false;
-
-    const char *last_sl = strrchr(_path, '/');
-    if( last_sl == _path + sz - 1 )
-        while( *(--last_sl) != '/' )
-            ;
-    memcpy(_buf, _path, last_sl - _path + 1);
-    _buf[last_sl - _path + 1] = 0;
-    return true;
-}
-
 namespace nc::utility {
 
 bool PathManip::IsAbsolute(std::string_view _path) noexcept

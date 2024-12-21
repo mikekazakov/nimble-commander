@@ -1045,11 +1045,12 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
     }();
     const double y = NSMinY(rect_on_screen) - m_ContentSize.height;
     NSScreen *screen = _positioning_view.window.screen;
+    const NSRect screen_rect = screen.visibleFrame;
     const double x = [&] {
-        if( initial_x < 0. )
-            return 0.;
-        else if( initial_x + sx > screen.frame.size.width )
-            return screen.frame.size.width - sx;
+        if( initial_x < screen_rect.origin.x )
+            return screen_rect.origin.x;
+        else if( initial_x + sx > NSMaxX(screen_rect) )
+            return NSMaxX(screen_rect) - sx;
         else
             return initial_x;
     }();

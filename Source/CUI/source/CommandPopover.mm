@@ -1049,7 +1049,7 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
     const double x = [&] {
         if( initial_x < screen_rect.origin.x )
             return screen_rect.origin.x;
-        else if( initial_x + sx > NSMaxX(screen_rect))
+        else if( initial_x + sx > NSMaxX(screen_rect) )
             return NSMaxX(screen_rect) - sx;
         else
             return initial_x;

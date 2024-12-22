@@ -48,7 +48,7 @@ struct NSEventModifierFlagsHolder {
 #endif
 
 private:
-    void check_flag_values();
+    static void check_flag_values();
 
     static constexpr int offset = 16;
     static constexpr unsigned long flag_caps_lock = 1ul << 16;

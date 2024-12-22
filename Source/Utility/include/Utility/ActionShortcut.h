@@ -66,8 +66,10 @@ struct std::hash<nc::utility::ActionShortcut> {
     size_t operator()(const nc::utility::ActionShortcut &) const noexcept;
 };
 
+#ifdef __OBJC__
 @interface NSMenuItem (NCAdditions)
 
 - (void)nc_setKeyEquivalentWithShortcut:(nc::utility::ActionShortcut)_shortcut;
 
 @end
+#endif

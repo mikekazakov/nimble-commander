@@ -13,7 +13,6 @@
 #include <vector>
 #include <span>
 #include <string_view>
-#include <Cocoa/Cocoa.h>
 
 namespace nc::config {
 class Config;
@@ -63,9 +62,13 @@ public:
 
     void RevertToDefaults();
 
+    // Returns true if any change was done to the actions maps.
+    // If the _action doesn't exist or already has the same value, returns false.
     bool SetShortCutOverride(std::string_view _action, const ShortCut &_sc);
 
+#ifdef __OBJC__
     void SetMenuShortCuts(NSMenu *_menu) const;
+#endif
 
     static std::span<const std::pair<const char *, int>> AllShortcuts();
 

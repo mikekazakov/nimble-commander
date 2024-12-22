@@ -101,35 +101,35 @@ static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelSt
         return true;
     }
 
-    const auto event_data = nc::utility::ActionShortcut::EventData(theEvent);
-    if( m_HKFocusLeft.IsKeyDown(event_data) ) {
+    const auto event_hotkey = nc::utility::ActionShortcut(nc::utility::ActionShortcut::EventData(theEvent));
+    if( m_HKFocusLeft == event_hotkey ) {
         [self executeBySelectorIfValidOrBeep:@selector(onFocusLeftPanel:) withSender:self];
         return true;
     }
 
-    if( m_HKFocusRight.IsKeyDown(event_data) ) {
+    if( m_HKFocusRight == event_hotkey ) {
         [self executeBySelectorIfValidOrBeep:@selector(onFocusRightPanel:) withSender:self];
         return true;
     }
 
     // overlapped terminal stuff
     if( hasTerminal ) {
-        if( m_HKMoveUp.IsKeyDown(event_data) ) {
+        if( m_HKMoveUp == event_hotkey ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionMoveUp:) withSender:self];
             return true;
         }
 
-        if( m_HKMoveDown.IsKeyDown(event_data) ) {
+        if( m_HKMoveDown == event_hotkey ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionMoveDown:) withSender:self];
             return true;
         }
 
-        if( m_HKShow.IsKeyDown(event_data) ) {
+        if( m_HKShow == event_hotkey ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionShowHidePanels:) withSender:self];
             return true;
         }
 
-        if( m_HKFocusTerminal.IsKeyDown(event_data) ) {
+        if( m_HKFocusTerminal == event_hotkey ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionFocusOverlappedTerminal:)
                                       withSender:self];
             return true;

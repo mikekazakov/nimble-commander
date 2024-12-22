@@ -229,6 +229,7 @@
         return [super performKeyEquivalent:_event];
 
     const auto event_data = nc::utility::ActionShortcut::EventData(_event);
+    const auto event_hotkey = nc::utility::ActionShortcut(event_data);
 
     static ActionsShortcutsManager::ShortCut hk_prev;
     static ActionsShortcutsManager::ShortCut hk_next;
@@ -257,51 +258,51 @@
             {.shortcut = &hk_t9, .action = "panel.show_tab_no_9"},
             {.shortcut = &hk_t10, .action = "panel.show_tab_no_10"}});
 
-    if( hk_prev.IsKeyDown(event_data) ) {
+    if( hk_prev == event_hotkey ) {
         [self selectPreviousFilePanelTab];
         return true;
     }
-    if( hk_next.IsKeyDown(event_data) ) {
+    if( hk_next == event_hotkey ) {
         [self selectNextFilePanelTab];
         return true;
     }
-    if( hk_t1.IsKeyDown(event_data) ) {
+    if( hk_t1 == event_hotkey ) {
         [self selectTabAtIndex:0];
         return true;
     }
-    if( hk_t2.IsKeyDown(event_data) ) {
+    if( hk_t2 == event_hotkey ) {
         [self selectTabAtIndex:1];
         return true;
     }
-    if( hk_t3.IsKeyDown(event_data) ) {
+    if( hk_t3 == event_hotkey ) {
         [self selectTabAtIndex:2];
         return true;
     }
-    if( hk_t4.IsKeyDown(event_data) ) {
+    if( hk_t4 == event_hotkey ) {
         [self selectTabAtIndex:3];
         return true;
     }
-    if( hk_t5.IsKeyDown(event_data) ) {
+    if( hk_t5 == event_hotkey ) {
         [self selectTabAtIndex:4];
         return true;
     }
-    if( hk_t6.IsKeyDown(event_data) ) {
+    if( hk_t6 == event_hotkey ) {
         [self selectTabAtIndex:5];
         return true;
     }
-    if( hk_t7.IsKeyDown(event_data) ) {
+    if( hk_t7 == event_hotkey ) {
         [self selectTabAtIndex:6];
         return true;
     }
-    if( hk_t8.IsKeyDown(event_data) ) {
+    if( hk_t8 == event_hotkey ) {
         [self selectTabAtIndex:7];
         return true;
     }
-    if( hk_t9.IsKeyDown(event_data) ) {
+    if( hk_t9 == event_hotkey ) {
         [self selectTabAtIndex:8];
         return true;
     }
-    if( hk_t10.IsKeyDown(event_data) ) {
+    if( hk_t10 == event_hotkey ) {
         [self selectTabAtIndex:9];
         return true;
     }

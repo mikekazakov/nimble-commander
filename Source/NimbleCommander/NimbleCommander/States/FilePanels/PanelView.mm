@@ -566,37 +566,42 @@ struct StateStorage {
             {.shortcut = &hk_scrhome, .action = "panel.scroll_first"},
             {.shortcut = &hk_scrend, .action = "panel.scroll_last"}});
 
-    const auto event_data = nc::utility::ActionShortcut::EventData(event);
-    auto event_data_wo_shift = event_data;
-    event_data_wo_shift.modifiers &= ~NSEventModifierFlagShift;
+    using nc::utility::ActionShortcut;
+    const auto event_data = ActionShortcut::EventData(event);
+    const auto event_hotkey = ActionShortcut(event_data);
+    const auto event_hotkey_wo_shift =
+        ActionShortcut(ActionShortcut::EventData(event_data.char_with_modifiers,
+                                                 event_data.char_without_modifiers,
+                                                 event_data.key_code,
+                                                 event_data.modifiers & ~NSEventModifierFlagShift));
 
-    if( hk_up.IsKeyDown(event_data_wo_shift) )
+    if( hk_up == event_hotkey_wo_shift )
         [self HandlePrevFile];
-    else if( hk_down.IsKeyDown(event_data_wo_shift) )
+    else if( hk_down == event_hotkey_wo_shift )
         [self HandleNextFile];
-    else if( hk_left.IsKeyDown(event_data_wo_shift) )
+    else if( hk_left == event_hotkey_wo_shift )
         [self HandlePrevColumn];
-    else if( hk_right.IsKeyDown(event_data_wo_shift) )
+    else if( hk_right == event_hotkey_wo_shift )
         [self HandleNextColumn];
-    else if( hk_first.IsKeyDown(event_data_wo_shift) )
+    else if( hk_first == event_hotkey_wo_shift )
         [self HandleFirstFile];
-    else if( hk_last.IsKeyDown(event_data_wo_shift) )
+    else if( hk_last == event_hotkey_wo_shift )
         [self HandleLastFile];
-    else if( hk_pgdown.IsKeyDown(event_data_wo_shift) )
+    else if( hk_pgdown == event_hotkey_wo_shift )
         [self HandleNextPage];
-    else if( hk_scrdown.IsKeyDown(event_data_wo_shift) )
+    else if( hk_scrdown == event_hotkey_wo_shift )
         [m_ItemsView onPageDown:event];
-    else if( hk_pgup.IsKeyDown(event_data_wo_shift) )
+    else if( hk_pgup == event_hotkey_wo_shift )
         [self HandlePrevPage];
-    else if( hk_scrup.IsKeyDown(event_data) )
+    else if( hk_scrup == event_hotkey )
         [m_ItemsView onPageUp:event];
-    else if( hk_scrhome.IsKeyDown(event_data) )
+    else if( hk_scrhome == event_hotkey )
         [m_ItemsView onScrollToBeginning:event];
-    else if( hk_scrend.IsKeyDown(event_data) )
+    else if( hk_scrend == event_hotkey )
         [m_ItemsView onScrollToEnd:event];
-    else if( hk_inv_and_move.IsKeyDown(event_data) )
+    else if( hk_inv_and_move == event_hotkey )
         [self onInvertCurrentItemSelectionAndMoveNext];
-    else if( hk_inv.IsKeyDown(event_data) )
+    else if( hk_inv == event_hotkey )
         [self onInvertCurrentItemSelection];
     else
         [super keyDown:event];

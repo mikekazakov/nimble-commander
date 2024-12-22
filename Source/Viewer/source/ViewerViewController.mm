@@ -603,8 +603,8 @@ struct BackgroundFileOpener {
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
-    const auto event_data = nc::utility::ActionShortcut::EventData(_event);
-    const auto is = [&](std::string_view _action_name) { return m_Shortcuts(_action_name).IsKeyDown(event_data); };
+    const auto event_hotkey = nc::utility::ActionShortcut(nc::utility::ActionShortcut::EventData(_event));
+    const auto is = [&](std::string_view _action_name) { return m_Shortcuts(_action_name) == event_hotkey; };
     if( is("viewer.toggle_text") ) {
         [m_View setMode:ViewMode::Text];
         return true;

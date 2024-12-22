@@ -134,7 +134,7 @@ TEST_CASE(PREFIX "[NSMenuItem nc_setKeyEquivalentWithShortcut]")
     }
 }
 
-TEST_CASE(PREFIX "IsKeyDown(EventData)")
+TEST_CASE(PREFIX "ActionShortcut(const EventData &_event)")
 {
     // clang-format off
     // NOLINTBEGIN(readability-isolate-declaration)
@@ -174,7 +174,7 @@ TEST_CASE(PREFIX "IsKeyDown(EventData)")
         bool expected;
     } const test_cases[] = {
         // nop
-        {.shortcut = u8"", .event = {}, .expected = false},
+        {.shortcut = u8"", .event = {}, .expected = true},
         {.shortcut = u8"", .event = a, .expected = false},
         {.shortcut = u8"", .event = b, .expected = false},
         // a
@@ -489,14 +489,16 @@ TEST_CASE(PREFIX "IsKeyDown(EventData)")
     };
 
     for( auto &test_case : test_cases ) {
-        INFO(fmt::format("{} {} {} {} {} {}",
+        INFO(fmt::format("'{}' {} {} {} {} {}",
                          reinterpret_cast<const char *>(test_case.shortcut),
                          test_case.event.char_with_modifiers,
                          test_case.event.char_without_modifiers,
                          test_case.event.modifiers,
                          test_case.event.key_code,
                          test_case.expected));
-        const auto shortcut = ActionShortcut{test_case.shortcut};
-        CHECK(shortcut.IsKeyDown(test_case.event) == test_case.expected);
+        const ActionShortcut manual_shortcut = ActionShortcut{test_case.shortcut};
+        const ActionShortcut event_shortcut = ActionShortcut{test_case.event};
+        const bool equal = manual_shortcut == event_shortcut;
+        CHECK(equal == test_case.expected);
     }
 }

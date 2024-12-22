@@ -259,6 +259,7 @@ static constexpr auto g_DividerThickness = 1.;
 {
     using nc::core::ActionsShortcutsManager;
     const auto event_data = nc::utility::ActionShortcut::EventData(_event);
+    const auto event_hotkey = nc::utility::ActionShortcut(event_data);
 
     static ActionsShortcutsManager::ShortCut hk_move_left;
     static ActionsShortcutsManager::ShortCut hk_move_right;
@@ -267,12 +268,12 @@ static constexpr auto g_DividerThickness = 1.;
             {.shortcut = &hk_move_left, .action = "menu.view.panels_position.move_left"},
             {.shortcut = &hk_move_right, .action = "menu.view.panels_position.move_right"}});
 
-    if( hk_move_left.IsKeyDown(event_data) ) {
+    if( hk_move_left == event_hotkey ) {
         [self OnViewPanelsPositionMoveLeft:self];
         return true;
     }
 
-    if( hk_move_right.IsKeyDown(event_data) ) {
+    if( hk_move_right == event_hotkey ) {
         [self OnViewPanelsPositionMoveRight:self];
         return true;
     }

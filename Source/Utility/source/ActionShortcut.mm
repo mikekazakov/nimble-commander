@@ -13,11 +13,6 @@ namespace nc::utility {
 
 static_assert(sizeof(ActionShortcut) == 4);
 
-ActionShortcut::EventData::EventData() noexcept
-    : char_with_modifiers(0), char_without_modifiers(0), key_code(0), modifiers(0)
-{
-}
-
 ActionShortcut::EventData::EventData(unsigned short _chmod,
                                      unsigned short _chunmod,
                                      unsigned short _kc,
@@ -88,6 +83,19 @@ ActionShortcut::ActionShortcut(uint16_t _unicode, unsigned long long _modif) noe
     if( _modif & NSEventModifierFlagCommand )
         mod_flags |= NSEventModifierFlagCommand;
     modifiers = mod_flags;
+}
+
+ActionShortcut::ActionShortcut(const EventData &_event) noexcept
+{
+    // Exclude CapsLock/NumPad/Func from our decision process - our hotkeys don't support these modifiers.
+    constexpr auto mask =
+        NSEventModifierFlagDeviceIndependentFlagsMask &
+        (~NSEventModifierFlagCapsLock & ~NSEventModifierFlagNumericPad & ~NSEventModifierFlagFunction);
+    modifiers = NSEventModifierFlagsHolder{_event.modifiers & mask};
+
+    // When the shift modifier is present, characters are shown as UPPERCASE even when explicitly asked to provide them
+    // without modifiers. Explicitly remove this by lowercasing the input character.
+    unicode = nc::base::g_ToLower[_event.char_without_modifiers];
 }
 
 ActionShortcut::operator bool() const noexcept
@@ -206,35 +214,6 @@ NSString *ActionShortcut::PrettyString() const noexcept
         return vis_key;
     else
         return [NSString stringWithFormat:@"%@%@", StringForModifierFlags(modifiers), vis_key];
-}
-
-bool ActionShortcut::IsKeyDown(EventData _event) const noexcept
-{
-    // unicode==0 => disable, don't match anything
-    if( !unicode )
-        return false;
-
-    // exclude CapsLock/NumPad/Func from our decision process
-    constexpr auto mask =
-        NSEventModifierFlagDeviceIndependentFlagsMask &
-        (~NSEventModifierFlagCapsLock & ~NSEventModifierFlagNumericPad & ~NSEventModifierFlagFunction);
-    const auto clean_modif = NSEventModifierFlagsHolder{_event.modifiers & mask};
-
-    // modifiers should match exactly
-    if( modifiers != clean_modif )
-        return false;
-
-    // check for exact hit - modifiers and unicode
-    if( unicode == _event.char_without_modifiers )
-        return true;
-
-    // characters are shown as UPPERCASE even when explicitly asked to provide them without modifiers.
-    // explicitly check for this case by lowercasing the input character
-    if( modifiers.is_shift() && nc::base::g_ToLower[_event.char_without_modifiers] == unicode )
-        return true;
-
-    // no dice
-    return false;
 }
 
 } // namespace nc::utility

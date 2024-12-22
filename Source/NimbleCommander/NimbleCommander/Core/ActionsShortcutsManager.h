@@ -58,8 +58,9 @@ public:
     /**
      * Returns default if can't be found.
      */
-    ShortCut DefaultShortCutFromTag(int _tag) const;
+    ShortCut DefaultShortCutFromTag(int _tag) const noexcept;
 
+    // Removes any hotkeys overrides.
     void RevertToDefaults();
 
     // Returns true if any change was done to the actions maps.

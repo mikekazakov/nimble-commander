@@ -35,3 +35,35 @@ TEST_CASE(PREFIX "ShortCutFromAction")
     REQUIRE(manager.SetShortCutOverride("menu.edit.copy", ActionShortcut("⌘j")));
     REQUIRE(manager.ShortCutFromAction("menu.edit.copy") == ActionShortcut("⌘j"));
 }
+
+TEST_CASE(PREFIX "ShortCutFromTag")
+{
+    nc::config::ConfigImpl config{g_EmptyConfigJSON, std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
+    ActionsShortcutsManager manager{config};
+
+    REQUIRE(manager.ShortCutFromTag(346'242) == ActionShortcut());
+    REQUIRE(manager.ShortCutFromTag(12'000) == ActionShortcut("⌘c"));
+    REQUIRE(manager.SetShortCutOverride("menu.edit.copy", ActionShortcut("⌘j")));
+    REQUIRE(manager.ShortCutFromTag(12'000) == ActionShortcut("⌘j"));
+}
+
+TEST_CASE(PREFIX "DefaultShortCutFromTag")
+{
+    nc::config::ConfigImpl config{g_EmptyConfigJSON, std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
+    ActionsShortcutsManager manager{config};
+
+    REQUIRE(manager.DefaultShortCutFromTag(346'242) == ActionShortcut());
+    REQUIRE(manager.DefaultShortCutFromTag(12'000) == ActionShortcut("⌘c"));
+    REQUIRE(manager.SetShortCutOverride("menu.edit.copy", ActionShortcut("⌘j")));
+    REQUIRE(manager.DefaultShortCutFromTag(12'000) == ActionShortcut("⌘c"));
+}
+
+TEST_CASE(PREFIX "RevertToDefaults")
+{
+    nc::config::ConfigImpl config{g_EmptyConfigJSON, std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
+    ActionsShortcutsManager manager{config};
+
+    REQUIRE(manager.SetShortCutOverride("menu.edit.copy", ActionShortcut("⌘j")));
+    manager.RevertToDefaults();
+    REQUIRE(manager.ShortCutFromAction("menu.edit.copy") == ActionShortcut("⌘c"));
+}

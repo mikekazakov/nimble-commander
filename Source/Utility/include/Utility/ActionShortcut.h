@@ -27,8 +27,7 @@ struct ActionShortcut {
     // Construct from data directly
     ActionShortcut(unsigned short _unicode, unsigned long long _modif) noexcept;
 
-    friend bool operator==(const ActionShortcut &_lhs, const ActionShortcut &_rhs) noexcept = default;
-    friend bool operator!=(const ActionShortcut &_lhs, const ActionShortcut &_rhs) noexcept = default;
+    constexpr friend bool operator==(const ActionShortcut &_lhs, const ActionShortcut &_rhs) noexcept = default;
     operator bool() const noexcept;
 
 #ifdef __OBJC__

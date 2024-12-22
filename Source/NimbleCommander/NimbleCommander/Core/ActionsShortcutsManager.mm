@@ -565,7 +565,7 @@ ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromTag(int _
     return {};
 }
 
-ActionsShortcutsManager::ShortCut ActionsShortcutsManager::DefaultShortCutFromTag(int _tag) const
+ActionsShortcutsManager::ShortCut ActionsShortcutsManager::DefaultShortCutFromTag(int _tag) const noexcept
 {
     auto sc_default = m_ShortCutsDefaults.find(_tag);
     if( sc_default != m_ShortCutsDefaults.end() )
@@ -582,7 +582,7 @@ bool ActionsShortcutsManager::SetShortCutOverride(const std::string_view _action
 
     if( m_ShortCutsDefaults[tag] == _sc ) {
         // hotkey is same as the default one
-        if( m_ShortCutsOverrides.count(tag) ) {
+        if( m_ShortCutsOverrides.contains(tag) ) {
             // if something was written as override - erase it
             m_ShortCutsOverrides.erase(tag);
 

@@ -15,6 +15,12 @@
 #include <string_view>
 #include <Cocoa/Cocoa.h>
 
+namespace nc::config {
+class Config;
+}
+
+namespace nc::core {
+
 class ActionsShortcutsManager : nc::base::ObservableBase
 {
 public:
@@ -22,10 +28,14 @@ public:
     struct AutoUpdatingShortCut;
     class ShortCutsUpdater;
 
+    // Create a new shortcut manager which will use the provided config to store the overides.
+    ActionsShortcutsManager(nc::config::Config &_config);
+
+    // A shared instance of a manager, it uses the GlobalConfig() as its data backend.
     static ActionsShortcutsManager &Instance();
 
     /**
-     * Return -1 on if tag corresponing _action wasn't found.
+     * Returns -1 on if tag corresponing _action wasn't found.
      */
     static int TagFromAction(std::string_view _action) noexcept;
 
@@ -35,19 +45,19 @@ public:
     static std::string_view ActionFromTag(int _tag) noexcept;
 
     /**
-     * Return default if can't be found.
+     * Returns default if can't be found.
      * Overrides has priority over defaults.
      */
     ShortCut ShortCutFromAction(std::string_view _action) const noexcept;
 
     /**
-     * Return default if can't be found.
+     * Returns default if can't be found.
      * Overrides has priority over defaults.
      */
     ShortCut ShortCutFromTag(int _tag) const noexcept;
 
     /**
-     * Return default if can't be found.
+     * Returns default if can't be found.
      */
     ShortCut DefaultShortCutFromTag(int _tag) const;
 
@@ -63,7 +73,6 @@ public:
     ObservationTicket ObserveChanges(std::function<void()> _callback);
 
 private:
-    ActionsShortcutsManager();
     ActionsShortcutsManager(const ActionsShortcutsManager &) = delete;
 
     void ReadOverrideFromConfig();
@@ -71,6 +80,7 @@ private:
 
     ankerl::unordered_dense::map<int, ShortCut> m_ShortCutsDefaults;
     ankerl::unordered_dense::map<int, ShortCut> m_ShortCutsOverrides;
+    nc::config::Config &m_Config;
 };
 
 class ActionsShortcutsManager::ShortCutsUpdater
@@ -89,9 +99,11 @@ private:
     ObservationTicket m_Ticket;
 };
 
+} // namespace nc::core
+
 #define IF_MENU_TAG_TOKENPASTE(x, y) x##y
 #define IF_MENU_TAG_TOKENPASTE2(x, y) IF_MENU_TAG_TOKENPASTE(x, y)
 #define IF_MENU_TAG(str)                                                                                               \
     static const int IF_MENU_TAG_TOKENPASTE2(__tag_no_, __LINE__) =                                                    \
-        ActionsShortcutsManager::Instance().TagFromAction(str);                                                        \
+        nc::core::ActionsShortcutsManager::Instance().TagFromAction(str);                                              \
     if( tag == IF_MENU_TAG_TOKENPASTE2(__tag_no_, __LINE__) )

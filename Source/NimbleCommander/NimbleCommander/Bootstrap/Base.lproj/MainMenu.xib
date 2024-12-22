@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23091" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23504" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23091"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23504"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -17,7 +17,7 @@
                 <menuItem title="Nimble Commander" id="56">
                     <menu key="submenu" title="Nimble Commander" systemMenu="apple" id="57">
                         <items>
-                            <menuItem title="About {AppName}" tag="10000" id="58">
+                            <menuItem title="About Nimble Commander" tag="10000" id="58">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="orderFrontStandardAboutPanel:" target="-2" id="142"/>
@@ -46,7 +46,7 @@
                             <menuItem isSeparatorItem="YES" id="144">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Hide {AppName}" tag="10020" keyEquivalent="h" id="134">
+                            <menuItem title="Hide Nimble Commander" tag="10020" keyEquivalent="h" id="134">
                                 <connections>
                                     <action selector="hide:" target="-1" id="367"/>
                                 </connections>
@@ -65,7 +65,7 @@
                             <menuItem isSeparatorItem="YES" id="149">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Quit {AppName}" tag="10050" keyEquivalent="q" id="136">
+                            <menuItem title="Quit Nimble Commander" tag="10050" keyEquivalent="q" id="136">
                                 <connections>
                                     <action selector="terminate:" target="-3" id="449"/>
                                 </connections>
@@ -1029,7 +1029,7 @@ CQ
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Help" systemMenu="help" id="491">
                         <items>
-                            <menuItem title="{AppName} Help" tag="17000" keyEquivalent="?" id="iBP-LD-aNS">
+                            <menuItem title="Nimble Commander Help" tag="17000" keyEquivalent="?" id="iBP-LD-aNS">
                                 <connections>
                                     <action selector="OnShowHelp:" target="-1" id="mbF-jF-ZMK"/>
                                 </connections>

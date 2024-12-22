@@ -6,6 +6,8 @@
 #include <frozen/string.h>
 #include <frozen/unordered_map.h>
 
+namespace nc::core {
+
 // this key should not exist in config defaults
 static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
 
@@ -466,7 +468,7 @@ void ActionsShortcutsManager::ShortCutsUpdater::CheckAndUpdate() const
         *i.first = am.ShortCutFromTag(i.second);
 }
 
-ActionsShortcutsManager::ActionsShortcutsManager()
+ActionsShortcutsManager::ActionsShortcutsManager(nc::config::Config &_config) : m_Config(_config)
 {
     // safety checks against malformed g_ActionsTags, only in Debug builds
     assert((ankerl::unordered_dense::map<std::string_view, int>{std::begin(g_ActionsTags), std::end(g_ActionsTags)})
@@ -483,8 +485,8 @@ ActionsShortcutsManager::ActionsShortcutsManager()
 
 ActionsShortcutsManager &ActionsShortcutsManager::Instance()
 {
-    static ActionsShortcutsManager *manager = new ActionsShortcutsManager;
-    return *manager;
+    [[clang::no_destroy]] static ActionsShortcutsManager manager(GlobalConfig());
+    return manager;
 }
 
 int ActionsShortcutsManager::TagFromAction(std::string_view _action) noexcept
@@ -529,7 +531,7 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
 {
     using namespace rapidjson;
 
-    auto v = GlobalConfig().Get(g_OverridesConfigPath);
+    auto v = m_Config.Get(g_OverridesConfigPath);
     if( v.GetType() != kObjectType )
         return;
 
@@ -625,7 +627,7 @@ void ActionsShortcutsManager::WriteOverridesToConfig() const
                                 nc::config::g_CrtAllocator);
     }
 
-    GlobalConfig().Set(g_OverridesConfigPath, overrides);
+    m_Config.Set(g_OverridesConfigPath, overrides);
 }
 
 std::span<const std::pair<const char *, int>> ActionsShortcutsManager::AllShortcuts()
@@ -637,3 +639,5 @@ ActionsShortcutsManager::ObservationTicket ActionsShortcutsManager::ObserveChang
 {
     return ObservableBase::AddObserver(_callback);
 }
+
+} // namespace nc::core

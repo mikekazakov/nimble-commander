@@ -257,6 +257,7 @@ static constexpr auto g_DividerThickness = 1.;
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
+    using nc::core::ActionsShortcutsManager;
     const auto event_data = nc::utility::ActionShortcut::EventData(_event);
 
     static ActionsShortcutsManager::ShortCut hk_move_left;
@@ -432,6 +433,7 @@ static constexpr auto g_DividerThickness = 1.;
 
 - (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)_item
 {
+    using nc::core::ActionsShortcutsManager;
     static const long move_left_tag = ActionsShortcutsManager::TagFromAction("menu.view.panels_position.move_left");
     static const long move_right_tag = ActionsShortcutsManager::TagFromAction("menu.view.panels_position.move_right");
 

@@ -87,7 +87,7 @@ enum class SourceType : uint8_t {
     if( self ) {
         m_SourceType = SourceType::All;
         m_ToolsStorage = _tool_storage;
-        const auto &all_shortcuts = ActionsShortcutsManager::AllShortcuts();
+        const auto &all_shortcuts = nc::core::ActionsShortcutsManager::AllShortcuts();
         m_Shortcuts.assign(begin(all_shortcuts), end(all_shortcuts));
 
         // remove shortcuts whichs are absent in main menu
@@ -122,7 +122,7 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
 
 - (void)buildData
 {
-    const auto &sm = ActionsShortcutsManager::Instance();
+    const auto &sm = nc::core::ActionsShortcutsManager::Instance();
     m_AllNodes.clear();
     std::unordered_map<nc::utility::ActionShortcut, int> counts;
     for( auto &v : m_Shortcuts ) {
@@ -363,7 +363,7 @@ static NSImageView *SpawnCautionSign()
 - (nc::utility::ActionShortcut)shortcutFromGTMHotKey:(GTMHotKey *)_key
 {
     const auto key = _key.key.length > 0 ? [_key.key characterAtIndex:0] : static_cast<uint16_t>(0);
-    const auto hk = ActionsShortcutsManager::ShortCut(key, _key.modifiers);
+    const auto hk = nc::core::ActionsShortcutsManager::ShortCut(key, _key.modifiers);
     return hk;
 }
 
@@ -387,12 +387,12 @@ static NSImageView *SpawnCautionSign()
 
 - (IBAction)onHKChanged:(id)sender
 {
-    auto &am = ActionsShortcutsManager::Instance();
+    auto &am = nc::core::ActionsShortcutsManager::Instance();
     if( auto tf = nc::objc_cast<GTMHotKeyTextField>(sender) )
         if( auto gtm_hk = nc::objc_cast<GTMHotKeyTextFieldCell>(tf.cell).hotKey ) {
             auto tag = int(tf.tag);
             auto hk = [self shortcutFromGTMHotKey:gtm_hk];
-            auto action = ActionsShortcutsManager::ActionFromTag(tag);
+            auto action = nc::core::ActionsShortcutsManager::ActionFromTag(tag);
             if( am.SetShortCutOverride(action, hk) ) {
                 am.SetMenuShortCuts(NSApp.mainMenu);
                 [self rebuildAll];
@@ -414,8 +414,8 @@ static NSImageView *SpawnCautionSign()
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
     if( [alert runModal] == NSAlertFirstButtonReturn ) {
-        ActionsShortcutsManager::Instance().RevertToDefaults();
-        ActionsShortcutsManager::Instance().SetMenuShortCuts(NSApp.mainMenu);
+        nc::core::ActionsShortcutsManager::Instance().RevertToDefaults();
+        nc::core::ActionsShortcutsManager::Instance().SetMenuShortCuts(NSApp.mainMenu);
         [self rebuildAll];
     }
 }

@@ -138,23 +138,6 @@ static void ResetDefaults()
     g_State->Commit();
 }
 
-static void UpdateMenuItemsPlaceholders(int _tag)
-{
-    static const auto app_name =
-        static_cast<NSString *>([NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleName"]);
-
-    if( auto menu_item = [NSApp.mainMenu itemWithTagHierarchical:_tag] ) {
-        auto title = menu_item.title;
-        title = [title stringByReplacingOccurrencesOfString:@"{AppName}" withString:app_name];
-        menu_item.title = title;
-    }
-}
-
-static void UpdateMenuItemsPlaceholders(const char *_action)
-{
-    UpdateMenuItemsPlaceholders(ActionsShortcutsManager::TagFromAction(_action));
-}
-
 static void CheckDefaultsReset()
 {
     const auto erase_mask =
@@ -299,7 +282,7 @@ static NCAppDelegate *g_Me = nil;
     [self updateMainMenuFeaturesByVersionAndState];
 
     // update menu with current shortcuts layout
-    ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
+    nc::core::ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
 
     [self wireMenuDelegates];
 
@@ -319,7 +302,7 @@ static NCAppDelegate *g_Me = nil;
 {
     // set up menu delegates. do this via DI to reduce links to AppDelegate in whole codebase
     auto item_for_action = [](const char *_action) {
-        auto tag = ActionsShortcutsManager::TagFromAction(_action);
+        auto tag = nc::core::ActionsShortcutsManager::TagFromAction(_action);
         return [NSApp.mainMenu itemWithTagHierarchical:tag];
     };
 
@@ -371,7 +354,7 @@ static NCAppDelegate *g_Me = nil;
 - (void)updateMainMenuFeaturesByVersionAndState
 {
     // disable some features available in menu by configuration limitation
-    auto tag_from_lit = [](const char *s) { return ActionsShortcutsManager::TagFromAction(s); };
+    auto tag_from_lit = [](const char *s) { return nc::core::ActionsShortcutsManager::TagFromAction(s); };
     auto current_menuitem = [&](const char *s) { return [NSApp.mainMenu itemWithTagHierarchical:tag_from_lit(s)]; };
     auto hide = [&](const char *s) {
         auto item = current_menuitem(s);
@@ -407,13 +390,6 @@ static NCAppDelegate *g_Me = nil;
                              returnTypes:@[]]; // pasteboard types provided by PanelController
 #pragma clang diagnostic pop
     NSUpdateDynamicServices();
-
-    // Since we have different app names (Nimble Commander and Nimble Commander Pro) and one
-    // fixed menu, we have to emplace the right title upon startup in some menu elements.
-    UpdateMenuItemsPlaceholders("menu.nimble_commander.about");
-    UpdateMenuItemsPlaceholders("menu.nimble_commander.hide");
-    UpdateMenuItemsPlaceholders("menu.nimble_commander.quit");
-    UpdateMenuItemsPlaceholders(17000); // Menu->Help
 
     [self temporaryFileStorage]; // implicitly runs the background temp storage purging
 

@@ -76,8 +76,8 @@
 /* Class = "NSMenu"; title = "Nimble Commander"; ObjectID = "57"; */
 "57.title" = "Nimble Commander";
 
-/* Class = "NSMenuItem"; title = "About {AppName}"; ObjectID = "58"; */
-"58.title" = "О {AppName}";
+/* Class = "NSMenuItem"; title = "About Nimble Commander"; ObjectID = "58"; */
+"58.title" = "О Nimble Commander";
 
 /* Class = "NSMenuItem"; title = "Enter"; ObjectID = "72"; */
 "72.title" = "Войти";
@@ -103,11 +103,11 @@
 /* Class = "NSMenuItem"; title = "Services"; ObjectID = "131"; */
 "131.title" = "Службы";
 
-/* Class = "NSMenuItem"; title = "Hide {AppName}"; ObjectID = "134"; */
-"134.title" = "Скрыть {AppName}";
+/* Class = "NSMenuItem"; title = "Hide Nimble Commander"; ObjectID = "134"; */
+"134.title" = "Скрыть Nimble Commander";
 
-/* Class = "NSMenuItem"; title = "Quit {AppName}"; ObjectID = "136"; */
-"136.title" = "Завершить {AppName}";
+/* Class = "NSMenuItem"; title = "Quit Nimble Commander"; ObjectID = "136"; */
+"136.title" = "Завершить Nimble Commander";
 
 /* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "145"; */
 "145.title" = "Скрыть остальные";
@@ -355,8 +355,8 @@
 /* Class = "NSMenuItem"; title = "External Editor"; ObjectID = "IBo-yJ-DeD"; */
 "IBo-yJ-DeD.title" = "Внешний редактор";
 
-/* Class = "NSMenuItem"; title = "{AppName} Help"; ObjectID = "iBP-LD-aNS"; */
-"iBP-LD-aNS.title" = "Справка {AppName}";
+/* Class = "NSMenuItem"; title = "Nimble Commander Help"; ObjectID = "iBP-LD-aNS"; */
+"iBP-LD-aNS.title" = "Справка Nimble Commander";
 
 /* Class = "NSMenuItem"; title = "Home"; ObjectID = "iGm-8g-qdX"; */
 "iGm-8g-qdX.title" = "Личное";

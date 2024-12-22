@@ -21,7 +21,7 @@
 - (NCViewerViewController *)makeViewerController
 {
     auto shortcuts = [](std::string_view _name) {
-        return ActionsShortcutsManager::Instance().ShortCutFromAction(_name);
+        return nc::core::ActionsShortcutsManager::Instance().ShortCutFromAction(_name);
     };
     return [[NCViewerViewController alloc] initWithHistory:self.internalViewerHistory
                                                     config:self.globalConfig

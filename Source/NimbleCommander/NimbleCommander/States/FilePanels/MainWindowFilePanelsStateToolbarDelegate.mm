@@ -167,7 +167,7 @@ static NSString *EncodeToolIdentifier(const ExternalTool &_et)
         itemForItemIdentifier:(NSString *)itemIdentifier
     willBeInsertedIntoToolbar:(BOOL) [[maybe_unused]] _flag
 {
-    const auto &actman = ActionsShortcutsManager::Instance();
+    const auto &actman = nc::core::ActionsShortcutsManager::Instance();
     if( [itemIdentifier isEqualToString:@"filepanels_left_goto_button"] ) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_LeftPanelGoToButton;

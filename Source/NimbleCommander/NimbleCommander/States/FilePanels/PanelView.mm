@@ -509,6 +509,8 @@ struct StateStorage {
 
 - (void)keyDown:(NSEvent *)event
 {
+    using nc::core::ActionsShortcutsManager;
+
     id<NCPanelViewKeystrokeSink> best_handler = nil;
     int best_bid = view::BiddingPriority::Skip;
     for( const auto &handler : m_KeystrokeSinks )

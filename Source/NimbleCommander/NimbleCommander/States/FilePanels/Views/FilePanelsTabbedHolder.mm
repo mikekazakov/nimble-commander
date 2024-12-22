@@ -222,6 +222,8 @@
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
+    using nc::core::ActionsShortcutsManager;
+
     const auto resp_view = nc::objc_cast<NSView>(self.window.firstResponder);
     if( !resp_view || ![resp_view isDescendantOf:m_TabView] )
         return [super performKeyEquivalent:_event];

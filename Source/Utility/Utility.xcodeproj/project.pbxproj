@@ -13,6 +13,7 @@
 		CF26DE3121D5685B003F0E93 /* TemporaryFileStorageImpl_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE3021D5685A003F0E93 /* TemporaryFileStorageImpl_UT.mm */; };
 		CF2C102922A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2C102822A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp */; };
 		CF308F52213B7CC700915730 /* BriefOnDiskStorageImpl_UnitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F50213B7CC400915730 /* BriefOnDiskStorageImpl_UnitTests.cpp */; };
+		CF371DAC2D1849FF0034EB3F /* NSEventModifierFlagsHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF371DAB2D1849FF0034EB3F /* NSEventModifierFlagsHolder.mm */; };
 		CF3ABD7D23B8AC0A00D1878B /* NativeFSManagerVolumeLookup_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD7B23B8AB5200D1878B /* NativeFSManagerVolumeLookup_UT.cpp */; };
 		CF3ABD7F23B8DBFF00D1878B /* NativeFSManager_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD7E23B8DBFF00D1878B /* NativeFSManager_UT.mm */; };
 		CF3F587C255B38A20027B69A /* PathManip_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3F587B255B38A20027B69A /* PathManip_UT.cpp */; };
@@ -138,6 +139,7 @@
 		CF308F50213B7CC400915730 /* BriefOnDiskStorageImpl_UnitTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BriefOnDiskStorageImpl_UnitTests.cpp; path = tests/BriefOnDiskStorageImpl_UnitTests.cpp; sourceTree = "<group>"; };
 		CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColoredSeparatorLine.h; path = include/Utility/ColoredSeparatorLine.h; sourceTree = "<group>"; };
 		CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ColoredSeparatorLine.mm; path = source/ColoredSeparatorLine.mm; sourceTree = "<group>"; };
+		CF371DAB2D1849FF0034EB3F /* NSEventModifierFlagsHolder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = NSEventModifierFlagsHolder.mm; path = source/NSEventModifierFlagsHolder.mm; sourceTree = "<group>"; };
 		CF3847272010756800BAB3BE /* FilenameTextNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilenameTextNavigation.h; path = include/Utility/FilenameTextNavigation.h; sourceTree = "<group>"; };
 		CF3847292010757300BAB3BE /* FilenameTextNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilenameTextNavigation.mm; path = source/FilenameTextNavigation.mm; sourceTree = "<group>"; };
 		CF38472B2010780B00BAB3BE /* FilenameTextNavigation_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilenameTextNavigation_UT.mm; path = tests/FilenameTextNavigation_UT.mm; sourceTree = SOURCE_ROOT; };
@@ -403,6 +405,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF371DAB2D1849FF0034EB3F /* NSEventModifierFlagsHolder.mm */,
 				CF24E1F52288AA0500C166FA /* ActionShortcut.mm */,
 				CF29FC612155D9AB0040FF19 /* AdaptiveDateFormatting.mm */,
 				CFDAC22A1DFBD8740039A104 /* BlinkScheduler.cpp */,
@@ -568,6 +571,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF371DAC2D1849FF0034EB3F /* NSEventModifierFlagsHolder.mm in Sources */,
 				CF46015F256125E50095FC73 /* FontExtras.cpp in Sources */,
 				CF460160256125E50095FC73 /* StringExtras.mm in Sources */,
 				CF46014B256125E50095FC73 /* PathManip.cpp in Sources */,

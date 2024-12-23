@@ -93,15 +93,17 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
 static const auto g_CloseWindowTitle = NSLocalizedString(@"Close Window", "Menu item title");
 - (BOOL)validateMenuItem:(NSMenuItem *)item
 {
-    auto tag = item.tag;
+    const long tag = item.tag;
 
-    IF_MENU_TAG("menu.file.close")
-    {
+    static const int close_tag = nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.file.close").value();
+    if( tag == close_tag ) {
         item.title = g_CloseWindowTitle;
         return true;
     }
-    IF_MENU_TAG("menu.file.close_window")
-    {
+
+    static const int close_window_tag =
+        nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.file.close_window").value();
+    if( tag == close_window_tag ) {
         item.hidden = true;
         return true;
     }

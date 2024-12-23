@@ -627,10 +627,11 @@ static NCAppDelegate *g_Me = nil;
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item
 {
-    auto tag = item.tag;
+    static const int admin_mode_tag =
+        nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.nimble_commander.toggle_admin_mode").value();
+    const long tag = item.tag;
 
-    IF_MENU_TAG("menu.nimble_commander.toggle_admin_mode")
-    {
+    if( tag == admin_mode_tag ) {
         bool enabled = nc::routedio::RoutedIO::Instance().Enabled();
         item.title = enabled ? NSLocalizedString(@"Disable Admin Mode", "Menu item title for disabling an admin mode")
                              : NSLocalizedString(@"Enable Admin Mode", "Menu item title for enabling an admin mode");

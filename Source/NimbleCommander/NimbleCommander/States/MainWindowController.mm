@@ -429,9 +429,11 @@ static const auto g_HideToolbarTitle = NSLocalizedString(@"Hide Toolbar", "Menu 
 static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu item title");
 - (BOOL)validateMenuItem:(NSMenuItem *)item
 {
-    auto tag = item.tag;
-    IF_MENU_TAG("menu.view.show_toolbar")
-    {
+    const long tag = item.tag;
+
+    static const int show_toolbal_tag =
+        nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.view.show_toolbar").value();
+    if( tag == show_toolbal_tag ) {
         item.title = self.toolbarVisible ? g_HideToolbarTitle : g_ShowToolbarTitle;
         return self.window.toolbar != nil;
     }

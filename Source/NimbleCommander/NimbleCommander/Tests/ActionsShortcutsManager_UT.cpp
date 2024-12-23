@@ -15,8 +15,8 @@ static const auto g_EmptyConfigJSON = R"({
 
 TEST_CASE(PREFIX "TagFromAction")
 {
-    CHECK(ActionsShortcutsManager::TagFromAction("menu.edit.copy") == 12'000); // Valid query
-    CHECK(ActionsShortcutsManager::TagFromAction("menu.i.dont.exist") == -1);  // Invalid query
+    CHECK(ActionsShortcutsManager::TagFromAction("menu.edit.copy") == 12'000);          // Valid query
+    CHECK(ActionsShortcutsManager::TagFromAction("menu.i.dont.exist") == std::nullopt); // Invalid query
 }
 
 TEST_CASE(PREFIX "ActionFromTag")

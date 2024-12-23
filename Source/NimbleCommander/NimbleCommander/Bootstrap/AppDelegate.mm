@@ -301,9 +301,11 @@ static NCAppDelegate *g_Me = nil;
 - (void)wireMenuDelegates
 {
     // set up menu delegates. do this via DI to reduce links to AppDelegate in whole codebase
-    auto item_for_action = [](const char *_action) {
-        auto tag = nc::core::ActionsShortcutsManager::TagFromAction(_action);
-        return [NSApp.mainMenu itemWithTagHierarchical:tag];
+    auto item_for_action = [](const char *_action) -> NSMenuItem * {
+        const std::optional<int> tag = nc::core::ActionsShortcutsManager::TagFromAction(_action);
+        if( tag == std::nullopt )
+            return nil;
+        return [NSApp.mainMenu itemWithTagHierarchical:*tag];
     };
 
     static auto layouts_delegate = [[PanelViewLayoutsMenuDelegate alloc] initWithStorage:*self.panelLayouts];
@@ -354,7 +356,7 @@ static NCAppDelegate *g_Me = nil;
 - (void)updateMainMenuFeaturesByVersionAndState
 {
     // disable some features available in menu by configuration limitation
-    auto tag_from_lit = [](const char *s) { return nc::core::ActionsShortcutsManager::TagFromAction(s); };
+    auto tag_from_lit = [](const char *s) { return nc::core::ActionsShortcutsManager::TagFromAction(s).value_or(-1); };
     auto current_menuitem = [&](const char *s) { return [NSApp.mainMenu itemWithTagHierarchical:tag_from_lit(s)]; };
     auto hide = [&](const char *s) {
         auto item = current_menuitem(s);

@@ -454,8 +454,10 @@ ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater(std::span<const Upda
 {
     auto &am = ActionsShortcutsManager::Instance();
     m_Targets.reserve(_targets.size());
-    for( auto target : _targets )
-        m_Targets.emplace_back(target.shortcut, ActionsShortcutsManager::TagFromAction(target.action));
+    for( auto target : _targets ) {
+        if( auto tag = ActionsShortcutsManager::TagFromAction(target.action) )
+            m_Targets.emplace_back(target.shortcut, *tag);
+    }
     m_Ticket = am.ObserveChanges([this] { CheckAndUpdate(); });
 
     CheckAndUpdate();
@@ -489,10 +491,11 @@ ActionsShortcutsManager &ActionsShortcutsManager::Instance()
     return manager;
 }
 
-int ActionsShortcutsManager::TagFromAction(std::string_view _action) noexcept
+std::optional<int> ActionsShortcutsManager::TagFromAction(std::string_view _action) noexcept
 {
-    const auto it = g_ActionToTag.find(_action);
-    return it == g_ActionToTag.end() ? -1 : it->second;
+    if( const auto it = g_ActionToTag.find(_action); it != g_ActionToTag.end() )
+        return it->second;
+    return std::nullopt;
 }
 
 std::string_view ActionsShortcutsManager::ActionFromTag(int _tag) noexcept
@@ -546,10 +549,10 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
 
 ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromAction(std::string_view _action) const noexcept
 {
-    const int tag = TagFromAction(_action);
-    if( tag <= 0 )
+    const std::optional<int> tag = TagFromAction(_action);
+    if( !tag )
         return {};
-    return ShortCutFromTag(tag);
+    return ShortCutFromTag(*tag);
 }
 
 ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromTag(int _tag) const noexcept
@@ -576,15 +579,15 @@ ActionsShortcutsManager::ShortCut ActionsShortcutsManager::DefaultShortCutFromTa
 
 bool ActionsShortcutsManager::SetShortCutOverride(const std::string_view _action, const ShortCut &_sc)
 {
-    const auto tag = TagFromAction(_action);
-    if( tag <= 0 )
+    const std::optional<int> tag = TagFromAction(_action);
+    if( !tag )
         return false;
 
-    if( m_ShortCutsDefaults[tag] == _sc ) {
+    if( m_ShortCutsDefaults[*tag] == _sc ) {
         // hotkey is same as the default one
-        if( m_ShortCutsOverrides.contains(tag) ) {
+        if( m_ShortCutsOverrides.contains(*tag) ) {
             // if something was written as override - erase it
-            m_ShortCutsOverrides.erase(tag);
+            m_ShortCutsOverrides.erase(*tag);
 
             // immediately write to config file
             WriteOverridesToConfig();
@@ -594,12 +597,12 @@ bool ActionsShortcutsManager::SetShortCutOverride(const std::string_view _action
         return false;
     }
 
-    const auto current_override = m_ShortCutsOverrides.find(tag);
+    const auto current_override = m_ShortCutsOverrides.find(*tag);
     if( current_override != end(m_ShortCutsOverrides) )
         if( current_override->second == _sc )
             return false; // nothing new, it's the same as currently in overrides
 
-    m_ShortCutsOverrides[tag] = _sc;
+    m_ShortCutsOverrides[*tag] = _sc;
 
     // immediately write to config file
     WriteOverridesToConfig();

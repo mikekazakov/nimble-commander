@@ -13,6 +13,7 @@
 #include <vector>
 #include <span>
 #include <string_view>
+#include <optional>
 
 namespace nc::config {
 class Config;
@@ -34,9 +35,9 @@ public:
     static ActionsShortcutsManager &Instance();
 
     /**
-     * Returns -1 on if tag corresponing _action wasn't found.
+     * Returns a numeric tag that corresponds to the given action name.
      */
-    static int TagFromAction(std::string_view _action) noexcept;
+    static std::optional<int> TagFromAction(std::string_view _action) noexcept;
 
     /**
      * return "" on if action corresponing _tag wasn't found.
@@ -109,5 +110,5 @@ private:
 #define IF_MENU_TAG_TOKENPASTE2(x, y) IF_MENU_TAG_TOKENPASTE(x, y)
 #define IF_MENU_TAG(str)                                                                                               \
     static const int IF_MENU_TAG_TOKENPASTE2(__tag_no_, __LINE__) =                                                    \
-        nc::core::ActionsShortcutsManager::Instance().TagFromAction(str);                                              \
+        nc::core::ActionsShortcutsManager::Instance().TagFromAction(str).value_or(-1);                                 \
     if( tag == IF_MENU_TAG_TOKENPASTE2(__tag_no_, __LINE__) )

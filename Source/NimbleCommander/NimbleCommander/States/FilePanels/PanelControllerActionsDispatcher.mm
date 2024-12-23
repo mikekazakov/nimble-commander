@@ -82,7 +82,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 
     if( hk_go_home == event_hotkey ) {
         if( _handle ) {
-            static auto tag = ActionsShortcutsManager::TagFromAction("menu.go.home");
+            static int tag = ActionsShortcutsManager::TagFromAction("menu.go.home").value_or(-1);
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
@@ -90,7 +90,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 
     if( hk_go_root == event_hotkey ) {
         if( _handle ) {
-            static auto tag = ActionsShortcutsManager::TagFromAction("menu.go.root");
+            static int tag = ActionsShortcutsManager::TagFromAction("menu.go.root").value_or(-1);
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
@@ -98,7 +98,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 
     if( hk_go_into == event_hotkey ) {
         if( _handle ) {
-            static auto tag = ActionsShortcutsManager::TagFromAction("menu.go.into_folder");
+            static int tag = ActionsShortcutsManager::TagFromAction("menu.go.into_folder").value_or(-1);
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
@@ -106,7 +106,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 
     if( hk_go_outside == event_hotkey ) {
         if( _handle ) {
-            static auto tag = ActionsShortcutsManager::TagFromAction("menu.go.enclosing_folder");
+            static int tag = ActionsShortcutsManager::TagFromAction("menu.go.enclosing_folder").value_or(-1);
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;

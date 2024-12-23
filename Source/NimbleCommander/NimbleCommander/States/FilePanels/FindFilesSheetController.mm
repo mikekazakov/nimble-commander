@@ -690,9 +690,21 @@ private:
     dispatch_to_main_queue_after(10ms, [=] { [self setupReturnKey]; });
 }
 
-- (void)controlTextDidChange:(NSNotification *)obj
+- (void)controlTextDidChange:(NSNotification *)_notification
 {
-    [self onSearchSettingsUIChanged:obj.object];
+    if( nc::objc_cast<NSTextField>(_notification.object) == self.textSearchField ) {
+        // For some reason when:
+        // 1) the Enabled property of this text field is bound; AND
+        // 2) the listener of this notification does not query the string value. THEN
+        // => the value of `self.textSearchField.stringValue` is not updated upon a mouse click on the Search button
+        // and later, once the text field is disabled, the field editor discards the input completely.
+        // To work around this bug, let's query the value just for the sake of it.
+        // This situation doesn't make much sense and a proper fix with a better understanding is required.
+        // See the GitHub issue #482 for details.
+        (void)self.textSearchField.stringValue;
+    }
+
+    [self onSearchSettingsUIChanged:_notification.object];
 }
 
 - (IBAction)onSearchSettingsUIChanged:(id) [[maybe_unused]] sender

@@ -22,7 +22,7 @@ TEST_CASE(PREFIX "TagFromAction")
 TEST_CASE(PREFIX "ActionFromTag")
 {
     CHECK(ActionsShortcutsManager::ActionFromTag(12'000) == "menu.edit.copy"); // Valid query
-    CHECK(ActionsShortcutsManager::ActionFromTag(346'242).empty());            // Invalid query
+    CHECK(ActionsShortcutsManager::ActionFromTag(346'242) == std::nullopt);    // Invalid query
 }
 
 TEST_CASE(PREFIX "ShortCutFromAction")

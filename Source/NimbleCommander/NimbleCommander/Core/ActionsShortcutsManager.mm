@@ -498,10 +498,11 @@ std::optional<int> ActionsShortcutsManager::TagFromAction(std::string_view _acti
     return std::nullopt;
 }
 
-std::string_view ActionsShortcutsManager::ActionFromTag(int _tag) noexcept
+std::optional<std::string_view> ActionsShortcutsManager::ActionFromTag(int _tag) noexcept
 {
-    const auto it = g_TagToAction.find(_tag);
-    return it == g_TagToAction.end() ? "" : std::string_view{it->second.data(), it->second.size()};
+    if( const auto it = g_TagToAction.find(_tag); it != g_TagToAction.end() )
+        return std::string_view{it->second.data(), it->second.size()};
+    return std::nullopt;
 }
 
 void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const

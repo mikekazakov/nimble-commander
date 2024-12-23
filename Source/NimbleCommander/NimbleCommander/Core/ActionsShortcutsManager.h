@@ -40,9 +40,9 @@ public:
     static std::optional<int> TagFromAction(std::string_view _action) noexcept;
 
     /**
-     * return "" on if action corresponing _tag wasn't found.
+     * Returns an action name of the given numeric tag.
      */
-    static std::string_view ActionFromTag(int _tag) noexcept;
+    static std::optional<std::string_view> ActionFromTag(int _tag) noexcept;
 
     /**
      * Returns default if can't be found.

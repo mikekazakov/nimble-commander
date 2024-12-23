@@ -392,8 +392,11 @@ static NSImageView *SpawnCautionSign()
         if( auto gtm_hk = nc::objc_cast<GTMHotKeyTextFieldCell>(tf.cell).hotKey ) {
             auto tag = int(tf.tag);
             auto hk = [self shortcutFromGTMHotKey:gtm_hk];
-            auto action = nc::core::ActionsShortcutsManager::ActionFromTag(tag);
-            if( am.SetShortCutOverride(action, hk) ) {
+            const std::optional<std::string_view> action = nc::core::ActionsShortcutsManager::ActionFromTag(tag);
+            if( !action )
+                return;
+
+            if( am.SetShortCutOverride(*action, hk) ) {
                 am.SetMenuShortCuts(NSApp.mainMenu);
                 [self rebuildAll];
             }

@@ -628,7 +628,7 @@ static NCAppDelegate *g_Me = nil;
 - (BOOL)validateMenuItem:(NSMenuItem *)item
 {
     static const int admin_mode_tag =
-        nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.nimble_commander.toggle_admin_mode").value();
+        nc::core::ActionsShortcutsManager::TagFromAction("menu.nimble_commander.toggle_admin_mode").value();
     const long tag = item.tag;
 
     if( tag == admin_mode_tag ) {

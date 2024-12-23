@@ -370,7 +370,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
 - (BOOL)validateMenuItem:(NSMenuItem *)item
 {
     static const int show_terminal_tag =
-        nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.view.show_terminal").value();
+        nc::core::ActionsShortcutsManager::TagFromAction("menu.view.show_terminal").value();
     const long tag = item.tag;
     if( tag == show_terminal_tag ) {
         item.title = NSLocalizedString(@"Hide Terminal", "Menu item title for hiding terminal");

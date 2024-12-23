@@ -95,14 +95,14 @@ static const auto g_CloseWindowTitle = NSLocalizedString(@"Close Window", "Menu 
 {
     const long tag = item.tag;
 
-    static const int close_tag = nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.file.close").value();
+    static const int close_tag = nc::core::ActionsShortcutsManager::TagFromAction("menu.file.close").value();
     if( tag == close_tag ) {
         item.title = g_CloseWindowTitle;
         return true;
     }
 
     static const int close_window_tag =
-        nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.file.close_window").value();
+        nc::core::ActionsShortcutsManager::TagFromAction("menu.file.close_window").value();
     if( tag == close_window_tag ) {
         item.hidden = true;
         return true;

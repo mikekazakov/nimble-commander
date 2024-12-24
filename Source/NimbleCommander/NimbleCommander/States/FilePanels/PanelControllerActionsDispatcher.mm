@@ -49,28 +49,29 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
                 forPanelView:(PanelView *) [[maybe_unused]] _panel_view
                    andHandle:(bool)_handle
 {
-    const auto event_hotkey = nc::utility::ActionShortcut(nc::utility::ActionShortcut::EventData(_event));
+    using ASM = ActionsShortcutsManager;
+    static const int file_enter_tag = ASM::TagFromAction("menu.file.enter").value();
+    static const int file_open_tag = ASM::TagFromAction("menu.file.open").value();
+    static const int go_root_tag = ASM::TagFromAction("panel.go_root").value();
+    static const int go_home_tag = ASM::TagFromAction("panel.go_home").value();
+    static const int show_preview_tag = ASM::TagFromAction("panel.show_preview").value();
+    static const int go_into_folder_tag = ASM::TagFromAction("panel.go_into_folder").value();
+    static const int go_into_enclosing_folder_tag = ASM::TagFromAction("panel.go_into_enclosing_folder").value();
+    static const int show_context_menu_tag = ASM::TagFromAction("panel.show_context_menu").value();
 
-    static ActionsShortcutsManager::ShortCut hk_file_open;         //
-    static ActionsShortcutsManager::ShortCut hk_file_open_native;  //
-    static ActionsShortcutsManager::ShortCut hk_go_root;           //
-    static ActionsShortcutsManager::ShortCut hk_go_home;           //
-    static ActionsShortcutsManager::ShortCut hk_preview;           //
-    static ActionsShortcutsManager::ShortCut hk_go_into;           //
-    static ActionsShortcutsManager::ShortCut hk_go_outside;        //
-    static ActionsShortcutsManager::ShortCut hk_show_context_menu; //
-    [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
-        std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
-            {.shortcut = &hk_file_open, .action = "menu.file.enter"},
-            {.shortcut = &hk_file_open_native, .action = "menu.file.open"},
-            {.shortcut = &hk_go_root, .action = "panel.go_root"},
-            {.shortcut = &hk_go_home, .action = "panel.go_home"},
-            {.shortcut = &hk_preview, .action = "panel.show_preview"},
-            {.shortcut = &hk_go_into, .action = "panel.go_into_folder"},
-            {.shortcut = &hk_go_outside, .action = "panel.go_into_enclosing_folder"},
-            {.shortcut = &hk_show_context_menu, .action = "panel.show_context_menu"}});
+    const ASM::ShortCut shortcut{ASM::ShortCut::EventData(_event)};
+    const std::optional<int> event_action_tag =
+        ASM::Instance().FirstOfActionTagsFromShortCut(std::initializer_list<int>{file_enter_tag,
+                                                                                 file_open_tag,
+                                                                                 go_root_tag,
+                                                                                 go_home_tag,
+                                                                                 show_preview_tag,
+                                                                                 go_into_folder_tag,
+                                                                                 go_into_enclosing_folder_tag,
+                                                                                 show_context_menu_tag},
+                                                      shortcut);
 
-    if( hk_preview == event_hotkey ) {
+    if( event_action_tag == show_preview_tag ) {
         if( _handle ) {
             [self OnFileViewCommand:self];
             return view::BiddingPriority::High;
@@ -80,39 +81,39 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
                                                                                  : view::BiddingPriority::Skip;
     }
 
-    if( hk_go_home == event_hotkey ) {
+    if( event_action_tag == go_home_tag ) {
         if( _handle ) {
-            static int tag = ActionsShortcutsManager::TagFromAction("menu.go.home").value_or(-1);
+            static int tag = ActionsShortcutsManager::TagFromAction("menu.go.home").value();
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
     }
 
-    if( hk_go_root == event_hotkey ) {
+    if( event_action_tag == go_root_tag ) {
         if( _handle ) {
-            static int tag = ActionsShortcutsManager::TagFromAction("menu.go.root").value_or(-1);
+            static int tag = ActionsShortcutsManager::TagFromAction("menu.go.root").value();
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
     }
 
-    if( hk_go_into == event_hotkey ) {
+    if( event_action_tag == go_into_folder_tag ) {
         if( _handle ) {
-            static int tag = ActionsShortcutsManager::TagFromAction("menu.go.into_folder").value_or(-1);
+            static int tag = ActionsShortcutsManager::TagFromAction("menu.go.into_folder").value();
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
     }
 
-    if( hk_go_outside == event_hotkey ) {
+    if( event_action_tag == go_into_enclosing_folder_tag ) {
         if( _handle ) {
-            static int tag = ActionsShortcutsManager::TagFromAction("menu.go.enclosing_folder").value_or(-1);
+            static int tag = ActionsShortcutsManager::TagFromAction("menu.go.enclosing_folder").value();
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
     }
 
-    if( hk_file_open == event_hotkey ) {
+    if( event_action_tag == file_enter_tag ) {
         if( _handle ) {
             // we keep it here to avoid blinking on menu item
             [self OnOpen:nil];
@@ -120,14 +121,14 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
         return view::BiddingPriority::High;
     }
 
-    if( hk_file_open_native == event_hotkey ) {
+    if( event_action_tag == file_open_tag ) {
         if( _handle ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnOpenNatively:) withSender:self];
         }
         return view::BiddingPriority::High;
     }
 
-    if( hk_show_context_menu == event_hotkey ) {
+    if( event_action_tag == show_context_menu_tag ) {
         if( _handle ) {
             [self executeBySelectorIfValidOrBeep:@selector(onShowContextMenu:) withSender:self];
         }

@@ -133,7 +133,7 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
         }
 
         const auto menu_item = [NSApp.mainMenu itemWithTagHierarchical:v.second];
-        
+
         ActionShortcutNode shortcut;
         shortcut.tag = v;
         shortcut.label = LabelTitleForAction(v.first, menu_item);

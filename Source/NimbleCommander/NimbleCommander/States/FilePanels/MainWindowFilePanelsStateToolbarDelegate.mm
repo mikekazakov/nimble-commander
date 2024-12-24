@@ -172,14 +172,14 @@ static NSString *EncodeToolIdentifier(const ExternalTool &_et)
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_LeftPanelGoToButton;
         item.paletteLabel = item.label = NSLocalizedString(@"Left GoTo", "Toolbar palette");
-        item.toolTip = actman.ShortCutFromAction("menu.go.left_panel").PrettyString();
+        item.toolTip = actman.ShortCutFromAction("menu.go.left_panel").value().PrettyString();
         return item;
     }
     if( [itemIdentifier isEqualToString:@"filepanels_right_goto_button"] ) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_RightPanelGoToButton;
         item.paletteLabel = item.label = NSLocalizedString(@"Right GoTo", "Toolbar palette");
-        item.toolTip = actman.ShortCutFromAction("menu.go.right_panel").PrettyString();
+        item.toolTip = actman.ShortCutFromAction("menu.go.right_panel").value().PrettyString();
         return item;
     }
     if( [itemIdentifier isEqualToString:@"operations_pool"] ) {

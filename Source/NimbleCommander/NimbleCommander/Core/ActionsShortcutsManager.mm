@@ -467,7 +467,7 @@ void ActionsShortcutsManager::ShortCutsUpdater::CheckAndUpdate() const
 {
     auto &am = ActionsShortcutsManager::Instance();
     for( auto &i : m_Targets )
-        *i.first = am.ShortCutFromTag(i.second);
+        *i.first = am.ShortCutFromTag(i.second).value_or(ShortCut{});
 }
 
 ActionsShortcutsManager::ActionsShortcutsManager(nc::config::Config &_config) : m_Config(_config)
@@ -548,7 +548,7 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
         }
 }
 
-ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromAction(std::string_view _action) const noexcept
+std::optional<ActionsShortcutsManager::ShortCut> ActionsShortcutsManager::ShortCutFromAction(std::string_view _action) const noexcept
 {
     const std::optional<int> tag = TagFromAction(_action);
     if( !tag )
@@ -556,7 +556,7 @@ ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromAction(st
     return ShortCutFromTag(*tag);
 }
 
-ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromTag(int _tag) const noexcept
+std::optional<ActionsShortcutsManager::ShortCut> ActionsShortcutsManager::ShortCutFromTag(int _tag) const noexcept
 {
     auto sc_override = m_ShortCutsOverrides.find(_tag);
     if( sc_override != m_ShortCutsOverrides.end() )
@@ -569,7 +569,7 @@ ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromTag(int _
     return {};
 }
 
-ActionsShortcutsManager::ShortCut ActionsShortcutsManager::DefaultShortCutFromTag(int _tag) const noexcept
+std::optional<ActionsShortcutsManager::ShortCut> ActionsShortcutsManager::DefaultShortCutFromTag(int _tag) const noexcept
 {
     auto sc_default = m_ShortCutsDefaults.find(_tag);
     if( sc_default != m_ShortCutsDefaults.end() )

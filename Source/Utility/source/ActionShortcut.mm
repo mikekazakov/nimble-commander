@@ -12,6 +12,9 @@
 namespace nc::utility {
 
 static_assert(sizeof(ActionShortcut) == 4);
+static_assert(std::is_trivially_copyable_v<ActionShortcut>);
+static_assert(std::is_trivially_destructible_v<ActionShortcut>);
+static_assert(std::is_trivially_copy_assignable_v<ActionShortcut>);
 
 ActionShortcut::EventData::EventData(unsigned short _chmod,
                                      unsigned short _chunmod,

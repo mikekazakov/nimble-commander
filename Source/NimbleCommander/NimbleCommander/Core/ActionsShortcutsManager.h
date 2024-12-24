@@ -33,33 +33,26 @@ public:
 
     // A shared instance of a manager, it uses the GlobalConfig() as its data backend.
     static ActionsShortcutsManager &Instance();
-
-    /**
-     * Returns a numeric tag that corresponds to the given action name.
-     */
+    
+    // Returns a numeric tag that corresponds to the given action name.
     static std::optional<int> TagFromAction(std::string_view _action) noexcept;
 
-    /**
-     * Returns an action name of the given numeric tag.
-     */
+    // Returns an action name of the given numeric tag.
     static std::optional<std::string_view> ActionFromTag(int _tag) noexcept;
 
-    /**
-     * Returns default if can't be found.
-     * Overrides has priority over defaults.
-     */
-    ShortCut ShortCutFromAction(std::string_view _action) const noexcept;
+    // Returns a shortcut assigned to the specified action.
+    // Returns std::nullopt such action cannot be found.
+    // Overrides have priority over the default shortcuts.
+    std::optional<ShortCut> ShortCutFromAction(std::string_view _action) const noexcept;
 
-    /**
-     * Returns default if can't be found.
-     * Overrides has priority over defaults.
-     */
-    ShortCut ShortCutFromTag(int _tag) const noexcept;
+    // Returns a shortcut assigned to the specified numeric action tag.
+    // Returns std::nullopt such action cannot be found.
+    // Overrides have priority over the default shortcuts.
+    std::optional<ShortCut> ShortCutFromTag(int _tag) const noexcept;
 
-    /**
-     * Returns default if can't be found.
-     */
-    ShortCut DefaultShortCutFromTag(int _tag) const noexcept;
+    // Returns a default shortcut for an action specified by its numeric tag.
+    // Returns std::nullopt such action cannot be found.
+    std::optional<ShortCut> DefaultShortCutFromTag(int _tag) const noexcept;
 
     // Removes any hotkeys overrides.
     void RevertToDefaults();

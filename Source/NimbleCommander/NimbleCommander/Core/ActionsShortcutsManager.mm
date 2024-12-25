@@ -715,7 +715,9 @@ void ActionsShortcutsManager::UnregisterShortcutUsage(ShortCut _shortcut, int _t
 {
     if( auto it = m_ShortCutsUsage.find(_shortcut); it != m_ShortCutsUsage.end() ) {
         auto &tags = it->second;
-        tags.erase(std::remove(tags.begin(), tags.end(), _tag), tags.end());
+        
+        auto r = std::ranges::remove(tags, _tag);
+        tags.erase(r.begin(), r.end());
         
         if( tags.empty() ) {
             // No need to keep an empty record in the usage map
@@ -738,26 +740,6 @@ void ActionsShortcutsManager::BuildShortcutUsageMap() noexcept
                 RegisterShortcutUsage(default_shortcut, tag);
         }
     }
-}
-
-ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater(std::span<const UpdateTarget> _targets)
-{
-    auto &am = ActionsShortcutsManager::Instance();
-    m_Targets.reserve(_targets.size());
-    for( auto target : _targets ) {
-        if( auto tag = ActionsShortcutsManager::TagFromAction(target.action) )
-            m_Targets.emplace_back(target.shortcut, *tag);
-    }
-    m_Ticket = am.ObserveChanges([this] { CheckAndUpdate(); });
-
-    CheckAndUpdate();
-}
-
-void ActionsShortcutsManager::ShortCutsUpdater::CheckAndUpdate() const
-{
-    auto &am = ActionsShortcutsManager::Instance();
-    for( auto &i : m_Targets )
-        *i.first = am.ShortCutFromTag(i.second).value_or(ShortCut{});
 }
 
 } // namespace nc::core

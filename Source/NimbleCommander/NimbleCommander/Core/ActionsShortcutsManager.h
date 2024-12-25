@@ -31,9 +31,6 @@ public:
     // Normally they are tiny, thus an inline vector is used to avoid memory allocation.
     using ActionTags = absl::InlinedVector<int, 4>;
 
-    struct AutoUpdatingShortCut;
-    class ShortCutsUpdater;
-
     // Create a new shortcut manager which will use the provided config to store the overides.
     ActionsShortcutsManager(nc::config::Config &_config);
 
@@ -112,22 +109,6 @@ private:
     ankerl::unordered_dense::map<int, ShortCut> m_ShortCutsOverrides;
     ankerl::unordered_dense::map<ShortCut, TagsUsingShortCut> m_ShortCutsUsage;
     nc::config::Config &m_Config;
-};
-
-class ActionsShortcutsManager::ShortCutsUpdater
-{
-public:
-    struct UpdateTarget {
-        ShortCut *shortcut;
-        const char *action;
-    };
-
-    ShortCutsUpdater(std::span<const UpdateTarget> _targets);
-
-private:
-    void CheckAndUpdate() const;
-    std::vector<std::pair<ShortCut *, int>> m_Targets;
-    ObservationTicket m_Ticket;
 };
 
 } // namespace nc::core

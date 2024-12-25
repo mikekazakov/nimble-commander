@@ -509,7 +509,8 @@ struct StateStorage {
 
 - (void)keyDown:(NSEvent *)event
 {
-    using nc::core::ActionsShortcutsManager;
+    using ASM = nc::core::ActionsShortcutsManager;
+    using nc::utility::ActionShortcut;
 
     id<NCPanelViewKeystrokeSink> best_handler = nil;
     int best_bid = view::BiddingPriority::Skip;
@@ -535,38 +536,23 @@ struct StateStorage {
 
     [self checkKeyboardModifierFlags:event.modifierFlags];
 
-    static ActionsShortcutsManager::ShortCut hk_up;
-    static ActionsShortcutsManager::ShortCut hk_down;
-    static ActionsShortcutsManager::ShortCut hk_left;
-    static ActionsShortcutsManager::ShortCut hk_right;
-    static ActionsShortcutsManager::ShortCut hk_first;
-    static ActionsShortcutsManager::ShortCut hk_last;
-    static ActionsShortcutsManager::ShortCut hk_pgdown;
-    static ActionsShortcutsManager::ShortCut hk_pgup;
-    static ActionsShortcutsManager::ShortCut hk_inv_and_move;
-    static ActionsShortcutsManager::ShortCut hk_inv;
-    static ActionsShortcutsManager::ShortCut hk_scrdown;
-    static ActionsShortcutsManager::ShortCut hk_scrup;
-    static ActionsShortcutsManager::ShortCut hk_scrhome;
-    static ActionsShortcutsManager::ShortCut hk_scrend;
-    [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
-        std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
-            {.shortcut = &hk_up, .action = "panel.move_up"},
-            {.shortcut = &hk_down, .action = "panel.move_down"},
-            {.shortcut = &hk_left, .action = "panel.move_left"},
-            {.shortcut = &hk_right, .action = "panel.move_right"},
-            {.shortcut = &hk_first, .action = "panel.move_first"},
-            {.shortcut = &hk_last, .action = "panel.move_last"},
-            {.shortcut = &hk_pgdown, .action = "panel.move_next_page"},
-            {.shortcut = &hk_pgup, .action = "panel.move_prev_page"},
-            {.shortcut = &hk_inv_and_move, .action = "panel.move_next_and_invert_selection"},
-            {.shortcut = &hk_inv, .action = "panel.invert_item_selection"},
-            {.shortcut = &hk_scrdown, .action = "panel.scroll_next_page"},
-            {.shortcut = &hk_scrup, .action = "panel.scroll_prev_page"},
-            {.shortcut = &hk_scrhome, .action = "panel.scroll_first"},
-            {.shortcut = &hk_scrend, .action = "panel.scroll_last"}});
+    struct Tags {
+        int up = ASM::TagFromAction("panel.move_up").value();
+        int down = ASM::TagFromAction("panel.move_down").value();
+        int left = ASM::TagFromAction("panel.move_left").value();
+        int right = ASM::TagFromAction("panel.move_right").value();
+        int first = ASM::TagFromAction("panel.move_first").value();
+        int last = ASM::TagFromAction("panel.move_last").value();
+        int page_down = ASM::TagFromAction("panel.move_next_page").value();
+        int page_up = ASM::TagFromAction("panel.move_prev_page").value();
+        int invert_and_move = ASM::TagFromAction("panel.move_next_and_invert_selection").value();
+        int invert = ASM::TagFromAction("panel.invert_item_selection").value();
+        int scroll_down = ASM::TagFromAction("panel.scroll_next_page").value();
+        int scroll_up = ASM::TagFromAction("panel.scroll_prev_page").value();
+        int scroll_home = ASM::TagFromAction("panel.scroll_first").value();
+        int scroll_end = ASM::TagFromAction("panel.scroll_last").value();
+    } static const tags;
 
-    using nc::utility::ActionShortcut;
     const auto event_data = ActionShortcut::EventData(event);
     const auto event_hotkey = ActionShortcut(event_data);
     const auto event_hotkey_wo_shift =
@@ -575,33 +561,42 @@ struct StateStorage {
                                                  event_data.key_code,
                                                  event_data.modifiers & ~NSEventModifierFlagShift));
 
-    if( hk_up == event_hotkey_wo_shift )
+    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortCut(
+        std::array{
+            tags.scroll_down, tags.scroll_up, tags.scroll_home, tags.scroll_end, tags.invert_and_move, tags.invert},
+        event_hotkey);
+
+    const std::optional<int> event_action_tag_wo_shift = ASM::Instance().FirstOfActionTagsFromShortCut(
+        std::array{tags.up, tags.down, tags.left, tags.right, tags.first, tags.last, tags.page_down, tags.page_up},
+        event_hotkey_wo_shift);
+
+    if( event_action_tag_wo_shift == tags.up )
         [self HandlePrevFile];
-    else if( hk_down == event_hotkey_wo_shift )
+    else if( event_action_tag_wo_shift == tags.down )
         [self HandleNextFile];
-    else if( hk_left == event_hotkey_wo_shift )
+    else if( event_action_tag_wo_shift == tags.left )
         [self HandlePrevColumn];
-    else if( hk_right == event_hotkey_wo_shift )
+    else if( event_action_tag_wo_shift == tags.right )
         [self HandleNextColumn];
-    else if( hk_first == event_hotkey_wo_shift )
+    else if( event_action_tag_wo_shift == tags.first )
         [self HandleFirstFile];
-    else if( hk_last == event_hotkey_wo_shift )
+    else if( event_action_tag_wo_shift == tags.last )
         [self HandleLastFile];
-    else if( hk_pgdown == event_hotkey_wo_shift )
+    else if( event_action_tag_wo_shift == tags.page_down )
         [self HandleNextPage];
-    else if( hk_scrdown == event_hotkey_wo_shift )
-        [m_ItemsView onPageDown:event];
-    else if( hk_pgup == event_hotkey_wo_shift )
+    else if( event_action_tag_wo_shift == tags.page_up )
         [self HandlePrevPage];
-    else if( hk_scrup == event_hotkey )
+    else if( event_action_tag == tags.scroll_down )
+        [m_ItemsView onPageDown:event];
+    else if( event_action_tag == tags.scroll_up )
         [m_ItemsView onPageUp:event];
-    else if( hk_scrhome == event_hotkey )
+    else if( event_action_tag == tags.scroll_home )
         [m_ItemsView onScrollToBeginning:event];
-    else if( hk_scrend == event_hotkey )
+    else if( event_action_tag == tags.scroll_end )
         [m_ItemsView onScrollToEnd:event];
-    else if( hk_inv_and_move == event_hotkey )
+    else if( event_action_tag == tags.invert_and_move )
         [self onInvertCurrentItemSelectionAndMoveNext];
-    else if( hk_inv == event_hotkey )
+    else if( event_action_tag == tags.invert )
         [self onInvertCurrentItemSelection];
     else
         [super keyDown:event];

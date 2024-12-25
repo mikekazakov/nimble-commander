@@ -222,87 +222,74 @@
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
-    using nc::core::ActionsShortcutsManager;
+    using ASM = nc::core::ActionsShortcutsManager;
+    struct Tags {
+        int prev = ASM::TagFromAction("panel.show_previous_tab").value();
+        int next = ASM::TagFromAction("panel.show_next_tab").value();
+        int t1 = ASM::TagFromAction("panel.show_tab_no_1").value();
+        int t2 = ASM::TagFromAction("panel.show_tab_no_2").value();
+        int t3 = ASM::TagFromAction("panel.show_tab_no_3").value();
+        int t4 = ASM::TagFromAction("panel.show_tab_no_4").value();
+        int t5 = ASM::TagFromAction("panel.show_tab_no_5").value();
+        int t6 = ASM::TagFromAction("panel.show_tab_no_6").value();
+        int t7 = ASM::TagFromAction("panel.show_tab_no_7").value();
+        int t8 = ASM::TagFromAction("panel.show_tab_no_8").value();
+        int t9 = ASM::TagFromAction("panel.show_tab_no_9").value();
+        int t10 = ASM::TagFromAction("panel.show_tab_no_10").value();
+    } static const tags;
 
     const auto resp_view = nc::objc_cast<NSView>(self.window.firstResponder);
     if( !resp_view || ![resp_view isDescendantOf:m_TabView] )
         return [super performKeyEquivalent:_event];
 
-    const auto event_data = nc::utility::ActionShortcut::EventData(_event);
-    const auto event_hotkey = nc::utility::ActionShortcut(event_data);
+    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortCut(
+        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)}, ASM::ShortCut::EventData(_event));
 
-    static ActionsShortcutsManager::ShortCut hk_prev;
-    static ActionsShortcutsManager::ShortCut hk_next;
-    static ActionsShortcutsManager::ShortCut hk_t1;
-    static ActionsShortcutsManager::ShortCut hk_t2;
-    static ActionsShortcutsManager::ShortCut hk_t3;
-    static ActionsShortcutsManager::ShortCut hk_t4;
-    static ActionsShortcutsManager::ShortCut hk_t5;
-    static ActionsShortcutsManager::ShortCut hk_t6;
-    static ActionsShortcutsManager::ShortCut hk_t7;
-    static ActionsShortcutsManager::ShortCut hk_t8;
-    static ActionsShortcutsManager::ShortCut hk_t9;
-    static ActionsShortcutsManager::ShortCut hk_t10;
-    [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
-        std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
-            {.shortcut = &hk_prev, .action = "panel.show_previous_tab"},
-            {.shortcut = &hk_next, .action = "panel.show_next_tab"},
-            {.shortcut = &hk_t1, .action = "panel.show_tab_no_1"},
-            {.shortcut = &hk_t2, .action = "panel.show_tab_no_2"},
-            {.shortcut = &hk_t3, .action = "panel.show_tab_no_3"},
-            {.shortcut = &hk_t4, .action = "panel.show_tab_no_4"},
-            {.shortcut = &hk_t5, .action = "panel.show_tab_no_5"},
-            {.shortcut = &hk_t6, .action = "panel.show_tab_no_6"},
-            {.shortcut = &hk_t7, .action = "panel.show_tab_no_7"},
-            {.shortcut = &hk_t8, .action = "panel.show_tab_no_8"},
-            {.shortcut = &hk_t9, .action = "panel.show_tab_no_9"},
-            {.shortcut = &hk_t10, .action = "panel.show_tab_no_10"}});
-
-    if( hk_prev == event_hotkey ) {
+    if( event_action_tag == tags.prev ) {
         [self selectPreviousFilePanelTab];
         return true;
     }
-    if( hk_next == event_hotkey ) {
+    if( event_action_tag == tags.next ) {
         [self selectNextFilePanelTab];
         return true;
     }
-    if( hk_t1 == event_hotkey ) {
+    if( event_action_tag == tags.t1 ) {
         [self selectTabAtIndex:0];
         return true;
     }
-    if( hk_t2 == event_hotkey ) {
+    if( event_action_tag == tags.t2 ) {
         [self selectTabAtIndex:1];
         return true;
     }
-    if( hk_t3 == event_hotkey ) {
+    if( event_action_tag == tags.t3 ) {
         [self selectTabAtIndex:2];
         return true;
     }
-    if( hk_t4 == event_hotkey ) {
+    if( event_action_tag == tags.t4 ) {
         [self selectTabAtIndex:3];
         return true;
     }
-    if( hk_t5 == event_hotkey ) {
+    if( event_action_tag == tags.t5 ) {
         [self selectTabAtIndex:4];
         return true;
     }
-    if( hk_t6 == event_hotkey ) {
+    if( event_action_tag == tags.t6 ) {
         [self selectTabAtIndex:5];
         return true;
     }
-    if( hk_t7 == event_hotkey ) {
+    if( event_action_tag == tags.t7 ) {
         [self selectTabAtIndex:6];
         return true;
     }
-    if( hk_t8 == event_hotkey ) {
+    if( event_action_tag == tags.t8 ) {
         [self selectTabAtIndex:7];
         return true;
     }
-    if( hk_t9 == event_hotkey ) {
+    if( event_action_tag == tags.t9 ) {
         [self selectTabAtIndex:8];
         return true;
     }
-    if( hk_t10 == event_hotkey ) {
+    if( event_action_tag == tags.t10 ) {
         [self selectTabAtIndex:9];
         return true;
     }

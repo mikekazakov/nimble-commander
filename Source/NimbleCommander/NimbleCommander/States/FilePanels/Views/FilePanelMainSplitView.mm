@@ -257,23 +257,21 @@ static constexpr auto g_DividerThickness = 1.;
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
-    using nc::core::ActionsShortcutsManager;
-    const auto event_data = nc::utility::ActionShortcut::EventData(_event);
-    const auto event_hotkey = nc::utility::ActionShortcut(event_data);
+    using ASM = nc::core::ActionsShortcutsManager;
+    struct Tags {
+        int move_left = ASM::TagFromAction("menu.view.panels_position.move_left").value();
+        int move_right = ASM::TagFromAction("menu.view.panels_position.move_right").value();
+    } static const tags;
 
-    static ActionsShortcutsManager::ShortCut hk_move_left;
-    static ActionsShortcutsManager::ShortCut hk_move_right;
-    [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
-        std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
-            {.shortcut = &hk_move_left, .action = "menu.view.panels_position.move_left"},
-            {.shortcut = &hk_move_right, .action = "menu.view.panels_position.move_right"}});
+    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortCut(
+        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)}, ASM::ShortCut::EventData(_event));
 
-    if( hk_move_left == event_hotkey ) {
+    if( event_action_tag == tags.move_left ) {
         [self OnViewPanelsPositionMoveLeft:self];
         return true;
     }
 
-    if( hk_move_right == event_hotkey ) {
+    if( event_action_tag == tags.move_right ) {
         [self OnViewPanelsPositionMoveRight:self];
         return true;
     }

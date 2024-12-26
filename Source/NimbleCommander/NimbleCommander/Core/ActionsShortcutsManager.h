@@ -25,7 +25,14 @@ namespace nc::core {
 class ActionsShortcutsManager : nc::base::ObservableBase
 {
 public:
+    // Shortcut represents a key and its modifiers that have to be pressed to trigger an action.
     using ShortCut = nc::utility::ActionShortcut;
+
+    // An ordered list of shortcuts.
+    // The relative order of the shortcuts must be preserved as it has semantic meaning for e.g. menus.
+    // Empty shortcuts should not be stored in such vectors.
+    // An inlined vector is used to avoid memory allocating for such tiny memory blocks.
+    using ShortCuts = absl::InlinedVector<ShortCut, 4>;
 
     // ActionTags represents a list of numberic action tags.
     // Normally they are tiny, thus an inline vector is used to avoid memory allocation.
@@ -46,16 +53,16 @@ public:
     // Returns a shortcut assigned to the specified action.
     // Returns std::nullopt such action cannot be found.
     // Overrides have priority over the default shortcuts.
-    std::optional<ShortCut> ShortCutFromAction(std::string_view _action) const noexcept;
+    std::optional<ShortCuts> ShortCutFromAction(std::string_view _action) const noexcept;
 
     // Returns a shortcut assigned to the specified numeric action tag.
     // Returns std::nullopt such action cannot be found.
     // Overrides have priority over the default shortcuts.
-    std::optional<ShortCut> ShortCutFromTag(int _tag) const noexcept;
+    std::optional<ShortCuts> ShortCutFromTag(int _tag) const noexcept;
 
     // Returns a default shortcut for an action specified by its numeric tag.
     // Returns std::nullopt such action cannot be found.
-    std::optional<ShortCut> DefaultShortCutFromTag(int _tag) const noexcept;
+    std::optional<ShortCuts> DefaultShortCutFromTag(int _tag) const noexcept;
 
     // Returns an unordered list of numeric tags of actions that have the specified shortcut.
     // An optional domain parameter can be specified to filter the output by only leaving actions that have the
@@ -72,9 +79,16 @@ public:
     // Removes any hotkeys overrides.
     void RevertToDefaults();
 
+    // Sets the custom shortkey for the specified action.
     // Returns true if any change was done to the actions maps.
     // If the _action doesn't exist or already has the same value, returns false.
+    // This function is effectively a syntax sugar for SetShortCutsOverride(_action, {&_sc, 1}).
     bool SetShortCutOverride(std::string_view _action, ShortCut _sc);
+
+    // Sets the custom shortkeys for the specified action.
+    // Returns true if any change was done to the actions maps.
+    // If the _action doesn't exist or already has the same value, returns false.
+    bool SetShortCutsOverride(std::string_view _action, std::span<const ShortCut> _shortcuts);
 
 #ifdef __OBJC__
     void SetMenuShortCuts(NSMenu *_menu) const;
@@ -105,9 +119,19 @@ private:
     // Removes the specified actions tag from the list of action tags that use the specified shortcut.
     void UnregisterShortcutUsage(ShortCut _shortcut, int _tag) noexcept;
 
-    ankerl::unordered_dense::map<int, ShortCut> m_ShortCutsDefaults;
-    ankerl::unordered_dense::map<int, ShortCut> m_ShortCutsOverrides;
+    // Returns a container without empty shortcuts, while preserving the original relative order of the remaining items.
+    static ShortCuts WithoutEmptyShortCuts(const ShortCuts &_shortcuts) noexcept;
+
+    // Maps an action tag to the default ordered list of its shortcuts.
+    ankerl::unordered_dense::map<int, ShortCuts> m_ShortCutsDefaults;
+
+    // Maps an action tag to the overriden ordered list of its shortcuts.
+    ankerl::unordered_dense::map<int, ShortCuts> m_ShortCutsOverrides;
+
+    // Maps a shortcut to an unordered list of action tags that use it.
     ankerl::unordered_dense::map<ShortCut, TagsUsingShortCut> m_ShortCutsUsage;
+
+    // Config instance used to read from and write to the shortcut overrides.
     nc::config::Config &m_Config;
 };
 

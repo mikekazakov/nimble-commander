@@ -460,9 +460,9 @@ ActionsShortcutsManager::ActionsShortcutsManager(nc::config::Config &_config) : 
                .size() == std::size(g_ActionsTags));
 
     // Set up the shortcut defaults from the hardcoded map
-    for( auto [action, shortcut] : g_DefaultShortcuts ) {
-        if( auto i = g_ActionToTag.find(std::string_view{action}); i != g_ActionToTag.end() ) {
-            m_ShortCutsDefaults[i->second] = ShortCut{shortcut};
+    for( auto [action, shortcut_string] : g_DefaultShortcuts ) {
+        if( auto it = g_ActionToTag.find(std::string_view{action}); it != g_ActionToTag.end() ) {
+            m_ShortCutsDefaults[it->second] = WithoutEmptyShortCuts(ShortCuts{ShortCut{shortcut_string}});
         }
     }
 
@@ -499,22 +499,21 @@ void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
     for( NSMenuItem *i : array ) {
         if( i.submenu != nil ) {
             SetMenuShortCuts(i.submenu);
+            continue;
         }
-        else {
-            const int tag = static_cast<int>(i.tag);
-            auto scover = m_ShortCutsOverrides.find(tag);
-            if( scover != m_ShortCutsOverrides.end() ) {
-                [i nc_setKeyEquivalentWithShortcut:scover->second];
-            }
-            else {
-                auto sc = m_ShortCutsDefaults.find(tag);
-                if( sc != m_ShortCutsDefaults.end() ) {
-                    [i nc_setKeyEquivalentWithShortcut:sc->second];
-                }
-                else if( g_TagToAction.find(tag) != g_TagToAction.end() ) {
-                    [i nc_setKeyEquivalentWithShortcut:nc::utility::ActionShortcut{}];
-                }
-            }
+
+        const int tag = static_cast<int>(i.tag);
+        if( auto shortcut_override = m_ShortCutsOverrides.find(tag); shortcut_override != m_ShortCutsOverrides.end() ) {
+            const auto &shortcuts = shortcut_override->second;
+            [i nc_setKeyEquivalentWithShortcut:shortcuts.empty() ? ShortCut{} : shortcuts.front()];
+        }
+        else if( auto shortcut_defaults = m_ShortCutsDefaults.find(tag);
+                 shortcut_defaults != m_ShortCutsDefaults.end() ) {
+            const auto &shortcuts = shortcut_defaults->second;
+            [i nc_setKeyEquivalentWithShortcut:shortcuts.empty() ? ShortCut{} : shortcuts.front()];
+        }
+        else if( g_TagToAction.contains(tag) ) {
+            [i nc_setKeyEquivalentWithShortcut:ShortCut{}];
         }
     }
 }
@@ -528,15 +527,18 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
         return;
 
     m_ShortCutsOverrides.clear();
-    for( auto i = v.MemberBegin(), e = v.MemberEnd(); i != e; ++i )
+    for( auto i = v.MemberBegin(), e = v.MemberEnd(); i != e; ++i ) {
         if( i->name.GetType() == kStringType && i->value.GetType() == kStringType ) {
             auto att = g_ActionToTag.find(std::string_view{i->name.GetString()});
-            if( att != g_ActionToTag.end() )
-                m_ShortCutsOverrides[att->second] = nc::utility::ActionShortcut{i->value.GetString()};
+            if( att != g_ActionToTag.end() ) {
+                m_ShortCutsOverrides[att->second] = WithoutEmptyShortCuts(ShortCuts{ShortCut{i->value.GetString()}});
+            }
         }
+        // TODO: support for array values when multiple shortcuts are stored
+    }
 }
 
-std::optional<ActionsShortcutsManager::ShortCut>
+std::optional<ActionsShortcutsManager::ShortCuts>
 ActionsShortcutsManager::ShortCutFromAction(std::string_view _action) const noexcept
 {
     const std::optional<int> tag = TagFromAction(_action);
@@ -545,26 +547,25 @@ ActionsShortcutsManager::ShortCutFromAction(std::string_view _action) const noex
     return ShortCutFromTag(*tag);
 }
 
-std::optional<ActionsShortcutsManager::ShortCut> ActionsShortcutsManager::ShortCutFromTag(int _tag) const noexcept
+std::optional<ActionsShortcutsManager::ShortCuts> ActionsShortcutsManager::ShortCutFromTag(int _tag) const noexcept
 {
-    auto sc_override = m_ShortCutsOverrides.find(_tag);
-    if( sc_override != m_ShortCutsOverrides.end() )
+    if( auto sc_override = m_ShortCutsOverrides.find(_tag); sc_override != m_ShortCutsOverrides.end() ) {
         return sc_override->second;
+    }
 
-    auto sc_default = m_ShortCutsDefaults.find(_tag);
-    if( sc_default != m_ShortCutsDefaults.end() )
+    if( auto sc_default = m_ShortCutsDefaults.find(_tag); sc_default != m_ShortCutsDefaults.end() ) {
         return sc_default->second;
+    }
 
     return {};
 }
 
-std::optional<ActionsShortcutsManager::ShortCut>
+std::optional<ActionsShortcutsManager::ShortCuts>
 ActionsShortcutsManager::DefaultShortCutFromTag(int _tag) const noexcept
 {
-    auto sc_default = m_ShortCutsDefaults.find(_tag);
-    if( sc_default != m_ShortCutsDefaults.end() )
+    if( auto sc_default = m_ShortCutsDefaults.find(_tag); sc_default != m_ShortCutsDefaults.end() ) {
         return sc_default->second;
-
+    }
     return {};
 }
 
@@ -606,6 +607,11 @@ ActionsShortcutsManager::FirstOfActionTagsFromShortCut(std::span<const int> _of_
 
 bool ActionsShortcutsManager::SetShortCutOverride(const std::string_view _action, const ShortCut _sc)
 {
+    return SetShortCutsOverride(_action, std::span<const ShortCut>{&_sc, 1});
+}
+
+bool ActionsShortcutsManager::SetShortCutsOverride(std::string_view _action, std::span<const ShortCut> _shortcuts)
+{
     const std::optional<int> tag = TagFromAction(_action);
     if( !tag )
         return false;
@@ -614,9 +620,10 @@ bool ActionsShortcutsManager::SetShortCutOverride(const std::string_view _action
     if( default_it == m_ShortCutsDefaults.end() )
         return false; // this should never happen
 
-    const auto override_it = m_ShortCutsOverrides.find(*tag);
+    const ShortCuts new_shortcuts = WithoutEmptyShortCuts(ShortCuts(_shortcuts.begin(), _shortcuts.end()));
 
-    if( default_it->second == _sc ) {
+    const auto override_it = m_ShortCutsOverrides.find(*tag);
+    if( std::ranges::equal(default_it->second, new_shortcuts) ) {
         // The shortcut is same as the default one for this action
 
         if( override_it == m_ShortCutsOverrides.end() ) {
@@ -624,13 +631,13 @@ bool ActionsShortcutsManager::SetShortCutOverride(const std::string_view _action
             return false;
         }
 
-        // Unregister the usage of the override shortcut
-        UnregisterShortcutUsage(override_it->second, *tag);
+        // Unregister the usage of the override shortcuts
+        for( const ShortCut &shortcut : override_it->second )
+            UnregisterShortcutUsage(shortcut, *tag);
 
-        // Register the usage of the default shortcut if it's defined
-        if( default_it->second ) {
-            RegisterShortcutUsage(default_it->second, *tag);
-        }
+        // Register the usage of the default shortcuts
+        for( const ShortCut &shortcut : default_it->second )
+            RegisterShortcutUsage(shortcut, *tag);
 
         // Remove the override
         m_ShortCutsOverrides.erase(*tag);
@@ -638,22 +645,22 @@ bool ActionsShortcutsManager::SetShortCutOverride(const std::string_view _action
     else {
         // The shortcut is not the same as the default for this action
 
-        if( override_it != m_ShortCutsOverrides.end() && override_it->second == _sc ) {
+        if( override_it != m_ShortCutsOverrides.end() && override_it->second == new_shortcuts ) {
             return false; // Nothing new, it's the same as currently defined in the overrides
         }
 
         if( override_it != m_ShortCutsOverrides.end() ) {
-            // Unregister the usage of the override shortcut
-            UnregisterShortcutUsage(override_it->second, *tag);
+            // Unregister the usage of the override shortcuts
+            for( const ShortCut &shortcut : override_it->second )
+                UnregisterShortcutUsage(shortcut, *tag);
         }
 
-        if( _sc ) {
-            // Register the usage of the new override if it's defined
-            RegisterShortcutUsage(_sc, *tag);
-        }
+        // Register the usage of the new override shortcuts
+        for( const ShortCut &shortcut : new_shortcuts )
+            RegisterShortcutUsage(shortcut, *tag);
 
         // Set the override
-        m_ShortCutsOverrides[*tag] = _sc;
+        m_ShortCutsOverrides[*tag] = new_shortcuts;
     }
 
     // immediately write to config file
@@ -674,12 +681,15 @@ void ActionsShortcutsManager::WriteOverridesToConfig() const
     using namespace rapidjson;
     nc::config::Value overrides{kObjectType};
 
+    // TODO: add support for storing multiple shortcuts
     for( auto &i : g_ActionsTags ) {
         auto scover = m_ShortCutsOverrides.find(i.second);
-        if( scover != end(m_ShortCutsOverrides) )
+        if( scover != m_ShortCutsOverrides.end() ) {
+            const std::string shortcut = scover->second.empty() ? std::string{} : scover->second.front().ToPersString();
             overrides.AddMember(nc::config::MakeStandaloneString(i.first),
-                                nc::config::MakeStandaloneString(scover->second.ToPersString()),
+                                nc::config::MakeStandaloneString(shortcut),
                                 nc::config::g_CrtAllocator);
+        }
     }
 
     m_Config.Set(g_OverridesConfigPath, overrides);
@@ -732,16 +742,28 @@ void ActionsShortcutsManager::BuildShortcutUsageMap() noexcept
 {
     m_ShortCutsUsage.clear(); // build the map means starting from scratch
 
-    for( const auto [tag, default_shortcut] : m_ShortCutsDefaults ) {
+    for( const auto [tag, default_shortcuts] : m_ShortCutsDefaults ) {
         if( const auto it = m_ShortCutsOverrides.find(tag); it != m_ShortCutsOverrides.end() ) {
-            if( it->second )
-                RegisterShortcutUsage(it->second, tag);
+            for( const ShortCut &shortcut : it->second ) {
+                if( shortcut )
+                    RegisterShortcutUsage(shortcut, tag);
+            }
         }
         else {
-            if( default_shortcut )
-                RegisterShortcutUsage(default_shortcut, tag);
+            for( const ShortCut &shortcut : default_shortcuts ) {
+                if( shortcut )
+                    RegisterShortcutUsage(shortcut, tag);
+            }
         }
     }
+}
+
+ActionsShortcutsManager::ShortCuts ActionsShortcutsManager::WithoutEmptyShortCuts(const ShortCuts &_shortcuts) noexcept
+{
+    ShortCuts shortcuts = _shortcuts;
+    auto to_erase = std::ranges::remove_if(shortcuts, [](const ShortCut &_sc) { return _sc == ShortCut{}; });
+    shortcuts.erase(to_erase.begin(), to_erase.end());
+    return shortcuts;
 }
 
 } // namespace nc::core

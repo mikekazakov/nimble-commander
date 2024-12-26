@@ -581,7 +581,9 @@ ActionsShortcutsManager::ActionTagsFromShortCut(const ShortCut _sc, const std::s
         auto not_in_domain = [&](const int tag) {
             return !ActionFromTag(tag).value_or(std::string_view{}).starts_with(_in_domain);
         };
-        tags.erase(std::remove_if(tags.begin(), tags.end(), not_in_domain), tags.end());
+
+        auto to_erase = std::ranges::remove_if(tags, not_in_domain);
+        tags.erase(to_erase.begin(), to_erase.end());
     }
 
     if( tags.empty() )
@@ -715,10 +717,10 @@ void ActionsShortcutsManager::UnregisterShortcutUsage(ShortCut _shortcut, int _t
 {
     if( auto it = m_ShortCutsUsage.find(_shortcut); it != m_ShortCutsUsage.end() ) {
         auto &tags = it->second;
-        
-        auto r = std::ranges::remove(tags, _tag);
-        tags.erase(r.begin(), r.end());
-        
+
+        auto to_erase = std::ranges::remove(tags, _tag);
+        tags.erase(to_erase.begin(), to_erase.end());
+
         if( tags.empty() ) {
             // No need to keep an empty record in the usage map
             m_ShortCutsUsage.erase(it);

@@ -87,7 +87,7 @@ public:
 
 private:
     // An unordered list of numeric tags indicating which actions are using a shortcut.
-    // An inlined vector is used to avoid memory allocating for such tiny memory blocks
+    // An inlined vector is used to avoid memory allocating for such tiny memory blocks.
     using TagsUsingShortCut = absl::InlinedVector<int, 4>;
 
     ActionsShortcutsManager(const ActionsShortcutsManager &) = delete;

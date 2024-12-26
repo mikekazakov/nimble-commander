@@ -27,8 +27,8 @@ namespace {
 
 struct ActionShortcutNode {
     std::pair<std::string, int> tag;
-    nc::core::ActionsShortcutsManager::ShortCuts current_shortcuts;
-    nc::core::ActionsShortcutsManager::ShortCuts default_shortcuts;
+    nc::core::ActionsShortcutsManager::Shortcuts current_shortcuts;
+    nc::core::ActionsShortcutsManager::Shortcuts default_shortcuts;
     NSString *label = @"";
     bool is_menu_action = false;
     bool has_submenu = false;
@@ -141,8 +141,8 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
         ActionShortcutNode shortcut;
         shortcut.tag = v;
         shortcut.label = LabelTitleForAction(v.first, menu_item);
-        shortcut.current_shortcuts = sm.ShortCutFromTag(v.second).value();
-        shortcut.default_shortcuts = sm.DefaultShortCutFromTag(v.second).value();
+        shortcut.current_shortcuts = sm.ShortcutFromTag(v.second).value();
+        shortcut.default_shortcuts = sm.DefaultShortcutFromTag(v.second).value();
         shortcut.is_menu_action = v.first.find_first_of("menu.") == 0;
         shortcut.is_customized = shortcut.current_shortcuts != shortcut.default_shortcuts;
         shortcut.has_submenu = menu_item != nil && menu_item.hasSubmenu;
@@ -307,7 +307,7 @@ static NSImageView *SpawnCautionSign()
     viewForTableColumn:(NSTableColumn *)_table_column
                    row:(NSInteger)_row
 {
-    auto first_or_empty = [](const ActionsShortcutsManager::ShortCuts &_shortcuts) -> ActionShortcut {
+    auto first_or_empty = [](const ActionsShortcutsManager::Shortcuts &_shortcuts) -> ActionShortcut {
         return _shortcuts.empty() ? ActionShortcut{} : _shortcuts.front();
     };
 
@@ -376,7 +376,7 @@ static NSImageView *SpawnCautionSign()
 - (nc::utility::ActionShortcut)shortcutFromGTMHotKey:(GTMHotKey *)_key
 {
     const auto key = _key.key.length > 0 ? [_key.key characterAtIndex:0] : static_cast<uint16_t>(0);
-    const auto hk = nc::core::ActionsShortcutsManager::ShortCut(key, _key.modifiers);
+    const auto hk = nc::core::ActionsShortcutsManager::Shortcut(key, _key.modifiers);
     return hk;
 }
 
@@ -409,8 +409,8 @@ static NSImageView *SpawnCautionSign()
             if( !action )
                 return;
 
-            if( am.SetShortCutOverride(*action, hk) ) {
-                am.SetMenuShortCuts(NSApp.mainMenu);
+            if( am.SetShortcutOverride(*action, hk) ) {
+                am.SetMenuShortcuts(NSApp.mainMenu);
                 [self rebuildAll];
             }
         }
@@ -431,7 +431,7 @@ static NSImageView *SpawnCautionSign()
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
     if( [alert runModal] == NSAlertFirstButtonReturn ) {
         nc::core::ActionsShortcutsManager::Instance().RevertToDefaults();
-        nc::core::ActionsShortcutsManager::Instance().SetMenuShortCuts(NSApp.mainMenu);
+        nc::core::ActionsShortcutsManager::Instance().SetMenuShortcuts(NSApp.mainMenu);
         [self rebuildAll];
     }
 }

@@ -263,8 +263,8 @@ static constexpr auto g_DividerThickness = 1.;
         int move_right = ASM::TagFromAction("menu.view.panels_position.move_right").value();
     } static const tags;
 
-    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortCut(
-        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)}, ASM::ShortCut::EventData(_event));
+    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortcut(
+        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)}, ASM::Shortcut::EventData(_event));
 
     if( event_action_tag == tags.move_left ) {
         [self OnViewPanelsPositionMoveLeft:self];

@@ -6,8 +6,8 @@
 
 using Catch::Matchers::UnorderedEquals;
 using ASM = nc::core::ActionsShortcutsManager;
-using AS = ASM::ShortCut;
-using ASs = ASM::ShortCuts;
+using AS = ASM::Shortcut;
+using ASs = ASM::Shortcuts;
 
 #define PREFIX "nc::core::ActionsShortcutsManager "
 
@@ -34,31 +34,31 @@ TEST_CASE(PREFIX "ShortCutFromAction")
 
     SECTION("Non-existent")
     {
-        REQUIRE(manager.ShortCutFromAction("menu.i.dont.exist") == std::nullopt);
+        REQUIRE(manager.ShortcutFromAction("menu.i.dont.exist") == std::nullopt);
     }
     SECTION("Default value")
     {
-        REQUIRE(manager.ShortCutFromAction("menu.edit.copy") == ASs{AS("⌘c")});
+        REQUIRE(manager.ShortcutFromAction("menu.edit.copy") == ASs{AS("⌘c")});
     }
     SECTION("Override with a single shortcut")
     {
-        REQUIRE(manager.SetShortCutOverride("menu.edit.copy", AS("⌘j")));
-        REQUIRE(manager.ShortCutFromAction("menu.edit.copy") == ASs{AS("⌘j")});
+        REQUIRE(manager.SetShortcutOverride("menu.edit.copy", AS("⌘j")));
+        REQUIRE(manager.ShortcutFromAction("menu.edit.copy") == ASs{AS("⌘j")});
     }
     SECTION("Override with an empty shortcut")
     {
-        REQUIRE(manager.SetShortCutOverride("menu.edit.copy", AS()));
-        REQUIRE(manager.ShortCutFromAction("menu.edit.copy") == ASs{});
+        REQUIRE(manager.SetShortcutOverride("menu.edit.copy", AS()));
+        REQUIRE(manager.ShortcutFromAction("menu.edit.copy") == ASs{});
     }
     SECTION("Override with two shortcuts")
     {
-        REQUIRE(manager.SetShortCutsOverride("menu.edit.copy", std::array{AS("⌘j"), AS("⌘k")}));
-        REQUIRE(manager.ShortCutFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
+        REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS("⌘j"), AS("⌘k")}));
+        REQUIRE(manager.ShortcutFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
     }
     SECTION("Override with two shortcuts and some empty bogus ones")
     {
-        REQUIRE(manager.SetShortCutsOverride("menu.edit.copy", std::array{AS(), AS("⌘j"), AS(), AS("⌘k"), AS()}));
-        REQUIRE(manager.ShortCutFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
+        REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS(), AS("⌘j"), AS(), AS("⌘k"), AS()}));
+        REQUIRE(manager.ShortcutFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
     }
 }
 
@@ -67,10 +67,10 @@ TEST_CASE(PREFIX "ShortCutFromTag")
     nc::config::ConfigImpl config{g_EmptyConfigJSON, std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
     ASM manager{config};
 
-    REQUIRE(manager.ShortCutFromTag(346'242) == std::nullopt);
-    REQUIRE(manager.ShortCutFromTag(12'000) == ASs{AS("⌘c")});
-    REQUIRE(manager.SetShortCutOverride("menu.edit.copy", AS("⌘j")));
-    REQUIRE(manager.ShortCutFromTag(12'000) == ASs{AS("⌘j")});
+    REQUIRE(manager.ShortcutFromTag(346'242) == std::nullopt);
+    REQUIRE(manager.ShortcutFromTag(12'000) == ASs{AS("⌘c")});
+    REQUIRE(manager.SetShortcutOverride("menu.edit.copy", AS("⌘j")));
+    REQUIRE(manager.ShortcutFromTag(12'000) == ASs{AS("⌘j")});
 }
 
 TEST_CASE(PREFIX "DefaultShortCutFromTag")
@@ -78,10 +78,10 @@ TEST_CASE(PREFIX "DefaultShortCutFromTag")
     nc::config::ConfigImpl config{g_EmptyConfigJSON, std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
     ASM manager{config};
 
-    REQUIRE(manager.DefaultShortCutFromTag(346'242) == std::nullopt);
-    REQUIRE(manager.DefaultShortCutFromTag(12'000) == ASs{AS("⌘c")});
-    REQUIRE(manager.SetShortCutOverride("menu.edit.copy", AS("⌘j")));
-    REQUIRE(manager.DefaultShortCutFromTag(12'000) == ASs{AS("⌘c")});
+    REQUIRE(manager.DefaultShortcutFromTag(346'242) == std::nullopt);
+    REQUIRE(manager.DefaultShortcutFromTag(12'000) == ASs{AS("⌘c")});
+    REQUIRE(manager.SetShortcutOverride("menu.edit.copy", AS("⌘j")));
+    REQUIRE(manager.DefaultShortcutFromTag(12'000) == ASs{AS("⌘c")});
 }
 
 TEST_CASE(PREFIX "RevertToDefaults")
@@ -89,9 +89,9 @@ TEST_CASE(PREFIX "RevertToDefaults")
     nc::config::ConfigImpl config{g_EmptyConfigJSON, std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
     ASM manager{config};
 
-    REQUIRE(manager.SetShortCutOverride("menu.edit.copy", AS("⌘j")));
+    REQUIRE(manager.SetShortcutOverride("menu.edit.copy", AS("⌘j")));
     manager.RevertToDefaults();
-    REQUIRE(manager.ShortCutFromAction("menu.edit.copy") == ASs{AS("⌘c")});
+    REQUIRE(manager.ShortcutFromAction("menu.edit.copy") == ASs{AS("⌘c")});
 }
 
 TEST_CASE(PREFIX "ActionTagsFromShortCut")
@@ -101,19 +101,19 @@ TEST_CASE(PREFIX "ActionTagsFromShortCut")
 
     SECTION("Non-existent shortcut")
     {
-        REQUIRE(manager.ActionTagsFromShortCut(AS("⇧^⌘⌥j")) == std::nullopt);
+        REQUIRE(manager.ActionTagsFromShortcut(AS("⇧^⌘⌥j")) == std::nullopt);
     }
     SECTION("Non-existent shortcut when a domain is specified")
     {
-        REQUIRE(manager.ActionTagsFromShortCut(AS("⇧^⌘⌥j"), "this.domain.doesnt.exist.") == std::nullopt);
+        REQUIRE(manager.ActionTagsFromShortcut(AS("⇧^⌘⌥j"), "this.domain.doesnt.exist.") == std::nullopt);
     }
     SECTION("Existent shortcut, but a domain doesn't match")
     {
-        REQUIRE(manager.ActionTagsFromShortCut(AS("⌘1"), "this.domain.doesnt.exist.") == std::nullopt);
+        REQUIRE(manager.ActionTagsFromShortcut(AS("⌘1"), "this.domain.doesnt.exist.") == std::nullopt);
     }
     SECTION("Shortcut used by two actions in different domains")
     {
-        auto tags = manager.ActionTagsFromShortCut(AS("⌘1"));
+        auto tags = manager.ActionTagsFromShortcut(AS("⌘1"));
         REQUIRE(tags);
         REQUIRE(std::set<int>(tags->begin(), tags->end()) ==
                 std::set<int>{ASM::TagFromAction("menu.go.quick_lists.parent_folders").value(),
@@ -121,18 +121,18 @@ TEST_CASE(PREFIX "ActionTagsFromShortCut")
     }
     SECTION("Shortcut used by two actions in different domains, specify first")
     {
-        REQUIRE(manager.ActionTagsFromShortCut(AS("⌘1"), "menu.") ==
+        REQUIRE(manager.ActionTagsFromShortcut(AS("⌘1"), "menu.") ==
                 ASM::ActionTags{ASM::TagFromAction("menu.go.quick_lists.parent_folders").value()});
     }
     SECTION("Shortcut used by two actions in different domains, specify second")
     {
-        REQUIRE(manager.ActionTagsFromShortCut(AS("⌘1"), "viewer.") ==
+        REQUIRE(manager.ActionTagsFromShortcut(AS("⌘1"), "viewer.") ==
                 ASM::ActionTags{ASM::TagFromAction("viewer.toggle_text").value()});
     }
     SECTION("Shortcut is used by by two actions by default and one via override")
     {
-        REQUIRE(manager.SetShortCutOverride("menu.window.zoom", AS("⌘1")));
-        auto tags = manager.ActionTagsFromShortCut(AS("⌘1"));
+        REQUIRE(manager.SetShortcutOverride("menu.window.zoom", AS("⌘1")));
+        auto tags = manager.ActionTagsFromShortcut(AS("⌘1"));
         REQUIRE(tags);
         REQUIRE(std::set<int>(tags->begin(), tags->end()) ==
                 std::set<int>{
@@ -143,8 +143,8 @@ TEST_CASE(PREFIX "ActionTagsFromShortCut")
     }
     SECTION("Shortcut is used by by two actions by default and one via override (multiple shortcuts)")
     {
-        REQUIRE(manager.SetShortCutsOverride("menu.window.zoom", std::array{AS("⇧^⌘⌥j"), AS("⌘1")}));
-        auto tags = manager.ActionTagsFromShortCut(AS("⌘1"));
+        REQUIRE(manager.SetShortcutsOverride("menu.window.zoom", std::array{AS("⇧^⌘⌥j"), AS("⌘1")}));
+        auto tags = manager.ActionTagsFromShortcut(AS("⌘1"));
         REQUIRE(tags);
         REQUIRE(std::set<int>(tags->begin(), tags->end()) ==
                 std::set<int>{
@@ -155,10 +155,10 @@ TEST_CASE(PREFIX "ActionTagsFromShortCut")
     }
     SECTION("After setting and removing the override its not reported as being used")
     {
-        REQUIRE(manager.SetShortCutsOverride("menu.window.zoom", std::array{AS("⇧^⌘⌥k"), AS("⇧^⌘⌥j")}));
-        REQUIRE(manager.SetShortCutsOverride("menu.window.zoom", {}));
-        REQUIRE(manager.ActionTagsFromShortCut(AS("⇧^⌘⌥k")) == std::nullopt);
-        REQUIRE(manager.ActionTagsFromShortCut(AS("⇧^⌘⌥j")) == std::nullopt);
+        REQUIRE(manager.SetShortcutsOverride("menu.window.zoom", std::array{AS("⇧^⌘⌥k"), AS("⇧^⌘⌥j")}));
+        REQUIRE(manager.SetShortcutsOverride("menu.window.zoom", {}));
+        REQUIRE(manager.ActionTagsFromShortcut(AS("⇧^⌘⌥k")) == std::nullopt);
+        REQUIRE(manager.ActionTagsFromShortcut(AS("⇧^⌘⌥j")) == std::nullopt);
     }
 }
 
@@ -166,29 +166,29 @@ TEST_CASE(PREFIX "FirstOfActionTagsFromShortCut")
 {
     nc::config::ConfigImpl config{g_EmptyConfigJSON, std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
     ASM manager{config};
-    REQUIRE(manager.FirstOfActionTagsFromShortCut({}, AS("⌘1")) == std::nullopt);
-    REQUIRE(manager.FirstOfActionTagsFromShortCut(std::initializer_list<int>{346'242}, AS("⌘1")) == std::nullopt);
-    REQUIRE(manager.FirstOfActionTagsFromShortCut(
+    REQUIRE(manager.FirstOfActionTagsFromShortcut({}, AS("⌘1")) == std::nullopt);
+    REQUIRE(manager.FirstOfActionTagsFromShortcut(std::initializer_list<int>{346'242}, AS("⌘1")) == std::nullopt);
+    REQUIRE(manager.FirstOfActionTagsFromShortcut(
                 std::initializer_list<int>{ASM::TagFromAction("menu.go.quick_lists.parent_folders").value()},
                 AS("⌘1")) == ASM::TagFromAction("menu.go.quick_lists.parent_folders").value());
-    REQUIRE(manager.FirstOfActionTagsFromShortCut(
+    REQUIRE(manager.FirstOfActionTagsFromShortcut(
                 std::initializer_list<int>{ASM::TagFromAction("menu.go.quick_lists.parent_folders").value()},
                 AS("⌘1"),
                 "menu.") == ASM::TagFromAction("menu.go.quick_lists.parent_folders").value());
 
-    REQUIRE(manager.FirstOfActionTagsFromShortCut(
+    REQUIRE(manager.FirstOfActionTagsFromShortcut(
                 std::initializer_list<int>{ASM::TagFromAction("menu.go.quick_lists.parent_folders").value()},
                 AS("⌘1"),
                 "viewer.") == std::nullopt);
 
-    REQUIRE(manager.FirstOfActionTagsFromShortCut(
+    REQUIRE(manager.FirstOfActionTagsFromShortcut(
                 std::initializer_list<int>{ASM::TagFromAction("viewer.toggle_text").value()}, AS("⌘1")) ==
             ASM::TagFromAction("viewer.toggle_text").value());
 
-    REQUIRE(manager.FirstOfActionTagsFromShortCut(
+    REQUIRE(manager.FirstOfActionTagsFromShortcut(
                 std::initializer_list<int>{ASM::TagFromAction("viewer.toggle_text").value()}, AS("⌘1"), "menu.") ==
             std::nullopt);
-    REQUIRE(manager.FirstOfActionTagsFromShortCut(
+    REQUIRE(manager.FirstOfActionTagsFromShortcut(
                 std::initializer_list<int>{ASM::TagFromAction("viewer.toggle_text").value()}, AS("⌘1"), "viewer.") ==
             ASM::TagFromAction("viewer.toggle_text").value());
 }

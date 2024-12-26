@@ -242,8 +242,8 @@
     if( !resp_view || ![resp_view isDescendantOf:m_TabView] )
         return [super performKeyEquivalent:_event];
 
-    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortCut(
-        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)}, ASM::ShortCut::EventData(_event));
+    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortcut(
+        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)}, ASM::Shortcut::EventData(_event));
 
     if( event_action_tag == tags.prev ) {
         [self selectPreviousFilePanelTab];

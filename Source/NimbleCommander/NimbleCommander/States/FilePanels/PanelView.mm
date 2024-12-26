@@ -561,12 +561,12 @@ struct StateStorage {
                                                  event_data.key_code,
                                                  event_data.modifiers & ~NSEventModifierFlagShift));
 
-    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortCut(
+    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortcut(
         std::array{
             tags.scroll_down, tags.scroll_up, tags.scroll_home, tags.scroll_end, tags.invert_and_move, tags.invert},
         event_hotkey);
 
-    const std::optional<int> event_action_tag_wo_shift = ASM::Instance().FirstOfActionTagsFromShortCut(
+    const std::optional<int> event_action_tag_wo_shift = ASM::Instance().FirstOfActionTagsFromShortcut(
         std::array{tags.up, tags.down, tags.left, tags.right, tags.first, tags.last, tags.page_down, tags.page_up},
         event_hotkey_wo_shift);
 

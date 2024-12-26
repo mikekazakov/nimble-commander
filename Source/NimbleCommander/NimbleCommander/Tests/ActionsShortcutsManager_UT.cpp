@@ -34,31 +34,31 @@ TEST_CASE(PREFIX "ShortCutFromAction")
 
     SECTION("Non-existent")
     {
-        REQUIRE(manager.ShortcutFromAction("menu.i.dont.exist") == std::nullopt);
+        REQUIRE(manager.ShortcutsFromAction("menu.i.dont.exist") == std::nullopt);
     }
     SECTION("Default value")
     {
-        REQUIRE(manager.ShortcutFromAction("menu.edit.copy") == ASs{AS("⌘c")});
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘c")});
     }
     SECTION("Override with a single shortcut")
     {
         REQUIRE(manager.SetShortcutOverride("menu.edit.copy", AS("⌘j")));
-        REQUIRE(manager.ShortcutFromAction("menu.edit.copy") == ASs{AS("⌘j")});
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j")});
     }
     SECTION("Override with an empty shortcut")
     {
         REQUIRE(manager.SetShortcutOverride("menu.edit.copy", AS()));
-        REQUIRE(manager.ShortcutFromAction("menu.edit.copy") == ASs{});
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{});
     }
     SECTION("Override with two shortcuts")
     {
         REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS("⌘j"), AS("⌘k")}));
-        REQUIRE(manager.ShortcutFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
     }
     SECTION("Override with two shortcuts and some empty bogus ones")
     {
         REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS(), AS("⌘j"), AS(), AS("⌘k"), AS()}));
-        REQUIRE(manager.ShortcutFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
     }
 }
 
@@ -67,10 +67,10 @@ TEST_CASE(PREFIX "ShortCutFromTag")
     nc::config::ConfigImpl config{g_EmptyConfigJSON, std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
     ASM manager{config};
 
-    REQUIRE(manager.ShortcutFromTag(346'242) == std::nullopt);
-    REQUIRE(manager.ShortcutFromTag(12'000) == ASs{AS("⌘c")});
+    REQUIRE(manager.ShortcutsFromTag(346'242) == std::nullopt);
+    REQUIRE(manager.ShortcutsFromTag(12'000) == ASs{AS("⌘c")});
     REQUIRE(manager.SetShortcutOverride("menu.edit.copy", AS("⌘j")));
-    REQUIRE(manager.ShortcutFromTag(12'000) == ASs{AS("⌘j")});
+    REQUIRE(manager.ShortcutsFromTag(12'000) == ASs{AS("⌘j")});
 }
 
 TEST_CASE(PREFIX "DefaultShortCutFromTag")
@@ -78,10 +78,10 @@ TEST_CASE(PREFIX "DefaultShortCutFromTag")
     nc::config::ConfigImpl config{g_EmptyConfigJSON, std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
     ASM manager{config};
 
-    REQUIRE(manager.DefaultShortcutFromTag(346'242) == std::nullopt);
-    REQUIRE(manager.DefaultShortcutFromTag(12'000) == ASs{AS("⌘c")});
+    REQUIRE(manager.DefaultShortcutsFromTag(346'242) == std::nullopt);
+    REQUIRE(manager.DefaultShortcutsFromTag(12'000) == ASs{AS("⌘c")});
     REQUIRE(manager.SetShortcutOverride("menu.edit.copy", AS("⌘j")));
-    REQUIRE(manager.DefaultShortcutFromTag(12'000) == ASs{AS("⌘c")});
+    REQUIRE(manager.DefaultShortcutsFromTag(12'000) == ASs{AS("⌘c")});
 }
 
 TEST_CASE(PREFIX "RevertToDefaults")
@@ -91,7 +91,7 @@ TEST_CASE(PREFIX "RevertToDefaults")
 
     REQUIRE(manager.SetShortcutOverride("menu.edit.copy", AS("⌘j")));
     manager.RevertToDefaults();
-    REQUIRE(manager.ShortcutFromAction("menu.edit.copy") == ASs{AS("⌘c")});
+    REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘c")});
 }
 
 TEST_CASE(PREFIX "ActionTagsFromShortCut")

@@ -53,16 +53,16 @@ public:
     // Returns a shortcut assigned to the specified action.
     // Returns std::nullopt such action cannot be found.
     // Overrides have priority over the default shortcuts.
-    std::optional<Shortcuts> ShortcutFromAction(std::string_view _action) const noexcept;
+    std::optional<Shortcuts> ShortcutsFromAction(std::string_view _action) const noexcept;
 
     // Returns a shortcut assigned to the specified numeric action tag.
     // Returns std::nullopt such action cannot be found.
     // Overrides have priority over the default shortcuts.
-    std::optional<Shortcuts> ShortcutFromTag(int _tag) const noexcept;
+    std::optional<Shortcuts> ShortcutsFromTag(int _tag) const noexcept;
 
     // Returns a default shortcut for an action specified by its numeric tag.
     // Returns std::nullopt such action cannot be found.
-    std::optional<Shortcuts> DefaultShortcutFromTag(int _tag) const noexcept;
+    std::optional<Shortcuts> DefaultShortcutsFromTag(int _tag) const noexcept;
 
     // Returns an unordered list of numeric tags of actions that have the specified shortcut.
     // An optional domain parameter can be specified to filter the output by only leaving actions that have the

@@ -141,8 +141,8 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
         ActionShortcutNode shortcut;
         shortcut.tag = v;
         shortcut.label = LabelTitleForAction(v.first, menu_item);
-        shortcut.current_shortcuts = sm.ShortcutFromTag(v.second).value();
-        shortcut.default_shortcuts = sm.DefaultShortcutFromTag(v.second).value();
+        shortcut.current_shortcuts = sm.ShortcutsFromTag(v.second).value();
+        shortcut.default_shortcuts = sm.DefaultShortcutsFromTag(v.second).value();
         shortcut.is_menu_action = v.first.find_first_of("menu.") == 0;
         shortcut.is_customized = shortcut.current_shortcuts != shortcut.default_shortcuts;
         shortcut.has_submenu = menu_item != nil && menu_item.hasSubmenu;

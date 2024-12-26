@@ -539,15 +539,15 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
 }
 
 std::optional<ActionsShortcutsManager::Shortcuts>
-ActionsShortcutsManager::ShortcutFromAction(std::string_view _action) const noexcept
+ActionsShortcutsManager::ShortcutsFromAction(std::string_view _action) const noexcept
 {
     const std::optional<int> tag = TagFromAction(_action);
     if( !tag )
         return {};
-    return ShortcutFromTag(*tag);
+    return ShortcutsFromTag(*tag);
 }
 
-std::optional<ActionsShortcutsManager::Shortcuts> ActionsShortcutsManager::ShortcutFromTag(int _tag) const noexcept
+std::optional<ActionsShortcutsManager::Shortcuts> ActionsShortcutsManager::ShortcutsFromTag(int _tag) const noexcept
 {
     if( auto sc_override = m_ShortcutsOverrides.find(_tag); sc_override != m_ShortcutsOverrides.end() ) {
         return sc_override->second;
@@ -561,7 +561,7 @@ std::optional<ActionsShortcutsManager::Shortcuts> ActionsShortcutsManager::Short
 }
 
 std::optional<ActionsShortcutsManager::Shortcuts>
-ActionsShortcutsManager::DefaultShortcutFromTag(int _tag) const noexcept
+ActionsShortcutsManager::DefaultShortcutsFromTag(int _tag) const noexcept
 {
     if( auto sc_default = m_ShortcutsDefaults.find(_tag); sc_default != m_ShortcutsDefaults.end() ) {
         return sc_default->second;

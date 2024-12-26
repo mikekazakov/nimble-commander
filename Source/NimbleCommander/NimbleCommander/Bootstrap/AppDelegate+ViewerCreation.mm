@@ -22,7 +22,7 @@
 {
     using nc::core::ActionsShortcutsManager;
     auto shortcuts = [](std::string_view _name) -> ActionsShortcutsManager::Shortcut {
-        auto sc = ActionsShortcutsManager::Instance().ShortcutFromAction(_name).value();
+        auto sc = ActionsShortcutsManager::Instance().ShortcutsFromAction(_name).value();
         return sc.empty() ? ActionsShortcutsManager::Shortcut{} : sc.front();
     };
     return [[NCViewerViewController alloc] initWithHistory:self.internalViewerHistory

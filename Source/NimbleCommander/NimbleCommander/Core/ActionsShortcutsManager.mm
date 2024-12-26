@@ -527,14 +527,27 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
         return;
 
     m_ShortcutsOverrides.clear();
-    for( auto i = v.MemberBegin(), e = v.MemberEnd(); i != e; ++i ) {
-        if( i->name.GetType() == kStringType && i->value.GetType() == kStringType ) {
-            auto att = g_ActionToTag.find(std::string_view{i->name.GetString()});
-            if( att != g_ActionToTag.end() ) {
-                m_ShortcutsOverrides[att->second] = WithoutEmptyShortcuts(Shortcuts{Shortcut{i->value.GetString()}});
-            }
+    for( auto it = v.MemberBegin(), e = v.MemberEnd(); it != e; ++it ) {
+        if( it->name.GetType() != kStringType )
+            continue;
+
+        const auto att = g_ActionToTag.find(std::string_view{it->name.GetString()});
+        if( att == g_ActionToTag.end() )
+            continue;
+
+        if( it->value.GetType() == kStringType ) {
+            m_ShortcutsOverrides[att->second] = WithoutEmptyShortcuts(Shortcuts{Shortcut{it->value.GetString()}});
         }
-        // TODO: support for array values when multiple shortcuts are stored
+        if( it->value.GetType() == kArrayType ) {
+            Shortcuts shortcuts;
+            const unsigned shortcuts_size = it->value.Size();
+            for( unsigned idx = 0; idx < shortcuts_size; ++idx ) {
+                const auto &shortcut = it->value[idx];
+                if( shortcut.IsString() )
+                    shortcuts.push_back(Shortcut{shortcut.GetString()});
+            }
+            m_ShortcutsOverrides[att->second] = WithoutEmptyShortcuts(shortcuts);
+        }
     }
 }
 
@@ -681,14 +694,23 @@ void ActionsShortcutsManager::WriteOverridesToConfig() const
     using namespace rapidjson;
     nc::config::Value overrides{kObjectType};
 
-    // TODO: add support for storing multiple shortcuts
     for( auto &i : g_ActionsTags ) {
         auto scover = m_ShortcutsOverrides.find(i.second);
-        if( scover != m_ShortcutsOverrides.end() ) {
+        if( scover == m_ShortcutsOverrides.end() ) {
+            continue;
+        }
+        if( scover->second.size() < 2 ) {
             const std::string shortcut = scover->second.empty() ? std::string{} : scover->second.front().ToPersString();
             overrides.AddMember(nc::config::MakeStandaloneString(i.first),
                                 nc::config::MakeStandaloneString(shortcut),
                                 nc::config::g_CrtAllocator);
+        }
+        else {
+            nc::config::Value shortcuts{kArrayType};
+            for( const Shortcut &sc : scover->second ) {
+                shortcuts.PushBack(nc::config::MakeStandaloneString(sc.ToPersString()), nc::config::g_CrtAllocator);
+            }
+            overrides.AddMember(nc::config::MakeStandaloneString(i.first), shortcuts, nc::config::g_CrtAllocator);
         }
     }
 

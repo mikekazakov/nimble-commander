@@ -3,11 +3,13 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <Config/ConfigImpl.h>
 #include <Config/NonPersistentOverwritesStorage.h>
+#include <fmt/format.h>
 
-using Catch::Matchers::UnorderedEquals;
 using ASM = nc::core::ActionsShortcutsManager;
 using AS = ASM::Shortcut;
 using ASs = ASM::Shortcuts;
+using nc::config::ConfigImpl;
+using nc::config::NonPersistentOverwritesStorage;
 
 #define PREFIX "nc::core::ActionsShortcutsManager "
 
@@ -29,7 +31,7 @@ TEST_CASE(PREFIX "ActionFromTag")
 
 TEST_CASE(PREFIX "ShortCutFromAction")
 {
-    nc::config::ConfigImpl config{g_EmptyConfigJSON, std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
+    ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
     ASM manager{config};
 
     SECTION("Non-existent")
@@ -64,7 +66,7 @@ TEST_CASE(PREFIX "ShortCutFromAction")
 
 TEST_CASE(PREFIX "ShortCutFromTag")
 {
-    nc::config::ConfigImpl config{g_EmptyConfigJSON, std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
+    ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
     ASM manager{config};
 
     REQUIRE(manager.ShortcutsFromTag(346'242) == std::nullopt);
@@ -75,7 +77,7 @@ TEST_CASE(PREFIX "ShortCutFromTag")
 
 TEST_CASE(PREFIX "DefaultShortCutFromTag")
 {
-    nc::config::ConfigImpl config{g_EmptyConfigJSON, std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
+    ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
     ASM manager{config};
 
     REQUIRE(manager.DefaultShortcutsFromTag(346'242) == std::nullopt);
@@ -86,7 +88,7 @@ TEST_CASE(PREFIX "DefaultShortCutFromTag")
 
 TEST_CASE(PREFIX "RevertToDefaults")
 {
-    nc::config::ConfigImpl config{g_EmptyConfigJSON, std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
+    ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
     ASM manager{config};
 
     REQUIRE(manager.SetShortcutOverride("menu.edit.copy", AS("⌘j")));
@@ -96,7 +98,7 @@ TEST_CASE(PREFIX "RevertToDefaults")
 
 TEST_CASE(PREFIX "ActionTagsFromShortCut")
 {
-    nc::config::ConfigImpl config{g_EmptyConfigJSON, std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
+    ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
     ASM manager{config};
 
     SECTION("Non-existent shortcut")
@@ -164,8 +166,8 @@ TEST_CASE(PREFIX "ActionTagsFromShortCut")
 
 TEST_CASE(PREFIX "FirstOfActionTagsFromShortCut")
 {
-    nc::config::ConfigImpl config{g_EmptyConfigJSON, std::make_shared<nc::config::NonPersistentOverwritesStorage>("")};
-    ASM manager{config};
+    ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
+    const ASM manager{config};
     REQUIRE(manager.FirstOfActionTagsFromShortcut({}, AS("⌘1")) == std::nullopt);
     REQUIRE(manager.FirstOfActionTagsFromShortcut(std::initializer_list<int>{346'242}, AS("⌘1")) == std::nullopt);
     REQUIRE(manager.FirstOfActionTagsFromShortcut(
@@ -175,16 +177,13 @@ TEST_CASE(PREFIX "FirstOfActionTagsFromShortCut")
                 std::initializer_list<int>{ASM::TagFromAction("menu.go.quick_lists.parent_folders").value()},
                 AS("⌘1"),
                 "menu.") == ASM::TagFromAction("menu.go.quick_lists.parent_folders").value());
-
     REQUIRE(manager.FirstOfActionTagsFromShortcut(
                 std::initializer_list<int>{ASM::TagFromAction("menu.go.quick_lists.parent_folders").value()},
                 AS("⌘1"),
                 "viewer.") == std::nullopt);
-
     REQUIRE(manager.FirstOfActionTagsFromShortcut(
                 std::initializer_list<int>{ASM::TagFromAction("viewer.toggle_text").value()}, AS("⌘1")) ==
             ASM::TagFromAction("viewer.toggle_text").value());
-
     REQUIRE(manager.FirstOfActionTagsFromShortcut(
                 std::initializer_list<int>{ASM::TagFromAction("viewer.toggle_text").value()}, AS("⌘1"), "menu.") ==
             std::nullopt);
@@ -193,4 +192,128 @@ TEST_CASE(PREFIX "FirstOfActionTagsFromShortCut")
             ASM::TagFromAction("viewer.toggle_text").value());
 }
 
-// TODO: unit tests for overrides persistence. include both variants of overrides.
+TEST_CASE(PREFIX "Configuration persistence")
+{
+    SECTION("Loading from config - single empty override")
+    {
+        const auto json = R"({
+            "hotkeyOverrides_v1": {
+                "menu.edit.copy": ""
+            }
+        })";
+        ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
+        ASM manager{config};
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{});
+    }
+    SECTION("Loading from config - single override")
+    {
+        const auto json = R"({
+            "hotkeyOverrides_v1": {
+                "menu.edit.copy": "⌘j"
+            }
+        })";
+        ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
+        ASM manager{config};
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j")});
+    }
+    SECTION("Loading from config - single empty array")
+    {
+        const auto json = R"({
+            "hotkeyOverrides_v1": {
+                "menu.edit.copy": []
+            }
+        })";
+        ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
+        ASM manager{config};
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{});
+    }
+    SECTION("Loading from config - single array with one shortcut")
+    {
+        const auto json = R"({
+            "hotkeyOverrides_v1": {
+                "menu.edit.copy": ["⌘j"]
+            }
+        })";
+        ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
+        ASM manager{config};
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j")});
+    }
+    SECTION("Loading from config - single array with two shortcuts")
+    {
+        const auto json = R"({
+            "hotkeyOverrides_v1": {
+                "menu.edit.copy": ["⌘j", "⌘k"]
+            }
+        })";
+        ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
+        ASM manager{config};
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
+    }
+    SECTION("Loading from config - mixed usage")
+    {
+        const auto json = R"({
+            "hotkeyOverrides_v1": {
+                "menu.edit.copy": ["⌘j", "⌘k"],
+                "menu.window.zoom": "⇧^⌘⌥j"
+            }
+        })";
+        ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
+        ASM manager{config};
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
+        REQUIRE(manager.ShortcutsFromAction("menu.window.zoom") == ASs{AS("⇧^⌘⌥j")});
+    }
+    SECTION("Writing to config - single empty override")
+    {
+        ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
+        ASM manager{config};
+        REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", {}));
+        const auto expected_json = R"({
+            "hotkeyOverrides_v1": {
+                "menu.edit.copy": ""
+            }
+        })";
+        ConfigImpl expected_config{expected_json, std::make_shared<NonPersistentOverwritesStorage>("")};
+        REQUIRE(config.Get("hotkeyOverrides_v1") == expected_config.Get("hotkeyOverrides_v1"));
+    }
+    SECTION("Writing to config - single override")
+    {
+        ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
+        ASM manager{config};
+        REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS("⌘j")}));
+        const auto expected_json = R"({
+            "hotkeyOverrides_v1": {
+                "menu.edit.copy": "⌘j"
+            }
+        })";
+        ConfigImpl expected_config{expected_json, std::make_shared<NonPersistentOverwritesStorage>("")};
+        REQUIRE(config.Get("hotkeyOverrides_v1") == expected_config.Get("hotkeyOverrides_v1"));
+    }
+    SECTION("Writing to config - single override with two hotkeys ")
+    {
+        ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
+        ASM manager{config};
+        REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS("⌘j"), AS("⌘k")}));
+        const auto expected_json = R"({
+            "hotkeyOverrides_v1": {
+                "menu.edit.copy": ["⌘j", "⌘k"]
+            }
+        })";
+        ConfigImpl expected_config{expected_json, std::make_shared<NonPersistentOverwritesStorage>("")};
+        REQUIRE(config.Get("hotkeyOverrides_v1") == expected_config.Get("hotkeyOverrides_v1"));
+    }
+    SECTION("Writing to config - mixed usage")
+    {
+        ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
+        ASM manager{config};
+        REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS("⌘j"), AS("⌘k")}));
+        REQUIRE(manager.SetShortcutOverride("menu.window.zoom", AS("⇧^⌘⌥j")));
+        const auto expected_json = R"({
+            "hotkeyOverrides_v1": {
+                "menu.edit.copy": ["⌘j", "⌘k"],
+                "menu.window.zoom": "⇧^⌥⌘j"
+            }
+        })";
+        ConfigImpl expected_config{expected_json, std::make_shared<NonPersistentOverwritesStorage>("")};
+        REQUIRE(config.Get("hotkeyOverrides_v1") == expected_config.Get("hotkeyOverrides_v1"));
+    }
+}

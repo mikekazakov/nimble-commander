@@ -110,13 +110,13 @@ std::string ActionShortcut::ToPersString() const noexcept
 {
     std::string result;
     if( modifiers & NSEventModifierFlagShift )
-        result += reinterpret_cast<const char *>(u8"⇧");
+        result += "⇧";
     if( modifiers & NSEventModifierFlagControl )
-        result += reinterpret_cast<const char *>(u8"^");
+        result += "^";
     if( modifiers & NSEventModifierFlagOption )
-        result += reinterpret_cast<const char *>(u8"⌥");
+        result += "⌥";
     if( modifiers & NSEventModifierFlagCommand )
-        result += reinterpret_cast<const char *>(u8"⌘");
+        result += "⌘";
 
     if( unicode == '\r' )
         result += "\\r";

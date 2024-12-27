@@ -202,7 +202,7 @@ TEST_CASE(PREFIX "Configuration persistence")
             }
         })";
         ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
-        ASM manager{config};
+        const ASM manager{config};
         REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{});
     }
     SECTION("Loading from config - single override")
@@ -213,7 +213,7 @@ TEST_CASE(PREFIX "Configuration persistence")
             }
         })";
         ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
-        ASM manager{config};
+        const ASM manager{config};
         REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j")});
     }
     SECTION("Loading from config - single empty array")
@@ -224,7 +224,7 @@ TEST_CASE(PREFIX "Configuration persistence")
             }
         })";
         ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
-        ASM manager{config};
+        const ASM manager{config};
         REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{});
     }
     SECTION("Loading from config - single array with one shortcut")
@@ -235,7 +235,7 @@ TEST_CASE(PREFIX "Configuration persistence")
             }
         })";
         ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
-        ASM manager{config};
+        const ASM manager{config};
         REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j")});
     }
     SECTION("Loading from config - single array with two shortcuts")
@@ -246,7 +246,7 @@ TEST_CASE(PREFIX "Configuration persistence")
             }
         })";
         ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
-        ASM manager{config};
+        const ASM manager{config};
         REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
     }
     SECTION("Loading from config - mixed usage")
@@ -258,7 +258,7 @@ TEST_CASE(PREFIX "Configuration persistence")
             }
         })";
         ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
-        ASM manager{config};
+        const ASM manager{config};
         REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
         REQUIRE(manager.ShortcutsFromAction("menu.window.zoom") == ASs{AS("⇧^⌘⌥j")});
     }
@@ -272,7 +272,7 @@ TEST_CASE(PREFIX "Configuration persistence")
                 "menu.edit.copy": ""
             }
         })";
-        ConfigImpl expected_config{expected_json, std::make_shared<NonPersistentOverwritesStorage>("")};
+        const ConfigImpl expected_config{expected_json, std::make_shared<NonPersistentOverwritesStorage>("")};
         REQUIRE(config.Get("hotkeyOverrides_v1") == expected_config.Get("hotkeyOverrides_v1"));
     }
     SECTION("Writing to config - single override")
@@ -285,7 +285,7 @@ TEST_CASE(PREFIX "Configuration persistence")
                 "menu.edit.copy": "⌘j"
             }
         })";
-        ConfigImpl expected_config{expected_json, std::make_shared<NonPersistentOverwritesStorage>("")};
+        const ConfigImpl expected_config{expected_json, std::make_shared<NonPersistentOverwritesStorage>("")};
         REQUIRE(config.Get("hotkeyOverrides_v1") == expected_config.Get("hotkeyOverrides_v1"));
     }
     SECTION("Writing to config - single override with two hotkeys ")
@@ -298,7 +298,7 @@ TEST_CASE(PREFIX "Configuration persistence")
                 "menu.edit.copy": ["⌘j", "⌘k"]
             }
         })";
-        ConfigImpl expected_config{expected_json, std::make_shared<NonPersistentOverwritesStorage>("")};
+        const ConfigImpl expected_config{expected_json, std::make_shared<NonPersistentOverwritesStorage>("")};
         REQUIRE(config.Get("hotkeyOverrides_v1") == expected_config.Get("hotkeyOverrides_v1"));
     }
     SECTION("Writing to config - mixed usage")
@@ -313,7 +313,7 @@ TEST_CASE(PREFIX "Configuration persistence")
                 "menu.window.zoom": "⇧^⌥⌘j"
             }
         })";
-        ConfigImpl expected_config{expected_json, std::make_shared<NonPersistentOverwritesStorage>("")};
+        const ConfigImpl expected_config{expected_json, std::make_shared<NonPersistentOverwritesStorage>("")};
         REQUIRE(config.Get("hotkeyOverrides_v1") == expected_config.Get("hotkeyOverrides_v1"));
     }
 }

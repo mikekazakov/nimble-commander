@@ -764,7 +764,7 @@ void ActionsShortcutsManager::BuildShortcutUsageMap() noexcept
 {
     m_ShortcutsUsage.clear(); // build the map means starting from scratch
 
-    for( const auto [tag, default_shortcuts] : m_ShortcutsDefaults ) {
+    for( const auto &[tag, default_shortcuts] : m_ShortcutsDefaults ) {
         if( const auto it = m_ShortcutsOverrides.find(tag); it != m_ShortcutsOverrides.end() ) {
             for( const Shortcut &shortcut : it->second ) {
                 if( shortcut )

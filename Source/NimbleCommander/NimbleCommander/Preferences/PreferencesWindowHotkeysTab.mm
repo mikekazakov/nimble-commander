@@ -61,6 +61,10 @@ enum class SourceType : uint8_t {
 @property(nonatomic) IBOutlet NSButton *sourceAllButton;
 @property(nonatomic) IBOutlet NSButton *sourceCustomizedButton;
 @property(nonatomic) IBOutlet NSButton *sourceConflictsButton;
+@property(nonatomic) IBOutlet NSTableColumn *firstShortcutColumn;
+@property(nonatomic) IBOutlet NSTableColumn *secondShortcutColumn;
+@property(nonatomic) IBOutlet NSTableColumn *thirdShortcutColumn;
+@property(nonatomic) IBOutlet NSTableColumn *fourthShortcutColumn;
 
 @property(nonatomic) SourceType sourceType;
 
@@ -84,6 +88,10 @@ enum class SourceType : uint8_t {
 @synthesize sourceAllButton;
 @synthesize sourceCustomizedButton;
 @synthesize sourceConflictsButton;
+@synthesize firstShortcutColumn;
+@synthesize secondShortcutColumn;
+@synthesize thirdShortcutColumn;
+@synthesize fourthShortcutColumn;
 
 - (id)initWithToolsStorage:(std::function<nc::panel::ExternalToolsStorage &()>)_tool_storage
 {
@@ -282,6 +290,7 @@ static NSTextField *SpawnLabelForAction(const ActionShortcutNode &_action)
     tf.bordered = false;
     tf.editable = false;
     tf.drawsBackground = false;
+    tf.lineBreakMode = NSLineBreakByTruncatingTail;
     return tf;
 }
 
@@ -307,25 +316,29 @@ static NSImageView *SpawnCautionSign()
     viewForTableColumn:(NSTableColumn *)_table_column
                    row:(NSInteger)_row
 {
-    auto first_or_empty = [](const ActionsShortcutsManager::Shortcuts &_shortcuts) -> ActionShortcut {
-        return _shortcuts.empty() ? ActionShortcut{} : _shortcuts.front();
-    };
-
     if( _row >= 0 && _row < static_cast<int>(m_FilteredNodes.size()) ) {
         if( auto node = std::any_cast<ActionShortcutNode>(&m_FilteredNodes[_row]) ) {
             if( [_table_column.identifier isEqualToString:@"action"] ) {
                 return SpawnLabelForAction(*node);
             }
-            if( [_table_column.identifier isEqualToString:@"hotkey"] ) {
+            
+            const std::array columns{
+                self.firstShortcutColumn, self.secondShortcutColumn, self.thirdShortcutColumn, self.fourthShortcutColumn};
+            if( auto it = std::ranges::find(columns, _table_column); it != columns.end() ) {
+                const size_t shortcut_idx = std::distance(columns.begin(), it);
+
                 const auto key_text_field = [self makeDefaultGTMHotKeyTextField];
                 assert(key_text_field);
                 key_text_field.action = @selector(onHKChanged:);
                 key_text_field.target = self;
                 key_text_field.tag = node->tag.second;
 
-                const ActionShortcut default_shortcut = first_or_empty(node->default_shortcuts);
-                const ActionShortcut current_shortcut = first_or_empty(node->current_shortcuts);
-
+                const ActionShortcut default_shortcut = node->default_shortcuts.size() > shortcut_idx
+                                                            ? node->default_shortcuts[shortcut_idx]
+                                                            : ActionShortcut{};
+                const ActionShortcut current_shortcut = node->current_shortcuts.size() > shortcut_idx
+                                                            ? node->current_shortcuts[shortcut_idx]
+                                                            : ActionShortcut{};
                 const auto field_cell = nc::objc_cast<GTMHotKeyTextFieldCell>(key_text_field.cell);
                 field_cell.hotKey = [GTMHotKey hotKeyWithKey:current_shortcut.Key()
                                                    modifiers:current_shortcut.modifiers];
@@ -340,6 +353,7 @@ static NSImageView *SpawnCautionSign()
 
                 return key_text_field;
             }
+
             if( [_table_column.identifier isEqualToString:@"flag"] ) {
                 return node->is_conflicted ? SpawnCautionSign() : nil;
             }
@@ -348,7 +362,7 @@ static NSImageView *SpawnCautionSign()
             if( [_table_column.identifier isEqualToString:@"action"] ) {
                 return SpawnLabelForTool(*node);
             }
-            if( [_table_column.identifier isEqualToString:@"hotkey"] ) {
+            if( [_table_column.identifier isEqualToString:@"first"] ) {
                 const auto &tool = *node->tool;
                 const auto key_text_field = [self makeDefaultGTMHotKeyTextField];
                 assert(key_text_field);
@@ -401,19 +415,33 @@ static NSImageView *SpawnCautionSign()
 - (IBAction)onHKChanged:(id)sender
 {
     auto &am = nc::core::ActionsShortcutsManager::Instance();
-    if( auto tf = nc::objc_cast<GTMHotKeyTextField>(sender) )
-        if( auto gtm_hk = nc::objc_cast<GTMHotKeyTextFieldCell>(tf.cell).hotKey ) {
-            auto tag = int(tf.tag);
-            auto hk = [self shortcutFromGTMHotKey:gtm_hk];
-            const std::optional<std::string_view> action = nc::core::ActionsShortcutsManager::ActionFromTag(tag);
-            if( !action )
-                return;
+    GTMHotKeyTextField *tf = nc::objc_cast<GTMHotKeyTextField>(sender);
+    if( !tf )
+        return;
 
-            if( am.SetShortcutOverride(*action, hk) ) {
-                am.SetMenuShortcuts(NSApp.mainMenu);
-                [self rebuildAll];
-            }
+    const long row = [self.Table rowForView:tf];
+    if( row < 0 || row >= static_cast<long>(m_FilteredNodes.size()) )
+        return;
+
+    const int tag = static_cast<int>(tf.tag);
+    const std::optional<std::string_view> action = nc::core::ActionsShortcutsManager::ActionFromTag(tag);
+    if( !action )
+        return;
+
+    std::vector<ActionShortcut> updated_shortcuts;
+    for( long col = 1; col <= 4; ++col ) {
+        if( GTMHotKeyTextField *v = nc::objc_cast<GTMHotKeyTextField>([self.Table viewAtColumn:col
+                                                                                           row:row
+                                                                               makeIfNecessary:false]) ) {
+            if( GTMHotKey *hk = nc::objc_cast<GTMHotKeyTextFieldCell>(v.cell).hotKey )
+                updated_shortcuts.push_back([self shortcutFromGTMHotKey:hk]);
         }
+    }
+
+    if( am.SetShortcutsOverride(*action, updated_shortcuts) ) {
+        am.SetMenuShortcuts(NSApp.mainMenu);
+        [self rebuildAll];
+    }
 }
 
 - (IBAction)OnDefaults:(id) [[maybe_unused]] sender

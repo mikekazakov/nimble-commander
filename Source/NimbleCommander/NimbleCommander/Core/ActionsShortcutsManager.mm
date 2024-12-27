@@ -780,6 +780,7 @@ void ActionsShortcutsManager::BuildShortcutUsageMap() noexcept
     }
 }
 
+// TODO: also should sanitize possible duplicates in the shortcuts
 ActionsShortcutsManager::Shortcuts ActionsShortcutsManager::WithoutEmptyShortcuts(const Shortcuts &_shortcuts) noexcept
 {
     Shortcuts shortcuts = _shortcuts;

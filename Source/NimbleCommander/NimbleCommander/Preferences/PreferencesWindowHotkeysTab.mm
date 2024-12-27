@@ -346,7 +346,7 @@ static NSImageView *SpawnCautionSign()
                                                    modifiers:current_shortcut.modifiers];
                 field_cell.defaultHotKey = [GTMHotKey hotKeyWithKey:default_shortcut.Key()
                                                           modifiers:default_shortcut.modifiers];
-                field_cell.menuHotKey = node->is_menu_action;
+                field_cell.menuHotKey = node->is_menu_action && shortcut_idx == 0;
 
                 if( node->is_customized )
                     field_cell.font = [NSFont boldSystemFontOfSize:field_cell.font.pointSize];

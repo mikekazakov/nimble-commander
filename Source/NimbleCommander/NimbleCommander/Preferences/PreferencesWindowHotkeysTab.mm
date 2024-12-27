@@ -27,8 +27,8 @@ namespace {
 
 struct ActionShortcutNode {
     std::pair<std::string, int> tag;
-    nc::core::ActionsShortcutsManager::Shortcuts current_shortcuts;
-    nc::core::ActionsShortcutsManager::Shortcuts default_shortcuts;
+    ActionsShortcutsManager::Shortcuts current_shortcuts;
+    ActionsShortcutsManager::Shortcuts default_shortcuts;
     NSString *label = @"";
     bool is_menu_action = false;
     bool has_submenu = false;
@@ -99,7 +99,7 @@ enum class SourceType : uint8_t {
     if( self ) {
         m_SourceType = SourceType::All;
         m_ToolsStorage = _tool_storage;
-        const auto &all_shortcuts = nc::core::ActionsShortcutsManager::AllShortcuts();
+        const auto &all_shortcuts = ActionsShortcutsManager::AllShortcuts();
         m_Shortcuts.assign(begin(all_shortcuts), end(all_shortcuts));
 
         // remove shortcuts whichs are absent in main menu
@@ -134,7 +134,7 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
 
 - (void)buildData
 {
-    const auto &sm = nc::core::ActionsShortcutsManager::Instance();
+    const auto &sm = ActionsShortcutsManager::Instance();
     m_AllNodes.clear();
     ankerl::unordered_dense::map<nc::utility::ActionShortcut, int> counts;
     for( auto &v : m_Shortcuts ) {
@@ -392,7 +392,7 @@ static NSImageView *SpawnCautionSign()
 - (nc::utility::ActionShortcut)shortcutFromGTMHotKey:(GTMHotKey *)_key
 {
     const auto key = _key.key.length > 0 ? [_key.key characterAtIndex:0] : static_cast<uint16_t>(0);
-    const auto hk = nc::core::ActionsShortcutsManager::Shortcut(key, _key.modifiers);
+    const auto hk = ActionsShortcutsManager::Shortcut(key, _key.modifiers);
     return hk;
 }
 
@@ -416,7 +416,7 @@ static NSImageView *SpawnCautionSign()
 
 - (IBAction)onHKChanged:(id)sender
 {
-    auto &am = nc::core::ActionsShortcutsManager::Instance();
+    auto &am = ActionsShortcutsManager::Instance();
     GTMHotKeyTextField *tf = nc::objc_cast<GTMHotKeyTextField>(sender);
     if( !tf )
         return;
@@ -426,7 +426,7 @@ static NSImageView *SpawnCautionSign()
         return;
 
     const int tag = static_cast<int>(tf.tag);
-    const std::optional<std::string_view> action = nc::core::ActionsShortcutsManager::ActionFromTag(tag);
+    const std::optional<std::string_view> action = ActionsShortcutsManager::ActionFromTag(tag);
     if( !action )
         return;
 
@@ -462,8 +462,8 @@ static NSImageView *SpawnCautionSign()
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
     if( [alert runModal] == NSAlertFirstButtonReturn ) {
-        nc::core::ActionsShortcutsManager::Instance().RevertToDefaults();
-        nc::core::ActionsShortcutsManager::Instance().SetMenuShortcuts(NSApp.mainMenu);
+        ActionsShortcutsManager::Instance().RevertToDefaults();
+        ActionsShortcutsManager::Instance().SetMenuShortcuts(NSApp.mainMenu);
         [self rebuildAll];
     }
 }

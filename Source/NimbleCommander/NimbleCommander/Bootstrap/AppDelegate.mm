@@ -282,8 +282,7 @@ static NCAppDelegate *g_Me = nil;
     [self updateMainMenuFeaturesByVersionAndState];
 
     // update menu with current shortcuts layout
-    nc::core::ActionsShortcutsManager::Instance().SetMenuShortcuts([NSApp mainMenu]);
-
+    [NSApp.mainMenu nc_setMenuItemShortcutsWithActionsShortcutsManager:nc::core::ActionsShortcutsManager::Instance()];
     [self wireMenuDelegates];
 
     if( nc::base::AmISandboxed() ) {

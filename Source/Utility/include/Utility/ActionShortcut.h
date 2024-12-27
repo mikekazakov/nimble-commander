@@ -72,7 +72,7 @@ struct std::hash<nc::utility::ActionShortcut> {
 };
 
 #ifdef __OBJC__
-@interface NSMenuItem (NCAdditions)
+@interface NSMenuItem (ActionShortcutSupport)
 
 - (void)nc_setKeyEquivalentWithShortcut:(nc::utility::ActionShortcut)_shortcut;
 

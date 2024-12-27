@@ -493,31 +493,6 @@ std::optional<std::string_view> ActionsShortcutsManager::ActionFromTag(int _tag)
     return std::nullopt;
 }
 
-void ActionsShortcutsManager::SetMenuShortcuts(NSMenu *_menu) const
-{
-    NSArray *const array = _menu.itemArray;
-    for( NSMenuItem *i : array ) {
-        if( i.submenu != nil ) {
-            SetMenuShortcuts(i.submenu);
-            continue;
-        }
-
-        const int tag = static_cast<int>(i.tag);
-        if( auto shortcut_override = m_ShortcutsOverrides.find(tag); shortcut_override != m_ShortcutsOverrides.end() ) {
-            const auto &shortcuts = shortcut_override->second;
-            [i nc_setKeyEquivalentWithShortcut:shortcuts.empty() ? Shortcut{} : shortcuts.front()];
-        }
-        else if( auto shortcut_defaults = m_ShortcutsDefaults.find(tag);
-                 shortcut_defaults != m_ShortcutsDefaults.end() ) {
-            const auto &shortcuts = shortcut_defaults->second;
-            [i nc_setKeyEquivalentWithShortcut:shortcuts.empty() ? Shortcut{} : shortcuts.front()];
-        }
-        else if( g_TagToAction.contains(tag) ) {
-            [i nc_setKeyEquivalentWithShortcut:Shortcut{}];
-        }
-    }
-}
-
 void ActionsShortcutsManager::ReadOverrideFromConfig()
 {
     using namespace rapidjson;
@@ -801,3 +776,23 @@ ActionsShortcutsManager::Shortcuts ActionsShortcutsManager::SanitizedShortcuts(c
 }
 
 } // namespace nc::core
+
+@implementation NSMenu (ActionsShortcutsManagerSupport)
+
+- (void)nc_setMenuItemShortcutsWithActionsShortcutsManager:(const nc::core::ActionsShortcutsManager &)_asm
+{
+    NSArray *const array = self.itemArray;
+    for( NSMenuItem *i : array ) {
+        if( i.submenu != nil ) {
+            [i.submenu nc_setMenuItemShortcutsWithActionsShortcutsManager:_asm];
+            continue;
+        }
+
+        const int tag = static_cast<int>(i.tag);
+        if( const auto shortcuts = _asm.ShortcutsFromTag(tag) ) {
+            [i nc_setKeyEquivalentWithShortcut:shortcuts->empty() ? nc::utility::ActionShortcut{} : shortcuts->front()];
+        }
+    }
+}
+
+@end

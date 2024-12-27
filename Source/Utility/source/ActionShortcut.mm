@@ -226,7 +226,7 @@ size_t std::hash<nc::utility::ActionShortcut>::operator()(const nc::utility::Act
     return static_cast<size_t>(_ac.unicode) | (static_cast<size_t>(_ac.modifiers.flags) << 16);
 }
 
-@implementation NSMenuItem (NCAdditions)
+@implementation NSMenuItem (ActionShortcutSupport)
 
 - (void)nc_setKeyEquivalentWithShortcut:(nc::utility::ActionShortcut)_shortcut
 {

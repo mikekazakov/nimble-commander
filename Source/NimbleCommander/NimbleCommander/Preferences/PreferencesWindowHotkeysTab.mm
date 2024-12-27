@@ -441,7 +441,7 @@ static NSImageView *SpawnCautionSign()
     }
 
     if( am.SetShortcutsOverride(*action, updated_shortcuts) ) {
-        am.SetMenuShortcuts(NSApp.mainMenu);
+        [NSApp.mainMenu nc_setMenuItemShortcutsWithActionsShortcutsManager:am];
     }
 
     // Rebuild everything just in case the shortcut was a duplicate that ASM filtered out
@@ -463,7 +463,7 @@ static NSImageView *SpawnCautionSign()
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
     if( [alert runModal] == NSAlertFirstButtonReturn ) {
         ActionsShortcutsManager::Instance().RevertToDefaults();
-        ActionsShortcutsManager::Instance().SetMenuShortcuts(NSApp.mainMenu);
+        [NSApp.mainMenu nc_setMenuItemShortcutsWithActionsShortcutsManager:ActionsShortcutsManager::Instance()];
         [self rebuildAll];
     }
 }

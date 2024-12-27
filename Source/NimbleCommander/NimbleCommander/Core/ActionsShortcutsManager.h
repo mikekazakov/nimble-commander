@@ -90,10 +90,6 @@ public:
     // If the _action doesn't exist or already has the same value, returns false.
     bool SetShortcutsOverride(std::string_view _action, std::span<const Shortcut> _shortcuts);
 
-#ifdef __OBJC__
-    void SetMenuShortcuts(NSMenu *_menu) const;
-#endif
-
     static std::span<const std::pair<const char *, int>> AllShortcuts();
 
     using ObservationTicket = ObservableBase::ObservationTicket;
@@ -137,3 +133,13 @@ private:
 };
 
 } // namespace nc::core
+
+#ifdef __OBJC__
+
+@interface NSMenu (ActionsShortcutsManagerSupport)
+
+- (void)nc_setMenuItemShortcutsWithActionsShortcutsManager:(const nc::core::ActionsShortcutsManager &)_asm;
+
+@end
+
+#endif

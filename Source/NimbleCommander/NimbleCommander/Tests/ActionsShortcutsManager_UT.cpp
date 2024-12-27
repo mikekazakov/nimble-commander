@@ -317,3 +317,44 @@ TEST_CASE(PREFIX "Configuration persistence")
         REQUIRE(config.Get("hotkeyOverrides_v1") == expected_config.Get("hotkeyOverrides_v1"));
     }
 }
+
+TEST_CASE(PREFIX "SetShortcutsOverride")
+{
+    ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
+    ASM manager{config};
+    SECTION("Empty")
+    {
+        REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", {}));
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{});
+    }
+    SECTION("Single")
+    {
+        REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS("⌘j")}));
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j")});
+    }
+    SECTION("Single and empty")
+    {
+        REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS(), AS("⌘j"), AS()}));
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j")});
+    }
+    SECTION("Single and duplicates")
+    {
+        REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS("⌘j"), AS("⌘j")}));
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j")});
+    }
+    SECTION("Two")
+    {
+        REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS("⌘j"), AS("⌘k")}));
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
+    }
+    SECTION("Two and empty")
+    {
+        REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS(), AS("⌘j"), AS(), AS("⌘k"), AS()}));
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
+    }
+    SECTION("Two and duplicates")
+    {
+        REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS("⌘j"), AS("⌘k"), AS("⌘j"), AS("⌘k")}));
+        REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
+    }
+}

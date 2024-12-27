@@ -321,9 +321,11 @@ static NSImageView *SpawnCautionSign()
             if( [_table_column.identifier isEqualToString:@"action"] ) {
                 return SpawnLabelForAction(*node);
             }
-            
-            const std::array columns{
-                self.firstShortcutColumn, self.secondShortcutColumn, self.thirdShortcutColumn, self.fourthShortcutColumn};
+
+            const std::array columns{self.firstShortcutColumn,
+                                     self.secondShortcutColumn,
+                                     self.thirdShortcutColumn,
+                                     self.fourthShortcutColumn};
             if( auto it = std::ranges::find(columns, _table_column); it != columns.end() ) {
                 const size_t shortcut_idx = std::distance(columns.begin(), it);
 
@@ -440,8 +442,10 @@ static NSImageView *SpawnCautionSign()
 
     if( am.SetShortcutsOverride(*action, updated_shortcuts) ) {
         am.SetMenuShortcuts(NSApp.mainMenu);
-        [self rebuildAll];
     }
+
+    // Rebuild everything just in case the shortcut was a duplicate that ASM filtered out
+    [self rebuildAll];
 }
 
 - (IBAction)OnDefaults:(id) [[maybe_unused]] sender

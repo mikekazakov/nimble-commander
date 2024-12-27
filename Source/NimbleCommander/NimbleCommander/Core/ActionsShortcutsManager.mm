@@ -462,7 +462,7 @@ ActionsShortcutsManager::ActionsShortcutsManager(nc::config::Config &_config) : 
     // Set up the shortcut defaults from the hardcoded map
     for( auto [action, shortcut_string] : g_DefaultShortcuts ) {
         if( auto it = g_ActionToTag.find(std::string_view{action}); it != g_ActionToTag.end() ) {
-            m_ShortcutsDefaults[it->second] = WithoutEmptyShortcuts(Shortcuts{Shortcut{shortcut_string}});
+            m_ShortcutsDefaults[it->second] = SanitizedShortcuts(Shortcuts{Shortcut{shortcut_string}});
         }
     }
 
@@ -536,7 +536,7 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
             continue;
 
         if( it->value.GetType() == kStringType ) {
-            m_ShortcutsOverrides[att->second] = WithoutEmptyShortcuts(Shortcuts{Shortcut{it->value.GetString()}});
+            m_ShortcutsOverrides[att->second] = SanitizedShortcuts(Shortcuts{Shortcut{it->value.GetString()}});
         }
         if( it->value.GetType() == kArrayType ) {
             Shortcuts shortcuts;
@@ -546,7 +546,7 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
                 if( shortcut.IsString() )
                     shortcuts.push_back(Shortcut{shortcut.GetString()});
             }
-            m_ShortcutsOverrides[att->second] = WithoutEmptyShortcuts(shortcuts);
+            m_ShortcutsOverrides[att->second] = SanitizedShortcuts(shortcuts);
         }
     }
 }
@@ -633,7 +633,7 @@ bool ActionsShortcutsManager::SetShortcutsOverride(std::string_view _action, std
     if( default_it == m_ShortcutsDefaults.end() )
         return false; // this should never happen
 
-    const Shortcuts new_shortcuts = WithoutEmptyShortcuts(Shortcuts(_shortcuts.begin(), _shortcuts.end()));
+    const Shortcuts new_shortcuts = SanitizedShortcuts(Shortcuts(_shortcuts.begin(), _shortcuts.end()));
 
     const auto override_it = m_ShortcutsOverrides.find(*tag);
     if( std::ranges::equal(default_it->second, new_shortcuts) ) {
@@ -780,12 +780,23 @@ void ActionsShortcutsManager::BuildShortcutUsageMap() noexcept
     }
 }
 
-// TODO: also should sanitize possible duplicates in the shortcuts
-ActionsShortcutsManager::Shortcuts ActionsShortcutsManager::WithoutEmptyShortcuts(const Shortcuts &_shortcuts) noexcept
+ActionsShortcutsManager::Shortcuts ActionsShortcutsManager::SanitizedShortcuts(const Shortcuts &_shortcuts) noexcept
 {
     Shortcuts shortcuts = _shortcuts;
-    auto to_erase = std::ranges::remove_if(shortcuts, [](const Shortcut &_sc) { return _sc == Shortcut{}; });
-    shortcuts.erase(to_erase.begin(), to_erase.end());
+
+    // Remove any empty shortcuts.
+    {
+        auto to_erase = std::ranges::remove_if(shortcuts, [](const Shortcut &_sc) { return _sc == Shortcut{}; });
+        shortcuts.erase(to_erase.begin(), to_erase.end());
+    }
+
+    // Remove any duplicates.
+    // Technically speaking this is O(N^2), but N is normally ~= 1, so it doesn't matter.
+    for( auto it = shortcuts.begin(); it != shortcuts.end(); ++it ) {
+        shortcuts.erase(std::remove_if(std::next(it), shortcuts.end(), [&](const Shortcut &_sc) { return _sc == *it; }),
+                        shortcuts.end());
+    }
+
     return shortcuts;
 }
 

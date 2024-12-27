@@ -120,7 +120,8 @@ private:
     void UnregisterShortcutUsage(Shortcut _shortcut, int _tag) noexcept;
 
     // Returns a container without empty shortcuts, while preserving the original relative order of the remaining items.
-    static Shortcuts WithoutEmptyShortcuts(const Shortcuts &_shortcuts) noexcept;
+    // Duplicates are removed as well.
+    static Shortcuts SanitizedShortcuts(const Shortcuts &_shortcuts) noexcept;
 
     // Maps an action tag to the default ordered list of its shortcuts.
     ankerl::unordered_dense::map<int, Shortcuts> m_ShortcutsDefaults;

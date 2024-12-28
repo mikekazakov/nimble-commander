@@ -65,12 +65,12 @@ static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelSt
 {
     using ASM = nc::core::ActionsShortcutsManager;
     struct Tags {
-        int FocusLeft = ASM::TagFromAction("panel.focus_left_panel").value();
-        int FocusRight = ASM::TagFromAction("panel.focus_right_panel").value();
-        int MoveUp = ASM::TagFromAction("menu.view.panels_position.move_up").value();
-        int MoveDown = ASM::TagFromAction("menu.view.panels_position.move_down").value();
-        int Show = ASM::TagFromAction("menu.view.panels_position.showpanels").value();
-        int FocusTerminal = ASM::TagFromAction("menu.view.panels_position.focusterminal").value();
+        int FocusLeft = ASM::Instance().TagFromAction("panel.focus_left_panel").value();
+        int FocusRight = ASM::Instance().TagFromAction("panel.focus_right_panel").value();
+        int MoveUp = ASM::Instance().TagFromAction("menu.view.panels_position.move_up").value();
+        int MoveDown = ASM::Instance().TagFromAction("menu.view.panels_position.move_down").value();
+        int Show = ASM::Instance().TagFromAction("menu.view.panels_position.showpanels").value();
+        int FocusTerminal = ASM::Instance().TagFromAction("menu.view.panels_position.focusterminal").value();
     } static const tags;
 
     NSString *characters = _event.charactersIgnoringModifiers;

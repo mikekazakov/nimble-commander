@@ -14,7 +14,8 @@ class History;
 };
 namespace nc::utility {
 struct ActionShortcut;
-}
+class ActionsShortcutsManager;
+} // namespace nc::utility
 
 @interface NCViewerViewController : NSResponder <NSSearchFieldDelegate, NSPopoverDelegate>
 
@@ -31,7 +32,7 @@ struct ActionShortcut;
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithHistory:(nc::viewer::History &)_history
                          config:(nc::config::Config &)_config
-              shortcutsProvider:(std::function<nc::utility::ActionShortcut(std::string_view _name)>)_shortcuts;
+                      shortcuts:(const nc::utility::ActionsShortcutsManager &)_shortcuts;
 
 - (void)setFile:(std::string)path at:(VFSHostPtr)vfs;
 

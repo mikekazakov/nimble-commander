@@ -301,7 +301,7 @@ static NCAppDelegate *g_Me = nil;
 {
     // set up menu delegates. do this via DI to reduce links to AppDelegate in whole codebase
     auto item_for_action = [](const char *_action) -> NSMenuItem * {
-        const std::optional<int> tag = nc::core::ActionsShortcutsManager::TagFromAction(_action);
+        const std::optional<int> tag = nc::core::ActionsShortcutsManager::Instance().TagFromAction(_action);
         if( tag == std::nullopt )
             return nil;
         return [NSApp.mainMenu itemWithTagHierarchical:*tag];
@@ -355,7 +355,9 @@ static NCAppDelegate *g_Me = nil;
 - (void)updateMainMenuFeaturesByVersionAndState
 {
     // disable some features available in menu by configuration limitation
-    auto tag_from_lit = [](const char *s) { return nc::core::ActionsShortcutsManager::TagFromAction(s).value_or(-1); };
+    auto tag_from_lit = [](const char *s) {
+        return nc::core::ActionsShortcutsManager::Instance().TagFromAction(s).value();
+    };
     auto current_menuitem = [&](const char *s) { return [NSApp.mainMenu itemWithTagHierarchical:tag_from_lit(s)]; };
     auto hide = [&](const char *s) {
         auto item = current_menuitem(s);
@@ -627,7 +629,7 @@ static NCAppDelegate *g_Me = nil;
 - (BOOL)validateMenuItem:(NSMenuItem *)item
 {
     static const int admin_mode_tag =
-        nc::core::ActionsShortcutsManager::TagFromAction("menu.nimble_commander.toggle_admin_mode").value();
+        nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.nimble_commander.toggle_admin_mode").value();
     const long tag = item.tag;
 
     if( tag == admin_mode_tag ) {

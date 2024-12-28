@@ -10,6 +10,7 @@
 #include <Base/Observable.h>
 #include <Base/UnorderedUtil.h>
 #include <Utility/ActionShortcut.h>
+#include <Utility/ActionsShortcutsManager.h>
 #include <absl/container/inlined_vector.h>
 #include <vector>
 #include <span>
@@ -22,59 +23,50 @@ class Config;
 
 namespace nc::core {
 
-class ActionsShortcutsManager : nc::base::ObservableBase
+class ActionsShortcutsManager : public nc::utility::ActionsShortcutsManager, private nc::base::ObservableBase
 {
 public:
-    // Shortcut represents a key and its modifiers that have to be pressed to trigger an action.
-    using Shortcut = nc::utility::ActionShortcut;
-
-    // An ordered list of shortcuts.
-    // The relative order of the shortcuts must be preserved as it has semantic meaning for e.g. menus.
-    // Empty shortcuts should not be stored in such vectors.
-    // An inlined vector is used to avoid memory allocating for such tiny memory blocks.
-    using Shortcuts = absl::InlinedVector<Shortcut, 4>;
-
-    // ActionTags represents a list of numberic action tags.
-    // Normally they are tiny, thus an inline vector is used to avoid memory allocation.
-    using ActionTags = absl::InlinedVector<int, 4>;
-
     // Create a new shortcut manager which will use the provided config to store the overides.
     ActionsShortcutsManager(nc::config::Config &_config);
+
+    // Destructor.
+    virtual ~ActionsShortcutsManager();
 
     // A shared instance of a manager, it uses the GlobalConfig() as its data backend.
     static ActionsShortcutsManager &Instance();
 
     // Returns a numeric tag that corresponds to the given action name.
-    static std::optional<int> TagFromAction(std::string_view _action) noexcept;
+    std::optional<int> TagFromAction(std::string_view _action) const noexcept override;
 
     // Returns an action name of the given numeric tag.
-    static std::optional<std::string_view> ActionFromTag(int _tag) noexcept;
+    std::optional<std::string_view> ActionFromTag(int _tag) const noexcept override;
 
     // Returns a shortcut assigned to the specified action.
     // Returns std::nullopt such action cannot be found.
     // Overrides have priority over the default shortcuts.
-    std::optional<Shortcuts> ShortcutsFromAction(std::string_view _action) const noexcept;
+    std::optional<Shortcuts> ShortcutsFromAction(std::string_view _action) const noexcept override;
 
     // Returns a shortcut assigned to the specified numeric action tag.
     // Returns std::nullopt such action cannot be found.
     // Overrides have priority over the default shortcuts.
-    std::optional<Shortcuts> ShortcutsFromTag(int _tag) const noexcept;
+    std::optional<Shortcuts> ShortcutsFromTag(int _tag) const noexcept override;
 
     // Returns a default shortcut for an action specified by its numeric tag.
     // Returns std::nullopt such action cannot be found.
-    std::optional<Shortcuts> DefaultShortcutsFromTag(int _tag) const noexcept;
+    std::optional<Shortcuts> DefaultShortcutsFromTag(int _tag) const noexcept override;
 
     // Returns an unordered list of numeric tags of actions that have the specified shortcut.
     // An optional domain parameter can be specified to filter the output by only leaving actions that have the
     // specified domain in their name.
-    std::optional<ActionTags> ActionTagsFromShortcut(Shortcut _sc, std::string_view _in_domain = {}) const noexcept;
+    std::optional<ActionTags> ActionTagsFromShortcut(Shortcut _sc,
+                                                     std::string_view _in_domain = {}) const noexcept override;
 
     // Syntax sugar around ActionTagsFromShortCut(_sc, _in_domain) and find_first_of(_of_tags).
     // Returns the first tag from the specified set.
     // The order is not defined in case of ambiguities.
     std::optional<int> FirstOfActionTagsFromShortcut(std::span<const int> _of_tags,
                                                      Shortcut _sc,
-                                                     std::string_view _in_domain = {}) const noexcept;
+                                                     std::string_view _in_domain = {}) const noexcept override;
 
     // Removes any hotkeys overrides.
     void RevertToDefaults();

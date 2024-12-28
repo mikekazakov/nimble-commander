@@ -83,6 +83,7 @@
 		CFB062452590BB4E0095C748 /* SystemInformation_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB062442590BB4E0095C748 /* SystemInformation_UT.mm */; };
 		CFB4B68F219944680097E4B4 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64EA1F62721500BF986E /* AppKit.framework */; };
 		CFC41DAB257159630037677B /* VersionCompare.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC41DAA257159630037677B /* VersionCompare.mm */; };
+		CFC4C4062D208985006C8A0F /* ActionsShortcutsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4C4052D208985006C8A0F /* ActionsShortcutsManager.cpp */; };
 		CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */; };
 		CFDAC82F2168E43600DEBA2A /* DiskUtility_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC82E2168E43600DEBA2A /* DiskUtility_UT.mm */; };
 		CFE3F1C422932CCF009D6AB4 /* ByteCountFormatter_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA81F9D871D0005F2DB /* ByteCountFormatter_UT.mm */; };
@@ -209,6 +210,8 @@
 		CFB0F239215A07830088C18E /* FileMask_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileMask_UT.cpp; path = tests/FileMask_UT.cpp; sourceTree = "<group>"; };
 		CFC41DA92571594E0037677B /* VersionCompare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VersionCompare.h; path = include/Utility/VersionCompare.h; sourceTree = "<group>"; };
 		CFC41DAA257159630037677B /* VersionCompare.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VersionCompare.mm; path = source/VersionCompare.mm; sourceTree = "<group>"; };
+		CFC4C4042D208969006C8A0F /* ActionsShortcutsManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ActionsShortcutsManager.h; path = include/Utility/ActionsShortcutsManager.h; sourceTree = "<group>"; };
+		CFC4C4052D208985006C8A0F /* ActionsShortcutsManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ActionsShortcutsManager.cpp; path = source/ActionsShortcutsManager.cpp; sourceTree = "<group>"; };
 		CFC4F9711F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleComboBoxPersistentDataSource.h; path = include/Utility/SimpleComboBoxPersistentDataSource.h; sourceTree = "<group>"; };
 		CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SimpleComboBoxPersistentDataSource.mm; path = source/SimpleComboBoxPersistentDataSource.mm; sourceTree = "<group>"; };
 		CFC546272136DAC800D288A4 /* UtilityUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = UtilityUT; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -343,6 +346,7 @@
 			isa = PBXGroup;
 			children = (
 				CF24E1F32288A9FB00C166FA /* ActionShortcut.h */,
+				CFC4C4042D208969006C8A0F /* ActionsShortcutsManager.h */,
 				CF29FC5F2155D9A20040FF19 /* AdaptiveDateFormatting.h */,
 				CFDAC2281DFBD8690039A104 /* BlinkScheduler.h */,
 				CF308F2C213ABFAA00915730 /* BriefOnDiskStorage.h */,
@@ -405,8 +409,8 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CF371DAB2D1849FF0034EB3F /* NSEventModifierFlagsHolder.mm */,
 				CF24E1F52288AA0500C166FA /* ActionShortcut.mm */,
+				CFC4C4052D208985006C8A0F /* ActionsShortcutsManager.cpp */,
 				CF29FC612155D9AB0040FF19 /* AdaptiveDateFormatting.mm */,
 				CFDAC22A1DFBD8740039A104 /* BlinkScheduler.cpp */,
 				CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */,
@@ -440,6 +444,7 @@
 				CFD62C171C9AECA50021EE7F /* NativeFSManager.mm */,
 				CFE08B2623DBA7BC007E99B8 /* NativeFSManagerImpl.mm */,
 				CF3ABD7723B8A76B00D1878B /* NativeFSManagerVolumeLookup.cpp */,
+				CF371DAB2D1849FF0034EB3F /* NSEventModifierFlagsHolder.mm */,
 				CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */,
 				CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.mm */,
 				CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.mm */,
@@ -594,6 +599,7 @@
 				CF5D1DC72B52B9E900750174 /* Tags.cpp in Sources */,
 				CF460151256125E50095FC73 /* NSObject+MassObserving.mm in Sources */,
 				CF46013A256125E50095FC73 /* NativeFSManagerImpl.mm in Sources */,
+				CFC4C4062D208985006C8A0F /* ActionsShortcutsManager.cpp in Sources */,
 				CF460152256125E50095FC73 /* ButtonWithTextColor.mm in Sources */,
 				CF460141256125E50095FC73 /* MIMResponder.mm in Sources */,
 				CF460138256125E50095FC73 /* UTI.cpp in Sources */,

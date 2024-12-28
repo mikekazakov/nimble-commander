@@ -537,20 +537,20 @@ struct StateStorage {
     [self checkKeyboardModifierFlags:event.modifierFlags];
 
     struct Tags {
-        int up = ASM::TagFromAction("panel.move_up").value();
-        int down = ASM::TagFromAction("panel.move_down").value();
-        int left = ASM::TagFromAction("panel.move_left").value();
-        int right = ASM::TagFromAction("panel.move_right").value();
-        int first = ASM::TagFromAction("panel.move_first").value();
-        int last = ASM::TagFromAction("panel.move_last").value();
-        int page_down = ASM::TagFromAction("panel.move_next_page").value();
-        int page_up = ASM::TagFromAction("panel.move_prev_page").value();
-        int invert_and_move = ASM::TagFromAction("panel.move_next_and_invert_selection").value();
-        int invert = ASM::TagFromAction("panel.invert_item_selection").value();
-        int scroll_down = ASM::TagFromAction("panel.scroll_next_page").value();
-        int scroll_up = ASM::TagFromAction("panel.scroll_prev_page").value();
-        int scroll_home = ASM::TagFromAction("panel.scroll_first").value();
-        int scroll_end = ASM::TagFromAction("panel.scroll_last").value();
+        int up = ASM::Instance().TagFromAction("panel.move_up").value();
+        int down = ASM::Instance().TagFromAction("panel.move_down").value();
+        int left = ASM::Instance().TagFromAction("panel.move_left").value();
+        int right = ASM::Instance().TagFromAction("panel.move_right").value();
+        int first = ASM::Instance().TagFromAction("panel.move_first").value();
+        int last = ASM::Instance().TagFromAction("panel.move_last").value();
+        int page_down = ASM::Instance().TagFromAction("panel.move_next_page").value();
+        int page_up = ASM::Instance().TagFromAction("panel.move_prev_page").value();
+        int invert_and_move = ASM::Instance().TagFromAction("panel.move_next_and_invert_selection").value();
+        int invert = ASM::Instance().TagFromAction("panel.invert_item_selection").value();
+        int scroll_down = ASM::Instance().TagFromAction("panel.scroll_next_page").value();
+        int scroll_up = ASM::Instance().TagFromAction("panel.scroll_prev_page").value();
+        int scroll_home = ASM::Instance().TagFromAction("panel.scroll_first").value();
+        int scroll_end = ASM::Instance().TagFromAction("panel.scroll_last").value();
     } static const tags;
 
     const auto event_data = ActionShortcut::EventData(event);

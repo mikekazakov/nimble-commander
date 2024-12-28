@@ -10,7 +10,7 @@
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
-#include <Utility/ActionShortcut.h>
+#include <Utility/ActionsShortcutsManager.h>
 #include "History.h"
 #include <Base/SerialQueue.h>
 #include "Internal.h"
@@ -95,7 +95,7 @@ struct BackgroundFileOpener {
     nc::base::SerialQueue m_SearchInFileQueue;
     nc::viewer::History *m_History;
     nc::config::Config *m_Config;
-    std::function<nc::utility::ActionShortcut(std::string_view _name)> m_Shortcuts;
+    const nc::utility::ActionsShortcutsManager *m_Shortcuts;
 
     // UI
     NCViewerView *m_View;
@@ -114,14 +114,14 @@ struct BackgroundFileOpener {
 
 - (instancetype)initWithHistory:(nc::viewer::History &)_history
                          config:(nc::config::Config &)_config
-              shortcutsProvider:(std::function<nc::utility::ActionShortcut(std::string_view _name)>)_shortcuts
+                      shortcuts:(const nc::utility::ActionsShortcutsManager &)_shortcuts
 {
     self = [super init];
     if( self ) {
         Log::Debug("created new NCViewerViewController {}", nc::objc_bridge_cast<void>(self));
         m_History = &_history;
         m_Config = &_config;
-        m_Shortcuts = _shortcuts;
+        m_Shortcuts = &_shortcuts;
         m_AutomaticFileRefreshScheduled = false;
         __weak NCViewerViewController *weak_self = self;
         m_SearchInFileQueue.SetOnChange(
@@ -603,25 +603,44 @@ struct BackgroundFileOpener {
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
-    const auto event_hotkey = nc::utility::ActionShortcut(nc::utility::ActionShortcut::EventData(_event));
-    const auto is = [&](std::string_view _action_name) { return m_Shortcuts(_action_name) == event_hotkey; };
-    if( is("viewer.toggle_text") ) {
+    struct Tags {
+        int toggle_text;
+        int toggle_hex;
+        int toggle_preview;
+        int show_goto;
+        int refresh;
+    };
+    static const Tags tags = [&] {
+        Tags t;
+        t.toggle_text = m_Shortcuts->TagFromAction("viewer.toggle_text").value();
+        t.toggle_hex = m_Shortcuts->TagFromAction("viewer.toggle_hex").value();
+        t.toggle_preview = m_Shortcuts->TagFromAction("viewer.toggle_preview").value();
+        t.show_goto = m_Shortcuts->TagFromAction("viewer.show_goto").value();
+        t.refresh = m_Shortcuts->TagFromAction("viewer.refresh").value();
+        return t;
+    }();
+
+    const auto event_shortcut = nc::utility::ActionShortcut(nc::utility::ActionShortcut::EventData(_event));
+    const std::optional<int> event_action_tag = m_Shortcuts->FirstOfActionTagsFromShortcut(
+        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)}, event_shortcut, "viewer.");
+
+    if( event_action_tag == tags.toggle_text ) {
         [m_View setMode:ViewMode::Text];
         return true;
     }
-    if( is("viewer.toggle_hex") ) {
+    if( event_action_tag == tags.toggle_hex ) {
         [m_View setMode:ViewMode::Hex];
         return true;
     }
-    if( is("viewer.toggle_preview") ) {
+    if( event_action_tag == tags.toggle_preview ) {
         [m_View setMode:ViewMode::Preview];
         return true;
     }
-    if( is("viewer.show_goto") ) {
+    if( event_action_tag == tags.show_goto ) {
         [m_View.footer performFilePositionClick:self];
         return true;
     }
-    if( is("viewer.refresh") ) {
+    if( event_action_tag == tags.refresh ) {
         [self onRefresh];
         return true;
     }

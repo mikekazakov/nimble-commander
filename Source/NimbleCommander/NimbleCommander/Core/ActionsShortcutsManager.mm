@@ -473,20 +473,22 @@ ActionsShortcutsManager::ActionsShortcutsManager(nc::config::Config &_config) : 
     BuildShortcutUsageMap();
 }
 
+ActionsShortcutsManager::~ActionsShortcutsManager() = default;
+
 ActionsShortcutsManager &ActionsShortcutsManager::Instance()
 {
     [[clang::no_destroy]] static ActionsShortcutsManager manager(GlobalConfig());
     return manager;
 }
 
-std::optional<int> ActionsShortcutsManager::TagFromAction(std::string_view _action) noexcept
+std::optional<int> ActionsShortcutsManager::TagFromAction(std::string_view _action) const noexcept
 {
     if( const auto it = g_ActionToTag.find(_action); it != g_ActionToTag.end() )
         return it->second;
     return std::nullopt;
 }
 
-std::optional<std::string_view> ActionsShortcutsManager::ActionFromTag(int _tag) noexcept
+std::optional<std::string_view> ActionsShortcutsManager::ActionFromTag(int _tag) const noexcept
 {
     if( const auto it = g_TagToAction.find(_tag); it != g_TagToAction.end() )
         return std::string_view{it->second.data(), it->second.size()};

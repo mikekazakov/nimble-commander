@@ -426,7 +426,7 @@ static NSImageView *SpawnCautionSign()
         return;
 
     const int tag = static_cast<int>(tf.tag);
-    const std::optional<std::string_view> action = ActionsShortcutsManager::ActionFromTag(tag);
+    const std::optional<std::string_view> action = ActionsShortcutsManager::Instance().ActionFromTag(tag);
     if( !action )
         return;
 

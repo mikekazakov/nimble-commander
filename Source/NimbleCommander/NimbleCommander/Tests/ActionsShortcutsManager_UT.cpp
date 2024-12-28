@@ -19,14 +19,18 @@ static const auto g_EmptyConfigJSON = R"({
 
 TEST_CASE(PREFIX "TagFromAction")
 {
-    CHECK(ASM::TagFromAction("menu.edit.copy") == 12'000);          // Valid query
-    CHECK(ASM::TagFromAction("menu.i.dont.exist") == std::nullopt); // Invalid query
+    ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
+    const ASM manager{config};
+    CHECK(manager.TagFromAction("menu.edit.copy") == 12'000);          // Valid query
+    CHECK(manager.TagFromAction("menu.i.dont.exist") == std::nullopt); // Invalid query
 }
 
 TEST_CASE(PREFIX "ActionFromTag")
 {
-    CHECK(ASM::ActionFromTag(12'000) == "menu.edit.copy"); // Valid query
-    CHECK(ASM::ActionFromTag(346'242) == std::nullopt);    // Invalid query
+    ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
+    const ASM manager{config};
+    CHECK(manager.ActionFromTag(12'000) == "menu.edit.copy"); // Valid query
+    CHECK(manager.ActionFromTag(346'242) == std::nullopt);    // Invalid query
 }
 
 TEST_CASE(PREFIX "ShortCutFromAction")
@@ -118,18 +122,18 @@ TEST_CASE(PREFIX "ActionTagsFromShortCut")
         auto tags = manager.ActionTagsFromShortcut(AS("⌘1"));
         REQUIRE(tags);
         REQUIRE(std::set<int>(tags->begin(), tags->end()) ==
-                std::set<int>{ASM::TagFromAction("menu.go.quick_lists.parent_folders").value(),
-                              ASM::TagFromAction("viewer.toggle_text").value()});
+                std::set<int>{manager.TagFromAction("menu.go.quick_lists.parent_folders").value(),
+                              manager.TagFromAction("viewer.toggle_text").value()});
     }
     SECTION("Shortcut used by two actions in different domains, specify first")
     {
         REQUIRE(manager.ActionTagsFromShortcut(AS("⌘1"), "menu.") ==
-                ASM::ActionTags{ASM::TagFromAction("menu.go.quick_lists.parent_folders").value()});
+                ASM::ActionTags{manager.TagFromAction("menu.go.quick_lists.parent_folders").value()});
     }
     SECTION("Shortcut used by two actions in different domains, specify second")
     {
         REQUIRE(manager.ActionTagsFromShortcut(AS("⌘1"), "viewer.") ==
-                ASM::ActionTags{ASM::TagFromAction("viewer.toggle_text").value()});
+                ASM::ActionTags{manager.TagFromAction("viewer.toggle_text").value()});
     }
     SECTION("Shortcut is used by by two actions by default and one via override")
     {
@@ -138,9 +142,9 @@ TEST_CASE(PREFIX "ActionTagsFromShortCut")
         REQUIRE(tags);
         REQUIRE(std::set<int>(tags->begin(), tags->end()) ==
                 std::set<int>{
-                    ASM::TagFromAction("menu.go.quick_lists.parent_folders").value(),
-                    ASM::TagFromAction("viewer.toggle_text").value(),
-                    ASM::TagFromAction("menu.window.zoom").value(),
+                    manager.TagFromAction("menu.go.quick_lists.parent_folders").value(),
+                    manager.TagFromAction("viewer.toggle_text").value(),
+                    manager.TagFromAction("menu.window.zoom").value(),
                 });
     }
     SECTION("Shortcut is used by by two actions by default and one via override (multiple shortcuts)")
@@ -150,9 +154,9 @@ TEST_CASE(PREFIX "ActionTagsFromShortCut")
         REQUIRE(tags);
         REQUIRE(std::set<int>(tags->begin(), tags->end()) ==
                 std::set<int>{
-                    ASM::TagFromAction("menu.go.quick_lists.parent_folders").value(),
-                    ASM::TagFromAction("viewer.toggle_text").value(),
-                    ASM::TagFromAction("menu.window.zoom").value(),
+                    manager.TagFromAction("menu.go.quick_lists.parent_folders").value(),
+                    manager.TagFromAction("viewer.toggle_text").value(),
+                    manager.TagFromAction("menu.window.zoom").value(),
                 });
     }
     SECTION("After setting and removing the override its not reported as being used")
@@ -171,25 +175,25 @@ TEST_CASE(PREFIX "FirstOfActionTagsFromShortCut")
     REQUIRE(manager.FirstOfActionTagsFromShortcut({}, AS("⌘1")) == std::nullopt);
     REQUIRE(manager.FirstOfActionTagsFromShortcut(std::initializer_list<int>{346'242}, AS("⌘1")) == std::nullopt);
     REQUIRE(manager.FirstOfActionTagsFromShortcut(
-                std::initializer_list<int>{ASM::TagFromAction("menu.go.quick_lists.parent_folders").value()},
-                AS("⌘1")) == ASM::TagFromAction("menu.go.quick_lists.parent_folders").value());
+                std::initializer_list<int>{manager.TagFromAction("menu.go.quick_lists.parent_folders").value()},
+                AS("⌘1")) == manager.TagFromAction("menu.go.quick_lists.parent_folders").value());
     REQUIRE(manager.FirstOfActionTagsFromShortcut(
-                std::initializer_list<int>{ASM::TagFromAction("menu.go.quick_lists.parent_folders").value()},
+                std::initializer_list<int>{manager.TagFromAction("menu.go.quick_lists.parent_folders").value()},
                 AS("⌘1"),
-                "menu.") == ASM::TagFromAction("menu.go.quick_lists.parent_folders").value());
+                "menu.") == manager.TagFromAction("menu.go.quick_lists.parent_folders").value());
     REQUIRE(manager.FirstOfActionTagsFromShortcut(
-                std::initializer_list<int>{ASM::TagFromAction("menu.go.quick_lists.parent_folders").value()},
+                std::initializer_list<int>{manager.TagFromAction("menu.go.quick_lists.parent_folders").value()},
                 AS("⌘1"),
                 "viewer.") == std::nullopt);
     REQUIRE(manager.FirstOfActionTagsFromShortcut(
-                std::initializer_list<int>{ASM::TagFromAction("viewer.toggle_text").value()}, AS("⌘1")) ==
-            ASM::TagFromAction("viewer.toggle_text").value());
+                std::initializer_list<int>{manager.TagFromAction("viewer.toggle_text").value()}, AS("⌘1")) ==
+            manager.TagFromAction("viewer.toggle_text").value());
     REQUIRE(manager.FirstOfActionTagsFromShortcut(
-                std::initializer_list<int>{ASM::TagFromAction("viewer.toggle_text").value()}, AS("⌘1"), "menu.") ==
+                std::initializer_list<int>{manager.TagFromAction("viewer.toggle_text").value()}, AS("⌘1"), "menu.") ==
             std::nullopt);
     REQUIRE(manager.FirstOfActionTagsFromShortcut(
-                std::initializer_list<int>{ASM::TagFromAction("viewer.toggle_text").value()}, AS("⌘1"), "viewer.") ==
-            ASM::TagFromAction("viewer.toggle_text").value());
+                std::initializer_list<int>{manager.TagFromAction("viewer.toggle_text").value()}, AS("⌘1"), "viewer.") ==
+            manager.TagFromAction("viewer.toggle_text").value());
 }
 
 TEST_CASE(PREFIX "Configuration persistence")

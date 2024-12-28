@@ -224,18 +224,18 @@
 {
     using ASM = nc::core::ActionsShortcutsManager;
     struct Tags {
-        int prev = ASM::TagFromAction("panel.show_previous_tab").value();
-        int next = ASM::TagFromAction("panel.show_next_tab").value();
-        int t1 = ASM::TagFromAction("panel.show_tab_no_1").value();
-        int t2 = ASM::TagFromAction("panel.show_tab_no_2").value();
-        int t3 = ASM::TagFromAction("panel.show_tab_no_3").value();
-        int t4 = ASM::TagFromAction("panel.show_tab_no_4").value();
-        int t5 = ASM::TagFromAction("panel.show_tab_no_5").value();
-        int t6 = ASM::TagFromAction("panel.show_tab_no_6").value();
-        int t7 = ASM::TagFromAction("panel.show_tab_no_7").value();
-        int t8 = ASM::TagFromAction("panel.show_tab_no_8").value();
-        int t9 = ASM::TagFromAction("panel.show_tab_no_9").value();
-        int t10 = ASM::TagFromAction("panel.show_tab_no_10").value();
+        int prev = ASM::Instance().TagFromAction("panel.show_previous_tab").value();
+        int next = ASM::Instance().TagFromAction("panel.show_next_tab").value();
+        int t1 = ASM::Instance().TagFromAction("panel.show_tab_no_1").value();
+        int t2 = ASM::Instance().TagFromAction("panel.show_tab_no_2").value();
+        int t3 = ASM::Instance().TagFromAction("panel.show_tab_no_3").value();
+        int t4 = ASM::Instance().TagFromAction("panel.show_tab_no_4").value();
+        int t5 = ASM::Instance().TagFromAction("panel.show_tab_no_5").value();
+        int t6 = ASM::Instance().TagFromAction("panel.show_tab_no_6").value();
+        int t7 = ASM::Instance().TagFromAction("panel.show_tab_no_7").value();
+        int t8 = ASM::Instance().TagFromAction("panel.show_tab_no_8").value();
+        int t9 = ASM::Instance().TagFromAction("panel.show_tab_no_9").value();
+        int t10 = ASM::Instance().TagFromAction("panel.show_tab_no_10").value();
     } static const tags;
 
     const auto resp_view = nc::objc_cast<NSView>(self.window.firstResponder);

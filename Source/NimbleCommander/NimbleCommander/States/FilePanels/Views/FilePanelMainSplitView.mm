@@ -259,8 +259,8 @@ static constexpr auto g_DividerThickness = 1.;
 {
     using ASM = nc::core::ActionsShortcutsManager;
     struct Tags {
-        int move_left = ASM::TagFromAction("menu.view.panels_position.move_left").value();
-        int move_right = ASM::TagFromAction("menu.view.panels_position.move_right").value();
+        int move_left = ASM::Instance().TagFromAction("menu.view.panels_position.move_left").value();
+        int move_right = ASM::Instance().TagFromAction("menu.view.panels_position.move_right").value();
     } static const tags;
 
     const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortcut(
@@ -434,9 +434,9 @@ static constexpr auto g_DividerThickness = 1.;
 {
     using nc::core::ActionsShortcutsManager;
     static const int move_left_tag =
-        ActionsShortcutsManager::TagFromAction("menu.view.panels_position.move_left").value_or(-1);
+        ActionsShortcutsManager::Instance().TagFromAction("menu.view.panels_position.move_left").value();
     static const int move_right_tag =
-        ActionsShortcutsManager::TagFromAction("menu.view.panels_position.move_right").value_or(-1);
+        ActionsShortcutsManager::Instance().TagFromAction("menu.view.panels_position.move_right").value();
 
     const long item_tag = _item.tag;
     if( item_tag == move_left_tag ) {

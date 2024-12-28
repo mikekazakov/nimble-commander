@@ -257,21 +257,21 @@ static constexpr auto g_DividerThickness = 1.;
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
-    const auto event_data = nc::utility::ActionShortcut::EventData(_event);
+    using ASM = nc::core::ActionsShortcutsManager;
+    struct Tags {
+        int move_left = ASM::Instance().TagFromAction("menu.view.panels_position.move_left").value();
+        int move_right = ASM::Instance().TagFromAction("menu.view.panels_position.move_right").value();
+    } static const tags;
 
-    static ActionsShortcutsManager::ShortCut hk_move_left;
-    static ActionsShortcutsManager::ShortCut hk_move_right;
-    [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
-        std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
-            {.shortcut = &hk_move_left, .action = "menu.view.panels_position.move_left"},
-            {.shortcut = &hk_move_right, .action = "menu.view.panels_position.move_right"}});
+    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortcut(
+        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)}, ASM::Shortcut::EventData(_event));
 
-    if( hk_move_left.IsKeyDown(event_data) ) {
+    if( event_action_tag == tags.move_left ) {
         [self OnViewPanelsPositionMoveLeft:self];
         return true;
     }
 
-    if( hk_move_right.IsKeyDown(event_data) ) {
+    if( event_action_tag == tags.move_right ) {
         [self OnViewPanelsPositionMoveRight:self];
         return true;
     }
@@ -432,8 +432,11 @@ static constexpr auto g_DividerThickness = 1.;
 
 - (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)_item
 {
-    static const long move_left_tag = ActionsShortcutsManager::TagFromAction("menu.view.panels_position.move_left");
-    static const long move_right_tag = ActionsShortcutsManager::TagFromAction("menu.view.panels_position.move_right");
+    using nc::core::ActionsShortcutsManager;
+    static const int move_left_tag =
+        ActionsShortcutsManager::Instance().TagFromAction("menu.view.panels_position.move_left").value();
+    static const int move_right_tag =
+        ActionsShortcutsManager::Instance().TagFromAction("menu.view.panels_position.move_right").value();
 
     const long item_tag = _item.tag;
     if( item_tag == move_left_tag ) {

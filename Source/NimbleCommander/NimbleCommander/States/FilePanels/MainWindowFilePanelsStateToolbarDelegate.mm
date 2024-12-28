@@ -167,19 +167,21 @@ static NSString *EncodeToolIdentifier(const ExternalTool &_et)
         itemForItemIdentifier:(NSString *)itemIdentifier
     willBeInsertedIntoToolbar:(BOOL) [[maybe_unused]] _flag
 {
-    const auto &actman = ActionsShortcutsManager::Instance();
+    const auto &actman = nc::core::ActionsShortcutsManager::Instance();
     if( [itemIdentifier isEqualToString:@"filepanels_left_goto_button"] ) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_LeftPanelGoToButton;
         item.paletteLabel = item.label = NSLocalizedString(@"Left GoTo", "Toolbar palette");
-        item.toolTip = actman.ShortCutFromAction("menu.go.left_panel").PrettyString();
+        auto shortcuts = actman.ShortcutsFromAction("menu.go.left_panel").value();
+        item.toolTip = shortcuts.empty() ? @"" : shortcuts.front().PrettyString();
         return item;
     }
     if( [itemIdentifier isEqualToString:@"filepanels_right_goto_button"] ) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_RightPanelGoToButton;
         item.paletteLabel = item.label = NSLocalizedString(@"Right GoTo", "Toolbar palette");
-        item.toolTip = actman.ShortCutFromAction("menu.go.right_panel").PrettyString();
+        auto shortcuts = actman.ShortcutsFromAction("menu.go.right_panel").value();
+        item.toolTip = shortcuts.empty() ? @"" : shortcuts.front().PrettyString();
         return item;
     }
     if( [itemIdentifier isEqualToString:@"operations_pool"] ) {

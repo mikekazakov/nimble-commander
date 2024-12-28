@@ -120,9 +120,9 @@
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item
 {
-    auto tag = item.tag;
-    IF_MENU_TAG("menu.file.close")
-    {
+    const long tag = item.tag;
+    static const int close_tag = nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.file.close").value();
+    if( tag == close_tag ) {
         item.title = NSLocalizedString(@"Close Viewer", "Menu item title for closing internal viewer state");
         return true;
     }

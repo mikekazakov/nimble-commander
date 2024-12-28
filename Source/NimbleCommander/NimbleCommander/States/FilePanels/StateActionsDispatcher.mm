@@ -18,13 +18,6 @@ static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelSt
 @implementation NCPanelsStateActionsDispatcher {
     __unsafe_unretained MainWindowFilePanelState *m_FS;
     const nc::panel::StateActionsMap *m_AM;
-    ActionsShortcutsManager::ShortCut m_HKFocusLeft;
-    ActionsShortcutsManager::ShortCut m_HKFocusRight;
-    ActionsShortcutsManager::ShortCut m_HKMoveUp;
-    ActionsShortcutsManager::ShortCut m_HKMoveDown;
-    ActionsShortcutsManager::ShortCut m_HKShow;
-    ActionsShortcutsManager::ShortCut m_HKFocusTerminal;
-    std::unique_ptr<ActionsShortcutsManager::ShortCutsUpdater> m_ShortCutsUpdater;
 }
 @synthesize hasTerminal;
 
@@ -35,14 +28,6 @@ static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelSt
     if( self ) {
         m_FS = _state;
         m_AM = &_actions_map;
-        m_ShortCutsUpdater = std::make_unique<ActionsShortcutsManager::ShortCutsUpdater>(
-            std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
-                {.shortcut = &m_HKFocusLeft, .action = "panel.focus_left_panel"},
-                {.shortcut = &m_HKFocusRight, .action = "panel.focus_right_panel"},
-                {.shortcut = &m_HKMoveUp, .action = "menu.view.panels_position.move_up"},
-                {.shortcut = &m_HKMoveDown, .action = "menu.view.panels_position.move_down"},
-                {.shortcut = &m_HKShow, .action = "menu.view.panels_position.showpanels"},
-                {.shortcut = &m_HKFocusTerminal, .action = "menu.view.panels_position.focusterminal"}});
     }
     return self;
 }
@@ -76,15 +61,25 @@ static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelSt
     return false;
 }
 
-- (BOOL)performKeyEquivalent:(NSEvent *)theEvent
+- (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
-    NSString *characters = theEvent.charactersIgnoringModifiers;
+    using ASM = nc::core::ActionsShortcutsManager;
+    struct Tags {
+        int FocusLeft = ASM::Instance().TagFromAction("panel.focus_left_panel").value();
+        int FocusRight = ASM::Instance().TagFromAction("panel.focus_right_panel").value();
+        int MoveUp = ASM::Instance().TagFromAction("menu.view.panels_position.move_up").value();
+        int MoveDown = ASM::Instance().TagFromAction("menu.view.panels_position.move_down").value();
+        int Show = ASM::Instance().TagFromAction("menu.view.panels_position.showpanels").value();
+        int FocusTerminal = ASM::Instance().TagFromAction("menu.view.panels_position.focusterminal").value();
+    } static const tags;
+
+    NSString *characters = _event.charactersIgnoringModifiers;
     if( characters.length != 1 )
-        return [super performKeyEquivalent:theEvent];
+        return [super performKeyEquivalent:_event];
 
     constexpr auto mask = NSEventModifierFlagDeviceIndependentFlagsMask &
                           ~(NSEventModifierFlagCapsLock | NSEventModifierFlagNumericPad | NSEventModifierFlagFunction);
-    const auto mod = theEvent.modifierFlags & mask;
+    const auto mod = _event.modifierFlags & mask;
     const auto unicode = [characters characterAtIndex:0];
 
     // workaround for (shift)+ctrl+tab when its menu item is disabled, so NSWindow won't steal
@@ -92,51 +87,53 @@ static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelSt
     // tabs switching, which might not be true for custom key bindings.
     if( unicode == NSTabCharacter && mod == NSEventModifierFlagControl ) {
         if( ActionBySel(@selector(OnWindowShowNextTab:), *m_AM)->Predicate(m_FS) )
-            return [super performKeyEquivalent:theEvent];
+            return [super performKeyEquivalent:_event];
         return true;
     }
     if( unicode == NSTabCharacter && mod == (NSEventModifierFlagControl | NSEventModifierFlagShift) ) {
         if( ActionBySel(@selector(OnWindowShowPreviousTab:), *m_AM)->Predicate(m_FS) )
-            return [super performKeyEquivalent:theEvent];
+            return [super performKeyEquivalent:_event];
         return true;
     }
 
-    const auto event_data = nc::utility::ActionShortcut::EventData(theEvent);
-    if( m_HKFocusLeft.IsKeyDown(event_data) ) {
+    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortcut(
+        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)}, ASM::Shortcut::EventData(_event));
+
+    if( event_action_tag == tags.FocusLeft ) {
         [self executeBySelectorIfValidOrBeep:@selector(onFocusLeftPanel:) withSender:self];
         return true;
     }
 
-    if( m_HKFocusRight.IsKeyDown(event_data) ) {
+    if( event_action_tag == tags.FocusRight ) {
         [self executeBySelectorIfValidOrBeep:@selector(onFocusRightPanel:) withSender:self];
         return true;
     }
 
     // overlapped terminal stuff
     if( hasTerminal ) {
-        if( m_HKMoveUp.IsKeyDown(event_data) ) {
+        if( event_action_tag == tags.MoveUp ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionMoveUp:) withSender:self];
             return true;
         }
 
-        if( m_HKMoveDown.IsKeyDown(event_data) ) {
+        if( event_action_tag == tags.MoveDown ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionMoveDown:) withSender:self];
             return true;
         }
 
-        if( m_HKShow.IsKeyDown(event_data) ) {
+        if( event_action_tag == tags.Show ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionShowHidePanels:) withSender:self];
             return true;
         }
 
-        if( m_HKFocusTerminal.IsKeyDown(event_data) ) {
+        if( event_action_tag == tags.FocusTerminal ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionFocusOverlappedTerminal:)
                                       withSender:self];
             return true;
         }
     }
 
-    return [super performKeyEquivalent:theEvent];
+    return [super performKeyEquivalent:_event];
 }
 
 - (void)executeBySelectorIfValidOrBeep:(SEL)_selector withSender:(id)_sender

@@ -10,9 +10,13 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include <algorithm>
+#include <numeric>
+#include <ranges>
 #include <any>
 
+using nc::core::ActionsShortcutsManager;
 using nc::panel::ExternalTool;
+using nc::utility::ActionShortcut;
 
 static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item);
 static NSString *ComposeVerboseNonMenuActionTitle(const std::string &_action);
@@ -23,8 +27,8 @@ namespace {
 
 struct ActionShortcutNode {
     std::pair<std::string, int> tag;
-    nc::utility::ActionShortcut current_shortcut;
-    nc::utility::ActionShortcut default_shortcut;
+    ActionsShortcutsManager::Shortcuts current_shortcuts;
+    ActionsShortcutsManager::Shortcuts default_shortcuts;
     NSString *label = @"";
     bool is_menu_action = false;
     bool has_submenu = false;
@@ -57,6 +61,10 @@ enum class SourceType : uint8_t {
 @property(nonatomic) IBOutlet NSButton *sourceAllButton;
 @property(nonatomic) IBOutlet NSButton *sourceCustomizedButton;
 @property(nonatomic) IBOutlet NSButton *sourceConflictsButton;
+@property(nonatomic) IBOutlet NSTableColumn *firstShortcutColumn;
+@property(nonatomic) IBOutlet NSTableColumn *secondShortcutColumn;
+@property(nonatomic) IBOutlet NSTableColumn *thirdShortcutColumn;
+@property(nonatomic) IBOutlet NSTableColumn *fourthShortcutColumn;
 
 @property(nonatomic) SourceType sourceType;
 
@@ -80,6 +88,10 @@ enum class SourceType : uint8_t {
 @synthesize sourceAllButton;
 @synthesize sourceCustomizedButton;
 @synthesize sourceConflictsButton;
+@synthesize firstShortcutColumn;
+@synthesize secondShortcutColumn;
+@synthesize thirdShortcutColumn;
+@synthesize fourthShortcutColumn;
 
 - (id)initWithToolsStorage:(std::function<nc::panel::ExternalToolsStorage &()>)_tool_storage
 {
@@ -124,7 +136,7 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
 {
     const auto &sm = ActionsShortcutsManager::Instance();
     m_AllNodes.clear();
-    std::unordered_map<nc::utility::ActionShortcut, int> counts;
+    ankerl::unordered_dense::map<nc::utility::ActionShortcut, int> counts;
     for( auto &v : m_Shortcuts ) {
         if( v.first == "menu.file.open_with_submenu" || v.first == "menu.file.always_open_with_submenu" ) {
             // Skip the menu items that are actually placeholders for submenus as shortcuts don't work for them.
@@ -137,14 +149,16 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
         ActionShortcutNode shortcut;
         shortcut.tag = v;
         shortcut.label = LabelTitleForAction(v.first, menu_item);
-        shortcut.current_shortcut = sm.ShortCutFromTag(v.second);
-        shortcut.default_shortcut = sm.DefaultShortCutFromTag(v.second);
+        shortcut.current_shortcuts = sm.ShortcutsFromTag(v.second).value();
+        shortcut.default_shortcuts = sm.DefaultShortcutsFromTag(v.second).value();
         shortcut.is_menu_action = v.first.find_first_of("menu.") == 0;
-        shortcut.is_customized = shortcut.current_shortcut != shortcut.default_shortcut;
+        shortcut.is_customized = shortcut.current_shortcuts != shortcut.default_shortcuts;
         shortcut.has_submenu = menu_item != nil && menu_item.hasSubmenu;
         shortcut.participates_in_conflicts = ParticipatesInConflicts(v.first);
-        if( shortcut.participates_in_conflicts )
-            counts[shortcut.current_shortcut]++;
+        if( shortcut.participates_in_conflicts ) {
+            for( auto &sc : shortcut.current_shortcuts )
+                counts[sc]++;
+        }
 
         m_AllNodes.emplace_back(std::move(shortcut));
     }
@@ -164,8 +178,8 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
         if( auto node = std::any_cast<ActionShortcutNode>(&v) ) {
             if( !node->participates_in_conflicts )
                 continue;
-
-            node->is_conflicted = node->current_shortcut && counts[node->current_shortcut] > 1;
+            node->is_conflicted =
+                std::ranges::any_of(node->current_shortcuts, [&](auto &_sc) { return counts[_sc] > 1; });
             if( node->is_conflicted )
                 conflicts_amount++;
         }
@@ -276,6 +290,7 @@ static NSTextField *SpawnLabelForAction(const ActionShortcutNode &_action)
     tf.bordered = false;
     tf.editable = false;
     tf.drawsBackground = false;
+    tf.lineBreakMode = NSLineBreakByTruncatingTail;
     return tf;
 }
 
@@ -297,28 +312,41 @@ static NSImageView *SpawnCautionSign()
     return iv;
 }
 
-- (NSView *)tableView:(NSTableView *) [[maybe_unused]] tableView
-    viewForTableColumn:(NSTableColumn *)tableColumn
-                   row:(NSInteger)row
+- (NSView *)tableView:(NSTableView *) [[maybe_unused]] _table_view
+    viewForTableColumn:(NSTableColumn *)_table_column
+                   row:(NSInteger)_row
 {
-    if( row >= 0 && row < static_cast<int>(m_FilteredNodes.size()) ) {
-        if( auto node = std::any_cast<ActionShortcutNode>(&m_FilteredNodes[row]) ) {
-            if( [tableColumn.identifier isEqualToString:@"action"] ) {
+    if( _row >= 0 && _row < static_cast<int>(m_FilteredNodes.size()) ) {
+        if( auto node = std::any_cast<ActionShortcutNode>(&m_FilteredNodes[_row]) ) {
+            if( [_table_column.identifier isEqualToString:@"action"] ) {
                 return SpawnLabelForAction(*node);
             }
-            if( [tableColumn.identifier isEqualToString:@"hotkey"] ) {
+
+            const std::array columns{self.firstShortcutColumn,
+                                     self.secondShortcutColumn,
+                                     self.thirdShortcutColumn,
+                                     self.fourthShortcutColumn};
+            if( auto it = std::ranges::find(columns, _table_column); it != columns.end() ) {
+                const size_t shortcut_idx = std::distance(columns.begin(), it);
+
                 const auto key_text_field = [self makeDefaultGTMHotKeyTextField];
                 assert(key_text_field);
                 key_text_field.action = @selector(onHKChanged:);
                 key_text_field.target = self;
                 key_text_field.tag = node->tag.second;
 
+                const ActionShortcut default_shortcut = node->default_shortcuts.size() > shortcut_idx
+                                                            ? node->default_shortcuts[shortcut_idx]
+                                                            : ActionShortcut{};
+                const ActionShortcut current_shortcut = node->current_shortcuts.size() > shortcut_idx
+                                                            ? node->current_shortcuts[shortcut_idx]
+                                                            : ActionShortcut{};
                 const auto field_cell = nc::objc_cast<GTMHotKeyTextFieldCell>(key_text_field.cell);
-                field_cell.hotKey = [GTMHotKey hotKeyWithKey:node->current_shortcut.Key()
-                                                   modifiers:node->current_shortcut.modifiers];
-                field_cell.defaultHotKey = [GTMHotKey hotKeyWithKey:node->default_shortcut.Key()
-                                                          modifiers:node->default_shortcut.modifiers];
-                field_cell.menuHotKey = node->is_menu_action;
+                field_cell.hotKey = [GTMHotKey hotKeyWithKey:current_shortcut.Key()
+                                                   modifiers:current_shortcut.modifiers];
+                field_cell.defaultHotKey = [GTMHotKey hotKeyWithKey:default_shortcut.Key()
+                                                          modifiers:default_shortcut.modifiers];
+                field_cell.menuHotKey = node->is_menu_action && shortcut_idx == 0;
 
                 if( node->is_customized )
                     field_cell.font = [NSFont boldSystemFontOfSize:field_cell.font.pointSize];
@@ -327,15 +355,16 @@ static NSImageView *SpawnCautionSign()
 
                 return key_text_field;
             }
-            if( [tableColumn.identifier isEqualToString:@"flag"] ) {
+
+            if( [_table_column.identifier isEqualToString:@"flag"] ) {
                 return node->is_conflicted ? SpawnCautionSign() : nil;
             }
         }
-        if( auto node = std::any_cast<ToolShortcutNode>(&m_FilteredNodes[row]) ) {
-            if( [tableColumn.identifier isEqualToString:@"action"] ) {
+        if( auto node = std::any_cast<ToolShortcutNode>(&m_FilteredNodes[_row]) ) {
+            if( [_table_column.identifier isEqualToString:@"action"] ) {
                 return SpawnLabelForTool(*node);
             }
-            if( [tableColumn.identifier isEqualToString:@"hotkey"] ) {
+            if( [_table_column.identifier isEqualToString:@"first"] ) {
                 const auto &tool = *node->tool;
                 const auto key_text_field = [self makeDefaultGTMHotKeyTextField];
                 assert(key_text_field);
@@ -352,7 +381,7 @@ static NSImageView *SpawnCautionSign()
 
                 return key_text_field;
             }
-            if( [tableColumn.identifier isEqualToString:@"flag"] ) {
+            if( [_table_column.identifier isEqualToString:@"flag"] ) {
                 return node->is_conflicted ? SpawnCautionSign() : nil;
             }
         }
@@ -363,7 +392,7 @@ static NSImageView *SpawnCautionSign()
 - (nc::utility::ActionShortcut)shortcutFromGTMHotKey:(GTMHotKey *)_key
 {
     const auto key = _key.key.length > 0 ? [_key.key characterAtIndex:0] : static_cast<uint16_t>(0);
-    const auto hk = ActionsShortcutsManager::ShortCut(key, _key.modifiers);
+    const auto hk = ActionsShortcutsManager::Shortcut(key, _key.modifiers);
     return hk;
 }
 
@@ -388,16 +417,35 @@ static NSImageView *SpawnCautionSign()
 - (IBAction)onHKChanged:(id)sender
 {
     auto &am = ActionsShortcutsManager::Instance();
-    if( auto tf = nc::objc_cast<GTMHotKeyTextField>(sender) )
-        if( auto gtm_hk = nc::objc_cast<GTMHotKeyTextFieldCell>(tf.cell).hotKey ) {
-            auto tag = int(tf.tag);
-            auto hk = [self shortcutFromGTMHotKey:gtm_hk];
-            auto action = ActionsShortcutsManager::ActionFromTag(tag);
-            if( am.SetShortCutOverride(action, hk) ) {
-                am.SetMenuShortCuts(NSApp.mainMenu);
-                [self rebuildAll];
-            }
+    GTMHotKeyTextField *tf = nc::objc_cast<GTMHotKeyTextField>(sender);
+    if( !tf )
+        return;
+
+    const long row = [self.Table rowForView:tf];
+    if( row < 0 || row >= static_cast<long>(m_FilteredNodes.size()) )
+        return;
+
+    const int tag = static_cast<int>(tf.tag);
+    const std::optional<std::string_view> action = ActionsShortcutsManager::Instance().ActionFromTag(tag);
+    if( !action )
+        return;
+
+    std::vector<ActionShortcut> updated_shortcuts;
+    for( long col = 1; col <= 4; ++col ) {
+        if( GTMHotKeyTextField *v = nc::objc_cast<GTMHotKeyTextField>([self.Table viewAtColumn:col
+                                                                                           row:row
+                                                                               makeIfNecessary:false]) ) {
+            if( GTMHotKey *hk = nc::objc_cast<GTMHotKeyTextFieldCell>(v.cell).hotKey )
+                updated_shortcuts.push_back([self shortcutFromGTMHotKey:hk]);
         }
+    }
+
+    if( am.SetShortcutsOverride(*action, updated_shortcuts) ) {
+        [NSApp.mainMenu nc_setMenuItemShortcutsWithActionsShortcutsManager:am];
+    }
+
+    // Rebuild everything just in case the shortcut was a duplicate that ASM filtered out
+    [self rebuildAll];
 }
 
 - (IBAction)OnDefaults:(id) [[maybe_unused]] sender
@@ -415,7 +463,7 @@ static NSImageView *SpawnCautionSign()
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
     if( [alert runModal] == NSAlertFirstButtonReturn ) {
         ActionsShortcutsManager::Instance().RevertToDefaults();
-        ActionsShortcutsManager::Instance().SetMenuShortCuts(NSApp.mainMenu);
+        [NSApp.mainMenu nc_setMenuItemShortcutsWithActionsShortcutsManager:ActionsShortcutsManager::Instance()];
         [self rebuildAll];
     }
 }
@@ -445,8 +493,10 @@ static bool ValidateNodeForFilter(const std::any &_node, NSString *_filter)
         if( [scid rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0 )
             return true;
 
-        const auto prettry_hotkey = node->current_shortcut.PrettyString();
-        return [prettry_hotkey rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0;
+        return std::ranges::any_of(node->current_shortcuts, [&](const ActionShortcut &_sc) {
+            const auto prettry_hotkey = _sc.PrettyString();
+            return [prettry_hotkey rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0;
+        });
     }
     if( auto node = std::any_cast<ToolShortcutNode>(&_node) ) {
         const auto label = node->label;

@@ -12,11 +12,9 @@
 namespace nc::utility {
 
 static_assert(sizeof(ActionShortcut) == 4);
-
-ActionShortcut::EventData::EventData() noexcept
-    : char_with_modifiers(0), char_without_modifiers(0), key_code(0), modifiers(0)
-{
-}
+static_assert(std::is_trivially_copyable_v<ActionShortcut>);
+static_assert(std::is_trivially_destructible_v<ActionShortcut>);
+static_assert(std::is_trivially_copy_assignable_v<ActionShortcut>);
 
 ActionShortcut::EventData::EventData(unsigned short _chmod,
                                      unsigned short _chunmod,
@@ -90,6 +88,19 @@ ActionShortcut::ActionShortcut(uint16_t _unicode, unsigned long long _modif) noe
     modifiers = mod_flags;
 }
 
+ActionShortcut::ActionShortcut(const EventData &_event) noexcept
+{
+    // Exclude CapsLock/NumPad/Func from our decision process - our hotkeys don't support these modifiers.
+    constexpr auto mask =
+        NSEventModifierFlagDeviceIndependentFlagsMask &
+        (~NSEventModifierFlagCapsLock & ~NSEventModifierFlagNumericPad & ~NSEventModifierFlagFunction);
+    modifiers = NSEventModifierFlagsHolder{_event.modifiers & mask};
+
+    // When the shift modifier is present, characters are shown as UPPERCASE even when explicitly asked to provide them
+    // without modifiers. Explicitly remove this by lowercasing the input character.
+    unicode = nc::base::g_ToLower[_event.char_without_modifiers];
+}
+
 ActionShortcut::operator bool() const noexcept
 {
     return unicode != 0;
@@ -99,13 +110,13 @@ std::string ActionShortcut::ToPersString() const noexcept
 {
     std::string result;
     if( modifiers & NSEventModifierFlagShift )
-        result += reinterpret_cast<const char *>(u8"⇧");
+        result += "⇧";
     if( modifiers & NSEventModifierFlagControl )
-        result += reinterpret_cast<const char *>(u8"^");
+        result += "^";
     if( modifiers & NSEventModifierFlagOption )
-        result += reinterpret_cast<const char *>(u8"⌥");
+        result += "⌥";
     if( modifiers & NSEventModifierFlagCommand )
-        result += reinterpret_cast<const char *>(u8"⌘");
+        result += "⌘";
 
     if( unicode == '\r' )
         result += "\\r";
@@ -208,35 +219,6 @@ NSString *ActionShortcut::PrettyString() const noexcept
         return [NSString stringWithFormat:@"%@%@", StringForModifierFlags(modifiers), vis_key];
 }
 
-bool ActionShortcut::IsKeyDown(EventData _event) const noexcept
-{
-    // unicode==0 => disable, don't match anything
-    if( !unicode )
-        return false;
-
-    // exclude CapsLock/NumPad/Func from our decision process
-    constexpr auto mask =
-        NSEventModifierFlagDeviceIndependentFlagsMask &
-        (~NSEventModifierFlagCapsLock & ~NSEventModifierFlagNumericPad & ~NSEventModifierFlagFunction);
-    const auto clean_modif = NSEventModifierFlagsHolder{_event.modifiers & mask};
-
-    // modifiers should match exactly
-    if( modifiers != clean_modif )
-        return false;
-
-    // check for exact hit - modifiers and unicode
-    if( unicode == _event.char_without_modifiers )
-        return true;
-
-    // characters are shown as UPPERCASE even when explicitly asked to provide them without modifiers.
-    // explicitly check for this case by lowercasing the input character
-    if( modifiers.is_shift() && nc::base::g_ToLower[_event.char_without_modifiers] == unicode )
-        return true;
-
-    // no dice
-    return false;
-}
-
 } // namespace nc::utility
 
 size_t std::hash<nc::utility::ActionShortcut>::operator()(const nc::utility::ActionShortcut &_ac) const noexcept
@@ -244,7 +226,7 @@ size_t std::hash<nc::utility::ActionShortcut>::operator()(const nc::utility::Act
     return static_cast<size_t>(_ac.unicode) | (static_cast<size_t>(_ac.modifiers.flags) << 16);
 }
 
-@implementation NSMenuItem (NCAdditions)
+@implementation NSMenuItem (ActionShortcutSupport)
 
 - (void)nc_setKeyEquivalentWithShortcut:(nc::utility::ActionShortcut)_shortcut
 {

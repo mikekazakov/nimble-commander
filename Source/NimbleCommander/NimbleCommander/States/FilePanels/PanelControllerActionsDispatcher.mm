@@ -49,28 +49,22 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
                 forPanelView:(PanelView *) [[maybe_unused]] _panel_view
                    andHandle:(bool)_handle
 {
-    const auto event_data = nc::utility::ActionShortcut::EventData(_event);
+    using ASM = ActionsShortcutsManager;
+    struct Tags {
+        int file_enter = ASM::Instance().TagFromAction("menu.file.enter").value();
+        int file_open = ASM::Instance().TagFromAction("menu.file.open").value();
+        int go_root = ASM::Instance().TagFromAction("panel.go_root").value();
+        int go_home = ASM::Instance().TagFromAction("panel.go_home").value();
+        int show_preview = ASM::Instance().TagFromAction("panel.show_preview").value();
+        int go_into_folder = ASM::Instance().TagFromAction("panel.go_into_folder").value();
+        int go_into_enclosing_folder = ASM::Instance().TagFromAction("panel.go_into_enclosing_folder").value();
+        int show_context_menu = ASM::Instance().TagFromAction("panel.show_context_menu").value();
+    } static const tags;
 
-    static ActionsShortcutsManager::ShortCut hk_file_open;         //
-    static ActionsShortcutsManager::ShortCut hk_file_open_native;  //
-    static ActionsShortcutsManager::ShortCut hk_go_root;           //
-    static ActionsShortcutsManager::ShortCut hk_go_home;           //
-    static ActionsShortcutsManager::ShortCut hk_preview;           //
-    static ActionsShortcutsManager::ShortCut hk_go_into;           //
-    static ActionsShortcutsManager::ShortCut hk_go_outside;        //
-    static ActionsShortcutsManager::ShortCut hk_show_context_menu; //
-    [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
-        std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
-            {.shortcut = &hk_file_open, .action = "menu.file.enter"},
-            {.shortcut = &hk_file_open_native, .action = "menu.file.open"},
-            {.shortcut = &hk_go_root, .action = "panel.go_root"},
-            {.shortcut = &hk_go_home, .action = "panel.go_home"},
-            {.shortcut = &hk_preview, .action = "panel.show_preview"},
-            {.shortcut = &hk_go_into, .action = "panel.go_into_folder"},
-            {.shortcut = &hk_go_outside, .action = "panel.go_into_enclosing_folder"},
-            {.shortcut = &hk_show_context_menu, .action = "panel.show_context_menu"}});
+    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortcut(
+        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)}, ASM::Shortcut::EventData(_event));
 
-    if( hk_preview.IsKeyDown(event_data) ) {
+    if( event_action_tag == tags.show_preview ) {
         if( _handle ) {
             [self OnFileViewCommand:self];
             return view::BiddingPriority::High;
@@ -80,39 +74,39 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
                                                                                  : view::BiddingPriority::Skip;
     }
 
-    if( hk_go_home.IsKeyDown(event_data) ) {
+    if( event_action_tag == tags.go_home ) {
         if( _handle ) {
-            static auto tag = ActionsShortcutsManager::TagFromAction("menu.go.home");
+            static int tag = ASM::Instance().TagFromAction("menu.go.home").value();
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
     }
 
-    if( hk_go_root.IsKeyDown(event_data) ) {
+    if( event_action_tag == tags.go_root ) {
         if( _handle ) {
-            static auto tag = ActionsShortcutsManager::TagFromAction("menu.go.root");
+            static int tag = ASM::Instance().TagFromAction("menu.go.root").value();
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
     }
 
-    if( hk_go_into.IsKeyDown(event_data) ) {
+    if( event_action_tag == tags.go_into_folder ) {
         if( _handle ) {
-            static auto tag = ActionsShortcutsManager::TagFromAction("menu.go.into_folder");
+            static int tag = ASM::Instance().TagFromAction("menu.go.into_folder").value();
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
     }
 
-    if( hk_go_outside.IsKeyDown(event_data) ) {
+    if( event_action_tag == tags.go_into_enclosing_folder ) {
         if( _handle ) {
-            static auto tag = ActionsShortcutsManager::TagFromAction("menu.go.enclosing_folder");
+            static int tag = ASM::Instance().TagFromAction("menu.go.enclosing_folder").value();
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
     }
 
-    if( hk_file_open.IsKeyDown(event_data) ) {
+    if( event_action_tag == tags.file_enter ) {
         if( _handle ) {
             // we keep it here to avoid blinking on menu item
             [self OnOpen:nil];
@@ -120,14 +114,14 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
         return view::BiddingPriority::High;
     }
 
-    if( hk_file_open_native.IsKeyDown(event_data) ) {
+    if( event_action_tag == tags.file_open ) {
         if( _handle ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnOpenNatively:) withSender:self];
         }
         return view::BiddingPriority::High;
     }
 
-    if( hk_show_context_menu.IsKeyDown(event_data) ) {
+    if( event_action_tag == tags.show_context_menu ) {
         if( _handle ) {
             [self executeBySelectorIfValidOrBeep:@selector(onShowContextMenu:) withSender:self];
         }

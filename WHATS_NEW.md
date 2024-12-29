@@ -1,6 +1,6 @@
 # What's New in Nimble Commander
 
-## Version 1.7.0 (TBA)
+## Version 1.7.0 (18 Dec 2024)
 - Updated for macOS Sequoia.
 - The integrated viewer now provides syntax highlighting using the Lexilla library.
 - The integrated viewer no longer uses toolbars; instead, a status bar is used to save space.

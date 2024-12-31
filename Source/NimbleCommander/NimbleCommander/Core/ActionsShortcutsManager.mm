@@ -612,7 +612,9 @@ bool ActionsShortcutsManager::SetShortcutsOverride(std::string_view _action, std
 
     const Shortcuts new_shortcuts = SanitizedShortcuts(Shortcuts(_shortcuts.begin(), _shortcuts.end()));
 
+    // Search if currently this action has custom shortcuts(s)
     const auto override_it = m_ShortcutsOverrides.find(*tag);
+
     if( std::ranges::equal(default_it->second, new_shortcuts) ) {
         // The shortcut is same as the default one for this action
 
@@ -639,7 +641,12 @@ bool ActionsShortcutsManager::SetShortcutsOverride(std::string_view _action, std
             return false; // Nothing new, it's the same as currently defined in the overrides
         }
 
-        if( override_it != m_ShortcutsOverrides.end() ) {
+        if( override_it == m_ShortcutsOverrides.end() ) {
+            // Unregister the usage of the default override shortcuts
+            for( const Shortcut &shortcut : default_it->second )
+                UnregisterShortcutUsage(shortcut, *tag);
+        }
+        else {
             // Unregister the usage of the override shortcuts
             for( const Shortcut &shortcut : override_it->second )
                 UnregisterShortcutUsage(shortcut, *tag);

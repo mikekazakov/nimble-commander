@@ -159,6 +159,11 @@ TEST_CASE(PREFIX "ActionTagsFromShortCut")
                     manager.TagFromAction("menu.window.zoom").value(),
                 });
     }
+    SECTION("After setting an override the original is not reported as being used")
+    {
+        REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS("⌘j")}));
+        REQUIRE(manager.ActionTagsFromShortcut(AS("⌘c"), "menu.") == std::nullopt);
+    }
     SECTION("After setting and removing the override its not reported as being used")
     {
         REQUIRE(manager.SetShortcutsOverride("menu.window.zoom", std::array{AS("⇧^⌘⌥k"), AS("⇧^⌘⌥j")}));

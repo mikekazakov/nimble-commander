@@ -111,6 +111,12 @@ private:
     // Duplicates are removed as well.
     static Shortcuts SanitizedShortcuts(const Shortcuts &_shortcuts) noexcept;
 
+    // ...
+    ankerl::unordered_dense::map<int, std::string> m_TagToAction;
+
+    // ...
+    ankerl::unordered_dense::map<std::string, int, UnorderedStringHashEqual, UnorderedStringHashEqual> m_ActionToTag;
+
     // Maps an action tag to the default ordered list of its shortcuts.
     ankerl::unordered_dense::map<int, Shortcuts> m_ShortcutsDefaults;
 

@@ -223,237 +223,217 @@ static constexpr std::pair<const char*,int> g_ActionsTags[] = {
     {"viewer.refresh",                                  101'005}
 };
 
-static constinit std::pair<const char*, const char8_t*> g_DefaultShortcuts[] = {
-    {"menu.nimble_commander.about",                         u8""        },
-    {"menu.nimble_commander.preferences",                   u8"⌘,"      }, // cmd+,
-    {"menu.nimble_commander.toggle_admin_mode",             u8""        },
-    {"menu.nimble_commander.hide",                          u8"⌘h"      }, // cmd+h
-    {"menu.nimble_commander.hide_others",                   u8"⌥⌘h"     }, // cmd+alt+h
-    {"menu.nimble_commander.show_all",                      u8""        },
-    {"menu.nimble_commander.quit",                          u8"⌘q"      }, // cmd+q
-    {"menu.nimble_commander.active_license_file",           u8""        }, // no longer used
-    {"menu.nimble_commander.purchase_license",              u8""        }, // no longer used
-    {"menu.nimble_commander.purchase_pro_features",         u8""        }, // no longer used
-    {"menu.nimble_commander.restore_purchases",             u8""        }, // no longer used
-    {"menu.nimble_commander.registration_info",             u8""        }, // no longer used
+static constinit std::pair<const char*, const char*> g_DefaultShortcuts[] = {
+    {"menu.nimble_commander.about",                         ""        },
+    {"menu.nimble_commander.preferences",                   "⌘,"      }, // cmd+,
+    {"menu.nimble_commander.toggle_admin_mode",             ""        },
+    {"menu.nimble_commander.hide",                          "⌘h"      }, // cmd+h
+    {"menu.nimble_commander.hide_others",                   "⌥⌘h"     }, // cmd+alt+h
+    {"menu.nimble_commander.show_all",                      ""        },
+    {"menu.nimble_commander.quit",                          "⌘q"      }, // cmd+q
+    {"menu.nimble_commander.active_license_file",           ""        }, // no longer used
+    {"menu.nimble_commander.purchase_license",              ""        }, // no longer used
+    {"menu.nimble_commander.purchase_pro_features",         ""        }, // no longer used
+    {"menu.nimble_commander.restore_purchases",             ""        }, // no longer used
+    {"menu.nimble_commander.registration_info",             ""        }, // no longer used
 
-    {"menu.file.newwindow",                                 u8"⌘n"      }, // cmd+n
-    {"menu.file.new_folder",                                u8"⇧⌘n"     }, // cmd+shift+n
-    {"menu.file.new_folder_with_selection",                 u8"^⌘n"     }, // cmd+ctrl+n
-    {"menu.file.new_file",                                  u8"⌥⌘n"     }, // cmd+alt+n
-    {"menu.file.new_tab",                                   u8"⌘t"      }, // cmd+t
-    {"menu.file.enter",                                     u8"\\r"     }, // ↵
-    {"menu.file.open_with_submenu",                         u8""        }, //
-    {"menu.file.always_open_with_submenu",                  u8"⌥"       }, // alt
-    {"menu.file.open",                                      u8"⇧\\r"    }, // shift+↵
-    {"menu.file.reveal_in_opposite_panel",                  u8"⌥\\r"    }, // alt+↵
-    {"menu.file.reveal_in_opposite_panel_tab",              u8"⌥⌘\\r"   }, // alt+cmd+↵
-    {"menu.file.calculate_sizes",                           u8"⇧⌥\\r"   }, // shift+alt+↵
-    {"menu.file.calculate_all_sizes",                       u8"⇧^\\r"   }, // shift+ctrl+↵
-    {"menu.file.feed_filename_to_terminal",                 u8"^⌥\\r"   }, // ctrl+alt+↵
-    {"menu.file.feed_filenames_to_terminal",                u8"^⌥⌘\\r"  }, // ctrl+alt+cmd+↵
-//  {"menu.file.calculate_checksum",                        u8"⇧⌘k"     }, // shift+cmd+k, no longer used
-    {"menu.file.duplicate",                                 u8"⌘d"      }, // cmd+d
-    {"menu.file.add_to_favorites",                          u8"⌘b"      }, // cmd+b
-    {"menu.file.close_window",                              u8"⇧⌘w"     }, // shift+cmd+w
-    {"menu.file.close",                                     u8"⌘w"      }, // cmd+w
-    {"menu.file.close_other_tabs",                          u8"⌥⌘w"     }, // alt+cmd+w
-    {"menu.file.find",                                      u8"⌘f"      }, // cmd+f
-    {"menu.file.find_next",                                 u8"⌘g"      }, // cmd+g
-    {"menu.file.find_with_spotlight",                       u8"⌥⌘f"     }, // alt+cmd+f
-    {"menu.file.page_setup",                                u8"⇧⌘p"     }, // shift+cmd+p
-    {"menu.file.print",                                     u8"⌘p"      }, // cmd+p
+    {"menu.file.newwindow",                                 "⌘n"      }, // cmd+n
+    {"menu.file.new_folder",                                "⇧⌘n"     }, // cmd+shift+n
+    {"menu.file.new_folder_with_selection",                 "^⌘n"     }, // cmd+ctrl+n
+    {"menu.file.new_file",                                  "⌥⌘n"     }, // cmd+alt+n
+    {"menu.file.new_tab",                                   "⌘t"      }, // cmd+t
+    {"menu.file.enter",                                     "\\r"     }, // ↵
+    {"menu.file.open_with_submenu",                         ""        }, //
+    {"menu.file.always_open_with_submenu",                  "⌥"       }, // alt
+    {"menu.file.open",                                      "⇧\\r"    }, // shift+↵
+    {"menu.file.reveal_in_opposite_panel",                  "⌥\\r"    }, // alt+↵
+    {"menu.file.reveal_in_opposite_panel_tab",              "⌥⌘\\r"   }, // alt+cmd+↵
+    {"menu.file.calculate_sizes",                           "⇧⌥\\r"   }, // shift+alt+↵
+    {"menu.file.calculate_all_sizes",                       "⇧^\\r"   }, // shift+ctrl+↵
+    {"menu.file.feed_filename_to_terminal",                 "^⌥\\r"   }, // ctrl+alt+↵
+    {"menu.file.feed_filenames_to_terminal",                "^⌥⌘\\r"  }, // ctrl+alt+cmd+↵
+//  {"menu.file.calculate_checksum",                        "⇧⌘k"     }, // shift+cmd+k, no longer used
+    {"menu.file.duplicate",                                 "⌘d"      }, // cmd+d
+    {"menu.file.add_to_favorites",                          "⌘b"      }, // cmd+b
+    {"menu.file.close_window",                              "⇧⌘w"     }, // shift+cmd+w
+    {"menu.file.close",                                     "⌘w"      }, // cmd+w
+    {"menu.file.close_other_tabs",                          "⌥⌘w"     }, // alt+cmd+w
+    {"menu.file.find",                                      "⌘f"      }, // cmd+f
+    {"menu.file.find_next",                                 "⌘g"      }, // cmd+g
+    {"menu.file.find_with_spotlight",                       "⌥⌘f"     }, // alt+cmd+f
+    {"menu.file.page_setup",                                "⇧⌘p"     }, // shift+cmd+p
+    {"menu.file.print",                                     "⌘p"      }, // cmd+p
 
-    {"menu.edit.copy",                                      u8"⌘c"      }, // cmd+c
-    {"menu.edit.paste",                                     u8"⌘v"      }, // cmd+v
-    {"menu.edit.move_here",                                 u8"⌥⌘v"     }, // alt+cmd+v
-    {"menu.edit.select_all",                                u8"⌘a"      }, // cmd+a
-    {"menu.edit.deselect_all",                              u8"⌥⌘a"     }, // alt+cmd+a
-    {"menu.edit.invert_selection",                          u8"^⌘a"     }, // ctrl+cmd+a
+    {"menu.edit.copy",                                      "⌘c"      }, // cmd+c
+    {"menu.edit.paste",                                     "⌘v"      }, // cmd+v
+    {"menu.edit.move_here",                                 "⌥⌘v"     }, // alt+cmd+v
+    {"menu.edit.select_all",                                "⌘a"      }, // cmd+a
+    {"menu.edit.deselect_all",                              "⌥⌘a"     }, // alt+cmd+a
+    {"menu.edit.invert_selection",                          "^⌘a"     }, // ctrl+cmd+a
 
-    {"menu.view.switch_dual_single_mode",                   u8"⇧⌘p"     }, // shift+cmd+p
-    {"menu.view.swap_panels",                               u8"⌘u"      }, // cmd+u
-    {"menu.view.sync_panels",                               u8"⌥⌘u"     }, // alt+cmd+u
-    {"menu.view.refresh",                                   u8"⌘r"      }, // cmd+r
-    {"menu.view.toggle_layout_1",                           u8"^1"      }, // ctrl+1
-    {"menu.view.toggle_layout_2",                           u8"^2"      }, // ctrl+2
-    {"menu.view.toggle_layout_3",                           u8"^3"      }, // ctrl+3
-    {"menu.view.toggle_layout_4",                           u8"^4"      }, // ctrl+4
-    {"menu.view.toggle_layout_5",                           u8"^5"      }, // ctrl+5
-    {"menu.view.toggle_layout_6",                           u8"^6"      }, // ctrl+6
-    {"menu.view.toggle_layout_7",                           u8"^7"      }, // ctrl+7
-    {"menu.view.toggle_layout_8",                           u8"^8"      }, // ctrl+8
-    {"menu.view.toggle_layout_9",                           u8"^9"      }, // ctrl+9
-    {"menu.view.toggle_layout_10",                          u8"^0"      }, // ctrl+0
-    {"menu.view.sorting_by_name",                           u8"^⌘1"     }, // ctrl+cmd+1
-    {"menu.view.sorting_by_extension",                      u8"^⌘2"     }, // ctrl+cmd+2
-    {"menu.view.sorting_by_modify_time",                    u8"^⌘3"     }, // ctrl+cmd+3
-    {"menu.view.sorting_by_size",                           u8"^⌘4"     }, // ctrl+cmd+4
-    {"menu.view.sorting_by_creation_time",                  u8"^⌘5"     }, // ctrl+cmd+5
-    {"menu.view.sorting_by_added_time",                     u8"^⌘6"     }, // ctrl+cmd+6
-    {"menu.view.sorting_by_accessed_time",                  u8"^⌘7"     }, // ctrl+cmd+7
-    {"menu.view.sorting_view_hidden",                       u8"⇧⌘."     }, // shift+cmd+.
-    {"menu.view.sorting_separate_folders",                  u8""        },
-    {"menu.view.sorting_extensionless_folders",             u8""        },
-//  {"menu.view.sorting_case_sensitive",                    u8""        }, // no longer used
-//  {"menu.view.sorting_numeric_comparison",                u8""        }, // no longer used
-    {"menu.view.sorting_natural",                           u8""        },
-    {"menu.view.sorting_case_insens",                       u8""        },
-    {"menu.view.sorting_case_sens",                         u8""        },
-    {"menu.view.panels_position.move_up",                   u8"^⌥\uF700"}, // ctrl+alt+↑
-    {"menu.view.panels_position.move_down",                 u8"^⌥\uF701"}, // ctrl+alt+↓
-    {"menu.view.panels_position.move_left",                 u8"^⌥\uF702"}, // ctrl+alt+←
-    {"menu.view.panels_position.move_right",                u8"^⌥\uF703"}, // ctrl+alt+→
-    {"menu.view.panels_position.showpanels",                u8"^⌥o"     }, // ctrl+alt+o
-    {"menu.view.panels_position.focusterminal",             u8"^⌥\t"    }, // ctrl+alt+⇥
-    {"menu.view.show_tabs",                                 u8"⇧⌘t"     }, // shift+cmd+t
-    {"menu.view.show_toolbar",                              u8"⌥⌘t"     }, // alt+cmd+t
-    {"menu.view.show_terminal",                             u8"⌥⌘o"     }, // alt+cmd+o
+    {"menu.view.switch_dual_single_mode",                   "⇧⌘p"     }, // shift+cmd+p
+    {"menu.view.swap_panels",                               "⌘u"      }, // cmd+u
+    {"menu.view.sync_panels",                               "⌥⌘u"     }, // alt+cmd+u
+    {"menu.view.refresh",                                   "⌘r"      }, // cmd+r
+    {"menu.view.toggle_layout_1",                           "^1"      }, // ctrl+1
+    {"menu.view.toggle_layout_2",                           "^2"      }, // ctrl+2
+    {"menu.view.toggle_layout_3",                           "^3"      }, // ctrl+3
+    {"menu.view.toggle_layout_4",                           "^4"      }, // ctrl+4
+    {"menu.view.toggle_layout_5",                           "^5"      }, // ctrl+5
+    {"menu.view.toggle_layout_6",                           "^6"      }, // ctrl+6
+    {"menu.view.toggle_layout_7",                           "^7"      }, // ctrl+7
+    {"menu.view.toggle_layout_8",                           "^8"      }, // ctrl+8
+    {"menu.view.toggle_layout_9",                           "^9"      }, // ctrl+9
+    {"menu.view.toggle_layout_10",                          "^0"      }, // ctrl+0
+    {"menu.view.sorting_by_name",                           "^⌘1"     }, // ctrl+cmd+1
+    {"menu.view.sorting_by_extension",                      "^⌘2"     }, // ctrl+cmd+2
+    {"menu.view.sorting_by_modify_time",                    "^⌘3"     }, // ctrl+cmd+3
+    {"menu.view.sorting_by_size",                           "^⌘4"     }, // ctrl+cmd+4
+    {"menu.view.sorting_by_creation_time",                  "^⌘5"     }, // ctrl+cmd+5
+    {"menu.view.sorting_by_added_time",                     "^⌘6"     }, // ctrl+cmd+6
+    {"menu.view.sorting_by_accessed_time",                  "^⌘7"     }, // ctrl+cmd+7
+    {"menu.view.sorting_view_hidden",                       "⇧⌘."     }, // shift+cmd+.
+    {"menu.view.sorting_separate_folders",                  ""        },
+    {"menu.view.sorting_extensionless_folders",             ""        },
+//  {"menu.view.sorting_case_sensitive",                    ""        }, // no longer used
+//  {"menu.view.sorting_numeric_comparison",                ""        }, // no longer used
+    {"menu.view.sorting_natural",                           ""        },
+    {"menu.view.sorting_case_insens",                       ""        },
+    {"menu.view.sorting_case_sens",                         ""        },
+    {"menu.view.panels_position.move_up",                   "^⌥\uF700"}, // ctrl+alt+↑
+    {"menu.view.panels_position.move_down",                 "^⌥\uF701"}, // ctrl+alt+↓
+    {"menu.view.panels_position.move_left",                 "^⌥\uF702"}, // ctrl+alt+←
+    {"menu.view.panels_position.move_right",                "^⌥\uF703"}, // ctrl+alt+→
+    {"menu.view.panels_position.showpanels",                "^⌥o"     }, // ctrl+alt+o
+    {"menu.view.panels_position.focusterminal",             "^⌥\t"    }, // ctrl+alt+⇥
+    {"menu.view.show_tabs",                                 "⇧⌘t"     }, // shift+cmd+t
+    {"menu.view.show_toolbar",                              "⌥⌘t"     }, // alt+cmd+t
+    {"menu.view.show_terminal",                             "⌥⌘o"     }, // alt+cmd+o
     
-    {"menu.go.back",                                        u8"⌘["      }, // cmd+[
-    {"menu.go.forward",                                     u8"⌘]"      }, // cmd+]
-    {"menu.go.enclosing_folder",                            u8"⌘\uF700" }, // cmd+↑
-    {"menu.go.into_folder",                                 u8"⌘\uF701" }, // cmd+↓
-    {"menu.go.follow_symlink",                              u8"⌘\uF703" }, // cmd+→
-    {"menu.go.left_panel",                                  u8"\uF704"  }, // F1
-    {"menu.go.right_panel",                                 u8"\uF705"  }, // F2
-    {"menu.go.documents",                                   u8"⇧⌘o"     }, // shift+cmd+o
-    {"menu.go.desktop",                                     u8"⇧⌘d"     }, // shift+cmd+d
-    {"menu.go.downloads",                                   u8"⌥⌘l"     }, // alt+cmd+l
-    {"menu.go.home",                                        u8"⇧⌘h"     }, // shift+cmd+h
-    {"menu.go.library",                                     u8""        },
-    {"menu.go.applications",                                u8"⇧⌘a"     }, // shift+cmd+a
-    {"menu.go.utilities",                                   u8"⇧⌘u"     }, // shift+cmd+u
-    {"menu.go.processes_list",                              u8"⌥⌘p"     }, // alt+cmd+p
-    {"menu.go.favorites.manage",                            u8"^⌘b"     }, // ctrl+cmd+b
-    {"menu.go.to_folder",                                   u8"⇧⌘g"     }, // shift+cmd+g
-    {"menu.go.restore_last_closed",                         u8"⇧⌘r"     }, // shift+cmd+R
-    {"menu.go.connect.ftp",                                 u8""        },
-    {"menu.go.connect.sftp",                                u8""        },
-    {"menu.go.connect.webdav",                              u8""        },
-    {"menu.go.connect.lanshare",                            u8""        },
-    {"menu.go.connect.dropbox",                             u8""        },
-    {"menu.go.connect.network_server",                      u8"⌘k"      }, // cmd+k
-    {"menu.go.root",                                        u8""        },
-    {"menu.go.quick_lists.parent_folders",                  u8"⌘1"      }, // cmd+1
-    {"menu.go.quick_lists.history",                         u8"⌘2"      }, // cmd+2
-    {"menu.go.quick_lists.favorites",                       u8"⌘3"      }, // cmd+3
-    {"menu.go.quick_lists.volumes",                         u8"⌘4"      }, // cmd+4
-    {"menu.go.quick_lists.connections",                     u8"⌘5"      }, // cmd+5
-    {"menu.go.quick_lists.tags",                            u8"⌘6"      }, // cmd+6
+    {"menu.go.back",                                        "⌘["      }, // cmd+[
+    {"menu.go.forward",                                     "⌘]"      }, // cmd+]
+    {"menu.go.enclosing_folder",                            "⌘\uF700" }, // cmd+↑
+    {"menu.go.into_folder",                                 "⌘\uF701" }, // cmd+↓
+    {"menu.go.follow_symlink",                              "⌘\uF703" }, // cmd+→
+    {"menu.go.left_panel",                                  "\uF704"  }, // F1
+    {"menu.go.right_panel",                                 "\uF705"  }, // F2
+    {"menu.go.documents",                                   "⇧⌘o"     }, // shift+cmd+o
+    {"menu.go.desktop",                                     "⇧⌘d"     }, // shift+cmd+d
+    {"menu.go.downloads",                                   "⌥⌘l"     }, // alt+cmd+l
+    {"menu.go.home",                                        "⇧⌘h"     }, // shift+cmd+h
+    {"menu.go.library",                                     ""        },
+    {"menu.go.applications",                                "⇧⌘a"     }, // shift+cmd+a
+    {"menu.go.utilities",                                   "⇧⌘u"     }, // shift+cmd+u
+    {"menu.go.processes_list",                              "⌥⌘p"     }, // alt+cmd+p
+    {"menu.go.favorites.manage",                            "^⌘b"     }, // ctrl+cmd+b
+    {"menu.go.to_folder",                                   "⇧⌘g"     }, // shift+cmd+g
+    {"menu.go.restore_last_closed",                         "⇧⌘r"     }, // shift+cmd+R
+    {"menu.go.connect.ftp",                                 ""        },
+    {"menu.go.connect.sftp",                                ""        },
+    {"menu.go.connect.webdav",                              ""        },
+    {"menu.go.connect.lanshare",                            ""        },
+    {"menu.go.connect.dropbox",                             ""        },
+    {"menu.go.connect.network_server",                      "⌘k"      }, // cmd+k
+    {"menu.go.root",                                        ""        },
+    {"menu.go.quick_lists.parent_folders",                  "⌘1"      }, // cmd+1
+    {"menu.go.quick_lists.history",                         "⌘2"      }, // cmd+2
+    {"menu.go.quick_lists.favorites",                       "⌘3"      }, // cmd+3
+    {"menu.go.quick_lists.volumes",                         "⌘4"      }, // cmd+4
+    {"menu.go.quick_lists.connections",                     "⌘5"      }, // cmd+5
+    {"menu.go.quick_lists.tags",                            "⌘6"      }, // cmd+6
 
-    {"menu.command.system_overview",                        u8"⌘l"      }, // cmd+l
-    {"menu.command.volume_information",                     u8""        },
-    {"menu.command.file_attributes",                        u8"^a"      }, // ctrl+a
-    {"menu.command.copy_file_name",                         u8"⇧⌘c"     }, // shift+cmd+c
-    {"menu.command.copy_file_path",                         u8"⌥⌘c"     }, // alt+cmd+c
-    {"menu.command.copy_file_directory",                    u8"⇧⌥⌘c"    }, // shift+alt+cmd+c
-    {"menu.command.select_with_mask",                       u8"⌘="      }, // cmd+=
-    {"menu.command.select_with_extension",                  u8"⌥⌘="     }, // alt+cmd+=
-    {"menu.command.deselect_with_mask",                     u8"⌘-"      }, // cmd+-
-    {"menu.command.deselect_with_extension",                u8"⌥⌘-"     }, // alt+cmd+-
-    {"menu.command.quick_look",                             u8"⌘y"      }, // cmd+y
-    {"menu.command.internal_viewer",                        u8"⌥\uF706" }, // alt+F3
-    {"menu.command.external_editor",                        u8"\uF707"  }, // F4
-    {"menu.command.eject_volume",                           u8"⌘e"      }, // cmd+e
-    {"menu.command.batch_rename",                           u8"^m"      }, // ctrl+m
-    {"menu.command.copy_to",                                u8"\uF708"  }, // F5
-    {"menu.command.copy_as",                                u8"⇧\uF708" }, // shift+F5
-    {"menu.command.move_to",                                u8"\uF709"  }, // F6
-    {"menu.command.move_as",                                u8"⇧\uF709" }, // shift+F6
-    {"menu.command.rename_in_place",                        u8"^\uF709" }, // ctrl+F6
-    {"menu.command.create_directory",                       u8"\uF70a"  }, // F7
-    {"menu.command.move_to_trash",                          u8"⌘\u007f" }, // cmd+backspace
-    {"menu.command.delete",                                 u8"\uF70b"  }, // F8
-    {"menu.command.delete_permanently",                     u8"⇧\uF70b" }, // shift+F8
-    {"menu.command.compress_here",                          u8"\uF70c"  }, // F9
-    {"menu.command.compress_to_opposite",                   u8"⇧\uF70c" }, // shift+F9
-    {"menu.command.link_create_soft",                       u8""        },
-    {"menu.command.link_create_hard",                       u8""        },
-    {"menu.command.link_edit",                              u8""        },
-    {"menu.command.open_xattr",                             u8"⌥⌘x"     }, // alt+cmd+x
+    {"menu.command.system_overview",                        "⌘l"      }, // cmd+l
+    {"menu.command.volume_information",                     ""        },
+    {"menu.command.file_attributes",                        "^a"      }, // ctrl+a
+    {"menu.command.copy_file_name",                         "⇧⌘c"     }, // shift+cmd+c
+    {"menu.command.copy_file_path",                         "⌥⌘c"     }, // alt+cmd+c
+    {"menu.command.copy_file_directory",                    "⇧⌥⌘c"    }, // shift+alt+cmd+c
+    {"menu.command.select_with_mask",                       "⌘="      }, // cmd+=
+    {"menu.command.select_with_extension",                  "⌥⌘="     }, // alt+cmd+=
+    {"menu.command.deselect_with_mask",                     "⌘-"      }, // cmd+-
+    {"menu.command.deselect_with_extension",                "⌥⌘-"     }, // alt+cmd+-
+    {"menu.command.quick_look",                             "⌘y"      }, // cmd+y
+    {"menu.command.internal_viewer",                        "⌥\uF706" }, // alt+F3
+    {"menu.command.external_editor",                        "\uF707"  }, // F4
+    {"menu.command.eject_volume",                           "⌘e"      }, // cmd+e
+    {"menu.command.batch_rename",                           "^m"      }, // ctrl+m
+    {"menu.command.copy_to",                                "\uF708"  }, // F5
+    {"menu.command.copy_as",                                "⇧\uF708" }, // shift+F5
+    {"menu.command.move_to",                                "\uF709"  }, // F6
+    {"menu.command.move_as",                                "⇧\uF709" }, // shift+F6
+    {"menu.command.rename_in_place",                        "^\uF709" }, // ctrl+F6
+    {"menu.command.create_directory",                       "\uF70a"  }, // F7
+    {"menu.command.move_to_trash",                          "⌘\u007f" }, // cmd+backspace
+    {"menu.command.delete",                                 "\uF70b"  }, // F8
+    {"menu.command.delete_permanently",                     "⇧\uF70b" }, // shift+F8
+    {"menu.command.compress_here",                          "\uF70c"  }, // F9
+    {"menu.command.compress_to_opposite",                   "⇧\uF70c" }, // shift+F9
+    {"menu.command.link_create_soft",                       ""        },
+    {"menu.command.link_create_hard",                       ""        },
+    {"menu.command.link_edit",                              ""        },
+    {"menu.command.open_xattr",                             "⌥⌘x"     }, // alt+cmd+x
 
-    {"menu.window.minimize",                                u8"⌘m"      }, // cmd+m
-    {"menu.window.fullscreen",                              u8"^⌘f"     }, // ctrl+cmd+f
-    {"menu.window.zoom",                                    u8""        },
-    {"menu.window.show_previous_tab",                       u8"⇧^\t"    }, // shift+ctrl+tab
-    {"menu.window.show_next_tab",                           u8"^\t"     }, // ctrl+tab
-    {"menu.window.show_vfs_list",                           u8""        },
-    {"menu.window.bring_all_to_front",                      u8""        },
+    {"menu.window.minimize",                                "⌘m"      }, // cmd+m
+    {"menu.window.fullscreen",                              "^⌘f"     }, // ctrl+cmd+f
+    {"menu.window.zoom",                                    ""        },
+    {"menu.window.show_previous_tab",                       "⇧^\t"    }, // shift+ctrl+tab
+    {"menu.window.show_next_tab",                           "^\t"     }, // ctrl+tab
+    {"menu.window.show_vfs_list",                           ""        },
+    {"menu.window.bring_all_to_front",                      ""        },
 
-    {"panel.move_up",                                       u8"\uF700"  }, // up
-    {"panel.move_down",                                     u8"\uF701"  }, // down
-    {"panel.move_left",                                     u8"\uF702"  }, // left
-    {"panel.move_right",                                    u8"\uF703"  }, // right
-    {"panel.move_first",                                    u8"\uF729"  }, // home
-    {"panel.scroll_first",                                  u8"⌥\uF729" }, // alt+home
-    {"panel.move_last",                                     u8"\uF72B"  }, // end
-    {"panel.scroll_last",                                   u8"⌥\uF72B" }, // alt+end
-    {"panel.move_next_page",                                u8"\uF72D"  }, // page down
-    {"panel.scroll_next_page",                              u8"⌥\uF72D" }, // alt+page down
-    {"panel.move_prev_page",                                u8"\uF72C"  }, // page up
-    {"panel.scroll_prev_page",                              u8"⌥\uF72C" }, // alt+page up
-    {"panel.move_next_and_invert_selection",                u8"\u0003"  }, // insert
-    {"panel.invert_item_selection",                         u8""        },
-    {"panel.go_into_enclosing_folder",                      u8"\u007f"  }, // backspace
-    {"panel.go_into_folder",                                u8""        },
-    {"panel.go_root",                                       u8"/"       }, // slash
-    {"panel.go_home",                                       u8"⇧~"      }, // shift+tilde
-    {"panel.show_preview",                                  u8" "       }, // space
-    {"panel.show_previous_tab",                             u8"⇧⌘{"     }, // shift+cmd+{
-    {"panel.show_next_tab",                                 u8"⇧⌘}"     }, // shift+cmd+}
-    {"panel.show_tab_no_1",                                 u8""        },
-    {"panel.show_tab_no_2",                                 u8""        },
-    {"panel.show_tab_no_3",                                 u8""        },
-    {"panel.show_tab_no_4",                                 u8""        },
-    {"panel.show_tab_no_5",                                 u8""        },
-    {"panel.show_tab_no_6",                                 u8""        },
-    {"panel.show_tab_no_7",                                 u8""        },
-    {"panel.show_tab_no_8",                                 u8""        },
-    {"panel.show_tab_no_9",                                 u8""        },
-    {"panel.show_tab_no_10",                                u8""        },
-    {"panel.focus_left_panel",                              u8"⇧⌘\uF702"}, // shift+cmd+left
-    {"panel.focus_right_panel",                             u8"⇧⌘\uF703"}, // shift+cmd+right
-    {"panel.show_context_menu",                             u8"^\\r"    }, // ctrl+↵
+    {"panel.move_up",                                       "\uF700"  }, // up
+    {"panel.move_down",                                     "\uF701"  }, // down
+    {"panel.move_left",                                     "\uF702"  }, // left
+    {"panel.move_right",                                    "\uF703"  }, // right
+    {"panel.move_first",                                    "\uF729"  }, // home
+    {"panel.scroll_first",                                  "⌥\uF729" }, // alt+home
+    {"panel.move_last",                                     "\uF72B"  }, // end
+    {"panel.scroll_last",                                   "⌥\uF72B" }, // alt+end
+    {"panel.move_next_page",                                "\uF72D"  }, // page down
+    {"panel.scroll_next_page",                              "⌥\uF72D" }, // alt+page down
+    {"panel.move_prev_page",                                "\uF72C"  }, // page up
+    {"panel.scroll_prev_page",                              "⌥\uF72C" }, // alt+page up
+    {"panel.move_next_and_invert_selection",                "\u0003"  }, // insert
+    {"panel.invert_item_selection",                         ""        },
+    {"panel.go_into_enclosing_folder",                      "\u007f"  }, // backspace
+    {"panel.go_into_folder",                                ""        },
+    {"panel.go_root",                                       "/"       }, // slash
+    {"panel.go_home",                                       "⇧~"      }, // shift+tilde
+    {"panel.show_preview",                                  " "       }, // space
+    {"panel.show_previous_tab",                             "⇧⌘{"     }, // shift+cmd+{
+    {"panel.show_next_tab",                                 "⇧⌘}"     }, // shift+cmd+}
+    {"panel.show_tab_no_1",                                 ""        },
+    {"panel.show_tab_no_2",                                 ""        },
+    {"panel.show_tab_no_3",                                 ""        },
+    {"panel.show_tab_no_4",                                 ""        },
+    {"panel.show_tab_no_5",                                 ""        },
+    {"panel.show_tab_no_6",                                 ""        },
+    {"panel.show_tab_no_7",                                 ""        },
+    {"panel.show_tab_no_8",                                 ""        },
+    {"panel.show_tab_no_9",                                 ""        },
+    {"panel.show_tab_no_10",                                ""        },
+    {"panel.focus_left_panel",                              "⇧⌘\uF702"}, // shift+cmd+left
+    {"panel.focus_right_panel",                             "⇧⌘\uF703"}, // shift+cmd+right
+    {"panel.show_context_menu",                             "^\\r"    }, // ctrl+↵
     
-    {"viewer.toggle_text",                                  u8"⌘1"      }, // cmd+1
-    {"viewer.toggle_hex",                                   u8"⌘2"      }, // cmd+2
-    {"viewer.toggle_preview",                               u8"⌘3"      }, // cmd+3
-//  {"viewer.show_settings",                                u8"⌘0"      }, // cmd+0, no longer used
-    {"viewer.show_goto",                                    u8"⌘l"      }, // cmd+l
-    {"viewer.refresh",                                      u8"⌘r"      }, // cmd+r
+    {"viewer.toggle_text",                                  "⌘1"      }, // cmd+1
+    {"viewer.toggle_hex",                                   "⌘2"      }, // cmd+2
+    {"viewer.toggle_preview",                               "⌘3"      }, // cmd+3
+//  {"viewer.show_settings",                                "⌘0"      }, // cmd+0, no longer used
+    {"viewer.show_goto",                                    "⌘l"      }, // cmd+l
+    {"viewer.refresh",                                      "⌘r"      }, // cmd+r
 };
 // clang-format on
-
-template <size_t size, typename T, size_t... indexes>
-static constexpr auto make_array_n_impl(T &&value, std::index_sequence<indexes...> /*unused*/)
-{
-    return std::array<std::decay_t<T>, size>{(static_cast<void>(indexes), value)..., std::forward<T>(value)};
-}
-
-template <size_t size, typename T>
-static constexpr auto make_array_n(T &&value)
-{
-    return make_array_n_impl<size>(std::forward<T>(value), std::make_index_sequence<size - 1>{});
-}
-
-static constinit const auto g_ActionToTag = [] {
-    auto items = make_array_n<std::size(g_ActionsTags)>(std::pair<frozen::string, int>(frozen::string(""), 0));
-    for( size_t i = 0; i < std::size(g_ActionsTags); ++i )
-        items[i] = std::pair<frozen::string, int>(g_ActionsTags[i].first, g_ActionsTags[i].second);
-    return frozen::make_unordered_map(items);
-}();
-
-static constinit const auto g_TagToAction = [] {
-    auto items = make_array_n<std::size(g_ActionsTags)>(std::pair<int, frozen::string>(0, frozen::string("")));
-    for( size_t i = 0; i < std::size(g_ActionsTags); ++i )
-        items[i] = std::pair<int, frozen::string>(g_ActionsTags[i].second, g_ActionsTags[i].first);
-    return frozen::make_unordered_map(items);
-}();
 
 ActionsShortcutsManager::ActionsShortcutsManager(nc::config::Config &_config) : m_Config(_config)
 {
     static_assert(sizeof(TagsUsingShortcut) == 24);
+
+    // TODO: DI
+    for( auto [action, tag] : g_ActionsTags ) {
+        m_ActionToTag.emplace(action, tag);
+        m_TagToAction.emplace(tag, action);
+    }
 
     // safety checks against malformed g_ActionsTags, only in Debug builds
     assert((ankerl::unordered_dense::map<std::string_view, int>{std::begin(g_ActionsTags), std::end(g_ActionsTags)})
@@ -461,7 +441,7 @@ ActionsShortcutsManager::ActionsShortcutsManager(nc::config::Config &_config) : 
 
     // Set up the shortcut defaults from the hardcoded map
     for( auto [action, shortcut_string] : g_DefaultShortcuts ) {
-        if( auto it = g_ActionToTag.find(std::string_view{action}); it != g_ActionToTag.end() ) {
+        if( auto it = m_ActionToTag.find(action); it != m_ActionToTag.end() ) {
             m_ShortcutsDefaults[it->second] = SanitizedShortcuts(Shortcuts{Shortcut{shortcut_string}});
         }
     }
@@ -483,14 +463,14 @@ ActionsShortcutsManager &ActionsShortcutsManager::Instance()
 
 std::optional<int> ActionsShortcutsManager::TagFromAction(std::string_view _action) const noexcept
 {
-    if( const auto it = g_ActionToTag.find(_action); it != g_ActionToTag.end() )
+    if( const auto it = m_ActionToTag.find(_action); it != m_ActionToTag.end() )
         return it->second;
     return std::nullopt;
 }
 
 std::optional<std::string_view> ActionsShortcutsManager::ActionFromTag(int _tag) const noexcept
 {
-    if( const auto it = g_TagToAction.find(_tag); it != g_TagToAction.end() )
+    if( const auto it = m_TagToAction.find(_tag); it != m_TagToAction.end() )
         return std::string_view{it->second.data(), it->second.size()};
     return std::nullopt;
 }
@@ -508,8 +488,8 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
         if( it->name.GetType() != kStringType )
             continue;
 
-        const auto att = g_ActionToTag.find(std::string_view{it->name.GetString()});
-        if( att == g_ActionToTag.end() )
+        const auto att = m_ActionToTag.find(it->name.GetString());
+        if( att == m_ActionToTag.end() )
             continue;
 
         if( it->value.GetType() == kStringType ) {

@@ -23,9 +23,6 @@ struct ActionShortcut {
     // Constructs from a persistency utf8 string
     ActionShortcut(std::string_view _from) noexcept;
 
-    // Constructs from a persistency utf8 string, wrapper for C++20-style u8 characters
-    ActionShortcut(std::u8string_view _from) noexcept;
-
     // Constructs from an NSEvent/NSEventTypeKeyDown data
     ActionShortcut(const EventData &_event) noexcept;
 

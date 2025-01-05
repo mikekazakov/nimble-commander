@@ -651,7 +651,6 @@ bool ActionsShortcutsManager::SetShortcutsOverride(std::string_view _action, std
 
     // immediately write to config file
     WriteOverridesToConfig();
-    FireObservers();
     return true;
 }
 
@@ -659,7 +658,6 @@ void ActionsShortcutsManager::RevertToDefaults()
 {
     m_ShortcutsOverrides.clear();
     WriteOverridesToConfig();
-    FireObservers();
 }
 
 void ActionsShortcutsManager::WriteOverridesToConfig() const
@@ -693,11 +691,6 @@ void ActionsShortcutsManager::WriteOverridesToConfig() const
 std::span<const std::pair<const char *, int>> ActionsShortcutsManager::AllShortcuts()
 {
     return g_ActionsTags;
-}
-
-ActionsShortcutsManager::ObservationTicket ActionsShortcutsManager::ObserveChanges(std::function<void()> _callback)
-{
-    return ObservableBase::AddObserver(_callback);
 }
 
 void ActionsShortcutsManager::RegisterShortcutUsage(const Shortcut _shortcut, const int _tag) noexcept

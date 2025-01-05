@@ -61,6 +61,20 @@ public:
     virtual std::optional<int> FirstOfActionTagsFromShortcut(std::span<const int> _of_tags,
                                                              Shortcut _sc,
                                                              std::string_view _in_domain = {}) const noexcept = 0;
+    
+    // Removes any hotkeys overrides.
+    virtual void RevertToDefaults() = 0;
+    
+    // Sets the custom shortkey for the specified action.
+    // Returns true if any change was done to the actions maps.
+    // If the _action doesn't exist or already has the same value, returns false.
+    // This function is effectively a syntax sugar for SetShortCutsOverride(_action, {&_sc, 1}).
+    virtual bool SetShortcutOverride(std::string_view _action, Shortcut _sc) = 0;
+
+    // Sets the custom shortkeys for the specified action.
+    // Returns true if any change was done to the actions maps.
+    // If the _action doesn't exist or already has the same value, returns false.
+    virtual bool SetShortcutsOverride(std::string_view _action, std::span<const Shortcut> _shortcuts) = 0;
 };
 
 } // namespace nc::utility

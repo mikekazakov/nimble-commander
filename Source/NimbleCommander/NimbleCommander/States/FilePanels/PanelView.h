@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -18,6 +18,10 @@
 
 namespace nc::vfs {
 class NativeHost;
+}
+
+namespace nc::utility {
+class ActionsShortcutsManager;
 }
 
 namespace nc::panel {
@@ -47,10 +51,11 @@ class Model;
 @property(nonatomic, weak) NCPanelControllerActionsDispatcher *actionsDispatcher;
 
 - (id)initWithFrame:(NSRect)frame
-     iconRepository:(std::unique_ptr<nc::vfsicon::IconRepository>)_icon_repository
-          nativeVFS:(nc::vfs::NativeHost &)_native_vfs // this dependency is weird
-             header:(NCPanelViewHeader *)_header
-             footer:(NCPanelViewFooter *)_footer;
+             iconRepository:(std::unique_ptr<nc::vfsicon::IconRepository>)_icon_repository
+    actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager
+                  nativeVFS:(nc::vfs::NativeHost &)_native_vfs // this dependency is weird
+                     header:(NCPanelViewHeader *)_header
+                     footer:(NCPanelViewFooter *)_footer;
 
 /**
  * called by controlled when a directory has been entirely changed in PanelData.

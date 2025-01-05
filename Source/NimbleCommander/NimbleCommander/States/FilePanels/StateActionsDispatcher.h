@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/MIMResponder.h>
@@ -6,6 +6,10 @@
 #include <ankerl/unordered_dense.h>
 
 @class MainWindowFilePanelState;
+
+namespace nc::utility {
+class ActionsShortcutsManager;
+}
 
 namespace nc::panel {
 namespace actions {
@@ -19,7 +23,8 @@ using StateActionsMap = ankerl::unordered_dense::map<SEL, std::unique_ptr<const 
 @property(nonatomic, readwrite) bool hasTerminal;
 
 - (instancetype)initWithState:(MainWindowFilePanelState *)_state
-                andActionsMap:(const nc::panel::StateActionsMap &)_actions_map;
+                    actionsMap:(const nc::panel::StateActionsMap &)_actions_map
+    andActionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_action_shortcuts_manager;
 
 - (IBAction)OnSwapPanels:(id)sender;
 - (IBAction)OnSyncPanels:(id)sender;

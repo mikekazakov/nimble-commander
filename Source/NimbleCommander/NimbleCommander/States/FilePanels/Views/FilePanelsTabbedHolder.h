@@ -1,5 +1,9 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
+
+namespace nc::utility {
+class ActionsShortcutsManager;
+}
 
 @class MMTabBarView;
 @class PanelView;
@@ -14,6 +18,10 @@
 @property(nonatomic, readonly) int selectedIndex; // return -1 if no PanelView is selected
 @property(nonatomic, readonly) unsigned tabsCount;
 @property(nonatomic) bool tabBarShown;
+
+- (id)initWithFrame:(NSRect)_frame_rect NS_UNAVAILABLE;
+- (id)initWithFrame:(NSRect)_frame_rect
+    actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager;
 
 - (void)addPanel:(PanelView *)_panel;
 - (NSTabViewItem *)tabViewItemForController:(PanelController *)_controller;

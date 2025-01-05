@@ -1,7 +1,7 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState.h"
 #include "StateActionsDispatcher.h"
-#include "../../Core/ActionsShortcutsManager.h"
+#include <Utility/ActionsShortcutsManager.h>
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 #include <Operations/PoolViewController.h>
 #include "Actions/ExecuteExternalTool.h"
@@ -32,6 +32,7 @@ static std::string_view g_ExternalToolsIdentifiersPrefix = "external_tool_";
     NSArray *m_AllowedToolbarItemsIdentifiers;
     nc::panel::ExternalToolsStorage *m_Storage;
     nc::panel::ExternalToolsStorage::ObservationTicket m_ToolsChangesTicket;
+    const nc::utility::ActionsShortcutsManager *m_ActionsShortcutsManager;
 
     id m_RepresentedObject;
 }
@@ -42,11 +43,13 @@ static std::string_view g_ExternalToolsIdentifiersPrefix = "external_tool_";
 @synthesize operationsPoolViewController = m_PoolViewController;
 
 - (instancetype)initWithToolsStorage:(nc::panel::ExternalToolsStorage &)_storage
+             actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager
                    andOperationsPool:(nc::ops::Pool &)_pool
 {
     self = [super init];
     if( self ) {
         m_Storage = &_storage;
+        m_ActionsShortcutsManager = &_actions_shortcuts_manager;
 
         [self buildBasicControls];
         [self buildToolbar];
@@ -167,12 +170,11 @@ static NSString *EncodeToolIdentifier(const ExternalTool &_et)
         itemForItemIdentifier:(NSString *)itemIdentifier
     willBeInsertedIntoToolbar:(BOOL) [[maybe_unused]] _flag
 {
-    const auto &actman = nc::core::ActionsShortcutsManager::Instance();
     if( [itemIdentifier isEqualToString:@"filepanels_left_goto_button"] ) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_LeftPanelGoToButton;
         item.paletteLabel = item.label = NSLocalizedString(@"Left GoTo", "Toolbar palette");
-        auto shortcuts = actman.ShortcutsFromAction("menu.go.left_panel").value();
+        auto shortcuts = m_ActionsShortcutsManager->ShortcutsFromAction("menu.go.left_panel").value();
         item.toolTip = shortcuts.empty() ? @"" : shortcuts.front().PrettyString();
         return item;
     }
@@ -180,7 +182,7 @@ static NSString *EncodeToolIdentifier(const ExternalTool &_et)
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_RightPanelGoToButton;
         item.paletteLabel = item.label = NSLocalizedString(@"Right GoTo", "Toolbar palette");
-        auto shortcuts = actman.ShortcutsFromAction("menu.go.right_panel").value();
+        auto shortcuts = m_ActionsShortcutsManager->ShortcutsFromAction("menu.go.right_panel").value();
         item.toolTip = shortcuts.empty() ? @"" : shortcuts.front().PrettyString();
         return item;
     }

@@ -1,6 +1,6 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelView.h"
-#include <NimbleCommander/Core/ActionsShortcutsManager.h>
+#include <Utility/ActionsShortcutsManager.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
 #include <Utility/MIMResponder.h>
 #include <Utility/ObjCpp.h>
@@ -61,6 +61,7 @@ struct StateStorage {
 
     std::unique_ptr<IconRepository> m_IconRepository;
     std::shared_ptr<nc::vfs::NativeHost> m_NativeHost;
+    const nc::utility::ActionsShortcutsManager *m_ActionsShortcutsManager;
 
     int m_CursorPos;
     nc::utility::NSEventModifierFlagsHolder m_KeyboardModifierFlags;
@@ -71,10 +72,11 @@ struct StateStorage {
 @synthesize actionsDispatcher;
 
 - (id)initWithFrame:(NSRect)frame
-     iconRepository:(std::unique_ptr<nc::vfsicon::IconRepository>)_icon_repository
-          nativeVFS:(nc::vfs::NativeHost &)_native_vfs
-             header:(NCPanelViewHeader *)_header
-             footer:(NCPanelViewFooter *)_footer
+             iconRepository:(std::unique_ptr<nc::vfsicon::IconRepository>)_icon_repository
+    actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager
+                  nativeVFS:(nc::vfs::NativeHost &)_native_vfs
+                     header:(NCPanelViewHeader *)_header
+                     footer:(NCPanelViewFooter *)_footer
 {
     self = [super initWithFrame:frame];
     if( self ) {
@@ -83,6 +85,7 @@ struct StateStorage {
         m_HeaderTitle = @"";
         m_IconRepository = std::move(_icon_repository);
         m_NativeHost = _native_vfs.SharedPtr();
+        m_ActionsShortcutsManager = &_actions_shortcuts_manager;
 
         m_ItemsView = [[NCPanelViewDummyPresentation alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         [self addSubview:m_ItemsView];
@@ -509,7 +512,6 @@ struct StateStorage {
 
 - (void)keyDown:(NSEvent *)event
 {
-    using ASM = nc::core::ActionsShortcutsManager;
     using nc::utility::ActionShortcut;
 
     id<NCPanelViewKeystrokeSink> best_handler = nil;
@@ -537,21 +539,39 @@ struct StateStorage {
     [self checkKeyboardModifierFlags:event.modifierFlags];
 
     struct Tags {
-        int up = ASM::Instance().TagFromAction("panel.move_up").value();
-        int down = ASM::Instance().TagFromAction("panel.move_down").value();
-        int left = ASM::Instance().TagFromAction("panel.move_left").value();
-        int right = ASM::Instance().TagFromAction("panel.move_right").value();
-        int first = ASM::Instance().TagFromAction("panel.move_first").value();
-        int last = ASM::Instance().TagFromAction("panel.move_last").value();
-        int page_down = ASM::Instance().TagFromAction("panel.move_next_page").value();
-        int page_up = ASM::Instance().TagFromAction("panel.move_prev_page").value();
-        int invert_and_move = ASM::Instance().TagFromAction("panel.move_next_and_invert_selection").value();
-        int invert = ASM::Instance().TagFromAction("panel.invert_item_selection").value();
-        int scroll_down = ASM::Instance().TagFromAction("panel.scroll_next_page").value();
-        int scroll_up = ASM::Instance().TagFromAction("panel.scroll_prev_page").value();
-        int scroll_home = ASM::Instance().TagFromAction("panel.scroll_first").value();
-        int scroll_end = ASM::Instance().TagFromAction("panel.scroll_last").value();
-    } static const tags;
+        int up = -1;
+        int down = -1;
+        int left = -1;
+        int right = -1;
+        int first = -1;
+        int last = -1;
+        int page_down = -1;
+        int page_up = -1;
+        int invert_and_move = -1;
+        int invert = -1;
+        int scroll_down = -1;
+        int scroll_up = -1;
+        int scroll_home = -1;
+        int scroll_end = -1;
+    };
+    static const Tags tags = [&] {
+        Tags t;
+        t.up = m_ActionsShortcutsManager->TagFromAction("panel.move_up").value();
+        t.down = m_ActionsShortcutsManager->TagFromAction("panel.move_down").value();
+        t.left = m_ActionsShortcutsManager->TagFromAction("panel.move_left").value();
+        t.right = m_ActionsShortcutsManager->TagFromAction("panel.move_right").value();
+        t.first = m_ActionsShortcutsManager->TagFromAction("panel.move_first").value();
+        t.last = m_ActionsShortcutsManager->TagFromAction("panel.move_last").value();
+        t.page_down = m_ActionsShortcutsManager->TagFromAction("panel.move_next_page").value();
+        t.page_up = m_ActionsShortcutsManager->TagFromAction("panel.move_prev_page").value();
+        t.invert_and_move = m_ActionsShortcutsManager->TagFromAction("panel.move_next_and_invert_selection").value();
+        t.invert = m_ActionsShortcutsManager->TagFromAction("panel.invert_item_selection").value();
+        t.scroll_down = m_ActionsShortcutsManager->TagFromAction("panel.scroll_next_page").value();
+        t.scroll_up = m_ActionsShortcutsManager->TagFromAction("panel.scroll_prev_page").value();
+        t.scroll_home = m_ActionsShortcutsManager->TagFromAction("panel.scroll_first").value();
+        t.scroll_end = m_ActionsShortcutsManager->TagFromAction("panel.scroll_last").value();
+        return t;
+    }();
 
     const auto event_data = ActionShortcut::EventData(event);
     const auto event_hotkey = ActionShortcut(event_data);
@@ -561,12 +581,12 @@ struct StateStorage {
                                                  event_data.key_code,
                                                  event_data.modifiers & ~NSEventModifierFlagShift));
 
-    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortcut(
+    const std::optional<int> event_action_tag = m_ActionsShortcutsManager->FirstOfActionTagsFromShortcut(
         std::array{
             tags.scroll_down, tags.scroll_up, tags.scroll_home, tags.scroll_end, tags.invert_and_move, tags.invert},
         event_hotkey);
 
-    const std::optional<int> event_action_tag_wo_shift = ASM::Instance().FirstOfActionTagsFromShortcut(
+    const std::optional<int> event_action_tag_wo_shift = m_ActionsShortcutsManager->FirstOfActionTagsFromShortcut(
         std::array{tags.up, tags.down, tags.left, tags.right, tags.first, tags.last, tags.page_down, tags.page_up},
         event_hotkey_wo_shift);
 

@@ -20,6 +20,7 @@ class Config;
 }
 
 namespace utility {
+class ActionsShortcutsManager;
 class FSEventsFileUpdate;
 class NativeFSManager;
 class TemporaryFileStorage;
@@ -148,5 +149,7 @@ class NativeHost;
 @property(nonatomic, readonly) nc::viewer::hl::SettingsStorage &syntaxHighlightingSettingsStorage;
 
 @property(nonatomic, readonly) nc::panel::PanelDataPersistency &panelDataPersistency;
+
+@property(nonatomic, readonly) nc::utility::ActionsShortcutsManager &actionsShortcutsManager;
 
 @end

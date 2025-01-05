@@ -1,9 +1,9 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../MainWindowController.h"
 #include <Viewer/ViewerViewController.h>
 #include <Viewer/Bundle.h>
-#include "../../Core/ActionsShortcutsManager.h"
+#include <Utility/ActionsShortcutsManager.h>
 #include "MainWindowInternalViewerState.h"
 #include <Base/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
@@ -19,17 +19,21 @@
 @implementation MainWindowInternalViewerState {
     NCViewerViewController *m_Controller;
     NSLayoutConstraint *m_TopLayoutConstraint;
+    const nc::utility::ActionsShortcutsManager *m_ActionsShortcutsManager;
 }
 @synthesize internalViewerToolbar;
 @synthesize embeddedFileView;
 
 - (id)initWithFrame:(NSRect)_frame_rect
-      viewerFactory:(const std::function<NCViewerView *(NSRect)> &)_viewer_factory
-         controller:(NCViewerViewController *)_viewer_controller
+              viewerFactory:(const std::function<NCViewerView *(NSRect)> &)_viewer_factory
+                 controller:(NCViewerViewController *)_viewer_controller
+    actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager
 {
     dispatch_assert_main_queue();
     self = [super initWithFrame:_frame_rect];
     if( self ) {
+        m_ActionsShortcutsManager = &_actions_shortcuts_manager;
+
         self.translatesAutoresizingMaskIntoConstraints = false;
 
         auto viewer = _viewer_factory(NSMakeRect(0, 0, 100, 100));
@@ -121,7 +125,7 @@
 - (BOOL)validateMenuItem:(NSMenuItem *)item
 {
     const long tag = item.tag;
-    static const int close_tag = nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.file.close").value();
+    static const int close_tag = m_ActionsShortcutsManager->TagFromAction("menu.file.close").value();
     if( tag == close_tag ) {
         item.title = NSLocalizedString(@"Close Viewer", "Menu item title for closing internal viewer state");
         return true;

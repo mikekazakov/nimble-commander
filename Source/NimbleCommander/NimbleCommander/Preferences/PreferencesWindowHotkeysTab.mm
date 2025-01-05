@@ -1,6 +1,7 @@
 // Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowHotkeysTab.h"
-#include "../Core/ActionsShortcutsManager.h"
+#include <Utility/ActionsShortcutsManager.h>
+#include "../Core/ActionsShortcutsManager.h" // TODO: remove me
 #include <Base/debug.h>
 #include <Base/dispatch_cpp.h>
 #import <GTMHotKeyTextField/GTMHotKeyTextField.h>
@@ -14,9 +15,9 @@
 #include <ranges>
 #include <any>
 
-using nc::core::ActionsShortcutsManager;
 using nc::panel::ExternalTool;
 using nc::utility::ActionShortcut;
+using nc::utility::ActionsShortcutsManager;
 
 static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item);
 static NSString *ComposeVerboseNonMenuActionTitle(const std::string &_action);
@@ -79,6 +80,7 @@ enum class SourceType : uint8_t {
     std::vector<std::any> m_SourceNodes;
     std::vector<std::any> m_FilteredNodes;
     SourceType m_SourceType;
+    nc::utility::ActionsShortcutsManager *m_ActionsShortcutsManager;
 }
 
 @synthesize sourceType = m_SourceType;
@@ -94,12 +96,14 @@ enum class SourceType : uint8_t {
 @synthesize fourthShortcutColumn;
 
 - (id)initWithToolsStorage:(std::function<nc::panel::ExternalToolsStorage &()>)_tool_storage
+    actionsShortcutsManager:(nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager
 {
     self = [super init];
     if( self ) {
         m_SourceType = SourceType::All;
         m_ToolsStorage = _tool_storage;
-        m_Shortcuts = ActionsShortcutsManager::Instance().AllShortcuts();
+        m_ActionsShortcutsManager = &_actions_shortcuts_manager;
+        m_Shortcuts = m_ActionsShortcutsManager->AllShortcuts();
 
         // remove shortcuts whichs are absent in main menu
         const auto absent = [](auto &_t) {
@@ -133,7 +137,6 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
 
 - (void)buildData
 {
-    const auto &sm = ActionsShortcutsManager::Instance();
     m_AllNodes.clear();
     ankerl::unordered_dense::map<nc::utility::ActionShortcut, int> counts;
     for( auto &v : m_Shortcuts ) {
@@ -148,8 +151,8 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
         ActionShortcutNode shortcut;
         shortcut.tag = v;
         shortcut.label = LabelTitleForAction(v.first, menu_item);
-        shortcut.current_shortcuts = sm.ShortcutsFromTag(v.second).value();
-        shortcut.default_shortcuts = sm.DefaultShortcutsFromTag(v.second).value();
+        shortcut.current_shortcuts = m_ActionsShortcutsManager->ShortcutsFromTag(v.second).value();
+        shortcut.default_shortcuts = m_ActionsShortcutsManager->DefaultShortcutsFromTag(v.second).value();
         shortcut.is_menu_action = v.first.find_first_of("menu.") == 0;
         shortcut.is_customized = shortcut.current_shortcuts != shortcut.default_shortcuts;
         shortcut.has_submenu = menu_item != nil && menu_item.hasSubmenu;
@@ -415,7 +418,6 @@ static NSImageView *SpawnCautionSign()
 
 - (IBAction)onHKChanged:(id)sender
 {
-    auto &am = ActionsShortcutsManager::Instance();
     GTMHotKeyTextField *tf = nc::objc_cast<GTMHotKeyTextField>(sender);
     if( !tf )
         return;
@@ -425,7 +427,7 @@ static NSImageView *SpawnCautionSign()
         return;
 
     const int tag = static_cast<int>(tf.tag);
-    const std::optional<std::string_view> action = ActionsShortcutsManager::Instance().ActionFromTag(tag);
+    const std::optional<std::string_view> action = m_ActionsShortcutsManager->ActionFromTag(tag);
     if( !action )
         return;
 
@@ -439,8 +441,8 @@ static NSImageView *SpawnCautionSign()
         }
     }
 
-    if( am.SetShortcutsOverride(*action, updated_shortcuts) ) {
-        [NSApp.mainMenu nc_setMenuItemShortcutsWithActionsShortcutsManager:am];
+    if( m_ActionsShortcutsManager->SetShortcutsOverride(*action, updated_shortcuts) ) {
+        [NSApp.mainMenu nc_setMenuItemShortcutsWithActionsShortcutsManager:*m_ActionsShortcutsManager];
     }
 
     // Rebuild everything just in case the shortcut was a duplicate that ASM filtered out
@@ -461,8 +463,8 @@ static NSImageView *SpawnCautionSign()
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
     if( [alert runModal] == NSAlertFirstButtonReturn ) {
-        ActionsShortcutsManager::Instance().RevertToDefaults();
-        [NSApp.mainMenu nc_setMenuItemShortcutsWithActionsShortcutsManager:ActionsShortcutsManager::Instance()];
+        m_ActionsShortcutsManager->RevertToDefaults();
+        [NSApp.mainMenu nc_setMenuItemShortcutsWithActionsShortcutsManager:*m_ActionsShortcutsManager];
         [self rebuildAll];
     }
 }

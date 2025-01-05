@@ -772,7 +772,7 @@ ActionsShortcutsManager::Shortcuts ActionsShortcutsManager::SanitizedShortcuts(c
 
 @implementation NSMenu (ActionsShortcutsManagerSupport)
 
-- (void)nc_setMenuItemShortcutsWithActionsShortcutsManager:(const nc::core::ActionsShortcutsManager &)_asm
+- (void)nc_setMenuItemShortcutsWithActionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_asm
 {
     NSArray *const array = self.itemArray;
     for( NSMenuItem *i : array ) {

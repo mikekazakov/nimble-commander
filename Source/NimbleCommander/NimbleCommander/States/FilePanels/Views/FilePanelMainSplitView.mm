@@ -1,11 +1,11 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/States/FilePanels/PanelView.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
-#include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include "FilePanelsTabbedHolder.h"
 #include "FilePanelMainSplitView.h"
+#include <Utility/ActionsShortcutsManager.h>
 #include <Utility/ObjCpp.h>
 #include <Base/dispatch_cpp.h>
 #include <cmath>
@@ -21,20 +21,25 @@ static constexpr auto g_DividerThickness = 1.;
     FilePanelsTabbedHolder *m_BasicViews[2];
     nc::ThemesManager::ObservationTicket m_ThemeChangesObservation;
     double m_PreCollapseProp; // full width minus divider divided by left width
+    const nc::utility::ActionsShortcutsManager *m_ActionsShortcutsManager;
 }
 
-- (id)initWithFrame:(NSRect)frame
+- (id)initWithFrame:(NSRect)_frame
+    actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager
 {
-    self = [super initWithFrame:frame];
+    self = [super initWithFrame:_frame];
     if( self ) {
+        m_ActionsShortcutsManager = &_actions_shortcuts_manager;
         m_PreCollapseProp = 0.5;
         self.vertical = true;
         self.dividerStyle = NSSplitViewDividerStyleThin;
         self.delegate = self;
 
-        FilePanelsTabbedHolder *th1 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+        FilePanelsTabbedHolder *th1 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)
+                                                            actionsShortcutsManager:*m_ActionsShortcutsManager];
         [self addSubview:th1];
-        FilePanelsTabbedHolder *th2 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+        FilePanelsTabbedHolder *th2 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)
+                                                            actionsShortcutsManager:*m_ActionsShortcutsManager];
         [self addSubview:th2];
 
         __weak FilePanelMainSplitView *weak_self = self;
@@ -257,14 +262,20 @@ static constexpr auto g_DividerThickness = 1.;
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
-    using ASM = nc::core::ActionsShortcutsManager;
     struct Tags {
-        int move_left = ASM::Instance().TagFromAction("menu.view.panels_position.move_left").value();
-        int move_right = ASM::Instance().TagFromAction("menu.view.panels_position.move_right").value();
-    } static const tags;
+        int move_left = -1;
+        int move_right = -1;
+    };
+    static const Tags tags = [&] {
+        Tags t;
+        t.move_left = m_ActionsShortcutsManager->TagFromAction("menu.view.panels_position.move_left").value();
+        t.move_right = m_ActionsShortcutsManager->TagFromAction("menu.view.panels_position.move_right").value();
+        return t;
+    }();
 
-    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortcut(
-        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)}, ASM::Shortcut::EventData(_event));
+    const std::optional<int> event_action_tag = m_ActionsShortcutsManager->FirstOfActionTagsFromShortcut(
+        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)},
+        nc::utility::ActionShortcut::EventData(_event));
 
     if( event_action_tag == tags.move_left ) {
         [self OnViewPanelsPositionMoveLeft:self];
@@ -432,11 +443,10 @@ static constexpr auto g_DividerThickness = 1.;
 
 - (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)_item
 {
-    using nc::core::ActionsShortcutsManager;
     static const int move_left_tag =
-        ActionsShortcutsManager::Instance().TagFromAction("menu.view.panels_position.move_left").value();
+        m_ActionsShortcutsManager->TagFromAction("menu.view.panels_position.move_left").value();
     static const int move_right_tag =
-        ActionsShortcutsManager::Instance().TagFromAction("menu.view.panels_position.move_right").value();
+        m_ActionsShortcutsManager->TagFromAction("menu.view.panels_position.move_right").value();
 
     const long item_tag = _item.tag;
     if( item_tag == move_left_tag ) {

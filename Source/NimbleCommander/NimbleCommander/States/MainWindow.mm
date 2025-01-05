@@ -1,8 +1,9 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindow.h"
 #include <Utility/SystemInformation.h>
 #include <Utility/NSMenu+Hierarchical.h>
-#include <NimbleCommander/Core/ActionsShortcutsManager.h>
+#include <Utility/ActionsShortcutsManager.h>
+#include <NimbleCommander/Bootstrap/AppDelegate.h> // TODO: bad, remove me!
 #include "MainWindowController.h"
 #include <Utility/ObjCpp.h>
 
@@ -13,7 +14,9 @@ static const auto g_MinWindowSize = NSMakeSize(640, 481);
 // for the Brief presentation with a default row height (i.e. 19 px)
 static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
 
-@implementation NCMainWindow
+@implementation NCMainWindow {
+    nc::utility::ActionsShortcutsManager *m_ActionsShortcutsManager;
+}
 
 + (NSString *)defaultIdentifier
 {
@@ -34,6 +37,7 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
                               backing:NSBackingStoreBuffered
                                 defer:true];
     if( self ) {
+        m_ActionsShortcutsManager = &NCAppDelegate.me.actionsShortcutsManager; // TODO: DI this somehow
         self.minSize = g_MinWindowSize;
         self.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
         self.restorable = true;
@@ -96,14 +100,13 @@ static const auto g_CloseWindowTitle = NSLocalizedString(@"Close Window", "Menu 
 {
     const long tag = item.tag;
 
-    static const int close_tag = nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.file.close").value();
+    static const int close_tag = m_ActionsShortcutsManager->TagFromAction("menu.file.close").value();
     if( tag == close_tag ) {
         item.title = g_CloseWindowTitle;
         return true;
     }
 
-    static const int close_window_tag =
-        nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.file.close_window").value();
+    static const int close_window_tag = m_ActionsShortcutsManager->TagFromAction("menu.file.close_window").value();
     if( tag == close_window_tag ) {
         item.hidden = true;
         return true;
@@ -126,15 +129,15 @@ static const auto g_CloseWindowTitle = NSLocalizedString(@"Close Window", "Menu 
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
-    using ASM = nc::core::ActionsShortcutsManager;
     using AS = nc::utility::ActionShortcut;
+    using ASM = nc::utility::ActionsShortcutsManager;
 
     // Build a shortcut out of the keyboard event and check if it's not empty
     if( const AS event_shortcut = AS(AS::EventData(_event)) ) {
 
         // Find if any menu actions use this shortcut
         if( const std::optional<ASM::ActionTags> action_tags =
-                ASM::Instance().ActionTagsFromShortcut(event_shortcut, "menu.");
+                m_ActionsShortcutsManager->ActionTagsFromShortcut(event_shortcut, "menu.");
             action_tags && !action_tags->empty() ) {
 
             // Get the tag of this action, ignore possible ambiguites - pick the first one.
@@ -142,7 +145,8 @@ static const auto g_CloseWindowTitle = NSLocalizedString(@"Close Window", "Menu 
 
             // Get the shortcuts of this action and check that the original shortcut is not the first one of them.
             // If it is the first one - we allow AppKit to process the shortcut via normal routing.
-            if( const std::optional<ASM::Shortcuts> action_shortcuts = ASM::Instance().ShortcutsFromTag(action_tag);
+            if( const std::optional<ASM::Shortcuts> action_shortcuts =
+                    m_ActionsShortcutsManager->ShortcutsFromTag(action_tag);
                 action_shortcuts &&           //
                 !action_shortcuts->empty() && //
                 action_shortcuts->at(0) != event_shortcut ) {

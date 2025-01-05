@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate+MainWindowCreation.h"
 #include "AppDelegate.Private.h"
 #include <VFSIcon/IconRepositoryImpl.h>
@@ -156,6 +156,7 @@ static std::vector<std::string> CommaSeparatedStrings(const nc::config::Config &
     const auto pv_rect = NSMakeRect(0, 0, 100, 100);
     return [[PanelView alloc] initWithFrame:pv_rect
                              iconRepository:[self allocateIconRepository]
+                    actionsShortcutsManager:self.actionsShortcutsManager
                                   nativeVFS:self.nativeHost
                                      header:header
                                      footer:footer];
@@ -170,8 +171,10 @@ static std::vector<std::string> CommaSeparatedStrings(const nc::config::Config &
                                    contextMenuProvider:[self makePanelContextMenuProvider]
                                        nativeFSManager:self.nativeFSManager
                                             nativeHost:self.nativeHost];
-    auto actions_dispatcher = [[NCPanelControllerActionsDispatcher alloc] initWithController:panel
-                                                                               andActionsMap:self.panelActionsMap];
+    auto actions_dispatcher =
+        [[NCPanelControllerActionsDispatcher alloc] initWithController:panel
+                                                            actionsMap:self.panelActionsMap
+                                               actionsShortcutsManager:self.actionsShortcutsManager];
     [panel setNextAttachedResponder:actions_dispatcher];
     [panel.view addKeystrokeSink:actions_dispatcher];
     panel.view.actionsDispatcher = actions_dispatcher;
@@ -254,7 +257,8 @@ static PanelController *PanelFactory()
 
     const auto file_state = [self allocateFilePanelsWithFrame:frame inContext:_context withOpsPool:*operations_pool];
     auto actions_dispatcher = [[NCPanelsStateActionsDispatcher alloc] initWithState:file_state
-                                                                      andActionsMap:self.stateActionsMap];
+                                                                         actionsMap:self.stateActionsMap
+                                                         andActionsShortcutsManager:self.actionsShortcutsManager];
     actions_dispatcher.hasTerminal = !nc::base::AmISandboxed();
     file_state.attachedResponder = actions_dispatcher;
 

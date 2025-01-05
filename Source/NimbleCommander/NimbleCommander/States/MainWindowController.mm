@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowController.h"
 #include <Base/debug.h>
 #include <Config/RapidJSON.h>
@@ -323,9 +323,11 @@ static int CountMainWindows()
                     auto rc = NSMakeRect(0, 0, 100, 100);
                     auto viewer_factory = [](NSRect rc) { return [NCAppDelegate.me makeViewerWithFrame:rc]; };
                     auto ctrl = [NCAppDelegate.me makeViewerController];
-                    m_Viewer = [[MainWindowInternalViewerState alloc] initWithFrame:rc
-                                                                      viewerFactory:viewer_factory
-                                                                         controller:ctrl];
+                    m_Viewer =
+                        [[MainWindowInternalViewerState alloc] initWithFrame:rc
+                                                               viewerFactory:viewer_factory
+                                                                  controller:ctrl
+                                                     actionsShortcutsManager:NCAppDelegate.me.actionsShortcutsManager];
                 });
             if( [m_Viewer openFile:_filepath atVFS:_host] ) {
                 dispatch_to_main_queue([=] { [self pushState:m_Viewer]; });
@@ -356,7 +358,8 @@ static int CountMainWindows()
 {
     if( m_Terminal == nil ) {
         const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame
-                                                   nativeFSManager:NCAppDelegate.me.nativeFSManager];
+                                                   nativeFSManager:NCAppDelegate.me.nativeFSManager
+                                           actionsShortcutsManager:NCAppDelegate.me.actionsShortcutsManager];
         state.initialWD = _cwd;
         [self pushState:state];
         m_Terminal = state;
@@ -376,7 +379,8 @@ static int CountMainWindows()
 {
     if( m_Terminal == nil ) {
         const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame
-                                                   nativeFSManager:NCAppDelegate.me.nativeFSManager];
+                                                   nativeFSManager:NCAppDelegate.me.nativeFSManager
+                                           actionsShortcutsManager:NCAppDelegate.me.actionsShortcutsManager];
         state.initialWD = std::string(_cwd);
         [self pushState:state];
         m_Terminal = state;
@@ -394,7 +398,8 @@ static int CountMainWindows()
 
     if( m_Terminal == nil ) {
         const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame
-                                                   nativeFSManager:NCAppDelegate.me.nativeFSManager];
+                                                   nativeFSManager:NCAppDelegate.me.nativeFSManager
+                                           actionsShortcutsManager:NCAppDelegate.me.actionsShortcutsManager];
         if( PanelController *pc = m_PanelState.activePanelController )
             if( pc.isUniform && pc.vfs->IsNativeFS() )
                 state.initialWD = pc.currentDirectoryPath;
@@ -432,7 +437,7 @@ static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu 
     const long tag = item.tag;
 
     static const int show_toolbal_tag =
-        nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.view.show_toolbar").value();
+        NCAppDelegate.me.actionsShortcutsManager.TagFromAction("menu.view.show_toolbar").value();
     if( tag == show_toolbal_tag ) {
         item.title = self.toolbarVisible ? g_HideToolbarTitle : g_ShowToolbarTitle;
         return self.window.toolbar != nil;

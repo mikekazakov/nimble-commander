@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/MIMResponder.h>
@@ -6,6 +6,10 @@
 #include <ankerl/unordered_dense.h>
 
 @class PanelController;
+
+namespace nc::utility {
+class ActionsShortcutsManager;
+}
 
 namespace nc::panel {
 namespace actions {
@@ -18,7 +22,8 @@ using PanelActionsMap = ankerl::unordered_dense::map<SEL, std::unique_ptr<const 
 @interface NCPanelControllerActionsDispatcher : AttachedResponder <NCPanelViewKeystrokeSink>
 
 - (instancetype)initWithController:(PanelController *)_controller
-                     andActionsMap:(const nc::panel::PanelActionsMap &)_actions_map;
+                        actionsMap:(const nc::panel::PanelActionsMap &)_actions_map
+           actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager;
 
 - (bool)validateActionBySelector:(SEL)_selector;
 

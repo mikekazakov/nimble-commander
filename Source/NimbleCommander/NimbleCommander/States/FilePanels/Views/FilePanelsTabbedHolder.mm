@@ -1,10 +1,10 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <MMTabBarView/MMTabBarView.h>
 #import <MMTabBarView/MMTabBarItem.h>
 #include "FilePanelsTabbedHolder.h"
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <NimbleCommander/States/FilePanels/PanelView.h>
-#include <NimbleCommander/Core/ActionsShortcutsManager.h>
+#include <Utility/ActionsShortcutsManager.h>
 #include "TabBarStyle.h"
 #include <Utility/ObjCpp.h>
 
@@ -29,18 +29,21 @@
 @end
 
 @implementation FilePanelsTabbedHolder {
+    const nc::utility::ActionsShortcutsManager *m_ActionsShortcutsManager;
     MMTabBarView *m_TabBar;
     NSTabView *m_TabView;
     bool m_TabBarShown;
 }
 
 - (id)initWithFrame:(NSRect)frameRect
+    actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager
 {
     static std::once_flag once;
     std::call_once(once, [] { [MMTabBarView registerTabStyleClass:TabBarStyle.class]; });
 
     self = [super initWithFrame:frameRect];
     if( self ) {
+        m_ActionsShortcutsManager = &_actions_shortcuts_manager;
         self.translatesAutoresizingMaskIntoConstraints = false;
 
         m_TabBarShown = false;
@@ -222,28 +225,44 @@
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
-    using ASM = nc::core::ActionsShortcutsManager;
     struct Tags {
-        int prev = ASM::Instance().TagFromAction("panel.show_previous_tab").value();
-        int next = ASM::Instance().TagFromAction("panel.show_next_tab").value();
-        int t1 = ASM::Instance().TagFromAction("panel.show_tab_no_1").value();
-        int t2 = ASM::Instance().TagFromAction("panel.show_tab_no_2").value();
-        int t3 = ASM::Instance().TagFromAction("panel.show_tab_no_3").value();
-        int t4 = ASM::Instance().TagFromAction("panel.show_tab_no_4").value();
-        int t5 = ASM::Instance().TagFromAction("panel.show_tab_no_5").value();
-        int t6 = ASM::Instance().TagFromAction("panel.show_tab_no_6").value();
-        int t7 = ASM::Instance().TagFromAction("panel.show_tab_no_7").value();
-        int t8 = ASM::Instance().TagFromAction("panel.show_tab_no_8").value();
-        int t9 = ASM::Instance().TagFromAction("panel.show_tab_no_9").value();
-        int t10 = ASM::Instance().TagFromAction("panel.show_tab_no_10").value();
-    } static const tags;
+        int prev = -1;
+        int next = -1;
+        int t1 = -1;
+        int t2 = -1;
+        int t3 = -1;
+        int t4 = -1;
+        int t5 = -1;
+        int t6 = -1;
+        int t7 = -1;
+        int t8 = -1;
+        int t9 = -1;
+        int t10 = -1;
+    };
+    static const Tags tags = [&] {
+        Tags t;
+        t.prev = m_ActionsShortcutsManager->TagFromAction("panel.show_previous_tab").value();
+        t.next = m_ActionsShortcutsManager->TagFromAction("panel.show_next_tab").value();
+        t.t1 = m_ActionsShortcutsManager->TagFromAction("panel.show_tab_no_1").value();
+        t.t2 = m_ActionsShortcutsManager->TagFromAction("panel.show_tab_no_2").value();
+        t.t3 = m_ActionsShortcutsManager->TagFromAction("panel.show_tab_no_3").value();
+        t.t4 = m_ActionsShortcutsManager->TagFromAction("panel.show_tab_no_4").value();
+        t.t5 = m_ActionsShortcutsManager->TagFromAction("panel.show_tab_no_5").value();
+        t.t6 = m_ActionsShortcutsManager->TagFromAction("panel.show_tab_no_6").value();
+        t.t7 = m_ActionsShortcutsManager->TagFromAction("panel.show_tab_no_7").value();
+        t.t8 = m_ActionsShortcutsManager->TagFromAction("panel.show_tab_no_8").value();
+        t.t9 = m_ActionsShortcutsManager->TagFromAction("panel.show_tab_no_9").value();
+        t.t10 = m_ActionsShortcutsManager->TagFromAction("panel.show_tab_no_10").value();
+        return t;
+    }();
 
     const auto resp_view = nc::objc_cast<NSView>(self.window.firstResponder);
     if( !resp_view || ![resp_view isDescendantOf:m_TabView] )
         return [super performKeyEquivalent:_event];
 
-    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortcut(
-        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)}, ASM::Shortcut::EventData(_event));
+    const std::optional<int> event_action_tag = m_ActionsShortcutsManager->FirstOfActionTagsFromShortcut(
+        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)},
+        nc::utility::ActionShortcut::EventData(_event));
 
     if( event_action_tag == tags.prev ) {
         [self selectPreviousFilePanelTab];

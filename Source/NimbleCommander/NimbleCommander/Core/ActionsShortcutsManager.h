@@ -26,8 +26,11 @@ namespace nc::core {
 class ActionsShortcutsManager : public nc::utility::ActionsShortcutsManager, private nc::base::ObservableBase
 {
 public:
-    // Create a new shortcut manager which will use the provided config to store the overides.
-    ActionsShortcutsManager(nc::config::Config &_config);
+    // Creates a new shortcut manager with the list of Action<->Tag mappings, Actions->DefaultShortcut mappings and the
+    // config to store the overides.
+    ActionsShortcutsManager(std::span<const std::pair<const char *, int>> _action_tags,
+                            std::span<const std::pair<const char *, const char *>> _default_shortcuts,
+                            nc::config::Config &_config);
 
     // Destructor.
     virtual ~ActionsShortcutsManager();
@@ -111,10 +114,10 @@ private:
     // Duplicates are removed as well.
     static Shortcuts SanitizedShortcuts(const Shortcuts &_shortcuts) noexcept;
 
-    // ...
+    // Maps a numeric action tag to its name.
     ankerl::unordered_dense::map<int, std::string> m_TagToAction;
 
-    // ...
+    // Maps an action name to its numeric tag.
     ankerl::unordered_dense::map<std::string, int, UnorderedStringHashEqual, UnorderedStringHashEqual> m_ActionToTag;
 
     // Maps an action tag to the default ordered list of its shortcuts.

@@ -425,22 +425,31 @@ static constinit std::pair<const char*, const char*> g_DefaultShortcuts[] = {
 };
 // clang-format on
 
-ActionsShortcutsManager::ActionsShortcutsManager(nc::config::Config &_config) : m_Config(_config)
+ActionsShortcutsManager::ActionsShortcutsManager(
+    const std::span<const std::pair<const char *, int>> _action_tags,
+    const std::span<const std::pair<const char *, const char *>> _default_shortcuts,
+    nc::config::Config &_config)
+    : m_Config(_config)
 {
     static_assert(sizeof(TagsUsingShortcut) == 24);
 
-    // TODO: DI
-    for( auto [action, tag] : g_ActionsTags ) {
+    // Safety checks against malformed _action_tags, only in Debug builds
+    assert((ankerl::unordered_dense::map<std::string_view, int>{_action_tags.begin(), _action_tags.end()}).size() ==
+           _action_tags.size());
+
+    // Safety checks against malformed _default_shortcuts, only in Debug builds
+    assert((ankerl::unordered_dense::map<std::string_view, std::string_view>{_default_shortcuts.begin(),
+                                                                             _default_shortcuts.end()})
+               .size() == _default_shortcuts.size());
+
+    // Build the O(1) mapping between the action tags and the action names
+    for( auto [action, tag] : _action_tags ) {
         m_ActionToTag.emplace(action, tag);
         m_TagToAction.emplace(tag, action);
     }
 
-    // safety checks against malformed g_ActionsTags, only in Debug builds
-    assert((ankerl::unordered_dense::map<std::string_view, int>{std::begin(g_ActionsTags), std::end(g_ActionsTags)})
-               .size() == std::size(g_ActionsTags));
-
     // Set up the shortcut defaults from the hardcoded map
-    for( auto [action, shortcut_string] : g_DefaultShortcuts ) {
+    for( auto [action, shortcut_string] : _default_shortcuts ) {
         if( auto it = m_ActionToTag.find(action); it != m_ActionToTag.end() ) {
             m_ShortcutsDefaults[it->second] = SanitizedShortcuts(Shortcuts{Shortcut{shortcut_string}});
         }
@@ -457,7 +466,7 @@ ActionsShortcutsManager::~ActionsShortcutsManager() = default;
 
 ActionsShortcutsManager &ActionsShortcutsManager::Instance()
 {
-    [[clang::no_destroy]] static ActionsShortcutsManager manager(GlobalConfig());
+    [[clang::no_destroy]] static ActionsShortcutsManager manager(g_ActionsTags, g_DefaultShortcuts, GlobalConfig());
     return manager;
 }
 

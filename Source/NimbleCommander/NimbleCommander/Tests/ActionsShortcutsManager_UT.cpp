@@ -17,10 +17,24 @@ static const auto g_EmptyConfigJSON = R"({
     "hotkeyOverrides_v1": {}
 })";
 
+static const std::pair<const char *, int> g_Actions[] = {
+    {"menu.edit.copy", 12'000},                     //
+    {"menu.go.quick_lists.parent_folders", 14'160}, //
+    {"menu.window.zoom", 16'020},                   //
+    {"viewer.toggle_text", 101'000},                //
+};
+
+static const std::pair<const char *, const char *> g_Shortcuts[] = {
+    {"menu.edit.copy", "⌘c"},                     //
+    {"menu.go.quick_lists.parent_folders", "⌘1"}, //
+    {"menu.window.zoom", ""},                     //
+    {"viewer.toggle_text", "⌘1"},                 //
+};
+
 TEST_CASE(PREFIX "TagFromAction")
 {
     ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
-    const ASM manager{config};
+    const ASM manager{g_Actions, g_Shortcuts, config};
     CHECK(manager.TagFromAction("menu.edit.copy") == 12'000);          // Valid query
     CHECK(manager.TagFromAction("menu.i.dont.exist") == std::nullopt); // Invalid query
 }
@@ -28,7 +42,7 @@ TEST_CASE(PREFIX "TagFromAction")
 TEST_CASE(PREFIX "ActionFromTag")
 {
     ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
-    const ASM manager{config};
+    const ASM manager{g_Actions, g_Shortcuts, config};
     CHECK(manager.ActionFromTag(12'000) == "menu.edit.copy"); // Valid query
     CHECK(manager.ActionFromTag(346'242) == std::nullopt);    // Invalid query
 }
@@ -36,7 +50,7 @@ TEST_CASE(PREFIX "ActionFromTag")
 TEST_CASE(PREFIX "ShortCutFromAction")
 {
     ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
-    ASM manager{config};
+    ASM manager{g_Actions, g_Shortcuts, config};
 
     SECTION("Non-existent")
     {
@@ -71,7 +85,7 @@ TEST_CASE(PREFIX "ShortCutFromAction")
 TEST_CASE(PREFIX "ShortCutFromTag")
 {
     ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
-    ASM manager{config};
+    ASM manager{g_Actions, g_Shortcuts, config};
 
     REQUIRE(manager.ShortcutsFromTag(346'242) == std::nullopt);
     REQUIRE(manager.ShortcutsFromTag(12'000) == ASs{AS("⌘c")});
@@ -82,7 +96,7 @@ TEST_CASE(PREFIX "ShortCutFromTag")
 TEST_CASE(PREFIX "DefaultShortCutFromTag")
 {
     ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
-    ASM manager{config};
+    ASM manager{g_Actions, g_Shortcuts, config};
 
     REQUIRE(manager.DefaultShortcutsFromTag(346'242) == std::nullopt);
     REQUIRE(manager.DefaultShortcutsFromTag(12'000) == ASs{AS("⌘c")});
@@ -93,7 +107,7 @@ TEST_CASE(PREFIX "DefaultShortCutFromTag")
 TEST_CASE(PREFIX "RevertToDefaults")
 {
     ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
-    ASM manager{config};
+    ASM manager{g_Actions, g_Shortcuts, config};
 
     REQUIRE(manager.SetShortcutOverride("menu.edit.copy", AS("⌘j")));
     manager.RevertToDefaults();
@@ -103,7 +117,7 @@ TEST_CASE(PREFIX "RevertToDefaults")
 TEST_CASE(PREFIX "ActionTagsFromShortCut")
 {
     ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
-    ASM manager{config};
+    ASM manager{g_Actions, g_Shortcuts, config};
 
     SECTION("Non-existent shortcut")
     {
@@ -176,7 +190,7 @@ TEST_CASE(PREFIX "ActionTagsFromShortCut")
 TEST_CASE(PREFIX "FirstOfActionTagsFromShortCut")
 {
     ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
-    const ASM manager{config};
+    const ASM manager{g_Actions, g_Shortcuts, config};
     REQUIRE(manager.FirstOfActionTagsFromShortcut({}, AS("⌘1")) == std::nullopt);
     REQUIRE(manager.FirstOfActionTagsFromShortcut(std::initializer_list<int>{346'242}, AS("⌘1")) == std::nullopt);
     REQUIRE(manager.FirstOfActionTagsFromShortcut(
@@ -211,7 +225,7 @@ TEST_CASE(PREFIX "Configuration persistence")
             }
         })";
         ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
-        const ASM manager{config};
+        const ASM manager{g_Actions, g_Shortcuts, config};
         REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{});
     }
     SECTION("Loading from config - single override")
@@ -222,7 +236,7 @@ TEST_CASE(PREFIX "Configuration persistence")
             }
         })";
         ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
-        const ASM manager{config};
+        const ASM manager{g_Actions, g_Shortcuts, config};
         REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j")});
     }
     SECTION("Loading from config - single empty array")
@@ -233,7 +247,7 @@ TEST_CASE(PREFIX "Configuration persistence")
             }
         })";
         ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
-        const ASM manager{config};
+        const ASM manager{g_Actions, g_Shortcuts, config};
         REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{});
     }
     SECTION("Loading from config - single array with one shortcut")
@@ -244,7 +258,7 @@ TEST_CASE(PREFIX "Configuration persistence")
             }
         })";
         ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
-        const ASM manager{config};
+        const ASM manager{g_Actions, g_Shortcuts, config};
         REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j")});
     }
     SECTION("Loading from config - single array with two shortcuts")
@@ -255,7 +269,7 @@ TEST_CASE(PREFIX "Configuration persistence")
             }
         })";
         ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
-        const ASM manager{config};
+        const ASM manager{g_Actions, g_Shortcuts, config};
         REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
     }
     SECTION("Loading from config - mixed usage")
@@ -267,14 +281,14 @@ TEST_CASE(PREFIX "Configuration persistence")
             }
         })";
         ConfigImpl config{json, std::make_shared<NonPersistentOverwritesStorage>("")};
-        const ASM manager{config};
+        const ASM manager{g_Actions, g_Shortcuts, config};
         REQUIRE(manager.ShortcutsFromAction("menu.edit.copy") == ASs{AS("⌘j"), AS("⌘k")});
         REQUIRE(manager.ShortcutsFromAction("menu.window.zoom") == ASs{AS("⇧^⌘⌥j")});
     }
     SECTION("Writing to config - single empty override")
     {
         ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
-        ASM manager{config};
+        ASM manager{g_Actions, g_Shortcuts, config};
         REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", {}));
         const auto expected_json = R"({
             "hotkeyOverrides_v1": {
@@ -287,7 +301,7 @@ TEST_CASE(PREFIX "Configuration persistence")
     SECTION("Writing to config - single override")
     {
         ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
-        ASM manager{config};
+        ASM manager{g_Actions, g_Shortcuts, config};
         REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS("⌘j")}));
         const auto expected_json = R"({
             "hotkeyOverrides_v1": {
@@ -300,7 +314,7 @@ TEST_CASE(PREFIX "Configuration persistence")
     SECTION("Writing to config - single override with two hotkeys ")
     {
         ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
-        ASM manager{config};
+        ASM manager{g_Actions, g_Shortcuts, config};
         REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS("⌘j"), AS("⌘k")}));
         const auto expected_json = R"({
             "hotkeyOverrides_v1": {
@@ -313,7 +327,7 @@ TEST_CASE(PREFIX "Configuration persistence")
     SECTION("Writing to config - mixed usage")
     {
         ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
-        ASM manager{config};
+        ASM manager{g_Actions, g_Shortcuts, config};
         REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", std::array{AS("⌘j"), AS("⌘k")}));
         REQUIRE(manager.SetShortcutOverride("menu.window.zoom", AS("⇧^⌘⌥j")));
         const auto expected_json = R"({
@@ -330,7 +344,7 @@ TEST_CASE(PREFIX "Configuration persistence")
 TEST_CASE(PREFIX "SetShortcutsOverride")
 {
     ConfigImpl config{g_EmptyConfigJSON, std::make_shared<NonPersistentOverwritesStorage>("")};
-    ASM manager{config};
+    ASM manager{g_Actions, g_Shortcuts, config};
     SECTION("Empty")
     {
         REQUIRE(manager.SetShortcutsOverride("menu.edit.copy", {}));

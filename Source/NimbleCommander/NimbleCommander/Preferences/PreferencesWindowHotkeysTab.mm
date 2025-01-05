@@ -8,6 +8,7 @@
 #include <Panel/ExternalTools.h>
 #include <Utility/FunctionKeysPass.h>
 #include <Utility/NSMenu+Hierarchical.h>
+#include <Utility/NSMenu+ActionsShortcutsManager.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include <algorithm>

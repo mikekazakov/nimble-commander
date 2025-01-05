@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate.h"
 #include "AppDelegateCPP.h"
 #include "AppDelegate+Migration.h"
@@ -23,6 +23,7 @@
 #include <Base/algo.h>
 #include <Base/debug.h>
 
+#include <Utility/NSMenu+ActionsShortcutsManager.h>
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/NativeFSManagerImpl.h>
 #include <Utility/TemporaryFileStorageImpl.h>

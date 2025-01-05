@@ -134,14 +134,3 @@ private:
 };
 
 } // namespace nc::core
-
-#ifdef __OBJC__
-
-// TODO: extract into a separate category file
-@interface NSMenu (ActionsShortcutsManagerSupport)
-
-- (void)nc_setMenuItemShortcutsWithActionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_asm;
-
-@end
-
-#endif

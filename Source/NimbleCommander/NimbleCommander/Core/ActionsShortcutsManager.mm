@@ -769,23 +769,3 @@ ActionsShortcutsManager::Shortcuts ActionsShortcutsManager::SanitizedShortcuts(c
 }
 
 } // namespace nc::core
-
-@implementation NSMenu (ActionsShortcutsManagerSupport)
-
-- (void)nc_setMenuItemShortcutsWithActionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_asm
-{
-    NSArray *const array = self.itemArray;
-    for( NSMenuItem *i : array ) {
-        if( i.submenu != nil ) {
-            [i.submenu nc_setMenuItemShortcutsWithActionsShortcutsManager:_asm];
-            continue;
-        }
-
-        const int tag = static_cast<int>(i.tag);
-        if( const auto shortcuts = _asm.ShortcutsFromTag(tag) ) {
-            [i nc_setKeyEquivalentWithShortcut:shortcuts->empty() ? nc::utility::ActionShortcut{} : shortcuts->front()];
-        }
-    }
-}
-
-@end

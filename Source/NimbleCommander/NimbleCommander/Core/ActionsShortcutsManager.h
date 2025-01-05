@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 // ⇧ - NSShiftKeyMask
@@ -70,6 +70,9 @@ public:
                                                      Shortcut _sc,
                                                      std::string_view _in_domain = {}) const noexcept override;
 
+    // Returns the list of actions alongside with their tags, preserving the order.
+    std::vector<std::pair<std::string, int>> AllShortcuts() const override;
+
     // Removes any hotkeys overrides.
     void RevertToDefaults() override;
 
@@ -83,8 +86,6 @@ public:
     // Returns true if any change was done to the actions maps.
     // If the _action doesn't exist or already has the same value, returns false.
     bool SetShortcutsOverride(std::string_view _action, std::span<const Shortcut> _shortcuts) override;
-
-    static std::span<const std::pair<const char *, int>> AllShortcuts();
 
 private:
     // An unordered list of numeric tags indicating which actions are using a shortcut.
@@ -127,6 +128,9 @@ private:
 
     // Config instance used to read from and write to the shortcut overrides.
     nc::config::Config &m_Config;
+
+    // A backup copy of the original input, preserving the order.
+    std::vector<std::pair<std::string, int>> m_OriginalOrderedActions;
 };
 
 } // namespace nc::core

@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/ActionShortcut.h>
@@ -61,10 +61,13 @@ public:
     virtual std::optional<int> FirstOfActionTagsFromShortcut(std::span<const int> _of_tags,
                                                              Shortcut _sc,
                                                              std::string_view _in_domain = {}) const noexcept = 0;
-    
+
+    // Returns the list of actions alongside with their tags, preserving the order.
+    virtual std::vector<std::pair<std::string, int>> AllShortcuts() const = 0;
+
     // Removes any hotkeys overrides.
     virtual void RevertToDefaults() = 0;
-    
+
     // Sets the custom shortkey for the specified action.
     // Returns true if any change was done to the actions maps.
     // If the _action doesn't exist or already has the same value, returns false.

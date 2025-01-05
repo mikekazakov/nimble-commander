@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ActionsShortcutsManager.h"
 #include <Config/RapidJSON.h>
 #include <NimbleCommander/Bootstrap/Config.h>
@@ -442,6 +442,8 @@ ActionsShortcutsManager::ActionsShortcutsManager(
                                                                              _default_shortcuts.end()})
                .size() == _default_shortcuts.size());
 
+    m_OriginalOrderedActions.assign(_action_tags.begin(), _action_tags.end());
+
     // Build the O(1) mapping between the action tags and the action names
     for( auto [action, tag] : _action_tags ) {
         m_ActionToTag.emplace(action, tag);
@@ -688,9 +690,9 @@ void ActionsShortcutsManager::WriteOverridesToConfig() const
     m_Config.Set(g_OverridesConfigPath, overrides);
 }
 
-std::span<const std::pair<const char *, int>> ActionsShortcutsManager::AllShortcuts()
+std::vector<std::pair<std::string, int>> ActionsShortcutsManager::AllShortcuts() const
 {
-    return g_ActionsTags;
+    return m_OriginalOrderedActions;
 }
 
 void ActionsShortcutsManager::RegisterShortcutUsage(const Shortcut _shortcut, const int _tag) noexcept

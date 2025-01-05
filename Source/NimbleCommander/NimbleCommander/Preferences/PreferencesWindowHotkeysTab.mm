@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowHotkeysTab.h"
 #include "../Core/ActionsShortcutsManager.h"
 #include <Base/debug.h>
@@ -99,8 +99,7 @@ enum class SourceType : uint8_t {
     if( self ) {
         m_SourceType = SourceType::All;
         m_ToolsStorage = _tool_storage;
-        const auto &all_shortcuts = ActionsShortcutsManager::AllShortcuts();
-        m_Shortcuts.assign(begin(all_shortcuts), end(all_shortcuts));
+        m_Shortcuts = ActionsShortcutsManager::Instance().AllShortcuts();
 
         // remove shortcuts whichs are absent in main menu
         const auto absent = [](auto &_t) {

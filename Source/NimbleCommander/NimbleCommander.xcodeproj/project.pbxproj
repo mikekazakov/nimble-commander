@@ -1090,6 +1090,7 @@
 		CF6BF84B2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewLayoutEngineBase.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewLayoutEngineBase.mm; sourceTree = "<group>"; };
 		CF6BF8522197F5C80017CECB /* PanelBriefViewFixedNumberLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewFixedNumberLayout.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedNumberLayout.h; sourceTree = "<group>"; };
 		CF6BF8532197F5C80017CECB /* PanelBriefViewFixedNumberLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedNumberLayout.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedNumberLayout.mm; sourceTree = "<group>"; };
+		CF6BFAE42D2C645200257029 /* Actions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Actions.h; path = NimbleCommander/Bootstrap/Actions.h; sourceTree = "<group>"; };
 		CF6D997D196675290077B146 /* Nimble Commander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF6D9D2B1966A56E0077B146 /* NimbleCommander-NonMAS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-NonMAS-Info.plist"; path = "NimbleCommander/Resources/NimbleCommander-NonMAS-Info.plist"; sourceTree = SOURCE_ROOT; };
 		CF6D9D2D1966A57B0077B146 /* NimbleCommander-MAS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-MAS-Info.plist"; path = "NimbleCommander/Resources/NimbleCommander-MAS-Info.plist"; sourceTree = SOURCE_ROOT; };
@@ -1866,6 +1867,7 @@
 		CF876D161D51DFD0009C0CCE /* Bootstrap */ = {
 			isa = PBXGroup;
 			children = (
+				CF6BFAE42D2C645200257029 /* Actions.h */,
 				CF12575A2CA97D87003906C6 /* NimbleCommanderCommon-Bridging-Header.h */,
 				CFDAC2371DFBDEBA0039A104 /* AppDelegate.h */,
 				CFDAC2381DFBDEBA0039A104 /* AppDelegate.mm */,

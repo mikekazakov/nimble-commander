@@ -22,6 +22,7 @@ class Config;
 
 namespace nc::core {
 
+// Implementation of the abstract interface ActionsShortcutsManager
 class ActionsShortcutsManager : public nc::utility::ActionsShortcutsManager
 {
 public:
@@ -33,9 +34,6 @@ public:
 
     // Destructor.
     virtual ~ActionsShortcutsManager();
-
-    // A shared instance of a manager, it uses the GlobalConfig() as its data backend.
-    static ActionsShortcutsManager &Instance();
 
     // Returns a numeric tag that corresponds to the given action name.
     std::optional<int> TagFromAction(std::string_view _action) const noexcept override;

@@ -12,6 +12,7 @@
 #include "SparkleShim.h"
 #include "PFMoveToApplicationsShim.h"
 #include "NativeVFSHostInstance.h"
+#include "Actions.h"
 #include "NCE.h"
 
 #include <algorithm>
@@ -967,7 +968,9 @@ static void DoTemporaryFileStoragePurge()
 
 - (nc::utility::ActionsShortcutsManager &)actionsShortcutsManager
 {
-    return nc::core::ActionsShortcutsManager::Instance();
+    [[clang::no_destroy]] static nc::core::ActionsShortcutsManager manager(
+        g_ActionsTags, g_DefaultActionShortcuts, GlobalConfig());
+    return manager;
 }
 
 @end

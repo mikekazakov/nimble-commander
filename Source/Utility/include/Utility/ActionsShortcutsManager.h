@@ -10,6 +10,10 @@
 
 namespace nc::utility {
 
+// ActionsShortcutsManager does the following:
+// - provides efficient mapping between the action names and their tags.
+// - manages shortcuts assigned to the actions, both defaults and user-defined overrides.
+// - provides an efficient backward mapping between shortcuts and actions that use them.
 class ActionsShortcutsManager
 {
 public:

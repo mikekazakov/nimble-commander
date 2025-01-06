@@ -6,14 +6,16 @@ First off, thank you for considering contributing to Nimble Commander! Your supp
 - [Suggesting Enhancements](#suggesting-enhancements)
 - [Helping Other Users](#helping-other-users)
 - [Localizations](#localizations)
+- [Documentation](#documentation)
 - [Sharing](#sharing)
+- [Testing](#testing)
 - [Code Contributions](#code-contributions)
 
 ## Reporting Bugs
 Bug reports are crucial for making Nimble Commander more reliable and user-friendly, as the tool's versatility means use cases can vary significantly.
+Before submitting a new report, please check the [documentation](https://github.com/mikekazakov/nimble-commander/blob/main/Docs/Help.md), particularly the [F.A.Q. section](https://github.com/mikekazakov/nimble-commander/blob/main/Docs/Help.md#frequently-asked-questions), to see if your question or issue is already addressed.
 Known bugs are tracked in the [Issues](https://github.com/mikekazakov/nimble-commander/issues) section.
-Before submitting a new report, please check there to see if the issue has already been reported.
-If you find your issue is already reported, feel free to add your information to the existing report or subscribe to updates.
+If the issue has already been reported, feel free to add your information to the existing report or subscribe to updates.
 Otherwise please provide as detailed a description as possible.
 This includes specifying the versions of Nimble Commander and macOS you're using, along with a step-by-step guide on how to reproduce the issue.
 Don't hesitate to attach any logs or screenshots if applicable.
@@ -46,6 +48,10 @@ The [user guide](Docs/Help.md) for Nimble Commander is in its early stages, and 
 
 ## Sharing
 A single tweet from you can go a long way. You can support this project by sharing information about it. Whether it's mentioning Nimble Commander on forums, submitting reviews, or talking about your experience, every bit of exposure helps.
+
+## Testing
+Help improve Nimble Commander by testing the nightly builds.
+It’s impossible to account for every usage scenario, edge case, or unique setup, so your feedback on these pre-release versions is invaluable for catching issues early and ensuring a smoother experience in the next official release.
 
 ## Code Contributions
 Contributions to the codebase are greatly appreciated, whether they come in the form of bug fixes, feature implementations, or improvements to existing features. If you're interested in contributing code to Nimble Commander, here's how to get started:

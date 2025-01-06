@@ -667,7 +667,7 @@ void ActionsShortcutsManager::WriteOverridesToConfig() const
     using namespace rapidjson;
     nc::config::Value overrides{kObjectType};
 
-    for( auto &i : g_ActionsTags ) {
+    for( auto &i : m_OriginalOrderedActions ) {
         auto scover = m_ShortcutsOverrides.find(i.second);
         if( scover == m_ShortcutsOverrides.end() ) {
             continue;

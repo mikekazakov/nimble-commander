@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate.h"
 #include "AppDelegateCPP.h"
 #include "AppDelegate+Migration.h"
@@ -12,6 +12,7 @@
 #include "SparkleShim.h"
 #include "PFMoveToApplicationsShim.h"
 #include "NativeVFSHostInstance.h"
+#include "Actions.h"
 #include "NCE.h"
 
 #include <algorithm>
@@ -23,6 +24,7 @@
 #include <Base/algo.h>
 #include <Base/debug.h>
 
+#include <Utility/NSMenu+ActionsShortcutsManager.h>
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/NativeFSManagerImpl.h>
 #include <Utility/TemporaryFileStorageImpl.h>
@@ -282,7 +284,7 @@ static NCAppDelegate *g_Me = nil;
     [self updateMainMenuFeaturesByVersionAndState];
 
     // update menu with current shortcuts layout
-    [NSApp.mainMenu nc_setMenuItemShortcutsWithActionsShortcutsManager:nc::core::ActionsShortcutsManager::Instance()];
+    [NSApp.mainMenu nc_setMenuItemShortcutsWithActionsShortcutsManager:self.actionsShortcutsManager];
     [self wireMenuDelegates];
 
     if( nc::base::AmISandboxed() ) {
@@ -300,8 +302,8 @@ static NCAppDelegate *g_Me = nil;
 - (void)wireMenuDelegates
 {
     // set up menu delegates. do this via DI to reduce links to AppDelegate in whole codebase
-    auto item_for_action = [](const char *_action) -> NSMenuItem * {
-        const std::optional<int> tag = nc::core::ActionsShortcutsManager::Instance().TagFromAction(_action);
+    auto item_for_action = [&](const char *_action) -> NSMenuItem * {
+        const std::optional<int> tag = self.actionsShortcutsManager.TagFromAction(_action);
         if( tag == std::nullopt )
             return nil;
         return [NSApp.mainMenu itemWithTagHierarchical:*tag];
@@ -355,9 +357,7 @@ static NCAppDelegate *g_Me = nil;
 - (void)updateMainMenuFeaturesByVersionAndState
 {
     // disable some features available in menu by configuration limitation
-    auto tag_from_lit = [](const char *s) {
-        return nc::core::ActionsShortcutsManager::Instance().TagFromAction(s).value();
-    };
+    auto tag_from_lit = [&](const char *s) { return self.actionsShortcutsManager.TagFromAction(s).value(); };
     auto current_menuitem = [&](const char *s) { return [NSApp.mainMenu itemWithTagHierarchical:tag_from_lit(s)]; };
     auto hide = [&](const char *s) {
         auto item = current_menuitem(s);
@@ -629,7 +629,7 @@ static NCAppDelegate *g_Me = nil;
 - (BOOL)validateMenuItem:(NSMenuItem *)item
 {
     static const int admin_mode_tag =
-        nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.nimble_commander.toggle_admin_mode").value();
+        self.actionsShortcutsManager.TagFromAction("menu.nimble_commander.toggle_admin_mode").value();
     const long tag = item.tag;
 
     if( tag == admin_mode_tag ) {
@@ -964,6 +964,13 @@ static void DoTemporaryFileStoragePurge()
 {
     [[clang::no_destroy]] static nc::panel::PanelDataPersistency persistency{*self.networkConnectionsManager};
     return persistency;
+}
+
+- (nc::utility::ActionsShortcutsManager &)actionsShortcutsManager
+{
+    [[clang::no_destroy]] static nc::core::ActionsShortcutsManager manager(
+        g_ActionsTags, g_DefaultActionShortcuts, GlobalConfig());
+    return manager;
 }
 
 @end

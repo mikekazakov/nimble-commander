@@ -69,11 +69,6 @@ ActionShortcut::ActionShortcut(std::string_view _from) noexcept : ActionShortcut
     modifiers = mod_flags;
 }
 
-ActionShortcut::ActionShortcut(std::u8string_view _from) noexcept
-    : ActionShortcut(std::string_view{reinterpret_cast<const char *>(_from.data()), _from.length()})
-{
-}
-
 ActionShortcut::ActionShortcut(uint16_t _unicode, unsigned long long _modif) noexcept : unicode(_unicode), modifiers(0)
 {
     uint64_t mod_flags = 0;

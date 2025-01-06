@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <NimbleCommander/States/MainWindowStateProtocol.h>
@@ -8,8 +8,9 @@
 #include <span>
 
 namespace nc::utility {
+class ActionsShortcutsManager;
 class NativeFSManager;
-}
+} // namespace nc::utility
 
 namespace nc::term {
 class ShellTask;
@@ -20,7 +21,9 @@ class ShellTask;
 @property(nonatomic, readonly) bool isAnythingRunning;
 
 - (instancetype)initWithFrame:(NSRect)frameRect NS_UNAVAILABLE;
-- (instancetype)initWithFrame:(NSRect)frameRect nativeFSManager:(nc::utility::NativeFSManager &)_native_fs_man;
+- (instancetype)initWithFrame:(NSRect)frameRect
+              nativeFSManager:(nc::utility::NativeFSManager &)_native_fs_man
+      actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager;
 
 - (std::string)initialWD;
 - (void)setInitialWD:(const std::string &)_wd;

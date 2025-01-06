@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #pragma once
 
@@ -20,6 +20,7 @@ class Config;
 }
 
 namespace utility {
+class ActionsShortcutsManager;
 class FSEventsFileUpdate;
 class NativeFSManager;
 class TemporaryFileStorage;
@@ -148,5 +149,7 @@ class NativeHost;
 @property(nonatomic, readonly) nc::viewer::hl::SettingsStorage &syntaxHighlightingSettingsStorage;
 
 @property(nonatomic, readonly) nc::panel::PanelDataPersistency &panelDataPersistency;
+
+@property(nonatomic, readonly) nc::utility::ActionsShortcutsManager &actionsShortcutsManager;
 
 @end

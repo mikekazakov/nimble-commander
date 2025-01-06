@@ -1,10 +1,19 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+#pragma once
 #import <Cocoa/Cocoa.h>
 #import "FilePanelsTabbedHolder.h"
+
+namespace nc::utility {
+class ActionsShortcutsManager;
+}
 
 @class PanelView;
 
 @interface FilePanelMainSplitView : NSSplitView <NSSplitViewDelegate>
+
+- (id)initWithFrame:(NSRect)_frame NS_UNAVAILABLE;
+- (id)initWithFrame:(NSRect)_frame
+    actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager;
 
 - (void)swapViews;
 - (void)collapseLeftView;

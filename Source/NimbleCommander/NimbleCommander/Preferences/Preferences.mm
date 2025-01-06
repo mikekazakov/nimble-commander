@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "PreferencesWindowGeneralTab.h"
 #include "PreferencesWindowPanelsTab.h"
@@ -21,7 +21,8 @@ static PreferencesWindowController *CreatePrefWindow()
         [[PreferencesWindowViewerTab alloc] initWithHistory:app_del.internalViewerHistory],
         [[PreferencesWindowExternalEditorsTab alloc] initWithEditorsStorage:app_del.externalEditorsStorage],
         [PreferencesWindowTerminalTab new],
-        [[PreferencesWindowHotkeysTab alloc] initWithToolsStorage:tools_storage],
+        [[PreferencesWindowHotkeysTab alloc] initWithToolsStorage:tools_storage
+                                          actionsShortcutsManager:app_del.actionsShortcutsManager],
         [[PreferencesWindowToolsTab alloc] initWithToolsStorage:tools_storage]
     ];
     return [[PreferencesWindowController alloc] initWithControllers:tabs title:@"Preferences"];

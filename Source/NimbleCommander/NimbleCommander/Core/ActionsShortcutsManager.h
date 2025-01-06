@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 // ⇧ - NSShiftKeyMask
@@ -7,7 +7,6 @@
 // ⌥ - NSAlternateKeyMask
 // ⌘ - NSCommandKeyMask
 
-#include <Base/Observable.h>
 #include <Base/UnorderedUtil.h>
 #include <Utility/ActionShortcut.h>
 #include <Utility/ActionsShortcutsManager.h>
@@ -23,17 +22,18 @@ class Config;
 
 namespace nc::core {
 
-class ActionsShortcutsManager : public nc::utility::ActionsShortcutsManager, private nc::base::ObservableBase
+// Implementation of the abstract interface ActionsShortcutsManager
+class ActionsShortcutsManager : public nc::utility::ActionsShortcutsManager
 {
 public:
-    // Create a new shortcut manager which will use the provided config to store the overides.
-    ActionsShortcutsManager(nc::config::Config &_config);
+    // Creates a new shortcut manager with the list of Action<->Tag mappings, Actions->DefaultShortcut mappings and the
+    // config to store the overides.
+    ActionsShortcutsManager(std::span<const std::pair<const char *, int>> _action_tags,
+                            std::span<const std::pair<const char *, const char *>> _default_shortcuts,
+                            nc::config::Config &_config);
 
     // Destructor.
     virtual ~ActionsShortcutsManager();
-
-    // A shared instance of a manager, it uses the GlobalConfig() as its data backend.
-    static ActionsShortcutsManager &Instance();
 
     // Returns a numeric tag that corresponds to the given action name.
     std::optional<int> TagFromAction(std::string_view _action) const noexcept override;
@@ -68,24 +68,22 @@ public:
                                                      Shortcut _sc,
                                                      std::string_view _in_domain = {}) const noexcept override;
 
+    // Returns the list of actions alongside with their tags, preserving the order.
+    std::vector<std::pair<std::string, int>> AllShortcuts() const override;
+
     // Removes any hotkeys overrides.
-    void RevertToDefaults();
+    void RevertToDefaults() override;
 
     // Sets the custom shortkey for the specified action.
     // Returns true if any change was done to the actions maps.
     // If the _action doesn't exist or already has the same value, returns false.
     // This function is effectively a syntax sugar for SetShortCutsOverride(_action, {&_sc, 1}).
-    bool SetShortcutOverride(std::string_view _action, Shortcut _sc);
+    bool SetShortcutOverride(std::string_view _action, Shortcut _sc) override;
 
     // Sets the custom shortkeys for the specified action.
     // Returns true if any change was done to the actions maps.
     // If the _action doesn't exist or already has the same value, returns false.
-    bool SetShortcutsOverride(std::string_view _action, std::span<const Shortcut> _shortcuts);
-
-    static std::span<const std::pair<const char *, int>> AllShortcuts();
-
-    using ObservationTicket = ObservableBase::ObservationTicket;
-    ObservationTicket ObserveChanges(std::function<void()> _callback);
+    bool SetShortcutsOverride(std::string_view _action, std::span<const Shortcut> _shortcuts) override;
 
 private:
     // An unordered list of numeric tags indicating which actions are using a shortcut.
@@ -111,6 +109,12 @@ private:
     // Duplicates are removed as well.
     static Shortcuts SanitizedShortcuts(const Shortcuts &_shortcuts) noexcept;
 
+    // Maps a numeric action tag to its name.
+    ankerl::unordered_dense::map<int, std::string> m_TagToAction;
+
+    // Maps an action name to its numeric tag.
+    ankerl::unordered_dense::map<std::string, int, UnorderedStringHashEqual, UnorderedStringHashEqual> m_ActionToTag;
+
     // Maps an action tag to the default ordered list of its shortcuts.
     ankerl::unordered_dense::map<int, Shortcuts> m_ShortcutsDefaults;
 
@@ -122,16 +126,9 @@ private:
 
     // Config instance used to read from and write to the shortcut overrides.
     nc::config::Config &m_Config;
+
+    // A backup copy of the original input, preserving the order.
+    std::vector<std::pair<std::string, int>> m_OriginalOrderedActions;
 };
 
 } // namespace nc::core
-
-#ifdef __OBJC__
-
-@interface NSMenu (ActionsShortcutsManagerSupport)
-
-- (void)nc_setMenuItemShortcutsWithActionsShortcutsManager:(const nc::core::ActionsShortcutsManager &)_asm;
-
-@end
-
-#endif

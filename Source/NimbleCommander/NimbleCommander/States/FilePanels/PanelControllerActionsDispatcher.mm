@@ -1,6 +1,6 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerActionsDispatcher.h"
-#include <NimbleCommander/Core/ActionsShortcutsManager.h>
+#include <Utility/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <Utility/NSMenu+Hierarchical.h>
 #include "PanelController.h"
@@ -22,15 +22,18 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 @implementation NCPanelControllerActionsDispatcher {
     __unsafe_unretained PanelController *m_PC;
     const nc::panel::PanelActionsMap *m_AM;
+    const nc::utility::ActionsShortcutsManager *m_ActionsShortcutsManager;
 }
 
 - (instancetype)initWithController:(PanelController *)_controller
-                     andActionsMap:(const nc::panel::PanelActionsMap &)_actions_map
+                        actionsMap:(const nc::panel::PanelActionsMap &)_actions_map
+           actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager
 {
     self = [super init];
     if( self ) {
         m_PC = _controller;
         m_AM = &_actions_map;
+        m_ActionsShortcutsManager = &_actions_shortcuts_manager;
     }
     return self;
 }
@@ -49,20 +52,32 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
                 forPanelView:(PanelView *) [[maybe_unused]] _panel_view
                    andHandle:(bool)_handle
 {
-    using ASM = ActionsShortcutsManager;
     struct Tags {
-        int file_enter = ASM::Instance().TagFromAction("menu.file.enter").value();
-        int file_open = ASM::Instance().TagFromAction("menu.file.open").value();
-        int go_root = ASM::Instance().TagFromAction("panel.go_root").value();
-        int go_home = ASM::Instance().TagFromAction("panel.go_home").value();
-        int show_preview = ASM::Instance().TagFromAction("panel.show_preview").value();
-        int go_into_folder = ASM::Instance().TagFromAction("panel.go_into_folder").value();
-        int go_into_enclosing_folder = ASM::Instance().TagFromAction("panel.go_into_enclosing_folder").value();
-        int show_context_menu = ASM::Instance().TagFromAction("panel.show_context_menu").value();
-    } static const tags;
+        int file_enter = -1;
+        int file_open = -1;
+        int go_root = -1;
+        int go_home = -1;
+        int show_preview = -1;
+        int go_into_folder = -1;
+        int go_into_enclosing_folder = -1;
+        int show_context_menu = -1;
+    };
+    static const Tags tags = [&] {
+        Tags t;
+        t.file_enter = m_ActionsShortcutsManager->TagFromAction("menu.file.enter").value();
+        t.file_open = m_ActionsShortcutsManager->TagFromAction("menu.file.open").value();
+        t.go_root = m_ActionsShortcutsManager->TagFromAction("panel.go_root").value();
+        t.go_home = m_ActionsShortcutsManager->TagFromAction("panel.go_home").value();
+        t.show_preview = m_ActionsShortcutsManager->TagFromAction("panel.show_preview").value();
+        t.go_into_folder = m_ActionsShortcutsManager->TagFromAction("panel.go_into_folder").value();
+        t.go_into_enclosing_folder = m_ActionsShortcutsManager->TagFromAction("panel.go_into_enclosing_folder").value();
+        t.show_context_menu = m_ActionsShortcutsManager->TagFromAction("panel.show_context_menu").value();
+        return t;
+    }();
 
-    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortcut(
-        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)}, ASM::Shortcut::EventData(_event));
+    const std::optional<int> event_action_tag = m_ActionsShortcutsManager->FirstOfActionTagsFromShortcut(
+        {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)},
+        nc::utility::ActionShortcut::EventData(_event));
 
     if( event_action_tag == tags.show_preview ) {
         if( _handle ) {
@@ -76,7 +91,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 
     if( event_action_tag == tags.go_home ) {
         if( _handle ) {
-            static int tag = ASM::Instance().TagFromAction("menu.go.home").value();
+            static int tag = m_ActionsShortcutsManager->TagFromAction("menu.go.home").value();
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
@@ -84,7 +99,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 
     if( event_action_tag == tags.go_root ) {
         if( _handle ) {
-            static int tag = ASM::Instance().TagFromAction("menu.go.root").value();
+            static int tag = m_ActionsShortcutsManager->TagFromAction("menu.go.root").value();
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
@@ -92,7 +107,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 
     if( event_action_tag == tags.go_into_folder ) {
         if( _handle ) {
-            static int tag = ASM::Instance().TagFromAction("menu.go.into_folder").value();
+            static int tag = m_ActionsShortcutsManager->TagFromAction("menu.go.into_folder").value();
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;
@@ -100,7 +115,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 
     if( event_action_tag == tags.go_into_enclosing_folder ) {
         if( _handle ) {
-            static int tag = ASM::Instance().TagFromAction("menu.go.enclosing_folder").value();
+            static int tag = m_ActionsShortcutsManager->TagFromAction("menu.go.enclosing_folder").value();
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
         }
         return view::BiddingPriority::High;

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShellState.h"
 #include <Base/CommonPaths.h>
 #include <Utility/NativeFSManager.h>
@@ -6,7 +6,7 @@
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
-#include <NimbleCommander/Core/ActionsShortcutsManager.h>
+#include <Utility/ActionsShortcutsManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <Term/ShellTask.h>
 #include <Term/Screen.h>
@@ -37,18 +37,22 @@ static const auto g_CustomPath = "terminal.customShellPath";
     std::unique_ptr<Interpreter> m_Interpreter;
     NSLayoutConstraint *m_TopLayoutConstraint;
     nc::utility::NativeFSManager *m_NativeFSManager;
+    const nc::utility::ActionsShortcutsManager *m_ActionsShortcutsManager;
     std::string m_InitalWD;
     std::string m_WindowTitle;
     std::string m_IconTitle;
     std::unique_ptr<ChildrenTracker> m_ChildrenTracker;
 }
 
-- (id)initWithFrame:(NSRect)frameRect nativeFSManager:(nc::utility::NativeFSManager &)_native_fs_man
+- (id)initWithFrame:(NSRect)frameRect
+            nativeFSManager:(nc::utility::NativeFSManager &)_native_fs_man
+    actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
         __weak NCTermShellState *weak_self = self;
         m_NativeFSManager = &_native_fs_man;
+        m_ActionsShortcutsManager = &_actions_shortcuts_manager;
         m_InitalWD = nc::base::CommonPaths::Home();
 
         m_TermScrollView = [[NCTermScrollView alloc] initWithFrame:self.bounds
@@ -369,8 +373,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item
 {
-    static const int show_terminal_tag =
-        nc::core::ActionsShortcutsManager::Instance().TagFromAction("menu.view.show_terminal").value();
+    static const int show_terminal_tag = m_ActionsShortcutsManager->TagFromAction("menu.view.show_terminal").value();
     const long tag = item.tag;
     if( tag == show_terminal_tag ) {
         item.title = NSLocalizedString(@"Hide Terminal", "Menu item title for hiding terminal");

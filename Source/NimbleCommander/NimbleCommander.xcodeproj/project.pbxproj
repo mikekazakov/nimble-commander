@@ -44,7 +44,7 @@
 		CF0A47FC2BDD9EA500833160 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
 		CF0A47FD2BDD9EB800833160 /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
 		CF0A47FE2BDD9F2200833160 /* ServicesHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46C23520317FD700A91E2F /* ServicesHandler.mm */; };
-		CF0A47FF2BDD9F2600833160 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */; };
+		CF0A47FF2BDD9F2600833160 /* ActionsShortcutsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.cpp */; };
 		CF0A48002BDD9F3200833160 /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B11DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm */; };
 		CF0A48012BDD9F3600833160 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC29E1DFBFBA10039A104 /* TemporaryNativeFileChangesSentinel.cpp */; };
 		CF0A48032BDD9F5500833160 /* Preferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */; };
@@ -1090,6 +1090,7 @@
 		CF6BF84B2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewLayoutEngineBase.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewLayoutEngineBase.mm; sourceTree = "<group>"; };
 		CF6BF8522197F5C80017CECB /* PanelBriefViewFixedNumberLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewFixedNumberLayout.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedNumberLayout.h; sourceTree = "<group>"; };
 		CF6BF8532197F5C80017CECB /* PanelBriefViewFixedNumberLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedNumberLayout.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedNumberLayout.mm; sourceTree = "<group>"; };
+		CF6BFAE42D2C645200257029 /* Actions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Actions.h; path = NimbleCommander/Bootstrap/Actions.h; sourceTree = "<group>"; };
 		CF6D997D196675290077B146 /* Nimble Commander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF6D9D2B1966A56E0077B146 /* NimbleCommander-NonMAS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-NonMAS-Info.plist"; path = "NimbleCommander/Resources/NimbleCommander-NonMAS-Info.plist"; sourceTree = SOURCE_ROOT; };
 		CF6D9D2D1966A57B0077B146 /* NimbleCommander-MAS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-MAS-Info.plist"; path = "NimbleCommander/Resources/NimbleCommander-MAS-Info.plist"; sourceTree = SOURCE_ROOT; };
@@ -1309,7 +1310,7 @@
 		CFDAC2391DFBDEBA0039A104 /* AppDelegateCPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegateCPP.h; path = NimbleCommander/Bootstrap/AppDelegateCPP.h; sourceTree = SOURCE_ROOT; };
 		CFDAC23A1DFBDEBA0039A104 /* AppDelegateCPP.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegateCPP.mm; path = NimbleCommander/Bootstrap/AppDelegateCPP.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC23F1DFBE18C0039A104 /* ActionsShortcutsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActionsShortcutsManager.h; path = NimbleCommander/Core/ActionsShortcutsManager.h; sourceTree = SOURCE_ROOT; };
-		CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ActionsShortcutsManager.mm; path = NimbleCommander/Core/ActionsShortcutsManager.mm; sourceTree = SOURCE_ROOT; };
+		CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActionsShortcutsManager.cpp; path = NimbleCommander/Core/ActionsShortcutsManager.cpp; sourceTree = SOURCE_ROOT; };
 		CFDAC2431DFBEE340039A104 /* MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindow.h; path = NimbleCommander/States/MainWindow.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2441DFBEE340039A104 /* MainWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindow.mm; path = NimbleCommander/States/MainWindow.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2451DFBEE340039A104 /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowController.h; path = NimbleCommander/States/MainWindowController.h; sourceTree = SOURCE_ROOT; };
@@ -1866,6 +1867,7 @@
 		CF876D161D51DFD0009C0CCE /* Bootstrap */ = {
 			isa = PBXGroup;
 			children = (
+				CF6BFAE42D2C645200257029 /* Actions.h */,
 				CF12575A2CA97D87003906C6 /* NimbleCommanderCommon-Bridging-Header.h */,
 				CFDAC2371DFBDEBA0039A104 /* AppDelegate.h */,
 				CFDAC2381DFBDEBA0039A104 /* AppDelegate.mm */,
@@ -1988,7 +1990,7 @@
 				CF46C23420317FD700A91E2F /* ServicesHandler.h */,
 				CF46C23520317FD700A91E2F /* ServicesHandler.mm */,
 				CFDAC23F1DFBE18C0039A104 /* ActionsShortcutsManager.h */,
-				CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */,
+				CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.cpp */,
 				CF2740821E57F5DD000D4365 /* Alert.h */,
 				CF2740831E57F5DD000D4365 /* Alert.mm */,
 				CF0139B91E9B1B8E00E44F2D /* AnyHolder.h */,
@@ -3132,7 +3134,7 @@
 				CF0A48432BDDA26E00833160 /* OpenNetworkConnection.mm in Sources */,
 				CF0A48422BDDA1DB00833160 /* OpenFile.mm in Sources */,
 				CF0A47282BDD8A1100833160 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
-				CF0A47FF2BDD9F2600833160 /* ActionsShortcutsManager.mm in Sources */,
+				CF0A47FF2BDD9F2600833160 /* ActionsShortcutsManager.cpp in Sources */,
 				CF0A48222BDDA04400833160 /* PanelDataOptionsPersistence.mm in Sources */,
 				CF0A486E2BDDA41200833160 /* PanelViewFooter.mm in Sources */,
 				CF0A487E2BDDA52A00833160 /* NetworkShareSheetController.mm in Sources */,

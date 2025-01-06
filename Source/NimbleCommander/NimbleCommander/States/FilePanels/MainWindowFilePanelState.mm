@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/CommonPaths.h>
 #include <Utility/PathManip.h>
 #include <Utility/NSView+Sugar.h>
@@ -264,7 +264,8 @@ static NSString *TitleForData(const data::Model *_data);
 
 - (void)CreateControls
 {
-    m_SplitView = [[FilePanelMainSplitView alloc] initWithFrame:NSRect()];
+    m_SplitView = [[FilePanelMainSplitView alloc] initWithFrame:NSRect()
+                                        actionsShortcutsManager:NCAppDelegate.me.actionsShortcutsManager];
     m_SplitView.translatesAutoresizingMaskIntoConstraints = NO;
     [m_SplitView.leftTabbedHolder addPanel:m_LeftPanelControllers.front().view];
     [m_SplitView.rightTabbedHolder addPanel:m_RightPanelControllers.front().view];
@@ -279,6 +280,7 @@ static NSString *TitleForData(const data::Model *_data);
 
     m_ToolbarDelegate =
         [[MainWindowFilePanelsStateToolbarDelegate alloc] initWithToolsStorage:NCAppDelegate.me.externalTools
+                                                       actionsShortcutsManager:NCAppDelegate.me.actionsShortcutsManager
                                                              andOperationsPool:self.operationsPool];
 
     auto views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_SplitView);

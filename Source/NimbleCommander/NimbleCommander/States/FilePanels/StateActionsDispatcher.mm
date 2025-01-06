@@ -1,7 +1,7 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "StateActionsDispatcher.h"
 #include "Actions/DefaultAction.h"
-#include <NimbleCommander/Core/ActionsShortcutsManager.h>
+#include <Utility/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/Alert.h>
 #include "MainWindowFilePanelState.h"
 #include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
@@ -18,16 +18,19 @@ static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelSt
 @implementation NCPanelsStateActionsDispatcher {
     __unsafe_unretained MainWindowFilePanelState *m_FS;
     const nc::panel::StateActionsMap *m_AM;
+    const nc::utility::ActionsShortcutsManager *m_ActionsShortcutsManager;
 }
 @synthesize hasTerminal;
 
 - (instancetype)initWithState:(MainWindowFilePanelState *)_state
-                andActionsMap:(const nc::panel::StateActionsMap &)_actions_map
+                    actionsMap:(const nc::panel::StateActionsMap &)_actions_map
+    andActionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_action_shortcuts_manager
 {
     self = [super init];
     if( self ) {
         m_FS = _state;
         m_AM = &_actions_map;
+        m_ActionsShortcutsManager = &_action_shortcuts_manager;
     }
     return self;
 }
@@ -63,15 +66,25 @@ static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelSt
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
-    using ASM = nc::core::ActionsShortcutsManager;
+    using ASM = nc::utility::ActionsShortcutsManager;
     struct Tags {
-        int FocusLeft = ASM::Instance().TagFromAction("panel.focus_left_panel").value();
-        int FocusRight = ASM::Instance().TagFromAction("panel.focus_right_panel").value();
-        int MoveUp = ASM::Instance().TagFromAction("menu.view.panels_position.move_up").value();
-        int MoveDown = ASM::Instance().TagFromAction("menu.view.panels_position.move_down").value();
-        int Show = ASM::Instance().TagFromAction("menu.view.panels_position.showpanels").value();
-        int FocusTerminal = ASM::Instance().TagFromAction("menu.view.panels_position.focusterminal").value();
-    } static const tags;
+        int FocusLeft = -1;
+        int FocusRight = -1;
+        int MoveUp = -1;
+        int MoveDown = -1;
+        int Show = -1;
+        int FocusTerminal = -1;
+    };
+    static const Tags tags = [&] {
+        Tags t;
+        t.FocusLeft = m_ActionsShortcutsManager->TagFromAction("panel.focus_left_panel").value();
+        t.FocusRight = m_ActionsShortcutsManager->TagFromAction("panel.focus_right_panel").value();
+        t.MoveUp = m_ActionsShortcutsManager->TagFromAction("menu.view.panels_position.move_up").value();
+        t.MoveDown = m_ActionsShortcutsManager->TagFromAction("menu.view.panels_position.move_down").value();
+        t.Show = m_ActionsShortcutsManager->TagFromAction("menu.view.panels_position.showpanels").value();
+        t.FocusTerminal = m_ActionsShortcutsManager->TagFromAction("menu.view.panels_position.focusterminal").value();
+        return t;
+    }();
 
     NSString *characters = _event.charactersIgnoringModifiers;
     if( characters.length != 1 )
@@ -96,7 +109,7 @@ static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelSt
         return true;
     }
 
-    const std::optional<int> event_action_tag = ASM::Instance().FirstOfActionTagsFromShortcut(
+    const std::optional<int> event_action_tag = m_ActionsShortcutsManager->FirstOfActionTagsFromShortcut(
         {reinterpret_cast<const int *>(&tags), sizeof(tags) / sizeof(int)}, ASM::Shortcut::EventData(_event));
 
     if( event_action_tag == tags.FocusLeft ) {

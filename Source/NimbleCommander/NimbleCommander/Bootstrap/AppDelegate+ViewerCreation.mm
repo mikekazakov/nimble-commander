@@ -22,7 +22,7 @@
 {
     return [[NCViewerViewController alloc] initWithHistory:self.internalViewerHistory
                                                     config:self.globalConfig
-                                                 shortcuts:nc::core::ActionsShortcutsManager::Instance()];
+                                                 shortcuts:self.actionsShortcutsManager];
 }
 
 @end

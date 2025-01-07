@@ -1,7 +1,6 @@
 // Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowHotkeysTab.h"
 #include <Utility/ActionsShortcutsManager.h>
-#include "../Core/ActionsShortcutsManager.h" // TODO: remove me
 #include <Base/debug.h>
 #include <Base/dispatch_cpp.h>
 #import <GTMHotKeyTextField/GTMHotKeyTextField.h>
@@ -423,24 +422,35 @@ static NSImageView *SpawnCautionSign()
     if( !tf )
         return;
 
-    const long row = [self.Table rowForView:tf];
-    if( row < 0 || row >= static_cast<long>(m_FilteredNodes.size()) )
+    GTMHotKey *hk = nc::objc_cast<GTMHotKeyTextFieldCell>(tf.cell).hotKey;
+    if( !hk )
         return;
 
+    const ActionShortcut updated_shortcut = [self shortcutFromGTMHotKey:hk];
+
+    const long column = [self.Table columnForView:tf];
+    if( column < 1 )
+        return;
+
+    const size_t shortcut_idx = column - 1; // primary shortcut is the column #1
+
     const int tag = static_cast<int>(tf.tag);
+
     const std::optional<std::string_view> action = m_ActionsShortcutsManager->ActionFromTag(tag);
     if( !action )
         return;
 
-    std::vector<ActionShortcut> updated_shortcuts;
-    for( long col = 1; col <= 4; ++col ) {
-        if( GTMHotKeyTextField *v = nc::objc_cast<GTMHotKeyTextField>([self.Table viewAtColumn:col
-                                                                                           row:row
-                                                                               makeIfNecessary:false]) ) {
-            if( GTMHotKey *hk = nc::objc_cast<GTMHotKeyTextFieldCell>(v.cell).hotKey )
-                updated_shortcuts.push_back([self shortcutFromGTMHotKey:hk]);
-        }
-    }
+    const std::optional<ActionsShortcutsManager::Shortcuts> current_shortcuts =
+        m_ActionsShortcutsManager->ShortcutsFromTag(tag);
+    if( !current_shortcuts )
+        return;
+
+    std::vector<ActionShortcut> updated_shortcuts(current_shortcuts->begin(), current_shortcuts->end());
+
+    if( shortcut_idx < updated_shortcuts.size() )
+        updated_shortcuts[shortcut_idx] = updated_shortcut;
+    else
+        updated_shortcuts.push_back(updated_shortcut);
 
     if( m_ActionsShortcutsManager->SetShortcutsOverride(*action, updated_shortcuts) ) {
         [NSApp.mainMenu nc_setMenuItemShortcutsWithActionsShortcutsManager:*m_ActionsShortcutsManager];

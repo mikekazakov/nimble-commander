@@ -210,7 +210,7 @@ static NSString *EncodeToolIdentifier(const ExternalTool &_et)
 - (IBAction)onExternalToolAction:(id)sender
 {
     if( auto i = nc::objc_cast<NSToolbarItem>(sender) )
-        if( auto tool = m_Storage->GetTool(i.tag) ) {
+        if( auto tool = [self findToolWithIdentifier:i.itemIdentifier] ) {
             m_RepresentedObject = [[AnyHolder alloc] initWithAny:std::any{tool}];
             [NSApp sendAction:@selector(onExecuteExternalTool:) to:nil from:self];
             m_RepresentedObject = nil;

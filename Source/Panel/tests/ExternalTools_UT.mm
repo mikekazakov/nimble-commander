@@ -936,6 +936,47 @@ TEST_CASE(PREFIX "Storage refuses duplicate UUIDs")
     ExternalToolsStorage stor("tools", config, ExternalToolsStorage::WriteChanges::Immediate);
     ExternalTool t;
     t.m_Title = "hi";
+    t.m_UUID = nc::base::UUID::Generate();
     REQUIRE_NOTHROW(stor.InsertTool(t));
     REQUIRE_THROWS_AS(stor.InsertTool(t), std::invalid_argument);
+}
+
+TEST_CASE(PREFIX "Storage immediately writes back the invented UUIDs once the tools are loaded")
+{
+    const auto config_json = R"({
+        "tools": [
+            {
+                "path": "/meow",
+                "title": "Meow!"
+            },
+            {
+                "path": "/woof",
+                "title": "Woof!"
+            }    
+        ]
+    })";
+    nc::config::ConfigImpl config{"{}", std::make_shared<nc::config::NonPersistentOverwritesStorage>(config_json)};
+
+    nc::base::UUID u1, u2;
+    {
+        ExternalToolsStorage stor("tools", config, ExternalToolsStorage::WriteChanges::Immediate);
+        REQUIRE(stor.GetAllTools().size() == 2);
+        REQUIRE(stor.GetTool(0)->m_Title == "Meow!");
+        REQUIRE(stor.GetTool(0)->m_ExecutablePath == "/meow");
+        u1 = stor.GetTool(0)->m_UUID; // invented
+        REQUIRE(stor.GetTool(1)->m_Title == "Woof!");
+        REQUIRE(stor.GetTool(1)->m_ExecutablePath == "/woof");
+        u2 = stor.GetTool(1)->m_UUID; // invented
+    }
+
+    {
+        ExternalToolsStorage stor("tools", config, ExternalToolsStorage::WriteChanges::Immediate);
+        REQUIRE(stor.GetAllTools().size() == 2);
+        REQUIRE(stor.GetTool(0)->m_Title == "Meow!");
+        REQUIRE(stor.GetTool(0)->m_ExecutablePath == "/meow");
+        REQUIRE(stor.GetTool(0)->m_UUID == u1); // stayed the same after reload
+        REQUIRE(stor.GetTool(1)->m_Title == "Woof!");
+        REQUIRE(stor.GetTool(1)->m_ExecutablePath == "/woof");
+        REQUIRE(stor.GetTool(1)->m_UUID == u2); // stayed the same after reload
+    }
 }

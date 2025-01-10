@@ -957,9 +957,10 @@ TEST_CASE(PREFIX "Storage immediately writes back the invented UUIDs once the to
     })";
     nc::config::ConfigImpl config{"{}", std::make_shared<nc::config::NonPersistentOverwritesStorage>(config_json)};
 
-    nc::base::UUID u1, u2;
+    nc::base::UUID u1;
+    nc::base::UUID u2;
     {
-        ExternalToolsStorage stor("tools", config, ExternalToolsStorage::WriteChanges::Immediate);
+        const ExternalToolsStorage stor("tools", config, ExternalToolsStorage::WriteChanges::Immediate);
         REQUIRE(stor.GetAllTools().size() == 2);
         REQUIRE(stor.GetTool(0)->m_Title == "Meow!");
         REQUIRE(stor.GetTool(0)->m_ExecutablePath == "/meow");
@@ -970,7 +971,7 @@ TEST_CASE(PREFIX "Storage immediately writes back the invented UUIDs once the to
     }
 
     {
-        ExternalToolsStorage stor("tools", config, ExternalToolsStorage::WriteChanges::Immediate);
+        const ExternalToolsStorage stor("tools", config, ExternalToolsStorage::WriteChanges::Immediate);
         REQUIRE(stor.GetAllTools().size() == 2);
         REQUIRE(stor.GetTool(0)->m_Title == "Meow!");
         REQUIRE(stor.GetTool(0)->m_ExecutablePath == "/meow");

@@ -416,12 +416,8 @@ static std::optional<ExternalTool> LoadTool(const nc::config::Value &_from)
         et.m_StartupMode = static_cast<ExternalTool::StartupMode>(_from[g_StartupKey].GetInt());
 
     if( _from.HasMember(g_UUIDKey) && _from[g_UUIDKey].IsString() &&
-        nc::base::UUID::FromString(_from[g_UUIDKey].GetString()) ) {
+        nc::base::UUID::FromString(_from[g_UUIDKey].GetString()) )
         et.m_UUID = nc::base::UUID::FromString(_from[g_UUIDKey].GetString()).value();
-    }
-    else {
-        et.m_UUID = nc::base::UUID::Generate(); // Provide any "old" tool with a new uuid
-    }
 
     // TODO: load m_GUIArgumentInterpretation
     return et;
@@ -446,21 +442,34 @@ void ExternalToolsStorage::LoadToolsFromConfig()
     if( !tools.IsArray() )
         return;
 
-    auto lock = std::lock_guard{m_ToolsLock};
-    m_Tools.clear();
+    bool did_invent_any_uuids = false;
 
-    ankerl::unordered_dense::set<base::UUID> uuids;
-    for( auto i = tools.Begin(), e = tools.End(); i != e; ++i ) {
-        if( auto et = LoadTool(*i) ) {
+    {
+        auto lock = std::lock_guard{m_ToolsLock};
+        m_Tools.clear();
 
-            // Ensure that all uuids are unique
-            if( uuids.contains(et->m_UUID) ) {
-                et->m_UUID = base::UUID::Generate();
+        ankerl::unordered_dense::set<base::UUID> uuids;
+        for( auto i = tools.Begin(), e = tools.End(); i != e; ++i ) {
+            if( std::optional<ExternalTool> et = LoadTool(*i) ) {
+                if( et->m_UUID == nc::base::UUID{} ) {
+                    et->m_UUID = nc::base::UUID::Generate(); // Provide any "old" tool with a new uuid
+                    did_invent_any_uuids = true;
+                }
+
+                // Ensure that all uuids are unique
+                if( uuids.contains(et->m_UUID) ) {
+                    et->m_UUID = base::UUID::Generate();
+                    did_invent_any_uuids = true;
+                }
+                uuids.emplace(et->m_UUID);
+
+                m_Tools.emplace_back(std::make_shared<ExternalTool>(std::move(*et)));
             }
-            uuids.emplace(et->m_UUID);
-
-            m_Tools.emplace_back(std::make_shared<ExternalTool>(std::move(*et)));
         }
+    }
+
+    if( did_invent_any_uuids ) {
+        CommitChanges();
     }
 }
 

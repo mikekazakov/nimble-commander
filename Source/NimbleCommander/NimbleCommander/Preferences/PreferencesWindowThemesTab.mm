@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowThemesTab.h"
 #include "PreferencesWindowThemesControls.h"
 #include "PreferencesWindowThemesTabAutomaticSwitchingSheet.h"
@@ -255,8 +255,7 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
 
 - (NSImage *)toolbarItemImage
 {
-    return [[NSImage alloc] initWithContentsOfFile:@"/System/Library/CoreServices/CoreTypes.bundle/"
-                                                   @"Contents/Resources/ProfileFontAndColor.icns"];
+    return [NSImage imageNamed:@"preferences.toolbar.themes"];
 }
 
 - (NSString *)toolbarItemLabel

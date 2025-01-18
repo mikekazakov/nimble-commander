@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowViewerTab.h"
 #include <Utility/FontExtras.h>
 #include <Viewer/History.h>
@@ -96,10 +96,12 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 {
     return NSStringFromClass(self.class);
 }
+
 - (NSImage *)toolbarItemImage
 {
-    return [NSImage imageNamed:@"PreferencesIcons_Viewer"];
+    return [NSImage imageNamed:@"preferences.toolbar.viewer"];
 }
+
 - (NSString *)toolbarItemLabel
 {
     return NSLocalizedStringFromTable(@"Viewer", @"Preferences", "General preferences tab title");

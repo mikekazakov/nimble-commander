@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowPanelsTab.h"
 #include "ConfigBinder.h"
 #include "PreferencesWindowPanelsTabOperationsConcurrencySheet.h"
@@ -217,10 +217,12 @@ static const auto g_TagsDDType = @"com.magnumbytes.nc.pref.PreferencesWindowPane
 {
     return NSStringFromClass(self.class);
 }
+
 - (NSImage *)toolbarItemImage
 {
-    return [NSImage imageNamed:@"PreferencesIcons_Panels"];
+    return [NSImage imageNamed:@"preferences.toolbar.panels"];
 }
+
 - (NSString *)toolbarItemLabel
 {
     return NSLocalizedStringFromTable(@"Panels", @"Preferences", "General preferences tab title");

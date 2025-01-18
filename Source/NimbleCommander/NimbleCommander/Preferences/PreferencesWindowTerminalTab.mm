@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowTerminalTab.h"
 #include <Utility/FontExtras.h>
 #include <Config/ObjCBridge.h>
@@ -53,10 +53,12 @@
 {
     return NSStringFromClass(self.class);
 }
+
 - (NSImage *)toolbarItemImage
 {
-    return [NSImage imageNamed:@"PreferencesIcons_Terminal"];
+    return [NSImage imageNamed:@"preferences.toolbar.terminal"];
 }
+
 - (NSString *)toolbarItemLabel
 {
     return NSLocalizedStringFromTable(@"Terminal", @"Preferences", "General preferences tab title");

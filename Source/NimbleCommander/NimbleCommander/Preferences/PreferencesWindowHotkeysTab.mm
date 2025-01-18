@@ -256,7 +256,7 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
 
 - (NSImage *)toolbarItemImage
 {
-    return [NSImage imageNamed:@"PreferencesIcons_Hotkeys"];
+    return [NSImage imageNamed:@"preferences.toolbar.hotkeys"];
 }
 
 - (NSString *)toolbarItemLabel

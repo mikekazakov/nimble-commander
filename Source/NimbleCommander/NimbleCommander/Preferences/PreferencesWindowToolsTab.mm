@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowToolsTab.h"
 #include <Panel/ExternalTools.h>
 #include <Base/dispatch_cpp.h>
@@ -83,7 +83,7 @@ static bool AskUserToDeleteTool()
 
 - (NSImage *)toolbarItemImage
 {
-    return [NSImage imageNamed:NSImageNameAdvanced];
+    return [NSImage imageNamed:@"preferences.toolbar.tools"];
 }
 
 - (NSString *)toolbarItemLabel

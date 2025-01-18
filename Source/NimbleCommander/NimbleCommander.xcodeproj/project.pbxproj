@@ -20,7 +20,6 @@
 		CF0A47222BDD884D00833160 /* VFSInstanceManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManagerImpl.cpp */; };
 		CF0A47232BDD885300833160 /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF509270201C3D9A004D9CF5 /* VFSInstanceManager.cpp */; };
 		CF0A47242BDD886400833160 /* VFSInstancePromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */; };
-		CF0A47252BDD887100833160 /* VFSListWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */; };
 		CF0A47262BDD899000833160 /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF0A47282BDD8A1100833160 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56311D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
 		CF0A472A2BDD8A7600833160 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56391D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */; };
@@ -277,9 +276,6 @@
 		CF8D0CF81D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CFD1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib */; };
 		CF8D0CF91D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CFD1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib */; };
 		CF8D0CFA1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CFD1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib */; };
-		CF8D0D041D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */; };
-		CF8D0D051D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */; };
-		CF8D0D061D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */; };
 		CF9B07C626FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9B07C326FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.h */; };
 		CF9F4B101ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9F4B151ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib */; };
 		CF9F4B111ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9F4B151ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib */; };
@@ -1140,9 +1136,7 @@
 		CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FavoritesImpl.cpp; path = NimbleCommander/States/FilePanels/FavoritesImpl.cpp; sourceTree = SOURCE_ROOT; };
 		CF8B24371E6FC68D008EB447 /* Favorites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Favorites.h; path = NimbleCommander/States/FilePanels/Favorites.h; sourceTree = SOURCE_ROOT; };
 		CF8D0CFC1D963E1F00ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SpotlightSearchPopupViewController.xib; sourceTree = "<group>"; };
-		CF8D0D081D963E9A00ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/VFSListWindowController.xib; sourceTree = "<group>"; };
 		CF8D0D0B1D964C9800ADFF14 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/SpotlightSearchPopupViewController.strings; sourceTree = "<group>"; };
-		CF8D0D0D1D964C9A00ADFF14 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/VFSListWindowController.strings; sourceTree = "<group>"; };
 		CF90C0081EBAE3190056E3B8 /* NetworkConnectionIconProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkConnectionIconProvider.h; path = NimbleCommander/Core/NetworkConnectionIconProvider.h; sourceTree = SOURCE_ROOT; };
 		CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkConnectionIconProvider.mm; path = NimbleCommander/Core/NetworkConnectionIconProvider.mm; sourceTree = SOURCE_ROOT; };
 		CF90C0B41EC161E70056E3B8 /* NavigateHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NavigateHistory.h; path = NimbleCommander/States/FilePanels/Actions/NavigateHistory.h; sourceTree = SOURCE_ROOT; };
@@ -1257,8 +1251,6 @@
 		CFD3CB1B1DA4C888006DA143 /* PanelBriefView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefView.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefView.h; sourceTree = SOURCE_ROOT; };
 		CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefView.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefView.mm; sourceTree = SOURCE_ROOT; };
 		CFD6295C1C2CE3AD0050EC68 /* State.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = State.json; path = NimbleCommander/Resources/State.json; sourceTree = SOURCE_ROOT; };
-		CFD6DD141D6C229F006B94C2 /* VFSListWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListWindowController.h; path = NimbleCommander/GeneralUI/VFSListWindowController.h; sourceTree = SOURCE_ROOT; };
-		CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSListWindowController.mm; path = NimbleCommander/GeneralUI/VFSListWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CFD6DD231D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowFilePanelsStateToolbarDelegate.h; path = NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h; sourceTree = SOURCE_ROOT; };
 		CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowFilePanelsStateToolbarDelegate.mm; path = NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.mm; sourceTree = SOURCE_ROOT; };
 		CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "AppDelegate+ViewerCreation.mm"; path = "NimbleCommander/Bootstrap/AppDelegate+ViewerCreation.mm"; sourceTree = "<group>"; };
@@ -2014,9 +2006,6 @@
 				CF50926F201C3476004D9CF5 /* VFSInstanceManagerImpl.h */,
 				CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */,
 				CF50925B201C3025004D9CF5 /* VFSInstancePromise.h */,
-				CFD6DD141D6C229F006B94C2 /* VFSListWindowController.h */,
-				CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */,
-				CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -2770,7 +2759,6 @@
 				CFC706562B497FB20045D2C9 /* PanelResources.bundle in Resources */,
 				CFC706582B497FB90045D2C9 /* ViewerResources.bundle in Resources */,
 				CFC706542B497FAC0045D2C9 /* CUIResources.bundle in Resources */,
-				CF8D0D061D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */,
 				CF4E56CD1D50694200452912 /* PreferencesWindowViewerTab.xib in Resources */,
 				CF9F4B431ECD81BC00E0AF82 /* NetworkShareSheetController.xib in Resources */,
 				CF4E56C11D50691B00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
@@ -2858,7 +2846,6 @@
 				CF9F4B111ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */,
 				CF7C7CC41E5C3EB9002DB0E2 /* PreferencesWindowThemesTab.xib in Resources */,
 				CFA53A591D433E2A00C562A7 /* PreferencesWindowToolsTab.xib in Resources */,
-				CF8D0D051D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */,
 				CFA53A5A1D433E2A00C562A7 /* State.json in Resources */,
 				CF4E56B51D5068EC00452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CF4E56AF1D5068E200452912 /* PreferencesWindowGeneralTab.xib in Resources */,
@@ -2904,7 +2891,6 @@
 				CF4E56DA1D506BA100452912 /* FindFilesSheetController.xib in Resources */,
 				CF9F4B2F1ECD810C00E0AF82 /* FavoritesWindowController.xib in Resources */,
 				CFCCFC4F1A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
-				CF8D0D041D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */,
 				CFCCFBCC1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CF7C7CBD1E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib in Resources */,
 				CF4E567B1D50669100452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
@@ -3179,7 +3165,6 @@
 				CF0A48782BDDA50D00833160 /* FilePanelsTabbedHolder.mm in Sources */,
 				CF764D3E258782E300D7ED17 /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */,
 				CF0A48822BDDA55600833160 /* QuickLookPanel.mm in Sources */,
-				CF0A47252BDD887100833160 /* VFSListWindowController.mm in Sources */,
 				CF0A47022BDD864300833160 /* AnyHolder.mm in Sources */,
 				CF0A48162BDDA00600833160 /* ListingPromise.cpp in Sources */,
 				CF0A480A2BDD9F7E00833160 /* PreferencesWindowThemesControls.mm in Sources */,
@@ -3554,16 +3539,6 @@
 			);
 			name = SpotlightSearchPopupViewController.xib;
 			path = NimbleCommander/States/FilePanels/Views;
-			sourceTree = SOURCE_ROOT;
-		};
-		CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CF8D0D081D963E9A00ADFF14 /* Base */,
-				CF8D0D0D1D964C9A00ADFF14 /* ru */,
-			);
-			name = VFSListWindowController.xib;
-			path = NimbleCommander/GeneralUI;
 			sourceTree = SOURCE_ROOT;
 		};
 		CF9F4B151ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib */ = {

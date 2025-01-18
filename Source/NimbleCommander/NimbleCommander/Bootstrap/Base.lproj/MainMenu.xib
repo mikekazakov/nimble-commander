@@ -1009,14 +1009,6 @@ CQ
                             <menuItem isSeparatorItem="YES" id="tbS-FY-UXh">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Show VFS List" tag="16060" id="Pid-lQ-zTt">
-                                <connections>
-                                    <action selector="onMainMenuPerformShowVFSListAction:" target="-1" id="A3e-AT-4ge"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="sNS-Lp-aK2">
-                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
-                            </menuItem>
                             <menuItem title="Bring All to Front" tag="16030" id="5">
                                 <connections>
                                     <action selector="arrangeInFront:" target="-1" id="39"/>

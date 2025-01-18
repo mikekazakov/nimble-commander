@@ -64,7 +64,6 @@
 #include <NimbleCommander/States/FilePanels/Helpers/ClosedPanelsHistoryImpl.h>
 #include <NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.h>
 #include <NimbleCommander/Preferences/Preferences.h>
-#include <NimbleCommander/GeneralUI/VFSListWindowController.h>
 
 #include <Operations/Pool.h>
 #include <Operations/PoolEnqueueFilter.h>
@@ -746,18 +745,6 @@ static NCAppDelegate *g_Me = nil;
     window.delegate = m_ViewerWindowDelegateBridge;
 
     return window;
-}
-
-- (IBAction)onMainMenuPerformShowVFSListAction:(id) [[maybe_unused]] _sender
-{
-    static __weak VFSListWindowController *existing_window = nil;
-    if( auto w = static_cast<VFSListWindowController *>(existing_window) )
-        [w show];
-    else {
-        auto window = [[VFSListWindowController alloc] initWithVFSManager:self.vfsInstanceManager];
-        [window show];
-        existing_window = window;
-    }
 }
 
 - (IBAction)onMainMenuPerformShowFavorites:(id) [[maybe_unused]] _sender

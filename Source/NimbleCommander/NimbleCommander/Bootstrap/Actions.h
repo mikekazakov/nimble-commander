@@ -163,7 +163,7 @@ static constexpr std::pair<const char*,int> g_ActionsTags[] = {
     {"menu.window.zoom",                                16'020},
     {"menu.window.show_previous_tab",                   16'040},
     {"menu.window.show_next_tab",                       16'050},
-    {"menu.window.show_vfs_list",                       16'060},
+//  {"menu.window.show_vfs_list",                       16'060}, // no longer used
     {"menu.window.bring_all_to_front",                  16'030},
     
     /**
@@ -371,7 +371,7 @@ static constinit std::pair<const char*, const char*> g_DefaultActionShortcuts[] 
     {"menu.window.zoom",                                    ""        },
     {"menu.window.show_previous_tab",                       "⇧^\t"    }, // shift+ctrl+tab
     {"menu.window.show_next_tab",                           "^\t"     }, // ctrl+tab
-    {"menu.window.show_vfs_list",                           ""        },
+//  {"menu.window.show_vfs_list",                           ""        }, // no longer used
     {"menu.window.bring_all_to_front",                      ""        },
 
     {"panel.move_up",                                       "\uF700"  }, // up

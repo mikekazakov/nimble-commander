@@ -1,9 +1,0 @@
-/* Class = "NSTextFieldCell"; placeholderString = "Enter a symlink value"; ObjectID = "12"; */
-"12.placeholderString" = "Введите имя символической ссылки";
-
-/* Class = "NSButtonCell"; title = "OK"; ObjectID = "19"; */
-"19.title" = "ОК";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "23"; */
-"23.title" = "Отмена";
-

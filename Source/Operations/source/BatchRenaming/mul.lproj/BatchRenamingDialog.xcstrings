@@ -1,0 +1,2652 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "0Bx-06-KrA.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[A x-y] Characters from the xth to the yth, padded with spaces\"; ObjectID = \"0Bx-06-KrA\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[A x-y] Characters from the xth to the yth, padded with spaces"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[A x-y] Символы x-y, отступ пробелами"
+          }
+        }
+      }
+    },
+    "0HA-bL-31h.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"7\"; ObjectID = \"0HA-bL-31h\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "7"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7"
+          }
+        }
+      }
+    },
+    "0yW-rZ-IWN.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"^O\"; ObjectID = \"0yW-rZ-IWN\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^O"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^O"
+          }
+        }
+      }
+    },
+    "0ZZ-ek-ffd.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Nx-y] Characters from the xth to the yth\"; ObjectID = \"0ZZ-ek-ffd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Nx-y] Characters from the xth to the yth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Nx-y] Символы с x по y"
+          }
+        }
+      }
+    },
+    "5OS-Hh-oit.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[E0x-y] Characters from the xth to the yth, padded with zeros\"; ObjectID = \"5OS-Hh-oit\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[E0x-y] Characters from the xth to the yth, padded with zeros"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E0x-y] Символы x-y, отступ нулями"
+          }
+        }
+      }
+    },
+    "5PB-nw-ruW.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[N0x-y] Characters from the xth to the yth, padded with zeros\"; ObjectID = \"5PB-nw-ruW\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[N0x-y] Characters from the xth to the yth, padded with zeros"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N0x-y] Символы x-y, отступ нулями"
+          }
+        }
+      }
+    },
+    "6UV-CG-7gE.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Insert Extension\"; ObjectID = \"6UV-CG-7gE\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Extension"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить расширение"
+          }
+        }
+      }
+    },
+    "7gT-UX-y3n.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[s] Seconds in 2-digit format\"; ObjectID = \"7gT-UX-y3n\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[s] Seconds in 2-digit format"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[s] Секунды в 2-значном формате"
+          }
+        }
+      }
+    },
+    "7gw-eT-fiP.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"⌘↩\"; ObjectID = \"7gw-eT-fiP\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "⌘↩"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌘↩"
+          }
+        }
+      }
+    },
+    "7l9-Dx-Ybo.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Gx-] Characters starting from the xth\"; ObjectID = \"7l9-Dx-Ybo\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Gx-] Characters starting from the xth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Gx-] Символы начиная с символа x"
+          }
+        }
+      }
+    },
+    "7WM-H3-fMK.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"4\"; ObjectID = \"7WM-H3-fMK\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "4"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4"
+          }
+        }
+      }
+    },
+    "7zz-h6-nzq.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[N-x-] Characters starting from the xth-last\"; ObjectID = \"7zz-h6-nzq\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[N-x-] Characters starting from the xth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N-x-] Символы с x-последнего символа"
+          }
+        }
+      }
+    },
+    "8b6-Qd-Tet.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[M] Month in 2-digit format\"; ObjectID = \"8b6-Qd-Tet\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[M] Month in 2-digit format"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[M] Месяц в 2-значном формате"
+          }
+        }
+      }
+    },
+    "8od-CO-un6.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"[C] Counter\"; ObjectID = \"8od-CO-un6\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[C] Counter"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[C] Счетчик"
+          }
+        }
+      }
+    },
+    "9Ue-xA-mhT.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"^T\"; ObjectID = \"9Ue-xA-mhT\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^T"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^T"
+          }
+        }
+      }
+    },
+    "9Zk-h9-bEp.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Gx-y] Characters from the xth to the yth\"; ObjectID = \"9Zk-h9-bEp\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Gx-y] Characters from the xth to the yth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Gx-y] Символы x по y"
+          }
+        }
+      }
+    },
+    "21D-xw-gDg.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"OK\"; ObjectID = \"21D-xw-gDg\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "OK"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ОК"
+          }
+        }
+      }
+    },
+    "69b-el-fdg.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Nx--y] Characters from the xth to the yth-last\"; ObjectID = \"69b-el-fdg\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Nx--y] Characters from the xth to the yth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Nx--y] Символы с x по y-последний символ"
+          }
+        }
+      }
+    },
+    "A21-Ij-cvY.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"[YMD] Date\"; ObjectID = \"A21-Ij-cvY\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[YMD] Date"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[YMD] Дата"
+          }
+        }
+      }
+    },
+    "aDt-Fx-JbE.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[m] Minutes in 2-digit format\"; ObjectID = \"aDt-Fx-JbE\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[m] Minutes in 2-digit format"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[m] Минуты в 2-значном формате"
+          }
+        }
+      }
+    },
+    "AKG-zR-ewH.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"^D\"; ObjectID = \"AKG-zR-ewH\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^D"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^D"
+          }
+        }
+      }
+    },
+    "ars-b9-93l.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Unchanged\"; ObjectID = \"ars-b9-93l\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Unchanged"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Без изменений"
+          }
+        }
+      }
+    },
+    "ASO-kr-YQ9.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Insert Name\"; ObjectID = \"ASO-kr-YQ9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Name"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить имя"
+          }
+        }
+      }
+    },
+    "AXs-d3-i6C.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"[E]\"; ObjectID = \"AXs-d3-i6C\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[E]"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E]"
+          }
+        }
+      }
+    },
+    "bD7-hF-2Bo.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Px--y] Characters from the xth to the yth-last\"; ObjectID = \"bD7-hF-2Bo\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Px--y] Characters from the xth to the yth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Px--y] Символы с x по y-последний символ"
+          }
+        }
+      }
+    },
+    "BF2-Vd-5NW.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"5\"; ObjectID = \"BF2-Vd-5NW\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "5"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5"
+          }
+        }
+      }
+    },
+    "bGP-Wa-nkX.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Change Case\"; ObjectID = \"bGP-Wa-nkX\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Change Case"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Изменить регистр"
+          }
+        }
+      }
+    },
+    "Blp-cK-Usi.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"8\"; ObjectID = \"Blp-cK-Usi\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "8"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8"
+          }
+        }
+      }
+    },
+    "BUk-IP-bgH.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Cancel\"; ObjectID = \"BUk-IP-bgH\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cancel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отмена"
+          }
+        }
+      }
+    },
+    "c6B-wg-whY.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Nx,y] y characters starting from the xth\"; ObjectID = \"c6B-wg-whY\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Nx,y] y characters starting from the xth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Nx,y] y символов начиная с символа x"
+          }
+        }
+      }
+    },
+    "cc4-5O-bUq.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Cx+y/z:w] -\\\"\\\"-, with width w\"; ObjectID = \"cc4-5O-bUq\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Cx+y/z:w] -\"\"-, with width w"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Cx+y/z:w] -\"\"-, с шириной w"
+          }
+        }
+      }
+    },
+    "cgN-Ss-qHc.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"^A\"; ObjectID = \"cgN-Ss-qHc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^A"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^A"
+          }
+        }
+      }
+    },
+    "CJg-T2-ViQ.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Step by:\"; ObjectID = \"CJg-T2-ViQ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Step by:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шаг:"
+          }
+        }
+      }
+    },
+    "cq6-JT-R4R.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[E] Extension\"; ObjectID = \"cq6-JT-R4R\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[E] Extension"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E] Расширение"
+          }
+        }
+      }
+    },
+    "CQg-4y-Ulu.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Px] xth character of the filename\"; ObjectID = \"CQg-4y-Ulu\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Px] xth character of the filename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Px] x-ый символ имени"
+          }
+        }
+      }
+    },
+    "cS1-vL-FvU.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"]] Closing square bracket\"; ObjectID = \"cS1-vL-FvU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "]] Closing square bracket"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "]] Закрывающая квадратная скобка"
+          }
+        }
+      }
+    },
+    "CWU-Al-vZS.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[G-x-] Characters starting from the xth-last\"; ObjectID = \"CWU-Al-vZS\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[G-x-] Characters starting from the xth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[G-x-] Символы с x-последнего символа"
+          }
+        }
+      }
+    },
+    "cxN-S7-SiU.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Renamed\"; ObjectID = \"cxN-S7-SiU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Renamed"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переименованный"
+          }
+        }
+      }
+    },
+    "Dh1-jk-Udx.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[A0x-y] Characters from the xth to the yth, padded with zeros\"; ObjectID = \"Dh1-jk-Udx\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[A0x-y] Characters from the xth to the yth, padded with zeros"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[A0x-y] Символы x-y, отступ нулями"
+          }
+        }
+      }
+    },
+    "DHj-ql-rAa.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Start at:\"; ObjectID = \"DHj-ql-rAa\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Start at:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Начать с:"
+          }
+        }
+      }
+    },
+    "DV8-qp-hX7.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Px-] Characters starting from the xth\"; ObjectID = \"DV8-qp-hX7\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Px-] Characters starting from the xth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Px-] Символы начиная с символа x"
+          }
+        }
+      }
+    },
+    "dZ4-P5-haY.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Px-y] Characters from the xth to the yth\"; ObjectID = \"dZ4-P5-haY\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Px-y] Characters from the xth to the yth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Px-y] Символы x по y"
+          }
+        }
+      }
+    },
+    "dZA-6P-0fW.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[U] UPPERCASE\"; ObjectID = \"dZA-6P-0fW\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[U] UPPERCASE"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[U] ВЕРХНИЙ РЕГИСТР"
+          }
+        }
+      }
+    },
+    "E2t-ZL-Mbg.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"^R\"; ObjectID = \"E2t-ZL-Mbg\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^R"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^R"
+          }
+        }
+      }
+    },
+    "e6p-dl-Cvn.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Remove Item\"; ObjectID = \"e6p-dl-Cvn\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Remove Item"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удалить объект"
+          }
+        }
+      }
+    },
+    "EKb-UU-Za4.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"^N\"; ObjectID = \"EKb-UU-Za4\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^N"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^N"
+          }
+        }
+      }
+    },
+    "ekj-0V-KuY.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[E-x-] Characters starting from the xth-last\"; ObjectID = \"ekj-0V-KuY\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[E-x-] Characters starting from the xth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E-x-] Символы с x-последнего символа"
+          }
+        }
+      }
+    },
+    "elx-8C-kN3.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Insert Extension\"; ObjectID = \"elx-8C-kN3\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Extension"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить расширение"
+          }
+        }
+      }
+    },
+    "eQ6-6Q-HtB.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Insert Filename\"; ObjectID = \"eQ6-6Q-HtB\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Filename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить полное имя файла"
+          }
+        }
+      }
+    },
+    "ETV-re-lbo.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[P x-y] Characters from the xth to the yth, padded with spaces\"; ObjectID = \"ETV-re-lbo\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[P x-y] Characters from the xth to the yth, padded with spaces"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[P x-y] Символы x-y, отступ пробелами"
+          }
+        }
+      }
+    },
+    "EzQ-Su-4rt.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[y] Year in 2-digit format\"; ObjectID = \"EzQ-Su-4rt\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[y] Year in 2-digit format"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[y] Год в 2-значной форме"
+          }
+        }
+      }
+    },
+    "Fkf-IO-A7D.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"[E] Extension\"; ObjectID = \"Fkf-IO-A7D\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[E] Extension"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E] Расширение"
+          }
+        }
+      }
+    },
+    "fuD-37-ihS.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Insert Counter\"; ObjectID = \"fuD-37-ihS\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Counter"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить счетчик"
+          }
+        }
+      }
+    },
+    "G5S-W3-9F5.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Ex-] Characters starting from the xth\"; ObjectID = \"G5S-W3-9F5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Ex-] Characters starting from the xth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ex-] Символы начиная с символа x"
+          }
+        }
+      }
+    },
+    "G8m-Gh-0hl.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Ax-y] Characters from the xth to the yth\"; ObjectID = \"G8m-Gh-0hl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Ax-y] Characters from the xth to the yth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ax-y] Символы x по y"
+          }
+        }
+      }
+    },
+    "gaG-D5-gum.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Ax--y] Characters from the xth to the yth-last\"; ObjectID = \"gaG-D5-gum\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Ax--y] Characters from the xth to the yth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ax--y] Символы с x по y-последний символ"
+          }
+        }
+      }
+    },
+    "GtS-TG-NfX.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[F] Capitalize Each Word\"; ObjectID = \"GtS-TG-NfX\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[F] Capitalize Each Word"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[F] С Заглавных Букв"
+          }
+        }
+      }
+    },
+    "GvW-eu-zvt.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Ax] xth character of the filename\"; ObjectID = \"GvW-eu-zvt\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Ax] xth character of the filename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ax] x-ый символ имени"
+          }
+        }
+      }
+    },
+    "gxe-Qo-9SB.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[N x-y] Characters from the xth to the yth, padded with spaces\"; ObjectID = \"gxe-Qo-9SB\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[N x-y] Characters from the xth to the yth, padded with spaces"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N x-y] Символы x-y, отступ пробелами"
+          }
+        }
+      }
+    },
+    "GXj-Bq-G3p.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Digits:\"; ObjectID = \"GXj-Bq-G3p\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Digits:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Цифр:"
+          }
+        }
+      }
+    },
+    "gzo-Oq-634.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Gx] xth character of the filename\"; ObjectID = \"gzo-Oq-634\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Gx] xth character of the filename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Gx] x-ый символ имени"
+          }
+        }
+      }
+    },
+    "h8h-hP-2GO.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Original\"; ObjectID = \"h8h-hP-2GO\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Original"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Исходный"
+          }
+        }
+      }
+    },
+    "Hbd-mI-Y1C.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"1x\"; ObjectID = \"Hbd-mI-Y1C\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "1x"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1x"
+          }
+        }
+      }
+    },
+    "Hk3-Jj-TuN.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"1\"; ObjectID = \"Hk3-Jj-TuN\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "1"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1"
+          }
+        }
+      }
+    },
+    "hnA-ag-UoB.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Search for:\"; ObjectID = \"hnA-ag-UoB\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Search for:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Найти:"
+          }
+        }
+      }
+    },
+    "HSQ-qr-5xS.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Rename pattern\"; ObjectID = \"HSQ-qr-5xS\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Rename pattern"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Маска переименования"
+          }
+        }
+      }
+    },
+    "ih7-k0-Ocn.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[n] Original case\"; ObjectID = \"ih7-k0-Ocn\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[n] Original case"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[n] Исходный регистр"
+          }
+        }
+      }
+    },
+    "Iug-8L-OCt.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[G x-y] Characters from the xth to the yth, padded with spaces\"; ObjectID = \"Iug-8L-OCt\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[G x-y] Characters from the xth to the yth, padded with spaces"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[G x-y] Символы x-y, отступ пробелами"
+          }
+        }
+      }
+    },
+    "IYS-tn-zus.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[N-x-y] Characters from the x-last to the y-last character\"; ObjectID = \"IYS-tn-zus\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[N-x-y] Characters from the x-last to the y-last character"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N-x-y] Символы с x-последнего по y-последний символ"
+          }
+        }
+      }
+    },
+    "IZE-i9-JNf.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[C] Default counter\"; ObjectID = \"IZE-i9-JNf\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[C] Default counter"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[C] Счетчик по-умолчанию"
+          }
+        }
+      }
+    },
+    "J7t-S7-amS.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Search & replace\"; ObjectID = \"J7t-S7-amS\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Search & replace"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Поиск и замена"
+          }
+        }
+      }
+    },
+    "Jak-d8-5mU.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[d] Localized date\"; ObjectID = \"Jak-d8-5mU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[d] Localized date"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[d] Локализованная дата"
+          }
+        }
+      }
+    },
+    "Jui-bP-pcf.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Ax-] Characters starting from the xth\"; ObjectID = \"Jui-bP-pcf\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Ax-] Characters starting from the xth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ax-] Символы начиная с символа x"
+          }
+        }
+      }
+    },
+    "jv3-c3-JIM.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Uppercase/lowercase\"; ObjectID = \"jv3-c3-JIM\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Uppercase/lowercase"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхний/нижний регистр"
+          }
+        }
+      }
+    },
+    "jzU-YA-fRW.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Ax,y] y characters starting from the xth\"; ObjectID = \"jzU-YA-fRW\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Ax,y] y characters starting from the xth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ax,y] y символов начиная с символа x"
+          }
+        }
+      }
+    },
+    "k2d-UP-FU1.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[P-x-y] Characters from the xth-last to the yth-last\"; ObjectID = \"k2d-UP-FU1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[P-x-y] Characters from the xth-last to the yth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[P-x-y] Символы с x-последнего по y-последний символ"
+          }
+        }
+      }
+    },
+    "KaF-N0-6UU.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Aa\"; ObjectID = \"KaF-N0-6UU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Aa"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Аа"
+          }
+        }
+      }
+    },
+    "kay-ak-msL.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[E-x-y] Characters from the xth-last to the yth-last\"; ObjectID = \"kay-ak-msL\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[E-x-y] Characters from the xth-last to the yth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E-x-y] Символы с x-последнего по y-последний символ"
+          }
+        }
+      }
+    },
+    "KEf-5O-PLS.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"[hms] Time\"; ObjectID = \"KEf-5O-PLS\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[hms] Time"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[hms] Время"
+          }
+        }
+      }
+    },
+    "kfE-p8-aQp.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Nx] The xth character of the name\"; ObjectID = \"kfE-p8-aQp\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Nx] The xth character of the name"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Nx] x-ый символ имени"
+          }
+        }
+      }
+    },
+    "KsH-3q-4EU.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[P-x-] Characters starting from the xth-last\"; ObjectID = \"KsH-3q-4EU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[P-x-] Characters starting from the xth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[P-x-] Символы с x-последнего символа"
+          }
+        }
+      }
+    },
+    "kuO-PY-Bmo.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Insert Counter\"; ObjectID = \"kuO-PY-Bmo\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Counter"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить счетчик"
+          }
+        }
+      }
+    },
+    "LEA-CX-gfa.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"^L\"; ObjectID = \"LEA-CX-gfa\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^L"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^L"
+          }
+        }
+      }
+    },
+    "liV-eL-4oU.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Cx+y] -\\\"\\\"-, stepping by y \"; ObjectID = \"liV-eL-4oU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Cx+y] -\"\"-, stepping by y "
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Cx+y] -\"\"-, шаг по y "
+          }
+        }
+      }
+    },
+    "lPY-kx-ngy.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Define counter\"; ObjectID = \"lPY-kx-ngy\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Define counter"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Задать счетчик"
+          }
+        }
+      }
+    },
+    "lQb-OZ-81W.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Insert Time\"; ObjectID = \"lQb-OZ-81W\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Time"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить время"
+          }
+        }
+      }
+    },
+    "M2c-fE-A0U.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[N-x,y] y characters starting from the xth-last\"; ObjectID = \"M2c-fE-A0U\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[N-x,y] y characters starting from the xth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N-x,y] y символов начиная с x-последнего символа"
+          }
+        }
+      }
+    },
+    "MaD-CZ-ZOf.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[N] Name\"; ObjectID = \"MaD-CZ-ZOf\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[N] Name"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N] Имя"
+          }
+        }
+      }
+    },
+    "MEn-IK-r9c.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"2\"; ObjectID = \"MEn-IK-r9c\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "2"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2"
+          }
+        }
+      }
+    },
+    "Mgu-aX-3a4.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Insert Parent Filename\"; ObjectID = \"Mgu-aX-3a4\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Parent Filename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить имя родителя"
+          }
+        }
+      }
+    },
+    "Mli-E6-Dh0.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[D] Day in 2-digit format\"; ObjectID = \"Mli-E6-Dh0\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[D] Day in 2-digit format"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[D] День в 2-значной форме"
+          }
+        }
+      }
+    },
+    "n1o-LN-TRC.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"9\"; ObjectID = \"n1o-LN-TRC\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "9"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "9"
+          }
+        }
+      }
+    },
+    "n9d-vl-7sS.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Insert Name\"; ObjectID = \"n9d-vl-7sS\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Name"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить время"
+          }
+        }
+      }
+    },
+    "NeK-ph-pA8.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"UPPERCASE\"; ObjectID = \"NeK-ph-pA8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "UPPERCASE"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ВЕРХНИЙ РЕГИСТР"
+          }
+        }
+      }
+    },
+    "nQr-DT-yTz.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"^E\"; ObjectID = \"nQr-DT-yTz\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^E"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^E"
+          }
+        }
+      }
+    },
+    "NsO-O0-e1k.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Insert Filename\"; ObjectID = \"NsO-O0-e1k\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Filename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить полное имя файла"
+          }
+        }
+      }
+    },
+    "nwO-dk-fvy.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Ex--y] Characters from the xth to the yth-last\"; ObjectID = \"nwO-dk-fvy\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Ex--y] Characters from the xth to the yth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ex--y] Символы с x по y-последний символ"
+          }
+        }
+      }
+    },
+    "O9w-V2-hsd.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Insert Grandparent Filename\"; ObjectID = \"O9w-V2-hsd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Grandparent Filename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить имя родителя родителя"
+          }
+        }
+      }
+    },
+    "p5V-M1-8GC.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSComboBox\"; ibShadowedToolTip = \"^P\"; ObjectID = \"p5V-M1-8GC\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^P"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^P"
+          }
+        }
+      }
+    },
+    "Pm1-6F-fNU.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"6\"; ObjectID = \"Pm1-6F-fNU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "6"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6"
+          }
+        }
+      }
+    },
+    "pN1-uo-MTv.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[P] Parent filename\"; ObjectID = \"pN1-uo-MTv\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[P] Parent filename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[P] Полное имя родителя"
+          }
+        }
+      }
+    },
+    "Psy-Lq-Thf.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[G] Grandparent filename\"; ObjectID = \"Psy-Lq-Thf\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[G] Grandparent filename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[G] Имя родителя родителя"
+          }
+        }
+      }
+    },
+    "Pt4-fB-yzE.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Cx+y/z] -\\\"\\\"-, every z files\"; ObjectID = \"Pt4-fB-yzE\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Cx+y/z] -\"\"-, every z files"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Cx+y/z] -\"\"-, каждые z файлов"
+          }
+        }
+      }
+    },
+    "Pyd-AP-5UJ.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Insert Parent Filename\"; ObjectID = \"Pyd-AP-5UJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Parent Filename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить имя родителя"
+          }
+        }
+      }
+    },
+    "q8K-ra-2WW.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Insert Grandparent Filename\"; ObjectID = \"q8K-ra-2WW\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Grandparent Filename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить имя родителя родителя"
+          }
+        }
+      }
+    },
+    "q54-cJ-xHR.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Replace with:\"; ObjectID = \"q54-cJ-xHR\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Replace with:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заменить на:"
+          }
+        }
+      }
+    },
+    "QeP-e1-ydC.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Insert Time\"; ObjectID = \"QeP-e1-ydC\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Time"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить время"
+          }
+        }
+      }
+    },
+    "ql9-1w-xJV.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"[E]\"; ObjectID = \"ql9-1w-xJV\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[E]"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E]"
+          }
+        }
+      }
+    },
+    "r4R-K5-WtL.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"RegEx\"; ObjectID = \"r4R-K5-WtL\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "RegEx"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RegExp"
+          }
+        }
+      }
+    },
+    "RBI-rU-SES.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSComboBox\"; ibShadowedToolTip = \"^W\"; ObjectID = \"RBI-rU-SES\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^W"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^W"
+          }
+        }
+      }
+    },
+    "riM-Tn-gc8.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"lowercase\"; ObjectID = \"riM-Tn-gc8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "lowercase"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "нижний регистр"
+          }
+        }
+      }
+    },
+    "Rke-70-QSJ.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[h] Hours in 2-digit, 24-hour format\"; ObjectID = \"Rke-70-QSJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[h] Hours in 2-digit, 24-hour format"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[h] Часы в 2-значном форме, 24 часа"
+          }
+        }
+      }
+    },
+    "ro3-I4-mHA.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[P-x,y] y characters starting from the xth-last\"; ObjectID = \"ro3-I4-mHA\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[P-x,y] y characters starting from the xth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[P-x,y] y символов начиная с x-последнего символа"
+          }
+        }
+      }
+    },
+    "ROd-xb-4lo.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Px,y] y characters starting from the xth\"; ObjectID = \"ROd-xb-4lo\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Px,y] y characters starting from the xth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Px,y] y символов начиная с символа x"
+          }
+        }
+      }
+    },
+    "rsg-6u-3v5.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Gx--y] Characters from the xth to the yth-last\"; ObjectID = \"rsg-6u-3v5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Gx--y] Characters from the xth to the yth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Gx--y] Символы с x по y-последний символ"
+          }
+        }
+      }
+    },
+    "RV2-6w-I75.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSScrollView\"; ibShadowedToolTip = \"^I\"; ObjectID = \"RV2-6w-I75\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^I"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^I"
+          }
+        }
+      }
+    },
+    "s97-nv-BwD.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[E-x,y] y characters starting from the xth-last\"; ObjectID = \"s97-nv-BwD\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[E-x,y] y characters starting from the xth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E-x,y] y символов начиная с x-последнего символа"
+          }
+        }
+      }
+    },
+    "sCN-Ho-nlG.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[E x-y] Characters from the xth to the yth, padded with spaces\"; ObjectID = \"sCN-Ho-nlG\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[E x-y] Characters from the xth to the yth, padded with spaces"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E x-y] Символы x-y, отступ пробелами"
+          }
+        }
+      }
+    },
+    "SI4-vS-Egd.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSComboBox\"; ibShadowedToolTip = \"^S\"; ObjectID = \"SI4-vS-Egd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^S"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^S"
+          }
+        }
+      }
+    },
+    "soN-u5-8B9.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Ex] xth character of the extension\"; ObjectID = \"soN-u5-8B9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Ex] xth character of the extension"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ex] x-ый символ расширения"
+          }
+        }
+      }
+    },
+    "SSD-YH-LcJ.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[A] Filename\"; ObjectID = \"SSD-YH-LcJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[A] Filename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[A] Полное имя"
+          }
+        }
+      }
+    },
+    "SsN-Yk-hdY.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Y] Year in 4-digit format\"; ObjectID = \"SsN-Yk-hdY\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Y] Year in 4-digit format"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Y] Год в 4-значном формате"
+          }
+        }
+      }
+    },
+    "stf-ED-JLt.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"^C\"; ObjectID = \"stf-ED-JLt\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^C"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^C"
+          }
+        }
+      }
+    },
+    "SYJ-ho-98O.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[P0x-y] Characters from the xth to the yth, padded with zeros\"; ObjectID = \"SYJ-ho-98O\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[P0x-y] Characters from the xth to the yth, padded with zeros"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[P0x-y] Символы x-y, отступ нулями"
+          }
+        }
+      }
+    },
+    "tC4-3p-6ii.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[G-x-y] Characters from the xth-last to the yth-last\"; ObjectID = \"tC4-3p-6ii\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[G-x-y] Characters from the xth-last to the yth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[G-x-y] Символы с x-последнего по y-последний символ"
+          }
+        }
+      }
+    },
+    "tHH-ES-kVx.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Nx-] Characters starting from the xth\"; ObjectID = \"tHH-ES-kVx\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Nx-] Characters starting from the xth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Nx-] Символы начиная с символа x"
+          }
+        }
+      }
+    },
+    "tLd-t3-eny.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Ex,y] y characters starting from the xth\"; ObjectID = \"tLd-t3-eny\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Ex,y] y characters starting from the xth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ex,y] y символов начиная с символа x"
+          }
+        }
+      }
+    },
+    "twO-ES-XWZ.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[[ Opening square bracket\"; ObjectID = \"twO-ES-XWZ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[[ Opening square bracket"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[[ Открывающая квадратная скобка"
+          }
+        }
+      }
+    },
+    "u67-zs-iEh.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[A-x-] Characters starting from the xth-last\"; ObjectID = \"u67-zs-iEh\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[A-x-] Characters starting from the xth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[A-x-] y символов начиная с x-последнего символа"
+          }
+        }
+      }
+    },
+    "Udy-gX-Ick.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"3\"; ObjectID = \"Udy-gX-Ick\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "3"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3"
+          }
+        }
+      }
+    },
+    "uwD-i0-8RE.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSPopUpButton\"; ibShadowedToolTip = \"^U\"; ObjectID = \"uwD-i0-8RE\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^U"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^U"
+          }
+        }
+      }
+    },
+    "uzo-Ra-fdB.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[L] lowercase\"; ObjectID = \"uzo-Ra-fdB\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[L] lowercase"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[L] нижний регистр"
+          }
+        }
+      }
+    },
+    "v6a-MY-jB5.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[A-x-y] Characters from the xth-last to the yth-last\"; ObjectID = \"v6a-MY-jB5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[A-x-y] Characters from the xth-last to the yth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[A-x-y] Символы с x-последнего по y-последний символ"
+          }
+        }
+      }
+    },
+    "VV4-xy-gvh.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[G-x,y] y characters starting from the xth-last\"; ObjectID = \"VV4-xy-gvh\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[G-x,y] y characters starting from the xth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[G-x,y] y символов начиная с x-последнего символа"
+          }
+        }
+      }
+    },
+    "vvU-hD-Eb6.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Capitalize Each Word\"; ObjectID = \"vvU-hD-Eb6\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Capitalize Each Word"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "С Большой Буквы"
+          }
+        }
+      }
+    },
+    "wKV-er-3v5.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"10\"; ObjectID = \"wKV-er-3v5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "10"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10"
+          }
+        }
+      }
+    },
+    "WWQ-5i-QHP.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Other\"; ObjectID = \"WWQ-5i-QHP\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Other"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прочее"
+          }
+        }
+      }
+    },
+    "X2x-oo-kdd.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[t] Localized time\"; ObjectID = \"X2x-oo-kdd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[t] Localized time"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[t] Локализованное время"
+          }
+        }
+      }
+    },
+    "X4f-xK-DKi.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Cx] Counter starting at x\"; ObjectID = \"X4f-xK-DKi\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Cx] Counter starting at x"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Cx] Счетчик начиная с x"
+          }
+        }
+      }
+    },
+    "xj4-zP-B43.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Change Case\"; ObjectID = \"xj4-zP-B43\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Change Case"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Изменить регистр"
+          }
+        }
+      }
+    },
+    "xn6-Ht-I36.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Gx,y] y characters starting from the xth\"; ObjectID = \"xn6-Ht-I36\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Gx,y] y characters starting from the xth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Gx,y] y символов начиная с символа x"
+          }
+        }
+      }
+    },
+    "XRV-Nj-PD1.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Other\"; ObjectID = \"XRV-Nj-PD1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Other"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прочее"
+          }
+        }
+      }
+    },
+    "Zbw-tQ-Old.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[Ex-y] Characters from the xth to the yth\"; ObjectID = \"Zbw-tQ-Old\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[Ex-y] Characters from the xth to the yth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ex-y] Символы x по y"
+          }
+        }
+      }
+    },
+    "zck-cy-kSi.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"[N#-#] Range\"; ObjectID = \"zck-cy-kSi\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[N#-#] Range"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N#-#] Диапазон"
+          }
+        }
+      }
+    },
+    "Zdb-iK-57H.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[A-x,y] y characters starting from the xth-last\"; ObjectID = \"Zdb-iK-57H\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[A-x,y] y characters starting from the xth-last"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[A-x,y] y символов начиная с x-последнего символа"
+          }
+        }
+      }
+    },
+    "ziB-7g-e85.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"[G0x-y] Characters from the xth to the yth, padded with zeros\"; ObjectID = \"ziB-7g-e85\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[G0x-y] Characters from the xth to the yth, padded with zeros"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[G0x-y] Символы x-y, отступ нулями"
+          }
+        }
+      }
+    },
+    "zO9-kl-5aA.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"[N] Name\"; ObjectID = \"zO9-kl-5aA\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "[N] Name"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N] Имя"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

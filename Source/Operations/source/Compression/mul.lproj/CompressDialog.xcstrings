@@ -1,0 +1,78 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "4Dh-kj-AYe.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Compress items to:\"; ObjectID = \"4Dh-kj-AYe\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Compress items to:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сжать объекты в:"
+          }
+        }
+      }
+    },
+    "a48-2O-Lyx.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Compress\"; ObjectID = \"a48-2O-Lyx\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Compress"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сжать"
+          }
+        }
+      }
+    },
+    "CUD-IL-ZRp.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Protect with password:\"; ObjectID = \"CUD-IL-ZRp\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Protect with password:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Защитить паролем:"
+          }
+        }
+      }
+    },
+    "zlZ-6H-Ljz.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Cancel\"; ObjectID = \"zlZ-6H-Ljz\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cancel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отмена"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

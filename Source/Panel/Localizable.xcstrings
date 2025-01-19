@@ -1,0 +1,137 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Clear Recents" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Очистить недавние поиски"
+          }
+        }
+      }
+    },
+    "Deselect files by mask:" : {
+      "comment" : "Title for deselection by mask popup",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Снять выделение по маске:"
+          }
+        }
+      }
+    },
+    "Mask “%@”" : {
+      "comment" : "Find file masks history - plain mask",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Маска “%@”"
+          }
+        }
+      }
+    },
+    "Mask: *, or *.t?t, or *.txt,*.jpg" : {
+      "comment" : "Placeholder prompt for a filemask",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Маска: *, или *.t?t, или *.txt,*.jpg"
+          }
+        }
+      }
+    },
+    "New Tool" : {
+      "comment" : "A placeholder title for a new external tool"
+    },
+    "Options" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Настройки"
+          }
+        }
+      }
+    },
+    "Recent Searches" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Недавние поиски"
+          }
+        }
+      }
+    },
+    "RegEx “%@”" : {
+      "comment" : "Find file masks history - regex",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RegEx “%@”"
+          }
+        }
+      }
+    },
+    "Regular expression" : {
+      "comment" : "Placeholder prompt for a regex",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Регулярное выражение"
+          }
+        }
+      }
+    },
+    "Regular Expression" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Регулярное выражение"
+          }
+        }
+      }
+    },
+    "Select files by mask:" : {
+      "comment" : "Title for selection by mask popup",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выделить по маске:"
+          }
+        }
+      }
+    },
+    "Specify a regular expression to match filenames with." : {
+      "comment" : "Tooltip for a regex filename match",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Укажите регулярное выражения для поиска имен файлов."
+          }
+        }
+      }
+    },
+    "Use \"*\" for multiple-character wildcard, \"?\" for single-character wildcard and \",\" to specify more than one mask." : {
+      "comment" : "Tooltip for mask filename match",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Используйте \"*\" для подстановки нескольких символов, \"?\" для подстановки одного символа и \",\" чтобы указать больше одной маски."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

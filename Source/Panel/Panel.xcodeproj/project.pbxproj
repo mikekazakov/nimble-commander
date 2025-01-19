@@ -39,17 +39,18 @@
 		CF5D1DCF2B58798A00750174 /* TagsPresentation_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5D1DCE2B58798A00750174 /* TagsPresentation_UT.mm */; };
 		CF60DF252A6D3BAB00478BA0 /* libTerm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF60DF242A6D3BAB00478BA0 /* libTerm.a */; };
 		CF60DF272A6D47CB00478BA0 /* ExternalTools_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF60DF262A6D47CB00478BA0 /* ExternalTools_IT.mm */; };
-		CF739C3D295644CD004758C5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF739C3B295644CD004758C5 /* Localizable.strings */; };
 		CF8B0FAF2CA7FF440098C4D6 /* NetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B0FAE2CA7FF440098C4D6 /* NetworkConnectionsManager.mm */; };
 		CF96DC7629CF4610003EC4EB /* ItemVolatileData_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF96DC7529CF460F003EC4EB /* ItemVolatileData_UT.mm */; };
 		CF96DC7829E7099A003EC4EB /* PanelDataFilter_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF96DC7729E7099A003EC4EB /* PanelDataFilter_UT.mm */; };
 		CFA89D822804C86E00BEA127 /* FindFilesData.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA89D812804C86E00BEA127 /* FindFilesData.h */; };
 		CFA89D842804C87700BEA127 /* FindFilesData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA89D832804C87700BEA127 /* FindFilesData.cpp */; };
 		CFA89DA22814794000BEA127 /* TextWidthsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA89DA12814794000BEA127 /* TextWidthsCache.mm */; };
+		CFC762CD2D3D2D41000498AA /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CFC762CB2D3D2B17000498AA /* Localizable.xcstrings */; };
 		CFCB690228968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCB690028968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm */; };
 		CFCB690328968C4800086E40 /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCB690128968C4800086E40 /* PanelViewPresentationItemsColoringFilter.mm */; };
 		CFCF43E22B8B642C00B513C7 /* TagsStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CFCF43E12B8B642C00B513C7 /* TagsStorage.h */; };
 		CFCF43E42B8B644B00B513C7 /* TagsStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCF43E32B8B644B00B513C7 /* TagsStorage.cpp */; };
+		CFCFAC692D3D2E80008C6E26 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CFC762CB2D3D2B17000498AA /* Localizable.xcstrings */; };
 		CFF33F962556941B00B3C92C /* PanelData.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33F952556941B00B3C92C /* PanelData.h */; };
 		CFF33F992556942700B3C92C /* PanelData.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF33F982556942600B3C92C /* PanelData.mm */; };
 		CFF33F9D2556948200B3C92C /* PanelDataSortMode.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33F9C2556948200B3C92C /* PanelDataSortMode.h */; };
@@ -140,7 +141,6 @@
 		CF5D1DCE2B58798A00750174 /* TagsPresentation_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TagsPresentation_UT.mm; path = tests/UI/TagsPresentation_UT.mm; sourceTree = "<group>"; };
 		CF60DF242A6D3BAB00478BA0 /* libTerm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libTerm.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF60DF262A6D47CB00478BA0 /* ExternalTools_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalTools_IT.mm; path = tests/ExternalTools_IT.mm; sourceTree = "<group>"; };
-		CF739C3C295644CD004758C5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CF8B0FAD2CA7FF300098C4D6 /* NetworkConnectionsManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkConnectionsManager.h; path = include/Panel/NetworkConnectionsManager.h; sourceTree = "<group>"; };
 		CF8B0FAE2CA7FF440098C4D6 /* NetworkConnectionsManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkConnectionsManager.mm; path = source/NetworkConnectionsManager.mm; sourceTree = "<group>"; };
 		CF96DC7529CF460F003EC4EB /* ItemVolatileData_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ItemVolatileData_UT.mm; path = tests/ItemVolatileData_UT.mm; sourceTree = "<group>"; };
@@ -149,6 +149,7 @@
 		CFA89D832804C87700BEA127 /* FindFilesData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FindFilesData.cpp; path = source/FindFilesData.cpp; sourceTree = "<group>"; };
 		CFA89DA02814793600BEA127 /* TextWidthsCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TextWidthsCache.h; path = include/Panel/TextWidthsCache.h; sourceTree = "<group>"; };
 		CFA89DA12814794000BEA127 /* TextWidthsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextWidthsCache.mm; path = source/TextWidthsCache.mm; sourceTree = "<group>"; };
+		CFC762CB2D3D2B17000498AA /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		CFCB68FE28968C3600086E40 /* PanelViewPresentationItemsColoringFilterPersistence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelViewPresentationItemsColoringFilterPersistence.h; path = include/Panel/UI/PanelViewPresentationItemsColoringFilterPersistence.h; sourceTree = "<group>"; };
 		CFCB68FF28968C3600086E40 /* PanelViewPresentationItemsColoringFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelViewPresentationItemsColoringFilter.h; path = include/Panel/UI/PanelViewPresentationItemsColoringFilter.h; sourceTree = "<group>"; };
 		CFCB690028968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewPresentationItemsColoringFilterPersistence.mm; path = source/UI/PanelViewPresentationItemsColoringFilterPersistence.mm; sourceTree = "<group>"; };
@@ -223,6 +224,7 @@
 		CF0B03FD281EFE4100076FDF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CFC762CB2D3D2B17000498AA /* Localizable.xcstrings */,
 				CF0B0401281EFE9800076FDF /* SelectionWithMaskPopupViewController.xib */,
 				CF0B03FE281EFE5200076FDF /* PanelResources.plist */,
 			);
@@ -262,7 +264,6 @@
 		CFF33F562556924900B3C92C = {
 			isa = PBXGroup;
 			children = (
-				CF739C3B295644CD004758C5 /* Localizable.strings */,
 				CFF33F8C255692B600B3C92C /* Config */,
 				CFF33F932556940200B3C92C /* Headers */,
 				CFF33F602556924900B3C92C /* Products */,
@@ -528,6 +529,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFC762CD2D3D2D41000498AA /* Localizable.xcstrings in Resources */,
 				CF0B0402281EFE9800076FDF /* SelectionWithMaskPopupViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -536,7 +538,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF739C3D295644CD004758C5 /* Localizable.strings in Resources */,
+				CFCFAC692D3D2E80008C6E26 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -619,17 +621,6 @@
 			targetProxy = CFF3402025569F3B00B3C92C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		CF739C3B295644CD004758C5 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CF739C3C295644CD004758C5 /* ru */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		CF0B03F9281EB16F00076FDF /* Debug */ = {

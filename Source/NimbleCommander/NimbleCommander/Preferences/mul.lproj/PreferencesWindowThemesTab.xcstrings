@@ -1,0 +1,78 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "2b4-LP-xK9.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Import theme...\"; ObjectID = \"2b4-LP-xK9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Import theme..."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Импортировать тему..."
+          }
+        }
+      }
+    },
+    "jUB-WD-5cq.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Configure automatic switching...\"; ObjectID = \"jUB-WD-5cq\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Configure automatic switching..."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Настроить автоматическое переключение..."
+          }
+        }
+      }
+    },
+    "WDR-Z2-SLE.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Revert theme\"; ObjectID = \"WDR-Z2-SLE\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Revert theme"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сбросить тему"
+          }
+        }
+      }
+    },
+    "WHW-7t-coM.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Export theme...\"; ObjectID = \"WHW-7t-coM\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Export theme..."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Экспортировать тему..."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

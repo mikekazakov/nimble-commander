@@ -1,0 +1,96 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "2Fl-xL-9fp.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"How do you wish to import this theme?\"; ObjectID = \"2Fl-xL-9fp\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "How do you wish to import this theme?"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Как вы хотели бы импортировать данную тему?"
+          }
+        }
+      }
+    },
+    "cbI-8M-hIM.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Cancel\"; ObjectID = \"cbI-8M-hIM\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cancel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отмена"
+          }
+        }
+      }
+    },
+    "eYe-YS-npt.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Overwrite current theme settings\"; ObjectID = \"eYe-YS-npt\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Overwrite current theme settings"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переписать настройки текущей темы"
+          }
+        }
+      }
+    },
+    "g9Q-gY-8zD.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Import as a new theme:\"; ObjectID = \"g9Q-gY-8zD\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Import as a new theme:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Импортировать как новую тему:"
+          }
+        }
+      }
+    },
+    "NQq-tq-S68.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Import\"; ObjectID = \"NQq-tq-S68\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Import"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Импорт"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

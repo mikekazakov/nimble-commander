@@ -1,0 +1,60 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "29m-Fx-ZcC.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"When choosing an editor to start, editors are checked in order of appearance in this list.\"; ObjectID = \"29m-Fx-ZcC\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "When choosing an editor to start, editors are checked in order of appearance in this list."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "При выборе редактора они проверяются в очередности этого списка."
+          }
+        }
+      }
+    },
+    "gJg-B1-OAZ.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"File mask\"; ObjectID = \"gJg-B1-OAZ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "File mask"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Маска файла"
+          }
+        }
+      }
+    },
+    "pPs-JA-wnQ.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"External editor\"; ObjectID = \"pPs-JA-wnQ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "External editor"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Внешний редактор"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

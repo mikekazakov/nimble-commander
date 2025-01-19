@@ -1,0 +1,127 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%1$@ matches | %2$@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ совпадений | %2$@"
+          }
+        }
+      }
+    },
+    "1 match | %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 совпадение | %@"
+          }
+        }
+      }
+    },
+    "2 matches | %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2 совпадения | %@"
+          }
+        }
+      }
+    },
+    "3 matches | %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 совпадения | %@"
+          }
+        }
+      }
+    },
+    "4 matches | %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4 совпадения | %@"
+          }
+        }
+      }
+    },
+    "5 matches | %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 совпадений | %@"
+          }
+        }
+      }
+    },
+    "6 matches | %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6 совпадений | %@"
+          }
+        }
+      }
+    },
+    "7 matches | %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 совпадений | %@"
+          }
+        }
+      }
+    },
+    "8 matches | %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8 совпадений | %@"
+          }
+        }
+      }
+    },
+    "9 matches | %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "9 совпадений | %@"
+          }
+        }
+      }
+    },
+    "Not found | %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не найдено | %@"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

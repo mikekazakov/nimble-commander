@@ -1,0 +1,186 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "2Rt-fk-BWq.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Delete, move to Trash\"; ObjectID = \"2Rt-fk-BWq\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Delete, move to Trash"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удаление, перемещение в Корзину"
+          }
+        }
+      }
+    },
+    "aaI-me-JuG.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Choose which operation should be queued. \"; ObjectID = \"aaI-me-JuG\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Choose which operation should be queued. "
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выберите операции которые должны ставиться в очередь."
+          }
+        }
+      }
+    },
+    "BkJ-Hv-n3A.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Create directory\"; ObjectID = \"BkJ-Hv-n3A\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create directory"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Создание папки"
+          }
+        }
+      }
+    },
+    "EgT-Gv-JMA.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Compress\"; ObjectID = \"EgT-Gv-JMA\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Compress"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сжатие"
+          }
+        }
+      }
+    },
+    "Hn9-xE-HX2.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Batch rename\"; ObjectID = \"Hn9-xE-HX2\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Batch rename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Груповое переименование"
+          }
+        }
+      }
+    },
+    "I7D-B5-d40.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Change attributes\"; ObjectID = \"I7D-B5-d40\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Change attributes"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Изменение атрибутов"
+          }
+        }
+      }
+    },
+    "P0v-1A-lWs.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Copy, move, rename\"; ObjectID = \"P0v-1A-lWs\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copy, move, rename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копирование, перемещение, переименование"
+          }
+        }
+      }
+    },
+    "Q0F-GA-tvs.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"OK\"; ObjectID = \"Q0F-GA-tvs\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "OK"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ОК"
+          }
+        }
+      }
+    },
+    "TOU-T9-KZc.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Not checked operations will always start immediately.\"; ObjectID = \"TOU-T9-KZc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Not checked operations will always start immediately."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Неотмеченные операции будут всегда стартовать сразу."
+          }
+        }
+      }
+    },
+    "XrZ-pW-hET.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Link\"; ObjectID = \"XrZ-pW-hET\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Link"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Создание ссылки"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

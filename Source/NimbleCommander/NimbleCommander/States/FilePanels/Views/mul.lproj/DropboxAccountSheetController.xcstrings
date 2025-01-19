@@ -1,0 +1,168 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "2Qi-HI-MXU.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Title:\"; ObjectID = \"2Qi-HI-MXU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Title:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Название:"
+          }
+        }
+      }
+    },
+    "9Dn-1I-JSI.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Cancel\"; ObjectID = \"9Dn-1I-JSI\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cancel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отменить"
+          }
+        }
+      }
+    },
+    "coa-l1-7eB.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Grant access\"; ObjectID = \"coa-l1-7eB\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Grant access"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Предоставить доступ"
+          }
+        }
+      }
+    },
+    "DhC-ep-E42.alternateTitle" : {
+      "comment" : "Class = \"NSButtonCell\"; alternateTitle = \"Save\"; ObjectID = \"DhC-ep-E42\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Save"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сохранить"
+          }
+        }
+      }
+    },
+    "DhC-ep-E42.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Connect\"; ObjectID = \"DhC-ep-E42\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Connect"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подключиться"
+          }
+        }
+      }
+    },
+    "fpO-ZD-wds.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Account:\"; ObjectID = \"fpO-ZD-wds\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Account:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Учетная запись:"
+          }
+        }
+      }
+    },
+    "fvv-oA-3o2.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Connect to Dropbox storage:\"; ObjectID = \"fvv-oA-3o2\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Connect to Dropbox storage:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подключиться к хранищу Dropbox:"
+          }
+        }
+      }
+    },
+    "iwg-Rw-1Y9.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"Press 'Grant access' to setup\"; ObjectID = \"iwg-Rw-1Y9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Press 'Grant access' to setup"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нажмите 'Предоставить доступ'"
+          }
+        }
+      }
+    },
+    "tVZ-rv-nah.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"arbitrary title\"; ObjectID = \"tVZ-rv-nah\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "arbitrary title"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "произвольное название"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

@@ -1,0 +1,132 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "3Gd-BR-hPY.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Date Added\"; ObjectID = \"3Gd-BR-hPY\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Date Added"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дата добавления"
+          }
+        }
+      }
+    },
+    "dlI-VF-x2j.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Date Created\"; ObjectID = \"dlI-VF-x2j\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Date Created"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дата создания"
+          }
+        }
+      }
+    },
+    "dmJ-ex-4dW.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Extension\"; ObjectID = \"dmJ-ex-4dW\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Extension"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Расширение"
+          }
+        }
+      }
+    },
+    "fAK-5J-yak.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Date Modified\"; ObjectID = \"fAK-5J-yak\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Date Modified"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дата изменения"
+          }
+        }
+      }
+    },
+    "JuP-sv-0Ng.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Tags\"; ObjectID = \"JuP-sv-0Ng\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tags"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Теги"
+          }
+        }
+      }
+    },
+    "N2S-KG-c0L.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Date Accessed\"; ObjectID = \"N2S-KG-c0L\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Date Accessed"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дате открытия"
+          }
+        }
+      }
+    },
+    "oMg-KM-AN0.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Size\"; ObjectID = \"oMg-KM-AN0\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Size"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Размер"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

@@ -1,0 +1,2289 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "__BYTECOUNTFORMATTER_BYTE_POSTFIX" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B"
+          }
+        }
+      }
+    },
+    "__BYTECOUNTFORMATTER_BYTES_WORD" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bytes"
+          }
+        }
+      }
+    },
+    "__BYTECOUNTFORMATTER_SI_LETTERS_ARRAY" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " KMGTP"
+          }
+        }
+      }
+    },
+    "__CLASSICPRESENTATION_FOLDER_WORD" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folder"
+          }
+        }
+      }
+    },
+    "__CLASSICPRESENTATION_UP_WORD" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "    Up"
+          }
+        }
+      }
+    },
+    "__MODERNPRESENTATION_FOLDER_WORD" : {
+      "comment" : "Folders dummy string when size is not available, for English is 'Folder'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folder"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Папка"
+          }
+        }
+      }
+    },
+    "__MODERNPRESENTATION_UP_WORD" : {
+      "comment" : "Upper-level in directory, for English is 'Up'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Наверх"
+          }
+        }
+      }
+    },
+    "__PANELVIEW_LIST_COLUMN_TITLE_DATE_ACCESSED" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date Accessed"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дата доступа"
+          }
+        }
+      }
+    },
+    "__PANELVIEW_LIST_COLUMN_TITLE_DATE_ADDED" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date Added"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дата добавления"
+          }
+        }
+      }
+    },
+    "__PANELVIEW_LIST_COLUMN_TITLE_DATE_CREATED" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date Created"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дата создания"
+          }
+        }
+      }
+    },
+    "__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date Modified"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дата изменения"
+          }
+        }
+      }
+    },
+    "__PANELVIEW_LIST_COLUMN_TITLE_EXTENSION" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extension"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Расширение"
+          }
+        }
+      }
+    },
+    "__PANELVIEW_LIST_COLUMN_TITLE_NAME" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Имя"
+          }
+        }
+      }
+    },
+    "__PANELVIEW_LIST_COLUMN_TITLE_SIZE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Size"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Размер"
+          }
+        }
+      }
+    },
+    "__PANELVIEW_LIST_COLUMN_TITLE_TAGS" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tags"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Теги"
+          }
+        }
+      }
+    },
+    "__PANELVIEW_TEMPORARY_PANEL_WITH_TITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temporary Panel: %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Временная панель: %@"
+          }
+        }
+      }
+    },
+    "__PANELVIEW_TEMPORARY_PANEL_WITHOUT_TITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temporary Panel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Временная панель"
+          }
+        }
+      }
+    },
+    "__THANKS_FOR_REGISTER_INFORMATIVE" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thank you for using a registered copy of Nimble Commander! Please restart it for the changes to take effect."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Спасибо за использование зарегистрированной копии Nimble Commander!"
+          }
+        }
+      }
+    },
+    "__THANKS_FOR_REGISTER_MESSAGE" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activated successfully"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Успешная активация"
+          }
+        }
+      }
+    },
+    "__TRIAL_WINDOW_NOTE" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is a trial version of Nimble Commander.\nTo continue using this software after the 30-day trial period, you have to either buy a license or install the paid version from Mac App Store.\nThis window appears only in the trial version."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Это пробная версия Nimble Commander.\nЧтобы продолжить использование этого продукта после окончания пробного периода в 30 дней, Вам нужно купить лицензию или установить платную версию из Mac App Store.\nЭто окно появляется только в пробной версии."
+          }
+        }
+      }
+    },
+    "%@ available" : {
+      "comment" : "Panels bottom volume bar, showing amount of bytes available",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ доступно"
+          }
+        }
+      }
+    },
+    "Allow Access" : {
+      "comment" : "Asking user for granting file system access for NC - button title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Разрешить доступ"
+          }
+        }
+      }
+    },
+    "App:" : {
+      "comment" : "Brief System Information app label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Приложения:"
+          }
+        }
+      }
+    },
+    "Are you sure you want to delete this connection?" : {
+      "comment" : "Asking user if he really wants to delete information about a stored connection",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вы действительно хотите удалить это соединение?"
+          }
+        }
+      }
+    },
+    "Are you sure you want to remove this editor?" : {
+      "comment" : "Asking the user for confirmation on deleting the external editor - message",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вы действительно хотите убрать этот редактор?"
+          }
+        }
+      }
+    },
+    "Are you sure you want to remove this theme?" : {
+      "comment" : "Asking user for confirmation on erasing custom theme - message",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вы действительно хотите удалить эту тему?"
+          }
+        }
+      }
+    },
+    "Are you sure you want to remove this tool?" : {
+      "comment" : "Asking the user for confirmation on deleting the external tool - message",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вы действительно хотите удалить этот инструмент?"
+          }
+        }
+      }
+    },
+    "Are you sure you want to reset settings to defaults?" : {
+      "comment" : "Asking user for confirmation on erasing custom settings - message",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вы действительно хотите сбросить настройки к стандартным?"
+          }
+        }
+      }
+    },
+    "Are you sure you want to revert the changes of this theme?" : {
+      "comment" : "Asking user for confirmation on reverting a standard theme - message",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вы действительно хотите сбросить изменения этой темы?"
+          }
+        }
+      }
+    },
+    "Blue" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Синий"
+          }
+        }
+      }
+    },
+    "Brief System Information" : {
+      "comment" : "Brief System Information overlay title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Краткий обзор системы"
+          }
+        }
+      }
+    },
+    "Cache:" : {
+      "comment" : "Brief System Information cache label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кэш:"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отмена"
+          }
+        }
+      }
+    },
+    "Case Sensitive" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C учетом регистра"
+          }
+        }
+      }
+    },
+    "Check for Updates..." : {
+      "comment" : "Menu item title for check if any Nimble Commander updates are available",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверить наличие обновлений..."
+          }
+        }
+      }
+    },
+    "Clear Recents" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Очистить недавние поиски"
+          }
+        }
+      }
+    },
+    "Click “Allow Access” to grant access to files in the selected directory" : {
+      "comment" : "Asking the user to grant filesystem access for NC",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нажмите “Разрешить доступ” чтобы позволить работать с файлами в выбранной директории"
+          }
+        }
+      }
+    },
+    "Close" : {
+      "comment" : "User action to close a window",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закрыть"
+          }
+        }
+      }
+    },
+    "Close Other Tabs" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закрыть остальные вкладки"
+          }
+        }
+      }
+    },
+    "Close Tab" : {
+      "comment" : "Menu item title for closing current tab",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закрыть вкладку"
+          }
+        }
+      }
+    },
+    "Close Viewer" : {
+      "comment" : "Menu item title for closing internal viewer state",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закрыть просмотрщик"
+          }
+        }
+      }
+    },
+    "Close Window" : {
+      "comment" : "Menu item title\nMenu item title for closing current window",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закрыть окно"
+          }
+        }
+      }
+    },
+    "Closing this window will terminate the running processes: " : {
+      "comment" : "Informing when closing with running terminal processes",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закрытие этого окна прервет следующие процессы: "
+          }
+        }
+      }
+    },
+    "Compressed:" : {
+      "comment" : "Brief System Information compressed label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сжато:"
+          }
+        }
+      }
+    },
+    "Computer Name:" : {
+      "comment" : "Brief System Information computer name label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Имя компьютера:"
+          }
+        }
+      }
+    },
+    "Conflicts (%@)" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Конфликты (%@)"
+          }
+        }
+      }
+    },
+    "Connections" : {
+      "comment" : "Connections popup menu title in file panels",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Соединения"
+          }
+        }
+      }
+    },
+    "CPU" : {
+      "comment" : "Brief System Information cpu box title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ЦП"
+          }
+        }
+      }
+    },
+    "Delete Tag" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удалить Тэг"
+          }
+        }
+      }
+    },
+    "Disable Admin Mode" : {
+      "comment" : "Menu item title for disabling an admin mode",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выключить режим администратора"
+          }
+        }
+      }
+    },
+    "Display all items with the tag “%@”" : {
+      "comment" : "Tooltip for a quick list menu shown for each finder tag",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показать все объекты с тегом “%@”"
+          }
+        }
+      }
+    },
+    "Do you want to close this window?" : {
+      "comment" : "Asking to close window with processes running",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вы хотите закрыть это окно?"
+          }
+        }
+      }
+    },
+    "Do you want to delete tag “%@”?" : {
+      "comment" : "Alert shown when a user removes a tag",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вы действительно хотите удалить тэг “%@”?"
+          }
+        }
+      }
+    },
+    "Dropbox connection error:" : {
+      "comment" : "Showing error when connecting to Dropbox service",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ошибка подключения к Dropbox:"
+          }
+        }
+      }
+    },
+    "Enable Admin Mode" : {
+      "comment" : "Menu item title for enabling an admin mode",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Включить режим администратора"
+          }
+        }
+      }
+    },
+    "Encoding" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кодировка"
+          }
+        }
+      }
+    },
+    "Enter “%@”" : {
+      "comment" : "Enter a directory",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Войти в “%@”"
+          }
+        }
+      }
+    },
+    "Execute “%@”" : {
+      "comment" : "Execute a binary",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запустить “%@”"
+          }
+        }
+      }
+    },
+    "Failed to access the dragged item:" : {
+      "comment" : "Showing error when failed to access the dragged items",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось получить доступ к перетащенному объекту:"
+          }
+        }
+      }
+    },
+    "Failed to access the privileged helper." : {
+      "comment" : "Information that toggling admin mode on has failed",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось связаться с привилегированным помощником."
+          }
+        }
+      }
+    },
+    "Failed to create an empty file:" : {
+      "comment" : "Showing error when trying to create an empty file",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось создать пустой файл:"
+          }
+        }
+      }
+    },
+    "Failed to open extended attributes" : {
+      "comment" : "Alert message text when failed to open xattr vfs",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось открыть расширенные атрибуты"
+          }
+        }
+      }
+    },
+    "Failed to retreive Finder's Favorites" : {
+      "comment" : "Showing an error when NC isn't able to get Finder Favorites",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось получить Избранное Finder'а"
+          }
+        }
+      }
+    },
+    "Favorites" : {
+      "comment" : "Favorites popup menu subtitle in file panels",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Избранное"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Focus Left Panel" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Фокус на левую панель"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Focus Right Panel" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Фокус на правую панель"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Go Into Folder" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Перейти в папку"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Go to Enclosing Folder" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Перейти на уровень выше"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Go to Home ~ Directory" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Перейти в папку ~ Личное"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Go to Root / Directory" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Перейти в папку / Корень"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Move Down" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Переместиться вниз"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Move Left" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Переместиться влево"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Move Right" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Переместиться вправо"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Move to the First Element" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Переместиться к первому элементу"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Move to the Last Element" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Переместиться к последнему элементу"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Move to the Next Page" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Переместиться на следующую страницу"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Move to the Previous Page" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Переместиться на предыдущую страницу"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Move Up" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Переместиться вверх"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Scroll to the First Element" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Прокрутить к первому элементу"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Scroll to the Last Element" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Прокрутить к последнему элементу"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Scroll to the Next Page" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Прокрутить к следующуей странице"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Scroll to the Previous Page" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Прокрутить к предыдущей странице"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Show Context Menu" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Показать контекстное меню"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Show Next Tab" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Показать предыдущую вкладку"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Show Preview" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Показать быстрый просмотр"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Show Previous Tab" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Показать закладку вкладку"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Show Tab №1" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Показать вкладку №1"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Show Tab №2" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Показать вкладку №2"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Show Tab №3" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Показать вкладку №3"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Show Tab №4" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Показать вкладку №4"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Show Tab №5" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Показать вкладку №5"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Show Tab №6" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Показать вкладку №6"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Show Tab №7" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Показать вкладку №7"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Show Tab №8" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Показать вкладку №8"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Show Tab №9" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Показать вкладку №9"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Show Tab №10" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Показать вкладку №10"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Toggle Selection" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Изменить выделение"
+          }
+        }
+      }
+    },
+    "File Panels ▶ Toggle Selection and Move Down" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файловые панели ▶ Изменить выделение и переместиться вниз"
+          }
+        }
+      }
+    },
+    "Focus File Panels" : {
+      "comment" : "Menu item for focusing file panels",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Фокус на файловые панели"
+          }
+        }
+      }
+    },
+    "Focus Overlapped Terminal" : {
+      "comment" : "Menu item for focusing an overlapped terminal",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Фокус на терминал"
+          }
+        }
+      }
+    },
+    "Follow “%@”" : {
+      "comment" : "Follow a symlink",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Следовать за “%@”"
+          }
+        }
+      }
+    },
+    "Free Bytes:" : {
+      "comment" : "Brief System Information free bytes label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Свободно байт:"
+          }
+        }
+      }
+    },
+    "Frequently Visited" : {
+      "comment" : "Frequently Visited popup menu subtitle in file panels",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Часто посещаемое"
+          }
+        }
+      }
+    },
+    "FTP connection error:" : {
+      "comment" : "Showing error when connecting to FTP server",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ошибка подключения FTP:"
+          }
+        }
+      }
+    },
+    "General" : {
+      "comment" : "Brief System Information general box title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Основное"
+          }
+        }
+      }
+    },
+    "Go to" : {
+      "comment" : "Goto popup menu title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перейти к"
+          }
+        }
+      }
+    },
+    "Gray" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Серый"
+          }
+        }
+      }
+    },
+    "Green" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зеленый"
+          }
+        }
+      }
+    },
+    "Hide Panels" : {
+      "comment" : "Menu item for hiding panels",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скрыть панели"
+          }
+        }
+      }
+    },
+    "Hide Tab Bar" : {
+      "comment" : "Menu item title for hiding tab bar",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скрыть панель вкладок"
+          }
+        }
+      }
+    },
+    "Hide Terminal" : {
+      "comment" : "Menu item title for hiding terminal",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скрыть терминал"
+          }
+        }
+      }
+    },
+    "Hide Toolbar" : {
+      "comment" : "Menu item title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скрыть панель инструментов"
+          }
+        }
+      }
+    },
+    "History" : {
+      "comment" : "History popup menu title in file panels",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "История"
+          }
+        }
+      }
+    },
+    "Idle:" : {
+      "comment" : "Brief System Information idle label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Свободно:"
+          }
+        }
+      }
+    },
+    "Left GoTo" : {
+      "comment" : "Toolbar palette",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Левый Переход"
+          }
+        }
+      }
+    },
+    "Load:" : {
+      "comment" : "Brief System Information load label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Загрузка:"
+          }
+        }
+      }
+    },
+    "Mac Model:" : {
+      "comment" : "Brief System Information mac model label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Модель Mac:"
+          }
+        }
+      }
+    },
+    "Mask “%@”" : {
+      "comment" : "Find file masks history - plain mask",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Маска “%@”"
+          }
+        }
+      }
+    },
+    "Mask: *, or *.t?t, or *.txt,*.jpg" : {
+      "comment" : "Placeholder prompt for a filemask",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Маска: *, или *.t?t, или *.txt,*.jpg"
+          }
+        }
+      }
+    },
+    "N/A" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Н/Д"
+          }
+        }
+      }
+    },
+    "New Folder with Items" : {
+      "comment" : "Name for freshly created folder by hotkey with items",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Новая папка с объектами"
+          }
+        }
+      }
+    },
+    "New Tab" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Новая вкладка"
+          }
+        }
+      }
+    },
+    "No" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нет"
+          }
+        }
+      }
+    },
+    "No Colour" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Без цвета"
+          }
+        }
+      }
+    },
+    "No new tags were found." : {
+      "comment" : "Information shown when no new tags were found after searching the fs",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Новые тэги не найдены."
+          }
+        }
+      }
+    },
+    "Not Containing" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не содержит"
+          }
+        }
+      }
+    },
+    "OK" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ОК"
+          }
+        }
+      }
+    },
+    "Open “%@”" : {
+      "comment" : "Open an item",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Открыть “%@”"
+          }
+        }
+      }
+    },
+    "Operation is complete" : {
+      "comment" : "Notification text",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Операция завершена"
+          }
+        }
+      }
+    },
+    "Operations" : {
+      "comment" : "Toolbar palette",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Операции"
+          }
+        }
+      }
+    },
+    "Options" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Настройки"
+          }
+        }
+      }
+    },
+    "Orange" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Оранжевый"
+          }
+        }
+      }
+    },
+    "Parent Folders" : {
+      "comment" : "Upper-dirs popup menu title in file panels",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Родительские папки"
+          }
+        }
+      }
+    },
+    "Please provide parameters to run \"%@\"" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пожалуйста введите параметры для запуска \"%@\""
+          }
+        }
+      }
+    },
+    "Processes:" : {
+      "comment" : "Brief System Information processes label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Процессы:"
+          }
+        }
+      }
+    },
+    "Purple" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Лиловый"
+          }
+        }
+      }
+    },
+    "RAM" : {
+      "comment" : "Brief System Information ram box title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Память"
+          }
+        }
+      }
+    },
+    "Recent Searches" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Недавние поиски"
+          }
+        }
+      }
+    },
+    "Recently Closed" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Недавно закрытые"
+          }
+        }
+      }
+    },
+    "Red" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Красный"
+          }
+        }
+      }
+    },
+    "RegEx “%@”" : {
+      "comment" : "Find file masks history - regex",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RegEx “%@”"
+          }
+        }
+      }
+    },
+    "Regular expression" : {
+      "comment" : "Placeholder prompt for a regex",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Регулярное выражение"
+          }
+        }
+      }
+    },
+    "Regular Expression" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Регулярное выражение"
+          }
+        }
+      }
+    },
+    "Right GoTo" : {
+      "comment" : "Toolbar palette",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Правый Переход"
+          }
+        }
+      }
+    },
+    "Selected %@ in %@ files" : {
+      "comment" : "Informative text for a bottom information bar in panels, showing size of selection",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выделено %1$@ в %2$@ файлах"
+          }
+        }
+      }
+    },
+    "Selected %@ in 1 file" : {
+      "comment" : "Informative text for a bottom information bar in panels, showing size of selection",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выделено %@ в 1 файле"
+          }
+        }
+      }
+    },
+    "Selected %@ in 2 files" : {
+      "comment" : "Informative text for a bottom information bar in panels, showing size of selection",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выделено %@ в 2 файлах"
+          }
+        }
+      }
+    },
+    "Selected %@ in 3 files" : {
+      "comment" : "Informative text for a bottom information bar in panels, showing size of selection",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выделено %@ в 3 файлах"
+          }
+        }
+      }
+    },
+    "Selected %@ in 4 files" : {
+      "comment" : "Informative text for a bottom information bar in panels, showing size of selection",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выделено %@ в 4 файлах"
+          }
+        }
+      }
+    },
+    "Selected %@ in 5 files" : {
+      "comment" : "Informative text for a bottom information bar in panels, showing size of selection",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выделено %@ в 5 файлах"
+          }
+        }
+      }
+    },
+    "Selected %@ in 6 files" : {
+      "comment" : "Informative text for a bottom information bar in panels, showing size of selection",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выделено %@ в 6 файлах"
+          }
+        }
+      }
+    },
+    "Selected %@ in 7 files" : {
+      "comment" : "Informative text for a bottom information bar in panels, showing size of selection",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выделено %@ в 7 файлах"
+          }
+        }
+      }
+    },
+    "Selected %@ in 8 files" : {
+      "comment" : "Informative text for a bottom information bar in panels, showing size of selection",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выделено %@ в 8 файлах"
+          }
+        }
+      }
+    },
+    "Selected %@ in 9 files" : {
+      "comment" : "Informative text for a bottom information bar in panels, showing size of selection",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выделено %@ в 9 файлах"
+          }
+        }
+      }
+    },
+    "SFTP connection error:" : {
+      "comment" : "Showing error when connecting to SFTP server",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ошибка подключения SFTP:"
+          }
+        }
+      }
+    },
+    "Show Panels" : {
+      "comment" : "Menu item for showing panels",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показать панели"
+          }
+        }
+      }
+    },
+    "Show Tab Bar" : {
+      "comment" : "Menu item title for showing tab bar",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показать панель вкладок"
+          }
+        }
+      }
+    },
+    "Show Terminal" : {
+      "comment" : "Menu item title for showing terminal",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показать терминал"
+          }
+        }
+      }
+    },
+    "Show Toolbar" : {
+      "comment" : "Menu item title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показать панель инструментов"
+          }
+        }
+      }
+    },
+    "Specify a regular expression to match filenames with. (^M)" : {
+      "comment" : "Tooltip for a regex filename match",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Укажите регулярное выражения для поиска имен файлов. (^M)"
+          }
+        }
+      }
+    },
+    "Stop and Close" : {
+      "comment" : "User action to stop running actions and close window",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Остановить и закрыть"
+          }
+        }
+      }
+    },
+    "Stop and Quit" : {
+      "comment" : "Asking user for quitting app with activity - confirmation",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Остановить и завершить"
+          }
+        }
+      }
+    },
+    "Storage" : {
+      "comment" : "Brief System Information storage box title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Хранилище"
+          }
+        }
+      }
+    },
+    "Swap:" : {
+      "comment" : "Brief System Information swap label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Своп:"
+          }
+        }
+      }
+    },
+    "System:" : {
+      "comment" : "Brief System Information system label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Система:"
+          }
+        }
+      }
+    },
+    "Tags" : {
+      "comment" : "Tags popup menu title in file panels",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Теги"
+          }
+        }
+      }
+    },
+    "Terminate and Close" : {
+      "comment" : "User confirmation on message box",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прервать и закрыть"
+          }
+        }
+      }
+    },
+    "The application has running operations. Do you want to stop all operations and quit?" : {
+      "comment" : "Asking user for quitting app with activity",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Имеются работающие операции. Прекратить все операции и завершить приложение?"
+          }
+        }
+      }
+    },
+    "The following tags were added: %@." : {
+      "comment" : "Information shown when new tags were found after searching the fs",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Следующие теги были добавлены: %@."
+          }
+        }
+      }
+    },
+    "The name “%@” can’t be used." : {
+      "comment" : "Message text when user is entering an invalid filename",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Имя “%@” не может быть использовано."
+          }
+        }
+      }
+    },
+    "The name “%@” is already taken.\nPlease choose a different name." : {
+      "comment" : "Alert shown when a user tries to enter a tag label that is already in use"
+    },
+    "The window has %@ tabs. Are you sure you want to close this window?" : {
+      "comment" : "Asking user to close window with additional tabs",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Это окно содежит %@ вкладок. Вы действительно хотите закрыть его?"
+          }
+        }
+      }
+    },
+    "The window has running operations. Do you want to stop them and close the window?" : {
+      "comment" : "Asking user to close window with some operations running",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "В окне имеются выполняющиеся операции. Остановить их и закрыть окно?"
+          }
+        }
+      }
+    },
+    "Theme" : {
+      "comment" : "Preferences window themes list",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тема"
+          }
+        }
+      }
+    },
+    "This operation is not reversible." : {
+      "comment" : "Asking the user for confirmation on deleting the external editor - informative text\nAsking the user for confirmation on deleting the external tool - message",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Эта операция необратима."
+          }
+        }
+      }
+    },
+    "This will erase all your custom settings." : {
+      "comment" : "Asking user for confirmation on erasing custom settings - informative text",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Это удалит ваши собственные настройки."
+          }
+        }
+      }
+    },
+    "Threads:" : {
+      "comment" : "Brief System Information threads label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Потоки:"
+          }
+        }
+      }
+    },
+    "Toggle Dual-Pane Mode" : {
+      "comment" : "Menu item title for switching to dual-pane mode",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Включить двухпанельный режим"
+          }
+        }
+      }
+    },
+    "Toggle Single-Pane Mode" : {
+      "comment" : "Menu item title for switching to single-pane mode",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Включить однопанельный режим"
+          }
+        }
+      }
+    },
+    "Tool #%u" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Инструмент #%u"
+          }
+        }
+      }
+    },
+    "Tools ▶ %@" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Инструменты ▶ %@"
+          }
+        }
+      }
+    },
+    "Total Bytes:" : {
+      "comment" : "Brief System Information total bytes label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Всего байт:"
+          }
+        }
+      }
+    },
+    "Total:" : {
+      "comment" : "Brief System Information total label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Всего:"
+          }
+        }
+      }
+    },
+    "Try using a name with fewer characters or without punctuation marks." : {
+      "comment" : "Informative text when user is entering an invalid filename",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Попытайтесь использовать имя с меньшим количеством символов или без знаков пунктуации."
+          }
+        }
+      }
+    },
+    "Unable to connect to a network share" : {
+      "comment" : "Informing a user that NC can't connect to network share",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось подключиться к сетевой папке"
+          }
+        }
+      }
+    },
+    "Unable to run the external tool \"%s\"" : {
+      "comment" : "Message text alerting the inability to run an external tool"
+    },
+    "Untitled" : {
+      "comment" : "Name of a newly created tag",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Новый"
+          }
+        }
+      }
+    },
+    "untitled folder" : {
+      "comment" : "Name for freshly create folder by hotkey",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Новая папка"
+          }
+        }
+      }
+    },
+    "untitled.txt" : {
+      "comment" : "Name for freshly created file by hotkey",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "новый файл.txt"
+          }
+        }
+      }
+    },
+    "Uptime:" : {
+      "comment" : "Brief System Information uptime label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Аптайм:"
+          }
+        }
+      }
+    },
+    "Use \"*\" for multiple-character wildcard, \"?\" for single-character wildcard and \",\" to specify more than one mask. (^M)" : {
+      "comment" : "Tooltip for mask filename match",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Используйте \"*\" для подстановки нескольких символов, \"?\" для подстановки одного символа и \",\" чтобы указать больше одной маски. (^M)"
+          }
+        }
+      }
+    },
+    "Used:" : {
+      "comment" : "Brief System Information used label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Используемая:"
+          }
+        }
+      }
+    },
+    "User Name:" : {
+      "comment" : "Brief System Information user name label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Имя пользователя:"
+          }
+        }
+      }
+    },
+    "User:" : {
+      "comment" : "Brief System Information user label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пользователь:"
+          }
+        }
+      }
+    },
+    "Viewer ▶ Refresh" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Просмотрщик ▶ Обновить"
+          }
+        }
+      }
+    },
+    "Viewer ▶ Show GoTo" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Просмотрщик ▶ Показать Переход"
+          }
+        }
+      }
+    },
+    "Viewer ▶ Show Settings" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Просмотрщик ▶ Показать Настройки"
+          }
+        }
+      }
+    },
+    "Viewer ▶ Toggle Hex" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Просмотрщик ▶ Переключить на шестнадцатеричный вид"
+          }
+        }
+      }
+    },
+    "Viewer ▶ Toggle Preview" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Просмотрщик ▶ Переключить на быстрый просмотр"
+          }
+        }
+      }
+    },
+    "Viewer ▶ Toggle Text" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Просмотрщик ▶ Переключить на текст"
+          }
+        }
+      }
+    },
+    "Volume Name:" : {
+      "comment" : "Brief System Information volume name label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Название тома:"
+          }
+        }
+      }
+    },
+    "Volumes" : {
+      "comment" : "Volumes popup menu title in file panels",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тома"
+          }
+        }
+      }
+    },
+    "WebDAV connection error:" : {
+      "comment" : "Showing error when connecting to WebDAV server",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ошибка подключения WebDAV:"
+          }
+        }
+      }
+    },
+    "Whole Phrase" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Фраза целиком"
+          }
+        }
+      }
+    },
+    "Wired:" : {
+      "comment" : "Brief System Information wired label title",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зарезервировано:"
+          }
+        }
+      }
+    },
+    "Yellow" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Желтый"
+          }
+        }
+      }
+    },
+    "Yes" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Да"
+          }
+        }
+      }
+    },
+    "You can’t undo this action." : {
+      "comment" : "Alert shown when a user removes a tag - message\nAsking user for confirmation on erasing custom theme - informative text\nAsking user for confirmation on reverting a standard theme - informative text",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вы не сможете отменить эту операцию."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

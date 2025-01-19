@@ -1,0 +1,222 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "9X5-ZX-4rg.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Files only\"; ObjectID = \"9X5-ZX-4rg\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Files only"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Только файлы"
+          }
+        }
+      }
+    },
+    "84y-na-X1l.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Arguments:\"; ObjectID = \"84y-na-X1l\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Arguments:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Аргументы:"
+          }
+        }
+      }
+    },
+    "BxS-J4-CBs.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Cancel\"; ObjectID = \"BxS-J4-CBs\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cancel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отмена"
+          }
+        }
+      }
+    },
+    "DPm-wa-ccm.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"OK\"; ObjectID = \"DPm-wa-ccm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "OK"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ОК"
+          }
+        }
+      }
+    },
+    "eP4-pl-vw3.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"File mask:\"; ObjectID = \"eP4-pl-vw3\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "File mask:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Маска файлов:"
+          }
+        }
+      }
+    },
+    "eTL-Fa-DVU.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Run in terminal\"; ObjectID = \"eTL-Fa-DVU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Run in terminal"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запускать в терминале"
+          }
+        }
+      }
+    },
+    "fkZ-WL-MSq.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"...\"; ObjectID = \"fkZ-WL-MSq\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "..."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "..."
+          }
+        }
+      }
+    },
+    "hau-43-Cpg.ibShadowedIsNilPlaceholder" : {
+      "comment" : "Class = \"CocoaBindingsConnection\"; ibShadowedIsNilPlaceholder = \"*, *.*, *.cpp, *.*m, etc.\"; ObjectID = \"hau-43-Cpg\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "*, *.*, *.cpp, *.*m, etc."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "*, *.*, *.cpp, *.*m и т.д."
+          }
+        }
+      }
+    },
+    "J19-J3-pgq.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Name:\"; ObjectID = \"J19-J3-pgq\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Name:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Имя:"
+          }
+        }
+      }
+    },
+    "mi2-sj-UPs.ibShadowedIsNilPlaceholder" : {
+      "comment" : "Class = \"CocoaBindingsConnection\"; ibShadowedIsNilPlaceholder = \"%%\"; ObjectID = \"mi2-sj-UPs\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%%"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%%"
+          }
+        }
+      }
+    },
+    "wWC-fX-UjM.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Any occurrences of %% will be replaced with file path. You can use backslashes to escape spaces, so that they are not interpreted as parameter delimiters.\"; ObjectID = \"wWC-fX-UjM\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Any occurrences of %% will be replaced with file path. You can use backslashes to escape spaces, so that they are not interpreted as parameter delimiters."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Все экземпляры %% будут заменены на путь файла. Вы можете использовать обратный слэш для избегания интерпретации пробелов как разделитей параметров."
+          }
+        }
+      }
+    },
+    "xCy-eR-Fzk.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Application path:\"; ObjectID = \"xCy-eR-Fzk\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Application path:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Путь приложения:"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

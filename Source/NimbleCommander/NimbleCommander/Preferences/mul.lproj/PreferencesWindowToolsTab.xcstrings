@@ -1,0 +1,870 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "1F7-OC-ESO.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Run in Terminal\"; ObjectID = \"1F7-OC-ESO\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Run in Terminal"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запускать в терминале"
+          }
+        }
+      }
+    },
+    "3Ja-QT-yqJ.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Run Detached\"; ObjectID = \"3Ja-QT-yqJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Run Detached"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запускать независимо"
+          }
+        }
+      }
+    },
+    "3Pc-uE-9BV.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Tool title:\"; ObjectID = \"3Pc-uE-9BV\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tool title:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Название инструмента:"
+          }
+        }
+      }
+    },
+    "4qW-yo-KcS.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%F\\t\\tSource filenames as parameters\"; ObjectID = \"4qW-yo-KcS\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%F\t\tSource filenames as parameters"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%F\t\tИмена исходных объектов как параметры"
+          }
+        }
+      }
+    },
+    "5aN-uP-JYd.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%-p\\tTarget item path\"; ObjectID = \"5aN-uP-JYd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%-p\tTarget item path"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-p\tПуть целевого объекта"
+          }
+        }
+      }
+    },
+    "7vb-zY-kcK.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"...\"; ObjectID = \"7vb-zY-kcK\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "..."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "..."
+          }
+        }
+      }
+    },
+    "78m-ca-qgo.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Please note that command-line external tools are not supported in MacAppStore versions\"; ObjectID = \"78m-ca-qgo\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Please note that command-line external tools are not supported in MacAppStore versions"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Обратите внимание, что инструменты командной строки не поддерживаются в версиях для MacAppStore"
+          }
+        }
+      }
+    },
+    "81Y-Cg-sSQ.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Insert Current Item\"; ObjectID = \"81Y-Cg-sSQ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Current Item"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить текущий объект"
+          }
+        }
+      }
+    },
+    "bBK-C9-eQV.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%-F \\tTarget filenames as parameters\"; ObjectID = \"bBK-C9-eQV\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%-F \tTarget filenames as parameters"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-F \tИмена целевых объектов как параметры"
+          }
+        }
+      }
+    },
+    "dmv-sq-9J8.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%f\\tSource item filename\"; ObjectID = \"dmv-sq-9J8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%f\tSource item filename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%f\tИмя исходного объекта"
+          }
+        }
+      }
+    },
+    "DYH-oC-XxH.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%10F\\tSource filenames as parameters, limited\"; ObjectID = \"DYH-oC-XxH\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%10F\tSource filenames as parameters, limited"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%10F\tИмена исходных объектов как параметры, ограниченно"
+          }
+        }
+      }
+    },
+    "E5p-BD-CuB.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%-P \\tTarget filepaths as parameters\"; ObjectID = \"E5p-BD-CuB\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%-P \tTarget filepaths as parameters"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-P \tПути целевых объектов как параметры"
+          }
+        }
+      }
+    },
+    "eeB-tN-Fpd.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Automatic\"; ObjectID = \"eeB-tN-Fpd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Automatic"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Автоматически"
+          }
+        }
+      }
+    },
+    "EL5-2T-5M1.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%10P\\tSource filepaths as parameters, limited\"; ObjectID = \"EL5-2T-5M1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%10P\tSource filepaths as parameters, limited"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%10P\tПути исходных объектов как параметры, ограниченно"
+          }
+        }
+      }
+    },
+    "ezB-E1-baW.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Other\"; ObjectID = \"ezB-E1-baW\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Other"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прочее"
+          }
+        }
+      }
+    },
+    "f5c-Cv-ZFZ.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%5T Limit the total number of output files\"; ObjectID = \"f5c-Cv-ZFZ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%5T Limit the total number of output files"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%5T Ограничить общее число объектов"
+          }
+        }
+      }
+    },
+    "GbL-vv-Nbz.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Application:\"; ObjectID = \"GbL-vv-Nbz\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Application:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Приложение:"
+          }
+        }
+      }
+    },
+    "hhv-Ii-7Ia.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%-e\\tTarget item extension\"; ObjectID = \"hhv-Ii-7Ia\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%-e\tTarget item extension"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-e\tРасширение целевого объекта"
+          }
+        }
+      }
+    },
+    "hk9-iG-W4a.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%LF\\t\\tSource filenames in a text file\"; ObjectID = \"hk9-iG-W4a\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%LF\t\tSource filenames in a text file"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%LF\t\tИмена исходных объектов в текстовом файле"
+          }
+        }
+      }
+    },
+    "hv1-vC-dN8.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Insert Current Item\"; ObjectID = \"hv1-vC-dN8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Current Item"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить текущий объект"
+          }
+        }
+      }
+    },
+    "II6-Wo-q1C.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%p\\tSource item path\"; ObjectID = \"II6-Wo-q1C\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%p\tSource item path"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%p\tПуть исходного объекта"
+          }
+        }
+      }
+    },
+    "iVQ-ca-93Q.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Startup Mode:\"; ObjectID = \"iVQ-ca-93Q\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Startup Mode:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тип запуска:"
+          }
+        }
+      }
+    },
+    "JUW-5J-iZz.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%10LF \\tSource filenames in a text file, limited\"; ObjectID = \"JUW-5J-iZz\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%10LF \tSource filenames in a text file, limited"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%10LF \tИмена исходных объектов в текстовом файле, ограниченно"
+          }
+        }
+      }
+    },
+    "kbC-Ac-yjQ.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Ask For Value\"; ObjectID = \"kbC-Ac-yjQ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ask For Value"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Спросить значение"
+          }
+        }
+      }
+    },
+    "L1y-lC-7iH.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%\\\"Option name\\\"? Enter the value of the parameter named\"; ObjectID = \"L1y-lC-7iH\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%\"Option name\"? Enter the value of the parameter named"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%\"Название параметра\"? Ввести значение параметра, с названием"
+          }
+        }
+      }
+    },
+    "l99-bl-ad0.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%% Insert the % character\"; ObjectID = \"l99-bl-ad0\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%% Insert the % character"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%% Вставить символ %"
+          }
+        }
+      }
+    },
+    "LrK-w4-iDz.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Insert Selected Items\"; ObjectID = \"LrK-w4-iDz\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Selected Items"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить выбранные объекты"
+          }
+        }
+      }
+    },
+    "lrv-hw-UfE.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%-f\\tTarget item filename\"; ObjectID = \"lrv-hw-UfE\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%-f\tTarget item filename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-f\tИмя целевого объекта"
+          }
+        }
+      }
+    },
+    "lzh-Bc-bxZ.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Parameters:\"; ObjectID = \"lzh-Bc-bxZ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Parameters:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Параметры:"
+          }
+        }
+      }
+    },
+    "n7P-7k-Ogp.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%10LP \\tSource filepaths in a text file, limited\"; ObjectID = \"n7P-7k-Ogp\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%10LP \tSource filepaths in a text file, limited"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%10LP \tПути исходных объектов в текстовом файле, ограниченно"
+          }
+        }
+      }
+    },
+    "NVF-cl-n3F.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Other\"; ObjectID = \"NVF-cl-n3F\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Other"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прочее"
+          }
+        }
+      }
+    },
+    "o8G-ZY-8l8.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Insert Selected Items\"; ObjectID = \"o8G-ZY-8l8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Insert Selected Items"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить выбранные объекты"
+          }
+        }
+      }
+    },
+    "oxh-ez-aQd.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%P\\t\\tSource filepaths as parameters\"; ObjectID = \"oxh-ez-aQd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%P\t\tSource filepaths as parameters"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%P\t\tПути исходных объектов как параметры"
+          }
+        }
+      }
+    },
+    "PeS-us-ncF.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%-10LP \\tTarget filepaths in a text file, limited\"; ObjectID = \"PeS-us-ncF\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%-10LP \tTarget filepaths in a text file, limited"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-10LP \tПути целевых объектов в текстовом файле, ограниченно"
+          }
+        }
+      }
+    },
+    "pOe-HA-s3m.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%e\\tSource item extension\"; ObjectID = \"pOe-HA-s3m\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%e\tSource item extension"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%e\tРасширение исходного объекта"
+          }
+        }
+      }
+    },
+    "qKU-gg-zci.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%-r\\tTarget panel path\"; ObjectID = \"qKU-gg-zci\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%-r\tTarget panel path"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-r\tПуть целевой панели"
+          }
+        }
+      }
+    },
+    "t7c-uZ-Wyx.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%-n\\tTarget item filename without extension\"; ObjectID = \"t7c-uZ-Wyx\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%-n\tTarget item filename without extension"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-n\tИмя целевого объекта без расширения"
+          }
+        }
+      }
+    },
+    "Uut-qc-UcK.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%LP\\t\\tSource filepaths in a text file\"; ObjectID = \"Uut-qc-UcK\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%LP\t\tSource filepaths in a text file"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%LP\t\tПути исходных объектов в текстовом файле"
+          }
+        }
+      }
+    },
+    "w1u-x0-TD2.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%- Use left/right panels instead of source/target\"; ObjectID = \"w1u-x0-TD2\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%- Use left/right panels instead of source/target"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%- Использовать левую/правую панель вместо исходной/целевой"
+          }
+        }
+      }
+    },
+    "wfS-Ll-F4V.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%n\\tSource item filename without extension\"; ObjectID = \"wfS-Ll-F4V\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%n\tSource item filename without extension"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%n\tИмя исходного объекта без расширения"
+          }
+        }
+      }
+    },
+    "X8z-91-qc7.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%r\\tSource panel path\"; ObjectID = \"X8z-91-qc7\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%r\tSource panel path"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%r\tПуть исходной панели"
+          }
+        }
+      }
+    },
+    "xbW-7L-Eo6.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%-10F \\tTarget filenames as parameters, limited\"; ObjectID = \"xbW-7L-Eo6\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%-10F \tTarget filenames as parameters, limited"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-10F \tИмена целевых объектов как параметры, ограниченно"
+          }
+        }
+      }
+    },
+    "XHU-jz-vdf.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%? Enter the value of the parameter\"; ObjectID = \"XHU-jz-vdf\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%? Enter the value of the parameter"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%? Ввести значение параметра"
+          }
+        }
+      }
+    },
+    "XJk-yw-oD6.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%-LP \\tTarget filepaths in a text file\"; ObjectID = \"XJk-yw-oD6\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%-LP \tTarget filepaths in a text file"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-LP \tПути целевых объектов в текстовом файле"
+          }
+        }
+      }
+    },
+    "xqa-ff-fmA.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%-LF \\tTarget filenames in a text file\"; ObjectID = \"xqa-ff-fmA\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%-LF \tTarget filenames in a text file"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-LF \tИмена целевых объектов в текстовом файле"
+          }
+        }
+      }
+    },
+    "XZ4-7A-fGc.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Ask For Value\"; ObjectID = \"XZ4-7A-fGc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ask For Value"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Спросить значение"
+          }
+        }
+      }
+    },
+    "yBx-gj-ydb.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%-10LF \\tTarget filenames in a text file, limited\"; ObjectID = \"yBx-gj-ydb\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%-10LF \tTarget filenames in a text file, limited"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-10LF \tИмена целевых объектов в текстовом файле, ограниченно"
+          }
+        }
+      }
+    },
+    "ZgB-uv-ecs.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%-10P \\tTarget filepaths as parameters, limited\"; ObjectID = \"ZgB-uv-ecs\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%-10P \tTarget filepaths as parameters, limited"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-10P \tПути целевых объектов как параметры, ограниченно"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

@@ -1,0 +1,234 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "2qF-P1-Qnm.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"All\"; ObjectID = \"2qF-P1-Qnm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "All"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Все"
+          }
+        }
+      }
+    },
+    "5Ln-U1-GlS.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"Filter\"; ObjectID = \"5Ln-U1-GlS\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Filter"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Фильтр"
+          }
+        }
+      }
+    },
+    "17V-g8-fDY.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Always use the Fn buttons as F1 ... F19\"; ObjectID = \"17V-g8-fDY\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Always use the Fn buttons as F1 ... F19"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Всегда использовать Fn кнопки как F1..F19"
+          }
+        }
+      }
+    },
+    "aLv-eW-18q.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Defaults\"; ObjectID = \"aLv-eW-18q\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Defaults"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По умолчанию"
+          }
+        }
+      }
+    },
+    "IVh-ax-KPY.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Customized\"; ObjectID = \"IVh-ax-KPY\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Customized"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переопределённые"
+          }
+        }
+      }
+    },
+    "ixl-kW-X7i.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Third\"; ObjectID = \"ixl-kW-X7i\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Third"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Третий"
+          }
+        }
+      }
+    },
+    "KvV-0v-Gl2.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Action\"; ObjectID = \"KvV-0v-Gl2\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Action"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Действие"
+          }
+        }
+      }
+    },
+    "NKe-Qo-gT6.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Primary\"; ObjectID = \"NKe-Qo-gT6\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Primary"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Основной"
+          }
+        }
+      }
+    },
+    "nL2-XV-AC2.alternateTitle" : {
+      "comment" : "Class = \"NSButtonCell\"; alternateTitle = \"Conflicts\"; ObjectID = \"nL2-XV-AC2\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conflicts"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Конфликты"
+          }
+        }
+      }
+    },
+    "nL2-XV-AC2.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Conflicts\"; ObjectID = \"nL2-XV-AC2\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conflicts"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Конфликты"
+          }
+        }
+      }
+    },
+    "omr-Nu-6w5.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Fourth\"; ObjectID = \"omr-Nu-6w5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Fourth"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Четвертый"
+          }
+        }
+      }
+    },
+    "SJn-Me-IpN.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Secondary\"; ObjectID = \"SJn-Me-IpN\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Secondary"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Второй"
+          }
+        }
+      }
+    },
+    "Yun-5T-3Fx.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Text Cell\"; ObjectID = \"Yun-5T-3Fx\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ""
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

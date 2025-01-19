@@ -1,0 +1,270 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "<None>" : {
+      "comment" : "Menu item for case when no handlers are available, for English is '<None>'",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "<Нет>"
+          }
+        }
+      }
+    },
+    "Always Open With" : {
+      "comment" : "Submenu title to choose app to always open with, for English is 'Always Open With'",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Всегда открывать в программе"
+          }
+        }
+      }
+    },
+    "App Store..." : {
+      "comment" : "Menu item to choose an app from MAS",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store..."
+          }
+        }
+      }
+    },
+    "Compress" : {
+      "comment" : "Compress some items here",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сжать"
+          }
+        }
+      }
+    },
+    "Compress “%@”" : {
+      "comment" : "Compress one item here",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сжать “%@”"
+          }
+        }
+      }
+    },
+    "Compress “%@” in Opposite Panel" : {
+      "comment" : "Compress one item",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сжать “%@” в противоположной панели"
+          }
+        }
+      }
+    },
+    "Compress %lu Items" : {
+      "comment" : "Compress some items here",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сжать %lu объектов"
+          }
+        }
+      }
+    },
+    "Compress %lu Items in Opposite Panel" : {
+      "comment" : "Compress some items",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сжать %lu объектов в противоположной панели"
+          }
+        }
+      }
+    },
+    "Compress in Opposite Panel" : {
+      "comment" : "Compress some items",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сжать в противоположной панели"
+          }
+        }
+      }
+    },
+    "Copy “%@”" : {
+      "comment" : "Copy one item",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копировать “%@”"
+          }
+        }
+      }
+    },
+    "Copy %d Items" : {
+      "comment" : "Copy many items",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скопировать %d объектов"
+          }
+        }
+      }
+    },
+    "Copy %lu Items" : {
+      "comment" : "Copy many items",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копировать %lu объектов"
+          }
+        }
+      }
+    },
+    "default" : {
+      "comment" : "Menu item postfix marker for default apps to open with, for English is 'default'",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "по умолчанию"
+          }
+        }
+      }
+    },
+    "Delete Permanently" : {
+      "comment" : "Menu item title to delete file, for English is 'Delete Permanently'",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удалить необратимо"
+          }
+        }
+      }
+    },
+    "Duplicate" : {
+      "comment" : "Duplicate an item",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дублировать"
+          }
+        }
+      }
+    },
+    "Fetching..." : {
+      "comment" : "Menu item for indicating that fetching process is in progress",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Загрузка..."
+          }
+        }
+      }
+    },
+    "Move to Trash" : {
+      "comment" : "Menu item title to move to trash, for English is 'Move to Trash'",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переместить в Корзину"
+          }
+        }
+      }
+    },
+    "Open" : {
+      "comment" : "Menu item title for opening a file by default, for English is 'Open'",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Открыть"
+          }
+        }
+      }
+    },
+    "Open With" : {
+      "comment" : "Submenu title to choose app to open with, for English is 'Open With'",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Открыть в программе"
+          }
+        }
+      }
+    },
+    "Other..." : {
+      "comment" : "Menu item to choose other app to open with, for English is 'Other...'",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выбрать программу..."
+          }
+        }
+      }
+    },
+    "Share" : {
+      "comment" : "Share submenu title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Поделиться"
+          }
+        }
+      }
+    },
+    "Tags" : {
+      "comment" : "Tags submenu title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Теги"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

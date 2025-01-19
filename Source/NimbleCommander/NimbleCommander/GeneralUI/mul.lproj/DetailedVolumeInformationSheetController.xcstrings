@@ -1,0 +1,348 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "6.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"OK\"; ObjectID = \"6\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "OK"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ОK"
+          }
+        }
+      }
+    },
+    "13.label" : {
+      "comment" : "Class = \"NSTabViewItem\"; label = \"Basic\"; ObjectID = \"13\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Basic"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Основная"
+          }
+        }
+      }
+    },
+    "14.label" : {
+      "comment" : "Class = \"NSTabViewItem\"; label = \"Advanced\"; ObjectID = \"14\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Advanced"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дополнительная"
+          }
+        }
+      }
+    },
+    "66.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Detailed Volume Information\"; ObjectID = \"66\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Detailed Volume Information"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Детальная информация о томе"
+          }
+        }
+      }
+    },
+    "91.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Name:\"; ObjectID = \"91\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Name:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Имя:"
+          }
+        }
+      }
+    },
+    "147.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Mounted at:\"; ObjectID = \"147\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mounted at:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подключен в:"
+          }
+        }
+      }
+    },
+    "160.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Device:\"; ObjectID = \"160\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Device:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Устройство:"
+          }
+        }
+      }
+    },
+    "181.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Format:\"; ObjectID = \"181\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Format:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Формат:"
+          }
+        }
+      }
+    },
+    "193.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Total bytes:\"; ObjectID = \"193\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Total bytes:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Всего байт:"
+          }
+        }
+      }
+    },
+    "207.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Free bytes:\"; ObjectID = \"207\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Free bytes:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Свободно байт:"
+          }
+        }
+      }
+    },
+    "219.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Available bytes:\"; ObjectID = \"219\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Available bytes:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доступно байт:"
+          }
+        }
+      }
+    },
+    "268.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Used bytes:\"; ObjectID = \"268\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Used bytes:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Использ. байт:"
+          }
+        }
+      }
+    },
+    "280.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Objects count:\"; ObjectID = \"280\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Objects count:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кол-во объектов:"
+          }
+        }
+      }
+    },
+    "294.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Files count:\"; ObjectID = \"294\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Files count:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кол-во файлов:"
+          }
+        }
+      }
+    },
+    "306.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Folders count:\"; ObjectID = \"306\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders count:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кол-во папок:"
+          }
+        }
+      }
+    },
+    "320.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Maximum objects:\"; ObjectID = \"320\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum objects:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Максимум объектов:"
+          }
+        }
+      }
+    },
+    "345.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"I/O block size:\"; ObjectID = \"345\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "I/O block size:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Размер блока I/O:"
+          }
+        }
+      }
+    },
+    "365.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Min. allocation:\"; ObjectID = \"365\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Min. allocation:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мин. аллокация:"
+          }
+        }
+      }
+    },
+    "377.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Allocation clump:\"; ObjectID = \"377\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Allocation clump:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мин. увеличение:"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

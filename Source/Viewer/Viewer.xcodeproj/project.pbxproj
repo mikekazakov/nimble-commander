@@ -41,7 +41,6 @@
 		CF5BF7CA2C0B89C90057C92E /* SettingsStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5BF7C92C0B89C90057C92E /* SettingsStorage.cpp */; };
 		CF5C1D36255EE63000ADE703 /* InternalViewerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B0821FE4F430043A26D /* InternalViewerController.xib */; };
 		CF5C1D3E255EE63F00ADE703 /* InternalViewerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */; };
-		CF5C1D42255EE64200ADE703 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF2343F022CDDFC600F516CB /* Localizable.strings */; };
 		CF5C1D46255EE64500ADE703 /* NCViewerSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B132205B8450043A26D /* NCViewerSheet.xib */; };
 		CF5C1D7A255EEA6A00ADE703 /* TextModeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF132567222AB8170097F9A1 /* TextModeView.mm */; };
 		CF5C1D7B255EEA6A00ADE703 /* HexModeFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF908226B2B0C00AD36D9 /* HexModeFrame.cpp */; };
@@ -66,6 +65,7 @@
 		CF9BF9062269FD7000AD36D9 /* HexModeProcessing_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */; };
 		CF9BF90D226CF99000AD36D9 /* HexModeFrame_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF90C226CF99000AD36D9 /* HexModeFrame_UT.cpp */; };
 		CFA9998D26468A4300F72E93 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA9998C26468A4300F72E93 /* Log.cpp */; };
+		CFC762C62D3D2841000498AA /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CFC762C52D3D2841000498AA /* Localizable.xcstrings */; };
 		CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B5822106E3C0043A26D /* Tests.cpp */; };
 		CFD79B6A22106F080043A26D /* TextProcessing_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B6822106F000043A26D /* TextProcessing_UT.cpp */; };
 		CFD79B8422198DB50043A26D /* TextModeWorkingSet_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B8222198DA80043A26D /* TextModeWorkingSet_UT.cpp */; };
@@ -129,8 +129,6 @@
 		CF132565222AB80B0097F9A1 /* TextModeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextModeView.h; path = include/Viewer/TextModeView.h; sourceTree = "<group>"; };
 		CF132567222AB8170097F9A1 /* TextModeView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextModeView.mm; path = source/TextModeView.mm; sourceTree = "<group>"; wrapsLines = 0; };
 		CF132569222ACF640097F9A1 /* TextModeViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextModeViewDelegate.h; path = include/Viewer/TextModeViewDelegate.h; sourceTree = "<group>"; };
-		CF2343F122CDDFC600F516CB /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = resources/Base.lproj/Localizable.strings; sourceTree = "<group>"; };
-		CF2343F322CDDFCF00F516CB /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = resources/ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CF2343F422CDE0F000F516CB /* Internal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Internal.mm; path = source/Internal.mm; sourceTree = "<group>"; };
 		CF24E1D1227F0B2400C166FA /* HexModeLayout_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeLayout_UT.cpp; path = tests/HexModeLayout_UT.cpp; sourceTree = "<group>"; };
 		CF24E1D62286E23800C166FA /* PreviewModeView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreviewModeView.mm; path = source/PreviewModeView.mm; sourceTree = "<group>"; };
@@ -181,6 +179,9 @@
 		CF9BF91E2275FD9E00AD36D9 /* HexModeLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexModeLayout.h; path = include/Viewer/HexModeLayout.h; sourceTree = "<group>"; };
 		CFA9998B26468A3900F72E93 /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Log.h; path = include/Viewer/Log.h; sourceTree = "<group>"; };
 		CFA9998C26468A4300F72E93 /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Log.cpp; path = source/Log.cpp; sourceTree = "<group>"; };
+		CFC762C52D3D2841000498AA /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = Localizable.xcstrings; path = resources/Localizable.xcstrings; sourceTree = "<group>"; };
+		CFC762C72D3D2841000498AA /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = resources/mul.lproj/NCViewerSheet.xcstrings; sourceTree = "<group>"; };
+		CFC762C82D3D2841000498AA /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = resources/mul.lproj/InternalViewerController.xcstrings; sourceTree = "<group>"; };
 		CFD79A7B21F65A980043A26D /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CFD79A7C21F65A980043A26D /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
 		CFD79A8621F65B4E0043A26D /* InternalViewerViewPreviewMode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerViewPreviewMode.mm; path = source/InternalViewerViewPreviewMode.mm; sourceTree = "<group>"; };
@@ -207,11 +208,9 @@
 		CFD79B0421FE4CCC0043A26D /* ViewerViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewerViewController.mm; path = source/ViewerViewController.mm; sourceTree = "<group>"; };
 		CFD79B0621FE4D400043A26D /* CUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD79B0921FE4F430043A26D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = resources/Base.lproj/InternalViewerController.xib; sourceTree = "<group>"; };
-		CFD79B0E21FE4F560043A26D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = resources/ru.lproj/InternalViewerController.strings; sourceTree = "<group>"; };
 		CFD79B0F2205B82F0043A26D /* ViewerSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewerSheet.h; path = include/Viewer/ViewerSheet.h; sourceTree = "<group>"; };
 		CFD79B112205B8360043A26D /* ViewerSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewerSheet.mm; path = source/ViewerSheet.mm; sourceTree = "<group>"; };
 		CFD79B142205B8450043A26D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = resources/Base.lproj/NCViewerSheet.xib; sourceTree = "<group>"; };
-		CFD79B162205B84E0043A26D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = resources/ru.lproj/NCViewerSheet.strings; sourceTree = "<group>"; };
 		CFD79B1F2205DE9C0043A26D /* InternalViewerWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerWindowController.h; path = include/Viewer/InternalViewerWindowController.h; sourceTree = "<group>"; };
 		CFD79B212205DEA40043A26D /* InternalViewerWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerWindowController.mm; path = source/InternalViewerWindowController.mm; sourceTree = "<group>"; };
 		CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = InternalViewerWindowController.xib; path = resources/InternalViewerWindowController.xib; sourceTree = "<group>"; };
@@ -326,7 +325,7 @@
 				CF5BF7AC2BFE6B160057C92E /* Highlighter.plist */,
 				CFD79B0821FE4F430043A26D /* InternalViewerController.xib */,
 				CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */,
-				CF2343F022CDDFC600F516CB /* Localizable.strings */,
+				CFC762C52D3D2841000498AA /* Localizable.xcstrings */,
 				CFD79B132205B8450043A26D /* NCViewerSheet.xib */,
 				CF5C1D2C255ED7D300ADE703 /* ViewerResources.plist */,
 				CFE5AF902C62C0940035CCFA /* Media.xcassets */,
@@ -603,8 +602,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF5C1D42255EE64200ADE703 /* Localizable.strings in Resources */,
 				CF5C1D46255EE64500ADE703 /* NCViewerSheet.xib in Resources */,
+				CFC762C62D3D2841000498AA /* Localizable.xcstrings in Resources */,
 				CF5C1D36255EE63000ADE703 /* InternalViewerController.xib in Resources */,
 				CFE5AF912C62C0940035CCFA /* Media.xcassets in Resources */,
 				CF5C1D3E255EE63F00ADE703 /* InternalViewerWindowController.xib in Resources */,
@@ -719,20 +718,11 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		CF2343F022CDDFC600F516CB /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CF2343F122CDDFC600F516CB /* Base */,
-				CF2343F322CDDFCF00F516CB /* ru */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
 		CFD79B0821FE4F430043A26D /* InternalViewerController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				CFD79B0921FE4F430043A26D /* Base */,
-				CFD79B0E21FE4F560043A26D /* ru */,
+				CFC762C82D3D2841000498AA /* mul */,
 			);
 			name = InternalViewerController.xib;
 			sourceTree = "<group>";
@@ -741,7 +731,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CFD79B142205B8450043A26D /* Base */,
-				CFD79B162205B84E0043A26D /* ru */,
+				CFC762C72D3D2841000498AA /* mul */,
 			);
 			name = NCViewerSheet.xib;
 			sourceTree = "<group>";

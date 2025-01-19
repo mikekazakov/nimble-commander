@@ -1,0 +1,222 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Case-sensitive search" : {
+      "comment" : "Menu item option in internal viewer search",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Поиск с учетом регистра"
+          }
+        }
+      }
+    },
+    "Clear Recents" : {
+      "comment" : "Menu item title in internal viewer search",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Очистить недавние поиски"
+          }
+        }
+      }
+    },
+    "File encoding" : {
+      "comment" : "Tooltip for the footer element",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кодировка файла"
+          }
+        }
+      }
+    },
+    "File position" : {
+      "comment" : "Tooltip for the footer element",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Позиция файла"
+          }
+        }
+      }
+    },
+    "File size" : {
+      "comment" : "Tooltip for the footer element",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Размер файла"
+          }
+        }
+      }
+    },
+    "File View - %@" : {
+      "comment" : "Window title for internal file viewer",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Просмотр файла - %@"
+          }
+        }
+      }
+    },
+    "Find whole phrase" : {
+      "comment" : "Menu item option in internal viewer search",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Искать фразу целиком"
+          }
+        }
+      }
+    },
+    "Hex" : {
+      "comment" : "Tooltip for menu element",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шестнадцатеричный"
+          }
+        }
+      }
+    },
+    "Language highlighting" : {
+      "comment" : "Tooltip for the footer element",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Язык подсветки"
+          }
+        }
+      }
+    },
+    "Opening file..." : {
+      "comment" : "Title for process sheet when opening a vfs file",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Открытие файла..."
+          }
+        }
+      }
+    },
+    "Plain Text" : {
+      "comment" : "Menu element of language selection",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Простой текст"
+          }
+        }
+      }
+    },
+    "Preview" : {
+      "comment" : "Tooltip for menu element",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Просмотр"
+          }
+        }
+      }
+    },
+    "Recent Searches" : {
+      "comment" : "Menu item title in internal viewer search",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Недавние поиски"
+          }
+        }
+      }
+    },
+    "Recents" : {
+      "comment" : "Menu item title in internal viewer search",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Последние"
+          }
+        }
+      }
+    },
+    "Search in file" : {
+      "comment" : "Placeholder for search text field in internal viewer",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Искать в файле"
+          }
+        }
+      }
+    },
+    "Text" : {
+      "comment" : "Tooltip for menu element",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Текст"
+          }
+        }
+      }
+    },
+    "View mode" : {
+      "comment" : "Tooltip for the footer element",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вид"
+          }
+        }
+      }
+    },
+    "Wrap lines" : {
+      "comment" : "Tooltip for the footer element",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заворачивать строки"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

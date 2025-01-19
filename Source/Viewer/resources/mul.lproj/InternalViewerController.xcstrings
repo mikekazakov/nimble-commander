@@ -1,0 +1,78 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "eXF-b7-bIU.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Go\"; ObjectID = \"eXF-b7-bIU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Go"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перейти"
+          }
+        }
+      }
+    },
+    "GIm-Ir-imd.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Go to\"; ObjectID = \"GIm-Ir-imd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Go to"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перейти к:"
+          }
+        }
+      }
+    },
+    "Grf-pi-kWw.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Percentage (%)\"; ObjectID = \"Grf-pi-kWw\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Percentage (%)"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проценту (%)"
+          }
+        }
+      }
+    },
+    "VGi-ZX-VHh.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Offset (B)\"; ObjectID = \"VGi-ZX-VHh\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Offset (B)"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Смещению (Б)"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

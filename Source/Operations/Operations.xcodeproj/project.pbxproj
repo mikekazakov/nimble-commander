@@ -320,8 +320,6 @@
 		CFF53BCD1EF3913B00F567C4 /* Progress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Progress.h; path = source/Progress.h; sourceTree = "<group>"; };
 		CFF544942620F2BC00A6C49C /* CopyingJobCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CopyingJobCallbacks.h; path = source/Copying/CopyingJobCallbacks.h; sourceTree = "<group>"; };
 		CFFA953F1F4C0C390035E606 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AttrsChangingDialog.xib; sourceTree = "<group>"; };
-		CFFA95441F4C17CC0035E606 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/Info-TestsPlist.strings"; sourceTree = "<group>"; };
-		CFFA954A1F4C17CD0035E606 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/Info-FrameworkPlist.strings"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -411,8 +409,6 @@
 			children = (
 				CFE0D33525A08DC200EFF0EB /* OperationsResources.plist */,
 				CFCFAC702D3D2F8D008C6E26 /* Localizable.xcstrings */,
-				CFFA954B1F4C17CD0035E606 /* Info-FrameworkPlist.strings */,
-				CFFA95451F4C17CC0035E606 /* Info-TestsPlist.strings */,
 				CFF53B3F1EDD197300F567C4 /* Info-Tests.plist */,
 				CFF53B331EDD197300F567C4 /* Info-Framework.plist */,
 				CFC4F8DF1EFCD9A50000B3EE /* Media.xcassets */,
@@ -1059,24 +1055,6 @@
 			);
 			name = AttrsChangingDialog.xib;
 			path = source/AttrsChanging;
-			sourceTree = "<group>";
-		};
-		CFFA95451F4C17CC0035E606 /* Info-TestsPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFFA95441F4C17CC0035E606 /* ru */,
-			);
-			name = "Info-TestsPlist.strings";
-			path = resources;
-			sourceTree = "<group>";
-		};
-		CFFA954B1F4C17CD0035E606 /* Info-FrameworkPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFFA954A1F4C17CD0035E606 /* ru */,
-			);
-			name = "Info-FrameworkPlist.strings";
-			path = resources;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

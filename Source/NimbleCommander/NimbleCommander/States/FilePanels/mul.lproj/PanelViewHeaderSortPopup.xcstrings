@@ -1,0 +1,402 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "0zO-Xr-vjm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Created Time ↓\"; ObjectID = \"0zO-Xr-vjm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Created Time ↓"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Времени создания ↓"
+          }
+        }
+      }
+    },
+    "1AJ-eC-Yem.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Created Time ↑\"; ObjectID = \"1AJ-eC-Yem\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Created Time ↑"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Времени создания ↑"
+          }
+        }
+      }
+    },
+    "9QW-2S-sOs.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Added Time ↑\"; ObjectID = \"9QW-2S-sOs\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Added Time ↑"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Времени добавления ↑"
+          }
+        }
+      }
+    },
+    "cz9-Bn-pwk.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Options\"; ObjectID = \"cz9-Bn-pwk\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Options"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Настройки"
+          }
+        }
+      }
+    },
+    "eaf-hX-ZwB.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Extension ↓\"; ObjectID = \"eaf-hX-ZwB\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Extension ↓"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Расширению ↓"
+          }
+        }
+      }
+    },
+    "ehv-BQ-xXY.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Accessed Time ↑\"; ObjectID = \"ehv-BQ-xXY\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Accessed Time ↑"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Времени открытия ↑"
+          }
+        }
+      }
+    },
+    "fpg-oA-HmO.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Case-Insensitive\"; ObjectID = \"fpg-oA-HmO\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Case-Insensitive"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Без учета регистра"
+          }
+        }
+      }
+    },
+    "gjX-58-iwr.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Modified Time ↓\"; ObjectID = \"gjX-58-iwr\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Modified Time ↓"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Времени модификации ↓"
+          }
+        }
+      }
+    },
+    "hdq-ge-Odh.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Size ↓\"; ObjectID = \"hdq-ge-Odh\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Size ↓"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Размеру ↓"
+          }
+        }
+      }
+    },
+    "ikn-C4-NbT.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Natural\"; ObjectID = \"ikn-C4-NbT\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Natural"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Естественное"
+          }
+        }
+      }
+    },
+    "kDo-Q7-LNI.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Size ↑\"; ObjectID = \"kDo-Q7-LNI\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Size ↑"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Размеру ↑"
+          }
+        }
+      }
+    },
+    "mJ3-ls-nKo.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Case-Sensitive\"; ObjectID = \"mJ3-ls-nKo\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Case-Sensitive"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "С учетом регистра"
+          }
+        }
+      }
+    },
+    "Nl7-FN-dds.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Modified Time ↑\"; ObjectID = \"Nl7-FN-dds\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Modified Time ↑"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Времени модификации ↑"
+          }
+        }
+      }
+    },
+    "prK-sX-wWv.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Name ↑\"; ObjectID = \"prK-sX-wWv\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Name ↑"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Имени ↑"
+          }
+        }
+      }
+    },
+    "RYi-mW-ybA.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Separate Folders from Files\"; ObjectID = \"RYi-mW-ybA\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Separate Folders from Files"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отделять папки от файлов"
+          }
+        }
+      }
+    },
+    "TSt-Ua-nI1.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Accessed Time ↓\"; ObjectID = \"TSt-Ua-nI1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Accessed Time ↓"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Времени открытия ↓"
+          }
+        }
+      }
+    },
+    "tzp-Uh-dub.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Extension ↑\"; ObjectID = \"tzp-Uh-dub\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Extension ↑"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Расширению ↑"
+          }
+        }
+      }
+    },
+    "uNn-d9-xaM.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Sort by\"; ObjectID = \"uNn-d9-xaM\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sort by"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сортировать по"
+          }
+        }
+      }
+    },
+    "UsI-k2-dKl.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Added Time ↓\"; ObjectID = \"UsI-k2-dKl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Added Time ↓"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Времени добавления ↓"
+          }
+        }
+      }
+    },
+    "VRa-0i-JUb.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Name ↓\"; ObjectID = \"VRa-0i-JUb\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Name ↓"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Имени ↓"
+          }
+        }
+      }
+    },
+    "ysh-wj-wqx.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Comparison\"; ObjectID = \"ysh-wj-wqx\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Comparison"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cравнение"
+          }
+        }
+      }
+    },
+    "Zk6-zX-sSG.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Extensionless Folders\"; ObjectID = \"Zk6-zX-sSG\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Extensionless Folders"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Папки без расширения"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

@@ -1,0 +1,348 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "2cu-Xx-BNh.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Base path:\"; ObjectID = \"2cu-Xx-BNh\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Base path:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Базовый путь:"
+          }
+        }
+      }
+    },
+    "9GC-kO-Qzl.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"Default\"; ObjectID = \"9GC-kO-Qzl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Default"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "авто"
+          }
+        }
+      }
+    },
+    "afZ-pr-a7Q.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"passwd\"; ObjectID = \"afZ-pr-a7Q\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "passwd"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "passwd"
+          }
+        }
+      }
+    },
+    "B2t-My-jEr.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"e.g. \\\"dav\\\", or leave it blank\"; ObjectID = \"B2t-My-jEr\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "e.g. \"dav\", or leave it blank"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "напр. \"dav\", или оставить пустым"
+          }
+        }
+      }
+    },
+    "bmN-il-FjS.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Username:\"; ObjectID = \"bmN-il-FjS\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Username:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Логин:"
+          }
+        }
+      }
+    },
+    "enT-ai-K9k.alternateTitle" : {
+      "comment" : "Class = \"NSButtonCell\"; alternateTitle = \"Save\"; ObjectID = \"enT-ai-K9k\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Save"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сохранить"
+          }
+        }
+      }
+    },
+    "enT-ai-K9k.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Connect\"; ObjectID = \"enT-ai-K9k\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Connect"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подключиться"
+          }
+        }
+      }
+    },
+    "Ep8-GA-vNO.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"http://\"; ObjectID = \"Ep8-GA-vNO\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "http://"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "http://"
+          }
+        }
+      }
+    },
+    "fbJ-q3-INF.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"webdav.example.com\"; ObjectID = \"fbJ-q3-INF\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "webdav.example.com"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "webdav.example.com"
+          }
+        }
+      }
+    },
+    "GUX-BP-Egc.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"anonymous\"; ObjectID = \"GUX-BP-Egc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "anonymous"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "anonymous"
+          }
+        }
+      }
+    },
+    "I4u-d6-5w1.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Remote port:\"; ObjectID = \"I4u-d6-5w1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Remote port:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удаленный порт:"
+          }
+        }
+      }
+    },
+    "i9i-lt-BeK.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Connect to WebDAV server:\"; ObjectID = \"i9i-lt-BeK\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Connect to WebDAV server:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подключиться к WebDAV серверу:"
+          }
+        }
+      }
+    },
+    "p6q-8a-DGB.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"https://\"; ObjectID = \"p6q-8a-DGB\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "https://"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://"
+          }
+        }
+      }
+    },
+    "RLB-gE-9sF.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"arbitrary title\"; ObjectID = \"RLB-gE-9sF\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "arbitrary title"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "произвольное название"
+          }
+        }
+      }
+    },
+    "Tc8-ck-w7G.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Password:\"; ObjectID = \"Tc8-ck-w7G\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Password:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пароль:"
+          }
+        }
+      }
+    },
+    "TZ6-Jn-QNP.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Cancel\"; ObjectID = \"TZ6-Jn-QNP\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cancel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отмена"
+          }
+        }
+      }
+    },
+    "WKP-im-MqU.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Server:\"; ObjectID = \"WKP-im-MqU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Server:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сервер:"
+          }
+        }
+      }
+    },
+    "xn6-Gp-4hn.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Protocol:\"; ObjectID = \"xn6-Gp-4hn\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Protocol:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Протокол:"
+          }
+        }
+      }
+    },
+    "YiH-ay-HUt.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Title:\"; ObjectID = \"YiH-ay-HUt\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Title:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Название:"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

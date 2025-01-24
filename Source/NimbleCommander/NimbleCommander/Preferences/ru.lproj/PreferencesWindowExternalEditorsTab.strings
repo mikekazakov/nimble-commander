@@ -1,9 +1,0 @@
-/* Class = "NSButtonCell"; title = "When choosing an editor to start, editors are checked in order of appearance in this list."; ObjectID = "29m-Fx-ZcC"; */
-"29m-Fx-ZcC.title" = "При выборе редактора они проверяются в очередности этого списка.";
-
-/* Class = "NSTableColumn"; headerCell.title = "File mask"; ObjectID = "gJg-B1-OAZ"; */
-"gJg-B1-OAZ.headerCell.title" = "Маска файла";
-
-/* Class = "NSTableColumn"; headerCell.title = "External editor"; ObjectID = "pPs-JA-wnQ"; */
-"pPs-JA-wnQ.headerCell.title" = "Внешний редактор";
-

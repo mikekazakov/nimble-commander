@@ -1,0 +1,222 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "5DS-YM-ifY.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Connect\"; ObjectID = \"5DS-YM-ifY\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Connect"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подключиться"
+          }
+        }
+      }
+    },
+    "9Kk-bR-qif.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Connection Path\"; ObjectID = \"9Kk-bR-qif\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Connection Path"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Путь подключения"
+          }
+        }
+      }
+    },
+    "Ckr-jX-yb4.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"SFTP Server\"; ObjectID = \"Ckr-jX-yb4\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "SFTP Server"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SFTP сервер"
+          }
+        }
+      }
+    },
+    "f3W-UC-2ji.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"FTP Server\"; ObjectID = \"f3W-UC-2ji\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "FTP Server"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FTP сервер"
+          }
+        }
+      }
+    },
+    "gyF-1f-E8G.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"WebDAV Server\"; ObjectID = \"gyF-1f-E8G\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "WebDAV Server"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WebDAV сервер"
+          }
+        }
+      }
+    },
+    "K8I-rQ-jcd.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Network Share\"; ObjectID = \"K8I-rQ-jcd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Network Share"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сетевая папка"
+          }
+        }
+      }
+    },
+    "ltj-qY-kNR.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Dropbox Account\"; ObjectID = \"ltj-qY-kNR\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Dropbox Account"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Учетная запись Dropbox"
+          }
+        }
+      }
+    },
+    "Nyu-es-qd5.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Title\"; ObjectID = \"Nyu-es-qd5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Title"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Название"
+          }
+        }
+      }
+    },
+    "T1K-Qg-QUI.ibShadowedToolTips[0]" : {
+      "comment" : "Class = \"NSSegmentedCell\"; T1K-Qg-QUI.ibShadowedToolTips[0] = \"^A\"; ObjectID = \"T1K-Qg-QUI\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^A"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^A"
+          }
+        }
+      }
+    },
+    "T1K-Qg-QUI.ibShadowedToolTips[1]" : {
+      "comment" : "Class = \"NSSegmentedCell\"; T1K-Qg-QUI.ibShadowedToolTips[1] = \"^X, ⌫\"; ObjectID = \"T1K-Qg-QUI\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^X, ⌫"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^X, ⌫"
+          }
+        }
+      }
+    },
+    "T1K-Qg-QUI.ibShadowedToolTips[2]" : {
+      "comment" : "Class = \"NSSegmentedCell\"; T1K-Qg-QUI.ibShadowedToolTips[2] = \"^E\"; ObjectID = \"T1K-Qg-QUI\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^E"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^E"
+          }
+        }
+      }
+    },
+    "wk0-oi-k9z.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Close\"; ObjectID = \"wk0-oi-k9z\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закрыть"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

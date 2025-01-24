@@ -1,0 +1,330 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "0Kp-zw-kW9.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"^K\"; ObjectID = \"0Kp-zw-kW9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^K"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^K"
+          }
+        }
+      }
+    },
+    "0un-JC-4pV.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSMenuItem\"; ibShadowedToolTip = \"Otherwise the item will be skipped\"; ObjectID = \"0un-JC-4pV\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Otherwise the item will be skipped"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Иначе объект будет пропущен"
+          }
+        }
+      }
+    },
+    "2O5-JQ-7Zs.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSMenuItem\"; ibShadowedToolTip = \"Otherwise the item will be skipped\"; ObjectID = \"2O5-JQ-7Zs\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Otherwise the item will be skipped"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Иначе объект будет пропущен"
+          }
+        }
+      }
+    },
+    "2O5-JQ-7Zs.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Overwrite Older\"; ObjectID = \"2O5-JQ-7Zs\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Overwrite Older"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заменить старый"
+          }
+        }
+      }
+    },
+    "4JC-am-dBk.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Keep Both\"; ObjectID = \"4JC-am-dBk\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Keep Both"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Оставить оба"
+          }
+        }
+      }
+    },
+    "8Xz-24-O4V.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Overwrite\"; ObjectID = \"8Xz-24-O4V\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Overwrite"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заменить"
+          }
+        }
+      }
+    },
+    "10.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"^S\"; ObjectID = \"10\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^S"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^S"
+          }
+        }
+      }
+    },
+    "12.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Skip\"; ObjectID = \"12\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Skip"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пропустить"
+          }
+        }
+      }
+    },
+    "15.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"^P\"; ObjectID = \"15\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^P"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^P"
+          }
+        }
+      }
+    },
+    "16.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Append\"; ObjectID = \"16\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Append"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дописать"
+          }
+        }
+      }
+    },
+    "30.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"⌘⎋\"; ObjectID = \"30\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "⌘⎋"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌘⎋"
+          }
+        }
+      }
+    },
+    "31.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Abort\"; ObjectID = \"31\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Abort"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отменить"
+          }
+        }
+      }
+    },
+    "37.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"Hold Shift to apply to all (^A)\"; ObjectID = \"37\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hold Shift to apply to all (^A)"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удерживайте Shift чтобы применить ко всем (^A)"
+          }
+        }
+      }
+    },
+    "38.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Apply to all\"; ObjectID = \"38\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Apply to all"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Применить ко всем"
+          }
+        }
+      }
+    },
+    "57.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"New:\"; ObjectID = \"57\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "New:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Новый:"
+          }
+        }
+      }
+    },
+    "61.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Existing:\"; ObjectID = \"61\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Existing:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Имеющийся:"
+          }
+        }
+      }
+    },
+    "120.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"File already exists\"; ObjectID = \"120\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "File already exists"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файл уже существует"
+          }
+        }
+      }
+    },
+    "B89-N8-gQP.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"^O\"; ObjectID = \"B89-N8-gQP\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^O"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^O"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

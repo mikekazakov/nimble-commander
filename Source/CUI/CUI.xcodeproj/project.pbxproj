@@ -18,11 +18,11 @@
 		CF46018725612CFD0095FC73 /* CUIResources.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = CUIResources.plist; path = resources/CUIResources.plist; sourceTree = "<group>"; };
 		CFAA4D0D2BBADD03003073A2 /* CommandPopover.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CommandPopover.h; path = include/CUI/CommandPopover.h; sourceTree = "<group>"; };
 		CFAA4D0E2BBADD0D003073A2 /* CommandPopover.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CommandPopover.mm; path = source/CommandPopover.mm; sourceTree = "<group>"; };
+		CFCFAC792D3D31CA008C6E26 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = resources/mul.lproj/ProcessSheetController.xcstrings; sourceTree = "<group>"; };
 		CFD79AE121FE29900043A26D /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
 		CFD79AEA21FE474B0043A26D /* ProcessSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessSheetController.h; path = include/CUI/ProcessSheetController.h; sourceTree = "<group>"; };
 		CFD79AEC21FE47560043A26D /* ProcessSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProcessSheetController.mm; path = source/ProcessSheetController.mm; sourceTree = "<group>"; };
 		CFD79AEF21FE475F0043A26D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = resources/Base.lproj/ProcessSheetController.xib; sourceTree = "<group>"; };
-		CFD79AF621FE478E0043A26D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = resources/ru.lproj/ProcessSheetController.strings; sourceTree = "<group>"; };
 		CFD79AFA21FE482D0043A26D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		CFD79AFC21FE48310043A26D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		CFD79AFE21FE48350043A26D /* libUtility.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libUtility.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -233,7 +233,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CFD79AEF21FE475F0043A26D /* Base */,
-				CFD79AF621FE478E0043A26D /* ru */,
+				CFCFAC792D3D31CA008C6E26 /* mul */,
 			);
 			name = ProcessSheetController.xib;
 			sourceTree = "<group>";

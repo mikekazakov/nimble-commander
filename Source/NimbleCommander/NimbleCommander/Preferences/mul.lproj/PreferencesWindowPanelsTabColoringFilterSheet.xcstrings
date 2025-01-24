@@ -1,0 +1,168 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "BgY-7f-vUa.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Symbolic link\"; ObjectID = \"BgY-7f-vUa\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Symbolic link"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Символическая ссылка"
+          }
+        }
+      }
+    },
+    "gIg-Vl-0HW.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"OK\"; ObjectID = \"gIg-Vl-0HW\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "OK"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ОК"
+          }
+        }
+      }
+    },
+    "MwK-gY-7TL.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Hidden\"; ObjectID = \"MwK-gY-7TL\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hidden"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скрытый"
+          }
+        }
+      }
+    },
+    "oDn-pT-U2H.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Regular file\"; ObjectID = \"oDn-pT-U2H\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Regular file"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Обычный файл"
+          }
+        }
+      }
+    },
+    "Phl-ru-7YI.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Filename mask:\"; ObjectID = \"Phl-ru-7YI\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Filename mask:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Маска имени файла:"
+          }
+        }
+      }
+    },
+    "rmY-Vd-0Fr.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Executable\"; ObjectID = \"rmY-Vd-0Fr\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Executable"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Исполняемый"
+          }
+        }
+      }
+    },
+    "Uaf-z8-1YE.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Selected\"; ObjectID = \"Uaf-z8-1YE\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Selected"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выделенный"
+          }
+        }
+      }
+    },
+    "XPG-7b-9P8.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Directory\"; ObjectID = \"XPG-7b-9P8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Directory"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Папка"
+          }
+        }
+      }
+    },
+    "yJQ-ob-3Ua.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Flags:\"; ObjectID = \"yJQ-ob-3Ua\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Flags:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Флаги:"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

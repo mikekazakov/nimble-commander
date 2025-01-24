@@ -1,0 +1,72 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "1.title" : {
+      "comment" : "Class = \"NSWindow\"; title = \"Window\"; ObjectID = \"1\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ""
+          }
+        }
+      }
+    },
+    "dOM-to-sC6.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Cancel\"; ObjectID = \"dOM-to-sC6\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cancel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отмена"
+          }
+        }
+      }
+    },
+    "DTg-xe-1S8.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Go\"; ObjectID = \"DTg-xe-1S8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Go"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перейти"
+          }
+        }
+      }
+    },
+    "VhM-Z6-zaU.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Go to the folder:\"; ObjectID = \"VhM-Z6-zaU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Go to the folder:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перейти к папке:"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

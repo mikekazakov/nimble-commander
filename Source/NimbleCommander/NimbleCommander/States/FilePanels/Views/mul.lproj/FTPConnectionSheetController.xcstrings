@@ -1,0 +1,402 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "5iY-lT-uKD.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Connect to FTP server:\"; ObjectID = \"5iY-lT-uKD\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Connect to FTP server:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подключиться к FTP серверу:"
+          }
+        }
+      }
+    },
+    "255-mx-b6a.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"anonymous@domain.com\"; ObjectID = \"255-mx-b6a\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "anonymous@domain.com"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "anonymous@domain.com"
+          }
+        }
+      }
+    },
+    "dA5-HK-3gm.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Title:\"; ObjectID = \"dA5-HK-3gm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Title:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Название:"
+          }
+        }
+      }
+    },
+    "EJR-gc-SwI.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Remote port:\"; ObjectID = \"EJR-gc-SwI\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Remote port:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удаленный порт:"
+          }
+        }
+      }
+    },
+    "FdQ-zx-5B7.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"ftp.example.com\"; ObjectID = \"FdQ-zx-5B7\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ftp.example.com"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ftp.example.com"
+          }
+        }
+      }
+    },
+    "HKG-Fq-wzu.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Active mode\"; ObjectID = \"HKG-Fq-wzu\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Active mode"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Активный режим"
+          }
+        }
+      }
+    },
+    "hUY-J5-Twm.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Remote path:\"; ObjectID = \"hUY-J5-Twm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Remote path:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удаленный путь:"
+          }
+        }
+      }
+    },
+    "j8e-Wn-3Fa.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Cancel\"; ObjectID = \"j8e-Wn-3Fa\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cancel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закрыть"
+          }
+        }
+      }
+    },
+    "KlY-P2-CgM.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"/\"; ObjectID = \"KlY-P2-CgM\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "/"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "/"
+          }
+        }
+      }
+    },
+    "MG5-t4-OT6.ibShadowedIsNilPlaceholder" : {
+      "comment" : "Class = \"CocoaBindingsConnection\"; ibShadowedIsNilPlaceholder = \"anonymous@domain.com\"; ObjectID = \"MG5-t4-OT6\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "anonymous@domain.com"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "anonymous@domain.com"
+          }
+        }
+      }
+    },
+    "mnE-WW-WZY.ibShadowedIsNilPlaceholder" : {
+      "comment" : "Class = \"CocoaBindingsConnection\"; ibShadowedIsNilPlaceholder = \"/\"; ObjectID = \"mnE-WW-WZY\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "/"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "/"
+          }
+        }
+      }
+    },
+    "O5E-rL-Xtf.ibShadowedIsNilPlaceholder" : {
+      "comment" : "Class = \"CocoaBindingsConnection\"; ibShadowedIsNilPlaceholder = \"anonymous\"; ObjectID = \"O5E-rL-Xtf\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "anonymous"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "anonymous"
+          }
+        }
+      }
+    },
+    "Oei-y6-cIo.ibShadowedIsNilPlaceholder" : {
+      "comment" : "Class = \"CocoaBindingsConnection\"; ibShadowedIsNilPlaceholder = \"21\"; ObjectID = \"Oei-y6-cIo\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "21"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "21"
+          }
+        }
+      }
+    },
+    "p3m-p9-Z9X.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"anonymous\"; ObjectID = \"p3m-p9-Z9X\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "anonymous"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "anonymous"
+          }
+        }
+      }
+    },
+    "P18-Nd-gLg.ibShadowedIsNilPlaceholder" : {
+      "comment" : "Class = \"CocoaBindingsConnection\"; ibShadowedIsNilPlaceholder = \"ftp.example.com\"; ObjectID = \"P18-Nd-gLg\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ftp.example.com"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ftp.example.com"
+          }
+        }
+      }
+    },
+    "Sp1-bt-rdp.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"21\"; ObjectID = \"Sp1-bt-rdp\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "21"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "21"
+          }
+        }
+      }
+    },
+    "Spe-8u-71A.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Username:\"; ObjectID = \"Spe-8u-71A\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Username:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Логин:"
+          }
+        }
+      }
+    },
+    "xIA-lj-ojE.alternateTitle" : {
+      "comment" : "Class = \"NSButtonCell\"; alternateTitle = \"Save\"; ObjectID = \"xIA-lj-ojE\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Save"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сохранить"
+          }
+        }
+      }
+    },
+    "xIA-lj-ojE.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Connect\"; ObjectID = \"xIA-lj-ojE\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Connect"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подключиться"
+          }
+        }
+      }
+    },
+    "Xwj-Vw-t6b.ibShadowedIsNilPlaceholder" : {
+      "comment" : "Class = \"CocoaBindingsConnection\"; ibShadowedIsNilPlaceholder = \"arbitrary title\"; ObjectID = \"Xwj-Vw-t6b\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "arbitrary title"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "произвольное название"
+          }
+        }
+      }
+    },
+    "ybn-fX-OGa.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Password:\"; ObjectID = \"ybn-fX-OGa\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Password:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пароль:"
+          }
+        }
+      }
+    },
+    "Z0v-Pw-m6u.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Server:\"; ObjectID = \"Z0v-Pw-m6u\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Server:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сервер:"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

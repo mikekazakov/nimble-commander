@@ -1,0 +1,186 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Are you sure you want to clear saved file states?" : {
+      "comment" : "Message text asking if user really wants to clear saved viewer file states",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вы действительно хотите очистить сохраненные состояния файлов?"
+          }
+        }
+      }
+    },
+    "Are you sure you want to reset granted filesystem access?" : {
+      "comment" : "Message text asking if user really wants to reset current file system access",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вы действительно хотите сбросить доступ к файловой системе?"
+          }
+        }
+      }
+    },
+    "Are you sure you want to reset hotkeys to defaults?" : {
+      "comment" : "Message text asking if user really wants to reset hotkeys to defaults",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вы действительно хотите установить горячие клавиши по умолчанию? "
+          }
+        }
+      }
+    },
+    "edit" : {
+      "comment" : "Coloring rules edit button title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ред."
+          }
+        }
+      }
+    },
+    "Editors" : {
+      "comment" : "General preferences tab title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Редакторы"
+          }
+        }
+      }
+    },
+    "General" : {
+      "comment" : "General preferences tab title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Основное"
+          }
+        }
+      }
+    },
+    "Hotkeys" : {
+      "comment" : "General preferences tab title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Хоткеи"
+          }
+        }
+      }
+    },
+    "Panels" : {
+      "comment" : "General preferences tab title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Панели"
+          }
+        }
+      }
+    },
+    "Terminal" : {
+      "comment" : "General preferences tab title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Терминал"
+          }
+        }
+      }
+    },
+    "Themes" : {
+      "comment" : "General preferences tab title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Темы"
+          }
+        }
+      }
+    },
+    "This will cause Nimble Commander to ask you for access when necessary." : {
+      "comment" : "Informative text saying that Nimble Commander will ask for filesystem access when need it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nimble Commander будет спрашивать вас о предоставлении доступа при необходимости."
+          }
+        }
+      }
+    },
+    "This will clear any custom hotkeys." : {
+      "comment" : "Informative text when user wants to reset hotkeys to defaults",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ваши изменения горячих клавиш будут удалены."
+          }
+        }
+      }
+    },
+    "This will erase stored positions, encodings, selections, etc." : {
+      "comment" : "Informative text displayed when the user is going to clear saved file state",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Будут удалены сохраненные позиции, кодировки, выделения и т.д."
+          }
+        }
+      }
+    },
+    "Tools" : {
+      "comment" : "Tools preferences tab title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Инструменты"
+          }
+        }
+      }
+    },
+    "Viewer" : {
+      "comment" : "General preferences tab title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Просмотрщик"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

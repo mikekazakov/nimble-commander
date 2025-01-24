@@ -1,0 +1,856 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ “%@” to “%@”" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ “%2$@” в “%3$@”"
+          }
+        }
+      }
+    },
+    "%@ %@ items to “%@”" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@ объектов в “%3$@”"
+          }
+        }
+      }
+    },
+    "%@ of %@" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ из %2$@"
+          }
+        }
+      }
+    },
+    "%@ of %@ - %@/s" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ из %2$@ - %3$@/с"
+          }
+        }
+      }
+    },
+    "%@ of %@ - %@/s, %@" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ из %2$@ - %3$@/с, %4$@"
+          }
+        }
+      }
+    },
+    "%@ of %@ - Paused" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ из %2$@ - Пауза"
+          }
+        }
+      }
+    },
+    "%@ of %@, %@" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ из %2$@, %3$@"
+          }
+        }
+      }
+    },
+    "%@ to “%@”" : {
+      "comment" : "Compressing “%@”",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ в “%2$@”"
+          }
+        }
+      }
+    },
+    "Abort" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прервать"
+          }
+        }
+      }
+    },
+    "Altering a symbolic link" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Изменение символической ссылки"
+          }
+        }
+      }
+    },
+    "Altering file attributes" : {
+      "comment" : "Title for attributes changing operation",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Изменение файловых атрибутов"
+          }
+        }
+      }
+    },
+    "Batch renaming %@ items" : {
+      "comment" : "Operation title batch renaming",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Групповое переименование %@ объектов"
+          }
+        }
+      }
+    },
+    "Cannot delete a locked item" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Невозможно удалить защищенный объект"
+          }
+        }
+      }
+    },
+    "Cannot move a locked item to Trash" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Невозможно переместить зищищенный объект в Корзину"
+          }
+        }
+      }
+    },
+    "Cannot open a locked item" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Невозможно открыть защищенный объект"
+          }
+        }
+      }
+    },
+    "Cannot remove the last item being renamed" : {
+      "comment" : "Alert shown when a user tries to remove all item from a Batch Rename dialog",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Невозможно удалить последний объект для переименования"
+          }
+        }
+      }
+    },
+    "Cannot rename a locked item" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Невозможно переименовать заблокированный объект"
+          }
+        }
+      }
+    },
+    "Change file attributes for “%@”" : {
+      "comment" : "Title for file attributes sheet, single item",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Изменить файловые атрибуты для “%@”"
+          }
+        }
+      }
+    },
+    "Change file attributes for %@ selected items" : {
+      "comment" : "Title for file attributes sheet, multiple items",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Изменить файловые атрибуты для %@ объектов"
+          }
+        }
+      }
+    },
+    "Checksum verification failed" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ошибка верификации контрольной суммы"
+          }
+        }
+      }
+    },
+    "Cleaning up.." : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Завершение..."
+          }
+        }
+      }
+    },
+    "Close" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закрыть"
+          }
+        }
+      }
+    },
+    "Compress “%@” to:" : {
+      "comment" : "Compress files sheet prompt, compressing single file",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сжать “%@” в:"
+          }
+        }
+      }
+    },
+    "Compress %@ items to:" : {
+      "comment" : "Compress files sheet prompt, compressing many files",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сжать %@ объектов в:"
+          }
+        }
+      }
+    },
+    "Compressing “%@”" : {
+      "comment" : "Compressing “%@”",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сжатие “%@”"
+          }
+        }
+      }
+    },
+    "Compressing %d items" : {
+      "comment" : "Compressing %d items",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compressing %#@items@"
+          },
+          "substitutions" : {
+            "items" : {
+              "formatSpecifier" : "d",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg item"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg items"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сжатие %d объектов"
+          }
+        }
+      }
+    },
+    "Continue" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Продолжить"
+          }
+        }
+      }
+    },
+    "Copy “%@” to:" : {
+      "comment" : "Copy files sheet prompt, copying single file",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скопировать “%@” в:"
+          }
+        }
+      }
+    },
+    "Copy %@ items to:" : {
+      "comment" : "Copy files sheet prompt, copying many files",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скопировать %@ объектов в:"
+          }
+        }
+      }
+    },
+    "Copying" : {
+      "comment" : "Prefix of a file operation",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копирование"
+          }
+        }
+      }
+    },
+    "Create a hardlink of '%@' to:" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Создать жесткую ссылку '%@' на:"
+          }
+        }
+      }
+    },
+    "Creating a directory “%@”" : {
+      "comment" : "Creating a directory “%@”",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Создание директории “%@”"
+          }
+        }
+      }
+    },
+    "Creating a new hard link" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Создание новой жесткой ссылки"
+          }
+        }
+      }
+    },
+    "Creating a new symbolic link" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Создание новой символической ссылки"
+          }
+        }
+      }
+    },
+    "Delete Permanently" : {
+      "comment" : "Menu item title in file deletion sheet",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удалить необратимо"
+          }
+        }
+      }
+    },
+    "Deleting “%@”" : {
+      "comment" : "Operation title for single item deletion",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удаление “%@”"
+          }
+        }
+      }
+    },
+    "Deleting %@ items" : {
+      "comment" : "Operation title for multiple items deletion",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удаление %@ объектов"
+          }
+        }
+      }
+    },
+    "Do you want to delete “%@”?" : {
+      "comment" : "Asking user to delete a file",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вы ходите удалить “%@”?"
+          }
+        }
+      }
+    },
+    "Do you want to delete %@ items?" : {
+      "comment" : "Asking user to delete multiple files",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вы ходите удалить %@ объектов?"
+          }
+        }
+      }
+    },
+    "Failed to access a directory" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отсутствует доступ к папке"
+          }
+        }
+      }
+    },
+    "Failed to access a file" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отсутствует доступ к файлу"
+          }
+        }
+      }
+    },
+    "Failed to access an item" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отсутствует доступ к объекту"
+          }
+        }
+      }
+    },
+    "Failed to alter a symbolic link" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось изменить символическую ссылку"
+          }
+        }
+      }
+    },
+    "Failed to create a directory" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось создать папку"
+          }
+        }
+      }
+    },
+    "Failed to create a hard link" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось создать жесткую ссылку"
+          }
+        }
+      }
+    },
+    "Failed to create a symbolic link" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось создать символическую ссылку"
+          }
+        }
+      }
+    },
+    "Failed to delete a destination file" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось удалить целевой файл"
+          }
+        }
+      }
+    },
+    "Failed to delete a directory" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось удалить папку"
+          }
+        }
+      }
+    },
+    "Failed to delete a file" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось удалить файл"
+          }
+        }
+      }
+    },
+    "Failed to delete a source item" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось удалить исходный файл"
+          }
+        }
+      }
+    },
+    "Failed to move an item to Trash" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось переместить объект в Корзину"
+          }
+        }
+      }
+    },
+    "Failed to open a destination file" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось открыть целевой файл"
+          }
+        }
+      }
+    },
+    "Failed to perform chflags" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось выполнить chflags"
+          }
+        }
+      }
+    },
+    "Failed to perform chmod" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось выполнить chmod"
+          }
+        }
+      }
+    },
+    "Failed to perform chown" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось выполнить chown"
+          }
+        }
+      }
+    },
+    "Failed to read a destination file" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось прочитать целевой файл"
+          }
+        }
+      }
+    },
+    "Failed to read a file" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось прочитать файл"
+          }
+        }
+      }
+    },
+    "Failed to read a source file" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось прочитать исходный файл"
+          }
+        }
+      }
+    },
+    "Failed to rename an item" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось переименовать объект"
+          }
+        }
+      }
+    },
+    "Failed to set file time" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось установить время файла"
+          }
+        }
+      }
+    },
+    "Failed to unlock an item" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось разблокировать объект"
+          }
+        }
+      }
+    },
+    "Failed to write a file" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось записать файл"
+          }
+        }
+      }
+    },
+    "Failed to write an archive" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось записать архив"
+          }
+        }
+      }
+    },
+    "Item is not a directory" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Объект не явлется папкой"
+          }
+        }
+      }
+    },
+    "Move to Trash" : {
+      "comment" : "Menu item title in file deletion sheet",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переместить в Корзину"
+          }
+        }
+      }
+    },
+    "Moving" : {
+      "comment" : "Prefix of a file operation",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перенос"
+          }
+        }
+      }
+    },
+    "Overwrite" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заменить"
+          }
+        }
+      }
+    },
+    "Preparing to copy “%@”" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подготовка к копированию “%@”"
+          }
+        }
+      }
+    },
+    "Preparing to copy %@ items" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подготовка к копированию %@ объектов"
+          }
+        }
+      }
+    },
+    "Preparing to move “%@”" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подготовка к перемещению “%@”"
+          }
+        }
+      }
+    },
+    "Preparing to move %@ items" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подготовка к перемещению %@ объектов"
+          }
+        }
+      }
+    },
+    "Rename/move “%@” to:" : {
+      "comment" : "Move files sheet prompt, moving single file",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переименовать/переместить “%@” в:"
+          }
+        }
+      }
+    },
+    "Rename/move %@ items to:" : {
+      "comment" : "Move files sheet prompt, moving many files",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переименовать/переместить %@ объектов в:"
+          }
+        }
+      }
+    },
+    "Retry" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Повторить"
+          }
+        }
+      }
+    },
+    "Skip" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пропустить"
+          }
+        }
+      }
+    },
+    "Skip All" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пропустить все"
+          }
+        }
+      }
+    },
+    "Symbolic link '%@' points at:" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Символическая ссылка '%@' указывает на:"
+          }
+        }
+      }
+    },
+    "Unlock" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Разблокировать"
+          }
+        }
+      }
+    },
+    "Verifying operation result.." : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верификация результата..."
+          }
+        }
+      }
+    },
+    "Waiting in the queue..." : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ожидание в очереди..."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

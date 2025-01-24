@@ -1,0 +1,276 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "9bP-RY-UQi.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Copy file times\"; ObjectID = \"9bP-RY-UQi\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copy file times"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копировать время"
+          }
+        }
+      }
+    },
+    "17.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Copy\"; ObjectID = \"17\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copy"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копировать"
+          }
+        }
+      }
+    },
+    "22.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Cancel\"; ObjectID = \"22\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cancel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отмена"
+          }
+        }
+      }
+    },
+    "AJ8-VF-u7U.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Copy UNIX flags\"; ObjectID = \"AJ8-VF-u7U\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copy UNIX flags"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копировать флаги UNIX"
+          }
+        }
+      }
+    },
+    "bVV-Mm-AAW.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Copy extended attributes\"; ObjectID = \"bVV-Mm-AAW\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copy extended attributes"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копировать расширенные атрибуты"
+          }
+        }
+      }
+    },
+    "E1e-vG-fVc.title" : {
+      "comment" : "Class = \"NSViewController\"; title = \"Advanced options\"; ObjectID = \"E1e-vG-fVc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Advanced options"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Расширенные настройки"
+          }
+        }
+      }
+    },
+    "GuV-mI-Jt1.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Never\"; ObjectID = \"GuV-mI-Jt1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Never"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Никогда"
+          }
+        }
+      }
+    },
+    "j2d-E0-qK6.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Preserve symbolic links\"; ObjectID = \"j2d-E0-qK6\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Preserve symbolic links"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сохранять символические ссылки"
+          }
+        }
+      }
+    },
+    "jQo-c7-41i.title" : {
+      "comment" : "Class = \"NSViewController\"; title = \"Advanced options\"; ObjectID = \"jQo-c7-41i\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Advanced options"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Расширенные настройки"
+          }
+        }
+      }
+    },
+    "SJz-Fu-krG.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"When moving\"; ObjectID = \"SJz-Fu-krG\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "When moving"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "При перемещении"
+          }
+        }
+      }
+    },
+    "UQ3-7b-2zx.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Copy\"; ObjectID = \"UQ3-7b-2zx\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copy"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копировать"
+          }
+        }
+      }
+    },
+    "X52-kY-B6Q.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Rename\"; ObjectID = \"X52-kY-B6Q\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Rename"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переименовать"
+          }
+        }
+      }
+    },
+    "xmS-ea-Z0v.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Always\"; ObjectID = \"xmS-ea-Z0v\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Always"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Всегда"
+          }
+        }
+      }
+    },
+    "y8g-hO-IAN.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Copy UNIX ownership\"; ObjectID = \"y8g-hO-IAN\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copy UNIX ownership"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копировать владельцев UNIX"
+          }
+        }
+      }
+    },
+    "zc8-ET-VWt.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Verify copied files:\"; ObjectID = \"zc8-ET-VWt\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Verify copied files:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверять скопированные файлы:"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

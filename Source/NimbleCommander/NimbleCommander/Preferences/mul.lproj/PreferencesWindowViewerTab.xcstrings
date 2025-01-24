@@ -1,0 +1,438 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "4.label" : {
+      "comment" : "Class = \"NSTabViewItem\"; label = \"Common\"; ObjectID = \"4\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Common"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Общее"
+          }
+        }
+      }
+    },
+    "5Gm-Pq-yfz.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Same window\"; ObjectID = \"5Gm-Pq-yfz\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Same window"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Текущем окне"
+          }
+        }
+      }
+    },
+    "263.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Auto-detect encoding\"; ObjectID = \"263\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Auto-detect encoding"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Автоопределение кодировки"
+          }
+        }
+      }
+    },
+    "273.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Default encoding:\"; ObjectID = \"273\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Default encoding:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кодировка по умолчанию:"
+          }
+        }
+      }
+    },
+    "340.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"File history:\"; ObjectID = \"340\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "File history:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "История файлов:"
+          }
+        }
+      }
+    },
+    "348.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Save position\"; ObjectID = \"348\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Save position"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сохранять позицию"
+          }
+        }
+      }
+    },
+    "375.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Save view mode\"; ObjectID = \"375\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Save view mode"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сохранять режим отображения"
+          }
+        }
+      }
+    },
+    "382.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Save encoding\"; ObjectID = \"382\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Save encoding"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сохранять кодировку"
+          }
+        }
+      }
+    },
+    "389.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Save wrapping\"; ObjectID = \"389\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Save wrapping"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сохранять перенос"
+          }
+        }
+      }
+    },
+    "396.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Save selection\"; ObjectID = \"396\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Save selection"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сохранять выделение"
+          }
+        }
+      }
+    },
+    "596.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Clear history\"; ObjectID = \"596\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Clear history"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Очистить историю"
+          }
+        }
+      }
+    },
+    "606.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"File window size:\"; ObjectID = \"606\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "File window size:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Размер окна файла:"
+          }
+        }
+      }
+    },
+    "616.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"32 Kb\"; ObjectID = \"616\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "32 Kb"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "32 Кб"
+          }
+        }
+      }
+    },
+    "617.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"64 Kb\"; ObjectID = \"617\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "64 Kb"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "64 Кб"
+          }
+        }
+      }
+    },
+    "618.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"128 Kb\"; ObjectID = \"618\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "128 Kb"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "128 Кб"
+          }
+        }
+      }
+    },
+    "636.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"256 Kb\"; ObjectID = \"636\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "256 Kb"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "256 Кб"
+          }
+        }
+      }
+    },
+    "637.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"512 Kb\"; ObjectID = \"637\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "512 Kb"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "512 Кб"
+          }
+        }
+      }
+    },
+    "638.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"1024 Kb\"; ObjectID = \"638\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "1024 Kb"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1024 Кб"
+          }
+        }
+      }
+    },
+    "dec-0H-tCg.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Check com.apple.TextEncoding\"; ObjectID = \"dec-0H-tCg\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Check com.apple.TextEncoding"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверять com.apple.TextEncoding"
+          }
+        }
+      }
+    },
+    "hZn-wm-Xh0.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Save language\"; ObjectID = \"hZn-wm-Xh0\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Save language"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сохранять язык"
+          }
+        }
+      }
+    },
+    "Mav-lu-obi.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Separate window\"; ObjectID = \"Mav-lu-obi\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Separate window"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отдельном окне"
+          }
+        }
+      }
+    },
+    "R3d-db-TY3.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Show viewer in:\"; ObjectID = \"R3d-db-TY3\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show viewer in:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показывать просмотрщик в:"
+          }
+        }
+      }
+    },
+    "tgW-Zz-ajT.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Enable syntax highlighting\"; ObjectID = \"tgW-Zz-ajT\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enable syntax highlighting"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Включить подсветку синтаксиса"
+          }
+        }
+      }
+    },
+    "UJD-ca-RTx.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Reload automatically\"; ObjectID = \"UJD-ca-RTx\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reload automatically"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Обновлять автоматически"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

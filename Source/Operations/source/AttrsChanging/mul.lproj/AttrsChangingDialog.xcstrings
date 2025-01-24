@@ -1,0 +1,996 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "2He-Td-Nlu.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"UF_APPEND\"; ObjectID = \"2He-Td-Nlu\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "UF_APPEND"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_APPEND"
+          }
+        }
+      }
+    },
+    "5pT-eE-xwu.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Additional access rights\"; ObjectID = \"5pT-eE-xwu\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Additional access rights"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дополнительные права"
+          }
+        }
+      }
+    },
+    "8em-yX-fmG.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"SF_FIRMLINK\"; ObjectID = \"8em-yX-fmG\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "SF_FIRMLINK"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF_FIRMLINK"
+          }
+        }
+      }
+    },
+    "8ox-Pt-X4E.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Tracked\"; ObjectID = \"8ox-Pt-X4E\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tracked"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tracked"
+          }
+        }
+      }
+    },
+    "8Wh-3d-3ib.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Process subfolders\"; ObjectID = \"8Wh-3d-3ib\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Process subfolders"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Обрабатывать подпапки"
+          }
+        }
+      }
+    },
+    "9SC-Qg-1em.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"SF_IMMUTABLE\"; ObjectID = \"9SC-Qg-1em\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "SF_IMMUTABLE"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF_IMMUTABLE"
+          }
+        }
+      }
+    },
+    "adJ-Cc-COj.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Set UID on execution\"; ObjectID = \"adJ-Cc-COj\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Set UID on execution"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set UID on execution"
+          }
+        }
+      }
+    },
+    "aR6-pI-ZLw.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Firmlink\"; ObjectID = \"aR6-pI-ZLw\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Firmlink"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firmlink"
+          }
+        }
+      }
+    },
+    "bEE-2e-LTs.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"←\"; ObjectID = \"bEE-2e-LTs\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "←"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "←"
+          }
+        }
+      }
+    },
+    "CWm-5R-XNs.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Ok\"; ObjectID = \"CWm-5R-XNs\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ok"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ОК"
+          }
+        }
+      }
+    },
+    "e0p-Oq-9AE.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Archived\"; ObjectID = \"e0p-Oq-9AE\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archived"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archived"
+          }
+        }
+      }
+    },
+    "EGh-WB-sVg.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Restricted\"; ObjectID = \"EGh-WB-sVg\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Restricted"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restricted"
+          }
+        }
+      }
+    },
+    "eOe-bE-of9.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Hidden\"; ObjectID = \"eOe-bE-of9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hidden"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hidden"
+          }
+        }
+      }
+    },
+    "FCy-Ag-Z5y.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Compressed\"; ObjectID = \"FCy-Ag-Z5y\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Compressed"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compressed"
+          }
+        }
+      }
+    },
+    "fQz-0J-h6g.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Group:\"; ObjectID = \"fQz-0J-h6g\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Group:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Группа:"
+          }
+        }
+      }
+    },
+    "gLG-hF-ldN.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Read\"; ObjectID = \"gLG-hF-ldN\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Read"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Чтение"
+          }
+        }
+      }
+    },
+    "hFs-i1-5bQ.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Cancel\"; ObjectID = \"hFs-i1-5bQ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cancel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отменить"
+          }
+        }
+      }
+    },
+    "hg0-pi-4jU.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"SF_NOUNLINK\"; ObjectID = \"hg0-pi-4jU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "SF_NOUNLINK"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF_NOUNLINK"
+          }
+        }
+      }
+    },
+    "ImI-6s-nFO.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Dataless\"; ObjectID = \"ImI-6s-nFO\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Dataless"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dataless"
+          }
+        }
+      }
+    },
+    "itv-6O-TUZ.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Modify time:\"; ObjectID = \"itv-6O-TUZ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Modify time:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Время модификации:"
+          }
+        }
+      }
+    },
+    "Jb7-Hf-wOj.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Sticky bit\"; ObjectID = \"Jb7-Hf-wOj\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sticky bit"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sticky bit"
+          }
+        }
+      }
+    },
+    "job-7D-4QV.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"UF_DATAVAULT\"; ObjectID = \"job-7D-4QV\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "UF_DATAVAULT"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_DATAVAULT"
+          }
+        }
+      }
+    },
+    "Jys-di-ICO.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"SF_RESTRICTED\"; ObjectID = \"Jys-di-ICO\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "SF_RESTRICTED"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF_RESTRICTED"
+          }
+        }
+      }
+    },
+    "lIH-Jg-d6l.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Set GID on execution\"; ObjectID = \"lIH-Jg-d6l\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Set GID on execution"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set GID on execution"
+          }
+        }
+      }
+    },
+    "LMi-ZL-eVF.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Append-only\"; ObjectID = \"LMi-ZL-eVF\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Append-only"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Append-only"
+          }
+        }
+      }
+    },
+    "lX1-iy-fbk.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"UF_NODUMP\"; ObjectID = \"lX1-iy-fbk\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "UF_NODUMP"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_NODUMP"
+          }
+        }
+      }
+    },
+    "m3i-mO-e5Z.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Immutable\"; ObjectID = \"m3i-mO-e5Z\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Immutable"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Immutable"
+          }
+        }
+      }
+    },
+    "Mmj-o0-eh9.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"User flags\"; ObjectID = \"Mmj-o0-eh9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "User flags"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Флаги пользователя"
+          }
+        }
+      }
+    },
+    "MMx-Ge-OWl.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Opaque\"; ObjectID = \"MMx-Ge-OWl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Opaque"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opaque"
+          }
+        }
+      }
+    },
+    "mYf-AR-6rd.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Create time:\"; ObjectID = \"mYf-AR-6rd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create time:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Время создания:"
+          }
+        }
+      }
+    },
+    "nuy-AP-3IJ.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"UF_TRACKED\"; ObjectID = \"nuy-AP-3IJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "UF_TRACKED"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_TRACKED"
+          }
+        }
+      }
+    },
+    "OBJ-Xy-ICR.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Exec\"; ObjectID = \"OBJ-Xy-ICR\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Exec"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выполнение"
+          }
+        }
+      }
+    },
+    "OKd-mQ-diJ.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Change time:\"; ObjectID = \"OKd-mQ-diJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Change time:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Время изменения:"
+          }
+        }
+      }
+    },
+    "pCY-Oi-ik9.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Data vault\"; ObjectID = \"pCY-Oi-ik9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Data vault"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data vault"
+          }
+        }
+      }
+    },
+    "rTI-SZ-mID.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Others:\"; ObjectID = \"rTI-SZ-mID\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Others:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Остальные:"
+          }
+        }
+      }
+    },
+    "SGG-aH-Bq0.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Owner:\"; ObjectID = \"SGG-aH-Bq0\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Owner:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Владелец:"
+          }
+        }
+      }
+    },
+    "sgu-2L-K7W.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"UF_HIDDEN\"; ObjectID = \"sgu-2L-K7W\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "UF_HIDDEN"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_HIDDEN"
+          }
+        }
+      }
+    },
+    "sMS-nE-WFJ.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Write\"; ObjectID = \"sMS-nE-WFJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Write"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запись"
+          }
+        }
+      }
+    },
+    "tdv-2i-RjR.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"SF_DATALESS\"; ObjectID = \"tdv-2i-RjR\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "SF_DATALESS"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF_DATALESS"
+          }
+        }
+      }
+    },
+    "tJw-H2-oKI.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"UF_OPAQUE\"; ObjectID = \"tJw-H2-oKI\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "UF_OPAQUE"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_OPAQUE"
+          }
+        }
+      }
+    },
+    "txz-50-umg.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Immutable\"; ObjectID = \"txz-50-umg\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Immutable"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Immutable"
+          }
+        }
+      }
+    },
+    "uAb-sS-2AX.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Owner:\"; ObjectID = \"uAb-sS-2AX\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Owner:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Владелец:"
+          }
+        }
+      }
+    },
+    "uer-2T-u4b.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"←\"; ObjectID = \"uer-2T-u4b\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "←"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "←"
+          }
+        }
+      }
+    },
+    "v4g-jY-FRk.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"UF_IMMUTABLE\"; ObjectID = \"v4g-jY-FRk\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "UF_IMMUTABLE"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_IMMUTABLE"
+          }
+        }
+      }
+    },
+    "VOs-FJ-EDs.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"SF_ARCHIVED\"; ObjectID = \"VOs-FJ-EDs\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "SF_ARCHIVED"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF_ARCHIVED"
+          }
+        }
+      }
+    },
+    "w1W-MU-8Jb.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Group:\"; ObjectID = \"w1W-MU-8Jb\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Group:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Группа:"
+          }
+        }
+      }
+    },
+    "wAw-mB-LGb.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Access time:\"; ObjectID = \"wAw-mB-LGb\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Access time:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Время доступа:"
+          }
+        }
+      }
+    },
+    "wXc-gm-PBz.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"←\"; ObjectID = \"wXc-gm-PBz\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "←"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "←"
+          }
+        }
+      }
+    },
+    "X7X-OH-fez.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Append-only\"; ObjectID = \"X7X-OH-fez\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Append-only"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Append-only"
+          }
+        }
+      }
+    },
+    "Xai-hV-qE1.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"No unlink\"; ObjectID = \"Xai-hV-qE1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No unlink"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No unlink"
+          }
+        }
+      }
+    },
+    "xEP-6h-nrz.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"SF_APPEND\"; ObjectID = \"xEP-6h-nrz\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "SF_APPEND"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF_APPEND"
+          }
+        }
+      }
+    },
+    "XNl-lf-aey.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"System flags\"; ObjectID = \"XNl-lf-aey\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "System flags"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Флаги системы"
+          }
+        }
+      }
+    },
+    "Y9a-4A-CuB.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSButton\"; ibShadowedToolTip = \"UF_COMPRESSED\"; ObjectID = \"Y9a-4A-CuB\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "UF_COMPRESSED"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_COMPRESSED"
+          }
+        }
+      }
+    },
+    "z2l-Jo-i8h.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"←\"; ObjectID = \"z2l-Jo-i8h\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "←"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "←"
+          }
+        }
+      }
+    },
+    "zIP-gW-PwM.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"No dump\"; ObjectID = \"zIP-gW-PwM\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No dump"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No dump"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

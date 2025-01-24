@@ -1,0 +1,40 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "AUTH_AS_ADMIN_PROMPT" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please authenticate as an Administrator to provide Nimble Commander additional rights"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пожалуйста пройдите аутентификацию как администратор чтобы предоставить Nimble Commander дополнительные права"
+          }
+        }
+      }
+    },
+    "INSTALL_HELPER_APP_PROMPT" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please authenticate as an Administrator to allow Nimble Commander install additional components."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пожалуйста пройдите аутентификацию как администратор чтобы позволить Nimble Commander установить дополнительные компоненты."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

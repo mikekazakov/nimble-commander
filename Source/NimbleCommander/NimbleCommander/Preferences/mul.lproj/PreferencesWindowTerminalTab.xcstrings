@@ -1,0 +1,168 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "9D7-aw-d5c.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Supported shells: bash, zsh and [t]csh\"; ObjectID = \"9D7-aw-d5c\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Supported shells: bash, zsh and [t]csh"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Поддерживаемые shell: bash, zsh и [t]csh"
+          }
+        }
+      }
+    },
+    "dru-f9-fCV.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Default login shell\"; ObjectID = \"dru-f9-fCV\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Default login shell"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shell входа по умолчанию"
+          }
+        }
+      }
+    },
+    "Hi6-HH-WxJ.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"▁ Underline\"; ObjectID = \"Hi6-HH-WxJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "▁ Underline"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "▁ Подчеркивание"
+          }
+        }
+      }
+    },
+    "lmd-o1-1kc.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"█ Block\"; ObjectID = \"lmd-o1-1kc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "█ Block"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "█ Блок"
+          }
+        }
+      }
+    },
+    "nU3-et-JNg.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Cursor:\"; ObjectID = \"nU3-et-JNg\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cursor:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Курсор"
+          }
+        }
+      }
+    },
+    "nWF-WN-ul0.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Open shell with: \"; ObjectID = \"nWF-WN-ul0\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open shell with: "
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запускать терминал с:"
+          }
+        }
+      }
+    },
+    "OJo-EQ-cnc.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \" ▏Vertical Bar\"; ObjectID = \"OJo-EQ-cnc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : " ▏Vertical Bar"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " ▏Вертикальная полоса"
+          }
+        }
+      }
+    },
+    "zcL-oM-aS5.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Hide scrollbar\"; ObjectID = \"zcL-oM-aS5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hide scrollbar"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скрыть полосу прокрутки"
+          }
+        }
+      }
+    },
+    "ZFM-pn-oBo.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Command (complete path):\"; ObjectID = \"ZFM-pn-oBo\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Command (complete path):"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Команда (полный путь)"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

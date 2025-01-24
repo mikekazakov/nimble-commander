@@ -1,0 +1,114 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "6.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Existing filename:\"; ObjectID = \"6\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Existing filename:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Имя существующего файла:"
+          }
+        }
+      }
+    },
+    "13.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"Enter a symlink value\"; ObjectID = \"13\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enter a symlink value"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Введите имя символической ссылки"
+          }
+        }
+      }
+    },
+    "22.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Symbolic link filename:\"; ObjectID = \"22\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Symbolic link filename:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Имя символической ссылки:"
+          }
+        }
+      }
+    },
+    "28.placeholderString" : {
+      "comment" : "Class = \"NSTextFieldCell\"; placeholderString = \"Enter a symlink name\"; ObjectID = \"28\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enter a symlink name"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Введите имя символической ссылки"
+          }
+        }
+      }
+    },
+    "33.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Create\"; ObjectID = \"33\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Создать"
+          }
+        }
+      }
+    },
+    "37.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Cancel\"; ObjectID = \"37\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cancel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отмена"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

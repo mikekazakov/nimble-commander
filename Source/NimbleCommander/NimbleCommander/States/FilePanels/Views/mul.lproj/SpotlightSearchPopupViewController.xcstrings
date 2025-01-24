@@ -1,0 +1,42 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "2XN-fO-zqw.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Find with Spotlight:\"; ObjectID = \"2XN-fO-zqw\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Find with Spotlight:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Найти с помощью Spotlight:"
+          }
+        }
+      }
+    },
+    "E0l-6v-dL3.placeholderString" : {
+      "comment" : "Class = \"NSComboBoxCell\"; placeholderString = \"Enter search criteria\"; ObjectID = \"E0l-6v-dL3\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enter search criteria"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Введите критерий поиска"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

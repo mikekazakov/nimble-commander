@@ -1,0 +1,78 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Ex6-62-jy7.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Name\"; ObjectID = \"Ex6-62-jy7\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Name"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Название"
+          }
+        }
+      }
+    },
+    "gLa-hT-gjP.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Filter\"; ObjectID = \"gLa-hT-gjP\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Filter"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Фильтр"
+          }
+        }
+      }
+    },
+    "o7j-LX-8x8.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Regular\"; ObjectID = \"o7j-LX-8x8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Regular"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Обычный"
+          }
+        }
+      }
+    },
+    "rgZ-Dw-zHX.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Focused\"; ObjectID = \"rgZ-Dw-zHX\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Focused"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "В фокусе"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

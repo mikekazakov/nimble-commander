@@ -1,0 +1,78 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "31.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Reset to defaults\"; ObjectID = \"31\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reset to defaults"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По умолчанию"
+          }
+        }
+      }
+    },
+    "56.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Settings:\"; ObjectID = \"56\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Настройки:"
+          }
+        }
+      }
+    },
+    "Geu-Lq-Yub.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Reset\"; ObjectID = \"Geu-Lq-Yub\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reset"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сбросить"
+          }
+        }
+      }
+    },
+    "q8n-Mc-Nho.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Granted filesystem access:\"; ObjectID = \"q8n-Mc-Nho\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Granted filesystem access:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доступ к файловой системе:"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

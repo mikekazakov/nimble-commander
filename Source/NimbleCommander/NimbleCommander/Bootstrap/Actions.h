@@ -346,7 +346,7 @@ static constinit std::pair<const char*, const char*> g_DefaultActionShortcuts[] 
     {"menu.command.deselect_with_mask",                     "⌘-"      }, // cmd+-
     {"menu.command.deselect_with_extension",                "⌥⌘-"     }, // alt+cmd+-
     {"menu.command.quick_look",                             "⌘y"      }, // cmd+y
-    {"menu.command.internal_viewer",                        "⌥\uF706" }, // alt+F3
+    {"menu.command.internal_viewer",                        "\uF706"  }, // F3
     {"menu.command.external_editor",                        "\uF707"  }, // F4
     {"menu.command.eject_volume",                           "⌘e"      }, // cmd+e
     {"menu.command.batch_rename",                           "^m"      }, // ctrl+m

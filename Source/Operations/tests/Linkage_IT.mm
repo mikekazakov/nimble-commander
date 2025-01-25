@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include "../source/Linkage/Linkage.h"
@@ -27,7 +27,7 @@ TEST_CASE(PREFIX "symlink creation")
     REQUIRE((st.mode & S_IFMT) == S_IFLNK);
 
     char buf[MAXPATHLEN];
-    REQUIRE(host->ReadSymlink(path, buf, sizeof(buf)) == VFSError::Ok);
+    REQUIRE(host->ReadSymlink(path, buf) == VFSError::Ok);
     REQUIRE(buf == value);
 }
 
@@ -62,7 +62,7 @@ TEST_CASE(PREFIX "symlink alteration")
     REQUIRE((st.mode & S_IFMT) == S_IFLNK);
 
     char buf[MAXPATHLEN];
-    REQUIRE(host->ReadSymlink(path, buf, sizeof(buf)) == VFSError::Ok);
+    REQUIRE(host->ReadSymlink(path, buf) == VFSError::Ok);
     REQUIRE(buf == value);
 }
 

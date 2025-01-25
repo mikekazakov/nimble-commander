@@ -691,7 +691,7 @@ The built-in viewer supports three modes:
 
 The viewer can operate within the application window where it was launched, replacing the file panels with its interface. Alternatively, it can be configured to appear as a separate floating window.
 
-To open the built-in viewer, press the `Alt + F3` hotkey or select the `Command > Internal Viewer` menu item. To close it, simply press `Esc`.
+To open the built-in viewer, press the `F3` hotkey or select the `Command > Internal Viewer` menu item. To close it, simply press `Esc`.
 
 # Integrated Terminal
 Nimble Commander includes a built-in terminal emulator, allowing you to run command-line utilities without switching to another application.
@@ -851,7 +851,7 @@ Some actions do not have default hotkeys but can still be accessed through the a
 | &nbsp; Deselect With Mask                    | Cmd + -                   |
 | &nbsp; Deselect With Extension               | Opt + Cmd + -             |
 | &nbsp; Preview                               | Cmd + Y                   |
-| &nbsp; Internal Viewer                       | Opt + F3                  |
+| &nbsp; Internal Viewer                       | F3                        |
 | &nbsp; External Editor                       | F4                        |
 | &nbsp; Eject Volume                          | Cmd + E                   |
 | &nbsp; Batch Rename...                       | Ctrl + M                  |

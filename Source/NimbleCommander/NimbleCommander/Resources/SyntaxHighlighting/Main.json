@@ -94,6 +94,11 @@
             "name": "YAML",
             "settings": "YAML.json",
             "filemask": "*.yaml, *.yml"
+        },
+        {
+            "name": "Zig",
+            "settings": "Zig.json",
+            "filemask": "*.zig, *.zir, *.zigr, *.zon"
         }
     ]
 }

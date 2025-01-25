@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <FunctionKeysPass.h>
 #include <Carbon/Carbon.h>
 #include <AppKit/AppKit.h>
@@ -11,23 +11,17 @@
 
 namespace nc::utility {
 
-FunctionalKeysPass::FunctionalKeysPass() : m_Port(nullptr), m_Enabled(false)
+FunctionalKeysPass::FunctionalKeysPass()
 {
     const auto center = NSNotificationCenter.defaultCenter;
     [center addObserverForName:NSApplicationDidBecomeActiveNotification
                         object:nil
                          queue:nil
-                    usingBlock:^(NSNotification *) {
-                      if( m_Port && m_Enabled )
-                          CGEventTapEnable(m_Port, true);
-                    }];
+                    usingBlock:[this](NSNotification *) { OnDidBecomeActive(); }];
     [center addObserverForName:NSApplicationDidResignActiveNotification
                         object:nil
                          queue:nil
-                    usingBlock:^(NSNotification *) {
-                      if( m_Port && m_Enabled )
-                          CGEventTapEnable(m_Port, false);
-                    }];
+                    usingBlock:[this](NSNotification *) { OnResignActive(); }];
 }
 
 FunctionalKeysPass &FunctionalKeysPass::Instance() noexcept
@@ -38,6 +32,7 @@ FunctionalKeysPass &FunctionalKeysPass::Instance() noexcept
 
 bool FunctionalKeysPass::Enabled() const
 {
+    Log::Trace("FunctionalKeysPass::Enabled() called");
     dispatch_assert_main_queue();
     return m_Port != nullptr && CGEventTapIsEnabled(m_Port);
 }
@@ -55,9 +50,12 @@ static CGEventRef NewFnButtonPress(CGKeyCode _vk, bool _key_down, CGEventFlags _
     return press;
 }
 
-CGEventRef FunctionalKeysPass::Callback([[maybe_unused]] CGEventTapProxy _proxy, CGEventType _type, CGEventRef _event)
+CGEventRef
+FunctionalKeysPass::Callback([[maybe_unused]] CGEventTapProxy _proxy, CGEventType _type, CGEventRef _event) noexcept
 {
+    Log::Trace("FunctionalKeysPass::Callback() called");
     if( _type == kCGEventTapDisabledByTimeout ) {
+        Log::Debug("FunctionalKeysPass: got kCGEventTapDisabledByTimeout, enabling the port");
         CGEventTapEnable(m_Port, true);
         return _event;
     }
@@ -76,12 +74,12 @@ CGEventRef FunctionalKeysPass::Callback([[maybe_unused]] CGEventTapProxy _proxy,
     return _event;
 }
 
-CGEventRef FunctionalKeysPass::HandleRegularKeyEvents(CGEventType _type, CGEventRef _event)
+CGEventRef FunctionalKeysPass::HandleRegularKeyEvents(CGEventType _type, CGEventRef _event) noexcept
 {
     // references:
     // https://www.apple.com/uk/newsroom/2022/06/apple-unveils-all-new-macbook-air-supercharged-by-the-new-m2-chip/
-    const auto is_key_down = _type == kCGEventKeyDown;
-    const auto keycode = static_cast<CGKeyCode>(CGEventGetIntegerValueField(_event, kCGKeyboardEventKeycode));
+    const bool is_key_down = _type == kCGEventKeyDown;
+    const CGKeyCode keycode = static_cast<CGKeyCode>(CGEventGetIntegerValueField(_event, kCGKeyboardEventKeycode));
     const auto substitute = [&](CGKeyCode _vk) { return NewFnButtonPress(_vk, is_key_down, CGEventGetFlags(_event)); };
     Log::Trace("HandleRegularKeyEvents: keycode is {}, pressed={}", keycode, is_key_down);
     switch( keycode ) {
@@ -121,7 +119,7 @@ CGEventRef FunctionalKeysPass::HandleRegularKeyEvents(CGEventType _type, CGEvent
     return _event;
 }
 
-CGEventRef FunctionalKeysPass::HandleControlButtons([[maybe_unused]] CGEventType _type, CGEventRef _event)
+CGEventRef FunctionalKeysPass::HandleControlButtons([[maybe_unused]] CGEventType _type, CGEventRef _event) noexcept
 {
     // have to create a NSEvent object for every NSSystemDefined event, which is awful
     const auto ev = [NSEvent eventWithCGEvent:_event];
@@ -129,9 +127,9 @@ CGEventRef FunctionalKeysPass::HandleControlButtons([[maybe_unused]] CGEventType
     if( ev.subtype != NX_SUBTYPE_AUX_CONTROL_BUTTONS )
         return _event;
 
-    const auto data1 = ev.data1;
-    const auto keycode = ((data1 & 0xFFFF0000) >> 16);
-    const auto is_key_down = (data1 & 0x0000FF00) == 0xA00;
+    const long data1 = ev.data1;
+    const long keycode = ((data1 & 0xFFFF0000) >> 16);
+    const bool is_key_down = (data1 & 0x0000FF00) == 0xA00;
     const auto substitute = [&](CGKeyCode _vk) {
         return NewFnButtonPress(_vk, is_key_down, static_cast<CGEventFlags>(ev.modifierFlags));
     };
@@ -158,24 +156,24 @@ CGEventRef FunctionalKeysPass::HandleControlButtons([[maybe_unused]] CGEventType
         case NX_KEYTYPE_SOUND_UP:
             return substitute(kVK_F12);
         default:
-            break;
+            return _event; // no remapping, return the original event
     }
-
-    return _event;
 }
 
 bool FunctionalKeysPass::Enable()
 {
+    Log::Trace("FunctionalKeysPass::Enable() called");
     dispatch_assert_main_queue();
 
     if( m_Port == nullptr ) {
+        Log::Trace("FunctionalKeysPass: port does not exist, obtaining accessibility rights");
         if( !ObtainAccessiblityRights() )
             return false;
 
-        const auto interested_events =
+        const CGEventMask interested_events =
             CGEventMaskBit(kCGEventKeyDown) | CGEventMaskBit(kCGEventKeyUp) | CGEventMaskBit(NSEventTypeSystemDefined);
         const auto handler =
-            [](CGEventTapProxy _proxy, CGEventType _type, CGEventRef _event, void *_info) -> CGEventRef {
+            +[](CGEventTapProxy _proxy, CGEventType _type, CGEventRef _event, void *_info) -> CGEventRef {
             return static_cast<FunctionalKeysPass *>(_info)->Callback(_proxy, _type, _event);
         };
         const auto port = CGEventTapCreate(
@@ -191,6 +189,7 @@ bool FunctionalKeysPass::Enable()
         CFRelease(loop_source);
     }
     else {
+        Log::Trace("FunctionalKeysPass: port exists, enabling it");
         CGEventTapEnable(m_Port, true);
     }
     m_Enabled = true;
@@ -199,6 +198,7 @@ bool FunctionalKeysPass::Enable()
 
 void FunctionalKeysPass::Disable()
 {
+    Log::Trace("FunctionalKeysPass::Disable() called");
     dispatch_assert_main_queue();
     if( m_Port ) {
         CGEventTapEnable(m_Port, false);
@@ -208,9 +208,29 @@ void FunctionalKeysPass::Disable()
 
 bool FunctionalKeysPass::ObtainAccessiblityRights()
 {
+    Log::Trace("FunctionalKeysPass::ObtainAccessiblityRights() called");
     const auto options = @{(__bridge NSString *)kAXTrustedCheckOptionPrompt: @YES};
-    auto accessibility_granted = AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)options);
+    const bool accessibility_granted = AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)options);
+    Log::Debug("AXIsProcessTrustedWithOptions() returned {}", accessibility_granted);
     return accessibility_granted;
+}
+
+void FunctionalKeysPass::OnDidBecomeActive() noexcept
+{
+    Log::Trace("FunctionalKeysPass::OnDidBecomeActive() called");
+    if( m_Port && m_Enabled ) {
+        Log::Debug("Calling CGEventTapEnable(..., true)");
+        CGEventTapEnable(m_Port, true);
+    }
+}
+
+void FunctionalKeysPass::OnResignActive() noexcept
+{
+    Log::Trace("FunctionalKeysPass::OnResignActive() called");
+    if( m_Port && m_Enabled ) {
+        Log::Debug("Calling CGEventTapEnable(..., false)");
+        CGEventTapEnable(m_Port, false);
+    }
 }
 
 } // namespace nc::utility

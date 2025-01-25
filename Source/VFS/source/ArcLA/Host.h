@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../../include/VFS/Host.h"
@@ -62,8 +62,7 @@ public:
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
     int ReadSymlink(std::string_view _symlink_path,
-                    char *_buffer,
-                    size_t _buffer_size,
+                    std::span<char> _buffer,
                     const VFSCancelChecker &_cancel_checker = {}) override;
 
     bool ShouldProduceThumbnails() const override;

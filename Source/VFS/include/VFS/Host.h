@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
@@ -8,6 +8,7 @@
 #include "VFSFactory.h"
 #include "../../source/Listing.h"
 #include <string_view>
+#include <span>
 
 namespace nc::vfs {
 
@@ -185,10 +186,13 @@ public:
     virtual bool
     IsSymlink(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = nullptr);
 
-    /** Return zero upon succes, negative value on error. */
+    /**
+     * Reads the symlink value into the specified buffer.
+     * The value stored there will be null-terminated.
+     * Return zero upon succes, negative value on error.
+     */
     virtual int ReadSymlink(std::string_view _symlink_path,
-                            char *_buffer,
-                            size_t _buffer_size,
+                            std::span<char> _buffer,
                             const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**

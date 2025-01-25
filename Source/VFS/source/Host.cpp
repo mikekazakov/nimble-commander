@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include <Base/StackAllocator.h>
 #include "ListingInput.h"
@@ -285,8 +285,7 @@ int Host::CreateDirectory([[maybe_unused]] std::string_view _path,
 }
 
 int Host::ReadSymlink([[maybe_unused]] std::string_view _path,
-                      [[maybe_unused]] char *_buffer,
-                      [[maybe_unused]] size_t _buffer_size,
+                      [[maybe_unused]] std::span<char> _buffer,
                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
@@ -447,7 +446,7 @@ int Host::FetchSingleItemListing(std::string_view _path,
     if( listing_source.unix_types[0] == DT_LNK ) {
         // read an actual link path
         char linkpath[MAXPATHLEN];
-        if( ReadSymlink(path_wo_trailing_slash, linkpath, MAXPATHLEN) == 0 )
+        if( ReadSymlink(path_wo_trailing_slash, linkpath) == 0 )
             listing_source.symlinks.insert(0, linkpath);
 
         // stat the target file

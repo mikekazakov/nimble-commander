@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -442,7 +442,7 @@ TEST_CASE(PREFIX "Symlinks handling")
 
     auto readsym = [&](const char *_path) -> std::string {
         char buf[1024];
-        REQUIRE(host->ReadSymlink(_path, buf, sizeof(buf), {}) == VFSError::Ok);
+        REQUIRE(host->ReadSymlink(_path, buf, {}) == VFSError::Ok);
         return buf;
     };
     CHECK(readsym("/r/l0") == "f");
@@ -526,7 +526,7 @@ TEST_CASE(PREFIX "Symlinks handling - invalid values")
 
     auto readsym = [&](const char *_path) -> std::string {
         char buf[1024];
-        REQUIRE(host->ReadSymlink(_path, buf, sizeof(buf), {}) == VFSError::Ok);
+        REQUIRE(host->ReadSymlink(_path, buf, {}) == VFSError::Ok);
         return buf;
     };
     CHECK(readsym("/r/l0") == "nada");
@@ -2087,7 +2087,7 @@ TEST_CASE(PREFIX "synthetic directories can be correctly resolved")
     REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(path.c_str(), TestEnv().vfs_native));
     auto readsym = [&](const std::string_view _path) -> std::string {
         char buf[1024];
-        REQUIRE(host->ReadSymlink(_path, buf, sizeof(buf), {}) == VFSError::Ok);
+        REQUIRE(host->ReadSymlink(_path, buf, {}) == VFSError::Ok);
         return buf;
     };
     REQUIRE(host->IsDirectory("/etc", VFSFlags::None));

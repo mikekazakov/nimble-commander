@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/NetSFTP.h>
@@ -502,7 +502,7 @@ TEST_CASE(PREFIX "read link")
 {
     const VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
     char link[MAXPATHLEN];
-    const auto rc = host->ReadSymlink("/etc/os-release", link, sizeof(link));
+    const auto rc = host->ReadSymlink("/etc/os-release", link);
     REQUIRE(rc == VFSError::Ok);
     REQUIRE(link == std::string_view("../usr/lib/os-release"));
 }
@@ -516,7 +516,7 @@ TEST_CASE(PREFIX "create link")
     REQUIRE(createlink_rc == VFSError::Ok);
 
     char link[MAXPATHLEN] = {0};
-    const auto readlink_rc = host->ReadSymlink(lnk_path, link, sizeof(link));
+    const auto readlink_rc = host->ReadSymlink(lnk_path, link);
     CHECK(readlink_rc == VFSError::Ok);
     CHECK(link == std::string_view(lnk_value));
     CHECK(host->Unlink(lnk_path) == VFSError::Ok);

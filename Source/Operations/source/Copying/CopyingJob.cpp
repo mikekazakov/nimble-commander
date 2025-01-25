@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CopyingJob.h"
 #include "../Statistics.h"
 #include "Helpers.h"
@@ -2728,7 +2728,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
 
     char linkpath[MAXPATHLEN];
     while( true ) {
-        const auto rc = _src_vfs.ReadSymlink(_src_path, linkpath, MAXPATHLEN);
+        const auto rc = _src_vfs.ReadSymlink(_src_path, linkpath);
         if( rc == VFSError::Ok )
             break;
         switch( m_OnCantAccessSourceItem(rc, _src_path, _src_vfs) ) {
@@ -2827,7 +2827,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
 
     char linkpath[MAXPATHLEN];
     while( true ) {
-        const auto rc = _src_vfs.ReadSymlink(_src_path, linkpath, MAXPATHLEN);
+        const auto rc = _src_vfs.ReadSymlink(_src_path, linkpath);
         if( rc == VFSError::Ok )
             break;
         switch( m_OnCantAccessSourceItem(rc, _src_path, _src_vfs) ) {

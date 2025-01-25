@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/Host.h>
@@ -59,10 +59,7 @@ public:
 
     ssize_t CalculateDirectorySize(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
-    int ReadSymlink(std::string_view _path,
-                    char *_buffer,
-                    size_t _buffer_size,
-                    const VFSCancelChecker &_cancel_checker) override;
+    int ReadSymlink(std::string_view _path, std::span<char> _buffer, const VFSCancelChecker &_cancel_checker) override;
 
     int CreateSymlink(std::string_view _symlink_path,
                       std::string_view _symlink_value,

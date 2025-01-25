@@ -36,6 +36,11 @@
             "filemask": "*.css"
         },
         {
+            "name": "Dart",
+            "settings": "Dart.json",
+            "filemask": "*.dart"
+        },
+        {
             "name": "HTML",
             "settings": "HTML.json",
             "filemask": "*.htm, *.html"

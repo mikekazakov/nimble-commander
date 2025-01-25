@@ -91,6 +91,11 @@
             "filemask": "*.mm, *.h"
         },
         {
+            "name": "Rust",
+            "settings": "Rust.json",
+            "filemask": "*.rs, *.rlib"
+        },
+        {
             "name": "XML",
             "settings": "XML.json",
             "filemask": "*.xml, *.plist"

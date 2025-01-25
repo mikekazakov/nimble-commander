@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/algo.h>
 #include <Utility/PathManip.h>
 #include <libssh2.h>
@@ -793,10 +793,12 @@ long SFTPHost::Port() const noexcept
 }
 
 int SFTPHost::ReadSymlink(std::string_view _symlink_path,
-                          char *_buffer,
-                          size_t _buffer_size,
+                          std::span<char> _buffer,
                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
+    if( _buffer.empty() )
+        return VFSError::SmallBuffer;
+
     std::unique_ptr<Connection> conn;
     if( const int rc = GetConnection(conn); rc < 0 )
         return rc;
@@ -806,8 +808,8 @@ int SFTPHost::ReadSymlink(std::string_view _symlink_path,
     const auto readlink_rc = libssh2_sftp_symlink_ex(conn->sftp,
                                                      _symlink_path.data(),
                                                      static_cast<unsigned>(_symlink_path.length()),
-                                                     _buffer,
-                                                     int(_buffer_size - 1),
+                                                     _buffer.data(),
+                                                     int(_buffer.size() - 1),
                                                      LIBSSH2_SFTP_READLINK);
     if( readlink_rc >= 0 ) {
         _buffer[readlink_rc] = 0;

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSEasyOps.h"
 #include "../include/VFS/VFSError.h"
 #include <Base/SerialQueue.h>
@@ -234,7 +234,7 @@ int VFSEasyCopySymlink(const char *_src_full_path,
 
     char symlink_val[MAXPATHLEN];
 
-    result = _src_host->ReadSymlink(_src_full_path, symlink_val, MAXPATHLEN, nullptr);
+    result = _src_host->ReadSymlink(_src_full_path, symlink_val, nullptr);
     if( result < 0 )
         return result;
 
@@ -393,9 +393,9 @@ int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
     else if( S_ISLNK(st1.mode) ) {
         char link1[MAXPATHLEN];
         char link2[MAXPATHLEN];
-        if( const int ret = _file1_host->ReadSymlink(_file1_full_path.c_str(), link1, MAXPATHLEN, nullptr); ret < 0 )
+        if( const int ret = _file1_host->ReadSymlink(_file1_full_path.c_str(), link1, nullptr); ret < 0 )
             return ret;
-        if( const int ret = _file2_host->ReadSymlink(_file2_full_path.c_str(), link2, MAXPATHLEN, nullptr); ret < 0 )
+        if( const int ret = _file2_host->ReadSymlink(_file2_full_path.c_str(), link2, nullptr); ret < 0 )
             return ret;
         if( strcmp(link1, link2) != 0 )
             _result = strcmp(link1, link2);

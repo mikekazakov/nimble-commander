@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Host.h"
 #include <OpenDirectory/OpenDirectory.h>
 #include <sys/attr.h>
@@ -637,19 +637,18 @@ int NativeHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const V
 }
 
 int NativeHost::ReadSymlink(std::string_view _path,
-                            char *_buffer,
-                            size_t _buffer_size,
+                            std::span<char> _buffer,
                             [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
-    const ssize_t sz = io.readlink(path.c_str(), _buffer, _buffer_size);
+    const ssize_t sz = io.readlink(path.c_str(), _buffer.data(), _buffer.size());
     if( sz < 0 )
         return VFSError::FromErrno();
 
-    if( sz >= static_cast<long>(_buffer_size) )
+    if( sz >= static_cast<long>(_buffer.size()) )
         return VFSError::SmallBuffer;
 
     _buffer[sz] = 0;

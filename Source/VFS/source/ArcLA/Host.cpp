@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
 
@@ -1091,8 +1091,7 @@ const ArchiveHost::Symlink *ArchiveHost::ResolvedSymlink(uint32_t _uid)
 }
 
 int ArchiveHost::ReadSymlink(std::string_view _symlink_path,
-                             char *_buffer,
-                             size_t _buffer_size,
+                             std::span<char> _buffer,
                              const VFSCancelChecker & /*_cancel_checker*/)
 {
     auto entry = FindEntry(_symlink_path);
@@ -1108,10 +1107,10 @@ int ArchiveHost::ReadSymlink(std::string_view _symlink_path,
 
     auto &val = symlink_it->second.value;
 
-    if( val.native().size() >= _buffer_size )
+    if( val.native().size() >= _buffer.size() )
         return VFSError::SmallBuffer;
 
-    strcpy(_buffer, val.c_str());
+    strcpy(_buffer.data(), val.c_str());
 
     return VFSError::Ok;
 }

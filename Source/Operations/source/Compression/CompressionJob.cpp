@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CompressionJob.h"
 #include <Base/algo.h>
 #include <libarchive/archive.h>
@@ -203,7 +203,7 @@ CompressionJob::ProcessSymlinkItem(int _index, const std::string &_relative_path
 
     char symlink[MAXPATHLEN];
     while( true ) {
-        const auto rc = vfs.ReadSymlink(_full_path, symlink, MAXPATHLEN, nullptr);
+        const auto rc = vfs.ReadSymlink(_full_path, symlink, nullptr);
         if( rc == VFSError::Ok )
             break;
         switch( m_SourceAccessError(rc, _full_path, vfs) ) {

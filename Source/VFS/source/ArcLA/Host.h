@@ -128,15 +128,12 @@ private:
 
     int ReadArchiveListing();
     uint64_t UpdateDirectorySize(arc::Dir &_directory, const std::string &_path);
-    arc::Dir *FindOrBuildDir(const char *_path_with_tr_sl);
+    arc::Dir *FindOrBuildDir(std::string_view _path_with_tr_sl);
 
-    void InsertDummyDirInto(arc::Dir *_parent, const char *_dir_name);
+    void InsertDummyDirInto(arc::Dir *_parent, std::string_view _dir_name);
     struct archive *SpawnLibarchive();
 
-    /**
-     * any positive number - item's uid, good to go.
-     * negative number or zero - error
-     */
+    // Returns a VFSError
     int ResolvePath(std::string_view _path, std::pmr::string &_resolved_path);
 
     void ResolveSymlink(uint32_t _uid);

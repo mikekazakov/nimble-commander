@@ -1,0 +1,22 @@
+// https://github.com/ScintillaOrg/lexilla/blob/master/lexers/LexDiff.cxx
+{
+    "lexer": "diff",
+    "wordlists": [
+    ],
+    "properties": {
+    },
+    "mapping": {
+        "SCE_DIFF_DEFAULT": "default",
+        "SCE_DIFF_COMMENT": "preprocessor",
+        "SCE_DIFF_COMMAND": "keyword",
+        "SCE_DIFF_HEADER": "preprocessor",
+        "SCE_DIFF_POSITION": "number",
+        "SCE_DIFF_DELETED": "string",
+        "SCE_DIFF_ADDED": "comment",
+        "SCE_DIFF_CHANGED": "identifier",
+        "SCE_DIFF_PATCH_ADD": "comment",
+        "SCE_DIFF_PATCH_DELETE": "string",
+        "SCE_DIFF_REMOVED_PATCH_ADD": "comment",
+        "SCE_DIFF_REMOVED_PATCH_DELETE": "string"
+    }
+}

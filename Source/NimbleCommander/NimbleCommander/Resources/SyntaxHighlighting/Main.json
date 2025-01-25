@@ -41,6 +41,11 @@
             "filemask": "*.dart"
         },
         {
+            "name": "Diff",
+            "settings": "Diff.json",
+            "filemask": "*.diff, *.patch"
+        },
+        {
             "name": "HTML",
             "settings": "HTML.json",
             "filemask": "*.htm, *.html"

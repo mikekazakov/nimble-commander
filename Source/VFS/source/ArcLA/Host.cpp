@@ -365,8 +365,13 @@ int ArchiveHost::ReadArchiveListing()
         if( !SplitIntoFilenameAndParentPath(path, short_name, sizeof(short_name), parent_path, sizeof(parent_path)) )
             continue;
 
-        if( parent_dir->full_path != parent_path )
-            parent_dir = FindOrBuildDir(parent_path);
+        if( parent_dir->full_path != parent_path ) {
+            Dir *const new_parent = FindOrBuildDir(parent_path);
+            if( new_parent == nullptr ) {
+                continue; // skip entries with bogus paths
+            }
+            parent_dir = new_parent;
+        }
 
         DirEntry *entry = nullptr;
         unsigned entry_index_in_dir = 0;
@@ -469,21 +474,26 @@ uint64_t ArchiveHost::UpdateDirectorySize(Dir &_directory, const std::string &_p
     return size;
 }
 
-Dir *ArchiveHost::FindOrBuildDir(const char *_path_with_tr_sl)
+Dir *ArchiveHost::FindOrBuildDir(const std::string_view _path_with_tr_sl)
 {
     assert(utility::PathManip::HasTrailingSlash(_path_with_tr_sl));
     if( const auto i = I->m_PathToDir.find(_path_with_tr_sl); i != I->m_PathToDir.end() )
         return &(*i).second;
 
-    char entry_name[256];
-    char parent_path[1024];
-    strcpy(parent_path, _path_with_tr_sl);
-    parent_path[strlen(parent_path) - 1] = 0;
-    strcpy(entry_name, strrchr(parent_path, '/') + 1);
-    *(strrchr(parent_path, '/') + 1) = 0;
+    const std::string_view parent_path = utility::PathManip::Parent(_path_with_tr_sl);
+    if( parent_path.empty() ) {
+        return nullptr;
+    }
+
+    const std::string_view entry_name = utility::PathManip::Filename(_path_with_tr_sl);
+    if( entry_name.empty() ) {
+        return nullptr;
+    }
 
     Dir *const parent_dir = FindOrBuildDir(parent_path);
-    assert(parent_dir != nullptr);
+    if( parent_dir == nullptr ) {
+        return nullptr;
+    }
 
     // TODO: need to check presense of entry_name in parent_dir
 
@@ -495,7 +505,7 @@ Dir *ArchiveHost::FindOrBuildDir(const char *_path_with_tr_sl)
     return &(*it.first).second;
 }
 
-void ArchiveHost::InsertDummyDirInto(Dir *_parent, const char *_dir_name)
+void ArchiveHost::InsertDummyDirInto(Dir *_parent, const std::string_view _dir_name)
 {
     constexpr mode_t synthetic_mode = S_IFDIR |                     //
                                       S_IRUSR | S_IXUSR | S_IWUSR | //
@@ -785,15 +795,12 @@ int ArchiveHost::ResolvePath(std::string_view _path, std::pmr::string &_resolved
     p = p.relative_path();
     std::filesystem::path result_path = "/";
 
-    uint32_t result_uid = 0;
     for( auto i : p ) {
         result_path /= i;
 
         auto entry = FindEntry(result_path.c_str());
         if( !entry )
             return VFSError::NotFound;
-
-        result_uid = entry->aruid;
 
         if( (entry->st.st_mode & S_IFMT) == S_IFLNK ) {
             const auto symlink_it = I->m_Symlinks.find(entry->aruid);
@@ -807,12 +814,11 @@ int ArchiveHost::ResolvePath(std::string_view _path, std::pmr::string &_resolved
                 return VFSError::NotFound; // current part points to nowhere
 
             result_path = s.target_path;
-            result_uid = s.target_uid;
         }
     }
 
     _resolved_path = result_path.native();
-    return result_uid;
+    return VFSError::Ok;
 }
 
 int ArchiveHost::StatFS(std::string_view /*_path*/, VFSStatFS &_stat, const VFSCancelChecker & /*_cancel_checker*/)

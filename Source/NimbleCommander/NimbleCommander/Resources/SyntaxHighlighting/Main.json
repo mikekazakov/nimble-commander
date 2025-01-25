@@ -36,6 +36,16 @@
             "filemask": "*.css"
         },
         {
+            "name": "Dart",
+            "settings": "Dart.json",
+            "filemask": "*.dart"
+        },
+        {
+            "name": "Diff",
+            "settings": "Diff.json",
+            "filemask": "*.diff, *.patch"
+        },
+        {
             "name": "HTML",
             "settings": "HTML.json",
             "filemask": "*.htm, *.html"
@@ -86,6 +96,11 @@
             "filemask": "*.mm, *.h"
         },
         {
+            "name": "Rust",
+            "settings": "Rust.json",
+            "filemask": "*.rs, *.rlib"
+        },
+        {
             "name": "XML",
             "settings": "XML.json",
             "filemask": "*.xml, *.plist"
@@ -94,6 +109,11 @@
             "name": "YAML",
             "settings": "YAML.json",
             "filemask": "*.yaml, *.yml"
+        },
+        {
+            "name": "Zig",
+            "settings": "Zig.json",
+            "filemask": "*.zig, *.zir, *.zigr, *.zon"
         }
     ]
 }

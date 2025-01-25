@@ -1,0 +1,50 @@
+// https://github.com/ScintillaOrg/lexilla/blob/master/lexers/LexRust.cxx
+{
+    "lexer": "rust",
+    "wordlists": [
+        // Primary keywords and identifiers
+        "alignof as be box break const continue crate do else enum extern false fn for if impl in let loop match mod mut offsetof once priv proc pub pure ref return self sizeof static struct super trait true type typeof unsafe unsized use virtual while yield",
+        // Built in types
+        "bool char f32 f64 i8 i16 i32 i64 i128 isize int str u8 u16 u32 u64 u128 usize uint",
+        // Other keywords
+        "Self"
+        // Keywords 4
+        // ""
+        // Keywords 5
+        // ""
+        // Keywords 6
+        // ""
+        // Keywords 7
+        // ""
+    ],
+    "properties": {
+    },
+    "mapping": {
+        "SCE_RUST_DEFAULT": "default",
+        "SCE_RUST_COMMENTBLOCK": "comment",
+        "SCE_RUST_COMMENTLINE": "comment",
+        "SCE_RUST_COMMENTBLOCKDOC": "comment",
+        "SCE_RUST_COMMENTLINEDOC": "comment",
+        "SCE_RUST_NUMBER": "number",
+        "SCE_RUST_WORD": "keyword",
+        "SCE_RUST_WORD2": "keyword",
+        "SCE_RUST_WORD3": "keyword",
+        "SCE_RUST_WORD4": "keyword",
+        "SCE_RUST_WORD5": "keyword",
+        "SCE_RUST_WORD6": "keyword",
+        "SCE_RUST_WORD7": "keyword",
+        "SCE_RUST_STRING": "string",
+        "SCE_RUST_STRINGR": "string",
+        "SCE_RUST_CHARACTER": "string",
+        "SCE_RUST_OPERATOR": "operator",
+        "SCE_RUST_IDENTIFIER": "identifier",
+        "SCE_RUST_LIFETIME": "operator",
+        "SCE_RUST_MACRO": "preprocessor",
+        "SCE_RUST_LEXERROR": "default",
+        "SCE_RUST_BYTESTRING": "string",
+        "SCE_RUST_BYTESTRINGR": "string",
+        "SCE_RUST_BYTECHARACTER": "string",
+        "SCE_RUST_CSTRING": "string",
+        "SCE_RUST_CSTRINGR": "string"
+    }
+}

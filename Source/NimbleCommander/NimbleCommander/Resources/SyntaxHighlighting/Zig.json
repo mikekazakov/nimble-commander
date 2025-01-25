@@ -1,0 +1,36 @@
+// https://github.com/ScintillaOrg/lexilla/blob/master/lexers/LexZig.cxx
+{
+    "lexer": "zig",
+    "wordlists": [
+        // Primary keywords
+        "False None True _ and as async await break case class continue def del elif else except finally for from global if import in is lambda match nonlocal not or pass raise return try while with yield addrspace align allowzero and anyframe anytype asm async await break callconv catch comptime const continue defer else enum errdefer error export extern false fn for if inline linksection noalias noinline nosuspend null opaque or orelse packed pub resume return struct suspend switch test threadlocal true try undefined union unreachable usingnamespace var volatile while"
+        // Secondary keywords
+        // "",
+        // Tertiary keywords
+        // "",
+        // Global type definitions
+        // ""
+    ],
+    "properties": {
+    },
+    "mapping": {
+        "SCE_ZIG_DEFAULT": "default",
+        "SCE_ZIG_COMMENTLINE": "comment",
+        "SCE_ZIG_COMMENTLINEDOC": "comment",
+        "SCE_ZIG_COMMENTLINETOP": "comment",
+        "SCE_ZIG_NUMBER": "number",
+        "SCE_ZIG_OPERATOR": "operator",
+        "SCE_ZIG_CHARACTER": "string",
+        "SCE_ZIG_STRING": "string",
+        "SCE_ZIG_MULTISTRING": "string",
+        "SCE_ZIG_ESCAPECHAR": "string",
+        "SCE_ZIG_IDENTIFIER": "identifier",
+        "SCE_ZIG_FUNCTION": "identifier",
+        "SCE_ZIG_BUILTIN_FUNCTION": "keyword",
+        "SCE_ZIG_KW_PRIMARY": "keyword",
+        "SCE_ZIG_KW_SECONDARY": "identifier",
+        "SCE_ZIG_KW_TERTIARY": "identifier",
+        "SCE_ZIG_KW_TYPE": "identifier",
+        "SCE_ZIG_IDENTIFIER_STRING": "identifier"
+    }
+}

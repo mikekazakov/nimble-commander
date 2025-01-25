@@ -1,0 +1,45 @@
+// https://github.com/ScintillaOrg/lexilla/blob/master/lexers/LexDart.cxx
+{
+    "lexer": "dart",
+    "wordlists": [
+        // Primary keywords
+        "abstract as assert async await base break case catch class const continue covariant default deferred do else enum export extends extension external factory false final finally for get hide if implements import in interface is late library mixin native new null of on operator part required rethrow return sealed set show static super switch sync this throw true try type typedef var when while with yield bool double dynamic int num void"
+        // Secondary keywords
+        // "",
+        // Tertiary keywords
+        // "",
+        // Global type definitions
+        // ""
+    ],
+    "properties": {
+    },
+    "mapping": {
+        "SCE_DART_DEFAULT": "default",
+        "SCE_DART_COMMENTLINE": "comment",
+        "SCE_DART_COMMENTLINEDOC": "comment",
+        "SCE_DART_COMMENTBLOCK": "comment",
+        "SCE_DART_COMMENTBLOCKDOC": "comment",
+        "SCE_DART_STRING_SQ": "string",
+        "SCE_DART_STRING_DQ": "string",
+        "SCE_DART_TRIPLE_STRING_SQ": "string",
+        "SCE_DART_TRIPLE_STRING_DQ": "string",
+        "SCE_DART_RAWSTRING_SQ": "string",
+        "SCE_DART_RAWSTRING_DQ": "string",
+        "SCE_DART_TRIPLE_RAWSTRING_SQ": "string",
+        "SCE_DART_TRIPLE_RAWSTRING_DQ": "string",
+        "SCE_DART_ESCAPECHAR": "string",
+        "SCE_DART_IDENTIFIER": "identifier",
+        "SCE_DART_IDENTIFIER_STRING": "identifier",
+        "SCE_DART_OPERATOR": "operator",
+        "SCE_DART_OPERATOR_STRING": "operator",
+        "SCE_DART_SYMBOL_IDENTIFIER": "identifier",
+        "SCE_DART_SYMBOL_OPERATOR": "operator",
+        "SCE_DART_NUMBER": "number",
+        "SCE_DART_KEY": "identifier",
+        "SCE_DART_METADATA": "preprocessor",
+        "SCE_DART_KW_PRIMARY": "keyword",
+        "SCE_DART_KW_SECONDARY": "identifier",
+        "SCE_DART_KW_TERTIARY": "identifier",
+        "SCE_DART_KW_TYPE": "identifier"
+    }
+}

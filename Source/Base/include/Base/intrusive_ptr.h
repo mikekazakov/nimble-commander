@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <utility>
@@ -183,6 +183,8 @@ public:
     intrusive_ref_counter(const intrusive_ref_counter &) noexcept : c{0} {}
 
     intrusive_ref_counter &operator=(const intrusive_ref_counter &) noexcept { return *this; }
+
+    int use_count() const noexcept { return c.load(std::memory_order_relaxed); }
 
 protected:
     ~intrusive_ref_counter() = default;

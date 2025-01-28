@@ -1,6 +1,9 @@
-// Copyright (C) 2015-2024 Michael G. Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael G. Kazakov. Subject to GNU General Public License version 3.
 #include <Base/CFString.h>
+#include <Base/StackAllocator.h>
+
 #include <memory>
+#include <vector>
 
 namespace nc::base {
 
@@ -70,10 +73,13 @@ std::string CFStringGetUTF8StdString(CFStringRef _str)
         return {cstr};
 
     const CFIndex length = CFStringGetLength(_str);
-    const CFIndex maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
-    auto buffer = std::make_unique<char[]>(maxSize); // REMOVE me!!!!
-    if( CFStringGetCString(_str, &buffer[0], maxSize, kCFStringEncodingUTF8) )
-        return {buffer.get()};
+    const CFIndex max_size = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
+
+    StackAllocator alloc;
+    std::pmr::vector<char> buffer(max_size, &alloc);
+
+    if( CFStringGetCString(_str, buffer.data(), max_size, kCFStringEncodingUTF8) )
+        return {buffer.data()};
 
     return {};
 }

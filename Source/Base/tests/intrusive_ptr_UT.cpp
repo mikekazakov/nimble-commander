@@ -407,4 +407,18 @@ TEST_CASE(PREFIX "Memory order correctness")
     CHECK(Counted::alive == 0);
 }
 
+TEST_CASE(PREFIX "use_count()")
+{
+    Counted *raw_ptr = new Counted;
+    REQUIRE(raw_ptr->use_count() == 0);
+
+    const intrusive_ptr<Counted> ptr1{raw_ptr};
+    REQUIRE(raw_ptr->use_count() == 1);
+    {
+        const intrusive_ptr<Counted> ptr2{ptr1};
+        REQUIRE(raw_ptr->use_count() == 2);
+    }
+    REQUIRE(raw_ptr->use_count() == 1);
+}
+
 // NOLINTEND(bugprone-use-after-move)

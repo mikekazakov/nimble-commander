@@ -29,42 +29,45 @@ private:
 
 TEST_CASE(PREFIX "Domain and error code are preserved")
 {
-    Error err("some domain", 42);
+    const Error err("some domain", 42);
     CHECK(err.Domain() == "some domain");
     CHECK(err.Code() == 42);
 }
 
 TEST_CASE(PREFIX "Description can be synthesized")
 {
-    Error err("Hello", 42);
+    const Error err("Hello", 42);
     CHECK(err.Description() == "Error Domain=Hello Code=42");
 }
 
 TEST_CASE(PREFIX "Description can query additional information from a provider")
 {
     struct Provider : ErrorDescriptionProvider {
-        std::string Description(int64_t _code) const noexcept override { return fmt::format("Description #{}", _code); }
+        [[nodiscard]] std::string Description(int64_t _code) const noexcept override
+        {
+            return fmt::format("Description #{}", _code);
+        }
     };
-    ErrorDescriptionProviderAutoReg autoreg("Hello", std::make_shared<Provider>());
+    const ErrorDescriptionProviderAutoReg autoreg("Hello", std::make_shared<Provider>());
 
-    Error err("Hello", 57);
+    const Error err("Hello", 57);
     CHECK(err.Description() == "Error Domain=Hello Code=57 \"Description #57\"");
 }
 
 TEST_CASE(PREFIX "Querying failure reason")
 {
     struct Provider : ErrorDescriptionProvider {
-        std::string LocalizedFailureReason(int64_t _code) const noexcept override
+        [[nodiscard]] std::string LocalizedFailureReason(int64_t _code) const noexcept override
         {
             return fmt::format("Reason#{}", _code);
         }
     };
 
-    ErrorDescriptionProviderAutoReg autoreg("MyDomain", std::make_shared<Provider>());
+    const ErrorDescriptionProviderAutoReg autoreg("MyDomain", std::make_shared<Provider>());
 
     SECTION("From provider")
     {
-        Error err("MyDomain", 42);
+        const Error err("MyDomain", 42);
         CHECK(err.LocalizedFailureReason() == "Reason#42");
     }
     SECTION("From payload")
@@ -83,21 +86,21 @@ TEST_CASE(PREFIX "Querying failure reason")
     }
     SECTION("None available")
     {
-        Error err("Nonsense", 42);
-        CHECK(err.LocalizedFailureReason() == "Unknown");
+        const Error err("Nonsense", 42);
+        CHECK(err.LocalizedFailureReason() == "Error Domain=Nonsense Code=42");
     }
 }
 
 TEST_CASE(PREFIX "Description providers can be set and unset")
 {
     struct Provider : ErrorDescriptionProvider {
-        std::string Description(int64_t) const noexcept override { return fmt::format("Hi"); }
+        [[nodiscard]] std::string Description(int64_t /*_code*/) const noexcept override { return fmt::format("Hi"); }
     };
 
-    Error err("Hello", 57);
+    const Error err("Hello", 57);
     CHECK(err.Description() == "Error Domain=Hello Code=57");
     {
-        ErrorDescriptionProviderAutoReg autoreg("Hello", std::make_shared<Provider>());
+        const ErrorDescriptionProviderAutoReg autoreg("Hello", std::make_shared<Provider>());
         CHECK(err.Description() == "Error Domain=Hello Code=57 \"Hi\"");
     }
     CHECK(err.Description() == "Error Domain=Hello Code=57");

@@ -25,30 +25,36 @@ namespace {
 class CoreFoundationErrorDescriptionProvider : public ErrorDescriptionProvider
 {
 public:
-    CoreFoundationErrorDescriptionProvider(CFErrorDomain _domain) : m_Domain(_domain) {}
-
-    std::string LocalizedFailureReason(int64_t _code) const noexcept override
-    {
-        CFPtr<CFErrorRef> cf_error = base::CFPtr<CFErrorRef>::adopt(CFErrorCreate(nullptr, m_Domain, _code, nullptr));
-        if( !cf_error )
-            return {};
-
-        CFPtr<CFStringRef> cf_reason = CFPtr<CFStringRef>::adopt(CFErrorCopyFailureReason(cf_error.get()));
-        if( cf_reason ) {
-            return base::CFStringGetUTF8StdString(cf_reason.get());
-        }
-
-        CFPtr<CFStringRef> cf_description = CFPtr<CFStringRef>::adopt(CFErrorCopyDescription(cf_error.get()));
-        if( cf_description ) {
-            return base::CFStringGetUTF8StdString(cf_description.get());
-        }
-
-        return {};
-    }
+    CoreFoundationErrorDescriptionProvider(CFErrorDomain _domain);
+    [[nodiscard]] std::string LocalizedFailureReason(int64_t _code) const noexcept;
 
 private:
     CFErrorDomain m_Domain;
 };
+
+CoreFoundationErrorDescriptionProvider::CoreFoundationErrorDescriptionProvider(CFErrorDomain _domain)
+    : m_Domain(_domain)
+{
+}
+
+[[nodiscard]] std::string CoreFoundationErrorDescriptionProvider::LocalizedFailureReason(int64_t _code) const noexcept
+{
+    const CFPtr<CFErrorRef> cf_error = base::CFPtr<CFErrorRef>::adopt(CFErrorCreate(nullptr, m_Domain, _code, nullptr));
+    if( !cf_error )
+        return {};
+
+    const CFPtr<CFStringRef> cf_reason = CFPtr<CFStringRef>::adopt(CFErrorCopyFailureReason(cf_error.get()));
+    if( cf_reason ) {
+        return base::CFStringGetUTF8StdString(cf_reason.get());
+    }
+
+    const CFPtr<CFStringRef> cf_description = CFPtr<CFStringRef>::adopt(CFErrorCopyDescription(cf_error.get()));
+    if( cf_description ) {
+        return base::CFStringGetUTF8StdString(cf_description.get());
+    }
+
+    return {};
+}
 
 class DomainIndices
 {
@@ -73,7 +79,7 @@ DomainIndices &DomainIndices::Instance() noexcept
 
 uint64_t DomainIndices::Index(std::string_view _domain) noexcept
 {
-    std::lock_guard lock{m_Lock};
+    const std::lock_guard lock{m_Lock};
     if( auto it = m_DomainToIndex.find(_domain); it != m_DomainToIndex.end() ) {
         return it->second;
     }
@@ -87,7 +93,7 @@ uint64_t DomainIndices::Index(std::string_view _domain) noexcept
 
 std::string DomainIndices::Domain(uint64_t _index) noexcept
 {
-    std::lock_guard lock{m_Lock};
+    const std::lock_guard lock{m_Lock};
     if( _index < m_IndexToDomain.size() )
         return m_IndexToDomain[_index];
     return {};
@@ -127,7 +133,7 @@ DescriptionProviders &DescriptionProviders::Instance() noexcept
 
 std::shared_ptr<const ErrorDescriptionProvider> DescriptionProviders::Get(uint64_t _domain) noexcept
 {
-    std::lock_guard lock{m_Lock};
+    const std::lock_guard lock{m_Lock};
     if( _domain < m_Providers.size() )
         return m_Providers[_domain];
     return {};
@@ -135,7 +141,7 @@ std::shared_ptr<const ErrorDescriptionProvider> DescriptionProviders::Get(uint64
 
 void DescriptionProviders::Set(uint64_t _domain, std::shared_ptr<const ErrorDescriptionProvider> _provider) noexcept
 {
-    std::lock_guard lock{m_Lock};
+    const std::lock_guard lock{m_Lock};
     if( _domain >= m_Providers.size() )
         m_Providers.resize(_domain + 1);
     m_Providers[_domain] = std::move(_provider);
@@ -190,7 +196,7 @@ Error::Error(NSError *_error) noexcept
     m_Domain = DomainIndices::Instance().Index(RemapDomain(domain_c_str));
     m_Code = _error.code;
     if( NSDictionary<NSErrorUserInfoKey, id> *const user_info = _error.userInfo ) {
-        if( NSString *ns_reason = [_error.userInfo objectForKey:NSLocalizedFailureReasonErrorKey] ) {
+        if( NSString *const ns_reason = [user_info objectForKey:NSLocalizedFailureReasonErrorKey] ) {
             // If there is a custom localized failure reason - retain it in the external payload.
             if( const char *const utf8_reason = ns_reason.UTF8String )
                 LocalizedFailureReason(utf8_reason);
@@ -232,7 +238,8 @@ int64_t Error::Code() const noexcept
 std::string Error::Description() const noexcept
 {
     std::string desc;
-    if( std::shared_ptr<const ErrorDescriptionProvider> provider = DescriptionProviders::Instance().Get(m_Domain) ) {
+    if( const std::shared_ptr<const ErrorDescriptionProvider> provider =
+            DescriptionProviders::Instance().Get(m_Domain) ) {
         desc = provider->Description(m_Code);
     }
 
@@ -249,12 +256,13 @@ std::string Error::LocalizedFailureReason() const noexcept
     if( m_External && !m_External->localized_failure_description.empty() ) {
         return m_External->localized_failure_description;
     }
-    else if( std::shared_ptr<const ErrorDescriptionProvider> provider =
+    else if( const std::shared_ptr<const ErrorDescriptionProvider> provider =
                  DescriptionProviders::Instance().Get(m_Domain) ) {
         return provider->LocalizedFailureReason(m_Code);
     }
     else {
-        return "Unknown"; // TODO: localize the backup
+        // As a backup return the non-localized description
+        return Description();
     }
 }
 

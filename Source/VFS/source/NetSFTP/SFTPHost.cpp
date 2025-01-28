@@ -6,6 +6,7 @@
 #include "../ListingInput.h"
 #include "SFTPHost.h"
 #include "File.h"
+#include "Errors.h"
 #include "OSDetector.h"
 #include "AccountsFetcher.h"
 #include <sys/socket.h>
@@ -32,7 +33,7 @@ SFTPHost::Connection::~Connection()
     }
 
     if( ssh ) {
-        libssh2_session_disconnect(ssh, "Farewell from Nimble Commander!");
+        libssh2_session_disconnect_ex(ssh, SSH_DISCONNECT_BY_APPLICATION, "Farewell from Nimble Commander!", "");
         libssh2_session_free(ssh);
         ssh = nullptr;
     }
@@ -111,6 +112,8 @@ VFSMeta SFTPHost::Meta()
                            [[maybe_unused]] VFSCancelChecker _cancel_checker) {
         return std::make_shared<SFTPHost>(_config);
     };
+    m.error_domain = sftp::ErrorDomain;
+    m.error_description_provider = std::make_shared<sftp::ErrorDescriptionProvider>();
     return m;
 }
 

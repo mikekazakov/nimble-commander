@@ -26,7 +26,7 @@ class CoreFoundationErrorDescriptionProvider : public ErrorDescriptionProvider
 {
 public:
     CoreFoundationErrorDescriptionProvider(CFErrorDomain _domain);
-    [[nodiscard]] std::string LocalizedFailureReason(int64_t _code) const noexcept;
+    [[nodiscard]] std::string LocalizedFailureReason(int64_t _code) const noexcept override;
 
 private:
     CFErrorDomain m_Domain;

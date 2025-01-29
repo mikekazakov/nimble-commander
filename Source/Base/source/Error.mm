@@ -123,6 +123,7 @@ DescriptionProviders::DescriptionProviders()
     Set(idxs.Index(Error::OSStatus), std::make_shared<CoreFoundationErrorDescriptionProvider>(kCFErrorDomainOSStatus));
     Set(idxs.Index(Error::Mach), std::make_shared<CoreFoundationErrorDescriptionProvider>(kCFErrorDomainMach));
     Set(idxs.Index(Error::Cocoa), std::make_shared<CoreFoundationErrorDescriptionProvider>(kCFErrorDomainCocoa));
+    Set(idxs.Index(Error::NSURL), std::make_shared<CoreFoundationErrorDescriptionProvider>(CFSTR("NSURLErrorDomain")));
 }
 
 DescriptionProviders &DescriptionProviders::Instance() noexcept
@@ -176,6 +177,8 @@ static std::string_view RemapDomain(std::string_view _domain) noexcept
         return Error::Mach;
     if( _domain == "NSCocoaErrorDomain" )
         return Error::Cocoa;
+    if( _domain == "NSURLErrorDomain" )
+        return Error::NSURL;
     return _domain;
 }
 

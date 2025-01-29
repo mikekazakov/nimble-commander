@@ -208,18 +208,6 @@ static NSString *TextForCode(int _code)
             return @"Internal archive module error";
         case ArclibMiscError:
             return @"Unknown or unclassified archive error";
-        case UnRARFailedToOpenArchive:
-            return @"Failed to open RAR archive";
-        case UnRARBadData:
-            return @"Bad RAR data";
-        case UnRARBadArchive:
-            return @"Bad RAR archive";
-        case UnRARUnknownFormat:
-            return @"Unknown RAR format";
-        case UnRARMissingPassword:
-            return @"Missing RAR password";
-        case UnRARBadPassword:
-            return @"Bad RAR password";
         case NetFTPLoginDenied:
             return @"The remote server denied to login";
         case NetFTPURLMalformat:

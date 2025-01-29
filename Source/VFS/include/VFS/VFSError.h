@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -30,14 +30,6 @@ enum {
     ArclibProgError = -2001,        // Illegal usage of the library.
     ArclibMiscError = -2002,        // Unknown or unclassified error.
     ArclibPasswordRequired = -2003, // Password needed.
-
-    // UnRAR error codes convert:
-    UnRARFailedToOpenArchive = -2100,
-    UnRARBadData = -2101,
-    UnRARBadArchive = -2102,
-    UnRARUnknownFormat = -2103,
-    UnRARMissingPassword = -2104,
-    UnRARBadPassword = -2105,
 
     // Net FTP error codes:
     NetFTPLoginDenied = -3000,

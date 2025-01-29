@@ -129,6 +129,12 @@ TEST_CASE(PREFIX "Predefined domains have description providers")
 
     CHECK(Error(Error::Cocoa, NSXPCConnectionInterrupted).LocalizedFailureReason() ==
           "Couldn’t communicate with a helper application.");
+
+    CHECK(Error(Error::NSURL, NSURLErrorDNSLookupFailed).LocalizedFailureReason() ==
+          "The operation couldn’t be completed. (NSURLErrorDomain error -1006.)");
+
+    CHECK(Error(Error::NSURL, NSURLErrorClientCertificateRequired).LocalizedFailureReason() ==
+          "The operation couldn’t be completed. (NSURLErrorDomain error -1206.)");
 }
 
 TEST_CASE(PREFIX "Can interface with NSError")

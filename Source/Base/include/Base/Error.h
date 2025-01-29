@@ -49,6 +49,9 @@ public:
     // Predefined domain for the Cocoa error codes.
     static inline constexpr std::string_view Cocoa = "Cocoa";
 
+    // Predefined domain for the NSURL error codes.
+    static inline constexpr std::string_view NSURL = "NSURL";
+
     // Construct an Error with the specified domain and the error code.
     Error(std::string_view _domain, int64_t _code) noexcept;
 

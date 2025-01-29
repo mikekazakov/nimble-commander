@@ -414,11 +414,15 @@ TEST_CASE(PREFIX "use_count()")
 
     const intrusive_ptr<Counted> ptr1{raw_ptr};
     REQUIRE(raw_ptr->use_count() == 1);
+    REQUIRE(raw_ptr->use_count() == ptr1->use_count());
     {
         const intrusive_ptr<Counted> ptr2{ptr1};
         REQUIRE(raw_ptr->use_count() == 2);
+        REQUIRE(raw_ptr->use_count() == ptr1->use_count());
+        REQUIRE(raw_ptr->use_count() == ptr2->use_count());
     }
     REQUIRE(raw_ptr->use_count() == 1);
+    REQUIRE(raw_ptr->use_count() == ptr1->use_count());
 }
 
 // NOLINTEND(bugprone-use-after-move)

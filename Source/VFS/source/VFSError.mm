@@ -343,7 +343,7 @@ namespace {
 class ErrorDescriptionProvider : public nc::base::ErrorDescriptionProvider
 {
 public:
-    std::string Description(int64_t _code) const noexcept override;
+    [[nodiscard]] std::string Description(int64_t _code) const noexcept override;
 };
 
 // TODO: remove this later
@@ -363,10 +363,10 @@ nc::Error ToError(int _vfs_error_code)
 
     if( _vfs_error_code >= g_PosixMin && _vfs_error_code <= g_PosixMax ) {
         const int posix_code = _vfs_error_code - g_PosixBase;
-        return nc::Error(nc::Error::POSIX, posix_code);
+        return {nc::Error::POSIX, posix_code};
     }
 
-    return nc::Error(ErrorDomain, _vfs_error_code);
+    return {ErrorDomain, _vfs_error_code};
 }
 
 } // namespace VFSError

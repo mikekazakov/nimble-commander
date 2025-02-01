@@ -59,7 +59,7 @@ public:
 
 #ifdef __OBJC__
     // Construct an Error out of the existing NSError.
-    Error(NSError *_error) noexcept;
+    explicit Error(NSError *_error) noexcept;
 #endif
 
     // Copy constructor.

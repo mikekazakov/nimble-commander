@@ -28,6 +28,7 @@ using base::ErrorDescriptionProvider;
 
 namespace {
 
+// TODO: provide "EINVAL" etc for POSIX domain as a raw Description
 class CoreFoundationErrorDescriptionProvider : public ErrorDescriptionProvider
 {
 public:

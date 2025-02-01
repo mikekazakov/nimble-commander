@@ -24,8 +24,10 @@ public:
 
     int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int
-    Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
+    int Stat(std::string_view _path,
+             VFSStat &_st,
+             unsigned long _flags,
+             const VFSCancelChecker &_cancel_checker = {}) override;
 
     int FetchDirectoryListing(std::string_view _path,
                               VFSListingPtr &_target,
@@ -42,11 +44,11 @@ public:
 
     int CreateFile(std::string_view _path,
                    std::shared_ptr<VFSFile> &_target,
-                   const VFSCancelChecker &_cancel_checker) override;
+                   const VFSCancelChecker &_cancel_checker = nullptr) override;
 
-    int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker) override;
+    int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
+    int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
 
     bool IsDirectoryChangeObservationAvailable(std::string_view _path) override;
     HostDirObservationTicket ObserveDirectoryChanges(std::string_view _path, std::function<void()> _handler) override;
@@ -57,43 +59,45 @@ public:
 
     void StopObservingFileChanges(unsigned long _token) override;
 
-    ssize_t CalculateDirectorySize(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
+    ssize_t CalculateDirectorySize(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int ReadSymlink(std::string_view _path, std::span<char> _buffer, const VFSCancelChecker &_cancel_checker) override;
+    int
+    ReadSymlink(std::string_view _path, std::span<char> _buffer, const VFSCancelChecker &_cancel_checker = {}) override;
 
     int CreateSymlink(std::string_view _symlink_path,
                       std::string_view _symlink_value,
-                      const VFSCancelChecker &_cancel_checker) override;
+                      const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
+    int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    std::expected<void, nc::Error> Trash(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, nc::Error> Trash(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int
-    Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker) override;
+    int Rename(std::string_view _old_path,
+               std::string_view _new_path,
+               const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker) override;
+    int SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;
 
     int SetFlags(std::string_view _path,
                  uint32_t _flags,
                  uint64_t _vfs_options,
-                 const VFSCancelChecker &_cancel_checker) override;
+                 const VFSCancelChecker &_cancel_checker = {}) override;
 
     int SetOwnership(std::string_view _path,
                      unsigned _uid,
                      unsigned _gid,
-                     const VFSCancelChecker &_cancel_checker) override;
+                     const VFSCancelChecker &_cancel_checker = {}) override;
 
     int SetTimes(std::string_view _path,
                  std::optional<time_t> _birth_time,
                  std::optional<time_t> _mod_time,
                  std::optional<time_t> _chg_time,
                  std::optional<time_t> _acc_time,
-                 const VFSCancelChecker &_cancel_checker) override;
+                 const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int FetchUsers(std::vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<std::vector<VFSUser>, Error> FetchUsers(const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int FetchGroups(std::vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker) override;
+    int FetchGroups(std::vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker = {}) override;
     bool ShouldProduceThumbnails() const override;
 
     std::shared_ptr<const NativeHost> SharedPtr() const

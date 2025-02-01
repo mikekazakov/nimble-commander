@@ -69,5 +69,6 @@ TEST_CASE(PREFIX "Unsupported methods")
     auto host = std::make_shared<Host>("/", nullptr, "dummy");
     // ...
     REQUIRE(host->Trash("/some/path").error() == Error(Error::POSIX, ENOTSUP));
+    REQUIRE(host->FetchUsers().error() == Error(Error::POSIX, ENOTSUP));
     // ...
 }

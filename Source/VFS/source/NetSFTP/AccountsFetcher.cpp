@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AccountsFetcher.h"
 #include <Base/algo.h>
 #include <VFS/VFSError.h>
@@ -14,28 +14,25 @@ AccountsFetcher::AccountsFetcher(LIBSSH2_SESSION *_session, OSType _os_type) : m
 {
 }
 
-int AccountsFetcher::FetchUsers(std::vector<VFSUser> &_target)
+std::expected<std::vector<VFSUser>, Error> AccountsFetcher::FetchUsers()
 {
-    _target.clear();
-
-    int rc = VFSError::Ok;
+    std::expected<std::vector<VFSUser>, Error> res;
     if( m_OSType == OSType::Linux || m_OSType == OSType::xBSD )
-        rc = GetUsersViaGetent(_target);
+        res = GetUsersViaGetent();
     else if( m_OSType == OSType::MacOSX )
-        rc = GetUsersViaOpenDirectory(_target);
+        res = GetUsersViaOpenDirectory();
     else
-        rc = VFSError::FromErrno(ENODEV);
+        res = std::unexpected(Error{Error::POSIX, ENODEV});
 
-    if( rc != VFSError::Ok )
-        return rc;
-
-    std::ranges::sort(_target, [](const auto &_1, const auto &_2) {
-        return static_cast<signed>(_1.uid) < static_cast<signed>(_2.uid);
-    });
-    _target.erase(std::ranges::unique(_target, [](const auto &_1, const auto &_2) { return _1.uid == _2.uid; }).begin(),
-                  std::end(_target));
-
-    return VFSError::Ok;
+    if( res ) {
+        std::vector<VFSUser> &users = res.value();
+        std::ranges::sort(users, [](const auto &_1, const auto &_2) {
+            return static_cast<signed>(_1.uid) < static_cast<signed>(_2.uid);
+        });
+        users.erase(std::ranges::unique(users, [](const auto &_1, const auto &_2) { return _1.uid == _2.uid; }).begin(),
+                    users.end());
+    }
+    return res;
 }
 
 int AccountsFetcher::FetchGroups(std::vector<VFSGroup> &_target)
@@ -62,13 +59,14 @@ int AccountsFetcher::FetchGroups(std::vector<VFSGroup> &_target)
     return VFSError::Ok;
 }
 
-int AccountsFetcher::GetUsersViaGetent(std::vector<VFSUser> &_target)
+std::expected<std::vector<VFSUser>, Error> AccountsFetcher::GetUsersViaGetent()
 {
     const auto getent = Execute("getent passwd");
     if( !getent )
-        return VFSError::FromErrno(ENODEV);
+        return std::unexpected(Error{Error::POSIX, ENODEV});
 
     const std::vector<std::string> entries = base::SplitByDelimiter(*getent, '\n');
+    std::vector<VFSUser> users;
     for( const auto &e : entries ) {
         const std::vector<std::string> fields = base::SplitByDelimiter(e, ':', false);
         const auto passwd_fields = 7;
@@ -78,11 +76,11 @@ int AccountsFetcher::GetUsersViaGetent(std::vector<VFSUser> &_target)
             user.gecos = fields[4];
             user.gecos = std::string{base::TrimRight(user.gecos, ',')};
             user.uid = static_cast<unsigned>(std::atoi(fields[2].c_str()));
-            _target.emplace_back(std::move(user));
+            users.emplace_back(std::move(user));
         }
     }
 
-    return VFSError::Ok;
+    return std::move(users);
 }
 
 int AccountsFetcher::GetGroupsViaGetent(std::vector<VFSGroup> &_target)
@@ -107,15 +105,15 @@ int AccountsFetcher::GetGroupsViaGetent(std::vector<VFSGroup> &_target)
     return VFSError::Ok;
 }
 
-int AccountsFetcher::GetUsersViaOpenDirectory(std::vector<VFSUser> &_target)
+std::expected<std::vector<VFSUser>, Error> AccountsFetcher::GetUsersViaOpenDirectory()
 {
     const auto ds_ids = Execute("dscl . -list /Users UniqueID");
     if( !ds_ids )
-        return VFSError::FromErrno(ENODEV);
+        return std::unexpected(Error{Error::POSIX, ENODEV});
 
     const auto ds_gecos = Execute("dscl . -list /Users RealName");
     if( !ds_gecos )
-        return VFSError::FromErrno(ENODEV);
+        return std::unexpected(Error{Error::POSIX, ENODEV});
 
     std::unordered_map<std::string, std::pair<uint32_t, std::string>> users; // user -> uid, gecos
     std::vector<std::string> entries = base::SplitByDelimiter(*ds_ids, '\n');
@@ -134,15 +132,16 @@ int AccountsFetcher::GetUsersViaOpenDirectory(std::vector<VFSUser> &_target)
             users[name].second = base::TrimLeft(gecos, ' ');
         }
 
+    std::vector<VFSUser> target;
     for( const auto &u : users ) {
         VFSUser user;
         user.name = u.first;
         user.uid = u.second.first;
         user.gecos = u.second.second;
-        _target.emplace_back(std::move(user));
+        target.emplace_back(std::move(user));
     }
 
-    return VFSError::Ok;
+    return std::move(target);
 }
 
 int AccountsFetcher::GetGroupsViaOpenDirectory(std::vector<VFSGroup> &_target)

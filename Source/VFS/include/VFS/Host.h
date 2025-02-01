@@ -166,41 +166,39 @@ public:
      * Default implementation does nothing, subclasses MUST implement it.
      */
     virtual int
-    Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker = nullptr);
+    Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * VFS version of statfs().
      * Path may be a file path or a directory path.
      */
-    virtual int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Default implementation calls Stat() and then returns (st.mode & S_IFMT) == S_IFDIR.
      * On any errors returns false.
      */
     virtual bool
-    IsDirectory(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = nullptr);
+    IsDirectory(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Default implementation calls Stat() and then returns (st.mode & S_IFMT) == S_IFLNK.
      * On any errors returns false.
      */
-    virtual bool
-    IsSymlink(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual bool IsSymlink(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Reads the symlink value into the specified buffer.
      * The value stored there will be null-terminated.
      * Return zero upon succes, negative value on error.
      */
-    virtual int ReadSymlink(std::string_view _symlink_path,
-                            std::span<char> _buffer,
-                            const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int
+    ReadSymlink(std::string_view _symlink_path, std::span<char> _buffer, const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Default implementation calls Stat() and returns true if return was Ok.
      */
-    virtual bool Exists(std::string_view _path, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual bool Exists(std::string_view _path, const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Checks if _filenames contains a forbidden symbols and return false if found them.
@@ -208,13 +206,19 @@ public:
      */
     virtual bool ValidateFilename(std::string_view _filename) const;
 
-    virtual ssize_t CalculateDirectorySize(std::string_view _path, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual ssize_t CalculateDirectorySize(std::string_view _path, const VFSCancelChecker &_cancel_checker = {});
 
     virtual bool ShouldProduceThumbnails() const;
 
-    virtual int FetchUsers(std::vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker = nullptr);
+    /**
+     * Return a list of known users on this host.
+     */
+    virtual std::expected<std::vector<VFSUser>, Error> FetchUsers(const VFSCancelChecker &_cancel_checker = {});
 
-    virtual int FetchGroups(std::vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker = nullptr);
+    /**
+     * Return a list of known user groups on this host.
+     */
+    virtual int FetchGroups(std::vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker = {});
 
     /***********************************************************************************************
      * Directories iteration, listings fetching
@@ -226,7 +230,7 @@ public:
     virtual int FetchDirectoryListing(std::string_view _path,
                                       VFSListingPtr &_target,
                                       unsigned long _flags,
-                                      const VFSCancelChecker &_cancel_checker = nullptr);
+                                      const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Produce a regular listing, consisting of a single element.
@@ -236,7 +240,7 @@ public:
     virtual int FetchSingleItemListing(std::string_view _path_to_item,
                                        VFSListingPtr &_target,
                                        unsigned long _flags,
-                                       const VFSCancelChecker &_cancel_checker = nullptr);
+                                       const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * IterateDirectoryListing will skip "." and ".." entries if they are present.
@@ -256,40 +260,38 @@ public:
      * Making changes to the filesystem
      **********************************************************************************************/
 
-    virtual int CreateFile(std::string_view _path,
-                           std::shared_ptr<VFSFile> &_target,
-                           const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int
+    CreateFile(std::string_view _path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker = {});
 
-    virtual int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker = {});
 
     /** Return zero upon succes, negative value on error. */
     virtual int CreateSymlink(std::string_view _symlink_path,
                               std::string_view _symlink_value,
-                              const VFSCancelChecker &_cancel_checker = nullptr);
+                              const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Unlinks(deletes) a file. Dont follow last symlink, in case of.
      * Don't delete directories, similar to POSIX.
      */
-    virtual int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Deletes an empty directory. Will fail on non-empty ones, unless NonEmptyRmDir flag is
      * specified.
      */
-    virtual int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Moves an item into trash bin.
      */
-    virtual std::expected<void, nc::Error> Trash(std::string_view _path,
-                                                 const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual std::expected<void, Error> Trash(std::string_view _path, const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Change the name of a file.
      */
     virtual int
-    Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker = nullptr);
+    Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Adjust file node times.
@@ -299,13 +301,12 @@ public:
                          std::optional<time_t> _mod_time,
                          std::optional<time_t> _chg_time,
                          std::optional<time_t> _acc_time,
-                         const VFSCancelChecker &_cancel_checker = nullptr);
+                         const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Change permissions similarly to chmod().
      */
-    virtual int
-    SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Change flags similarly to chflags().
@@ -314,15 +315,13 @@ public:
     virtual int SetFlags(std::string_view _path,
                          uint32_t _flags,
                          uint64_t _vfs_options,
-                         const VFSCancelChecker &_cancel_checker = nullptr);
+                         const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Change ownership similarly to chown().
      */
-    virtual int SetOwnership(std::string_view _path,
-                             unsigned _uid,
-                             unsigned _gid,
-                             const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int
+    SetOwnership(std::string_view _path, unsigned _uid, unsigned _gid, const VFSCancelChecker &_cancel_checker = {});
 
     /***********************************************************************************************
      * Observation of changes

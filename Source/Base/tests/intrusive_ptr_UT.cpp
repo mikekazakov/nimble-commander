@@ -416,10 +416,12 @@ TEST_CASE(PREFIX "use_count()")
     REQUIRE(raw_ptr->use_count() == 1);
     REQUIRE(raw_ptr->use_count() == ptr1->use_count());
     {
+        // NOLINTBEGIN(performance-unnecessary-copy-initialization)
         const intrusive_ptr<Counted> ptr2{ptr1};
         REQUIRE(raw_ptr->use_count() == 2);
         REQUIRE(raw_ptr->use_count() == ptr1->use_count());
         REQUIRE(raw_ptr->use_count() == ptr2->use_count());
+        // NOLINTEND(performance-unnecessary-copy-initialization)
     }
     REQUIRE(raw_ptr->use_count() == 1);
     REQUIRE(raw_ptr->use_count() == ptr1->use_count());

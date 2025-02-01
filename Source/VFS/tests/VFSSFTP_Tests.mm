@@ -565,8 +565,8 @@ TEST_CASE(PREFIX "chown")
 TEST_CASE(PREFIX "FetchUsers")
 {
     const VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
-    std::vector<VFSUser> users;
-    REQUIRE(host->FetchUsers(users) == VFSError::Ok);
+    const std::expected<std::vector<VFSUser>, nc::Error> users = host->FetchUsers();
+    REQUIRE(users);
     const std::vector<VFSUser> expected_users{
         {.uid = 0, .name = "root", .gecos = "root"},
         {.uid = 1, .name = "daemon", .gecos = "daemon"},
@@ -608,8 +608,8 @@ TEST_CASE(PREFIX "FetchUsers")
 TEST_CASE(PREFIX "FetchGroups")
 {
     const VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
-    std::vector<VFSGroup> groups;
-    REQUIRE(host->FetchGroups(groups) == VFSError::Ok);
+    const std::expected<std::vector<VFSGroup>, nc::Error> groups = host->FetchGroups();
+    REQUIRE(groups);
     const std::vector<VFSGroup> expected_groups{{.gid = 0, .name = "root", .gecos = ""},
                                                 {.gid = 1, .name = "daemon", .gecos = ""},
                                                 {.gid = 2, .name = "bin", .gecos = ""},

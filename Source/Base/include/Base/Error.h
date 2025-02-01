@@ -39,19 +39,19 @@ class Error
 {
 public:
     // Predefined domain for the POSIX error codes.
-    static inline constexpr std::string_view POSIX = "POSIX";
+    static constexpr std::string_view POSIX = "POSIX";
 
     // Predefined domain for the OSStatus error codes.
-    static inline constexpr std::string_view OSStatus = "OSStatus";
+    static constexpr std::string_view OSStatus = "OSStatus";
 
     // Predefined domain for the Mach error codes.
-    static inline constexpr std::string_view Mach = "Mach";
+    static constexpr std::string_view Mach = "Mach";
 
     // Predefined domain for the Cocoa error codes.
-    static inline constexpr std::string_view Cocoa = "Cocoa";
+    static constexpr std::string_view Cocoa = "Cocoa";
 
     // Predefined domain for the NSURL error codes.
-    static inline constexpr std::string_view NSURL = "NSURL";
+    static constexpr std::string_view NSURL = "NSURL";
 
     // Construct an Error with the specified domain and the error code.
     Error(std::string_view _domain, int64_t _code) noexcept;

@@ -70,11 +70,11 @@ public:
     uint64_t Index(std::string_view _domain) noexcept;
     std::string Domain(uint64_t _index) noexcept;
 
-    static inline constexpr uint64_t POSIX = 0;
-    static inline constexpr uint64_t OSStatus = 1;
-    static inline constexpr uint64_t Mach = 2;
-    static inline constexpr uint64_t Cocoa = 3;
-    static inline constexpr uint64_t NSURL = 4;
+    static constexpr uint64_t POSIX = 0;
+    static constexpr uint64_t OSStatus = 1;
+    static constexpr uint64_t Mach = 2;
+    static constexpr uint64_t Cocoa = 3;
+    static constexpr uint64_t NSURL = 4;
 
 private:
     using Map = ankerl::unordered_dense::map<std::string, int64_t, UnorderedStringHashEqual, UnorderedStringHashEqual>;

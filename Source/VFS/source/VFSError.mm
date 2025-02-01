@@ -337,4 +337,36 @@ std::string FormatErrorCode(int _vfs_code)
     return {};
 }
 
+namespace {
+
+// TODO: remove this later
+class ErrorDescriptionProvider : public nc::base::ErrorDescriptionProvider
+{
+public:
+    std::string Description(int64_t _code) const noexcept override;
+};
+
+// TODO: remove this later
+std::string ErrorDescriptionProvider::Description(int64_t _code) const noexcept
+{
+    return ToNSError(static_cast<int>(_code)).description.UTF8String;
+}
+
+} // namespace
+
+// TODO: remove this later
+nc::Error ToError(int _vfs_error_code)
+{
+    static std::once_flag once;
+    std::call_once(once,
+                   [] { nc::Error::DescriptionProvider(ErrorDomain, std::make_shared<ErrorDescriptionProvider>()); });
+
+    if( _vfs_error_code >= g_PosixMin && _vfs_error_code <= g_PosixMax ) {
+        const int posix_code = _vfs_error_code - g_PosixBase;
+        return nc::Error(nc::Error::POSIX, posix_code);
+    }
+
+    return nc::Error(ErrorDomain, _vfs_error_code);
+}
+
 } // namespace VFSError

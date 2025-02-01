@@ -7,6 +7,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <expected>
 #include <vector>
+#include <iostream>
 #include <fmt/format.h>
 #include <cassert>
 
@@ -348,6 +349,12 @@ void Error::DescriptionProvider(std::string_view _domain,
 bool operator==(const Error &_lhs, const Error &_rhs) noexcept
 {
     return _lhs.m_Domain == _rhs.m_Domain && _lhs.m_Code == _rhs.m_Code;
+}
+
+std::ostream &operator<<(std::ostream &_os, const Error &_err)
+{
+    _os << _err.Description();
+    return _os;
 }
 
 } // namespace nc

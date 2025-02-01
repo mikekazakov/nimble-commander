@@ -4,6 +4,7 @@
 #include <string>
 #include <string_view>
 #include <memory>
+#include <iosfwd>
 #include <Base/intrusive_ptr.h>
 
 #ifdef __OBJC__
@@ -98,6 +99,9 @@ public:
     // Comparing two Errors for equality.
     // Only the domain and the error code is considered in the comparison.
     friend bool operator==(const Error &_lhs, const Error &_rhs) noexcept;
+
+    // Support output into iostreams for debugging purposes.
+    friend std::ostream &operator<<(std::ostream &_os, const Error &_err);
 
     // Loads a description provider currently set for the specified domain.
     // Returns nullptr if this domain has no associated provider.

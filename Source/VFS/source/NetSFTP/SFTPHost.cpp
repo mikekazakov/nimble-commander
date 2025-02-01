@@ -966,19 +966,20 @@ SFTPHost::FetchUsers([[maybe_unused]] const VFSCancelChecker &_cancel_checker)
     return fetcher.FetchUsers();
 }
 
-int SFTPHost::FetchGroups(std::vector<VFSGroup> &_target, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<std::vector<VFSGroup>, Error>
+SFTPHost::FetchGroups([[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( m_OSType == sftp::OSType::Unknown )
-        return VFSError::FromErrno(ENODEV);
+        return std::unexpected(Error{Error::POSIX, ENODEV});
 
     std::unique_ptr<Connection> conn;
     if( const int rc = GetConnection(conn); rc < 0 )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
     sftp::AccountsFetcher fetcher{conn->ssh, m_OSType};
-    return fetcher.FetchGroups(_target);
+    return fetcher.FetchGroups();
 }
 
 static bool ServerHasReversedSymlinkParameters(LIBSSH2_SESSION *_session)

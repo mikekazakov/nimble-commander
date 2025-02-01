@@ -70,5 +70,6 @@ TEST_CASE(PREFIX "Unsupported methods")
     // ...
     REQUIRE(host->Trash("/some/path").error() == Error(Error::POSIX, ENOTSUP));
     REQUIRE(host->FetchUsers().error() == Error(Error::POSIX, ENOTSUP));
+    REQUIRE(host->FetchGroups().error() == Error(Error::POSIX, ENOTSUP));
     // ...
 }

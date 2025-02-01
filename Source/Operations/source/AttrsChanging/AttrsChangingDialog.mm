@@ -162,7 +162,7 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
     m_VFS = m_Items.front().Host();
     m_ProcessSubfolders = false;
     m_Users = m_Items.front().Host()->FetchUsers().value_or(std::vector<VFSUser>{});
-    m_Items.front().Host()->FetchGroups(m_Groups);
+    m_Groups = m_Items.front().Host()->FetchGroups().value_or(std::vector<VFSGroup>{});
 
     const auto vfs_features = m_VFS->Features();
     m_AccessRightsBlockShown = vfs_features & nc::vfs::HostFeatures::SetPermissions;

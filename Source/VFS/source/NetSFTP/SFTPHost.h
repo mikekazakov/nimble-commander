@@ -93,7 +93,7 @@ public:
 
     std::expected<std::vector<VFSUser>, Error> FetchUsers(const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int FetchGroups(std::vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<std::vector<VFSGroup>, Error> FetchGroups(const VFSCancelChecker &_cancel_checker = {}) override;
 
     // internal stuff
     struct Connection {

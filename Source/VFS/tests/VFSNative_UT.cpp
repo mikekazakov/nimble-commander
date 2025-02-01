@@ -168,3 +168,11 @@ TEST_CASE(PREFIX "FetchUsers")
     REQUIRE(std::ranges::contains(users.value(), VFSUser{0, "root", "System Administrator"}));
     REQUIRE(std::ranges::contains(users.value(), VFSUser{1, "daemon", "System Services"}));
 }
+
+TEST_CASE(PREFIX "FetchGroups")
+{
+    const std::expected<std::vector<VFSGroup>, Error> groups = host().FetchGroups();
+    REQUIRE(groups);
+    REQUIRE(std::ranges::contains(groups.value(), VFSGroup{0, "wheel", "System Group"}));
+    REQUIRE(std::ranges::contains(groups.value(), VFSGroup{20, "staff", "Staff"}));
+}

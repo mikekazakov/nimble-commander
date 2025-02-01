@@ -507,10 +507,9 @@ std::expected<std::vector<VFSUser>, Error> Host::FetchUsers([[maybe_unused]] con
     return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
-int Host::FetchGroups([[maybe_unused]] std::vector<VFSGroup> &_target,
-                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<std::vector<VFSGroup>, Error> Host::FetchGroups([[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 int Host::SetFlags([[maybe_unused]] std::string_view _path,

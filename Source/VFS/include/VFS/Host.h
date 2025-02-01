@@ -218,7 +218,7 @@ public:
     /**
      * Return a list of known user groups on this host.
      */
-    virtual int FetchGroups(std::vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker = {});
+    virtual std::expected<std::vector<VFSGroup>, Error> FetchGroups(const VFSCancelChecker &_cancel_checker = {});
 
     /***********************************************************************************************
      * Directories iteration, listings fetching

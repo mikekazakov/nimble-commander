@@ -16,13 +16,13 @@ public:
     AccountsFetcher(LIBSSH2_SESSION *_session, OSType _os_type);
 
     std::expected<std::vector<VFSUser>, Error> FetchUsers();
-    int FetchGroups(std::vector<VFSGroup> &_target);
+    std::expected<std::vector<VFSGroup>, Error> FetchGroups();
 
 private:
     std::expected<std::vector<VFSUser>, Error> GetUsersViaGetent();
-    int GetGroupsViaGetent(std::vector<VFSGroup> &_target);
+    std::expected<std::vector<VFSGroup>, Error> GetGroupsViaGetent();
     std::expected<std::vector<VFSUser>, Error> GetUsersViaOpenDirectory();
-    int GetGroupsViaOpenDirectory(std::vector<VFSGroup> &_target);
+    std::expected<std::vector<VFSGroup>, Error> GetGroupsViaOpenDirectory();
     std::optional<std::string> Execute(const std::string &_command);
 
     LIBSSH2_SESSION *const m_Session;

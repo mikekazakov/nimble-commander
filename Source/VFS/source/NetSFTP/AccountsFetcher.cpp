@@ -16,13 +16,11 @@ AccountsFetcher::AccountsFetcher(LIBSSH2_SESSION *_session, OSType _os_type) : m
 
 std::expected<std::vector<VFSUser>, Error> AccountsFetcher::FetchUsers()
 {
-    std::expected<std::vector<VFSUser>, Error> res;
+    std::expected<std::vector<VFSUser>, Error> res = std::unexpected(Error{Error::POSIX, ENODEV});
     if( m_OSType == OSType::Linux || m_OSType == OSType::xBSD )
         res = GetUsersViaGetent();
     else if( m_OSType == OSType::MacOSX )
         res = GetUsersViaOpenDirectory();
-    else
-        res = std::unexpected(Error{Error::POSIX, ENODEV});
 
     if( res ) {
         std::vector<VFSUser> &users = res.value();
@@ -35,28 +33,24 @@ std::expected<std::vector<VFSUser>, Error> AccountsFetcher::FetchUsers()
     return res;
 }
 
-int AccountsFetcher::FetchGroups(std::vector<VFSGroup> &_target)
+std::expected<std::vector<VFSGroup>, Error> AccountsFetcher::FetchGroups()
 {
-    _target.clear();
-
-    int rc = VFSError::Ok;
+    std::expected<std::vector<VFSGroup>, Error> res = std::unexpected(Error{Error::POSIX, ENODEV});
     if( m_OSType == OSType::Linux || m_OSType == OSType::xBSD )
-        rc = GetGroupsViaGetent(_target);
+        res = GetGroupsViaGetent();
     else if( m_OSType == OSType::MacOSX )
-        rc = GetGroupsViaOpenDirectory(_target);
-    else
-        rc = VFSError::FromErrno(ENODEV);
+        res = GetGroupsViaOpenDirectory();
 
-    if( rc != VFSError::Ok )
-        return rc;
-
-    std::ranges::sort(_target, [](const auto &_1, const auto &_2) {
-        return static_cast<signed>(_1.gid) < static_cast<signed>(_2.gid);
-    });
-    _target.erase(std::ranges::unique(_target, [](const auto &_1, const auto &_2) { return _1.gid == _2.gid; }).begin(),
-                  std::end(_target));
-
-    return VFSError::Ok;
+    if( res ) {
+        std::vector<VFSGroup> &groups = res.value();
+        std::ranges::sort(groups, [](const auto &_1, const auto &_2) {
+            return static_cast<signed>(_1.gid) < static_cast<signed>(_2.gid);
+        });
+        groups.erase(
+            std::ranges::unique(groups, [](const auto &_1, const auto &_2) { return _1.gid == _2.gid; }).begin(),
+            groups.end());
+    }
+    return res;
 }
 
 std::expected<std::vector<VFSUser>, Error> AccountsFetcher::GetUsersViaGetent()
@@ -83,14 +77,15 @@ std::expected<std::vector<VFSUser>, Error> AccountsFetcher::GetUsersViaGetent()
     return std::move(users);
 }
 
-int AccountsFetcher::GetGroupsViaGetent(std::vector<VFSGroup> &_target)
+std::expected<std::vector<VFSGroup>, Error> AccountsFetcher::GetGroupsViaGetent()
 {
     const auto getent = Execute("getent group");
     if( !getent )
-        return VFSError::FromErrno(ENODEV);
+        return std::unexpected(Error{Error::POSIX, ENODEV});
 
     const std::vector<std::string> entries = base::SplitByDelimiter(*getent, '\n');
 
+    std::vector<VFSGroup> groups;
     for( const auto &e : entries ) {
         const std::vector<std::string> fields = base::SplitByDelimiter(e, ':', false);
         const auto group_fields_at_least = 3;
@@ -98,11 +93,11 @@ int AccountsFetcher::GetGroupsViaGetent(std::vector<VFSGroup> &_target)
             VFSGroup group;
             group.name = fields[0];
             group.gid = static_cast<unsigned>(std::atoi(fields[2].c_str()));
-            _target.emplace_back(std::move(group));
+            groups.emplace_back(std::move(group));
         }
     }
 
-    return VFSError::Ok;
+    return std::move(groups);
 }
 
 std::expected<std::vector<VFSUser>, Error> AccountsFetcher::GetUsersViaOpenDirectory()
@@ -144,15 +139,15 @@ std::expected<std::vector<VFSUser>, Error> AccountsFetcher::GetUsersViaOpenDirec
     return std::move(target);
 }
 
-int AccountsFetcher::GetGroupsViaOpenDirectory(std::vector<VFSGroup> &_target)
+std::expected<std::vector<VFSGroup>, Error> AccountsFetcher::GetGroupsViaOpenDirectory()
 {
     const auto ds_ids = Execute("dscl . -list /Groups PrimaryGroupID");
     if( !ds_ids )
-        return VFSError::FromErrno(ENODEV);
+        return std::unexpected(Error{Error::POSIX, ENODEV});
 
     const auto ds_gecos = Execute("dscl . -list /Groups RealName");
     if( !ds_gecos )
-        return VFSError::FromErrno(ENODEV);
+        return std::unexpected(Error{Error::POSIX, ENODEV});
 
     std::unordered_map<std::string, std::pair<uint32_t, std::string>> groups; // group -> gid, gecos
     std::vector<std::string> entries = base::SplitByDelimiter(*ds_ids, '\n');
@@ -172,15 +167,16 @@ int AccountsFetcher::GetGroupsViaOpenDirectory(std::vector<VFSGroup> &_target)
             groups[name].second = base::TrimLeft(gecos, ' ');
         }
 
+    std::vector<VFSGroup> target;
     for( const auto &g : groups ) {
         VFSGroup group;
         group.name = g.first;
         group.gid = g.second.first;
         group.gecos = g.second.second;
-        _target.emplace_back(std::move(group));
+        target.emplace_back(std::move(group));
     }
 
-    return VFSError::Ok;
+    return std::move(target);
 }
 
 std::optional<std::string> AccountsFetcher::Execute(const std::string &_command)

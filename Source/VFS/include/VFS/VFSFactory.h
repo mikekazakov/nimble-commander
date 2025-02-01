@@ -1,9 +1,12 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <vector>
 #include <string>
+#include <Base/Error.h>
 #include "VFSDeclarations.h"
+
+// TODO: move into a namespace
 
 class VFSMeta
 {
@@ -13,6 +16,11 @@ public:
                              const VFSConfiguration &_config,
                              VFSCancelChecker _cancel_checker)>
         SpawnWithConfig; // may throw an exception upon call
+
+    // The description provider for this VFS will be automatically registered with nc::Error once it is passed into
+    // RegisterVFS().
+    std::string error_domain;
+    std::shared_ptr<const nc::base::ErrorDescriptionProvider> error_description_provider;
 };
 
 class VFSFactory

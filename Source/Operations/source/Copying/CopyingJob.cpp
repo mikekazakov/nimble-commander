@@ -2883,7 +2883,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
         }
 
         if( !new_path ) {
-            if( dst_host.Trash(_dst_path, nullptr) != VFSError::Ok ) {
+            if( !dst_host.Trash(_dst_path, nullptr) ) {
                 while( true ) {
                     const auto rc = dst_stat_buffer.mode_bits.dir ? dst_host.RemoveDirectory(_dst_path)
                                                                   : dst_host.Unlink(_dst_path);

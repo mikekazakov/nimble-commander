@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -40,17 +40,17 @@ private:
                         std::shared_ptr<VFSHost> _vfs,
                         std::shared_ptr<AsyncDialogResponse> _ctx);
 
-    DeletionJobCallbacks::TrashErrorResolution OnTrashError(int _err, const std::string &_path, VFSHost &_vfs);
+    DeletionJobCallbacks::TrashErrorResolution OnTrashError(Error _err, const std::string &_path, VFSHost &_vfs);
 
-    void OnTrashErrorUI(int _err,
+    void OnTrashErrorUI(Error _err,
                         const std::string &_path,
                         std::shared_ptr<VFSHost> _vfs,
                         std::shared_ptr<AsyncDialogResponse> _ctx);
 
     DeletionJobCallbacks::LockedItemResolution
-    OnLockedItem(int _err, const std::string &_path, VFSHost &_vfs, DeletionType _type);
+    OnLockedItem(Error _err, const std::string &_path, VFSHost &_vfs, DeletionType _type);
 
-    void OnLockedItemUI(int _err,
+    void OnLockedItemUI(Error _err,
                         const std::string &_path,
                         std::shared_ptr<VFSHost> _vfs,
                         DeletionType _type,

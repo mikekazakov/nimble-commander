@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSFactory.h"
 
 VFSFactory &VFSFactory::Instance()
@@ -9,6 +9,9 @@ VFSFactory &VFSFactory::Instance()
 
 void VFSFactory::RegisterVFS(VFSMeta _meta)
 {
+    if( !_meta.error_domain.empty() && _meta.error_description_provider ) {
+        nc::Error::DescriptionProvider(_meta.error_domain, _meta.error_description_provider);
+    }
     m_Metas.emplace_back(std::move(_meta));
 }
 

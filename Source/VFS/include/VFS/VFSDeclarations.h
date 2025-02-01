@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -122,7 +122,6 @@ struct User {
     std::string name;
     std::string gecos;
     friend bool operator==(const User &, const User &) noexcept = default;
-    friend bool operator!=(const User &, const User &) noexcept = default;
 };
 
 struct Group {
@@ -130,7 +129,6 @@ struct Group {
     std::string name;
     std::string gecos;
     friend bool operator==(const Group &, const Group &) noexcept = default;
-    friend bool operator!=(const Group &, const Group &) noexcept = default;
 };
 
 struct Flags {

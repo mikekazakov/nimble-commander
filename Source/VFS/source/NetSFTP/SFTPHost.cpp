@@ -6,6 +6,7 @@
 #include "../ListingInput.h"
 #include "SFTPHost.h"
 #include "File.h"
+#include "Errors.h"
 #include "OSDetector.h"
 #include "AccountsFetcher.h"
 #include <sys/socket.h>
@@ -32,7 +33,7 @@ SFTPHost::Connection::~Connection()
     }
 
     if( ssh ) {
-        libssh2_session_disconnect(ssh, "Farewell from Nimble Commander!");
+        libssh2_session_disconnect_ex(ssh, SSH_DISCONNECT_BY_APPLICATION, "Farewell from Nimble Commander!", "");
         libssh2_session_free(ssh);
         ssh = nullptr;
     }
@@ -111,6 +112,8 @@ VFSMeta SFTPHost::Meta()
                            [[maybe_unused]] VFSCancelChecker _cancel_checker) {
         return std::make_shared<SFTPHost>(_config);
     };
+    m.error_domain = sftp::ErrorDomain;
+    m.error_description_provider = std::make_shared<sftp::ErrorDescriptionProvider>();
     return m;
 }
 
@@ -947,34 +950,36 @@ int SFTPHost::SetTimes(std::string_view _path,
         return VFSErrorForConnection(*conn);
 }
 
-int SFTPHost::FetchUsers(std::vector<VFSUser> &_target, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<std::vector<VFSUser>, Error>
+SFTPHost::FetchUsers([[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( m_OSType == sftp::OSType::Unknown )
-        return VFSError::FromErrno(ENODEV);
+        return std::unexpected(Error{Error::POSIX, ENODEV});
 
     std::unique_ptr<Connection> conn;
     if( const int rc = GetConnection(conn); rc < 0 )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
     sftp::AccountsFetcher fetcher{conn->ssh, m_OSType};
-    return fetcher.FetchUsers(_target);
+    return fetcher.FetchUsers();
 }
 
-int SFTPHost::FetchGroups(std::vector<VFSGroup> &_target, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<std::vector<VFSGroup>, Error>
+SFTPHost::FetchGroups([[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( m_OSType == sftp::OSType::Unknown )
-        return VFSError::FromErrno(ENODEV);
+        return std::unexpected(Error{Error::POSIX, ENODEV});
 
     std::unique_ptr<Connection> conn;
     if( const int rc = GetConnection(conn); rc < 0 )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
     sftp::AccountsFetcher fetcher{conn->ssh, m_OSType};
-    return fetcher.FetchGroups(_target);
+    return fetcher.FetchGroups();
 }
 
 static bool ServerHasReversedSymlinkParameters(LIBSSH2_SESSION *_session)

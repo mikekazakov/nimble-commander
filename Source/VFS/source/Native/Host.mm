@@ -726,19 +726,21 @@ VFSConfiguration NativeHost::Configuration() const
     return aa;
 }
 
-int NativeHost::Trash(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, nc::Error> NativeHost::Trash(std::string_view _path,
+                                                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( _path.empty() )
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
     const auto ret = io.trash(path.c_str());
-    if( ret == 0 )
-        return VFSError::Ok;
-    return VFSError::FromErrno();
+    if( ret != 0 )
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
+
+    return {};
 }
 
 int NativeHost::SetPermissions(std::string_view _path,
@@ -795,15 +797,14 @@ int NativeHost::SetOwnership(std::string_view _path,
     return VFSError::FromErrno();
 }
 
-int NativeHost::FetchUsers(std::vector<VFSUser> &_target, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<std::vector<VFSUser>, Error>
+NativeHost::FetchUsers([[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    _target.clear();
-
     NSError *error;
     const auto node_name = @"/Local/Default";
     const auto node = [ODNode nodeWithSession:ODSession.defaultSession name:node_name error:&error];
     if( !node )
-        return VFSError::FromNSError(error);
+        return std::unexpected(Error{error});
 
     const auto attributes = @[kODAttributeTypeUniqueID, kODAttributeTypeFullName];
     const auto query = [ODQuery queryWithNode:node
@@ -815,12 +816,13 @@ int NativeHost::FetchUsers(std::vector<VFSUser> &_target, [[maybe_unused]] const
                                maximumResults:0
                                         error:&error];
     if( !query )
-        return VFSError::FromNSError(error);
+        return std::unexpected(Error{error});
 
     const auto records = [query resultsAllowingPartial:false error:&error];
     if( !records )
-        return VFSError::FromNSError(error);
+        return std::unexpected(Error{error});
 
+    std::vector<VFSUser> users;
     for( ODRecord *record in records ) {
         const auto uid_values = [record valuesForAttribute:kODAttributeTypeUniqueID error:nil];
         if( uid_values == nil || uid_values.count == 0 )
@@ -835,27 +837,26 @@ int NativeHost::FetchUsers(std::vector<VFSUser> &_target, [[maybe_unused]] const
         user.uid = uid;
         user.name = record.recordName.UTF8String;
         user.gecos = gecos;
-        _target.emplace_back(std::move(user));
+        users.emplace_back(std::move(user));
     }
 
-    std::ranges::sort(_target, [](const auto &_1, const auto &_2) {
+    std::ranges::sort(users, [](const auto &_1, const auto &_2) {
         return static_cast<signed>(_1.uid) < static_cast<signed>(_2.uid);
     });
-    _target.erase(std::ranges::unique(_target, [](const auto &_1, const auto &_2) { return _1.uid == _2.uid; }).begin(),
-                  std::end(_target));
+    users.erase(std::ranges::unique(users, [](const auto &_1, const auto &_2) { return _1.uid == _2.uid; }).begin(),
+                users.end());
 
-    return VFSError::Ok;
+    return std::move(users);
 }
 
-int NativeHost::FetchGroups(std::vector<VFSGroup> &_target, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<std::vector<VFSGroup>, Error>
+NativeHost::FetchGroups([[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    _target.clear();
-
     NSError *error;
     const auto node_name = @"/Local/Default";
     const auto node = [ODNode nodeWithSession:ODSession.defaultSession name:node_name error:&error];
     if( !node )
-        return VFSError::FromNSError(error);
+        return std::unexpected(Error{error});
 
     const auto attributes = @[kODAttributeTypePrimaryGroupID, kODAttributeTypeFullName];
     const auto query = [ODQuery queryWithNode:node
@@ -867,12 +868,13 @@ int NativeHost::FetchGroups(std::vector<VFSGroup> &_target, [[maybe_unused]] con
                                maximumResults:0
                                         error:&error];
     if( !query )
-        return VFSError::FromNSError(error);
+        return std::unexpected(Error{error});
 
     const auto records = [query resultsAllowingPartial:false error:&error];
     if( !records )
-        return VFSError::FromNSError(error);
+        return std::unexpected(Error{error});
 
+    std::vector<VFSGroup> groups;
     for( ODRecord *record in records ) {
         const auto gid_values = [record valuesForAttribute:kODAttributeTypePrimaryGroupID error:nil];
         if( gid_values == nil || gid_values.count == 0 )
@@ -887,16 +889,16 @@ int NativeHost::FetchGroups(std::vector<VFSGroup> &_target, [[maybe_unused]] con
         group.gid = gid;
         group.name = record.recordName.UTF8String;
         group.gecos = gecos;
-        _target.emplace_back(std::move(group));
+        groups.emplace_back(std::move(group));
     }
 
-    std::ranges::sort(_target, [](const auto &_1, const auto &_2) {
+    std::ranges::sort(groups, [](const auto &_1, const auto &_2) {
         return static_cast<signed>(_1.gid) < static_cast<signed>(_2.gid);
     });
-    _target.erase(std::ranges::unique(_target, [](const auto &_1, const auto &_2) { return _1.gid == _2.gid; }).begin(),
-                  std::end(_target));
+    groups.erase(std::ranges::unique(groups, [](const auto &_1, const auto &_2) { return _1.gid == _2.gid; }).begin(),
+                 groups.end());
 
-    return VFSError::Ok;
+    return std::move(groups);
 }
 
 bool NativeHost::IsCaseSensitiveAtPath(std::string_view _dir) const

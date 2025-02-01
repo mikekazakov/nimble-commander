@@ -208,18 +208,6 @@ static NSString *TextForCode(int _code)
             return @"Internal archive module error";
         case ArclibMiscError:
             return @"Unknown or unclassified archive error";
-        case UnRARFailedToOpenArchive:
-            return @"Failed to open RAR archive";
-        case UnRARBadData:
-            return @"Bad RAR data";
-        case UnRARBadArchive:
-            return @"Bad RAR archive";
-        case UnRARUnknownFormat:
-            return @"Unknown RAR format";
-        case UnRARMissingPassword:
-            return @"Missing RAR password";
-        case UnRARBadPassword:
-            return @"Bad RAR password";
         case NetFTPLoginDenied:
             return @"The remote server denied to login";
         case NetFTPURLMalformat:
@@ -347,6 +335,38 @@ std::string FormatErrorCode(int _vfs_code)
         return {};
     }
     return {};
+}
+
+namespace {
+
+// TODO: remove this later
+class ErrorDescriptionProvider : public nc::base::ErrorDescriptionProvider
+{
+public:
+    [[nodiscard]] std::string Description(int64_t _code) const noexcept override;
+};
+
+// TODO: remove this later
+std::string ErrorDescriptionProvider::Description(int64_t _code) const noexcept
+{
+    return ToNSError(static_cast<int>(_code)).description.UTF8String;
+}
+
+} // namespace
+
+// TODO: remove this later
+nc::Error ToError(int _vfs_error_code)
+{
+    static std::once_flag once;
+    std::call_once(once,
+                   [] { nc::Error::DescriptionProvider(ErrorDomain, std::make_shared<ErrorDescriptionProvider>()); });
+
+    if( _vfs_error_code >= g_PosixMin && _vfs_error_code <= g_PosixMax ) {
+        const int posix_code = _vfs_error_code - g_PosixBase;
+        return {nc::Error::POSIX, posix_code};
+    }
+
+    return {ErrorDomain, _vfs_error_code};
 }
 
 } // namespace VFSError

@@ -38,54 +38,62 @@ public:
     long Port() const noexcept;
 
     // core VFSHost methods
-    virtual bool IsWritable() const override;
+    bool IsWritable() const override;
 
-    virtual int Stat(std::string_view _path,
-                     VFSStat &_st,
-                     unsigned long _flags,
+    int Stat(std::string_view _path,
+             VFSStat &_st,
+             unsigned long _flags,
+             const VFSCancelChecker &_cancel_checker = {}) override;
+
+    int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = {}) override;
+
+    int FetchDirectoryListing(std::string_view _path,
+                              VFSListingPtr &_target,
+                              unsigned long _flags,
+                              const VFSCancelChecker &_cancel_checker = {}) override;
+
+    int IterateDirectoryListing(std::string_view _path,
+                                const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
+
+    int CreateFile(std::string_view _path,
+                   std::shared_ptr<VFSFile> &_target,
+                   const VFSCancelChecker &_cancel_checker = {}) override;
+
+    int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
+
+    int Rename(std::string_view _old_path,
+               std::string_view _new_path,
+               const VFSCancelChecker &_cancel_checker = {}) override;
+
+    int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker = {}) override;
+
+    int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
+
+    int ReadSymlink(std::string_view _symlink_path,
+                    std::span<char> _buffer,
+                    const VFSCancelChecker &_cancel_checker = {}) override;
+
+    int CreateSymlink(std::string_view _symlink_path,
+                      std::string_view _symlink_value,
+                      const VFSCancelChecker &_cancel_checker = {}) override;
+
+    int SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;
+
+    int SetOwnership(std::string_view _path,
+                     unsigned _uid,
+                     unsigned _gid,
                      const VFSCancelChecker &_cancel_checker = {}) override;
 
-    virtual int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker = {}) override;
+    int SetTimes(std::string_view _path,
+                 std::optional<time_t> _birth_time,
+                 std::optional<time_t> _mod_time,
+                 std::optional<time_t> _chg_time,
+                 std::optional<time_t> _acc_time,
+                 const VFSCancelChecker &_cancel_checker = {}) override;
 
-    virtual int FetchDirectoryListing(std::string_view _path,
-                                      VFSListingPtr &_target,
-                                      unsigned long _flags,
-                                      const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<std::vector<VFSUser>, Error> FetchUsers(const VFSCancelChecker &_cancel_checker = {}) override;
 
-    virtual int IterateDirectoryListing(std::string_view _path,
-                                        const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
-
-    virtual int CreateFile(std::string_view _path,
-                           std::shared_ptr<VFSFile> &_target,
-                           const VFSCancelChecker &_cancel_checker = {}) override;
-
-    virtual int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int Rename(std::string_view _old_path,
-                       std::string_view _new_path,
-                       const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int
-    CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int ReadSymlink(std::string_view _symlink_path,
-                            std::span<char> _buffer,
-                            const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int CreateSymlink(std::string_view _symlink_path,
-                              std::string_view _symlink_value,
-                              const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int
-    SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int SetOwnership(std::string_view _path,
-                             unsigned _uid,
-                             unsigned _gid,
-                             const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int SetTimes(std::string_view _path,
-                         std::optional<time_t> _birth_time,
-                         std::optional<time_t> _mod_time,
-                         std::optional<time_t> _chg_time,
-                         std::optional<time_t> _acc_time,
-                         const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int FetchUsers(std::vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker = {}) override;
-    virtual int FetchGroups(std::vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<std::vector<VFSGroup>, Error> FetchGroups(const VFSCancelChecker &_cancel_checker = {}) override;
 
     // internal stuff
     struct Connection {
@@ -97,13 +105,16 @@ public:
     };
 
     static int VFSErrorForConnection(Connection &_conn);
+
     int GetConnection(std::unique_ptr<Connection> &_t);
+
     void ReturnConnection(std::unique_ptr<Connection> _t);
 
     std::shared_ptr<const SFTPHost> SharedPtr() const
     {
         return std::static_pointer_cast<const SFTPHost>(Host::SharedPtr());
     }
+
     std::shared_ptr<SFTPHost> SharedPtr() { return std::static_pointer_cast<SFTPHost>(Host::SharedPtr()); }
 
 private:

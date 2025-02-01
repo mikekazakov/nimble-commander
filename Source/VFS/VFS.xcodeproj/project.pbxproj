@@ -100,6 +100,8 @@
 		CFB63CD525939A630038502E /* VFSNative_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB63CD425939A630038502E /* VFSNative_IT.mm */; };
 		CFCB684F28423A1300086E40 /* VFSError_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCB684E28423A1300086E40 /* VFSError_UT.mm */; };
 		CFCB68D3289089BF00086E40 /* VFSArchive_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCB68D2289089BF00086E40 /* VFSArchive_UT.cpp */; };
+		CFDA17EA2D496A2E00EE375B /* Errors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDA17E92D496A2E00EE375B /* Errors.cpp */; };
+		CFDA17EE2D4E3E8400EE375B /* Errors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDA17ED2D4E3E8400EE375B /* Errors.cpp */; };
 		CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */; };
 		CFE08AE923CB2D83007E99B8 /* ListingInput_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE823CB2D83007E99B8 /* ListingInput_UT.cpp */; };
 		CFE08AED23CFAFD8007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */; };
@@ -296,6 +298,10 @@
 		CFD7273D1E42EC8E00603077 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		CFD7273F1E42EC9A00603077 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CFD727411E42EC9D00603077 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		CFDA17E82D496A2E00EE375B /* Errors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Errors.h; path = source/NetSFTP/Errors.h; sourceTree = "<group>"; };
+		CFDA17E92D496A2E00EE375B /* Errors.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Errors.cpp; path = source/NetSFTP/Errors.cpp; sourceTree = "<group>"; };
+		CFDA17EC2D4E3E8400EE375B /* Errors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Errors.h; path = source/NetFTP/Errors.h; sourceTree = "<group>"; };
+		CFDA17ED2D4E3E8400EE375B /* Errors.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Errors.cpp; path = source/NetFTP/Errors.cpp; sourceTree = "<group>"; };
 		CFDE716C21526799005449C8 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		CFE08AE023CA5447007E99B8 /* NativeSpecialDirectories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NativeSpecialDirectories.h; path = include/VFS/NativeSpecialDirectories.h; sourceTree = "<group>"; };
 		CFE08AE223CA546A007E99B8 /* SpecialDirectories.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpecialDirectories.cpp; path = source/Native/SpecialDirectories.cpp; sourceTree = "<group>"; };
@@ -602,13 +608,15 @@
 			children = (
 				CF69D0351DA2324100992B84 /* Cache.h */,
 				CF69D0361DA2324100992B84 /* Cache.cpp */,
+				CFDA17EC2D4E3E8400EE375B /* Errors.h */,
+				CFDA17ED2D4E3E8400EE375B /* Errors.cpp */,
 				CF69D0371DA2324100992B84 /* File.h */,
 				CF69D0381DA2324100992B84 /* File.cpp */,
+				CF69D0391DA2324100992B84 /* Host.h */,
+				CF69D03A1DA2324100992B84 /* Host.cpp */,
 				CF69D03B1DA2324100992B84 /* Internals.h */,
 				CF69D03C1DA2324100992B84 /* Internals.cpp */,
 				CF69D03D1DA2324100992B84 /* InternalsForward.h */,
-				CF69D0391DA2324100992B84 /* Host.h */,
-				CF69D03A1DA2324100992B84 /* Host.cpp */,
 			);
 			name = NetFTP;
 			sourceTree = "<group>";
@@ -616,17 +624,19 @@
 		CF69D0471DA232E300992B84 /* NetSFTP */ = {
 			isa = PBXGroup;
 			children = (
-				CFC4F9F91F171E990000B3EE /* AccountsFetcher.cpp */,
 				CFC4F9FA1F171E990000B3EE /* AccountsFetcher.h */,
-				CFC4F9F71F171A470000B3EE /* OSType.h */,
-				CF69D0481DA232EF00992B84 /* File.cpp */,
+				CFC4F9F91F171E990000B3EE /* AccountsFetcher.cpp */,
+				CFDA17E82D496A2E00EE375B /* Errors.h */,
+				CFDA17E92D496A2E00EE375B /* Errors.cpp */,
 				CF69D0491DA232EF00992B84 /* File.h */,
-				CF69D04A1DA232EF00992B84 /* SFTPHost.cpp */,
-				CF69D04B1DA232EF00992B84 /* SFTPHost.h */,
-				CF7A09BB1EC4382700533B07 /* KeyValidator.cpp */,
+				CF69D0481DA232EF00992B84 /* File.cpp */,
 				CF7A09BC1EC4382700533B07 /* KeyValidator.h */,
-				CFC4F9F31F1719860000B3EE /* OSDetector.cpp */,
+				CF7A09BB1EC4382700533B07 /* KeyValidator.cpp */,
 				CFC4F9F41F1719860000B3EE /* OSDetector.h */,
+				CFC4F9F31F1719860000B3EE /* OSDetector.cpp */,
+				CFC4F9F71F171A470000B3EE /* OSType.h */,
+				CF69D04B1DA232EF00992B84 /* SFTPHost.h */,
+				CF69D04A1DA232EF00992B84 /* SFTPHost.cpp */,
 			);
 			name = NetSFTP;
 			sourceTree = "<group>";
@@ -850,6 +860,7 @@
 				CF4600AB256057DA0095FC73 /* KeyValidator.cpp in Sources */,
 				CF46007D2560579F0095FC73 /* VFSArchiveProxy.mm in Sources */,
 				CF1F6FC825E70982003A2497 /* CURLConnection.cpp in Sources */,
+				CFDA17EA2D496A2E00EE375B /* Errors.cpp in Sources */,
 				CF4600762560579F0095FC73 /* FileWindow.cpp in Sources */,
 				CF4600B6256057E80095FC73 /* Cache.cpp in Sources */,
 				CF465211268721BF0085840A /* NSURLShims.mm in Sources */,
@@ -883,6 +894,7 @@
 				CF46007B2560579F0095FC73 /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CF1F6FC725E70982003A2497 /* Connection.cpp in Sources */,
 				CF4600772560579F0095FC73 /* Host.cpp in Sources */,
+				CFDA17EE2D4E3E8400EE375B /* Errors.cpp in Sources */,
 				CF4600BA256057E80095FC73 /* WriteBuffer.cpp in Sources */,
 				CF4600B9256057E80095FC73 /* Internal.cpp in Sources */,
 				CF4600802560579F0095FC73 /* ListingObjC.mm in Sources */,

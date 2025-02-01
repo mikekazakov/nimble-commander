@@ -1,6 +1,7 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <Base/Error.h>
 #include <VFS/VFS.h>
 #include <functional>
 #include <string>
@@ -39,8 +40,8 @@ struct DeletionJobCallbacks {
         DeletePermanently,
         Retry
     };
-    std::function<TrashErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnTrashError =
-        [](int, const std::string &, VFSHost &) { return TrashErrorResolution::Stop; };
+    std::function<TrashErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnTrashError =
+        [](Error, const std::string &, VFSHost &) { return TrashErrorResolution::Stop; };
 
     enum class LockedItemResolution {
         Stop,
@@ -48,8 +49,8 @@ struct DeletionJobCallbacks {
         Unlock,
         Retry
     };
-    std::function<LockedItemResolution(int _err, const std::string &_path, VFSHost &_vfs, DeletionType _type)>
-        m_OnLockedItem = [](int, const std::string &, VFSHost &, DeletionType) { return LockedItemResolution::Stop; };
+    std::function<LockedItemResolution(Error _err, const std::string &_path, VFSHost &_vfs, DeletionType _type)>
+        m_OnLockedItem = [](Error, const std::string &, VFSHost &, DeletionType) { return LockedItemResolution::Stop; };
 
     enum class UnlockErrorResolution {
         Stop,

@@ -1,4 +1,4 @@
-// Copyright (C) 20 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UnitTests_main.h"
 #include <Base/CloseFrom.h>
 #include <cerrno>

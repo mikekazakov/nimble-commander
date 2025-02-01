@@ -80,6 +80,9 @@
 		CFD231322AEDC6330000C7CF /* algo_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD231302AEDC6260000C7CF /* algo_UT.cpp */; };
 		CFD231352AEEA2610000C7CF /* UUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD231342AEEA2610000C7CF /* UUID.cpp */; };
 		CFD231372AEEA26E0000C7CF /* UUID_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD231362AEEA26E0000C7CF /* UUID_UT.cpp */; };
+		CFDA17E22D4650E300EE375B /* Error.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDA17E12D4650E300EE375B /* Error.h */; };
+		CFDA17E42D4651CF00EE375B /* Error.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA17E32D4651CF00EE375B /* Error.mm */; };
+		CFDA17E62D4651F800EE375B /* Error_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA17E52D4651F800EE375B /* Error_UT.mm */; };
 		CFDE36E426BA5F2400EB1B0D /* WhereIs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDE36E326BA5F2400EB1B0D /* WhereIs.cpp */; };
 		CFDE36EA26BA665700EB1B0D /* WhereIs_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDE36E926BA665700EB1B0D /* WhereIs_UT.cpp */; };
 		CFE08ADF23C20664007E99B8 /* intrusive_ptr_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */; };
@@ -175,6 +178,10 @@
 		CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mach_time.cpp; path = source/mach_time.cpp; sourceTree = "<group>"; };
 		CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = chained_strings.cpp; path = source/chained_strings.cpp; sourceTree = "<group>"; };
 		CFD6DD211D6C44C1006B94C2 /* Observable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Observable.cpp; path = source/Observable.cpp; sourceTree = "<group>"; };
+		CFDA17E12D4650E300EE375B /* Error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Error.h; path = include/Base/Error.h; sourceTree = "<group>"; };
+		CFDA17E32D4651CF00EE375B /* Error.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = Error.mm; path = source/Error.mm; sourceTree = "<group>"; };
+		CFDA17E52D4651F800EE375B /* Error_UT.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Error_UT.mm; sourceTree = "<group>"; };
+		CFDA17E72D46520700EE375B /* UnitTests_main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnitTests_main.h; sourceTree = "<group>"; };
 		CFDE36E326BA5F2400EB1B0D /* WhereIs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WhereIs.cpp; path = source/WhereIs.cpp; sourceTree = "<group>"; };
 		CFDE36E926BA665700EB1B0D /* WhereIs_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WhereIs_UT.cpp; sourceTree = "<group>"; };
 		CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = intrusive_ptr_UT.cpp; sourceTree = "<group>"; };
@@ -222,11 +229,13 @@
 				CF24E214229196E100C166FA /* CFPtr_UT.cpp */,
 				CF614AD11F9D8EF00005F2DB /* chained_strings_UT.cpp */,
 				CF0A49F3252530D2008EC7B0 /* CloseFrom_UT.cpp */,
+				CFDA17E52D4651F800EE375B /* Error_UT.mm */,
 				CF614ACD1F9D8EDC0005F2DB /* Hash_UT.cpp */,
 				CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */,
 				CFD22CD52012DDF800608DFE /* LRUCache_Tests.cpp */,
 				CFE8F90321A27F3000300019 /* spinlock_UT.cpp */,
 				CF2084021FEFB2F70014D6AD /* StringsBulk_UT.cpp */,
+				CFDA17E72D46520700EE375B /* UnitTests_main.h */,
 				CF24E20B2291777D00C166FA /* UnitTests_main.cpp */,
 				CFD231362AEEA26E0000C7CF /* UUID_UT.cpp */,
 				CF614ACE1F9D8EDD0005F2DB /* VariableContainer_UT.cpp */,
@@ -272,6 +281,7 @@
 				CF3989612B4162A5006103C1 /* debug.h */,
 				CF39896F2B4162A5006103C1 /* dispatch_cpp.h */,
 				CF3989582B4162A5006103C1 /* DispatchGroup.h */,
+				CFDA17E12D4650E300EE375B /* Error.h */,
 				CF39895A2B4162A5006103C1 /* ExecutionDeadline.h */,
 				CF3989622B4162A5006103C1 /* Hash.h */,
 				CF39894B2B4162A4006103C1 /* IdleSleepPreventer.h */,
@@ -315,6 +325,7 @@
 				CFD62BA31C99C2AE0021EE7F /* debug.cpp */,
 				CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */,
 				CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */,
+				CFDA17E32D4651CF00EE375B /* Error.mm */,
 				CF5338682532512100022EE8 /* ExecutionDeadline.cpp */,
 				CFD62BA71C99C2AE0021EE7F /* Hash.cpp */,
 				CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */,
@@ -359,6 +370,7 @@
 				CF39898B2B4162A5006103C1 /* algo.h in Headers */,
 				CF3989882B4162A5006103C1 /* ScopedObservable.h in Headers */,
 				CF39897F2B4162A5006103C1 /* ExecutionDeadline.h in Headers */,
+				CFDA17E22D4650E300EE375B /* Error.h in Headers */,
 				CF3989702B4162A5006103C1 /* IdleSleepPreventer.h in Headers */,
 				CF39898D2B4162A5006103C1 /* WriteAtomically.h in Headers */,
 				CF3989752B4162A5006103C1 /* PosixFilesystem.h in Headers */,
@@ -468,6 +480,7 @@
 				CFE08ADF23C20664007E99B8 /* intrusive_ptr_UT.cpp in Sources */,
 				CF24E21C2291B0E500C166FA /* chained_strings_UT.cpp in Sources */,
 				CF24E20C2291777E00C166FA /* UnitTests_main.cpp in Sources */,
+				CFDA17E62D4651F800EE375B /* Error_UT.mm in Sources */,
 				CF24E21A2291A61F00C166FA /* Hash_UT.cpp in Sources */,
 				CFDE36EA26BA665700EB1B0D /* WhereIs_UT.cpp in Sources */,
 				CFD231322AEDC6330000C7CF /* algo_UT.cpp in Sources */,
@@ -493,6 +506,7 @@
 				CF4601F825630DE80095FC73 /* CFStackAllocator.cpp in Sources */,
 				CFD231352AEEA2610000C7CF /* UUID.cpp in Sources */,
 				CFD230F62AE5CF190000C7CF /* SysLocale.cpp in Sources */,
+				CFDA17E42D4651CF00EE375B /* Error.mm in Sources */,
 				CF4601FC25630DE80095FC73 /* CloseFrom.cpp in Sources */,
 				CF4601ED25630DE80095FC73 /* DispatchGroup.cpp in Sources */,
 				CFA99A1026512D4400F72E93 /* WriteAtomically.cpp in Sources */,

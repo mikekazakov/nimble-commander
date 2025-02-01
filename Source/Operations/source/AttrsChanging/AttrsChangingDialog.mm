@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingDialog.h"
 #include <VFS/VFS.h>
 #include <Base/algo.h>
@@ -161,8 +161,8 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
     m_CommonItemsTimes = ExtractCommonTimes(m_Items);
     m_VFS = m_Items.front().Host();
     m_ProcessSubfolders = false;
-    m_Items.front().Host()->FetchUsers(m_Users);
-    m_Items.front().Host()->FetchGroups(m_Groups);
+    m_Users = m_Items.front().Host()->FetchUsers().value_or(std::vector<VFSUser>{});
+    m_Groups = m_Items.front().Host()->FetchGroups().value_or(std::vector<VFSGroup>{});
 
     const auto vfs_features = m_VFS->Features();
     m_AccessRightsBlockShown = vfs_features & nc::vfs::HostFeatures::SetPermissions;

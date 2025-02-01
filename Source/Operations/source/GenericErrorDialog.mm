@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GenericErrorDialog.h"
 #include <VFS/VFS.h>
 #include "Internal.h"
@@ -25,8 +25,9 @@ using namespace nc::ops;
     NSModalResponse m_EscapeButtonResponse;
     NSString *m_Message;
     NSString *m_Path;
-    NSString *m_Error;
-    int m_ErrorNo;
+    NSString *m_ErrorMessage;
+    NSString *m_ErrorTooltip;
+    std::optional<nc::Error> m_Error;
     bool m_ShowApplyToAll;
     std::vector<std::pair<NSString *, NSModalResponse>> m_Buttons;
     std::shared_ptr<nc::ops::AsyncDialogResponse> m_Context;
@@ -35,7 +36,7 @@ using namespace nc::ops;
 @synthesize escapeButtonResponse = m_EscapeButtonResponse;
 @synthesize message = m_Message;
 @synthesize path = m_Path;
-@synthesize error = m_Error;
+@synthesize errorMessage = m_ErrorMessage;
 @synthesize showApplyToAll = m_ShowApplyToAll;
 @synthesize pathLabel;
 @synthesize errorLabel;
@@ -55,7 +56,6 @@ using namespace nc::ops;
         m_ShowApplyToAll = false;
         m_Style = GenericErrorDialogStyle::Caution;
         m_EscapeButtonResponse = nc::ops::NSModalResponseCancel;
-        m_ErrorNo = VFSError::Ok;
     }
     return self;
 }
@@ -75,8 +75,8 @@ using namespace nc::ops;
                                                                         : [Bundle() imageForResource:@"AlertStopBig"];
     self.appIcon.image = NSApp.applicationIconImage;
     self.pathLabel.stringValue = m_Path ? m_Path : @"";
-    self.errorLabel.stringValue = m_Error ? m_Error : @"";
-    self.errorLabel.toolTip = [NSString stringWithUTF8StdString:VFSError::FormatErrorCode(m_ErrorNo)];
+    self.errorLabel.stringValue = m_ErrorMessage ? m_ErrorMessage : @"";
+    self.errorLabel.toolTip = m_ErrorTooltip ? m_ErrorTooltip : @"";
     self.errorLabelPrompt.hidden = self.errorLabel.stringValue.length == 0;
     self.messageLabel.stringValue = m_Message ? m_Message : @"";
     [self.window recalculateKeyViewLoop];
@@ -164,15 +164,15 @@ static bool IsShiftPressed() noexcept
     return m_Style;
 }
 
-- (void)setErrorNo:(int)errorNo
+- (void)setErrorNo:(int)_error_no
 {
-    m_ErrorNo = errorNo;
-    self.error = VFSError::ToNSError(errorNo).localizedDescription;
+    [self setError:VFSError::ToError(_error_no)];
 }
 
-- (int)errorNo
+- (void)setError:(nc::Error)_error
 {
-    return m_ErrorNo;
+    m_ErrorMessage = [NSString stringWithUTF8StdString:_error.LocalizedFailureReason()];
+    m_ErrorTooltip = [NSString stringWithUTF8StdString:_error.Description()];
 }
 
 - (void)addButtonWithTitle:(NSString *)_title responseCode:(NSModalResponse)_response

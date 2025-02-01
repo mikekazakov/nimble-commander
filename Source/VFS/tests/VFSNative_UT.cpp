@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <NativeSpecialDirectories.h>
@@ -159,4 +159,20 @@ TEST_CASE(PREFIX "Loading tags")
         REQUIRE(listing->Count() == 1);
         REQUIRE(!listing->HasTags(0));
     }
+}
+
+TEST_CASE(PREFIX "FetchUsers")
+{
+    const std::expected<std::vector<VFSUser>, Error> users = host().FetchUsers();
+    REQUIRE(users);
+    REQUIRE(std::ranges::contains(users.value(), VFSUser{0, "root", "System Administrator"}));
+    REQUIRE(std::ranges::contains(users.value(), VFSUser{1, "daemon", "System Services"}));
+}
+
+TEST_CASE(PREFIX "FetchGroups")
+{
+    const std::expected<std::vector<VFSGroup>, Error> groups = host().FetchGroups();
+    REQUIRE(groups);
+    REQUIRE(std::ranges::contains(groups.value(), VFSGroup{0, "wheel", "System Group"}));
+    REQUIRE(std::ranges::contains(groups.value(), VFSGroup{20, "staff", "Staff"}));
 }

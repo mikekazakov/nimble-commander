@@ -2,6 +2,7 @@
 #pragma once
 
 #include <string>
+#include <Base/Error.h>
 
 #ifdef __OBJC__
 @class NSError;
@@ -87,4 +88,9 @@ std::string FormatErrorCode(int _vfs_code);
 NSError *ToNSError(int _code);
 int FromNSError(NSError *_err);
 #endif
+
+// Transition, to be removed later
+inline constexpr std::string_view ErrorDomain = "VFSError";
+nc::Error ToError(int _vfs_error_code);
+
 }; // namespace VFSError

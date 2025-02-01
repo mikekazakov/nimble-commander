@@ -67,7 +67,7 @@ public:
 
     int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
-    int Trash(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, nc::Error> Trash(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
     int
     Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker) override;

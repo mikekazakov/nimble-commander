@@ -1,14 +1,16 @@
 // Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <optional>
+#include <Base/Error.h>
 #include "VFSError.h"
 #include "VFSDeclarations.h"
 #include "VFSConfiguration.h"
 #include "VFSFactory.h"
 #include "../../source/Listing.h"
+#include <optional>
 #include <string_view>
 #include <span>
+#include <expected>
 
 namespace nc::vfs {
 
@@ -280,7 +282,8 @@ public:
     /**
      * Moves an item into trash bin.
      */
-    virtual int Trash(std::string_view _path, const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual std::expected<void, nc::Error> Trash(std::string_view _path,
+                                                 const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * Change the name of a file.

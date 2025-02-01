@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DeletionJob.h"
 #include <Utility/PathManip.h>
 #include <Utility/NativeFSManager.h>
@@ -175,13 +175,13 @@ bool DeletionJob::DoUnlock(const std::string &_path, VFSHost &_vfs)
 void DeletionJob::DoUnlink(const std::string &_path, VFSHost &_vfs)
 {
     while( true ) {
-        const auto rc = _vfs.Unlink(_path);
+        const int rc = _vfs.Unlink(_path);
         if( rc == VFSError::Ok ) {
             Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
             break;
         }
-        else if( IsNativeLockedItem(rc, _path, _vfs) ) {
-            switch( m_OnLockedItem(rc, _path, _vfs, DeletionType::Permanent) ) {
+        else if( IsNativeLockedItem(VFSError::ToError(rc), _path, _vfs) ) {
+            switch( m_OnLockedItem(VFSError::ToError(rc), _path, _vfs, DeletionType::Permanent) ) {
                 case LockedItemResolution::Unlock: {
                     if( !DoUnlock(_path, _vfs) )
                         return;
@@ -215,13 +215,13 @@ void DeletionJob::DoUnlink(const std::string &_path, VFSHost &_vfs)
 void DeletionJob::DoRmDir(const std::string &_path, VFSHost &_vfs)
 {
     while( true ) {
-        const auto rc = _vfs.RemoveDirectory(_path);
+        const int rc = _vfs.RemoveDirectory(_path);
         if( rc == VFSError::Ok ) {
             Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
             break;
         }
-        else if( IsNativeLockedItem(rc, _path, _vfs) ) {
-            switch( m_OnLockedItem(rc, _path, _vfs, DeletionType::Permanent) ) {
+        else if( IsNativeLockedItem(VFSError::ToError(rc), _path, _vfs) ) {
+            switch( m_OnLockedItem(VFSError::ToError(rc), _path, _vfs, DeletionType::Permanent) ) {
                 case LockedItemResolution::Unlock: {
                     if( !DoUnlock(_path, _vfs) )
                         return;
@@ -255,12 +255,12 @@ void DeletionJob::DoRmDir(const std::string &_path, VFSHost &_vfs)
 void DeletionJob::DoTrash(const std::string &_path, VFSHost &_vfs, SourceItem _src)
 {
     while( true ) {
-        const auto rc = _vfs.Trash(_path);
-        if( rc == VFSError::Ok ) {
+        const std::expected<void, nc::Error> result = _vfs.Trash(_path);
+        if( result ) {
             Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
         }
-        else if( IsNativeLockedItem(rc, _path, _vfs) ) {
-            switch( m_OnLockedItem(rc, _path, _vfs, DeletionType::Trash) ) {
+        else if( IsNativeLockedItem(result.error(), _path, _vfs) ) {
+            switch( m_OnLockedItem(result.error(), _path, _vfs, DeletionType::Trash) ) {
                 case LockedItemResolution::Unlock: {
                     if( !DoUnlock(_path, _vfs) )
                         return;
@@ -277,7 +277,7 @@ void DeletionJob::DoTrash(const std::string &_path, VFSHost &_vfs, SourceItem _s
             }
         }
         else {
-            const auto resolution = m_OnTrashError(rc, _path, _vfs);
+            const auto resolution = m_OnTrashError(result.error(), _path, _vfs);
             if( resolution == TrashErrorResolution::Retry ) {
                 continue;
             }
@@ -305,9 +305,9 @@ int DeletionJob::ItemsInScript() const
     return static_cast<int>(m_Script.size());
 }
 
-bool DeletionJob::IsNativeLockedItem(int vfs_err, const std::string &_path, VFSHost &_vfs)
+bool DeletionJob::IsNativeLockedItem(const nc::Error &_err, const std::string &_path, VFSHost &_vfs)
 {
-    if( vfs_err != VFSError::FromErrno(EPERM) )
+    if( _err != Error{Error::POSIX, EPERM} )
         return false;
 
     if( !_vfs.IsNativeFS() )

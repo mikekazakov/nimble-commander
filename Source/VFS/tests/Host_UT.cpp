@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -62,4 +62,12 @@ TEST_CASE(PREFIX "FetchSingleItemListing")
         REQUIRE(item.Directory() == "/my/");
         REQUIRE(item.Filename() == "file.txt");
     }
+}
+
+TEST_CASE(PREFIX "Unsupported methods")
+{
+    auto host = std::make_shared<Host>("/", nullptr, "dummy");
+    // ...
+    REQUIRE(host->Trash("/some/path").error() == Error(Error::POSIX, ENOTSUP));
+    // ...
 }

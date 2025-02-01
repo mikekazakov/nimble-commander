@@ -1,6 +1,7 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #import <Cocoa/Cocoa.h>
+#import <Base/Error.h>
 
 #include "AsyncDialogResponse.h"
 
@@ -22,9 +23,11 @@ enum class GenericErrorDialogStyle {
 @property(nonatomic) NSModalResponse escapeButtonResponse;
 @property(nonatomic) NSString *message;
 @property(nonatomic) NSString *path;
-@property(nonatomic) NSString *error;
-@property(nonatomic) int errorNo;
+@property(nonatomic) NSString *errorMessage;
 @property(nonatomic) bool showApplyToAll;
+
+- (void)setErrorNo:(int)_errorNo;
+- (void)setError:(nc::Error)_error;
 
 - (void)addButtonWithTitle:(NSString *)_title responseCode:(NSModalResponse)_response;
 - (void)addAbortButton;

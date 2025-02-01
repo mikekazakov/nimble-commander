@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Deletion.h"
 #include "DeletionJob.h"
 #include "../Internal.h"
@@ -30,10 +30,10 @@ Deletion::Deletion(std::vector<VFSListingItem> _items, DeletionOptions _options)
     m_Job->m_OnRmdirError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
         return OnRmdirError(_err, _path, _vfs);
     };
-    m_Job->m_OnTrashError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_OnTrashError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         return OnTrashError(_err, _path, _vfs);
     };
-    m_Job->m_OnLockedItem = [this](int _err, const std::string &_path, VFSHost &_vfs, DeletionType _type) {
+    m_Job->m_OnLockedItem = [this](Error _err, const std::string &_path, VFSHost &_vfs, DeletionType _type) {
         return OnLockedItem(_err, _path, _vfs, _type);
     };
     m_Job->m_OnUnlockError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
@@ -171,7 +171,7 @@ void Deletion::OnRmdirErrorUI(int _err,
     Show(sheet.window, _ctx);
 }
 
-Callbacks::TrashErrorResolution Deletion::OnTrashError(int _err, const std::string &_path, VFSHost &_vfs)
+Callbacks::TrashErrorResolution Deletion::OnTrashError(const Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_DeleteAllOnTrashError )
         return Callbacks::TrashErrorResolution::DeletePermanently;
@@ -199,7 +199,7 @@ Callbacks::TrashErrorResolution Deletion::OnTrashError(int _err, const std::stri
         return Callbacks::TrashErrorResolution::Stop;
 }
 
-void Deletion::OnTrashErrorUI(int _err,
+void Deletion::OnTrashErrorUI(const Error _err,
                               const std::string &_path,
                               [[maybe_unused]] std::shared_ptr<VFSHost> _vfs,
                               std::shared_ptr<AsyncDialogResponse> _ctx)
@@ -210,7 +210,7 @@ void Deletion::OnTrashErrorUI(int _err,
     sheet.message = NSLocalizedString(@"Failed to move an item to Trash", "");
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.showApplyToAll = m_Job->ItemsInScript() > 0;
-    sheet.errorNo = _err;
+    sheet.error = _err;
     [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
     [sheet addButtonWithTitle:NSLocalizedString(@"Delete Permanently", "")
                  responseCode:NSModalResponseDeletePermanently];
@@ -220,7 +220,7 @@ void Deletion::OnTrashErrorUI(int _err,
 }
 
 Callbacks::LockedItemResolution
-Deletion::OnLockedItem(int _err, const std::string &_path, VFSHost &_vfs, DeletionType _type)
+Deletion::OnLockedItem(const Error _err, const std::string &_path, VFSHost &_vfs, DeletionType _type)
 {
     switch( m_LockedItemBehaviour ) {
         case DeletionOptions::LockedItemBehavior::Ask:
@@ -257,7 +257,7 @@ Deletion::OnLockedItem(int _err, const std::string &_path, VFSHost &_vfs, Deleti
     }
 }
 
-void Deletion::OnLockedItemUI(int _err,
+void Deletion::OnLockedItemUI(const Error _err,
                               const std::string &_path,
                               [[maybe_unused]] std::shared_ptr<VFSHost> _vfs,
                               DeletionType _type,
@@ -270,7 +270,7 @@ void Deletion::OnLockedItemUI(int _err,
                                                      : NSLocalizedString(@"Cannot move a locked item to Trash", "");
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.showApplyToAll = m_Job->ItemsInScript() > 0;
-    sheet.errorNo = _err;
+    sheet.error = _err;
     [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
     [sheet addButtonWithTitle:NSLocalizedString(@"Unlock", "") responseCode:NSModalResponseUnlock];
     [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];

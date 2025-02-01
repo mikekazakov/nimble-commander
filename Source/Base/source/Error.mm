@@ -16,6 +16,11 @@ static_assert(sizeof(Error) == 24);
 static_assert(sizeof(std::expected<void, Error>) == 32);
 static_assert(sizeof(std::expected<std::string, Error>) == 32);
 static_assert(sizeof(std::expected<std::vector<std::string>, Error>) == 32);
+static_assert(Error::POSIX.length() <= 8);
+static_assert(Error::OSStatus.length() <= 8);
+static_assert(Error::Mach.length() <= 8);
+static_assert(Error::Cocoa.length() <= 8);
+static_assert(Error::NSURL.length() <= 8);
 
 using base::CFPtr;
 using base::ErrorDescriptionProvider;
@@ -61,11 +66,21 @@ class DomainIndices
 public:
     static DomainIndices &Instance() noexcept;
 
+    DomainIndices();
     uint64_t Index(std::string_view _domain) noexcept;
     std::string Domain(uint64_t _index) noexcept;
 
+    static inline constexpr uint64_t POSIX = 0;
+    static inline constexpr uint64_t OSStatus = 1;
+    static inline constexpr uint64_t Mach = 2;
+    static inline constexpr uint64_t Cocoa = 3;
+    static inline constexpr uint64_t NSURL = 4;
+
 private:
     using Map = ankerl::unordered_dense::map<std::string, int64_t, UnorderedStringHashEqual, UnorderedStringHashEqual>;
+
+    uint64_t IndexSlowPath(std::string_view _domain) noexcept;
+
     Map m_DomainToIndex;
     std::vector<std::string> m_IndexToDomain;
     spinlock m_Lock;
@@ -77,7 +92,49 @@ DomainIndices &DomainIndices::Instance() noexcept
     return inst;
 }
 
-uint64_t DomainIndices::Index(std::string_view _domain) noexcept
+DomainIndices::DomainIndices()
+{
+    auto init = [this](const std::string_view _domain) {
+        const uint64_t idx = m_IndexToDomain.size();
+        m_DomainToIndex.emplace(_domain, idx);
+        m_IndexToDomain.emplace_back(_domain);
+    };
+    init(Error::POSIX);
+    init(Error::OSStatus);
+    init(Error::Mach);
+    init(Error::Cocoa);
+    init(Error::NSURL);
+    assert(m_DomainToIndex.at(Error::POSIX) == POSIX);
+    assert(m_DomainToIndex.at(Error::OSStatus) == OSStatus);
+    assert(m_DomainToIndex.at(Error::Mach) == Mach);
+    assert(m_DomainToIndex.at(Error::Cocoa) == Cocoa);
+    assert(m_DomainToIndex.at(Error::NSURL) == NSURL);
+    assert(m_IndexToDomain.at(POSIX) == Error::POSIX);
+    assert(m_IndexToDomain.at(OSStatus) == Error::OSStatus);
+    assert(m_IndexToDomain.at(Mach) == Error::Mach);
+    assert(m_IndexToDomain.at(Cocoa) == Error::Cocoa);
+    assert(m_IndexToDomain.at(NSURL) == Error::NSURL);
+}
+
+uint64_t DomainIndices::Index(const std::string_view _domain) noexcept
+{
+    // Fast path for the built-in indices, clang is shockingly good at optimizing this naive approach.
+    if( _domain == Error::POSIX )
+        return POSIX;
+    if( _domain == Error::OSStatus )
+        return OSStatus;
+    if( _domain == Error::Mach )
+        return Mach;
+    if( _domain == Error::Cocoa )
+        return Cocoa;
+    if( _domain == Error::NSURL )
+        return NSURL;
+
+    // General slow path with locking, hashtable lookup and potential insertion of the index
+    return IndexSlowPath(_domain);
+}
+
+uint64_t DomainIndices::IndexSlowPath(std::string_view _domain) noexcept
 {
     const std::lock_guard lock{m_Lock};
     if( auto it = m_DomainToIndex.find(_domain); it != m_DomainToIndex.end() ) {
@@ -286,6 +343,11 @@ void Error::DescriptionProvider(std::string_view _domain,
 {
     const uint64_t idx = DomainIndices::Instance().Index(_domain);
     DescriptionProviders::Instance().Set(idx, std::move(_provider));
+}
+
+bool operator==(const Error &_lhs, const Error &_rhs) noexcept
+{
+    return _lhs.m_Domain == _rhs.m_Domain && _lhs.m_Code == _rhs.m_Code;
 }
 
 } // namespace nc

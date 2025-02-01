@@ -34,6 +34,7 @@ public:
 
 // This class provides a native C++ storage of a structured error description.
 // It somewhat mimicks what NSError provides, but it's intended to be passed by value as std::expected<.., Error>.
+// The class is lightweight enough to make copies very cheap.
 class Error
 {
 public:
@@ -93,6 +94,10 @@ public:
 
     // Set a custom failure reason.
     void LocalizedFailureReason(std::string_view _failure_reason) noexcept;
+
+    // Comparing two Errors for equality.
+    // Only the domain and the error code is considered in the comparison.
+    friend bool operator==(const Error &_lhs, const Error &_rhs) noexcept;
 
     // Loads a description provider currently set for the specified domain.
     // Returns nullptr if this domain has no associated provider.

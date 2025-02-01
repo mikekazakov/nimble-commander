@@ -158,3 +158,15 @@ TEST_CASE(PREFIX "Can interface with NSError")
         CHECK(err.LocalizedFailureReason() == "Hola! 😸");
     }
 }
+
+TEST_CASE(PREFIX "operator==()")
+{
+    CHECK(Error(Error::POSIX, EINTR) == Error(Error::POSIX, EINTR));
+    CHECK(!(Error(Error::POSIX, EINTR) != Error(Error::POSIX, EINTR)));
+
+    CHECK(!(Error(Error::POSIX, EINTR) == Error(Error::POSIX, EINVAL)));
+    CHECK(Error(Error::POSIX, EINTR) != Error(Error::POSIX, EINVAL));
+
+    CHECK(!(Error(Error::Cocoa, EINTR) == Error(Error::POSIX, EINTR)));
+    CHECK(Error(Error::Cocoa, EINTR) != Error(Error::POSIX, EINTR));
+}

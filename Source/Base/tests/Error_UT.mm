@@ -84,6 +84,19 @@ TEST_CASE(PREFIX "Querying failure reason")
         CHECK(err.LocalizedFailureReason() == "something bad!");
         CHECK(err2.LocalizedFailureReason() == "wow!");
     }
+    SECTION("Fallback to non-localized description")
+    {
+        struct Provider2 : ErrorDescriptionProvider {
+            [[nodiscard]] std::string Description(int64_t _code) const noexcept override
+            {
+                return fmt::format("!!Reason#{}!!", _code);
+            }
+        };
+        const ErrorDescriptionProviderAutoReg autoreg2("MyDomain", std::make_shared<Provider2>());
+
+        const Error err("MyDomain", 42);
+        CHECK(err.LocalizedFailureReason() == "Error Domain=MyDomain Code=42 \"!!Reason#42!!\"");
+    }
     SECTION("None available")
     {
         const Error err("Nonsense", 42);

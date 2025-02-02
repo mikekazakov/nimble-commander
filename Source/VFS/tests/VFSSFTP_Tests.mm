@@ -553,7 +553,7 @@ TEST_CASE(PREFIX "chown")
 
     const auto new_uid = st.uid + 1;
     const auto new_gid = st.gid + 1;
-    REQUIRE(host->SetOwnership(path, new_uid, new_gid) == VFSError::Ok);
+    REQUIRE(host->SetOwnership(path, new_uid, new_gid));
 
     REQUIRE(host->Stat(path, st, 0) == VFSError::Ok);
     REQUIRE(st.uid == new_uid);

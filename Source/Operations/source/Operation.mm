@@ -233,9 +233,19 @@ void Operation::AddButtonsForGenericDialog(const GenericDialog _dialog_type, NCO
     }
 }
 
+// TODO: remove this
 void Operation::ShowGenericDialog(GenericDialog _dialog_type,
                                   NSString *_message,
                                   int _err,
+                                  vfs::VFSPath _path,
+                                  std::shared_ptr<AsyncDialogResponse> _ctx)
+{
+    ShowGenericDialog(_dialog_type, _message, VFSError::ToError(_err), _path, _ctx);
+}
+
+void Operation::ShowGenericDialog(GenericDialog _dialog_type,
+                                  NSString *_message,
+                                  Error _err,
                                   vfs::VFSPath _path,
                                   std::shared_ptr<AsyncDialogResponse> _ctx)
 {
@@ -248,7 +258,7 @@ void Operation::ShowGenericDialog(GenericDialog _dialog_type,
     sheet.style = GenericErrorDialogStyle::Caution;
     sheet.message = _message;
     sheet.path = [NSString stringWithUTF8String:_path.Path().c_str()];
-    sheet.errorNo = _err;
+    sheet.error = _err;
     AddButtonsForGenericDialog(_dialog_type, sheet);
     Show(sheet.window, _ctx);
 }

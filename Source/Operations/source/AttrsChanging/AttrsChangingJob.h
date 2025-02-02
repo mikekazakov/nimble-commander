@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Job.h"
@@ -30,8 +30,8 @@ struct AttrsChangingJobCallbacks {
         Skip,
         Retry
     };
-    std::function<ChownErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnChownError =
-        [](int, const std::string &, VFSHost &) { return ChownErrorResolution::Stop; };
+    std::function<ChownErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnChownError =
+        [](Error, const std::string &, VFSHost &) { return ChownErrorResolution::Stop; };
 
     enum class FlagsErrorResolution {
         Stop,

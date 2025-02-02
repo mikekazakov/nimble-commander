@@ -494,12 +494,12 @@ void Host::SetDesctructCallback(std::function<void(const VFSHost *)> _callback)
     m_OnDesctruct = _callback;
 }
 
-int Host::SetOwnership([[maybe_unused]] std::string_view _path,
-                       [[maybe_unused]] unsigned _uid,
-                       [[maybe_unused]] unsigned _gid,
-                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> Host::SetOwnership([[maybe_unused]] std::string_view _path,
+                                              [[maybe_unused]] unsigned _uid,
+                                              [[maybe_unused]] unsigned _gid,
+                                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 std::expected<std::vector<VFSUser>, Error> Host::FetchUsers([[maybe_unused]] const VFSCancelChecker &_cancel_checker)

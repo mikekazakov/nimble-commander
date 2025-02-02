@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <memory>
 
 #include "AttrsChanging.h"
@@ -24,7 +24,7 @@ AttrsChanging::AttrsChanging(AttrsChangingCommand _command)
     m_Job->m_OnChmodError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
         return (Callbacks::ChmodErrorResolution)OnChmodError(_err, _path, _vfs);
     };
-    m_Job->m_OnChownError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_OnChownError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         return (Callbacks::ChownErrorResolution)OnChownError(_err, _path, _vfs);
     };
     m_Job->m_OnFlagsError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
@@ -98,7 +98,7 @@ int AttrsChanging::OnChmodError(int _err, const std::string &_path, VFSHost &_vf
         return (int)Callbacks::ChmodErrorResolution::Stop;
 }
 
-int AttrsChanging::OnChownError(int _err, const std::string &_path, VFSHost &_vfs)
+int AttrsChanging::OnChownError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ? (int)Callbacks::ChownErrorResolution::Skip : (int)Callbacks::ChownErrorResolution::Stop;

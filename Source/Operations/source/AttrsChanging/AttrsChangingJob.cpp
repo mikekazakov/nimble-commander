@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingJob.h"
 #include <Utility/PathManip.h>
 #include <sys/stat.h>
@@ -237,10 +237,10 @@ bool AttrsChangingJob::ChownSingleItem(const std::string &_path, VFSHost &_vfs, 
         return true;
 
     while( true ) {
-        const auto chown_rc = _vfs.SetOwnership(_path, new_uid, new_gid);
-        if( chown_rc == VFSError::Ok )
+        const std::expected<void, Error> chown_rc = _vfs.SetOwnership(_path, new_uid, new_gid);
+        if( chown_rc )
             break;
-        switch( m_OnChownError(chown_rc, _path, _vfs) ) {
+        switch( m_OnChownError(chown_rc.error(), _path, _vfs) ) {
             case ChownErrorResolution::Stop:
                 Stop();
                 return false;

@@ -779,22 +779,23 @@ int NativeHost::SetFlags(std::string_view _path,
     return VFSError::FromErrno();
 }
 
-int NativeHost::SetOwnership(std::string_view _path,
-                             unsigned _uid,
-                             unsigned _gid,
-                             [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> NativeHost::SetOwnership(std::string_view _path,
+                                                    unsigned _uid,
+                                                    unsigned _gid,
+                                                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( _path.empty() )
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
     const auto ret = io.chown(path.c_str(), _uid, _gid);
-    if( ret == 0 )
-        return VFSError::Ok;
-    return VFSError::FromErrno();
+    if( ret != 0 )
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
+
+    return {};
 }
 
 std::expected<std::vector<VFSUser>, Error>

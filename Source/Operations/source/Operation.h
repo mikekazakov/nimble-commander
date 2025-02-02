@@ -97,6 +97,11 @@ protected:
                            int _err,
                            vfs::VFSPath _path,
                            std::shared_ptr<AsyncDialogResponse> _ctx);
+    void ShowGenericDialog(GenericDialog _dialog_type,
+                           NSString *_message,
+                           Error _err,
+                           vfs::VFSPath _path,
+                           std::shared_ptr<AsyncDialogResponse> _ctx);
     void WaitForDialogResponse(std::shared_ptr<AsyncDialogResponse> _response);
     void ReportHaltReason(NSString *_message, int _error, const std::string &_path, VFSHost &_vfs);
     void SetTitle(std::string _title);

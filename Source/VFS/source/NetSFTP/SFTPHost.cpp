@@ -22,6 +22,8 @@
 namespace nc::vfs {
 
 using namespace std::literals;
+using sftp::ErrorDomain;
+using sftp::Errors;
 
 static bool ServerHasReversedSymlinkParameters(LIBSSH2_SESSION *_session);
 
@@ -717,6 +719,7 @@ int SFTPHost::CreateDirectory(std::string_view _path,
     return 0;
 }
 
+// TODO: remove this
 int SFTPHost::VFSErrorForConnection(Connection &_conn)
 {
     using namespace VFSError;
@@ -773,6 +776,17 @@ int SFTPHost::VFSErrorForConnection(Connection &_conn)
                 return NetSFTPFailure;
         }
     return NetSFTPErrorSSH; // until the better times we dont have a better errors explanation
+}
+
+std::optional<Error> SFTPHost::ErrorForConnection(Connection &_conn)
+{
+    if( const int sess_errno = libssh2_session_last_errno(_conn.ssh); sess_errno != 0 ) {
+        if( sess_errno == LIBSSH2_ERROR_SFTP_PROTOCOL )
+            return Error{sftp::ErrorDomain, static_cast<int64_t>(libssh2_sftp_last_error(_conn.sftp))};
+        else
+            return Error{sftp::ErrorDomain, static_cast<int64_t>(sess_errno)};
+    }
+    return {};
 }
 
 const std::string &SFTPHost::ServerUrl() const noexcept
@@ -875,14 +889,14 @@ int SFTPHost::SetPermissions(std::string_view _path,
         return VFSErrorForConnection(*conn);
 }
 
-int SFTPHost::SetOwnership(std::string_view _path,
-                           unsigned _uid,
-                           unsigned _gid,
-                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> SFTPHost::SetOwnership(std::string_view _path,
+                                                  unsigned _uid,
+                                                  unsigned _gid,
+                                                  [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     if( const int rc = GetConnection(conn); rc < 0 )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
@@ -892,12 +906,12 @@ int SFTPHost::SetOwnership(std::string_view _path,
     attrs.uid = _uid;
     attrs.gid = _gid;
 
-    const auto rc = libssh2_sftp_stat_ex(
+    const int rc = libssh2_sftp_stat_ex(
         conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), LIBSSH2_SFTP_SETSTAT, &attrs);
     if( rc == 0 )
-        return VFSError::Ok;
+        return {};
     else
-        return VFSErrorForConnection(*conn);
+        return std::unexpected(ErrorForConnection(*conn).value_or(Error{ErrorDomain, Errors::sftp_protocol}));
 }
 
 int SFTPHost::SetTimes(std::string_view _path,

@@ -170,4 +170,9 @@ std::string ErrorDescriptionProvider::Description(int64_t _code) const noexcept
         return fmt::format("LibSSH2 error ({}).", _code);
 }
 
+std::string ErrorDescriptionProvider::LocalizedFailureReason(int64_t _code) const noexcept
+{
+    return Description(_code);
+}
+
 } // namespace nc::vfs::sftp

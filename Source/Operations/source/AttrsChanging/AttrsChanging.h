@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Operation.h"
@@ -18,7 +18,7 @@ private:
     virtual Job *GetJob() noexcept override;
     int OnSourceAccessError(int _err, const std::string &_path, VFSHost &_vfs);
     int OnChmodError(int _err, const std::string &_path, VFSHost &_vfs);
-    int OnChownError(int _err, const std::string &_path, VFSHost &_vfs);
+    int OnChownError(Error _err, const std::string &_path, VFSHost &_vfs);
     int OnFlagsError(int _err, const std::string &_path, VFSHost &_vfs);
     int OnTimesError(int _err, const std::string &_path, VFSHost &_vfs);
 

@@ -79,10 +79,10 @@ public:
 
     int SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int SetOwnership(std::string_view _path,
-                     unsigned _uid,
-                     unsigned _gid,
-                     const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error> SetOwnership(std::string_view _path,
+                                            unsigned _uid,
+                                            unsigned _gid,
+                                            const VFSCancelChecker &_cancel_checker = {}) override;
 
     int SetTimes(std::string_view _path,
                  std::optional<time_t> _birth_time,
@@ -105,6 +105,7 @@ public:
     };
 
     static int VFSErrorForConnection(Connection &_conn);
+    static std::optional<Error> ErrorForConnection(Connection &_conn);
 
     int GetConnection(std::unique_ptr<Connection> &_t);
 

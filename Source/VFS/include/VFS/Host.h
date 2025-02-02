@@ -320,7 +320,7 @@ public:
     /**
      * Change ownership similarly to chown().
      */
-    virtual int
+    virtual std::expected<void, Error>
     SetOwnership(std::string_view _path, unsigned _uid, unsigned _gid, const VFSCancelChecker &_cancel_checker = {});
 
     /***********************************************************************************************

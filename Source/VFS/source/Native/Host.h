@@ -83,10 +83,10 @@ public:
                  uint64_t _vfs_options,
                  const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int SetOwnership(std::string_view _path,
-                     unsigned _uid,
-                     unsigned _gid,
-                     const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error> SetOwnership(std::string_view _path,
+                                            unsigned _uid,
+                                            unsigned _gid,
+                                            const VFSCancelChecker &_cancel_checker = {}) override;
 
     int SetTimes(std::string_view _path,
                  std::optional<time_t> _birth_time,

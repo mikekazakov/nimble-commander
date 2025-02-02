@@ -2283,8 +2283,12 @@ CopyingJob::RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_pa
                                             src_stat.ctime.tv_sec,
                                             src_stat.atime.tv_sec);
 
-            if( m_Options.copy_unix_owners && m_DestinationHost->Features() & vfs::HostFeatures::SetOwnership )
+            if( m_Options.copy_unix_owners && m_DestinationHost->Features() & vfs::HostFeatures::SetOwnership ) {
+                // TODO: currently silently ignoring the result of chown, that's wrong
+                // NOLINTBEGIN(bugprone-unused-return-value)
                 m_DestinationHost->SetOwnership(_dst_path, src_stat.uid, src_stat.gid);
+                // NOLINTEND(bugprone-unused-return-value)
+            }
 
             if( m_Options.copy_unix_flags && m_DestinationHost->Features() & vfs::HostFeatures::SetPermissions )
                 m_DestinationHost->SetPermissions(_dst_path, src_stat.mode);

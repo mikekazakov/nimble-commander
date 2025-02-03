@@ -17,7 +17,7 @@ public:
 private:
     virtual Job *GetJob() noexcept override;
     int OnSourceAccessError(int _err, const std::string &_path, VFSHost &_vfs);
-    int OnChmodError(int _err, const std::string &_path, VFSHost &_vfs);
+    int OnChmodError(Error _err, const std::string &_path, VFSHost &_vfs);
     int OnChownError(Error _err, const std::string &_path, VFSHost &_vfs);
     int OnFlagsError(Error _err, const std::string &_path, VFSHost &_vfs);
     int OnTimesError(int _err, const std::string &_path, VFSHost &_vfs);

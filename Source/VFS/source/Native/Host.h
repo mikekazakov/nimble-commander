@@ -76,7 +76,8 @@ public:
                std::string_view _new_path,
                const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error>
+    SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<void, Error> SetFlags(std::string_view _path,
                                         uint32_t _flags,

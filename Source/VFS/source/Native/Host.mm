@@ -743,21 +743,22 @@ std::expected<void, nc::Error> NativeHost::Trash(std::string_view _path,
     return {};
 }
 
-int NativeHost::SetPermissions(std::string_view _path,
-                               uint16_t _mode,
-                               [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> NativeHost::SetPermissions(std::string_view _path,
+                                                      uint16_t _mode,
+                                                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( _path.empty() )
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
     const auto ret = io.chmod(path.c_str(), _mode);
-    if( ret == 0 )
-        return VFSError::Ok;
-    return VFSError::FromErrno();
+    if( ret != 0 )
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
+
+    return {};
 }
 
 std::expected<void, Error> NativeHost::SetFlags(std::string_view _path,

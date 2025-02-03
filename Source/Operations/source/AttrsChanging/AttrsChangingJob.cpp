@@ -211,10 +211,10 @@ bool AttrsChangingJob::ChmodSingleItem(const std::string &_path, VFSHost &_vfs, 
         return true;
 
     while( true ) {
-        const auto chmod_rc = _vfs.SetPermissions(_path, mode);
-        if( chmod_rc == VFSError::Ok )
+        const std::expected<void, Error> chmod_rc = _vfs.SetPermissions(_path, mode);
+        if( chmod_rc )
             break;
-        switch( m_OnChmodError(chmod_rc, _path, _vfs) ) {
+        switch( m_OnChmodError(chmod_rc.error(), _path, _vfs) ) {
             case ChmodErrorResolution::Stop:
                 Stop();
                 return false;

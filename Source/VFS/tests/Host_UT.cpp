@@ -70,6 +70,7 @@ TEST_CASE(PREFIX "Unsupported methods")
     // ...
     REQUIRE(host->Trash("/some/path").error() == Error(Error::POSIX, ENOTSUP));
     REQUIRE(host->SetFlags("/some/path", 0, 0).error() == Error(Error::POSIX, ENOTSUP));
+    REQUIRE(host->SetPermissions("/some/path", 42).error() == Error(Error::POSIX, ENOTSUP));
     REQUIRE(host->SetOwnership("/some/path", 42, 42).error() == Error(Error::POSIX, ENOTSUP));
     REQUIRE(host->FetchUsers().error() == Error(Error::POSIX, ENOTSUP));
     REQUIRE(host->FetchGroups().error() == Error(Error::POSIX, ENOTSUP));

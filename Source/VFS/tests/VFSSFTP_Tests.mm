@@ -533,7 +533,7 @@ TEST_CASE(PREFIX "chmod")
     REQUIRE(st.mode_bits.xusr == 0);
 
     st.mode_bits.xusr = 1;
-    REQUIRE(host->SetPermissions(path, st.mode) == VFSError::Ok);
+    REQUIRE(host->SetPermissions(path, st.mode));
 
     memset(&st, 0, sizeof(st));
     REQUIRE(host->Stat(path, st, 0) == VFSError::Ok);

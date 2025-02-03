@@ -866,13 +866,13 @@ int SFTPHost::CreateSymlink(std::string_view _symlink_path,
         return VFSErrorForConnection(*conn);
 }
 
-int SFTPHost::SetPermissions(std::string_view _path,
-                             uint16_t _mode,
-                             [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> SFTPHost::SetPermissions(std::string_view _path,
+                                                    uint16_t _mode,
+                                                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     if( const int rc = GetConnection(conn); rc < 0 )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
@@ -884,9 +884,9 @@ int SFTPHost::SetPermissions(std::string_view _path,
     const auto rc = libssh2_sftp_stat_ex(
         conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), LIBSSH2_SFTP_SETSTAT, &attrs);
     if( rc == 0 )
-        return VFSError::Ok;
+        return {};
     else
-        return VFSErrorForConnection(*conn);
+        return std::unexpected(ErrorForConnection(*conn).value_or(Error{ErrorDomain, Errors::sftp_protocol}));
 }
 
 std::expected<void, Error> SFTPHost::SetOwnership(std::string_view _path,

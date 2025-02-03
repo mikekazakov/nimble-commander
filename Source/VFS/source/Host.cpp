@@ -327,11 +327,11 @@ int Host::Rename([[maybe_unused]] std::string_view _old_path,
     return VFSError::NotSupported;
 }
 
-int Host::SetPermissions([[maybe_unused]] std::string_view _path,
-                         [[maybe_unused]] uint16_t _mode,
-                         [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> Host::SetPermissions([[maybe_unused]] std::string_view _path,
+                                                [[maybe_unused]] uint16_t _mode,
+                                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 const std::shared_ptr<Host> &Host::DummyHost()

@@ -22,8 +22,8 @@ struct AttrsChangingJobCallbacks {
         Skip,
         Retry
     };
-    std::function<ChmodErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnChmodError =
-        [](int, const std::string &, VFSHost &) { return ChmodErrorResolution::Stop; };
+    std::function<ChmodErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnChmodError =
+        [](Error, const std::string &, VFSHost &) { return ChmodErrorResolution::Stop; };
 
     enum class ChownErrorResolution {
         Stop,

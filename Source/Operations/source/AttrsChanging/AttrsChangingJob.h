@@ -38,8 +38,8 @@ struct AttrsChangingJobCallbacks {
         Skip,
         Retry
     };
-    std::function<FlagsErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnFlagsError =
-        [](int, const std::string &, VFSHost &) { return FlagsErrorResolution::Stop; };
+    std::function<FlagsErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnFlagsError =
+        [](Error, const std::string &, VFSHost &) { return FlagsErrorResolution::Stop; };
 
     enum class TimesErrorResolution {
         Stop,

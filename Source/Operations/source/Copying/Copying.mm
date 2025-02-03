@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Copying.h"
 #include "CopyingJob.h"
 #include "../AsyncDialogResponse.h"
@@ -79,7 +79,7 @@ void Copying::SetupCallbacks()
     j.m_OnCantOpenLockedItem = [this](int _1, const std::string &_2, VFSHost &_3) {
         return OnLockedItemIssue(_1, _2, _3, LockedItemCause::Opening);
     };
-    j.m_OnUnlockError = [this](int _1, const std::string &_2, VFSHost &_3) { return OnUnlockError(_1, _2, _3); };
+    j.m_OnUnlockError = [this](Error _1, const std::string &_2, VFSHost &_3) { return OnUnlockError(_1, _2, _3); };
     j.m_OnNotADirectory = [this](const std::string &_1, VFSHost &_2) { return OnNotADirectory(_1, _2); };
     j.m_OnFileVerificationFailed = [this](const std::string &_1, VFSHost &_2) { OnFileVerificationFailed(_1, _2); };
     j.m_OnStageChanged = [this]() { OnStageChanged(); };
@@ -612,7 +612,7 @@ void Copying::OnLockedItemIssueUI(int _err,
     Show(sheet.window, _ctx);
 }
 
-CB::UnlockErrorResolution Copying::OnUnlockError(int _vfs_error, const std::string &_path, VFSHost &_vfs)
+CB::UnlockErrorResolution Copying::OnUnlockError(Error _error, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll )
         return CB::UnlockErrorResolution::Skip;
@@ -622,7 +622,7 @@ CB::UnlockErrorResolution Copying::OnUnlockError(int _vfs_error, const std::stri
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to unlock an item", ""),
-                      _vfs_error,
+                      _error,
                       {_vfs, _path},
                       ctx);
     WaitForDialogResponse(ctx);

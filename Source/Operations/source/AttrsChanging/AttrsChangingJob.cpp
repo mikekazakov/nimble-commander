@@ -263,10 +263,10 @@ bool AttrsChangingJob::ChflagSingleItem(const std::string &_path, VFSHost &_vfs,
         return true;
 
     while( true ) {
-        const auto chflags_rc = _vfs.SetFlags(_path, flags, vfs::Flags::None);
-        if( chflags_rc == VFSError::Ok )
+        const std::expected<void, Error> chflags_rc = _vfs.SetFlags(_path, flags, vfs::Flags::None);
+        if( chflags_rc )
             break;
-        switch( m_OnFlagsError(chflags_rc, _path, _vfs) ) {
+        switch( m_OnFlagsError(chflags_rc.error(), _path, _vfs) ) {
             case FlagsErrorResolution::Stop:
                 Stop();
                 return false;

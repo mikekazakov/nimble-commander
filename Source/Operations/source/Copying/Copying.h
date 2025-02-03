@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -73,7 +73,7 @@ private:
 
     CB::NotADirectoryResolution OnNotADirectory(const std::string &_path, VFSHost &_vfs);
 
-    CB::UnlockErrorResolution OnUnlockError(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+    CB::UnlockErrorResolution OnUnlockError(Error _error, const std::string &_path, VFSHost &_vfs);
 
     CB::LockedItemResolution
     OnLockedItemIssue(int _vfs_error, const std::string &_path, VFSHost &_vfs, LockedItemCause _cause);

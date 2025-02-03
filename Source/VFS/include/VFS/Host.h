@@ -312,10 +312,10 @@ public:
      * Change flags similarly to chflags().
      * _vfs_options can include F_NoFollow to work akin to lchflags() instead.
      */
-    virtual int SetFlags(std::string_view _path,
-                         uint32_t _flags,
-                         uint64_t _vfs_options,
-                         const VFSCancelChecker &_cancel_checker = {});
+    virtual std::expected<void, Error> SetFlags(std::string_view _path,
+                                                uint32_t _flags,
+                                                uint64_t _vfs_options,
+                                                const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Change ownership similarly to chown().

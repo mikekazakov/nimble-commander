@@ -760,13 +760,13 @@ int NativeHost::SetPermissions(std::string_view _path,
     return VFSError::FromErrno();
 }
 
-int NativeHost::SetFlags(std::string_view _path,
-                         uint32_t _flags,
-                         uint64_t _vfs_options,
-                         [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> NativeHost::SetFlags(std::string_view _path,
+                                                uint32_t _flags,
+                                                uint64_t _vfs_options,
+                                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( _path.empty() )
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
@@ -774,9 +774,10 @@ int NativeHost::SetFlags(std::string_view _path,
     auto &io = routedio::RoutedIO::Default;
     const bool no_follow = _vfs_options & Flags::F_NoFollow;
     const auto ret = no_follow ? io.lchflags(path.c_str(), _flags) : io.chflags(path.c_str(), _flags);
-    if( ret == 0 )
-        return VFSError::Ok;
-    return VFSError::FromErrno();
+    if( ret != 0 )
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
+
+    return {};
 }
 
 std::expected<void, Error> NativeHost::SetOwnership(std::string_view _path,

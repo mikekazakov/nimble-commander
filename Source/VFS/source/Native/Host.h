@@ -78,10 +78,10 @@ public:
 
     int SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int SetFlags(std::string_view _path,
-                 uint32_t _flags,
-                 uint64_t _vfs_options,
-                 const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error> SetFlags(std::string_view _path,
+                                        uint32_t _flags,
+                                        uint64_t _vfs_options,
+                                        const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<void, Error> SetOwnership(std::string_view _path,
                                             unsigned _uid,

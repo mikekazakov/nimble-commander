@@ -27,7 +27,7 @@ AttrsChanging::AttrsChanging(AttrsChangingCommand _command)
     m_Job->m_OnChownError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         return (Callbacks::ChownErrorResolution)OnChownError(_err, _path, _vfs);
     };
-    m_Job->m_OnFlagsError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_OnFlagsError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         return (Callbacks::FlagsErrorResolution)OnFlagsError(_err, _path, _vfs);
     };
     m_Job->m_OnTimesError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
@@ -123,7 +123,7 @@ int AttrsChanging::OnChownError(Error _err, const std::string &_path, VFSHost &_
         return (int)Callbacks::ChownErrorResolution::Stop;
 }
 
-int AttrsChanging::OnFlagsError(int _err, const std::string &_path, VFSHost &_vfs)
+int AttrsChanging::OnFlagsError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ? (int)Callbacks::FlagsErrorResolution::Skip : (int)Callbacks::FlagsErrorResolution::Stop;

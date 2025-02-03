@@ -36,7 +36,7 @@ Deletion::Deletion(std::vector<VFSListingItem> _items, DeletionOptions _options)
     m_Job->m_OnLockedItem = [this](Error _err, const std::string &_path, VFSHost &_vfs, DeletionType _type) {
         return OnLockedItem(_err, _path, _vfs, _type);
     };
-    m_Job->m_OnUnlockError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_OnUnlockError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         return OnUnlockError(_err, _path, _vfs);
     };
 }
@@ -278,7 +278,7 @@ void Deletion::OnLockedItemUI(const Error _err,
     Show(sheet.window, _ctx);
 }
 
-DeletionJobCallbacks::UnlockErrorResolution Deletion::OnUnlockError(int _err, const std::string &_path, VFSHost &_vfs)
+DeletionJobCallbacks::UnlockErrorResolution Deletion::OnUnlockError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ? Callbacks::UnlockErrorResolution::Skip : Callbacks::UnlockErrorResolution::Stop;
@@ -299,7 +299,7 @@ DeletionJobCallbacks::UnlockErrorResolution Deletion::OnUnlockError(int _err, co
         return Callbacks::UnlockErrorResolution::Stop;
 }
 
-void Deletion::OnUnlockErrorUI(int _err,
+void Deletion::OnUnlockErrorUI(Error _err,
                                const std::string &_path,
                                [[maybe_unused]] std::shared_ptr<VFSHost> _vfs,
                                std::shared_ptr<AsyncDialogResponse> _ctx)
@@ -309,7 +309,7 @@ void Deletion::OnUnlockErrorUI(int _err,
     sheet.style = GenericErrorDialogStyle::Caution;
     sheet.message = NSLocalizedString(@"Failed to unlock an item", "");
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
-    sheet.errorNo = _err;
+    sheet.error = _err;
     [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
     [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
     if( m_Job->ItemsInScript() > 0 )

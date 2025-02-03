@@ -155,10 +155,10 @@ void DeletionJob::DoDelete()
 bool DeletionJob::DoUnlock(const std::string &_path, VFSHost &_vfs)
 {
     while( true ) {
-        const int unlock_rc = UnlockItem(_path, _vfs);
-        if( unlock_rc == VFSError::Ok )
+        const std::expected<void, Error> unlock_rc = UnlockItem(_path, _vfs);
+        if( unlock_rc )
             return true;
-        switch( m_OnUnlockError(unlock_rc, _path, _vfs) ) {
+        switch( m_OnUnlockError(unlock_rc.error(), _path, _vfs) ) {
             case DeletionJobCallbacks::UnlockErrorResolution::Retry:
                 continue;
             case DeletionJobCallbacks::UnlockErrorResolution::Skip:
@@ -321,17 +321,17 @@ bool DeletionJob::IsNativeLockedItem(const nc::Error &_err, const std::string &_
     return st.flags & UF_IMMUTABLE;
 }
 
-int DeletionJob::UnlockItem(const std::string &_path, VFSHost &_vfs)
+std::expected<void, Error> DeletionJob::UnlockItem(std::string_view _path, VFSHost &_vfs)
 {
     // this is kind of stupid to call stat() essentially twice :-|
 
     VFSStat st;
     const int stat_rc = _vfs.Stat(_path, st, nc::vfs::Flags::F_NoFollow);
     if( stat_rc != VFSError::Ok )
-        return stat_rc;
+        return std::unexpected(VFSError::ToError(stat_rc));
 
     st.flags = (st.flags & ~UF_IMMUTABLE);
-    const int chflags_rc = _vfs.SetFlags(_path, st.flags, vfs::Flags::F_NoFollow);
+    const std::expected<void, Error> chflags_rc = _vfs.SetFlags(_path, st.flags, vfs::Flags::F_NoFollow);
     return chflags_rc;
 }
 

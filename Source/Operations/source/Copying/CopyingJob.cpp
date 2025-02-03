@@ -2962,19 +2962,19 @@ bool CopyingJob::IsNativeLockedItemNoFollow(int vfs_error, const std::string &_p
 CopyingJob::StepResult CopyingJob::UnlockNativeItemNoFollow(const std::string &_path,
                                                             vfs::NativeHost &_native_host) const
 {
-    auto unlock = [&]() -> int {
+    auto unlock = [&]() -> std::expected<void, Error> {
         VFSStat st;
         const int stat_rc = _native_host.Stat(_path, st, VFSFlags::F_NoFollow, {});
         if( stat_rc != VFSError::Ok )
-            return stat_rc;
+            return std::unexpected(VFSError::ToError(stat_rc));
         st.flags = (st.flags & ~UF_IMMUTABLE);
         return _native_host.SetFlags(_path, st.flags, VFSFlags::F_NoFollow, {});
     };
     while( true ) {
-        const int unlock_rc = unlock();
-        if( unlock_rc == VFSError::Ok )
+        const std::expected<void, Error> unlock_rc = unlock();
+        if( unlock_rc )
             return StepResult::Ok;
-        switch( m_OnUnlockError(unlock_rc, _path, _native_host) ) {
+        switch( m_OnUnlockError(unlock_rc.error(), _path, _native_host) ) {
             case UnlockErrorResolution::Retry:
                 continue;
             case UnlockErrorResolution::Skip:

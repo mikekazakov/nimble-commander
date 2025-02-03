@@ -512,12 +512,12 @@ std::expected<std::vector<VFSGroup>, Error> Host::FetchGroups([[maybe_unused]] c
     return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
-int Host::SetFlags([[maybe_unused]] std::string_view _path,
-                   [[maybe_unused]] uint32_t _flags,
-                   [[maybe_unused]] uint64_t _vfs_options,
-                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> Host::SetFlags([[maybe_unused]] std::string_view _path,
+                                          [[maybe_unused]] uint32_t _flags,
+                                          [[maybe_unused]] uint64_t _vfs_options,
+                                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 void Host::SetFeatures(uint64_t _features_bitset)

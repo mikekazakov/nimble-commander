@@ -57,8 +57,8 @@ struct DeletionJobCallbacks {
         Skip,
         Retry
     };
-    std::function<UnlockErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnUnlockError =
-        [](int, const std::string &, VFSHost &) { return UnlockErrorResolution::Stop; };
+    std::function<UnlockErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnUnlockError =
+        [](Error, const std::string &, VFSHost &) { return UnlockErrorResolution::Stop; };
 };
 
 } // namespace nc::ops

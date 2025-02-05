@@ -55,7 +55,7 @@ void Copying::SetupCallbacks()
     j.m_OnDestinationFileReadError = [this](int _1, const std::string &_2, VFSHost &_3) {
         return OnDestinationFileReadError(_1, _2, _3);
     };
-    j.m_OnDestinationFileWriteError = [this](int _1, const std::string &_2, VFSHost &_3) {
+    j.m_OnDestinationFileWriteError = [this](Error _1, const std::string &_2, VFSHost &_3) {
         return OnDestinationFileWriteError(_1, _2, _3);
     };
     j.m_OnCantCreateDestinationRootDir = [this](int _1, const std::string &_2, VFSHost &_3) {
@@ -352,10 +352,10 @@ Copying::OnDestinationFileReadError(int _vfs_error, const std::string &_path, VF
 }
 
 CB::DestinationFileWriteErrorResolution
-Copying::OnDestinationFileWriteError(int _vfs_error, const std::string &_path, VFSHost &_vfs)
+Copying::OnDestinationFileWriteError(Error _error, const std::string &_path, VFSHost &_vfs)
 {
     if( m_CallbackHooks && m_CallbackHooks->m_OnDestinationFileWriteError )
-        return m_CallbackHooks->m_OnDestinationFileWriteError(_vfs_error, _path, _vfs);
+        return m_CallbackHooks->m_OnDestinationFileWriteError(_error, _path, _vfs);
 
     if( m_SkipAll )
         return CB::DestinationFileWriteErrorResolution::Skip;
@@ -365,7 +365,7 @@ Copying::OnDestinationFileWriteError(int _vfs_error, const std::string &_path, V
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to write a file", ""),
-                      _vfs_error,
+                      _error,
                       {_vfs, _path},
                       ctx);
     WaitForDialogResponse(ctx);

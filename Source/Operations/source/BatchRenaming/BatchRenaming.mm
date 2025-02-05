@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenaming.h"
 #include "BatchRenamingJob.h"
 #include <VFS/VFS.h>
@@ -28,7 +28,7 @@ BatchRenaming::BatchRenaming(std::vector<std::string> _src_paths,
     SetTitle(Caption(_src_paths));
 
     m_Job = std::make_unique<BatchRenamingJob>(std::move(_src_paths), std::move(_dst_paths), _vfs);
-    m_Job->m_OnRenameError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_OnRenameError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         return (Callbacks::RenameErrorResolution)OnRenameError(_err, _path, _vfs);
     };
 }
@@ -43,7 +43,7 @@ Job *BatchRenaming::GetJob() noexcept
     return m_Job.get();
 }
 
-int BatchRenaming::OnRenameError(int _err, const std::string &_path, VFSHost &_vfs)
+int BatchRenaming::OnRenameError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ? (int)Callbacks::RenameErrorResolution::Skip : (int)Callbacks::RenameErrorResolution::Stop;

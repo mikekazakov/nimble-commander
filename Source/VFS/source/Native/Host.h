@@ -72,9 +72,9 @@ public:
 
     std::expected<void, nc::Error> Trash(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int Rename(std::string_view _old_path,
-               std::string_view _new_path,
-               const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error> Rename(std::string_view _old_path,
+                                      std::string_view _new_path,
+                                      const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<void, Error>
     SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;

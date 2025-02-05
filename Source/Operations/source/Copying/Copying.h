@@ -58,7 +58,7 @@ private:
     OnDestinationFileReadError(int _vfs_error, const std::string &_path, VFSHost &_vfs);
 
     CB::DestinationFileWriteErrorResolution
-    OnDestinationFileWriteError(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+    OnDestinationFileWriteError(Error _error, const std::string &_path, VFSHost &_vfs);
 
     CB::CantCreateDestinationRootDirResolution
     OnCantCreateDestinationRootDir(int _vfs_error, const std::string &_path, VFSHost &_vfs);

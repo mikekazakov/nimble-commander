@@ -290,7 +290,7 @@ public:
     /**
      * Change the name of a file.
      */
-    virtual int
+    virtual std::expected<void, Error>
     Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker = {});
 
     /**

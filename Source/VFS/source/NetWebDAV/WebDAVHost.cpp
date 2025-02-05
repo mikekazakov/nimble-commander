@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WebDAVHost.h"
 #include "Internal.h"
 #include <Utility/PathManip.h>
@@ -350,17 +350,17 @@ webdav::Cache &WebDAVHost::Cache()
     return I->m_Cache;
 }
 
-int WebDAVHost::Rename(std::string_view _old_path,
-                       std::string_view _new_path,
-                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> WebDAVHost::Rename(std::string_view _old_path,
+                                              std::string_view _new_path,
+                                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_old_path) || !IsValidInputPath(_new_path) )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     VFSStat st;
     const int stat_rc = Stat(_old_path, st, 0, _cancel_checker);
     if( stat_rc != VFSError::Ok )
-        return stat_rc;
+        return std::unexpected(VFSError::ToError(stat_rc));
 
     std::string old_path = std::string(_old_path);
     std::string new_path = std::string(_new_path);
@@ -371,13 +371,13 @@ int WebDAVHost::Rename(std::string_view _old_path,
     }
 
     const auto ar = I->m_Pool.Get();
-    const auto rc = RequestMove(Config(), *ar.connection, old_path, new_path);
-    if( rc != VFSError::Ok )
-        return rc;
+    const auto move_rc = RequestMove(Config(), *ar.connection, old_path, new_path);
+    if( move_rc != VFSError::Ok )
+        return std::unexpected(VFSError::ToError(move_rc));
 
     I->m_Cache.CommitMove(_old_path, _new_path);
 
-    return VFSError::Ok;
+    return {};
 }
 
 bool WebDAVHost::IsDirectoryChangeObservationAvailable([[maybe_unused]] std::string_view _path)

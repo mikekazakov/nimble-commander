@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenamingJob.h"
 #include <Utility/StringExtras.h>
 
@@ -35,18 +35,18 @@ void BatchRenamingJob::Rename(const std::string &_src, const std::string &_dst)
     }
 
     while( true ) {
-        const auto dst_exists = m_VFS->Exists(_dst);
+        const bool dst_exists = m_VFS->Exists(_dst);
 
-        int rc = VFSError::Ok;
+        std::expected<void, Error> rc;
         if( dst_exists && !LowercaseEqual(_src, _dst) )
-            rc = VFSError::FromErrno(EEXIST);
+            rc = std::unexpected(Error{Error::POSIX, EEXIST});
         else
             rc = m_VFS->Rename(_src, _dst);
 
-        if( rc == VFSError::Ok )
+        if( rc )
             break;
 
-        switch( m_OnRenameError(rc, _dst, *m_VFS) ) {
+        switch( m_OnRenameError(rc.error(), _dst, *m_VFS) ) {
             case RenameErrorResolution::Skip:
                 Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
                 return;

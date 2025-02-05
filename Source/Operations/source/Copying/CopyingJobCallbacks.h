@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -75,9 +75,9 @@ struct CopyingJobCallbacks {
         Skip,
         Retry
     };
-    std::function<DestinationFileWriteErrorResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+    std::function<DestinationFileWriteErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)>
         m_OnDestinationFileWriteError =
-            [](int, const std::string &, VFSHost &) { return DestinationFileWriteErrorResolution::Stop; };
+            [](Error, const std::string &, VFSHost &) { return DestinationFileWriteErrorResolution::Stop; };
 
     enum class CantCreateDestinationRootDirResolution {
         Stop,

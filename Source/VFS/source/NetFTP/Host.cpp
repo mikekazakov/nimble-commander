@@ -501,14 +501,14 @@ int FTPHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFSC
                                 : VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
 }
 
-int FTPHost::Rename(std::string_view _old_path,
-                    std::string_view _new_path,
-                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> FTPHost::Rename(std::string_view _old_path,
+                                           std::string_view _new_path,
+                                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     const std::filesystem::path old_path = EnsureNoTrailingSlash(std::string(_old_path));
     const std::filesystem::path new_path = EnsureNoTrailingSlash(std::string(_new_path));
     if( !old_path.is_absolute() || !new_path.is_absolute() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const std::filesystem::path old_parent_path = utility::PathManip::EnsureTrailingSlash(old_path.parent_path());
 
@@ -543,8 +543,10 @@ int FTPHost::Rename(std::string_view _old_path,
 
     CommitIOInstanceAtDir(old_parent_path, std::move(curl));
 
-    return curl_res == CURLE_OK ? VFSError::Ok
-                                : VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
+    if( curl_res == CURLE_OK )
+        return {};
+
+    return std::unexpected(VFSError::ToError(CURLErrorToVFSError(curl_res)));
 }
 
 void FTPHost::MakeDirectoryStructureDirty(const char *_path)

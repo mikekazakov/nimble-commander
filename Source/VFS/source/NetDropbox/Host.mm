@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include <VFS/Log.h>
 #include "../ListingInput.h"
@@ -494,10 +494,11 @@ bool DropboxHost::IsWritable() const
     return true;
 }
 
-int DropboxHost::Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error>
+DropboxHost::Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker)
 {
     if( !_old_path.starts_with("/") || !_new_path.starts_with("/") )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const std::string old_path = EnsureNoTrailingSlash(std::string(_old_path));
     const std::string new_path = EnsureNoTrailingSlash(std::string(_new_path));
@@ -509,7 +510,10 @@ int DropboxHost::Rename(std::string_view _old_path, std::string_view _new_path, 
     [req setHTTPBody:[NSData dataWithBytes:data(path_spec) length:size(path_spec)]];
 
     auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
-    return rc;
+    if( rc == VFSError::Ok )
+        return {};
+
+    return std::unexpected(VFSError::ToError(rc));
 }
 
 const std::string &DropboxHost::Account() const

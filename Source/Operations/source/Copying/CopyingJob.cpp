@@ -904,10 +904,10 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
     // necessary
     if( need_dst_truncate ) {
         while( true ) {
-            const auto rc = ftruncate(destination_fd, total_dst_size);
+            const int rc = ftruncate(destination_fd, total_dst_size);
             if( rc == 0 )
                 break;
-            switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path, _native_host) ) {
+            switch( m_OnDestinationFileWriteError(Error{Error::POSIX, errno}, _dst_path, _native_host) ) {
                 case DestinationFileWriteErrorResolution::Skip:
                     return StepResult::Skipped;
                 case DestinationFileWriteErrorResolution::Stop:
@@ -924,7 +924,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
             const auto rc = lseek(destination_fd, initial_writing_offset, SEEK_SET);
             if( rc >= 0 )
                 break;
-            switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path, _native_host) ) {
+            switch( m_OnDestinationFileWriteError(Error{Error::POSIX, errno}, _dst_path, _native_host) ) {
                 case DestinationFileWriteErrorResolution::Skip:
                     return StepResult::Skipped;
                 case DestinationFileWriteErrorResolution::Stop:
@@ -976,7 +976,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
                     destination_bytes_written += n_written;
                 }
                 else if( n_written < 0 || (++write_loops > max_io_loops) ) {
-                    switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path, _native_host) ) {
+                    switch( m_OnDestinationFileWriteError(Error{Error::POSIX, errno}, _dst_path, _native_host) ) {
                         case DestinationFileWriteErrorResolution::Skip:
                             write_return = StepResult::Skipped;
                             return;
@@ -1281,10 +1281,10 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
     // necessary
     if( need_dst_truncate ) {
         while( true ) {
-            const auto rc = ftruncate(destination_fd, total_dst_size);
+            const int rc = ftruncate(destination_fd, total_dst_size);
             if( rc == 0 )
                 break;
-            switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path, _dst_host) ) {
+            switch( m_OnDestinationFileWriteError(Error{Error::POSIX, errno}, _dst_path, _dst_host) ) {
                 case DestinationFileWriteErrorResolution::Skip:
                     return StepResult::Skipped;
                 case DestinationFileWriteErrorResolution::Stop:
@@ -1298,10 +1298,10 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
     // find the right position in destination file
     if( initial_writing_offset > 0 ) {
         while( true ) {
-            const auto rc = lseek(destination_fd, initial_writing_offset, SEEK_SET);
+            const long rc = lseek(destination_fd, initial_writing_offset, SEEK_SET);
             if( rc >= 0 )
                 break;
-            switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path, _dst_host) ) {
+            switch( m_OnDestinationFileWriteError(Error{Error::POSIX, errno}, _dst_path, _dst_host) ) {
                 case DestinationFileWriteErrorResolution::Skip:
                     return StepResult::Skipped;
                 case DestinationFileWriteErrorResolution::Stop:
@@ -1354,7 +1354,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
                     destination_bytes_written += n_written;
                 }
                 else if( n_written < 0 || (++write_loops > max_io_loops) ) {
-                    switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path, _dst_host) ) {
+                    switch( m_OnDestinationFileWriteError(Error{Error::POSIX, errno}, _dst_path, _dst_host) ) {
                         case DestinationFileWriteErrorResolution::Skip:
                             write_return = StepResult::Skipped;
                             return;
@@ -1635,10 +1635,11 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     // find the right position in destination file
     if( dst_file->Pos() != initial_writing_offset ) {
         while( true ) {
-            const auto rc = dst_file->Seek(initial_writing_offset, VFSFile::Seek_Set);
+            const long rc = dst_file->Seek(initial_writing_offset, VFSFile::Seek_Set);
             if( rc >= 0 )
                 break;
-            switch( m_OnDestinationFileWriteError(static_cast<int>(rc), _dst_path, *m_DestinationHost) ) {
+            switch( m_OnDestinationFileWriteError(
+                VFSError::ToError(static_cast<int>(rc)), _dst_path, *m_DestinationHost) ) {
                 case DestinationFileWriteErrorResolution::Skip:
                     return StepResult::Skipped;
                 case DestinationFileWriteErrorResolution::Stop:
@@ -1689,8 +1690,8 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
                     destination_bytes_written += n_written;
                 }
                 else if( n_written < 0 || (++write_loops > max_io_loops) ) {
-                    switch(
-                        m_OnDestinationFileWriteError(static_cast<int>(n_written), _dst_path, *m_DestinationHost) ) {
+                    switch( m_OnDestinationFileWriteError(
+                        VFSError::ToError(static_cast<int>(n_written)), _dst_path, *m_DestinationHost) ) {
                         case DestinationFileWriteErrorResolution::Skip:
                             write_return = StepResult::Skipped;
                             return;
@@ -2174,7 +2175,7 @@ CopyingJob::RenameNativeDirectory(vfs::NativeHost &_native_host,
                     return {StepResult::Stop, SourceItemAftermath::NoChanges};
             }
         }
-        switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path, _native_host) ) {
+        switch( m_OnDestinationFileWriteError(Error{Error::POSIX, errno}, _dst_path, _native_host) ) {
             case DestinationFileWriteErrorResolution::Skip:
                 return {StepResult::Skipped, SourceItemAftermath::NoChanges};
             case DestinationFileWriteErrorResolution::Stop:
@@ -2303,10 +2304,10 @@ CopyingJob::RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_pa
 
     // do rename itself
     while( true ) {
-        const auto rc = _common_host.Rename(_src_path, _dst_path);
-        if( rc == VFSError::Ok )
+        const std::expected<void, Error> rc = _common_host.Rename(_src_path, _dst_path);
+        if( rc )
             break;
-        switch( m_OnDestinationFileWriteError(rc, _dst_path, _common_host) ) {
+        switch( m_OnDestinationFileWriteError(rc.error(), _dst_path, _common_host) ) {
             case DestinationFileWriteErrorResolution::Skip:
                 return {StepResult::Skipped, SourceItemAftermath::NoChanges};
             case DestinationFileWriteErrorResolution::Stop:
@@ -2396,7 +2397,7 @@ CopyingJob::StepResult CopyingJob::RenameNativeFile(vfs::NativeHost &_native_hos
                     return StepResult::Stop;
             }
         }
-        switch( m_OnDestinationFileWriteError(vfs_error, _dst_path, _native_host) ) {
+        switch( m_OnDestinationFileWriteError(VFSError::ToError(vfs_error), _dst_path, _native_host) ) {
             case DestinationFileWriteErrorResolution::Skip:
                 return StepResult::Skipped;
             case DestinationFileWriteErrorResolution::Stop:
@@ -2456,10 +2457,10 @@ CopyingJob::StepResult CopyingJob::RenameVFSFile(VFSHost &_common_host,
 
     // do rename itself
     while( true ) {
-        const auto rc = _common_host.Rename(_src_path, _dst_path);
-        if( rc == VFSError::Ok )
+        const std::expected<void, Error> rc = _common_host.Rename(_src_path, _dst_path);
+        if( rc )
             break;
-        switch( m_OnDestinationFileWriteError(rc, _dst_path, _common_host) ) {
+        switch( m_OnDestinationFileWriteError(rc.error(), _dst_path, _common_host) ) {
             case DestinationFileWriteErrorResolution::Skip:
                 return StepResult::Skipped;
             case DestinationFileWriteErrorResolution::Stop:
@@ -2716,7 +2717,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeSymlinkToNative(vfs::NativeHost &_n
         const auto rc = io.symlink(linkpath, _dst_path.c_str());
         if( rc == 0 )
             break;
-        switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path, _native_host) ) {
+        switch( m_OnDestinationFileWriteError(Error{Error::POSIX, errno}, _dst_path, _native_host) ) {
             case DestinationFileWriteErrorResolution::Skip:
                 return StepResult::Skipped;
             case DestinationFileWriteErrorResolution::Stop:
@@ -2816,7 +2817,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
         const auto rc = io.symlink(linkpath, _dst_path.c_str());
         if( rc == 0 )
             break;
-        switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path, _dst_host) ) {
+        switch( m_OnDestinationFileWriteError(Error{Error::POSIX, errno}, _dst_path, _dst_host) ) {
             case DestinationFileWriteErrorResolution::Skip:
                 return StepResult::Skipped;
             case DestinationFileWriteErrorResolution::Stop:
@@ -2914,10 +2915,10 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
     }
 
     while( true ) {
-        const auto rc = dst_host.CreateSymlink(_dst_path, linkpath);
+        const int rc = dst_host.CreateSymlink(_dst_path, linkpath);
         if( rc == VFSError::Ok )
             break;
-        switch( m_OnDestinationFileWriteError(rc, _dst_path, dst_host) ) {
+        switch( m_OnDestinationFileWriteError(VFSError::ToError(rc), _dst_path, dst_host) ) {
             case DestinationFileWriteErrorResolution::Skip:
                 return StepResult::Skipped;
             case DestinationFileWriteErrorResolution::Stop:

@@ -640,12 +640,12 @@ int SFTPHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChe
     return 0;
 }
 
-int SFTPHost::Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error>
+SFTPHost::Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
-    const int rc = GetConnection(conn);
-    if( rc != VFSError::Ok )
-        return rc;
+    if( const int rc = GetConnection(conn); rc != VFSError::Ok )
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
@@ -657,9 +657,9 @@ int SFTPHost::Rename(std::string_view _old_path, std::string_view _new_path, con
                                                   static_cast<unsigned>(_new_path.length()),
                                                   rename_flags);
     if( rename_rc == LIBSSH2_ERROR_NONE )
-        return VFSError::Ok;
+        return {};
 
-    const auto rename_vfs_rc = VFSErrorForConnection(*conn);
+    const auto rename_vfs_rc = ErrorForConnection(*conn);
 
     if( rename_rc == LIBSSH2_ERROR_SFTP_PROTOCOL && libssh2_sftp_last_error(conn->sftp) == LIBSSH2_FX_FAILURE &&
         Exists(_new_path, _cancel_checker) ) {
@@ -667,7 +667,7 @@ int SFTPHost::Rename(std::string_view _old_path, std::string_view _new_path, con
         // lets try to fallback to "rm + mv" scheme
         const auto unlink_rc = Unlink(_new_path, _cancel_checker);
         if( unlink_rc != VFSError::Ok )
-            return unlink_rc;
+            return std::unexpected(VFSError::ToError(unlink_rc));
 
         const auto rename2_rc = libssh2_sftp_rename_ex(conn->sftp,
                                                        _old_path.data(),
@@ -676,11 +676,12 @@ int SFTPHost::Rename(std::string_view _old_path, std::string_view _new_path, con
                                                        static_cast<unsigned>(_new_path.length()),
                                                        rename_flags);
         if( rename2_rc == LIBSSH2_ERROR_NONE )
-            return VFSError::Ok;
+            return {};
 
-        return VFSErrorForConnection(*conn);
+        return std::unexpected(ErrorForConnection(*conn).value_or(Error{ErrorDomain, Errors::sftp_protocol}));
     }
-    return rename_vfs_rc;
+
+    return std::unexpected(rename_vfs_rc.value_or(Error{ErrorDomain, Errors::sftp_protocol}));
 }
 
 int SFTPHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)

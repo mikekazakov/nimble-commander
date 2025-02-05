@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <Operations/Copying.h>
@@ -1446,7 +1446,7 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> vfs)")
         VFSStat st;
         REQUIRE(host->Stat(target_dir.c_str(), st, 0) == 0);
         REQUIRE(st.mode == (S_IFDIR | S_IRUSR | S_IXUSR));
-        host->SetPermissions(target_dir.c_str(), S_IRWXU);
+        REQUIRE(host->SetPermissions(target_dir.c_str(), S_IRWXU));
     }
     SECTION("Don't copy unix flags")
     {

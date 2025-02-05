@@ -284,11 +284,11 @@ bool AttrsChangingJob::ChflagSingleItem(const std::string &_path, VFSHost &_vfs,
 bool AttrsChangingJob::ChtimesSingleItem(const std::string &_path, VFSHost &_vfs, [[maybe_unused]] const VFSStat &_stat)
 {
     while( true ) {
-        const auto set_times_rc = _vfs.SetTimes(
+        const std::expected<void, Error> set_times_rc = _vfs.SetTimes(
             _path, m_Command.times->btime, m_Command.times->mtime, m_Command.times->ctime, m_Command.times->atime);
-        if( set_times_rc == VFSError::Ok )
+        if( set_times_rc )
             break;
-        switch( m_OnTimesError(set_times_rc, _path, _vfs) ) {
+        switch( m_OnTimesError(set_times_rc.error(), _path, _vfs) ) {
             case TimesErrorResolution::Stop:
                 Stop();
                 return false;

@@ -914,22 +914,22 @@ std::expected<void, Error> SFTPHost::SetOwnership(std::string_view _path,
         return std::unexpected(ErrorForConnection(*conn).value_or(Error{ErrorDomain, Errors::sftp_protocol}));
 }
 
-int SFTPHost::SetTimes(std::string_view _path,
-                       std::optional<time_t> _birth_time,
-                       std::optional<time_t> _mod_time,
-                       std::optional<time_t> _chg_time,
-                       std::optional<time_t> _acc_time,
-                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> SFTPHost::SetTimes(std::string_view _path,
+                                              std::optional<time_t> _birth_time,
+                                              std::optional<time_t> _mod_time,
+                                              std::optional<time_t> _chg_time,
+                                              std::optional<time_t> _acc_time,
+                                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     _birth_time = std::nullopt;
     _chg_time = std::nullopt;
 
     if( !_birth_time && !_mod_time && !_chg_time && !_acc_time )
-        return VFSError::Ok;
+        return {};
 
     std::unique_ptr<Connection> conn;
     if( const int rc = GetConnection(conn); rc < 0 )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
@@ -938,7 +938,7 @@ int SFTPHost::SetTimes(std::string_view _path,
         const int rc = libssh2_sftp_stat_ex(
             conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), LIBSSH2_SFTP_LSTAT, &attrs);
         if( rc != 0 )
-            return VFSErrorForConnection(*conn);
+            return std::unexpected(ErrorForConnection(*conn).value_or(Error{ErrorDomain, Errors::sftp_protocol}));
 
         if( attrs.flags & LIBSSH2_SFTP_ATTR_ACMODTIME ) {
             if( !_mod_time )
@@ -947,7 +947,7 @@ int SFTPHost::SetTimes(std::string_view _path,
                 _acc_time = attrs.atime;
         }
         else
-            return VFSError::NotSupported;
+            return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
     }
 
     LIBSSH2_SFTP_ATTRIBUTES attrs;
@@ -959,9 +959,9 @@ int SFTPHost::SetTimes(std::string_view _path,
     const auto rc = libssh2_sftp_stat_ex(
         conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), LIBSSH2_SFTP_SETSTAT, &attrs);
     if( rc == 0 )
-        return VFSError::Ok;
+        return {};
     else
-        return VFSErrorForConnection(*conn);
+        return std::unexpected(ErrorForConnection(*conn).value_or(Error{ErrorDomain, Errors::sftp_protocol}));
 }
 
 std::expected<std::vector<VFSUser>, Error>

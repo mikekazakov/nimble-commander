@@ -299,14 +299,14 @@ int Host::CreateSymlink([[maybe_unused]] std::string_view _symlink_path,
     return VFSError::NotSupported;
 }
 
-int Host::SetTimes([[maybe_unused]] std::string_view _path,
-                   [[maybe_unused]] std::optional<time_t> _birth_time,
-                   [[maybe_unused]] std::optional<time_t> _mod_time,
-                   [[maybe_unused]] std::optional<time_t> _chg_time,
-                   [[maybe_unused]] std::optional<time_t> _acc_time,
-                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> Host::SetTimes([[maybe_unused]] std::string_view _path,
+                                          [[maybe_unused]] std::optional<time_t> _birth_time,
+                                          [[maybe_unused]] std::optional<time_t> _mod_time,
+                                          [[maybe_unused]] std::optional<time_t> _chg_time,
+                                          [[maybe_unused]] std::optional<time_t> _acc_time,
+                                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 bool Host::ShouldProduceThumbnails() const

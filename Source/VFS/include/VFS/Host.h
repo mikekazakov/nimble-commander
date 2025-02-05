@@ -296,12 +296,12 @@ public:
     /**
      * Adjust file node times.
      */
-    virtual int SetTimes(std::string_view _path,
-                         std::optional<time_t> _birth_time,
-                         std::optional<time_t> _mod_time,
-                         std::optional<time_t> _chg_time,
-                         std::optional<time_t> _acc_time,
-                         const VFSCancelChecker &_cancel_checker = {});
+    virtual std::expected<void, Error> SetTimes(std::string_view _path,
+                                                std::optional<time_t> _birth_time,
+                                                std::optional<time_t> _mod_time,
+                                                std::optional<time_t> _chg_time,
+                                                std::optional<time_t> _acc_time,
+                                                const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Change permissions similarly to chmod().

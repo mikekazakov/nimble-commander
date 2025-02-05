@@ -85,12 +85,12 @@ public:
                                             unsigned _gid,
                                             const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int SetTimes(std::string_view _path,
-                 std::optional<time_t> _birth_time,
-                 std::optional<time_t> _mod_time,
-                 std::optional<time_t> _chg_time,
-                 std::optional<time_t> _acc_time,
-                 const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error> SetTimes(std::string_view _path,
+                                        std::optional<time_t> _birth_time,
+                                        std::optional<time_t> _mod_time,
+                                        std::optional<time_t> _chg_time,
+                                        std::optional<time_t> _acc_time,
+                                        const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<std::vector<VFSUser>, Error> FetchUsers(const VFSCancelChecker &_cancel_checker = {}) override;
 

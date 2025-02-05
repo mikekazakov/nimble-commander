@@ -46,8 +46,8 @@ struct AttrsChangingJobCallbacks {
         Skip,
         Retry
     };
-    std::function<TimesErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnTimesError =
-        [](int, const std::string &, VFSHost &) { return TimesErrorResolution::Stop; };
+    std::function<TimesErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnTimesError =
+        [](Error, const std::string &, VFSHost &) { return TimesErrorResolution::Stop; };
 };
 
 class AttrsChangingJob : public Job, public AttrsChangingJobCallbacks

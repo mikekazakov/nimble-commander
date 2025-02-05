@@ -20,7 +20,7 @@ private:
     int OnChmodError(Error _err, const std::string &_path, VFSHost &_vfs);
     int OnChownError(Error _err, const std::string &_path, VFSHost &_vfs);
     int OnFlagsError(Error _err, const std::string &_path, VFSHost &_vfs);
-    int OnTimesError(int _err, const std::string &_path, VFSHost &_vfs);
+    int OnTimesError(Error _err, const std::string &_path, VFSHost &_vfs);
 
     std::unique_ptr<AttrsChangingJob> m_Job;
     bool m_SkipAll = false;

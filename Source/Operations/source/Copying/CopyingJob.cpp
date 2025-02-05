@@ -2290,8 +2290,12 @@ CopyingJob::RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_pa
                 // NOLINTEND(bugprone-unused-return-value)
             }
 
-            if( m_Options.copy_unix_flags && m_DestinationHost->Features() & vfs::HostFeatures::SetPermissions )
+            if( m_Options.copy_unix_flags && m_DestinationHost->Features() & vfs::HostFeatures::SetPermissions ) {
+                // TODO: currently silently ignoring the result of chmod, that's wrong
+                // NOLINTBEGIN(bugprone-unused-return-value)
                 m_DestinationHost->SetPermissions(_dst_path, src_stat.mode);
+                // NOLINTEND(bugprone-unused-return-value)
+            }
 
             return {StepResult::Ok, SourceItemAftermath::NeedsToBeDeleted};
         }
@@ -2538,7 +2542,10 @@ void CopyingJob::ApplyPermissionFixups()
     }
     else {
         for( auto &i : std::ranges::reverse_view(m_TargetPermissionsFixupEpilogue) ) {
+            // TODO: currently silently ignoring the result of chmod, that's wrong
+            // NOLINTBEGIN(bugprone-unused-return-value)
             m_DestinationHost->SetPermissions(i.path.c_str(), i.mode);
+            // NOLINTEND(bugprone-unused-return-value)
         }
     }
 }

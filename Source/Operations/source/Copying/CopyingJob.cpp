@@ -1764,12 +1764,16 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     dst_file->Close();
     dst_file.reset();
 
-    if( m_Options.copy_file_times && do_set_times && m_DestinationHost->Features() & vfs::HostFeatures::SetTimes )
+    if( m_Options.copy_file_times && do_set_times && m_DestinationHost->Features() & vfs::HostFeatures::SetTimes ) {
+        // TODO: currently silently ignoring the result of chtime, that's wrong
+        // NOLINTBEGIN(bugprone-unused-return-value)
         m_DestinationHost->SetTimes(_dst_path,
                                     src_stat_buffer.btime.tv_sec,
                                     src_stat_buffer.mtime.tv_sec,
                                     src_stat_buffer.ctime.tv_sec,
                                     src_stat_buffer.atime.tv_sec);
+        // NOLINTEND(bugprone-unused-return-value)
+    }
     return StepResult::Ok;
 }
 
@@ -2022,8 +2026,11 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
 
     if( m_Options.copy_file_times && (m_DestinationHost->Features() & vfs::HostFeatures::SetTimes) ) {
         // TODO: move to epilogue
+        // TODO: currently silently ignoring the result of chtime, that's wrong
+        // NOLINTBEGIN(bugprone-unused-return-value)
         m_DestinationHost->SetTimes(
             _dst_path, src_st.btime.tv_sec, src_st.mtime.tv_sec, src_st.ctime.tv_sec, src_st.atime.tv_sec);
+        // NOLINTEND(bugprone-unused-return-value)
     }
 
     return StepResult::Ok;
@@ -2277,12 +2284,16 @@ CopyingJob::RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_pa
 
             // copy attributes and sentence the source to death
 
-            if( m_Options.copy_file_times && m_DestinationHost->Features() & vfs::HostFeatures::SetTimes )
+            if( m_Options.copy_file_times && m_DestinationHost->Features() & vfs::HostFeatures::SetTimes ) {
+                // TODO: currently silently ignoring the result of chtime, that's wrong
+                // NOLINTBEGIN(bugprone-unused-return-value)
                 m_DestinationHost->SetTimes(_dst_path,
                                             src_stat.btime.tv_sec,
                                             src_stat.mtime.tv_sec,
                                             src_stat.ctime.tv_sec,
                                             src_stat.atime.tv_sec);
+                // NOLINTEND(bugprone-unused-return-value)
+            }
 
             if( m_Options.copy_unix_owners && m_DestinationHost->Features() & vfs::HostFeatures::SetOwnership ) {
                 // TODO: currently silently ignoring the result of chown, that's wrong

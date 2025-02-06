@@ -33,9 +33,11 @@ static int CopyNodeAttrs(const char *_src_full_path,
     if( result < 0 )
         return result;
 
-    _dst_host->SetTimes(_dst_full_path, st.btime.tv_sec, st.mtime.tv_sec, st.ctime.tv_sec, st.atime.tv_sec, nullptr);
+    // Set times but do ignore the result for now
+    std::ignore = _dst_host->SetTimes(
+        _dst_full_path, st.btime.tv_sec, st.mtime.tv_sec, st.ctime.tv_sec, st.atime.tv_sec, nullptr);
 
-    return 0;
+    return VFSError::Ok;
 }
 
 static int CopyFileContentsSmall(std::shared_ptr<VFSFile> _src, std::shared_ptr<VFSFile> _dst)

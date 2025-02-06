@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <sys/stat.h>
@@ -33,7 +33,8 @@ public:
     Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
     virtual int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
-    virtual int
+
+    virtual std::expected<void, Error>
     Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker) override;
 
     void ReportChange(); // will cause host to reload xattrs list

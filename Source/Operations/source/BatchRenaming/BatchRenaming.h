@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -17,8 +17,8 @@ public:
     ~BatchRenaming();
 
 private:
-    virtual Job *GetJob() noexcept override;
-    int OnRenameError(int _err, const std::string &_path, VFSHost &_vfs);
+    Job *GetJob() noexcept override;
+    int OnRenameError(Error _err, const std::string &_path, VFSHost &_vfs);
 
     std::unique_ptr<BatchRenamingJob> m_Job;
     bool m_SkipAll = false;

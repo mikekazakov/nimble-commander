@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include "xattr.h"
 #include <VFS/VFSFile.h>
@@ -286,12 +286,12 @@ int XAttrHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelCh
     return VFSError::Ok;
 }
 
-int XAttrHost::Rename(std::string_view _old_path,
-                      std::string_view _new_path,
-                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> XAttrHost::Rename(std::string_view _old_path,
+                                             std::string_view _new_path,
+                                             [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( !_old_path.starts_with("/") || !_new_path.starts_with("/") )
-        return VFSError::FromErrno(ENOENT);
+        return std::unexpected(nc::Error{nc::Error::POSIX, ENOENT});
 
     StackAllocator alloc;
 
@@ -300,21 +300,21 @@ int XAttrHost::Rename(std::string_view _old_path,
 
     const auto xattr_size = fgetxattr(m_FD, old_path.c_str(), nullptr, 0, 0, 0);
     if( xattr_size < 0 )
-        return VFSError::FromErrno();
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 
     std::pmr::vector<uint8_t> buf(xattr_size, &alloc);
     if( fgetxattr(m_FD, old_path.c_str(), buf.data(), xattr_size, 0, 0) < 0 )
-        return VFSError::FromErrno();
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 
     if( fsetxattr(m_FD, new_path.c_str(), buf.data(), xattr_size, 0, 0) < 0 )
-        return VFSError::FromErrno();
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 
     if( fremovexattr(m_FD, old_path.c_str(), 0) < 0 )
-        return VFSError::FromErrno();
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 
     ReportChange();
 
-    return VFSError::Ok;
+    return {};
 }
 
 void XAttrHost::ReportChange()

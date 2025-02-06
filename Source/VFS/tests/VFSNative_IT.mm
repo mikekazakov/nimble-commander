@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../../source/Native/Fetching.h" // EVIL!
 #include "TestEnv.h"
 #include "Tests.h"
@@ -11,6 +11,7 @@
 #include <fstream>
 #include <unistd.h>
 
+using namespace nc;
 using namespace nc::vfs;
 using namespace nc::vfs::native;
 #define PREFIX "VFSNative "
@@ -95,7 +96,7 @@ TEST_CASE(PREFIX "SetFlags")
         }
         const auto path = dir.directory / "regular_file";
         REQUIRE(close(creat(path.c_str(), 0755)) == 0);
-        REQUIRE(host->SetFlags(path.c_str(), UF_HIDDEN, vfs_flags, nullptr) == VFSError::Ok);
+        REQUIRE(host->SetFlags(path.c_str(), UF_HIDDEN, vfs_flags, nullptr));
         REQUIRE(::lstat(path.c_str(), &st) == 0);
         CHECK(st.st_flags & UF_HIDDEN);
     }
@@ -107,7 +108,7 @@ TEST_CASE(PREFIX "SetFlags")
         REQUIRE_NOTHROW(std::filesystem::create_symlink(path_reg, path_sym));
         SECTION("Flags::None")
         {
-            REQUIRE(host->SetFlags(path_sym.c_str(), UF_HIDDEN, Flags::None, nullptr) == VFSError::Ok);
+            REQUIRE(host->SetFlags(path_sym.c_str(), UF_HIDDEN, Flags::None, nullptr));
             REQUIRE(::lstat(path_sym.c_str(), &st) == 0);
             CHECK_FALSE(st.st_flags & UF_HIDDEN);
             REQUIRE(::lstat(path_reg.c_str(), &st) == 0);
@@ -115,7 +116,7 @@ TEST_CASE(PREFIX "SetFlags")
         }
         SECTION("Flags::F_NoFollow")
         {
-            REQUIRE(host->SetFlags(path_sym.c_str(), UF_HIDDEN, Flags::F_NoFollow, nullptr) == VFSError::Ok);
+            REQUIRE(host->SetFlags(path_sym.c_str(), UF_HIDDEN, Flags::F_NoFollow, nullptr));
             REQUIRE(::lstat(path_sym.c_str(), &st) == 0);
             CHECK(st.st_flags & UF_HIDDEN);
             REQUIRE(::lstat(path_reg.c_str(), &st) == 0);
@@ -125,7 +126,7 @@ TEST_CASE(PREFIX "SetFlags")
     SECTION("Non-existent")
     {
         const auto path = dir.directory / "blah";
-        CHECK(host->SetFlags(path.c_str(), UF_HIDDEN, Flags::None, nullptr) == VFSError::FromErrno(ENOENT));
+        CHECK(host->SetFlags(path.c_str(), UF_HIDDEN, Flags::None, nullptr).error() == Error{Error::POSIX, ENOENT});
     }
 }
 

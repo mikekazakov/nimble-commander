@@ -299,14 +299,14 @@ int Host::CreateSymlink([[maybe_unused]] std::string_view _symlink_path,
     return VFSError::NotSupported;
 }
 
-int Host::SetTimes([[maybe_unused]] std::string_view _path,
-                   [[maybe_unused]] std::optional<time_t> _birth_time,
-                   [[maybe_unused]] std::optional<time_t> _mod_time,
-                   [[maybe_unused]] std::optional<time_t> _chg_time,
-                   [[maybe_unused]] std::optional<time_t> _acc_time,
-                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> Host::SetTimes([[maybe_unused]] std::string_view _path,
+                                          [[maybe_unused]] std::optional<time_t> _birth_time,
+                                          [[maybe_unused]] std::optional<time_t> _mod_time,
+                                          [[maybe_unused]] std::optional<time_t> _chg_time,
+                                          [[maybe_unused]] std::optional<time_t> _acc_time,
+                                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 bool Host::ShouldProduceThumbnails() const
@@ -320,18 +320,18 @@ int Host::RemoveDirectory([[maybe_unused]] std::string_view _path,
     return VFSError::NotSupported;
 }
 
-int Host::Rename([[maybe_unused]] std::string_view _old_path,
-                 [[maybe_unused]] std::string_view _new_path,
-                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> Host::Rename([[maybe_unused]] std::string_view _old_path,
+                                        [[maybe_unused]] std::string_view _new_path,
+                                        [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
-int Host::SetPermissions([[maybe_unused]] std::string_view _path,
-                         [[maybe_unused]] uint16_t _mode,
-                         [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> Host::SetPermissions([[maybe_unused]] std::string_view _path,
+                                                [[maybe_unused]] uint16_t _mode,
+                                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 const std::shared_ptr<Host> &Host::DummyHost()
@@ -494,12 +494,12 @@ void Host::SetDesctructCallback(std::function<void(const VFSHost *)> _callback)
     m_OnDesctruct = _callback;
 }
 
-int Host::SetOwnership([[maybe_unused]] std::string_view _path,
-                       [[maybe_unused]] unsigned _uid,
-                       [[maybe_unused]] unsigned _gid,
-                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> Host::SetOwnership([[maybe_unused]] std::string_view _path,
+                                              [[maybe_unused]] unsigned _uid,
+                                              [[maybe_unused]] unsigned _gid,
+                                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 std::expected<std::vector<VFSUser>, Error> Host::FetchUsers([[maybe_unused]] const VFSCancelChecker &_cancel_checker)
@@ -512,12 +512,12 @@ std::expected<std::vector<VFSGroup>, Error> Host::FetchGroups([[maybe_unused]] c
     return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
-int Host::SetFlags([[maybe_unused]] std::string_view _path,
-                   [[maybe_unused]] uint32_t _flags,
-                   [[maybe_unused]] uint64_t _vfs_options,
-                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> Host::SetFlags([[maybe_unused]] std::string_view _path,
+                                          [[maybe_unused]] uint32_t _flags,
+                                          [[maybe_unused]] uint64_t _vfs_options,
+                                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 void Host::SetFeatures(uint64_t _features_bitset)

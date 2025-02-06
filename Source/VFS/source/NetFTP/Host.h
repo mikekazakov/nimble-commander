@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <VFS/Host.h>
 #include "InternalsForward.h"
@@ -25,7 +25,7 @@ public:
 
     static const char *UniqueTag;
     static VFSMeta Meta();
-    virtual VFSConfiguration Configuration() const override;
+    VFSConfiguration Configuration() const override;
 
     const std::string &ServerUrl() const noexcept;
     const std::string &User() const noexcept;
@@ -33,36 +33,39 @@ public:
     bool Active() const noexcept;
 
     // core VFSHost methods
-    virtual int FetchDirectoryListing(std::string_view _path,
-                                      VFSListingPtr &_target,
-                                      unsigned long _flags,
-                                      const VFSCancelChecker &_cancel_checker) override;
+    int FetchDirectoryListing(std::string_view _path,
+                              VFSListingPtr &_target,
+                              unsigned long _flags,
+                              const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int IterateDirectoryListing(std::string_view _path,
-                                        const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
+    int IterateDirectoryListing(std::string_view _path,
+                                const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
-    virtual int
+    int
     Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
+    int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int CreateFile(std::string_view _path,
-                           std::shared_ptr<VFSFile> &_target,
-                           const VFSCancelChecker &_cancel_checker) override;
+    int CreateFile(std::string_view _path,
+                   std::shared_ptr<VFSFile> &_target,
+                   const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker) override;
+    int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
-    virtual int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
-    virtual int
+    int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
+
+    int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
+
+    std::expected<void, Error>
     Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual bool IsWritable() const override;
+    bool IsWritable() const override;
 
-    virtual bool IsDirectoryChangeObservationAvailable(std::string_view _path) override;
-    virtual HostDirObservationTicket ObserveDirectoryChanges(std::string_view _path,
-                                                             std::function<void()> _handler) override;
-    virtual void StopDirChangeObserving(unsigned long _ticket) override;
+    bool IsDirectoryChangeObservationAvailable(std::string_view _path) override;
+
+    HostDirObservationTicket ObserveDirectoryChanges(std::string_view _path, std::function<void()> _handler) override;
+
+    void StopDirChangeObserving(unsigned long _ticket) override;
 
     // internal stuff below:
     std::string BuildFullURLString(std::string_view _path) const;
@@ -72,7 +75,7 @@ public:
     std::unique_ptr<ftp::CURLInstance> InstanceForIOAtDir(const std::filesystem::path &_dir);
     void CommitIOInstanceAtDir(const std::filesystem::path &_dir, std::unique_ptr<ftp::CURLInstance> _i);
 
-    inline ftp::Cache &Cache() const { return *m_Cache.get(); };
+    ftp::Cache &Cache() const { return *m_Cache.get(); };
 
     std::shared_ptr<const FTPHost> SharedPtr() const
     {

@@ -67,9 +67,15 @@ TEST_CASE(PREFIX "FetchSingleItemListing")
 TEST_CASE(PREFIX "Unsupported methods")
 {
     auto host = std::make_shared<Host>("/", nullptr, "dummy");
+    const Error enotsup = Error{Error::POSIX, ENOTSUP};
     // ...
-    REQUIRE(host->Trash("/some/path").error() == Error(Error::POSIX, ENOTSUP));
-    REQUIRE(host->FetchUsers().error() == Error(Error::POSIX, ENOTSUP));
-    REQUIRE(host->FetchGroups().error() == Error(Error::POSIX, ENOTSUP));
+    REQUIRE(host->Rename("/some/path1", "/some/path2").error() == enotsup);
+    REQUIRE(host->Trash("/some/path").error() == enotsup);
+    REQUIRE(host->SetFlags("/some/path", 0, 0).error() == enotsup);
+    REQUIRE(host->SetPermissions("/some/path", 42).error() == enotsup);
+    REQUIRE(host->SetOwnership("/some/path", 42, 42).error() == enotsup);
+    REQUIRE(host->SetTimes("/some/path", std::nullopt, std::nullopt, std::nullopt, std::nullopt).error() == enotsup);
+    REQUIRE(host->FetchUsers().error() == enotsup);
+    REQUIRE(host->FetchGroups().error() == enotsup);
     // ...
 }

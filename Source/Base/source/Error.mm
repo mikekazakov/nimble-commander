@@ -318,14 +318,13 @@ std::string Error::LocalizedFailureReason() const noexcept
     if( m_External && !m_External->localized_failure_description.empty() ) {
         return m_External->localized_failure_description;
     }
-    else if( const std::shared_ptr<const ErrorDescriptionProvider> provider =
-                 DescriptionProviders::Instance().Get(m_Domain) ) {
-        return provider->LocalizedFailureReason(m_Code);
+    if( const std::shared_ptr<const ErrorDescriptionProvider> provider =
+            DescriptionProviders::Instance().Get(m_Domain) ) {
+        if( auto failure_reason = provider->LocalizedFailureReason(m_Code); !failure_reason.empty() )
+            return failure_reason;
     }
-    else {
-        // As a backup return the non-localized description
-        return Description();
-    }
+    // As a backup return the non-localized description
+    return Description();
 }
 
 void Error::LocalizedFailureReason(std::string_view _failure_reason) noexcept

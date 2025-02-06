@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../source/NetWebDAV/WebDAVHost.h"
 #include "NCE.h"
 #include "TestEnv.h"
@@ -434,7 +434,7 @@ static void TestRename(VFSHostPtr _host)
         VFSEasyDelete(p1, _host);
         VFSEasyDelete(p2, _host);
         REQUIRE(VFSEasyCreateEmptyFile(p1, _host) == VFSError::Ok);
-        REQUIRE(_host->Rename(p1, p2, nullptr) == VFSError::Ok);
+        REQUIRE(_host->Rename(p1, p2, nullptr));
         REQUIRE(_host->Exists(p1) == false);
         REQUIRE(_host->Exists(p2) == true);
         VFSEasyDelete(p2, _host);
@@ -447,7 +447,7 @@ static void TestRename(VFSHostPtr _host)
         VFSEasyDelete(p2.parent_path().c_str(), _host);
         REQUIRE(VFSEasyCreateEmptyFile(p1, _host) == VFSError::Ok);
         REQUIRE(_host->CreateDirectory(p2.parent_path().c_str(), 0) == VFSError::Ok);
-        REQUIRE(_host->Rename(p1, p2.c_str()) == VFSError::Ok);
+        REQUIRE(_host->Rename(p1, p2.c_str()));
         REQUIRE(_host->Exists(p1) == false);
         REQUIRE(_host->Exists(p2.c_str()) == true);
         VFSEasyDelete(p2.parent_path().c_str(), _host);
@@ -459,7 +459,7 @@ static void TestRename(VFSHostPtr _host)
         VFSEasyDelete(p1, _host);
         VFSEasyDelete(p2, _host);
         REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
-        REQUIRE(_host->Rename(p1, p2) == VFSError::Ok);
+        REQUIRE(_host->Rename(p1, p2));
         REQUIRE(_host->Exists(p1) == false);
         REQUIRE(_host->Exists(p2) == true);
         REQUIRE(_host->IsDirectory(p2, 0) == true);
@@ -474,7 +474,7 @@ static void TestRename(VFSHostPtr _host)
         VFSEasyDelete(p2, _host);
         REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
         REQUIRE(_host->CreateDirectory(p2, 0) == VFSError::Ok);
-        REQUIRE(_host->Rename(p1, p3) == VFSError::Ok);
+        REQUIRE(_host->Rename(p1, p3));
         REQUIRE(_host->Exists(p1) == false);
         REQUIRE(_host->Exists(p3) == true);
         REQUIRE(_host->IsDirectory(p3, 0) == true);
@@ -490,7 +490,7 @@ static void TestRename(VFSHostPtr _host)
         VFSEasyDelete(p2, _host);
         REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
         REQUIRE(VFSEasyCreateEmptyFile(pp1, _host) == VFSError::Ok);
-        REQUIRE(_host->Rename(p1, p2) == VFSError::Ok);
+        REQUIRE(_host->Rename(p1, p2));
         REQUIRE(_host->Exists(p1) == false);
         REQUIRE(_host->Exists(pp1) == false);
         REQUIRE(_host->Exists(p2) == true);

@@ -533,7 +533,7 @@ TEST_CASE(PREFIX "chmod")
     REQUIRE(st.mode_bits.xusr == 0);
 
     st.mode_bits.xusr = 1;
-    REQUIRE(host->SetPermissions(path, st.mode) == VFSError::Ok);
+    REQUIRE(host->SetPermissions(path, st.mode));
 
     memset(&st, 0, sizeof(st));
     REQUIRE(host->Stat(path, st, 0) == VFSError::Ok);
@@ -553,7 +553,7 @@ TEST_CASE(PREFIX "chown")
 
     const auto new_uid = st.uid + 1;
     const auto new_gid = st.gid + 1;
-    REQUIRE(host->SetOwnership(path, new_uid, new_gid) == VFSError::Ok);
+    REQUIRE(host->SetOwnership(path, new_uid, new_gid));
 
     REQUIRE(host->Stat(path, st, 0) == VFSError::Ok);
     REQUIRE(st.uid == new_uid);

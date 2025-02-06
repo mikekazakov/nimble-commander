@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -159,7 +159,7 @@ TEST_CASE(PREFIX "renaming")
         REQUIRE(host->Unlink(fn2) == 0);
 
     REQUIRE(VFSEasyCopyFile(fn1.c_str(), TestEnv().vfs_native, fn2.c_str(), host) == 0);
-    REQUIRE(host->Rename(fn2, fn3) == 0);
+    REQUIRE(host->Rename(fn2, fn3));
     REQUIRE(host->Stat(fn3, stat, 0) == 0);
     REQUIRE(host->Unlink(fn3) == 0);
 
@@ -169,10 +169,10 @@ TEST_CASE(PREFIX "renaming")
         REQUIRE(host->RemoveDirectory("/DirectoryName2") == 0);
 
     REQUIRE(host->CreateDirectory("/DirectoryName1", 0755) == 0);
-    REQUIRE(host->Rename("/DirectoryName1", "/DirectoryName2") == 0);
+    REQUIRE(host->Rename("/DirectoryName1", "/DirectoryName2"));
     REQUIRE(host->Stat("/DirectoryName2", stat, 0) == 0);
     REQUIRE(host->CreateDirectory("/DirectoryName2/SomethingElse", 0755) == 0);
-    REQUIRE(host->Rename("/DirectoryName2/SomethingElse", "/DirectoryName2/SomethingEvenElse") == 0);
+    REQUIRE(host->Rename("/DirectoryName2/SomethingElse", "/DirectoryName2/SomethingEvenElse"));
     REQUIRE(host->RemoveDirectory("/DirectoryName2/SomethingEvenElse") == 0);
     REQUIRE(host->RemoveDirectory("/DirectoryName2") == 0);
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingJob.h"
 #include <Utility/PathManip.h>
 #include <sys/stat.h>
@@ -211,10 +211,10 @@ bool AttrsChangingJob::ChmodSingleItem(const std::string &_path, VFSHost &_vfs, 
         return true;
 
     while( true ) {
-        const auto chmod_rc = _vfs.SetPermissions(_path, mode);
-        if( chmod_rc == VFSError::Ok )
+        const std::expected<void, Error> chmod_rc = _vfs.SetPermissions(_path, mode);
+        if( chmod_rc )
             break;
-        switch( m_OnChmodError(chmod_rc, _path, _vfs) ) {
+        switch( m_OnChmodError(chmod_rc.error(), _path, _vfs) ) {
             case ChmodErrorResolution::Stop:
                 Stop();
                 return false;
@@ -237,10 +237,10 @@ bool AttrsChangingJob::ChownSingleItem(const std::string &_path, VFSHost &_vfs, 
         return true;
 
     while( true ) {
-        const auto chown_rc = _vfs.SetOwnership(_path, new_uid, new_gid);
-        if( chown_rc == VFSError::Ok )
+        const std::expected<void, Error> chown_rc = _vfs.SetOwnership(_path, new_uid, new_gid);
+        if( chown_rc )
             break;
-        switch( m_OnChownError(chown_rc, _path, _vfs) ) {
+        switch( m_OnChownError(chown_rc.error(), _path, _vfs) ) {
             case ChownErrorResolution::Stop:
                 Stop();
                 return false;
@@ -263,10 +263,10 @@ bool AttrsChangingJob::ChflagSingleItem(const std::string &_path, VFSHost &_vfs,
         return true;
 
     while( true ) {
-        const auto chflags_rc = _vfs.SetFlags(_path, flags, vfs::Flags::None);
-        if( chflags_rc == VFSError::Ok )
+        const std::expected<void, Error> chflags_rc = _vfs.SetFlags(_path, flags, vfs::Flags::None);
+        if( chflags_rc )
             break;
-        switch( m_OnFlagsError(chflags_rc, _path, _vfs) ) {
+        switch( m_OnFlagsError(chflags_rc.error(), _path, _vfs) ) {
             case FlagsErrorResolution::Stop:
                 Stop();
                 return false;
@@ -284,11 +284,11 @@ bool AttrsChangingJob::ChflagSingleItem(const std::string &_path, VFSHost &_vfs,
 bool AttrsChangingJob::ChtimesSingleItem(const std::string &_path, VFSHost &_vfs, [[maybe_unused]] const VFSStat &_stat)
 {
     while( true ) {
-        const auto set_times_rc = _vfs.SetTimes(
+        const std::expected<void, Error> set_times_rc = _vfs.SetTimes(
             _path, m_Command.times->btime, m_Command.times->mtime, m_Command.times->ctime, m_Command.times->atime);
-        if( set_times_rc == VFSError::Ok )
+        if( set_times_rc )
             break;
-        switch( m_OnTimesError(set_times_rc, _path, _vfs) ) {
+        switch( m_OnTimesError(set_times_rc.error(), _path, _vfs) ) {
             case TimesErrorResolution::Stop:
                 Stop();
                 return false;

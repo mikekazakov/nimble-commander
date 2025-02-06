@@ -290,37 +290,38 @@ public:
     /**
      * Change the name of a file.
      */
-    virtual int
+    virtual std::expected<void, Error>
     Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Adjust file node times.
      */
-    virtual int SetTimes(std::string_view _path,
-                         std::optional<time_t> _birth_time,
-                         std::optional<time_t> _mod_time,
-                         std::optional<time_t> _chg_time,
-                         std::optional<time_t> _acc_time,
-                         const VFSCancelChecker &_cancel_checker = {});
+    virtual std::expected<void, Error> SetTimes(std::string_view _path,
+                                                std::optional<time_t> _birth_time,
+                                                std::optional<time_t> _mod_time,
+                                                std::optional<time_t> _chg_time,
+                                                std::optional<time_t> _acc_time,
+                                                const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Change permissions similarly to chmod().
      */
-    virtual int SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {});
+    virtual std::expected<void, Error>
+    SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Change flags similarly to chflags().
      * _vfs_options can include F_NoFollow to work akin to lchflags() instead.
      */
-    virtual int SetFlags(std::string_view _path,
-                         uint32_t _flags,
-                         uint64_t _vfs_options,
-                         const VFSCancelChecker &_cancel_checker = {});
+    virtual std::expected<void, Error> SetFlags(std::string_view _path,
+                                                uint32_t _flags,
+                                                uint64_t _vfs_options,
+                                                const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Change ownership similarly to chown().
      */
-    virtual int
+    virtual std::expected<void, Error>
     SetOwnership(std::string_view _path, unsigned _uid, unsigned _gid, const VFSCancelChecker &_cancel_checker = {});
 
     /***********************************************************************************************

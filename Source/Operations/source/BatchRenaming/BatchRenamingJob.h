@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Job.h"
@@ -12,8 +12,8 @@ struct BatchRenamingJobCallbacks {
         Skip,
         Retry
     };
-    std::function<RenameErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnRenameError =
-        [](int, const std::string &, VFSHost &) { return RenameErrorResolution::Stop; };
+    std::function<RenameErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnRenameError =
+        [](Error, const std::string &, VFSHost &) { return RenameErrorResolution::Stop; };
 };
 
 class BatchRenamingJob final : public Job, public BatchRenamingJobCallbacks

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../../include/VFS/Host.h"
@@ -53,7 +53,7 @@ public:
                    std::shared_ptr<VFSFile> &_target,
                    const VFSCancelChecker &_cancel_checker) override;
 
-    int
+    std::expected<void, Error>
     Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker) override;
 
     bool IsDirectoryChangeObservationAvailable(std::string_view _path) override;

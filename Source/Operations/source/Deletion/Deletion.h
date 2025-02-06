@@ -56,9 +56,9 @@ private:
                         DeletionType _type,
                         std::shared_ptr<AsyncDialogResponse> _ctx);
 
-    DeletionJobCallbacks::UnlockErrorResolution OnUnlockError(int _err, const std::string &_path, VFSHost &_vfs);
+    DeletionJobCallbacks::UnlockErrorResolution OnUnlockError(Error _err, const std::string &_path, VFSHost &_vfs);
 
-    void OnUnlockErrorUI(int _err,
+    void OnUnlockErrorUI(Error _err,
                          const std::string &_path,
                          std::shared_ptr<VFSHost> _vfs,
                          std::shared_ptr<AsyncDialogResponse> _ctx);

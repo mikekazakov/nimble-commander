@@ -671,38 +671,38 @@ int NativeHost::CreateSymlink(std::string_view _symlink_path,
     return 0;
 }
 
-int NativeHost::SetTimes(std::string_view _path,
-                         std::optional<time_t> _birth_time,
-                         std::optional<time_t> _mod_time,
-                         std::optional<time_t> _chg_time,
-                         std::optional<time_t> _acc_time,
-                         [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> NativeHost::SetTimes(const std::string_view _path,
+                                                const std::optional<time_t> _birth_time,
+                                                const std::optional<time_t> _mod_time,
+                                                const std::optional<time_t> _chg_time,
+                                                const std::optional<time_t> _acc_time,
+                                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( _path.empty() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     if( !_birth_time && !_mod_time && !_chg_time && !_acc_time )
-        return VFSError::Ok;
+        return {};
 
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
     if( _birth_time && io.chbtime(path.c_str(), *_birth_time) != 0 )
-        return VFSError::FromErrno();
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
     if( _mod_time && io.chmtime(path.c_str(), *_mod_time) != 0 )
-        return VFSError::FromErrno();
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
     if( _chg_time && io.chctime(path.c_str(), *_chg_time) != 0 )
-        return VFSError::FromErrno();
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
     if( _acc_time && io.chatime(path.c_str(), *_acc_time) != 0 )
-        return VFSError::FromErrno();
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 
-    return VFSError::Ok;
+    return {};
 }
 
-int NativeHost::Rename(std::string_view _old_path,
-                       std::string_view _new_path,
-                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> NativeHost::Rename(std::string_view _old_path,
+                                              std::string_view _new_path,
+                                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
     const std::pmr::string old_path(_old_path, &alloc);
@@ -711,8 +711,9 @@ int NativeHost::Rename(std::string_view _old_path,
     auto &io = routedio::RoutedIO::Default;
     const int ret = io.rename(old_path.c_str(), new_path.c_str());
     if( ret == 0 )
-        return VFSError::Ok;
-    return VFSError::FromErrno();
+        return {};
+
+    return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 }
 
 bool NativeHost::IsNativeFS() const noexcept
@@ -743,30 +744,31 @@ std::expected<void, nc::Error> NativeHost::Trash(std::string_view _path,
     return {};
 }
 
-int NativeHost::SetPermissions(std::string_view _path,
-                               uint16_t _mode,
-                               [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> NativeHost::SetPermissions(std::string_view _path,
+                                                      uint16_t _mode,
+                                                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( _path.empty() )
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
     const auto ret = io.chmod(path.c_str(), _mode);
-    if( ret == 0 )
-        return VFSError::Ok;
-    return VFSError::FromErrno();
+    if( ret != 0 )
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
+
+    return {};
 }
 
-int NativeHost::SetFlags(std::string_view _path,
-                         uint32_t _flags,
-                         uint64_t _vfs_options,
-                         [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> NativeHost::SetFlags(std::string_view _path,
+                                                uint32_t _flags,
+                                                uint64_t _vfs_options,
+                                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( _path.empty() )
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
@@ -774,27 +776,29 @@ int NativeHost::SetFlags(std::string_view _path,
     auto &io = routedio::RoutedIO::Default;
     const bool no_follow = _vfs_options & Flags::F_NoFollow;
     const auto ret = no_follow ? io.lchflags(path.c_str(), _flags) : io.chflags(path.c_str(), _flags);
-    if( ret == 0 )
-        return VFSError::Ok;
-    return VFSError::FromErrno();
+    if( ret != 0 )
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
+
+    return {};
 }
 
-int NativeHost::SetOwnership(std::string_view _path,
-                             unsigned _uid,
-                             unsigned _gid,
-                             [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> NativeHost::SetOwnership(std::string_view _path,
+                                                    unsigned _uid,
+                                                    unsigned _gid,
+                                                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( _path.empty() )
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
     const auto ret = io.chown(path.c_str(), _uid, _gid);
-    if( ret == 0 )
-        return VFSError::Ok;
-    return VFSError::FromErrno();
+    if( ret != 0 )
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
+
+    return {};
 }
 
 std::expected<std::vector<VFSUser>, Error>

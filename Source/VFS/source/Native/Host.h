@@ -72,28 +72,29 @@ public:
 
     std::expected<void, nc::Error> Trash(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int Rename(std::string_view _old_path,
-               std::string_view _new_path,
-               const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error> Rename(std::string_view _old_path,
+                                      std::string_view _new_path,
+                                      const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error>
+    SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int SetFlags(std::string_view _path,
-                 uint32_t _flags,
-                 uint64_t _vfs_options,
-                 const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error> SetFlags(std::string_view _path,
+                                        uint32_t _flags,
+                                        uint64_t _vfs_options,
+                                        const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int SetOwnership(std::string_view _path,
-                     unsigned _uid,
-                     unsigned _gid,
-                     const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error> SetOwnership(std::string_view _path,
+                                            unsigned _uid,
+                                            unsigned _gid,
+                                            const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int SetTimes(std::string_view _path,
-                 std::optional<time_t> _birth_time,
-                 std::optional<time_t> _mod_time,
-                 std::optional<time_t> _chg_time,
-                 std::optional<time_t> _acc_time,
-                 const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error> SetTimes(std::string_view _path,
+                                        std::optional<time_t> _birth_time,
+                                        std::optional<time_t> _mod_time,
+                                        std::optional<time_t> _chg_time,
+                                        std::optional<time_t> _acc_time,
+                                        const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<std::vector<VFSUser>, Error> FetchUsers(const VFSCancelChecker &_cancel_checker = {}) override;
 

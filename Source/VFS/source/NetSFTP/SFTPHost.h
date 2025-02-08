@@ -59,7 +59,7 @@ public:
                    std::shared_ptr<VFSFile> &_target,
                    const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error> Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<void, Error> Rename(std::string_view _old_path,
                                       std::string_view _new_path,

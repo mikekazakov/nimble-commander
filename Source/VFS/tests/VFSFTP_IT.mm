@@ -30,7 +30,7 @@ TEST_CASE(PREFIX "upload and compare")
 
     // if there's a trash from previous runs - remove it
     if( host->Stat(fn2, stat, 0, nullptr) == 0 )
-        REQUIRE(host->Unlink(fn2, nullptr) == 0);
+        REQUIRE(host->Unlink(fn2, nullptr));
 
     // copy file to the remote server
     REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host) == 0);
@@ -44,9 +44,8 @@ TEST_CASE(PREFIX "upload and compare")
     REQUIRE(host->Stat(fn2, stat, 0, nullptr) == 0);
 
     // delete it
-    REQUIRE(host->Unlink(fn2, nullptr) == 0);
-    REQUIRE(host->Unlink("/Public/!FilesTesting/wf8g2398fg239f6g23976fg79gads",
-                         nullptr) != 0); // also check deleting wrong entry
+    REQUIRE(host->Unlink(fn2, nullptr));
+    REQUIRE(!host->Unlink("/Public/!FilesTesting/wf8g2398fg239f6g23976fg79gads")); // also check deleting wrong entry
 
     // check that it is no longer available in stat cache
     REQUIRE(host->Stat(fn2, stat, 0, nullptr) != 0);
@@ -60,7 +59,7 @@ TEST_CASE(PREFIX "empty file test")
 
     VFSStat stat;
     if( host->Stat(fn, stat, 0, nullptr) == 0 )
-        REQUIRE(host->Unlink(fn, nullptr) == 0);
+        REQUIRE(host->Unlink(fn));
 
     VFSFilePtr file;
     REQUIRE(host->CreateFile(fn, file) == 0);
@@ -75,7 +74,7 @@ TEST_CASE(PREFIX "empty file test")
     REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist) != 0);
     REQUIRE(file->IsOpened() == false);
 
-    REQUIRE(host->Unlink(fn, nullptr) == 0);
+    REQUIRE(host->Unlink(fn));
     REQUIRE(host->Stat(fn, stat, 0, nullptr) != 0);
 }
 
@@ -155,12 +154,12 @@ TEST_CASE(PREFIX "renaming")
 
     // if there's a trash from previous runs - remove it
     if( host->Stat(fn2, stat, 0) == 0 )
-        REQUIRE(host->Unlink(fn2) == 0);
+        REQUIRE(host->Unlink(fn2));
 
     REQUIRE(VFSEasyCopyFile(fn1.c_str(), TestEnv().vfs_native, fn2.c_str(), host) == 0);
     REQUIRE(host->Rename(fn2, fn3));
     REQUIRE(host->Stat(fn3, stat, 0) == 0);
-    REQUIRE(host->Unlink(fn3) == 0);
+    REQUIRE(host->Unlink(fn3));
 
     if( host->Stat("/DirectoryName1", stat, 0) == 0 )
         REQUIRE(host->RemoveDirectory("/DirectoryName1"));
@@ -182,7 +181,7 @@ TEST_CASE(PREFIX "listing")
         // Create the context to check with a separate instance of FTPHost to not have any cached state.
         VFSHostPtr host;
         REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
-        VFSEasyDelete("/Test", host);
+        std::ignore = VFSEasyDelete("/Test", host);
         auto touch = [&](const char *_path) {
             VFSFilePtr file;
             REQUIRE(host->CreateFile(_path, file) == 0);
@@ -214,7 +213,7 @@ TEST_CASE(PREFIX "listing")
         return true;
     }) == 0);
     REQUIRE(filenames == expected_filenames);
-    VFSEasyDelete("/Test", host);
+    std::ignore = VFSEasyDelete("/Test", host);
 }
 
 static void WriteAll(VFSFile &_file, const std::span<const uint8_t> _bytes)
@@ -235,7 +234,7 @@ TEST_CASE(PREFIX "seekread")
         // Create the context to check with a separate instance of FTPHost to not have any cached state.
         VFSHostPtr host;
         REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
-        VFSEasyDelete("/TestSeekRead", host);
+        std::ignore = VFSEasyDelete("/TestSeekRead", host);
 
         constexpr size_t sz = 50'000'000;
         std::vector<uint8_t> bytes(sz);
@@ -280,7 +279,7 @@ TEST_CASE(PREFIX "seekread")
         REQUIRE(buf == tc.expected);
     }
 
-    VFSEasyDelete("/TestSeekRead", host);
+    std::ignore = VFSEasyDelete("/TestSeekRead", host);
 }
 
 TEST_CASE(PREFIX "big files reading cancellation")
@@ -289,7 +288,7 @@ TEST_CASE(PREFIX "big files reading cancellation")
         // Create the context to check with a separate instance of FTPHost to not have any cached state.
         VFSHostPtr host;
         REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
-        VFSEasyDelete("/TestCancellation", host);
+        std::ignore = VFSEasyDelete("/TestCancellation", host);
 
         constexpr size_t sz = 200'000'000;
         std::vector<uint8_t> bytes(sz);
@@ -326,5 +325,5 @@ TEST_CASE(PREFIX "big files reading cancellation")
         REQUIRE((std::chrono::system_clock::now() < deadline));
     }
     th.join();
-    VFSEasyDelete("/TestCancellation", host);
+    std::ignore = VFSEasyDelete("/TestCancellation", host);
 }

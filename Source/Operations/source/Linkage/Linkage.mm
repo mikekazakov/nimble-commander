@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <memory>
 
 #include "Linkage.h"
@@ -20,7 +20,7 @@ Linkage::Linkage(const std::string &_link_path,
     m_Job->m_OnCreateSymlinkError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
         OnCreateSymlinkError(_err, _path, _vfs);
     };
-    m_Job->m_OnAlterSymlinkError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_OnAlterSymlinkError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         OnAlterSymlinkError(_err, _path, _vfs);
     };
     m_Job->m_OnCreateHardlinkError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
@@ -41,7 +41,7 @@ void Linkage::OnCreateSymlinkError(int _err, const std::string &_path, VFSHost &
     ReportHaltReason(NSLocalizedString(@"Failed to create a symbolic link", ""), _err, _path, _vfs);
 }
 
-void Linkage::OnAlterSymlinkError(int _err, const std::string &_path, VFSHost &_vfs)
+void Linkage::OnAlterSymlinkError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     ReportHaltReason(NSLocalizedString(@"Failed to alter a symbolic link", ""), _err, _path, _vfs);
 }

@@ -175,13 +175,13 @@ bool DeletionJob::DoUnlock(const std::string &_path, VFSHost &_vfs)
 void DeletionJob::DoUnlink(const std::string &_path, VFSHost &_vfs)
 {
     while( true ) {
-        const int rc = _vfs.Unlink(_path);
-        if( rc == VFSError::Ok ) {
+        const std::expected<void, Error> rc = _vfs.Unlink(_path);
+        if( rc ) {
             Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
             break;
         }
-        else if( IsNativeLockedItem(VFSError::ToError(rc), _path, _vfs) ) {
-            switch( m_OnLockedItem(VFSError::ToError(rc), _path, _vfs, DeletionType::Permanent) ) {
+        else if( IsNativeLockedItem(rc.error(), _path, _vfs) ) {
+            switch( m_OnLockedItem(rc.error(), _path, _vfs, DeletionType::Permanent) ) {
                 case LockedItemResolution::Unlock: {
                     if( !DoUnlock(_path, _vfs) )
                         return;
@@ -198,7 +198,7 @@ void DeletionJob::DoUnlink(const std::string &_path, VFSHost &_vfs)
             }
         }
         else {
-            switch( m_OnUnlinkError(rc, _path, _vfs) ) {
+            switch( m_OnUnlinkError(rc.error(), _path, _vfs) ) {
                 case UnlinkErrorResolution::Retry:
                     continue;
                 case UnlinkErrorResolution::Skip:

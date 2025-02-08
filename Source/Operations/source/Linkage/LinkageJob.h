@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -11,8 +11,8 @@ struct LinkageJobCallbacks {
     std::function<void(int _err, const std::string &_path, VFSHost &_vfs)> m_OnCreateSymlinkError =
         [](int, const std::string &, VFSHost &) {};
 
-    std::function<void(int _err, const std::string &_path, VFSHost &_vfs)> m_OnAlterSymlinkError =
-        [](int, const std::string &, VFSHost &) {};
+    std::function<void(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnAlterSymlinkError =
+        [](Error, const std::string &, VFSHost &) {};
 
     std::function<void(int _err, const std::string &_path, VFSHost &_vfs)> m_OnCreateHardlinkError =
         [](int, const std::string &, VFSHost &) {};

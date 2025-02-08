@@ -69,7 +69,7 @@ public:
                       std::string_view _symlink_value,
                       const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error> Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<void, nc::Error> Trash(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
 

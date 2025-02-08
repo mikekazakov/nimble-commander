@@ -24,7 +24,7 @@ Deletion::Deletion(std::vector<VFSListingItem> _items, DeletionOptions _options)
     m_Job->m_OnReadDirError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
         return OnReadDirError(_err, _path, _vfs);
     };
-    m_Job->m_OnUnlinkError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_OnUnlinkError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         return OnUnlinkError(_err, _path, _vfs);
     };
     m_Job->m_OnRmdirError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
@@ -89,7 +89,7 @@ void Deletion::OnReadDirErrorUI(int _err,
     Show(sheet.window, _ctx);
 }
 
-Callbacks::UnlinkErrorResolution Deletion::OnUnlinkError(int _err, const std::string &_path, VFSHost &_vfs)
+Callbacks::UnlinkErrorResolution Deletion::OnUnlinkError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ? Callbacks::UnlinkErrorResolution::Skip : Callbacks::UnlinkErrorResolution::Stop;
@@ -110,7 +110,7 @@ Callbacks::UnlinkErrorResolution Deletion::OnUnlinkError(int _err, const std::st
         return Callbacks::UnlinkErrorResolution::Stop;
 }
 
-void Deletion::OnUnlinkErrorUI(int _err,
+void Deletion::OnUnlinkErrorUI(Error _err,
                                const std::string &_path,
                                [[maybe_unused]] std::shared_ptr<VFSHost> _vfs,
                                std::shared_ptr<AsyncDialogResponse> _ctx)
@@ -120,7 +120,7 @@ void Deletion::OnUnlinkErrorUI(int _err,
     sheet.style = GenericErrorDialogStyle::Caution;
     sheet.message = NSLocalizedString(@"Failed to delete a file", "");
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
-    sheet.errorNo = _err;
+    sheet.error = _err;
     [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
     [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
     if( m_Job->ItemsInScript() > 0 )

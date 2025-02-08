@@ -443,16 +443,19 @@ const std::string &DropboxHost::Token() const
     return I->m_Token;
 }
 
-int DropboxHost::Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> DropboxHost::Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker)
 {
     if( !_path.starts_with("/") )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::Delete];
     InsertHTTPBodyPathspec(req, _path);
 
     auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
-    return rc;
+    if( rc == VFSError::Ok )
+        return {};
+
+    return std::unexpected(VFSError::ToError(rc));
 }
 
 std::expected<void, Error> DropboxHost::RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker)

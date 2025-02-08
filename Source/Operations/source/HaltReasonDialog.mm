@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "HaltReasonDialog.h"
 #include <VFS/VFS.h>
 #include "Internal.h"
@@ -22,7 +22,6 @@ using namespace nc::ops;
 
 @synthesize message = m_Message;
 @synthesize path = m_Path;
-@synthesize error = m_Error;
 @synthesize pathLabel;
 @synthesize errorLabel;
 @synthesize messageLabel;
@@ -55,7 +54,12 @@ using namespace nc::ops;
 
 - (void)setErrorNo:(int)errorNo
 {
-    self.error = VFSError::ToNSError(errorNo).localizedDescription;
+    m_Error = VFSError::ToNSError(errorNo).localizedDescription;
+}
+
+- (void)setError:(nc::Error)_error
+{
+    m_Error = [NSString stringWithUTF8String:_error.LocalizedFailureReason().c_str()];
 }
 
 - (int)errorNo

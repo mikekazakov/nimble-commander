@@ -2213,11 +2213,11 @@ CopyingJob::RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_pa
         }
 
         while( true ) {
-            const auto rc = _common_host.Unlink(_dst_path);
-            if( rc == VFSError::Ok )
+            const std::expected<void, Error> rc = _common_host.Unlink(_dst_path);
+            if( rc )
                 break;
 
-            switch( m_OnCantDeleteDestinationFile(VFSError::ToError(rc), _dst_path, _common_host) ) {
+            switch( m_OnCantDeleteDestinationFile(rc.error(), _dst_path, _common_host) ) {
                 case CantDeleteDestinationFileResolution::Skip:
                     return {StepResult::Skipped, SourceItemAftermath::NoChanges};
                 case CantDeleteDestinationFileResolution::Stop:
@@ -2502,8 +2502,7 @@ void CopyingJob::ClearSourceItem(const std::string &_path, mode_t _mode, VFSHost
 {
     while( true ) {
         const auto is_dir = S_ISDIR(_mode);
-        const std::expected<void, Error> rc =
-            is_dir ? _host.RemoveDirectory(_path) : VFSError::ToExpectedError(_host.Unlink(_path));
+        const std::expected<void, Error> rc = is_dir ? _host.RemoveDirectory(_path) : _host.Unlink(_path);
 
         if( rc )
             break;
@@ -2911,7 +2910,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
                 while( true ) {
                     const std::expected<void, Error> rc = dst_stat_buffer.mode_bits.dir
                                                               ? dst_host.RemoveDirectory(_dst_path)
-                                                              : VFSError::ToExpectedError(dst_host.Unlink(_dst_path));
+                                                              : dst_host.Unlink(_dst_path);
                     if( rc )
                         break;
                     switch( m_OnCantDeleteDestinationFile(rc.error(), _dst_path, dst_host) ) {

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/SerialQueue.h>
@@ -30,7 +30,7 @@ public:
 
     int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
 
-    int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = nullptr) override;
+    std::expected<void, Error> Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
 
     int FetchDirectoryListing(std::string_view _path,
                               VFSListingPtr &_target,

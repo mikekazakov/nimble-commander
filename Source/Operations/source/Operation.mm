@@ -298,6 +298,7 @@ void Operation::AbortUIWaiting() noexcept
         r->Abort();
 }
 
+// TODO: remove me
 void Operation::ReportHaltReason(NSString *_message,
                                  int _error,
                                  const std::string &_path,
@@ -312,6 +313,25 @@ void Operation::ReportHaltReason(NSString *_message,
         sheet.message = _message;
         sheet.path = [NSString stringWithUTF8String:_path.c_str()];
         sheet.errorNo = _error;
+        Show(sheet.window, ctx);
+    });
+    WaitForDialogResponse(ctx);
+}
+
+void Operation::ReportHaltReason(NSString *_message,
+                                 const Error &_error,
+                                 const std::string &_path,
+                                 [[maybe_unused]] VFSHost &_vfs)
+{
+    dispatch_assert_background_queue();
+    if( !IsInteractive() )
+        return;
+    const auto ctx = std::make_shared<AsyncDialogResponse>();
+    dispatch_to_main_queue([=, this] {
+        const auto sheet = [[NCOpsHaltReasonDialog alloc] init];
+        sheet.message = _message;
+        sheet.path = [NSString stringWithUTF8String:_path.c_str()];
+        sheet.error = _error;
         Show(sheet.window, ctx);
     });
     WaitForDialogResponse(ctx);

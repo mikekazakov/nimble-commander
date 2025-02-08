@@ -23,8 +23,8 @@ struct DeletionJobCallbacks {
         Skip,
         Retry
     };
-    std::function<UnlinkErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnUnlinkError =
-        [](int, const std::string &, VFSHost &) { return UnlinkErrorResolution::Stop; };
+    std::function<UnlinkErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnUnlinkError =
+        [](Error, const std::string &, VFSHost &) { return UnlinkErrorResolution::Stop; };
 
     enum class RmdirErrorResolution {
         Stop,

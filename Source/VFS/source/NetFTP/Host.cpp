@@ -378,11 +378,12 @@ int FTPHost::CreateFile(std::string_view _path,
     return VFSError::Ok;
 }
 
-int FTPHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> FTPHost::Unlink(std::string_view _path,
+                                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     const std::filesystem::path path = _path;
     if( !path.is_absolute() || path.native().back() == '/' )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const std::filesystem::path parent_path = utility::PathManip::EnsureTrailingSlash(path.parent_path());
     const std::string cmd = "DELE " + path.filename().native();
@@ -414,8 +415,7 @@ int FTPHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChec
 
     CommitIOInstanceAtDir(parent_path, std::move(curl));
 
-    return curl_res == CURLE_OK ? VFSError::Ok
-                                : VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
+    return std::unexpected(VFSError::ToError(CURLErrorToVFSError(curl_res)));
 }
 
 // _mode is ignored, since we can't specify any access mode from ftp

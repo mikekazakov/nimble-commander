@@ -1,6 +1,7 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #import <Cocoa/Cocoa.h>
+#import <Base/Error.h>
 
 @interface NCOpsHaltReasonDialog : NSWindowController
 
@@ -8,7 +9,8 @@
 
 @property(nonatomic) NSString *message;
 @property(nonatomic) NSString *path;
-@property(nonatomic) NSString *error;
-@property(nonatomic) int errorNo;
+
+- (void)setErrorNo:(int)_errorNo;
+- (void)setError:(nc::Error)_error;
 
 @end

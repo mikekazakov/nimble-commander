@@ -270,20 +270,21 @@ int XAttrHost::CreateFile(std::string_view _path,
     return VFSError::Ok;
 }
 
-int XAttrHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> XAttrHost::Unlink(std::string_view _path,
+                                             [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( !_path.starts_with("/") )
-        return VFSError::FromErrno(ENOENT);
+        return std::unexpected(nc::Error{nc::Error::POSIX, ENOENT});
 
     StackAllocator alloc;
     const std::pmr::string path(_path.substr(1), &alloc);
 
     if( fremovexattr(m_FD, path.c_str(), 0) == -1 )
-        return VFSError::FromErrno();
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 
     ReportChange();
 
-    return VFSError::Ok;
+    return {};
 }
 
 std::expected<void, Error> XAttrHost::Rename(std::string_view _old_path,

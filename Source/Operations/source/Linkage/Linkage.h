@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -21,7 +21,7 @@ public:
 private:
     virtual Job *GetJob() noexcept override;
     void OnCreateSymlinkError(int _err, const std::string &_path, VFSHost &_vfs);
-    void OnAlterSymlinkError(int _err, const std::string &_path, VFSHost &_vfs);
+    void OnAlterSymlinkError(Error _err, const std::string &_path, VFSHost &_vfs);
     void OnCreatehardlinkError(int _err, const std::string &_path, VFSHost &_vfs);
 
     std::unique_ptr<LinkageJob> m_Job;

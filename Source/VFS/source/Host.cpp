@@ -267,9 +267,10 @@ int Host::StatFS([[maybe_unused]] std::string_view _path,
     return VFSError::NotSupported;
 }
 
-int Host::Unlink([[maybe_unused]] std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> Host::Unlink([[maybe_unused]] std::string_view _path,
+                                        [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 std::expected<void, nc::Error> Host::Trash([[maybe_unused]] std::string_view _path,

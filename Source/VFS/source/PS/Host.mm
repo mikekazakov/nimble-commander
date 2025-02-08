@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Host.h"
 #include <libproc.h>
 #include <sys/resource.h>
@@ -655,10 +655,11 @@ static std::optional<bool> WaitForProcessToDie(int pid)
     return false;
 }
 
-int PSHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> PSHost::Unlink(std::string_view _path,
+                                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( _path.empty() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     int gid = -1;
     int pid = -1;
@@ -667,7 +668,7 @@ int PSHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelCheck
 
         auto index = ProcIndexFromFilepath_Unlocked(_path);
         if( index < 0 )
-            return VFSError::NotFound;
+            return std::unexpected(Error{Error::POSIX, ESRCH});
 
         auto &proc = m_Data->procs[index];
         gid = proc.gid;
@@ -678,32 +679,27 @@ int PSHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelCheck
     int ret = routedio::RoutedIO::Default.killpg(gid, SIGTERM);
     if( ret == -1 ) {
         if( errno == ESRCH )
-            return VFSError::Ok;
-        if( errno == EPERM )
-            return VFSError::FromErrno();
-        return VFSError::FromErrno();
+            return {};
+        return std::unexpected(Error{Error::POSIX, errno});
     }
 
     if( auto died_opt = WaitForProcessToDie(pid) ) {
         if( *died_opt )
-            return VFSError::Ok; // goodnight, sweet prince...
+            return {}; // goodnight, sweet prince...
         else {
-            // 2nd try - process refused to kill itself in 5 seconds by SIGTERM, well, send SIGKILL
-            // to him...
+            // 2nd try - process refused to kill itself in 5 seconds by SIGTERM, well, send SIGKILL to him...
             ret = routedio::RoutedIO::Default.killpg(gid, SIGKILL);
             if( ret == -1 ) {
                 if( errno == ESRCH )
-                    return VFSError::Ok;
-                if( errno == EPERM )
-                    return VFSError::FromErrno();
-                return VFSError::FromErrno();
+                    return {};
+                return std::unexpected(Error{Error::POSIX, errno});
             }
             // no need to wait after signal 9, seems so..
-            return VFSError::Ok;
+            return {};
         }
     }
     else
-        return VFSError::Ok; // what to return here??
+        return {}; // what to return here??
 }
 
 bool PSHost::IsWritable() const

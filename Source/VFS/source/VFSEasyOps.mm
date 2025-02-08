@@ -337,15 +337,13 @@ std::expected<void, nc::Error> VFSEasyDelete(const char *_full_path, const std::
             _host->IterateDirectoryListing(_full_path, [&](const VFSDirEnt &_dirent) {
                 std::filesystem::path p = _full_path;
                 p /= _dirent.name;
-                VFSEasyDelete(p.native().c_str(), _host);
+                std::ignore = VFSEasyDelete(p.native().c_str(), _host); // TODO: why the return status is ignored?
                 return true;
             });
-        return _host->RemoveDirectory(_full_path, nullptr);
+        return _host->RemoveDirectory(_full_path);
     }
     else {
-        if( const int rc = _host->Unlink(_full_path, nullptr); rc != VFSError::Ok )
-            return std::unexpected(VFSError::ToError(rc));
-        return {};
+        return _host->Unlink(_full_path);
     }
 }
 

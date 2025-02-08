@@ -428,7 +428,7 @@ TEST_CASE(PREFIX "folder creation and removal")
 {
     const auto filepath = "/FolderToModify/NewDirectory/";
     const std::shared_ptr<VFSHost> host = Spawn();
-    host->RemoveDirectory(filepath);
+    std::ignore = host->RemoveDirectory(filepath);
 
     REQUIRE(host->CreateDirectory(filepath, 0) == VFSError::Ok);
     REQUIRE(host->Exists(filepath) == true);

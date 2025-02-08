@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include "Internal.h"
 #include "Cache.h"
@@ -63,8 +63,8 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
         // If file already exist - remove it
         if( stat_rc == VFSError::Ok ) {
             const auto unlink_rc = m_Host.Unlink(Path(), _cancel_checker);
-            if( unlink_rc != VFSError::Ok )
-                return unlink_rc;
+            if( !unlink_rc )
+                return VFSError::FromErrno(EINVAL); // TODO: return 'unlink_rc'
         }
 
         // Finally verified and ready to go

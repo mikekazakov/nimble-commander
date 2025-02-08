@@ -203,7 +203,7 @@ TEST_CASE(PREFIX "simple upload")
     const auto to_upload = "Hello, world!"s;
     const auto filepath = "/FolderToModify/test.txt";
     const std::shared_ptr<VFSHost> host = Spawn();
-    host->Unlink(filepath);
+    std::ignore = host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
     REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
@@ -220,7 +220,7 @@ TEST_CASE(PREFIX "simple upload")
     REQUIRE(equal(uploaded->begin(), uploaded->end(), to_upload.begin()));
     REQUIRE(file->Close() == VFSError::Ok);
 
-    host->Unlink(filepath);
+    std::ignore = host->Unlink(filepath);
 }
 
 TEST_CASE(PREFIX "upload with invalid name")
@@ -244,7 +244,7 @@ TEST_CASE(PREFIX "simple upload with overwrite")
     const auto to_upload = "Hello, world!"s;
     const auto filepath = "/FolderToModify/test.txt";
     const std::shared_ptr<VFSHost> host = Spawn();
-    host->Unlink(filepath);
+    std::ignore = host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
     REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
@@ -267,7 +267,7 @@ TEST_CASE(PREFIX "simple upload with overwrite")
     REQUIRE(std::equal(uploaded->begin(), uploaded->end(), to_upload_new.begin()));
     REQUIRE(file->Close() == VFSError::Ok);
 
-    host->Unlink(filepath);
+    std::ignore = host->Unlink(filepath);
 }
 
 TEST_CASE(PREFIX "UnfinishedUpload")
@@ -275,7 +275,7 @@ TEST_CASE(PREFIX "UnfinishedUpload")
     const auto to_upload = "Hello, world!"s;
     const auto filepath = "/FolderToModify/test.txt";
     const std::shared_ptr<VFSHost> host = Spawn();
-    host->Unlink(filepath);
+    std::ignore = host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
     REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
@@ -292,7 +292,7 @@ TEST_CASE(PREFIX "zero sized upload")
 {
     const auto filepath = "/FolderToModify/zero.txt";
     const std::shared_ptr<VFSHost> host = Spawn();
-    host->Unlink(filepath);
+    std::ignore = host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
     REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
@@ -304,7 +304,7 @@ TEST_CASE(PREFIX "zero sized upload")
     VFSStat stat;
     REQUIRE(host->Stat(filepath, stat, 0) == VFSError::Ok);
     REQUIRE(stat.size == 0);
-    host->Unlink(filepath);
+    std::ignore = host->Unlink(filepath);
 }
 
 TEST_CASE(PREFIX "decent sized upload")
@@ -312,7 +312,7 @@ TEST_CASE(PREFIX "decent sized upload")
     const auto length = 5 * 1024 * 1024; // 5Mb upload / download
     const auto filepath = "/FolderToModify/SomeRubbish.bin";
     const std::shared_ptr<VFSHost> host = Spawn();
-    host->Unlink(filepath);
+    std::ignore = host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
     REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
@@ -331,7 +331,7 @@ TEST_CASE(PREFIX "decent sized upload")
     REQUIRE(equal(uploaded->begin(), uploaded->end(), to_upload.begin()));
     REQUIRE(file->Close() == VFSError::Ok);
 
-    host->Unlink(filepath);
+    std::ignore = host->Unlink(filepath);
 }
 
 TEST_CASE(PREFIX "two-chunk upload")
@@ -339,7 +339,7 @@ TEST_CASE(PREFIX "two-chunk upload")
     const auto length = 17 * 1024 * 1024; // 17MB upload / download
     const auto filepath = "/FolderToModify/SomeBigRubbish.bin";
     const std::shared_ptr<VFSHost> host = Spawn();
-    host->Unlink(filepath);
+    std::ignore = host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
     REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
@@ -359,7 +359,7 @@ TEST_CASE(PREFIX "two-chunk upload")
     REQUIRE(std::equal(uploaded->begin(), uploaded->end(), to_upload.begin()));
     REQUIRE(file->Close() == VFSError::Ok);
 
-    host->Unlink(filepath);
+    std::ignore = host->Unlink(filepath);
 }
 
 TEST_CASE(PREFIX "multi-chunks upload")
@@ -368,7 +368,7 @@ TEST_CASE(PREFIX "multi-chunks upload")
 
     const auto filepath = "/FolderToModify/SomeBigRubbish.bin";
     const std::shared_ptr<VFSHost> host = Spawn();
-    host->Unlink(filepath);
+    std::ignore = host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
     REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
@@ -388,7 +388,7 @@ TEST_CASE(PREFIX "multi-chunks upload")
     REQUIRE(equal(uploaded->begin(), uploaded->end(), to_upload.begin()));
     REQUIRE(file->Close() == VFSError::Ok);
 
-    host->Unlink(filepath);
+    std::ignore = host->Unlink(filepath);
 }
 
 TEST_CASE(PREFIX "upload edge cases")
@@ -399,7 +399,7 @@ TEST_CASE(PREFIX "upload edge cases")
     const auto filepath = "/FolderToModify/SomeBigRubbish.bin";
 
     const std::shared_ptr<VFSHost> host = Spawn();
-    host->Unlink(filepath);
+    std::ignore = host->Unlink(filepath);
 
     for( auto length : lengths ) {
         std::shared_ptr<VFSFile> file;
@@ -420,7 +420,7 @@ TEST_CASE(PREFIX "upload edge cases")
         REQUIRE(equal(uploaded->begin(), uploaded->end(), to_upload.begin()));
         REQUIRE(file->Close() == VFSError::Ok);
 
-        host->Unlink(filepath);
+        std::ignore = host->Unlink(filepath);
     }
 }
 

@@ -414,6 +414,9 @@ std::expected<void, Error> FTPHost::Unlink(std::string_view _path,
         m_Cache->CommitUnlink(_path);
 
     CommitIOInstanceAtDir(parent_path, std::move(curl));
+    
+    if( curl_res == CURLE_OK )
+        return {};
 
     return std::unexpected(VFSError::ToError(CURLErrorToVFSError(curl_res)));
 }

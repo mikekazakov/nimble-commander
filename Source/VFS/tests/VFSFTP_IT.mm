@@ -30,7 +30,7 @@ TEST_CASE(PREFIX "upload and compare")
 
     // if there's a trash from previous runs - remove it
     if( host->Stat(fn2, stat, 0, nullptr) == 0 )
-        REQUIRE(host->Unlink(fn2, nullptr));
+        REQUIRE(host->Unlink(fn2));
 
     // copy file to the remote server
     REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host) == 0);
@@ -44,7 +44,7 @@ TEST_CASE(PREFIX "upload and compare")
     REQUIRE(host->Stat(fn2, stat, 0, nullptr) == 0);
 
     // delete it
-    REQUIRE(host->Unlink(fn2, nullptr));
+    REQUIRE(host->Unlink(fn2));
     REQUIRE(!host->Unlink("/Public/!FilesTesting/wf8g2398fg239f6g23976fg79gads")); // also check deleting wrong entry
 
     // check that it is no longer available in stat cache

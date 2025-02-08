@@ -1624,8 +1624,10 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
             // we need to revert what we've done
             dst_file->Close();
             dst_file.reset();
-            if( do_unlink_on_stop )
-                m_DestinationHost->Unlink(_dst_path, nullptr);
+            if( do_unlink_on_stop ) {
+                // TODO: we do why ignore the result of this unlinking?
+                std::ignore = m_DestinationHost->Unlink(_dst_path);
+            }
         }
     });
 

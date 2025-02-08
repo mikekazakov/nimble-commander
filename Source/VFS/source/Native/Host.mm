@@ -604,7 +604,7 @@ std::expected<void, Error> NativeHost::Unlink(std::string_view _path,
     auto &io = routedio::RoutedIO::Default;
 
     if( io.unlink(path.c_str()) != 0 )
-        std::unexpected(nc::Error{nc::Error::POSIX, errno});
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 
     return {};
 }

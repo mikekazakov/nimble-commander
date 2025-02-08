@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include "NCE.h"
@@ -433,7 +433,7 @@ TEST_CASE(PREFIX "folder creation and removal")
     REQUIRE(host->CreateDirectory(filepath, 0) == VFSError::Ok);
     REQUIRE(host->Exists(filepath) == true);
     REQUIRE(host->IsDirectory(filepath, 0) == true);
-    REQUIRE(host->RemoveDirectory(filepath) == VFSError::Ok);
+    REQUIRE(host->RemoveDirectory(filepath));
     REQUIRE(host->Exists(filepath) == false);
 }
 

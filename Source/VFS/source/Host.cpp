@@ -314,10 +314,10 @@ bool Host::ShouldProduceThumbnails() const
     return false;
 }
 
-int Host::RemoveDirectory([[maybe_unused]] std::string_view _path,
-                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> Host::RemoveDirectory([[maybe_unused]] std::string_view _path,
+                                                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 std::expected<void, Error> Host::Rename([[maybe_unused]] std::string_view _old_path,

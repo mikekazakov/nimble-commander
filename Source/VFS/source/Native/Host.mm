@@ -625,15 +625,17 @@ int NativeHost::CreateDirectory(std::string_view _path,
     return VFSError::FromErrno();
 }
 
-int NativeHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> NativeHost::RemoveDirectory(std::string_view _path,
+                                                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
     auto &io = routedio::RoutedIO::Default;
     const int ret = io.rmdir(path.c_str());
     if( ret == 0 )
-        return 0;
-    return VFSError::FromErrno();
+        return {};
+
+    return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 }
 
 int NativeHost::ReadSymlink(std::string_view _path,

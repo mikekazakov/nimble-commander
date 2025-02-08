@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/algo.h>
@@ -169,7 +169,7 @@ private:
     void CopyXattrsFromVFSFileToNativeFD(VFSFile &_source, int _fd_to) const;
     void CopyXattrsFromVFSFileToPath(VFSFile &_file, const char *_fn_to) const;
 
-    static bool IsNativeLockedItemNoFollow(int vfs_error, const std::string &_path);
+    static bool IsNativeLockedItemNoFollow(const Error &_error, const std::string &_path);
     StepResult UnlockNativeItemNoFollow(const std::string &_path, vfs::NativeHost &_native_host) const;
 
     StepResult OnCantOpenDestinationFile(int _vfs_error, const std::string &_path, VFSHost &_vfs);

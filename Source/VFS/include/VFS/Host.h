@@ -280,7 +280,8 @@ public:
      * Deletes an empty directory. Will fail on non-empty ones, unless NonEmptyRmDir flag is
      * specified.
      */
-    virtual int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker = {});
+    virtual std::expected<void, Error> RemoveDirectory(std::string_view _path,
+                                                       const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Moves an item into trash bin.

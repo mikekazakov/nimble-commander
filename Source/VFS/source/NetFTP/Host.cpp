@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Host.h"
 #include <Utility/PathManip.h>
 #include "../ListingInput.h"
@@ -462,11 +462,12 @@ int FTPHost::CreateDirectory(std::string_view _path,
                               : VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
 }
 
-int FTPHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> FTPHost::RemoveDirectory(std::string_view _path,
+                                                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     const std::filesystem::path path = EnsureNoTrailingSlash(std::string(_path));
     if( !path.is_absolute() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const std::filesystem::path parent_path = utility::PathManip::EnsureTrailingSlash(path.parent_path());
     const std::string cmd = "RMD " + path.filename().native(); // TODO: this needs to be escaped (?)
@@ -497,8 +498,10 @@ int FTPHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFSC
 
     CommitIOInstanceAtDir(parent_path, std::move(curl));
 
-    return curl_res == CURLE_OK ? VFSError::Ok
-                                : VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
+    if( curl_res == CURLE_OK )
+        return {};
+
+    return std::unexpected(VFSError::ToError(CURLErrorToVFSError(curl_res)));
 }
 
 std::expected<void, Error> FTPHost::Rename(std::string_view _old_path,

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -313,7 +313,7 @@ TEST_CASE(PREFIX "Deleting from FTP directory")
     VFSStat stat;
     // if there's a trash from previous runs - remove it
     if( host->Stat(fn2, stat, 0, nullptr) == 0 )
-        REQUIRE(VFSEasyDelete(fn2, host) == 0);
+        REQUIRE(VFSEasyDelete(fn2, host));
     REQUIRE(VFSEasyCopyNode(fn1, TestEnv().vfs_native, fn2, host) == 0);
 
     Deletion operation{FetchItems("/Public/!FilesTesting", {"bin"}, *host), DeletionType::Permanent};

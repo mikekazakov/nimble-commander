@@ -326,14 +326,11 @@ int VFSEasyCompareFiles(const char *_file1_full_path,
     return 0;
 }
 
-int VFSEasyDelete(const char *_full_path, const std::shared_ptr<VFSHost> &_host)
+std::expected<void, nc::Error> VFSEasyDelete(const char *_full_path, const std::shared_ptr<VFSHost> &_host)
 {
     VFSStat st;
-    int result;
-
-    result = _host->Stat(_full_path, st, VFSFlags::F_NoFollow, nullptr);
-    if( result < 0 )
-        return result;
+    if( const int rc = _host->Stat(_full_path, st, VFSFlags::F_NoFollow, nullptr); rc != VFSError::Ok )
+        return std::unexpected(VFSError::ToError(rc));
 
     if( (st.mode & S_IFMT) == S_IFDIR ) {
         if( !(_host->Features() & HostFeatures::NonEmptyRmDir) )
@@ -345,8 +342,11 @@ int VFSEasyDelete(const char *_full_path, const std::shared_ptr<VFSHost> &_host)
             });
         return _host->RemoveDirectory(_full_path, nullptr);
     }
-    else
-        return _host->Unlink(_full_path, nullptr);
+    else {
+        if( const int rc = _host->Unlink(_full_path, nullptr); rc != VFSError::Ok )
+            return std::unexpected(VFSError::ToError(rc));
+        return {};
+    }
 }
 
 int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr &_vfs)

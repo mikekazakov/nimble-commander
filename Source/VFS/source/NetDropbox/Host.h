@@ -51,7 +51,8 @@ public:
 
     int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
-    int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error> RemoveDirectory(std::string_view _path,
+                                               const VFSCancelChecker &_cancel_checker) override;
 
     int IterateDirectoryListing(std::string_view _path,
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;

@@ -2062,8 +2062,8 @@ CopyingJob::RenameNativeDirectory(vfs::NativeHost &_native_host,
             const auto rc = io.unlink(_dst_path.c_str());
             if( rc == 0 )
                 break;
-
-            switch( m_OnCantDeleteDestinationFile(VFSError::FromErrno(), _dst_path, _native_host) ) {
+            const Error error{Error::POSIX, errno};
+            switch( m_OnCantDeleteDestinationFile(error, _dst_path, _native_host) ) {
                 case CantDeleteDestinationFileResolution::Skip:
                     return {StepResult::Skipped, SourceItemAftermath::NoChanges};
                 case CantDeleteDestinationFileResolution::Stop:
@@ -2162,12 +2162,12 @@ CopyingJob::RenameNativeDirectory(vfs::NativeHost &_native_host,
 
     // do actual rename on fs level
     while( true ) {
-        const auto rc = io.rename(_src_path.c_str(), _dst_path.c_str());
+        const int rc = io.rename(_src_path.c_str(), _dst_path.c_str());
         if( rc == 0 )
             break;
-        const int vfs_error = VFSError::FromErrno();
-        if( IsNativeLockedItemNoFollow(vfs_error, _src_path) ) {
-            switch( m_OnCantRenameLockedItem(vfs_error, _src_path, _native_host) ) {
+        const Error error{Error::POSIX, errno};
+        if( IsNativeLockedItemNoFollow(error, _src_path) ) {
+            switch( m_OnCantRenameLockedItem(error, _src_path, _native_host) ) {
                 case LockedItemResolution::Unlock:
                     if( const auto step_result = UnlockNativeItemNoFollow(_src_path, _native_host);
                         step_result == StepResult::Ok )
@@ -2182,7 +2182,7 @@ CopyingJob::RenameNativeDirectory(vfs::NativeHost &_native_host,
                     return {StepResult::Stop, SourceItemAftermath::NoChanges};
             }
         }
-        switch( m_OnDestinationFileWriteError(Error{Error::POSIX, errno}, _dst_path, _native_host) ) {
+        switch( m_OnDestinationFileWriteError(error, _dst_path, _native_host) ) {
             case DestinationFileWriteErrorResolution::Skip:
                 return {StepResult::Skipped, SourceItemAftermath::NoChanges};
             case DestinationFileWriteErrorResolution::Stop:
@@ -2217,7 +2217,7 @@ CopyingJob::RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_pa
             if( rc == VFSError::Ok )
                 break;
 
-            switch( m_OnCantDeleteDestinationFile(rc, _dst_path, _common_host) ) {
+            switch( m_OnCantDeleteDestinationFile(VFSError::ToError(rc), _dst_path, _common_host) ) {
                 case CantDeleteDestinationFileResolution::Skip:
                     return {StepResult::Skipped, SourceItemAftermath::NoChanges};
                 case CantDeleteDestinationFileResolution::Stop:
@@ -2384,15 +2384,15 @@ CopyingJob::StepResult CopyingJob::RenameNativeFile(vfs::NativeHost &_native_hos
 
     // do the rename itself
     while( true ) {
-        const auto rc = io.rename(_src_path.c_str(), _dst_path.c_str());
+        const int rc = io.rename(_src_path.c_str(), _dst_path.c_str());
         if( rc == 0 )
             break;
-        const auto vfs_error = VFSError::FromErrno();
-        if( const auto src_locked = IsNativeLockedItemNoFollow(vfs_error, _src_path),
-            dst_locked = IsNativeLockedItemNoFollow(vfs_error, _dst_path);
+        const Error error{Error::POSIX, errno};
+        if( const auto src_locked = IsNativeLockedItemNoFollow(error, _src_path),
+            dst_locked = IsNativeLockedItemNoFollow(error, _dst_path);
             src_locked || dst_locked ) {
             const auto locked_path = src_locked ? _src_path : _dst_path;
-            switch( m_OnCantRenameLockedItem(vfs_error, locked_path, _native_host) ) {
+            switch( m_OnCantRenameLockedItem(error, locked_path, _native_host) ) {
                 case LockedItemResolution::Unlock: {
                     const auto step_result = UnlockNativeItemNoFollow(locked_path, _native_host);
                     if( step_result == StepResult::Ok )
@@ -2408,7 +2408,7 @@ CopyingJob::StepResult CopyingJob::RenameNativeFile(vfs::NativeHost &_native_hos
                     return StepResult::Stop;
             }
         }
-        switch( m_OnDestinationFileWriteError(VFSError::ToError(vfs_error), _dst_path, _native_host) ) {
+        switch( m_OnDestinationFileWriteError(error, _dst_path, _native_host) ) {
             case DestinationFileWriteErrorResolution::Skip:
                 return StepResult::Skipped;
             case DestinationFileWriteErrorResolution::Stop:
@@ -2502,13 +2502,14 @@ void CopyingJob::ClearSourceItem(const std::string &_path, mode_t _mode, VFSHost
 {
     while( true ) {
         const auto is_dir = S_ISDIR(_mode);
-        const auto vfs_rc = is_dir ? _host.RemoveDirectory(_path) : _host.Unlink(_path);
+        const std::expected<void, Error> rc =
+            is_dir ? _host.RemoveDirectory(_path) : VFSError::ToExpectedError(_host.Unlink(_path));
 
-        if( vfs_rc == VFSError::Ok )
+        if( rc )
             break;
 
-        if( _host.IsNativeFS() && IsNativeLockedItemNoFollow(vfs_rc, _path) ) {
-            switch( m_OnCantDeleteLockedItem(vfs_rc, _path, _host) ) {
+        if( _host.IsNativeFS() && IsNativeLockedItemNoFollow(rc.error(), _path) ) {
+            switch( m_OnCantDeleteLockedItem(rc.error(), _path, _host) ) {
                 case LockedItemResolution::Unlock:
                     switch( UnlockNativeItemNoFollow(_path, dynamic_cast<VFSNativeHost &>(_host)) ) {
                         case StepResult::Ok:
@@ -2528,7 +2529,7 @@ void CopyingJob::ClearSourceItem(const std::string &_path, mode_t _mode, VFSHost
                     return;
             }
         }
-        switch( m_OnCantDeleteSourceItem(vfs_rc, _path, _host) ) {
+        switch( m_OnCantDeleteSourceItem(rc.error(), _path, _host) ) {
             case CantDeleteSourceFileResolution::Skip:
                 return;
             case CantDeleteSourceFileResolution::Stop:
@@ -2711,7 +2712,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeSymlinkToNative(vfs::NativeHost &_n
                         S_ISDIR(dst_stat_buffer.st_mode) ? io.rmdir(_dst_path.c_str()) : io.unlink(_dst_path.c_str());
                     if( rc == 0 )
                         break;
-                    switch( m_OnCantDeleteDestinationFile(VFSError::FromErrno(), _dst_path, _native_host) ) {
+                    switch( m_OnCantDeleteDestinationFile(Error{Error::POSIX, errno}, _dst_path, _native_host) ) {
                         case CantDeleteDestinationFileResolution::Skip:
                             return StepResult::Skipped;
                         case CantDeleteDestinationFileResolution::Stop:
@@ -2807,11 +2808,11 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
         if( !new_dst_path ) {
             if( io.trash(_dst_path.c_str()) != 0 ) {
                 while( true ) {
-                    const auto rc =
+                    const int rc =
                         S_ISDIR(dst_stat_buffer.st_mode) ? io.rmdir(_dst_path.c_str()) : io.unlink(_dst_path.c_str());
                     if( rc == 0 )
                         break;
-                    switch( m_OnCantDeleteDestinationFile(VFSError::FromErrno(), _dst_path, _dst_host) ) {
+                    switch( m_OnCantDeleteDestinationFile(Error{Error::POSIX, errno}, _dst_path, _dst_host) ) {
                         case CantDeleteDestinationFileResolution::Skip:
                             return StepResult::Skipped;
                         case CantDeleteDestinationFileResolution::Stop:
@@ -2908,11 +2909,12 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
         if( !new_path ) {
             if( !dst_host.Trash(_dst_path, nullptr) ) {
                 while( true ) {
-                    const auto rc = dst_stat_buffer.mode_bits.dir ? dst_host.RemoveDirectory(_dst_path)
-                                                                  : dst_host.Unlink(_dst_path);
-                    if( rc == VFSError::Ok )
+                    const std::expected<void, Error> rc = dst_stat_buffer.mode_bits.dir
+                                                              ? dst_host.RemoveDirectory(_dst_path)
+                                                              : VFSError::ToExpectedError(dst_host.Unlink(_dst_path));
+                    if( rc )
                         break;
-                    switch( m_OnCantDeleteDestinationFile(rc, _dst_path, dst_host) ) {
+                    switch( m_OnCantDeleteDestinationFile(rc.error(), _dst_path, dst_host) ) {
                         case CantDeleteDestinationFileResolution::Skip:
                             return StepResult::Skipped;
                         case CantDeleteDestinationFileResolution::Stop:
@@ -2965,9 +2967,9 @@ const CopyingOptions &CopyingJob::Options() const noexcept
     return m_Options;
 }
 
-bool CopyingJob::IsNativeLockedItemNoFollow(int vfs_error, const std::string &_path)
+bool CopyingJob::IsNativeLockedItemNoFollow(const Error &_error, const std::string &_path)
 {
-    if( vfs_error != VFSError::FromErrno(EPERM) )
+    if( _error != Error{Error::POSIX, EPERM} )
         return false;
 
     struct stat item_stat;
@@ -3006,7 +3008,7 @@ CopyingJob::StepResult CopyingJob::UnlockNativeItemNoFollow(const std::string &_
 
 CopyingJob::StepResult CopyingJob::OnCantOpenDestinationFile(int _vfs_error, const std::string &_path, VFSHost &_vfs)
 {
-    if( _vfs.IsNativeFS() && IsNativeLockedItemNoFollow(_vfs_error, _path) ) {
+    if( _vfs.IsNativeFS() && IsNativeLockedItemNoFollow(VFSError::ToError(_vfs_error), _path) ) {
         switch( m_OnCantOpenLockedItem(_vfs_error, _path, _vfs) ) {
             case LockedItemResolution::Unlock: {
                 const auto step_result = UnlockNativeItemNoFollow(_path, dynamic_cast<VFSNativeHost &>(_vfs));

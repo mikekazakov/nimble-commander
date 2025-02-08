@@ -70,6 +70,7 @@ TEST_CASE(PREFIX "Unsupported methods")
     const Error enotsup = Error{Error::POSIX, ENOTSUP};
     // ...
     REQUIRE(host->Rename("/some/path1", "/some/path2").error() == enotsup);
+    REQUIRE(host->RemoveDirectory("/some/path").error() == enotsup);
     REQUIRE(host->Trash("/some/path").error() == enotsup);
     REQUIRE(host->SetFlags("/some/path", 0, 0).error() == enotsup);
     REQUIRE(host->SetPermissions("/some/path", 42).error() == enotsup);

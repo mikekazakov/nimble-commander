@@ -27,7 +27,7 @@ Deletion::Deletion(std::vector<VFSListingItem> _items, DeletionOptions _options)
     m_Job->m_OnUnlinkError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
         return OnUnlinkError(_err, _path, _vfs);
     };
-    m_Job->m_OnRmdirError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_OnRmdirError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         return OnRmdirError(_err, _path, _vfs);
     };
     m_Job->m_OnTrashError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
@@ -130,7 +130,7 @@ void Deletion::OnUnlinkErrorUI(int _err,
     Show(sheet.window, _ctx);
 }
 
-Callbacks::RmdirErrorResolution Deletion::OnRmdirError(int _err, const std::string &_path, VFSHost &_vfs)
+Callbacks::RmdirErrorResolution Deletion::OnRmdirError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ? Callbacks::RmdirErrorResolution::Skip : Callbacks::RmdirErrorResolution::Stop;
@@ -151,7 +151,7 @@ Callbacks::RmdirErrorResolution Deletion::OnRmdirError(int _err, const std::stri
         return Callbacks::RmdirErrorResolution::Stop;
 }
 
-void Deletion::OnRmdirErrorUI(int _err,
+void Deletion::OnRmdirErrorUI(Error _err,
                               const std::string &_path,
                               [[maybe_unused]] std::shared_ptr<VFSHost> _vfs,
                               std::shared_ptr<AsyncDialogResponse> _ctx)
@@ -161,7 +161,7 @@ void Deletion::OnRmdirErrorUI(int _err,
     sheet.style = GenericErrorDialogStyle::Caution;
     sheet.message = NSLocalizedString(@"Failed to delete a directory", "");
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
-    sheet.errorNo = _err;
+    sheet.error = _err;
     [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
     [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
     if( m_Job->ItemsInScript() > 0 )

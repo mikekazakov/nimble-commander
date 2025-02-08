@@ -91,7 +91,7 @@ TEST_CASE(PREFIX "MKD RMD")
         REQUIRE(host->CreateDirectory(dir, 0755) == 0);
         REQUIRE(host->IsDirectory(dir, 0) == true);                              // cached
         REQUIRE(shadowhost->IsDirectory(dir, VFSFlags::F_ForceRefresh) == true); // non-cached
-        REQUIRE(host->RemoveDirectory(dir) == 0);
+        REQUIRE(host->RemoveDirectory(dir));
         REQUIRE(host->IsDirectory(dir, 0) == false);                              // cached
         REQUIRE(shadowhost->IsDirectory(dir, VFSFlags::F_ForceRefresh) == false); // non-cached
     }
@@ -103,16 +103,15 @@ TEST_CASE(PREFIX "MKD RMD")
         REQUIRE(host->CreateDirectory("/", 0755) != 0);
     }
     {
-        REQUIRE(host->RemoveDirectory("/") != 0);
-        REQUIRE(host->RemoveDirectory("") != 0);
-        REQUIRE(host->RemoveDirectory("/") != 0);
-        REQUIRE(host->RemoveDirectory("//") != 0);
-        REQUIRE(host->RemoveDirectory("///") != 0);
-        REQUIRE(host->RemoveDirectory("////") != 0);
-        REQUIRE(host->RemoveDirectory("/I don't even exist") != 0);
-        REQUIRE(host->RemoveDirectory("/I don't even exist/////") != 0);
-        REQUIRE(host->RemoveDirectory("/I don't even exist/me too!") != 0);
-        REQUIRE(host->RemoveDirectory("/I don't even exist/me too///!") != 0);
+        REQUIRE(!host->RemoveDirectory(""));
+        REQUIRE(!host->RemoveDirectory("/"));
+        REQUIRE(!host->RemoveDirectory("//"));
+        REQUIRE(!host->RemoveDirectory("///"));
+        REQUIRE(!host->RemoveDirectory("////"));
+        REQUIRE(!host->RemoveDirectory("/I don't even exist"));
+        REQUIRE(!host->RemoveDirectory("/I don't even exist/////"));
+        REQUIRE(!host->RemoveDirectory("/I don't even exist/me too!"));
+        REQUIRE(!host->RemoveDirectory("/I don't even exist/me too///!"));
     }
 
     {
@@ -125,13 +124,13 @@ TEST_CASE(PREFIX "MKD RMD")
         REQUIRE(host->CreateDirectory("/First/Second/Третий/🤡", 0755) == 0);
         REQUIRE(shadowhost->IsDirectory("/First/Second/Третий/🤡", VFSFlags::F_ForceRefresh)); // non-cached
 
-        REQUIRE(host->RemoveDirectory("/First/Second/Третий/🤡") == 0);
+        REQUIRE(host->RemoveDirectory("/First/Second/Третий/🤡"));
         REQUIRE(shadowhost->IsDirectory("/First/Second/Третий/🤡", VFSFlags::F_ForceRefresh) == false); // non-cached
-        REQUIRE(host->RemoveDirectory("/First/Second/Третий") == 0);
+        REQUIRE(host->RemoveDirectory("/First/Second/Третий"));
         REQUIRE(shadowhost->IsDirectory("/First/Second/Третий", VFSFlags::F_ForceRefresh) == false); // non-cached
-        REQUIRE(host->RemoveDirectory("/First/Second") == 0);
+        REQUIRE(host->RemoveDirectory("/First/Second"));
         REQUIRE(shadowhost->IsDirectory("/First/Second", VFSFlags::F_ForceRefresh) == false); // non-cached
-        REQUIRE(host->RemoveDirectory("/First") == 0);
+        REQUIRE(host->RemoveDirectory("/First"));
         REQUIRE(shadowhost->IsDirectory("/First", VFSFlags::F_ForceRefresh) == false); // non-cached
     }
 
@@ -164,17 +163,17 @@ TEST_CASE(PREFIX "renaming")
     REQUIRE(host->Unlink(fn3) == 0);
 
     if( host->Stat("/DirectoryName1", stat, 0) == 0 )
-        REQUIRE(host->RemoveDirectory("/DirectoryName1") == 0);
+        REQUIRE(host->RemoveDirectory("/DirectoryName1"));
     if( host->Stat("/DirectoryName2", stat, 0) == 0 )
-        REQUIRE(host->RemoveDirectory("/DirectoryName2") == 0);
+        REQUIRE(host->RemoveDirectory("/DirectoryName2"));
 
     REQUIRE(host->CreateDirectory("/DirectoryName1", 0755) == 0);
     REQUIRE(host->Rename("/DirectoryName1", "/DirectoryName2"));
     REQUIRE(host->Stat("/DirectoryName2", stat, 0) == 0);
     REQUIRE(host->CreateDirectory("/DirectoryName2/SomethingElse", 0755) == 0);
     REQUIRE(host->Rename("/DirectoryName2/SomethingElse", "/DirectoryName2/SomethingEvenElse"));
-    REQUIRE(host->RemoveDirectory("/DirectoryName2/SomethingEvenElse") == 0);
-    REQUIRE(host->RemoveDirectory("/DirectoryName2") == 0);
+    REQUIRE(host->RemoveDirectory("/DirectoryName2/SomethingEvenElse"));
+    REQUIRE(host->RemoveDirectory("/DirectoryName2"));
 }
 
 TEST_CASE(PREFIX "listing")

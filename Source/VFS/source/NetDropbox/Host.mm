@@ -455,10 +455,10 @@ int DropboxHost::Unlink(std::string_view _path, const VFSCancelChecker &_cancel_
     return rc;
 }
 
-int DropboxHost::RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> DropboxHost::RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker)
 {
     if( !_path.starts_with("/") )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     std::string path = std::string(_path);
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
@@ -468,7 +468,10 @@ int DropboxHost::RemoveDirectory(std::string_view _path, const VFSCancelChecker 
     InsertHTTPBodyPathspec(req, path);
 
     auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
-    return rc;
+    if( rc == VFSError::Ok )
+        return {};
+
+    return std::unexpected(VFSError::ToError(rc));
 }
 
 int DropboxHost::CreateDirectory(std::string_view _path,

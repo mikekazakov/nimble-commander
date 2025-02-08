@@ -33,9 +33,9 @@ private:
                          std::shared_ptr<VFSHost> _vfs,
                          std::shared_ptr<AsyncDialogResponse> _ctx);
 
-    DeletionJobCallbacks::RmdirErrorResolution OnRmdirError(int _err, const std::string &_path, VFSHost &_vfs);
+    DeletionJobCallbacks::RmdirErrorResolution OnRmdirError(Error _err, const std::string &_path, VFSHost &_vfs);
 
-    void OnRmdirErrorUI(int _err,
+    void OnRmdirErrorUI(Error _err,
                         const std::string &_path,
                         std::shared_ptr<VFSHost> _vfs,
                         std::shared_ptr<AsyncDialogResponse> _ctx);

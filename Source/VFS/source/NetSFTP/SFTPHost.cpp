@@ -684,21 +684,22 @@ SFTPHost::Rename(std::string_view _old_path, std::string_view _new_path, const V
     return std::unexpected(rename_vfs_rc.value_or(Error{ErrorDomain, Errors::sftp_protocol}));
 }
 
-int SFTPHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> SFTPHost::RemoveDirectory(std::string_view _path,
+                                                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
-    if( rc )
-        return rc;
+    if( rc != VFSError::Ok )
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
     rc = libssh2_sftp_rmdir_ex(conn->sftp, _path.data(), static_cast<unsigned>(_path.length()));
 
     if( rc < 0 )
-        return VFSErrorForConnection(*conn);
+        return std::unexpected(ErrorForConnection(*conn).value_or(Error{ErrorDomain, Errors::sftp_protocol}));
 
-    return 0;
+    return {};
 }
 
 int SFTPHost::CreateDirectory(std::string_view _path,

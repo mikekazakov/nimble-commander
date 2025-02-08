@@ -31,8 +31,8 @@ struct DeletionJobCallbacks {
         Skip,
         Retry
     };
-    std::function<RmdirErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnRmdirError =
-        [](int, const std::string &, VFSHost &) { return RmdirErrorResolution::Stop; };
+    std::function<RmdirErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnRmdirError =
+        [](Error, const std::string &, VFSHost &) { return RmdirErrorResolution::Stop; };
 
     enum class TrashErrorResolution {
         Stop,

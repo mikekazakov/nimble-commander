@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -124,7 +124,7 @@ TEST_CASE(PREFIX "On local FTP server")
 
     VFSStat st;
     REQUIRE(host->Stat("/Public/!FilesTesting/Dir/Other/Dir/And/Many/other fancy dirs/", st, 0, nullptr) == 0);
-    REQUIRE(VFSEasyDelete("/Public/!FilesTesting/Dir", host) == 0);
+    REQUIRE(VFSEasyDelete("/Public/!FilesTesting/Dir", host));
 
     {
         DirectoryCreation operation("AnotherDir/AndSecondOne", "/Public/!FilesTesting", *host);
@@ -133,5 +133,5 @@ TEST_CASE(PREFIX "On local FTP server")
     }
 
     REQUIRE(host->Stat("/Public/!FilesTesting/AnotherDir/AndSecondOne", st, 0, nullptr) == 0);
-    REQUIRE(VFSEasyDelete("/Public/!FilesTesting/AnotherDir", host) == 0);
+    REQUIRE(VFSEasyDelete("/Public/!FilesTesting/AnotherDir", host));
 }

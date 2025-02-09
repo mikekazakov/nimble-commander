@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <curl/curl.h>
@@ -114,6 +114,7 @@ size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *us
 
 std::shared_ptr<Directory> ParseListing(const char *_str);
 
+// TODO: migrate to Error
 int CURLErrorToVFSError(CURLcode _curle);
 
 } // namespace nc::vfs::ftp

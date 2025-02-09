@@ -623,21 +623,22 @@ bool SFTPHost::IsWritable() const
     return true; // dummy now
 }
 
-int SFTPHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> SFTPHost::Unlink(std::string_view _path,
+                                            [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if( rc )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
     rc = libssh2_sftp_unlink_ex(conn->sftp, _path.data(), static_cast<unsigned>(_path.length()));
 
     if( rc < 0 )
-        return VFSErrorForConnection(*conn);
+        return std::unexpected(ErrorForConnection(*conn).value_or(Error{ErrorDomain, Errors::sftp_protocol}));
 
-    return 0;
+    return {};
 }
 
 std::expected<void, Error>
@@ -665,9 +666,8 @@ SFTPHost::Rename(std::string_view _old_path, std::string_view _new_path, const V
         Exists(_new_path, _cancel_checker) ) {
         // it's likely that a SSH server forbids a direct usage of overwriting semantics
         // lets try to fallback to "rm + mv" scheme
-        const auto unlink_rc = Unlink(_new_path, _cancel_checker);
-        if( unlink_rc != VFSError::Ok )
-            return std::unexpected(VFSError::ToError(unlink_rc));
+        if( const std::expected<void, Error> unlink_rc = Unlink(_new_path, _cancel_checker); !unlink_rc )
+            return unlink_rc;
 
         const auto rename2_rc = libssh2_sftp_rename_ex(conn->sftp,
                                                        _old_path.data(),
@@ -684,21 +684,22 @@ SFTPHost::Rename(std::string_view _old_path, std::string_view _new_path, const V
     return std::unexpected(rename_vfs_rc.value_or(Error{ErrorDomain, Errors::sftp_protocol}));
 }
 
-int SFTPHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> SFTPHost::RemoveDirectory(std::string_view _path,
+                                                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
-    if( rc )
-        return rc;
+    if( rc != VFSError::Ok )
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
     rc = libssh2_sftp_rmdir_ex(conn->sftp, _path.data(), static_cast<unsigned>(_path.length()));
 
     if( rc < 0 )
-        return VFSErrorForConnection(*conn);
+        return std::unexpected(ErrorForConnection(*conn).value_or(Error{ErrorDomain, Errors::sftp_protocol}));
 
-    return 0;
+    return {};
 }
 
 int SFTPHost::CreateDirectory(std::string_view _path,

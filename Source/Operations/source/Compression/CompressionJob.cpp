@@ -130,8 +130,9 @@ bool CompressionJob::BuildArchive()
 
         m_TargetFile->Close();
 
-        if( IsStopped() )
-            m_DstVFS->Unlink(m_TargetArchivePath, nullptr);
+        if( IsStopped() ) {
+            std::ignore = m_DstVFS->Unlink(m_TargetArchivePath);
+        }
     }
     else {
         m_TargetWriteError(open_rc, m_TargetArchivePath, *m_DstVFS);

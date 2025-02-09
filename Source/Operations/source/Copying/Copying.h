@@ -67,18 +67,18 @@ private:
     OnCantCreateDestinationDir(int _vfs_error, const std::string &_path, VFSHost &_vfs);
 
     CB::CantDeleteDestinationFileResolution
-    OnCantDeleteDestinationFile(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+    OnCantDeleteDestinationFile(Error _error, const std::string &_path, VFSHost &_vfs);
 
-    CB::CantDeleteSourceFileResolution OnCantDeleteSourceItem(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+    CB::CantDeleteSourceFileResolution OnCantDeleteSourceItem(Error _error, const std::string &_path, VFSHost &_vfs);
 
     CB::NotADirectoryResolution OnNotADirectory(const std::string &_path, VFSHost &_vfs);
 
     CB::UnlockErrorResolution OnUnlockError(Error _error, const std::string &_path, VFSHost &_vfs);
 
     CB::LockedItemResolution
-    OnLockedItemIssue(int _vfs_error, const std::string &_path, VFSHost &_vfs, LockedItemCause _cause);
+    OnLockedItemIssue(Error _error, const std::string &_path, VFSHost &_vfs, LockedItemCause _cause);
 
-    void OnLockedItemIssueUI(int _err,
+    void OnLockedItemIssueUI(Error _err,
                              const std::string &_path,
                              std::shared_ptr<VFSHost> _vfs,
                              LockedItemCause _cause,

@@ -45,9 +45,10 @@ public:
 
     int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker) override;
 
-    int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error> RemoveDirectory(std::string_view _path,
+                                               const VFSCancelChecker &_cancel_checker) override;
 
-    int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error> Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
     int CreateFile(std::string_view _path,
                    std::shared_ptr<VFSFile> &_target,

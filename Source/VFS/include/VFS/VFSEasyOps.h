@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include "VFSFile.h"
 #include "Host.h"
@@ -24,7 +24,7 @@ int VFSEasyCompareFiles(const char *_file1_full_path,
  * Will delete an entry at _full_path.
  * If entry is a dir, will recursively delete it's content.
  */
-int VFSEasyDelete(const char *_full_path, const std::shared_ptr<VFSHost> &host);
+std::expected<void, nc::Error> VFSEasyDelete(const char *_full_path, const std::shared_ptr<VFSHost> &host);
 
 /**
  * _dst_full_path - is a directory to where source directory should be copied. Top-level directory will be created,

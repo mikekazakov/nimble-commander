@@ -101,18 +101,18 @@ struct CopyingJobCallbacks {
         Skip,
         Retry
     };
-    std::function<CantDeleteDestinationFileResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+    std::function<CantDeleteDestinationFileResolution(Error _error, const std::string &_path, VFSHost &_vfs)>
         m_OnCantDeleteDestinationFile =
-            [](int, const std::string &, VFSHost &) { return CantDeleteDestinationFileResolution::Stop; };
+            [](Error, const std::string &, VFSHost &) { return CantDeleteDestinationFileResolution::Stop; };
 
     enum class CantDeleteSourceFileResolution {
         Stop,
         Skip,
         Retry
     };
-    std::function<CantDeleteSourceFileResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+    std::function<CantDeleteSourceFileResolution(Error _error, const std::string &_path, VFSHost &_vfs)>
         m_OnCantDeleteSourceItem =
-            [](int, const std::string &, VFSHost &) { return CantDeleteSourceFileResolution::Stop; };
+            [](Error, const std::string &, VFSHost &) { return CantDeleteSourceFileResolution::Stop; };
 
     enum class NotADirectoryResolution {
         Stop,
@@ -128,10 +128,10 @@ struct CopyingJobCallbacks {
         Unlock,
         Retry
     };
-    std::function<LockedItemResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
-        m_OnCantRenameLockedItem = [](int, const std::string &, VFSHost &) { return LockedItemResolution::Stop; };
-    std::function<LockedItemResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
-        m_OnCantDeleteLockedItem = [](int, const std::string &, VFSHost &) { return LockedItemResolution::Stop; };
+    std::function<LockedItemResolution(Error _error, const std::string &_path, VFSHost &_vfs)>
+        m_OnCantRenameLockedItem = [](Error, const std::string &, VFSHost &) { return LockedItemResolution::Stop; };
+    std::function<LockedItemResolution(Error _error, const std::string &_path, VFSHost &_vfs)>
+        m_OnCantDeleteLockedItem = [](Error, const std::string &, VFSHost &) { return LockedItemResolution::Stop; };
     std::function<LockedItemResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
         m_OnCantOpenLockedItem = [](int, const std::string &, VFSHost &) { return LockedItemResolution::Stop; };
 

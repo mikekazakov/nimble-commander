@@ -85,7 +85,7 @@ static void TestFetchDirectoryListing(VFSHostPtr _host)
     const auto pp1 = "/Test1/Dir1";
     const auto pp2 = "/Test1/meow.txt";
     const auto ppp1 = "/Test1/Dir1/purr.txt";
-    VFSEasyDelete(p1, _host);
+    std::ignore = VFSEasyDelete(p1, _host);
     REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
     REQUIRE(_host->CreateDirectory(pp1, 0) == VFSError::Ok);
     const std::string_view content = "Hello, World!";
@@ -144,7 +144,7 @@ static void TestSimpleFileWrite(VFSHostPtr _host)
 {
     const auto path = "/temp_file";
     if( _host->Exists(path) )
-        VFSEasyDelete(path, _host);
+        std::ignore = VFSEasyDelete(path, _host);
 
     VFSFilePtr file;
     const auto filecr_rc = _host->CreateFile(path, file, nullptr);
@@ -172,7 +172,7 @@ static void TestSimpleFileWrite(VFSHostPtr _host)
 
     REQUIRE(file->Close() == VFSError::Ok);
 
-    VFSEasyDelete(path, _host);
+    std::ignore = VFSEasyDelete(path, _host);
 }
 INSTANTIATE_TEST("simple file write", TestSimpleFileWrite, "local");
 INSTANTIATE_TEST("simple file write", TestSimpleFileWrite, "yandex.com");
@@ -184,7 +184,7 @@ static void TestVariousCompleteWrites(VFSHostPtr _host)
 {
     const auto path = "/temp_file";
     if( _host->Exists(path) )
-        VFSEasyDelete(path, _host);
+        std::ignore = VFSEasyDelete(path, _host);
 
     VFSFilePtr file;
     const auto filecr_rc = _host->CreateFile(path, file, nullptr);
@@ -250,7 +250,7 @@ static void TestVariousCompleteWrites(VFSHostPtr _host)
 
     VerifyFileContent(*_host, path, noise);
 
-    VFSEasyDelete(path, _host);
+    std::ignore = VFSEasyDelete(path, _host);
 }
 INSTANTIATE_TEST("various complete writes", TestVariousCompleteWrites, "local");
 // Yandex.disk doesn't like big uploads via WebDAV and imposes huge wait time, which fails at
@@ -263,7 +263,7 @@ static void TestEdgeCase1bWrites(VFSHostPtr _host)
 {
     const auto path = "/temp_file";
     if( _host->Exists(path) )
-        VFSEasyDelete(path, _host);
+        std::ignore = VFSEasyDelete(path, _host);
 
     VFSFilePtr file;
     const auto filecr_rc = _host->CreateFile(path, file, nullptr);
@@ -282,7 +282,7 @@ static void TestEdgeCase1bWrites(VFSHostPtr _host)
 
     VerifyFileContent(*_host, path, {reinterpret_cast<std::byte *>(data), file_size});
 
-    VFSEasyDelete(path, _host);
+    std::ignore = VFSEasyDelete(path, _host);
 }
 INSTANTIATE_TEST("edge case - 1b writes", TestEdgeCase1bWrites, "local");
 INSTANTIATE_TEST("edge case - 1b writes", TestEdgeCase1bWrites, "yandex.com");
@@ -294,7 +294,7 @@ static void TestAbortsPendingUploads(VFSHostPtr _host)
 {
     const auto path = "/temp_file";
     if( _host->Exists(path) )
-        VFSEasyDelete(path, _host);
+        std::ignore = VFSEasyDelete(path, _host);
 
     VFSFilePtr file;
     const auto filecr_rc = _host->CreateFile(path, file, nullptr);
@@ -323,7 +323,7 @@ static void TestAbortsPendingDownloads(VFSHostPtr _host)
 {
     const auto path = "/temp_file";
     if( _host->Exists(path) )
-        VFSEasyDelete(path, _host);
+        std::ignore = VFSEasyDelete(path, _host);
     {
         const size_t file_size = 100000; // 100Kb
         const auto noise = MakeNoise(file_size);
@@ -342,7 +342,7 @@ static void TestAbortsPendingDownloads(VFSHostPtr _host)
         REQUIRE(file->Read(buf.data(), buf.size()) == buf.size());
         REQUIRE(file->Close() == VFSError::Ok);
     }
-    VFSEasyDelete(path, _host);
+    std::ignore = VFSEasyDelete(path, _host);
 }
 INSTANTIATE_TEST("aborts pending downloads", TestAbortsPendingDownloads, "local");
 INSTANTIATE_TEST("aborts pending downloads", TestAbortsPendingDownloads, "yandex.com");
@@ -354,7 +354,7 @@ static void TestEmptyFileCreation(VFSHostPtr _host)
 {
     const auto path = "/empty_file";
     if( _host->Exists(path) )
-        VFSEasyDelete(path, _host);
+        std::ignore = VFSEasyDelete(path, _host);
 
     VFSFilePtr file;
     const auto filecr_rc = _host->CreateFile(path, file, nullptr);
@@ -369,7 +369,7 @@ static void TestEmptyFileCreation(VFSHostPtr _host)
 
     REQUIRE(_host->Exists(path));
 
-    VFSEasyDelete(path, _host);
+    std::ignore = VFSEasyDelete(path, _host);
 }
 INSTANTIATE_TEST("empty file creation", TestEmptyFileCreation, "local");
 INSTANTIATE_TEST("empty file creation", TestEmptyFileCreation, "yandex.com");
@@ -381,7 +381,7 @@ static void TestEmptyFileDownload(VFSHostPtr _host)
 {
     const auto path = "/temp_file";
     if( _host->Exists(path) )
-        VFSEasyDelete(path, _host);
+        std::ignore = VFSEasyDelete(path, _host);
     {
         VFSFilePtr file;
         REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
@@ -395,7 +395,7 @@ static void TestEmptyFileDownload(VFSHostPtr _host)
         REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
         REQUIRE(file->Close() == VFSError::Ok);
     }
-    VFSEasyDelete(path, _host);
+    std::ignore = VFSEasyDelete(path, _host);
 }
 INSTANTIATE_TEST("can download empty file", TestEmptyFileDownload, "local");
 INSTANTIATE_TEST("can download empty file", TestEmptyFileDownload, "yandex.com");
@@ -405,7 +405,7 @@ complex copy
 ==================================================================================================*/
 static void TestComplexCopy(VFSHostPtr _host)
 {
-    VFSEasyDelete("/Test2", _host);
+    std::ignore = VFSEasyDelete("/Test2", _host);
     const auto copy_rc =
         VFSEasyCopyDirectory("/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host);
     REQUIRE(copy_rc == VFSError::Ok);
@@ -417,7 +417,7 @@ static void TestComplexCopy(VFSHostPtr _host)
     CHECK(cmp_rc == VFSError::Ok);
     CHECK(res == 0);
 
-    VFSEasyDelete("/Test2", _host);
+    std::ignore = VFSEasyDelete("/Test2", _host);
 }
 INSTANTIATE_TEST("complex copy", TestComplexCopy, "local");
 INSTANTIATE_TEST("complex copy", TestComplexCopy, "yandex.com");
@@ -431,54 +431,54 @@ static void TestRename(VFSHostPtr _host)
     {
         const auto p1 = "/new_empty_file";
         const auto p2 = "/new_empty_file_1";
-        VFSEasyDelete(p1, _host);
-        VFSEasyDelete(p2, _host);
+        std::ignore = VFSEasyDelete(p1, _host);
+        std::ignore = VFSEasyDelete(p2, _host);
         REQUIRE(VFSEasyCreateEmptyFile(p1, _host) == VFSError::Ok);
         REQUIRE(_host->Rename(p1, p2, nullptr));
         REQUIRE(_host->Exists(p1) == false);
         REQUIRE(_host->Exists(p2) == true);
-        VFSEasyDelete(p2, _host);
+        std::ignore = VFSEasyDelete(p2, _host);
     }
     SECTION("simple reg -> reg in other dir")
     {
         const auto p1 = "/new_empty_file";
         const auto p2 = std::filesystem::path("/TestTestDir/new_empty_file_1");
-        VFSEasyDelete(p1, _host);
-        VFSEasyDelete(p2.parent_path().c_str(), _host);
+        std::ignore = VFSEasyDelete(p1, _host);
+        std::ignore = VFSEasyDelete(p2.parent_path().c_str(), _host);
         REQUIRE(VFSEasyCreateEmptyFile(p1, _host) == VFSError::Ok);
         REQUIRE(_host->CreateDirectory(p2.parent_path().c_str(), 0) == VFSError::Ok);
         REQUIRE(_host->Rename(p1, p2.c_str()));
         REQUIRE(_host->Exists(p1) == false);
         REQUIRE(_host->Exists(p2.c_str()) == true);
-        VFSEasyDelete(p2.parent_path().c_str(), _host);
+        std::ignore = VFSEasyDelete(p2.parent_path().c_str(), _host);
     }
     SECTION("simple dir -> dir in the same dir")
     {
         const auto p1 = "/TestTestDir1";
         const auto p2 = "/TestTestDir2";
-        VFSEasyDelete(p1, _host);
-        VFSEasyDelete(p2, _host);
+        std::ignore = VFSEasyDelete(p1, _host);
+        std::ignore = VFSEasyDelete(p2, _host);
         REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
         REQUIRE(_host->Rename(p1, p2));
         REQUIRE(_host->Exists(p1) == false);
         REQUIRE(_host->Exists(p2) == true);
         REQUIRE(_host->IsDirectory(p2, 0) == true);
-        VFSEasyDelete(p2, _host);
+        std::ignore = VFSEasyDelete(p2, _host);
     }
     SECTION("simple dir -> dir in other dir")
     {
         const auto p1 = "/TestTestDir1";
         const auto p2 = "/TestTestDir2";
         const auto p3 = "/TestTestDir2/NestedDir";
-        VFSEasyDelete(p1, _host);
-        VFSEasyDelete(p2, _host);
+        std::ignore = VFSEasyDelete(p1, _host);
+        std::ignore = VFSEasyDelete(p2, _host);
         REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
         REQUIRE(_host->CreateDirectory(p2, 0) == VFSError::Ok);
         REQUIRE(_host->Rename(p1, p3));
         REQUIRE(_host->Exists(p1) == false);
         REQUIRE(_host->Exists(p3) == true);
         REQUIRE(_host->IsDirectory(p3, 0) == true);
-        VFSEasyDelete(p2, _host);
+        std::ignore = VFSEasyDelete(p2, _host);
     }
     SECTION("dir with items -> dir in the same dir")
     {
@@ -486,8 +486,8 @@ static void TestRename(VFSHostPtr _host)
         const auto pp1 = "/TestTestDir1/meow.txt";
         const auto p2 = "/TestTestDir2";
         const auto pp2 = "/TestTestDir2/meow.txt";
-        VFSEasyDelete(p1, _host);
-        VFSEasyDelete(p2, _host);
+        std::ignore = VFSEasyDelete(p1, _host);
+        std::ignore = VFSEasyDelete(p2, _host);
         REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
         REQUIRE(VFSEasyCreateEmptyFile(pp1, _host) == VFSError::Ok);
         REQUIRE(_host->Rename(p1, p2));
@@ -496,7 +496,7 @@ static void TestRename(VFSHostPtr _host)
         REQUIRE(_host->Exists(p2) == true);
         REQUIRE(_host->Exists(pp2) == true);
         REQUIRE(_host->IsDirectory(p2, 0) == true);
-        VFSEasyDelete(p2, _host);
+        std::ignore = VFSEasyDelete(p2, _host);
     }
 }
 INSTANTIATE_TEST("rename", TestRename, "local");
@@ -527,7 +527,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
     SECTION("File at root")
     {
         const auto path = "/SomeTestFile.extensiondoesntmatter";
-        VFSEasyDelete(path, _host);
+        std::ignore = VFSEasyDelete(path, _host);
         {
             VFSFilePtr file;
             REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
@@ -553,13 +553,13 @@ static void TestSimpleDownload(VFSHostPtr _host)
             REQUIRE(data->size() == file_size);
             REQUIRE(std::memcmp(data->data(), noise.data(), file_size) == 0);
         }
-        VFSEasyDelete(path, _host);
+        std::ignore = VFSEasyDelete(path, _host);
     }
     SECTION("File at one dir below root")
     {
         const auto dir = "/TestDirWithNonsenseName";
         const auto path = "/TestDirWithNonsenseName/SomeTestFile.extensiondoesntmatter";
-        VFSEasyDelete(dir, _host);
+        std::ignore = VFSEasyDelete(dir, _host);
         REQUIRE(_host->CreateDirectory(dir, 0, nullptr) == VFSError::Ok);
         {
             VFSFilePtr file;
@@ -586,14 +586,14 @@ static void TestSimpleDownload(VFSHostPtr _host)
             REQUIRE(data->size() == file_size);
             REQUIRE(std::memcmp(data->data(), noise.data(), file_size) == 0);
         }
-        VFSEasyDelete(dir, _host);
+        std::ignore = VFSEasyDelete(dir, _host);
     }
     SECTION("File at two dirs below root")
     {
         const auto dir1 = "/TestDirWithNonsenseName";
         const auto dir2 = "/TestDirWithNonsenseName/MoreStuff";
         const auto path = "/TestDirWithNonsenseName/MoreStuff/SomeTestFile.extensiondoesntmatter";
-        VFSEasyDelete(dir1, _host);
+        std::ignore = VFSEasyDelete(dir1, _host);
         REQUIRE(_host->CreateDirectory(dir1, 0, nullptr) == VFSError::Ok);
         REQUIRE(_host->CreateDirectory(dir2, 0, nullptr) == VFSError::Ok);
         {
@@ -621,7 +621,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
             REQUIRE(data->size() == file_size);
             REQUIRE(std::memcmp(data->data(), noise.data(), file_size) == 0);
         }
-        VFSEasyDelete(dir1, _host);
+        std::ignore = VFSEasyDelete(dir1, _host);
     }
 }
 INSTANTIATE_TEST("simple download", TestSimpleDownload, "local");
@@ -634,7 +634,7 @@ static void TestWriteFlagsSemantics(VFSHostPtr _host)
 {
     const auto config = _host->Configuration();
     const auto path = "/SomeTestFile.extensiondoesntmatter";
-    VFSEasyDelete(path, _host);
+    std::ignore = VFSEasyDelete(path, _host);
     SECTION("Specifying both OF_Read and OF_Write is not supported")
     {
         VFSFilePtr file;
@@ -700,7 +700,7 @@ static void TestWriteFlagsSemantics(VFSHostPtr _host)
             REQUIRE(std::memcmp(data->data(), new_data.data(), new_data.size()) == 0);
         }
     }
-    VFSEasyDelete(path, _host);
+    std::ignore = VFSEasyDelete(path, _host);
 }
 INSTANTIATE_TEST("write flags semantics", TestWriteFlagsSemantics, "local");
 INSTANTIATE_TEST("write flags semantics", TestWriteFlagsSemantics, "yandex.com");

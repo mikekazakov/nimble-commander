@@ -15,26 +15,28 @@ public:
     ~XAttrHost();
 
     static const char *UniqueTag;
-    virtual VFSConfiguration Configuration() const override;
+
+    VFSConfiguration Configuration() const override;
+
     static VFSMeta Meta();
 
-    virtual bool IsWritable() const override;
+    bool IsWritable() const override;
 
-    virtual int CreateFile(std::string_view _path,
-                           std::shared_ptr<VFSFile> &_target,
-                           const VFSCancelChecker &_cancel_checker) override;
+    int CreateFile(std::string_view _path,
+                   std::shared_ptr<VFSFile> &_target,
+                   const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int FetchDirectoryListing(std::string_view _path,
-                                      VFSListingPtr &_target,
-                                      unsigned long _flags,
-                                      const VFSCancelChecker &_cancel_checker) override;
+    int FetchDirectoryListing(std::string_view _path,
+                              VFSListingPtr &_target,
+                              unsigned long _flags,
+                              const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int
+    int
     Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error> Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
-    virtual std::expected<void, Error>
+    std::expected<void, Error>
     Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker) override;
 
     void ReportChange(); // will cause host to reload xattrs list

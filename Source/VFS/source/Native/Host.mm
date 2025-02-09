@@ -596,15 +596,17 @@ int NativeHost::StatFS(std::string_view _path,
     return 0;
 }
 
-int NativeHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> NativeHost::Unlink(std::string_view _path,
+                                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
     auto &io = routedio::RoutedIO::Default;
-    const int ret = io.unlink(path.c_str());
-    if( ret == 0 )
-        return 0;
-    return VFSError::FromErrno();
+
+    if( io.unlink(path.c_str()) != 0 )
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
+
+    return {};
 }
 
 bool NativeHost::IsWritable() const
@@ -625,15 +627,17 @@ int NativeHost::CreateDirectory(std::string_view _path,
     return VFSError::FromErrno();
 }
 
-int NativeHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> NativeHost::RemoveDirectory(std::string_view _path,
+                                                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
     auto &io = routedio::RoutedIO::Default;
     const int ret = io.rmdir(path.c_str());
     if( ret == 0 )
-        return 0;
-    return VFSError::FromErrno();
+        return {};
+
+    return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 }
 
 int NativeHost::ReadSymlink(std::string_view _path,

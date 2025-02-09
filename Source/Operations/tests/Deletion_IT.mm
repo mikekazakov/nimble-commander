@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -289,7 +289,7 @@ TEST_CASE(PREFIX "Simple delete from FTP")
     VFSStat stat;
     // if there's a trash from previous runs - remove it
     if( host->Stat(fn2, stat, 0, nullptr) == 0 )
-        REQUIRE(host->Unlink(fn2, nullptr) == 0);
+        REQUIRE(host->Unlink(fn2));
     REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host) == 0);
 
     Deletion operation{FetchItems("/Public/!FilesTesting", {"mach_kernel"}, *host), DeletionType::Permanent};
@@ -298,7 +298,7 @@ TEST_CASE(PREFIX "Simple delete from FTP")
 
     REQUIRE(host->Stat(fn2, stat, 0, nullptr) != 0); // check that file has gone
 
-    VFSEasyDelete("/Public/!FilesTesting", host);
+    std::ignore = VFSEasyDelete("/Public/!FilesTesting", host);
 }
 
 TEST_CASE(PREFIX "Deleting from FTP directory")
@@ -313,7 +313,7 @@ TEST_CASE(PREFIX "Deleting from FTP directory")
     VFSStat stat;
     // if there's a trash from previous runs - remove it
     if( host->Stat(fn2, stat, 0, nullptr) == 0 )
-        REQUIRE(VFSEasyDelete(fn2, host) == 0);
+        REQUIRE(VFSEasyDelete(fn2, host));
     REQUIRE(VFSEasyCopyNode(fn1, TestEnv().vfs_native, fn2, host) == 0);
 
     Deletion operation{FetchItems("/Public/!FilesTesting", {"bin"}, *host), DeletionType::Permanent};
@@ -322,7 +322,7 @@ TEST_CASE(PREFIX "Deleting from FTP directory")
 
     REQUIRE(host->Stat(fn2, stat, 0, nullptr) != 0); // check that file has gone
 
-    VFSEasyDelete("/Public/!FilesTesting", host);
+    std::ignore = VFSEasyDelete("/Public/!FilesTesting", host);
 }
 
 static std::vector<VFSListingItem>

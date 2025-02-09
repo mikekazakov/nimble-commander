@@ -519,7 +519,7 @@ TEST_CASE(PREFIX "create link")
     const auto readlink_rc = host->ReadSymlink(lnk_path, link);
     CHECK(readlink_rc == VFSError::Ok);
     CHECK(link == std::string_view(lnk_value));
-    CHECK(host->Unlink(lnk_path) == VFSError::Ok);
+    CHECK(host->Unlink(lnk_path));
 }
 
 TEST_CASE(PREFIX "chmod")
@@ -539,7 +539,7 @@ TEST_CASE(PREFIX "chmod")
     REQUIRE(host->Stat(path, st, 0) == VFSError::Ok);
     REQUIRE(st.mode_bits.xusr == 1);
 
-    REQUIRE(host->Unlink(path) == VFSError::Ok);
+    REQUIRE(host->Unlink(path));
 }
 
 TEST_CASE(PREFIX "chown")
@@ -559,7 +559,7 @@ TEST_CASE(PREFIX "chown")
     REQUIRE(st.uid == new_uid);
     REQUIRE(st.gid == new_gid);
 
-    REQUIRE(host->Unlink(path) == VFSError::Ok);
+    REQUIRE(host->Unlink(path));
 }
 
 TEST_CASE(PREFIX "FetchUsers")

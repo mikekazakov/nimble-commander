@@ -297,35 +297,37 @@ int WebDAVHost::CreateDirectory(std::string_view _path,
     return VFSError::Ok;
 }
 
-int WebDAVHost::RemoveDirectory(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> WebDAVHost::RemoveDirectory(std::string_view _path,
+                                                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_path) )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const auto path = EnsureTrailingSlash(std::string(_path));
     const auto ar = I->m_Pool.Get();
     const auto rc = RequestDelete(Config(), *ar.connection, path);
     if( rc != VFSError::Ok )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     I->m_Cache.CommitRmDir(path);
 
-    return VFSError::Ok;
+    return {};
 }
 
-int WebDAVHost::Unlink(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> WebDAVHost::Unlink(std::string_view _path,
+                                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_path) )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const auto ar = I->m_Pool.Get();
     const auto rc = RequestDelete(Config(), *ar.connection, _path);
     if( rc != VFSError::Ok )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     I->m_Cache.CommitUnlink(_path);
 
-    return VFSError::Ok;
+    return {};
 }
 
 int WebDAVHost::CreateFile(std::string_view _path,

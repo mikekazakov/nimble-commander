@@ -49,9 +49,10 @@ public:
     int
     Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
-    int Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error> Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
-    int RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error> RemoveDirectory(std::string_view _path,
+                                               const VFSCancelChecker &_cancel_checker) override;
 
     int IterateDirectoryListing(std::string_view _path,
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;

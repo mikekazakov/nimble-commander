@@ -64,20 +64,20 @@ void Copying::SetupCallbacks()
     j.m_OnCantCreateDestinationDir = [this](int _1, const std::string &_2, VFSHost &_3) {
         return OnCantCreateDestinationDir(_1, _2, _3);
     };
-    j.m_OnCantDeleteDestinationFile = [this](int _1, const std::string &_2, VFSHost &_3) {
+    j.m_OnCantDeleteDestinationFile = [this](Error _1, const std::string &_2, VFSHost &_3) {
         return OnCantDeleteDestinationFile(_1, _2, _3);
     };
-    j.m_OnCantDeleteSourceItem = [this](int _1, const std::string &_2, VFSHost &_3) {
+    j.m_OnCantDeleteSourceItem = [this](Error _1, const std::string &_2, VFSHost &_3) {
         return OnCantDeleteSourceItem(_1, _2, _3);
     };
-    j.m_OnCantRenameLockedItem = [this](int _1, const std::string &_2, VFSHost &_3) {
+    j.m_OnCantRenameLockedItem = [this](Error _1, const std::string &_2, VFSHost &_3) {
         return OnLockedItemIssue(_1, _2, _3, LockedItemCause::Moving);
     };
-    j.m_OnCantDeleteLockedItem = [this](int _1, const std::string &_2, VFSHost &_3) {
+    j.m_OnCantDeleteLockedItem = [this](Error _1, const std::string &_2, VFSHost &_3) {
         return OnLockedItemIssue(_1, _2, _3, LockedItemCause::Deletion);
     };
     j.m_OnCantOpenLockedItem = [this](int _1, const std::string &_2, VFSHost &_3) {
-        return OnLockedItemIssue(_1, _2, _3, LockedItemCause::Opening);
+        return OnLockedItemIssue(VFSError::ToError(_1), _2, _3, LockedItemCause::Opening);
     };
     j.m_OnUnlockError = [this](Error _1, const std::string &_2, VFSHost &_3) { return OnUnlockError(_1, _2, _3); };
     j.m_OnNotADirectory = [this](const std::string &_1, VFSHost &_2) { return OnNotADirectory(_1, _2); };
@@ -431,10 +431,10 @@ Copying::OnCantCreateDestinationDir(int _vfs_error, const std::string &_path, VF
 }
 
 CB::CantDeleteDestinationFileResolution
-Copying::OnCantDeleteDestinationFile(int _vfs_error, const std::string &_path, VFSHost &_vfs)
+Copying::OnCantDeleteDestinationFile(Error _error, const std::string &_path, VFSHost &_vfs)
 {
     if( m_CallbackHooks && m_CallbackHooks->m_OnCantDeleteDestinationFile )
-        return m_CallbackHooks->m_OnCantDeleteDestinationFile(_vfs_error, _path, _vfs);
+        return m_CallbackHooks->m_OnCantDeleteDestinationFile(_error, _path, _vfs);
 
     if( m_SkipAll )
         return CB::CantDeleteDestinationFileResolution::Skip;
@@ -444,7 +444,7 @@ Copying::OnCantDeleteDestinationFile(int _vfs_error, const std::string &_path, V
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to delete a destination file", ""),
-                      _vfs_error,
+                      _error,
                       {_vfs, _path},
                       ctx);
     WaitForDialogResponse(ctx);
@@ -478,10 +478,10 @@ void Copying::OnFileVerificationFailed(const std::string &_path, VFSHost &_vfs)
 }
 
 CB::CantDeleteSourceFileResolution
-Copying::OnCantDeleteSourceItem(int _vfs_error, const std::string &_path, VFSHost &_vfs)
+Copying::OnCantDeleteSourceItem(Error _error, const std::string &_path, VFSHost &_vfs)
 {
     if( m_CallbackHooks && m_CallbackHooks->m_OnCantDeleteSourceItem )
-        return m_CallbackHooks->m_OnCantDeleteSourceItem(_vfs_error, _path, _vfs);
+        return m_CallbackHooks->m_OnCantDeleteSourceItem(_error, _path, _vfs);
 
     if( m_SkipAll )
         return CB::CantDeleteSourceFileResolution::Skip;
@@ -491,7 +491,7 @@ Copying::OnCantDeleteSourceItem(int _vfs_error, const std::string &_path, VFSHos
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to delete a source item", ""),
-                      _vfs_error,
+                      _error,
                       {_vfs, _path},
                       ctx);
     WaitForDialogResponse(ctx);
@@ -541,7 +541,7 @@ CB::NotADirectoryResolution Copying::OnNotADirectory(const std::string &_path, V
 }
 
 CB::LockedItemResolution
-Copying::OnLockedItemIssue(int _vfs_error, const std::string &_path, VFSHost &_vfs, LockedItemCause _cause)
+Copying::OnLockedItemIssue(Error _error, const std::string &_path, VFSHost &_vfs, LockedItemCause _cause)
 {
     // NOT YET WIRED TO m_CallbackHooks
 
@@ -562,7 +562,7 @@ Copying::OnLockedItemIssue(int _vfs_error, const std::string &_path, VFSHost &_v
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     dispatch_to_main_queue(
-        [=, this, vfs = _vfs.shared_from_this()] { OnLockedItemIssueUI(_vfs_error, _path, vfs, _cause, ctx); });
+        [=, this, vfs = _vfs.shared_from_this()] { OnLockedItemIssueUI(_error, _path, vfs, _cause, ctx); });
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip ) {
@@ -583,7 +583,7 @@ Copying::OnLockedItemIssue(int _vfs_error, const std::string &_path, VFSHost &_v
     }
 }
 
-void Copying::OnLockedItemIssueUI(int _err,
+void Copying::OnLockedItemIssueUI(Error _err,
                                   const std::string &_path,
                                   [[maybe_unused]] std::shared_ptr<VFSHost> _vfs,
                                   LockedItemCause _cause,
@@ -604,7 +604,7 @@ void Copying::OnLockedItemIssueUI(int _err,
     }
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.showApplyToAll = !m_Job->IsSingleScannedItemProcessing();
-    sheet.errorNo = _err;
+    sheet.error = _err;
     [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
     [sheet addButtonWithTitle:NSLocalizedString(@"Unlock", "") responseCode:NSModalResponseUnlock];
     [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];

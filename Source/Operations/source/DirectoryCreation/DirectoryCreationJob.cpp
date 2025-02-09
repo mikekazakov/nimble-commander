@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DirectoryCreationJob.h"
 
 namespace nc::ops {
@@ -43,7 +43,7 @@ bool DirectoryCreationJob::MakeDir(const std::string &_path)
             return true;
         }
         else {
-            switch( m_OnError(VFSError::FromErrno(EEXIST), _path, *m_VFS) ) {
+            switch( m_OnError(Error{Error::POSIX, EEXIST}, _path, *m_VFS) ) {
                 case ErrorResolution::Retry:
                     continue;
                 default:
@@ -54,10 +54,10 @@ bool DirectoryCreationJob::MakeDir(const std::string &_path)
     }
 
     while( true ) {
-        const auto mkdir_rc = m_VFS->CreateDirectory(_path, g_CreateMode);
-        if( mkdir_rc == VFSError::Ok )
+        const std::expected<void, Error> mkdir_rc = m_VFS->CreateDirectory(_path, g_CreateMode);
+        if( mkdir_rc )
             return true;
-        switch( m_OnError(mkdir_rc, _path, *m_VFS) ) {
+        switch( m_OnError(mkdir_rc.error(), _path, *m_VFS) ) {
             case ErrorResolution::Retry:
                 continue;
             default:

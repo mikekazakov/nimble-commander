@@ -58,10 +58,10 @@ void Copying::SetupCallbacks()
     j.m_OnDestinationFileWriteError = [this](Error _1, const std::string &_2, VFSHost &_3) {
         return OnDestinationFileWriteError(_1, _2, _3);
     };
-    j.m_OnCantCreateDestinationRootDir = [this](int _1, const std::string &_2, VFSHost &_3) {
+    j.m_OnCantCreateDestinationRootDir = [this](Error _1, const std::string &_2, VFSHost &_3) {
         return OnCantCreateDestinationRootDir(_1, _2, _3);
     };
-    j.m_OnCantCreateDestinationDir = [this](int _1, const std::string &_2, VFSHost &_3) {
+    j.m_OnCantCreateDestinationDir = [this](Error _1, const std::string &_2, VFSHost &_3) {
         return OnCantCreateDestinationDir(_1, _2, _3);
     };
     j.m_OnCantDeleteDestinationFile = [this](Error _1, const std::string &_2, VFSHost &_3) {
@@ -383,14 +383,11 @@ Copying::OnDestinationFileWriteError(Error _error, const std::string &_path, VFS
 }
 
 CB::CantCreateDestinationRootDirResolution
-Copying::OnCantCreateDestinationRootDir(int _vfs_error, const std::string &_path, VFSHost &_vfs)
+Copying::OnCantCreateDestinationRootDir(Error _error, const std::string &_path, VFSHost &_vfs)
 {
     const auto ctx = std::make_shared<AsyncDialogResponse>();
-    ShowGenericDialog(GenericDialog::AbortRetry,
-                      NSLocalizedString(@"Failed to create a directory", ""),
-                      _vfs_error,
-                      {_vfs, _path},
-                      ctx);
+    ShowGenericDialog(
+        GenericDialog::AbortRetry, NSLocalizedString(@"Failed to create a directory", ""), _error, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseRetry )
@@ -400,10 +397,10 @@ Copying::OnCantCreateDestinationRootDir(int _vfs_error, const std::string &_path
 }
 
 CB::CantCreateDestinationDirResolution
-Copying::OnCantCreateDestinationDir(int _vfs_error, const std::string &_path, VFSHost &_vfs)
+Copying::OnCantCreateDestinationDir(Error _error, const std::string &_path, VFSHost &_vfs)
 {
     if( m_CallbackHooks && m_CallbackHooks->m_OnCantCreateDestinationDir )
-        return m_CallbackHooks->m_OnCantCreateDestinationDir(_vfs_error, _path, _vfs);
+        return m_CallbackHooks->m_OnCantCreateDestinationDir(_error, _path, _vfs);
 
     if( m_SkipAll )
         return CB::CantCreateDestinationDirResolution::Skip;
@@ -413,7 +410,7 @@ Copying::OnCantCreateDestinationDir(int _vfs_error, const std::string &_path, VF
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to create a directory", ""),
-                      _vfs_error,
+                      _error,
                       {_vfs, _path},
                       ctx);
     WaitForDialogResponse(ctx);

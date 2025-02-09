@@ -702,23 +702,22 @@ std::expected<void, Error> SFTPHost::RemoveDirectory(std::string_view _path,
     return {};
 }
 
-int SFTPHost::CreateDirectory(std::string_view _path,
-                              int _mode,
-                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error>
+SFTPHost::CreateDirectory(std::string_view _path, int _mode, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if( rc )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
     rc = libssh2_sftp_mkdir_ex(conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), _mode);
 
     if( rc < 0 )
-        return VFSErrorForConnection(*conn);
+        return std::unexpected(ErrorForConnection(*conn).value_or(Error{ErrorDomain, Errors::sftp_protocol}));
 
-    return 0;
+    return {};
 }
 
 // TODO: remove this

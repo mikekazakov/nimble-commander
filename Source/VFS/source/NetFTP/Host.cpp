@@ -422,13 +422,13 @@ std::expected<void, Error> FTPHost::Unlink(std::string_view _path,
 }
 
 // _mode is ignored, since we can't specify any access mode from ftp
-int FTPHost::CreateDirectory(std::string_view _path,
-                             [[maybe_unused]] int _mode,
-                             [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> FTPHost::CreateDirectory(std::string_view _path,
+                                                    [[maybe_unused]] int _mode,
+                                                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     const std::filesystem::path path = EnsureNoTrailingSlash(std::string(_path));
     if( !path.is_absolute() || path == "/" )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const std::filesystem::path parent_path = utility::PathManip::EnsureTrailingSlash(path.parent_path());
     const std::string cmd = "MKD " + path.filename().native();
@@ -461,8 +461,10 @@ int FTPHost::CreateDirectory(std::string_view _path,
 
     CommitIOInstanceAtDir(parent_path, std::move(curl));
 
-    return curl_e == CURLE_OK ? VFSError::Ok
-                              : VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
+    if( curl_e == CURLE_OK )
+        return {};
+
+    return std::unexpected(VFSError::ToError(CURLErrorToVFSError(curl_e)));
 }
 
 std::expected<void, Error> FTPHost::RemoveDirectory(std::string_view _path,

@@ -197,9 +197,8 @@ int VFSEasyCopyDirectory(const char *_src_full_path,
     if( !_src_host->IsDirectory(_src_full_path, 0, nullptr) )
         return VFSError::InvalidCall;
 
-    result = _dst_host->CreateDirectory(_dst_full_path, 0640, nullptr);
-    if( result < 0 )
-        return result;
+    if( const std::expected<void, nc::Error> rc = _dst_host->CreateDirectory(_dst_full_path, 0640); !rc )
+        return VFSError::GenericError; // TODO: return rc
 
     result = CopyNodeAttrs(_src_full_path, _src_host, _dst_full_path, _dst_host);
     if( result < 0 )

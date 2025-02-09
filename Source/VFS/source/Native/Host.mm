@@ -614,17 +614,17 @@ bool NativeHost::IsWritable() const
     return true; // dummy now
 }
 
-int NativeHost::CreateDirectory(std::string_view _path,
-                                int _mode,
-                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error>
+NativeHost::CreateDirectory(std::string_view _path, int _mode, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
     auto &io = routedio::RoutedIO::Default;
     const int ret = io.mkdir(path.c_str(), mode_t(_mode));
     if( ret == 0 )
-        return 0;
-    return VFSError::FromErrno();
+        return {};
+
+    return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 }
 
 std::expected<void, Error> NativeHost::RemoveDirectory(std::string_view _path,

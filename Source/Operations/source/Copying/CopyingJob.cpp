@@ -557,10 +557,10 @@ CopyingJob::StepResult CopyingJob::BuildDestinationDirectory() const
     // build absent directories. no skipping here - all or nothing.
     for( auto &path : paths_to_build ) {
         while( true ) {
-            const auto rc = m_DestinationHost->CreateDirectory(path, g_NewDirectoryMode);
-            if( rc == VFSError::Ok )
+            const std::expected<void, Error> rc = m_DestinationHost->CreateDirectory(path, g_NewDirectoryMode);
+            if( rc )
                 break;
-            switch( m_OnCantCreateDestinationRootDir(rc, path, *m_DestinationHost) ) {
+            switch( m_OnCantCreateDestinationRootDir(rc.error(), path, *m_DestinationHost) ) {
                 case CantCreateDestinationRootDirResolution::Stop:
                     return StepResult::Stop;
                 case CantCreateDestinationRootDirResolution::Retry:
@@ -1850,7 +1850,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeDirectoryToNativeDirectory(vfs::Nat
             const auto rc = io.mkdir(_dst_path.c_str(), g_NewDirectoryMode);
             if( rc == 0 )
                 break;
-            switch( m_OnCantCreateDestinationDir(VFSError::FromErrno(), _dst_path, _native_host) ) {
+            switch( m_OnCantCreateDestinationDir(Error{Error::POSIX, errno}, _dst_path, _native_host) ) {
                 case CantCreateDestinationDirResolution::Skip:
                     return StepResult::Skipped;
                 case CantCreateDestinationDirResolution::Stop:
@@ -1928,7 +1928,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_s
             const auto rc = io.mkdir(_dst_path.c_str(), g_NewDirectoryMode);
             if( rc == 0 )
                 break;
-            switch( m_OnCantCreateDestinationDir(VFSError::FromErrno(), _dst_path, _dst_host) ) {
+            switch( m_OnCantCreateDestinationDir(Error{Error::POSIX, errno}, _dst_path, _dst_host) ) {
                 case CantCreateDestinationDirResolution::Skip:
                     return StepResult::Skipped;
                 case CantCreateDestinationDirResolution::Stop:
@@ -2003,10 +2003,10 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
     }
     else {
         while( true ) {
-            const auto rc = m_DestinationHost->CreateDirectory(_dst_path, g_NewDirectoryMode);
-            if( rc == VFSError::Ok )
+            const std::expected<void, Error> rc = m_DestinationHost->CreateDirectory(_dst_path, g_NewDirectoryMode);
+            if( rc )
                 break;
-            switch( m_OnCantCreateDestinationDir(rc, _dst_path, *m_DestinationHost) ) {
+            switch( m_OnCantCreateDestinationDir(rc.error(), _dst_path, *m_DestinationHost) ) {
                 case CantCreateDestinationDirResolution::Skip:
                     return StepResult::Skipped;
                 case CantCreateDestinationDirResolution::Stop:
@@ -2079,7 +2079,7 @@ CopyingJob::RenameNativeDirectory(vfs::NativeHost &_native_host,
             const auto rc = io.mkdir(_dst_path.c_str(), g_NewDirectoryMode);
             if( rc == 0 )
                 break;
-            switch( m_OnCantCreateDestinationDir(VFSError::FromErrno(), _dst_path, _native_host) ) {
+            switch( m_OnCantCreateDestinationDir(Error{Error::POSIX, errno}, _dst_path, _native_host) ) {
                 case CantCreateDestinationDirResolution::Skip:
                     return {StepResult::Skipped, SourceItemAftermath::NoChanges};
                 case CantCreateDestinationDirResolution::Stop:
@@ -2230,10 +2230,10 @@ CopyingJob::RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_pa
         }
 
         while( true ) {
-            const auto rc = _common_host.CreateDirectory(_dst_path, g_NewDirectoryMode);
-            if( rc == VFSError::Ok )
+            const std::expected<void, Error> rc = _common_host.CreateDirectory(_dst_path, g_NewDirectoryMode);
+            if( rc )
                 break;
-            switch( m_OnCantCreateDestinationDir(rc, _dst_path, _common_host) ) {
+            switch( m_OnCantCreateDestinationDir(rc.error(), _dst_path, _common_host) ) {
                 case CantCreateDestinationDirResolution::Skip:
                     return {StepResult::Skipped, SourceItemAftermath::NoChanges};
                 case CantCreateDestinationDirResolution::Stop:

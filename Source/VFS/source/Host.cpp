@@ -279,11 +279,11 @@ std::expected<void, nc::Error> Host::Trash([[maybe_unused]] std::string_view _pa
     return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
-int Host::CreateDirectory([[maybe_unused]] std::string_view _path,
-                          [[maybe_unused]] int _mode,
-                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> Host::CreateDirectory([[maybe_unused]] std::string_view _path,
+                                                 [[maybe_unused]] int _mode,
+                                                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 std::expected<std::string, Error> Host::ReadSymlink([[maybe_unused]] std::string_view _path,

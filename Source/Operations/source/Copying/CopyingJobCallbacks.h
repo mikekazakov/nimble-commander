@@ -83,18 +83,18 @@ struct CopyingJobCallbacks {
         Stop,
         Retry
     };
-    std::function<CantCreateDestinationRootDirResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+    std::function<CantCreateDestinationRootDirResolution(Error _error, const std::string &_path, VFSHost &_vfs)>
         m_OnCantCreateDestinationRootDir =
-            [](int, const std::string &, VFSHost &) { return CantCreateDestinationRootDirResolution::Stop; };
+            [](Error, const std::string &, VFSHost &) { return CantCreateDestinationRootDirResolution::Stop; };
 
     enum class CantCreateDestinationDirResolution {
         Stop,
         Skip,
         Retry
     };
-    std::function<CantCreateDestinationDirResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+    std::function<CantCreateDestinationDirResolution(Error _error, const std::string &_path, VFSHost &_vfs)>
         m_OnCantCreateDestinationDir =
-            [](int, const std::string &, VFSHost &) { return CantCreateDestinationDirResolution::Stop; };
+            [](Error, const std::string &, VFSHost &) { return CantCreateDestinationDirResolution::Stop; };
 
     enum class CantDeleteDestinationFileResolution {
         Stop,

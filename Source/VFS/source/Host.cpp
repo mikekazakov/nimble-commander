@@ -293,11 +293,11 @@ int Host::ReadSymlink([[maybe_unused]] std::string_view _path,
     return VFSError::NotSupported;
 }
 
-int Host::CreateSymlink([[maybe_unused]] std::string_view _symlink_path,
-                        [[maybe_unused]] std::string_view _symlink_value,
-                        [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> Host::CreateSymlink([[maybe_unused]] std::string_view _symlink_path,
+                                               [[maybe_unused]] std::string_view _symlink_value,
+                                               [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 std::expected<void, Error> Host::SetTimes([[maybe_unused]] std::string_view _path,

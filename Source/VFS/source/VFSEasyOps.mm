@@ -236,13 +236,12 @@ int VFSEasyCopySymlink(const char *_src_full_path,
 
     char symlink_val[MAXPATHLEN];
 
-    result = _src_host->ReadSymlink(_src_full_path, symlink_val, nullptr);
+    result = _src_host->ReadSymlink(_src_full_path, symlink_val);
     if( result < 0 )
         return result;
 
-    result = _dst_host->CreateSymlink(_dst_full_path, symlink_val, nullptr);
-    if( result < 0 )
-        return result;
+    if( const std::expected<void, nc::Error> rc = _dst_host->CreateSymlink(_dst_full_path, symlink_val); !rc )
+        return VFSError::FromErrno(EINVAL); // TODO: use rc instead
 
     result = CopyNodeAttrs(_src_full_path, _src_host, _dst_full_path, _dst_host);
     if( result < 0 )

@@ -2929,10 +2929,10 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
     }
 
     while( true ) {
-        const int rc = dst_host.CreateSymlink(_dst_path, linkpath);
-        if( rc == VFSError::Ok )
+        const std::expected<void, Error> rc = dst_host.CreateSymlink(_dst_path, linkpath);
+        if( rc )
             break;
-        switch( m_OnDestinationFileWriteError(VFSError::ToError(rc), _dst_path, dst_host) ) {
+        switch( m_OnDestinationFileWriteError(rc.error(), _dst_path, dst_host) ) {
             case DestinationFileWriteErrorResolution::Skip:
                 return StepResult::Skipped;
             case DestinationFileWriteErrorResolution::Stop:

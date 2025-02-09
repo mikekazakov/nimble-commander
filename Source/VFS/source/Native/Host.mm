@@ -659,9 +659,9 @@ int NativeHost::ReadSymlink(std::string_view _path,
     return 0;
 }
 
-int NativeHost::CreateSymlink(std::string_view _symlink_path,
-                              std::string_view _symlink_value,
-                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> NativeHost::CreateSymlink(std::string_view _symlink_path,
+                                                     std::string_view _symlink_value,
+                                                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
     const std::pmr::string symlink_path(_symlink_path, &alloc);
@@ -669,10 +669,10 @@ int NativeHost::CreateSymlink(std::string_view _symlink_path,
 
     auto &io = routedio::RoutedIO::Default;
     const int result = io.symlink(symlink_value.c_str(), symlink_path.c_str());
-    if( result < 0 )
-        return VFSError::FromErrno();
+    if( result != 0 )
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 
-    return 0;
+    return {};
 }
 
 std::expected<void, Error> NativeHost::SetTimes(const std::string_view _path,

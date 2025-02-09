@@ -65,9 +65,9 @@ public:
     int
     ReadSymlink(std::string_view _path, std::span<char> _buffer, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int CreateSymlink(std::string_view _symlink_path,
-                      std::string_view _symlink_value,
-                      const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error> CreateSymlink(std::string_view _symlink_path,
+                                             std::string_view _symlink_value,
+                                             const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<void, Error> Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
 

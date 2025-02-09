@@ -839,13 +839,13 @@ int SFTPHost::ReadSymlink(std::string_view _symlink_path,
     }
 }
 
-int SFTPHost::CreateSymlink(std::string_view _symlink_path,
-                            std::string_view _symlink_value,
-                            [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> SFTPHost::CreateSymlink(std::string_view _symlink_path,
+                                                   std::string_view _symlink_value,
+                                                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     if( const int rc = GetConnection(conn); rc < 0 )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
@@ -863,9 +863,9 @@ int SFTPHost::CreateSymlink(std::string_view _symlink_path,
                                                           static_cast<unsigned>(_symlink_value.length()),
                                                           LIBSSH2_SFTP_SYMLINK);
     if( symlink_rc == 0 )
-        return VFSError::Ok;
+        return {};
     else
-        return VFSErrorForConnection(*conn);
+        return std::unexpected(ErrorForConnection(*conn).value_or(Error{ErrorDomain, Errors::sftp_protocol}));
 }
 
 std::expected<void, Error> SFTPHost::SetPermissions(std::string_view _path,

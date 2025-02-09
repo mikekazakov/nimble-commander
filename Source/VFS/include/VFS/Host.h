@@ -266,9 +266,9 @@ public:
     virtual int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker = {});
 
     /** Return zero upon succes, negative value on error. */
-    virtual int CreateSymlink(std::string_view _symlink_path,
-                              std::string_view _symlink_value,
-                              const VFSCancelChecker &_cancel_checker = {});
+    virtual std::expected<void, Error> CreateSymlink(std::string_view _symlink_path,
+                                                     std::string_view _symlink_value,
+                                                     const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Unlinks(deletes) a file. Dont follow last symlink, in case of.

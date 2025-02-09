@@ -31,12 +31,12 @@ void LinkageJob::Perform()
 
 void LinkageJob::DoSymlinkCreation()
 {
-    const auto rc = m_VFS->CreateSymlink(m_LinkPath, m_LinkValue);
-    if( rc == VFSError::Ok ) {
+    const std::expected<void, Error> rc = m_VFS->CreateSymlink(m_LinkPath, m_LinkValue);
+    if( rc ) {
         Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
     }
     else {
-        m_OnCreateSymlinkError(rc, m_LinkPath, *m_VFS);
+        m_OnCreateSymlinkError(rc.error(), m_LinkPath, *m_VFS);
         Stop();
     }
 }
@@ -64,12 +64,12 @@ void LinkageJob::DoSymlinkAlteration()
         return;
     }
 
-    const int link_rc = m_VFS->CreateSymlink(m_LinkPath, m_LinkValue);
-    if( link_rc == VFSError::Ok ) {
+    const std::expected<void, Error> link_rc = m_VFS->CreateSymlink(m_LinkPath, m_LinkValue);
+    if( link_rc ) {
         Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
     }
     else {
-        m_OnAlterSymlinkError(VFSError::ToError(link_rc), m_LinkPath, *m_VFS);
+        m_OnAlterSymlinkError(link_rc.error(), m_LinkPath, *m_VFS);
         Stop();
     }
 }

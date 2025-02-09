@@ -17,7 +17,7 @@ Linkage::Linkage(const std::string &_link_path,
                  LinkageType _type)
 {
     m_Job = std::make_unique<LinkageJob>(_link_path, _link_value, _vfs, _type);
-    m_Job->m_OnCreateSymlinkError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_OnCreateSymlinkError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         OnCreateSymlinkError(_err, _path, _vfs);
     };
     m_Job->m_OnAlterSymlinkError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
@@ -36,7 +36,7 @@ Job *Linkage::GetJob() noexcept
     return m_Job.get();
 }
 
-void Linkage::OnCreateSymlinkError(int _err, const std::string &_path, VFSHost &_vfs)
+void Linkage::OnCreateSymlinkError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     ReportHaltReason(NSLocalizedString(@"Failed to create a symbolic link", ""), _err, _path, _vfs);
 }

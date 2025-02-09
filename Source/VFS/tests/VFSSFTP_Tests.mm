@@ -513,7 +513,7 @@ TEST_CASE(PREFIX "create link")
     const auto lnk_path = "/home/user1/smtest";
     const auto lnk_value = "/path/to/some/rubbish";
     const auto createlink_rc = host->CreateSymlink(lnk_path, lnk_value);
-    REQUIRE(createlink_rc == VFSError::Ok);
+    REQUIRE(createlink_rc);
 
     char link[MAXPATHLEN] = {0};
     const auto readlink_rc = host->ReadSymlink(lnk_path, link);

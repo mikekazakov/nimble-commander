@@ -43,7 +43,7 @@ void Copying::SetupCallbacks()
         [this](const struct stat &_src, const struct stat &_dst, const std::string &_path) {
             return OnRenameDestExists(_src, _dst, _path);
         };
-    j.m_OnCantAccessSourceItem = [this](int _1, const std::string &_2, VFSHost &_3) {
+    j.m_OnCantAccessSourceItem = [this](Error _1, const std::string &_2, VFSHost &_3) {
         return OnCantAccessSourceItem(_1, _2, _3);
     };
     j.m_OnCantOpenDestinationFile = [this](int _1, const std::string &_2, VFSHost &_3) {
@@ -230,10 +230,10 @@ void Copying::OnRenameDestExistsUI(const struct stat &_src,
 }
 
 CB::CantAccessSourceItemResolution
-Copying::OnCantAccessSourceItem(int _vfs_error, const std::string &_path, VFSHost &_vfs)
+Copying::OnCantAccessSourceItem(Error _error, const std::string &_path, VFSHost &_vfs)
 {
     if( m_CallbackHooks && m_CallbackHooks->m_OnCantAccessSourceItem )
-        return m_CallbackHooks->m_OnCantAccessSourceItem(_vfs_error, _path, _vfs);
+        return m_CallbackHooks->m_OnCantAccessSourceItem(_error, _path, _vfs);
 
     if( m_SkipAll )
         return CB::CantAccessSourceItemResolution::Skip;
@@ -243,7 +243,7 @@ Copying::OnCantAccessSourceItem(int _vfs_error, const std::string &_path, VFSHos
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to access a file", ""),
-                      _vfs_error,
+                      _error,
                       {_vfs, _path},
                       ctx);
     WaitForDialogResponse(ctx);

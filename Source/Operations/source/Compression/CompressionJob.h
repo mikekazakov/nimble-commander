@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Job.h"
@@ -25,8 +25,8 @@ struct CompressionJobCallbacks {
         Skip,
         Retry
     };
-    std::function<SourceAccessErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_SourceAccessError =
-        [](int, const std::string &, VFSHost &) { return SourceAccessErrorResolution::Stop; };
+    std::function<SourceAccessErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)>
+        m_SourceAccessError = [](Error, const std::string &, VFSHost &) { return SourceAccessErrorResolution::Stop; };
 
     enum class SourceReadErrorResolution {
         Stop,

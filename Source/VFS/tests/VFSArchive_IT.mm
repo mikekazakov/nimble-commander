@@ -38,14 +38,14 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
             _result = int(int64_t(st1.size) - int64_t(st2.size));
     }
     else if( S_ISLNK(st1.mode) ) {
-        char link1[MAXPATHLEN];
-        char link2[MAXPATHLEN];
-        if( const int ret = _file1_host->ReadSymlink(_file1_full_path.c_str(), link1, nullptr); ret < 0 )
-            return ret;
-        if( const int ret = _file2_host->ReadSymlink(_file2_full_path.c_str(), link2, nullptr); ret < 0 )
-            return ret;
-        if( strcmp(link1, link2) != 0 )
-            _result = strcmp(link1, link2);
+        std::expected<std::string, nc::Error> link1 = _file1_host->ReadSymlink(_file1_full_path.c_str());
+        if( !link1 )
+            return VFSError::GenericError;
+        std::expected<std::string, nc::Error> link2 = _file2_host->ReadSymlink(_file2_full_path.c_str());
+        if( !link2 )
+            return VFSError::GenericError;
+        if( strcmp(link1->c_str(), link1->c_str()) != 0 )
+            _result = strcmp(link1->c_str(), link1->c_str());
     }
     else if( S_ISDIR(st1.mode) ) {
         _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {

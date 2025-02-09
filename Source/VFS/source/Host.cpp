@@ -286,11 +286,10 @@ int Host::CreateDirectory([[maybe_unused]] std::string_view _path,
     return VFSError::NotSupported;
 }
 
-int Host::ReadSymlink([[maybe_unused]] std::string_view _path,
-                      [[maybe_unused]] std::span<char> _buffer,
-                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<std::string, Error> Host::ReadSymlink([[maybe_unused]] std::string_view _path,
+                                                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 std::expected<void, Error> Host::CreateSymlink([[maybe_unused]] std::string_view _symlink_path,
@@ -447,9 +446,8 @@ int Host::FetchSingleItemListing(std::string_view _path,
 
     if( listing_source.unix_types[0] == DT_LNK ) {
         // read an actual link path
-        char linkpath[MAXPATHLEN];
-        if( ReadSymlink(path_wo_trailing_slash, linkpath) == 0 )
-            listing_source.symlinks.insert(0, linkpath);
+        if( std::expected<std::string, Error> linkpath = ReadSymlink(path_wo_trailing_slash); linkpath )
+            listing_source.symlinks.insert(0, std::move(*linkpath));
 
         // stat the target file
         VFSStat stat;

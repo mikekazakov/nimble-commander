@@ -191,7 +191,7 @@ CompressionJob::ProcessSymlinkItem(int _index, const std::string &_relative_path
         const auto rc = vfs.Stat(_full_path, stat, VFSFlags::F_NoFollow, nullptr);
         if( rc == VFSError::Ok )
             break;
-        switch( m_SourceAccessError(rc, _full_path, vfs) ) {
+        switch( m_SourceAccessError(VFSError::ToError(rc), _full_path, vfs) ) {
             case SourceAccessErrorResolution::Stop:
                 Stop();
                 return StepResult::Stopped;
@@ -202,12 +202,14 @@ CompressionJob::ProcessSymlinkItem(int _index, const std::string &_relative_path
         }
     }
 
-    char symlink[MAXPATHLEN];
+    std::string symlink;
     while( true ) {
-        const auto rc = vfs.ReadSymlink(_full_path, symlink, nullptr);
-        if( rc == VFSError::Ok )
+        std::expected<std::string, Error> rc = vfs.ReadSymlink(_full_path);
+        if( rc ) {
+            symlink = std::move(*rc);
             break;
-        switch( m_SourceAccessError(rc, _full_path, vfs) ) {
+        }
+        switch( m_SourceAccessError(rc.error(), _full_path, vfs) ) {
             case SourceAccessErrorResolution::Stop:
                 Stop();
                 return StepResult::Stopped;
@@ -222,7 +224,7 @@ CompressionJob::ProcessSymlinkItem(int _index, const std::string &_relative_path
     const auto entry_cleanup = at_scope_end([&] { archive_entry_free(entry); });
     archive_entry_set_pathname(entry, _relative_path.c_str());
     archive_entry_copy_stat(entry, stat);
-    archive_entry_set_symlink(entry, symlink);
+    archive_entry_set_symlink(entry, symlink.c_str());
     archive_write_header(m_Archive, entry);
 
     return StepResult::Done;
@@ -239,7 +241,7 @@ CompressionJob::ProcessDirectoryItem(int _index, const std::string &_relative_pa
         const auto rc = vfs.Stat(_full_path, vfs_stat, 0, nullptr);
         if( rc == VFSError::Ok )
             break;
-        switch( m_SourceAccessError(rc, _full_path, vfs) ) {
+        switch( m_SourceAccessError(VFSError::ToError(rc), _full_path, vfs) ) {
             case SourceAccessErrorResolution::Stop:
                 Stop();
                 return StepResult::Stopped;
@@ -284,7 +286,7 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
         const auto rc = vfs.Stat(_full_path, stat, 0);
         if( rc == VFSError::Ok )
             break;
-        switch( m_SourceAccessError(rc, _full_path, vfs) ) {
+        switch( m_SourceAccessError(VFSError::ToError(rc), _full_path, vfs) ) {
             case SourceAccessErrorResolution::Stop:
                 Stop();
                 return StepResult::Stopped;
@@ -303,7 +305,7 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
         const auto rc = src_file->Open(flags);
         if( rc == VFSError::Ok )
             break;
-        switch( m_SourceAccessError(rc, _full_path, vfs) ) {
+        switch( m_SourceAccessError(VFSError::ToError(rc), _full_path, vfs) ) {
             case SourceAccessErrorResolution::Stop:
                 Stop();
                 return StepResult::Stopped;

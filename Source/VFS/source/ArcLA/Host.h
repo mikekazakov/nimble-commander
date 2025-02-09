@@ -61,9 +61,8 @@ public:
     int IterateDirectoryListing(std::string_view _path,
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
-    int ReadSymlink(std::string_view _symlink_path,
-                    std::span<char> _buffer,
-                    const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<std::string, Error> ReadSymlink(std::string_view _symlink_path,
+                                                  const VFSCancelChecker &_cancel_checker = {}) override;
 
     bool ShouldProduceThumbnails() const override;
 

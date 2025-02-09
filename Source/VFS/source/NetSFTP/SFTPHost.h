@@ -77,9 +77,8 @@ public:
     std::expected<void, Error> RemoveDirectory(std::string_view _path,
                                                const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int ReadSymlink(std::string_view _symlink_path,
-                    std::span<char> _buffer,
-                    const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<std::string, Error> ReadSymlink(std::string_view _symlink_path,
+                                                  const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<void, Error> CreateSymlink(std::string_view _symlink_path,
                                              std::string_view _symlink_value,

@@ -14,9 +14,9 @@ struct CopyingJobCallbacks {
         Skip,
         Retry
     };
-    std::function<CantAccessSourceItemResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+    std::function<CantAccessSourceItemResolution(Error _vfs_error, const std::string &_path, VFSHost &_vfs)>
         m_OnCantAccessSourceItem =
-            [](int, const std::string &, VFSHost &) { return CantAccessSourceItemResolution::Stop; };
+            [](Error, const std::string &, VFSHost &) { return CantAccessSourceItemResolution::Stop; };
 
     enum class CopyDestExistsResolution {
         Stop,

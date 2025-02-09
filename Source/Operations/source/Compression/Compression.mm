@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Compression.h"
 #include "CompressionJob.h"
 #include "../HaltReasonDialog.h"
@@ -35,7 +35,7 @@ Compression::Compression(std::vector<VFSListingItem> _src_files,
     m_Job->m_SourceScanError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
         return (Callbacks::SourceScanErrorResolution)OnSourceScanError(_err, _path, _vfs);
     };
-    m_Job->m_SourceAccessError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_SourceAccessError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         return (Callbacks::SourceAccessErrorResolution)OnSourceAccessError(_err, _path, _vfs);
     };
 
@@ -108,7 +108,7 @@ int Compression::OnSourceScanError(int _err, const std::string &_path, VFSHost &
         return (int)Callbacks::SourceScanErrorResolution::Stop;
 }
 
-int Compression::OnSourceAccessError(int _err, const std::string &_path, VFSHost &_vfs)
+int Compression::OnSourceAccessError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ? (int)Callbacks::SourceAccessErrorResolution::Skip

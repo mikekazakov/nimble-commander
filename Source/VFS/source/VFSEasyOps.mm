@@ -234,13 +234,11 @@ int VFSEasyCopySymlink(const char *_src_full_path,
         _dst_full_path[0] != '/' || !_dst_host )
         return VFSError::InvalidCall;
 
-    char symlink_val[MAXPATHLEN];
+    const std::expected<std::string, nc::Error> symlink = _src_host->ReadSymlink(_src_full_path);
+    if( !symlink )
+        return VFSError::FromErrno(EINVAL); // TODO: use symlink instead
 
-    result = _src_host->ReadSymlink(_src_full_path, symlink_val);
-    if( result < 0 )
-        return result;
-
-    if( const std::expected<void, nc::Error> rc = _dst_host->CreateSymlink(_dst_full_path, symlink_val); !rc )
+    if( const std::expected<void, nc::Error> rc = _dst_host->CreateSymlink(_dst_full_path, *symlink); !rc )
         return VFSError::FromErrno(EINVAL); // TODO: use rc instead
 
     result = CopyNodeAttrs(_src_full_path, _src_host, _dst_full_path, _dst_host);
@@ -390,14 +388,16 @@ int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
             _result = int(int64_t(st1.size) - int64_t(st2.size));
     }
     else if( S_ISLNK(st1.mode) ) {
-        char link1[MAXPATHLEN];
-        char link2[MAXPATHLEN];
-        if( const int ret = _file1_host->ReadSymlink(_file1_full_path.c_str(), link1, nullptr); ret < 0 )
-            return ret;
-        if( const int ret = _file2_host->ReadSymlink(_file2_full_path.c_str(), link2, nullptr); ret < 0 )
-            return ret;
-        if( strcmp(link1, link2) != 0 )
-            _result = strcmp(link1, link2);
+        const std::expected<std::string, nc::Error> link1 = _file1_host->ReadSymlink(_file1_full_path.c_str());
+        if( !link1 )
+            return VFSError::FromErrno(EINVAL); // TODO: use link1 instead
+
+        const std::expected<std::string, nc::Error> link2 = _file2_host->ReadSymlink(_file2_full_path.c_str());
+        if( !link2 )
+            return VFSError::FromErrno(EINVAL); // TODO: use link2 instead
+
+        if( strcmp(link1->c_str(), link2->c_str()) != 0 )
+            _result = strcmp(link1->c_str(), link2->c_str());
     }
     else if( S_ISDIR(st1.mode) ) {
         _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {

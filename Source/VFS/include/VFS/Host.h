@@ -188,12 +188,10 @@ public:
     virtual bool IsSymlink(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = {});
 
     /**
-     * Reads the symlink value into the specified buffer.
-     * The value stored there will be null-terminated.
-     * Return zero upon succes, negative value on error.
+     * Reads the symlink into a string.
      */
-    virtual int
-    ReadSymlink(std::string_view _symlink_path, std::span<char> _buffer, const VFSCancelChecker &_cancel_checker = {});
+    virtual std::expected<std::string, Error> ReadSymlink(std::string_view _symlink_path,
+                                                          const VFSCancelChecker &_cancel_checker = {});
 
     /**
      * Default implementation calls Stat() and returns true if return was Ok.

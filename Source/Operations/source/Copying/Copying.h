@@ -47,7 +47,7 @@ private:
                               const std::string &_path,
                               std::shared_ptr<AsyncDialogResponse> _ctx);
 
-    CB::CantAccessSourceItemResolution OnCantAccessSourceItem(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+    CB::CantAccessSourceItemResolution OnCantAccessSourceItem(Error _error, const std::string &_path, VFSHost &_vfs);
 
     CB::CantOpenDestinationFileResolution
     OnCantOpenDestinationFile(int _vfs_error, const std::string &_path, VFSHost &_vfs);

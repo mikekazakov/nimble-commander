@@ -440,11 +440,7 @@ TEST_CASE(PREFIX "Symlinks handling")
     CHECK(host->StatTotalDirs() == 2);
     CHECK(host->StatTotalRegs() == 1);
 
-    auto readsym = [&](const char *_path) -> std::string {
-        char buf[1024];
-        REQUIRE(host->ReadSymlink(_path, buf, {}) == VFSError::Ok);
-        return buf;
-    };
+    auto readsym = [&](const char *_path) -> std::string { return host->ReadSymlink(_path).value(); };
     CHECK(readsym("/r/l0") == "f");
     CHECK(readsym("/r/l1") == "./f");
     CHECK(readsym("/r/l2") == "l1");
@@ -524,11 +520,7 @@ TEST_CASE(PREFIX "Symlinks handling - invalid values")
     CHECK(host->StatTotalDirs() == 1);
     CHECK(host->StatTotalRegs() == 0);
 
-    auto readsym = [&](const char *_path) -> std::string {
-        char buf[1024];
-        REQUIRE(host->ReadSymlink(_path, buf, {}) == VFSError::Ok);
-        return buf;
-    };
+    auto readsym = [&](const char *_path) -> std::string { return host->ReadSymlink(_path).value(); };
     CHECK(readsym("/r/l0") == "nada");
     CHECK(readsym("/r/l1") == "../nada");
     CHECK(readsym("/r/l2") == "../.././../../././../nada");
@@ -2085,11 +2077,7 @@ TEST_CASE(PREFIX "synthetic directories can be correctly resolved")
     REQUIRE(nc::base::WriteAtomically(path, {reinterpret_cast<const std::byte *>(arc_tar_gz), std::size(arc_tar_gz)}));
     std::shared_ptr<ArchiveHost> host;
     REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(path.c_str(), TestEnv().vfs_native));
-    auto readsym = [&](const std::string_view _path) -> std::string {
-        char buf[1024];
-        REQUIRE(host->ReadSymlink(_path, buf, {}) == VFSError::Ok);
-        return buf;
-    };
+    auto readsym = [&](const std::string_view _path) -> std::string { return host->ReadSymlink(_path).value(); };
     REQUIRE(host->IsDirectory("/etc", VFSFlags::None));
     REQUIRE(host->IsDirectory("/etc/rc0.d", VFSFlags::None));
     REQUIRE(host->IsSymlink("/etc/rc0.d/K01cryptdisks-early", VFSFlags::F_NoFollow));

@@ -557,10 +557,10 @@ CopyingJob::StepResult CopyingJob::BuildDestinationDirectory() const
     // build absent directories. no skipping here - all or nothing.
     for( auto &path : paths_to_build ) {
         while( true ) {
-            const auto rc = m_DestinationHost->CreateDirectory(path, g_NewDirectoryMode);
-            if( rc == VFSError::Ok )
+            const std::expected<void, Error> rc = m_DestinationHost->CreateDirectory(path, g_NewDirectoryMode);
+            if( rc )
                 break;
-            switch( m_OnCantCreateDestinationRootDir(rc, path, *m_DestinationHost) ) {
+            switch( m_OnCantCreateDestinationRootDir(rc.error(), path, *m_DestinationHost) ) {
                 case CantCreateDestinationRootDirResolution::Stop:
                     return StepResult::Stop;
                 case CantCreateDestinationRootDirResolution::Retry:
@@ -600,7 +600,7 @@ std::tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
                 const auto rc = host.Stat(path, st, stat_flags, nullptr);
                 if( rc == VFSError::Ok )
                     break;
-                switch( m_OnCantAccessSourceItem(rc, path, host) ) {
+                switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), path, host) ) {
                     case CantAccessSourceItemResolution::Skip:
                         return StepResult::Skipped;
                     case CantAccessSourceItemResolution::Stop:
@@ -657,7 +657,7 @@ std::tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
                         const auto rc = host.IterateDirectoryListing(path, callback);
                         if( rc == VFSError::Ok )
                             break;
-                        switch( m_OnCantAccessSourceItem(rc, path, host) ) {
+                        switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), path, host) ) {
                             case CantAccessSourceItemResolution::Skip:
                                 return StepResult::Skipped;
                             case CantAccessSourceItemResolution::Stop:
@@ -725,7 +725,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
             source_fd = io.open(_src_path.c_str(), O_RDONLY | O_NONBLOCK);
         if( source_fd >= 0 )
             break;
-        switch( m_OnCantAccessSourceItem(VFSError::FromErrno(), _src_path, _native_host) ) {
+        switch( m_OnCantAccessSourceItem(Error{Error::POSIX, errno}, _src_path, _native_host) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -752,7 +752,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
         const auto rc = fstat(source_fd, &src_stat_buffer);
         if( rc == 0 )
             break;
-        switch( m_OnCantAccessSourceItem(VFSError::FromErrno(), _src_path, _native_host) ) {
+        switch( m_OnCantAccessSourceItem(Error{Error::POSIX, errno}, _src_path, _native_host) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -1105,7 +1105,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
         const auto rc = _src_vfs.Stat(_src_path, src_stat_buffer, 0);
         if( rc == VFSError::Ok )
             break;
-        switch( m_OnCantAccessSourceItem(rc, _src_path, _src_vfs) ) {
+        switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _src_vfs) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -1121,7 +1121,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
         const auto rc = _src_vfs.CreateFile(_src_path, src_file);
         if( rc == VFSError::Ok )
             break;
-        switch( m_OnCantAccessSourceItem(rc, _src_path, _src_vfs) ) {
+        switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _src_vfs) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -1137,7 +1137,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
         const auto rc = src_file->Open(flags);
         if( rc == VFSError::Ok )
             break;
-        switch( m_OnCantAccessSourceItem(rc, _src_path, _src_vfs) ) {
+        switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _src_vfs) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -1474,7 +1474,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
         const auto rc = _src_vfs.Stat(_src_path, src_stat_buffer, 0);
         if( rc == VFSError::Ok )
             break;
-        switch( m_OnCantAccessSourceItem(rc, _src_path, _src_vfs) ) {
+        switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _src_vfs) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -1490,7 +1490,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
         const auto rc = _src_vfs.CreateFile(_src_path, src_file);
         if( rc == VFSError::Ok )
             break;
-        switch( m_OnCantAccessSourceItem(rc, _src_path, _src_vfs) ) {
+        switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _src_vfs) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -1506,7 +1506,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
         const auto rc = src_file->Open(flags);
         if( rc == VFSError::Ok )
             break;
-        switch( m_OnCantAccessSourceItem(rc, _src_path, _src_vfs) ) {
+        switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _src_vfs) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -1850,7 +1850,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeDirectoryToNativeDirectory(vfs::Nat
             const auto rc = io.mkdir(_dst_path.c_str(), g_NewDirectoryMode);
             if( rc == 0 )
                 break;
-            switch( m_OnCantCreateDestinationDir(VFSError::FromErrno(), _dst_path, _native_host) ) {
+            switch( m_OnCantCreateDestinationDir(Error{Error::POSIX, errno}, _dst_path, _native_host) ) {
                 case CantCreateDestinationDirResolution::Skip:
                     return StepResult::Skipped;
                 case CantCreateDestinationDirResolution::Stop:
@@ -1928,7 +1928,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_s
             const auto rc = io.mkdir(_dst_path.c_str(), g_NewDirectoryMode);
             if( rc == 0 )
                 break;
-            switch( m_OnCantCreateDestinationDir(VFSError::FromErrno(), _dst_path, _dst_host) ) {
+            switch( m_OnCantCreateDestinationDir(Error{Error::POSIX, errno}, _dst_path, _dst_host) ) {
                 case CantCreateDestinationDirResolution::Skip:
                     return StepResult::Skipped;
                 case CantCreateDestinationDirResolution::Stop:
@@ -1987,7 +1987,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
         const auto rc = _src_vfs.Stat(_src_path, src_st, 0);
         if( rc == VFSError::Ok )
             break;
-        switch( m_OnCantAccessSourceItem(rc, _dst_path, _src_vfs) ) {
+        switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _dst_path, _src_vfs) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -2003,10 +2003,10 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
     }
     else {
         while( true ) {
-            const auto rc = m_DestinationHost->CreateDirectory(_dst_path, g_NewDirectoryMode);
-            if( rc == VFSError::Ok )
+            const std::expected<void, Error> rc = m_DestinationHost->CreateDirectory(_dst_path, g_NewDirectoryMode);
+            if( rc )
                 break;
-            switch( m_OnCantCreateDestinationDir(rc, _dst_path, *m_DestinationHost) ) {
+            switch( m_OnCantCreateDestinationDir(rc.error(), _dst_path, *m_DestinationHost) ) {
                 case CantCreateDestinationDirResolution::Skip:
                     return StepResult::Skipped;
                 case CantCreateDestinationDirResolution::Stop:
@@ -2079,7 +2079,7 @@ CopyingJob::RenameNativeDirectory(vfs::NativeHost &_native_host,
             const auto rc = io.mkdir(_dst_path.c_str(), g_NewDirectoryMode);
             if( rc == 0 )
                 break;
-            switch( m_OnCantCreateDestinationDir(VFSError::FromErrno(), _dst_path, _native_host) ) {
+            switch( m_OnCantCreateDestinationDir(Error{Error::POSIX, errno}, _dst_path, _native_host) ) {
                 case CantCreateDestinationDirResolution::Skip:
                     return {StepResult::Skipped, SourceItemAftermath::NoChanges};
                 case CantCreateDestinationDirResolution::Stop:
@@ -2098,7 +2098,7 @@ CopyingJob::RenameNativeDirectory(vfs::NativeHost &_native_host,
             const auto rc = io.lstat(_src_path.c_str(), &src_stat_buffer);
             if( rc == 0 )
                 break;
-            switch( m_OnCantAccessSourceItem(VFSError::FromErrno(), _src_path, _native_host) ) {
+            switch( m_OnCantAccessSourceItem(Error{Error::POSIX, errno}, _src_path, _native_host) ) {
                 case CantAccessSourceItemResolution::Skip:
                     return {StepResult::Skipped, SourceItemAftermath::NoChanges};
                 case CantAccessSourceItemResolution::Stop:
@@ -2230,10 +2230,10 @@ CopyingJob::RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_pa
         }
 
         while( true ) {
-            const auto rc = _common_host.CreateDirectory(_dst_path, g_NewDirectoryMode);
-            if( rc == VFSError::Ok )
+            const std::expected<void, Error> rc = _common_host.CreateDirectory(_dst_path, g_NewDirectoryMode);
+            if( rc )
                 break;
-            switch( m_OnCantCreateDestinationDir(rc, _dst_path, _common_host) ) {
+            switch( m_OnCantCreateDestinationDir(rc.error(), _dst_path, _common_host) ) {
                 case CantCreateDestinationDirResolution::Skip:
                     return {StepResult::Skipped, SourceItemAftermath::NoChanges};
                 case CantCreateDestinationDirResolution::Stop:
@@ -2256,7 +2256,7 @@ CopyingJob::RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_pa
                 const auto rc = _common_host.Stat(_src_path, src_stat, VFSFlags::F_NoFollow);
                 if( rc == VFSError::Ok )
                     break;
-                switch( m_OnCantAccessSourceItem(rc, _src_path, _common_host) ) {
+                switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _common_host) ) {
                     case CantAccessSourceItemResolution::Skip:
                         return {StepResult::Skipped, SourceItemAftermath::NoChanges};
                     case CantAccessSourceItemResolution::Stop:
@@ -2352,7 +2352,7 @@ CopyingJob::StepResult CopyingJob::RenameNativeFile(vfs::NativeHost &_native_hos
             const auto rc = io.lstat(_src_path.c_str(), &src_stat_buffer);
             if( rc == 0 )
                 break;
-            switch( m_OnCantAccessSourceItem(VFSError::FromErrno(), _src_path, _native_host) ) {
+            switch( m_OnCantAccessSourceItem(Error{Error::POSIX, errno}, _src_path, _native_host) ) {
                 case CantAccessSourceItemResolution::Skip:
                     return StepResult::Skipped;
                 case CantAccessSourceItemResolution::Stop:
@@ -2438,7 +2438,7 @@ CopyingJob::StepResult CopyingJob::RenameVFSFile(VFSHost &_common_host,
             const auto rc = _common_host.Stat(_src_path, src_stat_buffer, VFSFlags::F_NoFollow);
             if( rc == VFSError::Ok )
                 break;
-            switch( m_OnCantAccessSourceItem(rc, _src_path, _common_host) ) {
+            switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _common_host) ) {
                 case CantAccessSourceItemResolution::Skip:
                     return StepResult::Skipped;
                 case CantAccessSourceItemResolution::Stop:
@@ -2653,7 +2653,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeSymlinkToNative(vfs::NativeHost &_n
             linkpath[sz] = 0;
             break;
         }
-        switch( m_OnCantAccessSourceItem(VFSError::FromErrno(), _src_path, _native_host) ) {
+        switch( m_OnCantAccessSourceItem(Error{Error::POSIX, errno}, _src_path, _native_host) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -2670,7 +2670,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeSymlinkToNative(vfs::NativeHost &_n
             const auto rc = io.lstat(_src_path.c_str(), &src_stat_buffer);
             if( rc == 0 )
                 break;
-            switch( m_OnCantAccessSourceItem(VFSError::FromErrno(), _src_path, _native_host) ) {
+            switch( m_OnCantAccessSourceItem(Error{Error::POSIX, errno}, _src_path, _native_host) ) {
                 case CantAccessSourceItemResolution::Skip:
                     return StepResult::Skipped;
                 case CantAccessSourceItemResolution::Stop:
@@ -2751,12 +2751,14 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
 {
     auto &io = routedio::RoutedIO::Default;
 
-    char linkpath[MAXPATHLEN];
+    std::string linkpath;
     while( true ) {
-        const auto rc = _src_vfs.ReadSymlink(_src_path, linkpath);
-        if( rc == VFSError::Ok )
+        std::expected<std::string, Error> rc = _src_vfs.ReadSymlink(_src_path);
+        if( rc ) {
+            linkpath = std::move(*rc);
             break;
-        switch( m_OnCantAccessSourceItem(rc, _src_path, _src_vfs) ) {
+        }
+        switch( m_OnCantAccessSourceItem(rc.error(), _src_path, _src_vfs) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -2773,7 +2775,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
             const auto rc = _src_vfs.Stat(_src_path, src_stat_buffer, VFSFlags::F_NoFollow);
             if( rc == VFSError::Ok )
                 break;
-            switch( m_OnCantAccessSourceItem(rc, _src_path, _src_vfs) ) {
+            switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _src_vfs) ) {
                 case CantAccessSourceItemResolution::Skip:
                     return StepResult::Skipped;
                 case CantAccessSourceItemResolution::Stop:
@@ -2827,7 +2829,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
     }
 
     while( true ) {
-        const auto rc = io.symlink(linkpath, _dst_path.c_str());
+        const auto rc = io.symlink(linkpath.c_str(), _dst_path.c_str());
         if( rc == 0 )
             break;
         switch( m_OnDestinationFileWriteError(Error{Error::POSIX, errno}, _dst_path, _dst_host) ) {
@@ -2850,12 +2852,14 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
 {
     auto &dst_host = *m_DestinationHost;
 
-    char linkpath[MAXPATHLEN];
+    std::string linkpath;
     while( true ) {
-        const auto rc = _src_vfs.ReadSymlink(_src_path, linkpath);
-        if( rc == VFSError::Ok )
+        std::expected<std::string, Error> rc = _src_vfs.ReadSymlink(_src_path);
+        if( rc ) {
+            linkpath = std::move(*rc);
             break;
-        switch( m_OnCantAccessSourceItem(rc, _src_path, _src_vfs) ) {
+        }
+        switch( m_OnCantAccessSourceItem(rc.error(), _src_path, _src_vfs) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -2872,7 +2876,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
             const auto rc = _src_vfs.Stat(_src_path, src_stat_buffer, VFSFlags::F_NoFollow);
             if( rc == VFSError::Ok )
                 break;
-            switch( m_OnCantAccessSourceItem(rc, _src_path, _src_vfs) ) {
+            switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _src_vfs) ) {
                 case CantAccessSourceItemResolution::Skip:
                     return StepResult::Skipped;
                 case CantAccessSourceItemResolution::Stop:
@@ -2929,10 +2933,10 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
     }
 
     while( true ) {
-        const int rc = dst_host.CreateSymlink(_dst_path, linkpath);
-        if( rc == VFSError::Ok )
+        const std::expected<void, Error> rc = dst_host.CreateSymlink(_dst_path, linkpath);
+        if( rc )
             break;
-        switch( m_OnDestinationFileWriteError(VFSError::ToError(rc), _dst_path, dst_host) ) {
+        switch( m_OnDestinationFileWriteError(rc.error(), _dst_path, dst_host) ) {
             case DestinationFileWriteErrorResolution::Skip:
                 return StepResult::Skipped;
             case DestinationFileWriteErrorResolution::Stop:

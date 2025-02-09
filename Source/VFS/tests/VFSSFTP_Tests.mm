@@ -501,10 +501,9 @@ TEST_CASE(PREFIX "basic read")
 TEST_CASE(PREFIX "read link")
 {
     const VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
-    char link[MAXPATHLEN];
-    const auto rc = host->ReadSymlink("/etc/os-release", link);
-    REQUIRE(rc == VFSError::Ok);
-    REQUIRE(link == std::string_view("../usr/lib/os-release"));
+    const std::expected<std::string, nc::Error> link = host->ReadSymlink("/etc/os-release");
+    REQUIRE(link);
+    REQUIRE(*link == std::string_view("../usr/lib/os-release"));
 }
 
 TEST_CASE(PREFIX "create link")
@@ -513,12 +512,11 @@ TEST_CASE(PREFIX "create link")
     const auto lnk_path = "/home/user1/smtest";
     const auto lnk_value = "/path/to/some/rubbish";
     const auto createlink_rc = host->CreateSymlink(lnk_path, lnk_value);
-    REQUIRE(createlink_rc == VFSError::Ok);
+    REQUIRE(createlink_rc);
 
-    char link[MAXPATHLEN] = {0};
-    const auto readlink_rc = host->ReadSymlink(lnk_path, link);
-    CHECK(readlink_rc == VFSError::Ok);
-    CHECK(link == std::string_view(lnk_value));
+    const std::expected<std::string, nc::Error> link = host->ReadSymlink(lnk_path);
+    REQUIRE(link);
+    CHECK(*link == std::string_view(lnk_value));
     CHECK(host->Unlink(lnk_path));
 }
 

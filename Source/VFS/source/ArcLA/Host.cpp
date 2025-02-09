@@ -1090,29 +1090,22 @@ const ArchiveHost::Symlink *ArchiveHost::ResolvedSymlink(uint32_t _uid)
     return &iter->second;
 }
 
-int ArchiveHost::ReadSymlink(std::string_view _symlink_path,
-                             std::span<char> _buffer,
-                             const VFSCancelChecker & /*_cancel_checker*/)
+std::expected<std::string, Error> ArchiveHost::ReadSymlink(std::string_view _symlink_path,
+                                                           const VFSCancelChecker & /*_cancel_checker*/)
 {
     auto entry = FindEntry(_symlink_path);
     if( !entry )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     if( (entry->st.st_mode & S_IFMT) != S_IFLNK )
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const auto symlink_it = I->m_Symlinks.find(entry->aruid);
     if( symlink_it == std::end(I->m_Symlinks) )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
-    auto &val = symlink_it->second.value;
-
-    if( val.native().size() >= _buffer.size() )
-        return VFSError::SmallBuffer;
-
-    strcpy(_buffer.data(), val.c_str());
-
-    return VFSError::Ok;
+    const std::filesystem::path &val = symlink_it->second.value;
+    return val.native();
 }
 
 uint32_t ArchiveHost::StatTotalFiles() const

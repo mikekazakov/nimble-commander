@@ -18,7 +18,9 @@ class SFTPHost final : public Host
 public:
     // vfs identity
     static const char *UniqueTag;
-    virtual VFSConfiguration Configuration() const override;
+
+    VFSConfiguration Configuration() const override;
+
     static VFSMeta Meta();
 
     // construction
@@ -29,12 +31,17 @@ public:
              const std::string &_keypath, // full path to private key
              long _port = 22,
              const std::string &_home = "");
+
     SFTPHost(const VFSConfiguration &_config); // should be of type VFSNetSFTPHostConfiguration
 
     const std::string &HomeDir() const; // no guarantees about trailing slash
+
     const std::string &ServerUrl() const noexcept;
+
     const std::string &User() const noexcept;
+
     const std::string &Keypath() const noexcept;
+
     long Port() const noexcept;
 
     // core VFSHost methods
@@ -65,18 +72,18 @@ public:
                                       std::string_view _new_path,
                                       const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error>
+    CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<void, Error> RemoveDirectory(std::string_view _path,
                                                const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int ReadSymlink(std::string_view _symlink_path,
-                    std::span<char> _buffer,
-                    const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<std::string, Error> ReadSymlink(std::string_view _symlink_path,
+                                                  const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int CreateSymlink(std::string_view _symlink_path,
-                      std::string_view _symlink_value,
-                      const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error> CreateSymlink(std::string_view _symlink_path,
+                                             std::string_view _symlink_value,
+                                             const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<void, Error>
     SetPermissions(std::string_view _path, uint16_t _mode, const VFSCancelChecker &_cancel_checker = {}) override;

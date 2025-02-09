@@ -477,12 +477,12 @@ std::expected<void, Error> DropboxHost::RemoveDirectory(std::string_view _path, 
     return std::unexpected(VFSError::ToError(rc));
 }
 
-int DropboxHost::CreateDirectory(std::string_view _path,
-                                 [[maybe_unused]] int _mode,
-                                 const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> DropboxHost::CreateDirectory(std::string_view _path,
+                                                        [[maybe_unused]] int _mode,
+                                                        const VFSCancelChecker &_cancel_checker)
 {
     if( !_path.starts_with("/") )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     std::string path = std::string(_path);
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
@@ -492,7 +492,10 @@ int DropboxHost::CreateDirectory(std::string_view _path,
     InsertHTTPBodyPathspec(req, path);
 
     auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
-    return rc;
+    if( rc == VFSError::Ok )
+        return {};
+
+    return std::unexpected(VFSError::ToError(rc));
 }
 
 bool DropboxHost::IsWritable() const

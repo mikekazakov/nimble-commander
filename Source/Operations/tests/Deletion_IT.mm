@@ -284,8 +284,8 @@ TEST_CASE(PREFIX "Simple delete from FTP")
 
     const char *fn1 = "/System/Library/Kernels/kernel";
     const char *fn2 = "/Public/!FilesTesting/mach_kernel";
-    host->CreateDirectory("/Public", 0755);
-    host->CreateDirectory("/Public/!FilesTesting", 0755);
+    std::ignore = host->CreateDirectory("/Public", 0755);
+    std::ignore = host->CreateDirectory("/Public/!FilesTesting", 0755);
     VFSStat stat;
     // if there's a trash from previous runs - remove it
     if( host->Stat(fn2, stat, 0, nullptr) == 0 )
@@ -308,8 +308,8 @@ TEST_CASE(PREFIX "Deleting from FTP directory")
 
     const char *fn1 = "/bin";
     const char *fn2 = "/Public/!FilesTesting/bin";
-    host->CreateDirectory("/Public", 0755);
-    host->CreateDirectory("/Public/!FilesTesting", 0755);
+    std::ignore = host->CreateDirectory("/Public", 0755);
+    std::ignore = host->CreateDirectory("/Public/!FilesTesting", 0755);
     VFSStat stat;
     // if there's a trash from previous runs - remove it
     if( host->Stat(fn2, stat, 0, nullptr) == 0 )

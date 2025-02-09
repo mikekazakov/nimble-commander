@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Operation.h"
@@ -18,7 +18,7 @@ public:
 
 private:
     virtual Job *GetJob() noexcept override;
-    int OnError(int _err, const std::string &_path, VFSHost &_vfs);
+    int OnError(Error _err, const std::string &_path, VFSHost &_vfs);
 
     std::vector<std::string> m_Directories;
     std::unique_ptr<DirectoryCreationJob> m_Job;

@@ -8,8 +8,8 @@
 namespace nc::ops {
 
 struct LinkageJobCallbacks {
-    std::function<void(int _err, const std::string &_path, VFSHost &_vfs)> m_OnCreateSymlinkError =
-        [](int, const std::string &, VFSHost &) {};
+    std::function<void(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnCreateSymlinkError =
+        [](Error, const std::string &, VFSHost &) {};
 
     std::function<void(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnAlterSymlinkError =
         [](Error, const std::string &, VFSHost &) {};

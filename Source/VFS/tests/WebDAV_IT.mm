@@ -86,8 +86,8 @@ static void TestFetchDirectoryListing(VFSHostPtr _host)
     const auto pp2 = "/Test1/meow.txt";
     const auto ppp1 = "/Test1/Dir1/purr.txt";
     std::ignore = VFSEasyDelete(p1, _host);
-    REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
-    REQUIRE(_host->CreateDirectory(pp1, 0) == VFSError::Ok);
+    REQUIRE(_host->CreateDirectory(p1, 0));
+    REQUIRE(_host->CreateDirectory(pp1, 0));
     const std::string_view content = "Hello, World!";
     WriteWholeFile(*_host, pp2, {reinterpret_cast<const std::byte *>(content.data()), content.size()});
     WriteWholeFile(*_host, ppp1, {reinterpret_cast<const std::byte *>(content.data()), content.size()});
@@ -446,7 +446,7 @@ static void TestRename(VFSHostPtr _host)
         std::ignore = VFSEasyDelete(p1, _host);
         std::ignore = VFSEasyDelete(p2.parent_path().c_str(), _host);
         REQUIRE(VFSEasyCreateEmptyFile(p1, _host) == VFSError::Ok);
-        REQUIRE(_host->CreateDirectory(p2.parent_path().c_str(), 0) == VFSError::Ok);
+        REQUIRE(_host->CreateDirectory(p2.parent_path().c_str(), 0));
         REQUIRE(_host->Rename(p1, p2.c_str()));
         REQUIRE(_host->Exists(p1) == false);
         REQUIRE(_host->Exists(p2.c_str()) == true);
@@ -458,7 +458,7 @@ static void TestRename(VFSHostPtr _host)
         const auto p2 = "/TestTestDir2";
         std::ignore = VFSEasyDelete(p1, _host);
         std::ignore = VFSEasyDelete(p2, _host);
-        REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
+        REQUIRE(_host->CreateDirectory(p1, 0));
         REQUIRE(_host->Rename(p1, p2));
         REQUIRE(_host->Exists(p1) == false);
         REQUIRE(_host->Exists(p2) == true);
@@ -472,8 +472,8 @@ static void TestRename(VFSHostPtr _host)
         const auto p3 = "/TestTestDir2/NestedDir";
         std::ignore = VFSEasyDelete(p1, _host);
         std::ignore = VFSEasyDelete(p2, _host);
-        REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
-        REQUIRE(_host->CreateDirectory(p2, 0) == VFSError::Ok);
+        REQUIRE(_host->CreateDirectory(p1, 0));
+        REQUIRE(_host->CreateDirectory(p2, 0));
         REQUIRE(_host->Rename(p1, p3));
         REQUIRE(_host->Exists(p1) == false);
         REQUIRE(_host->Exists(p3) == true);
@@ -488,7 +488,7 @@ static void TestRename(VFSHostPtr _host)
         const auto pp2 = "/TestTestDir2/meow.txt";
         std::ignore = VFSEasyDelete(p1, _host);
         std::ignore = VFSEasyDelete(p2, _host);
-        REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
+        REQUIRE(_host->CreateDirectory(p1, 0));
         REQUIRE(VFSEasyCreateEmptyFile(pp1, _host) == VFSError::Ok);
         REQUIRE(_host->Rename(p1, p2));
         REQUIRE(_host->Exists(p1) == false);
@@ -560,7 +560,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
         const auto dir = "/TestDirWithNonsenseName";
         const auto path = "/TestDirWithNonsenseName/SomeTestFile.extensiondoesntmatter";
         std::ignore = VFSEasyDelete(dir, _host);
-        REQUIRE(_host->CreateDirectory(dir, 0, nullptr) == VFSError::Ok);
+        REQUIRE(_host->CreateDirectory(dir, 0));
         {
             VFSFilePtr file;
             REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
@@ -594,8 +594,8 @@ static void TestSimpleDownload(VFSHostPtr _host)
         const auto dir2 = "/TestDirWithNonsenseName/MoreStuff";
         const auto path = "/TestDirWithNonsenseName/MoreStuff/SomeTestFile.extensiondoesntmatter";
         std::ignore = VFSEasyDelete(dir1, _host);
-        REQUIRE(_host->CreateDirectory(dir1, 0, nullptr) == VFSError::Ok);
-        REQUIRE(_host->CreateDirectory(dir2, 0, nullptr) == VFSError::Ok);
+        REQUIRE(_host->CreateDirectory(dir1, 0));
+        REQUIRE(_host->CreateDirectory(dir2, 0));
         {
             VFSFilePtr file;
             REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
@@ -664,7 +664,7 @@ static void TestWriteFlagsSemantics(VFSHostPtr _host)
     }
     SECTION("Opening an existing directory for writing fails")
     {
-        REQUIRE(_host->CreateDirectory(path, 0, nullptr) == VFSError::Ok);
+        REQUIRE(_host->CreateDirectory(path, 0));
         VFSFilePtr file;
         REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
         REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::FromErrno(EISDIR));

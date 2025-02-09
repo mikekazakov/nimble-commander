@@ -66,7 +66,8 @@ public:
                    std::shared_ptr<VFSFile> &_target,
                    const VFSCancelChecker &_cancel_checker) override;
 
-    int CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error>
+    CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker) override;
 
     std::expected<void, Error>
     Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker) override;

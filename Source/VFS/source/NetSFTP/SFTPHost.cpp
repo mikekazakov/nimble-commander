@@ -702,23 +702,22 @@ std::expected<void, Error> SFTPHost::RemoveDirectory(std::string_view _path,
     return {};
 }
 
-int SFTPHost::CreateDirectory(std::string_view _path,
-                              int _mode,
-                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error>
+SFTPHost::CreateDirectory(std::string_view _path, int _mode, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if( rc )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
     rc = libssh2_sftp_mkdir_ex(conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), _mode);
 
     if( rc < 0 )
-        return VFSErrorForConnection(*conn);
+        return std::unexpected(ErrorForConnection(*conn).value_or(Error{ErrorDomain, Errors::sftp_protocol}));
 
-    return 0;
+    return {};
 }
 
 // TODO: remove this
@@ -811,41 +810,37 @@ long SFTPHost::Port() const noexcept
     return Config().port;
 }
 
-int SFTPHost::ReadSymlink(std::string_view _symlink_path,
-                          std::span<char> _buffer,
-                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<std::string, Error> SFTPHost::ReadSymlink(std::string_view _symlink_path,
+                                                        [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( _buffer.empty() )
-        return VFSError::SmallBuffer;
-
     std::unique_ptr<Connection> conn;
     if( const int rc = GetConnection(conn); rc < 0 )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
-    const auto readlink_rc = libssh2_sftp_symlink_ex(conn->sftp,
-                                                     _symlink_path.data(),
-                                                     static_cast<unsigned>(_symlink_path.length()),
-                                                     _buffer.data(),
-                                                     int(_buffer.size() - 1),
-                                                     LIBSSH2_SFTP_READLINK);
+    char buffer[4096];
+    const int readlink_rc = libssh2_sftp_symlink_ex(conn->sftp,
+                                                    _symlink_path.data(),
+                                                    static_cast<unsigned>(_symlink_path.length()),
+                                                    buffer,
+                                                    sizeof(buffer) - 1,
+                                                    LIBSSH2_SFTP_READLINK);
     if( readlink_rc >= 0 ) {
-        _buffer[readlink_rc] = 0;
-        return VFSError::Ok;
+        return std::string(buffer, readlink_rc);
     }
     else {
-        return VFSErrorForConnection(*conn);
+        return std::unexpected(ErrorForConnection(*conn).value_or(Error{ErrorDomain, Errors::sftp_protocol}));
     }
 }
 
-int SFTPHost::CreateSymlink(std::string_view _symlink_path,
-                            std::string_view _symlink_value,
-                            [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> SFTPHost::CreateSymlink(std::string_view _symlink_path,
+                                                   std::string_view _symlink_value,
+                                                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     if( const int rc = GetConnection(conn); rc < 0 )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
@@ -863,9 +858,9 @@ int SFTPHost::CreateSymlink(std::string_view _symlink_path,
                                                           static_cast<unsigned>(_symlink_value.length()),
                                                           LIBSSH2_SFTP_SYMLINK);
     if( symlink_rc == 0 )
-        return VFSError::Ok;
+        return {};
     else
-        return VFSErrorForConnection(*conn);
+        return std::unexpected(ErrorForConnection(*conn).value_or(Error{ErrorDomain, Errors::sftp_protocol}));
 }
 
 std::expected<void, Error> SFTPHost::SetPermissions(std::string_view _path,

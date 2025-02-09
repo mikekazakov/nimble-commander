@@ -87,7 +87,7 @@ TEST_CASE(PREFIX "MKD RMD")
     for( const auto &dir : std::vector<std::string>{"/" + nc::base::UUID::Generate().ToString(),
                                                     "/В лесу родилась елочка, В лесу она росла",
                                                     "/北京市 >≥±§ 😱"} ) {
-        REQUIRE(host->CreateDirectory(dir, 0755) == 0);
+        REQUIRE(host->CreateDirectory(dir, 0755));
         REQUIRE(host->IsDirectory(dir, 0) == true);                              // cached
         REQUIRE(shadowhost->IsDirectory(dir, VFSFlags::F_ForceRefresh) == true); // non-cached
         REQUIRE(host->RemoveDirectory(dir));
@@ -96,10 +96,10 @@ TEST_CASE(PREFIX "MKD RMD")
     }
 
     {
-        REQUIRE(host->CreateDirectory("", 0755) != 0);
-        REQUIRE(host->CreateDirectory("Hello, world!", 0755) != 0);
-        REQUIRE(host->CreateDirectory("/", 0755) != 0);
-        REQUIRE(host->CreateDirectory("/", 0755) != 0);
+        REQUIRE(!host->CreateDirectory("", 0755));
+        REQUIRE(!host->CreateDirectory("Hello, world!", 0755));
+        REQUIRE(!host->CreateDirectory("/", 0755));
+        REQUIRE(!host->CreateDirectory("/", 0755));
     }
     {
         REQUIRE(!host->RemoveDirectory(""));
@@ -114,13 +114,13 @@ TEST_CASE(PREFIX "MKD RMD")
     }
 
     {
-        REQUIRE(host->CreateDirectory("/First", 0755) == 0);
+        REQUIRE(host->CreateDirectory("/First", 0755));
         REQUIRE(shadowhost->IsDirectory("/First", VFSFlags::F_ForceRefresh)); // non-cached
-        REQUIRE(host->CreateDirectory("/First/Second", 0755) == 0);
+        REQUIRE(host->CreateDirectory("/First/Second", 0755));
         REQUIRE(shadowhost->IsDirectory("/First/Second", VFSFlags::F_ForceRefresh)); // non-cached
-        REQUIRE(host->CreateDirectory("/First/Second/Третий", 0755) == 0);
+        REQUIRE(host->CreateDirectory("/First/Second/Третий", 0755));
         REQUIRE(shadowhost->IsDirectory("/First/Second/Третий", VFSFlags::F_ForceRefresh)); // non-cached
-        REQUIRE(host->CreateDirectory("/First/Second/Третий/🤡", 0755) == 0);
+        REQUIRE(host->CreateDirectory("/First/Second/Третий/🤡", 0755));
         REQUIRE(shadowhost->IsDirectory("/First/Second/Третий/🤡", VFSFlags::F_ForceRefresh)); // non-cached
 
         REQUIRE(host->RemoveDirectory("/First/Second/Третий/🤡"));
@@ -135,7 +135,7 @@ TEST_CASE(PREFIX "MKD RMD")
 
     for( const auto &dir : std::vector<std::string>{
              "/some / very / bad / filename", "/some/another/invalid/path", "not even an absolute path"} ) {
-        REQUIRE(host->CreateDirectory(dir, 0755) != 0);
+        REQUIRE(!host->CreateDirectory(dir, 0755));
         REQUIRE(host->IsDirectory(dir, 0) == false);
         REQUIRE(shadowhost->IsDirectory(dir, VFSFlags::F_ForceRefresh) == false); // non-cached
     }
@@ -166,10 +166,10 @@ TEST_CASE(PREFIX "renaming")
     if( host->Stat("/DirectoryName2", stat, 0) == 0 )
         REQUIRE(host->RemoveDirectory("/DirectoryName2"));
 
-    REQUIRE(host->CreateDirectory("/DirectoryName1", 0755) == 0);
+    REQUIRE(host->CreateDirectory("/DirectoryName1", 0755));
     REQUIRE(host->Rename("/DirectoryName1", "/DirectoryName2"));
     REQUIRE(host->Stat("/DirectoryName2", stat, 0) == 0);
-    REQUIRE(host->CreateDirectory("/DirectoryName2/SomethingElse", 0755) == 0);
+    REQUIRE(host->CreateDirectory("/DirectoryName2/SomethingElse", 0755));
     REQUIRE(host->Rename("/DirectoryName2/SomethingElse", "/DirectoryName2/SomethingEvenElse"));
     REQUIRE(host->RemoveDirectory("/DirectoryName2/SomethingEvenElse"));
     REQUIRE(host->RemoveDirectory("/DirectoryName2"));
@@ -187,11 +187,11 @@ TEST_CASE(PREFIX "listing")
             REQUIRE(host->CreateFile(_path, file) == 0);
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
         };
-        REQUIRE(host->CreateDirectory("/Test", 0755) == 0);
-        REQUIRE(host->CreateDirectory("/Test/DirectoryName1", 0755) == 0);
-        REQUIRE(host->CreateDirectory("/Test/DirectoryName2", 0755) == 0);
-        REQUIRE(host->CreateDirectory("/Test/DirectoryName3", 0755) == 0);
-        REQUIRE(host->CreateDirectory("/Test/DirectoryName4", 0755) == 0);
+        REQUIRE(host->CreateDirectory("/Test", 0755));
+        REQUIRE(host->CreateDirectory("/Test/DirectoryName1", 0755));
+        REQUIRE(host->CreateDirectory("/Test/DirectoryName2", 0755));
+        REQUIRE(host->CreateDirectory("/Test/DirectoryName3", 0755));
+        REQUIRE(host->CreateDirectory("/Test/DirectoryName4", 0755));
         touch("/Test/FileName1.txt");
         touch("/Test/FileName2.txt");
         touch("/Test/FileName3.txt");
@@ -242,7 +242,7 @@ TEST_CASE(PREFIX "seekread")
             bytes[i] = static_cast<uint8_t>(i & 0xFF);
 
         VFSFilePtr file;
-        REQUIRE(host->CreateDirectory("/TestSeekRead", 0755) == 0);
+        REQUIRE(host->CreateDirectory("/TestSeekRead", 0755));
         REQUIRE(host->CreateFile("/TestSeekRead/blob", file) == 0);
         REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
         WriteAll(*file, bytes);
@@ -296,7 +296,7 @@ TEST_CASE(PREFIX "big files reading cancellation")
             bytes[i] = static_cast<uint8_t>(i & 0xFF);
 
         VFSFilePtr file;
-        REQUIRE(host->CreateDirectory("/TestCancellation", 0755) == 0);
+        REQUIRE(host->CreateDirectory("/TestCancellation", 0755));
         REQUIRE(host->CreateFile("/TestCancellation/blob", file) == 0);
         REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
         WriteAll(*file, bytes);

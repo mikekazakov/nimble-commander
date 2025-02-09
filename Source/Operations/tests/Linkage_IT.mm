@@ -26,8 +26,7 @@ TEST_CASE(PREFIX "symlink creation")
     REQUIRE(st_rc == VFSError::Ok);
     REQUIRE((st.mode & S_IFMT) == S_IFLNK);
 
-    char buf[MAXPATHLEN];
-    REQUIRE(host->ReadSymlink(path, buf) == VFSError::Ok);
+    std::expected<std::string, nc::Error> buf = host->ReadSymlink(path);
     REQUIRE(buf == value);
 }
 
@@ -61,8 +60,7 @@ TEST_CASE(PREFIX "symlink alteration")
     REQUIRE(st_rc == VFSError::Ok);
     REQUIRE((st.mode & S_IFMT) == S_IFLNK);
 
-    char buf[MAXPATHLEN];
-    REQUIRE(host->ReadSymlink(path, buf) == VFSError::Ok);
+    std::expected<std::string, nc::Error> buf = host->ReadSymlink(path);
     REQUIRE(buf == value);
 }
 

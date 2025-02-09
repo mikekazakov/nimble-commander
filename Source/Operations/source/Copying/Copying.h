@@ -47,7 +47,7 @@ private:
                               const std::string &_path,
                               std::shared_ptr<AsyncDialogResponse> _ctx);
 
-    CB::CantAccessSourceItemResolution OnCantAccessSourceItem(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+    CB::CantAccessSourceItemResolution OnCantAccessSourceItem(Error _error, const std::string &_path, VFSHost &_vfs);
 
     CB::CantOpenDestinationFileResolution
     OnCantOpenDestinationFile(int _vfs_error, const std::string &_path, VFSHost &_vfs);
@@ -61,10 +61,10 @@ private:
     OnDestinationFileWriteError(Error _error, const std::string &_path, VFSHost &_vfs);
 
     CB::CantCreateDestinationRootDirResolution
-    OnCantCreateDestinationRootDir(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+    OnCantCreateDestinationRootDir(Error _error, const std::string &_path, VFSHost &_vfs);
 
     CB::CantCreateDestinationDirResolution
-    OnCantCreateDestinationDir(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+    OnCantCreateDestinationDir(Error _error, const std::string &_path, VFSHost &_vfs);
 
     CB::CantDeleteDestinationFileResolution
     OnCantDeleteDestinationFile(Error _error, const std::string &_path, VFSHost &_vfs);

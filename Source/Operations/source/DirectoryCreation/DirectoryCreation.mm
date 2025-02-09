@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DirectoryCreation.h"
 #include "../AsyncDialogResponse.h"
 #include "../Internal.h"
@@ -21,7 +21,7 @@ DirectoryCreation::DirectoryCreation(std::string _directory_name, std::string _r
     m_Directories = Split(_directory_name);
 
     m_Job = std::make_unique<DirectoryCreationJob>(m_Directories, _root_folder, _vfs.shared_from_this());
-    m_Job->m_OnError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_OnError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         return static_cast<Callbacks::ErrorResolution>(OnError(_err, _path, _vfs));
     };
 
@@ -46,7 +46,7 @@ const std::vector<std::string> &DirectoryCreation::DirectoryNames() const
     return m_Directories;
 }
 
-int DirectoryCreation::OnError(int _err, const std::string &_path, VFSHost &_vfs)
+int DirectoryCreation::OnError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( !IsInteractive() )
         return (int)Callbacks::ErrorResolution::Stop;

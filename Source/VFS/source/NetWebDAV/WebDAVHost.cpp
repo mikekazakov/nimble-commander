@@ -279,22 +279,22 @@ int WebDAVHost::StatFS([[maybe_unused]] std::string_view _path,
     return VFSError::Ok;
 }
 
-int WebDAVHost::CreateDirectory(std::string_view _path,
-                                [[maybe_unused]] int _mode,
-                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> WebDAVHost::CreateDirectory(std::string_view _path,
+                                                       [[maybe_unused]] int _mode,
+                                                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_path) )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const auto path = EnsureTrailingSlash(std::string(_path));
     const auto ar = I->m_Pool.Get();
     const auto rc = RequestMKCOL(Config(), *ar.connection, path);
     if( rc != VFSError::Ok )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     I->m_Cache.CommitMkDir(path);
 
-    return VFSError::Ok;
+    return {};
 }
 
 std::expected<void, Error> WebDAVHost::RemoveDirectory(std::string_view _path,

@@ -614,17 +614,17 @@ bool NativeHost::IsWritable() const
     return true; // dummy now
 }
 
-int NativeHost::CreateDirectory(std::string_view _path,
-                                int _mode,
-                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error>
+NativeHost::CreateDirectory(std::string_view _path, int _mode, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
     auto &io = routedio::RoutedIO::Default;
     const int ret = io.mkdir(path.c_str(), mode_t(_mode));
     if( ret == 0 )
-        return 0;
-    return VFSError::FromErrno();
+        return {};
+
+    return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 }
 
 std::expected<void, Error> NativeHost::RemoveDirectory(std::string_view _path,
@@ -640,28 +640,27 @@ std::expected<void, Error> NativeHost::RemoveDirectory(std::string_view _path,
     return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 }
 
-int NativeHost::ReadSymlink(std::string_view _path,
-                            std::span<char> _buffer,
-                            [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<std::string, Error> NativeHost::ReadSymlink(std::string_view _path,
+                                                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
 
     auto &io = routedio::RoutedIO::Default;
-    const ssize_t sz = io.readlink(path.c_str(), _buffer.data(), _buffer.size());
+    char buffer[8192];
+    const ssize_t sz = io.readlink(path.c_str(), buffer, sizeof(buffer));
     if( sz < 0 )
-        return VFSError::FromErrno();
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 
-    if( sz >= static_cast<long>(_buffer.size()) )
-        return VFSError::SmallBuffer;
+    if( sz >= static_cast<long>(sizeof(buffer)) )
+        return std::unexpected(nc::Error{nc::Error::POSIX, ENOMEM});
 
-    _buffer[sz] = 0;
-    return 0;
+    return std::string(buffer, sz);
 }
 
-int NativeHost::CreateSymlink(std::string_view _symlink_path,
-                              std::string_view _symlink_value,
-                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> NativeHost::CreateSymlink(std::string_view _symlink_path,
+                                                     std::string_view _symlink_value,
+                                                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
     const std::pmr::string symlink_path(_symlink_path, &alloc);
@@ -669,10 +668,10 @@ int NativeHost::CreateSymlink(std::string_view _symlink_path,
 
     auto &io = routedio::RoutedIO::Default;
     const int result = io.symlink(symlink_value.c_str(), symlink_path.c_str());
-    if( result < 0 )
-        return VFSError::FromErrno();
+    if( result != 0 )
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 
-    return 0;
+    return {};
 }
 
 std::expected<void, Error> NativeHost::SetTimes(const std::string_view _path,

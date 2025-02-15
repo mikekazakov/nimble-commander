@@ -1,22 +1,10 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFSDeclarations.h>
 #include <sys/stat.h>
 
 namespace nc::vfs {
 
 static_assert(sizeof(Stat) == 128);
-
-bool StatFS::operator==(const StatFS &_r) const
-{
-    return total_bytes == _r.total_bytes && free_bytes == _r.free_bytes && avail_bytes == _r.avail_bytes &&
-           volume_name == _r.volume_name;
-}
-
-bool StatFS::operator!=(const StatFS &_r) const
-{
-    return total_bytes != _r.total_bytes || free_bytes != _r.free_bytes || avail_bytes != _r.avail_bytes ||
-           volume_name != _r.volume_name;
-}
 
 void Stat::FromSysStat(const struct stat &_from, Stat &_to)
 {

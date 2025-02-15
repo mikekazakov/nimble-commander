@@ -3,6 +3,7 @@
 
 #include <string>
 #include <functional>
+#include <compare>
 #include <Base/intrusive_ptr.h>
 #include <Base/Error.h>
 
@@ -31,11 +32,10 @@ struct DirEnt {
 struct StatFS {
     uint64_t total_bytes = 0;
     uint64_t free_bytes = 0;
-    uint64_t avail_bytes = 0; // may be less than actuat free_bytes
+    uint64_t avail_bytes = 0; // may be less than actual free_bytes
     std::string volume_name;
 
-    bool operator==(const StatFS &_r) const;
-    bool operator!=(const StatFS &_r) const;
+    constexpr bool operator==(const StatFS &_rhs) const noexcept = default;
 };
 
 struct Stat {

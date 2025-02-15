@@ -822,17 +822,19 @@ int ArchiveHost::ResolvePath(std::string_view _path, std::pmr::string &_resolved
     return VFSError::Ok;
 }
 
-int ArchiveHost::StatFS(std::string_view /*_path*/, VFSStatFS &_stat, const VFSCancelChecker & /*_cancel_checker*/)
+std::expected<VFSStatFS, Error> ArchiveHost::StatFS(std::string_view /*_path*/,
+                                                    const VFSCancelChecker & /*_cancel_checker*/)
 {
     const std::string_view vol_name = utility::PathManip::Filename(JunctionPath());
     if( vol_name.empty() )
-        return VFSError::InvalidCall;
-    _stat.volume_name = vol_name;
-    _stat.total_bytes = I->m_ArchivedFilesTotalSize;
-    _stat.free_bytes = 0;
-    _stat.avail_bytes = 0;
+        return std::unexpected(VFSError::ToError(VFSError::InvalidCall));
 
-    return 0;
+    VFSStatFS stat;
+    stat.volume_name = vol_name;
+    stat.total_bytes = I->m_ArchivedFilesTotalSize;
+    stat.free_bytes = 0;
+    stat.avail_bytes = 0;
+    return stat;
 }
 
 bool ArchiveHost::ShouldProduceThumbnails() const

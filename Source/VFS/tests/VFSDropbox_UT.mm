@@ -1,4 +1,4 @@
-// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/NetDropbox.h>
@@ -8,6 +8,7 @@
 #include <queue>
 #include <optional>
 
+using namespace nc;
 using namespace nc::vfs;
 
 #define PREFIX "VFSDropbox "
@@ -340,8 +341,7 @@ TEST_CASE(PREFIX "Operation with a refresh token")
     params.session_creator = &factory;
     auto host = std::make_shared<DropboxHost>(params);
 
-    VFSStatFS statfs;
-    CHECK(host->StatFS("/", statfs, {}) == VFSError::Ok);
+    const VFSStatFS statfs = host->StatFS("/").value();
     CHECK(statfs.total_bytes == 10000);
     CHECK(statfs.avail_bytes == 9000);
     CHECK(statfs.free_bytes == 9000);
@@ -386,6 +386,5 @@ TEST_CASE(PREFIX "Failed re-auth")
     params.session_creator = &factory;
     auto host = std::make_shared<DropboxHost>(params);
 
-    VFSStatFS statfs;
-    CHECK(host->StatFS("/", statfs, {}) == VFSError::FromErrno(EAUTH));
+    CHECK(host->StatFS("/").error() == Error{Error::POSIX, EAUTH});
 }

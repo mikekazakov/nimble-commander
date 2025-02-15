@@ -685,13 +685,13 @@ void FTPHost::BasicOptsSetup(CURLInstance *_inst)
     // _inst->EasySetOpt(CURLOPT_SSL_VERIFYHOST, false);
 }
 
-int FTPHost::StatFS([[maybe_unused]] std::string_view _path,
-                    VFSStatFS &_stat,
-                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSStatFS, Error> FTPHost::StatFS([[maybe_unused]] std::string_view _path,
+                                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    _stat.avail_bytes = _stat.free_bytes = _stat.total_bytes = 0;
-    _stat.volume_name = JunctionPath();
-    return 0;
+    VFSStatFS stat;
+    stat.avail_bytes = stat.free_bytes = stat.total_bytes = 0;
+    stat.volume_name = JunctionPath();
+    return stat;
 }
 
 const std::string &FTPHost::ServerUrl() const noexcept

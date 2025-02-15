@@ -494,9 +494,7 @@ statfs
 ==================================================================================================*/
 static void TestStatFS(VFSHostPtr _host)
 {
-    VFSStatFS st;
-    const auto statfs_rc = _host->StatFS("/", st, nullptr);
-    CHECK(statfs_rc == VFSError::Ok);
+    const VFSStatFS st = _host->StatFS("/").value();
     CHECK(st.total_bytes > 1'000'000'000L);
 }
 // INSTANTIATE_TEST("statfs", TestStatFS, "local"); // apache2 doesn't provide stafs (??)

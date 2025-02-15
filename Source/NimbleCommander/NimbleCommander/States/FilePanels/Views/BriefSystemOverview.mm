@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefSystemOverview.h"
 #include <Utility/SystemInformation.h>
 #include <Utility/NSTimer+Tolerance.h>
@@ -660,7 +660,7 @@ static NSTextField *CreateStockTF()
 
     m_StatFS = {};
     if( !m_TargetVFSPath.empty() && m_TargetVFSHost.get() )
-        m_TargetVFSHost->StatFS(m_TargetVFSPath, m_StatFS, nullptr);
+        m_StatFS = m_TargetVFSHost->StatFS(m_TargetVFSPath).value_or(VFSStatFS{});
 }
 
 - (void)updateControls
@@ -711,7 +711,7 @@ static NSTextField *CreateStockTF()
     // traversing in /Volumes
     m_StatFS = {};
     if( !m_TargetVFSPath.empty() && m_TargetVFSHost.get() )
-        m_TargetVFSHost->StatFS(m_TargetVFSPath, m_StatFS, nullptr);
+        m_StatFS = m_TargetVFSHost->StatFS(m_TargetVFSPath).value_or(VFSStatFS{});
 
     [self updateControls];
 }

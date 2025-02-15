@@ -610,18 +610,18 @@ int PSHost::IterateDirectoryListing(std::string_view _path,
     return VFSError::Ok;
 }
 
-int PSHost::StatFS([[maybe_unused]] std::string_view _path,
-                   VFSStatFS &_stat,
-                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSStatFS, Error> PSHost::StatFS([[maybe_unused]] std::string_view _path,
+                                               [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    _stat.volume_name = "Processes List";
-    _stat.avail_bytes = _stat.free_bytes = 0;
+    VFSStatFS stat;
+    stat.volume_name = "Processes List";
+    stat.avail_bytes = stat.free_bytes = 0;
 
     const std::lock_guard<std::mutex> lock(m_Lock);
     int total_size = 0;
     for_each(begin(m_Data->files), end(m_Data->files), [&](auto &i) { total_size += i.length(); });
-    _stat.total_bytes = total_size;
-    return 0;
+    stat.total_bytes = total_size;
+    return stat;
 }
 
 // return true if process has died, if it didn't on timeout - returns false

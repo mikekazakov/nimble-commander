@@ -4,8 +4,11 @@
 #include <string>
 #include <string_view>
 #include <memory>
+#include <exception>
 #include <iosfwd>
+#include <optional>
 #include <Base/intrusive_ptr.h>
+#include <fmt/format.h>
 
 #ifdef __OBJC__
 @class NSError;
@@ -125,4 +128,39 @@ private:
     nc::base::intrusive_ptr<ExternalPayload> m_External;
 };
 
+// This class wraps Error as a throwable exception.
+class ErrorException : public std::exception
+{
+public:
+    // Constructs an expection out of an error.
+    ErrorException(const Error &_err) noexcept;
+
+    // Constructs an expection out of an error.
+    ErrorException(Error &&_err) noexcept;
+
+    // Destructor.
+    ~ErrorException();
+
+    // Provides the description of the underlying Error.
+    const char *what() const noexcept override;
+
+    // Provides the underlying Error.
+    const Error &error() const noexcept;
+
+private:
+    Error m_Error;
+    mutable std::optional<std::string> m_What;
+};
+
 } // namespace nc
+
+template <>
+struct fmt::formatter<nc::Error> : fmt::formatter<std::string> {
+    constexpr auto parse(fmt::format_parse_context &_ctx) { return _ctx.begin(); }
+
+    template <typename FormatContext>
+    auto format(const nc::Error &_err, FormatContext &_ctx) const
+    {
+        return fmt::format_to(_ctx.out(), "{}", _err.Description());
+    }
+};

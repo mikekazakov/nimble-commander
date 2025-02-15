@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SearchForFiles.h"
 #include <sys/stat.h>
 #include <VFS/FileWindow.h>
@@ -203,21 +203,21 @@ bool SearchForFiles::FilterByContent(const char *_full_path, VFSHost &_in_host, 
     assert(m_FilterContent);
     _r = CFRangeMake(-1, 0);
 
-    VFSFilePtr file;
-    if( _in_host.CreateFile(_full_path, file, nullptr) != 0 )
+    const std::expected<std::shared_ptr<VFSFile>, Error> file = _in_host.CreateFile(_full_path);
+    if( !file )
         return false;
 
-    if( file->Open(VFSFlags::OF_Read) != 0 )
+    if( (*file)->Open(VFSFlags::OF_Read) != 0 )
         return false;
 
     NotifyLookingIn(_full_path, _in_host);
 
     nc::vfs::FileWindow fw;
-    if( fw.Attach(file) != 0 )
+    if( fw.Attach(*file) != 0 )
         return false;
 
     utility::Encoding encoding = m_FilterContent->encoding;
-    if( const utility::Encoding xattr_enc = EncodingFromXAttr(file); xattr_enc != utility::Encoding::ENCODING_INVALID )
+    if( const utility::Encoding xattr_enc = EncodingFromXAttr(*file); xattr_enc != utility::Encoding::ENCODING_INVALID )
         encoding = xattr_enc;
 
     using nc::vfs::SearchInFile;

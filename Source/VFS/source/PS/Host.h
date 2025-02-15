@@ -17,9 +17,8 @@ public:
     virtual VFSConfiguration Configuration() const override;
     static VFSMeta Meta();
 
-    int CreateFile(std::string_view _path,
-                   std::shared_ptr<VFSFile> &_target,
-                   const VFSCancelChecker &_cancel_checker) override;
+    std::expected<std::shared_ptr<VFSFile>, Error> CreateFile(std::string_view _path,
+                                                              const VFSCancelChecker &_cancel_checker = {}) override;
 
     bool IsDirectory(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 

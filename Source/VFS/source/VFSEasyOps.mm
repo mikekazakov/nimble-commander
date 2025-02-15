@@ -151,31 +151,29 @@ int VFSEasyCopyFile(const char *_src_full_path,
 
     int result = 0;
 
-    VFSFilePtr source_file;
-    VFSFilePtr dest_file;
-    result = _src_host->CreateFile(_src_full_path, source_file, nullptr);
-    if( result != 0 )
-        return result;
+    {
+        const std::expected<std::shared_ptr<VFSFile>, nc::Error> source_file = _src_host->CreateFile(_src_full_path);
+        if( !source_file )
+            return VFSError::GenericError; // TODO: return source_file
 
-    result = source_file->Open(VFSFlags::OF_Read);
-    if( result != 0 )
-        return result;
+        result = (*source_file)->Open(VFSFlags::OF_Read);
+        if( result != 0 )
+            return result;
 
-    result = _dst_host->CreateFile(_dst_full_path, dest_file, nullptr);
-    if( result != 0 )
-        return result;
+        const std::expected<std::shared_ptr<VFSFile>, nc::Error> dest_file = _dst_host->CreateFile(_dst_full_path);
+        if( !dest_file )
+            return VFSError::GenericError; // TODO: return dest_file
 
-    result = dest_file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist | VFSFlags::OF_IRUsr |
-                             VFSFlags::OF_IWUsr | VFSFlags::OF_IRGrp);
-    if( result != 0 )
-        return result;
+        result = (*dest_file)
+                     ->Open(VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist | VFSFlags::OF_IRUsr |
+                            VFSFlags::OF_IWUsr | VFSFlags::OF_IRGrp);
+        if( result != 0 )
+            return result;
 
-    result = CopyFileContents(source_file, dest_file);
-    if( result < 0 )
-        return result;
-
-    source_file.reset();
-    dest_file.reset();
+        result = CopyFileContents(*source_file, *dest_file);
+        if( result < 0 )
+            return result;
+    }
 
     result = CopyNodeAttrs(_src_full_path, _src_host, _dst_full_path, _dst_host);
     if( result < 0 )
@@ -288,26 +286,23 @@ int VFSEasyCompareFiles(const char *_file1_full_path,
         _file2_full_path[0] != '/' || !_file2_host )
         return VFSError::InvalidCall;
 
-    VFSFilePtr file1;
-    VFSFilePtr file2;
-    std::optional<std::vector<uint8_t>> data1;
-    std::optional<std::vector<uint8_t>> data2;
-
-    if( const int ret = _file1_host->CreateFile(_file1_full_path, file1, nullptr); ret != 0 )
+    const std::expected<VFSFilePtr, nc::Error> file1 = _file1_host->CreateFile(_file1_full_path);
+    if( !file1 )
+        return VFSError::GenericError; // TODO: return file1
+    if( const int ret = (*file1)->Open(VFSFlags::OF_Read); ret != 0 )
         return ret;
-    if( const int ret = file1->Open(VFSFlags::OF_Read); ret != 0 )
-        return ret;
-    data1 = file1->ReadFile();
+    const std::optional<std::vector<uint8_t>> data1 = (*file1)->ReadFile();
     if( !data1 )
-        return file1->LastError();
+        return (*file1)->LastError();
 
-    if( const int ret = _file2_host->CreateFile(_file2_full_path, file2, nullptr); ret != 0 )
+    const std::expected<VFSFilePtr, nc::Error> file2 = _file2_host->CreateFile(_file2_full_path);
+    if( !file2 )
+        return VFSError::GenericError; // TODO: return file2
+    if( const int ret = (*file2)->Open(VFSFlags::OF_Read); ret != 0 )
         return ret;
-    if( const int ret = file2->Open(VFSFlags::OF_Read); ret != 0 )
-        return ret;
-    data2 = file2->ReadFile();
+    const std::optional<std::vector<uint8_t>> data2 = (*file2)->ReadFile();
     if( !data2 )
-        return file2->LastError();
+        return (*file2)->LastError();
 
     if( data1->size() < data2->size() ) {
         _result = -1;
@@ -345,20 +340,20 @@ std::expected<void, nc::Error> VFSEasyDelete(const char *_full_path, const std::
 
 int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr &_vfs)
 {
-    VFSFilePtr file;
-    int ret = _vfs->CreateFile(_path, file, nullptr);
+    const std::expected<VFSFilePtr, nc::Error> efile = _vfs->CreateFile(_path);
+    if( !efile )
+        return VFSError::GenericError; // TODO: return efile
+    VFSFile &file = **efile;
+
+    const int ret = file.Open(VFSFlags::OF_IRUsr | VFSFlags::OF_IRGrp | VFSFlags::OF_IROth | VFSFlags::OF_IWUsr |
+                              VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist);
     if( ret != 0 )
         return ret;
 
-    ret = file->Open(VFSFlags::OF_IRUsr | VFSFlags::OF_IRGrp | VFSFlags::OF_IROth | VFSFlags::OF_IWUsr |
-                     VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist);
-    if( ret != 0 )
-        return ret;
+    if( file.GetWriteParadigm() == VFSFile::WriteParadigm::Upload )
+        file.SetUploadSize(0);
 
-    if( file->GetWriteParadigm() == VFSFile::WriteParadigm::Upload )
-        file->SetUploadSize(0);
-
-    return file->Close();
+    return file.Close();
 }
 
 int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
@@ -415,11 +410,12 @@ std::optional<std::string> CopyFileToTempStorage(const std::string &_vfs_filepat
                                                  nc::utility::TemporaryFileStorage &_temp_storage,
                                                  const std::function<bool()> &_cancel_checker)
 {
-    VFSFilePtr vfs_file;
-    if( _host.CreateFile(_vfs_filepath, vfs_file, _cancel_checker) < 0 )
-        return std::nullopt;
+    const std::expected<VFSFilePtr, nc::Error> evfs_file = _host.CreateFile(_vfs_filepath, _cancel_checker);
+    if( !evfs_file )
+        return std::nullopt; // TODO: return vfs_file;
+    VFSFile &vfs_file = **evfs_file;
 
-    if( vfs_file->Open(VFSFlags::OF_Read, _cancel_checker) < 0 )
+    if( vfs_file.Open(VFSFlags::OF_Read, _cancel_checker) < 0 )
         return std::nullopt;
 
     const std::string_view name = utility::PathManip::Filename(_vfs_filepath);
@@ -434,7 +430,7 @@ std::optional<std::string> CopyFileToTempStorage(const std::string &_vfs_filepat
     constexpr size_t bufsz = 256ULL * 1024ULL;
     std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
     ssize_t res_read;
-    while( (res_read = vfs_file->Read(buf.get(), bufsz)) > 0 ) {
+    while( (res_read = vfs_file.Read(buf.get(), bufsz)) > 0 ) {
         ssize_t res_write;
         auto bufp = &buf[0];
         while( res_read > 0 ) {
@@ -450,8 +446,8 @@ std::optional<std::string> CopyFileToTempStorage(const std::string &_vfs_filepat
     if( res_read < 0 )
         return std::nullopt;
 
-    vfs_file->XAttrIterateNames([&](const char *_name) {
-        const ssize_t res = vfs_file->XAttrGet(_name, buf.get(), bufsz);
+    vfs_file.XAttrIterateNames([&](const char *_name) {
+        const ssize_t res = vfs_file.XAttrGet(_name, buf.get(), bufsz);
         if( res >= 0 )
             fsetxattr(native_file->file_descriptor, _name, buf.get(), res, 0, 0);
         return true;
@@ -534,12 +530,12 @@ static int ExtractRegFile(const std::string &_vfs_path,
                           const std::string &_native_path,
                           const std::function<bool()> &_cancel_checker)
 {
-    VFSFilePtr vfs_file;
-    const auto create_file_rc = _host.CreateFile(_vfs_path, vfs_file, _cancel_checker);
-    if( create_file_rc != VFSError::Ok )
-        return create_file_rc;
+    const std::expected<VFSFilePtr, nc::Error> efile = _host.CreateFile(_vfs_path, _cancel_checker);
+    if( !efile )
+        return VFSError::GenericError; // TODO: return evfs_file
+    VFSFile &file = **efile;
 
-    const auto open_file_rc = vfs_file->Open(VFSFlags::OF_Read, _cancel_checker);
+    const auto open_file_rc = file.Open(VFSFlags::OF_Read, _cancel_checker);
     if( open_file_rc != VFSError::Ok )
         return open_file_rc;
 
@@ -555,7 +551,7 @@ static int ExtractRegFile(const std::string &_vfs_path,
     constexpr size_t bufsz = 256ULL * 1024ULL;
     std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
     ssize_t res_read;
-    while( (res_read = vfs_file->Read(buf.get(), bufsz)) > 0 ) {
+    while( (res_read = file.Read(buf.get(), bufsz)) > 0 ) {
         while( res_read > 0 ) {
             const ssize_t res_write = write(fd, buf.get(), res_read);
             if( res_write >= 0 )
@@ -569,8 +565,8 @@ static int ExtractRegFile(const std::string &_vfs_path,
         return static_cast<int>(res_read);
     }
 
-    vfs_file->XAttrIterateNames([&](const char *name) -> bool {
-        const ssize_t res = vfs_file->XAttrGet(name, buf.get(), bufsz);
+    file.XAttrIterateNames([&](const char *name) -> bool {
+        const ssize_t res = file.XAttrGet(name, buf.get(), bufsz);
         if( res >= 0 )
             fsetxattr(fd, name, buf.get(), res, 0, 0);
         return true;

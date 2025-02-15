@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "OpenNetworkConnection.h"
 #include "../PanelController.h"
 #include "../Views/FTPConnectionSheetController.h"
@@ -49,12 +49,12 @@ static bool GoToFTP(PanelController *_target,
         _net_mgr.ReportUsage(_connection);
 
         return true;
-    } catch( VFSErrorException &e ) {
+    } catch( const ErrorException &e ) {
         dispatch_to_main_queue([=] {
             Alert *const alert = [[Alert alloc] init];
             alert.messageText =
                 NSLocalizedString(@"FTP connection error:", "Showing error when connecting to FTP server");
-            alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
+            alert.informativeText = [NSString stringWithUTF8StdString:e.error().LocalizedFailureReason()];
             [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];
         });
@@ -84,12 +84,12 @@ static bool GoToSFTP(PanelController *_target,
         _net_mgr.ReportUsage(_connection);
 
         return true;
-    } catch( const VFSErrorException &e ) {
+    } catch( const ErrorException &e ) {
         dispatch_to_main_queue([=] {
             Alert *const alert = [[Alert alloc] init];
             alert.messageText =
                 NSLocalizedString(@"SFTP connection error:", "Showing error when connecting to SFTP server");
-            alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
+            alert.informativeText = [NSString stringWithUTF8StdString:e.error().LocalizedFailureReason()];
             [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];
         });
@@ -119,12 +119,12 @@ static bool GoToWebDAV(PanelController *_target,
         _net_mgr.ReportUsage(_connection);
 
         return true;
-    } catch( const VFSErrorException &e ) {
+    } catch( const ErrorException &e ) {
         dispatch_to_main_queue([=] {
             Alert *const alert = [[Alert alloc] init];
             alert.messageText =
                 NSLocalizedString(@"WebDAV connection error:", "Showing error when connecting to WebDAV server");
-            alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
+            alert.informativeText = [NSString stringWithUTF8StdString:e.error().LocalizedFailureReason()];
             [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];
         });
@@ -157,12 +157,12 @@ static void GoToDropboxStorage(PanelController *_target,
 
         // save successful connection to history
         _net_mgr.ReportUsage(_connection);
-    } catch( const VFSErrorException &e ) {
+    } catch( const ErrorException &e ) {
         dispatch_to_main_queue([=] {
             Alert *const alert = [[Alert alloc] init];
             alert.messageText =
                 NSLocalizedString(@"Dropbox connection error:", "Showing error when connecting to Dropbox service");
-            alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
+            alert.informativeText = [NSString stringWithUTF8StdString:e.error().LocalizedFailureReason()];
             [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];
         });

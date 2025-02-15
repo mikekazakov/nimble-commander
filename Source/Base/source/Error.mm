@@ -346,6 +346,28 @@ void Error::DescriptionProvider(std::string_view _domain,
     DescriptionProviders::Instance().Set(idx, std::move(_provider));
 }
 
+ErrorException::ErrorException(const Error &_err) noexcept : m_Error(_err)
+{
+}
+
+ErrorException::ErrorException(Error &&_err) noexcept : m_Error(std::move(_err))
+{
+}
+
+ErrorException::~ErrorException() = default;
+
+const char *ErrorException::what() const noexcept
+{
+    if( !m_What )
+        m_What = m_Error.Description();
+    return m_What->c_str();
+}
+
+const Error &ErrorException::error() const noexcept
+{
+    return m_Error;
+}
+
 bool operator==(const Error &_lhs, const Error &_rhs) noexcept
 {
     return _lhs.m_Domain == _rhs.m_Domain && _lhs.m_Code == _rhs.m_Code;

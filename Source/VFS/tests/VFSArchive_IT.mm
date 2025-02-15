@@ -88,8 +88,7 @@ TEST_CASE(PREFIX "XNUSource - TAR")
         REQUIRE(st.mode_bits.reg);
         REQUIRE(st.size == 957);
 
-        VFSFilePtr file;
-        REQUIRE(host->CreateFile(fn, file, nullptr) == 0);
+        const VFSFilePtr file = host->CreateFile(fn).value();
         REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
         auto d = file->ReadFile();
         REQUIRE(d->size() == 957);
@@ -122,8 +121,7 @@ TEST_CASE(PREFIX "XNUSource - TAR")
           VFSStat local_st;
           REQUIRE(host->Stat(fn, local_st, 0, nullptr) == 0);
 
-          VFSFilePtr file;
-          REQUIRE(host->CreateFile(fn, file, nullptr) == 0);
+          const VFSFilePtr file = host->CreateFile(fn).value();
           REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
           std::this_thread::sleep_for(std::chrono::milliseconds(5));
           auto d = file->ReadFile();

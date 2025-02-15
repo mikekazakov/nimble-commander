@@ -267,9 +267,13 @@ public:
      * Making changes to the filesystem
      **********************************************************************************************/
 
-    virtual int CreateFile(std::string_view _path,                        //
-                           std::shared_ptr<VFSFile> &_target,             //
-                           const VFSCancelChecker &_cancel_checker = {}); //
+    // Factory method - creates a VFSFile for this VFS type that points at the specified path.
+    // The file object will be in a default non-opened state.
+    // This call is not assumed to cause any I/O.
+    // A host may refuse to create a file that points to an invalid path location.
+    // A host may also refuse if there can't be any item at that path and that's known in advance without I/O.
+    virtual std::expected<std::shared_ptr<VFSFile>, Error> CreateFile(std::string_view _path,                        //
+                                                                      const VFSCancelChecker &_cancel_checker = {}); //
 
     // Creates a directory at the specified path with the specified permissions.
     virtual std::expected<void, Error> CreateDirectory(std::string_view _path,                        //

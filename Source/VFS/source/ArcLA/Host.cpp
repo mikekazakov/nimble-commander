@@ -107,13 +107,12 @@ ArchiveHost::ArchiveHost(const std::string_view _path,
       m_Configuration(ComposeConfiguration(_path, std::move(_password)))
 {
     assert(_parent);
-    const int rc = DoInit(_cancel_checker);
-    if( rc < 0 ) {
+    if( const std::expected<void, Error> rc = DoInit(_cancel_checker); !rc ) {
         if( I->m_Arc != nullptr ) { // TODO: ugly
             archive_read_free(I->m_Arc);
             I->m_Arc = nullptr;
         }
-        throw VFSErrorException(rc);
+        throw VFSErrorException(rc.error());
     }
 }
 
@@ -122,13 +121,12 @@ ArchiveHost::ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_con
       m_Configuration(_config)
 {
     assert(_parent);
-    const int rc = DoInit(_cancel_checker);
-    if( rc < 0 ) {
+    if( const std::expected<void, Error> rc = DoInit(_cancel_checker); !rc ) {
         if( I->m_Arc != nullptr ) { // TODO: ugly
             archive_read_free(I->m_Arc);
             I->m_Arc = nullptr;
         }
-        throw VFSErrorException(rc);
+        throw VFSErrorException(rc.error());
     }
 }
 
@@ -164,7 +162,7 @@ VFSMeta ArchiveHost::Meta()
     return m;
 }
 
-int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
+std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_checker)
 {
     assert(I->m_Arc == nullptr);
     int res = 0;
@@ -176,21 +174,23 @@ int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
         VFSStat st;
         res = Parent()->Stat(path, st, 0);
         if( res < 0 )
-            return res;
+            return std::unexpected(VFSError::ToError(res));
         VFSStat::ToSysStat(st, I->m_SrcFileStat);
     }
 
     VFSFilePtr source_file;
-    res = Parent()->CreateFile(path, source_file, {});
-    if( res < 0 )
-        return res;
+    if( auto exp = Parent()->CreateFile(path, _cancel_checker); exp )
+        source_file = *exp;
+    else
+        return std::unexpected(exp.error());
 
     res = source_file->Open(VFSFlags::OF_Read);
     if( res < 0 )
-        return res;
+        return std::unexpected(VFSError::ToError(res));
 
     if( source_file->Size() <= 0 )
-        return VFSError::ArclibFileFormat; // libarchive thinks that zero-bytes archives are OK, but I don't think so.
+        return std::unexpected(VFSError::ToError(
+            VFSError::ArclibFileFormat)); // libarchive thinks that zero-bytes archives are OK, but I don't think so.
 
     if( Parent()->IsNativeFS() ) {
         I->m_ArFile = source_file;
@@ -199,13 +199,13 @@ int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
         auto wrapping = std::make_shared<VFSSeqToRandomROWrapperFile>(source_file);
         res = wrapping->Open(VFSFlags::OF_Read, _cancel_checker);
         if( res != VFSError::Ok )
-            return res;
+            return std::unexpected(VFSError::ToError(res));
         I->m_ArFile = wrapping;
     }
 
     if( I->m_ArFile->GetReadParadigm() < VFSFile::ReadParadigm::Sequential ) {
         I->m_ArFile.reset();
-        return VFSError::InvalidCall;
+        return std::unexpected(VFSError::ToError(VFSError::InvalidCall));
     }
 
     I->m_Mediator = std::make_shared<Mediator>();
@@ -222,19 +222,22 @@ int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
         I->m_Arc = nullptr;
         I->m_Mediator.reset();
         I->m_ArFile.reset();
-        return -1; // TODO: right error code
+        return std::unexpected(VFSError::ToError(-1)); // TODO: right error code
     }
 
     // we should fail is archive is encrypted and there's no password provided
     if( archive_read_has_encrypted_entries(I->m_Arc) > 0 && !Config().password )
-        return VFSError::ArclibPasswordRequired;
+        return std::unexpected(VFSError::ToError(VFSError::ArclibPasswordRequired));
 
     res = ReadArchiveListing();
     I->m_ArchiveFileSize = I->m_ArFile->Size();
     if( archive_read_has_encrypted_entries(I->m_Arc) > 0 && !Config().password )
-        return VFSError::ArclibPasswordRequired;
+        return std::unexpected(VFSError::ToError(VFSError::ArclibPasswordRequired));
 
-    return res;
+    if( res != VFSError::Ok )
+        return std::unexpected(VFSError::ToError(res));
+
+    return {};
 }
 
 static bool SplitIntoFilenameAndParentPath(const char *_path,
@@ -526,15 +529,13 @@ void ArchiveHost::InsertDummyDirInto(Dir *_parent, const std::string_view _dir_n
     entry.aruid = SyntheticArUID;
 }
 
-int ArchiveHost::CreateFile(std::string_view _path,
-                            std::shared_ptr<VFSFile> &_target,
-                            const VFSCancelChecker &_cancel_checker)
+std::expected<std::shared_ptr<VFSFile>, Error> ArchiveHost::CreateFile(std::string_view _path,
+                                                                       const VFSCancelChecker &_cancel_checker)
 {
     auto file = std::make_shared<File>(_path, SharedPtr());
     if( _cancel_checker && _cancel_checker() )
-        return VFSError::Cancelled;
-    _target = file;
-    return VFSError::Ok;
+        return std::unexpected(Error{Error::POSIX, ECANCELED});
+    return file;
 }
 
 int ArchiveHost::FetchDirectoryListing(std::string_view _path,

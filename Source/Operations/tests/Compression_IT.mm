@@ -166,7 +166,7 @@ TEST_CASE(PREFIX "Compressing kernel into encrypted archive")
         std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host);
         REQUIRE(false);
     } catch( VFSErrorException &e ) {
-        REQUIRE(e.code() == VFSError::ArclibPasswordRequired);
+        REQUIRE(e.error() == Error{VFSError::ErrorDomain, VFSError::ArclibPasswordRequired});
     }
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
@@ -252,8 +252,7 @@ TEST_CASE(PREFIX "Compressing an item with xattrs")
         REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
 
         // open the compressed file in the archive
-        std::shared_ptr<VFSFile> file;
-        REQUIRE(arc_host->CreateFile("/" + filepath.filename().native(), file) == VFSError::Ok);
+        const std::shared_ptr<VFSFile> file = arc_host->CreateFile("/" + filepath.filename().native()).value();
         REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
 
         // check the number of compressed extended attributes is the same as in the original file
@@ -312,8 +311,7 @@ TEST_CASE(PREFIX "Compressing multiple items with xattrs")
     for( const auto &p : {file0, file1, file2, dir1, dir2} ) {
         // open the compressed file in the archive
         const std::filesystem::path path = std::filesystem::path("/") / p;
-        std::shared_ptr<VFSFile> file;
-        REQUIRE(arc_host->CreateFile(path.native(), file) == VFSError::Ok);
+        const std::shared_ptr<VFSFile> file = arc_host->CreateFile(path.native()).value();
         REQUIRE(file->Open(p.native().ends_with(".txt")
                                ? VFSFlags::OF_Read
                                : (VFSFlags::OF_Read | VFSFlags::OF_Directory)) == VFSError::Ok);

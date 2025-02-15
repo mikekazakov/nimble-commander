@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -9,6 +9,7 @@
 #include <thread>
 #include "NCE.h"
 
+using namespace nc;
 using namespace nc::vfs;
 
 #define PREFIX "VFSArchiveRaw "
@@ -24,12 +25,9 @@ static const unsigned char __hello_txt_bz2[] = {0x42, 0x5a, 0x68, 0x39, 0x31, 0x
                                                 0x9c, 0x28, 0x48, 0x0c, 0x98, 0xb2, 0x9e, 0x80};
 static const unsigned int __hello_txt_bz2_len = 41;
 
-// clang-format off
-static const unsigned char __hello_txt_zst[] = {
-    0x28, 0xb5, 0x2f, 0xfd, 0x24, 0x05, 0x29, 0x00, 0x00, 0x68, 0x65, 0x6c, 0x6c, 0x6f,
-    0xa3, 0x6d, 0x9f, 0x88};
+static const unsigned char __hello_txt_zst[] =
+    {0x28, 0xb5, 0x2f, 0xfd, 0x24, 0x05, 0x29, 0x00, 0x00, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0xa3, 0x6d, 0x9f, 0x88};
 static const unsigned int __hello_txt_zst_len = 18;
-// clang-format on
 
 static const unsigned char __hello_txt_lz4[] = {0x04, 0x22, 0x4d, 0x18, 0x64, 0x40, 0xa7, 0x05, 0x00, 0x00, 0x80, 0x68,
                                                 0x65, 0x6c, 0x6c, 0x6f, 0x00, 0x00, 0x00, 0x00, 0xf9, 0x77, 0x00, 0xfb};
@@ -108,12 +106,11 @@ static void check(const Case &test_case)
     const auto enoent = VFSError::FromErrno(ENOENT);
 
     // let's read a file
-    VFSFilePtr file;
-    CHECK(host->CreateFile("", file) == einval);
-    CHECK(host->CreateFile("blah-blah", file) == einval);
-    CHECK(host->CreateFile("/blah-blah", file) == enoent);
-    REQUIRE(host->CreateFile("/hello.txt", file) == VFSError::Ok);
+    CHECK(host->CreateFile("").error() == Error{Error::POSIX, EINVAL});
+    CHECK(host->CreateFile("blah-blah").error() == Error{Error::POSIX, EINVAL});
+    CHECK(host->CreateFile("/blah-blah").error() == Error{Error::POSIX, ENOENT});
 
+    const VFSFilePtr file = host->CreateFile("/hello.txt").value();
     CHECK(file->Open(nc::vfs::Flags::OF_Read) == VFSError::Ok);
     REQUIRE(file->Size() == 5);
     char data[5];
@@ -177,8 +174,7 @@ TEST_CASE(PREFIX "gracefully discards non-compressed input")
     std::vector<uint8_t> const cases[] = {
         {},
         {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-        {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B,
-         0x0C, 0x0D, 0x0E, 0x0F}
+        {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F}
     };
     // clang-format on
     const TestDir dir;
@@ -189,7 +185,7 @@ TEST_CASE(PREFIX "gracefully discards non-compressed input")
             std::make_shared<ArchiveRawHost>(path.c_str(), TestEnv().vfs_native);
             CHECK(false);
         } catch( VFSErrorException &ex ) {
-            CHECK(ex.code() == VFSError::ArclibFileFormat);
+            CHECK(ex.error() == Error{VFSError::ErrorDomain, VFSError::ArclibFileFormat});
         }
     }
 }

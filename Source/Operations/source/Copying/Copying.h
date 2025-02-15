@@ -50,12 +50,12 @@ private:
     CB::CantAccessSourceItemResolution OnCantAccessSourceItem(Error _error, const std::string &_path, VFSHost &_vfs);
 
     CB::CantOpenDestinationFileResolution
-    OnCantOpenDestinationFile(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+    OnCantOpenDestinationFile(Error _error, const std::string &_path, VFSHost &_vfs);
 
     CB::SourceFileReadErrorResolution OnSourceFileReadError(int _vfs_error, const std::string &_path, VFSHost &_vfs);
 
     CB::DestinationFileReadErrorResolution
-    OnDestinationFileReadError(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+    OnDestinationFileReadError(Error _error, const std::string &_path, VFSHost &_vfs);
 
     CB::DestinationFileWriteErrorResolution
     OnDestinationFileWriteError(Error _error, const std::string &_path, VFSHost &_vfs);

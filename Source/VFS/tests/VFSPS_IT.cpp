@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/PS.h>
@@ -38,8 +38,7 @@ TEST_CASE(PREFIX "can read info about kernel_task")
     REQUIRE(it != list->end());
     const auto &kernel_task_listing_item = *it;
 
-    VFSFilePtr file;
-    REQUIRE(host->CreateFile(kernel_task_listing_item.Path(), file, {}) == 0);
+    const VFSFilePtr file = host->CreateFile(kernel_task_listing_item.Path()).value();
     REQUIRE(file->Open(Flags::OF_Read) == 0);
     const auto file_contents = file->ReadFile();
     REQUIRE(file_contents != std::nullopt);

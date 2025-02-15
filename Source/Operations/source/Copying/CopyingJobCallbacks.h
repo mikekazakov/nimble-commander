@@ -14,7 +14,7 @@ struct CopyingJobCallbacks {
         Skip,
         Retry
     };
-    std::function<CantAccessSourceItemResolution(Error _vfs_error, const std::string &_path, VFSHost &_vfs)>
+    std::function<CantAccessSourceItemResolution(Error _error, const std::string &_path, VFSHost &_vfs)>
         m_OnCantAccessSourceItem =
             [](Error, const std::string &, VFSHost &) { return CantAccessSourceItemResolution::Stop; };
 
@@ -49,9 +49,9 @@ struct CopyingJobCallbacks {
         Skip,
         Retry
     };
-    std::function<CantOpenDestinationFileResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+    std::function<CantOpenDestinationFileResolution(Error _error, const std::string &_path, VFSHost &_vfs)>
         m_OnCantOpenDestinationFile =
-            [](int, const std::string &, VFSHost &) { return CantOpenDestinationFileResolution::Stop; };
+            [](Error, const std::string &, VFSHost &) { return CantOpenDestinationFileResolution::Stop; };
 
     enum class SourceFileReadErrorResolution {
         Stop,
@@ -66,9 +66,9 @@ struct CopyingJobCallbacks {
         Stop,
         Skip
     };
-    std::function<DestinationFileReadErrorResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+    std::function<DestinationFileReadErrorResolution(Error _error, const std::string &_path, VFSHost &_vfs)>
         m_OnDestinationFileReadError =
-            [](int, const std::string &, VFSHost &) { return DestinationFileReadErrorResolution::Stop; };
+            [](Error, const std::string &, VFSHost &) { return DestinationFileReadErrorResolution::Stop; };
 
     enum class DestinationFileWriteErrorResolution {
         Stop,

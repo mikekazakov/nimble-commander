@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSArchiveProxy.h"
 #include "ArcLA/Host.h"
 #include "ArcLARaw/Host.h"
@@ -14,7 +14,8 @@ VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const std::string &_path,
         auto archive = std::make_shared<nc::vfs::ArchiveHost>(_path, _parent, std::nullopt, _cancel_checker);
         return archive;
     } catch( VFSErrorException &e ) {
-        if( e.code() == VFSError::ArclibPasswordRequired && _passwd ) {
+        if( e.error().Domain() == VFSError::ErrorDomain && e.error().Code() == VFSError::ArclibPasswordRequired &&
+            _passwd ) {
             auto passwd = _passwd();
             if( passwd.empty() )
                 return nullptr;

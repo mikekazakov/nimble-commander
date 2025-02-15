@@ -49,9 +49,8 @@ public:
              unsigned long _flags,
              const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int CreateFile(std::string_view _path,
-                   std::shared_ptr<VFSFile> &_target,
-                   const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<std::shared_ptr<VFSFile>, Error> CreateFile(std::string_view _path,
+                                                              const VFSCancelChecker &_cancel_checker = {}) override;
 
     int FetchDirectoryListing(std::string_view _path,
                               VFSListingPtr &_target,
@@ -121,7 +120,7 @@ public:
 private:
     struct Impl;
 
-    int DoInit(VFSCancelChecker _cancel_checker);
+    std::expected<void, Error> DoInit(const VFSCancelChecker &_cancel_checker);
     const class VFSArchiveHostConfiguration &Config() const;
 
     int ReadArchiveListing();

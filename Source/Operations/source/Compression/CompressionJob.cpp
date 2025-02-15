@@ -96,7 +96,11 @@ bool CompressionJob::BuildArchive()
 {
     const auto flags =
         VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_IRUsr | VFSFlags::OF_IWUsr | VFSFlags::OF_IRGrp;
-    m_DstVFS->CreateFile(m_TargetArchivePath, m_TargetFile, nullptr);
+    const std::expected<std::shared_ptr<VFSFile>, Error> exp_file = m_DstVFS->CreateFile(m_TargetArchivePath);
+    if( !exp_file )
+        return false; // TODO: use error from exp_file
+
+    m_TargetFile = *exp_file;
     const auto open_rc = m_TargetFile->Open(flags);
     if( open_rc == VFSError::Ok ) {
         m_Archive = archive_write_new();
@@ -264,11 +268,10 @@ CompressionJob::ProcessDirectoryItem(int _index, const std::string &_relative_pa
 
     if( !IsEncrypted() ) {
         // we can't support encrypted EAs due to lack of read support in LA
-        VFSFilePtr src_file;
-        vfs.CreateFile(_full_path, src_file);
-        if( src_file->Open(VFSFlags::OF_Read) == VFSError::Ok ) {
+        const std::expected<std::shared_ptr<VFSFile>, Error> src_file = vfs.CreateFile(_full_path);
+        if( src_file && (*src_file)->Open(VFSFlags::OF_Read) == VFSError::Ok ) {
             const std::string name_wo_slash = {std::begin(_relative_path), std::end(_relative_path) - 1};
-            WriteEAsIfAny(*src_file, m_Archive, name_wo_slash);
+            WriteEAsIfAny(**src_file, m_Archive, name_wo_slash);
         }
     }
 
@@ -297,12 +300,17 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
         }
     }
 
-    VFSFilePtr src_file;
-    vfs.CreateFile(_full_path, src_file);
+    const std::expected<std::shared_ptr<VFSFile>, Error> exp_src_file = vfs.CreateFile(_full_path);
+    if( !exp_src_file ) {
+        // TODO: show an error message?
+        Stop();
+        return StepResult::Stopped;
+    }
 
+    VFSFile &src_file = **exp_src_file;
     while( true ) {
         const auto flags = VFSFlags::OF_Read | VFSFlags::OF_ShLock;
-        const auto rc = src_file->Open(flags);
+        const auto rc = src_file.Open(flags);
         if( rc == VFSError::Ok )
             break;
         switch( m_SourceAccessError(VFSError::ToError(rc), _full_path, vfs) ) {
@@ -330,7 +338,7 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
     constexpr int buf_sz = 256 * 1024; // Why 256Kb?
     const std::unique_ptr<char[]> buf = std::make_unique<char[]>(buf_sz);
     ssize_t source_read_rc;
-    while( (source_read_rc = src_file->Read(buf.get(), buf_sz)) > 0 ) { // reading and compressing itself
+    while( (source_read_rc = src_file.Read(buf.get(), buf_sz)) > 0 ) { // reading and compressing itself
         if( BlockIfPaused(); IsStopped() )
             return StepResult::Stopped;
 
@@ -364,7 +372,7 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
 
     if( !IsEncrypted() ) {
         // we can't support encrypted EAs due to lack of read support in LA
-        WriteEAsIfAny(*src_file, m_Archive, _relative_path);
+        WriteEAsIfAny(src_file, m_Archive, _relative_path);
     }
 
     return StepResult::Done;

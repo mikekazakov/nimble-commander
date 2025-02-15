@@ -94,15 +94,12 @@ static NSImage *ProduceThumbnailForTempFile(const std::string &_path, CGSize _px
 
 static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_path, VFSHost &_host)
 {
-    VFSFilePtr vfs_file;
-
-    if( _host.CreateFile(_path, vfs_file, nullptr) < 0 )
-        return std::nullopt;
-
-    if( vfs_file->Open(VFSFlags::OF_Read) < 0 )
-        return std::nullopt;
-
-    return vfs_file->ReadFile();
+    if( const std::expected<std::shared_ptr<VFSFile>, Error> file = _host.CreateFile(_path) ) {
+        if( (*file)->Open(VFSFlags::OF_Read) == VFSError::Ok ) {
+            return (*file)->ReadFile();
+        }
+    }
+    return std::nullopt;
 }
 
 } // namespace nc::vfsicon

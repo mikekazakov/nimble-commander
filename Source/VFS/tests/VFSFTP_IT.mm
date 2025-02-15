@@ -61,8 +61,7 @@ TEST_CASE(PREFIX "empty file test")
     if( host->Stat(fn, stat, 0, nullptr) == 0 )
         REQUIRE(host->Unlink(fn));
 
-    VFSFilePtr file;
-    REQUIRE(host->CreateFile(fn, file) == 0);
+    const VFSFilePtr file = host->CreateFile(fn).value();
     REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
     REQUIRE(file->IsOpened() == true);
     REQUIRE(file->Close() == 0);
@@ -183,8 +182,7 @@ TEST_CASE(PREFIX "listing")
         REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
         std::ignore = VFSEasyDelete("/Test", host);
         auto touch = [&](const char *_path) {
-            VFSFilePtr file;
-            REQUIRE(host->CreateFile(_path, file) == 0);
+            const VFSFilePtr file = host->CreateFile(_path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
         };
         REQUIRE(host->CreateDirectory("/Test", 0755));
@@ -241,9 +239,8 @@ TEST_CASE(PREFIX "seekread")
         for( size_t i = 0; i < sz; ++i )
             bytes[i] = static_cast<uint8_t>(i & 0xFF);
 
-        VFSFilePtr file;
         REQUIRE(host->CreateDirectory("/TestSeekRead", 0755));
-        REQUIRE(host->CreateFile("/TestSeekRead/blob", file) == 0);
+        const VFSFilePtr file = host->CreateFile("/TestSeekRead/blob").value();
         REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
         WriteAll(*file, bytes);
         REQUIRE(file->Close() == 0);
@@ -253,8 +250,7 @@ TEST_CASE(PREFIX "seekread")
     REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
 
     constexpr auto fn = "/TestSeekRead/blob";
-    VFSFilePtr file;
-    REQUIRE(host->CreateFile(fn, file, nullptr) == 0);
+    const VFSFilePtr file = host->CreateFile(fn).value();
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
 
     struct TC {
@@ -295,9 +291,8 @@ TEST_CASE(PREFIX "big files reading cancellation")
         for( size_t i = 0; i < sz; ++i )
             bytes[i] = static_cast<uint8_t>(i & 0xFF);
 
-        VFSFilePtr file;
         REQUIRE(host->CreateDirectory("/TestCancellation", 0755));
-        REQUIRE(host->CreateFile("/TestCancellation/blob", file) == 0);
+        const VFSFilePtr file = host->CreateFile("/TestCancellation/blob").value();
         REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
         WriteAll(*file, bytes);
         REQUIRE(file->Close() == 0);
@@ -308,9 +303,8 @@ TEST_CASE(PREFIX "big files reading cancellation")
     const auto host_path = "/TestCancellation/blob";
     std::atomic_bool finished = false;
     std::thread th{[&] {
-        VFSFilePtr file;
         char buf[256];
-        REQUIRE(host->CreateFile(host_path, file) == 0);
+        const VFSFilePtr file = host->CreateFile(host_path).value();
         REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
         REQUIRE(file->Read(buf, sizeof(buf)) == sizeof(buf));
         REQUIRE(file->Close() == 0); // at this moment we have read only a small part of file

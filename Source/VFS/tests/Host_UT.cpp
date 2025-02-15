@@ -69,6 +69,7 @@ TEST_CASE(PREFIX "Unsupported methods")
     auto host = std::make_shared<Host>("/", nullptr, "dummy");
     const Error enotsup = Error{Error::POSIX, ENOTSUP};
     // ...
+    REQUIRE(host->CreateFile("/some/path").error() == enotsup);
     REQUIRE(host->CreateDirectory("/some/path", 42).error() == enotsup);
     REQUIRE(host->ReadSymlink("/some/path").error() == enotsup);
     REQUIRE(host->CreateSymlink("/some/path1", "/some/path2").error() == enotsup);

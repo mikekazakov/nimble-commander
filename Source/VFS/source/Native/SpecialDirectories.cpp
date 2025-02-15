@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SpecialDirectories.h"
 #include "DisplayNamesCache.h"
 #include <VFS/VFSListingInput.h>
@@ -63,8 +63,8 @@ int FetchUnifiedListing(NativeHost &_host,
         else {
             _target = system_listing;
         }
-    } catch( const VFSErrorException &err ) {
-        return err.code();
+    } catch( const VFSErrorException & /*err*/ ) {
+        return VFSError::FromErrno(EINVAL); // TODO: return err
     } catch( ... ) {
         return VFSError::FromErrno(EINVAL);
     }

@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Helpers.h"
 #include "../PanelController.h"
 #include <NimbleCommander/Core/VFSInstancePromise.h>
@@ -26,9 +26,9 @@ void AsyncVFSPromiseRestorer::Restore(const nc::core::VFSInstanceManager::Promis
 
             host = manager.RetrieveVFS(promise, _is_cancelled);
 
-        } catch( VFSErrorException &ex ) {
+        } catch( ErrorException &ex ) {
             if( failure != nullptr )
-                failure(ex.code());
+                failure(ex.error());
         }
 
         if( host != nullptr ) {
@@ -57,19 +57,18 @@ void AsyncPersistentLocationRestorer::Restore(const nc::panel::PersistentLocatio
                  location = _location,
                  success = std::move(_success_handler),
                  failure = std::move(_failure_handler)]([[maybe_unused]] const std::function<bool()> &_is_cancelled) {
-        VFSHostPtr host;
         PanelDataPersistency persistency(netmgr);
-        const auto rc = persistency.CreateVFSFromLocation(location, host, manager);
+        const std::expected<VFSHostPtr, Error> exp_host = persistency.CreateVFSFromLocation(location, manager);
 
-        if( rc != VFSError::Ok ) {
+        if( !exp_host ) {
             if( failure != nullptr )
-                failure(rc);
+                failure(exp_host.error());
             return;
         }
 
-        if( host != nullptr ) {
+        if( exp_host && *exp_host != nullptr ) {
             if( success != nullptr ) {
-                success(host);
+                success(*exp_host);
             }
         }
     };

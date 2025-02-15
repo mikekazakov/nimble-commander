@@ -183,3 +183,10 @@ TEST_CASE(PREFIX "operator==()")
     CHECK(!(Error(Error::Cocoa, EINTR) == Error(Error::POSIX, EINTR)));
     CHECK(Error(Error::Cocoa, EINTR) != Error(Error::POSIX, EINTR));
 }
+
+TEST_CASE(PREFIX "ErrorException")
+{
+    const ErrorException ee(Error{Error::POSIX, EINVAL});
+    CHECK(ee.error() == Error{Error::POSIX, EINVAL});
+    CHECK(ee.what() == std::string_view("Error Domain=POSIX Code=22"));
+}

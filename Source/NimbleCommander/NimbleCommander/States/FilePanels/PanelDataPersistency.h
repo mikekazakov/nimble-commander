@@ -55,7 +55,8 @@ public:
     // LocationToJSON( *EncodeLocation(host, path) ) == EncodeVFSPath(host, path)
 
     // uses current state to retrieve existing vfs if possible
-    int CreateVFSFromLocation(const PersistentLocation &_state, VFSHostPtr &_host, core::VFSInstanceManager &_inst_mgr);
+    std::expected<VFSHostPtr, Error> CreateVFSFromLocation(const PersistentLocation &_state,
+                                                           core::VFSInstanceManager &_inst_mgr);
 
     std::string GetPathFromState(const json &_state);
 

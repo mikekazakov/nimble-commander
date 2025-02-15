@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerViewController.h"
 #include "ViewerFooter.h"
 #include "ViewerSearchView.h"
@@ -60,7 +60,8 @@ static int InvertBitFlag(int _value, int _flag)
 namespace nc::viewer {
 
 struct BackgroundFileOpener {
-    int Open(VFSHostPtr _vfs, const std::string &_path, const nc::config::Config &_config, int _window_size);
+    std::expected<void, Error>
+    Open(VFSHostPtr _vfs, const std::string &_path, const nc::config::Config &_config, int _window_size);
 
     VFSFilePtr original_file;
     VFSSeqToRandomROWrapperFilePtr seq_wrapper;
@@ -181,8 +182,8 @@ struct BackgroundFileOpener {
     dispatch_assert_background_queue();
 
     BackgroundFileOpener opener;
-    const int open_err = opener.Open(m_VFS, m_Path, *m_Config, self.fileWindowSize);
-    if( open_err != VFSError::Ok )
+    const std::expected<void, Error> open_err = opener.Open(m_VFS, m_Path, *m_Config, self.fileWindowSize);
+    if( !open_err )
         return false;
     m_OriginalFile = std::move(opener.original_file);
     m_SeqWrapper = std::move(opener.seq_wrapper);
@@ -571,10 +572,10 @@ struct BackgroundFileOpener {
             return;
 
         auto opener = std::make_unique<BackgroundFileOpener>();
-        const int open_err =
+        const std::expected<void, Error> open_rc =
             opener->Open(strong_self->m_VFS, strong_self->m_Path, *strong_self->m_Config, strong_self.fileWindowSize);
-        if( open_err != VFSError::Ok ) {
-            Log::Warn("failed to open a path {}, vfs_error: {}", strong_self->m_Path, open_err);
+        if( !open_rc ) {
+            Log::Warn("failed to open a path {}, vfs_error: {}", strong_self->m_Path, open_rc.error());
             return;
         }
 
@@ -679,15 +680,17 @@ struct BackgroundFileOpener {
 
 namespace nc::viewer {
 
-int BackgroundFileOpener::Open(VFSHostPtr _vfs,
-                               const std::string &_path,
-                               const nc::config::Config &_config,
-                               int _window_size)
+std::expected<void, Error> BackgroundFileOpener::Open(VFSHostPtr _vfs,
+                                                      const std::string &_path,
+                                                      const nc::config::Config &_config,
+                                                      int _window_size)
 {
     dispatch_assert_background_queue();
     assert(_vfs);
-    if( const int vfs_err = _vfs->CreateFile(_path, original_file, nullptr); vfs_err != VFSError::Ok )
-        return vfs_err;
+    if( const std::expected<std::shared_ptr<VFSFile>, Error> exp = _vfs->CreateFile(_path); exp )
+        original_file = *exp;
+    else
+        return std::unexpected(exp.error());
 
     if( original_file->GetReadParadigm() < VFSFile::ReadParadigm::Random ) {
         // we need to read a file into temporary mem/file storage to access it randomly
@@ -702,23 +705,23 @@ int BackgroundFileOpener::Open(VFSHostPtr _vfs,
             [=](uint64_t _bytes, uint64_t _total) { proc.progress = double(_bytes) / double(_total); });
         [proc Close];
         if( open_err != VFSError::Ok )
-            return open_err;
+            return std::unexpected(VFSError::ToError(open_err));
 
         seq_wrapper = wrapper;
         work_file = wrapper;
     }
     else { // just open input file
         if( const int open_err = original_file->Open(VFSFlags::OF_Read); open_err != VFSError::Ok )
-            return open_err;
+            return std::unexpected(VFSError::ToError(open_err));
         work_file = original_file;
     }
     viewer_file_window = std::make_shared<nc::vfs::FileWindow>();
     if( const int attach_err = viewer_file_window->Attach(work_file, _window_size); attach_err != VFSError::Ok )
-        return attach_err;
+        return std::unexpected(VFSError::ToError(attach_err));
 
     search_file_window = std::make_shared<nc::vfs::FileWindow>();
     if( const int attach_err = search_file_window->Attach(work_file); attach_err != 0 )
-        return attach_err;
+        return std::unexpected(VFSError::ToError(attach_err));
 
     using nc::vfs::SearchInFile;
     search_in_file = std::make_shared<SearchInFile>(*search_file_window);
@@ -734,7 +737,7 @@ int BackgroundFileOpener::Open(VFSHostPtr _vfs,
     }();
     search_in_file->SetSearchOptions(search_options);
 
-    return VFSError::Ok;
+    return {};
 }
 
 } // namespace nc::viewer

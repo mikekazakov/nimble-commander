@@ -14,14 +14,14 @@ static NSString *const g_Domain = @"vfs";
 layout:
 0                        : OK code
 [-1..              -1000]: Files             vfs err = vfs err
-[-1'001..         -2'000]: POSIX             vfs err = posix - 1'500
+[-1'001..         -1'999]: POSIX             vfs err = posix - 1'500
 [-1'000'000.. -2'000'000): Cocoa             vfs err = cocoa - 1'500'000
 [-2'000'000.. -3'000'000): NSURLError        vfs err = nsurlerror - 2'500'000
  */
 
 static constexpr int g_PosixMax = -1001;
 static constexpr int g_PosixBase = -1500;
-static constexpr int g_PosixMin = -2000;
+static constexpr int g_PosixMin = -1999;
 
 // EWOULDBLOCK was skipped as a duplicate
 static constexpr frozen::unordered_map<int, frozen::string, 103> g_PosixCodes = {
@@ -134,22 +134,16 @@ namespace nc::vfs {
 
 using namespace std::literals;
 
-ErrorException::ErrorException(int _err) : m_Code(_err)
+ErrorException::ErrorException(int _err) noexcept : ::nc::ErrorException(VFSError::ToError(_err))
 {
-    m_Verb = "vfs exception code #"s + std::to_string(_err);
-    if( const auto e = VFSError::ToNSError(_err) )
-        if( const auto d = e.description )
-            m_Verb = d.UTF8String;
 }
 
-const char *ErrorException::what() const noexcept
+ErrorException::ErrorException(const Error &_err) noexcept : ::nc::ErrorException(_err)
 {
-    return m_Verb.c_str();
 }
 
-int ErrorException::code() const noexcept
+ErrorException::ErrorException(Error &&_err) noexcept : ::nc::ErrorException(std::move(_err))
 {
-    return m_Code;
 }
 
 } // namespace nc::vfs

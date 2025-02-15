@@ -1,5 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#pragma clang diagnostic push
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataPersistency.h"
 #include <Config/RapidJSON.h>
 #include <Panel/NetworkConnectionsManager.h>
@@ -517,15 +516,13 @@ VFSHostPtr PanelDataPersistency::FindFitting(const std::vector<std::weak_ptr<VFS
     return nullptr;
 }
 
-// TODO CancelChecker support???
-int PanelDataPersistency::CreateVFSFromLocation(const PersistentLocation &_state,
-                                                VFSHostPtr &_host,
-                                                core::VFSInstanceManager &_inst_mgr)
+// TODO: CancelChecker support???
+std::expected<VFSHostPtr, Error> PanelDataPersistency::CreateVFSFromLocation(const PersistentLocation &_state,
+                                                                             core::VFSInstanceManager &_inst_mgr)
 {
     if( _state.hosts.empty() ) {
         // short path for most common case - native vfs
-        _host = nc::bootstrap::NativeVFSHostInstance().SharedPtr();
-        return 0;
+        return nc::bootstrap::NativeVFSHostInstance().SharedPtr();
     }
 
     std::vector<VFSHostPtr> vfs;
@@ -548,7 +545,7 @@ int PanelDataPersistency::CreateVFSFromLocation(const PersistentLocation &_state
             }
             else if( auto xattr = std::any_cast<XAttr>(&h) ) {
                 if( vfs.empty() )
-                    return VFSError::GenericError; // invalid data
+                    return std::unexpected(Error{Error::POSIX, EINVAL}); // invalid data
 
                 auto xattr_vfs = std::make_shared<vfs::XAttrHost>(xattr->junction.c_str(), vfs.back());
                 vfs.emplace_back(xattr_vfs);
@@ -558,36 +555,35 @@ int PanelDataPersistency::CreateVFSFromLocation(const PersistentLocation &_state
                     if( auto host = m_ConnectionsManager.SpawnHostFromConnection(*conn) )
                         vfs.emplace_back(host);
                     else
-                        return VFSError::GenericError; // failed to spawn connection
+                        return std::unexpected(Error{Error::POSIX, EINVAL}); // failed to spawn connection
                 }
                 else
-                    return VFSError::GenericError; // failed to find connection by uuid
+                    return std::unexpected(Error{Error::POSIX, EINVAL}); // failed to find connection by uuid
             }
             else if( auto la = std::any_cast<ArcLA>(&h) ) {
                 if( vfs.empty() )
-                    return VFSError::GenericError; // invalid data
+                    return std::unexpected(Error{Error::POSIX, EINVAL}); // invalid data
 
                 auto host = std::make_shared<vfs::ArchiveHost>(la->junction.c_str(), vfs.back());
                 vfs.emplace_back(host);
             }
             else if( auto la_raw = std::any_cast<ArcLARaw>(&h) ) {
                 if( vfs.empty() )
-                    return VFSError::GenericError; // invalid data
+                    return std::unexpected(Error{Error::POSIX, EINVAL}); // invalid data
 
                 auto host = std::make_shared<vfs::ArchiveRawHost>(la_raw->junction.c_str(), vfs.back());
                 vfs.emplace_back(host);
             }
         }
-    } catch( VFSErrorException &ee ) {
-        return ee.code();
+    } catch( const ErrorException &ee ) {
+        return std::unexpected(ee.error());
     }
 
-    if( !vfs.empty() ) {
-        _host = vfs.back();
-        return VFSError::Ok;
-    }
+    if( !vfs.empty() )
+        return vfs.back();
     else
-        return VFSError::GenericError;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
+    ;
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)

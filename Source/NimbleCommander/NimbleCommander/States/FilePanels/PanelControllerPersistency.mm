@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerPersistency.h"
 #include "PanelController.h"
 #include <Panel/PanelData.h>
@@ -123,12 +123,13 @@ bool ControllerStateJSONDecoder::AllowSyncRecovery(const PersistentLocation &_lo
 
 void ControllerStateJSONDecoder::RecoverSavedContentSync(const PersistentLocation &_location, PanelController *_panel)
 {
-    VFSHostPtr host;
-    const auto rc = m_Persistency.CreateVFSFromLocation(_location, host, m_VFSInstanceManager);
-    if( rc != VFSError::Ok ) {
+    const std::expected<VFSHostPtr, Error> exp_host =
+        m_Persistency.CreateVFSFromLocation(_location, m_VFSInstanceManager);
+    if( !exp_host ) {
         EnsureNonEmptyStateAsync(_panel);
         return;
     }
+    const VFSHostPtr &host = *exp_host;
 
     auto &path = _location.path;
     auto request = std::make_shared<DirectoryChangeRequest>();
@@ -158,10 +159,11 @@ void ControllerStateJSONDecoder::RecoverSavedContentAsync(PersistentLocation _lo
 {
     auto workload =
         [this, _panel, location = std::move(_location)]([[maybe_unused]] const std::function<bool()> &_cancel_checker) {
-            VFSHostPtr host;
-            const auto rc = m_Persistency.CreateVFSFromLocation(location, host, m_VFSInstanceManager);
-            if( rc == VFSError::Ok && host != nullptr ) {
+            const std::expected<VFSHostPtr, Error> exp_host =
+                m_Persistency.CreateVFSFromLocation(location, m_VFSInstanceManager);
+            if( exp_host && *exp_host != nullptr ) {
                 // the VFS was recovered, lets go inside it.
+                const VFSHostPtr &host = *exp_host;
                 auto path = location.path;
                 dispatch_to_main_queue([=] { RecoverSavedPathAtVFSAsync(host, path, _panel); });
             }

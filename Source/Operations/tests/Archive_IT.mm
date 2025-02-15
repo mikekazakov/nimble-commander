@@ -78,8 +78,7 @@ TEST_CASE(PREFIX "Compressing an item with big xattrs")
     REQUIRE(operation.State() == nc::ops::OperationState::Completed);
 
     const auto host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), TestEnv().vfs_native);
-    VFSFilePtr file;
-    REQUIRE(host->CreateFile("/"s + source_fn, file, {}) == 0);
+    const VFSFilePtr file = host->CreateFile("/"s + source_fn).value();
     REQUIRE(file != nullptr);
     REQUIRE(file->Open(nc::vfs::Flags::OF_Read) == 0);
     CHECK(file->Size() == 0);

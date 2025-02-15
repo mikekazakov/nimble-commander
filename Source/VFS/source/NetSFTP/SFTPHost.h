@@ -62,9 +62,8 @@ public:
     int IterateDirectoryListing(std::string_view _path,
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
-    int CreateFile(std::string_view _path,
-                   std::shared_ptr<VFSFile> &_target,
-                   const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<std::shared_ptr<VFSFile>, Error> CreateFile(std::string_view _path,
+                                                              const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<void, Error> Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
 

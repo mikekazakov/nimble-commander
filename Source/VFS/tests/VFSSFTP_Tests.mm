@@ -486,8 +486,7 @@ TEST_CASE(PREFIX "doesn't crash on many connections")
 TEST_CASE(PREFIX "basic read")
 {
     const VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
-    VFSFilePtr file;
-    REQUIRE(host->CreateFile("/etc/debian_version", file, nullptr) == 0);
+    const VFSFilePtr file = host->CreateFile("/etc/debian_version").value();
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
 
     const auto contents = file->ReadFile();
@@ -674,8 +673,7 @@ TEST_CASE(PREFIX "RandomWrappers")
 {
     auto host = hostForUbuntu2004_User2_RSA();
 
-    VFSFilePtr seq_file;
-    REQUIRE(host->CreateFile(host->HomeDir() + "/.ssh/authorized_keys", seq_file, nullptr) == VFSError::Ok);
+    const VFSFilePtr seq_file = host->CreateFile(host->HomeDir() + "/.ssh/authorized_keys").value();
 
     auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(seq_file);
     REQUIRE(wrapper->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock, nullptr, nullptr) == VFSError::Ok);

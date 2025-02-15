@@ -367,15 +367,13 @@ int FTPHost::GetListingForFetching(CURLInstance *_inst,
     return 0;
 }
 
-int FTPHost::CreateFile(std::string_view _path,
-                        std::shared_ptr<VFSFile> &_target,
-                        const VFSCancelChecker &_cancel_checker)
+std::expected<std::shared_ptr<VFSFile>, Error> FTPHost::CreateFile(std::string_view _path,
+                                                                   const VFSCancelChecker &_cancel_checker)
 {
     auto file = std::make_shared<File>(_path, SharedPtr());
     if( _cancel_checker && _cancel_checker() )
-        return VFSError::Cancelled;
-    _target = file;
-    return VFSError::Ok;
+        return std::unexpected(Error{Error::POSIX, ECANCELED});
+    return file;
 }
 
 std::expected<void, Error> FTPHost::Unlink(std::string_view _path,

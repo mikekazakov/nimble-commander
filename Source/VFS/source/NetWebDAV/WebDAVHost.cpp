@@ -330,16 +330,13 @@ std::expected<void, Error> WebDAVHost::Unlink(std::string_view _path,
     return {};
 }
 
-int WebDAVHost::CreateFile(std::string_view _path,
-                           std::shared_ptr<VFSFile> &_target,
-                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<std::shared_ptr<VFSFile>, Error>
+WebDAVHost::CreateFile(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_path) )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
-    _target = std::make_shared<File>(_path, std::dynamic_pointer_cast<WebDAVHost>(shared_from_this()));
-
-    return VFSError::Ok;
+    return std::make_shared<File>(_path, std::dynamic_pointer_cast<WebDAVHost>(shared_from_this()));
 }
 
 webdav::ConnectionsPool &WebDAVHost::ConnectionsPool()

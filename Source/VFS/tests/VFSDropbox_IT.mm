@@ -151,12 +151,9 @@ TEST_CASE(PREFIX "basic file read")
 {
     const auto filepath = "/TestSet01/11778860-R3L8T8D-650-funny-jumping-cats-51__880.jpg";
     const std::shared_ptr<VFSHost> host = Spawn();
-    std::shared_ptr<VFSFile> file;
-    int rc = host->CreateFile(filepath, file);
-    REQUIRE(rc == VFSError::Ok);
+    const VFSFilePtr file = host->CreateFile(filepath).value();
 
-    rc = file->Open(VFSFlags::OF_Read);
-    REQUIRE(rc == VFSError::Ok);
+    REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
     CHECK(file->Size() == 190892);
 
     auto data = file->ReadFile();
@@ -167,15 +164,11 @@ TEST_CASE(PREFIX "basic file read")
 
 TEST_CASE(PREFIX "reading file with non ASCII symbols")
 {
-    const auto filepath =
-        reinterpret_cast<const char *>(u8"/TestSet03/Это фотка котега $о ВСЯкими #\"символами\"!!!.jpg");
+    const auto filepath = "/TestSet03/Это фотка котега $о ВСЯкими #\"символами\"!!!.jpg";
     const std::shared_ptr<VFSHost> host = Spawn();
-    std::shared_ptr<VFSFile> file;
-    int rc = host->CreateFile(filepath, file);
-    REQUIRE(rc == VFSError::Ok);
+    const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
 
-    rc = file->Open(VFSFlags::OF_Read);
-    REQUIRE(rc == VFSError::Ok);
+    REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
     CHECK(file->Size() == 253899);
 
     auto data = file->ReadFile();
@@ -189,12 +182,9 @@ TEST_CASE(PREFIX "reading non-existing file")
 {
     const auto filepath = "/TestSet01/jggweofgewufygweufguwefg.jpg";
     const std::shared_ptr<VFSHost> host = Spawn();
-    std::shared_ptr<VFSFile> file;
-    int rc = host->CreateFile(filepath, file);
-    REQUIRE(rc == VFSError::Ok);
+    const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
 
-    rc = file->Open(VFSFlags::OF_Read);
-    REQUIRE(rc != VFSError::Ok);
+    REQUIRE(file->Open(VFSFlags::OF_Read) != VFSError::Ok);
     REQUIRE(!file->IsOpened());
 }
 
@@ -205,8 +195,7 @@ TEST_CASE(PREFIX "simple upload")
     const std::shared_ptr<VFSHost> host = Spawn();
     std::ignore = host->Unlink(filepath);
 
-    std::shared_ptr<VFSFile> file;
-    REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
+    const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
 
     REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
     REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
@@ -229,8 +218,7 @@ TEST_CASE(PREFIX "upload with invalid name")
     const auto filepath = R"(/FolderToModify/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/test.txt)";
     const std::shared_ptr<VFSHost> host = Spawn();
 
-    std::shared_ptr<VFSFile> file;
-    REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
+    const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
 
     const bool op1 = file->Open(VFSFlags::OF_Write) == VFSError::Ok;
     const bool op2 = file->SetUploadSize(to_upload.size()) == VFSError::Ok;
@@ -246,8 +234,7 @@ TEST_CASE(PREFIX "simple upload with overwrite")
     const std::shared_ptr<VFSHost> host = Spawn();
     std::ignore = host->Unlink(filepath);
 
-    std::shared_ptr<VFSFile> file;
-    REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
+    const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
 
     REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
     REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
@@ -277,8 +264,7 @@ TEST_CASE(PREFIX "UnfinishedUpload")
     const std::shared_ptr<VFSHost> host = Spawn();
     std::ignore = host->Unlink(filepath);
 
-    std::shared_ptr<VFSFile> file;
-    REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
+    const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
 
     REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
     REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
@@ -294,8 +280,7 @@ TEST_CASE(PREFIX "zero sized upload")
     const std::shared_ptr<VFSHost> host = Spawn();
     std::ignore = host->Unlink(filepath);
 
-    std::shared_ptr<VFSFile> file;
-    REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
+    const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
 
     REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
     REQUIRE(file->SetUploadSize(0) == VFSError::Ok);
@@ -314,8 +299,7 @@ TEST_CASE(PREFIX "decent sized upload")
     const std::shared_ptr<VFSHost> host = Spawn();
     std::ignore = host->Unlink(filepath);
 
-    std::shared_ptr<VFSFile> file;
-    REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
+    const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
 
     std::vector<uint8_t> to_upload = MakeNoise(length);
 
@@ -341,8 +325,7 @@ TEST_CASE(PREFIX "two-chunk upload")
     const std::shared_ptr<VFSHost> host = Spawn();
     std::ignore = host->Unlink(filepath);
 
-    std::shared_ptr<VFSFile> file;
-    REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
+    const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
     std::dynamic_pointer_cast<dropbox::File>(file)->SetChunkSize(10000000); // 10 Mb chunks
 
     std::vector<uint8_t> to_upload = MakeNoise(length);
@@ -370,8 +353,7 @@ TEST_CASE(PREFIX "multi-chunks upload")
     const std::shared_ptr<VFSHost> host = Spawn();
     std::ignore = host->Unlink(filepath);
 
-    std::shared_ptr<VFSFile> file;
-    REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
+    const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
     std::dynamic_pointer_cast<dropbox::File>(file)->SetChunkSize(5000000); // 5Mb chunks
 
     std::vector<uint8_t> to_upload = MakeNoise(length);
@@ -402,8 +384,7 @@ TEST_CASE(PREFIX "upload edge cases")
     std::ignore = host->Unlink(filepath);
 
     for( auto length : lengths ) {
-        std::shared_ptr<VFSFile> file;
-        REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
+        const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
         std::dynamic_pointer_cast<dropbox::File>(file)->SetChunkSize(chunk_size);
 
         std::vector<uint8_t> to_upload = MakeNoise(length);

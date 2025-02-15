@@ -46,13 +46,13 @@ void Copying::SetupCallbacks()
     j.m_OnCantAccessSourceItem = [this](Error _1, const std::string &_2, VFSHost &_3) {
         return OnCantAccessSourceItem(_1, _2, _3);
     };
-    j.m_OnCantOpenDestinationFile = [this](int _1, const std::string &_2, VFSHost &_3) {
+    j.m_OnCantOpenDestinationFile = [this](Error _1, const std::string &_2, VFSHost &_3) {
         return OnCantOpenDestinationFile(_1, _2, _3);
     };
     j.m_OnSourceFileReadError = [this](int _1, const std::string &_2, VFSHost &_3) {
         return OnSourceFileReadError(_1, _2, _3);
     };
-    j.m_OnDestinationFileReadError = [this](int _1, const std::string &_2, VFSHost &_3) {
+    j.m_OnDestinationFileReadError = [this](Error _1, const std::string &_2, VFSHost &_3) {
         return OnDestinationFileReadError(_1, _2, _3);
     };
     j.m_OnDestinationFileWriteError = [this](Error _1, const std::string &_2, VFSHost &_3) {
@@ -261,10 +261,10 @@ Copying::OnCantAccessSourceItem(Error _error, const std::string &_path, VFSHost 
 }
 
 CB::CantOpenDestinationFileResolution
-Copying::OnCantOpenDestinationFile(int _vfs_error, const std::string &_path, VFSHost &_vfs)
+Copying::OnCantOpenDestinationFile(Error _error, const std::string &_path, VFSHost &_vfs)
 {
     if( m_CallbackHooks && m_CallbackHooks->m_OnCantOpenDestinationFile )
-        return m_CallbackHooks->m_OnCantOpenDestinationFile(_vfs_error, _path, _vfs);
+        return m_CallbackHooks->m_OnCantOpenDestinationFile(_error, _path, _vfs);
 
     if( m_SkipAll )
         return CB::CantOpenDestinationFileResolution::Skip;
@@ -274,7 +274,7 @@ Copying::OnCantOpenDestinationFile(int _vfs_error, const std::string &_path, VFS
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to open a destination file", ""),
-                      _vfs_error,
+                      _error,
                       {_vfs, _path},
                       ctx);
     WaitForDialogResponse(ctx);
@@ -323,10 +323,10 @@ Copying::OnSourceFileReadError(int _vfs_error, const std::string &_path, VFSHost
 }
 
 CB::DestinationFileReadErrorResolution
-Copying::OnDestinationFileReadError(int _vfs_error, const std::string &_path, VFSHost &_vfs)
+Copying::OnDestinationFileReadError(Error _error, const std::string &_path, VFSHost &_vfs)
 {
     if( m_CallbackHooks && m_CallbackHooks->m_OnDestinationFileReadError )
-        return m_CallbackHooks->m_OnDestinationFileReadError(_vfs_error, _path, _vfs);
+        return m_CallbackHooks->m_OnDestinationFileReadError(_error, _path, _vfs);
 
     if( m_SkipAll )
         return CB::DestinationFileReadErrorResolution::Skip;
@@ -336,7 +336,7 @@ Copying::OnDestinationFileReadError(int _vfs_error, const std::string &_path, VF
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
                       NSLocalizedString(@"Failed to read a destination file", ""),
-                      _vfs_error,
+                      _error,
                       {_vfs, _path},
                       ctx);
     WaitForDialogResponse(ctx);

@@ -4,6 +4,7 @@
 #include <string>
 #include <functional>
 #include <Base/intrusive_ptr.h>
+#include <Base/Error.h>
 
 struct stat;
 
@@ -105,16 +106,13 @@ struct Stat {
     }
 };
 
-class ErrorException : public std::exception
+// TODO: remove me
+class ErrorException : public ::nc::ErrorException
 {
 public:
-    ErrorException(int _err);
-    virtual const char *what() const noexcept override;
-    int code() const noexcept;
-
-private:
-    int m_Code;
-    std::string m_Verb;
+    ErrorException(int _err) noexcept;
+    ErrorException(const Error &_err) noexcept;
+    ErrorException(Error &&_err) noexcept;
 };
 
 struct User {

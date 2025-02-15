@@ -492,25 +492,23 @@ bool PSHost::IsDirectory(std::string_view _path,
     return !(_path.empty() || _path != "/");
 }
 
-int PSHost::CreateFile(std::string_view _path,
-                       std::shared_ptr<VFSFile> &_target,
-                       const VFSCancelChecker &_cancel_checker)
+std::expected<std::shared_ptr<VFSFile>, Error> PSHost::CreateFile(std::string_view _path,
+                                                                  const VFSCancelChecker &_cancel_checker)
 {
     if( _path.empty() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const std::lock_guard<std::mutex> lock(m_Lock);
 
     auto index = ProcIndexFromFilepath_Unlocked(_path);
 
     if( index < 0 )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     auto file = std::make_shared<PSFile>(_path, SharedPtr(), m_Data->files[index]);
     if( _cancel_checker && _cancel_checker() )
-        return VFSError::Cancelled;
-    _target = file;
-    return VFSError::Ok;
+        return std::unexpected(Error{Error::POSIX, ECANCELED});
+    return file;
 }
 
 int PSHost::Stat(std::string_view _path,

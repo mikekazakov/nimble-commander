@@ -146,9 +146,7 @@ static void TestSimpleFileWrite(VFSHostPtr _host)
     if( _host->Exists(path) )
         std::ignore = VFSEasyDelete(path, _host);
 
-    VFSFilePtr file;
-    const auto filecr_rc = _host->CreateFile(path, file, nullptr);
-    REQUIRE(filecr_rc == VFSError::Ok);
+    const VFSFilePtr file = _host->CreateFile(path).value();
 
     const auto open_rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create);
     REQUIRE(open_rc == VFSError::Ok);
@@ -186,9 +184,7 @@ static void TestVariousCompleteWrites(VFSHostPtr _host)
     if( _host->Exists(path) )
         std::ignore = VFSEasyDelete(path, _host);
 
-    VFSFilePtr file;
-    const auto filecr_rc = _host->CreateFile(path, file, nullptr);
-    REQUIRE(filecr_rc == VFSError::Ok);
+    const VFSFilePtr file = _host->CreateFile(path).value();
 
     const auto open_rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create);
     REQUIRE(open_rc == VFSError::Ok);
@@ -265,9 +261,7 @@ static void TestEdgeCase1bWrites(VFSHostPtr _host)
     if( _host->Exists(path) )
         std::ignore = VFSEasyDelete(path, _host);
 
-    VFSFilePtr file;
-    const auto filecr_rc = _host->CreateFile(path, file, nullptr);
-    REQUIRE(filecr_rc == VFSError::Ok);
+    const VFSFilePtr file = _host->CreateFile(path).value();
 
     const auto open_rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create);
     REQUIRE(open_rc == VFSError::Ok);
@@ -296,9 +290,7 @@ static void TestAbortsPendingUploads(VFSHostPtr _host)
     if( _host->Exists(path) )
         std::ignore = VFSEasyDelete(path, _host);
 
-    VFSFilePtr file;
-    const auto filecr_rc = _host->CreateFile(path, file, nullptr);
-    REQUIRE(filecr_rc == VFSError::Ok);
+    const VFSFilePtr file = _host->CreateFile(path).value();
 
     const auto open_rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create);
     REQUIRE(open_rc == VFSError::Ok);
@@ -327,8 +319,7 @@ static void TestAbortsPendingDownloads(VFSHostPtr _host)
     {
         const size_t file_size = 100000; // 100Kb
         const auto noise = MakeNoise(file_size);
-        VFSFilePtr file;
-        REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+        const VFSFilePtr file = _host->CreateFile(path).value();
         REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
         REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
         REQUIRE(file->WriteFile(noise.data(), file_size) == VFSError::Ok);
@@ -336,8 +327,7 @@ static void TestAbortsPendingDownloads(VFSHostPtr _host)
     }
     {
         std::array<std::byte, 1000> buf; // 1Kb
-        VFSFilePtr file;
-        REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+        const VFSFilePtr file = _host->CreateFile(path).value();
         REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
         REQUIRE(file->Read(buf.data(), buf.size()) == buf.size());
         REQUIRE(file->Close() == VFSError::Ok);
@@ -356,9 +346,7 @@ static void TestEmptyFileCreation(VFSHostPtr _host)
     if( _host->Exists(path) )
         std::ignore = VFSEasyDelete(path, _host);
 
-    VFSFilePtr file;
-    const auto filecr_rc = _host->CreateFile(path, file, nullptr);
-    REQUIRE(filecr_rc == VFSError::Ok);
+    const VFSFilePtr file = _host->CreateFile(path).value();
 
     const auto open_rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create);
     REQUIRE(open_rc == VFSError::Ok);
@@ -383,15 +371,13 @@ static void TestEmptyFileDownload(VFSHostPtr _host)
     if( _host->Exists(path) )
         std::ignore = VFSEasyDelete(path, _host);
     {
-        VFSFilePtr file;
-        REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+        const VFSFilePtr file = _host->CreateFile(path).value();
         REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
         REQUIRE(file->SetUploadSize(0) == VFSError::Ok);
         REQUIRE(file->Close() == VFSError::Ok);
     }
     {
-        VFSFilePtr file;
-        REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+        const VFSFilePtr file = _host->CreateFile(path).value();
         REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
         REQUIRE(file->Close() == VFSError::Ok);
     }
@@ -529,8 +515,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
         const auto path = "/SomeTestFile.extensiondoesntmatter";
         std::ignore = VFSEasyDelete(path, _host);
         {
-            VFSFilePtr file;
-            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
             REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
             REQUIRE(file->WriteFile(noise.data(), file_size) == VFSError::Ok);
@@ -544,8 +529,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
             _host = std::make_shared<WebDAVHost>(config);
         }
         {
-            VFSFilePtr file;
-            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
             const auto data = file->ReadFile();
             REQUIRE(file->Close() == VFSError::Ok);
@@ -562,8 +546,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
         std::ignore = VFSEasyDelete(dir, _host);
         REQUIRE(_host->CreateDirectory(dir, 0));
         {
-            VFSFilePtr file;
-            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
             REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
             REQUIRE(file->WriteFile(noise.data(), file_size) == VFSError::Ok);
@@ -577,8 +560,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
             _host = std::make_shared<WebDAVHost>(config);
         }
         {
-            VFSFilePtr file;
-            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
             const auto data = file->ReadFile();
             REQUIRE(file->Close() == VFSError::Ok);
@@ -597,8 +579,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
         REQUIRE(_host->CreateDirectory(dir1, 0));
         REQUIRE(_host->CreateDirectory(dir2, 0));
         {
-            VFSFilePtr file;
-            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
             REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
             REQUIRE(file->WriteFile(noise.data(), file_size) == VFSError::Ok);
@@ -612,8 +593,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
             _host = std::make_shared<WebDAVHost>(config);
         }
         {
-            VFSFilePtr file;
-            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
             const auto data = file->ReadFile();
             REQUIRE(file->Close() == VFSError::Ok);
@@ -637,36 +617,31 @@ static void TestWriteFlagsSemantics(VFSHostPtr _host)
     std::ignore = VFSEasyDelete(path, _host);
     SECTION("Specifying both OF_Read and OF_Write is not supported")
     {
-        VFSFilePtr file;
-        REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+        const VFSFilePtr file = _host->CreateFile(path).value();
         REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Read) == VFSError::FromErrno(EPERM));
     }
     SECTION("OF_NoExist forces to fail when a file already exist")
     {
         {
-            VFSFilePtr file;
-            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
             REQUIRE(file->SetUploadSize(0) == VFSError::Ok);
             REQUIRE(file->Close() == VFSError::Ok);
         }
         {
-            VFSFilePtr file;
-            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_NoExist) == VFSError::FromErrno(EEXIST));
         }
     }
     SECTION("Open a non-existing file for writing without OF_Create fails")
     {
-        VFSFilePtr file;
-        REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+        const VFSFilePtr file = _host->CreateFile(path).value();
         REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::FromErrno(ENOENT));
     }
     SECTION("Opening an existing directory for writing fails")
     {
         REQUIRE(_host->CreateDirectory(path, 0));
-        VFSFilePtr file;
-        REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+        const VFSFilePtr file = _host->CreateFile(path).value();
         REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::FromErrno(EISDIR));
     }
     SECTION("Opening an existing file for writing overwrites it")
@@ -674,24 +649,21 @@ static void TestWriteFlagsSemantics(VFSHostPtr _host)
         const std::string old_data = "123456";
         const std::string new_data = "0987654321";
         {
-            VFSFilePtr file;
-            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
             REQUIRE(file->SetUploadSize(old_data.size()) == VFSError::Ok);
             REQUIRE(file->WriteFile(old_data.data(), old_data.size()) == VFSError::Ok);
             REQUIRE(file->Close() == VFSError::Ok);
         }
         {
-            VFSFilePtr file;
-            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
             REQUIRE(file->SetUploadSize(new_data.size()) == VFSError::Ok);
             REQUIRE(file->WriteFile(new_data.data(), new_data.size()) == VFSError::Ok);
             REQUIRE(file->Close() == VFSError::Ok);
         }
         {
-            VFSFilePtr file;
-            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
             const auto data = file->ReadFile();
             REQUIRE(file->Close() == VFSError::Ok);
@@ -718,9 +690,7 @@ static std::vector<std::byte> MakeNoise(size_t size)
 
 static void VerifyFileContent(VFSHost &_host, const std::filesystem::path &_path, std::span<const std::byte> _content)
 {
-    VFSFilePtr file;
-    const auto createfile_rc = _host.CreateFile(_path.c_str(), file, nullptr);
-    REQUIRE(createfile_rc == VFSError::Ok);
+    const VFSFilePtr file = _host.CreateFile(_path.c_str()).value();
 
     const auto open_rc = file->Open(VFSFlags::OF_Read);
     REQUIRE(open_rc == VFSError::Ok);
@@ -733,9 +703,7 @@ static void VerifyFileContent(VFSHost &_host, const std::filesystem::path &_path
 
 static void WriteWholeFile(VFSHost &_host, const std::filesystem::path &_path, std::span<const std::byte> _content)
 {
-    VFSFilePtr file;
-    const auto filecr_rc = _host.CreateFile(_path.c_str(), file, nullptr);
-    REQUIRE(filecr_rc == VFSError::Ok);
+    const VFSFilePtr file = _host.CreateFile(_path.c_str()).value();
 
     const auto open_rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create);
     REQUIRE(open_rc == VFSError::Ok);

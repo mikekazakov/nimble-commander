@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Host.h"
 #include "../Log.h"
 #include <vector>
@@ -36,10 +36,9 @@ static constexpr std::string_view g_ExtensionsList[] = {"bz2", "gz", "lz", "lz4"
 namespace {
 struct Extracted {
     Extracted() = default;
-    Extracted(int _vfs_err) : vfs_err(_vfs_err) {};
+    Extracted(const Error &_err) : bytes(std::unexpected(_err)) {};
 
-    int vfs_err = VFSError::Ok;
-    std::vector<std::byte> bytes;
+    std::expected<std::vector<std::byte>, Error> bytes;
     std::string filename;
     time_t mtime = 0;
 };
@@ -59,17 +58,20 @@ static Extracted read_stream(const uint64_t _max_bytes,
         VFSCancelChecker cancel_checker;
     } st;
 
+    if( const std::expected<std::shared_ptr<VFSFile>, Error> exp = _parent.CreateFile(_path, _cancel_checker); exp )
+        st.source_file = *exp;
+    else
+        return exp.error();
+
     int rc = 0;
-    rc = _parent.CreateFile(_path, st.source_file, _cancel_checker);
-    if( rc < 0 )
-        return rc;
+
     rc = st.source_file->Open(VFSFlags::OF_Read);
     if( rc < 0 )
-        return rc;
+        return VFSError::ToError(rc);
     if( st.source_file->Size() <= 0 )
-        return VFSError::ArclibFileFormat;
+        return VFSError::ToError(VFSError::ArclibFileFormat);
     if( st.source_file->GetReadParadigm() < VFSFile::ReadParadigm::Sequential )
-        return VFSError::InvalidCall;
+        return VFSError::ToError(VFSError::InvalidCall);
 
     st.inbuf = std::make_unique<std::byte[]>(buf_sz);
     st.outbuf = std::make_unique<std::byte[]>(buf_sz);
@@ -110,18 +112,18 @@ static Extracted read_stream(const uint64_t _max_bytes,
     archive_read_set_read_callback(arc, myread);
     int arc_rc = archive_read_open1(arc);
     if( arc_rc != ARCHIVE_OK )
-        return VFSError::FromErrno(archive_errno(arc));
+        return VFSError::ToError(VFSError::FromErrno(archive_errno(arc)));
 
     if( archive_filter_code(arc, 0) == ARCHIVE_FILTER_NONE ) {
         // libarchive always supports "none" compression filter as a fallback, but in this
         // configuration it doesn't make any sense, so reject such files.
-        return VFSError::ArclibFileFormat;
+        return VFSError::ToError(VFSError::ArclibFileFormat);
     }
 
     archive_entry *entry;
     arc_rc = archive_read_next_header(arc, &entry);
     if( arc_rc != ARCHIVE_OK )
-        return VFSError::FromErrno(archive_errno(arc));
+        return VFSError::ToError(VFSError::FromErrno(archive_errno(arc)));
 
     Extracted extr;
 
@@ -135,17 +137,17 @@ static Extracted read_stream(const uint64_t _max_bytes,
     uint64_t total_size = 0;
     while( true ) {
         if( st.cancel_checker && st.cancel_checker() ) {
-            return VFSError::Cancelled;
+            return Error{Error::POSIX, ECANCELED};
         }
         const ssize_t size = archive_read_data(arc, st.outbuf.get(), buf_sz);
         if( size < 0 )
-            return VFSError::FromErrno(archive_errno(arc));
+            return VFSError::ToError(VFSError::FromErrno(archive_errno(arc)));
         if( size == 0 )
             break; // EOF?
         total_size += size;
         if( total_size > _max_bytes )
-            return VFSError::FromErrno(EFBIG);
-        extr.bytes.insert(extr.bytes.end(), st.outbuf.get(), st.outbuf.get() + size);
+            return Error{Error::POSIX, EFBIG};
+        extr.bytes->insert(extr.bytes->end(), st.outbuf.get(), st.outbuf.get() + size);
     }
 
     return extr;
@@ -194,16 +196,12 @@ void ArchiveRawHost::Init(const VFSCancelChecker &_cancel_checker)
 {
     const auto &path = Configuration().Get<VFSArchiveRawHostConfiguration>().path;
     auto extracted = read_stream(g_MaxBytes, path, *Parent(), _cancel_checker);
-    if( extracted.vfs_err != VFSError::Ok ) {
-        Log::Warn("unable to open {}({}), error: {}({})",
-                  path.c_str(),
-                  Parent()->Tag(),
-                  VFSError::FormatErrorCode(extracted.vfs_err),
-                  extracted.vfs_err);
-        throw VFSErrorException(extracted.vfs_err);
+    if( !extracted.bytes ) {
+        Log::Warn("unable to open {}({}), error: {}", path.c_str(), Parent()->Tag(), extracted.bytes.error());
+        throw VFSErrorException(extracted.bytes.error());
     }
 
-    m_Data = std::move(extracted.bytes);
+    m_Data = std::move(*extracted.bytes);
     m_Filename = extracted.filename;
     if( m_Filename.empty() )
         m_Filename = DeduceFilename(path);
@@ -220,18 +218,16 @@ void ArchiveRawHost::Init(const VFSCancelChecker &_cancel_checker)
     }
 }
 
-int ArchiveRawHost::CreateFile(std::string_view _path,
-                               std::shared_ptr<VFSFile> &_target,
-                               [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<std::shared_ptr<VFSFile>, Error>
+ArchiveRawHost::CreateFile(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( !_path.starts_with("/") )
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( m_Filename != _path.substr(1) )
-        return VFSError::FromErrno(ENOENT);
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
-    _target = std::make_unique<GenericMemReadOnlyFile>(_path, shared_from_this(), m_Data.data(), m_Data.size());
-    return VFSError::Ok;
+    return std::make_shared<GenericMemReadOnlyFile>(_path, shared_from_this(), m_Data.data(), m_Data.size());
 }
 
 int ArchiveRawHost::Stat(std::string_view _path,

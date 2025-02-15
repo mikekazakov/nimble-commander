@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/VFSBundleIconsCacheImpl.h>
 #include <Utility/ObjCpp.h>
 
@@ -54,15 +54,16 @@ std::string VFSBundleIconsCacheImpl::MakeKey(const std::string &_file_path, VFSH
 
 static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_path, VFSHost &_host)
 {
-    VFSFilePtr vfs_file;
-
-    if( _host.CreateFile(_path, vfs_file, nullptr) < 0 )
+    const std::expected<std::shared_ptr<VFSFile>, Error> exp_file = _host.CreateFile(_path);
+    if( !exp_file )
         return std::nullopt;
 
-    if( vfs_file->Open(VFSFlags::OF_Read) < 0 )
+    VFSFile &file = **exp_file;
+
+    if( file.Open(VFSFlags::OF_Read) < 0 )
         return std::nullopt;
 
-    return vfs_file->ReadFile();
+    return file.ReadFile();
 }
 
 static NSData *ToTempNSData(const std::optional<std::vector<uint8_t>> &_data)

@@ -1,7 +1,8 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "OpenXAttr.h"
 #include <VFS/XAttr.h>
 #include <NimbleCommander/Core/Alert.h>
+#include <Utility/StringExtras.h>
 #include "../PanelController.h"
 #include "../PanelView.h"
 
@@ -25,11 +26,11 @@ void OpenXAttr::Perform(PanelController *_target, id /*_sender*/) const
         context->RequestedDirectory = "/";
         context->InitiatedByUser = true;
         [_target GoToDirWithContext:context];
-    } catch( const VFSErrorException &e ) {
+    } catch( const ErrorException &e ) {
         Alert *const alert = [[Alert alloc] init];
         alert.messageText = NSLocalizedString(@"Failed to open extended attributes",
                                               "Alert message text when failed to open xattr vfs");
-        alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
+        alert.informativeText = [NSString stringWithUTF8StdString:e.error().LocalizedFailureReason()];
         [alert runModal];
     }
 }

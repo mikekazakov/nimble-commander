@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFSDeclarations.h>
@@ -23,7 +23,7 @@ public:
     AsyncVFSPromiseRestorer(PanelController *_panel, nc::core::VFSInstanceManager &_instance_mgr);
 
     using SuccessHandler = std::function<void(VFSHostPtr)>;
-    using FailureHandler = std::function<void(int)>;
+    using FailureHandler = std::function<void(Error)>;
     void Restore(const nc::core::VFSInstanceManager::Promise &_promise,
                  SuccessHandler _success_handler,
                  FailureHandler _failure_handler);
@@ -48,7 +48,7 @@ public:
                                     nc::panel::NetworkConnectionsManager &_net_mgr);
 
     using SuccessHandler = std::function<void(VFSHostPtr)>;
-    using FailureHandler = std::function<void(int)>;
+    using FailureHandler = std::function<void(Error)>;
     void Restore(const nc::panel::PersistentLocation &_location,
                  SuccessHandler _success_handler,
                  FailureHandler _failure_handler);

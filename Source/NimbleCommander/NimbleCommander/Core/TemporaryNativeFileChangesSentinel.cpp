@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TemporaryNativeFileChangesSentinel.h"
 #include <Base/algo.h>
 #include <Base/Hash.h>
@@ -10,15 +10,18 @@
 
 #include <algorithm>
 
+using namespace nc;
+
 static std::optional<std::vector<uint8_t>> CalculateFileHash(const std::string &_path)
 {
     const int chunk_sz = 1 * 1024 * 1024;
-    VFSFilePtr file;
-    int rc = nc::bootstrap::NativeVFSHostInstance().CreateFile(_path, file, nullptr);
-    if( rc != 0 )
+    const std::expected<std::shared_ptr<VFSFile>, Error> exp_file =
+        bootstrap::NativeVFSHostInstance().CreateFile(_path);
+    if( !exp_file )
         return std::nullopt;
 
-    rc = file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock, nullptr);
+    VFSFile &file = **exp_file;
+    const int rc = file.Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock, nullptr);
     if( rc != 0 )
         return std::nullopt;
 
@@ -26,7 +29,7 @@ static std::optional<std::vector<uint8_t>> CalculateFileHash(const std::string &
     nc::base::Hash h(nc::base::Hash::MD5);
 
     ssize_t rn = 0;
-    while( (rn = file->Read(buf.get(), chunk_sz)) > 0 )
+    while( (rn = file.Read(buf.get(), chunk_sz)) > 0 )
         h.Feed(buf.get(), rn);
 
     if( rn < 0 )
@@ -37,8 +40,8 @@ static std::optional<std::vector<uint8_t>> CalculateFileHash(const std::string &
 
 TemporaryNativeFileChangesSentinel &TemporaryNativeFileChangesSentinel::Instance()
 {
-    static auto inst = new TemporaryNativeFileChangesSentinel;
-    return *inst;
+    [[clang::no_destroy]] static TemporaryNativeFileChangesSentinel inst;
+    return inst;
 }
 
 bool TemporaryNativeFileChangesSentinel::WatchFile(const std::string &_path,

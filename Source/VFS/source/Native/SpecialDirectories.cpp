@@ -63,7 +63,7 @@ int FetchUnifiedListing(NativeHost &_host,
         else {
             _target = system_listing;
         }
-    } catch( const VFSErrorException & /*err*/ ) {
+    } catch( const ErrorException & /*err*/ ) {
         return VFSError::FromErrno(EINVAL); // TODO: return err
     } catch( ... ) {
         return VFSError::FromErrno(EINVAL);

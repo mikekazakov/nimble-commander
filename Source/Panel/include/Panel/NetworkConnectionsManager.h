@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/UUID.h>
@@ -56,7 +56,7 @@ public:
     virtual bool AskForPassword(const Connection &_conn, std::string &_password) = 0;
 
     /**
-     * May throw VFSErrorException on error.
+     * May throw ErrorException on error.
      */
     virtual std::shared_ptr<VFSHost> SpawnHostFromConnection(const Connection &_conn,
                                                              bool _allow_password_ui = true) = 0;

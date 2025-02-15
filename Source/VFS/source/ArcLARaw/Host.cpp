@@ -198,7 +198,7 @@ void ArchiveRawHost::Init(const VFSCancelChecker &_cancel_checker)
     auto extracted = read_stream(g_MaxBytes, path, *Parent(), _cancel_checker);
     if( !extracted.bytes ) {
         Log::Warn("unable to open {}({}), error: {}", path.c_str(), Parent()->Tag(), extracted.bytes.error());
-        throw VFSErrorException(extracted.bytes.error());
+        throw ErrorException(extracted.bytes.error());
     }
 
     m_Data = std::move(*extracted.bytes);
@@ -213,7 +213,7 @@ void ArchiveRawHost::Init(const VFSCancelChecker &_cancel_checker)
         VFSStat st;
         const auto st_rc = Parent()->Stat(path, st, Flags::None, _cancel_checker);
         if( st_rc != VFSError::Ok )
-            throw VFSErrorException(st_rc);
+            throw ErrorException(VFSError::ToError(st_rc));
         m_MTime = st.mtime;
     }
 }

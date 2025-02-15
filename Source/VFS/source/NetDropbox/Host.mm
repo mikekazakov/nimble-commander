@@ -94,13 +94,13 @@ void DropboxHost::Construct(const std::string &_account, const std::string &_acc
         I->m_RefreshToken = TokenMangler::FromMangledRefreshToken(_access_token);
         auto [vfs_err, access_token] = RetreiveAccessTokenFromRefreshToken(I->m_RefreshToken);
         if( vfs_err != VFSError::Ok )
-            throw VFSErrorException(vfs_err);
+            throw ErrorException(VFSError::ToError(vfs_err));
         SetAccessToken(access_token);
     }
     else {
         SetAccessToken(_access_token);
         if( I->m_Token.empty() )
-            throw VFSErrorException{VFSError::FromErrno(EINVAL)};
+            throw ErrorException{VFSError::ToError(VFSError::FromErrno(EINVAL))};
     }
 }
 
@@ -151,11 +151,11 @@ void DropboxHost::InitialAccountLookup()
     if( rc == VFSError::Ok ) {
         auto json = ParseJSON(data);
         if( !json )
-            throw VFSErrorException(VFSError::FromErrno(EBADMSG));
+            throw ErrorException(VFSError::ToError(VFSError::FromErrno(EBADMSG)));
         I->m_AccountInfo = ParseAccountInfo(*json);
     }
     else
-        throw VFSErrorException(rc);
+        throw ErrorException(VFSError::ToError(rc));
 }
 
 std::pair<int, std::string> DropboxHost::CheckTokenAndRetrieveAccountEmail(const std::string &_token)

@@ -112,7 +112,7 @@ ArchiveHost::ArchiveHost(const std::string_view _path,
             archive_read_free(I->m_Arc);
             I->m_Arc = nullptr;
         }
-        throw VFSErrorException(rc.error());
+        throw ErrorException(rc.error());
     }
 }
 
@@ -126,7 +126,7 @@ ArchiveHost::ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_con
             archive_read_free(I->m_Arc);
             I->m_Arc = nullptr;
         }
-        throw VFSErrorException(rc.error());
+        throw ErrorException(rc.error());
     }
 }
 

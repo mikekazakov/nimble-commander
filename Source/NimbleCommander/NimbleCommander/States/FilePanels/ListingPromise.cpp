@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ListingPromise.h"
 #include <VFS/VFSListingInput.h>
 #include <algorithm>
@@ -95,7 +95,7 @@ VFSListingPtr ListingPromise::RestoreUniform(unsigned long _fetch_flags,
     VFSListingPtr listing;
     const auto rc = host->FetchDirectoryListing(info->directory, listing, _fetch_flags, _cancel_checker);
     if( rc != VFSError::Ok )
-        throw VFSErrorException{rc};
+        throw ErrorException{VFSError::ToError(rc)};
 
     return listing;
 }

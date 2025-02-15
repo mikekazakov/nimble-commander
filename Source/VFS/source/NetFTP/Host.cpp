@@ -74,7 +74,7 @@ FTPHost::FTPHost(const std::string &_serv_url,
 {
     const int rc = DoInit();
     if( rc < 0 )
-        throw VFSErrorException(rc);
+        throw ErrorException(VFSError::ToError(rc));
 }
 
 FTPHost::FTPHost(const VFSConfiguration &_config)
@@ -83,7 +83,7 @@ FTPHost::FTPHost(const VFSConfiguration &_config)
 {
     const int rc = DoInit();
     if( rc < 0 )
-        throw VFSErrorException(rc);
+        throw ErrorException(VFSError::ToError(rc));
 }
 
 const class VFSNetFTPHostConfiguration &FTPHost::Config() const noexcept

@@ -106,15 +106,6 @@ struct Stat {
     }
 };
 
-// TODO: remove me
-class ErrorException : public ::nc::ErrorException
-{
-public:
-    ErrorException(int _err) noexcept;
-    ErrorException(const Error &_err) noexcept;
-    ErrorException(Error &&_err) noexcept;
-};
-
 struct User {
     uint32_t uid;
     std::string name;
@@ -187,7 +178,6 @@ using VFSHostWeakPtr = std::weak_ptr<nc::vfs::Host>;
 using VFSFlags = nc::vfs::Flags;
 using VFSGroup = nc::vfs::Group;
 using VFSUser = nc::vfs::User;
-using VFSErrorException = nc::vfs::ErrorException;
 using VFSStat = nc::vfs::Stat;
 using VFSStatFS = nc::vfs::StatFS;
 using VFSDirEnt = nc::vfs::DirEnt;

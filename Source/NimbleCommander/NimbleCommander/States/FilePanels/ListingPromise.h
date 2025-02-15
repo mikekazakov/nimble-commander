@@ -37,7 +37,7 @@ public:
     ListingPromise &operator=(const ListingPromise &) = default;
     ListingPromise &operator=(ListingPromise &&) = default;
 
-    // may throw VFSErrorException or return nullptr
+    // may throw ErrorException or return nullptr
     VFSListingPtr Restore(unsigned long _fetch_flags,
                           const PromiseVFSAdapter &_adapter,
                           const std::function<bool()> &_cancel_checker) const;

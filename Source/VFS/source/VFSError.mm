@@ -130,24 +130,6 @@ static constexpr frozen::unordered_map<int, frozen::string, 103> g_PosixCodes = 
     {EQFULL, "EQFULL"},
 };
 
-namespace nc::vfs {
-
-using namespace std::literals;
-
-ErrorException::ErrorException(int _err) noexcept : ::nc::ErrorException(VFSError::ToError(_err))
-{
-}
-
-ErrorException::ErrorException(const Error &_err) noexcept : ::nc::ErrorException(_err)
-{
-}
-
-ErrorException::ErrorException(Error &&_err) noexcept : ::nc::ErrorException(std::move(_err))
-{
-}
-
-} // namespace nc::vfs
-
 namespace VFSError {
 
 int FromErrno(int _errno) noexcept

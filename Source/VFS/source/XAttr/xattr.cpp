@@ -107,7 +107,7 @@ XAttrHost::XAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config)
 {
     const std::string &path = _config.Get<VFSXAttrHostConfiguration>().path;
     if( !_parent->IsNativeFS() )
-        throw VFSErrorException(VFSError::InvalidCall);
+        throw ErrorException(VFSError::ToError(VFSError::InvalidCall));
 
     int fd = open(path.c_str(), O_RDONLY | O_NONBLOCK | O_EXLOCK);
     if( fd < 0 )
@@ -115,22 +115,22 @@ XAttrHost::XAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config)
     if( fd < 0 )
         fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
     if( fd < 0 )
-        throw VFSErrorException(VFSError::FromErrno(EIO));
+        throw ErrorException(VFSError::ToError(VFSError::FromErrno(EIO)));
 
     if( !TurnOffBlockingMode(fd) ) {
         close(fd);
-        throw VFSErrorException(VFSError::FromErrno(EIO));
+        throw ErrorException(VFSError::ToError(VFSError::FromErrno(EIO)));
     }
 
     if( fstat(fd, &m_Stat) != 0 ) {
         close(fd);
-        throw VFSErrorException(VFSError::FromErrno(EIO));
+        throw ErrorException(VFSError::ToError(VFSError::FromErrno(EIO)));
     }
 
     const int ret = EnumerateAttrs(fd, m_Attrs);
     if( ret != 0 ) {
         close(fd);
-        throw VFSErrorException(ret);
+        throw ErrorException(VFSError::ToError(ret));
     }
 
     m_FD = fd;

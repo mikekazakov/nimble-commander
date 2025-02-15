@@ -6,6 +6,7 @@
 #include <VFS/../../source/NetDropbox/File.h>
 #include <set>
 
+using namespace nc;
 using namespace nc::vfs;
 using namespace std::string_literals;
 
@@ -44,7 +45,7 @@ TEST_CASE(PREFIX "invalid credentials")
     params.access_token = token;
     params.client_id = NCE(nc::env::dropbox_client_id);
     params.client_secret = NCE(nc::env::dropbox_client_secret);
-    CHECK_THROWS_AS(std::make_shared<DropboxHost>(params), VFSErrorException);
+    CHECK_THROWS_AS(std::make_shared<DropboxHost>(params), ErrorException);
 }
 
 TEST_CASE(PREFIX "stat on existing file")

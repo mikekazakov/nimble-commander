@@ -124,7 +124,7 @@ SFTPHost::SFTPHost(const VFSConfiguration &_config)
 {
     const int rc = DoInit();
     if( rc < 0 )
-        throw VFSErrorException(rc);
+        throw ErrorException(VFSError::ToError(rc));
 }
 
 static VFSConfiguration ComposeConfguration(const std::string &_serv_url,
@@ -156,7 +156,7 @@ SFTPHost::SFTPHost(const std::string &_serv_url,
 {
     const int rc = DoInit();
     if( rc < 0 )
-        throw VFSErrorException(rc);
+        throw ErrorException(VFSError::ToError(rc));
 }
 
 int SFTPHost::DoInit()

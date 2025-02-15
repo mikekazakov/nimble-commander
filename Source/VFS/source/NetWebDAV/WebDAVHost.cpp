@@ -62,7 +62,7 @@ void WebDAVHost::Init()
     auto ar = I->m_Pool.Get();
     const auto [rc, requests] = RequestServerOptions(Config(), *ar.connection);
     if( rc != VFSError::Ok )
-        throw VFSErrorException(rc);
+        throw ErrorException(VFSError::ToError(rc));
 
     // it's besically good to check available requests before commiting to work
     // with the server, BUT my local QNAP NAS is pretty strange and reports a
@@ -71,7 +71,7 @@ void WebDAVHost::Init()
     //    if( (requests & HTTPRequests::MinimalRequiredSet) !=
     //    HTTPRequests::MinimalRequiredSet ) {
     //        HTTPRequests::Print(requests);
-    //        throw VFSErrorException( VFSError::FromErrno(EPROTONOSUPPORT) );
+    //        throw ErrorException( VFSError::ToError(VFSError::FromErrno(EPROTONOSUPPORT)) );
     //    }
 
     AddFeatures(HostFeatures::NonEmptyRmDir);

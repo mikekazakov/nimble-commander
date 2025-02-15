@@ -165,7 +165,7 @@ TEST_CASE(PREFIX "Compressing kernel into encrypted archive")
     try {
         std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host);
         REQUIRE(false);
-    } catch( VFSErrorException &e ) {
+    } catch( const ErrorException &e ) {
         REQUIRE(e.error() == Error{VFSError::ErrorDomain, VFSError::ArclibPasswordRequired});
     }
 

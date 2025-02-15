@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/FileWindow.h>
 #include <cassert>
 
@@ -8,7 +8,7 @@ FileWindow::FileWindow(const std::shared_ptr<VFSFile> &_file, int _window_size)
 {
     const auto rc = Attach(_file, _window_size);
     if( rc != VFSError::Ok )
-        throw VFSErrorException{rc};
+        throw ErrorException{VFSError::ToError(rc)};
 }
 
 bool FileWindow::FileOpened() const

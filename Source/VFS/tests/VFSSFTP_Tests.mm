@@ -8,6 +8,7 @@
 #include <set>
 #include <dirent.h>
 
+using namespace nc;
 using namespace nc::vfs;
 using namespace std::string_literals;
 
@@ -693,19 +694,19 @@ TEST_CASE(PREFIX "Invalid auth")
     // invalid user
     CHECK_THROWS_AS(
         std::make_shared<SFTPHost>(g_Ubuntu2004_Address, "Somebody", "Hello, World!", "", g_Ubuntu2004_Port),
-        VFSErrorException);
+        ErrorException);
 
     // invalid password
     CHECK_THROWS_AS(
         std::make_shared<SFTPHost>(g_Ubuntu2004_Address, g_Ubuntu2004_User1, "Hello, World!", "", g_Ubuntu2004_Port),
-        VFSErrorException);
+        ErrorException);
 
     // invalid key
     CHECK_THROWS_AS(std::make_shared<SFTPHost>(g_Ubuntu2004_Address, g_Ubuntu2004_User3, "", rsa, g_Ubuntu2004_Port),
-                    VFSErrorException);
+                    ErrorException);
 
     // invalid password for a key
     CHECK_THROWS_AS(
         std::make_shared<SFTPHost>(g_Ubuntu2004_Address, g_Ubuntu2004_User7, "Blah", passwdrsa, g_Ubuntu2004_Port),
-        VFSErrorException);
+        ErrorException);
 }

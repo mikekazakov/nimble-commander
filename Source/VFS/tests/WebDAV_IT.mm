@@ -12,6 +12,7 @@
 
 #define PREFIX "WebDAV "
 
+using namespace nc;
 using namespace nc::vfs;
 
 // Apache/2.4.41 on Ubuntu 20.04 LTS running in a Docker
@@ -73,7 +74,7 @@ TEST_CASE(PREFIX "invalid credentials")
 {
     REQUIRE_THROWS_AS(
         new WebDAVHost("localhost", g_Ubuntu2004Username, "SomeRandomGibberish", "webdav", false, g_Ubuntu2004Port),
-        VFSErrorException);
+        ErrorException);
 }
 
 /*==================================================================================================

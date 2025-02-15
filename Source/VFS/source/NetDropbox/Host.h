@@ -44,15 +44,18 @@ public:
 
     bool IsCaseSensitiveAtPath(std::string_view _dir) const override;
 
-    int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<VFSStatFS, Error> StatFS(std::string_view _path,
+                                           const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int
-    Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
+    int Stat(std::string_view _path,
+             VFSStat &_st,
+             unsigned long _flags,
+             const VFSCancelChecker &_cancel_checker = {}) override;
 
-    std::expected<void, Error> Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error> Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<void, Error> RemoveDirectory(std::string_view _path,
-                                               const VFSCancelChecker &_cancel_checker) override;
+                                               const VFSCancelChecker &_cancel_checker = {}) override;
 
     int IterateDirectoryListing(std::string_view _path,
                                 const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
@@ -60,16 +63,17 @@ public:
     int FetchDirectoryListing(std::string_view _path,
                               VFSListingPtr &_target,
                               unsigned long _flags,
-                              const VFSCancelChecker &_cancel_checker) override;
+                              const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<std::shared_ptr<VFSFile>, Error> CreateFile(std::string_view _path,
-                                                              const VFSCancelChecker &_cancel_checker) override;
+                                                              const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<void, Error>
-    CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker) override;
+    CreateDirectory(std::string_view _path, int _mode, const VFSCancelChecker &_cancel_checker = {}) override;
 
-    std::expected<void, Error>
-    Rename(std::string_view _old_path, std::string_view _new_path, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error> Rename(std::string_view _old_path,
+                                      std::string_view _new_path,
+                                      const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::shared_ptr<const DropboxHost> SharedPtr() const noexcept;
 

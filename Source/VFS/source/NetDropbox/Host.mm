@@ -210,31 +210,30 @@ void DropboxHost::FillAuth(NSMutableURLRequest *_request) const
     [_request setValue:I->m_AuthString forHTTPHeaderField:@"Authorization"];
 }
 
-int DropboxHost::StatFS([[maybe_unused]] std::string_view _path,
-                        VFSStatFS &_stat,
-                        const VFSCancelChecker &_cancel_checker)
+std::expected<VFSStatFS, Error> DropboxHost::StatFS([[maybe_unused]] std::string_view _path,
+                                                    const VFSCancelChecker &_cancel_checker)
 {
-    _stat = VFSStatFS{};
-
     NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::GetSpaceUsage];
     auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
     if( rc == VFSError::Ok ) {
         auto json_opt = ParseJSON(data);
         if( !json_opt )
-            return VFSError::GenericError;
+            return std::unexpected(VFSError::ToError(VFSError::GenericError));
         auto &json = *json_opt;
 
         // TODO: wrap with checks
         auto used = json["used"].GetInt64();
         auto allocated = json["allocation"]["allocated"].GetInt64();
 
-        _stat.total_bytes = allocated;
-        _stat.free_bytes = allocated - used;
-        _stat.avail_bytes = _stat.free_bytes;
-        _stat.volume_name = I->m_AccountInfo.email;
+        VFSStatFS stat;
+        stat.total_bytes = allocated;
+        stat.free_bytes = allocated - used;
+        stat.avail_bytes = stat.free_bytes;
+        stat.volume_name = I->m_AccountInfo.email;
+        return stat;
     }
 
-    return rc;
+    return std::unexpected(VFSError::ToError(rc));
 }
 
 int DropboxHost::Stat(std::string_view _path,

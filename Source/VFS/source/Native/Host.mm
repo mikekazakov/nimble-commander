@@ -569,29 +569,28 @@ int NativeHost::IterateDirectoryListing(std::string_view _path,
     return VFSError::Ok;
 }
 
-int NativeHost::StatFS(std::string_view _path,
-                       VFSStatFS &_stat,
-                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSStatFS, Error> NativeHost::StatFS(std::string_view _path,
+                                                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
 
     struct statfs info;
     if( statfs(path.c_str(), &info) < 0 )
-        return VFSError::FromErrno();
+        return std::unexpected(Error{Error::POSIX, errno});
 
     auto volume = m_NativeFSManager.VolumeFromMountPoint(info.f_mntonname);
     if( !volume )
-        return VFSError::GenericError;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     m_NativeFSManager.UpdateSpaceInformation(volume);
 
-    _stat.volume_name = volume->verbose.name.UTF8String;
-    _stat.total_bytes = volume->basic.total_bytes;
-    _stat.free_bytes = volume->basic.free_bytes;
-    _stat.avail_bytes = volume->basic.available_bytes;
-
-    return 0;
+    VFSStatFS stat;
+    stat.volume_name = volume->verbose.name.UTF8String;
+    stat.total_bytes = volume->basic.total_bytes;
+    stat.free_bytes = volume->basic.free_bytes;
+    stat.avail_bytes = volume->basic.available_bytes;
+    return stat;
 }
 
 std::expected<void, Error> NativeHost::Unlink(std::string_view _path,

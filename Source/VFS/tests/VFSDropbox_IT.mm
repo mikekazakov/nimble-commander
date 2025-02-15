@@ -29,8 +29,7 @@ static std::shared_ptr<DropboxHost> Spawn()
 TEST_CASE(PREFIX "statfs")
 {
     const std::shared_ptr<VFSHost> host = Spawn();
-    VFSStatFS statfs;
-    REQUIRE(host->StatFS("/", statfs) == 0);
+    const VFSStatFS statfs = host->StatFS("/").value();
     CHECK(statfs.total_bytes == 2147483648);
     CHECK(statfs.free_bytes > 0);
     CHECK(statfs.free_bytes < statfs.total_bytes);

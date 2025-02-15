@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/SerialQueue.h>
 #include <Base/CommonPaths.h>
 
@@ -37,7 +37,7 @@ static const auto g_Delay = 5s;
 
 struct PanelViewFooterVolumeInfoFetcherInternals {
 
-    static void AcceptResult(VFSHostWeakPtr _host, std::string _path, std::optional<VFSStatFS> _stat)
+    static void AcceptResult(VFSHostWeakPtr _host, std::string_view _path, const std::optional<VFSStatFS> &_stat)
     {
         dispatch_assert_main_queue();
 
@@ -67,12 +67,11 @@ struct PanelViewFooterVolumeInfoFetcherInternals {
         const std::string path = _lp.path;
 
         g_Queue.after(_hurry ? 0s : g_Delay, [=] {
-            VFSStatFS stat;
-            int result = -1;
+            std::expected<VFSStatFS, Error> stat;
             if( auto h = host.lock() )
-                result = h->StatFS(path, stat, nullptr);
+                stat = h->StatFS(path);
             dispatch_to_main_queue(
-                [=] { AcceptResult(host, path, result == 0 ? std::optional<VFSStatFS>{stat} : std::nullopt); });
+                [=] { AcceptResult(host, path, stat ? std::optional<VFSStatFS>{*stat} : std::nullopt); });
         });
 
         _lp.scheduled = true;

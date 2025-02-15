@@ -27,7 +27,7 @@ public:
     int
     Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
-    int StatFS(std::string_view _path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<VFSStatFS, Error> StatFS(std::string_view _path, const VFSCancelChecker &_cancel_checker) override;
 
     std::expected<void, Error> Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
 

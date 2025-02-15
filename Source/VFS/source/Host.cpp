@@ -259,11 +259,10 @@ int Host::IterateDirectoryListing([[maybe_unused]] std::string_view _path,
     return VFSError::NotSupported;
 }
 
-int Host::StatFS([[maybe_unused]] std::string_view _path,
-                 [[maybe_unused]] VFSStatFS &_stat,
-                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSStatFS, Error> Host::StatFS([[maybe_unused]] std::string_view _path,
+                                             [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 std::expected<void, Error> Host::Unlink([[maybe_unused]] std::string_view _path,

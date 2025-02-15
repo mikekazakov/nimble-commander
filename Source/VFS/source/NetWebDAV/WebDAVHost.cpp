@@ -255,28 +255,27 @@ int WebDAVHost::RefreshListingAtPath(const std::string &_path, [[maybe_unused]] 
     return VFSError::Ok;
 }
 
-int WebDAVHost::StatFS([[maybe_unused]] std::string_view _path,
-                       VFSStatFS &_stat,
-                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSStatFS, Error> WebDAVHost::StatFS([[maybe_unused]] std::string_view _path,
+                                                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     const auto ar = I->m_Pool.Get();
     const auto [rc, free, used] = RequestSpaceQuota(Config(), *ar.connection);
     if( rc != VFSError::Ok )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
-    _stat = nc::vfs::StatFS{};
+    VFSStatFS stat;
 
     if( free >= 0 ) {
-        _stat.free_bytes = free;
-        _stat.avail_bytes = free;
+        stat.free_bytes = free;
+        stat.avail_bytes = free;
     }
     if( free >= 0 && used >= 0 ) {
-        _stat.total_bytes = free + used;
+        stat.total_bytes = free + used;
     }
 
-    _stat.volume_name = Config().full_url;
+    stat.volume_name = Config().full_url;
 
-    return VFSError::Ok;
+    return stat;
 }
 
 std::expected<void, Error> WebDAVHost::CreateDirectory(std::string_view _path,

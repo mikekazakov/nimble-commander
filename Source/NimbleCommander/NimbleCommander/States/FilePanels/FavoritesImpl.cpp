@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FavoritesImpl.h"
 #include <CoreServices/CoreServices.h>
 #include <VFS/VFS.h>
@@ -73,9 +73,9 @@ FavoriteLocationsStorageImpl::ComposeFavoriteLocation(VFSHost &_host,
     f.footprint = _host.FullHashForPath(_directory);
     if( _title.empty() ) {
         if( _directory == "/" ) {
-            VFSStatFS statfs;
-            if( _host.StatFS(_directory, statfs) == VFSError::Ok && !statfs.volume_name.empty() ) {
-                f.title = statfs.volume_name;
+            if( const std::expected<VFSStatFS, Error> statfs = _host.StatFS(_directory);
+                statfs && !statfs->volume_name.empty() ) {
+                f.title = statfs->volume_name;
             }
             else {
                 f.title = _host.MakePathVerbose(_directory);

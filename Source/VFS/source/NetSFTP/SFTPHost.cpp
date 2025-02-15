@@ -585,26 +585,26 @@ int SFTPHost::IterateDirectoryListing(std::string_view _path,
     return 0;
 }
 
-int SFTPHost::StatFS(std::string_view _path, VFSStatFS &_stat, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSStatFS, Error> SFTPHost::StatFS(std::string_view _path,
+                                                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if( rc )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
     LIBSSH2_SFTP_STATVFS statfs;
     rc = libssh2_sftp_statvfs(conn->sftp, _path.data(), _path.length(), &statfs);
     if( rc < 0 )
-        return VFSErrorForConnection(*conn);
+        return std::unexpected(VFSError::ToError(VFSErrorForConnection(*conn)));
 
-    _stat.total_bytes = statfs.f_blocks * statfs.f_frsize;
-    _stat.avail_bytes = statfs.f_bavail * statfs.f_frsize;
-    _stat.free_bytes = statfs.f_ffree * statfs.f_frsize;
-    _stat.volume_name.clear(); // mb some dummy name here?
-
-    return 0;
+    VFSStatFS stat;
+    stat.total_bytes = statfs.f_blocks * statfs.f_frsize;
+    stat.avail_bytes = statfs.f_bavail * statfs.f_frsize;
+    stat.free_bytes = statfs.f_ffree * statfs.f_frsize;
+    return stat;
 }
 
 std::expected<std::shared_ptr<VFSFile>, Error> SFTPHost::CreateFile(std::string_view _path,

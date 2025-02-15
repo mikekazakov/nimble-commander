@@ -240,7 +240,7 @@ TEST_CASE(PREFIX "seekread")
             bytes[i] = static_cast<uint8_t>(i & 0xFF);
 
         REQUIRE(host->CreateDirectory("/TestSeekRead", 0755));
-        VFSFilePtr file = host->CreateFile("/TestSeekRead/blob").value();
+        const VFSFilePtr file = host->CreateFile("/TestSeekRead/blob").value();
         REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
         WriteAll(*file, bytes);
         REQUIRE(file->Close() == 0);

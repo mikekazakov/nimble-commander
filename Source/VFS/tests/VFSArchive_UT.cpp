@@ -565,7 +565,7 @@ TEST_CASE(PREFIX "Cyrilic encoding in a file downloaded from GDrive")
     std::shared_ptr<ArchiveHost> host;
     REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(path.c_str(), TestEnv().vfs_native));
 
-    VFSFilePtr file = host->CreateFile("/тест.txt").value();
+    const VFSFilePtr file = host->CreateFile("/тест.txt").value();
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
 
     auto d = file->ReadFile();

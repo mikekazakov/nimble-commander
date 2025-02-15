@@ -129,7 +129,7 @@ void ControllerStateJSONDecoder::RecoverSavedContentSync(const PersistentLocatio
         EnsureNonEmptyStateAsync(_panel);
         return;
     }
-    VFSHostPtr host = *exp_host;
+    const VFSHostPtr host = *exp_host;
 
     auto &path = _location.path;
     auto request = std::make_shared<DirectoryChangeRequest>();
@@ -163,7 +163,7 @@ void ControllerStateJSONDecoder::RecoverSavedContentAsync(PersistentLocation _lo
                 m_Persistency.CreateVFSFromLocation(location, m_VFSInstanceManager);
             if( exp_host && *exp_host != nullptr ) {
                 // the VFS was recovered, lets go inside it.
-                VFSHostPtr host = *exp_host;
+                const VFSHostPtr host = *exp_host;
                 auto path = location.path;
                 dispatch_to_main_queue([=] { RecoverSavedPathAtVFSAsync(host, path, _panel); });
             }

@@ -195,7 +195,7 @@ TEST_CASE(PREFIX "simple upload")
     const std::shared_ptr<VFSHost> host = Spawn();
     std::ignore = host->Unlink(filepath);
 
-    std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
+    const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
 
     REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
     REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);

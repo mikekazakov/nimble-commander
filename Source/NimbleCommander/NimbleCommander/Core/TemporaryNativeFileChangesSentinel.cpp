@@ -21,7 +21,7 @@ static std::optional<std::vector<uint8_t>> CalculateFileHash(const std::string &
         return std::nullopt;
 
     VFSFile &file = **exp_file;
-    int rc = file.Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock, nullptr);
+    const int rc = file.Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock, nullptr);
     if( rc != 0 )
         return std::nullopt;
 

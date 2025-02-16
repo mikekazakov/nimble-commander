@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
 #include "TestEnv.h"
@@ -6,6 +6,7 @@
 
 #define PREFIX "Operations::BatchRenaming "
 
+using namespace nc;
 using namespace nc::ops;
 
 static VFSListingItem GetRegListingItem(const std::string &_filename, const std::filesystem::path &_at);
@@ -445,9 +446,9 @@ TEST_CASE(PREFIX "Renaming - simple cases")
 static VFSListingItem GetRegListingItem(const std::string &_filename, const std::filesystem::path &_at)
 {
     REQUIRE(close(creat((_at / _filename).c_str(), 0755)) == 0);
-    std::vector<VFSListingItem> items;
-    const int vfs_error = TestEnv().vfs_native->FetchFlexibleListingItems(_at, {_filename}, 0, items, nullptr);
-    REQUIRE(vfs_error == VFSError::Ok);
-    REQUIRE(items.size() == 1);
-    return items[0];
+    std::expected<std::vector<VFSListingItem>, Error> items =
+        TestEnv().vfs_native->FetchFlexibleListingItems(_at, {_filename}, 0);
+    REQUIRE(items);
+    REQUIRE(items->size() == 1);
+    return items->front();
 }

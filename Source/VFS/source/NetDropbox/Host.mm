@@ -288,11 +288,12 @@ int DropboxHost::Stat(std::string_view _path,
     return rc;
 }
 
-int DropboxHost::IterateDirectoryListing(std::string_view _path,
-                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+std::expected<void, Error>
+DropboxHost::IterateDirectoryListing(std::string_view _path,
+                                     const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     if( !_path.starts_with("/") )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     std::string path = std::string(_path);
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
@@ -309,11 +310,11 @@ int DropboxHost::IterateDirectoryListing(std::string_view _path,
 
         auto [rc, data] = SendSynchronousPostRequest(req);
         if( rc != VFSError::Ok )
-            return rc;
+            return std::unexpected(VFSError::ToError(rc));
 
         auto json_opt = ParseJSON(data);
         if( !json_opt )
-            return VFSError::GenericError;
+            return std::unexpected(Error{Error::POSIX, EINVAL});
         auto &json = *json_opt;
 
         auto entries = json.FindMember("entries");
@@ -329,7 +330,7 @@ int DropboxHost::IterateDirectoryListing(std::string_view _path,
                     dirent.name_len = uint16_t(metadata.name.length());
                     const bool goon = _handler(dirent);
                     if( !goon )
-                        return VFSError::Cancelled;
+                        return std::unexpected(Error{Error::POSIX, ECANCELED});
                 }
             }
         }
@@ -344,7 +345,7 @@ int DropboxHost::IterateDirectoryListing(std::string_view _path,
         }
     } while( not cursor_token.empty() );
 
-    return VFSError::Ok;
+    return {};
 }
 
 int DropboxHost::FetchDirectoryListing(std::string_view _path,

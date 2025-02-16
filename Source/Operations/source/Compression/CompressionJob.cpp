@@ -442,10 +442,10 @@ bool CompressionJob::ScanItem(const VFSListingItem &_item, Source &_ctx)
                 directory_entries.emplace_back(_dirent.name);
                 return true;
             };
-            const auto rc = host.IterateDirectoryListing(_item.Path(), callback);
-            if( rc == VFSError::Ok )
+            const std::expected<void, Error> rc = host.IterateDirectoryListing(_item.Path(), callback);
+            if( rc )
                 break;
-            switch( m_SourceScanError(rc, _item.Path(), host) ) {
+            switch( m_SourceScanError(rc.error(), _item.Path(), host) ) {
                 case SourceScanErrorResolution::Stop:
                     Stop();
                     return false;
@@ -481,7 +481,7 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
         const auto rc = vfs->Stat(_full_path, stat_buffer, VFSFlags::F_NoFollow, nullptr);
         if( rc == VFSError::Ok )
             break;
-        switch( m_SourceScanError(rc, _full_path, *vfs) ) {
+        switch( m_SourceScanError(VFSError::ToError(rc), _full_path, *vfs) ) {
             case SourceScanErrorResolution::Stop:
                 Stop();
                 return false;
@@ -524,10 +524,10 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
                 directory_entries.emplace_back(_dirent.name);
                 return true;
             };
-            const auto rc = vfs->IterateDirectoryListing(_full_path, callback);
-            if( rc == VFSError::Ok )
+            const std::expected<void, Error> rc = vfs->IterateDirectoryListing(_full_path, callback);
+            if( rc )
                 break;
-            switch( m_SourceScanError(rc, _full_path, *vfs) ) {
+            switch( m_SourceScanError(rc.error(), _full_path, *vfs) ) {
                 case SourceScanErrorResolution::Stop:
                     Stop();
                     return false;

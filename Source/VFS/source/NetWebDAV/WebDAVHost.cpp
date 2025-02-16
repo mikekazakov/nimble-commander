@@ -154,11 +154,12 @@ int WebDAVHost::FetchDirectoryListing(std::string_view _path,
     return VFSError::Ok;
 }
 
-int WebDAVHost::IterateDirectoryListing(std::string_view _path,
-                                        const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+std::expected<void, Error>
+WebDAVHost::IterateDirectoryListing(std::string_view _path,
+                                    const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     if( !IsValidInputPath(_path) )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const auto path = EnsureTrailingSlash(std::string(_path));
 
@@ -169,12 +170,12 @@ int WebDAVHost::IterateDirectoryListing(std::string_view _path,
     else {
         const auto refresh_rc = RefreshListingAtPath(path, nullptr);
         if( refresh_rc != VFSError::Ok )
-            return refresh_rc;
+            return std::unexpected(VFSError::ToError(refresh_rc));
 
         if( auto cached2 = I->m_Cache.Listing(path) )
             items = std::move(*cached2);
         else
-            return VFSError::GenericError;
+            return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
     }
 
     std::erase_if(items, [](const auto &_item) { return _item.filename == ".."; });
@@ -185,10 +186,10 @@ int WebDAVHost::IterateDirectoryListing(std::string_view _path,
         e.name_len = uint16_t(i.filename.length());
         e.type = i.is_directory ? DT_DIR : DT_REG;
         if( !_handler(e) )
-            return VFSError::Cancelled;
+            return std::unexpected(nc::Error{nc::Error::POSIX, ECANCELED});
     }
 
-    return VFSError::Ok;
+    return {};
 }
 
 int WebDAVHost::Stat(std::string_view _path,

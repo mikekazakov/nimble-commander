@@ -539,20 +539,20 @@ int SFTPHost::Stat(std::string_view _path,
     return 0;
 }
 
-int SFTPHost::IterateDirectoryListing(std::string_view _path,
-                                      const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+std::expected<void, Error>
+SFTPHost::IterateDirectoryListing(std::string_view _path, const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if( rc )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
     LIBSSH2_SFTP_HANDLE *sftp_handle = libssh2_sftp_open_ex(
         conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), 0, 0, LIBSSH2_SFTP_OPENDIR);
     if( !sftp_handle ) {
-        return VFSErrorForConnection(*conn);
+        return std::unexpected(VFSError::ToError(VFSErrorForConnection(*conn)));
     }
     const auto close_sftp_handle = at_scope_end([&] { libssh2_sftp_closedir(sftp_handle); });
 
@@ -582,7 +582,7 @@ int SFTPHost::IterateDirectoryListing(std::string_view _path,
             break;
     }
 
-    return 0;
+    return {};
 }
 
 std::expected<VFSStatFS, Error> SFTPHost::StatFS(std::string_view _path,

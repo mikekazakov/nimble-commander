@@ -253,8 +253,9 @@ public:
      * Do not rely on it to build a directory listing, it's for contents iteration.
      * _handler: return true to allow further iteration, false to stop it.
      */
-    virtual int IterateDirectoryListing(std::string_view _path,                                         //
-                                        const std::function<bool(const VFSDirEnt &_dirent)> &_handler); //
+    virtual std::expected<void, Error>
+    IterateDirectoryListing(std::string_view _path,                                         //
+                            const std::function<bool(const VFSDirEnt &_dirent)> &_handler); //
 
     // Fetches a listing of the specified directory and returns an array of items with the specified filenames.
     std::expected<std::vector<VFSListingItem>, Error>

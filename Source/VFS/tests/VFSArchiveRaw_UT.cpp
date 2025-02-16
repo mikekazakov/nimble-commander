@@ -138,10 +138,10 @@ static void check(const Case &test_case)
         CHECK(_dirent.name_len == std::string_view("hello.txt").size());
         return true;
     };
-    CHECK(host->IterateDirectoryListing("", iter_cb) == einval);
-    CHECK(host->IterateDirectoryListing("blah-blah", iter_cb) == einval);
-    CHECK(host->IterateDirectoryListing("/blah-blah", iter_cb) == enoent);
-    CHECK(host->IterateDirectoryListing("/", iter_cb) == VFSError::Ok);
+    CHECK(host->IterateDirectoryListing("", iter_cb).error() == Error{Error::POSIX, EINVAL});
+    CHECK(host->IterateDirectoryListing("blah-blah", iter_cb).error() == Error{Error::POSIX, EINVAL});
+    CHECK(host->IterateDirectoryListing("/blah-blah", iter_cb).error() == Error{Error::POSIX, ENOENT});
+    CHECK(host->IterateDirectoryListing("/", iter_cb));
 
     // let's fetch a listing
     VFSListingPtr listing;

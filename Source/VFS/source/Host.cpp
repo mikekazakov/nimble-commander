@@ -251,12 +251,13 @@ int Host::Stat([[maybe_unused]] std::string_view _path,
     return VFSError::NotSupported;
 }
 
-int Host::IterateDirectoryListing([[maybe_unused]] std::string_view _path,
-                                  [[maybe_unused]] const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+std::expected<void, Error>
+Host::IterateDirectoryListing([[maybe_unused]] std::string_view _path,
+                              [[maybe_unused]] const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     // TODO: write a default implementation using listing fetching.
     // it will be less efficient, but for some FS like PS it will be ok
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 std::expected<VFSStatFS, Error> Host::StatFS([[maybe_unused]] std::string_view _path,

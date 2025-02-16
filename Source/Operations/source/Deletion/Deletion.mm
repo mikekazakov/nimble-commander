@@ -21,7 +21,7 @@ Deletion::Deletion(std::vector<VFSListingItem> _items, DeletionOptions _options)
     m_LockedItemBehaviour = m_OrigOptions.locked_items_behaviour;
 
     m_Job = std::make_unique<DeletionJob>(std::move(_items), _options.type);
-    m_Job->m_OnReadDirError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_OnReadDirError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         return OnReadDirError(_err, _path, _vfs);
     };
     m_Job->m_OnUnlinkError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
@@ -48,7 +48,7 @@ Job *Deletion::GetJob() noexcept
     return m_Job.get();
 }
 
-Callbacks::ReadDirErrorResolution Deletion::OnReadDirError(int _err, const std::string &_path, VFSHost &_vfs)
+Callbacks::ReadDirErrorResolution Deletion::OnReadDirError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ? Callbacks::ReadDirErrorResolution::Skip : Callbacks::ReadDirErrorResolution::Stop;
@@ -69,7 +69,7 @@ Callbacks::ReadDirErrorResolution Deletion::OnReadDirError(int _err, const std::
         return Callbacks::ReadDirErrorResolution::Stop;
 }
 
-void Deletion::OnReadDirErrorUI(int _err,
+void Deletion::OnReadDirErrorUI(Error _err,
                                 const std::string &_path,
                                 [[maybe_unused]] std::shared_ptr<VFSHost> _vfs,
                                 std::shared_ptr<AsyncDialogResponse> _ctx)
@@ -79,7 +79,7 @@ void Deletion::OnReadDirErrorUI(int _err,
     sheet.style = GenericErrorDialogStyle::Caution;
     sheet.message = NSLocalizedString(@"Failed to access a directory", "");
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
-    sheet.errorNo = _err;
+    sheet.error = _err;
     [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
     [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
     if( m_Job->ItemsInScript() > 0 )

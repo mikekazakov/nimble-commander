@@ -21,8 +21,9 @@ TEST_CASE(PREFIX "Allows cancellation on the phase of source items scanning")
     struct MyHost : vfs::NativeHost {
         //        MyHost(nc::utility::NativeFSManager &_native_fs_man) : NativeHost(_native_fs_man) {}
         using NativeHost::NativeHost;
-        int IterateDirectoryListing(std::string_view _path,
-                                    const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override
+        std::expected<void, Error>
+        IterateDirectoryListing(std::string_view _path,
+                                const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override
         {
             if( on_iterate_directorying_listing )
                 on_iterate_directorying_listing(_path);

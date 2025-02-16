@@ -654,10 +654,10 @@ std::tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
                             dir_ents.emplace_back(_.name);
                             return true;
                         };
-                        const auto rc = host.IterateDirectoryListing(path, callback);
-                        if( rc == VFSError::Ok )
+                        const std::expected<void, Error> rc = host.IterateDirectoryListing(path, callback);
+                        if( rc )
                             break;
-                        switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), path, host) ) {
+                        switch( m_OnCantAccessSourceItem(rc.error(), path, host) ) {
                             case CantAccessSourceItemResolution::Skip:
                                 return StepResult::Skipped;
                             case CantAccessSourceItemResolution::Stop:

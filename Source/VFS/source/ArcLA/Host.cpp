@@ -678,25 +678,26 @@ int ArchiveHost::ResolvePathIfNeeded(std::string_view _path, std::pmr::string &_
     return VFSError::Ok;
 }
 
-int ArchiveHost::IterateDirectoryListing(std::string_view _path,
-                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+std::expected<void, Error>
+ArchiveHost::IterateDirectoryListing(std::string_view _path,
+                                     const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     if( !_path.starts_with("/") )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     StackAllocator alloc;
     std::pmr::string buf(&alloc);
 
     const int ret = ResolvePathIfNeeded(_path, buf, 0);
     if( ret < 0 )
-        return ret;
+        return std::unexpected(VFSError::ToError(ret));
 
     if( buf.back() != '/' )
         buf += '/'; // we store directories with trailing slash
 
     const auto i = I->m_PathToDir.find(buf);
     if( i == I->m_PathToDir.end() )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     VFSDirEnt dir;
 
@@ -717,7 +718,7 @@ int ArchiveHost::IterateDirectoryListing(std::string_view _path,
             break;
     }
 
-    return VFSError::Ok;
+    return {};
 }
 
 uint32_t ArchiveHost::ItemUID(const char *_filename)

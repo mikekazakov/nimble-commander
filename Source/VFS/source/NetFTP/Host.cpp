@@ -606,13 +606,13 @@ bool FTPHost::IsWritable() const
     return true;
 }
 
-int FTPHost::IterateDirectoryListing(std::string_view _path,
-                                     const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+std::expected<void, Error>
+FTPHost::IterateDirectoryListing(std::string_view _path, const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     std::shared_ptr<Directory> dir;
     const int result = GetListingForFetching(m_ListingInstance.get(), _path, dir, nullptr);
     if( result != 0 )
-        return result;
+        return std::unexpected(VFSError::ToError(result));
 
     for( auto &i : dir->entries ) {
         VFSDirEnt e;
@@ -623,7 +623,7 @@ int FTPHost::IterateDirectoryListing(std::string_view _path,
         if( !_handler(e) )
             break;
     }
-    return 0;
+    return {};
 }
 
 std::unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const std::filesystem::path &_dir)

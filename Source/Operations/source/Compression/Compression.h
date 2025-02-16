@@ -32,7 +32,7 @@ private:
     void OnTargetPathDefined();
     void OnTargetWriteError(int _err, const std::string &_path, VFSHost &_vfs);
     int OnSourceReadError(int _err, const std::string &_path, VFSHost &_vfs);
-    int OnSourceScanError(int _err, const std::string &_path, VFSHost &_vfs);
+    int OnSourceScanError(Error _err, const std::string &_path, VFSHost &_vfs);
     int OnSourceAccessError(Error _err, const std::string &_path, VFSHost &_vfs);
 
     std::unique_ptr<CompressionJob> m_Job;

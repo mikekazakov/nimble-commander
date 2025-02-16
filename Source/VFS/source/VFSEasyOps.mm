@@ -12,6 +12,7 @@
 #include <numeric>
 #include <stack>
 
+using namespace nc;
 using namespace nc::vfs;
 
 static int CopyNodeAttrs(const char *_src_full_path,
@@ -187,7 +188,7 @@ int VFSEasyCopyDirectory(const char *_src_full_path,
                          const char *_dst_full_path,
                          std::shared_ptr<VFSHost> _dst_host)
 {
-    int result = 0;
+
     if( _src_full_path == nullptr || _src_full_path[0] != '/' || !_src_host || _dst_full_path == nullptr ||
         _dst_full_path[0] != '/' || !_dst_host )
         return VFSError::InvalidCall;
@@ -198,25 +199,26 @@ int VFSEasyCopyDirectory(const char *_src_full_path,
     if( const std::expected<void, nc::Error> rc = _dst_host->CreateDirectory(_dst_full_path, 0640); !rc )
         return VFSError::GenericError; // TODO: return rc
 
-    result = CopyNodeAttrs(_src_full_path, _src_host, _dst_full_path, _dst_host);
+    const int result = CopyNodeAttrs(_src_full_path, _src_host, _dst_full_path, _dst_host);
     if( result < 0 )
         return result;
 
-    result = _src_host->IterateDirectoryListing(_src_full_path, [&](const VFSDirEnt &_dirent) {
-        std::string source(_src_full_path);
-        source += '/';
-        source += _dirent.name;
+    const std::expected<void, Error> it_rc =
+        _src_host->IterateDirectoryListing(_src_full_path, [&](const VFSDirEnt &_dirent) {
+            std::string source(_src_full_path);
+            source += '/';
+            source += _dirent.name;
 
-        std::string destination(_dst_full_path);
-        destination += '/';
-        destination += _dirent.name;
+            std::string destination(_dst_full_path);
+            destination += '/';
+            destination += _dirent.name;
 
-        VFSEasyCopyNode(source.c_str(), _src_host, destination.c_str(), _dst_host);
-        return true;
-    });
+            VFSEasyCopyNode(source.c_str(), _src_host, destination.c_str(), _dst_host);
+            return true;
+        });
 
-    if( result < 0 )
-        return result;
+    if( !it_rc )
+        return VFSError::GenericError; // TODO: return it_rc
 
     return 0;
 }
@@ -510,8 +512,7 @@ Traverse(const std::string &_vfs_dirpath, VFSHost &_host, const std::function<bo
             return true;
         };
 
-        const auto rc = _host.IterateDirectoryListing(current.src_full_path, block);
-        if( rc != VFSError::Ok )
+        if( !_host.IterateDirectoryListing(current.src_full_path, block) )
             return {};
     }
 

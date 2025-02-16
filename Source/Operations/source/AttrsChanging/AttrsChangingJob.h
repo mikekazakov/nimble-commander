@@ -14,8 +14,8 @@ struct AttrsChangingJobCallbacks {
         Skip,
         Retry
     };
-    std::function<SourceAccessErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)>
-        m_OnSourceAccessError = [](int, const std::string &, VFSHost &) { return SourceAccessErrorResolution::Stop; };
+    std::function<SourceAccessErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)>
+        m_OnSourceAccessError = [](Error, const std::string &, VFSHost &) { return SourceAccessErrorResolution::Stop; };
 
     enum class ChmodErrorResolution {
         Stop,

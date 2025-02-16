@@ -326,13 +326,14 @@ std::expected<void, nc::Error> VFSEasyDelete(const char *_full_path, const std::
         return std::unexpected(VFSError::ToError(rc));
 
     if( (st.mode & S_IFMT) == S_IFDIR ) {
-        if( !(_host->Features() & HostFeatures::NonEmptyRmDir) )
-            _host->IterateDirectoryListing(_full_path, [&](const VFSDirEnt &_dirent) {
+        if( !(_host->Features() & HostFeatures::NonEmptyRmDir) ) {
+            std::ignore = _host->IterateDirectoryListing(_full_path, [&](const VFSDirEnt &_dirent) {
                 std::filesystem::path p = _full_path;
                 p /= _dirent.name;
                 std::ignore = VFSEasyDelete(p.native().c_str(), _host); // TODO: why the return status is ignored?
                 return true;
             });
+        }
         return _host->RemoveDirectory(_full_path);
     }
     else {
@@ -396,7 +397,7 @@ int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
             _result = strcmp(link1->c_str(), link2->c_str());
     }
     else if( S_ISDIR(st1.mode) ) {
-        _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
+        std::ignore = _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
             const int ret = VFSCompareNodes(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
             return ret == 0;

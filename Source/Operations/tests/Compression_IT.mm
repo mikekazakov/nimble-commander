@@ -417,11 +417,14 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
             _result = strcmp(link1->c_str(), link2->c_str());
     }
     else if( S_ISDIR(st1.mode) ) {
-        _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
+        const auto rc = _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
             const int ret = VFSCompareEntries(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
             return ret == 0;
         });
+        if( !rc ) {
+            return VFSError::GenericError; // TODO: use rc instead
+        }
     }
     return 0;
 }

@@ -201,7 +201,8 @@ ssize_t Host::CalculateDirectorySize(std::string_view _path, const VFSCancelChec
         if( _cancel_checker && _cancel_checker() ) // check if we need to quit
             return VFSError::Cancelled;
 
-        IterateDirectoryListing(look_paths.front().c_str(), [&](const VFSDirEnt &_dirent) {
+        // Deliberately ignoring the potential errors
+        std::ignore = IterateDirectoryListing(look_paths.front().c_str(), [&](const VFSDirEnt &_dirent) {
             std::filesystem::path full_path = look_paths.front() / _dirent.name;
             if( _dirent.type == VFSDirEnt::Dir )
                 look_paths.emplace(std::move(full_path));

@@ -201,7 +201,8 @@ ssize_t Host::CalculateDirectorySize(std::string_view _path, const VFSCancelChec
         if( _cancel_checker && _cancel_checker() ) // check if we need to quit
             return VFSError::Cancelled;
 
-        IterateDirectoryListing(look_paths.front().c_str(), [&](const VFSDirEnt &_dirent) {
+        // Deliberately ignoring the potential errors
+        std::ignore = IterateDirectoryListing(look_paths.front().c_str(), [&](const VFSDirEnt &_dirent) {
             std::filesystem::path full_path = look_paths.front() / _dirent.name;
             if( _dirent.type == VFSDirEnt::Dir )
                 look_paths.emplace(std::move(full_path));
@@ -251,12 +252,13 @@ int Host::Stat([[maybe_unused]] std::string_view _path,
     return VFSError::NotSupported;
 }
 
-int Host::IterateDirectoryListing([[maybe_unused]] std::string_view _path,
-                                  [[maybe_unused]] const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+std::expected<void, Error>
+Host::IterateDirectoryListing([[maybe_unused]] std::string_view _path,
+                              [[maybe_unused]] const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     // TODO: write a default implementation using listing fetching.
     // it will be less efficient, but for some FS like PS it will be ok
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 std::expected<VFSStatFS, Error> Host::StatFS([[maybe_unused]] std::string_view _path,
@@ -463,27 +465,27 @@ int Host::FetchSingleItemListing(std::string_view _path,
     return 0;
 }
 
-int Host::FetchFlexibleListingItems(const std::string &_directory_path,
-                                    const std::vector<std::string> &_filenames,
-                                    unsigned long _flags,
-                                    std::vector<VFSListingItem> &_result,
-                                    const VFSCancelChecker &_cancel_checker)
+std::expected<std::vector<VFSListingItem>, Error>
+Host::FetchFlexibleListingItems(const std::string &_directory_path,
+                                const std::vector<std::string> &_filenames,
+                                unsigned long _flags,
+                                const VFSCancelChecker &_cancel_checker)
 {
     VFSListingPtr listing;
     const int ret = FetchDirectoryListing(_directory_path, listing, _flags, _cancel_checker);
     if( ret != 0 )
-        return ret;
+        return std::unexpected(VFSError::ToError(ret));
 
-    _result.clear();
-    _result.reserve(_filenames.size());
+    std::vector<VFSListingItem> items;
+    items.reserve(_filenames.size());
 
-    // O(n) implementation, can write as O(logn) with indirection indeces map
+    // O(n) implementation, can write as O(logn) with indirection indices map
     for( unsigned i = 0, e = listing->Count(); i != e; ++i )
         for( auto &filename : _filenames )
             if( listing->Filename(i) == filename )
-                _result.emplace_back(listing->Item(i));
+                items.emplace_back(listing->Item(i));
 
-    return 0;
+    return items;
 }
 
 void Host::SetDesctructCallback(std::function<void(const VFSHost *)> _callback)

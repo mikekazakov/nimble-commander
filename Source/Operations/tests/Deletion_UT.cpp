@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -21,8 +21,9 @@ TEST_CASE(PREFIX "Allows cancellation on the phase of source items scanning")
     struct MyHost : vfs::NativeHost {
         //        MyHost(nc::utility::NativeFSManager &_native_fs_man) : NativeHost(_native_fs_man) {}
         using NativeHost::NativeHost;
-        int IterateDirectoryListing(std::string_view _path,
-                                    const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override
+        std::expected<void, Error>
+        IterateDirectoryListing(std::string_view _path,
+                                const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override
         {
             if( on_iterate_directorying_listing )
                 on_iterate_directorying_listing(_path);
@@ -63,7 +64,5 @@ TEST_CASE(PREFIX "Allows cancellation on the phase of source items scanning")
 static std::vector<VFSListingItem>
 FetchItems(const std::string &_directory_path, const std::vector<std::string> &_filenames, VFSHost &_host)
 {
-    std::vector<VFSListingItem> items;
-    _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
-    return items;
+    return _host.FetchFlexibleListingItems(_directory_path, _filenames, 0).value_or(std::vector<VFSListingItem>{});
 }

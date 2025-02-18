@@ -83,10 +83,10 @@ void DeletionJob::ScanDirectory(const std::string &_path,
         if( BlockIfPaused(); IsStopped() )
             return;
 
-        if( auto rc = vfs.IterateDirectoryListing(_path, it_callback); rc == VFSError::Ok )
+        if( const std::expected<void, Error> rc = vfs.IterateDirectoryListing(_path, it_callback); rc )
             break;
         else
-            switch( m_OnReadDirError(rc, _path, vfs) ) {
+            switch( m_OnReadDirError(rc.error(), _path, vfs) ) {
                 case ReadDirErrorResolution::Retry:
                     continue;
                 case ReadDirErrorResolution::Stop:

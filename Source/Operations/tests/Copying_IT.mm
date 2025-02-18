@@ -31,9 +31,7 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
 static std::vector<VFSListingItem>
 FetchItems(const std::string &_directory_path, const std::vector<std::string> &_filenames, VFSHost &_host)
 {
-    std::vector<VFSListingItem> items;
-    _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
-    return items;
+    return _host.FetchFlexibleListingItems(_directory_path, _filenames, 0).value_or(std::vector<VFSListingItem>{});
 }
 
 #define PREFIX "nc::ops::Copying "
@@ -1555,7 +1553,7 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
         return 0;
     }
     else if( S_ISDIR(st1.mode) ) {
-        _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
+        std::ignore = _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
             const int ret = VFSCompareEntries(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
             return ret == 0;

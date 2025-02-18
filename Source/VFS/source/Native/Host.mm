@@ -538,8 +538,9 @@ int NativeHost::Stat(std::string_view _path,
     return VFSError::FromErrno();
 }
 
-int NativeHost::IterateDirectoryListing(std::string_view _path,
-                                        const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+std::expected<void, Error>
+NativeHost::IterateDirectoryListing(std::string_view _path,
+                                    const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
@@ -548,7 +549,7 @@ int NativeHost::IterateDirectoryListing(std::string_view _path,
 
     DIR *dirp = io.opendir(path.c_str());
     if( dirp == nullptr )
-        return VFSError::FromErrno();
+        return std::unexpected(Error{Error::POSIX, errno});
     const auto close_dirp = at_scope_end([&] { io.closedir(dirp); });
 
     dirent *entp;
@@ -566,7 +567,7 @@ int NativeHost::IterateDirectoryListing(std::string_view _path,
             break;
     }
 
-    return VFSError::Ok;
+    return {};
 }
 
 std::expected<VFSStatFS, Error> NativeHost::StatFS(std::string_view _path,

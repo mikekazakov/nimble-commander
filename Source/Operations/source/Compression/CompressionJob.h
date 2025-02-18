@@ -17,8 +17,8 @@ struct CompressionJobCallbacks {
         Skip,
         Retry
     };
-    std::function<SourceScanErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_SourceScanError =
-        [](int, const std::string &, VFSHost &) { return SourceScanErrorResolution::Stop; };
+    std::function<SourceScanErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_SourceScanError =
+        [](Error, const std::string &, VFSHost &) { return SourceScanErrorResolution::Stop; };
 
     enum class SourceAccessErrorResolution {
         Stop,

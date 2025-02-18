@@ -587,11 +587,11 @@ void PSHost::StopDirChangeObserving(unsigned long _ticket)
         m_UpdateHandlers.erase(it);
 }
 
-int PSHost::IterateDirectoryListing(std::string_view _path,
-                                    const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+std::expected<void, Error>
+PSHost::IterateDirectoryListing(std::string_view _path, const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     if( _path != "/" )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     m_Lock.lock();
     auto snapshot = m_Data;
@@ -607,7 +607,7 @@ int PSHost::IterateDirectoryListing(std::string_view _path,
             break;
     }
 
-    return VFSError::Ok;
+    return {};
 }
 
 std::expected<VFSStatFS, Error> PSHost::StatFS([[maybe_unused]] std::string_view _path,

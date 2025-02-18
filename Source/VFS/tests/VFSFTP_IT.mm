@@ -209,7 +209,7 @@ TEST_CASE(PREFIX "listing")
     REQUIRE(host->IterateDirectoryListing("/Test/", [&](const VFSDirEnt &_dirent) {
         filenames.emplace(_dirent.name);
         return true;
-    }) == 0);
+    }));
     REQUIRE(filenames == expected_filenames);
     std::ignore = VFSEasyDelete("/Test", host);
 }

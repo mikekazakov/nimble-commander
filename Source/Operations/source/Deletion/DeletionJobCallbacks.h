@@ -15,8 +15,8 @@ struct DeletionJobCallbacks {
         Skip,
         Retry
     };
-    std::function<ReadDirErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_OnReadDirError =
-        [](int, const std::string &, VFSHost &) { return ReadDirErrorResolution::Stop; };
+    std::function<ReadDirErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnReadDirError =
+        [](Error, const std::string &, VFSHost &) { return ReadDirErrorResolution::Stop; };
 
     enum class UnlinkErrorResolution {
         Stop,

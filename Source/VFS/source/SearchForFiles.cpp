@@ -127,7 +127,7 @@ void SearchForFiles::AsyncProc(const char *_from_path, VFSHost &_in_host)
 
         NotifyLookingIn(path.Path().c_str(), *path.Host());
 
-        path.Host()->IterateDirectoryListing(path.Path(), [&](const VFSDirEnt &_dirent) {
+        auto callback = [&](const VFSDirEnt &_dirent) {
             if( m_Queue.IsStopped() )
                 return false;
 
@@ -139,7 +139,10 @@ void SearchForFiles::AsyncProc(const char *_from_path, VFSHost &_in_host)
             ProcessDirent(full_path.c_str(), path.Path().c_str(), _dirent, *path.Host());
 
             return true;
-        });
+        };
+
+        // Deliberately ignoring the errors here
+        std::ignore = path.Host()->IterateDirectoryListing(path.Path(), callback);
     }
 }
 

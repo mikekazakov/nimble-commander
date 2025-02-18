@@ -18,7 +18,7 @@ using Callbacks = AttrsChangingJobCallbacks;
 AttrsChanging::AttrsChanging(AttrsChangingCommand _command)
 {
     m_Job = std::make_unique<AttrsChangingJob>(std::move(_command));
-    m_Job->m_OnSourceAccessError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_OnSourceAccessError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         return (Callbacks::SourceAccessErrorResolution)OnSourceAccessError(_err, _path, _vfs);
     };
     m_Job->m_OnChmodError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
@@ -47,7 +47,7 @@ Job *AttrsChanging::GetJob() noexcept
     return m_Job.get();
 }
 
-int AttrsChanging::OnSourceAccessError(int _err, const std::string &_path, VFSHost &_vfs)
+int AttrsChanging::OnSourceAccessError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ? (int)Callbacks::SourceAccessErrorResolution::Skip

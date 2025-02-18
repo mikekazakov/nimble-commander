@@ -101,11 +101,10 @@ TEST_CASE(PREFIX "directory iterating")
     const std::shared_ptr<VFSHost> host = Spawn();
 
     std::set<std::string> filenames;
-    const int rc = host->IterateDirectoryListing(filepath, [&](const VFSDirEnt &_e) {
+    REQUIRE(host->IterateDirectoryListing(filepath, [&](const VFSDirEnt &_e) {
         filenames.emplace(_e.name);
         return true;
-    });
-    REQUIRE(rc == VFSError::Ok);
+    }));
     CHECK(filenames == must_be);
 }
 
@@ -114,11 +113,10 @@ TEST_CASE(PREFIX "large directory iterating")
     const auto filepath = "/TestSet02/";
     const std::shared_ptr<VFSHost> host = Spawn();
     std::set<std::string> filenames;
-    const int rc = host->IterateDirectoryListing(filepath, [&](const VFSDirEnt &_e) {
+    REQUIRE(host->IterateDirectoryListing(filepath, [&](const VFSDirEnt &_e) {
         filenames.emplace(_e.name);
         return true;
-    });
-    REQUIRE(rc == VFSError::Ok);
+    }));
     CHECK(filenames.count("ActionShortcut.h"));
     CHECK(filenames.count("xattr.h"));
     CHECK(filenames.size() == 501);

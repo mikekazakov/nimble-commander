@@ -253,14 +253,16 @@ public:
      * Do not rely on it to build a directory listing, it's for contents iteration.
      * _handler: return true to allow further iteration, false to stop it.
      */
-    virtual int IterateDirectoryListing(std::string_view _path,                                         //
-                                        const std::function<bool(const VFSDirEnt &_dirent)> &_handler); //
+    virtual std::expected<void, Error>
+    IterateDirectoryListing(std::string_view _path,                                         //
+                            const std::function<bool(const VFSDirEnt &_dirent)> &_handler); //
 
-    int FetchFlexibleListingItems(const std::string &_directory_path,         //
-                                  const std::vector<std::string> &_filenames, //
-                                  unsigned long _flags,                       //
-                                  std::vector<VFSListingItem> &_result,       //
-                                  const VFSCancelChecker &_cancel_checker);   //
+    // Fetches a listing of the specified directory and returns an array of items with the specified filenames.
+    std::expected<std::vector<VFSListingItem>, Error>
+    FetchFlexibleListingItems(const std::string &_directory_path,            //
+                              const std::vector<std::string> &_filenames,    //
+                              unsigned long _flags,                          //
+                              const VFSCancelChecker &_cancel_checker = {}); //
 
     /***********************************************************************************************
      * Making changes to the filesystem

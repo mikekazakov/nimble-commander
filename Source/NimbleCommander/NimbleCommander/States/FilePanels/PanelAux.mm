@@ -81,16 +81,16 @@ static void RegisterRemoteFileUploading(const std::string &_original_path,
         if( !vfs )
             return;
 
-        std::vector<VFSListingItem> listing_items;
         auto &storage_host = nc::bootstrap::NativeVFSHostInstance();
         const auto changed_item_directory = std::filesystem::path(_native_path).parent_path().native();
         const auto changed_item_filename = std::filesystem::path(_native_path).filename().native();
-        const auto ret = storage_host.FetchFlexibleListingItems(
-            changed_item_directory, {1, changed_item_filename}, 0, listing_items, nullptr);
-        if( ret == 0 ) {
+        // TODO: why is FetchFlexibleListingItems() used here instead of FetchSingleItemListing()?
+        const std::expected<std::vector<VFSListingItem>, Error> listing_items =
+            storage_host.FetchFlexibleListingItems(changed_item_directory, {1, changed_item_filename}, 0);
+        if( listing_items ) {
             auto opts = panel::MakeDefaultFileCopyOptions();
             opts.exist_behavior = nc::ops::CopyingOptions::ExistBehavior::OverwriteAll;
-            const auto op = std::make_shared<nc::ops::Copying>(listing_items, _original_path, vfs, opts);
+            const auto op = std::make_shared<nc::ops::Copying>(*listing_items, _original_path, vfs, opts);
             if( static_cast<PanelController *>(origin_controller) )
                 op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
                     dispatch_to_main_queue([=] {

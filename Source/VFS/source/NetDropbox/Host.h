@@ -57,8 +57,9 @@ public:
     std::expected<void, Error> RemoveDirectory(std::string_view _path,
                                                const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int IterateDirectoryListing(std::string_view _path,
-                                const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
+    std::expected<void, Error>
+    IterateDirectoryListing(std::string_view _path,
+                            const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
     int FetchDirectoryListing(std::string_view _path,
                               VFSListingPtr &_target,

@@ -19,9 +19,9 @@ public:
 private:
     virtual Job *GetJob() noexcept override;
 
-    DeletionJobCallbacks::ReadDirErrorResolution OnReadDirError(int _err, const std::string &_path, VFSHost &_vfs);
+    DeletionJobCallbacks::ReadDirErrorResolution OnReadDirError(Error _err, const std::string &_path, VFSHost &_vfs);
 
-    void OnReadDirErrorUI(int _err,
+    void OnReadDirErrorUI(Error _err,
                           const std::string &_path,
                           std::shared_ptr<VFSHost> _vfs,
                           std::shared_ptr<AsyncDialogResponse> _ctx);

@@ -254,24 +254,25 @@ int ArchiveRawHost::Stat(std::string_view _path,
     return VFSError::Ok;
 }
 
-int ArchiveRawHost::IterateDirectoryListing(std::string_view _path,
-                                            const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+std::expected<void, Error>
+ArchiveRawHost::IterateDirectoryListing(std::string_view _path,
+                                        const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     if( !_path.starts_with("/") || !_handler )
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     if( _path != "/" )
-        return VFSError::FromErrno(ENOENT);
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     VFSDirEnt entry;
     entry.type = VFSDirEnt::Reg;
     if( m_Filename.size() > sizeof(entry.name) - 1 )
-        return VFSError::FromErrno(ENAMETOOLONG);
+        return std::unexpected(Error{Error::POSIX, ENAMETOOLONG});
     strcpy(entry.name, m_Filename.c_str());
     entry.name_len = static_cast<uint16_t>(m_Filename.size());
 
     _handler(entry);
 
-    return VFSError::Ok;
+    return {};
 }
 
 int ArchiveRawHost::FetchDirectoryListing(std::string_view _path,

@@ -38,8 +38,9 @@ public:
                               unsigned long _flags,
                               const VFSCancelChecker &_cancel_checker) override;
 
-    int IterateDirectoryListing(std::string_view _path,
-                                const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
+    std::expected<void, Error>
+    IterateDirectoryListing(std::string_view _path,
+                            const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
     int
     Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;

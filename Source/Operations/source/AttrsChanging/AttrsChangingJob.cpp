@@ -57,7 +57,7 @@ void AttrsChangingJob::ScanItem(unsigned _origin_item)
         const auto stat_rc = vfs.Stat(path, st, 0);
         if( stat_rc == VFSError::Ok )
             break;
-        switch( m_OnSourceAccessError(stat_rc, path, vfs) ) {
+        switch( m_OnSourceAccessError(VFSError::ToError(stat_rc), path, vfs) ) {
             case SourceAccessErrorResolution::Stop:
                 Stop();
                 return;
@@ -82,10 +82,10 @@ void AttrsChangingJob::ScanItem(unsigned _origin_item)
                 dir_entries.emplace_back(_entry);
                 return true;
             };
-            const auto list_rc = vfs.IterateDirectoryListing(path, callback);
-            if( list_rc == VFSError::Ok )
+            const std::expected<void, Error> list_rc = vfs.IterateDirectoryListing(path, callback);
+            if( list_rc )
                 break;
-            switch( m_OnSourceAccessError(list_rc, path, vfs) ) {
+            switch( m_OnSourceAccessError(list_rc.error(), path, vfs) ) {
                 case SourceAccessErrorResolution::Stop:
                     Stop();
                     return;
@@ -115,7 +115,7 @@ void AttrsChangingJob::ScanItem(const std::string &_full_path,
         const auto stat_rc = vfs.Stat(_full_path, st, 0);
         if( stat_rc == VFSError::Ok )
             break;
-        switch( m_OnSourceAccessError(stat_rc, _full_path, vfs) ) {
+        switch( m_OnSourceAccessError(VFSError::ToError(stat_rc), _full_path, vfs) ) {
             case SourceAccessErrorResolution::Stop:
                 Stop();
                 return;
@@ -140,10 +140,10 @@ void AttrsChangingJob::ScanItem(const std::string &_full_path,
                 dir_entries.emplace_back(_entry);
                 return true;
             };
-            const auto list_rc = vfs.IterateDirectoryListing(_full_path, callback);
-            if( list_rc == VFSError::Ok )
+            const std::expected<void, Error> list_rc = vfs.IterateDirectoryListing(_full_path, callback);
+            if( list_rc )
                 break;
-            switch( m_OnSourceAccessError(list_rc, _full_path, vfs) ) {
+            switch( m_OnSourceAccessError(list_rc.error(), _full_path, vfs) ) {
                 case SourceAccessErrorResolution::Stop:
                     Stop();
                     return;

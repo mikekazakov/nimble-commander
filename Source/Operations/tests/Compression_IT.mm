@@ -417,11 +417,14 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
             _result = strcmp(link1->c_str(), link2->c_str());
     }
     else if( S_ISDIR(st1.mode) ) {
-        _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
+        const auto rc = _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
             const int ret = VFSCompareEntries(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
             return ret == 0;
         });
+        if( !rc ) {
+            return VFSError::GenericError; // TODO: use rc instead
+        }
     }
     return 0;
 }
@@ -429,9 +432,7 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
 static std::vector<VFSListingItem>
 FetchItems(const std::string &_directory_path, const std::vector<std::string> &_filenames, VFSHost &_host)
 {
-    std::vector<VFSListingItem> items;
-    _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
-    return items;
+    return _host.FetchFlexibleListingItems(_directory_path, _filenames, 0).value_or(std::vector<VFSListingItem>{});
 }
 
 static bool touch(const std::filesystem::path &_path)

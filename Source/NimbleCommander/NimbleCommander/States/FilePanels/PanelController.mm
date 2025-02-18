@@ -1002,7 +1002,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
         const auto &vfs = initial_vfs;
 
         while( true ) {
-            if( vfs->IterateDirectoryListing(path.native(), [](const VFSDirEnt &) { return false; }) >= 0 ) {
+            if( vfs->IterateDirectoryListing(path.native(), [](const VFSDirEnt &) { return false; }) ) {
                 dispatch_to_main_queue([=] {
                     auto request = std::make_shared<DirectoryChangeRequest>();
                     request->RequestedDirectory = path.native();

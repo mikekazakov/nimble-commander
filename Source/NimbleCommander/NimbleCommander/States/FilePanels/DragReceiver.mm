@@ -333,7 +333,7 @@ bool DragReceiver::PerformWithURLsSource(NSArray<NSURL *> *_source, const vfs::V
     if( !source_items.has_value() ) {
         // failed to fetch the source items.
         // refuse the drag and show an error message asynchronously.
-        const Error error = source_items.error();
+        const Error &error = source_items.error();
         dispatch_to_main_queue([error] {
             Alert *const alert = [[Alert alloc] init];
             alert.messageText = NSLocalizedString(@"Failed to access the dragged item:",

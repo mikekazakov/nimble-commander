@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFSListingInput.h>
 #include <NimbleCommander/States/FilePanels/FindFilesSheetController.h>
 #include "../PanelController.h"
@@ -35,10 +35,10 @@ static VFSListingPtr FetchSearchResultsAsListing(const std::vector<vfs::VFSPath>
     std::vector<VFSListingPtr> listings;
 
     for( auto &p : _filepaths ) {
-        VFSListingPtr listing;
-        const int ret = p.Host()->FetchSingleItemListing(p.Path(), listing, _fetch_flags, _cancel_checker);
-        if( ret == 0 )
-            listings.emplace_back(listing);
+        const std::expected<VFSListingPtr, Error> listing =
+            p.Host()->FetchSingleItemListing(p.Path(), _fetch_flags, _cancel_checker);
+        if( listing )
+            listings.emplace_back(*listing);
 
         if( _cancel_checker && _cancel_checker() )
             return {};

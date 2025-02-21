@@ -124,10 +124,10 @@ VFSListingPtr ListingPromise::RestoreNonUniform(unsigned long _fetch_flags,
                 if( _cancel_checker && _cancel_checker() )
                     return nullptr;
                 const auto path = directory + entries[i];
-                VFSListingPtr listing;
-                const auto rc = host->FetchSingleItemListing(path, listing, _fetch_flags, _cancel_checker);
-                if( rc == VFSError::Ok && listing != nullptr )
-                    listings.emplace_back(std::move(listing));
+                const std::expected<VFSListingPtr, Error> listing =
+                    host->FetchSingleItemListing(path, _fetch_flags, _cancel_checker);
+                if( listing && *listing != nullptr )
+                    listings.emplace_back(*listing);
             }
         }
     }

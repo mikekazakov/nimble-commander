@@ -145,8 +145,8 @@ TEST_CASE(PREFIX "Loading tags")
         REQUIRE(!listing->HasTags(1));
     }
     {
-        REQUIRE(host().FetchSingleItemListing(
-                    (test_dir / "1.txt").c_str(), listing, Flags::F_NoDotDot | Flags::F_LoadTags) == VFSError::Ok);
+        listing =
+            host().FetchSingleItemListing((test_dir / "1.txt").c_str(), Flags::F_NoDotDot | Flags::F_LoadTags).value();
         REQUIRE(listing->Count() == 1);
         REQUIRE(listing->HasTags(0));
         REQUIRE(listing->Tags(0).size() == 1);
@@ -154,8 +154,7 @@ TEST_CASE(PREFIX "Loading tags")
         REQUIRE(listing->Tags(0)[0].Color() == Color::Green);
     }
     {
-        REQUIRE(host().FetchSingleItemListing((test_dir / "1.txt").c_str(), listing, Flags::F_NoDotDot) ==
-                VFSError::Ok);
+        listing = host().FetchSingleItemListing((test_dir / "1.txt").c_str(), Flags::F_NoDotDot).value();
         REQUIRE(listing->Count() == 1);
         REQUIRE(!listing->HasTags(0));
     }

@@ -169,16 +169,15 @@ static GoToPopupListActionMediator *g_CurrentMediator = nil;
         auto vfs = nc::bootstrap::NativeVFSHostInstance().SharedPtr(); // TODO: DI instead
 
         // Load listing per each query result in parallel
-        pstld::transform(items.begin(),    //
-                         items.end(),      //
-                         listings.begin(), //
-                         [&](const std::filesystem::path &_path) -> VFSListingPtr {
-                             if( _is_cancelled && _is_cancelled() )
-                                 return nullptr;
-                             VFSListingPtr listing;
-                             vfs->FetchSingleItemListing(_path.c_str(), listing, fetch_flags, _is_cancelled);
-                             return listing;
-                         });
+        pstld::transform(
+            items.begin(),    //
+            items.end(),      //
+            listings.begin(), //
+            [&](const std::filesystem::path &_path) -> VFSListingPtr {
+                if( _is_cancelled && _is_cancelled() )
+                    return nullptr;
+                return vfs->FetchSingleItemListing(_path.c_str(), fetch_flags, _is_cancelled).value_or(VFSListingPtr{});
+            });
         if( _is_cancelled && _is_cancelled() )
             return;
 

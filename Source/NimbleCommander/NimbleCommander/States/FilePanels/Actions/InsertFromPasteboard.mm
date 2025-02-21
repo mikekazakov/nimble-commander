@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/Native.h>
 #include <Utility/PathManip.h>
 #include "../PanelController.h"
@@ -23,10 +23,8 @@ static std::vector<VFSListingItem> FetchVFSListingsItemsFromPaths(NSArray *_inpu
             continue; // guard against malformed input
 
         if( const char *filepath = ns_filepath.fileSystemRepresentation ) {
-            VFSListingPtr listing;
-            const int rc = _native_host.FetchSingleItemListing(filepath, listing, 0, nullptr);
-            if( rc == 0 )
-                result.emplace_back(listing->Item(0));
+            if( const std::expected<VFSListingPtr, Error> listing = _native_host.FetchSingleItemListing(filepath, 0) )
+                result.emplace_back((*listing)->Item(0));
         }
     }
     return result;

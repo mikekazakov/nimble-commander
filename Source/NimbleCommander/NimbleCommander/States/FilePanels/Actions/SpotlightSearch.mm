@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SpotlightSearch.h"
 #include <Base/algo.h>
 #include <VFS/Native.h>
@@ -91,10 +91,10 @@ static VFSListingPtr FetchSearchResultsAsListing(const std::vector<std::string> 
     std::vector<VFSListingPtr> listings;
 
     for( auto &p : _file_paths ) {
-        VFSListingPtr listing;
-        const int ret = _vfs.FetchSingleItemListing(p, listing, _fetch_flags, _cancel_checker);
-        if( ret == 0 )
-            listings.emplace_back(listing);
+        const std::expected<VFSListingPtr, Error> listing =
+            _vfs.FetchSingleItemListing(p, _fetch_flags, _cancel_checker);
+        if( listing )
+            listings.emplace_back(*listing);
     }
 
     return VFSListing::Build(VFSListing::Compose(listings));

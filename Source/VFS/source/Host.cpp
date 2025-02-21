@@ -380,36 +380,35 @@ int Host::FetchDirectoryListing([[maybe_unused]] std::string_view _path,
     return VFSError::NotSupported;
 }
 
-int Host::FetchSingleItemListing(std::string_view _path,
-                                 VFSListingPtr &_target,
-                                 [[maybe_unused]] unsigned long _flags,
-                                 const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error> Host::FetchSingleItemListing(std::string_view _path,
+                                                                 [[maybe_unused]] unsigned long _flags,
+                                                                 const VFSCancelChecker &_cancel_checker)
 {
     // as we came here - there's no special implementation in derived class,
     // so need to try to emulate it with available methods.
 
     if( !_path.starts_with("/") )
-        return VFSError::InvalidCall;
-
-    if( _cancel_checker && _cancel_checker() )
-        return VFSError::Cancelled;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const std::string_view directory = utility::PathManip::Parent(_path);
     if( directory.empty() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const std::string_view filename = utility::PathManip::Filename(_path);
     if( filename.empty() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const std::string_view path_wo_trailing_slash = utility::PathManip::WithoutTrailingSlashes(_path);
     if( path_wo_trailing_slash.empty() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
+
+    if( _cancel_checker && _cancel_checker() )
+        return std::unexpected(nc::Error{nc::Error::POSIX, ECANCELED});
 
     VFSStat lstat;
-    const int ret = Stat(path_wo_trailing_slash, lstat, VFSFlags::F_NoFollow);
+    const int ret = Stat(path_wo_trailing_slash, lstat, VFSFlags::F_NoFollow, _cancel_checker);
     if( ret != 0 )
-        return ret;
+        return std::unexpected(VFSError::ToError(ret));
 
     using nc::base::variable_container;
     nc::vfs::ListingInput listing_source;
@@ -460,9 +459,7 @@ int Host::FetchSingleItemListing(std::string_view _path,
         }
     }
 
-    _target = VFSListing::Build(std::move(listing_source));
-
-    return 0;
+    return VFSListing::Build(std::move(listing_source));
 }
 
 std::expected<std::vector<VFSListingItem>, Error>

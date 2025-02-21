@@ -243,10 +243,9 @@ public:
      * If there's no overriden implementaition in derived class, VFSHost will try to produce
      * this listing with Stat().
      */
-    virtual int FetchSingleItemListing(std::string_view _path_to_item,                //
-                                       VFSListingPtr &_target,                        //
-                                       unsigned long _flags,                          //
-                                       const VFSCancelChecker &_cancel_checker = {}); //
+    virtual std::expected<VFSListingPtr, Error> FetchSingleItemListing(std::string_view _path_to_item,                //
+                                                                       unsigned long _flags,                          //
+                                                                       const VFSCancelChecker &_cancel_checker = {}); //
 
     /**
      * IterateDirectoryListing will skip "." and ".." entries if they are present.

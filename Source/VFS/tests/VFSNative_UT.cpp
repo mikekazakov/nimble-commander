@@ -66,7 +66,7 @@ TEST_CASE(PREFIX "FetchUnifiedListing fetches contents from both directories")
     REQUIRE(close(creat((test_dir + "B/b").c_str(), 0755)) == 0);
 
     const std::expected<VFSListingPtr, Error> listing =
-        FetchUnifiedListing(host(), (test_dir + "A").c_str(), (test_dir + "B").c_str(), VFSFlags::None);
+        FetchUnifiedListing(host(), test_dir + "A", test_dir + "B", VFSFlags::None);
     REQUIRE(listing);
     REQUIRE(*listing != nullptr);
     REQUIRE((*listing)->IsUniform() == false);
@@ -84,7 +84,7 @@ TEST_CASE(PREFIX "FetchUnifiedListing succeeds when user directory doesn't exist
     REQUIRE(close(creat((test_dir + "A/a").c_str(), 0755)) == 0);
 
     const std::expected<VFSListingPtr, Error> listing =
-        FetchUnifiedListing(host(), (test_dir + "A").c_str(), (test_dir + "B").c_str(), VFSFlags::None);
+        FetchUnifiedListing(host(), test_dir + "A", test_dir + "B", VFSFlags::None);
     REQUIRE(listing);
     REQUIRE(*listing != nullptr);
     REQUIRE((*listing)->IsUniform() == true);

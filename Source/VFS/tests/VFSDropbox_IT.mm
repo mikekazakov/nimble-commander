@@ -132,7 +132,7 @@ TEST_CASE(PREFIX "large directory listing")
 {
     const auto dirpath = "/TestSet02/";
     const std::shared_ptr<VFSHost> host = Spawn();
-    VFSListingPtr listing = host->FetchDirectoryListing(dirpath, Flags::F_NoDotDot).value();
+    const VFSListingPtr listing = host->FetchDirectoryListing(dirpath, Flags::F_NoDotDot).value();
 
     std::set<std::string> filenames;
     for( const auto &item : *listing )

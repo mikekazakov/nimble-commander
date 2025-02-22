@@ -73,36 +73,27 @@ void GoToDownloadsFolder::Perform(PanelController *_target, id /*_sender*/) cons
 
 void GoToApplicationsFolder::Perform(PanelController *_target, id /*_sender*/) const
 {
-    if( utility::GetOSXVersion() < utility::OSXVersion::OSX_15 ) {
-        GoToNativeDir(base::CommonPaths::Applications(), _target);
-    }
-    else {
-        auto task = [_target](const std::function<bool()> &_cancelled) {
-            const std::expected<VFSListingPtr, Error> listing = vfs::native::FetchUnifiedApplicationsListing(
-                nc::bootstrap::NativeVFSHostInstance(), _target.vfsFetchingFlags, _cancelled);
-            if( listing ) {
-                dispatch_to_main_queue([listing, _target] { [_target loadListing:*listing]; });
-            }
-        };
-        [_target commitCancelableLoadingTask:std::move(task)];
-    }
+
+    auto task = [_target](const std::function<bool()> &_cancelled) {
+        const std::expected<VFSListingPtr, Error> listing = vfs::native::FetchUnifiedApplicationsListing(
+            nc::bootstrap::NativeVFSHostInstance(), _target.vfsFetchingFlags, _cancelled);
+        if( listing ) {
+            dispatch_to_main_queue([listing, _target] { [_target loadListing:*listing]; });
+        }
+    };
+    [_target commitCancelableLoadingTask:std::move(task)];
 }
 
 void GoToUtilitiesFolder::Perform(PanelController *_target, id /*_sender*/) const
 {
-    if( utility::GetOSXVersion() < utility::OSXVersion::OSX_15 ) {
-        GoToNativeDir(base::CommonPaths::Utilities(), _target);
-    }
-    else {
-        auto task = [_target](const std::function<bool()> &_cancelled) {
-            const std::expected<VFSListingPtr, Error> listing = vfs::native::FetchUnifiedUtilitiesListing(
-                nc::bootstrap::NativeVFSHostInstance(), _target.vfsFetchingFlags, _cancelled);
-            if( listing ) {
-                dispatch_to_main_queue([listing, _target] { [_target loadListing:*listing]; });
-            }
-        };
-        [_target commitCancelableLoadingTask:std::move(task)];
-    }
+    auto task = [_target](const std::function<bool()> &_cancelled) {
+        const std::expected<VFSListingPtr, Error> listing = vfs::native::FetchUnifiedUtilitiesListing(
+            nc::bootstrap::NativeVFSHostInstance(), _target.vfsFetchingFlags, _cancelled);
+        if( listing ) {
+            dispatch_to_main_queue([listing, _target] { [_target loadListing:*listing]; });
+        }
+    };
+    [_target commitCancelableLoadingTask:std::move(task)];
 }
 
 void GoToLibraryFolder::Perform(PanelController *_target, id /*_sender*/) const

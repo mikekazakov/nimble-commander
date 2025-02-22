@@ -73,14 +73,12 @@ std::expected<VFSListingPtr, Error> FetchUnifiedListing(NativeHost &_host,
 std::expected<VFSListingPtr, Error>
 FetchUnifiedApplicationsListing(NativeHost &_host, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
-    assert(utility::GetOSXVersion() >= utility::OSXVersion::OSX_15);
     return FetchUnifiedListing(_host, g_SystemApplications, g_UserApplications, _flags, _cancel_checker);
 }
 
 std::expected<VFSListingPtr, Error>
 FetchUnifiedUtilitiesListing(NativeHost &_host, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
-    assert(utility::GetOSXVersion() >= utility::OSXVersion::OSX_15);
     return FetchUnifiedListing(_host, g_SystemUtilities, g_UserUtilities, _flags, _cancel_checker);
 }
 

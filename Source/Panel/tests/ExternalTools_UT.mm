@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalTools.h"
 #include "Tests.h"
 #include <VFS/Native.h>
@@ -274,10 +274,10 @@ TEST_CASE(PREFIX "ExternalToolExecution - generation of simple arguments")
     touch(root / "dir2/file3.txt");
     touch(root / "dir2/file4.txt");
 
-    VFSListingPtr l1;
-    VFSListingPtr l2;
-    REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir1").c_str(), l1, VFSFlags::F_NoDotDot, {}) == 0);
-    REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir2").c_str(), l2, VFSFlags::F_NoDotDot, {}) == 0);
+    const VFSListingPtr l1 =
+        TestEnv().vfs_native->FetchDirectoryListing((root / "dir1").c_str(), VFSFlags::F_NoDotDot).value();
+    const VFSListingPtr l2 =
+        TestEnv().vfs_native->FetchDirectoryListing((root / "dir2").c_str(), VFSFlags::F_NoDotDot).value();
     data::Model left;
     data::Model right;
     left.Load(l1, data::Model::PanelType::Directory);
@@ -433,10 +433,10 @@ TEST_CASE(PREFIX "ExternalToolExecution - generation of lists as parameters")
     touch(root / "dir2/file5.txt");
     touch(root / "dir2/file6.txt");
 
-    VFSListingPtr l1;
-    VFSListingPtr l2;
-    REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir1").c_str(), l1, VFSFlags::F_NoDotDot, {}) == 0);
-    REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir2").c_str(), l2, VFSFlags::F_NoDotDot, {}) == 0);
+    const VFSListingPtr l1 =
+        TestEnv().vfs_native->FetchDirectoryListing((root / "dir1").c_str(), VFSFlags::F_NoDotDot).value();
+    const VFSListingPtr l2 =
+        TestEnv().vfs_native->FetchDirectoryListing((root / "dir2").c_str(), VFSFlags::F_NoDotDot).value();
     data::Model left;
     data::Model right;
     left.Load(l1, data::Model::PanelType::Directory);
@@ -659,10 +659,10 @@ TEST_CASE(PREFIX "ExternalToolExecution - generation of lists as file")
     touch(root / "dir2/file5.txt");
     touch(root / "dir2/file6.txt");
 
-    VFSListingPtr l1;
-    VFSListingPtr l2;
-    REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir1").c_str(), l1, VFSFlags::F_NoDotDot, {}) == 0);
-    REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir2").c_str(), l2, VFSFlags::F_NoDotDot, {}) == 0);
+    const VFSListingPtr l1 =
+        TestEnv().vfs_native->FetchDirectoryListing((root / "dir1").c_str(), VFSFlags::F_NoDotDot).value();
+    const VFSListingPtr l2 =
+        TestEnv().vfs_native->FetchDirectoryListing((root / "dir2").c_str(), VFSFlags::F_NoDotDot).value();
     data::Model left;
     data::Model right;
     left.Load(l1, data::Model::PanelType::Directory);
@@ -849,10 +849,10 @@ TEST_CASE(PREFIX "ExternalToolExecution - user-input values")
     touch(root / "dir2/file3.txt");
     touch(root / "dir2/file4.txt");
 
-    VFSListingPtr l1;
-    VFSListingPtr l2;
-    REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir1").c_str(), l1, VFSFlags::F_NoDotDot, {}) == 0);
-    REQUIRE(TestEnv().vfs_native->FetchDirectoryListing((root / "dir2").c_str(), l2, VFSFlags::F_NoDotDot, {}) == 0);
+    const VFSListingPtr l1 =
+        TestEnv().vfs_native->FetchDirectoryListing((root / "dir1").c_str(), VFSFlags::F_NoDotDot).value();
+    const VFSListingPtr l2 =
+        TestEnv().vfs_native->FetchDirectoryListing((root / "dir2").c_str(), VFSFlags::F_NoDotDot).value();
     data::Model left;
     data::Model right;
     left.Load(l1, data::Model::PanelType::Directory);

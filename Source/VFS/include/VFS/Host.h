@@ -211,47 +211,38 @@ public:
      */
     virtual bool ValidateFilename(std::string_view _filename) const;
 
+    // TODO: describle
     virtual ssize_t CalculateDirectorySize(std::string_view _path,                        //
                                            const VFSCancelChecker &_cancel_checker = {}); //
 
+    // TODO: describle
     virtual bool ShouldProduceThumbnails() const;
 
-    /**
-     * Return a list of known users on this host.
-     */
+    // Returns a list of known users on this host.
     virtual std::expected<std::vector<VFSUser>, Error> FetchUsers(const VFSCancelChecker &_cancel_checker = {});
 
-    /**
-     * Return a list of known user groups on this host.
-     */
+    // Returns a list of known user groups on this host.
     virtual std::expected<std::vector<VFSGroup>, Error> FetchGroups(const VFSCancelChecker &_cancel_checker = {});
 
     /***********************************************************************************************
      * Directories iteration, listings fetching
      **********************************************************************************************/
 
-    /**
-     * Produce a regular directory listing.
-     */
-    virtual int FetchDirectoryListing(std::string_view _path,                        //
-                                      VFSListingPtr &_target,                        //
-                                      unsigned long _flags,                          //
-                                      const VFSCancelChecker &_cancel_checker = {}); //
+    // Produces a regular directory listing.
+    // An actual host implementation must provide this method.
+    virtual std::expected<VFSListingPtr, Error> FetchDirectoryListing(std::string_view _path,                        //
+                                                                      unsigned long _flags,                          //
+                                                                      const VFSCancelChecker &_cancel_checker = {}); //
 
-    /**
-     * Produce a regular listing, consisting of a single element.
-     * If there's no overriden implementaition in derived class, VFSHost will try to produce
-     * this listing with Stat().
-     */
+    // Produces a regular listing, consisting of a single element.
+    // If there's no overriden implementaition in derived class, VFSHost will try to produce this listing with Stat().
     virtual std::expected<VFSListingPtr, Error> FetchSingleItemListing(std::string_view _path_to_item,                //
                                                                        unsigned long _flags,                          //
                                                                        const VFSCancelChecker &_cancel_checker = {}); //
 
-    /**
-     * IterateDirectoryListing will skip "." and ".." entries if they are present.
-     * Do not rely on it to build a directory listing, it's for contents iteration.
-     * _handler: return true to allow further iteration, false to stop it.
-     */
+    // IterateDirectoryListing will skip "." and ".." entries if they are present.
+    // Do not rely on it to build a directory listing, it's for contents iteration.
+    // _handler: return true to allow further iteration, false to stop it.
     virtual std::expected<void, Error>
     IterateDirectoryListing(std::string_view _path,                                         //
                             const std::function<bool(const VFSDirEnt &_dirent)> &_handler); //

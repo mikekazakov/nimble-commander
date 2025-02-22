@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GoToFolderSheetController.h"
 #include <VFS/VFS.h>
 #include <NimbleCommander/Bootstrap/Config.h>
@@ -93,14 +93,14 @@ static std::vector<unsigned> ListDirsWithPrefix(const VFSListing &_listing, cons
     m_Handler();
 }
 
-- (void)tellLoadingResult:(int)_code
+- (void)tellLoadingResult:(const std::expected<void, nc::Error> &)_result
 {
-    if( _code == VFSError::Ok ) {
+    if( _result ) {
         StateConfig().Set(g_StateGoToKey, self.Text.stringValue.fileSystemRepresentationSafe);
         [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseStop];
     }
     else { // show error here
-        self.Error.stringValue = VFSError::ToNSError(_code).localizedDescription;
+        self.Error.stringValue = [NSString stringWithUTF8StdString:_result.error().LocalizedFailureReason()];
     }
 }
 
@@ -235,7 +235,7 @@ static std::vector<unsigned> ListDirsWithPrefix(const VFSListing &_listing, cons
 }
 
 // sync operation with simple caching
-- (const VFSListing *)listingFromDir:(const std::string &)_path
+- (VFSListingPtr)listingFromDir:(const std::string &)_path
 {
     if( _path.empty() )
         return nullptr;
@@ -245,17 +245,16 @@ static std::vector<unsigned> ListDirsWithPrefix(const VFSListing &_listing, cons
         path += '/';
 
     if( m_LastListing && m_LastListing->Directory() == path )
-        return m_LastListing.get();
+        return m_LastListing;
 
     if( !self.panel.isUniform )
         return nullptr;
     auto vfs = self.panel.vfs;
 
-    VFSListingPtr listing;
-    int ret = vfs->FetchDirectoryListing(path, listing, VFSFlags::F_NoDotDot, nullptr);
-    if( ret == 0 ) {
-        m_LastListing = listing;
-        return m_LastListing.get();
+    const std::expected<VFSListingPtr, nc::Error> listing = vfs->FetchDirectoryListing(path, VFSFlags::F_NoDotDot);
+    if( listing ) {
+        m_LastListing = *listing;
+        return m_LastListing;
     }
     else
         return nullptr;

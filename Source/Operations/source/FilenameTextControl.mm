@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilenameTextControl.h"
 #include <AppKit/AppKit.h>
 #include <Utility/FilenameTextNavigation.h>
@@ -270,13 +270,12 @@ VFSListingPtr DirectoryPathAutoCompletionImpl::ListingForDir(const std::string &
     if( m_LastListing && m_LastListing->Directory() == path )
         return m_LastListing;
 
-    VFSListingPtr listing;
-    const int rc = m_VFS->FetchDirectoryListing(path, listing, VFSFlags::F_NoDotDot);
-    if( rc == VFSError::Ok ) {
-        m_LastListing = listing;
+    const std::expected<VFSListingPtr, Error> listing = m_VFS->FetchDirectoryListing(path, VFSFlags::F_NoDotDot);
+    if( listing ) {
+        m_LastListing = *listing;
         return m_LastListing;
     }
-    return nullptr;
+    return {};
 }
 
 std::vector<unsigned> DirectoryPathAutoCompletionImpl::ListDirsWithPrefix(const VFSListing &_listing,

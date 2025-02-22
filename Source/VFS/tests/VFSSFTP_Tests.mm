@@ -328,8 +328,7 @@ static void TestUbuntu2004LayoutWithHost(SFTPHost &_host)
     CHECK(_host.MakePathVerbose("/Blah/") == "sftp://"s + _host.User() + "@" + g_Ubuntu2004_Address + "/Blah/");
 
     // Get the listing of a root directory
-    VFSListingPtr root_listing;
-    REQUIRE(_host.FetchDirectoryListing("/", root_listing, 0, nullptr) == 0);
+    VFSListingPtr root_listing = _host.FetchDirectoryListing("/", 0).value();
     REQUIRE(root_listing);
     auto at = [&](VFSListingPtr _listing, std::string_view _fn) {
         auto it = std::find_if(

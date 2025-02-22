@@ -8,41 +8,41 @@
 
 namespace nc::vfs::native {
 
-static const auto g_SystemApplications = "/System/Applications";
-static const auto g_UserApplications = "/Applications";
-static const auto g_SystemUtilities = "/System/Applications/Utilities";
-static const auto g_UserUtilities = "/Applications/Utilities";
+static const std::string_view g_SystemApplications = "/System/Applications";
+static const std::string_view g_UserApplications = "/Applications";
+static const std::string_view g_SystemUtilities = "/System/Applications/Utilities";
+static const std::string_view g_UserUtilities = "/Applications/Utilities";
 
-static const char *MakeNonLocalizedTitle(const char *_from)
+static std::string_view MakeNonLocalizedTitle(const std::string_view _from)
 {
-    if( _from == nullptr )
-        return nullptr;
-    auto p = strrchr(_from, '/');
-    return p ? p + 1 : nullptr;
+    const size_t p = _from.rfind('/');
+    if( p == std::string_view::npos )
+        return {};
+    else
+        return _from.substr(p + 1);
 }
 
-int FetchUnifiedListing(NativeHost &_host,
-                        const char *_system_path,
-                        const char *_user_path,
-                        VFSListingPtr &_target,
-                        unsigned long _flags,
-                        const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error> FetchUnifiedListing(NativeHost &_host,
+                                                        const std::string_view _system_path,
+                                                        const std::string_view _user_path,
+                                                        unsigned long _flags,
+                                                        const VFSCancelChecker &_cancel_checker)
 {
     try {
         _flags = _flags | VFSFlags::F_NoDotDot;
 
-        VFSListingPtr system_listing;
-        const int fetch_system_rc = _host.FetchDirectoryListing(_system_path, system_listing, _flags, _cancel_checker);
-        if( fetch_system_rc != VFSError::Ok )
-            return fetch_system_rc;
+        const std::expected<VFSListingPtr, Error> system_listing =
+            _host.FetchDirectoryListing(_system_path, _flags, _cancel_checker);
+        if( !system_listing )
+            return system_listing;
 
         if( _host.Exists(_user_path, _cancel_checker) && _host.IsDirectory(_user_path, VFSFlags::None) ) {
-            VFSListingPtr user_listing;
-            const int fetch_user_rc = _host.FetchDirectoryListing(_user_path, user_listing, _flags, _cancel_checker);
-            if( fetch_user_rc != VFSError::Ok )
-                return fetch_user_rc;
+            const std::expected<VFSListingPtr, Error> user_listing =
+                _host.FetchDirectoryListing(_user_path, _flags, _cancel_checker);
+            if( !user_listing )
+                return user_listing;
 
-            auto input = Listing::Compose({system_listing, user_listing});
+            auto input = Listing::Compose({*system_listing, *user_listing});
 
             if( (_flags & VFSFlags::F_LoadDisplayNames) != 0 ) {
                 auto &cache = DisplayNamesCache::Instance();
@@ -50,43 +50,38 @@ int FetchUnifiedListing(NativeHost &_host,
                     input.title = *userpath_name;
                 else if( auto systempath_name = cache.DisplayName(_system_path) )
                     input.title = *systempath_name;
-                else if( auto nonloc_name = MakeNonLocalizedTitle(_user_path) )
+                else if( auto nonloc_name = MakeNonLocalizedTitle(_user_path); !nonloc_name.empty() )
                     input.title = nonloc_name;
             }
             else {
-                if( auto name = MakeNonLocalizedTitle(_user_path) )
+                if( auto name = MakeNonLocalizedTitle(_user_path); !name.empty() )
                     input.title = name;
             }
 
-            _target = Listing::Build(std::move(input));
+            return Listing::Build(std::move(input));
         }
         else {
-            _target = system_listing;
+            return system_listing;
         }
-    } catch( const ErrorException & /*err*/ ) {
-        return VFSError::FromErrno(EINVAL); // TODO: return err
+    } catch( const ErrorException &err ) {
+        return std::unexpected(err.error());
     } catch( ... ) {
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     }
-    return VFSError::Ok;
 }
 
-int FetchUnifiedApplicationsListing(NativeHost &_host,
-                                    VFSListingPtr &_target,
-                                    unsigned long _flags,
-                                    const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error>
+FetchUnifiedApplicationsListing(NativeHost &_host, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     assert(utility::GetOSXVersion() >= utility::OSXVersion::OSX_15);
-    return FetchUnifiedListing(_host, g_SystemApplications, g_UserApplications, _target, _flags, _cancel_checker);
+    return FetchUnifiedListing(_host, g_SystemApplications, g_UserApplications, _flags, _cancel_checker);
 }
 
-int FetchUnifiedUtilitiesListing(NativeHost &_host,
-                                 VFSListingPtr &_target,
-                                 unsigned long _flags,
-                                 const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error>
+FetchUnifiedUtilitiesListing(NativeHost &_host, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     assert(utility::GetOSXVersion() >= utility::OSXVersion::OSX_15);
-    return FetchUnifiedListing(_host, g_SystemUtilities, g_UserUtilities, _target, _flags, _cancel_checker);
+    return FetchUnifiedListing(_host, g_SystemUtilities, g_UserUtilities, _flags, _cancel_checker);
 }
 
 } // namespace nc::vfs::native

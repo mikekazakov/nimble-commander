@@ -54,10 +54,9 @@ public:
     std::expected<std::shared_ptr<VFSFile>, Error> CreateFile(std::string_view _path,
                                                               const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int FetchDirectoryListing(std::string_view _path,
-                              VFSListingPtr &_target,
-                              unsigned long _flags,
-                              const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<VFSListingPtr, Error> FetchDirectoryListing(std::string_view _path,
+                                                              unsigned long _flags,
+                                                              const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<void, Error>
     IterateDirectoryListing(std::string_view _path,

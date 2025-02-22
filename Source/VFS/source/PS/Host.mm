@@ -447,15 +447,15 @@ std::string PSHost::ProcInfoIntoFile(const ProcInfo &_info, std::shared_ptr<Snap
     return result;
 }
 
-int PSHost::FetchDirectoryListing(std::string_view _path,
-                                  VFSListingPtr &_target,
-                                  [[maybe_unused]] unsigned long _flags,
-                                  [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error>
+PSHost::FetchDirectoryListing(std::string_view _path,
+                              [[maybe_unused]] unsigned long _flags,
+                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     EnsureUpdateRunning();
 
     if( _path != "/" )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     auto data = m_Data;
 
@@ -481,8 +481,7 @@ int PSHost::FetchDirectoryListing(std::string_view _path,
         listing_source.sizes.insert(index, data->files[index].size());
     }
 
-    _target = VFSListing::Build(std::move(listing_source));
-    return 0;
+    return VFSListing::Build(std::move(listing_source));
 }
 
 bool PSHost::IsDirectory(std::string_view _path,

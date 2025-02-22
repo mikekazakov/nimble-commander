@@ -103,17 +103,11 @@ struct DirectoryChangeRequest {
     bool InitiatedByUser = false;
 
     /**
-     * This will be called from a thread which is loading a vfs listing with
-     * vfs result code.
+     * This will be called from a thread which is loading a vfs listing with the result - either nothing or an error.
      * This thread may be main or background depending on PerformAsynchronous.
-     * Will be called on any error canceling process or with 0 on successful loading.
+     * Will be called on any error canceling process or with {} on successful loading.
      */
-    std::function<void(int)> LoadingResultCallback = nullptr;
-
-    /**
-     * Return code of a VFS->FetchDirectoryListing will be placed here.
-     */
-    int LoadingResultCode = 0;
+    std::function<void(const std::expected<void, Error> &)> LoadingResultCallback = nullptr;
 };
 
 using ContextMenuProvider =
@@ -196,7 +190,7 @@ using ContextMenuProvider =
  * A calling code can also set intended outcomes like focus, selection, view state restoration
  * and a completion callback.
  */
-- (int)GoToDirWithContext:(std::shared_ptr<nc::panel::DirectoryChangeRequest>)_context;
+- (std::expected<void, nc::Error>)GoToDirWithContext:(std::shared_ptr<nc::panel::DirectoryChangeRequest>)_context;
 
 /**
  * Loads existing listing into the panel. Save to call from any thread.

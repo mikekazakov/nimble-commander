@@ -275,16 +275,16 @@ ArchiveRawHost::IterateDirectoryListing(std::string_view _path,
     return {};
 }
 
-int ArchiveRawHost::FetchDirectoryListing(std::string_view _path,
-                                          VFSListingPtr &_target,
-                                          unsigned long _flags,
-                                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error>
+ArchiveRawHost::FetchDirectoryListing(std::string_view _path,
+                                      unsigned long _flags,
+                                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 
 {
     if( _path.empty() || _path[0] != '/' )
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     if( _path != "/" )
-        return VFSError::FromErrno(ENOENT);
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     using nc::base::variable_container;
     ListingInput listing_source;
@@ -319,8 +319,7 @@ int ArchiveRawHost::FetchDirectoryListing(std::string_view _path,
     listing_source.mtimes.insert(index, m_MTime.tv_sec);
     listing_source.sizes.insert(index, m_Data.size());
 
-    _target = VFSListing::Build(std::move(listing_source));
-    return 0;
+    return VFSListing::Build(std::move(listing_source));
 }
 
 std::string_view ArchiveRawHost::DeduceFilename(std::string_view _path) noexcept

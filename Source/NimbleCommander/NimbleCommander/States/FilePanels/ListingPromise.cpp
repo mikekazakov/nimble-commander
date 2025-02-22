@@ -92,12 +92,12 @@ VFSListingPtr ListingPromise::RestoreUniform(unsigned long _fetch_flags,
     if( !host )
         return nullptr;
 
-    VFSListingPtr listing;
-    const auto rc = host->FetchDirectoryListing(info->directory, listing, _fetch_flags, _cancel_checker);
-    if( rc != VFSError::Ok )
-        throw ErrorException{VFSError::ToError(rc)};
+    const std::expected<VFSListingPtr, Error> listing =
+        host->FetchDirectoryListing(info->directory, _fetch_flags, _cancel_checker);
+    if( !listing )
+        throw ErrorException{listing.error()};
 
-    return listing;
+    return *listing;
 }
 
 VFSListingPtr ListingPromise::RestoreNonUniform(unsigned long _fetch_flags,

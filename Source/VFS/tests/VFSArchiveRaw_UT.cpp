@@ -144,19 +144,24 @@ static void check(const Case &test_case)
     CHECK(host->IterateDirectoryListing("/", iter_cb));
 
     // let's fetch a listing
-    VFSListingPtr listing;
-    CHECK(host->FetchDirectoryListing("", listing, Flags::None) == einval);
-    CHECK(host->FetchDirectoryListing("blah-blah", listing, Flags::None) == einval);
-    CHECK(host->FetchDirectoryListing("/blah-blah", listing, Flags::None) == enoent);
-    CHECK(host->FetchDirectoryListing("/", listing, Flags::None) == VFSError::Ok);
-    CHECK(listing->Count() == 2);
-    CHECK(listing->Filename(0) == "..");
-    CHECK(listing->Filename(1) == "hello.txt");
-    CHECK(listing->Size(0) == 5);
-    CHECK(listing->Size(1) == 5);
-    CHECK(host->FetchDirectoryListing("/", listing, Flags::F_NoDotDot) == VFSError::Ok);
-    CHECK(listing->Filename(0) == "hello.txt");
-    CHECK(listing->Size(0) == 5);
+    CHECK(host->FetchDirectoryListing("", Flags::None).error() == Error{Error::POSIX, EINVAL});
+    CHECK(host->FetchDirectoryListing("blah-blah", Flags::None).error() == Error{Error::POSIX, EINVAL});
+    CHECK(host->FetchDirectoryListing("/blah-blah", Flags::None).error() == Error{Error::POSIX, ENOENT});
+
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/", Flags::None).value();
+        CHECK(listing->Count() == 2);
+        CHECK(listing->Filename(0) == "..");
+        CHECK(listing->Filename(1) == "hello.txt");
+        CHECK(listing->Size(0) == 5);
+        CHECK(listing->Size(1) == 5);
+    }
+
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/", Flags::F_NoDotDot).value();
+        CHECK(listing->Filename(0) == "hello.txt");
+        CHECK(listing->Size(0) == 5);
+    }
 
     // check that the full verbose path is sane
     CHECK(host->MakePathVerbose("/hello.txt") == (path / "hello.txt"));

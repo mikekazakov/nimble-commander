@@ -1,4 +1,4 @@
-// Copyright (C) 2023-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 // TODO: add a PanelIT target
 
 #include "ExternalTools.h"
@@ -53,8 +53,8 @@ TEST_CASE(PREFIX "execute a detached console app")
     std::ofstream(basedir / "z z") << "aaa";
 
     auto &root = dir.directory;
-    VFSListingPtr listing;
-    REQUIRE(TestEnv().vfs_native->FetchDirectoryListing(root.c_str(), listing, VFSFlags::F_NoDotDot, {}) == 0);
+    const VFSListingPtr listing =
+        TestEnv().vfs_native->FetchDirectoryListing(root.c_str(), VFSFlags::F_NoDotDot).value();
     data::Model model;
     model.Load(listing, data::Model::PanelType::Directory);
     nc::utility::TemporaryFileStorageImpl temp_storage(root.native(), "temp");
@@ -111,8 +111,7 @@ TEST_CASE(PREFIX "execute a non-existing app")
 {
     const TempTestDir dir;
 
-    VFSListingPtr listing;
-    REQUIRE(TestEnv().vfs_native->FetchDirectoryListing("/", listing, VFSFlags::F_NoDotDot, {}) == 0);
+    const VFSListingPtr listing = TestEnv().vfs_native->FetchDirectoryListing("/", VFSFlags::F_NoDotDot).value();
     data::Model model;
     model.Load(listing, data::Model::PanelType::Directory);
     nc::utility::TemporaryFileStorageImpl temp_storage(dir.directory.native(), "temp");
@@ -182,8 +181,8 @@ TEST_CASE(PREFIX "execute a ui app", "[!mayfail]")
                        .c_str()) == 0);
 
     auto &root = dir.directory;
-    VFSListingPtr listing;
-    REQUIRE(TestEnv().vfs_native->FetchDirectoryListing(root.c_str(), listing, VFSFlags::F_NoDotDot, {}) == 0);
+    const VFSListingPtr listing =
+        TestEnv().vfs_native->FetchDirectoryListing(root.c_str(), VFSFlags::F_NoDotDot).value();
     data::Model model;
     model.Load(listing, data::Model::PanelType::Directory);
     nc::utility::TemporaryFileStorageImpl temp_storage(root.native(), "temp");

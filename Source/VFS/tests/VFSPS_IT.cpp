@@ -10,8 +10,7 @@ using namespace nc::vfs;
 TEST_CASE(PREFIX "basic test")
 {
     auto host = std::make_shared<PSHost>();
-    VFSListingPtr list;
-    REQUIRE(host->FetchDirectoryListing("/", list, 0, {}) == 0);
+    VFSListingPtr list = host->FetchDirectoryListing("/", 0).value();
 
     bool has_launchd = false;
     bool has_kernel_task = false;
@@ -30,8 +29,7 @@ TEST_CASE(PREFIX "basic test")
 TEST_CASE(PREFIX "can read info about kernel_task")
 {
     auto host = std::make_shared<PSHost>();
-    VFSListingPtr list;
-    REQUIRE(host->FetchDirectoryListing("/", list, 0, {}) == 0);
+    VFSListingPtr list = host->FetchDirectoryListing("/", 0).value();
 
     auto it = std::find_if(
         list->begin(), list->end(), [](const auto &item) { return item.Filename().ends_with("kernel_task.txt"); });

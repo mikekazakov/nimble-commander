@@ -58,10 +58,7 @@ TEST_CASE(PREFIX "can connect to localhost")
 {
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = spawnLocalHost());
-
-    VFSListingPtr listing;
-    const int rc = host->FetchDirectoryListing("/", listing, 0, nullptr);
-    CHECK(rc == VFSError::Ok);
+    CHECK(host->FetchDirectoryListing("/", 0));
 }
 
 TEST_CASE(PREFIX "can connect to yandex.com")
@@ -98,21 +95,21 @@ static void TestFetchDirectoryListing(VFSHostPtr _host)
         return std::any_of(std::begin(*listing), std::end(*listing), [_fn](auto &_i) { return _i.Filename() == _fn; });
     };
 
-    REQUIRE(_host->FetchDirectoryListing("", listing, 0, nullptr) != VFSError::Ok);
-    REQUIRE(_host->FetchDirectoryListing("/DontExist", listing, 0, nullptr) != VFSError::Ok);
+    REQUIRE(!_host->FetchDirectoryListing("", 0));
+    REQUIRE(!_host->FetchDirectoryListing("/DontExist", 0));
 
-    REQUIRE(_host->FetchDirectoryListing("/", listing, 0, nullptr) == VFSError::Ok);
+    listing = _host->FetchDirectoryListing("/", 0).value();
     REQUIRE(listing->Count() == 1);
     REQUIRE(!has_fn(".."));
     REQUIRE(has_fn("Test1"));
 
-    REQUIRE(_host->FetchDirectoryListing("/Test1", listing, 0, nullptr) == VFSError::Ok);
+    listing = _host->FetchDirectoryListing("/Test1", 0).value();
     REQUIRE(listing->Count() == 3);
     REQUIRE(has_fn(".."));
     REQUIRE(has_fn("meow.txt"));
     REQUIRE(has_fn("Dir1"));
 
-    REQUIRE(_host->FetchDirectoryListing("/Test1/Dir1", listing, 0, nullptr) == VFSError::Ok);
+    listing = _host->FetchDirectoryListing("/Test1/Dir1", 0).value();
     REQUIRE(listing->Count() == 2);
     REQUIRE(has_fn(".."));
     REQUIRE(has_fn("purr.txt"));

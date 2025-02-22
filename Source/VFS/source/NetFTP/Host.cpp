@@ -285,10 +285,8 @@ int FTPHost::Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, co
     return VFSError::NotFound;
 }
 
-int FTPHost::FetchDirectoryListing(std::string_view _path,
-                                   VFSListingPtr &_target,
-                                   unsigned long _flags,
-                                   const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error>
+FTPHost::FetchDirectoryListing(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     if( _flags & VFSFlags::F_ForceRefresh )
         m_Cache->MarkDirectoryDirty(_path);
@@ -296,7 +294,7 @@ int FTPHost::FetchDirectoryListing(std::string_view _path,
     std::shared_ptr<Directory> dir;
     const int result = GetListingForFetching(m_ListingInstance.get(), _path, dir, _cancel_checker);
     if( result != 0 )
-        return result;
+        return std::unexpected(VFSError::ToError(result));
 
     // setup of listing structure
     using nc::base::variable_container;
@@ -335,9 +333,7 @@ int FTPHost::FetchDirectoryListing(std::string_view _path,
         listing_source.mtimes.insert(index, entry.time);
     }
 
-    _target = VFSListing::Build(std::move(listing_source));
-
-    return 0;
+    return VFSListing::Build(std::move(listing_source));
 }
 
 int FTPHost::GetListingForFetching(CURLInstance *_inst,

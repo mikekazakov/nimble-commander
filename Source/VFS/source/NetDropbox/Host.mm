@@ -348,13 +348,12 @@ DropboxHost::IterateDirectoryListing(std::string_view _path,
     return {};
 }
 
-int DropboxHost::FetchDirectoryListing(std::string_view _path,
-                                       VFSListingPtr &_target,
-                                       unsigned long _flags,
-                                       const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error> DropboxHost::FetchDirectoryListing(std::string_view _path,
+                                                                       unsigned long _flags,
+                                                                       const VFSCancelChecker &_cancel_checker)
 {
     if( !_path.starts_with("/") )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     std::string path = std::string(_path);
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
@@ -390,11 +389,11 @@ int DropboxHost::FetchDirectoryListing(std::string_view _path,
 
         auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
         if( rc != VFSError::Ok )
-            return rc;
+            return std::unexpected(VFSError::ToError(rc));
 
         auto json_opt = ParseJSON(data);
         if( !json_opt )
-            return VFSError::GenericError;
+            return std::unexpected(Error{Error::POSIX, EINVAL});
         auto &json = *json_opt;
 
         auto entries = ExtractMetadataEntries(json);
@@ -422,9 +421,7 @@ int DropboxHost::FetchDirectoryListing(std::string_view _path,
         }
     } while( not cursor_token.empty() );
 
-    _target = VFSListing::Build(std::move(listing_source));
-
-    return VFSError::Ok;
+    return VFSListing::Build(std::move(listing_source));
 }
 
 std::expected<std::shared_ptr<VFSFile>, Error> DropboxHost::CreateFile(std::string_view _path,

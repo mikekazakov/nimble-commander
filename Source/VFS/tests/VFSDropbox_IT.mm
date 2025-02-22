@@ -125,16 +125,14 @@ TEST_CASE(PREFIX "large directory iterating")
 TEST_CASE(PREFIX "directory listing")
 {
     const std::shared_ptr<VFSHost> host = Spawn();
-    VFSListingPtr listing;
-    CHECK(host->FetchDirectoryListing("/", listing, 0) == VFSError::Ok);
+    CHECK(host->FetchDirectoryListing("/", 0));
 }
 
 TEST_CASE(PREFIX "large directory listing")
 {
     const auto dirpath = "/TestSet02/";
     const std::shared_ptr<VFSHost> host = Spawn();
-    VFSListingPtr listing;
-    REQUIRE(host->FetchDirectoryListing(dirpath, listing, Flags::F_NoDotDot) == VFSError::Ok);
+    VFSListingPtr listing = host->FetchDirectoryListing(dirpath, Flags::F_NoDotDot).value();
 
     std::set<std::string> filenames;
     for( const auto &item : *listing )

@@ -372,12 +372,12 @@ bool Host::ValidateFilename(std::string_view _filename) const
     return _filename.find_first_of(invalid_chars) == std::string_view::npos;
 }
 
-int Host::FetchDirectoryListing([[maybe_unused]] std::string_view _path,
-                                [[maybe_unused]] VFSListingPtr &_target,
-                                [[maybe_unused]] unsigned long _flags,
-                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error>
+Host::FetchDirectoryListing([[maybe_unused]] std::string_view _path,
+                            [[maybe_unused]] unsigned long _flags,
+                            [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 std::expected<VFSListingPtr, Error> Host::FetchSingleItemListing(std::string_view _path,
@@ -468,19 +468,21 @@ Host::FetchFlexibleListingItems(const std::string &_directory_path,
                                 unsigned long _flags,
                                 const VFSCancelChecker &_cancel_checker)
 {
-    VFSListingPtr listing;
-    const int ret = FetchDirectoryListing(_directory_path, listing, _flags, _cancel_checker);
-    if( ret != 0 )
-        return std::unexpected(VFSError::ToError(ret));
+    const std::expected<VFSListingPtr, Error> exp_listing =
+        FetchDirectoryListing(_directory_path, _flags, _cancel_checker);
+    if( !exp_listing )
+        return std::unexpected(exp_listing.error());
+
+    const VFSListing &listing = *exp_listing.value();
 
     std::vector<VFSListingItem> items;
     items.reserve(_filenames.size());
 
     // O(n) implementation, can write as O(logn) with indirection indices map
-    for( unsigned i = 0, e = listing->Count(); i != e; ++i )
+    for( unsigned i = 0, e = listing.Count(); i != e; ++i )
         for( auto &filename : _filenames )
-            if( listing->Filename(i) == filename )
-                items.emplace_back(listing->Item(i));
+            if( listing.Filename(i) == filename )
+                items.emplace_back(listing.Item(i));
 
     return items;
 }

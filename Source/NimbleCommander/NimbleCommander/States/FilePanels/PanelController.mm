@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelController.h"
 #include <Base/algo.h>
 #include <Utility/NSView+Sugar.h>
@@ -430,9 +430,8 @@ static void HeatUpConfigValues()
                 Log::Trace("[PanelController refreshPanelDiscardingCaches] cancelled the refresh");
                 return;
             }
-            VFSListingPtr listing;
-            const int ret = vfs->FetchDirectoryListing(
-                dirpath, listing, fetch_flags, [&] { return m_DirectoryReLoadingQ.IsStopped(); });
+            const std::expected<VFSListingPtr, Error> listing =
+                vfs->FetchDirectoryListing(dirpath, fetch_flags, [&] { return m_DirectoryReLoadingQ.IsStopped(); });
             if( m_DirectoryReLoadingQ.IsStopped() ) {
                 Log::Trace("[PanelController refreshPanelDiscardingCaches] cancelled the refresh");
                 return;
@@ -445,8 +444,8 @@ static void HeatUpConfigValues()
                     return;
                 }
 
-                if( ret >= 0 )
-                    [self reloadRefreshedListing:listing];
+                if( listing )
+                    [self reloadRefreshedListing:*listing];
                 else
                     [self recoverFromInvalidDirectory];
             });
@@ -901,7 +900,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
     }
 }
 
-- (void)doGoToDirWithContext:(std::shared_ptr<DirectoryChangeRequest>)_request
+- (std::expected<void, Error>)doGoToDirWithContext:(std::shared_ptr<DirectoryChangeRequest>)_request
 {
     assert(_request != nullptr);
     assert(_request->VFS != nullptr);
@@ -909,28 +908,28 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
 
     try {
         if( ![self probeDirectoryAccessForRequest:*_request] ) {
-            _request->LoadingResultCode = VFSError::FromErrno(EPERM);
-            return;
+            return std::unexpected(Error{Error::POSIX, EPERM});
         }
 
         auto directory = _request->RequestedDirectory;
         auto &vfs = *_request->VFS;
         const auto canceller = VFSCancelChecker([&] { return m_DirectoryLoadingQ.IsStopped(); });
-        VFSListingPtr listing;
-        const auto fetch_result = vfs.FetchDirectoryListing(directory, listing, m_VFSFetchingFlags, canceller);
-        _request->LoadingResultCode = fetch_result;
-        if( _request->LoadingResultCallback )
-            _request->LoadingResultCallback(fetch_result);
+        const std::expected<VFSListingPtr, Error> listing =
+            vfs.FetchDirectoryListing(directory, m_VFSFetchingFlags, canceller);
+        if( _request->LoadingResultCallback ) {
+            _request->LoadingResultCallback(listing ? std::expected<void, Error>{}
+                                                    : std::expected<void, Error>{std::unexpected(listing.error())});
+        }
 
-        if( fetch_result < 0 )
-            return;
+        if( !listing )
+            return std::unexpected(listing.error());
 
         // TODO: need an ability to show errors at least
 
         [self CancelBackgroundOperations]; // clean running operations if any
         dispatch_or_run_in_main_queue([=] {
             [m_View savePathState];
-            m_Data.Load(listing, data::Model::PanelType::Directory);
+            m_Data.Load(*listing, data::Model::PanelType::Directory);
             for( auto &i : _request->RequestSelectedEntries )
                 m_Data.CustomFlagsSelectSorted(m_Data.SortedIndexForName(i), true);
             m_DataGeneration++;
@@ -944,16 +943,17 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
     } catch( ... ) {
         ShowExceptionAlert();
     }
+    return {};
 }
 
-- (int)GoToDirWithContext:(std::shared_ptr<DirectoryChangeRequest>)_request
+- (std::expected<void, Error>)GoToDirWithContext:(std::shared_ptr<DirectoryChangeRequest>)_request
 {
     if( _request == nullptr )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( _request->RequestedDirectory.empty() || _request->RequestedDirectory.front() != '/' ||
         _request->VFS == nullptr )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     assert(_request != nullptr);
     assert(_request->VFS != nullptr);
@@ -964,15 +964,15 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
         m_DirectoryLoadingQ.Stop();
         m_DirectoryLoadingQ.Wait();
 
-        [self doGoToDirWithContext:_request];
-        return _request->LoadingResultCode;
+        const std::expected<void, Error> result = [self doGoToDirWithContext:_request];
+        return result;
     }
     else {
         if( !m_DirectoryLoadingQ.Empty() )
-            return 0;
+            return {};
 
         m_DirectoryLoadingQ.Run([=] { [self doGoToDirWithContext:_request]; });
-        return 0;
+        return {};
     }
 }
 

@@ -41,6 +41,7 @@
 #include <Base/dispatch_cpp.h>
 #include <Base/debug.h>
 
+using namespace nc;
 using namespace nc::panel;
 using namespace std::literals;
 
@@ -252,8 +253,8 @@ static NSString *TitleForData(const data::Model *_data);
             request->RequestedDirectory = p;
             request->VFS = nc::bootstrap::NativeVFSHostInstance().SharedPtr();
             request->PerformAsynchronous = false;
-            const auto result = [_panel GoToDirWithContext:request];
-            if( result == VFSError::Ok )
+            const std::expected<void, Error> result = [_panel GoToDirWithContext:request];
+            if( result )
                 break;
         }
     };

@@ -74,13 +74,12 @@ bool NativeHost::ShouldProduceThumbnails() const
     return true;
 }
 
-int NativeHost::FetchDirectoryListing(std::string_view _path,
-                                      VFSListingPtr &_target,
-                                      const unsigned long _flags,
-                                      const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error> NativeHost::FetchDirectoryListing(std::string_view _path,
+                                                                      const unsigned long _flags,
+                                                                      const VFSCancelChecker &_cancel_checker)
 {
     if( !_path.starts_with("/") )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     StackAllocator alloc;
     const std::pmr::string path(_path, &alloc);
@@ -90,7 +89,7 @@ int NativeHost::FetchDirectoryListing(std::string_view _path,
     const bool is_native_io = !io.isrouted();
     const int fd = io.open(path.c_str(), O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
     if( fd < 0 )
-        return VFSError::FromErrno();
+        return std::unexpected(Error{Error::POSIX, errno});
     auto close_fd = at_scope_end([fd] { close(fd); });
 
     using nc::base::variable_container;
@@ -181,10 +180,10 @@ int NativeHost::FetchDirectoryListing(std::string_view _path,
         is_native_io ? Fetching::ReadDirAttributesBulk(fd, cb_fetch, cb_param)
                      : Fetching::ReadDirAttributesStat(fd, listing_source.directories[0].c_str(), cb_fetch, cb_param);
     if( ret != 0 )
-        return VFSError::FromErrno(ret);
+        return std::unexpected(Error{Error::POSIX, ret});
 
     if( _cancel_checker && _cancel_checker() )
-        return VFSError::Cancelled;
+        return std::unexpected(Error{Error::POSIX, ECANCELED});
 
     // check if final entries count is less than approximate
     if( next_entry_index < allocated_size )
@@ -242,35 +241,32 @@ int NativeHost::FetchDirectoryListing(std::string_view _path,
         }
     }
 
-    _target = VFSListing::Build(std::move(listing_source));
-
-    return 0;
+    return VFSListing::Build(std::move(listing_source));
 }
 
-int NativeHost::FetchSingleItemListing(std::string_view _path,
-                                       VFSListingPtr &_target,
-                                       unsigned long _flags,
-                                       const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error> NativeHost::FetchSingleItemListing(std::string_view _path,
+                                                                       unsigned long _flags,
+                                                                       const VFSCancelChecker &_cancel_checker)
 {
     if( !_path.starts_with("/") )
-        return VFSError::InvalidCall;
-
-    if( _cancel_checker && _cancel_checker() )
-        return VFSError::Cancelled;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     std::array<char, 512> mem_buffer;
     std::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
     const std::pmr::string path(utility::PathManip::WithoutTrailingSlashes(_path), &mem_resource);
     if( path.empty() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const std::string_view directory = utility::PathManip::Parent(path);
     if( directory.empty() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const std::string_view filename = utility::PathManip::Filename(path);
     if( filename.empty() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
+
+    if( _cancel_checker && _cancel_checker() )
+        return std::unexpected(nc::Error{nc::Error::POSIX, ECANCELED});
 
     auto &io = routedio::RoutedIO::InterfaceForAccess(path.c_str(), R_OK);
 
@@ -324,7 +320,7 @@ int NativeHost::FetchSingleItemListing(std::string_view _path,
 
     const int ret = Fetching::ReadSingleEntryAttributesByPath(io, _path, cb_param);
     if( ret != 0 )
-        return VFSError::FromErrno(ret);
+        return std::unexpected(Error{Error::POSIX, ret});
 
     // a little more work with symlink, if any
     if( listing_source.unix_types[0] == DT_LNK ) {
@@ -360,9 +356,7 @@ int NativeHost::FetchSingleItemListing(std::string_view _path,
         }
     }
 
-    _target = VFSListing::Build(std::move(listing_source));
-
-    return 0;
+    return VFSListing::Build(std::move(listing_source));
 }
 
 std::expected<std::shared_ptr<VFSFile>, Error> NativeHost::CreateFile(std::string_view _path,

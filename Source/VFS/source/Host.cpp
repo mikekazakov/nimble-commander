@@ -372,44 +372,43 @@ bool Host::ValidateFilename(std::string_view _filename) const
     return _filename.find_first_of(invalid_chars) == std::string_view::npos;
 }
 
-int Host::FetchDirectoryListing([[maybe_unused]] std::string_view _path,
-                                [[maybe_unused]] VFSListingPtr &_target,
-                                [[maybe_unused]] unsigned long _flags,
-                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error>
+Host::FetchDirectoryListing([[maybe_unused]] std::string_view _path,
+                            [[maybe_unused]] unsigned long _flags,
+                            [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
-int Host::FetchSingleItemListing(std::string_view _path,
-                                 VFSListingPtr &_target,
-                                 [[maybe_unused]] unsigned long _flags,
-                                 const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error> Host::FetchSingleItemListing(std::string_view _path,
+                                                                 [[maybe_unused]] unsigned long _flags,
+                                                                 const VFSCancelChecker &_cancel_checker)
 {
     // as we came here - there's no special implementation in derived class,
     // so need to try to emulate it with available methods.
 
     if( !_path.starts_with("/") )
-        return VFSError::InvalidCall;
-
-    if( _cancel_checker && _cancel_checker() )
-        return VFSError::Cancelled;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const std::string_view directory = utility::PathManip::Parent(_path);
     if( directory.empty() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const std::string_view filename = utility::PathManip::Filename(_path);
     if( filename.empty() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const std::string_view path_wo_trailing_slash = utility::PathManip::WithoutTrailingSlashes(_path);
     if( path_wo_trailing_slash.empty() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
+
+    if( _cancel_checker && _cancel_checker() )
+        return std::unexpected(nc::Error{nc::Error::POSIX, ECANCELED});
 
     VFSStat lstat;
-    const int ret = Stat(path_wo_trailing_slash, lstat, VFSFlags::F_NoFollow);
+    const int ret = Stat(path_wo_trailing_slash, lstat, VFSFlags::F_NoFollow, _cancel_checker);
     if( ret != 0 )
-        return ret;
+        return std::unexpected(VFSError::ToError(ret));
 
     using nc::base::variable_container;
     nc::vfs::ListingInput listing_source;
@@ -460,9 +459,7 @@ int Host::FetchSingleItemListing(std::string_view _path,
         }
     }
 
-    _target = VFSListing::Build(std::move(listing_source));
-
-    return 0;
+    return VFSListing::Build(std::move(listing_source));
 }
 
 std::expected<std::vector<VFSListingItem>, Error>
@@ -471,19 +468,21 @@ Host::FetchFlexibleListingItems(const std::string &_directory_path,
                                 unsigned long _flags,
                                 const VFSCancelChecker &_cancel_checker)
 {
-    VFSListingPtr listing;
-    const int ret = FetchDirectoryListing(_directory_path, listing, _flags, _cancel_checker);
-    if( ret != 0 )
-        return std::unexpected(VFSError::ToError(ret));
+    const std::expected<VFSListingPtr, Error> exp_listing =
+        FetchDirectoryListing(_directory_path, _flags, _cancel_checker);
+    if( !exp_listing )
+        return std::unexpected(exp_listing.error());
+
+    const VFSListing &listing = *exp_listing.value();
 
     std::vector<VFSListingItem> items;
     items.reserve(_filenames.size());
 
     // O(n) implementation, can write as O(logn) with indirection indices map
-    for( unsigned i = 0, e = listing->Count(); i != e; ++i )
+    for( unsigned i = 0, e = listing.Count(); i != e; ++i )
         for( auto &filename : _filenames )
-            if( listing->Filename(i) == filename )
-                items.emplace_back(listing->Item(i));
+            if( listing.Filename(i) == filename )
+                items.emplace_back(listing.Item(i));
 
     return items;
 }

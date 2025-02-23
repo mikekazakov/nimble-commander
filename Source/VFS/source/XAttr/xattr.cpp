@@ -175,13 +175,13 @@ int XAttrHost::Fetch()
     return VFSError::Ok;
 }
 
-int XAttrHost::FetchDirectoryListing(std::string_view _path,
-                                     VFSListingPtr &_target,
-                                     unsigned long _flags,
-                                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error>
+XAttrHost::FetchDirectoryListing(std::string_view _path,
+                                 unsigned long _flags,
+                                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( _path != "/" )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     using nc::base::variable_container;
 
@@ -217,8 +217,7 @@ int XAttrHost::FetchDirectoryListing(std::string_view _path,
         }
     }
 
-    _target = VFSListing::Build(std::move(listing_source));
-    return VFSError::Ok;
+    return VFSListing::Build(std::move(listing_source));
 }
 
 int XAttrHost::Stat(std::string_view _path,

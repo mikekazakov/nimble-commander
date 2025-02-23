@@ -743,8 +743,7 @@ TEST_CASE(PREFIX "archive with a slash dir")
     REQUIRE(host->StatTotalRegs() == 1);
     REQUIRE(host->StatTotalDirs() == 0); // root doesn't count
 
-    VFSListingPtr listing;
-    REQUIRE(host->FetchDirectoryListing("/", listing, 0, nullptr) == VFSError::Ok);
+    REQUIRE(host->FetchDirectoryListing("/", 0));
 
     auto fn = "/f.txt";
     const VFSFilePtr file = host->CreateFile(fn).value();
@@ -1773,9 +1772,10 @@ TEST_CASE(PREFIX "zip archive with a heading slash in a filename")
     REQUIRE(host->StatTotalRegs() == 1);
     REQUIRE(host->StatTotalDirs() == 0);
 
-    VFSListingPtr listing;
-    REQUIRE(host->FetchDirectoryListing("/", listing, 0, nullptr) == VFSError::Ok);
-    CHECK(listing->Filename(1) == "The.Expanse.S02E13.Caliban's.War.SVA.srt");
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/", 0).value();
+        CHECK(listing->Filename(1) == "The.Expanse.S02E13.Caliban's.War.SVA.srt");
+    }
 
     auto fn = "/The.Expanse.S02E13.Caliban's.War.SVA.srt";
     const VFSFilePtr file = host->CreateFile(fn).value();
@@ -1819,8 +1819,7 @@ TEST_CASE(PREFIX "lzma support")
     REQUIRE(host->StatTotalRegs() == 1);
     REQUIRE(host->StatTotalDirs() == 0); // root doesn't count
 
-    VFSListingPtr listing;
-    REQUIRE(host->FetchDirectoryListing("/", listing, 0, nullptr) == VFSError::Ok);
+    REQUIRE(host->FetchDirectoryListing("/", 0));
 
     auto fn = "/Hello.txt";
     const VFSFilePtr file = host->CreateFile(fn).value();
@@ -1852,9 +1851,8 @@ TEST_CASE(PREFIX "zip with GB18030-2020 support")
     std::shared_ptr<ArchiveHost> host;
     REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(path.c_str(), TestEnv().vfs_native));
 
-    VFSListingPtr listing;
-    REQUIRE(host->FetchDirectoryListing("/", listing, 0, nullptr) == VFSError::Ok);
-    REQUIRE(host->FetchDirectoryListing("/维基百科是什么", listing, 0, nullptr) == VFSError::Ok);
+    REQUIRE(host->FetchDirectoryListing("/", 0));
+    REQUIRE(host->FetchDirectoryListing("/维基百科是什么", 0));
 
     auto fn = "/维基百科是什么/以及具有百科全书之意的.txt";
     const VFSFilePtr file = host->CreateFile(fn).value();
@@ -1897,14 +1895,17 @@ TEST_CASE(PREFIX "synthetic directories semantics")
     CHECK(st.uid == zip_stat.st_uid);
     CHECK(st.gid == zip_stat.st_gid);
 
-    VFSListingPtr listing;
-    REQUIRE(host->FetchDirectoryListing("/", listing, VFSFlags::F_NoDotDot) == VFSError::Ok);
-    REQUIRE(listing->Count() == 1);
-    REQUIRE(listing->Filename(0) == "dir");
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/", VFSFlags::F_NoDotDot).value();
+        REQUIRE(listing->Count() == 1);
+        REQUIRE(listing->Filename(0) == "dir");
+    }
 
-    REQUIRE(host->FetchDirectoryListing("/dir", listing, VFSFlags::F_NoDotDot) == VFSError::Ok);
-    REQUIRE(listing->Count() == 1);
-    REQUIRE(listing->Filename(0) == "file.txt");
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/dir", VFSFlags::F_NoDotDot).value();
+        REQUIRE(listing->Count() == 1);
+        REQUIRE(listing->Filename(0) == "file.txt");
+    }
 
     CheckFileIs(*host, "/dir/file.txt", "hello\n");
 }
@@ -1976,43 +1977,64 @@ TEST_CASE(PREFIX "synthetic directories semantics, nested case")
         CHECK(st.uid == zip_stat.st_uid);
         CHECK(st.gid == zip_stat.st_gid);
     }
-    VFSListingPtr listing;
-    REQUIRE(host->FetchDirectoryListing("/", listing, VFSFlags::F_NoDotDot) == VFSError::Ok);
-    REQUIRE(listing->Count() == 2);
-    REQUIRE(listing->Filename(0) == "a");
-    REQUIRE(listing->Filename(1) == "b");
-    REQUIRE(host->FetchDirectoryListing("/a", listing, VFSFlags::F_NoDotDot) == VFSError::Ok);
-    REQUIRE(listing->Count() == 2);
-    REQUIRE(listing->Filename(0) == "c");
-    REQUIRE(listing->Filename(1) == "d");
-    REQUIRE(host->FetchDirectoryListing("/a/c", listing, VFSFlags::F_NoDotDot) == VFSError::Ok);
-    REQUIRE(listing->Count() == 1);
-    REQUIRE(listing->Filename(0) == "g");
-    REQUIRE(host->FetchDirectoryListing("/a/c/g", listing, VFSFlags::F_NoDotDot) == VFSError::Ok);
-    REQUIRE(listing->Count() == 1);
-    REQUIRE(listing->Filename(0) == "f.txt");
-    REQUIRE(host->FetchDirectoryListing("/a/d", listing, VFSFlags::F_NoDotDot) == VFSError::Ok);
-    REQUIRE(listing->Count() == 1);
-    REQUIRE(listing->Filename(0) == "h");
-    REQUIRE(host->FetchDirectoryListing("/a/d/h", listing, VFSFlags::F_NoDotDot) == VFSError::Ok);
-    REQUIRE(listing->Count() == 1);
-    REQUIRE(listing->Filename(0) == "f.txt");
-    REQUIRE(host->FetchDirectoryListing("/b", listing, VFSFlags::F_NoDotDot) == VFSError::Ok);
-    REQUIRE(listing->Count() == 2);
-    REQUIRE(listing->Filename(0) == "f");
-    REQUIRE(listing->Filename(1) == "e");
-    REQUIRE(host->FetchDirectoryListing("/b/e", listing, VFSFlags::F_NoDotDot) == VFSError::Ok);
-    REQUIRE(listing->Count() == 1);
-    REQUIRE(listing->Filename(0) == "i");
-    REQUIRE(host->FetchDirectoryListing("/b/e/i", listing, VFSFlags::F_NoDotDot) == VFSError::Ok);
-    REQUIRE(listing->Count() == 1);
-    REQUIRE(listing->Filename(0) == "f.txt");
-    REQUIRE(host->FetchDirectoryListing("/b/f", listing, VFSFlags::F_NoDotDot) == VFSError::Ok);
-    REQUIRE(listing->Count() == 1);
-    REQUIRE(listing->Filename(0) == "j");
-    REQUIRE(host->FetchDirectoryListing("/b/f/j", listing, VFSFlags::F_NoDotDot) == VFSError::Ok);
-    REQUIRE(listing->Count() == 1);
-    REQUIRE(listing->Filename(0) == "f.txt");
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/", VFSFlags::F_NoDotDot).value();
+        REQUIRE(listing->Count() == 2);
+        REQUIRE(listing->Filename(0) == "a");
+        REQUIRE(listing->Filename(1) == "b");
+    }
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/a", VFSFlags::F_NoDotDot).value();
+        REQUIRE(listing->Count() == 2);
+        REQUIRE(listing->Filename(0) == "c");
+        REQUIRE(listing->Filename(1) == "d");
+    }
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/a/c", VFSFlags::F_NoDotDot).value();
+        REQUIRE(listing->Count() == 1);
+        REQUIRE(listing->Filename(0) == "g");
+    }
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/a/c/g", VFSFlags::F_NoDotDot).value();
+        REQUIRE(listing->Count() == 1);
+        REQUIRE(listing->Filename(0) == "f.txt");
+    }
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/a/d", VFSFlags::F_NoDotDot).value();
+        REQUIRE(listing->Count() == 1);
+        REQUIRE(listing->Filename(0) == "h");
+    }
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/a/d/h", VFSFlags::F_NoDotDot).value();
+        REQUIRE(listing->Count() == 1);
+        REQUIRE(listing->Filename(0) == "f.txt");
+    }
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/b", VFSFlags::F_NoDotDot).value();
+        REQUIRE(listing->Count() == 2);
+        REQUIRE(listing->Filename(0) == "f");
+        REQUIRE(listing->Filename(1) == "e");
+    }
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/b/e", VFSFlags::F_NoDotDot).value();
+        REQUIRE(listing->Count() == 1);
+        REQUIRE(listing->Filename(0) == "i");
+    }
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/b/e/i", VFSFlags::F_NoDotDot).value();
+        REQUIRE(listing->Count() == 1);
+        REQUIRE(listing->Filename(0) == "f.txt");
+    }
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/b/f", VFSFlags::F_NoDotDot).value();
+        REQUIRE(listing->Count() == 1);
+        REQUIRE(listing->Filename(0) == "j");
+    }
+    {
+        const VFSListingPtr listing = host->FetchDirectoryListing("/b/f/j", VFSFlags::F_NoDotDot).value();
+        REQUIRE(listing->Count() == 1);
+        REQUIRE(listing->Filename(0) == "f.txt");
+    }
     CheckFileIs(*host, "/a/c/g/f.txt", "acg\n");
     CheckFileIs(*host, "/a/d/h/f.txt", "adh\n");
     CheckFileIs(*host, "/b/e/i/f.txt", "bei\n");

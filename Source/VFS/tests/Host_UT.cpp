@@ -21,7 +21,7 @@ TEST_CASE(PREFIX "FetchSingleItemListing")
     VFSListingPtr listing;
     SECTION("Not absolute path")
     {
-        REQUIRE(host->FetchSingleItemListing("not absolute path", listing, VFSFlags::None) != VFSError::Ok);
+        REQUIRE(!host->FetchSingleItemListing("not absolute path", VFSFlags::None));
     }
     SECTION("Single reg-file listing")
     {
@@ -33,7 +33,7 @@ TEST_CASE(PREFIX "FetchSingleItemListing")
                 st.mode_bits.reg = true;
                 return 0;
             });
-        REQUIRE(host->FetchSingleItemListing("/my/file.txt", listing, VFSFlags::None) == VFSError::Ok);
+        listing = host->FetchSingleItemListing("/my/file.txt", VFSFlags::None).value();
         REQUIRE(listing);
         REQUIRE(listing->Host() == host);
         REQUIRE(listing->Count() == 1);
@@ -55,7 +55,7 @@ TEST_CASE(PREFIX "FetchSingleItemListing")
                 st.mode_bits.reg = true;
                 return 0;
             });
-        REQUIRE(host->FetchSingleItemListing("/my/file.txt///", listing, VFSFlags::None) == VFSError::Ok);
+        listing = host->FetchSingleItemListing("/my/file.txt///", VFSFlags::None).value();
         REQUIRE(listing);
         REQUIRE(listing->Directory() == "/my/");
         auto item = listing->Item(0);
@@ -69,6 +69,7 @@ TEST_CASE(PREFIX "Unsupported methods")
     auto host = std::make_shared<Host>("/", nullptr, "dummy");
     const Error enotsup = Error{Error::POSIX, ENOTSUP};
     // ...
+    REQUIRE(host->FetchDirectoryListing("/some/path", 0).error() == enotsup);
     REQUIRE(host->IterateDirectoryListing("/some/path", [](auto &) { return false; }).error() == enotsup);
     REQUIRE(host->StatFS("/some/path").error() == enotsup);
     REQUIRE(host->CreateFile("/some/path").error() == enotsup);

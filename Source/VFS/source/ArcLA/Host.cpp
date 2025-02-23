@@ -538,24 +538,23 @@ std::expected<std::shared_ptr<VFSFile>, Error> ArchiveHost::CreateFile(std::stri
     return file;
 }
 
-int ArchiveHost::FetchDirectoryListing(std::string_view _path,
-                                       VFSListingPtr &_target,
-                                       unsigned long _flags,
-                                       const VFSCancelChecker & /*_cancel_checker*/)
+std::expected<VFSListingPtr, Error> ArchiveHost::FetchDirectoryListing(std::string_view _path,
+                                                                       unsigned long _flags,
+                                                                       const VFSCancelChecker & /*_cancel_checker*/)
 {
     StackAllocator alloc;
     std::pmr::string path(&alloc);
 
     const int res = ResolvePathIfNeeded(_path, path, _flags);
     if( res < 0 )
-        return res;
+        return std::unexpected(VFSError::ToError(res));
 
     if( path.back() != '/' )
         path += "/";
 
     const auto i = I->m_PathToDir.find(path);
     if( i == I->m_PathToDir.end() )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     const auto &directory = i->second;
 
@@ -616,8 +615,7 @@ int ArchiveHost::FetchDirectoryListing(std::string_view _path,
         listing_source.unix_flags.insert(index, stat.st_flags);
     }
 
-    _target = VFSListing::Build(std::move(listing_source));
-    return 0;
+    return VFSListing::Build(std::move(listing_source));
 }
 
 bool ArchiveHost::IsDirectory(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)

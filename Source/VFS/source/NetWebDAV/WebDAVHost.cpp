@@ -92,13 +92,11 @@ bool WebDAVHost::IsWritable() const
     return true;
 }
 
-int WebDAVHost::FetchDirectoryListing(std::string_view _path,
-                                      VFSListingPtr &_target,
-                                      unsigned long _flags,
-                                      const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error>
+WebDAVHost::FetchDirectoryListing(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_path) )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const auto path = EnsureTrailingSlash(std::string(_path));
 
@@ -112,12 +110,12 @@ int WebDAVHost::FetchDirectoryListing(std::string_view _path,
     else {
         const auto refresh_rc = RefreshListingAtPath(path, _cancel_checker);
         if( refresh_rc != VFSError::Ok )
-            return refresh_rc;
+            return std::unexpected(VFSError::ToError(refresh_rc));
 
         if( auto cached2 = I->m_Cache.Listing(path) )
             items = std::move(*cached2);
         else
-            return VFSError::GenericError;
+            return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
     }
 
     if( (_flags & VFSFlags::F_NoDotDot) || path == "/" )
@@ -150,8 +148,7 @@ int WebDAVHost::FetchDirectoryListing(std::string_view _path,
         index++;
     }
 
-    _target = VFSListing::Build(std::move(listing_source));
-    return VFSError::Ok;
+    return VFSListing::Build(std::move(listing_source));
 }
 
 std::expected<void, Error>

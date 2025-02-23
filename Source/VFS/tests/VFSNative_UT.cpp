@@ -36,24 +36,23 @@ TEST_CASE(PREFIX "Does produces unified Application directory")
     REQUIRE(close(creat(marker_path, 0755)) == 0);
     auto marker_cleanup = at_scope_end([&] { rm_marker(); });
 
-    VFSListingPtr listing;
-    int rc = 0;
+    std::expected<VFSListingPtr, Error> listing;
     SECTION("No ..")
     {
-        rc = FetchUnifiedApplicationsListing(host(), listing, Flags::F_NoDotDot, {});
+        listing = FetchUnifiedApplicationsListing(host(), Flags::F_NoDotDot);
     }
     SECTION("With ..")
     {
-        rc = FetchUnifiedApplicationsListing(host(), listing, Flags::None, {});
+        listing = FetchUnifiedApplicationsListing(host(), Flags::None);
     }
 
-    REQUIRE(rc == VFSError::Ok);
-    REQUIRE(listing != nullptr);
-    REQUIRE(listing->IsUniform() == false);
-    CHECK(ListingHas(listing, "..") == false);
-    CHECK(ListingHas(listing, "Mail.app"));
-    CHECK(ListingHas(listing, "__nc_fetch_probe__"));
-    CHECK(ListingHas(listing, "some_meaningless_rubbish_that_nobody_would_every_have") == false);
+    REQUIRE(listing);
+    REQUIRE(*listing != nullptr);
+    REQUIRE((*listing)->IsUniform() == false);
+    CHECK(ListingHas(*listing, "..") == false);
+    CHECK(ListingHas(*listing, "Mail.app"));
+    CHECK(ListingHas(*listing, "__nc_fetch_probe__"));
+    CHECK(ListingHas(*listing, "some_meaningless_rubbish_that_nobody_would_every_have") == false);
 }
 
 TEST_CASE(PREFIX "FetchUnifiedListing fetches contents from both directories")
@@ -66,15 +65,14 @@ TEST_CASE(PREFIX "FetchUnifiedListing fetches contents from both directories")
     REQUIRE(close(creat((test_dir + "A/a").c_str(), 0755)) == 0);
     REQUIRE(close(creat((test_dir + "B/b").c_str(), 0755)) == 0);
 
-    VFSListingPtr listing;
-    const int rc =
-        FetchUnifiedListing(host(), (test_dir + "A").c_str(), (test_dir + "B").c_str(), listing, VFSFlags::None, {});
-    REQUIRE(rc == VFSError::Ok);
-    REQUIRE(listing != nullptr);
-    REQUIRE(listing->IsUniform() == false);
-    CHECK(listing->Count() == 2);
-    CHECK(ListingHas(listing, "a"));
-    CHECK(ListingHas(listing, "b"));
+    const std::expected<VFSListingPtr, Error> listing =
+        FetchUnifiedListing(host(), test_dir + "A", test_dir + "B", VFSFlags::None);
+    REQUIRE(listing);
+    REQUIRE(*listing != nullptr);
+    REQUIRE((*listing)->IsUniform() == false);
+    CHECK((*listing)->Count() == 2);
+    CHECK(ListingHas(*listing, "a"));
+    CHECK(ListingHas(*listing, "b"));
 }
 
 TEST_CASE(PREFIX "FetchUnifiedListing succeeds when user directory doesn't exist")
@@ -85,14 +83,13 @@ TEST_CASE(PREFIX "FetchUnifiedListing succeeds when user directory doesn't exist
     REQUIRE(mkdir((test_dir + "A").c_str(), 0755) == 0);
     REQUIRE(close(creat((test_dir + "A/a").c_str(), 0755)) == 0);
 
-    VFSListingPtr listing;
-    const int rc =
-        FetchUnifiedListing(host(), (test_dir + "A").c_str(), (test_dir + "B").c_str(), listing, VFSFlags::None, {});
-    REQUIRE(rc == VFSError::Ok);
-    REQUIRE(listing != nullptr);
-    REQUIRE(listing->IsUniform() == true);
-    CHECK(listing->Count() == 1);
-    CHECK(ListingHas(listing, "a"));
+    const std::expected<VFSListingPtr, Error> listing =
+        FetchUnifiedListing(host(), test_dir + "A", test_dir + "B", VFSFlags::None);
+    REQUIRE(listing);
+    REQUIRE(*listing != nullptr);
+    REQUIRE((*listing)->IsUniform() == true);
+    CHECK((*listing)->Count() == 1);
+    CHECK(ListingHas(*listing, "a"));
 }
 
 TEST_CASE(PREFIX "Loading tags")
@@ -124,40 +121,53 @@ TEST_CASE(PREFIX "Loading tags")
                      sizeof(xattr_bytes_blue),
                      0,
                      0) == 0);
-    VFSListingPtr listing;
+
     {
-        REQUIRE(host().FetchDirectoryListing(test_dir.c_str(), listing, Flags::F_NoDotDot | Flags::F_LoadTags) ==
-                VFSError::Ok);
-        REQUIRE(listing->Count() == 2);
-        REQUIRE(listing->HasTags(0));
-        REQUIRE(listing->Tags(0).size() == 1);
-        REQUIRE(listing->Tags(0)[0].Label() == (listing->Filename(0) == "1.txt" ? "Green" : "Blue"));
-        REQUIRE(listing->Tags(0)[0].Color() == (listing->Filename(0) == "1.txt" ? Color::Green : Color::Blue));
-        REQUIRE(listing->HasTags(1));
-        REQUIRE(listing->Tags(1).size() == 1);
-        REQUIRE(listing->Tags(1)[0].Label() == (listing->Filename(1) == "1.txt" ? "Green" : "Blue"));
-        REQUIRE(listing->Tags(1)[0].Color() == (listing->Filename(1) == "1.txt" ? Color::Green : Color::Blue));
+        const std::expected<VFSListingPtr, Error> exp_listing =
+            host().FetchDirectoryListing(test_dir.c_str(), Flags::F_NoDotDot | Flags::F_LoadTags);
+        REQUIRE(exp_listing);
+        REQUIRE(*exp_listing);
+        const VFSListing &listing = **exp_listing;
+        REQUIRE(listing.Count() == 2);
+        REQUIRE(listing.HasTags(0));
+        REQUIRE(listing.Tags(0).size() == 1);
+        REQUIRE(listing.Tags(0)[0].Label() == (listing.Filename(0) == "1.txt" ? "Green" : "Blue"));
+        REQUIRE(listing.Tags(0)[0].Color() == (listing.Filename(0) == "1.txt" ? Color::Green : Color::Blue));
+        REQUIRE(listing.HasTags(1));
+        REQUIRE(listing.Tags(1).size() == 1);
+        REQUIRE(listing.Tags(1)[0].Label() == (listing.Filename(1) == "1.txt" ? "Green" : "Blue"));
+        REQUIRE(listing.Tags(1)[0].Color() == (listing.Filename(1) == "1.txt" ? Color::Green : Color::Blue));
     }
     {
-        REQUIRE(host().FetchDirectoryListing(test_dir.c_str(), listing, Flags::F_NoDotDot) == VFSError::Ok);
-        REQUIRE(listing->Count() == 2);
-        REQUIRE(!listing->HasTags(0));
-        REQUIRE(!listing->HasTags(1));
+        const std::expected<VFSListingPtr, Error> exp_listing =
+            host().FetchDirectoryListing(test_dir.c_str(), Flags::F_NoDotDot);
+        REQUIRE(exp_listing);
+        REQUIRE(*exp_listing);
+        const VFSListing &listing = **exp_listing;
+        REQUIRE(listing.Count() == 2);
+        REQUIRE(!listing.HasTags(0));
+        REQUIRE(!listing.HasTags(1));
     }
     {
-        REQUIRE(host().FetchSingleItemListing(
-                    (test_dir / "1.txt").c_str(), listing, Flags::F_NoDotDot | Flags::F_LoadTags) == VFSError::Ok);
-        REQUIRE(listing->Count() == 1);
-        REQUIRE(listing->HasTags(0));
-        REQUIRE(listing->Tags(0).size() == 1);
-        REQUIRE(listing->Tags(0)[0].Label() == "Green");
-        REQUIRE(listing->Tags(0)[0].Color() == Color::Green);
+        const std::expected<VFSListingPtr, Error> exp_listing =
+            host().FetchSingleItemListing((test_dir / "1.txt").c_str(), Flags::F_NoDotDot | Flags::F_LoadTags).value();
+        REQUIRE(exp_listing);
+        REQUIRE(*exp_listing);
+        const VFSListing &listing = **exp_listing;
+        REQUIRE(listing.Count() == 1);
+        REQUIRE(listing.HasTags(0));
+        REQUIRE(listing.Tags(0).size() == 1);
+        REQUIRE(listing.Tags(0)[0].Label() == "Green");
+        REQUIRE(listing.Tags(0)[0].Color() == Color::Green);
     }
     {
-        REQUIRE(host().FetchSingleItemListing((test_dir / "1.txt").c_str(), listing, Flags::F_NoDotDot) ==
-                VFSError::Ok);
-        REQUIRE(listing->Count() == 1);
-        REQUIRE(!listing->HasTags(0));
+        const std::expected<VFSListingPtr, Error> exp_listing =
+            host().FetchSingleItemListing((test_dir / "1.txt").c_str(), Flags::F_NoDotDot).value();
+        REQUIRE(exp_listing);
+        REQUIRE(*exp_listing);
+        const VFSListing &listing = **exp_listing;
+        REQUIRE(listing.Count() == 1);
+        REQUIRE(!listing.HasTags(0));
     }
 }
 

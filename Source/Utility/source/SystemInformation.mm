@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <IOKit/IOKitLib.h>
@@ -257,30 +257,6 @@ std::chrono::seconds GetUptime() noexcept
         std::chrono::microseconds(boottime_raw.tv_usec + (boottime_raw.tv_sec * 1000000)));
     const auto uptime = std::chrono::system_clock::now() - boottime;
     return std::chrono::duration_cast<std::chrono::seconds>(uptime);
-}
-
-static const OSXVersion g_Version = [] {
-    const auto sys_ver = NSProcessInfo.processInfo.operatingSystemVersion;
-    if( sys_ver.majorVersion == 13 )
-        return OSXVersion::macOS_13;
-    if( sys_ver.majorVersion == 12 )
-        return OSXVersion::macOS_12;
-    if( sys_ver.majorVersion == 11 )
-        return OSXVersion::macOS_11;
-    if( sys_ver.majorVersion == 10 )
-        switch( sys_ver.minorVersion ) {
-            case 15:
-                return OSXVersion::OSX_15;
-                // MacOSX older that 10.15 are unsupported
-            default:
-                break;
-        }
-    return OSXVersion::OSX_Unknown;
-}();
-
-OSXVersion GetOSXVersion() noexcept
-{
-    return g_Version;
 }
 
 static std::string ExtractReadableModelNameFromFrameworks(std::string_view _coded_name)

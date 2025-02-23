@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DragReceiver.h"
 #include "FilesDraggingSource.h"
 #include "PanelController.h"
@@ -8,6 +8,7 @@
 #include <Utility/NativeFSManager.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/PathManip.h>
+#include <Utility/StringExtras.h>
 #include <Utility/URLSecurityScopedResourceGuard.h>
 #include "PanelAux.h"
 #include <Operations/Linkage.h>
@@ -34,7 +35,7 @@ static NSArray<NSURL *> *ExtractURLs(NSPasteboard *_source);
 static int CountItemsWithType(id<NSDraggingInfo> _sender, NSString *_type);
 static NSString *URLs_Promise_UTI();
 static NSString *URLs_UTI();
-static std::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray<NSURL *> *_input, VFSHost &_host);
+static std::expected<std::vector<VFSListingItem>, Error> FetchListingItems(NSArray<NSURL *> *_input, VFSHost &_host);
 
 static void AddPanelRefreshIfNecessary(PanelController *_target, ops::Operation &_operation);
 static void AddPanelRefreshIfNecessary(PanelController *_target, PanelController *_source, ops::Operation &_operation);
@@ -332,12 +333,12 @@ bool DragReceiver::PerformWithURLsSource(NSArray<NSURL *> *_source, const vfs::V
     if( !source_items.has_value() ) {
         // failed to fetch the source items.
         // refuse the drag and show an error message asynchronously.
-        const int vfs_error = source_items.error();
-        dispatch_to_main_queue([vfs_error] {
+        const Error &error = source_items.error();
+        dispatch_to_main_queue([error] {
             Alert *const alert = [[Alert alloc] init];
             alert.messageText = NSLocalizedString(@"Failed to access the dragged item:",
                                                   "Showing error when failed to access the dragged items");
-            alert.informativeText = VFSError::ToNSError(vfs_error).localizedDescription;
+            alert.informativeText = [NSString stringWithUTF8StdString:error.LocalizedFailureReason()];
             [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];
         });
@@ -484,7 +485,7 @@ static NSString *URLs_UTI()
     return uti;
 }
 
-static std::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray<NSURL *> *_input, VFSHost &_host)
+static std::expected<std::vector<VFSListingItem>, Error> FetchListingItems(NSArray<NSURL *> *_input, VFSHost &_host)
 {
     // TODO:
     // The current implementation uses a rather moronic approach of fetching multiple single-item
@@ -499,14 +500,14 @@ static std::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray
     // implementation must rely only on stat()-level functions.
     std::vector<VFSListingItem> source_items;
     for( NSURL *url : _input ) {
-        VFSListingPtr listing;
-        auto rc = _host.FetchSingleItemListing(url.fileSystemRepresentation, listing, 0);
-        if( rc == VFSError::Ok ) {
-            assert(listing && listing->Count() == 1);
-            source_items.emplace_back(listing->Item(0));
+        const std::expected<VFSListingPtr, Error> listing =
+            _host.FetchSingleItemListing(url.fileSystemRepresentation, 0);
+        if( listing ) {
+            assert(*listing && (*listing)->Count() == 1);
+            source_items.emplace_back((*listing)->Item(0));
         }
         else
-            return std::unexpected(rc);
+            return std::unexpected(listing.error());
     }
     return source_items;
 }

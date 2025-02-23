@@ -382,15 +382,15 @@ in_addr_t SFTPHost::InetAddr() const
     return m_HostAddr;
 }
 
-int SFTPHost::FetchDirectoryListing(std::string_view _path,
-                                    VFSListingPtr &_target,
-                                    unsigned long _flags,
-                                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSListingPtr, Error>
+SFTPHost::FetchDirectoryListing(std::string_view _path,
+                                unsigned long _flags,
+                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if( rc )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
@@ -413,7 +413,7 @@ int SFTPHost::FetchDirectoryListing(std::string_view _path,
         LIBSSH2_SFTP_HANDLE *sftp_handle = libssh2_sftp_open_ex(
             conn->sftp, _path.data(), static_cast<unsigned>(_path.length()), 0, 0, LIBSSH2_SFTP_OPENDIR);
         if( !sftp_handle )
-            return VFSErrorForConnection(*conn);
+            return std::unexpected(VFSError::ToError(VFSErrorForConnection(*conn)));
         auto close_sftp_handle = at_scope_end([=] { libssh2_sftp_closedir(sftp_handle); });
 
         const bool should_have_dot_dot = !(_flags & VFSFlags::F_NoDotDot) && listing_source.directories[0] != "/";
@@ -480,9 +480,7 @@ int SFTPHost::FetchDirectoryListing(std::string_view _path,
             }
         }
 
-    _target = VFSListing::Build(std::move(listing_source));
-
-    return 0;
+    return VFSListing::Build(std::move(listing_source));
 }
 
 int SFTPHost::Stat(std::string_view _path,

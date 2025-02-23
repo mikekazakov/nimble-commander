@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -57,28 +57,12 @@ struct SystemOverview {
     std::string coded_model; // like "Macmini6,2"
 };
 
-enum class OSXVersion {
-    OSX_15 = 101500,
-    macOS_11 = 110000,
-    macOS_12 = 120000,
-    macOS_13 = 130000,
-    OSX_Unknown = 999999
-};
-
 std::optional<MemoryInfo> GetMemoryInfo() noexcept;
 
 /**
  * Synchronously reads the current CPU load, divided in system, user and idle
  */
 std::optional<CPULoad> GetCPULoad() noexcept;
-
-/**
- * Returns currently running OSX Version or
- * OSX_Unknown if it's not possible to determine current version (future release maybe)  or
- * OSX_Below if current system is Snow Leopard or older
- * Loads this info on first use, then return cached data instantly
- */
-OSXVersion GetOSXVersion() noexcept;
 
 /**
  * Returns common information about system, such as computer name, computer model, user name etc

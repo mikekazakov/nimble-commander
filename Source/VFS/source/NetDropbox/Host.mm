@@ -283,7 +283,7 @@ std::expected<VFSStat, Error> DropboxHost::Stat(std::string_view _path,
             st.btime = st.mtime = st.ctime;
             st.meaning.ctime = st.meaning.btime = st.meaning.mtime = true;
         }
-        
+
         return st;
     }
     return std::unexpected(VFSError::ToError(rc));

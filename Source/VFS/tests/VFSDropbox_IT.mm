@@ -52,7 +52,7 @@ TEST_CASE(PREFIX "stat on existing file")
     auto filepath = "/TestSet01/11778860-R3L8T8D-650-funny-jumping-cats-51__880.jpg";
     const std::shared_ptr<VFSHost> host = Spawn();
 
-    VFSStat stat = host->Stat(filepath, 0).value();
+    const VFSStat stat = host->Stat(filepath, 0).value();
     CHECK(stat.mode_bits.reg == true);
     CHECK(stat.mode_bits.dir == false);
     CHECK(stat.size == 190892);

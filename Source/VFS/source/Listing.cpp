@@ -319,34 +319,32 @@ VFSListingPtr Listing::ProduceUpdatedTemporaryPanelListing(const Listing &_origi
         path.assign(_original.Directory(i));
         path.append(_original.Filename(i));
 
-        VFSStat st;
-        auto stat_flags = _original.IsSymlink(i) ? VFSFlags::F_NoFollow : 0;
-        if( _original.Host(i)->Stat(path, st, stat_flags, _cancel_checker) == 0 ) {
-
+        const uint64_t stat_flags = _original.IsSymlink(i) ? VFSFlags::F_NoFollow : 0;
+        if( const std::expected<VFSStat, Error> st = _original.Host(i)->Stat(path, stat_flags, _cancel_checker) ) {
             result.filenames.emplace_back(_original.Filename(i));
             result.unix_modes.emplace_back(_original.UnixMode(i));
             result.unix_types.emplace_back(_original.UnixType(i));
             result.hosts.insert(count, _original.Host(i));
             result.directories.insert(count, _original.Directory(i));
 
-            if( st.meaning.size )
-                result.sizes.insert(count, st.size);
-            if( st.meaning.inode )
-                result.inodes.insert(count, st.inode);
-            if( st.meaning.atime )
-                result.atimes.insert(count, st.atime.tv_sec);
-            if( st.meaning.btime )
-                result.btimes.insert(count, st.btime.tv_sec);
-            if( st.meaning.ctime )
-                result.ctimes.insert(count, st.ctime.tv_sec);
-            if( st.meaning.mtime )
-                result.mtimes.insert(count, st.mtime.tv_sec);
-            if( st.meaning.uid )
-                result.uids.insert(count, st.uid);
-            if( st.meaning.gid )
-                result.gids.insert(count, st.gid);
-            if( st.meaning.flags )
-                result.unix_flags.insert(count, st.flags);
+            if( st->meaning.size )
+                result.sizes.insert(count, st->size);
+            if( st->meaning.inode )
+                result.inodes.insert(count, st->inode);
+            if( st->meaning.atime )
+                result.atimes.insert(count, st->atime.tv_sec);
+            if( st->meaning.btime )
+                result.btimes.insert(count, st->btime.tv_sec);
+            if( st->meaning.ctime )
+                result.ctimes.insert(count, st->ctime.tv_sec);
+            if( st->meaning.mtime )
+                result.mtimes.insert(count, st->mtime.tv_sec);
+            if( st->meaning.uid )
+                result.uids.insert(count, st->uid);
+            if( st->meaning.gid )
+                result.gids.insert(count, st->gid);
+            if( st->meaning.flags )
+                result.unix_flags.insert(count, st->flags);
 
             // mb update symlink too?
             if( _original.HasSymlink(i) )

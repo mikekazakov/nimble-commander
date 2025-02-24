@@ -510,10 +510,9 @@ std::expected<std::shared_ptr<VFSFile>, Error> PSHost::CreateFile(std::string_vi
     return file;
 }
 
-int PSHost::Stat(std::string_view _path,
-                 VFSStat &_st,
-                 [[maybe_unused]] unsigned long _flags,
-                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSStat, Error> PSHost::Stat(std::string_view _path,
+                                           [[maybe_unused]] unsigned long _flags,
+                                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     static VFSStat::meaningT m;
     static std::once_flag once;
@@ -530,23 +529,23 @@ int PSHost::Stat(std::string_view _path,
     const std::lock_guard<std::mutex> lock(m_Lock);
 
     if( _path.empty() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     auto index = ProcIndexFromFilepath_Unlocked(_path);
 
     if( index < 0 )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
-    memset(&_st, 0, sizeof(_st));
-    _st.size = m_Data->files[index].length();
-    _st.mode = S_IFREG | S_IRUSR | S_IRGRP;
-    _st.mtime.tv_sec = m_Data->taken_time;
-    _st.atime.tv_sec = m_Data->taken_time;
-    _st.ctime.tv_sec = m_Data->taken_time;
-    _st.btime.tv_sec = m_Data->taken_time;
-    _st.meaning = m;
+    VFSStat st;
+    st.size = m_Data->files[index].length();
+    st.mode = S_IFREG | S_IRUSR | S_IRGRP;
+    st.mtime.tv_sec = m_Data->taken_time;
+    st.atime.tv_sec = m_Data->taken_time;
+    st.ctime.tv_sec = m_Data->taken_time;
+    st.btime.tv_sec = m_Data->taken_time;
+    st.meaning = m;
 
-    return VFSError::Ok;
+    return st;
 }
 
 int PSHost::ProcIndexFromFilepath_Unlocked(std::string_view _filepath)

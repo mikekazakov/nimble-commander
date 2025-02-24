@@ -15,10 +15,10 @@
 using namespace nc;
 using namespace nc::vfs;
 
-static int CopyNodeAttrs(const char *_src_full_path,
-                         std::shared_ptr<VFSHost> _src_host,
-                         const char *_dst_full_path,
-                         std::shared_ptr<VFSHost> _dst_host)
+static std::expected<void, Error> CopyNodeAttrs(const char *_src_full_path,
+                                                std::shared_ptr<VFSHost> _src_host,
+                                                const char *_dst_full_path,
+                                                std::shared_ptr<VFSHost> _dst_host)
 {
     /* copy permissions,
      owners,
@@ -29,16 +29,15 @@ static int CopyNodeAttrs(const char *_src_full_path,
      here. LOL!
      */
 
-    VFSStat st;
-    const int result = _src_host->Stat(_src_full_path, st, VFSFlags::F_NoFollow, nullptr);
-    if( result < 0 )
-        return result;
+    const std::expected<VFSStat, Error> st = _src_host->Stat(_src_full_path, VFSFlags::F_NoFollow);
+    if( !st )
+        return std::unexpected(st.error());
 
     // Set times but do ignore the result for now
-    std::ignore = _dst_host->SetTimes(
-        _dst_full_path, st.btime.tv_sec, st.mtime.tv_sec, st.ctime.tv_sec, st.atime.tv_sec, nullptr);
+    std::ignore =
+        _dst_host->SetTimes(_dst_full_path, st->btime.tv_sec, st->mtime.tv_sec, st->ctime.tv_sec, st->atime.tv_sec);
 
-    return VFSError::Ok;
+    return {};
 }
 
 static int CopyFileContentsSmall(std::shared_ptr<VFSFile> _src, std::shared_ptr<VFSFile> _dst)
@@ -176,9 +175,9 @@ int VFSEasyCopyFile(const char *_src_full_path,
             return result;
     }
 
-    result = CopyNodeAttrs(_src_full_path, _src_host, _dst_full_path, _dst_host);
-    if( result < 0 )
-        return result;
+    const std::expected<void, Error> attrs_rc = CopyNodeAttrs(_src_full_path, _src_host, _dst_full_path, _dst_host);
+    if( !attrs_rc )
+        return VFSError::GenericError; // TODO: return attrs_rc
 
     return 0;
 }
@@ -199,9 +198,9 @@ int VFSEasyCopyDirectory(const char *_src_full_path,
     if( const std::expected<void, nc::Error> rc = _dst_host->CreateDirectory(_dst_full_path, 0640); !rc )
         return VFSError::GenericError; // TODO: return rc
 
-    const int result = CopyNodeAttrs(_src_full_path, _src_host, _dst_full_path, _dst_host);
-    if( result < 0 )
-        return result;
+    const std::expected<void, Error> attrs_rc = CopyNodeAttrs(_src_full_path, _src_host, _dst_full_path, _dst_host);
+    if( !attrs_rc )
+        return VFSError::GenericError; // TODO: return attrs_rc
 
     const std::expected<void, Error> it_rc =
         _src_host->IterateDirectoryListing(_src_full_path, [&](const VFSDirEnt &_dirent) {
@@ -228,7 +227,6 @@ int VFSEasyCopySymlink(const char *_src_full_path,
                        const char *_dst_full_path,
                        std::shared_ptr<VFSHost> _dst_host)
 {
-    int result = 0;
     if( _src_full_path == nullptr || _src_full_path[0] != '/' || !_src_host || _dst_full_path == nullptr ||
         _dst_full_path[0] != '/' || !_dst_host )
         return VFSError::InvalidCall;
@@ -240,9 +238,9 @@ int VFSEasyCopySymlink(const char *_src_full_path,
     if( const std::expected<void, nc::Error> rc = _dst_host->CreateSymlink(_dst_full_path, *symlink); !rc )
         return VFSError::FromErrno(EINVAL); // TODO: use rc instead
 
-    result = CopyNodeAttrs(_src_full_path, _src_host, _dst_full_path, _dst_host);
-    if( result < 0 )
-        return result;
+    const std::expected<void, Error> attrs_rc = CopyNodeAttrs(_src_full_path, _src_host, _dst_full_path, _dst_host);
+    if( !attrs_rc )
+        return VFSError::GenericError; // TODO: return attrs_rc
 
     return 0;
 }
@@ -256,14 +254,11 @@ int VFSEasyCopyNode(const char *_src_full_path,
         _dst_full_path[0] != '/' || !_dst_host )
         return VFSError::InvalidCall;
 
-    VFSStat st;
-    int result;
+    const std::expected<VFSStat, Error> st = _src_host->Stat(_src_full_path, VFSFlags::F_NoFollow);
+    if( !st )
+        return VFSError::GenericError; // TODO: return st
 
-    result = _src_host->Stat(_src_full_path, st, VFSFlags::F_NoFollow, nullptr);
-    if( result < 0 )
-        return result;
-
-    switch( st.mode & S_IFMT ) {
+    switch( st->mode & S_IFMT ) {
         case S_IFDIR:
             return VFSEasyCopyDirectory(_src_full_path, _src_host, _dst_full_path, _dst_host);
 
@@ -321,11 +316,11 @@ int VFSEasyCompareFiles(const char *_file1_full_path,
 
 std::expected<void, nc::Error> VFSEasyDelete(const char *_full_path, const std::shared_ptr<VFSHost> &_host)
 {
-    VFSStat st;
-    if( const int rc = _host->Stat(_full_path, st, VFSFlags::F_NoFollow, nullptr); rc != VFSError::Ok )
-        return std::unexpected(VFSError::ToError(rc));
+    const std::expected<VFSStat, Error> st = _host->Stat(_full_path, VFSFlags::F_NoFollow);
+    if( !st )
+        return std::unexpected(st.error());
 
-    if( (st.mode & S_IFMT) == S_IFDIR ) {
+    if( (st->mode & S_IFMT) == S_IFDIR ) {
         if( !(_host->Features() & HostFeatures::NonEmptyRmDir) ) {
             std::ignore = _host->IterateDirectoryListing(_full_path, [&](const VFSDirEnt &_dirent) {
                 std::filesystem::path p = _full_path;
@@ -367,24 +362,24 @@ int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
 {
     // not comparing flags, perm, times, xattrs, acls etc now
 
-    VFSStat st1;
-    VFSStat st2;
-    if( const int ret = _file1_host->Stat(_file1_full_path.c_str(), st1, VFSFlags::F_NoFollow, nullptr); ret < 0 )
-        return ret;
+    const std::expected<VFSStat, Error> st1 = _file1_host->Stat(_file1_full_path.c_str(), VFSFlags::F_NoFollow);
+    if( !st1 )
+        return VFSError::GenericError; // TODO: return st1
 
-    if( const int ret = _file2_host->Stat(_file2_full_path.c_str(), st2, VFSFlags::F_NoFollow, nullptr); ret < 0 )
-        return ret;
+    const std::expected<VFSStat, Error> st2 = _file2_host->Stat(_file2_full_path.c_str(), VFSFlags::F_NoFollow);
+    if( !st2 )
+        return VFSError::GenericError; // TODO: return st2
 
-    if( (st1.mode & S_IFMT) != (st2.mode & S_IFMT) ) {
+    if( (st1->mode & S_IFMT) != (st2->mode & S_IFMT) ) {
         _result = -1;
         return 0;
     }
 
-    if( S_ISREG(st1.mode) ) {
-        if( int64_t(st1.size) - int64_t(st2.size) != 0 )
-            _result = int(int64_t(st1.size) - int64_t(st2.size));
+    if( S_ISREG(st1->mode) ) {
+        if( int64_t(st1->size) - int64_t(st2->size) != 0 )
+            _result = int(int64_t(st1->size) - int64_t(st2->size));
     }
-    else if( S_ISLNK(st1.mode) ) {
+    else if( S_ISLNK(st1->mode) ) {
         const std::expected<std::string, nc::Error> link1 = _file1_host->ReadSymlink(_file1_full_path.c_str());
         if( !link1 )
             return VFSError::FromErrno(EINVAL); // TODO: use link1 instead
@@ -396,7 +391,7 @@ int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
         if( strcmp(link1->c_str(), link2->c_str()) != 0 )
             _result = strcmp(link1->c_str(), link2->c_str());
     }
-    else if( S_ISDIR(st1.mode) ) {
+    else if( S_ISDIR(st1->mode) ) {
         std::ignore = _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
             const int ret = VFSCompareNodes(
                 _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
@@ -475,12 +470,11 @@ Traverse(const std::string &_vfs_dirpath, VFSHost &_host, const std::function<bo
 {
     auto vfs_dirpath = EnsureNoTrailingSlash(_vfs_dirpath);
 
-    VFSStat st_src_dir;
-    const auto src_dir_stat_rc = _host.Stat(vfs_dirpath, st_src_dir, VFSFlags::F_NoFollow, _cancel_checker);
-    if( src_dir_stat_rc != VFSError::Ok )
+    const std::expected<VFSStat, Error> st_src_dir = _host.Stat(vfs_dirpath, VFSFlags::F_NoFollow, _cancel_checker);
+    if( !st_src_dir )
         return {};
 
-    if( !st_src_dir.mode_bits.dir )
+    if( !st_src_dir->mode_bits.dir )
         return {};
 
     const auto top_level_name = std::filesystem::path{vfs_dirpath}.filename().native();
@@ -488,7 +482,7 @@ Traverse(const std::string &_vfs_dirpath, VFSHost &_host, const std::function<bo
     std::vector<TraversedFSEntry> result;
     std::stack<TraversedFSEntry> traverse;
 
-    result.emplace_back(TraversedFSEntry{.src_full_path = vfs_dirpath, .rel_path = top_level_name, .st = st_src_dir});
+    result.emplace_back(TraversedFSEntry{.src_full_path = vfs_dirpath, .rel_path = top_level_name, .st = *st_src_dir});
     traverse.push(result.back());
 
     while( !traverse.empty() ) {
@@ -500,14 +494,13 @@ Traverse(const std::string &_vfs_dirpath, VFSHost &_host, const std::function<bo
                 return false;
 
             auto full_entry_path = current.src_full_path + "/" + _dirent.name;
-            VFSStat st;
-            const auto stat_rc = _host.Stat(full_entry_path, st, VFSFlags::F_NoFollow, _cancel_checker);
-            if( stat_rc != VFSError::Ok )
+            const std::expected<VFSStat, Error> st = _host.Stat(full_entry_path, VFSFlags::F_NoFollow, _cancel_checker);
+            if( !st )
                 return false;
 
             result.emplace_back(TraversedFSEntry{
-                .src_full_path = full_entry_path, .rel_path = current.rel_path + "/" + _dirent.name, .st = st});
-            if( st.mode_bits.dir )
+                .src_full_path = full_entry_path, .rel_path = current.rel_path + "/" + _dirent.name, .st = *st});
+            if( st->mode_bits.dir )
                 traverse.push(result.back());
 
             return true;

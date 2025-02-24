@@ -43,15 +43,14 @@ void LinkageJob::DoSymlinkCreation()
 
 void LinkageJob::DoSymlinkAlteration()
 {
-    VFSStat st;
-    const int stat_rc = m_VFS->Stat(m_LinkPath, st, VFSFlags::F_NoFollow);
-    if( stat_rc != VFSError::Ok ) {
-        m_OnAlterSymlinkError(VFSError::ToError(stat_rc), m_LinkPath, *m_VFS);
+    const std::expected<VFSStat, Error> st = m_VFS->Stat(m_LinkPath, VFSFlags::F_NoFollow);
+    if( !st ) {
+        m_OnAlterSymlinkError(st.error(), m_LinkPath, *m_VFS);
         Stop();
         return;
     }
 
-    if( (st.mode & S_IFMT) != S_IFLNK ) {
+    if( (st->mode & S_IFMT) != S_IFLNK ) {
         m_OnAlterSymlinkError(Error{Error::POSIX, EEXIST}, m_LinkPath, *m_VFS);
         Stop();
         return;

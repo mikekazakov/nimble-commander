@@ -13,7 +13,8 @@ TEST_CASE(PREFIX "FetchSingleItemListing")
 {
     struct MockHost : Host {
         MockHost() : Host("/", nullptr, "mock") {}
-        MOCK_METHOD(int, Stat, (std::string_view, VFSStat &, unsigned long, const VFSCancelChecker &), (override));
+        using EST = std::expected<VFSStat, Error>;
+        MOCK_METHOD(EST, Stat, (std::string_view, unsigned long, const VFSCancelChecker &), (override));
     };
 
     auto host = std::make_shared<MockHost>();
@@ -25,13 +26,13 @@ TEST_CASE(PREFIX "FetchSingleItemListing")
     }
     SECTION("Single reg-file listing")
     {
-        EXPECT_CALL(*host, Stat(_, _, _, _))
-            .WillRepeatedly([](std::string_view _path, VFSStat &st, unsigned long, const VFSCancelChecker &) {
+        EXPECT_CALL(*host, Stat(_, _, _))
+            .WillRepeatedly([](std::string_view _path, unsigned long, const VFSCancelChecker &) {
                 REQUIRE(_path == "/my/file.txt");
-                memset(&st, 0, sizeof(st));
+                VFSStat st;
                 st.size = 42;
                 st.mode_bits.reg = true;
-                return 0;
+                return st;
             });
         listing = host->FetchSingleItemListing("/my/file.txt", VFSFlags::None).value();
         REQUIRE(listing);
@@ -47,13 +48,13 @@ TEST_CASE(PREFIX "FetchSingleItemListing")
     }
     SECTION("Removes trailing slashes")
     {
-        EXPECT_CALL(*host, Stat(_, _, _, _))
-            .WillRepeatedly([](std::string_view _path, VFSStat &st, unsigned long, const VFSCancelChecker &) {
+        EXPECT_CALL(*host, Stat(_, _, _))
+            .WillRepeatedly([](std::string_view _path, unsigned long, const VFSCancelChecker &) {
                 REQUIRE(_path == "/my/file.txt");
-                memset(&st, 0, sizeof(st));
+                VFSStat st;
                 st.size = 42;
                 st.mode_bits.reg = true;
-                return 0;
+                return st;
             });
         listing = host->FetchSingleItemListing("/my/file.txt///", VFSFlags::None).value();
         REQUIRE(listing);
@@ -71,6 +72,7 @@ TEST_CASE(PREFIX "Unsupported methods")
     // ...
     REQUIRE(host->FetchDirectoryListing("/some/path", 0).error() == enotsup);
     REQUIRE(host->IterateDirectoryListing("/some/path", [](auto &) { return false; }).error() == enotsup);
+    REQUIRE(host->Stat("/some/path", 0).error() == enotsup);
     REQUIRE(host->StatFS("/some/path").error() == enotsup);
     REQUIRE(host->CreateFile("/some/path").error() == enotsup);
     REQUIRE(host->CreateDirectory("/some/path", 42).error() == enotsup);

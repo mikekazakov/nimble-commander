@@ -313,25 +313,23 @@ bool DeletionJob::IsNativeLockedItem(const nc::Error &_err, const std::string &_
     if( !_vfs.IsNativeFS() )
         return false;
 
-    VFSStat st;
-    const int stat_rc = _vfs.Stat(_path, st, nc::vfs::Flags::F_NoFollow);
-    if( stat_rc != VFSError::Ok )
+    const std::expected<VFSStat, Error> st = _vfs.Stat(_path, nc::vfs::Flags::F_NoFollow);
+    if( !st )
         return false;
 
-    return st.flags & UF_IMMUTABLE;
+    return st->flags & UF_IMMUTABLE;
 }
 
 std::expected<void, Error> DeletionJob::UnlockItem(std::string_view _path, VFSHost &_vfs)
 {
     // this is kind of stupid to call stat() essentially twice :-|
 
-    VFSStat st;
-    const int stat_rc = _vfs.Stat(_path, st, nc::vfs::Flags::F_NoFollow);
-    if( stat_rc != VFSError::Ok )
-        return std::unexpected(VFSError::ToError(stat_rc));
+    const std::expected<VFSStat, Error> st = _vfs.Stat(_path, vfs::Flags::F_NoFollow);
+    if( !st )
+        return std::unexpected(st.error());
 
-    st.flags = (st.flags & ~UF_IMMUTABLE);
-    const std::expected<void, Error> chflags_rc = _vfs.SetFlags(_path, st.flags, vfs::Flags::F_NoFollow);
+    const uint32_t flags = (st->flags & ~UF_IMMUTABLE);
+    const std::expected<void, Error> chflags_rc = _vfs.SetFlags(_path, flags, vfs::Flags::F_NoFollow);
     return chflags_rc;
 }
 

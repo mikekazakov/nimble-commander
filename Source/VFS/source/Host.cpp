@@ -172,20 +172,14 @@ Host::CreateFile([[maybe_unused]] std::string_view _path, [[maybe_unused]] const
 
 bool Host::IsDirectory(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
-    VFSStat st;
-    if( Stat(_path, st, _flags, _cancel_checker) < 0 )
-        return false;
-
-    return (st.mode & S_IFMT) == S_IFDIR;
+    const std::expected<VFSStat, Error> st = Stat(_path, _flags, _cancel_checker);
+    return st && (st->mode & S_IFMT) == S_IFDIR;
 }
 
 bool Host::IsSymlink(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
-    VFSStat st;
-    if( Stat(_path, st, _flags, _cancel_checker) < 0 )
-        return false;
-
-    return (st.mode & S_IFMT) == S_IFLNK;
+    const std::expected<VFSStat, Error> st = Stat(_path, _flags, _cancel_checker);
+    return st && (st->mode & S_IFMT) == S_IFLNK;
 }
 
 ssize_t Host::CalculateDirectorySize(std::string_view _path, const VFSCancelChecker &_cancel_checker)
@@ -207,9 +201,8 @@ ssize_t Host::CalculateDirectorySize(std::string_view _path, const VFSCancelChec
             if( _dirent.type == VFSDirEnt::Dir )
                 look_paths.emplace(std::move(full_path));
             else {
-                VFSStat stat;
-                if( Stat(full_path.c_str(), stat, VFSFlags::F_NoFollow, nullptr) == 0 )
-                    total_size += stat.size;
+                if( const std::expected<VFSStat, Error> stat = Stat(full_path.c_str(), VFSFlags::F_NoFollow) )
+                    total_size += stat->size;
             }
             return true;
         });
@@ -244,12 +237,11 @@ void Host::StopObservingFileChanges([[maybe_unused]] unsigned long _token)
 {
 }
 
-int Host::Stat([[maybe_unused]] std::string_view _path,
-               [[maybe_unused]] VFSStat &_st,
-               [[maybe_unused]] unsigned long _flags,
-               [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSStat, Error> Host::Stat([[maybe_unused]] std::string_view _path,
+                                         [[maybe_unused]] unsigned long _flags,
+                                         [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 std::expected<void, Error>
@@ -348,8 +340,7 @@ VFSConfiguration Host::Configuration() const
 
 bool Host::Exists(std::string_view _path, const VFSCancelChecker &_cancel_checker)
 {
-    VFSStat st;
-    return Stat(_path, st, 0, _cancel_checker) == VFSError::Ok;
+    return Stat(_path, 0, _cancel_checker).has_value();
 }
 
 bool Host::IsImmutableFS() const noexcept
@@ -405,10 +396,9 @@ std::expected<VFSListingPtr, Error> Host::FetchSingleItemListing(std::string_vie
     if( _cancel_checker && _cancel_checker() )
         return std::unexpected(nc::Error{nc::Error::POSIX, ECANCELED});
 
-    VFSStat lstat;
-    const int ret = Stat(path_wo_trailing_slash, lstat, VFSFlags::F_NoFollow, _cancel_checker);
-    if( ret != 0 )
-        return std::unexpected(VFSError::ToError(ret));
+    const std::expected<VFSStat, Error> lstat = Stat(path_wo_trailing_slash, VFSFlags::F_NoFollow, _cancel_checker);
+    if( !lstat )
+        return std::unexpected(lstat.error());
 
     using nc::base::variable_container;
     nc::vfs::ListingInput listing_source;
@@ -431,17 +421,17 @@ std::expected<VFSListingPtr, Error> Host::FetchSingleItemListing(std::string_vie
     listing_source.unix_types.resize(1);
     listing_source.filenames.emplace_back(filename);
 
-    listing_source.inodes[0] = lstat.inode;
-    listing_source.unix_types[0] = IFTODT(lstat.mode);
-    listing_source.atimes[0] = lstat.atime.tv_sec;
-    listing_source.mtimes[0] = lstat.mtime.tv_sec;
-    listing_source.ctimes[0] = lstat.ctime.tv_sec;
-    listing_source.btimes[0] = lstat.btime.tv_sec;
-    listing_source.unix_modes[0] = lstat.mode;
-    listing_source.unix_flags[0] = lstat.flags;
-    listing_source.uids[0] = lstat.uid;
-    listing_source.gids[0] = lstat.gid;
-    listing_source.sizes[0] = lstat.size;
+    listing_source.inodes[0] = lstat->inode;
+    listing_source.unix_types[0] = IFTODT(lstat->mode);
+    listing_source.atimes[0] = lstat->atime.tv_sec;
+    listing_source.mtimes[0] = lstat->mtime.tv_sec;
+    listing_source.ctimes[0] = lstat->ctime.tv_sec;
+    listing_source.btimes[0] = lstat->btime.tv_sec;
+    listing_source.unix_modes[0] = lstat->mode;
+    listing_source.unix_flags[0] = lstat->flags;
+    listing_source.uids[0] = lstat->uid;
+    listing_source.gids[0] = lstat->gid;
+    listing_source.sizes[0] = lstat->size;
 
     if( listing_source.unix_types[0] == DT_LNK ) {
         // read an actual link path
@@ -449,13 +439,12 @@ std::expected<VFSListingPtr, Error> Host::FetchSingleItemListing(std::string_vie
             listing_source.symlinks.insert(0, std::move(*linkpath));
 
         // stat the target file
-        VFSStat stat;
-        if( Stat(path_wo_trailing_slash, stat, 0) == 0 ) {
-            listing_source.unix_modes[0] = stat.mode;
-            listing_source.unix_flags[0] = stat.flags;
-            listing_source.uids[0] = stat.uid;
-            listing_source.gids[0] = stat.gid;
-            listing_source.sizes[0] = stat.size;
+        if( const std::expected<VFSStat, Error> stat = Stat(path_wo_trailing_slash, 0) ) {
+            listing_source.unix_modes[0] = stat->mode;
+            listing_source.unix_flags[0] = stat->flags;
+            listing_source.uids[0] = stat->uid;
+            listing_source.gids[0] = stat->gid;
+            listing_source.sizes[0] = stat->size;
         }
     }
 

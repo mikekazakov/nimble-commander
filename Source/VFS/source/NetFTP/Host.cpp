@@ -222,25 +222,26 @@ std::unique_ptr<CURLInstance> FTPHost::SpawnCURL()
     return inst;
 }
 
-int FTPHost::Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
+std::expected<VFSStat, Error>
+FTPHost::Stat(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     Log::Trace("FTPHost::Stat({}, {}) called", _path, _flags);
     if( _path.empty() || _path[0] != '/' ) {
         Log::Warn("Invalid call");
-        return VFSError::InvalidCall;
+        return std::unexpected(VFSError::ToError(VFSError::InvalidCall));
     }
 
     const std::filesystem::path path = EnsureNoTrailingSlash(std::string(_path));
     if( path == "/" ) {
         // special case for root path
-        memset(&_st, 0, sizeof(_st));
-        _st.mode = S_IRUSR | S_IWUSR | S_IFDIR;
-        _st.atime.tv_sec = _st.mtime.tv_sec = _st.btime.tv_sec = _st.ctime.tv_sec = time(nullptr);
+        VFSStat st;
+        st.mode = S_IRUSR | S_IWUSR | S_IFDIR;
+        st.atime.tv_sec = st.mtime.tv_sec = st.btime.tv_sec = st.ctime.tv_sec = time(nullptr);
 
-        _st.meaning.size = 1;
-        _st.meaning.mode = 1;
-        _st.meaning.mtime = _st.meaning.ctime = _st.meaning.btime = _st.meaning.atime = 1;
-        return 0;
+        st.meaning.size = 1;
+        st.meaning.mode = 1;
+        st.meaning.mtime = st.meaning.ctime = st.meaning.btime = st.meaning.atime = 1;
+        return st;
     }
 
     // 1st - extract directory and filename from _path
@@ -255,15 +256,16 @@ int FTPHost::Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, co
             if( entry ) {
                 Log::Trace("found an entry for '{}', outdated={}", filename, entry->dirty);
                 if( !entry->dirty ) { // if entry is here and it's not outdated - return it
-                    entry->ToStat(_st);
-                    return 0;
+                    VFSStat st;
+                    entry->ToStat(st);
+                    return st;
                 }
                 // if entry is here and it is outdated - we have to fetch a new listing
             }
             else {
                 Log::Trace("didn't find an entry for '{}'", filename);
                 if( !dir->IsOutdated() ) { // if we can't find entry and dir is not outdated - return NotFound.
-                    return VFSError::NotFound;
+                    return std::unexpected(VFSError::ToError(VFSError::NotFound));
                 }
             }
         }
@@ -274,15 +276,16 @@ int FTPHost::Stat(std::string_view _path, VFSStat &_st, unsigned long _flags, co
     std::shared_ptr<Directory> dir;
     const int result = DownloadAndCacheListing(m_ListingInstance.get(), parent_dir.c_str(), &dir, _cancel_checker);
     if( result != 0 ) {
-        return result;
+        return std::unexpected(VFSError::ToError(result));
     }
 
     assert(dir);
     if( auto entry = dir->EntryByName(filename) ) {
-        entry->ToStat(_st);
-        return 0;
+        VFSStat st;
+        entry->ToStat(st);
+        return st;
     }
-    return VFSError::NotFound;
+    return std::unexpected(VFSError::ToError(VFSError::NotFound));
 }
 
 std::expected<VFSListingPtr, Error>

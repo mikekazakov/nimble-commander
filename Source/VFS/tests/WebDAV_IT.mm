@@ -115,22 +115,21 @@ static void TestFetchDirectoryListing(VFSHostPtr _host)
     REQUIRE(has_fn("purr.txt"));
 
     // now let's do some Stat()s
-    VFSStat st;
-    REQUIRE(_host->Stat("/Test1", st, 0, nullptr) == VFSError::Ok);
+    VFSStat st = _host->Stat("/Test1", 0).value();
     REQUIRE(st.mode_bits.dir);
     REQUIRE(!st.mode_bits.reg);
-    REQUIRE(_host->Stat("/Test1/", st, 0, nullptr) == VFSError::Ok);
+    st = _host->Stat("/Test1/", 0).value();
     REQUIRE(st.mode_bits.dir);
     REQUIRE(!st.mode_bits.reg);
-    REQUIRE(_host->Stat("/Test1/meow.txt", st, 0, nullptr) == VFSError::Ok);
+    st = _host->Stat("/Test1/meow.txt", 0).value();
     REQUIRE(!st.mode_bits.dir);
     REQUIRE(st.mode_bits.reg);
     REQUIRE(st.size == 13);
-    REQUIRE(_host->Stat("/Test1/Dir1/purr.txt", st, 0, nullptr) == VFSError::Ok);
+    st = _host->Stat("/Test1/Dir1/purr.txt", 0).value();
     REQUIRE(!st.mode_bits.dir);
     REQUIRE(st.mode_bits.reg);
     REQUIRE(st.size == 13);
-    REQUIRE(_host->Stat("/SomeGibberish/MoreGibberish/EvenMoregibberish.txt", st, 0, nullptr) != VFSError::Ok);
+    REQUIRE(!_host->Stat("/SomeGibberish/MoreGibberish/EvenMoregibberish.txt", 0));
 }
 INSTANTIATE_TEST("directory listing", TestFetchDirectoryListing, "local");
 // INSTANTIATE_TEST("directory listing", TestFetchDirectoryListing, "yandex.com"); - might have garbage

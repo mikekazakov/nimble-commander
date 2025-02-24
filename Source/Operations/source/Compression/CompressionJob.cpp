@@ -192,10 +192,12 @@ CompressionJob::ProcessSymlinkItem(int _index, const std::string &_relative_path
 
     VFSStat stat;
     while( true ) {
-        const auto rc = vfs.Stat(_full_path, stat, VFSFlags::F_NoFollow, nullptr);
-        if( rc == VFSError::Ok )
+        const std::expected<VFSStat, Error> exp_stat = vfs.Stat(_full_path, VFSFlags::F_NoFollow);
+        if( exp_stat ) {
+            stat = *exp_stat;
             break;
-        switch( m_SourceAccessError(VFSError::ToError(rc), _full_path, vfs) ) {
+        }
+        switch( m_SourceAccessError(exp_stat.error(), _full_path, vfs) ) {
             case SourceAccessErrorResolution::Stop:
                 Stop();
                 return StepResult::Stopped;
@@ -242,10 +244,12 @@ CompressionJob::ProcessDirectoryItem(int _index, const std::string &_relative_pa
 
     VFSStat vfs_stat;
     while( true ) {
-        const auto rc = vfs.Stat(_full_path, vfs_stat, 0, nullptr);
-        if( rc == VFSError::Ok )
+        const std::expected<VFSStat, Error> exp_stat = vfs.Stat(_full_path, 0);
+        if( exp_stat ) {
+            vfs_stat = *exp_stat;
             break;
-        switch( m_SourceAccessError(VFSError::ToError(rc), _full_path, vfs) ) {
+        }
+        switch( m_SourceAccessError(exp_stat.error(), _full_path, vfs) ) {
             case SourceAccessErrorResolution::Stop:
                 Stop();
                 return StepResult::Stopped;
@@ -286,10 +290,12 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
 
     VFSStat stat;
     while( true ) {
-        const auto rc = vfs.Stat(_full_path, stat, 0);
-        if( rc == VFSError::Ok )
+        const std::expected<VFSStat, Error> exp_stat = vfs.Stat(_full_path, 0);
+        if( exp_stat ) {
+            stat = *exp_stat;
             break;
-        switch( m_SourceAccessError(VFSError::ToError(rc), _full_path, vfs) ) {
+        }
+        switch( m_SourceAccessError(exp_stat.error(), _full_path, vfs) ) {
             case SourceAccessErrorResolution::Stop:
                 Stop();
                 return StepResult::Stopped;
@@ -381,13 +387,12 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
 std::string CompressionJob::FindSuitableFilename(const std::string &_proposed_arcname) const
 {
     std::string fn = fmt::format("{}{}.zip", m_DstRoot, _proposed_arcname);
-    VFSStat st;
-    if( m_DstVFS->Stat(fn, st, VFSFlags::F_NoFollow, nullptr) != 0 )
+    if( !m_DstVFS->Stat(fn, VFSFlags::F_NoFollow) )
         return fn;
 
     for( int i = 2; i < 100; ++i ) {
         fn = fmt::format("{}{} {}.zip", m_DstRoot, _proposed_arcname, i);
-        if( m_DstVFS->Stat(fn, st, VFSFlags::F_NoFollow, nullptr) != 0 )
+        if( !m_DstVFS->Stat(fn, VFSFlags::F_NoFollow) )
             return fn;
     }
     return {};
@@ -478,10 +483,12 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
     auto &vfs = _ctx.base_hosts[_vfs_no];
 
     while( true ) {
-        const auto rc = vfs->Stat(_full_path, stat_buffer, VFSFlags::F_NoFollow, nullptr);
-        if( rc == VFSError::Ok )
+        const std::expected<VFSStat, Error> exp_stat = vfs->Stat(_full_path, VFSFlags::F_NoFollow);
+        if( exp_stat ) {
+            stat_buffer = *exp_stat;
             break;
-        switch( m_SourceScanError(VFSError::ToError(rc), _full_path, *vfs) ) {
+        }
+        switch( m_SourceScanError(exp_stat.error(), _full_path, *vfs) ) {
             case SourceScanErrorResolution::Stop:
                 Stop();
                 return false;

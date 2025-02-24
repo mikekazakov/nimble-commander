@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include "Host.h"
 #include "Internals.h"
@@ -65,15 +65,14 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
 {
     Log::Trace("File::Open({}) called", _open_flags);
     auto ftp_host = std::dynamic_pointer_cast<FTPHost>(Host());
-    VFSStat stat;
-    const int stat_ret = ftp_host->Stat(Path(), stat, 0, _cancel_checker);
-    Log::Trace("stat_ret = {}", stat_ret);
+    const std::expected<VFSStat, Error> stat = ftp_host->Stat(Path(), 0, _cancel_checker);
+    Log::Trace("stat is {}", stat ? "ok" : "not ok");
 
-    if( stat_ret == 0 && ((stat.mode & S_IFMT) == S_IFREG) && (_open_flags & VFSFlags::OF_Read) != 0 &&
+    if( stat && ((stat->mode & S_IFMT) == S_IFREG) && (_open_flags & VFSFlags::OF_Read) != 0 &&
         (_open_flags & VFSFlags::OF_Write) == 0 ) {
         m_URLRequest = ftp_host->BuildFullURLString(Path());
         m_CURL = ftp_host->InstanceForIOAtDir(DirName().c_str());
-        m_FileSize = stat.size;
+        m_FileSize = stat->size;
 
         if( m_FileSize == 0 ) {
             m_Mode = Mode::Read;
@@ -89,7 +88,8 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
 
         return VFSError::GenericError;
     }
-    else if( (!(_open_flags & VFSFlags::OF_NoExist) || stat_ret != 0) && (_open_flags & VFSFlags::OF_Read) == 0 &&
+    else if( (!(_open_flags & VFSFlags::OF_NoExist) || !stat) && //
+             (_open_flags & VFSFlags::OF_Read) == 0 &&           //
              (_open_flags & VFSFlags::OF_Write) != 0 ) {
         m_URLRequest = ftp_host->BuildFullURLString(Path());
         m_CURL = ftp_host->InstanceForIOAtDir(DirName().c_str());
@@ -107,9 +107,9 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
         if( _open_flags & VFSFlags::OF_Append ) {
             m_CURL->EasySetOpt(CURLOPT_APPEND, 1l);
 
-            if( stat_ret == 0 ) {
-                m_FilePos = stat.size;
-                m_FileSize = stat.size;
+            if( stat ) {
+                m_FilePos = stat->size;
+                m_FileSize = stat->size;
             }
         }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FindFilesSheetController.h"
 #include <Base/DispatchGroup.h>
 #include <Base/dispatch_cpp.h>
@@ -499,7 +499,7 @@ private:
         // TODO: need some decent cancelling mechanics here
         auto stat_block = [self, it = std::move(it)]() mutable {
             // doing stat()'ing item in async background thread
-            it.host->Stat(it.full_filename, it.st, 0, nullptr);
+            it.st = it.host->Stat(it.full_filename, 0).value_or(VFSStat{}); // TODO: why is the status ignored?
 
             FindFilesSheetFoundItem *const item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:std::move(it)];
             m_BatchQueue.Run([self, item] {

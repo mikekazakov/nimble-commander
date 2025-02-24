@@ -4,7 +4,8 @@
 
 namespace nc::vfs {
 
-static_assert(sizeof(Stat) == 128);
+static_assert(sizeof(Stat) == 120);
+static_assert(sizeof(Stat::meaningT) == 2);
 
 void Stat::FromSysStat(const struct stat &_from, Stat &_to)
 {

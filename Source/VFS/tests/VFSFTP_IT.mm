@@ -26,10 +26,9 @@ TEST_CASE(PREFIX "upload and compare")
 
     const char *fn1 = "/System/Library/Kernels/kernel";
     const char *fn2 = "/kernel";
-    VFSStat stat;
 
     // if there's a trash from previous runs - remove it
-    if( host->Stat(fn2, stat, 0, nullptr) == 0 )
+    if( host->Stat(fn2, 0) )
         REQUIRE(host->Unlink(fn2));
 
     // copy file to the remote server
@@ -41,14 +40,14 @@ TEST_CASE(PREFIX "upload and compare")
     REQUIRE(compare == 0);
 
     // check that it appeared in stat cache
-    REQUIRE(host->Stat(fn2, stat, 0, nullptr) == 0);
+    REQUIRE(host->Stat(fn2, 0));
 
     // delete it
     REQUIRE(host->Unlink(fn2));
     REQUIRE(!host->Unlink("/Public/!FilesTesting/wf8g2398fg239f6g23976fg79gads")); // also check deleting wrong entry
 
     // check that it is no longer available in stat cache
-    REQUIRE(host->Stat(fn2, stat, 0, nullptr) != 0);
+    REQUIRE(!host->Stat(fn2, 0));
 }
 
 TEST_CASE(PREFIX "empty file test")
@@ -57,8 +56,7 @@ TEST_CASE(PREFIX "empty file test")
     REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
     const char *fn = "/empty_file";
 
-    VFSStat stat;
-    if( host->Stat(fn, stat, 0, nullptr) == 0 )
+    if( host->Stat(fn, 0) )
         REQUIRE(host->Unlink(fn));
 
     const VFSFilePtr file = host->CreateFile(fn).value();
@@ -67,14 +65,14 @@ TEST_CASE(PREFIX "empty file test")
     REQUIRE(file->Close() == 0);
 
     // sometimes this fail. mb caused by FTP server implementation (?)
-    REQUIRE(host->Stat(fn, stat, 0, nullptr) == 0);
+    const VFSStat stat = host->Stat(fn, 0).value();
     REQUIRE(stat.size == 0);
 
     REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist) != 0);
     REQUIRE(file->IsOpened() == false);
 
     REQUIRE(host->Unlink(fn));
-    REQUIRE(host->Stat(fn, stat, 0, nullptr) != 0);
+    REQUIRE(!host->Stat(fn, 0));
 }
 
 TEST_CASE(PREFIX "MKD RMD")
@@ -149,25 +147,23 @@ TEST_CASE(PREFIX "renaming")
     const std::string fn2 = "/kernel";
     const std::string fn3 = "/kernel34234234";
 
-    VFSStat stat;
-
     // if there's a trash from previous runs - remove it
-    if( host->Stat(fn2, stat, 0) == 0 )
+    if( host->Stat(fn2, 0) )
         REQUIRE(host->Unlink(fn2));
 
     REQUIRE(VFSEasyCopyFile(fn1.c_str(), TestEnv().vfs_native, fn2.c_str(), host) == 0);
     REQUIRE(host->Rename(fn2, fn3));
-    REQUIRE(host->Stat(fn3, stat, 0) == 0);
+    REQUIRE(host->Stat(fn3, 0));
     REQUIRE(host->Unlink(fn3));
 
-    if( host->Stat("/DirectoryName1", stat, 0) == 0 )
+    if( host->Stat("/DirectoryName1", 0) )
         REQUIRE(host->RemoveDirectory("/DirectoryName1"));
-    if( host->Stat("/DirectoryName2", stat, 0) == 0 )
+    if( host->Stat("/DirectoryName2", 0) )
         REQUIRE(host->RemoveDirectory("/DirectoryName2"));
 
     REQUIRE(host->CreateDirectory("/DirectoryName1", 0755));
     REQUIRE(host->Rename("/DirectoryName1", "/DirectoryName2"));
-    REQUIRE(host->Stat("/DirectoryName2", stat, 0) == 0);
+    REQUIRE(host->Stat("/DirectoryName2", 0));
     REQUIRE(host->CreateDirectory("/DirectoryName2/SomethingElse", 0755));
     REQUIRE(host->Rename("/DirectoryName2/SomethingElse", "/DirectoryName2/SomethingEvenElse"));
     REQUIRE(host->RemoveDirectory("/DirectoryName2/SomethingEvenElse"));

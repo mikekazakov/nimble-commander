@@ -486,12 +486,11 @@ static bool IsSingleDirectoryCaseRenaming(const CopyingOptions &_options,
 CopyingJob::PathCompositionType CopyingJob::AnalyzeInitialDestination(std::string &_result_destination,
                                                                       bool &_need_to_build)
 {
-    VFSStat st;
-    if( m_DestinationHost->Stat(m_InitialDestinationPath, st, 0, nullptr) == 0 ) {
+    if( const std::expected<VFSStat, Error> st = m_DestinationHost->Stat(m_InitialDestinationPath, 0) ) {
         // destination entry already exist
         m_IsSingleDirectoryCaseRenaming = IsSingleDirectoryCaseRenaming(
-            m_Options, m_VFSListingItems, *m_DestinationHost, m_InitialDestinationPath, st);
-        if( S_ISDIR(st.mode) && !m_IsSingleDirectoryCaseRenaming ) {
+            m_Options, m_VFSListingItems, *m_DestinationHost, m_InitialDestinationPath, *st);
+        if( S_ISDIR(st->mode) && !m_IsSingleDirectoryCaseRenaming ) {
             _result_destination = EnsureTrailingSlash(m_InitialDestinationPath);
             return PathCompositionType::PathPreffix;
         }
@@ -597,10 +596,12 @@ std::tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
             // gather stat() information regarding current entry
             VFSStat st;
             while( true ) {
-                const auto rc = host.Stat(path, st, stat_flags, nullptr);
-                if( rc == VFSError::Ok )
+                const std::expected<VFSStat, Error> exp_st = host.Stat(path, stat_flags);
+                if( exp_st ) {
+                    st = *exp_st;
                     break;
-                switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), path, host) ) {
+                }
+                switch( m_OnCantAccessSourceItem(exp_st.error(), path, host) ) {
                     case CantAccessSourceItemResolution::Skip:
                         return StepResult::Skipped;
                     case CantAccessSourceItemResolution::Stop:
@@ -1102,10 +1103,12 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
     // get information about the source file
     VFSStat src_stat_buffer;
     while( true ) {
-        const auto rc = _src_vfs.Stat(_src_path, src_stat_buffer, 0);
-        if( rc == VFSError::Ok )
+        const std::expected<VFSStat, Error> exp_stat = _src_vfs.Stat(_src_path, 0);
+        if( exp_stat ) {
+            src_stat_buffer = *exp_stat;
             break;
-        switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _src_vfs) ) {
+        }
+        switch( m_OnCantAccessSourceItem(exp_stat.error(), _src_path, _src_vfs) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -1473,10 +1476,12 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     // get information about the source file
     VFSStat src_stat_buffer;
     while( true ) {
-        const auto rc = _src_vfs.Stat(_src_path, src_stat_buffer, 0);
-        if( rc == VFSError::Ok )
+        const std::expected<VFSStat, Error> exp_stat = _src_vfs.Stat(_src_path, 0);
+        if( exp_stat ) {
+            src_stat_buffer = *exp_stat;
             break;
-        switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _src_vfs) ) {
+        }
+        switch( m_OnCantAccessSourceItem(exp_stat.error(), _src_path, _src_vfs) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -1539,9 +1544,9 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     };
 
     // stat destination
-    VFSStat dst_stat_buffer;
-    if( m_DestinationHost->Stat(_dst_path, dst_stat_buffer, 0, nullptr) == 0 ) {
+    if( const std::expected<VFSStat, Error> exp_dst_stat_buffer = m_DestinationHost->Stat(_dst_path, 0) ) {
         // file already exist. what should we do now?
+        const VFSStat &dst_stat_buffer = *exp_dst_stat_buffer;
         const auto setup_overwrite = [&] {
             dst_open_flags = VFSFlags::OF_Write | VFSFlags::OF_Truncate | VFSFlags::OF_NoCache;
             do_unlink_on_stop = true;
@@ -1949,8 +1954,12 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_s
     // we currently ignore possible errors on attributes copying, which is not great at all
 
     VFSStat src_stat_buffer;
-    if( _src_vfs.Stat(_src_path, src_stat_buffer, 0, nullptr) < 0 )
+    if( const std::expected<VFSStat, Error> exp_src_stat_buffer = _src_vfs.Stat(_src_path, 0) ) {
+        src_stat_buffer = *exp_src_stat_buffer;
+    }
+    else {
         return StepResult::Ok;
+    }
 
     if( m_Options.copy_unix_flags ) {
         // change unix mode - only schedule if needed
@@ -1992,10 +2001,12 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
 {
     VFSStat src_st;
     while( true ) {
-        const auto rc = _src_vfs.Stat(_src_path, src_st, 0);
-        if( rc == VFSError::Ok )
+        const std::expected<VFSStat, Error> exp_src_st = _src_vfs.Stat(_src_path, 0);
+        if( exp_src_st ) {
+            src_st = *exp_src_st;
             break;
-        switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _dst_path, _src_vfs) ) {
+        }
+        switch( m_OnCantAccessSourceItem(exp_src_st.error(), _dst_path, _src_vfs) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -2005,8 +2016,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
         }
     }
 
-    VFSStat dest_st;
-    if( m_DestinationHost->Stat(_dst_path, dest_st, VFSFlags::F_NoFollow, nullptr) == 0 ) {
+    if( m_DestinationHost->Stat(_dst_path, VFSFlags::F_NoFollow) ) {
         // this directory already exist. currently do nothing, later - update it's attrs.
     }
     else {
@@ -2208,9 +2218,10 @@ std::pair<CopyingJob::StepResult, CopyingJob::SourceItemAftermath>
 CopyingJob::RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_path, const std::string &_dst_path) const
 {
     // check if a destination item already exists
-    VFSStat dst_stat_buffer;
-    const auto dst_exists = _common_host.Stat(_dst_path, dst_stat_buffer, VFSFlags::F_NoFollow) == VFSError::Ok;
-    auto dst_dir_is_dummy = false;
+    const std::expected<VFSStat, Error> exp_dst_stat_buffer = _common_host.Stat(_dst_path, VFSFlags::F_NoFollow);
+    const bool dst_exists = static_cast<bool>(exp_dst_stat_buffer);
+    const VFSStat dst_stat_buffer = exp_dst_stat_buffer.value_or(VFSStat{});
+    bool dst_dir_is_dummy = false;
     if( dst_exists && !S_ISDIR(dst_stat_buffer.mode) ) {
         // if user agrees - remove exising file and create a directory with a same name
         switch( m_OnNotADirectory(_dst_path, _common_host) ) {
@@ -2261,10 +2272,12 @@ CopyingJob::RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_pa
         if( !case_renaming ) {
             VFSStat src_stat;
             while( true ) {
-                const auto rc = _common_host.Stat(_src_path, src_stat, VFSFlags::F_NoFollow);
-                if( rc == VFSError::Ok )
+                const std::expected<VFSStat, Error> exp_src_stat = _common_host.Stat(_src_path, VFSFlags::F_NoFollow);
+                if( exp_src_stat ) {
+                    src_stat = *exp_src_stat;
                     break;
-                switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _common_host) ) {
+                }
+                switch( m_OnCantAccessSourceItem(exp_src_stat.error(), _src_path, _common_host) ) {
                     case CantAccessSourceItemResolution::Skip:
                         return {StepResult::Skipped, SourceItemAftermath::NoChanges};
                     case CantAccessSourceItemResolution::Stop:
@@ -2437,16 +2450,17 @@ CopyingJob::StepResult CopyingJob::RenameVFSFile(VFSHost &_common_host,
                                                  const RequestNonexistentDst &_new_dst_callback) const
 {
     // check if destination file already exist
-    VFSStat dst_stat_buffer;
-    if( _common_host.Stat(_dst_path, dst_stat_buffer, VFSFlags::F_NoFollow) == 0 ) {
+    if( const std::expected<VFSStat, Error> dst_stat_buffer = _common_host.Stat(_dst_path, VFSFlags::F_NoFollow) ) {
         // Destination file already exists.
 
         VFSStat src_stat_buffer;
         while( true ) {
-            const auto rc = _common_host.Stat(_src_path, src_stat_buffer, VFSFlags::F_NoFollow);
-            if( rc == VFSError::Ok )
+            const std::expected<VFSStat, Error> exp_stat = _common_host.Stat(_src_path, VFSFlags::F_NoFollow);
+            if( exp_stat ) {
+                src_stat_buffer = *exp_stat;
                 break;
-            switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _common_host) ) {
+            }
+            switch( m_OnCantAccessSourceItem(exp_stat.error(), _src_path, _common_host) ) {
                 case CantAccessSourceItemResolution::Skip:
                     return StepResult::Skipped;
                 case CantAccessSourceItemResolution::Stop:
@@ -2458,12 +2472,12 @@ CopyingJob::StepResult CopyingJob::RenameVFSFile(VFSHost &_common_host,
 
         // renaming into _dst_path will erase it. need to ask user what to do
         const auto res =
-            m_OnRenameDestinationAlreadyExists(src_stat_buffer.SysStat(), dst_stat_buffer.SysStat(), _dst_path);
+            m_OnRenameDestinationAlreadyExists(src_stat_buffer.SysStat(), dst_stat_buffer->SysStat(), _dst_path);
         switch( res ) {
             case RenameDestExistsResolution::Skip:
                 return StepResult::Skipped;
             case RenameDestExistsResolution::OverwriteOld:
-                if( !EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
+                if( !EntryIsOlder(*dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
                 [[fallthrough]];
             case RenameDestExistsResolution::Overwrite:
@@ -2785,10 +2799,12 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
     if( io.lstat(_dst_path.c_str(), &dst_stat_buffer) == 0 ) {
         VFSStat src_stat_buffer;
         while( true ) {
-            const auto rc = _src_vfs.Stat(_src_path, src_stat_buffer, VFSFlags::F_NoFollow);
-            if( rc == VFSError::Ok )
+            const std::expected<VFSStat, Error> exp_stat = _src_vfs.Stat(_src_path, VFSFlags::F_NoFollow);
+            if( exp_stat ) {
+                src_stat_buffer = *exp_stat;
                 break;
-            switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _src_vfs) ) {
+            }
+            switch( m_OnCantAccessSourceItem(exp_stat.error(), _src_path, _src_vfs) ) {
                 case CantAccessSourceItemResolution::Skip:
                     return StepResult::Skipped;
                 case CantAccessSourceItemResolution::Stop:
@@ -2882,14 +2898,15 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
         }
     }
 
-    VFSStat dst_stat_buffer;
-    if( dst_host.Stat(_dst_path, dst_stat_buffer, VFSFlags::F_NoFollow) == VFSError::Ok ) {
+    if( const std::expected<VFSStat, Error> dst_stat_buffer = dst_host.Stat(_dst_path, VFSFlags::F_NoFollow) ) {
         VFSStat src_stat_buffer;
         while( true ) {
-            const auto rc = _src_vfs.Stat(_src_path, src_stat_buffer, VFSFlags::F_NoFollow);
-            if( rc == VFSError::Ok )
+            const std::expected<VFSStat, Error> exp_stat = _src_vfs.Stat(_src_path, VFSFlags::F_NoFollow);
+            if( exp_stat ) {
+                src_stat_buffer = *exp_stat;
                 break;
-            switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _src_vfs) ) {
+            }
+            switch( m_OnCantAccessSourceItem(exp_stat.error(), _src_path, _src_vfs) ) {
                 case CantAccessSourceItemResolution::Skip:
                     return StepResult::Skipped;
                 case CantAccessSourceItemResolution::Stop:
@@ -2904,14 +2921,14 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
         struct stat posix_src_stat_buffer;
         struct stat posix_dst_stat_buffer;
         VFSStat::ToSysStat(src_stat_buffer, posix_src_stat_buffer);
-        VFSStat::ToSysStat(dst_stat_buffer, posix_dst_stat_buffer);
+        VFSStat::ToSysStat(*dst_stat_buffer, posix_dst_stat_buffer);
         const auto res = m_OnRenameDestinationAlreadyExists(posix_src_stat_buffer, posix_dst_stat_buffer, _dst_path);
         auto new_path = false;
         switch( res ) {
             case RenameDestExistsResolution::Skip:
                 return StepResult::Skipped;
             case RenameDestExistsResolution::OverwriteOld:
-                if( !EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
+                if( !EntryIsOlder(*dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
                 [[fallthrough]];
             case RenameDestExistsResolution::Overwrite:
@@ -2927,7 +2944,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
         if( !new_path ) {
             if( !dst_host.Trash(_dst_path, nullptr) ) {
                 while( true ) {
-                    const std::expected<void, Error> rc = dst_stat_buffer.mode_bits.dir
+                    const std::expected<void, Error> rc = dst_stat_buffer->mode_bits.dir
                                                               ? dst_host.RemoveDirectory(_dst_path)
                                                               : dst_host.Unlink(_dst_path);
                     if( rc )
@@ -3002,12 +3019,11 @@ CopyingJob::StepResult CopyingJob::UnlockNativeItemNoFollow(const std::string &_
                                                             vfs::NativeHost &_native_host) const
 {
     auto unlock = [&]() -> std::expected<void, Error> {
-        VFSStat st;
-        const int stat_rc = _native_host.Stat(_path, st, VFSFlags::F_NoFollow, {});
-        if( stat_rc != VFSError::Ok )
-            return std::unexpected(VFSError::ToError(stat_rc));
-        st.flags = (st.flags & ~UF_IMMUTABLE);
-        return _native_host.SetFlags(_path, st.flags, VFSFlags::F_NoFollow, {});
+        const std::expected<VFSStat, Error> st = _native_host.Stat(_path, VFSFlags::F_NoFollow);
+        if( !st )
+            return std::unexpected(st.error());
+        const uint32_t flags = (st->flags & ~UF_IMMUTABLE);
+        return _native_host.SetFlags(_path, flags, VFSFlags::F_NoFollow);
     };
     while( true ) {
         const std::expected<void, Error> unlock_rc = unlock();

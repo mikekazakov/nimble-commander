@@ -483,15 +483,13 @@ SFTPHost::FetchDirectoryListing(std::string_view _path,
     return VFSListing::Build(std::move(listing_source));
 }
 
-int SFTPHost::Stat(std::string_view _path,
-                   VFSStat &_st,
-                   unsigned long _flags,
-                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSStat, Error>
+SFTPHost::Stat(std::string_view _path, unsigned long _flags, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if( rc )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     const AutoConnectionReturn acr(conn, this);
 
@@ -502,39 +500,39 @@ int SFTPHost::Stat(std::string_view _path,
                               (_flags & VFSFlags::F_NoFollow) ? LIBSSH2_SFTP_LSTAT : LIBSSH2_SFTP_STAT,
                               &attrs);
     if( rc )
-        return VFSErrorForConnection(*conn);
+        return std::unexpected(VFSError::ToError(VFSErrorForConnection(*conn)));
 
-    memset(&_st, 0, sizeof(_st));
+    VFSStat st;
 
     if( attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS ) {
-        _st.mode = mode_t(attrs.permissions);
-        _st.meaning.mode = 1;
+        st.mode = mode_t(attrs.permissions);
+        st.meaning.mode = 1;
     }
 
     if( attrs.flags & LIBSSH2_SFTP_ATTR_UIDGID ) {
-        _st.uid = (uid_t)attrs.uid;
-        _st.gid = (gid_t)attrs.gid;
-        _st.meaning.uid = 1;
-        _st.meaning.gid = 1;
+        st.uid = (uid_t)attrs.uid;
+        st.gid = (gid_t)attrs.gid;
+        st.meaning.uid = 1;
+        st.meaning.gid = 1;
     }
 
     if( attrs.flags & LIBSSH2_SFTP_ATTR_ACMODTIME ) {
-        _st.atime.tv_sec = attrs.atime;
-        _st.mtime.tv_sec = attrs.mtime;
-        _st.ctime.tv_sec = attrs.mtime;
-        _st.btime.tv_sec = attrs.mtime;
-        _st.meaning.atime = 1;
-        _st.meaning.mtime = 1;
-        _st.meaning.ctime = 1;
-        _st.meaning.btime = 1;
+        st.atime.tv_sec = attrs.atime;
+        st.mtime.tv_sec = attrs.mtime;
+        st.ctime.tv_sec = attrs.mtime;
+        st.btime.tv_sec = attrs.mtime;
+        st.meaning.atime = 1;
+        st.meaning.mtime = 1;
+        st.meaning.ctime = 1;
+        st.meaning.btime = 1;
     }
 
     if( attrs.flags & LIBSSH2_SFTP_ATTR_SIZE ) {
-        _st.size = attrs.filesize;
-        _st.meaning.size = 1;
+        st.size = attrs.filesize;
+        st.meaning.size = 1;
     }
 
-    return 0;
+    return st;
 }
 
 std::expected<void, Error>

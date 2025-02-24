@@ -122,8 +122,7 @@ TEST_CASE(PREFIX "On local FTP server")
         operation.Wait();
     }
 
-    VFSStat st;
-    REQUIRE(host->Stat("/Public/!FilesTesting/Dir/Other/Dir/And/Many/other fancy dirs/", st, 0, nullptr) == 0);
+    REQUIRE(host->Stat("/Public/!FilesTesting/Dir/Other/Dir/And/Many/other fancy dirs/", 0));
     REQUIRE(VFSEasyDelete("/Public/!FilesTesting/Dir", host));
 
     {
@@ -132,6 +131,6 @@ TEST_CASE(PREFIX "On local FTP server")
         operation.Wait();
     }
 
-    REQUIRE(host->Stat("/Public/!FilesTesting/AnotherDir/AndSecondOne", st, 0, nullptr) == 0);
+    REQUIRE(host->Stat("/Public/!FilesTesting/AnotherDir/AndSecondOne", 0));
     REQUIRE(VFSEasyDelete("/Public/!FilesTesting/AnotherDir", host));
 }

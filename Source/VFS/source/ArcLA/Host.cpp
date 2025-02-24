@@ -171,11 +171,10 @@ std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_c
     const std::pmr::string path(JunctionPath(), &alloc);
 
     {
-        VFSStat st;
-        res = Parent()->Stat(path, st, 0);
-        if( res < 0 )
-            return std::unexpected(VFSError::ToError(res));
-        VFSStat::ToSysStat(st, I->m_SrcFileStat);
+        const std::expected<VFSStat, Error> st = Parent()->Stat(path, 0, _cancel_checker);
+        if( !st )
+            return std::unexpected(st.error());
+        VFSStat::ToSysStat(*st, I->m_SrcFileStat);
     }
 
     VFSFilePtr source_file;
@@ -630,21 +629,19 @@ bool ArchiveHost::IsDirectory(std::string_view _path, unsigned long _flags, cons
     return Host::IsDirectory(_path, _flags, _cancel_checker);
 }
 
-int ArchiveHost::Stat(std::string_view _path,
-                      VFSStat &_st,
-                      unsigned long _flags,
-                      const VFSCancelChecker & /*_cancel_checker*/)
+std::expected<VFSStat, Error>
+ArchiveHost::Stat(std::string_view _path, unsigned long _flags, const VFSCancelChecker & /*_cancel_checker*/)
 {
     if( _path.empty() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     if( _path[0] != '/' )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     if( _path.length() == 1 ) {
         // we have no info about root dir - dummy here
-        memset(&_st, 0, sizeof(_st));
-        _st.mode = S_IRUSR | S_IFDIR;
-        return VFSError::Ok;
+        VFSStat st;
+        st.mode = S_IRUSR | S_IFDIR;
+        return st;
     }
 
     StackAllocator alloc;
@@ -652,13 +649,14 @@ int ArchiveHost::Stat(std::string_view _path,
 
     const int res = ResolvePathIfNeeded(_path, resolve_buf, _flags);
     if( res < 0 )
-        return res;
+        return std::unexpected(VFSError::ToError(res));
 
     if( auto it = FindEntry(resolve_buf) ) {
-        VFSStat::FromSysStat(it->st, _st);
-        return VFSError::Ok;
+        VFSStat st;
+        VFSStat::FromSysStat(it->st, st);
+        return st;
     }
-    return VFSError::NotFound;
+    return std::unexpected(Error{Error::POSIX, ENOENT});
 }
 
 int ArchiveHost::ResolvePathIfNeeded(std::string_view _path, std::pmr::string &_resolved_path, unsigned long _flags)

@@ -220,42 +220,41 @@ XAttrHost::FetchDirectoryListing(std::string_view _path,
     return VFSListing::Build(std::move(listing_source));
 }
 
-int XAttrHost::Stat(std::string_view _path,
-                    VFSStat &_st,
-                    [[maybe_unused]] unsigned long _flags,
-                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSStat, Error> XAttrHost::Stat(std::string_view _path,
+                                              [[maybe_unused]] unsigned long _flags,
+                                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( !utility::PathManip::IsAbsolute(_path) )
-        return VFSError::NotFound;
+        return std::unexpected(nc::Error{nc::Error::POSIX, ENOENT});
 
-    memset(&_st, 0, sizeof(_st));
-    _st.meaning.size = true;
-    _st.meaning.mode = true;
-    _st.meaning.atime = true;
-    _st.meaning.btime = true;
-    _st.meaning.ctime = true;
-    _st.meaning.mtime = true;
-    _st.atime = m_Stat.st_atimespec;
-    _st.mtime = m_Stat.st_mtimespec;
-    _st.btime = m_Stat.st_birthtimespec;
-    _st.ctime = m_Stat.st_ctimespec;
+    VFSStat st;
+    st.meaning.size = true;
+    st.meaning.mode = true;
+    st.meaning.atime = true;
+    st.meaning.btime = true;
+    st.meaning.ctime = true;
+    st.meaning.mtime = true;
+    st.atime = m_Stat.st_atimespec;
+    st.mtime = m_Stat.st_mtimespec;
+    st.btime = m_Stat.st_birthtimespec;
+    st.ctime = m_Stat.st_ctimespec;
 
     if( _path == "/" ) {
-        _st.mode = g_RootMode;
-        _st.size = 0;
-        return VFSError::Ok;
+        st.mode = g_RootMode;
+        st.size = 0;
+        return st;
     }
     else if( _path.length() > 1 ) {
         _path.remove_prefix(1);
         for( auto &i : m_Attrs )
             if( _path == i.first ) {
-                _st.mode = g_RegMode;
-                _st.size = i.second;
-                return 0;
+                st.mode = g_RegMode;
+                st.size = i.second;
+                return st;
             }
     }
 
-    return VFSError::FromErrno(ENOENT);
+    return std::unexpected(nc::Error{nc::Error::POSIX, ENOENT});
 }
 
 std::expected<std::shared_ptr<VFSFile>, Error> XAttrHost::CreateFile(std::string_view _path,

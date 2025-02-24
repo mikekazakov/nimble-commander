@@ -52,8 +52,7 @@ TEST_CASE(PREFIX "stat on existing file")
     auto filepath = "/TestSet01/11778860-R3L8T8D-650-funny-jumping-cats-51__880.jpg";
     const std::shared_ptr<VFSHost> host = Spawn();
 
-    VFSStat stat;
-    REQUIRE(host->Stat(filepath, stat, 0) == 0);
+    VFSStat stat = host->Stat(filepath, 0).value();
     CHECK(stat.mode_bits.reg == true);
     CHECK(stat.mode_bits.dir == false);
     CHECK(stat.size == 190892);
@@ -71,9 +70,7 @@ TEST_CASE(PREFIX "stat on non existing file")
 {
     const auto filepath = "/TestSet01/this_file_does_not_exist!!!.jpg";
     const std::shared_ptr<VFSHost> host = Spawn();
-
-    VFSStat stat;
-    CHECK(host->Stat(filepath, stat, 0) != 0);
+    CHECK(!host->Stat(filepath, 0));
 }
 
 TEST_CASE(PREFIX "stat on existing folder")
@@ -81,8 +78,7 @@ TEST_CASE(PREFIX "stat on existing folder")
     const auto filepath = "/TestSet01/";
     const std::shared_ptr<VFSHost> host = Spawn();
 
-    VFSStat stat;
-    REQUIRE(host->Stat(filepath, stat, 0) == 0);
+    const VFSStat stat = host->Stat(filepath, 0).value();
     CHECK(stat.mode_bits.dir == true);
     CHECK(stat.mode_bits.reg == false);
 }
@@ -282,8 +278,7 @@ TEST_CASE(PREFIX "zero sized upload")
     REQUIRE(file->SetUploadSize(0) == VFSError::Ok);
     REQUIRE(file->Close() == VFSError::Ok);
 
-    VFSStat stat;
-    REQUIRE(host->Stat(filepath, stat, 0) == VFSError::Ok);
+    const VFSStat stat = host->Stat(filepath, 0).value();
     REQUIRE(stat.size == 0);
     std::ignore = host->Unlink(filepath);
 }

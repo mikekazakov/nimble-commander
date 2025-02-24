@@ -12,51 +12,6 @@ using namespace nc::vfs;
 
 #define PREFIX "VFSArchive "
 
-static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
-                             const VFSHostPtr &_file1_host,
-                             const std::filesystem::path &_file2_full_path,
-                             const VFSHostPtr &_file2_host,
-                             int &_result)
-{
-    // not comparing flags, perm, times, xattrs, acls etc now
-
-    VFSStat st1;
-    VFSStat st2;
-    if( const int ret = _file1_host->Stat(_file1_full_path.c_str(), st1, VFSFlags::F_NoFollow, nullptr); ret < 0 )
-        return ret;
-
-    if( const int ret = _file2_host->Stat(_file2_full_path.c_str(), st2, VFSFlags::F_NoFollow, nullptr); ret < 0 )
-        return ret;
-
-    if( (st1.mode & S_IFMT) != (st2.mode & S_IFMT) ) {
-        _result = -1;
-        return 0;
-    }
-
-    if( S_ISREG(st1.mode) ) {
-        if( int64_t(st1.size) - int64_t(st2.size) != 0 )
-            _result = int(int64_t(st1.size) - int64_t(st2.size));
-    }
-    else if( S_ISLNK(st1.mode) ) {
-        const std::expected<std::string, nc::Error> link1 = _file1_host->ReadSymlink(_file1_full_path.c_str());
-        if( !link1 )
-            return VFSError::GenericError;
-        const std::expected<std::string, nc::Error> link2 = _file2_host->ReadSymlink(_file2_full_path.c_str());
-        if( !link2 )
-            return VFSError::GenericError;
-        if( strcmp(link1->c_str(), link1->c_str()) != 0 )
-            _result = strcmp(link1->c_str(), link1->c_str());
-    }
-    else if( S_ISDIR(st1.mode) ) {
-        std::ignore = _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
-            const int ret = VFSCompareEntries(
-                _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
-            return ret == 0;
-        });
-    }
-    return 0;
-}
-
 TEST_CASE(PREFIX "XNUSource - TAR")
 {
     const TestDir dir;
@@ -75,16 +30,17 @@ TEST_CASE(PREFIX "XNUSource - TAR")
     REQUIRE(host->IsDirectory("/xnu-xnu-3248.20.55/EXTERNAL_HEADERS/mach-o/x86_64/", 0, nullptr) == true);
     REQUIRE(host->Exists("/xnu-xnu-3248.20.55/2342423/9182391273/x86_64") == false);
 
-    VFSStat st;
-    REQUIRE(host->Stat("/xnu-xnu-3248.20.55/bsd/security/audit/audit_bsm_socket_type.c", st, 0, nullptr) == 0);
-    REQUIRE(st.mode_bits.reg);
-    REQUIRE(st.size == 3313);
+    {
+        const VFSStat st = host->Stat("/xnu-xnu-3248.20.55/bsd/security/audit/audit_bsm_socket_type.c", 0).value();
+        REQUIRE(st.mode_bits.reg);
+        REQUIRE(st.size == 3313);
+    }
 
     {
         // symlinks were faulty in <1.1.3
         auto fn = "/xnu-xnu-3248.20.55/libkern/.clang-format";
         REQUIRE(host->IsSymlink(fn, VFSFlags::F_NoFollow));
-        REQUIRE(host->Stat(fn, st, 0, nullptr) == 0);
+        const VFSStat st = host->Stat(fn, 0).value();
         REQUIRE(st.mode_bits.reg);
         REQUIRE(st.size == 957);
 
@@ -118,8 +74,7 @@ TEST_CASE(PREFIX "XNUSource - TAR")
         dispatch_group_async(dg, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
           const std::string &fn = filenames[std::rand() % filenames.size()];
 
-          VFSStat local_st;
-          REQUIRE(host->Stat(fn, local_st, 0, nullptr) == 0);
+          const VFSStat st = host->Stat(fn, 0).value();
 
           const VFSFilePtr file = host->CreateFile(fn).value();
           REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
@@ -127,7 +82,7 @@ TEST_CASE(PREFIX "XNUSource - TAR")
           auto d = file->ReadFile();
           REQUIRE(d);
           REQUIRE(!d->empty());
-          REQUIRE(d->size() == local_st.size);
+          REQUIRE(d->size() == st.size);
         });
 
     dispatch_group_wait(dg, DISPATCH_TIME_FOREVER);

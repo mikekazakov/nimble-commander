@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -143,13 +143,13 @@ void FileOpener::Open(std::string _filepath,
             return;
         }
 
-        VFSStat st;
-        if( _host->Stat(_filepath, st, 0, nullptr) < 0 ) {
+        const std::expected<VFSStat, Error> st = _host->Stat(_filepath, 0);
+        if( !st ) {
             NSBeep();
             return;
         }
 
-        if( st.size > g_MaxFileSizeForVFSOpen ) {
+        if( st->size > g_MaxFileSizeForVFSOpen ) {
             NSBeep();
             return;
         }
@@ -204,11 +204,11 @@ void FileOpener::Open(std::vector<std::string> _filepaths,
             if( _host->IsDirectory(i, 0, nullptr) )
                 continue;
 
-            VFSStat st;
-            if( _host->Stat(i, st, 0, nullptr) < 0 )
+            const std::expected<VFSStat, Error> st = _host->Stat(i, 0);
+            if( !st )
                 continue;
 
-            if( st.size > g_MaxFileSizeForVFSOpen )
+            if( st->size > g_MaxFileSizeForVFSOpen )
                 continue;
 
             if( auto tmp_path = CopyFileToTempStorage(i, *_host, m_TemporaryFileStorage) ) {
@@ -251,13 +251,13 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
                 return;
             }
 
-            VFSStat st;
-            if( _host->Stat(_filepath, st, 0, nullptr) < 0 ) {
+            const std::expected<VFSStat, Error> st = _host->Stat(_filepath, 0);
+            if( !st ) {
                 NSBeep();
                 return;
             }
 
-            if( st.size > g_MaxFileSizeForVFSOpen ) {
+            if( st->size > g_MaxFileSizeForVFSOpen ) {
                 NSBeep();
                 return;
             }

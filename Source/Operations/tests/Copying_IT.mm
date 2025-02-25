@@ -17,17 +17,17 @@
 #include <thread>
 #include <condition_variable>
 
+using nc::Error;
 using nc::ops::Copying;
 using nc::ops::CopyingOptions;
 using nc::ops::OperationState;
 
 static std::vector<std::byte> MakeNoise(size_t _size);
 static bool Save(const std::filesystem::path &_filepath, std::span<const std::byte> _content);
-static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
-                             const VFSHostPtr &_file1_host,
-                             const std::filesystem::path &_file2_full_path,
-                             const VFSHostPtr &_file2_host,
-                             int &_result);
+static std::expected<int, Error> VFSCompareEntries(const std::filesystem::path &_file1_full_path,
+                                                   const VFSHostPtr &_file1_host,
+                                                   const std::filesystem::path &_file2_full_path,
+                                                   const VFSHostPtr &_file2_host);
 static std::vector<VFSListingItem>
 FetchItems(const std::string &_directory_path, const std::vector<std::string> &_filenames, VFSHost &_host)
 {
@@ -382,13 +382,10 @@ TEST_CASE(PREFIX "Modes - CopyToPrefix")
     op.Start();
     op.Wait();
 
-    int result = 0;
     REQUIRE(VFSCompareEntries(std::filesystem::path("/System/Applications") / "Mail.app",
                               TestEnv().vfs_native,
                               tmp_dir.directory / "Mail.app",
-                              TestEnv().vfs_native,
-                              result) == 0);
-    REQUIRE(result == 0);
+                              TestEnv().vfs_native) == 0);
 }
 
 TEST_CASE(PREFIX "Modes - CopyToPrefix, with absent directories in path")
@@ -405,13 +402,10 @@ TEST_CASE(PREFIX "Modes - CopyToPrefix, with absent directories in path")
     op.Start();
     op.Wait();
 
-    int result = 0;
     REQUIRE(VFSCompareEntries(std::filesystem::path("/System/Applications") / "Mail.app",
                               TestEnv().vfs_native,
                               dst_dir / "Mail.app",
-                              TestEnv().vfs_native,
-                              result) == 0);
-    REQUIRE(result == 0);
+                              TestEnv().vfs_native) == 0);
 }
 
 // this test is now actually outdated, since FileCopyOperation now requires that destination path is
@@ -433,13 +427,9 @@ TEST_CASE(PREFIX "Modes - CopyToPrefix_WithLocalDir")
     op.Start();
     op.Wait();
 
-    int result = 0;
-    REQUIRE(VFSCompareEntries("/System/Applications/Mail.app",
-                              host,
-                              tmp_dir.directory / "SomeDirectoryName" / "Mail.app",
-                              host,
-                              result) == 0);
-    REQUIRE(result == 0);
+    REQUIRE(VFSCompareEntries(
+                "/System/Applications/Mail.app", host, tmp_dir.directory / "SomeDirectoryName" / "Mail.app", host) ==
+            0);
 }
 
 // this test is now somewhat outdated, since FileCopyOperation now requires that destination path is
@@ -459,10 +449,7 @@ TEST_CASE(PREFIX "Modes - CopyToPathName_WithLocalDir")
     op.Start();
     op.Wait();
 
-    int result = 0;
-    REQUIRE(VFSCompareEntries("/System/Applications/Mail.app", host, tmp_dir.directory / "Mail2.app", host, result) ==
-            0);
-    REQUIRE(result == 0);
+    REQUIRE(VFSCompareEntries("/System/Applications/Mail.app", host, tmp_dir.directory / "Mail2.app", host) == 0);
 }
 
 TEST_CASE(PREFIX "Modes - RenameToPathPreffix")
@@ -482,9 +469,7 @@ TEST_CASE(PREFIX "Modes - RenameToPathPreffix")
     op.Start();
     op.Wait();
 
-    int result = 0;
-    REQUIRE(VFSCompareEntries("/System/Applications/Mail.app", host, dir2 / "Mail.app", host, result) == 0);
-    REQUIRE(result == 0);
+    REQUIRE(VFSCompareEntries("/System/Applications/Mail.app", host, dir2 / "Mail.app", host) == 0);
 }
 
 TEST_CASE(PREFIX "Modes - RenameToPathName")
@@ -503,10 +488,7 @@ TEST_CASE(PREFIX "Modes - RenameToPathName")
     op.Start();
     op.Wait();
 
-    int result = 0;
-    REQUIRE(VFSCompareEntries("/System/Applications/Mail.app", host, tmp_dir.directory / "Mail2.app", host, result) ==
-            0);
-    REQUIRE(result == 0);
+    REQUIRE(VFSCompareEntries("/System/Applications/Mail.app", host, tmp_dir.directory / "Mail2.app", host) == 0);
 }
 
 TEST_CASE(PREFIX "symlinks overwriting")
@@ -880,9 +862,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part3")
     op.Wait();
     REQUIRE(op.State() == OperationState::Completed);
 
-    int result = 0;
-    REQUIRE(VFSCompareEntries("/bin", TestEnv().vfs_native, "/Public/!FilesTesting/bin", host, result) == 0);
-    REQUIRE(result == 0);
+    REQUIRE(VFSCompareEntries("/bin", TestEnv().vfs_native, "/Public/!FilesTesting/bin", host) == 0);
 
     std::ignore = VFSEasyDelete("/Public/!FilesTesting/bin", host);
 }
@@ -1441,9 +1421,7 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> vfs)")
         op.Start();
         op.Wait();
         REQUIRE(op.State() == OperationState::Completed);
-        VFSStat st;
-        REQUIRE(host->Stat(target_dir.c_str(), st, 0) == 0);
-        REQUIRE(st.mode == (S_IFDIR | S_IRUSR | S_IXUSR));
+        REQUIRE(host->Stat(target_dir.c_str(), 0).value().mode == (S_IFDIR | S_IRUSR | S_IXUSR));
         REQUIRE(host->SetPermissions(target_dir.c_str(), S_IRWXU));
     }
     SECTION("Don't copy unix flags")
@@ -1453,9 +1431,8 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> vfs)")
         op.Start();
         op.Wait();
         REQUIRE(op.State() == OperationState::Completed);
-        VFSStat st;
-        REQUIRE(host->Stat(target_dir.c_str(), st, 0) == 0);
-        REQUIRE(st.mode == (S_IFDIR | S_IRUSR | S_IXUSR | S_IWUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH));
+        REQUIRE(host->Stat(target_dir.c_str(), 0).value().mode ==
+                (S_IFDIR | S_IRUSR | S_IXUSR | S_IWUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH));
     }
 
     std::ignore = VFSEasyDelete(target_dir.c_str(), host);
@@ -1526,38 +1503,37 @@ static bool Save(const std::filesystem::path &_filepath, std::span<const std::by
     return true;
 }
 
-static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
-                             const VFSHostPtr &_file1_host,
-                             const std::filesystem::path &_file2_full_path,
-                             const VFSHostPtr &_file2_host,
-                             int &_result)
+static std::expected<int, Error> VFSCompareEntries(const std::filesystem::path &_file1_full_path,
+                                                   const VFSHostPtr &_file1_host,
+                                                   const std::filesystem::path &_file2_full_path,
+                                                   const VFSHostPtr &_file2_host)
 {
     // TODO: rewrite this!
     // not comparing contents, flags, perm, times, xattrs, acls etc now
 
-    VFSStat st1;
-    VFSStat st2;
-    if( const int ret = _file1_host->Stat(_file1_full_path.c_str(), st1, 0, nullptr); ret != 0 )
-        return ret;
+    const std::expected<VFSStat, Error> st1 = _file1_host->Stat(_file1_full_path.c_str(), 0);
+    if( !st1 )
+        return std::unexpected(st1.error());
 
-    if( const int ret = _file2_host->Stat(_file2_full_path.c_str(), st2, 0, nullptr); ret != 0 )
-        return ret;
+    const std::expected<VFSStat, Error> st2 = _file2_host->Stat(_file2_full_path.c_str(), 0);
+    if( !st2 )
+        return std::unexpected(st2.error());
 
-    if( (st1.mode & S_IFMT) != (st2.mode & S_IFMT) ) {
-        _result = -1;
-        return 0;
+    if( (st1->mode & S_IFMT) != (st2->mode & S_IFMT) ) {
+        return -1;
     }
 
-    if( S_ISREG(st1.mode) ) {
-        _result = int(int64_t(st1.size) - int64_t(st2.size));
-        return 0;
+    if( S_ISREG(st1->mode) ) {
+        return int(int64_t(st1->size) - int64_t(st2->size));
     }
-    else if( S_ISDIR(st1.mode) ) {
+    else if( S_ISDIR(st1->mode) ) {
+        std::expected<int, Error> result = 0;
         std::ignore = _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
-            const int ret = VFSCompareEntries(
-                _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
-            return ret == 0;
+            result = VFSCompareEntries(
+                _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host);
+            return result.has_value() && result.value() == 0;
         });
+        return result;
     }
     return 0;
 }

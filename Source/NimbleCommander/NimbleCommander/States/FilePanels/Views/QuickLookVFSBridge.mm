@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QuickLookVFSBridge.h"
 #include <Utility/StringExtras.h>
 #include <Utility/TemporaryFileStorage.h>
@@ -19,10 +19,10 @@ NSURL *QuickLookVFSBridge::FetchItem(const std::string &_path, VFSHost &_host)
     const auto is_dir = _host.IsDirectory(_path, 0);
 
     if( !is_dir ) {
-        VFSStat st;
-        if( _host.Stat(_path, st, 0, nullptr) < 0 )
+        const std::expected<VFSStat, Error> st = _host.Stat(_path, 0);
+        if( !st )
             return nil;
-        if( st.size > m_MaxSize )
+        if( st->size > m_MaxSize )
             return nil;
 
         const auto copied_path = CopyFileToTempStorage(_path, _host, m_TempStorage);

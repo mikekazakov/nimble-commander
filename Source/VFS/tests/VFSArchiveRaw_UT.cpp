@@ -102,9 +102,6 @@ static void check(const Case &test_case)
     std::shared_ptr<ArchiveRawHost> host;
     REQUIRE_NOTHROW(host = std::make_shared<ArchiveRawHost>(path.c_str(), TestEnv().vfs_native));
 
-    const auto einval = VFSError::FromErrno(EINVAL);
-    const auto enoent = VFSError::FromErrno(ENOENT);
-
     // let's read a file
     CHECK(host->CreateFile("").error() == Error{Error::POSIX, EINVAL});
     CHECK(host->CreateFile("blah-blah").error() == Error{Error::POSIX, EINVAL});
@@ -119,11 +116,10 @@ static void check(const Case &test_case)
     CHECK(std::string_view(data, 5) == "hello");
 
     // let's stat
-    VFSStat st;
-    CHECK(host->Stat("", st, Flags::None) == einval);
-    CHECK(host->Stat("blah-blah", st, Flags::None) == einval);
-    CHECK(host->Stat("/blah-blah", st, Flags::None) == enoent);
-    CHECK(host->Stat("/hello.txt", st, Flags::None) == VFSError::Ok);
+    CHECK(host->Stat("", Flags::None).error() == Error{Error::POSIX, EINVAL});
+    CHECK(host->Stat("blah-blah", Flags::None).error() == Error{Error::POSIX, EINVAL});
+    CHECK(host->Stat("/blah-blah", Flags::None).error() == Error{Error::POSIX, ENOENT});
+    const VFSStat st = host->Stat("/hello.txt", Flags::None).value();
     CHECK(st.size == 5);
     CHECK(st.mode_bits.reg);
     CHECK(st.mode_bits.rusr);

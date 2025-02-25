@@ -476,10 +476,7 @@ TEST_CASE(PREFIX "doesn't crash on many connections")
     // returning errors on this case is ok at the moment
     const nc::base::DispatchGroup grp;
     for( int i = 0; i < 100; ++i )
-        grp.Run([&] {
-            VFSStat st;
-            host->Stat("/bin/cat", st, 0);
-        });
+        grp.Run([&] { std::ignore = host->Stat("/bin/cat", 0); });
     grp.Wait();
 }
 
@@ -525,15 +522,14 @@ TEST_CASE(PREFIX "chmod")
     const auto path = "/home/user1/chmodtest";
 
     REQUIRE(VFSEasyCreateEmptyFile(path, host) == VFSError::Ok);
-    VFSStat st;
-    REQUIRE(host->Stat(path, st, 0) == VFSError::Ok);
+
+    VFSStat st = host->Stat(path, 0).value();
     REQUIRE(st.mode_bits.xusr == 0);
 
     st.mode_bits.xusr = 1;
     REQUIRE(host->SetPermissions(path, st.mode));
 
-    memset(&st, 0, sizeof(st));
-    REQUIRE(host->Stat(path, st, 0) == VFSError::Ok);
+    st = host->Stat(path, 0).value();
     REQUIRE(st.mode_bits.xusr == 1);
 
     REQUIRE(host->Unlink(path));
@@ -545,14 +541,13 @@ TEST_CASE(PREFIX "chown")
     const auto path = "/root/chowntest";
 
     REQUIRE(VFSEasyCreateEmptyFile(path, host) == VFSError::Ok);
-    VFSStat st;
-    REQUIRE(host->Stat(path, st, 0) == VFSError::Ok);
+    VFSStat st = host->Stat(path, 0).value();
 
     const auto new_uid = st.uid + 1;
     const auto new_gid = st.gid + 1;
     REQUIRE(host->SetOwnership(path, new_uid, new_gid));
 
-    REQUIRE(host->Stat(path, st, 0) == VFSError::Ok);
+    st = host->Stat(path, 0).value();
     REQUIRE(st.uid == new_uid);
     REQUIRE(st.gid == new_gid);
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <sys/stat.h>
@@ -35,8 +35,7 @@ TEST_CASE(PREFIX "chmod")
     operation.Wait();
     REQUIRE(operation.State() == OperationState::Completed);
 
-    VFSStat st;
-    CHECK(native_host->Stat(path.c_str(), st, 0, {}) == VFSError::Ok);
+    const VFSStat st = native_host->Stat(path.c_str(), 0).value();
     CHECK((st.mode & ~S_IFMT) == 0700);
 }
 
@@ -65,15 +64,9 @@ TEST_CASE(PREFIX "recursion")
     operation.Wait();
     REQUIRE(operation.State() == OperationState::Completed);
 
-    VFSStat st;
-    CHECK(native_host->Stat(path.c_str(), st, 0, {}) == VFSError::Ok);
-    CHECK((st.mode & ~S_IFMT) == 0700);
-
-    CHECK(native_host->Stat(path1.c_str(), st, 0, {}) == VFSError::Ok);
-    CHECK((st.mode & ~S_IFMT) == 0700);
-
-    CHECK(native_host->Stat(path2.c_str(), st, 0, {}) == VFSError::Ok);
-    CHECK((st.mode & ~S_IFMT) == 0700);
+    CHECK((native_host->Stat(path.c_str(), 0).value().mode & ~S_IFMT) == 0700);
+    CHECK((native_host->Stat(path1.c_str(), 0).value().mode & ~S_IFMT) == 0700);
+    CHECK((native_host->Stat(path2.c_str(), 0).value().mode & ~S_IFMT) == 0700);
 }
 
 TEST_CASE(PREFIX "chown")
@@ -91,9 +84,7 @@ TEST_CASE(PREFIX "chown")
     operation.Wait();
     REQUIRE(operation.State() == OperationState::Completed);
 
-    VFSStat st;
-    CHECK(native_host->Stat(path.c_str(), st, 0, {}) == VFSError::Ok);
-    CHECK(st.gid == 12);
+    CHECK(native_host->Stat(path.c_str(), 0).value().gid == 12);
 }
 
 TEST_CASE(PREFIX "chflags")
@@ -113,9 +104,7 @@ TEST_CASE(PREFIX "chflags")
     operation.Wait();
     REQUIRE(operation.State() == OperationState::Completed);
 
-    VFSStat st;
-    CHECK(native_host->Stat(path.c_str(), st, 0, {}) == VFSError::Ok);
-    CHECK((st.flags & UF_HIDDEN) != 0);
+    CHECK((native_host->Stat(path.c_str(), 0).value().flags & UF_HIDDEN) != 0);
 }
 
 TEST_CASE(PREFIX "mtime")
@@ -136,9 +125,7 @@ TEST_CASE(PREFIX "mtime")
     operation.Wait();
     REQUIRE(operation.State() == OperationState::Completed);
 
-    VFSStat st;
-    CHECK(native_host->Stat(path.c_str(), st, 0, {}) == VFSError::Ok);
-    CHECK(st.mtime.tv_sec == mtime);
+    CHECK(native_host->Stat(path.c_str(), 0).value().mtime.tv_sec == mtime);
 }
 
 TEST_CASE(PREFIX "Item reporting")

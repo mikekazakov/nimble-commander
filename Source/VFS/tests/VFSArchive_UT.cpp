@@ -1886,8 +1886,7 @@ TEST_CASE(PREFIX "synthetic directories semantics")
     std::shared_ptr<ArchiveHost> host;
     REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(path.c_str(), TestEnv().vfs_native));
 
-    VFSStat st;
-    REQUIRE(host->Stat("/dir", st, 0) == 0);
+    const VFSStat st = host->Stat("/dir", 0).value();
     CHECK(st.mode == (S_IFDIR | S_IRUSR | S_IXUSR | S_IWUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH));
     CHECK(st.ctime == zip_stat.st_ctimespec);
     CHECK(st.mtime == zip_stat.st_mtimespec);
@@ -1968,8 +1967,7 @@ TEST_CASE(PREFIX "synthetic directories semantics, nested case")
     REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(path.c_str(), TestEnv().vfs_native));
 
     for( auto p : {"/a", "/b", "/a/c", "/a/d", "/b/e", "/b/f", "/a/c/g", "/a/d/h", "/b/e/i", "/b/f/j"} ) {
-        VFSStat st;
-        REQUIRE(host->Stat(p, st, 0) == 0);
+        const VFSStat st = host->Stat(p, 0).value();
         CHECK(st.mode == (S_IFDIR | S_IRUSR | S_IXUSR | S_IWUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH));
         CHECK(st.ctime == zip_stat.st_ctimespec);
         CHECK(st.mtime == zip_stat.st_mtimespec);

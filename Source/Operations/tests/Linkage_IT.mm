@@ -21,9 +21,7 @@ TEST_CASE(PREFIX "symlink creation")
     operation.Wait();
     REQUIRE(operation.State() == OperationState::Completed);
 
-    VFSStat st;
-    const auto st_rc = host->Stat(path, st, VFSFlags::F_NoFollow);
-    REQUIRE(st_rc == VFSError::Ok);
+    const VFSStat st = host->Stat(path, VFSFlags::F_NoFollow).value();
     REQUIRE((st.mode & S_IFMT) == S_IFLNK);
 
     std::expected<std::string, nc::Error> buf = host->ReadSymlink(path);
@@ -55,9 +53,7 @@ TEST_CASE(PREFIX "symlink alteration")
     operation.Wait();
     REQUIRE(operation.State() == OperationState::Completed);
 
-    VFSStat st;
-    const auto st_rc = host->Stat(path, st, VFSFlags::F_NoFollow);
-    REQUIRE(st_rc == VFSError::Ok);
+    const VFSStat st = host->Stat(path, VFSFlags::F_NoFollow).value();
     REQUIRE((st.mode & S_IFMT) == S_IFLNK);
 
     std::expected<std::string, nc::Error> buf = host->ReadSymlink(path);
@@ -77,9 +73,7 @@ TEST_CASE(PREFIX "hardlink creation")
     operation.Wait();
     REQUIRE(operation.State() == OperationState::Completed);
 
-    VFSStat st1;
-    VFSStat st2;
-    REQUIRE(host->Stat(path, st1, 0) == VFSError::Ok);
-    REQUIRE(host->Stat(value, st2, 0) == VFSError::Ok);
+    const VFSStat st1 = host->Stat(path, 0).value();
+    const VFSStat st2 = host->Stat(value, 0).value();
     REQUIRE(st1.inode == st2.inode);
 }

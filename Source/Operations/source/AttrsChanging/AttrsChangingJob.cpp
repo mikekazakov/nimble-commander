@@ -54,10 +54,12 @@ void AttrsChangingJob::ScanItem(unsigned _origin_item)
     auto &vfs = *item.Host();
     VFSStat st;
     while( true ) {
-        const auto stat_rc = vfs.Stat(path, st, 0);
-        if( stat_rc == VFSError::Ok )
+        const std::expected<VFSStat, Error> exp_stat = vfs.Stat(path, 0);
+        if( exp_stat ) {
+            st = *exp_stat;
             break;
-        switch( m_OnSourceAccessError(VFSError::ToError(stat_rc), path, vfs) ) {
+        }
+        switch( m_OnSourceAccessError(exp_stat.error(), path, vfs) ) {
             case SourceAccessErrorResolution::Stop:
                 Stop();
                 return;
@@ -112,10 +114,12 @@ void AttrsChangingJob::ScanItem(const std::string &_full_path,
 
     VFSStat st;
     while( true ) {
-        const auto stat_rc = vfs.Stat(_full_path, st, 0);
-        if( stat_rc == VFSError::Ok )
+        const std::expected<VFSStat, Error> exp_stat = vfs.Stat(_full_path, 0);
+        if( exp_stat ) {
+            st = *exp_stat;
             break;
-        switch( m_OnSourceAccessError(VFSError::ToError(stat_rc), _full_path, vfs) ) {
+        }
+        switch( m_OnSourceAccessError(exp_stat.error(), _full_path, vfs) ) {
             case SourceAccessErrorResolution::Stop:
                 Stop();
                 return;

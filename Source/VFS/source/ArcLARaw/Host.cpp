@@ -210,11 +210,10 @@ void ArchiveRawHost::Init(const VFSCancelChecker &_cancel_checker)
     m_MTime.tv_nsec = 0;
     m_MTime.tv_sec = extracted.mtime;
     if( m_MTime.tv_sec == 0 ) {
-        VFSStat st;
-        const auto st_rc = Parent()->Stat(path, st, Flags::None, _cancel_checker);
-        if( st_rc != VFSError::Ok )
-            throw ErrorException(VFSError::ToError(st_rc));
-        m_MTime = st.mtime;
+        const std::expected<VFSStat, Error> st = Parent()->Stat(path, Flags::None, _cancel_checker);
+        if( !st )
+            throw ErrorException(st.error());
+        m_MTime = st->mtime;
     }
 }
 
@@ -230,28 +229,26 @@ ArchiveRawHost::CreateFile(std::string_view _path, [[maybe_unused]] const VFSCan
     return std::make_shared<GenericMemReadOnlyFile>(_path, shared_from_this(), m_Data.data(), m_Data.size());
 }
 
-int ArchiveRawHost::Stat(std::string_view _path,
-                         VFSStat &_st,
-                         [[maybe_unused]] unsigned long _flags,
-                         [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<VFSStat, Error> ArchiveRawHost::Stat(std::string_view _path,
+                                                   [[maybe_unused]] unsigned long _flags,
+                                                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( _path.empty() || _path[0] != '/' )
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( m_Filename != _path.substr(1) )
-        return VFSError::FromErrno(ENOENT);
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
-    std::memset(&_st, 0, sizeof(_st));
-
-    _st.size = m_Data.size();
-    _st.meaning.size = 1;
-    _st.mode_bits.reg = 1;
-    _st.mode_bits.rusr = 1;
-    _st.mode_bits.rgrp = 1;
-    _st.meaning.mode = 1;
-    _st.mtime = _st.atime = _st.ctime = _st.btime = m_MTime;
-    _st.meaning.mtime = _st.meaning.atime = _st.meaning.ctime = _st.meaning.btime = 1;
-    return VFSError::Ok;
+    VFSStat st;
+    st.size = m_Data.size();
+    st.meaning.size = 1;
+    st.mode_bits.reg = 1;
+    st.mode_bits.rusr = 1;
+    st.mode_bits.rgrp = 1;
+    st.meaning.mode = 1;
+    st.mtime = st.atime = st.ctime = st.btime = m_MTime;
+    st.meaning.mtime = st.meaning.atime = st.meaning.ctime = st.meaning.btime = 1;
+    return st;
 }
 
 std::expected<void, Error>

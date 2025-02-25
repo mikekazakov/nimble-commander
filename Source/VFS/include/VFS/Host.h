@@ -165,10 +165,9 @@ public:
      * VFS version of stat().
      * Default implementation does nothing, subclasses MUST implement it.
      */
-    virtual int Stat(std::string_view _path,                        //
-                     VFSStat &_st,                                  //
-                     unsigned long _flags,                          //
-                     const VFSCancelChecker &_cancel_checker = {}); //
+    virtual std::expected<VFSStat, Error> Stat(std::string_view _path,                        //
+                                               unsigned long _flags,                          //
+                                               const VFSCancelChecker &_cancel_checker = {}); //
 
     /**
      * VFS version of statfs().
@@ -199,9 +198,7 @@ public:
     virtual std::expected<std::string, Error> ReadSymlink(std::string_view _symlink_path,                //
                                                           const VFSCancelChecker &_cancel_checker = {}); //
 
-    /**
-     * Default implementation calls Stat() and returns true if return was Ok.
-     */
+    // Default implementation calls Stat() and returns true if the call was sucessful.
     virtual bool Exists(std::string_view _path,                        //
                         const VFSCancelChecker &_cancel_checker = {}); //
 

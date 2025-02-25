@@ -236,21 +236,20 @@ std::expected<VFSStatFS, Error> DropboxHost::StatFS([[maybe_unused]] std::string
     return std::unexpected(VFSError::ToError(rc));
 }
 
-int DropboxHost::Stat(std::string_view _path,
-                      VFSStat &_st,
-                      [[maybe_unused]] unsigned long _flags,
-                      const VFSCancelChecker &_cancel_checker)
+std::expected<VFSStat, Error> DropboxHost::Stat(std::string_view _path,
+                                                [[maybe_unused]] unsigned long _flags,
+                                                const VFSCancelChecker &_cancel_checker)
 {
     if( _path.empty() || _path[0] != '/' )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
-    memset(&_st, 0, sizeof(_st));
+    VFSStat st;
 
     if( _path == "/" ) {
         // special treatment for root dir
-        _st.mode = DirectoryAccessMode;
-        _st.meaning.mode = true;
-        return 0;
+        st.mode = DirectoryAccessMode;
+        st.meaning.mode = true;
+        return st;
     }
 
     std::string path = std::string(_path);
@@ -264,28 +263,30 @@ int DropboxHost::Stat(std::string_view _path,
     if( rc == VFSError::Ok ) {
         auto json_opt = ParseJSON(data);
         if( !json_opt )
-            return VFSError::GenericError;
+            return std::unexpected(Error{Error::POSIX, EINVAL});
         auto &json = *json_opt;
 
         auto md = ParseMetadata(json);
         if( md.name.empty() )
-            return VFSError::GenericError;
+            return std::unexpected(Error{Error::POSIX, EINVAL});
 
-        _st.mode = md.is_directory ? DirectoryAccessMode : RegularFileAccessMode;
-        _st.meaning.mode = true;
+        st.mode = md.is_directory ? DirectoryAccessMode : RegularFileAccessMode;
+        st.meaning.mode = true;
 
         if( md.size >= 0 ) {
-            _st.size = md.size;
-            _st.meaning.size = true;
+            st.size = md.size;
+            st.meaning.size = true;
         }
 
         if( md.chg_time >= 0 ) {
-            _st.ctime.tv_sec = md.chg_time;
-            _st.btime = _st.mtime = _st.ctime;
-            _st.meaning.ctime = _st.meaning.btime = _st.meaning.mtime = true;
+            st.ctime.tv_sec = md.chg_time;
+            st.btime = st.mtime = st.ctime;
+            st.meaning.ctime = st.meaning.btime = st.meaning.mtime = true;
         }
+
+        return st;
     }
-    return rc;
+    return std::unexpected(VFSError::ToError(rc));
 }
 
 std::expected<void, Error>

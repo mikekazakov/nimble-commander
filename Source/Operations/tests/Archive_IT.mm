@@ -17,11 +17,10 @@ using namespace std::literals;
 
 // TODO: are these Compression or Copying tests in the end? need to decide.
 
-static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
-                             const VFSHostPtr &_file1_host,
-                             const std::filesystem::path &_file2_full_path,
-                             const VFSHostPtr &_file2_host,
-                             int &_result);
+static std::expected<int, Error> VFSCompareEntries(const std::filesystem::path &_file1_full_path,
+                                                   const VFSHostPtr &_file1_host,
+                                                   const std::filesystem::path &_file2_full_path,
+                                                   const VFSHostPtr &_file2_host);
 static std::vector<std::byte> MakeNoise(size_t _size);
 
 static std::vector<VFSListingItem>
@@ -43,9 +42,7 @@ TEST_CASE(PREFIX "valid signature after extracting an application")
     REQUIRE(comp_operation.State() == nc::ops::OperationState::Completed);
     const auto archive_path = comp_operation.ArchivePath();
     const auto host = std::make_shared<vfs::ArchiveHost>(archive_path.c_str(), TestEnv().vfs_native);
-    int cmp_result = 0;
-    REQUIRE(VFSCompareEntries("/"s + source_fn, host, source_path, TestEnv().vfs_native, cmp_result) == 0);
-    REQUIRE(cmp_result == 0);
+    REQUIRE(VFSCompareEntries("/"s + source_fn, host, source_path, TestEnv().vfs_native).value() == 0);
 
     const CopyingOptions copy_opts;
     Copying copy_operation(
@@ -85,49 +82,49 @@ TEST_CASE(PREFIX "Compressing an item with big xattrs")
     CHECK(orig_noise == unpacked_noise);
 }
 
-static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
-                             const VFSHostPtr &_file1_host,
-                             const std::filesystem::path &_file2_full_path,
-                             const VFSHostPtr &_file2_host,
-                             int &_result)
+static std::expected<int, Error> VFSCompareEntries(const std::filesystem::path &_file1_full_path,
+                                                   const VFSHostPtr &_file1_host,
+                                                   const std::filesystem::path &_file2_full_path,
+                                                   const VFSHostPtr &_file2_host)
 {
     // not comparing flags, perm, times, xattrs, acls etc now
 
-    VFSStat st1;
-    VFSStat st2;
-    if( const int ret = _file1_host->Stat(_file1_full_path.c_str(), st1, VFSFlags::F_NoFollow, nullptr); ret < 0 )
-        return ret;
+    const std::expected<VFSStat, Error> st1 = _file1_host->Stat(_file1_full_path.c_str(), VFSFlags::F_NoFollow);
+    if( !st1 )
+        return std::unexpected(st1.error());
 
-    if( const int ret = _file2_host->Stat(_file2_full_path.c_str(), st2, VFSFlags::F_NoFollow, nullptr); ret < 0 )
-        return ret;
+    const std::expected<VFSStat, Error> st2 = _file2_host->Stat(_file2_full_path.c_str(), VFSFlags::F_NoFollow);
+    if( !st2 )
+        return std::unexpected(st2.error());
 
-    if( (st1.mode & S_IFMT) != (st2.mode & S_IFMT) ) {
-        _result = -1;
-        return 0;
+    if( (st1->mode & S_IFMT) != (st2->mode & S_IFMT) ) {
+        return -1;
     }
 
-    if( S_ISREG(st1.mode) ) {
-        if( int64_t(st1.size) - int64_t(st2.size) != 0 )
-            _result = int(int64_t(st1.size) - int64_t(st2.size));
+    if( S_ISREG(st1->mode) ) {
+        if( int64_t(st1->size) - int64_t(st2->size) != 0 )
+            return int(int64_t(st1->size) - int64_t(st2->size));
     }
-    else if( S_ISLNK(st1.mode) ) {
+    else if( S_ISLNK(st1->mode) ) {
         const std::expected<std::string, Error> link1 = _file1_host->ReadSymlink(_file1_full_path.c_str());
         if( !link1 )
-            return VFSError::GenericError;
+            return std::unexpected(link1.error());
 
         const std::expected<std::string, Error> link2 = _file2_host->ReadSymlink(_file2_full_path.c_str());
         if( !link2 )
-            return VFSError::GenericError;
+            return std::unexpected(link2.error());
 
         if( strcmp(link1->c_str(), link2->c_str()) != 0 )
-            _result = strcmp(link1->c_str(), link2->c_str());
+            return strcmp(link1->c_str(), link2->c_str());
     }
-    else if( S_ISDIR(st1.mode) ) {
+    else if( S_ISDIR(st1->mode) ) {
+        std::expected<int, Error> result = 0;
         std::ignore = _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
-            const int ret = VFSCompareEntries(
-                _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
-            return ret == 0;
+            result = VFSCompareEntries(
+                _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host);
+            return result.has_value();
         });
+        return result;
     }
     return 0;
 }

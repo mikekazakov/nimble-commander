@@ -35,11 +35,10 @@ void DirectoryCreationJob::Perform()
 bool DirectoryCreationJob::MakeDir(const std::string &_path)
 {
     while( true ) {
-        VFSStat st;
-        const auto stat_rc = m_VFS->Stat(_path, st, 0);
-        if( stat_rc != VFSError::Ok )
+        const std::expected<VFSStat, Error> st = m_VFS->Stat(_path, 0);
+        if( !st )
             break;
-        if( st.mode_bits.dir ) {
+        if( st->mode_bits.dir ) {
             return true;
         }
         else {

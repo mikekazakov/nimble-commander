@@ -47,10 +47,8 @@ public:
     std::expected<VFSStatFS, Error> StatFS(std::string_view _path,
                                            const VFSCancelChecker &_cancel_checker = {}) override;
 
-    int Stat(std::string_view _path,
-             VFSStat &_st,
-             unsigned long _flags,
-             const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<VFSStat, Error>
+    Stat(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<void, Error> Unlink(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
 

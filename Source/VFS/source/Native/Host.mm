@@ -368,24 +368,23 @@ std::expected<std::shared_ptr<VFSFile>, Error> NativeHost::CreateFile(std::strin
     return file;
 }
 
-// return VFSError on error or cancellation
-static int CalculateDirectoriesSizesHelper(char *_path,
-                                           size_t _path_len,
-                                           std::atomic_bool &_iscancelling,
-                                           const VFSCancelChecker &_checker,
-                                           dispatch_queue &_stat_queue,
-                                           std::atomic_int64_t &_size_stock)
+static std::expected<void, Error> CalculateDirectoriesSizesHelper(char *_path,
+                                                                  size_t _path_len,
+                                                                  std::atomic_bool &_iscancelling,
+                                                                  const VFSCancelChecker &_checker,
+                                                                  dispatch_queue &_stat_queue,
+                                                                  std::atomic_uint64_t &_size_stock)
 {
     if( _checker && _checker() ) {
         _iscancelling = true;
-        return VFSError::Cancelled;
+        return std::unexpected(nc::Error{nc::Error::POSIX, ECANCELED});
     }
 
     auto &io = routedio::RoutedIO::InterfaceForAccess(_path, R_OK); // <-- sync IO operation
 
     const auto dirp = io.opendir(_path); // <-- sync IO operation
     if( dirp == nullptr )
-        return VFSError::FromErrno();
+        return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 
     _path[_path_len] = '/';
     _path[_path_len + 1] = 0;
@@ -407,7 +406,7 @@ static int CalculateDirectoriesSizesHelper(char *_path,
 
         memcpy(var, entp->d_name, entp->d_namlen + 1);
         if( entp->d_type == DT_DIR ) {
-            CalculateDirectoriesSizesHelper(
+            std::ignore = CalculateDirectoriesSizesHelper(
                 _path, _path_len + entp->d_namlen + 1, _iscancelling, _checker, _stat_queue, _size_stock);
             if( _iscancelling )
                 goto cleanup;
@@ -429,7 +428,7 @@ static int CalculateDirectoriesSizesHelper(char *_path,
             struct stat st;
             if( io.lstat(_path, &st) == 0 ) { // <-- sync IO operation
                 if( S_ISDIR(st.st_mode) ) {
-                    CalculateDirectoriesSizesHelper(
+                    std::ignore = CalculateDirectoriesSizesHelper(
                         _path, _path_len + entp->d_namlen + 1, _iscancelling, _checker, _stat_queue, _size_stock);
                     if( _iscancelling )
                         goto cleanup;
@@ -444,16 +443,17 @@ static int CalculateDirectoriesSizesHelper(char *_path,
 cleanup:
     io.closedir(dirp); // <-- sync IO operation
     _path[_path_len] = 0;
-    return VFSError::Ok;
+    return {};
 }
 
-ssize_t NativeHost::CalculateDirectorySize(std::string_view _path, const VFSCancelChecker &_cancel_checker)
+std::expected<uint64_t, Error> NativeHost::CalculateDirectorySize(std::string_view _path,
+                                                                  const VFSCancelChecker &_cancel_checker)
 {
     if( _cancel_checker && _cancel_checker() )
-        return VFSError::Cancelled;
+        return std::unexpected(nc::Error{nc::Error::POSIX, ECANCELED});
 
     if( !_path.starts_with("/") )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     std::atomic_bool iscancelling{false};
 
@@ -464,14 +464,14 @@ ssize_t NativeHost::CalculateDirectorySize(std::string_view _path, const VFSCanc
 
     dispatch_queue stat_queue("VFSNativeHost.CalculateDirectoriesSizes");
 
-    std::atomic_int64_t size{0};
-    const int result =
+    std::atomic_uint64_t size{0};
+    const std::expected<void, Error> result =
         CalculateDirectoriesSizesHelper(path, strlen(path), iscancelling, _cancel_checker, stat_queue, size);
     stat_queue.sync([] {});
-    if( result >= 0 )
-        return size;
-    else
-        return result;
+    if( !result )
+        return std::unexpected(result.error());
+
+    return size.load();
 }
 
 bool NativeHost::IsDirectoryChangeObservationAvailable(std::string_view _path)

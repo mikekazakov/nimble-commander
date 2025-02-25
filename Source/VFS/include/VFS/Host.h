@@ -208,9 +208,11 @@ public:
      */
     virtual bool ValidateFilename(std::string_view _filename) const;
 
-    // TODO: describle
-    virtual ssize_t CalculateDirectorySize(std::string_view _path,                        //
-                                           const VFSCancelChecker &_cancel_checker = {}); //
+    // Returns size of all items in a directory, recursively.
+    // The default implementation uses IterateDirectoryListing() and Stat() to calculate the sizes.
+    // Symlinks are not followed.
+    virtual std::expected<uint64_t, Error> CalculateDirectorySize(std::string_view _path,                        //
+                                                                  const VFSCancelChecker &_cancel_checker = {}); //
 
     // TODO: describle
     virtual bool ShouldProduceThumbnails() const;

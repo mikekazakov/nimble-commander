@@ -542,14 +542,14 @@ static void HeatUpConfigValues()
             if( !i.IsDir() )
                 continue;
 
-            const auto result = i.Host()->CalculateDirectorySize(!i.IsDotDot() ? i.Path() : i.Directory(),
-                                                                 [=] { return m_DirectorySizeCountingQ.IsStopped(); });
+            const std::expected<uint64_t, Error> result = i.Host()->CalculateDirectorySize(
+                !i.IsDotDot() ? i.Path() : i.Directory(), [=] { return m_DirectorySizeCountingQ.IsStopped(); });
 
-            if( result < 0 )
+            if( !result )
                 continue; // silently skip items that caused erros while calculating size
 
             calculated.items.emplace_back(i);
-            calculated.sizes.emplace_back(static_cast<uint64_t>(result));
+            calculated.sizes.emplace_back(*result);
         }
 
         if( calculated.items.empty() )

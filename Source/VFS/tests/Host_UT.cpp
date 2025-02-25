@@ -65,6 +65,8 @@ TEST_CASE(PREFIX "FetchSingleItemListing")
     }
 }
 
+// TODO: CalculateDirectorySize
+
 TEST_CASE(PREFIX "Unsupported methods")
 {
     auto host = std::make_shared<Host>("/", nullptr, "dummy");

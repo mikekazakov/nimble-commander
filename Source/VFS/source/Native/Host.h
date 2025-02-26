@@ -58,7 +58,8 @@ public:
 
     void StopObservingFileChanges(unsigned long _token) override;
 
-    ssize_t CalculateDirectorySize(std::string_view _path, const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<uint64_t, Error> CalculateDirectorySize(std::string_view _path,
+                                                          const VFSCancelChecker &_cancel_checker = {}) override;
 
     std::expected<std::string, Error> ReadSymlink(std::string_view _path,
                                                   const VFSCancelChecker &_cancel_checker = {}) override;

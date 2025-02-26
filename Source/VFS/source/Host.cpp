@@ -182,26 +182,27 @@ bool Host::IsSymlink(std::string_view _path, unsigned long _flags, const VFSCanc
     return st && (st->mode & S_IFMT) == S_IFLNK;
 }
 
-ssize_t Host::CalculateDirectorySize(std::string_view _path, const VFSCancelChecker &_cancel_checker)
+std::expected<uint64_t, Error> Host::CalculateDirectorySize(std::string_view _path,
+                                                            const VFSCancelChecker &_cancel_checker)
 {
     if( !_path.starts_with("/") )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     std::queue<std::filesystem::path> look_paths;
-    int64_t total_size = 0;
+    uint64_t total_size = 0;
 
     look_paths.emplace(_path);
     while( !look_paths.empty() ) {
         if( _cancel_checker && _cancel_checker() ) // check if we need to quit
-            return VFSError::Cancelled;
+            return std::unexpected(nc::Error{nc::Error::POSIX, ECANCELED});
 
         // Deliberately ignoring the potential errors
-        std::ignore = IterateDirectoryListing(look_paths.front().c_str(), [&](const VFSDirEnt &_dirent) {
+        std::ignore = IterateDirectoryListing(look_paths.front().native(), [&](const VFSDirEnt &_dirent) {
             std::filesystem::path full_path = look_paths.front() / _dirent.name;
             if( _dirent.type == VFSDirEnt::Dir )
                 look_paths.emplace(std::move(full_path));
             else {
-                if( const std::expected<VFSStat, Error> stat = Stat(full_path.c_str(), VFSFlags::F_NoFollow) )
+                if( const std::expected<VFSStat, Error> stat = Stat(full_path.native(), VFSFlags::F_NoFollow) )
                     total_size += stat->size;
             }
             return true;

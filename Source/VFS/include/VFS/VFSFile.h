@@ -63,6 +63,11 @@ public:
     // Move assignment is disabled
     VFSFile &operator=(const VFSFile &) = delete;
 
+    // Clone() returns an object of the same type with the same parent host and the relative path.
+    // Open status and file positions are not shared.
+    // Can return a null pointer in some cases.
+    virtual std::shared_ptr<VFSFile> Clone() const;
+
     // Opens the file with the specified flags, semantics are similar to POSIX open().
     virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = {});
 
@@ -146,26 +151,24 @@ public:
     // long). This function may cause blocking I/O.
     virtual ssize_t XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const;
 
-    // Clone() returns an object of the same type with the same parent host and the relative path.
-    // Open status and file positions are not shared.
-    // Can return a null pointer in some cases.
-    virtual std::shared_ptr<VFSFile> Clone() const;
-
     // ComposeVerbosePath() relies solely on Host() and VerboseJunctionPath().
     std::string ComposeVerbosePath() const;
 
-    // ReadFile() return the full file content in a vector<uint8_t> or an Error.
+    // ReadFile() returns the full file content in a vector<uint8_t> or an Error.
+    // Helper function, non-virtual.
     std::expected<std::vector<uint8_t>, nc::Error> ReadFile();
-
-    // Will call Write until data ends or an error occurs.
-    // Returns VFSError::Ok on success or error code on failure.
-    int WriteFile(const void *_d, size_t _sz);
 
 #ifdef __OBJC__
     // ReadFileToNSData() returns the full file content in NSData object or nil.
     // It's a syntax sugar wrapper for Cocoa APIs around ReadFile().
+    // Helper function, non-virtual.
     NSData *ReadFileToNSData();
 #endif
+
+    // Will call Write until data ends or an error occurs.
+    // Returns an error on failure.
+    // Helper function, non-virtual.
+    std::expected<void, nc::Error> WriteFile(const void *_d, size_t _sz);
 
     std::shared_ptr<VFSFile> SharedPtr();
     std::shared_ptr<const VFSFile> SharedPtr() const;

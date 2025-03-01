@@ -154,23 +154,22 @@ std::expected<std::vector<uint8_t>, nc::Error> VFSFile::ReadFile()
     return std::move(buf);
 }
 
-int VFSFile::WriteFile(const void *_d, size_t _sz)
+std::expected<void, nc::Error> VFSFile::WriteFile(const void *_d, size_t _sz)
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const uint8_t *d = static_cast<const uint8_t *>(_d);
-    ssize_t r = 0;
     while( _sz > 0 ) {
-        r = Write(d, _sz);
-        if( r >= 0 ) {
+        if( const ssize_t r = Write(d, _sz); r >= 0 ) {
             d += r;
             _sz -= r;
         }
-        else
-            return static_cast<int>(r);
+        else {
+            return std::unexpected(VFSError::ToError(static_cast<int>(r)));
+        }
     }
-    return VFSError::Ok;
+    return {};
 }
 
 ssize_t VFSFile::XAttrGet([[maybe_unused]] const char *_xattr_name,

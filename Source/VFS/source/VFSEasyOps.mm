@@ -289,9 +289,9 @@ std::expected<int, nc::Error> VFSEasyCompareFiles(const char *_file1_full_path,
     if( const int ret = (*file1)->Open(VFSFlags::OF_Read); ret != 0 )
         return std::unexpected(VFSError::ToError(ret));
 
-    const std::optional<std::vector<uint8_t>> data1 = (*file1)->ReadFile();
+    const std::expected<std::vector<uint8_t>, nc::Error> data1 = (*file1)->ReadFile();
     if( !data1 )
-        return std::unexpected((*file1)->LastError().value_or(nc::Error{nc::Error::POSIX, EIO}));
+        return std::unexpected(data1.error());
 
     const std::expected<VFSFilePtr, nc::Error> file2 = _file2_host->CreateFile(_file2_full_path);
     if( !file2 )
@@ -300,9 +300,9 @@ std::expected<int, nc::Error> VFSEasyCompareFiles(const char *_file1_full_path,
     if( const int ret = (*file2)->Open(VFSFlags::OF_Read); ret != 0 )
         return std::unexpected(VFSError::ToError(ret));
 
-    const std::optional<std::vector<uint8_t>> data2 = (*file2)->ReadFile();
+    const std::expected<std::vector<uint8_t>, nc::Error> data2 = (*file2)->ReadFile();
     if( !data2 )
-        return std::unexpected((*file2)->LastError().value_or(nc::Error{nc::Error::POSIX, EIO}));
+        return std::unexpected(data2.error());
 
     if( data1->size() < data2->size() ) {
         return -1;

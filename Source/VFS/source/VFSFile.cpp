@@ -122,16 +122,20 @@ void VFSFile::XAttrIterateNames([[maybe_unused]] const std::function<bool(const 
 {
 }
 
-std::optional<std::vector<uint8_t>> VFSFile::ReadFile()
+std::expected<std::vector<uint8_t>, nc::Error> VFSFile::ReadFile()
 {
     if( !IsOpened() )
-        return std::nullopt;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     if( GetReadParadigm() < ReadParadigm::Seek && Pos() != 0 )
-        return std::nullopt;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
-    if( Pos() != 0 && Seek(Seek_Set, 0) < 0 )
-        return std::nullopt; // can't rewind file
+    if( Pos() != 0 ) {
+        const long seek_rc = Seek(Seek_Set, 0);
+        if( seek_rc < 0 ) {
+            return std::unexpected(VFSError::ToError(static_cast<int>(seek_rc))); // can't rewind the file
+        }
+    }
 
     const uint64_t sz = Size();
     auto buf = std::vector<uint8_t>(sz);
@@ -140,8 +144,9 @@ std::optional<std::vector<uint8_t>> VFSFile::ReadFile()
     uint64_t szleft = sz;
     while( szleft ) {
         const ssize_t r = Read(buftmp, szleft);
-        if( r < 0 )
-            return std::nullopt;
+        if( r < 0 ) {
+            return std::unexpected(VFSError::ToError(static_cast<int>(r)));
+        }
         szleft -= r;
         buftmp += r;
     }

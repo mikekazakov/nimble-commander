@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/QLVFSThumbnailsCacheImpl.h>
 #include <Quartz/Quartz.h>
 #include <filesystem>
@@ -6,7 +6,7 @@
 namespace nc::vfsicon {
 
 static NSImage *ProduceThumbnailForTempFile(const std::string &_path, CGSize _px_size);
-static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_path, VFSHost &_host);
+static std::expected<std::vector<uint8_t>, Error> ReadEntireFile(const std::string &_path, VFSHost &_host);
 
 QLVFSThumbnailsCacheImpl::QLVFSThumbnailsCacheImpl(const std::shared_ptr<utility::BriefOnDiskStorage> &_temp_storage)
     : m_TempStorage(_temp_storage)
@@ -92,14 +92,18 @@ static NSImage *ProduceThumbnailForTempFile(const std::string &_path, CGSize _px
     return result;
 }
 
-static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_path, VFSHost &_host)
+static std::expected<std::vector<uint8_t>, Error> ReadEntireFile(const std::string &_path, VFSHost &_host)
 {
-    if( const std::expected<std::shared_ptr<VFSFile>, Error> file = _host.CreateFile(_path) ) {
-        if( (*file)->Open(VFSFlags::OF_Read) == VFSError::Ok ) {
-            return (*file)->ReadFile();
-        }
+    const std::expected<std::shared_ptr<VFSFile>, Error> file = _host.CreateFile(_path);
+    if( !file )
+        return std::unexpected(file.error());
+
+    if( const int rc = (*file)->Open(VFSFlags::OF_Read); rc == VFSError::Ok ) {
+        return (*file)->ReadFile();
     }
-    return std::nullopt;
+    else {
+        return std::unexpected(VFSError::ToError(rc));
+    }
 }
 
 } // namespace nc::vfsicon

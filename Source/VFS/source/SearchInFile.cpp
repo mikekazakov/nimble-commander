@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SearchInFile.h"
 #include <Utility/Encodings.h>
 #include <VFS/FileWindow.h>
@@ -33,14 +33,14 @@ void SearchInFile::MoveCurrentPosition(uint64_t _pos)
     const auto is_valid = (m_File.FileSize() > 0 && _pos < m_File.FileSize()) || _pos == 0;
     if( !is_valid )
         throw std::out_of_range("SearchInFile::MoveCurrentPosition: invalid index");
-    ;
 
     m_Position = _pos;
 
+    // TODO: what to do when moving fails?
     if( m_File.WindowSize() + m_Position > m_File.FileSize() )
-        m_File.MoveWindow(m_File.FileSize() - m_File.WindowSize());
+        std::ignore = m_File.MoveWindow(m_File.FileSize() - m_File.WindowSize());
     else
-        m_File.MoveWindow(m_Position);
+        std::ignore = m_File.MoveWindow(m_Position);
 }
 
 void SearchInFile::ToggleTextSearch(CFStringRef _string, utility::Encoding _encoding)
@@ -104,7 +104,8 @@ SearchInFile::Response SearchInFile::SearchText(uint64_t *_offset, uint64_t *_by
             window_pos = m_File.FileSize() - m_File.WindowSize();
             left_window_gap = m_Position - window_pos;
         }
-        m_File.MoveWindow(window_pos);
+        if( !m_File.MoveWindow(window_pos) )
+            return Response::IOErr;
         assert(m_Position >= m_File.WindowPos() &&
                m_Position < m_File.WindowPos() + m_File.WindowSize()); // sanity check
 

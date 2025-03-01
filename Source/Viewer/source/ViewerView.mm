@@ -275,7 +275,8 @@ using namespace nc::viewer;
 
 - (void)RequestWindowMovementAt:(uint64_t)_pos
 {
-    m_Data->MoveWindowSync(_pos);
+    // TODO: what to do if this fails?
+    std::ignore = m_Data->MoveWindowSync(_pos);
 }
 
 - (bool)wordWrap

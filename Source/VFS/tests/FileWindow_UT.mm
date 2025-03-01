@@ -171,7 +171,7 @@ TEST_CASE(PREFIX "random access")
 
     for( int i = 0; i < 10000; ++i ) {
         auto pos = dist(mt);
-        fw.MoveWindow(pos);
+        REQUIRE(fw.MoveWindow(pos));
         const int cmp = memcmp(fw.Window(), &data[pos], fw.WindowSize());
         REQUIRE(cmp == 0);
     }
@@ -203,7 +203,7 @@ TEST_CASE(PREFIX "sequential access")
         if( pos > fw.FileSize() - fw.WindowSize() )
             break;
 
-        fw.MoveWindow(pos);
+        REQUIRE(fw.MoveWindow(pos));
     }
 }
 
@@ -226,7 +226,7 @@ TEST_CASE(PREFIX "seek access")
 
     for( int i = 0; i < 10000; ++i ) {
         auto pos = dist(mt);
-        fw.MoveWindow(pos);
+        REQUIRE(fw.MoveWindow(pos));
         const int cmp = memcmp(fw.Window(), &data[pos], fw.WindowSize());
         REQUIRE(cmp == 0);
     }

@@ -60,7 +60,7 @@ int File::Close()
     }
 
     const std::optional<Error> last_error = LastError();
-    
+
     ClearLastError();
     m_OpenFlags = 0;
     m_FilePos = 0;

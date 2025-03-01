@@ -6,9 +6,9 @@ namespace nc::vfs {
 
 FileWindow::FileWindow(const std::shared_ptr<VFSFile> &_file, int _window_size)
 {
-    const auto rc = Attach(_file, _window_size);
-    if( rc != VFSError::Ok )
-        throw ErrorException{VFSError::ToError(rc)};
+    const std::expected<void, Error> rc = Attach(_file, _window_size);
+    if( !rc )
+        throw ErrorException{rc.error()};
 }
 
 bool FileWindow::FileOpened() const
@@ -16,13 +16,13 @@ bool FileWindow::FileOpened() const
     return m_Window != nullptr;
 }
 
-int FileWindow::Attach(const std::shared_ptr<VFSFile> &_file, int _window_size)
+std::expected<void, Error> FileWindow::Attach(const std::shared_ptr<VFSFile> &_file, int _window_size)
 {
     if( !_file->IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( _file->GetReadParadigm() == VFSFile::ReadParadigm::NoRead )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     m_File = _file;
     m_WindowSize = std::min(m_File->Size(), static_cast<ssize_t>(_window_size));
@@ -32,15 +32,15 @@ int FileWindow::Attach(const std::shared_ptr<VFSFile> &_file, int _window_size)
     if( m_File->GetReadParadigm() == VFSFile::ReadParadigm::Random ) {
         const int ret = ReadFileWindowRandomPart(0, m_WindowSize);
         if( ret < 0 )
-            return ret;
+            return std::unexpected(VFSError::ToError(ret));
     }
     else {
         const int ret = ReadFileWindowSeqPart(0, m_WindowSize);
         if( ret < 0 )
-            return ret;
+            return std::unexpected(VFSError::ToError(ret));
     }
 
-    return VFSError::Ok;
+    return {};
 }
 
 int FileWindow::CloseFile()
@@ -185,6 +185,35 @@ int FileWindow::DoMoveWindowSeqential(size_t _offset)
     }
     else // invalid case - moving back was requested
         return VFSError::InvalidCall;
+}
+
+size_t FileWindow::FileSize() const
+{
+    assert(FileOpened());
+    return m_File->Size();
+}
+
+const void *FileWindow::Window() const
+{
+    assert(FileOpened());
+    return m_Window.get();
+}
+
+size_t FileWindow::WindowSize() const
+{
+    assert(FileOpened());
+    return m_WindowSize;
+}
+
+size_t FileWindow::WindowPos() const
+{
+    assert(FileOpened());
+    return m_WindowPos;
+}
+
+const VFSFilePtr &FileWindow::File() const
+{
+    return m_File;
 }
 
 } // namespace nc::vfs

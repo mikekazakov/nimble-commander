@@ -1,8 +1,7 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "VFSFile.h"
-#include <assert.h>
 
 namespace nc::vfs {
 
@@ -25,12 +24,9 @@ public:
      */
     FileWindow(const std::shared_ptr<VFSFile> &_file, int _window_size = DefaultWindowSize);
 
-    /**
-     * For files with Sequential and Seek read paradigms, FileWindow needs exclusive access to
-     * VFSFile, so that no one else can touch it's seek pointers.
-     * Returns VFSError.
-     */
-    int Attach(const std::shared_ptr<VFSFile> &_file, int _window_size = DefaultWindowSize);
+    // For files with Sequential and Seek read paradigms, FileWindow needs exclusive access to VFSFile, so that no one
+    // else can touch it's seek pointers.
+    std::expected<void, Error> Attach(const std::shared_ptr<VFSFile> &_file, int _window_size = DefaultWindowSize);
 
     /**
      * Closes the VFSFile pointer and the memory buffer.
@@ -88,34 +84,5 @@ private:
     size_t m_WindowSize = std::numeric_limits<size_t>::max();
     size_t m_WindowPos = std::numeric_limits<size_t>::max();
 };
-
-inline size_t FileWindow::FileSize() const
-{
-    assert(FileOpened());
-    return m_File->Size();
-}
-
-inline const void *FileWindow::Window() const
-{
-    assert(FileOpened());
-    return m_Window.get();
-}
-
-inline size_t FileWindow::WindowSize() const
-{
-    assert(FileOpened());
-    return m_WindowSize;
-}
-
-inline size_t FileWindow::WindowPos() const
-{
-    assert(FileOpened());
-    return m_WindowPos;
-}
-
-inline const VFSFilePtr &FileWindow::File() const
-{
-    return m_File;
-}
 
 } // namespace nc::vfs

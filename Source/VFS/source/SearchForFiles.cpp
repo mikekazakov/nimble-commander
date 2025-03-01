@@ -215,7 +215,7 @@ bool SearchForFiles::FilterByContent(const char *_full_path, VFSHost &_in_host, 
     NotifyLookingIn(_full_path, _in_host);
 
     nc::vfs::FileWindow fw;
-    if( fw.Attach(*file) != 0 )
+    if( !fw.Attach(*file) )
         return false;
 
     utility::Encoding encoding = m_FilterContent->encoding;

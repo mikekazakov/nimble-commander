@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -163,8 +163,7 @@ TEST_CASE(PREFIX "random access")
     vfs_file->Open(0, nullptr);
 
     FileWindow fw;
-    const int ret = fw.Attach(vfs_file);
-    REQUIRE(ret == 0);
+    REQUIRE(fw.Attach(vfs_file));
 
     std::mt19937 mt((std::random_device())());
     std::uniform_int_distribution<size_t> dist(0, fw.FileSize() - fw.WindowSize());
@@ -189,8 +188,7 @@ TEST_CASE(PREFIX "sequential access")
     vfs_file->Open(0, nullptr);
 
     FileWindow fw;
-    const int ret = fw.Attach(vfs_file);
-    REQUIRE(ret == 0);
+    REQUIRE(fw.Attach(vfs_file));
 
     std::mt19937 mt((std::random_device())());
     std::uniform_int_distribution<size_t> dist(0, fw.WindowSize() * 10);
@@ -220,8 +218,7 @@ TEST_CASE(PREFIX "seek access")
     vfs_file->Open(0, nullptr);
 
     FileWindow fw;
-    const int ret = fw.Attach(vfs_file);
-    REQUIRE(ret == 0);
+    REQUIRE(fw.Attach(vfs_file));
 
     std::mt19937 mt((std::random_device())());
     std::uniform_int_distribution<size_t> dist(0, fw.FileSize() - fw.WindowSize());

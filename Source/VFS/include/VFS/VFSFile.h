@@ -24,7 +24,7 @@ public:
         // Classic I/O - can seek and sequentially read the requested data.
         Seek = 2,
 
-        // The worst variant - can only read file sequentially from the beginning
+        // The worst variant - can only read a file sequentially from the beginning
         // (http downloading without resuming for example)
         // Should also support Skip operation, which can be not cheap.
         Sequential = 1,
@@ -34,19 +34,19 @@ public:
     };
 
     enum class WriteParadigm {
-        // ...
+        // Supports writing at a random offset, not currently implemented.
         Random = 4,
 
-        // ...
+        // Classic I/O - can seek and sequentially write the requested data.
         Seek = 3,
 
-        // ...
+        // Can only write a file sequentially from the beginning.
         Sequential = 2,
 
-        // ...
+        // The client code needs to specify the full size of the data that will be written in advance.
         Upload = 1,
 
-        // ...
+        // This file cannot be written to.
         NoWrite = 0
     };
 
@@ -62,6 +62,18 @@ public:
 
     // Move assignment is disabled
     VFSFile &operator=(const VFSFile &) = delete;
+
+    // Syntax sugar around shared_from_this().
+    std::shared_ptr<VFSFile> SharedPtr();
+
+    // Syntax sugar around shared_from_this().
+    std::shared_ptr<const VFSFile> SharedPtr() const;
+
+    // Returns the path of this file.
+    const char *Path() const noexcept;
+
+    // Returns the host to which this file belongs to.
+    const std::shared_ptr<VFSHost> &Host() const;
 
     // Clone() returns an object of the same type with the same parent host and the relative path.
     // Open status and file positions are not shared.
@@ -169,11 +181,6 @@ public:
     // Returns an error on failure.
     // Helper function, non-virtual.
     std::expected<void, nc::Error> WriteFile(const void *_d, size_t _sz);
-
-    std::shared_ptr<VFSFile> SharedPtr();
-    std::shared_ptr<const VFSFile> SharedPtr() const;
-    const char *Path() const noexcept;
-    const std::shared_ptr<VFSHost> &Host() const;
 
 protected:
     // TODO: remove this

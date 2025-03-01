@@ -30,14 +30,12 @@ std::expected<void, Error> FileWindow::Attach(const std::shared_ptr<VFSFile> &_f
     m_WindowPos = 0;
 
     if( m_File->GetReadParadigm() == VFSFile::ReadParadigm::Random ) {
-        const int ret = ReadFileWindowRandomPart(0, m_WindowSize);
-        if( ret < 0 )
-            return std::unexpected(VFSError::ToError(ret));
+        if( const std::expected<void, Error> ret = ReadFileWindowRandomPart(0, m_WindowSize); !ret )
+            return std::unexpected(ret.error());
     }
     else {
-        const int ret = ReadFileWindowSeqPart(0, m_WindowSize);
-        if( ret < 0 )
-            return std::unexpected(VFSError::ToError(ret));
+        if( const std::expected<void, Error> ret = ReadFileWindowSeqPart(0, m_WindowSize); !ret )
+            return std::unexpected(ret.error());
     }
 
     return {};
@@ -52,58 +50,58 @@ int FileWindow::CloseFile()
     return VFSError::Ok;
 }
 
-int FileWindow::ReadFileWindowRandomPart(size_t _offset, size_t _len)
+std::expected<void, Error> FileWindow::ReadFileWindowRandomPart(size_t _offset, size_t _len)
 {
     if( _len == 0 )
-        return VFSError::Ok;
+        return {};
 
     if( _offset + _len > m_WindowSize )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const ssize_t readret = m_File->ReadAt(m_WindowPos + _offset, m_Window.get() + _offset, _len);
     if( readret < 0 )
-        return static_cast<int>(readret);
+        return std::unexpected(VFSError::ToError(static_cast<int>(readret)));
 
     if( readret == 0 )
-        return VFSError::UnexpectedEOF;
+        return std::unexpected(Error{Error::POSIX, EIO});
 
     if( static_cast<size_t>(readret) < _len )
         return ReadFileWindowRandomPart(_offset + readret, _len - readret);
 
-    return VFSError::Ok;
+    return {};
 }
 
-int FileWindow::ReadFileWindowSeqPart(size_t _offset, size_t _len)
+std::expected<void, Error> FileWindow::ReadFileWindowSeqPart(size_t _offset, size_t _len)
 {
     if( _len == 0 )
-        return VFSError::Ok;
+        return {};
 
     if( _offset + _len > m_WindowSize )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const ssize_t readret = m_File->Read(m_Window.get() + _offset, _len);
     if( readret < 0 )
-        return static_cast<int>(readret);
+        return std::unexpected(VFSError::ToError(static_cast<int>(readret)));
 
     if( readret == 0 )
-        return VFSError::UnexpectedEOF;
+        return std::unexpected(Error{Error::POSIX, EIO});
 
     if( static_cast<size_t>(readret) < _len )
         return ReadFileWindowSeqPart(_offset + readret, _len - readret);
 
-    return VFSError::Ok;
+    return {};
 }
 
-int FileWindow::MoveWindow(size_t _offset)
+std::expected<void, Error> FileWindow::MoveWindow(size_t _offset)
 {
     if( !FileOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( _offset == m_WindowPos )
-        return VFSError::Ok;
+        return {};
 
     if( _offset + m_WindowSize > static_cast<size_t>(m_File->Size()) )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     switch( m_File->GetReadParadigm() ) {
         case VFSFile::ReadParadigm::Random:
@@ -113,13 +111,13 @@ int FileWindow::MoveWindow(size_t _offset)
         case VFSFile::ReadParadigm::Sequential:
             return DoMoveWindowSeqential(_offset);
         case VFSFile::ReadParadigm::NoRead:
-            return VFSError::InvalidCall;
+            return std::unexpected(Error{Error::POSIX, EINVAL});
     }
 
-    return VFSError::InvalidCall;
+    return std::unexpected(Error{Error::POSIX, EINVAL});
 }
 
-int FileWindow::DoMoveWindowRandom(size_t _offset)
+std::expected<void, Error> FileWindow::DoMoveWindowRandom(size_t _offset)
 {
     // check for overlapping window movements
     if( _offset >= m_WindowPos && _offset <= m_WindowPos + m_WindowSize ) {
@@ -145,18 +143,18 @@ int FileWindow::DoMoveWindowRandom(size_t _offset)
     }
 }
 
-int FileWindow::DoMoveWindowSeek(size_t _offset)
+std::expected<void, Error> FileWindow::DoMoveWindowSeek(size_t _offset)
 {
     // TODO: not efficient implementation, update me
     const ssize_t ret = m_File->Seek(_offset, VFSFile::Seek_Set);
     if( ret < 0 )
-        return static_cast<int>(ret);
+        return std::unexpected(VFSError::ToError(static_cast<int>(ret)));
 
     m_WindowPos = _offset;
     return ReadFileWindowSeqPart(0, m_WindowSize);
 }
 
-int FileWindow::DoMoveWindowSeqential(size_t _offset)
+std::expected<void, Error> FileWindow::DoMoveWindowSeqential(size_t _offset)
 {
     // check for possible variants
     if( _offset >= m_WindowPos && _offset <= m_WindowPos + m_WindowSize ) {
@@ -165,8 +163,8 @@ int FileWindow::DoMoveWindowSeqential(size_t _offset)
         const size_t off = m_WindowSize - (_offset - m_WindowPos);
         const size_t len = _offset - m_WindowPos;
         m_WindowPos = _offset;
-        const int ret = ReadFileWindowSeqPart(off, len);
-        if( ret == 0 )
+        const std::expected<void, Error> ret = ReadFileWindowSeqPart(off, len);
+        if( ret )
             assert(ssize_t(m_WindowPos + m_WindowSize) == m_File->Pos());
         return ret;
     }
@@ -175,16 +173,15 @@ int FileWindow::DoMoveWindowSeqential(size_t _offset)
         assert(m_File->Pos() < ssize_t(_offset));
         const size_t to_skip = _offset - m_File->Pos();
 
-        int ret = static_cast<int>(m_File->Skip(to_skip));
-        if( ret < 0 )
-            return ret;
+        if( const int ret = static_cast<int>(m_File->Skip(to_skip)); ret < 0 )
+            return std::unexpected(VFSError::ToError(ret));
 
         m_WindowPos = _offset;
-        ret = ReadFileWindowSeqPart(0, m_WindowSize);
-        return ret;
+        return ReadFileWindowSeqPart(0, m_WindowSize);
+        ;
     }
     else // invalid case - moving back was requested
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 }
 
 size_t FileWindow::FileSize() const

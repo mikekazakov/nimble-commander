@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DataBackend.h"
 #include <Utility/Encodings.h>
 #include <Utility/PathManip.h>
@@ -39,17 +39,16 @@ void DataBackend::SetEncoding(utility::Encoding _encoding)
     }
 }
 
-int DataBackend::MoveWindowSync(uint64_t _pos)
+std::expected<void, Error> DataBackend::MoveWindowSync(uint64_t _pos)
 {
     if( _pos == m_FileWindow->WindowPos() )
-        return 0; // nothing to do
+        return {}; // nothing to do
 
-    const int ret = m_FileWindow->MoveWindow(_pos);
-    if( ret < 0 )
+    if( const std::expected<void, Error> ret = m_FileWindow->MoveWindow(_pos); !ret )
         return ret;
 
     DecodeBuffer();
-    return 0;
+    return {};
 }
 
 std::filesystem::path DataBackend::FileName() const

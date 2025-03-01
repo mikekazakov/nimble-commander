@@ -329,7 +329,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
                        static_cast<int64_t>(m_Backend->FileSize()) - static_cast<int64_t>(m_Backend->RawSize()));
 
         const auto rc = [self.delegate hexModeView:self requestsSyncBackendWindowMovementAt:desired_wnd_pos];
-        if( rc != VFSError::Ok )
+        if( !rc )
             return false;
 
         [self rebuildWorkingSetAndFrame];
@@ -423,7 +423,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
                        static_cast<int64_t>(m_Backend->FileSize() - m_Backend->RawSize()));
 
         const auto rc = [self.delegate hexModeView:self requestsSyncBackendWindowMovementAt:desired_window_offset];
-        if( rc != VFSError::Ok )
+        if( !rc )
             return false;
 
         [self rebuildWorkingSetAndFrame];
@@ -468,7 +468,7 @@ static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState(
             return false; // singular situation. don't handle for now.
 
         const auto rc = [self.delegate hexModeView:self requestsSyncBackendWindowMovementAt:desired_window_offset];
-        if( rc != VFSError::Ok )
+        if( !rc )
             return false;
 
         [self rebuildWorkingSetAndFrame];

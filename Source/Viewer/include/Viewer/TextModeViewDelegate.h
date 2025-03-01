@@ -1,15 +1,15 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
+#include <Base/Error.h>
 @class NCViewerTextModeView;
 
 @protocol NCViewerTextModeViewDelegate <NSObject>
 
-/**
- * Returns a VFS error code.
- */
-- (int)textModeView:(NCViewerTextModeView *)_view requestsSyncBackendWindowMovementAt:(int64_t)_position;
+// ...
+- (std::expected<void, nc::Error>)textModeView:(NCViewerTextModeView *)_view
+           requestsSyncBackendWindowMovementAt:(int64_t)_position;
 
 - (void)textModeView:(NCViewerTextModeView *)_view
     didScrollAtGlobalBytePosition:(int64_t)_position

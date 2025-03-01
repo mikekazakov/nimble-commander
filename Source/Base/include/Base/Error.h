@@ -7,6 +7,7 @@
 #include <exception>
 #include <iosfwd>
 #include <optional>
+#include <expected>
 #include <Base/intrusive_ptr.h>
 #include <fmt/format.h>
 

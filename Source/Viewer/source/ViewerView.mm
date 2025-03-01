@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerView.h"
 #include "Highlighting/SettingsStorage.h"
 #include <Utility/HexadecimalColor.h>
@@ -585,21 +585,22 @@ using namespace nc::viewer;
     }
 }
 
-- (int)textModeView:(NCViewerTextModeView *) [[maybe_unused]] _view
-    requestsSyncBackendWindowMovementAt:(int64_t)_position
+- (std::expected<void, nc::Error>)textModeView:(NCViewerTextModeView *) [[maybe_unused]] _view
+           requestsSyncBackendWindowMovementAt:(int64_t)_position
 {
     return [self moveBackendWindowSyncAt:_position notifyView:false];
 }
 
-- (int)hexModeView:(NCViewerHexModeView *) [[maybe_unused]] _view requestsSyncBackendWindowMovementAt:(int64_t)_position
+- (std::expected<void, nc::Error>)hexModeView:(NCViewerHexModeView *) [[maybe_unused]] _view
+          requestsSyncBackendWindowMovementAt:(int64_t)_position
 {
     return [self moveBackendWindowSyncAt:_position notifyView:false];
 }
 
-- (int)moveBackendWindowSyncAt:(int64_t)_position notifyView:(bool)_notify_view
+- (std::expected<void, Error>)moveBackendWindowSyncAt:(int64_t)_position notifyView:(bool)_notify_view
 {
     const auto rc = m_Data->MoveWindowSync(_position);
-    if( rc == VFSError::Ok ) {
+    if( rc ) {
         // ... callout
         if( _notify_view ) {
             if( [m_View respondsToSelector:@selector(backendContentHasChanged)] )

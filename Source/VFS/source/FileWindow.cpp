@@ -172,12 +172,11 @@ std::expected<void, Error> FileWindow::DoMoveWindowSeqential(size_t _offset)
         assert(m_File->Pos() < ssize_t(_offset));
         const size_t to_skip = _offset - m_File->Pos();
 
-        if( const int ret = static_cast<int>(m_File->Skip(to_skip)); ret < 0 )
-            return std::unexpected(VFSError::ToError(ret));
+        if( const std::expected<void, nc::Error> ret = m_File->Skip(to_skip); !ret )
+            return ret;
 
         m_WindowPos = _offset;
         return ReadFileWindowSeqPart(0, m_WindowSize);
-        ;
     }
     else // invalid case - moving back was requested
         return std::unexpected(Error{Error::POSIX, EINVAL});

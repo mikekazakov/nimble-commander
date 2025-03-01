@@ -179,22 +179,20 @@ ssize_t VFSFile::XAttrGet([[maybe_unused]] const char *_xattr_name,
     return SetLastError(VFSError::NotSupported);
 }
 
-ssize_t VFSFile::Skip(size_t _size)
+std::expected<void, nc::Error> VFSFile::Skip(size_t _size)
 {
     const size_t trash_size = 32768;
     static char trash[trash_size];
-    size_t skipped = 0;
 
     while( _size > 0 ) {
         const ssize_t r = Read(trash, std::min(_size, trash_size));
         if( r < 0 )
-            return r;
+            return std::unexpected(VFSError::ToError(static_cast<int>(r)));
         if( r == 0 )
-            return VFSError::UnexpectedEOF;
+            return std::unexpected(nc::Error{nc::Error::POSIX, EIO});
         _size -= r;
-        skipped += r;
     }
-    return skipped;
+    return {};
 }
 
 int VFSFile::SetUploadSize([[maybe_unused]] size_t _size)

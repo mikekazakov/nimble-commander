@@ -114,8 +114,8 @@ public:
     // Returnes the amount of bytes written or negative value for errors.
     virtual ssize_t Write(const void *_buf, size_t _size);
 
-    // ...
-    virtual ssize_t Skip(size_t _size);
+    // Reads and discards _size bytes.
+    virtual std::expected<void, nc::Error> Skip(size_t _size);
 
     // ReadAt is available only on Random level.
     // It will not move any file pointers.

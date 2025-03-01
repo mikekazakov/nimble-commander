@@ -35,9 +35,7 @@ TEST_CASE(PREFIX "upload and compare")
     REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host) == 0);
 
     // compare it with origin
-    int compare = 0;
-    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
-    REQUIRE(compare == 0);
+    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host) == 0);
 
     // check that it appeared in stat cache
     REQUIRE(host->Stat(fn2, 0));

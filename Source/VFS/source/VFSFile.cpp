@@ -1,10 +1,10 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSFile.h"
 #include "../include/VFS/VFSError.h"
 #include "../include/VFS/Host.h"
 
 VFSFile::VFSFile(std::string_view _relative_path, const VFSHostPtr &_host)
-    : m_RelativePath(_relative_path), m_Host(_host), m_LastError(VFSError::Ok)
+    : m_RelativePath(_relative_path), m_Host(_host)
 {
 }
 
@@ -64,26 +64,32 @@ int VFSFile::Open(unsigned long /*unused*/, const VFSCancelChecker & /*unused*/)
 {
     return SetLastError(VFSError::NotSupported);
 }
+
 int VFSFile::Close()
 {
     return SetLastError(VFSError::NotSupported);
 }
+
 off_t VFSFile::Seek(off_t /*unused*/, int /*unused*/)
 {
     return SetLastError(VFSError::NotSupported);
 }
+
 ssize_t VFSFile::Pos() const
 {
     return SetLastError(VFSError::NotSupported);
 }
+
 ssize_t VFSFile::Size() const
 {
     return SetLastError(VFSError::NotSupported);
 }
+
 bool VFSFile::Eof() const
 {
     return true;
 }
+
 std::shared_ptr<VFSFile> VFSFile::Clone() const
 {
     return {};
@@ -194,10 +200,22 @@ int VFSFile::SetUploadSize([[maybe_unused]] size_t _size)
 
 int VFSFile::SetLastError(int _error) const
 {
-    return m_LastError = _error;
+    SetLastError(VFSError::ToError(_error));
+    return _error;
 }
 
-int VFSFile::LastError() const
+std::unexpected<nc::Error> VFSFile::SetLastError(nc::Error _error) const
+{
+    m_LastError = _error;
+    return std::unexpected<nc::Error>(_error);
+}
+
+void VFSFile::ClearLastError() const
+{
+    m_LastError.reset();
+}
+
+std::optional<nc::Error> VFSFile::LastError() const
 {
     return m_LastError;
 }

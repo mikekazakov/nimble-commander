@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include "VFSError.h"
 #include "VFSDeclarations.h"
+#include <Base/Error.h>
+#include <optional>
 
 #ifdef __OBJC__
 #include <Foundation/Foundation.h>
@@ -46,11 +48,19 @@ public:
         NoWrite = 0
     };
 
+    // ...
     VFSFile(std::string_view _relative_path, const VFSHostPtr &_host);
+
+    // ...
     virtual ~VFSFile();
 
-    virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = nullptr);
+    // ...
+    virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = {});
+
+    // ...
     virtual bool IsOpened() const;
+
+    // ...
     virtual int Close();
 
     /**
@@ -62,7 +72,11 @@ public:
      * Return available read paradigm. Should return some considerable value even on non-opened files.
      */
     virtual ReadParadigm GetReadParadigm() const;
+
+    // ...
     virtual WriteParadigm GetWriteParadigm() const;
+
+    // ...
     virtual ssize_t Read(void *_buf, size_t _size);
 
     /**
@@ -116,11 +130,10 @@ public:
     virtual bool Eof() const;
 
     /**
-     * LastError() return last VFSError occured for this VFSFile.
-     * Should be overwritten only when error occurs,
-     * normal workflow won't overwrite the last error code.
+     * LastError() return last Error occured for this VFSFile.
+     * Should be overwritten only when error occurs, normal workflow won't overwrite the last error code.
      */
-    int LastError() const;
+    std::optional<nc::Error> LastError() const;
 
     /**
      * XAttrCount() should be always available, returning 0 on non-supported case.
@@ -192,6 +205,12 @@ protected:
      */
     int SetLastError(int _error) const;
 
+    // ...
+    std::unexpected<nc::Error> SetLastError(nc::Error _error) const;
+
+    // ...
+    void ClearLastError() const;
+
 private:
     std::string m_RelativePath;
     std::shared_ptr<VFSHost> m_Host;
@@ -200,7 +219,7 @@ private:
      * m_LastError should be set when any error occurs.
      * This storage is not per-thread - concurrent accesses may overwrite it.
      */
-    mutable std::atomic_int m_LastError;
+    mutable std::optional<nc::Error> m_LastError;
 
     // forbid copying
     VFSFile(const VFSFile &) = delete;

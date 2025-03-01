@@ -35,8 +35,8 @@ struct CompressionJobCallbacks {
     std::function<SourceReadErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_SourceReadError =
         [](int, const std::string &, VFSHost &) { return SourceReadErrorResolution::Stop; };
 
-    std::function<void(int _err, const std::string &_path, VFSHost &_vfs)> m_TargetWriteError =
-        [](int, const std::string &, VFSHost &) {};
+    std::function<void(Error _err, const std::string &_path, VFSHost &_vfs)> m_TargetWriteError =
+        [](Error, const std::string &, VFSHost &) {};
 };
 
 class CompressionJob final : public Job, public CompressionJobCallbacks

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include "Aux.h"
 #include "FileUploadStream.h"
@@ -59,15 +59,13 @@ int File::Close()
         }
     }
 
-    const int rc = LastError();
-
-    SetLastError(VFSError::Ok);
+    ClearLastError();
     m_OpenFlags = 0;
     m_FilePos = 0;
     m_FileSize = -1;
     m_State = Cold;
 
-    return rc;
+    return 0;
 }
 
 NSURLRequest *File::BuildDownloadRequest() const
@@ -108,7 +106,8 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
 
         WaitForDownloadResponse();
 
-        return m_State == Downloading ? VFSError::Ok : LastError();
+        // TODO: use LastError() error instead
+        return m_State == Downloading ? VFSError::Ok : /*LastError()*/ VFSError::InvalidCall;
     }
     if( (_open_flags & VFSFlags::OF_Write) == VFSFlags::OF_Write ) {
         m_OpenFlags = _open_flags;
@@ -211,7 +210,9 @@ ssize_t File::Read(void *_buf, size_t _size)
         std::unique_lock<std::mutex> lk(m_SignalLock);
         m_Signal.wait(lk);
     } while( m_State == Downloading );
-    return LastError();
+
+    // TODO: return LastError instead
+    return /*LastError()*/ VFSError::InvalidCall;
 }
 
 bool File::IsOpened() const
@@ -547,8 +548,10 @@ ssize_t File::Write(const void *_buf, size_t _size)
     PushUploadDataIntoFIFOAndNotifyStream(_buf, to_write);
     const auto eaten = WaitForUploadBufferConsumption();
 
-    if( m_State != Uploading )
-        return LastError();
+    if( m_State != Uploading ) {
+        // TODO: return LastError() instead
+        return /*LastError()*/ VFSError::InvalidCall;
+    }
 
     m_FilePos += eaten;
 
@@ -571,8 +574,10 @@ ssize_t File::Write(const void *_buf, size_t _size)
             m_Upload->delegate.handleReceivedData = nullptr;
             m_Upload->delegate.handleFinished = nullptr;
 
-            if( m_State != Uploading )
-                return LastError();
+            if( m_State != Uploading ) {
+                // TODO: return LastError() instead
+                return /*LastError()*/ VFSError::InvalidCall;
+            }
         }
 
         if( m_Upload->part_no >= 1 && m_Upload->part_no < m_Upload->parts_count - 1 ) {
@@ -584,8 +589,10 @@ ssize_t File::Write(const void *_buf, size_t _size)
             };
             WaitForAppendToComplete();
 
-            if( m_State != Uploading )
-                return LastError();
+            if( m_State != Uploading ) {
+                // TODO: return LastError() instead
+                return /*LastError()*/ VFSError::InvalidCall;
+            }
         }
 
         if( m_Upload->part_no + 1 < m_Upload->parts_count - 1 )

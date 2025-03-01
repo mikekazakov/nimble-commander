@@ -273,45 +273,46 @@ int VFSEasyCopyNode(const char *_src_full_path,
     }
 }
 
-int VFSEasyCompareFiles(const char *_file1_full_path,
-                        std::shared_ptr<VFSHost> _file1_host,
-                        const char *_file2_full_path,
-                        std::shared_ptr<VFSHost> _file2_host,
-                        int &_result)
+std::expected<int, nc::Error> VFSEasyCompareFiles(const char *_file1_full_path,
+                                                  std::shared_ptr<VFSHost> _file1_host,
+                                                  const char *_file2_full_path,
+                                                  std::shared_ptr<VFSHost> _file2_host)
 {
     if( _file1_full_path == nullptr || _file1_full_path[0] != '/' || !_file1_host || _file2_full_path == nullptr ||
         _file2_full_path[0] != '/' || !_file2_host )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const std::expected<VFSFilePtr, nc::Error> file1 = _file1_host->CreateFile(_file1_full_path);
     if( !file1 )
-        return VFSError::GenericError; // TODO: return file1
+        return std::unexpected(file1.error());
+
     if( const int ret = (*file1)->Open(VFSFlags::OF_Read); ret != 0 )
-        return ret;
+        return std::unexpected(VFSError::ToError(ret));
+
     const std::optional<std::vector<uint8_t>> data1 = (*file1)->ReadFile();
     if( !data1 )
-        return (*file1)->LastError();
+        return std::unexpected((*file1)->LastError().value_or(nc::Error{nc::Error::POSIX, EIO}));
 
     const std::expected<VFSFilePtr, nc::Error> file2 = _file2_host->CreateFile(_file2_full_path);
     if( !file2 )
-        return VFSError::GenericError; // TODO: return file2
+        return std::unexpected(file2.error());
+
     if( const int ret = (*file2)->Open(VFSFlags::OF_Read); ret != 0 )
-        return ret;
+        return std::unexpected(VFSError::ToError(ret));
+
     const std::optional<std::vector<uint8_t>> data2 = (*file2)->ReadFile();
     if( !data2 )
-        return (*file2)->LastError();
+        return std::unexpected((*file2)->LastError().value_or(nc::Error{nc::Error::POSIX, EIO}));
 
     if( data1->size() < data2->size() ) {
-        _result = -1;
-        return 0;
+        return -1;
     }
-    if( data1->size() > data2->size() ) {
-        _result = 1;
-        return 0;
+    else if( data1->size() > data2->size() ) {
+        return 1;
     }
-
-    _result = memcmp(data1->data(), data2->data(), data1->size());
-    return 0;
+    else {
+        return memcmp(data1->data(), data2->data(), data1->size());
+    }
 }
 
 std::expected<void, nc::Error> VFSEasyDelete(const char *_full_path, const std::shared_ptr<VFSHost> &_host)

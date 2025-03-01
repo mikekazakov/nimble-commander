@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSSeqToRandomWrapper.h"
 #include "../include/VFS/VFSError.h"
 #include <Base/CommonPaths.h>
@@ -200,19 +200,19 @@ bool VFSSeqToRandomROWrapperFile::IsOpened() const
 
 ssize_t VFSSeqToRandomROWrapperFile::Read(void *_buf, size_t _size)
 {
-    const ssize_t result = ReadAt(m_Pos, _buf, _size);
-    if( result >= 0 )
-        m_Pos += result;
-    return result;
+    const std::expected<size_t, nc::Error> result = ReadAt(m_Pos, _buf, _size);
+    if( result )
+        m_Pos += *result;
+    return /*result*/ -1; // TODO: return result
 }
 
-ssize_t VFSSeqToRandomROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size)
+std::expected<size_t, nc::Error> VFSSeqToRandomROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     if( _pos < 0 || _pos > m_Backend->m_Size )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     if( m_Backend->m_DataBuf ) {
         const ssize_t toread = std::min(m_Backend->m_Size - _pos, static_cast<off_t>(_size));
@@ -225,10 +225,11 @@ ssize_t VFSSeqToRandomROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size
         if( res >= 0 )
             return res;
         else
-            return VFSError::FromErrno(errno);
+            return std::unexpected(nc::Error{nc::Error::POSIX, errno});
+        ;
     }
     assert(0);
-    return VFSError::GenericError;
+    return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 }
 
 off_t VFSSeqToRandomROWrapperFile::Seek(off_t _off, int _basis)

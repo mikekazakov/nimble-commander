@@ -14,11 +14,10 @@ int VFSEasyCopyFile(const char *_src_full_path,
                     const char *_dst_full_path,
                     std::shared_ptr<VFSHost> _dst_host);
 
-int VFSEasyCompareFiles(const char *_file1_full_path,
-                        std::shared_ptr<VFSHost> _file1_host,
-                        const char *_file2_full_path,
-                        std::shared_ptr<VFSHost> _file2_host,
-                        int &_result);
+std::expected<int, nc::Error> VFSEasyCompareFiles(const char *_file1_full_path,
+                                                  std::shared_ptr<VFSHost> _file1_host,
+                                                  const char *_file2_full_path,
+                                                  std::shared_ptr<VFSHost> _file2_host);
 
 /**
  * Will delete an entry at _full_path.

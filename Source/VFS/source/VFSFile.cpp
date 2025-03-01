@@ -1,10 +1,10 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSFile.h"
 #include "../include/VFS/VFSError.h"
 #include "../include/VFS/Host.h"
 
 VFSFile::VFSFile(std::string_view _relative_path, const VFSHostPtr &_host)
-    : m_RelativePath(_relative_path), m_Host(_host), m_LastError(VFSError::Ok)
+    : m_RelativePath(_relative_path), m_Host(_host)
 {
 }
 
@@ -50,9 +50,10 @@ ssize_t VFSFile::Write([[maybe_unused]] const void *_buf, [[maybe_unused]] size_
     return SetLastError(VFSError::NotSupported);
 }
 
-ssize_t VFSFile::ReadAt([[maybe_unused]] off_t _pos, [[maybe_unused]] void *_buf, [[maybe_unused]] size_t _size)
+std::expected<size_t, nc::Error>
+VFSFile::ReadAt([[maybe_unused]] off_t _pos, [[maybe_unused]] void *_buf, [[maybe_unused]] size_t _size)
 {
-    return SetLastError(VFSError::NotSupported);
+    return SetLastError(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 bool VFSFile::IsOpened() const
@@ -64,26 +65,32 @@ int VFSFile::Open(unsigned long /*unused*/, const VFSCancelChecker & /*unused*/)
 {
     return SetLastError(VFSError::NotSupported);
 }
+
 int VFSFile::Close()
 {
     return SetLastError(VFSError::NotSupported);
 }
+
 off_t VFSFile::Seek(off_t /*unused*/, int /*unused*/)
 {
     return SetLastError(VFSError::NotSupported);
 }
+
 ssize_t VFSFile::Pos() const
 {
     return SetLastError(VFSError::NotSupported);
 }
+
 ssize_t VFSFile::Size() const
 {
     return SetLastError(VFSError::NotSupported);
 }
+
 bool VFSFile::Eof() const
 {
     return true;
 }
+
 std::shared_ptr<VFSFile> VFSFile::Clone() const
 {
     return {};
@@ -116,16 +123,20 @@ void VFSFile::XAttrIterateNames([[maybe_unused]] const std::function<bool(const 
 {
 }
 
-std::optional<std::vector<uint8_t>> VFSFile::ReadFile()
+std::expected<std::vector<uint8_t>, nc::Error> VFSFile::ReadFile()
 {
     if( !IsOpened() )
-        return std::nullopt;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     if( GetReadParadigm() < ReadParadigm::Seek && Pos() != 0 )
-        return std::nullopt;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
-    if( Pos() != 0 && Seek(Seek_Set, 0) < 0 )
-        return std::nullopt; // can't rewind file
+    if( Pos() != 0 ) {
+        const long seek_rc = Seek(Seek_Set, 0);
+        if( seek_rc < 0 ) {
+            return std::unexpected(VFSError::ToError(static_cast<int>(seek_rc))); // can't rewind the file
+        }
+    }
 
     const uint64_t sz = Size();
     auto buf = std::vector<uint8_t>(sz);
@@ -134,8 +145,9 @@ std::optional<std::vector<uint8_t>> VFSFile::ReadFile()
     uint64_t szleft = sz;
     while( szleft ) {
         const ssize_t r = Read(buftmp, szleft);
-        if( r < 0 )
-            return std::nullopt;
+        if( r < 0 ) {
+            return std::unexpected(VFSError::ToError(static_cast<int>(r)));
+        }
         szleft -= r;
         buftmp += r;
     }
@@ -143,23 +155,22 @@ std::optional<std::vector<uint8_t>> VFSFile::ReadFile()
     return std::move(buf);
 }
 
-int VFSFile::WriteFile(const void *_d, size_t _sz)
+std::expected<void, nc::Error> VFSFile::WriteFile(const void *_d, size_t _sz)
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const uint8_t *d = static_cast<const uint8_t *>(_d);
-    ssize_t r = 0;
     while( _sz > 0 ) {
-        r = Write(d, _sz);
-        if( r >= 0 ) {
+        if( const ssize_t r = Write(d, _sz); r >= 0 ) {
             d += r;
             _sz -= r;
         }
-        else
-            return static_cast<int>(r);
+        else {
+            return std::unexpected(VFSError::ToError(static_cast<int>(r)));
+        }
     }
-    return VFSError::Ok;
+    return {};
 }
 
 ssize_t VFSFile::XAttrGet([[maybe_unused]] const char *_xattr_name,
@@ -169,22 +180,20 @@ ssize_t VFSFile::XAttrGet([[maybe_unused]] const char *_xattr_name,
     return SetLastError(VFSError::NotSupported);
 }
 
-ssize_t VFSFile::Skip(size_t _size)
+std::expected<void, nc::Error> VFSFile::Skip(size_t _size)
 {
     const size_t trash_size = 32768;
     static char trash[trash_size];
-    size_t skipped = 0;
 
     while( _size > 0 ) {
         const ssize_t r = Read(trash, std::min(_size, trash_size));
         if( r < 0 )
-            return r;
+            return std::unexpected(VFSError::ToError(static_cast<int>(r)));
         if( r == 0 )
-            return VFSError::UnexpectedEOF;
+            return std::unexpected(nc::Error{nc::Error::POSIX, EIO});
         _size -= r;
-        skipped += r;
     }
-    return skipped;
+    return {};
 }
 
 int VFSFile::SetUploadSize([[maybe_unused]] size_t _size)
@@ -194,10 +203,22 @@ int VFSFile::SetUploadSize([[maybe_unused]] size_t _size)
 
 int VFSFile::SetLastError(int _error) const
 {
-    return m_LastError = _error;
+    SetLastError(VFSError::ToError(_error));
+    return _error;
 }
 
-int VFSFile::LastError() const
+std::unexpected<nc::Error> VFSFile::SetLastError(nc::Error _error) const
+{
+    m_LastError = _error;
+    return std::unexpected<nc::Error>(_error);
+}
+
+void VFSFile::ClearLastError() const
+{
+    m_LastError.reset();
+}
+
+std::optional<nc::Error> VFSFile::LastError() const
 {
     return m_LastError;
 }

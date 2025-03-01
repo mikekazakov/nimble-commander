@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <VFS/VFSFile.h>
 
@@ -18,7 +18,7 @@ public:
     virtual bool IsOpened() const override;
     virtual int Close() override;
     virtual ssize_t Read(void *_buf, size_t _size) override;
-    virtual ssize_t ReadAt(off_t _pos, void *_buf, size_t _size) override;
+    virtual std::expected<size_t, Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
     virtual ssize_t Write(const void *_buf, size_t _size) override;
 
     virtual off_t Seek(off_t _off, int _basis) override;

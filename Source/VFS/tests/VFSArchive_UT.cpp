@@ -17,7 +17,7 @@ static void CheckFileIs(VFSHost &_host, const std::string_view _path, const std:
     const VFSFilePtr file = _host.CreateFile(_path).value();
     REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
     auto data = file->ReadFile();
-    REQUIRE(data != std::nullopt);
+    REQUIRE(data);
     CHECK(std::string_view{reinterpret_cast<const char *>(data->data()), data->size()} == _content);
 }
 

@@ -139,7 +139,7 @@ bool CompressionJob::BuildArchive()
         }
     }
     else {
-        m_TargetWriteError(open_rc, m_TargetArchivePath, *m_DstVFS);
+        m_TargetWriteError(VFSError::ToError(open_rc), m_TargetArchivePath, *m_DstVFS);
         Stop();
         return false;
     }
@@ -266,7 +266,8 @@ CompressionJob::ProcessDirectoryItem(int _index, const std::string &_relative_pa
     archive_entry_copy_stat(entry, vfs_stat);
     const auto head_write_rc = archive_write_header(m_Archive, entry);
     if( head_write_rc < 0 ) {
-        m_TargetWriteError(m_TargetFile->LastError(), m_TargetArchivePath, *m_DstVFS);
+        m_TargetWriteError(
+            m_TargetFile->LastError().value_or(Error{Error::POSIX, EINVAL}), m_TargetArchivePath, *m_DstVFS);
         Stop();
     }
 
@@ -337,7 +338,8 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
     archive_entry_copy_stat(entry, stat);
     const auto head_write_rc = archive_write_header(m_Archive, entry);
     if( head_write_rc < 0 ) {
-        m_TargetWriteError(m_TargetFile->LastError(), m_TargetArchivePath, *m_DstVFS);
+        m_TargetWriteError(
+            m_TargetFile->LastError().value_or(Error{Error::POSIX, EINVAL}), m_TargetArchivePath, *m_DstVFS);
         Stop();
     }
 
@@ -359,7 +361,8 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
         } while( to_write > 0 );
 
         if( la_rc < 0 ) {
-            m_TargetWriteError(m_TargetFile->LastError(), m_TargetArchivePath, *m_DstVFS);
+            m_TargetWriteError(
+                m_TargetFile->LastError().value_or(Error{Error::POSIX, EINVAL}), m_TargetArchivePath, *m_DstVFS);
             Stop();
             return StepResult::Stopped;
         }

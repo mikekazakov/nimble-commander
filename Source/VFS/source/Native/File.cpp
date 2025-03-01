@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include <Utility/NativeFSManager.h>
 #include <RoutedIO/RoutedIO.h>
@@ -92,14 +92,14 @@ ssize_t File::Read(void *_buf, size_t _size)
     return SetLastError(VFSError::FromErrno(errno));
 }
 
-ssize_t File::ReadAt(off_t _pos, void *_buf, size_t _size)
+std::expected<size_t, Error> File::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if( m_FD < 0 )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
     const ssize_t ret = pread(m_FD, _buf, _size, _pos);
     if( ret < 0 )
-        return SetLastError(VFSError::FromErrno(errno));
-    return ret;
+        return SetLastError(Error{Error::POSIX, errno});
+    return static_cast<size_t>(ret);
 }
 
 off_t File::Seek(off_t _off, int _basis)

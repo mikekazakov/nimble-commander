@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -33,11 +33,7 @@ TEST_CASE(PREFIX "CopyFileToTempStorage works")
     REQUIRE(copied_path != std::nullopt);
     CHECK(std::filesystem::path(*copied_path).filename() == "aaa.txt");
 
-    int compare_result = 0;
-    const auto compare_errc =
-        VFSEasyCompareFiles((base_dir + "aaa.txt").c_str(), host, (*copied_path).c_str(), host, compare_result);
-    CHECK(compare_errc == VFSError::Ok);
-    CHECK(compare_result == 0);
+    CHECK(VFSEasyCompareFiles((base_dir + "aaa.txt").c_str(), host, (*copied_path).c_str(), host) == 0);
 }
 
 TEST_CASE(PREFIX "CopyDirectoryToTempStorage works")
@@ -59,18 +55,10 @@ TEST_CASE(PREFIX "CopyDirectoryToTempStorage works")
 
     REQUIRE(copied_path != std::nullopt);
     CHECK(std::filesystem::path(*copied_path).parent_path().filename() == "A");
-
-    int compare_result1 = 0;
-    const auto compare_errc1 = VFSEasyCompareFiles(
-        (base_dir + "A/B/aaa.txt").c_str(), host, (*copied_path + "B/aaa.txt").c_str(), host, compare_result1);
-    CHECK(compare_errc1 == VFSError::Ok);
-    CHECK(compare_result1 == 0);
-
-    int compare_result2 = 0;
-    const auto compare_errc2 = VFSEasyCompareFiles(
-        (base_dir + "A/C/bbb.txt").c_str(), host, (*copied_path + "C/bbb.txt").c_str(), host, compare_result2);
-    CHECK(compare_errc2 == VFSError::Ok);
-    CHECK(compare_result2 == 0);
+    CHECK(VFSEasyCompareFiles((base_dir + "A/B/aaa.txt").c_str(), host, (*copied_path + "B/aaa.txt").c_str(), host) ==
+          0);
+    CHECK(VFSEasyCompareFiles((base_dir + "A/C/bbb.txt").c_str(), host, (*copied_path + "C/bbb.txt").c_str(), host) ==
+          0);
 }
 
 static int RMRF(const std::string &_path)

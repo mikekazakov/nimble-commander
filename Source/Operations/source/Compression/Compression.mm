@@ -26,7 +26,7 @@ Compression::Compression(std::vector<VFSListingItem> _src_files,
     m_InitialSingleItemFilename = m_InitialSourceItemsAmount == 1 ? _src_files.front().DisplayName() : "";
     m_Job = std::make_unique<CompressionJob>(std::move(_src_files), _dst_root, _dst_vfs, _passphrase);
     m_Job->m_TargetPathDefined = [this] { OnTargetPathDefined(); };
-    m_Job->m_TargetWriteError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_TargetWriteError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         OnTargetWriteError(_err, _path, _vfs);
     };
     m_Job->m_SourceReadError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
@@ -57,7 +57,7 @@ std::string Compression::ArchivePath() const
     return m_Job->TargetArchivePath();
 }
 
-void Compression::OnTargetWriteError(int _err, const std::string &_path, VFSHost &_vfs)
+void Compression::OnTargetWriteError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     ReportHaltReason(NSLocalizedString(@"Failed to write an archive", ""), _err, _path, _vfs);
 }

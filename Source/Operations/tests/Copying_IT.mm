@@ -281,9 +281,7 @@ TEST_CASE(PREFIX "Overwrite bug regression")
         op.Wait();
     }
 
-    int result = -1;
-    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "big.zzz").c_str(), host, dest.c_str(), host, result) == 0);
-    REQUIRE(result == 0);
+    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "big.zzz").c_str(), host, dest.c_str(), host) == 0);
 
     {
         CopyingOptions opts;
@@ -294,8 +292,7 @@ TEST_CASE(PREFIX "Overwrite bug regression")
         op.Wait();
     }
 
-    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "small.zzz").c_str(), host, dest.c_str(), host, result) == 0);
-    REQUIRE(result == 0);
+    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "small.zzz").c_str(), host, dest.c_str(), host) == 0);
 }
 
 TEST_CASE(PREFIX "Overwrite bug regression - revert")
@@ -319,9 +316,7 @@ TEST_CASE(PREFIX "Overwrite bug regression - revert")
         op.Wait();
     }
 
-    int result = -1;
-    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "small.zzz").c_str(), host, dest.c_str(), host, result) == 0);
-    REQUIRE(result == 0);
+    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "small.zzz").c_str(), host, dest.c_str(), host) == 0);
 
     {
         CopyingOptions opts;
@@ -332,8 +327,7 @@ TEST_CASE(PREFIX "Overwrite bug regression - revert")
         op.Wait();
     }
 
-    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "big.zzz").c_str(), host, dest.c_str(), host, result) == 0);
-    REQUIRE(result == 0);
+    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "big.zzz").c_str(), host, dest.c_str(), host) == 0);
 }
 
 TEST_CASE(PREFIX "case renaming")
@@ -769,9 +763,7 @@ TEST_CASE(PREFIX "Copy native->xattr->xattr")
         op.Wait();
         REQUIRE(op.State() == OperationState::Completed);
 
-        int result = 0;
-        REQUIRE(VFSEasyCompareFiles(orig.c_str(), native_host, "/src", src_host, result) == 0);
-        REQUIRE(result == 0);
+        REQUIRE(VFSEasyCompareFiles(orig.c_str(), native_host, "/src", src_host) == 0);
     }
 
     const auto xattr2 = tmp_dir.directory / "xattr2";
@@ -782,9 +774,7 @@ TEST_CASE(PREFIX "Copy native->xattr->xattr")
         op.Start();
         op.Wait();
 
-        int result = 0;
-        REQUIRE(VFSEasyCompareFiles(orig.c_str(), native_host, "/dst", dst_host, result) == 0);
-        REQUIRE(result == 0);
+        REQUIRE(VFSEasyCompareFiles(orig.c_str(), native_host, "/dst", dst_host) == 0);
     }
 }
 
@@ -808,9 +798,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part1")
     op.Wait();
     REQUIRE(op.State() == OperationState::Completed);
 
-    int compare;
-    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
-    REQUIRE(compare == 0);
+    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host) == 0);
 
     REQUIRE(host->Unlink(fn2));
 }
@@ -835,13 +823,10 @@ TEST_CASE(PREFIX "Copy to local FTP")
     REQUIRE(op.State() == OperationState::Completed);
 
     for( auto &i : files ) {
-        int compare;
         REQUIRE(VFSEasyCompareFiles(("/System/Applications/Mail.app/Contents/" + i).c_str(),
                                     TestEnv().vfs_native,
                                     ("/Public/!FilesTesting/" + i).c_str(),
-                                    host,
-                                    compare) == 0);
-        REQUIRE(compare == 0);
+                                    host) == 0);
         REQUIRE(host->Unlink("/Public/!FilesTesting/" + i));
     }
 
@@ -889,9 +874,7 @@ TEST_CASE(PREFIX "Copy to local FTP part4")
         REQUIRE(op.State() == OperationState::Completed);
     }
 
-    int compare;
-    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
-    REQUIRE(compare == 0);
+    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host) == 0);
 
     {
         Copying op(FetchItems("/Public/!FilesTesting/", {"kernel"}, *host), fn3, host, {});
@@ -900,8 +883,7 @@ TEST_CASE(PREFIX "Copy to local FTP part4")
         REQUIRE(op.State() == OperationState::Completed);
     }
 
-    REQUIRE(VFSEasyCompareFiles(fn2, host, fn3, host, compare) == 0);
-    REQUIRE(compare == 0);
+    REQUIRE(VFSEasyCompareFiles(fn2, host, fn3, host) == 0);
 
     REQUIRE(host->Unlink(fn2));
     REQUIRE(host->Unlink(fn3));
@@ -935,9 +917,7 @@ TEST_CASE(PREFIX "Copy to local FTP, special characters")
             op.Wait();
             REQUIRE(op.State() == OperationState::Completed);
         }
-        int compare;
-        REQUIRE(VFSEasyCompareFiles("/bin/sleep", TestEnv().vfs_native, (dir / tc.name).c_str(), host, compare) == 0);
-        REQUIRE(compare == 0);
+        REQUIRE(VFSEasyCompareFiles("/bin/sleep", TestEnv().vfs_native, (dir / tc.name).c_str(), host) == 0);
         REQUIRE(host->Unlink((dir / tc.name).c_str()));
     }
 
@@ -1376,10 +1356,7 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> native)
         REQUIRE(::stat((dir.directory / "d").c_str(), &st) == 0);
         CHECK((st.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO)) ==
               (S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH));
-        int result = 0;
-        REQUIRE(VFSEasyCompareFiles(
-                    (dir.directory / "d/f.txt").c_str(), TestEnv().vfs_native, "/d/f.txt", host, result) == 0);
-        REQUIRE(result == 0);
+        REQUIRE(VFSEasyCompareFiles((dir.directory / "d/f.txt").c_str(), TestEnv().vfs_native, "/d/f.txt", host) == 0);
         chmod((dir.directory / "d").c_str(), S_IRWXU);
     }
     SECTION("Don't copy unix flags")
@@ -1392,10 +1369,7 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> native)
         REQUIRE(::stat((dir.directory / "d").c_str(), &st) == 0);
         CHECK((st.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO)) ==
               (S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH));
-        int result = 0;
-        REQUIRE(VFSEasyCompareFiles(
-                    (dir.directory / "d/f.txt").c_str(), TestEnv().vfs_native, "/d/f.txt", host, result) == 0);
-        REQUIRE(result == 0);
+        REQUIRE(VFSEasyCompareFiles((dir.directory / "d/f.txt").c_str(), TestEnv().vfs_native, "/d/f.txt", host) == 0);
     }
 }
 

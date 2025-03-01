@@ -1,15 +1,16 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
+#include <Base/Error.h>
+
 @class NCViewerHexModeView;
 
 @protocol NCViewerHexModeViewDelegate <NSObject>
 
-/**
- * Returns a VFS error code.
- */
-- (int)hexModeView:(NCViewerHexModeView *)_view requestsSyncBackendWindowMovementAt:(int64_t)_position;
+// ...
+- (std::expected<void, nc::Error>)hexModeView:(NCViewerHexModeView *)_view
+          requestsSyncBackendWindowMovementAt:(int64_t)_position;
 
 - (void)hexModeView:(NCViewerHexModeView *)_view
     didScrollAtGlobalBytePosition:(int64_t)_position

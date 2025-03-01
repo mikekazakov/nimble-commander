@@ -39,10 +39,10 @@ TEST_CASE(PREFIX "can read info about kernel_task")
     const VFSFilePtr file = host->CreateFile(kernel_task_listing_item.Path()).value();
     REQUIRE(file->Open(Flags::OF_Read) == 0);
     const auto file_contents = file->ReadFile();
-    REQUIRE(file_contents != std::nullopt);
+    REQUIRE(file_contents);
     REQUIRE(!file_contents->empty());
     const std::string_view proc_info(reinterpret_cast<const char *>(file_contents->data()), file_contents->size());
 
-    CHECK(proc_info.find("Name: kernel_task") != std::string_view::npos);
-    CHECK(proc_info.find("Process user id: 0 (root)") != std::string_view::npos);
+    CHECK(proc_info.contains("Name: kernel_task"));
+    CHECK(proc_info.contains("Process user id: 0 (root)"));
 }

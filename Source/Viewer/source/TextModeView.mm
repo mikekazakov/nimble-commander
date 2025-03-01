@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextModeView.h"
 #include "TextProcessing.h"
 #include "TextModeIndexedTextLine.h"
@@ -369,7 +369,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
                        static_cast<int64_t>(m_Backend->FileSize() - m_Backend->RawSize()));
 
         const auto rc = [self.delegate textModeView:self requestsSyncBackendWindowMovementAt:desired_window_offset];
-        if( rc != VFSError::Ok )
+        if( !rc )
             return false;
 
         [self rebuildWorkingSetAndHighlightingAndFrame];
@@ -416,7 +416,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
             return false; // singular situation. don't handle for now.
 
         const auto rc = [self.delegate textModeView:self requestsSyncBackendWindowMovementAt:desired_window_offset];
-        if( rc != VFSError::Ok )
+        if( !rc )
             return false;
 
         [self rebuildWorkingSetAndHighlightingAndFrame];
@@ -688,7 +688,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
                        static_cast<int64_t>(m_Backend->FileSize()) - static_cast<int64_t>(m_Backend->RawSize()));
 
         const auto rc = [self.delegate textModeView:self requestsSyncBackendWindowMovementAt:desired_wnd_pos];
-        if( rc != VFSError::Ok )
+        if( !rc )
             return false;
 
         [self rebuildWorkingSetAndHighlightingAndFrame];

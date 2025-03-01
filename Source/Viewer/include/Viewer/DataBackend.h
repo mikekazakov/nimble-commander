@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/FileWindow.h>
@@ -25,7 +25,7 @@ public:
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     // operations
-    int MoveWindowSync(uint64_t _pos); // return VFS error code
+    std::expected<void, Error> MoveWindowSync(uint64_t _pos);
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     // data access

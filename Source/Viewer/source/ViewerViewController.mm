@@ -716,12 +716,12 @@ std::expected<void, Error> BackgroundFileOpener::Open(VFSHostPtr _vfs,
         work_file = original_file;
     }
     viewer_file_window = std::make_shared<nc::vfs::FileWindow>();
-    if( const int attach_err = viewer_file_window->Attach(work_file, _window_size); attach_err != VFSError::Ok )
-        return std::unexpected(VFSError::ToError(attach_err));
+    if( const std::expected<void, Error> res = viewer_file_window->Attach(work_file, _window_size); !res )
+        return std::unexpected(res.error());
 
     search_file_window = std::make_shared<nc::vfs::FileWindow>();
-    if( const int attach_err = search_file_window->Attach(work_file); attach_err != 0 )
-        return std::unexpected(VFSError::ToError(attach_err));
+    if( const std::expected<void, Error> res = search_file_window->Attach(work_file); !res )
+        return std::unexpected(res.error());
 
     using nc::vfs::SearchInFile;
     search_in_file = std::make_shared<SearchInFile>(*search_file_window);

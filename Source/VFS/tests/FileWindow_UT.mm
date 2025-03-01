@@ -1,10 +1,11 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
 #include <VFS/FileWindow.h>
 #include <random>
 
+using namespace nc;
 using nc::vfs::FileWindow;
 
 #define PREFIX "nc::vfs::FileWindow "
@@ -23,7 +24,7 @@ public:
     int Close() override;
 
     ssize_t Read(void *_buf, size_t _size) override;
-    ssize_t ReadAt(off_t _pos, void *_buf, size_t _size) override;
+    std::expected<size_t, nc::Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
     ReadParadigm GetReadParadigm() const override;
     off_t Seek(off_t _off, int _basis) override;
     ssize_t Pos() const override;
@@ -70,19 +71,19 @@ ssize_t TestGenericMemReadOnlyFile::Read(void *_buf, size_t _size)
     return to_read;
 }
 
-ssize_t TestGenericMemReadOnlyFile::ReadAt(off_t _pos, void *_buf, size_t _size)
+std::expected<size_t, nc::Error> TestGenericMemReadOnlyFile::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if( m_Behaviour < VFSFile::ReadParadigm::Random )
-        return VFSError::NotSupported;
+        return SetLastError(Error{Error::POSIX, ENOTSUP});
 
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     // we can only deal with cache buffer now, need another branch later
     if( _pos < 0 || _pos > static_cast<ssize_t>(m_Size) )
-        return VFSError::InvalidCall;
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
-    const ssize_t toread = MIN(m_Size - _pos, _size);
+    const size_t toread = std::min(static_cast<size_t>(m_Size) - static_cast<size_t>(_pos), _size);
     std::memcpy(_buf, static_cast<const char *>(m_Mem) + _pos, toread);
     return toread;
 }
@@ -163,15 +164,14 @@ TEST_CASE(PREFIX "random access")
     vfs_file->Open(0, nullptr);
 
     FileWindow fw;
-    const int ret = fw.Attach(vfs_file);
-    REQUIRE(ret == 0);
+    REQUIRE(fw.Attach(vfs_file));
 
     std::mt19937 mt((std::random_device())());
     std::uniform_int_distribution<size_t> dist(0, fw.FileSize() - fw.WindowSize());
 
     for( int i = 0; i < 10000; ++i ) {
         auto pos = dist(mt);
-        fw.MoveWindow(pos);
+        REQUIRE(fw.MoveWindow(pos));
         const int cmp = memcmp(fw.Window(), &data[pos], fw.WindowSize());
         REQUIRE(cmp == 0);
     }
@@ -189,8 +189,7 @@ TEST_CASE(PREFIX "sequential access")
     vfs_file->Open(0, nullptr);
 
     FileWindow fw;
-    const int ret = fw.Attach(vfs_file);
-    REQUIRE(ret == 0);
+    REQUIRE(fw.Attach(vfs_file));
 
     std::mt19937 mt((std::random_device())());
     std::uniform_int_distribution<size_t> dist(0, fw.WindowSize() * 10);
@@ -204,7 +203,7 @@ TEST_CASE(PREFIX "sequential access")
         if( pos > fw.FileSize() - fw.WindowSize() )
             break;
 
-        fw.MoveWindow(pos);
+        REQUIRE(fw.MoveWindow(pos));
     }
 }
 
@@ -220,15 +219,14 @@ TEST_CASE(PREFIX "seek access")
     vfs_file->Open(0, nullptr);
 
     FileWindow fw;
-    const int ret = fw.Attach(vfs_file);
-    REQUIRE(ret == 0);
+    REQUIRE(fw.Attach(vfs_file));
 
     std::mt19937 mt((std::random_device())());
     std::uniform_int_distribution<size_t> dist(0, fw.FileSize() - fw.WindowSize());
 
     for( int i = 0; i < 10000; ++i ) {
         auto pos = dist(mt);
-        fw.MoveWindow(pos);
+        REQUIRE(fw.MoveWindow(pos));
         const int cmp = memcmp(fw.Window(), &data[pos], fw.WindowSize());
         REQUIRE(cmp == 0);
     }

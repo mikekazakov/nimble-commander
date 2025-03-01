@@ -28,7 +28,7 @@ public:
     ssize_t Size() const override;
     bool Eof() const override;
     ssize_t Read(void *_buf, size_t _size) override;
-    ssize_t ReadAt(off_t _pos, void *_buf, size_t _size) override;
+    std::expected<size_t, Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
     ssize_t Write(const void *_buf, size_t _size) override;
     int SetUploadSize(size_t _size) override;
 
@@ -447,15 +447,15 @@ ssize_t XAttrFile::Read(void *_buf, size_t _size)
     return to_read;
 }
 
-ssize_t XAttrFile::ReadAt(off_t _pos, void *_buf, size_t _size)
+std::expected<size_t, Error> XAttrFile::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if( !IsOpened() || !IsOpenedForReading() )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     if( _pos < 0 || _pos > m_Size )
-        return SetLastError(VFSError::FromErrno(EINVAL));
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
-    auto sz = std::min(m_Size - _pos, off_t(_size));
+    const size_t sz = std::min(m_Size - _pos, off_t(_size));
     memcpy(_buf, m_FileBuf.get() + _pos, sz);
     return sz;
 }

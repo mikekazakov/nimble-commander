@@ -1,4 +1,4 @@
-// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TextModeView.h"
 #include "TextModeFrame.h"
@@ -54,7 +54,8 @@ private:
 } // namespace
 
 @interface NCViewerTextModeViewMockDelegate : NSObject <NCViewerTextModeViewDelegate>
-@property(nonatomic, readwrite) std::function<int(NCViewerTextModeView *, int64_t _position)> syncBackendWindowMovement;
+@property(nonatomic, readwrite) std::function<std::expected<void, nc::Error>(NCViewerTextModeView *, int64_t _position)>
+    syncBackendWindowMovement;
 @end
 
 static const auto g_MenloRegular13 = [NSFont fontWithName:@"Menlo-Regular" size:13.];
@@ -288,7 +289,8 @@ void Context::Reload(std::string_view _new_string)
 
 @synthesize syncBackendWindowMovement;
 
-- (int)textModeView:(NCViewerTextModeView *)_view requestsSyncBackendWindowMovementAt:(int64_t)_position
+- (std::expected<void, nc::Error>)textModeView:(NCViewerTextModeView *)_view
+           requestsSyncBackendWindowMovementAt:(int64_t)_position
 {
     assert(self.syncBackendWindowMovement);
     return self.syncBackendWindowMovement(_view, _position);

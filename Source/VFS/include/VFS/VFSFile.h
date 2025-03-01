@@ -120,7 +120,7 @@ public:
     // ReadAt is available only on Random level.
     // It will not move any file pointers.
     // Reads up to _size bytes, may return less.
-    virtual ssize_t ReadAt(off_t _pos, void *_buf, size_t _size);
+    virtual std::expected<size_t, nc::Error> ReadAt(off_t _pos, void *_buf, size_t _size);
 
     enum {
         Seek_Set = 0,

@@ -57,15 +57,15 @@ std::expected<void, Error> FileWindow::ReadFileWindowRandomPart(size_t _offset, 
     if( _offset + _len > m_WindowSize )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
-    const ssize_t readret = m_File->ReadAt(m_WindowPos + _offset, m_Window.get() + _offset, _len);
-    if( readret < 0 )
-        return std::unexpected(VFSError::ToError(static_cast<int>(readret)));
+    const std::expected<size_t, Error> readret = m_File->ReadAt(m_WindowPos + _offset, m_Window.get() + _offset, _len);
+    if( !readret )
+        return std::unexpected(readret.error());
 
     if( readret == 0 )
         return std::unexpected(Error{Error::POSIX, EIO});
 
-    if( static_cast<size_t>(readret) < _len )
-        return ReadFileWindowRandomPart(_offset + readret, _len - readret);
+    if( *readret < _len )
+        return ReadFileWindowRandomPart(_offset + *readret, _len - *readret);
 
     return {};
 }

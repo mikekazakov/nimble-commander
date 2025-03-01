@@ -50,9 +50,10 @@ ssize_t VFSFile::Write([[maybe_unused]] const void *_buf, [[maybe_unused]] size_
     return SetLastError(VFSError::NotSupported);
 }
 
-ssize_t VFSFile::ReadAt([[maybe_unused]] off_t _pos, [[maybe_unused]] void *_buf, [[maybe_unused]] size_t _size)
+std::expected<size_t, nc::Error>
+VFSFile::ReadAt([[maybe_unused]] off_t _pos, [[maybe_unused]] void *_buf, [[maybe_unused]] size_t _size)
 {
-    return SetLastError(VFSError::NotSupported);
+    return SetLastError(nc::Error{nc::Error::POSIX, ENOTSUP});
 }
 
 bool VFSFile::IsOpened() const

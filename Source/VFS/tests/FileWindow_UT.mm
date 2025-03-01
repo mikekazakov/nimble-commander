@@ -5,6 +5,7 @@
 #include <VFS/FileWindow.h>
 #include <random>
 
+using namespace nc;
 using nc::vfs::FileWindow;
 
 #define PREFIX "nc::vfs::FileWindow "
@@ -23,7 +24,7 @@ public:
     int Close() override;
 
     ssize_t Read(void *_buf, size_t _size) override;
-    ssize_t ReadAt(off_t _pos, void *_buf, size_t _size) override;
+    std::expected<size_t, nc::Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
     ReadParadigm GetReadParadigm() const override;
     off_t Seek(off_t _off, int _basis) override;
     ssize_t Pos() const override;
@@ -70,19 +71,19 @@ ssize_t TestGenericMemReadOnlyFile::Read(void *_buf, size_t _size)
     return to_read;
 }
 
-ssize_t TestGenericMemReadOnlyFile::ReadAt(off_t _pos, void *_buf, size_t _size)
+std::expected<size_t, nc::Error> TestGenericMemReadOnlyFile::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if( m_Behaviour < VFSFile::ReadParadigm::Random )
-        return VFSError::NotSupported;
+        return SetLastError(Error{Error::POSIX, ENOTSUP});
 
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     // we can only deal with cache buffer now, need another branch later
     if( _pos < 0 || _pos > static_cast<ssize_t>(m_Size) )
-        return VFSError::InvalidCall;
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
-    const ssize_t toread = MIN(m_Size - _pos, _size);
+    const size_t toread = std::min(static_cast<size_t>(m_Size) - static_cast<size_t>(_pos), _size);
     std::memcpy(_buf, static_cast<const char *>(m_Mem) + _pos, toread);
     return toread;
 }

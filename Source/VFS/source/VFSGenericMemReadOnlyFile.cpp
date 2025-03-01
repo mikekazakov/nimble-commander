@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "VFSGenericMemReadOnlyFile.h"
 #include <algorithm>
 #include <cassert>
@@ -47,16 +47,16 @@ ssize_t GenericMemReadOnlyFile::Read(void *_buf, size_t _size)
     return to_read;
 }
 
-ssize_t GenericMemReadOnlyFile::ReadAt(off_t _pos, void *_buf, size_t _size)
+std::expected<size_t, Error> GenericMemReadOnlyFile::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     // we can only deal with cache buffer now, need another branch later
     if( _pos < 0 || _pos > static_cast<long>(m_Size) )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
-    const ssize_t toread = std::min(static_cast<size_t>(m_Size - _pos), _size);
+    const size_t toread = std::min(static_cast<size_t>(m_Size - _pos), _size);
     memcpy(_buf, static_cast<const char *>(m_Mem) + _pos, toread);
     return toread;
 }

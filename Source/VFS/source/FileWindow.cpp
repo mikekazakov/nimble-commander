@@ -41,13 +41,12 @@ std::expected<void, Error> FileWindow::Attach(const std::shared_ptr<VFSFile> &_f
     return {};
 }
 
-int FileWindow::CloseFile()
+void FileWindow::CloseFile()
 {
     m_File.reset();
     m_Window.reset();
     m_WindowPos = -1;
     m_WindowSize = -1;
-    return VFSError::Ok;
 }
 
 std::expected<void, Error> FileWindow::ReadFileWindowRandomPart(size_t _offset, size_t _len)

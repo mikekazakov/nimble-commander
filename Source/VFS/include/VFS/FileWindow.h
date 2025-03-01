@@ -28,7 +28,7 @@ public:
     std::expected<void, Error> Attach(const std::shared_ptr<VFSFile> &_file, int _window_size = DefaultWindowSize);
 
     // Closes the VFSFile pointer and the memory buffer.
-    int CloseFile();
+    void CloseFile();
 
     // ...
     bool FileOpened() const;

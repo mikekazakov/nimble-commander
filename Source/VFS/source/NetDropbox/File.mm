@@ -59,13 +59,15 @@ int File::Close()
         }
     }
 
+    const std::optional<Error> last_error = LastError();
+    
     ClearLastError();
     m_OpenFlags = 0;
     m_FilePos = 0;
     m_FileSize = -1;
     m_State = Cold;
 
-    return 0;
+    return last_error ? VFSError::FromErrno(EIO) : 0; // TODO: return last_error
 }
 
 NSURLRequest *File::BuildDownloadRequest() const

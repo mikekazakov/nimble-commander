@@ -3,6 +3,8 @@
 #include "../include/VFS/VFSError.h"
 #include "../include/VFS/Host.h"
 
+using namespace nc;
+
 VFSFile::VFSFile(std::string_view _relative_path, const VFSHostPtr &_host)
     : m_RelativePath(_relative_path), m_Host(_host)
 {
@@ -40,9 +42,9 @@ VFSFile::WriteParadigm VFSFile::GetWriteParadigm() const
     return WriteParadigm::NoWrite;
 }
 
-ssize_t VFSFile::Read([[maybe_unused]] void *_buf, [[maybe_unused]] size_t _size)
+std::expected<size_t, Error> VFSFile::Read([[maybe_unused]] void *_buf, [[maybe_unused]] size_t _size)
 {
-    return SetLastError(VFSError::NotSupported);
+    return SetLastError(Error{Error::POSIX, ENOTSUP});
 }
 
 ssize_t VFSFile::Write([[maybe_unused]] const void *_buf, [[maybe_unused]] size_t _size)
@@ -50,10 +52,10 @@ ssize_t VFSFile::Write([[maybe_unused]] const void *_buf, [[maybe_unused]] size_
     return SetLastError(VFSError::NotSupported);
 }
 
-std::expected<size_t, nc::Error>
+std::expected<size_t, Error>
 VFSFile::ReadAt([[maybe_unused]] off_t _pos, [[maybe_unused]] void *_buf, [[maybe_unused]] size_t _size)
 {
-    return SetLastError(nc::Error{nc::Error::POSIX, ENOTSUP});
+    return SetLastError(Error{Error::POSIX, ENOTSUP});
 }
 
 bool VFSFile::IsOpened() const
@@ -123,13 +125,13 @@ void VFSFile::XAttrIterateNames([[maybe_unused]] const std::function<bool(const 
 {
 }
 
-std::expected<std::vector<uint8_t>, nc::Error> VFSFile::ReadFile()
+std::expected<std::vector<uint8_t>, Error> VFSFile::ReadFile()
 {
     if( !IsOpened() )
-        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( GetReadParadigm() < ReadParadigm::Seek && Pos() != 0 )
-        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( Pos() != 0 ) {
         const long seek_rc = Seek(Seek_Set, 0);
@@ -144,21 +146,21 @@ std::expected<std::vector<uint8_t>, nc::Error> VFSFile::ReadFile()
     uint8_t *buftmp = buf.data();
     uint64_t szleft = sz;
     while( szleft ) {
-        const ssize_t r = Read(buftmp, szleft);
-        if( r < 0 ) {
-            return std::unexpected(VFSError::ToError(static_cast<int>(r)));
+        const std::expected<size_t, Error> r = Read(buftmp, szleft);
+        if( !r ) {
+            return std::unexpected(r.error());
         }
-        szleft -= r;
-        buftmp += r;
+        szleft -= *r;
+        buftmp += *r;
     }
 
     return std::move(buf);
 }
 
-std::expected<void, nc::Error> VFSFile::WriteFile(const void *_d, size_t _sz)
+std::expected<void, Error> VFSFile::WriteFile(const void *_d, size_t _sz)
 {
     if( !IsOpened() )
-        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const uint8_t *d = static_cast<const uint8_t *>(_d);
     while( _sz > 0 ) {
@@ -180,18 +182,18 @@ ssize_t VFSFile::XAttrGet([[maybe_unused]] const char *_xattr_name,
     return SetLastError(VFSError::NotSupported);
 }
 
-std::expected<void, nc::Error> VFSFile::Skip(size_t _size)
+std::expected<void, Error> VFSFile::Skip(size_t _size)
 {
     const size_t trash_size = 32768;
     static char trash[trash_size];
 
     while( _size > 0 ) {
-        const ssize_t r = Read(trash, std::min(_size, trash_size));
-        if( r < 0 )
-            return std::unexpected(VFSError::ToError(static_cast<int>(r)));
-        if( r == 0 )
-            return std::unexpected(nc::Error{nc::Error::POSIX, EIO});
-        _size -= r;
+        const std::expected<size_t, Error> r = Read(trash, std::min(_size, trash_size));
+        if( !r )
+            return std::unexpected(r.error());
+        if( *r == 0 )
+            return std::unexpected(Error{Error::POSIX, EIO});
+        _size -= *r;
     }
     return {};
 }
@@ -207,10 +209,10 @@ int VFSFile::SetLastError(int _error) const
     return _error;
 }
 
-std::unexpected<nc::Error> VFSFile::SetLastError(nc::Error _error) const
+std::unexpected<Error> VFSFile::SetLastError(Error _error) const
 {
     m_LastError = _error;
-    return std::unexpected<nc::Error>(_error);
+    return std::unexpected<Error>(_error);
 }
 
 void VFSFile::ClearLastError() const
@@ -218,7 +220,7 @@ void VFSFile::ClearLastError() const
     m_LastError.reset();
 }
 
-std::optional<nc::Error> VFSFile::LastError() const
+std::optional<Error> VFSFile::LastError() const
 {
     return m_LastError;
 }

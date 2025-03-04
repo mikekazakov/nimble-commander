@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Host.h"
@@ -18,18 +18,18 @@ public:
     File(std::string_view _relative_path, const std::shared_ptr<class DropboxHost> &_host);
     ~File();
 
-    virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
-    virtual int Close() override;
-    virtual int PreferredIOSize() const override;
-    virtual bool IsOpened() const override;
-    virtual ReadParadigm GetReadParadigm() const override;
-    virtual WriteParadigm GetWriteParadigm() const override;
-    virtual ssize_t Read(void *_buf, size_t _size) override;
-    virtual ssize_t Write(const void *_buf, size_t _size) override;
-    virtual ssize_t Pos() const override;
-    virtual ssize_t Size() const override;
-    virtual bool Eof() const override;
-    virtual int SetUploadSize(size_t _size) override;
+    int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
+    int Close() override;
+    int PreferredIOSize() const override;
+    bool IsOpened() const override;
+    ReadParadigm GetReadParadigm() const override;
+    WriteParadigm GetWriteParadigm() const override;
+    std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
+    ssize_t Write(const void *_buf, size_t _size) override;
+    ssize_t Pos() const override;
+    ssize_t Size() const override;
+    bool Eof() const override;
+    int SetUploadSize(size_t _size) override;
     int SetChunkSize(size_t _size);
 
 private:

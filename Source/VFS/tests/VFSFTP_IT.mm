@@ -32,7 +32,7 @@ TEST_CASE(PREFIX "upload and compare")
         REQUIRE(host->Unlink(fn2));
 
     // copy file to the remote server
-    REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host) == 0);
+    REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host));
 
     // compare it with origin
     REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host) == 0);
@@ -149,7 +149,7 @@ TEST_CASE(PREFIX "renaming")
     if( host->Stat(fn2, 0) )
         REQUIRE(host->Unlink(fn2));
 
-    REQUIRE(VFSEasyCopyFile(fn1.c_str(), TestEnv().vfs_native, fn2.c_str(), host) == 0);
+    REQUIRE(VFSEasyCopyFile(fn1.c_str(), TestEnv().vfs_native, fn2.c_str(), host));
     REQUIRE(host->Rename(fn2, fn3));
     REQUIRE(host->Stat(fn3, 0));
     REQUIRE(host->Unlink(fn3));

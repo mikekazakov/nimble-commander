@@ -28,11 +28,11 @@ static std::optional<std::vector<uint8_t>> CalculateFileHash(const std::string &
     auto buf = std::make_unique<uint8_t[]>(chunk_sz);
     nc::base::Hash h(nc::base::Hash::MD5);
 
-    ssize_t rn = 0;
-    while( (rn = file.Read(buf.get(), chunk_sz)) > 0 )
-        h.Feed(buf.get(), rn);
+    std::expected<size_t, Error> rn;
+    while( (rn = file.Read(buf.get(), chunk_sz)).value_or(0) > 0 )
+        h.Feed(buf.get(), *rn);
 
-    if( rn < 0 )
+    if( !rn )
         return std::nullopt;
 
     return h.Final();

@@ -77,10 +77,10 @@ int File::Close()
     return VFSError::Ok;
 }
 
-ssize_t File::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     if( m_FD < 0 )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
     if( Eof() )
         return 0;
 
@@ -89,7 +89,7 @@ ssize_t File::Read(void *_buf, size_t _size)
         m_Position += ret;
         return ret;
     }
-    return SetLastError(VFSError::FromErrno(errno));
+    return SetLastError(Error{Error::POSIX, errno});
 }
 
 std::expected<size_t, Error> File::ReadAt(off_t _pos, void *_buf, size_t _size)

@@ -24,13 +24,13 @@ GenericMemReadOnlyFile::GenericMemReadOnlyFile(std::string_view _relative_path,
         throw std::invalid_argument("GenericMemReadOnlyFile expects a valid memory pointer");
 }
 
-ssize_t GenericMemReadOnlyFile::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> GenericMemReadOnlyFile::Read(void *_buf, size_t _size)
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( _buf == nullptr )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( _size == 0 )
         return 0;

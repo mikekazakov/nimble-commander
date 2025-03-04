@@ -40,146 +40,79 @@ static std::expected<void, Error> CopyNodeAttrs(const char *_src_full_path,
     return {};
 }
 
-static int CopyFileContentsSmall(std::shared_ptr<VFSFile> _src, std::shared_ptr<VFSFile> _dst)
+static std::expected<void, Error> CopyFileContents(std::shared_ptr<VFSFile> _src, std::shared_ptr<VFSFile> _dst)
 {
     constexpr uint64_t bufsz = 256ULL * 1024ULL;
     const std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
     const uint64_t src_size = _src->Size();
-    const uint64_t left_read = src_size;
-    ssize_t res_read = 0;
     ssize_t total_wrote = 0;
 
-    while( (res_read = _src->Read(buf.get(), std::min(bufsz, left_read))) > 0 ) {
+    while( true ) {
+        const std::expected<size_t, Error> res_read = _src->Read(buf.get(), std::min(bufsz, src_size));
+        if( !res_read )
+            return std::unexpected(res_read.error());
+        if( res_read == 0 ) {
+            if( static_cast<uint64_t>(total_wrote) == src_size )
+                return {};
+            else
+                return std::unexpected(Error{Error::POSIX, EIO}); // unexpected eof
+        }
+
+        ssize_t to_write = *res_read;
         ssize_t res_write = 0;
         const char *ptr = buf.get();
-        while( res_read > 0 ) {
-            res_write = _dst->Write(ptr, res_read);
+        while( to_write > 0 ) {
+            res_write = _dst->Write(ptr, to_write);
             if( res_write >= 0 ) {
-                res_read -= res_write;
+                to_write -= res_write;
                 total_wrote += res_write;
                 ptr += res_write;
             }
             else
-                return static_cast<int>(res_write);
+                return std::unexpected(VFSError::ToError(static_cast<int>(res_write)));
         }
     }
-
-    if( res_read < 0 )
-        return static_cast<int>(res_read);
-
-    if( res_read == 0 && static_cast<uint64_t>(total_wrote) != src_size )
-        return VFSError::UnexpectedEOF;
-
-    return 0;
 }
 
-static int CopyFileContentsLarge(std::shared_ptr<VFSFile> _src, std::shared_ptr<VFSFile> _dst)
-{
-    const nc::base::DispatchGroup io;
-
-    // consider using variable-sized buffers depending on underlying media
-    const int buffer_size = 1024 * 1024; // 1Mb
-    auto buffer_read = std::make_unique<uint8_t[]>(buffer_size);
-    auto buffer_write = std::make_unique<uint8_t[]>(buffer_size);
-
-    const uint64_t src_size = _src->Size();
-    uint64_t total_read = 0;
-    uint64_t total_written = 0;
-    int64_t io_left_to_write = 0;
-    int64_t io_nread = 0;
-    int64_t io_nwritten = 0;
-
-    while( true ) {
-        io.Run([&] {
-            if( total_read < src_size ) {
-                io_nread = _src->Read(buffer_read.get(), buffer_size);
-                if( io_nread >= 0 )
-                    total_read += io_nread;
-            }
-        });
-
-        io.Run([&] {
-            int64_t already_wrote = 0;
-            while( io_left_to_write > 0 ) {
-                io_nwritten = _dst->Write(buffer_write.get() + already_wrote, io_left_to_write);
-                if( io_nwritten >= 0 ) {
-                    already_wrote += io_nwritten;
-                    io_left_to_write -= io_nwritten;
-                }
-                else
-                    break;
-            }
-            total_written += already_wrote;
-        });
-
-        io.Wait();
-
-        if( io_nread < 0 )
-            return static_cast<int>(io_nread);
-        if( io_nwritten < 0 )
-            return static_cast<int>(io_nwritten);
-
-        assert(io_left_to_write == 0); // vfs sanity check
-
-        if( total_written == src_size )
-            return 0;
-
-        io_left_to_write = io_nread;
-
-        std::swap(buffer_read, buffer_write);
-    }
-}
-
-static int CopyFileContents(std::shared_ptr<VFSFile> _src, std::shared_ptr<VFSFile> _dst)
-{
-    const ssize_t small_large_tresh = 16LL * 1024LL * 1024LL; // 16mb
-
-    if( _src->Size() > small_large_tresh )
-        return CopyFileContentsLarge(_src, _dst);
-    else
-        return CopyFileContentsSmall(_src, _dst);
-}
-
-int VFSEasyCopyFile(const char *_src_full_path,
-                    std::shared_ptr<VFSHost> _src_host,
-                    const char *_dst_full_path,
-                    std::shared_ptr<VFSHost> _dst_host)
+std::expected<void, Error> VFSEasyCopyFile(const char *_src_full_path,
+                                           std::shared_ptr<VFSHost> _src_host,
+                                           const char *_dst_full_path,
+                                           std::shared_ptr<VFSHost> _dst_host)
 {
     if( _src_full_path == nullptr || _src_full_path[0] != '/' || !_src_host || _dst_full_path == nullptr ||
         _dst_full_path[0] != '/' || !_dst_host )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     int result = 0;
 
     {
         const std::expected<std::shared_ptr<VFSFile>, nc::Error> source_file = _src_host->CreateFile(_src_full_path);
         if( !source_file )
-            return VFSError::GenericError; // TODO: return source_file
+            return std::unexpected(source_file.error());
 
         result = (*source_file)->Open(VFSFlags::OF_Read);
         if( result != 0 )
-            return result;
+            return std::unexpected(VFSError::ToError(result));
 
         const std::expected<std::shared_ptr<VFSFile>, nc::Error> dest_file = _dst_host->CreateFile(_dst_full_path);
         if( !dest_file )
-            return VFSError::GenericError; // TODO: return dest_file
+            return std::unexpected(dest_file.error());
 
         result = (*dest_file)
                      ->Open(VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist | VFSFlags::OF_IRUsr |
                             VFSFlags::OF_IWUsr | VFSFlags::OF_IRGrp);
         if( result != 0 )
-            return result;
+            return std::unexpected(VFSError::ToError(result));
 
-        result = CopyFileContents(*source_file, *dest_file);
-        if( result < 0 )
-            return result;
+        if( const std::expected<void, Error> rc = CopyFileContents(*source_file, *dest_file); !rc )
+            return rc;
     }
 
     const std::expected<void, Error> attrs_rc = CopyNodeAttrs(_src_full_path, _src_host, _dst_full_path, _dst_host);
     if( !attrs_rc )
-        return VFSError::GenericError; // TODO: return attrs_rc
+        return attrs_rc;
 
-    return 0;
+    return {};
 }
 
 int VFSEasyCopyDirectory(const char *_src_full_path,
@@ -245,31 +178,32 @@ int VFSEasyCopySymlink(const char *_src_full_path,
     return 0;
 }
 
-int VFSEasyCopyNode(const char *_src_full_path,
-                    std::shared_ptr<VFSHost> _src_host,
-                    const char *_dst_full_path,
-                    std::shared_ptr<VFSHost> _dst_host)
+std::expected<void, Error> VFSEasyCopyNode(const char *_src_full_path,
+                                           std::shared_ptr<VFSHost> _src_host,
+                                           const char *_dst_full_path,
+                                           std::shared_ptr<VFSHost> _dst_host)
 {
     if( _src_full_path == nullptr || _src_full_path[0] != '/' || !_src_host || _dst_full_path == nullptr ||
         _dst_full_path[0] != '/' || !_dst_host )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const std::expected<VFSStat, Error> st = _src_host->Stat(_src_full_path, VFSFlags::F_NoFollow);
     if( !st )
-        return VFSError::GenericError; // TODO: return st
+        return std::unexpected(st.error());
 
     switch( st->mode & S_IFMT ) {
         case S_IFDIR:
-            return VFSEasyCopyDirectory(_src_full_path, _src_host, _dst_full_path, _dst_host);
+            return VFSError::ToExpectedError(
+                VFSEasyCopyDirectory(_src_full_path, _src_host, _dst_full_path, _dst_host));
 
         case S_IFREG:
             return VFSEasyCopyFile(_src_full_path, _src_host, _dst_full_path, _dst_host);
 
         case S_IFLNK:
-            return VFSEasyCopySymlink(_src_full_path, _src_host, _dst_full_path, _dst_host);
+            return VFSError::ToExpectedError(VFSEasyCopySymlink(_src_full_path, _src_host, _dst_full_path, _dst_host));
 
         default:
-            return VFSError::GenericError;
+            return std::unexpected(Error{Error::POSIX, EINVAL});
     }
 }
 
@@ -428,22 +362,26 @@ std::optional<std::string> CopyFileToTempStorage(const std::string &_vfs_filepat
 
     constexpr size_t bufsz = 256ULL * 1024ULL;
     std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
-    ssize_t res_read;
-    while( (res_read = vfs_file.Read(buf.get(), bufsz)) > 0 ) {
-        ssize_t res_write;
+
+    while( true ) {
+        const std::expected<size_t, Error> res_read = vfs_file.Read(buf.get(), bufsz);
+        if( !res_read )
+            return std::nullopt;
+        if( res_read == 0 )
+            break;
+        ssize_t to_write = *res_read;
+        ssize_t res_write = 0;
         auto bufp = &buf[0];
-        while( res_read > 0 ) {
-            res_write = write(native_file->file_descriptor, bufp, res_read);
+        while( to_write > 0 ) {
+            res_write = write(native_file->file_descriptor, bufp, to_write);
             if( res_write >= 0 ) {
-                res_read -= res_write;
+                to_write -= res_write;
                 bufp += res_write;
             }
             else
                 return std::nullopt;
         }
     }
-    if( res_read < 0 )
-        return std::nullopt;
 
     vfs_file.XAttrIterateNames([&](const char *_name) {
         const ssize_t res = vfs_file.XAttrGet(_name, buf.get(), bufsz);
@@ -521,23 +459,23 @@ static size_t CalculateSumOfRegEntriesSizes(const std::vector<TraversedFSEntry> 
     });
 }
 
-static int ExtractRegFile(const std::string &_vfs_path,
-                          VFSHost &_host,
-                          const std::string &_native_path,
-                          const std::function<bool()> &_cancel_checker)
+static std::expected<void, Error> ExtractRegFile(const std::string &_vfs_path,
+                                                 VFSHost &_host,
+                                                 const std::string &_native_path,
+                                                 const std::function<bool()> &_cancel_checker)
 {
     const std::expected<VFSFilePtr, nc::Error> efile = _host.CreateFile(_vfs_path, _cancel_checker);
     if( !efile )
-        return VFSError::GenericError; // TODO: return evfs_file
+        return std::unexpected(efile.error());
     VFSFile &file = **efile;
 
     const auto open_file_rc = file.Open(VFSFlags::OF_Read, _cancel_checker);
     if( open_file_rc != VFSError::Ok )
-        return open_file_rc;
+        return std::unexpected(VFSError::ToError(open_file_rc));
 
     const auto fd = open(_native_path.c_str(), O_EXLOCK | O_NONBLOCK | O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if( fd < 0 )
-        return VFSError::FromErrno();
+        return std::unexpected(Error{Error::POSIX, errno});
     const auto close_fd = at_scope_end([&] { close(fd); });
 
     auto unlink_file = at_scope_end([&] { unlink(_native_path.c_str()); });
@@ -546,19 +484,21 @@ static int ExtractRegFile(const std::string &_vfs_path,
 
     constexpr size_t bufsz = 256ULL * 1024ULL;
     std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
-    ssize_t res_read;
-    while( (res_read = file.Read(buf.get(), bufsz)) > 0 ) {
-        while( res_read > 0 ) {
-            const ssize_t res_write = write(fd, buf.get(), res_read);
+    while( true ) {
+        const std::expected<size_t, Error> res_read = file.Read(buf.get(), bufsz);
+        if( !res_read )
+            return std::unexpected(res_read.error());
+        if( res_read == 0 )
+            break;
+        ssize_t to_write = *res_read;
+        while( to_write > 0 ) {
+            const ssize_t res_write = write(fd, buf.get(), to_write);
             if( res_write >= 0 )
-                res_read -= res_write;
+                to_write -= res_write;
             else {
-                return static_cast<int>(res_write);
+                return std::unexpected(VFSError::ToError(static_cast<int>(res_write)));
             }
         }
-    }
-    if( res_read < 0 ) {
-        return static_cast<int>(res_read);
     }
 
     file.XAttrIterateNames([&](const char *name) -> bool {
@@ -569,7 +509,7 @@ static int ExtractRegFile(const std::string &_vfs_path,
     });
 
     unlink_file.disengage();
-    return VFSError::Ok;
+    return {};
 }
 
 static bool ExtractEntry(const TraversedFSEntry &_entry,
@@ -589,7 +529,7 @@ static bool ExtractEntry(const TraversedFSEntry &_entry,
     else {
         // reg file
         const auto rc = ExtractRegFile(_entry.src_full_path, _host, target_tmp_path, _cancel_checker);
-        if( rc != VFSError::Ok )
+        if( !rc )
             return false;
     }
     // NB! no special types like symlinks are processed at the moment

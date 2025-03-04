@@ -185,12 +185,12 @@ bool File::Eof() const
     return m_FilePos == m_FileSize;
 }
 
-ssize_t File::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     if( m_State != Downloading && m_State != Completed )
-        return VFSError::InvalidCall;
+        return SetLastError(Error{Error::POSIX, EINVAL});
     if( !m_Download )
-        return VFSError::InvalidCall;
+        return SetLastError(Error{Error::POSIX, EINVAL});
     if( _size == 0 || Eof() )
         return 0;
 
@@ -213,8 +213,7 @@ ssize_t File::Read(void *_buf, size_t _size)
         m_Signal.wait(lk);
     } while( m_State == Downloading );
 
-    // TODO: return LastError instead
-    return /*LastError()*/ VFSError::InvalidCall;
+    return std::unexpected(LastError().value_or(Error{Error::POSIX, EIO}));
 }
 
 bool File::IsOpened() const

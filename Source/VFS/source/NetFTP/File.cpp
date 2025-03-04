@@ -227,7 +227,7 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
     return size;
 }
 
-ssize_t File::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     Log::Trace("File::Read({}, {}) called", _buf, _size);
     if( Eof() )
@@ -235,7 +235,7 @@ ssize_t File::Read(void *_buf, size_t _size)
 
     const ssize_t ret = ReadChunk(_buf, _size, m_FilePos, nullptr);
     if( ret < 0 )
-        return ret;
+        return std::unexpected(VFSError::ToError(static_cast<int>(ret)));
 
     m_FilePos += ret;
     return ret;

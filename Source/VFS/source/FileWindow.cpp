@@ -78,15 +78,15 @@ std::expected<void, Error> FileWindow::ReadFileWindowSeqPart(size_t _offset, siz
     if( _offset + _len > m_WindowSize )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
-    const ssize_t readret = m_File->Read(m_Window.get() + _offset, _len);
-    if( readret < 0 )
-        return std::unexpected(VFSError::ToError(static_cast<int>(readret)));
+    const std::expected<size_t, Error> readret = m_File->Read(m_Window.get() + _offset, _len);
+    if( !readret )
+        return std::unexpected(readret.error());
 
     if( readret == 0 )
         return std::unexpected(Error{Error::POSIX, EIO});
 
-    if( static_cast<size_t>(readret) < _len )
-        return ReadFileWindowSeqPart(_offset + readret, _len - readret);
+    if( *readret < _len )
+        return ReadFileWindowSeqPart(_offset + *readret, _len - *readret);
 
     return {};
 }

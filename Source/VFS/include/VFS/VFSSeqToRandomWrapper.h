@@ -29,7 +29,7 @@ public:
 
     bool Eof() const override;
 
-    ssize_t Read(void *_buf, size_t _size) override;
+    std::expected<size_t, nc::Error> Read(void *_buf, size_t _size) override;
 
     std::expected<size_t, nc::Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
 
@@ -48,9 +48,10 @@ private:
     };
 
     VFSSeqToRandomROWrapperFile(const char *_relative_path, const VFSHostPtr &_host, std::shared_ptr<Backend> _backend);
-    int OpenBackend(unsigned long _flags,
-                    VFSCancelChecker _cancel_checker,
-                    std::function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress);
+    std::expected<void, nc::Error>
+    OpenBackend(unsigned long _flags,
+                VFSCancelChecker _cancel_checker,
+                std::function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress);
 
     std::shared_ptr<Backend> m_Backend;
     ssize_t m_Pos = 0;

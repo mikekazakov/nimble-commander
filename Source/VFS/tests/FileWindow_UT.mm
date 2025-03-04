@@ -23,7 +23,7 @@ public:
     bool IsOpened() const override { return m_Opened; }
     int Close() override;
 
-    ssize_t Read(void *_buf, size_t _size) override;
+    std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     std::expected<size_t, nc::Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
     ReadParadigm GetReadParadigm() const override;
     off_t Seek(off_t _off, int _basis) override;
@@ -48,13 +48,13 @@ TestGenericMemReadOnlyFile::TestGenericMemReadOnlyFile(std::string_view _relativ
 {
 }
 
-ssize_t TestGenericMemReadOnlyFile::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> TestGenericMemReadOnlyFile::Read(void *_buf, size_t _size)
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     if( _buf == nullptr )
-        return VFSError::InvalidCall;
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     if( _size == 0 )
         return 0;

@@ -29,7 +29,7 @@ Compression::Compression(std::vector<VFSListingItem> _src_files,
     m_Job->m_TargetWriteError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         OnTargetWriteError(_err, _path, _vfs);
     };
-    m_Job->m_SourceReadError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_SourceReadError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         return (Callbacks::SourceReadErrorResolution)OnSourceReadError(_err, _path, _vfs);
     };
     m_Job->m_SourceScanError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
@@ -62,7 +62,7 @@ void Compression::OnTargetWriteError(Error _err, const std::string &_path, VFSHo
     ReportHaltReason(NSLocalizedString(@"Failed to write an archive", ""), _err, _path, _vfs);
 }
 
-int Compression::OnSourceReadError(int _err, const std::string &_path, VFSHost &_vfs)
+int Compression::OnSourceReadError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ? (int)Callbacks::SourceReadErrorResolution::Skip

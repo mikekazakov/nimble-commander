@@ -23,7 +23,7 @@ public:
     int Close() override;
     std::shared_ptr<VFSFile> Clone() const override;
 
-    ssize_t Read(void *_buf, size_t _size) override;
+    std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     std::expected<size_t, Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
     ReadParadigm GetReadParadigm() const override;
     off_t Seek(off_t _off, int _basis) override;

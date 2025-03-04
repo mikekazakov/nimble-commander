@@ -27,7 +27,7 @@ public:
     off_t Seek(off_t _off, int _basis) override;
     ssize_t Size() const override;
     bool Eof() const override;
-    ssize_t Read(void *_buf, size_t _size) override;
+    std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     std::expected<size_t, Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
     ssize_t Write(const void *_buf, size_t _size) override;
     int SetUploadSize(size_t _size) override;
@@ -429,10 +429,10 @@ off_t XAttrFile::Seek(off_t _off, int _basis)
     return m_Position;
 }
 
-ssize_t XAttrFile::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> XAttrFile::Read(void *_buf, size_t _size)
 {
     if( !IsOpened() || !IsOpenedForReading() )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     if( m_Position == m_Size )
         return 0;

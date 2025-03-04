@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "WebDAVHost.h"
@@ -21,7 +21,7 @@ public:
     ssize_t Pos() const override;
     ssize_t Size() const override;
     bool Eof() const override;
-    ssize_t Read(void *_buf, size_t _size) override;
+    std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     ssize_t Write(const void *_buf, size_t _size) override;
     int SetUploadSize(size_t _size) override;
     ReadParadigm GetReadParadigm() const override;

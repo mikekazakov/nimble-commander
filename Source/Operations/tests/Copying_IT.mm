@@ -409,8 +409,7 @@ TEST_CASE(PREFIX "Modes - CopyToPrefix_WithLocalDir")
     const TempTestDir tmp_dir;
     auto host = TestEnv().vfs_native;
 
-    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host) ==
-            0);
+    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
 
     const CopyingOptions opts;
     Copying op(FetchItems(tmp_dir.directory, {"Mail.app"}, *TestEnv().vfs_native),
@@ -434,8 +433,7 @@ TEST_CASE(PREFIX "Modes - CopyToPathName_WithLocalDir")
     const TempTestDir tmp_dir;
     auto host = TestEnv().vfs_native;
 
-    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host) ==
-            0);
+    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
 
     Copying op(
         FetchItems(tmp_dir.directory, {"Mail.app"}, *TestEnv().vfs_native), tmp_dir.directory / "Mail2.app", host, {});
@@ -454,8 +452,7 @@ TEST_CASE(PREFIX "Modes - RenameToPathPreffix")
     auto dir2 = tmp_dir.directory / "Some" / "Dir" / "Where" / "Files" / "Should" / "Be" / "Renamed/";
     auto host = TestEnv().vfs_native;
 
-    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host) ==
-            0);
+    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
 
     CopyingOptions opts;
     opts.docopy = false;
@@ -473,8 +470,7 @@ TEST_CASE(PREFIX "Modes - RenameToPathName")
     const TempTestDir tmp_dir;
     auto host = TestEnv().vfs_native;
 
-    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host) ==
-            0);
+    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
 
     CopyingOptions opts;
     opts.docopy = false;

@@ -9,10 +9,10 @@ namespace nc::utility {
 class TemporaryFileStorage;
 };
 
-int VFSEasyCopyFile(const char *_src_full_path,
-                    std::shared_ptr<VFSHost> _src_host,
-                    const char *_dst_full_path,
-                    std::shared_ptr<VFSHost> _dst_host);
+std::expected<void, nc::Error> VFSEasyCopyFile(const char *_src_full_path,
+                                               std::shared_ptr<VFSHost> _src_host,
+                                               const char *_dst_full_path,
+                                               std::shared_ptr<VFSHost> _dst_host);
 
 std::expected<int, nc::Error> VFSEasyCompareFiles(const char *_file1_full_path,
                                                   std::shared_ptr<VFSHost> _file1_host,
@@ -41,10 +41,10 @@ int VFSEasyCopySymlink(const char *_src_full_path,
                        const char *_dst_full_path,
                        std::shared_ptr<VFSHost> _dst_host);
 
-int VFSEasyCopyNode(const char *_src_full_path,
-                    std::shared_ptr<VFSHost> _src_host,
-                    const char *_dst_full_path,
-                    std::shared_ptr<VFSHost> _dst_host);
+std::expected<void, nc::Error> VFSEasyCopyNode(const char *_src_full_path,
+                                               std::shared_ptr<VFSHost> _src_host,
+                                               const char *_dst_full_path,
+                                               std::shared_ptr<VFSHost> _dst_host);
 
 int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr &_vfs);
 

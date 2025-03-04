@@ -32,8 +32,8 @@ struct CompressionJobCallbacks {
         Stop,
         Skip
     };
-    std::function<SourceReadErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)> m_SourceReadError =
-        [](int, const std::string &, VFSHost &) { return SourceReadErrorResolution::Stop; };
+    std::function<SourceReadErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_SourceReadError =
+        [](Error, const std::string &, VFSHost &) { return SourceReadErrorResolution::Stop; };
 
     std::function<void(Error _err, const std::string &_path, VFSHost &_vfs)> m_TargetWriteError =
         [](Error, const std::string &, VFSHost &) {};

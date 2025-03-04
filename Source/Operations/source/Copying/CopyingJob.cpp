@@ -1010,7 +1010,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
                 to_read -= read_result;
             }
             else if( (read_result < 0) || (++read_loops > max_io_loops) ) {
-                switch( m_OnSourceFileReadError(VFSError::FromErrno(), _src_path, _native_host) ) {
+                switch( m_OnSourceFileReadError(Error{Error::POSIX, errno}, _src_path, _native_host) ) {
                     case SourceFileReadErrorResolution::Skip:
                         read_return = StepResult::Skipped;
                         break;
@@ -1382,18 +1382,18 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
         int read_loops = 0;                    // amount of zero-resulting reads
         std::optional<StepResult> read_return; // optional storage for error returning
         while( to_read != 0 ) {
-            const int64_t read_result =
+            const std::expected<size_t, Error> read_result =
                 src_file->Read(read_buffer + has_read, std::min(to_read, src_preffered_io_size));
-            if( read_result > 0 ) {
+            if( read_result && *read_result > 0 ) {
                 if( _source_data_feedback )
-                    _source_data_feedback(read_buffer + has_read, static_cast<unsigned>(read_result));
-                source_bytes_read += read_result;
-                has_read += read_result;
-                assert(to_read >= read_result); // regression assert
-                to_read -= read_result;
+                    _source_data_feedback(read_buffer + has_read, static_cast<unsigned>(*read_result));
+                source_bytes_read += *read_result;
+                has_read += *read_result;
+                assert(to_read >= *read_result); // regression assert
+                to_read -= *read_result;
             }
-            else if( (read_result < 0) || (++read_loops > max_io_loops) ) {
-                switch( m_OnSourceFileReadError(static_cast<int>(read_result), _src_path, _src_vfs) ) {
+            else if( !read_result || (++read_loops > max_io_loops) ) {
+                switch( m_OnSourceFileReadError(read_result.error_or(Error{Error::POSIX, EIO}), _src_path, _src_vfs) ) {
                     case SourceFileReadErrorResolution::Skip:
                         read_return = StepResult::Skipped;
                         break;
@@ -1727,17 +1727,17 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
         int read_loops = 0;                    // amount of zero-resulting reads
         std::optional<StepResult> read_return; // optional storage for error returning
         while( to_read != 0 ) {
-            const int64_t read_result =
+            const std::expected<size_t, Error> read_result =
                 src_file->Read(read_buffer + has_read, std::min(to_read, src_preffered_io_size));
-            if( read_result > 0 ) {
+            if( read_result && *read_result > 0 ) {
                 if( _source_data_feedback )
-                    _source_data_feedback(read_buffer + has_read, static_cast<unsigned>(read_result));
-                source_bytes_read += read_result;
-                has_read += read_result;
-                to_read -= read_result;
+                    _source_data_feedback(read_buffer + has_read, static_cast<unsigned>(*read_result));
+                source_bytes_read += *read_result;
+                has_read += *read_result;
+                to_read -= *read_result;
             }
-            else if( (read_result < 0) || (++read_loops > max_io_loops) ) {
-                switch( m_OnSourceFileReadError(static_cast<int>(read_result), _src_path, _src_vfs) ) {
+            else if( !read_result || (++read_loops > max_io_loops) ) {
+                switch( m_OnSourceFileReadError(read_result.error_or(Error{Error::POSIX, EIO}), _src_path, _src_vfs) ) {
                     case SourceFileReadErrorResolution::Skip:
                         read_return = StepResult::Skipped;
                         break;
@@ -2645,10 +2645,9 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation &_
         if( BlockIfPaused(); IsStopped() )
             return StepResult::Stop;
 
-        const ssize_t r = file->Read(buf, std::min(szleft, buf_sz));
-        if( r < 0 ) {
-            switch( m_OnDestinationFileReadError(
-                VFSError::ToError(static_cast<int>(r)), _exp.destination_path, *m_DestinationHost) ) {
+        const std::expected<size_t, Error> r = file->Read(buf, std::min(szleft, buf_sz));
+        if( !r ) {
+            switch( m_OnDestinationFileReadError(r.error(), _exp.destination_path, *m_DestinationHost) ) {
                 case DestinationFileReadErrorResolution::Skip:
                     return StepResult::Skipped;
                 case DestinationFileReadErrorResolution::Stop:
@@ -2656,8 +2655,8 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation &_
             }
         }
         else {
-            szleft -= r;
-            hash.Feed(buf, r);
+            szleft -= *r;
+            hash.Feed(buf, *r);
         }
     }
     file->Close();

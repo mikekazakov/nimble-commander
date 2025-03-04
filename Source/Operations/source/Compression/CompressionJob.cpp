@@ -345,12 +345,12 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
 
     constexpr int buf_sz = 256 * 1024; // Why 256Kb?
     const std::unique_ptr<char[]> buf = std::make_unique<char[]>(buf_sz);
-    ssize_t source_read_rc;
-    while( (source_read_rc = src_file.Read(buf.get(), buf_sz)) > 0 ) { // reading and compressing itself
+    std::expected<size_t, Error> source_read_rc;
+    while( (source_read_rc = src_file.Read(buf.get(), buf_sz)).value_or(0) > 0 ) { // reading and compressing itself
         if( BlockIfPaused(); IsStopped() )
             return StepResult::Stopped;
 
-        ssize_t to_write = source_read_rc;
+        ssize_t to_write = *source_read_rc;
         ssize_t la_rc = 0;
         do {
             la_rc = archive_write_data(m_Archive, buf.get(), to_write);
@@ -367,11 +367,11 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
             return StepResult::Stopped;
         }
 
-        Statistics().CommitProcessed(Statistics::SourceType::Bytes, source_read_rc);
+        Statistics().CommitProcessed(Statistics::SourceType::Bytes, *source_read_rc);
     }
 
-    if( source_read_rc < 0 )
-        switch( m_SourceReadError(static_cast<int>(source_read_rc), _full_path, vfs) ) {
+    if( !source_read_rc )
+        switch( m_SourceReadError(source_read_rc.error(), _full_path, vfs) ) {
             case SourceReadErrorResolution::Stop:
                 Stop();
                 return StepResult::Stopped;

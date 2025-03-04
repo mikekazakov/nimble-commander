@@ -69,10 +69,10 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     return VFSError::FromErrno(EINVAL);
 }
 
-ssize_t File::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     if( !IsOpened() || !(m_OpenFlags & VFSFlags::OF_Read) )
-        return SetLastError(VFSError::FromErrno(EINVAL));
+        return SetLastError(Error{Error::POSIX, EINVAL});
     if( _size == 0 || Eof() )
         return 0;
 
@@ -80,7 +80,7 @@ ssize_t File::Read(void *_buf, size_t _size)
 
     const int vfs_error = m_Conn->ReadBodyUpToSize(_size);
     if( vfs_error != VFSError::Ok )
-        return SetLastError(vfs_error);
+        return SetLastError(VFSError::ToError(vfs_error));
 
     auto &read_buffer = m_Conn->ResponseBody();
     const auto has_read = read_buffer.Read(_buf, _size);

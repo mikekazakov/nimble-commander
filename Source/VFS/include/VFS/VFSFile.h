@@ -100,8 +100,17 @@ public:
     // Should return some considerable value even on non-opened files.
     virtual WriteParadigm GetWriteParadigm() const;
 
-    // ...
-    virtual ssize_t Read(void *_buf, size_t _size);
+    // Reads the specified amount of bytes into the specified buffer.
+    // Returns the amount of read bytes, which can be less than requested.
+    virtual std::expected<size_t, nc::Error> Read(void *_buf, size_t _size);
+
+    // ReadAt is available only on Random level.
+    // It will not move any file pointers.
+    // Reads up to _size bytes, may return less.
+    virtual std::expected<size_t, nc::Error> ReadAt(off_t _pos, void *_buf, size_t _size);
+
+    // Reads and discards _size bytes.
+    virtual std::expected<void, nc::Error> Skip(size_t _size);
 
     // For Upload write paradigm: sets upload size in advance, so the file object can set up its data structures and
     // do an actual upload on Write() call when the client hits the stated size.
@@ -113,14 +122,6 @@ public:
     // Writes _size bytes from _buf to a file in blocking mode.
     // Returnes the amount of bytes written or negative value for errors.
     virtual ssize_t Write(const void *_buf, size_t _size);
-
-    // Reads and discards _size bytes.
-    virtual std::expected<void, nc::Error> Skip(size_t _size);
-
-    // ReadAt is available only on Random level.
-    // It will not move any file pointers.
-    // Reads up to _size bytes, may return less.
-    virtual std::expected<size_t, nc::Error> ReadAt(off_t _pos, void *_buf, size_t _size);
 
     enum {
         Seek_Set = 0,

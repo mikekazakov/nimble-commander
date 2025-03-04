@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Internal.h"
 #include <cassert>
 
@@ -9,10 +9,10 @@ ssize_t Mediator::myread([[maybe_unused]] struct archive *a, void *client_data, 
     Mediator *_this = static_cast<Mediator *>(client_data);
     *buff = &_this->buf[0];
 
-    const ssize_t result = _this->file->Read(&_this->buf[0], bufsz);
-    if( result < 0 )
+    const std::expected<size_t, Error> result = _this->file->Read(&_this->buf[0], bufsz);
+    if( !result )
         return ARCHIVE_FATAL; // handle somehow
-    return result;
+    return *result;
 }
 
 off_t Mediator::myseek([[maybe_unused]] struct archive *a, void *client_data, off_t offset, int whence)
@@ -59,10 +59,10 @@ ssize_t State::myread([[maybe_unused]] struct archive *a, void *client_data, con
     auto _this = static_cast<State *>(client_data);
     *buff = &_this->m_Buf;
 
-    const ssize_t result = _this->m_File->Read(&_this->m_Buf[0], BufferSize);
-    if( result < 0 )
+    const std::expected<size_t, Error> result = _this->m_File->Read(&_this->m_Buf[0], BufferSize);
+    if( !result )
         return ARCHIVE_FATAL; // handle somehow
-    return result;
+    return *result;
 }
 
 off_t State::myseek([[maybe_unused]] struct archive *a, void *client_data, off_t offset, int whence)

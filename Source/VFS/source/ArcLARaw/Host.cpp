@@ -83,13 +83,13 @@ static Extracted read_stream(const uint64_t _max_bytes,
             archive_set_error(a, ECANCELED, "user-canceled");
             return ARCHIVE_FATAL;
         }
-        const ssize_t result = st.source_file->Read(st.inbuf.get(), buf_sz);
-        if( result < 0 ) {
+        const std::expected<size_t, Error> result = st.source_file->Read(st.inbuf.get(), buf_sz);
+        if( !result ) {
             archive_set_error(a, EIO, "I/O error");
             return ARCHIVE_FATAL; // handle somehow
         }
         *buff = static_cast<void *>(st.inbuf.get());
-        return result;
+        return *result;
     };
 
     archive *arc = archive_read_new();

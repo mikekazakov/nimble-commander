@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
 
@@ -97,10 +97,10 @@ bool File::Eof() const
     return m_Position == m_Size;
 }
 
-ssize_t File::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     if( IsOpened() == 0 )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
     if( Eof() )
         return 0;
 
@@ -111,7 +111,7 @@ ssize_t File::Read(void *_buf, size_t _size)
     if( size < 0 ) {
         // TODO: libarchive error - convert it into our errors
         fmt::println("libarchive error: {}", archive_error_string(m_State->Archive()));
-        return SetLastError(VFSError::FromLibarchive(archive_errno(m_State->Archive())));
+        return SetLastError(VFSError::ToError(VFSError::FromLibarchive(archive_errno(m_State->Archive()))));
     }
 
     m_Position += size;

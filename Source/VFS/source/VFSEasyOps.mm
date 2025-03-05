@@ -145,7 +145,8 @@ int VFSEasyCopyDirectory(const char *_src_full_path,
             destination += '/';
             destination += _dirent.name;
 
-            VFSEasyCopyNode(source.c_str(), _src_host, destination.c_str(), _dst_host);
+            // TODO: why is the return value ignored?
+            std::ignore = VFSEasyCopyNode(source.c_str(), _src_host, destination.c_str(), _dst_host);
             return true;
         });
 

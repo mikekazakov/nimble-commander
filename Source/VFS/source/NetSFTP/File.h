@@ -21,7 +21,7 @@ public:
     std::expected<uint64_t, Error> Seek(off_t _off, int _basis) override;
     std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     ssize_t Write(const void *_buf, size_t _size) override;
-    ssize_t Pos() const override;
+    std::expected<uint64_t, Error> Pos() const override;
     ssize_t Size() const override;
     bool Eof() const override;
 

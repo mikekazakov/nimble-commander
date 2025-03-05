@@ -78,9 +78,9 @@ std::expected<uint64_t, Error> VFSFile::Seek(off_t /*unused*/, int /*unused*/)
     return SetLastError(Error{Error::POSIX, ENOTSUP});
 }
 
-ssize_t VFSFile::Pos() const
+std::expected<uint64_t, Error> VFSFile::Pos() const
 {
-    return SetLastError(VFSError::NotSupported);
+    return SetLastError(Error{Error::POSIX, ENOTSUP});
 }
 
 ssize_t VFSFile::Size() const

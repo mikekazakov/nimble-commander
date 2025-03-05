@@ -27,7 +27,7 @@ public:
     std::expected<size_t, Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
     ReadParadigm GetReadParadigm() const override;
     std::expected<uint64_t, Error> Seek(off_t _off, int _basis) override;
-    ssize_t Pos() const override;
+    std::expected<uint64_t, Error> Pos() const override;
     ssize_t Size() const override;
     bool Eof() const override;
 

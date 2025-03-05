@@ -23,7 +23,7 @@ public:
     bool IsOpened() const override;
     ReadParadigm GetReadParadigm() const override;
     WriteParadigm GetWriteParadigm() const override;
-    ssize_t Pos() const override;
+    std::expected<uint64_t, Error> Pos() const override;
     std::expected<uint64_t, Error> Seek(off_t _off, int _basis) override;
     ssize_t Size() const override;
     bool Eof() const override;
@@ -388,7 +388,7 @@ VFSFile::WriteParadigm XAttrFile::GetWriteParadigm() const
     return VFSFile::WriteParadigm::Upload;
 }
 
-ssize_t XAttrFile::Pos() const
+std::expected<uint64_t, Error> XAttrFile::Pos() const
 {
     return m_Position;
 }

@@ -18,7 +18,7 @@ public:
     int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     bool IsOpened() const override;
     int Close() override;
-    ssize_t Pos() const override;
+    std::expected<uint64_t, Error> Pos() const override;
     ssize_t Size() const override;
     bool Eof() const override;
     std::expected<size_t, Error> Read(void *_buf, size_t _size) override;

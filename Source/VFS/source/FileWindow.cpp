@@ -169,8 +169,12 @@ std::expected<void, Error> FileWindow::DoMoveWindowSeqential(size_t _offset)
     }
     else if( _offset >= m_WindowPos ) {
         // need to move forward
-        assert(m_File->Pos() < ssize_t(_offset));
-        const size_t to_skip = _offset - m_File->Pos();
+        const std::expected<uint64_t, Error> pos = m_File->Pos();
+        if( !pos )
+            return std::unexpected(pos.error());
+
+        assert(*pos < _offset);
+        const size_t to_skip = _offset - *m_File->Pos();
 
         if( const std::expected<void, nc::Error> ret = m_File->Skip(to_skip); !ret )
             return ret;

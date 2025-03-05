@@ -64,7 +64,7 @@ VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
         if( res < 0 )
             return std::unexpected(VFSError::ToError(res));
     }
-    else if( m_SeqFile->Pos() > 0 )
+    else if( m_SeqFile->Pos().value_or(0) > 0 )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
     auto backend = std::make_shared<Backend>();
@@ -178,10 +178,10 @@ VFSFile::ReadParadigm VFSSeqToRandomROWrapperFile::GetReadParadigm() const
     return VFSFile::ReadParadigm::Random;
 }
 
-ssize_t VFSSeqToRandomROWrapperFile::Pos() const
+std::expected<uint64_t, Error> VFSSeqToRandomROWrapperFile::Pos() const
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     return m_Pos;
 }
 

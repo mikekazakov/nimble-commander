@@ -90,10 +90,10 @@ VFSFile::ReadParadigm GenericMemReadOnlyFile::GetReadParadigm() const
     return VFSFile::ReadParadigm::Random;
 }
 
-ssize_t GenericMemReadOnlyFile::Pos() const
+std::expected<uint64_t, Error> GenericMemReadOnlyFile::Pos() const
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     return m_Pos;
 }
 

@@ -170,7 +170,7 @@ void File::AppendDownloadedDataAsync(NSData *_data)
     m_Signal.notify_all();
 }
 
-ssize_t File::Pos() const
+std::expected<uint64_t, Error> File::Pos() const
 {
     return 0;
 }

@@ -145,10 +145,10 @@ ssize_t File::Write(const void *_buf, size_t _size)
         return SetLastError(SFTPHost::VFSErrorForConnection(*m_Connection));
 }
 
-ssize_t File::Pos() const
+std::expected<uint64_t, Error> File::Pos() const
 {
     if( !IsOpened() )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     return m_Position;
 }

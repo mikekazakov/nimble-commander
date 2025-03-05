@@ -25,7 +25,7 @@ public:
     ReadParadigm GetReadParadigm() const override;
     WriteParadigm GetWriteParadigm() const override;
 
-    ssize_t Pos() const override;
+    std::expected<uint64_t, Error> Pos() const override;
     ssize_t Size() const override;
     bool Eof() const override;
     unsigned XAttrCount() const override;

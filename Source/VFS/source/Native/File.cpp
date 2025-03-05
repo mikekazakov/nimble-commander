@@ -151,10 +151,10 @@ VFSFile::WriteParadigm File::GetWriteParadigm() const
     return VFSFile::WriteParadigm::NoWrite;
 }
 
-ssize_t File::Pos() const
+std::expected<uint64_t, Error> File::Pos() const
 {
     if( m_FD < 0 )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
     return m_Position;
 }
 

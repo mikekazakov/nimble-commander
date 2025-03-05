@@ -23,7 +23,7 @@ public:
 
     bool IsOpened() const override;
 
-    ssize_t Pos() const override;
+    std::expected<uint64_t, nc::Error> Pos() const override;
 
     ssize_t Size() const override;
 

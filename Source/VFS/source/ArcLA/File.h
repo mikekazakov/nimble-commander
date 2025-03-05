@@ -20,7 +20,7 @@ public:
     int Close() override;
     std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     ReadParadigm GetReadParadigm() const override;
-    ssize_t Pos() const override;
+    std::expected<uint64_t, Error> Pos() const override;
     ssize_t Size() const override;
     bool Eof() const override;
     unsigned XAttrCount() const override;

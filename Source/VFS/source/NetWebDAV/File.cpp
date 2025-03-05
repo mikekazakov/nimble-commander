@@ -199,7 +199,7 @@ File::WriteParadigm File::GetWriteParadigm() const
     return WriteParadigm::Upload;
 }
 
-ssize_t File::Pos() const
+std::expected<uint64_t, Error> File::Pos() const
 {
     return m_Pos;
 }

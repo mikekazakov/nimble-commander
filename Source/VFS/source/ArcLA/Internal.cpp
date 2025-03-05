@@ -18,10 +18,10 @@ ssize_t Mediator::myread([[maybe_unused]] struct archive *a, void *client_data, 
 off_t Mediator::myseek([[maybe_unused]] struct archive *a, void *client_data, off_t offset, int whence)
 {
     Mediator *_this = static_cast<Mediator *>(client_data);
-    const off_t result = _this->file->Seek(offset, whence);
-    if( result < 0 )
+    const std::expected<uint64_t, Error> result = _this->file->Seek(offset, whence);
+    if( !result )
         return ARCHIVE_FATAL; // handle somehow
-    return result;
+    return *result;
 }
 
 void Mediator::setup(struct archive *a)
@@ -68,10 +68,10 @@ ssize_t State::myread([[maybe_unused]] struct archive *a, void *client_data, con
 off_t State::myseek([[maybe_unused]] struct archive *a, void *client_data, off_t offset, int whence)
 {
     auto _this = static_cast<State *>(client_data);
-    const off_t result = _this->m_File->Seek(offset, whence);
-    if( result < 0 )
+    const std::expected<uint64_t, Error> result = _this->m_File->Seek(offset, whence);
+    if( !result )
         return ARCHIVE_FATAL; // handle somehow
-    return result;
+    return *result;
 }
 
 void State::SetEntry(struct archive_entry *_e, uint32_t _uid)

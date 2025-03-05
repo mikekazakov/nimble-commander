@@ -1648,11 +1648,10 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     // find the right position in destination file
     if( dst_file->Pos() != initial_writing_offset ) {
         while( true ) {
-            const long rc = dst_file->Seek(initial_writing_offset, VFSFile::Seek_Set);
-            if( rc >= 0 )
+            const std::expected<uint64_t, Error> rc = dst_file->Seek(initial_writing_offset, VFSFile::Seek_Set);
+            if( rc )
                 break;
-            switch( m_OnDestinationFileWriteError(
-                VFSError::ToError(static_cast<int>(rc)), _dst_path, *m_DestinationHost) ) {
+            switch( m_OnDestinationFileWriteError(rc.error(), _dst_path, *m_DestinationHost) ) {
                 case DestinationFileWriteErrorResolution::Skip:
                     return StepResult::Skipped;
                 case DestinationFileWriteErrorResolution::Stop:

@@ -102,19 +102,17 @@ std::expected<size_t, Error> File::ReadAt(off_t _pos, void *_buf, size_t _size)
     return static_cast<size_t>(ret);
 }
 
-off_t File::Seek(off_t _off, int _basis)
+std::expected<uint64_t, Error> File::Seek(off_t _off, int _basis)
 {
     if( m_FD < 0 )
-        return SetLastError(VFSError::InvalidCall);
-    //    printf("seek:%lld/%d \n", _off, _basis);
-    //    assert(m_FD >= 0);
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     const off_t ret = lseek(m_FD, _off, _basis);
     if( ret >= 0 ) {
         m_Position = ret;
         return ret;
     }
-    return SetLastError(VFSError::FromErrno(errno));
+    return SetLastError(Error{Error::POSIX, errno});
 }
 
 ssize_t File::Write(const void *_buf, size_t _size)

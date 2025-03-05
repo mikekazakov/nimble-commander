@@ -145,9 +145,9 @@ std::expected<void, Error> FileWindow::DoMoveWindowRandom(size_t _offset)
 std::expected<void, Error> FileWindow::DoMoveWindowSeek(size_t _offset)
 {
     // TODO: not efficient implementation, update me
-    const ssize_t ret = m_File->Seek(_offset, VFSFile::Seek_Set);
-    if( ret < 0 )
-        return std::unexpected(VFSError::ToError(static_cast<int>(ret)));
+    const std::expected<uint64_t, Error> ret = m_File->Seek(_offset, VFSFile::Seek_Set);
+    if( !ret )
+        return std::unexpected(ret.error());
 
     m_WindowPos = _offset;
     return ReadFileWindowSeqPart(0, m_WindowSize);

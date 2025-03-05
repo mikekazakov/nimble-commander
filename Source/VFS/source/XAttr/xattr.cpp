@@ -24,7 +24,7 @@ public:
     ReadParadigm GetReadParadigm() const override;
     WriteParadigm GetWriteParadigm() const override;
     ssize_t Pos() const override;
-    off_t Seek(off_t _off, int _basis) override;
+    std::expected<uint64_t, Error> Seek(off_t _off, int _basis) override;
     ssize_t Size() const override;
     bool Eof() const override;
     std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
@@ -403,13 +403,13 @@ bool XAttrFile::Eof() const
     return m_Position >= m_Size;
 }
 
-off_t XAttrFile::Seek(off_t _off, int _basis)
+std::expected<uint64_t, Error> XAttrFile::Seek(off_t _off, int _basis)
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     if( !IsOpenedForReading() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     off_t req_pos = 0;
     if( _basis == VFSFile::Seek_Set )
@@ -419,10 +419,10 @@ off_t XAttrFile::Seek(off_t _off, int _basis)
     else if( _basis == VFSFile::Seek_Cur )
         req_pos = m_Position + _off;
     else
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     if( req_pos < 0 )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
     req_pos = std::min<off_t>(req_pos, m_Size);
     m_Position = req_pos;
 

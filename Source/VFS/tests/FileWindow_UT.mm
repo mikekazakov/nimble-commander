@@ -26,7 +26,7 @@ public:
     std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     std::expected<size_t, nc::Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
     ReadParadigm GetReadParadigm() const override;
-    off_t Seek(off_t _off, int _basis) override;
+    std::expected<uint64_t, Error> Seek(off_t _off, int _basis) override;
     ssize_t Pos() const override;
     ssize_t Size() const override;
     bool Eof() const override;
@@ -88,13 +88,13 @@ std::expected<size_t, nc::Error> TestGenericMemReadOnlyFile::ReadAt(off_t _pos, 
     return toread;
 }
 
-off_t TestGenericMemReadOnlyFile::Seek(off_t _off, int _basis)
+std::expected<uint64_t, Error> TestGenericMemReadOnlyFile::Seek(off_t _off, int _basis)
 {
     if( m_Behaviour < VFSFile::ReadParadigm::Seek )
-        return VFSError::NotSupported;
+        return SetLastError(Error{Error::POSIX, ENOTSUP});
 
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     off_t req_pos = 0;
     if( _basis == VFSFile::Seek_Set )
@@ -104,10 +104,10 @@ off_t TestGenericMemReadOnlyFile::Seek(off_t _off, int _basis)
     else if( _basis == VFSFile::Seek_Cur )
         req_pos = m_Pos + _off;
     else
-        return VFSError::InvalidCall;
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     if( req_pos < 0 )
-        return VFSError::InvalidCall;
+        return SetLastError(Error{Error::POSIX, EINVAL});
     if( req_pos > static_cast<ssize_t>(m_Size) )
         req_pos = m_Size;
     m_Pos = req_pos;

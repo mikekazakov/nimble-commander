@@ -130,7 +130,7 @@ public:
     };
 
     // Seek() is available if Read paradigm is Seek or above.
-    virtual off_t Seek(off_t _off, int _basis);
+    virtual std::expected<uint64_t, nc::Error> Seek(off_t _off, int _basis);
 
     // Pos() should always be available, except of dummy VFSFile class, which returns VFSError::NotSupported.
     virtual ssize_t Pos() const;

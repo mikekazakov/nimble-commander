@@ -73,9 +73,9 @@ int VFSFile::Close()
     return SetLastError(VFSError::NotSupported);
 }
 
-off_t VFSFile::Seek(off_t /*unused*/, int /*unused*/)
+std::expected<uint64_t, Error> VFSFile::Seek(off_t /*unused*/, int /*unused*/)
 {
-    return SetLastError(VFSError::NotSupported);
+    return SetLastError(Error{Error::POSIX, ENOTSUP});
 }
 
 ssize_t VFSFile::Pos() const
@@ -134,9 +134,9 @@ std::expected<std::vector<uint8_t>, Error> VFSFile::ReadFile()
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( Pos() != 0 ) {
-        const long seek_rc = Seek(Seek_Set, 0);
-        if( seek_rc < 0 ) {
-            return std::unexpected(VFSError::ToError(static_cast<int>(seek_rc))); // can't rewind the file
+        const std::expected<uint64_t, Error> seek_rc = Seek(Seek_Set, 0);
+        if( !seek_rc ) {
+            return std::unexpected(seek_rc.error()); // can't rewind the file
         }
     }
 

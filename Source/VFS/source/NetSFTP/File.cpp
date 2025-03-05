@@ -96,7 +96,7 @@ VFSFile::WriteParadigm File::GetWriteParadigm() const
     return VFSFile::WriteParadigm::Seek;
 }
 
-off_t File::Seek(off_t _off, int _basis)
+std::expected<uint64_t, Error> File::Seek(off_t _off, int _basis)
 {
     uint64_t req = 0;
     if( _basis == VFSFile::Seek_Set )
@@ -106,6 +106,7 @@ off_t File::Seek(off_t _off, int _basis)
     else if( _basis == VFSFile::Seek_End )
         req = m_Size + _off;
 
+    // TODO: why errors are not handled?
     libssh2_sftp_seek64(m_Handle, req);
     const libssh2_uint64_t pos = libssh2_sftp_tell64(m_Handle);
     m_Position = pos;

@@ -61,10 +61,10 @@ std::expected<size_t, Error> GenericMemReadOnlyFile::ReadAt(off_t _pos, void *_b
     return toread;
 }
 
-off_t GenericMemReadOnlyFile::Seek(off_t _off, int _basis)
+std::expected<uint64_t, Error> GenericMemReadOnlyFile::Seek(off_t _off, int _basis)
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     off_t req_pos = 0;
     if( _basis == VFSFile::Seek_Set )
@@ -74,10 +74,10 @@ off_t GenericMemReadOnlyFile::Seek(off_t _off, int _basis)
     else if( _basis == VFSFile::Seek_Cur )
         req_pos = m_Pos + _off;
     else
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( req_pos < 0 )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     if( req_pos > static_cast<long>(m_Size) )
         req_pos = m_Size;
     m_Pos = req_pos;

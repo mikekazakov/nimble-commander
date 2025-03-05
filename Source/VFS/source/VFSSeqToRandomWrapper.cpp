@@ -215,10 +215,10 @@ std::expected<size_t, nc::Error> VFSSeqToRandomROWrapperFile::Read(void *_buf, s
 std::expected<size_t, nc::Error> VFSSeqToRandomROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if( !IsOpened() )
-        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( _pos < 0 || _pos > m_Backend->m_Size )
-        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( m_Backend->m_DataBuf ) {
         const ssize_t toread = std::min(m_Backend->m_Size - _pos, static_cast<off_t>(_size));
@@ -231,17 +231,17 @@ std::expected<size_t, nc::Error> VFSSeqToRandomROWrapperFile::ReadAt(off_t _pos,
         if( res >= 0 )
             return res;
         else
-            return std::unexpected(nc::Error{nc::Error::POSIX, errno});
+            return std::unexpected(Error{Error::POSIX, errno});
         ;
     }
     assert(0);
-    return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
+    return std::unexpected(Error{Error::POSIX, EINVAL});
 }
 
-off_t VFSSeqToRandomROWrapperFile::Seek(off_t _off, int _basis)
+std::expected<uint64_t, Error> VFSSeqToRandomROWrapperFile::Seek(off_t _off, int _basis)
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     // we can only deal with cache buffer now, need another branch later
     off_t req_pos = 0;
@@ -252,10 +252,10 @@ off_t VFSSeqToRandomROWrapperFile::Seek(off_t _off, int _basis)
     else if( _basis == VFSFile::Seek_Cur )
         req_pos = m_Pos + _off;
     else
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( req_pos < 0 )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     req_pos = std::min<off_t>(req_pos, m_Backend->m_Size);
     m_Pos = req_pos;
 

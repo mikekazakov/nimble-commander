@@ -317,14 +317,14 @@ bool File::Eof() const
     return m_FilePos >= m_FileSize;
 }
 
-off_t File::Seek(off_t _off, int _basis)
+std::expected<uint64_t, Error> File::Seek(off_t _off, int _basis)
 {
     Log::Trace("File::Seek({}, {}) called", _off, _basis);
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( m_Mode != Mode::Read )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     // we can only deal with cache buffer now, need another branch later
     off_t req_pos = 0;
@@ -335,10 +335,10 @@ off_t File::Seek(off_t _off, int _basis)
     else if( _basis == VFSFile::Seek_Cur )
         req_pos = m_FilePos + _off;
     else
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( req_pos < 0 )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     req_pos = std::min(req_pos, static_cast<off_t>(m_FileSize));
 
     m_FilePos = req_pos;

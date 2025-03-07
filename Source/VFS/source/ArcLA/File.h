@@ -21,7 +21,7 @@ public:
     std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     ReadParadigm GetReadParadigm() const override;
     std::expected<uint64_t, Error> Pos() const override;
-    ssize_t Size() const override;
+    std::expected<uint64_t, Error> Size() const override;
     bool Eof() const override;
     unsigned XAttrCount() const override;
     void XAttrIterateNames(const XAttrIterateNamesCallback &_handler) const override;

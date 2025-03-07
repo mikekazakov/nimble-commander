@@ -132,11 +132,11 @@ public:
     // Seek() is available if Read paradigm is Seek or above.
     virtual std::expected<uint64_t, nc::Error> Seek(off_t _off, int _basis);
 
-    // Pos() should always be available, except of dummy VFSFile class, which returns VFSError::NotSupported.
+    // Implementations should always provide Pos(), the base class always returns ENOTSUP.
     virtual std::expected<uint64_t, nc::Error> Pos() const;
 
-    // Size() should always be available, except of dummy VFSFile class, which returns VFSError::NotSupported.
-    virtual ssize_t Size() const;
+    // Implementation should always provide Size(), the base class always returns ENOTSUP.
+    virtual std::expected<uint64_t, nc::Error> Size() const;
 
     // Eof() should always be available, return true on not-valid file state.
     virtual bool Eof() const;

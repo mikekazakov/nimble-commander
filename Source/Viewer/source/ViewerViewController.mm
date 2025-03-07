@@ -506,8 +506,8 @@ struct BackgroundFileOpener {
         [m_View scrollToVerticalPosition:std::clamp(pos, 0., 1.)];
     }
     if( self.goToPositionKindButton.selectedTag == 1 ) {
-        const long pos = string.integerValue;
-        m_View.verticalPositionInBytes = std::clamp(pos, 0l, m_WorkFile->Size());
+        const unsigned long long pos = string.integerValue;
+        m_View.verticalPositionInBytes = std::clamp(pos, 0ull, m_WorkFile->Size().value_or(0ull));
     }
 }
 

@@ -25,7 +25,7 @@ public:
     WriteParadigm GetWriteParadigm() const override;
     std::expected<uint64_t, Error> Pos() const override;
     std::expected<uint64_t, Error> Seek(off_t _off, int _basis) override;
-    ssize_t Size() const override;
+    std::expected<uint64_t, Error> Size() const override;
     bool Eof() const override;
     std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     std::expected<size_t, Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
@@ -393,7 +393,7 @@ std::expected<uint64_t, Error> XAttrFile::Pos() const
     return m_Position;
 }
 
-ssize_t XAttrFile::Size() const
+std::expected<uint64_t, Error> XAttrFile::Size() const
 {
     return m_Size;
 }

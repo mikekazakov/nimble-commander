@@ -83,10 +83,10 @@ std::expected<uint64_t, Error> File::Pos() const
     return m_Position;
 }
 
-ssize_t File::Size() const
+std::expected<uint64_t, Error> File::Size() const
 {
     if( !IsOpened() )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
     return m_Size;
 }
 

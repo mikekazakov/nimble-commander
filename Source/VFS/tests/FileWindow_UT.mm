@@ -28,7 +28,7 @@ public:
     ReadParadigm GetReadParadigm() const override;
     std::expected<uint64_t, Error> Seek(off_t _off, int _basis) override;
     std::expected<uint64_t, Error> Pos() const override;
-    ssize_t Size() const override;
+    std::expected<uint64_t, Error> Size() const override;
     bool Eof() const override;
 
 private:
@@ -127,7 +127,7 @@ std::expected<uint64_t, Error> TestGenericMemReadOnlyFile::Pos() const
     return m_Pos;
 }
 
-ssize_t TestGenericMemReadOnlyFile::Size() const
+std::expected<uint64_t, Error> TestGenericMemReadOnlyFile::Size() const
 {
     return m_Size;
 }

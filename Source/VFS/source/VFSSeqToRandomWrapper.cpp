@@ -67,13 +67,17 @@ VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
     else if( m_SeqFile->Pos().value_or(0) > 0 )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
+    const std::expected<uint64_t, Error> seq_file_size = m_SeqFile->Size();
+    if( !seq_file_size )
+        return std::unexpected(seq_file_size.error());
+
     auto backend = std::make_shared<Backend>();
     m_Pos = 0;
 
-    if( m_SeqFile->Size() <= MaxCachedInMem ) {
+    if( *seq_file_size <= MaxCachedInMem ) {
         // we just read a whole file into a memory buffer
 
-        backend->m_Size = m_SeqFile->Size();
+        backend->m_Size = *seq_file_size;
         backend->m_DataBuf = std::make_unique<uint8_t[]>(backend->m_Size);
 
         const size_t max_io = 256ULL * 1024ULL;
@@ -112,7 +116,7 @@ VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
         fcntl(fd, F_NOCACHE, 1); // don't need to cache this temporaral stuff
 
         backend->m_FD = fd;
-        backend->m_Size = m_SeqFile->Size();
+        backend->m_Size = *seq_file_size;
 
         constexpr uint64_t bufsz = 256ULL * 1024ULL;
         const std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
@@ -185,10 +189,10 @@ std::expected<uint64_t, Error> VFSSeqToRandomROWrapperFile::Pos() const
     return m_Pos;
 }
 
-ssize_t VFSSeqToRandomROWrapperFile::Size() const
+std::expected<uint64_t, Error> VFSSeqToRandomROWrapperFile::Size() const
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     return m_Backend->m_Size;
 }
 

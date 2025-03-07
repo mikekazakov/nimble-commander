@@ -25,7 +25,7 @@ public:
 
     std::expected<uint64_t, nc::Error> Pos() const override;
 
-    ssize_t Size() const override;
+    std::expected<uint64_t, nc::Error> Size() const override;
 
     bool Eof() const override;
 

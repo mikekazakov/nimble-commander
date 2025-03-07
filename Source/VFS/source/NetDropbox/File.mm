@@ -175,9 +175,11 @@ std::expected<uint64_t, Error> File::Pos() const
     return 0;
 }
 
-ssize_t File::Size() const
+std::expected<uint64_t, Error> File::Size() const
 {
-    return m_FileSize >= 0 ? m_FileSize : VFSError::InvalidCall;
+    if( m_FileSize < 0 )
+        return SetLastError(Error{Error::POSIX, EINVAL});
+    return m_FileSize;
 }
 
 bool File::Eof() const

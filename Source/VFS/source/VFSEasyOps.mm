@@ -44,11 +44,14 @@ static std::expected<void, Error> CopyFileContents(std::shared_ptr<VFSFile> _src
 {
     constexpr uint64_t bufsz = 256ULL * 1024ULL;
     const std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
-    const uint64_t src_size = _src->Size();
+    const std::expected<uint64_t, Error> src_size = _src->Size();
+    if( !src_size )
+        return std::unexpected(src_size.error());
+
     ssize_t total_wrote = 0;
 
     while( true ) {
-        const std::expected<size_t, Error> res_read = _src->Read(buf.get(), std::min(bufsz, src_size));
+        const std::expected<size_t, Error> res_read = _src->Read(buf.get(), std::min(bufsz, *src_size));
         if( !res_read )
             return std::unexpected(res_read.error());
         if( res_read == 0 ) {

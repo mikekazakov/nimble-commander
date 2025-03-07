@@ -83,9 +83,9 @@ std::expected<uint64_t, Error> VFSFile::Pos() const
     return SetLastError(Error{Error::POSIX, ENOTSUP});
 }
 
-ssize_t VFSFile::Size() const
+std::expected<uint64_t, Error> VFSFile::Size() const
 {
-    return SetLastError(VFSError::NotSupported);
+    return SetLastError(Error{Error::POSIX, ENOTSUP});
 }
 
 bool VFSFile::Eof() const
@@ -140,11 +140,14 @@ std::expected<std::vector<uint8_t>, Error> VFSFile::ReadFile()
         }
     }
 
-    const uint64_t sz = Size();
-    auto buf = std::vector<uint8_t>(sz);
+    const std::expected<uint64_t, Error> sz = Size();
+    if( !sz )
+        return std::unexpected(sz.error());
+
+    auto buf = std::vector<uint8_t>(*sz);
 
     uint8_t *buftmp = buf.data();
-    uint64_t szleft = sz;
+    uint64_t szleft = *sz;
     while( szleft ) {
         const std::expected<size_t, Error> r = Read(buftmp, szleft);
         if( !r ) {

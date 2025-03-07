@@ -97,7 +97,7 @@ std::expected<uint64_t, Error> GenericMemReadOnlyFile::Pos() const
     return m_Pos;
 }
 
-ssize_t GenericMemReadOnlyFile::Size() const
+std::expected<uint64_t, Error> GenericMemReadOnlyFile::Size() const
 {
     return m_Size;
 }

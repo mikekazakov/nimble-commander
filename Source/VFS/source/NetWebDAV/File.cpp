@@ -204,7 +204,7 @@ std::expected<uint64_t, Error> File::Pos() const
     return m_Pos;
 }
 
-ssize_t File::Size() const
+std::expected<uint64_t, Error> File::Size() const
 {
     return m_Size;
 }

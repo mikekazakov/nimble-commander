@@ -2635,8 +2635,8 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation &_
 
     base::Hash hash(base::Hash::MD5);
 
-    const uint64_t sz = file->Size();
-    uint64_t szleft = sz;
+    const std::expected<uint64_t, Error> sz = file->Size();
+    uint64_t szleft = sz.value_or(0);
     void *buf = m_Buffers[0].get();
     const uint64_t buf_sz = m_BufferSize;
 

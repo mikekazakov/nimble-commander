@@ -42,7 +42,6 @@ struct ArchiveHost::Impl {
     uint32_t m_TotalDirs = 0;
     uint32_t m_TotalRegs = 0;
     uint32_t m_LastItemUID = 0;
-    uint64_t m_ArchiveFileSize = 0;
     uint64_t m_ArchivedFilesTotalSize = 0;
 
     bool m_NeedsPathResolving = false; // true if there are any symlinks present in archive
@@ -187,7 +186,9 @@ std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_c
     if( res < 0 )
         return std::unexpected(VFSError::ToError(res));
 
-    if( source_file->Size() <= 0 )
+    if( const std::expected<uint64_t, Error> source_file_size = source_file->Size(); !source_file_size )
+        return std::unexpected(source_file_size.error());
+    else if( *source_file_size == 0 )
         return std::unexpected(VFSError::ToError(
             VFSError::ArclibFileFormat)); // libarchive thinks that zero-bytes archives are OK, but I don't think so.
 
@@ -229,7 +230,6 @@ std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_c
         return std::unexpected(VFSError::ToError(VFSError::ArclibPasswordRequired));
 
     res = ReadArchiveListing();
-    I->m_ArchiveFileSize = I->m_ArFile->Size();
     if( archive_read_has_encrypted_entries(I->m_Arc) > 0 && !Config().password )
         return std::unexpected(VFSError::ToError(VFSError::ArclibPasswordRequired));
 

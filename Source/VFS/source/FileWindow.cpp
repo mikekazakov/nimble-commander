@@ -24,8 +24,12 @@ std::expected<void, Error> FileWindow::Attach(const std::shared_ptr<VFSFile> &_f
     if( _file->GetReadParadigm() == VFSFile::ReadParadigm::NoRead )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
+    const std::expected<uint64_t, Error> file_size = m_File->Size();
+    if( !file_size )
+        return std::unexpected(file_size.error());
+
     m_File = _file;
-    m_WindowSize = std::min(m_File->Size(), static_cast<ssize_t>(_window_size));
+    m_WindowSize = std::min(*file_size, static_cast<uint64_t>(_window_size));
     m_Window = std::make_unique<uint8_t[]>(m_WindowSize);
     m_WindowPos = 0;
 
@@ -99,7 +103,11 @@ std::expected<void, Error> FileWindow::MoveWindow(size_t _offset)
     if( _offset == m_WindowPos )
         return {};
 
-    if( _offset + m_WindowSize > static_cast<size_t>(m_File->Size()) )
+    const std::expected<uint64_t, Error> file_size = m_File->Size();
+    if( !file_size )
+        return std::unexpected(file_size.error());
+
+    if( _offset + m_WindowSize > *file_size )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
     switch( m_File->GetReadParadigm() ) {
@@ -189,7 +197,7 @@ std::expected<void, Error> FileWindow::DoMoveWindowSeqential(size_t _offset)
 size_t FileWindow::FileSize() const
 {
     assert(FileOpened());
-    return m_File->Size();
+    return m_File->Size().value_or(0);
 }
 
 const void *FileWindow::Window() const

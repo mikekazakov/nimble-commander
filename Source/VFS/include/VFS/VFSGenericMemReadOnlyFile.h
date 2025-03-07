@@ -28,7 +28,7 @@ public:
     ReadParadigm GetReadParadigm() const override;
     std::expected<uint64_t, Error> Seek(off_t _off, int _basis) override;
     std::expected<uint64_t, Error> Pos() const override;
-    ssize_t Size() const override;
+    std::expected<uint64_t, Error> Size() const override;
     bool Eof() const override;
 
 private:

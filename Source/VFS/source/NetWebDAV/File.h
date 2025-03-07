@@ -19,7 +19,7 @@ public:
     bool IsOpened() const override;
     int Close() override;
     std::expected<uint64_t, Error> Pos() const override;
-    ssize_t Size() const override;
+    std::expected<uint64_t, Error> Size() const override;
     bool Eof() const override;
     std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     ssize_t Write(const void *_buf, size_t _size) override;

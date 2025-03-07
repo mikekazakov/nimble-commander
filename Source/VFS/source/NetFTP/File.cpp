@@ -241,13 +241,13 @@ std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
     return ret;
 }
 
-ssize_t File::Write(const void *_buf, size_t _size)
+std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
 {
     Log::Trace("File::Write({}, {}) called", _buf, _size);
     // TODO: reconnecting support
 
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     assert(m_WriteBuf.Consumed() == 0);
     m_WriteBuf.Write(_buf, _size);
@@ -280,7 +280,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
     }
 
     if( error )
-        return VFSError::FromErrno(EIO);
+        return std::unexpected(Error{Error::POSIX, EIO});
 
     m_FilePos += m_WriteBuf.Consumed();
     m_FileSize += m_WriteBuf.Consumed();

@@ -47,9 +47,9 @@ std::expected<size_t, Error> VFSFile::Read([[maybe_unused]] void *_buf, [[maybe_
     return SetLastError(Error{Error::POSIX, ENOTSUP});
 }
 
-ssize_t VFSFile::Write([[maybe_unused]] const void *_buf, [[maybe_unused]] size_t _size)
+std::expected<size_t, Error> VFSFile::Write([[maybe_unused]] const void *_buf, [[maybe_unused]] size_t _size)
 {
-    return SetLastError(VFSError::NotSupported);
+    return SetLastError(Error{Error::POSIX, ENOTSUP});
 }
 
 std::expected<size_t, Error>
@@ -167,12 +167,12 @@ std::expected<void, Error> VFSFile::WriteFile(const void *_d, size_t _sz)
 
     const uint8_t *d = static_cast<const uint8_t *>(_d);
     while( _sz > 0 ) {
-        if( const ssize_t r = Write(d, _sz); r >= 0 ) {
-            d += r;
-            _sz -= r;
+        if( const std::expected<size_t, Error> r = Write(d, _sz); r ) {
+            d += *r;
+            _sz -= *r;
         }
         else {
-            return std::unexpected(VFSError::ToError(static_cast<int>(r)));
+            return std::unexpected(r.error());
         }
     }
     return {};

@@ -129,10 +129,10 @@ std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
         return SetLastError(VFSError::ToError(SFTPHost::VFSErrorForConnection(*m_Connection)));
 }
 
-ssize_t File::Write(const void *_buf, size_t _size)
+std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
 {
     if( !IsOpened() )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     const ssize_t rc = libssh2_sftp_write(m_Handle, static_cast<const char *>(_buf), _size);
 
@@ -142,7 +142,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
         return rc;
     }
     else
-        return SetLastError(SFTPHost::VFSErrorForConnection(*m_Connection));
+        return SetLastError(VFSError::ToError(SFTPHost::VFSErrorForConnection(*m_Connection)));
 }
 
 std::expected<uint64_t, Error> File::Pos() const

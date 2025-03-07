@@ -1692,18 +1692,16 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
             uint32_t has_written = 0; // amount of bytes written into destination this time
             int write_loops = 0;
             while( left_to_write > 0 ) {
-                //                int64_t n_written = write(destination_fd, write_buffer +
-                //                has_written, min(left_to_write, dst_preffered_io_size) );
-                const int64_t n_written =
+                const std::expected<size_t, Error> n_written =
                     dst_file->Write(write_buffer + has_written, std::min(left_to_write, dst_preffered_io_size));
-                if( n_written > 0 ) {
-                    has_written += n_written;
-                    left_to_write -= n_written;
-                    destination_bytes_written += n_written;
+                if( n_written && *n_written > 0 ) {
+                    has_written += *n_written;
+                    left_to_write -= *n_written;
+                    destination_bytes_written += *n_written;
                 }
-                else if( n_written < 0 || (++write_loops > max_io_loops) ) {
+                else if( !n_written || (++write_loops > max_io_loops) ) {
                     switch( m_OnDestinationFileWriteError(
-                        VFSError::ToError(static_cast<int>(n_written)), _dst_path, *m_DestinationHost) ) {
+                        n_written.error_or(Error{Error::POSIX, EIO}), _dst_path, *m_DestinationHost) ) {
                         case DestinationFileWriteErrorResolution::Skip:
                             write_return = StepResult::Skipped;
                             return;

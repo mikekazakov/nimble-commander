@@ -232,7 +232,7 @@ static void TestVariousCompleteWrites(VFSHostPtr _host)
     const std::byte *read_from = noise.data();
     while( left_to_write > 0 ) {
         const auto write_now = std::min(write_chunk, static_cast<size_t>(left_to_write));
-        const auto write_rc = file->Write(read_from, write_now);
+        const auto write_rc = file->Write(read_from, write_now).value();
         REQUIRE(write_rc >= 0);
         read_from += write_rc;
         left_to_write -= write_rc;

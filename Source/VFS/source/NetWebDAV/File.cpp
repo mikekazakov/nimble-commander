@@ -89,10 +89,10 @@ std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
     return has_read;
 }
 
-ssize_t File::Write(const void *_buf, size_t _size)
+std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
 {
     if( !IsOpened() || !(m_OpenFlags & VFSFlags::OF_Write) || m_Size < 0 )
-        return SetLastError(VFSError::FromErrno(EINVAL));
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     SpawnUploadConnectionIfNeeded();
 
@@ -105,7 +105,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
 
     const int vfs_error = m_Conn->WriteBodyUpToSize(_size);
     if( vfs_error != VFSError::Ok )
-        return SetLastError(vfs_error);
+        return SetLastError(VFSError::ToError(vfs_error));
 
     //    TODO: clarify what File should return for partially written blocks - error code or number
     //    of bytes written?

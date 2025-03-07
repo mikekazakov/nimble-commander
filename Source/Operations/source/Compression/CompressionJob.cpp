@@ -566,9 +566,9 @@ ssize_t
 CompressionJob::WriteCallback(struct archive * /*_archive*/, void *_client_data, const void *_buffer, size_t _length)
 {
     const auto me = static_cast<CompressionJob *>(_client_data);
-    const ssize_t ret = me->m_TargetFile->Write(_buffer, _length);
-    if( ret >= 0 )
-        return ret;
+    const std::expected<size_t, Error> ret = me->m_TargetFile->Write(_buffer, _length);
+    if( ret )
+        return *ret;
     return ARCHIVE_FATAL;
 }
 

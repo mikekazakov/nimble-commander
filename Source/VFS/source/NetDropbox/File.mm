@@ -536,11 +536,11 @@ void File::WaitForAppendToComplete() const
     });
 }
 
-ssize_t File::Write(const void *_buf, size_t _size)
+std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
 {
     if( !m_Upload || m_State != Uploading || m_Upload->upload_size < 0 ||
         m_FilePos + static_cast<long>(_size) > m_Upload->upload_size )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     assert(m_Upload->fifo.empty());
 
@@ -552,8 +552,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
     const auto eaten = WaitForUploadBufferConsumption();
 
     if( m_State != Uploading ) {
-        // TODO: return LastError() instead
-        return /*LastError()*/ VFSError::InvalidCall;
+        return std::unexpected(LastError().value_or(Error{Error::POSIX, EINVAL}));
     }
 
     m_FilePos += eaten;
@@ -578,8 +577,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
             m_Upload->delegate.handleFinished = nullptr;
 
             if( m_State != Uploading ) {
-                // TODO: return LastError() instead
-                return /*LastError()*/ VFSError::InvalidCall;
+                return std::unexpected(LastError().value_or(Error{Error::POSIX, EINVAL}));
             }
         }
 
@@ -593,8 +591,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
             WaitForAppendToComplete();
 
             if( m_State != Uploading ) {
-                // TODO: return LastError() instead
-                return /*LastError()*/ VFSError::InvalidCall;
+                return std::unexpected(LastError().value_or(Error{Error::POSIX, EINVAL}));
             }
         }
 

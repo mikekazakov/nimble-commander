@@ -62,17 +62,16 @@ static std::expected<void, Error> CopyFileContents(std::shared_ptr<VFSFile> _src
         }
 
         ssize_t to_write = *res_read;
-        ssize_t res_write = 0;
         const char *ptr = buf.get();
         while( to_write > 0 ) {
-            res_write = _dst->Write(ptr, to_write);
-            if( res_write >= 0 ) {
-                to_write -= res_write;
-                total_wrote += res_write;
-                ptr += res_write;
+            const std::expected<size_t, Error> res_write = _dst->Write(ptr, to_write);
+            if( res_write ) {
+                to_write -= *res_write;
+                total_wrote += *res_write;
+                ptr += *res_write;
             }
             else
-                return std::unexpected(VFSError::ToError(static_cast<int>(res_write)));
+                return std::unexpected(res_write.error());
         }
     }
 }

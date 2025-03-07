@@ -29,7 +29,7 @@ public:
     bool Eof() const override;
     std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     std::expected<size_t, Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
-    ssize_t Write(const void *_buf, size_t _size) override;
+    std::expected<size_t, Error> Write(const void *_buf, size_t _size) override;
     int SetUploadSize(size_t _size) override;
 
 private:
@@ -495,10 +495,10 @@ int XAttrFile::SetUploadSize(size_t _size)
     return 0;
 }
 
-ssize_t XAttrFile::Write(const void *_buf, size_t _size)
+std::expected<size_t, Error> XAttrFile::Write(const void *_buf, size_t _size)
 {
     if( !IsOpenedForWriting() || !m_FileBuf )
-        return VFSError::FromErrno(EIO);
+        return SetLastError(Error{Error::POSIX, EIO});
 
     if( m_Position < m_UploadSize ) {
         const ssize_t to_write = std::min(m_UploadSize - m_Position, static_cast<ssize_t>(_size));

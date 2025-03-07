@@ -115,10 +115,10 @@ std::expected<uint64_t, Error> File::Seek(off_t _off, int _basis)
     return SetLastError(Error{Error::POSIX, errno});
 }
 
-ssize_t File::Write(const void *_buf, size_t _size)
+std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
 {
     if( m_FD < 0 )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     const ssize_t ret = write(m_FD, _buf, _size);
     if( ret >= 0 ) {
@@ -126,7 +126,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
         m_Position += ret;
         return ret;
     }
-    return SetLastError(VFSError::FromErrno(errno));
+    return SetLastError(Error{Error::POSIX, errno});
 }
 
 VFSFile::ReadParadigm File::GetReadParadigm() const

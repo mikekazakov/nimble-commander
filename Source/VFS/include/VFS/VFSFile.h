@@ -119,9 +119,9 @@ public:
     // Default implementation returns Ok.
     virtual int SetUploadSize(size_t _size);
 
-    // Writes _size bytes from _buf to a file in blocking mode.
-    // Returnes the amount of bytes written or negative value for errors.
-    virtual ssize_t Write(const void *_buf, size_t _size);
+    // Writes up to _size bytes from _buf to the file in a blocking mode.
+    // Returns the amount of bytes written.
+    virtual std::expected<size_t, nc::Error> Write(const void *_buf, size_t _size);
 
     enum {
         Seek_Set = 0,

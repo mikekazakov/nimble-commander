@@ -213,7 +213,7 @@ static void WriteAll(VFSFile &_file, const std::span<const uint8_t> _bytes)
     ssize_t write_left = _bytes.size();
     const uint8_t *buf = _bytes.data();
     while( write_left > 0 ) {
-        const ssize_t res = _file.Write(buf, write_left);
+        const ssize_t res = _file.Write(buf, write_left).value();
         REQUIRE(res >= 0);
         write_left -= res;
         buf += res;

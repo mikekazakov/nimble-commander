@@ -19,7 +19,7 @@ public:
     int Close() override;
     std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     std::expected<size_t, Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
-    ssize_t Write(const void *_buf, size_t _size) override;
+    std::expected<size_t, Error> Write(const void *_buf, size_t _size) override;
 
     std::expected<uint64_t, Error> Seek(off_t _off, int _basis) override;
     ReadParadigm GetReadParadigm() const override;

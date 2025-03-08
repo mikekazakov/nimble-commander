@@ -18,13 +18,13 @@ bool FileWindow::FileOpened() const
 
 std::expected<void, Error> FileWindow::Attach(const std::shared_ptr<VFSFile> &_file, int _window_size)
 {
-    if( !_file->IsOpened() )
+    if( !_file || !_file->IsOpened() )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( _file->GetReadParadigm() == VFSFile::ReadParadigm::NoRead )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
-    const std::expected<uint64_t, Error> file_size = m_File->Size();
+    const std::expected<uint64_t, Error> file_size = _file->Size();
     if( !file_size )
         return std::unexpected(file_size.error());
 

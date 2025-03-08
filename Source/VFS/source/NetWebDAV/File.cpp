@@ -163,8 +163,10 @@ int File::Close()
     }
     else if( m_OpenFlags & VFSFlags::OF_Write ) {
         if( m_Size >= 0 ) {
-            if( m_Conn == nullptr )
-                Write("", 0); // force a connection to appear, needed for zero-byte uploads
+            if( m_Conn == nullptr ) {
+                // TODO: why the result code is ignored?
+                std::ignore = Write("", 0); // force a connection to appear, needed for zero-byte uploads
+            }
 
             assert(m_Conn);
 

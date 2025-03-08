@@ -1019,23 +1019,25 @@ TEST_CASE(PREFIX "ChDir respects literal square-bracketed directory despite glob
     const TempTestDir dir;
     ShellTask shell;
     QueuedAtomicHolder<std::pair<std::filesystem::path, bool>> cwd;
-    shell.SetOnPwdPrompt([&](const char *_cwd, bool _changed) {
-        cwd.store({_cwd, _changed});
-    });
+    shell.SetOnPwdPrompt([&](const char *_cwd, bool _changed) { cwd.store({_cwd, _changed}); });
 
     const auto bracketedDir = dir.directory / "a[bc]d" / "";
     std::filesystem::create_directory(bracketedDir);
 
-    SECTION("/bin/bash") {
+    SECTION("/bin/bash")
+    {
         shell.SetShellPath("/bin/bash");
     }
-    SECTION("/bin/zsh") {
+    SECTION("/bin/zsh")
+    {
         shell.SetShellPath("/bin/zsh");
     }
-    SECTION("/bin/tcsh") {
+    SECTION("/bin/tcsh")
+    {
         shell.SetShellPath("/bin/tcsh");
     }
-    SECTION("/bin/csh") {
+    SECTION("/bin/csh")
+    {
         shell.SetShellPath("/bin/csh");
     }
 

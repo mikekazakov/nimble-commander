@@ -148,7 +148,7 @@ static void TestSimpleFileWrite(VFSHostPtr _host)
     REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
 
     const std::string_view str{"Hello, world!"};
-    REQUIRE(file->SetUploadSize(str.size()) == VFSError::Ok);
+    REQUIRE(file->SetUploadSize(str.size()));
     REQUIRE(file->WriteFile(str.data(), str.size()));
 
     REQUIRE(file->Close() == VFSError::Ok);
@@ -288,7 +288,7 @@ static void TestAbortsPendingUploads(VFSHostPtr _host)
 
     const size_t file_size = 1000;
     const auto noise = MakeNoise(file_size);
-    REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
+    REQUIRE(file->SetUploadSize(file_size));
 
     REQUIRE(file->WriteFile(noise.data(), file_size - 1));
 
@@ -312,7 +312,7 @@ static void TestAbortsPendingDownloads(VFSHostPtr _host)
         const auto noise = MakeNoise(file_size);
         const VFSFilePtr file = _host->CreateFile(path).value();
         REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
-        REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
+        REQUIRE(file->SetUploadSize(file_size));
         REQUIRE(file->WriteFile(noise.data(), file_size));
         REQUIRE(file->Close() == VFSError::Ok);
     }
@@ -341,7 +341,7 @@ static void TestEmptyFileCreation(VFSHostPtr _host)
 
     REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
 
-    REQUIRE(file->SetUploadSize(0) == VFSError::Ok);
+    REQUIRE(file->SetUploadSize(0));
 
     REQUIRE(file->Close() == VFSError::Ok);
 
@@ -363,7 +363,7 @@ static void TestEmptyFileDownload(VFSHostPtr _host)
     {
         const VFSFilePtr file = _host->CreateFile(path).value();
         REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
-        REQUIRE(file->SetUploadSize(0) == VFSError::Ok);
+        REQUIRE(file->SetUploadSize(0));
         REQUIRE(file->Close() == VFSError::Ok);
     }
     {
@@ -505,7 +505,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
         {
             const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
-            REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
+            REQUIRE(file->SetUploadSize(file_size));
             REQUIRE(file->WriteFile(noise.data(), file_size));
             REQUIRE(file->Close() == VFSError::Ok);
         }
@@ -536,7 +536,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
         {
             const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
-            REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
+            REQUIRE(file->SetUploadSize(file_size));
             REQUIRE(file->WriteFile(noise.data(), file_size));
             REQUIRE(file->Close() == VFSError::Ok);
         }
@@ -569,7 +569,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
         {
             const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
-            REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
+            REQUIRE(file->SetUploadSize(file_size));
             REQUIRE(file->WriteFile(noise.data(), file_size));
             REQUIRE(file->Close() == VFSError::Ok);
         }
@@ -613,7 +613,7 @@ static void TestWriteFlagsSemantics(VFSHostPtr _host)
         {
             const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
-            REQUIRE(file->SetUploadSize(0) == VFSError::Ok);
+            REQUIRE(file->SetUploadSize(0));
             REQUIRE(file->Close() == VFSError::Ok);
         }
         {
@@ -639,14 +639,14 @@ static void TestWriteFlagsSemantics(VFSHostPtr _host)
         {
             const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
-            REQUIRE(file->SetUploadSize(old_data.size()) == VFSError::Ok);
+            REQUIRE(file->SetUploadSize(old_data.size()));
             REQUIRE(file->WriteFile(old_data.data(), old_data.size()));
             REQUIRE(file->Close() == VFSError::Ok);
         }
         {
             const VFSFilePtr file = _host->CreateFile(path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
-            REQUIRE(file->SetUploadSize(new_data.size()) == VFSError::Ok);
+            REQUIRE(file->SetUploadSize(new_data.size()));
             REQUIRE(file->WriteFile(new_data.data(), new_data.size()));
             REQUIRE(file->Close() == VFSError::Ok);
         }
@@ -694,7 +694,7 @@ static void WriteWholeFile(VFSHost &_host, const std::filesystem::path &_path, s
 
     REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
 
-    REQUIRE(file->SetUploadSize(_content.size()) == VFSError::Ok);
+    REQUIRE(file->SetUploadSize(_content.size()));
     REQUIRE(file->WriteFile(_content.data(), _content.size()));
 
     REQUIRE(file->Close() == VFSError::Ok);

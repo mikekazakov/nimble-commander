@@ -1643,7 +1643,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     });
 
     // tell upload-only vfs'es how much we're going to write
-    dst_file->SetUploadSize(src_stat_buffer.size);
+    std::ignore = dst_file->SetUploadSize(src_stat_buffer.size);
 
     // find the right position in destination file
     if( dst_file->Pos() != initial_writing_offset ) {

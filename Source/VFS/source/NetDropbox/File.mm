@@ -460,12 +460,12 @@ void File::StartSessionFinish()
     [task resume];
 }
 
-int File::SetUploadSize(size_t _size)
+std::expected<void, Error> File::SetUploadSize(size_t _size)
 {
     if( !m_Upload || m_State != Initiated )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     if( m_Upload->upload_size >= 0 )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     m_Upload->upload_size = _size;
 
@@ -473,7 +473,7 @@ int File::SetUploadSize(size_t _size)
         StartSmallUpload();
     else
         StartSession();
-    return VFSError::Ok;
+    return {};
 }
 
 ssize_t File::WaitForUploadBufferConsumption() const

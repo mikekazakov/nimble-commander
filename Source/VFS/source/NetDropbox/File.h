@@ -29,7 +29,7 @@ public:
     std::expected<uint64_t, Error> Pos() const override;
     std::expected<uint64_t, Error> Size() const override;
     bool Eof() const override;
-    int SetUploadSize(size_t _size) override;
+    std::expected<void, Error> SetUploadSize(size_t _size) override;
     int SetChunkSize(size_t _size);
 
 private:

@@ -23,7 +23,7 @@ public:
     bool Eof() const override;
     std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     std::expected<size_t, Error> Write(const void *_buf, size_t _size) override;
-    int SetUploadSize(size_t _size) override;
+    std::expected<void, Error> SetUploadSize(size_t _size) override;
     ReadParadigm GetReadParadigm() const override;
     WriteParadigm GetWriteParadigm() const override;
 

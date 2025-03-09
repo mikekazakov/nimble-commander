@@ -284,7 +284,7 @@ int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr &_vfs)
         return VFSError::GenericError; // TODO: return ret
 
     if( file.GetWriteParadigm() == VFSFile::WriteParadigm::Upload )
-        file.SetUploadSize(0);
+        std::ignore = file.SetUploadSize(0);
 
     return file.Close();
 }

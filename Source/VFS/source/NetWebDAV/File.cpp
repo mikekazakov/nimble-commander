@@ -218,14 +218,14 @@ bool File::Eof() const
     return m_Pos == m_Size;
 }
 
-int File::SetUploadSize(size_t _size)
+std::expected<void, Error> File::SetUploadSize(size_t _size)
 {
     if( !IsOpened() || m_Size >= 0 )
-        return SetLastError(VFSError::FromErrno(EINVAL));
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     m_Size = _size;
 
-    return VFSError::Ok;
+    return {};
 }
 
 } // namespace nc::vfs::webdav

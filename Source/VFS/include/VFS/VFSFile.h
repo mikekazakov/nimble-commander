@@ -118,7 +118,7 @@ public:
     // May be ignored by other write paradigms.
     // If _size is zero - the file object may perform an actual upload.
     // Default implementation returns Ok.
-    virtual int SetUploadSize(size_t _size);
+    virtual std::expected<void, nc::Error> SetUploadSize(size_t _size);
 
     // Writes up to _size bytes from _buf to the file in a blocking mode.
     // Returns the amount of bytes written.

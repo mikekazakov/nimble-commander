@@ -201,9 +201,9 @@ std::expected<void, Error> VFSFile::Skip(size_t _size)
     return {};
 }
 
-int VFSFile::SetUploadSize([[maybe_unused]] size_t _size)
+std::expected<void, Error> VFSFile::SetUploadSize([[maybe_unused]] size_t _size)
 {
-    return 0;
+    return {};
 }
 
 int VFSFile::SetLastError(int _error) const

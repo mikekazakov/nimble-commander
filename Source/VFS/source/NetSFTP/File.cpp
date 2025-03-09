@@ -17,7 +17,8 @@ File::~File()
     Close();
 }
 
-int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> File::Open(unsigned long _open_flags,
+                                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( IsOpened() )
         Close();
@@ -25,7 +26,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
     auto sftp_host = std::dynamic_pointer_cast<SFTPHost>(Host());
     std::unique_ptr<SFTPHost::Connection> conn;
     if( const int rc = sftp_host->GetConnection(conn); rc != 0 )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     int sftp_flags = 0;
     if( _open_flags & VFSFlags::OF_Read )
@@ -48,14 +49,14 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
     if( handle == nullptr ) {
         const int rc = SFTPHost::VFSErrorForConnection(*conn);
         sftp_host->ReturnConnection(std::move(conn));
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
     }
 
     LIBSSH2_SFTP_ATTRIBUTES attrs;
     const int fstat_rc = libssh2_sftp_fstat_ex(handle, &attrs, 0);
     if( fstat_rc < 0 ) {
         const int conn_err = SFTPHost::VFSErrorForConnection(*conn);
-        return conn_err;
+        return std::unexpected(VFSError::ToError(conn_err));
     }
 
     m_Connection = std::move(conn);
@@ -63,7 +64,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
     m_Position = 0;
     m_Size = attrs.filesize;
 
-    return 0;
+    return {};
 }
 
 bool File::IsOpened() const

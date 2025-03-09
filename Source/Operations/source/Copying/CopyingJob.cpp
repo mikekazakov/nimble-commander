@@ -1139,10 +1139,10 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
     // open the source file
     while( true ) {
         const auto flags = VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache;
-        const auto rc = src_file->Open(flags);
-        if( rc == VFSError::Ok )
+        const std::expected<void, Error> rc = src_file->Open(flags);
+        if( rc )
             break;
-        switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _src_vfs) ) {
+        switch( m_OnCantAccessSourceItem(rc.error(), _src_path, _src_vfs) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -1512,10 +1512,10 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     // open source file
     while( true ) {
         const auto flags = VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache;
-        const auto rc = src_file->Open(flags);
-        if( rc == VFSError::Ok )
+        const std::expected<void, Error> rc = src_file->Open(flags);
+        if( rc )
             break;
-        switch( m_OnCantAccessSourceItem(VFSError::ToError(rc), _src_path, _src_vfs) ) {
+        switch( m_OnCantAccessSourceItem(rc.error(), _src_path, _src_vfs) ) {
             case CantAccessSourceItemResolution::Skip:
                 return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:
@@ -1615,10 +1615,10 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     dst_open_flags |= m_Options.copy_unix_flags ? (src_stat_buffer.mode & (S_IRWXU | S_IRWXG | S_IRWXO))
                                                 : (S_IRUSR | S_IWUSR | S_IRGRP);
     while( true ) {
-        const auto rc = dst_file->Open(dst_open_flags);
-        if( rc == VFSError::Ok )
+        const std::expected<void, Error> rc = dst_file->Open(dst_open_flags);
+        if( rc )
             break;
-        switch( m_OnCantOpenDestinationFile(VFSError::ToError(rc), _dst_path, *m_DestinationHost) ) {
+        switch( m_OnCantOpenDestinationFile(rc.error(), _dst_path, *m_DestinationHost) ) {
             case CantOpenDestinationFileResolution::Skip:
                 return StepResult::Skipped;
             case CantOpenDestinationFileResolution::Stop:
@@ -1973,7 +1973,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_s
     if( m_Options.copy_xattrs ) {
         if( const std::expected<std::shared_ptr<VFSFile>, Error> exp_src_file = _src_vfs.CreateFile(_src_path) ) {
             const auto src_flags = VFSFlags::OF_Read | VFSFlags::OF_Directory | VFSFlags::OF_ShLock;
-            if( auto &src_file = **exp_src_file; src_file.Open(src_flags) >= 0 ) {
+            if( auto &src_file = **exp_src_file; src_file.Open(src_flags) ) {
                 if( src_file.XAttrCount() > 0 )
                     CopyXattrsFromVFSFileToPath(src_file, _dst_path.c_str());
             }
@@ -2623,8 +2623,10 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation &_
         }
     }
 
-    if( const int rc = file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache); rc != 0 )
-        switch( m_OnDestinationFileReadError(VFSError::ToError(rc), _exp.destination_path, *m_DestinationHost) ) {
+    if( const std::expected<void, Error> rc =
+            file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache);
+        !rc )
+        switch( m_OnDestinationFileReadError(rc.error(), _exp.destination_path, *m_DestinationHost) ) {
             case DestinationFileReadErrorResolution::Skip:
                 return StepResult::Skipped;
             case DestinationFileReadErrorResolution::Stop:

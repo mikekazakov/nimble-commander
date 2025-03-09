@@ -21,8 +21,7 @@ static std::optional<std::vector<uint8_t>> CalculateFileHash(const std::string &
         return std::nullopt;
 
     VFSFile &file = **exp_file;
-    const int rc = file.Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock, nullptr);
-    if( rc != 0 )
+    if( !file.Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock) )
         return std::nullopt;
 
     auto buf = std::make_unique<uint8_t[]>(chunk_sz);

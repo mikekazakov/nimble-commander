@@ -81,7 +81,8 @@ public:
     virtual std::shared_ptr<VFSFile> Clone() const;
 
     // Opens the file with the specified flags, semantics are similar to POSIX open().
-    virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = {});
+    virtual std::expected<void, nc::Error> Open(unsigned long _open_flags,
+                                                const VFSCancelChecker &_cancel_checker = {});
 
     // Returns true if the file is currently opened.
     virtual bool IsOpened() const;
@@ -135,10 +136,10 @@ public:
     // Implementations should always provide Pos(), the base class always returns ENOTSUP.
     virtual std::expected<uint64_t, nc::Error> Pos() const;
 
-    // Implementation should always provide Size(), the base class always returns ENOTSUP.
+    // Implementations should always provide Size(), the base class always returns ENOTSUP.
     virtual std::expected<uint64_t, nc::Error> Size() const;
 
-    // Eof() should always be available, return true on not-valid file state.
+    // Eof() should always be available, returns true on invalid file state.
     virtual bool Eof() const;
 
     // LastError() return last Error occured for this VFSFile.

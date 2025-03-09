@@ -85,26 +85,22 @@ std::expected<void, Error> VFSEasyCopyFile(const char *_src_full_path,
         _dst_full_path[0] != '/' || !_dst_host )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
-    int result = 0;
-
     {
         const std::expected<std::shared_ptr<VFSFile>, nc::Error> source_file = _src_host->CreateFile(_src_full_path);
         if( !source_file )
             return std::unexpected(source_file.error());
 
-        result = (*source_file)->Open(VFSFlags::OF_Read);
-        if( result != 0 )
-            return std::unexpected(VFSError::ToError(result));
+        if( const std::expected<void, Error> rc = (*source_file)->Open(VFSFlags::OF_Read); !rc )
+            return rc;
 
         const std::expected<std::shared_ptr<VFSFile>, nc::Error> dest_file = _dst_host->CreateFile(_dst_full_path);
         if( !dest_file )
             return std::unexpected(dest_file.error());
 
-        result = (*dest_file)
-                     ->Open(VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist | VFSFlags::OF_IRUsr |
-                            VFSFlags::OF_IWUsr | VFSFlags::OF_IRGrp);
-        if( result != 0 )
-            return std::unexpected(VFSError::ToError(result));
+        const auto dst_flags = VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist | VFSFlags::OF_IRUsr |
+                               VFSFlags::OF_IWUsr | VFSFlags::OF_IRGrp;
+        if( const std::expected<void, Error> rc = (*dest_file)->Open(dst_flags); !rc )
+            return rc;
 
         if( const std::expected<void, Error> rc = CopyFileContents(*source_file, *dest_file); !rc )
             return rc;
@@ -223,8 +219,8 @@ std::expected<int, nc::Error> VFSEasyCompareFiles(const char *_file1_full_path,
     if( !file1 )
         return std::unexpected(file1.error());
 
-    if( const int ret = (*file1)->Open(VFSFlags::OF_Read); ret != 0 )
-        return std::unexpected(VFSError::ToError(ret));
+    if( const std::expected<void, Error> rc = (*file1)->Open(VFSFlags::OF_Read); !rc )
+        return std::unexpected(rc.error());
 
     const std::expected<std::vector<uint8_t>, nc::Error> data1 = (*file1)->ReadFile();
     if( !data1 )
@@ -234,8 +230,8 @@ std::expected<int, nc::Error> VFSEasyCompareFiles(const char *_file1_full_path,
     if( !file2 )
         return std::unexpected(file2.error());
 
-    if( const int ret = (*file2)->Open(VFSFlags::OF_Read); ret != 0 )
-        return std::unexpected(VFSError::ToError(ret));
+    if( const std::expected<void, Error> rc = (*file2)->Open(VFSFlags::OF_Read); !rc )
+        return std::unexpected(rc.error());
 
     const std::expected<std::vector<uint8_t>, nc::Error> data2 = (*file2)->ReadFile();
     if( !data2 )
@@ -281,10 +277,11 @@ int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr &_vfs)
         return VFSError::GenericError; // TODO: return efile
     VFSFile &file = **efile;
 
-    const int ret = file.Open(VFSFlags::OF_IRUsr | VFSFlags::OF_IRGrp | VFSFlags::OF_IROth | VFSFlags::OF_IWUsr |
-                              VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist);
-    if( ret != 0 )
-        return ret;
+    const std::expected<void, Error> ret =
+        file.Open(VFSFlags::OF_IRUsr | VFSFlags::OF_IRGrp | VFSFlags::OF_IROth | VFSFlags::OF_IWUsr |
+                  VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist);
+    if( !ret != 0 )
+        return VFSError::GenericError; // TODO: return ret
 
     if( file.GetWriteParadigm() == VFSFile::WriteParadigm::Upload )
         file.SetUploadSize(0);
@@ -351,7 +348,7 @@ std::optional<std::string> CopyFileToTempStorage(const std::string &_vfs_filepat
         return std::nullopt; // TODO: return vfs_file;
     VFSFile &vfs_file = **evfs_file;
 
-    if( vfs_file.Open(VFSFlags::OF_Read, _cancel_checker) < 0 )
+    if( !vfs_file.Open(VFSFlags::OF_Read, _cancel_checker) )
         return std::nullopt;
 
     const std::string_view name = utility::PathManip::Filename(_vfs_filepath);
@@ -472,9 +469,8 @@ static std::expected<void, Error> ExtractRegFile(const std::string &_vfs_path,
         return std::unexpected(efile.error());
     VFSFile &file = **efile;
 
-    const auto open_file_rc = file.Open(VFSFlags::OF_Read, _cancel_checker);
-    if( open_file_rc != VFSError::Ok )
-        return std::unexpected(VFSError::ToError(open_file_rc));
+    if( const std::expected<void, Error> rc = file.Open(VFSFlags::OF_Read, _cancel_checker); !rc )
+        return rc;
 
     const auto fd = open(_native_path.c_str(), O_EXLOCK | O_NONBLOCK | O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if( fd < 0 )

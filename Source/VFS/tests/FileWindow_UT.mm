@@ -19,7 +19,7 @@ public:
                                uint64_t _mem_size,
                                ReadParadigm _behave_as);
 
-    int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     bool IsOpened() const override { return m_Opened; }
     int Close() override;
 
@@ -139,11 +139,11 @@ bool TestGenericMemReadOnlyFile::Eof() const
     return m_Pos == static_cast<ssize_t>(m_Size);
 }
 
-int TestGenericMemReadOnlyFile::Open([[maybe_unused]] unsigned long _open_flags,
-                                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> TestGenericMemReadOnlyFile::Open([[maybe_unused]] unsigned long _open_flags,
+                                                            [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     m_Opened = true;
-    return 0;
+    return {};
 }
 
 int TestGenericMemReadOnlyFile::Close()

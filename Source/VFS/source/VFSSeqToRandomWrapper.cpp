@@ -39,12 +39,12 @@ VFSSeqToRandomROWrapperFile::~VFSSeqToRandomROWrapperFile()
     Close();
 }
 
-int VFSSeqToRandomROWrapperFile::Open(unsigned long _flags,
-                                      const VFSCancelChecker &_cancel_checker,
-                                      std::function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress)
+std::expected<void, Error>
+VFSSeqToRandomROWrapperFile::Open(unsigned long _flags,
+                                  const VFSCancelChecker &_cancel_checker,
+                                  std::function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress)
 {
-    const std::expected<void, nc::Error> ret = OpenBackend(_flags, _cancel_checker, _progress);
-    return ret ? 0 : VFSError::FromErrno(EIO); // TODO: use ret instead
+    return OpenBackend(_flags, _cancel_checker, _progress);
 }
 
 std::expected<void, nc::Error>
@@ -60,9 +60,9 @@ VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( !m_SeqFile->IsOpened() ) {
-        const int res = m_SeqFile->Open(_flags);
-        if( res < 0 )
-            return std::unexpected(VFSError::ToError(res));
+        const std::expected<void, Error> res = m_SeqFile->Open(_flags);
+        if( !res )
+            return res;
     }
     else if( m_SeqFile->Pos().value_or(0) > 0 )
         return std::unexpected(Error{Error::POSIX, EINVAL});
@@ -159,7 +159,8 @@ VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
     return {};
 }
 
-int VFSSeqToRandomROWrapperFile::Open(unsigned long _flags, const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> VFSSeqToRandomROWrapperFile::Open(unsigned long _flags,
+                                                             const VFSCancelChecker &_cancel_checker)
 {
     return Open(_flags, _cancel_checker, nullptr);
 }

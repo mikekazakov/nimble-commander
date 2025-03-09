@@ -61,7 +61,7 @@ std::filesystem::path File::DirName() const
     return utility::PathManip::EnsureTrailingSlash(std::filesystem::path(Path()).parent_path());
 }
 
-int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     Log::Trace("File::Open({}) called", _open_flags);
     auto ftp_host = std::dynamic_pointer_cast<FTPHost>(Host());
@@ -76,17 +76,17 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
 
         if( m_FileSize == 0 ) {
             m_Mode = Mode::Read;
-            return 0;
+            return {};
         }
 
         if( ReadChunk(nullptr, 1, 0, _cancel_checker) == 1 ) {
             m_Mode = Mode::Read;
-            return 0;
+            return {};
         }
 
         Close();
 
-        return VFSError::GenericError;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     }
     else if( (!(_open_flags & VFSFlags::OF_NoExist) || !stat) && //
              (_open_flags & VFSFlags::OF_Read) == 0 &&           //
@@ -116,10 +116,10 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
         m_CURL->Attach();
 
         m_Mode = Mode::Write;
-        return 0;
+        return {};
     }
 
-    return VFSError::NotSupported;
+    return std::unexpected(Error{Error::POSIX, ENOTSUP});
 }
 
 ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offset, VFSCancelChecker _cancel_checker)

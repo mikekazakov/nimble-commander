@@ -19,7 +19,8 @@ File::~File()
     Close();
 }
 
-int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> File::Open(unsigned long _open_flags,
+                                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     auto &io = routedio::RoutedIO::Default;
     auto fs_info = std::dynamic_pointer_cast<NativeHost>(Host())->NativeFSManager().VolumeFromPath(Path());
@@ -44,7 +45,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
 
     m_FD = io.open(Path(), openflags, mode);
     if( m_FD < 0 ) {
-        return SetLastError(VFSError::FromErrno(errno));
+        return SetLastError(Error{Error::POSIX, errno});
     }
 
     fcntl(m_FD, F_SETFL, fcntl(m_FD, F_GETFL) & ~O_NONBLOCK);
@@ -57,7 +58,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
     m_Size = lseek(m_FD, 0, SEEK_END);
     lseek(m_FD, 0, SEEK_SET);
 
-    return VFSError::Ok;
+    return {};
 }
 
 bool File::IsOpened() const

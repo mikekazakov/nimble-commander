@@ -60,8 +60,8 @@ static std::expected<std::vector<uint8_t>, Error> ReadEntireFile(const std::stri
 
     VFSFile &file = **exp_file;
 
-    if( const int rc = file.Open(VFSFlags::OF_Read); rc < 0 )
-        return std::unexpected(VFSError::ToError(rc));
+    if( const std::expected<void, Error> rc = file.Open(VFSFlags::OF_Read); !rc )
+        return std::unexpected(rc.error());
 
     return file.ReadFile();
 }

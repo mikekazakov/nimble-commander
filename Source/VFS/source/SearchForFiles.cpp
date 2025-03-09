@@ -209,7 +209,7 @@ bool SearchForFiles::FilterByContent(const char *_full_path, VFSHost &_in_host, 
     if( !file )
         return false;
 
-    if( (*file)->Open(VFSFlags::OF_Read) != 0 )
+    if( !(*file)->Open(VFSFlags::OF_Read) )
         return false;
 
     NotifyLookingIn(_full_path, _in_host);

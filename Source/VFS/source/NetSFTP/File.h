@@ -13,7 +13,7 @@ public:
     File(std::string_view _relative_path, std::shared_ptr<SFTPHost> _host);
     ~File();
 
-    int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     bool IsOpened() const override;
     int Close() override;
     ReadParadigm GetReadParadigm() const override;

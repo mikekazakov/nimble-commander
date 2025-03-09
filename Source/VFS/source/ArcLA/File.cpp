@@ -20,13 +20,13 @@ File::~File()
     Close();
 }
 
-int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     if( strlen(Path()) < 2 || Path()[0] != '/' )
-        return SetLastError(VFSError::NotFound);
+        return SetLastError(Error{Error::POSIX, ENOENT});
 
     if( _open_flags & VFSFlags::OF_Write )
-        return SetLastError(VFSError::NotSupported); // ArchiveFile is Read-Only
+        return SetLastError(Error{Error::POSIX, ENOTSUP}); // ArchiveFile is Read-Only
 
     int res;
     auto host = std::dynamic_pointer_cast<ArchiveHost>(Host());
@@ -35,15 +35,15 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     std::pmr::string file_path(&alloc);
     res = host->ResolvePathIfNeeded(Path(), file_path, _open_flags);
     if( res < 0 )
-        return res;
+        return std::unexpected(VFSError::ToError(res));
 
     if( host->IsDirectory(file_path, _open_flags, _cancel_checker) && !(_open_flags & VFSFlags::OF_Directory) )
-        return VFSError::FromErrno(EISDIR);
+        return SetLastError(Error{Error::POSIX, EISDIR});
 
     std::unique_ptr<State> state;
     res = host->ArchiveStateForItem(file_path.c_str(), state);
     if( res < 0 )
-        return res;
+        return std::unexpected(VFSError::ToError(res));
 
     assert(state->Entry());
 
@@ -55,8 +55,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     m_Size = archive_entry_size(state->Entry());
     m_State = std::move(state);
 
-    return VFSError::Ok;
-    ;
+    return {};
 }
 
 bool File::IsOpened() const

@@ -18,7 +18,8 @@ class XAttrFile final : public VFSFile
 {
 public:
     XAttrFile(std::string_view _xattr_path, const std::shared_ptr<XAttrHost> &_parent, int _fd);
-    int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = nullptr) override;
+    std::expected<void, Error> Open(unsigned long _open_flags,
+                                    const VFSCancelChecker &_cancel_checker = nullptr) override;
     int Close() override;
     bool IsOpened() const override;
     ReadParadigm GetReadParadigm() const override;
@@ -329,20 +330,21 @@ XAttrFile::XAttrFile(std::string_view _xattr_path, const std::shared_ptr<XAttrHo
 {
 }
 
-int XAttrFile::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> XAttrFile::Open(unsigned long _open_flags,
+                                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     Close();
 
     const auto path = XAttrName();
     if( !path )
-        return VFSError::FromErrno(ENOENT);
+        return std::unexpected(nc::Error{nc::Error::POSIX, ENOENT});
 
     if( _open_flags & VFSFlags::OF_Write ) {
         if( _open_flags & VFSFlags::OF_Append )
-            return VFSError::NotSupported;
+            return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
         // TODO: OF_NoExist
 
         m_OpenFlags = _open_flags;
@@ -350,17 +352,17 @@ int XAttrFile::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelC
     else if( _open_flags & VFSFlags::OF_Read ) {
         auto xattr_size = fgetxattr(m_FD, path, nullptr, 0, 0, 0);
         if( xattr_size < 0 )
-            return VFSError::FromErrno(ENOENT);
+            return std::unexpected(nc::Error{nc::Error::POSIX, ENOENT});
 
         m_FileBuf = std::make_unique<uint8_t[]>(xattr_size);
         if( fgetxattr(m_FD, path, m_FileBuf.get(), xattr_size, 0, 0) < 0 )
-            return VFSError::FromErrno();
+            return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 
         m_Size = xattr_size;
         m_OpenFlags = _open_flags;
     }
 
-    return VFSError::Ok;
+    return {};
 }
 
 int XAttrFile::Close()

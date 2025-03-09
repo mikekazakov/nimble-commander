@@ -15,7 +15,7 @@ public:
     File(std::string_view _relative_path, const std::shared_ptr<WebDAVHost> &_host);
     ~File();
 
-    int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     bool IsOpened() const override;
     int Close() override;
     std::expected<uint64_t, Error> Pos() const override;

@@ -9,11 +9,11 @@ public:
     VFSSeqToRandomROWrapperFile(const VFSFilePtr &_file_to_wrap);
     ~VFSSeqToRandomROWrapperFile();
 
-    int Open(unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, nc::Error> Open(unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
-    int Open(unsigned long _flags,
-             const VFSCancelChecker &_cancel_checker,
-             std::function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress);
+    std::expected<void, nc::Error> Open(unsigned long _flags,
+                                        const VFSCancelChecker &_cancel_checker,
+                                        std::function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress);
 
     int Close() override;
 

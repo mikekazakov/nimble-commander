@@ -15,7 +15,7 @@ public:
     ~File();
 
     //        OF_Truncate is implicitly added to VFSFile when OF_Append is not used - FTP specific
-    int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     bool IsOpened() const override;
     int Close() override;
     ReadParadigm GetReadParadigm() const override;

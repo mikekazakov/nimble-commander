@@ -18,7 +18,7 @@ public:
     File(std::string_view _relative_path, const std::shared_ptr<class DropboxHost> &_host);
     ~File();
 
-    int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     int Close() override;
     int PreferredIOSize() const override;
     bool IsOpened() const override;

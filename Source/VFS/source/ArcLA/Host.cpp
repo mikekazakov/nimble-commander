@@ -182,9 +182,8 @@ std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_c
     else
         return std::unexpected(exp.error());
 
-    res = source_file->Open(VFSFlags::OF_Read);
-    if( res < 0 )
-        return std::unexpected(VFSError::ToError(res));
+    if( const std::expected<void, Error> rc = source_file->Open(VFSFlags::OF_Read); !rc )
+        return rc;
 
     if( const std::expected<uint64_t, Error> source_file_size = source_file->Size(); !source_file_size )
         return std::unexpected(source_file_size.error());
@@ -197,9 +196,8 @@ std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_c
     }
     else {
         auto wrapping = std::make_shared<VFSSeqToRandomROWrapperFile>(source_file);
-        res = wrapping->Open(VFSFlags::OF_Read, _cancel_checker);
-        if( res != VFSError::Ok )
-            return std::unexpected(VFSError::ToError(res));
+        if( const std::expected<void, Error> rc = wrapping->Open(VFSFlags::OF_Read, _cancel_checker); !rc )
+            return rc;
         I->m_ArFile = wrapping;
     }
 
@@ -908,13 +906,14 @@ int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<Stat
         if( !file )
             return VFSError::NotSupported;
 
-        int res = file->IsOpened() ? VFSError::Ok : file->Open(VFSFlags::OF_Read);
-        if( res < 0 )
-            return res;
+        if( !file->IsOpened() ) {
+            if( const std::expected<void, Error> rc = file->Open(VFSFlags::OF_Read); !rc )
+                return VFSError::FromErrno(EIO); // TODO: return rc instead
+        }
 
         auto new_state = std::make_unique<State>(file, SpawnLibarchive());
 
-        res = new_state->Open();
+        const int res = new_state->Open();
         if( res < 0 ) {
             const int rc = VFSError::FromLibarchive(new_state->Errno());
             return rc;

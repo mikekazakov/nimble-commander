@@ -79,10 +79,11 @@ NSURLRequest *File::BuildDownloadRequest() const
     return request;
 }
 
-int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> File::Open(unsigned long _open_flags,
+                                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( m_State != Cold )
-        return VFSError::InvalidCall;
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     assert(!m_Upload && !m_Download);
 
@@ -108,8 +109,10 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
 
         WaitForDownloadResponse();
 
-        // TODO: use LastError() error instead
-        return m_State == Downloading ? VFSError::Ok : /*LastError()*/ VFSError::InvalidCall;
+        if( m_State == Downloading )
+            return {};
+        else
+            return std::unexpected(LastError().value_or(Error{Error::POSIX, EIO}));
     }
     if( (_open_flags & VFSFlags::OF_Write) == VFSFlags::OF_Write ) {
         m_OpenFlags = _open_flags;
@@ -117,10 +120,10 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
         m_Upload = std::make_unique<Upload>();
         // at this point we need to wait for SetUploadSize() call to build of a request
         // and to actually start it
-        return VFSError::Ok;
+        return {};
     }
 
-    return VFSError::InvalidCall;
+    return SetLastError(Error{Error::POSIX, EINVAL});
 }
 
 void File::WaitForDownloadResponse() const

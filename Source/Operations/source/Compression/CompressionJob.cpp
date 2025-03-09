@@ -101,8 +101,8 @@ bool CompressionJob::BuildArchive()
         return false; // TODO: use error from exp_file
 
     m_TargetFile = *exp_file;
-    const auto open_rc = m_TargetFile->Open(flags);
-    if( open_rc == VFSError::Ok ) {
+    const std::expected<void, Error> open_rc = m_TargetFile->Open(flags);
+    if( open_rc ) {
         m_Archive = archive_write_new();
         archive_write_set_format_zip(m_Archive);
         archive_write_add_filter_none(m_Archive);
@@ -139,7 +139,7 @@ bool CompressionJob::BuildArchive()
         }
     }
     else {
-        m_TargetWriteError(VFSError::ToError(open_rc), m_TargetArchivePath, *m_DstVFS);
+        m_TargetWriteError(open_rc.error(), m_TargetArchivePath, *m_DstVFS);
         Stop();
         return false;
     }
@@ -274,7 +274,7 @@ CompressionJob::ProcessDirectoryItem(int _index, const std::string &_relative_pa
     if( !IsEncrypted() ) {
         // we can't support encrypted EAs due to lack of read support in LA
         const std::expected<std::shared_ptr<VFSFile>, Error> src_file = vfs.CreateFile(_full_path);
-        if( src_file && (*src_file)->Open(VFSFlags::OF_Read) == VFSError::Ok ) {
+        if( src_file && (*src_file)->Open(VFSFlags::OF_Read) ) {
             const std::string name_wo_slash = {std::begin(_relative_path), std::end(_relative_path) - 1};
             WriteEAsIfAny(**src_file, m_Archive, name_wo_slash);
         }
@@ -317,10 +317,10 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
     VFSFile &src_file = **exp_src_file;
     while( true ) {
         const auto flags = VFSFlags::OF_Read | VFSFlags::OF_ShLock;
-        const auto rc = src_file.Open(flags);
-        if( rc == VFSError::Ok )
+        const std::expected<void, Error> rc = src_file.Open(flags);
+        if( rc )
             break;
-        switch( m_SourceAccessError(VFSError::ToError(rc), _full_path, vfs) ) {
+        switch( m_SourceAccessError(rc.error(), _full_path, vfs) ) {
             case SourceAccessErrorResolution::Stop:
                 Stop();
                 return StepResult::Stopped;

@@ -18,7 +18,7 @@ public:
                            const std::shared_ptr<VFSHost> &_host,
                            std::string_view _memory);
 
-    int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = {}) override;
+    std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = {}) override;
     bool IsOpened() const override;
     int Close() override;
     std::shared_ptr<VFSFile> Clone() const override;

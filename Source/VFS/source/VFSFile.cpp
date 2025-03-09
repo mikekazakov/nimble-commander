@@ -63,9 +63,9 @@ bool VFSFile::IsOpened() const
     return false;
 }
 
-int VFSFile::Open(unsigned long /*unused*/, const VFSCancelChecker & /*unused*/)
+std::expected<void, Error> VFSFile::Open(unsigned long /*unused*/, const VFSCancelChecker & /*unused*/)
 {
-    return SetLastError(VFSError::NotSupported);
+    return SetLastError(Error{Error::POSIX, ENOTSUP});
 }
 
 int VFSFile::Close()

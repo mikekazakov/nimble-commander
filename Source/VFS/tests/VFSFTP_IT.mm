@@ -58,7 +58,7 @@ TEST_CASE(PREFIX "empty file test")
         REQUIRE(host->Unlink(fn));
 
     const VFSFilePtr file = host->CreateFile(fn).value();
-    REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
     REQUIRE(file->IsOpened() == true);
     REQUIRE(file->Close() == 0);
 
@@ -66,7 +66,7 @@ TEST_CASE(PREFIX "empty file test")
     const VFSStat stat = host->Stat(fn, 0).value();
     REQUIRE(stat.size == 0);
 
-    REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist) != 0);
+    REQUIRE(!file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist));
     REQUIRE(file->IsOpened() == false);
 
     REQUIRE(host->Unlink(fn));
@@ -177,7 +177,7 @@ TEST_CASE(PREFIX "listing")
         std::ignore = VFSEasyDelete("/Test", host);
         auto touch = [&](const char *_path) {
             const VFSFilePtr file = host->CreateFile(_path).value();
-            REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
+            REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
         };
         REQUIRE(host->CreateDirectory("/Test", 0755));
         REQUIRE(host->CreateDirectory("/Test/DirectoryName1", 0755));
@@ -235,7 +235,7 @@ TEST_CASE(PREFIX "seekread")
 
         REQUIRE(host->CreateDirectory("/TestSeekRead", 0755));
         const VFSFilePtr file = host->CreateFile("/TestSeekRead/blob").value();
-        REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
+        REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
         WriteAll(*file, bytes);
         REQUIRE(file->Close() == 0);
     }
@@ -245,7 +245,7 @@ TEST_CASE(PREFIX "seekread")
 
     constexpr auto fn = "/TestSeekRead/blob";
     const VFSFilePtr file = host->CreateFile(fn).value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
 
     struct TC {
         uint64_t offset;
@@ -287,7 +287,7 @@ TEST_CASE(PREFIX "big files reading cancellation")
 
         REQUIRE(host->CreateDirectory("/TestCancellation", 0755));
         const VFSFilePtr file = host->CreateFile("/TestCancellation/blob").value();
-        REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
+        REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
         WriteAll(*file, bytes);
         REQUIRE(file->Close() == 0);
     }
@@ -299,7 +299,7 @@ TEST_CASE(PREFIX "big files reading cancellation")
     std::thread th{[&] {
         char buf[256];
         const VFSFilePtr file = host->CreateFile(host_path).value();
-        REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+        REQUIRE(file->Open(VFSFlags::OF_Read));
         REQUIRE(file->Read(buf, sizeof(buf)) == sizeof(buf));
         REQUIRE(file->Close() == 0); // at this moment we have read only a small part of file
         // and Close() should tell curl to stop reading and will wait

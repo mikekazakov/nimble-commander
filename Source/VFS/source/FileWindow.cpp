@@ -18,14 +18,18 @@ bool FileWindow::FileOpened() const
 
 std::expected<void, Error> FileWindow::Attach(const std::shared_ptr<VFSFile> &_file, int _window_size)
 {
-    if( !_file->IsOpened() )
+    if( !_file || !_file->IsOpened() )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( _file->GetReadParadigm() == VFSFile::ReadParadigm::NoRead )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
+    const std::expected<uint64_t, Error> file_size = _file->Size();
+    if( !file_size )
+        return std::unexpected(file_size.error());
+
     m_File = _file;
-    m_WindowSize = std::min(m_File->Size(), static_cast<ssize_t>(_window_size));
+    m_WindowSize = std::min(*file_size, static_cast<uint64_t>(_window_size));
     m_Window = std::make_unique<uint8_t[]>(m_WindowSize);
     m_WindowPos = 0;
 
@@ -78,15 +82,15 @@ std::expected<void, Error> FileWindow::ReadFileWindowSeqPart(size_t _offset, siz
     if( _offset + _len > m_WindowSize )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
-    const ssize_t readret = m_File->Read(m_Window.get() + _offset, _len);
-    if( readret < 0 )
-        return std::unexpected(VFSError::ToError(static_cast<int>(readret)));
+    const std::expected<size_t, Error> readret = m_File->Read(m_Window.get() + _offset, _len);
+    if( !readret )
+        return std::unexpected(readret.error());
 
     if( readret == 0 )
         return std::unexpected(Error{Error::POSIX, EIO});
 
-    if( static_cast<size_t>(readret) < _len )
-        return ReadFileWindowSeqPart(_offset + readret, _len - readret);
+    if( *readret < _len )
+        return ReadFileWindowSeqPart(_offset + *readret, _len - *readret);
 
     return {};
 }
@@ -99,7 +103,11 @@ std::expected<void, Error> FileWindow::MoveWindow(size_t _offset)
     if( _offset == m_WindowPos )
         return {};
 
-    if( _offset + m_WindowSize > static_cast<size_t>(m_File->Size()) )
+    const std::expected<uint64_t, Error> file_size = m_File->Size();
+    if( !file_size )
+        return std::unexpected(file_size.error());
+
+    if( _offset + m_WindowSize > *file_size )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
     switch( m_File->GetReadParadigm() ) {
@@ -145,9 +153,9 @@ std::expected<void, Error> FileWindow::DoMoveWindowRandom(size_t _offset)
 std::expected<void, Error> FileWindow::DoMoveWindowSeek(size_t _offset)
 {
     // TODO: not efficient implementation, update me
-    const ssize_t ret = m_File->Seek(_offset, VFSFile::Seek_Set);
-    if( ret < 0 )
-        return std::unexpected(VFSError::ToError(static_cast<int>(ret)));
+    const std::expected<uint64_t, Error> ret = m_File->Seek(_offset, VFSFile::Seek_Set);
+    if( !ret )
+        return std::unexpected(ret.error());
 
     m_WindowPos = _offset;
     return ReadFileWindowSeqPart(0, m_WindowSize);
@@ -169,8 +177,12 @@ std::expected<void, Error> FileWindow::DoMoveWindowSeqential(size_t _offset)
     }
     else if( _offset >= m_WindowPos ) {
         // need to move forward
-        assert(m_File->Pos() < ssize_t(_offset));
-        const size_t to_skip = _offset - m_File->Pos();
+        const std::expected<uint64_t, Error> pos = m_File->Pos();
+        if( !pos )
+            return std::unexpected(pos.error());
+
+        assert(*pos < _offset);
+        const size_t to_skip = _offset - *m_File->Pos();
 
         if( const std::expected<void, nc::Error> ret = m_File->Skip(to_skip); !ret )
             return ret;
@@ -185,7 +197,7 @@ std::expected<void, Error> FileWindow::DoMoveWindowSeqential(size_t _offset)
 size_t FileWindow::FileSize() const
 {
     assert(FileOpened());
-    return m_File->Size();
+    return m_File->Size().value_or(0);
 }
 
 const void *FileWindow::Window() const

@@ -108,7 +108,7 @@ static void check(const Case &test_case)
     CHECK(host->CreateFile("/blah-blah").error() == Error{Error::POSIX, ENOENT});
 
     const VFSFilePtr file = host->CreateFile("/hello.txt").value();
-    CHECK(file->Open(nc::vfs::Flags::OF_Read) == VFSError::Ok);
+    CHECK(file->Open(nc::vfs::Flags::OF_Read));
     REQUIRE(file->Size() == 5);
     char data[5];
     CHECK(file->Read(data, 5) == 5);

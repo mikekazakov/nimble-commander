@@ -81,7 +81,8 @@ public:
     virtual std::shared_ptr<VFSFile> Clone() const;
 
     // Opens the file with the specified flags, semantics are similar to POSIX open().
-    virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = {});
+    virtual std::expected<void, nc::Error> Open(unsigned long _open_flags,
+                                                const VFSCancelChecker &_cancel_checker = {});
 
     // Returns true if the file is currently opened.
     virtual bool IsOpened() const;
@@ -100,8 +101,17 @@ public:
     // Should return some considerable value even on non-opened files.
     virtual WriteParadigm GetWriteParadigm() const;
 
-    // ...
-    virtual ssize_t Read(void *_buf, size_t _size);
+    // Reads the specified amount of bytes into the specified buffer.
+    // Returns the amount of read bytes, which can be less than requested.
+    virtual std::expected<size_t, nc::Error> Read(void *_buf, size_t _size);
+
+    // ReadAt is available only on Random level.
+    // It will not move any file pointers.
+    // Reads up to _size bytes, may return less.
+    virtual std::expected<size_t, nc::Error> ReadAt(off_t _pos, void *_buf, size_t _size);
+
+    // Reads and discards _size bytes.
+    virtual std::expected<void, nc::Error> Skip(size_t _size);
 
     // For Upload write paradigm: sets upload size in advance, so the file object can set up its data structures and
     // do an actual upload on Write() call when the client hits the stated size.
@@ -110,17 +120,9 @@ public:
     // Default implementation returns Ok.
     virtual int SetUploadSize(size_t _size);
 
-    // Writes _size bytes from _buf to a file in blocking mode.
-    // Returnes the amount of bytes written or negative value for errors.
-    virtual ssize_t Write(const void *_buf, size_t _size);
-
-    // Reads and discards _size bytes.
-    virtual std::expected<void, nc::Error> Skip(size_t _size);
-
-    // ReadAt is available only on Random level.
-    // It will not move any file pointers.
-    // Reads up to _size bytes, may return less.
-    virtual std::expected<size_t, nc::Error> ReadAt(off_t _pos, void *_buf, size_t _size);
+    // Writes up to _size bytes from _buf to the file in a blocking mode.
+    // Returns the amount of bytes written.
+    virtual std::expected<size_t, nc::Error> Write(const void *_buf, size_t _size);
 
     enum {
         Seek_Set = 0,
@@ -129,15 +131,15 @@ public:
     };
 
     // Seek() is available if Read paradigm is Seek or above.
-    virtual off_t Seek(off_t _off, int _basis);
+    virtual std::expected<uint64_t, nc::Error> Seek(off_t _off, int _basis);
 
-    // Pos() should always be available, except of dummy VFSFile class, which returns VFSError::NotSupported.
-    virtual ssize_t Pos() const;
+    // Implementations should always provide Pos(), the base class always returns ENOTSUP.
+    virtual std::expected<uint64_t, nc::Error> Pos() const;
 
-    // Size() should always be available, except of dummy VFSFile class, which returns VFSError::NotSupported.
-    virtual ssize_t Size() const;
+    // Implementations should always provide Size(), the base class always returns ENOTSUP.
+    virtual std::expected<uint64_t, nc::Error> Size() const;
 
-    // Eof() should always be available, return true on not-valid file state.
+    // Eof() should always be available, returns true on invalid file state.
     virtual bool Eof() const;
 
     // LastError() return last Error occured for this VFSFile.

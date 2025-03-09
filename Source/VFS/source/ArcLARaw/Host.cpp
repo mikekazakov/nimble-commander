@@ -63,12 +63,9 @@ static Extracted read_stream(const uint64_t _max_bytes,
     else
         return exp.error();
 
-    int rc = 0;
-
-    rc = st.source_file->Open(VFSFlags::OF_Read);
-    if( rc < 0 )
-        return VFSError::ToError(rc);
-    if( st.source_file->Size() <= 0 )
+    if( const std::expected<void, Error> rc = st.source_file->Open(VFSFlags::OF_Read); !rc )
+        return rc.error();
+    if( st.source_file->Size().value_or(0) <= 0 )
         return VFSError::ToError(VFSError::ArclibFileFormat);
     if( st.source_file->GetReadParadigm() < VFSFile::ReadParadigm::Sequential )
         return VFSError::ToError(VFSError::InvalidCall);
@@ -83,13 +80,13 @@ static Extracted read_stream(const uint64_t _max_bytes,
             archive_set_error(a, ECANCELED, "user-canceled");
             return ARCHIVE_FATAL;
         }
-        const ssize_t result = st.source_file->Read(st.inbuf.get(), buf_sz);
-        if( result < 0 ) {
+        const std::expected<size_t, Error> result = st.source_file->Read(st.inbuf.get(), buf_sz);
+        if( !result ) {
             archive_set_error(a, EIO, "I/O error");
             return ARCHIVE_FATAL; // handle somehow
         }
         *buff = static_cast<void *>(st.inbuf.get());
-        return result;
+        return *result;
     };
 
     archive *arc = archive_read_new();

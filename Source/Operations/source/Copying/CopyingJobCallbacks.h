@@ -58,9 +58,9 @@ struct CopyingJobCallbacks {
         Skip,
         Retry
     };
-    std::function<SourceFileReadErrorResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+    std::function<SourceFileReadErrorResolution(Error _error, const std::string &_path, VFSHost &_vfs)>
         m_OnSourceFileReadError =
-            [](int, const std::string &, VFSHost &) { return SourceFileReadErrorResolution::Stop; };
+            [](Error, const std::string &, VFSHost &) { return SourceFileReadErrorResolution::Stop; };
 
     enum class DestinationFileReadErrorResolution {
         Stop,

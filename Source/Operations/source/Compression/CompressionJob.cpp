@@ -101,8 +101,8 @@ bool CompressionJob::BuildArchive()
         return false; // TODO: use error from exp_file
 
     m_TargetFile = *exp_file;
-    const auto open_rc = m_TargetFile->Open(flags);
-    if( open_rc == VFSError::Ok ) {
+    const std::expected<void, Error> open_rc = m_TargetFile->Open(flags);
+    if( open_rc ) {
         m_Archive = archive_write_new();
         archive_write_set_format_zip(m_Archive);
         archive_write_add_filter_none(m_Archive);
@@ -139,7 +139,7 @@ bool CompressionJob::BuildArchive()
         }
     }
     else {
-        m_TargetWriteError(VFSError::ToError(open_rc), m_TargetArchivePath, *m_DstVFS);
+        m_TargetWriteError(open_rc.error(), m_TargetArchivePath, *m_DstVFS);
         Stop();
         return false;
     }
@@ -274,7 +274,7 @@ CompressionJob::ProcessDirectoryItem(int _index, const std::string &_relative_pa
     if( !IsEncrypted() ) {
         // we can't support encrypted EAs due to lack of read support in LA
         const std::expected<std::shared_ptr<VFSFile>, Error> src_file = vfs.CreateFile(_full_path);
-        if( src_file && (*src_file)->Open(VFSFlags::OF_Read) == VFSError::Ok ) {
+        if( src_file && (*src_file)->Open(VFSFlags::OF_Read) ) {
             const std::string name_wo_slash = {std::begin(_relative_path), std::end(_relative_path) - 1};
             WriteEAsIfAny(**src_file, m_Archive, name_wo_slash);
         }
@@ -317,10 +317,10 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
     VFSFile &src_file = **exp_src_file;
     while( true ) {
         const auto flags = VFSFlags::OF_Read | VFSFlags::OF_ShLock;
-        const auto rc = src_file.Open(flags);
-        if( rc == VFSError::Ok )
+        const std::expected<void, Error> rc = src_file.Open(flags);
+        if( rc )
             break;
-        switch( m_SourceAccessError(VFSError::ToError(rc), _full_path, vfs) ) {
+        switch( m_SourceAccessError(rc.error(), _full_path, vfs) ) {
             case SourceAccessErrorResolution::Stop:
                 Stop();
                 return StepResult::Stopped;
@@ -345,12 +345,12 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
 
     constexpr int buf_sz = 256 * 1024; // Why 256Kb?
     const std::unique_ptr<char[]> buf = std::make_unique<char[]>(buf_sz);
-    ssize_t source_read_rc;
-    while( (source_read_rc = src_file.Read(buf.get(), buf_sz)) > 0 ) { // reading and compressing itself
+    std::expected<size_t, Error> source_read_rc;
+    while( (source_read_rc = src_file.Read(buf.get(), buf_sz)).value_or(0) > 0 ) { // reading and compressing itself
         if( BlockIfPaused(); IsStopped() )
             return StepResult::Stopped;
 
-        ssize_t to_write = source_read_rc;
+        ssize_t to_write = *source_read_rc;
         ssize_t la_rc = 0;
         do {
             la_rc = archive_write_data(m_Archive, buf.get(), to_write);
@@ -367,11 +367,11 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
             return StepResult::Stopped;
         }
 
-        Statistics().CommitProcessed(Statistics::SourceType::Bytes, source_read_rc);
+        Statistics().CommitProcessed(Statistics::SourceType::Bytes, *source_read_rc);
     }
 
-    if( source_read_rc < 0 )
-        switch( m_SourceReadError(static_cast<int>(source_read_rc), _full_path, vfs) ) {
+    if( !source_read_rc )
+        switch( m_SourceReadError(source_read_rc.error(), _full_path, vfs) ) {
             case SourceReadErrorResolution::Stop:
                 Stop();
                 return StepResult::Stopped;
@@ -566,9 +566,9 @@ ssize_t
 CompressionJob::WriteCallback(struct archive * /*_archive*/, void *_client_data, const void *_buffer, size_t _length)
 {
     const auto me = static_cast<CompressionJob *>(_client_data);
-    const ssize_t ret = me->m_TargetFile->Write(_buffer, _length);
-    if( ret >= 0 )
-        return ret;
+    const std::expected<size_t, Error> ret = me->m_TargetFile->Write(_buffer, _length);
+    if( ret )
+        return *ret;
     return ARCHIVE_FATAL;
 }
 

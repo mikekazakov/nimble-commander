@@ -79,10 +79,11 @@ NSURLRequest *File::BuildDownloadRequest() const
     return request;
 }
 
-int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> File::Open(unsigned long _open_flags,
+                                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( m_State != Cold )
-        return VFSError::InvalidCall;
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     assert(!m_Upload && !m_Download);
 
@@ -108,8 +109,10 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
 
         WaitForDownloadResponse();
 
-        // TODO: use LastError() error instead
-        return m_State == Downloading ? VFSError::Ok : /*LastError()*/ VFSError::InvalidCall;
+        if( m_State == Downloading )
+            return {};
+        else
+            return std::unexpected(LastError().value_or(Error{Error::POSIX, EIO}));
     }
     if( (_open_flags & VFSFlags::OF_Write) == VFSFlags::OF_Write ) {
         m_OpenFlags = _open_flags;
@@ -117,10 +120,10 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
         m_Upload = std::make_unique<Upload>();
         // at this point we need to wait for SetUploadSize() call to build of a request
         // and to actually start it
-        return VFSError::Ok;
+        return {};
     }
 
-    return VFSError::InvalidCall;
+    return SetLastError(Error{Error::POSIX, EINVAL});
 }
 
 void File::WaitForDownloadResponse() const
@@ -170,14 +173,16 @@ void File::AppendDownloadedDataAsync(NSData *_data)
     m_Signal.notify_all();
 }
 
-ssize_t File::Pos() const
+std::expected<uint64_t, Error> File::Pos() const
 {
     return 0;
 }
 
-ssize_t File::Size() const
+std::expected<uint64_t, Error> File::Size() const
 {
-    return m_FileSize >= 0 ? m_FileSize : VFSError::InvalidCall;
+    if( m_FileSize < 0 )
+        return SetLastError(Error{Error::POSIX, EINVAL});
+    return m_FileSize;
 }
 
 bool File::Eof() const
@@ -185,12 +190,12 @@ bool File::Eof() const
     return m_FilePos == m_FileSize;
 }
 
-ssize_t File::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     if( m_State != Downloading && m_State != Completed )
-        return VFSError::InvalidCall;
+        return SetLastError(Error{Error::POSIX, EINVAL});
     if( !m_Download )
-        return VFSError::InvalidCall;
+        return SetLastError(Error{Error::POSIX, EINVAL});
     if( _size == 0 || Eof() )
         return 0;
 
@@ -213,8 +218,7 @@ ssize_t File::Read(void *_buf, size_t _size)
         m_Signal.wait(lk);
     } while( m_State == Downloading );
 
-    // TODO: return LastError instead
-    return /*LastError()*/ VFSError::InvalidCall;
+    return std::unexpected(LastError().value_or(Error{Error::POSIX, EIO}));
 }
 
 bool File::IsOpened() const
@@ -535,11 +539,11 @@ void File::WaitForAppendToComplete() const
     });
 }
 
-ssize_t File::Write(const void *_buf, size_t _size)
+std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
 {
     if( !m_Upload || m_State != Uploading || m_Upload->upload_size < 0 ||
         m_FilePos + static_cast<long>(_size) > m_Upload->upload_size )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     assert(m_Upload->fifo.empty());
 
@@ -551,8 +555,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
     const auto eaten = WaitForUploadBufferConsumption();
 
     if( m_State != Uploading ) {
-        // TODO: return LastError() instead
-        return /*LastError()*/ VFSError::InvalidCall;
+        return std::unexpected(LastError().value_or(Error{Error::POSIX, EINVAL}));
     }
 
     m_FilePos += eaten;
@@ -577,8 +580,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
             m_Upload->delegate.handleFinished = nullptr;
 
             if( m_State != Uploading ) {
-                // TODO: return LastError() instead
-                return /*LastError()*/ VFSError::InvalidCall;
+                return std::unexpected(LastError().value_or(Error{Error::POSIX, EINVAL}));
             }
         }
 
@@ -592,8 +594,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
             WaitForAppendToComplete();
 
             if( m_State != Uploading ) {
-                // TODO: return LastError() instead
-                return /*LastError()*/ VFSError::InvalidCall;
+                return std::unexpected(LastError().value_or(Error{Error::POSIX, EINVAL}));
             }
         }
 

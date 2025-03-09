@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include <libssh2.h>
 #include <libssh2_sftp.h>
@@ -17,7 +17,8 @@ File::~File()
     Close();
 }
 
-int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> File::Open(unsigned long _open_flags,
+                                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( IsOpened() )
         Close();
@@ -25,7 +26,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
     auto sftp_host = std::dynamic_pointer_cast<SFTPHost>(Host());
     std::unique_ptr<SFTPHost::Connection> conn;
     if( const int rc = sftp_host->GetConnection(conn); rc != 0 )
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
 
     int sftp_flags = 0;
     if( _open_flags & VFSFlags::OF_Read )
@@ -48,14 +49,14 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
     if( handle == nullptr ) {
         const int rc = SFTPHost::VFSErrorForConnection(*conn);
         sftp_host->ReturnConnection(std::move(conn));
-        return rc;
+        return std::unexpected(VFSError::ToError(rc));
     }
 
     LIBSSH2_SFTP_ATTRIBUTES attrs;
     const int fstat_rc = libssh2_sftp_fstat_ex(handle, &attrs, 0);
     if( fstat_rc < 0 ) {
         const int conn_err = SFTPHost::VFSErrorForConnection(*conn);
-        return conn_err;
+        return std::unexpected(VFSError::ToError(conn_err));
     }
 
     m_Connection = std::move(conn);
@@ -63,7 +64,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
     m_Position = 0;
     m_Size = attrs.filesize;
 
-    return 0;
+    return {};
 }
 
 bool File::IsOpened() const
@@ -96,7 +97,7 @@ VFSFile::WriteParadigm File::GetWriteParadigm() const
     return VFSFile::WriteParadigm::Seek;
 }
 
-off_t File::Seek(off_t _off, int _basis)
+std::expected<uint64_t, Error> File::Seek(off_t _off, int _basis)
 {
     uint64_t req = 0;
     if( _basis == VFSFile::Seek_Set )
@@ -106,6 +107,7 @@ off_t File::Seek(off_t _off, int _basis)
     else if( _basis == VFSFile::Seek_End )
         req = m_Size + _off;
 
+    // TODO: why errors are not handled?
     libssh2_sftp_seek64(m_Handle, req);
     const libssh2_uint64_t pos = libssh2_sftp_tell64(m_Handle);
     m_Position = pos;
@@ -113,10 +115,10 @@ off_t File::Seek(off_t _off, int _basis)
     return pos;
 }
 
-ssize_t File::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     if( !IsOpened() )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     const ssize_t rc = libssh2_sftp_read(m_Handle, static_cast<char *>(_buf), _size);
 
@@ -125,13 +127,13 @@ ssize_t File::Read(void *_buf, size_t _size)
         return rc;
     }
     else
-        return SetLastError(SFTPHost::VFSErrorForConnection(*m_Connection));
+        return SetLastError(VFSError::ToError(SFTPHost::VFSErrorForConnection(*m_Connection)));
 }
 
-ssize_t File::Write(const void *_buf, size_t _size)
+std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
 {
     if( !IsOpened() )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     const ssize_t rc = libssh2_sftp_write(m_Handle, static_cast<const char *>(_buf), _size);
 
@@ -141,21 +143,21 @@ ssize_t File::Write(const void *_buf, size_t _size)
         return rc;
     }
     else
-        return SetLastError(SFTPHost::VFSErrorForConnection(*m_Connection));
+        return SetLastError(VFSError::ToError(SFTPHost::VFSErrorForConnection(*m_Connection)));
 }
 
-ssize_t File::Pos() const
+std::expected<uint64_t, Error> File::Pos() const
 {
     if( !IsOpened() )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     return m_Position;
 }
 
-ssize_t File::Size() const
+std::expected<uint64_t, Error> File::Size() const
 {
     if( !IsOpened() )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     return m_Size;
 }

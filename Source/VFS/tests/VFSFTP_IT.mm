@@ -32,7 +32,7 @@ TEST_CASE(PREFIX "upload and compare")
         REQUIRE(host->Unlink(fn2));
 
     // copy file to the remote server
-    REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host) == 0);
+    REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host));
 
     // compare it with origin
     REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host) == 0);
@@ -58,7 +58,7 @@ TEST_CASE(PREFIX "empty file test")
         REQUIRE(host->Unlink(fn));
 
     const VFSFilePtr file = host->CreateFile(fn).value();
-    REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
     REQUIRE(file->IsOpened() == true);
     REQUIRE(file->Close() == 0);
 
@@ -66,7 +66,7 @@ TEST_CASE(PREFIX "empty file test")
     const VFSStat stat = host->Stat(fn, 0).value();
     REQUIRE(stat.size == 0);
 
-    REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist) != 0);
+    REQUIRE(!file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist));
     REQUIRE(file->IsOpened() == false);
 
     REQUIRE(host->Unlink(fn));
@@ -149,7 +149,7 @@ TEST_CASE(PREFIX "renaming")
     if( host->Stat(fn2, 0) )
         REQUIRE(host->Unlink(fn2));
 
-    REQUIRE(VFSEasyCopyFile(fn1.c_str(), TestEnv().vfs_native, fn2.c_str(), host) == 0);
+    REQUIRE(VFSEasyCopyFile(fn1.c_str(), TestEnv().vfs_native, fn2.c_str(), host));
     REQUIRE(host->Rename(fn2, fn3));
     REQUIRE(host->Stat(fn3, 0));
     REQUIRE(host->Unlink(fn3));
@@ -177,7 +177,7 @@ TEST_CASE(PREFIX "listing")
         std::ignore = VFSEasyDelete("/Test", host);
         auto touch = [&](const char *_path) {
             const VFSFilePtr file = host->CreateFile(_path).value();
-            REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
+            REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
         };
         REQUIRE(host->CreateDirectory("/Test", 0755));
         REQUIRE(host->CreateDirectory("/Test/DirectoryName1", 0755));
@@ -213,7 +213,7 @@ static void WriteAll(VFSFile &_file, const std::span<const uint8_t> _bytes)
     ssize_t write_left = _bytes.size();
     const uint8_t *buf = _bytes.data();
     while( write_left > 0 ) {
-        const ssize_t res = _file.Write(buf, write_left);
+        const ssize_t res = _file.Write(buf, write_left).value();
         REQUIRE(res >= 0);
         write_left -= res;
         buf += res;
@@ -235,7 +235,7 @@ TEST_CASE(PREFIX "seekread")
 
         REQUIRE(host->CreateDirectory("/TestSeekRead", 0755));
         const VFSFilePtr file = host->CreateFile("/TestSeekRead/blob").value();
-        REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
+        REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
         WriteAll(*file, bytes);
         REQUIRE(file->Close() == 0);
     }
@@ -245,7 +245,7 @@ TEST_CASE(PREFIX "seekread")
 
     constexpr auto fn = "/TestSeekRead/blob";
     const VFSFilePtr file = host->CreateFile(fn).value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
 
     struct TC {
         uint64_t offset;
@@ -287,7 +287,7 @@ TEST_CASE(PREFIX "big files reading cancellation")
 
         REQUIRE(host->CreateDirectory("/TestCancellation", 0755));
         const VFSFilePtr file = host->CreateFile("/TestCancellation/blob").value();
-        REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
+        REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
         WriteAll(*file, bytes);
         REQUIRE(file->Close() == 0);
     }
@@ -299,7 +299,7 @@ TEST_CASE(PREFIX "big files reading cancellation")
     std::thread th{[&] {
         char buf[256];
         const VFSFilePtr file = host->CreateFile(host_path).value();
-        REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+        REQUIRE(file->Open(VFSFlags::OF_Read));
         REQUIRE(file->Read(buf, sizeof(buf)) == sizeof(buf));
         REQUIRE(file->Close() == 0); // at this moment we have read only a small part of file
         // and Close() should tell curl to stop reading and will wait

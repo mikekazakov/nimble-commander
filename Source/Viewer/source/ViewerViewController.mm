@@ -506,8 +506,8 @@ struct BackgroundFileOpener {
         [m_View scrollToVerticalPosition:std::clamp(pos, 0., 1.)];
     }
     if( self.goToPositionKindButton.selectedTag == 1 ) {
-        const long pos = string.integerValue;
-        m_View.verticalPositionInBytes = std::clamp(pos, 0l, m_WorkFile->Size());
+        const unsigned long long pos = string.integerValue;
+        m_View.verticalPositionInBytes = std::clamp(pos, 0ull, m_WorkFile->Size().value_or(0ull));
     }
 }
 
@@ -699,20 +699,20 @@ std::expected<void, Error> BackgroundFileOpener::Open(VFSHostPtr _vfs,
         [proc Show];
 
         auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(original_file);
-        const int open_err = wrapper->Open(
+        const std::expected<void, Error> open_rc = wrapper->Open(
             VFSFlags::OF_Read | VFSFlags::OF_ShLock,
             [=] { return proc.userCancelled; },
             [=](uint64_t _bytes, uint64_t _total) { proc.progress = double(_bytes) / double(_total); });
         [proc Close];
-        if( open_err != VFSError::Ok )
-            return std::unexpected(VFSError::ToError(open_err));
+        if( !open_rc )
+            return open_rc;
 
         seq_wrapper = wrapper;
         work_file = wrapper;
     }
     else { // just open input file
-        if( const int open_err = original_file->Open(VFSFlags::OF_Read); open_err != VFSError::Ok )
-            return std::unexpected(VFSError::ToError(open_err));
+        if( const std::expected<void, Error> open_err = original_file->Open(VFSFlags::OF_Read); !open_err )
+            return open_err;
         work_file = original_file;
     }
     viewer_file_window = std::make_shared<nc::vfs::FileWindow>();

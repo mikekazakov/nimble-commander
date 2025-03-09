@@ -17,62 +17,62 @@ File::~File()
     Close();
 }
 
-int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     if( _open_flags & VFSFlags::OF_Append )
-        return VFSError::FromErrno(EPERM);
+        return std::unexpected(Error{Error::POSIX, EPERM});
 
     if( (_open_flags & (VFSFlags::OF_Read | VFSFlags::OF_Write)) == (VFSFlags::OF_Read | VFSFlags::OF_Write) )
-        return VFSError::FromErrno(EPERM);
+        return std::unexpected(Error{Error::POSIX, EPERM});
 
     if( _open_flags & VFSFlags::OF_Read ) {
         const std::expected<VFSStat, Error> st = m_Host.Stat(Path(), 0, _cancel_checker);
         if( !st )
-            return VFSError::FromErrno(EINVAL); // TODO: return 'st'
+            return std::unexpected(st.error());
 
         if( !S_ISREG(st->mode) )
-            return VFSError::FromErrno(EPERM); // TODO: test for this
+            return std::unexpected(Error{Error::POSIX, EPERM}); // TODO: test for this
 
         m_Size = st->size;
         m_OpenFlags = _open_flags;
-        return VFSError::Ok;
+        return {};
     }
     if( _open_flags & VFSFlags::OF_Write ) {
         const std::expected<VFSStat, Error> st = m_Host.Stat(Path(), 0, _cancel_checker);
 
         // Refuse if the file does exist and OF_NoExist was specified
         if( (_open_flags & VFSFlags::OF_NoExist) && st ) {
-            return VFSError::FromErrno(EEXIST);
+            return std::unexpected(Error{Error::POSIX, EEXIST});
         }
 
         // Refuse if the file does not exist but OF_Create was not specified
         if( (_open_flags & VFSFlags::OF_Create) == 0 && !st ) {
-            return VFSError::FromErrno(ENOENT);
+            return std::unexpected(Error{Error::POSIX, ENOENT});
         }
 
         // If file already exist, but it is actually a directory
         if( st && st->mode_bits.dir ) {
-            return VFSError::FromErrno(EISDIR);
+            return std::unexpected(Error{Error::POSIX, EISDIR});
         }
 
         // If file already exist - remove it
         if( st ) {
-            const auto unlink_rc = m_Host.Unlink(Path(), _cancel_checker);
+            const std::expected<void, Error> unlink_rc = m_Host.Unlink(Path(), _cancel_checker);
             if( !unlink_rc )
-                return VFSError::FromErrno(EINVAL); // TODO: return 'unlink_rc'
+                return unlink_rc;
         }
 
         // Finally verified and ready to go
         m_OpenFlags = _open_flags;
-        return VFSError::Ok;
+        return {};
     }
-    return VFSError::FromErrno(EINVAL);
+    return std::unexpected(Error{Error::POSIX, EINVAL});
 }
 
-ssize_t File::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     if( !IsOpened() || !(m_OpenFlags & VFSFlags::OF_Read) )
-        return SetLastError(VFSError::FromErrno(EINVAL));
+        return SetLastError(Error{Error::POSIX, EINVAL});
     if( _size == 0 || Eof() )
         return 0;
 
@@ -80,7 +80,7 @@ ssize_t File::Read(void *_buf, size_t _size)
 
     const int vfs_error = m_Conn->ReadBodyUpToSize(_size);
     if( vfs_error != VFSError::Ok )
-        return SetLastError(vfs_error);
+        return SetLastError(VFSError::ToError(vfs_error));
 
     auto &read_buffer = m_Conn->ResponseBody();
     const auto has_read = read_buffer.Read(_buf, _size);
@@ -89,10 +89,10 @@ ssize_t File::Read(void *_buf, size_t _size)
     return has_read;
 }
 
-ssize_t File::Write(const void *_buf, size_t _size)
+std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
 {
     if( !IsOpened() || !(m_OpenFlags & VFSFlags::OF_Write) || m_Size < 0 )
-        return SetLastError(VFSError::FromErrno(EINVAL));
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     SpawnUploadConnectionIfNeeded();
 
@@ -105,7 +105,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
 
     const int vfs_error = m_Conn->WriteBodyUpToSize(_size);
     if( vfs_error != VFSError::Ok )
-        return SetLastError(vfs_error);
+        return SetLastError(VFSError::ToError(vfs_error));
 
     //    TODO: clarify what File should return for partially written blocks - error code or number
     //    of bytes written?
@@ -163,8 +163,10 @@ int File::Close()
     }
     else if( m_OpenFlags & VFSFlags::OF_Write ) {
         if( m_Size >= 0 ) {
-            if( m_Conn == nullptr )
-                Write("", 0); // force a connection to appear, needed for zero-byte uploads
+            if( m_Conn == nullptr ) {
+                // TODO: why the result code is ignored?
+                std::ignore = Write("", 0); // force a connection to appear, needed for zero-byte uploads
+            }
 
             assert(m_Conn);
 
@@ -199,12 +201,12 @@ File::WriteParadigm File::GetWriteParadigm() const
     return WriteParadigm::Upload;
 }
 
-ssize_t File::Pos() const
+std::expected<uint64_t, Error> File::Pos() const
 {
     return m_Pos;
 }
 
-ssize_t File::Size() const
+std::expected<uint64_t, Error> File::Size() const
 {
     return m_Size;
 }

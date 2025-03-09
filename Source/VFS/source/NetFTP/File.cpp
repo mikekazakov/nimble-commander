@@ -61,7 +61,7 @@ std::filesystem::path File::DirName() const
     return utility::PathManip::EnsureTrailingSlash(std::filesystem::path(Path()).parent_path());
 }
 
-int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     Log::Trace("File::Open({}) called", _open_flags);
     auto ftp_host = std::dynamic_pointer_cast<FTPHost>(Host());
@@ -76,17 +76,17 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
 
         if( m_FileSize == 0 ) {
             m_Mode = Mode::Read;
-            return 0;
+            return {};
         }
 
         if( ReadChunk(nullptr, 1, 0, _cancel_checker) == 1 ) {
             m_Mode = Mode::Read;
-            return 0;
+            return {};
         }
 
         Close();
 
-        return VFSError::GenericError;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     }
     else if( (!(_open_flags & VFSFlags::OF_NoExist) || !stat) && //
              (_open_flags & VFSFlags::OF_Read) == 0 &&           //
@@ -116,10 +116,10 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
         m_CURL->Attach();
 
         m_Mode = Mode::Write;
-        return 0;
+        return {};
     }
 
-    return VFSError::NotSupported;
+    return std::unexpected(Error{Error::POSIX, ENOTSUP});
 }
 
 ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offset, VFSCancelChecker _cancel_checker)
@@ -227,7 +227,7 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
     return size;
 }
 
-ssize_t File::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     Log::Trace("File::Read({}, {}) called", _buf, _size);
     if( Eof() )
@@ -235,19 +235,19 @@ ssize_t File::Read(void *_buf, size_t _size)
 
     const ssize_t ret = ReadChunk(_buf, _size, m_FilePos, nullptr);
     if( ret < 0 )
-        return ret;
+        return std::unexpected(VFSError::ToError(static_cast<int>(ret)));
 
     m_FilePos += ret;
     return ret;
 }
 
-ssize_t File::Write(const void *_buf, size_t _size)
+std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
 {
     Log::Trace("File::Write({}, {}) called", _buf, _size);
     // TODO: reconnecting support
 
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     assert(m_WriteBuf.Consumed() == 0);
     m_WriteBuf.Write(_buf, _size);
@@ -280,7 +280,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
     }
 
     if( error )
-        return VFSError::FromErrno(EIO);
+        return std::unexpected(Error{Error::POSIX, EIO});
 
     m_FilePos += m_WriteBuf.Consumed();
     m_FileSize += m_WriteBuf.Consumed();
@@ -299,12 +299,12 @@ VFSFile::WriteParadigm File::GetWriteParadigm() const
     return VFSFile::WriteParadigm::Sequential;
 }
 
-ssize_t File::Pos() const
+std::expected<uint64_t, Error> File::Pos() const
 {
     return m_FilePos;
 }
 
-ssize_t File::Size() const
+std::expected<uint64_t, Error> File::Size() const
 {
     return m_FileSize;
 }
@@ -317,14 +317,14 @@ bool File::Eof() const
     return m_FilePos >= m_FileSize;
 }
 
-off_t File::Seek(off_t _off, int _basis)
+std::expected<uint64_t, Error> File::Seek(off_t _off, int _basis)
 {
     Log::Trace("File::Seek({}, {}) called", _off, _basis);
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( m_Mode != Mode::Read )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     // we can only deal with cache buffer now, need another branch later
     off_t req_pos = 0;
@@ -335,10 +335,10 @@ off_t File::Seek(off_t _off, int _basis)
     else if( _basis == VFSFile::Seek_Cur )
         req_pos = m_FilePos + _off;
     else
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( req_pos < 0 )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     req_pos = std::min(req_pos, static_cast<off_t>(m_FileSize));
 
     m_FilePos = req_pos;

@@ -19,7 +19,8 @@ File::~File()
     Close();
 }
 
-int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> File::Open(unsigned long _open_flags,
+                                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     auto &io = routedio::RoutedIO::Default;
     auto fs_info = std::dynamic_pointer_cast<NativeHost>(Host())->NativeFSManager().VolumeFromPath(Path());
@@ -44,7 +45,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
 
     m_FD = io.open(Path(), openflags, mode);
     if( m_FD < 0 ) {
-        return SetLastError(VFSError::FromErrno(errno));
+        return SetLastError(Error{Error::POSIX, errno});
     }
 
     fcntl(m_FD, F_SETFL, fcntl(m_FD, F_GETFL) & ~O_NONBLOCK);
@@ -57,7 +58,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
     m_Size = lseek(m_FD, 0, SEEK_END);
     lseek(m_FD, 0, SEEK_SET);
 
-    return VFSError::Ok;
+    return {};
 }
 
 bool File::IsOpened() const
@@ -77,10 +78,10 @@ int File::Close()
     return VFSError::Ok;
 }
 
-ssize_t File::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     if( m_FD < 0 )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
     if( Eof() )
         return 0;
 
@@ -89,7 +90,7 @@ ssize_t File::Read(void *_buf, size_t _size)
         m_Position += ret;
         return ret;
     }
-    return SetLastError(VFSError::FromErrno(errno));
+    return SetLastError(Error{Error::POSIX, errno});
 }
 
 std::expected<size_t, Error> File::ReadAt(off_t _pos, void *_buf, size_t _size)
@@ -102,25 +103,23 @@ std::expected<size_t, Error> File::ReadAt(off_t _pos, void *_buf, size_t _size)
     return static_cast<size_t>(ret);
 }
 
-off_t File::Seek(off_t _off, int _basis)
+std::expected<uint64_t, Error> File::Seek(off_t _off, int _basis)
 {
     if( m_FD < 0 )
-        return SetLastError(VFSError::InvalidCall);
-    //    printf("seek:%lld/%d \n", _off, _basis);
-    //    assert(m_FD >= 0);
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     const off_t ret = lseek(m_FD, _off, _basis);
     if( ret >= 0 ) {
         m_Position = ret;
         return ret;
     }
-    return SetLastError(VFSError::FromErrno(errno));
+    return SetLastError(Error{Error::POSIX, errno});
 }
 
-ssize_t File::Write(const void *_buf, size_t _size)
+std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
 {
     if( m_FD < 0 )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     const ssize_t ret = write(m_FD, _buf, _size);
     if( ret >= 0 ) {
@@ -128,7 +127,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
         m_Position += ret;
         return ret;
     }
-    return SetLastError(VFSError::FromErrno(errno));
+    return SetLastError(Error{Error::POSIX, errno});
 }
 
 VFSFile::ReadParadigm File::GetReadParadigm() const
@@ -153,17 +152,17 @@ VFSFile::WriteParadigm File::GetWriteParadigm() const
     return VFSFile::WriteParadigm::NoWrite;
 }
 
-ssize_t File::Pos() const
+std::expected<uint64_t, Error> File::Pos() const
 {
     if( m_FD < 0 )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
     return m_Position;
 }
 
-ssize_t File::Size() const
+std::expected<uint64_t, Error> File::Size() const
 {
     if( m_FD < 0 )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
     return m_Size;
 }
 

@@ -484,7 +484,7 @@ TEST_CASE(PREFIX "basic read")
 {
     const VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
     const VFSFilePtr file = host->CreateFile("/etc/debian_version").value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
 
     const auto contents = file->ReadFile();
     REQUIRE(contents);
@@ -671,7 +671,7 @@ TEST_CASE(PREFIX "RandomWrappers")
     const VFSFilePtr seq_file = host->CreateFile(host->HomeDir() + "/.ssh/authorized_keys").value();
 
     auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(seq_file);
-    REQUIRE(wrapper->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock, nullptr, nullptr) == VFSError::Ok);
+    REQUIRE(wrapper->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock, nullptr, nullptr));
 }
 
 TEST_CASE(PREFIX "Invalid auth")

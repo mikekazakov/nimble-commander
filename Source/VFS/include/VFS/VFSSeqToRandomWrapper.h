@@ -9,11 +9,11 @@ public:
     VFSSeqToRandomROWrapperFile(const VFSFilePtr &_file_to_wrap);
     ~VFSSeqToRandomROWrapperFile();
 
-    int Open(unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, nc::Error> Open(unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
-    int Open(unsigned long _flags,
-             const VFSCancelChecker &_cancel_checker,
-             std::function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress);
+    std::expected<void, nc::Error> Open(unsigned long _flags,
+                                        const VFSCancelChecker &_cancel_checker,
+                                        std::function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress);
 
     int Close() override;
 
@@ -23,17 +23,17 @@ public:
 
     bool IsOpened() const override;
 
-    ssize_t Pos() const override;
+    std::expected<uint64_t, nc::Error> Pos() const override;
 
-    ssize_t Size() const override;
+    std::expected<uint64_t, nc::Error> Size() const override;
 
     bool Eof() const override;
 
-    ssize_t Read(void *_buf, size_t _size) override;
+    std::expected<size_t, nc::Error> Read(void *_buf, size_t _size) override;
 
     std::expected<size_t, nc::Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
 
-    off_t Seek(off_t _off, int _basis) override;
+    std::expected<uint64_t, nc::Error> Seek(off_t _off, int _basis) override;
 
     ReadParadigm GetReadParadigm() const override;
 
@@ -48,9 +48,10 @@ private:
     };
 
     VFSSeqToRandomROWrapperFile(const char *_relative_path, const VFSHostPtr &_host, std::shared_ptr<Backend> _backend);
-    int OpenBackend(unsigned long _flags,
-                    VFSCancelChecker _cancel_checker,
-                    std::function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress);
+    std::expected<void, nc::Error>
+    OpenBackend(unsigned long _flags,
+                VFSCancelChecker _cancel_checker,
+                std::function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress);
 
     std::shared_ptr<Backend> m_Backend;
     ssize_t m_Pos = 0;

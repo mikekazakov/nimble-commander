@@ -24,13 +24,13 @@ GenericMemReadOnlyFile::GenericMemReadOnlyFile(std::string_view _relative_path,
         throw std::invalid_argument("GenericMemReadOnlyFile expects a valid memory pointer");
 }
 
-ssize_t GenericMemReadOnlyFile::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> GenericMemReadOnlyFile::Read(void *_buf, size_t _size)
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( _buf == nullptr )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( _size == 0 )
         return 0;
@@ -61,10 +61,10 @@ std::expected<size_t, Error> GenericMemReadOnlyFile::ReadAt(off_t _pos, void *_b
     return toread;
 }
 
-off_t GenericMemReadOnlyFile::Seek(off_t _off, int _basis)
+std::expected<uint64_t, Error> GenericMemReadOnlyFile::Seek(off_t _off, int _basis)
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     off_t req_pos = 0;
     if( _basis == VFSFile::Seek_Set )
@@ -74,10 +74,10 @@ off_t GenericMemReadOnlyFile::Seek(off_t _off, int _basis)
     else if( _basis == VFSFile::Seek_Cur )
         req_pos = m_Pos + _off;
     else
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( req_pos < 0 )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     if( req_pos > static_cast<long>(m_Size) )
         req_pos = m_Size;
     m_Pos = req_pos;
@@ -90,14 +90,14 @@ VFSFile::ReadParadigm GenericMemReadOnlyFile::GetReadParadigm() const
     return VFSFile::ReadParadigm::Random;
 }
 
-ssize_t GenericMemReadOnlyFile::Pos() const
+std::expected<uint64_t, Error> GenericMemReadOnlyFile::Pos() const
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     return m_Pos;
 }
 
-ssize_t GenericMemReadOnlyFile::Size() const
+std::expected<uint64_t, Error> GenericMemReadOnlyFile::Size() const
 {
     return m_Size;
 }
@@ -109,11 +109,11 @@ bool GenericMemReadOnlyFile::Eof() const
     return m_Pos == static_cast<long>(m_Size);
 }
 
-int GenericMemReadOnlyFile::Open([[maybe_unused]] unsigned long _open_flags,
-                                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> GenericMemReadOnlyFile::Open([[maybe_unused]] unsigned long _open_flags,
+                                                        [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     m_Opened = true;
-    return 0;
+    return {};
 }
 
 bool GenericMemReadOnlyFile::IsOpened() const

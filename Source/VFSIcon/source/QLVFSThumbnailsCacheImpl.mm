@@ -98,11 +98,11 @@ static std::expected<std::vector<uint8_t>, Error> ReadEntireFile(const std::stri
     if( !file )
         return std::unexpected(file.error());
 
-    if( const int rc = (*file)->Open(VFSFlags::OF_Read); rc == VFSError::Ok ) {
+    if( const std::expected<void, Error> rc = (*file)->Open(VFSFlags::OF_Read) ) {
         return (*file)->ReadFile();
     }
     else {
-        return std::unexpected(VFSError::ToError(rc));
+        return std::unexpected(rc.error());
     }
 }
 

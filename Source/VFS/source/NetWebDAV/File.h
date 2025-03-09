@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "WebDAVHost.h"
@@ -15,14 +15,14 @@ public:
     File(std::string_view _relative_path, const std::shared_ptr<WebDAVHost> &_host);
     ~File();
 
-    int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     bool IsOpened() const override;
     int Close() override;
-    ssize_t Pos() const override;
-    ssize_t Size() const override;
+    std::expected<uint64_t, Error> Pos() const override;
+    std::expected<uint64_t, Error> Size() const override;
     bool Eof() const override;
-    ssize_t Read(void *_buf, size_t _size) override;
-    ssize_t Write(const void *_buf, size_t _size) override;
+    std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
+    std::expected<size_t, Error> Write(const void *_buf, size_t _size) override;
     int SetUploadSize(size_t _size) override;
     ReadParadigm GetReadParadigm() const override;
     WriteParadigm GetWriteParadigm() const override;

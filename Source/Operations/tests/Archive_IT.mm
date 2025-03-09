@@ -75,7 +75,7 @@ TEST_CASE(PREFIX "Compressing an item with big xattrs")
     const auto host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), TestEnv().vfs_native);
     const VFSFilePtr file = host->CreateFile("/"s + source_fn).value();
     REQUIRE(file != nullptr);
-    REQUIRE(file->Open(nc::vfs::Flags::OF_Read) == 0);
+    REQUIRE(file->Open(nc::vfs::Flags::OF_Read));
     CHECK(file->Size() == 0);
     std::vector<std::byte> unpacked_noise(xattr_size);
     REQUIRE(file->XAttrGet(xattr_name, unpacked_noise.data(), xattr_size) == xattr_size);

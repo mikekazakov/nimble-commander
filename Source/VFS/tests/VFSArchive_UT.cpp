@@ -15,7 +15,7 @@ using namespace nc::vfs;
 static void CheckFileIs(VFSHost &_host, const std::string_view _path, const std::string_view _content)
 {
     const VFSFilePtr file = _host.CreateFile(_path).value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
     auto data = file->ReadFile();
     REQUIRE(data);
     CHECK(std::string_view{reinterpret_cast<const char *>(data->data()), data->size()} == _content);
@@ -83,7 +83,7 @@ TEST_CASE(PREFIX "Can unzip an archive with Chinese symbols")
         CHECK(host->StatTotalRegs() == 1);
 
         const VFSFilePtr file = host->CreateFile("/中文测试").value();
-        REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+        REQUIRE(file->Open(VFSFlags::OF_Read));
 
         auto bytes = file->ReadFile();
         REQUIRE(bytes);
@@ -217,7 +217,7 @@ TEST_CASE(PREFIX "Can unzip an archive with Cyrillic symbols")
         CHECK(host->StatTotalRegs() == 1);
 
         const VFSFilePtr file = host->CreateFile("/Привет, Мир!.txt").value();
-        REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+        REQUIRE(file->Open(VFSFlags::OF_Read));
 
         auto bytes = file->ReadFile();
         REQUIRE(bytes);
@@ -274,13 +274,13 @@ TEST_CASE(PREFIX "Can unrar a file with japanese filenames")
     CHECK(host->StatTotalRegs() == 2);
 
     VFSFilePtr file = host->CreateFile("/表だよ/新しいフォルダ/新規テキスト ドキュメント.txt").value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
     auto bytes = file->ReadFile();
     REQUIRE(bytes);
     REQUIRE(bytes->empty());
 
     file = host->CreateFile("/表だよ/漢字長いファイル名long-filename-in-漢字.txt").value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
     bytes = file->ReadFile();
     REQUIRE(bytes);
     REQUIRE(bytes->size() == 5);
@@ -314,14 +314,14 @@ TEST_CASE(PREFIX "Can unrar a file with cyrilic filenames")
     CHECK(host->StatTotalRegs() == 2);
 
     VFSFilePtr file = host->CreateFile("/ПРИВЕТ").value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
     auto bytes = file->ReadFile();
     REQUIRE(bytes);
     REQUIRE(bytes->size() == 6);
     CHECK(std::memcmp(bytes->data(), "\xf0\xf2\xe9\xf7\xe5\xf4", 6) == 0);
 
     file = host->CreateFile("/привет").value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
     bytes = file->ReadFile();
     REQUIRE(bytes);
     REQUIRE(bytes->size() == 6);
@@ -566,7 +566,7 @@ TEST_CASE(PREFIX "Cyrilic encoding in a file downloaded from GDrive")
     REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(path.c_str(), TestEnv().vfs_native));
 
     const VFSFilePtr file = host->CreateFile("/тест.txt").value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
 
     auto d = file->ReadFile();
     REQUIRE(d->size() == 9);
@@ -612,7 +612,7 @@ TEST_CASE(PREFIX "Encrypted zip archive")
 
     const auto fn = "/file2";
     const VFSFilePtr file = host->CreateFile(fn).value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
     auto d = file->ReadFile();
     REQUIRE(d->size() == 19);
     auto ref = "contents of file2.\0A";
@@ -655,7 +655,7 @@ TEST_CASE(PREFIX "Reading xattr from an archive")
 
     char buf[4096];
     const VFSFilePtr file = host->CreateFile("/f.txt").value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
     REQUIRE(file->XAttrCount() == 1);
     REQUIRE(file->XAttrGet("hello", buf, sizeof(buf)) == 5);
     REQUIRE(strncmp(buf, "world", 5) == 0);
@@ -700,7 +700,7 @@ TEST_CASE(PREFIX "Reading com.apple.FinderInfo from an archive")
 
     char buf[4096];
     const VFSFilePtr file = host->CreateFile("/f.txt").value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
     REQUIRE(file->XAttrCount() == 2);
     REQUIRE(file->XAttrGet("com.apple.FinderInfo", buf, sizeof(buf)) == 32);
     const uint8_t finfo[32] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00,
@@ -747,7 +747,7 @@ TEST_CASE(PREFIX "archive with a slash dir")
 
     auto fn = "/f.txt";
     const VFSFilePtr file = host->CreateFile(fn).value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
     auto d = file->ReadFile();
     REQUIRE(d->size() == 13);
     auto ref = "Hello, World!";
@@ -1779,7 +1779,7 @@ TEST_CASE(PREFIX "zip archive with a heading slash in a filename")
 
     auto fn = "/The.Expanse.S02E13.Caliban's.War.SVA.srt";
     const VFSFilePtr file = host->CreateFile(fn).value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
     auto d = file->ReadFile();
     REQUIRE(d->size() == 46159);
     CHECK(std::string_view{reinterpret_cast<const char *>(d->data()), d->size()}.ends_with("Sweet dreams."));
@@ -1823,7 +1823,7 @@ TEST_CASE(PREFIX "lzma support")
 
     auto fn = "/Hello.txt";
     const VFSFilePtr file = host->CreateFile(fn).value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
     auto d = file->ReadFile();
     REQUIRE(d->size() == 5);
     auto ref = "World";
@@ -1856,7 +1856,7 @@ TEST_CASE(PREFIX "zip with GB18030-2020 support")
 
     auto fn = "/维基百科是什么/以及具有百科全书之意的.txt";
     const VFSFilePtr file = host->CreateFile(fn).value();
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read));
     auto d = file->ReadFile();
     CHECK(std::string_view{reinterpret_cast<const char *>(d.value().data()), d.value().size()} == "Hello!");
 }

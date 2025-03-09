@@ -231,7 +231,7 @@ TEST_CASE(PREFIX "Compressing an item with xattrs")
 
         // open the compressed file in the archive
         const std::shared_ptr<VFSFile> file = arc_host->CreateFile("/" + filepath.filename().native()).value();
-        REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
+        REQUIRE(file->Open(VFSFlags::OF_Read));
 
         // check the number of compressed extended attributes is the same as in the original file
         REQUIRE(file->XAttrCount() == tc.eas.size());
@@ -290,9 +290,8 @@ TEST_CASE(PREFIX "Compressing multiple items with xattrs")
         // open the compressed file in the archive
         const std::filesystem::path path = std::filesystem::path("/") / p;
         const std::shared_ptr<VFSFile> file = arc_host->CreateFile(path.native()).value();
-        REQUIRE(file->Open(p.native().ends_with(".txt")
-                               ? VFSFlags::OF_Read
-                               : (VFSFlags::OF_Read | VFSFlags::OF_Directory)) == VFSError::Ok);
+        REQUIRE(file->Open(p.native().ends_with(".txt") ? VFSFlags::OF_Read
+                                                        : (VFSFlags::OF_Read | VFSFlags::OF_Directory)));
         // read the xattr and check its value
         REQUIRE(file->XAttrCount() == 1);
         REQUIRE(file->XAttrGet("attr", nullptr, 0) > 0);

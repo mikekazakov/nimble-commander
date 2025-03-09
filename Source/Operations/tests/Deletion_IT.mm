@@ -267,7 +267,7 @@ TEST_CASE(PREFIX "Complex deletion")
 {
     const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
-    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (dir.directory / "Mail.app").c_str(), host) == 0);
+    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (dir.directory / "Mail.app").c_str(), host));
 
     Deletion operation{FetchItems(dir.directory.native(), {"Mail.app"}, *host), DeletionType::Permanent};
     operation.Start();
@@ -290,7 +290,7 @@ TEST_CASE(PREFIX "Simple delete from FTP")
     // if there's a trash from previous runs - remove it
     if( host->Stat(fn2, 0) )
         REQUIRE(host->Unlink(fn2));
-    REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host) == 0);
+    REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host));
 
     Deletion operation{FetchItems("/Public/!FilesTesting", {"mach_kernel"}, *host), DeletionType::Permanent};
     operation.Start();
@@ -314,7 +314,7 @@ TEST_CASE(PREFIX "Deleting from FTP directory")
     // if there's a trash from previous runs - remove it
     if( host->Stat(fn2, 0) )
         REQUIRE(VFSEasyDelete(fn2, host));
-    REQUIRE(VFSEasyCopyNode(fn1, TestEnv().vfs_native, fn2, host) == 0);
+    REQUIRE(VFSEasyCopyNode(fn1, TestEnv().vfs_native, fn2, host));
 
     Deletion operation{FetchItems("/Public/!FilesTesting", {"bin"}, *host), DeletionType::Permanent};
     operation.Start();

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
 
@@ -20,13 +20,13 @@ File::~File()
     Close();
 }
 
-int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     if( strlen(Path()) < 2 || Path()[0] != '/' )
-        return SetLastError(VFSError::NotFound);
+        return SetLastError(Error{Error::POSIX, ENOENT});
 
     if( _open_flags & VFSFlags::OF_Write )
-        return SetLastError(VFSError::NotSupported); // ArchiveFile is Read-Only
+        return SetLastError(Error{Error::POSIX, ENOTSUP}); // ArchiveFile is Read-Only
 
     int res;
     auto host = std::dynamic_pointer_cast<ArchiveHost>(Host());
@@ -35,15 +35,15 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     std::pmr::string file_path(&alloc);
     res = host->ResolvePathIfNeeded(Path(), file_path, _open_flags);
     if( res < 0 )
-        return res;
+        return std::unexpected(VFSError::ToError(res));
 
     if( host->IsDirectory(file_path, _open_flags, _cancel_checker) && !(_open_flags & VFSFlags::OF_Directory) )
-        return VFSError::FromErrno(EISDIR);
+        return SetLastError(Error{Error::POSIX, EISDIR});
 
     std::unique_ptr<State> state;
     res = host->ArchiveStateForItem(file_path.c_str(), state);
     if( res < 0 )
-        return res;
+        return std::unexpected(VFSError::ToError(res));
 
     assert(state->Entry());
 
@@ -55,8 +55,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     m_Size = archive_entry_size(state->Entry());
     m_State = std::move(state);
 
-    return VFSError::Ok;
-    ;
+    return {};
 }
 
 bool File::IsOpened() const
@@ -76,17 +75,17 @@ VFSFile::ReadParadigm File::GetReadParadigm() const
     return VFSFile::ReadParadigm::Sequential;
 }
 
-ssize_t File::Pos() const
+std::expected<uint64_t, Error> File::Pos() const
 {
     if( !IsOpened() )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
     return m_Position;
 }
 
-ssize_t File::Size() const
+std::expected<uint64_t, Error> File::Size() const
 {
     if( !IsOpened() )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
     return m_Size;
 }
 
@@ -97,10 +96,10 @@ bool File::Eof() const
     return m_Position == m_Size;
 }
 
-ssize_t File::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     if( IsOpened() == 0 )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
     if( Eof() )
         return 0;
 
@@ -111,7 +110,7 @@ ssize_t File::Read(void *_buf, size_t _size)
     if( size < 0 ) {
         // TODO: libarchive error - convert it into our errors
         fmt::println("libarchive error: {}", archive_error_string(m_State->Archive()));
-        return SetLastError(VFSError::FromLibarchive(archive_errno(m_State->Archive())));
+        return SetLastError(VFSError::ToError(VFSError::FromLibarchive(archive_errno(m_State->Archive()))));
     }
 
     m_Position += size;

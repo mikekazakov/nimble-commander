@@ -18,18 +18,19 @@ class XAttrFile final : public VFSFile
 {
 public:
     XAttrFile(std::string_view _xattr_path, const std::shared_ptr<XAttrHost> &_parent, int _fd);
-    int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = nullptr) override;
+    std::expected<void, Error> Open(unsigned long _open_flags,
+                                    const VFSCancelChecker &_cancel_checker = nullptr) override;
     int Close() override;
     bool IsOpened() const override;
     ReadParadigm GetReadParadigm() const override;
     WriteParadigm GetWriteParadigm() const override;
-    ssize_t Pos() const override;
-    off_t Seek(off_t _off, int _basis) override;
-    ssize_t Size() const override;
+    std::expected<uint64_t, Error> Pos() const override;
+    std::expected<uint64_t, Error> Seek(off_t _off, int _basis) override;
+    std::expected<uint64_t, Error> Size() const override;
     bool Eof() const override;
-    ssize_t Read(void *_buf, size_t _size) override;
+    std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     std::expected<size_t, Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
-    ssize_t Write(const void *_buf, size_t _size) override;
+    std::expected<size_t, Error> Write(const void *_buf, size_t _size) override;
     int SetUploadSize(size_t _size) override;
 
 private:
@@ -329,20 +330,21 @@ XAttrFile::XAttrFile(std::string_view _xattr_path, const std::shared_ptr<XAttrHo
 {
 }
 
-int XAttrFile::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> XAttrFile::Open(unsigned long _open_flags,
+                                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     Close();
 
     const auto path = XAttrName();
     if( !path )
-        return VFSError::FromErrno(ENOENT);
+        return std::unexpected(nc::Error{nc::Error::POSIX, ENOENT});
 
     if( _open_flags & VFSFlags::OF_Write ) {
         if( _open_flags & VFSFlags::OF_Append )
-            return VFSError::NotSupported;
+            return std::unexpected(nc::Error{nc::Error::POSIX, ENOTSUP});
         // TODO: OF_NoExist
 
         m_OpenFlags = _open_flags;
@@ -350,17 +352,17 @@ int XAttrFile::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelC
     else if( _open_flags & VFSFlags::OF_Read ) {
         auto xattr_size = fgetxattr(m_FD, path, nullptr, 0, 0, 0);
         if( xattr_size < 0 )
-            return VFSError::FromErrno(ENOENT);
+            return std::unexpected(nc::Error{nc::Error::POSIX, ENOENT});
 
         m_FileBuf = std::make_unique<uint8_t[]>(xattr_size);
         if( fgetxattr(m_FD, path, m_FileBuf.get(), xattr_size, 0, 0) < 0 )
-            return VFSError::FromErrno();
+            return std::unexpected(nc::Error{nc::Error::POSIX, errno});
 
         m_Size = xattr_size;
         m_OpenFlags = _open_flags;
     }
 
-    return VFSError::Ok;
+    return {};
 }
 
 int XAttrFile::Close()
@@ -388,12 +390,12 @@ VFSFile::WriteParadigm XAttrFile::GetWriteParadigm() const
     return VFSFile::WriteParadigm::Upload;
 }
 
-ssize_t XAttrFile::Pos() const
+std::expected<uint64_t, Error> XAttrFile::Pos() const
 {
     return m_Position;
 }
 
-ssize_t XAttrFile::Size() const
+std::expected<uint64_t, Error> XAttrFile::Size() const
 {
     return m_Size;
 }
@@ -403,13 +405,13 @@ bool XAttrFile::Eof() const
     return m_Position >= m_Size;
 }
 
-off_t XAttrFile::Seek(off_t _off, int _basis)
+std::expected<uint64_t, Error> XAttrFile::Seek(off_t _off, int _basis)
 {
     if( !IsOpened() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     if( !IsOpenedForReading() )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     off_t req_pos = 0;
     if( _basis == VFSFile::Seek_Set )
@@ -419,20 +421,20 @@ off_t XAttrFile::Seek(off_t _off, int _basis)
     else if( _basis == VFSFile::Seek_Cur )
         req_pos = m_Position + _off;
     else
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     if( req_pos < 0 )
-        return VFSError::InvalidCall;
+        return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
     req_pos = std::min<off_t>(req_pos, m_Size);
     m_Position = req_pos;
 
     return m_Position;
 }
 
-ssize_t XAttrFile::Read(void *_buf, size_t _size)
+std::expected<size_t, Error> XAttrFile::Read(void *_buf, size_t _size)
 {
     if( !IsOpened() || !IsOpenedForReading() )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     if( m_Position == m_Size )
         return 0;
@@ -495,10 +497,10 @@ int XAttrFile::SetUploadSize(size_t _size)
     return 0;
 }
 
-ssize_t XAttrFile::Write(const void *_buf, size_t _size)
+std::expected<size_t, Error> XAttrFile::Write(const void *_buf, size_t _size)
 {
     if( !IsOpenedForWriting() || !m_FileBuf )
-        return VFSError::FromErrno(EIO);
+        return SetLastError(Error{Error::POSIX, EIO});
 
     if( m_Position < m_UploadSize ) {
         const ssize_t to_write = std::min(m_UploadSize - m_Position, static_cast<ssize_t>(_size));

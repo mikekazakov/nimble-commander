@@ -185,7 +185,7 @@ static void TestVariousCompleteWrites(VFSHostPtr _host)
     const size_t file_size = 12'345'678; // ~12MB
     const auto noise = MakeNoise(file_size);
 
-    file->SetUploadSize(file_size);
+    REQUIRE(file->SetUploadSize(file_size));
 
     size_t write_chunk = std::numeric_limits<size_t>::max();
     SECTION("")
@@ -260,7 +260,7 @@ static void TestEdgeCase1bWrites(VFSHostPtr _host)
 
     constexpr size_t file_size = 9;
     char data[file_size + 1] = "012345678";
-    file->SetUploadSize(file_size);
+    REQUIRE(file->SetUploadSize(file_size));
     for( int i = 0; i != file_size; ++i )
         REQUIRE(file->Write(data + i, 1) == 1);
 

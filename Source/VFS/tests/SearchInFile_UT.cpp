@@ -217,6 +217,6 @@ static FileWindow MakeFileWindow(std::string_view _data)
 {
     assert(_data.data() != nullptr);
     auto mem_file = std::make_shared<GenericMemReadOnlyFile>("", nullptr, _data);
-    mem_file->Open(VFSFlags::OF_Read);
+    REQUIRE(mem_file->Open(VFSFlags::OF_Read));
     return FileWindow{mem_file};
 }

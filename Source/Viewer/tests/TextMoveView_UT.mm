@@ -275,7 +275,7 @@ Context::Context(std::string_view _string)
 void Context::Open(std::string_view _string)
 {
     file = std::make_shared<nc::vfs::GenericMemReadOnlyFile>("/foo.txt", nc::vfs::Host::DummyHost(), _string);
-    file->Open(nc::vfs::Flags::OF_Read);
+    REQUIRE(file->Open(nc::vfs::Flags::OF_Read));
     window = std::make_shared<nc::vfs::FileWindow>(file);
     backend = std::make_shared<DataBackend>(window, nc::utility::Encoding::ENCODING_UTF8);
 }

@@ -19,7 +19,7 @@ public:
                                uint64_t _mem_size,
                                ReadParadigm _behave_as);
 
-    std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
+    std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = {}) override;
     bool IsOpened() const override { return m_Opened; }
     int Close() override;
 
@@ -161,7 +161,7 @@ TEST_CASE(PREFIX "random access")
 
     auto vfs_file =
         std::make_shared<TestGenericMemReadOnlyFile>("", nullptr, data.get(), data_size, VFSFile::ReadParadigm::Random);
-    vfs_file->Open(0, nullptr);
+    REQUIRE(vfs_file->Open(0));
 
     FileWindow fw;
     REQUIRE(fw.Attach(vfs_file));
@@ -186,7 +186,7 @@ TEST_CASE(PREFIX "sequential access")
 
     auto vfs_file = std::make_shared<TestGenericMemReadOnlyFile>(
         "", nullptr, data.get(), data_size, VFSFile::ReadParadigm::Sequential);
-    vfs_file->Open(0, nullptr);
+    REQUIRE(vfs_file->Open(0));
 
     FileWindow fw;
     REQUIRE(fw.Attach(vfs_file));
@@ -216,7 +216,7 @@ TEST_CASE(PREFIX "seek access")
 
     auto vfs_file =
         std::make_shared<TestGenericMemReadOnlyFile>("", nullptr, data.get(), data_size, VFSFile::ReadParadigm::Seek);
-    vfs_file->Open(0, nullptr);
+    REQUIRE(vfs_file->Open(0));
 
     FileWindow fw;
     REQUIRE(fw.Attach(vfs_file));

@@ -226,7 +226,7 @@ bool File::IsOpened() const
     return m_State == Initiated || m_State == Downloading || m_State == Uploading || m_State == Completed;
 }
 
-int File::PreferredIOSize() const
+std::expected<size_t, Error> File::PreferredIOSize() const
 {
     return 32768; // packets are usually 16384 bytes long, use IO twice as long
 }

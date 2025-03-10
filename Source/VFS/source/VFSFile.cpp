@@ -228,7 +228,7 @@ std::optional<Error> VFSFile::LastError() const
     return m_LastError;
 }
 
-int VFSFile::PreferredIOSize() const
+std::expected<size_t, Error> VFSFile::PreferredIOSize() const
 {
-    return VFSError::NotSupported;
+    return std::unexpected(Error{Error::POSIX, ENOTSUP});
 }

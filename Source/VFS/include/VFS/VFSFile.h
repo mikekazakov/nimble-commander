@@ -90,8 +90,8 @@ public:
     // Closes the file.
     virtual int Close();
 
-    // Negative value means that vfs doesn't provide such information.
-    virtual int PreferredIOSize() const;
+    // Optional, by default vfs doesn't provide such information.
+    virtual std::expected<size_t, nc::Error> PreferredIOSize() const;
 
     // Return the available read paradigm for this VFS at this path.
     // Should return some considerable value even on non-opened files.

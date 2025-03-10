@@ -19,7 +19,7 @@ public:
     ~File();
 
     std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
-    int Close() override;
+    std::expected<void, Error> Close() override;
     std::expected<size_t, Error> PreferredIOSize() const override;
     bool IsOpened() const override;
     ReadParadigm GetReadParadigm() const override;

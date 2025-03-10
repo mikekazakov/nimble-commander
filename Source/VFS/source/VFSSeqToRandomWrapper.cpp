@@ -165,17 +165,12 @@ std::expected<void, Error> VFSSeqToRandomROWrapperFile::Open(unsigned long _flag
     return Open(_flags, _cancel_checker, nullptr);
 }
 
-int VFSSeqToRandomROWrapperFile::Close()
+std::expected<void, Error> VFSSeqToRandomROWrapperFile::Close()
 {
     m_SeqFile.reset();
     m_Backend.reset();
-    //    m_DataBuf.reset();
-    //    if(m_FD >= 0) {
-    //        close(m_FD);
-    //        m_FD = -1;
-    //    }
-    //    m_Ready = false;
-    return VFSError::Ok;
+    m_Pos = 0;
+    return {};
 }
 
 VFSFile::ReadParadigm VFSSeqToRandomROWrapperFile::GetReadParadigm() const

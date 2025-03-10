@@ -68,9 +68,9 @@ std::expected<void, Error> VFSFile::Open(unsigned long /*unused*/, const VFSCanc
     return SetLastError(Error{Error::POSIX, ENOTSUP});
 }
 
-int VFSFile::Close()
+std::expected<void, Error> VFSFile::Close()
 {
-    return SetLastError(VFSError::NotSupported);
+    return SetLastError(Error{Error::POSIX, ENOTSUP});
 }
 
 std::expected<uint64_t, Error> VFSFile::Seek(off_t /*unused*/, int /*unused*/)

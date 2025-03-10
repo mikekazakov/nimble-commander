@@ -27,7 +27,7 @@ bool File::IsOpened() const
     return m_Mode != Mode::Closed;
 }
 
-int File::Close()
+std::expected<void, Error> File::Close()
 {
     Log::Trace("File::Close() called");
 
@@ -53,7 +53,7 @@ int File::Close()
     m_BufFileOffset = 0;
     m_CURL.reset();
     m_URLRequest.clear();
-    return 0;
+    return {};
 }
 
 std::filesystem::path File::DirName() const

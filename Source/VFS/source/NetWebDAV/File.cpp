@@ -148,10 +148,10 @@ bool File::IsOpened() const
     return m_OpenFlags != 0;
 }
 
-int File::Close()
+std::expected<void, Error> File::Close()
 {
     if( !IsOpened() )
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     int result = VFSError::Ok;
 
@@ -188,7 +188,10 @@ int File::Close()
     m_Pos = 0;
     m_Size = -1;
 
-    return SetLastError(result);
+    if( result == VFSError::Ok )
+        return {};
+
+    return SetLastError(VFSError::ToError(result));
 }
 
 File::ReadParadigm File::GetReadParadigm() const

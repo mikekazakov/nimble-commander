@@ -60,7 +60,7 @@ TEST_CASE(PREFIX "empty file test")
     const VFSFilePtr file = host->CreateFile(fn).value();
     REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
     REQUIRE(file->IsOpened() == true);
-    REQUIRE(file->Close() == 0);
+    REQUIRE(file->Close());
 
     // sometimes this fail. mb caused by FTP server implementation (?)
     const VFSStat stat = host->Stat(fn, 0).value();
@@ -237,7 +237,7 @@ TEST_CASE(PREFIX "seekread")
         const VFSFilePtr file = host->CreateFile("/TestSeekRead/blob").value();
         REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
         WriteAll(*file, bytes);
-        REQUIRE(file->Close() == 0);
+        REQUIRE(file->Close());
     }
 
     VFSHostPtr host;
@@ -289,7 +289,7 @@ TEST_CASE(PREFIX "big files reading cancellation")
         const VFSFilePtr file = host->CreateFile("/TestCancellation/blob").value();
         REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
         WriteAll(*file, bytes);
-        REQUIRE(file->Close() == 0);
+        REQUIRE(file->Close());
     }
 
     VFSHostPtr host;
@@ -301,7 +301,7 @@ TEST_CASE(PREFIX "big files reading cancellation")
         const VFSFilePtr file = host->CreateFile(host_path).value();
         REQUIRE(file->Open(VFSFlags::OF_Read));
         REQUIRE(file->Read(buf, sizeof(buf)) == sizeof(buf));
-        REQUIRE(file->Close() == 0); // at this moment we have read only a small part of file
+        REQUIRE(file->Close()); // at this moment we have read only a small part of file
         // and Close() should tell curl to stop reading and will wait
         // for a pending operations to be finished
         finished = true;

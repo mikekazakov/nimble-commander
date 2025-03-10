@@ -286,7 +286,9 @@ int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr &_vfs)
     if( file.GetWriteParadigm() == VFSFile::WriteParadigm::Upload )
         std::ignore = file.SetUploadSize(0);
 
-    return file.Close();
+    std::ignore = file.Close(); // TODO: return this
+
+    return VFSError::Ok;
 }
 
 int VFSCompareNodes(const std::filesystem::path &_file1_full_path,

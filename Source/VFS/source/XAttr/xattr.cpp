@@ -20,7 +20,7 @@ public:
     XAttrFile(std::string_view _xattr_path, const std::shared_ptr<XAttrHost> &_parent, int _fd);
     std::expected<void, Error> Open(unsigned long _open_flags,
                                     const VFSCancelChecker &_cancel_checker = nullptr) override;
-    int Close() override;
+    std::expected<void, Error> Close() override;
     bool IsOpened() const override;
     ReadParadigm GetReadParadigm() const override;
     WriteParadigm GetWriteParadigm() const override;
@@ -365,14 +365,14 @@ std::expected<void, Error> XAttrFile::Open(unsigned long _open_flags,
     return {};
 }
 
-int XAttrFile::Close()
+std::expected<void, Error> XAttrFile::Close()
 {
     m_Size = 0;
     m_FileBuf.reset();
     m_OpenFlags = 0;
     m_Position = 0;
     m_UploadSize = -1;
-    return 0;
+    return {};
 }
 
 bool XAttrFile::IsOpened() const

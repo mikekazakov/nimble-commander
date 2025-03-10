@@ -66,16 +66,16 @@ bool File::IsOpened() const
     return m_FD >= 0;
 }
 
-int File::Close()
+std::expected<void, Error> File::Close()
 {
     if( m_FD >= 0 ) {
-        close(m_FD);
+        close(m_FD); // TODO: return errno?
         m_FD = -1;
         m_OpenFlags = 0;
         m_Size = 0;
         m_Position = 0;
     }
-    return VFSError::Ok;
+    return {};
 }
 
 std::expected<size_t, Error> File::Read(void *_buf, size_t _size)

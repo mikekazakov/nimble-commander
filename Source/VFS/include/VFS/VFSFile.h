@@ -88,7 +88,7 @@ public:
     virtual bool IsOpened() const;
 
     // Closes the file.
-    virtual int Close();
+    virtual std::expected<void, nc::Error> Close();
 
     // Optional, by default vfs doesn't provide such information.
     virtual std::expected<size_t, nc::Error> PreferredIOSize() const;

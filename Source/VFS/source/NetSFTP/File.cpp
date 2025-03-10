@@ -72,7 +72,7 @@ bool File::IsOpened() const
     return m_Connection && m_Handle;
 }
 
-int File::Close()
+std::expected<void, Error> File::Close()
 {
     if( m_Handle ) {
         libssh2_sftp_close(m_Handle);
@@ -84,7 +84,7 @@ int File::Close()
 
     m_Position = 0;
     m_Size = 0;
-    return 0;
+    return {};
 }
 
 VFSFile::ReadParadigm File::GetReadParadigm() const

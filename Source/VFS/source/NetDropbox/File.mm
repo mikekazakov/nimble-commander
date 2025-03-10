@@ -21,7 +21,7 @@ File::~File()
     Close();
 }
 
-int File::Close()
+std::expected<void, Error> File::Close()
 {
     if( m_Upload ) {
         if( m_State == Uploading ) {
@@ -67,7 +67,9 @@ int File::Close()
     m_FileSize = -1;
     m_State = Cold;
 
-    return last_error ? VFSError::FromErrno(EIO) : 0; // TODO: return last_error
+    if( last_error )
+        return std::unexpected(*last_error);
+    return {};
 }
 
 NSURLRequest *File::BuildDownloadRequest() const

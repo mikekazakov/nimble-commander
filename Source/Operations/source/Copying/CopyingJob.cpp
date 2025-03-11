@@ -1633,7 +1633,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     auto clean_destination = at_scope_end([&] {
         if( dst_file && dst_file->IsOpened() ) {
             // we need to revert what we've done
-            dst_file->Close();
+            std::ignore = dst_file->Close();
             dst_file.reset();
             if( do_unlink_on_stop ) {
                 // TODO: we do why ignore the result of this unlinking?
@@ -1771,7 +1771,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     // owners
     // flags
 
-    dst_file->Close();
+    std::ignore = dst_file->Close();
     dst_file.reset();
 
     if( m_Options.copy_file_times && do_set_times && m_DestinationHost->Features() & vfs::HostFeatures::SetTimes ) {
@@ -2658,7 +2658,7 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation &_
             hash.Feed(buf, *r);
         }
     }
-    file->Close();
+    std::ignore = file->Close();
 
     _matched = _exp == hash.Final();
     return StepResult::Ok;

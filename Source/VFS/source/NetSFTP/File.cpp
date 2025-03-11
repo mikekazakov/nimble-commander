@@ -14,14 +14,14 @@ File::File(std::string_view _relative_path, std::shared_ptr<SFTPHost> _host) : V
 
 File::~File()
 {
-    Close();
+    std::ignore = Close();
 }
 
 std::expected<void, Error> File::Open(unsigned long _open_flags,
                                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( IsOpened() )
-        Close();
+        std::ignore = Close();
 
     auto sftp_host = std::dynamic_pointer_cast<SFTPHost>(Host());
     std::unique_ptr<SFTPHost::Connection> conn;

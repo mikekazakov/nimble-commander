@@ -36,7 +36,7 @@ VFSSeqToRandomROWrapperFile::VFSSeqToRandomROWrapperFile(const char *_relative_p
 
 VFSSeqToRandomROWrapperFile::~VFSSeqToRandomROWrapperFile()
 {
-    Close();
+    std::ignore = Close();
 }
 
 std::expected<void, Error>

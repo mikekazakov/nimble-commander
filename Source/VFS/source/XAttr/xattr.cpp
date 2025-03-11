@@ -336,7 +336,7 @@ std::expected<void, Error> XAttrFile::Open(unsigned long _open_flags,
     if( IsOpened() )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
-    Close();
+    std::ignore = Close();
 
     const auto path = XAttrName();
     if( !path )

@@ -18,7 +18,7 @@ File::File(std::string_view _relative_path, const std::shared_ptr<class DropboxH
 
 File::~File()
 {
-    Close();
+    std::ignore = Close();
 }
 
 std::expected<void, Error> File::Close()

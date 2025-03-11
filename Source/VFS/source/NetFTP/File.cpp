@@ -19,7 +19,7 @@ File::File(std::string_view _relative_path, std::shared_ptr<FTPHost> _host) : VF
 File::~File()
 {
     Log::Trace("File::~File() called");
-    Close();
+    std::ignore = Close();
 }
 
 bool File::IsOpened() const
@@ -84,7 +84,7 @@ std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancel
             return {};
         }
 
-        Close();
+        std::ignore = Close();
 
         return std::unexpected(Error{Error::POSIX, EINVAL});
     }

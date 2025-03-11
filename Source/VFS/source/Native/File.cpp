@@ -16,7 +16,7 @@ File::File(std::string_view _relative_path, const std::shared_ptr<NativeHost> &_
 
 File::~File()
 {
-    Close();
+    std::ignore = Close();
 }
 
 std::expected<void, Error> File::Open(unsigned long _open_flags,

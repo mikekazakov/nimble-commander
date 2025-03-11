@@ -15,7 +15,7 @@ public:
                                         const VFSCancelChecker &_cancel_checker,
                                         std::function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress);
 
-    int Close() override;
+    std::expected<void, nc::Error> Close() override;
 
     enum {
         MaxCachedInMem = 16 * 1024 * 1024

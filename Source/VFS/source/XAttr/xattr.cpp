@@ -20,7 +20,7 @@ public:
     XAttrFile(std::string_view _xattr_path, const std::shared_ptr<XAttrHost> &_parent, int _fd);
     std::expected<void, Error> Open(unsigned long _open_flags,
                                     const VFSCancelChecker &_cancel_checker = nullptr) override;
-    int Close() override;
+    std::expected<void, Error> Close() override;
     bool IsOpened() const override;
     ReadParadigm GetReadParadigm() const override;
     WriteParadigm GetWriteParadigm() const override;
@@ -31,7 +31,7 @@ public:
     std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     std::expected<size_t, Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
     std::expected<size_t, Error> Write(const void *_buf, size_t _size) override;
-    int SetUploadSize(size_t _size) override;
+    std::expected<void, Error> SetUploadSize(size_t _size) override;
 
 private:
     const char *XAttrName() const noexcept;
@@ -336,7 +336,7 @@ std::expected<void, Error> XAttrFile::Open(unsigned long _open_flags,
     if( IsOpened() )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
-    Close();
+    std::ignore = Close();
 
     const auto path = XAttrName();
     if( !path )
@@ -365,14 +365,14 @@ std::expected<void, Error> XAttrFile::Open(unsigned long _open_flags,
     return {};
 }
 
-int XAttrFile::Close()
+std::expected<void, Error> XAttrFile::Close()
 {
     m_Size = 0;
     m_FileBuf.reset();
     m_OpenFlags = 0;
     m_Position = 0;
     m_UploadSize = -1;
-    return 0;
+    return {};
 }
 
 bool XAttrFile::IsOpened() const
@@ -472,13 +472,13 @@ bool XAttrFile::IsOpenedForWriting() const noexcept
     return m_OpenFlags & VFSFlags::OF_Write;
 }
 
-int XAttrFile::SetUploadSize(size_t _size)
+std::expected<void, Error> XAttrFile::SetUploadSize(size_t _size)
 {
     if( !IsOpenedForWriting() )
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( m_UploadSize >= 0 )
-        return VFSError::FromErrno(EINVAL); // already reported before
+        return std::unexpected(Error{Error::POSIX, EINVAL}); // already reported before
 
     // TODO: check max xattr size and reject huge ones
 
@@ -489,12 +489,12 @@ int XAttrFile::SetUploadSize(size_t _size)
         // for zero-size uploading - do it right here
         char buf[1];
         if( fsetxattr(m_FD, XAttrName(), buf, 0, 0, 0) != 0 )
-            return VFSError::FromErrno();
+            return std::unexpected(Error{Error::POSIX, errno});
 
         std::dynamic_pointer_cast<XAttrHost>(Host())->ReportChange();
     }
 
-    return 0;
+    return {};
 }
 
 std::expected<size_t, Error> XAttrFile::Write(const void *_buf, size_t _size)

@@ -17,6 +17,7 @@ jobs:
       run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
     - name: Install deps
       run: |
+        brew update      
         brew install create-dmg pandoc basictex
     - uses: actions/checkout@v4
       with:

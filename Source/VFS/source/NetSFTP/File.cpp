@@ -14,14 +14,14 @@ File::File(std::string_view _relative_path, std::shared_ptr<SFTPHost> _host) : V
 
 File::~File()
 {
-    Close();
+    std::ignore = Close();
 }
 
 std::expected<void, Error> File::Open(unsigned long _open_flags,
                                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( IsOpened() )
-        Close();
+        std::ignore = Close();
 
     auto sftp_host = std::dynamic_pointer_cast<SFTPHost>(Host());
     std::unique_ptr<SFTPHost::Connection> conn;
@@ -72,7 +72,7 @@ bool File::IsOpened() const
     return m_Connection && m_Handle;
 }
 
-int File::Close()
+std::expected<void, Error> File::Close()
 {
     if( m_Handle ) {
         libssh2_sftp_close(m_Handle);
@@ -84,7 +84,7 @@ int File::Close()
 
     m_Position = 0;
     m_Size = 0;
-    return 0;
+    return {};
 }
 
 VFSFile::ReadParadigm File::GetReadParadigm() const

@@ -20,7 +20,7 @@ public:
 
     std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = {}) override;
     bool IsOpened() const override;
-    int Close() override;
+    std::expected<void, Error> Close() override;
     std::shared_ptr<VFSFile> Clone() const override;
 
     std::expected<size_t, Error> Read(void *_buf, size_t _size) override;

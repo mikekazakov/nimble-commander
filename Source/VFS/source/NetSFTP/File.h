@@ -15,7 +15,7 @@ public:
 
     std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     bool IsOpened() const override;
-    int Close() override;
+    std::expected<void, Error> Close() override;
     ReadParadigm GetReadParadigm() const override;
     WriteParadigm GetWriteParadigm() const override;
     std::expected<uint64_t, Error> Seek(off_t _off, int _basis) override;

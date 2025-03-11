@@ -21,7 +21,7 @@ public:
 
     std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = {}) override;
     bool IsOpened() const override { return m_Opened; }
-    int Close() override;
+    std::expected<void, Error> Close() override;
 
     std::expected<size_t, Error> Read(void *_buf, size_t _size) override;
     std::expected<size_t, nc::Error> ReadAt(off_t _pos, void *_buf, size_t _size) override;
@@ -146,10 +146,10 @@ std::expected<void, Error> TestGenericMemReadOnlyFile::Open([[maybe_unused]] uns
     return {};
 }
 
-int TestGenericMemReadOnlyFile::Close()
+std::expected<void, Error> TestGenericMemReadOnlyFile::Close()
 {
     m_Opened = false;
-    return 0;
+    return {};
 }
 
 TEST_CASE(PREFIX "random access")

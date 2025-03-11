@@ -19,8 +19,8 @@ public:
     ~File();
 
     std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
-    int Close() override;
-    int PreferredIOSize() const override;
+    std::expected<void, Error> Close() override;
+    std::expected<size_t, Error> PreferredIOSize() const override;
     bool IsOpened() const override;
     ReadParadigm GetReadParadigm() const override;
     WriteParadigm GetWriteParadigm() const override;
@@ -29,7 +29,7 @@ public:
     std::expected<uint64_t, Error> Pos() const override;
     std::expected<uint64_t, Error> Size() const override;
     bool Eof() const override;
-    int SetUploadSize(size_t _size) override;
+    std::expected<void, Error> SetUploadSize(size_t _size) override;
     int SetChunkSize(size_t _size);
 
 private:

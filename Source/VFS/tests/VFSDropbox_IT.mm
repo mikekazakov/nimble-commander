@@ -190,16 +190,16 @@ TEST_CASE(PREFIX "simple upload")
     const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
 
     REQUIRE(file->Open(VFSFlags::OF_Write));
-    REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
+    REQUIRE(file->SetUploadSize(to_upload.size()));
     REQUIRE(file->WriteFile(std::data(to_upload), std::size(to_upload)));
-    REQUIRE(file->Close() == VFSError::Ok);
+    REQUIRE(file->Close());
 
     REQUIRE(file->Open(VFSFlags::OF_Read));
     auto uploaded = file->ReadFile();
     REQUIRE(uploaded);
     REQUIRE(uploaded->size() == size(to_upload));
     REQUIRE(equal(uploaded->begin(), uploaded->end(), to_upload.begin()));
-    REQUIRE(file->Close() == VFSError::Ok);
+    REQUIRE(file->Close());
 
     std::ignore = host->Unlink(filepath);
 }
@@ -213,9 +213,9 @@ TEST_CASE(PREFIX "upload with invalid name")
     const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
 
     const bool op1 = file->Open(VFSFlags::OF_Write).has_value();
-    const bool op2 = file->SetUploadSize(to_upload.size()) == VFSError::Ok;
+    const bool op2 = file->SetUploadSize(to_upload.size()).has_value();
     const bool op3 = file->WriteFile(std::data(to_upload), std::size(to_upload)).has_value();
-    const bool op4 = file->Close() == VFSError::Ok;
+    const bool op4 = file->Close().has_value();
     CHECK((!op1 || !op2 || !op3 || !op4));
 }
 
@@ -229,22 +229,22 @@ TEST_CASE(PREFIX "simple upload with overwrite")
     const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
 
     REQUIRE(file->Open(VFSFlags::OF_Write));
-    REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
+    REQUIRE(file->SetUploadSize(to_upload.size()));
     REQUIRE(file->WriteFile(std::data(to_upload), std::size(to_upload)));
-    REQUIRE(file->Close() == VFSError::Ok);
+    REQUIRE(file->Close());
 
     const auto to_upload_new = "Hello, world, again!"s;
     REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Truncate));
-    REQUIRE(file->SetUploadSize(to_upload_new.size()) == VFSError::Ok);
+    REQUIRE(file->SetUploadSize(to_upload_new.size()));
     REQUIRE(file->WriteFile(std::data(to_upload_new), std::size(to_upload_new)));
-    REQUIRE(file->Close() == VFSError::Ok);
+    REQUIRE(file->Close());
 
     REQUIRE(file->Open(VFSFlags::OF_Read));
     auto uploaded = file->ReadFile();
     REQUIRE(uploaded);
     REQUIRE(uploaded->size() == std::size(to_upload_new));
     REQUIRE(std::equal(uploaded->begin(), uploaded->end(), to_upload_new.begin()));
-    REQUIRE(file->Close() == VFSError::Ok);
+    REQUIRE(file->Close());
 
     std::ignore = host->Unlink(filepath);
 }
@@ -259,9 +259,9 @@ TEST_CASE(PREFIX "UnfinishedUpload")
     const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
 
     REQUIRE(file->Open(VFSFlags::OF_Write));
-    REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
+    REQUIRE(file->SetUploadSize(to_upload.size()));
     REQUIRE(file->WriteFile(std::data(to_upload), std::size(to_upload) - 1));
-    REQUIRE(file->Close() != VFSError::Ok);
+    REQUIRE(!file->Close());
 
     REQUIRE(host->Exists(filepath) == false);
 }
@@ -275,8 +275,8 @@ TEST_CASE(PREFIX "zero sized upload")
     const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
 
     REQUIRE(file->Open(VFSFlags::OF_Write));
-    REQUIRE(file->SetUploadSize(0) == VFSError::Ok);
-    REQUIRE(file->Close() == VFSError::Ok);
+    REQUIRE(file->SetUploadSize(0));
+    REQUIRE(file->Close());
 
     const VFSStat stat = host->Stat(filepath, 0).value();
     REQUIRE(stat.size == 0);
@@ -295,16 +295,16 @@ TEST_CASE(PREFIX "decent sized upload")
     std::vector<uint8_t> to_upload = MakeNoise(length);
 
     REQUIRE(file->Open(VFSFlags::OF_Write));
-    REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
+    REQUIRE(file->SetUploadSize(to_upload.size()));
     REQUIRE(file->WriteFile(std::data(to_upload), std::size(to_upload)));
-    REQUIRE(file->Close() == VFSError::Ok);
+    REQUIRE(file->Close());
 
     REQUIRE(file->Open(VFSFlags::OF_Read));
     auto uploaded = file->ReadFile();
     REQUIRE(uploaded);
     REQUIRE(uploaded->size() == size(to_upload));
     REQUIRE(equal(uploaded->begin(), uploaded->end(), to_upload.begin()));
-    REQUIRE(file->Close() == VFSError::Ok);
+    REQUIRE(file->Close());
 
     std::ignore = host->Unlink(filepath);
 }
@@ -322,16 +322,16 @@ TEST_CASE(PREFIX "two-chunk upload")
     std::vector<uint8_t> to_upload = MakeNoise(length);
 
     REQUIRE(file->Open(VFSFlags::OF_Write));
-    REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
+    REQUIRE(file->SetUploadSize(to_upload.size()));
     REQUIRE(file->WriteFile(std::data(to_upload), std::size(to_upload)));
-    REQUIRE(file->Close() == VFSError::Ok);
+    REQUIRE(file->Close());
 
     REQUIRE(file->Open(VFSFlags::OF_Read));
     auto uploaded = file->ReadFile();
     REQUIRE(uploaded);
     REQUIRE(uploaded->size() == size(to_upload));
     REQUIRE(std::equal(uploaded->begin(), uploaded->end(), to_upload.begin()));
-    REQUIRE(file->Close() == VFSError::Ok);
+    REQUIRE(file->Close());
 
     std::ignore = host->Unlink(filepath);
 }
@@ -350,16 +350,16 @@ TEST_CASE(PREFIX "multi-chunks upload")
     std::vector<uint8_t> to_upload = MakeNoise(length);
 
     REQUIRE(file->Open(VFSFlags::OF_Write));
-    REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
+    REQUIRE(file->SetUploadSize(to_upload.size()));
     REQUIRE(file->WriteFile(std::data(to_upload), std::size(to_upload)));
-    REQUIRE(file->Close() == VFSError::Ok);
+    REQUIRE(file->Close());
 
     REQUIRE(file->Open(VFSFlags::OF_Read));
     auto uploaded = file->ReadFile();
     REQUIRE(uploaded);
     REQUIRE(uploaded->size() == std::size(to_upload));
     REQUIRE(equal(uploaded->begin(), uploaded->end(), to_upload.begin()));
-    REQUIRE(file->Close() == VFSError::Ok);
+    REQUIRE(file->Close());
 
     std::ignore = host->Unlink(filepath);
 }
@@ -381,16 +381,16 @@ TEST_CASE(PREFIX "upload edge cases")
         std::vector<uint8_t> to_upload = MakeNoise(length);
 
         REQUIRE(file->Open(VFSFlags::OF_Write));
-        REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
+        REQUIRE(file->SetUploadSize(to_upload.size()));
         REQUIRE(file->WriteFile(data(to_upload), std::size(to_upload)));
-        REQUIRE(file->Close() == VFSError::Ok);
+        REQUIRE(file->Close());
 
         REQUIRE(file->Open(VFSFlags::OF_Read));
         auto uploaded = file->ReadFile();
         REQUIRE(uploaded);
         REQUIRE(uploaded->size() == std::size(to_upload));
         REQUIRE(equal(uploaded->begin(), uploaded->end(), to_upload.begin()));
-        REQUIRE(file->Close() == VFSError::Ok);
+        REQUIRE(file->Close());
 
         std::ignore = host->Unlink(filepath);
     }

@@ -1321,9 +1321,9 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
     auto write_buffer = m_Buffers[1].get();
     const uint32_t dst_preffered_io_size =
         dst_fs_info.basic.io_size < m_BufferSize ? dst_fs_info.basic.io_size : m_BufferSize;
+    // use custom IO size for this vfs. not sure if this is a good idea, but seems to be ok
     const uint32_t src_preffered_io_size =
-        src_file->PreferredIOSize() > 0 ? src_file->PreferredIOSize() : // use custom IO size for this vfs
-            dst_preffered_io_size;  // not sure if this is a good idea, but seems to be ok
+        static_cast<uint32_t>(src_file->PreferredIOSize().value_or(dst_preffered_io_size));
     constexpr int max_io_loops = 5; // looked in Apple's copyfile() - treat 5 zero-resulting reads/writes as an error
     uint32_t bytes_to_write = 0;
     uint64_t source_bytes_read = 0;
@@ -1633,7 +1633,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     auto clean_destination = at_scope_end([&] {
         if( dst_file && dst_file->IsOpened() ) {
             // we need to revert what we've done
-            dst_file->Close();
+            std::ignore = dst_file->Close();
             dst_file.reset();
             if( do_unlink_on_stop ) {
                 // TODO: we do why ignore the result of this unlinking?
@@ -1643,7 +1643,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     });
 
     // tell upload-only vfs'es how much we're going to write
-    dst_file->SetUploadSize(src_stat_buffer.size);
+    std::ignore = dst_file->SetUploadSize(src_stat_buffer.size);
 
     // find the right position in destination file
     if( dst_file->Pos() != initial_writing_offset ) {
@@ -1771,7 +1771,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     // owners
     // flags
 
-    dst_file->Close();
+    std::ignore = dst_file->Close();
     dst_file.reset();
 
     if( m_Options.copy_file_times && do_set_times && m_DestinationHost->Features() & vfs::HostFeatures::SetTimes ) {
@@ -2658,7 +2658,7 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation &_
             hash.Feed(buf, *r);
         }
     }
-    file->Close();
+    std::ignore = file->Close();
 
     _matched = _exp == hash.Final();
     return StepResult::Ok;

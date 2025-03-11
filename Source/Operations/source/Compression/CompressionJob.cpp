@@ -132,7 +132,7 @@ bool CompressionJob::BuildArchive()
         archive_write_close(m_Archive);
         archive_write_free(m_Archive);
 
-        m_TargetFile->Close();
+        std::ignore = m_TargetFile->Close();
 
         if( IsStopped() ) {
             std::ignore = m_DstVFS->Unlink(m_TargetArchivePath);

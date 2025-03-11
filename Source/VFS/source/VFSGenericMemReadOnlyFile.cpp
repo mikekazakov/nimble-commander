@@ -121,10 +121,10 @@ bool GenericMemReadOnlyFile::IsOpened() const
     return m_Opened;
 }
 
-int GenericMemReadOnlyFile::Close()
+std::expected<void, Error> GenericMemReadOnlyFile::Close()
 {
     m_Opened = false;
-    return 0;
+    return {};
 }
 
 std::shared_ptr<VFSFile> GenericMemReadOnlyFile::Clone() const

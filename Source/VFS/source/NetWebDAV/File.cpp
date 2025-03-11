@@ -14,7 +14,7 @@ File::File(std::string_view _relative_path, const std::shared_ptr<WebDAVHost> &_
 
 File::~File()
 {
-    Close();
+    std::ignore = Close();
 }
 
 std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
@@ -148,10 +148,10 @@ bool File::IsOpened() const
     return m_OpenFlags != 0;
 }
 
-int File::Close()
+std::expected<void, Error> File::Close()
 {
     if( !IsOpened() )
-        return VFSError::FromErrno(EINVAL);
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     int result = VFSError::Ok;
 
@@ -188,7 +188,10 @@ int File::Close()
     m_Pos = 0;
     m_Size = -1;
 
-    return SetLastError(result);
+    if( result == VFSError::Ok )
+        return {};
+
+    return SetLastError(VFSError::ToError(result));
 }
 
 File::ReadParadigm File::GetReadParadigm() const
@@ -218,14 +221,14 @@ bool File::Eof() const
     return m_Pos == m_Size;
 }
 
-int File::SetUploadSize(size_t _size)
+std::expected<void, Error> File::SetUploadSize(size_t _size)
 {
     if( !IsOpened() || m_Size >= 0 )
-        return SetLastError(VFSError::FromErrno(EINVAL));
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     m_Size = _size;
 
-    return VFSError::Ok;
+    return {};
 }
 
 } // namespace nc::vfs::webdav

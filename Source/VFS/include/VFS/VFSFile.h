@@ -88,10 +88,10 @@ public:
     virtual bool IsOpened() const;
 
     // Closes the file.
-    virtual int Close();
+    virtual std::expected<void, nc::Error> Close();
 
-    // Negative value means that vfs doesn't provide such information.
-    virtual int PreferredIOSize() const;
+    // Optional, by default vfs doesn't provide such information.
+    virtual std::expected<size_t, nc::Error> PreferredIOSize() const;
 
     // Return the available read paradigm for this VFS at this path.
     // Should return some considerable value even on non-opened files.
@@ -118,7 +118,7 @@ public:
     // May be ignored by other write paradigms.
     // If _size is zero - the file object may perform an actual upload.
     // Default implementation returns Ok.
-    virtual int SetUploadSize(size_t _size);
+    virtual std::expected<void, nc::Error> SetUploadSize(size_t _size);
 
     // Writes up to _size bytes from _buf to the file in a blocking mode.
     // Returns the amount of bytes written.

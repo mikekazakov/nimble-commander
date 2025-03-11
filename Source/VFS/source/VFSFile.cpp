@@ -68,9 +68,9 @@ std::expected<void, Error> VFSFile::Open(unsigned long /*unused*/, const VFSCanc
     return SetLastError(Error{Error::POSIX, ENOTSUP});
 }
 
-int VFSFile::Close()
+std::expected<void, Error> VFSFile::Close()
 {
-    return SetLastError(VFSError::NotSupported);
+    return SetLastError(Error{Error::POSIX, ENOTSUP});
 }
 
 std::expected<uint64_t, Error> VFSFile::Seek(off_t /*unused*/, int /*unused*/)
@@ -201,9 +201,9 @@ std::expected<void, Error> VFSFile::Skip(size_t _size)
     return {};
 }
 
-int VFSFile::SetUploadSize([[maybe_unused]] size_t _size)
+std::expected<void, Error> VFSFile::SetUploadSize([[maybe_unused]] size_t _size)
 {
-    return 0;
+    return {};
 }
 
 int VFSFile::SetLastError(int _error) const
@@ -228,7 +228,7 @@ std::optional<Error> VFSFile::LastError() const
     return m_LastError;
 }
 
-int VFSFile::PreferredIOSize() const
+std::expected<size_t, Error> VFSFile::PreferredIOSize() const
 {
-    return VFSError::NotSupported;
+    return std::unexpected(Error{Error::POSIX, ENOTSUP});
 }

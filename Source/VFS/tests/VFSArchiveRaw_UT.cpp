@@ -112,7 +112,7 @@ static void check(const Case &test_case)
     REQUIRE(file->Size() == 5);
     char data[5];
     CHECK(file->Read(data, 5) == 5);
-    CHECK(file->Close() == VFSError::Ok);
+    CHECK(file->Close());
     CHECK(std::string_view(data, 5) == "hello");
 
     // let's stat

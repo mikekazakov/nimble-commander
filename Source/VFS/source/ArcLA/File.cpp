@@ -17,7 +17,7 @@ File::File(std::string_view _relative_path, const std::shared_ptr<ArchiveHost> &
 
 File::~File()
 {
-    Close();
+    std::ignore = Close();
 }
 
 std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
@@ -63,11 +63,11 @@ bool File::IsOpened() const
     return m_State != nullptr;
 }
 
-int File::Close()
+std::expected<void, Error> File::Close()
 {
     std::dynamic_pointer_cast<ArchiveHost>(Host())->CommitState(std::move(m_State));
     m_State.reset();
-    return VFSError::Ok;
+    return {};
 }
 
 VFSFile::ReadParadigm File::GetReadParadigm() const

@@ -18,10 +18,10 @@ File::File(std::string_view _relative_path, const std::shared_ptr<class DropboxH
 
 File::~File()
 {
-    Close();
+    std::ignore = Close();
 }
 
-int File::Close()
+std::expected<void, Error> File::Close()
 {
     if( m_Upload ) {
         if( m_State == Uploading ) {
@@ -67,7 +67,9 @@ int File::Close()
     m_FileSize = -1;
     m_State = Cold;
 
-    return last_error ? VFSError::FromErrno(EIO) : 0; // TODO: return last_error
+    if( last_error )
+        return std::unexpected(*last_error);
+    return {};
 }
 
 NSURLRequest *File::BuildDownloadRequest() const
@@ -226,7 +228,7 @@ bool File::IsOpened() const
     return m_State == Initiated || m_State == Downloading || m_State == Uploading || m_State == Completed;
 }
 
-int File::PreferredIOSize() const
+std::expected<size_t, Error> File::PreferredIOSize() const
 {
     return 32768; // packets are usually 16384 bytes long, use IO twice as long
 }
@@ -460,12 +462,12 @@ void File::StartSessionFinish()
     [task resume];
 }
 
-int File::SetUploadSize(size_t _size)
+std::expected<void, Error> File::SetUploadSize(size_t _size)
 {
     if( !m_Upload || m_State != Initiated )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     if( m_Upload->upload_size >= 0 )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     m_Upload->upload_size = _size;
 
@@ -473,7 +475,7 @@ int File::SetUploadSize(size_t _size)
         StartSmallUpload();
     else
         StartSession();
-    return VFSError::Ok;
+    return {};
 }
 
 ssize_t File::WaitForUploadBufferConsumption() const

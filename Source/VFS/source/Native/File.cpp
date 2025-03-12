@@ -2,6 +2,7 @@
 #include <sys/xattr.h>
 #include <Utility/NativeFSManager.h>
 #include <RoutedIO/RoutedIO.h>
+#include <Base/StackAllocator.h>
 
 #include "File.h"
 #include "Host.h"
@@ -232,14 +233,17 @@ void File::XAttrIterateNames(const XAttrIterateNamesCallback &_handler) const
     }
 }
 
-ssize_t File::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const
+std::expected<size_t, Error> File::XAttrGet(const std::string_view _xattr_name, void *_buffer, size_t _buf_size) const
 {
     if( m_FD < 0 )
-        return SetLastError(VFSError::InvalidCall);
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
-    const ssize_t ret = fgetxattr(m_FD, _xattr_name, _buffer, _buf_size, 0, 0);
+    StackAllocator alloc;
+    const std::pmr::string xattr_name(_xattr_name, &alloc);
+
+    const ssize_t ret = fgetxattr(m_FD, xattr_name.c_str(), _buffer, _buf_size, 0, 0);
     if( ret < 0 )
-        return SetLastError(VFSError::FromErrno(errno));
+        return SetLastError(Error{Error::POSIX, errno});
 
     return ret;
 }

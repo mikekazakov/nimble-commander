@@ -178,11 +178,11 @@ std::expected<void, Error> VFSFile::WriteFile(const void *_d, size_t _sz)
     return {};
 }
 
-ssize_t VFSFile::XAttrGet([[maybe_unused]] const char *_xattr_name,
-                          [[maybe_unused]] void *_buffer,
-                          [[maybe_unused]] size_t _buf_size) const
+std::expected<size_t, Error> VFSFile::XAttrGet([[maybe_unused]] const std::string_view _xattr_name,
+                                               [[maybe_unused]] void *_buffer,
+                                               [[maybe_unused]] size_t _buf_size) const
 {
-    return SetLastError(VFSError::NotSupported);
+    return SetLastError(Error{Error::POSIX, ENOTSUP});
 }
 
 std::expected<void, Error> VFSFile::Skip(size_t _size)

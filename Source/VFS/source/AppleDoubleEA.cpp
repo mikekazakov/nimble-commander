@@ -292,10 +292,10 @@ std::vector<std::byte> BuildAppleDoubleFromEA(VFSFile &_file)
     });
 
     for( EA &ea : file_eas ) {
-        const ssize_t sz = _file.XAttrGet(ea.name.c_str(), nullptr, 0);
-        if( sz > 0 ) {
-            ea.data = std::make_unique<char[]>(sz);
-            ea.data_sz = (unsigned)sz;
+        const std::expected<size_t, Error> sz = _file.XAttrGet(ea.name, nullptr, 0);
+        if( sz && *sz > 0 ) {
+            ea.data = std::make_unique<char[]>(*sz);
+            ea.data_sz = static_cast<unsigned>(*sz);
             _file.XAttrGet(ea.name.c_str(), ea.data.get(), ea.data_sz);
         }
     }

@@ -1816,9 +1816,9 @@ void CopyingJob::CopyXattrsFromVFSFileToNativeFD(VFSFile &_source, int _fd_to) c
     auto buf = m_Buffers[0].get();
     size_t buf_sz = m_BufferSize;
     _source.XAttrIterateNames([&](const char *name) {
-        const ssize_t res = _source.XAttrGet(name, buf, buf_sz);
-        if( res >= 0 )
-            fsetxattr(_fd_to, name, buf, res, 0, 0);
+        const std::expected<size_t, Error> res = _source.XAttrGet(name, buf, buf_sz);
+        if( *res )
+            fsetxattr(_fd_to, name, buf, *res, 0, 0);
         return true;
     });
 }
@@ -1829,9 +1829,9 @@ void CopyingJob::CopyXattrsFromVFSFileToPath(VFSFile &_file, const char *_fn_to)
     size_t buf_sz = m_BufferSize;
 
     _file.XAttrIterateNames([&](const char *name) {
-        const ssize_t res = _file.XAttrGet(name, buf, buf_sz);
-        if( res >= 0 )
-            setxattr(_fn_to, name, buf, res, 0, 0);
+        const std::expected<size_t, Error> res = _file.XAttrGet(name, buf, buf_sz);
+        if( res )
+            setxattr(_fn_to, name, buf, *res, 0, 0);
         return true;
     });
 }

@@ -238,10 +238,9 @@ TEST_CASE(PREFIX "Compressing an item with xattrs")
 
         // check that each extracted extended attribute is equal to the original
         for( const EA &ea : tc.eas ) {
-            REQUIRE(static_cast<size_t>(file->XAttrGet(ea.name.c_str(), nullptr, 0)) == ea.bytes.size());
+            REQUIRE(file->XAttrGet(ea.name.c_str(), nullptr, 0) == ea.bytes.size());
             std::vector<std::byte> bytes(ea.bytes.size());
-            REQUIRE(static_cast<size_t>(file->XAttrGet(ea.name.c_str(), bytes.data(), bytes.size())) ==
-                    ea.bytes.size());
+            REQUIRE(file->XAttrGet(ea.name.c_str(), bytes.data(), bytes.size()) == ea.bytes.size());
             REQUIRE(bytes == ea.bytes);
         }
 
@@ -294,9 +293,9 @@ TEST_CASE(PREFIX "Compressing multiple items with xattrs")
                                                         : (VFSFlags::OF_Read | VFSFlags::OF_Directory)));
         // read the xattr and check its value
         REQUIRE(file->XAttrCount() == 1);
-        REQUIRE(file->XAttrGet("attr", nullptr, 0) > 0);
-        std::string val(file->XAttrGet("attr", nullptr, 0), '\0');
-        REQUIRE(file->XAttrGet("attr", val.data(), val.size()) > 0);
+        REQUIRE(file->XAttrGet("attr", nullptr, 0).value() > 0);
+        std::string val(file->XAttrGet("attr", nullptr, 0).value(), '\0');
+        REQUIRE(file->XAttrGet("attr", val.data(), val.size()).value() > 0);
         REQUIRE(val == p.filename().native());
     }
 }

@@ -25,7 +25,7 @@ public:
     bool Eof() const override;
     unsigned XAttrCount() const override;
     void XAttrIterateNames(const XAttrIterateNamesCallback &_handler) const override;
-    ssize_t XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const override;
+    std::expected<size_t, Error> XAttrGet(std::string_view _xattr_name, void *_buffer, size_t _buf_size) const override;
 
 private:
     std::unique_ptr<State> m_State;

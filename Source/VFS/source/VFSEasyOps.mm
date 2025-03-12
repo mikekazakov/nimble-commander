@@ -386,9 +386,9 @@ std::optional<std::string> CopyFileToTempStorage(const std::string &_vfs_filepat
     }
 
     vfs_file.XAttrIterateNames([&](const char *_name) {
-        const ssize_t res = vfs_file.XAttrGet(_name, buf.get(), bufsz);
-        if( res >= 0 )
-            fsetxattr(native_file->file_descriptor, _name, buf.get(), res, 0, 0);
+        const std::expected<size_t, Error> res = vfs_file.XAttrGet(_name, buf.get(), bufsz);
+        if( res )
+            fsetxattr(native_file->file_descriptor, _name, buf.get(), *res, 0, 0);
         return true;
     });
 
@@ -503,9 +503,9 @@ static std::expected<void, Error> ExtractRegFile(const std::string &_vfs_path,
     }
 
     file.XAttrIterateNames([&](const char *name) -> bool {
-        const ssize_t res = file.XAttrGet(name, buf.get(), bufsz);
-        if( res >= 0 )
-            fsetxattr(fd, name, buf.get(), res, 0, 0);
+        const std::expected<size_t, Error> res = file.XAttrGet(name, buf.get(), bufsz);
+        if( res )
+            fsetxattr(fd, name, buf.get(), *res, 0, 0);
         return true;
     });
 

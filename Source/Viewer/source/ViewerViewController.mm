@@ -29,10 +29,10 @@ static const auto g_AutomaticRefreshDelay = std::chrono::milliseconds(200);
 static utility::Encoding EncodingFromXAttr(const VFSFilePtr &_f)
 {
     char buf[128];
-    const ssize_t r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
-    if( r < 0 || r >= static_cast<ssize_t>(sizeof(buf)) )
+    const std::expected<size_t, Error> r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
+    if( !r || *r >= sizeof(buf) )
         return utility::Encoding::ENCODING_INVALID;
-    buf[r] = 0;
+    buf[*r] = 0;
     return utility::FromComAppleTextEncodingXAttr(buf);
 }
 

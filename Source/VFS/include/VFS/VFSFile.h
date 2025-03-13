@@ -151,19 +151,20 @@ public:
     virtual unsigned XAttrCount() const;
 
     // Return true to allow further iteration, false to stop it.
-    using XAttrIterateNamesCallback = std::function<bool(const char *_xattr_name)>;
+    using XAttrIterateNamesCallback = std::function<bool(std::string_view _xattr_name)>;
 
     // XAttrIterateNames() will call block with every xattr name for this file while handler returns true.
     // This function may cause blocking I/O.
     virtual void XAttrIterateNames(const XAttrIterateNamesCallback &_handler) const;
 
-    // XAttrGet copies an extended attribute value named _xattr_name into buffer _buffer limited with _buf_size.
-    // If the requested xattr was not found this function returns VFSError::NotFound.
-    // If _buffer is NULL and requested xattr was found then size of this xattr is returned.
-    // If _buf_size is smaller than required buffer for _xattr_name then data will be truncated and _buf_size will be
-    // returned. Generally this function returns amount of bytes copied (note that valid xattr value can be 0 bytes
-    // long). This function may cause blocking I/O.
-    virtual ssize_t XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const;
+    // XAttrGet copies the extended attribute value named _xattr_name into the buffer _buffer limited with _buf_size.
+    // If the requested xattr was not found this function returns POSIX/ENOATTR.
+    // If _buffer is nullptr and the requested xattr was found then the size of this xattr is returned.
+    // If _buf_size is smaller than the buffer required for _xattr_name then the data will be truncated and _buf_size
+    // will be returned. Generally this function returns the amount of bytes copied (note that a valid xattr value can
+    // be 0 bytes long). This function may cause blocking I/O.
+    virtual std::expected<size_t, nc::Error>
+    XAttrGet(std::string_view _xattr_name, void *_buffer, size_t _buf_size) const;
 
     // ComposeVerbosePath() relies solely on Host() and VerboseJunctionPath().
     std::string ComposeVerbosePath() const;

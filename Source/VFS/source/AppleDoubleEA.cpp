@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <CoreFoundation/CoreFoundation.h>
 #include <cstdlib>
 #include <cstring>
@@ -283,7 +283,7 @@ std::vector<std::byte> BuildAppleDoubleFromEA(VFSFile &_file)
     };
     std::vector<EA> file_eas;
 
-    _file.XAttrIterateNames([&](const char *_name) {
+    _file.XAttrIterateNames([&](const std::string_view _name) {
         file_eas.emplace_back();
         EA &ea = file_eas.back();
         ea.name = _name;
@@ -292,11 +292,11 @@ std::vector<std::byte> BuildAppleDoubleFromEA(VFSFile &_file)
     });
 
     for( EA &ea : file_eas ) {
-        const ssize_t sz = _file.XAttrGet(ea.name.c_str(), nullptr, 0);
-        if( sz > 0 ) {
-            ea.data = std::make_unique<char[]>(sz);
-            ea.data_sz = (unsigned)sz;
-            _file.XAttrGet(ea.name.c_str(), ea.data.get(), ea.data_sz);
+        const std::expected<size_t, Error> sz = _file.XAttrGet(ea.name, nullptr, 0);
+        if( sz && *sz > 0 ) {
+            ea.data = std::make_unique<char[]>(*sz);
+            ea.data_sz = static_cast<unsigned>(*sz);
+            std::ignore = _file.XAttrGet(ea.name, ea.data.get(), ea.data_sz);
         }
     }
 

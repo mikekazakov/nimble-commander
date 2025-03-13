@@ -133,13 +133,13 @@ void File::XAttrIterateNames(const XAttrIterateNamesCallback &_handler) const
             break;
 }
 
-ssize_t File::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const
+std::expected<size_t, Error> File::XAttrGet(const std::string_view _xattr_name, void *_buffer, size_t _buf_size) const
 {
-    if( !IsOpened() || !_xattr_name )
-        return SetLastError(VFSError::InvalidCall);
+    if( !IsOpened() || _xattr_name.empty() )
+        return SetLastError(Error{Error::POSIX, EINVAL});
 
     for( auto &i : m_EA )
-        if( strcmp(i.name, _xattr_name) == 0 ) {
+        if( _xattr_name == i.name ) {
             if( _buffer == nullptr )
                 return i.data_sz;
 
@@ -148,7 +148,7 @@ ssize_t File::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size)
             return sz;
         }
 
-    return SetLastError(VFSError::NotFound);
+    return SetLastError(Error{Error::POSIX, ENOATTR});
 }
 
 } // namespace nc::vfs::arc

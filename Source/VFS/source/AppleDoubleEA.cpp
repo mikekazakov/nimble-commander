@@ -296,7 +296,7 @@ std::vector<std::byte> BuildAppleDoubleFromEA(VFSFile &_file)
         if( sz && *sz > 0 ) {
             ea.data = std::make_unique<char[]>(*sz);
             ea.data_sz = static_cast<unsigned>(*sz);
-            _file.XAttrGet(ea.name.c_str(), ea.data.get(), ea.data_sz);
+            std::ignore = _file.XAttrGet(ea.name, ea.data.get(), ea.data_sz);
         }
     }
 

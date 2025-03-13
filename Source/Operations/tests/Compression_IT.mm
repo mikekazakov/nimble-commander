@@ -238,9 +238,9 @@ TEST_CASE(PREFIX "Compressing an item with xattrs")
 
         // check that each extracted extended attribute is equal to the original
         for( const EA &ea : tc.eas ) {
-            REQUIRE(file->XAttrGet(ea.name.c_str(), nullptr, 0) == ea.bytes.size());
+            REQUIRE(file->XAttrGet(ea.name, nullptr, 0) == ea.bytes.size());
             std::vector<std::byte> bytes(ea.bytes.size());
-            REQUIRE(file->XAttrGet(ea.name.c_str(), bytes.data(), bytes.size()) == ea.bytes.size());
+            REQUIRE(file->XAttrGet(ea.name, bytes.data(), bytes.size()) == ea.bytes.size());
             REQUIRE(bytes == ea.bytes);
         }
 

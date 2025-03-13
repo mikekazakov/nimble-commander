@@ -4,6 +4,7 @@
 #include <Base/SerialQueue.h>
 #include <Base/DispatchGroup.h>
 #include <Base/algo.h>
+#include <Base/StackAllocator.h>
 #include <Utility/PathManip.h>
 #include <Utility/TemporaryFileStorage.h>
 #include <sys/stat.h>
@@ -385,10 +386,13 @@ std::optional<std::string> CopyFileToTempStorage(const std::string &_vfs_filepat
         }
     }
 
-    vfs_file.XAttrIterateNames([&](const char *_name) {
+    vfs_file.XAttrIterateNames([&](const std::string_view _name) {
         const std::expected<size_t, Error> res = vfs_file.XAttrGet(_name, buf.get(), bufsz);
-        if( res )
-            fsetxattr(native_file->file_descriptor, _name, buf.get(), *res, 0, 0);
+        if( res ) {
+            StackAllocator alloc;
+            const std::pmr::string name(_name, &alloc);
+            fsetxattr(native_file->file_descriptor, name.c_str(), buf.get(), *res, 0, 0);
+        }
         return true;
     });
 
@@ -502,10 +506,13 @@ static std::expected<void, Error> ExtractRegFile(const std::string &_vfs_path,
         }
     }
 
-    file.XAttrIterateNames([&](const char *name) -> bool {
-        const std::expected<size_t, Error> res = file.XAttrGet(name, buf.get(), bufsz);
-        if( res )
-            fsetxattr(fd, name, buf.get(), *res, 0, 0);
+    file.XAttrIterateNames([&](const std::string_view _name) -> bool {
+        const std::expected<size_t, Error> res = file.XAttrGet(_name, buf.get(), bufsz);
+        if( res ) {
+            StackAllocator alloc;
+            const std::pmr::string name(_name, &alloc);
+            fsetxattr(fd, name.c_str(), buf.get(), *res, 0, 0);
+        }
         return true;
     });
 

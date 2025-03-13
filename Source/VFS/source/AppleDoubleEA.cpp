@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <CoreFoundation/CoreFoundation.h>
 #include <cstdlib>
 #include <cstring>
@@ -283,7 +283,7 @@ std::vector<std::byte> BuildAppleDoubleFromEA(VFSFile &_file)
     };
     std::vector<EA> file_eas;
 
-    _file.XAttrIterateNames([&](const char *_name) {
+    _file.XAttrIterateNames([&](const std::string_view _name) {
         file_eas.emplace_back();
         EA &ea = file_eas.back();
         ea.name = _name;

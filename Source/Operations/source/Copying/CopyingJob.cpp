@@ -5,6 +5,7 @@
 #include "NativeFSHelpers.h"
 #include <Base/Hash.h>
 #include <Base/algo.h>
+#include <Base/StackAllocator.h>
 #include <RoutedIO/RoutedIO.h>
 #include <Utility/PathManip.h>
 #include <Utility/StringExtras.h>
@@ -1815,10 +1816,13 @@ void CopyingJob::CopyXattrsFromVFSFileToNativeFD(VFSFile &_source, int _fd_to) c
 {
     auto buf = m_Buffers[0].get();
     size_t buf_sz = m_BufferSize;
-    _source.XAttrIterateNames([&](const char *name) {
-        const std::expected<size_t, Error> res = _source.XAttrGet(name, buf, buf_sz);
-        if( *res )
-            fsetxattr(_fd_to, name, buf, *res, 0, 0);
+    _source.XAttrIterateNames([&](const std::string_view _name) {
+        const std::expected<size_t, Error> res = _source.XAttrGet(_name, buf, buf_sz);
+        if( *res ) {
+            StackAllocator alloc;
+            const std::pmr::string name(_name, &alloc);
+            fsetxattr(_fd_to, name.c_str(), buf, *res, 0, 0);
+        }
         return true;
     });
 }
@@ -1828,10 +1832,13 @@ void CopyingJob::CopyXattrsFromVFSFileToPath(VFSFile &_file, const char *_fn_to)
     auto buf = m_Buffers[0].get();
     size_t buf_sz = m_BufferSize;
 
-    _file.XAttrIterateNames([&](const char *name) {
-        const std::expected<size_t, Error> res = _file.XAttrGet(name, buf, buf_sz);
-        if( res )
-            setxattr(_fn_to, name, buf, *res, 0, 0);
+    _file.XAttrIterateNames([&](const std::string_view _name) {
+        const std::expected<size_t, Error> res = _file.XAttrGet(_name, buf, buf_sz);
+        if( res ) {
+            StackAllocator alloc;
+            const std::pmr::string name(_name, &alloc);
+            setxattr(_fn_to, name.c_str(), buf, *res, 0, 0);
+        }
         return true;
     });
 }

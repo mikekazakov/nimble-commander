@@ -121,7 +121,8 @@ unsigned VFSFile::XAttrCount() const
     return 0;
 }
 
-void VFSFile::XAttrIterateNames([[maybe_unused]] const std::function<bool(const char *_xattr_name)> &_handler) const
+void VFSFile::XAttrIterateNames(
+    [[maybe_unused]] const std::function<bool(std::string_view _xattr_name)> &_handler) const
 {
 }
 

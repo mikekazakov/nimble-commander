@@ -151,7 +151,7 @@ public:
     virtual unsigned XAttrCount() const;
 
     // Return true to allow further iteration, false to stop it.
-    using XAttrIterateNamesCallback = std::function<bool(const char *_xattr_name)>;
+    using XAttrIterateNamesCallback = std::function<bool(std::string_view _xattr_name)>;
 
     // XAttrIterateNames() will call block with every xattr name for this file while handler returns true.
     // This function may cause blocking I/O.

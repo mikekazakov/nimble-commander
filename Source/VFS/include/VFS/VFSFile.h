@@ -186,10 +186,6 @@ public:
     std::expected<void, nc::Error> WriteFile(const void *_d, size_t _sz);
 
 protected:
-    // TODO: remove this
-    // Sets a new last error code and returns it for convenience.
-    int SetLastError(int _error) const;
-
     // Sets the new last error and returns it as an std::unexpected for convenience.
     std::unexpected<nc::Error> SetLastError(nc::Error _error) const;
 

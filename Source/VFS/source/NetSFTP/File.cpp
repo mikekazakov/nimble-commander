@@ -165,7 +165,7 @@ std::expected<uint64_t, Error> File::Size() const
 bool File::Eof() const
 {
     if( !IsOpened() ) {
-        SetLastError(VFSError::InvalidCall);
+        std::ignore = SetLastError(Error{Error::POSIX, EINVAL});
         return true;
     }
 

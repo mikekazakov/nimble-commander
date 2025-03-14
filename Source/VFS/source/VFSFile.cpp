@@ -207,12 +207,6 @@ std::expected<void, Error> VFSFile::SetUploadSize([[maybe_unused]] size_t _size)
     return {};
 }
 
-int VFSFile::SetLastError(int _error) const
-{
-    SetLastError(VFSError::ToError(_error));
-    return _error;
-}
-
 std::unexpected<Error> VFSFile::SetLastError(Error _error) const
 {
     m_LastError = _error;

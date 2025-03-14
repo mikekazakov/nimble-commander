@@ -170,7 +170,7 @@ std::expected<uint64_t, Error> File::Size() const
 bool File::Eof() const
 {
     if( m_FD < 0 ) {
-        SetLastError(VFSError::InvalidCall);
+        std::ignore = SetLastError(Error{Error::POSIX, EINVAL});
         return true;
     }
     return m_Position >= m_Size;

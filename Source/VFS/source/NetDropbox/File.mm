@@ -31,7 +31,7 @@ std::expected<void, Error> File::Close()
                 // client hasn't provided enough data and is closing a file.
                 // this is an invalid behaviour, need to cancel a transfer task
                 [m_Upload->task cancel];
-                SetLastError(VFSError::FromErrno(EIO));
+                std::ignore = SetLastError(Error{Error::POSIX, EIO});
                 SwitchToState(Canceled);
             }
 
@@ -146,7 +146,7 @@ void File::HandleDownloadResponseAsync(ssize_t _download_size)
 void File::HandleDownloadError(int _error)
 {
     if( m_State == Initiated || m_State == Downloading ) {
-        SetLastError(_error);
+        std::ignore = SetLastError(VFSError::ToError(_error));
         SwitchToState(Canceled);
     }
 }
@@ -274,7 +274,7 @@ void File::StartSmallUpload()
                 SwitchToState(Completed);
             }
             else {
-                SetLastError(_vfs_error);
+                std::ignore = SetLastError(VFSError::ToError(_vfs_error));
                 SwitchToState(Canceled);
             }
         }
@@ -321,7 +321,7 @@ void File::StartSession()
     auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error) {
         if( m_State == Uploading && _vfs_error != VFSError::Ok ) {
-            SetLastError(_vfs_error);
+            std::ignore = SetLastError(VFSError::ToError(_vfs_error));
             SwitchToState(Canceled);
         }
     };
@@ -381,7 +381,7 @@ void File::StartSessionAppend()
     auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error) {
         if( m_State == Uploading && _vfs_error != VFSError::Ok ) {
-            SetLastError(_vfs_error);
+            std::ignore = SetLastError(VFSError::ToError(_vfs_error));
             SwitchToState(Canceled);
         }
     };
@@ -443,7 +443,7 @@ void File::StartSessionFinish()
                 SwitchToState(Completed);
             }
             else {
-                SetLastError(_vfs_error);
+                std::ignore = SetLastError(VFSError::ToError(_vfs_error));
                 SwitchToState(Canceled);
             }
         }
@@ -515,7 +515,7 @@ void File::ExtractSessionIdOrCancelUploadAsync(NSData *_data)
             return;
         }
 
-    SetLastError(VFSError::FromErrno(EIO));
+    std::ignore = SetLastError(Error{Error::POSIX, EIO});
     SwitchToState(Canceled);
 }
 

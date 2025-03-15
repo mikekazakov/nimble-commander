@@ -44,18 +44,18 @@ VFSFile::WriteParadigm VFSFile::GetWriteParadigm() const
 
 std::expected<size_t, Error> VFSFile::Read([[maybe_unused]] void *_buf, [[maybe_unused]] size_t _size)
 {
-    return SetLastError(Error{Error::POSIX, ENOTSUP});
+    return std::unexpected(Error{Error::POSIX, ENOTSUP});
 }
 
 std::expected<size_t, Error> VFSFile::Write([[maybe_unused]] const void *_buf, [[maybe_unused]] size_t _size)
 {
-    return SetLastError(Error{Error::POSIX, ENOTSUP});
+    return std::unexpected(Error{Error::POSIX, ENOTSUP});
 }
 
 std::expected<size_t, Error>
 VFSFile::ReadAt([[maybe_unused]] off_t _pos, [[maybe_unused]] void *_buf, [[maybe_unused]] size_t _size)
 {
-    return SetLastError(Error{Error::POSIX, ENOTSUP});
+    return std::unexpected(Error{Error::POSIX, ENOTSUP});
 }
 
 bool VFSFile::IsOpened() const
@@ -65,27 +65,27 @@ bool VFSFile::IsOpened() const
 
 std::expected<void, Error> VFSFile::Open(unsigned long /*unused*/, const VFSCancelChecker & /*unused*/)
 {
-    return SetLastError(Error{Error::POSIX, ENOTSUP});
+    return std::unexpected(Error{Error::POSIX, ENOTSUP});
 }
 
 std::expected<void, Error> VFSFile::Close()
 {
-    return SetLastError(Error{Error::POSIX, ENOTSUP});
+    return std::unexpected(Error{Error::POSIX, ENOTSUP});
 }
 
 std::expected<uint64_t, Error> VFSFile::Seek(off_t /*unused*/, int /*unused*/)
 {
-    return SetLastError(Error{Error::POSIX, ENOTSUP});
+    return std::unexpected(Error{Error::POSIX, ENOTSUP});
 }
 
 std::expected<uint64_t, Error> VFSFile::Pos() const
 {
-    return SetLastError(Error{Error::POSIX, ENOTSUP});
+    return std::unexpected(Error{Error::POSIX, ENOTSUP});
 }
 
 std::expected<uint64_t, Error> VFSFile::Size() const
 {
-    return SetLastError(Error{Error::POSIX, ENOTSUP});
+    return std::unexpected(Error{Error::POSIX, ENOTSUP});
 }
 
 bool VFSFile::Eof() const
@@ -183,7 +183,7 @@ std::expected<size_t, Error> VFSFile::XAttrGet([[maybe_unused]] const std::strin
                                                [[maybe_unused]] void *_buffer,
                                                [[maybe_unused]] size_t _buf_size) const
 {
-    return SetLastError(Error{Error::POSIX, ENOTSUP});
+    return std::unexpected(Error{Error::POSIX, ENOTSUP});
 }
 
 std::expected<void, Error> VFSFile::Skip(size_t _size)
@@ -205,22 +205,6 @@ std::expected<void, Error> VFSFile::Skip(size_t _size)
 std::expected<void, Error> VFSFile::SetUploadSize([[maybe_unused]] size_t _size)
 {
     return {};
-}
-
-std::unexpected<Error> VFSFile::SetLastError(Error _error) const
-{
-    m_LastError = _error;
-    return std::unexpected<Error>(_error);
-}
-
-void VFSFile::ClearLastError() const
-{
-    m_LastError.reset();
-}
-
-std::optional<Error> VFSFile::LastError() const
-{
-    return m_LastError;
 }
 
 std::expected<size_t, Error> VFSFile::PreferredIOSize() const

@@ -46,7 +46,7 @@ std::expected<void, Error> File::Open(unsigned long _open_flags,
 
     m_FD = io.open(Path(), openflags, mode);
     if( m_FD < 0 ) {
-        return SetLastError(Error{Error::POSIX, errno});
+        return std::unexpected(Error{Error::POSIX, errno});
     }
 
     fcntl(m_FD, F_SETFL, fcntl(m_FD, F_GETFL) & ~O_NONBLOCK);
@@ -82,7 +82,7 @@ std::expected<void, Error> File::Close()
 std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     if( m_FD < 0 )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     if( Eof() )
         return 0;
 
@@ -91,36 +91,36 @@ std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
         m_Position += ret;
         return ret;
     }
-    return SetLastError(Error{Error::POSIX, errno});
+    return std::unexpected(Error{Error::POSIX, errno});
 }
 
 std::expected<size_t, Error> File::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if( m_FD < 0 )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     const ssize_t ret = pread(m_FD, _buf, _size, _pos);
     if( ret < 0 )
-        return SetLastError(Error{Error::POSIX, errno});
+        return std::unexpected(Error{Error::POSIX, errno});
     return static_cast<size_t>(ret);
 }
 
 std::expected<uint64_t, Error> File::Seek(off_t _off, int _basis)
 {
     if( m_FD < 0 )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const off_t ret = lseek(m_FD, _off, _basis);
     if( ret >= 0 ) {
         m_Position = ret;
         return ret;
     }
-    return SetLastError(Error{Error::POSIX, errno});
+    return std::unexpected(Error{Error::POSIX, errno});
 }
 
 std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
 {
     if( m_FD < 0 )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const ssize_t ret = write(m_FD, _buf, _size);
     if( ret >= 0 ) {
@@ -128,7 +128,7 @@ std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
         m_Position += ret;
         return ret;
     }
-    return SetLastError(Error{Error::POSIX, errno});
+    return std::unexpected(Error{Error::POSIX, errno});
 }
 
 VFSFile::ReadParadigm File::GetReadParadigm() const
@@ -156,21 +156,20 @@ VFSFile::WriteParadigm File::GetWriteParadigm() const
 std::expected<uint64_t, Error> File::Pos() const
 {
     if( m_FD < 0 )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     return m_Position;
 }
 
 std::expected<uint64_t, Error> File::Size() const
 {
     if( m_FD < 0 )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     return m_Size;
 }
 
 bool File::Eof() const
 {
     if( m_FD < 0 ) {
-        std::ignore = SetLastError(Error{Error::POSIX, EINVAL});
         return true;
     }
     return m_Position >= m_Size;
@@ -236,14 +235,14 @@ void File::XAttrIterateNames(const XAttrIterateNamesCallback &_handler) const
 std::expected<size_t, Error> File::XAttrGet(const std::string_view _xattr_name, void *_buffer, size_t _buf_size) const
 {
     if( m_FD < 0 )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     StackAllocator alloc;
     const std::pmr::string xattr_name(_xattr_name, &alloc);
 
     const ssize_t ret = fgetxattr(m_FD, xattr_name.c_str(), _buffer, _buf_size, 0, 0);
     if( ret < 0 )
-        return SetLastError(Error{Error::POSIX, errno});
+        return std::unexpected(Error{Error::POSIX, errno});
 
     return ret;
 }

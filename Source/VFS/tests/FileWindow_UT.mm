@@ -51,10 +51,10 @@ TestGenericMemReadOnlyFile::TestGenericMemReadOnlyFile(std::string_view _relativ
 std::expected<size_t, Error> TestGenericMemReadOnlyFile::Read(void *_buf, size_t _size)
 {
     if( !IsOpened() )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( _buf == nullptr )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( _size == 0 )
         return 0;
@@ -74,14 +74,14 @@ std::expected<size_t, Error> TestGenericMemReadOnlyFile::Read(void *_buf, size_t
 std::expected<size_t, nc::Error> TestGenericMemReadOnlyFile::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if( m_Behaviour < VFSFile::ReadParadigm::Random )
-        return SetLastError(Error{Error::POSIX, ENOTSUP});
+        return std::unexpected(Error{Error::POSIX, ENOTSUP});
 
     if( !IsOpened() )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     // we can only deal with cache buffer now, need another branch later
     if( _pos < 0 || _pos > static_cast<ssize_t>(m_Size) )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const size_t toread = std::min(static_cast<size_t>(m_Size) - static_cast<size_t>(_pos), _size);
     std::memcpy(_buf, static_cast<const char *>(m_Mem) + _pos, toread);
@@ -91,10 +91,10 @@ std::expected<size_t, nc::Error> TestGenericMemReadOnlyFile::ReadAt(off_t _pos, 
 std::expected<uint64_t, Error> TestGenericMemReadOnlyFile::Seek(off_t _off, int _basis)
 {
     if( m_Behaviour < VFSFile::ReadParadigm::Seek )
-        return SetLastError(Error{Error::POSIX, ENOTSUP});
+        return std::unexpected(Error{Error::POSIX, ENOTSUP});
 
     if( !IsOpened() )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     off_t req_pos = 0;
     if( _basis == VFSFile::Seek_Set )
@@ -104,10 +104,10 @@ std::expected<uint64_t, Error> TestGenericMemReadOnlyFile::Seek(off_t _off, int 
     else if( _basis == VFSFile::Seek_Cur )
         req_pos = m_Pos + _off;
     else
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( req_pos < 0 )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     if( req_pos > static_cast<ssize_t>(m_Size) )
         req_pos = m_Size;
     m_Pos = req_pos;
@@ -123,7 +123,7 @@ VFSFile::ReadParadigm TestGenericMemReadOnlyFile::GetReadParadigm() const
 std::expected<uint64_t, Error> TestGenericMemReadOnlyFile::Pos() const
 {
     if( !IsOpened() )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     return m_Pos;
 }
 

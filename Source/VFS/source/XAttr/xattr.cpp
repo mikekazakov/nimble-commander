@@ -434,7 +434,7 @@ std::expected<uint64_t, Error> XAttrFile::Seek(off_t _off, int _basis)
 std::expected<size_t, Error> XAttrFile::Read(void *_buf, size_t _size)
 {
     if( !IsOpened() || !IsOpenedForReading() )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( m_Position == m_Size )
         return 0;
@@ -452,10 +452,10 @@ std::expected<size_t, Error> XAttrFile::Read(void *_buf, size_t _size)
 std::expected<size_t, Error> XAttrFile::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if( !IsOpened() || !IsOpenedForReading() )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( _pos < 0 || _pos > m_Size )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const size_t sz = std::min(m_Size - _pos, off_t(_size));
     memcpy(_buf, m_FileBuf.get() + _pos, sz);
@@ -500,7 +500,7 @@ std::expected<void, Error> XAttrFile::SetUploadSize(size_t _size)
 std::expected<size_t, Error> XAttrFile::Write(const void *_buf, size_t _size)
 {
     if( !IsOpenedForWriting() || !m_FileBuf )
-        return SetLastError(Error{Error::POSIX, EIO});
+        return std::unexpected(Error{Error::POSIX, EIO});
 
     if( m_Position < m_UploadSize ) {
         const ssize_t to_write = std::min(m_UploadSize - m_Position, static_cast<ssize_t>(_size));

@@ -105,6 +105,8 @@ private:
     mutable std::mutex m_DataLock;        // any access to m_Download/m_Upload must be guarded
     std::unique_ptr<Download> m_Download; // exists only on reading
     std::unique_ptr<Upload> m_Upload;     // exists only on writing
+
+    std::optional<Error> m_LastError;
 };
 
 } // namespace nc::vfs::dropbox

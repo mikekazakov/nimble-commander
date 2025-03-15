@@ -95,14 +95,14 @@ private:
     void SetAccessToken(const std::string &_access_token);
     void InitialAccountLookup(); // will throw on invalid account / connectivity issues
 
-    std::pair<int, std::string> RetreiveAccessTokenFromRefreshToken(const std::string &_refresh_token);
+    std::expected<std::string, Error> RetreiveAccessTokenFromRefreshToken(const std::string &_refresh_token);
 
 #ifdef __OBJC__
     // Sets HTTPMethod to POST
     // Handles Authentications, can update an access token if the current one is expired and
     // a refresh token is available.
-    std::pair<int, NSData *> SendSynchronousPostRequest(NSMutableURLRequest *_request,
-                                                        const VFSCancelChecker &_cancel_checker = {});
+    std::expected<NSData *, Error> SendSynchronousPostRequest(NSMutableURLRequest *_request,
+                                                              const VFSCancelChecker &_cancel_checker = {});
 #endif
 
     const class VFSNetDropboxHostConfiguration &Config() const;

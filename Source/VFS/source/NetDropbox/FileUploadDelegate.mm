@@ -1,17 +1,18 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFSError.h>
 #include "FileUploadDelegate.h"
 #include "Aux.h"
 #include <mutex>
 #include <Utility/ObjCpp.h>
 
+using namespace nc;
 using namespace nc::vfs;
 using namespace nc::vfs::dropbox;
 
 @implementation NCVFSDropboxFileUploadDelegate {
     NSInputStream *m_Stream;
     std::mutex m_CallbacksLock;
-    std::function<void(int _vfs_error)> m_HandleFinished;
+    std::function<void(std::expected<void, Error>)> m_HandleFinished;
     std::function<void(NSData *_data)> m_HandleReceivedData;
 }
 
@@ -37,13 +38,13 @@ using namespace nc::vfs::dropbox;
     return m_HandleReceivedData;
 }
 
-- (void)setHandleFinished:(std::function<void(int)>)handleFinished
+- (void)setHandleFinished:(std::function<void(std::expected<void, Error>)>)handleFinished
 {
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     m_HandleFinished = handleFinished;
 }
 
-- (std::function<void(int)>)handleFinished
+- (std::function<void(std::expected<void, Error>)>)handleFinished
 {
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     return m_HandleFinished;
@@ -58,10 +59,10 @@ using namespace nc::vfs::dropbox;
 
 - (void)URLSession:(NSURLSession *) [[maybe_unused]] session didBecomeInvalidWithError:(nullable NSError *)_error
 {
-    auto error = VFSErrorFromErrorAndReponseAndData(_error, nil, nil);
+    Error error = ErrorFromErrorAndReponseAndData(_error, nil, nil);
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     if( m_HandleFinished )
-        m_HandleFinished(error);
+        m_HandleFinished(std::unexpected(error));
 }
 
 static bool HasNoError(NSURLResponse *_response)
@@ -79,13 +80,13 @@ static bool HasNoError(NSURLResponse *_response)
     if( !_error && HasNoError(_task.response) ) {
         std::lock_guard<std::mutex> lock{m_CallbacksLock};
         if( m_HandleFinished )
-            m_HandleFinished(VFSError::Ok);
+            m_HandleFinished({});
     }
     else {
-        auto error = VFSErrorFromErrorAndReponseAndData(_error, _task.response, nil);
+        Error error = ErrorFromErrorAndReponseAndData(_error, _task.response, nil);
         std::lock_guard<std::mutex> lock{m_CallbacksLock};
         if( m_HandleFinished )
-            m_HandleFinished(error);
+            m_HandleFinished(std::unexpected(error));
     }
 }
 
@@ -99,10 +100,10 @@ static bool HasNoError(NSURLResponse *_response)
             m_HandleReceivedData(_data);
     }
     else {
-        auto error = VFSErrorFromErrorAndReponseAndData(nil, _task.response, _data);
+        Error error = ErrorFromErrorAndReponseAndData(nil, _task.response, _data);
         std::lock_guard<std::mutex> lock{m_CallbacksLock};
         if( m_HandleFinished )
-            m_HandleFinished(error);
+            m_HandleFinished(std::unexpected(error));
     }
 }
 

@@ -1,39 +1,40 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileDownloadDelegate.h"
 #include <VFS/VFSError.h>
 #include "Aux.h"
 #include <mutex>
 #include <Utility/ObjCpp.h>
 
+using namespace nc;
 using namespace nc::vfs;
 using namespace nc::vfs::dropbox;
 
 @implementation NCVFSDropboxFileDownloadDelegate {
     std::mutex m_CallbacksLock;
-    std::function<void(ssize_t _size_or_error)> m_ResponseHandler;
+    std::function<void(size_t _size)> m_ResponseHandler;
     std::function<void(NSData *)> m_DataHandler;
-    std::function<void(int)> m_ErrorHandler;
+    std::function<void(Error)> m_ErrorHandler;
 }
 
-- (void)setHandleError:(std::function<void(int)>)handleError
+- (void)setHandleError:(std::function<void(Error)>)handleError
 {
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     m_ErrorHandler = handleError;
 }
 
-- (std::function<void(int)>)handleError
+- (std::function<void(Error)>)handleError
 {
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     return m_ErrorHandler;
 }
 
-- (void)setHandleResponse:(std::function<void(ssize_t)>)handleResponse
+- (void)setHandleResponse:(std::function<void(size_t)>)handleResponse
 {
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     m_ResponseHandler = handleResponse;
 }
 
-- (std::function<void(ssize_t)>)handleResponse
+- (std::function<void(size_t)>)handleResponse
 {
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     return m_ResponseHandler;
@@ -53,7 +54,7 @@ using namespace nc::vfs::dropbox;
 
 - (void)URLSession:(NSURLSession *) [[maybe_unused]] session didBecomeInvalidWithError:(nullable NSError *)_error
 {
-    auto error = VFSErrorFromErrorAndReponseAndData(_error, nil, nil);
+    auto error = ErrorFromErrorAndReponseAndData(_error, nil, nil);
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     if( m_ErrorHandler )
         m_ErrorHandler(error);
@@ -64,7 +65,7 @@ using namespace nc::vfs::dropbox;
     didCompleteWithError:(nullable NSError *)_error
 {
     if( _error ) {
-        auto error = VFSErrorFromErrorAndReponseAndData(_error, nil, nil);
+        auto error = ErrorFromErrorAndReponseAndData(_error, nil, nil);
         std::lock_guard<std::mutex> lock{m_CallbacksLock};
         if( m_ErrorHandler )
             m_ErrorHandler(error);
@@ -83,7 +84,7 @@ using namespace nc::vfs::dropbox;
             return;
         }
 
-    auto error = VFSErrorFromErrorAndReponseAndData(nil, task.response, data);
+    auto error = ErrorFromErrorAndReponseAndData(nil, task.response, data);
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
     if( m_ErrorHandler )
         m_ErrorHandler(error);

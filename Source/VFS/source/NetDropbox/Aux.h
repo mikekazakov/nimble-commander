@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <rapidjson/rapidjson.h>
@@ -45,13 +45,12 @@ void InsertHTTPBodyPathspec(NSMutableURLRequest *_request, std::string_view _pat
 void InsertHTTPBodyCursor(NSMutableURLRequest *_request, const std::string &_cursor);
 void InsertHTTPHeaderPathspec(NSMutableURLRequest *_request, const std::string &_path);
 
-int ExtractVFSErrorFromJSON(NSData *_response_data);
-int VFSErrorFromErrorAndReponseAndData(NSError *_error, NSURLResponse *_response, NSData *_data);
+std::optional<Error> ExtractErrorFromJSON(NSData *_response_data);
+Error ErrorFromErrorAndReponseAndData(NSError *_error, NSURLResponse *_response, NSData *_data);
 
-// returns VFSError and NSData, if VFSError is Ok
-std::pair<int, NSData *> SendSynchronousRequest(NSURLSession *_session,
-                                                NSURLRequest *_request,
-                                                const VFSCancelChecker &_cancel_checker = nullptr);
+std::expected<NSData *, Error> SendSynchronousRequest(NSURLSession *_session,
+                                                      NSURLRequest *_request,
+                                                      const VFSCancelChecker &_cancel_checker = nullptr);
 
 struct Metadata {
     std::string name = ""; // will be empty on errors

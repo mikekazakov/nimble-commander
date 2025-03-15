@@ -173,21 +173,6 @@ int FromCFNetwork(int _errno)
     return (_errno - 2500000);
 }
 
-int FromNSError(NSError *_err)
-{
-    if( !_err )
-        return VFSError::GenericError;
-
-    if( [_err.domain isEqualToString:NSCocoaErrorDomain] )
-        return int(_err.code - 1500000);
-    if( [_err.domain isEqualToString:NSPOSIXErrorDomain] )
-        return int(_err.code - g_PosixBase);
-    if( [_err.domain isEqualToString:NSURLErrorDomain] )
-        return int(_err.code - 2500000);
-
-    return VFSError::GenericError;
-}
-
 namespace {
 
 // TODO: remove this later

@@ -53,7 +53,7 @@ private:
     bool HasDataToFeedUploadTaskAsync() const;
     void AppendDownloadedDataAsync(NSData *_data);
     void HandleDownloadResponseAsync(ssize_t _download_size);
-    void HandleDownloadError(int _error);
+    void HandleDownloadError(const Error &_error);
     void StartSmallUpload();
     void StartSession();
     void StartSessionAppend();

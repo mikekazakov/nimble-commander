@@ -80,10 +80,6 @@ int FromErrno(int _errno) noexcept;
 int FromLibarchive(int _errno);
 int FromCFNetwork(int _errno);
 
-#ifdef __OBJC__
-int FromNSError(NSError *_err);
-#endif
-
 // Transition, to be removed later
 inline constexpr std::string_view ErrorDomain = "VFSError";
 nc::Error ToError(int _vfs_error_code);

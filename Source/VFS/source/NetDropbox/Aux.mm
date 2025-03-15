@@ -48,91 +48,92 @@ std::optional<long> GetLong(const rapidjson::Value &_doc, const char *_key)
     return i->value.GetInt64();
 }
 
-static int ExtractVFSErrorFromObject(const rapidjson::Value &_object)
+static std::optional<Error> ExtractErrorFromObject(const rapidjson::Value &_object)
 {
     using namespace std::literals;
 
     auto tag = GetString(_object, ".tag");
     if( !tag )
-        return VFSError::GenericError;
+        return {};
 
     auto error_node = _object.FindMember(tag);
     if( error_node == _object.MemberEnd() || !error_node->value.IsObject() )
-        return VFSError::GenericError;
+        return {};
 
     auto error_tag = GetString(error_node->value, ".tag");
     if( !error_tag )
-        return VFSError::GenericError;
+        return {};
 
     if( "not_found"s == error_tag )
-        return VFSError::FromErrno(ENOENT);
+        return Error{Error::POSIX, ENOENT};
     if( "not_file"s == error_tag )
-        return VFSError::FromErrno(EISDIR);
+        return Error{Error::POSIX, EISDIR};
     if( "not_folder"s == error_tag )
-        return VFSError::FromErrno(ENOTDIR);
+        return Error{Error::POSIX, ENOTDIR};
     if( "restricted_content"s == error_tag )
-        return VFSError::FromErrno(EACCES);
+        return Error{Error::POSIX, EACCES};
     if( "invalid_path_root"s == error_tag )
-        return VFSError::FromErrno(ENOENT);
+        return Error{Error::POSIX, ENOENT};
     if( "malformed_path"s == error_tag )
-        return VFSError::FromErrno(EINVAL);
+        return Error{Error::POSIX, EINVAL};
     if( "conflict"s == error_tag )
-        return VFSError::FromErrno(EBUSY);
+        return Error{Error::POSIX, EBUSY};
     if( "no_write_permission"s == error_tag )
-        return VFSError::FromErrno(EPERM);
+        return Error{Error::POSIX, EPERM};
     if( "insufficient_space"s == error_tag )
-        return VFSError::FromErrno(ENOSPC);
+        return Error{Error::POSIX, ENOSPC};
     if( "disallowed_name"s == error_tag )
-        return VFSError::FromErrno(EINVAL);
+        return Error{Error::POSIX, EINVAL};
     if( "team_folder"s == error_tag )
-        return VFSError::FromErrno(EACCES);
+        return Error{Error::POSIX, EACCES};
 
-    return VFSError::GenericError;
+    return {};
 }
 
-int ExtractVFSErrorFromJSON(NSData *_response_data)
+std::optional<Error> ExtractErrorFromJSON(NSData *_response_data)
 {
     auto optional_json = ParseJSON(_response_data);
     if( !optional_json )
-        return VFSError::GenericError;
+        return {};
     auto &json = *optional_json;
 
     if( !json.IsObject() )
-        return VFSError::GenericError;
+        return {};
 
     auto error_node = json.FindMember("error");
     if( error_node == json.MemberEnd() )
-        return VFSError::GenericError;
+        return {};
 
     if( !error_node->value.IsObject() )
-        return VFSError::GenericError;
+        return {};
 
-    return ExtractVFSErrorFromObject(error_node->value);
+    return ExtractErrorFromObject(error_node->value);
 }
 
-int VFSErrorFromErrorAndReponseAndData(NSError *_error, NSURLResponse *_response, NSData *_data)
+Error ErrorFromErrorAndReponseAndData(NSError *_error, NSURLResponse *_response, NSData *_data)
 {
-    int vfs_error = VFSError::FromErrno(EIO);
-    if( _error )
-        vfs_error = VFSError::FromNSError(_error);
-    else if( auto http_response = objc_cast<NSHTTPURLResponse>(_response) ) {
-        const auto sc = http_response.statusCode;
-        if( sc == 400 )
-            vfs_error = VFSError::FromErrno(EINVAL);
-        else if( sc == 401 )
-            vfs_error = VFSError::FromErrno(EAUTH);
-        else if( sc == 409 && _data )
-            vfs_error = ExtractVFSErrorFromJSON(_data);
-        else if( sc == 429 )
-            vfs_error = VFSError::FromErrno(EBUSY);
-        else if( sc >= 500 && sc < 600 )
-            vfs_error = VFSError::FromErrno(EIO);
+    if( _error ) {
+        return Error{_error};
     }
 
-    return vfs_error;
+    if( auto http_response = objc_cast<NSHTTPURLResponse>(_response) ) {
+        const auto sc = http_response.statusCode;
+        if( sc == 400 )
+            return Error{Error::POSIX, EINVAL};
+        else if( sc == 401 )
+            return Error{Error::POSIX, EAUTH};
+        else if( sc == 409 && _data )
+            return ExtractErrorFromJSON(_data).value_or(Error{Error::POSIX, EIO});
+        else if( sc == 429 )
+            return Error{Error::POSIX, EBUSY};
+        else if( sc >= 500 && sc < 600 )
+            return Error{Error::POSIX, EIO};
+    }
+
+    return Error{Error::POSIX, EIO};
 }
 
-static std::pair<int, NSData *> SendInfiniteSynchronousRequest(NSURLSession *_session, NSURLRequest *_request)
+static std::expected<NSData *, Error> SendInfiniteSynchronousRequest(NSURLSession *_session, NSURLRequest *_request)
 {
     assert(_session != nil);
     assert(_request != nil);
@@ -159,12 +160,12 @@ static std::pair<int, NSData *> SendInfiniteSynchronousRequest(NSURLSession *_se
     if( error == nil && data != nil && response != nil )
         if( auto http_resp = objc_cast<NSHTTPURLResponse>(response) )
             if( http_resp.statusCode == 200 )
-                return {VFSError::Ok, data};
+                return data;
 
-    return {VFSErrorFromErrorAndReponseAndData(error, response, data), nil};
+    return std::unexpected(ErrorFromErrorAndReponseAndData(error, response, data));
 }
 
-std::pair<int, NSData *>
+std::expected<NSData *, Error>
 SendSynchronousRequest(NSURLSession *_session, NSURLRequest *_request, const VFSCancelChecker &_cancel_checker)
 {
     assert(_session != nil);
@@ -193,15 +194,15 @@ SendSynchronousRequest(NSURLSession *_session, NSURLRequest *_request, const VFS
     while( dispatch_semaphore_wait(sem, timeout) )
         if( _cancel_checker() ) {
             [task cancel];
-            return {VFSError::Cancelled, nil};
+            return std::unexpected(Error{Error::POSIX, ECANCELED});
         }
 
     if( error == nil && data != nil && response != nil )
         if( auto http_resp = objc_cast<NSHTTPURLResponse>(response) )
             if( http_resp.statusCode == 200 )
-                return {VFSError::Ok, data};
+                return data;
 
-    return {VFSErrorFromErrorAndReponseAndData(error, response, data), nil};
+    return std::unexpected(ErrorFromErrorAndReponseAndData(error, response, data));
 }
 
 Metadata ParseMetadata(const rapidjson::Value &_value)

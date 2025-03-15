@@ -72,7 +72,7 @@ std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancel
 std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     if( !IsOpened() || !(m_OpenFlags & VFSFlags::OF_Read) )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     if( _size == 0 || Eof() )
         return 0;
 
@@ -80,7 +80,7 @@ std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 
     const int vfs_error = m_Conn->ReadBodyUpToSize(_size);
     if( vfs_error != VFSError::Ok )
-        return SetLastError(VFSError::ToError(vfs_error));
+        return std::unexpected(VFSError::ToError(vfs_error));
 
     auto &read_buffer = m_Conn->ResponseBody();
     const auto has_read = read_buffer.Read(_buf, _size);
@@ -92,7 +92,7 @@ std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
 {
     if( !IsOpened() || !(m_OpenFlags & VFSFlags::OF_Write) || m_Size < 0 )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     SpawnUploadConnectionIfNeeded();
 
@@ -105,7 +105,7 @@ std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
 
     const int vfs_error = m_Conn->WriteBodyUpToSize(_size);
     if( vfs_error != VFSError::Ok )
-        return SetLastError(VFSError::ToError(vfs_error));
+        return std::unexpected(VFSError::ToError(vfs_error));
 
     //    TODO: clarify what File should return for partially written blocks - error code or number
     //    of bytes written?
@@ -191,7 +191,7 @@ std::expected<void, Error> File::Close()
     if( result == VFSError::Ok )
         return {};
 
-    return SetLastError(VFSError::ToError(result));
+    return std::unexpected(VFSError::ToError(result));
 }
 
 File::ReadParadigm File::GetReadParadigm() const

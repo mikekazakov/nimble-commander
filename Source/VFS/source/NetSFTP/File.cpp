@@ -118,7 +118,7 @@ std::expected<uint64_t, Error> File::Seek(off_t _off, int _basis)
 std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     if( !IsOpened() )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const ssize_t rc = libssh2_sftp_read(m_Handle, static_cast<char *>(_buf), _size);
 
@@ -127,13 +127,13 @@ std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
         return rc;
     }
     else
-        return SetLastError(VFSError::ToError(SFTPHost::VFSErrorForConnection(*m_Connection)));
+        return std::unexpected(VFSError::ToError(SFTPHost::VFSErrorForConnection(*m_Connection)));
 }
 
 std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
 {
     if( !IsOpened() )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const ssize_t rc = libssh2_sftp_write(m_Handle, static_cast<const char *>(_buf), _size);
 
@@ -143,13 +143,13 @@ std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
         return rc;
     }
     else
-        return SetLastError(VFSError::ToError(SFTPHost::VFSErrorForConnection(*m_Connection)));
+        return std::unexpected(VFSError::ToError(SFTPHost::VFSErrorForConnection(*m_Connection)));
 }
 
 std::expected<uint64_t, Error> File::Pos() const
 {
     if( !IsOpened() )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     return m_Position;
 }
@@ -157,7 +157,7 @@ std::expected<uint64_t, Error> File::Pos() const
 std::expected<uint64_t, Error> File::Size() const
 {
     if( !IsOpened() )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     return m_Size;
 }
@@ -165,7 +165,6 @@ std::expected<uint64_t, Error> File::Size() const
 bool File::Eof() const
 {
     if( !IsOpened() ) {
-        SetLastError(VFSError::InvalidCall);
         return true;
     }
 

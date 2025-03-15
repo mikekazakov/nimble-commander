@@ -23,10 +23,10 @@ File::~File()
 std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     if( strlen(Path()) < 2 || Path()[0] != '/' )
-        return SetLastError(Error{Error::POSIX, ENOENT});
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     if( _open_flags & VFSFlags::OF_Write )
-        return SetLastError(Error{Error::POSIX, ENOTSUP}); // ArchiveFile is Read-Only
+        return std::unexpected(Error{Error::POSIX, ENOTSUP}); // ArchiveFile is Read-Only
 
     int res;
     auto host = std::dynamic_pointer_cast<ArchiveHost>(Host());
@@ -38,7 +38,7 @@ std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancel
         return std::unexpected(VFSError::ToError(res));
 
     if( host->IsDirectory(file_path, _open_flags, _cancel_checker) && !(_open_flags & VFSFlags::OF_Directory) )
-        return SetLastError(Error{Error::POSIX, EISDIR});
+        return std::unexpected(Error{Error::POSIX, EISDIR});
 
     std::unique_ptr<State> state;
     res = host->ArchiveStateForItem(file_path.c_str(), state);
@@ -78,14 +78,14 @@ VFSFile::ReadParadigm File::GetReadParadigm() const
 std::expected<uint64_t, Error> File::Pos() const
 {
     if( !IsOpened() )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     return m_Position;
 }
 
 std::expected<uint64_t, Error> File::Size() const
 {
     if( !IsOpened() )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     return m_Size;
 }
 
@@ -99,7 +99,7 @@ bool File::Eof() const
 std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     if( IsOpened() == 0 )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     if( Eof() )
         return 0;
 
@@ -110,7 +110,7 @@ std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
     if( size < 0 ) {
         // TODO: libarchive error - convert it into our errors
         fmt::println("libarchive error: {}", archive_error_string(m_State->Archive()));
-        return SetLastError(VFSError::ToError(VFSError::FromLibarchive(archive_errno(m_State->Archive()))));
+        return std::unexpected(VFSError::ToError(VFSError::FromLibarchive(archive_errno(m_State->Archive()))));
     }
 
     m_Position += size;
@@ -136,7 +136,7 @@ void File::XAttrIterateNames(const XAttrIterateNamesCallback &_handler) const
 std::expected<size_t, Error> File::XAttrGet(const std::string_view _xattr_name, void *_buffer, size_t _buf_size) const
 {
     if( !IsOpened() || _xattr_name.empty() )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     for( auto &i : m_EA )
         if( _xattr_name == i.name ) {
@@ -148,7 +148,7 @@ std::expected<size_t, Error> File::XAttrGet(const std::string_view _xattr_name, 
             return sz;
         }
 
-    return SetLastError(Error{Error::POSIX, ENOATTR});
+    return std::unexpected(Error{Error::POSIX, ENOATTR});
 }
 
 } // namespace nc::vfs::arc

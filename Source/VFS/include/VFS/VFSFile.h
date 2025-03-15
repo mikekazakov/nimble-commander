@@ -142,10 +142,6 @@ public:
     // Eof() should always be available, returns true on invalid file state.
     virtual bool Eof() const;
 
-    // LastError() return last Error occured for this VFSFile.
-    // Should be overwritten only when error occurs, normal workflow won't overwrite the last error code.
-    std::optional<nc::Error> LastError() const;
-
     // XAttrCount() should be always available, returning 0 on non-supported case.
     // This function may cause blocking I/O.
     virtual unsigned XAttrCount() const;
@@ -185,22 +181,7 @@ public:
     // Helper function, non-virtual.
     std::expected<void, nc::Error> WriteFile(const void *_d, size_t _sz);
 
-protected:
-    // TODO: remove this
-    // Sets a new last error code and returns it for convenience.
-    int SetLastError(int _error) const;
-
-    // Sets the new last error and returns it as an std::unexpected for convenience.
-    std::unexpected<nc::Error> SetLastError(nc::Error _error) const;
-
-    // Resets the last error of this file, if there was any
-    void ClearLastError() const;
-
 private:
     std::string m_RelativePath;
     std::shared_ptr<VFSHost> m_Host;
-
-    // m_LastError should be set when any error occurs.
-    // This storage is not per thread as with errno, but instead per file object.
-    mutable std::optional<nc::Error> m_LastError;
 };

@@ -31,7 +31,7 @@ std::expected<void, Error> File::Close()
                 // client hasn't provided enough data and is closing a file.
                 // this is an invalid behaviour, need to cancel a transfer task
                 [m_Upload->task cancel];
-                SetLastError(VFSError::FromErrno(EIO));
+                m_LastError = Error{Error::POSIX, EIO};
                 SwitchToState(Canceled);
             }
 
@@ -59,9 +59,9 @@ std::expected<void, Error> File::Close()
         }
     }
 
-    const std::optional<Error> last_error = LastError();
+    const std::optional<Error> last_error = m_LastError;
 
-    ClearLastError();
+    m_LastError.reset();
     m_OpenFlags = 0;
     m_FilePos = 0;
     m_FileSize = -1;
@@ -85,7 +85,7 @@ std::expected<void, Error> File::Open(unsigned long _open_flags,
                                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( m_State != Cold )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     assert(!m_Upload && !m_Download);
 
@@ -114,7 +114,7 @@ std::expected<void, Error> File::Open(unsigned long _open_flags,
         if( m_State == Downloading )
             return {};
         else
-            return std::unexpected(LastError().value_or(Error{Error::POSIX, EIO}));
+            return std::unexpected(m_LastError.value_or(Error{Error::POSIX, EIO}));
     }
     if( (_open_flags & VFSFlags::OF_Write) == VFSFlags::OF_Write ) {
         m_OpenFlags = _open_flags;
@@ -125,7 +125,7 @@ std::expected<void, Error> File::Open(unsigned long _open_flags,
         return {};
     }
 
-    return SetLastError(Error{Error::POSIX, EINVAL});
+    return std::unexpected(Error{Error::POSIX, EINVAL});
 }
 
 void File::WaitForDownloadResponse() const
@@ -146,7 +146,7 @@ void File::HandleDownloadResponseAsync(ssize_t _download_size)
 void File::HandleDownloadError(int _error)
 {
     if( m_State == Initiated || m_State == Downloading ) {
-        SetLastError(_error);
+        m_LastError = VFSError::ToError(_error);
         SwitchToState(Canceled);
     }
 }
@@ -183,7 +183,7 @@ std::expected<uint64_t, Error> File::Pos() const
 std::expected<uint64_t, Error> File::Size() const
 {
     if( m_FileSize < 0 )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     return m_FileSize;
 }
 
@@ -195,9 +195,9 @@ bool File::Eof() const
 std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 {
     if( m_State != Downloading && m_State != Completed )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     if( !m_Download )
-        return SetLastError(Error{Error::POSIX, EINVAL});
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     if( _size == 0 || Eof() )
         return 0;
 
@@ -220,7 +220,7 @@ std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
         m_Signal.wait(lk);
     } while( m_State == Downloading );
 
-    return std::unexpected(LastError().value_or(Error{Error::POSIX, EIO}));
+    return std::unexpected(m_LastError.value_or(Error{Error::POSIX, EIO}));
 }
 
 bool File::IsOpened() const
@@ -274,7 +274,7 @@ void File::StartSmallUpload()
                 SwitchToState(Completed);
             }
             else {
-                SetLastError(_vfs_error);
+                m_LastError = VFSError::ToError(_vfs_error);
                 SwitchToState(Canceled);
             }
         }
@@ -321,7 +321,7 @@ void File::StartSession()
     auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error) {
         if( m_State == Uploading && _vfs_error != VFSError::Ok ) {
-            SetLastError(_vfs_error);
+            m_LastError = VFSError::ToError(_vfs_error);
             SwitchToState(Canceled);
         }
     };
@@ -381,7 +381,7 @@ void File::StartSessionAppend()
     auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error) {
         if( m_State == Uploading && _vfs_error != VFSError::Ok ) {
-            SetLastError(_vfs_error);
+            m_LastError = VFSError::ToError(_vfs_error);
             SwitchToState(Canceled);
         }
     };
@@ -443,7 +443,7 @@ void File::StartSessionFinish()
                 SwitchToState(Completed);
             }
             else {
-                SetLastError(_vfs_error);
+                m_LastError = VFSError::ToError(_vfs_error);
                 SwitchToState(Canceled);
             }
         }
@@ -515,7 +515,7 @@ void File::ExtractSessionIdOrCancelUploadAsync(NSData *_data)
             return;
         }
 
-    SetLastError(VFSError::FromErrno(EIO));
+    m_LastError = Error{Error::POSIX, EIO};
     SwitchToState(Canceled);
 }
 
@@ -557,7 +557,7 @@ std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
     const auto eaten = WaitForUploadBufferConsumption();
 
     if( m_State != Uploading ) {
-        return std::unexpected(LastError().value_or(Error{Error::POSIX, EINVAL}));
+        return std::unexpected(m_LastError.value_or(Error{Error::POSIX, EINVAL}));
     }
 
     m_FilePos += eaten;
@@ -582,7 +582,7 @@ std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
             m_Upload->delegate.handleFinished = nullptr;
 
             if( m_State != Uploading ) {
-                return std::unexpected(LastError().value_or(Error{Error::POSIX, EINVAL}));
+                return std::unexpected(m_LastError.value_or(Error{Error::POSIX, EINVAL}));
             }
         }
 
@@ -596,7 +596,7 @@ std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
             WaitForAppendToComplete();
 
             if( m_State != Uploading ) {
-                return std::unexpected(LastError().value_or(Error{Error::POSIX, EINVAL}));
+                return std::unexpected(m_LastError.value_or(Error{Error::POSIX, EINVAL}));
             }
         }
 

@@ -74,7 +74,7 @@ public:
 private:
     void Init();
     void StopDirChangeObserving(unsigned long _ticket) override;
-    int RefreshListingAtPath(const std::string &_path, const VFSCancelChecker &_cancel_checker);
+    std::expected<void, Error> RefreshListingAtPath(const std::string &_path, const VFSCancelChecker &_cancel_checker);
 
     struct State;
     std::unique_ptr<State> I;

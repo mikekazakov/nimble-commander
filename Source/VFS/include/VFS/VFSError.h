@@ -74,7 +74,6 @@ enum {
 
 int FromErrno(int _errno) noexcept;
 int FromLibarchive(int _errno);
-int FromCFNetwork(int _errno);
 
 // Transition, to be removed later
 inline constexpr std::string_view ErrorDomain = "VFSError";

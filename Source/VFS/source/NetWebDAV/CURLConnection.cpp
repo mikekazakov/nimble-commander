@@ -35,7 +35,7 @@ static int curl_easy_get_response_code(CURL *_handle)
     return static_cast<int>(code);
 }
 
-static int ErrorIfAny(CURLM *_multi)
+static std::optional<Error> ErrorIfAny(CURLM *_multi)
 {
     CURLMsg *msg;
     int msgs_left = 0;
@@ -43,14 +43,14 @@ static int ErrorIfAny(CURLM *_multi)
         if( msg->msg == CURLMSG_DONE ) {
             const auto curle_rc = msg->data.result;
             if( curle_rc != CURLE_OK )
-                return ToVFSError(curle_rc, 0);
+                return ToError(curle_rc, 0);
 
             const auto http_rc = curl_easy_get_response_code(msg->easy_handle);
             if( http_rc >= 300 )
-                return ToVFSError(curle_rc, http_rc);
+                return ToError(curle_rc, http_rc);
         }
     }
-    return VFSError::Ok;
+    return {};
 }
 
 CURLConnection::CURLConnection(const HostConfiguration &_config)
@@ -144,24 +144,28 @@ void CURLConnection::Clear()
     m_ResponseBody.Clear();
 }
 
-int CURLConnection::SetCustomRequest(std::string_view _request)
+std::expected<void, Error> CURLConnection::SetCustomRequest(std::string_view _request)
 {
     StackAllocator alloc;
     const std::pmr::string request(_request, &alloc);
 
     const auto rc = curl_easy_setopt(m_EasyHandle, CURLOPT_CUSTOMREQUEST, request.c_str());
-    return CurlRCToVFSError(rc);
+    if( auto err = CurlRCToError(rc) )
+        return std::unexpected(*err);
+    return {};
 }
 
-int CURLConnection::SetURL(std::string_view _url)
+std::expected<void, Error> CURLConnection::SetURL(std::string_view _url)
 {
     StackAllocator alloc;
     const std::pmr::string url(_url, &alloc);
     const auto rc = curl_easy_setopt(m_EasyHandle, CURLOPT_URL, url.c_str());
-    return CurlRCToVFSError(rc);
+    if( auto err = CurlRCToError(rc) )
+        return std::unexpected(*err);
+    return {};
 }
 
-int CURLConnection::SetHeader(std::span<const std::string_view> _header)
+std::expected<void, Error> CURLConnection::SetHeader(std::span<const std::string_view> _header)
 {
     StackAllocator alloc;
     struct curl_slist *chunk = nullptr;
@@ -174,10 +178,12 @@ int CURLConnection::SetHeader(std::span<const std::string_view> _header)
 
     m_RequestHeader.reset(chunk);
     const auto rc = curl_easy_setopt(m_EasyHandle, CURLOPT_HTTPHEADER, m_RequestHeader.get());
-    return CurlRCToVFSError(rc);
+    if( auto err = CurlRCToError(rc) )
+        return std::unexpected(*err);
+    return {};
 }
 
-int CURLConnection::SetBody(std::span<const std::byte> _body)
+std::expected<void, Error> CURLConnection::SetBody(std::span<const std::byte> _body)
 {
     m_RequestBody.Write(_body.data(), _body.size_bytes());
 
@@ -187,10 +193,10 @@ int CURLConnection::SetBody(std::span<const std::byte> _body)
     curl_easy_setopt(m_EasyHandle, CURLOPT_INFILESIZE_LARGE, static_cast<curl_off_t>(m_RequestBody.Size()));
 
     // TODO: mb check rcs from curl?
-    return VFSError::Ok;
+    return {};
 }
 
-int CURLConnection::SetNonBlockingUpload(size_t _upload_size)
+std::expected<void, Error> CURLConnection::SetNonBlockingUpload(size_t _upload_size)
 {
     curl_easy_setopt(m_EasyHandle, CURLOPT_UPLOAD, 1L);
     curl_easy_setopt(m_EasyHandle, CURLOPT_READFUNCTION, ReadFromWriteBuffer);
@@ -198,7 +204,7 @@ int CURLConnection::SetNonBlockingUpload(size_t _upload_size)
     curl_easy_setopt(m_EasyHandle, CURLOPT_INFILESIZE_LARGE, static_cast<curl_off_t>(_upload_size));
 
     // TODO: mb check rcs from curl?
-    return VFSError::Ok;
+    return {};
 }
 
 WriteBuffer &CURLConnection::RequestBody()
@@ -216,17 +222,20 @@ std::string_view CURLConnection::ResponseHeader()
     return m_ResponseHeader;
 }
 
-Connection::BlockRequestResult CURLConnection::PerformBlockingRequest()
+std::expected<int, Error> CURLConnection::PerformBlockingRequest()
 {
     const auto curl_rc = curl_easy_perform(m_EasyHandle);
+    if( auto err = CurlRCToError(curl_rc) )
+        return std::unexpected(*err);
+
     const auto http_rc = curl_easy_get_response_code(m_EasyHandle);
-    return {.vfs_error = CurlRCToVFSError(curl_rc), .http_code = http_rc};
+    return http_rc;
 }
 
-int CURLConnection::ReadBodyUpToSize(size_t _target)
+std::expected<void, Error> CURLConnection::ReadBodyUpToSize(size_t _target)
 {
     if( m_MultiHandle == nullptr || !m_MultiHandleAttached )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const auto multi = m_MultiHandle;
 
@@ -237,11 +246,11 @@ int CURLConnection::ReadBodyUpToSize(size_t _target)
             while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
                 ;
         } while( running_handles );
-        return VFSError::Ok;
+        return {};
     }
 
     if( m_ResponseBody.Size() >= _target )
-        return VFSError::Ok;
+        return {};
 
     int running_handles = 0;
     while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
@@ -255,9 +264,10 @@ int CURLConnection::ReadBodyUpToSize(size_t _target)
     }
 
     if( running_handles == 0 )
-        return ErrorIfAny(multi);
-    else
-        return VFSError::Ok;
+        if( auto err = ErrorIfAny(multi) )
+            return std::unexpected(*err);
+
+    return {};
 }
 
 size_t CURLConnection::ReadFromWriteBuffer(void *_ptr, size_t _size, size_t _nmemb, void *_userp)
@@ -274,10 +284,10 @@ size_t CURLConnection::ReadFromWriteBuffer(void *_ptr, size_t _size, size_t _nme
     return write_buffer.Read(_ptr, bytes);
 }
 
-int CURLConnection::WriteBodyUpToSize(size_t _target)
+std::expected<void, Error> CURLConnection::WriteBodyUpToSize(size_t _target)
 {
     if( m_MultiHandle == nullptr || !m_MultiHandleAttached )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const auto multi = m_MultiHandle;
 
@@ -294,8 +304,11 @@ int CURLConnection::WriteBodyUpToSize(size_t _target)
         while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
             ;
 
-        if( running_handles == 0 )
-            return ErrorIfAny(multi);
+        if( running_handles == 0 ) {
+            if( auto err = ErrorIfAny(multi) )
+                return std::unexpected(*err);
+            return {};
+        }
 
         while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
             ;
@@ -306,11 +319,13 @@ int CURLConnection::WriteBodyUpToSize(size_t _target)
             while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
                 ;
         }
-        return ErrorIfAny(multi);
+        if( auto err = ErrorIfAny(multi) )
+            return std::unexpected(*err);
+        return {};
     }
 
     if( m_RequestBody.Size() < _target )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const size_t target_buffer_size = m_RequestBody.Size() - _target;
 
@@ -331,9 +346,10 @@ int CURLConnection::WriteBodyUpToSize(size_t _target)
     } while( m_RequestBody.Size() > target_buffer_size && running_handles != 0 );
 
     if( running_handles == 0 )
-        return ErrorIfAny(multi);
-    else
-        return VFSError::Ok;
+        if( auto err = ErrorIfAny(multi) )
+            return std::unexpected(*err);
+
+    return {};
 }
 
 } // namespace nc::vfs::webdav

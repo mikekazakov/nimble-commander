@@ -60,9 +60,9 @@ void WebDAVHost::Init()
     I = std::make_unique<State>(Config());
 
     auto ar = I->m_Pool.Get();
-    const auto [rc, requests] = RequestServerOptions(Config(), *ar.connection);
-    if( rc != VFSError::Ok )
-        throw ErrorException(VFSError::ToError(rc));
+    const std::expected<HTTPRequests::Mask, Error> requests = RequestServerOptions(Config(), *ar.connection);
+    if( !requests )
+        throw ErrorException(requests.error());
 
     // it's besically good to check available requests before commiting to work
     // with the server, BUT my local QNAP NAS is pretty strange and reports a
@@ -108,9 +108,9 @@ WebDAVHost::FetchDirectoryListing(std::string_view _path, unsigned long _flags, 
         items = std::move(*cached);
     }
     else {
-        const auto refresh_rc = RefreshListingAtPath(path, _cancel_checker);
-        if( refresh_rc != VFSError::Ok )
-            return std::unexpected(VFSError::ToError(refresh_rc));
+        const std::expected<void, Error> refresh_rc = RefreshListingAtPath(path, _cancel_checker);
+        if( !refresh_rc )
+            return std::unexpected(refresh_rc.error());
 
         if( auto cached2 = I->m_Cache.Listing(path) )
             items = std::move(*cached2);
@@ -165,9 +165,9 @@ WebDAVHost::IterateDirectoryListing(std::string_view _path,
         items = std::move(*cached);
     }
     else {
-        const auto refresh_rc = RefreshListingAtPath(path, nullptr);
-        if( refresh_rc != VFSError::Ok )
-            return std::unexpected(VFSError::ToError(refresh_rc));
+        const std::expected<void, Error> refresh_rc = RefreshListingAtPath(path, nullptr);
+        if( !refresh_rc )
+            return refresh_rc;
 
         if( auto cached2 = I->m_Cache.Listing(path) )
             items = std::move(*cached2);
@@ -207,9 +207,9 @@ WebDAVHost::Stat(std::string_view _path, [[maybe_unused]] unsigned long _flags, 
         const auto [directory, filename] = DeconstructPath(_path);
         if( directory.empty() )
             return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
-        const auto rc = RefreshListingAtPath(directory, _cancel_checker);
-        if( rc != VFSError::Ok )
-            return std::unexpected(VFSError::ToError(rc));
+        const std::expected<void, Error> rc = RefreshListingAtPath(directory, _cancel_checker);
+        if( !rc )
+            return std::unexpected(rc.error());
 
         auto [cached_2nd, cached_2nd_res] = I->m_Cache.Item(_path);
         if( cached_2nd )
@@ -236,37 +236,38 @@ WebDAVHost::Stat(std::string_view _path, [[maybe_unused]] unsigned long _flags, 
     return st;
 }
 
-int WebDAVHost::RefreshListingAtPath(const std::string &_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> WebDAVHost::RefreshListingAtPath(const std::string &_path,
+                                                            [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( _path.back() != '/' )
         throw std::invalid_argument("RefreshListingAtPath requires a path with a trailing slash");
 
     auto ar = I->m_Pool.Get();
-    auto [rc, items] = RequestDAVListing(Config(), *ar.connection, _path);
-    if( rc != VFSError::Ok )
-        return rc;
+    std::expected<std::vector<PropFindResponse>, Error> items = RequestDAVListing(Config(), *ar.connection, _path);
+    if( !items )
+        return std::unexpected(items.error());
 
-    I->m_Cache.CommitListing(_path, std::move(items));
+    I->m_Cache.CommitListing(_path, std::move(*items));
 
-    return VFSError::Ok;
+    return {};
 }
 
 std::expected<VFSStatFS, Error> WebDAVHost::StatFS([[maybe_unused]] std::string_view _path,
                                                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     const auto ar = I->m_Pool.Get();
-    const auto [rc, free, used] = RequestSpaceQuota(Config(), *ar.connection);
-    if( rc != VFSError::Ok )
-        return std::unexpected(VFSError::ToError(rc));
+    const std::expected<SpaceQuota, Error> quota = RequestSpaceQuota(Config(), *ar.connection);
+    if( !quota )
+        return std::unexpected(quota.error());
 
     VFSStatFS stat;
 
-    if( free >= 0 ) {
-        stat.free_bytes = free;
-        stat.avail_bytes = free;
+    if( quota->free >= 0 ) {
+        stat.free_bytes = quota->free;
+        stat.avail_bytes = quota->free;
     }
-    if( free >= 0 && used >= 0 ) {
-        stat.total_bytes = free + used;
+    if( quota->free >= 0 && quota->used >= 0 ) {
+        stat.total_bytes = quota->free + quota->used;
     }
 
     stat.volume_name = Config().full_url;
@@ -283,9 +284,9 @@ std::expected<void, Error> WebDAVHost::CreateDirectory(std::string_view _path,
 
     const auto path = EnsureTrailingSlash(std::string(_path));
     const auto ar = I->m_Pool.Get();
-    const auto rc = RequestMKCOL(Config(), *ar.connection, path);
-    if( rc != VFSError::Ok )
-        return std::unexpected(VFSError::ToError(rc));
+    const std::expected<void, Error> rc = RequestMKCOL(Config(), *ar.connection, path);
+    if( !rc )
+        return rc;
 
     I->m_Cache.CommitMkDir(path);
 
@@ -300,9 +301,9 @@ std::expected<void, Error> WebDAVHost::RemoveDirectory(std::string_view _path,
 
     const auto path = EnsureTrailingSlash(std::string(_path));
     const auto ar = I->m_Pool.Get();
-    const auto rc = RequestDelete(Config(), *ar.connection, path);
-    if( rc != VFSError::Ok )
-        return std::unexpected(VFSError::ToError(rc));
+    const std::expected<void, Error> rc = RequestDelete(Config(), *ar.connection, path);
+    if( !rc )
+        return rc;
 
     I->m_Cache.CommitRmDir(path);
 
@@ -316,9 +317,9 @@ std::expected<void, Error> WebDAVHost::Unlink(std::string_view _path,
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const auto ar = I->m_Pool.Get();
-    const auto rc = RequestDelete(Config(), *ar.connection, _path);
-    if( rc != VFSError::Ok )
-        return std::unexpected(VFSError::ToError(rc));
+    const std::expected<void, Error> rc = RequestDelete(Config(), *ar.connection, _path);
+    if( !rc )
+        return rc;
 
     I->m_Cache.CommitUnlink(_path);
 
@@ -364,9 +365,9 @@ std::expected<void, Error> WebDAVHost::Rename(std::string_view _old_path,
     }
 
     const auto ar = I->m_Pool.Get();
-    const auto move_rc = RequestMove(Config(), *ar.connection, old_path, new_path);
-    if( move_rc != VFSError::Ok )
-        return std::unexpected(VFSError::ToError(move_rc));
+    const std::expected<void, Error> move_rc = RequestMove(Config(), *ar.connection, old_path, new_path);
+    if( !move_rc )
+        return move_rc;
 
     I->m_Cache.CommitMove(_old_path, _new_path);
 

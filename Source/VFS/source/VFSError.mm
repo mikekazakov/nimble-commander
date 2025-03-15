@@ -168,11 +168,6 @@ static NSError *ToNSError(int _code)
     return [NSError errorWithDomain:g_Domain code:_code userInfo:@{NSLocalizedDescriptionKey: TextForCode(_code)}];
 }
 
-int FromCFNetwork(int _errno)
-{
-    return (_errno - 2500000);
-}
-
 namespace {
 
 // TODO: remove this later

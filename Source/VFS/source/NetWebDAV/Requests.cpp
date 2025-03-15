@@ -67,23 +67,24 @@ static HTTPRequests::Mask ParseSupportedRequests(std::string_view _options_respo
     return mask;
 }
 
-std::pair<int, HTTPRequests::Mask> RequestServerOptions(const HostConfiguration &_options, Connection &_connection)
+std::expected<HTTPRequests::Mask, Error> RequestServerOptions(const HostConfiguration &_options,
+                                                              Connection &_connection)
 {
     _connection.SetCustomRequest("OPTIONS");
     _connection.SetURL(_options.full_url);
 
-    const auto result = _connection.PerformBlockingRequest();
+    const std::expected<int, Error> http_code = _connection.PerformBlockingRequest();
 
-    if( result.vfs_error != VFSError::Ok )
-        return {result.vfs_error, HTTPRequests::None};
+    if( !http_code )
+        return std::unexpected(http_code.error());
 
-    if( IsOkHTTPRC(result.http_code) ) {
+    if( IsOkHTTPRC(*http_code) ) {
         const auto header = _connection.ResponseHeader();
         const auto requests = ParseSupportedRequests(header);
-        return {VFSError::Ok, requests};
+        return requests;
     }
     else {
-        return {HTTPRCToVFSError(result.http_code), HTTPRequests::None};
+        return std::unexpected(HTTPRCToError(*http_code).value_or(Error{Error::POSIX, EIO}));
     }
 }
 
@@ -200,7 +201,7 @@ static bool FilepathsHavePathPrefix(const std::vector<PropFindResponse> &_items,
     return server_uses_prefixes;
 }
 
-std::pair<int, std::vector<PropFindResponse>>
+std::expected<std::vector<PropFindResponse>, Error>
 RequestDAVListing(const HostConfiguration &_options, Connection &_connection, const std::string &_path)
 {
     if( _path.back() != '/' )
@@ -226,21 +227,21 @@ RequestDAVListing(const HostConfiguration &_options, Connection &_connection, co
     _connection.SetBody(
         {reinterpret_cast<const std::byte *>(g_PropfindMessage), std::string_view(g_PropfindMessage).length()});
 
-    const auto result = _connection.PerformBlockingRequest();
-    if( result.vfs_error != VFSError::Ok )
-        return {result.vfs_error, {}};
+    const std::expected<int, Error> http_code = _connection.PerformBlockingRequest();
+    if( !http_code )
+        return std::unexpected(http_code.error());
 
-    if( IsOkHTTPRC(result.http_code) ) {
+    if( IsOkHTTPRC(*http_code) ) {
         const auto response = _connection.ResponseBody().ReadAllAsString();
         auto items = ParseDAVListing(response);
         // TODO: clarify use_prefix
         const auto use_prefix = true /* FilepathsHavePathPrefix(items, _options.path) */;
         const auto base_path = use_prefix ? ((_options.path.empty() ? "" : "/" + _options.path) + _path) : _path;
         items = PruneFilepaths(std::move(items), base_path);
-        return {VFSError::Ok, std::move(items)};
+        return std::move(items);
     }
     else {
-        return {HTTPRCToVFSError(result.http_code), {}};
+        return std::unexpected(HTTPRCToError(*http_code).value_or(Error{Error::POSIX, EIO}));
     }
 }
 
@@ -272,7 +273,7 @@ static std::pair<long, long> ParseSpaceQouta(const std::string &_xml)
     return {free, used};
 }
 
-std::tuple<int, long, long> RequestSpaceQuota(const HostConfiguration &_options, Connection &_connection)
+std::expected<SpaceQuota, Error> RequestSpaceQuota(const HostConfiguration &_options, Connection &_connection)
 {
     const auto g_QuotaMessage = "<?xml version=\"1.0\"?>"
                                 "<a:propfind xmlns:a=\"DAV:\">"
@@ -290,21 +291,25 @@ std::tuple<int, long, long> RequestSpaceQuota(const HostConfiguration &_options,
     _connection.SetBody(
         {reinterpret_cast<const std::byte *>(g_QuotaMessage), std::string_view(g_QuotaMessage).length()});
 
-    const auto result = _connection.PerformBlockingRequest();
-    if( result.vfs_error != VFSError::Ok )
-        return {result.vfs_error, -1, -1};
+    const std::expected<int, Error> http_code = _connection.PerformBlockingRequest();
+    if( !http_code )
+        return std::unexpected(http_code.error());
 
-    if( IsOkHTTPRC(result.http_code) ) {
+    if( IsOkHTTPRC(*http_code) ) {
         const auto response = _connection.ResponseBody().ReadAllAsString();
         const auto [free, used] = ParseSpaceQouta(response);
-        return {VFSError::Ok, free, used};
+        SpaceQuota sq;
+        sq.free = free;
+        sq.used = used;
+        return sq;
     }
     else {
-        return {HTTPRCToVFSError(result.http_code), -1, -1};
+        return std::unexpected(HTTPRCToError(*http_code).value_or(Error{Error::POSIX, EIO}));
     }
 }
 
-int RequestMKCOL(const HostConfiguration &_options, Connection &_connection, const std::string &_path)
+std::expected<void, Error>
+RequestMKCOL(const HostConfiguration &_options, Connection &_connection, const std::string &_path)
 {
     if( _path.back() != '/' )
         throw std::invalid_argument("RequestMKCOL: path must contain a trailing slash");
@@ -317,17 +322,20 @@ int RequestMKCOL(const HostConfiguration &_options, Connection &_connection, con
     const auto url = URIForPath(_options, _path);
     _connection.SetURL(url);
 
-    const auto result = _connection.PerformBlockingRequest();
-    if( result.vfs_error != VFSError::Ok )
-        return result.vfs_error;
-    else
-        return HTTPRCToVFSError(result.http_code);
+    const std::expected<int, Error> http_code = _connection.PerformBlockingRequest();
+    if( !http_code )
+        return std::unexpected(http_code.error());
+    if( const std::optional<Error> err = HTTPRCToError(*http_code) )
+        return std::unexpected(*err);
+
+    return {};
 }
 
-int RequestDelete(const HostConfiguration &_options, Connection &_connection, std::string_view _path)
+std::expected<void, Error>
+RequestDelete(const HostConfiguration &_options, Connection &_connection, std::string_view _path)
 {
     if( _path == "/" )
-        return VFSError::FromErrno(EPERM);
+        return std::unexpected(Error{Error::POSIX, EPERM});
 
     _connection.SetCustomRequest("DELETE");
 
@@ -337,20 +345,22 @@ int RequestDelete(const HostConfiguration &_options, Connection &_connection, st
     const auto url = URIForPath(_options, _path);
     _connection.SetURL(url);
 
-    const auto result = _connection.PerformBlockingRequest();
-    if( result.vfs_error != VFSError::Ok )
-        return result.vfs_error;
-    else
-        return HTTPRCToVFSError(result.http_code);
+    const std::expected<int, Error> http_code = _connection.PerformBlockingRequest();
+    if( !http_code )
+        return std::unexpected(http_code.error());
+    if( const std::optional<Error> err = HTTPRCToError(*http_code) )
+        return std::unexpected(*err);
+
+    return {};
 }
 
-int RequestMove(const HostConfiguration &_options,
-                Connection &_connection,
-                const std::string &_src,
-                const std::string &_dst)
+std::expected<void, Error> RequestMove(const HostConfiguration &_options,
+                                       Connection &_connection,
+                                       const std::string &_src,
+                                       const std::string &_dst)
 {
     if( _src == "/" )
-        return VFSError::FromErrno(EPERM);
+        return std::unexpected(Error{Error::POSIX, EPERM});
 
     _connection.SetCustomRequest("MOVE");
 
@@ -361,11 +371,13 @@ int RequestMove(const HostConfiguration &_options,
     const auto url = URIForPath(_options, _src);
     _connection.SetURL(url);
 
-    const auto result = _connection.PerformBlockingRequest();
-    if( result.vfs_error != VFSError::Ok )
-        return result.vfs_error;
-    else
-        return HTTPRCToVFSError(result.http_code);
+    const std::expected<int, Error> http_code = _connection.PerformBlockingRequest();
+    if( !http_code )
+        return std::unexpected(http_code.error());
+    if( const std::optional<Error> err = HTTPRCToError(*http_code) )
+        return std::unexpected(*err);
+
+    return {};
 }
 
 } // namespace nc::vfs::webdav

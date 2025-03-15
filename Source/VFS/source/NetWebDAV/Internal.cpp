@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Internal.h"
 #include "WebDAVHost.h"
 #include <CFNetwork/CFNetworkErrors.h>
@@ -71,110 +71,110 @@ static bool IsOkHTTPRC(const int _rc)
     return _rc >= 200 & _rc < 300;
 }
 
-int ToVFSError(const int _curl_rc, const int _http_rc) noexcept
+std::optional<Error> ToError(const int _curl_rc, const int _http_rc) noexcept
 {
     if( _curl_rc == CURLE_OK )
-        return HTTPRCToVFSError(_http_rc);
+        return HTTPRCToError(_http_rc);
     else
-        return CurlRCToVFSError(_curl_rc);
+        return CurlRCToError(_curl_rc);
 }
 
-int CurlRCToVFSError(int _curl_rc) noexcept
+std::optional<Error> CurlRCToError(int _curl_rc) noexcept
 {
     switch( _curl_rc ) {
         case CURLE_OK:
-            return VFSError::Ok;
+            return {};
         case CURLE_UNSUPPORTED_PROTOCOL:
-            return VFSError::FromErrno(EPROTO);
+            return Error{Error::POSIX, EPROTO};
         case CURLE_FAILED_INIT:
-            return VFSError::FromErrno(ENODEV);
+            return Error{Error::POSIX, ENODEV};
         case CURLE_URL_MALFORMAT:
-            return VFSError::FromErrno(EINVAL);
+            return Error{Error::POSIX, EINVAL};
         case CURLE_NOT_BUILT_IN:
-            return VFSError::FromErrno(EPROTONOSUPPORT);
+            return Error{Error::POSIX, EPROTONOSUPPORT};
         case CURLE_COULDNT_RESOLVE_HOST:
-            return VFSError::FromErrno(EHOSTUNREACH);
+            return Error{Error::POSIX, EHOSTUNREACH};
         case CURLE_COULDNT_CONNECT:
-            return VFSError::FromErrno(EADDRNOTAVAIL);
+            return Error{Error::POSIX, EADDRNOTAVAIL};
         case CURLE_REMOTE_ACCESS_DENIED:
-            return VFSError::FromErrno(EACCES);
+            return Error{Error::POSIX, EACCES};
         case CURLE_OPERATION_TIMEDOUT:
-            return VFSError::FromErrno(ETIMEDOUT);
+            return Error{Error::POSIX, ETIMEDOUT};
         case CURLE_ABORTED_BY_CALLBACK:
-            return VFSError::FromErrno(ECANCELED);
+            return Error{Error::POSIX, ECANCELED};
         case CURLE_BAD_FUNCTION_ARGUMENT:
-            return VFSError::FromErrno(EINVAL);
+            return Error{Error::POSIX, EINVAL};
         case CURLE_INTERFACE_FAILED:
-            return VFSError::FromErrno(ENETDOWN);
+            return Error{Error::POSIX, ENETDOWN};
         case CURLE_LOGIN_DENIED:
-            return VFSError::FromErrno(EAUTH);
+            return Error{Error::POSIX, EAUTH};
         case CURLE_REMOTE_FILE_EXISTS:
-            return VFSError::FromErrno(EEXIST);
+            return Error{Error::POSIX, EEXIST};
         case CURLE_SSL_CACERT:
-            return VFSError::FromCFNetwork(kCFURLErrorSecureConnectionFailed);
+            return Error{Error::NSURL, kCFURLErrorSecureConnectionFailed};
         default:
-            return VFSError::FromErrno(EIO);
+            return Error{Error::POSIX, EIO};
     }
 }
 
-int HTTPRCToVFSError(int _http_rc) noexcept
+std::optional<Error> HTTPRCToError(int _http_rc) noexcept
 {
     if( IsOkHTTPRC(_http_rc) )
-        return VFSError::Ok;
+        return {};
 
     switch( _http_rc ) {
         // TODO:: 3xx
         case 400:
-            return VFSError::FromErrno(EINVAL);
+            return Error{Error::POSIX, EINVAL};
         case 401:
         case 402:
-            return VFSError::FromErrno(EAUTH);
+            return Error{Error::POSIX, EAUTH};
         case 403:
-            return VFSError::FromErrno(EACCES);
+            return Error{Error::POSIX, EACCES};
         case 404:
-            return VFSError::FromErrno(ENOENT);
+            return Error{Error::POSIX, ENOENT};
         case 405:
-            return VFSError::FromErrno(ENODEV);
+            return Error{Error::POSIX, ENODEV};
         case 406:
-            return VFSError::FromErrno(EINVAL);
+            return Error{Error::POSIX, EINVAL};
         case 407:
-            return VFSError::FromErrno(ECONNREFUSED);
+            return Error{Error::POSIX, ECONNREFUSED};
         case 408:
-            return VFSError::FromErrno(ETIMEDOUT);
+            return Error{Error::POSIX, ETIMEDOUT};
         case 409:
-            return VFSError::FromErrno(EINVAL);
+            return Error{Error::POSIX, EINVAL};
         case 410:
-            return VFSError::FromErrno(ENOENT);
+            return Error{Error::POSIX, ENOENT};
         case 411:
         case 412:
-            return VFSError::FromErrno(EINVAL);
+            return Error{Error::POSIX, EINVAL};
         case 413:
-            return VFSError::FromErrno(EOVERFLOW);
+            return Error{Error::POSIX, EOVERFLOW};
         case 414:
-            return VFSError::FromErrno(ENAMETOOLONG);
+            return Error{Error::POSIX, ENAMETOOLONG};
         case 415:
         case 416:
         case 417:
-            return VFSError::FromErrno(EINVAL);
+            return Error{Error::POSIX, EINVAL};
         case 421:
-            return VFSError::FromErrno(ECONNABORTED);
+            return Error{Error::POSIX, ECONNABORTED};
         case 422:
-            return VFSError::FromErrno(EINVAL);
+            return Error{Error::POSIX, EINVAL};
         case 423:
-            return VFSError::FromErrno(EPERM);
+            return Error{Error::POSIX, EPERM};
         case 424:
         case 428:
-            return VFSError::FromErrno(EINVAL);
+            return Error{Error::POSIX, EINVAL};
         case 429:
-            return VFSError::FromErrno(EMFILE);
+            return Error{Error::POSIX, EMFILE};
         case 431:
-            return VFSError::FromErrno(EOVERFLOW);
+            return Error{Error::POSIX, EOVERFLOW};
         case 507:
-            return VFSError::FromErrno(EDQUOT);
+            return Error{Error::POSIX, EDQUOT};
         case 508:
-            return VFSError::FromErrno(ELOOP);
+            return Error{Error::POSIX, ELOOP};
         default:
-            return VFSError::FromErrno(EIO);
+            return Error{Error::POSIX, EIO};
     }
 }
 

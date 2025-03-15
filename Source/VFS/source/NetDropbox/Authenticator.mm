@@ -108,18 +108,17 @@ void AuthenticatorImpl::Callback(OIDAuthState *_Nullable _auth_state, NSError *_
     if( _error != nil ) {
         Log::Warn("Failed to got auth token, error: {}", _error.localizedDescription.UTF8String);
 
-        int error = VFSError::Ok;
+        Error error = Error{_error};
         if( [_error.domain isEqualToString:OIDOAuthTokenErrorDomain] ||
             [_error.domain isEqualToString:OIDOAuthAuthorizationErrorDomain] ||
             [_error.domain isEqualToString:OIDOAuthTokenErrorDomain] ||
             [_error.domain isEqualToString:OIDOAuthRegistrationErrorDomain] ||
             [_error.domain isEqualToString:OIDResourceServerAuthorizationErrorDomain] ||
-            [_error.domain isEqualToString:OIDHTTPErrorDomain] )
-            error = VFSError::FromErrno(EAUTH);
-        else
-            error = VFSError::FromNSError(_error);
+            [_error.domain isEqualToString:OIDHTTPErrorDomain] ) {
+            error = Error{Error::POSIX, EAUTH};
+        }
 
-        m_OnError(VFSError::ToError(error));
+        m_OnError(error);
         return;
     }
 }

@@ -521,7 +521,7 @@ TEST_CASE(PREFIX "chmod")
     const VFSHostPtr host = hostForUbuntu2004_User1_Pwd();
     const auto path = "/home/user1/chmodtest";
 
-    REQUIRE(VFSEasyCreateEmptyFile(path, host) == VFSError::Ok);
+    REQUIRE(VFSEasyCreateEmptyFile(path, host));
 
     VFSStat st = host->Stat(path, 0).value();
     REQUIRE(st.mode_bits.xusr == 0);
@@ -540,7 +540,7 @@ TEST_CASE(PREFIX "chown")
     const VFSHostPtr host = hostForUbuntu2004_Root_ED25519();
     const auto path = "/root/chowntest";
 
-    REQUIRE(VFSEasyCreateEmptyFile(path, host) == VFSError::Ok);
+    REQUIRE(VFSEasyCreateEmptyFile(path, host));
     VFSStat st = host->Stat(path, 0).value();
 
     const auto new_uid = st.uid + 1;

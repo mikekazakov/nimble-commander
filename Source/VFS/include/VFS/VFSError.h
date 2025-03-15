@@ -80,10 +80,6 @@ int FromErrno(int _errno) noexcept;
 int FromLibarchive(int _errno);
 int FromCFNetwork(int _errno);
 
-// "Domain: Code(numeric)
-// Can return "" if unimplemented for a domain
-std::string FormatErrorCode(int _vfs_code);
-
 #ifdef __OBJC__
 int FromNSError(NSError *_err);
 #endif

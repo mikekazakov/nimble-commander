@@ -5,10 +5,6 @@
 #include <Base/Error.h>
 #include <expected>
 
-#ifdef __OBJC__
-@class NSError;
-#endif
-
 namespace VFSError {
 enum {
     // general error codes
@@ -83,6 +79,5 @@ int FromCFNetwork(int _errno);
 // Transition, to be removed later
 inline constexpr std::string_view ErrorDomain = "VFSError";
 nc::Error ToError(int _vfs_error_code);
-std::expected<void, nc::Error> ToExpectedError(int _vfs_error_code);
 
 }; // namespace VFSError

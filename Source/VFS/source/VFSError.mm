@@ -205,12 +205,4 @@ nc::Error ToError(int _vfs_error_code)
     return {ErrorDomain, _vfs_error_code};
 }
 
-// TODO: remove this later
-std::expected<void, nc::Error> ToExpectedError(int _vfs_error_code)
-{
-    if( _vfs_error_code == VFSError::Ok )
-        return {};
-    return std::unexpected(ToError(_vfs_error_code));
-}
-
 } // namespace VFSError

@@ -382,9 +382,7 @@ complex copy
 static void TestComplexCopy(VFSHostPtr _host)
 {
     std::ignore = VFSEasyDelete("/Test2", _host);
-    const auto copy_rc =
-        VFSEasyCopyDirectory("/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host);
-    REQUIRE(copy_rc == VFSError::Ok);
+    REQUIRE(VFSEasyCopyDirectory("/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host));
 
     int res = 0;
     const int cmp_rc =

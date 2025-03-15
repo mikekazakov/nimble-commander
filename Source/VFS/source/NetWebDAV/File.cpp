@@ -125,8 +125,8 @@ void File::SpawnUploadConnectionIfNeeded()
     m_Conn = m_Host.ConnectionsPool().GetRaw();
     assert(m_Conn);
     const auto url = URIForPath(m_Host.Config(), Path());
-    m_Conn->SetURL(url);
-    m_Conn->SetNonBlockingUpload(m_Size);
+    std::ignore = m_Conn->SetURL(url);                  // TODO: why is rc ignored?
+    std::ignore = m_Conn->SetNonBlockingUpload(m_Size); // TODO: why is rc ignored?
     m_Conn->MakeNonBlocking();
 }
 
@@ -138,8 +138,8 @@ void File::SpawnDownloadConnectionIfNeeded()
     m_Conn = m_Host.ConnectionsPool().GetRaw();
     assert(m_Conn);
     const auto url = URIForPath(m_Host.Config(), Path());
-    m_Conn->SetURL(url);
-    m_Conn->SetCustomRequest("GET");
+    std::ignore = m_Conn->SetURL(url);             // TODO: why is rc ignored?
+    std::ignore = m_Conn->SetCustomRequest("GET"); // TODO: why is rc ignored?
     m_Conn->MakeNonBlocking();
 }
 
@@ -157,7 +157,7 @@ std::expected<void, Error> File::Close()
 
     if( m_OpenFlags & VFSFlags::OF_Read ) {
         if( m_Conn ) {
-            m_Conn->ReadBodyUpToSize(Connection::AbortBodyRead);
+            std::ignore = m_Conn->ReadBodyUpToSize(Connection::AbortBodyRead); // TODO: why is rc ignored?
             m_Host.ConnectionsPool().Return(std::move(m_Conn));
         }
     }

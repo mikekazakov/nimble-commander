@@ -77,7 +77,6 @@ enum {
 };
 
 int FromErrno(int _errno) noexcept;
-int FromErrno() noexcept;
 int FromLibarchive(int _errno);
 int FromCFNetwork(int _errno);
 

@@ -76,8 +76,8 @@ void Copying::SetupCallbacks()
     j.m_OnCantDeleteLockedItem = [this](Error _1, const std::string &_2, VFSHost &_3) {
         return OnLockedItemIssue(_1, _2, _3, LockedItemCause::Deletion);
     };
-    j.m_OnCantOpenLockedItem = [this](int _1, const std::string &_2, VFSHost &_3) {
-        return OnLockedItemIssue(VFSError::ToError(_1), _2, _3, LockedItemCause::Opening);
+    j.m_OnCantOpenLockedItem = [this](Error _1, const std::string &_2, VFSHost &_3) {
+        return OnLockedItemIssue(_1, _2, _3, LockedItemCause::Opening);
     };
     j.m_OnUnlockError = [this](Error _1, const std::string &_2, VFSHost &_3) { return OnUnlockError(_1, _2, _3); };
     j.m_OnNotADirectory = [this](const std::string &_1, VFSHost &_2) { return OnNotADirectory(_1, _2); };

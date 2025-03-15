@@ -143,11 +143,6 @@ int FromErrno(int _errno) noexcept
     }
 }
 
-int FromErrno() noexcept
-{
-    return FromErrno(errno);
-}
-
 int FromLibarchive(int _errno)
 {
     if( _errno == EFTYPE )

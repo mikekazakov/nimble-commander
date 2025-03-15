@@ -10,7 +10,6 @@
 @property(nonatomic) NSString *message;
 @property(nonatomic) NSString *path;
 
-- (void)setErrorNo:(int)_errorNo;
 - (void)setError:(nc::Error)_error;
 
 @end

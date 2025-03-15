@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DropboxAccountSheetController.h"
 #include <VFS/NetDropbox.h>
 #include <NimbleCommander/Bootstrap/NCE.h>
@@ -106,9 +106,9 @@ enum class State : uint8_t {
             if( DropboxAccountSheetController *const me = weak_self )
                 [me processAuthToken:_token];
         },
-        [weak_self](int _vfs_error) {
+        [weak_self](Error _error) {
             if( DropboxAccountSheetController *const me = weak_self )
-                [me processAuthError:_vfs_error];
+                [me processAuthError:_error];
         });
 }
 
@@ -123,32 +123,32 @@ enum class State : uint8_t {
 
     const auto access_token = _token.access_token;
     dispatch_to_background([=] {
-        auto res = vfs::DropboxHost::CheckTokenAndRetrieveAccountEmail(access_token);
-        auto rc = res.first;
-        auto email = res.second;
+        const std::expected<std::string, Error> email =
+            vfs::DropboxHost::CheckTokenAndRetrieveAccountEmail(access_token);
         dispatch_to_main_queue([=] {
-            if( rc == VFSError::Ok ) {
-                self.accountField.stringValue = [NSString stringWithUTF8StdString:email];
-                m_Connection.account = email;
+            if( email ) {
+                self.accountField.stringValue = [NSString stringWithUTF8StdString:*email];
+                m_Connection.account = *email;
                 self.state = State::Success;
             }
             else {
                 self.accountField.stringValue = @"";
                 m_Connection.account = "";
-                self.failureReasonField.stringValue = VFSError::ToNSError(rc).localizedDescription;
+                self.failureReasonField.stringValue =
+                    [NSString stringWithUTF8StdString:email.error().LocalizedFailureReason()];
                 self.state = State::Failure;
             }
         });
     });
 }
 
-- (void)processAuthError:(int)_vfs_error
+- (void)processAuthError:(Error)_error
 {
     // Brings this app to the foreground.
     [NSRunningApplication.currentApplication
         activateWithOptions:(NSApplicationActivateAllWindows | NSApplicationActivateIgnoringOtherApps)];
     self.state = State::Failure;
-    self.failureReasonField.stringValue = VFSError::ToNSError(_vfs_error).localizedDescription;
+    self.failureReasonField.stringValue = [NSString stringWithUTF8StdString:_error.LocalizedFailureReason()];
 }
 
 - (void)setPassword:(std::string)password

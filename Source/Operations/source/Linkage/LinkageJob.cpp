@@ -76,7 +76,7 @@ void LinkageJob::DoSymlinkAlteration()
 void LinkageJob::DoHardlinkCreation()
 {
     if( !m_VFS->IsNativeFS() ) {
-        m_OnCreateHardlinkError(VFSError::FromErrno(ENOTSUP), m_LinkPath, *m_VFS);
+        m_OnCreateHardlinkError(Error{Error::POSIX, ENOTSUP}, m_LinkPath, *m_VFS);
         Stop();
         return;
     }
@@ -86,7 +86,7 @@ void LinkageJob::DoHardlinkCreation()
         Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
     }
     else {
-        m_OnCreateHardlinkError(VFSError::FromErrno(), m_LinkPath, *m_VFS);
+        m_OnCreateHardlinkError(Error{Error::POSIX, errno}, m_LinkPath, *m_VFS);
         Stop();
     }
 }

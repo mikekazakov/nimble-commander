@@ -158,7 +158,7 @@ void DropboxHost::InitialAccountLookup()
         throw ErrorException(VFSError::ToError(rc));
 }
 
-std::pair<int, std::string> DropboxHost::CheckTokenAndRetrieveAccountEmail(const std::string &_token)
+std::expected<std::string, Error> DropboxHost::CheckTokenAndRetrieveAccountEmail(const std::string &_token)
 {
     const auto config = NSURLSessionConfiguration.defaultSessionConfiguration;
     const auto session = [NSURLSession sessionWithConfiguration:config];
@@ -170,12 +170,12 @@ std::pair<int, std::string> DropboxHost::CheckTokenAndRetrieveAccountEmail(const
     if( rc == VFSError::Ok ) {
         const auto json = ParseJSON(data);
         if( !json )
-            return {VFSError::FromErrno(EBADMSG), ""};
+            return std::unexpected(Error{Error::POSIX, EBADMSG});
         const auto account_info = ParseAccountInfo(*json);
-        return {VFSError::Ok, account_info.email};
+        return account_info.email;
     }
     else
-        return {rc, ""};
+        return std::unexpected(VFSError::ToError(rc));
 }
 
 VFSMeta DropboxHost::Meta()

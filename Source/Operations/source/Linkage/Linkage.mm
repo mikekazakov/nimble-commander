@@ -23,7 +23,7 @@ Linkage::Linkage(const std::string &_link_path,
     m_Job->m_OnAlterSymlinkError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         OnAlterSymlinkError(_err, _path, _vfs);
     };
-    m_Job->m_OnCreateHardlinkError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
+    m_Job->m_OnCreateHardlinkError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         OnCreatehardlinkError(_err, _path, _vfs);
     };
     SetTitle(Caption(_type).UTF8String);
@@ -46,7 +46,7 @@ void Linkage::OnAlterSymlinkError(Error _err, const std::string &_path, VFSHost 
     ReportHaltReason(NSLocalizedString(@"Failed to alter a symbolic link", ""), _err, _path, _vfs);
 }
 
-void Linkage::OnCreatehardlinkError(int _err, const std::string &_path, VFSHost &_vfs)
+void Linkage::OnCreatehardlinkError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     ReportHaltReason(NSLocalizedString(@"Failed to create a hard link", ""), _err, _path, _vfs);
 }

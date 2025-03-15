@@ -129,13 +129,13 @@ void MakeNewFile::Perform(PanelController *_target, id /*_sender*/) const
         if( name.empty() )
             return;
 
-        const int ret = VFSEasyCreateEmptyFile((dir / name).c_str(), vfs);
-        if( ret != 0 ) {
+        const std::expected<void, Error> ret = VFSEasyCreateEmptyFile((dir / name).c_str(), vfs);
+        if( !ret ) {
             dispatch_to_main_queue([=] {
                 Alert *const alert = [[Alert alloc] init];
                 alert.messageText = NSLocalizedString(@"Failed to create an empty file:",
                                                       "Showing error when trying to create an empty file");
-                alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
+                alert.informativeText = [NSString stringWithUTF8StdString:ret.error().LocalizedFailureReason()];
                 [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
                 [alert runModal];
             });

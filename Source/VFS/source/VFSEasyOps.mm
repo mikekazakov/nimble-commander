@@ -271,25 +271,23 @@ std::expected<void, nc::Error> VFSEasyDelete(const char *_full_path, const std::
     }
 }
 
-int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr &_vfs)
+std::expected<void, Error> VFSEasyCreateEmptyFile(const std::string_view _path, const VFSHostPtr &_vfs)
 {
-    const std::expected<VFSFilePtr, nc::Error> efile = _vfs->CreateFile(_path);
+    const std::expected<VFSFilePtr, Error> efile = _vfs->CreateFile(_path);
     if( !efile )
-        return VFSError::GenericError; // TODO: return efile
+        return std::unexpected(efile.error());
     VFSFile &file = **efile;
 
     const std::expected<void, Error> ret =
         file.Open(VFSFlags::OF_IRUsr | VFSFlags::OF_IRGrp | VFSFlags::OF_IROth | VFSFlags::OF_IWUsr |
                   VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist);
     if( !ret != 0 )
-        return VFSError::GenericError; // TODO: return ret
+        return std::unexpected(ret.error());
 
     if( file.GetWriteParadigm() == VFSFile::WriteParadigm::Upload )
         std::ignore = file.SetUploadSize(0);
 
-    std::ignore = file.Close(); // TODO: return this
-
-    return VFSError::Ok;
+    return file.Close();
 }
 
 int VFSCompareNodes(const std::filesystem::path &_file1_full_path,

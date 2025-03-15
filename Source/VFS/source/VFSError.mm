@@ -265,7 +265,8 @@ static NSString *TextForCode(int _code)
     }
 }
 
-NSError *ToNSError(int _code)
+// TODO: remove this
+static NSError *ToNSError(int _code)
 {
     if( _code >= g_PosixMin && _code <= g_PosixMax )
         // unix error codes section

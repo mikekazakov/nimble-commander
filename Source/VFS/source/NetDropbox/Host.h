@@ -87,7 +87,7 @@ public:
     static NSURLSessionConfiguration *GenericConfiguration();
 #endif
 
-    static std::pair<int, std::string> CheckTokenAndRetrieveAccountEmail(const std::string &_token);
+    static std::expected<std::string, Error> CheckTokenAndRetrieveAccountEmail(const std::string &_token);
 
 private:
     void Init();

@@ -86,7 +86,6 @@ int FromCFNetwork(int _errno);
 std::string FormatErrorCode(int _vfs_code);
 
 #ifdef __OBJC__
-NSError *ToNSError(int _code);
 int FromNSError(NSError *_err);
 #endif
 

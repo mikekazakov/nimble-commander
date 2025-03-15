@@ -79,6 +79,8 @@ private:
 
     static ssize_t WriteCallback(struct archive *_archive, void *_client_data, const void *_buffer, size_t _length);
 
+    ssize_t WriteCallback(struct archive *_archive, const void *_buffer, size_t _length);
+
     std::vector<VFSListingItem> m_InitialListingItems;
     std::string m_DstRoot;
     VFSHostPtr m_DstVFS;
@@ -87,6 +89,7 @@ private:
 
     struct ::archive *m_Archive = nullptr;
     std::shared_ptr<VFSFile> m_TargetFile;
+    std::optional<Error> m_TargetFileLastError;
 
     std::unique_ptr<const Source> m_Source;
 };

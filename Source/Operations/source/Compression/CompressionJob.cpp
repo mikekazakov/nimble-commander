@@ -266,8 +266,7 @@ CompressionJob::ProcessDirectoryItem(int _index, const std::string &_relative_pa
     archive_entry_copy_stat(entry, vfs_stat);
     const auto head_write_rc = archive_write_header(m_Archive, entry);
     if( head_write_rc < 0 ) {
-        m_TargetWriteError(
-            m_TargetFile->LastError().value_or(Error{Error::POSIX, EINVAL}), m_TargetArchivePath, *m_DstVFS);
+        m_TargetWriteError(m_TargetFileLastError.value_or(Error{Error::POSIX, EINVAL}), m_TargetArchivePath, *m_DstVFS);
         Stop();
     }
 
@@ -338,8 +337,7 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
     archive_entry_copy_stat(entry, stat);
     const auto head_write_rc = archive_write_header(m_Archive, entry);
     if( head_write_rc < 0 ) {
-        m_TargetWriteError(
-            m_TargetFile->LastError().value_or(Error{Error::POSIX, EINVAL}), m_TargetArchivePath, *m_DstVFS);
+        m_TargetWriteError(m_TargetFileLastError.value_or(Error{Error::POSIX, EINVAL}), m_TargetArchivePath, *m_DstVFS);
         Stop();
     }
 
@@ -362,7 +360,7 @@ CompressionJob::ProcessRegularItem(int _index, const std::string &_relative_path
 
         if( la_rc < 0 ) {
             m_TargetWriteError(
-                m_TargetFile->LastError().value_or(Error{Error::POSIX, EINVAL}), m_TargetArchivePath, *m_DstVFS);
+                m_TargetFileLastError.value_or(Error{Error::POSIX, EINVAL}), m_TargetArchivePath, *m_DstVFS);
             Stop();
             return StepResult::Stopped;
         }
@@ -562,13 +560,18 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
     return true;
 }
 
-ssize_t
-CompressionJob::WriteCallback(struct archive * /*_archive*/, void *_client_data, const void *_buffer, size_t _length)
+ssize_t CompressionJob::WriteCallback(struct archive *_archive, void *_client_data, const void *_buffer, size_t _length)
 {
     const auto me = static_cast<CompressionJob *>(_client_data);
-    const std::expected<size_t, Error> ret = me->m_TargetFile->Write(_buffer, _length);
+    return me->WriteCallback(_archive, _buffer, _length);
+}
+
+ssize_t CompressionJob::WriteCallback(struct archive * /*_archive*/, const void *_buffer, size_t _length)
+{
+    const std::expected<size_t, Error> ret = m_TargetFile->Write(_buffer, _length);
     if( ret )
         return *ret;
+    m_TargetFileLastError = ret.error();
     return ARCHIVE_FATAL;
 }
 

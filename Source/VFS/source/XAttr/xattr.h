@@ -40,7 +40,7 @@ public:
     void ReportChange(); // will cause host to reload xattrs list
 
 private:
-    int Fetch();
+    std::expected<void, Error> Fetch();
 
     VFSConfiguration m_Configuration;
     int m_FD = -1;

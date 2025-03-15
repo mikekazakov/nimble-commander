@@ -382,9 +382,7 @@ complex copy
 static void TestComplexCopy(VFSHostPtr _host)
 {
     std::ignore = VFSEasyDelete("/Test2", _host);
-    const auto copy_rc =
-        VFSEasyCopyDirectory("/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host);
-    REQUIRE(copy_rc == VFSError::Ok);
+    REQUIRE(VFSEasyCopyDirectory("/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host));
 
     int res = 0;
     const int cmp_rc =
@@ -409,7 +407,7 @@ static void TestRename(VFSHostPtr _host)
         const auto p2 = "/new_empty_file_1";
         std::ignore = VFSEasyDelete(p1, _host);
         std::ignore = VFSEasyDelete(p2, _host);
-        REQUIRE(VFSEasyCreateEmptyFile(p1, _host) == VFSError::Ok);
+        REQUIRE(VFSEasyCreateEmptyFile(p1, _host));
         REQUIRE(_host->Rename(p1, p2, nullptr));
         REQUIRE(_host->Exists(p1) == false);
         REQUIRE(_host->Exists(p2) == true);
@@ -421,7 +419,7 @@ static void TestRename(VFSHostPtr _host)
         const auto p2 = std::filesystem::path("/TestTestDir/new_empty_file_1");
         std::ignore = VFSEasyDelete(p1, _host);
         std::ignore = VFSEasyDelete(p2.parent_path().c_str(), _host);
-        REQUIRE(VFSEasyCreateEmptyFile(p1, _host) == VFSError::Ok);
+        REQUIRE(VFSEasyCreateEmptyFile(p1, _host));
         REQUIRE(_host->CreateDirectory(p2.parent_path().c_str(), 0));
         REQUIRE(_host->Rename(p1, p2.c_str()));
         REQUIRE(_host->Exists(p1) == false);
@@ -465,7 +463,7 @@ static void TestRename(VFSHostPtr _host)
         std::ignore = VFSEasyDelete(p1, _host);
         std::ignore = VFSEasyDelete(p2, _host);
         REQUIRE(_host->CreateDirectory(p1, 0));
-        REQUIRE(VFSEasyCreateEmptyFile(pp1, _host) == VFSError::Ok);
+        REQUIRE(VFSEasyCreateEmptyFile(pp1, _host));
         REQUIRE(_host->Rename(p1, p2));
         REQUIRE(_host->Exists(p1) == false);
         REQUIRE(_host->Exists(pp1) == false);

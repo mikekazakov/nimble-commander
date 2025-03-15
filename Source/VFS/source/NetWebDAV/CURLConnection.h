@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Connection.h"
@@ -21,19 +21,19 @@ public:
 
     void Clear() override;
 
-    int SetCustomRequest(std::string_view _request) override;
+    std::expected<void, Error> SetCustomRequest(std::string_view _request) override;
 
-    int SetURL(std::string_view _url) override;
+    std::expected<void, Error> SetURL(std::string_view _url) override;
 
-    int SetHeader(std::span<const std::string_view> _header) override;
+    std::expected<void, Error> SetHeader(std::span<const std::string_view> _header) override;
 
-    int SetBody(std::span<const std::byte> _body) override;
+    std::expected<void, Error> SetBody(std::span<const std::byte> _body) override;
 
-    int SetNonBlockingUpload(size_t _upload_size) override;
+    std::expected<void, Error> SetNonBlockingUpload(size_t _upload_size) override;
 
     void MakeNonBlocking() override;
 
-    BlockRequestResult PerformBlockingRequest() override;
+    std::expected<int, Error> PerformBlockingRequest() override;
 
     WriteBuffer &RequestBody() override;
 
@@ -41,9 +41,9 @@ public:
 
     std::string_view ResponseHeader() override;
 
-    int ReadBodyUpToSize(size_t _target) override;
+    std::expected<void, Error> ReadBodyUpToSize(size_t _target) override;
 
-    int WriteBodyUpToSize(size_t _target) override;
+    std::expected<void, Error> WriteBodyUpToSize(size_t _target) override;
 
 private:
     using SlistPtr = std::unique_ptr<struct curl_slist, decltype(&curl_slist_free_all)>;

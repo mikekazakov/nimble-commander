@@ -5,10 +5,6 @@
 #include <Base/Error.h>
 #include <expected>
 
-#ifdef __OBJC__
-@class NSError;
-#endif
-
 namespace VFSError {
 enum {
     // general error codes
@@ -77,22 +73,10 @@ enum {
 };
 
 int FromErrno(int _errno) noexcept;
-int FromErrno() noexcept;
 int FromLibarchive(int _errno);
-int FromCFNetwork(int _errno);
-
-// "Domain: Code(numeric)
-// Can return "" if unimplemented for a domain
-std::string FormatErrorCode(int _vfs_code);
-
-#ifdef __OBJC__
-NSError *ToNSError(int _code);
-int FromNSError(NSError *_err);
-#endif
 
 // Transition, to be removed later
 inline constexpr std::string_view ErrorDomain = "VFSError";
 nc::Error ToError(int _vfs_error_code);
-std::expected<void, nc::Error> ToExpectedError(int _vfs_error_code);
 
 }; // namespace VFSError

@@ -14,8 +14,8 @@ struct LinkageJobCallbacks {
     std::function<void(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnAlterSymlinkError =
         [](Error, const std::string &, VFSHost &) {};
 
-    std::function<void(int _err, const std::string &_path, VFSHost &_vfs)> m_OnCreateHardlinkError =
-        [](int, const std::string &, VFSHost &) {};
+    std::function<void(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnCreateHardlinkError =
+        [](Error, const std::string &, VFSHost &) {};
 };
 
 class LinkageJob final : public Job, public LinkageJobCallbacks

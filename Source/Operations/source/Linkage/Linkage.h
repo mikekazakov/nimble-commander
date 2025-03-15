@@ -22,7 +22,7 @@ private:
     virtual Job *GetJob() noexcept override;
     void OnCreateSymlinkError(Error _err, const std::string &_path, VFSHost &_vfs);
     void OnAlterSymlinkError(Error _err, const std::string &_path, VFSHost &_vfs);
-    void OnCreatehardlinkError(int _err, const std::string &_path, VFSHost &_vfs);
+    void OnCreatehardlinkError(Error _err, const std::string &_path, VFSHost &_vfs);
 
     std::unique_ptr<LinkageJob> m_Job;
 };

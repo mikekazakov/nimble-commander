@@ -808,7 +808,7 @@ std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedFork() con
 
     const int pid = nc::term::Task::RunDetachedProcess(m_ET.m_ExecutablePath, args);
     if( pid < 0 ) {
-        return std::unexpected(VFSError::FormatErrorCode(VFSError::FromErrno()));
+        return std::unexpected(Error{Error::POSIX, errno}.LocalizedFailureReason());
     }
 
     return pid;

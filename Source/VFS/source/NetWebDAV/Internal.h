@@ -1,8 +1,10 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
 #include <sys/stat.h>
+#include <Base/Error.h>
+#include <optional>
 
 namespace nc::vfs::webdav {
 
@@ -65,8 +67,8 @@ struct PropFindResponse {
 constexpr uint16_t DirectoryAccessMode = S_IRUSR | S_IWUSR | S_IFDIR | S_IXUSR;
 constexpr uint16_t RegularFileAccessMode = S_IRUSR | S_IWUSR | S_IFREG;
 
-int ToVFSError(int _curl_rc, int _http_rc) noexcept;
-int CurlRCToVFSError(int _curl_rc) noexcept;
-int HTTPRCToVFSError(int _http_rc) noexcept;
+std::optional<Error> ToError(int _curl_rc, int _http_rc) noexcept;
+std::optional<Error> CurlRCToError(int _curl_rc) noexcept;
+std::optional<Error> HTTPRCToError(int _http_rc) noexcept;
 
 } // namespace nc::vfs::webdav

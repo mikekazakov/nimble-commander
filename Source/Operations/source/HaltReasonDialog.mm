@@ -52,11 +52,6 @@ using namespace nc::ops;
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
 }
 
-- (void)setErrorNo:(int)errorNo
-{
-    m_Error = VFSError::ToNSError(errorNo).localizedDescription;
-}
-
 - (void)setError:(nc::Error)_error
 {
     m_Error = [NSString stringWithUTF8String:_error.LocalizedFailureReason().c_str()];

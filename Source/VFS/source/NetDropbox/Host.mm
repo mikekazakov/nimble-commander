@@ -92,10 +92,10 @@ void DropboxHost::Construct(const std::string &_account, const std::string &_acc
     I->m_Account = _account;
     if( TokenMangler::IsMangledRefreshToken(_access_token) ) {
         I->m_RefreshToken = TokenMangler::FromMangledRefreshToken(_access_token);
-        auto [vfs_err, access_token] = RetreiveAccessTokenFromRefreshToken(I->m_RefreshToken);
-        if( vfs_err != VFSError::Ok )
-            throw ErrorException(VFSError::ToError(vfs_err));
-        SetAccessToken(access_token);
+        const std::expected<std::string, Error> access_token = RetreiveAccessTokenFromRefreshToken(I->m_RefreshToken);
+        if( !access_token )
+            throw ErrorException(access_token.error());
+        SetAccessToken(*access_token);
     }
     else {
         SetAccessToken(_access_token);
@@ -117,7 +117,7 @@ void DropboxHost::SetAccessToken(const std::string &_access_token)
     I->m_AuthString = [NSString stringWithFormat:@"Bearer %s", I->m_Token.c_str()];
 }
 
-std::pair<int, std::string> DropboxHost::RetreiveAccessTokenFromRefreshToken(const std::string &_refresh_token)
+std::expected<std::string, Error> DropboxHost::RetreiveAccessTokenFromRefreshToken(const std::string &_refresh_token)
 {
     NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::OAuth2Token];
     req.HTTPMethod = @"POST";
@@ -129,36 +129,36 @@ std::pair<int, std::string> DropboxHost::RetreiveAccessTokenFromRefreshToken(con
                                    Config().client_secret.c_str()];
     [req setHTTPBody:[post_string dataUsingEncoding:NSUTF8StringEncoding]];
 
-    const auto [rc, data] = SendSynchronousRequest(GenericSession(), req);
-    if( rc == VFSError::Ok ) {
-        const auto json = ParseJSON(data);
+    const std::expected<NSData *, Error> data = SendSynchronousRequest(GenericSession(), req);
+    if( data ) {
+        const auto json = ParseJSON(*data);
         if( !json )
-            return {VFSError::FromErrno(EBADMSG), ""};
+            return std::unexpected(Error{Error::POSIX, EBADMSG});
         const auto access_token = ParseRefreshTokenReponse(*json);
         if( access_token )
-            return {VFSError::Ok, *access_token};
+            return *access_token;
         else
-            return {VFSError::FromErrno(EBADMSG), ""};
+            return std::unexpected(Error{Error::POSIX, EBADMSG});
     }
     else
-        return {rc, ""};
+        return std::unexpected(data.error());
 }
 
 void DropboxHost::InitialAccountLookup()
 {
     NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::GetCurrentAccount];
-    auto [rc, data] = SendSynchronousPostRequest(req);
-    if( rc == VFSError::Ok ) {
-        auto json = ParseJSON(data);
+    const std::expected<NSData *, Error> data = SendSynchronousPostRequest(req);
+    if( data ) {
+        auto json = ParseJSON(*data);
         if( !json )
             throw ErrorException(VFSError::ToError(VFSError::FromErrno(EBADMSG)));
         I->m_AccountInfo = ParseAccountInfo(*json);
     }
     else
-        throw ErrorException(VFSError::ToError(rc));
+        throw ErrorException(data.error());
 }
 
-std::pair<int, std::string> DropboxHost::CheckTokenAndRetrieveAccountEmail(const std::string &_token)
+std::expected<std::string, Error> DropboxHost::CheckTokenAndRetrieveAccountEmail(const std::string &_token)
 {
     const auto config = NSURLSessionConfiguration.defaultSessionConfiguration;
     const auto session = [NSURLSession sessionWithConfiguration:config];
@@ -166,16 +166,16 @@ std::pair<int, std::string> DropboxHost::CheckTokenAndRetrieveAccountEmail(const
     NSMutableURLRequest *const request = [[NSMutableURLRequest alloc] initWithURL:api::GetCurrentAccount];
     request.HTTPMethod = @"POST";
     [request setValue:auth_string forHTTPHeaderField:@"Authorization"];
-    auto [rc, data] = SendSynchronousRequest(session, request);
-    if( rc == VFSError::Ok ) {
-        const auto json = ParseJSON(data);
+    const std::expected<NSData *, Error> data = SendSynchronousRequest(session, request);
+    if( data ) {
+        const auto json = ParseJSON(*data);
         if( !json )
-            return {VFSError::FromErrno(EBADMSG), ""};
+            return std::unexpected(Error{Error::POSIX, EBADMSG});
         const auto account_info = ParseAccountInfo(*json);
-        return {VFSError::Ok, account_info.email};
+        return account_info.email;
     }
     else
-        return {rc, ""};
+        return std::unexpected(data.error());
 }
 
 VFSMeta DropboxHost::Meta()
@@ -214,9 +214,9 @@ std::expected<VFSStatFS, Error> DropboxHost::StatFS([[maybe_unused]] std::string
                                                     const VFSCancelChecker &_cancel_checker)
 {
     NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::GetSpaceUsage];
-    auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
-    if( rc == VFSError::Ok ) {
-        auto json_opt = ParseJSON(data);
+    const std::expected<NSData *, Error> data = SendSynchronousPostRequest(req, _cancel_checker);
+    if( data ) {
+        auto json_opt = ParseJSON(*data);
         if( !json_opt )
             return std::unexpected(VFSError::ToError(VFSError::GenericError));
         auto &json = *json_opt;
@@ -233,7 +233,7 @@ std::expected<VFSStatFS, Error> DropboxHost::StatFS([[maybe_unused]] std::string
         return stat;
     }
 
-    return std::unexpected(VFSError::ToError(rc));
+    return std::unexpected(data.error());
 }
 
 std::expected<VFSStat, Error> DropboxHost::Stat(std::string_view _path,
@@ -259,9 +259,9 @@ std::expected<VFSStat, Error> DropboxHost::Stat(std::string_view _path,
     NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::GetMetadata];
     InsertHTTPBodyPathspec(req, path);
 
-    auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
-    if( rc == VFSError::Ok ) {
-        auto json_opt = ParseJSON(data);
+    const std::expected<NSData *, Error> data = SendSynchronousPostRequest(req, _cancel_checker);
+    if( data ) {
+        auto json_opt = ParseJSON(*data);
         if( !json_opt )
             return std::unexpected(Error{Error::POSIX, EINVAL});
         auto &json = *json_opt;
@@ -286,7 +286,7 @@ std::expected<VFSStat, Error> DropboxHost::Stat(std::string_view _path,
 
         return st;
     }
-    return std::unexpected(VFSError::ToError(rc));
+    return std::unexpected(data.error());
 }
 
 std::expected<void, Error>
@@ -309,11 +309,11 @@ DropboxHost::IterateDirectoryListing(std::string_view _path,
         else
             InsertHTTPBodyCursor(req, cursor_token);
 
-        auto [rc, data] = SendSynchronousPostRequest(req);
-        if( rc != VFSError::Ok )
-            return std::unexpected(VFSError::ToError(rc));
+        std::expected<NSData *, Error> data = SendSynchronousPostRequest(req);
+        if( !data )
+            return std::unexpected(data.error());
 
-        auto json_opt = ParseJSON(data);
+        auto json_opt = ParseJSON(*data);
         if( !json_opt )
             return std::unexpected(Error{Error::POSIX, EINVAL});
         auto &json = *json_opt;
@@ -388,11 +388,11 @@ std::expected<VFSListingPtr, Error> DropboxHost::FetchDirectoryListing(std::stri
         else
             InsertHTTPBodyCursor(req, cursor_token);
 
-        auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
-        if( rc != VFSError::Ok )
-            return std::unexpected(VFSError::ToError(rc));
+        const std::expected<NSData *, Error> data = SendSynchronousPostRequest(req, _cancel_checker);
+        if( !data )
+            return std::unexpected(data.error());
 
-        auto json_opt = ParseJSON(data);
+        auto json_opt = ParseJSON(*data);
         if( !json_opt )
             return std::unexpected(Error{Error::POSIX, EINVAL});
         auto &json = *json_opt;
@@ -447,11 +447,11 @@ std::expected<void, Error> DropboxHost::Unlink(std::string_view _path, const VFS
     NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::Delete];
     InsertHTTPBodyPathspec(req, _path);
 
-    auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
-    if( rc == VFSError::Ok )
+    const std::expected<NSData *, Error> data = SendSynchronousPostRequest(req, _cancel_checker);
+    if( data )
         return {};
 
-    return std::unexpected(VFSError::ToError(rc));
+    return std::unexpected(data.error());
 }
 
 std::expected<void, Error> DropboxHost::RemoveDirectory(std::string_view _path, const VFSCancelChecker &_cancel_checker)
@@ -466,11 +466,11 @@ std::expected<void, Error> DropboxHost::RemoveDirectory(std::string_view _path, 
     NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::Delete];
     InsertHTTPBodyPathspec(req, path);
 
-    auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
-    if( rc == VFSError::Ok )
+    const std::expected<NSData *, Error> data = SendSynchronousPostRequest(req, _cancel_checker);
+    if( data )
         return {};
 
-    return std::unexpected(VFSError::ToError(rc));
+    return std::unexpected(data.error());
 }
 
 std::expected<void, Error> DropboxHost::CreateDirectory(std::string_view _path,
@@ -487,11 +487,11 @@ std::expected<void, Error> DropboxHost::CreateDirectory(std::string_view _path,
     NSMutableURLRequest *const req = [[NSMutableURLRequest alloc] initWithURL:api::CreateFolder];
     InsertHTTPBodyPathspec(req, path);
 
-    auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
-    if( rc == VFSError::Ok )
+    const std::expected<NSData *, Error> data = SendSynchronousPostRequest(req, _cancel_checker);
+    if( data )
         return {};
 
-    return std::unexpected(VFSError::ToError(rc));
+    return std::unexpected(data.error());
 }
 
 bool DropboxHost::IsWritable() const
@@ -514,11 +514,11 @@ DropboxHost::Rename(std::string_view _old_path, std::string_view _new_path, cons
                                   EscapeString(new_path) + "\"" + " }";
     [req setHTTPBody:[NSData dataWithBytes:data(path_spec) length:size(path_spec)]];
 
-    auto [rc, data] = SendSynchronousPostRequest(req, _cancel_checker);
-    if( rc == VFSError::Ok )
+    const std::expected<NSData *, Error> data = SendSynchronousPostRequest(req, _cancel_checker);
+    if( data )
         return {};
 
-    return std::unexpected(VFSError::ToError(rc));
+    return std::unexpected(data.error());
 }
 
 const std::string &DropboxHost::Account() const
@@ -531,31 +531,31 @@ bool DropboxHost::IsCaseSensitiveAtPath([[maybe_unused]] std::string_view _dir) 
     return false;
 }
 
-std::pair<int, NSData *> DropboxHost::SendSynchronousPostRequest(NSMutableURLRequest *_request,
-                                                                 const VFSCancelChecker &_cancel_checker)
+std::expected<NSData *, Error> DropboxHost::SendSynchronousPostRequest(NSMutableURLRequest *_request,
+                                                                       const VFSCancelChecker &_cancel_checker)
 {
     _request.HTTPMethod = @"POST";
     [_request setValue:I->m_AuthString forHTTPHeaderField:@"Authorization"];
 
-    const auto [_1st_errc, _1st_data] = SendSynchronousRequest(GenericSession(), _request, _cancel_checker);
-    if( _1st_errc == VFSError::Ok )
-        return {_1st_errc, _1st_data};
+    const std::expected<NSData *, Error> data = SendSynchronousRequest(GenericSession(), _request, _cancel_checker);
+    if( data )
+        return data;
 
-    if( _1st_errc == VFSError::FromErrno(EAUTH) && !I->m_RefreshToken.empty() ) {
+    if( data.error() == Error{Error::POSIX, EAUTH} && !I->m_RefreshToken.empty() ) {
         Log::Info("Got 401 - trying to refresh an access token");
         // Handle HTTP 401 - try to regen our short-lived access token if possible
-        const auto [refresh_errc, access_token] = RetreiveAccessTokenFromRefreshToken(I->m_RefreshToken);
-        if( refresh_errc != VFSError::Ok ) {
+        const std::expected<std::string, Error> access_token = RetreiveAccessTokenFromRefreshToken(I->m_RefreshToken);
+        if( !access_token ) {
             Log::Warn("Failed to refresn an access token");
             // failed to refresh - give up
-            return {_1st_errc, _1st_data};
+            return data;
         }
         Log::Info("Successfully refreshed an access token");
-        SetAccessToken(access_token);
+        SetAccessToken(*access_token);
     }
     else {
         // something else is wrong or our refresh token was revoked - give up
-        return {_1st_errc, _1st_data};
+        return data;
     }
 
     // try again, but with a renewed access token

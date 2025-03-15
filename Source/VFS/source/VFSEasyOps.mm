@@ -114,25 +114,25 @@ std::expected<void, Error> VFSEasyCopyFile(const char *_src_full_path,
     return {};
 }
 
-int VFSEasyCopyDirectory(const char *_src_full_path,
-                         std::shared_ptr<VFSHost> _src_host,
-                         const char *_dst_full_path,
-                         std::shared_ptr<VFSHost> _dst_host)
+std::expected<void, nc::Error> VFSEasyCopyDirectory(const char *_src_full_path,
+                                                    std::shared_ptr<VFSHost> _src_host,
+                                                    const char *_dst_full_path,
+                                                    std::shared_ptr<VFSHost> _dst_host)
 {
 
     if( _src_full_path == nullptr || _src_full_path[0] != '/' || !_src_host || _dst_full_path == nullptr ||
         _dst_full_path[0] != '/' || !_dst_host )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( !_src_host->IsDirectory(_src_full_path, 0, nullptr) )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( const std::expected<void, nc::Error> rc = _dst_host->CreateDirectory(_dst_full_path, 0740); !rc )
-        return VFSError::GenericError; // TODO: return rc
+        return std::unexpected(rc.error());
 
     const std::expected<void, Error> attrs_rc = CopyNodeAttrs(_src_full_path, _src_host, _dst_full_path, _dst_host);
     if( !attrs_rc )
-        return VFSError::GenericError; // TODO: return attrs_rc
+        return std::unexpected(attrs_rc.error());
 
     const std::expected<void, Error> it_rc =
         _src_host->IterateDirectoryListing(_src_full_path, [&](const VFSDirEnt &_dirent) {
@@ -150,32 +150,32 @@ int VFSEasyCopyDirectory(const char *_src_full_path,
         });
 
     if( !it_rc )
-        return VFSError::GenericError; // TODO: return it_rc
+        return std::unexpected(it_rc.error());
 
-    return 0;
+    return {};
 }
 
-int VFSEasyCopySymlink(const char *_src_full_path,
-                       std::shared_ptr<VFSHost> _src_host,
-                       const char *_dst_full_path,
-                       std::shared_ptr<VFSHost> _dst_host)
+std::expected<void, nc::Error> VFSEasyCopySymlink(const char *_src_full_path,
+                                                  std::shared_ptr<VFSHost> _src_host,
+                                                  const char *_dst_full_path,
+                                                  std::shared_ptr<VFSHost> _dst_host)
 {
     if( _src_full_path == nullptr || _src_full_path[0] != '/' || !_src_host || _dst_full_path == nullptr ||
         _dst_full_path[0] != '/' || !_dst_host )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const std::expected<std::string, nc::Error> symlink = _src_host->ReadSymlink(_src_full_path);
     if( !symlink )
-        return VFSError::FromErrno(EINVAL); // TODO: use symlink instead
+        return std::unexpected(symlink.error());
 
     if( const std::expected<void, nc::Error> rc = _dst_host->CreateSymlink(_dst_full_path, *symlink); !rc )
-        return VFSError::FromErrno(EINVAL); // TODO: use rc instead
+        return std::unexpected(rc.error());
 
     const std::expected<void, Error> attrs_rc = CopyNodeAttrs(_src_full_path, _src_host, _dst_full_path, _dst_host);
     if( !attrs_rc )
-        return VFSError::GenericError; // TODO: return attrs_rc
+        return std::unexpected(attrs_rc.error());
 
-    return 0;
+    return {};
 }
 
 std::expected<void, Error> VFSEasyCopyNode(const char *_src_full_path,
@@ -193,14 +193,13 @@ std::expected<void, Error> VFSEasyCopyNode(const char *_src_full_path,
 
     switch( st->mode & S_IFMT ) {
         case S_IFDIR:
-            return VFSError::ToExpectedError(
-                VFSEasyCopyDirectory(_src_full_path, _src_host, _dst_full_path, _dst_host));
+            return VFSEasyCopyDirectory(_src_full_path, _src_host, _dst_full_path, _dst_host);
 
         case S_IFREG:
             return VFSEasyCopyFile(_src_full_path, _src_host, _dst_full_path, _dst_host);
 
         case S_IFLNK:
-            return VFSError::ToExpectedError(VFSEasyCopySymlink(_src_full_path, _src_host, _dst_full_path, _dst_host));
+            return VFSEasyCopySymlink(_src_full_path, _src_host, _dst_full_path, _dst_host);
 
         default:
             return std::unexpected(Error{Error::POSIX, EINVAL});
@@ -271,25 +270,23 @@ std::expected<void, nc::Error> VFSEasyDelete(const char *_full_path, const std::
     }
 }
 
-int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr &_vfs)
+std::expected<void, Error> VFSEasyCreateEmptyFile(const std::string_view _path, const VFSHostPtr &_vfs)
 {
-    const std::expected<VFSFilePtr, nc::Error> efile = _vfs->CreateFile(_path);
+    const std::expected<VFSFilePtr, Error> efile = _vfs->CreateFile(_path);
     if( !efile )
-        return VFSError::GenericError; // TODO: return efile
+        return std::unexpected(efile.error());
     VFSFile &file = **efile;
 
     const std::expected<void, Error> ret =
         file.Open(VFSFlags::OF_IRUsr | VFSFlags::OF_IRGrp | VFSFlags::OF_IROth | VFSFlags::OF_IWUsr |
                   VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist);
     if( !ret != 0 )
-        return VFSError::GenericError; // TODO: return ret
+        return std::unexpected(ret.error());
 
     if( file.GetWriteParadigm() == VFSFile::WriteParadigm::Upload )
         std::ignore = file.SetUploadSize(0);
 
-    std::ignore = file.Close(); // TODO: return this
-
-    return VFSError::Ok;
+    return file.Close();
 }
 
 int VFSCompareNodes(const std::filesystem::path &_file1_full_path,

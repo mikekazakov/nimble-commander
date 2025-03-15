@@ -93,7 +93,7 @@ std::expected<void, Error> File::Open(unsigned long _open_flags,
         auto delegate = [[NCVFSDropboxFileDownloadDelegate alloc] init];
         delegate.handleResponse = [this](ssize_t _size) { HandleDownloadResponseAsync(_size); };
         delegate.handleData = [this](NSData *_data) { AppendDownloadedDataAsync(_data); };
-        delegate.handleError = [this](int _error) { HandleDownloadError(_error); };
+        delegate.handleError = [this](Error _error) { HandleDownloadError(_error); };
 
         auto request = BuildDownloadRequest();
         auto session = [NSURLSession sessionWithConfiguration:DropboxHost::GenericConfiguration()
@@ -143,10 +143,10 @@ void File::HandleDownloadResponseAsync(ssize_t _download_size)
     SwitchToState(Downloading);
 }
 
-void File::HandleDownloadError(int _error)
+void File::HandleDownloadError(const Error &_error)
 {
     if( m_State == Initiated || m_State == Downloading ) {
-        m_LastError = VFSError::ToError(_error);
+        m_LastError = _error;
         SwitchToState(Canceled);
     }
 }
@@ -268,13 +268,13 @@ void File::StartSmallUpload()
     stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t { return FeedUploadTaskAsync(_buffer, _sz); };
 
     auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
-    delegate.handleFinished = [this](int _vfs_error) {
+    delegate.handleFinished = [this](std::expected<void, Error> _result) {
         if( m_State == Initiated || m_State == Uploading ) {
-            if( _vfs_error == VFSError::Ok ) {
+            if( _result ) {
                 SwitchToState(Completed);
             }
             else {
-                m_LastError = VFSError::ToError(_vfs_error);
+                m_LastError = _result.error();
                 SwitchToState(Canceled);
             }
         }
@@ -319,9 +319,9 @@ void File::StartSession()
     stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t { return FeedUploadTaskAsync(_buffer, _sz); };
 
     auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
-    delegate.handleFinished = [this](int _vfs_error) {
-        if( m_State == Uploading && _vfs_error != VFSError::Ok ) {
-            m_LastError = VFSError::ToError(_vfs_error);
+    delegate.handleFinished = [this](std::expected<void, Error> _result) {
+        if( m_State == Uploading && !_result ) {
+            m_LastError = _result.error();
             SwitchToState(Canceled);
         }
     };
@@ -379,9 +379,9 @@ void File::StartSessionAppend()
     stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t { return FeedUploadTaskAsync(_buffer, _sz); };
 
     auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
-    delegate.handleFinished = [this](int _vfs_error) {
-        if( m_State == Uploading && _vfs_error != VFSError::Ok ) {
-            m_LastError = VFSError::ToError(_vfs_error);
+    delegate.handleFinished = [this](std::expected<void, Error> _result) {
+        if( m_State == Uploading && !_result ) {
+            m_LastError = _result.error();
             SwitchToState(Canceled);
         }
     };
@@ -437,13 +437,13 @@ void File::StartSessionFinish()
     stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t { return FeedUploadTaskAsync(_buffer, _sz); };
 
     auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
-    delegate.handleFinished = [this](int _vfs_error) {
+    delegate.handleFinished = [this](std::expected<void, Error> _result) {
         if( m_State == Uploading ) {
-            if( _vfs_error == VFSError::Ok ) {
+            if( _result ) {
                 SwitchToState(Completed);
             }
             else {
-                m_LastError = VFSError::ToError(_vfs_error);
+                m_LastError = _result.error();
                 SwitchToState(Canceled);
             }
         }

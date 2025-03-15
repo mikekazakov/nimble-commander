@@ -1,10 +1,11 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stdint.h>
 #include <functional>
 #include <string>
 #include <string_view>
+#include <Base/Error.h>
 
 namespace nc::vfs::dropbox {
 
@@ -31,7 +32,7 @@ public:
 
     virtual void PerformRequest(const Request &_request,
                                 std::function<void(const Token &_token)> _on_success,
-                                std::function<void(int _vfs_error)> _on_error) = 0;
+                                std::function<void(Error _error)> _on_error) = 0;
 };
 
 std::shared_ptr<Authenticator> MakeAuthenticator();

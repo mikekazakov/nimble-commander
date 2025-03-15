@@ -78,9 +78,9 @@ std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
 
     SpawnDownloadConnectionIfNeeded();
 
-    const int vfs_error = m_Conn->ReadBodyUpToSize(_size);
-    if( vfs_error != VFSError::Ok )
-        return std::unexpected(VFSError::ToError(vfs_error));
+    const std::expected<void, Error> read_rc = m_Conn->ReadBodyUpToSize(_size);
+    if( !read_rc )
+        return std::unexpected(read_rc.error());
 
     auto &read_buffer = m_Conn->ResponseBody();
     const auto has_read = read_buffer.Read(_buf, _size);
@@ -103,9 +103,9 @@ std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
 
     write_buffer.Write(_buf, _size);
 
-    const int vfs_error = m_Conn->WriteBodyUpToSize(_size);
-    if( vfs_error != VFSError::Ok )
-        return std::unexpected(VFSError::ToError(vfs_error));
+    const std::expected<void, Error> write_rc = m_Conn->WriteBodyUpToSize(_size);
+    if( !write_rc )
+        return std::unexpected(write_rc.error());
 
     //    TODO: clarify what File should return for partially written blocks - error code or number
     //    of bytes written?
@@ -125,8 +125,8 @@ void File::SpawnUploadConnectionIfNeeded()
     m_Conn = m_Host.ConnectionsPool().GetRaw();
     assert(m_Conn);
     const auto url = URIForPath(m_Host.Config(), Path());
-    m_Conn->SetURL(url);
-    m_Conn->SetNonBlockingUpload(m_Size);
+    std::ignore = m_Conn->SetURL(url);                  // TODO: why is rc ignored?
+    std::ignore = m_Conn->SetNonBlockingUpload(m_Size); // TODO: why is rc ignored?
     m_Conn->MakeNonBlocking();
 }
 
@@ -138,8 +138,8 @@ void File::SpawnDownloadConnectionIfNeeded()
     m_Conn = m_Host.ConnectionsPool().GetRaw();
     assert(m_Conn);
     const auto url = URIForPath(m_Host.Config(), Path());
-    m_Conn->SetURL(url);
-    m_Conn->SetCustomRequest("GET");
+    std::ignore = m_Conn->SetURL(url);             // TODO: why is rc ignored?
+    std::ignore = m_Conn->SetCustomRequest("GET"); // TODO: why is rc ignored?
     m_Conn->MakeNonBlocking();
 }
 
@@ -153,11 +153,11 @@ std::expected<void, Error> File::Close()
     if( !IsOpened() )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
-    int result = VFSError::Ok;
+    std::expected<void, Error> result;
 
     if( m_OpenFlags & VFSFlags::OF_Read ) {
         if( m_Conn ) {
-            m_Conn->ReadBodyUpToSize(Connection::AbortBodyRead);
+            std::ignore = m_Conn->ReadBodyUpToSize(Connection::AbortBodyRead); // TODO: why is rc ignored?
             m_Host.ConnectionsPool().Return(std::move(m_Conn));
         }
     }
@@ -172,8 +172,8 @@ std::expected<void, Error> File::Close()
 
             if( m_Pos < m_Size ) {
                 result = m_Conn->WriteBodyUpToSize(Connection::AbortBodyWrite);
-                if( result == VFSError::FromErrno(ECANCELED) )
-                    result = VFSError::Ok; // explicitly eat ECANCELED as we do cancel the upload
+                if( !result && result.error() == Error{Error::POSIX, ECANCELED} )
+                    result = {}; // explicitly eat ECANCELED as we do cancel the upload
             }
             else {
                 result = m_Conn->WriteBodyUpToSize(Connection::ConcludeBodyWrite);
@@ -188,10 +188,7 @@ std::expected<void, Error> File::Close()
     m_Pos = 0;
     m_Size = -1;
 
-    if( result == VFSError::Ok )
-        return {};
-
-    return std::unexpected(VFSError::ToError(result));
+    return result;
 }
 
 File::ReadParadigm File::GetReadParadigm() const

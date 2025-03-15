@@ -56,14 +56,14 @@ static bool TurnOffBlockingMode(int _fd) noexcept
     return fcntl_ret >= 0;
 }
 
-static int EnumerateAttrs(int _fd, std::vector<std::pair<std::string, unsigned>> &_attrs)
+static std::expected<void, Error> EnumerateAttrs(int _fd, std::vector<std::pair<std::string, unsigned>> &_attrs)
 {
     constexpr size_t buf_sz = 65536;
     const std::unique_ptr<char[]> buf = std::make_unique<char[]>(buf_sz);
     const ssize_t used_size = flistxattr(_fd, buf.get(), buf_sz, 0);
     if( used_size < 0 ) // need to process ERANGE later. if somebody wanna mess with
                         // 65536/XATTR_MAXNAMELEN=512 xattrs per entry...
-        return VFSError::FromErrno();
+        return std::unexpected(Error{Error::POSIX, errno});
 
     for( auto s = buf.get(), e = buf.get() + used_size; s < e; s += strlen(s) + 1 ) { // iterate thru xattr names..
         auto xattr_size = fgetxattr(_fd, s, nullptr, 0, 0, 0);
@@ -71,7 +71,7 @@ static int EnumerateAttrs(int _fd, std::vector<std::pair<std::string, unsigned>>
             _attrs.emplace_back(s, xattr_size);
     }
 
-    return 0;
+    return {};
 }
 
 const char *XAttrHost::UniqueTag = "xattr";
@@ -128,10 +128,9 @@ XAttrHost::XAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config)
         throw ErrorException(VFSError::ToError(VFSError::FromErrno(EIO)));
     }
 
-    const int ret = EnumerateAttrs(fd, m_Attrs);
-    if( ret != 0 ) {
+    if( const std::expected<void, Error> ret = EnumerateAttrs(fd, m_Attrs); !ret ) {
         close(fd);
-        throw ErrorException(VFSError::ToError(ret));
+        throw ErrorException(ret.error());
     }
 
     m_FD = fd;
@@ -164,16 +163,16 @@ bool XAttrHost::IsWritable() const
     return true;
 }
 
-int XAttrHost::Fetch()
+std::expected<void, Error> XAttrHost::Fetch()
 {
     std::vector<std::pair<std::string, unsigned>> info;
-    const int ret = EnumerateAttrs(m_FD, info);
-    if( ret != 0 )
+    const std::expected<void, Error> ret = EnumerateAttrs(m_FD, info);
+    if( !ret )
         return ret;
 
     const std::lock_guard<spinlock> lock(m_AttrsLock);
     m_Attrs = std::move(info);
-    return VFSError::Ok;
+    return {};
 }
 
 std::expected<VFSListingPtr, Error>
@@ -317,7 +316,7 @@ std::expected<void, Error> XAttrHost::Rename(std::string_view _old_path,
 
 void XAttrHost::ReportChange()
 {
-    Fetch();
+    std::ignore = Fetch();
 
     // observers
 }
@@ -511,7 +510,7 @@ std::expected<size_t, Error> XAttrFile::Write(const void *_buf, size_t _size)
             // time to flush
 
             if( fsetxattr(m_FD, XAttrName(), m_FileBuf.get(), m_UploadSize, 0, 0) != 0 )
-                return VFSError::FromErrno();
+                return std::unexpected(Error{Error::POSIX, errno});
 
             std::dynamic_pointer_cast<XAttrHost>(Host())->ReportChange();
         }

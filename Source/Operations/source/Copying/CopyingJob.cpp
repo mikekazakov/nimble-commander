@@ -851,7 +851,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
         const mode_t open_mode = m_Options.copy_unix_flags ? src_stat_buffer.st_mode : S_IRUSR | S_IWUSR | S_IRGRP;
         const mode_t old_umask = umask(0);
         destination_fd = io.open(_dst_path.c_str(), dst_open_flags, open_mode);
-        const auto open_err = VFSError::FromErrno();
+        const auto open_err = Error{Error::POSIX, errno};
         umask(old_umask);
 
         if( destination_fd >= 0 )
@@ -1231,7 +1231,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
         const mode_t open_mode = m_Options.copy_unix_flags ? src_stat_buffer.mode : S_IRUSR | S_IWUSR | S_IRGRP;
         const mode_t old_umask = umask(0);
         destination_fd = io.open(_dst_path.c_str(), dst_open_flags, open_mode);
-        const auto open_err = VFSError::FromErrno();
+        const auto open_err = Error{Error::POSIX, errno};
         umask(old_umask);
 
         if( destination_fd >= 0 )
@@ -3045,10 +3045,11 @@ CopyingJob::StepResult CopyingJob::UnlockNativeItemNoFollow(const std::string &_
     }
 }
 
-CopyingJob::StepResult CopyingJob::OnCantOpenDestinationFile(int _vfs_error, const std::string &_path, VFSHost &_vfs)
+CopyingJob::StepResult
+CopyingJob::OnCantOpenDestinationFile(const Error &_error, const std::string &_path, VFSHost &_vfs)
 {
-    if( _vfs.IsNativeFS() && IsNativeLockedItemNoFollow(VFSError::ToError(_vfs_error), _path) ) {
-        switch( m_OnCantOpenLockedItem(_vfs_error, _path, _vfs) ) {
+    if( _vfs.IsNativeFS() && IsNativeLockedItemNoFollow(_error, _path) ) {
+        switch( m_OnCantOpenLockedItem(_error, _path, _vfs) ) {
             case LockedItemResolution::Unlock: {
                 const auto step_result = UnlockNativeItemNoFollow(_path, dynamic_cast<VFSNativeHost &>(_vfs));
                 if( step_result == StepResult::Ok )
@@ -3065,7 +3066,7 @@ CopyingJob::StepResult CopyingJob::OnCantOpenDestinationFile(int _vfs_error, con
         }
     }
     else {
-        switch( m_OnCantOpenDestinationFile(VFSError::ToError(_vfs_error), _path, _vfs) ) {
+        switch( m_OnCantOpenDestinationFile(_error, _path, _vfs) ) {
             case CantOpenDestinationFileResolution::Skip:
                 return StepResult::Skipped;
             case CantOpenDestinationFileResolution::Stop:

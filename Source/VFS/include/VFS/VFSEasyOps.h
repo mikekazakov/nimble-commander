@@ -31,22 +31,22 @@ std::expected<void, nc::Error> VFSEasyDelete(const char *_full_path, const std::
  * Example params: source: /foo/bar1/my_dir, dest: /foo/bar2/my_dir
  *
  */
-int VFSEasyCopyDirectory(const char *_src_full_path,
-                         std::shared_ptr<VFSHost> _src_host,
-                         const char *_dst_full_path,
-                         std::shared_ptr<VFSHost> _dst_host);
+std::expected<void, nc::Error> VFSEasyCopyDirectory(const char *_src_full_path,
+                                                    std::shared_ptr<VFSHost> _src_host,
+                                                    const char *_dst_full_path,
+                                                    std::shared_ptr<VFSHost> _dst_host);
 
-int VFSEasyCopySymlink(const char *_src_full_path,
-                       std::shared_ptr<VFSHost> _src_host,
-                       const char *_dst_full_path,
-                       std::shared_ptr<VFSHost> _dst_host);
+std::expected<void, nc::Error> VFSEasyCopySymlink(const char *_src_full_path,
+                                                  std::shared_ptr<VFSHost> _src_host,
+                                                  const char *_dst_full_path,
+                                                  std::shared_ptr<VFSHost> _dst_host);
 
 std::expected<void, nc::Error> VFSEasyCopyNode(const char *_src_full_path,
                                                std::shared_ptr<VFSHost> _src_host,
                                                const char *_dst_full_path,
                                                std::shared_ptr<VFSHost> _dst_host);
 
-int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr &_vfs);
+std::expected<void, nc::Error> VFSEasyCreateEmptyFile(std::string_view _path, const VFSHostPtr &_vfs);
 
 int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
                     const VFSHostPtr &_file1_host,

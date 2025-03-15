@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Authenticator.h"
 #include <VFS/VFSError.h>
 #include <VFS/Log.h>
@@ -16,7 +16,7 @@ class AuthenticatorImpl : public Authenticator, public std::enable_shared_from_t
 public:
     void PerformRequest(const Request &_request,
                         std::function<void(const Token &_token)> _on_success,
-                        std::function<void(int _vfs_error)> _on_error) override;
+                        std::function<void(Error _error)> _on_error) override;
 
 private:
     void Callback(OIDAuthState *_Nullable _auth_state, NSError *_Nullable _error);
@@ -24,7 +24,7 @@ private:
     OIDRedirectHTTPHandler *m_RedirectHTTPHandler;
     Request m_Request;
     std::function<void(const Token &_token)> m_OnSuccess;
-    std::function<void(int _vfs_error)> m_OnError;
+    std::function<void(Error _error)> m_OnError;
 };
 
 std::shared_ptr<Authenticator> MakeAuthenticator()
@@ -34,7 +34,7 @@ std::shared_ptr<Authenticator> MakeAuthenticator()
 
 void AuthenticatorImpl::PerformRequest(const Request &_request,
                                        std::function<void(const Token &_token)> _on_success,
-                                       std::function<void(int _vfs_error)> _on_error)
+                                       std::function<void(Error _error)> _on_error)
 {
     assert(_on_success);
     assert(_on_error);
@@ -108,16 +108,15 @@ void AuthenticatorImpl::Callback(OIDAuthState *_Nullable _auth_state, NSError *_
     if( _error != nil ) {
         Log::Warn("Failed to got auth token, error: {}", _error.localizedDescription.UTF8String);
 
-        int error = VFSError::Ok;
+        Error error = Error{_error};
         if( [_error.domain isEqualToString:OIDOAuthTokenErrorDomain] ||
             [_error.domain isEqualToString:OIDOAuthAuthorizationErrorDomain] ||
             [_error.domain isEqualToString:OIDOAuthTokenErrorDomain] ||
             [_error.domain isEqualToString:OIDOAuthRegistrationErrorDomain] ||
             [_error.domain isEqualToString:OIDResourceServerAuthorizationErrorDomain] ||
-            [_error.domain isEqualToString:OIDHTTPErrorDomain] )
-            error = VFSError::FromErrno(EAUTH);
-        else
-            error = VFSError::FromNSError(_error);
+            [_error.domain isEqualToString:OIDHTTPErrorDomain] ) {
+            error = Error{Error::POSIX, EAUTH};
+        }
 
         m_OnError(error);
         return;

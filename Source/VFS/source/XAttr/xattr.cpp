@@ -316,7 +316,7 @@ std::expected<void, Error> XAttrHost::Rename(std::string_view _old_path,
 
 void XAttrHost::ReportChange()
 {
-    Fetch();
+    std::ignore = Fetch();
 
     // observers
 }

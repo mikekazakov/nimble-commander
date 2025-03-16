@@ -17,7 +17,6 @@ using namespace nc::ops;
     NSString *m_Message;
     NSString *m_Path;
     NSString *m_Error;
-    int m_ErrorNo;
 }
 
 @synthesize message = m_Message;
@@ -32,7 +31,6 @@ using namespace nc::ops;
     const auto nib_path = [Bundle() pathForResource:@"HaltReasonDialog" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
-        m_ErrorNo = VFSError::Ok;
     }
     return self;
 }
@@ -55,11 +53,6 @@ using namespace nc::ops;
 - (void)setError:(nc::Error)_error
 {
     m_Error = [NSString stringWithUTF8String:_error.LocalizedFailureReason().c_str()];
-}
-
-- (int)errorNo
-{
-    return m_ErrorNo;
 }
 
 @end

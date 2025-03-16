@@ -915,8 +915,7 @@ std::expected<std::unique_ptr<arc::State>, Error> ArchiveHost::ArchiveStateForIt
 
         const int res = new_state->Open();
         if( res < 0 ) {
-            const int rc = VFSError::FromLibarchive(new_state->Errno());
-            return std::unexpected(VFSError::ToError(rc));
+            return std::unexpected(Error{Error::POSIX, new_state->Errno()});
         }
         state = std::move(new_state);
     }

@@ -23,29 +23,6 @@ static constexpr int g_PosixMin = -1999;
 
 namespace VFSError {
 
-static int FromErrno(int _errno) noexcept
-{
-    if( _errno >= 0 && _errno <= ELAST ) {
-        return _errno + g_PosixBase;
-    }
-    else {
-        nc::vfs::Log::Warn("VFSError::FromErrno(): unknown errno - {}", _errno);
-        return FromErrno(EINVAL);
-    }
-}
-
-int FromLibarchive(int _errno)
-{
-    if( _errno == EFTYPE )
-        return VFSError::ArclibFileFormat;
-    else if( _errno == EINVAL )
-        return VFSError::ArclibProgError;
-    else if( _errno == -1 )
-        return VFSError::ArclibMiscError;
-
-    return FromErrno(_errno); // if error is none of listed above - treat it as unix error code
-}
-
 static NSString *TextForCode(int _code)
 {
     // TODO later: localization

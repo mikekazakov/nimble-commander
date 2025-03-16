@@ -26,8 +26,6 @@ enum {
     ArclibPasswordRequired = -2003, // Password needed.
 };
 
-int FromLibarchive(int _errno);
-
 // Transition, to be removed later
 inline constexpr std::string_view ErrorDomain = "VFSError";
 nc::Error ToError(int _vfs_error_code);

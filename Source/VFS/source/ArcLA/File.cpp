@@ -110,7 +110,7 @@ std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
     if( size < 0 ) {
         // TODO: libarchive error - convert it into our errors
         fmt::println("libarchive error: {}", archive_error_string(m_State->Archive()));
-        return std::unexpected(VFSError::ToError(VFSError::FromLibarchive(archive_errno(m_State->Archive()))));
+        return std::unexpected(Error{Error::POSIX, archive_errno(m_State->Archive())});
     }
 
     m_Position += size;

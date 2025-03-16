@@ -164,11 +164,6 @@ static bool IsShiftPressed() noexcept
     return m_Style;
 }
 
-- (void)setErrorNo:(int)_error_no
-{
-    [self setError:VFSError::ToError(_error_no)];
-}
-
 - (void)setError:(nc::Error)_error
 {
     m_ErrorMessage = [NSString stringWithUTF8StdString:_error.LocalizedFailureReason()];

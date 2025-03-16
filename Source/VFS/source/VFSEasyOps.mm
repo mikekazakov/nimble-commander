@@ -504,7 +504,7 @@ static std::expected<void, Error> ExtractRegFile(const std::string &_vfs_path,
             if( res_write >= 0 )
                 to_write -= res_write;
             else {
-                return std::unexpected(VFSError::ToError(static_cast<int>(res_write)));
+                return std::unexpected(Error{Error::POSIX, errno});
             }
         }
     }

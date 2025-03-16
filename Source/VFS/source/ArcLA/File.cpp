@@ -28,14 +28,12 @@ std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancel
     if( _open_flags & VFSFlags::OF_Write )
         return std::unexpected(Error{Error::POSIX, ENOTSUP}); // ArchiveFile is Read-Only
 
-    int res;
     auto host = std::dynamic_pointer_cast<ArchiveHost>(Host());
 
     StackAllocator alloc;
     std::pmr::string file_path(&alloc);
-    res = host->ResolvePathIfNeeded(Path(), file_path, _open_flags);
-    if( res < 0 )
-        return std::unexpected(VFSError::ToError(res));
+    if( const std::expected<void, Error> rc = host->ResolvePathIfNeeded(Path(), file_path, _open_flags); !rc )
+        return std::unexpected(rc.error());
 
     if( host->IsDirectory(file_path, _open_flags, _cancel_checker) && !(_open_flags & VFSFlags::OF_Directory) )
         return std::unexpected(Error{Error::POSIX, EISDIR});

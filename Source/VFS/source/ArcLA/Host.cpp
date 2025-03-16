@@ -542,10 +542,8 @@ std::expected<VFSListingPtr, Error> ArchiveHost::FetchDirectoryListing(std::stri
 {
     StackAllocator alloc;
     std::pmr::string path(&alloc);
-
-    const int res = ResolvePathIfNeeded(_path, path, _flags);
-    if( res < 0 )
-        return std::unexpected(VFSError::ToError(res));
+    if( const std::expected<void, Error> rc = ResolvePathIfNeeded(_path, path, _flags); !rc )
+        return std::unexpected(rc.error());
 
     if( path.back() != '/' )
         path += "/";
@@ -646,9 +644,8 @@ ArchiveHost::Stat(std::string_view _path, unsigned long _flags, const VFSCancelC
     StackAllocator alloc;
     std::pmr::string resolve_buf(&alloc);
 
-    const int res = ResolvePathIfNeeded(_path, resolve_buf, _flags);
-    if( res < 0 )
-        return std::unexpected(VFSError::ToError(res));
+    if( const std::expected<void, Error> rc = ResolvePathIfNeeded(_path, resolve_buf, _flags); !rc )
+        return std::unexpected(rc.error());
 
     if( auto it = FindEntry(resolve_buf) ) {
         VFSStat st;
@@ -658,19 +655,19 @@ ArchiveHost::Stat(std::string_view _path, unsigned long _flags, const VFSCancelC
     return std::unexpected(Error{Error::POSIX, ENOENT});
 }
 
-int ArchiveHost::ResolvePathIfNeeded(std::string_view _path, std::pmr::string &_resolved_path, unsigned long _flags)
+std::expected<void, Error>
+ArchiveHost::ResolvePathIfNeeded(std::string_view _path, std::pmr::string &_resolved_path, unsigned long _flags)
 {
     if( _path.empty() )
-        return VFSError::InvalidCall;
+        std::unexpected(Error{Error::POSIX, EINVAL});
 
-    if( !I->m_NeedsPathResolving || (_flags & VFSFlags::F_NoFollow) )
+    if( !I->m_NeedsPathResolving || (_flags & VFSFlags::F_NoFollow) ) {
         _resolved_path = _path;
-    else {
-        const int res = ResolvePath(_path, _resolved_path);
-        if( res < 0 )
-            return res;
     }
-    return VFSError::Ok;
+    else {
+        return ResolvePath(_path, _resolved_path);
+    }
+    return {};
 }
 
 std::expected<void, Error>
@@ -683,9 +680,8 @@ ArchiveHost::IterateDirectoryListing(std::string_view _path,
     StackAllocator alloc;
     std::pmr::string buf(&alloc);
 
-    const int ret = ResolvePathIfNeeded(_path, buf, 0);
-    if( ret < 0 )
-        return std::unexpected(VFSError::ToError(ret));
+    if( const std::expected<void, Error> rc = ResolvePathIfNeeded(_path, buf, 0); !rc )
+        return std::unexpected(rc.error());
 
     if( buf.back() != '/' )
         buf += '/'; // we store directories with trailing slash
@@ -783,10 +779,10 @@ const DirEntry *ArchiveHost::FindEntry(uint32_t _uid)
     return &dir->entries[ind];
 }
 
-int ArchiveHost::ResolvePath(std::string_view _path, std::pmr::string &_resolved_path)
+std::expected<void, Error> ArchiveHost::ResolvePath(std::string_view _path, std::pmr::string &_resolved_path)
 {
     if( _path.empty() || _path[0] != '/' )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     std::filesystem::path p = EnsureNoTrailingSlash(std::string(_path));
     p = p.relative_path();
@@ -797,25 +793,25 @@ int ArchiveHost::ResolvePath(std::string_view _path, std::pmr::string &_resolved
 
         auto entry = FindEntry(result_path.c_str());
         if( !entry )
-            return VFSError::NotFound;
+            return std::unexpected(Error{Error::POSIX, ENOENT});
 
         if( (entry->st.st_mode & S_IFMT) == S_IFLNK ) {
             const auto symlink_it = I->m_Symlinks.find(entry->aruid);
             if( symlink_it == I->m_Symlinks.end() )
-                return VFSError::NotFound;
+                return std::unexpected(Error{Error::POSIX, ENOENT});
 
             auto &s = symlink_it->second;
             if( s.state == SymlinkState::Unresolved )
                 ResolveSymlink(s.uid);
             if( s.state != SymlinkState::Resolved )
-                return VFSError::NotFound; // current part points to nowhere
+                return std::unexpected(Error{Error::POSIX, ENOENT}); // current part points to nowhere
 
             result_path = s.target_path;
         }
     }
 
     _resolved_path = result_path.native();
-    return VFSError::Ok;
+    return {};
 }
 
 std::expected<VFSStatFS, Error> ArchiveHost::StatFS(std::string_view /*_path*/,

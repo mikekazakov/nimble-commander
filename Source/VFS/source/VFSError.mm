@@ -33,8 +33,6 @@ static NSString *TextForCode(int _code)
             return @"Invalid call";
         case GenericError:
             return @"Generic error";
-        case NotFound:
-            return @"Item not found";
         default:
             return [NSString stringWithFormat:@"Error code %d", _code];
     }

@@ -260,7 +260,7 @@ FTPHost::Stat(std::string_view _path, unsigned long _flags, const VFSCancelCheck
             else {
                 Log::Trace("didn't find an entry for '{}'", filename);
                 if( !dir->IsOutdated() ) { // if we can't find entry and dir is not outdated - return NotFound.
-                    return std::unexpected(VFSError::ToError(VFSError::NotFound));
+                    return std::unexpected(Error{Error::POSIX, ENOENT});
                 }
             }
         }
@@ -281,7 +281,7 @@ FTPHost::Stat(std::string_view _path, unsigned long _flags, const VFSCancelCheck
         entry->ToStat(st);
         return st;
     }
-    return std::unexpected(VFSError::ToError(VFSError::NotFound));
+    return std::unexpected(Error{Error::POSIX, ENOENT});
 }
 
 std::expected<VFSListingPtr, Error>

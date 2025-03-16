@@ -11,9 +11,6 @@ enum {
     Ok = 0,            // operation was succesful
     InvalidCall = -3,  // object state is invalid for such call
     GenericError = -4, // generic(unknown) error has occured
-
-    // specific error codes
-    NotFound = -100, // requested item was not found
 };
 
 // Transition, to be removed later

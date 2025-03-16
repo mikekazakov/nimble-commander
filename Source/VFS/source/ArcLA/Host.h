@@ -85,7 +85,8 @@ public:
     std::shared_ptr<ArchiveHost> SharedPtr();
 
     /** return VFSError, not uids returned */
-    int ResolvePathIfNeeded(std::string_view _path, std::pmr::string &_resolved_path, unsigned long _flags);
+    std::expected<void, Error>
+    ResolvePathIfNeeded(std::string_view _path, std::pmr::string &_resolved_path, unsigned long _flags);
 
     enum class SymlinkState : uint8_t {
         /// symlink is ok to use
@@ -130,8 +131,7 @@ private:
     void InsertDummyDirInto(arc::Dir *_parent, std::string_view _dir_name);
     struct archive *SpawnLibarchive();
 
-    // Returns a VFSError
-    int ResolvePath(std::string_view _path, std::pmr::string &_resolved_path);
+    std::expected<void, Error> ResolvePath(std::string_view _path, std::pmr::string &_resolved_path);
 
     void ResolveSymlink(uint32_t _uid);
 

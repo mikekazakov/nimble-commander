@@ -14,16 +14,6 @@ enum {
 
     // specific error codes
     NotFound = -100, // requested item was not found
-
-    // UNIX error codes convert:
-    // -1001 - error code
-    // example: EIO: -1001 - 5 = -1006
-
-    // Libarchive error codes convert:
-    ArclibFileFormat = -2000,       // Unrecognized or invalid file format.
-    ArclibProgError = -2001,        // Illegal usage of the library.
-    ArclibMiscError = -2002,        // Unknown or unclassified error.
-    ArclibPasswordRequired = -2003, // Password needed.
 };
 
 // Transition, to be removed later

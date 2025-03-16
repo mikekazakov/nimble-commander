@@ -186,7 +186,7 @@ TEST_CASE(PREFIX "gracefully discards non-compressed input")
             std::make_shared<ArchiveRawHost>(path.c_str(), TestEnv().vfs_native);
             CHECK(false);
         } catch( ErrorException &ex ) {
-            CHECK(ex.error() == Error{VFSError::ErrorDomain, VFSError::ArclibFileFormat});
+            CHECK(ex.error() == Error{Error::POSIX, EFTYPE});
         }
     }
 }

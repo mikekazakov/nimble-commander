@@ -35,12 +35,6 @@ static NSString *TextForCode(int _code)
             return @"Generic error";
         case NotFound:
             return @"Item not found";
-        case ArclibFileFormat:
-            return @"Unrecognized or invalid archive file format";
-        case ArclibProgError:
-            return @"Internal archive module error";
-        case ArclibMiscError:
-            return @"Unknown or unclassified archive error";
         default:
             return [NSString stringWithFormat:@"Error code %d", _code];
     }

@@ -16,8 +16,7 @@ VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const std::string &_path,
         auto archive = std::make_shared<nc::vfs::ArchiveHost>(_path, _parent, std::nullopt, _cancel_checker);
         return archive;
     } catch( ErrorException &e ) {
-        if( e.error().Domain() == VFSError::ErrorDomain && e.error().Code() == VFSError::ArclibPasswordRequired &&
-            _passwd ) {
+        if( e.error() == Error{Error::POSIX, ENEEDAUTH} && _passwd ) {
             auto passwd = _passwd();
             if( passwd.empty() )
                 return nullptr;

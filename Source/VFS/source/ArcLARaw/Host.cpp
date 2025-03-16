@@ -66,7 +66,7 @@ static Extracted read_stream(const uint64_t _max_bytes,
     if( const std::expected<void, Error> rc = st.source_file->Open(VFSFlags::OF_Read); !rc )
         return rc.error();
     if( st.source_file->Size().value_or(0) <= 0 )
-        return VFSError::ToError(VFSError::ArclibFileFormat);
+        return Error{Error::POSIX, EFTYPE};
     if( st.source_file->GetReadParadigm() < VFSFile::ReadParadigm::Sequential )
         return Error{Error::POSIX, EINVAL};
 
@@ -114,7 +114,7 @@ static Extracted read_stream(const uint64_t _max_bytes,
     if( archive_filter_code(arc, 0) == ARCHIVE_FILTER_NONE ) {
         // libarchive always supports "none" compression filter as a fallback, but in this
         // configuration it doesn't make any sense, so reject such files.
-        return VFSError::ToError(VFSError::ArclibFileFormat);
+        return Error{Error::POSIX, EFTYPE};
     }
 
     archive_entry *entry;

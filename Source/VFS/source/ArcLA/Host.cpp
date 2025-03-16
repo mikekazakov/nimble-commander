@@ -188,8 +188,8 @@ std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_c
     if( const std::expected<uint64_t, Error> source_file_size = source_file->Size(); !source_file_size )
         return std::unexpected(source_file_size.error());
     else if( *source_file_size == 0 )
-        return std::unexpected(VFSError::ToError(
-            VFSError::ArclibFileFormat)); // libarchive thinks that zero-bytes archives are OK, but I don't think so.
+        return std::unexpected(
+            Error{Error::POSIX, EFTYPE}); // libarchive thinks that zero-bytes archives are OK, but I don't think so.
 
     if( Parent()->IsNativeFS() ) {
         I->m_ArFile = source_file;
@@ -216,23 +216,24 @@ std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_c
     archive_read_set_seek_callback(I->m_Arc, Mediator::myseek);
     res = archive_read_open1(I->m_Arc);
     if( res < 0 ) {
+        const int err = archive_errno(I->m_Arc);
         archive_read_free(I->m_Arc);
         I->m_Arc = nullptr;
         I->m_Mediator.reset();
         I->m_ArFile.reset();
-        return std::unexpected(VFSError::ToError(-1)); // TODO: right error code
+        return std::unexpected(Error{Error::POSIX, err});
     }
 
     // we should fail is archive is encrypted and there's no password provided
     if( archive_read_has_encrypted_entries(I->m_Arc) > 0 && !Config().password )
-        return std::unexpected(VFSError::ToError(VFSError::ArclibPasswordRequired));
+        return std::unexpected(Error{Error::POSIX, ENEEDAUTH});
 
-    res = ReadArchiveListing();
+    const std::expected<void, Error> list_rc = ReadArchiveListing();
     if( archive_read_has_encrypted_entries(I->m_Arc) > 0 && !Config().password )
-        return std::unexpected(VFSError::ToError(VFSError::ArclibPasswordRequired));
+        return std::unexpected(Error{Error::POSIX, ENEEDAUTH});
 
-    if( res != VFSError::Ok )
-        return std::unexpected(VFSError::ToError(res));
+    if( !list_rc )
+        return std::unexpected(list_rc.error());
 
     return {};
 }
@@ -282,7 +283,7 @@ static bool SplitIntoFilenameAndParentPath(const char *_path,
     return true;
 }
 
-int ArchiveHost::ReadArchiveListing()
+std::expected<void, Error> ArchiveHost::ReadArchiveListing()
 {
     assert(I->m_Arc != nullptr);
     uint32_t aruid = 0;
@@ -443,14 +444,14 @@ int ArchiveHost::ReadArchiveListing()
     UpdateDirectorySize(I->m_PathToDir["/"], "/");
 
     if( ret == ARCHIVE_EOF )
-        return VFSError::Ok;
+        return {};
 
     fmt::println("{}", archive_error_string(I->m_Arc));
 
     if( ret == ARCHIVE_WARN )
-        return VFSError::Ok;
+        return {};
 
-    return VFSError::GenericError;
+    return std::unexpected(Error{Error::POSIX, archive_errno(I->m_Arc)});
 }
 
 uint64_t ArchiveHost::UpdateDirectorySize(Dir &_directory, const std::string &_path)

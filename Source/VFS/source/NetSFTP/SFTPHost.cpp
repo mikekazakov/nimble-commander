@@ -461,7 +461,7 @@ SFTPHost::FetchDirectoryListing(std::string_view _path,
 
             // read where symlink points at
             char symlink[MAXPATHLEN];
-            int rc = libssh2_sftp_symlink_ex(
+            const int rc = libssh2_sftp_symlink_ex(
                 conn.sftp, path.c_str(), (unsigned)path.length(), symlink, MAXPATHLEN, LIBSSH2_SFTP_READLINK);
             if( rc >= 0 )
                 listing_source.symlinks.insert(index, symlink);
@@ -488,11 +488,11 @@ SFTPHost::Stat(std::string_view _path, unsigned long _flags, [[maybe_unused]] co
     const AutoConnectionReturn acr(*conn, this);
 
     LIBSSH2_SFTP_ATTRIBUTES attrs;
-    int rc = libssh2_sftp_stat_ex((*conn)->sftp,
-                                  _path.data(),
-                                  static_cast<unsigned>(_path.length()),
-                                  (_flags & VFSFlags::F_NoFollow) ? LIBSSH2_SFTP_LSTAT : LIBSSH2_SFTP_STAT,
-                                  &attrs);
+    const int rc = libssh2_sftp_stat_ex((*conn)->sftp,
+                                        _path.data(),
+                                        static_cast<unsigned>(_path.length()),
+                                        (_flags & VFSFlags::F_NoFollow) ? LIBSSH2_SFTP_LSTAT : LIBSSH2_SFTP_STAT,
+                                        &attrs);
     if( rc )
         return std::unexpected(ErrorForConnection(**conn));
 
@@ -551,7 +551,7 @@ SFTPHost::IterateDirectoryListing(std::string_view _path, const std::function<bo
         LIBSSH2_SFTP_ATTRIBUTES attrs;
 
         /* loop until we fail */
-        int rc = libssh2_sftp_readdir_ex(sftp_handle, mem, sizeof(mem), nullptr, 0, &attrs);
+        const int rc = libssh2_sftp_readdir_ex(sftp_handle, mem, sizeof(mem), nullptr, 0, &attrs);
         if( rc <= 0 )
             break;
 
@@ -584,7 +584,7 @@ std::expected<VFSStatFS, Error> SFTPHost::StatFS(std::string_view _path,
     const AutoConnectionReturn acr(*conn, this);
 
     LIBSSH2_SFTP_STATVFS statfs;
-    int rc = libssh2_sftp_statvfs((*conn)->sftp, _path.data(), _path.length(), &statfs);
+    const int rc = libssh2_sftp_statvfs((*conn)->sftp, _path.data(), _path.length(), &statfs);
     if( rc < 0 )
         return std::unexpected(ErrorForConnection(**conn));
 
@@ -618,7 +618,7 @@ std::expected<void, Error> SFTPHost::Unlink(std::string_view _path,
 
     const AutoConnectionReturn acr(*conn, this);
 
-    int rc = libssh2_sftp_unlink_ex((*conn)->sftp, _path.data(), static_cast<unsigned>(_path.length()));
+    const int rc = libssh2_sftp_unlink_ex((*conn)->sftp, _path.data(), static_cast<unsigned>(_path.length()));
 
     if( rc < 0 )
         return std::unexpected(ErrorForConnection(**conn));
@@ -678,7 +678,7 @@ std::expected<void, Error> SFTPHost::RemoveDirectory(std::string_view _path,
 
     const AutoConnectionReturn acr(*conn, this);
 
-    int rc = libssh2_sftp_rmdir_ex((*conn)->sftp, _path.data(), static_cast<unsigned>(_path.length()));
+    const int rc = libssh2_sftp_rmdir_ex((*conn)->sftp, _path.data(), static_cast<unsigned>(_path.length()));
 
     if( rc < 0 )
         return std::unexpected(ErrorForConnection(**conn));
@@ -695,7 +695,7 @@ SFTPHost::CreateDirectory(std::string_view _path, int _mode, [[maybe_unused]] co
 
     const AutoConnectionReturn acr(*conn, this);
 
-    int rc = libssh2_sftp_mkdir_ex((*conn)->sftp, _path.data(), static_cast<unsigned>(_path.length()), _mode);
+    const int rc = libssh2_sftp_mkdir_ex((*conn)->sftp, _path.data(), static_cast<unsigned>(_path.length()), _mode);
 
     if( rc < 0 )
         return std::unexpected(ErrorForConnection(**conn));

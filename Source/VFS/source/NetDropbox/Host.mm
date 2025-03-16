@@ -100,7 +100,7 @@ void DropboxHost::Construct(const std::string &_account, const std::string &_acc
     else {
         SetAccessToken(_access_token);
         if( I->m_Token.empty() )
-            throw ErrorException{VFSError::ToError(VFSError::FromErrno(EINVAL))};
+            throw ErrorException{Error{Error::POSIX, EINVAL}};
     }
 }
 
@@ -151,7 +151,7 @@ void DropboxHost::InitialAccountLookup()
     if( data ) {
         auto json = ParseJSON(*data);
         if( !json )
-            throw ErrorException(VFSError::ToError(VFSError::FromErrno(EBADMSG)));
+            throw ErrorException{Error{Error::POSIX, EBADMSG}};
         I->m_AccountInfo = ParseAccountInfo(*json);
     }
     else

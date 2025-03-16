@@ -116,16 +116,16 @@ XAttrHost::XAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config)
     if( fd < 0 )
         fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
     if( fd < 0 )
-        throw ErrorException(VFSError::ToError(VFSError::FromErrno(EIO)));
+        throw ErrorException{Error{Error::POSIX, EIO}};
 
     if( !TurnOffBlockingMode(fd) ) {
         close(fd);
-        throw ErrorException(VFSError::ToError(VFSError::FromErrno(EIO)));
+        throw ErrorException{Error{Error::POSIX, EIO}};
     }
 
     if( fstat(fd, &m_Stat) != 0 ) {
         close(fd);
-        throw ErrorException(VFSError::ToError(VFSError::FromErrno(EIO)));
+        throw ErrorException{Error{Error::POSIX, EIO}};
     }
 
     if( const std::expected<void, Error> ret = EnumerateAttrs(fd, m_Attrs); !ret ) {

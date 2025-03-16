@@ -40,10 +40,10 @@ std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancel
     if( host->IsDirectory(file_path, _open_flags, _cancel_checker) && !(_open_flags & VFSFlags::OF_Directory) )
         return std::unexpected(Error{Error::POSIX, EISDIR});
 
-    std::unique_ptr<State> state;
-    res = host->ArchiveStateForItem(file_path.c_str(), state);
-    if( res < 0 )
-        return std::unexpected(VFSError::ToError(res));
+    std::expected<std::unique_ptr<arc::State>, Error> exp_state = host->ArchiveStateForItem(file_path.c_str());
+    if( !exp_state )
+        return std::unexpected(exp_state.error());
+    auto &state = *exp_state;
 
     assert(state->Entry());
 

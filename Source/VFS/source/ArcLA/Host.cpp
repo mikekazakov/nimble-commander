@@ -886,11 +886,11 @@ void ArchiveHost::CommitState(std::unique_ptr<State> _state)
     }
 }
 
-int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<State> &_target)
+std::expected<std::unique_ptr<arc::State>, Error> ArchiveHost::ArchiveStateForItem(const char *_filename)
 {
     const uint32_t requested_item = ItemUID(_filename);
     if( requested_item == 0 )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     auto state = ClosestState(requested_item);
 
@@ -904,11 +904,11 @@ int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<Stat
             file = I->m_ArFile->Clone();
 
         if( !file )
-            return VFSError::NotSupported;
+            return std::unexpected(Error{Error::POSIX, ENOTSUP});
 
         if( !file->IsOpened() ) {
             if( const std::expected<void, Error> rc = file->Open(VFSFlags::OF_Read); !rc )
-                return VFSError::FromErrno(EIO); // TODO: return rc instead
+                return std::unexpected(rc.error());
         }
 
         auto new_state = std::make_unique<State>(file, SpawnLibarchive());
@@ -916,14 +916,13 @@ int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<Stat
         const int res = new_state->Open();
         if( res < 0 ) {
             const int rc = VFSError::FromLibarchive(new_state->Errno());
-            return rc;
+            return std::unexpected(VFSError::ToError(rc));
         }
         state = std::move(new_state);
     }
     else if( state->UID() == requested_item && !state->Consumed() ) {
         assert(state->Entry());
-        _target = std::move(state);
-        return VFSError::Ok;
+        return std::move(state);
     }
 
     bool found = false;
@@ -943,12 +942,10 @@ int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<Stat
     }
 
     if( !found )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     state->SetEntry(entry, requested_item);
-    _target = std::move(state);
-
-    return VFSError::Ok;
+    return std::move(state);
 }
 
 struct archive *ArchiveHost::SpawnLibarchive()

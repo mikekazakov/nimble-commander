@@ -78,7 +78,7 @@ public:
     void CommitState(std::unique_ptr<arc::State> _state);
 
     // use SeekCache or open a new file and seeks to requested item
-    int ArchiveStateForItem(const char *_filename, std::unique_ptr<arc::State> &_target);
+    std::expected<std::unique_ptr<arc::State>, Error> ArchiveStateForItem(const char *_filename);
 
     std::shared_ptr<const ArchiveHost> SharedPtr() const;
 

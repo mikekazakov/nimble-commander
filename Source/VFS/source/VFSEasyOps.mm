@@ -289,49 +289,55 @@ std::expected<void, Error> VFSEasyCreateEmptyFile(const std::string_view _path, 
     return file.Close();
 }
 
-int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
-                    const VFSHostPtr &_file1_host,
-                    const std::filesystem::path &_file2_full_path,
-                    const VFSHostPtr &_file2_host,
-                    int &_result)
+std::expected<int, nc::Error> VFSCompareNodes(const std::filesystem::path &_file1_full_path,
+                                              const VFSHostPtr &_file1_host,
+                                              const std::filesystem::path &_file2_full_path,
+                                              const VFSHostPtr &_file2_host)
 {
     // not comparing flags, perm, times, xattrs, acls etc now
 
     const std::expected<VFSStat, Error> st1 = _file1_host->Stat(_file1_full_path.c_str(), VFSFlags::F_NoFollow);
     if( !st1 )
-        return VFSError::GenericError; // TODO: return st1
+        return std::unexpected(st1.error());
 
     const std::expected<VFSStat, Error> st2 = _file2_host->Stat(_file2_full_path.c_str(), VFSFlags::F_NoFollow);
     if( !st2 )
-        return VFSError::GenericError; // TODO: return st2
+        return std::unexpected(st2.error());
 
     if( (st1->mode & S_IFMT) != (st2->mode & S_IFMT) ) {
-        _result = -1;
-        return 0;
+        return -1;
     }
 
     if( S_ISREG(st1->mode) ) {
         if( int64_t(st1->size) - int64_t(st2->size) != 0 )
-            _result = int(int64_t(st1->size) - int64_t(st2->size));
+            return int(int64_t(st1->size) - int64_t(st2->size));
     }
     else if( S_ISLNK(st1->mode) ) {
         const std::expected<std::string, nc::Error> link1 = _file1_host->ReadSymlink(_file1_full_path.c_str());
         if( !link1 )
-            return VFSError::FromErrno(EINVAL); // TODO: use link1 instead
+            return std::unexpected(link1.error());
 
         const std::expected<std::string, nc::Error> link2 = _file2_host->ReadSymlink(_file2_full_path.c_str());
         if( !link2 )
-            return VFSError::FromErrno(EINVAL); // TODO: use link2 instead
+            return std::unexpected(link2.error());
 
         if( strcmp(link1->c_str(), link2->c_str()) != 0 )
-            _result = strcmp(link1->c_str(), link2->c_str());
+            return strcmp(link1->c_str(), link2->c_str());
     }
     else if( S_ISDIR(st1->mode) ) {
-        std::ignore = _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
-            const int ret = VFSCompareNodes(
-                _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
-            return ret == 0;
-        });
+        int result = 0;
+        const std::expected<void, Error> rc =
+            _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
+                const std::expected<int, nc::Error> ret = VFSCompareNodes(
+                    _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host);
+                if( !ret )
+                    return false;
+                result = *ret;
+                return true;
+            });
+        if( !rc )
+            return std::unexpected(rc.error());
+        return result;
     }
     return 0;
 }

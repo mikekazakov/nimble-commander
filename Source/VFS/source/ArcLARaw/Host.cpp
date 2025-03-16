@@ -109,7 +109,7 @@ static Extracted read_stream(const uint64_t _max_bytes,
     archive_read_set_read_callback(arc, myread);
     int arc_rc = archive_read_open1(arc);
     if( arc_rc != ARCHIVE_OK )
-        return VFSError::ToError(VFSError::FromErrno(archive_errno(arc)));
+        return Error{Error::POSIX, archive_errno(arc)};
 
     if( archive_filter_code(arc, 0) == ARCHIVE_FILTER_NONE ) {
         // libarchive always supports "none" compression filter as a fallback, but in this
@@ -120,7 +120,7 @@ static Extracted read_stream(const uint64_t _max_bytes,
     archive_entry *entry;
     arc_rc = archive_read_next_header(arc, &entry);
     if( arc_rc != ARCHIVE_OK )
-        return VFSError::ToError(VFSError::FromErrno(archive_errno(arc)));
+        return Error{Error::POSIX, archive_errno(arc)};
 
     Extracted extr;
 
@@ -138,7 +138,7 @@ static Extracted read_stream(const uint64_t _max_bytes,
         }
         const ssize_t size = archive_read_data(arc, st.outbuf.get(), buf_sz);
         if( size < 0 )
-            return VFSError::ToError(VFSError::FromErrno(archive_errno(arc)));
+            return Error{Error::POSIX, archive_errno(arc)};
         if( size == 0 )
             break; // EOF?
         total_size += size;

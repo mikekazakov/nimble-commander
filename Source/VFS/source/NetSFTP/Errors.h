@@ -63,6 +63,8 @@ struct Errors {
     static constexpr long mac_failure = -52;
     static constexpr long hash_init = -53;
     static constexpr long hash_calc = -54;
+    static constexpr long connect_failed = -1000000;
+    static constexpr long couldnt_resolve = -1000001;
     static constexpr long fx_eof = 1;
     static constexpr long fx_no_such_file = 2;
     static constexpr long fx_permission_denied = 3;
@@ -84,6 +86,7 @@ struct Errors {
     static constexpr long fx_not_a_directory = 19;
     static constexpr long fx_invalid_filename = 20;
     static constexpr long fx_link_loop = 21;
+    static constexpr long fx_init_failure = 1000000;
 };
 
 class ErrorDescriptionProvider : public nc::base::ErrorDescriptionProvider

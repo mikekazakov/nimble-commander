@@ -84,7 +84,7 @@ static_assert(Errors::fx_not_a_directory == LIBSSH2_FX_NOT_A_DIRECTORY);
 static_assert(Errors::fx_invalid_filename == LIBSSH2_FX_INVALID_FILENAME);
 static_assert(Errors::fx_link_loop == LIBSSH2_FX_LINK_LOOP);
 
-static constinit frozen::unordered_map<long, const char *, 76> g_Messages{
+static constinit frozen::unordered_map<long, const char *, 79> g_Messages{
     {Errors::none, "No error."},
     {Errors::socket_none, "The socket is invalid."},
     {Errors::banner_recv, "No banner was received from the remote host."},
@@ -140,6 +140,8 @@ static constinit frozen::unordered_map<long, const char *, 76> g_Messages{
     {Errors::mac_failure, "Failed to calculate MAC."},
     {Errors::hash_init, "Unable to initialize hash context."},
     {Errors::hash_calc, "Failed to calculate hash."},
+    {Errors::connect_failed, "Unable to connect to the server."},
+    {Errors::couldnt_resolve, "Couldn't resolve the SFTP server host."},
     {Errors::fx_eof, "End-of-file encountered."},
     {Errors::fx_no_such_file, "File does not exist in the server."},
     {Errors::fx_permission_denied, "The user does not have permission to perform the operation on the server."},
@@ -160,7 +162,8 @@ static constinit frozen::unordered_map<long, const char *, 76> g_Messages{
     {Errors::fx_dir_not_empty, "The directory is not empty."},
     {Errors::fx_not_a_directory, "The specified file is not a directory."},
     {Errors::fx_invalid_filename, "The filename is not valid."},
-    {Errors::fx_link_loop, "Too many symbolic links encountered."}};
+    {Errors::fx_link_loop, "Too many symbolic links encountered."},
+    {Errors::fx_init_failure, "Unable to inialize SFTP."}};
 
 std::string ErrorDescriptionProvider::Description(int64_t _code) const noexcept
 {

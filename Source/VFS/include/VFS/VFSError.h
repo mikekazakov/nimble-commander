@@ -28,37 +28,6 @@ enum {
     ArclibProgError = -2001,        // Illegal usage of the library.
     ArclibMiscError = -2002,        // Unknown or unclassified error.
     ArclibPasswordRequired = -2003, // Password needed.
-
-    // Net SFTP error codes:
-    NetSFTPCouldntResolveHost = -4000,
-    NetSFTPCouldntConnect = -4001,
-    NetSFTPCouldntEstablishSSH = -4002,
-    NetSFTPCouldntAuthenticatePassword = -4003,
-    NetSFTPCouldntAuthenticateKey = -4004,
-    NetSFTPCouldntInitSFTP = -4005,
-    NetSFTPErrorSSH = -4006,
-    NetSFTPEOF = -4007,
-    NetSFTPNoSuchFile = -4008,
-    NetSFTPPermissionDenied = -4009,
-    NetSFTPFailure = -4010,
-    NetSFTPBadMessage = -4011,
-    NetSFTPNoConnection = -4012,
-    NetSFTPConnectionLost = -4013,
-    NetSFTPOpUnsupported = -4014,
-    NetSFTPInvalidHandle = -4015,
-    NetSFTPNoSuchPath = -4016,
-    NetSFTPFileAlreadyExists = -4017,
-    NetSFTPWriteProtect = -4018,
-    NetSFTPNoMedia = -4019,
-    NetSFTPNoSpaceOnFilesystem = -4020,
-    NetSFTPQuotaExceeded = -4021,
-    NetSFTPUnknownPrincipal = -4022,
-    NetSFTPLockConflict = -4023,
-    NetSFTPDirNotEmpty = -4024,
-    NetSFTPNotADir = -4025,
-    NetSFTPInvalidFilename = -4026,
-    NetSFTPLinkLoop = -4027,
-    NetSFTPCouldntReadKey = -4028,
 };
 
 int FromLibarchive(int _errno);

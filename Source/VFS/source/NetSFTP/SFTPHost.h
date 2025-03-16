@@ -111,10 +111,9 @@ public:
         int socket = -1;
     };
 
-    static int VFSErrorForConnection(Connection &_conn);
-    static std::optional<Error> ErrorForConnection(Connection &_conn);
+    static Error ErrorForConnection(Connection &_conn);
 
-    int GetConnection(std::unique_ptr<Connection> &_t);
+    std::expected<std::unique_ptr<Connection>, Error> GetConnection();
 
     void ReturnConnection(std::unique_ptr<Connection> _t);
 
@@ -136,9 +135,9 @@ private:
                                       const LIBSSH2_USERAUTH_KBDINT_PROMPT *prompts,
                                       LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses,
                                       void **abstract);
-    int DoInit();
-    int SpawnSSH2(std::unique_ptr<Connection> &_t);
-    static int SpawnSFTP(std::unique_ptr<Connection> &_t);
+    std::expected<void, Error> DoInit();
+    std::expected<std::unique_ptr<Connection>, Error> SpawnSSH2();
+    static std::expected<void, Error> SpawnSFTP(Connection &_t);
 
     in_addr_t InetAddr() const;
     const class SFTPHostConfiguration &Config() const;

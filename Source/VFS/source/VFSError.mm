@@ -70,64 +70,6 @@ static NSString *TextForCode(int _code)
             return @"Internal archive module error";
         case ArclibMiscError:
             return @"Unknown or unclassified archive error";
-        case NetSFTPCouldntResolveHost:
-            return @"Couldn't resolve SFTP server host";
-        case NetSFTPCouldntConnect:
-            return @"Failed to connect remote SFTP server";
-        case NetSFTPCouldntEstablishSSH:
-            return @"Failed to establish SSH session";
-        case NetSFTPCouldntAuthenticatePassword:
-            return @"Authentication by password failed";
-        case NetSFTPCouldntAuthenticateKey:
-            return @"Authentication by key failed";
-        case NetSFTPCouldntInitSFTP:
-            return @"Unable to init SFTP session";
-        case NetSFTPErrorSSH:
-            return @"SSH error";
-        case NetSFTPEOF:
-            return @"End of file";
-        case NetSFTPNoSuchFile:
-            return @"No such file";
-        case NetSFTPPermissionDenied:
-            return @"Permission denied";
-        case NetSFTPFailure:
-            return @"General SFTP failure";
-        case NetSFTPBadMessage:
-            return @"Bad message";
-        case NetSFTPNoConnection:
-            return @"No connection";
-        case NetSFTPConnectionLost:
-            return @"Connection lost";
-        case NetSFTPOpUnsupported:
-            return @"Operation unsupported";
-        case NetSFTPInvalidHandle:
-            return @"Invalid handle";
-        case NetSFTPNoSuchPath:
-            return @"No such path";
-        case NetSFTPFileAlreadyExists:
-            return @"File already exists";
-        case NetSFTPWriteProtect:
-            return @"Write protect";
-        case NetSFTPNoMedia:
-            return @"No media";
-        case NetSFTPNoSpaceOnFilesystem:
-            return @"No space on filesystem";
-        case NetSFTPQuotaExceeded:
-            return @"Quota exceeded";
-        case NetSFTPUnknownPrincipal:
-            return @"Unknown principal";
-        case NetSFTPLockConflict:
-            return @"Lock conflict";
-        case NetSFTPDirNotEmpty:
-            return @"Directory not empty";
-        case NetSFTPNotADir:
-            return @"Not a directory";
-        case NetSFTPInvalidFilename:
-            return @"Invalid filename";
-        case NetSFTPLinkLoop:
-            return @"Link loop";
-        case NetSFTPCouldntReadKey:
-            return @"Coundn't open the private key";
         default:
             return [NSString stringWithFormat:@"Error code %d", _code];
     }

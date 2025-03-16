@@ -1,7 +1,6 @@
 // Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AccountsFetcher.h"
 #include <Base/algo.h>
-#include <VFS/VFSError.h>
 #include <algorithm>
 #include <unordered_map>
 

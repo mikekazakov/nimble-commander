@@ -4,7 +4,6 @@
 #include <optional>
 #include <vector>
 #include <stdint.h>
-#include "VFSError.h"
 #include "VFSDeclarations.h"
 #include <Base/Error.h>
 #include <optional>

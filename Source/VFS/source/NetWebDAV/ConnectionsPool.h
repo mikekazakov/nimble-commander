@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <functional>
@@ -7,7 +7,6 @@
 #include <string_view>
 #include <span>
 #include <limits>
-#include <VFS/VFSError.h>
 #include "ReadBuffer.h"
 #include "WriteBuffer.h"
 #include "Connection.h"

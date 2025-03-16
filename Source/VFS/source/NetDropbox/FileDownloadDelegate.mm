@@ -1,6 +1,5 @@
 // Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileDownloadDelegate.h"
-#include <VFS/VFSError.h>
 #include "Aux.h"
 #include <mutex>
 #include <Utility/ObjCpp.h>

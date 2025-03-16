@@ -1,6 +1,5 @@
 // Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSSeqToRandomWrapper.h"
-#include "../include/VFS/VFSError.h"
 #include <Base/CommonPaths.h>
 #include <Base/algo.h>
 #include <Utility/SystemInformation.h>

@@ -1,6 +1,5 @@
 // Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSEasyOps.h"
-#include "../include/VFS/VFSError.h"
 #include <Base/SerialQueue.h>
 #include <Base/DispatchGroup.h>
 #include <Base/algo.h>

@@ -1,5 +1,4 @@
 // Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <VFS/VFSError.h>
 #include "FileUploadDelegate.h"
 #include "Aux.h"
 #include <mutex>

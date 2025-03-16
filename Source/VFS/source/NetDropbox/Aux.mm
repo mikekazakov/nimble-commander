@@ -1,6 +1,5 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
-#include <VFS/VFSError.h>
 #include "Aux.h"
 #include <VFS/Log.h>
 #include <Utility/ObjCpp.h>

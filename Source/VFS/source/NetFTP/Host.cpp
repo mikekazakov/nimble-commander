@@ -223,7 +223,7 @@ FTPHost::Stat(std::string_view _path, unsigned long _flags, const VFSCancelCheck
     Log::Trace("FTPHost::Stat({}, {}) called", _path, _flags);
     if( _path.empty() || _path[0] != '/' ) {
         Log::Warn("Invalid call");
-        return std::unexpected(VFSError::ToError(VFSError::InvalidCall));
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     }
 
     const std::filesystem::path path = EnsureNoTrailingSlash(std::string(_path));

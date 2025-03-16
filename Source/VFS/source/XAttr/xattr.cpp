@@ -108,7 +108,7 @@ XAttrHost::XAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config)
 {
     const std::string &path = _config.Get<VFSXAttrHostConfiguration>().path;
     if( !_parent->IsNativeFS() )
-        throw ErrorException(VFSError::ToError(VFSError::InvalidCall));
+        throw ErrorException(Error{Error::POSIX, EINVAL});
 
     int fd = open(path.c_str(), O_RDONLY | O_NONBLOCK | O_EXLOCK);
     if( fd < 0 )

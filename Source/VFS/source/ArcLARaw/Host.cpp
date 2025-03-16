@@ -68,7 +68,7 @@ static Extracted read_stream(const uint64_t _max_bytes,
     if( st.source_file->Size().value_or(0) <= 0 )
         return VFSError::ToError(VFSError::ArclibFileFormat);
     if( st.source_file->GetReadParadigm() < VFSFile::ReadParadigm::Sequential )
-        return VFSError::ToError(VFSError::InvalidCall);
+        return Error{Error::POSIX, EINVAL};
 
     st.inbuf = std::make_unique<std::byte[]>(buf_sz);
     st.outbuf = std::make_unique<std::byte[]>(buf_sz);

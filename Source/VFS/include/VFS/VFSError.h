@@ -9,15 +9,11 @@ namespace VFSError {
 enum {
     // general error codes
     Ok = 0,            // operation was succesful
-    Cancelled = -1,    // operation was canceled by user with cancel-callback
-    NotSupported = -2, // call not supported by current object
     InvalidCall = -3,  // object state is invalid for such call
     GenericError = -4, // generic(unknown) error has occured
-    SmallBuffer = -5,  // Buffer passed to VFS is too small to accomplish operation
 
     // specific error codes
-    NotFound = -100,      // requested item was not found
-    UnexpectedEOF = -101, // an unexpected end of file has occured
+    NotFound = -100, // requested item was not found
 
     // UNIX error codes convert:
     // -1001 - error code

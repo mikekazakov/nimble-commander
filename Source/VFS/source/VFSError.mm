@@ -52,18 +52,12 @@ static NSString *TextForCode(int _code)
     switch( _code ) {
         case Ok:
             return @"No error";
-        case Cancelled:
-            return @"Operation was cancelled";
-        case NotSupported:
-            return @"Operation is not supported";
         case InvalidCall:
             return @"Invalid call";
         case GenericError:
             return @"Generic error";
         case NotFound:
             return @"Item not found";
-        case UnexpectedEOF:
-            return @"An unexpected end of file occured";
         case ArclibFileFormat:
             return @"Unrecognized or invalid archive file format";
         case ArclibProgError:

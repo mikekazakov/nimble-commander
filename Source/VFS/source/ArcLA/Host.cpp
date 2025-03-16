@@ -203,7 +203,7 @@ std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_c
 
     if( I->m_ArFile->GetReadParadigm() < VFSFile::ReadParadigm::Sequential ) {
         I->m_ArFile.reset();
-        return std::unexpected(VFSError::ToError(VFSError::InvalidCall));
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     }
 
     I->m_Mediator = std::make_shared<Mediator>();
@@ -822,7 +822,7 @@ std::expected<VFSStatFS, Error> ArchiveHost::StatFS(std::string_view /*_path*/,
 {
     const std::string_view vol_name = utility::PathManip::Filename(JunctionPath());
     if( vol_name.empty() )
-        return std::unexpected(VFSError::ToError(VFSError::InvalidCall));
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     VFSStatFS stat;
     stat.volume_name = vol_name;

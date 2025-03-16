@@ -1,6 +1,7 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Internals.h"
 #include "Host.h"
+#include "Errors.h"
 #include <fmt/format.h>
 #include <sys/stat.h>
 #include <VFS/Log.h>
@@ -386,46 +387,57 @@ bool WriteBuffer::Exhausted() const noexcept
     return m_Consumed == m_Buf.size();
 }
 
-int CURLErrorToVFSError(CURLcode _curle)
+Error CURLErrorToError(const CURLcode _curle)
 {
-    using namespace VFSError;
+    using E = Error;
+    using ES = Errors;
+    constexpr std::string_view ED = ErrorDomain;
+
     switch( _curle ) {
         case CURLE_LOGIN_DENIED:
-            return NetFTPLoginDenied;
+            return E{ED, ES::login_denied};
         case CURLE_URL_MALFORMAT:
-            return NetFTPURLMalformat;
-        case CURLE_FTP_WEIRD_SERVER_REPLY:
+            return E{ED, ES::url_malformat};
+        case CURLE_WEIRD_SERVER_REPLY:
+            return E{ED, ES::weird_server_reply};
         case CURLE_FTP_WEIRD_PASS_REPLY:
+            return E{ED, ES::weird_pass_reply};
         case CURLE_FTP_WEIRD_PASV_REPLY:
+            return E{ED, ES::weird_pasv_reply};
         case CURLE_FTP_WEIRD_227_FORMAT:
+            return E{ED, ES::weird_227_format};
         case CURLE_FTP_COULDNT_USE_REST:
+            return E{ED, ES::couldn_use_rest};
         case CURLE_FTP_COULDNT_RETR_FILE:
+            return E{ED, ES::couldn_retr_file};
         case CURLE_FTP_COULDNT_SET_TYPE:
+            return E{ED, ES::couldn_set_type};
+        case CURLE_FTP_PORT_FAILED:
+            return E{ED, ES::port_failed};
         case CURLE_QUOTE_ERROR:
         case CURLE_RANGE_ERROR:
-        case CURLE_FTP_PORT_FAILED:
         case CURLE_BAD_CONTENT_ENCODING:
-            return NetFTPServerProblem;
+            return E{ED, ES::server_problem};
         case CURLE_COULDNT_RESOLVE_PROXY:
-            return NetFTPCouldntResolveProxy;
+            return E{ED, ES::couldnt_resolve_proxy};
         case CURLE_COULDNT_RESOLVE_HOST:
         case CURLE_FTP_CANT_GET_HOST:
-            return NetFTPCouldntResolveHost;
+            return E{ED, ES::couldnt_resolve_host};
         case CURLE_COULDNT_CONNECT:
-            return NetFTPCouldntConnect;
+            return E{ED, ES::couldnt_connect};
         case CURLE_REMOTE_ACCESS_DENIED:
         case CURLE_UPLOAD_FAILED:
-            return NetFTPAccessDenied;
+            return E{ED, ES::access_denied};
         case CURLE_PARTIAL_FILE:
         case CURLE_FTP_BAD_DOWNLOAD_RESUME:
-            return UnexpectedEOF;
+            return E{ED, ES::unexpected_eof};
         case CURLE_OPERATION_TIMEDOUT:
-            return NetFTPOperationTimeout;
+            return E{ED, ES::operation_timeout};
         case CURLE_SEND_ERROR:
         case CURLE_RECV_ERROR:
-            return FromErrno(EIO);
+            return E{E::POSIX, EIO};
         case CURLE_REMOTE_FILE_NOT_FOUND:
-            return NotFound;
+            return E{E::POSIX, ENOENT};
         case CURLE_SSL_CONNECT_ERROR:
         case CURLE_SSL_ENGINE_NOTFOUND:
         case CURLE_SSL_ENGINE_SETFAILED:
@@ -433,9 +445,9 @@ int CURLErrorToVFSError(CURLcode _curle)
         case CURLE_SSL_CIPHER:
         case CURLE_SSL_CACERT:
         case CURLE_USE_SSL_FAILED:
-            return NetFTPSSLFailure;
+            return E{ED, ES::ssl_failure};
         default:
-            return FromErrno(EIO);
+            return E{E::POSIX, EIO};
     }
 }
 

@@ -29,17 +29,6 @@ enum {
     ArclibMiscError = -2002,        // Unknown or unclassified error.
     ArclibPasswordRequired = -2003, // Password needed.
 
-    // Net FTP error codes:
-    NetFTPLoginDenied = -3000,
-    NetFTPURLMalformat = -3001,
-    NetFTPServerProblem = -3002,
-    NetFTPCouldntResolveProxy = -3003,
-    NetFTPCouldntResolveHost = -3004,
-    NetFTPCouldntConnect = -3005,
-    NetFTPAccessDenied = -3006,
-    NetFTPOperationTimeout = -3007,
-    NetFTPSSLFailure = -3008,
-
     // Net SFTP error codes:
     NetSFTPCouldntResolveHost = -4000,
     NetSFTPCouldntConnect = -4001,
@@ -72,7 +61,6 @@ enum {
     NetSFTPCouldntReadKey = -4028,
 };
 
-int FromErrno(int _errno) noexcept;
 int FromLibarchive(int _errno);
 
 // Transition, to be removed later

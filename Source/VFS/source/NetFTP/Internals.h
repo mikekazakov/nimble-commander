@@ -114,7 +114,6 @@ size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *us
 
 std::shared_ptr<Directory> ParseListing(const char *_str);
 
-// TODO: migrate to Error
-int CURLErrorToVFSError(CURLcode _curle);
+Error CURLErrorToError(CURLcode _curle);
 
 } // namespace nc::vfs::ftp

@@ -71,7 +71,7 @@ void WebDAVHost::Init()
     //    if( (requests & HTTPRequests::MinimalRequiredSet) !=
     //    HTTPRequests::MinimalRequiredSet ) {
     //        HTTPRequests::Print(requests);
-    //        throw ErrorException( VFSError::ToError(VFSError::FromErrno(EPROTONOSUPPORT)) );
+    //        throw ErrorException( Error{Error::POSIX, EPROTONOSUPPORT} );
     //    }
 
     AddFeatures(HostFeatures::NonEmptyRmDir);

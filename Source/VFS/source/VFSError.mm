@@ -23,7 +23,7 @@ static constexpr int g_PosixMin = -1999;
 
 namespace VFSError {
 
-int FromErrno(int _errno) noexcept
+static int FromErrno(int _errno) noexcept
 {
     if( _errno >= 0 && _errno <= ELAST ) {
         return _errno + g_PosixBase;
@@ -70,24 +70,6 @@ static NSString *TextForCode(int _code)
             return @"Internal archive module error";
         case ArclibMiscError:
             return @"Unknown or unclassified archive error";
-        case NetFTPLoginDenied:
-            return @"The remote server denied to login";
-        case NetFTPURLMalformat:
-            return @"URL malformat";
-        case NetFTPServerProblem:
-            return @"Weird FTP server behaviour";
-        case NetFTPCouldntResolveProxy:
-            return @"Couldn't resolve proxy for FTP server";
-        case NetFTPCouldntResolveHost:
-            return @"Couldn't resolve FTP server host";
-        case NetFTPCouldntConnect:
-            return @"Failed to connect to remote FTP server";
-        case NetFTPAccessDenied:
-            return @"Access to remote resource is denied";
-        case NetFTPOperationTimeout:
-            return @"Operation timeout";
-        case NetFTPSSLFailure:
-            return @"FTP+SSL/TLS failure";
         case NetSFTPCouldntResolveHost:
             return @"Couldn't resolve SFTP server host";
         case NetSFTPCouldntConnect:

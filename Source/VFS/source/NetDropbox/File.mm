@@ -636,15 +636,15 @@ bool File::HasDataToFeedUploadTaskAsync() const
     return !m_Upload->fifo.empty();
 }
 
-int File::SetChunkSize(size_t _size)
+std::expected<void, Error> File::SetChunkSize(size_t _size)
 {
     if( m_State != Cold )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     if( _size >= 1l * 1000l * 1000l && _size <= 150l * 1000l * 1000l ) {
         m_ChunkSize = _size;
-        return VFSError::Ok;
+        return {};
     }
-    return VFSError::FromErrno(EINVAL);
+    return std::unexpected(Error{Error::POSIX, EINVAL});
 }
 
 void File::CheckStateTransition(State _new_state) const

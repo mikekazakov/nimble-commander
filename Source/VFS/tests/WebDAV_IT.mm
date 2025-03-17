@@ -383,13 +383,7 @@ static void TestComplexCopy(VFSHostPtr _host)
 {
     std::ignore = VFSEasyDelete("/Test2", _host);
     REQUIRE(VFSEasyCopyDirectory("/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host));
-
-    int res = 0;
-    const int cmp_rc =
-        VFSCompareNodes("/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host, res);
-
-    CHECK(cmp_rc == VFSError::Ok);
-    CHECK(res == 0);
+    CHECK(VFSCompareNodes("/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host) == 0);
 
     std::ignore = VFSEasyDelete("/Test2", _host);
 }

@@ -34,7 +34,8 @@ private:
         Write
     };
 
-    ssize_t ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offset, VFSCancelChecker _cancel_checker);
+    std::expected<size_t, Error>
+    ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offset, const VFSCancelChecker &_cancel_checker);
 
     std::filesystem::path DirName() const;
     void FinishWriting();

@@ -78,14 +78,15 @@ public:
     void CommitState(std::unique_ptr<arc::State> _state);
 
     // use SeekCache or open a new file and seeks to requested item
-    int ArchiveStateForItem(const char *_filename, std::unique_ptr<arc::State> &_target);
+    std::expected<std::unique_ptr<arc::State>, Error> ArchiveStateForItem(const char *_filename);
 
     std::shared_ptr<const ArchiveHost> SharedPtr() const;
 
     std::shared_ptr<ArchiveHost> SharedPtr();
 
     /** return VFSError, not uids returned */
-    int ResolvePathIfNeeded(std::string_view _path, std::pmr::string &_resolved_path, unsigned long _flags);
+    std::expected<void, Error>
+    ResolvePathIfNeeded(std::string_view _path, std::pmr::string &_resolved_path, unsigned long _flags);
 
     enum class SymlinkState : uint8_t {
         /// symlink is ok to use
@@ -123,15 +124,14 @@ private:
     std::expected<void, Error> DoInit(const VFSCancelChecker &_cancel_checker);
     const class VFSArchiveHostConfiguration &Config() const;
 
-    int ReadArchiveListing();
+    std::expected<void, Error> ReadArchiveListing();
     uint64_t UpdateDirectorySize(arc::Dir &_directory, const std::string &_path);
     arc::Dir *FindOrBuildDir(std::string_view _path_with_tr_sl);
 
     void InsertDummyDirInto(arc::Dir *_parent, std::string_view _dir_name);
     struct archive *SpawnLibarchive();
 
-    // Returns a VFSError
-    int ResolvePath(std::string_view _path, std::pmr::string &_resolved_path);
+    std::expected<void, Error> ResolvePath(std::string_view _path, std::pmr::string &_resolved_path);
 
     void ResolveSymlink(uint32_t _uid);
 

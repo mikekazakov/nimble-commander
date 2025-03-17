@@ -85,23 +85,19 @@ public:
     std::shared_ptr<FTPHost> SharedPtr() { return std::static_pointer_cast<FTPHost>(Host::SharedPtr()); }
 
 private:
-    int DoInit();
-    int DownloadAndCacheListing(ftp::CURLInstance *_inst,
-                                const char *_path,
-                                std::shared_ptr<ftp::Directory> *_cached_dir,
-                                const VFSCancelChecker &_cancel_checker);
+    std::expected<void, Error> DoInit();
+    std::expected<void, Error> DownloadAndCacheListing(ftp::CURLInstance *_inst,
+                                                       const char *_path,
+                                                       std::shared_ptr<ftp::Directory> *_cached_dir,
+                                                       const VFSCancelChecker &_cancel_checker);
 
-    int GetListingForFetching(ftp::CURLInstance *_inst,
-                              std::string_view _path,
-                              std::shared_ptr<ftp::Directory> &_cached_dir,
-                              const VFSCancelChecker &_cancel_checker);
+    std::expected<std::shared_ptr<ftp::Directory>, Error>
+    GetListingForFetching(ftp::CURLInstance *_inst, std::string_view _path, const VFSCancelChecker &_cancel_checker);
 
     std::unique_ptr<ftp::CURLInstance> SpawnCURL();
 
-    int DownloadListing(ftp::CURLInstance *_inst,
-                        const char *_path,
-                        std::string &_buffer,
-                        const VFSCancelChecker &_cancel_checker) const;
+    std::expected<std::string, Error>
+    DownloadListing(ftp::CURLInstance *_inst, const char *_path, const VFSCancelChecker &_cancel_checker) const;
 
     void InformDirectoryChanged(const std::string &_dir_wth_sl);
 

@@ -66,9 +66,9 @@ static Extracted read_stream(const uint64_t _max_bytes,
     if( const std::expected<void, Error> rc = st.source_file->Open(VFSFlags::OF_Read); !rc )
         return rc.error();
     if( st.source_file->Size().value_or(0) <= 0 )
-        return VFSError::ToError(VFSError::ArclibFileFormat);
+        return Error{Error::POSIX, EFTYPE};
     if( st.source_file->GetReadParadigm() < VFSFile::ReadParadigm::Sequential )
-        return VFSError::ToError(VFSError::InvalidCall);
+        return Error{Error::POSIX, EINVAL};
 
     st.inbuf = std::make_unique<std::byte[]>(buf_sz);
     st.outbuf = std::make_unique<std::byte[]>(buf_sz);
@@ -109,18 +109,18 @@ static Extracted read_stream(const uint64_t _max_bytes,
     archive_read_set_read_callback(arc, myread);
     int arc_rc = archive_read_open1(arc);
     if( arc_rc != ARCHIVE_OK )
-        return VFSError::ToError(VFSError::FromErrno(archive_errno(arc)));
+        return Error{Error::POSIX, archive_errno(arc)};
 
     if( archive_filter_code(arc, 0) == ARCHIVE_FILTER_NONE ) {
         // libarchive always supports "none" compression filter as a fallback, but in this
         // configuration it doesn't make any sense, so reject such files.
-        return VFSError::ToError(VFSError::ArclibFileFormat);
+        return Error{Error::POSIX, EFTYPE};
     }
 
     archive_entry *entry;
     arc_rc = archive_read_next_header(arc, &entry);
     if( arc_rc != ARCHIVE_OK )
-        return VFSError::ToError(VFSError::FromErrno(archive_errno(arc)));
+        return Error{Error::POSIX, archive_errno(arc)};
 
     Extracted extr;
 
@@ -138,7 +138,7 @@ static Extracted read_stream(const uint64_t _max_bytes,
         }
         const ssize_t size = archive_read_data(arc, st.outbuf.get(), buf_sz);
         if( size < 0 )
-            return VFSError::ToError(VFSError::FromErrno(archive_errno(arc)));
+            return Error{Error::POSIX, archive_errno(arc)};
         if( size == 0 )
             break; // EOF?
         total_size += size;

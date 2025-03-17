@@ -5,6 +5,7 @@
 #include "Internals.h"
 #include "Cache.h"
 #include "File.h"
+#include "Errors.h"
 #include <sys/dirent.h>
 #include <sys/stat.h>
 #include <fmt/format.h>
@@ -72,18 +73,16 @@ FTPHost::FTPHost(const std::string &_serv_url,
     : Host(_serv_url, nullptr, UniqueTag), m_Cache(std::make_unique<ftp::Cache>()),
       m_Configuration(ComposeConfiguration(_serv_url, _user, _passwd, _start_dir, _port, _active))
 {
-    const int rc = DoInit();
-    if( rc < 0 )
-        throw ErrorException(VFSError::ToError(rc));
+    if( const std::expected<void, Error> rc = DoInit(); !rc )
+        throw ErrorException(rc.error());
 }
 
 FTPHost::FTPHost(const VFSConfiguration &_config)
     : Host(_config.Get<VFSNetFTPHostConfiguration>().server_url, nullptr, UniqueTag),
       m_Cache(std::make_unique<ftp::Cache>()), m_Configuration(_config)
 {
-    const int rc = DoInit();
-    if( rc < 0 )
-        throw ErrorException(VFSError::ToError(rc));
+    if( const std::expected<void, Error> rc = DoInit(); !rc )
+        throw ErrorException(rc.error());
 }
 
 const class VFSNetFTPHostConfiguration &FTPHost::Config() const noexcept
@@ -100,6 +99,8 @@ VFSMeta FTPHost::Meta()
                            [[maybe_unused]] VFSCancelChecker _cancel_checker) {
         return std::make_shared<FTPHost>(_config);
     };
+    m.error_domain = ftp::ErrorDomain;
+    m.error_description_provider = std::make_shared<ftp::ErrorDescriptionProvider>();
     return m;
 }
 
@@ -108,7 +109,7 @@ VFSConfiguration FTPHost::Configuration() const
     return m_Configuration;
 }
 
-int FTPHost::DoInit()
+std::expected<void, Error> FTPHost::DoInit()
 {
     m_Cache->SetChangesCallback([this](const std::string &_at_dir) {
         InformDirectoryChanged(_at_dir.back() == '/' ? _at_dir : _at_dir + "/");
@@ -116,30 +117,28 @@ int FTPHost::DoInit()
 
     auto instance = SpawnCURL();
 
-    const int result = DownloadAndCacheListing(instance.get(), Config().start_dir.c_str(), nullptr, nullptr);
-    if( result == 0 ) {
-        m_ListingInstance = std::move(instance);
-        return 0;
-    }
-
-    return result;
+    const std::expected<void, Error> rc =
+        DownloadAndCacheListing(instance.get(), Config().start_dir.c_str(), nullptr, nullptr);
+    if( !rc )
+        return rc;
+    m_ListingInstance = std::move(instance);
+    return {};
 }
 
-int FTPHost::DownloadAndCacheListing(CURLInstance *_inst,
-                                     const char *_path,
-                                     std::shared_ptr<Directory> *_cached_dir,
-                                     const VFSCancelChecker &_cancel_checker)
+std::expected<void, Error> FTPHost::DownloadAndCacheListing(CURLInstance *_inst,
+                                                            const char *_path,
+                                                            std::shared_ptr<Directory> *_cached_dir,
+                                                            const VFSCancelChecker &_cancel_checker)
 {
     Log::Trace("FTPHost::DownloadAndCacheListing({}, {}) called", static_cast<void *>(_inst), _path);
     if( _inst == nullptr || _path == nullptr )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
-    std::string listing_data;
-    const int result = DownloadListing(_inst, _path, listing_data, _cancel_checker);
-    if( result != 0 )
-        return result;
+    const std::expected<std::string, Error> listing = DownloadListing(_inst, _path, _cancel_checker);
+    if( !listing )
+        return std::unexpected(listing.error());
 
-    auto dir = ParseListing(listing_data.c_str());
+    auto dir = ParseListing(listing->c_str());
     m_Cache->InsertLISTDirectory(_path, dir);
     std::string path = _path;
     InformDirectoryChanged(path.back() == '/' ? path : path + "/");
@@ -147,17 +146,15 @@ int FTPHost::DownloadAndCacheListing(CURLInstance *_inst,
     if( _cached_dir )
         *_cached_dir = dir;
 
-    return 0;
+    return {};
 }
 
-int FTPHost::DownloadListing(CURLInstance *_inst,
-                             const char *_path,
-                             std::string &_buffer,
-                             const VFSCancelChecker &_cancel_checker) const
+std::expected<std::string, Error>
+FTPHost::DownloadListing(CURLInstance *_inst, const char *_path, const VFSCancelChecker &_cancel_checker) const
 {
     Log::Trace("FTPHost::DownloadListing({}, {}) called", static_cast<void *>(_inst), _path);
     if( _path == nullptr || _path[0] != '/' )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     std::string path = _path;
     if( path.back() != '/' )
@@ -185,12 +182,10 @@ int FTPHost::DownloadListing(CURLInstance *_inst,
     Log::Trace("CURLcode = {}", std::to_underlying(result));
 
     if( result != 0 )
-        return CURLErrorToVFSError(result);
+        return std::unexpected(CURLErrorToError(result));
 
     Log::Trace("response = {}", response);
-    _buffer.swap(response);
-
-    return 0;
+    return response;
 }
 
 // TODO: unit tests
@@ -228,7 +223,7 @@ FTPHost::Stat(std::string_view _path, unsigned long _flags, const VFSCancelCheck
     Log::Trace("FTPHost::Stat({}, {}) called", _path, _flags);
     if( _path.empty() || _path[0] != '/' ) {
         Log::Warn("Invalid call");
-        return std::unexpected(VFSError::ToError(VFSError::InvalidCall));
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     }
 
     const std::filesystem::path path = EnsureNoTrailingSlash(std::string(_path));
@@ -265,7 +260,7 @@ FTPHost::Stat(std::string_view _path, unsigned long _flags, const VFSCancelCheck
             else {
                 Log::Trace("didn't find an entry for '{}'", filename);
                 if( !dir->IsOutdated() ) { // if we can't find entry and dir is not outdated - return NotFound.
-                    return std::unexpected(VFSError::ToError(VFSError::NotFound));
+                    return std::unexpected(Error{Error::POSIX, ENOENT});
                 }
             }
         }
@@ -274,9 +269,10 @@ FTPHost::Stat(std::string_view _path, unsigned long _flags, const VFSCancelCheck
     // assume that file is freshly created and thus we don't have it in current cache state
     // download new listing, sync I/O
     std::shared_ptr<Directory> dir;
-    const int result = DownloadAndCacheListing(m_ListingInstance.get(), parent_dir.c_str(), &dir, _cancel_checker);
-    if( result != 0 ) {
-        return std::unexpected(VFSError::ToError(result));
+    const std::expected<void, Error> rc =
+        DownloadAndCacheListing(m_ListingInstance.get(), parent_dir.c_str(), &dir, _cancel_checker);
+    if( !rc ) {
+        return std::unexpected(rc.error());
     }
 
     assert(dir);
@@ -285,7 +281,7 @@ FTPHost::Stat(std::string_view _path, unsigned long _flags, const VFSCancelCheck
         entry->ToStat(st);
         return st;
     }
-    return std::unexpected(VFSError::ToError(VFSError::NotFound));
+    return std::unexpected(Error{Error::POSIX, ENOENT});
 }
 
 std::expected<VFSListingPtr, Error>
@@ -294,10 +290,10 @@ FTPHost::FetchDirectoryListing(std::string_view _path, unsigned long _flags, con
     if( _flags & VFSFlags::F_ForceRefresh )
         m_Cache->MarkDirectoryDirty(_path);
 
-    std::shared_ptr<Directory> dir;
-    const int result = GetListingForFetching(m_ListingInstance.get(), _path, dir, _cancel_checker);
-    if( result != 0 )
-        return std::unexpected(VFSError::ToError(result));
+    const std::expected<std::shared_ptr<ftp::Directory>, Error> dir =
+        GetListingForFetching(m_ListingInstance.get(), _path, _cancel_checker);
+    if( !dir )
+        return std::unexpected(dir.error());
 
     // setup of listing structure
     using nc::base::variable_container;
@@ -323,7 +319,7 @@ FTPHost::FetchDirectoryListing(std::string_view _path, unsigned long _flags, con
         listing_source.mtimes.insert(0, curtime);
     }
 
-    for( const auto &entry : dir->entries ) {
+    for( const auto &entry : (*dir)->entries ) {
         listing_source.filenames.emplace_back(entry.name);
         listing_source.unix_types.emplace_back((entry.mode & S_IFDIR) ? DT_DIR : DT_REG);
         listing_source.unix_modes.emplace_back(entry.mode);
@@ -339,31 +335,27 @@ FTPHost::FetchDirectoryListing(std::string_view _path, unsigned long _flags, con
     return VFSListing::Build(std::move(listing_source));
 }
 
-int FTPHost::GetListingForFetching(CURLInstance *_inst,
-                                   std::string_view _path,
-                                   std::shared_ptr<Directory> &_cached_dir,
-                                   const VFSCancelChecker &_cancel_checker)
+std::expected<std::shared_ptr<ftp::Directory>, Error>
+FTPHost::GetListingForFetching(CURLInstance *_inst, std::string_view _path, const VFSCancelChecker &_cancel_checker)
 {
     if( _path.empty() || _path[0] != '/' )
-        return VFSError::InvalidCall;
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     const auto path = utility::PathManip::EnsureTrailingSlash(_path);
 
     auto dir = m_Cache->FindDirectory(path.native());
     if( dir && !dir->IsOutdated() && !dir->has_dirty_items ) {
-        _cached_dir = dir;
-        return 0;
+        return dir;
     }
 
     // download listing, sync I/O
-    const int result = DownloadAndCacheListing(_inst, path.c_str(), &dir, _cancel_checker); // sync I/O here
-    if( result != 0 )
-        return result;
+    const std::expected<void, Error> rc =
+        DownloadAndCacheListing(_inst, path.c_str(), &dir, _cancel_checker); // sync I/O here
+    if( !rc )
+        return std::unexpected(rc.error());
 
     assert(dir);
-
-    _cached_dir = dir;
-    return 0;
+    return dir;
 }
 
 std::expected<std::shared_ptr<VFSFile>, Error> FTPHost::CreateFile(std::string_view _path,
@@ -415,7 +407,7 @@ std::expected<void, Error> FTPHost::Unlink(std::string_view _path,
     if( curl_res == CURLE_OK )
         return {};
 
-    return std::unexpected(VFSError::ToError(CURLErrorToVFSError(curl_res)));
+    return std::unexpected(CURLErrorToError(curl_res));
 }
 
 // _mode is ignored, since we can't specify any access mode from ftp
@@ -461,7 +453,7 @@ std::expected<void, Error> FTPHost::CreateDirectory(std::string_view _path,
     if( curl_e == CURLE_OK )
         return {};
 
-    return std::unexpected(VFSError::ToError(CURLErrorToVFSError(curl_e)));
+    return std::unexpected(CURLErrorToError(curl_e));
 }
 
 std::expected<void, Error> FTPHost::RemoveDirectory(std::string_view _path,
@@ -503,7 +495,7 @@ std::expected<void, Error> FTPHost::RemoveDirectory(std::string_view _path,
     if( curl_res == CURLE_OK )
         return {};
 
-    return std::unexpected(VFSError::ToError(CURLErrorToVFSError(curl_res)));
+    return std::unexpected(CURLErrorToError(curl_res));
 }
 
 std::expected<void, Error> FTPHost::Rename(std::string_view _old_path,
@@ -551,7 +543,7 @@ std::expected<void, Error> FTPHost::Rename(std::string_view _old_path,
     if( curl_res == CURLE_OK )
         return {};
 
-    return std::unexpected(VFSError::ToError(CURLErrorToVFSError(curl_res)));
+    return std::unexpected(CURLErrorToError(curl_res));
 }
 
 void FTPHost::MakeDirectoryStructureDirty(const char *_path)
@@ -608,12 +600,12 @@ bool FTPHost::IsWritable() const
 std::expected<void, Error>
 FTPHost::IterateDirectoryListing(std::string_view _path, const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    std::shared_ptr<Directory> dir;
-    const int result = GetListingForFetching(m_ListingInstance.get(), _path, dir, nullptr);
-    if( result != 0 )
-        return std::unexpected(VFSError::ToError(result));
+    const std::expected<std::shared_ptr<ftp::Directory>, Error> dir =
+        GetListingForFetching(m_ListingInstance.get(), _path, nullptr);
+    if( !dir )
+        return std::unexpected(dir.error());
 
-    for( auto &i : dir->entries ) {
+    for( auto &i : (*dir)->entries ) {
         VFSDirEnt e;
         strcpy(e.name, i.name.c_str());
         e.name_len = uint16_t(i.name.length());

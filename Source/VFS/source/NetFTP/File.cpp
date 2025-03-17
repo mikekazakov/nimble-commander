@@ -122,7 +122,8 @@ std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancel
     return std::unexpected(Error{Error::POSIX, ENOTSUP});
 }
 
-ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offset, VFSCancelChecker _cancel_checker)
+std::expected<size_t, Error>
+File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offset, const VFSCancelChecker &_cancel_checker)
 {
     Log::Trace("File::ReadChunk({}, {}, {}) called", _read_to, _read_size, _file_offset);
 
@@ -187,7 +188,7 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
                 has_range = false;
             }
             if( _cancel_checker && _cancel_checker() ) {
-                return VFSError::Cancelled;
+                return std::unexpected(Error{Error::POSIX, ECANCELED});
             }
         } while( still_running && (m_ReadBuf.Size() < _read_size + _file_offset - m_BufFileOffset) );
 
@@ -205,7 +206,7 @@ ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offs
     }
 
     if( error )
-        return VFSError::FromErrno(EIO);
+        return std::unexpected(Error{Error::POSIX, EIO});
 
     if( m_BufFileOffset < _file_offset ) {
         const uint64_t discard = std::min(m_ReadBuf.Size(), static_cast<size_t>(_file_offset - m_BufFileOffset));
@@ -233,12 +234,12 @@ std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
     if( Eof() )
         return 0;
 
-    const ssize_t ret = ReadChunk(_buf, _size, m_FilePos, nullptr);
-    if( ret < 0 )
-        return std::unexpected(VFSError::ToError(static_cast<int>(ret)));
+    const std::expected<size_t, Error> ret = ReadChunk(_buf, _size, m_FilePos, nullptr);
+    if( !ret )
+        return std::unexpected(ret.error());
 
-    m_FilePos += ret;
-    return ret;
+    m_FilePos += *ret;
+    return *ret;
 }
 
 std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)

@@ -188,8 +188,8 @@ std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_c
     if( const std::expected<uint64_t, Error> source_file_size = source_file->Size(); !source_file_size )
         return std::unexpected(source_file_size.error());
     else if( *source_file_size == 0 )
-        return std::unexpected(VFSError::ToError(
-            VFSError::ArclibFileFormat)); // libarchive thinks that zero-bytes archives are OK, but I don't think so.
+        return std::unexpected(
+            Error{Error::POSIX, EFTYPE}); // libarchive thinks that zero-bytes archives are OK, but I don't think so.
 
     if( Parent()->IsNativeFS() ) {
         I->m_ArFile = source_file;
@@ -203,7 +203,7 @@ std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_c
 
     if( I->m_ArFile->GetReadParadigm() < VFSFile::ReadParadigm::Sequential ) {
         I->m_ArFile.reset();
-        return std::unexpected(VFSError::ToError(VFSError::InvalidCall));
+        return std::unexpected(Error{Error::POSIX, EINVAL});
     }
 
     I->m_Mediator = std::make_shared<Mediator>();
@@ -216,23 +216,24 @@ std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_c
     archive_read_set_seek_callback(I->m_Arc, Mediator::myseek);
     res = archive_read_open1(I->m_Arc);
     if( res < 0 ) {
+        const int err = archive_errno(I->m_Arc);
         archive_read_free(I->m_Arc);
         I->m_Arc = nullptr;
         I->m_Mediator.reset();
         I->m_ArFile.reset();
-        return std::unexpected(VFSError::ToError(-1)); // TODO: right error code
+        return std::unexpected(Error{Error::POSIX, err});
     }
 
     // we should fail is archive is encrypted and there's no password provided
     if( archive_read_has_encrypted_entries(I->m_Arc) > 0 && !Config().password )
-        return std::unexpected(VFSError::ToError(VFSError::ArclibPasswordRequired));
+        return std::unexpected(Error{Error::POSIX, ENEEDAUTH});
 
-    res = ReadArchiveListing();
+    const std::expected<void, Error> list_rc = ReadArchiveListing();
     if( archive_read_has_encrypted_entries(I->m_Arc) > 0 && !Config().password )
-        return std::unexpected(VFSError::ToError(VFSError::ArclibPasswordRequired));
+        return std::unexpected(Error{Error::POSIX, ENEEDAUTH});
 
-    if( res != VFSError::Ok )
-        return std::unexpected(VFSError::ToError(res));
+    if( !list_rc )
+        return std::unexpected(list_rc.error());
 
     return {};
 }
@@ -282,7 +283,7 @@ static bool SplitIntoFilenameAndParentPath(const char *_path,
     return true;
 }
 
-int ArchiveHost::ReadArchiveListing()
+std::expected<void, Error> ArchiveHost::ReadArchiveListing()
 {
     assert(I->m_Arc != nullptr);
     uint32_t aruid = 0;
@@ -443,14 +444,14 @@ int ArchiveHost::ReadArchiveListing()
     UpdateDirectorySize(I->m_PathToDir["/"], "/");
 
     if( ret == ARCHIVE_EOF )
-        return VFSError::Ok;
+        return {};
 
     fmt::println("{}", archive_error_string(I->m_Arc));
 
     if( ret == ARCHIVE_WARN )
-        return VFSError::Ok;
+        return {};
 
-    return VFSError::GenericError;
+    return std::unexpected(Error{Error::POSIX, archive_errno(I->m_Arc)});
 }
 
 uint64_t ArchiveHost::UpdateDirectorySize(Dir &_directory, const std::string &_path)
@@ -541,10 +542,8 @@ std::expected<VFSListingPtr, Error> ArchiveHost::FetchDirectoryListing(std::stri
 {
     StackAllocator alloc;
     std::pmr::string path(&alloc);
-
-    const int res = ResolvePathIfNeeded(_path, path, _flags);
-    if( res < 0 )
-        return std::unexpected(VFSError::ToError(res));
+    if( const std::expected<void, Error> rc = ResolvePathIfNeeded(_path, path, _flags); !rc )
+        return std::unexpected(rc.error());
 
     if( path.back() != '/' )
         path += "/";
@@ -645,9 +644,8 @@ ArchiveHost::Stat(std::string_view _path, unsigned long _flags, const VFSCancelC
     StackAllocator alloc;
     std::pmr::string resolve_buf(&alloc);
 
-    const int res = ResolvePathIfNeeded(_path, resolve_buf, _flags);
-    if( res < 0 )
-        return std::unexpected(VFSError::ToError(res));
+    if( const std::expected<void, Error> rc = ResolvePathIfNeeded(_path, resolve_buf, _flags); !rc )
+        return std::unexpected(rc.error());
 
     if( auto it = FindEntry(resolve_buf) ) {
         VFSStat st;
@@ -657,19 +655,19 @@ ArchiveHost::Stat(std::string_view _path, unsigned long _flags, const VFSCancelC
     return std::unexpected(Error{Error::POSIX, ENOENT});
 }
 
-int ArchiveHost::ResolvePathIfNeeded(std::string_view _path, std::pmr::string &_resolved_path, unsigned long _flags)
+std::expected<void, Error>
+ArchiveHost::ResolvePathIfNeeded(std::string_view _path, std::pmr::string &_resolved_path, unsigned long _flags)
 {
     if( _path.empty() )
-        return VFSError::InvalidCall;
+        std::unexpected(Error{Error::POSIX, EINVAL});
 
-    if( !I->m_NeedsPathResolving || (_flags & VFSFlags::F_NoFollow) )
+    if( !I->m_NeedsPathResolving || (_flags & VFSFlags::F_NoFollow) ) {
         _resolved_path = _path;
-    else {
-        const int res = ResolvePath(_path, _resolved_path);
-        if( res < 0 )
-            return res;
     }
-    return VFSError::Ok;
+    else {
+        return ResolvePath(_path, _resolved_path);
+    }
+    return {};
 }
 
 std::expected<void, Error>
@@ -682,9 +680,8 @@ ArchiveHost::IterateDirectoryListing(std::string_view _path,
     StackAllocator alloc;
     std::pmr::string buf(&alloc);
 
-    const int ret = ResolvePathIfNeeded(_path, buf, 0);
-    if( ret < 0 )
-        return std::unexpected(VFSError::ToError(ret));
+    if( const std::expected<void, Error> rc = ResolvePathIfNeeded(_path, buf, 0); !rc )
+        return std::unexpected(rc.error());
 
     if( buf.back() != '/' )
         buf += '/'; // we store directories with trailing slash
@@ -782,10 +779,10 @@ const DirEntry *ArchiveHost::FindEntry(uint32_t _uid)
     return &dir->entries[ind];
 }
 
-int ArchiveHost::ResolvePath(std::string_view _path, std::pmr::string &_resolved_path)
+std::expected<void, Error> ArchiveHost::ResolvePath(std::string_view _path, std::pmr::string &_resolved_path)
 {
     if( _path.empty() || _path[0] != '/' )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     std::filesystem::path p = EnsureNoTrailingSlash(std::string(_path));
     p = p.relative_path();
@@ -796,25 +793,25 @@ int ArchiveHost::ResolvePath(std::string_view _path, std::pmr::string &_resolved
 
         auto entry = FindEntry(result_path.c_str());
         if( !entry )
-            return VFSError::NotFound;
+            return std::unexpected(Error{Error::POSIX, ENOENT});
 
         if( (entry->st.st_mode & S_IFMT) == S_IFLNK ) {
             const auto symlink_it = I->m_Symlinks.find(entry->aruid);
             if( symlink_it == I->m_Symlinks.end() )
-                return VFSError::NotFound;
+                return std::unexpected(Error{Error::POSIX, ENOENT});
 
             auto &s = symlink_it->second;
             if( s.state == SymlinkState::Unresolved )
                 ResolveSymlink(s.uid);
             if( s.state != SymlinkState::Resolved )
-                return VFSError::NotFound; // current part points to nowhere
+                return std::unexpected(Error{Error::POSIX, ENOENT}); // current part points to nowhere
 
             result_path = s.target_path;
         }
     }
 
     _resolved_path = result_path.native();
-    return VFSError::Ok;
+    return {};
 }
 
 std::expected<VFSStatFS, Error> ArchiveHost::StatFS(std::string_view /*_path*/,
@@ -822,7 +819,7 @@ std::expected<VFSStatFS, Error> ArchiveHost::StatFS(std::string_view /*_path*/,
 {
     const std::string_view vol_name = utility::PathManip::Filename(JunctionPath());
     if( vol_name.empty() )
-        return std::unexpected(VFSError::ToError(VFSError::InvalidCall));
+        return std::unexpected(Error{Error::POSIX, EINVAL});
 
     VFSStatFS stat;
     stat.volume_name = vol_name;
@@ -886,11 +883,11 @@ void ArchiveHost::CommitState(std::unique_ptr<State> _state)
     }
 }
 
-int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<State> &_target)
+std::expected<std::unique_ptr<arc::State>, Error> ArchiveHost::ArchiveStateForItem(const char *_filename)
 {
     const uint32_t requested_item = ItemUID(_filename);
     if( requested_item == 0 )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     auto state = ClosestState(requested_item);
 
@@ -904,26 +901,24 @@ int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<Stat
             file = I->m_ArFile->Clone();
 
         if( !file )
-            return VFSError::NotSupported;
+            return std::unexpected(Error{Error::POSIX, ENOTSUP});
 
         if( !file->IsOpened() ) {
             if( const std::expected<void, Error> rc = file->Open(VFSFlags::OF_Read); !rc )
-                return VFSError::FromErrno(EIO); // TODO: return rc instead
+                return std::unexpected(rc.error());
         }
 
         auto new_state = std::make_unique<State>(file, SpawnLibarchive());
 
         const int res = new_state->Open();
         if( res < 0 ) {
-            const int rc = VFSError::FromLibarchive(new_state->Errno());
-            return rc;
+            return std::unexpected(Error{Error::POSIX, new_state->Errno()});
         }
         state = std::move(new_state);
     }
     else if( state->UID() == requested_item && !state->Consumed() ) {
         assert(state->Entry());
-        _target = std::move(state);
-        return VFSError::Ok;
+        return std::move(state);
     }
 
     bool found = false;
@@ -943,12 +938,10 @@ int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<Stat
     }
 
     if( !found )
-        return VFSError::NotFound;
+        return std::unexpected(Error{Error::POSIX, ENOENT});
 
     state->SetEntry(entry, requested_item);
-    _target = std::move(state);
-
-    return VFSError::Ok;
+    return std::move(state);
 }
 
 struct archive *ArchiveHost::SpawnLibarchive()

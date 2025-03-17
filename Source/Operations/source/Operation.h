@@ -94,11 +94,6 @@ protected:
     static void AddButtonsForGenericDialog(GenericDialog _dialog_type, NCOpsGenericErrorDialog *_dialog);
     void ShowGenericDialog(GenericDialog _dialog_type,
                            NSString *_message,
-                           int _err,
-                           vfs::VFSPath _path,
-                           std::shared_ptr<AsyncDialogResponse> _ctx);
-    void ShowGenericDialog(GenericDialog _dialog_type,
-                           NSString *_message,
                            Error _err,
                            vfs::VFSPath _path,
                            std::shared_ptr<AsyncDialogResponse> _ctx);

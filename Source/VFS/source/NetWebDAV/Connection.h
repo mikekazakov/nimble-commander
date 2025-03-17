@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <VFS/VFSError.h>
+#include <Base/Error.h>
 #include <string>
 #include <string_view>
 #include <span>

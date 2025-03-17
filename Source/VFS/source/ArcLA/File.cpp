@@ -28,22 +28,20 @@ std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancel
     if( _open_flags & VFSFlags::OF_Write )
         return std::unexpected(Error{Error::POSIX, ENOTSUP}); // ArchiveFile is Read-Only
 
-    int res;
     auto host = std::dynamic_pointer_cast<ArchiveHost>(Host());
 
     StackAllocator alloc;
     std::pmr::string file_path(&alloc);
-    res = host->ResolvePathIfNeeded(Path(), file_path, _open_flags);
-    if( res < 0 )
-        return std::unexpected(VFSError::ToError(res));
+    if( const std::expected<void, Error> rc = host->ResolvePathIfNeeded(Path(), file_path, _open_flags); !rc )
+        return std::unexpected(rc.error());
 
     if( host->IsDirectory(file_path, _open_flags, _cancel_checker) && !(_open_flags & VFSFlags::OF_Directory) )
         return std::unexpected(Error{Error::POSIX, EISDIR});
 
-    std::unique_ptr<State> state;
-    res = host->ArchiveStateForItem(file_path.c_str(), state);
-    if( res < 0 )
-        return std::unexpected(VFSError::ToError(res));
+    std::expected<std::unique_ptr<arc::State>, Error> exp_state = host->ArchiveStateForItem(file_path.c_str());
+    if( !exp_state )
+        return std::unexpected(exp_state.error());
+    auto &state = *exp_state;
 
     assert(state->Entry());
 
@@ -110,7 +108,7 @@ std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
     if( size < 0 ) {
         // TODO: libarchive error - convert it into our errors
         fmt::println("libarchive error: {}", archive_error_string(m_State->Archive()));
-        return std::unexpected(VFSError::ToError(VFSError::FromLibarchive(archive_errno(m_State->Archive()))));
+        return std::unexpected(Error{Error::POSIX, archive_errno(m_State->Archive())});
     }
 
     m_Position += size;

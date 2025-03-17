@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalTools.h"
 #include "Internal.h"
 #include <Config/Config.h>
@@ -9,7 +9,6 @@
 #include <Term/Task.h>
 #include <Base/dispatch_cpp.h>
 #include <Base/UnorderedUtil.h>
-#include <VFS/VFSError.h>
 #include <fmt/core.h>
 #include <any>
 #include <atomic>

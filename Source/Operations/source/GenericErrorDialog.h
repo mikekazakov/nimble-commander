@@ -26,7 +26,6 @@ enum class GenericErrorDialogStyle {
 @property(nonatomic) NSString *errorMessage;
 @property(nonatomic) bool showApplyToAll;
 
-- (void)setErrorNo:(int)_errorNo;
 - (void)setError:(nc::Error)_error;
 
 - (void)addButtonWithTitle:(NSString *)_title responseCode:(NSModalResponse)_response;

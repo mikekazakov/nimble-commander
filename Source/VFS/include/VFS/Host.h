@@ -2,7 +2,6 @@
 #pragma once
 
 #include <Base/Error.h>
-#include "VFSError.h"
 #include "VFSDeclarations.h"
 #include "VFSConfiguration.h"
 #include "VFSFactory.h"

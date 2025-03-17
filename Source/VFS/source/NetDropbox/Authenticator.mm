@@ -1,6 +1,5 @@
 // Copyright (C) 2021-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Authenticator.h"
-#include <VFS/VFSError.h>
 #include <VFS/Log.h>
 #import <AppAuth/AppAuth.h>
 #import <AppAuth/OIDRedirectHTTPHandler.h>

@@ -48,11 +48,10 @@ std::expected<void, nc::Error> VFSEasyCopyNode(const char *_src_full_path,
 
 std::expected<void, nc::Error> VFSEasyCreateEmptyFile(std::string_view _path, const VFSHostPtr &_vfs);
 
-int VFSCompareNodes(const std::filesystem::path &_file1_full_path,
-                    const VFSHostPtr &_file1_host,
-                    const std::filesystem::path &_file2_full_path,
-                    const VFSHostPtr &_file2_host,
-                    int &_result);
+std::expected<int, nc::Error> VFSCompareNodes(const std::filesystem::path &_file1_full_path,
+                                              const VFSHostPtr &_file1_host,
+                                              const std::filesystem::path &_file2_full_path,
+                                              const VFSHostPtr &_file2_host);
 
 namespace nc::vfs::easy {
 

@@ -317,7 +317,7 @@ TEST_CASE(PREFIX "two-chunk upload")
     std::ignore = host->Unlink(filepath);
 
     const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
-    std::dynamic_pointer_cast<dropbox::File>(file)->SetChunkSize(10000000); // 10 Mb chunks
+    REQUIRE(std::dynamic_pointer_cast<dropbox::File>(file)->SetChunkSize(10000000)); // 10 Mb chunks
 
     std::vector<uint8_t> to_upload = MakeNoise(length);
 
@@ -345,7 +345,7 @@ TEST_CASE(PREFIX "multi-chunks upload")
     std::ignore = host->Unlink(filepath);
 
     const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
-    std::dynamic_pointer_cast<dropbox::File>(file)->SetChunkSize(5000000); // 5Mb chunks
+    REQUIRE(std::dynamic_pointer_cast<dropbox::File>(file)->SetChunkSize(5000000)); // 5Mb chunks
 
     std::vector<uint8_t> to_upload = MakeNoise(length);
 
@@ -376,7 +376,7 @@ TEST_CASE(PREFIX "upload edge cases")
 
     for( auto length : lengths ) {
         const std::shared_ptr<VFSFile> file = host->CreateFile(filepath).value();
-        std::dynamic_pointer_cast<dropbox::File>(file)->SetChunkSize(chunk_size);
+        REQUIRE(std::dynamic_pointer_cast<dropbox::File>(file)->SetChunkSize(chunk_size));
 
         std::vector<uint8_t> to_upload = MakeNoise(length);
 

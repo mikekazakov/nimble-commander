@@ -467,7 +467,7 @@ void Copying::OnFileVerificationFailed(const std::string &_path, VFSHost &_vfs)
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::Continue,
                       NSLocalizedString(@"Checksum verification failed", ""),
-                      VFSError::FromErrno(EIO),
+                      Error{Error::POSIX, EIO},
                       {_vfs, _path},
                       ctx);
     WaitForDialogResponse(ctx);
@@ -519,7 +519,7 @@ CB::NotADirectoryResolution Copying::OnNotADirectory(const std::string &_path, V
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllOverwrite,
                       NSLocalizedString(@"Item is not a directory", ""),
-                      VFSError::FromErrno(EEXIST),
+                      Error{Error::POSIX, EEXIST},
                       {_vfs, _path},
                       ctx);
     WaitForDialogResponse(ctx);

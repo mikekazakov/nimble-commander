@@ -24,9 +24,9 @@ std::expected<void, Error> File::Open(unsigned long _open_flags,
         std::ignore = Close();
 
     auto sftp_host = std::dynamic_pointer_cast<SFTPHost>(Host());
-    std::unique_ptr<SFTPHost::Connection> conn;
-    if( const int rc = sftp_host->GetConnection(conn); rc != 0 )
-        return std::unexpected(VFSError::ToError(rc));
+    std::expected<std::unique_ptr<SFTPHost::Connection>, Error> conn = sftp_host->GetConnection();
+    if( !conn )
+        return std::unexpected(conn.error());
 
     int sftp_flags = 0;
     if( _open_flags & VFSFlags::OF_Read )
@@ -45,21 +45,22 @@ std::expected<void, Error> File::Open(unsigned long _open_flags,
     const int mode = _open_flags & (S_IRWXU | S_IRWXG | S_IRWXO);
 
     LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open_ex(
-        conn->sftp, Path(), static_cast<unsigned>(std::strlen(Path())), sftp_flags, mode, LIBSSH2_SFTP_OPENFILE);
+        (*conn)->sftp, Path(), static_cast<unsigned>(std::strlen(Path())), sftp_flags, mode, LIBSSH2_SFTP_OPENFILE);
     if( handle == nullptr ) {
-        const int rc = SFTPHost::VFSErrorForConnection(*conn);
-        sftp_host->ReturnConnection(std::move(conn));
-        return std::unexpected(VFSError::ToError(rc));
+        const Error err = SFTPHost::ErrorForConnection(**conn);
+        sftp_host->ReturnConnection(std::move(*conn));
+        return std::unexpected(err);
     }
 
     LIBSSH2_SFTP_ATTRIBUTES attrs;
     const int fstat_rc = libssh2_sftp_fstat_ex(handle, &attrs, 0);
     if( fstat_rc < 0 ) {
-        const int conn_err = SFTPHost::VFSErrorForConnection(*conn);
-        return std::unexpected(VFSError::ToError(conn_err));
+        const Error err = SFTPHost::ErrorForConnection(**conn);
+        sftp_host->ReturnConnection(std::move(*conn));
+        return std::unexpected(err);
     }
 
-    m_Connection = std::move(conn);
+    m_Connection = std::move(*conn);
     m_Handle = handle;
     m_Position = 0;
     m_Size = attrs.filesize;
@@ -127,7 +128,7 @@ std::expected<size_t, Error> File::Read(void *_buf, size_t _size)
         return rc;
     }
     else
-        return std::unexpected(VFSError::ToError(SFTPHost::VFSErrorForConnection(*m_Connection)));
+        return std::unexpected(SFTPHost::ErrorForConnection(*m_Connection));
 }
 
 std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
@@ -143,7 +144,7 @@ std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
         return rc;
     }
     else
-        return std::unexpected(VFSError::ToError(SFTPHost::VFSErrorForConnection(*m_Connection)));
+        return std::unexpected(SFTPHost::ErrorForConnection(*m_Connection));
 }
 
 std::expected<uint64_t, Error> File::Pos() const

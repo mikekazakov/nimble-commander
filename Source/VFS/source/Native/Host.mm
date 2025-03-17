@@ -13,7 +13,6 @@
 #include <RoutedIO/RoutedIO.h>
 #include "DisplayNamesCache.h"
 #include "File.h"
-#include <VFS/VFSError.h>
 #include <VFS/Log.h>
 #include "../ListingInput.h"
 #include "Fetching.h"

@@ -1,5 +1,4 @@
 [![Build and Test](https://github.com/mikekazakov/nimble-commander/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/mikekazakov/nimble-commander/actions/workflows/build.yml)
-[![CodeQL](https://github.com/mikekazakov/nimble-commander/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/mikekazakov/nimble-commander/actions/workflows/codeql.yml)
 [![Nightly Build](https://github.com/mikekazakov/nimble-commander/actions/workflows/nightly.yml/badge.svg?branch=main)](https://github.com/mikekazakov/nimble-commander/actions/workflows/nightly.yml)
 
 # Nimble Commander

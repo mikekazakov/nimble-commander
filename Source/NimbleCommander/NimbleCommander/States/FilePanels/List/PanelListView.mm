@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListView.h"
 #include <Base/algo.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
@@ -191,7 +191,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
     m_ExtensionColumn.minWidth = 50;
     m_ExtensionColumn.maxWidth = 200;
     m_ExtensionColumn.headerCell.alignment = NSTextAlignmentLeft;
-    m_ExtensionColumn.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
+    m_ExtensionColumn.resizingMask = NSTableColumnUserResizingMask;
     [m_ExtensionColumn addObserver:self forKeyPath:@"width" options:0 context:nullptr];
 
     m_SizeColumn = [[NSTableColumn alloc] initWithIdentifier:ToKindIdentifier(PanelListViewColumns::Size)];
@@ -258,7 +258,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
     m_TagsColumn.minWidth = 90;
     m_TagsColumn.maxWidth = 400;
     m_TagsColumn.headerCell.alignment = NSTextAlignmentLeft;
-    m_TagsColumn.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
+    m_TagsColumn.resizingMask = NSTableColumnUserResizingMask;
     [m_TagsColumn addObserver:self forKeyPath:@"width" options:0 context:nullptr];
 }
 
@@ -856,7 +856,6 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     }
 
     m_AssignedLayout = _layout;
-    [m_TableView sizeToFit];
     [self calculateItemLayout];
     [self placeSortIndicator];
 }

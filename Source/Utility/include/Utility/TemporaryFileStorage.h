@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -53,30 +53,5 @@ public:
      */
     virtual std::optional<std::string> MakeFileFromMemory(std::string_view _memory, std::string_view _filename = {});
 };
-
-inline TemporaryFileStorage::OpenedFile::OpenedFile(OpenedFile &&_rhs)
-    : path{std::move(_rhs.path)}, file_descriptor{_rhs.file_descriptor}
-{
-    _rhs.file_descriptor = -1;
-}
-
-inline TemporaryFileStorage::OpenedFile::~OpenedFile()
-{
-    if( file_descriptor != -1 )
-        close(file_descriptor);
-}
-
-inline TemporaryFileStorage::OpenedFile &
-TemporaryFileStorage::OpenedFile::operator=(TemporaryFileStorage::OpenedFile &&_rhs)
-{
-    if( this != &_rhs ) {
-        if( file_descriptor != -1 )
-            close(file_descriptor);
-        file_descriptor = _rhs.file_descriptor;
-        _rhs.file_descriptor = -1;
-        path = std::move(_rhs.path);
-    }
-    return *this;
-}
 
 } // namespace nc::utility

@@ -107,61 +107,61 @@ private:
 };
 
 template <class T, class U>
-inline bool operator==(const intrusive_ptr<T> &_lhs, const intrusive_ptr<U> &_rhs) noexcept
+bool operator==(const intrusive_ptr<T> &_lhs, const intrusive_ptr<U> &_rhs) noexcept
 {
     return _lhs.get() == _rhs.get();
 }
 
 template <class T, class U>
-inline bool operator!=(const intrusive_ptr<T> &_lhs, const intrusive_ptr<U> &_rhs) noexcept
+bool operator!=(const intrusive_ptr<T> &_lhs, const intrusive_ptr<U> &_rhs) noexcept
 {
     return _lhs.get() != _rhs.get();
 }
 
 template <class T, class U>
-inline bool operator<(const intrusive_ptr<T> &_lhs, const intrusive_ptr<U> &_rhs) noexcept
+bool operator<(const intrusive_ptr<T> &_lhs, const intrusive_ptr<U> &_rhs) noexcept
 {
     return _lhs.get() < _rhs.get();
 }
 
 template <class T, class U>
-inline bool operator<=(const intrusive_ptr<T> &_lhs, const intrusive_ptr<U> &_rhs) noexcept
+bool operator<=(const intrusive_ptr<T> &_lhs, const intrusive_ptr<U> &_rhs) noexcept
 {
     return _lhs.get() <= _rhs.get();
 }
 
 template <class T, class U>
-inline bool operator>(const intrusive_ptr<T> &_lhs, const intrusive_ptr<U> &_rhs) noexcept
+bool operator>(const intrusive_ptr<T> &_lhs, const intrusive_ptr<U> &_rhs) noexcept
 {
     return _lhs.get() > _rhs.get();
 }
 
 template <class T, class U>
-inline bool operator>=(const intrusive_ptr<T> &_lhs, const intrusive_ptr<U> &_rhs) noexcept
+bool operator>=(const intrusive_ptr<T> &_lhs, const intrusive_ptr<U> &_rhs) noexcept
 {
     return _lhs.get() >= _rhs.get();
 }
 
 template <class T>
-inline bool operator==(const intrusive_ptr<T> &_p, std::nullptr_t) noexcept
+bool operator==(const intrusive_ptr<T> &_p, std::nullptr_t) noexcept
 {
     return !static_cast<bool>(_p);
 }
 
 template <class T>
-inline bool operator==(std::nullptr_t, const intrusive_ptr<T> &_p) noexcept
+bool operator==(std::nullptr_t, const intrusive_ptr<T> &_p) noexcept
 {
     return !static_cast<bool>(_p);
 }
 
 template <class T>
-inline bool operator!=(const intrusive_ptr<T> &_p, std::nullptr_t) noexcept
+bool operator!=(const intrusive_ptr<T> &_p, std::nullptr_t) noexcept
 {
     return static_cast<bool>(_p);
 }
 
 template <class T>
-inline bool operator!=(std::nullptr_t, const intrusive_ptr<T> &_p) noexcept
+bool operator!=(std::nullptr_t, const intrusive_ptr<T> &_p) noexcept
 {
     return static_cast<bool>(_p);
 }
@@ -196,13 +196,13 @@ private:
 };
 
 template <typename T>
-inline void intrusive_ptr_add_refcount(const intrusive_ref_counter<T> *p) noexcept
+void intrusive_ptr_add_refcount(const intrusive_ref_counter<T> *p) noexcept
 {
     p->c.fetch_add(1, std::memory_order_relaxed);
 }
 
 template <typename T>
-inline void intrusive_ptr_dec_refcount(const intrusive_ref_counter<T> *p) noexcept
+void intrusive_ptr_dec_refcount(const intrusive_ref_counter<T> *p) noexcept
 {
     if( p->c.fetch_sub(1, std::memory_order_release) == 1 ) {
         std::atomic_thread_fence(std::memory_order_acquire);
@@ -214,7 +214,7 @@ inline void intrusive_ptr_dec_refcount(const intrusive_ref_counter<T> *p) noexce
 namespace std {
 
 template <typename T>
-inline void swap(nc::base::intrusive_ptr<T> &lhs, nc::base::intrusive_ptr<T> &rhs) noexcept
+void swap(nc::base::intrusive_ptr<T> &lhs, nc::base::intrusive_ptr<T> &rhs) noexcept
 {
     lhs.swap(rhs);
 }

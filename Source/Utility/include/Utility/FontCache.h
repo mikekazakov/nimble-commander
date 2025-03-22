@@ -1,15 +1,12 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <CoreText/CTFont.h>
-#include <CoreGraphics/CGFont.h>
 #include <array>
-#include <map>
 #include <memory>
-#include <cassert>
 #include <ankerl/unordered_dense.h>
-#include "FontExtras.h"
 #include <Base/CFPtr.h>
+#include "FontExtras.h"
 
 namespace nc::utility {
 
@@ -52,46 +49,5 @@ private:
     base::CFPtr<CFStringRef> m_FontName;
     FontGeometryInfo m_FontInfo;
 };
-
-inline CTFontRef FontCache::BaseFont() const noexcept
-{
-    return m_CTFonts[0].get();
-}
-
-inline CTFontRef FontCache::Font(unsigned _no) const noexcept
-{
-    assert(_no < m_CTFonts.size());
-    return m_CTFonts[_no].get();
-}
-
-inline double FontCache::Size() const noexcept
-{
-    return m_FontInfo.Size();
-}
-
-inline double FontCache::Height() const noexcept
-{
-    return m_FontInfo.LineHeight();
-}
-
-inline double FontCache::Width() const noexcept
-{
-    return m_FontInfo.MonospaceWidth();
-}
-
-inline double FontCache::Ascent() const noexcept
-{
-    return m_FontInfo.Ascent();
-}
-
-inline double FontCache::Descent() const noexcept
-{
-    return m_FontInfo.Descent();
-}
-
-inline double FontCache::Leading() const noexcept
-{
-    return m_FontInfo.Leading();
-}
 
 } // namespace nc::utility

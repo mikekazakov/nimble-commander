@@ -84,6 +84,10 @@ std::string CFStringGetUTF8StdString(CFStringRef _str)
     return {};
 }
 
+CFString::CFString(CFStringRef _str) noexcept : p(_str)
+{
+}
+
 CFString::CFString(std::string_view _str, CFStringEncoding _encoding) noexcept
     : p(nc::base::CFPtr<CFStringRef>::adopt(CFStringCreateWithBytes(nullptr,
                                                                     reinterpret_cast<const UInt8 *>(_str.data()),
@@ -98,6 +102,16 @@ CFString::CFString(const char *_str, CFStringEncoding _encoding) noexcept
     if( _str )
         p = nc::base::CFPtr<CFStringRef>::adopt(CFStringCreateWithBytes(
             nullptr, reinterpret_cast<const UInt8 *>(_str), std::strlen(_str), _encoding, false));
+}
+
+CFString::operator bool() const noexcept
+{
+    return static_cast<bool>(p);
+}
+
+CFStringRef CFString::operator*() const noexcept
+{
+    return p.get();
 }
 
 } // namespace nc::base

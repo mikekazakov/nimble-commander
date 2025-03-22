@@ -111,43 +111,43 @@ private:
 };
 
 template <typename T>
-inline void swap(CFPtr<T> &_lhs, CFPtr<T> &_rhs) noexcept
+void swap(CFPtr<T> &_lhs, CFPtr<T> &_rhs) noexcept
 {
     _lhs.swap(_rhs);
 }
 
 template <typename T, typename U>
-inline bool operator==(const CFPtr<T> &_lhs, const CFPtr<U> &_rhs) noexcept
+bool operator==(const CFPtr<T> &_lhs, const CFPtr<U> &_rhs) noexcept
 {
     return _lhs.get() == _rhs.get();
 }
 
 template <typename T, typename U>
-inline bool operator==(const CFPtr<T> &_lhs, U *_rhs) noexcept
+bool operator==(const CFPtr<T> &_lhs, U *_rhs) noexcept
 {
     return _lhs.get() == _rhs;
 }
 
 template <typename T, typename U>
-inline bool operator==(T *_lhs, const CFPtr<U> &_rhs) noexcept
+bool operator==(T *_lhs, const CFPtr<U> &_rhs) noexcept
 {
     return _lhs == _rhs.get();
 }
 
 template <typename T, typename U>
-inline bool operator!=(const CFPtr<T> &_lhs, const CFPtr<U> &_rhs) noexcept
+bool operator!=(const CFPtr<T> &_lhs, const CFPtr<U> &_rhs) noexcept
 {
     return _lhs.get() != _rhs.get();
 }
 
 template <typename T, typename U>
-inline bool operator!=(const CFPtr<T> &_lhs, U *_rhs) noexcept
+bool operator!=(const CFPtr<T> &_lhs, U *_rhs) noexcept
 {
     return _lhs.get() != _rhs;
 }
 
 template <typename T, typename U>
-inline bool operator!=(T *_lhs, const CFPtr<U> &_rhs) noexcept
+bool operator!=(T *_lhs, const CFPtr<U> &_rhs) noexcept
 {
     return _lhs != _rhs.get();
 }

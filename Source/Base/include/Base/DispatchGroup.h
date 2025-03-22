@@ -1,4 +1,4 @@
-/* Copyright (c) 2014-2023 Michael G. Kazakov
+/* Copyright (c) 2014-2025 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -105,7 +105,7 @@ private:
 };
 
 template <class T>
-inline void DispatchGroup::Run(T _f) const
+void DispatchGroup::Run(T _f) const
 {
     using CT = std::pair<T, const DispatchGroup *>;
     Increment();

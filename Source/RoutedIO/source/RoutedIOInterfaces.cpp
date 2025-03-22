@@ -185,7 +185,7 @@ bool PosixIOInterfaceRouted::isrouted() const noexcept
     return inst.Enabled();
 }
 
-inline xpc_connection_t PosixIOInterfaceRouted::Connection()
+xpc_connection_t PosixIOInterfaceRouted::Connection()
 {
     if( !inst.Enabled() )
         return nullptr;

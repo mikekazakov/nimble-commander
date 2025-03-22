@@ -1,6 +1,7 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <CoreText/CoreText.h>
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
+#include <CoreText/CoreText.h>
+#include <CoreGraphics/CGFont.h>
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -8,6 +9,7 @@
 #include <cwchar>
 #include <memory.h>
 #include <vector>
+#include <cassert>
 
 namespace nc::utility {
 
@@ -319,6 +321,47 @@ unsigned char FontCache::InsertFont(base::CFPtr<CTFontRef> _font)
 FontCache::Pair FontCache::Get(uint32_t _c) noexcept
 {
     return _c < 0x10000 ? DoGetBMP(static_cast<uint16_t>(_c)) : DoGetNonBMP(_c);
+}
+
+CTFontRef FontCache::BaseFont() const noexcept
+{
+    return m_CTFonts[0].get();
+}
+
+CTFontRef FontCache::Font(unsigned _no) const noexcept
+{
+    assert(_no < m_CTFonts.size());
+    return m_CTFonts[_no].get();
+}
+
+double FontCache::Size() const noexcept
+{
+    return m_FontInfo.Size();
+}
+
+double FontCache::Height() const noexcept
+{
+    return m_FontInfo.LineHeight();
+}
+
+double FontCache::Width() const noexcept
+{
+    return m_FontInfo.MonospaceWidth();
+}
+
+double FontCache::Ascent() const noexcept
+{
+    return m_FontInfo.Ascent();
+}
+
+double FontCache::Descent() const noexcept
+{
+    return m_FontInfo.Descent();
+}
+
+double FontCache::Leading() const noexcept
+{
+    return m_FontInfo.Leading();
 }
 
 } // namespace nc::utility

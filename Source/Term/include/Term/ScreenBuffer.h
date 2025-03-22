@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
@@ -15,14 +15,14 @@ namespace nc::term {
 struct ScreenPoint {
     int x = 0;
     int y = 0;
-    inline ScreenPoint() noexcept {};
-    inline ScreenPoint(int _x, int _y) noexcept : x(_x), y(_y) {};
-    inline bool operator>(const ScreenPoint &_r) const noexcept { return (y > _r.y) || (y == _r.y && x > _r.x); }
-    inline bool operator>=(const ScreenPoint &_r) const noexcept { return (y > _r.y) || (y == _r.y && x >= _r.x); }
-    inline bool operator<(const ScreenPoint &_r) const noexcept { return !(*this >= _r); }
-    inline bool operator<=(const ScreenPoint &_r) const noexcept { return !(*this > _r); }
-    inline bool operator==(const ScreenPoint &_r) const noexcept { return y == _r.y && x == _r.x; }
-    inline bool operator!=(const ScreenPoint &_r) const noexcept { return y != _r.y || x != _r.x; }
+    ScreenPoint() noexcept {};
+    ScreenPoint(int _x, int _y) noexcept : x(_x), y(_y) {};
+    bool operator>(const ScreenPoint &_r) const noexcept { return (y > _r.y) || (y == _r.y && x > _r.x); }
+    bool operator>=(const ScreenPoint &_r) const noexcept { return (y > _r.y) || (y == _r.y && x >= _r.x); }
+    bool operator<(const ScreenPoint &_r) const noexcept { return !(*this >= _r); }
+    bool operator<=(const ScreenPoint &_r) const noexcept { return !(*this > _r); }
+    bool operator==(const ScreenPoint &_r) const noexcept { return y == _r.y && x == _r.x; }
+    bool operator!=(const ScreenPoint &_r) const noexcept { return y != _r.y || x != _r.x; }
 };
 
 class ScreenBuffer

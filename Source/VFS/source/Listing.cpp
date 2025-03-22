@@ -1,9 +1,10 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Listing.h"
 #include "../include/VFS/Host.h"
 #include "ListingInput.h"
 #include <sys/param.h>
 #include <Base/mach_time.h>
+#include <cassert>
 
 namespace nc::vfs {
 
@@ -417,6 +418,712 @@ void Listing::BuildFilenames()
 std::chrono::nanoseconds Listing::BuildTicksTimestamp() const noexcept
 {
     return m_CreationTicks;
+}
+
+#define VFS_LISTING_CHECK_BOUNDS(a)                                                                                    \
+    if( (a) >= m_ItemsCount ) [[unlikely]]                                                                             \
+        throw std::out_of_range(std::string(__PRETTY_FUNCTION__) + ": index out of range");
+
+bool Listing::HasExtension(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_ExtensionOffsets[_ind] != 0;
+}
+
+uint16_t Listing::ExtensionOffset(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_ExtensionOffsets[_ind];
+}
+
+const char *Listing::Extension(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_Filenames[_ind].c_str() + m_ExtensionOffsets[_ind];
+}
+
+const std::string &Listing::Filename(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_Filenames[_ind];
+}
+
+CFStringRef Listing::FilenameCF(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return *m_FilenamesCF[_ind];
+}
+
+std::string Listing::Path(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    if( !IsDotDot(_ind) )
+        return m_Directories[_ind] + m_Filenames[_ind];
+    else {
+        std::string p = m_Directories[_ind];
+        if( p.length() > 1 )
+            p.pop_back();
+        return p;
+    }
+}
+
+std::string Listing::FilenameWithoutExt(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    if( m_ExtensionOffsets[_ind] == 0 )
+        return m_Filenames[_ind];
+    return m_Filenames[_ind].substr(0, m_ExtensionOffsets[_ind] - 1);
+}
+
+const VFSHostPtr &Listing::Host() const
+{
+    if( HasCommonHost() )
+        return m_Hosts[0];
+    throw std::logic_error("Listing::Host() called for listing with no common host");
+}
+
+const VFSHostPtr &Listing::Host(unsigned _ind) const
+{
+    if( HasCommonHost() )
+        return m_Hosts[0];
+    else {
+        VFS_LISTING_CHECK_BOUNDS(_ind);
+        return m_Hosts[_ind];
+    }
+}
+
+const std::string &Listing::Directory() const
+{
+    if( HasCommonDirectory() )
+        return m_Directories[0];
+    throw std::logic_error("Listing::Directory() called for listing with no common directory");
+}
+
+const std::string &Listing::Directory(unsigned _ind) const
+{
+    if( HasCommonDirectory() ) {
+        return m_Directories[0];
+    }
+    else {
+        VFS_LISTING_CHECK_BOUNDS(_ind);
+        return m_Directories[_ind];
+    }
+}
+
+unsigned Listing::Count() const noexcept
+{
+    return m_ItemsCount;
+};
+
+bool Listing::Empty() const noexcept
+{
+    return m_ItemsCount == 0;
+}
+
+bool Listing::IsUniform() const noexcept
+{
+    return HasCommonHost() && HasCommonDirectory();
+}
+
+const std::string &Listing::Title() const noexcept
+{
+    return m_Title;
+}
+
+bool Listing::HasCommonHost() const noexcept
+{
+    return m_Hosts.mode() == base::variable_container<>::type::common;
+}
+
+bool Listing::HasCommonDirectory() const noexcept
+{
+    return m_Directories.mode() == base::variable_container<>::type::common;
+}
+
+bool Listing::HasSize(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_Sizes.has(_ind);
+}
+
+uint64_t Listing::Size(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_Sizes.has(_ind) ? m_Sizes[_ind] : 0;
+}
+
+bool Listing::HasInode(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_Inodes.has(_ind);
+}
+
+uint64_t Listing::Inode(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_Inodes.has(_ind) ? m_Inodes[_ind] : 0;
+}
+
+bool Listing::HasATime(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_ATimes.has(_ind);
+}
+
+time_t Listing::ATime(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_ATimes.has(_ind) ? m_ATimes[_ind] : m_CreationTime;
+}
+
+bool Listing::HasMTime(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_MTimes.has(_ind);
+}
+
+time_t Listing::MTime(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_MTimes.has(_ind) ? m_MTimes[_ind] : m_CreationTime;
+}
+
+bool Listing::HasCTime(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_CTimes.has(_ind);
+}
+
+time_t Listing::CTime(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_CTimes.has(_ind) ? m_CTimes[_ind] : m_CreationTime;
+}
+
+bool Listing::HasBTime(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_BTimes.has(_ind);
+}
+
+time_t Listing::BTime(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_BTimes.has(_ind) ? m_BTimes[_ind] : m_CreationTime;
+}
+
+bool Listing::HasAddTime(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_AddTimes.has(_ind);
+}
+
+time_t Listing::AddTime(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_AddTimes.has(_ind) ? m_AddTimes[_ind] : BTime(_ind);
+}
+
+mode_t Listing::UnixMode(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_UnixModes[_ind];
+}
+
+uint8_t Listing::UnixType(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_UnixTypes[_ind];
+}
+
+bool Listing::HasUID(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_UIDS.has(_ind);
+}
+
+uid_t Listing::UID(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_UIDS.has(_ind) ? m_UIDS[_ind] : 0;
+}
+
+bool Listing::HasGID(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_GIDS.has(_ind);
+}
+
+gid_t Listing::GID(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_GIDS.has(_ind) ? m_GIDS[_ind] : 0;
+}
+
+bool Listing::HasUnixFlags(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_UnixFlags.has(_ind);
+}
+
+uint32_t Listing::UnixFlags(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_UnixFlags.has(_ind) ? m_UnixFlags[_ind] : 0;
+}
+
+bool Listing::HasSymlink(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_Symlinks.has(_ind);
+}
+
+const std::string &Listing::Symlink(unsigned _ind) const
+{
+    [[clang::no_destroy]] static const std::string st = "";
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_Symlinks.has(_ind) ? m_Symlinks[_ind] : st;
+}
+
+bool Listing::HasTags(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_Tags.contains(_ind);
+}
+
+std::span<const utility::Tags::Tag> Listing::Tags(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    if( auto it = m_Tags.find(_ind); it != m_Tags.end() )
+        return it->second;
+    return {};
+}
+
+bool Listing::HasDisplayFilename(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_DisplayFilenames.has(_ind);
+}
+
+const std::string &Listing::DisplayFilename(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_DisplayFilenames.has(_ind) ? m_DisplayFilenames[_ind] : Filename(_ind);
+}
+
+CFStringRef Listing::DisplayFilenameCF(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_DisplayFilenamesCF.has(_ind) ? *m_DisplayFilenamesCF[_ind] : FilenameCF(_ind);
+}
+
+bool Listing::IsDotDot(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    auto &s = m_Filenames[_ind];
+    return s[0] == '.' && s[1] == '.' && s[2] == 0;
+}
+
+bool Listing::IsDir(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return (m_UnixModes[_ind] & m_S_IFMT) == m_S_IFDIR;
+}
+
+bool Listing::IsReg(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return (m_UnixModes[_ind] & m_S_IFMT) == m_S_IFREG;
+}
+
+bool Listing::IsSymlink(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_UnixTypes[_ind] == m_DT_LNK;
+}
+
+bool Listing::IsHidden(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return (Filename(_ind)[0] == '.' || (UnixFlags(_ind) & m_UF_HIDDEN)) && !IsDotDot(_ind);
+}
+
+ListingItem Listing::Item(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return ListingItem(base::intrusive_ptr{this}, _ind);
+}
+
+Listing::iterator Listing::begin() const noexcept
+{
+    iterator it;
+    it.i = ListingItem(base::intrusive_ptr{this}, 0);
+    return it;
+}
+
+Listing::iterator Listing::end() const noexcept
+{
+    iterator it;
+    it.i = ListingItem(base::intrusive_ptr{this}, m_ItemsCount);
+    return it;
+}
+
+#undef VFS_LISTING_CHECK_BOUNDS
+
+ListingItem::ListingItem() noexcept : L(nullptr), I(std::numeric_limits<unsigned>::max())
+{
+}
+
+ListingItem::ListingItem(const base::intrusive_ptr<const class Listing> &_listing, unsigned _ind) noexcept
+    : L(_listing), I(_ind)
+{
+}
+
+ListingItem::operator bool() const noexcept
+{
+    return static_cast<bool>(L);
+}
+
+const base::intrusive_ptr<const Listing> &ListingItem::Listing() const noexcept
+{
+    return L;
+}
+
+unsigned ListingItem::Index() const noexcept
+{
+    return I;
+}
+
+std::string ListingItem::Path() const
+{
+    return L->Path(I);
+}
+
+const VFSHostPtr &ListingItem::Host() const
+{
+    return L->Host(I);
+}
+
+const std::string &ListingItem::Directory() const
+{
+    return L->Directory(I);
+}
+
+const std::string &ListingItem::Filename() const
+{
+    return L->Filename(I);
+}
+
+const char *ListingItem::FilenameC() const
+{
+    return L->Filename(I).c_str();
+}
+
+size_t ListingItem::FilenameLen() const
+{
+    return L->Filename(I).length();
+}
+
+CFStringRef ListingItem::FilenameCF() const
+{
+    return L->FilenameCF(I);
+}
+
+bool ListingItem::HasDisplayName() const
+{
+    return L->HasDisplayFilename(I);
+}
+
+const std::string &ListingItem::DisplayName() const
+{
+    return L->DisplayFilename(I);
+}
+
+CFStringRef ListingItem::DisplayNameCF() const
+{
+    return L->DisplayFilenameCF(I);
+}
+
+bool ListingItem::HasExtension() const
+{
+    return L->HasExtension(I);
+}
+
+uint16_t ListingItem::ExtensionOffset() const
+{
+    return L->ExtensionOffset(I);
+}
+
+const char *ListingItem::Extension() const
+{
+    return L->Extension(I);
+}
+
+const char *ListingItem::ExtensionIfAny() const
+{
+    return HasExtension() ? Extension() : "";
+}
+
+std::string ListingItem::FilenameWithoutExt() const
+{
+    return L->FilenameWithoutExt(I);
+}
+
+mode_t ListingItem::UnixMode() const
+{
+    return L->UnixMode(I);
+}
+
+uint8_t ListingItem::UnixType() const
+{
+    return L->UnixType(I);
+}
+
+bool ListingItem::HasSize() const
+{
+    return L->HasSize(I);
+}
+
+uint64_t ListingItem::Size() const
+{
+    return L->Size(I);
+}
+
+bool ListingItem::HasInode() const
+{
+    return L->HasInode(I);
+}
+
+uint64_t ListingItem::Inode() const
+{
+    return L->Inode(I);
+}
+
+bool ListingItem::HasATime() const
+{
+    return L->HasATime(I);
+}
+
+time_t ListingItem::ATime() const
+{
+    return L->ATime(I);
+}
+
+bool ListingItem::HasMTime() const
+{
+    return L->HasMTime(I);
+}
+
+time_t ListingItem::MTime() const
+{
+    return L->MTime(I);
+}
+
+bool ListingItem::HasCTime() const
+{
+    return L->HasCTime(I);
+}
+
+time_t ListingItem::CTime() const
+{
+    return L->CTime(I);
+}
+
+bool ListingItem::HasBTime() const
+{
+    return L->HasBTime(I);
+}
+
+time_t ListingItem::BTime() const
+{
+    return L->BTime(I);
+}
+
+bool ListingItem::HasAddTime() const
+{
+    return L->HasAddTime(I);
+}
+
+time_t ListingItem::AddTime() const
+{
+    return L->AddTime(I);
+}
+
+bool ListingItem::HasUnixFlags() const
+{
+    return L->HasUnixFlags(I);
+}
+
+uint32_t ListingItem::UnixFlags() const
+{
+    return L->UnixFlags(I);
+}
+
+bool ListingItem::HasUnixUID() const
+{
+    return L->HasUID(I);
+}
+
+uid_t ListingItem::UnixUID() const
+{
+    return L->UID(I);
+}
+
+bool ListingItem::HasUnixGID() const
+{
+    return L->HasGID(I);
+}
+
+gid_t ListingItem::UnixGID() const
+{
+    return L->GID(I);
+}
+
+bool ListingItem::HasSymlink() const
+{
+    return L->HasSymlink(I);
+}
+
+const std::string &ListingItem::Symlink() const
+{
+    return L->Symlink(I);
+}
+
+bool ListingItem::HasTags() const
+{
+    return L->HasTags(I);
+}
+
+std::span<const utility::Tags::Tag> ListingItem::Tags() const
+{
+    return L->Tags(I);
+}
+
+bool ListingItem::IsDir() const
+{
+    return L->IsDir(I);
+}
+
+bool ListingItem::IsReg() const
+{
+    return L->IsReg(I);
+}
+
+bool ListingItem::IsSymlink() const
+{
+    return L->IsSymlink(I);
+}
+
+bool ListingItem::IsDotDot() const
+{
+    return L->IsDotDot(I);
+}
+
+bool ListingItem::IsHidden() const
+{
+    return L->IsHidden(I);
+}
+
+bool ListingItem::operator==(const ListingItem &_) const noexcept
+{
+    return I == _.I && L == _.L;
+}
+
+bool ListingItem::operator!=(const ListingItem &_) const noexcept
+{
+    return I != _.I || L != _.L;
+}
+
+Listing::iterator &Listing::iterator::operator--() noexcept // prefix decrement
+{
+    i.I--;
+    return *this;
+}
+
+Listing::iterator &Listing::iterator::operator++() noexcept // prefix increment
+{
+    i.I++;
+    return *this;
+}
+
+Listing::iterator Listing::iterator::operator--(int) noexcept // posfix decrement
+{
+    auto p = *this;
+    i.I--;
+    return p;
+}
+
+Listing::iterator Listing::iterator::operator++(int) noexcept // posfix increment
+{
+    auto p = *this;
+    i.I++;
+    return p;
+}
+
+Listing::iterator Listing::iterator::operator+(long _diff) const noexcept
+{
+    auto p = *this;
+    p.i.I += _diff;
+    return p;
+}
+
+Listing::iterator Listing::iterator::operator-(long _diff) const noexcept
+{
+    auto p = *this;
+    p.i.I -= _diff;
+    return p;
+}
+
+long Listing::iterator::operator-(const iterator &_rhs) const noexcept
+{
+    return static_cast<long>(i.I) - static_cast<long>(_rhs.i.I);
+}
+
+Listing::iterator &Listing::iterator::operator+=(long _diff) noexcept
+{
+    i.I += _diff;
+    return *this;
+}
+
+Listing::iterator &Listing::iterator::operator-=(long _diff) noexcept
+{
+    i.I -= _diff;
+    return *this;
+}
+
+bool Listing::iterator::operator==(const iterator &_r) const noexcept
+{
+    return i.I == _r.i.I && i.L == _r.i.L;
+}
+
+bool Listing::iterator::operator!=(const iterator &_r) const noexcept
+{
+    return !(*this == _r);
+}
+
+bool Listing::iterator::operator<(const iterator &_r) const noexcept
+{
+    return i.I < _r.i.I;
+}
+
+bool Listing::iterator::operator<=(const iterator &_r) const noexcept
+{
+    return i.I <= _r.i.I;
+}
+
+bool Listing::iterator::operator>(const iterator &_r) const noexcept
+{
+    return i.I > _r.i.I;
+}
+
+bool Listing::iterator::operator>=(const iterator &_r) const noexcept
+{
+    return i.I >= _r.i.I;
+}
+
+const ListingItem &Listing::iterator::operator*() const noexcept
+{
+    return i;
 }
 
 } // namespace nc::vfs

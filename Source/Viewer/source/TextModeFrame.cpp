@@ -132,4 +132,49 @@ static void CalculateLinesWidths(const TextModeIndexedTextLine *_lines_begin,
     dispatch_apply(_lines_end - _lines_begin, dispatch_get_global_queue(0, 0), block);
 }
 
+const std::vector<TextModeIndexedTextLine> &TextModeFrame::Lines() const noexcept
+{
+    return m_Lines;
+}
+
+bool TextModeFrame::Empty() const noexcept
+{
+    return m_Lines.empty();
+}
+
+int TextModeFrame::LinesNumber() const noexcept
+{
+    return static_cast<int>(m_Lines.size());
+}
+
+const TextModeIndexedTextLine &TextModeFrame::Line(int _index) const
+{
+    return m_Lines.at(_index);
+}
+
+double TextModeFrame::LineWidth(int _index) const
+{
+    return m_LinesWidths.at(_index);
+}
+
+double TextModeFrame::WrappingWidth() const noexcept
+{
+    return m_WrappingWidth;
+}
+
+const TextModeWorkingSet &TextModeFrame::WorkingSet() const noexcept
+{
+    return *m_WorkingSet;
+}
+
+const nc::utility::FontGeometryInfo &TextModeFrame::FontGeometryInfo() const noexcept
+{
+    return m_FontInfo;
+}
+
+CGSize TextModeFrame::Bounds() const noexcept
+{
+    return m_Bounds;
+}
+
 } // namespace nc::viewer

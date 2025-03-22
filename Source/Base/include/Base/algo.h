@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <algorithm>
@@ -76,8 +76,8 @@ class upward_flag
     bool _state = false;
 
 public:
-    inline operator bool() const noexcept { return _state; };
-    inline void toggle() noexcept { _state = true; };
+    operator bool() const noexcept { return _state; };
+    void toggle() noexcept { _state = true; };
 };
 
 class downward_flag
@@ -85,8 +85,8 @@ class downward_flag
     bool _state = true;
 
 public:
-    inline operator bool() const noexcept { return _state; };
-    inline void toggle() noexcept { _state = false; };
+    operator bool() const noexcept { return _state; };
+    void toggle() noexcept { _state = false; };
 };
 
 template <class InputIt>

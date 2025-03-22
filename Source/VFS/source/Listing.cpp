@@ -680,7 +680,7 @@ bool Listing::HasSymlink(unsigned _ind) const
 
 const std::string &Listing::Symlink(unsigned _ind) const
 {
-    [[clang::no_destroy]] static const std::string st = "";
+    [[clang::no_destroy]] static const std::string st;
     VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_Symlinks.has(_ind) ? m_Symlinks[_ind] : st;
 }
@@ -751,7 +751,7 @@ bool Listing::IsHidden(unsigned _ind) const
 ListingItem Listing::Item(unsigned _ind) const
 {
     VFS_LISTING_CHECK_BOUNDS(_ind);
-    return ListingItem(base::intrusive_ptr{this}, _ind);
+    return {base::intrusive_ptr{this}, _ind};
 }
 
 Listing::iterator Listing::begin() const noexcept

@@ -30,11 +30,11 @@ public:
 
     struct OpenedFile {
         OpenedFile() = default;
-        OpenedFile(OpenedFile &&);
+        OpenedFile(OpenedFile &&) noexcept;
         OpenedFile(const OpenedFile &) = delete;
         ~OpenedFile();
         OpenedFile &operator=(const OpenedFile &) = delete;
-        OpenedFile &operator=(OpenedFile &&);
+        OpenedFile &operator=(OpenedFile &&) noexcept;
         std::string path;
         int file_descriptor = -1;
     };

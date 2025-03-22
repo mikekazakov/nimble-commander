@@ -9,7 +9,6 @@
 #include <cwchar>
 #include <memory.h>
 #include <vector>
-#include <cassert>
 
 namespace nc::utility {
 

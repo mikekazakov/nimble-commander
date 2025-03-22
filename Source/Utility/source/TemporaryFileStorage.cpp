@@ -37,7 +37,7 @@ std::optional<std::string> TemporaryFileStorage::MakeFileFromMemory(std::string_
     return std::make_optional(std::move(opened_file->path));
 }
 
-TemporaryFileStorage::OpenedFile::OpenedFile(OpenedFile &&_rhs)
+TemporaryFileStorage::OpenedFile::OpenedFile(OpenedFile &&_rhs) noexcept
     : path{std::move(_rhs.path)}, file_descriptor{_rhs.file_descriptor}
 {
     _rhs.file_descriptor = -1;
@@ -49,7 +49,8 @@ TemporaryFileStorage::OpenedFile::~OpenedFile()
         close(file_descriptor);
 }
 
-TemporaryFileStorage::OpenedFile &TemporaryFileStorage::OpenedFile::operator=(TemporaryFileStorage::OpenedFile &&_rhs)
+TemporaryFileStorage::OpenedFile &
+TemporaryFileStorage::OpenedFile::operator=(TemporaryFileStorage::OpenedFile &&_rhs) noexcept
 {
     if( this != &_rhs ) {
         if( file_descriptor != -1 )

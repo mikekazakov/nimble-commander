@@ -236,23 +236,3 @@ void dispatch_queue::after(std::chrono::nanoseconds when, T f)
 {
     dispatch_after(when, m_queue, std::move(f));
 }
-
-void dispatch_queue::async(dispatch_block_t block)
-{
-    dispatch_async(m_queue, block);
-}
-
-void dispatch_queue::sync(dispatch_block_t block)
-{
-    dispatch_sync(m_queue, block);
-}
-
-void dispatch_queue::apply(size_t iterations, void (^block)(size_t))
-{
-    dispatch_apply(iterations, m_queue, block);
-}
-
-void dispatch_queue::after(std::chrono::nanoseconds when, dispatch_block_t block)
-{
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, when.count()), m_queue, block);
-}

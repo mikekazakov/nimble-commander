@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <utility>
@@ -35,25 +35,25 @@ public:
     value_t value;
 };
 
-inline constexpr tribool::tribool() noexcept : value{value_t::false_value}
+constexpr tribool::tribool() noexcept : value{value_t::false_value}
 {
     static_assert(sizeof(tribool) == 1);
 }
 
-inline constexpr tribool::tribool(bool _value) noexcept : value{_value ? value_t::true_value : value_t::false_value}
+constexpr tribool::tribool(bool _value) noexcept : value{_value ? value_t::true_value : value_t::false_value}
 {
 }
 
-inline constexpr tribool::tribool(indeterminate_type_t) noexcept : value{value_t::indeterminate_value}
+constexpr tribool::tribool(indeterminate_type_t) noexcept : value{value_t::indeterminate_value}
 {
 }
 
-inline constexpr tribool::operator bool() const noexcept
+constexpr tribool::operator bool() const noexcept
 {
     return value == value_t::true_value ? true : false;
 }
 
-inline constexpr tribool operator!(tribool _v) noexcept
+constexpr tribool operator!(tribool _v) noexcept
 {
     if( _v.value == tribool::value_t::true_value )
         return tribool{false};
@@ -62,59 +62,59 @@ inline constexpr tribool operator!(tribool _v) noexcept
     return _v;
 }
 
-inline constexpr tribool operator==(tribool _1, tribool _2) noexcept
+constexpr tribool operator==(tribool _1, tribool _2) noexcept
 {
     if( indeterminate(_1) || indeterminate(_2) )
         return indeterminate;
     return _1.value == _2.value;
 }
 
-inline constexpr tribool operator==(tribool _1, bool _2) noexcept
+constexpr tribool operator==(tribool _1, bool _2) noexcept
 {
     return _1 == tribool{_2};
 }
 
-inline constexpr tribool operator==(bool _1, tribool _2) noexcept
+constexpr tribool operator==(bool _1, tribool _2) noexcept
 {
     return tribool{_1} == _2;
 }
 
-inline constexpr tribool operator==(tribool _1, indeterminate_type_t _2) noexcept
+constexpr tribool operator==(tribool _1, indeterminate_type_t _2) noexcept
 {
     return _1 == tribool{_2};
 }
 
-inline constexpr tribool operator==(indeterminate_type_t _1, tribool _2) noexcept
+constexpr tribool operator==(indeterminate_type_t _1, tribool _2) noexcept
 {
     return tribool{_1} == _2;
 }
 
-inline constexpr tribool operator!=(tribool _1, tribool _2) noexcept
+constexpr tribool operator!=(tribool _1, tribool _2) noexcept
 {
     return !(_1 == _2);
 }
 
-inline constexpr tribool operator!=(tribool _1, bool _2) noexcept
+constexpr tribool operator!=(tribool _1, bool _2) noexcept
 {
     return !(_1 == _2);
 }
 
-inline constexpr tribool operator!=(bool _1, tribool _2) noexcept
+constexpr tribool operator!=(bool _1, tribool _2) noexcept
 {
     return !(_1 == _2);
 }
 
-inline constexpr tribool operator!=(tribool _1, indeterminate_type_t _2) noexcept
+constexpr tribool operator!=(tribool _1, indeterminate_type_t _2) noexcept
 {
     return !(_1 == _2);
 }
 
-inline constexpr tribool operator!=(indeterminate_type_t _1, tribool _2) noexcept
+constexpr tribool operator!=(indeterminate_type_t _1, tribool _2) noexcept
 {
     return !(_1 == _2);
 }
 
-inline constexpr tribool operator&&(tribool _1, tribool _2) noexcept
+constexpr tribool operator&&(tribool _1, tribool _2) noexcept
 {
     if( _1.value == tribool::value_t::false_value || _2.value == tribool::value_t::false_value )
         return tribool{false};
@@ -123,27 +123,27 @@ inline constexpr tribool operator&&(tribool _1, tribool _2) noexcept
     return tribool{indeterminate};
 }
 
-inline constexpr tribool operator&&(tribool _1, bool _2) noexcept
+constexpr tribool operator&&(tribool _1, bool _2) noexcept
 {
     return _1 && tribool{_2};
 }
 
-inline constexpr tribool operator&&(bool _1, tribool _2) noexcept
+constexpr tribool operator&&(bool _1, tribool _2) noexcept
 {
     return tribool{_1} && _2;
 }
 
-inline constexpr tribool operator&&(tribool _1, indeterminate_type_t _2) noexcept
+constexpr tribool operator&&(tribool _1, indeterminate_type_t _2) noexcept
 {
     return _1 && tribool{_2};
 }
 
-inline constexpr tribool operator&&(indeterminate_type_t _1, tribool _2) noexcept
+constexpr tribool operator&&(indeterminate_type_t _1, tribool _2) noexcept
 {
     return tribool{_1} && _2;
 }
 
-inline constexpr tribool operator||(tribool _1, tribool _2) noexcept
+constexpr tribool operator||(tribool _1, tribool _2) noexcept
 {
     if( _1.value == tribool::value_t::true_value || _2.value == tribool::value_t::true_value )
         return tribool{true};
@@ -152,27 +152,27 @@ inline constexpr tribool operator||(tribool _1, tribool _2) noexcept
     return tribool{indeterminate};
 }
 
-inline constexpr tribool operator||(tribool _1, bool _2) noexcept
+constexpr tribool operator||(tribool _1, bool _2) noexcept
 {
     return _1 || tribool{_2};
 }
 
-inline constexpr tribool operator||(bool _1, tribool _2) noexcept
+constexpr tribool operator||(bool _1, tribool _2) noexcept
 {
     return tribool{_1} || _2;
 }
 
-inline constexpr tribool operator||(tribool _1, indeterminate_type_t _2) noexcept
+constexpr tribool operator||(tribool _1, indeterminate_type_t _2) noexcept
 {
     return _1 || tribool{_2};
 }
 
-inline constexpr tribool operator||(indeterminate_type_t _1, tribool _2) noexcept
+constexpr tribool operator||(indeterminate_type_t _1, tribool _2) noexcept
 {
     return tribool{_1} || _2;
 }
 
-inline constexpr bool indeterminate_type_t::operator()(tribool _v) const noexcept
+constexpr bool indeterminate_type_t::operator()(tribool _v) const noexcept
 {
     return _v.value == tribool::value_t::indeterminate_value;
 }

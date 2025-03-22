@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/QLThumbnailsCacheImpl.h>
 #include <VFSIcon/Log.h>
 #include <Quartz/Quartz.h>
@@ -7,31 +7,31 @@
 
 namespace nc::vfsicon {
 
-static inline void hash_combine(size_t & /*unused*/)
+static void hash_combine(size_t & /*unused*/)
 {
 }
 
 template <typename T, typename... Rest>
-static inline void hash_combine(size_t &seed, const T &v, Rest... rest)
+static void hash_combine(size_t &seed, const T &v, Rest... rest)
 {
     const std::hash<T> hasher;
     seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     hash_combine(seed, rest...);
 }
 
-inline size_t QLThumbnailsCacheImpl::KeyHash::operator()(const Key &c) const noexcept
+size_t QLThumbnailsCacheImpl::KeyHash::operator()(const Key &c) const noexcept
 {
     return c.hash;
 }
 
-inline QLThumbnailsCacheImpl::Key::Key()
+QLThumbnailsCacheImpl::Key::Key()
 {
     static_assert(sizeof(Key) == 56);
     path = path_storage;
     hash_combine(hash, path, px_size);
 }
 
-inline QLThumbnailsCacheImpl::Key::Key(const Key &_key)
+QLThumbnailsCacheImpl::Key::Key(const Key &_key)
 {
     if( _key.path.data() == _key.path_storage.data() ) {
         path_storage = _key.path_storage;
@@ -59,14 +59,14 @@ QLThumbnailsCacheImpl::Key::Key(Key &&_key) noexcept
     hash = _key.hash;
 }
 
-inline QLThumbnailsCacheImpl::Key::Key(std::string_view _path, int _px_size, no_ownership_tag /*unused*/)
+QLThumbnailsCacheImpl::Key::Key(std::string_view _path, int _px_size, no_ownership_tag /*unused*/)
 {
     px_size = _px_size;
     path = _path;
     hash_combine(hash, path, px_size);
 }
 
-inline QLThumbnailsCacheImpl::Key::Key(const std::string &_path, int _px_size)
+QLThumbnailsCacheImpl::Key::Key(const std::string &_path, int _px_size)
 {
     path_storage = _path;
     px_size = _px_size;
@@ -90,12 +90,12 @@ QLThumbnailsCacheImpl::Key &QLThumbnailsCacheImpl::Key::operator=(const Key &_rh
     return *this;
 }
 
-inline bool QLThumbnailsCacheImpl::Key::operator==(const Key &_rhs) const noexcept
+bool QLThumbnailsCacheImpl::Key::operator==(const Key &_rhs) const noexcept
 {
     return hash == _rhs.hash && px_size == _rhs.px_size && path == _rhs.path;
 }
 
-inline bool QLThumbnailsCacheImpl::Key::operator!=(const Key &_rhs) const noexcept
+bool QLThumbnailsCacheImpl::Key::operator!=(const Key &_rhs) const noexcept
 {
     return !(*this == _rhs);
 }

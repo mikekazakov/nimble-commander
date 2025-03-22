@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "TextModeWorkingSet.h"
@@ -89,50 +89,5 @@ private:
     CGSize m_Bounds;
     double m_WrappingWidth = 0.;
 };
-
-inline const std::vector<TextModeIndexedTextLine> &TextModeFrame::Lines() const noexcept
-{
-    return m_Lines;
-}
-
-inline bool TextModeFrame::Empty() const noexcept
-{
-    return m_Lines.empty();
-}
-
-inline int TextModeFrame::LinesNumber() const noexcept
-{
-    return static_cast<int>(m_Lines.size());
-}
-
-inline const TextModeIndexedTextLine &TextModeFrame::Line(int _index) const
-{
-    return m_Lines.at(_index);
-}
-
-inline double TextModeFrame::LineWidth(int _index) const
-{
-    return m_LinesWidths.at(_index);
-}
-
-inline double TextModeFrame::WrappingWidth() const noexcept
-{
-    return m_WrappingWidth;
-}
-
-inline const TextModeWorkingSet &TextModeFrame::WorkingSet() const noexcept
-{
-    return *m_WorkingSet;
-}
-
-inline const nc::utility::FontGeometryInfo &TextModeFrame::FontGeometryInfo() const noexcept
-{
-    return m_FontInfo;
-}
-
-inline CGSize TextModeFrame::Bounds() const noexcept
-{
-    return m_Bounds;
-}
 
 } // namespace nc::viewer

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <dispatch/dispatch.h>
@@ -106,7 +106,7 @@ private:
 // implementation details
 
 template <class T>
-inline void dispatch_async(dispatch_queue_t _queue, T _f)
+void dispatch_async(dispatch_queue_t _queue, T _f)
 {
     dispatch_async_f(_queue, new T(std::move(_f)), [](void *_p) {
         nc::base::dispatch_cpp_support::wrapped_call(
@@ -235,24 +235,4 @@ template <class T>
 void dispatch_queue::after(std::chrono::nanoseconds when, T f)
 {
     dispatch_after(when, m_queue, std::move(f));
-}
-
-inline void dispatch_queue::async(dispatch_block_t block)
-{
-    dispatch_async(m_queue, block);
-}
-
-inline void dispatch_queue::sync(dispatch_block_t block)
-{
-    dispatch_sync(m_queue, block);
-}
-
-inline void dispatch_queue::apply(size_t iterations, void (^block)(size_t))
-{
-    dispatch_apply(iterations, m_queue, block);
-}
-
-inline void dispatch_queue::after(std::chrono::nanoseconds when, dispatch_block_t block)
-{
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, when.count()), m_queue, block);
 }

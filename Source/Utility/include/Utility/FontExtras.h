@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <CoreText/CoreText.h>
@@ -20,13 +20,13 @@ public:
     FontGeometryInfo(NSFont *_font);
 #endif
 
-    inline double Size() const noexcept { return m_Size; }
-    inline double Ascent() const noexcept { return m_Ascent; }
-    inline double Descent() const noexcept { return m_Descent; }
-    inline double Leading() const noexcept { return m_Leading; }
-    inline double LineHeight() const noexcept { return m_LineHeight; }
-    inline double MonospaceWidth() const noexcept { return m_MonospaceWidth; }
-    inline double PreciseMonospaceWidth() const noexcept { return m_PreciseMonospaceWidth; }
+    double Size() const noexcept { return m_Size; }
+    double Ascent() const noexcept { return m_Ascent; }
+    double Descent() const noexcept { return m_Descent; }
+    double Leading() const noexcept { return m_Leading; }
+    double LineHeight() const noexcept { return m_LineHeight; }
+    double MonospaceWidth() const noexcept { return m_MonospaceWidth; }
+    double PreciseMonospaceWidth() const noexcept { return m_PreciseMonospaceWidth; }
 
 #ifdef __OBJC__
     // Returns a list of widths of each string in the container.

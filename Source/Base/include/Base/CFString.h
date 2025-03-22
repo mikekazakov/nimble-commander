@@ -40,25 +40,11 @@ CFStringRef CFStringCreateWithMacOSRomanStdStringNoCopy(const std::string &_s) n
 CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s) noexcept;
 CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s, size_t _len) noexcept;
 
-inline CFString::operator bool() const noexcept
-{
-    return static_cast<bool>(p);
-}
-
-inline CFStringRef CFString::operator*() const noexcept
-{
-    return p.get();
-}
-
 #ifdef __OBJC__
 inline NSString *CFString::ns() const noexcept
 {
     return (__bridge NSString *)p.get();
 }
 #endif
-
-inline CFString::CFString(CFStringRef _str) noexcept : p(_str)
-{
-}
 
 } // namespace nc::base

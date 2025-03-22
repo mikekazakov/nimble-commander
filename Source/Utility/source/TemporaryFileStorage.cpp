@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TemporaryFileStorage.h"
 #include <Base/algo.h>
 #include <cstdio>
@@ -35,6 +35,31 @@ std::optional<std::string> TemporaryFileStorage::MakeFileFromMemory(std::string_
         }
     }
     return std::make_optional(std::move(opened_file->path));
+}
+
+TemporaryFileStorage::OpenedFile::OpenedFile(OpenedFile &&_rhs) noexcept
+    : path{std::move(_rhs.path)}, file_descriptor{_rhs.file_descriptor}
+{
+    _rhs.file_descriptor = -1;
+}
+
+TemporaryFileStorage::OpenedFile::~OpenedFile()
+{
+    if( file_descriptor != -1 )
+        close(file_descriptor);
+}
+
+TemporaryFileStorage::OpenedFile &
+TemporaryFileStorage::OpenedFile::operator=(TemporaryFileStorage::OpenedFile &&_rhs) noexcept
+{
+    if( this != &_rhs ) {
+        if( file_descriptor != -1 )
+            close(file_descriptor);
+        file_descriptor = _rhs.file_descriptor;
+        _rhs.file_descriptor = -1;
+        path = std::move(_rhs.path);
+    }
+    return *this;
 }
 
 } // namespace nc::utility

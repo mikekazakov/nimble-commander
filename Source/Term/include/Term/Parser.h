@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <variant>
 #include <string>
@@ -277,21 +277,5 @@ public:
     virtual ~Parser() = default;
     virtual std::vector<input::Command> Parse(Bytes _to_parse) = 0;
 };
-
-namespace input {
-
-inline Command::Command() noexcept : Command(Type::noop)
-{
-}
-
-inline Command::Command(Type _type) noexcept : type{_type}
-{
-}
-
-inline Command::Command(Type _type, Payload _payload) noexcept : type{_type}, payload{std::move(_payload)}
-{
-}
-
-} // namespace input
 
 } // namespace nc::term

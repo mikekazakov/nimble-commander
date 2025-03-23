@@ -300,7 +300,13 @@
               * effectively bypassing this mechanism. Comma-separated string list, possible entries
               * are: "attrs_change", "batch_rename", "compress", "copy", "delete", "mkdir", "link".
               */
-              "concurrencyPerWindowDoesntApplyTo": ""
+              "concurrencyPerWindowDoesntApplyTo": "",
+
+              /**
+               * When performing I/O, bypass system caches for the affected files.
+               * Effectively controls whether F_NOCACHE will be applied.
+               */
+              "disableSystemCaches": false
         },
         
         /**

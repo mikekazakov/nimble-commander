@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 namespace nc::ops {
@@ -27,12 +27,13 @@ struct CopyingOptions {
         Stop,      // abort entire operation
     };
 
-    bool docopy = true; // it it false then operation will do renaming/moving
-    bool preserve_symlinks = true;
-    bool copy_xattrs = true;
-    bool copy_file_times = true;
-    bool copy_unix_flags = true;
-    bool copy_unix_owners = true;
+    bool docopy : 1 = true; // it it false then operation will do renaming/moving
+    bool preserve_symlinks : 1 = true;
+    bool copy_xattrs : 1 = true;
+    bool copy_file_times : 1 = true;
+    bool copy_unix_flags : 1 = true;
+    bool copy_unix_owners : 1 = true;
+    bool disable_system_caches : 1 = false;
     ChecksumVerification verification = ChecksumVerification::Never;
     ExistBehavior exist_behavior = ExistBehavior::Ask;
     LockedItemBehavior locked_items_behaviour = LockedItemBehavior::Ask;

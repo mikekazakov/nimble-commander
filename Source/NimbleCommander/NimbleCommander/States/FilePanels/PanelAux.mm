@@ -23,12 +23,13 @@ using nc::vfs::easy::CopyFileToTempStorage;
 
 namespace nc::panel {
 
-static const auto g_ConfigArchivesExtensionsWhiteList = "filePanel.general.archivesExtensionsWhitelist";
-static const auto g_ConfigExecutableExtensionsWhitelist = "filePanel.general.executableExtensionsWhitelist";
-static const auto g_ConfigDefaultVerificationSetting = "filePanel.operations.defaultChecksumVerification";
-static const auto g_CheckDelay = "filePanel.operations.vfsShadowUploadChangesCheckDelay";
-static const auto g_DropDelay = "filePanel.operations.vfsShadowUploadObservationDropDelay";
-static const auto g_QLPanel = "filePanel.presentation.showQuickLookAsFloatingPanel";
+static const std::string_view g_ConfigArchivesExtensionsWhiteList = "filePanel.general.archivesExtensionsWhitelist";
+static const std::string_view g_ConfigExecutableExtensionsWhitelist = "filePanel.general.executableExtensionsWhitelist";
+static const std::string_view g_ConfigDefaultVerificationSetting = "filePanel.operations.defaultChecksumVerification";
+static const std::string_view g_ConfigDisableSystemCaches = "filePanel.operations.disableSystemCaches";
+static const std::string_view g_CheckDelay = "filePanel.operations.vfsShadowUploadChangesCheckDelay";
+static const std::string_view g_DropDelay = "filePanel.operations.vfsShadowUploadObservationDropDelay";
+static const std::string_view g_QLPanel = "filePanel.presentation.showQuickLookAsFloatingPanel";
 static const uint64_t g_MaxFileSizeForVFSOpen = 64ull * 1024ull * 1024ull; // 64mb
 
 static std::chrono::milliseconds UploadingCheckDelay()
@@ -309,11 +310,18 @@ static ops::CopyingOptions::ChecksumVerification DefaultChecksumVerificationSett
         return ops::CopyingOptions::ChecksumVerification::Never;
 }
 
+static bool DisableSystemCaches()
+{
+    // TODO: make depencies on Config explicit
+    return GlobalConfig().GetBool(g_ConfigDisableSystemCaches);
+}
+
 ops::CopyingOptions MakeDefaultFileCopyOptions()
 {
     ops::CopyingOptions options;
     options.docopy = true;
     options.verification = DefaultChecksumVerificationSetting();
+    options.disable_system_caches = DisableSystemCaches();
 
     return options;
 }
@@ -323,6 +331,7 @@ ops::CopyingOptions MakeDefaultFileMoveOptions()
     ops::CopyingOptions options;
     options.docopy = false;
     options.verification = DefaultChecksumVerificationSetting();
+    options.disable_system_caches = DisableSystemCaches();
 
     return options;
 }

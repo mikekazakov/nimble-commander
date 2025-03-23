@@ -743,8 +743,9 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
             close(source_fd);
     });
 
-    // do not waste OS file cache with one-way data
-    fcntl(source_fd, F_NOCACHE, 1);
+    if( m_Options.disable_system_caches ) {
+        fcntl(source_fd, F_NOCACHE, 1); // do not waste OS file cache with one-way data
+    }
 
     TurnIntoBlockingOrThrow(source_fd);
 
@@ -783,7 +784,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
     bool need_dst_truncate = false;
     int64_t dst_size_on_stop = 0;
     int64_t total_dst_size = src_stat_buffer.st_size;
-    int64_t preallocate_delta = 0;
+    uint64_t preallocate_delta = 0;
     int64_t initial_writing_offset = 0;
 
     const auto setup_new = [&] {
@@ -802,7 +803,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
             do_unlink_on_stop = true;
             dst_size_on_stop = 0;
             do_erase_xattrs = true;
-            preallocate_delta = src_stat_buffer.st_size - dst_stat_buffer.st_size; // negative value is ok here
+            preallocate_delta = std::max(src_stat_buffer.st_size - dst_stat_buffer.st_size, 0ll);
             need_dst_truncate = src_stat_buffer.st_size < dst_stat_buffer.st_size;
         };
         const auto setup_append = [&] {
@@ -883,8 +884,9 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
         }
     });
 
-    // caching is meaningless here
-    fcntl(destination_fd, F_NOCACHE, 1);
+    if( m_Options.disable_system_caches ) {
+        fcntl(destination_fd, F_NOCACHE, 1); // caching is meaningless here
+    }
 
     // find fs info for destination file.
     auto dst_fs_info_holder = m_NativeFSManager->VolumeFromFD(destination_fd);
@@ -970,8 +972,8 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
             uint32_t has_written = 0; // amount of bytes written into destination this time
             int write_loops = 0;
             while( left_to_write > 0 ) {
-                const int64_t n_written =
-                    write(destination_fd, write_buffer + has_written, std::min(left_to_write, dst_preferred_io_size));
+                const size_t to_write = std::min(left_to_write, dst_preferred_io_size);
+                const int64_t n_written = write(destination_fd, write_buffer + has_written, to_write);
                 if( n_written > 0 ) {
                     has_written += n_written;
                     left_to_write -= n_written;
@@ -1139,7 +1141,8 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
 
     // open the source file
     while( true ) {
-        const auto flags = VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache;
+        const auto flags =
+            VFSFlags::OF_Read | VFSFlags::OF_ShLock | (m_Options.disable_system_caches ? VFSFlags::OF_NoCache : 0);
         const std::expected<void, Error> rc = src_file->Open(flags);
         if( rc )
             break;
@@ -1263,8 +1266,9 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
         }
     });
 
-    // caching is meaningless here
-    fcntl(destination_fd, F_NOCACHE, 1);
+    if( m_Options.disable_system_caches ) {
+        fcntl(destination_fd, F_NOCACHE, 1); // caching is meaningless here
+    }
 
     // find fs info for destination file.
     assert(m_NativeFSManager);
@@ -1512,7 +1516,8 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
 
     // open source file
     while( true ) {
-        const auto flags = VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache;
+        const auto flags =
+            VFSFlags::OF_Read | VFSFlags::OF_ShLock | (m_Options.disable_system_caches ? VFSFlags::OF_NoCache : 0);
         const std::expected<void, Error> rc = src_file->Open(flags);
         if( rc )
             break;
@@ -1539,7 +1544,8 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     int64_t initial_writing_offset = 0;
 
     const auto setup_new = [&] {
-        dst_open_flags = VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoCache;
+        dst_open_flags =
+            VFSFlags::OF_Write | VFSFlags::OF_Create | (m_Options.disable_system_caches ? VFSFlags::OF_NoCache : 0);
         do_unlink_on_stop = true;
         dst_size_on_stop = 0;
     };
@@ -1549,14 +1555,16 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
         // file already exist. what should we do now?
         const VFSStat &dst_stat_buffer = *exp_dst_stat_buffer;
         const auto setup_overwrite = [&] {
-            dst_open_flags = VFSFlags::OF_Write | VFSFlags::OF_Truncate | VFSFlags::OF_NoCache;
+            dst_open_flags = VFSFlags::OF_Write | VFSFlags::OF_Truncate |
+                             (m_Options.disable_system_caches ? VFSFlags::OF_NoCache : 0);
             do_unlink_on_stop = true;
             dst_size_on_stop = 0;
             do_erase_xattrs = true;
             need_dst_truncate = src_stat_buffer.size < dst_stat_buffer.size;
         };
         const auto setup_append = [&] {
-            dst_open_flags = VFSFlags::OF_Write | VFSFlags::OF_Append | VFSFlags::OF_NoCache;
+            dst_open_flags =
+                VFSFlags::OF_Write | VFSFlags::OF_Append | (m_Options.disable_system_caches ? VFSFlags::OF_NoCache : 0);
             do_unlink_on_stop = false;
             do_copy_xattrs = false;
             do_set_times = false;
@@ -2630,9 +2638,9 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation &_
         }
     }
 
-    if( const std::expected<void, Error> rc =
-            file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache);
-        !rc )
+    const auto open_flags =
+        VFSFlags::OF_Read | VFSFlags::OF_ShLock | (m_Options.disable_system_caches ? VFSFlags::OF_NoCache : 0);
+    if( const std::expected<void, Error> rc = file->Open(open_flags); !rc )
         switch( m_OnDestinationFileReadError(rc.error(), _exp.destination_path, *m_DestinationHost) ) {
             case DestinationFileReadErrorResolution::Skip:
                 return StepResult::Skipped;

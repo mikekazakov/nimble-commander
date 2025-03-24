@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NativeFSHelpers.h"
 #include <sys/stat.h>
 #include <sys/param.h>
@@ -6,23 +6,26 @@
 
 namespace nc::ops::copying {
 
-bool ShouldPreallocateSpace(int64_t _bytes_to_write, const utility::NativeFileSystemInfo &_fs_info) noexcept
+bool ShouldPreallocateSpace(uint64_t _bytes_to_write, const utility::NativeFileSystemInfo &_fs_info) noexcept
 {
-    using namespace std::literals;
-    const auto min_prealloc_size = 4096;
+    // Only bother with preallocation when the amount of data we're going to write it large that the optimal I/O size.
+    // Otherwise, it will be a single write call anyway.
+    const uint32_t min_prealloc_size = _fs_info.basic.io_size;
     if( _bytes_to_write <= min_prealloc_size )
         return false;
 
     // Need to check destination fs and permit preallocation only on certain filesystems
-    static const auto prealloc_on = {"hfs"s, "apfs"s};
-    return count(begin(prealloc_on), end(prealloc_on), _fs_info.fs_type_name) != 0;
+    constexpr std::string_view hfs_plus = "hfs";
+    constexpr std::string_view apfs = "apfs";
+    return _fs_info.fs_type_name == hfs_plus || //
+           _fs_info.fs_type_name == apfs;
 }
 
-// PreallocateSpace assumes following ftruncate, meaningless otherwise on HFS+ (??)
-bool TryToPreallocateSpace(int64_t _preallocate_delta, int _file_des) noexcept
+// PreallocateSpace assumes following ftruncate, meaningless otherwise (??)
+bool TryToPreallocateSpace(uint64_t _preallocate_delta, int _file_des) noexcept
 {
     // at first try to request a single contiguous block
-    fstore_t preallocstore = {F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, _preallocate_delta, 0};
+    fstore_t preallocstore = {F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, static_cast<off_t>(_preallocate_delta), 0};
     if( fcntl(_file_des, F_PREALLOCATE, &preallocstore) == 0 )
         return true;
 
@@ -33,13 +36,10 @@ bool TryToPreallocateSpace(int64_t _preallocate_delta, int _file_des) noexcept
 
 bool SupportsFastTruncationAfterPreallocation(const utility::NativeFileSystemInfo &_fs_info) noexcept
 {
-    // For some reasons, as of 10.13.2, "apfs" behaves strangely and writes the entire preallocated
-    // space (presumably zeroing the space) upon ftruncate() call, which causes a significant and
-    // noticable lag. Thus, until something changes in F_PREALLOCATE/ftruncate() implementation on
-    // APFS or some clarification on the situation appears, the preallocation is not followed with
-    // ftruncate() for this FS.
     constexpr std::string_view hfs_plus = "hfs";
-    return _fs_info.fs_type_name == hfs_plus;
+    constexpr std::string_view apfs = "apfs";
+    return _fs_info.fs_type_name == hfs_plus || //
+           _fs_info.fs_type_name == apfs;
 }
 
 void AdjustFileTimesForNativePath(const char *_target_path, struct stat &_with_times)

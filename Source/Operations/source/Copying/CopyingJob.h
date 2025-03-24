@@ -12,6 +12,7 @@
 #include "SourceItems.h"
 #include "ChecksumExpectation.h"
 #include "CopyingJobCallbacks.h"
+#include <stdlib.h>
 
 namespace nc::ops {
 
@@ -189,11 +190,13 @@ private:
     PathCompositionType m_PathCompositionType;
     nc::utility::NativeFSManager *const m_NativeFSManager;
 
-    // buffers are allocated once in job init and are used to manupulate files' bytes.
-    // thus no parallel routines should run using these buffers
-    static const int m_BufferSize = 2 * 1024 * 1024;
-    const std::unique_ptr<uint8_t[]> m_Buffers[2] = {std::make_unique<uint8_t[]>(m_BufferSize),
-                                                     std::make_unique<uint8_t[]>(m_BufferSize)};
+    // Buffers are allocated once during the Job init and are used to manupulate files' bytes.
+    // No parallel routines should run using these buffers.
+    // valloc() is used to ensure the memory is aligned on a page boundary.
+    static constexpr int m_BufferSize = 2 * 1024 * 1024;
+    const std::unique_ptr<uint8_t[], decltype(&::free)> m_Buffers[2] = {
+        {static_cast<uint8_t *>(valloc(m_BufferSize)), &::free},
+        {static_cast<uint8_t *>(valloc(m_BufferSize)), &::free}};
 
     const base::DispatchGroup m_IOGroup;
     bool m_IsSingleInitialItemProcessing = false;

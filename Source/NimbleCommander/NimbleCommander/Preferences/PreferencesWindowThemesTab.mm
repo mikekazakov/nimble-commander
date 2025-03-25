@@ -313,6 +313,13 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
                 v.target = self;
                 return v;
             }
+            if( i.type == PreferencesWindowThemesTabItemType::Int ) {
+                auto v = [[PreferencesWindowThemesTabIntControl alloc] initWithFrame:NSRect{}];
+                v.value = ThemePersistence::ExtractInt(self.selectedThemeFrontend, i.entry.c_str());
+                v.action = @selector(onIntChanged:);
+                v.target = self;
+                return v;
+            }
             if( i.type == PreferencesWindowThemesTabItemType::ColoringRules ) {
                 auto v = [[PreferencesWindowThemesTabColoringRulesControl alloc] initWithFrame:NSRect{}];
                 v.rules = ThemePersistence::ExtractRules(self.selectedThemeFrontend, i.entry.c_str());
@@ -388,6 +395,16 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
         const id item = [self.outlineView itemAtRow:row];
         if( const auto node = nc::objc_cast<PreferencesWindowThemesTabItemNode>(item) )
             [self commitChangedValue:ThemePersistence::EncodeFont(v.font) forKey:node.entry];
+    }
+}
+
+- (void)onIntChanged:(id)sender
+{
+    if( const auto v = nc::objc_cast<PreferencesWindowThemesTabIntControl>(sender) ) {
+        const auto row = [self.outlineView rowForView:v];
+        const id item = [self.outlineView itemAtRow:row];
+        if( const auto node = nc::objc_cast<PreferencesWindowThemesTabItemNode>(item) )
+            [self commitChangedValue:ThemePersistence::EncodeInt(v.value) forKey:node.entry];
     }
 }
 

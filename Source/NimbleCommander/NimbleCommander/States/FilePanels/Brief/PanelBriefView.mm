@@ -55,7 +55,7 @@ static constinit const std::array<LayoutDataT, 21> g_FixedLayoutData = {{
     std::make_tuple(16, 2, 32, 35, 12)  //
 }};
 
-static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font, PanelBriefViewColumnsLayout _layout)
+static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font, PanelBriefViewColumnsLayout _layout, NSUInteger _padding)
 {
     assert(_font);
     static const short insets[4] = {7, 1, 5, 1};
@@ -97,8 +97,8 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font, PanelBr
     lc.inset_right = static_cast<int8_t>(insets[2]) /*5*/;
     lc.inset_bottom = static_cast<int8_t>(insets[3]) /*1*/;
     lc.icon_size = icon_size /*16*/;
-    lc.font_baseline = text_baseline /*4*/;
-    lc.item_height = line_height /*20*/;
+    lc.font_baseline = text_baseline + static_cast<short>(_padding) /*4*/;
+    lc.item_height = line_height + static_cast<short>(_padding * 2) /*20*/;
 
     return lc;
 }
@@ -389,7 +389,7 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
 - (void)calculateItemLayout
 {
     Log::Trace("[PanelBriefView calculateItemLayout]");
-    m_ItemLayout = BuildItemsLayout(nc::CurrentTheme().FilePanelsBriefFont(), m_ColumnsLayout);
+    m_ItemLayout = BuildItemsLayout(nc::CurrentTheme().FilePanelsBriefFont(), m_ColumnsLayout, nc::CurrentTheme().FilePanelsBriefRowVerticalPadding());
     [self updateItemsLayoutEngine];
 
     [self setupIconsPxSize];

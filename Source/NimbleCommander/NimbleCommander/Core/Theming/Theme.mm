@@ -44,6 +44,7 @@ struct Theme::Internals {
     NSColor *m_FilePanelsTabsSeparatorColor;
     NSColor *m_FilePanelsTabsPictogramColor;
     NSFont *m_FilePanelsListFont;
+    NSUInteger m_FilePanelsListRowVerticalPadding;
     NSColor *m_FilePanelsListGridColor;
     NSFont *m_FilePanelsListHeaderFont;
     NSColor *m_FilePanelsListHeaderBackgroundColor;
@@ -55,6 +56,7 @@ struct Theme::Internals {
     NSColor *m_FilePanelsListRegularEvenRowBackgroundColor;
     NSColor *m_FilePanelsListRegularOddRowBackgroundColor;
     NSFont *m_FilePanelsBriefFont;
+    NSUInteger m_FilePanelsBriefRowVerticalPadding;
     NSColor *m_FilePanelsBriefGridColor;
     NSColor *m_FilePanelsBriefRegularEvenRowBackgroundColor;
     NSColor *m_FilePanelsBriefRegularOddRowBackgroundColor;
@@ -106,6 +108,13 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     const auto &doc = _theme_data;
     const auto &backup = _backup_theme_data;
 
+    const auto ExtractInt = [&](const char *_path) {
+        if( auto v = ThemePersistence::ExtractInt(doc, _path) )
+            return v;
+        if( auto v = ThemePersistence::ExtractInt(backup, _path) )
+            return v;
+        return static_cast<unsigned long>(0);
+    };
     const auto ExtractColor = [&](const char *_path) {
         if( auto v = ThemePersistence::ExtractColor(doc, _path) )
             return v;
@@ -152,6 +161,7 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     I->m_FilePanelsGeneralTopSeparatorColor = ExtractColor("filePanelsGeneralTopSeparatorColor");
 
     I->m_FilePanelsListFont = ExtractFont("filePanelsListFont");
+    I->m_FilePanelsListRowVerticalPadding = ExtractInt("filePanelsListRowVerticalPadding");
     I->m_FilePanelsListGridColor = ExtractColor("filePanelsListGridColor");
 
     I->m_FilePanelsHeaderFont = ExtractFont("filePanelsHeaderFont");
@@ -196,6 +206,7 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     I->m_FilePanelsTabsPictogramColor = ExtractColor("filePanelsTabsPictogramColor");
 
     I->m_FilePanelsBriefFont = ExtractFont("filePanelsBriefFont");
+    I->m_FilePanelsBriefRowVerticalPadding = ExtractInt("filePanelsBriefRowVerticalPadding");
     I->m_FilePanelsBriefGridColor = ExtractColor("filePanelsBriefGridColor");
     I->m_FilePanelsBriefRegularEvenRowBackgroundColor = ExtractColor("filePanelsBriefRegularEvenRowBackgroundColor");
     I->m_FilePanelsBriefRegularOddRowBackgroundColor = ExtractColor("filePanelsBriefRegularOddRowBackgroundColor");
@@ -263,6 +274,11 @@ NSAppearance *Theme::Appearance() const noexcept
 NSFont *Theme::FilePanelsListFont() const noexcept
 {
     return I->m_FilePanelsListFont;
+}
+
+NSUInteger Theme::FilePanelsListRowVerticalPadding() const noexcept
+{
+    return I->m_FilePanelsListRowVerticalPadding;
 }
 
 NSColor *Theme::FilePanelsListFocusedActiveRowBackgroundColor() const noexcept
@@ -438,6 +454,11 @@ NSColor *Theme::FilePanelsHeaderSeparatorColor() const noexcept
 NSFont *Theme::FilePanelsBriefFont() const noexcept
 {
     return I->m_FilePanelsBriefFont;
+}
+
+NSUInteger Theme::FilePanelsBriefRowVerticalPadding() const noexcept
+{
+    return I->m_FilePanelsBriefRowVerticalPadding;
 }
 
 NSColor *Theme::FilePanelsBriefRegularEvenRowBackgroundColor() const noexcept

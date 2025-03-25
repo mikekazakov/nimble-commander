@@ -299,6 +299,74 @@ using nc::ThemeAppearance;
 
 @end
 
+@implementation PreferencesWindowThemesTabIntControl {
+    NSUInteger m_Value;
+    NSTextField *m_TextField;
+}
+
+- (id)initWithFrame:(NSRect)frameRect
+{
+    self = [super initWithFrame:frameRect];
+    if( self ) {
+        m_Value = 2;
+
+        m_TextField = [[NSTextField alloc] initWithFrame:NSRect()];
+        m_TextField.doubleValue = m_Value;
+        m_TextField.target = self;
+        m_TextField.action = @selector(inputChanged:);
+        [self addSubview:m_TextField];
+
+
+        auto views = NSDictionaryOfVariableBindings(m_TextField);
+        auto add_visfmt = [&](NSString *_layout) {
+            auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_layout
+                                                                       options:0
+                                                                       metrics:nil
+                                                                         views:views];
+            [self addConstraints:constraints];
+        };
+        add_visfmt(@"|[m_TextField(==40)]-(>=0)-|");
+        add_visfmt(@"V:[m_TextField(==18)]");
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:m_TextField
+                                                         attribute:NSLayoutAttributeCenterY
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:self
+                                                         attribute:NSLayoutAttributeCenterY
+                                                        multiplier:1.
+                                                          constant:0.]];
+    }
+    return self;
+}
+
+- (void)inputChanged:(id)sender
+{
+    if( NSTextField *txtField = nc::objc_cast<NSTextField>(sender) ) {
+        if( txtField.doubleValue != m_Value ) {
+            m_Value = txtField.intValue;
+            [self sendAction:self.action to:self.target];
+        }
+    }
+}
+
+
+- (NSUInteger)value
+{
+    return m_Value;
+}
+
+- (void)setValue:(NSUInteger)value
+{
+    if( !value )
+        return;
+    if( m_Value != value ) {
+        m_Value = value;
+        m_TextField.doubleValue = m_Value;
+    }
+}
+
+@end
+
+
 @interface PreferencesWindowThemesTabColoringRulesControl ()
 @property(nonatomic) IBOutlet NSView *carrier;
 @property(nonatomic) IBOutlet NSTableView *table;

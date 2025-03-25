@@ -24,6 +24,12 @@
 
 @end
 
+@interface PreferencesWindowThemesTabIntControl : NCPreferencesActionTableCellView
+
+@property(nonatomic) NSUInteger value;
+
+@end
+
 namespace nc::panel {
 struct PresentationItemsColoringRule;
 }

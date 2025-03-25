@@ -581,6 +581,7 @@
                       
                       /* File Panels -> List settings */
                       "filePanelsListFont": "@systemFont, 13",
+                      "filePanelsListRowVerticalPadding": 2,
                       "filePanelsListGridColor": "@clearColor",
                       "filePanelsListHeaderFont": "@systemFont, 11",
                       "filePanelsListHeaderBackgroundColor": "@controlBackgroundColor",
@@ -594,6 +595,7 @@
                       
                       /* File Panels -> Brief settings */
                       "filePanelsBriefFont": "@systemFont, 13",
+                      "filePanelsBriefRowVerticalPadding": 2,
                       "filePanelsBriefGridColor": "#E6E6E6",
                       "filePanelsBriefRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
                       "filePanelsBriefRegularOddRowBackgroundColor": "@controlAlternatingRowBackgroundColors1",
@@ -702,6 +704,7 @@
                       
                       /* File Panels -> List settings */
                       "filePanelsListFont": "@systemFont, 13",
+                      "filePanelsListRowVerticalPadding": 2,
                       "filePanelsListGridColor": "@clearColor",
                       "filePanelsListHeaderFont": "@systemFont, 11",
                       "filePanelsListHeaderBackgroundColor": "@controlBackgroundColor",
@@ -716,6 +719,7 @@
                       
                       /* File Panels -> Brief settings */
                       "filePanelsBriefFont": "@systemFont, 13",
+                      "filePanelsBriefRowVerticalPadding": 2,
                       "filePanelsBriefGridColor": "#141414",
                       "filePanelsBriefRegularEvenRowBackgroundColor": "#000000",
                       "filePanelsBriefRegularOddRowBackgroundColor": "#0A0A0A",
@@ -840,6 +844,7 @@
                       
                       /* File Panels -> List settings */
                       "filePanelsListFont": "Menlo-Regular, 13",
+                      "filePanelsListRowVerticalPadding": 2,
                       "filePanelsListGridColor": "#00FFFF",
                       "filePanelsListHeaderFont": "Menlo-Regular, 13",
                       "filePanelsListHeaderBackgroundColor": "#000080",
@@ -853,6 +858,7 @@
                       
                       /* File Panels -> Brief settings */
                       "filePanelsBriefFont": "Menlo-Regular, 13",
+                      "filePanelsBriefRowVerticalPadding": 2,
                       "filePanelsBriefGridColor": "#00FFFF",
                       "filePanelsBriefRegularEvenRowBackgroundColor": "#000080",
                       "filePanelsBriefRegularOddRowBackgroundColor": "#000080",
@@ -952,6 +958,7 @@
                         "filePanelsFooterActiveBackgroundColor": "#FFFFFF",
                         "filePanelsFooterInactiveBackgroundColor": "#E8E8E8",
                         "filePanelsListFont": "@systemFont, 13",
+                        "filePanelsListRowVerticalPadding": 2,
                         "filePanelsListGridColor": "#FFFFFF00",
                         "filePanelsListHeaderFont": "@systemFont, 11",
                         "filePanelsListHeaderBackgroundColor": "#FFFFFF",
@@ -963,6 +970,7 @@
                         "filePanelsListRegularEvenRowBackgroundColor": "#FFFFFF",
                         "filePanelsListRegularOddRowBackgroundColor": "#F6F6F6",
                         "filePanelsBriefFont": "@systemFont, 13",
+                        "filePanelsBriefRowVerticalPadding": 2,
                         "filePanelsBriefGridColor": "#E6E6E6",
                         "filePanelsBriefRegularEvenRowBackgroundColor": "#FFFFFF",
                         "filePanelsBriefRegularOddRowBackgroundColor": "#F6F6F6",
@@ -1059,6 +1067,7 @@
                         "filePanelsFooterInactiveBackgroundColor": "#1D1D1D",
                         "filePanelsListFont": "@systemFont, 13",
                         "filePanelsListGridColor": "#1D1D1D",
+                        "filePanelsListRowVerticalPadding": 2,
                         "filePanelsListHeaderFont": "@systemFont, 11",
                         "filePanelsListHeaderBackgroundColor": "#1D1D1D",
                         "filePanelsListHeaderTextColor": "#EFEFEF",
@@ -1069,6 +1078,7 @@
                         "filePanelsListRegularEvenRowBackgroundColor": "#242424",
                         "filePanelsListRegularOddRowBackgroundColor": "#212121",
                         "filePanelsBriefFont": "@systemFont, 13",
+                        "filePanelsBriefRowVerticalPadding": 2,
                         "filePanelsBriefGridColor": "#1D1D1D",
                         "filePanelsBriefRegularEvenRowBackgroundColor": "#242424",
                         "filePanelsBriefRegularOddRowBackgroundColor": "#212121",

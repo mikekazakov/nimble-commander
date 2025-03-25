@@ -29,6 +29,9 @@ struct ThemePersistence {
 
     static ThemeAppearance ExtractAppearance(const Value &_doc, const char *_path);
     static Value EncodeAppearance(ThemeAppearance _appearance);
+    
+    static NSUInteger ExtractInt(const Value &_doc, const char *_path);
+    static Value EncodeInt(NSUInteger _int);
 };
 
 } // namespace nc

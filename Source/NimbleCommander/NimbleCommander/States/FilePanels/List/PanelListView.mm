@@ -351,7 +351,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
 
 - (void)calculateItemLayout
 {
-    m_Geometry = PanelListViewGeometry(CurrentTheme().FilePanelsListFont(), m_AssignedLayout.icon_scale);
+    m_Geometry = PanelListViewGeometry(CurrentTheme().FilePanelsListFont(), m_AssignedLayout.icon_scale, CurrentTheme().FilePanelsListRowVerticalPadding());
 
     [self setupIconsPxSize];
 

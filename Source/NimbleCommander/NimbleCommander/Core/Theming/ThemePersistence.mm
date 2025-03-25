@@ -13,10 +13,10 @@ NSUInteger ThemePersistence::ExtractInt(const Value &_doc, const char *_path)
     if( cr == _doc.MemberEnd() )
         return 0;
     
-    if( !cr->value.IsUint())
+    if( !cr->value.IsString())
         return 0;
 
-    return  cr->value.GetUint();
+    return [[NSString stringWithUTF8String:cr->value.GetString()] longLongValue];
 }
 
 NSColor *ThemePersistence::ExtractColor(const Value &_doc, const char *_path)

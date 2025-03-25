@@ -301,6 +301,7 @@ using nc::ThemeAppearance;
 
 @implementation PreferencesWindowThemesTabIntControl {
     NSUInteger m_Value;
+    NCPreferencesAlphaColorWell *m_ColorWell;
     NSTextField *m_TextField;
 }
 
@@ -308,14 +309,18 @@ using nc::ThemeAppearance;
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
-        m_Value = 2;
-
+       
         m_TextField = [[NSTextField alloc] initWithFrame:NSRect()];
+        m_TextField.translatesAutoresizingMaskIntoConstraints = false;
+        m_TextField.bordered = true;
+        m_TextField.editable = true;
+        m_TextField.drawsBackground = false;
+        m_TextField.alignment = NSTextAlignmentRight;
+        m_TextField.font = [NSFont labelFontOfSize:11];
         m_TextField.doubleValue = m_Value;
         m_TextField.target = self;
         m_TextField.action = @selector(inputChanged:);
         [self addSubview:m_TextField];
-
 
         auto views = NSDictionaryOfVariableBindings(m_TextField);
         auto add_visfmt = [&](NSString *_layout) {
@@ -327,6 +332,7 @@ using nc::ThemeAppearance;
         };
         add_visfmt(@"|[m_TextField(==40)]-(>=0)-|");
         add_visfmt(@"V:[m_TextField(==18)]");
+
         [self addConstraint:[NSLayoutConstraint constraintWithItem:m_TextField
                                                          attribute:NSLayoutAttributeCenterY
                                                          relatedBy:NSLayoutRelationEqual

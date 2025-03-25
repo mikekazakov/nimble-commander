@@ -26,7 +26,7 @@
 
 @interface PreferencesWindowThemesTabIntControl : NCPreferencesActionTableCellView
 
-@property(nonatomic) NSUInteger value;
+@property NSUInteger value;
 
 @end
 

@@ -7,6 +7,18 @@
 
 namespace nc {
 
+NSUInteger ThemePersistence::ExtractInt(const Value &_doc, const char *_path)
+{
+    auto cr = _doc.FindMember(_path);
+    if( cr == _doc.MemberEnd() )
+        return 0;
+
+    if( !cr->value.IsString() )
+        return 0;
+
+    return [[NSString stringWithUTF8String:cr->value.GetString()] longLongValue];
+}
+
 NSColor *ThemePersistence::ExtractColor(const Value &_doc, const char *_path)
 {
     auto cr = _doc.FindMember(_path);
@@ -41,6 +53,11 @@ std::vector<nc::panel::PresentationItemsColoringRule> ThemePersistence::ExtractR
             r.emplace_back(nc::panel::PresentationItemsColoringRulePersistence::FromJSON(*i));
         }
     return r;
+}
+
+ThemePersistence::Value ThemePersistence::EncodeInt(NSUInteger _int)
+{
+    return {[NSString stringWithFormat:@"%lu", _int].UTF8String, nc::config::g_CrtAllocator};
 }
 
 ThemePersistence::Value ThemePersistence::EncodeColor(NSColor *_color)

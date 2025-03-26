@@ -144,7 +144,7 @@ static NSParagraphStyle *PStyle()
     if( auto row_view = nc::objc_cast<PanelListViewRowView>(self.superview) ) {
         m_TextAttributes = @{
             NSFontAttributeName: row_view.listView.font,
-            NSForegroundColorAttributeName: row_view.rowTextColor,
+            NSForegroundColorAttributeName: [row_view.rowTextColor colorWithAlphaComponent:0.5],
             NSParagraphStyleAttributeName: PStyle()
         };
         [self setNeedsDisplay:true];

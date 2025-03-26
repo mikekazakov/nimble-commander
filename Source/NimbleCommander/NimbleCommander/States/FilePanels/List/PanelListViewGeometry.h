@@ -9,7 +9,7 @@ class PanelListViewGeometry
 {
 public:
     PanelListViewGeometry();
-    PanelListViewGeometry(NSFont *_font, int _icon_scale);
+    PanelListViewGeometry(NSFont *_font, int _icon_scale, unsigned long _padding);
 
     short LineHeight() const { return m_LineHeight; }
     short TextBaseLine() const { return m_TextBaseLine; }

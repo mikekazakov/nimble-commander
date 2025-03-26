@@ -309,7 +309,7 @@ using nc::ThemeAppearance;
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
-       
+
         m_TextField = [[NSTextField alloc] initWithFrame:NSRect()];
         m_TextField.translatesAutoresizingMaskIntoConstraints = false;
         m_TextField.bordered = true;
@@ -354,7 +354,6 @@ using nc::ThemeAppearance;
     }
 }
 
-
 - (NSUInteger)value
 {
     return m_Value;
@@ -371,7 +370,6 @@ using nc::ThemeAppearance;
 }
 
 @end
-
 
 @interface PreferencesWindowThemesTabColoringRulesControl ()
 @property(nonatomic) IBOutlet NSView *carrier;

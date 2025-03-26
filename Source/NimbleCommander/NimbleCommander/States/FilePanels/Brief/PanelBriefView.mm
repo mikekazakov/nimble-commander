@@ -55,7 +55,8 @@ static constinit const std::array<LayoutDataT, 21> g_FixedLayoutData = {{
     std::make_tuple(16, 2, 32, 35, 12)  //
 }};
 
-static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font, PanelBriefViewColumnsLayout _layout, NSUInteger _padding)
+static PanelBriefViewItemLayoutConstants
+BuildItemsLayout(NSFont *_font, PanelBriefViewColumnsLayout _layout, NSUInteger _padding)
 {
     assert(_font);
     static const short insets[4] = {7, 1, 5, 1};
@@ -389,7 +390,9 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
 - (void)calculateItemLayout
 {
     Log::Trace("[PanelBriefView calculateItemLayout]");
-    m_ItemLayout = BuildItemsLayout(nc::CurrentTheme().FilePanelsBriefFont(), m_ColumnsLayout, nc::CurrentTheme().FilePanelsBriefRowVerticalPadding());
+    m_ItemLayout = BuildItemsLayout(nc::CurrentTheme().FilePanelsBriefFont(),
+                                    m_ColumnsLayout,
+                                    nc::CurrentTheme().FilePanelsBriefRowVerticalPadding());
     [self updateItemsLayoutEngine];
 
     [self setupIconsPxSize];

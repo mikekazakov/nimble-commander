@@ -318,7 +318,7 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
                 if( auto val = ThemePersistence::ExtractUInt(self.selectedThemeFrontend, i.entry.c_str()) ) {
                     v.value = val.value();
                 }
-                v.action = @selector(onIntChanged:);
+                v.action = @selector(onUIntChanged:);
                 v.target = self;
                 return v;
             }
@@ -400,7 +400,7 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
     }
 }
 
-- (void)onIntChanged:(id)sender
+- (void)onUIntChanged:(id)sender
 {
     if( const auto v = nc::objc_cast<PreferencesWindowThemesTabUIntControl>(sender) ) {
         const auto row = [self.outlineView rowForView:v];

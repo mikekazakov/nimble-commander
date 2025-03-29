@@ -1,11 +1,31 @@
 // Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ThemePersistence.h"
+#include <charconv>
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
 #include <Panel/UI/PanelViewPresentationItemsColoringFilterPersistence.h>
 #include <Config/RapidJSON.h>
 
 namespace nc {
+
+std::optional<unsigned> ThemePersistence::ExtractUInt(const Value &_doc, const char *_path)
+{
+    auto cr = _doc.FindMember(_path);
+    if( cr == _doc.MemberEnd() )
+        return 0;
+
+    if( !cr->value.IsString() )
+        return std::nullopt;
+
+    const char *str = cr->value.GetString();
+    const size_t len = cr->value.GetStringLength();
+    unsigned result = 0;
+
+    if( auto [ptr, ec] = std::from_chars(str, str + len, result); ec == std::errc{} )
+        return result;
+
+    return std::nullopt;
+}
 
 NSColor *ThemePersistence::ExtractColor(const Value &_doc, const char *_path)
 {
@@ -41,6 +61,11 @@ std::vector<nc::panel::PresentationItemsColoringRule> ThemePersistence::ExtractR
             r.emplace_back(nc::panel::PresentationItemsColoringRulePersistence::FromJSON(*i));
         }
     return r;
+}
+
+ThemePersistence::Value ThemePersistence::EncodeUInt(unsigned _value)
+{
+    return {fmt::format("{}", _value), nc::config::g_CrtAllocator};
 }
 
 ThemePersistence::Value ThemePersistence::EncodeColor(NSColor *_color)

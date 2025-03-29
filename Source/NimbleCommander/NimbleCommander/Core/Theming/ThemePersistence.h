@@ -29,6 +29,9 @@ struct ThemePersistence {
 
     static ThemeAppearance ExtractAppearance(const Value &_doc, const char *_path);
     static Value EncodeAppearance(ThemeAppearance _appearance);
+
+    static std::optional<unsigned> ExtractUInt(const Value &_doc, const char *_path);
+    static Value EncodeUInt(unsigned _value);
 };
 
 } // namespace nc

@@ -38,7 +38,7 @@ static const std::array<LayoutDataT, 21> g_FixedLayoutData = {{
 }};
 
 // line height, text baseline, icon size
-static std::tuple<short, short, short> GrabGeometryFromSystemFont(NSFont *_font, int _icon_scale)
+static std::tuple<short, short, short> GrabGeometryFromSystemFont(NSFont *_font, int _icon_scale, NSUInteger _padding)
 {
     // hardcoded stuff to mimic Finder's layout
     short icon_size = 16;
@@ -67,17 +67,17 @@ static std::tuple<short, short, short> GrabGeometryFromSystemFont(NSFont *_font,
         text_baseline = insets[1] + short(font_info.Descent());
         icon_size = short(_icon_scale) * 16;
     }
-    return std::make_tuple(line_height, text_baseline, icon_size);
+    return std::make_tuple(line_height + (_padding * 2), text_baseline + _padding, icon_size);
 }
 
 PanelListViewGeometry::PanelListViewGeometry()
-    : PanelListViewGeometry([NSFont systemFontOfSize:NSFont.systemFontSize], 1)
+    : PanelListViewGeometry([NSFont systemFontOfSize:NSFont.systemFontSize], 1, 0)
 {
 }
 
-PanelListViewGeometry::PanelListViewGeometry(NSFont *_font, int _icon_scale)
+PanelListViewGeometry::PanelListViewGeometry(NSFont *_font, int _icon_scale, NSUInteger _padding)
 {
-    std::tie(m_LineHeight, m_TextBaseLine, m_IconSize) = GrabGeometryFromSystemFont(_font, _icon_scale);
+    std::tie(m_LineHeight, m_TextBaseLine, m_IconSize) = GrabGeometryFromSystemFont(_font, _icon_scale, _padding);
 }
 
 short PanelListViewGeometry::FilenameOffsetInColumn() const noexcept

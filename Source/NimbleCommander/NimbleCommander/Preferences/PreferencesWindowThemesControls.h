@@ -24,6 +24,12 @@
 
 @end
 
+@interface PreferencesWindowThemesTabUIntControl : NCPreferencesActionTableCellView
+
+@property unsigned value;
+
+@end
+
 namespace nc::panel {
 struct PresentationItemsColoringRule;
 }

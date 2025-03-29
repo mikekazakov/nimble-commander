@@ -299,6 +299,78 @@ using nc::ThemeAppearance;
 
 @end
 
+@implementation PreferencesWindowThemesTabUIntControl {
+    unsigned m_Value;
+    NCPreferencesAlphaColorWell *m_ColorWell;
+    NSTextField *m_TextField;
+}
+
+- (id)initWithFrame:(NSRect)frameRect
+{
+    self = [super initWithFrame:frameRect];
+    if( self ) {
+
+        m_TextField = [[NSTextField alloc] initWithFrame:NSRect()];
+        m_TextField.translatesAutoresizingMaskIntoConstraints = false;
+        m_TextField.bordered = true;
+        m_TextField.editable = true;
+        m_TextField.drawsBackground = false;
+        m_TextField.alignment = NSTextAlignmentRight;
+        m_TextField.font = [NSFont labelFontOfSize:11];
+        m_TextField.doubleValue = m_Value;
+        m_TextField.target = self;
+        m_TextField.action = @selector(inputChanged:);
+        [self addSubview:m_TextField];
+
+        auto views = NSDictionaryOfVariableBindings(m_TextField);
+        auto add_visfmt = [&](NSString *_layout) {
+            auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_layout
+                                                                       options:0
+                                                                       metrics:nil
+                                                                         views:views];
+            [self addConstraints:constraints];
+        };
+        add_visfmt(@"|[m_TextField(==40)]-(>=0)-|");
+        add_visfmt(@"V:[m_TextField(==18)]");
+
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:m_TextField
+                                                         attribute:NSLayoutAttributeCenterY
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:self
+                                                         attribute:NSLayoutAttributeCenterY
+                                                        multiplier:1.
+                                                          constant:0.]];
+    }
+    return self;
+}
+
+- (void)inputChanged:(id)sender
+{
+    if( NSTextField *txtField = nc::objc_cast<NSTextField>(sender) ) {
+        if( static_cast<unsigned>(txtField.intValue) != m_Value ) {
+            m_Value = txtField.intValue;
+            [self sendAction:self.action to:self.target];
+        }
+    }
+}
+
+- (unsigned)value
+{
+    return m_Value;
+}
+
+- (void)setValue:(unsigned)value
+{
+    if( !value )
+        return;
+    if( m_Value != value ) {
+        m_Value = value;
+        m_TextField.intValue = m_Value;
+    }
+}
+
+@end
+
 @interface PreferencesWindowThemesTabColoringRulesControl ()
 @property(nonatomic) IBOutlet NSView *carrier;
 @property(nonatomic) IBOutlet NSTableView *table;

@@ -54,6 +54,13 @@ static PreferencesWindowThemesTabItemNode *SpawnFontNode(NSString *_description,
                                                               ofType:PreferencesWindowThemesTabItemType::Font];
 }
 
+static PreferencesWindowThemesTabItemNode *SpawnIntNode(NSString *_description, const std::string &_entry)
+{
+    return [[PreferencesWindowThemesTabItemNode alloc] initWithTitle:_description
+                                                            forEntry:_entry
+                                                              ofType:PreferencesWindowThemesTabItemType::UInt];
+}
+
 static PreferencesWindowThemesTabItemNode *SpawnColoringRulesNode(NSString *_description, const std::string &_entry)
 {
     return [[PreferencesWindowThemesTabItemNode alloc] initWithTitle:_description
@@ -116,6 +123,7 @@ NSArray *BuildThemeSettingsNodesTree()
 
     auto fp_brief_nodes = @[
         SpawnFontNode(@"Text font", "filePanelsBriefFont"),
+        SpawnIntNode(@"Row vertical padding", "filePanelsBriefRowVerticalPadding"),
         SpawnColorNode(@"Grid color", "filePanelsBriefGridColor"),
         SpawnColorNode(@"Even row background", "filePanelsBriefRegularEvenRowBackgroundColor"),
         SpawnColorNode(@"Odd row background", "filePanelsBriefRegularOddRowBackgroundColor"),
@@ -126,6 +134,7 @@ NSArray *BuildThemeSettingsNodesTree()
 
     auto fp_list_nodes = @[
         SpawnFontNode(@"Text font", "filePanelsListFont"),
+        SpawnIntNode(@"Row vertical padding", "filePanelsListRowVerticalPadding"),
         SpawnColorNode(@"Grid color", "filePanelsListGridColor"),
         SpawnFontNode(@"Header font", "filePanelsListHeaderFont"),
         SpawnColorNode(@"Header background", "filePanelsListHeaderBackgroundColor"),

@@ -13,17 +13,17 @@ std::optional<unsigned> ThemePersistence::ExtractUInt(const Value &_doc, const c
     auto cr = _doc.FindMember(_path);
     if( cr == _doc.MemberEnd() )
         return 0;
-    
+
     if( !cr->value.IsString() )
         return std::nullopt;
-    
+
     const char *str = cr->value.GetString();
     const size_t len = cr->value.GetStringLength();
     unsigned result = 0;
-    
+
     if( auto [ptr, ec] = std::from_chars(str, str + len, result); ec == std::errc{} )
         return result;
-    
+
     return std::nullopt;
 }
 

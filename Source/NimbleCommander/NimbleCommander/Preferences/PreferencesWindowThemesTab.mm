@@ -315,7 +315,7 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
             }
             if( i.type == PreferencesWindowThemesTabItemType::UInt ) {
                 auto v = [[PreferencesWindowThemesTabUIntControl alloc] initWithFrame:NSRect{}];
-                if (auto val = ThemePersistence::ExtractUInt(self.selectedThemeFrontend, i.entry.c_str())) {
+                if( auto val = ThemePersistence::ExtractUInt(self.selectedThemeFrontend, i.entry.c_str()) ) {
                     v.value = val.value();
                 }
                 v.action = @selector(onIntChanged:);

@@ -1,5 +1,6 @@
 // Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ThemePersistence.h"
+#include <charconv>
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
 #include <Panel/UI/PanelViewPresentationItemsColoringFilterPersistence.h>
@@ -7,16 +8,23 @@
 
 namespace nc {
 
-NSUInteger ThemePersistence::ExtractInt(const Value &_doc, const char *_path)
+std::optional<unsigned> ThemePersistence::ExtractUInt(const Value &_doc, const char *_path)
 {
     auto cr = _doc.FindMember(_path);
     if( cr == _doc.MemberEnd() )
         return 0;
-
+    
     if( !cr->value.IsString() )
-        return 0;
-
-    return [[NSString stringWithUTF8String:cr->value.GetString()] longLongValue];
+        return std::nullopt;
+    
+    const char *str = cr->value.GetString();
+    const size_t len = cr->value.GetStringLength();
+    unsigned result = 0;
+    
+    if( auto [ptr, ec] = std::from_chars(str, str + len, result); ec == std::errc{} )
+        return result;
+    
+    return std::nullopt;
 }
 
 NSColor *ThemePersistence::ExtractColor(const Value &_doc, const char *_path)
@@ -55,9 +63,9 @@ std::vector<nc::panel::PresentationItemsColoringRule> ThemePersistence::ExtractR
     return r;
 }
 
-ThemePersistence::Value ThemePersistence::EncodeInt(NSUInteger _int)
+ThemePersistence::Value ThemePersistence::EncodeUInt(unsigned _value)
 {
-    return {[NSString stringWithFormat:@"%lu", _int].UTF8String, nc::config::g_CrtAllocator};
+    return {fmt::format("{}", _value), nc::config::g_CrtAllocator};
 }
 
 ThemePersistence::Value ThemePersistence::EncodeColor(NSColor *_color)

@@ -98,8 +98,8 @@ BuildItemsLayout(NSFont *_font, PanelBriefViewColumnsLayout _layout, NSUInteger 
     lc.inset_right = static_cast<int8_t>(insets[2]) /*5*/;
     lc.inset_bottom = static_cast<int8_t>(insets[3]) /*1*/;
     lc.icon_size = icon_size /*16*/;
-    lc.font_baseline = text_baseline + static_cast<short>(_padding) /*4*/;
-    lc.item_height = line_height + static_cast<short>(_padding * 2) /*20*/;
+    lc.font_baseline = text_baseline + static_cast<short>(_padding / 2) /*4 + padding /2*/;
+    lc.item_height = line_height + static_cast<short>(_padding) /*20 + padding*/;
 
     return lc;
 }

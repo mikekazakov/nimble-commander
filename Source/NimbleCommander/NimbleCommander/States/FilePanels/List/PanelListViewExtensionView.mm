@@ -71,7 +71,7 @@ static NSParagraphStyle *const g_Style = [] {
             return;
         NSDictionary *attrs = @{
             NSFontAttributeName: row_view.listView.font,
-            NSForegroundColorAttributeName: [row_view.rowTextColor colorWithAlphaComponent:0.5],
+            NSForegroundColorAttributeName: row_view.rowTextColor,
             NSParagraphStyleAttributeName: g_Style
         };
         auto attr_str = [[NSMutableAttributedString alloc] initWithString:m_Extension attributes:attrs];

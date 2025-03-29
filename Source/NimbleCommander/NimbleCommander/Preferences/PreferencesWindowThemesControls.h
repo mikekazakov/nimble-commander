@@ -24,9 +24,9 @@
 
 @end
 
-@interface PreferencesWindowThemesTabIntControl : NCPreferencesActionTableCellView
+@interface PreferencesWindowThemesTabUIntControl : NCPreferencesActionTableCellView
 
-@property NSUInteger value;
+@property unsigned value;
 
 @end
 

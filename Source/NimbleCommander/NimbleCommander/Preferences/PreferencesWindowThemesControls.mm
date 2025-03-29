@@ -299,8 +299,8 @@ using nc::ThemeAppearance;
 
 @end
 
-@implementation PreferencesWindowThemesTabIntControl {
-    NSUInteger m_Value;
+@implementation PreferencesWindowThemesTabUIntControl {
+    unsigned m_Value;
     NCPreferencesAlphaColorWell *m_ColorWell;
     NSTextField *m_TextField;
 }
@@ -347,25 +347,25 @@ using nc::ThemeAppearance;
 - (void)inputChanged:(id)sender
 {
     if( NSTextField *txtField = nc::objc_cast<NSTextField>(sender) ) {
-        if( txtField.doubleValue != m_Value ) {
+        if( static_cast<unsigned>(txtField.intValue) != m_Value ) {
             m_Value = txtField.intValue;
             [self sendAction:self.action to:self.target];
         }
     }
 }
 
-- (NSUInteger)value
+- (unsigned)value
 {
     return m_Value;
 }
 
-- (void)setValue:(NSUInteger)value
+- (void)setValue:(unsigned)value
 {
     if( !value )
         return;
     if( m_Value != value ) {
         m_Value = value;
-        m_TextField.doubleValue = m_Value;
+        m_TextField.intValue = m_Value;
     }
 }
 

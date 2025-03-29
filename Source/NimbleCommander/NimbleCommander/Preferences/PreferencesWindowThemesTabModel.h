@@ -10,7 +10,7 @@ enum class PreferencesWindowThemesTabItemType {
     ColoringRules,
     Appearance,
     ThemeTitle,
-    Int
+    UInt
     // bool?
 };
 

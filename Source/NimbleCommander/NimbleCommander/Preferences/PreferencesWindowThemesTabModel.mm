@@ -58,7 +58,7 @@ static PreferencesWindowThemesTabItemNode *SpawnIntNode(NSString *_description, 
 {
     return [[PreferencesWindowThemesTabItemNode alloc] initWithTitle:_description
                                                             forEntry:_entry
-                                                              ofType:PreferencesWindowThemesTabItemType::Int];
+                                                              ofType:PreferencesWindowThemesTabItemType::UInt];
 }
 
 static PreferencesWindowThemesTabItemNode *SpawnColoringRulesNode(NSString *_description, const std::string &_entry)

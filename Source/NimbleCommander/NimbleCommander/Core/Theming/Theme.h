@@ -90,7 +90,7 @@ public:
 
     // File Panels --> List presentation settings //////////////////////////////////////////////////
     NSFont *FilePanelsListFont() const noexcept;
-    NSUInteger FilePanelsListRowVerticalPadding() const noexcept;
+    unsigned FilePanelsListRowVerticalPadding() const noexcept;
     NSColor *FilePanelsListGridColor() const noexcept;
     NSFont *FilePanelsListHeaderFont() const noexcept;
     NSColor *FilePanelsListHeaderBackgroundColor() const noexcept;
@@ -104,7 +104,7 @@ public:
 
     // File Panels --> Brief presentation settings /////////////////////////////////////////////////
     NSFont *FilePanelsBriefFont() const noexcept;
-    NSUInteger FilePanelsBriefRowVerticalPadding() const noexcept;
+    unsigned FilePanelsBriefRowVerticalPadding() const noexcept;
     NSColor *FilePanelsBriefGridColor() const noexcept;
     NSColor *FilePanelsBriefRegularEvenRowBackgroundColor() const noexcept;
     NSColor *FilePanelsBriefRegularOddRowBackgroundColor() const noexcept;

@@ -301,7 +301,6 @@ using nc::ThemeAppearance;
 
 @implementation PreferencesWindowThemesTabUIntControl {
     unsigned m_Value;
-    NCPreferencesAlphaColorWell *m_ColorWell;
     NSTextField *m_TextField;
 }
 
@@ -309,7 +308,7 @@ using nc::ThemeAppearance;
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
-
+        m_Value = 0;
         m_TextField = [[NSTextField alloc] initWithFrame:NSRect()];
         m_TextField.translatesAutoresizingMaskIntoConstraints = false;
         m_TextField.bordered = true;
@@ -317,7 +316,7 @@ using nc::ThemeAppearance;
         m_TextField.drawsBackground = false;
         m_TextField.alignment = NSTextAlignmentRight;
         m_TextField.font = [NSFont labelFontOfSize:11];
-        m_TextField.doubleValue = m_Value;
+        m_TextField.stringValue = @"0";
         m_TextField.target = self;
         m_TextField.action = @selector(inputChanged:);
         [self addSubview:m_TextField];
@@ -361,8 +360,6 @@ using nc::ThemeAppearance;
 
 - (void)setValue:(unsigned)value
 {
-    if( !value )
-        return;
     if( m_Value != value ) {
         m_Value = value;
         m_TextField.intValue = m_Value;

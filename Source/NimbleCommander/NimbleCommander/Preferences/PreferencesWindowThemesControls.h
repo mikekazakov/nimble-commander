@@ -26,7 +26,7 @@
 
 @interface PreferencesWindowThemesTabUIntControl : NCPreferencesActionTableCellView
 
-@property unsigned value;
+@property(nonatomic) unsigned value;
 
 @end
 

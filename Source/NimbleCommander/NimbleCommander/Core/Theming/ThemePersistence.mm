@@ -12,7 +12,7 @@ std::optional<unsigned> ThemePersistence::ExtractUInt(const Value &_doc, const c
 {
     auto cr = _doc.FindMember(_path);
     if( cr == _doc.MemberEnd() )
-        return 0;
+        return std::nullopt;
 
     if( !cr->value.IsString() )
         return std::nullopt;

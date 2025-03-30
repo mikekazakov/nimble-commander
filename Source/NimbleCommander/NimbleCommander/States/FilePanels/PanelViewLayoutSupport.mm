@@ -1,19 +1,10 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewLayoutSupport.h"
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include <Base/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
-
-// struct PanelViewLayout
-//{
-//    string name; // for the future
-//    any layout; // perhaps switch to variant?
-//    // may be PanelListViewColumnsLayout, PanelBriefViewColumnsLayout or
-//    // PanelViewDisabledLayout at the moment.
-
-using namespace nc::panel;
 
 namespace nc::panel {
 
@@ -26,22 +17,29 @@ PanelViewLayout::Type PanelViewLayout::type() const
 {
     if( std::any_cast<PanelListViewColumnsLayout>(&layout) )
         return Type::List;
+    if( std::any_cast<PanelGalleryViewLayout>(&layout) )
+        return Type::Gallery;
     if( std::any_cast<PanelBriefViewColumnsLayout>(&layout) )
         return Type::Brief;
     return Type::Disabled;
 }
 
-const PanelBriefViewColumnsLayout *PanelViewLayout::brief() const
+const PanelBriefViewColumnsLayout *PanelViewLayout::brief() const noexcept
 {
     return std::any_cast<PanelBriefViewColumnsLayout>(&layout);
 }
 
-const PanelListViewColumnsLayout *PanelViewLayout::list() const
+const PanelGalleryViewLayout *PanelViewLayout::gallery() const noexcept
+{
+    return std::any_cast<PanelGalleryViewLayout>(&layout);
+}
+
+const PanelListViewColumnsLayout *PanelViewLayout::list() const noexcept
 {
     return std::any_cast<PanelListViewColumnsLayout>(&layout);
 }
 
-bool PanelViewLayout::operator==(const PanelViewLayout &_rhs) const
+bool PanelViewLayout::operator==(const PanelViewLayout &_rhs) const noexcept
 {
     if( this == &_rhs )
         return true;
@@ -56,16 +54,13 @@ bool PanelViewLayout::operator==(const PanelViewLayout &_rhs) const
     switch( mytype ) {
         case Type::Brief:
             return *brief() == *_rhs.brief();
+        case Type::Gallery:
+            return *gallery() == *_rhs.gallery();
         case Type::List:
             return *list() == *_rhs.list();
         default:
             return true;
     }
-}
-
-bool PanelViewLayout::operator!=(const PanelViewLayout &_rhs) const
-{
-    return !(*this == _rhs);
 }
 
 static const auto g_TitleKey = "title";
@@ -339,6 +334,8 @@ void PanelViewLayoutsStorage::CommitChanges(bool _fire_observers)
 }
 
 } // namespace nc::panel
+
+using namespace nc::panel;
 
 @implementation PanelViewLayoutsMenuDelegate {
     bool m_IsDirty;

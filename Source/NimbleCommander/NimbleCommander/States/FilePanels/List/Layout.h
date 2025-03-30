@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <boost/container/static_vector.hpp>
 
@@ -24,14 +24,12 @@ struct PanelListViewColumnsLayout {
         short max_width = -1;
         short min_width = -1;
         bool operator==(const Column &_rhs) const noexcept = default;
-        bool operator!=(const Column &_rhs) const noexcept = default;
     };
 
     boost::container::static_vector<Column, 8> columns;
     unsigned char icon_scale = 1;
 
     bool operator==(const PanelListViewColumnsLayout &_rhs) const noexcept = default;
-    bool operator!=(const PanelListViewColumnsLayout &_rhs) const noexcept = default;
 };
 
 } // namespace nc::panel

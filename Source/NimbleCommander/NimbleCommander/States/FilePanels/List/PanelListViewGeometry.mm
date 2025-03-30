@@ -67,7 +67,7 @@ static std::tuple<short, short, short> GrabGeometryFromSystemFont(NSFont *_font,
         text_baseline = insets[1] + short(font_info.Descent());
         icon_size = short(_icon_scale) * 16;
     }
-    return std::make_tuple(line_height + _padding, text_baseline + _padding / 2, icon_size);
+    return std::make_tuple(line_height + _padding, text_baseline + (_padding / 2), icon_size);
 }
 
 PanelListViewGeometry::PanelListViewGeometry()

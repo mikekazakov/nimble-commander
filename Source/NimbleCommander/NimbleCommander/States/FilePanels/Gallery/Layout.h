@@ -8,4 +8,4 @@ struct PanelGalleryViewLayout {
     bool operator==(const PanelGalleryViewLayout &_rhs) const noexcept = default;
 };
 
-}
+} // namespace nc::panel

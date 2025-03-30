@@ -27,7 +27,8 @@ struct PanelViewLayout {
 
     std::string name;
     std::any layout; // perhaps switch to variant?
-    // may be PanelListViewColumnsLayout, PanelBriefViewColumnsLayout, PanelGalleryViewLayout or PanelViewDisabledLayout at the moment.
+    // may be PanelListViewColumnsLayout, PanelBriefViewColumnsLayout, PanelGalleryViewLayout or PanelViewDisabledLayout
+    // at the moment.
     bool is_disabled() const;
     Type type() const;
     const PanelBriefViewColumnsLayout *brief() const noexcept;

@@ -135,6 +135,7 @@ NSArray *BuildThemeSettingsNodesTree()
     auto fp_list_nodes = @[
         SpawnFontNode(@"Text font", "filePanelsListFont"),
         SpawnIntNode(@"Row vertical padding", "filePanelsListRowVerticalPadding"),
+        SpawnIntNode(@"Secondary columns' opacity (%)", "filePanelsListSecondaryColumnsOpacity"),
         SpawnColorNode(@"Grid color", "filePanelsListGridColor"),
         SpawnFontNode(@"Header font", "filePanelsListHeaderFont"),
         SpawnColorNode(@"Header background", "filePanelsListHeaderBackgroundColor"),

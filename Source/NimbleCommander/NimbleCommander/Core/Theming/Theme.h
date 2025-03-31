@@ -91,6 +91,7 @@ public:
     // File Panels --> List presentation settings //////////////////////////////////////////////////
     NSFont *FilePanelsListFont() const noexcept;
     unsigned FilePanelsListRowVerticalPadding() const noexcept;
+    unsigned FilePanelsListSecondaryColumnsOpacity() const noexcept;
     NSColor *FilePanelsListGridColor() const noexcept;
     NSFont *FilePanelsListHeaderFont() const noexcept;
     NSColor *FilePanelsListHeaderBackgroundColor() const noexcept;

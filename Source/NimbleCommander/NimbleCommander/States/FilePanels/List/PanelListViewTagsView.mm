@@ -4,6 +4,7 @@
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
 #include "PanelListViewTableView.h"
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include <vector>
@@ -73,9 +74,11 @@ static NSParagraphStyle *const g_Style = [] {
         PanelListViewRowView *row_view = static_cast<PanelListViewRowView *>(self.superview);
         if( !row_view )
             return;
+        
+        auto opacity = nc::CurrentTheme().FilePanelsListSecondaryColumnsOpacity() / 100.0;
         NSDictionary *attrs = @{
             NSFontAttributeName: row_view.listView.font,
-            NSForegroundColorAttributeName: row_view.rowTextColor,
+            NSForegroundColorAttributeName: [row_view.rowTextColor colorWithAlphaComponent:opacity],
             NSParagraphStyleAttributeName: g_Style
         };
 

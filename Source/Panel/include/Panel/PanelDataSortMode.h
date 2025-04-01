@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 namespace nc::panel::data {
@@ -82,8 +82,7 @@ struct SortMode {
     bool isrevert() const noexcept;
     static bool validate(Mode _mode) noexcept;
     static bool validate(Collation _collation) noexcept;
-    bool operator==(const SortMode &_r) const noexcept = default;
-    bool operator!=(const SortMode &_r) const noexcept = default;
+    constexpr bool operator==(const SortMode &_r) const noexcept = default;
 };
 
 } // namespace nc::panel::data

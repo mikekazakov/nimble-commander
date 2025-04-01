@@ -1,8 +1,9 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #pragma once
 
 #include <memory>
+#include <typeinfo>
 #include <stdexcept>
 
 /**

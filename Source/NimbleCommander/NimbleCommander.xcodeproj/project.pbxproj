@@ -197,7 +197,6 @@
 		CF371DAA2D18472E0034EB3F /* ActionsShortcutsManager_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF371DA92D18472E0034EB3F /* ActionsShortcutsManager_UT.cpp */; };
 		CF3FC99E2D99502900878079 /* Layout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3FC99D2D99502900878079 /* Layout.cpp */; };
 		CF3FC99F2D99502900878079 /* Layout.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3FC99C2D99502900878079 /* Layout.h */; };
-		CF3FC9BC2D9965F900878079 /* PanelGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3FC9BB2D9965F900878079 /* PanelGalleryView.swift */; };
 		CF45CA281D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
 		CF45CA291D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
 		CF45CA2D1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
@@ -958,7 +957,6 @@
 		CF3E6DF71E3870AB002B4AAD /* PanelViewPresentationSettings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewPresentationSettings.mm; path = NimbleCommander/States/FilePanels/PanelViewPresentationSettings.mm; sourceTree = SOURCE_ROOT; };
 		CF3FC99C2D99502900878079 /* Layout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = NimbleCommander/States/FilePanels/Gallery/Layout.h; sourceTree = SOURCE_ROOT; };
 		CF3FC99D2D99502900878079 /* Layout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Layout.cpp; path = NimbleCommander/States/FilePanels/Gallery/Layout.cpp; sourceTree = SOURCE_ROOT; };
-		CF3FC9BB2D9965F900878079 /* PanelGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PanelGalleryView.swift; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryView.swift; sourceTree = SOURCE_ROOT; };
 		CF41351E1F890709007429B6 /* SettingsAdaptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SettingsAdaptor.h; path = NimbleCommander/States/Terminal/SettingsAdaptor.h; sourceTree = SOURCE_ROOT; };
 		CF41351F1F890709007429B6 /* SettingsAdaptor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SettingsAdaptor.mm; path = NimbleCommander/States/Terminal/SettingsAdaptor.mm; sourceTree = SOURCE_ROOT; };
 		CF44D329202D63100083FAF5 /* ExecuteExternalTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExecuteExternalTool.h; path = NimbleCommander/States/FilePanels/Actions/ExecuteExternalTool.h; sourceTree = SOURCE_ROOT; };
@@ -1647,7 +1645,6 @@
 		CF3FC99B2D994FC100878079 /* Gallery */ = {
 			isa = PBXGroup;
 			children = (
-				CF3FC9BB2D9965F900878079 /* PanelGalleryView.swift */,
 				CF3FC99C2D99502900878079 /* Layout.h */,
 				CF3FC99D2D99502900878079 /* Layout.cpp */,
 			);
@@ -3003,7 +3000,6 @@
 				CF0A47F82BDD9E8000833160 /* AppDelegate+ViewerCreation.mm in Sources */,
 				CF0A47032BDD864D00833160 /* Dock.mm in Sources */,
 				CF0A487A2BDDA51600833160 /* GoToFolderSheetController.mm in Sources */,
-				CF3FC9BC2D9965F900878079 /* PanelGalleryView.swift in Sources */,
 				CF0A480F2BDD9F9900833160 /* PreferencesWindowToolsTab.mm in Sources */,
 				CF0A48502BDDA2B100833160 /* SpotlightSearch.mm in Sources */,
 				CF0A480E2BDD9F9300833160 /* PreferencesWindowThemesTabModel.mm in Sources */,

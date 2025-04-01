@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CommandPopover.h"
 #include <Carbon/Carbon.h>
 #include <vector>
@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <numeric>
 #include <span>
+#include <cmath>
 #include <optional>
 
 static constexpr double g_ContentViewCornerRadius = 10.;

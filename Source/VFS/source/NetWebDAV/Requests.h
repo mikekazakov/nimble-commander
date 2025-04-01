@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Internal.h"
+#include <vector>
 
 namespace nc::vfs::webdav {
 

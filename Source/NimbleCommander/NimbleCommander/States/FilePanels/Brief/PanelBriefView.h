@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFSIcon/IconRepository.h>
@@ -45,7 +45,7 @@ struct PanelBriefViewItemLayoutConstants {
 @property(nonatomic) int cursorPosition;
 @property(nonatomic) nc::panel::data::SortMode sortMode;
 
-@property(nonatomic) PanelBriefViewColumnsLayout columnsLayout;
+@property(nonatomic) nc::panel::PanelBriefViewColumnsLayout columnsLayout;
 
 - (PanelBriefViewItemLayoutConstants)layoutConstants;
 

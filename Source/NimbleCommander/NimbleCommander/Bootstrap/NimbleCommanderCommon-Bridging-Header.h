@@ -3,3 +3,4 @@
 //
 
 #include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/States/FilePanels/PanelViewImplementationProtocol.h>

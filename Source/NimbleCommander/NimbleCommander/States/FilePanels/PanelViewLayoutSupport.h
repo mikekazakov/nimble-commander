@@ -1,8 +1,9 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/Observable.h>
 #include "Brief/Layout.h"
+#include "Gallery/Layout.h"
 #include "List/Layout.h"
 #include <any>
 #include <string>
@@ -20,21 +21,21 @@ struct PanelViewLayout {
     enum class Type : signed char {
         Disabled = -1,
         Brief = 0,
-        List = 1
-        /*Thumbs = 2 */
+        List = 1,
+        Gallery = 2
     };
 
     std::string name;
     std::any layout; // perhaps switch to variant?
-    // may be PanelListViewColumnsLayout, PanelBriefViewColumnsLayout or
-    // PanelViewDisabledLayout at the moment.
+    // may be PanelListViewColumnsLayout, PanelBriefViewColumnsLayout, PanelGalleryViewLayout or PanelViewDisabledLayout
+    // at the moment.
     bool is_disabled() const;
     Type type() const;
-    const PanelBriefViewColumnsLayout *brief() const;
-    const PanelListViewColumnsLayout *list() const;
+    const PanelBriefViewColumnsLayout *brief() const noexcept;
+    const PanelGalleryViewLayout *gallery() const noexcept;
+    const PanelListViewColumnsLayout *list() const noexcept;
 
-    bool operator==(const PanelViewLayout &) const;
-    bool operator!=(const PanelViewLayout &) const;
+    bool operator==(const PanelViewLayout &) const noexcept;
 };
 
 // supposed to be thread-safe

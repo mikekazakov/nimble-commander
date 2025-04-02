@@ -1,9 +1,10 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Foundation/Foundation.h>
 #include <string>
 #include <optional>
+#include <vector>
 
 namespace nc::utility {
 

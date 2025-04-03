@@ -85,7 +85,7 @@ jobs:
     - name: Install the dependencies
       run: |
         brew update
-        brew install llvm jq
+        brew install llvm@19 jq
     - uses: actions/checkout@v4
     - name: Run clang-tidy
       run: "cd Scripts && ./run_clang_tidy.sh --check"

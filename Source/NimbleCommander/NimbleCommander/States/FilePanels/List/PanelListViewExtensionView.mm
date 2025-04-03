@@ -70,7 +70,7 @@ static NSParagraphStyle *const g_Style = [] {
         PanelListViewRowView *row_view = static_cast<PanelListViewRowView *>(self.superview);
         if( !row_view )
             return;
-        
+
         auto opacity = nc::CurrentTheme().FilePanelsListSecondaryColumnsOpacity() / 100.0;
         NSDictionary *attrs = @{
             NSFontAttributeName: row_view.listView.font,

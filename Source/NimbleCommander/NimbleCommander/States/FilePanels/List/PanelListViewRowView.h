@@ -18,6 +18,7 @@
 @property(nonatomic, weak) PanelListView *listView;
 @property(nonatomic, readonly) NSColor *rowBackgroundColor;
 @property(nonatomic, readonly) NSColor *rowTextColor;
+@property(nonatomic, readonly) NSColor *rowSecondaryTextColor;
 @property(nonatomic, readonly) NSColor *tagAccentColor; // may return nil when no accent should be drawn
 @property(nonatomic) bool panelActive;
 @property(nonatomic) int itemIndex;

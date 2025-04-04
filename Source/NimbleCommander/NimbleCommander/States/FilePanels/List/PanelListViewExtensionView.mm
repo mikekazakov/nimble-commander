@@ -4,7 +4,6 @@
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
 #include "PanelListViewTableView.h"
-#include <NimbleCommander/Core/Theming/Theme.h>
 #include <Utility/ObjCpp.h>
 #include <Base/CFPtr.h>
 #include <cassert>
@@ -71,10 +70,9 @@ static NSParagraphStyle *const g_Style = [] {
         if( !row_view )
             return;
 
-        auto opacity = nc::CurrentTheme().FilePanelsListSecondaryColumnsOpacity() / 100.0;
         NSDictionary *attrs = @{
             NSFontAttributeName: row_view.listView.font,
-            NSForegroundColorAttributeName: [row_view.rowTextColor colorWithAlphaComponent:opacity],
+            NSForegroundColorAttributeName: row_view.rowSecondaryTextColor,
             NSParagraphStyleAttributeName: g_Style
         };
         auto attr_str = [[NSMutableAttributedString alloc] initWithString:m_Extension attributes:attrs];
@@ -99,7 +97,7 @@ static NSParagraphStyle *const g_Style = [] {
             if( m_Line ) {
                 const auto geometry = lv.geometry;
                 const auto context = NSGraphicsContext.currentContext.CGContext;
-                CGContextSetFillColorWithColor(context, rv.rowTextColor.CGColor);
+                CGContextSetFillColorWithColor(context, rv.rowSecondaryTextColor.CGColor);
                 CGContextSetTextPosition(context, geometry.LeftInset(), geometry.TextBaseLine());
                 CGContextSetTextDrawingMode(context, kCGTextFill);
                 CTLineDraw(m_Line.get(), context);

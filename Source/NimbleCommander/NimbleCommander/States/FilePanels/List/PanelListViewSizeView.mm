@@ -6,7 +6,6 @@
 #include "PanelListViewRowView.h"
 #include "PanelListViewSizeView.h"
 #include "PanelListViewTableView.h"
-#include <NimbleCommander/Core/Theming/Theme.h>
 #include <Utility/ObjCpp.h>
 
 using namespace nc::panel;
@@ -143,10 +142,9 @@ static NSParagraphStyle *PStyle()
 - (void)buildPresentation
 {
     if( auto row_view = nc::objc_cast<PanelListViewRowView>(self.superview) ) {
-        auto opacity = nc::CurrentTheme().FilePanelsListSecondaryColumnsOpacity() / 100.0;
         m_TextAttributes = @{
             NSFontAttributeName: row_view.listView.font,
-            NSForegroundColorAttributeName: [row_view.rowTextColor colorWithAlphaComponent:opacity],
+            NSForegroundColorAttributeName: row_view.rowSecondaryTextColor,
             NSParagraphStyleAttributeName: PStyle()
         };
         [self setNeedsDisplay:true];

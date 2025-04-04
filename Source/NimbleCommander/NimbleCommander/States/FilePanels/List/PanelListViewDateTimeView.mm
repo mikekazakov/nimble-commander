@@ -164,8 +164,7 @@ using nc::utility::AdaptiveDateFormatting;
             [PanelListViewTableView drawVerticalSeparatorForView:self];
 
             if( m_Line ) {
-                auto opacity = nc::CurrentTheme().FilePanelsListSecondaryColumnsOpacity() / 100.0;
-                CGContextSetFillColorWithColor(context, [rv.rowTextColor colorWithAlphaComponent:opacity].CGColor);
+                CGContextSetFillColorWithColor(context, rv.rowSecondaryTextColor.CGColor);
                 CGContextSetTextPosition(context, geometry.LeftInset(), geometry.TextBaseLine());
                 CGContextSetTextDrawingMode(context, kCGTextFill);
                 CTLineDraw(m_Line, context);

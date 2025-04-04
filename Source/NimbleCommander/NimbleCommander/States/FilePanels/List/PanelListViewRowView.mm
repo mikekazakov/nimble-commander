@@ -22,6 +22,7 @@ using namespace nc::panel;
     data::ItemVolatileData m_VD;
     NSColor *m_RowColor;
     NSColor *m_TextColor;
+    NSColor *m_TextSecondaryColor;
     NSColor *m_TagAccentColor;
     int m_ItemIndex;
     bool m_PanelActive;
@@ -30,6 +31,7 @@ using namespace nc::panel;
 }
 @synthesize rowBackgroundColor = m_RowColor;
 @synthesize rowTextColor = m_TextColor;
+@synthesize rowSecondaryTextColor = m_TextSecondaryColor;
 @synthesize tagAccentColor = m_TagAccentColor;
 @synthesize itemIndex = m_ItemIndex;
 @synthesize item = m_Item;
@@ -46,6 +48,7 @@ using namespace nc::panel;
         m_ItemIndex = 0;
         m_RowColor = NSColor.whiteColor;
         m_TextColor = NSColor.blackColor;
+        m_TextSecondaryColor = NSColor.blackColor;
         self.selected = false;
         [self updateColors];
         [self registerForDraggedTypes:PanelView.acceptedDragAndDropTypes];
@@ -249,6 +252,8 @@ static NSColor *FindBackgroundColor(bool _is_focused, bool _is_active, bool _is_
     auto new_row_fg_color = [self findCurrentTextColor];
     if( new_row_fg_color != m_TextColor ) {
         m_TextColor = new_row_fg_color;
+        m_TextSecondaryColor = [m_TextSecondaryColor
+            colorWithAlphaComponent:nc::CurrentTheme().FilePanelsListSecondaryColumnsOpacity() / 100.0];
         colors_has_changed = true;
     }
 

@@ -102,7 +102,7 @@ namespace
 
 template <typename T>
 struct formatter<spdlog::details::dump_info<T>, char> {
-    const char delimiter = ' ';
+    char delimiter = ' ';
     bool put_newlines = true;
     bool put_delimiters = true;
     bool use_uppercase = false;

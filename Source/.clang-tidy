@@ -186,7 +186,7 @@ Checks: >
   portability-restrict-system-includes,
   portability-simd-intrinsics,
   portability-std-allocator-const,
-  portability-template-virtual-member-function,
+  # portability-template-virtual-member-function,       <-- causes warnings coming from spdlog, not fully understood
   readability-avoid-const-params-in-decls,
   readability-avoid-nested-conditional-operator,
   readability-avoid-return-with-void-value,
@@ -265,5 +265,7 @@ ExtraArgs:
 - -Wno-missing-field-initializers
 # breaks on swift interop otherwise
 - -Wno-explicit-specialization-storage-class
+# otherwise getting error: "argument unused during compilation: '-fno-cxx-modules' [clang-diagnostic-unused-command-line-argument]" on ObjC++ files
+- -Wno-unused-command-line-argument
 
 FormatStyle: file

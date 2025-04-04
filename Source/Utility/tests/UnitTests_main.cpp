@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 
 static std::string MakeTempFilesStorage()
 {
-    const auto base_path = nc::base::CommonPaths::AppTemporaryDirectory();
+    const std::string &base_path = nc::base::CommonPaths::AppTemporaryDirectory();
     const auto tmp_path = base_path + g_TestDirPrefix + "/";
     if( access(tmp_path.c_str(), F_OK) == 0 )
         std::filesystem::remove_all(tmp_path);

@@ -129,7 +129,7 @@ LauchServicesHandlers::LauchServicesHandlers(const std::vector<LauchServicesHand
         ankerl::unordered_dense::set<std::string> inserted;
         for( auto &p : i.m_Paths )
             // here we exclude multiple counting for repeating handlers for one content type
-            if( !inserted.count(p) ) {
+            if( !inserted.contains(p) ) {
                 handlers_count[p]++;
                 inserted.insert(p);
             }

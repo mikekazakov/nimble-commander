@@ -85,8 +85,7 @@ jobs:
     - name: Install the dependencies
       run: |
         brew update
-        brew install llvm@19 jq
-        echo 'export PATH="/opt/homebrew/opt/llvm@19/bin:$PATH"' >> /Users/runner/.bash_profile
+        brew install llvm jq
     - uses: actions/checkout@v4
     - name: Run clang-tidy
       run: "cd Scripts && ./run_clang_tidy.sh --check"

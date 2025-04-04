@@ -32,3 +32,4 @@ set -e
 ./unordered_dense/bootstrap.sh
 ./Catch2/bootstrap.sh
 ./rapidjson/bootstrap.sh
+./magic_enum/bootstrap.sh

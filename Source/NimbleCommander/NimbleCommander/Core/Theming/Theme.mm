@@ -45,6 +45,7 @@ struct Theme::Internals {
     NSColor *m_FilePanelsTabsPictogramColor;
     NSFont *m_FilePanelsListFont;
     unsigned m_FilePanelsListRowVerticalPadding;
+    unsigned m_FilePanelsListSecondaryColumnsOpacity;
     NSColor *m_FilePanelsListGridColor;
     NSFont *m_FilePanelsListHeaderFont;
     NSColor *m_FilePanelsListHeaderBackgroundColor;
@@ -162,6 +163,7 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
 
     I->m_FilePanelsListFont = ExtractFont("filePanelsListFont");
     I->m_FilePanelsListRowVerticalPadding = ExtractUInt("filePanelsListRowVerticalPadding");
+    I->m_FilePanelsListSecondaryColumnsOpacity = ExtractUInt("filePanelsListSecondaryColumnsOpacity");
     I->m_FilePanelsListGridColor = ExtractColor("filePanelsListGridColor");
 
     I->m_FilePanelsHeaderFont = ExtractFont("filePanelsHeaderFont");
@@ -279,6 +281,11 @@ NSFont *Theme::FilePanelsListFont() const noexcept
 unsigned Theme::FilePanelsListRowVerticalPadding() const noexcept
 {
     return I->m_FilePanelsListRowVerticalPadding;
+}
+
+unsigned Theme::FilePanelsListSecondaryColumnsOpacity() const noexcept
+{
+    return I->m_FilePanelsListSecondaryColumnsOpacity;
 }
 
 NSColor *Theme::FilePanelsListFocusedActiveRowBackgroundColor() const noexcept

@@ -69,9 +69,10 @@ static NSParagraphStyle *const g_Style = [] {
         PanelListViewRowView *row_view = static_cast<PanelListViewRowView *>(self.superview);
         if( !row_view )
             return;
+
         NSDictionary *attrs = @{
             NSFontAttributeName: row_view.listView.font,
-            NSForegroundColorAttributeName: row_view.rowTextColor,
+            NSForegroundColorAttributeName: row_view.rowSecondaryTextColor,
             NSParagraphStyleAttributeName: g_Style
         };
         auto attr_str = [[NSMutableAttributedString alloc] initWithString:m_Extension attributes:attrs];
@@ -96,7 +97,7 @@ static NSParagraphStyle *const g_Style = [] {
             if( m_Line ) {
                 const auto geometry = lv.geometry;
                 const auto context = NSGraphicsContext.currentContext.CGContext;
-                CGContextSetFillColorWithColor(context, rv.rowTextColor.CGColor);
+                CGContextSetFillColorWithColor(context, rv.rowSecondaryTextColor.CGColor);
                 CGContextSetTextPosition(context, geometry.LeftInset(), geometry.TextBaseLine());
                 CGContextSetTextDrawingMode(context, kCGTextFill);
                 CTLineDraw(m_Line.get(), context);

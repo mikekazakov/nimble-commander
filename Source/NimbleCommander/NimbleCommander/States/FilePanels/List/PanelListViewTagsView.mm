@@ -73,9 +73,10 @@ static NSParagraphStyle *const g_Style = [] {
         PanelListViewRowView *row_view = static_cast<PanelListViewRowView *>(self.superview);
         if( !row_view )
             return;
+
         NSDictionary *attrs = @{
             NSFontAttributeName: row_view.listView.font,
-            NSForegroundColorAttributeName: row_view.rowTextColor,
+            NSForegroundColorAttributeName: row_view.rowSecondaryTextColor,
             NSParagraphStyleAttributeName: g_Style
         };
 

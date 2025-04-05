@@ -587,6 +587,7 @@
                       
                       /* File Panels -> List settings */
                       "filePanelsListFont": "@systemFont, 13",
+                      "filePanelsListSecondaryColumnsOpacity": "100",
                       "filePanelsListRowVerticalPadding": "0",
                       "filePanelsListGridColor": "@clearColor",
                       "filePanelsListHeaderFont": "@systemFont, 11",
@@ -710,6 +711,7 @@
                       
                       /* File Panels -> List settings */
                       "filePanelsListFont": "@systemFont, 13",
+                      "filePanelsListSecondaryColumnsOpacity": "100",
                       "filePanelsListRowVerticalPadding": "0",
                       "filePanelsListGridColor": "@clearColor",
                       "filePanelsListHeaderFont": "@systemFont, 11",
@@ -850,6 +852,7 @@
                       
                       /* File Panels -> List settings */
                       "filePanelsListFont": "Menlo-Regular, 13",
+                      "filePanelsListSecondaryColumnsOpacity": "100",
                       "filePanelsListRowVerticalPadding": "0",
                       "filePanelsListGridColor": "#00FFFF",
                       "filePanelsListHeaderFont": "Menlo-Regular, 13",
@@ -964,6 +967,7 @@
                         "filePanelsFooterActiveBackgroundColor": "#FFFFFF",
                         "filePanelsFooterInactiveBackgroundColor": "#E8E8E8",
                         "filePanelsListFont": "@systemFont, 13",
+                        "filePanelsListSecondaryColumnsOpacity": "100",
                         "filePanelsListRowVerticalPadding": "0",
                         "filePanelsListGridColor": "#FFFFFF00",
                         "filePanelsListHeaderFont": "@systemFont, 11",
@@ -1072,6 +1076,7 @@
                         "filePanelsFooterActiveBackgroundColor": "#353535",
                         "filePanelsFooterInactiveBackgroundColor": "#1D1D1D",
                         "filePanelsListFont": "@systemFont, 13",
+                        "filePanelsListSecondaryColumnsOpacity": "100",
                         "filePanelsListGridColor": "#1D1D1D",
                         "filePanelsListRowVerticalPadding": "0",
                         "filePanelsListHeaderFont": "@systemFont, 11",

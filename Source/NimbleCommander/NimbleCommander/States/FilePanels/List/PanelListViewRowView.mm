@@ -252,7 +252,7 @@ static NSColor *FindBackgroundColor(bool _is_focused, bool _is_active, bool _is_
     auto new_row_fg_color = [self findCurrentTextColor];
     if( new_row_fg_color != m_TextColor ) {
         m_TextColor = new_row_fg_color;
-        
+
         if( const unsigned opacity = nc::CurrentTheme().FilePanelsListSecondaryColumnsOpacity(); opacity < 100 )
             m_TextSecondaryColor = [m_TextColor colorWithAlphaComponent:static_cast<double>(opacity) / 100.];
         else

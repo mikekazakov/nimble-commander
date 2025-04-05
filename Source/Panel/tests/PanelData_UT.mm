@@ -310,7 +310,7 @@ TEST_CASE(PREFIX "HardFiltering")
                                                   "Public"};
     const auto listing = ProduceDummyListing(strings);
 
-    const auto empty_listing = VFSListing::EmptyListing();
+    const auto &empty_listing = VFSListing::EmptyListing();
 
     const auto almost_empty_listing =
         ProduceDummyListing(std::vector<std::string>{reinterpret_cast<const char *>(u8"какой-то файл")});

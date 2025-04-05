@@ -852,7 +852,7 @@ static void DoTemporaryFileStoragePurge()
 - (nc::utility::TemporaryFileStorage &)temporaryFileStorage
 {
     const auto instance = [] {
-        const auto base_dir = nc::base::CommonPaths::AppTemporaryDirectory();
+        const std::string &base_dir = nc::base::CommonPaths::AppTemporaryDirectory();
         const auto prefix = nc::utility::GetBundleID() + ".tmp.";
         g_TemporaryFileStorage = new nc::utility::TemporaryFileStorageImpl(base_dir, prefix);
         dispatch_to_background(DoTemporaryFileStoragePurge);

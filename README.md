@@ -34,5 +34,5 @@ For build instructions and an overview of the source code, please refer to the [
 Your contributions are welcome and greatly appreciated! For guidelines on how to contribute, including reporting bugs, suggesting features, and submitting code changes, please see the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 # License
-Copyright (C) 2013-2024 Michael Kazakov (mike.kazakov@gmail.com)  
+Copyright (C) 2013-2025 Michael Kazakov (mike.kazakov@gmail.com)  
 The source code is distributed under GNU General Public License version 3.

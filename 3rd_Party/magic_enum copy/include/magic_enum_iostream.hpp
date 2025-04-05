@@ -5,11 +5,11 @@
 // | |  | | (_| | (_| | | (__  | |____| | | | |_| | | | | | | | |____|_|   |_|
 // |_|  |_|\__,_|\__, |_|\___| |______|_| |_|\__,_|_| |_| |_|  \_____|
 //                __/ | https://github.com/Neargye/magic_enum
-//               |___/  version 0.9.7
+//               |___/  version 0.9.5
 //
 // Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2019 - 2024 Daniil Goncharov <neargye@gmail.com>.
+// Copyright (c) 2019 - 2023 Daniil Goncharov <neargye@gmail.com>.
 //
 // Permission is hereby  granted, free of charge, to any  person obtaining a copy
 // of this software and associated  documentation files (the "Software"), to deal
@@ -35,9 +35,7 @@
 #include "magic_enum.hpp"
 #include "magic_enum_flags.hpp"
 
-#ifndef MAGIC_ENUM_USE_STD_MODULE
 #include <iosfwd>
-#endif
 
 namespace magic_enum {
 
@@ -107,8 +105,8 @@ std::basic_istream<Char, Traits>& operator>>(std::basic_istream<Char, Traits>& i
 
 namespace iostream_operators {
 
-using magic_enum::ostream_operators::operator<<;
-using magic_enum::istream_operators::operator>>;
+using namespace ostream_operators;
+using namespace istream_operators;
 
 } // namespace magic_enum::iostream_operators
 

@@ -42,7 +42,7 @@ TestDir::~TestDir()
 
 std::string TestDir::MakeTempFilesStorage()
 {
-    const auto base_path = nc::base::CommonPaths::AppTemporaryDirectory();
+    const auto &base_path = nc::base::CommonPaths::AppTemporaryDirectory();
     const auto tmp_path = base_path + g_TestDirPrefix + "/";
     if( access(tmp_path.c_str(), F_OK) == 0 )
         std::filesystem::remove_all(tmp_path);

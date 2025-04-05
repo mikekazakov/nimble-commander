@@ -332,7 +332,7 @@ bool ThemesManager::SelectTheme(const std::string &_theme_name)
     if( m_SelectedThemeName == _theme_name )
         return true;
 
-    if( !m_Themes.count(_theme_name) )
+    if( !m_Themes.contains(_theme_name) )
         return false;
 
     m_SelectedThemeName = _theme_name;
@@ -436,7 +436,7 @@ bool ThemesManager::ImportThemeData(const std::string &_theme_name, const nc::co
 
 bool ThemesManager::AddTheme(const std::string &_theme_name, const nc::config::Value &_data)
 {
-    if( _theme_name.empty() || m_Themes.count(_theme_name) )
+    if( _theme_name.empty() || m_Themes.contains(_theme_name) )
         return false;
 
     nc::config::Document doc;
@@ -536,7 +536,7 @@ bool ThemesManager::RenameTheme(const std::string &_theme_name, const std::strin
     if( !CanBeRenamed(_theme_name) )
         return false;
 
-    if( m_Themes.count(_to_name) )
+    if( m_Themes.contains(_to_name) )
         return false;
 
     auto old_doc = ThemeData(_theme_name);

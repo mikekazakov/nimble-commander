@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/boost.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-wget https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.gz
+wget https://archives.boost.io/release/1.85.0/source/boost_1_85_0.tar.gz
 tar -xf boost_1_85_0.tar.gz
 
 cd ..

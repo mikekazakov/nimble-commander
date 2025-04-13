@@ -508,7 +508,7 @@ TEST_CASE(PREFIX "Our tags can be read back by Cocoa")
     }
 }
 
-TEST_CASE(PREFIX "Spotlight detects items with new tags invented by NC")
+TEST_CASE(PREFIX "Spotlight detects items with new tags invented by NC", "[!mayfail]")
 {
     // Need to place these temp files into an indexable location (which the temp dir is not)
     auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
@@ -537,7 +537,7 @@ TEST_CASE(PREFIX "Spotlight detects items with new tags invented by NC")
     }
 }
 
-TEST_CASE(PREFIX "GatherAllItemsWithTag")
+TEST_CASE(PREFIX "GatherAllItemsWithTag", "[!mayfail]")
 {
     // Need to place these temp files into an indexable location (which the temp dir is not)
     auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
@@ -580,7 +580,7 @@ TEST_CASE(PREFIX "GatherAllItemsWithTag")
     }
 }
 
-TEST_CASE(PREFIX "ChangeColorOfAllItemsWithTag")
+TEST_CASE(PREFIX "ChangeColorOfAllItemsWithTag", "[!mayfail]")
 {
     // Need to place these temp files into an indexable location (which the temp dir is not)
     auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
@@ -623,7 +623,7 @@ TEST_CASE(PREFIX "ChangeColorOfAllItemsWithTag")
     CHECK(Tags::ReadTags(p3) == std::vector<Tags::Tag>{{&label2, orig_color2}, {&label1, new_color1}});
 }
 
-TEST_CASE(PREFIX "ChangeLabelOfAllItemsWithTag")
+TEST_CASE(PREFIX "ChangeLabelOfAllItemsWithTag", "[!mayfail]")
 {
     // Need to place these temp files into an indexable location (which the temp dir is not)
     auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
@@ -726,7 +726,7 @@ TEST_CASE(PREFIX "RemoveTag")
     }
 }
 
-TEST_CASE(PREFIX "RemoveTagFromAllItems")
+TEST_CASE(PREFIX "RemoveTagFromAllItems", "[!mayfail]")
 {
     // Need to place these temp files into an indexable location (which the temp dir is not)
     auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";

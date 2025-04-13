@@ -13,6 +13,9 @@ wget http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz
 gunzip -c lzo-2.10.tar.gz | tar xopf -
 
 cd lzo-2.10
+
+patch -p1 < ../../CMakeLists.txt.patch
+
 mkdir build && cd build
 cmake \
   -D CMAKE_BUILD_TYPE=Release \

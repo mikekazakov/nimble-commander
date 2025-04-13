@@ -558,7 +558,7 @@ TEST_CASE(PREFIX "GatherAllItemsWithTag")
             const auto items = Tags::GatherAllItemsWithTag(label);
             if( std::set<std::filesystem::path>{items.begin(), items.end()} == filepaths )
                 break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
-            if( attempt == 9 )
+            if( attempt == 49 )
                 FAIL(); // Failed to find the new tag after the number of attempts
             std::this_thread::sleep_for(std::chrono::milliseconds{100});
         }
@@ -601,7 +601,7 @@ TEST_CASE(PREFIX "ChangeColorOfAllItemsWithTag")
         const auto items = Tags::GatherAllItemsWithTag(label1);
         if( std::set<std::filesystem::path>{items.begin(), items.end()} == std::set<std::filesystem::path>{p1, p2, p3} )
             break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
-        if( attempt == 9 )
+        if( attempt == 49 )
             FAIL(); // Failed to find the new tag after the number of attempts
         std::this_thread::sleep_for(std::chrono::milliseconds{100});
     }
@@ -647,7 +647,7 @@ TEST_CASE(PREFIX "ChangeLabelOfAllItemsWithTag")
         const auto items = Tags::GatherAllItemsWithTag(label1);
         if( std::set<std::filesystem::path>{items.begin(), items.end()} == std::set<std::filesystem::path>{p1, p2, p3} )
             break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
-        if( attempt == 9 )
+        if( attempt == 49 )
             FAIL(); // Failed to find the new tag after the number of attempts
         std::this_thread::sleep_for(std::chrono::milliseconds{100});
     }
@@ -753,7 +753,7 @@ TEST_CASE(PREFIX "RemoveTagFromAllItems")
         const auto items = Tags::GatherAllItemsWithTag(label1);
         if( std::set<std::filesystem::path>{items.begin(), items.end()} == std::set<std::filesystem::path>{p1, p2, p3} )
             break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
-        if( attempt == 9 )
+        if( attempt == 49 )
             FAIL(); // Failed to find the new tag after the number of attempts
         std::this_thread::sleep_for(std::chrono::milliseconds{100});
     }

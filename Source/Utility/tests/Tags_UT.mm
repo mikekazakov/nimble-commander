@@ -15,6 +15,26 @@ using nc::utility::Tags;
 
 #define PREFIX "nc::utility::Tags "
 
+namespace {
+
+struct Attempt {
+    Attempt(int _limit) : m_Limit(_limit) {}
+
+    void operator++()
+    {
+        std::this_thread::sleep_for(m_Wait);
+        m_Idx++;
+        REQUIRE(m_Idx < m_Limit);
+    }
+
+private:
+    int m_Idx = 0;
+    int m_Limit = 0;
+    std::chrono::milliseconds m_Wait = std::chrono::milliseconds{100};
+};
+
+} // namespace
+
 TEST_CASE(PREFIX "Rejects corrupt data")
 {
     CHECK(Tags::ParseMDItemUserTags({}).empty());
@@ -509,19 +529,12 @@ TEST_CASE(PREFIX "Spotlight detects items with new tags invented by NC")
 
     // Try a few times to find the new tag via Spotlight, need multiple attempts since there's still a race condition
     // even after an explicit call to mdimport
-    for( int attempt = 0; attempt < 50; ++attempt ) {
+    for( Attempt attempt{100};; ++attempt ) {
         auto all_tags = Tags::GatherAllItemsTags();
-        if( std::ranges::find(all_tags, Tags::Tag{&label, color}) == all_tags.end() ) {
-            std::this_thread::sleep_for(std::chrono::milliseconds{100});
-            continue;
+        if( std::ranges::contains(all_tags, Tags::Tag{&label, color}) ) {
+            break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
         }
-
-        // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
-        return;
     }
-
-    // Failed to find the new tag after the number of attempts
-    FAIL();
 }
 
 TEST_CASE(PREFIX "GatherAllItemsWithTag")
@@ -554,13 +567,10 @@ TEST_CASE(PREFIX "GatherAllItemsWithTag")
 
         // Try a few times to find the items via Spotlight, need multiple attempts since there's still a race condition
         // even after an explicit call to mdimport
-        for( int attempt = 0; attempt < 50; ++attempt ) {
+        for( Attempt attempt{100};; ++attempt ) {
             const auto items = Tags::GatherAllItemsWithTag(label);
             if( std::set<std::filesystem::path>{items.begin(), items.end()} == filepaths )
                 break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
-            if( attempt == 49 )
-                FAIL(); // Failed to find the new tag after the number of attempts
-            std::this_thread::sleep_for(std::chrono::milliseconds{100});
         }
 
         // Remove the temp files
@@ -597,13 +607,10 @@ TEST_CASE(PREFIX "ChangeColorOfAllItemsWithTag")
 
     // Try a few times to find the items via Spotlight, need multiple attempts since there's still a race condition
     // even after an explicit call to mdimport
-    for( int attempt = 0; attempt < 50; ++attempt ) {
+    for( Attempt attempt{100};; ++attempt ) {
         const auto items = Tags::GatherAllItemsWithTag(label1);
         if( std::set<std::filesystem::path>{items.begin(), items.end()} == std::set<std::filesystem::path>{p1, p2, p3} )
             break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
-        if( attempt == 49 )
-            FAIL(); // Failed to find the new tag after the number of attempts
-        std::this_thread::sleep_for(std::chrono::milliseconds{100});
     }
 
     // Change the color for one of the new tags
@@ -643,13 +650,10 @@ TEST_CASE(PREFIX "ChangeLabelOfAllItemsWithTag")
 
     // Try a few times to find the items via Spotlight, need multiple attempts since there's still a race condition
     // even after an explicit call to mdimport
-    for( int attempt = 0; attempt < 50; ++attempt ) {
+    for( Attempt attempt{100};; ++attempt ) {
         const auto items = Tags::GatherAllItemsWithTag(label1);
         if( std::set<std::filesystem::path>{items.begin(), items.end()} == std::set<std::filesystem::path>{p1, p2, p3} )
             break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
-        if( attempt == 49 )
-            FAIL(); // Failed to find the new tag after the number of attempts
-        std::this_thread::sleep_for(std::chrono::milliseconds{100});
     }
 
     // Change the label for one of the new tags
@@ -749,13 +753,10 @@ TEST_CASE(PREFIX "RemoveTagFromAllItems")
 
     // Try a few times to find the items via Spotlight, need multiple attempts since there's still a race condition
     // even after an explicit call to mdimport
-    for( int attempt = 0; attempt < 50; ++attempt ) {
+    for( Attempt attempt{100};; ++attempt ) {
         const auto items = Tags::GatherAllItemsWithTag(label1);
         if( std::set<std::filesystem::path>{items.begin(), items.end()} == std::set<std::filesystem::path>{p1, p2, p3} )
             break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
-        if( attempt == 49 )
-            FAIL(); // Failed to find the new tag after the number of attempts
-        std::this_thread::sleep_for(std::chrono::milliseconds{100});
     }
 
     // Remove the first tag from all items

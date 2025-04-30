@@ -44,12 +44,12 @@ public:
 
     using OnStateChange = std::function<void(TaskState _new_state)>;
     using OnPwdPrompt = std::function<void(const char *_cwd, bool _changed)>;
-    using OnChildOutput = std::function<void(const void *_d, size_t _sz)>;
+    using OnChildOutput = std::function<void(std::span<const std::byte> _data)>;
 
     ShellTask();
     ~ShellTask();
 
-    // TODO: describe, change to std::span
+    // _callback will be called with any output from the child shell process, unless the output is suppressed.
     void SetOnChildOutput(OnChildOutput _callback);
 
     // _callback can be called from a background thread
@@ -78,7 +78,7 @@ public:
     /**
      * Sets a value to be fed into the spawned shell task ***upon startup***.
      */
-    void SetEnvVar(const std::string &_var, const std::string &_value);
+    void SetEnvVar(std::string_view _var, std::string_view _value);
 
     // Launches current shell at _work_dir
     bool Launch(const std::filesystem::path &_work_dir);

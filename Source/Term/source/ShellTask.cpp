@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShellTask.h"
 #include "Log.h"
 #include <Base/CloseFrom.h>
@@ -583,12 +583,14 @@ void ShellTask::Impl::OnCwdSourceCancellation()
 
 void ShellTask::Impl::DoCalloutOnChildOutput(const void *_d, size_t _sz)
 {
-    callback_lock.lock();
-    auto clbk = on_child_output;
-    callback_lock.unlock();
+    if( _sz && _d ) {
+        callback_lock.lock();
+        auto clbk = on_child_output;
+        callback_lock.unlock();
 
-    if( clbk && *clbk && _sz && _d )
-        (*clbk)(_d, _sz);
+        if( clbk && *clbk )
+            (*clbk)({static_cast<const std::byte *>(_d), _sz});
+    }
 }
 
 void ShellTask::Impl::ProcessPwdPrompt(const void *_d, int _sz)
@@ -1041,7 +1043,7 @@ void ShellTask::SetShellPath(const std::string &_path)
     }
 }
 
-void ShellTask::SetEnvVar(const std::string &_var, const std::string &_value)
+void ShellTask::SetEnvVar(const std::string_view _var, const std::string_view _value)
 {
     I->custom_env_vars.emplace_back(_var, _value);
 }

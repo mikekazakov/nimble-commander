@@ -255,9 +255,8 @@ TEST_CASE(PREFIX "Launch=>Exit via output (Bash)")
         shell.SetShellPath("/bin/tcsh");
     }
     const auto type = shell.GetShellType();
-    shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds = parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
-            !cmds.empty() ) {
+    shell.SetOnChildOutput([&](const std::span<const std::byte> _data) {
+        if( auto cmds = parser.Parse(_data); !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
@@ -327,9 +326,8 @@ TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
         shell.SetShellPath("/bin/tcsh");
     }
     const auto type = shell.GetShellType();
-    shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds = parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
-            !cmds.empty() ) {
+    shell.SetOnChildOutput([&](const std::span<const std::byte> _data) {
+        if( auto cmds = parser.Parse(_data); !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
@@ -633,9 +631,8 @@ TEST_CASE(PREFIX "Test vim interaction via output")
     {
         shell.SetShellPath("/bin/tcsh");
     }
-    shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds = parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
-            !cmds.empty() ) {
+    shell.SetOnChildOutput([&](const std::span<const std::byte> _data) {
+        if( auto cmds = parser.Parse(_data); !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
@@ -738,9 +735,8 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
     }
     for( auto &ctx : shells ) {
         ctx.shell.ResizeWindow(20, 5);
-        ctx.shell.SetOnChildOutput([&](const void *_d, int _sz) {
-            if( auto cmds = ctx.parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
-                !cmds.empty() ) {
+        ctx.shell.SetOnChildOutput([&](const std::span<const std::byte> _data) {
+            if( auto cmds = ctx.parser.Parse(_data); !cmds.empty() ) {
                 if( auto lock = ctx.screen.AcquireLock() ) {
                     ctx.interpreter.Interpret(cmds);
                     ctx.buffer_dump.store(ctx.screen.Buffer().DumpScreenAsANSI());
@@ -814,9 +810,8 @@ TEST_CASE(PREFIX "doesn't keep external cwd change commands in history")
         shell.AddCustomShellArgument("-f");
     }
     // [t]csh is out of equation - no such option exists (?)
-    shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds = parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
-            !cmds.empty() ) {
+    shell.SetOnChildOutput([&](const std::span<const std::byte> _data) {
+        if( auto cmds = parser.Parse(_data); !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());

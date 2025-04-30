@@ -114,8 +114,8 @@ static const auto g_LongProcessDelay = 100ms;
             me->m_Task->ResizeWindow(_sx, _sy);
         };
 
-        m_Task->SetOnChildOutput([weak_self](const void *_d, int _sz) {
-            [static_cast<FilePanelOverlappedTerminal *>(weak_self) onChildOutput:_d size:_sz];
+        m_Task->SetOnChildOutput([weak_self](const std::span<const std::byte> _data) {
+            [static_cast<FilePanelOverlappedTerminal *>(weak_self) onChildOutput:_data];
         });
         m_Task->SetOnPwdPrompt([weak_self](const char *_cwd, bool _changed) {
             [static_cast<FilePanelOverlappedTerminal *>(weak_self) onBashPrompt:_cwd cwdChanged:_changed];
@@ -127,11 +127,11 @@ static const auto g_LongProcessDelay = 100ms;
     return self;
 }
 
-- (void)onChildOutput:(const void *)_d size:(int)_sz
+- (void)onChildOutput:(std::span<const std::byte>)_data
 {
     dispatch_assert_background_queue();
 
-    auto cmds = m_Parser->Parse({static_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
+    auto cmds = m_Parser->Parse(_data);
     if( cmds.empty() )
         return;
 

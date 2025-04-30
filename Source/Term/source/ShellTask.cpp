@@ -812,15 +812,17 @@ void ShellTask::ChDir(const std::filesystem::path &_new_cwd)
     WriteChildInput(child_feed);
 }
 
-bool ShellTask::IsCurrentWD(const char *_what) const
+bool ShellTask::IsCurrentWD(const std::string_view _what) const noexcept
 {
-    char cwd[MAXPATHLEN];
-    strcpy(cwd, _what);
-
-    if( !utility::PathManip::HasTrailingSlash(cwd) )
-        strcat(cwd, "/");
-
-    return I->cwd == cwd;
+    if( utility::PathManip::HasTrailingSlash(_what) ) {
+        return I->cwd == _what;
+    }
+    else {
+        std::string_view cwd{I->cwd};
+        if( cwd.length() > 0 )
+            cwd.remove_suffix(1);
+        return cwd == _what;
+    }
 }
 
 void ShellTask::Execute(const char *_short_fn, const char *_at, const char *_parameters)
@@ -862,25 +864,12 @@ void ShellTask::Execute(const char *_short_fn, const char *_at, const char *_par
     WriteChildInput(input);
 }
 
-void ShellTask::ExecuteWithFullPath(const char *_path, const char *_parameters)
-{
-    if( I->state != TaskState::Shell )
-        return;
-
-    const std::string cmd = EscapeShellFeed(_path);
-    const std::string input =
-        fmt::format("{}{}{}\n", cmd, _parameters != nullptr ? " " : "", _parameters != nullptr ? _parameters : "");
-
-    I->SetState(TaskState::ProgramExternal);
-    WriteChildInput(input);
-}
-
 void ShellTask::ExecuteWithFullPath(const std::filesystem::path &_binary_path, std::span<const std::string> _arguments)
 {
     if( I->state != TaskState::Shell )
         return;
 
-    std::string cmd = EscapeShellFeed(_binary_path);
+    std::string cmd = EscapeShellFeed(_binary_path.native());
     for( auto &arg : _arguments ) {
         cmd += ' ';
         cmd += EscapeShellFeed(arg);

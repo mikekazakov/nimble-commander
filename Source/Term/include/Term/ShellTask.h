@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Task.h"
@@ -101,13 +101,8 @@ public:
      */
     void Execute(const char *_short_fn, const char *_at, const char *_parameters);
 
-    /**
-     * executes a binary by a full path.
-     * _parameters can be NULL.
-     */
-    void ExecuteWithFullPath(const char *_path, const char *_parameters);
-
-    // TODO: describe
+    // Executes a binary at its full path.
+    // Arguments are separated by space and are always shell-escaped
     void ExecuteWithFullPath(const std::filesystem::path &_binary_path, std::span<const std::string> _arguments);
 
     /**
@@ -166,7 +161,7 @@ private:
     ShellTask(const ShellTask &) = delete;
     ShellTask &operator=(const ShellTask &) = delete;
 
-    bool IsCurrentWD(const char *_what) const;
+    bool IsCurrentWD(std::string_view _what) const noexcept;
     char **BuildShellArgs() const;
     std::string ComposePromptCommand() const;
     struct Impl;

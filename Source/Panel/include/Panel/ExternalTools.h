@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "PanelData.h"
@@ -148,7 +148,6 @@ public:
     GUIArgumentInterpretation m_GUIArgumentInterpretation = GUIArgumentInterpretation::PassExistingPathsAsURLs;
 
     friend bool operator==(const ExternalTool &_lhs, const ExternalTool &_rhs) noexcept = default;
-    friend bool operator!=(const ExternalTool &_lhs, const ExternalTool &_rhs) noexcept = default;
 
     // run in terminal
     // allow VFS

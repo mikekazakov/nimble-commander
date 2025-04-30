@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
 #include "AtomicHolder.h"
@@ -216,7 +216,7 @@ TEST_CASE(PREFIX "Inactive -> Shell -> ProgramExternal (vi) -> Shell -> Terminat
     REQUIRE(shell.State() == TaskState::Inactive);
     REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
-    shell.ExecuteWithFullPath("/usr/bin/vi", nullptr);
+    shell.ExecuteWithFullPath("/usr/bin/vi", {});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     shell.WriteChildInput(":q\r");
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
@@ -437,43 +437,43 @@ TEST_CASE(PREFIX "CWD prompt response")
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
 
     const char *new_dir1 = "foo";
-    shell.ExecuteWithFullPath("/bin/mkdir", new_dir1);
+    shell.ExecuteWithFullPath("/bin/mkdir", std::vector<std::string>{new_dir1});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
-    shell.ExecuteWithFullPath("cd", new_dir1);
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{new_dir1});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory / new_dir1 / ""));
-    shell.ExecuteWithFullPath("cd", "..");
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{".."});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
 
     const char *new_dir2 = reinterpret_cast<const char *>(u8"привет");
-    shell.ExecuteWithFullPath("/bin/mkdir", Task::EscapeShellFeed(new_dir2).c_str());
+    shell.ExecuteWithFullPath("/bin/mkdir", std::vector<std::string>{new_dir2});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
-    shell.ExecuteWithFullPath("cd", Task::EscapeShellFeed(new_dir2).c_str());
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{new_dir2});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory / new_dir2 / ""));
-    shell.ExecuteWithFullPath("cd", "..");
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{".."});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
 
     const char *new_dir3 = reinterpret_cast<const char *>(u8"привет, мир!");
-    shell.ExecuteWithFullPath("/bin/mkdir", ("'" + std::string(new_dir3) + "'").c_str());
+    shell.ExecuteWithFullPath("/bin/mkdir", std::vector<std::string>{new_dir3});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
-    shell.ExecuteWithFullPath("cd", Task::EscapeShellFeed(new_dir3).c_str());
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{new_dir3});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory / new_dir3 / ""));
-    shell.ExecuteWithFullPath("cd", "..");
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{".."});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
@@ -508,13 +508,13 @@ TEST_CASE(PREFIX "CWD prompt response - changed/same")
     REQUIRE(shell.Launch(dir.directory));
     REQUIRE(cwd.wait_to_become(5s, {dir.directory, false}));
 
-    shell.ExecuteWithFullPath("cd", ".");
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{"."});
     REQUIRE(cwd.wait_to_become(5s, {dir.directory, false}));
 
-    shell.ExecuteWithFullPath("cd", "/");
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{"/"});
     REQUIRE(cwd.wait_to_become(5s, {"/", true}));
 
-    shell.ExecuteWithFullPath("cd", "/");
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{"/"});
     REQUIRE(cwd.wait_to_become(5s, {"/", false}));
 }
 
@@ -559,7 +559,7 @@ TEST_CASE(PREFIX "Test basics (legacy stuff)")
     REQUIRE(WaitChildrenListToBecome(shell, {}, 5s, 1ms));
 
     // test executing binaries within a shell
-    shell.ExecuteWithFullPath("/usr/bin/top", nullptr);
+    shell.ExecuteWithFullPath("/usr/bin/top", {});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(WaitChildrenListToBecome(shell, {"top"}, 5s, 1ms));
 

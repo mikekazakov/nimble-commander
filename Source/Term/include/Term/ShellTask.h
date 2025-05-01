@@ -66,7 +66,7 @@ public:
      * If none was specified - default login shell will be used.
      * Should be called before Launch().
      */
-    void SetShellPath(const std::string &_path);
+    void SetShellPath(const std::filesystem::path &_shell_path);
 
     /**
      * Adds an argument to be passed to the shell upon startup.

@@ -52,7 +52,7 @@ static bool WaitUntilBecomes(int _pid,
                              std::string_view _expected_image_path,
                              std::chrono::nanoseconds _timeout,
                              std::chrono::nanoseconds _pull_period) noexcept;
-static ShellTask::ShellType DetectShellType(const std::string &_path);
+static ShellTask::ShellType DetectShellType(std::string_view _path) noexcept;
 static bool fd_is_valid(int fd);
 static void KillAndReap(int _pid, std::chrono::nanoseconds _gentle_deadline, std::chrono::nanoseconds _brutal_deadline);
 static void TurnOffSigPipe();
@@ -109,15 +109,15 @@ static bool WaitUntilBecomes(int _pid,
     }
 }
 
-static ShellTask::ShellType DetectShellType(const std::string &_path)
+static ShellTask::ShellType DetectShellType(std::string_view _path) noexcept
 {
-    if( _path.find("/bash") != std::string::npos )
+    if( _path.ends_with("/bash") )
         return ShellTask::ShellType::Bash;
-    if( _path.find("/zsh") != std::string::npos )
+    if( _path.ends_with("/zsh") )
         return ShellTask::ShellType::ZSH;
-    if( _path.find("/tcsh") != std::string::npos )
+    if( _path.ends_with("/tcsh") )
         return ShellTask::ShellType::TCSH;
-    if( _path.find("/csh") != std::string::npos )
+    if( _path.ends_with("/csh") )
         return ShellTask::ShellType::TCSH;
     return ShellTask::ShellType::Unknown;
 }
@@ -821,7 +821,7 @@ bool ShellTask::IsCurrentWD(const std::string_view _what) const noexcept
     }
     else {
         std::string_view cwd{I->cwd};
-        if( cwd.length() > 0 )
+        if( !cwd.empty() )
             cwd.remove_suffix(1);
         return cwd == _what;
     }
@@ -1026,13 +1026,13 @@ ShellTask::TaskState ShellTask::State() const
     return I->state;
 }
 
-void ShellTask::SetShellPath(const std::string &_path)
+void ShellTask::SetShellPath(const std::filesystem::path &_path)
 {
     // that's the raw shell path
     I->shell_path = _path;
 
-    // for now we decude a shell type from the raw input
-    I->shell_type = DetectShellType(_path);
+    // for now we decide a shell type from the raw input
+    I->shell_type = DetectShellType(_path.native());
 
     // try to resolve it in case it's a symlink. Sync I/O here!
     if( auto symlink = TryToResolve(I->shell_path) ) {

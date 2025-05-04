@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileOverwritesStorage.h"
 #include "Log.h"
 #include <sys/stat.h>
@@ -48,12 +48,12 @@ void FileOverwritesStorage::Write(std::string_view _overwrites_json)
 {
     const auto bytes = std::span<const std::byte>(reinterpret_cast<const std::byte *>(_overwrites_json.data()),
                                                   _overwrites_json.length());
-    if( base::WriteAtomically(m_Path, bytes) ) {
+    if( const auto rc = base::WriteAtomically(m_Path, bytes); rc ) {
         Log::Info("Successfully written overwrites to {}", m_Path);
         m_OverwritesTime = ModificationTime(m_Path);
     }
     else {
-        Log::Error("Failed to write overwrites to {}", m_Path);
+        Log::Error("Failed to write overwrites to {}: {}", m_Path, rc.error().LocalizedFailureReason());
     }
 }
 

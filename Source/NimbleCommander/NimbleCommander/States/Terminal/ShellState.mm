@@ -199,17 +199,14 @@ static const auto g_CustomPath = "terminal.customShellPath";
     [self layoutSubtreeIfNeeded];
 
     __weak NCTermShellState *weakself = self;
-    m_Task->SetOnChildOutput([=](const void *_d, int _sz) {
-        assert(_sz > 0);
-
+    m_Task->SetOnChildOutput([=](const std::span<const std::byte> _data) {
         auto strongself = weakself;
         if( !strongself )
             return;
 
-        const std::span<const std::byte> bytes{static_cast<const std::byte *>(_d), static_cast<size_t>(_sz)};
-        [strongself dumpRawInputIfRequired:bytes];
+        [strongself dumpRawInputIfRequired:_data];
 
-        auto cmds = strongself->m_Parser->Parse(bytes);
+        auto cmds = strongself->m_Parser->Parse(_data);
         if( cmds.empty() )
             return;
 
@@ -224,7 +221,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
         });
     });
 
-    m_Task->SetOnPwdPrompt([=]([[maybe_unused]] const char *_cwd, [[maybe_unused]] bool _changed) {
+    m_Task->SetOnPwdPrompt([=]([[maybe_unused]] const std::string_view _cwd, [[maybe_unused]] bool _changed) {
         if( auto strongself = weakself ) {
             strongself->m_IconTitle = "";
             strongself->m_WindowTitle = "";

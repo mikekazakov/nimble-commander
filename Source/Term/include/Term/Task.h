@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <functional>
@@ -19,7 +19,7 @@ public:
 
     void SetOnChildOutput(std::function<void(const void *_d, size_t _sz)> _callback);
 
-    static std::string EscapeShellFeed(const std::string &_feed);
+    static std::string EscapeShellFeed(std::string_view _feed);
 
     // TODO: pwd
     // _process_path is a full path to the executable

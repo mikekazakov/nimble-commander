@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShellTask.h"
 #include "Log.h"
 #include <Base/CloseFrom.h>
@@ -52,7 +52,7 @@ static bool WaitUntilBecomes(int _pid,
                              std::string_view _expected_image_path,
                              std::chrono::nanoseconds _timeout,
                              std::chrono::nanoseconds _pull_period) noexcept;
-static ShellTask::ShellType DetectShellType(const std::string &_path);
+static ShellTask::ShellType DetectShellType(std::string_view _path) noexcept;
 static bool fd_is_valid(int fd);
 static void KillAndReap(int _pid, std::chrono::nanoseconds _gentle_deadline, std::chrono::nanoseconds _brutal_deadline);
 static void TurnOffSigPipe();
@@ -109,15 +109,15 @@ static bool WaitUntilBecomes(int _pid,
     }
 }
 
-static ShellTask::ShellType DetectShellType(const std::string &_path)
+static ShellTask::ShellType DetectShellType(std::string_view _path) noexcept
 {
-    if( _path.find("/bash") != std::string::npos )
+    if( _path.ends_with("/bash") )
         return ShellTask::ShellType::Bash;
-    if( _path.find("/zsh") != std::string::npos )
+    if( _path.ends_with("/zsh") )
         return ShellTask::ShellType::ZSH;
-    if( _path.find("/tcsh") != std::string::npos )
+    if( _path.ends_with("/tcsh") )
         return ShellTask::ShellType::TCSH;
-    if( _path.find("/csh") != std::string::npos )
+    if( _path.ends_with("/csh") )
         return ShellTask::ShellType::TCSH;
     return ShellTask::ShellType::Unknown;
 }
@@ -245,7 +245,7 @@ struct ShellTask::Impl {
     void OnShellDied();
     void ProcessPwdPrompt(const void *_d, int _sz);
     void DoCalloutOnChildOutput(const void *_d, size_t _sz);
-    void DoOnPwdPromptCallout(const char *_cwd, bool _changed) const;
+    void DoOnPwdPromptCallout(std::string_view _cwd, bool _changed) const;
     void SetState(TaskState _new_state);
     void CleanUp();
     void DoCleanUp();
@@ -583,12 +583,14 @@ void ShellTask::Impl::OnCwdSourceCancellation()
 
 void ShellTask::Impl::DoCalloutOnChildOutput(const void *_d, size_t _sz)
 {
-    callback_lock.lock();
-    auto clbk = on_child_output;
-    callback_lock.unlock();
+    if( _sz && _d ) {
+        callback_lock.lock();
+        auto clbk = on_child_output;
+        callback_lock.unlock();
 
-    if( clbk && *clbk && _sz && _d )
-        (*clbk)(_d, _sz);
+        if( clbk && *clbk )
+            (*clbk)({static_cast<const std::byte *>(_d), _sz});
+    }
 }
 
 void ShellTask::Impl::ProcessPwdPrompt(const void *_d, int _sz)
@@ -629,14 +631,14 @@ void ShellTask::Impl::ProcessPwdPrompt(const void *_d, int _sz)
     }
 
     if( requested_cwd.empty() )
-        DoOnPwdPromptCallout(current_cwd.c_str(), current_wd_changed);
+        DoOnPwdPromptCallout(current_cwd, current_wd_changed);
     if( do_nr_hack )
         DoCalloutOnChildOutput("\n\r", 2);
 
     write(semaphore_pipe[1], "OK\n\r", 4);
 }
 
-void ShellTask::Impl::DoOnPwdPromptCallout(const char *_cwd, bool _changed) const
+void ShellTask::Impl::DoOnPwdPromptCallout(std::string_view _cwd, bool _changed) const
 {
     callback_lock.lock();
     auto on_pwd = on_pwd_prompt;
@@ -812,15 +814,17 @@ void ShellTask::ChDir(const std::filesystem::path &_new_cwd)
     WriteChildInput(child_feed);
 }
 
-bool ShellTask::IsCurrentWD(const char *_what) const
+bool ShellTask::IsCurrentWD(const std::string_view _what) const noexcept
 {
-    char cwd[MAXPATHLEN];
-    strcpy(cwd, _what);
-
-    if( !utility::PathManip::HasTrailingSlash(cwd) )
-        strcat(cwd, "/");
-
-    return I->cwd == cwd;
+    if( utility::PathManip::HasTrailingSlash(_what) ) {
+        return I->cwd == _what;
+    }
+    else {
+        std::string_view cwd{I->cwd};
+        if( !cwd.empty() )
+            cwd.remove_suffix(1);
+        return cwd == _what;
+    }
 }
 
 void ShellTask::Execute(const char *_short_fn, const char *_at, const char *_parameters)
@@ -862,25 +866,12 @@ void ShellTask::Execute(const char *_short_fn, const char *_at, const char *_par
     WriteChildInput(input);
 }
 
-void ShellTask::ExecuteWithFullPath(const char *_path, const char *_parameters)
-{
-    if( I->state != TaskState::Shell )
-        return;
-
-    const std::string cmd = EscapeShellFeed(_path);
-    const std::string input =
-        fmt::format("{}{}{}\n", cmd, _parameters != nullptr ? " " : "", _parameters != nullptr ? _parameters : "");
-
-    I->SetState(TaskState::ProgramExternal);
-    WriteChildInput(input);
-}
-
 void ShellTask::ExecuteWithFullPath(const std::filesystem::path &_binary_path, std::span<const std::string> _arguments)
 {
     if( I->state != TaskState::Shell )
         return;
 
-    std::string cmd = EscapeShellFeed(_binary_path);
+    std::string cmd = EscapeShellFeed(_binary_path.native());
     for( auto &arg : _arguments ) {
         cmd += ' ';
         cmd += EscapeShellFeed(arg);
@@ -1035,13 +1026,13 @@ ShellTask::TaskState ShellTask::State() const
     return I->state;
 }
 
-void ShellTask::SetShellPath(const std::string &_path)
+void ShellTask::SetShellPath(const std::filesystem::path &_path)
 {
     // that's the raw shell path
     I->shell_path = _path;
 
-    // for now we decude a shell type from the raw input
-    I->shell_type = DetectShellType(_path);
+    // for now we decide a shell type from the raw input
+    I->shell_type = DetectShellType(_path.native());
 
     // try to resolve it in case it's a symlink. Sync I/O here!
     if( auto symlink = TryToResolve(I->shell_path) ) {
@@ -1052,7 +1043,7 @@ void ShellTask::SetShellPath(const std::string &_path)
     }
 }
 
-void ShellTask::SetEnvVar(const std::string &_var, const std::string &_value)
+void ShellTask::SetEnvVar(const std::string_view _var, const std::string_view _value)
 {
     I->custom_env_vars.emplace_back(_var, _value);
 }

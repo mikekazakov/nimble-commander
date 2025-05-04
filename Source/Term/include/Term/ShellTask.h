@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Task.h"
@@ -43,13 +43,13 @@ public:
     };
 
     using OnStateChange = std::function<void(TaskState _new_state)>;
-    using OnPwdPrompt = std::function<void(const char *_cwd, bool _changed)>;
-    using OnChildOutput = std::function<void(const void *_d, size_t _sz)>;
+    using OnPwdPrompt = std::function<void(std::string_view _cwd, bool _changed)>;
+    using OnChildOutput = std::function<void(std::span<const std::byte> _data)>;
 
     ShellTask();
     ~ShellTask();
 
-    // TODO: describe, change to std::span
+    // _callback will be called with any output from the child shell process, unless the output is suppressed.
     void SetOnChildOutput(OnChildOutput _callback);
 
     // _callback can be called from a background thread
@@ -66,7 +66,7 @@ public:
      * If none was specified - default login shell will be used.
      * Should be called before Launch().
      */
-    void SetShellPath(const std::string &_path);
+    void SetShellPath(const std::filesystem::path &_shell_path);
 
     /**
      * Adds an argument to be passed to the shell upon startup.
@@ -78,7 +78,7 @@ public:
     /**
      * Sets a value to be fed into the spawned shell task ***upon startup***.
      */
-    void SetEnvVar(const std::string &_var, const std::string &_value);
+    void SetEnvVar(std::string_view _var, std::string_view _value);
 
     // Launches current shell at _work_dir
     bool Launch(const std::filesystem::path &_work_dir);
@@ -101,13 +101,8 @@ public:
      */
     void Execute(const char *_short_fn, const char *_at, const char *_parameters);
 
-    /**
-     * executes a binary by a full path.
-     * _parameters can be NULL.
-     */
-    void ExecuteWithFullPath(const char *_path, const char *_parameters);
-
-    // TODO: describe
+    // Executes a binary at its full path.
+    // Arguments are separated by space and are always shell-escaped
     void ExecuteWithFullPath(const std::filesystem::path &_binary_path, std::span<const std::string> _arguments);
 
     /**
@@ -166,7 +161,7 @@ private:
     ShellTask(const ShellTask &) = delete;
     ShellTask &operator=(const ShellTask &) = delete;
 
-    bool IsCurrentWD(const char *_what) const;
+    bool IsCurrentWD(std::string_view _what) const noexcept;
     char **BuildShellArgs() const;
     std::string ComposePromptCommand() const;
     struct Impl;

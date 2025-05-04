@@ -178,7 +178,7 @@ unsigned Task::ReadInputAsMuchAsAvailable(int _fd, void *_buf, unsigned _buf_sz,
     return already_read;
 }
 
-std::string Task::EscapeShellFeed(const std::string &_feed)
+std::string Task::EscapeShellFeed(std::string_view _feed)
 {
     static const char to_esc[] = {
         '|', '&', ';', '<', '>', '(', ')', '$', '\'', '\\', '\"', '`', ' ', '\t', '!', '[', ']'};

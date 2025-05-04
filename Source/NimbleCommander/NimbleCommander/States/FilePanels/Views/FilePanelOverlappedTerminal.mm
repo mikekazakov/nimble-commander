@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/CommonPaths.h>
 #include <Term/ShellTask.h>
 #include <Term/Screen.h>
@@ -117,7 +117,7 @@ static const auto g_LongProcessDelay = 100ms;
         m_Task->SetOnChildOutput([weak_self](const std::span<const std::byte> _data) {
             [static_cast<FilePanelOverlappedTerminal *>(weak_self) onChildOutput:_data];
         });
-        m_Task->SetOnPwdPrompt([weak_self](const char *_cwd, bool _changed) {
+        m_Task->SetOnPwdPrompt([weak_self](const std::string_view _cwd, bool _changed) {
             [static_cast<FilePanelOverlappedTerminal *>(weak_self) onBashPrompt:_cwd cwdChanged:_changed];
         });
         m_Task->SetOnStateChange([weak_self](ShellTask::TaskState _state) {
@@ -146,7 +146,7 @@ static const auto g_LongProcessDelay = 100ms;
     });
 }
 
-- (void)onBashPrompt:(const char *) [[maybe_unused]] _cwd cwdChanged:(bool)_changed
+- (void)onBashPrompt:(std::string_view) [[maybe_unused]] _cwd cwdChanged:(bool)_changed
 {
     dispatch_assert_background_queue();
     dispatch_to_main_queue_after(g_BashPromptInputDelay, [=] { [self guessWhereCommandLineIs]; });

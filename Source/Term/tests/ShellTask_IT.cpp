@@ -334,7 +334,7 @@ TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
             }
         }
     });
-    shell.SetOnPwdPrompt([&](const char *_cwd, bool) { cwd.store(_cwd); });
+    shell.SetOnPwdPrompt([&](const std::string_view _cwd, bool) { cwd.store(_cwd); });
     REQUIRE(shell.Launch(dir.directory));
 
     if( type == ShellTask::ShellType::TCSH ) {
@@ -412,7 +412,7 @@ TEST_CASE(PREFIX "CWD prompt response")
     shell_state.value = shell.State();
     shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
     AtomicHolder<std::filesystem::path> cwd;
-    shell.SetOnPwdPrompt([&](const char *_cwd, bool) { cwd.store(_cwd); });
+    shell.SetOnPwdPrompt([&](const std::string_view _cwd, bool) { cwd.store(_cwd); });
     REQUIRE(shell.State() == TaskState::Inactive);
     SECTION("/bin/bash")
     {
@@ -486,7 +486,7 @@ TEST_CASE(PREFIX "CWD prompt response - changed/same")
     const TempTestDir dir;
     ShellTask shell;
     QueuedAtomicHolder<std::pair<std::filesystem::path, bool>> cwd;
-    shell.SetOnPwdPrompt([&](const char *_cwd, bool _changed) { cwd.store({_cwd, _changed}); });
+    shell.SetOnPwdPrompt([&](const std::string_view _cwd, bool _changed) { cwd.store({_cwd, _changed}); });
     SECTION("/bin/bash")
     {
         shell.SetShellPath("/bin/bash");
@@ -528,7 +528,7 @@ TEST_CASE(PREFIX "Test basics (legacy stuff)")
     shell_state.store(shell.State());
     shell_state.strict(false);
     shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
-    shell.SetOnPwdPrompt([&](const char *_cwd, bool) { cwd.store(_cwd); });
+    shell.SetOnPwdPrompt([&](const std::string_view _cwd, bool) { cwd.store(_cwd); });
     SECTION("/bin/bash")
     {
         shell.SetShellPath("/bin/bash");
@@ -1014,7 +1014,7 @@ TEST_CASE(PREFIX "ChDir respects literal square-bracketed directory despite glob
     const TempTestDir dir;
     ShellTask shell;
     QueuedAtomicHolder<std::pair<std::filesystem::path, bool>> cwd;
-    shell.SetOnPwdPrompt([&](const char *_cwd, bool _changed) { cwd.store({_cwd, _changed}); });
+    shell.SetOnPwdPrompt([&](const std::string_view _cwd, bool _changed) { cwd.store({_cwd, _changed}); });
 
     const auto bracketedDir = dir.directory / "a[bc]d" / "";
     std::filesystem::create_directory(bracketedDir);

@@ -43,7 +43,7 @@ public:
     };
 
     using OnStateChange = std::function<void(TaskState _new_state)>;
-    using OnPwdPrompt = std::function<void(const char *_cwd, bool _changed)>;
+    using OnPwdPrompt = std::function<void(std::string_view _cwd, bool _changed)>;
     using OnChildOutput = std::function<void(std::span<const std::byte> _data)>;
 
     ShellTask();

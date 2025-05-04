@@ -221,7 +221,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
         });
     });
 
-    m_Task->SetOnPwdPrompt([=]([[maybe_unused]] const char *_cwd, [[maybe_unused]] bool _changed) {
+    m_Task->SetOnPwdPrompt([=]([[maybe_unused]] const std::string_view _cwd, [[maybe_unused]] bool _changed) {
         if( auto strongself = weakself ) {
             strongself->m_IconTitle = "";
             strongself->m_WindowTitle = "";

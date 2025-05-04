@@ -245,7 +245,7 @@ struct ShellTask::Impl {
     void OnShellDied();
     void ProcessPwdPrompt(const void *_d, int _sz);
     void DoCalloutOnChildOutput(const void *_d, size_t _sz);
-    void DoOnPwdPromptCallout(const char *_cwd, bool _changed) const;
+    void DoOnPwdPromptCallout(std::string_view _cwd, bool _changed) const;
     void SetState(TaskState _new_state);
     void CleanUp();
     void DoCleanUp();
@@ -631,14 +631,14 @@ void ShellTask::Impl::ProcessPwdPrompt(const void *_d, int _sz)
     }
 
     if( requested_cwd.empty() )
-        DoOnPwdPromptCallout(current_cwd.c_str(), current_wd_changed);
+        DoOnPwdPromptCallout(current_cwd, current_wd_changed);
     if( do_nr_hack )
         DoCalloutOnChildOutput("\n\r", 2);
 
     write(semaphore_pipe[1], "OK\n\r", 4);
 }
 
-void ShellTask::Impl::DoOnPwdPromptCallout(const char *_cwd, bool _changed) const
+void ShellTask::Impl::DoOnPwdPromptCallout(std::string_view _cwd, bool _changed) const
 {
     callback_lock.lock();
     auto on_pwd = on_pwd_prompt;

@@ -9,7 +9,7 @@ namespace nc::base {
 
 std::expected<void, Error> WriteAtomically(const std::filesystem::path &_path,
                                            std::span<const std::byte> _bytes,
-                                           bool _follow_trail_symlink) noexcept
+                                           bool _follow_symlink) noexcept
 {
     if( _path.empty() || !_path.is_absolute() ) {
         return std::unexpected(Error{Error::POSIX, EINVAL});
@@ -18,7 +18,7 @@ std::expected<void, Error> WriteAtomically(const std::filesystem::path &_path,
     nc::StackAllocator alloc;
     std::pmr::string target_path(_path.c_str(), &alloc);
 
-    if( _follow_trail_symlink ) {
+    if( _follow_symlink ) {
         // Try the read the real target path
         char actualpath[PATH_MAX + 1];
         if( realpath(_path.c_str(), actualpath) ) {

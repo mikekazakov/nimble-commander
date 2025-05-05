@@ -86,6 +86,7 @@
 		CFDE36E426BA5F2400EB1B0D /* WhereIs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDE36E326BA5F2400EB1B0D /* WhereIs.cpp */; };
 		CFDE36EA26BA665700EB1B0D /* WhereIs_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDE36E926BA665700EB1B0D /* WhereIs_UT.cpp */; };
 		CFE08ADF23C20664007E99B8 /* intrusive_ptr_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */; };
+		CFF835372DC783BA00CED300 /* WriteAtomically_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF835362DC783BA00CED300 /* WriteAtomically_UT.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -186,6 +187,7 @@
 		CFDE36E926BA665700EB1B0D /* WhereIs_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WhereIs_UT.cpp; sourceTree = "<group>"; };
 		CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = intrusive_ptr_UT.cpp; sourceTree = "<group>"; };
 		CFE8F90321A27F3000300019 /* spinlock_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = spinlock_UT.cpp; sourceTree = "<group>"; };
+		CFF835362DC783BA00CED300 /* WriteAtomically_UT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WriteAtomically_UT.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -240,6 +242,7 @@
 				CFD231362AEEA26E0000C7CF /* UUID_UT.cpp */,
 				CF614ACE1F9D8EDD0005F2DB /* VariableContainer_UT.cpp */,
 				CFDE36E926BA665700EB1B0D /* WhereIs_UT.cpp */,
+				CFF835362DC783BA00CED300 /* WriteAtomically_UT.cpp */,
 			);
 			name = Tests;
 			path = tests;
@@ -475,6 +478,7 @@
 				CF24E2192291A0D500C166FA /* LRUCache_Tests.cpp in Sources */,
 				CF24E215229196E100C166FA /* CFPtr_UT.cpp in Sources */,
 				CF24E21D2291B63E00C166FA /* VariableContainer_UT.cpp in Sources */,
+				CFF835372DC783BA00CED300 /* WriteAtomically_UT.cpp in Sources */,
 				CF24E21622919DFB00C166FA /* spinlock_UT.cpp in Sources */,
 				CF5338632525317700022EE8 /* CloseFrom_UT.cpp in Sources */,
 				CFE08ADF23C20664007E99B8 /* intrusive_ptr_UT.cpp in Sources */,

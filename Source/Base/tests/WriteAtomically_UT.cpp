@@ -98,7 +98,9 @@ TEST_CASE(PREFIX "Symlink following enabled")
         const std::filesystem::path real_target = d.directory / "real_target";
         const std::vector<std::byte> payload1 = FromString("Meow");
         REQUIRE(WriteAtomically(real_target, payload1));
+        // NOLINTBEGIN(readability-suspicious-call-argument)
         std::filesystem::create_symlink(real_target, target);
+        // NOLINTEND(readability-suspicious-call-argument)
         const std::vector<std::byte> payload2 = FromString("Hiss");
         SECTION("Regular write")
         {
@@ -121,7 +123,9 @@ TEST_CASE(PREFIX "Symlink following enabled")
         const std::filesystem::path real_target = d.directory / "another_dir" / "real_target";
         const std::vector<std::byte> payload1 = FromString("Meow");
         REQUIRE(WriteAtomically(real_target, payload1));
+        // NOLINTBEGIN(readability-suspicious-call-argument)
         std::filesystem::create_symlink(real_target, target);
+        // NOLINTEND(readability-suspicious-call-argument)
         const std::vector<std::byte> payload2 = FromString("Hiss");
         SECTION("Regular write")
         {
@@ -141,7 +145,9 @@ TEST_CASE(PREFIX "Symlink following enabled")
     SECTION("Target file exists and is an invalid symlink")
     {
         const std::filesystem::path nonexisting_target = d.directory / "nonexisting_target";
+        // NOLINTBEGIN(readability-suspicious-call-argument)
         std::filesystem::create_symlink(nonexisting_target, target);
+        // NOLINTEND(readability-suspicious-call-argument)
         const std::vector<std::byte> payload2 = FromString("Hiss");
         REQUIRE(WriteAtomically(target, payload2, true));
         REQUIRE(ReadFile(target) == payload2);

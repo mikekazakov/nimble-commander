@@ -48,7 +48,7 @@ void FileOverwritesStorage::Write(std::string_view _overwrites_json)
 {
     const auto bytes = std::span<const std::byte>(reinterpret_cast<const std::byte *>(_overwrites_json.data()),
                                                   _overwrites_json.length());
-    if( const auto rc = base::WriteAtomically(m_Path, bytes); rc ) {
+    if( const auto rc = base::WriteAtomically(m_Path, bytes, true); rc ) {
         Log::Info("Successfully written overwrites to {}", m_Path);
         m_OverwritesTime = ModificationTime(m_Path);
     }

@@ -7,9 +7,8 @@
 
 namespace nc::base {
 
-std::expected<void, Error> WriteAtomically(const std::filesystem::path &_path,
-                                           std::span<const std::byte> _bytes,
-                                           bool _follow_symlink) noexcept
+std::expected<void, Error>
+WriteAtomically(const std::filesystem::path &_path, std::span<const std::byte> _bytes, bool _follow_symlink) noexcept
 {
     if( _path.empty() || !_path.is_absolute() ) {
         return std::unexpected(Error{Error::POSIX, EINVAL});

@@ -1,11 +1,10 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewDummyPresentation.h"
 
 @implementation NCPanelViewDummyPresentation
 @synthesize itemsInColumn;
 @synthesize maxNumberOfVisibleItems;
 @synthesize cursorPosition;
-@synthesize sortMode;
 
 - (BOOL)isOpaque
 {
@@ -16,11 +15,11 @@
 {
 }
 
-- (void)dataChanged
+- (void)onDataChanged
 {
 }
 
-- (void)syncVolatileData
+- (void)onVolatileDataChanged
 {
 }
 
@@ -35,22 +34,6 @@
 
 - (void)setupFieldEditor:(NCPanelViewFieldEditor *) [[maybe_unused]] _editor
           forItemAtIndex:(int) [[maybe_unused]] _sorted_item_index
-{
-}
-
-- (void)onScrollToBeginning:(NSEvent *) [[maybe_unused]] _event
-{
-}
-
-- (void)onScrollToEnd:(NSEvent *) [[maybe_unused]] _event
-{
-}
-
-- (void)onPageUp:(NSEvent *) [[maybe_unused]] _event
-{
-}
-
-- (void)onPageDown:(NSEvent *) [[maybe_unused]] _event
 {
 }
 

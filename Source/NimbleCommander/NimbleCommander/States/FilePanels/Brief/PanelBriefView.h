@@ -37,8 +37,8 @@ struct PanelBriefViewItemLayoutConstants {
 
 - (id)initWithFrame:(NSRect)frameRect andIR:(nc::vfsicon::IconRepository &)_ir;
 
-- (void)dataChanged;
-- (void)syncVolatileData;
+- (void)onDataChanged;
+- (void)onVolatileDataChanged;
 - (void)setData:(nc::panel::data::Model *)_data;
 
 @property(nonatomic, readonly) int itemsInColumn;

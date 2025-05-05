@@ -137,7 +137,7 @@ bool PanelBriefViewItemLayoutConstants::operator!=(const PanelBriefViewItemLayou
 - (void)setData:(data::Model *)_data
 {
     m_Data = _data;
-    [self dataChanged];
+    [self onDataChanged];
 }
 
 - (id)initWithFrame:(NSRect)frameRect andIR:(IconRepository &)_ir
@@ -418,7 +418,7 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
     [self setupIconsPxSize]; // we call this here due to a possible DPI change
 }
 
-- (void)dataChanged
+- (void)onDataChanged
 {
     Log::Trace("[PanelBriefView dataChanged]");
     dispatch_assert_main_queue();
@@ -427,7 +427,7 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
     m_IconSlotToItemIndexMapping.clear();
     IconRepositoryCleaner{*m_IconsRepository, *m_Data}.SweepUnusedSlots();
     [m_CollectionView reloadData];
-    [self syncVolatileData];
+    [self onVolatileDataChanged];
     [m_Background setNeedsDisplay:true];
 }
 
@@ -539,7 +539,7 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
     return m_Layout.rowsNumber;
 }
 
-- (void)syncVolatileData
+- (void)onVolatileDataChanged
 {
     Log::Trace("[PanelBriefView syncVolatileData]");
     dispatch_assert_main_queue();

@@ -575,7 +575,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     _view.style = m_DateAccessedFormattingStyle;
 }
 
-- (void)dataChanged
+- (void)onDataChanged
 {
     data::Model *const data = m_Data;
     const auto old_rows_count = static_cast<int>(m_TableView.numberOfRows);
@@ -630,7 +630,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                            withAnimation:NSTableViewAnimationEffectNone];
     }
 }
-- (void)syncVolatileData
+- (void)onVolatileDataChanged
 {
     [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
       if( m_Data->IsValidSortPosition(static_cast<int>(row)) )
@@ -641,7 +641,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 - (void)setData:(data::Model *)_data
 {
     m_Data = _data;
-    [self dataChanged];
+    [self onDataChanged];
     [self placeSortIndicator];
 }
 

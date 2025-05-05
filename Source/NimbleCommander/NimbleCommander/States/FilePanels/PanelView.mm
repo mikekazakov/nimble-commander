@@ -976,7 +976,7 @@ struct StateStorage {
         }
     }
 
-    [m_ItemsView dataChanged];
+    [m_ItemsView onDataChanged];
     [m_ItemsView setCursorPosition:m_CursorPos];
 
     [self volatileDataChanged];
@@ -992,7 +992,7 @@ struct StateStorage {
 
 - (void)volatileDataChanged
 {
-    [m_ItemsView syncVolatileData];
+    [m_ItemsView onVolatileDataChanged];
     [m_FooterView updateFocusedItem:self.item VD:self.item_vd];
     [m_FooterView updateStatistics:m_Data->Stats()];
 }

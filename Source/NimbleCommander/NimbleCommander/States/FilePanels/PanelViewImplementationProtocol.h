@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "PanelViewTypes.h"
@@ -19,11 +19,13 @@ class Model;
 @property(nonatomic, readonly) int maxNumberOfVisibleItems;
 @property(nonatomic) int cursorPosition;
 
-// ...
-- (void)dataChanged;
+// Called by the owning PanelView whenever the contents of the associated Data is changed.
+// e.g. after reloading or go to a different directory.
+- (void)onDataChanged;
 
-// ...
-- (void)syncVolatileData;
+// Called by the owning PanelView whenever the volatile contents of the associated Data is changed.
+// e.g. after a directory size was calculated, highlighting was changed, icon was assigned etc.
+- (void)onVolatileDataChanged;
 
 // ...
 - (void)setData:(nc::panel::data::Model *)_data;

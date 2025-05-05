@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
 #include "AtomicHolder.h"
@@ -216,7 +216,7 @@ TEST_CASE(PREFIX "Inactive -> Shell -> ProgramExternal (vi) -> Shell -> Terminat
     REQUIRE(shell.State() == TaskState::Inactive);
     REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
-    shell.ExecuteWithFullPath("/usr/bin/vi", nullptr);
+    shell.ExecuteWithFullPath("/usr/bin/vi", {});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     shell.WriteChildInput(":q\r");
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
@@ -255,9 +255,8 @@ TEST_CASE(PREFIX "Launch=>Exit via output (Bash)")
         shell.SetShellPath("/bin/tcsh");
     }
     const auto type = shell.GetShellType();
-    shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds = parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
-            !cmds.empty() ) {
+    shell.SetOnChildOutput([&](const std::span<const std::byte> _data) {
+        if( auto cmds = parser.Parse(_data); !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
@@ -327,16 +326,15 @@ TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
         shell.SetShellPath("/bin/tcsh");
     }
     const auto type = shell.GetShellType();
-    shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds = parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
-            !cmds.empty() ) {
+    shell.SetOnChildOutput([&](const std::span<const std::byte> _data) {
+        if( auto cmds = parser.Parse(_data); !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
             }
         }
     });
-    shell.SetOnPwdPrompt([&](const char *_cwd, bool) { cwd.store(_cwd); });
+    shell.SetOnPwdPrompt([&](const std::string_view _cwd, bool) { cwd.store(_cwd); });
     REQUIRE(shell.Launch(dir.directory));
 
     if( type == ShellTask::ShellType::TCSH ) {
@@ -414,7 +412,7 @@ TEST_CASE(PREFIX "CWD prompt response")
     shell_state.value = shell.State();
     shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
     AtomicHolder<std::filesystem::path> cwd;
-    shell.SetOnPwdPrompt([&](const char *_cwd, bool) { cwd.store(_cwd); });
+    shell.SetOnPwdPrompt([&](const std::string_view _cwd, bool) { cwd.store(_cwd); });
     REQUIRE(shell.State() == TaskState::Inactive);
     SECTION("/bin/bash")
     {
@@ -437,43 +435,43 @@ TEST_CASE(PREFIX "CWD prompt response")
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
 
     const char *new_dir1 = "foo";
-    shell.ExecuteWithFullPath("/bin/mkdir", new_dir1);
+    shell.ExecuteWithFullPath("/bin/mkdir", std::vector<std::string>{new_dir1});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
-    shell.ExecuteWithFullPath("cd", new_dir1);
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{new_dir1});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory / new_dir1 / ""));
-    shell.ExecuteWithFullPath("cd", "..");
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{".."});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
 
     const char *new_dir2 = reinterpret_cast<const char *>(u8"привет");
-    shell.ExecuteWithFullPath("/bin/mkdir", Task::EscapeShellFeed(new_dir2).c_str());
+    shell.ExecuteWithFullPath("/bin/mkdir", std::vector<std::string>{new_dir2});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
-    shell.ExecuteWithFullPath("cd", Task::EscapeShellFeed(new_dir2).c_str());
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{new_dir2});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory / new_dir2 / ""));
-    shell.ExecuteWithFullPath("cd", "..");
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{".."});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
 
     const char *new_dir3 = reinterpret_cast<const char *>(u8"привет, мир!");
-    shell.ExecuteWithFullPath("/bin/mkdir", ("'" + std::string(new_dir3) + "'").c_str());
+    shell.ExecuteWithFullPath("/bin/mkdir", std::vector<std::string>{new_dir3});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
-    shell.ExecuteWithFullPath("cd", Task::EscapeShellFeed(new_dir3).c_str());
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{new_dir3});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory / new_dir3 / ""));
-    shell.ExecuteWithFullPath("cd", "..");
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{".."});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
@@ -488,7 +486,7 @@ TEST_CASE(PREFIX "CWD prompt response - changed/same")
     const TempTestDir dir;
     ShellTask shell;
     QueuedAtomicHolder<std::pair<std::filesystem::path, bool>> cwd;
-    shell.SetOnPwdPrompt([&](const char *_cwd, bool _changed) { cwd.store({_cwd, _changed}); });
+    shell.SetOnPwdPrompt([&](const std::string_view _cwd, bool _changed) { cwd.store({_cwd, _changed}); });
     SECTION("/bin/bash")
     {
         shell.SetShellPath("/bin/bash");
@@ -508,13 +506,13 @@ TEST_CASE(PREFIX "CWD prompt response - changed/same")
     REQUIRE(shell.Launch(dir.directory));
     REQUIRE(cwd.wait_to_become(5s, {dir.directory, false}));
 
-    shell.ExecuteWithFullPath("cd", ".");
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{"."});
     REQUIRE(cwd.wait_to_become(5s, {dir.directory, false}));
 
-    shell.ExecuteWithFullPath("cd", "/");
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{"/"});
     REQUIRE(cwd.wait_to_become(5s, {"/", true}));
 
-    shell.ExecuteWithFullPath("cd", "/");
+    shell.ExecuteWithFullPath("cd", std::vector<std::string>{"/"});
     REQUIRE(cwd.wait_to_become(5s, {"/", false}));
 }
 
@@ -530,7 +528,7 @@ TEST_CASE(PREFIX "Test basics (legacy stuff)")
     shell_state.store(shell.State());
     shell_state.strict(false);
     shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
-    shell.SetOnPwdPrompt([&](const char *_cwd, bool) { cwd.store(_cwd); });
+    shell.SetOnPwdPrompt([&](const std::string_view _cwd, bool) { cwd.store(_cwd); });
     SECTION("/bin/bash")
     {
         shell.SetShellPath("/bin/bash");
@@ -559,7 +557,7 @@ TEST_CASE(PREFIX "Test basics (legacy stuff)")
     REQUIRE(WaitChildrenListToBecome(shell, {}, 5s, 1ms));
 
     // test executing binaries within a shell
-    shell.ExecuteWithFullPath("/usr/bin/top", nullptr);
+    shell.ExecuteWithFullPath("/usr/bin/top", {});
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     REQUIRE(WaitChildrenListToBecome(shell, {"top"}, 5s, 1ms));
 
@@ -633,9 +631,8 @@ TEST_CASE(PREFIX "Test vim interaction via output")
     {
         shell.SetShellPath("/bin/tcsh");
     }
-    shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds = parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
-            !cmds.empty() ) {
+    shell.SetOnChildOutput([&](const std::span<const std::byte> _data) {
+        if( auto cmds = parser.Parse(_data); !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
@@ -738,9 +735,8 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
     }
     for( auto &ctx : shells ) {
         ctx.shell.ResizeWindow(20, 5);
-        ctx.shell.SetOnChildOutput([&](const void *_d, int _sz) {
-            if( auto cmds = ctx.parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
-                !cmds.empty() ) {
+        ctx.shell.SetOnChildOutput([&](const std::span<const std::byte> _data) {
+            if( auto cmds = ctx.parser.Parse(_data); !cmds.empty() ) {
                 if( auto lock = ctx.screen.AcquireLock() ) {
                     ctx.interpreter.Interpret(cmds);
                     ctx.buffer_dump.store(ctx.screen.Buffer().DumpScreenAsANSI());
@@ -814,9 +810,8 @@ TEST_CASE(PREFIX "doesn't keep external cwd change commands in history")
         shell.AddCustomShellArgument("-f");
     }
     // [t]csh is out of equation - no such option exists (?)
-    shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds = parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
-            !cmds.empty() ) {
+    shell.SetOnChildOutput([&](const std::span<const std::byte> _data) {
+        if( auto cmds = parser.Parse(_data); !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
@@ -1019,7 +1014,7 @@ TEST_CASE(PREFIX "ChDir respects literal square-bracketed directory despite glob
     const TempTestDir dir;
     ShellTask shell;
     QueuedAtomicHolder<std::pair<std::filesystem::path, bool>> cwd;
-    shell.SetOnPwdPrompt([&](const char *_cwd, bool _changed) { cwd.store({_cwd, _changed}); });
+    shell.SetOnPwdPrompt([&](const std::string_view _cwd, bool _changed) { cwd.store({_cwd, _changed}); });
 
     const auto bracketedDir = dir.directory / "a[bc]d" / "";
     std::filesystem::create_directory(bracketedDir);

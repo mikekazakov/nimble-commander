@@ -27,10 +27,11 @@ class Model;
 // e.g. after a directory size was calculated, highlighting was changed, icon was assigned etc.
 - (void)onVolatileDataChanged;
 
-// ...
+// Called once by the owning PanelView upon initialization to provide access to the underlying data of the panel.
 - (void)setData:(nc::panel::data::Model *)_data;
 
-// ...
+// Returns true if the item specified by the sorted index is currently visible.
+// Any partial visibility counts.
 - (bool)isItemVisible:(int)_sorted_item_index;
 
 // ...

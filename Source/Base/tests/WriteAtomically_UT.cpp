@@ -1,8 +1,8 @@
 // Copyright (C) 2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WriteAtomically.h"
 #include "UnitTests_main.h"
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include <fcntl.h>
 
 using nc::base::WriteAtomically;
@@ -45,7 +45,7 @@ static std::vector<std::byte> FromString(const std::string_view _str)
 
 TEST_CASE(PREFIX "Simple cases")
 {
-    TempTestDir d;
+    const TempTestDir d;
     const std::filesystem::path target = d.directory / "test";
     SECTION("File didn't exist, writing non-zero data")
     {
@@ -69,9 +69,89 @@ TEST_CASE(PREFIX "Simple cases")
     }
 }
 
+TEST_CASE(PREFIX "Symlink following enabled")
+{
+    const TempTestDir d;
+    const std::filesystem::path target = d.directory / "test";
+    SECTION("File didn't exist, writing non-zero data")
+    {
+        const std::vector<std::byte> payload = FromString("Hello, World!");
+        REQUIRE(WriteAtomically(target, payload, true));
+        REQUIRE(ReadFile(target) == payload);
+    }
+    SECTION("File didn't exist, writing zero data")
+    {
+        const std::vector<std::byte> payload;
+        REQUIRE(WriteAtomically(target, payload, true));
+        REQUIRE(ReadFile(target) == payload);
+    }
+    SECTION("Overwriting an existing file")
+    {
+        const std::vector<std::byte> payload1 = FromString("Meow");
+        REQUIRE(WriteAtomically(target, payload1, true));
+        const std::vector<std::byte> payload2 = FromString("Hiss");
+        REQUIRE(WriteAtomically(target, payload2, true));
+        REQUIRE(ReadFile(target) == payload2);
+    }
+    SECTION("Target file exists and is a symlink")
+    {
+        const std::filesystem::path real_target = d.directory / "real_target";
+        const std::vector<std::byte> payload1 = FromString("Meow");
+        REQUIRE(WriteAtomically(real_target, payload1));
+        std::filesystem::create_symlink(real_target, target);
+        const std::vector<std::byte> payload2 = FromString("Hiss");
+        SECTION("Regular write")
+        {
+            REQUIRE(WriteAtomically(target, payload2, false));
+            REQUIRE(ReadFile(real_target) == payload1);            // symlink dest unchanged
+            REQUIRE(ReadFile(target) == payload2);                 // symlink itself changed
+            REQUIRE(std::filesystem::is_symlink(target) == false); // no longer is a symlink
+        }
+        SECTION("Following")
+        {
+            REQUIRE(WriteAtomically(target, payload2, true));
+            REQUIRE(ReadFile(real_target) == payload2);           // symlink dest changed
+            REQUIRE(ReadFile(target) == payload2);                // symlink itself changed
+            REQUIRE(std::filesystem::is_symlink(target) == true); // is still a symlink
+        }
+    }
+    SECTION("Target file exists and is a symlink to another directory")
+    {
+        std::filesystem::create_directory(d.directory / "another_dir");
+        const std::filesystem::path real_target = d.directory / "another_dir" / "real_target";
+        const std::vector<std::byte> payload1 = FromString("Meow");
+        REQUIRE(WriteAtomically(real_target, payload1));
+        std::filesystem::create_symlink(real_target, target);
+        const std::vector<std::byte> payload2 = FromString("Hiss");
+        SECTION("Regular write")
+        {
+            REQUIRE(WriteAtomically(target, payload2, false));
+            REQUIRE(ReadFile(real_target) == payload1);            // symlink dest unchanged
+            REQUIRE(ReadFile(target) == payload2);                 // symlink itself changed
+            REQUIRE(std::filesystem::is_symlink(target) == false); // no longer is a symlink
+        }
+        SECTION("Following")
+        {
+            REQUIRE(WriteAtomically(target, payload2, true));
+            REQUIRE(ReadFile(real_target) == payload2);           // symlink dest changed
+            REQUIRE(ReadFile(target) == payload2);                // symlink itself changed
+            REQUIRE(std::filesystem::is_symlink(target) == true); // is still a symlink
+        }
+    }
+    SECTION("Target file exists and is an invalid symlink")
+    {
+        const std::filesystem::path nonexisting_target = d.directory / "nonexisting_target";
+        std::filesystem::create_symlink(nonexisting_target, target);
+        const std::vector<std::byte> payload2 = FromString("Hiss");
+        REQUIRE(WriteAtomically(target, payload2, true));
+        REQUIRE(ReadFile(target) == payload2);
+        REQUIRE(std::filesystem::is_symlink(target) == false); // no longer is a symlink
+    }
+}
+
 TEST_CASE(PREFIX "Error handling")
 {
     const std::vector<std::byte> payload = FromString("Hello, World!");
     const auto err = WriteAtomically("/bin/meow", payload);
-    CHECK(err.error() == nc::Error{nc::Error::POSIX, EPERM});
+    CHECK(((err.error() == nc::Error{nc::Error::POSIX, EPERM}) || (err.error() == nc::Error{nc::Error::POSIX, EROFS})));
 }

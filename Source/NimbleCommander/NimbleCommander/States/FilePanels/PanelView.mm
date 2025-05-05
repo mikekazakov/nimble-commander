@@ -606,14 +606,22 @@ struct StateStorage {
         [self HandleNextPage];
     else if( event_action_tag_wo_shift == tags.page_up )
         [self HandlePrevPage];
-    else if( event_action_tag == tags.scroll_down )
-        [m_ItemsView onPageDown:event];
-    else if( event_action_tag == tags.scroll_up )
-        [m_ItemsView onPageUp:event];
-    else if( event_action_tag == tags.scroll_home )
-        [m_ItemsView onScrollToBeginning:event];
-    else if( event_action_tag == tags.scroll_end )
-        [m_ItemsView onScrollToEnd:event];
+    else if( event_action_tag == tags.scroll_down ) {
+        if( [m_ItemsView respondsToSelector:@selector(onPageDown:)] )
+            [m_ItemsView onPageDown:event];
+    }
+    else if( event_action_tag == tags.scroll_up ) {
+        if( [m_ItemsView respondsToSelector:@selector(onPageUp:)] )
+            [m_ItemsView onPageUp:event];
+    }
+    else if( event_action_tag == tags.scroll_home ){
+        if( [m_ItemsView respondsToSelector:@selector(onScrollToBeginning:)] )
+            [m_ItemsView onScrollToBeginning:event];
+    }
+    else if( event_action_tag == tags.scroll_end ) {
+        if( [m_ItemsView respondsToSelector:@selector(onScrollToEnd:)] )
+            [m_ItemsView onScrollToEnd:event];
+    }
     else if( event_action_tag == tags.invert_and_move )
         [self onInvertCurrentItemSelectionAndMoveNext];
     else if( event_action_tag == tags.invert )

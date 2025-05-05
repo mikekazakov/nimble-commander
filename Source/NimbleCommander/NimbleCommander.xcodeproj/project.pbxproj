@@ -389,6 +389,8 @@
 		CFEADD49259CF60D009ECA14 /* ChangePanelsPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = CFEADD47259CF60D009ECA14 /* ChangePanelsPosition.h */; };
 		CFEADD54259D01AD009ECA14 /* FocusOverlappedTerminal.h in Headers */ = {isa = PBXBuildFile; fileRef = CFEADD52259D01AD009ECA14 /* FocusOverlappedTerminal.h */; };
 		CFEADD55259D01AD009ECA14 /* FocusOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEADD53259D01AD009ECA14 /* FocusOverlappedTerminal.mm */; };
+		CFF8353E2DC8D1B400CED300 /* PanelGalleryView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF8353D2DC8D1B400CED300 /* PanelGalleryView.mm */; };
+		CFF8353F2DC8D1B400CED300 /* PanelGalleryView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF8353C2DC8D1B400CED300 /* PanelGalleryView.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1364,6 +1366,8 @@
 		CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Operations.xcodeproj; path = ../Operations/Operations.xcodeproj; sourceTree = "<group>"; };
 		CFF695701E20C6CF0069EEA4 /* TabBarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TabBarStyle.h; path = NimbleCommander/States/FilePanels/Views/TabBarStyle.h; sourceTree = SOURCE_ROOT; };
 		CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TabBarStyle.mm; path = NimbleCommander/States/FilePanels/Views/TabBarStyle.mm; sourceTree = SOURCE_ROOT; };
+		CFF8353C2DC8D1B400CED300 /* PanelGalleryView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelGalleryView.h; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryView.h; sourceTree = "<group>"; };
+		CFF8353D2DC8D1B400CED300 /* PanelGalleryView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelGalleryView.mm; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryView.mm; sourceTree = "<group>"; };
 		CFFA942C1F3DBF790035E606 /* Dock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dock.h; path = NimbleCommander/Core/Dock.h; sourceTree = SOURCE_ROOT; };
 		CFFA942D1F3DBF790035E606 /* Dock.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Dock.mm; path = NimbleCommander/Core/Dock.mm; sourceTree = SOURCE_ROOT; };
 		CFFA943A1F3E9C4D0035E606 /* ConfigWiring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigWiring.h; path = NimbleCommander/Bootstrap/ConfigWiring.h; sourceTree = SOURCE_ROOT; };
@@ -1647,8 +1651,10 @@
 			children = (
 				CF3FC99C2D99502900878079 /* Layout.h */,
 				CF3FC99D2D99502900878079 /* Layout.cpp */,
+				CFF8353C2DC8D1B400CED300 /* PanelGalleryView.h */,
+				CFF8353D2DC8D1B400CED300 /* PanelGalleryView.mm */,
 			);
-			path = Gallery;
+			name = Gallery;
 			sourceTree = "<group>";
 		};
 		CF536C0D16C92EA200F37203 /* FilePanels */ = {
@@ -2285,6 +2291,7 @@
 				CFD2D28228A7876C003C18F9 /* SystemThemeDetector.h in Headers */,
 				CFA999F4264F17A800F72E93 /* CLI.h in Headers */,
 				CF9B07C626FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.h in Headers */,
+				CFF8353F2DC8D1B400CED300 /* PanelGalleryView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3116,6 +3123,7 @@
 				CF0A48662BDDA3E600833160 /* PanelListViewNameView.mm in Sources */,
 				CF0A48052BDD9F6200833160 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CF0A48112BDD9FA300833160 /* MainWindow.mm in Sources */,
+				CFF8353E2DC8D1B400CED300 /* PanelGalleryView.mm in Sources */,
 				CF0A485D2BDDA3AE00833160 /* PanelBriefViewDynamicWidthLayout.mm in Sources */,
 				CF0A48562BDDA2C800833160 /* ToggleSort.mm in Sources */,
 				CF0A481E2BDDA03100833160 /* PanelController+DataAccess.mm in Sources */,

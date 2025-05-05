@@ -13,18 +13,6 @@
         }
       }
     },
-    "NSAppleEventsUsageDescription" : {
-      "comment" : "Privacy - AppleEvents Sending Usage Description",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "An application in Nimble Commander wants to use AppleScript."
-          }
-        }
-      }
-    },
     "NSDesktopFolderUsageDescription" : {
       "comment" : "Privacy - Desktop Folder Usage Description",
       "extractionState" : "extracted_with_value",

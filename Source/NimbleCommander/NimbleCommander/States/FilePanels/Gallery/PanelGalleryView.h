@@ -2,7 +2,13 @@
 #pragma once
 
 #include "../PanelViewImplementationProtocol.h"
+#include "Layout.h"
 
 @interface PanelGalleryView : NSView <NCPanelViewPresentationProtocol>
+
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithFrame:(NSRect)_frame;
+
+@property(nonatomic) nc::panel::PanelGalleryViewLayout galleryLayout;
 
 @end

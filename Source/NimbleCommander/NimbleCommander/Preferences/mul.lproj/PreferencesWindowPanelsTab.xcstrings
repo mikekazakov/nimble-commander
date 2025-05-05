@@ -109,6 +109,18 @@
         }
       }
     },
+    "4VN-F4-oO8.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Gallery\"; ObjectID = \"4VN-F4-oO8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Gallery"
+          }
+        }
+      }
+    },
     "5JY-Qe-Lw7.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Show Preview as a:\"; ObjectID = \"5JY-Qe-Lw7\";",
       "extractionState" : "extracted_with_value",

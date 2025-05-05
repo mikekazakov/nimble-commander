@@ -505,6 +505,10 @@ static NSMenu *BuildTagColorMenu()
             l1.columns.emplace_back(col);
             new_layout.layout = l1;
         }
+        if( self.layoutType.selectedTag == static_cast<int>(PanelViewLayout::Type::Gallery) ) {
+            PanelGalleryViewLayout l1;
+            new_layout.layout = l1;
+        }
         if( self.layoutType.selectedTag == static_cast<int>(PanelViewLayout::Type::Disabled) )
             new_layout.layout = PanelViewDisabledLayout{};
 

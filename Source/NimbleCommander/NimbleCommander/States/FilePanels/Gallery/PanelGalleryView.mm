@@ -6,11 +6,12 @@ using namespace nc::panel;
 
 @implementation PanelGalleryView {
     data::Model *m_Data;
+    PanelGalleryViewLayout m_Layout;
 }
 
-- (instancetype)init
+- (instancetype)initWithFrame:(NSRect)_frame
 {
-    if( self = [super init] ) {
+    if( self = [super initWithFrame:_frame] ) {
         m_Data = nullptr;
     }
 
@@ -76,6 +77,17 @@ using namespace nc::panel;
 {
     // TODO: implement
     return {};
+}
+
+- (PanelGalleryViewLayout)galleryLayout
+{
+    return m_Layout;
+}
+
+- (void)setGalleryLayout:(nc::panel::PanelGalleryViewLayout)_layout
+{
+    // TODO: implement
+    m_Layout = _layout;
 }
 
 @end

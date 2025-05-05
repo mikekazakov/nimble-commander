@@ -79,6 +79,8 @@ static const auto g_ListColumWidth = "width";
 static const auto g_ListColumMaxWidth = "max_width";
 static const auto g_ListColumMinWidth = "min_width";
 static const auto g_ListIconScale = "icon_scale";
+static const auto g_GalleryKey = "gallery";
+static const auto g_GalleryIconScale = "icon_scale";
 static const auto g_DisabledKey = "disabled";
 
 static config::Value SaveLayout(const PanelViewLayout &_l)
@@ -123,6 +125,11 @@ static config::Value SaveLayout(const PanelViewLayout &_l)
                     g_CrtAllocator);
         d.AddMember(MakeStandaloneString(g_BriefIconScale), config::Value(brief->icon_scale), g_CrtAllocator);
         v.AddMember(MakeStandaloneString(g_BriefKey), std::move(d), g_CrtAllocator);
+    }
+    else if( auto gallery = _l.gallery() ) {
+        config::Value d{kObjectType};
+        d.AddMember(MakeStandaloneString(g_GalleryIconScale), config::Value(gallery->icon_scale), g_CrtAllocator);
+        v.AddMember(MakeStandaloneString(g_GalleryKey), std::move(d), g_CrtAllocator);
     }
     else if( _l.is_disabled() ) {
         v.AddMember(MakeStandaloneString(g_DisabledKey), config::Value{kNullType}, g_CrtAllocator);
@@ -184,6 +191,13 @@ static std::optional<PanelViewLayout> LoadLayout(const config::Value &_from)
         if( o.HasMember(g_ListIconScale) && o[g_ListIconScale].IsInt() )
             list.icon_scale = static_cast<uint8_t>(o[g_ListIconScale].GetInt());
         l.layout = list;
+    }
+    else if( _from.HasMember(g_GalleryKey) && _from[g_GalleryKey].IsObject() ) {
+        auto &o = _from[g_GalleryKey];
+        PanelGalleryViewLayout gallery;
+        if( o.HasMember(g_GalleryIconScale) && o[g_GalleryIconScale].IsInt() )
+            gallery.icon_scale = static_cast<uint8_t>(o[g_GalleryIconScale].GetInt());
+        l.layout = gallery;
     }
     else if( _from.HasMember(g_DisabledKey) )
         l.layout = PanelViewDisabledLayout{};

@@ -18,7 +18,6 @@ class Model;
 @property(nonatomic, readonly) int itemsInColumn;
 @property(nonatomic, readonly) int maxNumberOfVisibleItems;
 @property(nonatomic) int cursorPosition;
-@property(nonatomic) nc::panel::data::SortMode sortMode;
 
 // ...
 - (void)dataChanged;
@@ -42,6 +41,11 @@ class Model;
 - (std::optional<NSRect>)frameOfItemAtIndex:(int)_sorted_item_index;
 
 @optional
+
+// Called by the owning PanelView when the existing Panel Data has its sorting mode changed.
+// This notification will not be set when the data is replaced entirely, the presentation implementation should
+// rely on "setData:" for that.
+- (void)onDataSortingHasChanged;
 
 // Called by the owning PanelView when the "panel.scroll_first" action is triggered
 - (void)onScrollToBeginning:(NSEvent *)_event;

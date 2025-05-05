@@ -6,4 +6,3 @@
 @interface PanelGalleryView : NSView <NCPanelViewPresentationProtocol>
 
 @end
-

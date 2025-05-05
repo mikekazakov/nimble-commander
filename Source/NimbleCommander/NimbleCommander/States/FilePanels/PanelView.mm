@@ -278,7 +278,6 @@ struct StateStorage {
 
     if( data ) {
         [m_ItemsView setData:data];
-        m_ItemsView.sortMode = data->SortMode();
         m_HeaderView.sortMode = data->SortMode();
     }
 
@@ -614,7 +613,7 @@ struct StateStorage {
         if( [m_ItemsView respondsToSelector:@selector(onPageUp:)] )
             [m_ItemsView onPageUp:event];
     }
-    else if( event_action_tag == tags.scroll_home ){
+    else if( event_action_tag == tags.scroll_home ) {
         if( [m_ItemsView respondsToSelector:@selector(onScrollToBeginning:)] )
             [m_ItemsView onScrollToBeginning:event];
     }
@@ -751,7 +750,6 @@ struct StateStorage {
 
         if( m_Data ) {
             m_ItemsView.data = m_Data;
-            m_ItemsView.sortMode = m_Data->SortMode();
         }
 
         if( m_CursorPos >= 0 )
@@ -789,7 +787,6 @@ struct StateStorage {
 
         if( m_Data ) {
             m_ItemsView.data = m_Data;
-            m_ItemsView.sortMode = m_Data->SortMode();
         }
 
         if( m_CursorPos >= 0 )
@@ -1114,7 +1111,8 @@ struct StateStorage {
 - (void)dataSortingHasChanged
 {
     m_HeaderView.sortMode = m_Data->SortMode();
-    m_ItemsView.sortMode = m_Data->SortMode();
+    if( [m_ItemsView respondsToSelector:@selector(onDataSortingHasChanged)] )
+        [m_ItemsView onDataSortingHasChanged];
 }
 
 - (PanelController *)controller

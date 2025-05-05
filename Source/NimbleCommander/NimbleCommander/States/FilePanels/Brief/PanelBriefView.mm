@@ -129,12 +129,10 @@ bool PanelBriefViewItemLayoutConstants::operator!=(const PanelBriefViewItemLayou
     PanelBriefViewItemLayoutConstants m_ItemLayout;
     PanelBriefViewColumnsLayout m_ColumnsLayout;
     __weak PanelView *m_PanelView;
-    data::SortMode m_SortMode;
     nc::ThemesManager::ObservationTicket m_ThemeObservation;
 }
 
 @synthesize columnsLayout = m_ColumnsLayout;
-@synthesize sortMode = m_SortMode;
 
 - (void)setData:(data::Model *)_data
 {

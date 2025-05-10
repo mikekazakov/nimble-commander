@@ -2,15 +2,21 @@
 #include "PanelGalleryView.h"
 #include "PanelGalleryCollectionViewItem.h"
 #include "../Helpers/IconRepositoryCleaner.h"
+#include <NimbleCommander/Bootstrap/Config.h> // TODO: evil! DI instead!
 #include <Panel/PanelData.h>
 #include <Base/dispatch_cpp.h>
+#include <Utility/ExtensionLowercaseComparison.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
+#include <Utility/PathManip.h>
 #include <ankerl/unordered_dense.h>
 #include <Quartz/Quartz.h>
 
 using namespace nc;
 using namespace nc::panel;
+
+static constexpr auto g_HazardousExtensionsList = "filePanel.presentation.quickLookHazardousExtensionsList";
+static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolling";
 
 @implementation PanelGalleryView {
     data::Model *m_Data;
@@ -24,6 +30,10 @@ using namespace nc::panel;
 
     ankerl::unordered_dense::map<vfsicon::IconRepository::SlotKey, int> m_IconSlotToItemIndexMapping;
     vfsicon::IconRepository *m_IconRepository;
+    
+    // It's a workaround for the macOS bug reported in FB9809109/FB5352643.
+    bool m_CurrentPreviewIsHazardous;
+    std::optional<nc::utility::ExtensionsLowercaseList> m_HazardousExtsList; // empty means everything is hazardous
 }
 
 - (instancetype)initWithFrame:(NSRect)_frame andIR:(nc::vfsicon::IconRepository &)_ir
@@ -34,6 +44,7 @@ using namespace nc::panel;
 
     m_Data = nullptr;
     m_IconRepository = &_ir;
+    m_CurrentPreviewIsHazardous = false;
 
     m_ScrollView = [[NSScrollView alloc] initWithFrame:_frame];
     m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
@@ -77,6 +88,10 @@ using namespace nc::panel;
         if( auto strong_self = weak_self )
             [strong_self onIconUpdated:_icon_no image:_icon];
     });
+        
+    if(const std::string hazard_list = GlobalConfig().GetString(g_HazardousExtensionsList); hazard_list != "*" ) {
+        m_HazardousExtsList.emplace(hazard_list);
+    }
 
     return self;
 }
@@ -120,16 +135,18 @@ using namespace nc::panel;
         const auto index_path = [NSIndexPath indexPathForItem:_cursor_position inSection:0];
         const auto indices = [NSSet setWithObject:index_path];
         m_CollectionView.selectionIndexPaths = indices;
-        //        [self ensureItemIsVisible:_cursor_position];
+        [self ensureItemIsVisible:_cursor_position];
     }
 
     if( auto vfs_item = m_Data->EntryAtSortPosition(_cursor_position) ) {
-        if( NSString *path = [NSString stringWithUTF8StdString:vfs_item.Path()] ) {
-            if( NSURL *url = [NSURL fileURLWithPath:path] ) {
-
-                // if (hazard)...
-                m_QLView.previewItem = nil;
+        const std::string path = vfs_item.Path();
+        if( NSString *ns_path = [NSString stringWithUTF8StdString:path] ) {
+            if( NSURL *url = [NSURL fileURLWithPath:ns_path] ) {
+                if (m_CurrentPreviewIsHazardous) {
+                    m_QLView.previewItem = nil; // to prevent an ObjC exception from inside QL - reset the view first
+                }
                 m_QLView.previewItem = url;
+                m_CurrentPreviewIsHazardous = [self isHazardousPath:path];
             }
         }
     }
@@ -232,5 +249,64 @@ using namespace nc::panel;
         }
     }
 }
+
+- (void)ensureItemIsVisible:(int)_item_index
+{
+    if( _item_index < 0 )
+        return;
+
+    // the existing scroll state and item's position
+    const auto visible_rect = m_ScrollView.documentVisibleRect;
+    const auto item_rect = [m_CollectionView frameForItemAtIndex:_item_index];
+
+    // check if the item is already visible - nothing to do in that case
+    if( NSContainsRect(visible_rect, item_rect) )
+        return;
+
+    // NB! not updated automatically, initialized only once per run
+    static const bool smooth_scroll = GlobalConfig().GetBool(g_SmoothScrolling);
+    auto scroll_to = [&](NSPoint _pt) {
+        if( smooth_scroll ) {
+            [m_ScrollView.contentView scrollPoint:_pt];
+        }
+        else {
+            [m_ScrollView.contentView setBoundsOrigin:_pt];
+        }
+        [m_CollectionView
+            prepareContentInRect:NSMakeRect(_pt.x, _pt.y, visible_rect.size.width, visible_rect.size.height)];
+    };
+
+    // NB! scrollToItemsAtIndexPaths is NOT used here because at some version of macOS it decided to
+    // add gaps to the items it's been asked to scroll to. That looks very buggy. Hence this custom
+    // logic
+    if( visible_rect.size.width >= item_rect.size.width ) {
+        // normal case - scroll to the item, aligning depending on its location
+        if( item_rect.origin.x < visible_rect.origin.x ) {
+            // align left
+            scroll_to(NSMakePoint(item_rect.origin.x, 0.));
+        }
+        else if( NSMaxX(item_rect) > NSMaxX(visible_rect) ) {
+            // align right
+            scroll_to(NSMakePoint(item_rect.origin.x + item_rect.size.width - visible_rect.size.width, 0.));
+        }
+        else {
+            // center
+            scroll_to(NSMakePoint(item_rect.origin.x - ((visible_rect.size.width - item_rect.size.width) / 2.), 0.));
+        }
+    }
+    else {
+        // singular case - just try to show as much as possible
+        scroll_to(NSMakePoint(item_rect.origin.x, 0.));
+    }
+}
+
+- (bool)isHazardousPath:(std::string_view)_path
+{
+    if( m_HazardousExtsList == std::nullopt )
+        return true;
+    return m_HazardousExtsList->contains(nc::utility::PathManip::Extension(_path));
+}
+
+
 
 @end

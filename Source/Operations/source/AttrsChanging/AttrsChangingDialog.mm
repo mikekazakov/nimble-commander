@@ -676,10 +676,18 @@ static const auto g_MixedOwnageTitle = @"[???]";
         return false;
 
     const auto &vfs = _items.front().Host();
-    const auto vfs_features = vfs->Features();
-    return (vfs_features & nc::vfs::HostFeatures::SetPermissions) ||
-           (vfs_features & nc::vfs::HostFeatures::SetOwnership) || (vfs_features & nc::vfs::HostFeatures::SetFlags) ||
-           (vfs_features & nc::vfs::HostFeatures::SetTimes);
+    return [NCOpsAttrsChangingDialog canEditAnythingInHost:*vfs];
+}
+
++ (bool)canEditAnythingInHost:(const VFSHost &)_host
+{
+    if( !_host.IsWritable() )
+        return false;
+    const auto vfs_features = _host.Features();
+    return (vfs_features & nc::vfs::HostFeatures::SetPermissions) || //
+           (vfs_features & nc::vfs::HostFeatures::SetOwnership) ||   //
+           (vfs_features & nc::vfs::HostFeatures::SetFlags) ||       //
+           (vfs_features & nc::vfs::HostFeatures::SetTimes);         //
 }
 
 template <class _InputIterator, class _Predicate>

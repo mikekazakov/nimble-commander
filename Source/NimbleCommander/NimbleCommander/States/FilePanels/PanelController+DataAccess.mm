@@ -71,9 +71,9 @@
 {
     std::vector<VFSListingItem> items;
     auto &d = self.data;
-    for( auto ind : d.SortedDirectoryEntries() )
+    for( unsigned ind : d.SortedDirectoryEntries() )
         if( d.VolatileDataAtRawPosition(ind).is_selected() )
-            if( auto e = d.EntryAtRawPosition(ind) )
+            if( VFSListingItem e = d.EntryAtRawPosition(ind) )
                 items.emplace_back(std::move(e));
 
     if( items.empty() )

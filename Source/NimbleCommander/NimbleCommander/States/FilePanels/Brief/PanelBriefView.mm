@@ -104,18 +104,6 @@ BuildItemsLayout(NSFont *_font, PanelBriefViewColumnsLayout _layout, NSUInteger 
     return lc;
 }
 
-bool PanelBriefViewItemLayoutConstants::operator==(const PanelBriefViewItemLayoutConstants &_rhs) const noexcept
-{
-    return inset_left == _rhs.inset_left && inset_top == _rhs.inset_top && inset_right == _rhs.inset_right &&
-           inset_bottom == _rhs.inset_bottom && icon_size == _rhs.icon_size && font_baseline == _rhs.font_baseline &&
-           item_height == _rhs.item_height;
-}
-
-bool PanelBriefViewItemLayoutConstants::operator!=(const PanelBriefViewItemLayoutConstants &_rhs) const noexcept
-{
-    return !(*this == _rhs);
-}
-
 @implementation PanelBriefView {
     NSScrollView *m_ScrollView;
     PanelBriefViewCollectionView *m_CollectionView;
@@ -565,8 +553,7 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
 - (void)onIconUpdated:(IconRepository::SlotKey)_icon_no image:(NSImage *)_image
 {
     dispatch_assert_main_queue();
-    const auto it = m_IconSlotToItemIndexMapping.find(_icon_no);
-    if( it != end(m_IconSlotToItemIndexMapping) ) {
+    if( const auto it = m_IconSlotToItemIndexMapping.find(_icon_no); it != m_IconSlotToItemIndexMapping.end() ) {
         const auto index = [NSIndexPath indexPathForItem:it->second inSection:0];
         if( auto item = nc::objc_cast<PanelBriefViewItem>([m_CollectionView itemAtIndexPath:index]) ) {
             [item setIcon:_image];

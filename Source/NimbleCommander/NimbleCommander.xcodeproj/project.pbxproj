@@ -391,6 +391,8 @@
 		CFEADD55259D01AD009ECA14 /* FocusOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEADD53259D01AD009ECA14 /* FocusOverlappedTerminal.mm */; };
 		CFF8353E2DC8D1B400CED300 /* PanelGalleryView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF8353D2DC8D1B400CED300 /* PanelGalleryView.mm */; };
 		CFF8353F2DC8D1B400CED300 /* PanelGalleryView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF8353C2DC8D1B400CED300 /* PanelGalleryView.h */; };
+		CFF835F82DC9504A00CED300 /* PanelGalleryCollectionViewItem.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF835F62DC9504A00CED300 /* PanelGalleryCollectionViewItem.h */; };
+		CFF835F92DC9504A00CED300 /* PanelGalleryCollectionViewItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF835F72DC9504A00CED300 /* PanelGalleryCollectionViewItem.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1368,6 +1370,8 @@
 		CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TabBarStyle.mm; path = NimbleCommander/States/FilePanels/Views/TabBarStyle.mm; sourceTree = SOURCE_ROOT; };
 		CFF8353C2DC8D1B400CED300 /* PanelGalleryView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelGalleryView.h; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryView.h; sourceTree = "<group>"; };
 		CFF8353D2DC8D1B400CED300 /* PanelGalleryView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelGalleryView.mm; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryView.mm; sourceTree = "<group>"; };
+		CFF835F62DC9504A00CED300 /* PanelGalleryCollectionViewItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelGalleryCollectionViewItem.h; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryCollectionViewItem.h; sourceTree = "<group>"; };
+		CFF835F72DC9504A00CED300 /* PanelGalleryCollectionViewItem.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelGalleryCollectionViewItem.mm; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryCollectionViewItem.mm; sourceTree = "<group>"; };
 		CFFA942C1F3DBF790035E606 /* Dock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dock.h; path = NimbleCommander/Core/Dock.h; sourceTree = SOURCE_ROOT; };
 		CFFA942D1F3DBF790035E606 /* Dock.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Dock.mm; path = NimbleCommander/Core/Dock.mm; sourceTree = SOURCE_ROOT; };
 		CFFA943A1F3E9C4D0035E606 /* ConfigWiring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigWiring.h; path = NimbleCommander/Bootstrap/ConfigWiring.h; sourceTree = SOURCE_ROOT; };
@@ -1651,6 +1655,8 @@
 			children = (
 				CF3FC99C2D99502900878079 /* Layout.h */,
 				CF3FC99D2D99502900878079 /* Layout.cpp */,
+				CFF835F62DC9504A00CED300 /* PanelGalleryCollectionViewItem.h */,
+				CFF835F72DC9504A00CED300 /* PanelGalleryCollectionViewItem.mm */,
 				CFF8353C2DC8D1B400CED300 /* PanelGalleryView.h */,
 				CFF8353D2DC8D1B400CED300 /* PanelGalleryView.mm */,
 			);
@@ -2282,6 +2288,7 @@
 			files = (
 				CFCBA8BB2CC3B1B4009ABD2C /* ShowContextMenu.h in Headers */,
 				CFCF44012BA2418100B513C7 /* ConfigBinder.h in Headers */,
+				CFF835F82DC9504A00CED300 /* PanelGalleryCollectionViewItem.h in Headers */,
 				CFEADD49259CF60D009ECA14 /* ChangePanelsPosition.h in Headers */,
 				CFEADD54259D01AD009ECA14 /* FocusOverlappedTerminal.h in Headers */,
 				CFAB6CE32587C38800397DB5 /* FollowSymlink.h in Headers */,
@@ -3113,6 +3120,7 @@
 				CF0A48332BDDA15D00833160 /* DefaultAction.mm in Sources */,
 				CF0A48152BDD9FFE00833160 /* ExternalEditorInfo.mm in Sources */,
 				CF0A48772BDDA50800833160 /* FilePanelOverlappedTerminal.mm in Sources */,
+				CFF835F92DC9504A00CED300 /* PanelGalleryCollectionViewItem.mm in Sources */,
 				CF0A48812BDDA54F00833160 /* QuickLookOverlay.mm in Sources */,
 				CF0A485A2BDDA3A000833160 /* PanelBriefViewCollectionView.mm in Sources */,
 				CF0A47FB2BDD9E9F00833160 /* ConfigWiring.mm in Sources */,

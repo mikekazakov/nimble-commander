@@ -26,8 +26,7 @@ struct PanelBriefViewItemLayoutConstants {
     int16_t icon_size;
     int16_t font_baseline;
     int16_t item_height;
-    bool operator==(const PanelBriefViewItemLayoutConstants &_rhs) const noexcept;
-    bool operator!=(const PanelBriefViewItemLayoutConstants &_rhs) const noexcept;
+    constexpr bool operator==(const PanelBriefViewItemLayoutConstants &_rhs) const noexcept = default;
 };
 
 @interface PanelBriefView : NSView <NCPanelViewPresentationProtocol,

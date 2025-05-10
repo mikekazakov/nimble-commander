@@ -3,11 +3,13 @@
 
 #include "../PanelViewImplementationProtocol.h"
 #include "Layout.h"
+#include <VFSIcon/IconRepository.h>
 
-@interface PanelGalleryView : NSView <NCPanelViewPresentationProtocol>
+@interface PanelGalleryView : NSView <NCPanelViewPresentationProtocol, NSCollectionViewDataSource>
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithFrame:(NSRect)_frame;
+- (instancetype)initWithFrame:(NSRect)_frame NS_UNAVAILABLE;
+- (instancetype)initWithFrame:(NSRect)_frame andIR:(nc::vfsicon::IconRepository &)_ir;
 
 @property(nonatomic) nc::panel::PanelGalleryViewLayout galleryLayout;
 

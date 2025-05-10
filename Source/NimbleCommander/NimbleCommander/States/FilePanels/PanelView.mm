@@ -196,7 +196,7 @@ struct StateStorage {
 
 - (PanelGalleryView *)spawnGalleryView
 {
-    auto v = [[PanelGalleryView alloc] initWithFrame:self.bounds];
+    auto v = [[PanelGalleryView alloc] initWithFrame:self.bounds andIR:*m_IconRepository];
     v.translatesAutoresizingMaskIntoConstraints = false;
     return v;
 }

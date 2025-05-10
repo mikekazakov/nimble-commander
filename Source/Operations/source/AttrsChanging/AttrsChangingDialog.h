@@ -9,6 +9,7 @@
 - (instancetype)initWithItems:(std::vector<VFSListingItem>)_items;
 
 + (bool)canEditAnythingInItems:(const std::vector<VFSListingItem> &)_items;
++ (bool)canEditAnythingInHost:(const VFSHost &)_host;
 
 @property(readonly, nonatomic) const nc::ops::AttrsChangingCommand &command;
 

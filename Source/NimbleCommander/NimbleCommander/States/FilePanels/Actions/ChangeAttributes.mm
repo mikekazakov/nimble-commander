@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ChangeAttributes.h"
 #include <Base/algo.h>
 #include <Base/dispatch_cpp.h>
@@ -21,8 +21,40 @@ ChangeAttributes::ChangeAttributes(nc::config::Config &_config) : m_Config(_conf
 
 bool ChangeAttributes::Predicate(PanelController *_target) const
 {
-    const auto i = _target.view.item;
-    return i && ((!i.IsDotDot() && i.Host()->IsWritable()) || _target.data.Stats().selected_entries_amount > 0);
+    // checks that there's an item or items to operate on, they have the same host and that host supports changing
+    // attributes
+    VFSHostPtr host;
+    const nc::panel::data::Model &data = _target.data;
+    if( data.Stats().selected_entries_amount == 0 ) {
+        // Simplest form - nothing is selected, just get the focused item and check it
+        const VFSListingItem item = _target.view.item;
+        if( !item || item.IsDotDot() )
+            return false;
+        host = item.Host();
+    }
+    else if( data.Listing().HasCommonHost() ) {
+        // There are selected items => need to check them, but the listing has the common host => get it from the
+        // listing
+        host = data.Listing().Host();
+    }
+    else {
+        // The most expensive check - need to check each selected item
+        for( const unsigned ind : data.SortedDirectoryEntries() ) {
+            if( data.VolatileDataAtRawPosition(ind).is_selected() )
+                if( const VFSListingItem e = data.EntryAtRawPosition(ind) ) {
+                    if( host == nullptr ) {
+                        host = e.Host();
+                    }
+                    else if( host != e.Host() ) {
+                        return false; // Can't operate on a set of different hosts
+                    }
+                }
+        }
+    }
+    if( !host )
+        return false; // failsafe - something is wrong
+
+    return [NCOpsAttrsChangingDialog canEditAnythingInHost:*host];
 }
 
 void ChangeAttributes::Perform(PanelController *_target, [[maybe_unused]] id _sender) const

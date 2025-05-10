@@ -39,9 +39,9 @@ bool ChangeAttributes::Predicate(PanelController *_target) const
     }
     else {
         // The most expensive check - need to check each selected item
-        for( unsigned ind : data.SortedDirectoryEntries() ) {
+        for( const unsigned ind : data.SortedDirectoryEntries() ) {
             if( data.VolatileDataAtRawPosition(ind).is_selected() )
-                if( VFSListingItem e = data.EntryAtRawPosition(ind) ) {
+                if( const VFSListingItem e = data.EntryAtRawPosition(ind) ) {
                     if( host == nullptr ) {
                         host = e.Host();
                     }

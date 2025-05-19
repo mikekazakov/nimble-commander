@@ -4,5 +4,6 @@
 namespace nc::bootstrap {
 
 void ProcessCLIUsage(int argc, char *argv[]);
+bool ShouldOpenNewWindowFromCLI();
 
 }

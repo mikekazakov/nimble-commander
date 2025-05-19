@@ -1,3 +1,4 @@
+#include "CLI.h"
 // Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate.h"
 #include "AppDelegateCPP.h"
@@ -296,6 +297,12 @@ static NCAppDelegate *g_Me = nil;
             }
         }
     }
+
+    // In - (id)init or applicationDidFinishLaunching, add observer for NCOpenNewWindow:
+    [[NSDistributedNotificationCenter defaultCenter] addObserver:self
+                                                        selector:@selector(handleDistributedNewWindow:)
+                                                            name:@"NCOpenNewWindow"
+                                                          object:nil];
 }
 
 - (void)wireMenuDelegates
@@ -384,6 +391,23 @@ static NCAppDelegate *g_Me = nil;
     if( self.mainWindowControllers.empty() )
         [self applicationOpenUntitledFile:NSApp]; // if there's no restored windows - we'll create a
                                                   // freshly new one
+
+    // If --new-window was passed, try to notify a running instance and exit if successful
+    if( nc::bootstrap::ShouldOpenNewWindowFromCLI() ) {
+        // Use NSDistributedNotificationCenter to notify any running instance
+        [[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"NCOpenNewWindow"
+                                                                       object:nil
+                                                                     userInfo:nil
+                                                          deliverImmediately:YES];
+        // Exit this process, do not open a window in this instance
+        [NSApp terminate:nil];
+        return;
+    }
+
+    // If --new-window was passed, always open a new window
+    if( nc::bootstrap::ShouldOpenNewWindowFromCLI() ) {
+        [self onMainMenuNewWindow:self];
+    }
 
     NSApp.servicesProvider = self;
 #pragma clang diagnostic push
@@ -958,6 +982,10 @@ static void DoTemporaryFileStoragePurge()
     [[clang::no_destroy]] static nc::core::ActionsShortcutsManager manager(
         g_ActionsTags, g_DefaultActionShortcuts, GlobalConfig());
     return manager;
+}
+
+- (void)handleDistributedNewWindow:(NSNotification *)notification {
+    [self onMainMenuNewWindow:self];
 }
 
 @end

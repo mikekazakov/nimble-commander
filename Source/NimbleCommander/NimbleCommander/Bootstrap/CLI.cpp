@@ -15,7 +15,10 @@ static const auto g_Message = "Command-line options:                            
                               "Command-line commands:                                                         \n"
                               "--help                          Prints this message.                           \n"
                               "--install-privileged-helper     Installs the Admin Mode helper.                \n"
-                              "--uninstall-privileged-helper   Stops and uninstalls the Admin Mode helper.    \n";
+                              "--uninstall-privileged-helper   Stops and uninstalls the Admin Mode helper.    \n"
+                              "--new-window                   Opens a new window in the current instance.    \n";
+
+static bool g_ShouldOpenNewWindow = false;
 
 void ProcessCLIUsage(int argc, char *argv[])
 {
@@ -33,7 +36,14 @@ void ProcessCLIUsage(int argc, char *argv[])
             nc::routedio::RoutedIO::UninstallViaRootCLI();
             std::exit(0);
         }
+        if( arg == "--new-window" ) {
+            g_ShouldOpenNewWindow = true;
+        }
     }
+}
+
+bool ShouldOpenNewWindowFromCLI() {
+    return g_ShouldOpenNewWindow;
 }
 
 } // namespace nc::bootstrap

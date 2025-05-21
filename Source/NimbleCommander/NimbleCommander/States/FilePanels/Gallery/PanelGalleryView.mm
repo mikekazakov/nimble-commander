@@ -1,5 +1,6 @@
 // Copyright (C) 2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelGalleryView.h"
+#include "PanelGalleryCollectionView.h"
 #include "PanelGalleryCollectionViewItem.h"
 #include "../Helpers/IconRepositoryCleaner.h"
 #include <NimbleCommander/Bootstrap/Config.h> // TODO: evil! DI instead!
@@ -23,7 +24,7 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
     PanelGalleryViewLayout m_Layout;
 
     NSScrollView *m_ScrollView;
-    NSCollectionView *m_CollectionView;
+    NCPanelGalleryViewCollectionView *m_CollectionView;
     NSCollectionViewFlowLayout *m_CollectionViewLayout;
 
     QLPreviewView *m_QLView;
@@ -57,12 +58,12 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
     m_CollectionViewLayout.itemSize = NSMakeSize(40, 40);
     m_CollectionViewLayout.minimumLineSpacing = 10.;
     m_CollectionViewLayout.sectionInset = NSEdgeInsetsMake(0., 0., 0., 0.);
-    m_CollectionView = [[NSCollectionView alloc] initWithFrame:_frame];
+    
+    m_CollectionView = [[NCPanelGalleryViewCollectionView alloc] initWithFrame:_frame];
     m_CollectionView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
     m_CollectionView.collectionViewLayout = m_CollectionViewLayout;
     m_CollectionView.dataSource = self;
-    m_CollectionView.selectable = true;
-
+    m_CollectionView.smoothScrolling = GlobalConfig().GetBool(g_SmoothScrolling);
     [m_CollectionView registerClass:NCPanelGalleryCollectionViewItem.class forItemWithIdentifier:@"GalleryItem"];
 
     m_QLView = [[QLPreviewView alloc] initWithFrame:_frame style:QLPreviewViewStyleNormal];
@@ -135,7 +136,7 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
         const auto index_path = [NSIndexPath indexPathForItem:_cursor_position inSection:0];
         const auto indices = [NSSet setWithObject:index_path];
         m_CollectionView.selectionIndexPaths = indices;
-        [self ensureItemIsVisible:_cursor_position];
+        [m_CollectionView ensureItemIsVisible:_cursor_position];
     }
 
     if( auto vfs_item = m_Data->EntryAtSortPosition(_cursor_position) ) {
@@ -206,6 +207,11 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
     m_Layout = _layout;
 }
 
+- (BOOL)isOpaque
+{
+    return true;
+}
+
 - (NSInteger)collectionView:(NSCollectionView *)_collection_view numberOfItemsInSection:(NSInteger)_section
 {
     return m_Data ? m_Data->SortedDirectoryEntries().size() : 0;
@@ -247,56 +253,6 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
         if( auto item = nc::objc_cast<NCPanelGalleryCollectionViewItem>([m_CollectionView itemAtIndexPath:index]) ) {
             item.imageView.image = _icon;
         }
-    }
-}
-
-- (void)ensureItemIsVisible:(int)_item_index
-{
-    if( _item_index < 0 )
-        return;
-
-    // the existing scroll state and item's position
-    const auto visible_rect = m_ScrollView.documentVisibleRect;
-    const auto item_rect = [m_CollectionView frameForItemAtIndex:_item_index];
-
-    // check if the item is already visible - nothing to do in that case
-    if( NSContainsRect(visible_rect, item_rect) )
-        return;
-
-    // NB! not updated automatically, initialized only once per run
-    static const bool smooth_scroll = GlobalConfig().GetBool(g_SmoothScrolling);
-    auto scroll_to = [&](NSPoint _pt) {
-        if( smooth_scroll ) {
-            [m_ScrollView.contentView scrollPoint:_pt];
-        }
-        else {
-            [m_ScrollView.contentView setBoundsOrigin:_pt];
-        }
-        [m_CollectionView
-            prepareContentInRect:NSMakeRect(_pt.x, _pt.y, visible_rect.size.width, visible_rect.size.height)];
-    };
-
-    // NB! scrollToItemsAtIndexPaths is NOT used here because at some version of macOS it decided to
-    // add gaps to the items it's been asked to scroll to. That looks very buggy. Hence this custom
-    // logic
-    if( visible_rect.size.width >= item_rect.size.width ) {
-        // normal case - scroll to the item, aligning depending on its location
-        if( item_rect.origin.x < visible_rect.origin.x ) {
-            // align left
-            scroll_to(NSMakePoint(item_rect.origin.x, 0.));
-        }
-        else if( NSMaxX(item_rect) > NSMaxX(visible_rect) ) {
-            // align right
-            scroll_to(NSMakePoint(item_rect.origin.x + item_rect.size.width - visible_rect.size.width, 0.));
-        }
-        else {
-            // center
-            scroll_to(NSMakePoint(item_rect.origin.x - ((visible_rect.size.width - item_rect.size.width) / 2.), 0.));
-        }
-    }
-    else {
-        // singular case - just try to show as much as possible
-        scroll_to(NSMakePoint(item_rect.origin.x, 0.));
     }
 }
 

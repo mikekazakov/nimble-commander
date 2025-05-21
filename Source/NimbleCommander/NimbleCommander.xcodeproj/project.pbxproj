@@ -393,6 +393,8 @@
 		CFF8353F2DC8D1B400CED300 /* PanelGalleryView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF8353C2DC8D1B400CED300 /* PanelGalleryView.h */; };
 		CFF835F82DC9504A00CED300 /* PanelGalleryCollectionViewItem.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF835F62DC9504A00CED300 /* PanelGalleryCollectionViewItem.h */; };
 		CFF835F92DC9504A00CED300 /* PanelGalleryCollectionViewItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF835F72DC9504A00CED300 /* PanelGalleryCollectionViewItem.mm */; };
+		CFF836B92DCFE98B00CED300 /* PanelGalleryCollectionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF836B82DCFE98B00CED300 /* PanelGalleryCollectionView.mm */; };
+		CFF836BA2DCFE98B00CED300 /* PanelGalleryCollectionView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF836B72DCFE98B00CED300 /* PanelGalleryCollectionView.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1372,6 +1374,8 @@
 		CFF8353D2DC8D1B400CED300 /* PanelGalleryView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelGalleryView.mm; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryView.mm; sourceTree = "<group>"; };
 		CFF835F62DC9504A00CED300 /* PanelGalleryCollectionViewItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelGalleryCollectionViewItem.h; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryCollectionViewItem.h; sourceTree = "<group>"; };
 		CFF835F72DC9504A00CED300 /* PanelGalleryCollectionViewItem.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelGalleryCollectionViewItem.mm; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryCollectionViewItem.mm; sourceTree = "<group>"; };
+		CFF836B72DCFE98B00CED300 /* PanelGalleryCollectionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelGalleryCollectionView.h; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryCollectionView.h; sourceTree = "<group>"; };
+		CFF836B82DCFE98B00CED300 /* PanelGalleryCollectionView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelGalleryCollectionView.mm; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryCollectionView.mm; sourceTree = "<group>"; };
 		CFFA942C1F3DBF790035E606 /* Dock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dock.h; path = NimbleCommander/Core/Dock.h; sourceTree = SOURCE_ROOT; };
 		CFFA942D1F3DBF790035E606 /* Dock.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Dock.mm; path = NimbleCommander/Core/Dock.mm; sourceTree = SOURCE_ROOT; };
 		CFFA943A1F3E9C4D0035E606 /* ConfigWiring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigWiring.h; path = NimbleCommander/Bootstrap/ConfigWiring.h; sourceTree = SOURCE_ROOT; };
@@ -1655,6 +1659,8 @@
 			children = (
 				CF3FC99C2D99502900878079 /* Layout.h */,
 				CF3FC99D2D99502900878079 /* Layout.cpp */,
+				CFF836B72DCFE98B00CED300 /* PanelGalleryCollectionView.h */,
+				CFF836B82DCFE98B00CED300 /* PanelGalleryCollectionView.mm */,
 				CFF835F62DC9504A00CED300 /* PanelGalleryCollectionViewItem.h */,
 				CFF835F72DC9504A00CED300 /* PanelGalleryCollectionViewItem.mm */,
 				CFF8353C2DC8D1B400CED300 /* PanelGalleryView.h */,
@@ -2299,6 +2305,7 @@
 				CFA999F4264F17A800F72E93 /* CLI.h in Headers */,
 				CF9B07C626FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.h in Headers */,
 				CFF8353F2DC8D1B400CED300 /* PanelGalleryView.h in Headers */,
+				CFF836BA2DCFE98B00CED300 /* PanelGalleryCollectionView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3063,6 +3070,7 @@
 				CF0A481C2BDDA02800833160 /* PanelAux.mm in Sources */,
 				CF0A48872BDDA58000833160 /* FavoriteComposing.mm in Sources */,
 				CFD2D27E28A05E57003C18F9 /* ThemePersistence.mm in Sources */,
+				CFF836B92DCFE98B00CED300 /* PanelGalleryCollectionView.mm in Sources */,
 				CF0A48132BDD9FAC00833160 /* MainWindowInternalViewerState.mm in Sources */,
 				CF0A482A2BDDA0AA00833160 /* AddToFavorites.mm in Sources */,
 				CF0A48302BDDA13600833160 /* CopyFile.mm in Sources */,

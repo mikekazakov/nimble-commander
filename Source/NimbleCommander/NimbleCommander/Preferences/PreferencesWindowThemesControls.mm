@@ -432,22 +432,20 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
 
 - (void)onColorChanged:(id)sender
 {
-    if( NSColorWell *cw = nc::objc_cast<NSColorWell>(sender) )
-        if( auto rv = nc::objc_cast<NSTableRowView>(cw.superview) )
-            if( rv.superview == self.table ) {
-                long row_no = [self.table rowForView:rv];
-                if( row_no >= 0 ) {
-                    auto new_color = cw.color;
-                    if( cw == [rv viewAtColumn:1] && m_Rules.at(row_no).regular != new_color ) {
-                        m_Rules.at(row_no).regular = new_color;
-                        [self commit];
-                    }
-                    if( cw == [rv viewAtColumn:2] && m_Rules.at(row_no).focused != new_color ) {
-                        m_Rules.at(row_no).focused = new_color;
-                        [self commit];
-                    }
-                }
+    if( NSColorWell *cw = nc::objc_cast<NSColorWell>(sender) ) {
+        if( const long row_no = [self.table rowForView:cw]; row_no >= 0 ) {
+            const long col_no = [self.table columnForView:cw];
+            NSColor *new_color = cw.color;
+            if( col_no == 1 && m_Rules.at(row_no).regular != new_color ) {
+                m_Rules.at(row_no).regular = new_color;
+                [self commit];
             }
+            if( col_no == 2 && m_Rules.at(row_no).focused != new_color ) {
+                m_Rules.at(row_no).focused = new_color;
+                [self commit];
+            }
+        }
+    }
 }
 
 - (NSView *)tableView:(NSTableView *) [[maybe_unused]] tableView
@@ -577,16 +575,11 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
     NSTextField *tf = obj.object;
     if( !tf )
         return;
-    if( auto rv = nc::objc_cast<NSTableRowView>(tf.superview) ) {
-        if( rv.superview == self.table ) {
-            long row_no = [self.table rowForView:rv];
-            if( row_no >= 0 ) {
-                auto new_value = tf.stringValue ? tf.stringValue.UTF8String : "";
-                if( m_Rules[row_no].name != new_value ) {
-                    m_Rules[row_no].name = new_value;
-                    [self commit];
-                }
-            }
+    if( const long row_no = [self.table rowForView:tf]; row_no >= 0 ) {
+        auto new_value = tf.stringValue ? tf.stringValue.UTF8String : "";
+        if( m_Rules[row_no].name != new_value ) {
+            m_Rules[row_no].name = new_value;
+            [self commit];
         }
     }
 }
@@ -594,8 +587,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
 - (void)onColoringFilterClicked:(id)sender
 {
     if( auto button = nc::objc_cast<NSButton>(sender) )
-        if( auto rv = nc::objc_cast<NSTableRowView>(button.superview) ) {
-            long row_no = [static_cast<NSTableView *>(rv.superview) rowForView:rv];
+        if( const long row_no = [self.table rowForView:button]; row_no >= 0 ) {
             auto sheet =
                 [[PreferencesWindowPanelsTabColoringFilterSheet alloc] initWithFilter:m_Rules.at(row_no).filter];
             [sheet beginSheetForWindow:self.window

@@ -95,6 +95,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <unistd.h>
 
 using namespace std::literals;
 using namespace nc::bootstrap;
@@ -388,28 +389,75 @@ static NCAppDelegate *g_Me = nil;
 {
     m_FinishedLaunching.toggle();
 
-    if( self.mainWindowControllers.empty() )
-        [self applicationOpenUntitledFile:NSApp]; // if there's no restored windows - we'll create a
-                                                  // freshly new one
-
-    // If --new-window was passed, try to notify a running instance and exit if successful
-    if( nc::bootstrap::ShouldOpenNewWindowFromCLI() ) {
-        // Use NSDistributedNotificationCenter to notify any running instance
-        [[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"NCOpenNewWindow"
-                                                                       object:nil
-                                                                     userInfo:nil
-                                                          deliverImmediately:YES];
-        // Exit this process, do not open a window in this instance
-        [NSApp terminate:nil];
-        return;
-    }
-
-    // If --new-window was passed, always open a new window
-    if( nc::bootstrap::ShouldOpenNewWindowFromCLI() ) {
+    // Check for --new-window flag first
+    BOOL shouldOpenNewWindow = nc::bootstrap::ShouldOpenNewWindowFromCLI();
+    
+    // Handle --new-window flag first, if present
+    if( shouldOpenNewWindow ) {
+        // Check for existing instances using NSRunningApplication
+        NSString *bundleID = NSBundle.mainBundle.bundleIdentifier;
+        NSArray<NSRunningApplication *> *runningInstances = [NSRunningApplication runningApplicationsWithBundleIdentifier:bundleID];
+        
+        // Count only other instances (excluding ourselves)
+        NSUInteger otherInstanceCount = 0;
+        NSRunningApplication *currentApp = [NSRunningApplication currentApplication];
+        for (NSRunningApplication *app in runningInstances) {
+            if (![app isEqual:currentApp]) {
+                otherInstanceCount++;
+            }
+        }
+        
+        if (otherInstanceCount > 0) {
+            // Other instances exist, try to notify them
+            NSString *requestID = [[NSUUID UUID] UUIDString];
+            
+            // Set up a response listener
+            __block BOOL notificationReceived = NO;
+            id observer = [[NSDistributedNotificationCenter defaultCenter] 
+                addObserverForName:@"NCOpenNewWindowResponse"
+                            object:nil
+                             queue:[NSOperationQueue mainQueue]
+                        usingBlock:^(NSNotification *note) {
+                            if ([note.userInfo[@"responseToID"] isEqualToString:requestID]) {
+                                notificationReceived = YES;
+                            }
+                        }];
+            
+            // Send notification with our unique ID
+            [[NSDistributedNotificationCenter defaultCenter] 
+                postNotificationName:@"NCOpenNewWindow"
+                              object:nil
+                            userInfo:@{@"requestID": requestID}
+                 deliverImmediately:YES];
+            
+            // Wait briefly for a response (up to 0.5 seconds)
+            NSDate *timeout = [NSDate dateWithTimeIntervalSinceNow:0.5];
+            while (!notificationReceived && [timeout timeIntervalSinceNow] > 0) {
+                [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:timeout];
+            }
+            
+            // Clean up observer
+            [[NSDistributedNotificationCenter defaultCenter] removeObserver:observer];
+            
+            if (notificationReceived) {
+                // Another instance responded, so we should exit cleanly
+                // Clean exit immediately without running atexit handlers
+                // No need to call daemon() (which is deprecated) since we're exiting completely
+                _exit(0);
+            }
+        }
+        
+        // No other instances or no response, so we should handle the request ourselves
         [self onMainMenuNewWindow:self];
+        return; // Skip normal window creation
     }
+    
+    // Only open the default window if we're not handling the --new-window flag
+    // and no windows are already open
+    if( self.mainWindowControllers.empty() )
+        [self applicationOpenUntitledFile:NSApp]; // if there's no restored windows - we'll create a freshly new one
 
-    NSApp.servicesProvider = self;
+    [NSApp setServicesProvider:self];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [NSApp registerServicesMenuSendTypes:@[NSFilenamesPboardType, (__bridge NSString *)kUTTypeFileURL]
@@ -985,7 +1033,22 @@ static void DoTemporaryFileStoragePurge()
 }
 
 - (void)handleDistributedNewWindow:(NSNotification *)notification {
-    [self onMainMenuNewWindow:self];
+    // Send response immediately if we have a request ID, even before we create the window
+    // This allows the requesting process to terminate quickly
+    if (notification.userInfo && notification.userInfo[@"requestID"]) {
+        // Send response with the same ID to let the requesting process know we received it
+        [[NSDistributedNotificationCenter defaultCenter] 
+            postNotificationName:@"NCOpenNewWindowResponse"
+                          object:nil
+                        userInfo:@{@"responseToID": notification.userInfo[@"requestID"]}
+             deliverImmediately:YES];
+    }
+    
+    // Always create a new window regardless of launch state
+    // Use dispatch_async to ensure this happens on the main queue
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self onMainMenuNewWindow:self];
+    });
 }
 
 @end

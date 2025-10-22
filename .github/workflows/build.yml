@@ -44,12 +44,8 @@ jobs:
         brew install qemu
         brew install docker
         brew install colima
-        # specifically install an outdated version of lima - 0.23.2 as with 1.0.1 there are network connectivity issues
-        brew uninstall --ignore-dependencies lima
-        curl https://raw.githubusercontent.com/Homebrew/homebrew-core/45464b6c4788a80be3f131ab5e2a4468cdfa960c/Formula/l/lima.rb > lima.rb
-        brew install lima.rb                
         LIMACTL_PATH=$(brew --prefix)/bin/limactl
-        sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
+        sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf2/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
         colima start --network-address --arch arm64 --vm-type=qemu
     - uses: actions/checkout@v4
     - name: Work around GHA issue 7522

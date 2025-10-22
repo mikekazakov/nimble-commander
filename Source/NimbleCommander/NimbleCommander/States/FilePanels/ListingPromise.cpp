@@ -39,7 +39,9 @@ ListingPromise::NonUniformListing ListingPromise::FromNonUniformListing(const VF
     // this will blow up the memory subsystem on listings with 1m+ entries.
     // might need to come with a more clever solution.
     for( unsigned index = 0, count = _listing.Count(); index < count; ++index ) {
+        // NOLINTBEGIN(misc-const-correctness)
         VFSHost *const host_ptr = _listing.Host(index).get();
+        // NOLINTEND(misc-const-correctness)
 
         auto &per_host = entries[host_ptr];
 

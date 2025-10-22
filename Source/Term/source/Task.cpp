@@ -90,7 +90,7 @@ void Task::SetupHandlesAndSID(int _slave_fd)
 static std::string GetLocale()
 {
     // Keep a copy of the current locale setting for this process
-    char *backupLocale = setlocale(LC_CTYPE, nullptr);
+    const char *backupLocale = setlocale(LC_CTYPE, nullptr);
     if( backupLocale != nullptr && !std::string_view{backupLocale}.empty() && std::string_view{backupLocale} != "C" ) {
         return backupLocale;
     }

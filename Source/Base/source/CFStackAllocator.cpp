@@ -37,7 +37,9 @@ void *CFStackAllocator::DoAlloc(CFIndex _alloc_size, CFOptionFlags /*_hint*/, vo
 
     auto me = static_cast<CFStackAllocator *>(_info);
     if( aligned_size <= me->m_Left ) {
-        void *v = me->m_Buffer + m_Size - me->m_Left;
+        // NOLINTBEGIN(misc-const-correctness)
+        void *const v = me->m_Buffer + m_Size - me->m_Left;
+        // NOLINTEND(misc-const-correctness)
         me->m_Left -= aligned_size;
         me->m_StackObjects++;
         return v;

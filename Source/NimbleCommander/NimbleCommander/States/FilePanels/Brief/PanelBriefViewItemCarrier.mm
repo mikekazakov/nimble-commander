@@ -449,7 +449,7 @@ static bool HasNoModifiers(NSEvent *_event)
     // let the editor occupy the entire text segment and ensure that it is vertically centered within our view
     text_segment_rect.origin.y = m_LayoutConstants.font_baseline - fi.Descent();
     text_segment_rect.origin.x -= line_padding;
-    text_segment_rect.size.height = bounds.size.height - text_segment_rect.origin.y * 2.;
+    text_segment_rect.size.height = bounds.size.height - (text_segment_rect.origin.y * 2.);
     text_segment_rect.size.width += 1.; // cover for any roundings potentially caused by compressing
     _editor.frame = text_segment_rect;
 

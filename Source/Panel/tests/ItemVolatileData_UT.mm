@@ -110,7 +110,8 @@ TEST_CASE(PREFIX "ranges constructor")
         struct TC {
             R src, dst;
         } const tcs[] = {{
-            .src = {0, 1000}, .dst = {0, 120},
+            .src = {0, 1000},
+            .dst = {0, 120},
             // TODO: more?
         }};
         for( auto test_case : tcs ) {

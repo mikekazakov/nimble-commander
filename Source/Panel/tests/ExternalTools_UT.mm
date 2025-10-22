@@ -420,6 +420,40 @@ TEST_CASE(PREFIX "ExternalToolExecution - generation of simple arguments")
     }
 }
 
+TEST_CASE(PREFIX "ExternalToolExecution - panel path can be queried even if there's no items")
+{
+    const TempTestDir dir;
+    const std::filesystem::path &root = dir.directory;
+    std::filesystem::create_directory(root / "dir1");
+    std::filesystem::create_directory(root / "dir2");
+
+    const VFSListingPtr l1 =
+        TestEnv().vfs_native->FetchDirectoryListing((root / "dir1").c_str(), VFSFlags::F_NoDotDot).value();
+    const VFSListingPtr l2 =
+        TestEnv().vfs_native->FetchDirectoryListing((root / "dir2").c_str(), VFSFlags::F_NoDotDot).value();
+    data::Model left;
+    data::Model right;
+    left.Load(l1, data::Model::PanelType::Directory);
+    right.Load(l2, data::Model::PanelType::Directory);
+    nc::utility::TemporaryFileStorageImpl temp_storage(root.native(), "temp");
+
+    ExternalToolExecution::Context ctx;
+    ctx.left_data = &left;
+    ctx.right_data = &right;
+    ctx.focus = ExternalToolExecution::PanelFocus::left;
+    ctx.left_cursor_pos = -1;
+    ctx.right_cursor_pos = -1;
+    ctx.temp_storage = &temp_storage;
+
+    ExternalTool et;
+    et.m_Parameters = "%r %-r";
+
+    const ExternalToolExecution ex{ctx, et};
+    std::vector<std::string> args = ex.BuildArguments();
+
+    CHECK(args == std::vector<std::string>{root / "dir1", root / "dir2"});
+}
+
 TEST_CASE(PREFIX "ExternalToolExecution - generation of lists as parameters")
 {
     const TempTestDir dir;

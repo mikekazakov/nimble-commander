@@ -167,7 +167,7 @@ std::expected<void, Error> SFTPHost::DoInit()
             throw std::runtime_error("libssh2_init failed");
     });
 
-    struct hostent *remote_host = gethostbyname(Config().server_url.c_str());
+    struct hostent const *remote_host = gethostbyname(Config().server_url.c_str());
     if( !remote_host )
         return std::unexpected(Error{ErrorDomain, Errors::couldnt_resolve}); // need something meaningful
     if( remote_host->h_addrtype != AF_INET )
@@ -254,7 +254,7 @@ void SFTPHost::SpawnSSH2_KbdCallback([[maybe_unused]] const char *name,
                                      LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses,
                                      void **abstract)
 {
-    SFTPHost *_this = *(SFTPHost **)abstract;
+    const SFTPHost *_this = *(SFTPHost **)abstract;
     if( num_prompts == 1 ) {
         responses[0].text = strdup(_this->Config().passwd.c_str());
         responses[0].length = (unsigned)_this->Config().passwd.length();

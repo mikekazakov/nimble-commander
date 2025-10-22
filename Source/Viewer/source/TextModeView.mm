@@ -570,7 +570,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
             m_HorizontalCharsOffset -= 1;
             px_offset += m_FontInfo.PreciseMonospaceWidth();
         }
-        if( m_HorizontalCharsOffset * m_FontInfo.PreciseMonospaceWidth() + px_offset < 0. ) {
+        if( (m_HorizontalCharsOffset * m_FontInfo.PreciseMonospaceWidth()) + px_offset < 0. ) {
             // left-bound clamp
             m_HorizontalCharsOffset = 0;
             px_offset = 0.;
@@ -591,7 +591,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
             m_HorizontalCharsOffset = 0;
             px_offset = 0.;
         }
-        else if( m_HorizontalCharsOffset * m_FontInfo.PreciseMonospaceWidth() + px_offset > gap ) {
+        else if( (m_HorizontalCharsOffset * m_FontInfo.PreciseMonospaceWidth()) + px_offset > gap ) {
             // right-bound clamp
             m_HorizontalCharsOffset = static_cast<int>(std::floor(gap / m_FontInfo.PreciseMonospaceWidth()));
             px_offset = std::fmod(gap, m_FontInfo.PreciseMonospaceWidth());

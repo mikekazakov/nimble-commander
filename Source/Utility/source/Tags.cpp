@@ -318,7 +318,7 @@ std::vector<Tags::Tag> Tags::ParseMDItemUserTags(const std::span<const std::byte
                     tags.push_back(*tag);
         }
         if( (byte_marker & 0xF0) == 0x60 ) { // Unicode string...
-            if( const auto vl = ExtractVarLen(byte_marker_ptr); vl && vl->start + vl->length * 2 <= objs_end )
+            if( const auto vl = ExtractVarLen(byte_marker_ptr); vl && vl->start + (vl->length * 2) <= objs_end )
                 if( auto tag = ParseTag({reinterpret_cast<const char16_t *>(vl->start), vl->length}) )
                     tags.push_back(*tag);
         }

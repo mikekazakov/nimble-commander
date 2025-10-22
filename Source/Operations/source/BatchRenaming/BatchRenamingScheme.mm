@@ -273,7 +273,7 @@ static std::optional<std::pair<unsigned short, short>> EatUShort(NSString *s, co
         c = [s characterAtIndex:pos + n];
         if( c < '0' || c > '9' )
             break;
-        r = r * 10 + c - '0';
+        r = (r * 10) + c - '0';
         n++;
     } while( pos + n < l );
 
@@ -308,7 +308,7 @@ static std::optional<std::pair<int, short>> EatInt(NSString *s, const unsigned l
         c = [s characterAtIndex:pos + n];
         if( c < '0' || c > '9' )
             break;
-        r = r * 10 + c - '0';
+        r = (r * 10) + c - '0';
         n++;
     } while( pos + n < l );
 
@@ -611,7 +611,7 @@ NSString *BatchRenamingScheme::FormatCounter(const Counter &_c, int _file_number
     if( _c.stripe == 0 )
         return @"";
 
-    char *buf = static_cast<char *>(alloca(_c.width + 32)); // no heap allocs, for great justice!
+    char *const buf = static_cast<char *>(alloca(_c.width + 32)); // no heap allocs, for great justice!
     if( !buf )
         return @"";
     *fmt::format_to(buf, "{:0{}}", _c.start + (_c.step * (_file_number / _c.stripe)), _c.width) = 0;

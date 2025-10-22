@@ -36,7 +36,7 @@ TEST_CASE(PREFIX "Parsing empty produces no parameters")
 
 TEST_CASE(PREFIX "Parsing - errors")
 {
-    const char *invalids[] = {
+    const char *const invalids[] = {
         "%",   // non-terminated percent command
         "%\"", // non-terminated enter value
         "%\"?" // enter value with broken quotes

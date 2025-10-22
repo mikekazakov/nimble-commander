@@ -411,7 +411,7 @@ std::string PSHost::ProcInfoIntoFile(const ProcInfo &_info, std::shared_ptr<Snap
     }
 
     const char *user_name = "N/A";
-    if( struct passwd *pwd = getpwuid(_info.p_uid) )
+    if( struct passwd const *pwd = getpwuid(_info.p_uid) )
         user_name = pwd->pw_name;
 
     result += "Name: "s + _info.name + "\n";

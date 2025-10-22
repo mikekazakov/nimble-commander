@@ -245,7 +245,7 @@ CURLcode CURLInstance::PerformMulti() const
     if( still_running == 0 ) {
         int msgs_left = 1;
         while( msgs_left ) {
-            CURLMsg *msg = curl_multi_info_read(curlm, &msgs_left);
+            const CURLMsg *msg = curl_multi_info_read(curlm, &msgs_left);
             if( msg == nullptr || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
                 if( msg )
                     result = msg->data.result;
@@ -280,7 +280,7 @@ int CURLInstance::ProgressCallback(void *clientp,
                                    curl_off_t ultotal,
                                    curl_off_t ulnow)
 {
-    CURLInstance *_this = static_cast<CURLInstance *>(clientp);
+    const CURLInstance *_this = static_cast<CURLInstance *>(clientp);
     return _this->prog_func ? _this->prog_func(dltotal, dlnow, ultotal, ulnow) : 0;
 }
 

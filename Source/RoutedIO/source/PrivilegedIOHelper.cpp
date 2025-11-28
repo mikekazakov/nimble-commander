@@ -675,7 +675,7 @@ static void XPC_Connection_Handler(xpc_connection_t _connection)
     ConnectionContext *cc = new ConnectionContext;
     xpc_connection_set_context(_connection, cc);
     xpc_connection_set_finalizer_f(_connection, [](void *_value) {
-        ConnectionContext *context = static_cast<ConnectionContext *>(_value);
+        const ConnectionContext *context = static_cast<ConnectionContext *>(_value);
         delete context;
     });
     xpc_connection_set_event_handler(_connection, ^(xpc_object_t event) {

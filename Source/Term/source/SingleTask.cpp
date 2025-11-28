@@ -74,7 +74,7 @@ void SingleTask::Launch(const char *_full_binary_path, const char *_params, int 
     m_TermSY = _sy;
 
     // user's home dir to set as cwd
-    struct passwd *pw = getpwuid(getuid());
+    struct passwd const *pw = getpwuid(getuid());
 
     // find out binary name to put as argv[0]
     const char *img_name = ImgNameFromPath(_full_binary_path);

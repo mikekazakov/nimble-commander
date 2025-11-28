@@ -139,7 +139,7 @@ SearchInFile::Response SearchInFile::SearchText(uint64_t *_offset, uint64_t *_by
                 assert(left_window_gap == 0);
                 assert(size_t(CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit) < m_File.WindowSize());
                 m_Position =
-                    m_Position + m_File.WindowSize() - CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit;
+                    m_Position + m_File.WindowSize() - (CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit);
             }
             else { // this is the end (c)
                 m_Position = m_File.FileSize();

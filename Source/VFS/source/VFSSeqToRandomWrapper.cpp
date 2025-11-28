@@ -81,7 +81,7 @@ VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
 
         const size_t max_io = 256ULL * 1024ULL;
         uint8_t *d = &backend->m_DataBuf[0];
-        uint8_t *e = d + backend->m_Size;
+        const uint8_t *e = d + backend->m_Size;
 
         while( d < e ) {
             const std::expected<size_t, nc::Error> res = m_SeqFile->Read(d, std::min(e - d, static_cast<long>(max_io)));

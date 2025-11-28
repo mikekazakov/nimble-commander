@@ -673,7 +673,7 @@ void ShellTask::Impl::CleanUp()
     // first we must ensure that the dispatch sources (if any) are cancelled BEFORE calling DoCleanUp()
     dispatch_group_async_f(
         io_group, io_queue, this, +[](void *_ctx) {
-            Impl *me = static_cast<Impl *>(_ctx);
+            const Impl *me = static_cast<Impl *>(_ctx);
             if( me->master_source != nullptr )
                 dispatch_source_cancel(me->master_source);
             if( me->cwd_source != nullptr )

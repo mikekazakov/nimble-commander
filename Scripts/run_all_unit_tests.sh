@@ -12,6 +12,9 @@ fi
 # https://github.com/xcpretty/xcpretty/issues/48
 export LC_CTYPE=en_US.UTF-8
 
+# https://github.com/google/sanitizers/wiki/AddressSanitizerContainerOverflow#false-positives
+export ASAN_OPTIONS=detect_container_overflow=0
+
 # get current directory
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 

@@ -459,7 +459,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         if( attr.underline ) {
             CGRect rc;
             rc.origin.x = _first * width;
-            rc.origin.y = _y * height + height - 1; /* NEED A REAL UNDERLINE POSITION HERE !!! */
+            rc.origin.y = (_y * height) + height - 1; /* NEED A REAL UNDERLINE POSITION HERE !!! */
             rc.size.width = (_last - _first) * width;
             rc.size.height = 1.;
             CGContextFillRect(_context, rc);
@@ -468,7 +468,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         if( attr.crossed ) {
             CGRect rc;
             rc.origin.x = _first * width;
-            rc.origin.y = _y * height + height / 2.; /* NEED A REAL CROSS POSITION HERE !!! */
+            rc.origin.y = (_y * height) + (height / 2.); /* NEED A REAL CROSS POSITION HERE !!! */
             rc.size.width = (_last - _first) * width;
             rc.size.height = 1;
             CGContextFillRect(_context, rc);

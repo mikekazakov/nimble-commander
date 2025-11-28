@@ -196,7 +196,7 @@ File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offset, cons
         if( still_running == 0 ) {
             int msgs_left = 1;
             while( msgs_left ) {
-                CURLMsg *msg = curl_multi_info_read(m_CURL->curlm, &msgs_left);
+                const CURLMsg *msg = curl_multi_info_read(m_CURL->curlm, &msgs_left);
                 if( msg == nullptr || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
                     Log::Error("curl_multi_info_read() returned {}.", std::to_underlying(msg->msg));
                     error = true;
@@ -272,7 +272,7 @@ std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
     if( still_running == 0 ) {
         int msgs_left = 1;
         while( msgs_left ) {
-            CURLMsg *msg = curl_multi_info_read(m_CURL->curlm, &msgs_left);
+            const CURLMsg *msg = curl_multi_info_read(m_CURL->curlm, &msgs_left);
             if( msg == nullptr || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
                 Log::Error("curl_multi_info_read() returned {}.", std::to_underlying(msg->msg));
                 error = true;

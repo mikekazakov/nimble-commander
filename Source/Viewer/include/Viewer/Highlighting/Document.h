@@ -16,7 +16,7 @@ class Document final : public Scintilla::IDocument
 {
 public:
     Document(std::string_view _text);
-    virtual ~Document();
+    ~Document();
 
     char StyleAt(Sci_Position position) const noexcept override;
 

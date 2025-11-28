@@ -825,7 +825,7 @@
 /* #undef USE_WIN32_IDN */
 
 /* to enable Apple IDN */
-/* #undef USE_APPLE_IDN */
+#define USE_APPLE_IDN 1
 
 /* Define to 1 if OpenSSL has the SSL_CTX_set_srp_username function. */
 /* #undef HAVE_OPENSSL_SRP */

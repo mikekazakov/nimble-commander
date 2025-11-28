@@ -691,10 +691,16 @@ std::vector<std::string> ExternalToolExecution::BuildArguments() const
             commit(m_UserInput.at(step.index));
         }
         if( step.type == ExternalToolsParameters::ActionType::CurrentItem && num_files < max_files ) {
-            const auto v = m_Params.GetCurrentItem(step.index);
+            const ExternalToolsParameters::CurrentItem v = m_Params.GetCurrentItem(step.index);
             const auto [panel, idx] = panel_cursor_for_location(v.location);
             if( const VFSListingItem item = panel->EntryAtSortPosition(idx) ) {
                 commit(info_from_item(item, v.what));
+                ++num_files;
+            }
+            else if( v.what == ExternalToolsParameters::FileInfo::DirectoryPath && panel->Listing().IsUniform() ) {
+                // Special handling of the case when item's directory is queried but there's no item - in this case
+                // query a uniform panel instead.
+                commit(EnsureNoTrailingSlash(panel->Listing().Directory()));
                 ++num_files;
             }
         }

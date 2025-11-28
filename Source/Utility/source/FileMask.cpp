@@ -205,7 +205,7 @@ FileMask::FileMask(const std::string_view _mask, const Type _type) : m_Mask(_mas
 bool FileMask::Validate(const std::string_view _mask, const Type _type)
 {
     if( _type == Type::RegEx ) {
-        re2::RE2 const regex(string_needs_normalization(_mask) ? ProduceFormCLowercase(_mask) : _mask, re2::RE2::Quiet);
+        const re2::RE2 regex(string_needs_normalization(_mask) ? ProduceFormCLowercase(_mask) : _mask, re2::RE2::Quiet);
         return regex.ok();
     }
     return true;

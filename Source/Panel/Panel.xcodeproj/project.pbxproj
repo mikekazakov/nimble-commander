@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF0B0402281EFE9800076FDF /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF0B0401281EFE9800076FDF /* SelectionWithMaskPopupViewController.xib */; };
+		CF0190312EAE6B990025ACFB /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF0190302EAE6B990025ACFB /* SelectionWithMaskPopupViewController.xib */; };
 		CF0B0405281F014800076FDF /* SelectionWithMaskPopupViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CF0B0404281F014800076FDF /* SelectionWithMaskPopupViewController.h */; };
 		CF0B0408281F016300076FDF /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B0407281F016300076FDF /* SelectionWithMaskPopupViewController.mm */; };
 		CF0B040B281F027900076FDF /* Internal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B0409281F027900076FDF /* Internal.mm */; };
@@ -110,9 +110,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CF01902F2EAE6B990025ACFB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SelectionWithMaskPopupViewController.xib; sourceTree = "<group>"; };
+		CF0190322EAE6B990025ACFB /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/SelectionWithMaskPopupViewController.xcstrings; sourceTree = "<group>"; };
 		CF0B03F8281EB16F00076FDF /* PanelResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PanelResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF0B03FE281EFE5200076FDF /* PanelResources.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PanelResources.plist; path = resources/PanelResources.plist; sourceTree = "<group>"; };
-		CF0B0401281EFE9800076FDF /* SelectionWithMaskPopupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SelectionWithMaskPopupViewController.xib; path = resources/SelectionWithMaskPopupViewController.xib; sourceTree = "<group>"; };
 		CF0B0404281F014800076FDF /* SelectionWithMaskPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectionWithMaskPopupViewController.h; path = include/Panel/UI/SelectionWithMaskPopupViewController.h; sourceTree = "<group>"; };
 		CF0B0407281F016300076FDF /* SelectionWithMaskPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SelectionWithMaskPopupViewController.mm; path = source/UI/SelectionWithMaskPopupViewController.mm; sourceTree = "<group>"; };
 		CF0B0409281F027900076FDF /* Internal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Internal.mm; path = source/Internal.mm; sourceTree = "<group>"; };
@@ -225,7 +226,7 @@
 			isa = PBXGroup;
 			children = (
 				CFC762CB2D3D2B17000498AA /* Localizable.xcstrings */,
-				CF0B0401281EFE9800076FDF /* SelectionWithMaskPopupViewController.xib */,
+				CF0190302EAE6B990025ACFB /* SelectionWithMaskPopupViewController.xib */,
 				CF0B03FE281EFE5200076FDF /* PanelResources.plist */,
 			);
 			name = Resources;
@@ -530,7 +531,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFC762CD2D3D2D41000498AA /* Localizable.xcstrings in Resources */,
-				CF0B0402281EFE9800076FDF /* SelectionWithMaskPopupViewController.xib in Resources */,
+				CF0190312EAE6B990025ACFB /* SelectionWithMaskPopupViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -621,6 +622,19 @@
 			targetProxy = CFF3402025569F3B00B3C92C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		CF0190302EAE6B990025ACFB /* SelectionWithMaskPopupViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF01902F2EAE6B990025ACFB /* Base */,
+				CF0190322EAE6B990025ACFB /* mul */,
+			);
+			name = SelectionWithMaskPopupViewController.xib;
+			path = resources;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		CF0B03F9281EB16F00076FDF /* Debug */ = {

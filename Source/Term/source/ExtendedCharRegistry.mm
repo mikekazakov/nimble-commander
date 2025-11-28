@@ -50,7 +50,7 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
             const bool first_potentially_composable = IsPotentiallyComposableCharacter(_input[0]);
             if( !first_potentially_composable ) {
                 // 99.99% of cases should fall into this branch.
-                return _initial == 0 ? AppendResult{.newchar = _input[0], .eaten = 1}
+                return _initial == 0 ? AppendResult{.newchar = static_cast<char32_t>(_input[0]), .eaten = 1}
                                      : AppendResult{.newchar = _initial, .eaten = 0};
             }
         }
@@ -58,7 +58,7 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
     else if( _input.length() == 1 ) {
         const bool first_potentially_composable = IsPotentiallyComposableCharacter(_input[0]);
         if( !first_potentially_composable ) {
-            return _initial == 0 ? AppendResult{.newchar = _input[0], .eaten = 1}
+            return _initial == 0 ? AppendResult{.newchar = static_cast<char32_t>(_input[0]), .eaten = 1}
                                  : AppendResult{.newchar = _initial, .eaten = 0};
         }
     }
@@ -77,7 +77,7 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
         const CFIndex grapheme_len = CFStringGetRangeOfComposedCharactersAtIndex(cf_str.get(), 0).length;
 
         if( grapheme_len == 1 ) {
-            return {.newchar = _input[0], .eaten = 1};
+            return {.newchar = static_cast<char32_t>(_input[0]), .eaten = 1};
         }
         else if( grapheme_len == 2 && CFStringIsSurrogateHighCharacter(_input[0]) &&
                  CFStringIsSurrogateLowCharacter(_input[1]) ) {

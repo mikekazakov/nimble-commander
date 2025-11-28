@@ -17,7 +17,7 @@ ssize_t Mediator::myread([[maybe_unused]] struct archive *a, void *client_data, 
 
 off_t Mediator::myseek([[maybe_unused]] struct archive *a, void *client_data, off_t offset, int whence)
 {
-    Mediator *_this = static_cast<Mediator *>(client_data);
+    const Mediator *_this = static_cast<Mediator *>(client_data);
     const std::expected<uint64_t, Error> result = _this->file->Seek(offset, whence);
     if( !result )
         return ARCHIVE_FATAL; // handle somehow

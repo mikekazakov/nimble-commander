@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FirmlinksMappingParser.h"
 #include "UnitTests_main.h"
 #include <fstream>
@@ -87,3 +87,5 @@ TEST_CASE(PREFIX "Works against system mapping")
 
     CHECK(!parsed.empty());
 }
+
+#undef PREFIX

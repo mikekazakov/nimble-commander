@@ -1,7 +1,9 @@
-// Copyright (C) 2019-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefOnDiskStorageImpl.h"
 #include <Base/PosixFilesystemMock.h>
 #include "UnitTests_main.h"
+
+namespace {
 
 using namespace std::string_literals;
 using namespace nc::utility;
@@ -67,3 +69,5 @@ TEST_CASE("BriefOnDiskStorageImpl does as many write()s as needed")
     auto placement = storage.Place(data.data(), data.length());
     REQUIRE(placement.has_value());
 }
+
+} // namespace

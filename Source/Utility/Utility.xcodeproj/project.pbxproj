@@ -7,33 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF0A49B3250D685D008EC7B0 /* BlinkScheduler_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49B2250D685D008EC7B0 /* BlinkScheduler_UT.cpp */; };
-		CF22060B27C2644B008EDE3A /* HexadecimalColor_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22060A27C2644B008EDE3A /* HexadecimalColor_UT.mm */; };
-		CF24E1F8228B525000C166FA /* ActionShortcut_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24E1F7228B525000C166FA /* ActionShortcut_UT.mm */; };
-		CF26DE3121D5685B003F0E93 /* TemporaryFileStorageImpl_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE3021D5685A003F0E93 /* TemporaryFileStorageImpl_UT.mm */; };
-		CF2C102922A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2C102822A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp */; };
-		CF308F52213B7CC700915730 /* BriefOnDiskStorageImpl_UnitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F50213B7CC400915730 /* BriefOnDiskStorageImpl_UnitTests.cpp */; };
-		CF3ABD7D23B8AC0A00D1878B /* NativeFSManagerVolumeLookup_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD7B23B8AB5200D1878B /* NativeFSManagerVolumeLookup_UT.cpp */; };
-		CF3ABD7F23B8DBFF00D1878B /* NativeFSManager_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD7E23B8DBFF00D1878B /* NativeFSManager_UT.mm */; };
-		CF3F587C255B38A20027B69A /* PathManip_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3F587B255B38A20027B69A /* PathManip_UT.cpp */; };
 		CF4C980D2EDA0239001E6496 /* _Utility.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C980C2EDA0239001E6496 /* _Utility.mm */; };
 		CF4C980E2EDA0239001E6496 /* _Utility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4C980B2EDA0239001E6496 /* _Utility.cpp */; };
-		CF52C39B22B974280043E825 /* UTIImpl_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C39922B974210043E825 /* UTIImpl_UT.cpp */; };
-		CF5D1DC92B52B9FA00750174 /* Tags_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5D1DC82B52B9FA00750174 /* Tags_UT.mm */; };
 		CF61F30B26404962009FF900 /* FSEventsFileUpdateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF61F30A26404962009FF900 /* FSEventsFileUpdateImpl.h */; };
-		CF6E493A23B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6E493923B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp */; };
-		CF88363925716F9300BAC081 /* VersionCompare_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF88363825716F9300BAC081 /* VersionCompare_UT.cpp */; };
-		CFA89D86281422EF00BEA127 /* FontExtras_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA89D85281422EF00BEA127 /* FontExtras_UT.mm */; };
-		CFA999652644888C00F72E93 /* FSEventsFileUpdate_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA999642644888C00F72E93 /* FSEventsFileUpdate_UT.cpp */; };
-		CFAB7F7A2774A50700926554 /* ExtensionLowercaseComparison_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFAB7F792774A50700926554 /* ExtensionLowercaseComparison_UT.cpp */; };
-		CFB062452590BB4E0095C748 /* SystemInformation_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB062442590BB4E0095C748 /* SystemInformation_UT.mm */; };
 		CFB4B68F219944680097E4B4 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64EA1F62721500BF986E /* AppKit.framework */; };
 		CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */; };
-		CFDAC82F2168E43600DEBA2A /* DiskUtility_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC82E2168E43600DEBA2A /* DiskUtility_UT.mm */; };
-		CFE3F1C422932CCF009D6AB4 /* ByteCountFormatter_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA81F9D871D0005F2DB /* ByteCountFormatter_UT.mm */; };
-		CFE3F1C522932EAA009D6AB4 /* FileMask_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB0F239215A07830088C18E /* FileMask_UT.cpp */; };
-		CFE3F1C622933058009D6AB4 /* FilenameTextNavigation_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38472B2010780B00BAB3BE /* FilenameTextNavigation_UT.mm */; };
-		CFE3F1C7229332FB009D6AB4 /* Encodings_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA91F9D871D0005F2DB /* Encodings_UT.mm */; };
+		CFF762362EDA3946002DD1EE /* _Utility_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF762352EDA3946002DD1EE /* _Utility_UT.cpp */; };
+		CFF762382EDA3B6A002DD1EE /* _Utility_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF762372EDA3B6A002DD1EE /* _Utility_UT.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -205,6 +185,8 @@
 		CFE08B2423DBA7AD007E99B8 /* NativeFSManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NativeFSManagerImpl.h; path = include/Utility/NativeFSManagerImpl.h; sourceTree = "<group>"; };
 		CFE08B2623DBA7BC007E99B8 /* NativeFSManagerImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeFSManagerImpl.mm; path = source/NativeFSManagerImpl.mm; sourceTree = "<group>"; };
 		CFE33EBB2135708800C3902C /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
+		CFF762352EDA3946002DD1EE /* _Utility_UT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = _Utility_UT.cpp; path = tests/_Utility_UT.cpp; sourceTree = "<group>"; };
+		CFF762372EDA3B6A002DD1EE /* _Utility_UT.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = _Utility_UT.mm; path = tests/_Utility_UT.mm; sourceTree = "<group>"; };
 		CFFA948E1F453DF30035E606 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -239,6 +221,8 @@
 		CF614A9E1F9D86CC0005F2DB /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CFF762372EDA3B6A002DD1EE /* _Utility_UT.mm */,
+				CFF762352EDA3946002DD1EE /* _Utility_UT.cpp */,
 				CF24E1F7228B525000C166FA /* ActionShortcut_UT.mm */,
 				CF0A49B2250D685D008EC7B0 /* BlinkScheduler_UT.cpp */,
 				CF308F50213B7CC400915730 /* BriefOnDiskStorageImpl_UnitTests.cpp */,
@@ -537,29 +521,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF24E1F8228B525000C166FA /* ActionShortcut_UT.mm in Sources */,
-				CFE3F1C422932CCF009D6AB4 /* ByteCountFormatter_UT.mm in Sources */,
-				CFA89D86281422EF00BEA127 /* FontExtras_UT.mm in Sources */,
-				CF3F587C255B38A20027B69A /* PathManip_UT.cpp in Sources */,
-				CF3ABD7F23B8DBFF00D1878B /* NativeFSManager_UT.mm in Sources */,
-				CF0A49B3250D685D008EC7B0 /* BlinkScheduler_UT.cpp in Sources */,
-				CFE3F1C7229332FB009D6AB4 /* Encodings_UT.mm in Sources */,
-				CF22060B27C2644B008EDE3A /* HexadecimalColor_UT.mm in Sources */,
-				CFE3F1C622933058009D6AB4 /* FilenameTextNavigation_UT.mm in Sources */,
-				CF2C102922A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp in Sources */,
-				CFDAC82F2168E43600DEBA2A /* DiskUtility_UT.mm in Sources */,
-				CF52C39B22B974280043E825 /* UTIImpl_UT.cpp in Sources */,
-				CFB062452590BB4E0095C748 /* SystemInformation_UT.mm in Sources */,
-				CF88363925716F9300BAC081 /* VersionCompare_UT.cpp in Sources */,
-				CF308F52213B7CC700915730 /* BriefOnDiskStorageImpl_UnitTests.cpp in Sources */,
-				CFAB7F7A2774A50700926554 /* ExtensionLowercaseComparison_UT.cpp in Sources */,
+				CFF762382EDA3B6A002DD1EE /* _Utility_UT.mm in Sources */,
 				CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */,
-				CF3ABD7D23B8AC0A00D1878B /* NativeFSManagerVolumeLookup_UT.cpp in Sources */,
-				CF5D1DC92B52B9FA00750174 /* Tags_UT.mm in Sources */,
-				CFA999652644888C00F72E93 /* FSEventsFileUpdate_UT.cpp in Sources */,
-				CF26DE3121D5685B003F0E93 /* TemporaryFileStorageImpl_UT.mm in Sources */,
-				CFE3F1C522932EAA009D6AB4 /* FileMask_UT.cpp in Sources */,
-				CF6E493A23B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp in Sources */,
+				CFF762362EDA3946002DD1EE /* _Utility_UT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

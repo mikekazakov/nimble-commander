@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BlinkScheduler.h"
 #include "UnitTests_main.h"
 #include <optional>
@@ -224,3 +224,5 @@ TEST_CASE(PREFIX "Alternates visibility between fires based on absolute time")
         CHECK(bs.Visible() == false);
     }
 }
+
+#undef PREFIX

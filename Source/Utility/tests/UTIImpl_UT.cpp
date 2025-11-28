@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UTIImpl.h"
 #include "UnitTests_main.h"
 
@@ -60,3 +60,5 @@ TEST_CASE(PREFIX "ConformsTo works")
     CHECK(db.ConformsTo("public.volume", "public.item") == true);
     CHECK(db.ConformsTo("public.folder", "public.directory") == true);
 }
+
+#undef PREFIX

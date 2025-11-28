@@ -128,3 +128,5 @@ TEST_CASE(PREFIX "Empty")
     CHECK(FilenameTextNavigation::NavigateToNextWord(@"", 0) == 0);
     CHECK(FilenameTextNavigation::NavigateToPreviousWord(@"", 0) == 0);
 }
+
+#undef PREFIX

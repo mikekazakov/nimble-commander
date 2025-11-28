@@ -56,3 +56,5 @@ TEST_CASE(PREFIX "System colors can be deserialized and serialized")
         CHECK(orig_color == restored_color); // should be equal up to the pointer. works even for tagged pointers!
     }
 }
+
+#undef PREFIX

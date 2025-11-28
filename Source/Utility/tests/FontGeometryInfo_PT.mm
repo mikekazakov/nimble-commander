@@ -29,7 +29,7 @@ static CFStringRef MakeRandomString(int _length)
     str.reserve(_length);
     while( _length-- > 0 )
         str.push_back(g_RandomAlphabet[distribution(g_RndGen)]);
-    return CFStringCreateWithUTF8StdString(str);
+    return nc::base::CFStringCreateWithUTF8StdString(str);
 }
 
 static std::vector<CFStringRef> MakeRandomStrings(int _amount, int _length)

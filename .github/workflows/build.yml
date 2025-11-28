@@ -31,7 +31,7 @@ jobs:
       run: "cd Scripts && ./run_all_unit_tests.sh ${{ matrix.configuration }}"
     - uses: actions/upload-artifact@v4
       with:
-        name: logs
+        name: unit-tests-logs-${{ matrix.configuration }}
         path: Scripts/**/*.log
   
   integration-tests:

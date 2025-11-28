@@ -16,7 +16,7 @@
 #include <sys/sysctl.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <stdlib.h>
+#include <cstdlib>
 
 namespace nc::base {
 
@@ -49,7 +49,7 @@ bool AmIBeingDebugged() noexcept
     return ((info.kp_proc.p_flag & P_TRACED) != 0);
 }
 
-static const bool g_IsSandboxed = getenv("APP_SANDBOX_CONTAINER_ID") != nullptr;
+static const bool g_IsSandboxed = std::getenv("APP_SANDBOX_CONTAINER_ID") != nullptr;
 
 bool AmISandboxed() noexcept
 {

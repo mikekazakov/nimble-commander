@@ -20,10 +20,14 @@ cmake \
   -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
   -D CMAKE_C_FLAGS="-fvisibility=hidden -flto" \
   -D CMAKE_OSX_DEPLOYMENT_TARGET="10.15" \
-  -D CMAKE_IGNORE_PATH="/usr/local;/opt/homebrew;/opt/homebrew/include" \
+  -D CMAKE_IGNORE_PREFIX_PATH="/usr/local;/opt/homebrew" \
   -D CURL_USE_SECTRANSP="ON" \
+  -D USE_APPLE_IDN="ON" \
   -D CURL_USE_LIBSSH="OFF" \
   -D CURL_USE_LIBSSH2="OFF" \
+  -D USE_LIBIDN="OFF" \
+  -D USE_LIBIDN2="OFF" \
+  -D USE_NGHTTP2="OFF" \
   -D CURL_DISABLE_LDAP="ON" \
   -D CURL_ZLIB="ON" \
   -D BUILD_STATIC_LIBS="ON" \

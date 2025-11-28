@@ -8,7 +8,7 @@ To minimize internet bandwidth, you can opt to fetch only the latest version wit
 `git clone https://github.com/mikekazakov/nimble-commander --depth=1`
 
 ## Compiling the Project
-After obtaining the source code, you'll need Xcode 16.3 to open and compile the project. Navigate to the `NimbleCommander.xcodeproj` folder within the source code and open it using either the Xcode GUI or the command line with:  
+After obtaining the source code, you'll need Xcode 26.1 to open and compile the project. Navigate to the `NimbleCommander.xcodeproj` folder within the source code and open it using either the Xcode GUI or the command line with:  
 `open nimble-commander/Source/NimbleCommander/NimbleCommander.xcodeproj`  
 
 ![](schema.png)

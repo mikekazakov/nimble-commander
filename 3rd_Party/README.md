@@ -45,7 +45,7 @@ Verify the Xcode version with `xcode-select -p`.
 | letsmove        | 1.25       | 2020.07.09 | https://github.com/potionfactory/LetsMove.git
 | lexilla         | 5.4.2      | 2024.12.15 | https://github.com/ScintillaOrg/lexilla.git
 | libarchive      | 3.7.9      | 2025.03.30 | https://github.com/libarchive/libarchive.git
-| libcxx          | 18.x       | 2024.03.05 | https://github.com/llvm/llvm-project.git
+| libcxx          | 21.x       | 2024.03.05 | https://github.com/llvm/llvm-project.git
 | libssh2         | 1.11.1     | 2024.10.16 | https://github.com/libssh2/libssh2.git
 | lz4             | 1.10.0     | 2024.07.22 | https://github.com/lz4/lz4.git
 | lzma(xz)        | 5.6.3      | 2024.10.01 | https://github.com/tukaani-project/xz.git

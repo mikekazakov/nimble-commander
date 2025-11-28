@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/libcxx.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b release/18.x --single-branch --depth=1 https://github.com/llvm/llvm-project.git
+git clone -b release/21.x --single-branch --depth=1 https://github.com/llvm/llvm-project.git
 
 cd llvm-project
 

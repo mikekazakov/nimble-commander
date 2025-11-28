@@ -29,7 +29,10 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build and run unit tests
       run: "cd Scripts && ./run_all_unit_tests.sh ${{ matrix.configuration }}"
-
+    - uses: actions/upload-artifact@v4
+      with:
+        name: logs
+        path: Scripts/**/*.log
   
   integration-tests:
     runs-on: macos-15

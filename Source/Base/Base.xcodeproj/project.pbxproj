@@ -8,13 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		CF24E20C2291777E00C166FA /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF24E20B2291777D00C166FA /* UnitTests_main.cpp */; };
-		CF24E215229196E100C166FA /* CFPtr_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF24E214229196E100C166FA /* CFPtr_UT.cpp */; };
-		CF24E21622919DFB00C166FA /* spinlock_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE8F90321A27F3000300019 /* spinlock_UT.cpp */; };
-		CF24E2192291A0D500C166FA /* LRUCache_Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD22CD52012DDF800608DFE /* LRUCache_Tests.cpp */; };
-		CF24E21A2291A61F00C166FA /* Hash_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF614ACD1F9D8EDC0005F2DB /* Hash_UT.cpp */; };
-		CF24E21B2291ABAD00C166FA /* StringsBulk_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2084021FEFB2F70014D6AD /* StringsBulk_UT.cpp */; };
-		CF24E21C2291B0E500C166FA /* chained_strings_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF614AD11F9D8EF00005F2DB /* chained_strings_UT.cpp */; };
-		CF24E21D2291B63E00C166FA /* VariableContainer_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF614ACE1F9D8EDD0005F2DB /* VariableContainer_UT.cpp */; };
 		CF3989702B4162A5006103C1 /* IdleSleepPreventer.h in Headers */ = {isa = PBXBuildFile; fileRef = CF39894B2B4162A4006103C1 /* IdleSleepPreventer.h */; };
 		CF3989712B4162A5006103C1 /* Observable.h in Headers */ = {isa = PBXBuildFile; fileRef = CF39894C2B4162A4006103C1 /* Observable.h */; };
 		CF3989722B4162A5006103C1 /* tribool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF39894D2B4162A4006103C1 /* tribool.h */; };
@@ -51,42 +44,11 @@
 		CF3989922B4162A5006103C1 /* SerialQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = CF39896D2B4162A5006103C1 /* SerialQueue.h */; };
 		CF3989932B4162A5006103C1 /* variable_container.h in Headers */ = {isa = PBXBuildFile; fileRef = CF39896E2B4162A5006103C1 /* variable_container.h */; };
 		CF3989942B4162A5006103C1 /* dispatch_cpp.h in Headers */ = {isa = PBXBuildFile; fileRef = CF39896F2B4162A5006103C1 /* dispatch_cpp.h */; };
-		CF4601ED25630DE80095FC73 /* DispatchGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */; };
-		CF4601EE25630DE80095FC73 /* PosixFilesystemImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F4C213B773400915730 /* PosixFilesystemImpl.cpp */; };
-		CF4601EF25630DE80095FC73 /* StringsBulk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2084001FEFACFC0014D6AD /* StringsBulk.cpp */; };
-		CF4601F025630DE80095FC73 /* Hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA71C99C2AE0021EE7F /* Hash.cpp */; };
-		CF4601F225630DE80095FC73 /* CommonPaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */; };
-		CF4601F325630DE80095FC73 /* CommonPaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */; };
-		CF4601F425630DE80095FC73 /* dispatch_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */; };
-		CF4601F525630DE80095FC73 /* spinlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */; };
-		CF4601F625630DE80095FC73 /* CFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA01C99C2AE0021EE7F /* CFString.cpp */; };
-		CF4601F725630DE80095FC73 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA31C99C2AE0021EE7F /* debug.cpp */; };
-		CF4601F825630DE80095FC73 /* CFStackAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */; };
-		CF4601F925630DE80095FC73 /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */; };
-		CF4601FB25630DE80095FC73 /* IdleSleepPreventer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */; };
-		CF4601FC25630DE80095FC73 /* CloseFrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49F125252C40008EC7B0 /* CloseFrom.cpp */; };
-		CF4601FD25630DE80095FC73 /* mach_time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */; };
-		CF4601FE25630DE80095FC73 /* PosixFilesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F48213B755F00915730 /* PosixFilesystem.cpp */; };
-		CF4601FF25630DE80095FC73 /* ScopedObservable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF19B3ED2544B94800838B45 /* ScopedObservable.cpp */; };
-		CF46020025630DE80095FC73 /* SerialQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF19B4392544BD2400838B45 /* SerialQueue.cpp */; };
-		CF46020125630DE80095FC73 /* CFDefaultsCPP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */; };
-		CF46020325630DE80095FC73 /* Observable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD211D6C44C1006B94C2 /* Observable.cpp */; };
-		CF46020425630DE80095FC73 /* ExecutionDeadline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5338682532512100022EE8 /* ExecutionDeadline.cpp */; };
-		CF5338632525317700022EE8 /* CloseFrom_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49F3252530D2008EC7B0 /* CloseFrom_UT.cpp */; };
-		CFA99A022650661300F72E93 /* SpdlogFacade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A012650661300F72E93 /* SpdlogFacade.cpp */; };
-		CFA99A1026512D4400F72E93 /* WriteAtomically.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A0F26512D4400F72E93 /* WriteAtomically.cpp */; };
-		CFD230F62AE5CF190000C7CF /* SysLocale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD230F52AE5CF190000C7CF /* SysLocale.cpp */; };
-		CFD2312F2AEDC3B80000C7CF /* algo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD2312E2AEDC3B80000C7CF /* algo.cpp */; };
-		CFD231322AEDC6330000C7CF /* algo_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD231302AEDC6260000C7CF /* algo_UT.cpp */; };
-		CFD231352AEEA2610000C7CF /* UUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD231342AEEA2610000C7CF /* UUID.cpp */; };
-		CFD231372AEEA26E0000C7CF /* UUID_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD231362AEEA26E0000C7CF /* UUID_UT.cpp */; };
+		CF4C98092EDA011C001E6496 /* _Base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4C98072EDA011C001E6496 /* _Base.cpp */; };
+		CF4C980A2EDA011C001E6496 /* _Base.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C98082EDA011C001E6496 /* _Base.mm */; };
+		CF4C98102EDA03B0001E6496 /* _BaseUT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4C980F2EDA03B0001E6496 /* _BaseUT.cpp */; };
 		CFDA17E22D4650E300EE375B /* Error.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDA17E12D4650E300EE375B /* Error.h */; };
-		CFDA17E42D4651CF00EE375B /* Error.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA17E32D4651CF00EE375B /* Error.mm */; };
 		CFDA17E62D4651F800EE375B /* Error_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA17E52D4651F800EE375B /* Error_UT.mm */; };
-		CFDE36E426BA5F2400EB1B0D /* WhereIs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDE36E326BA5F2400EB1B0D /* WhereIs.cpp */; };
-		CFDE36EA26BA665700EB1B0D /* WhereIs_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDE36E926BA665700EB1B0D /* WhereIs_UT.cpp */; };
-		CFE08ADF23C20664007E99B8 /* intrusive_ptr_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */; };
-		CFF835372DC783BA00CED300 /* WriteAtomically_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF835362DC783BA00CED300 /* WriteAtomically_UT.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -153,6 +115,9 @@
 		CF39896F2B4162A5006103C1 /* dispatch_cpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dispatch_cpp.h; path = include/Base/dispatch_cpp.h; sourceTree = "<group>"; };
 		CF4601E725630DCB0095FC73 /* libBase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBase.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DispatchGroup.cpp; path = source/DispatchGroup.cpp; sourceTree = "<group>"; };
+		CF4C98072EDA011C001E6496 /* _Base.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = _Base.cpp; path = source/_Base.cpp; sourceTree = "<group>"; };
+		CF4C98082EDA011C001E6496 /* _Base.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = _Base.mm; path = source/_Base.mm; sourceTree = "<group>"; };
+		CF4C980F2EDA03B0001E6496 /* _BaseUT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = _BaseUT.cpp; sourceTree = "<group>"; };
 		CF5338682532512100022EE8 /* ExecutionDeadline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExecutionDeadline.cpp; path = source/ExecutionDeadline.cpp; sourceTree = "<group>"; };
 		CF614ACD1F9D8EDC0005F2DB /* Hash_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hash_UT.cpp; sourceTree = "<group>"; };
 		CF614ACE1F9D8EDD0005F2DB /* VariableContainer_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableContainer_UT.cpp; sourceTree = "<group>"; };
@@ -227,6 +192,7 @@
 		CF614ABF1F9D8E6E0005F2DB /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF4C980F2EDA03B0001E6496 /* _BaseUT.cpp */,
 				CFD231302AEDC6260000C7CF /* algo_UT.cpp */,
 				CF24E214229196E100C166FA /* CFPtr_UT.cpp */,
 				CF614AD11F9D8EF00005F2DB /* chained_strings_UT.cpp */,
@@ -317,6 +283,8 @@
 		CFD62B851C99C2590021EE7F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF4C98072EDA011C001E6496 /* _Base.cpp */,
+				CF4C98082EDA011C001E6496 /* _Base.mm */,
 				CFD2312E2AEDC3B80000C7CF /* algo.cpp */,
 				CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */,
 				CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */,
@@ -474,21 +442,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFD231372AEEA26E0000C7CF /* UUID_UT.cpp in Sources */,
-				CF24E2192291A0D500C166FA /* LRUCache_Tests.cpp in Sources */,
-				CF24E215229196E100C166FA /* CFPtr_UT.cpp in Sources */,
-				CF24E21D2291B63E00C166FA /* VariableContainer_UT.cpp in Sources */,
-				CFF835372DC783BA00CED300 /* WriteAtomically_UT.cpp in Sources */,
-				CF24E21622919DFB00C166FA /* spinlock_UT.cpp in Sources */,
-				CF5338632525317700022EE8 /* CloseFrom_UT.cpp in Sources */,
-				CFE08ADF23C20664007E99B8 /* intrusive_ptr_UT.cpp in Sources */,
-				CF24E21C2291B0E500C166FA /* chained_strings_UT.cpp in Sources */,
 				CF24E20C2291777E00C166FA /* UnitTests_main.cpp in Sources */,
 				CFDA17E62D4651F800EE375B /* Error_UT.mm in Sources */,
-				CF24E21A2291A61F00C166FA /* Hash_UT.cpp in Sources */,
-				CFDE36EA26BA665700EB1B0D /* WhereIs_UT.cpp in Sources */,
-				CFD231322AEDC6330000C7CF /* algo_UT.cpp in Sources */,
-				CF24E21B2291ABAD00C166FA /* StringsBulk_UT.cpp in Sources */,
+				CF4C98102EDA03B0001E6496 /* _BaseUT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,34 +452,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF46020425630DE80095FC73 /* ExecutionDeadline.cpp in Sources */,
-				CF4601EE25630DE80095FC73 /* PosixFilesystemImpl.cpp in Sources */,
-				CFD2312F2AEDC3B80000C7CF /* algo.cpp in Sources */,
-				CF4601FB25630DE80095FC73 /* IdleSleepPreventer.cpp in Sources */,
-				CF4601FD25630DE80095FC73 /* mach_time.cpp in Sources */,
-				CF4601F025630DE80095FC73 /* Hash.cpp in Sources */,
-				CFA99A022650661300F72E93 /* SpdlogFacade.cpp in Sources */,
-				CF4601F325630DE80095FC73 /* CommonPaths.mm in Sources */,
-				CF4601FE25630DE80095FC73 /* PosixFilesystem.cpp in Sources */,
-				CF4601F525630DE80095FC73 /* spinlock.cpp in Sources */,
-				CF4601F425630DE80095FC73 /* dispatch_cpp.cpp in Sources */,
-				CF4601F825630DE80095FC73 /* CFStackAllocator.cpp in Sources */,
-				CFD231352AEEA2610000C7CF /* UUID.cpp in Sources */,
-				CFD230F62AE5CF190000C7CF /* SysLocale.cpp in Sources */,
-				CFDA17E42D4651CF00EE375B /* Error.mm in Sources */,
-				CF4601FC25630DE80095FC73 /* CloseFrom.cpp in Sources */,
-				CF4601ED25630DE80095FC73 /* DispatchGroup.cpp in Sources */,
-				CFA99A1026512D4400F72E93 /* WriteAtomically.cpp in Sources */,
-				CF4601F725630DE80095FC73 /* debug.cpp in Sources */,
-				CF46020025630DE80095FC73 /* SerialQueue.cpp in Sources */,
-				CF4601EF25630DE80095FC73 /* StringsBulk.cpp in Sources */,
-				CF4601F625630DE80095FC73 /* CFString.cpp in Sources */,
-				CF4601F925630DE80095FC73 /* chained_strings.cpp in Sources */,
-				CF4601FF25630DE80095FC73 /* ScopedObservable.cpp in Sources */,
-				CF46020325630DE80095FC73 /* Observable.cpp in Sources */,
-				CF46020125630DE80095FC73 /* CFDefaultsCPP.cpp in Sources */,
-				CF4601F225630DE80095FC73 /* CommonPaths.cpp in Sources */,
-				CFDE36E426BA5F2400EB1B0D /* WhereIs.cpp in Sources */,
+				CF4C98092EDA011C001E6496 /* _Base.cpp in Sources */,
+				CF4C980A2EDA011C001E6496 /* _Base.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

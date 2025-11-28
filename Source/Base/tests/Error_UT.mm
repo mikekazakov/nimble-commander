@@ -190,3 +190,5 @@ TEST_CASE(PREFIX "ErrorException")
     CHECK(ee.error() == Error{Error::POSIX, EINVAL});
     CHECK(ee.what() == std::string_view("Error Domain=POSIX Code=22"));
 }
+
+#undef PREFIX

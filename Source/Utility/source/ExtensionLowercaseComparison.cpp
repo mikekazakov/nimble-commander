@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <Base/CFStackAllocator.h>
 #include <Base/algo.h>
@@ -13,7 +13,7 @@ ExtensionLowercaseComparison &ExtensionLowercaseComparison::Instance() noexcept
     return inst;
 }
 
-static std::string ProduceFormCLowercase(std::string_view _string)
+std::string ExtensionLowercaseComparison::ProduceFormCLowercase(std::string_view _string)
 {
     const base::CFStackAllocator allocator;
 

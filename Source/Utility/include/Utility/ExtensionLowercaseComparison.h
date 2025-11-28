@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -35,6 +35,8 @@ private:
     };
     using Storage =
         ankerl::unordered_dense::map<std::string, std::string, UnorderedStringHashEqual, UnorderedStringHashEqual>;
+
+    static std::string ProduceFormCLowercase(std::string_view _string);
 
     Storage m_Data;
     nc::spinlock m_Lock;

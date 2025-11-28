@@ -4,7 +4,6 @@
 #include <random>
 
 using nc::base::chained_strings;
-using namespace std;
 
 #define PREFIX "chained_strings "
 
@@ -21,7 +20,7 @@ TEST_CASE(PREFIX "basic")
     CHECK(strings.empty() == true);
     CHECK(strings.singleblock() == false);
 
-    const string str("hello");
+    const std::string str("hello");
     strings.push_back(str, nullptr);
     CHECK(strings.empty() == false);
     CHECK(strings.size() == 1);
@@ -32,8 +31,8 @@ TEST_CASE(PREFIX "basic")
     for( auto i : strings )
         CHECK(str == i.c_str());
 
-    const string long_str("this is a very long string which will presumably "
-                          "never fit into built-in buffer");
+    const std::string long_str("this is a very long string which will presumably "
+                               "never fit into built-in buffer");
     strings.push_back(long_str, nullptr);
     CHECK(strings.empty() == false);
     CHECK(strings.size() == 2);
@@ -52,7 +51,7 @@ TEST_CASE(PREFIX "blocks")
 {
     const int amount = 1000000;
 
-    const string str("hello from the underworld of mallocs and frees");
+    const std::string str("hello from the underworld of mallocs and frees");
     chained_strings strings;
 
     for( int i = 0; i < amount; ++i )
@@ -70,15 +69,15 @@ TEST_CASE(PREFIX "blocks")
 
 TEST_CASE(PREFIX "prefix")
 {
-    mt19937 mt((random_device())());
-    uniform_int_distribution<int> dist(0, 100000);
+    std::mt19937 mt((std::random_device())());
+    std::uniform_int_distribution<int> dist(0, 100000);
 
     chained_strings strings;
     const chained_strings::node *pref = nullptr;
-    string predicted_string;
+    std::string predicted_string;
     const int amount = 100;
     for( int i = 0; i < amount; ++i ) {
-        const string rnd = to_string(dist(mt));
+        const std::string rnd = std::to_string(dist(mt));
 
         predicted_string += rnd;
         strings.push_back(rnd, pref);
@@ -95,6 +94,8 @@ TEST_CASE(PREFIX "prefix")
 TEST_CASE(PREFIX "regressions")
 {
     chained_strings strings;
-    CHECK(begin(strings) == end(strings));
-    CHECK(!(begin(strings) != end(strings)));
+    CHECK(std::begin(strings) == std::end(strings));
+    CHECK(!(std::begin(strings) != std::end(strings)));
 }
+
+#undef PREFIX

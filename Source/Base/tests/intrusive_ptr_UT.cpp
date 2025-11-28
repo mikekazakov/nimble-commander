@@ -428,3 +428,5 @@ TEST_CASE(PREFIX "use_count()")
 }
 
 // NOLINTEND(bugprone-use-after-move)
+
+#undef PREFIX

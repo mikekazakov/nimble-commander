@@ -23,6 +23,8 @@ SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BUILD_DIR="${SCRIPTS_DIR}/build_unsigned.tmp"
 mkdir "${BUILD_DIR}"
 
+LOG_FILE=${BUILD_DIR}/xcodebuild.log
+
 # all builds paths will be relative to ROOT_DIR
 ROOT_DIR=$(cd "$SCRIPTS_DIR/.." && pwd)
 XCODEPROJ="../Source/NimbleCommander/NimbleCommander.xcodeproj"
@@ -49,8 +51,8 @@ APP_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= 
 APP_NAME=$($XC -showBuildSettings | grep " FULL_PRODUCT_NAME =" | sed -e 's/.*= *//' )
 APP_PATH=$APP_DIR/$APP_NAME
 
-$XC build | xcpretty
-
+$XC build | tee -a ${LOG_FILE} | xcpretty
+    
 cp -R "${APP_PATH}" ./
 
 VERSION=$( $PBUDDY -c "Print CFBundleShortVersionString" "$APP_PATH/Contents/Info.plist" )

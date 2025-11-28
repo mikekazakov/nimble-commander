@@ -90,7 +90,7 @@ LIBS=$(SRCROOT)/..
 
 // Paths - headers
 USE_HEADERMAP = NO
-HEADER_SEARCH_PATHS = $(TOOLCHAIN_DIR)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/include $(THRDPTY)/Catch2/include $(THRDPTY)/rapidjson/include $(THRDPTY)/libssh2/include $(THRDPTY)/pugixml/include $(THRDPTY)/zlib/include $(THRDPTY)/bz2/include $(THRDPTY)/libcurl/include $(THRDPTY)/MMTabBarView $(THRDPTY)/AppAuth/include $(THRDPTY)/pstld/include $(THRDPTY)/re2/include $(THRDPTY)/fmt/include $(THRDPTY)/lexilla/include $(THRDPTY)/nlohmann/include $(THRDPTY)/unordered_dense/include $(THRDPTY)/abseil/include
+HEADER_SEARCH_PATHS = $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/include $(THRDPTY)/Catch2/include $(THRDPTY)/rapidjson/include $(THRDPTY)/libssh2/include $(THRDPTY)/pugixml/include $(THRDPTY)/zlib/include $(THRDPTY)/bz2/include $(THRDPTY)/libcurl/include $(THRDPTY)/MMTabBarView $(THRDPTY)/AppAuth/include $(THRDPTY)/pstld/include $(THRDPTY)/re2/include $(THRDPTY)/fmt/include $(THRDPTY)/lexilla/include $(THRDPTY)/nlohmann/include $(THRDPTY)/unordered_dense/include $(THRDPTY)/abseil/include
 SYSTEM_HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/boost/include $(THRDPTY)/spdlog/include $(THRDPTY)/libarchive/include $(THRDPTY)/googletest/include $(THRDPTY)/frozen/include
 
 // Paths - libraries

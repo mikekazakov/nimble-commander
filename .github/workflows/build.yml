@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 env:
-  XC_VERSION: ${{ '16.3' }}
+  XC_VERSION: ${{ '26.1' }}
 
 jobs:
 

@@ -6,7 +6,7 @@ on:
     - cron: '0 3 * * *' # at 03:00 AM UTC everyday
 
 env:
-  XC_VERSION: ${{ '16.3' }}
+  XC_VERSION: ${{ '26.1' }}
 
 jobs:
   build:

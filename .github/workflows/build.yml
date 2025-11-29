@@ -34,6 +34,7 @@ jobs:
       with:
         name: unit-tests-logs-${{ matrix.configuration }}
         path: Scripts/**/*.log
+        if-no-files-found: ignore
   
   integration-tests:
     runs-on: macos-15
@@ -115,3 +116,4 @@ jobs:
       with:
         name: build-logs
         path: Scripts/**/*.log
+        if-no-files-found: ignore

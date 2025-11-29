@@ -12,7 +12,7 @@ cd ${TMP_DIR}
 git clone -b OpenSSL_1_1_1w --single-branch --depth 1 https://github.com/openssl/openssl.git openssl.x64
 cp -r openssl.x64 openssl.arm64
 
-CFLAGS="-mmacosx-version-min=10.15 -fvisibility=hidden -flto -Os -isysroot $(xcrun --sdk macosx --show-sdk-path)"
+CFLAGS="-mmacosx-version-min=11.0 -fvisibility=hidden -flto -Os -isysroot $(xcrun --sdk macosx --show-sdk-path)"
 
 cd openssl.x64
 arch -arch x86_64 ./config \

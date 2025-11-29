@@ -26,7 +26,6 @@ set -e
 ./pstld/bootstrap.sh
 ./abseil/bootstrap.sh
 ./re2/bootstrap.sh
-./libcxxbackport/bootstrap.sh
 ./lexilla/bootstrap.sh
 ./nlohmann/bootstrap.sh
 ./unordered_dense/bootstrap.sh

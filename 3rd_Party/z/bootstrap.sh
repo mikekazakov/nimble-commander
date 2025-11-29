@@ -19,7 +19,7 @@ mkdir build && cd build
 cmake \
   -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
   -D CMAKE_C_FLAGS="-fvisibility=hidden -flto" \
-  -D CMAKE_OSX_DEPLOYMENT_TARGET="10.15" \
+  -D CMAKE_OSX_DEPLOYMENT_TARGET="11.0" \
   ..
 make -j zlibstatic
 

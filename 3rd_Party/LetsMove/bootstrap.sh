@@ -17,7 +17,7 @@ XC="xcodebuild \
   -project LetsMove.xcodeproj \
   -scheme LetsMove \
   -configuration Release \
-  MACOSX_DEPLOYMENT_TARGET=10.15"
+  MACOSX_DEPLOYMENT_TARGET=11.0"
 BINARY_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= *//')
 BINARY_NAME=$($XC -showBuildSettings | grep " FULL_PRODUCT_NAME =" | sed -e 's/.*= *//')
 BINARY_PATH=$BINARY_DIR/$BINARY_NAME

@@ -21,7 +21,7 @@ namespace nc::core {
 UserNotificationsCenter::UserNotificationsCenter() : m_MinElapsedOperationTime{g_DefaultMinElapsedOperationTime}
 {
     static auto delegate = [[NCCoreUserNotificationCenterDelegate alloc] init];
-    UNUserNotificationCenter *center = UNUserNotificationCenter.currentNotificationCenter;
+    UNUserNotificationCenter *const center = UNUserNotificationCenter.currentNotificationCenter;
     center.delegate = delegate;
     [center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound)
                           completionHandler:^(BOOL _granted, NSError *_Nullable) {
@@ -40,7 +40,7 @@ void UserNotificationsCenter::ReportCompletedOperation(const nc::ops::Operation 
     if( _operation.Statistics().ElapsedTime() < m_MinElapsedOperationTime || !m_NotificationsAutorized )
         return;
 
-    UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
+    UNMutableNotificationContent *const content = [[UNMutableNotificationContent alloc] init];
     content.title = NSLocalizedString(@"Operation is complete", "Notification text");
     content.subtitle = [NSString stringWithUTF8StdString:_operation.Title()];
     content.sound = [UNNotificationSound defaultSound];
@@ -48,10 +48,10 @@ void UserNotificationsCenter::ReportCompletedOperation(const nc::ops::Operation 
     const unsigned long wnd_address = reinterpret_cast<unsigned long>(objc_bridge_cast<void>(_in_window));
     content.userInfo = @{g_Window: [NSNumber numberWithUnsignedLong:wnd_address]};
 
-    NSString *identifier = [NSString stringWithFormat:@"nc.op.complete.%lu", wnd_address];
-    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:identifier
-                                                                          content:content
-                                                                          trigger:nil];
+    NSString *const identifier = [NSString stringWithFormat:@"nc.op.complete.%lu", wnd_address];
+    UNNotificationRequest *const request = [UNNotificationRequest requestWithIdentifier:identifier
+                                                                                content:content
+                                                                                trigger:nil];
 
     [UNUserNotificationCenter.currentNotificationCenter addNotificationRequest:request
                                                          withCompletionHandler:^(NSError *_Nullable error) {

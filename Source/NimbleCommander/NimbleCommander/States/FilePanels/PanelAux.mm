@@ -124,13 +124,12 @@ void FileOpener::Open(std::string _filepath,
     if( _host->IsNativeFS() ) {
         NSString *const filename = [NSString stringWithUTF8String:_filepath.c_str()];
 
-        NSURL *file_url = [NSURL fileURLWithPath:filename];
+        NSURL *const file_url = [NSURL fileURLWithPath:filename];
         if( !_with_app_path.empty() ) {
-            NSURL *app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:_with_app_path.c_str()]];
-            NSWorkspaceOpenConfiguration *config = [NSWorkspaceOpenConfiguration configuration];
+            NSURL *const app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:_with_app_path.c_str()]];
             [[NSWorkspace sharedWorkspace] openURLs:@[file_url]
                                withApplicationAtURL:app_url
-                                      configuration:config
+                                      configuration:[NSWorkspaceOpenConfiguration configuration]
                                   completionHandler:^(NSRunningApplication *_app, NSError *) {
                                     if( !_app )
                                         NSBeep();
@@ -167,13 +166,12 @@ void FileOpener::Open(std::string _filepath,
 
             NSString *const fn = [NSString stringWithUTF8StdString:*tmp_path];
             dispatch_to_main_queue([=] {
-                NSURL *file_url = [NSURL fileURLWithPath:fn];
+                NSURL *const file_url = [NSURL fileURLWithPath:fn];
                 if( !_with_app_path.empty() ) {
-                    NSURL *app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:_with_app_path]];
-                    NSWorkspaceOpenConfiguration *config = [NSWorkspaceOpenConfiguration configuration];
+                    NSURL *const app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:_with_app_path]];
                     [[NSWorkspace sharedWorkspace] openURLs:@[file_url]
                                        withApplicationAtURL:app_url
-                                              configuration:config
+                                              configuration:[NSWorkspaceOpenConfiguration configuration]
                                           completionHandler:^(NSRunningApplication *_app, NSError *) {
                                             if( !_app )
                                                 NSBeep();
@@ -211,10 +209,9 @@ void FileOpener::Open(std::vector<std::string> _filepaths,
             }
         }
 
-        NSWorkspaceOpenConfiguration *config = [NSWorkspaceOpenConfiguration configuration];
         [[NSWorkspace sharedWorkspace] openURLs:arr
                            withApplicationAtURL:app_url
-                                  configuration:config
+                                  configuration:[NSWorkspaceOpenConfiguration configuration]
                               completionHandler:^(NSRunningApplication *_app, NSError *) {
                                 if( !_app )
                                     NSBeep();
@@ -253,10 +250,9 @@ void FileOpener::Open(std::vector<std::string> _filepaths,
             }
         }
 
-        NSWorkspaceOpenConfiguration *config = [NSWorkspaceOpenConfiguration configuration];
         [[NSWorkspace sharedWorkspace] openURLs:arr
                            withApplicationAtURL:app_url
-                                  configuration:config
+                                  configuration:[NSWorkspaceOpenConfiguration configuration]
                               completionHandler:^(NSRunningApplication *_app, NSError *) {
                                 if( !_app )
                                     NSBeep();

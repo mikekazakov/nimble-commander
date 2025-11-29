@@ -1005,3 +1005,10 @@ Some actions do not have default hotkeys but can still be accessed through the a
 **Q**: Why does Nimble Commander keep forgetting the theme I selected?  
 **A**: Mostly likely, Nimble Commander automatically switches to another theme whenever the macOS system theme changes (Light/Dark) and/or when the app restarts.
 You can control this by navigating to `Settings -> Themes -> (...) -> Configure automatic switching...` and either turning off this functionality or setting the theme you want for both Light and Dark appearances.
+
+---
+
+**Q**: Where can I find the logs?
+**A**: To open the Logs window while NC is running, hold Alt and select `Help -> Debug -> Show Logs...`.
+Next, adjust the log level by clicking the settings (gear) icon and choosing the desired level, either for a specific subsystem or globally.   
+By default, logging is disabled (the level is set to Off).

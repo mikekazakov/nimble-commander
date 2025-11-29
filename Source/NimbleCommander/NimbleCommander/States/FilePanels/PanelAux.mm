@@ -124,13 +124,19 @@ void FileOpener::Open(std::string _filepath,
     if( _host->IsNativeFS() ) {
         NSString *const filename = [NSString stringWithUTF8String:_filepath.c_str()];
 
+        NSURL *const file_url = [NSURL fileURLWithPath:filename];
         if( !_with_app_path.empty() ) {
-            if( ![[NSWorkspace sharedWorkspace] openFile:filename
-                                         withApplication:[NSString stringWithUTF8String:_with_app_path.c_str()]] )
-                NSBeep();
+            NSURL *const app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:_with_app_path.c_str()]];
+            [[NSWorkspace sharedWorkspace] openURLs:@[file_url]
+                               withApplicationAtURL:app_url
+                                      configuration:[NSWorkspaceOpenConfiguration configuration]
+                                  completionHandler:^(NSRunningApplication *_app, NSError *) {
+                                    if( !_app )
+                                        NSBeep();
+                                  }];
         }
         else {
-            if( ![[NSWorkspace sharedWorkspace] openFile:filename] )
+            if( ![[NSWorkspace sharedWorkspace] openURL:file_url] )
                 NSBeep();
         }
 
@@ -160,13 +166,19 @@ void FileOpener::Open(std::string _filepath,
 
             NSString *const fn = [NSString stringWithUTF8StdString:*tmp_path];
             dispatch_to_main_queue([=] {
+                NSURL *const file_url = [NSURL fileURLWithPath:fn];
                 if( !_with_app_path.empty() ) {
-                    if( ![NSWorkspace.sharedWorkspace openFile:fn
-                                               withApplication:[NSString stringWithUTF8StdString:_with_app_path]] )
-                        NSBeep();
+                    NSURL *const app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:_with_app_path]];
+                    [[NSWorkspace sharedWorkspace] openURLs:@[file_url]
+                                       withApplicationAtURL:app_url
+                                              configuration:[NSWorkspaceOpenConfiguration configuration]
+                                          completionHandler:^(NSRunningApplication *_app, NSError *) {
+                                            if( !_app )
+                                                NSBeep();
+                                          }];
                 }
                 else {
-                    if( ![NSWorkspace.sharedWorkspace openFile:fn] )
+                    if( ![[NSWorkspace sharedWorkspace] openURL:file_url] )
                         NSBeep();
                 }
             });
@@ -188,12 +200,22 @@ void FileOpener::Open(std::vector<std::string> _filepaths,
             if( NSString *const s = [NSString stringWithUTF8String:i.c_str()] )
                 [arr addObject:[[NSURL alloc] initFileURLWithPath:s]];
 
-        if( ![NSWorkspace.sharedWorkspace openURLs:arr
-                           withAppBundleIdentifier:_with_app_bundle
-                                           options:0
-                    additionalEventParamDescriptor:nil
-                                 launchIdentifiers:nil] )
-            NSBeep();
+        NSURL *app_url = nil;
+        if( _with_app_bundle != nil && _with_app_bundle.length > 0 ) {
+            app_url = [[NSWorkspace sharedWorkspace] URLForApplicationWithBundleIdentifier:_with_app_bundle];
+            if( !app_url ) {
+                NSBeep();
+                return;
+            }
+        }
+
+        [[NSWorkspace sharedWorkspace] openURLs:arr
+                           withApplicationAtURL:app_url
+                                  configuration:[NSWorkspaceOpenConfiguration configuration]
+                              completionHandler:^(NSRunningApplication *_app, NSError *) {
+                                if( !_app )
+                                    NSBeep();
+                              }];
 
         return;
     }
@@ -219,12 +241,22 @@ void FileOpener::Open(std::vector<std::string> _filepaths,
             }
         }
 
-        if( ![NSWorkspace.sharedWorkspace openURLs:arr
-                           withAppBundleIdentifier:_with_app_bundle
-                                           options:0
-                    additionalEventParamDescriptor:nil
-                                 launchIdentifiers:nil] )
-            NSBeep();
+        NSURL *app_url = nil;
+        if( _with_app_bundle != nil && _with_app_bundle.length > 0 ) {
+            app_url = [[NSWorkspace sharedWorkspace] URLForApplicationWithBundleIdentifier:_with_app_bundle];
+            if( !app_url ) {
+                NSBeep();
+                return;
+            }
+        }
+
+        [[NSWorkspace sharedWorkspace] openURLs:arr
+                           withApplicationAtURL:app_url
+                                  configuration:[NSWorkspaceOpenConfiguration configuration]
+                              completionHandler:^(NSRunningApplication *_app, NSError *) {
+                                if( !_app )
+                                    NSBeep();
+                              }];
     });
 }
 

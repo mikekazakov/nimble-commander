@@ -29,7 +29,8 @@ private:
     UserNotificationsCenter(const UserNotificationsCenter &) = delete;
     ~UserNotificationsCenter() = default;
     void operator=(const UserNotificationsCenter &) = delete;
-    bool m_ShowWhenActive;
+    bool m_ShowWhenActive = true;
+    bool m_NotificationsAutorized = false;
     std::chrono::nanoseconds m_MinElapsedOperationTime;
 };
 

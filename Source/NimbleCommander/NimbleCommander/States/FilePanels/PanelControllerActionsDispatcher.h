@@ -19,7 +19,7 @@ struct PanelAction;
 using PanelActionsMap = ankerl::unordered_dense::map<SEL, std::unique_ptr<const actions::PanelAction>>;
 } // namespace nc::panel
 
-@interface NCPanelControllerActionsDispatcher : AttachedResponder <NCPanelViewKeystrokeSink>
+@interface NCPanelControllerActionsDispatcher : AttachedResponder <NCPanelViewKeystrokeSink, NSMenuItemValidation>
 
 - (instancetype)initWithController:(PanelController *)_controller
                         actionsMap:(const nc::panel::PanelActionsMap &)_actions_map

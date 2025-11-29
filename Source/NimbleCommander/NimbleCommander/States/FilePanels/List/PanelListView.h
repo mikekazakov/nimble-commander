@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../PanelViewImplementationProtocol.h"
@@ -15,7 +15,8 @@ class Model;
 
 @class PanelView;
 
-@interface PanelListView : NSView <NCPanelViewPresentationProtocol, NSTableViewDataSource, NSTableViewDelegate>
+@interface PanelListView
+    : NSView <NCPanelViewPresentationProtocol, NSTableViewDataSource, NSTableViewDelegate, NSMenuItemValidation>
 
 - (id)initWithFrame:(NSRect)frameRect andIR:(nc::vfsicon::IconRepository &)_ir;
 

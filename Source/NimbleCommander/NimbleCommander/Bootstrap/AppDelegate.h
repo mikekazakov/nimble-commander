@@ -60,7 +60,7 @@ class NativeHost;
 
 } // namespace nc
 
-@interface NCAppDelegate : NSObject <NSApplicationDelegate, NSWindowRestoration>
+@interface NCAppDelegate : NSObject <NSApplicationDelegate, NSWindowRestoration, NSMenuItemValidation>
 
 - (InternalViewerWindowController *)findInternalViewerWindowForPath:(const std::string &)_path
                                                               onVFS:(const std::shared_ptr<VFSHost> &)_vfs;

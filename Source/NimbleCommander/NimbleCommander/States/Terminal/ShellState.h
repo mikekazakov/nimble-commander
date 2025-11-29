@@ -16,7 +16,7 @@ namespace nc::term {
 class ShellTask;
 }
 
-@interface NCTermShellState : NSView <NCMainWindowState>
+@interface NCTermShellState : NSView <NCMainWindowState, NSMenuItemValidation>
 
 @property(nonatomic, readonly) bool isAnythingRunning;
 

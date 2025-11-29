@@ -1,0 +1,8 @@
+#include "Comparators_UT.mm"
+#include "ExternalTools_IT.mm"
+#include "ExternalTools_UT.mm"
+#include "ItemVolatileData_UT.mm"
+#include "PanelData_UT.mm"
+#include "PanelDataFilter_UT.mm"
+#include "QuickSearch_UT.mm"
+#include "UI/TagsPresentation_UT.mm"

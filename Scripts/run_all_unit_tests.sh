@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Usage: ./run_all_unit_tests.sh [Debug|Release|ASAN|UBSAN]
 
 set -e
@@ -15,10 +15,13 @@ export LC_CTYPE=en_US.UTF-8
 # https://github.com/google/sanitizers/wiki/AddressSanitizerContainerOverflow#false-positives
 export ASAN_OPTIONS=detect_container_overflow=0
 
-# get current directory
+# Determine the host architecture
+HOST_ARCH=$(uname -m)
+
+# Get current directory
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-# allocate a dir for build artifacts
+# Allocate a directory for the build artifacts
 BUILD_DIR="${SCRIPTS_DIR}/run_all_unit_tests.tmp"
 mkdir "${BUILD_DIR}"
 
@@ -28,71 +31,80 @@ XCODEPROJ="../Source/NimbleCommander/NimbleCommander.xcodeproj"
 
 LOG_FILE=${BUILD_DIR}/xcodebuild.log
 
-build_target()
-{
-    TARGET=$1
-    CONFIGURATION=$2
-    echo building ${TARGET} - ${CONFIGURATION}
-    
-    asan_flags=""
-    if [ "$CONFIGURATION" == "ASAN" ]; then
-        CONFIGURATION="Release"
-        asan_flags="-enableAddressSanitizer YES"
-    fi
-
-    ubsan_flags=""
-    if [ "$CONFIGURATION" == "UBSAN" ]; then
-        CONFIGURATION="Release"
-        ubsan_flags="-enableUndefinedBehaviorSanitizer YES"
-    fi
-
-    XC="xcodebuild \
-        -project ${XCODEPROJ} \
-        -scheme ${TARGET} \
-        -configuration ${CONFIGURATION} \
-        SYMROOT=${BUILD_DIR} \
-        OBJROOT=${BUILD_DIR} \
-        -parallelizeTargets \
-        ${asan_flags} \
-        ${ubsan_flags} \
-        OTHER_CFLAGS=\"-fdebug-prefix-map=${ROOT_DIR}=.\""
-    BINARY_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= *//')
-    BINARY_NAME=$($XC -showBuildSettings | grep " FULL_PRODUCT_NAME =" | sed -e 's/.*= *//')
-    BINARY_PATH=$BINARY_DIR/$BINARY_NAME
-    $XC build | tee -a ${LOG_FILE} | xcpretty
-}
-
-# list of targets to build
-tests=$(xcodebuild -project ${XCODEPROJ} -list | awk -v word="Schemes:" 'BEGIN {found=0} found {if ($0 ~ /UT$/) print} $0 ~ word {found=1}' | sed 's/^[[:space:]]*//')
-echo Building these unit tests: ${tests}
-
-# list of configurations to build the targets with
+# Configuration to build the unit tests with
 if [ -n "$1" ]; then
-    configurations="$1"
+    CONFIGURATION="$1"
 else
-    configurations="Debug Release"
+    CONFIGURATION="Debug"
 fi
-echo Building these configurations: ${configurations}
 
-# a list of binaries of UTs to execute
-binary_paths=()
+# The target is an umbrella that depends on all unit tests
+TARGET="UnitTests"
 
-# build N * M binaries
-for configuration in ${configurations}; do
-  for test in ${tests}; do
-    # build the binary
-    build_target ${test} ${configuration}
+echo Now building ${TARGET} - ${CONFIGURATION} - ${HOST_ARCH}
+
+# Conditionally inject ASAN flag
+asan_flags=""
+if [ "$CONFIGURATION" == "ASAN" ]; then
+    CONFIGURATION="Release"
+    asan_flags="-enableAddressSanitizer YES"
+fi
+
+# Conditionally inject UBSAN flag
+ubsan_flags=""
+if [ "$CONFIGURATION" == "UBSAN" ]; then
+    CONFIGURATION="Release"
+    ubsan_flags="-enableUndefinedBehaviorSanitizer YES"
+fi
+
+# Build the xcodebuild execution command
+XC="xcodebuild \
+    -project ${XCODEPROJ} \
+    -scheme ${TARGET} \
+    -configuration ${CONFIGURATION} \
+    -destination "platform=macOS,arch=${HOST_ARCH}" \
+    SYMROOT=${BUILD_DIR} \
+    OBJROOT=${BUILD_DIR} \
+    -parallelizeTargets \
+    ${asan_flags} \
+    ${ubsan_flags}"
+
+# Extract the directories and the names of the built unit test binaries
+DIRS="$($XC -showBuildSettings 2>/dev/null | grep ' BUILT_PRODUCTS_DIR =' | sed -e 's/.*= *//')"
+NAMES="$($XC -showBuildSettings 2>/dev/null | grep ' FULL_PRODUCT_NAME =' | sed -e 's/.*= *//')"
+
+# Fill dirs[]
+dirs=()
+while IFS= read -r d; do
+    dirs+=("$d")
+done <<< "$DIRS"
+
+# Fill names[]
+names=()
+while IFS= read -r n; do
+    names+=("$n")
+done <<< "$NAMES"
     
-    # store the path to execute later
-    binary_paths+=("$BINARY_PATH")
-  done
+# Sanity check: both arrays must have same length
+if [[ ${#dirs[@]} -ne ${#names[@]} ]]; then
+    echo "Mismatch: ${#dirs[@]} dirs vs ${#names[@]} names" >&2
+    exit 1
+fi
+
+# Combine them to build full binary paths
+binary_paths=()
+for ((i=0; i<${#names[@]}; i++)); do
+    binary_paths+=("${dirs[$i]}/${names[$i]}")
 done
 
-# run the binaries
+# Now actually build the unit tests
+${XC} build | tee -a ${LOG_FILE} | xcpretty
+
+# Run the produced binaries
 for path in "${binary_paths[@]}"; do
-    echo "$path"
-    $path
+    echo Now Running ${path}
+    ${path}
 done
 
-# cleanup
+# Cleanup
 rm -rf ${BUILD_DIR}

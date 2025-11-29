@@ -97,3 +97,5 @@ TEST_CASE(PREFIX "works")
     close(fd1);
     close(fd2);
 }
+
+#undef PREFIX

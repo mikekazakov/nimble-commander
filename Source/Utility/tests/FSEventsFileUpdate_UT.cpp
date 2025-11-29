@@ -1,4 +1,4 @@
-// Copyright (C) 2021-203 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FSEventsFileUpdateImpl.h"
 #include "UnitTests_main.h"
 #include <CoreFoundation/CoreFoundation.h>
@@ -6,6 +6,8 @@
 #include <fcntl.h>
 #include <chrono>
 #include <thread>
+
+namespace {
 
 using nc::utility::FSEventsFileUpdateImpl;
 using namespace std::chrono_literals;
@@ -144,3 +146,7 @@ static bool run_until_timeout_or_predicate(std::chrono::nanoseconds _timeout,
     } while( deadline > nc::base::machtime() );
     return false;
 }
+
+} // namespace
+
+#undef PREFIX

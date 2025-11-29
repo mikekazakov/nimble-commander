@@ -45,7 +45,7 @@ XC="xcodebuild \
  CODE_SIGN_ENTITLEMENTS= \
  SYMROOT=${BUILD_DIR} \
  OBJROOT=${BUILD_DIR} \
- OTHER_CFLAGS=\"-fdebug-prefix-map=${ROOT_DIR}=.\""
+ -parallelizeTargets"
 
 APP_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= *//' )
 APP_NAME=$($XC -showBuildSettings | grep " FULL_PRODUCT_NAME =" | sed -e 's/.*= *//' )

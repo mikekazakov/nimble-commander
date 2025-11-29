@@ -7,18 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF16112F2EDA0952000CD328 /* _Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF16112E2EDA0952000CD328 /* _Config.cpp */; };
 		CF20CC2D215BB19C006716F6 /* ConfigImpl_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF20CC2A215BB19C006716F6 /* ConfigImpl_UT.cpp */; };
 		CF20CC2E215BB19C006716F6 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF20CC2B215BB19C006716F6 /* Tests.cpp */; };
 		CF2E7A322161B2CB0002E46C /* ObjCBridge_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2E7A302161B2370002E46C /* ObjCBridge_UT.mm */; };
-		CF4601AC25612EC80095FC73 /* FileOverwritesStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF84A7932161BB3500E03CB1 /* FileOverwritesStorage.cpp */; };
-		CF4601AD25612EC80095FC73 /* NonPersistentOverwritesStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2E7A26215CBFCD0002E46C /* NonPersistentOverwritesStorage.cpp */; };
-		CF4601AE25612EC80095FC73 /* Executor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2E7A2A2160E2660002E46C /* Executor.cpp */; };
-		CF4601AF25612EC80095FC73 /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF20CC0D215A267B006716F6 /* Config.cpp */; };
-		CF4601B025612EC80095FC73 /* ConfigImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF20CC1A215B9B45006716F6 /* ConfigImpl.cpp */; };
-		CF4601B125612EC80095FC73 /* OverwritesStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2E7A22215CB5470002E46C /* OverwritesStorage.cpp */; };
-		CF4601B225612EC80095FC73 /* RapidJSON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF20CC16215B5253006716F6 /* RapidJSON.cpp */; };
 		CF4601B325612EC90095FC73 /* ObjCBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2E7A2E2161AD090002E46C /* ObjCBridge.mm */; };
-		CFA99A0926506ECB00F72E93 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A0826506ECB00F72E93 /* Log.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,6 +28,7 @@
 
 /* Begin PBXFileReference section */
 		CF0F9D09216459FB00DB48F1 /* libUtility.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libUtility.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF16112E2EDA0952000CD328 /* _Config.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = _Config.cpp; path = source/_Config.cpp; sourceTree = "<group>"; };
 		CF20CC0B215A2666006716F6 /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Config.h; path = include/Config/Config.h; sourceTree = "<group>"; };
 		CF20CC0D215A267B006716F6 /* Config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Config.cpp; path = source/Config.cpp; sourceTree = "<group>"; };
 		CF20CC0F215A2701006716F6 /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
@@ -133,6 +127,7 @@
 		CF20CC09215A25AB006716F6 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF16112E2EDA0952000CD328 /* _Config.cpp */,
 				CF20CC0D215A267B006716F6 /* Config.cpp */,
 				CF20CC1A215B9B45006716F6 /* ConfigImpl.cpp */,
 				CF2E7A2A2160E2660002E46C /* Executor.cpp */,
@@ -265,14 +260,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF4601B325612EC90095FC73 /* ObjCBridge.mm in Sources */,
-				CF4601AD25612EC80095FC73 /* NonPersistentOverwritesStorage.cpp in Sources */,
-				CF4601AF25612EC80095FC73 /* Config.cpp in Sources */,
-				CFA99A0926506ECB00F72E93 /* Log.cpp in Sources */,
-				CF4601B025612EC80095FC73 /* ConfigImpl.cpp in Sources */,
-				CF4601AE25612EC80095FC73 /* Executor.cpp in Sources */,
-				CF4601AC25612EC80095FC73 /* FileOverwritesStorage.cpp in Sources */,
-				CF4601B125612EC80095FC73 /* OverwritesStorage.cpp in Sources */,
-				CF4601B225612EC80095FC73 /* RapidJSON.cpp in Sources */,
+				CF16112F2EDA0952000CD328 /* _Config.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

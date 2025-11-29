@@ -1,4 +1,4 @@
-// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FSEventsFileUpdateImpl.h"
 #include <Base/CFPtr.h>
 #include <Base/dispatch_cpp.h>
@@ -10,10 +10,6 @@
 #include <iostream>
 
 namespace nc::utility {
-
-static const CFAbsoluteTime g_FSEventsLatency = 0.05; // 50ms
-static const std::chrono::nanoseconds g_ScanInterval = std::chrono::seconds(2);
-static const std::chrono::nanoseconds g_StaleInterval = g_ScanInterval / 2;
 
 static std::optional<struct stat> GetStat(const std::filesystem::path &_path) noexcept;
 
@@ -132,7 +128,7 @@ FSEventStreamRef FSEventsFileUpdateImpl::CreateEventStream(const std::filesystem
                                      &context,
                                      paths_to_watch.get(),
                                      kFSEventStreamEventIdSinceNow,
-                                     g_FSEventsLatency,
+                                     m_FSEventsLatency,
                                      flags);
         if( stream == nullptr ) {
             Log::Warn("Failed to create a stream for {}", _path);
@@ -209,7 +205,7 @@ void FSEventsFileUpdateImpl::ScheduleScannerKickstart()
     // no dispatch_assert_main_queue here - can be scheduled from any thread
     m_KickstartIsOnline = true;
     // schedule the next scanner execution after g_ScanInterval
-    dispatch_after(g_ScanInterval, m_KickstartQueue, [context = m_WeakAsyncContext] {
+    dispatch_after(m_ScanInterval, m_KickstartQueue, [context = m_WeakAsyncContext] {
         if( auto instance = context.lock() )
             instance->me->KickstartBackgroundScanner();
     });
@@ -231,7 +227,7 @@ void FSEventsFileUpdateImpl::KickstartBackgroundScanner()
     const auto now = base::machtime();
     for( const auto &watch : m_Watches ) {
         // check that the last snapshot is stale enough to bother
-        if( watch.second.snapshot_time + g_StaleInterval < now ) {
+        if( watch.second.snapshot_time + m_StaleInterval < now ) {
             paths.emplace_back(watch.first);
         }
     }

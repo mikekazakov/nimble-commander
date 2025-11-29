@@ -2,10 +2,9 @@
 #include "UUID.h"
 #include "UnitTests_main.h"
 
-using namespace nc::base;
-
 TEST_CASE("nc::base::UUID")
 {
+    using namespace nc::base;
     CHECK(UUID{}.ToString() == "00000000-0000-0000-0000-000000000000");
     CHECK(!UUID::FromString("df69ae86-c4f6-4bab-af46-fd97e764868"));
     CHECK(!UUID::FromString("df6-ae86-c4f6-4bab-af46-fd97e764868c"));

@@ -1,8 +1,10 @@
-// Copyright (C) 2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataFilter.h"
 #include "Tests.h"
 
 #define PREFIX "PanelDataFilter "
+
+namespace {
 
 using namespace nc;
 using namespace nc::panel::data;
@@ -63,3 +65,7 @@ TEST_CASE(PREFIX "Fuzzy search")
         CHECK(hl == tc.expected);
     }
 }
+
+} // namespace
+
+#undef PREFIX

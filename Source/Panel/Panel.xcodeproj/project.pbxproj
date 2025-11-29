@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		CF0190312EAE6B990025ACFB /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF0190302EAE6B990025ACFB /* SelectionWithMaskPopupViewController.xib */; };
 		CF0B0405281F014800076FDF /* SelectionWithMaskPopupViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CF0B0404281F014800076FDF /* SelectionWithMaskPopupViewController.h */; };
-		CF0B0408281F016300076FDF /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B0407281F016300076FDF /* SelectionWithMaskPopupViewController.mm */; };
-		CF0B040B281F027900076FDF /* Internal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B0409281F027900076FDF /* Internal.mm */; };
 		CF0B040E281F029A00076FDF /* Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CF0B040D281F029A00076FDF /* Internal.h */; };
 		CF13B6012C8C5AA6004C1879 /* Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FF025569DF200B3C92C /* Tests.mm */; };
 		CF13B6052C8C682D004C1879 /* Comparator_PT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF13B6042C8C682D004C1879 /* Comparator_PT.cpp */; };
@@ -18,57 +16,31 @@
 		CF13B6072C8C6886004C1879 /* libConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3ED50C25860F7200D67AF2 /* libConfig.a */; };
 		CF13B6082C8C688E004C1879 /* libPanel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF33F5F2556924900B3C92C /* libPanel.a */; };
 		CF13B6092C8C6894004C1879 /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF465283269A4C150085840A /* libOperations.a */; };
-		CF13B60B2C8C6FE7004C1879 /* PanelDataEntriesComparator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF13B60A2C8C6FE7004C1879 /* PanelDataEntriesComparator.mm */; };
 		CF22060527B851A6008EDE3A /* ExternalTools.h in Headers */ = {isa = PBXBuildFile; fileRef = CF22060427B851A6008EDE3A /* ExternalTools.h */; };
-		CF22060727B851B5008EDE3A /* ExternalTools.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22060627B851B5008EDE3A /* ExternalTools.mm */; };
-		CF22060927B9B73C008EDE3A /* ExternalTools_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22060827B9B73C008EDE3A /* ExternalTools_UT.mm */; };
-		CF349B1125FCAEA1009735DC /* Comparators_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF349B0D25FCAE9B009735DC /* Comparators_UT.mm */; };
 		CF3ED4E725860BFE00D67AF2 /* PanelViewKeystrokeSink.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3ED4E625860BFE00D67AF2 /* PanelViewKeystrokeSink.h */; };
 		CF3ED4EB25860C8000D67AF2 /* CursorBackup.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3ED4EA25860C8000D67AF2 /* CursorBackup.h */; };
-		CF3ED4F225860C8900D67AF2 /* CursorBackup.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED4F125860C8900D67AF2 /* CursorBackup.mm */; };
 		CF3ED4FA25860D5900D67AF2 /* QuickSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3ED4F925860D5900D67AF2 /* QuickSearch.h */; };
-		CF3ED50125860D5E00D67AF2 /* QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED50025860D5E00D67AF2 /* QuickSearch.mm */; };
-		CF3ED50925860E1000D67AF2 /* QuickSearch_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED50825860E1000D67AF2 /* QuickSearch_UT.mm */; };
 		CF3ED50E25860F7E00D67AF2 /* libConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3ED50C25860F7200D67AF2 /* libConfig.a */; };
 		CF465229268D163E0085840A /* Log.h in Headers */ = {isa = PBXBuildFile; fileRef = CF465228268D163E0085840A /* Log.h */; };
-		CF46522D268D16500085840A /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF46522C268D16500085840A /* Log.cpp */; };
 		CF4652592699F97C0085840A /* PanelViewFieldEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4652582699F97C0085840A /* PanelViewFieldEditor.h */; };
-		CF46525D2699F9830085840A /* PanelViewFieldEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46525C2699F9830085840A /* PanelViewFieldEditor.mm */; };
 		CF465284269A4C150085840A /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF465283269A4C150085840A /* libOperations.a */; };
-		CF5D1DCC2B56E5C000750174 /* TagsPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5D1DCB2B56E5C000750174 /* TagsPresentation.mm */; };
-		CF5D1DCF2B58798A00750174 /* TagsPresentation_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5D1DCE2B58798A00750174 /* TagsPresentation_UT.mm */; };
 		CF60DF252A6D3BAB00478BA0 /* libTerm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF60DF242A6D3BAB00478BA0 /* libTerm.a */; };
-		CF60DF272A6D47CB00478BA0 /* ExternalTools_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF60DF262A6D47CB00478BA0 /* ExternalTools_IT.mm */; };
-		CF8B0FAF2CA7FF440098C4D6 /* NetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B0FAE2CA7FF440098C4D6 /* NetworkConnectionsManager.mm */; };
-		CF96DC7629CF4610003EC4EB /* ItemVolatileData_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF96DC7529CF460F003EC4EB /* ItemVolatileData_UT.mm */; };
-		CF96DC7829E7099A003EC4EB /* PanelDataFilter_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF96DC7729E7099A003EC4EB /* PanelDataFilter_UT.mm */; };
 		CFA89D822804C86E00BEA127 /* FindFilesData.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA89D812804C86E00BEA127 /* FindFilesData.h */; };
-		CFA89D842804C87700BEA127 /* FindFilesData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA89D832804C87700BEA127 /* FindFilesData.cpp */; };
-		CFA89DA22814794000BEA127 /* TextWidthsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA89DA12814794000BEA127 /* TextWidthsCache.mm */; };
 		CFC762CD2D3D2D41000498AA /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CFC762CB2D3D2B17000498AA /* Localizable.xcstrings */; };
-		CFCB690228968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCB690028968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm */; };
-		CFCB690328968C4800086E40 /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCB690128968C4800086E40 /* PanelViewPresentationItemsColoringFilter.mm */; };
 		CFCF43E22B8B642C00B513C7 /* TagsStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CFCF43E12B8B642C00B513C7 /* TagsStorage.h */; };
-		CFCF43E42B8B644B00B513C7 /* TagsStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCF43E32B8B644B00B513C7 /* TagsStorage.cpp */; };
 		CFCFAC692D3D2E80008C6E26 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CFC762CB2D3D2B17000498AA /* Localizable.xcstrings */; };
 		CFF33F962556941B00B3C92C /* PanelData.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33F952556941B00B3C92C /* PanelData.h */; };
-		CFF33F992556942700B3C92C /* PanelData.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF33F982556942600B3C92C /* PanelData.mm */; };
 		CFF33F9D2556948200B3C92C /* PanelDataSortMode.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33F9C2556948200B3C92C /* PanelDataSortMode.h */; };
-		CFF33FA02556948900B3C92C /* PanelDataSortMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF33F9F2556948900B3C92C /* PanelDataSortMode.cpp */; };
 		CFF33FA3255694DC00B3C92C /* PanelDataStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33FA2255694DC00B3C92C /* PanelDataStatistics.h */; };
-		CFF33FA6255694E300B3C92C /* PanelDataStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FA5255694E300B3C92C /* PanelDataStatistics.cpp */; };
 		CFF33FA92556950800B3C92C /* PanelDataFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33FA82556950800B3C92C /* PanelDataFilter.h */; };
-		CFF33FAC2556950E00B3C92C /* PanelDataFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FAB2556950E00B3C92C /* PanelDataFilter.mm */; };
 		CFF33FAF2556954200B3C92C /* PanelDataItemVolatileData.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33FAE2556954200B3C92C /* PanelDataItemVolatileData.h */; };
-		CFF33FB22556954900B3C92C /* PanelDataItemVolatileData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FB12556954900B3C92C /* PanelDataItemVolatileData.cpp */; };
 		CFF33FB52556958C00B3C92C /* PanelDataEntriesComparator.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33FB42556958C00B3C92C /* PanelDataEntriesComparator.h */; };
-		CFF33FB82556959400B3C92C /* PanelDataEntriesComparator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FB72556959400B3C92C /* PanelDataEntriesComparator.cpp */; };
 		CFF33FBB255695B800B3C92C /* PanelDataExternalEntryKey.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33FBA255695B800B3C92C /* PanelDataExternalEntryKey.h */; };
-		CFF33FBE255695BF00B3C92C /* PanelDataExternalEntryKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FBD255695BF00B3C92C /* PanelDataExternalEntryKey.cpp */; };
 		CFF33FF225569DF300B3C92C /* Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FF025569DF200B3C92C /* Tests.mm */; };
-		CFF3401625569EC600B3C92C /* PanelData_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF3401525569EC600B3C92C /* PanelData_UT.mm */; };
 		CFF3401F25569F3B00B3C92C /* libPanel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF33F5F2556924900B3C92C /* libPanel.a */; };
-		CFF3402A2556A13200B3C92C /* PanelDataSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF3401A25569F2400B3C92C /* PanelDataSelection.mm */; };
+		CFF7623A2EDB1E98002DD1EE /* _Panel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF762392EDB1E98002DD1EE /* _Panel.cpp */; };
+		CFF7623C2EDB1F58002DD1EE /* _Panel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF7623B2EDB1F58002DD1EE /* _Panel.mm */; };
+		CFF7623E2EDB2280002DD1EE /* _PanelUT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF7623D2EDB2280002DD1EE /* _PanelUT.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -180,6 +152,9 @@
 		CFF3401525569EC600B3C92C /* PanelData_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelData_UT.mm; path = tests/PanelData_UT.mm; sourceTree = "<group>"; };
 		CFF3401925569F1700B3C92C /* PanelDataSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataSelection.h; path = include/Panel/PanelDataSelection.h; sourceTree = "<group>"; };
 		CFF3401A25569F2400B3C92C /* PanelDataSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataSelection.mm; path = source/PanelDataSelection.mm; sourceTree = "<group>"; };
+		CFF762392EDB1E98002DD1EE /* _Panel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = _Panel.cpp; path = source/_Panel.cpp; sourceTree = "<group>"; };
+		CFF7623B2EDB1F58002DD1EE /* _Panel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = _Panel.mm; path = source/_Panel.mm; sourceTree = "<group>"; };
+		CFF7623D2EDB2280002DD1EE /* _PanelUT.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = _PanelUT.mm; path = tests/_PanelUT.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -325,6 +300,8 @@
 		CFF33F942556940800B3C92C /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFF7623B2EDB1F58002DD1EE /* _Panel.mm */,
+				CFF762392EDB1E98002DD1EE /* _Panel.cpp */,
 				CF3ED4F125860C8900D67AF2 /* CursorBackup.mm */,
 				CF22060627B851B5008EDE3A /* ExternalTools.mm */,
 				CFA89D832804C87700BEA127 /* FindFilesData.cpp */,
@@ -352,6 +329,7 @@
 		CFF33FEF25569DBE00B3C92C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CFF7623D2EDB2280002DD1EE /* _PanelUT.mm */,
 				CF13B6042C8C682D004C1879 /* Comparator_PT.cpp */,
 				CF349B0D25FCAE9B009735DC /* Comparators_UT.mm */,
 				CF60DF262A6D47CB00478BA0 /* ExternalTools_IT.mm */,
@@ -566,29 +544,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF0B0408281F016300076FDF /* SelectionWithMaskPopupViewController.mm in Sources */,
-				CF8B0FAF2CA7FF440098C4D6 /* NetworkConnectionsManager.mm in Sources */,
-				CFCF43E42B8B644B00B513C7 /* TagsStorage.cpp in Sources */,
-				CFF33F992556942700B3C92C /* PanelData.mm in Sources */,
-				CF22060727B851B5008EDE3A /* ExternalTools.mm in Sources */,
-				CFCB690228968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,
-				CF13B60B2C8C6FE7004C1879 /* PanelDataEntriesComparator.mm in Sources */,
-				CF0B040B281F027900076FDF /* Internal.mm in Sources */,
-				CF46522D268D16500085840A /* Log.cpp in Sources */,
-				CF5D1DCC2B56E5C000750174 /* TagsPresentation.mm in Sources */,
-				CFA89D842804C87700BEA127 /* FindFilesData.cpp in Sources */,
-				CFF33FBE255695BF00B3C92C /* PanelDataExternalEntryKey.cpp in Sources */,
-				CFF33FA02556948900B3C92C /* PanelDataSortMode.cpp in Sources */,
-				CF3ED4F225860C8900D67AF2 /* CursorBackup.mm in Sources */,
-				CF46525D2699F9830085840A /* PanelViewFieldEditor.mm in Sources */,
-				CFF33FAC2556950E00B3C92C /* PanelDataFilter.mm in Sources */,
-				CFCB690328968C4800086E40 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
-				CFA89DA22814794000BEA127 /* TextWidthsCache.mm in Sources */,
-				CFF33FA6255694E300B3C92C /* PanelDataStatistics.cpp in Sources */,
-				CFF3402A2556A13200B3C92C /* PanelDataSelection.mm in Sources */,
-				CF3ED50125860D5E00D67AF2 /* QuickSearch.mm in Sources */,
-				CFF33FB22556954900B3C92C /* PanelDataItemVolatileData.cpp in Sources */,
-				CFF33FB82556959400B3C92C /* PanelDataEntriesComparator.cpp in Sources */,
+				CFF7623C2EDB1F58002DD1EE /* _Panel.mm in Sources */,
+				CFF7623A2EDB1E98002DD1EE /* _Panel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -596,14 +553,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF96DC7829E7099A003EC4EB /* PanelDataFilter_UT.mm in Sources */,
-				CF22060927B9B73C008EDE3A /* ExternalTools_UT.mm in Sources */,
-				CF349B1125FCAEA1009735DC /* Comparators_UT.mm in Sources */,
-				CF60DF272A6D47CB00478BA0 /* ExternalTools_IT.mm in Sources */,
-				CF3ED50925860E1000D67AF2 /* QuickSearch_UT.mm in Sources */,
-				CF96DC7629CF4610003EC4EB /* ItemVolatileData_UT.mm in Sources */,
-				CFF3401625569EC600B3C92C /* PanelData_UT.mm in Sources */,
-				CF5D1DCF2B58798A00750174 /* TagsPresentation_UT.mm in Sources */,
+				CFF7623E2EDB2280002DD1EE /* _PanelUT.mm in Sources */,
 				CFF33FF225569DF300B3C92C /* Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/dirent.h>
 #include <VFS/VFS.h>
 #include <VFS/VFSListingInput.h>
@@ -10,6 +10,8 @@
 #include "Tests.h"
 
 #define PREFIX "PanelData "
+
+namespace {
 
 using namespace nc;
 using namespace nc::base;
@@ -753,3 +755,7 @@ TEST_CASE(PREFIX "ReLoad a temporary listing")
         CHECK(data.SortedIndexForName("meow.txt") == -1);
     }
 }
+
+} // namespace
+
+#undef PREFIX

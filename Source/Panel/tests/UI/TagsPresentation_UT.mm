@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/dirent.h>
 #include <VFS/VFS.h>
 #include <VFS/VFSListingInput.h>
@@ -6,6 +6,8 @@
 #include "../Tests.h"
 
 #define PREFIX "TagsPresentation "
+
+namespace {
 
 using namespace nc;
 using namespace nc::base;
@@ -53,3 +55,7 @@ TEST_CASE(PREFIX "TrailingTagsInplaceDisplay::Place")
         CHECK(geom.margin == tc.exp_margin);
     }
 }
+
+} // namespace
+
+#undef PREFIX

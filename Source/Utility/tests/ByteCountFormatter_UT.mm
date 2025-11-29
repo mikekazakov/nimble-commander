@@ -143,3 +143,5 @@ TEST_CASE(PREFIX "SpaceSeparated")
         CHECK([f.ToNSString(tc.size, ByteCountFormatter::SpaceSeparated) isEqualToString:tc.expected]);
     }
 }
+
+#undef PREFIX

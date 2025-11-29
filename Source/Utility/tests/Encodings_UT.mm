@@ -98,3 +98,5 @@ TEST_CASE(PREFIX "ScanUTF8ForValidSequenceLength")
     CHECK(len("\xf0\x9f\x99z") == 0);
     CHECK(len("x\xf0\x9f\x99z") == 1);
 }
+
+#undef PREFIX

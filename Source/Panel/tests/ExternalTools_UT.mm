@@ -11,6 +11,8 @@
 
 #define PREFIX "ExternalTools "
 
+namespace {
+
 using namespace nc;
 using namespace nc::panel;
 
@@ -1015,3 +1017,7 @@ TEST_CASE(PREFIX "Storage immediately writes back the invented UUIDs once the to
         REQUIRE(stor.GetTool(1)->m_UUID == u2); // stayed the same after reload
     }
 }
+
+} // namespace
+
+#undef PREFIX

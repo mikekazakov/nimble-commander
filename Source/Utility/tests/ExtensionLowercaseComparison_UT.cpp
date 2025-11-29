@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UnitTests_main.h"
 #include "ExtensionLowercaseComparison.h"
 #include <string_view>
@@ -35,3 +35,5 @@ TEST_CASE(PREFIX "ExtensionsLowercaseList - Long ext")
     const ExtensionsLowercaseList l("This_Is_A_Very_Long_Extension_That_Cannot_For_Sure_Fit_Into_SBO");
     CHECK(l.contains("this_is_a_very_long_extension_that_cannot_for_sure_fit_into_sbo") == true);
 }
+
+#undef PREFIX

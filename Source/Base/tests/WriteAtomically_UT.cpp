@@ -6,7 +6,6 @@
 #include <fcntl.h>
 
 using nc::base::WriteAtomically;
-using VP = std::vector<std::filesystem::path>;
 
 #define PREFIX "WriteAtomically "
 
@@ -161,3 +160,5 @@ TEST_CASE(PREFIX "Error handling")
     const auto err = WriteAtomically("/bin/meow", payload);
     CHECK(((err.error() == nc::Error{nc::Error::POSIX, EPERM}) || (err.error() == nc::Error{nc::Error::POSIX, EROFS})));
 }
+
+#undef PREFIX

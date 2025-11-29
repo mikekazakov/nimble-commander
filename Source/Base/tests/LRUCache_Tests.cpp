@@ -115,3 +115,5 @@ TEST_CASE(PREFIX "big cache")
     cache[limit] = -1;
     CHECK(cache.count(limit - 1) == 0);
 }
+
+#undef PREFIX

@@ -11,11 +11,11 @@
 #include <Base/algo.h>
 #include <Cocoa/Cocoa.h>
 
-using nc::utility::Tags;
-
 #define PREFIX "nc::utility::Tags "
 
 namespace {
+
+using nc::utility::Tags;
 
 struct Attempt {
     Attempt(int _limit) : m_Limit(_limit) {}
@@ -32,8 +32,6 @@ private:
     int m_Limit = 0;
     std::chrono::milliseconds m_Wait = std::chrono::milliseconds{100};
 };
-
-} // namespace
 
 TEST_CASE(PREFIX "Rejects corrupt data")
 {
@@ -767,3 +765,7 @@ TEST_CASE(PREFIX "RemoveTagFromAllItems", "[!mayfail]")
     CHECK(Tags::ReadTags(p2) == std::vector<Tags::Tag>{{&label2, color2}});
     CHECK(Tags::ReadTags(p3) == std::vector<Tags::Tag>{{&label2, color2}});
 }
+
+} // namespace
+
+#undef PREFIX

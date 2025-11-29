@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "algo.h"
 #include "UnitTests_main.h"
 
@@ -77,3 +77,5 @@ TEST_CASE(PREFIX "ReplaceAll(..., std::string_view, ...)")
     CHECK(ReplaceAll("aaaaa", "a", "bb") == "bbbbbbbbbb");
     CHECK(ReplaceAll("aaaaa", "", "bb") == "aaaaa");
 }
+
+#undef PREFIX

@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CFPtr.h"
 #include "UnitTests_main.h"
 
@@ -175,3 +175,5 @@ TEST_CASE(PREFIX "reset")
     p1.reset(array);
     CHECK(CFGetRetainCount(array) == 2);
 }
+
+#undef PREFIX

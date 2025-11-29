@@ -502,3 +502,5 @@ TEST_CASE(PREFIX "ActionShortcut(const EventData &_event)")
         CHECK(equal == test_case.expected);
     }
 }
+
+#undef PREFIX

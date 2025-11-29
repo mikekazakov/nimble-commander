@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UnitTests_main.h"
 #include "FileMask.h"
 
@@ -6,13 +6,10 @@ using nc::utility::FileMask;
 
 #define PREFIX "nc::utility::FileMask "
 
-static const char *ch(const char8_t *str)
-{
-    return reinterpret_cast<const char *>(str);
-}
-
 TEST_CASE(PREFIX "MatchName - old file masks")
 {
+    auto ch = [](const char8_t *str) -> const char * { return reinterpret_cast<const char *>(str); };
+
     struct TC {
         const char *mask;
         const char *name;
@@ -188,3 +185,5 @@ TEST_CASE(PREFIX "Wildcards")
     CHECK(FileMask::ToFilenameWildCard("jpg") == "*jpg*");
     CHECK(FileMask::ToFilenameWildCard("jpg,png") == "*jpg*, *png*");
 }
+
+#undef PREFIX

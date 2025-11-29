@@ -1,6 +1,8 @@
-// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NativeFSManagerVolumeLookup.h>
 #include "UnitTests_main.h"
+
+namespace {
 
 using VolumeLookup = nc::utility::NativeFSManagerVolumeLookup;
 using nc::utility::NativeFileSystemInfo;
@@ -95,3 +97,7 @@ TEST_CASE(PREFIX "works when empty")
     CHECK(l.FindVolumeForLocation("") == nullptr);
     CHECK(l.FindVolumeForLocation("/") == nullptr);
 }
+
+} // namespace
+
+#undef PREFIX

@@ -1,0 +1,7 @@
+#include "ColorMap.mm"
+#include "ExtendedCharRegistry.mm"
+#include "FlippableHolder.mm"
+#include "InputTranslatorImpl.mm"
+#include "ScrollView.mm"
+#include "Settings.mm"
+#include "View.mm"

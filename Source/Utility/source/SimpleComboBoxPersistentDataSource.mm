@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/Utility/SimpleComboBoxPersistentDataSource.h"
 
 @implementation NCUtilSimpleComboBoxPersistentDataSource
@@ -7,12 +7,13 @@
 {
 }
 
-- (NSInteger)numberOfItemsInComboBox:(NSComboBox *) [[maybe_unused]] aComboBox
+- (NSInteger)numberOfItemsInComboBox:(NSComboBox *_Nonnull) [[maybe_unused]] aComboBox
 {
     return 0;
 }
 
-- (id)comboBox:(NSComboBox *) [[maybe_unused]] aComboBox objectValueForItemAtIndex:(NSInteger) [[maybe_unused]] index
+- (id _Nullable)comboBox:(NSComboBox *_Nonnull) [[maybe_unused]] aComboBox
+    objectValueForItemAtIndex:(NSInteger) [[maybe_unused]] index
 {
     return @"";
 }

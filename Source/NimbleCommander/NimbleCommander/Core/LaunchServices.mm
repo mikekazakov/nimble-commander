@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "LaunchServices.h"
 #include <sys/stat.h>
 #include <VFS/VFS.h>
@@ -72,9 +72,9 @@ static std::string GetDefaultHandlerPathForUTI(const std::string &_uti)
 
     NSString *const bundle =
         (__bridge_transfer NSString *)LSCopyDefaultRoleHandlerForContentType((__bridge CFStringRef)uti, kLSRolesAll);
-    auto path = [NSWorkspace.sharedWorkspace absolutePathForAppBundleWithIdentifier:bundle];
-    if( path )
-        return path.fileSystemRepresentation;
+    NSURL *app_url = [NSWorkspace.sharedWorkspace URLForApplicationWithBundleIdentifier:bundle];
+    if( app_url )
+        return app_url.path.fileSystemRepresentation;
     return "";
 }
 
@@ -89,8 +89,8 @@ static std::vector<std::string> GetHandlersPathsForUTI(const std::string &_uti)
 
     std::vector<std::string> result;
     for( NSString *bundle in bundles )
-        if( auto path = [NSWorkspace.sharedWorkspace absolutePathForAppBundleWithIdentifier:bundle] )
-            result.emplace_back(path.fileSystemRepresentation);
+        if( NSURL *app_url = [NSWorkspace.sharedWorkspace URLForApplicationWithBundleIdentifier:bundle] )
+            result.emplace_back(app_url.path.fileSystemRepresentation);
 
     return result;
 }

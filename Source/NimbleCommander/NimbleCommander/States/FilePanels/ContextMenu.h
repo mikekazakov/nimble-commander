@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
@@ -14,7 +14,7 @@ namespace nc::panel {
 class FileOpener;
 }
 
-@interface NCPanelContextMenu : NSMenu <NSMenuDelegate>
+@interface NCPanelContextMenu : NSMenu <NSMenuDelegate, NSMenuItemValidation>
 
 - (instancetype)initWithItems:(std::vector<VFSListingItem>)_items
                       ofPanel:(PanelController *)_panel

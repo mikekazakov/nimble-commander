@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "MainWindowStateProtocol.h"
@@ -15,7 +15,7 @@ class Pool;
 class Operation;
 } // namespace nc::ops
 
-@interface NCMainWindowController : NSWindowController <NSWindowDelegate, NSWindowRestoration>
+@interface NCMainWindowController : NSWindowController <NSWindowDelegate, NSWindowRestoration, NSMenuItemValidation>
 
 - (instancetype)initWithWindow:(NCMainWindow *)_window;
 

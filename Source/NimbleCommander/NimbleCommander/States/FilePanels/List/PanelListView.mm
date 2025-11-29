@@ -106,7 +106,6 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
         m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
         m_ScrollView.wantsLayer = true;
         m_ScrollView.layer.drawsAsynchronously = false;
-        m_ScrollView.contentView.copiesOnScroll = true;
         m_ScrollView.hasVerticalScroller = true;
         m_ScrollView.hasHorizontalScroller = true;
         m_ScrollView.borderType = NSNoBorder;

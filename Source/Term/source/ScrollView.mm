@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
 #include "View.h"
 #include "Screen.h"
@@ -47,7 +47,6 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
         self.borderType = NSNoBorder;
         self.verticalScrollElasticity = NSScrollElasticityNone;
         self.scrollsDynamically = true;
-        self.contentView.copiesOnScroll = false;
         self.contentView.canDrawConcurrently = false;
         self.contentView.drawsBackground = true;
         self.contentView.backgroundColor = m_Settings->BackgroundColor();

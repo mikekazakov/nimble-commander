@@ -19,7 +19,7 @@ struct StateAction;
 using StateActionsMap = ankerl::unordered_dense::map<SEL, std::unique_ptr<const actions::StateAction>>;
 } // namespace nc::panel
 
-@interface NCPanelsStateActionsDispatcher : AttachedResponder
+@interface NCPanelsStateActionsDispatcher : AttachedResponder <NSMenuItemValidation>
 @property(nonatomic, readwrite) bool hasTerminal;
 
 - (instancetype)initWithState:(MainWindowFilePanelState *)_state

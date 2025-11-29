@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TabsManagement.h"
 #include "../MainWindowFilePanelState.h"
 #include "../MainWindowFilePanelState+TabsSupport.h"
@@ -50,8 +50,9 @@ bool CloseTab::ValidateMenuItem(MainWindowFilePanelState *_target, NSMenuItem *_
         while( objc_cast<AttachedResponder>(resp) != nil )
             resp = resp.nextResponder;
         while( resp != nil ) {
-            if( [resp respondsToSelector:_item.action] && [resp respondsToSelector:@selector(validateMenuItem:)] )
-                return [resp validateMenuItem:_item];
+            if( [resp respondsToSelector:_item.action] && [resp respondsToSelector:@selector(validateMenuItem:)] ) {
+                [static_cast<id<NSMenuItemValidation>>(resp) validateMenuItem:_item];
+            }
             resp = resp.nextResponder;
         }
         return true;

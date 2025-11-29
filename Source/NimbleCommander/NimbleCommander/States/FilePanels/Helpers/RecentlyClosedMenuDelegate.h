@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
@@ -22,7 +22,7 @@ struct RestoreClosedTabRequest {
 };
 } // namespace nc::panel
 
-@interface NCPanelsRecentlyClosedMenuDelegate : NSObject <NSMenuDelegate>
+@interface NCPanelsRecentlyClosedMenuDelegate : NSObject <NSMenuDelegate, NSMenuItemValidation>
 
 - (instancetype)initWithMenu:(NSMenu *)_menu
                      storage:(std::shared_ptr<nc::panel::ClosedPanelsHistory>)_storage

@@ -20,7 +20,6 @@
 		CF3989B42B416F89006103C1 /* libBase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989B22B416F84006103C1 /* libBase.a */; };
 		CF3BFC6B2D143F3300105999 /* Host_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3BFC6A2D143F3300105999 /* Host_UT.cpp */; };
 		CF3D24152D14B72B005C36F6 /* DisplayNamesCache_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3D24142D14B72B005C36F6 /* DisplayNamesCache_UT.mm */; };
-		CF4600722560579F0095FC73 /* VFSFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0111DA22BE800992B84 /* VFSFile.cpp */; };
 		CF4600802560579F0095FC73 /* ListingObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F92F1F0B5E250000B3EE /* ListingObjC.mm */; };
 		CF4600812560579F0095FC73 /* VFSEasyOps.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D00E1DA22BE800992B84 /* VFSEasyOps.mm */; };
 		CF460086256057A90095FC73 /* EncodingDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099941F95C881000AFDE7 /* EncodingDetection.mm */; };
@@ -721,7 +720,6 @@
 				CF4600B4256057E80095FC73 /* PathRoutines.mm in Sources */,
 				CFF762A02EDCA7CC002DD1EE /* _VFS.cpp in Sources */,
 				CF460086256057A90095FC73 /* EncodingDetection.mm in Sources */,
-				CF4600722560579F0095FC73 /* VFSFile.cpp in Sources */,
 				CFF762A42EDCB6EE002DD1EE /* OpenDirectory.mm in Sources */,
 				CF460094256057BE0095FC73 /* DisplayNamesCache.mm in Sources */,
 				CF4600812560579F0095FC73 /* VFSEasyOps.mm in Sources */,

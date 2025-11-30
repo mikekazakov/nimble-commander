@@ -9,6 +9,7 @@
 #include "VFSArchiveProxy.cpp"
 #include "VFSConfiguration.cpp"
 #include "VFSFactory.cpp"
+#include "VFSFile.cpp"
 #include "VFSGenericMemReadOnlyFile.cpp"
 #include "VFSPath.cpp"
 #include "VFSSeqToRandomWrapper.cpp"

@@ -1,9 +1,8 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConnectToServer.h"
 #include "FTPConnectionSheetController.h"
 #include "SFTPConnectionSheetController.h"
 #include "NetworkShareSheetController.h"
-#include "DropboxAccountSheetController.h"
 #include "WebDAVConnectionSheetController.h"
 #include <Utility/SheetWithHotkeys.h>
 #include <Utility/ObjCpp.h>
@@ -42,11 +41,6 @@ private:
     void Visit(const nc::panel::NetworkConnectionsManager::LANShare & /*_share*/) override
     {
         m_Sheet = [[NetworkShareSheetController alloc] init];
-    }
-
-    void Visit(const nc::panel::NetworkConnectionsManager::Dropbox & /*_account*/) override
-    {
-        m_Sheet = [[DropboxAccountSheetController alloc] init];
     }
 
     void Visit(const nc::panel::NetworkConnectionsManager::WebDAV & /*_webdav*/) override
@@ -301,11 +295,6 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 - (IBAction)onAddNetworkShare:(id) [[maybe_unused]] _sender
 {
     [self runNewConnectionSheet:[[NetworkShareSheetController alloc] init]];
-}
-
-- (IBAction)onAddDropboxAccount:(id) [[maybe_unused]] _sender
-{
-    [self runNewConnectionSheet:[[DropboxAccountSheetController alloc] init]];
 }
 
 - (IBAction)onControlButtonClicked:(id)sender

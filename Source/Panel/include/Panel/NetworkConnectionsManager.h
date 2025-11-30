@@ -16,7 +16,6 @@ public:
     class FTP;
     class SFTP;
     class LANShare;
-    class Dropbox;
     class WebDAV;
     class ConnectionVisitor;
 
@@ -24,8 +23,7 @@ public:
 
     /**
      * Returns connections path is the following format: protocol://[user@]domain[/resource]
-     * e.g. sftp://migun@192.168.2.1, dropbox://mike.kazakov@gmail.com,
-     * sftp://migun@magnumbytes.com.
+     * e.g. sftp://migun@192.168.2.1, sftp://migun@magnumbytes.com.
      */
     static std::string MakeConnectionPath(const Connection &_conn);
 
@@ -78,7 +76,6 @@ public:
     virtual void Visit(const NetworkConnectionsManager::FTP &_ftp);
     virtual void Visit(const NetworkConnectionsManager::SFTP &_sftp);
     virtual void Visit(const NetworkConnectionsManager::LANShare &_share);
-    virtual void Visit(const NetworkConnectionsManager::Dropbox &_account);
     virtual void Visit(const NetworkConnectionsManager::WebDAV &_webdav);
 };
 
@@ -173,13 +170,6 @@ public:
     std::string mountpoint; // empty mountpoint means that system will decide it itself
     Protocol proto;
     bool operator==(const LANShare &_rhs) const noexcept;
-};
-
-class NetworkConnectionsManager::Dropbox : public NetworkConnectionsManager::BaseConnection
-{
-public:
-    std::string account;
-    bool operator==(const Dropbox &_rhs) const noexcept;
 };
 
 class NetworkConnectionsManager::WebDAV : public NetworkConnectionsManager::BaseConnection

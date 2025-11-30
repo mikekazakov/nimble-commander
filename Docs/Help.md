@@ -584,9 +584,6 @@ Currently, the following virtual filesystems are supported:
   - WebDAV  
     Enables connection to WebDAV servers.
     Paths for these resources will have `http://` or `https://` prefixes.
-  - DropBox  
-    Enables direct connection to Dropbox storage.
-    Paths for these resources will have a `dropbox://` prefix.
 - **Extended attributes**  
   You can open an item’s [extended attributes (xattrs)](https://en.wikipedia.org/wiki/Extended_file_attributes#macOS) as a read-write folder and interact with these attributes as though they were regular files.
 - **Process list**  
@@ -836,7 +833,6 @@ Some actions do not have default hotkeys but can still be accessed through the a
 | &nbsp; &nbsp; FTP Server...                  |                           |
 | &nbsp; &nbsp; SFTP Server...                 |                           |
 | &nbsp; &nbsp; WebDAV Server...               |                           |
-| &nbsp; &nbsp; Dropbox Storage...             |                           |
 | &nbsp; &nbsp; Network Share...               |                           |
 | &nbsp; &nbsp; Manage Connections...          | Cmd + K                   |
 | _**Command Menu**_                           |                           |
@@ -1009,7 +1005,7 @@ You can control this by navigating to `Settings -> Themes -> (...) -> Configure 
 
 ---
 
-**Q**: Where can I find the logs?
+**Q**: Where can I find the logs?  
 **A**: To open the Logs window while NC is running, hold Alt and select `Help -> Debug -> Show Logs...`.
 Next, adjust the log level by clicking the settings (gear) icon and choosing the desired level, either for a specific subsystem or globally.   
 By default, logging is disabled (the level is set to Off).

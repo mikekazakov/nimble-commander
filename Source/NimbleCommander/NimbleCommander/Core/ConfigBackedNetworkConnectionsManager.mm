@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConfigBackedNetworkConnectionsManager.h"
 #include <dirent.h>
 #include <NetFS/NetFS.h>
@@ -9,11 +9,9 @@
 #include <Utility/NativeFSManager.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
-#include <VFS/NetDropbox.h>
 #include <VFS/NetWebDAV.h>
 #include <Config/RapidJSON.h>
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
-#include <NimbleCommander/Bootstrap/NCE.h>
 #include <Base/spinlock.h>
 #include <Base/dispatch_cpp.h>
 
@@ -85,12 +83,6 @@ static config::Value ConnectionToJSONObject(NetworkConnectionsManager::Connectio
         o.AddMember("share", value(c.share.c_str(), alloc), alloc);
         o.AddMember("mountpoint", value(c.mountpoint.c_str(), alloc), alloc);
         o.AddMember("proto", value(static_cast<int>(c.proto)), alloc);
-        return o;
-    }
-    if( _c.IsType<NetworkConnectionsManager::Dropbox>() ) {
-        auto &c = _c.Get<NetworkConnectionsManager::Dropbox>();
-        auto o = FillBasicConnectionInfoInJSONObject("dropbox", c);
-        o.AddMember("account", value(c.account.c_str(), alloc), alloc);
         return o;
     }
     if( const auto p = _c.Cast<NetworkConnectionsManager::WebDAV>() ) {
@@ -182,17 +174,6 @@ static std::optional<NetworkConnectionsManager::Connection> JSONObjectToConnecti
 
         return NetworkConnectionsManager::Connection(std::move(c));
     }
-    else if( type == "dropbox" ) {
-        if( !has_string("account") )
-            return std::nullopt;
-
-        NetworkConnectionsManager::Dropbox c;
-        c.uuid = *uuid;
-        c.title = _object["title"].GetString();
-        c.account = _object["account"].GetString();
-
-        return NetworkConnectionsManager::Connection(std::move(c));
-    }
     else if( type == "webdav" ) {
         if( !has_string("user") || !has_string("host") || !has_string("path") || !has_number("port") ||
             !has_bool("https") )
@@ -237,8 +218,6 @@ static std::string KeychainWhereFromConnection(const NetworkConnectionsManager::
     if( auto c = _c.Cast<NetworkConnectionsManager::LANShare>() )
         return PrefixForShareProtocol(c->proto) + "://" + (c->user.empty() ? c->user + "@" : "") + c->host + "/" +
                c->share;
-    if( auto c = _c.Cast<NetworkConnectionsManager::Dropbox>() )
-        return "dropbox://"s + c->account;
     if( auto c = _c.Cast<NetworkConnectionsManager::WebDAV>() )
         return (c->https ? "https://" : "http://") + c->host + (c->path.empty() ? "" : "/" + c->path);
     return "";
@@ -252,8 +231,6 @@ static std::string KeychainAccountFromConnection(const NetworkConnectionsManager
         return c->user;
     if( auto c = _c.Cast<NetworkConnectionsManager::LANShare>() )
         return c->user;
-    if( auto c = _c.Cast<NetworkConnectionsManager::Dropbox>() )
-        return c->account;
     if( auto c = _c.Cast<NetworkConnectionsManager::WebDAV>() )
         return c->user;
     return "";
@@ -457,12 +434,6 @@ ConfigBackedNetworkConnectionsManager::ConnectionForVFS(const VFSHost &_vfs) con
                        p->port == sftp->Port();
             return false;
         };
-    else if( auto dropbox = dynamic_cast<const vfs::DropboxHost *>(&_vfs) )
-        pred = [dropbox](const Connection &i) {
-            if( auto p = i.Cast<Dropbox>() )
-                return p->account == dropbox->Account();
-            return false;
-        };
     else if( auto webdav = dynamic_cast<const vfs::WebDAVHost *>(&_vfs) )
         pred = [webdav](const Connection &i) {
             if( auto p = i.Cast<WebDAV>() )
@@ -497,14 +468,6 @@ VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection(const 
         host = std::make_shared<vfs::FTPHost>(ftp->host, ftp->user, passwd, ftp->path, ftp->port, ftp->active);
     else if( auto sftp = _connection.Cast<SFTP>() )
         host = std::make_shared<vfs::SFTPHost>(sftp->host, sftp->user, passwd, sftp->keypath, sftp->port);
-    else if( auto dropbox = _connection.Cast<Dropbox>() ) {
-        vfs::DropboxHost::Params params;
-        params.account = dropbox->account;
-        params.access_token = passwd;
-        params.client_id = NCE(env::dropbox_client_id);
-        params.client_secret = NCE(env::dropbox_client_secret);
-        host = std::make_shared<vfs::DropboxHost>(params);
-    }
     else if( auto w = _connection.Cast<WebDAV>() )
         host = std::make_shared<vfs::WebDAVHost>(w->host, w->user, passwd, w->path, w->https, w->port);
 

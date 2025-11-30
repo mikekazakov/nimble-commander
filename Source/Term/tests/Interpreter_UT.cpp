@@ -1,11 +1,14 @@
-// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <InterpreterImpl.h>
 #include <optional>
 #include "Tests.h"
 
+#define PREFIX "nc::term::Interpreter "
+
+namespace InterpreterTest {
+
 using namespace nc::term;
 using namespace nc::term::input;
-#define PREFIX "nc::term::Interpreter "
 
 TEST_CASE(PREFIX "does call the Bell callback")
 {
@@ -760,3 +763,7 @@ TEST_CASE(PREFIX "Cursor style management")
         CHECK(mode == CursorMode::SteadyBar);
     }
 }
+
+} // namespace InterpreterTest
+
+#undef PREFIX

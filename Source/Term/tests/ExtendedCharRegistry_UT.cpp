@@ -1,11 +1,14 @@
-// Copyright (C) 2023-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <ExtendedCharRegistry.h>
 #include "Tests.h"
+
+#define PREFIX "nc::term::ExtendedCharRegistry "
+
+namespace ExtendedCharRegistryTest {
 
 using namespace nc;
 using namespace nc::term;
 using namespace std::string_literals;
-#define PREFIX "nc::term::ExtendedCharRegistry "
 
 using Reg = ExtendedCharRegistry;
 using AR = ExtendedCharRegistry::AppendResult;
@@ -287,3 +290,7 @@ TEST_CASE(PREFIX "IsDoubleWidth")
         CHECK(dw(tc.str) == tc.exp);
     }
 }
+
+} // namespace ExtendedCharRegistryTest
+
+#undef PREFIX

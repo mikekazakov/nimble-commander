@@ -1,14 +1,17 @@
-// Copyright (C) 2023-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
 #include "AtomicHolder.h"
 #include "ChildrenTracker.h"
 #include <thread>
 
+#define PREFIX "nc::term::ChildrenTracker "
+
+namespace ChildrenTrackerTest {
+
 using namespace nc;
 using namespace nc::term;
 using namespace std::chrono_literals;
-#define PREFIX "nc::term::ChildrenTracker "
 
 TEST_CASE(PREFIX "Generic cases", "[!mayfail]")
 {
@@ -185,3 +188,7 @@ TEST_CASE(PREFIX "Invalid input")
         exit(0);
     }
 }
+
+} // namespace ChildrenTrackerTest
+
+#undef PREFIX

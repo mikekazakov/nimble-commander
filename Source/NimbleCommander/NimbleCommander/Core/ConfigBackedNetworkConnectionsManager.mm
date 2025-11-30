@@ -12,7 +12,6 @@
 #include <VFS/NetWebDAV.h>
 #include <Config/RapidJSON.h>
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
-#include <NimbleCommander/Bootstrap/NCE.h>
 #include <Base/spinlock.h>
 #include <Base/dispatch_cpp.h>
 

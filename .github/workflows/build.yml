@@ -59,10 +59,7 @@ jobs:
          echo Killing XProtect...; sudo pkill -9 XProtect >/dev/null || true;
          echo Waiting for XProtect process...; while pgrep XProtect; do sleep 3; done;
     - name: Build and run unit tests
-      env:
-        NC_SENSITIVE: ${{ secrets.NC_SENSITIVE }}
       run: |
-        echo -n "$NC_SENSITIVE" | base64 --decode -o /Users/runner/.nc_sensitive.h
         cd Scripts && ./run_all_integration_tests.sh
 
 

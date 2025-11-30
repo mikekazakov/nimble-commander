@@ -11,7 +11,6 @@
 #include <VFS/NetSFTP.h>
 #include <VFS/NetWebDAV.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
-#include <NimbleCommander/Bootstrap/NCE.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include <Base/dispatch_cpp.h>

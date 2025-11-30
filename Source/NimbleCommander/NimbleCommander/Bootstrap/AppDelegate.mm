@@ -13,7 +13,6 @@
 #include "PFMoveToApplicationsShim.h"
 #include "NativeVFSHostInstance.h"
 #include "Actions.h"
-#include "NCE.h"
 
 #include <algorithm>
 #include <magic_enum.hpp>

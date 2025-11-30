@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MakeNew.h"
 #include <NimbleCommander/Core/Alert.h>
 #include "../PanelController.h"
@@ -129,7 +129,7 @@ void MakeNewFile::Perform(PanelController *_target, id /*_sender*/) const
         if( name.empty() )
             return;
 
-        const std::expected<void, Error> ret = VFSEasyCreateEmptyFile((dir / name).c_str(), vfs);
+        const std::expected<void, Error> ret = vfs::easy::VFSEasyCreateEmptyFile((dir / name).c_str(), vfs);
         if( !ret ) {
             dispatch_to_main_queue([=] {
                 Alert *const alert = [[Alert alloc] init];

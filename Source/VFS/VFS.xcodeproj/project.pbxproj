@@ -20,11 +20,6 @@
 		CF3989B42B416F89006103C1 /* libBase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989B22B416F84006103C1 /* libBase.a */; };
 		CF3BFC6B2D143F3300105999 /* Host_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3BFC6A2D143F3300105999 /* Host_UT.cpp */; };
 		CF3D24152D14B72B005C36F6 /* DisplayNamesCache_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3D24142D14B72B005C36F6 /* DisplayNamesCache_UT.mm */; };
-		CF4600802560579F0095FC73 /* ListingObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F92F1F0B5E250000B3EE /* ListingObjC.mm */; };
-		CF4600812560579F0095FC73 /* VFSEasyOps.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D00E1DA22BE800992B84 /* VFSEasyOps.mm */; };
-		CF460086256057A90095FC73 /* EncodingDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099941F95C881000AFDE7 /* EncodingDetection.mm */; };
-		CF460094256057BE0095FC73 /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0241DA2305A00992B84 /* DisplayNamesCache.mm */; };
-		CF4600B4256057E80095FC73 /* PathRoutines.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FDD061F5D4AEC00AF1EBD /* PathRoutines.mm */; };
 		CF824F66279F564800C4F29C /* Host.h in Headers */ = {isa = PBXBuildFile; fileRef = CF824F64279F564800C4F29C /* Host.h */; };
 		CF824F69279F622900C4F29C /* VFSArchiveRaw_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF824F68279F622900C4F29C /* VFSArchiveRaw_UT.cpp */; };
 		CFA99A9A266FC16800F72E93 /* Log.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA99A99266FC16800F72E93 /* Log.h */; };
@@ -34,7 +29,6 @@
 		CFAB6D62258A555A00397DB5 /* FileWindow_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE0E21CFA2CC003F0E93 /* FileWindow_UT.mm */; };
 		CFAB6D6F258A58D300397DB5 /* WebDAV_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95571F4E65A60035E606 /* WebDAV_IT.mm */; };
 		CFAB6D87258B6B1F00397DB5 /* VFSArchive_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470A1E41C8A5008B7C9F /* VFSArchive_IT.mm */; };
-		CFAE50782D7322CF007ADA14 /* VFSFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAE50772D7322CF007ADA14 /* VFSFile.mm */; };
 		CFB63CD525939A630038502E /* VFSNative_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB63CD425939A630038502E /* VFSNative_IT.mm */; };
 		CFCB68D3289089BF00086E40 /* VFSArchive_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCB68D2289089BF00086E40 /* VFSArchive_UT.cpp */; };
 		CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */; };
@@ -47,8 +41,8 @@
 		CFEADD6D259D2C2F009ECA14 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFEADD68259D2C20009ECA14 /* libRoutedIO.a */; };
 		CFEADD6E259D2C3C009ECA14 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFEADD6A259D2C24009ECA14 /* libUtility.a */; };
 		CFF762A02EDCA7CC002DD1EE /* _VFS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF7629F2EDCA7CC002DD1EE /* _VFS.cpp */; };
-		CFF762A42EDCB6EE002DD1EE /* OpenDirectory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF762A32EDCB6EE002DD1EE /* OpenDirectory.mm */; };
 		CFF762A52EDCB6EE002DD1EE /* OpenDirectory.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF762A22EDCB6EE002DD1EE /* OpenDirectory.h */; };
+		CFF762A72EDCEDB0002DD1EE /* _VFS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF762A62EDCEDB0002DD1EE /* _VFS.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -229,6 +223,7 @@
 		CFF7629F2EDCA7CC002DD1EE /* _VFS.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = _VFS.cpp; path = source/_VFS.cpp; sourceTree = "<group>"; };
 		CFF762A22EDCB6EE002DD1EE /* OpenDirectory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OpenDirectory.h; path = source/Native/OpenDirectory.h; sourceTree = "<group>"; };
 		CFF762A32EDCB6EE002DD1EE /* OpenDirectory.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenDirectory.mm; path = source/Native/OpenDirectory.mm; sourceTree = "<group>"; };
+		CFF762A62EDCEDB0002DD1EE /* _VFS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = _VFS.mm; path = source/_VFS.mm; sourceTree = "<group>"; };
 		CFFA94E31F4544F60035E606 /* libRoutedIO.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libRoutedIO.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libRoutedIO.dylib"; sourceTree = "<group>"; };
 		CFFA94E51F4544F90035E606 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
 		CFFA94E71F4544FB0035E606 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
@@ -419,6 +414,7 @@
 			isa = PBXGroup;
 			children = (
 				CFF7629F2EDCA7CC002DD1EE /* _VFS.cpp */,
+				CFF762A62EDCEDB0002DD1EE /* _VFS.mm */,
 				CF69D0501DA2335700992B84 /* ArcLA */,
 				CF824F63279F563300C4F29C /* ArcLARaw */,
 				CF26DE0C21CFA2BF003F0E93 /* FileWindow.cpp */,
@@ -716,14 +712,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFAE50782D7322CF007ADA14 /* VFSFile.mm in Sources */,
-				CF4600B4256057E80095FC73 /* PathRoutines.mm in Sources */,
+				CFF762A72EDCEDB0002DD1EE /* _VFS.mm in Sources */,
 				CFF762A02EDCA7CC002DD1EE /* _VFS.cpp in Sources */,
-				CF460086256057A90095FC73 /* EncodingDetection.mm in Sources */,
-				CFF762A42EDCB6EE002DD1EE /* OpenDirectory.mm in Sources */,
-				CF460094256057BE0095FC73 /* DisplayNamesCache.mm in Sources */,
-				CF4600812560579F0095FC73 /* VFSEasyOps.mm in Sources */,
-				CF4600802560579F0095FC73 /* ListingObjC.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

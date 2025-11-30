@@ -37,7 +37,7 @@
     [super setSelected:selected];
 
     if( selected ) {
-        self.view.layer.backgroundColor = [[NSColor alternateSelectedControlColor] CGColor];
+        self.view.layer.backgroundColor = [[NSColor selectedContentBackgroundColor] CGColor];
     }
     else {
         self.view.layer.backgroundColor = [[NSColor clearColor] CGColor];

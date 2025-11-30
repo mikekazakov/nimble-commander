@@ -447,12 +447,12 @@ INSTANTIATE_TEST("rename", TestRename, "local");
 /*==================================================================================================
 statfs
 ==================================================================================================*/
-//static void TestStatFS(VFSHostPtr _host)
+// static void TestStatFS(VFSHostPtr _host)
 //{
-//    const VFSStatFS st = _host->StatFS("/").value();
-//    CHECK(st.total_bytes > 1'000'000'000L);
-//}
-// INSTANTIATE_TEST("statfs", TestStatFS, "local"); // apache2 doesn't provide stafs (??)
+//     const VFSStatFS st = _host->StatFS("/").value();
+//     CHECK(st.total_bytes > 1'000'000'000L);
+// }
+//  INSTANTIATE_TEST("statfs", TestStatFS, "local"); // apache2 doesn't provide stafs (??)
 
 /*==================================================================================================
 simple download

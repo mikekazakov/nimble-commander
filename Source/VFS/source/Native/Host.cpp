@@ -1,6 +1,5 @@
 // Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Host.h"
-#include <OpenDirectory/OpenDirectory.h>
 #include <sys/attr.h>
 #include <sys/errno.h>
 #include <sys/vnode.h>
@@ -16,6 +15,7 @@
 #include <VFS/Log.h>
 #include "../ListingInput.h"
 #include "Fetching.h"
+#include "OpenDirectory.h"
 #include <Base/DispatchGroup.h>
 #include <Base/StackAllocator.h>
 #include <Utility/ObjCpp.h>
@@ -25,15 +25,7 @@
 #include <fmt/ranges.h>
 #include <algorithm>
 
-// hack to access function from libc implementation directly.
-// this func does readdir but without mutex locking
-struct dirent *_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
-
 namespace nc::vfs {
-
-static uint32_t MergeUnixFlags(uint32_t _symlink_flags, uint32_t _target_flags) noexcept;
-
-using namespace native;
 
 const char *NativeHost::UniqueTag = "native";
 
@@ -77,6 +69,7 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchDirectoryListing(std::strin
                                                                       const unsigned long _flags,
                                                                       const VFSCancelChecker &_cancel_checker)
 {
+    using namespace native;
     if( !_path.starts_with("/") )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
@@ -247,6 +240,7 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchSingleItemListing(std::stri
                                                                        unsigned long _flags,
                                                                        const VFSCancelChecker &_cancel_checker)
 {
+    using namespace native;
     if( !_path.starts_with("/") )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
@@ -361,7 +355,7 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchSingleItemListing(std::stri
 std::expected<std::shared_ptr<VFSFile>, Error> NativeHost::CreateFile(std::string_view _path,
                                                                       const VFSCancelChecker &_cancel_checker)
 {
-    auto file = std::make_shared<File>(_path, SharedPtr());
+    auto file = std::make_shared<native::File>(_path, SharedPtr());
     if( _cancel_checker && _cancel_checker() )
         return std::unexpected(Error{Error::POSIX, ECANCELED});
     return file;
@@ -576,7 +570,7 @@ std::expected<VFSStatFS, Error> NativeHost::StatFS(std::string_view _path,
     m_NativeFSManager.UpdateSpaceInformation(volume);
 
     VFSStatFS stat;
-    stat.volume_name = volume->verbose.name.UTF8String;
+    stat.volume_name = volume->verbose.name;
     stat.total_bytes = volume->basic.total_bytes;
     stat.free_bytes = volume->basic.free_bytes;
     stat.avail_bytes = volume->basic.available_bytes;
@@ -794,105 +788,13 @@ std::expected<void, Error> NativeHost::SetOwnership(std::string_view _path,
 std::expected<std::vector<VFSUser>, Error>
 NativeHost::FetchUsers([[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    NSError *error;
-    const auto node_name = @"/Local/Default";
-    const auto node = [ODNode nodeWithSession:ODSession.defaultSession name:node_name error:&error];
-    if( !node )
-        return std::unexpected(Error{error});
-
-    const auto attributes = @[kODAttributeTypeUniqueID, kODAttributeTypeFullName];
-    const auto query = [ODQuery queryWithNode:node
-                               forRecordTypes:kODRecordTypeUsers
-                                    attribute:nil
-                                    matchType:0
-                                  queryValues:nil
-                             returnAttributes:attributes
-                               maximumResults:0
-                                        error:&error];
-    if( !query )
-        return std::unexpected(Error{error});
-
-    const auto records = [query resultsAllowingPartial:false error:&error];
-    if( !records )
-        return std::unexpected(Error{error});
-
-    std::vector<VFSUser> users;
-    for( ODRecord *record in records ) {
-        const auto uid_values = [record valuesForAttribute:kODAttributeTypeUniqueID error:nil];
-        if( uid_values == nil || uid_values.count == 0 )
-            continue;
-        const auto uid = static_cast<uint32_t>(objc_cast<NSString>(uid_values.firstObject).integerValue);
-
-        const auto gecos_values = [record valuesForAttribute:kODAttributeTypeFullName error:nil];
-        const auto gecos =
-            (gecos_values && gecos_values.count > 0) ? objc_cast<NSString>(gecos_values.firstObject).UTF8String : "";
-
-        VFSUser user;
-        user.uid = uid;
-        user.name = record.recordName.UTF8String;
-        user.gecos = gecos;
-        users.emplace_back(std::move(user));
-    }
-
-    std::ranges::sort(users, [](const auto &_1, const auto &_2) {
-        return static_cast<signed>(_1.uid) < static_cast<signed>(_2.uid);
-    });
-    users.erase(std::ranges::unique(users, [](const auto &_1, const auto &_2) { return _1.uid == _2.uid; }).begin(),
-                users.end());
-
-    return std::move(users);
+    return native::FetchUsers();
 }
 
 std::expected<std::vector<VFSGroup>, Error>
 NativeHost::FetchGroups([[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    NSError *error;
-    const auto node_name = @"/Local/Default";
-    const auto node = [ODNode nodeWithSession:ODSession.defaultSession name:node_name error:&error];
-    if( !node )
-        return std::unexpected(Error{error});
-
-    const auto attributes = @[kODAttributeTypePrimaryGroupID, kODAttributeTypeFullName];
-    const auto query = [ODQuery queryWithNode:node
-                               forRecordTypes:kODRecordTypeGroups
-                                    attribute:nil
-                                    matchType:0
-                                  queryValues:nil
-                             returnAttributes:attributes
-                               maximumResults:0
-                                        error:&error];
-    if( !query )
-        return std::unexpected(Error{error});
-
-    const auto records = [query resultsAllowingPartial:false error:&error];
-    if( !records )
-        return std::unexpected(Error{error});
-
-    std::vector<VFSGroup> groups;
-    for( ODRecord *record in records ) {
-        const auto gid_values = [record valuesForAttribute:kODAttributeTypePrimaryGroupID error:nil];
-        if( gid_values == nil || gid_values.count == 0 )
-            continue;
-        const auto gid = static_cast<uint32_t>(objc_cast<NSString>(gid_values.firstObject).integerValue);
-
-        const auto gecos_values = [record valuesForAttribute:kODAttributeTypeFullName error:nil];
-        const auto gecos =
-            (gecos_values && gecos_values.count > 0) ? objc_cast<NSString>(gecos_values.firstObject).UTF8String : "";
-
-        VFSGroup group;
-        group.gid = gid;
-        group.name = record.recordName.UTF8String;
-        group.gecos = gecos;
-        groups.emplace_back(std::move(group));
-    }
-
-    std::ranges::sort(groups, [](const auto &_1, const auto &_2) {
-        return static_cast<signed>(_1.gid) < static_cast<signed>(_2.gid);
-    });
-    groups.erase(std::ranges::unique(groups, [](const auto &_1, const auto &_2) { return _1.gid == _2.gid; }).begin(),
-                 groups.end());
-
-    return std::move(groups);
+    return native::FetchGroups();
 }
 
 bool NativeHost::IsCaseSensitiveAtPath(std::string_view _dir) const
@@ -909,7 +811,7 @@ nc::utility::NativeFSManager &NativeHost::NativeFSManager() const noexcept
     return m_NativeFSManager;
 }
 
-static uint32_t MergeUnixFlags(uint32_t _symlink_flags, uint32_t _target_flags) noexcept
+uint32_t NativeHost::MergeUnixFlags(uint32_t _symlink_flags, uint32_t _target_flags) noexcept
 {
     const uint32_t hidden_flag = _symlink_flags & UF_HIDDEN;
     return _target_flags | hidden_flag;

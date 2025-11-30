@@ -26,11 +26,7 @@
 		CF4600802560579F0095FC73 /* ListingObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F92F1F0B5E250000B3EE /* ListingObjC.mm */; };
 		CF4600812560579F0095FC73 /* VFSEasyOps.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D00E1DA22BE800992B84 /* VFSEasyOps.mm */; };
 		CF460086256057A90095FC73 /* EncodingDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099941F95C881000AFDE7 /* EncodingDetection.mm */; };
-		CF460092256057BE0095FC73 /* Fetching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1FBF381E909AC400D3569C /* Fetching.cpp */; };
-		CF460093256057BE0095FC73 /* Host.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0281DA2305A00992B84 /* Host.mm */; };
 		CF460094256057BE0095FC73 /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0241DA2305A00992B84 /* DisplayNamesCache.mm */; };
-		CF460095256057BE0095FC73 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0251DA2305A00992B84 /* File.cpp */; };
-		CF460096256057BE0095FC73 /* SpecialDirectories.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE223CA546A007E99B8 /* SpecialDirectories.cpp */; };
 		CF4600A3256057D00095FC73 /* Host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D03A1DA2324100992B84 /* Host.cpp */; };
 		CF4600A4256057D00095FC73 /* Internals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D03C1DA2324100992B84 /* Internals.cpp */; };
 		CF4600A5256057D00095FC73 /* Cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0361DA2324100992B84 /* Cache.cpp */; };
@@ -77,6 +73,8 @@
 		CFEADD6D259D2C2F009ECA14 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFEADD68259D2C20009ECA14 /* libRoutedIO.a */; };
 		CFEADD6E259D2C3C009ECA14 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFEADD6A259D2C24009ECA14 /* libUtility.a */; };
 		CFF762A02EDCA7CC002DD1EE /* _VFS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF7629F2EDCA7CC002DD1EE /* _VFS.cpp */; };
+		CFF762A42EDCB6EE002DD1EE /* OpenDirectory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF762A32EDCB6EE002DD1EE /* OpenDirectory.mm */; };
+		CFF762A52EDCB6EE002DD1EE /* OpenDirectory.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF762A22EDCB6EE002DD1EE /* OpenDirectory.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -181,7 +179,7 @@
 		CF69D0251DA2305A00992B84 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = File.cpp; path = source/Native/File.cpp; sourceTree = "<group>"; };
 		CF69D0261DA2305A00992B84 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = source/Native/File.h; sourceTree = "<group>"; };
 		CF69D0271DA2305A00992B84 /* Host.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Host.h; path = source/Native/Host.h; sourceTree = "<group>"; };
-		CF69D0281DA2305A00992B84 /* Host.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Host.mm; path = source/Native/Host.mm; sourceTree = "<group>"; };
+		CF69D0281DA2305A00992B84 /* Host.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Host.cpp; path = source/Native/Host.cpp; sourceTree = "<group>"; };
 		CF69D0301DA231EA00992B84 /* xattr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xattr.cpp; path = source/XAttr/xattr.cpp; sourceTree = "<group>"; };
 		CF69D0311DA231EA00992B84 /* xattr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xattr.h; path = source/XAttr/xattr.h; sourceTree = "<group>"; };
 		CF69D0351DA2324100992B84 /* Cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Cache.h; path = source/NetFTP/Cache.h; sourceTree = "<group>"; };
@@ -255,6 +253,8 @@
 		CFEADD6A259D2C24009ECA14 /* libUtility.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libUtility.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF3403F2556DD3A00B3C92C /* VFSListing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VFSListing.h; path = include/VFS/VFSListing.h; sourceTree = "<group>"; };
 		CFF7629F2EDCA7CC002DD1EE /* _VFS.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = _VFS.cpp; path = source/_VFS.cpp; sourceTree = "<group>"; };
+		CFF762A22EDCB6EE002DD1EE /* OpenDirectory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OpenDirectory.h; path = source/Native/OpenDirectory.h; sourceTree = "<group>"; };
+		CFF762A32EDCB6EE002DD1EE /* OpenDirectory.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenDirectory.mm; path = source/Native/OpenDirectory.mm; sourceTree = "<group>"; };
 		CFFA94E31F4544F60035E606 /* libRoutedIO.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libRoutedIO.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libRoutedIO.dylib"; sourceTree = "<group>"; };
 		CFFA94E51F4544F90035E606 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
 		CFFA94E71F4544FB0035E606 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
@@ -479,6 +479,8 @@
 		CF69D0221DA2304B00992B84 /* Native */ = {
 			isa = PBXGroup;
 			children = (
+				CFF762A22EDCB6EE002DD1EE /* OpenDirectory.h */,
+				CFF762A32EDCB6EE002DD1EE /* OpenDirectory.mm */,
 				CF69D0231DA2305A00992B84 /* DisplayNamesCache.h */,
 				CF69D0241DA2305A00992B84 /* DisplayNamesCache.mm */,
 				CF1FBF381E909AC400D3569C /* Fetching.cpp */,
@@ -486,7 +488,7 @@
 				CF69D0251DA2305A00992B84 /* File.cpp */,
 				CF69D0261DA2305A00992B84 /* File.h */,
 				CF69D0271DA2305A00992B84 /* Host.h */,
-				CF69D0281DA2305A00992B84 /* Host.mm */,
+				CF69D0281DA2305A00992B84 /* Host.cpp */,
 				CFE08AE223CA546A007E99B8 /* SpecialDirectories.cpp */,
 				CFE08AE323CA546B007E99B8 /* SpecialDirectories.h */,
 			);
@@ -615,6 +617,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFF762A52EDCB6EE002DD1EE /* OpenDirectory.h in Headers */,
 				CFA99A9A266FC16800F72E93 /* Log.h in Headers */,
 				CF1F6FC625E70982003A2497 /* CURLConnection.h in Headers */,
 				CF1F6FC525E70982003A2497 /* Connection.h in Headers */,
@@ -741,7 +744,6 @@
 			files = (
 				CF4600A5256057D00095FC73 /* Cache.cpp in Sources */,
 				CFAE50782D7322CF007ADA14 /* VFSFile.mm in Sources */,
-				CF460095256057BE0095FC73 /* File.cpp in Sources */,
 				CF4600B4256057E80095FC73 /* PathRoutines.mm in Sources */,
 				CF4600B3256057E80095FC73 /* WebDAVHost.cpp in Sources */,
 				CF4600A6256057D00095FC73 /* File.cpp in Sources */,
@@ -753,16 +755,14 @@
 				CF1F6FC825E70982003A2497 /* CURLConnection.cpp in Sources */,
 				CFDA17EA2D496A2E00EE375B /* Errors.cpp in Sources */,
 				CF4600B6256057E80095FC73 /* Cache.cpp in Sources */,
-				CF460092256057BE0095FC73 /* Fetching.cpp in Sources */,
-				CF460093256057BE0095FC73 /* Host.mm in Sources */,
 				CF4600A3256057D00095FC73 /* Host.cpp in Sources */,
 				CF4600722560579F0095FC73 /* VFSFile.cpp in Sources */,
 				CF4600BB256057E80095FC73 /* ReadBuffer.cpp in Sources */,
+				CFF762A42EDCB6EE002DD1EE /* OpenDirectory.mm in Sources */,
 				CF460094256057BE0095FC73 /* DisplayNamesCache.mm in Sources */,
 				CF4600B5256057E80095FC73 /* File.cpp in Sources */,
 				CF4600BF256057EC0095FC73 /* File.cpp in Sources */,
 				CF4600B7256057E80095FC73 /* Requests.cpp in Sources */,
-				CF460096256057BE0095FC73 /* SpecialDirectories.cpp in Sources */,
 				CF4600AD256057DA0095FC73 /* OSDetector.cpp in Sources */,
 				CF4600B2256057E80095FC73 /* ConnectionsPool.cpp in Sources */,
 				CF4600AC256057DA0095FC73 /* SFTPHost.cpp in Sources */,

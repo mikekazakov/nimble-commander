@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "LocationFormatter.h"
 #include "../ListingPromise.h"
 #include <compose_visitors.hpp>
@@ -139,7 +139,7 @@ VolumeFormatter::Representation VolumeFormatter::Render(RenderOptions _options,
     Representation rep;
 
     if( _options & RenderMenuTitle )
-        rep.menu_title = NonNull(_volume.verbose.name);
+        rep.menu_title = [NSString stringWithUTF8StdString:_volume.verbose.name];
 
     if( _options & RenderMenuTooltip ) {
         auto tooltip = _volume.mounted_at_path + "\n" + _volume.mounted_from_name;

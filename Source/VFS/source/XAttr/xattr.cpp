@@ -7,10 +7,7 @@
 #include "../ListingInput.h"
 #include <dirent.h>
 #include <fmt/format.h>
-
 #include <algorithm>
-
-using namespace std::literals;
 
 namespace nc::vfs {
 
@@ -46,7 +43,7 @@ private:
     ssize_t m_UploadSize = -1;
 };
 
-static bool TurnOffBlockingMode(int _fd) noexcept
+bool XAttrHost::TurnOffBlockingMode(int _fd) noexcept
 {
     int fcntl_ret = fcntl(_fd, F_GETFL);
     if( fcntl_ret < 0 )
@@ -56,7 +53,7 @@ static bool TurnOffBlockingMode(int _fd) noexcept
     return fcntl_ret >= 0;
 }
 
-static std::expected<void, Error> EnumerateAttrs(int _fd, std::vector<std::pair<std::string, unsigned>> &_attrs)
+std::expected<void, Error> XAttrHost::EnumerateAttrs(int _fd, std::vector<std::pair<std::string, unsigned>> &_attrs)
 {
     constexpr size_t buf_sz = 65536;
     const std::unique_ptr<char[]> buf = std::make_unique<char[]>(buf_sz);
@@ -75,8 +72,6 @@ static std::expected<void, Error> EnumerateAttrs(int _fd, std::vector<std::pair<
 }
 
 const char *XAttrHost::UniqueTag = "xattr";
-static const mode_t g_RegMode = S_IRUSR | S_IWUSR | S_IFREG;
-static const mode_t g_RootMode = S_IRUSR | S_IXUSR | S_IFDIR;
 
 class VFSXAttrHostConfiguration
 {
@@ -205,14 +200,14 @@ XAttrHost::FetchDirectoryListing(std::string_view _path,
         if( !(_flags & VFSFlags::F_NoDotDot) ) {
             listing_source.filenames.emplace_back("..");
             listing_source.unix_types.emplace_back(DT_DIR);
-            listing_source.unix_modes.emplace_back(g_RootMode);
+            listing_source.unix_modes.emplace_back(m_RootMode);
             listing_source.sizes.insert(0, ListingInput::unknown_size);
         }
 
         for( const auto &i : m_Attrs ) {
             listing_source.filenames.emplace_back(i.first);
             listing_source.unix_types.emplace_back(DT_REG);
-            listing_source.unix_modes.emplace_back(g_RegMode);
+            listing_source.unix_modes.emplace_back(m_RegMode);
             listing_source.sizes.insert(listing_source.filenames.size() - 1, i.second);
         }
     }
@@ -240,7 +235,7 @@ std::expected<VFSStat, Error> XAttrHost::Stat(std::string_view _path,
     st.ctime = m_Stat.st_ctimespec;
 
     if( _path == "/" ) {
-        st.mode = g_RootMode;
+        st.mode = m_RootMode;
         st.size = 0;
         return st;
     }
@@ -248,7 +243,7 @@ std::expected<VFSStat, Error> XAttrHost::Stat(std::string_view _path,
         _path.remove_prefix(1);
         for( auto &i : m_Attrs )
             if( _path == i.first ) {
-                st.mode = g_RegMode;
+                st.mode = m_RegMode;
                 st.size = i.second;
                 return st;
             }

@@ -26,7 +26,6 @@
 		CF460086256057A90095FC73 /* EncodingDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099941F95C881000AFDE7 /* EncodingDetection.mm */; };
 		CF460094256057BE0095FC73 /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0241DA2305A00992B84 /* DisplayNamesCache.mm */; };
 		CF4600B4256057E80095FC73 /* PathRoutines.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FDD061F5D4AEC00AF1EBD /* PathRoutines.mm */; };
-		CF4600C5256057F10095FC73 /* xattr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0301DA231EA00992B84 /* xattr.cpp */; };
 		CF824F66279F564800C4F29C /* Host.h in Headers */ = {isa = PBXBuildFile; fileRef = CF824F64279F564800C4F29C /* Host.h */; };
 		CF824F69279F622900C4F29C /* VFSArchiveRaw_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF824F68279F622900C4F29C /* VFSArchiveRaw_UT.cpp */; };
 		CFA99A9A266FC16800F72E93 /* Log.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA99A99266FC16800F72E93 /* Log.h */; };
@@ -727,7 +726,6 @@
 				CF460094256057BE0095FC73 /* DisplayNamesCache.mm in Sources */,
 				CF4600812560579F0095FC73 /* VFSEasyOps.mm in Sources */,
 				CF4600802560579F0095FC73 /* ListingObjC.mm in Sources */,
-				CF4600C5256057F10095FC73 /* xattr.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

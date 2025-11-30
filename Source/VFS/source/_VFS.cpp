@@ -44,3 +44,4 @@
 #include "NetWebDAV/WriteBuffer.cpp"
 #include "PS/File.cpp"
 #include "PS/Host.cpp"
+#include "XAttr/xattr.cpp"

@@ -41,7 +41,11 @@ public:
 
 private:
     std::expected<void, Error> Fetch();
+    static bool TurnOffBlockingMode(int _fd) noexcept;
+    static std::expected<void, Error> EnumerateAttrs(int _fd, std::vector<std::pair<std::string, unsigned>> &_attrs);
 
+    static constexpr mode_t m_RegMode = S_IRUSR | S_IWUSR | S_IFREG;
+    static constexpr mode_t m_RootMode = S_IRUSR | S_IXUSR | S_IFDIR;
     VFSConfiguration m_Configuration;
     int m_FD = -1;
     struct stat m_Stat;

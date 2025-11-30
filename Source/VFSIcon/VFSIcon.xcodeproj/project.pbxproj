@@ -11,27 +11,11 @@
 		CF38BECA2148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38BEC92148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm */; };
 		CF38BECB2148AF9C005E336C /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD662147EC7900F14C3E /* Tests.cpp */; };
 		CF38BECD2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38BECC2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm */; };
-		CF46002A256052570095FC73 /* WorkspaceIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD502147E8B600F14C3E /* WorkspaceIconsCacheImpl.mm */; };
-		CF46002B256052570095FC73 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4E2147E8B600F14C3E /* QLThumbnailsCache.mm */; };
-		CF46002C256052570095FC73 /* WorkspaceExtensionIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4D2147E8B600F14C3E /* WorkspaceExtensionIconsCacheImpl.mm */; };
-		CF46002D256052570095FC73 /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4F2147E8B600F14C3E /* WorkspaceIconsCache.mm */; };
-		CF46002E256052570095FC73 /* WorkspaceExtensionIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4C2147E8B600F14C3E /* WorkspaceExtensionIconsCache.mm */; };
-		CF46002F256052570095FC73 /* QLThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD512147E8B600F14C3E /* QLThumbnailsCacheImpl.mm */; };
-		CF460030256052570095FC73 /* VFSBundleIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD2E2147E3EB00F14C3E /* VFSBundleIconsCacheImpl.mm */; };
-		CF460031256052570095FC73 /* IconBuilder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD372147E6A700F14C3E /* IconBuilder.mm */; };
-		CF460032256052570095FC73 /* IconRepositoryImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4B2147E8B600F14C3E /* IconRepositoryImpl.mm */; };
-		CF460033256052570095FC73 /* QLVFSThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD1E2147D79400F14C3E /* QLVFSThumbnailsCacheImpl.mm */; };
-		CF460034256052570095FC73 /* IconRepositoryImplBase.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3736E12148EF1600C3EBDC /* IconRepositoryImplBase.mm */; };
-		CF460035256052570095FC73 /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD1D2147D79400F14C3E /* QLVFSThumbnailsCache.mm */; };
-		CF460036256052570095FC73 /* VFSBundleIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD2D2147E3EA00F14C3E /* VFSBundleIconsCache.mm */; };
-		CF460037256052570095FC73 /* IconRepository.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD522147E8B600F14C3E /* IconRepository.mm */; };
-		CF460038256052570095FC73 /* ExtensionsWhitelistImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C3A022BE371F0043E825 /* ExtensionsWhitelistImpl.cpp */; };
-		CF460039256052570095FC73 /* ExtensionsWhitelist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C3A222BE37D50043E825 /* ExtensionsWhitelist.cpp */; };
-		CF46003A256052570095FC73 /* IconBuilderImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD382147E6A700F14C3E /* IconBuilderImpl.mm */; };
 		CF52C3A522BE3F380043E825 /* ExtensionsWhitelistImpl_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C3A422BE3F380043E825 /* ExtensionsWhitelistImpl_UT.cpp */; };
-		CF71BCE0293236DA00997E0F /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF71BCDF293236DA00997E0F /* Log.cpp */; };
 		CF8BDD6A2147EC7D00F14C3E /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD662147EC7900F14C3E /* Tests.cpp */; };
 		CF8BDD6E2147ED1400F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD6B2147ECA900F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm */; };
+		CFF762452EDC6B89002DD1EE /* _VFSIcon.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF762442EDC6B89002DD1EE /* _VFSIcon.mm */; };
+		CFF762472EDC6CB7002DD1EE /* _VFSIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF762462EDC6CB7002DD1EE /* _VFSIcon.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -109,6 +93,8 @@
 		CF8BDD662147EC7900F14C3E /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tests.cpp; path = tests/Tests.cpp; sourceTree = "<group>"; };
 		CF8BDD672147EC7900F14C3E /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tests.h; path = tests/Tests.h; sourceTree = "<group>"; };
 		CF8BDD6B2147ECA900F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceIconsCacheImpl_UnitTests.mm; path = tests/WorkspaceIconsCacheImpl_UnitTests.mm; sourceTree = "<group>"; };
+		CFF762442EDC6B89002DD1EE /* _VFSIcon.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = _VFSIcon.mm; path = source/_VFSIcon.mm; sourceTree = "<group>"; };
+		CFF762462EDC6CB7002DD1EE /* _VFSIcon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = _VFSIcon.cpp; path = source/_VFSIcon.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -207,6 +193,8 @@
 		CF8BDD172147D75A00F14C3E /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFF762462EDC6CB7002DD1EE /* _VFSIcon.cpp */,
+				CFF762442EDC6B89002DD1EE /* _VFSIcon.mm */,
 				CF52C3A222BE37D50043E825 /* ExtensionsWhitelist.cpp */,
 				CF52C3A022BE371F0043E825 /* ExtensionsWhitelistImpl.cpp */,
 				CF8BDD372147E6A700F14C3E /* IconBuilder.mm */,
@@ -362,24 +350,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF46003A256052570095FC73 /* IconBuilderImpl.mm in Sources */,
-				CF46002E256052570095FC73 /* WorkspaceExtensionIconsCache.mm in Sources */,
-				CF46002B256052570095FC73 /* QLThumbnailsCache.mm in Sources */,
-				CF46002F256052570095FC73 /* QLThumbnailsCacheImpl.mm in Sources */,
-				CF460034256052570095FC73 /* IconRepositoryImplBase.mm in Sources */,
-				CF46002D256052570095FC73 /* WorkspaceIconsCache.mm in Sources */,
-				CF460039256052570095FC73 /* ExtensionsWhitelist.cpp in Sources */,
-				CF460038256052570095FC73 /* ExtensionsWhitelistImpl.cpp in Sources */,
-				CF460036256052570095FC73 /* VFSBundleIconsCache.mm in Sources */,
-				CF460030256052570095FC73 /* VFSBundleIconsCacheImpl.mm in Sources */,
-				CF460035256052570095FC73 /* QLVFSThumbnailsCache.mm in Sources */,
-				CF46002C256052570095FC73 /* WorkspaceExtensionIconsCacheImpl.mm in Sources */,
-				CF71BCE0293236DA00997E0F /* Log.cpp in Sources */,
-				CF460033256052570095FC73 /* QLVFSThumbnailsCacheImpl.mm in Sources */,
-				CF460031256052570095FC73 /* IconBuilder.mm in Sources */,
-				CF46002A256052570095FC73 /* WorkspaceIconsCacheImpl.mm in Sources */,
-				CF460037256052570095FC73 /* IconRepository.mm in Sources */,
-				CF460032256052570095FC73 /* IconRepositoryImpl.mm in Sources */,
+				CFF762452EDC6B89002DD1EE /* _VFSIcon.mm in Sources */,
+				CFF762472EDC6CB7002DD1EE /* _VFSIcon.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

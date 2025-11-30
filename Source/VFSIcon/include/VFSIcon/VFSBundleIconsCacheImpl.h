@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "VFSBundleIconsCache.h"
@@ -30,6 +30,11 @@ private:
     using Container = base::LRUCache<std::string, NSImage *, m_CacheSize>;
 
     static std::string MakeKey(const std::string &_file_path, VFSHost &_host);
+    static NSImage *ProduceBundleIcon(const std::string &_path, VFSHost &_host);
+    static NSDictionary *ReadDictionary(const std::string &_path, VFSHost &_host);
+    static NSData *ToTempNSData(std::span<const uint8_t> _data);
+    static NSImage *ReadImageFromFile(const std::string &_path, VFSHost &_host);
+    static std::expected<std::vector<uint8_t>, Error> ReadEntireFile(const std::string &_path, VFSHost &_host);
 
     Container m_Icons;
     mutable spinlock m_Lock;

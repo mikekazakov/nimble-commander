@@ -6,10 +6,6 @@
 
 namespace nc::vfs {
 
-static const unsigned g_MaximumCodeUnit = 2;
-
-static bool IsWholePhrase(CFStringRef _string, CFRange _range);
-
 SearchInFile::SearchInFile(nc::vfs::FileWindow &_file)
     : m_File(_file), m_TextSearchEncoding(utility::Encoding::ENCODING_INVALID)
 {
@@ -137,9 +133,9 @@ SearchInFile::Response SearchInFile::SearchText(uint64_t *_offset, uint64_t *_by
                 // left some space in the tail to exclude situations when searched text is cut
                 // between the windows
                 assert(left_window_gap == 0);
-                assert(size_t(CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit) < m_File.WindowSize());
+                assert(size_t(CFStringGetLength(m_RequestedTextSearch) * m_MaximumCodeUnit) < m_File.WindowSize());
                 m_Position =
-                    m_Position + m_File.WindowSize() - (CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit);
+                    m_Position + m_File.WindowSize() - (CFStringGetLength(m_RequestedTextSearch) * m_MaximumCodeUnit);
             }
             else { // this is the end (c)
                 m_Position = m_File.FileSize();
@@ -190,7 +186,7 @@ SearchInFile::Options SearchInFile::SearchOptions() const
     return m_SearchOptions;
 }
 
-static bool IsWholePhrase(CFStringRef _string, CFRange _range)
+bool SearchInFile::IsWholePhrase(CFStringRef _string, CFRange _range)
 {
     static const auto alphanumeric = CFCharacterSetGetPredefined(kCFCharacterSetAlphaNumeric);
     assert(_range.length > 0);

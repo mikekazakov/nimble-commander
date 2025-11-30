@@ -561,7 +561,8 @@ private:
     if( !nc::panel::IsExtensionInArchivesWhitelist(extension) )
         return nullptr;
 
-    auto host = VFSArchiveProxy::OpenFileAsArchive(_path, _host, nullptr, [&] { return m_FileSearch->IsStopped(); });
+    auto host =
+        nc::vfs::VFSArchiveProxy::OpenFileAsArchive(_path, _host, nullptr, [&] { return m_FileSearch->IsStopped(); });
     if( host )
         if( self.vfsInstanceManager )
             self.vfsInstanceManager->TameVFS(host);

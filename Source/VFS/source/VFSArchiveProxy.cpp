@@ -3,9 +3,7 @@
 #include "ArcLA/Host.h"
 #include "ArcLARaw/Host.h"
 
-// TODO: move to a namespace
-
-using namespace nc;
+namespace nc::vfs {
 
 VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const std::string &_path,
                                               const VFSHostPtr &_parent,
@@ -39,3 +37,5 @@ VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const std::string &_path,
 
     return nullptr;
 }
+
+} // namespace nc::vfs

@@ -273,7 +273,7 @@ void GoIntoFolder::Perform(PanelController *_target, id /*_sender*/) const
                 return RunAskForPasswordModalWindow(item.Filename(), p) ? p : "";
             };
 
-            auto arhost = VFSArchiveProxy::OpenFileAsArchive(item.Path(), item.Host(), pwd_ask, _cancelled);
+            auto arhost = vfs::VFSArchiveProxy::OpenFileAsArchive(item.Path(), item.Host(), pwd_ask, _cancelled);
 
             if( arhost ) {
                 auto request = std::make_shared<DirectoryChangeRequest>();

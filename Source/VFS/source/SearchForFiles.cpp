@@ -6,7 +6,7 @@
 
 namespace nc::vfs {
 
-static utility::Encoding EncodingFromXAttr(const VFSFilePtr &_f)
+utility::Encoding SearchForFiles::EncodingFromXAttr(const VFSFilePtr &_f)
 {
     char buf[128];
     const std::expected<size_t, Error> r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));

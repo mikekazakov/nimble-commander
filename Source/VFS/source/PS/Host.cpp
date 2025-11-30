@@ -10,39 +10,12 @@
 #include "Internal.h"
 #include "File.h"
 #include <fmt/format.h>
-
+#include <CoreFoundation/CoreFoundation.h>
 #include <algorithm>
 
 namespace nc::vfs {
-using namespace std::literals;
 
 const char *PSHost::UniqueTag = "psfs";
-
-static NSDateFormatter *ProcDateFormatter()
-{
-    static NSDateFormatter *formatter = nil;
-    std::once_flag flag;
-    std::call_once(flag, [] {
-        auto fmt = [[NSDateFormatter alloc] init];
-        [fmt setTimeStyle:NSDateFormatterShortStyle];
-        [fmt setDateStyle:NSDateFormatterShortStyle];
-        formatter = fmt;
-    });
-    return formatter;
-}
-
-static const std::string &ProcStatus(int _st)
-{
-    [[clang::no_destroy]] static const std::string strings[] = {"",
-                                                                "SIDL (process being created by fork)",
-                                                                "SRUN (currently runnable)",
-                                                                "SSLEEP (sleeping on an address)",
-                                                                "SSTOP (process debugging or suspension)",
-                                                                "SZOMB (awaiting collection by parent)"};
-    if( _st >= 0 && _st <= SZOMB )
-        return strings[_st];
-    return strings[0];
-}
 
 static cpu_type_t ArchTypeFromPID(pid_t _pid)
 {
@@ -68,23 +41,6 @@ static cpu_type_t ArchTypeFromPID(pid_t _pid)
     }
 
     return 0;
-}
-
-static const std::string &ArchType(int _type)
-{
-    [[clang::no_destroy]] static const std::string x86 = "x86";
-    [[clang::no_destroy]] static const std::string x86_64 = "x86-64";
-    [[clang::no_destroy]] static const std::string arm64 = "arm64";
-    [[clang::no_destroy]] static const std::string na = "N/A";
-
-    if( _type == CPU_TYPE_X86_64 )
-        return x86_64;
-    else if( _type == CPU_TYPE_X86 )
-        return x86;
-    else if( _type == CPU_TYPE_ARM64 )
-        return arm64;
-    else
-        return na;
 }
 
 // from https://gist.github.com/nonowarn/770696
@@ -344,6 +300,7 @@ std::vector<PSHost::ProcInfo> PSHost::GetProcs()
 
 void PSHost::UpdateCycle()
 {
+    using namespace std::literals;
     auto weak_this = std::weak_ptr<PSHost>(SharedPtr());
     m_UpdateQ.Run([=, this] {
         if( m_UpdateQ.IsStopped() )
@@ -379,7 +336,7 @@ void PSHost::CommitProcs(std::vector<ProcInfo> _procs)
 
     auto newdata = std::make_shared<Snapshot>();
 
-    newdata->taken_time = time_t(NSDate.date.timeIntervalSince1970);
+    newdata->taken_time = time(nullptr);
     newdata->procs.swap(_procs);
     newdata->files.reserve(newdata->procs.size());
     newdata->plain_filenames.reserve(newdata->procs.size());
@@ -400,6 +357,7 @@ void PSHost::CommitProcs(std::vector<ProcInfo> _procs)
 
 std::string PSHost::ProcInfoIntoFile(const ProcInfo &_info, std::shared_ptr<Snapshot> _data)
 {
+    using namespace std::literals;
     using std::to_string;
     std::string result;
 
@@ -421,11 +379,7 @@ std::string PSHost::ProcInfoIntoFile(const ProcInfo &_info, std::shared_ptr<Snap
     result += "Process user id: "s + to_string(_info.p_uid) + " (" + user_name + ")\n";
     result += "Process priority: "s + to_string(_info.priority) + "\n";
     result += R"(Process "nice" value: )" + to_string(_info.nice) + "\n";
-    result += "Started at: "s +
-              [ProcDateFormatter()
-                  stringFromDate:[NSDate dateWithTimeIntervalSince1970:static_cast<double>(_info.start_time)]]
-                  .UTF8String +
-              "\n";
+    result += "Started at: "s + FormatTime(_info.start_time) + "\n";
     result += "Status: "s + ProcStatus(_info.status) + "\n";
     result += "Architecture: "s + ArchType(_info.cpu_type) + "\n";
     result += "Image file: "s + (_info.bin_path.empty() ? "N/A" : _info.bin_path) + "\n";
@@ -703,6 +657,66 @@ bool PSHost::IsWritable() const
     // need to fake 'writability' to allow deleting for PSFS, since some high-level code does such
     // checks to allow/disallow functionality.
     return true;
+}
+
+std::string PSHost::FormatTime(time_t _time)
+{
+    static const CFDateFormatterRef fmt = [] {
+        const CFLocaleRef locale = CFLocaleCopyCurrent();
+        const CFDateFormatterRef fmt =
+            CFDateFormatterCreate(kCFAllocatorDefault, locale, kCFDateFormatterShortStyle, kCFDateFormatterShortStyle);
+        if( locale )
+            CFRelease(locale);
+        return fmt;
+    }();
+    [[clang::no_destroy]] static std::mutex fmt_mutex;
+
+    if( !fmt )
+        return {};
+    const std::lock_guard lock{fmt_mutex};
+
+    const CFAbsoluteTime abs_time = static_cast<CFAbsoluteTime>(_time) - kCFAbsoluteTimeIntervalSince1970;
+    const CFDateRef date = CFDateCreate(kCFAllocatorDefault, abs_time);
+    if( !date )
+        return {};
+    auto release_date = at_scope_end([date] { CFRelease(date); });
+
+    const CFStringRef str = CFDateFormatterCreateStringWithDate(kCFAllocatorDefault, fmt, date);
+    if( !str )
+        return {};
+    auto release_str = at_scope_end([str] { CFRelease(str); });
+
+    return base::CFStringGetUTF8StdString(str);
+}
+
+const std::string &PSHost::ProcStatus(int _st)
+{
+    [[clang::no_destroy]] static const std::string strings[] = {"",
+                                                                "SIDL (process being created by fork)",
+                                                                "SRUN (currently runnable)",
+                                                                "SSLEEP (sleeping on an address)",
+                                                                "SSTOP (process debugging or suspension)",
+                                                                "SZOMB (awaiting collection by parent)"};
+    if( _st >= 0 && _st <= SZOMB )
+        return strings[_st];
+    return strings[0];
+}
+
+const std::string &PSHost::ArchType(int _type)
+{
+    [[clang::no_destroy]] static const std::string x86 = "x86";
+    [[clang::no_destroy]] static const std::string x86_64 = "x86-64";
+    [[clang::no_destroy]] static const std::string arm64 = "arm64";
+    [[clang::no_destroy]] static const std::string na = "N/A";
+
+    if( _type == CPU_TYPE_X86_64 )
+        return x86_64;
+    else if( _type == CPU_TYPE_X86 )
+        return x86;
+    else if( _type == CPU_TYPE_ARM64 )
+        return arm64;
+    else
+        return na;
 }
 
 } // namespace nc::vfs

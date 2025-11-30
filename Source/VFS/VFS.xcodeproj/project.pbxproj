@@ -26,8 +26,6 @@
 		CF460086256057A90095FC73 /* EncodingDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099941F95C881000AFDE7 /* EncodingDetection.mm */; };
 		CF460094256057BE0095FC73 /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0241DA2305A00992B84 /* DisplayNamesCache.mm */; };
 		CF4600B4256057E80095FC73 /* PathRoutines.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FDD061F5D4AEC00AF1EBD /* PathRoutines.mm */; };
-		CF4600BF256057EC0095FC73 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D06F1DA2353000992B84 /* File.cpp */; };
-		CF4600C0256057EC0095FC73 /* Host.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0721DA2353000992B84 /* Host.mm */; };
 		CF4600C5256057F10095FC73 /* xattr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0301DA231EA00992B84 /* xattr.cpp */; };
 		CF824F66279F564800C4F29C /* Host.h in Headers */ = {isa = PBXBuildFile; fileRef = CF824F64279F564800C4F29C /* Host.h */; };
 		CF824F69279F622900C4F29C /* VFSArchiveRaw_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF824F68279F622900C4F29C /* VFSArchiveRaw_UT.cpp */; };
@@ -184,7 +182,7 @@
 		CF69D06F1DA2353000992B84 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = File.cpp; path = source/PS/File.cpp; sourceTree = "<group>"; };
 		CF69D0701DA2353000992B84 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = source/PS/File.h; sourceTree = "<group>"; };
 		CF69D0711DA2353000992B84 /* Host.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Host.h; path = source/PS/Host.h; sourceTree = "<group>"; };
-		CF69D0721DA2353000992B84 /* Host.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Host.mm; path = source/PS/Host.mm; sourceTree = "<group>"; };
+		CF69D0721DA2353000992B84 /* Host.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Host.cpp; path = source/PS/Host.cpp; sourceTree = "<group>"; };
 		CF69D0731DA2353000992B84 /* Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internal.h; path = source/PS/Internal.h; sourceTree = "<group>"; };
 		CF69D0791DA238D400992B84 /* VFSListingInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListingInput.h; path = include/VFS/VFSListingInput.h; sourceTree = "<group>"; };
 		CF7A09BB1EC4382700533B07 /* KeyValidator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyValidator.cpp; path = source/NetSFTP/KeyValidator.cpp; sourceTree = "<group>"; };
@@ -542,7 +540,7 @@
 				CF69D06F1DA2353000992B84 /* File.cpp */,
 				CF69D0701DA2353000992B84 /* File.h */,
 				CF69D0711DA2353000992B84 /* Host.h */,
-				CF69D0721DA2353000992B84 /* Host.mm */,
+				CF69D0721DA2353000992B84 /* Host.cpp */,
 				CF69D0731DA2353000992B84 /* Internal.h */,
 			);
 			name = PS;
@@ -727,10 +725,8 @@
 				CF4600722560579F0095FC73 /* VFSFile.cpp in Sources */,
 				CFF762A42EDCB6EE002DD1EE /* OpenDirectory.mm in Sources */,
 				CF460094256057BE0095FC73 /* DisplayNamesCache.mm in Sources */,
-				CF4600BF256057EC0095FC73 /* File.cpp in Sources */,
 				CF4600812560579F0095FC73 /* VFSEasyOps.mm in Sources */,
 				CF4600802560579F0095FC73 /* ListingObjC.mm in Sources */,
-				CF4600C0256057EC0095FC73 /* Host.mm in Sources */,
 				CF4600C5256057F10095FC73 /* xattr.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

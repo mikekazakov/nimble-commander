@@ -42,3 +42,5 @@
 #include "NetWebDAV/Requests.cpp"
 #include "NetWebDAV/WebDAVHost.cpp"
 #include "NetWebDAV/WriteBuffer.cpp"
+#include "PS/File.cpp"
+#include "PS/Host.cpp"

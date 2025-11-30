@@ -17,15 +17,10 @@
 #include <sys/dirent.h>
 
 // libssh2 is full of macros with C-style casts, hence disabling here
+#pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wold-style-cast"
 
 namespace nc::vfs {
-
-using namespace std::literals;
-using sftp::ErrorDomain;
-using sftp::Errors;
-
-static bool ServerHasReversedSymlinkParameters(LIBSSH2_SESSION *_session);
 
 SFTPHost::Connection::~Connection()
 {
@@ -133,6 +128,7 @@ static VFSConfiguration ComposeConfguration(const std::string &_serv_url,
                                             long _port,
                                             const std::string &_home)
 {
+    using namespace std::string_literals;
     SFTPHostConfiguration config;
     config.server_url = _serv_url;
     config.user = _user;
@@ -159,6 +155,8 @@ SFTPHost::SFTPHost(const std::string &_serv_url,
 
 std::expected<void, Error> SFTPHost::DoInit()
 {
+    using sftp::ErrorDomain;
+    using sftp::Errors;
     static std::once_flag once;
     call_once(once, [] {
         const int rc = libssh2_init(0);
@@ -263,6 +261,9 @@ void SFTPHost::SpawnSSH2_KbdCallback([[maybe_unused]] const char *name,
 
 std::expected<std::unique_ptr<SFTPHost::Connection>, Error> SFTPHost::SpawnSSH2()
 {
+    using sftp::ErrorDomain;
+    using sftp::Errors;
+    using namespace std::chrono_literals;
     auto connection = std::make_unique<Connection>();
 
     int rc;
@@ -332,7 +333,7 @@ std::expected<void, Error> SFTPHost::SpawnSFTP(Connection &_t)
     _t.sftp = libssh2_sftp_init(_t.ssh);
 
     if( !_t.sftp )
-        return std::unexpected(Error{ErrorDomain, Errors::fx_init_failure});
+        return std::unexpected(Error{sftp::ErrorDomain, sftp::Errors::fx_init_failure});
     return {};
 }
 
@@ -711,7 +712,7 @@ Error SFTPHost::ErrorForConnection(Connection &_conn)
         else
             return Error{sftp::ErrorDomain, static_cast<int64_t>(sess_errno)};
     }
-    return Error{ErrorDomain, Errors::sftp_protocol};
+    return Error{sftp::ErrorDomain, sftp::Errors::sftp_protocol};
 }
 
 const std::string &SFTPHost::ServerUrl() const noexcept
@@ -917,10 +918,12 @@ SFTPHost::FetchGroups([[maybe_unused]] const VFSCancelChecker &_cancel_checker)
     return fetcher.FetchGroups();
 }
 
-static bool ServerHasReversedSymlinkParameters(LIBSSH2_SESSION *_session)
+bool SFTPHost::ServerHasReversedSymlinkParameters(LIBSSH2_SESSION *_session)
 {
     const auto banner = libssh2_session_banner_get(_session);
     return banner && (strstr(banner, "OpenSSH") || strstr(banner, "mod_sftp"));
 }
 
 } // namespace nc::vfs
+
+#pragma clang diagnostic pop

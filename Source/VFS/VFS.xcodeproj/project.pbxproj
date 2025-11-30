@@ -27,11 +27,6 @@
 		CF4600812560579F0095FC73 /* VFSEasyOps.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D00E1DA22BE800992B84 /* VFSEasyOps.mm */; };
 		CF460086256057A90095FC73 /* EncodingDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099941F95C881000AFDE7 /* EncodingDetection.mm */; };
 		CF460094256057BE0095FC73 /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0241DA2305A00992B84 /* DisplayNamesCache.mm */; };
-		CF4600AA256057DA0095FC73 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0481DA232EF00992B84 /* File.cpp */; };
-		CF4600AB256057DA0095FC73 /* KeyValidator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09BB1EC4382700533B07 /* KeyValidator.cpp */; };
-		CF4600AC256057DA0095FC73 /* SFTPHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D04A1DA232EF00992B84 /* SFTPHost.cpp */; };
-		CF4600AD256057DA0095FC73 /* OSDetector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9F31F1719860000B3EE /* OSDetector.cpp */; };
-		CF4600AE256057DA0095FC73 /* AccountsFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9F91F171E990000B3EE /* AccountsFetcher.cpp */; };
 		CF4600B2256057E80095FC73 /* ConnectionsPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95621F5506FC0035E606 /* ConnectionsPool.cpp */; };
 		CF4600B3256057E80095FC73 /* WebDAVHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95541F4E60850035E606 /* WebDAVHost.cpp */; };
 		CF4600B4256057E80095FC73 /* PathRoutines.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FDD061F5D4AEC00AF1EBD /* PathRoutines.mm */; };
@@ -57,7 +52,6 @@
 		CFAE50782D7322CF007ADA14 /* VFSFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAE50772D7322CF007ADA14 /* VFSFile.mm */; };
 		CFB63CD525939A630038502E /* VFSNative_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB63CD425939A630038502E /* VFSNative_IT.mm */; };
 		CFCB68D3289089BF00086E40 /* VFSArchive_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCB68D2289089BF00086E40 /* VFSArchive_UT.cpp */; };
-		CFDA17EA2D496A2E00EE375B /* Errors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDA17E92D496A2E00EE375B /* Errors.cpp */; };
 		CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */; };
 		CFE08AE923CB2D83007E99B8 /* ListingInput_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE823CB2D83007E99B8 /* ListingInput_UT.cpp */; };
 		CFE08AED23CFAFD8007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */; };
@@ -741,11 +735,8 @@
 				CF4600B4256057E80095FC73 /* PathRoutines.mm in Sources */,
 				CF4600B3256057E80095FC73 /* WebDAVHost.cpp in Sources */,
 				CFF762A02EDCA7CC002DD1EE /* _VFS.cpp in Sources */,
-				CF4600AE256057DA0095FC73 /* AccountsFetcher.cpp in Sources */,
 				CF460086256057A90095FC73 /* EncodingDetection.mm in Sources */,
-				CF4600AB256057DA0095FC73 /* KeyValidator.cpp in Sources */,
 				CF1F6FC825E70982003A2497 /* CURLConnection.cpp in Sources */,
-				CFDA17EA2D496A2E00EE375B /* Errors.cpp in Sources */,
 				CF4600B6256057E80095FC73 /* Cache.cpp in Sources */,
 				CF4600722560579F0095FC73 /* VFSFile.cpp in Sources */,
 				CF4600BB256057E80095FC73 /* ReadBuffer.cpp in Sources */,
@@ -754,9 +745,7 @@
 				CF4600B5256057E80095FC73 /* File.cpp in Sources */,
 				CF4600BF256057EC0095FC73 /* File.cpp in Sources */,
 				CF4600B7256057E80095FC73 /* Requests.cpp in Sources */,
-				CF4600AD256057DA0095FC73 /* OSDetector.cpp in Sources */,
 				CF4600B2256057E80095FC73 /* ConnectionsPool.cpp in Sources */,
-				CF4600AC256057DA0095FC73 /* SFTPHost.cpp in Sources */,
 				CF4600812560579F0095FC73 /* VFSEasyOps.mm in Sources */,
 				CF1F6FC725E70982003A2497 /* Connection.cpp in Sources */,
 				CF4600BA256057E80095FC73 /* WriteBuffer.cpp in Sources */,
@@ -765,7 +754,6 @@
 				CF4600C0256057EC0095FC73 /* Host.mm in Sources */,
 				CF4600C5256057F10095FC73 /* xattr.cpp in Sources */,
 				CF4600B8256057E80095FC73 /* DateTimeParser.cpp in Sources */,
-				CF4600AA256057DA0095FC73 /* File.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,23 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF0A49DA251668E8008EC7B0 /* InputTranslator_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49CC2516676A008EC7B0 /* InputTranslator_UT.mm */; };
 		CF0A49E7251F1A42008EC7B0 /* ShellTask_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49E6251F1A42008EC7B0 /* ShellTask_IT.cpp */; };
 		CF0A49E8251F1A51008EC7B0 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3C23DCFC15007E99B8 /* Tests.cpp */; };
-		CF4D0D3B2A9B8BA5006E4D5A /* ChildrenTracker_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4D0D3A2A9B8BA5006E4D5A /* ChildrenTracker_UT.cpp */; };
 		CF5F3934242FCD2B004DF1F8 /* Term_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F3932242FCD23004DF1F8 /* Term_IT.cpp */; };
-		CF739C78295B2610004758C5 /* Color_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF739C77295B2610004758C5 /* Color_UT.cpp */; };
 		CF739CC32972059B004758C5 /* ExtendedCharRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = CF739CC22972059A004758C5 /* ExtendedCharRegistry.h */; };
-		CF739CDE297C1704004758C5 /* ExtendedCharRegistry_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF739CDC297C166E004758C5 /* ExtendedCharRegistry_UT.cpp */; };
 		CF739CE0297F3EEE004758C5 /* CTCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF739CDF297F3EEE004758C5 /* CTCache.h */; };
 		CF739CF229B38401004758C5 /* ColorMap.h in Headers */ = {isa = PBXBuildFile; fileRef = CF739CF129B38401004758C5 /* ColorMap.h */; };
-		CF83CF28243A21C8003AC820 /* Interpreter_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */; };
-		CF9D696724A897B5008352B0 /* Screen_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D696624A897B5008352B0 /* Screen_UT.cpp */; };
-		CF9D697F24ADF06D008352B0 /* ScreenBuffer_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */; };
 		CFE08B3D23DCFC15007E99B8 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3C23DCFC15007E99B8 /* Tests.cpp */; };
-		CFE08B4023DCFCF9007E99B8 /* Parser2_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3F23DCFCF9007E99B8 /* Parser2_UT.cpp */; };
 		CFF762262EDA3352002DD1EE /* _Term.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF762252EDA3352002DD1EE /* _Term.cpp */; };
 		CFF762342EDA3422002DD1EE /* _Term.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF762332EDA3422002DD1EE /* _Term.mm */; };
+		CFF762432EDC67C5002DD1EE /* _TermUT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF762422EDC67C5002DD1EE /* _TermUT.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -135,6 +128,7 @@
 		CFE08B3F23DCFCF9007E99B8 /* Parser2_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser2_UT.cpp; sourceTree = "<group>"; };
 		CFF762252EDA3352002DD1EE /* _Term.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = _Term.cpp; sourceTree = "<group>"; };
 		CFF762332EDA3422002DD1EE /* _Term.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _Term.mm; sourceTree = "<group>"; };
+		CFF762422EDC67C5002DD1EE /* _TermUT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = _TermUT.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -260,6 +254,7 @@
 		CF5099781F948E7C000AFDE7 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CFF762422EDC67C5002DD1EE /* _TermUT.cpp */,
 				CF69DCD9253B17BD00AB1E3A /* AtomicHolder.h */,
 				CF4D0D3A2A9B8BA5006E4D5A /* ChildrenTracker_UT.cpp */,
 				CF739C77295B2610004758C5 /* Color_UT.cpp */,
@@ -421,16 +416,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF4D0D3B2A9B8BA5006E4D5A /* ChildrenTracker_UT.cpp in Sources */,
+				CFF762432EDC67C5002DD1EE /* _TermUT.cpp in Sources */,
 				CF5F3934242FCD2B004DF1F8 /* Term_IT.cpp in Sources */,
-				CFE08B4023DCFCF9007E99B8 /* Parser2_UT.cpp in Sources */,
-				CF9D696724A897B5008352B0 /* Screen_UT.cpp in Sources */,
 				CFE08B3D23DCFC15007E99B8 /* Tests.cpp in Sources */,
-				CF739C78295B2610004758C5 /* Color_UT.cpp in Sources */,
-				CF0A49DA251668E8008EC7B0 /* InputTranslator_UT.mm in Sources */,
-				CF9D697F24ADF06D008352B0 /* ScreenBuffer_UT.cpp in Sources */,
-				CF739CDE297C1704004758C5 /* ExtendedCharRegistry_UT.cpp in Sources */,
-				CF83CF28243A21C8003AC820 /* Interpreter_UT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

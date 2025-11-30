@@ -1,9 +1,12 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Screen.h>
 #include "Tests.h"
 
-using namespace nc::term;
 #define PREFIX "nc::term::Screen "
+
+namespace ScreenTest {
+
+using namespace nc::term;
 
 TEST_CASE(PREFIX "Defaults")
 {
@@ -133,3 +136,7 @@ TEST_CASE(PREFIX "ScrollDown")
 //     screen.GoTo(0, 0);
 //     CHECK( screen.LineOverflown() == false );
 // }
+
+} // namespace ScreenTest
+
+#undef PREFIX

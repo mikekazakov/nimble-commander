@@ -41,6 +41,7 @@
 		CFF7623A2EDB1E98002DD1EE /* _Panel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF762392EDB1E98002DD1EE /* _Panel.cpp */; };
 		CFF7623C2EDB1F58002DD1EE /* _Panel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF7623B2EDB1F58002DD1EE /* _Panel.mm */; };
 		CFF7623E2EDB2280002DD1EE /* _PanelUT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF7623D2EDB2280002DD1EE /* _PanelUT.mm */; };
+		CFF762412EDC5E2B002DD1EE /* Localizable.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF762402EDC5E2B002DD1EE /* Localizable.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -155,6 +156,8 @@
 		CFF762392EDB1E98002DD1EE /* _Panel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = _Panel.cpp; path = source/_Panel.cpp; sourceTree = "<group>"; };
 		CFF7623B2EDB1F58002DD1EE /* _Panel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = _Panel.mm; path = source/_Panel.mm; sourceTree = "<group>"; };
 		CFF7623D2EDB2280002DD1EE /* _PanelUT.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = _PanelUT.mm; path = tests/_PanelUT.mm; sourceTree = "<group>"; };
+		CFF7623F2EDC5E15002DD1EE /* Localizable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Localizable.h; path = include/Panel/Localizable.h; sourceTree = "<group>"; };
+		CFF762402EDC5E2B002DD1EE /* Localizable.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = Localizable.mm; path = source/Localizable.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -277,6 +280,7 @@
 				CF22060427B851A6008EDE3A /* ExternalTools.h */,
 				CFA89D812804C86E00BEA127 /* FindFilesData.h */,
 				CF0B040D281F029A00076FDF /* Internal.h */,
+				CFF7623F2EDC5E15002DD1EE /* Localizable.h */,
 				CF465228268D163E0085840A /* Log.h */,
 				CF8B0FAD2CA7FF300098C4D6 /* NetworkConnectionsManager.h */,
 				CFF33F952556941B00B3C92C /* PanelData.h */,
@@ -300,12 +304,13 @@
 		CFF33F942556940800B3C92C /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CFF7623B2EDB1F58002DD1EE /* _Panel.mm */,
 				CFF762392EDB1E98002DD1EE /* _Panel.cpp */,
+				CFF7623B2EDB1F58002DD1EE /* _Panel.mm */,
 				CF3ED4F125860C8900D67AF2 /* CursorBackup.mm */,
 				CF22060627B851B5008EDE3A /* ExternalTools.mm */,
 				CFA89D832804C87700BEA127 /* FindFilesData.cpp */,
 				CF0B0409281F027900076FDF /* Internal.mm */,
+				CFF762402EDC5E2B002DD1EE /* Localizable.mm */,
 				CF46522C268D16500085840A /* Log.cpp */,
 				CF8B0FAE2CA7FF440098C4D6 /* NetworkConnectionsManager.mm */,
 				CFF33F982556942600B3C92C /* PanelData.mm */,
@@ -544,6 +549,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFF762412EDC5E2B002DD1EE /* Localizable.mm in Sources */,
 				CFF7623C2EDB1F58002DD1EE /* _Panel.mm in Sources */,
 				CFF7623A2EDB1E98002DD1EE /* _Panel.cpp in Sources */,
 			);

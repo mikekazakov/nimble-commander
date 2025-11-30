@@ -5,9 +5,6 @@
 
 namespace nc::vfsicon {
 
-static NSImage *ProduceThumbnailForTempFile(const std::string &_path, CGSize _px_size);
-static std::expected<std::vector<uint8_t>, Error> ReadEntireFile(const std::string &_path, VFSHost &_host);
-
 QLVFSThumbnailsCacheImpl::QLVFSThumbnailsCacheImpl(const std::shared_ptr<utility::BriefOnDiskStorage> &_temp_storage)
     : m_TempStorage(_temp_storage)
 {
@@ -75,7 +72,7 @@ std::string QLVFSThumbnailsCacheImpl::MakeKey(const std::string &_file_path, VFS
     return key;
 }
 
-static NSImage *ProduceThumbnailForTempFile(const std::string &_path, CGSize _px_size)
+NSImage *QLVFSThumbnailsCacheImpl::ProduceThumbnailForTempFile(const std::string &_path, CGSize _px_size)
 {
 
     CFURLRef url = CFURLCreateFromFileSystemRepresentation(
@@ -92,7 +89,8 @@ static NSImage *ProduceThumbnailForTempFile(const std::string &_path, CGSize _px
     return result;
 }
 
-static std::expected<std::vector<uint8_t>, Error> ReadEntireFile(const std::string &_path, VFSHost &_host)
+std::expected<std::vector<uint8_t>, Error> QLVFSThumbnailsCacheImpl::ReadEntireFile(const std::string &_path,
+                                                                                    VFSHost &_host)
 {
     const std::expected<std::shared_ptr<VFSFile>, Error> file = _host.CreateFile(_path);
     if( !file )

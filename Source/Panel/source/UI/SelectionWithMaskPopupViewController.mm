@@ -1,6 +1,7 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Panel/UI/SelectionWithMaskPopupViewController.h>
 #include <Panel/Internal.h>
+#include <Panel/Localizable.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 
@@ -45,9 +46,8 @@ using namespace nc::panel;
 {
     [super viewDidLoad];
 
-    self.titleLabel.stringValue =
-        m_DoesSelect ? NSLocalizedString(@"Select files by mask:", "Title for selection by mask popup")
-                     : NSLocalizedString(@"Deselect files by mask:", "Title for deselection by mask popup");
+    self.titleLabel.stringValue = m_DoesSelect ? localizable::SelectFilesByMaskPopupSelectTitle()
+                                               : localizable::SelectFilesByMaskPopupDeselectTitle();
 
     [self updateMasksMenu];
     [self updateSearchPrompt];
@@ -59,9 +59,9 @@ using namespace nc::panel;
 {
     const auto menu = [[NSMenu alloc] initWithTitle:@""];
 
-    [menu addItemWithTitle:NSLocalizedString(@"Options", "") action:nil keyEquivalent:@""];
+    [menu addItemWithTitle:localizable::SelectFilesByMaskPopupOptionsTitle() action:nil keyEquivalent:@""];
 
-    const auto regex = [menu addItemWithTitle:NSLocalizedString(@"Regular Expression", "")
+    const auto regex = [menu addItemWithTitle:localizable::SelectFilesByMaskPopupRegularExpressionTitle()
                                        action:@selector(onMaskMenuRegExOptionClicked:)
                                 keyEquivalent:@""];
     regex.state = m_RegexSearch ? NSControlStateValueOn : NSControlStateValueOff;
@@ -69,19 +69,19 @@ using namespace nc::panel;
 
     if( !m_History.empty() ) {
         [menu addItem:NSMenuItem.separatorItem];
-        [menu addItemWithTitle:NSLocalizedString(@"Recent Searches", "") action:nil keyEquivalent:@""];
+        [menu addItemWithTitle:localizable::SelectFilesByMaskPopupRegularRecentSearchesTitle()
+                        action:nil
+                 keyEquivalent:@""];
         long query_index = 0;
         for( const auto &query : m_History ) {
             NSString *title = @"";
             if( query.type == FindFilesMask::Classic ) {
-                title = [NSString
-                    stringWithFormat:NSLocalizedString(@"Mask \u201c%@\u201d", "Find file masks history - plain mask"),
-                                     [NSString stringWithUTF8StdString:query.string]];
+                title = [NSString stringWithFormat:localizable::SelectFilesByMaskPopupHistoryMaskFormat(),
+                                                   [NSString stringWithUTF8StdString:query.string]];
             }
             else if( query.type == FindFilesMask::RegEx ) {
-                title = [NSString
-                    stringWithFormat:NSLocalizedString(@"RegEx \u201c%@\u201d", "Find file masks history - regex"),
-                                     [NSString stringWithUTF8StdString:query.string]];
+                title = [NSString stringWithFormat:localizable::SelectFilesByMaskPopupHistoryRegExFormat(),
+                                                   [NSString stringWithUTF8StdString:query.string]];
             }
             auto item = [menu addItemWithTitle:title
                                         action:@selector(onMaskMenuHistoryEntryClicked:)
@@ -91,7 +91,7 @@ using namespace nc::panel;
             ++query_index;
         }
         [menu addItem:NSMenuItem.separatorItem];
-        [menu addItemWithTitle:NSLocalizedString(@"Clear Recents", "")
+        [menu addItemWithTitle:localizable::SelectFilesByMaskPopupRegularClearRecentsTitle()
                         action:@selector(onMaskMenuClearRecentsClicked:)
                  keyEquivalent:@""];
     }
@@ -106,21 +106,10 @@ using namespace nc::panel;
 
 - (void)updateSearchPrompt
 {
-    NSString *tt = @"";
-    NSString *ps = @"";
-    if( m_RegexSearch ) {
-        tt = NSLocalizedString(@"Specify a regular expression to match filenames with.",
-                               "Tooltip for a regex filename match");
-        ps = NSLocalizedString(@"Regular expression", "Placeholder prompt for a regex");
-    }
-    else {
-        tt = NSLocalizedString(@"Use \"*\" for multiple-character wildcard, \"?\" for single-character wildcard and "
-                               @"\",\" to specify more than one mask.",
-                               "Tooltip for mask filename match");
-        ps = NSLocalizedString(@"Mask: *, or *.t?t, or *.txt,*.jpg", "Placeholder prompt for a filemask");
-    }
-    self.searchField.toolTip = tt;
-    self.searchField.placeholderString = ps;
+    self.searchField.toolTip = m_RegexSearch ? localizable::SelectFilesByMaskPopupRegExTooltip()
+                                             : localizable::SelectFilesByMaskPopupMaskTooltip();
+    self.searchField.placeholderString = m_RegexSearch ? localizable::SelectFilesByMaskPopupRegExPlaceholder()
+                                                       : localizable::SelectFilesByMaskPopupMaskPlaceholder();
 }
 
 - (IBAction)onMaskMenuRegExOptionClicked:(id)sender

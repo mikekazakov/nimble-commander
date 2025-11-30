@@ -58,7 +58,6 @@
 		CF4600C0256057EC0095FC73 /* Host.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0721DA2353000992B84 /* Host.mm */; };
 		CF4600C5256057F10095FC73 /* xattr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0301DA231EA00992B84 /* xattr.cpp */; };
 		CF824F66279F564800C4F29C /* Host.h in Headers */ = {isa = PBXBuildFile; fileRef = CF824F64279F564800C4F29C /* Host.h */; };
-		CF824F67279F564800C4F29C /* Host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF824F65279F564800C4F29C /* Host.cpp */; };
 		CF824F69279F622900C4F29C /* VFSArchiveRaw_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF824F68279F622900C4F29C /* VFSArchiveRaw_UT.cpp */; };
 		CFA99A9A266FC16800F72E93 /* Log.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA99A99266FC16800F72E93 /* Log.h */; };
 		CFAB6D1D258A1AF000397DB5 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */; };
@@ -782,7 +781,6 @@
 				CF460092256057BE0095FC73 /* Fetching.cpp in Sources */,
 				CF460093256057BE0095FC73 /* Host.mm in Sources */,
 				CF4600A3256057D00095FC73 /* Host.cpp in Sources */,
-				CF824F67279F564800C4F29C /* Host.cpp in Sources */,
 				CF4600722560579F0095FC73 /* VFSFile.cpp in Sources */,
 				CF4600BB256057E80095FC73 /* ReadBuffer.cpp in Sources */,
 				CF460094256057BE0095FC73 /* DisplayNamesCache.mm in Sources */,

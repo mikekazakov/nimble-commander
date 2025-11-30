@@ -44,7 +44,14 @@ public:
     static bool HasSupportedExtension(std::string_view _path) noexcept;
 
 private:
+    struct Extracted;
+
     void Init(const VFSCancelChecker &_cancel_checker);
+
+    static Extracted read_stream(const uint64_t _max_bytes,
+                                 const std::string &_path,
+                                 VFSHost &_parent,
+                                 const VFSCancelChecker &_cancel_checker);
 
     std::vector<std::byte> m_Data;
     std::string m_Filename;

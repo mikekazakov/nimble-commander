@@ -15,3 +15,4 @@
 #include "ArcLA/File.cpp"
 #include "ArcLA/Host.cpp"
 #include "ArcLA/Internal.cpp"
+#include "ArcLARaw/Host.cpp"

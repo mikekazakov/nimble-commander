@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/UnorderedUtil.h>
 #include <Utility/HexadecimalColor.h>
 #include <Utility/SystemInformation.h>
@@ -91,6 +91,9 @@ static constexpr void HexadecimalColorRGBAToString(uint32_t _rgba, char _string[
 
 // TODO: unit test for a round-trip!
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 [[clang::no_destroy]]                                                   //
 static const ankerl::unordered_dense::map<std::string,                  //
                                           NSColor *,                    //
@@ -173,6 +176,8 @@ static const ankerl::unordered_dense::map<std::string,                  //
         {"@unemphasizedSelectedTextColor", NSColor.unemphasizedSelectedTextColor},
         {"@controlAccentColor", NSColor.controlAccentColor},
 };
+
+#pragma clang diagnostic pop
 
 static NSColor *DecodeSystemColor(std::string_view _color) noexcept
 {

@@ -111,7 +111,7 @@
     },
     "ltj-qY-kNR.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Dropbox Account\"; ObjectID = \"ltj-qY-kNR\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

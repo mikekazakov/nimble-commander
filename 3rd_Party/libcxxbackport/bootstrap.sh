@@ -19,7 +19,7 @@ clang++ -c \
   -fvisibility=hidden \
   -flto \
   -Os \
-  -mmacosx-version-min=10.15 \
+  -mmacosx-version-min=11.0 \
   -DNDEBUG \
   -D_LIBCPP_FUNC_VIS= \
   -D'_LIBCPP_ASSERT_NON_NULL(c,m)=((void)0)' \

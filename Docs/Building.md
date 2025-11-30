@@ -36,7 +36,6 @@ Unit tests are quick and standalone, not requiring any external setups. In contr
 ## Limitations
 While this source code mirrors that of the official Nimble Commander builds, the public repository does not include sensitive information such as specific accounts, addresses, and keys. Consequently, some features might be restricted or unavailable:
   * Privileged Helper: Requires proper signing to be installed and function correctly.
-  * Dropbox VFS: Needs a specific application key for to operate.
   
 ## Implementation Notes
   * [Syntax Highlighting](SyntaxHighlighting.md)

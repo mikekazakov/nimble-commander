@@ -44,3 +44,5 @@ TEST_CASE(PREFIX "CalculateStringsWidths treats newlines")
     REQUIRE(widths.size() == 1);
     REQUIRE(widths[0] == 77);
 }
+
+#undef PREFIX

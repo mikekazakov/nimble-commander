@@ -1,5 +1,5 @@
 #include "../XCConfig/common.xcconfig"
-HEADER_SEARCH_PATHS = $(inherited) $(THRDPTY) $(LIBS)/Base/include $(LIBS)/Utility/include $(LIBS)/RoutedIO/include $(LIBS)/VFS/include $(LIBS)/VFSIcon/include $(LIBS)/Config/include $(LIBS)/Operations/include $(LIBS)/Term/include $(LIBS)/CUI/include $(LIBS)/Viewer/include $(LIBS)/Panel/include $(PROJECT_DIR) $(HOME)
+HEADER_SEARCH_PATHS = $(inherited) $(THRDPTY) $(LIBS)/Base/include $(LIBS)/Utility/include $(LIBS)/RoutedIO/include $(LIBS)/VFS/include $(LIBS)/VFSIcon/include $(LIBS)/Config/include $(LIBS)/Operations/include $(LIBS)/Term/include $(LIBS)/CUI/include $(LIBS)/Viewer/include $(LIBS)/Panel/include $(PROJECT_DIR)
 
 LD_RUNPATH_SEARCH_PATHS = /usr/lib/swift @executable_path/../Frameworks
 

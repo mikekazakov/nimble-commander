@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/SheetController.h>
@@ -40,7 +40,7 @@ struct FindFilesSheetViewRequest {
 } // namespace nc::panel
 
 @interface FindFilesSheetController
-    : SheetController <NSTableViewDataSource, NSTableViewDelegate, NSSearchFieldDelegate>
+    : SheetController <NSTableViewDataSource, NSTableViewDelegate, NSSearchFieldDelegate, NSMenuItemValidation>
 
 @property(nonatomic) VFSHostPtr host;
 @property(nonatomic) std::string path;

@@ -14,7 +14,7 @@ ExtensionLowercaseComparison &ExtensionLowercaseComparison::Instance() noexcept
     return inst;
 }
 
-static std::string ProduceFormCLowercase(std::string_view _string)
+std::string ExtensionLowercaseComparison::ProduceFormCLowercase(std::string_view _string)
 {
     const base::CFStackAllocator allocator;
 

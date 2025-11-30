@@ -7,7 +7,6 @@
 #include <Base/WriteAtomically.h>
 #include <sys/stat.h>
 #include <thread>
-#include "NCE.h"
 
 using namespace nc;
 using namespace nc::vfs;

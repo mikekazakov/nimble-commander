@@ -1,19 +1,19 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UI/PanelViewPresentationItemsColoringFilter.h"
 #include <sys/stat.h>
 
 namespace nc::panel {
 
-using base::indeterminate;
-
 bool PresentationItemsColoringFilter::IsEmpty() const
 {
+    using base::indeterminate;
     return mask.IsEmpty() && indeterminate(executable) && indeterminate(hidden) && indeterminate(directory) &&
            indeterminate(symlink) && indeterminate(reg) && indeterminate(selected);
 }
 
 bool PresentationItemsColoringFilter::Filter(const VFSListingItem &_item, const data::ItemVolatileData &_item_vd) const
 {
+    using base::indeterminate;
     if( !mask.IsEmpty() && !mask.MatchName(_item.DisplayName()) )
         return false;
 

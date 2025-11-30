@@ -72,8 +72,11 @@ private:
     dispatch_queue_t m_KickstartQueue;
     uint64_t m_NextTicket = 1;
     bool m_KickstartIsOnline = false;
-    std::shared_ptr<AsyncContext> m_AsyncContext;   // the only strong ownership
-    std::weak_ptr<AsyncContext> m_WeakAsyncContext; // 'points' at m_AsyncContext
+    std::shared_ptr<AsyncContext> m_AsyncContext;             // the only strong ownership
+    std::weak_ptr<AsyncContext> m_WeakAsyncContext;           // 'points' at m_AsyncContext
+    static constexpr CFAbsoluteTime m_FSEventsLatency = 0.05; // 50ms
+    static constexpr std::chrono::nanoseconds m_ScanInterval = std::chrono::seconds(2);
+    static constexpr std::chrono::nanoseconds m_StaleInterval = m_ScanInterval / 2;
 };
 
 } // namespace nc::utility

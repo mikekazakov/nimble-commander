@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "QLVFSThumbnailsCache.h"
@@ -32,6 +32,8 @@ private:
 
     NSImage *ProduceThumbnail(const std::string &_path, const std::string &_ext, VFSHost &_host, CGSize _sz);
     static std::string MakeKey(const std::string &_file_path, VFSHost &_host, int _px_size);
+    static NSImage *ProduceThumbnailForTempFile(const std::string &_path, CGSize _px_size);
+    static std::expected<std::vector<uint8_t>, Error> ReadEntireFile(const std::string &_path, VFSHost &_host);
 
     Container m_Thumbnails;
     mutable spinlock m_Lock;

@@ -7,9 +7,12 @@
 #include <boost/process.hpp>
 #include <filesystem>
 
+#define PREFIX "nc::utility::NativeFSManager "
+
+namespace {
+
 using nc::utility::NativeFileSystemInfo;
 using nc::utility::NativeFSManagerImpl;
-#define PREFIX "nc::utility::NativeFSManager "
 
 static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation);
 static int Execute(const std::string &_command);
@@ -169,3 +172,7 @@ static int Execute(const std::string &_command)
     c.wait();
     return c.exit_code();
 }
+
+} // namespace
+
+#undef PREFIX

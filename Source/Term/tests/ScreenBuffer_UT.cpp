@@ -1,12 +1,14 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
-
 #include <ScreenBuffer.h>
 #include <bit>
 
-using namespace nc::term;
 #define PREFIX "nc::term::ScreenBuffer "
+
+namespace ScreenBufferTest {
+
+using namespace nc::term;
 
 TEST_CASE(PREFIX "Init")
 {
@@ -281,3 +283,7 @@ TEST_CASE(PREFIX "ResizeScreen, empty with a backscreen")
     CHECK(buffer.LineFromNo(-1).empty());
     CHECK(buffer.LineFromNo(-1).data() != nullptr); // NB! empty but still points into the buffer
 }
+
+} // namespace ScreenBufferTest
+
+#undef PREFIX

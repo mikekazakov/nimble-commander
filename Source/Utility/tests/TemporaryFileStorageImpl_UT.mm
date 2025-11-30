@@ -10,6 +10,10 @@
 #include <sys/dirent.h>
 #include <Cocoa/Cocoa.h>
 
+#define PREFIX "[nc::utility::TemporaryFileStorageImpl] "
+
+namespace {
+
 using namespace std::literals;
 using nc::utility::TemporaryFileStorageImpl;
 
@@ -18,8 +22,6 @@ static int RMRF(const std::string &_path);
 static std::string MakeTempFilesStorage();
 static std::optional<std::string> Load(const std::string &_filepath);
 static bool IsEmptyDir(const std::string &_dir_path);
-
-#define PREFIX "[nc::utility::TemporaryFileStorageImpl] "
 
 TEST_CASE(PREFIX "Checks that base directory is accessible")
 {
@@ -309,3 +311,7 @@ static bool IsEmptyDir(const std::string &_dir_path)
     }
     return true;
 }
+
+} // namespace
+
+#undef PREFIX

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewFieldEditor.h"
 #include <Operations/FilenameTextControl.h>
 #include <Utility/StringExtras.h>
@@ -7,7 +7,7 @@
 
 using nc::panel::Log;
 
-static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_selection);
+static NSRange NextFilenameSelectionRange(NSString *_Nonnull _string, NSRange _current_selection);
 
 @implementation NCPanelViewFieldEditor {
     NSTextView *m_TextView;
@@ -21,7 +21,7 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
 @synthesize onTextEntered;
 @synthesize onEditingFinished;
 
-- (instancetype)initWithItem:(VFSListingItem)_item
+- (instancetype _Nonnull)initWithItem:(VFSListingItem)_item
 {
     self = [super init];
     if( self ) {
@@ -80,7 +80,7 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
     m_TextView.selectedRange = NextFilenameSelectionRange(m_TextView.string, m_TextView.selectedRange);
 }
 
-- (BOOL)textShouldEndEditing:(NSText *) [[maybe_unused]] textObject
+- (BOOL)textShouldEndEditing:(NSText *_Nonnull) [[maybe_unused]] textObject
 {
     if( m_Stashed ) {
         Log::Trace("textShouldEndEditing called, stashed, ignoring");
@@ -92,7 +92,7 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
     return true;
 }
 
-- (void)textDidEndEditing:(NSNotification *) [[maybe_unused]] notification
+- (void)textDidEndEditing:(NSNotification *_Nonnull) [[maybe_unused]] notification
 {
     if( m_Stashed ) {
         Log::Trace("textShouldEndEditing called, stashed, ignoring");
@@ -103,15 +103,15 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
     }
 }
 
-- (NSArray *)textView:(NSTextView *) [[maybe_unused]] textView
-            completions:(NSArray *) [[maybe_unused]] words
-    forPartialWordRange:(NSRange) [[maybe_unused]] charRange
-    indexOfSelectedItem:(NSInteger *) [[maybe_unused]] index
+- (NSArray *_Nonnull)textView:(NSTextView *_Nonnull) [[maybe_unused]] textView
+                  completions:(NSArray *_Nonnull) [[maybe_unused]] words
+          forPartialWordRange:(NSRange) [[maybe_unused]] charRange
+          indexOfSelectedItem:(NSInteger *_Nullable) [[maybe_unused]] index
 {
     return @[];
 }
 
-- (BOOL)textView:(NSTextView *) [[maybe_unused]] textView doCommandBySelector:(SEL)commandSelector
+- (BOOL)textView:(NSTextView *_Nonnull) [[maybe_unused]] textView doCommandBySelector:(SEL _Nonnull)commandSelector
 {
     static const auto cancel = NSSelectorFromString(@"cancelOperation:");
     static const auto insert_new_line = NSSelectorFromString(@"insertNewline:");
@@ -127,7 +127,7 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
     return false;
 }
 
-- (BOOL)performKeyEquivalent:(NSEvent *)_event
+- (BOOL)performKeyEquivalent:(NSEvent *_Nonnull)_event
 {
     // manually process Cmd+Backspace that should processed here instead of going into the menu
     // where Move To Trash could pick it.
@@ -170,12 +170,12 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
     }
 }
 
-- (nullable NSUndoManager *)undoManagerForTextView:(NSTextView *) [[maybe_unused]] view
+- (nullable NSUndoManager *)undoManagerForTextView:(NSTextView *_Nonnull) [[maybe_unused]] view
 {
     return m_UndoManager;
 }
 
-- (void)viewWillMoveToWindow:(NSWindow *)_wnd
+- (void)viewWillMoveToWindow:(NSWindow *_Nullable)_wnd
 {
     Log::Trace("viewWillMoveToWindow: {}", (__bridge void *)_wnd);
     const auto notify_center = NSNotificationCenter.defaultCenter;
@@ -201,7 +201,7 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
     [self finishEditing];
 }
 
-static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_selection)
+static NSRange NextFilenameSelectionRange(NSString *_Nonnull _string, NSRange _current_selection)
 {
     static auto dot = [NSCharacterSet characterSetWithCharactersInString:@"."];
 

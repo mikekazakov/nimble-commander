@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include <VFS/VFSListingInput.h>
 #include <VFS/Host.h>
@@ -10,25 +10,6 @@
 #include <memory>
 
 #define PREFIX "QuickSearch "
-
-using namespace nc::panel;
-using namespace nc::panel::QuickSearch;
-using namespace nc::panel::data;
-
-static const auto g_ConfigJSON = "{\
-\"filePanel\": {\
-\"quickSearch\": {\
-    \"typingView\": true,\
-    \"softFiltering\": false,\
-    \"whereToFind\": 0,\
-    \"keyOption\": 3,\
-    \"ignoreCharacters\": \" \"\
-}}}";
-
-static VFSListingPtr ProduceDummyListing(const std::vector<std::string> &_filenames);
-static VFSListingPtr AppsListing();
-static NSEvent *KeyDown(NSString *_key, NSEventModifierFlags _flags);
-static NSString *SingleCharStr(unichar _c);
 
 @interface QuickSearch_MockDelegate : NSObject <NCPanelQuickSearchDelegate>
 @property(nonatomic) int cursorPosition;
@@ -64,6 +45,27 @@ static NSString *SingleCharStr(unichar _c);
 {
 }
 @end
+
+namespace {
+
+using namespace nc::panel;
+using namespace nc::panel::QuickSearch;
+using namespace nc::panel::data;
+
+static const auto g_ConfigJSON = "{\
+\"filePanel\": {\
+\"quickSearch\": {\
+    \"typingView\": true,\
+    \"softFiltering\": false,\
+    \"whereToFind\": 0,\
+    \"keyOption\": 3,\
+    \"ignoreCharacters\": \" \"\
+}}}";
+
+static VFSListingPtr QuickSearch_ProduceDummyListing(const std::vector<std::string> &_filenames);
+static VFSListingPtr AppsListing();
+static NSEvent *KeyDown(NSString *_key, NSEventModifierFlags _flags);
+static NSString *SingleCharStr(unichar _c);
 
 struct QuickSearchTestsContext {
     QuickSearch_MockDelegate *delegate;
@@ -406,7 +408,7 @@ static NSString *SingleCharStr(unichar _c)
     return [NSString stringWithCharacters:&_c length:1];
 }
 
-static VFSListingPtr ProduceDummyListing(const std::vector<std::string> &_filenames)
+static VFSListingPtr QuickSearch_ProduceDummyListing(const std::vector<std::string> &_filenames)
 {
     nc::vfs::ListingInput l;
 
@@ -427,64 +429,68 @@ static VFSListingPtr ProduceDummyListing(const std::vector<std::string> &_filena
 
 static VFSListingPtr AppsListing()
 {
-    return ProduceDummyListing({"App Store.app",
-                                "Automator.app",
-                                "Backup and Sync.app",
-                                "Banktivity 5.app",
-                                "Calculator.app",
-                                "Calendar.app",
-                                "Chess.app",
-                                "Contacts.app",
-                                "Counterparts Lite.app",
-                                "CrashPlan.app",
-                                "Dashboard.app",
-                                "Dictionary.app",
-                                "Dropbox.app",
-                                "DropDMG.app",
-                                "duet.app",
-                                "DVD Player.app",
-                                "FaceTime.app",
-                                "Firefox.app",
-                                "Font Book.app",
-                                "freecol",
-                                "Grammarly.app",
-                                "GuitarPro.app",
-                                "iBooks.app",
-                                "Image Capture.app",
-                                "iTunes.app",
-                                "Keynote.app",
-                                "LastPass.app",
-                                "Launchpad.app",
-                                "Mail.app",
-                                "Maps.app",
-                                "Messages.app",
-                                "Microsoft Excel.app",
-                                "Microsoft OneNote.app",
-                                "Microsoft Outlook.app",
-                                "Microsoft PowerPoint.app",
-                                "Microsoft Word.app",
-                                "Mission Control.app",
-                                "Nimble Commander.app",
-                                "Notes.app",
-                                "Numbers.app",
-                                "Pages.app",
-                                "Parallels Desktop.app",
-                                "Photo Booth.app",
-                                "Photos.app",
-                                "Preview.app",
-                                "QuickTime Player.app",
-                                "Reminders.app",
-                                "Safari.app",
-                                "Siri.app",
-                                "Skype.app",
-                                "Stickies.app",
-                                "System Preferences.app",
-                                "TextEdit.app",
-                                "Time Machine.app",
-                                "Tunnelblick.app",
-                                "Utilities",
-                                "uTorrent.app",
-                                "VirtualBox.app",
-                                "Xcode8.3.2.app",
-                                "Xcode9.1.app"});
+    return QuickSearch_ProduceDummyListing({"App Store.app",
+                                            "Automator.app",
+                                            "Backup and Sync.app",
+                                            "Banktivity 5.app",
+                                            "Calculator.app",
+                                            "Calendar.app",
+                                            "Chess.app",
+                                            "Contacts.app",
+                                            "Counterparts Lite.app",
+                                            "CrashPlan.app",
+                                            "Dashboard.app",
+                                            "Dictionary.app",
+                                            "Dropbox.app",
+                                            "DropDMG.app",
+                                            "duet.app",
+                                            "DVD Player.app",
+                                            "FaceTime.app",
+                                            "Firefox.app",
+                                            "Font Book.app",
+                                            "freecol",
+                                            "Grammarly.app",
+                                            "GuitarPro.app",
+                                            "iBooks.app",
+                                            "Image Capture.app",
+                                            "iTunes.app",
+                                            "Keynote.app",
+                                            "LastPass.app",
+                                            "Launchpad.app",
+                                            "Mail.app",
+                                            "Maps.app",
+                                            "Messages.app",
+                                            "Microsoft Excel.app",
+                                            "Microsoft OneNote.app",
+                                            "Microsoft Outlook.app",
+                                            "Microsoft PowerPoint.app",
+                                            "Microsoft Word.app",
+                                            "Mission Control.app",
+                                            "Nimble Commander.app",
+                                            "Notes.app",
+                                            "Numbers.app",
+                                            "Pages.app",
+                                            "Parallels Desktop.app",
+                                            "Photo Booth.app",
+                                            "Photos.app",
+                                            "Preview.app",
+                                            "QuickTime Player.app",
+                                            "Reminders.app",
+                                            "Safari.app",
+                                            "Siri.app",
+                                            "Skype.app",
+                                            "Stickies.app",
+                                            "System Preferences.app",
+                                            "TextEdit.app",
+                                            "Time Machine.app",
+                                            "Tunnelblick.app",
+                                            "Utilities",
+                                            "uTorrent.app",
+                                            "VirtualBox.app",
+                                            "Xcode8.3.2.app",
+                                            "Xcode9.1.app"});
 }
+
+} // namespace
+
+#undef PREFIX

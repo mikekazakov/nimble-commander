@@ -1,10 +1,13 @@
-// Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VersionCompare.h>
 #include "UnitTests_main.h"
 
+#define PREFIX "nc::utility::VersionCompare "
+
+namespace {
+
 using VC = nc::utility::VersionCompare;
 using namespace std::string_literals;
-#define PREFIX "nc::utility::VersionCompare "
 
 struct Exp {
     const char *lhs;
@@ -52,3 +55,7 @@ TEST_CASE(PREFIX "Check expectations")
         CHECK(vc.Compare(exp.rhs, exp.lhs) == -exp.cmp);
     }
 }
+
+} // namespace
+
+#undef PREFIX

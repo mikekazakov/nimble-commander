@@ -1,0 +1,7 @@
+#include "ChildrenTracker_UT.cpp"
+#include "Color_UT.cpp"
+#include "ExtendedCharRegistry_UT.cpp"
+#include "Interpreter_UT.cpp"
+#include "Parser2_UT.cpp"
+#include "Screen_UT.cpp"
+#include "ScreenBuffer_UT.cpp"

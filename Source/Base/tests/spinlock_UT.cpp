@@ -40,3 +40,5 @@ TEST_CASE(PREFIX "contested passage")
     th2.join();
     CHECK(value == 2);
 }
+
+#undef PREFIX

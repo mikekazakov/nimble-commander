@@ -170,7 +170,7 @@ static const auto g_CloseWindowTitle = NSLocalizedString(@"Close Window", "Menu 
                             if( [resp respondsToSelector:item.action] ) {
                                 // Found the responder, ask it now in case it supports validation.
                                 if( [resp respondsToSelector:@selector(validateMenuItem:)] &&
-                                    ![resp validateMenuItem:item] ) {
+                                    ![static_cast<id<NSMenuItemValidation>>(resp) validateMenuItem:item] ) {
                                     NSBeep();
                                     return true; // We've handled the event.
                                 }

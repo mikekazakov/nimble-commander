@@ -1,11 +1,14 @@
-// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <InputTranslatorImpl.h>
 #include "Tests.h"
+
+#define PREFIX "nc::term::InputTranslatorImpl "
+
+namespace InputTranslatorTest {
 
 using namespace nc::term;
 using namespace std::string_literals;
 using MouseEvent = InputTranslator::MouseEvent;
-#define PREFIX "nc::term::InputTranslatorImpl "
 
 TEST_CASE(PREFIX "Mouse reporting: X10")
 {
@@ -436,3 +439,7 @@ TEST_CASE(PREFIX "Pasting")
         CHECK(output == "\x1B[200~Hello\x1B[201~");
     }
 }
+
+} // namespace InputTranslatorTest
+
+#undef PREFIX

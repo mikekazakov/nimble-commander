@@ -5,15 +5,12 @@
 #include "../Views/SFTPConnectionSheetController.h"
 #include "../Views/NetworkShareSheetController.h"
 #include "../Views/ConnectToServer.h"
-#include "../Views/DropboxAccountSheetController.h"
 #include "../Views/WebDAVConnectionSheetController.h"
 #include <VFS/Native.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
-#include <VFS/NetDropbox.h>
 #include <VFS/NetWebDAV.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
-#include <NimbleCommander/Bootstrap/NCE.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include <Base/dispatch_cpp.h>
@@ -132,43 +129,6 @@ static bool GoToWebDAV(PanelController *_target,
     return false;
 }
 
-static void GoToDropboxStorage(PanelController *_target,
-                               const NetworkConnectionsManager::Connection &_connection,
-                               const std::string &_passwd,
-                               NetworkConnectionsManager &_net_mgr)
-{
-    dispatch_assert_background_queue();
-    auto &info = _connection.Get<NetworkConnectionsManager::Dropbox>();
-    try {
-        vfs::DropboxHost::Params params;
-        params.account = info.account;
-        params.access_token = _passwd;
-        params.client_id = NCE(nc::env::dropbox_client_id);
-        params.client_secret = NCE(nc::env::dropbox_client_secret);
-        auto host = std::make_shared<vfs::DropboxHost>(params);
-        dispatch_to_main_queue([=] {
-            auto request = std::make_shared<DirectoryChangeRequest>();
-            request->RequestedDirectory = "/";
-            request->VFS = host;
-            request->PerformAsynchronous = true;
-            request->InitiatedByUser = true;
-            [_target GoToDirWithContext:request];
-        });
-
-        // save successful connection to history
-        _net_mgr.ReportUsage(_connection);
-    } catch( const ErrorException &e ) {
-        dispatch_to_main_queue([=] {
-            Alert *const alert = [[Alert alloc] init];
-            alert.messageText =
-                NSLocalizedString(@"Dropbox connection error:", "Showing error when connecting to Dropbox service");
-            alert.informativeText = [NSString stringWithUTF8StdString:e.error().LocalizedFailureReason()];
-            [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-            [alert runModal];
-        });
-    }
-}
-
 static void GoToLANShare(PanelController *_target,
                          const NetworkConnectionsManager::Connection &_connection,
                          const std::string &_passwd,
@@ -261,31 +221,6 @@ void OpenNewSFTPConnection::Perform(PanelController *_target, id /*_sender*/) co
              }];
 }
 
-OpenNewDropboxStorage::OpenNewDropboxStorage(NetworkConnectionsManager &_net_mgr) : OpenConnectionBase(_net_mgr)
-{
-}
-
-void OpenNewDropboxStorage::Perform(PanelController *_target, id /*_sender*/) const
-{
-    const auto sheet = [[DropboxAccountSheetController alloc] init];
-    const auto window = _target.window;
-    [sheet beginSheetForWindow:window
-             completionHandler:^(NSModalResponse returnCode) {
-               if( returnCode != NSModalResponseOK )
-                   return;
-
-               auto connection = sheet.connection;
-               const std::string password = sheet.password;
-
-               m_NetMgr.InsertConnection(connection);
-               m_NetMgr.SetPassword(connection, password);
-               dispatch_to_background([=, this] {
-                   auto activity = [_target registerExtActivity];
-                   GoToDropboxStorage(_target, connection, password, m_NetMgr);
-               });
-             }];
-}
-
 OpenNewLANShare::OpenNewLANShare(NetworkConnectionsManager &_net_mgr) : OpenConnectionBase(_net_mgr)
 {
 }
@@ -361,11 +296,6 @@ static void GoToConnection(PanelController *_target,
         });
     else if( connection.IsType<NetworkConnectionsManager::LANShare>() )
         GoToLANShare(_target, connection, passwd, should_save_passwd, _net_mgr);
-    else if( connection.IsType<NetworkConnectionsManager::Dropbox>() )
-        dispatch_to_background([=, &_net_mgr] {
-            auto activity = [_target registerExtActivity];
-            GoToDropboxStorage(_target, connection, passwd, _net_mgr);
-        });
     else if( connection.IsType<NetworkConnectionsManager::WebDAV>() )
         dispatch_to_background([=, &_net_mgr] {
             auto activity = [_target registerExtActivity];

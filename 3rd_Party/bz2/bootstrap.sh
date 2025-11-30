@@ -13,7 +13,7 @@ git clone -b bzip2-1.0.8 --single-branch https://sourceware.org/git/bzip2.git
 cd bzip2
 make \
   CC=$(xcrun --sdk macosx --find cc) \
-  CFLAGS="-arch x86_64 -arch arm64 -mmacosx-version-min=10.15 -fvisibility=hidden -flto -isysroot $(xcrun --sdk macosx --show-sdk-path)" \
+  CFLAGS="-arch x86_64 -arch arm64 -mmacosx-version-min=11.0 -fvisibility=hidden -flto -isysroot $(xcrun --sdk macosx --show-sdk-path)" \
   -j
 cd ../..
 

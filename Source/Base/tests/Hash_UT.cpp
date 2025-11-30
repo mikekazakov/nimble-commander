@@ -2,12 +2,11 @@
 #include "Hash.h"
 #include "UnitTests_main.h"
 
-using nc::base::Hash;
-
 #define PREFIX "Hash "
 
 TEST_CASE(PREFIX "check the hash results")
 {
+    using nc::base::Hash;
     const std::string d = "6Bwbu8HbVqF*GPNL$BR[Jh4Nk)$!afU#w6[erC4yYX2&$]"
                           "VUzGjsaQ6M#%ZdJk${VbsWw_!F^NMnfDCC5A=5bPNf(#*"
                           "HKYmu8NJd4qdAM[+a)4--J*mj#x7SriKU=sH6";
@@ -31,3 +30,5 @@ TEST_CASE(PREFIX "check the hash results")
     CHECK(Hash::Hex(Hash(Hash::Adler32).Feed(d.c_str(), d.size()).Final()) == "e3d9270a");
     CHECK(Hash::Hex(Hash(Hash::CRC32).Feed(d.c_str(), d.size()).Final()) == "d3ec3da8");
 }
+
+#undef PREFIX

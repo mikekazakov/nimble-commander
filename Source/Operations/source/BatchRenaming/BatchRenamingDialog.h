@@ -5,8 +5,11 @@
 #include <VFS/VFS.h>
 #include <Utility/SimpleComboBoxPersistentDataSource.h>
 
-@interface NCOpsBatchRenamingDialog
-    : NSWindowController <NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate, NSComboBoxDelegate>
+@interface NCOpsBatchRenamingDialog : NSWindowController <NSTableViewDataSource,
+                                                          NSTableViewDelegate,
+                                                          NSTextFieldDelegate,
+                                                          NSComboBoxDelegate,
+                                                          NSMenuItemValidation>
 
 @property(readonly, nonatomic) std::vector<std::string> &filenamesSource; // full path
 @property(readonly, nonatomic) std::vector<std::string> &filenamesDestination;

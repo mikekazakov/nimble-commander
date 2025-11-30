@@ -1,15 +1,13 @@
-// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UI/PanelViewPresentationItemsColoringFilterPersistence.h"
 #include <Utility/HexadecimalColor.h>
 #include <Config/RapidJSON.h>
 
 namespace nc::panel {
 
-using base::indeterminate;
-using base::tribool;
-
-static tribool to_tribool(const config::Value &_val)
+static base::tribool to_tribool(const config::Value &_val)
 {
+    using base::indeterminate;
     switch( _val.GetType() ) {
         case rapidjson::kTrueType:
             return true;
@@ -20,8 +18,9 @@ static tribool to_tribool(const config::Value &_val)
     }
 }
 
-static config::Value to_json(tribool _b)
+static config::Value to_json(base::tribool _b)
 {
+    using base::indeterminate;
     if( indeterminate(_b) )
         return config::Value(rapidjson::kNullType);
     if( _b )
@@ -37,6 +36,7 @@ static NSColor *ColorFromJSON(const config::Value &_v)
 
 config::Value PresentationItemsColoringFilterPersitence::ToJSON(const PresentationItemsColoringFilter &_filter)
 {
+    using base::indeterminate;
     auto &allocator = config::g_CrtAllocator;
     config::Value v(rapidjson::kObjectType);
     if( !_filter.mask.Mask().empty() )

@@ -111,7 +111,7 @@ std::string_view InplaceFormCLowercaseString::str() const noexcept
     return m_View;
 }
 
-static std::string ProduceFormCLowercase(std::string_view _string)
+std::string FileMask::ProduceFormCLowercase(std::string_view _string)
 {
     const base::CFStackAllocator allocator;
 

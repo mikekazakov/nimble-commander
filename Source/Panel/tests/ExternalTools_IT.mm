@@ -16,6 +16,8 @@
 
 #define PREFIX "ExternalTools "
 
+namespace {
+
 using namespace nc;
 using namespace nc::panel;
 using namespace std::chrono_literals;
@@ -248,3 +250,7 @@ TEST_CASE(PREFIX "execute a ui app", "[!mayfail]")
         std::filesystem::remove(basedir / "test.txt");
     }
 }
+
+} // namespace
+
+#undef PREFIX

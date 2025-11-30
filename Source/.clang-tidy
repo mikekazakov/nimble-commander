@@ -63,7 +63,7 @@ Checks: >
   bugprone-string-literal-with-embedded-nul,
   bugprone-stringview-nullptr,
   bugprone-suspicious-enum-usage,
-  bugprone-suspicious-include,
+  # bugprone-suspicious-include,                        <-- needed for unity builds
   bugprone-suspicious-memory-comparison,
   bugprone-suspicious-memset-usage,
   bugprone-suspicious-missing-comma,

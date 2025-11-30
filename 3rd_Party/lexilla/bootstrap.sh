@@ -34,7 +34,7 @@ clang++ -c \
   -fvisibility=hidden \
   -flto \
   -Os \
-  -mmacosx-version-min=10.15 \
+  -mmacosx-version-min=11.0 \
   -DNDEBUG \
   -I./include \
   -I./lexlib \

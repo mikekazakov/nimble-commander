@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefView.h"
 #include <VFS/VFS.h>
 #include <Base/algo.h>
@@ -139,7 +139,6 @@ BuildItemsLayout(NSFont *_font, PanelBriefViewColumnsLayout _layout, NSUInteger 
     m_ScrollView = [[NSScrollView alloc] initWithFrame:frameRect];
     m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
     m_ScrollView.wantsLayer = true;
-    m_ScrollView.contentView.copiesOnScroll = true;
     m_ScrollView.drawsBackground = true;
     m_ScrollView.backgroundColor = nc::CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
     [self addSubview:m_ScrollView];

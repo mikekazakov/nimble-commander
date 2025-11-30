@@ -2199,7 +2199,7 @@
     },
     "IiL-lV-Phd.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Dropbox Storage...\"; ObjectID = \"IiL-lV-Phd\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

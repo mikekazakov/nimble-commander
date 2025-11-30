@@ -1,6 +1,5 @@
 // Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../source/NetWebDAV/WebDAVHost.h"
-#include "NCE.h"
 #include "TestEnv.h"
 #include "Tests.h"
 #include <VFS/Native.h>
@@ -21,9 +20,6 @@ static const auto g_Ubuntu2004Username = "r2d2";
 static const auto g_Ubuntu2004Password = "Hello";
 static const auto g_Ubuntu2004Port = 9080;
 
-static const auto g_YandexDiskUsername = NCE(nc::env::test::webdav_yandexdisk_username);
-static const auto g_YandexDiskPassword = NCE(nc::env::test::webdav_yandexdisk_password);
-
 static std::vector<std::byte> MakeNoise(size_t size);
 static void VerifyFileContent(VFSHost &_host, const std::filesystem::path &_path, std::span<const std::byte> _content);
 static void WriteWholeFile(VFSHost &_host, const std::filesystem::path &_path, std::span<const std::byte> _content);
@@ -34,17 +30,10 @@ static std::shared_ptr<WebDAVHost> spawnLocalHost()
         g_Ubuntu2004Host, g_Ubuntu2004Username, g_Ubuntu2004Password, "webdav", false, g_Ubuntu2004Port);
 }
 
-static std::shared_ptr<WebDAVHost> spawnYandexDiskHost()
-{
-    return std::make_shared<WebDAVHost>("webdav.yandex.com", g_YandexDiskUsername, g_YandexDiskPassword, "", true);
-}
-
 static std::shared_ptr<WebDAVHost> Spawn(const std::string &_server)
 {
     if( _server == "local" )
         return spawnLocalHost();
-    if( _server == "yandex.com" )
-        return spawnYandexDiskHost();
     return nullptr;
 }
 
@@ -59,12 +48,6 @@ TEST_CASE(PREFIX "can connect to localhost")
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = spawnLocalHost());
     CHECK(host->FetchDirectoryListing("/", 0));
-}
-
-TEST_CASE(PREFIX "can connect to yandex.com")
-{
-    VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnYandexDiskHost());
 }
 
 TEST_CASE(PREFIX "invalid credentials")
@@ -132,7 +115,6 @@ static void TestFetchDirectoryListing(VFSHostPtr _host)
     REQUIRE(!_host->Stat("/SomeGibberish/MoreGibberish/EvenMoregibberish.txt", 0));
 }
 INSTANTIATE_TEST("directory listing", TestFetchDirectoryListing, "local");
-// INSTANTIATE_TEST("directory listing", TestFetchDirectoryListing, "yandex.com"); - might have garbage
 
 /*==================================================================================================
  simple file write
@@ -167,7 +149,6 @@ static void TestSimpleFileWrite(VFSHostPtr _host)
     std::ignore = VFSEasyDelete(path, _host);
 }
 INSTANTIATE_TEST("simple file write", TestSimpleFileWrite, "local");
-INSTANTIATE_TEST("simple file write", TestSimpleFileWrite, "yandex.com");
 
 /*==================================================================================================
  various complete writes
@@ -271,7 +252,6 @@ static void TestEdgeCase1bWrites(VFSHostPtr _host)
     std::ignore = VFSEasyDelete(path, _host);
 }
 INSTANTIATE_TEST("edge case - 1b writes", TestEdgeCase1bWrites, "local");
-INSTANTIATE_TEST("edge case - 1b writes", TestEdgeCase1bWrites, "yandex.com");
 
 /*==================================================================================================
  aborts pending uploads
@@ -297,7 +277,6 @@ static void TestAbortsPendingUploads(VFSHostPtr _host)
     REQUIRE(_host->Exists(path) == false);
 }
 INSTANTIATE_TEST("aborts pending uploads", TestAbortsPendingUploads, "local");
-INSTANTIATE_TEST("aborts pending uploads", TestAbortsPendingUploads, "yandex.com");
 
 /*==================================================================================================
 aborts pending downloads
@@ -326,7 +305,6 @@ static void TestAbortsPendingDownloads(VFSHostPtr _host)
     std::ignore = VFSEasyDelete(path, _host);
 }
 INSTANTIATE_TEST("aborts pending downloads", TestAbortsPendingDownloads, "local");
-INSTANTIATE_TEST("aborts pending downloads", TestAbortsPendingDownloads, "yandex.com");
 
 /*==================================================================================================
 empty file creation
@@ -350,7 +328,6 @@ static void TestEmptyFileCreation(VFSHostPtr _host)
     std::ignore = VFSEasyDelete(path, _host);
 }
 INSTANTIATE_TEST("empty file creation", TestEmptyFileCreation, "local");
-INSTANTIATE_TEST("empty file creation", TestEmptyFileCreation, "yandex.com");
 
 /*==================================================================================================
 can download empty file :-|
@@ -374,7 +351,6 @@ static void TestEmptyFileDownload(VFSHostPtr _host)
     std::ignore = VFSEasyDelete(path, _host);
 }
 INSTANTIATE_TEST("can download empty file", TestEmptyFileDownload, "local");
-INSTANTIATE_TEST("can download empty file", TestEmptyFileDownload, "yandex.com");
 
 /*==================================================================================================
 complex copy
@@ -388,7 +364,6 @@ static void TestComplexCopy(VFSHostPtr _host)
     std::ignore = VFSEasyDelete("/Test2", _host);
 }
 INSTANTIATE_TEST("complex copy", TestComplexCopy, "local");
-INSTANTIATE_TEST("complex copy", TestComplexCopy, "yandex.com");
 
 /*==================================================================================================
 rename
@@ -468,18 +443,16 @@ static void TestRename(VFSHostPtr _host)
     }
 }
 INSTANTIATE_TEST("rename", TestRename, "local");
-INSTANTIATE_TEST("rename", TestRename, "yandex.com");
 
 /*==================================================================================================
 statfs
 ==================================================================================================*/
-static void TestStatFS(VFSHostPtr _host)
-{
-    const VFSStatFS st = _host->StatFS("/").value();
-    CHECK(st.total_bytes > 1'000'000'000L);
-}
-// INSTANTIATE_TEST("statfs", TestStatFS, "local"); // apache2 doesn't provide stafs (??)
-INSTANTIATE_TEST("statfs", TestStatFS, "yandex.com");
+// static void TestStatFS(VFSHostPtr _host)
+//{
+//     const VFSStatFS st = _host->StatFS("/").value();
+//     CHECK(st.total_bytes > 1'000'000'000L);
+// }
+//  INSTANTIATE_TEST("statfs", TestStatFS, "local"); // apache2 doesn't provide stafs (??)
 
 /*==================================================================================================
 simple download
@@ -585,7 +558,6 @@ static void TestSimpleDownload(VFSHostPtr _host)
     }
 }
 INSTANTIATE_TEST("simple download", TestSimpleDownload, "local");
-INSTANTIATE_TEST("simple download", TestSimpleDownload, "yandex.com");
 
 /*==================================================================================================
 write flags semantics
@@ -655,7 +627,6 @@ static void TestWriteFlagsSemantics(VFSHostPtr _host)
     std::ignore = VFSEasyDelete(path, _host);
 }
 INSTANTIATE_TEST("write flags semantics", TestWriteFlagsSemantics, "local");
-INSTANTIATE_TEST("write flags semantics", TestWriteFlagsSemantics, "yandex.com");
 
 //==================================================================================================
 

@@ -3,9 +3,11 @@
 #include "DiskUtility.h"
 #include "ObjCpp.h"
 
-using namespace nc::utility;
-
 #define PREFIX "nc::utility::DiskUtility "
+
+namespace {
+
+using namespace nc::utility;
 
 extern const std::string_view g_APFSListExample10_14;
 extern const std::string_view g_APFSListExample10_15;
@@ -1140,3 +1142,7 @@ const std::string_view g_APFSListExample11_1 =
     "    </array>"
     "</dict>"
     "</plist>";
+
+} // namespace
+
+#undef PREFIX

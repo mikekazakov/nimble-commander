@@ -11,12 +11,12 @@ This website contains an in-depth study of this kind of software: [Less is More:
 
 The current version of Nimble Commander supports any Mac running the following versions of macOS:
 
+- macOS 26 Tahoe
 - macOS 15 Sequoia
 - macOS 14 Sonoma
 - macOS 13 Ventura
 - macOS 12 Monterey
 - macOS 11 Big Sur
-- macOS 10.15 Catalina
 
 It runs natively on both Intel and Apple Silicon (ARM) architectures.
 
@@ -24,7 +24,8 @@ Below is the compatibility table for older releases of Nimble Commander:
 
 | Versions      | Architecture  | Minimum macOS Version
 | ------------- | ------------- | -----------------
-| 1.2.9 - 1.7.0 | x64 & ARM64   | macOS 10.15 
+| 1.8.0 -       | x64 & ARM64   | macOS 11
+| 1.2.9 - 1.7.0 | x64 & ARM64   | macOS 10.15
 | 1.2.0 - 1.2.7 | x64           | OS X 10.11 El Capitan
 | 1.1.0 - 1.1.5 | x64           | OS X 10.10 Yosemite
 | 1.0.7 - 1.0.9 | x64           | OS X 10.9 Mavericks
@@ -583,9 +584,6 @@ Currently, the following virtual filesystems are supported:
   - WebDAV  
     Enables connection to WebDAV servers.
     Paths for these resources will have `http://` or `https://` prefixes.
-  - DropBox  
-    Enables direct connection to Dropbox storage.
-    Paths for these resources will have a `dropbox://` prefix.
 - **Extended attributes**  
   You can open an item’s [extended attributes (xattrs)](https://en.wikipedia.org/wiki/Extended_file_attributes#macOS) as a read-write folder and interact with these attributes as though they were regular files.
 - **Process list**  
@@ -835,7 +833,6 @@ Some actions do not have default hotkeys but can still be accessed through the a
 | &nbsp; &nbsp; FTP Server...                  |                           |
 | &nbsp; &nbsp; SFTP Server...                 |                           |
 | &nbsp; &nbsp; WebDAV Server...               |                           |
-| &nbsp; &nbsp; Dropbox Storage...             |                           |
 | &nbsp; &nbsp; Network Share...               |                           |
 | &nbsp; &nbsp; Manage Connections...          | Cmd + K                   |
 | _**Command Menu**_                           |                           |
@@ -1005,3 +1002,10 @@ Some actions do not have default hotkeys but can still be accessed through the a
 **Q**: Why does Nimble Commander keep forgetting the theme I selected?  
 **A**: Mostly likely, Nimble Commander automatically switches to another theme whenever the macOS system theme changes (Light/Dark) and/or when the app restarts.
 You can control this by navigating to `Settings -> Themes -> (...) -> Configure automatic switching...` and either turning off this functionality or setting the theme you want for both Light and Dark appearances.
+
+---
+
+**Q**: Where can I find the logs?  
+**A**: To open the Logs window while NC is running, hold Alt and select `Help -> Debug -> Show Logs...`.
+Next, adjust the log level by clicking the settings (gear) icon and choosing the desired level, either for a specific subsystem or globally.   
+By default, logging is disabled (the level is set to Off).

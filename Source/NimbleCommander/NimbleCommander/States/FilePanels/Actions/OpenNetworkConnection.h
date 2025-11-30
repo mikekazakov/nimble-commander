@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "DefaultAction.h"
@@ -28,11 +28,6 @@ struct OpenNewSFTPConnection final : OpenConnectionBase {
 
 struct OpenNewWebDAVConnection final : OpenConnectionBase {
     OpenNewWebDAVConnection(NetworkConnectionsManager &_net_mgr);
-    void Perform(PanelController *_target, id _sender) const override;
-};
-
-struct OpenNewDropboxStorage final : OpenConnectionBase {
-    OpenNewDropboxStorage(NetworkConnectionsManager &_net_mgr);
     void Perform(PanelController *_target, id _sender) const override;
 };
 

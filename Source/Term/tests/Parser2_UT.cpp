@@ -1,12 +1,15 @@
-// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <ParserImpl.h>
 #include "Tests.h"
 
+#define PREFIX "nc::term::Parser "
+#pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wframe-larger-than="
+
+namespace ParserTest {
 
 using namespace nc::term;
 using namespace nc::term::input;
-#define PREFIX "nc::term::Parser "
 
 static Parser::Bytes to_bytes(const char *_characters)
 {
@@ -2253,3 +2256,8 @@ TEST_CASE(PREFIX "Properly handles torn sequences")
     }
     CHECK(parser.GetEscState() == ParserImpl::EscState::Text);
 }
+
+} // namespace ParserTest
+
+#pragma clang diagnostic pop
+#undef PREFIX

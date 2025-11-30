@@ -2,9 +2,12 @@
 #include <Utility/SystemInformation.h>
 #include "UnitTests_main.h"
 
+#define PREFIX "nc::utility::GetSystemOverview "
+
+namespace {
+
 using namespace nc::utility;
 using namespace std::string_literals;
-#define PREFIX "nc::utility::GetSystemOverview "
 
 TEST_CASE(PREFIX "Extracts all data", "[!mayfail]")
 {
@@ -17,3 +20,7 @@ TEST_CASE(PREFIX "Extracts all data", "[!mayfail]")
     CHECK(so.human_model.empty() == false);
     CHECK(so.human_model != "N/A"); // <<-- getting human model fails on GHA / macOS14 / M1 runners
 }
+
+} // namespace
+
+#undef PREFIX

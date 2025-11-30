@@ -1,11 +1,12 @@
-// Copyright (C) 2023-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataItemVolatileData.h"
 #include "Tests.h"
 
 #define PREFIX "PanelDataItemVolatileData "
 
+namespace {
+
 using namespace nc;
-// using namespace nc::base;
 using namespace nc::panel::data;
 
 using R = QuickSearchHiglight::Range;
@@ -125,3 +126,7 @@ TEST_CASE(PREFIX "ranges constructor")
         }
     }
 }
+
+} // namespace
+
+#undef PREFIX

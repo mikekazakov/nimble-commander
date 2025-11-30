@@ -5,7 +5,6 @@
 #define PREFIX "StringsBulk "
 
 using nc::base::StringsBulk;
-using namespace std;
 
 TEST_CASE(PREFIX "empty")
 {
@@ -20,6 +19,7 @@ TEST_CASE(PREFIX "empty")
 
 TEST_CASE(PREFIX "basic")
 {
+    using namespace std::string_literals;
     StringsBulk::Builder sbb;
     sbb.Add("Hello");
     sbb.Add(", ");
@@ -34,6 +34,7 @@ TEST_CASE(PREFIX "basic")
 
 TEST_CASE(PREFIX "empty strings")
 {
+    using namespace std::string_literals;
     const auto s = ""s;
     const auto n = 1000000;
     StringsBulk::Builder sbb;
@@ -55,10 +56,10 @@ TEST_CASE(PREFIX "invalid at")
 TEST_CASE(PREFIX "random strings")
 {
     const auto n = 10000;
-    vector<string> v;
+    std::vector<std::string> v;
     for( int i = 0; i < n; ++i ) {
-        const auto l = rand() % 1000;
-        string s(l, ' ');
+        const auto l = std::rand() % 1000;
+        std::string s(l, ' ');
         for( int j = 0; j < l; ++j )
             s[j] = static_cast<unsigned char>((j % 255) + 1);
         v.emplace_back(s);
@@ -82,10 +83,10 @@ TEST_CASE(PREFIX "random strings")
 TEST_CASE(PREFIX "non-owning builder")
 {
     const auto n = 10000;
-    vector<string> v;
+    std::vector<std::string> v;
     for( int i = 0; i < n; ++i ) {
-        const auto l = rand() % 1000;
-        string s(l, ' ');
+        const auto l = std::rand() % 1000;
+        std::string s(l, ' ');
         for( int j = 0; j < l; ++j )
             s[j] = static_cast<unsigned char>((j % 255) + 1);
         v.emplace_back(s);
@@ -140,3 +141,5 @@ TEST_CASE(PREFIX "equality")
     CHECK(d.empty());
     // NOLINTEND(bugprone-use-after-move)
 }
+
+#undef PREFIX

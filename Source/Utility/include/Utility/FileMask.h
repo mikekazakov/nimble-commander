@@ -69,6 +69,8 @@ public:
 private:
     using ExtFilter = std::variant<std::shared_ptr<const re2::RE2>, std::string>;
 
+    static std::string ProduceFormCLowercase(std::string_view _string);
+
     // A disjunction (OR) of filters, each can be either a regexp or a corresponding simple mask
     std::vector<ExtFilter> m_Masks;
 

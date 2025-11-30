@@ -94,3 +94,5 @@ TEST_CASE(PREFIX "is_contiguous")
         CHECK(!vc.is_contiguous());
     }
 }
+
+#undef PREFIX

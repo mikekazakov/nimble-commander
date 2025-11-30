@@ -1,10 +1,12 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FSEventsDirUpdate.h"
 #include "FSEventsDirUpdateImpl.h"
 #include "UnitTests_main.h"
 #include <Base/dispatch_cpp.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <fcntl.h>
+
+namespace {
 
 using nc::utility::FSEventsDirUpdate;
 using nc::utility::FSEventsDirUpdateImpl;
@@ -134,3 +136,7 @@ static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeo
             return true;
     }
 }
+
+} // namespace
+
+#undef PREFIX

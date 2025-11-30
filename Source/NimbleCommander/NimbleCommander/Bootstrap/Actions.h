@@ -118,7 +118,7 @@ static constexpr std::pair<const char*,int> g_ActionsTags[] = {
     {"menu.go.connect.sftp",                            14'140},
     {"menu.go.connect.webdav",                          14'280},
     {"menu.go.connect.lanshare",                        14'230},
-    {"menu.go.connect.dropbox",                         14'250},
+//  {"menu.go.connect.dropbox",                         14'250}, // no longer used
     {"menu.go.connect.network_server",                  14'240},
     {"menu.go.quick_lists.parent_folders",              14'160},
     {"menu.go.quick_lists.history",                     14'170},
@@ -325,7 +325,7 @@ static constinit std::pair<const char*, const char*> g_DefaultActionShortcuts[] 
     {"menu.go.connect.sftp",                                ""        },
     {"menu.go.connect.webdav",                              ""        },
     {"menu.go.connect.lanshare",                            ""        },
-    {"menu.go.connect.dropbox",                             ""        },
+//  {"menu.go.connect.dropbox",                             ""        }, // no longer used
     {"menu.go.connect.network_server",                      "⌘k"      }, // cmd+k
     {"menu.go.root",                                        ""        },
     {"menu.go.quick_lists.parent_folders",                  "⌘1"      }, // cmd+1

@@ -19,7 +19,7 @@ struct PanelAction;
 using PanelActionsMap = ankerl::unordered_dense::map<SEL, std::unique_ptr<const actions::PanelAction>>;
 } // namespace nc::panel
 
-@interface NCPanelControllerActionsDispatcher : AttachedResponder <NCPanelViewKeystrokeSink>
+@interface NCPanelControllerActionsDispatcher : AttachedResponder <NCPanelViewKeystrokeSink, NSMenuItemValidation>
 
 - (instancetype)initWithController:(PanelController *)_controller
                         actionsMap:(const nc::panel::PanelActionsMap &)_actions_map
@@ -50,7 +50,6 @@ using PanelActionsMap = ankerl::unordered_dense::map<SEL, std::unique_ptr<const 
 - (IBAction)OnGoToSFTP:(id)sender;
 - (IBAction)onGoToWebDAV:(id)sender;
 - (IBAction)OnGoToNetworkShare:(id)sender;
-- (IBAction)OnGoToDropboxStorage:(id)sender;
 - (IBAction)OnConnectToNetworkServer:(id)sender;
 - (IBAction)copy:(id)sender;
 - (IBAction)OnSelectByMask:(id)sender;

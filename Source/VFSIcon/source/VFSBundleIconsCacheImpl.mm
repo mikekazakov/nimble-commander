@@ -4,12 +4,6 @@
 
 namespace nc::vfsicon {
 
-static NSImage *ProduceBundleIcon(const std::string &_path, VFSHost &_host);
-static NSDictionary *ReadDictionary(const std::string &_path, VFSHost &_host);
-static NSData *ToTempNSData(std::span<const uint8_t> _data);
-static NSImage *ReadImageFromFile(const std::string &_path, VFSHost &_host);
-static std::expected<std::vector<uint8_t>, Error> ReadEntireFile(const std::string &_path, VFSHost &_host);
-
 VFSBundleIconsCacheImpl::VFSBundleIconsCacheImpl() = default;
 
 VFSBundleIconsCacheImpl::~VFSBundleIconsCacheImpl() = default;
@@ -52,7 +46,8 @@ std::string VFSBundleIconsCacheImpl::MakeKey(const std::string &_file_path, VFSH
     return _host.MakePathVerbose(_file_path);
 }
 
-static std::expected<std::vector<uint8_t>, Error> ReadEntireFile(const std::string &_path, VFSHost &_host)
+std::expected<std::vector<uint8_t>, Error> VFSBundleIconsCacheImpl::ReadEntireFile(const std::string &_path,
+                                                                                   VFSHost &_host)
 {
     const std::expected<std::shared_ptr<VFSFile>, Error> exp_file = _host.CreateFile(_path);
     if( !exp_file )
@@ -66,14 +61,14 @@ static std::expected<std::vector<uint8_t>, Error> ReadEntireFile(const std::stri
     return file.ReadFile();
 }
 
-static NSData *ToTempNSData(const std::span<const uint8_t> _data)
+NSData *VFSBundleIconsCacheImpl::ToTempNSData(const std::span<const uint8_t> _data)
 {
     return [NSData dataWithBytesNoCopy:const_cast<void *>(reinterpret_cast<const void *>(_data.data()))
                                 length:_data.size()
                           freeWhenDone:false];
 }
 
-static NSDictionary *ReadDictionary(const std::string &_path, VFSHost &_host)
+NSDictionary *VFSBundleIconsCacheImpl::ReadDictionary(const std::string &_path, VFSHost &_host)
 {
     const std::expected<std::vector<uint8_t>, Error> data = ReadEntireFile(_path, _host);
     if( !data.has_value() )
@@ -90,7 +85,7 @@ static NSDictionary *ReadDictionary(const std::string &_path, VFSHost &_host)
     return objc_cast<NSDictionary>(dictionary);
 }
 
-static NSImage *ReadImageFromFile(const std::string &_path, VFSHost &_host)
+NSImage *VFSBundleIconsCacheImpl::ReadImageFromFile(const std::string &_path, VFSHost &_host)
 {
     const std::expected<std::vector<uint8_t>, Error> data = ReadEntireFile(_path, _host);
     if( !data.has_value() )
@@ -103,7 +98,7 @@ static NSImage *ReadImageFromFile(const std::string &_path, VFSHost &_host)
     return [[NSImage alloc] initWithData:objc_data];
 }
 
-static NSImage *ProduceBundleIcon(const std::string &_path, VFSHost &_host)
+NSImage *VFSBundleIconsCacheImpl::ProduceBundleIcon(const std::string &_path, VFSHost &_host)
 {
     const auto info_plist_path = std::filesystem::path(_path) / "Contents/Info.plist";
     const auto plist = ReadDictionary(info_plist_path.native(), _host);

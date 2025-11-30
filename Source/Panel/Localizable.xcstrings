@@ -2,6 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "Clear Recents" : {
+      "comment" : "Title for clear recents menu item in selection by mask popup",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
@@ -48,6 +49,7 @@
       "comment" : "A placeholder title for a new external tool"
     },
     "Options" : {
+      "comment" : "Title for options menu item in selection by mask popup",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
@@ -58,6 +60,7 @@
       }
     },
     "Recent Searches" : {
+      "comment" : "Title for recent searches menu item in selection by mask popup",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
@@ -90,6 +93,7 @@
       }
     },
     "Regular Expression" : {
+      "comment" : "Title for regular expression option in selection by mask popup",
       "localizations" : {
         "ru" : {
           "stringUnit" : {

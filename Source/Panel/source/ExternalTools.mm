@@ -1,6 +1,7 @@
 // Copyright (C) 2022-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalTools.h"
 #include "Internal.h"
+#include <Panel/Localizable.h>
 #include <Config/Config.h>
 #include <Config/RapidJSON.h>
 #include <Foundation/Foundation.h>
@@ -591,7 +592,7 @@ std::string ExternalToolsStorage::NewTitle() const
     }
 
     size_t idx = 0;
-    const std::string prefix = NSLocalizedString(@"New Tool", "A placeholder title for a new external tool").UTF8String;
+    const std::string prefix = localizable::ExternalToolsStorageNewToolPlaceholderTitle().UTF8String;
     while( true ) {
         const std::string name = idx == 0 ? prefix : fmt::format("{} {}", prefix, idx + 1);
         if( !names.contains(name) )

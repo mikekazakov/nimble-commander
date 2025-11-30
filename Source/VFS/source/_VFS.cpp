@@ -20,3 +20,8 @@
 #include "Native/File.cpp"
 #include "Native/Host.cpp"
 #include "Native/SpecialDirectories.cpp"
+#include "NetFTP/Cache.cpp"
+#include "NetFTP/Errors.cpp"
+#include "NetFTP/File.cpp"
+#include "NetFTP/Host.cpp"
+#include "NetFTP/Internals.cpp"

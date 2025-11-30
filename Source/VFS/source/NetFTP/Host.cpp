@@ -15,9 +15,6 @@
 
 namespace nc::vfs {
 
-using namespace ftp;
-using namespace std::literals;
-
 const char *FTPHost::UniqueTag = "net_ftp";
 
 class VFSNetFTPHostConfiguration
@@ -53,6 +50,7 @@ static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
                                              long _port,
                                              bool _active)
 {
+    using namespace std::string_literals;
     VFSNetFTPHostConfiguration config;
     config.server_url = _serv_url;
     config.user = _user;
@@ -125,11 +123,12 @@ std::expected<void, Error> FTPHost::DoInit()
     return {};
 }
 
-std::expected<void, Error> FTPHost::DownloadAndCacheListing(CURLInstance *_inst,
+std::expected<void, Error> FTPHost::DownloadAndCacheListing(ftp::CURLInstance *_inst,
                                                             const char *_path,
-                                                            std::shared_ptr<Directory> *_cached_dir,
+                                                            std::shared_ptr<ftp::Directory> *_cached_dir,
                                                             const VFSCancelChecker &_cancel_checker)
 {
+    using namespace ftp;
     Log::Trace("FTPHost::DownloadAndCacheListing({}, {}) called", static_cast<void *>(_inst), _path);
     if( _inst == nullptr || _path == nullptr )
         return std::unexpected(Error{Error::POSIX, EINVAL});
@@ -150,8 +149,9 @@ std::expected<void, Error> FTPHost::DownloadAndCacheListing(CURLInstance *_inst,
 }
 
 std::expected<std::string, Error>
-FTPHost::DownloadListing(CURLInstance *_inst, const char *_path, const VFSCancelChecker &_cancel_checker) const
+FTPHost::DownloadListing(ftp::CURLInstance *_inst, const char *_path, const VFSCancelChecker &_cancel_checker) const
 {
+    using namespace ftp;
     Log::Trace("FTPHost::DownloadListing({}, {}) called", static_cast<void *>(_inst), _path);
     if( _path == nullptr || _path[0] != '/' )
         return std::unexpected(Error{Error::POSIX, EINVAL});
@@ -209,8 +209,9 @@ std::string FTPHost::BuildFullURLString(std::string_view _path) const
     return result_path;
 }
 
-std::unique_ptr<CURLInstance> FTPHost::SpawnCURL()
+std::unique_ptr<ftp::CURLInstance> FTPHost::SpawnCURL()
 {
+    using namespace ftp;
     auto inst = std::make_unique<CURLInstance>();
     inst->curl = curl_easy_init();
     BasicOptsSetup(inst.get());
@@ -220,6 +221,7 @@ std::unique_ptr<CURLInstance> FTPHost::SpawnCURL()
 std::expected<VFSStat, Error>
 FTPHost::Stat(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
+    using namespace ftp;
     Log::Trace("FTPHost::Stat({}, {}) called", _path, _flags);
     if( _path.empty() || _path[0] != '/' ) {
         Log::Warn("Invalid call");
@@ -336,8 +338,11 @@ FTPHost::FetchDirectoryListing(std::string_view _path, unsigned long _flags, con
 }
 
 std::expected<std::shared_ptr<ftp::Directory>, Error>
-FTPHost::GetListingForFetching(CURLInstance *_inst, std::string_view _path, const VFSCancelChecker &_cancel_checker)
+FTPHost::GetListingForFetching(ftp::CURLInstance *_inst,
+                               std::string_view _path,
+                               const VFSCancelChecker &_cancel_checker)
 {
+    using namespace ftp;
     if( _path.empty() || _path[0] != '/' )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
@@ -361,7 +366,7 @@ FTPHost::GetListingForFetching(CURLInstance *_inst, std::string_view _path, cons
 std::expected<std::shared_ptr<VFSFile>, Error> FTPHost::CreateFile(std::string_view _path,
                                                                    const VFSCancelChecker &_cancel_checker)
 {
-    auto file = std::make_shared<File>(_path, SharedPtr());
+    auto file = std::make_shared<ftp::File>(_path, SharedPtr());
     if( _cancel_checker && _cancel_checker() )
         return std::unexpected(Error{Error::POSIX, ECANCELED});
     return file;
@@ -370,6 +375,7 @@ std::expected<std::shared_ptr<VFSFile>, Error> FTPHost::CreateFile(std::string_v
 std::expected<void, Error> FTPHost::Unlink(std::string_view _path,
                                            [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
+    using namespace ftp;
     const std::filesystem::path path = _path;
     if( !path.is_absolute() || path.native().back() == '/' )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
@@ -415,6 +421,7 @@ std::expected<void, Error> FTPHost::CreateDirectory(std::string_view _path,
                                                     [[maybe_unused]] int _mode,
                                                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
+    using namespace ftp;
     const std::filesystem::path path = EnsureNoTrailingSlash(std::string(_path));
     if( !path.is_absolute() || path == "/" )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
@@ -459,6 +466,7 @@ std::expected<void, Error> FTPHost::CreateDirectory(std::string_view _path,
 std::expected<void, Error> FTPHost::RemoveDirectory(std::string_view _path,
                                                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
+    using namespace ftp;
     const std::filesystem::path path = EnsureNoTrailingSlash(std::string(_path));
     if( !path.is_absolute() )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
@@ -502,6 +510,8 @@ std::expected<void, Error> FTPHost::Rename(std::string_view _old_path,
                                            std::string_view _new_path,
                                            [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
+    using namespace std::string_literals;
+    using namespace ftp;
     const std::filesystem::path old_path = EnsureNoTrailingSlash(std::string(_old_path));
     const std::filesystem::path new_path = EnsureNoTrailingSlash(std::string(_new_path));
     if( !old_path.is_absolute() || !new_path.is_absolute() )
@@ -617,7 +627,7 @@ FTPHost::IterateDirectoryListing(std::string_view _path, const std::function<boo
     return {};
 }
 
-std::unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const std::filesystem::path &_dir)
+std::unique_ptr<ftp::CURLInstance> FTPHost::InstanceForIOAtDir(const std::filesystem::path &_dir)
 {
     assert(!_dir.empty() && _dir.native().back() == '/');
     const std::lock_guard<std::mutex> lock(m_IOIntancesLock);
@@ -646,7 +656,7 @@ std::unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const std::filesystem:
     return inst;
 }
 
-void FTPHost::CommitIOInstanceAtDir(const std::filesystem::path &_dir, std::unique_ptr<CURLInstance> _i)
+void FTPHost::CommitIOInstanceAtDir(const std::filesystem::path &_dir, std::unique_ptr<ftp::CURLInstance> _i)
 {
     assert(!_dir.empty() && _dir.native().back() == '/');
     const std::lock_guard<std::mutex> lock(m_IOIntancesLock);
@@ -656,8 +666,9 @@ void FTPHost::CommitIOInstanceAtDir(const std::filesystem::path &_dir, std::uniq
     m_IOIntances[_dir] = std::move(_i);
 }
 
-void FTPHost::BasicOptsSetup(CURLInstance *_inst)
+void FTPHost::BasicOptsSetup(ftp::CURLInstance *_inst)
 {
+    using namespace ftp;
     _inst->EasySetOpt(CURLOPT_VERBOSE, g_CURLVerbose);
     _inst->EasySetOpt(CURLOPT_FTP_FILEMETHOD, g_CURLFTPMethod);
 

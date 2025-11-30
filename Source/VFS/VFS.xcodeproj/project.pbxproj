@@ -27,10 +27,6 @@
 		CF4600812560579F0095FC73 /* VFSEasyOps.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D00E1DA22BE800992B84 /* VFSEasyOps.mm */; };
 		CF460086256057A90095FC73 /* EncodingDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099941F95C881000AFDE7 /* EncodingDetection.mm */; };
 		CF460094256057BE0095FC73 /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0241DA2305A00992B84 /* DisplayNamesCache.mm */; };
-		CF4600A3256057D00095FC73 /* Host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D03A1DA2324100992B84 /* Host.cpp */; };
-		CF4600A4256057D00095FC73 /* Internals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D03C1DA2324100992B84 /* Internals.cpp */; };
-		CF4600A5256057D00095FC73 /* Cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0361DA2324100992B84 /* Cache.cpp */; };
-		CF4600A6256057D00095FC73 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0381DA2324100992B84 /* File.cpp */; };
 		CF4600AA256057DA0095FC73 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0481DA232EF00992B84 /* File.cpp */; };
 		CF4600AB256057DA0095FC73 /* KeyValidator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09BB1EC4382700533B07 /* KeyValidator.cpp */; };
 		CF4600AC256057DA0095FC73 /* SFTPHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D04A1DA232EF00992B84 /* SFTPHost.cpp */; };
@@ -62,7 +58,6 @@
 		CFB63CD525939A630038502E /* VFSNative_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB63CD425939A630038502E /* VFSNative_IT.mm */; };
 		CFCB68D3289089BF00086E40 /* VFSArchive_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCB68D2289089BF00086E40 /* VFSArchive_UT.cpp */; };
 		CFDA17EA2D496A2E00EE375B /* Errors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDA17E92D496A2E00EE375B /* Errors.cpp */; };
-		CFDA17EE2D4E3E8400EE375B /* Errors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDA17ED2D4E3E8400EE375B /* Errors.cpp */; };
 		CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */; };
 		CFE08AE923CB2D83007E99B8 /* ListingInput_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE823CB2D83007E99B8 /* ListingInput_UT.cpp */; };
 		CFE08AED23CFAFD8007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */; };
@@ -742,20 +737,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF4600A5256057D00095FC73 /* Cache.cpp in Sources */,
 				CFAE50782D7322CF007ADA14 /* VFSFile.mm in Sources */,
 				CF4600B4256057E80095FC73 /* PathRoutines.mm in Sources */,
 				CF4600B3256057E80095FC73 /* WebDAVHost.cpp in Sources */,
-				CF4600A6256057D00095FC73 /* File.cpp in Sources */,
 				CFF762A02EDCA7CC002DD1EE /* _VFS.cpp in Sources */,
 				CF4600AE256057DA0095FC73 /* AccountsFetcher.cpp in Sources */,
-				CF4600A4256057D00095FC73 /* Internals.cpp in Sources */,
 				CF460086256057A90095FC73 /* EncodingDetection.mm in Sources */,
 				CF4600AB256057DA0095FC73 /* KeyValidator.cpp in Sources */,
 				CF1F6FC825E70982003A2497 /* CURLConnection.cpp in Sources */,
 				CFDA17EA2D496A2E00EE375B /* Errors.cpp in Sources */,
 				CF4600B6256057E80095FC73 /* Cache.cpp in Sources */,
-				CF4600A3256057D00095FC73 /* Host.cpp in Sources */,
 				CF4600722560579F0095FC73 /* VFSFile.cpp in Sources */,
 				CF4600BB256057E80095FC73 /* ReadBuffer.cpp in Sources */,
 				CFF762A42EDCB6EE002DD1EE /* OpenDirectory.mm in Sources */,
@@ -768,7 +759,6 @@
 				CF4600AC256057DA0095FC73 /* SFTPHost.cpp in Sources */,
 				CF4600812560579F0095FC73 /* VFSEasyOps.mm in Sources */,
 				CF1F6FC725E70982003A2497 /* Connection.cpp in Sources */,
-				CFDA17EE2D4E3E8400EE375B /* Errors.cpp in Sources */,
 				CF4600BA256057E80095FC73 /* WriteBuffer.cpp in Sources */,
 				CF4600B9256057E80095FC73 /* Internal.cpp in Sources */,
 				CF4600802560579F0095FC73 /* ListingObjC.mm in Sources */,

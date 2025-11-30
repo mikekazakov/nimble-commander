@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <libarchive/archive.h>
@@ -17,8 +17,8 @@ struct Mediator {
     };
     char buf[bufsz];
 
-    static ssize_t myread(struct archive *a, void *client_data, const void **buff);
-    static off_t myseek(struct archive *a, void *client_data, off_t offset, int whence);
+    static ssize_t myread(struct ::archive *a, void *client_data, const void **buff);
+    static off_t myseek(struct ::archive *a, void *client_data, off_t offset, int whence);
 
     void setup(struct archive *a);
 };
@@ -28,13 +28,13 @@ struct State {
     State(const VFSFilePtr &_file, struct archive *_arc);
     ~State();
 
-    inline struct archive *Archive() { return m_Archive; }
-    inline struct archive_entry *Entry() { return m_Entry; }
+    inline struct ::archive *Archive() { return m_Archive; }
+    inline struct ::archive_entry *Entry() { return m_Entry; }
     inline uint32_t UID() { return m_UID; }
     inline bool Consumed() { return m_Consumed; }
 
     // assumes that this call is in  archive_read_next_header cycle. sets consumed flag to false
-    void SetEntry(struct archive_entry *_e, uint32_t _uid);
+    void SetEntry(struct ::archive_entry *_e, uint32_t _uid);
     inline void ConsumeEntry() { m_Consumed = true; }
 
     // libarchive API wrapping
@@ -45,15 +45,15 @@ struct State {
 private:
     State(const State &) = delete;
     void Setup();
-    static ssize_t myread(struct archive *a, void *client_data, const void **buff);
-    static off_t myseek(struct archive *a, void *client_data, off_t offset, int whence);
+    static ssize_t myread(struct ::archive *a, void *client_data, const void **buff);
+    static off_t myseek(struct ::archive *a, void *client_data, off_t offset, int whence);
 
     enum {
         BufferSize = 65536 * 4
     };
     VFSFilePtr m_File;
-    struct archive *m_Archive = nullptr;
-    struct archive_entry *m_Entry = nullptr; // entry for current archive state
+    struct ::archive *m_Archive = nullptr;
+    struct ::archive_entry *m_Entry = nullptr; // entry for current archive state
     uint32_t m_UID = 0;
     bool m_Consumed = false;
     char m_Buf[BufferSize];

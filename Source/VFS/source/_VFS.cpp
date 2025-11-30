@@ -12,3 +12,6 @@
 #include "VFSGenericMemReadOnlyFile.cpp"
 #include "VFSPath.cpp"
 #include "VFSSeqToRandomWrapper.cpp"
+#include "ArcLA/File.cpp"
+#include "ArcLA/Host.cpp"
+#include "ArcLA/Internal.cpp"

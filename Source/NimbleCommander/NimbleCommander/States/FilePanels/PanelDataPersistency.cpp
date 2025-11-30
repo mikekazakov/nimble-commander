@@ -6,7 +6,6 @@
 #include <VFS/ArcLA.h>
 #include <VFS/ArcLARaw.h>
 #include <VFS/Native.h>
-#include <VFS/NetDropbox.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
 #include <VFS/NetWebDAV.h>
@@ -98,8 +97,7 @@ static nc::config::Value EncodeAny(const std::any &_host);
 static bool IsNetworkVFS(const VFSHost &_host)
 {
     const auto tag = _host.Tag();
-    return tag == vfs::FTPHost::UniqueTag || tag == vfs::SFTPHost::UniqueTag || tag == vfs::DropboxHost::UniqueTag ||
-           tag == vfs::WebDAVHost::UniqueTag;
+    return tag == vfs::FTPHost::UniqueTag || tag == vfs::SFTPHost::UniqueTag || tag == vfs::WebDAVHost::UniqueTag;
 }
 
 std::any PanelDataPersistency::EncodeState(const VFSHost &_host)
@@ -288,8 +286,6 @@ static const char *VFSTagForNetworkConnection(const NetworkConnectionsManager::C
         return vfs::FTPHost::UniqueTag;
     else if( _conn.Cast<NetworkConnectionsManager::SFTP>() )
         return vfs::SFTPHost::UniqueTag;
-    else if( _conn.Cast<NetworkConnectionsManager::Dropbox>() )
-        return vfs::DropboxHost::UniqueTag;
     else if( _conn.Cast<NetworkConnectionsManager::WebDAV>() )
         return vfs::WebDAVHost::UniqueTag;
     else

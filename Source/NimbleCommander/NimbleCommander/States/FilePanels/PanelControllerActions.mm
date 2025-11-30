@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerActions.h"
 #include "PanelControllerActionsDispatcher.h"
 #include "Actions/CopyFilePaths.h"
@@ -115,7 +115,6 @@ PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
     add(@selector(OnGoToSFTP:), new OpenNewSFTPConnection{_net_mgr});
     add(@selector(onGoToWebDAV:), new OpenNewWebDAVConnection{_net_mgr});
     add(@selector(OnGoToNetworkShare:), new OpenNewLANShare{_net_mgr});
-    add(@selector(OnGoToDropboxStorage:), new OpenNewDropboxStorage{_net_mgr});
     add(@selector(OnConnectToNetworkServer:), new OpenNetworkConnections{_net_mgr});
     add(@selector(OnGoToSavedConnectionItem:), new OpenExistingNetworkConnection{_net_mgr});
     add(@selector(OnGoToQuickListsParents:), new ShowParentFoldersQuickList{_net_mgr, _native_fs_mgr, _tags_storage});

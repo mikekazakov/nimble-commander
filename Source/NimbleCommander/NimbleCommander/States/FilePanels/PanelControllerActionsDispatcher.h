@@ -50,7 +50,6 @@ using PanelActionsMap = ankerl::unordered_dense::map<SEL, std::unique_ptr<const 
 - (IBAction)OnGoToSFTP:(id)sender;
 - (IBAction)onGoToWebDAV:(id)sender;
 - (IBAction)OnGoToNetworkShare:(id)sender;
-- (IBAction)OnGoToDropboxStorage:(id)sender;
 - (IBAction)OnConnectToNetworkServer:(id)sender;
 - (IBAction)copy:(id)sender;
 - (IBAction)OnSelectByMask:(id)sender;

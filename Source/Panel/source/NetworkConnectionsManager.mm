@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NetworkConnectionsManager.h"
 
 namespace nc::panel {
@@ -44,7 +44,6 @@ private:
             PrefixForShareProtocol(share.proto) + "://" +
             (share.user.empty() ? share.host + "/" + share.share : share.user + "@" + share.host + "/" + share.share);
     }
-    void Visit(const NetworkConnectionsManager::Dropbox &dropbox) override { path = "dropbox://" + dropbox.account; }
     void Visit(const NetworkConnectionsManager::WebDAV &webdav) override
     {
         path = (webdav.https ? "https://" : "http://") + (webdav.user.empty() ? "" : webdav.user + "@") + webdav.host +
@@ -109,10 +108,6 @@ void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnection
 {
 }
 
-void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::Dropbox & /*unused*/)
-{
-}
-
 void NetworkConnectionsManager::ConnectionVisitor::Visit(const NetworkConnectionsManager::WebDAV & /*unused*/)
 {
 }
@@ -133,11 +128,6 @@ bool NetworkConnectionsManager::LANShare::operator==(const LANShare &_rhs) const
 {
     return BaseConnection::operator==(_rhs) && host == _rhs.host && user == _rhs.user && share == _rhs.share &&
            mountpoint == _rhs.mountpoint && proto == _rhs.proto;
-}
-
-bool NetworkConnectionsManager::Dropbox::operator==(const Dropbox &_rhs) const noexcept
-{
-    return BaseConnection::operator==(_rhs) && account == _rhs.account;
 }
 
 bool NetworkConnectionsManager::WebDAV::operator==(const WebDAV &_rhs) const noexcept

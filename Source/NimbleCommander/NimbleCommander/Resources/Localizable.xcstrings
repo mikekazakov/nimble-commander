@@ -659,6 +659,7 @@
     },
     "Dropbox connection error:" : {
       "comment" : "Showing error when connecting to Dropbox service",
+      "extractionState" : "stale",
       "localizations" : {
         "ru" : {
           "stringUnit" : {

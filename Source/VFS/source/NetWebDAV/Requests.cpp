@@ -5,19 +5,13 @@
 #include "PathRoutines.h"
 #include "ReadBuffer.h"
 #include "WebDAVHost.h"
+#include "Internal.h"
 #include <Base/algo.h>
 #include <CFNetwork/CFNetworkErrors.h>
 #include <algorithm>
 #include <pugixml/pugixml.hpp>
 
 namespace nc::vfs::webdav {
-
-using namespace std::literals;
-
-static bool IsOkHTTPRC(const int _rc)
-{
-    return _rc >= 200 & _rc < 300;
-}
 
 static HTTPRequests::Mask ParseSupportedRequests(std::string_view _options_response_header)
 {
@@ -327,6 +321,7 @@ std::expected<SpaceQuota, Error> RequestSpaceQuota(const HostConfiguration &_opt
 std::expected<void, Error>
 RequestMKCOL(const HostConfiguration &_options, Connection &_connection, const std::string &_path)
 {
+    using namespace std::literals;
     if( _path.back() != '/' )
         throw std::invalid_argument("RequestMKCOL: path must contain a trailing slash");
 
@@ -354,6 +349,7 @@ RequestMKCOL(const HostConfiguration &_options, Connection &_connection, const s
 std::expected<void, Error>
 RequestDelete(const HostConfiguration &_options, Connection &_connection, std::string_view _path)
 {
+    using namespace std::literals;
     if( _path == "/" )
         return std::unexpected(Error{Error::POSIX, EPERM});
 

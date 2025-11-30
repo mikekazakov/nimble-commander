@@ -16,24 +16,14 @@
 
 namespace nc::vfs {
 
-using namespace webdav;
-
 const char *WebDAVHost::UniqueTag = "net_webdav";
 
 struct WebDAVHost::State {
-    State(const HostConfiguration &_config) : m_Pool{_config} {}
+    State(const webdav::HostConfiguration &_config) : m_Pool{_config} {}
 
-    class ConnectionsPool m_Pool;
-    class Cache m_Cache;
+    webdav::ConnectionsPool m_Pool;
+    webdav::Cache m_Cache;
 };
-
-static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
-                                             const std::string &_user,
-                                             const std::string &_passwd,
-                                             const std::string &_path,
-                                             bool _https,
-                                             int _port);
-static bool IsValidInputPath(std::string_view _path);
 
 WebDAVHost::WebDAVHost(const std::string &_serv_url,
                        const std::string &_user,
@@ -48,7 +38,7 @@ WebDAVHost::WebDAVHost(const std::string &_serv_url,
 }
 
 WebDAVHost::WebDAVHost(const VFSConfiguration &_config)
-    : VFSHost(_config.Get<HostConfiguration>().server_url, nullptr, UniqueTag), m_Configuration(_config)
+    : VFSHost(_config.Get<webdav::HostConfiguration>().server_url, nullptr, UniqueTag), m_Configuration(_config)
 {
     Init();
 }
@@ -57,6 +47,7 @@ WebDAVHost::~WebDAVHost() = default;
 
 void WebDAVHost::Init()
 {
+    using namespace webdav;
     I = std::make_unique<State>(Config());
 
     auto ar = I->m_Pool.Get();
@@ -82,7 +73,7 @@ VFSConfiguration WebDAVHost::Configuration() const
     return m_Configuration;
 }
 
-const HostConfiguration &WebDAVHost::Config() const noexcept
+const webdav::HostConfiguration &WebDAVHost::Config() const noexcept
 {
     return m_Configuration.GetUnchecked<webdav::HostConfiguration>();
 }
@@ -95,6 +86,7 @@ bool WebDAVHost::IsWritable() const
 std::expected<VFSListingPtr, Error>
 WebDAVHost::FetchDirectoryListing(std::string_view _path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
+    using namespace webdav;
     if( !IsValidInputPath(_path) )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
@@ -155,6 +147,7 @@ std::expected<void, Error>
 WebDAVHost::IterateDirectoryListing(std::string_view _path,
                                     const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
+    using namespace webdav;
     if( !IsValidInputPath(_path) )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
@@ -192,6 +185,7 @@ WebDAVHost::IterateDirectoryListing(std::string_view _path,
 std::expected<VFSStat, Error>
 WebDAVHost::Stat(std::string_view _path, [[maybe_unused]] unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
+    using namespace webdav;
     if( !IsValidInputPath(_path) )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
@@ -239,6 +233,7 @@ WebDAVHost::Stat(std::string_view _path, [[maybe_unused]] unsigned long _flags, 
 std::expected<void, Error> WebDAVHost::RefreshListingAtPath(const std::string &_path,
                                                             [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
+    using namespace webdav;
     if( _path.back() != '/' )
         throw std::invalid_argument("RefreshListingAtPath requires a path with a trailing slash");
 
@@ -255,6 +250,7 @@ std::expected<void, Error> WebDAVHost::RefreshListingAtPath(const std::string &_
 std::expected<VFSStatFS, Error> WebDAVHost::StatFS([[maybe_unused]] std::string_view _path,
                                                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
+    using namespace webdav;
     const auto ar = I->m_Pool.Get();
     const std::expected<SpaceQuota, Error> quota = RequestSpaceQuota(Config(), *ar.connection);
     if( !quota )
@@ -329,6 +325,7 @@ std::expected<void, Error> WebDAVHost::Unlink(std::string_view _path,
 std::expected<std::shared_ptr<VFSFile>, Error>
 WebDAVHost::CreateFile(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
+    using namespace webdav;
     if( !IsValidInputPath(_path) )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
@@ -424,13 +421,14 @@ int WebDAVHost::Port() const noexcept
     return Config().port;
 }
 
-static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
-                                             const std::string &_user,
-                                             const std::string &_passwd,
-                                             const std::string &_path,
-                                             bool _https,
-                                             int _port)
+VFSConfiguration WebDAVHost::ComposeConfiguration(const std::string &_serv_url,
+                                                  const std::string &_user,
+                                                  const std::string &_passwd,
+                                                  const std::string &_path,
+                                                  bool _https,
+                                                  int _port)
 {
+    using namespace webdav;
     if( _port <= 0 )
         _port = _https ? 443 : 80;
 
@@ -461,7 +459,7 @@ static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
     return {std::move(config)};
 }
 
-static bool IsValidInputPath(std::string_view _path)
+bool WebDAVHost::IsValidInputPath(std::string_view _path)
 {
     return !_path.empty() && _path[0] == '/';
 }

@@ -70,5 +70,6 @@ constexpr uint16_t RegularFileAccessMode = S_IRUSR | S_IWUSR | S_IFREG;
 std::optional<Error> ToError(int _curl_rc, int _http_rc) noexcept;
 std::optional<Error> CurlRCToError(int _curl_rc) noexcept;
 std::optional<Error> HTTPRCToError(int _http_rc) noexcept;
+bool IsOkHTTPRC(int _rc);
 
 } // namespace nc::vfs::webdav

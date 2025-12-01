@@ -6,6 +6,8 @@
 #include <memory>
 #include <filesystem>
 
+struct archive;
+
 namespace nc::vfs {
 
 namespace arc {
@@ -129,7 +131,7 @@ private:
     arc::Dir *FindOrBuildDir(std::string_view _path_with_tr_sl);
 
     void InsertDummyDirInto(arc::Dir *_parent, std::string_view _dir_name);
-    struct archive *SpawnLibarchive();
+    struct ::archive *SpawnLibarchive();
 
     std::expected<void, Error> ResolvePath(std::string_view _path, std::pmr::string &_resolved_path);
 

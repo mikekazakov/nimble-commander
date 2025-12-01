@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -547,7 +547,7 @@ struct NativeFileSystemInfo {
         /**
          * The name of the volume (settable if NSURLVolumeSupportsRenamingKey is YES).
          */
-        NSString *name = nullptr;
+        std::string name;
 
         /**
          * The user-presentable name of the volume.

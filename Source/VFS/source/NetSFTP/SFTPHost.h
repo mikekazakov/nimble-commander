@@ -138,6 +138,7 @@ private:
     std::expected<void, Error> DoInit();
     std::expected<std::unique_ptr<Connection>, Error> SpawnSSH2();
     static std::expected<void, Error> SpawnSFTP(Connection &_t);
+    static bool ServerHasReversedSymlinkParameters(LIBSSH2_SESSION *_session);
 
     in_addr_t InetAddr() const;
     const class SFTPHostConfiguration &Config() const;

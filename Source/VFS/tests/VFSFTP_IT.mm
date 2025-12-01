@@ -32,10 +32,10 @@ TEST_CASE(PREFIX "upload and compare")
         REQUIRE(host->Unlink(fn2));
 
     // copy file to the remote server
-    REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host));
+    REQUIRE(easy::VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host));
 
     // compare it with origin
-    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host) == 0);
+    REQUIRE(easy::VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host) == 0);
 
     // check that it appeared in stat cache
     REQUIRE(host->Stat(fn2, 0));
@@ -149,7 +149,7 @@ TEST_CASE(PREFIX "renaming")
     if( host->Stat(fn2, 0) )
         REQUIRE(host->Unlink(fn2));
 
-    REQUIRE(VFSEasyCopyFile(fn1.c_str(), TestEnv().vfs_native, fn2.c_str(), host));
+    REQUIRE(easy::VFSEasyCopyFile(fn1.c_str(), TestEnv().vfs_native, fn2.c_str(), host));
     REQUIRE(host->Rename(fn2, fn3));
     REQUIRE(host->Stat(fn3, 0));
     REQUIRE(host->Unlink(fn3));
@@ -174,7 +174,7 @@ TEST_CASE(PREFIX "listing")
         // Create the context to check with a separate instance of FTPHost to not have any cached state.
         VFSHostPtr host;
         REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
-        std::ignore = VFSEasyDelete("/Test", host);
+        std::ignore = easy::VFSEasyDelete("/Test", host);
         auto touch = [&](const char *_path) {
             const VFSFilePtr file = host->CreateFile(_path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
@@ -205,7 +205,7 @@ TEST_CASE(PREFIX "listing")
         return true;
     }));
     REQUIRE(filenames == expected_filenames);
-    std::ignore = VFSEasyDelete("/Test", host);
+    std::ignore = easy::VFSEasyDelete("/Test", host);
 }
 
 static void WriteAll(VFSFile &_file, const std::span<const uint8_t> _bytes)
@@ -226,7 +226,7 @@ TEST_CASE(PREFIX "seekread")
         // Create the context to check with a separate instance of FTPHost to not have any cached state.
         VFSHostPtr host;
         REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
-        std::ignore = VFSEasyDelete("/TestSeekRead", host);
+        std::ignore = easy::VFSEasyDelete("/TestSeekRead", host);
 
         constexpr size_t sz = 50'000'000;
         std::vector<uint8_t> bytes(sz);
@@ -269,7 +269,7 @@ TEST_CASE(PREFIX "seekread")
         REQUIRE(buf == tc.expected);
     }
 
-    std::ignore = VFSEasyDelete("/TestSeekRead", host);
+    std::ignore = easy::VFSEasyDelete("/TestSeekRead", host);
 }
 
 TEST_CASE(PREFIX "big files reading cancellation")
@@ -278,7 +278,7 @@ TEST_CASE(PREFIX "big files reading cancellation")
         // Create the context to check with a separate instance of FTPHost to not have any cached state.
         VFSHostPtr host;
         REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
-        std::ignore = VFSEasyDelete("/TestCancellation", host);
+        std::ignore = easy::VFSEasyDelete("/TestCancellation", host);
 
         constexpr size_t sz = 200'000'000;
         std::vector<uint8_t> bytes(sz);
@@ -313,5 +313,5 @@ TEST_CASE(PREFIX "big files reading cancellation")
         REQUIRE((std::chrono::system_clock::now() < deadline));
     }
     th.join();
-    std::ignore = VFSEasyDelete("/TestCancellation", host);
+    std::ignore = easy::VFSEasyDelete("/TestCancellation", host);
 }

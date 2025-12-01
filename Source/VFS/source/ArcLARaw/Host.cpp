@@ -20,21 +20,21 @@ const char *const ArchiveRawHost::UniqueTag = "arc_libarchive_raw";
 
 // An arbitrary picked value, invented out of a blue. Should presumably cover reasonable uses cases
 // while giving a protection about potential traps, like accidentally expanding a 100GB .gz file.
-static constexpr uint64_t g_MaxBytes = 64ULL * 1024ULL * 1024ULL;
+static constexpr uint64_t g_ArcLARawMaxBytes = 64ULL * 1024ULL * 1024ULL;
 
 // A filename to be used if we failed to deduce or extract it
-static constexpr const char *g_LastResortFilename = "data";
+static constexpr const char *g_ArcLARawLastResortFilename = "data";
 
 // Lowercase FormC extensions supported by this VFS
-static constexpr std::string_view g_ExtensionsList[] = {"bz2", "gz", "lz", "lz4", "lzma", "lzo", "xz", "z", "zst"};
+static constexpr std::string_view g_ArcLARawExtensionsList[] =
+    {"bz2", "gz", "lz", "lz4", "lzma", "lzo", "xz", "z", "zst"};
 
 // O(1) unordered set of the extensions
 [[clang::no_destroy]] static const ankerl::unordered_dense::
-    set<std::string, UnorderedStringHashEqual, UnorderedStringHashEqual> g_ExtensionsSet(std::begin(g_ExtensionsList),
-                                                                                         std::end(g_ExtensionsList));
+    set<std::string, UnorderedStringHashEqual, UnorderedStringHashEqual>
+        g_ArcLARawExtensionsSet(std::begin(g_ArcLARawExtensionsList), std::end(g_ArcLARawExtensionsList));
 
-namespace {
-struct Extracted {
+struct ArchiveRawHost::Extracted {
     Extracted() = default;
     Extracted(const Error &_err) : bytes(std::unexpected(_err)) {};
 
@@ -43,12 +43,10 @@ struct Extracted {
     time_t mtime = 0;
 };
 
-} // namespace
-
-static Extracted read_stream(const uint64_t _max_bytes,
-                             const std::string &_path,
-                             VFSHost &_parent,
-                             const VFSCancelChecker &_cancel_checker)
+ArchiveRawHost::Extracted ArchiveRawHost::read_stream(const uint64_t _max_bytes,
+                                                      const std::string &_path,
+                                                      VFSHost &_parent,
+                                                      const VFSCancelChecker &_cancel_checker)
 {
     static constexpr size_t buf_sz = 256ULL * 1024ULL;
     struct State {
@@ -192,7 +190,7 @@ VFSMeta ArchiveRawHost::Meta()
 void ArchiveRawHost::Init(const VFSCancelChecker &_cancel_checker)
 {
     const auto &path = Configuration().Get<VFSArchiveRawHostConfiguration>().path;
-    auto extracted = read_stream(g_MaxBytes, path, *Parent(), _cancel_checker);
+    auto extracted = read_stream(g_ArcLARawMaxBytes, path, *Parent(), _cancel_checker);
     if( !extracted.bytes ) {
         Log::Warn("unable to open {}({}), error: {}", path.c_str(), Parent()->Tag(), extracted.bytes.error());
         throw ErrorException(extracted.bytes.error());
@@ -203,7 +201,7 @@ void ArchiveRawHost::Init(const VFSCancelChecker &_cancel_checker)
     if( m_Filename.empty() )
         m_Filename = DeduceFilename(path);
     if( m_Filename.empty() )
-        m_Filename = g_LastResortFilename;
+        m_Filename = g_ArcLARawLastResortFilename;
     m_MTime.tv_nsec = 0;
     m_MTime.tv_sec = extracted.mtime;
     if( m_MTime.tv_sec == 0 ) {
@@ -326,7 +324,7 @@ std::string_view ArchiveRawHost::DeduceFilename(std::string_view _path) noexcept
         return {};
     const auto lowercase_formc_extension =
         utility::ExtensionLowercaseComparison::Instance().ExtensionToLowercase(original_extension);
-    if( !g_ExtensionsSet.contains(lowercase_formc_extension) )
+    if( !g_ArcLARawExtensionsSet.contains(lowercase_formc_extension) )
         return {};
     if( lowercase_formc_extension.size() + 1 < filename.size() )
         return filename.substr(0, filename.size() - lowercase_formc_extension.size() - 1);
@@ -344,7 +342,7 @@ bool ArchiveRawHost::HasSupportedExtension(std::string_view _path) noexcept
         return false;
     const auto lowercase_formc_extension =
         utility::ExtensionLowercaseComparison::Instance().ExtensionToLowercase(original_extension);
-    return g_ExtensionsSet.contains(lowercase_formc_extension);
+    return g_ArcLARawExtensionsSet.contains(lowercase_formc_extension);
 }
 
 VFSConfiguration ArchiveRawHost::Configuration() const

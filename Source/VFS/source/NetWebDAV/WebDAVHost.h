@@ -75,6 +75,13 @@ private:
     void Init();
     void StopDirChangeObserving(unsigned long _ticket) override;
     std::expected<void, Error> RefreshListingAtPath(const std::string &_path, const VFSCancelChecker &_cancel_checker);
+    static bool IsValidInputPath(std::string_view _path);
+    static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
+                                                 const std::string &_user,
+                                                 const std::string &_passwd,
+                                                 const std::string &_path,
+                                                 bool _https,
+                                                 int _port);
 
     struct State;
     std::unique_ptr<State> I;

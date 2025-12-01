@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DisplayNamesCache.h"
 #include <Foundation/Foundation.h>
 #include <Utility/StringExtras.h>
@@ -11,7 +11,7 @@
 
 namespace nc::vfs::native {
 
-static const std::string *Internalize(std::string_view _string) noexcept
+const std::string *DisplayNamesCache::Internalize(std::string_view _string) noexcept
 {
     [[clang::no_destroy]] static constinit std::mutex mtx;
     [[clang::no_destroy]] static ankerl::unordered_dense::

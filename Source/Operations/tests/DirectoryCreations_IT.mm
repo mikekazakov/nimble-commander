@@ -123,7 +123,7 @@ TEST_CASE(PREFIX "On local FTP server")
     }
 
     REQUIRE(host->Stat("/Public/!FilesTesting/Dir/Other/Dir/And/Many/other fancy dirs/", 0));
-    REQUIRE(VFSEasyDelete("/Public/!FilesTesting/Dir", host));
+    REQUIRE(easy::VFSEasyDelete("/Public/!FilesTesting/Dir", host));
 
     {
         DirectoryCreation operation("AnotherDir/AndSecondOne", "/Public/!FilesTesting", *host);
@@ -132,5 +132,5 @@ TEST_CASE(PREFIX "On local FTP server")
     }
 
     REQUIRE(host->Stat("/Public/!FilesTesting/AnotherDir/AndSecondOne", 0));
-    REQUIRE(VFSEasyDelete("/Public/!FilesTesting/AnotherDir", host));
+    REQUIRE(easy::VFSEasyDelete("/Public/!FilesTesting/AnotherDir", host));
 }

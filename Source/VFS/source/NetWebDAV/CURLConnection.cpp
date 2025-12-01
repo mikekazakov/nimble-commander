@@ -1,10 +1,11 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CURLConnection.h"
 #include "Internal.h"
 #include <Base/StackAllocator.h>
 #include <cassert>
 
 // CURL is full of macros with C-style casts
+#pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wold-style-cast"
 
 namespace nc::vfs::webdav {
@@ -353,3 +354,5 @@ std::expected<void, Error> CURLConnection::WriteBodyUpToSize(size_t _target)
 }
 
 } // namespace nc::vfs::webdav
+
+#pragma clang diagnostic pop

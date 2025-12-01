@@ -19,6 +19,7 @@ static std::string MakeTempFilesStorage();
 
 using nc::vfs::easy::CopyDirectoryToTempStorage;
 using nc::vfs::easy::CopyFileToTempStorage;
+using nc::vfs::easy::VFSEasyCompareFiles;
 
 TEST_CASE(PREFIX "CopyFileToTempStorage works")
 {

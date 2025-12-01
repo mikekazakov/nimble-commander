@@ -114,6 +114,7 @@ private:
     void NotifyLookingIn(const char *_path, VFSHost &_in_host) const;
     bool FilterByContent(const char *_full_path, VFSHost &_in_host, CFRange &_r);
     bool FilterByFilename(const char *_filename) const;
+    static utility::Encoding EncodingFromXAttr(const VFSFilePtr &_f);
 
     base::SerialQueue m_Queue;
     utility::FileMask m_FilterName;

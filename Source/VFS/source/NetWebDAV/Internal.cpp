@@ -66,7 +66,7 @@ void HTTPRequests::Print(const Mask _mask)
     std::cout << '\n';
 }
 
-static bool IsOkHTTPRC(const int _rc)
+bool IsOkHTTPRC(const int _rc)
 {
     return _rc >= 200 & _rc < 300;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NativeFSManagerImpl.h"
 #include <AppKit/AppKit.h>
 #include <Base/CFPtr.h>
@@ -317,10 +317,8 @@ static bool GetVerboseInfo(NativeFileSystemInfo &_volume)
     NSNumber *number;
     NSError *error;
 
-    if( [url getResourceValue:&string forKey:NSURLVolumeNameKey error:&error] )
-        _volume.verbose.name = string;
-    if( !_volume.verbose.name )
-        _volume.verbose.name = @"";
+    if( [url getResourceValue:&string forKey:NSURLVolumeNameKey error:&error] && string != nil )
+        _volume.verbose.name = string.UTF8String;
 
     if( [url getResourceValue:&string forKey:NSURLVolumeLocalizedNameKey error:&error] )
         _volume.verbose.localized_name = string;

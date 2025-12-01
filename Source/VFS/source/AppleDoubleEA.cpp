@@ -9,6 +9,7 @@
 #include "../include/VFS/AppleDoubleEA.h"
 
 // this requires a complete rewrite...
+#pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wold-style-cast"
 
 namespace nc::vfs {
@@ -356,3 +357,5 @@ std::vector<std::byte> BuildAppleDoubleFromEA(VFSFile &_file)
 }
 
 } // namespace nc::vfs
+
+#pragma clang diagnostic pop

@@ -11,6 +11,7 @@
 
 using namespace nc;
 using namespace nc::ops;
+using namespace nc::vfs;
 
 #define PREFIX "Operations::Deletion "
 
@@ -267,7 +268,7 @@ TEST_CASE(PREFIX "Complex deletion")
 {
     const TempTestDir dir;
     const auto host = TestEnv().vfs_native;
-    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (dir.directory / "Mail.app").c_str(), host));
+    REQUIRE(easy::VFSEasyCopyNode("/System/Applications/Mail.app", host, (dir.directory / "Mail.app").c_str(), host));
 
     Deletion operation{FetchItems(dir.directory.native(), {"Mail.app"}, *host), DeletionType::Permanent};
     operation.Start();
@@ -290,7 +291,7 @@ TEST_CASE(PREFIX "Simple delete from FTP")
     // if there's a trash from previous runs - remove it
     if( host->Stat(fn2, 0) )
         REQUIRE(host->Unlink(fn2));
-    REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host));
+    REQUIRE(easy::VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host));
 
     Deletion operation{FetchItems("/Public/!FilesTesting", {"mach_kernel"}, *host), DeletionType::Permanent};
     operation.Start();
@@ -298,7 +299,7 @@ TEST_CASE(PREFIX "Simple delete from FTP")
 
     REQUIRE(!host->Stat(fn2, 0)); // check that file has gone
 
-    std::ignore = VFSEasyDelete("/Public/!FilesTesting", host);
+    std::ignore = easy::VFSEasyDelete("/Public/!FilesTesting", host);
 }
 
 TEST_CASE(PREFIX "Deleting from FTP directory")
@@ -313,8 +314,8 @@ TEST_CASE(PREFIX "Deleting from FTP directory")
 
     // if there's a trash from previous runs - remove it
     if( host->Stat(fn2, 0) )
-        REQUIRE(VFSEasyDelete(fn2, host));
-    REQUIRE(VFSEasyCopyNode(fn1, TestEnv().vfs_native, fn2, host));
+        REQUIRE(easy::VFSEasyDelete(fn2, host));
+    REQUIRE(easy::VFSEasyCopyNode(fn1, TestEnv().vfs_native, fn2, host));
 
     Deletion operation{FetchItems("/Public/!FilesTesting", {"bin"}, *host), DeletionType::Permanent};
     operation.Start();
@@ -322,7 +323,7 @@ TEST_CASE(PREFIX "Deleting from FTP directory")
 
     REQUIRE(!host->Stat(fn2, 0)); // check that file has gone
 
-    std::ignore = VFSEasyDelete("/Public/!FilesTesting", host);
+    std::ignore = easy::VFSEasyDelete("/Public/!FilesTesting", host);
 }
 
 static std::vector<VFSListingItem>

@@ -15,6 +15,7 @@
 
 using namespace nc;
 using namespace nc::ops;
+using namespace nc::vfs;
 using namespace std::literals;
 
 #define PREFIX "Operations::Compression "
@@ -63,7 +64,7 @@ TEST_CASE(PREFIX "Compressing Mac kernel")
     std::shared_ptr<vfs::ArchiveHost> arc_host;
     REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
     CHECK(arc_host->StatTotalFiles() == 1);
-    CHECK(VFSEasyCompareFiles("/System/Library/Kernels/kernel", native_host, "/kernel", arc_host) == 0);
+    CHECK(easy::VFSEasyCompareFiles("/System/Library/Kernels/kernel", native_host, "/kernel", arc_host) == 0);
 }
 
 TEST_CASE(PREFIX "Compressing Bin utilities")
@@ -89,7 +90,7 @@ TEST_CASE(PREFIX "Compressing Bin utilities")
     CHECK(arc_host->StatTotalFiles() == filenames.size());
 
     for( auto &fn : filenames ) {
-        CHECK(VFSEasyCompareFiles(("/bin/"s + fn).c_str(), native_host, ("/"s + fn).c_str(), arc_host) == 0);
+        CHECK(easy::VFSEasyCompareFiles(("/bin/"s + fn).c_str(), native_host, ("/"s + fn).c_str(), arc_host) == 0);
     }
 }
 
@@ -157,7 +158,7 @@ TEST_CASE(PREFIX "Compressing kernel into encrypted archive")
     std::shared_ptr<vfs::ArchiveHost> arc_host;
     REQUIRE_NOTHROW(arc_host =
                         std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host, passwd));
-    CHECK(VFSEasyCompareFiles("/System/Library/Kernels/kernel", native_host, "/kernel", arc_host) == 0);
+    CHECK(easy::VFSEasyCompareFiles("/System/Library/Kernels/kernel", native_host, "/kernel", arc_host) == 0);
 }
 
 TEST_CASE(PREFIX "Compressing /bin into encrypted archive")

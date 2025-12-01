@@ -33,10 +33,6 @@ public:
     std::optional<std::string_view> DisplayName(ino_t _ino, dev_t _dev, std::string_view _path);
 
 private:
-    std::optional<std::string_view> Fast_Unlocked(ino_t _ino, dev_t _dev, std::string_view _path) const noexcept;
-    const std::string *Slow_Locked(std::string_view _path) const;
-    void Commit_Locked(ino_t _ino, dev_t _dev, std::string_view _path, const std::string *_dispay_name);
-
     struct Filename {
         std::string_view fs_filename;
         const std::string *display_filename = nullptr; // nullptr means that there's no display name for this item
@@ -44,6 +40,11 @@ private:
     using InodeFilenames = std::variant<Filename, std::vector<Filename>>;
     using Inodes = ankerl::unordered_dense::map<ino_t, InodeFilenames>;
     using Devices = ankerl::unordered_dense::map<dev_t, Inodes>;
+
+    std::optional<std::string_view> Fast_Unlocked(ino_t _ino, dev_t _dev, std::string_view _path) const noexcept;
+    const std::string *Slow_Locked(std::string_view _path) const;
+    void Commit_Locked(ino_t _ino, dev_t _dev, std::string_view _path, const std::string *_dispay_name);
+    static const std::string *Internalize(std::string_view _string) noexcept;
 
     std::atomic_int m_Readers{0};
     spinlock m_ReadLock;

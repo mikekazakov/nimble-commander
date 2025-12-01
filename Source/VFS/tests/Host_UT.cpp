@@ -5,6 +5,8 @@
 
 #define PREFIX "nc::vfs::Host "
 
+namespace HostTest {
+
 using namespace nc;
 using namespace nc::vfs;
 using ::testing::_;
@@ -92,3 +94,7 @@ TEST_CASE(PREFIX "Unsupported methods")
     REQUIRE(host->FetchGroups().error() == enotsup);
     // ...
 }
+
+} // namespace HostTest
+
+#undef PREFIX

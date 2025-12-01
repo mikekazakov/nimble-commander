@@ -1,0 +1,7 @@
+#include "Host_UT.cpp"
+#include "ListingInput_UT.cpp"
+#include "SearchInFile_UT.cpp"
+#include "VFSArchive_UT.cpp"
+#include "VFSArchiveRaw_UT.cpp"
+#include "VFSNative_UT.cpp"
+#include "NetSFTP/KeyValidator_UT.cpp"

@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFSListingInput.h>
@@ -7,8 +7,11 @@
 #include <Base/mach_time.h>
 #include <thread>
 
+#define PREFIX "nc::vfs::ListingInput "
+
+namespace {
+
 using namespace nc::vfs;
-#define PREFIX "[nc::vfs::ListingInput] "
 
 TEST_CASE(PREFIX "Title is preserved after building")
 {
@@ -47,3 +50,7 @@ TEST_CASE(PREFIX "Prodives a correct ticks timestamp")
     CHECK(listing->BuildTicksTimestamp() >= old_ts);
     CHECK(listing->BuildTicksTimestamp() <= new_ts);
 }
+
+} // namespace
+
+#undef PREFIX

@@ -9,20 +9,20 @@ body:
         Thanks for taking the time to fill out this bug report!
   - type: markdown
     attributes:
-      value: "Please make sure to read the [contributing guidelines](https://github.com/mikekazakov/nimble-commander/blob/main/CONTRIBUTING.md) before submitting an issue."
+      value: "Please make sure to read the [contributing guidelines](https://github.com/mikekazakov/nimble-commander/blob/main/CONTRIBUTING.md) and **Help.pdf** (including the F.A.Q. section) before submitting an issue."
   - type: checkboxes
     id: agreement
     attributes:
       label: Confirmation
       description: Confirm before submitting
       options:
-        - label: I have read the contributing guidelines
+        - label: I have read the contributing guidelines and Help.pdf
           required: true
   - type: input
     id: version
     attributes:
       label: Version of Nimble Commander
-      description: Fill in below what version of Nimble Commander you are using, including your OS.
+      description: Please specify the version of Nimble Commander you are using, including your OS.
       placeholder: ex. v1.5.0, MacOS 14
     validations:
       required: true

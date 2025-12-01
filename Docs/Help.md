@@ -922,32 +922,54 @@ Some actions do not have default hotkeys but can still be accessed through the a
 # Frequently Asked Questions
 
 **Q**: I have an idea for Nimble Commander!  
-**A**: That’s fantastic! Feel free to contribute your ideas. The entire source code and build instructions for Nimble Commander are available in [this repository](https://github.com/mikekazakov/nimble-commander). Be sure to read through the [CONTRIBUTING](https://github.com/mikekazakov/nimble-commander/blob/main/CONTRIBUTING.md) guidelines carefully before you start.
-
----
-
-**Q**: Nimble Commander crashes/behaves incorrectly/etc. Can you fix it?  
-**A**: Possibly. However, it is often difficult to track down the problem without a detailed description of the setup and a set of reproducible steps. Please spend some time describing in detail what happened and how it can be reproduced. This will greatly help in resolving the issue.
+**A**: That’s fantastic!
+Feel free to contribute your ideas and proposed changes to the project.
+The entire source code and build instructions for Nimble Commander are available in [this repository](https://github.com/mikekazakov/nimble-commander).
+Be sure to read through the [CONTRIBUTING](https://github.com/mikekazakov/nimble-commander/blob/main/CONTRIBUTING.md) guidelines carefully before you start.
 
 ---
 
 **Q**: Can you implement a specific feature or request?  
-**A**: Likely not. As Nimble Commander is maintained by a single contributor, resources are limited, and I cannot accommodate all requests due to time and energy constraints. However, contributions from the community are welcome. You can consider implementing the feature yourself. Check out the [contribution guidelines](https://github.com/mikekazakov/nimble-commander/blob/main/CONTRIBUTING.md) for more information.
+**A**: Likely not.
+As Nimble Commander is maintained by a single contributor, resources are limited, and I cannot accommodate all requests due to time and energy constraints.
+The Apple ecosystem is rather hostile to developers, and just maintaining the project up to date with the constant macOS/toolchain/dependencies changes requires significant effort.
+However, contributions of reasonable quality from the community are welcome.
+You can consider implementing the feature yourself.
+Check out the [contribution guidelines](https://github.com/mikekazakov/nimble-commander/blob/main/CONTRIBUTING.md) for more information.
+
+---
+
+**Q**: Nimble Commander crashes/behaves incorrectly/etc. Can you fix it?  
+**A**: Possibly.
+However, it is often difficult to track down the problem without a detailed description of the setup and a set of reproducible steps.
+Please spend some time describing in detail what happened and how it can be reproduced.
+This will greatly help in resolving the issue.
 
 ---
 
 **Q**: Preview lacks a feature XYZ, is it possible to add it?  
-**A**: This might be challenging. The entire preview functionality is managed by macOS via the [Quick Look framework](https://en.wikipedia.org/wiki/Quick_Look). Rendition and behaviour for various file types is provided by various plugins in that system-wide framework, and Nimble Commander has no control over it. Currently it doesn’t even have any content-specific logic. While it’s possible to start providing special handling for some specific file types, like images, it would require significant resources to implement, test, and maintain.
+**A**: This might be challenging.
+The entire preview functionality is managed by macOS via the [Quick Look framework](https://en.wikipedia.org/wiki/Quick_Look).
+Rendition and behaviour for various file types is provided by various plugins in that system-wide framework, and Nimble Commander has no control over it.
+Currently it doesn’t even have any content-specific logic.
+While it’s possible to start providing special handling for some specific file types, like images, it would require significant resources to implement, test, and maintain.
 
 ---
 
 **Q**: Can Nimble Commander access iCloud storage?  
-**A**: Nimble Commander does not provide first-class access to iCloud. Apple does not have an official API to allow applications to directly manipulate items outside of their own containers. At least that’s my understanding of the status quo at the moment of writing (I’d be glad to be proven wrong). However, you can manually navigate to `~/Library/Mobile Documents/com~apple~CloudDocs` and access the items there using the normal UI of Nimble Commander. This usually works, but there is no guarantee that the content of that folder is properly synchronized.
+**A**: Nimble Commander does not provide first-class access to iCloud.
+Apple does not have an official API to allow applications to directly manipulate items outside of their own containers.
+At least that’s my understanding of the status quo at the moment of writing (I’d be glad to be proven wrong).
+However, you can manually navigate to `~/Library/Mobile Documents/com~apple~CloudDocs` and access the items there using the normal UI of Nimble Commander.
+This usually works, but there is no guarantee that the content of that folder is properly synchronized.
 
 ---
 
 **Q**: Nimble Commander crashes with EXC_BAD_INSTRUCTION.  
-**A**: This has been observed when macOS Catalina is installed on hardware that is not officially supported. Nimble Commander/x64 requires SSE4.2 since v1.2.9, which is available on all Mac models officially supported by Catalina. If this OS version is installed on a machine with a CPU lacking these instructions, Nimble Commander v1.2.9+ cannot run. The only workaround is to use an older version.
+**A**: This has been observed when macOS Catalina is installed on hardware that is not officially supported.
+Nimble Commander/x64 requires SSE4.2 since v1.2.9, which is available on all Mac models officially supported by Catalina.
+If this OS version is installed on a machine with a CPU lacking these instructions, Nimble Commander v1.2.9+ cannot run.
+The only workaround is to use an older version.
 
 ---
 
@@ -957,17 +979,20 @@ Some actions do not have default hotkeys but can still be accessed through the a
 ---
 
 **Q**: Do you plan to add capabilities to modify existing archives?  
-**A**: There are no plans to add this feature at the moment unless someone steps up to implement it. The reasons why were discussed here: [https://magnumbytes.com/forum/viewtopic.php?f=6&t=205](https://magnumbytes.com/forum/viewtopic.php?f=6&t=205)
+**A**: There are no plans to add this feature at the moment unless someone steps up to implement it.
+The reasons why were discussed here: [https://magnumbytes.com/forum/viewtopic.php?f=6&t=205](https://magnumbytes.com/forum/viewtopic.php?f=6&t=205)
 
 ---
 
 **Q**: How to make Nimble Commander restore the state of its windows after it has been closed and restarted?  
-**A**: Turn off the checkbox `System Settings > Desktop & Dock > Close windows when quitting an application`. By default, this option is turned on.
+**A**: Turn off the checkbox `System Settings > Desktop & Dock > Close windows when quitting an application`.
+By default, this option is turned on.
 
 ---
 
 **Q**: Can I see folders which are starting with dot (for example, ".folder")?  
-**A**: Yes, it’s possible to see hidden folders. Toggle this option by selecting `Menu > View > Show Hidden Files` or by pressing `Shift + Cmd + .`.
+**A**: Yes, it’s possible to see hidden folders.
+Toggle this option by selecting `Menu > View > Show Hidden Files` or by pressing `Shift + Cmd + .`.
 
 ---
 
@@ -977,7 +1002,8 @@ Some actions do not have default hotkeys but can still be accessed through the a
 ---
 
 **Q**: Do dialogs in Nimble Commander have hotkeys?  
-**A**: Yes, many dialogs have hotkeys using the Ctrl (^) key modifier. Hovering the mouse cursor over a UI element will display context help, which may show the hotkey for that element.
+**A**: Yes, many dialogs have hotkeys using the Ctrl (^) key modifier.
+Hovering the mouse cursor over a UI element will display context help, which may show the hotkey for that element.
 
 ---
 
@@ -1007,5 +1033,5 @@ You can control this by navigating to `Settings -> Themes -> (...) -> Configure 
 
 **Q**: Where can I find the logs?  
 **A**: To open the Logs window while NC is running, hold Alt and select `Help -> Debug -> Show Logs...`.
-Next, adjust the log level by clicking the settings (gear) icon and choosing the desired level, either for a specific subsystem or globally.   
+Next, adjust the log level by clicking the settings (gear) icon and choosing the desired level, either for a specific subsystem or globally.
 By default, logging is disabled (the level is set to Off).

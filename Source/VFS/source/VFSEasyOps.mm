@@ -12,8 +12,7 @@
 #include <numeric>
 #include <stack>
 
-using namespace nc;
-using namespace nc::vfs;
+namespace nc::vfs::easy {
 
 static std::expected<void, Error> CopyNodeAttrs(const char *_src_full_path,
                                                 std::shared_ptr<VFSHost> _src_host,
@@ -340,8 +339,6 @@ std::expected<int, nc::Error> VFSCompareNodes(const std::filesystem::path &_file
     }
     return 0;
 }
-
-namespace nc::vfs::easy {
 
 std::optional<std::string> CopyFileToTempStorage(const std::string &_vfs_filepath,
                                                  VFSHost &_host,

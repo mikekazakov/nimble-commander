@@ -69,6 +69,9 @@ private:
     static std::vector<ProcInfo> GetProcs();
     void CommitProcs(std::vector<ProcInfo> _procs);
     static std::string ProcInfoIntoFile(const ProcInfo &_info, std::shared_ptr<Snapshot> _data);
+    static std::string FormatTime(time_t _time);
+    static const std::string &ProcStatus(int _st);
+    static const std::string &ArchType(int _type);
 
     std::mutex m_Lock; // bad and ugly, ok.
     std::shared_ptr<Snapshot> m_Data;

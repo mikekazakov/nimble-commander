@@ -1,11 +1,5 @@
-// Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSConfiguration.h"
-
-struct VFSConfigurationDummyModel {
-    [[nodiscard]] static const char *Tag() { return ""; }
-    [[nodiscard]] static const char *Junction() { return ""; }
-    bool operator==(const VFSConfigurationDummyModel & /*unused*/) const { return false; }
-};
 
 const char *VFSConfiguration::Tag() const
 {

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Cache.h"
 #include <Utility/PathManip.h>
 #include "Internal.h"
@@ -9,9 +9,7 @@
 
 namespace nc::vfs::webdav {
 
-using namespace std::literals;
-
-static const auto g_ListingTimeout = 60s;
+static const auto g_ListingTimeout = std::chrono::seconds{60};
 
 Cache::Cache() = default;
 

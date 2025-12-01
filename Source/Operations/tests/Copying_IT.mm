@@ -21,6 +21,7 @@ using nc::Error;
 using nc::ops::Copying;
 using nc::ops::CopyingOptions;
 using nc::ops::OperationState;
+using namespace nc::vfs;
 
 static std::vector<std::byte> MakeNoise(size_t _size);
 static bool Save(const std::filesystem::path &_filepath, std::span<const std::byte> _content);
@@ -281,7 +282,7 @@ TEST_CASE(PREFIX "Overwrite bug regression")
         op.Wait();
     }
 
-    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "big.zzz").c_str(), host, dest.c_str(), host) == 0);
+    REQUIRE(easy::VFSEasyCompareFiles((tmp_dir.directory / "big.zzz").c_str(), host, dest.c_str(), host) == 0);
 
     {
         CopyingOptions opts;
@@ -292,7 +293,7 @@ TEST_CASE(PREFIX "Overwrite bug regression")
         op.Wait();
     }
 
-    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "small.zzz").c_str(), host, dest.c_str(), host) == 0);
+    REQUIRE(easy::VFSEasyCompareFiles((tmp_dir.directory / "small.zzz").c_str(), host, dest.c_str(), host) == 0);
 }
 
 TEST_CASE(PREFIX "Overwrite bug regression - revert")
@@ -316,7 +317,7 @@ TEST_CASE(PREFIX "Overwrite bug regression - revert")
         op.Wait();
     }
 
-    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "small.zzz").c_str(), host, dest.c_str(), host) == 0);
+    REQUIRE(easy::VFSEasyCompareFiles((tmp_dir.directory / "small.zzz").c_str(), host, dest.c_str(), host) == 0);
 
     {
         CopyingOptions opts;
@@ -327,7 +328,7 @@ TEST_CASE(PREFIX "Overwrite bug regression - revert")
         op.Wait();
     }
 
-    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "big.zzz").c_str(), host, dest.c_str(), host) == 0);
+    REQUIRE(easy::VFSEasyCompareFiles((tmp_dir.directory / "big.zzz").c_str(), host, dest.c_str(), host) == 0);
 }
 
 TEST_CASE(PREFIX "case renaming")
@@ -409,7 +410,8 @@ TEST_CASE(PREFIX "Modes - CopyToPrefix_WithLocalDir")
     const TempTestDir tmp_dir;
     auto host = TestEnv().vfs_native;
 
-    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
+    REQUIRE(
+        easy::VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
 
     const CopyingOptions opts;
     Copying op(FetchItems(tmp_dir.directory, {"Mail.app"}, *TestEnv().vfs_native),
@@ -433,7 +435,8 @@ TEST_CASE(PREFIX "Modes - CopyToPathName_WithLocalDir")
     const TempTestDir tmp_dir;
     auto host = TestEnv().vfs_native;
 
-    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
+    REQUIRE(
+        easy::VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
 
     Copying op(
         FetchItems(tmp_dir.directory, {"Mail.app"}, *TestEnv().vfs_native), tmp_dir.directory / "Mail2.app", host, {});
@@ -452,7 +455,8 @@ TEST_CASE(PREFIX "Modes - RenameToPathPreffix")
     auto dir2 = tmp_dir.directory / "Some" / "Dir" / "Where" / "Files" / "Should" / "Be" / "Renamed/";
     auto host = TestEnv().vfs_native;
 
-    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
+    REQUIRE(
+        easy::VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
 
     CopyingOptions opts;
     opts.docopy = false;
@@ -470,7 +474,8 @@ TEST_CASE(PREFIX "Modes - RenameToPathName")
     const TempTestDir tmp_dir;
     auto host = TestEnv().vfs_native;
 
-    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
+    REQUIRE(
+        easy::VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
 
     CopyingOptions opts;
     opts.docopy = false;
@@ -759,7 +764,7 @@ TEST_CASE(PREFIX "Copy native->xattr->xattr")
         op.Wait();
         REQUIRE(op.State() == OperationState::Completed);
 
-        REQUIRE(VFSEasyCompareFiles(orig.c_str(), native_host, "/src", src_host) == 0);
+        REQUIRE(easy::VFSEasyCompareFiles(orig.c_str(), native_host, "/src", src_host) == 0);
     }
 
     const auto xattr2 = tmp_dir.directory / "xattr2";
@@ -770,7 +775,7 @@ TEST_CASE(PREFIX "Copy native->xattr->xattr")
         op.Start();
         op.Wait();
 
-        REQUIRE(VFSEasyCompareFiles(orig.c_str(), native_host, "/dst", dst_host) == 0);
+        REQUIRE(easy::VFSEasyCompareFiles(orig.c_str(), native_host, "/dst", dst_host) == 0);
     }
 }
 
@@ -782,7 +787,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part1")
     const char *fn1 = "/System/Library/Kernels/kernel";
     const char *fn2 = "/Public/!FilesTesting/kernel";
 
-    std::ignore = VFSEasyDelete(fn2, host);
+    std::ignore = easy::VFSEasyDelete(fn2, host);
 
     const CopyingOptions opts;
     Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *TestEnv().vfs_native),
@@ -794,7 +799,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part1")
     op.Wait();
     REQUIRE(op.State() == OperationState::Completed);
 
-    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host) == 0);
+    REQUIRE(easy::VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host) == 0);
 
     REQUIRE(host->Unlink(fn2));
 }
@@ -806,7 +811,7 @@ TEST_CASE(PREFIX "Copy to local FTP")
 
     auto files = std::vector<std::string>{"Info.plist", "PkgInfo", "version.plist"};
 
-    std::ignore = VFSEasyDelete("/Public", host);
+    std::ignore = easy::VFSEasyDelete("/Public", host);
 
     const CopyingOptions opts;
     Copying op(FetchItems("/System/Applications/Mail.app/Contents", {begin(files), end(files)}, *TestEnv().vfs_native),
@@ -819,14 +824,14 @@ TEST_CASE(PREFIX "Copy to local FTP")
     REQUIRE(op.State() == OperationState::Completed);
 
     for( auto &i : files ) {
-        REQUIRE(VFSEasyCompareFiles(("/System/Applications/Mail.app/Contents/" + i).c_str(),
-                                    TestEnv().vfs_native,
-                                    ("/Public/!FilesTesting/" + i).c_str(),
-                                    host) == 0);
+        REQUIRE(easy::VFSEasyCompareFiles(("/System/Applications/Mail.app/Contents/" + i).c_str(),
+                                          TestEnv().vfs_native,
+                                          ("/Public/!FilesTesting/" + i).c_str(),
+                                          host) == 0);
         REQUIRE(host->Unlink("/Public/!FilesTesting/" + i));
     }
 
-    std::ignore = VFSEasyDelete("/Public", host);
+    std::ignore = easy::VFSEasyDelete("/Public", host);
 }
 
 TEST_CASE(PREFIX "Copy to local FTP, part3")
@@ -834,7 +839,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part3")
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = std::make_shared<nc::vfs::FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
 
-    std::ignore = VFSEasyDelete("/Public/!FilesTesting/bin", host);
+    std::ignore = easy::VFSEasyDelete("/Public/!FilesTesting/bin", host);
 
     const CopyingOptions opts;
     Copying op(FetchItems("/", {"bin"}, *TestEnv().vfs_native), "/Public/!FilesTesting/", host, opts);
@@ -845,7 +850,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part3")
 
     REQUIRE(VFSCompareEntries("/bin", TestEnv().vfs_native, "/Public/!FilesTesting/bin", host) == 0);
 
-    std::ignore = VFSEasyDelete("/Public/!FilesTesting/bin", host);
+    std::ignore = easy::VFSEasyDelete("/Public/!FilesTesting/bin", host);
 }
 
 TEST_CASE(PREFIX "Copy to local FTP part4")
@@ -857,8 +862,8 @@ TEST_CASE(PREFIX "Copy to local FTP part4")
     const char *fn2 = "/Public/!FilesTesting/kernel";
     const char *fn3 = "/Public/!FilesTesting/kernel copy";
 
-    std::ignore = VFSEasyDelete(fn2, host);
-    std::ignore = VFSEasyDelete(fn3, host);
+    std::ignore = easy::VFSEasyDelete(fn2, host);
+    std::ignore = easy::VFSEasyDelete(fn3, host);
 
     {
         Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *TestEnv().vfs_native),
@@ -870,7 +875,7 @@ TEST_CASE(PREFIX "Copy to local FTP part4")
         REQUIRE(op.State() == OperationState::Completed);
     }
 
-    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host) == 0);
+    REQUIRE(easy::VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host) == 0);
 
     {
         Copying op(FetchItems("/Public/!FilesTesting/", {"kernel"}, *host), fn3, host, {});
@@ -879,7 +884,7 @@ TEST_CASE(PREFIX "Copy to local FTP part4")
         REQUIRE(op.State() == OperationState::Completed);
     }
 
-    REQUIRE(VFSEasyCompareFiles(fn2, host, fn3, host) == 0);
+    REQUIRE(easy::VFSEasyCompareFiles(fn2, host, fn3, host) == 0);
 
     REQUIRE(host->Unlink(fn2));
     REQUIRE(host->Unlink(fn3));
@@ -891,7 +896,7 @@ TEST_CASE(PREFIX "Copy to local FTP, special characters")
     REQUIRE_NOTHROW(host = std::make_shared<nc::vfs::FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
     const std::filesystem::path dir = "/Testing";
 
-    std::ignore = VFSEasyDelete(dir.c_str(), host);
+    std::ignore = easy::VFSEasyDelete(dir.c_str(), host);
 
     struct TestCase {
         std::filesystem::path name;
@@ -913,11 +918,11 @@ TEST_CASE(PREFIX "Copy to local FTP, special characters")
             op.Wait();
             REQUIRE(op.State() == OperationState::Completed);
         }
-        REQUIRE(VFSEasyCompareFiles("/bin/sleep", TestEnv().vfs_native, (dir / tc.name).c_str(), host) == 0);
+        REQUIRE(easy::VFSEasyCompareFiles("/bin/sleep", TestEnv().vfs_native, (dir / tc.name).c_str(), host) == 0);
         REQUIRE(host->Unlink((dir / tc.name).c_str()));
     }
 
-    std::ignore = VFSEasyDelete(dir.c_str(), host);
+    std::ignore = easy::VFSEasyDelete(dir.c_str(), host);
 }
 
 TEST_CASE(PREFIX "Renaming a locked native regular item")
@@ -1352,7 +1357,8 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> native)
         REQUIRE(::stat((dir.directory / "d").c_str(), &st) == 0);
         CHECK((st.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO)) ==
               (S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH));
-        REQUIRE(VFSEasyCompareFiles((dir.directory / "d/f.txt").c_str(), TestEnv().vfs_native, "/d/f.txt", host) == 0);
+        REQUIRE(easy::VFSEasyCompareFiles(
+                    (dir.directory / "d/f.txt").c_str(), TestEnv().vfs_native, "/d/f.txt", host) == 0);
         chmod((dir.directory / "d").c_str(), S_IRWXU);
     }
     SECTION("Don't copy unix flags")
@@ -1365,7 +1371,8 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> native)
         REQUIRE(::stat((dir.directory / "d").c_str(), &st) == 0);
         CHECK((st.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO)) ==
               (S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH));
-        REQUIRE(VFSEasyCompareFiles((dir.directory / "d/f.txt").c_str(), TestEnv().vfs_native, "/d/f.txt", host) == 0);
+        REQUIRE(easy::VFSEasyCompareFiles(
+                    (dir.directory / "d/f.txt").c_str(), TestEnv().vfs_native, "/d/f.txt", host) == 0);
     }
 }
 
@@ -1380,7 +1387,7 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> vfs)")
     auto host = TestEnvironment::SpawnSFTPHost();
     REQUIRE(host);
     const std::filesystem::path target_dir = std::filesystem::path(host->HomeDir()) / "__nc_operations_test";
-    std::ignore = VFSEasyDelete(target_dir.c_str(), host);
+    std::ignore = easy::VFSEasyDelete(target_dir.c_str(), host);
 
     CopyingOptions opts;
     opts.docopy = true;
@@ -1405,7 +1412,7 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> vfs)")
                 (S_IFDIR | S_IRUSR | S_IXUSR | S_IWUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH));
     }
 
-    std::ignore = VFSEasyDelete(target_dir.c_str(), host);
+    std::ignore = easy::VFSEasyDelete(target_dir.c_str(), host);
 }
 
 TEST_CASE(PREFIX "Copying a native file that is being written to")

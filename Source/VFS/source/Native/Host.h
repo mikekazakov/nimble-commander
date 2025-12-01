@@ -113,6 +113,8 @@ public:
     nc::utility::NativeFSManager &NativeFSManager() const noexcept;
 
 private:
+    static uint32_t MergeUnixFlags(uint32_t _symlink_flags, uint32_t _target_flags) noexcept;
+
     nc::utility::NativeFSManager &m_NativeFSManager;
     [[maybe_unused]] nc::utility::FSEventsFileUpdate &m_FSEventsFileUpdate;
 };

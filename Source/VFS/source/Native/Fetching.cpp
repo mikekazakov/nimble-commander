@@ -10,10 +10,6 @@
 #include <sys/stat.h>
 #include <vector>
 
-// hack to access function from libc implementation directly.
-// this func does readdir but without mutex locking
-struct dirent *_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
-
 namespace nc::vfs::native {
 
 static mode_t VNodeToUnixMode(const fsobj_type_t _type)
@@ -214,7 +210,7 @@ int Fetching::ReadDirAttributesStat(const int _dir_fd,
         auto close_dir = at_scope_end([=] { closedir(dirp); });
         static const auto dirents_reserve_amount = 64;
         dirents.reserve(dirents_reserve_amount);
-        while( auto entp = ::_readdir_unlocked(dirp, 1) ) {
+        while( auto entp = ::readdir(dirp) ) {
             if( entp->d_ino == 0 ||                      // apple's documentation suggest to skip such files
                 entp->d_name == std::string_view{"."} || // do not process self entry
                 entp->d_name == std::string_view{".."} ) // do not process parent entry

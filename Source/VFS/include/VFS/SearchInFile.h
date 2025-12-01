@@ -57,12 +57,15 @@ private:
     void operator=(const SearchInFile &); // forbid
 
     Response SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker _checker);
+    static bool IsWholePhrase(CFStringRef _string, CFRange _range);
 
     enum class WorkMode {
         NotSet,
         Text
         /* binary(hex) and regexp(tempates) later */
     };
+
+    static constexpr unsigned m_MaximumCodeUnit = 2;
 
     nc::vfs::FileWindow &m_File;
 

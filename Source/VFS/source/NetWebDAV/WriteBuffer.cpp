@@ -1,12 +1,10 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WriteBuffer.h"
 #include <cstdlib>
 #include <algorithm>
 #include <cassert>
 
 namespace nc::vfs::webdav {
-
-static const size_t g_DefaultCapacity = 32768;
 
 WriteBuffer::WriteBuffer() = default;
 
@@ -27,7 +25,7 @@ size_t WriteBuffer::Size() const noexcept
 
 void WriteBuffer::Grow(size_t _new_size) noexcept
 {
-    _new_size = std::max(_new_size, g_DefaultCapacity);
+    _new_size = std::max(_new_size, m_DefaultCapacity);
     assert(m_Size < _new_size);
     m_Capacity = _new_size;
     m_Bytes = static_cast<uint8_t *>(std::realloc(m_Bytes, m_Capacity));

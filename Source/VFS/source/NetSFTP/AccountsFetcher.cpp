@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 // libssh2 has macros with C-style casts
+#pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wold-style-cast"
 
 namespace nc::vfs::sftp {
@@ -209,3 +210,5 @@ std::optional<std::string> AccountsFetcher::Execute(const std::string &_command)
 }
 
 } // namespace nc::vfs::sftp
+
+#pragma clang diagnostic pop

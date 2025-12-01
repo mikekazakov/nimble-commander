@@ -22,9 +22,6 @@
 
 namespace nc::vfs {
 
-using namespace arc;
-using namespace std::literals;
-
 const char *const ArchiveHost::UniqueTag = "arc_libarchive";
 
 struct ArchiveHost::Impl {
@@ -35,7 +32,7 @@ struct ArchiveHost::Impl {
 
     std::shared_ptr<VFSFile> m_ArFile;
     std::shared_ptr<arc::Mediator> m_Mediator;
-    struct archive *m_Arc = nullptr;
+    struct ::archive *m_Arc = nullptr;
     PathToDirT m_PathToDir;
 
     uint32_t m_TotalFiles = 0;
@@ -163,6 +160,7 @@ VFSMeta ArchiveHost::Meta()
 
 std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_checker)
 {
+    using namespace arc;
     assert(I->m_Arc == nullptr);
     int res = 0;
 
@@ -285,6 +283,7 @@ static bool SplitIntoFilenameAndParentPath(const char *_path,
 
 std::expected<void, Error> ArchiveHost::ReadArchiveListing()
 {
+    using namespace arc;
     assert(I->m_Arc != nullptr);
     uint32_t aruid = 0;
 
@@ -454,7 +453,7 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
     return std::unexpected(Error{Error::POSIX, archive_errno(I->m_Arc)});
 }
 
-uint64_t ArchiveHost::UpdateDirectorySize(Dir &_directory, const std::string &_path)
+uint64_t ArchiveHost::UpdateDirectorySize(arc::Dir &_directory, const std::string &_path)
 {
     uint64_t size = 0;
     for( auto &e : _directory.entries )
@@ -475,8 +474,9 @@ uint64_t ArchiveHost::UpdateDirectorySize(Dir &_directory, const std::string &_p
     return size;
 }
 
-Dir *ArchiveHost::FindOrBuildDir(const std::string_view _path_with_tr_sl)
+arc::Dir *ArchiveHost::FindOrBuildDir(const std::string_view _path_with_tr_sl)
 {
+    using namespace arc;
     assert(utility::PathManip::HasTrailingSlash(_path_with_tr_sl));
     if( const auto i = I->m_PathToDir.find(_path_with_tr_sl); i != I->m_PathToDir.end() )
         return &(*i).second;
@@ -506,8 +506,9 @@ Dir *ArchiveHost::FindOrBuildDir(const std::string_view _path_with_tr_sl)
     return &(*it.first).second;
 }
 
-void ArchiveHost::InsertDummyDirInto(Dir *_parent, const std::string_view _dir_name)
+void ArchiveHost::InsertDummyDirInto(arc::Dir *_parent, const std::string_view _dir_name)
 {
+    using namespace arc;
     constexpr mode_t synthetic_mode = S_IFDIR |                     //
                                       S_IRUSR | S_IXUSR | S_IWUSR | //
                                       S_IRGRP | S_IXGRP |           //
@@ -530,7 +531,7 @@ void ArchiveHost::InsertDummyDirInto(Dir *_parent, const std::string_view _dir_n
 std::expected<std::shared_ptr<VFSFile>, Error> ArchiveHost::CreateFile(std::string_view _path,
                                                                        const VFSCancelChecker &_cancel_checker)
 {
-    auto file = std::make_shared<File>(_path, SharedPtr());
+    auto file = std::make_shared<arc::File>(_path, SharedPtr());
     if( _cancel_checker && _cancel_checker() )
         return std::unexpected(Error{Error::POSIX, ECANCELED});
     return file;
@@ -720,7 +721,7 @@ uint32_t ArchiveHost::ItemUID(const char *_filename)
     return 0;
 }
 
-const DirEntry *ArchiveHost::FindEntry(std::string_view _path)
+const arc::DirEntry *ArchiveHost::FindEntry(std::string_view _path)
 {
     if( _path.empty() || _path[0] != '/' )
         return nullptr;
@@ -767,7 +768,7 @@ const DirEntry *ArchiveHost::FindEntry(std::string_view _path)
     return nullptr;
 }
 
-const DirEntry *ArchiveHost::FindEntry(uint32_t _uid)
+const arc::DirEntry *ArchiveHost::FindEntry(uint32_t _uid)
 {
     if( !_uid || _uid >= I->m_EntryByUID.size() )
         return nullptr;
@@ -834,7 +835,7 @@ bool ArchiveHost::ShouldProduceThumbnails() const
     return true;
 }
 
-std::unique_ptr<State> ArchiveHost::ClosestState(uint32_t _requested_item)
+std::unique_ptr<arc::State> ArchiveHost::ClosestState(uint32_t _requested_item)
 {
     if( _requested_item == 0 )
         return nullptr;
@@ -863,7 +864,7 @@ std::unique_ptr<State> ArchiveHost::ClosestState(uint32_t _requested_item)
     return nullptr;
 }
 
-void ArchiveHost::CommitState(std::unique_ptr<State> _state)
+void ArchiveHost::CommitState(std::unique_ptr<arc::State> _state)
 {
     if( !_state )
         return;
@@ -908,7 +909,7 @@ std::expected<std::unique_ptr<arc::State>, Error> ArchiveHost::ArchiveStateForIt
                 return std::unexpected(rc.error());
         }
 
-        auto new_state = std::make_unique<State>(file, SpawnLibarchive());
+        auto new_state = std::make_unique<arc::State>(file, SpawnLibarchive());
 
         const int res = new_state->Open();
         if( res < 0 ) {
@@ -944,7 +945,7 @@ std::expected<std::unique_ptr<arc::State>, Error> ArchiveHost::ArchiveStateForIt
     return std::move(state);
 }
 
-struct archive *ArchiveHost::SpawnLibarchive()
+struct ::archive *ArchiveHost::SpawnLibarchive()
 {
     archive *arc = archive_read_new();
     auto require = [](int rc) {

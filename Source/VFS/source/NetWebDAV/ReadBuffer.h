@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stddef.h>
@@ -29,6 +29,7 @@ private:
     void PushBack(const void *_data, int _size) noexcept;
     void PopFront(int _size) noexcept;
 
+    static constexpr auto m_DefaultCapacity = 32768;
     uint8_t *m_Bytes = nullptr;
     int m_Size = 0;
     int m_Capacity = 0;

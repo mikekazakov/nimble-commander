@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SpdLogWindow.h"
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/base_sink.h>
@@ -157,7 +157,10 @@ void SpdLogUISink::DoFlush()
     NSTextView *tv = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     tv.delegate = self;
     tv.editable = false;
-    tv.minSize = NSMakeSize(0, 0);
+    // NB! this min size is not (0, 0), but instead (100, 100) out of the blue, because in older versions on MacOS
+    // passing zeroes here seem to break automatic resizing, see GH#213.
+    // VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+    tv.minSize = NSMakeSize(100, 100);
     tv.maxSize = NSMakeSize(std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
     tv.textContainer.containerSize = NSMakeSize(std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
     tv.textContainer.widthTracksTextView = false;

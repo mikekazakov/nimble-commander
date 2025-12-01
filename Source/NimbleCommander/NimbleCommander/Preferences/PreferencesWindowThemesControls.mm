@@ -478,6 +478,10 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
                                                                    options:0
                                                                    metrics:nil
                                                                      views:NSDictionaryOfVariableBindings(cw)]];
+        [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[cw]|"
+                                                                   options:0
+                                                                   metrics:nil
+                                                                     views:NSDictionaryOfVariableBindings(cw)]];
         [cv addConstraint:[NSLayoutConstraint constraintWithItem:cw
                                                        attribute:NSLayoutAttributeCenterX
                                                        relatedBy:NSLayoutRelationEqual
@@ -503,6 +507,10 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
         NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
         [cv addSubview:cw];
         [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[cw(==18)]"
+                                                                   options:0
+                                                                   metrics:nil
+                                                                     views:NSDictionaryOfVariableBindings(cw)]];
+        [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[cw]|"
                                                                    options:0
                                                                    metrics:nil
                                                                      views:NSDictionaryOfVariableBindings(cw)]];

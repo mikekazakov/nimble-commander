@@ -3,9 +3,11 @@
 #include "PanelGalleryCollectionView.h"
 #include "PanelGalleryCollectionViewItem.h"
 #include "../Helpers/IconRepositoryCleaner.h"
+#include "../PanelView.h"
 #include <NimbleCommander/Bootstrap/Config.h>   // TODO: evil! DI instead!
 #include <NimbleCommander/Core/Theming/Theme.h> // Evil!
 #include <Panel/PanelData.h>
+#include <Panel/Log.h>
 #include <Base/dispatch_cpp.h>
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <Utility/ObjCpp.h>
@@ -30,8 +32,8 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     NSScrollView *m_ScrollView;
     NCPanelGalleryViewCollectionView *m_CollectionView;
     NSCollectionViewFlowLayout *m_CollectionViewLayout;
-
     QLPreviewView *m_QLView;
+    __weak PanelView *m_PanelView;
 
     ankerl::unordered_dense::map<vfsicon::IconRepository::SlotKey, int> m_IconSlotToItemIndexMapping;
     vfsicon::IconRepository *m_IconRepository;
@@ -104,6 +106,32 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     return self;
 }
 
+- (void)dealloc
+{
+    [m_PanelView removeObserver:self forKeyPath:@"active"];
+}
+
+- (void)viewDidMoveToSuperview
+{
+    if( PanelView *panel_view = nc::objc_cast<PanelView>(self.superview) ) {
+        m_PanelView = panel_view;
+        [panel_view addObserver:self forKeyPath:@"active" options:0 context:nullptr];
+        [self observeValueForKeyPath:@"active" ofObject:panel_view change:nil context:nil];
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id) [[maybe_unused]] object
+                        change:(NSDictionary *) [[maybe_unused]] change
+                       context:(void *) [[maybe_unused]] context
+{
+    if( [keyPath isEqualToString:@"active"] ) {
+        const bool active = m_PanelView.active;
+        for( NCPanelGalleryCollectionViewItem *item in m_CollectionView.visibleItems )
+            item.panelActive = active;
+    }
+}
+
 - (int)itemsInColumn
 {
     // TODO: implement
@@ -172,7 +200,15 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 
 - (void)onVolatileDataChanged
 {
-    // TODO: implement
+    Log::Trace("[PanelGalleryView onVolatileDataChanged]");
+    dispatch_assert_main_queue();
+    for( NCPanelGalleryCollectionViewItem *item in m_CollectionView.visibleItems )
+        if( NSIndexPath *index_path = [m_CollectionView indexPathForItem:item] ) {
+            const auto index = static_cast<int>(index_path.item);
+            // need to firstly check if we're still in sync with panel data
+            if( m_Data->IsValidSortPosition(index) )
+                item.vd = m_Data->VolatileDataAtSortPosition(index);
+        }
 }
 
 - (void)setData:(data::Model *)_data
@@ -247,7 +283,9 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
             else {
                 item.icon = m_IconRepository->AvailableIconForListingItem(vfs_item);
             }
+            item.vd = vd;
         }
+        [item setPanelActive:m_PanelView.active];
     }
 
     return item;

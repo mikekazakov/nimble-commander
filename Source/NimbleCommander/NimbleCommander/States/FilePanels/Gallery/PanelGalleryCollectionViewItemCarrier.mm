@@ -52,7 +52,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     __weak NCPanelGalleryCollectionViewItem *m_Controller;
     NSImage *m_Icon;
     NSString *m_Filename;
-    //    NSMutableAttributedString *m_AttrString;
+    NSColor *m_BackgroundColor;
     std::vector<NSMutableAttributedString *> m_AttrStrings;
     ItemLayout m_ItemLayout;
 }
@@ -61,6 +61,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 @synthesize icon = m_Icon;
 @synthesize filename = m_Filename;
 @synthesize itemLayout = m_ItemLayout;
+@synthesize backgroundColor = m_BackgroundColor;
 
 //@property(nonatomic, weak) NCPanelGalleryCollectionViewItem *controller;
 //@property(nonatomic) NSImage *icon;
@@ -98,8 +99,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     const auto bounds = self.bounds;
     const auto context = NSGraphicsContext.currentContext.CGContext;
 
-    //    NSColor *background = NSColor.purpleColor; // ????????????????????????????
-    NSColor *background = NSColor.grayColor; // ????????????????????????????
+    NSColor *background = m_BackgroundColor;
 
     CGContextSetFillColorWithColor(context, background.CGColor);
     CGContextFillRect(context, bounds);
@@ -131,7 +131,6 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
                        context:nil];
         current_y -= m_ItemLayout.font_height;
     }
-
 }
 
 - (void)setFilename:(NSString *)_filename
@@ -140,6 +139,14 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
         return;
     m_Filename = _filename;
     m_AttrStrings.clear();
+    [self setNeedsDisplay:true];
+}
+
+- (void)setBackgroundColor:(NSColor *)_background_color
+{
+    if( m_BackgroundColor == _background_color )
+        return;
+    m_BackgroundColor = _background_color;
     [self setNeedsDisplay:true];
 }
 

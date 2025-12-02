@@ -13,11 +13,8 @@
 @property(nonatomic) NSImage *icon;
 @property(nonatomic) NSString *filename;
 @property(nonatomic) nc::panel::gallery::ItemLayout itemLayout;
+@property(nonatomic) NSColor *backgroundColor;
 
-//
-//@property(nonatomic) NSColor *backgroundColor;
-//@property(nonatomic) NSColor *tagAccentColor;
-//@property(nonatomic) NSString *filename;
 //@property(nonatomic) NSColor *filenameColor;
 
 @end

@@ -19,6 +19,9 @@ export LC_CTYPE=en_US.UTF-8
 # https://github.com/google/sanitizers/wiki/AddressSanitizerContainerOverflow#false-positives
 export ASAN_OPTIONS=detect_container_overflow=0
 
+# Determine the host architecture
+HOST_ARCH=$(uname -m)
+
 # get current directory
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ROOT_DIR="${SCRIPTS_DIR}/.."
@@ -44,38 +47,52 @@ trap cleanup EXIT
 # go to the scripts directory
 cd ${SCRIPTS_DIR}
 
-build_target()
-{
-    TARGET=$1
-    echo building ${TARGET} - ${CONFIGURATION}
-    XC="xcodebuild \
-        -project ../Source/NimbleCommander/NimbleCommander.xcodeproj \
-        -scheme ${TARGET} \
-        -configuration Debug \
-        SYMROOT=${BUILD_DIR} \
-        OBJROOT=${BUILD_DIR} \
-        -enableAddressSanitizer YES \
-        -parallelizeTargets"
-    BINARY_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= *//')
-    BINARY_NAME=$($XC -showBuildSettings | grep " FULL_PRODUCT_NAME =" | sed -e 's/.*= *//')
-    BINARY_PATH=$BINARY_DIR/$BINARY_NAME
-    $XC build | tee -a ${LOG_FILE} | xcpretty
-}
+# Build the xcodebuild execution command
+XC="xcodebuild \
+    -project ../Source/NimbleCommander/NimbleCommander.xcodeproj \
+    -scheme IntegrationTests \
+    -configuration Debug \
+    -destination "platform=macOS,arch=${HOST_ARCH}" \
+    SYMROOT=${BUILD_DIR} \
+    OBJROOT=${BUILD_DIR} \
+    -enableAddressSanitizer YES \
+    -parallelizeTargets"
 
-# list of targets to build
-tests=(\
-VFSIconIT \
-VFSIT \
-OperationsIT \
-TermIT \
-)
+# Extract the directories and the names of the built unit test binaries
+DIRS="$($XC -showBuildSettings 2>/dev/null | grep ' BUILT_PRODUCTS_DIR =' | sed -e 's/.*= *//')"
+NAMES="$($XC -showBuildSettings 2>/dev/null | grep ' FULL_PRODUCT_NAME =' | sed -e 's/.*= *//')"
 
-for test in ${tests[@]}; do
-  # build the binary
-  build_target $test
+# Fill dirs[]
+dirs=()
+while IFS= read -r d; do
+    dirs+=("$d")
+done <<< "$DIRS"
+
+# Fill names[]
+names=()
+while IFS= read -r n; do
+    names+=("$n")
+done <<< "$NAMES"
     
-  # execute the binary
-  $BINARY_PATH
+# Sanity check: both arrays must have same length
+if [[ ${#dirs[@]} -ne ${#names[@]} ]]; then
+    echo "Mismatch: ${#dirs[@]} dirs vs ${#names[@]} names" >&2
+    exit 1
+fi
+
+# Combine them to build full binary paths
+binary_paths=()
+for ((i=0; i<${#names[@]}; i++)); do
+    binary_paths+=("${dirs[$i]}/${names[$i]}")
+done
+
+# Now actually build the integration tests tests
+${XC} build | tee -a ${LOG_FILE} | xcpretty
+
+# Run the produced binaries
+for path in "${binary_paths[@]}"; do
+    echo Now Running ${path}
+    ${path}
 done
 
 # cleanup

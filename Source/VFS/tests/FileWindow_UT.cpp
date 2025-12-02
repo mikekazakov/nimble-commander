@@ -5,10 +5,12 @@
 #include <VFS/FileWindow.h>
 #include <random>
 
+#define PREFIX "nc::vfs::FileWindow "
+
+namespace FileWindowTest {
+
 using namespace nc;
 using nc::vfs::FileWindow;
-
-#define PREFIX "nc::vfs::FileWindow "
 
 class TestGenericMemReadOnlyFile : public VFSFile
 {
@@ -63,7 +65,7 @@ std::expected<size_t, Error> TestGenericMemReadOnlyFile::Read(void *_buf, size_t
     if( m_Pos == static_cast<ssize_t>(m_Size) )
         return 0;
 
-    const size_t to_read = MIN(m_Size - m_Pos, _size);
+    const size_t to_read = std::min(static_cast<size_t>(m_Size - m_Pos), _size);
     std::memcpy(_buf, static_cast<const char *>(m_Mem) + m_Pos, to_read);
     m_Pos += to_read;
     assert(m_Pos <= static_cast<ssize_t>(m_Size)); // just a sanity check
@@ -231,3 +233,7 @@ TEST_CASE(PREFIX "seek access")
         REQUIRE(cmp == 0);
     }
 }
+
+} // namespace FileWindowTest
+
+#undef PREFIX

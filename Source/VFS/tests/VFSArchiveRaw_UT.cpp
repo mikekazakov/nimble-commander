@@ -8,10 +8,12 @@
 #include <sys/stat.h>
 #include <thread>
 
+#define PREFIX "VFSArchiveRaw "
+
+namespace VFSArchiveRawTest {
+
 using namespace nc;
 using namespace nc::vfs;
-
-#define PREFIX "VFSArchiveRaw "
 
 static const unsigned char __hello_txt_gz[] = {0x1f, 0x8b, 0x08, 0x08, 0xb6, 0x29, 0xef, 0x61, 0x00, 0x03, 0x68, 0x65,
                                                0x6c, 0x6c, 0x6f, 0x2e, 0x74, 0x78, 0x74, 0x00, 0xcb, 0x48, 0xcd, 0xc9,
@@ -189,3 +191,7 @@ TEST_CASE(PREFIX "gracefully discards non-compressed input")
         }
     }
 }
+
+} // namespace VFSArchiveRawTest
+
+#undef PREFIX

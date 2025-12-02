@@ -1,3 +1,5 @@
+#include "EasyOps_UT.cpp"
+#include "FileWindow_UT.cpp"
 #include "Host_UT.cpp"
 #include "ListingInput_UT.cpp"
 #include "SearchInFile_UT.cpp"

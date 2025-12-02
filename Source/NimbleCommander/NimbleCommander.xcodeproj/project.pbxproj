@@ -288,6 +288,8 @@
 		CF9F4B411ECD81BC00E0AF82 /* NetworkShareSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9F4B461ECD81BC00E0AF82 /* NetworkShareSheetController.xib */; };
 		CF9F4B421ECD81BC00E0AF82 /* NetworkShareSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9F4B461ECD81BC00E0AF82 /* NetworkShareSheetController.xib */; };
 		CF9F4B431ECD81BC00E0AF82 /* NetworkShareSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9F4B461ECD81BC00E0AF82 /* NetworkShareSheetController.xib */; };
+		CFA3B2A52DECB01F006001F9 /* PanelGalleryCollectionViewItemCarrier.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3B2A42DECB01F006001F9 /* PanelGalleryCollectionViewItemCarrier.mm */; };
+		CFA3B2A62DECB01F006001F9 /* PanelGalleryCollectionViewItemCarrier.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA3B2A32DECB01F006001F9 /* PanelGalleryCollectionViewItemCarrier.h */; };
 		CFA53A341D433E2A00C562A7 /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
 		CFA53A351D433E2A00C562A7 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */; };
 		CFA53A381D433E2A00C562A7 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
@@ -1156,6 +1158,8 @@
 		CFA22D2B2B51BD7E00E71479 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = NimbleCommander/Config/tests.xcconfig; sourceTree = "<group>"; };
 		CFA2D6011E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowThemesTabImportSheet.h; path = NimbleCommander/Preferences/PreferencesWindowThemesTabImportSheet.h; sourceTree = SOURCE_ROOT; };
 		CFA2D6021E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowThemesTabImportSheet.mm; path = NimbleCommander/Preferences/PreferencesWindowThemesTabImportSheet.mm; sourceTree = SOURCE_ROOT; };
+		CFA3B2A32DECB01F006001F9 /* PanelGalleryCollectionViewItemCarrier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelGalleryCollectionViewItemCarrier.h; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryCollectionViewItemCarrier.h; sourceTree = "<group>"; };
+		CFA3B2A42DECB01F006001F9 /* PanelGalleryCollectionViewItemCarrier.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelGalleryCollectionViewItemCarrier.mm; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryCollectionViewItemCarrier.mm; sourceTree = "<group>"; };
 		CFA3D7C519625F71006A30A1 /* GTMHotKeyTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GTMHotKeyTextField.h; path = ../../3rd_Party/GTMHotKeyTextField/GTMHotKeyTextField.h; sourceTree = SOURCE_ROOT; };
 		CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GTMHotKeyTextField.mm; path = ../../3rd_Party/GTMHotKeyTextField/GTMHotKeyTextField.mm; sourceTree = SOURCE_ROOT; };
 		CFA53A6D1D433E2A00C562A7 /* NimbleCommander-Unsigned.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NimbleCommander-Unsigned.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1655,6 +1659,8 @@
 				CFF836B82DCFE98B00CED300 /* PanelGalleryCollectionView.mm */,
 				CFF835F62DC9504A00CED300 /* PanelGalleryCollectionViewItem.h */,
 				CFF835F72DC9504A00CED300 /* PanelGalleryCollectionViewItem.mm */,
+				CFA3B2A32DECB01F006001F9 /* PanelGalleryCollectionViewItemCarrier.h */,
+				CFA3B2A42DECB01F006001F9 /* PanelGalleryCollectionViewItemCarrier.mm */,
 				CFF8353C2DC8D1B400CED300 /* PanelGalleryView.h */,
 				CFF8353D2DC8D1B400CED300 /* PanelGalleryView.mm */,
 			);
@@ -2290,6 +2296,7 @@
 				CFD2D28428A7876C003C18F9 /* Appearance.h in Headers */,
 				CF3FC99F2D99502900878079 /* Layout.h in Headers */,
 				CFA99A68265EE01E00F72E93 /* PanelListViewExtensionView.h in Headers */,
+				CFA3B2A62DECB01F006001F9 /* PanelGalleryCollectionViewItemCarrier.h in Headers */,
 				CFD2D28228A7876C003C18F9 /* SystemThemeDetector.h in Headers */,
 				CFA999F4264F17A800F72E93 /* CLI.h in Headers */,
 				CF9B07C626FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.h in Headers */,
@@ -3099,6 +3106,7 @@
 				CF0A47552BDD8EEB00833160 /* NetworkConnectionIconProvider.mm in Sources */,
 				CF0A481F2BDDA03600833160 /* PanelControllerActions.mm in Sources */,
 				CF764D2E258782D900D7ED17 /* PanelBriefViewFixedNumberLayoutEngine.mm in Sources */,
+				CFA3B2A52DECB01F006001F9 /* PanelGalleryCollectionViewItemCarrier.mm in Sources */,
 				CFEADD55259D01AD009ECA14 /* FocusOverlappedTerminal.mm in Sources */,
 				CF0A483E2BDDA1C600833160 /* InsertFromPasteboard.mm in Sources */,
 				CF0A488C2BDDA5A000833160 /* ToolsMenuDelegate.mm in Sources */,

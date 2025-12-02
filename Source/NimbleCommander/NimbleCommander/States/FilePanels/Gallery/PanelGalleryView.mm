@@ -9,12 +9,14 @@
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
+#include <Utility/FontExtras.h>
 #include <Utility/PathManip.h>
 #include <ankerl/unordered_dense.h>
 #include <Quartz/Quartz.h>
 
 using namespace nc;
 using namespace nc::panel;
+using namespace nc::panel::gallery;
 
 static constexpr auto g_HazardousExtensionsList = "filePanel.presentation.quickLookHazardousExtensionsList";
 static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolling";
@@ -22,6 +24,7 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
 @implementation PanelGalleryView {
     data::Model *m_Data;
     PanelGalleryViewLayout m_Layout;
+    ItemLayout m_ItemLayout;
 
     NSScrollView *m_ScrollView;
     NCPanelGalleryViewCollectionView *m_CollectionView;
@@ -46,6 +49,8 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
     m_Data = nullptr;
     m_IconRepository = &_ir;
     m_CurrentPreviewIsHazardous = false;
+    
+    [self rebuildItemLayout];
 
     m_ScrollView = [[NSScrollView alloc] initWithFrame:_frame];
     m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
@@ -55,7 +60,8 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
 
     m_CollectionViewLayout = [NSCollectionViewFlowLayout new];
     m_CollectionViewLayout.scrollDirection = NSCollectionViewScrollDirectionHorizontal;
-    m_CollectionViewLayout.itemSize = NSMakeSize(40, 40);
+//    m_CollectionViewLayout.itemSize = NSMakeSize( 40, 40);
+    m_CollectionViewLayout.itemSize = NSMakeSize(m_ItemLayout.width, m_ItemLayout.height);
     m_CollectionViewLayout.minimumLineSpacing = 10.;
     m_CollectionViewLayout.sectionInset = NSEdgeInsetsMake(0., 0., 0., 0.);
     
@@ -80,7 +86,7 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
                                                                            views:views_dict];
         [self addConstraints:constraints];
     };
-    add_constraints(@"V:|-(0)-[m_QLView]-(10)-[m_ScrollView(==50)]-(0)-|");
+    add_constraints(@"V:|-(0)-[m_QLView]-(10)-[m_ScrollView(==80@400)]-(0)-|");
     add_constraints(@"|-(0)-[m_ScrollView]-(0)-|");
     add_constraints(@"|-(0)-[m_QLView]-(0)-|");
 
@@ -222,22 +228,22 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
 {
     NCPanelGalleryCollectionViewItem *item = [m_CollectionView makeItemWithIdentifier:@"GalleryItem"
                                                                          forIndexPath:_index_path];
-
+    item.itemLayout = m_ItemLayout;
     if( m_Data ) {
         const auto index = static_cast<int>(_index_path.item);
         if( auto vfs_item = m_Data->EntryAtSortPosition(index) ) {
-            item.textField.stringValue = vfs_item.DisplayNameNS();
+            item.textField.stringValue = vfs_item.DisplayNameNS(); // TODO: wrong!
 
             auto &vd = m_Data->VolatileDataAtSortPosition(index);
             if( !m_IconRepository->IsValidSlot(vd.icon) )
                 vd.icon = m_IconRepository->Register(vfs_item);
             if( m_IconRepository->IsValidSlot(vd.icon) ) {
-                item.imageView.image = m_IconRepository->AvailableIconForSlot(vd.icon);
+                item.icon = m_IconRepository->AvailableIconForSlot(vd.icon);
                 m_IconRepository->ScheduleIconProduction(vd.icon, vfs_item);
                 m_IconSlotToItemIndexMapping[vd.icon] = index;
             }
             else {
-                item.imageView.image = m_IconRepository->AvailableIconForListingItem(vfs_item);
+                item.icon = m_IconRepository->AvailableIconForListingItem(vfs_item);
             }
         }
     }
@@ -263,6 +269,29 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
     return m_HazardousExtsList->contains(nc::utility::PathManip::Extension(_path));
 }
 
+- (void)rebuildItemLayout
+{
+    
+//    ItemLayout BuildItemLayout(unsigned _icon_size_px,
+//                               unsigned _font_height,
+//                               unsigned _text_lines);
+
+//    [SetPxSize-]
+    
+    
+//    if( self.window ) {
+
+//        m_IconsRepository->SetPxSize(px_size);
+//    }
+//    else {
+
+    // TODO: add support for scaling
+    //        const auto px_size = int(m_ItemLayout.icon_size * self.window.backingScaleFactor);
+    m_IconRepository->SetPxSize(32);
+    m_ItemLayout = BuildItemLayout(32,
+                                   static_cast<unsigned>(nc::utility::FontGeometryInfo([NSFont systemFontOfSize:12]).LineHeight()),
+                                   2);
+}
 
 
 @end

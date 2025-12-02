@@ -3,8 +3,7 @@
 #include "../PanelView.h"
 #include <Utility/ObjCpp.h>
 
-@implementation NCPanelGalleryViewCollectionView
-{
+@implementation NCPanelGalleryViewCollectionView {
     bool m_SmoothScrolling;
 }
 
@@ -34,7 +33,7 @@
 {
     if( _item_index < 0 )
         return;
-    
+
     NSScrollView *scroll_view = [self enclosingScrollView];
     assert(scroll_view);
 
@@ -138,4 +137,3 @@ static NSEvent *SwapScrollAxis(NSEvent *_event)
 }
 
 @end
-

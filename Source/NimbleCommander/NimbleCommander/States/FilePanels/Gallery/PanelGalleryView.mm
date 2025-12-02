@@ -3,7 +3,8 @@
 #include "PanelGalleryCollectionView.h"
 #include "PanelGalleryCollectionViewItem.h"
 #include "../Helpers/IconRepositoryCleaner.h"
-#include <NimbleCommander/Bootstrap/Config.h> // TODO: evil! DI instead!
+#include <NimbleCommander/Bootstrap/Config.h>   // TODO: evil! DI instead!
+#include <NimbleCommander/Core/Theming/Theme.h> // Evil!
 #include <Panel/PanelData.h>
 #include <Base/dispatch_cpp.h>
 #include <Utility/ExtensionLowercaseComparison.h>
@@ -19,7 +20,7 @@ using namespace nc::panel;
 using namespace nc::panel::gallery;
 
 static constexpr auto g_HazardousExtensionsList = "filePanel.presentation.quickLookHazardousExtensionsList";
-static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolling";
+static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrolling";
 
 @implementation PanelGalleryView {
     data::Model *m_Data;
@@ -34,7 +35,7 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
 
     ankerl::unordered_dense::map<vfsicon::IconRepository::SlotKey, int> m_IconSlotToItemIndexMapping;
     vfsicon::IconRepository *m_IconRepository;
-    
+
     // It's a workaround for the macOS bug reported in FB9809109/FB5352643.
     bool m_CurrentPreviewIsHazardous;
     std::optional<nc::utility::ExtensionsLowercaseList> m_HazardousExtsList; // empty means everything is hazardous
@@ -49,7 +50,7 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
     m_Data = nullptr;
     m_IconRepository = &_ir;
     m_CurrentPreviewIsHazardous = false;
-    
+
     [self rebuildItemLayout];
 
     m_ScrollView = [[NSScrollView alloc] initWithFrame:_frame];
@@ -60,11 +61,11 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
 
     m_CollectionViewLayout = [NSCollectionViewFlowLayout new];
     m_CollectionViewLayout.scrollDirection = NSCollectionViewScrollDirectionHorizontal;
-//    m_CollectionViewLayout.itemSize = NSMakeSize( 40, 40);
+    //    m_CollectionViewLayout.itemSize = NSMakeSize( 40, 40);
     m_CollectionViewLayout.itemSize = NSMakeSize(m_ItemLayout.width, m_ItemLayout.height);
     m_CollectionViewLayout.minimumLineSpacing = 10.;
     m_CollectionViewLayout.sectionInset = NSEdgeInsetsMake(0., 0., 0., 0.);
-    
+
     m_CollectionView = [[NCPanelGalleryViewCollectionView alloc] initWithFrame:_frame];
     m_CollectionView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
     m_CollectionView.collectionViewLayout = m_CollectionViewLayout;
@@ -95,8 +96,8 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
         if( auto strong_self = weak_self )
             [strong_self onIconUpdated:_icon_no image:_icon];
     });
-        
-    if(const std::string hazard_list = GlobalConfig().GetString(g_HazardousExtensionsList); hazard_list != "*" ) {
+
+    if( const std::string hazard_list = GlobalConfig().GetString(g_HazardousExtensionsList); hazard_list != "*" ) {
         m_HazardousExtsList.emplace(hazard_list);
     }
 
@@ -149,7 +150,7 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
         const std::string path = vfs_item.Path();
         if( NSString *ns_path = [NSString stringWithUTF8StdString:path] ) {
             if( NSURL *url = [NSURL fileURLWithPath:ns_path] ) {
-                if (m_CurrentPreviewIsHazardous) {
+                if( m_CurrentPreviewIsHazardous ) {
                     m_QLView.previewItem = nil; // to prevent an ObjC exception from inside QL - reset the view first
                 }
                 m_QLView.previewItem = url;
@@ -230,9 +231,10 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
                                                                          forIndexPath:_index_path];
     item.itemLayout = m_ItemLayout;
     if( m_Data ) {
-        const auto index = static_cast<int>(_index_path.item);
-        if( auto vfs_item = m_Data->EntryAtSortPosition(index) ) {
-            item.textField.stringValue = vfs_item.DisplayNameNS(); // TODO: wrong!
+        const int index = static_cast<int>(_index_path.item);
+        if( VFSListingItem vfs_item = m_Data->EntryAtSortPosition(index) ) {
+            //            item.textField.stringValue = vfs_item.DisplayNameNS(); // TODO: wrong!
+            item.item = vfs_item;
 
             auto &vd = m_Data->VolatileDataAtSortPosition(index);
             if( !m_IconRepository->IsValidSlot(vd.icon) )
@@ -271,27 +273,26 @@ static constexpr auto g_SmoothScrolling =  "filePanel.presentation.smoothScrolli
 
 - (void)rebuildItemLayout
 {
-    
-//    ItemLayout BuildItemLayout(unsigned _icon_size_px,
-//                               unsigned _font_height,
-//                               unsigned _text_lines);
 
-//    [SetPxSize-]
-    
-    
-//    if( self.window ) {
+    //    ItemLayout BuildItemLayout(unsigned _icon_size_px,
+    //                               unsigned _font_height,
+    //                               unsigned _text_lines);
 
-//        m_IconsRepository->SetPxSize(px_size);
-//    }
-//    else {
+    //    [SetPxSize-]
+
+    //    if( self.window ) {
+
+    //        m_IconsRepository->SetPxSize(px_size);
+    //    }
+    //    else {
 
     // TODO: add support for scaling
     //        const auto px_size = int(m_ItemLayout.icon_size * self.window.backingScaleFactor);
-    m_IconRepository->SetPxSize(32);
-    m_ItemLayout = BuildItemLayout(32,
-                                   static_cast<unsigned>(nc::utility::FontGeometryInfo([NSFont systemFontOfSize:12]).LineHeight()),
-                                   2);
-}
 
+    nc::utility::FontGeometryInfo info(nc::CurrentTheme().FilePanelsBriefFont()); // TODO: use real font
+    m_IconRepository->SetPxSize(32);
+    m_ItemLayout =
+        BuildItemLayout(32, static_cast<unsigned>(info.LineHeight()), static_cast<unsigned>(info.Descent()), 2);
+}
 
 @end

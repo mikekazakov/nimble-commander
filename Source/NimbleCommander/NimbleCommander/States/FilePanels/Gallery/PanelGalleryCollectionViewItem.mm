@@ -1,16 +1,14 @@
 // Copyright (C) 2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelGalleryCollectionViewItem.h"
 #include "PanelGalleryCollectionViewItemCarrier.h"
+#include <Utility/ObjCpp.h>
+#include <cassert>
 
 using namespace nc::panel::gallery;
 
 @implementation NCPanelGalleryCollectionViewItem {
-//    NSImageView *m_ImageView;
-//    NSTextField *m_Label;
-//    ItemLayout m_ItemLayout;
-    
-    
-    NCPanelGalleryCollectionViewItemCarrier *m_Carrier; // == self.view
+    VFSListingItem m_Item;
+    //    data::ItemVolatileData m_VD; // TODO
 }
 
 //@synthesize itemLayout = m_ItemLayout;
@@ -20,11 +18,11 @@ using namespace nc::panel::gallery;
 {
     self = [super initWithNibName:nil bundle:nil];
     if( self ) {
-//        m_PanelActive = false;
+        //        m_PanelActive = false;
         const auto rc = NSMakeRect(0, 0, 10, 10);
-        m_Carrier = [[NCPanelGalleryCollectionViewItemCarrier alloc] initWithFrame:rc];
-        m_Carrier.controller = self;
-        self.view = m_Carrier;
+        const auto carrier = [[NCPanelGalleryCollectionViewItemCarrier alloc] initWithFrame:rc];
+        carrier.controller = self;
+        self.view = carrier;
     }
     return self;
 }
@@ -57,8 +55,23 @@ using namespace nc::panel::gallery;
 
 - (void)prepareForReuse
 {
+    //    [super prepareForReuse];
+    // TODO: implement
+
     [super prepareForReuse];
-    // TODO: implement    
+    m_Item = VFSListingItem{};
+    //    m_VD = data::ItemVolatileData{};
+    //    m_PanelActive = false;
+    //    [super setSelected:false];
+    //    self.carrier.backgroundColor = nil;
+    //    self.carrier.tagAccentColor = nil;
+    //    self.carrier.qsHighlight = {};
+}
+
+- (NCPanelGalleryCollectionViewItemCarrier *)carrier
+{
+    assert(nc::objc_cast<NCPanelGalleryCollectionViewItemCarrier>(self.view));
+    return static_cast<NCPanelGalleryCollectionViewItemCarrier *>(self.view);
 }
 
 - (void)setSelected:(BOOL)selected
@@ -73,26 +86,37 @@ using namespace nc::panel::gallery;
     }
 }
 
-//@property (nonatomic) NSImage *icon;
-
 - (void)setIcon:(NSImage *)_icon
 {
-    m_Carrier.icon = _icon;
+    self.carrier.icon = _icon;
 }
 
-- (NSImage*)icon
+- (NSImage *)icon
 {
-    return m_Carrier.icon;
+    return self.carrier.icon;
 }
 
 - (ItemLayout)itemLayout
 {
-    return m_Carrier.itemLayout;
+    return self.carrier.itemLayout;
 }
 
 - (void)setItemLayout:(ItemLayout)_item_layout
 {
-    m_Carrier.itemLayout = _item_layout;    
+    self.carrier.itemLayout = _item_layout;
+}
+
+- (VFSListingItem)item
+{
+    return m_Item;
+}
+
+- (void)setItem:(VFSListingItem)_item
+{
+    m_Item = _item;
+    self.carrier.filename = m_Item.DisplayNameNS();
+    //    self.carrier.isSymlink = m_Item.IsSymlink();
+    //    [self updateItemLayout];
 }
 
 @end

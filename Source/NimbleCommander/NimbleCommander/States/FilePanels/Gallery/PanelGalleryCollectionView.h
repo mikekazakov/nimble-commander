@@ -6,7 +6,7 @@
 @interface NCPanelGalleryViewCollectionView : NSCollectionView
 
 // Should scrolling to an item be immediate or smoothly animated.
-@property (nonatomic) bool smoothScrolling;
+@property(nonatomic) bool smoothScrolling;
 
 // Ensures that the item is present on the screen.
 // Scrolls to the specified item if needed.

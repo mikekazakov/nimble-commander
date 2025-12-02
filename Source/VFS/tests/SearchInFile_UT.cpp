@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "SearchInFile.h"
 #include "VFSGenericMemReadOnlyFile.h"
@@ -6,12 +6,15 @@
 #include <Utility/StringExtras.h>
 #include <Base/CFString.h>
 
+#define PREFIX "nc::vfs::SearchInFile "
+
+namespace SearchInFileTest {
+
 using namespace nc::base;
 using nc::utility::Encoding;
 using nc::vfs::FileWindow;
 using nc::vfs::GenericMemReadOnlyFile;
 using nc::vfs::SearchInFile;
-#define PREFIX "[nc::vfs::SearchInFile] "
 
 static FileWindow MakeFileWindow(std::string_view _data);
 
@@ -220,3 +223,7 @@ static FileWindow MakeFileWindow(std::string_view _data)
     REQUIRE(mem_file->Open(VFSFlags::OF_Read));
     return FileWindow{mem_file};
 }
+
+} // namespace SearchInFileTest
+
+#undef PREFIX

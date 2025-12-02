@@ -8,9 +8,11 @@
 #include <Base/WriteAtomically.h>
 #include <Base/algo.h>
 
-using namespace nc::vfs;
-
 #define PREFIX "VFSArchive "
+
+namespace VFSArchiveTest {
+
+using namespace nc::vfs;
 
 static void CheckFileIs(VFSHost &_host, const std::string_view _path, const std::string_view _content)
 {
@@ -2102,3 +2104,7 @@ TEST_CASE(PREFIX "synthetic directories can be correctly resolved")
     REQUIRE(host->IsSymlink("/etc/rc0.d/K01cryptdisks", VFSFlags::F_NoFollow));
     REQUIRE(readsym("/etc/rc0.d/K01cryptdisks") == "../init.d/cryptdisks");
 }
+
+} // namespace VFSArchiveTest
+
+#undef PREFIX

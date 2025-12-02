@@ -1,7 +1,11 @@
-// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../Tests.h"
 #include <VFS/NetSFTP.h>
 #include <fstream>
+
+#define PREFIX "nc::vfs::sftp::KeyValidator "
+
+namespace KeyValidatorTests {
 
 static bool Save(const std::string &_filepath, const std::string &_content);
 
@@ -211,7 +215,6 @@ static const std::string_view g_OpenSSHED25519Encrypted =
     "9D25BkEY8ZF4OVl3PtjJgv9/DM5mOPnVJleF8=\n"
     "-----END OPENSSH PRIVATE KEY-----";
 
-#define PREFIX "nc::vfs::sftp::KeyValidator "
 using nc::vfs::sftp::KeyValidator;
 
 TEST_CASE(PREFIX "refuses to validate an unexising key")
@@ -317,3 +320,7 @@ static bool Save(const std::string &_filepath, const std::string &_content)
     out.close();
     return true;
 }
+
+} // namespace KeyValidatorTests
+
+#undef PREFIX

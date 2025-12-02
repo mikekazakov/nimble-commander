@@ -5,13 +5,15 @@
 #include <Base/algo.h>
 #include <sys/stat.h>
 #include <sys/xattr.h>
-
 #include <algorithm>
+
+#define PREFIX "VFSNative "
+
+namespace VFSNativeTests {
 
 using namespace nc;
 using namespace nc::vfs;
 using namespace nc::vfs::native;
-#define PREFIX "VFSNative "
 
 static VFSNativeHost &host()
 {
@@ -186,3 +188,7 @@ TEST_CASE(PREFIX "FetchGroups")
     REQUIRE(std::ranges::contains(groups.value(), VFSGroup{0, "wheel", "System Group"}));
     REQUIRE(std::ranges::contains(groups.value(), VFSGroup{20, "staff", "Staff"}));
 }
+
+} // namespace VFSNativeTests
+
+#undef PREFIX

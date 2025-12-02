@@ -53,6 +53,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     NSImage *m_Icon;
     NSString *m_Filename;
     NSColor *m_BackgroundColor;
+    NSColor *m_FilenameColor;
     std::vector<NSMutableAttributedString *> m_AttrStrings;
     ItemLayout m_ItemLayout;
 }
@@ -62,6 +63,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 @synthesize filename = m_Filename;
 @synthesize itemLayout = m_ItemLayout;
 @synthesize backgroundColor = m_BackgroundColor;
+@synthesize filenameColor = m_FilenameColor;
 
 //@property(nonatomic, weak) NCPanelGalleryCollectionViewItem *controller;
 //@property(nonatomic) NSImage *icon;
@@ -150,6 +152,15 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     [self setNeedsDisplay:true];
 }
 
+- (void)setFilenameColor:(NSColor *)_filename_color
+{
+    if( m_FilenameColor == _filename_color )
+        return;
+    m_FilenameColor = _filename_color;
+    m_AttrStrings.clear();
+    [self setNeedsDisplay:true];
+}
+
 - (NSRect)calculateTextSegmentFromBounds:(NSRect)_bounds
 {
     const int origin_x = m_ItemLayout.text_left_margin;
@@ -216,9 +227,9 @@ CutStringIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double _
         CutStringIntoWrappedAndTailSubstrings(typesetting_attr_string, text_rect.size.width, m_ItemLayout.text_lines);
 
     const auto tm = GetCurrentFilenamesTrimmingMode();
-    NSDictionary *attrs_2 = @{
+    NSDictionary *final_attrs = @{
         NSFontAttributeName: nc::CurrentTheme().FilePanelsBriefFont(),
-        NSForegroundColorAttributeName: NSColor.blackColor,
+        NSForegroundColorAttributeName: m_FilenameColor,
         NSParagraphStyleAttributeName: ParagraphStyle(tm)
     };
 
@@ -239,7 +250,7 @@ CutStringIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double _
 
     for( NSRange range : substrings ) {
         m_AttrStrings.push_back([[NSMutableAttributedString alloc] initWithString:[m_Filename substringWithRange:range]
-                                                                       attributes:attrs_2]);
+                                                                       attributes:final_attrs]);
     }
 }
 

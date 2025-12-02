@@ -1,6 +1,7 @@
 // Copyright (C) 2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelGalleryCollectionViewItem.h"
 #include "PanelGalleryCollectionViewItemCarrier.h"
+#include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <Utility/ObjCpp.h>
 #include <cassert>
@@ -27,32 +28,6 @@ using namespace nc::panel::gallery;
     return self;
 }
 
-//- (void)viewDidLoad
-//{
-//    [super viewDidLoad];
-//
-//    self.view.wantsLayer = YES; // Required for layer-backed background
-//
-//    m_ImageView = [[NSImageView alloc]
-//        initWithFrame:NSMakeRect(0, 20, self.view.bounds.size.width, self.view.bounds.size.height - 20)];
-//    m_ImageView.imageScaling = NSImageScaleProportionallyUpOrDown;
-//    m_ImageView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-//
-//    m_Label = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, self.view.bounds.size.width, 20)];
-//    m_Label.editable = NO;
-//    m_Label.bezeled = NO;
-//    m_Label.drawsBackground = NO;
-//    m_Label.alignment = NSTextAlignmentCenter;
-//    m_Label.font = [NSFont systemFontOfSize:12];
-//    m_Label.autoresizingMask = NSViewWidthSizable;
-//
-//    [self.view addSubview:m_ImageView];
-//    [self.view addSubview:m_Label];
-//
-//    self.imageView = m_ImageView;
-//    self.textField = m_Label;
-//}
-
 - (void)prepareForReuse
 {
     [super prepareForReuse];
@@ -60,7 +35,7 @@ using namespace nc::panel::gallery;
     m_VD = nc::panel::data::ItemVolatileData{};
     m_PanelActive = false;
     [super setSelected:false];
-    //    self.carrier.backgroundColor = nil;
+//    self.carrier.backgroundColor = nil;
     //    self.carrier.tagAccentColor = nil;
     //    self.carrier.qsHighlight = {};
 }
@@ -74,19 +49,8 @@ using namespace nc::panel::gallery;
 - (void)setSelected:(BOOL)selected
 {
     [super setSelected:selected];
-
+    [self updateForegroundColor];
     [self updateBackgroundColor];
-
-    //    [self updateBackgroundColor];
-    //    [self updateForegroundColor];
-    //    [self updateAccentColor];
-
-    //    if( selected ) {
-    //        self.view.layer.backgroundColor = [[NSColor selectedContentBackgroundColor] CGColor];
-    //    }
-    //    else {
-    //        self.view.layer.backgroundColor = [[NSColor clearColor] CGColor];
-    //    }
 }
 
 - (void)setIcon:(NSImage *)_icon
@@ -128,10 +92,9 @@ using namespace nc::panel::gallery;
         return;
     m_VD = _vd;
 
+    [self updateForegroundColor];
     [self updateBackgroundColor];
 
-    //    [self updateBackgroundColor];
-    //    [self updateAccentColor];
     //    self.carrier.qsHighlight = _vd.highlight;
     //    self.carrier.highlighted = _vd.is_highlighted();
 }
@@ -192,13 +155,27 @@ static NSColor *Blend(NSColor *_front, NSColor *_back)
     self.carrier.backgroundColor = final_color;
 }
 
+- (void)updateForegroundColor
+{
+    if( !m_Item )
+        return;
+
+    const auto &rules = nc::CurrentTheme().FilePanelsItemsColoringRules();
+    const bool focus = self.selected && m_PanelActive;
+    for( const auto &i : rules )
+        if( i.filter.Filter(m_Item, m_VD) ) {
+            self.carrier.filenameColor = focus ? i.focused : i.regular;
+            break;
+        }
+}
+
 - (void)setPanelActive:(bool)_active
 {
     if( m_PanelActive == _active )
         return;
     m_PanelActive = _active;
 
-    // update?
+    [self updateForegroundColor];
     [self updateBackgroundColor];
 }
 

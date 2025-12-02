@@ -269,7 +269,6 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     if( m_Data ) {
         const int index = static_cast<int>(_index_path.item);
         if( VFSListingItem vfs_item = m_Data->EntryAtSortPosition(index) ) {
-            //            item.textField.stringValue = vfs_item.DisplayNameNS(); // TODO: wrong!
             item.item = vfs_item;
 
             auto &vd = m_Data->VolatileDataAtSortPosition(index);

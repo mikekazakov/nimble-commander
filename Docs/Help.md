@@ -272,6 +272,12 @@ Nimble Commander also provides some customization options to fine-tune sorting:
   - `Case-Insensitive`: A Unicode-based comparison that ignores the case of letters in filenames.
   - `Case-Sensitive`:  A simple Unicode-based comparison that compares characters one by one without transformations. The fastest of the three.
 
+## Hidden Items
+In Nimble Commander, items are considered hidden if their filenames begin with a dot (`"."`) or if they have the hidden file attribute (`UF_HIDDEN`) set.
+The special parent folder entry (`".."`) is never treated as hidden.
+By default, hidden items are not shown in the file panels.
+You can toggle their visibility using the `Shift + Cmd + .` hotkey or by selecting `View > Show/Hide Hidden Items` from the menu.
+
 ## Quick Search
 Nimble Commander offers a fast way to locate a file in a folder by typing a few letters from its name.
 This keyboard-based navigation is called Quick Search.

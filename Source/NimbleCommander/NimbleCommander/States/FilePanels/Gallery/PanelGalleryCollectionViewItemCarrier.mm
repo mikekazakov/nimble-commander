@@ -215,7 +215,7 @@ CutStringIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double _
 
     // Build a minimal set of attributes solely for typesetting
     NSDictionary *typesetting_attrs = @{
-        NSFontAttributeName: nc::CurrentTheme().FilePanelsBriefFont(),
+        NSFontAttributeName: nc::CurrentTheme().FilePanelsGalleryFont(),
         NSParagraphStyleAttributeName: breaking_paragraph_style
     };
 
@@ -228,7 +228,7 @@ CutStringIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double _
 
     const auto tm = GetCurrentFilenamesTrimmingMode();
     NSDictionary *final_attrs = @{
-        NSFontAttributeName: nc::CurrentTheme().FilePanelsBriefFont(),
+        NSFontAttributeName: nc::CurrentTheme().FilePanelsGalleryFont(),
         NSForegroundColorAttributeName: m_FilenameColor,
         NSParagraphStyleAttributeName: ParagraphStyle(tm)
     };

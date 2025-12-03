@@ -359,7 +359,7 @@ static bool IsQLSupportedSync(NSURL *_url)
     // TODO: add support for scaling
     //        const auto px_size = int(m_ItemLayout.icon_size * self.window.backingScaleFactor);
 
-    nc::utility::FontGeometryInfo info(nc::CurrentTheme().FilePanelsBriefFont()); // TODO: use real font
+    nc::utility::FontGeometryInfo info(nc::CurrentTheme().FilePanelsGalleryFont());
     m_IconRepository->SetPxSize(32);
     m_ItemLayout =
         BuildItemLayout(32, static_cast<unsigned>(info.LineHeight()), static_cast<unsigned>(info.Descent()), 2);

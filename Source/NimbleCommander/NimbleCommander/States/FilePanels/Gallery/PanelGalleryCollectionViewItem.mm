@@ -35,7 +35,7 @@ using namespace nc::panel::gallery;
     m_VD = nc::panel::data::ItemVolatileData{};
     m_PanelActive = false;
     [super setSelected:false];
-//    self.carrier.backgroundColor = nil;
+    //    self.carrier.backgroundColor = nil;
     self.carrier.qsHighlight = {};
 }
 

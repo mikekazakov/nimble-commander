@@ -11,6 +11,7 @@ namespace nc::panel::data {
 // Can store up to 8 segments, each with up to 15 characters inside them.
 // The maximum stored offset can be 120 characters.
 // The maximum amount of highlighted characters can be 120.
+// NB! The characters are counted in UTF-16 code units, i.e. native to NSString/Foundation.
 struct QuickSearchHiglight {
     // The maximum number of segments in a highlight
     inline static constexpr size_t max_len = 8;

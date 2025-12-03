@@ -36,8 +36,7 @@ using namespace nc::panel::gallery;
     m_PanelActive = false;
     [super setSelected:false];
 //    self.carrier.backgroundColor = nil;
-    //    self.carrier.tagAccentColor = nil;
-    //    self.carrier.qsHighlight = {};
+    self.carrier.qsHighlight = {};
 }
 
 - (NCPanelGalleryCollectionViewItemCarrier *)carrier
@@ -94,8 +93,7 @@ using namespace nc::panel::gallery;
 
     [self updateForegroundColor];
     [self updateBackgroundColor];
-
-    //    self.carrier.qsHighlight = _vd.highlight;
+    self.carrier.qsHighlight = _vd.highlight;
     //    self.carrier.highlighted = _vd.is_highlighted();
 }
 

@@ -5,6 +5,7 @@
 #include <NimbleCommander/Core/Theming/Theme.h> // Evil!
 #include <Base/algo.h>
 #include <Base/CFPtr.h>
+#include <boost/container/static_vector.hpp> // TODO: switch to std::inplace_vector once available
 
 #include <fmt/format.h>
 #include <CoreText/CoreText.h>
@@ -54,8 +55,9 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     NSString *m_Filename;
     NSColor *m_BackgroundColor;
     NSColor *m_FilenameColor;
-    std::vector<NSMutableAttributedString *> m_AttrStrings;
+    boost::container::static_vector<NSMutableAttributedString *, 4> m_AttrStrings;
     ItemLayout m_ItemLayout;
+    nc::panel::data::QuickSearchHiglight m_QSHighlight;
 }
 
 @synthesize controller = m_Controller;
@@ -64,11 +66,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 @synthesize itemLayout = m_ItemLayout;
 @synthesize backgroundColor = m_BackgroundColor;
 @synthesize filenameColor = m_FilenameColor;
-
-//@property(nonatomic, weak) NCPanelGalleryCollectionViewItem *controller;
-//@property(nonatomic) NSImage *icon;
-//@property(nonatomic) NSString *filename;
-//@property(nonatomic) nc::panel::gallery::ItemLayout itemLayout;
+@synthesize qsHighlight = m_QSHighlight;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -94,10 +92,6 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 
 - (void)drawRect:(NSRect) [[maybe_unused]] _dirty_rect
 {
-    //    if ( !m_Filename )
-    //        return;
-    //
-
     const auto bounds = self.bounds;
     const auto context = NSGraphicsContext.currentContext.CGContext;
 
@@ -161,6 +155,15 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     [self setNeedsDisplay:true];
 }
 
+- (void)setQsHighlight:(nc::panel::data::QuickSearchHiglight)_qs_highlight
+{
+    if( m_QSHighlight == _qs_highlight )
+        return;
+    m_QSHighlight = _qs_highlight;
+    m_AttrStrings.clear();
+    [self setNeedsDisplay:true];
+}
+
 - (NSRect)calculateTextSegmentFromBounds:(NSRect)_bounds
 {
     const int origin_x = m_ItemLayout.text_left_margin;
@@ -171,10 +174,10 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     return NSMakeRect(origin_x, origin_y, width, height);
 }
 
-static std::vector<NSRange>
+static boost::container::static_vector<NSRange, 4>
 CutStringIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double _width, size_t _max_lines)
 {
-    assert(_max_lines > 0);
+    assert(_max_lines > 0 && _max_lines <= 4);
     if( _max_lines == 1 ) {
         return {NSMakeRange(0, _attr_string.length)};
     }
@@ -182,7 +185,7 @@ CutStringIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double _
     const nc::base::CFPtr<CTTypesetterRef> typesetter = nc::base::CFPtr<CTTypesetterRef>::adopt(
         CTTypesetterCreateWithAttributedString((__bridge CFAttributedStringRef)(_attr_string)));
 
-    std::vector<NSRange> result;
+    boost::container::static_vector<NSRange, 4> result;
     CFIndex start = 0;
     for( size_t line_idx = 0; line_idx < _max_lines - 1; ++line_idx ) {
         CFIndex count = CTTypesetterSuggestLineBreak(typesetter.get(), start, _width);
@@ -223,34 +226,41 @@ CutStringIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double _
     NSMutableAttributedString *typesetting_attr_string =
         [[NSMutableAttributedString alloc] initWithString:m_Filename attributes:typesetting_attrs];
     const NSRect text_rect = [self calculateTextSegmentFromBounds:self.bounds];
-    const std::vector<NSRange> substrings =
+    const boost::container::static_vector<NSRange, 4> substrings =
         CutStringIntoWrappedAndTailSubstrings(typesetting_attr_string, text_rect.size.width, m_ItemLayout.text_lines);
 
-    const auto tm = GetCurrentFilenamesTrimmingMode();
+    // Build the final text attributes for rendering
     NSDictionary *final_attrs = @{
         NSFontAttributeName: nc::CurrentTheme().FilePanelsGalleryFont(),
         NSForegroundColorAttributeName: m_FilenameColor,
-        NSParagraphStyleAttributeName: ParagraphStyle(tm)
+        NSParagraphStyleAttributeName: ParagraphStyle(GetCurrentFilenamesTrimmingMode())
     };
-
-    // TODO: QuickSearch
-    //    if( !m_QSHighlight.empty() ) {
-    //        const auto hl = m_QSHighlight.unpack();
-    //        const auto fn_len = static_cast<size_t>(m_Filename.length);
-    //        for( size_t i = 0; i != hl.count; ++i ) {
-    //            if( hl.segments[i].offset < fn_len && hl.segments[i].offset + hl.segments[i].length <= fn_len ) {
-    //                const auto range = NSMakeRange(hl.segments[i].offset, hl.segments[i].length);
-    //                [m_AttrString addAttribute:NSUnderlineStyleAttributeName value:@(NSUnderlineStyleSingle)
-    //                range:range];
-    //            }
-    //        }
-    //    }
 
     m_AttrStrings.clear();
 
+    const data::QuickSearchHiglight::Ranges qs_ranges = m_QSHighlight.unpack();
+
     for( NSRange range : substrings ) {
-        m_AttrStrings.push_back([[NSMutableAttributedString alloc] initWithString:[m_Filename substringWithRange:range]
-                                                                       attributes:final_attrs]);
+        NSMutableAttributedString *str =
+            [[NSMutableAttributedString alloc] initWithString:[m_Filename substringWithRange:range]
+                                                   attributes:final_attrs];
+
+        // Apply QuickSearch underlining if there is one
+        if( qs_ranges.count != 0 ) {
+            // For every QS range, check if it intersects with the current substring range
+            for( size_t i = 0; i != qs_ranges.count; ++i ) {
+                const NSRange qs_range = NSMakeRange(qs_ranges.segments[i].offset, qs_ranges.segments[i].length);
+                if( NSIntersectionRange(range, qs_range).length > 0 ) {
+                    // There is an intersection, apply underline to the intersecting part
+                    const NSRange intersection = NSIntersectionRange(range, qs_range);
+                    const NSRange local_range =
+                        NSMakeRange(intersection.location - range.location, intersection.length);
+                    [str addAttribute:NSUnderlineStyleAttributeName value:@(NSUnderlineStyleSingle) range:local_range];
+                }
+            }
+        }
+
+        m_AttrStrings.push_back(str);
     }
 }
 

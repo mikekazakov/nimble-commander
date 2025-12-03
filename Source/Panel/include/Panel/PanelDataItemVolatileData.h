@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stdint.h>
@@ -8,7 +8,7 @@
 
 namespace nc::panel::data {
 
-// Can store up to 8 segments, each with up to characters inside them.
+// Can store up to 8 segments, each with up to 15 characters inside them.
 // The maximum stored offset can be 120 characters.
 // The maximum amount of highlighted characters can be 120.
 struct QuickSearchHiglight {

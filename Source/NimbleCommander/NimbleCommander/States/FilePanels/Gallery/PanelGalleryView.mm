@@ -32,6 +32,7 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     NSScrollView *m_ScrollView;
     NCPanelGalleryViewCollectionView *m_CollectionView;
     NSCollectionViewFlowLayout *m_CollectionViewLayout;
+    NSLayoutConstraint *m_ScrollViewHeightConstraint;
     QLPreviewView *m_QLView;
     NSImageView *m_FallbackImageView;
 
@@ -60,7 +61,8 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_CollectionViewLayout = [NSCollectionViewFlowLayout new];
     m_CollectionViewLayout.scrollDirection = NSCollectionViewScrollDirectionHorizontal;
     m_CollectionViewLayout.itemSize = NSMakeSize(m_ItemLayout.width, m_ItemLayout.height);
-    m_CollectionViewLayout.minimumLineSpacing = 10.;
+    m_CollectionViewLayout.minimumLineSpacing = 0.;
+    m_CollectionViewLayout.minimumInteritemSpacing = 0.;
     m_CollectionViewLayout.sectionInset = NSEdgeInsetsMake(0., 0., 0., 0.);
 
     m_CollectionView = [[NCPanelGalleryViewCollectionView alloc] initWithFrame:_frame];
@@ -95,12 +97,22 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
                                                                            views:views_dict];
         [self addConstraints:constraints];
     };
-    add_constraints(@"V:|-(0)-[m_QLView]-(10)-[m_ScrollView(==80@400)]-(0)-|");
     add_constraints(@"|-(0)-[m_ScrollView]-(0)-|");
     add_constraints(@"|-(0)-[m_QLView]-(0)-|");
-    add_constraints(@"V:|-(0)-[m_FallbackImageView]-(10)-[m_ScrollView(==80@400)]-(0)-|"); // TODO: reduce copy&paste
     add_constraints(@"|-(0)-[m_FallbackImageView]-(0)-|");
-
+    add_constraints(@"V:|-(0)-[m_QLView]-(0)-[m_ScrollView]");
+    add_constraints(@"V:|-(0)-[m_FallbackImageView]-(0)-[m_ScrollView]");
+    add_constraints(@"V:[m_ScrollView]-(0)-|");
+    m_ScrollViewHeightConstraint = [NSLayoutConstraint constraintWithItem:m_ScrollView
+                                                                attribute: NSLayoutAttributeHeight
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                     toItem:nil
+                                                                attribute:NSLayoutAttributeNotAnAttribute
+                                                                multiplier:1.0
+                                                                    constant:m_ItemLayout.height];
+    m_ScrollViewHeightConstraint.priority = 400; // TODO: why 400?
+    [self addConstraint:m_ScrollViewHeightConstraint];
+    
     __weak PanelGalleryView *weak_self = self;
     m_IconRepository->SetUpdateCallback([=](vfsicon::IconRepository::SlotKey _icon_no, NSImage *_icon) {
         if( auto strong_self = weak_self )
@@ -363,6 +375,10 @@ static bool IsQLSupportedSync(NSURL *_url)
     m_IconRepository->SetPxSize(32);
     m_ItemLayout =
         BuildItemLayout(32, static_cast<unsigned>(info.LineHeight()), static_cast<unsigned>(info.Descent()), 2);
+    
+    if( m_ScrollViewHeightConstraint != nil ) {
+        m_ScrollViewHeightConstraint.constant = m_ItemLayout.height;
+    }
 }
 
 @end

@@ -175,7 +175,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 }
 
 static boost::container::static_vector<NSRange, 4>
-CutStringIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double _width, size_t _max_lines)
+CutFilenameIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double _width, size_t _max_lines)
 {
     assert(_max_lines > 0 && _max_lines <= 4);
     if( _max_lines == 1 ) {
@@ -199,6 +199,27 @@ CutStringIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double _
     const CFIndex length = static_cast<CFIndex>(_attr_string.length);
     if( start < length ) {
         result.push_back(NSMakeRange(static_cast<NSUInteger>(start), static_cast<NSUInteger>(length - start)));
+    }
+
+    // Check for a special case when the extension is split across 2 lines and could be rebalanced for better
+    // readability
+    if( result.size() >= 2 ) { // at least 2 lines to consider rebalancing
+        const NSRange last_dot = [_attr_string.string rangeOfString:@"." options:NSBackwardsSearch];
+        if( last_dot.location != NSNotFound &&                        // actual dot was found ...
+            last_dot.location > 0 &&                                  // ... and it's something like an extension
+            last_dot.location > result[result.size() - 2].location && // dot is on the previous to the last line
+            last_dot.location < result[result.size() - 1].location    // dot is on the previous to the last line
+        ) {
+            // Check if after rebalancing the last line would still fit
+            const long new_break = CTTypesetterSuggestLineBreak(typesetter.get(), last_dot.location, _width);
+            if( (new_break + last_dot.location) == static_cast<NSUInteger>(length) ) {
+                const long diff = result.back().location - last_dot.location;
+                assert(diff > 0);
+                result[result.size() - 2].length -= diff;
+                result[result.size() - 1].location -= diff;
+                result[result.size() - 1].length += diff;
+            }
+        }
     }
 
     return result;
@@ -227,7 +248,7 @@ CutStringIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double _
         [[NSMutableAttributedString alloc] initWithString:m_Filename attributes:typesetting_attrs];
     const NSRect text_rect = [self calculateTextSegmentFromBounds:self.bounds];
     const boost::container::static_vector<NSRange, 4> substrings =
-        CutStringIntoWrappedAndTailSubstrings(typesetting_attr_string, text_rect.size.width, m_ItemLayout.text_lines);
+        CutFilenameIntoWrappedAndTailSubstrings(typesetting_attr_string, text_rect.size.width, m_ItemLayout.text_lines);
 
     // Build the final text attributes for rendering
     NSDictionary *final_attrs = @{

@@ -33,6 +33,8 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     NCPanelGalleryViewCollectionView *m_CollectionView;
     NSCollectionViewFlowLayout *m_CollectionViewLayout;
     QLPreviewView *m_QLView;
+    NSImageView *m_FallbackImageView;
+
     __weak PanelView *m_PanelView;
 
     ankerl::unordered_dense::map<vfsicon::IconRepository::SlotKey, int> m_IconSlotToItemIndexMapping;
@@ -55,15 +57,8 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 
     [self rebuildItemLayout];
 
-    m_ScrollView = [[NSScrollView alloc] initWithFrame:_frame];
-    m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
-    m_ScrollView.hasVerticalScroller = false;
-    m_ScrollView.hasHorizontalScroller = true;
-    [self addSubview:m_ScrollView];
-
     m_CollectionViewLayout = [NSCollectionViewFlowLayout new];
     m_CollectionViewLayout.scrollDirection = NSCollectionViewScrollDirectionHorizontal;
-    //    m_CollectionViewLayout.itemSize = NSMakeSize( 40, 40);
     m_CollectionViewLayout.itemSize = NSMakeSize(m_ItemLayout.width, m_ItemLayout.height);
     m_CollectionViewLayout.minimumLineSpacing = 10.;
     m_CollectionViewLayout.sectionInset = NSEdgeInsetsMake(0., 0., 0., 0.);
@@ -75,13 +70,24 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_CollectionView.smoothScrolling = GlobalConfig().GetBool(g_SmoothScrolling);
     [m_CollectionView registerClass:NCPanelGalleryCollectionViewItem.class forItemWithIdentifier:@"GalleryItem"];
 
+    m_ScrollView = [[NSScrollView alloc] initWithFrame:_frame];
+    m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
+    m_ScrollView.hasVerticalScroller = false;
+    m_ScrollView.hasHorizontalScroller = true;
+    m_ScrollView.documentView = m_CollectionView;
+    [self addSubview:m_ScrollView];
+
     m_QLView = [[QLPreviewView alloc] initWithFrame:_frame style:QLPreviewViewStyleNormal];
     m_QLView.translatesAutoresizingMaskIntoConstraints = false;
     [self addSubview:m_QLView];
 
-    m_ScrollView.documentView = m_CollectionView;
+    m_FallbackImageView = [[NSImageView alloc] initWithFrame:_frame];
+    m_FallbackImageView.translatesAutoresizingMaskIntoConstraints = false;
+    m_FallbackImageView.imageScaling = NSImageScaleProportionallyUpOrDown;
+    m_FallbackImageView.hidden = true;
+    [self addSubview:m_FallbackImageView];
 
-    const auto views_dict = NSDictionaryOfVariableBindings(m_ScrollView, m_QLView);
+    const auto views_dict = NSDictionaryOfVariableBindings(m_ScrollView, m_QLView, m_FallbackImageView);
     const auto add_constraints = [&](NSString *_vis_fmt) {
         const auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_vis_fmt
                                                                          options:0
@@ -92,6 +98,8 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     add_constraints(@"V:|-(0)-[m_QLView]-(10)-[m_ScrollView(==80@400)]-(0)-|");
     add_constraints(@"|-(0)-[m_ScrollView]-(0)-|");
     add_constraints(@"|-(0)-[m_QLView]-(0)-|");
+    add_constraints(@"V:|-(0)-[m_FallbackImageView]-(10)-[m_ScrollView(==80@400)]-(0)-|"); // TODO: reduce copy&paste
+    add_constraints(@"|-(0)-[m_FallbackImageView]-(0)-|");
 
     __weak PanelGalleryView *weak_self = self;
     m_IconRepository->SetUpdateCallback([=](vfsicon::IconRepository::SlotKey _icon_no, NSImage *_icon) {
@@ -152,6 +160,17 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
         return -1;
 }
 
+static bool IsQLSupportedSync(NSURL *_url)
+{
+    // TODO: never call this in the main thread
+    const CGImageRef image = QLThumbnailImageCreate(nullptr, (__bridge CFURLRef)(_url), CGSizeMake(64, 64), nullptr);
+    if( image ) {
+        CGImageRelease(image);
+        return true;
+    }
+    return false;
+}
+
 - (void)setCursorPosition:(int)_cursor_position
 {
     assert(m_Data);
@@ -178,10 +197,24 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
         const std::string path = vfs_item.Path();
         if( NSString *ns_path = [NSString stringWithUTF8StdString:path] ) {
             if( NSURL *url = [NSURL fileURLWithPath:ns_path] ) {
-                if( m_CurrentPreviewIsHazardous ) {
-                    m_QLView.previewItem = nil; // to prevent an ObjC exception from inside QL - reset the view first
+                if( IsQLSupportedSync(url) ) {
+                    m_QLView.hidden = false;
+                    m_FallbackImageView.hidden = true;
+                    if( m_CurrentPreviewIsHazardous ) {
+                        m_QLView.previewItem =
+                            nil; // to prevent an ObjC exception from inside QL - reset the view first
+                    }
+                    m_QLView.previewItem = url;
                 }
-                m_QLView.previewItem = url;
+                else {
+                    m_QLView.hidden = true;
+                    m_QLView.previewItem =
+                        nil; // NB! Without resetting the preview to nil, it somehow manages to completely freeze NC
+                    m_FallbackImageView.hidden = false;
+
+                    // TODO: never call this in the main thread
+                    m_FallbackImageView.image = [[NSWorkspace sharedWorkspace] iconForFile:ns_path];
+                }
                 m_CurrentPreviewIsHazardous = [self isHazardousPath:path];
             }
         }

@@ -138,6 +138,9 @@ public:
     bool IsDir(unsigned _ind) const;
     bool IsReg(unsigned _ind) const;
     bool IsSymlink(unsigned _ind) const;
+    
+    // An item is hidden when either its filename starts with the dot character or the item has a `UF_HIDDEN` flag up.
+    // ".." entries are never hidden.
     bool IsHidden(unsigned _ind) const;
 
     class iterator;

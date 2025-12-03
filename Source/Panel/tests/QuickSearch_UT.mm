@@ -278,7 +278,7 @@ TEST_CASE("Underscoring works in UTF16")
 
 TEST_CASE("Different phrase locations")
 {
-    using Ranges = QuickSearchHiglight::Ranges;
+    using Ranges = QuickSearchHighlight::Ranges;
     using Where = data::TextualFilter::Where;
     QuickSearchTestsContext ctx;
     NCPanelQuickSearch *qs;

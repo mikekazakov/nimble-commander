@@ -57,7 +57,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     NSColor *m_FilenameColor;
     boost::container::static_vector<NSMutableAttributedString *, 4> m_AttrStrings;
     ItemLayout m_ItemLayout;
-    nc::panel::data::QuickSearchHiglight m_QSHighlight;
+    nc::panel::data::QuickSearchHighlight m_QSHighlight;
 }
 
 @synthesize controller = m_Controller;
@@ -155,7 +155,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     [self setNeedsDisplay:true];
 }
 
-- (void)setQsHighlight:(nc::panel::data::QuickSearchHiglight)_qs_highlight
+- (void)setQsHighlight:(nc::panel::data::QuickSearchHighlight)_qs_highlight
 {
     if( m_QSHighlight == _qs_highlight )
         return;
@@ -238,7 +238,7 @@ CutStringIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double _
 
     m_AttrStrings.clear();
 
-    const data::QuickSearchHiglight::Ranges qs_ranges = m_QSHighlight.unpack();
+    const data::QuickSearchHighlight::Ranges qs_ranges = m_QSHighlight.unpack();
 
     for( NSRange range : substrings ) {
         NSMutableAttributedString *str =

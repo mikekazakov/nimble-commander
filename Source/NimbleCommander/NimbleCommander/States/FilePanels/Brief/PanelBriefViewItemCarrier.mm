@@ -60,7 +60,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     NSMutableAttributedString *m_AttrString;
     PanelBriefViewItemLayoutConstants m_LayoutConstants;
     __weak PanelBriefViewItem *m_Controller;
-    nc::panel::data::QuickSearchHiglight m_QSHighlight;
+    nc::panel::data::QuickSearchHighlight m_QSHighlight;
     bool m_Highlighted;
     bool m_PermitFieldRenaming;
     bool m_IsDropTarget;
@@ -417,7 +417,7 @@ static bool HasNoModifiers(NSEvent *_event)
     [self setNeedsDisplay:true];
 }
 
-- (void)setQsHighlight:(nc::panel::data::QuickSearchHiglight)qsHighlight
+- (void)setQsHighlight:(nc::panel::data::QuickSearchHighlight)qsHighlight
 {
     if( m_QSHighlight != qsHighlight ) {
         m_QSHighlight = qsHighlight;

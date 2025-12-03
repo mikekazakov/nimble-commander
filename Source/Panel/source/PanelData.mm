@@ -789,14 +789,14 @@ void Model::DoSortWithHardFiltering()
     }
 
     if( m_HardFiltering.IsFiltering() ) {
-        auto filter = [&](const VFSListingItem &_item) -> std::optional<QuickSearchHiglight> {
-            QuickSearchHiglight found_range;
+        auto filter = [&](const VFSListingItem &_item) -> std::optional<QuickSearchHighlight> {
+            QuickSearchHighlight found_range;
             const bool valid = m_HardFiltering.IsValidItem(_item, found_range);
             if( valid )
                 return found_range;
             return {};
         };
-        std::vector<std::optional<QuickSearchHiglight>> found_ranges(size);
+        std::vector<std::optional<QuickSearchHighlight>> found_ranges(size);
         pstld::transform(m_Listing->begin(), m_Listing->end(), found_ranges.begin(), filter);
 
         const bool hightlight_results = m_HardFiltering.text.hightlight_results;
@@ -865,7 +865,7 @@ void Model::BuildSoftFilteringIndeces()
         int i = 0;
         const int e = static_cast<int>(m_EntriesByCustomSort.size());
         for( ; i != e; ++i ) {
-            QuickSearchHiglight found_range;
+            QuickSearchHighlight found_range;
             const int raw_index = m_EntriesByCustomSort[i];
             if( m_SoftFiltering.IsValidItem(m_Listing->Item(raw_index), found_range) )
                 m_EntriesBySoftFiltering.push_back(i);

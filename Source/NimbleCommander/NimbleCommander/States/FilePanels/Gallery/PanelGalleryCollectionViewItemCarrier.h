@@ -17,6 +17,6 @@
 @property(nonatomic) nc::panel::gallery::ItemLayout itemLayout;
 @property(nonatomic) NSColor *filenameColor;
 @property(nonatomic) NSColor *backgroundColor;
-@property(nonatomic) nc::panel::data::QuickSearchHiglight qsHighlight;
+@property(nonatomic) nc::panel::data::QuickSearchHighlight qsHighlight;
 
 @end

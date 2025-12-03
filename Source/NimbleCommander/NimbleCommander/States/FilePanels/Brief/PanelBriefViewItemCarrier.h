@@ -17,7 +17,7 @@ struct PanelBriefViewItemLayoutConstants;
 @property(nonatomic) NSImage *icon;
 @property(nonatomic) bool isSymlink;
 @property(nonatomic) PanelBriefViewItemLayoutConstants layoutConstants;
-@property(nonatomic) nc::panel::data::QuickSearchHiglight qsHighlight;
+@property(nonatomic) nc::panel::data::QuickSearchHighlight qsHighlight;
 @property(nonatomic) bool highlighted;
 
 - (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor;

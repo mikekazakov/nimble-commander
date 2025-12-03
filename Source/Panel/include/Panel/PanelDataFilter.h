@@ -38,7 +38,7 @@ struct TextualFilter {
     bool operator!=(const TextualFilter &_r) const noexcept;
     static Where WhereFromInt(int _v) noexcept;
     static TextualFilter NoFilter() noexcept;
-    bool IsValidItem(const VFSListingItem &_item, QuickSearchHiglight &_found_range) const;
+    bool IsValidItem(const VFSListingItem &_item, QuickSearchHighlight &_found_range) const;
     bool IsValidItem(const VFSListingItem &_item) const;
     void OnPanelDataLoad();
     bool IsFiltering() const noexcept;
@@ -47,12 +47,12 @@ struct TextualFilter {
 struct HardFilter {
     TextualFilter text = TextualFilter::NoFilter();
     bool show_hidden = true;
-    bool IsValidItem(const VFSListingItem &_item, QuickSearchHiglight &_found_range) const;
+    bool IsValidItem(const VFSListingItem &_item, QuickSearchHighlight &_found_range) const;
     bool IsFiltering() const noexcept;
     bool operator==(const HardFilter &_r) const noexcept = default;
     bool operator!=(const HardFilter &_r) const noexcept = default;
 };
 
-std::optional<QuickSearchHiglight> FuzzySearch(NSString *_filename, NSString *_text) noexcept;
+std::optional<QuickSearchHighlight> FuzzySearch(NSString *_filename, NSString *_text) noexcept;
 
 } // namespace nc::panel::data

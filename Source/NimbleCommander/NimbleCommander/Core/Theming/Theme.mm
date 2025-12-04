@@ -68,6 +68,10 @@ struct Theme::Internals {
     NSColor *m_FilePanelsBriefSelectedItemBackgroundColor;
 
     NSFont *m_FilePanelsGalleryFont;
+    NSColor *m_FilePanelsGalleryBackgroundColor;
+    NSColor *m_FilePanelsGalleryFocusedActiveItemBackgroundColor;
+    NSColor *m_FilePanelsGalleryFocusedInactiveItemBackgroundColor;
+    NSColor *m_FilePanelsGallerySelectedItemBackgroundColor;
 
     NSFont *m_TerminalFont;
     NSColor *m_TerminalOverlayColor;
@@ -203,6 +207,12 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     I->m_FilePanelsBriefSelectedItemBackgroundColor = ExtractColor("filePanelsBriefSelectedItemBackgroundColor");
 
     I->m_FilePanelsGalleryFont = ExtractFont("filePanelsGalleryFont");
+    I->m_FilePanelsGalleryBackgroundColor = ExtractColor("filePanelsGalleryBackgroundColor");
+    I->m_FilePanelsGalleryFocusedActiveItemBackgroundColor =
+        ExtractColor("filePanelsGalleryFocusedActiveItemBackgroundColor");
+    I->m_FilePanelsGalleryFocusedInactiveItemBackgroundColor =
+        ExtractColor("filePanelsGalleryFocusedInactiveItemBackgroundColor");
+    I->m_FilePanelsGallerySelectedItemBackgroundColor = ExtractColor("filePanelsGallerySelectedItemBackgroundColor");
 
     I->m_FilePanelsFooterFont = ExtractFont("filePanelsFooterFont");
     I->m_FilePanelsFooterTextColor = ExtractColor("filePanelsFooterTextColor");
@@ -505,6 +515,26 @@ NSColor *Theme::FilePanelsBriefSelectedItemBackgroundColor() const noexcept
 NSFont *Theme::FilePanelsGalleryFont() const noexcept
 {
     return I->m_FilePanelsGalleryFont;
+}
+
+NSColor *Theme::FilePanelsGalleryBackgroundColor() const noexcept
+{
+    return I->m_FilePanelsGalleryBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsGalleryFocusedActiveItemBackgroundColor() const noexcept
+{
+    return I->m_FilePanelsGalleryFocusedActiveItemBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsGalleryFocusedInactiveItemBackgroundColor() const noexcept
+{
+    return I->m_FilePanelsGalleryFocusedInactiveItemBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsGallerySelectedItemBackgroundColor() const noexcept
+{
+    return I->m_FilePanelsGallerySelectedItemBackgroundColor;
 }
 
 NSColor *Theme::FilePanelsGeneralOverlayColor() const noexcept

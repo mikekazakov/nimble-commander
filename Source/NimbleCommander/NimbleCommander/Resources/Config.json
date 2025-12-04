@@ -612,6 +612,10 @@
 
                       /* File Panels -> Gallery settings */
                       "filePanelsGalleryFont": "@systemFont, 10",
+                      "filePanelsGalleryBackgroundColor": "@textBackgroundColor",
+                      "filePanelsGalleryFocusedActiveItemBackgroundColor": "@blueColor",
+                      "filePanelsGalleryFocusedInactiveItemBackgroundColor": "@lightGrayColor",
+                      "filePanelsGallerySelectedItemBackgroundColor": "#80C3FF58",
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",
@@ -740,6 +744,10 @@
                       
                       /* File Panels -> Gallery settings */
                       "filePanelsGalleryFont": "@systemFont, 10",
+                      "filePanelsGalleryBackgroundColor": "@textBackgroundColor",
+                      "filePanelsGalleryFocusedActiveItemBackgroundColor": "@blueColor",
+                      "filePanelsGalleryFocusedInactiveItemBackgroundColor": "#4B4B4B",
+                      "filePanelsGallerySelectedItemBackgroundColor": "#242424",
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",
@@ -883,6 +891,10 @@
                       
                       /* File Panels -> Gallery settings */
                       "filePanelsGalleryFont": "Menlo-Regular, 10",
+                      "filePanelsGalleryBackgroundColor": "#000080",
+                      "filePanelsGalleryFocusedActiveItemBackgroundColor": "#008080",
+                      "filePanelsGalleryFocusedInactiveItemBackgroundColor": "#000080",
+                      "filePanelsGallerySelectedItemBackgroundColor": "#000080",
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",

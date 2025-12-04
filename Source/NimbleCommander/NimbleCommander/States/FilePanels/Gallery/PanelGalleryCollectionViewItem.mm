@@ -102,55 +102,27 @@ using namespace nc::panel::gallery;
     return m_VD;
 }
 
-static NSColor *Blend(NSColor *_front, NSColor *_back)
+- (NSColor *)deduceBackgroundColor
 {
-    const auto alpha = _front.alphaComponent;
-    if( alpha == 1. )
-        return _front;
-    if( alpha == 0. )
-        return _back;
-
-    const auto cs = NSColorSpace.genericRGBColorSpace;
-    _front = [_front colorUsingColorSpace:cs];
-    _back = [_back colorUsingColorSpace:cs];
-    const auto r = (_front.redComponent * alpha) + (_back.redComponent * (1. - alpha));
-    const auto g = (_front.greenComponent * alpha) + (_back.greenComponent * (1. - alpha));
-    const auto b = (_front.blueComponent * alpha) + (_back.blueComponent * (1. - alpha));
-    return [NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.];
+    if( self.selected ) {
+        if( m_PanelActive )
+            return nc::CurrentTheme().FilePanelsGalleryFocusedActiveItemBackgroundColor();
+        else
+            return nc::CurrentTheme().FilePanelsGalleryFocusedInactiveItemBackgroundColor();
+    }
+    else {
+        if( m_VD.is_selected() ) {
+            return nc::CurrentTheme().FilePanelsGallerySelectedItemBackgroundColor();
+        }
+        else {
+            return nc::CurrentTheme().FilePanelsGalleryBackgroundColor();
+        }
+    }
 }
 
 - (void)updateBackgroundColor
 {
-    NSColor *const front_color = [&] -> NSColor * {
-        if( self.selected ) {
-
-            if( m_PanelActive )
-                return nc::CurrentTheme().FilePanelsBriefFocusedActiveItemBackgroundColor();
-            else
-                return nc::CurrentTheme().FilePanelsBriefFocusedInactiveItemBackgroundColor();
-        }
-        else {
-            if( m_VD.is_selected() ) {
-                return nc::CurrentTheme().FilePanelsBriefSelectedItemBackgroundColor();
-            }
-            else {
-                return nil;
-            }
-        }
-    }();
-    NSColor *const back_color = nc::CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
-    NSColor *const final_color = [&] -> NSColor * {
-        if( front_color ) {
-            const auto alpha = front_color.alphaComponent;
-            if( alpha == 1. )
-                return front_color;
-            return Blend(front_color, back_color);
-        }
-        else {
-            return back_color;
-        }
-    }();
-    self.carrier.backgroundColor = final_color;
+    self.carrier.backgroundColor = [self deduceBackgroundColor];
 }
 
 - (void)updateForegroundColor

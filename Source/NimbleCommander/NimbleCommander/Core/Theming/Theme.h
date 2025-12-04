@@ -115,6 +115,10 @@ public:
 
     // File Panels --> Gallery presentation settings /////////////////////////////////////////////////
     NSFont *FilePanelsGalleryFont() const noexcept;
+    NSColor *FilePanelsGalleryBackgroundColor() const noexcept;
+    NSColor *FilePanelsGalleryFocusedActiveItemBackgroundColor() const noexcept;
+    NSColor *FilePanelsGalleryFocusedInactiveItemBackgroundColor() const noexcept;
+    NSColor *FilePanelsGallerySelectedItemBackgroundColor() const noexcept;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Terminal Emulator section

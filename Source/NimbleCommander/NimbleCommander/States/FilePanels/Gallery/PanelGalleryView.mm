@@ -104,15 +104,15 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     add_constraints(@"V:|-(0)-[m_FallbackImageView]-(0)-[m_ScrollView]");
     add_constraints(@"V:[m_ScrollView]-(0)-|");
     m_ScrollViewHeightConstraint = [NSLayoutConstraint constraintWithItem:m_ScrollView
-                                                                attribute: NSLayoutAttributeHeight
+                                                                attribute:NSLayoutAttributeHeight
                                                                 relatedBy:NSLayoutRelationEqual
-                                                                     toItem:nil
+                                                                   toItem:nil
                                                                 attribute:NSLayoutAttributeNotAnAttribute
-                                                                multiplier:1.0
-                                                                    constant:m_ItemLayout.height];
+                                                               multiplier:1.0
+                                                                 constant:m_ItemLayout.height];
     m_ScrollViewHeightConstraint.priority = 400; // TODO: why 400?
     [self addConstraint:m_ScrollViewHeightConstraint];
-    
+
     __weak PanelGalleryView *weak_self = self;
     m_IconRepository->SetUpdateCallback([=](vfsicon::IconRepository::SlotKey _icon_no, NSImage *_icon) {
         if( auto strong_self = weak_self )
@@ -375,7 +375,7 @@ static bool IsQLSupportedSync(NSURL *_url)
     m_IconRepository->SetPxSize(32);
     m_ItemLayout =
         BuildItemLayout(32, static_cast<unsigned>(info.LineHeight()), static_cast<unsigned>(info.Descent()), 2);
-    
+
     if( m_ScrollViewHeightConstraint != nil ) {
         m_ScrollViewHeightConstraint.constant = m_ItemLayout.height;
     }

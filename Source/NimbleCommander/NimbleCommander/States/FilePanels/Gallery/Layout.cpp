@@ -8,8 +8,8 @@ ItemLayout BuildItemLayout(unsigned _icon_size_px, unsigned _font_height, unsign
     const unsigned char icon_margin = 2; // TODO: should it be not hardcoded?
     const unsigned char text_margin = 2; // TODO: should it be not hardcoded?
 
-    // Add extra 6px width per each font size above 10 to accomodate for larger fonts
-    const unsigned additional_icon_margin = _font_height > 10 ? (_font_height - 10) * 3 : 0;
+    // Add extra 6px width per each font heght 12 to accomodate for larger fonts
+    const unsigned additional_icon_margin = _font_height > 12 ? (_font_height - 12) * 3 : 0;
 
     ItemLayout il;
     il.icon_size = static_cast<unsigned short>(_icon_size_px);

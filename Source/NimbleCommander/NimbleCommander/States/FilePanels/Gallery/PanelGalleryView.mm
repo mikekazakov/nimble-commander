@@ -31,7 +31,7 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     PanelGalleryViewLayout m_Layout;
     ItemLayout m_ItemLayout;
 
-    NSScrollView *m_ScrollView;
+    NSScrollView *m_CollectionScrollView;
     NCPanelGalleryViewCollectionView *m_CollectionView;
     NSCollectionViewFlowLayout *m_CollectionViewLayout;
     NSLayoutConstraint *m_ScrollViewHeightConstraint;
@@ -77,14 +77,14 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_CollectionView.backgroundColors = @[nc::CurrentTheme().FilePanelsGalleryBackgroundColor()];
     [m_CollectionView registerClass:NCPanelGalleryCollectionViewItem.class forItemWithIdentifier:@"GalleryItem"];
 
-    m_ScrollView = [[NSScrollView alloc] initWithFrame:_frame];
-    m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
-    m_ScrollView.hasVerticalScroller = false;
-    m_ScrollView.hasHorizontalScroller = true;
-    m_ScrollView.documentView = m_CollectionView;
-    m_ScrollView.backgroundColor = nc::CurrentTheme().FilePanelsGalleryBackgroundColor();
-    m_ScrollView.drawsBackground = true;
-    [self addSubview:m_ScrollView];
+    m_CollectionScrollView = [[NSScrollView alloc] initWithFrame:_frame];
+    m_CollectionScrollView.translatesAutoresizingMaskIntoConstraints = false;
+    m_CollectionScrollView.hasVerticalScroller = false;
+    m_CollectionScrollView.hasHorizontalScroller = true;
+    m_CollectionScrollView.documentView = m_CollectionView;
+    m_CollectionScrollView.backgroundColor = nc::CurrentTheme().FilePanelsGalleryBackgroundColor();
+    m_CollectionScrollView.drawsBackground = true;
+    [self addSubview:m_CollectionScrollView];
 
     m_QLView = [[QLPreviewView alloc] initWithFrame:_frame style:QLPreviewViewStyleNormal];
     m_QLView.translatesAutoresizingMaskIntoConstraints = false;
@@ -96,7 +96,7 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_FallbackImageView.hidden = true;
     [self addSubview:m_FallbackImageView];
 
-    const auto views_dict = NSDictionaryOfVariableBindings(m_ScrollView, m_QLView, m_FallbackImageView);
+    const auto views_dict = NSDictionaryOfVariableBindings(m_CollectionScrollView, m_QLView, m_FallbackImageView);
     const auto add_constraints = [&](NSString *_vis_fmt) {
         const auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_vis_fmt
                                                                          options:0
@@ -104,13 +104,13 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
                                                                            views:views_dict];
         [self addConstraints:constraints];
     };
-    add_constraints(@"|-(0)-[m_ScrollView]-(0)-|");
+    add_constraints(@"|-(0)-[m_CollectionScrollView]-(0)-|");
     add_constraints(@"|-(0)-[m_QLView]-(0)-|");
     add_constraints(@"|-(0)-[m_FallbackImageView]-(0)-|");
-    add_constraints(@"V:|-(0)-[m_QLView]-(0)-[m_ScrollView]");
-    add_constraints(@"V:|-(0)-[m_FallbackImageView]-(0)-[m_ScrollView]");
-    add_constraints(@"V:[m_ScrollView]-(0)-|");
-    m_ScrollViewHeightConstraint = [NSLayoutConstraint constraintWithItem:m_ScrollView
+    add_constraints(@"V:|-(0)-[m_QLView]-(0)-[m_CollectionScrollView]");
+    add_constraints(@"V:|-(0)-[m_FallbackImageView]-(0)-[m_CollectionScrollView]");
+    add_constraints(@"V:[m_CollectionScrollView]-(0)-|");
+    m_ScrollViewHeightConstraint = [NSLayoutConstraint constraintWithItem:m_CollectionScrollView
                                                                 attribute:NSLayoutAttributeHeight
                                                                 relatedBy:NSLayoutRelationEqual
                                                                    toItem:nil
@@ -165,14 +165,14 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 
 - (int)itemsInColumn
 {
-    // TODO: implement
-    return 1; // ??
+    // Pretend that we have a row of 1-item columns, such that effectively Left==Up and Right==Down
+    return 1;
 }
 
 - (int)maxNumberOfVisibleItems
 {
-    // TODO: implement
-    return 5;
+    return static_cast<int>(m_CollectionScrollView.contentView.bounds.size.width /
+                            static_cast<double>(m_ItemLayout.width));
 }
 
 - (int)cursorPosition
@@ -352,7 +352,7 @@ static bool IsQLSupportedSync(NSURL *_url)
     if( const auto it = m_IconSlotToItemIndexMapping.find(_icon_no); it != m_IconSlotToItemIndexMapping.end() ) {
         NSIndexPath *const index = [NSIndexPath indexPathForItem:it->second inSection:0];
         if( auto item = nc::objc_cast<NCPanelGalleryCollectionViewItem>([m_CollectionView itemAtIndexPath:index]) ) {
-            item.imageView.image = _icon;
+            item.icon = _icon;
         }
     }
 }
@@ -366,26 +366,16 @@ static bool IsQLSupportedSync(NSURL *_url)
 
 - (void)rebuildItemLayout
 {
+    const int logical_icon_size = 32;
 
-    //    ItemLayout BuildItemLayout(unsigned _icon_size_px,
-    //                               unsigned _font_height,
-    //                               unsigned _text_lines);
-
-    //    [SetPxSize-]
-
-    //    if( self.window ) {
-
-    //        m_IconsRepository->SetPxSize(px_size);
-    //    }
-    //    else {
-
-    // TODO: add support for scaling
-    //        const auto px_size = int(m_ItemLayout.icon_size * self.window.backingScaleFactor);
+    if( self.window ) {
+        const int physical_icon_size = static_cast<int>(logical_icon_size * self.window.backingScaleFactor);
+        m_IconRepository->SetPxSize(physical_icon_size);
+    }
 
     nc::utility::FontGeometryInfo info(nc::CurrentTheme().FilePanelsGalleryFont());
-    m_IconRepository->SetPxSize(32);
-    m_ItemLayout =
-        BuildItemLayout(32, static_cast<unsigned>(info.LineHeight()), static_cast<unsigned>(info.Descent()), 2);
+    m_ItemLayout = BuildItemLayout(
+        logical_icon_size, static_cast<unsigned>(info.LineHeight()), static_cast<unsigned>(info.Descent()), 2);
 
     if( m_ScrollViewHeightConstraint != nil )
         m_ScrollViewHeightConstraint.constant = m_ItemLayout.height;
@@ -400,7 +390,13 @@ static bool IsQLSupportedSync(NSURL *_url)
     [m_CollectionView reloadData];
     self.cursorPosition = cursor_position; // TODO: why is this here?
     m_CollectionView.backgroundColors = @[nc::CurrentTheme().FilePanelsGalleryBackgroundColor()];
-    m_ScrollView.backgroundColor = nc::CurrentTheme().FilePanelsGalleryBackgroundColor();
+    m_CollectionScrollView.backgroundColor = nc::CurrentTheme().FilePanelsGalleryBackgroundColor();
+}
+
+- (void)viewDidMoveToWindow
+{
+    [super viewDidMoveToWindow];
+    [self rebuildItemLayout]; // we call this here due to a possible DPI change
 }
 
 @end

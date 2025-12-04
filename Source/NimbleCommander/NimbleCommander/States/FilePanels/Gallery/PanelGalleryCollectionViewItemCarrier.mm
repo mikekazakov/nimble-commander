@@ -164,6 +164,14 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     [self setNeedsDisplay:true];
 }
 
+- (void)setIcon:(NSImage *)_icon
+{
+    if( m_Icon == _icon )
+        return;
+    m_Icon = _icon;
+    [self setNeedsDisplay:true];
+}
+
 - (NSRect)calculateTextSegmentFromBounds:(NSRect)_bounds
 {
     const int origin_x = m_ItemLayout.text_left_margin;

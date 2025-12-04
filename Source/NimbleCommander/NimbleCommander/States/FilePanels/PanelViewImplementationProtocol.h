@@ -15,8 +15,12 @@ class Model;
 @protocol NCPanelViewPresentationProtocol <NSObject>
 @required
 
+// Used by PanelView to handle Left/Right keypresses.
 @property(nonatomic, readonly) int itemsInColumn;
+
+// Used by PanelView to handle PageUp/PageDown keypresses.
 @property(nonatomic, readonly) int maxNumberOfVisibleItems;
+
 @property(nonatomic) int cursorPosition;
 
 // Called by the owning PanelView whenever the contents of the associated Data is changed.

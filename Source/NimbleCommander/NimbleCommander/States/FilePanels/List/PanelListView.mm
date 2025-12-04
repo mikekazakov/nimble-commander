@@ -382,7 +382,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
         m_IconRepository->SetPxSize(px_size);
     }
     else {
-        m_IconRepository->SetPxSize(m_Geometry.IconSize());
+        // Do not touch the icon repository, as we can be in a teardown stage
     }
 }
 

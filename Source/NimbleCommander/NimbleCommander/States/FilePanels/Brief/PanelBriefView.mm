@@ -395,7 +395,7 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
         m_IconsRepository->SetPxSize(px_size);
     }
     else {
-        m_IconsRepository->SetPxSize(m_ItemLayout.icon_size);
+        // Do not touch the icon repository, as we can be in a teardown stage
     }
 }
 

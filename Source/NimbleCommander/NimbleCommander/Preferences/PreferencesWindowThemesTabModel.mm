@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowThemesTabModel.h"
 
 @implementation PreferencesWindowThemesTabItemNode {
@@ -148,13 +148,22 @@ NSArray *BuildThemeSettingsNodesTree()
         SpawnColorNode(@"Odd row background", "filePanelsListRegularOddRowBackgroundColor")
     ];
 
+    auto fp_gallery_nodes = @[
+        SpawnFontNode(@"Text font", "filePanelsGalleryFont"),
+        SpawnColorNode(@"Background", "filePanelsGalleryBackgroundColor"),
+        SpawnColorNode(@"Focused item background, active", "filePanelsGalleryFocusedActiveItemBackgroundColor"),
+        SpawnColorNode(@"Focused item background, inactive", "filePanelsGalleryFocusedInactiveItemBackgroundColor"),
+        SpawnColorNode(@"Selected item background", "filePanelsGallerySelectedItemBackgroundColor")
+    ];
+
     auto fp_group = SpawnGroupNode(@"File panels", @[
         SpawnGroupNode(@"General", fp_general_nodes),
         SpawnGroupNode(@"Tabs", fp_tabs_nodes),
         SpawnGroupNode(@"Header", fp_header_nodes),
         SpawnGroupNode(@"Footer", fp_footer_nodes),
         SpawnGroupNode(@"Brief mode", fp_brief_nodes),
-        SpawnGroupNode(@"List mode", fp_list_nodes)
+        SpawnGroupNode(@"List mode", fp_list_nodes),
+        SpawnGroupNode(@"Gallery mode", fp_gallery_nodes)
     ]);
 
     auto viewer_nodes = @[

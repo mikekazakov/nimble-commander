@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/Observable.h>
@@ -202,11 +202,14 @@ struct ThemesManager::Notifications {
         // File panels - list presentation mode's theming has changed
         FilePanelsList = 1 << 7,
 
+        // File panels - gallery presentation mode's theming has changed
+        FilePanelsGallery = 1 << 8,
+
         // Viewer-related theming has changed
-        Viewer = 1 << 8,
+        Viewer = 1 << 9,
 
         // Terminal-related theming has changed
-        Terminal = 1 << 9
+        Terminal = 1 << 10
     };
 };
 

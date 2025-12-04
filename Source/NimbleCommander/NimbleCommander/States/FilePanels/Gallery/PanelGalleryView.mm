@@ -4,8 +4,10 @@
 #include "PanelGalleryCollectionViewItem.h"
 #include "../Helpers/IconRepositoryCleaner.h"
 #include "../PanelView.h"
-#include <NimbleCommander/Bootstrap/Config.h>   // TODO: evil! DI instead!
-#include <NimbleCommander/Core/Theming/Theme.h> // Evil!
+#include <NimbleCommander/Bootstrap/Config.h>      // TODO: evil! DI instead!
+#include <NimbleCommander/Bootstrap/AppDelegate.h> // TODO: evil! DI instead!
+#include <NimbleCommander/Core/Theming/Theme.h>    // Evil!
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <Panel/PanelData.h>
 #include <Panel/Log.h>
 #include <Base/dispatch_cpp.h>
@@ -44,6 +46,8 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     // It's a workaround for the macOS bug reported in FB9809109/FB5352643.
     bool m_CurrentPreviewIsHazardous;
     std::optional<nc::utility::ExtensionsLowercaseList> m_HazardousExtsList; // empty means everything is hazardous
+
+    nc::ThemesManager::ObservationTicket m_ThemeObservation;
 }
 
 - (instancetype)initWithFrame:(NSRect)_frame andIR:(nc::vfsicon::IconRepository &)_ir
@@ -70,6 +74,7 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_CollectionView.collectionViewLayout = m_CollectionViewLayout;
     m_CollectionView.dataSource = self;
     m_CollectionView.smoothScrolling = GlobalConfig().GetBool(g_SmoothScrolling);
+    m_CollectionView.backgroundColors = @[nc::CurrentTheme().FilePanelsGalleryBackgroundColor()];
     [m_CollectionView registerClass:NCPanelGalleryCollectionViewItem.class forItemWithIdentifier:@"GalleryItem"];
 
     m_ScrollView = [[NSScrollView alloc] initWithFrame:_frame];
@@ -77,6 +82,8 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_ScrollView.hasVerticalScroller = false;
     m_ScrollView.hasHorizontalScroller = true;
     m_ScrollView.documentView = m_CollectionView;
+    m_ScrollView.backgroundColor = nc::CurrentTheme().FilePanelsGalleryBackgroundColor();
+    m_ScrollView.drawsBackground = true;
     [self addSubview:m_ScrollView];
 
     m_QLView = [[QLPreviewView alloc] initWithFrame:_frame style:QLPreviewViewStyleNormal];
@@ -122,6 +129,10 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     if( const std::string hazard_list = GlobalConfig().GetString(g_HazardousExtensionsList); hazard_list != "*" ) {
         m_HazardousExtsList.emplace(hazard_list);
     }
+
+    m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
+        nc::ThemesManager::Notifications::FilePanelsGallery | nc::ThemesManager::Notifications::FilePanelsGeneral,
+        nc::objc_callback(self, @selector(themeDidChange)));
 
     return self;
 }
@@ -376,9 +387,20 @@ static bool IsQLSupportedSync(NSURL *_url)
     m_ItemLayout =
         BuildItemLayout(32, static_cast<unsigned>(info.LineHeight()), static_cast<unsigned>(info.Descent()), 2);
 
-    if( m_ScrollViewHeightConstraint != nil ) {
+    if( m_ScrollViewHeightConstraint != nil )
         m_ScrollViewHeightConstraint.constant = m_ItemLayout.height;
-    }
+    if( m_CollectionViewLayout != nil )
+        m_CollectionViewLayout.itemSize = NSMakeSize(m_ItemLayout.width, m_ItemLayout.height);
+}
+
+- (void)themeDidChange
+{
+    const int cursor_position = self.cursorPosition;
+    [self rebuildItemLayout];
+    [m_CollectionView reloadData];
+    self.cursorPosition = cursor_position; // TODO: why is this here?
+    m_CollectionView.backgroundColors = @[nc::CurrentTheme().FilePanelsGalleryBackgroundColor()];
+    m_ScrollView.backgroundColor = nc::CurrentTheme().FilePanelsGalleryBackgroundColor();
 }
 
 @end

@@ -42,9 +42,6 @@ class Model;
 - (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor forItemAtIndex:(int)_sorted_item_index;
 
 // ...
-- (int)sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(nc::panel::PanelViewHitTest::Options)_options;
-
-// ...
 - (std::optional<NSRect>)frameOfItemAtIndex:(int)_sorted_item_index;
 
 @optional

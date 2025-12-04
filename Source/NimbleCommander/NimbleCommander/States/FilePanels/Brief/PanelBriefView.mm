@@ -606,13 +606,6 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
     [m_CollectionView scrollRectToVisible:rect];
 }
 
-- (int)sortedItemPosAtPoint:(NSPoint) [[maybe_unused]] _window_point
-              hitTestOption:(PanelViewHitTest::Options) [[maybe_unused]] _options
-{
-    // TODO:
-    return -1;
-}
-
 - (int)maxNumberOfVisibleItems
 {
     const auto cur_pos = self.cursorPosition;

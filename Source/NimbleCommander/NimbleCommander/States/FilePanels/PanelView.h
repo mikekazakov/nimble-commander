@@ -82,12 +82,6 @@ class Model;
  */
 - (NSPopover *)showPopoverUnderPathBarWithView:(NSViewController *)_view andDelegate:(id<NSPopoverDelegate>)_delegate;
 
-/**
- * return a number of item at specified point.
- * options currently unsupported.
- */
-- (int)sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(nc::panel::PanelViewHitTest::Options)_options;
-
 - (void)startFieldEditorRenaming;
 - (void)discardFieldEditor;
 

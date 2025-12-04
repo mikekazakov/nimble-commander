@@ -1036,13 +1036,6 @@ struct StateStorage {
     [m_FooterView updateStatistics:m_Data->Stats()];
 }
 
-- (int)sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options)_options
-{
-    dispatch_assert_main_queue();
-    auto pos = [m_ItemsView sortedItemPosAtPoint:_window_point hitTestOption:_options];
-    return pos;
-}
-
 - (void)windowStatusDidChange
 {
     [self refreshActiveStatus];

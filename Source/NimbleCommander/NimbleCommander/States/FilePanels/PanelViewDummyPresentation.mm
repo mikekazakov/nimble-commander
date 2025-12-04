@@ -37,12 +37,6 @@
 {
 }
 
-- (int)sortedItemPosAtPoint:(NSPoint) [[maybe_unused]] _window_point
-              hitTestOption:(nc::panel::PanelViewHitTest::Options) [[maybe_unused]] _options
-{
-    return -1;
-}
-
 - (std::optional<NSRect>)frameOfItemAtIndex:(int)_sorted_item_index
 {
     return {};

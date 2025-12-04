@@ -274,8 +274,14 @@ static bool IsQLSupportedSync(NSURL *_url)
 
 - (bool)isItemVisible:(int)_sorted_item_index
 {
-    // TODO: implement
-    return false;
+    Log::Trace("[PanelGalleryView isItemVisible:{}]", _sorted_item_index);
+    const long entries_count = [m_CollectionView numberOfItemsInSection:0];
+    if( _sorted_item_index < 0 || _sorted_item_index >= entries_count )
+        return false;
+
+    const auto vis_rect = m_CollectionScrollView.documentVisibleRect;
+    const auto item_rect = [m_CollectionView frameForItemAtIndex:_sorted_item_index];
+    return NSContainsRect(vis_rect, item_rect) || NSIntersectsRect(vis_rect, item_rect);
 }
 
 - (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor forItemAtIndex:(int)_sorted_item_index
@@ -283,16 +289,13 @@ static bool IsQLSupportedSync(NSURL *_url)
     // TODO: implement
 }
 
-- (int)sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options)_options
-{
-    // TODO: implement
-    return -1;
-}
-
 - (std::optional<NSRect>)frameOfItemAtIndex:(int)_sorted_item_index
 {
-    // TODO: implement
-    return {};
+    const auto index_path = [NSIndexPath indexPathForItem:_sorted_item_index inSection:0];
+    NSCollectionViewLayoutAttributes *const attrs = [m_CollectionView layoutAttributesForItemAtIndexPath:index_path];
+    if( attrs == nil )
+        return {};
+    return [self convertRect:attrs.frame fromView:m_CollectionView];
 }
 
 - (PanelGalleryViewLayout)galleryLayout

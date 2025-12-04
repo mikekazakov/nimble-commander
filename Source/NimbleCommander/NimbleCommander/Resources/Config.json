@@ -615,7 +615,7 @@
                       "filePanelsGalleryBackgroundColor": "@textBackgroundColor",
                       "filePanelsGalleryFocusedActiveItemBackgroundColor": "@blueColor",
                       "filePanelsGalleryFocusedInactiveItemBackgroundColor": "@lightGrayColor",
-                      "filePanelsGallerySelectedItemBackgroundColor": "#80C3FF58",
+                      "filePanelsGallerySelectedItemBackgroundColor": "#D3EAFF",
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",

@@ -24,12 +24,4 @@ NSString *ViewControllerRecentsMenuTitle();
 NSString *ViewControllerTitleFormat();
 NSString *ViewControllerOpeningFileTitle();
 
-// NSLocalizedString(@"Opening file...", "Title for process sheet when opening a vfs file")
-
-// NSLocalizedString(@"File View - %@", "Window title for internal file viewer")
-
-// NSLocalizedString(@"Recents", "Menu item title in internal viewer search")
-
-// NSLocalizedString(@"Recent Searches", "Menu item title in internal viewer search")
-
 } // namespace nc::viewer::localizable

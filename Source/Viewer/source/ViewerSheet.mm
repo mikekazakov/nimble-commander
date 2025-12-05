@@ -1,11 +1,9 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerSheet.h"
 #include <Viewer/ViewerViewController.h>
 #include <Base/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
 #include "Internal.h"
-
-using namespace nc::viewer;
 
 @interface NCViewerSheet ()
 
@@ -33,6 +31,7 @@ using namespace nc::viewer;
          viewerFactory:(const std::function<NCViewerView *(NSRect)> &)_viewer_factory
       viewerController:(NCViewerViewController *)_viewer_controller
 {
+    using namespace nc::viewer;
     dispatch_assert_main_queue();
     auto nib_path = [Bundle() pathForResource:@"NCViewerSheet" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];

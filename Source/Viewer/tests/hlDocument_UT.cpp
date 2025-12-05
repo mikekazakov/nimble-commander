@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "Highlighting/Document.h"
 
@@ -13,9 +13,11 @@
 #include <lexilla/SciLexer.h>
 #include <unordered_map>
 
-using namespace nc::viewer::hl;
-
 #define PREFIX "hl::Document "
+
+namespace HLDocumentTests {
+
+using namespace nc::viewer::hl;
 
 TEST_CASE(PREFIX "Check integration with a lexer")
 {
@@ -39,38 +41,38 @@ TEST_CASE(PREFIX "Check integration with a lexer")
         std::string styles;
     } const tcs[] = {
         {.text="",
-         .styles=""},
+            .styles=""},
         {.text="int",
-         .styles="WWW" },
+            .styles="WWW" },
         {.text="hello",
-         .styles="IIIII"},
+            .styles="IIIII"},
         {.text="#pragma once\x0A/*Hey!*/ int hello = 10;",
-         .styles="PPPPPPPPPPPPP" "CCCCCCCCDWWWDIIIIIDODNNO"
+                .styles="PPPPPPPPPPPPP" "CCCCCCCCDWWWDIIIIIDODNNO"
         },
         {.text="//hi!",
-         .styles="LLLLL"},
+            .styles="LLLLL"},
         {.text="\"hi!\"",
-         .styles="SSSSS"},
+            .styles="SSSSS"},
         {.text="//line 1\x0Ahi2;\x0A//line 3\x0Ahi4",
-         .styles="LLLLLLLLL" "IIIOD" "LLLLLLLLL" "III"
+                .styles="LLLLLLLLL" "IIIOD" "LLLLLLLLL" "III"
         },
         {.text="//line 1\x0D\x0Ahi2;\x0D\x0A//line 3\x0D\x0Ahi4",
-         .styles="LLLLLLLLLL"    "IIIODD"    "LLLLLLLLLL"    "III"
+                .styles="LLLLLLLLLL"    "IIIODD"    "LLLLLLLLLL"    "III"
         },
         {.text="/*line 1*/\x0D\x0A",
-         .styles="CCCCCCCCCCDD"
+                .styles="CCCCCCCCCCDD"
         },
         {.text="\x0A\x0A\x0A\x0A!",
-         .styles="D" "D" "D" "D" "O"
+                .styles="D" "D" "D" "D" "O"
         },
         {.text="int привет=10;",
-         .styles="WWWDIIIIIIIIIIIIONNO"
+                .styles="WWWDIIIIIIIIIIIIONNO"
         },
         {.text="int ꮚ=10;",
-         .styles="WWWDIIIONNO"
+                .styles="WWWDIIIONNO"
         },
         {.text="int 🤡=10;",
-         .styles="WWWDIIIIONNO"
+                .styles="WWWDIIIIONNO"
         },
     };
     // clang-format on
@@ -129,3 +131,7 @@ TEST_CASE(PREFIX "Line breaks - LineStart/LineEnd")
         CHECK(doc.LineEnd(tc.starts.size()) == static_cast<long>(tc.text.size()));
     }
 }
+
+} // namespace HLDocumentTests
+
+#undef PREFIX

@@ -1,7 +1,8 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerFooter.h"
 #include "Highlighting/SettingsStorage.h"
 #include "Internal.h"
+#include <Viewer/Localizable.h>
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/ColoredSeparatorLine.h>
 #include <Utility/Encodings.h>
@@ -11,14 +12,11 @@
 #include <algorithm>
 #include <utility>
 
-using namespace nc;
-using namespace nc::viewer;
-
 @implementation NCViewerFooter {
-    hl::SettingsStorage *m_SettingsStorage;
+    nc::viewer::hl::SettingsStorage *m_SettingsStorage;
 
-    ViewMode m_Mode;
-    utility::Encoding m_Encoding;
+    nc::viewer::ViewMode m_Mode;
+    nc::utility::Encoding m_Encoding;
     uint64_t m_FileSize;
     bool m_WrapLines;
     std::string m_HighlightingLanguage;
@@ -41,17 +39,17 @@ using namespace nc::viewer;
 
 - (instancetype)initWithFrame:(NSRect)_frame andHighlightingSyntaxStorage:(nc::viewer::hl::SettingsStorage &)_stor
 {
+    using namespace nc::viewer;
     self = [super initWithFrame:_frame];
     if( self ) {
         m_SettingsStorage = &_stor;
         m_Mode = ViewMode::Text;
-        m_Encoding = utility::Encoding::ENCODING_UTF8;
+        m_Encoding = nc::utility::Encoding::ENCODING_UTF8;
         m_FileSize = 0;
         m_WrapLines = false;
 
         m_Languages = _stor.List();
-        m_Languages.insert(m_Languages.begin(),
-                           NSLocalizedString(@"Plain Text", "Menu element of language selection").UTF8String);
+        m_Languages.insert(m_Languages.begin(), localizable::FooterSyntaxPlainText().UTF8String);
 
         [self buildControls];
         [self layoutControls];
@@ -61,6 +59,7 @@ using namespace nc::viewer;
 
 - (void)buildControls
 {
+    using namespace nc::viewer;
     m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
     m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = false;
     m_SeparatorLine.borderColor = NSColor.separatorColor;
@@ -92,14 +91,12 @@ using namespace nc::viewer;
     [self addSubview:m_VSep5];
 
     NSMenu *mode_menu = [[NSMenu alloc] init];
-    [mode_menu addItemWithTitle:NSLocalizedString(@"Text", "Tooltip for menu element") action:nullptr keyEquivalent:@""]
-        .tag = static_cast<int>(ViewMode::Text);
-    [mode_menu addItemWithTitle:NSLocalizedString(@"Hex", "Tooltip for menu element") action:nullptr keyEquivalent:@""]
-        .tag = static_cast<int>(ViewMode::Hex);
-    [mode_menu addItemWithTitle:NSLocalizedString(@"Preview", "Tooltip for menu element")
-                         action:nullptr
-                  keyEquivalent:@""]
-        .tag = static_cast<int>(ViewMode::Preview);
+    [mode_menu addItemWithTitle:localizable::FooterModeTextTitle() action:nullptr keyEquivalent:@""].tag =
+        static_cast<int>(ViewMode::Text);
+    [mode_menu addItemWithTitle:localizable::FooterModeHexTitle() action:nullptr keyEquivalent:@""].tag =
+        static_cast<int>(ViewMode::Hex);
+    [mode_menu addItemWithTitle:localizable::FooterModePreviewTitle() action:nullptr keyEquivalent:@""].tag =
+        static_cast<int>(ViewMode::Preview);
 
     m_ModeButton = [[NSPopUpButton alloc] initWithFrame:NSRect() pullsDown:false];
     m_ModeButton.imagePosition = NSNoImage;
@@ -110,11 +107,11 @@ using namespace nc::viewer;
     m_ModeButton.action = @selector(onModeChanged:);
     m_ModeButton.translatesAutoresizingMaskIntoConstraints = false;
     m_ModeButton.contentTintColor = NSColor.secondaryLabelColor;
-    m_ModeButton.toolTip = NSLocalizedString(@"View mode", "Tooltip for the footer element");
+    m_ModeButton.toolTip = localizable::FooterModeTooltip();
     [self addSubview:m_ModeButton];
 
     NSMenu *encoding_menu = [[NSMenu alloc] init];
-    for( const auto &encoding : utility::LiteralEncodingsList() ) {
+    for( const auto &encoding : nc::utility::LiteralEncodingsList() ) {
         [encoding_menu addItemWithTitle:(__bridge NSString *)encoding.second action:nullptr keyEquivalent:@""].tag =
             std::to_underlying(encoding.first);
     }
@@ -128,7 +125,7 @@ using namespace nc::viewer;
     m_EncodingButton.action = @selector(onEncodingChanged:);
     m_EncodingButton.translatesAutoresizingMaskIntoConstraints = false;
     m_EncodingButton.contentTintColor = NSColor.secondaryLabelColor;
-    m_EncodingButton.toolTip = NSLocalizedString(@"File encoding", "Tooltip for the footer element");
+    m_EncodingButton.toolTip = localizable::FooterEncodingTooltip();
     [self addSubview:m_EncodingButton];
 
     NSMenu *languages_menu = [[NSMenu alloc] init];
@@ -147,7 +144,7 @@ using namespace nc::viewer;
     m_LanguageButton.action = @selector(onLanguageChanged:);
     m_LanguageButton.translatesAutoresizingMaskIntoConstraints = false;
     m_LanguageButton.contentTintColor = NSColor.secondaryLabelColor;
-    m_LanguageButton.toolTip = NSLocalizedString(@"Language highlighting", "Tooltip for the footer element");
+    m_LanguageButton.toolTip = localizable::FooterLanguageHighlightingTooltip();
     [self addSubview:m_LanguageButton];
 
     m_LineWrapButton = [[NSButton alloc] initWithFrame:NSRect()];
@@ -163,7 +160,7 @@ using namespace nc::viewer;
     m_LineWrapButton.buttonType = NSButtonTypeToggle;
     m_LineWrapButton.target = self;
     m_LineWrapButton.action = @selector(onWrappingChanged:);
-    m_LineWrapButton.toolTip = NSLocalizedString(@"Wrap lines", "Tooltip for the footer element");
+    m_LineWrapButton.toolTip = localizable::FooterWrapLinesTooltip();
     [self addSubview:m_LineWrapButton];
 
     m_FileSizeLabel = [[NSTextField alloc] initWithFrame:NSRect()];
@@ -177,7 +174,7 @@ using namespace nc::viewer;
     m_FileSizeLabel.usesSingleLineMode = true;
     m_FileSizeLabel.alignment = NSTextAlignmentCenter;
     m_FileSizeLabel.textColor = NSColor.secondaryLabelColor;
-    m_FileSizeLabel.toolTip = NSLocalizedString(@"File size", "Tooltip for the footer element");
+    m_FileSizeLabel.toolTip = localizable::FooterFileSizeTooltip();
     [self addSubview:m_FileSizeLabel];
 
     m_LinePositionButton = [[NSButton alloc] initWithFrame:NSRect()];
@@ -185,7 +182,7 @@ using namespace nc::viewer;
     m_LinePositionButton.bordered = false;
     m_LinePositionButton.buttonType = NSButtonTypeMomentaryPushIn;
     m_LinePositionButton.title = @"";
-    m_LinePositionButton.toolTip = NSLocalizedString(@"File position", "Tooltip for the footer element");
+    m_LinePositionButton.toolTip = localizable::FooterFilePositionTooltip();
     [self addSubview:m_LinePositionButton];
 }
 
@@ -236,6 +233,7 @@ using namespace nc::viewer;
 
 - (void)updateControlsVisibility
 {
+    using namespace nc::viewer;
     m_VSep1.hidden = !(m_Mode == ViewMode::Text);
     m_LineWrapButton.hidden = !(m_Mode == ViewMode::Text);
     m_VSep2.hidden = !(m_Mode == ViewMode::Text);
@@ -246,7 +244,7 @@ using namespace nc::viewer;
     m_LinePositionButton.hidden = m_Mode != ViewMode::Text && m_Mode != ViewMode::Hex;
 }
 
-- (void)setMode:(ViewMode)_mode
+- (void)setMode:(nc::viewer::ViewMode)_mode
 {
     if( m_Mode == _mode )
         return; // nothing to do
@@ -260,7 +258,7 @@ using namespace nc::viewer;
     [self updateControlsVisibility];
 }
 
-- (ViewMode)mode
+- (nc::viewer::ViewMode)mode
 {
     return m_Mode;
 }
@@ -315,6 +313,7 @@ using namespace nc::viewer;
 
 - (IBAction)onModeChanged:(id)_sender
 {
+    using namespace nc::viewer;
     assert(_sender == m_ModeButton);
     self.mode = static_cast<ViewMode>(m_ModeButton.selectedTag); // notifies via KVO
 }

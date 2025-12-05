@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextProcessing.h"
 #include "TextModeIndexedTextLine.h"
 
@@ -11,8 +11,6 @@
 #include <algorithm>
 
 namespace nc::viewer {
-
-using utility::CharInfo;
 
 void CleanUnicodeControlSymbols(char16_t *const _characters, const int _characters_length, const char16_t _replacement)
 {
@@ -107,7 +105,7 @@ std::vector<std::pair<int, int>> SplitStringIntoLines(const char16_t *_character
                 break;
             }
 
-            if( CharInfo::IsUnicodeCombiningCharacter(c) ) {
+            if( utility::CharInfo::IsUnicodeCombiningCharacter(c) ) {
                 count++;
                 continue;
             }
@@ -119,9 +117,9 @@ std::vector<std::pair<int, int>> SplitStringIntoLines(const char16_t *_character
                 width = probe_width;
             }
             else {
-                const auto probe_width = CharInfo::WCWidthMin1(c) == 1 ? // TODO: add support for surrogate pairs
-                                             width + _monospace_width
-                                                                       : width + (2 * _monospace_width);
+                // TODO: add support for surrogate pairs
+                const auto probe_width =
+                    utility::CharInfo::WCWidthMin1(c) == 1 ? width + _monospace_width : width + (2 * _monospace_width);
 
                 if( probe_width > _wrapping_width + wrapping_epsilon ) {
                     break;

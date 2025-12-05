@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include "TextModeWorkingSet.h"
 #include "Highlighting/Style.h"
@@ -65,6 +65,10 @@ public:
 private:
     void Commit(std::expected<std::vector<hl::Style>, std::string> _result);
     void Notify();
+
+    static void MapUTF8ToUTF16(const std::span<const hl::Style> _styles_utf8,
+                               const std::span<const char16_t> _chars_utf16,
+                               const std::span<hl::Style> _styles_utf16);
 
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
     std::shared_ptr<const std::string> m_HighlightingOptions;

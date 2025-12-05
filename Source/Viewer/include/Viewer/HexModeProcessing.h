@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "TextModeWorkingSet.h"
@@ -36,6 +36,15 @@ struct HexModeSplitter {
 
     static base::CFPtr<CFStringRef>
     MakeBytesHexString(const std::byte *_first, const std::byte *_last, char16_t _gap_symbol = ' ');
+
+private:
+    static void Fill(const std::byte *const _first,
+                     const std::byte *const _last,
+                     char16_t *const _buffer,
+                     const char16_t _gap_symbol) noexcept;
+
+    static constexpr char m_4Bits_To_Char[16] =
+        {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 };
 
 } // namespace nc::viewer

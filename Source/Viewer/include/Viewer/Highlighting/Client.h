@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include "Style.h"
 #include <string_view>
@@ -22,6 +22,9 @@ public:
                                std::string_view _settings,
                                std::function<void(std::expected<std::vector<Style>, std::string>)> _done,
                                dispatch_queue_t _queue = nullptr);
+
+private:
+    static constexpr const char *m_ServiceName = "com.magnumbytes.NimbleCommander.Highlighter";
 };
 
 } // namespace nc::viewer::hl

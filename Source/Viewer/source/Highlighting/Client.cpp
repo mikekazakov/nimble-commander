@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/algo.h>
 #include <Viewer/Highlighting/Client.h>
 #include <Viewer/Log.h>
@@ -8,13 +8,11 @@
 
 namespace nc::viewer::hl {
 
-static constexpr auto g_ServiceName = "com.magnumbytes.NimbleCommander.Highlighter";
-
 std::expected<std::vector<Style>, std::string> Client::Highlight(std::string_view _text, std::string_view _settings)
 {
     Log::Trace("Client::Highlight called");
 
-    xpc_connection_t connection = xpc_connection_create(g_ServiceName, nullptr);
+    xpc_connection_t connection = xpc_connection_create(m_ServiceName, nullptr);
     if( connection == nullptr ) {
         Log::Error("Failed to create an XPC connection");
         return std::unexpected<std::string>("Failed to create an XPC connection");
@@ -98,7 +96,7 @@ void Client::HighlightAsync(std::string_view _text,
         _queue = dispatch_get_main_queue();
     }
 
-    xpc_connection_t connection = xpc_connection_create(g_ServiceName, _queue);
+    xpc_connection_t connection = xpc_connection_create(m_ServiceName, _queue);
     if( connection == nullptr ) {
         Log::Error("Failed to create an XPC connection");
         _done(std::unexpected<std::string>("Failed to create an XPC connection"));

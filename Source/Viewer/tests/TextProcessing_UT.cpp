@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TextProcessing.h"
 #include "TextModeIndexedTextLine.h"
@@ -9,6 +9,8 @@
 
 #include <cstdint>
 #include <string>
+
+namespace TextProcessingTest {
 
 using namespace nc::viewer;
 
@@ -101,3 +103,5 @@ TEST_CASE("SplitStringIntoLines handles double-sized characters")
     CHECK(lines[2].first == 3);
     CHECK(lines[2].second == 1);
 }
+
+} // namespace TextProcessingTest

@@ -1,11 +1,14 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "Highlighting/LexerSettings.h"
 #include <lexilla/SciLexer.h>
 
-using namespace nc::viewer::hl;
-
 #define PREFIX "hl::LexerSettings "
+
+namespace HLLexerSettingsTest {
+
+using namespace nc::viewer::hl;
+using nc::viewer::hl::Style;
 
 TEST_CASE(PREFIX "Load from a JSON")
 {
@@ -36,3 +39,7 @@ TEST_CASE(PREFIX "Load from a JSON")
     sets->mapping.MapStyles(in, out);
     CHECK(out == std::vector<Style>{Style::Keyword, Style::Default, Style::Preprocessor, Style::Number});
 }
+
+} // namespace HLLexerSettingsTest
+
+#undef PREFIX

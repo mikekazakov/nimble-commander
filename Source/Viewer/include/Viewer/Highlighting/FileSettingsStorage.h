@@ -37,6 +37,7 @@ private:
     void SubscribeToOverridesChanges();
     void UnsubscribeFromOverridesChanges();
     void OverridesChanged();
+    static bool RegFileExists(const std::filesystem::path &_path) noexcept;
 
     std::filesystem::path m_BaseDir;
     std::filesystem::path m_OverridesDir;

@@ -1,14 +1,14 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "Highlighting/Style.h"
 #include <lexilla/SciLexer.h>
-
-using namespace nc::viewer::hl;
 
 #define PREFIX "hl::Style "
 
 TEST_CASE(PREFIX "StyleMapper")
 {
+    using namespace nc::viewer::hl;
+    using nc::viewer::hl::Style;
     StyleMapper sm;
     SECTION("Empty, negative values")
     {
@@ -37,3 +37,5 @@ TEST_CASE(PREFIX "StyleMapper")
         CHECK(dst[1] == Style::Default);
     }
 }
+
+#undef PREFIX

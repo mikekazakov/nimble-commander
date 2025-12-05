@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "Highlighting/Client.h"
 #include <Base/mach_time.h>
@@ -6,9 +6,11 @@
 #include <ankerl/unordered_dense.h>
 #include <fmt/format.h>
 
-using namespace nc::viewer::hl;
-
 #define PREFIX "hl::Client "
+
+namespace HLClientTests {
+
+using namespace nc::viewer::hl;
 
 [[clang::no_destroy]] static const ankerl::unordered_dense::map<char, nc::viewer::hl::Style> m{
     {'D', nc::viewer::hl::Style::Default},
@@ -176,3 +178,7 @@ TEST_CASE(PREFIX "Reacting to non-existing mapping target")
     REQUIRE(!hl.has_value());
     CHECK(hl.error().contains("Unable to parse the lexing settings"));
 }
+
+} // namespace HLClientTests
+
+#undef PREFIX

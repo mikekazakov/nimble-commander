@@ -1,12 +1,15 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "Highlighting/Highlighter.h"
 #include <lexilla/SciLexer.h>
 #include <ankerl/unordered_dense.h>
 
-using namespace nc::viewer::hl;
-
 #define PREFIX "hl::Highlighter "
+
+namespace HLHighlighterTests {
+
+using namespace nc::viewer::hl;
+using nc::viewer::hl::Style;
 
 [[clang::no_destroy]] static const ankerl::unordered_dense::map<char, Style> m{
     {'D', Style::Default},
@@ -144,3 +147,7 @@ export LC_CTYPE=en_US.UTF-8)Z";
         CHECK(hl[i] == m.at(hl_exp[i]));
     }
 }
+
+} // namespace HLHighlighterTests
+
+#undef PREFIX

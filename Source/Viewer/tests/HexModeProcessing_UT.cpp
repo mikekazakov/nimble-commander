@@ -1,10 +1,14 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TextModeWorkingSet.h"
 #include "HexModeProcessing.h"
 #include <Utility/Encodings.h>
 
 #include <algorithm>
+
+#define PREFIX "HexModeSplitter "
+
+namespace HexModeProcessingTests {
 
 using namespace nc::viewer;
 
@@ -15,8 +19,6 @@ static std::shared_ptr<const TextModeWorkingSet>
 ProduceWorkingSet(const char *_chars, int _chars_number, long _ws_offset = 0);
 
 static bool Equal(CFStringRef _lhs, CFStringRef _rhs);
-
-#define PREFIX "HexModeSplitter "
 
 TEST_CASE(PREFIX "Verify a layout of a primitive 1-byte encoded string")
 {
@@ -403,3 +405,7 @@ static bool Equal(CFStringRef _lhs, CFStringRef _rhs)
 {
     return CFStringCompare(_lhs, _rhs, 0) == kCFCompareEqualTo;
 }
+
+} // namespace HexModeProcessingTests
+
+#undef PREFIX

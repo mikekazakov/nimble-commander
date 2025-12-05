@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TextModeFrame.h"
 #include "TextModeWorkingSet.h"
@@ -9,6 +9,10 @@
 #include <numeric>
 #include <vector>
 
+#define PREFIX "TextModeFrame "
+
+namespace TestModeFrameTests {
+
 using nc::viewer::TextModeFrame;
 using nc::viewer::TextModeWorkingSet;
 
@@ -18,7 +22,6 @@ static std::shared_ptr<const TextModeFrame> ProduceFrame(std::shared_ptr<const T
                                                          int _tab_spaces,
                                                          CTFontRef _font);
 
-#define PREFIX "TextModeFrame "
 TEST_CASE(PREFIX "Does proper hit-test")
 {
     const auto font = CTFontCreateWithName(CFSTR("Menlo-Regular"), 13., nullptr);
@@ -101,3 +104,7 @@ static std::shared_ptr<const TextModeWorkingSet> ProduceWorkingSet(const char16_
     source.bytes_offset = static_cast<long>(_chars_number) * 2l;
     return std::make_shared<TextModeWorkingSet>(source);
 }
+
+} // namespace TestModeFrameTests
+
+#undef PREFIX

@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TextModeWorkingSet.h"
 #include "HexModeProcessing.h"
@@ -6,6 +6,10 @@
 #include "HexModeLayout.h"
 #include <Utility/Encodings.h>
 #include <Base/algo.h>
+
+#define PREFIX "HexModeLayout "
+
+namespace HexModeLayoutTests {
 
 using namespace nc::viewer;
 using Catch::Approx;
@@ -16,8 +20,6 @@ static std::shared_ptr<const HexModeFrame>
 ProduceFrame(const std::shared_ptr<const TextModeWorkingSet> &ws, const char *_chars, int _chars_number);
 
 static std::unique_ptr<HexModeLayout> ProduceLayout(std::shared_ptr<const HexModeFrame> _frame);
-
-#define PREFIX "HexModeLayout "
 
 TEST_CASE(PREFIX "Correctly performs a hit-test on columns")
 {
@@ -160,3 +162,7 @@ static std::unique_ptr<HexModeLayout> ProduceLayout(std::shared_ptr<const HexMod
     source.file_size = _frame->WorkingSet().BytesLength();
     return std::make_unique<HexModeLayout>(source);
 }
+
+} // namespace HexModeLayoutTests
+
+#undef PREFIX

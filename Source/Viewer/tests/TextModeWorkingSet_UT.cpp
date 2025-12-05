@@ -1,13 +1,16 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TextModeWorkingSet.h"
 #include <Utility/Encodings.h>
 #include <string>
 #include <memory>
 
+#define PREFIX "TextModeWorkingSet "
+
+namespace TextModeWorkingSetTest {
+
 using nc::viewer::TextModeWorkingSet;
 
-#define PREFIX "TextModeWorkingSet "
 TEST_CASE(PREFIX "Copies and owns UTF16 characters")
 {
     std::string utf8_string = reinterpret_cast<const char *>(u8"Привет, мир!");
@@ -115,3 +118,7 @@ TEST_CASE(PREFIX "properly clips ranges in ToLocalBytesRange")
         CHECK(ws.ToLocalBytesRange(CFRangeMake(-1, 0)).length == 0);
     }
 }
+
+} // namespace TextModeWorkingSetTest
+
+#undef PREFIX

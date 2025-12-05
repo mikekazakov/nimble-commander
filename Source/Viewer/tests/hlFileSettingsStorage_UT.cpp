@@ -1,14 +1,16 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "Highlighting/FileSettingsStorage.h"
 #include <fstream>
 #include <Base/dispatch_cpp.h>
 #include <CoreFoundation/CoreFoundation.h>
 
+#define PREFIX "hl::FileSettingsStorage "
+
+namespace HLFileSettingsStorageTest {
+
 using namespace nc::viewer::hl;
 using FSL = FileSettingsStorage;
-
-#define PREFIX "hl::FileSettingsStorage "
 
 static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation);
 
@@ -259,3 +261,7 @@ static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeo
             return true;
     }
 }
+
+} // namespace HLFileSettingsStorageTest
+
+#undef PREFIX

@@ -82,6 +82,14 @@ public:
     const nc::utility::FontGeometryInfo &FontGeometryInfo() const noexcept;
 
 private:
+    static void CalculateLinesWidths(const TextModeIndexedTextLine *_lines_begin,
+                                     const TextModeIndexedTextLine *_lines_end,
+                                     float *_widths);
+
+    static void ApplyStyles(CFMutableAttributedStringRef _str,
+                            const TextModeWorkingSetHighlighting &_styles,
+                            const std::array<CGColorRef, 8> &_colors);
+
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
     std::vector<TextModeIndexedTextLine> m_Lines;
     std::vector<float> m_LinesWidths;

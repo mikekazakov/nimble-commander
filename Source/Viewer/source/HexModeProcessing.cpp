@@ -1,12 +1,9 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "HexModeProcessing.h"
 
 #include <string>
 
 namespace nc::viewer {
-
-static constexpr char g_4Bits_To_Char[16] =
-    {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
 std::vector<HexModeSplitter::Line> HexModeSplitter::Split(const Source &_source)
 {
@@ -79,7 +76,7 @@ base::CFPtr<CFStringRef> HexModeSplitter::MakeAddressString(const int _row_bytes
 
     long offset = row_offset;
     for( int char_ind = _hex_digits_in_address - 1; char_ind >= 0; --char_ind ) {
-        buffer[char_ind] = g_4Bits_To_Char[offset & 0xF];
+        buffer[char_ind] = m_4Bits_To_Char[offset & 0xF];
         offset >>= 4;
     }
 
@@ -88,16 +85,16 @@ base::CFPtr<CFStringRef> HexModeSplitter::MakeAddressString(const int _row_bytes
     return base::CFPtr<CFStringRef>::adopt(str);
 }
 
-static void Fill(const std::byte *const _first,
-                 const std::byte *const _last,
-                 char16_t *const _buffer,
-                 const char16_t _gap_symbol) noexcept
+void HexModeSplitter::Fill(const std::byte *const _first,
+                           const std::byte *const _last,
+                           char16_t *const _buffer,
+                           const char16_t _gap_symbol) noexcept
 {
     auto target = _buffer;
     for( auto source = _first; source < _last; source += 1, target += 3 ) {
         const auto c = static_cast<int>(*source);
-        const auto lower_4bits = g_4Bits_To_Char[c & 0x0F];
-        const auto upper_4bits = g_4Bits_To_Char[(c & 0xF0) >> 4];
+        const auto lower_4bits = m_4Bits_To_Char[c & 0x0F];
+        const auto upper_4bits = m_4Bits_To_Char[(c & 0xF0) >> 4];
         target[0] = upper_4bits;
         target[1] = lower_4bits;
         target[2] = _gap_symbol;

@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "HexModeFrame.h"
 #include "HexModeProcessing.h"
 #include <Base/algo.h>
@@ -139,7 +139,7 @@ HexModeFrame::Row &HexModeFrame::Row::operator=(Row &&) noexcept = default;
 // - it's very unlikely that any concurrent code would deal with CoreText stuff
 // - in the worst case scenario there will be a leak of a CTLineRef object, which is
 //   not an end of the world.
-static base::CFPtr<CTLineRef> ToCTLine(CFStringRef _string, CFDictionaryRef _attributes)
+base::CFPtr<CTLineRef> HexModeFrame::ToCTLine(CFStringRef _string, CFDictionaryRef _attributes)
 {
     if( _string == nullptr || _attributes == nullptr )
         throw std::invalid_argument("ToCTLine: nullptr argument");

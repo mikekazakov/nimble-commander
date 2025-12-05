@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "TextModeWorkingSet.h"
@@ -62,6 +62,8 @@ public:
     static int FindClosest(const Row *_first, const Row *_last, int _bytes_offset) noexcept;
 
 private:
+    static base::CFPtr<CTLineRef> ToCTLine(CFStringRef _string, CFDictionaryRef _attributes);
+
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
     std::vector<Row> m_Rows;
     nc::utility::FontGeometryInfo m_FontInfo;

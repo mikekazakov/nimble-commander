@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Viewer/Highlighting/FileSettingsStorage.h>
 #include <Viewer/Log.h>
 #include <Utility/FSEventsDirUpdate.h>
@@ -7,13 +7,11 @@
 #include <ranges>
 #include <fmt/format.h>
 
-using json = nlohmann::json;
-
 namespace nc::viewer::hl {
 
-[[clang::no_destroy]] static const std::filesystem::path g_MainFile = "Main.json";
+[[clang::no_destroy]] static const std::filesystem::path g_MainSettingsFile = "Main.json";
 
-static bool RegFileExists(const std::filesystem::path &_path) noexcept
+bool FileSettingsStorage::RegFileExists(const std::filesystem::path &_path) noexcept
 {
     std::error_code ec = {};
     const std::filesystem::file_status status = std::filesystem::status(_path, ec);
@@ -28,8 +26,8 @@ FileSettingsStorage::FileSettingsStorage(const std::filesystem::path &_base_dir,
                                          const std::filesystem::path &_overrides_dir)
     : m_BaseDir(_base_dir), m_OverridesDir(_overrides_dir)
 {
-    const std::filesystem::path base_main = m_BaseDir / g_MainFile;
-    const std::filesystem::path overrides_main = m_OverridesDir / g_MainFile;
+    const std::filesystem::path base_main = m_BaseDir / g_MainSettingsFile;
+    const std::filesystem::path overrides_main = m_OverridesDir / g_MainSettingsFile;
 
     if( RegFileExists(overrides_main) ) {
         // Try to load the main settings from the overrides file
@@ -64,9 +62,9 @@ std::vector<FileSettingsStorage::Lang> FileSettingsStorage::LoadLangs(const std:
         throw std::invalid_argument(fmt::format("Unable to open the file '{}'", _path.native()));
     }
 
-    json data;
+    nlohmann::json data;
     try {
-        data = json::parse(f);
+        data = nlohmann::json::parse(f);
     } catch( std::exception &ex ) {
         Log::Error("Unable to parse '{}': {}", _path.native(), ex.what());
         throw std::invalid_argument(fmt::format("Unable to parse '{}': {}", _path.native(), ex.what()));
@@ -123,8 +121,8 @@ std::vector<FileSettingsStorage::Lang> FileSettingsStorage::LoadLangs(const std:
 
 void FileSettingsStorage::ReloadLangs()
 {
-    const std::filesystem::path base_main = m_BaseDir / g_MainFile;
-    const std::filesystem::path overrides_main = m_OverridesDir / g_MainFile;
+    const std::filesystem::path base_main = m_BaseDir / g_MainSettingsFile;
+    const std::filesystem::path overrides_main = m_OverridesDir / g_MainSettingsFile;
     m_Langs.clear();
 
     try {

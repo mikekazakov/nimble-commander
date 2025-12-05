@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextModeWorkingSetHighlighting.h"
 #include "Highlighting/Client.h"
 #include "Log.h"
@@ -38,9 +38,9 @@ enum TextModeWorkingSetHighlighting::Status TextModeWorkingSetHighlighting::Stat
     return m_Status;
 }
 
-static void MapUTF8ToUTF16(const std::span<const hl::Style> _styles_utf8,
-                           const std::span<const char16_t> _chars_utf16,
-                           const std::span<hl::Style> _styles_utf16)
+void TextModeWorkingSetHighlighting::MapUTF8ToUTF16(const std::span<const hl::Style> _styles_utf8,
+                                                    const std::span<const char16_t> _chars_utf16,
+                                                    const std::span<hl::Style> _styles_utf16)
 {
     assert(_chars_utf16.size() == _styles_utf16.size());
 

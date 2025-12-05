@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextModeFrame.h"
 #include <Base/algo.h>
 #include <Base/dispatch_cpp.h>
@@ -6,38 +6,6 @@
 #include <cmath>
 
 namespace nc::viewer {
-
-static void CalculateLinesWidths(const TextModeIndexedTextLine *_lines_begin,
-                                 const TextModeIndexedTextLine *_lines_end,
-                                 float *_widths);
-
-static void ApplyStyles(CFMutableAttributedStringRef _str,
-                        const TextModeWorkingSetHighlighting &_styles,
-                        const std::array<CGColorRef, 8> &_colors)
-{
-    const size_t str_len = CFAttributedStringGetLength(_str);
-    const std::span<const hl::Style> styles = _styles.Styles();
-
-    size_t start = 0;
-    size_t i = 0;
-    hl::Style current = hl::Style::Default;
-    auto commit = [&] {
-        if( start == i )
-            return;
-        const auto range = CFRangeMake(start, i - start);
-        CFAttributedStringSetAttribute(
-            _str, range, kCTForegroundColorAttributeName, _colors.at(std::to_underlying(current)));
-    };
-
-    for( ; i < std::min(styles.size(), str_len); ++i ) {
-        if( styles[i] != current ) {
-            commit();
-            start = i;
-            current = styles[i];
-        }
-    }
-    commit();
-}
 
 TextModeFrame::TextModeFrame(const Source &_source)
     : m_WorkingSet{_source.working_set}, m_FontInfo{_source.font_info}, m_WrappingWidth{_source.wrapping_width}
@@ -122,9 +90,9 @@ int TextModeFrame::LineIndexForPosition(CGPoint _position) const
     return line_index;
 }
 
-static void CalculateLinesWidths(const TextModeIndexedTextLine *_lines_begin,
-                                 const TextModeIndexedTextLine *_lines_end,
-                                 float *_widths)
+void TextModeFrame::CalculateLinesWidths(const TextModeIndexedTextLine *_lines_begin,
+                                         const TextModeIndexedTextLine *_lines_end,
+                                         float *_widths)
 {
     const auto block = [&](size_t n) {
         _widths[n] = static_cast<float>(CTLineGetTypographicBounds(_lines_begin[n].Line(), nullptr, nullptr, nullptr));
@@ -175,6 +143,34 @@ const nc::utility::FontGeometryInfo &TextModeFrame::FontGeometryInfo() const noe
 CGSize TextModeFrame::Bounds() const noexcept
 {
     return m_Bounds;
+}
+
+void TextModeFrame::ApplyStyles(CFMutableAttributedStringRef _str,
+                                const TextModeWorkingSetHighlighting &_styles,
+                                const std::array<CGColorRef, 8> &_colors)
+{
+    const size_t str_len = CFAttributedStringGetLength(_str);
+    const std::span<const hl::Style> styles = _styles.Styles();
+
+    size_t start = 0;
+    size_t i = 0;
+    hl::Style current = hl::Style::Default;
+    auto commit = [&] {
+        if( start == i )
+            return;
+        const auto range = CFRangeMake(start, i - start);
+        CFAttributedStringSetAttribute(
+            _str, range, kCTForegroundColorAttributeName, _colors.at(std::to_underlying(current)));
+    };
+
+    for( ; i < std::min(styles.size(), str_len); ++i ) {
+        if( styles[i] != current ) {
+            commit();
+            start = i;
+            current = styles[i];
+        }
+    }
+    commit();
 }
 
 } // namespace nc::viewer

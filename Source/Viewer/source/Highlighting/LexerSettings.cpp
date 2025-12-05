@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Viewer/Highlighting/LexerSettings.h>
 #include <lexilla/SciLexerStyleNames.h>
 #include <nlohmann/json.hpp>
@@ -9,8 +9,6 @@
 #include <map>
 
 namespace nc::viewer::hl {
-
-using json = nlohmann::json;
 
 [[clang::no_destroy]] static const ankerl::unordered_dense::map<std::string_view, char> g_SCENames = [] {
     static_assert(std::size(Lexilla::g_SCENames) == std::size(Lexilla::g_SCEValues));
@@ -37,7 +35,7 @@ static constinit frozen::unordered_map<frozen::string, Style, 8> g_MappedStyles{
 std::expected<LexerSettings, std::string> ParseLexerSettings(std::string_view _json) noexcept
 {
     try {
-        json json_obj = json::parse(_json, nullptr, true, true);
+        nlohmann::json json_obj = nlohmann::json::parse(_json, nullptr, true, true);
 
         LexerSettings sets;
         sets.name = json_obj.at("lexer");

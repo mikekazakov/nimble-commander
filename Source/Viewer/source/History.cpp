@@ -1,20 +1,20 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "History.h"
 #include <Config/RapidJSON.h>
 #include <Utility/Encodings.h>
 #include <algorithm>
 
-static const auto g_ConfigMaximumHistoryEntries = "viewer.maximumHistoryEntries";
-static const auto g_ConfigSaveFileEnconding = "viewer.saveFileEncoding";
-static const auto g_ConfigSaveFileMode = "viewer.saveFileMode";
-static const auto g_ConfigSaveFilePosition = "viewer.saveFilePosition";
-static const auto g_ConfigSaveFileWrapping = "viewer.saveFileWrapping";
-static const auto g_ConfigSaveFileSelection = "viewer.saveFileSelection";
-static const auto g_ConfigSaveFileLanguage = "viewer.saveFileLanguage";
-
 namespace nc::viewer {
 
-static nc::config::Value EntryToJSONObject(const History::Entry &_entry)
+static constexpr const char *g_ConfigMaximumHistoryEntries = "viewer.maximumHistoryEntries";
+static constexpr const char *g_ConfigSaveFileEnconding = "viewer.saveFileEncoding";
+static constexpr const char *g_ConfigSaveFileMode = "viewer.saveFileMode";
+static constexpr const char *g_ConfigSaveFilePosition = "viewer.saveFilePosition";
+static constexpr const char *g_ConfigSaveFileWrapping = "viewer.saveFileWrapping";
+static constexpr const char *g_ConfigSaveFileSelection = "viewer.saveFileSelection";
+static constexpr const char *g_ConfigSaveFileLanguage = "viewer.saveFileLanguage";
+
+static nc::config::Value HistoryEntryToJSONObject(const History::Entry &_entry)
 {
     using namespace nc::config;
     Value o(rapidjson::kObjectType);
@@ -31,7 +31,7 @@ static nc::config::Value EntryToJSONObject(const History::Entry &_entry)
     return o;
 }
 
-static std::optional<History::Entry> JSONObjectToEntry(const nc::config::Value &_object)
+static std::optional<History::Entry> JSONObjectToHistoryEntry(const nc::config::Value &_object)
 {
     using namespace rapidjson;
     auto has_string = [&](const char *_key) { return _object.HasMember(_key) && _object[_key].IsString(); };
@@ -139,7 +139,7 @@ void History::SaveToStateConfig() const
     {
         auto lock = std::lock_guard{m_HistoryLock};
         for( auto &e : m_History ) {
-            auto o = EntryToJSONObject(e);
+            auto o = HistoryEntryToJSONObject(e);
             if( o.GetType() != rapidjson::kNullType )
                 entries.PushBack(std::move(o), nc::config::g_CrtAllocator);
         }
@@ -154,7 +154,7 @@ void History::LoadFromStateConfig()
     auto lock = std::lock_guard{m_HistoryLock};
     if( entries.GetType() == kArrayType ) {
         for( auto i = entries.Begin(), e = entries.End(); i != e; ++i )
-            if( auto c = JSONObjectToEntry(*i) )
+            if( auto c = JSONObjectToHistoryEntry(*i) )
                 m_History.emplace_back(*c);
     }
 }

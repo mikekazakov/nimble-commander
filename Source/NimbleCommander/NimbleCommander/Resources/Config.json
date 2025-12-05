@@ -363,8 +363,10 @@
                                 }
                            },
                            {
-                                "title": "Custom Layout V",
-                                "disabled": null
+                                "title": "Gallery",
+                                "gallery": {
+                                    "icon_scale": 1
+                                }
                            },
                            {
                                 "title": "Custom Layout VI",
@@ -609,6 +611,13 @@
                       "filePanelsBriefFocusedActiveItemBackgroundColor": "@blueColor",
                       "filePanelsBriefFocusedInactiveItemBackgroundColor": "@lightGrayColor",
                       "filePanelsBriefSelectedItemBackgroundColor": "#80C3FF58",
+
+                      /* File Panels -> Gallery settings */
+                      "filePanelsGalleryFont": "@systemFont, 10",
+                      "filePanelsGalleryBackgroundColor": "@textBackgroundColor",
+                      "filePanelsGalleryFocusedActiveItemBackgroundColor": "@blueColor",
+                      "filePanelsGalleryFocusedInactiveItemBackgroundColor": "@lightGrayColor",
+                      "filePanelsGallerySelectedItemBackgroundColor": "#D3EAFF",
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",
@@ -734,6 +743,13 @@
                       "filePanelsBriefFocusedActiveItemBackgroundColor": "@blueColor",
                       "filePanelsBriefFocusedInactiveItemBackgroundColor": "#4B4B4B",
                       "filePanelsBriefSelectedItemBackgroundColor": "#55555558",
+                      
+                      /* File Panels -> Gallery settings */
+                      "filePanelsGalleryFont": "@systemFont, 10",
+                      "filePanelsGalleryBackgroundColor": "@textBackgroundColor",
+                      "filePanelsGalleryFocusedActiveItemBackgroundColor": "@blueColor",
+                      "filePanelsGalleryFocusedInactiveItemBackgroundColor": "#4B4B4B",
+                      "filePanelsGallerySelectedItemBackgroundColor": "#242424",
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",
@@ -874,6 +890,13 @@
                       "filePanelsBriefFocusedActiveItemBackgroundColor": "#008080",
                       "filePanelsBriefFocusedInactiveItemBackgroundColor": "#000080",
                       "filePanelsBriefSelectedItemBackgroundColor": "#00000000",
+                      
+                      /* File Panels -> Gallery settings */
+                      "filePanelsGalleryFont": "Menlo-Regular, 10",
+                      "filePanelsGalleryBackgroundColor": "#000080",
+                      "filePanelsGalleryFocusedActiveItemBackgroundColor": "#008080",
+                      "filePanelsGalleryFocusedInactiveItemBackgroundColor": "#000080",
+                      "filePanelsGallerySelectedItemBackgroundColor": "#000080",
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",

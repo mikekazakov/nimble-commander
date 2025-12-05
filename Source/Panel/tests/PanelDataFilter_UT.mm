@@ -11,54 +11,54 @@ using namespace nc::panel::data;
 
 TEST_CASE(PREFIX "Fuzzy search")
 {
-    using RIL = std::initializer_list<QuickSearchHiglight::Range>;
+    using RIL = std::initializer_list<QuickSearchHighlight::Range>;
     struct TC {
         NSString *filename;
         NSString *text;
-        std::optional<QuickSearchHiglight> expected;
+        std::optional<QuickSearchHighlight> expected;
     } test_cases[] = {
-        {.filename = @"", .text = @"", .expected = QuickSearchHiglight{}},
+        {.filename = @"", .text = @"", .expected = QuickSearchHighlight{}},
         {.filename = @"", .text = @"a", .expected = std::nullopt},
-        {.filename = @"a", .text = @"", .expected = QuickSearchHiglight{}},
+        {.filename = @"a", .text = @"", .expected = QuickSearchHighlight{}},
         {.filename = @"a", .text = @"b", .expected = std::nullopt},
-        {.filename = @"a", .text = @"a", .expected = QuickSearchHiglight{RIL{{.offset = 0, .length = 1}}}},
+        {.filename = @"a", .text = @"a", .expected = QuickSearchHighlight{RIL{{.offset = 0, .length = 1}}}},
         {.filename = @"a", .text = @"ab", .expected = std::nullopt},
-        {.filename = @"ab", .text = @"ab", .expected = QuickSearchHiglight{RIL{{.offset = 0, .length = 2}}}},
+        {.filename = @"ab", .text = @"ab", .expected = QuickSearchHighlight{RIL{{.offset = 0, .length = 2}}}},
         {.filename = @"ba", .text = @"ab", .expected = std::nullopt},
-        {.filename = @"aaa", .text = @"a", .expected = QuickSearchHiglight{RIL{{.offset = 0, .length = 1}}}},
-        {.filename = @"aaa", .text = @"aa", .expected = QuickSearchHiglight{RIL{{.offset = 0, .length = 2}}}},
-        {.filename = @"aaa", .text = @"aaa", .expected = QuickSearchHiglight{RIL{{.offset = 0, .length = 3}}}},
+        {.filename = @"aaa", .text = @"a", .expected = QuickSearchHighlight{RIL{{.offset = 0, .length = 1}}}},
+        {.filename = @"aaa", .text = @"aa", .expected = QuickSearchHighlight{RIL{{.offset = 0, .length = 2}}}},
+        {.filename = @"aaa", .text = @"aaa", .expected = QuickSearchHighlight{RIL{{.offset = 0, .length = 3}}}},
         {.filename = @"abc",
          .text = @"ac",
-         .expected = QuickSearchHiglight{RIL{{.offset = 0, .length = 1}, {.offset = 2, .length = 1}}}},
-        {.filename = @"aab", .text = @"ab", .expected = QuickSearchHiglight{RIL{{.offset = 1, .length = 2}}}},
-        {.filename = @"abcabc", .text = @"abc", .expected = QuickSearchHiglight{RIL{{.offset = 0, .length = 3}}}},
+         .expected = QuickSearchHighlight{RIL{{.offset = 0, .length = 1}, {.offset = 2, .length = 1}}}},
+        {.filename = @"aab", .text = @"ab", .expected = QuickSearchHighlight{RIL{{.offset = 1, .length = 2}}}},
+        {.filename = @"abcabc", .text = @"abc", .expected = QuickSearchHighlight{RIL{{.offset = 0, .length = 3}}}},
         {.filename = @"abcabc",
          .text = @"abab",
-         .expected = QuickSearchHiglight{RIL{{.offset = 0, .length = 2}, {.offset = 3, .length = 2}}}},
-        {.filename = @"abcabc", .text = @"cabc", .expected = QuickSearchHiglight{RIL{{.offset = 2, .length = 4}}}},
+         .expected = QuickSearchHighlight{RIL{{.offset = 0, .length = 2}, {.offset = 3, .length = 2}}}},
+        {.filename = @"abcabc", .text = @"cabc", .expected = QuickSearchHighlight{RIL{{.offset = 2, .length = 4}}}},
         {.filename = @"abcabc",
          .text = @"bbc",
-         .expected = QuickSearchHiglight{RIL{{.offset = 1, .length = 1}, {.offset = 4, .length = 2}}}},
+         .expected = QuickSearchHighlight{RIL{{.offset = 1, .length = 1}, {.offset = 4, .length = 2}}}},
         {.filename = @"abcabc",
          .text = @"acc",
-         .expected = QuickSearchHiglight{RIL{
+         .expected = QuickSearchHighlight{RIL{
              {.offset = 0, .length = 1}, {.offset = 2, .length = 1}, {.offset = 5, .length = 1}}}},
         {.filename = @"Calculator.app",
          .text = @"calap",
-         .expected = QuickSearchHiglight{RIL{{.offset = 0, .length = 3}, {.offset = 11, .length = 2}}}},
+         .expected = QuickSearchHighlight{RIL{{.offset = 0, .length = 3}, {.offset = 11, .length = 2}}}},
         {.filename = @"Calculator.app",
          .text = @"calapp",
-         .expected = QuickSearchHiglight{RIL{{.offset = 0, .length = 3}, {.offset = 11, .length = 3}}}},
+         .expected = QuickSearchHighlight{RIL{{.offset = 0, .length = 3}, {.offset = 11, .length = 3}}}},
         {.filename = @"Calculator.app",
          .text = @"calcapp",
-         .expected = QuickSearchHiglight{RIL{{.offset = 0, .length = 4}, {.offset = 11, .length = 3}}}},
+         .expected = QuickSearchHighlight{RIL{{.offset = 0, .length = 4}, {.offset = 11, .length = 3}}}},
         {.filename = @"Calculator.app",
          .text = @"culap",
-         .expected = QuickSearchHiglight{RIL{{.offset = 3, .length = 4}, {.offset = 12, .length = 1}}}},
+         .expected = QuickSearchHighlight{RIL{{.offset = 3, .length = 4}, {.offset = 12, .length = 1}}}},
         {.filename = @"Calculator.app",
          .text = @"app",
-         .expected = QuickSearchHiglight{RIL{{.offset = 11, .length = 3}}}},
+         .expected = QuickSearchHighlight{RIL{{.offset = 11, .length = 3}}}},
     };
     for( auto &tc : test_cases ) {
         auto hl = FuzzySearch(tc.filename, tc.text);

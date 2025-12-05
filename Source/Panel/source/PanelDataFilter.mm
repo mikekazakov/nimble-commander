@@ -50,7 +50,7 @@ TextualFilter TextualFilter::NoFilter() noexcept
 
 bool TextualFilter::IsValidItem(const VFSListingItem &_item) const
 {
-    QuickSearchHiglight hl;
+    QuickSearchHighlight hl;
     return IsValidItem(_item, hl);
 }
 
@@ -78,7 +78,7 @@ static bool FuzzySearchSatisfiable(CFStringRef _hay,
     return true;
 }
 
-std::optional<QuickSearchHiglight> FuzzySearch(NSString *_filename, NSString *_text) noexcept
+std::optional<QuickSearchHighlight> FuzzySearch(NSString *_filename, NSString *_text) noexcept
 {
     assert(_filename != nil);
     assert(_text != nil);
@@ -95,7 +95,7 @@ std::optional<QuickSearchHiglight> FuzzySearch(NSString *_filename, NSString *_t
     // 2nd - now start to greadily look for longest substrings - O(n^2)
     std::array<char, 16384> mem_buffer;
     std::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
-    std::pmr::vector<QuickSearchHiglight::Range> found(&mem_resource);
+    std::pmr::vector<QuickSearchHighlight::Range> found(&mem_resource);
     unsigned long filename_pos = 0;
     NSString *text = _text;
     while( true ) {
@@ -130,10 +130,10 @@ std::optional<QuickSearchHiglight> FuzzySearch(NSString *_filename, NSString *_t
         }
     }
 
-    return QuickSearchHiglight({found.data(), found.size()}); // might discard some results here
+    return QuickSearchHighlight({found.data(), found.size()}); // might discard some results here
 }
 
-bool TextualFilter::IsValidItem(const VFSListingItem &_item, QuickSearchHiglight &_found_range) const
+bool TextualFilter::IsValidItem(const VFSListingItem &_item, QuickSearchHighlight &_found_range) const
 {
     _found_range = {};
 
@@ -157,10 +157,10 @@ bool TextualFilter::IsValidItem(const VFSListingItem &_item, QuickSearchHiglight
         if( result.length == 0 )
             return false;
 
-        QuickSearchHiglight::Range hlrange;
+        QuickSearchHighlight::Range hlrange;
         hlrange.offset = result.location;
         hlrange.length = result.length;
-        _found_range = QuickSearchHiglight({&hlrange, 1});
+        _found_range = QuickSearchHighlight({&hlrange, 1});
         return true;
     }
     else if( type == Beginning ) {
@@ -169,20 +169,20 @@ bool TextualFilter::IsValidItem(const VFSListingItem &_item, QuickSearchHiglight
         if( result.length == 0 )
             return false;
 
-        QuickSearchHiglight::Range hlrange;
+        QuickSearchHighlight::Range hlrange;
         hlrange.offset = result.location;
         hlrange.length = result.length;
-        _found_range = QuickSearchHiglight({&hlrange, 1});
+        _found_range = QuickSearchHighlight({&hlrange, 1});
         return true;
     }
     else if( type == Ending || type == BeginningOrEnding ) {
         if( type == BeginningOrEnding ) { // look at beginning
             const NSRange result = [name rangeOfString:text options:NSCaseInsensitiveSearch | NSAnchoredSearch];
             if( result.length != 0 ) {
-                QuickSearchHiglight::Range hlrange;
+                QuickSearchHighlight::Range hlrange;
                 hlrange.offset = result.location;
                 hlrange.length = result.length;
-                _found_range = QuickSearchHiglight({&hlrange, 1});
+                _found_range = QuickSearchHighlight({&hlrange, 1});
                 return true;
             }
         }
@@ -196,10 +196,10 @@ bool TextualFilter::IsValidItem(const VFSListingItem &_item, QuickSearchHiglight
                                 options:NSCaseInsensitiveSearch | NSAnchoredSearch | NSBackwardsSearch
                                   range:NSMakeRange(dotrange.location - textlen, textlen)];
                 if( result.length != 0 ) {
-                    QuickSearchHiglight::Range hlrange;
+                    QuickSearchHighlight::Range hlrange;
                     hlrange.offset = result.location;
                     hlrange.length = result.length;
-                    _found_range = QuickSearchHiglight({&hlrange, 1});
+                    _found_range = QuickSearchHighlight({&hlrange, 1});
                     return true;
                 }
             }
@@ -209,10 +209,10 @@ bool TextualFilter::IsValidItem(const VFSListingItem &_item, QuickSearchHiglight
         const NSRange result = [name rangeOfString:text
                                            options:NSCaseInsensitiveSearch | NSAnchoredSearch | NSBackwardsSearch];
         if( result.length != 0 ) {
-            QuickSearchHiglight::Range hlrange;
+            QuickSearchHighlight::Range hlrange;
             hlrange.offset = result.location;
             hlrange.length = result.length;
-            _found_range = QuickSearchHiglight({&hlrange, 1});
+            _found_range = QuickSearchHighlight({&hlrange, 1});
             return true;
         }
         else
@@ -245,7 +245,7 @@ bool TextualFilter::IsFiltering() const noexcept
 // HardFilter
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool HardFilter::IsValidItem(const VFSListingItem &_item, QuickSearchHiglight &_found_range) const
+bool HardFilter::IsValidItem(const VFSListingItem &_item, QuickSearchHighlight &_found_range) const
 {
     if( !show_hidden && _item.IsHidden() )
         return false;

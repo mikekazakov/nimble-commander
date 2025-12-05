@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ThemesManager.h"
 #include "Theme.h"
 #include <Base/dispatch_cpp.h>
@@ -80,6 +80,11 @@ static constexpr std::pair<const char *, uint64_t> g_EntryToNotificationMappingT
     {"filePanelsBriefFocusedActiveItemBackgroundColor", TMN::FilePanelsBrief},
     {"filePanelsBriefFocusedInactiveItemBackgroundColor", TMN::FilePanelsBrief},
     {"filePanelsBriefSelectedItemBackgroundColor", TMN::FilePanelsBrief},
+    {"filePanelsGalleryFont", TMN::FilePanelsGallery},
+    {"filePanelsGalleryBackgroundColor", TMN::FilePanelsGallery},
+    {"filePanelsGalleryFocusedActiveItemBackgroundColor", TMN::FilePanelsGallery},
+    {"filePanelsGalleryFocusedInactiveItemBackgroundColor", TMN::FilePanelsGallery},
+    {"filePanelsGallerySelectedItemBackgroundColor", TMN::FilePanelsGallery},
     {"terminalFont", TMN::Terminal},
     {"terminalOverlayColor", TMN::Terminal},
     {"terminalForegroundColor", TMN::Terminal},

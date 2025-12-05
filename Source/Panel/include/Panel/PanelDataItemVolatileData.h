@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stdint.h>
@@ -8,10 +8,11 @@
 
 namespace nc::panel::data {
 
-// Can store up to 8 segments, each with up to characters inside them.
+// Can store up to 8 segments, each with up to 15 characters inside them.
 // The maximum stored offset can be 120 characters.
 // The maximum amount of highlighted characters can be 120.
-struct QuickSearchHiglight {
+// NB! The characters are counted in UTF-16 code units, i.e. native to NSString/Foundation.
+struct QuickSearchHighlight {
     // The maximum number of segments in a highlight
     inline static constexpr size_t max_len = 8;
 
@@ -27,10 +28,10 @@ struct QuickSearchHiglight {
     };
 
     // Default constructor create an empty highlight.
-    QuickSearchHiglight() noexcept = default;
+    QuickSearchHighlight() noexcept = default;
 
     // !Lossy! encoding constructor. It fits as much as possible into the 8-byte word and discards anything else.
-    QuickSearchHiglight(std::span<const Range> _ranges) noexcept;
+    QuickSearchHighlight(std::span<const Range> _ranges) noexcept;
 
     // Check if the highlight contains and segments with non-zero lenghts
     constexpr bool empty() const noexcept;
@@ -42,7 +43,7 @@ struct QuickSearchHiglight {
     Ranges unpack() const noexcept;
 
     // Comparison operator.
-    constexpr auto operator<=>(const QuickSearchHiglight &_rhs) const noexcept = default;
+    constexpr auto operator<=>(const QuickSearchHighlight &_rhs) const noexcept = default;
 
 private:
     // 0byte   1byte   2byte   4byte   5byte   6byte   7byte   8byte
@@ -71,7 +72,7 @@ struct ItemVolatileData {
     uint64_t size = invalid_size;
 
     // contains highlighted segments of the filename if any
-    QuickSearchHiglight highlight;
+    QuickSearchHighlight highlight;
 
     // custom icon ID. zero means invalid value. volatile - can be changed. saved upon directory reload.
     uint16_t icon = 0;
@@ -89,12 +90,12 @@ struct ItemVolatileData {
     constexpr auto operator<=>(const ItemVolatileData &_rhs) const noexcept = default;
 };
 
-constexpr bool QuickSearchHiglight::empty() const noexcept
+constexpr bool QuickSearchHighlight::empty() const noexcept
 {
     return (d & len_mask) == 0;
 }
 
-constexpr uint64_t QuickSearchHiglight::size() const noexcept
+constexpr uint64_t QuickSearchHighlight::size() const noexcept
 {
     uint64_t sz = 0;
     uint64_t t = d;

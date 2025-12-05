@@ -1,6 +1,7 @@
 // Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <Base/CFStackAllocator.h>
+#include <Base/StackAllocator.h>
 #include <Base/algo.h>
 #include <string_view>
 #include <ranges>
@@ -93,9 +94,10 @@ bool ExtensionLowercaseComparison::Equal(std::string_view _filename_ext, std::st
 ExtensionsLowercaseList::ExtensionsLowercaseList(std::string_view _comma_separated_list)
 {
     auto &i = ExtensionLowercaseComparison::Instance();
-    std::vector<std::string> exts;
+    StackAllocator alloc;
+    std::pmr::vector<std::string> exts{&alloc};
     for( const auto ext : std::views::split(_comma_separated_list, ',') )
-        if( auto trimmed = base::Trim(std::string_view{ext}); !trimmed.empty() )
+        if( const std::string_view trimmed = base::Trim(std::string_view{ext}); !trimmed.empty() )
             exts.emplace_back(trimmed);
     for( auto &ext : exts ) {
         if( !ext.empty() )

@@ -1,6 +1,7 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Theme.h"
 #include <Panel/UI/PanelViewPresentationItemsColoringFilterPersistence.h>
+#include <Panel/Log.h>
 #include "ThemePersistence.h"
 #include <Utility/HexadecimalColor.h>
 #include <Config/RapidJSON.h>
@@ -56,6 +57,7 @@ struct Theme::Internals {
     NSColor *m_FilePanelsListSelectedRowBackgroundColor;
     NSColor *m_FilePanelsListRegularEvenRowBackgroundColor;
     NSColor *m_FilePanelsListRegularOddRowBackgroundColor;
+
     NSFont *m_FilePanelsBriefFont;
     unsigned m_FilePanelsBriefRowVerticalPadding;
     NSColor *m_FilePanelsBriefGridColor;
@@ -64,6 +66,12 @@ struct Theme::Internals {
     NSColor *m_FilePanelsBriefFocusedActiveItemBackgroundColor;
     NSColor *m_FilePanelsBriefFocusedInactiveItemBackgroundColor;
     NSColor *m_FilePanelsBriefSelectedItemBackgroundColor;
+
+    NSFont *m_FilePanelsGalleryFont;
+    NSColor *m_FilePanelsGalleryBackgroundColor;
+    NSColor *m_FilePanelsGalleryFocusedActiveItemBackgroundColor;
+    NSColor *m_FilePanelsGalleryFocusedInactiveItemBackgroundColor;
+    NSColor *m_FilePanelsGallerySelectedItemBackgroundColor;
 
     NSFont *m_TerminalFont;
     NSColor *m_TerminalOverlayColor;
@@ -109,32 +117,36 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     const auto &doc = _theme_data;
     const auto &backup = _backup_theme_data;
 
-    const auto ExtractUInt = [&](const char *_path) {
-        if( auto v = ThemePersistence::ExtractUInt(doc, _path) )
+    const auto ExtractUInt = [&](const char *_path) -> unsigned {
+        if( const std::optional<unsigned> v = ThemePersistence::ExtractUInt(doc, _path) )
             return v.value();
-        if( auto v = ThemePersistence::ExtractUInt(backup, _path) )
+        if( const std::optional<unsigned> v = ThemePersistence::ExtractUInt(backup, _path) )
             return v.value();
+        panel::Log::Warn("Theme: unable to extract {} from both primary and backup documents", _path);
         return static_cast<unsigned>(0);
     };
-    const auto ExtractColor = [&](const char *_path) {
-        if( auto v = ThemePersistence::ExtractColor(doc, _path) )
+    const auto ExtractColor = [&](const char *_path) -> NSColor * {
+        if( NSColor *const v = ThemePersistence::ExtractColor(doc, _path) )
             return v;
-        if( auto v = ThemePersistence::ExtractColor(backup, _path) )
+        if( NSColor *const v = ThemePersistence::ExtractColor(backup, _path) )
             return v;
+        panel::Log::Warn("Theme: unable to extract {} from both primary and backup documents", _path);
         return NSColor.blackColor;
     };
-    const auto ExtractSyntaxColor = [&](const char *_path) {
-        if( auto v = ThemePersistence::ExtractColor(doc, _path) )
+    const auto ExtractSyntaxColor = [&](const char *_path) -> NSColor * {
+        if( NSColor *const v = ThemePersistence::ExtractColor(doc, _path) )
             return v;
-        if( auto v = ThemePersistence::ExtractColor(backup, _path) )
+        if( NSColor *const v = ThemePersistence::ExtractColor(backup, _path) )
             return v;
+        panel::Log::Warn("Theme: unable to extract {} from both primary and backup documents", _path);
         return I->m_ViewerTextColor;
     };
-    const auto ExtractFont = [&](const char *_path) {
-        if( auto v = ThemePersistence::ExtractFont(doc, _path) )
+    const auto ExtractFont = [&](const char *_path) -> NSFont * {
+        if( NSFont *const v = ThemePersistence::ExtractFont(doc, _path) )
             return v;
-        if( auto v = ThemePersistence::ExtractFont(backup, _path) )
+        if( NSFont *const v = ThemePersistence::ExtractFont(backup, _path) )
             return v;
+        panel::Log::Warn("Theme: unable to extract {} from both primary and backup documents", _path);
         return [NSFont systemFontOfSize:NSFont.systemFontSize];
     };
 
@@ -161,11 +173,6 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     I->m_FilePanelsGeneralSplitterColor = ExtractColor("filePanelsGeneralSplitterColor");
     I->m_FilePanelsGeneralTopSeparatorColor = ExtractColor("filePanelsGeneralTopSeparatorColor");
 
-    I->m_FilePanelsListFont = ExtractFont("filePanelsListFont");
-    I->m_FilePanelsListRowVerticalPadding = ExtractUInt("filePanelsListRowVerticalPadding");
-    I->m_FilePanelsListSecondaryColumnsOpacity = ExtractUInt("filePanelsListSecondaryColumnsOpacity");
-    I->m_FilePanelsListGridColor = ExtractColor("filePanelsListGridColor");
-
     I->m_FilePanelsHeaderFont = ExtractFont("filePanelsHeaderFont");
     I->m_FilePanelsHeaderTextColor = ExtractColor("filePanelsHeaderTextColor");
     I->m_FilePanelsHeaderActiveTextColor = ExtractColor("filePanelsHeaderActiveTextColor");
@@ -173,6 +180,10 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     I->m_FilePanelsHeaderInactiveBackgroundColor = ExtractColor("filePanelsHeaderInactiveBackgroundColor");
     I->m_FilePanelsHeaderSeparatorColor = ExtractColor("filePanelsHeaderSeparatorColor");
 
+    I->m_FilePanelsListFont = ExtractFont("filePanelsListFont");
+    I->m_FilePanelsListRowVerticalPadding = ExtractUInt("filePanelsListRowVerticalPadding");
+    I->m_FilePanelsListSecondaryColumnsOpacity = ExtractUInt("filePanelsListSecondaryColumnsOpacity");
+    I->m_FilePanelsListGridColor = ExtractColor("filePanelsListGridColor");
     I->m_FilePanelsListHeaderFont = ExtractFont("filePanelsListHeaderFont");
     I->m_FilePanelsListHeaderBackgroundColor = ExtractColor("filePanelsListHeaderBackgroundColor");
     I->m_FilePanelsListHeaderTextColor = ExtractColor("filePanelsListHeaderTextColor");
@@ -183,6 +194,25 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     I->m_FilePanelsListRegularEvenRowBackgroundColor = ExtractColor("filePanelsListRegularEvenRowBackgroundColor");
     I->m_FilePanelsListRegularOddRowBackgroundColor = ExtractColor("filePanelsListRegularOddRowBackgroundColor");
     I->m_FilePanelsListSelectedRowBackgroundColor = ExtractColor("filePanelsListSelectedItemBackgroundColor");
+
+    I->m_FilePanelsBriefFont = ExtractFont("filePanelsBriefFont");
+    I->m_FilePanelsBriefRowVerticalPadding = ExtractUInt("filePanelsBriefRowVerticalPadding");
+    I->m_FilePanelsBriefGridColor = ExtractColor("filePanelsBriefGridColor");
+    I->m_FilePanelsBriefRegularEvenRowBackgroundColor = ExtractColor("filePanelsBriefRegularEvenRowBackgroundColor");
+    I->m_FilePanelsBriefRegularOddRowBackgroundColor = ExtractColor("filePanelsBriefRegularOddRowBackgroundColor");
+    I->m_FilePanelsBriefFocusedActiveItemBackgroundColor =
+        ExtractColor("filePanelsBriefFocusedActiveItemBackgroundColor");
+    I->m_FilePanelsBriefFocusedInactiveItemBackgroundColor =
+        ExtractColor("filePanelsBriefFocusedInactiveItemBackgroundColor");
+    I->m_FilePanelsBriefSelectedItemBackgroundColor = ExtractColor("filePanelsBriefSelectedItemBackgroundColor");
+
+    I->m_FilePanelsGalleryFont = ExtractFont("filePanelsGalleryFont");
+    I->m_FilePanelsGalleryBackgroundColor = ExtractColor("filePanelsGalleryBackgroundColor");
+    I->m_FilePanelsGalleryFocusedActiveItemBackgroundColor =
+        ExtractColor("filePanelsGalleryFocusedActiveItemBackgroundColor");
+    I->m_FilePanelsGalleryFocusedInactiveItemBackgroundColor =
+        ExtractColor("filePanelsGalleryFocusedInactiveItemBackgroundColor");
+    I->m_FilePanelsGallerySelectedItemBackgroundColor = ExtractColor("filePanelsGallerySelectedItemBackgroundColor");
 
     I->m_FilePanelsFooterFont = ExtractFont("filePanelsFooterFont");
     I->m_FilePanelsFooterTextColor = ExtractColor("filePanelsFooterTextColor");
@@ -206,17 +236,6 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     I->m_FilePanelsTabsRegularNotKeyWndBackgroundColor = ExtractColor("filePanelsTabsRegularNotKeyWndBackgroundColor");
     I->m_FilePanelsTabsSeparatorColor = ExtractColor("filePanelsTabsSeparatorColor");
     I->m_FilePanelsTabsPictogramColor = ExtractColor("filePanelsTabsPictogramColor");
-
-    I->m_FilePanelsBriefFont = ExtractFont("filePanelsBriefFont");
-    I->m_FilePanelsBriefRowVerticalPadding = ExtractUInt("filePanelsBriefRowVerticalPadding");
-    I->m_FilePanelsBriefGridColor = ExtractColor("filePanelsBriefGridColor");
-    I->m_FilePanelsBriefRegularEvenRowBackgroundColor = ExtractColor("filePanelsBriefRegularEvenRowBackgroundColor");
-    I->m_FilePanelsBriefRegularOddRowBackgroundColor = ExtractColor("filePanelsBriefRegularOddRowBackgroundColor");
-    I->m_FilePanelsBriefFocusedActiveItemBackgroundColor =
-        ExtractColor("filePanelsBriefFocusedActiveItemBackgroundColor");
-    I->m_FilePanelsBriefFocusedInactiveItemBackgroundColor =
-        ExtractColor("filePanelsBriefFocusedInactiveItemBackgroundColor");
-    I->m_FilePanelsBriefSelectedItemBackgroundColor = ExtractColor("filePanelsBriefSelectedItemBackgroundColor");
 
     I->m_TerminalFont = ExtractFont("terminalFont");
     I->m_TerminalOverlayColor = ExtractColor("terminalOverlayColor");
@@ -491,6 +510,31 @@ NSColor *Theme::FilePanelsBriefFocusedInactiveItemBackgroundColor() const noexce
 NSColor *Theme::FilePanelsBriefSelectedItemBackgroundColor() const noexcept
 {
     return I->m_FilePanelsBriefSelectedItemBackgroundColor;
+}
+
+NSFont *Theme::FilePanelsGalleryFont() const noexcept
+{
+    return I->m_FilePanelsGalleryFont;
+}
+
+NSColor *Theme::FilePanelsGalleryBackgroundColor() const noexcept
+{
+    return I->m_FilePanelsGalleryBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsGalleryFocusedActiveItemBackgroundColor() const noexcept
+{
+    return I->m_FilePanelsGalleryFocusedActiveItemBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsGalleryFocusedInactiveItemBackgroundColor() const noexcept
+{
+    return I->m_FilePanelsGalleryFocusedInactiveItemBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsGallerySelectedItemBackgroundColor() const noexcept
+{
+    return I->m_FilePanelsGallerySelectedItemBackgroundColor;
 }
 
 NSColor *Theme::FilePanelsGeneralOverlayColor() const noexcept

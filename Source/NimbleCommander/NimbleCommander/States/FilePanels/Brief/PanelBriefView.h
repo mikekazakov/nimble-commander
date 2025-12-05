@@ -26,8 +26,7 @@ struct PanelBriefViewItemLayoutConstants {
     int16_t icon_size;
     int16_t font_baseline;
     int16_t item_height;
-    bool operator==(const PanelBriefViewItemLayoutConstants &_rhs) const noexcept;
-    bool operator!=(const PanelBriefViewItemLayoutConstants &_rhs) const noexcept;
+    constexpr bool operator==(const PanelBriefViewItemLayoutConstants &_rhs) const noexcept = default;
 };
 
 @interface PanelBriefView : NSView <NCPanelViewPresentationProtocol,
@@ -37,13 +36,12 @@ struct PanelBriefViewItemLayoutConstants {
 
 - (id)initWithFrame:(NSRect)frameRect andIR:(nc::vfsicon::IconRepository &)_ir;
 
-- (void)dataChanged;
-- (void)syncVolatileData;
+- (void)onDataChanged;
+- (void)onVolatileDataChanged;
 - (void)setData:(nc::panel::data::Model *)_data;
 
 @property(nonatomic, readonly) int itemsInColumn;
 @property(nonatomic) int cursorPosition;
-@property(nonatomic) nc::panel::data::SortMode sortMode;
 
 @property(nonatomic) nc::panel::PanelBriefViewColumnsLayout columnsLayout;
 

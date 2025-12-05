@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
@@ -8,8 +8,7 @@ namespace nc::vfsicon {
 
 /**
  * IconRepository assumes a single thread affinity.
- * This means that client(s) should call it from one thread only, presumably from a main thread
- * only.
+ * This means that client(s) should call it from one thread only, presumably from a main thread only.
  */
 class IconRepository
 {
@@ -18,11 +17,10 @@ public:
 
     using SlotKey = uint16_t;
 
-    static inline const SlotKey InvalidKey = SlotKey{0};
+    static inline constexpr SlotKey InvalidKey = SlotKey{0};
 
     /**
-     * Checks whether _key refers to a valid slot. A key which is equal to InvalidKey is always
-     * invalid.
+     * Checks whether _key refers to a valid slot. A key which is equal to InvalidKey is always invalid.
      */
     virtual bool IsValidSlot(SlotKey _key) const = 0;
 

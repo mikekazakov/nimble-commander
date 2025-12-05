@@ -3,10 +3,10 @@
 
 namespace nc::panel::data {
 
-static_assert(sizeof(QuickSearchHiglight) == 8);
+static_assert(sizeof(QuickSearchHighlight) == 8);
 static_assert(sizeof(ItemVolatileData) == 24);
 
-QuickSearchHiglight::QuickSearchHiglight(std::span<const Range> _ranges) noexcept
+QuickSearchHighlight::QuickSearchHighlight(std::span<const Range> _ranges) noexcept
 {
     // limitation: _ranges must be monotonically rising and have no overlaps
     int idx = 0;
@@ -50,7 +50,7 @@ QuickSearchHiglight::QuickSearchHiglight(std::span<const Range> _ranges) noexcep
     }
 }
 
-QuickSearchHiglight::Ranges QuickSearchHiglight::unpack() const noexcept
+QuickSearchHighlight::Ranges QuickSearchHighlight::unpack() const noexcept
 {
     Ranges r;
     uint64_t t = d;

@@ -12,6 +12,7 @@
 #include "PanelController.h"
 #include "Brief/PanelBriefView.h"
 #include "List/PanelListView.h"
+#include "Gallery/PanelGalleryView.h"
 #include "PanelViewHeader.h"
 #include "PanelViewFooter.h"
 #include "PanelViewDelegate.h"
@@ -193,6 +194,13 @@ struct StateStorage {
     return v;
 }
 
+- (PanelGalleryView *)spawnGalleryView
+{
+    auto v = [[PanelGalleryView alloc] initWithFrame:self.bounds andIR:*m_IconRepository];
+    v.translatesAutoresizingMaskIntoConstraints = false;
+    return v;
+}
+
 - (BOOL)isOpaque
 {
     return true;
@@ -278,7 +286,6 @@ struct StateStorage {
 
     if( data ) {
         [m_ItemsView setData:data];
-        m_ItemsView.sortMode = data->SortMode();
         m_HeaderView.sortMode = data->SortMode();
     }
 
@@ -606,14 +613,22 @@ struct StateStorage {
         [self HandleNextPage];
     else if( event_action_tag_wo_shift == tags.page_up )
         [self HandlePrevPage];
-    else if( event_action_tag == tags.scroll_down )
-        [m_ItemsView onPageDown:event];
-    else if( event_action_tag == tags.scroll_up )
-        [m_ItemsView onPageUp:event];
-    else if( event_action_tag == tags.scroll_home )
-        [m_ItemsView onScrollToBeginning:event];
-    else if( event_action_tag == tags.scroll_end )
-        [m_ItemsView onScrollToEnd:event];
+    else if( event_action_tag == tags.scroll_down ) {
+        if( [m_ItemsView respondsToSelector:@selector(onPageDown:)] )
+            [m_ItemsView onPageDown:event];
+    }
+    else if( event_action_tag == tags.scroll_up ) {
+        if( [m_ItemsView respondsToSelector:@selector(onPageUp:)] )
+            [m_ItemsView onPageUp:event];
+    }
+    else if( event_action_tag == tags.scroll_home ) {
+        if( [m_ItemsView respondsToSelector:@selector(onScrollToBeginning:)] )
+            [m_ItemsView onScrollToBeginning:event];
+    }
+    else if( event_action_tag == tags.scroll_end ) {
+        if( [m_ItemsView respondsToSelector:@selector(onScrollToEnd:)] )
+            [m_ItemsView onScrollToEnd:event];
+    }
     else if( event_action_tag == tags.invert_and_move )
         [self onInvertCurrentItemSelectionAndMoveNext];
     else if( event_action_tag == tags.invert )
@@ -719,14 +734,12 @@ struct StateStorage {
 
 - (void)setupBriefPresentationWithLayout:(PanelBriefViewColumnsLayout)_layout
 {
-    const auto init = !nc::objc_cast<PanelBriefView>(m_ItemsView);
-    if( init ) {
-        auto v = [self spawnBriefView];
-        // v.translatesAutoresizingMaskIntoConstraints = false;
-        //    [self addSubview:m_ItemsView];
+    PanelBriefView *view = nc::objc_cast<PanelBriefView>(m_ItemsView);
+    if( view == nil ) {
+        view = [self spawnBriefView];
 
-        [self replaceSubview:m_ItemsView with:v];
-        m_ItemsView = v;
+        [self replaceSubview:m_ItemsView with:view];
+        m_ItemsView = view;
 
         NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView, m_FooterView);
         [self
@@ -743,28 +756,24 @@ struct StateStorage {
 
         if( m_Data ) {
             m_ItemsView.data = m_Data;
-            m_ItemsView.sortMode = m_Data->SortMode();
         }
 
         if( m_CursorPos >= 0 )
             [m_ItemsView setCursorPosition:m_CursorPos];
     }
 
-    if( auto v = nc::objc_cast<PanelBriefView>(m_ItemsView) ) {
-        [v setColumnsLayout:_layout];
-    }
+    view.columnsLayout = _layout;
 }
 
 - (void)setupListPresentationWithLayout:(PanelListViewColumnsLayout)_layout
 {
-    const auto init = !nc::objc_cast<PanelListView>(m_ItemsView);
+    PanelListView *view = nc::objc_cast<PanelListView>(m_ItemsView);
 
-    if( init ) {
-        auto v = [self spawnListView];
-        // v.translatesAutoresizingMaskIntoConstraints = false;
+    if( view == nil ) {
+        view = [self spawnListView];
 
-        [self replaceSubview:m_ItemsView with:v];
-        m_ItemsView = v;
+        [self replaceSubview:m_ItemsView with:view];
+        m_ItemsView = view;
 
         NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView, m_FooterView);
         [self
@@ -781,16 +790,46 @@ struct StateStorage {
 
         if( m_Data ) {
             m_ItemsView.data = m_Data;
-            m_ItemsView.sortMode = m_Data->SortMode();
         }
 
         if( m_CursorPos >= 0 )
             [m_ItemsView setCursorPosition:m_CursorPos];
     }
 
-    if( auto v = nc::objc_cast<PanelListView>(m_ItemsView) ) {
-        [v setColumnsLayout:_layout];
+    view.columnsLayout = _layout;
+}
+
+- (void)setupGalleryPresentationWithLayout:(PanelGalleryViewLayout)_layout
+{
+    PanelGalleryView *view = nc::objc_cast<PanelGalleryView>(m_ItemsView);
+    if( view == nil ) {
+        view = [self spawnGalleryView];
+
+        [self replaceSubview:m_ItemsView with:view];
+        m_ItemsView = view;
+
+        NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView, m_FooterView);
+        [self
+            addConstraints:[NSLayoutConstraint
+                               constraintsWithVisualFormat:@"V:[m_HeaderView]-(==0)-[m_ItemsView]-(==0)-[m_FooterView]"
+                                                   options:0
+                                                   metrics:nil
+                                                     views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ItemsView]-(0)-|"
+                                                                     options:0
+                                                                     metrics:nil
+                                                                       views:views]];
+        [self layout];
+
+        if( m_Data ) {
+            m_ItemsView.data = m_Data;
+        }
+
+        if( m_CursorPos >= 0 )
+            [m_ItemsView setCursorPosition:m_CursorPos];
     }
+
+    view.galleryLayout = _layout;
 }
 
 - (std::any)presentationLayout
@@ -799,6 +838,8 @@ struct StateStorage {
         return std::any{[v columnsLayout]};
     if( auto v = nc::objc_cast<PanelListView>(m_ItemsView) )
         return std::any{[v columnsLayout]};
+    if( auto v = nc::objc_cast<PanelGalleryView>(m_ItemsView) )
+        return std::any{[v galleryLayout]};
     return std::any{PanelViewDisabledLayout{}};
 }
 
@@ -809,6 +850,9 @@ struct StateStorage {
     }
     else if( auto bl = std::any_cast<PanelBriefViewColumnsLayout>(&_layout.layout) ) {
         [self setupBriefPresentationWithLayout:*bl];
+    }
+    else if( auto gl = std::any_cast<PanelGalleryViewLayout>(&_layout.layout) ) {
+        [self setupGalleryPresentationWithLayout:*gl];
     }
 }
 
@@ -971,7 +1015,7 @@ struct StateStorage {
         }
     }
 
-    [m_ItemsView dataChanged];
+    [m_ItemsView onDataChanged];
     [m_ItemsView setCursorPosition:m_CursorPos];
 
     [self volatileDataChanged];
@@ -987,16 +1031,9 @@ struct StateStorage {
 
 - (void)volatileDataChanged
 {
-    [m_ItemsView syncVolatileData];
+    [m_ItemsView onVolatileDataChanged];
     [m_FooterView updateFocusedItem:self.item VD:self.item_vd];
     [m_FooterView updateStatistics:m_Data->Stats()];
-}
-
-- (int)sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options)_options
-{
-    dispatch_assert_main_queue();
-    auto pos = [m_ItemsView sortedItemPosAtPoint:_window_point hitTestOption:_options];
-    return pos;
 }
 
 - (void)windowStatusDidChange
@@ -1106,7 +1143,8 @@ struct StateStorage {
 - (void)dataSortingHasChanged
 {
     m_HeaderView.sortMode = m_Data->SortMode();
-    m_ItemsView.sortMode = m_Data->SortMode();
+    if( [m_ItemsView respondsToSelector:@selector(onDataSortingHasChanged)] )
+        [m_ItemsView onDataSortingHasChanged];
 }
 
 - (PanelController *)controller

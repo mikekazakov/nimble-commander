@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stdint.h>
@@ -112,6 +112,13 @@ public:
     NSColor *FilePanelsBriefFocusedActiveItemBackgroundColor() const noexcept;
     NSColor *FilePanelsBriefFocusedInactiveItemBackgroundColor() const noexcept;
     NSColor *FilePanelsBriefSelectedItemBackgroundColor() const noexcept;
+
+    // File Panels --> Gallery presentation settings /////////////////////////////////////////////////
+    NSFont *FilePanelsGalleryFont() const noexcept;
+    NSColor *FilePanelsGalleryBackgroundColor() const noexcept;
+    NSColor *FilePanelsGalleryFocusedActiveItemBackgroundColor() const noexcept;
+    NSColor *FilePanelsGalleryFocusedInactiveItemBackgroundColor() const noexcept;
+    NSColor *FilePanelsGallerySelectedItemBackgroundColor() const noexcept;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Terminal Emulator section

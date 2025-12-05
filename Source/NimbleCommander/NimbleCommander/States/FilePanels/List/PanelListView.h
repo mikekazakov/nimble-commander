@@ -22,12 +22,11 @@ class Model;
 
 @property(nonatomic, readonly) int itemsInColumn;
 @property(nonatomic) int cursorPosition;
-@property(nonatomic) nc::panel::data::SortMode sortMode;
 @property(nonatomic) std::function<void(nc::panel::data::SortMode)> sortModeChangeCallback;
 @property(nonatomic, readonly) PanelView *panelView;
 
-- (void)dataChanged;
-- (void)syncVolatileData;
+- (void)onDataChanged;
+- (void)onVolatileDataChanged;
 - (void)setData:(nc::panel::data::Model *)_data;
 
 - (const nc::panel::PanelListViewGeometry &)geometry;

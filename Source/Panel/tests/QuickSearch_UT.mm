@@ -249,9 +249,36 @@ TEST_CASE("Underscoring")
     CHECK(ctx.data.VolatileDataAtSortPosition(1).highlight.unpack().segments[0].length == 3);
 }
 
+TEST_CASE("Underscoring works in UTF16")
+{
+    QuickSearchTestsContext ctx;
+    auto listing = QuickSearch_ProduceDummyListing({"привет.txt", "🤩.txt"});
+    ctx.data.Load(listing, data::Model::PanelType::Directory);
+    ctx.qsconfig.Set(g_ConfigIsSoftFiltering, false);
+    ctx.qsconfig.Set(g_ConfigTypingView, true);
+    ctx.qsconfig.Set(g_ConfigWhereToFind, data::TextualFilter::Where::Anywhere);
+    auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
+    [qs setSearchCriteria:@"привет"];
+    CHECK(ctx.data.VolatileDataAtSortPosition(0).highlight.unpack().count == 1);
+    CHECK(ctx.data.VolatileDataAtSortPosition(0).highlight.unpack().segments[0].offset == 0);
+    CHECK(ctx.data.VolatileDataAtSortPosition(0).highlight.unpack().segments[0].length == 6);
+    [qs setSearchCriteria:@"txt"];
+    CHECK(ctx.data.VolatileDataAtSortPosition(0).highlight.unpack().count == 1);
+    CHECK(ctx.data.VolatileDataAtSortPosition(0).highlight.unpack().segments[0].offset == 7);
+    CHECK(ctx.data.VolatileDataAtSortPosition(0).highlight.unpack().segments[0].length == 3);
+    CHECK(ctx.data.VolatileDataAtSortPosition(1).highlight.unpack().count == 1);
+    CHECK(ctx.data.VolatileDataAtSortPosition(1).highlight.unpack().segments[0].offset == 3);
+    CHECK(ctx.data.VolatileDataAtSortPosition(1).highlight.unpack().segments[0].length == 3);
+    // Currently doesn't work:
+    // [qs setSearchCriteria:@"🤩"];
+    // CHECK(ctx.data.VolatileDataAtSortPosition(1).highlight.unpack().count == 1);
+    // CHECK(ctx.data.VolatileDataAtSortPosition(1).highlight.unpack().segments[0].offset == 0);
+    // CHECK(ctx.data.VolatileDataAtSortPosition(1).highlight.unpack().segments[0].length == 2);
+}
+
 TEST_CASE("Different phrase locations")
 {
-    using Ranges = QuickSearchHiglight::Ranges;
+    using Ranges = QuickSearchHighlight::Ranges;
     using Where = data::TextualFilter::Where;
     QuickSearchTestsContext ctx;
     NCPanelQuickSearch *qs;

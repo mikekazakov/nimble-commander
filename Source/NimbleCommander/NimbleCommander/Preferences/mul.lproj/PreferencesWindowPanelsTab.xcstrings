@@ -109,6 +109,18 @@
         }
       }
     },
+    "4VN-F4-oO8.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Gallery\"; ObjectID = \"4VN-F4-oO8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Gallery"
+          }
+        }
+      }
+    },
     "5JY-Qe-Lw7.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Show Preview as a:\"; ObjectID = \"5JY-Qe-Lw7\";",
       "extractionState" : "extracted_with_value",
@@ -1779,6 +1791,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Начальное окно:"
+          }
+        }
+      }
+    },
+    "z4z-UI-F7h.label" : {
+      "comment" : "Class = \"NSTabViewItem\"; label = \"Gallery\"; ObjectID = \"z4z-UI-F7h\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Gallery"
           }
         }
       }

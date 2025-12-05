@@ -505,6 +505,10 @@ static NSMenu *BuildTagColorMenu()
             l1.columns.emplace_back(col);
             new_layout.layout = l1;
         }
+        if( self.layoutType.selectedTag == static_cast<int>(PanelViewLayout::Type::Gallery) ) {
+            PanelGalleryViewLayout l1;
+            new_layout.layout = l1;
+        }
         if( self.layoutType.selectedTag == static_cast<int>(PanelViewLayout::Type::Disabled) )
             new_layout.layout = PanelViewDisabledLayout{};
 
@@ -523,6 +527,8 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
             return @"Brief";
         case PanelViewLayout::Type::List:
             return @"List";
+        case PanelViewLayout::Type::Gallery:
+            return @"Gallery";
         default:
             return @"Disabled";
     }
@@ -574,6 +580,8 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
         self.layoutsListIcon1x.state = list->icon_scale == 1;
         self.layoutsListIcon2x.state = list->icon_scale == 2;
     }
+
+    // TODO: Add Gallery options later
 }
 
 - (void)clearLayoutFields

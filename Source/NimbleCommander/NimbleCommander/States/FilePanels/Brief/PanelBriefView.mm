@@ -104,18 +104,6 @@ BuildItemsLayout(NSFont *_font, PanelBriefViewColumnsLayout _layout, NSUInteger 
     return lc;
 }
 
-bool PanelBriefViewItemLayoutConstants::operator==(const PanelBriefViewItemLayoutConstants &_rhs) const noexcept
-{
-    return inset_left == _rhs.inset_left && inset_top == _rhs.inset_top && inset_right == _rhs.inset_right &&
-           inset_bottom == _rhs.inset_bottom && icon_size == _rhs.icon_size && font_baseline == _rhs.font_baseline &&
-           item_height == _rhs.item_height;
-}
-
-bool PanelBriefViewItemLayoutConstants::operator!=(const PanelBriefViewItemLayoutConstants &_rhs) const noexcept
-{
-    return !(*this == _rhs);
-}
-
 @implementation PanelBriefView {
     NSScrollView *m_ScrollView;
     PanelBriefViewCollectionView *m_CollectionView;
@@ -129,17 +117,15 @@ bool PanelBriefViewItemLayoutConstants::operator!=(const PanelBriefViewItemLayou
     PanelBriefViewItemLayoutConstants m_ItemLayout;
     PanelBriefViewColumnsLayout m_ColumnsLayout;
     __weak PanelView *m_PanelView;
-    data::SortMode m_SortMode;
     nc::ThemesManager::ObservationTicket m_ThemeObservation;
 }
 
 @synthesize columnsLayout = m_ColumnsLayout;
-@synthesize sortMode = m_SortMode;
 
 - (void)setData:(data::Model *)_data
 {
     m_Data = _data;
-    [self dataChanged];
+    [self onDataChanged];
 }
 
 - (id)initWithFrame:(NSRect)frameRect andIR:(IconRepository &)_ir
@@ -409,7 +395,7 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
         m_IconsRepository->SetPxSize(px_size);
     }
     else {
-        m_IconsRepository->SetPxSize(m_ItemLayout.icon_size);
+        // Do not touch the icon repository, as we can be in a teardown stage
     }
 }
 
@@ -419,7 +405,7 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
     [self setupIconsPxSize]; // we call this here due to a possible DPI change
 }
 
-- (void)dataChanged
+- (void)onDataChanged
 {
     Log::Trace("[PanelBriefView dataChanged]");
     dispatch_assert_main_queue();
@@ -428,7 +414,7 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
     m_IconSlotToItemIndexMapping.clear();
     IconRepositoryCleaner{*m_IconsRepository, *m_Data}.SweepUnusedSlots();
     [m_CollectionView reloadData];
-    [self syncVolatileData];
+    [self onVolatileDataChanged];
     [m_Background setNeedsDisplay:true];
 }
 
@@ -540,7 +526,7 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
     return m_Layout.rowsNumber;
 }
 
-- (void)syncVolatileData
+- (void)onVolatileDataChanged
 {
     Log::Trace("[PanelBriefView syncVolatileData]");
     dispatch_assert_main_queue();
@@ -566,8 +552,7 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
 - (void)onIconUpdated:(IconRepository::SlotKey)_icon_no image:(NSImage *)_image
 {
     dispatch_assert_main_queue();
-    const auto it = m_IconSlotToItemIndexMapping.find(_icon_no);
-    if( it != end(m_IconSlotToItemIndexMapping) ) {
+    if( const auto it = m_IconSlotToItemIndexMapping.find(_icon_no); it != m_IconSlotToItemIndexMapping.end() ) {
         const auto index = [NSIndexPath indexPathForItem:it->second inSection:0];
         if( auto item = nc::objc_cast<PanelBriefViewItem>([m_CollectionView itemAtIndexPath:index]) ) {
             [item setIcon:_image];
@@ -619,13 +604,6 @@ static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::M
     rect = m_CollectionView.visibleRect;
     rect.origin.x = m_CollectionView.bounds.size.width - rect.size.width;
     [m_CollectionView scrollRectToVisible:rect];
-}
-
-- (int)sortedItemPosAtPoint:(NSPoint) [[maybe_unused]] _window_point
-              hitTestOption:(PanelViewHitTest::Options) [[maybe_unused]] _options
-{
-    // TODO:
-    return -1;
 }
 
 - (int)maxNumberOfVisibleItems

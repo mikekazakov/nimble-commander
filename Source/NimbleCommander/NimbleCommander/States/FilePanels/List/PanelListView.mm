@@ -80,7 +80,6 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
 
     std::vector<PanelListViewRowView *> m_RowsStash;
 
-    data::SortMode m_SortMode;
     std::function<void(data::SortMode)> m_SortModeChangeCallback;
 
     PanelListViewColumnsLayout m_AssignedLayout;
@@ -91,7 +90,6 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
 @synthesize dateAddedFormattingStyle = m_DateAddedFormattingStyle;
 @synthesize dateModifiedFormattingStyle = m_DateModifiedFormattingStyle;
 @synthesize dateAccessedFormattingStyle = m_DateAccessedFormattingStyle;
-@synthesize sortMode = m_SortMode;
 @synthesize sortModeChangeCallback = m_SortModeChangeCallback;
 
 - (id)initWithFrame:(NSRect)_frame andIR:(nc::vfsicon::IconRepository &)_ir
@@ -384,7 +382,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
         m_IconRepository->SetPxSize(px_size);
     }
     else {
-        m_IconRepository->SetPxSize(m_Geometry.IconSize());
+        // Do not touch the icon repository, as we can be in a teardown stage
     }
 }
 
@@ -576,7 +574,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     _view.style = m_DateAccessedFormattingStyle;
 }
 
-- (void)dataChanged
+- (void)onDataChanged
 {
     data::Model *const data = m_Data;
     const auto old_rows_count = static_cast<int>(m_TableView.numberOfRows);
@@ -631,7 +629,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                            withAnimation:NSTableViewAnimationEffectNone];
     }
 }
-- (void)syncVolatileData
+- (void)onVolatileDataChanged
 {
     [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
       if( m_Data->IsValidSortPosition(static_cast<int>(row)) )
@@ -642,7 +640,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 - (void)setData:(data::Model *)_data
 {
     m_Data = _data;
-    [self dataChanged];
+    [self onDataChanged];
+    [self placeSortIndicator];
 }
 
 - (int)itemsInColumn
@@ -861,23 +860,23 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     [self placeSortIndicator];
 }
 
-- (void)setSortMode:(data::SortMode)_mode
+- (void)onDataSortingHasChanged
 {
-    if( m_SortMode == _mode )
-        return;
-    m_SortMode = _mode;
-
     [self placeSortIndicator];
 }
 
 - (void)placeSortIndicator
 {
+    if( !m_Data )
+        return;
+
     for( NSTableColumn *c in m_TableView.tableColumns )
         [m_TableView setIndicatorImage:nil inTableColumn:c];
 
+    const data::SortMode sort_mode = m_Data->SortMode();
     auto set = [&]() -> std::pair<NSImage *, NSTableColumn *> {
         using _ = data::SortMode;
-        switch( m_SortMode.sort ) {
+        switch( sort_mode.sort ) {
             case _::SortByName:
                 return {g_SortAscImage, m_NameColumn};
             case _::SortByNameRev:
@@ -917,7 +916,10 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (void)tableView:(NSTableView *) [[maybe_unused]] _table_view didClickTableColumn:(NSTableColumn *)_table_column
 {
-    auto proposed = m_SortMode;
+    if( !m_Data )
+        return;
+    const data::SortMode initial = m_Data->SortMode();
+    data::SortMode proposed = initial;
     auto swp = [&](data::SortMode::Mode _1st, data::SortMode::Mode _2nd) {
         proposed.sort = (proposed.sort == _1st ? _2nd : _1st);
     };
@@ -937,7 +939,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     else if( _table_column == m_DateAccessedColumn )
         swp(data::SortMode::SortByAccessTime, data::SortMode::SortByAccessTimeRev);
 
-    if( proposed != m_SortMode && m_SortModeChangeCallback )
+    if( proposed != initial && m_SortModeChangeCallback )
         m_SortModeChangeCallback(proposed);
 }
 
@@ -1010,23 +1012,6 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         [m_ScrollView.contentView scrollPoint:_rc.origin];
     else
         [m_ScrollView.contentView setBoundsOrigin:_rc.origin];
-}
-
-- (int)sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options) [[maybe_unused]] _options
-{
-    const auto local_point = [m_TableView convertPoint:_window_point fromView:nil];
-    const auto visible_rect = m_ScrollView.documentVisibleRect;
-    if( !NSPointInRect(local_point, visible_rect) )
-        return -1;
-
-    const auto row_index = [m_TableView rowAtPoint:local_point];
-    if( row_index < 0 )
-        return -1;
-
-    if( PanelListViewRowView *rv = [m_TableView rowViewAtRow:row_index makeIfNecessary:false] )
-        return rv.itemIndex;
-
-    return -1;
 }
 
 - (void)frameDidChange

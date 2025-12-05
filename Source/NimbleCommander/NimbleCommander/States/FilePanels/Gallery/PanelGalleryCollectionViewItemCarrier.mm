@@ -194,9 +194,9 @@ CutFilenameIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double
         CTTypesetterCreateWithAttributedString((__bridge CFAttributedStringRef)(_attr_string)));
 
     boost::container::static_vector<NSRange, 4> result;
-    CFIndex start = 0;
+    long start = 0;
     for( size_t line_idx = 0; line_idx < _max_lines - 1; ++line_idx ) {
-        CFIndex count = CTTypesetterSuggestLineBreak(typesetter.get(), start, _width);
+        const long count = CTTypesetterSuggestLineBreak(typesetter.get(), start, _width);
         if( count <= 0 ) {
             break;
         }
@@ -204,7 +204,7 @@ CutFilenameIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double
         start += count;
     }
 
-    const CFIndex length = static_cast<CFIndex>(_attr_string.length);
+    const long length = static_cast<long>(_attr_string.length);
     if( start < length ) {
         result.push_back(NSMakeRange(static_cast<NSUInteger>(start), static_cast<NSUInteger>(length - start)));
     }

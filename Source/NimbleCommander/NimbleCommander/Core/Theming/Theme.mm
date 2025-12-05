@@ -126,25 +126,25 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
         return static_cast<unsigned>(0);
     };
     const auto ExtractColor = [&](const char *_path) -> NSColor * {
-        if( NSColor *v = ThemePersistence::ExtractColor(doc, _path) )
+        if( NSColor *const v = ThemePersistence::ExtractColor(doc, _path) )
             return v;
-        if( NSColor *v = ThemePersistence::ExtractColor(backup, _path) )
+        if( NSColor *const v = ThemePersistence::ExtractColor(backup, _path) )
             return v;
         panel::Log::Warn("Theme: unable to extract {} from both primary and backup documents", _path);
         return NSColor.blackColor;
     };
     const auto ExtractSyntaxColor = [&](const char *_path) -> NSColor * {
-        if( NSColor *v = ThemePersistence::ExtractColor(doc, _path) )
+        if( NSColor *const v = ThemePersistence::ExtractColor(doc, _path) )
             return v;
-        if( NSColor *v = ThemePersistence::ExtractColor(backup, _path) )
+        if( NSColor *const v = ThemePersistence::ExtractColor(backup, _path) )
             return v;
         panel::Log::Warn("Theme: unable to extract {} from both primary and backup documents", _path);
         return I->m_ViewerTextColor;
     };
     const auto ExtractFont = [&](const char *_path) -> NSFont * {
-        if( NSFont *v = ThemePersistence::ExtractFont(doc, _path) )
+        if( NSFont *const v = ThemePersistence::ExtractFont(doc, _path) )
             return v;
-        if( NSFont *v = ThemePersistence::ExtractFont(backup, _path) )
+        if( NSFont *const v = ThemePersistence::ExtractFont(backup, _path) )
             return v;
         panel::Log::Warn("Theme: unable to extract {} from both primary and backup documents", _path);
         return [NSFont systemFontOfSize:NSFont.systemFontSize];

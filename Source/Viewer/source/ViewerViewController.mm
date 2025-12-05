@@ -3,6 +3,7 @@
 #include "ViewerFooter.h"
 #include "ViewerSearchView.h"
 #include <Viewer/Log.h>
+#include <Viewer/Localizable.h>
 #include <VFS/VFS.h>
 #include <CUI/ProcessSheetController.h>
 #include <Config/Config.h>
@@ -15,9 +16,7 @@
 #include <Base/SerialQueue.h>
 #include "Internal.h"
 
-using namespace std::literals;
-using namespace nc;
-using namespace nc::viewer;
+namespace nc::viewer {
 
 static const auto g_ConfigRespectComAppleTextEncoding = "viewer.respectComAppleTextEncoding";
 static const auto g_ConfigSearchCaseSensitive = "viewer.searchCaseSensitive";
@@ -40,6 +39,8 @@ static int InvertBitFlag(int _value, int _flag)
 {
     return (_value & ~_flag) | (~_value & _flag);
 }
+
+} // namespace nc::viewer
 
 @interface NCViewerVerticalPostionToStringTransformer : NSValueTransformer
 @end
@@ -117,6 +118,7 @@ struct BackgroundFileOpener {
                          config:(nc::config::Config &)_config
                       shortcuts:(const nc::utility::ActionsShortcutsManager &)_shortcuts
 {
+    using namespace nc::viewer;
     self = [super init];
     if( self ) {
         Log::Debug("created new NCViewerViewController {}", nc::objc_bridge_cast<void>(self));
@@ -136,6 +138,7 @@ struct BackgroundFileOpener {
 
 - (void)dealloc
 {
+    using namespace nc::viewer;
     dispatch_assert_main_queue();
     Log::Debug("deallocating NCViewerViewController {}", nc::objc_bridge_cast<void>(self));
     [m_View removeObserver:self forKeyPath:@"verticalPositionPercentage"];
@@ -179,10 +182,11 @@ struct BackgroundFileOpener {
 
 - (bool)performBackgroundOpening
 {
+    using namespace nc::viewer;
     dispatch_assert_background_queue();
 
     BackgroundFileOpener opener;
-    const std::expected<void, Error> open_err = opener.Open(m_VFS, m_Path, *m_Config, self.fileWindowSize);
+    const std::expected<void, nc::Error> open_err = opener.Open(m_VFS, m_Path, *m_Config, self.fileWindowSize);
     if( !open_err )
         return false;
     m_OriginalFile = std::move(opener.original_file);
@@ -209,6 +213,7 @@ struct BackgroundFileOpener {
 
 - (void)show
 {
+    using namespace nc::viewer;
     dispatch_assert_main_queue();
     assert(self.view != nil);
 
@@ -239,8 +244,8 @@ struct BackgroundFileOpener {
     else {
         [m_View setFile:m_ViewerFileWindow];
         if( m_Config->GetBool(g_ConfigRespectComAppleTextEncoding) ) {
-            if( const utility::Encoding encoding = EncodingFromXAttr(m_OriginalFile);
-                encoding != utility::Encoding::ENCODING_INVALID ) {
+            if( const nc::utility::Encoding encoding = EncodingFromXAttr(m_OriginalFile);
+                encoding != nc::utility::Encoding::ENCODING_INVALID ) {
                 m_View.encoding = encoding;
             }
         }
@@ -271,6 +276,7 @@ struct BackgroundFileOpener {
 
 - (unsigned)fileWindowSize
 {
+    using namespace nc::viewer;
     unsigned file_window_size = nc::vfs::FileWindow::DefaultWindowSize;
     unsigned file_window_pow2x = m_Config->GetInt(g_ConfigWindowSize);
     if( file_window_pow2x <= 5 )
@@ -298,6 +304,7 @@ struct BackgroundFileOpener {
 
 - (void)setSearchField:(NSSearchField *)searchField
 {
+    using namespace nc::viewer;
     if( m_SearchField == searchField )
         return;
 
@@ -306,8 +313,7 @@ struct BackgroundFileOpener {
     m_SearchField.action = @selector(onSearchFieldAction:);
     m_SearchField.delegate = self;
     auto cell = static_cast<NSSearchFieldCell *>(m_SearchField.cell);
-    cell.placeholderString =
-        NSLocalizedString(@"Search in file", "Placeholder for search text field in internal viewer");
+    cell.placeholderString = localizable::ViewControllerSearchInFilePlaceholder();
     cell.sendsWholeSearchString = true;
     cell.recentsAutosaveName = @"BigFileViewRecentSearches";
     cell.maximumRecents = 20;
@@ -328,29 +334,27 @@ struct BackgroundFileOpener {
 
 - (NSMenu *)searchFieldMenu
 {
+    using namespace nc::viewer;
     NSMenu *menu = [[NSMenu alloc] initWithTitle:@"Search Menu"];
     NSMenuItem *item;
 
-    item = [[NSMenuItem alloc]
-        initWithTitle:NSLocalizedString(@"Case-sensitive search", "Menu item option in internal viewer search")
-               action:@selector(onSearchFieldMenuCaseSensitiveAction:)
-        keyEquivalent:@""];
+    item = [[NSMenuItem alloc] initWithTitle:localizable::ViewControllerCaseSensitiveSearchMenuTitle()
+                                      action:@selector(onSearchFieldMenuCaseSensitiveAction:)
+                               keyEquivalent:@""];
     item.state = m_Config->GetBool(g_ConfigSearchCaseSensitive);
     item.target = self;
     [menu insertItem:item atIndex:0];
 
-    item = [[NSMenuItem alloc]
-        initWithTitle:NSLocalizedString(@"Find whole phrase", "Menu item option in internal viewer search")
-               action:@selector(onSearchFiledMenuWholePhraseSearch:)
-        keyEquivalent:@""];
+    item = [[NSMenuItem alloc] initWithTitle:localizable::ViewControllerFindWholePhraseMenuTitle()
+                                      action:@selector(onSearchFiledMenuWholePhraseSearch:)
+                               keyEquivalent:@""];
     item.state = m_Config->GetBool(g_ConfigSearchForWholePhrase);
     item.target = self;
     [menu insertItem:item atIndex:1];
 
-    item = [[NSMenuItem alloc]
-        initWithTitle:NSLocalizedString(@"Clear Recents", "Menu item title in internal viewer search")
-               action:nullptr
-        keyEquivalent:@""];
+    item = [[NSMenuItem alloc] initWithTitle:localizable::ViewControllerClearRecentsMenuTitle()
+                                      action:nullptr
+                               keyEquivalent:@""];
     item.tag = NSSearchFieldClearRecentsMenuItemTag;
     [menu insertItem:item atIndex:2];
 
@@ -358,14 +362,13 @@ struct BackgroundFileOpener {
     item.tag = NSSearchFieldRecentsTitleMenuItemTag;
     [menu insertItem:item atIndex:3];
 
-    item = [[NSMenuItem alloc]
-        initWithTitle:NSLocalizedString(@"Recent Searches", "Menu item title in internal viewer search")
-               action:nullptr
-        keyEquivalent:@""];
+    item = [[NSMenuItem alloc] initWithTitle:localizable::ViewControllerRecentSearchesMenuTitle()
+                                      action:nullptr
+                               keyEquivalent:@""];
     item.tag = NSSearchFieldRecentsTitleMenuItemTag;
     [menu insertItem:item atIndex:4];
 
-    item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Recents", "Menu item title in internal viewer search")
+    item = [[NSMenuItem alloc] initWithTitle:localizable::ViewControllerRecentsMenuTitle()
                                       action:nullptr
                                keyEquivalent:@""];
     item.tag = NSSearchFieldRecentsMenuItemTag;
@@ -402,7 +405,7 @@ struct BackgroundFileOpener {
         m_View.selectionInFile = CFRangeMake(-1, 0); // remove current selection
 
         uint64_t view_offset = m_View.verticalPositionInBytes;
-        utility::Encoding encoding = m_View.encoding;
+        nc::utility::Encoding encoding = m_View.encoding;
 
         m_SearchInFileQueue.Stop(); // we should stop current search if any
         m_SearchInFileQueue.Wait();
@@ -438,7 +441,7 @@ struct BackgroundFileOpener {
     if( m_SearchInFileQueue.Empty() )
         dispatch_to_main_queue([=] { [m_SearchProgressIndicator stopAnimation:self]; });
     else
-        dispatch_to_main_queue_after(100ms,
+        dispatch_to_main_queue_after(std::chrono::milliseconds{100},
                                      [=] { // should be 100 ms of workload before user will get spinning indicator
                                          if( !m_SearchInFileQueue.Empty() ) // need to check if task was already done
                                              [m_SearchProgressIndicator startAnimation:self];
@@ -447,6 +450,7 @@ struct BackgroundFileOpener {
 
 - (void)onSearchFieldMenuCaseSensitiveAction:(id) [[maybe_unused]] _sender
 {
+    using namespace nc::viewer;
     using nc::vfs::SearchInFile;
     using Options = SearchInFile::Options;
     const auto options = static_cast<Options>(
@@ -462,6 +466,7 @@ struct BackgroundFileOpener {
 
 - (void)onSearchFiledMenuWholePhraseSearch:(id) [[maybe_unused]] _sender
 {
+    using namespace nc::viewer;
     using nc::vfs::SearchInFile;
     using Options = SearchInFile::Options;
     const auto options = static_cast<Options>(
@@ -513,11 +518,11 @@ struct BackgroundFileOpener {
 
 - (void)buildTitle
 {
+    using namespace nc::viewer;
     NSString *path = [NSString stringWithUTF8StdString:m_GlobalFilePath];
     if( path == nil )
         path = @"...";
-    NSString *title =
-        [NSString stringWithFormat:NSLocalizedString(@"File View - %@", "Window title for internal file viewer"), path];
+    NSString *title = [NSString stringWithFormat:localizable::ViewControllerTitleFormat(), path];
 
     [self willChangeValueForKey:@"verboseTitle"];
     m_VerboseTitle = title;
@@ -548,7 +553,7 @@ struct BackgroundFileOpener {
     return m_WorkFile != nullptr;
 }
 
-- (void)commitRefresh:(BackgroundFileOpener &)_opener
+- (void)commitRefresh:(nc::viewer::BackgroundFileOpener &)_opener
 {
     dispatch_assert_main_queue();
 
@@ -564,6 +569,7 @@ struct BackgroundFileOpener {
 
 - (void)onRefresh
 {
+    using namespace nc::viewer;
     Log::Debug("refresh called");
     __weak NCViewerViewController *weak_self = self;
     dispatch_to_background([weak_self] {
@@ -572,7 +578,7 @@ struct BackgroundFileOpener {
             return;
 
         auto opener = std::make_unique<BackgroundFileOpener>();
-        const std::expected<void, Error> open_rc =
+        const std::expected<void, nc::Error> open_rc =
             opener->Open(strong_self->m_VFS, strong_self->m_Path, *strong_self->m_Config, strong_self.fileWindowSize);
         if( !open_rc ) {
             Log::Warn("failed to open a path {}, vfs_error: {}", strong_self->m_Path, open_rc.error());
@@ -590,6 +596,7 @@ struct BackgroundFileOpener {
 
 - (void)onFileChanged
 {
+    using namespace nc::viewer;
     if( m_AutomaticFileRefreshScheduled )
         return;
     m_AutomaticFileRefreshScheduled = true;
@@ -604,6 +611,7 @@ struct BackgroundFileOpener {
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
+    using namespace nc::viewer;
     struct Tags {
         int toggle_text;
         int toggle_hex;
@@ -685,6 +693,7 @@ std::expected<void, Error> BackgroundFileOpener::Open(VFSHostPtr _vfs,
                                                       const nc::config::Config &_config,
                                                       int _window_size)
 {
+    using namespace nc::viewer;
     dispatch_assert_background_queue();
     assert(_vfs);
     if( const std::expected<std::shared_ptr<VFSFile>, Error> exp = _vfs->CreateFile(_path); exp )
@@ -695,7 +704,7 @@ std::expected<void, Error> BackgroundFileOpener::Open(VFSHostPtr _vfs,
     if( original_file->GetReadParadigm() < VFSFile::ReadParadigm::Random ) {
         // we need to read a file into temporary mem/file storage to access it randomly
         ProcessSheetController *const proc = [ProcessSheetController new];
-        proc.title = NSLocalizedString(@"Opening file...", "Title for process sheet when opening a vfs file");
+        proc.title = localizable::ViewControllerOpeningFileTitle();
         [proc Show];
 
         auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(original_file);

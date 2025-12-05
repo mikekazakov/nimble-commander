@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InternalViewerWindowController.h"
 #include <Viewer/ViewerView.h>
 #include <Viewer/ViewerViewController.h>
@@ -6,9 +6,6 @@
 #include <chrono>
 #include <Utility/ObjCpp.h>
 #include "Internal.h"
-
-using namespace nc::viewer;
-using namespace std::literals;
 
 @interface InternalViewerWindow : NSWindow
 @end
@@ -39,7 +36,7 @@ using namespace std::literals;
          viewerFactory:(const std::function<NCViewerView *(NSRect)> &)_viewer_factory
             controller:(NCViewerViewController *)_controller
 {
-    auto nib_path = [Bundle() pathForResource:@"InternalViewerWindowController" ofType:@"nib"];
+    auto nib_path = [nc::viewer::Bundle() pathForResource:@"InternalViewerWindowController" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
         m_Controller = _controller;
@@ -94,7 +91,7 @@ using namespace std::literals;
 {
     [m_Controller saveFileState];
     self.window.delegate = nil;
-    dispatch_to_main_queue_after(10ms, [=] {
+    dispatch_to_main_queue_after(std::chrono::milliseconds{10}, [=] {
         if( const id<NCViewerWindowDelegate> delegate = self.delegate )
             if( [delegate respondsToSelector:@selector(viewerWindowWillClose:)] )
                 [delegate viewerWindowWillClose:self];

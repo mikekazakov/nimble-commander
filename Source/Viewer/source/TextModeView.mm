@@ -11,23 +11,19 @@
 #include <iostream>
 #include <algorithm>
 
-using namespace nc;
-using namespace nc::viewer;
-using nc::utility::FontGeometryInfo;
+namespace nc::viewer {
 
-static const auto g_TabSpaces = 4;
-static const auto g_WrappingWidth = 10000.;
-static const auto g_TopInset = 4.;
-static const auto g_LeftInset = 4.;
-static const auto g_RightInset = 4.;
-static const auto g_SyncHighlightingThreshold = std::chrono::milliseconds{16};
+static const auto g_TextModeTabSpaces = 4;
+static const auto g_TextModeWrappingWidth = 10000.;
+static const auto g_TextModeTopInset = 4.;
+static const auto g_TextModeLeftInset = 4.;
+static const auto g_TextModeRightInset = 4.;
+static const auto g_TextModeSyncHighlightingThreshold = std::chrono::milliseconds{16};
 
-namespace {
-struct ScrollPosition {
+struct TextModeScrollPosition {
     double position = 0.;
     double proportion = 0.;
 };
-} // namespace
 
 static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet();
 
@@ -37,11 +33,11 @@ static int FindEqualVerticalOffsetForRebuiltFrame(const TextModeFrame &old_frame
                                                   int old_vertical_offset,
                                                   const TextModeFrame &new_frame);
 
-static ScrollPosition CalculateScrollPosition(const TextModeFrame &_frame,
-                                              const DataBackend &_backend,
-                                              NSSize _view_size,
-                                              int _vertical_line_offset,
-                                              double _vertical_px_offset);
+static TextModeScrollPosition CalculateScrollPosition(const TextModeFrame &_frame,
+                                                      const DataBackend &_backend,
+                                                      NSSize _view_size,
+                                                      int _vertical_line_offset,
+                                                      double _vertical_px_offset);
 
 static int64_t CalculateGlobalBytesOffsetFromScrollPosition(const TextModeFrame &_frame,
                                                             const DataBackend &_backend,
@@ -54,21 +50,23 @@ static std::optional<int> FindVerticalLineToScrollToBytesOffsetWithFrame(const T
                                                                          NSSize _view_size,
                                                                          int64_t _global_offset);
 
-static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame &_frame,
+static double CalculateVerticalPxPositionFromScrollPosition(const nc::viewer::TextModeFrame &_frame,
                                                             NSSize _view_size,
                                                             double _scroll_knob_position);
 
+} // namespace nc::viewer
+
 @implementation NCViewerTextModeView {
-    std::shared_ptr<const DataBackend> m_Backend;
-    const Theme *m_Theme;
-    hl::SettingsStorage *m_HighlightingSettings;
-    std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
-    std::shared_ptr<TextModeWorkingSetHighlighting> m_WorkingSetHighlighting;
-    std::shared_ptr<const TextModeFrame> m_Frame;
+    std::shared_ptr<const nc::viewer::DataBackend> m_Backend;
+    const nc::viewer::Theme *m_Theme;
+    nc::viewer::hl::SettingsStorage *m_HighlightingSettings;
+    std::shared_ptr<const nc::viewer::TextModeWorkingSet> m_WorkingSet;
+    std::shared_ptr<nc::viewer::TextModeWorkingSetHighlighting> m_WorkingSetHighlighting;
+    std::shared_ptr<const nc::viewer::TextModeFrame> m_Frame;
     std::string m_Language;
     bool m_LineWrap;
     bool m_EnableSyntaxHighlighting;
-    FontGeometryInfo m_FontInfo;
+    nc::utility::FontGeometryInfo m_FontInfo;
 
     int m_VerticalLineOffset;    // offset in lines number within existing text lines in Frame
     int m_HorizontalCharsOffset; // horizontal offset/scroll in monowidth chars
@@ -79,11 +77,11 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 
 @synthesize delegate;
 
-- (instancetype)initWithFrame:(NSRect)_frame
-                      backend:(std::shared_ptr<const DataBackend>)_backend
-                        theme:(const nc::viewer::Theme &)_theme
-         highlightingSettings:(nc::viewer::hl::SettingsStorage &)_hl_settings
-           enableHighlighting:(bool)_highlighting_enabled
+- (instancetype _Nonnull)initWithFrame:(NSRect)_frame
+                               backend:(std::shared_ptr<const nc::viewer::DataBackend>)_backend
+                                 theme:(const nc::viewer::Theme &)_theme
+                  highlightingSettings:(nc::viewer::hl::SettingsStorage &)_hl_settings
+                    enableHighlighting:(bool)_highlighting_enabled
 {
     self = [super initWithFrame:_frame];
     if( self ) {
@@ -92,9 +90,9 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
         m_Backend = _backend;
         m_Theme = &_theme;
         m_HighlightingSettings = &_hl_settings;
-        m_WorkingSet = MakeEmptyWorkingSet();
+        m_WorkingSet = nc::viewer::MakeEmptyWorkingSet();
         m_LineWrap = true;
-        m_FontInfo = FontGeometryInfo{(__bridge CTFontRef)m_Theme->Font()};
+        m_FontInfo = nc::utility::FontGeometryInfo{(__bridge CTFontRef)m_Theme->Font()};
         m_VerticalLineOffset = 0;
         m_HorizontalCharsOffset = 0;
         m_PxOffset = CGPointMake(0., 0.);
@@ -169,18 +167,21 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 
 - (void)rebuildHighlightingAndFrame
 {
+    using namespace nc::viewer;
     m_WorkingSetHighlighting.reset();
     if( m_EnableSyntaxHighlighting && !m_Language.empty() ) {
         if( const std::shared_ptr<const std::string> settings = m_HighlightingSettings->Settings(m_Language) ) {
-            m_WorkingSetHighlighting = std::make_shared<TextModeWorkingSetHighlighting>(m_WorkingSet, settings);
+            m_WorkingSetHighlighting =
+                std::make_shared<nc::viewer::TextModeWorkingSetHighlighting>(m_WorkingSet, settings);
             __weak NCViewerTextModeView *weak_self = self;
-            m_WorkingSetHighlighting->Highlight(g_SyncHighlightingThreshold,
-                                                [weak_self](std::shared_ptr<const TextModeWorkingSetHighlighting> _hl) {
-                                                    NCViewerTextModeView *const strong_self = weak_self;
-                                                    if( !strong_self || _hl != strong_self->m_WorkingSetHighlighting )
-                                                        return;
-                                                    [strong_self highlightingHasChanged];
-                                                });
+            m_WorkingSetHighlighting->Highlight(
+                g_TextModeSyncHighlightingThreshold,
+                [weak_self](std::shared_ptr<const nc::viewer::TextModeWorkingSetHighlighting> _hl) {
+                    NCViewerTextModeView *const strong_self = weak_self;
+                    if( !strong_self || _hl != strong_self->m_WorkingSetHighlighting )
+                        return;
+                    [strong_self highlightingHasChanged];
+                });
         }
     }
 
@@ -191,7 +192,9 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 
 - (NSSize)contentsSize
 {
-    auto width = self.bounds.size.width - g_LeftInset - g_RightInset - m_VerticalScroller.bounds.size.width;
+    using namespace nc::viewer;
+    auto width =
+        self.bounds.size.width - g_TextModeLeftInset - g_TextModeRightInset - m_VerticalScroller.bounds.size.width;
     auto height = self.bounds.size.height;
 
     return NSMakeSize(width, height);
@@ -199,14 +202,16 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 
 - (double)wrappingWidth
 {
-    return m_LineWrap ? self.contentsSize.width : g_WrappingWidth;
+    using namespace nc::viewer;
+    return m_LineWrap ? self.contentsSize.width : g_TextModeWrappingWidth;
 }
 
-- (std::shared_ptr<const TextModeFrame>)buildLayout
+- (std::shared_ptr<const nc::viewer::TextModeFrame>)buildLayout
 {
+    using namespace nc::viewer;
     const auto wrapping_width = [self wrappingWidth];
-    using S = hl::Style;
-    TextModeFrame::Source source;
+    using S = nc::viewer::hl::Style;
+    nc::viewer::TextModeFrame::Source source;
     source.wrapping_width = wrapping_width;
     source.font = (__bridge CTFontRef)m_Theme->Font();
     source.font_info = m_FontInfo;
@@ -218,10 +223,10 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     source.foreground_colors[std::to_underlying(S::Identifier)] = m_Theme->TextSyntaxIdentifierColor().CGColor;
     source.foreground_colors[std::to_underlying(S::Number)] = m_Theme->TextSyntaxNumberColor().CGColor;
     source.foreground_colors[std::to_underlying(S::String)] = m_Theme->TextSyntaxStringColor().CGColor;
-    source.tab_spaces = g_TabSpaces;
+    source.tab_spaces = g_TextModeTabSpaces;
     source.working_set = m_WorkingSet;
     source.working_set_highlighting = m_WorkingSetHighlighting;
-    return std::make_shared<TextModeFrame>(source);
+    return std::make_shared<nc::viewer::TextModeFrame>(source);
 }
 
 /**
@@ -230,7 +235,8 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
  */
 - (CGPoint)textOrigin
 {
-    const auto origin = CGPointMake(g_LeftInset, g_TopInset);
+    using namespace nc::viewer;
+    const auto origin = CGPointMake(g_TextModeLeftInset, g_TextModeTopInset);
     const auto vertical_shift = (m_VerticalLineOffset * m_FontInfo.LineHeight()) + m_PxOffset.y;
     const auto horizontal_shift = (m_HorizontalCharsOffset * m_FontInfo.PreciseMonospaceWidth()) + m_PxOffset.x;
     return CGPointMake(origin.x - horizontal_shift, origin.y - vertical_shift);
@@ -433,24 +439,24 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     }
 }
 
-- (void)moveUp:(id) [[maybe_unused]] _sender
+- (void)moveUp:(id _Nullable) [[maybe_unused]] _sender
 {
     [self doMoveUpByOneLine];
     [self scrollPositionDidChange];
 }
 
-- (void)moveDown:(id) [[maybe_unused]] _sender
+- (void)moveDown:(id _Nullable) [[maybe_unused]] _sender
 {
     [self doMoveDownByOneLine];
     [self scrollPositionDidChange];
 }
 
-- (void)moveLeft:(id) [[maybe_unused]] _sender
+- (void)moveLeft:(id _Nullable) [[maybe_unused]] _sender
 {
     [self scrollWheelHorizontal:m_FontInfo.PreciseMonospaceWidth()];
 }
 
-- (void)moveRight:(id) [[maybe_unused]] _sender
+- (void)moveRight:(id _Nullable) [[maybe_unused]] _sender
 {
     [self scrollWheelHorizontal:-m_FontInfo.PreciseMonospaceWidth()];
 }
@@ -471,7 +477,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     [self scrollPositionDidChange];
 }
 
-- (void)keyDown:(NSEvent *)event
+- (void)keyDown:(NSEvent *_Nonnull)event
 {
     if( event.charactersIgnoringModifiers.length != 1 ) {
         [super keyDown:event];
@@ -601,7 +607,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     }
 }
 
-- (void)scrollWheel:(NSEvent *)_event
+- (void)scrollWheel:(NSEvent *_Nonnull)_event
 {
     const auto delta_y =
         _event.hasPreciseScrollingDeltas ? _event.scrollingDeltaY : _event.scrollingDeltaY * m_FontInfo.LineHeight();
@@ -629,7 +635,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     m_VerticalScroller.knobProportion = scroll_pos.proportion;
 }
 
-- (void)onVerticalScroll:(id)_sender
+- (void)onVerticalScroll:(id _Nonnull)_sender
 {
     switch( m_VerticalScroller.hitPart ) {
         case NSScrollerIncrementPage:
@@ -767,7 +773,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     return CGPointMake(_view_coords.x - left_upper.x, _view_coords.y - left_upper.y);
 }
 
-- (void)mouseDown:(NSEvent *)_event
+- (void)mouseDown:(NSEvent *_Nonnull)_event
 {
     if( !self.delegate )
         return;
@@ -806,7 +812,7 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
         return _first_mouse_hit_index;
 }
 
-- (void)handleSelectionWithMouseDragging:(NSEvent *)_event
+- (void)handleSelectionWithMouseDragging:(NSEvent *_Nonnull)_event
 {
     if( !self.delegate )
         return;
@@ -840,7 +846,7 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
     }
 }
 
-- (void)handleSelectionWithDoubleClick:(NSEvent *)_event
+- (void)handleSelectionWithDoubleClick:(NSEvent *_Nonnull)_event
 {
     if( !self.delegate )
         return;
@@ -853,7 +859,7 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
     [self.delegate textModeView:self setSelection:CFRangeMake(sel_start_byte, sel_end_byte - sel_start_byte)];
 }
 
-- (void)handleSelectionWithTripleClick:(NSEvent *)_event
+- (void)handleSelectionWithTripleClick:(NSEvent *_Nonnull)_event
 {
     if( !self.delegate )
         return;
@@ -875,7 +881,7 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
 
 - (void)themeHasChanged
 {
-    m_FontInfo = FontGeometryInfo{(__bridge CTFontRef)m_Theme->Font()};
+    m_FontInfo = nc::utility::FontGeometryInfo{(__bridge CTFontRef)m_Theme->Font()};
     const auto new_frame = [self buildLayout];
     m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*m_Frame, m_VerticalLineOffset, *new_frame);
     m_Frame = new_frame;
@@ -909,6 +915,8 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
 }
 
 @end
+
+namespace nc::viewer {
 
 static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet()
 {
@@ -997,16 +1005,16 @@ static int FindEqualVerticalOffsetForRebuiltFrame(const TextModeFrame &old_frame
     }
 }
 
-static ScrollPosition CalculateScrollPosition(const TextModeFrame &_frame,
-                                              const DataBackend &_backend,
-                                              const NSSize _view_size,
-                                              const int _vertical_line_offset,
-                                              const double _vertical_px_offset)
+static TextModeScrollPosition CalculateScrollPosition(const TextModeFrame &_frame,
+                                                      const DataBackend &_backend,
+                                                      const NSSize _view_size,
+                                                      const int _vertical_line_offset,
+                                                      const double _vertical_px_offset)
 {
     const auto line_height = _frame.FontGeometryInfo().LineHeight();
     assert(line_height > 0.);
 
-    ScrollPosition scroll_position;
+    TextModeScrollPosition scroll_position;
     scroll_position.position = 0.;
     scroll_position.proportion = 1.;
 
@@ -1117,3 +1125,5 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
         return 0.;
     return _scroll_knob_position * (full_height - _view_size.height);
 }
+
+} // namespace nc::viewer

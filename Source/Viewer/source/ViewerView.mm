@@ -19,18 +19,18 @@
 #include "ViewerSearchView.h"
 #include <algorithm>
 
+namespace nc::viewer {
+
 static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 static const auto g_ConfigAutoDetectEncoding = "viewer.autoDetectEncoding";
 static const auto g_ConfigStickToBottomOnRefresh = "viewer.stickToBottomOnRefresh";
 static const auto g_ConfigEnableSyntaxHighlighting = "viewer.enableHighlighting";
 
-using nc::vfs::easy::CopyFileToTempStorage;
-using namespace nc;
-using namespace nc::viewer;
+} // namespace nc::viewer
 
 @implementation NCViewerView {
-    std::shared_ptr<nc::vfs::FileWindow> m_File; // may be nullptr
-    std::shared_ptr<DataBackend> m_Data;         // may be nullptr
+    std::shared_ptr<nc::vfs::FileWindow> m_File;     // may be nullptr
+    std::shared_ptr<nc::viewer::DataBackend> m_Data; // may be nullptr
 
     std::optional<std::filesystem::path> m_NativeStoredFile;
 
@@ -87,6 +87,7 @@ using namespace nc::viewer;
 
 - (void)commonInit
 {
+    using namespace nc::viewer;
     m_VerticalPositionPercentage = 0.;
     m_VerticalPositionInBytes = 0;
     m_WrapWords = true;
@@ -143,6 +144,7 @@ using namespace nc::viewer;
 
 - (void)configEnableSyntaxHighlightingChanged
 {
+    using namespace nc::viewer;
     if( [m_View respondsToSelector:@selector(syntaxHighlightingEnabled:)] )
         [m_View syntaxHighlightingEnabled:m_Config->GetBool(g_ConfigEnableSyntaxHighlighting)];
 }
@@ -171,6 +173,8 @@ using namespace nc::viewer;
 
 - (void)setFile:(std::shared_ptr<nc::vfs::FileWindow>)_file
 {
+    using namespace nc;
+    using namespace nc::viewer;
     utility::Encoding encoding = utility::EncodingFromName(m_Config->GetString(g_ConfigDefaultEncoding).c_str());
     if( encoding == utility::Encoding::ENCODING_INVALID )
         encoding = utility::Encoding::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
@@ -194,11 +198,12 @@ using namespace nc::viewer;
 }
 
 - (void)setKnownFile:(std::shared_ptr<nc::vfs::FileWindow>)_file
-            encoding:(utility::Encoding)_encoding
-                mode:(ViewMode)_mode
+            encoding:(nc::utility::Encoding)_encoding
+                mode:(nc::viewer::ViewMode)_mode
             language:(const std::optional<std::string> &)_language
 {
-    assert(_encoding != utility::Encoding::ENCODING_INVALID);
+    using namespace nc::viewer;
+    assert(_encoding != nc::utility::Encoding::ENCODING_INVALID);
 
     m_File = _file;
     m_Data = std::make_shared<DataBackend>(m_File, _encoding);
@@ -229,6 +234,7 @@ using namespace nc::viewer;
 
 - (void)replaceFile:(std::shared_ptr<nc::vfs::FileWindow>)_file
 {
+    using namespace nc::viewer;
     const uint64_t current_position = self.verticalPositionInBytes;
     const bool attach_to_bottom = m_Config->GetBool(g_ConfigStickToBottomOnRefresh) &&
                                   [m_View respondsToSelector:@selector(isAtTheEnd)] && [m_View isAtTheEnd];
@@ -251,14 +257,14 @@ using namespace nc::viewer;
     }
 }
 
-- (utility::Encoding)encoding
+- (nc::utility::Encoding)encoding
 {
     if( m_Data )
         return m_Data->Encoding();
-    return utility::Encoding::ENCODING_UTF8; // ??
+    return nc::utility::Encoding::ENCODING_UTF8; // ??
 }
 
-- (void)setEncoding:(utility::Encoding)_encoding
+- (void)setEncoding:(nc::utility::Encoding)_encoding
 {
     if( !m_Data || m_Data->Encoding() == _encoding )
         return; // nothing to do
@@ -299,8 +305,9 @@ using namespace nc::viewer;
     m_Footer.wrapLines = m_WrapWords;
 }
 
-- (ViewMode)mode
+- (nc::viewer::ViewMode)mode
 {
+    using namespace nc::viewer;
     if( [m_View isKindOfClass:NCViewerTextModeView.class] )
         return ViewMode::Text;
     if( [m_View isKindOfClass:NCViewerHexModeView.class] )
@@ -310,8 +317,9 @@ using namespace nc::viewer;
     return ViewMode::Text;
 }
 
-- (void)setMode:(ViewMode)_mode
+- (void)setMode:(nc::viewer::ViewMode)_mode
 {
+    using namespace nc::viewer;
     if( _mode == ViewMode::Text && [m_View isKindOfClass:NCViewerTextModeView.class] )
         return;
     if( _mode == ViewMode::Hex && [m_View isKindOfClass:NCViewerHexModeView.class] )
@@ -390,8 +398,8 @@ using namespace nc::viewer;
     }
     else {
         if( !m_NativeStoredFile )
-            m_NativeStoredFile =
-                CopyFileToTempStorage(m_File->File()->Path(), *m_File->File()->Host(), *m_TempFileStorage);
+            m_NativeStoredFile = nc::vfs::easy::CopyFileToTempStorage(
+                m_File->File()->Path(), *m_File->File()->Host(), *m_TempFileStorage);
         if( m_NativeStoredFile )
             return *m_NativeStoredFile;
         return {};
@@ -598,7 +606,7 @@ using namespace nc::viewer;
     return [self moveBackendWindowSyncAt:_position notifyView:false];
 }
 
-- (std::expected<void, Error>)moveBackendWindowSyncAt:(int64_t)_position notifyView:(bool)_notify_view
+- (std::expected<void, nc::Error>)moveBackendWindowSyncAt:(int64_t)_position notifyView:(bool)_notify_view
 {
     const auto rc = m_Data->MoveWindowSync(_position);
     if( rc ) {

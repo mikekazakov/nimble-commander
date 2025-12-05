@@ -1,8 +1,6 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerSearchView.h"
 #include "Internal.h"
-
-using namespace nc::viewer;
 
 @implementation NCViewerSearchView {
     NSSearchField *m_SearchField;
@@ -14,6 +12,7 @@ using namespace nc::viewer;
 
 - (instancetype)initWithFrame:(NSRect)_frame
 {
+    using namespace nc::viewer;
     self = [super initWithFrame:_frame];
     if( self ) {
         m_BorderColor = NSColor.placeholderTextColor;

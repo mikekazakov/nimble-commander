@@ -1795,6 +1795,18 @@
         }
       }
     },
+    "z4z-UI-F7h.label" : {
+      "comment" : "Class = \"NSTabViewItem\"; label = \"Gallery\"; ObjectID = \"z4z-UI-F7h\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Gallery"
+          }
+        }
+      }
+    },
     "z9U-uR-HFr.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Fixed column width\"; ObjectID = \"z9U-uR-HFr\";",
       "extractionState" : "extracted_with_value",

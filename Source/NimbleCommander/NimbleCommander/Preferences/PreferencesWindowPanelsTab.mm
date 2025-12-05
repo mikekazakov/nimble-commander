@@ -527,6 +527,8 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
             return @"Brief";
         case PanelViewLayout::Type::List:
             return @"List";
+        case PanelViewLayout::Type::Gallery:
+            return @"Gallery";
         default:
             return @"Disabled";
     }
@@ -578,6 +580,8 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
         self.layoutsListIcon1x.state = list->icon_scale == 1;
         self.layoutsListIcon2x.state = list->icon_scale == 2;
     }
+    
+    // TODO: Add Gallery options later
 }
 
 - (void)clearLayoutFields

@@ -246,12 +246,13 @@ static bool IsQLSupportedSync(NSURL *_url)
 
 - (void)onDataChanged
 {
-    // TODO: implement
-
+    Log::Trace("[PanelGalleryView dataChanged]");
+    dispatch_assert_main_queue();
+    assert(m_Data);
     m_IconSlotToItemIndexMapping.clear();
     IconRepositoryCleaner{*m_IconRepository, *m_Data}.SweepUnusedSlots();
-
     [m_CollectionView reloadData];
+    [self onVolatileDataChanged];
 }
 
 - (void)onVolatileDataChanged

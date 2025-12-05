@@ -363,8 +363,10 @@
                                 }
                            },
                            {
-                                "title": "Custom Layout V",
-                                "disabled": null
+                                "title": "Gallery",
+                                "gallery": {
+                                    "icon_scale": 1
+                                }
                            },
                            {
                                 "title": "Custom Layout VI",

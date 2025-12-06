@@ -73,6 +73,7 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_CollectionView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
     m_CollectionView.collectionViewLayout = m_CollectionViewLayout;
     m_CollectionView.dataSource = self;
+    m_CollectionView.delegate = self;
     m_CollectionView.smoothScrolling = GlobalConfig().GetBool(g_SmoothScrolling);
     m_CollectionView.backgroundColors = @[nc::CurrentTheme().FilePanelsGalleryBackgroundColor()];
     [m_CollectionView registerClass:NCPanelGalleryCollectionViewItem.class forItemWithIdentifier:@"GalleryItem"];
@@ -287,7 +288,9 @@ static bool IsQLSupportedSync(NSURL *_url)
 
 - (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor forItemAtIndex:(int)_sorted_item_index
 {
-    // TODO: implement
+    NSIndexPath *const index = [NSIndexPath indexPathForItem:_sorted_item_index inSection:0];
+    if( auto i = nc::objc_cast<NCPanelGalleryCollectionViewItem>([m_CollectionView itemAtIndexPath:index]) )
+        [i setupFieldEditor:_editor];
 }
 
 - (std::optional<NSRect>)frameOfItemAtIndex:(int)_sorted_item_index
@@ -401,6 +404,11 @@ static bool IsQLSupportedSync(NSURL *_url)
 {
     [super viewDidMoveToWindow];
     [self rebuildItemLayout]; // we call this here due to a possible DPI change
+}
+
+- (PanelView *)panelView
+{
+    return m_PanelView;
 }
 
 @end

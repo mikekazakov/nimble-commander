@@ -6,6 +6,7 @@
 #include "Layout.h"
 
 @class NCPanelGalleryCollectionViewItem;
+@class NCPanelViewFieldEditor;
 
 // NCPanelGalleryCollectionViewItemCarrier class is responsible for the view elements corresponding to file items
 // shown in the horizontal collection.
@@ -18,5 +19,7 @@
 @property(nonatomic) NSColor *filenameColor;
 @property(nonatomic) NSColor *backgroundColor;
 @property(nonatomic) nc::panel::data::QuickSearchHighlight qsHighlight;
+
+- (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor;
 
 @end

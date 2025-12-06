@@ -391,6 +391,15 @@ static bool HasNoModifiers(NSEvent *_event)
     g_LastMouseDownPos = {};
 }
 
+- (NSMenu *)menuForEvent:(NSEvent *)_event
+{
+    const int my_index = m_Controller.itemIndex;
+    if( my_index < 0 )
+        return nil;
+
+    return [m_Controller.galleryView.panelView panelItem:my_index menuForForEvent:_event];
+}
+
 - (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor
 {
     const double line_padding = 2.;

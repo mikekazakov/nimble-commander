@@ -19,6 +19,7 @@
 @property(nonatomic) NSColor *filenameColor;
 @property(nonatomic) NSColor *backgroundColor;
 @property(nonatomic) nc::panel::data::QuickSearchHighlight qsHighlight;
+@property(nonatomic) bool isSymlink;
 
 - (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor;
 

@@ -82,8 +82,7 @@ using namespace nc::panel::gallery;
 {
     m_Item = _item;
     self.carrier.filename = m_Item.DisplayNameNS();
-    //    self.carrier.isSymlink = m_Item.IsSymlink();
-    //    [self updateItemLayout];
+    self.carrier.isSymlink = m_Item.IsSymlink();
 }
 
 - (void)setVd:(nc::panel::data::ItemVolatileData)_vd

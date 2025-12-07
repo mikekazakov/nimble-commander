@@ -18,6 +18,9 @@
 using namespace nc::panel;
 using namespace nc::panel::gallery;
 
+static NSImage * const g_SymlinkArrowImage =
+    [[NSImage alloc] initWithData:[[NSDataAsset alloc] initWithName:@"AliasBadgeIcon"].data];
+
 static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 {
     static NSParagraphStyle *styles[3];
@@ -64,6 +67,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     ItemLayout m_ItemLayout;
     nc::panel::data::QuickSearchHighlight m_QSHighlight;
     bool m_PermitFieldRenaming;
+    bool m_IsSymlink;
 }
 
 @synthesize controller = m_Controller;
@@ -73,6 +77,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 @synthesize backgroundColor = m_BackgroundColor;
 @synthesize filenameColor = m_FilenameColor;
 @synthesize qsHighlight = m_QSHighlight;
+@synthesize isSymlink = m_IsSymlink;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -81,6 +86,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
         self.autoresizingMask = NSViewNotSizable;
         self.autoresizesSubviews = false;
         m_PermitFieldRenaming = false;
+        m_IsSymlink = false;
     }
     return self;
 }
@@ -116,6 +122,15 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
               fraction:1.0
         respectFlipped:false
                  hints:nil];
+    
+    // Draw symlink arrow over an icon
+    if( m_IsSymlink )
+        [g_SymlinkArrowImage drawInRect:icon_rect
+                               fromRect:NSZeroRect
+                              operation:NSCompositingOperationSourceOver
+                               fraction:1.0
+                         respectFlipped:false
+                                  hints:nil];
 
     if( m_AttrStrings.empty() ) {
         [self buildTextAttributes];
@@ -417,6 +432,14 @@ static bool HasNoModifiers(NSEvent *_event)
     tv.textContainer.lineFragmentPadding = line_padding;
 
     [self addSubview:_editor];
+}
+
+- (void)setIsSymlink:(bool)_is_symlink
+{
+    if( m_IsSymlink == _is_symlink )
+        return;
+    m_IsSymlink = _is_symlink;
+    [self setNeedsDisplay:true];
 }
 
 @end

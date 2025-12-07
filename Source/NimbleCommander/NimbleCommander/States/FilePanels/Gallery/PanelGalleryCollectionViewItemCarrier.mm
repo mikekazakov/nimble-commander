@@ -1,10 +1,15 @@
 // Copyright (C) 2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelGalleryCollectionViewItemCarrier.h"
 #include "PanelGalleryCollectionViewItem.h"
+#include "PanelGalleryView.h"
 #include "../PanelViewPresentationSettings.h"
+#include "../PanelView.h"
+#include <Panel/PanelViewFieldEditor.h>
 #include <NimbleCommander/Core/Theming/Theme.h> // Evil!
 #include <Base/algo.h>
 #include <Base/CFPtr.h>
+#include <Base/dispatch_cpp.h>
+#include <Utility/FontCache.h>
 #include <boost/container/static_vector.hpp> // TODO: switch to std::inplace_vector once available
 
 #include <fmt/format.h>
@@ -12,6 +17,9 @@
 
 using namespace nc::panel;
 using namespace nc::panel::gallery;
+
+static NSImage *const g_SymlinkArrowImage =
+    [[NSImage alloc] initWithData:[[NSDataAsset alloc] initWithName:@"AliasBadgeIcon"].data];
 
 static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 {
@@ -58,6 +66,8 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     boost::container::static_vector<NSMutableAttributedString *, 4> m_AttrStrings;
     ItemLayout m_ItemLayout;
     nc::panel::data::QuickSearchHighlight m_QSHighlight;
+    bool m_PermitFieldRenaming;
+    bool m_IsSymlink;
 }
 
 @synthesize controller = m_Controller;
@@ -67,6 +77,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 @synthesize backgroundColor = m_BackgroundColor;
 @synthesize filenameColor = m_FilenameColor;
 @synthesize qsHighlight = m_QSHighlight;
+@synthesize isSymlink = m_IsSymlink;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -74,8 +85,8 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     if( self ) {
         self.autoresizingMask = NSViewNotSizable;
         self.autoresizesSubviews = false;
-        //        self.postsFrameChangedNotifications = false; // ???
-        //        self.postsBoundsChangedNotifications = false; // ???
+        m_PermitFieldRenaming = false;
+        m_IsSymlink = false;
     }
     return self;
 }
@@ -111,6 +122,15 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
               fraction:1.0
         respectFlipped:false
                  hints:nil];
+
+    // Draw symlink arrow over an icon
+    if( m_IsSymlink )
+        [g_SymlinkArrowImage drawInRect:icon_rect
+                               fromRect:NSZeroRect
+                              operation:NSCompositingOperationSourceOver
+                               fraction:1.0
+                         respectFlipped:false
+                                  hints:nil];
 
     if( m_AttrStrings.empty() ) {
         [self buildTextAttributes];
@@ -291,6 +311,135 @@ CutFilenameIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double
 
         m_AttrStrings.push_back(str);
     }
+}
+
+- (BOOL)acceptsFirstMouse:(NSEvent *) [[maybe_unused]] _event
+{
+    return true; /* really always??? */
+}
+
+- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *) [[maybe_unused]] _event
+{
+    return true; /* really always??? */
+}
+
+static bool g_RowReadyToDrag = false;
+static void *g_MouseDownCarrier = nullptr;
+static NSPoint g_LastMouseDownPos = {};
+
+static bool HasNoModifiers(NSEvent *_event)
+{
+    const auto m = _event.modifierFlags;
+    const auto mask =
+        NSEventModifierFlagShift | NSEventModifierFlagControl | NSEventModifierFlagOption | NSEventModifierFlagCommand;
+    return (m & mask) == 0;
+}
+
+- (void)mouseDown:(NSEvent *)_event
+{
+    const NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
+    if( !NSPointInRect(local_point, self.bounds) ) {
+        // In case of rapid mouse clicks and reloading items of NSCollectionView at the same time it's possible to end
+        // up with a situation when mouse events are incoming to the view which is no longer relevant. Sometimes it's
+        // possible to partially salvage this situation by manually re-routing the event to the correct view.
+        NSView *ht_view = [self.window.contentView hitTest:_event.locationInWindow];
+        if( ht_view != nil && ht_view != self )
+            [ht_view mouseDown:_event];
+        return;
+    }
+
+    const int my_index = m_Controller.itemIndex;
+    if( my_index < 0 )
+        return;
+
+    m_PermitFieldRenaming = m_Controller.selected && m_Controller.panelActive && HasNoModifiers(_event);
+
+    [m_Controller.galleryView.panelView panelItem:my_index mouseDown:_event];
+
+    const bool lb_pressed = NSEvent.pressedMouseButtons == 1;
+
+    if( lb_pressed ) {
+        g_RowReadyToDrag = true;
+        g_MouseDownCarrier = (__bridge void *)self;
+        g_LastMouseDownPos = local_point;
+    }
+}
+
+- (void)mouseUp:(NSEvent *)_event
+{
+    // used for delayed action to ensure that click was single, not double or more
+    static std::atomic_ullong current_ticket = {0};
+    static const std::chrono::nanoseconds delay = std::chrono::milliseconds(int(NSEvent.doubleClickInterval * 1000));
+
+    const NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
+    if( !NSPointInRect(local_point, self.bounds) ) {
+        // In case of rapid mouse clicks and reloading items of NSCollectionView at the same time it's possible to end
+        // up with a situation when mouse events are incoming to the view which is no longer relevant. Sometimes it's
+        // possible to partially salvage this situation by manually re-routing the event to the correct view.
+        NSView *ht_view = [self.window.contentView hitTest:_event.locationInWindow];
+        if( ht_view != nil && ht_view != self )
+            [ht_view mouseUp:_event];
+        return;
+    }
+
+    const auto my_index = m_Controller.itemIndex;
+    if( my_index < 0 )
+        return;
+
+    int click_count = static_cast<int>(_event.clickCount);
+    if( click_count <= 1 && m_PermitFieldRenaming ) {
+        uint64_t renaming_ticket = ++current_ticket;
+        dispatch_to_main_queue_after(delay, [=] {
+            if( renaming_ticket == current_ticket )
+                [m_Controller.galleryView.panelView panelItem:my_index fieldEditor:_event];
+        });
+    }
+    else if( click_count == 2 || click_count == 4 || click_count == 6 || click_count == 8 ) {
+        // Handle double-or-four-etc clicks as double-click
+        ++current_ticket; // to abort field editing
+        [m_Controller.galleryView.panelView panelItem:my_index dblClick:_event];
+    }
+
+    m_PermitFieldRenaming = false;
+    g_RowReadyToDrag = false;
+    g_MouseDownCarrier = nullptr;
+    g_LastMouseDownPos = {};
+}
+
+- (NSMenu *)menuForEvent:(NSEvent *)_event
+{
+    const int my_index = m_Controller.itemIndex;
+    if( my_index < 0 )
+        return nil;
+
+    return [m_Controller.galleryView.panelView panelItem:my_index menuForForEvent:_event];
+}
+
+- (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor
+{
+    const double line_padding = 2.;
+
+    const NSRect bounds = self.bounds;
+    NSRect text_segment_rect = [self calculateTextSegmentFromBounds:bounds];
+    auto fi = nc::utility::FontGeometryInfo(nc::CurrentTheme().FilePanelsGalleryFont());
+
+    _editor.frame = text_segment_rect;
+
+    // TODO: enable multi-line editing to match the behaviour of this carrier
+    NSTextView *tv = _editor.documentView;
+    tv.font = nc::CurrentTheme().FilePanelsGalleryFont();
+    tv.textContainerInset = NSMakeSize(0, text_segment_rect.size.height - fi.LineHeight());
+    tv.textContainer.lineFragmentPadding = line_padding;
+
+    [self addSubview:_editor];
+}
+
+- (void)setIsSymlink:(bool)_is_symlink
+{
+    if( m_IsSymlink == _is_symlink )
+        return;
+    m_IsSymlink = _is_symlink;
+    [self setNeedsDisplay:true];
 }
 
 @end

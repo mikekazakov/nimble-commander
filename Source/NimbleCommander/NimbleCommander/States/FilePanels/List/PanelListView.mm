@@ -136,8 +136,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
         // is enabled, so instead the PanelListViewTableView draws it manually in
         // drawBackgroundInClipRect:
         m_TableView.gridStyleMask = NSTableViewGridNone;
-        if( @available(macOS 11.0, *) )
-            m_TableView.style = NSTableViewStylePlain;
+        m_TableView.style = NSTableViewStylePlain;
         m_TableView.headerView = [[PanelListViewTableHeaderView alloc] init];
         [self setupColumns];
 

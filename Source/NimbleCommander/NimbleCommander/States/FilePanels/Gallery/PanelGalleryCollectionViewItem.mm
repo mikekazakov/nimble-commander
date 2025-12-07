@@ -1,5 +1,6 @@
 // Copyright (C) 2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelGalleryCollectionViewItem.h"
+#include "PanelGalleryView.h"
 #include "PanelGalleryCollectionViewItemCarrier.h"
 #include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -81,8 +82,7 @@ using namespace nc::panel::gallery;
 {
     m_Item = _item;
     self.carrier.filename = m_Item.DisplayNameNS();
-    //    self.carrier.isSymlink = m_Item.IsSymlink();
-    //    [self updateItemLayout];
+    self.carrier.isSymlink = m_Item.IsSymlink();
 }
 
 - (void)setVd:(nc::panel::data::ItemVolatileData)_vd
@@ -152,6 +152,24 @@ using namespace nc::panel::gallery;
 - (bool)panelActive
 {
     return m_PanelActive;
+}
+
+- (int)itemIndex
+{
+    if( NSCollectionView *const collection = self.collectionView )
+        if( NSIndexPath *const path = [collection indexPathForItem:self] )
+            return static_cast<int>(path.item);
+    return -1;
+}
+
+- (PanelGalleryView *)galleryView
+{
+    return static_cast<PanelGalleryView *>(self.collectionView.delegate);
+}
+
+- (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor
+{
+    [self.carrier setupFieldEditor:_editor];
 }
 
 @end

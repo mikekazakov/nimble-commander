@@ -43,11 +43,8 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
         self.restorable = true;
         self.identifier = g_Identifier;
         self.title = @"";
-
-        if( @available(macOS 11.0, *) ) {
-            self.titlebarSeparatorStyle = NSTitlebarSeparatorStyleNone;
-            self.toolbarStyle = NSWindowToolbarStyleUnifiedCompact;
-        }
+        self.titlebarSeparatorStyle = NSTitlebarSeparatorStyleNone;
+        self.toolbarStyle = NSWindowToolbarStyleUnifiedCompact;
 
         // window placement logic below:
         // (it may be later overwritten by Cocoa's restoration mechanism)

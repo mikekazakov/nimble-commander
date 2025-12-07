@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 #include "../PanelView.h"
@@ -169,14 +169,9 @@ static NSColor *FindBackgroundColor(bool _is_focused, bool _is_active, bool _is_
 {
     const auto &c = g_BackgroundColorsCache;
     if( auto &t = nc::CurrentTheme(); c.generation != t.Generation() ) {
-        if( @available(macOS 11.0, *) ) {
-            [t.Appearance() performAsCurrentDrawingAppearance:^{
-              RebuildBackgroundColorsCache();
-            }];
-        }
-        else {
-            RebuildBackgroundColorsCache();
-        }
+        [t.Appearance() performAsCurrentDrawingAppearance:^{
+          RebuildBackgroundColorsCache();
+        }];
     }
 
     if( _is_focused ) {

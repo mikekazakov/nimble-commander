@@ -215,22 +215,14 @@ static constexpr double g_ContentViewCornerRadius = 10.;
     m_TableView.allowsTypeSelect = false;
     m_TableView.autosaveTableColumns = false;
     m_TableView.intercellSpacing = NSMakeSize(0., 2);
-    if( @available(macOS 11.0, *) ) {
-        m_TableView.style = NSTableViewStyleFullWidth;
-    }
-    else {
-        m_TableView.selectionHighlightStyle = NSTableViewSelectionHighlightStyleRegular;
-    }
+    m_TableView.style = NSTableViewStyleFullWidth;
     m_TableView.usesAlternatingRowBackgroundColors = false;
     m_TableView.backgroundColor = NSColor.clearColor;
     m_TableView.rowSizeStyle = NSTableViewRowSizeStyleCustom;
     m_TableView.rowHeight = m_RegularRowHeight;
 
     NSTableColumn *img_col = [[NSTableColumn alloc] initWithIdentifier:@"I"];
-    if( @available(macOS 11.0, *) )
-        img_col.width = 20.;
-    else
-        img_col.width = 26.;
+    img_col.width = 20.;
     [m_TableView addTableColumn:img_col];
 
     NSTableColumn *label_col = [[NSTableColumn alloc] initWithIdentifier:@"L"];

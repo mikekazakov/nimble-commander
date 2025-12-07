@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/WorkspaceExtensionIconsCacheImpl.h>
 #include <VFSIcon/Log.h>
 #include <Cocoa/Cocoa.h>
@@ -57,16 +57,9 @@ NSImage *WorkspaceExtensionIconsCacheImpl::IconForExtension(const std::string &_
     Log::Info("IconForExtension() uti for '{}' is '{}'", _extension, uti);
     if( not m_UTIDB.IsDynamicUTI(uti) ) {
         Log::Info("IconForExtension() getting an icon for filetype: '{}'", _extension);
-        NSImage *image = nil;
-        if( @available(macOS 11.0, *) ) {
-            Log::Debug("IconForExtension() polling [NSWorkspace iconForContentType:'{}']", uti);
-            UTType *const uttype = [UTType typeWithIdentifier:[NSString stringWithUTF8StdString:uti]];
-            image = [NSWorkspace.sharedWorkspace iconForContentType:uttype];
-        }
-        else {
-            Log::Debug("IconForExtension() polling [NSWorkspace iconForFileType:'{}']", uti);
-            image = [NSWorkspace.sharedWorkspace iconForFileType:[NSString stringWithUTF8StdString:uti]];
-        }
+        Log::Debug("IconForExtension() polling [NSWorkspace iconForContentType:'{}']", uti);
+        UTType *const uttype = [UTType typeWithIdentifier:[NSString stringWithUTF8StdString:uti]];
+        NSImage *const image = [NSWorkspace.sharedWorkspace iconForContentType:uttype];
         Commit_Locked(_extension, image);
         return image;
     }

@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 
 import Cocoa
 
@@ -33,9 +33,7 @@ private typealias ViewController = NSViewController & PreferencesViewControllerP
         
         toolbar.isVisible = true
         toolbar.displayMode = .iconAndLabel
-        if #available(macOS 11.0, *) {
-            window.toolbarStyle = .preference
-        }
+        window.toolbarStyle = .preference
         
         controllers.forEach {
             let item = NSToolbarItem(itemIdentifier: NSToolbarItem.Identifier($0.identifier) )

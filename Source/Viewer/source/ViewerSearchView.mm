@@ -92,18 +92,9 @@
 - (void)viewDidChangeEffectiveAppearance
 {
     [super viewDidChangeEffectiveAppearance];
-
-    if( @available(macOS 11, *) ) {
-        [NSApp.effectiveAppearance performAsCurrentDrawingAppearance:^{
-          m_Background.layer.borderColor = m_BorderColor.CGColor;
-        }];
-    }
-    else {
-        NSAppearance *curr = NSAppearance.currentAppearance;
-        NSAppearance.currentAppearance = NSApp.effectiveAppearance;
-        m_Background.layer.borderColor = m_BorderColor.CGColor;
-        NSAppearance.currentAppearance = curr;
-    }
+    [NSApp.effectiveAppearance performAsCurrentDrawingAppearance:^{
+      m_Background.layer.borderColor = m_BorderColor.CGColor;
+    }];
 }
 
 - (NSSearchField *)searchField

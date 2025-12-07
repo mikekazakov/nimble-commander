@@ -18,7 +18,7 @@
 using namespace nc::panel;
 using namespace nc::panel::gallery;
 
-static NSImage * const g_SymlinkArrowImage =
+static NSImage *const g_SymlinkArrowImage =
     [[NSImage alloc] initWithData:[[NSDataAsset alloc] initWithName:@"AliasBadgeIcon"].data];
 
 static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
@@ -122,7 +122,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
               fraction:1.0
         respectFlipped:false
                  hints:nil];
-    
+
     // Draw symlink arrow over an icon
     if( m_IsSymlink )
         [g_SymlinkArrowImage drawInRect:icon_rect

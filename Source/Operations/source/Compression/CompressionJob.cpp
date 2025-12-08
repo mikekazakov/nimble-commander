@@ -417,21 +417,22 @@ std::optional<CompressionJob::Source> CompressionJob::ScanItems()
 bool CompressionJob::ScanItem(const VFSListingItem &_item, Source &_ctx)
 {
     Statistics().CommitEstimated(Statistics::SourceType::Items, 1);
-    if( _item.IsReg() ) {
-        Source::ItemMeta meta;
-        meta.base_path_indx = _ctx.FindOrInsertBasePath(_item.Directory());
-        meta.base_vfs_indx = _ctx.FindOrInsertHost(_item.Host());
-        _ctx.metas.emplace_back(meta);
-        _ctx.filenames.push_back(_item.Filename(), nullptr);
-        Statistics().CommitEstimated(Statistics::SourceType::Bytes, _item.Size());
-    }
-    else if( _item.IsSymlink() ) {
+    if( _item.IsSymlink() ) {
+        // NB! The check for symlink must be before the regular/dir check, because they are not mutually exclusive.
         Source::ItemMeta meta;
         meta.base_path_indx = _ctx.FindOrInsertBasePath(_item.Directory());
         meta.base_vfs_indx = _ctx.FindOrInsertHost(_item.Host());
         meta.flags = Source::ItemFlags::symlink;
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_item.Filename(), nullptr);
+    }
+    else if( _item.IsReg() ) {
+        Source::ItemMeta meta;
+        meta.base_path_indx = _ctx.FindOrInsertBasePath(_item.Directory());
+        meta.base_vfs_indx = _ctx.FindOrInsertHost(_item.Host());
+        _ctx.metas.emplace_back(meta);
+        _ctx.filenames.push_back(_item.Filename(), nullptr);
+        Statistics().CommitEstimated(Statistics::SourceType::Bytes, _item.Size());
     }
     else if( _item.IsDir() ) {
         Source::ItemMeta meta;

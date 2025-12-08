@@ -135,8 +135,16 @@ public:
 #endif
 
     bool IsDotDot(unsigned _ind) const;
+
     bool IsDir(unsigned _ind) const;
+
+    // Returns true if the item is a regular file, i.e. ((UnixMode & S_IFMT) == S_IFREG).
+    // In case of a symlink, the target type is returned.
     bool IsReg(unsigned _ind) const;
+
+    // Return true if the item is a symlink, i.e. (UnixType == DT_LNK).
+    // This refers to the item itself, not to its target, i.e. the file type without potentially following a symlink.
+    // An item can be both a symlink and a Dir or a Reg.
     bool IsSymlink(unsigned _ind) const;
 
     // An item is hidden when either its filename starts with the dot character or the item has a `UF_HIDDEN` flag up.

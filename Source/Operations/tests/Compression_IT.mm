@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <sys/xattr.h>
 #include <set>
+#include <fstream>
 
 #include "../source/Compression/Compression.h"
 #include "../source/Statistics.h"
@@ -41,7 +42,7 @@ TEST_CASE(PREFIX "Empty archive building")
     REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
-    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
+    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath(), native_host));
     CHECK(arc_host->StatTotalFiles() == 0);
 }
 
@@ -62,7 +63,7 @@ TEST_CASE(PREFIX "Compressing Mac kernel")
     REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
-    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
+    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath(), native_host));
     CHECK(arc_host->StatTotalFiles() == 1);
     CHECK(easy::VFSEasyCompareFiles("/System/Library/Kernels/kernel", native_host, "/kernel", arc_host) == 0);
 }
@@ -86,7 +87,7 @@ TEST_CASE(PREFIX "Compressing Bin utilities")
     REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
-    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
+    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath(), native_host));
     CHECK(arc_host->StatTotalFiles() == filenames.size());
 
     for( auto &fn : filenames ) {
@@ -108,7 +109,7 @@ TEST_CASE(PREFIX "Compressing Bin directory")
     REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
-    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
+    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath(), native_host));
 
     CHECK(VFSCompareEntries("/bin/", native_host, "/bin/", arc_host).value() == 0);
 }
@@ -128,9 +129,32 @@ TEST_CASE(PREFIX "Compressing Chess.app")
     REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
-    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
+    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath(), native_host));
 
     CHECK(VFSCompareEntries("/System/Applications/Chess.app", native_host, "/Chess.app", arc_host).value() == 0);
+}
+
+TEST_CASE(PREFIX "Compressing a symlink to regular file")
+{
+    const TempTestDir tmp_dir;
+    const auto native_host = TestEnv().vfs_native;
+    std::ofstream(tmp_dir.directory / "file.txt") << "Hello!";
+    std::filesystem::create_symlink("file.txt", tmp_dir.directory / "symlink.txt");
+
+    Compression operation{
+        FetchItems(tmp_dir.directory, {"file.txt", "symlink.txt"}, *native_host), tmp_dir.directory, native_host};
+
+    operation.Start();
+    operation.Wait();
+
+    REQUIRE(operation.State() == OperationState::Completed);
+    REQUIRE(native_host->Exists(operation.ArchivePath()));
+
+    std::shared_ptr<vfs::ArchiveHost> arc_host;
+    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath(), native_host));
+
+    CHECK(VFSCompareEntries(tmp_dir.directory / "file.txt", native_host, "/file.txt", arc_host).value() == 0);
+    CHECK(VFSCompareEntries(tmp_dir.directory / "symlink.txt", native_host, "/symlink.txt", arc_host).value() == 0);
 }
 
 TEST_CASE(PREFIX "Compressing kernel into encrypted archive")
@@ -149,15 +173,14 @@ TEST_CASE(PREFIX "Compressing kernel into encrypted archive")
     REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     try {
-        std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host);
+        std::make_shared<vfs::ArchiveHost>(operation.ArchivePath(), native_host);
         REQUIRE(false);
     } catch( const ErrorException &e ) {
         REQUIRE(e.error() == Error{Error::POSIX, ENEEDAUTH});
     }
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
-    REQUIRE_NOTHROW(arc_host =
-                        std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host, passwd));
+    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath(), native_host, passwd));
     CHECK(easy::VFSEasyCompareFiles("/System/Library/Kernels/kernel", native_host, "/kernel", arc_host) == 0);
 }
 
@@ -176,8 +199,7 @@ TEST_CASE(PREFIX "Compressing /bin into encrypted archive")
     REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
-    REQUIRE_NOTHROW(arc_host =
-                        std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host, passwd));
+    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath(), native_host, passwd));
     CHECK(VFSCompareEntries("/bin/", native_host, "/bin/", arc_host).value() == 0);
 }
 
@@ -228,7 +250,7 @@ TEST_CASE(PREFIX "Compressing an item with xattrs")
 
         // open the archive
         std::shared_ptr<vfs::ArchiveHost> arc_host;
-        REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
+        REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath(), native_host));
 
         // open the compressed file in the archive
         const std::shared_ptr<VFSFile> file = arc_host->CreateFile("/" + filepath.filename().native()).value();
@@ -284,7 +306,7 @@ TEST_CASE(PREFIX "Compressing multiple items with xattrs")
 
     // open the archive
     std::shared_ptr<vfs::ArchiveHost> arc_host;
-    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
+    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath(), native_host));
 
     for( const auto &p : {file0, file1, file2, dir1, dir2} ) {
         // open the compressed file in the archive
@@ -324,7 +346,7 @@ TEST_CASE(PREFIX "Long compression stats (compressing Music.app)")
     REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     std::shared_ptr<vfs::ArchiveHost> arc_host;
-    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host));
+    REQUIRE_NOTHROW(arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath(), native_host));
     CHECK(VFSCompareEntries("/System/Applications/Music.app", native_host, "/Music.app", arc_host).value() == 0);
 }
 
@@ -359,11 +381,11 @@ static std::expected<int, Error> VFSCompareEntries(const std::filesystem::path &
 {
     // not comparing flags, perm, times, xattrs, acls etc now
 
-    const std::expected<VFSStat, Error> st1 = _file1_host->Stat(_file1_full_path.c_str(), VFSFlags::F_NoFollow);
+    const std::expected<VFSStat, Error> st1 = _file1_host->Stat(_file1_full_path.native(), VFSFlags::F_NoFollow);
     if( !st1 )
         return std::unexpected(st1.error());
 
-    const std::expected<VFSStat, Error> st2 = _file2_host->Stat(_file2_full_path.c_str(), VFSFlags::F_NoFollow);
+    const std::expected<VFSStat, Error> st2 = _file2_host->Stat(_file2_full_path.native(), VFSFlags::F_NoFollow);
     if( !st2 )
         return std::unexpected(st2.error());
 
@@ -376,21 +398,21 @@ static std::expected<int, Error> VFSCompareEntries(const std::filesystem::path &
             return int(int64_t(st1->size) - int64_t(st2->size));
     }
     else if( S_ISLNK(st1->mode) ) {
-        const std::expected<std::string, Error> link1 = _file1_host->ReadSymlink(_file1_full_path.c_str());
+        const std::expected<std::string, Error> link1 = _file1_host->ReadSymlink(_file1_full_path.native());
         if( !link1 )
             return std::unexpected(link1.error());
 
-        const std::expected<std::string, Error> link2 = _file2_host->ReadSymlink(_file2_full_path.c_str());
+        const std::expected<std::string, Error> link2 = _file2_host->ReadSymlink(_file2_full_path.native());
         if( !link2 )
             return std::unexpected(link2.error());
 
-        if( strcmp(link1->c_str(), link2->c_str()) != 0 )
-            return strcmp(link1->c_str(), link2->c_str());
+        if( const int cmp = link1.value().compare(link2.value()); cmp != 0 )
+            return cmp;
     }
     else if( S_ISDIR(st1->mode) ) {
         std::expected<int, Error> result = 0;
         const std::expected<void, Error> rc =
-            _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
+            _file1_host->IterateDirectoryListing(_file1_full_path.native(), [&](const VFSDirEnt &_dirent) {
                 result = VFSCompareEntries(
                     _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host);
                 return result.has_value() && result.value() == 0;

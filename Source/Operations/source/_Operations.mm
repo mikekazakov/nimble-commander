@@ -1,0 +1,7 @@
+#include "AggregateProgressTracker.mm"
+#include "BriefOperationView.mm"
+#include "BriefOperationViewController.mm"
+#include "FilenameTextControl.mm"
+#include "GenericErrorDialog.mm"
+#include "HaltReasonDialog.mm"
+#include "Internal.mm"

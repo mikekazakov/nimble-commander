@@ -3,8 +3,6 @@
 #include <VFS/VFS.h>
 #include "Internal.h"
 
-using namespace nc::ops;
-
 @interface NCOpsHaltReasonDialog ()
 @property(strong, nonatomic) IBOutlet NSTextField *pathLabel;
 @property(strong, nonatomic) IBOutlet NSTextField *errorLabel;
@@ -28,6 +26,7 @@ using namespace nc::ops;
 
 - (instancetype)init
 {
+    using namespace nc::ops;
     const auto nib_path = [Bundle() pathForResource:@"HaltReasonDialog" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {

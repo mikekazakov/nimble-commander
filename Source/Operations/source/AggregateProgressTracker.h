@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Pool.h"
@@ -29,6 +29,7 @@ private:
     mutable std::mutex m_Lock;
     std::vector<std::weak_ptr<Pool>> m_Pools;
     std::function<void(double _progress)> m_Callback;
+    static constexpr std::chrono::milliseconds m_UpdateDelay = std::chrono::milliseconds{100};
 };
 
 } // namespace nc::ops

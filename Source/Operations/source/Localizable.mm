@@ -77,4 +77,44 @@ NSString *BatchRenamingCantRemoveLastItemMessage()
                              "Alert shown when a user tries to remove all item from a Batch Rename dialog");
 }
 
+NSString *CompressionFailedToWriteArchiveMessage()
+{
+    return NSLocalizedString(@"Failed to write an archive", "");
+}
+
+NSString *CompressionFailedToReadFileMessage()
+{
+    return NSLocalizedString(@"Failed to read a file", "");
+}
+
+NSString *CompressionFailedToAccessFileMessage()
+{
+    return NSLocalizedString(@"Failed to access an item", "");
+}
+
+NSString *CompressionCompressingItemsTitle()
+{
+    return NSLocalizedString(@"Compressing %d items", "Compressing %d items");
+}
+
+NSString *CompressionCompressingItemTitle()
+{
+    return NSLocalizedString(@"Compressing \u201c%@\u201d", "Compressing \u201c%@\u201d");
+}
+
+NSString *CompressionCompressingToTitle()
+{
+    return NSLocalizedString(@"%@ to \u201c%@\u201d", "Compressing \u201c%@\u201d");
+}
+
+NSString *CompressionDiaglogCompressItemsToTitle()
+{
+    return NSLocalizedString(@"Compress %@ items to:", "Compress files sheet prompt, compressing many files");
+}
+
+NSString *CompressionDiaglogCompressItemToTitle()
+{
+    return NSLocalizedString(@"Compress \u201c%@\u201d to:", "Compress files sheet prompt, compressing single file");
+}
+
 } // namespace nc::ops::localizable

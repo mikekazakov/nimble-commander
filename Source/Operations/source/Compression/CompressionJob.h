@@ -6,6 +6,7 @@
 #include <Base/chained_strings.h>
 
 struct archive;
+struct archive_entry;
 
 namespace nc::ops {
 
@@ -80,6 +81,12 @@ private:
     static ssize_t WriteCallback(struct archive *_archive, void *_client_data, const void *_buffer, size_t _length);
 
     ssize_t WriteCallback(struct archive *_archive, const void *_buffer, size_t _length);
+
+    static void WriteEmptyArchiveEntry(struct ::archive *_archive);
+    static bool
+    WriteEAs(struct ::archive *_a, std::span<const std::byte> _md, std::string_view _path, std::string_view _name);
+    static bool WriteEAsIfAny(VFSFile &_src, struct ::archive *_a, std::string_view _source_fn);
+    static void archive_entry_copy_stat(struct ::archive_entry *_ae, const VFSStat &_vfs_stat);
 
     std::vector<VFSListingItem> m_InitialListingItems;
     std::string m_DstRoot;

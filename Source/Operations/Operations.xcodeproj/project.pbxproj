@@ -45,9 +45,6 @@
 		CF46FF90255FCCA90095FC73 /* AlterSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9A81F10890B0000B3EE /* AlterSymlinkDialog.xib */; };
 		CF46FF95255FCCAD0095FC73 /* CreateHardlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AA1F10890B0000B3EE /* CreateHardlinkDialog.xib */; };
 		CF46FF9A255FCCAF0095FC73 /* CreateSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AC1F10890B0000B3EE /* CreateSymlinkDialog.xib */; };
-		CF46FFE0255FD03F0095FC73 /* CompressDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C1006229F16E400A5359D /* CompressDialog.mm */; };
-		CF46FFE1255FD03F0095FC73 /* Compression.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B901EE24FEC00F567C4 /* Compression.mm */; };
-		CF46FFE2255FD03F0095FC73 /* CompressionJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B931EE2515400F567C4 /* CompressionJob.cpp */; };
 		CF46FFE7255FD04D0095FC73 /* Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF238E0E21A1948800569809 /* Helpers.cpp */; };
 		CF46FFE8255FD04D0095FC73 /* CopyingJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */; };
 		CF46FFE9255FD04D0095FC73 /* FileAlreadyExistDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF0B1F1EF579005F8414 /* FileAlreadyExistDialog.mm */; };
@@ -889,14 +886,11 @@
 				CF4786212EE7171400736117 /* Localizable.mm in Sources */,
 				CF46FFFE255FD0590095FC73 /* DirectoryCreationJob.cpp in Sources */,
 				CF460003255FD0600095FC73 /* AlterSymlinkDialog.mm in Sources */,
-				CF46FFE1255FD03F0095FC73 /* Compression.mm in Sources */,
 				CF460006255FD0600095FC73 /* Linkage.mm in Sources */,
 				CF46FFF7255FD0530095FC73 /* DeletionDialog.mm in Sources */,
 				CF46FFE9255FD04D0095FC73 /* FileAlreadyExistDialog.mm in Sources */,
 				CFB7BD42260F696C00E2EA4D /* DeletionJobCallbacks.cpp in Sources */,
-				CF46FFE2255FD03F0095FC73 /* CompressionJob.cpp in Sources */,
 				CF47861C2EE7144500736117 /* _Operations.mm in Sources */,
-				CF46FFE0255FD03F0095FC73 /* CompressDialog.mm in Sources */,
 				CF46FFF6255FD0530095FC73 /* DeletionJob.cpp in Sources */,
 				CF46FFE8255FD04D0095FC73 /* CopyingJob.cpp in Sources */,
 				CF46FFFD255FD0590095FC73 /* DirectoryCreation.mm in Sources */,

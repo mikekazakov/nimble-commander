@@ -16,3 +16,5 @@
 #include "BatchRenaming/BatchRenamingDialog.mm"
 #include "BatchRenaming/BatchRenamingRangeSelectionPopover.mm"
 #include "BatchRenaming/BatchRenamingScheme.mm"
+#include "Compression/CompressDialog.mm"
+#include "Compression/Compression.mm"

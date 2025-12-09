@@ -19,5 +19,13 @@ NSString *AttrChangingFailedToPerformSetTimeMessage();
 NSString *BatchRenamingFailedToRenameMessage();
 NSString *BatchRenamingBatchRenamingTitle();
 NSString *BatchRenamingCantRemoveLastItemMessage();
+NSString *CompressionFailedToWriteArchiveMessage();
+NSString *CompressionFailedToReadFileMessage();
+NSString *CompressionFailedToAccessFileMessage();
+NSString *CompressionCompressingItemsTitle();
+NSString *CompressionCompressingItemTitle();
+NSString *CompressionCompressingToTitle();
+NSString *CompressionDiaglogCompressItemsToTitle();
+NSString *CompressionDiaglogCompressItemToTitle();
 
 } // namespace nc::ops::localizable

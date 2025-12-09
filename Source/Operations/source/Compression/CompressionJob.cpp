@@ -53,10 +53,6 @@ struct CompressionJob::Source {
     }
 };
 
-static void WriteEmptyArchiveEntry(struct ::archive *_archive);
-static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, std::string_view _source_fn);
-static void archive_entry_copy_stat(struct archive_entry *_ae, const VFSStat &_vfs_stat);
-
 CompressionJob::CompressionJob(std::vector<VFSListingItem> _src_files,
                                std::string _dst_root,
                                VFSHostPtr _dst_vfs,
@@ -581,26 +577,29 @@ bool CompressionJob::IsEncrypted() const noexcept
     return !m_Password.empty();
 }
 
-static void archive_entry_copy_stat(struct archive_entry *_ae, const VFSStat &_vfs_stat)
+void CompressionJob::archive_entry_copy_stat(struct archive_entry *_ae, const VFSStat &_vfs_stat)
 {
-    struct stat sys_stat;
+    struct ::stat sys_stat;
     VFSStat::ToSysStat(_vfs_stat, sys_stat);
-    archive_entry_copy_stat(_ae, &sys_stat);
+    ::archive_entry_copy_stat(_ae, &sys_stat);
 }
 
-static void WriteEmptyArchiveEntry(struct ::archive *_archive)
+void CompressionJob::WriteEmptyArchiveEntry(struct ::archive *_archive)
 {
     auto entry = archive_entry_new();
     archive_entry_set_pathname(entry, "");
     struct stat st;
     memset(&st, 0, sizeof(st));
     st.st_mode = S_IFDIR | S_IRWXU;
-    archive_entry_copy_stat(entry, &st);
+    ::archive_entry_copy_stat(entry, &st);
     archive_write_header(_archive, entry);
     archive_entry_free(entry);
 }
 
-static bool WriteEAs(struct archive *_a, std::span<const std::byte> _md, std::string_view _path, std::string_view _name)
+bool CompressionJob::WriteEAs(struct archive *_a,
+                              std::span<const std::byte> _md,
+                              std::string_view _path,
+                              std::string_view _name)
 {
     const std::string metadata_path = fmt::format("__MACOSX/{}._{}", _path, _name);
     struct archive_entry *entry = archive_entry_new();
@@ -615,7 +614,7 @@ static bool WriteEAs(struct archive *_a, std::span<const std::byte> _md, std::st
     return ret == static_cast<ssize_t>(_md.size());
 }
 
-static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, std::string_view _source_fn)
+bool CompressionJob::WriteEAsIfAny(VFSFile &_src, struct archive *_a, std::string_view _source_fn)
 {
     assert(!utility::PathManip::HasTrailingSlash(_source_fn));
 

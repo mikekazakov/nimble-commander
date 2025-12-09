@@ -1,6 +1,7 @@
 // Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Compression.h"
 #include "CompressionJob.h"
+#include <Operations/Localizable.h>
 #include "../HaltReasonDialog.h"
 #include "../GenericErrorDialog.h"
 #include "../AsyncDialogResponse.h"
@@ -11,11 +12,10 @@
 #include <memory>
 
 // TODO: remove once callback results are no longer wrapped into 'int'
+#pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wold-style-cast"
 
 namespace nc::ops {
-
-using Callbacks = CompressionJobCallbacks;
 
 Compression::Compression(std::vector<VFSListingItem> _src_files,
                          std::string _dst_root,
@@ -59,7 +59,7 @@ std::string Compression::ArchivePath() const
 
 void Compression::OnTargetWriteError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
-    ReportHaltReason(NSLocalizedString(@"Failed to write an archive", ""), _err, _path, _vfs);
+    ReportHaltReason(localizable::CompressionFailedToWriteArchiveMessage(), _err, _path, _vfs);
 }
 
 int Compression::OnSourceReadError(Error _err, const std::string &_path, VFSHost &_vfs)
@@ -70,7 +70,7 @@ int Compression::OnSourceReadError(Error _err, const std::string &_path, VFSHost
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(
-        GenericDialog::AbortSkipSkipAll, NSLocalizedString(@"Failed to read a file", ""), _err, {_vfs, _path}, ctx);
+        GenericDialog::AbortSkipSkipAll, localizable::CompressionFailedToReadFileMessage(), _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -90,7 +90,7 @@ int Compression::OnSourceScanError(Error _err, const std::string &_path, VFSHost
                          : (int)Callbacks::SourceScanErrorResolution::Stop;
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
-                      NSLocalizedString(@"Failed to access an item", ""),
+                      localizable::CompressionFailedToAccessFileMessage(),
                       _err,
                       {_vfs, _path},
                       ctx);
@@ -115,7 +115,7 @@ int Compression::OnSourceAccessError(Error _err, const std::string &_path, VFSHo
                          : (int)Callbacks::SourceAccessErrorResolution::Stop;
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
-                      NSLocalizedString(@"Failed to access an item", ""),
+                      localizable::CompressionFailedToAccessFileMessage(),
                       _err,
                       {_vfs, _path},
                       ctx);
@@ -141,12 +141,11 @@ void Compression::OnTargetPathDefined()
 NSString *Compression::BuildTitlePrefix() const
 {
     if( m_InitialSingleItemFilename.empty() )
-        return [NSString localizedStringWithFormat:NSLocalizedString(@"Compressing %d items", "Compressing %d items"),
-                                                   m_InitialSourceItemsAmount];
-    else
         return [NSString
-            localizedStringWithFormat:NSLocalizedString(@"Compressing \u201c%@\u201d", "Compressing \u201c%@\u201d"),
-                                      [NSString stringWithUTF8StdString:m_InitialSingleItemFilename]];
+            localizedStringWithFormat:localizable::CompressionCompressingItemsTitle(), m_InitialSourceItemsAmount];
+    else
+        return [NSString localizedStringWithFormat:localizable::CompressionCompressingItemTitle(),
+                                                   [NSString stringWithUTF8StdString:m_InitialSingleItemFilename]];
 }
 
 std::string Compression::BuildInitialTitle() const
@@ -157,10 +156,12 @@ std::string Compression::BuildInitialTitle() const
 std::string Compression::BuildTitleWithArchiveFilename() const
 {
     auto p = std::filesystem::path(m_Job->TargetArchivePath());
-    return [NSString localizedStringWithFormat:NSLocalizedString(@"%@ to \u201c%@\u201d", "Compressing \u201c%@\u201d"),
+    return [NSString localizedStringWithFormat:localizable::CompressionCompressingToTitle(),
                                                BuildTitlePrefix(),
                                                [NSString stringWithUTF8StdString:p.filename()]]
         .UTF8String;
 }
 
 } // namespace nc::ops
+
+#pragma clang diagnostic pop

@@ -61,6 +61,18 @@ NSString *AttrChangingFailedToPerformSetTimeMessage()
     return NSLocalizedString(@"Failed to set file time", "");
 }
 
+NSString *AttrChangingSingleTitle()
+{
+    return NSLocalizedString(@"Change file attributes for \u201c%@\u201d",
+                             "Title for file attributes sheet, single item");
+}
+
+NSString *AttrChangingMultiTitle()
+{
+    return NSLocalizedString(@"Change file attributes for %@ selected items",
+                             "Title for file attributes sheet, multiple items");
+}
+
 NSString *BatchRenamingFailedToRenameMessage()
 {
     return NSLocalizedString(@"Failed to rename an item", "");
@@ -115,6 +127,62 @@ NSString *CompressionDiaglogCompressItemsToTitle()
 NSString *CompressionDiaglogCompressItemToTitle()
 {
     return NSLocalizedString(@"Compress \u201c%@\u201d to:", "Compress files sheet prompt, compressing single file");
+}
+
+NSString *OperationAbortTitle()
+{
+
+    return NSLocalizedString(@"Abort", "");
+}
+
+NSString *OperationRetryTitle()
+{
+    return NSLocalizedString(@"Retry", "");
+}
+
+NSString *OperationContinueTitle()
+{
+    return NSLocalizedString(@"Continue", "");
+}
+
+NSString *OperationSkipTitle()
+{
+    return NSLocalizedString(@"Skip", "");
+}
+
+NSString *OperationSkipAllTitle()
+{
+    return NSLocalizedString(@"Skip All", "");
+}
+
+NSString *OperationOverwriteTitle()
+{
+    return NSLocalizedString(@"Overwrite", "");
+}
+
+NSString *StatisticsFormatterVolOfVolPaused()
+{
+    return NSLocalizedString(@"%@ of %@ - Paused", "");
+}
+
+NSString *StatisticsFormatterVolOfVol()
+{
+    return NSLocalizedString(@"%@ of %@", "");
+}
+
+NSString *StatisticsFormatterVolOfVolEta()
+{
+    return NSLocalizedString(@"%@ of %@, %@", "");
+}
+
+NSString *StatisticsFormatterVolOfVolSpeed()
+{
+    return NSLocalizedString(@"%@ of %@ - %@/s", "");
+}
+
+NSString *StatisticsFormatterVolOfVolSpeedEta()
+{
+    return NSLocalizedString(@"%@ of %@ - %@/s, %@", "");
 }
 
 } // namespace nc::ops::localizable

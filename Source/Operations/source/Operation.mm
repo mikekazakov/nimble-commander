@@ -1,8 +1,9 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Operation.h"
 #include "Job.h"
 #include "AsyncDialogResponse.h"
 #include "ModalDialogResponses.h"
+#include <Operations/Localizable.h>
 #include <VFS/VFS.h>
 #include "HaltReasonDialog.h"
 #include "GenericErrorDialog.h"
@@ -208,28 +209,28 @@ void Operation::Show(NSWindow *_dialog, std::shared_ptr<AsyncDialogResponse> _re
 void Operation::AddButtonsForGenericDialog(const GenericDialog _dialog_type, NCOpsGenericErrorDialog *_dialog)
 {
     if( _dialog_type == GenericDialog::AbortRetry ) {
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
+        [_dialog addButtonWithTitle:localizable::OperationAbortTitle() responseCode:NSModalResponseStop];
+        [_dialog addButtonWithTitle:localizable::OperationRetryTitle() responseCode:NSModalResponseRetry];
     }
     if( _dialog_type == GenericDialog::Continue ) {
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Continue", "") responseCode:NSModalResponseContinue];
+        [_dialog addButtonWithTitle:localizable::OperationContinueTitle() responseCode:NSModalResponseContinue];
     }
     if( _dialog_type == GenericDialog::AbortSkipSkipAll ) {
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
+        [_dialog addButtonWithTitle:localizable::OperationAbortTitle() responseCode:NSModalResponseStop];
+        [_dialog addButtonWithTitle:localizable::OperationSkipTitle() responseCode:NSModalResponseSkip];
+        [_dialog addButtonWithTitle:localizable::OperationSkipAllTitle() responseCode:NSModalResponseSkipAll];
     }
     if( _dialog_type == GenericDialog::AbortSkipSkipAllRetry ) {
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
+        [_dialog addButtonWithTitle:localizable::OperationAbortTitle() responseCode:NSModalResponseStop];
+        [_dialog addButtonWithTitle:localizable::OperationSkipTitle() responseCode:NSModalResponseSkip];
+        [_dialog addButtonWithTitle:localizable::OperationSkipAllTitle() responseCode:NSModalResponseSkipAll];
+        [_dialog addButtonWithTitle:localizable::OperationRetryTitle() responseCode:NSModalResponseRetry];
     }
     if( _dialog_type == GenericDialog::AbortSkipSkipAllOverwrite ) {
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
-        [_dialog addButtonWithTitle:NSLocalizedString(@"Overwrite", "") responseCode:NSModalResponseOverwrite];
+        [_dialog addButtonWithTitle:localizable::OperationAbortTitle() responseCode:NSModalResponseStop];
+        [_dialog addButtonWithTitle:localizable::OperationSkipTitle() responseCode:NSModalResponseSkip];
+        [_dialog addButtonWithTitle:localizable::OperationSkipAllTitle() responseCode:NSModalResponseSkipAll];
+        [_dialog addButtonWithTitle:localizable::OperationOverwriteTitle() responseCode:NSModalResponseOverwrite];
     }
 }
 

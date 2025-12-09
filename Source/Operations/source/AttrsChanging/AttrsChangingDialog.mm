@@ -806,12 +806,10 @@ static NSString *GroupToString(const VFSGroup &_group)
 static NSString *Title(const std::vector<VFSListingItem> &_items)
 {
     if( _items.size() == 1 )
-        return [NSString stringWithFormat:NSLocalizedString(@"Change file attributes for \u201c%@\u201d",
-                                                            "Title for file attributes sheet, single item"),
+        return [NSString stringWithFormat:localizable::AttrChangingSingleTitle(),
                                           [NSString stringWithUTF8String:_items.front().FilenameC()]];
     else
-        return [NSString stringWithFormat:NSLocalizedString(@"Change file attributes for %@ selected items",
-                                                            "Title for file attributes sheet, multiple items"),
+        return [NSString stringWithFormat:localizable::AttrChangingMultiTitle(),
                                           [NSNumber numberWithInt:static_cast<int>(_items.size())]];
 }
 

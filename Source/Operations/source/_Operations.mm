@@ -18,3 +18,6 @@
 #include "BatchRenaming/BatchRenamingScheme.mm"
 #include "Compression/CompressDialog.mm"
 #include "Compression/Compression.mm"
+#include "Copying/Copying.mm"
+#include "Copying/CopyingDialog.mm"
+#include "Copying/CopyingTitleBuilder.mm"

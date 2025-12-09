@@ -160,6 +160,11 @@ NSString *OperationOverwriteTitle()
     return NSLocalizedString(@"Overwrite", "");
 }
 
+NSString *OperationUnlockTitle()
+{
+    return NSLocalizedString(@"Unlock", "");
+}
+
 NSString *StatisticsFormatterVolOfVolPaused()
 {
     return NSLocalizedString(@"%@ of %@ - Paused", "");
@@ -183,6 +188,147 @@ NSString *StatisticsFormatterVolOfVolSpeed()
 NSString *StatisticsFormatterVolOfVolSpeedEta()
 {
     return NSLocalizedString(@"%@ of %@ - %@/s, %@", "");
+}
+
+NSString *CopyingFailedToAccessFileMessage()
+{
+    return NSLocalizedString(@"Failed to access a file", "");
+}
+
+NSString *CopyingFailedToOpenDestFileMessage()
+{
+    return NSLocalizedString(@"Failed to open a destination file", "");
+}
+
+NSString *CopyingFailedToReadSourceFileMessage()
+{
+    return NSLocalizedString(@"Failed to read a source file", "");
+}
+
+NSString *CopyingFailedToReadDestFileMessage()
+{
+    return NSLocalizedString(@"Failed to read a destination file", "");
+}
+
+NSString *CopyingFailedToWriteDestFileMessage()
+{
+    return NSLocalizedString(@"Failed to write a file", "");
+}
+
+NSString *CopyingFailedToCreateDirectoryMessage()
+{
+    return NSLocalizedString(@"Failed to create a directory", "");
+}
+
+NSString *CopyingFailedToDeleteDestFileMessage()
+{
+    return NSLocalizedString(@"Failed to delete a destination file", "");
+}
+
+NSString *CopyingChecksumVerificationFailedMessage()
+{
+    return NSLocalizedString(@"Checksum verification failed", "");
+}
+
+NSString *CopyingFailedToDeleteSourceFileMessage()
+{
+    return NSLocalizedString(@"Failed to delete a source item", "");
+}
+
+NSString *CopyingItemNotDirMessage()
+{
+
+    return NSLocalizedString(@"Item is not a directory", "");
+}
+
+NSString *CopyingCantRenameLockedMessage()
+{
+    return NSLocalizedString(@"Cannot rename a locked item", "");
+}
+
+NSString *CopyingCantDeleteLockedMessage()
+{
+    return NSLocalizedString(@"Cannot delete a locked item", "");
+}
+
+NSString *CopyingCantOpenLockedMessage()
+{
+    return NSLocalizedString(@"Cannot open a locked item", "");
+}
+
+NSString *CopyingFailedToUnlockMessage()
+{
+    return NSLocalizedString(@"Failed to unlock an item", "");
+}
+
+NSString *CopyingDialogCopyItemsToTitle()
+{
+    return NSLocalizedString(@"Copy %@ items to:", "Copy files sheet prompt, copying many files");
+}
+
+NSString *CopyingDialogCopyItemToTitle()
+{
+    return NSLocalizedString(@"Copy \u201c%@\u201d to:", "Copy files sheet prompt, copying single file");
+}
+
+NSString *CopyingDialogMoveItemsToTitle()
+{
+    return NSLocalizedString(@"Rename/move %@ items to:", "Move files sheet prompt, moving many files");
+}
+
+NSString *CopyingDialogMoveItemToTitle()
+{
+    return NSLocalizedString(@"Rename/move \u201c%@\u201d to:", "Move files sheet prompt, moving single file");
+}
+
+NSString *CopyingTitleCopyingPrefix()
+{
+    return NSLocalizedString(@"Copying", "Prefix of a file operation");
+}
+
+NSString *CopyingTitleMovingPrefix()
+{
+    return NSLocalizedString(@"Moving", "Prefix of a file operation");
+}
+
+NSString *CopyingTitleSingleSuffix()
+{
+    return NSLocalizedString(@"%@ \u201c%@\u201d to \u201c%@\u201d", "");
+}
+
+NSString *CopyingTitleMultiSuffix()
+{
+    return NSLocalizedString(@"%@ %@ items to \u201c%@\u201d", "");
+}
+
+NSString *CopyingTitlePreparingToCopySingle()
+{
+    return NSLocalizedString(@"Preparing to copy \u201c%@\u201d", "");
+}
+
+NSString *CopyingTitlePreparingToMoveSingle()
+{
+    return NSLocalizedString(@"Preparing to move \u201c%@\u201d", "");
+}
+
+NSString *CopyingTitlePreparingToCopyMulti()
+{
+    return NSLocalizedString(@"Preparing to copy %@ items", "");
+}
+
+NSString *CopyingTitlePreparingToMoveMulti()
+{
+    return NSLocalizedString(@"Preparing to move %@ items", "");
+}
+
+NSString *CopyingTitleVerifyingResult()
+{
+    return NSLocalizedString(@"Verifying operation result..", "");
+}
+
+NSString *CopyingTitleCleaningUp()
+{
+    return NSLocalizedString(@"Cleaning up..", "");
 }
 
 } // namespace nc::ops::localizable

@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -162,6 +162,20 @@ private:
     void AddInsertCounter(const Counter &t);
     bool ParsePlaceholder(NSString *_ph);
     static NSString *DoSearchReplace(const ReplaceOptions &_opts, NSString *_source);
+    static std::optional<std::pair<unsigned short, short>> EatUShort(NSString *s, const unsigned long pos);
+    static std::optional<std::pair<int, short>> EatInt(NSString *s, const unsigned long pos);
+    static std::optional<std::pair<int, short>> EatIntWithPreffix(NSString *s, const unsigned long pos, char prefix);
+    static NSString *StringByTransform(NSString *_s, CaseTransform _ct);
+    static NSString *StringByTransform(NSString *_s, CaseTransform _ct, bool _apply_to_ext);
+    static NSString *FormatTimeSeconds(const struct tm &_t);
+    static NSString *FormatTimeMinutes(const struct tm &_t);
+    static NSString *FormatTimeHours(const struct tm &_t);
+    static NSString *FormatTimeDay(const struct tm &_t);
+    static NSString *FormatTimeMonth(const struct tm &_t);
+    static NSString *FormatTimeYear2(const struct tm &_t);
+    static NSString *FormatTimeYear4(const struct tm &_t);
+    static NSString *FormatDate(time_t _t);
+    static NSString *FormatTime(time_t _t);
 
     std::vector<Step> m_Steps;
     std::vector<NSString *> m_ActionsStatic;

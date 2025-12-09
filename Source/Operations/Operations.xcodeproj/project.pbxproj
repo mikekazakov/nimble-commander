@@ -45,11 +45,6 @@
 		CF46FF90255FCCA90095FC73 /* AlterSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9A81F10890B0000B3EE /* AlterSymlinkDialog.xib */; };
 		CF46FF95255FCCAD0095FC73 /* CreateHardlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AA1F10890B0000B3EE /* CreateHardlinkDialog.xib */; };
 		CF46FF9A255FCCAF0095FC73 /* CreateSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AC1F10890B0000B3EE /* CreateSymlinkDialog.xib */; };
-		CF46FFD7255FD0390095FC73 /* BatchRenaming.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F96A1F0CEFB60000B3EE /* BatchRenaming.mm */; };
-		CF46FFD8255FD0390095FC73 /* BatchRenamingScheme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9631F0CC66E0000B3EE /* BatchRenamingScheme.mm */; };
-		CF46FFD9255FD0390095FC73 /* BatchRenamingRangeSelectionPopover.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F97C1F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.mm */; };
-		CF46FFDA255FD0390095FC73 /* BatchRenamingJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F96B1F0CEFB60000B3EE /* BatchRenamingJob.cpp */; };
-		CF46FFDB255FD0390095FC73 /* BatchRenamingDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F97A1F0DEC280000B3EE /* BatchRenamingDialog.mm */; };
 		CF46FFE0255FD03F0095FC73 /* CompressDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C1006229F16E400A5359D /* CompressDialog.mm */; };
 		CF46FFE1255FD03F0095FC73 /* Compression.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B901EE24FEC00F567C4 /* Compression.mm */; };
 		CF46FFE2255FD03F0095FC73 /* CompressionJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B931EE2515400F567C4 /* CompressionJob.cpp */; };
@@ -882,16 +877,13 @@
 				CF46FFEA255FD04D0095FC73 /* SourceItems.cpp in Sources */,
 				CF46FFF0255FD04D0095FC73 /* ChecksumExpectation.cpp in Sources */,
 				CF46FFEB255FD04D0095FC73 /* CopyingDialog.mm in Sources */,
-				CF46FFD9255FD0390095FC73 /* BatchRenamingRangeSelectionPopover.mm in Sources */,
 				CF460005255FD0600095FC73 /* CreateHardlinkDialog.mm in Sources */,
-				CF46FFD8255FD0390095FC73 /* BatchRenamingScheme.mm in Sources */,
 				CF46FFFC255FD0590095FC73 /* DirectoryCreationDialog.mm in Sources */,
 				CF46FFED255FD04D0095FC73 /* DisclosureViewController.m in Sources */,
 				CF46FFF5255FD0530095FC73 /* Deletion.mm in Sources */,
 				CF46FFEF255FD04D0095FC73 /* NativeFSHelpers.cpp in Sources */,
 				CF46FFEE255FD04D0095FC73 /* Copying.mm in Sources */,
 				CF460004255FD0600095FC73 /* LinkageJob.cpp in Sources */,
-				CF46FFDA255FD0390095FC73 /* BatchRenamingJob.cpp in Sources */,
 				CF47861A2EE7127500736117 /* _Operations.cpp in Sources */,
 				CF460007255FD0600095FC73 /* CreateSymlinkDialog.mm in Sources */,
 				CF4786212EE7171400736117 /* Localizable.mm in Sources */,
@@ -900,14 +892,12 @@
 				CF46FFE1255FD03F0095FC73 /* Compression.mm in Sources */,
 				CF460006255FD0600095FC73 /* Linkage.mm in Sources */,
 				CF46FFF7255FD0530095FC73 /* DeletionDialog.mm in Sources */,
-				CF46FFD7255FD0390095FC73 /* BatchRenaming.mm in Sources */,
 				CF46FFE9255FD04D0095FC73 /* FileAlreadyExistDialog.mm in Sources */,
 				CFB7BD42260F696C00E2EA4D /* DeletionJobCallbacks.cpp in Sources */,
 				CF46FFE2255FD03F0095FC73 /* CompressionJob.cpp in Sources */,
 				CF47861C2EE7144500736117 /* _Operations.mm in Sources */,
 				CF46FFE0255FD03F0095FC73 /* CompressDialog.mm in Sources */,
 				CF46FFF6255FD0530095FC73 /* DeletionJob.cpp in Sources */,
-				CF46FFDB255FD0390095FC73 /* BatchRenamingDialog.mm in Sources */,
 				CF46FFE8255FD04D0095FC73 /* CopyingJob.cpp in Sources */,
 				CF46FFFD255FD0590095FC73 /* DirectoryCreation.mm in Sources */,
 			);

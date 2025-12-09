@@ -16,5 +16,8 @@ NSString *AttrChangingFailedToPerformChmodMessage();
 NSString *AttrChangingFailedToPerformChownMessage();
 NSString *AttrChangingFailedToPerformChflagsMessage();
 NSString *AttrChangingFailedToPerformSetTimeMessage();
+NSString *BatchRenamingFailedToRenameMessage();
+NSString *BatchRenamingBatchRenamingTitle();
+NSString *BatchRenamingCantRemoveLastItemMessage();
 
 } // namespace nc::ops::localizable

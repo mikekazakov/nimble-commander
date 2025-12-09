@@ -1,6 +1,7 @@
 // Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenaming.h"
 #include "BatchRenamingJob.h"
+#include <Operations/Localizable.h>
 #include <VFS/VFS.h>
 
 #include "../AsyncDialogResponse.h"
@@ -10,13 +11,10 @@
 #include <memory>
 
 // TODO: remove once callback results are no longer wrapped into 'int'
+#pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wold-style-cast"
 
 namespace nc::ops {
-
-using Callbacks = BatchRenamingJobCallbacks;
-
-static std::string Caption(const std::vector<std::string> &_paths);
 
 BatchRenaming::BatchRenaming(std::vector<std::string> _src_paths,
                              std::vector<std::string> _dst_paths,
@@ -50,7 +48,7 @@ int BatchRenaming::OnRenameError(Error _err, const std::string &_path, VFSHost &
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
-                      NSLocalizedString(@"Failed to rename an item", ""),
+                      localizable::BatchRenamingFailedToRenameMessage(),
                       _err,
                       {_vfs, _path},
                       ctx);
@@ -68,12 +66,13 @@ int BatchRenaming::OnRenameError(Error _err, const std::string &_path, VFSHost &
         return (int)Callbacks::RenameErrorResolution::Stop;
 }
 
-static std::string Caption(const std::vector<std::string> &_paths)
+std::string BatchRenaming::Caption(const std::vector<std::string> &_paths)
 {
-    return [NSString localizedStringWithFormat:NSLocalizedString(@"Batch renaming %@ items",
-                                                                 "Operation title batch renaming"),
+    return [NSString localizedStringWithFormat:localizable::BatchRenamingBatchRenamingTitle(),
                                                [NSNumber numberWithUnsignedLong:_paths.size()]]
         .UTF8String;
 }
 
 } // namespace nc::ops
+
+#pragma clang diagnostic pop

@@ -4,3 +4,4 @@
 #include "Progress.cpp"
 #include "Statistics.cpp"
 #include "AttrsChanging/AttrsChangingJob.cpp"
+#include "BatchRenaming/BatchRenamingJob.cpp"

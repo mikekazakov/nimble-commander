@@ -12,3 +12,7 @@
 #include "StatisticsFormatter.mm"
 #include "AttrsChanging/AttrsChanging.mm"
 #include "AttrsChanging/AttrsChangingDialog.mm"
+#include "BatchRenaming/BatchRenaming.mm"
+#include "BatchRenaming/BatchRenamingDialog.mm"
+#include "BatchRenaming/BatchRenamingRangeSelectionPopover.mm"
+#include "BatchRenaming/BatchRenamingScheme.mm"

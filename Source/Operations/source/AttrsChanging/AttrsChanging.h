@@ -7,6 +7,7 @@
 namespace nc::ops {
 
 class AttrsChangingJob;
+struct AttrsChangingJobCallbacks;
 
 class AttrsChanging : public Operation
 {
@@ -15,6 +16,8 @@ public:
     ~AttrsChanging();
 
 private:
+    using Callbacks = AttrsChangingJobCallbacks;
+
     virtual Job *GetJob() noexcept override;
     int OnSourceAccessError(Error _err, const std::string &_path, VFSHost &_vfs);
     int OnChmodError(Error _err, const std::string &_path, VFSHost &_vfs);

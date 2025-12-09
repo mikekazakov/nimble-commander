@@ -15,8 +15,6 @@
 
 namespace nc::ops {
 
-using Callbacks = AttrsChangingJobCallbacks;
-
 AttrsChanging::AttrsChanging(AttrsChangingCommand _command)
 {
     m_Job = std::make_unique<AttrsChangingJob>(std::move(_command));

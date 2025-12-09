@@ -61,4 +61,20 @@ NSString *AttrChangingFailedToPerformSetTimeMessage()
     return NSLocalizedString(@"Failed to set file time", "");
 }
 
+NSString *BatchRenamingFailedToRenameMessage()
+{
+    return NSLocalizedString(@"Failed to rename an item", "");
+}
+
+NSString *BatchRenamingBatchRenamingTitle()
+{
+    return NSLocalizedString(@"Batch renaming %@ items", "Operation title batch renaming");
+}
+
+NSString *BatchRenamingCantRemoveLastItemMessage()
+{
+    return NSLocalizedString(@"Cannot remove the last item being renamed",
+                             "Alert shown when a user tries to remove all item from a Batch Rename dialog");
+}
+
 } // namespace nc::ops::localizable

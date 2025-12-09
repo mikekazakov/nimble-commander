@@ -8,7 +8,6 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 
-
 @interface NCOpsGenericErrorDialog ()
 @property(strong, nonatomic) IBOutlet NSTextField *pathLabel;
 @property(strong, nonatomic) IBOutlet NSTextField *errorLabel;

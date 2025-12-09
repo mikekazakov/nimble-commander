@@ -1,2 +1,5 @@
 #include "AsyncDialogResponse.cpp"
 #include "Job.cpp"
+#include "PoolEnqueueFilter.cpp"
+#include "Progress.cpp"
+#include "Statistics.cpp"

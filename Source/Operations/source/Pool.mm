@@ -1,16 +1,10 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Pool.h"
 #include "Operation.h"
 #include <Base/dispatch_cpp.h>
 #include <thread>
 
 namespace nc::ops {
-
-template <class C, class T>
-void erase_from(C &_c, const T &_t)
-{
-    _c.erase(remove(begin(_c), end(_c), _t), end(_c));
-}
 
 std::shared_ptr<Pool> Pool::Make()
 {
@@ -65,8 +59,8 @@ void Pool::OperationDidFinish([[maybe_unused]] const std::shared_ptr<Operation> 
 {
     {
         const auto guard = std::lock_guard{m_Lock};
-        erase_from(m_RunningOperations, _operation);
-        erase_from(m_PendingOperations, _operation);
+        std::erase(m_RunningOperations, _operation);
+        std::erase(m_PendingOperations, _operation);
     }
     FireObservers(NotifyAboutRemoval);
     StartPendingOperations();

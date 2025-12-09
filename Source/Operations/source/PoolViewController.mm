@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PoolViewController.h"
 #include "Pool.h"
 #include "Internal.h"
@@ -8,10 +8,7 @@
 
 #include <algorithm>
 
-using namespace nc::ops;
-using namespace std::literals;
-
-static const auto g_ViewAppearTimeout = 100ms;
+static const std::chrono::milliseconds g_PoolViewAppearTimeout = std::chrono::milliseconds{100};
 
 @interface NCOpsPoolViewController ()
 @property(strong, nonatomic) IBOutlet NSView *idleViewHolder;
@@ -22,18 +19,19 @@ static const auto g_ViewAppearTimeout = 100ms;
 @end
 
 @implementation NCOpsPoolViewController {
-    std::shared_ptr<Pool> m_Pool;
+    std::shared_ptr<nc::ops::Pool> m_Pool;
     std::vector<NCOpsBriefOperationViewController *> m_BriefViews;
     int m_IndexToShow;
-    std::shared_ptr<Operation> m_ShownOperation;
+    std::shared_ptr<nc::ops::Operation> m_ShownOperation;
 }
 @synthesize idleViewHolder;
 @synthesize briefViewHolder;
 @synthesize upButton;
 @synthesize downButton;
 
-- (instancetype)initWithPool:(Pool &)_pool
+- (instancetype)initWithPool:(nc::ops::Pool &)_pool
 {
+    using namespace nc::ops;
     dispatch_assert_main_queue();
     self = [super initWithNibName:@"PoolViewController" bundle:Bundle()];
     if( self ) {
@@ -55,8 +53,9 @@ static const auto g_ViewAppearTimeout = 100ms;
     [self updateButtonsState];
 }
 
-- (void)syncWithOperations:(const std::vector<std::shared_ptr<Operation>> &)_operations
+- (void)syncWithOperations:(const std::vector<std::shared_ptr<nc::ops::Operation>> &)_operations
 {
+    using namespace nc::ops;
     const auto find_existing = [=](const std::shared_ptr<Operation> &_op) {
         const auto existing = std::ranges::find_if(m_BriefViews, [_op](auto &v) { return v.operation == _op; });
         return existing != m_BriefViews.end() ? *existing : nullptr;
@@ -108,7 +107,7 @@ static const auto g_ViewAppearTimeout = 100ms;
     if( self.idleView.hidden && m_ShownOperation == nil )
         self.idleView.hidden = false;
     else if( !self.idleView.hidden && m_ShownOperation != nil )
-        dispatch_to_main_queue_after(g_ViewAppearTimeout, [=] {
+        dispatch_to_main_queue_after(g_PoolViewAppearTimeout, [=] {
             if( m_ShownOperation )
                 self.idleView.hidden = true;
         });

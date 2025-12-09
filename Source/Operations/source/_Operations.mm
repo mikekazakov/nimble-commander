@@ -5,3 +5,8 @@
 #include "GenericErrorDialog.mm"
 #include "HaltReasonDialog.mm"
 #include "Internal.mm"
+#include "Operation.mm"
+#include "Pool.mm"
+#include "PoolView.mm"
+#include "PoolViewController.mm"
+#include "StatisticsFormatter.mm"

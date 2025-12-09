@@ -14,7 +14,6 @@
 		CF22F0CA258F43610033E850 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.mm */; };
 		CF22F0F5258F43A80033E850 /* Deletion_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF22F0F4258F43A80033E850 /* Deletion_UT.cpp */; };
 		CF287FDC26EE0A5600FC24B5 /* Pool_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF287FDB26EE0A5600FC24B5 /* Pool_UT.mm */; };
-		CF287FF326F6876200FC24B5 /* PoolEnqueueFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF287FF126F6876200FC24B5 /* PoolEnqueueFilter.cpp */; };
 		CF287FF426F6876200FC24B5 /* PoolEnqueueFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = CF287FF226F6876200FC24B5 /* PoolEnqueueFilter.h */; };
 		CF2C101A22A0731500A5359D /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2C101822A0731500A5359D /* Tests.cpp */; };
 		CF2C102622A4116F00A5359D /* DirectoryPathAutoCompetion_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C102422A4116B00A5359D /* DirectoryPathAutoCompetion_IT.mm */; };
@@ -46,13 +45,6 @@
 		CF46FF90255FCCA90095FC73 /* AlterSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9A81F10890B0000B3EE /* AlterSymlinkDialog.xib */; };
 		CF46FF95255FCCAD0095FC73 /* CreateHardlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AA1F10890B0000B3EE /* CreateHardlinkDialog.xib */; };
 		CF46FF9A255FCCAF0095FC73 /* CreateSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AC1F10890B0000B3EE /* CreateSymlinkDialog.xib */; };
-		CF46FFBD255FD0260095FC73 /* Progress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF53BCC1EF3913B00F567C4 /* Progress.cpp */; };
-		CF46FFBF255FD0260095FC73 /* Statistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF53BAD1EEA840600F567C4 /* Statistics.cpp */; };
-		CF46FFC0255FD0260095FC73 /* PoolViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8C61EFA05B00000B3EE /* PoolViewController.mm */; };
-		CF46FFC4255FD0260095FC73 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B751EDE53E800F567C4 /* Operation.mm */; };
-		CF46FFC5255FD0260095FC73 /* Pool.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7084D71EF7CC770072F0F6 /* Pool.mm */; };
-		CF46FFC9255FD0260095FC73 /* PoolView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8C41EFA05B00000B3EE /* PoolView.mm */; };
-		CF46FFCB255FD0260095FC73 /* StatisticsFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8DC1EFCC0040000B3EE /* StatisticsFormatter.mm */; };
 		CF46FFD0255FD02F0095FC73 /* AttrsChangingDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9E71F15BA800000B3EE /* AttrsChangingDialog.mm */; };
 		CF46FFD1255FD02F0095FC73 /* AttrsChangingJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9D11F14C4030000B3EE /* AttrsChangingJob.cpp */; };
 		CF46FFD2255FD02F0095FC73 /* AttrsChanging.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9CE1F14BFFE0000B3EE /* AttrsChanging.mm */; };
@@ -893,15 +885,10 @@
 				CF46FFEA255FD04D0095FC73 /* SourceItems.cpp in Sources */,
 				CF46FFF0255FD04D0095FC73 /* ChecksumExpectation.cpp in Sources */,
 				CF46FFEB255FD04D0095FC73 /* CopyingDialog.mm in Sources */,
-				CF46FFC5255FD0260095FC73 /* Pool.mm in Sources */,
 				CF46FFD9255FD0390095FC73 /* BatchRenamingRangeSelectionPopover.mm in Sources */,
 				CF460005255FD0600095FC73 /* CreateHardlinkDialog.mm in Sources */,
 				CF46FFD8255FD0390095FC73 /* BatchRenamingScheme.mm in Sources */,
-				CF46FFBF255FD0260095FC73 /* Statistics.cpp in Sources */,
 				CF46FFFC255FD0590095FC73 /* DirectoryCreationDialog.mm in Sources */,
-				CF287FF326F6876200FC24B5 /* PoolEnqueueFilter.cpp in Sources */,
-				CF46FFC9255FD0260095FC73 /* PoolView.mm in Sources */,
-				CF46FFCB255FD0260095FC73 /* StatisticsFormatter.mm in Sources */,
 				CF46FFED255FD04D0095FC73 /* DisclosureViewController.m in Sources */,
 				CF46FFF5255FD0530095FC73 /* Deletion.mm in Sources */,
 				CF46FFEF255FD04D0095FC73 /* NativeFSHelpers.cpp in Sources */,
@@ -920,12 +907,9 @@
 				CF46FFD0255FD02F0095FC73 /* AttrsChangingDialog.mm in Sources */,
 				CF46FFD7255FD0390095FC73 /* BatchRenaming.mm in Sources */,
 				CF46FFD2255FD02F0095FC73 /* AttrsChanging.mm in Sources */,
-				CF46FFC4255FD0260095FC73 /* Operation.mm in Sources */,
 				CF46FFE9255FD04D0095FC73 /* FileAlreadyExistDialog.mm in Sources */,
 				CFB7BD42260F696C00E2EA4D /* DeletionJobCallbacks.cpp in Sources */,
 				CF46FFE2255FD03F0095FC73 /* CompressionJob.cpp in Sources */,
-				CF46FFC0255FD0260095FC73 /* PoolViewController.mm in Sources */,
-				CF46FFBD255FD0260095FC73 /* Progress.cpp in Sources */,
 				CF47861C2EE7144500736117 /* _Operations.mm in Sources */,
 				CF46FFE0255FD03F0095FC73 /* CompressDialog.mm in Sources */,
 				CF46FFF6255FD0530095FC73 /* DeletionJob.cpp in Sources */,

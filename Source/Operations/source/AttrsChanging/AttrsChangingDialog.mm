@@ -10,7 +10,7 @@
 
 #include <algorithm>
 
-using namespace nc::ops;
+// using namespace nc::ops;
 
 @interface NCOpsAttrsChangingDialog ()
 
@@ -66,6 +66,8 @@ using namespace nc::ops;
 @property(strong, nonatomic) IBOutlet NSButton *processSubfolders;
 @end
 
+namespace nc::ops::attr {
+
 static AttrsChangingCommand::Permissions ExtractCommonPermissions(const std::vector<VFSListingItem> &_items);
 static AttrsChangingCommand::Ownage ExtractCommonOwnage(const std::vector<VFSListingItem> &_items);
 static AttrsChangingCommand::Flags ExtractCommonFlags(const std::vector<VFSListingItem> &_items);
@@ -75,13 +77,19 @@ static NSString *UserToString(const VFSUser &_user);
 static NSString *GroupToString(const VFSGroup &_group);
 static NSString *Title(const std::vector<VFSListingItem> &_items);
 
+static NSImage *UserIcon();
+static NSImage *GroupIcon();
+static const auto g_MixedOwnageTitle = @"[???]";
+
+} // namespace nc::ops::attr
+
 @implementation NCOpsAttrsChangingDialog {
     std::vector<VFSListingItem> m_Items;
     bool m_ItemsHaveDirectories;
-    AttrsChangingCommand::Permissions m_CommonItemsPermissions;
-    AttrsChangingCommand::Ownage m_CommonItemsOwnage;
-    AttrsChangingCommand::Flags m_CommonItemsFlags;
-    AttrsChangingCommand::Times m_CommonItemsTimes;
+    nc::ops::AttrsChangingCommand::Permissions m_CommonItemsPermissions;
+    nc::ops::AttrsChangingCommand::Ownage m_CommonItemsOwnage;
+    nc::ops::AttrsChangingCommand::Flags m_CommonItemsFlags;
+    nc::ops::AttrsChangingCommand::Times m_CommonItemsTimes;
     VFSHostPtr m_VFS;
 
     bool m_ProcessSubfolders;
@@ -90,7 +98,7 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
     bool m_FlagsBlockShown;
     bool m_TimesBlockShown;
 
-    AttrsChangingCommand m_Command;
+    nc::ops::AttrsChangingCommand m_Command;
     std::vector<VFSUser> m_Users;
     std::vector<VFSGroup> m_Groups;
 }
@@ -143,6 +151,8 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
 
 - (instancetype)initWithItems:(std::vector<VFSListingItem>)_items
 {
+    using namespace nc::ops;
+    using namespace nc::ops::attr;
     if( _items.empty() )
         throw std::invalid_argument("NCOpsAttrsChangingDialog: input array can't be empty");
     if( !all_equal(begin(_items), end(_items), [](auto &i) { return i.Host(); }) )
@@ -175,6 +185,7 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
 
 - (void)windowDidLoad
 {
+    using namespace nc::ops::attr;
     [super windowDidLoad];
     self.processSubfolders.hidden = !m_ItemsHaveDirectories;
     self.titleLabel.stringValue = Title(m_Items);
@@ -357,7 +368,7 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
     [self fillTimes];
 }
 
-- (void)fillPermUIWithPermissions:(const AttrsChangingCommand::Permissions &)_p
+- (void)fillPermUIWithPermissions:(const nc::ops::AttrsChangingCommand::Permissions &)_p
 {
     const auto m = [=](NSButton *_b, std::optional<bool> _v) {
         const auto has_user_input = _b.tag > 0;
@@ -401,7 +412,7 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
     [self.window makeFirstResponder:fr];
 }
 
-- (void)makeDefaultOwnerSelection:(const AttrsChangingCommand::Ownage &)_o
+- (void)makeDefaultOwnerSelection:(const nc::ops::AttrsChangingCommand::Ownage &)_o
 {
     if( m_ProcessSubfolders ) {
         [self.userPopup selectItemWithTag:-1];
@@ -414,7 +425,7 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
     }
 }
 
-- (void)makeDefaultGroupSelection:(const AttrsChangingCommand::Ownage &)_o
+- (void)makeDefaultGroupSelection:(const nc::ops::AttrsChangingCommand::Ownage &)_o
 {
     if( m_ProcessSubfolders ) {
         [self.groupPopup selectItemWithTag:-1];
@@ -427,30 +438,10 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
     }
 }
 
-static NSImage *UserIcon()
+- (void)fillOwner:(const nc::ops::AttrsChangingCommand::Ownage &)_o
 {
-    static const auto icon = [] {
-        const auto img = [NSImage imageNamed:NSImageNameUser];
-        img.size = NSMakeSize([NSFont menuFontOfSize:0].pointSize, [NSFont menuFontOfSize:0].pointSize);
-        return img;
-    }();
-    return icon;
-}
-
-static NSImage *GroupIcon()
-{
-    static const auto icon = [] {
-        const auto img = [NSImage imageNamed:NSImageNameUserGroup];
-        img.size = NSMakeSize([NSFont menuFontOfSize:0].pointSize, [NSFont menuFontOfSize:0].pointSize);
-        return img;
-    }();
-    return icon;
-}
-
-static const auto g_MixedOwnageTitle = @"[???]";
-
-- (void)fillOwner:(const AttrsChangingCommand::Ownage &)_o
-{
+    using namespace nc::ops;
+    using namespace nc::ops::attr;
     const auto popup = self.userPopup;
     const auto previous_selection = popup.tag > 0 ? std::optional<long>{popup.selectedTag} : std::optional<long>{};
     [popup removeAllItems];
@@ -471,8 +462,9 @@ static const auto g_MixedOwnageTitle = @"[???]";
         [self makeDefaultOwnerSelection:_o];
 }
 
-- (void)fillGroup:(const AttrsChangingCommand::Ownage &)_o
+- (void)fillGroup:(const nc::ops::AttrsChangingCommand::Ownage &)_o
 {
+    using namespace nc::ops::attr;
     const auto popup = self.groupPopup;
     const auto previous_selection =
         popup.tag > 0 ? std::optional<long>{self.groupPopup.selectedTag} : std::optional<long>{};
@@ -494,14 +486,15 @@ static const auto g_MixedOwnageTitle = @"[???]";
         [self makeDefaultGroupSelection:_o];
 }
 
-- (void)fillOwnageControls:(const AttrsChangingCommand::Ownage &)_o
+- (void)fillOwnageControls:(const nc::ops::AttrsChangingCommand::Ownage &)_o
 {
     [self fillOwner:_o];
     [self fillGroup:_o];
 }
 
-- (std::optional<AttrsChangingCommand::Permissions>)extractPermissionsFromUI
+- (std::optional<nc::ops::AttrsChangingCommand::Permissions>)extractPermissionsFromUI
 {
+    using namespace nc::ops;
     if( !m_AccessRightsBlockShown )
         return std::nullopt;
 
@@ -542,8 +535,9 @@ static const auto g_MixedOwnageTitle = @"[???]";
     return p;
 }
 
-- (std::optional<AttrsChangingCommand::Flags>)extractFlagsFromUI
+- (std::optional<nc::ops::AttrsChangingCommand::Flags>)extractFlagsFromUI
 {
+    using namespace nc::ops;
     if( !m_FlagsBlockShown )
         return std::nullopt;
 
@@ -591,8 +585,9 @@ static const auto g_MixedOwnageTitle = @"[???]";
     return f;
 }
 
-- (std::optional<AttrsChangingCommand::Ownage>)extractOwnageFromUI
+- (std::optional<nc::ops::AttrsChangingCommand::Ownage>)extractOwnageFromUI
 {
+    using namespace nc::ops;
     if( !m_OwnageBlockShown )
         return std::nullopt;
 
@@ -612,8 +607,9 @@ static const auto g_MixedOwnageTitle = @"[???]";
     return o;
 }
 
-- (std::optional<AttrsChangingCommand::Times>)extractTimesFromUI
+- (std::optional<nc::ops::AttrsChangingCommand::Times>)extractTimesFromUI
 {
+    using namespace nc::ops;
     if( !m_TimesBlockShown )
         return std::nullopt;
 
@@ -689,6 +685,8 @@ static const auto g_MixedOwnageTitle = @"[???]";
            (vfs_features & nc::vfs::HostFeatures::SetFlags) ||       //
            (vfs_features & nc::vfs::HostFeatures::SetTimes);         //
 }
+
+namespace nc::ops::attr {
 
 template <class _InputIterator, class _Predicate>
 static auto optional_common_value(_InputIterator _first, _InputIterator _last, _Predicate _pred)
@@ -816,5 +814,27 @@ static NSString *Title(const std::vector<VFSListingItem> &_items)
                                                             "Title for file attributes sheet, multiple items"),
                                           [NSNumber numberWithInt:static_cast<int>(_items.size())]];
 }
+
+static NSImage *UserIcon()
+{
+    static const auto icon = [] {
+        const auto img = [NSImage imageNamed:NSImageNameUser];
+        img.size = NSMakeSize([NSFont menuFontOfSize:0].pointSize, [NSFont menuFontOfSize:0].pointSize);
+        return img;
+    }();
+    return icon;
+}
+
+static NSImage *GroupIcon()
+{
+    static const auto icon = [] {
+        const auto img = [NSImage imageNamed:NSImageNameUserGroup];
+        img.size = NSMakeSize([NSFont menuFontOfSize:0].pointSize, [NSFont menuFontOfSize:0].pointSize);
+        return img;
+    }();
+    return icon;
+}
+
+} // namespace nc::ops::attr
 
 @end

@@ -71,6 +71,9 @@ private:
     bool ChflagSingleItem(const std::string &_path, VFSHost &_vfs, const VFSStat &_stat);
     bool ChtimesSingleItem(const std::string &_path, VFSHost &_vfs, const VFSStat &_stat);
 
+    static std::pair<uint16_t, uint16_t> PermissionsValueAndMask(const AttrsChangingCommand::Permissions &_p);
+    static std::pair<uint32_t, uint32_t> FlagsValueAndMask(const AttrsChangingCommand::Flags &_f);
+
     struct Meta;
     const AttrsChangingCommand m_Command;
     std::optional<std::pair<uint16_t, uint16_t>> m_ChmodCommand;

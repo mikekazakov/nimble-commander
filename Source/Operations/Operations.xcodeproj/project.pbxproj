@@ -45,9 +45,6 @@
 		CF46FF90255FCCA90095FC73 /* AlterSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9A81F10890B0000B3EE /* AlterSymlinkDialog.xib */; };
 		CF46FF95255FCCAD0095FC73 /* CreateHardlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AA1F10890B0000B3EE /* CreateHardlinkDialog.xib */; };
 		CF46FF9A255FCCAF0095FC73 /* CreateSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AC1F10890B0000B3EE /* CreateSymlinkDialog.xib */; };
-		CF46FFD0255FD02F0095FC73 /* AttrsChangingDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9E71F15BA800000B3EE /* AttrsChangingDialog.mm */; };
-		CF46FFD1255FD02F0095FC73 /* AttrsChangingJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9D11F14C4030000B3EE /* AttrsChangingJob.cpp */; };
-		CF46FFD2255FD02F0095FC73 /* AttrsChanging.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9CE1F14BFFE0000B3EE /* AttrsChanging.mm */; };
 		CF46FFD7255FD0390095FC73 /* BatchRenaming.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F96A1F0CEFB60000B3EE /* BatchRenaming.mm */; };
 		CF46FFD8255FD0390095FC73 /* BatchRenamingScheme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9631F0CC66E0000B3EE /* BatchRenamingScheme.mm */; };
 		CF46FFD9255FD0390095FC73 /* BatchRenamingRangeSelectionPopover.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F97C1F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.mm */; };
@@ -903,10 +900,7 @@
 				CF46FFE1255FD03F0095FC73 /* Compression.mm in Sources */,
 				CF460006255FD0600095FC73 /* Linkage.mm in Sources */,
 				CF46FFF7255FD0530095FC73 /* DeletionDialog.mm in Sources */,
-				CF46FFD1255FD02F0095FC73 /* AttrsChangingJob.cpp in Sources */,
-				CF46FFD0255FD02F0095FC73 /* AttrsChangingDialog.mm in Sources */,
 				CF46FFD7255FD0390095FC73 /* BatchRenaming.mm in Sources */,
-				CF46FFD2255FD02F0095FC73 /* AttrsChanging.mm in Sources */,
 				CF46FFE9255FD04D0095FC73 /* FileAlreadyExistDialog.mm in Sources */,
 				CFB7BD42260F696C00E2EA4D /* DeletionJobCallbacks.cpp in Sources */,
 				CF46FFE2255FD03F0095FC73 /* CompressionJob.cpp in Sources */,

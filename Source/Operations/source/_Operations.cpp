@@ -3,3 +3,4 @@
 #include "PoolEnqueueFilter.cpp"
 #include "Progress.cpp"
 #include "Statistics.cpp"
+#include "AttrsChanging/AttrsChangingJob.cpp"

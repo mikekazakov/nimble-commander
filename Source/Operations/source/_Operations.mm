@@ -10,3 +10,5 @@
 #include "PoolView.mm"
 #include "PoolViewController.mm"
 #include "StatisticsFormatter.mm"
+#include "AttrsChanging/AttrsChanging.mm"
+#include "AttrsChanging/AttrsChangingDialog.mm"

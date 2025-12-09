@@ -10,5 +10,11 @@ NSString *GenericErrorDialogCloseTitle();
 NSString *GenericErrorDialogAbortTitle();
 NSString *GenericErrorDialogSkipTitle();
 NSString *GenericErrorDialogSkipAllTitle();
+NSString *AttrChangingAlteringFileAttributesTitle();
+NSString *AttrChangingFailedToAccessAnItemMessage();
+NSString *AttrChangingFailedToPerformChmodMessage();
+NSString *AttrChangingFailedToPerformChownMessage();
+NSString *AttrChangingFailedToPerformChflagsMessage();
+NSString *AttrChangingFailedToPerformSetTimeMessage();
 
 } // namespace nc::ops::localizable

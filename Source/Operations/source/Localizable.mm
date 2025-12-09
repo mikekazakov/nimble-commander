@@ -31,4 +31,34 @@ NSString *GenericErrorDialogSkipAllTitle()
     return NSLocalizedString(@"Skip All", "");
 }
 
+NSString *AttrChangingAlteringFileAttributesTitle()
+{
+    return NSLocalizedString(@"Altering file attributes", "Title for attributes changing operation");
+}
+
+NSString *AttrChangingFailedToAccessAnItemMessage()
+{
+    return NSLocalizedString(@"Failed to access an item", "");
+}
+
+NSString *AttrChangingFailedToPerformChmodMessage()
+{
+    return NSLocalizedString(@"Failed to perform chmod", "");
+}
+
+NSString *AttrChangingFailedToPerformChownMessage()
+{
+    return NSLocalizedString(@"Failed to perform chown", "");
+}
+
+NSString *AttrChangingFailedToPerformChflagsMessage()
+{
+    return NSLocalizedString(@"Failed to perform chflags", "");
+}
+
+NSString *AttrChangingFailedToPerformSetTimeMessage()
+{
+    return NSLocalizedString(@"Failed to set file time", "");
+}
+
 } // namespace nc::ops::localizable

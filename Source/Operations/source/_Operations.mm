@@ -24,3 +24,5 @@
 #include "Copying/FileAlreadyExistDialog.mm"
 #include "Deletion/Deletion.mm"
 #include "Deletion/DeletionDialog.mm"
+#include "DirectoryCreation/DirectoryCreation.mm"
+#include "DirectoryCreation/DirectoryCreationDialog.mm"

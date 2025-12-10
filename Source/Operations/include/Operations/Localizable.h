@@ -84,5 +84,7 @@ NSString *DeletionDialogMoveToTrashTitle();
 NSString *DeletionDialogDeletePermanentlyTitle();
 NSString *DeletionDialogDoYouWantToDeleteSingleMessage();
 NSString *DeletionDialogDoYouWantToDeleteMultiMessage();
+NSString *MkdirCreatingDirectoryTitle();
+NSString *MkdirFailedToCreateDirectoryMessage();
 
 } // namespace nc::ops::localizable

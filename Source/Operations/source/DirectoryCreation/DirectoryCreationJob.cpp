@@ -3,8 +3,6 @@
 
 namespace nc::ops {
 
-static const auto g_CreateMode = 0755;
-
 DirectoryCreationJob::DirectoryCreationJob(const std::vector<std::string> &_directories_chain,
                                            const std::string &_root_folder,
                                            const VFSHostPtr &_vfs)
@@ -53,7 +51,7 @@ bool DirectoryCreationJob::MakeDir(const std::string &_path)
     }
 
     while( true ) {
-        const std::expected<void, Error> mkdir_rc = m_VFS->CreateDirectory(_path, g_CreateMode);
+        const std::expected<void, Error> mkdir_rc = m_VFS->CreateDirectory(_path, m_CreateMode);
         if( mkdir_rc )
             return true;
         switch( m_OnError(mkdir_rc.error(), _path, *m_VFS) ) {

@@ -406,4 +406,14 @@ NSString *DeletionDialogDoYouWantToDeleteMultiMessage()
     return NSLocalizedString(@"Do you want to delete %@ items?", "Asking user to delete multiple files");
 }
 
+NSString *MkdirCreatingDirectoryTitle()
+{
+    return NSLocalizedString(@"Creating a directory \u201c%@\u201d", "Creating a directory \u201c%@\u201d");
+}
+
+NSString *MkdirFailedToCreateDirectoryMessage()
+{
+    return NSLocalizedString(@"Failed to create a directory", "");
+}
+
 } // namespace nc::ops::localizable

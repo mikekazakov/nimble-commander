@@ -46,9 +46,6 @@
 		CF46FF95255FCCAD0095FC73 /* CreateHardlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AA1F10890B0000B3EE /* CreateHardlinkDialog.xib */; };
 		CF46FF9A255FCCAF0095FC73 /* CreateSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AC1F10890B0000B3EE /* CreateSymlinkDialog.xib */; };
 		CF46FFED255FD04D0095FC73 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF571F2F1508005F8414 /* DisclosureViewController.m */; };
-		CF46FFFC255FD0590095FC73 /* DirectoryCreationDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F94D1F0CA84D0000B3EE /* DirectoryCreationDialog.mm */; };
-		CF46FFFD255FD0590095FC73 /* DirectoryCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9051F06253D0000B3EE /* DirectoryCreation.mm */; };
-		CF46FFFE255FD0590095FC73 /* DirectoryCreationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.cpp */; };
 		CF47861A2EE7127500736117 /* _Operations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4786192EE7127500736117 /* _Operations.cpp */; };
 		CF47861C2EE7144500736117 /* _Operations.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47861B2EE7144500736117 /* _Operations.mm */; };
 		CF4786212EE7171400736117 /* Localizable.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4786202EE7171400736117 /* Localizable.mm */; };
@@ -857,17 +854,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF460005255FD0600095FC73 /* CreateHardlinkDialog.mm in Sources */,
-				CF46FFFC255FD0590095FC73 /* DirectoryCreationDialog.mm in Sources */,
 				CF46FFED255FD04D0095FC73 /* DisclosureViewController.m in Sources */,
 				CF460004255FD0600095FC73 /* LinkageJob.cpp in Sources */,
 				CF47861A2EE7127500736117 /* _Operations.cpp in Sources */,
 				CF460007255FD0600095FC73 /* CreateSymlinkDialog.mm in Sources */,
 				CF4786212EE7171400736117 /* Localizable.mm in Sources */,
-				CF46FFFE255FD0590095FC73 /* DirectoryCreationJob.cpp in Sources */,
 				CF460003255FD0600095FC73 /* AlterSymlinkDialog.mm in Sources */,
 				CF460006255FD0600095FC73 /* Linkage.mm in Sources */,
 				CF47861C2EE7144500736117 /* _Operations.mm in Sources */,
-				CF46FFFD255FD0590095FC73 /* DirectoryCreation.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

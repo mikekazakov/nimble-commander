@@ -1,4 +1,5 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+#pragma once
 #include <Cocoa/Cocoa.h>
 
 @interface NCSheetWithHotkeys : NSWindow

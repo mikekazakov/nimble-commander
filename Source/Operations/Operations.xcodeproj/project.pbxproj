@@ -45,11 +45,7 @@
 		CF46FF90255FCCA90095FC73 /* AlterSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9A81F10890B0000B3EE /* AlterSymlinkDialog.xib */; };
 		CF46FF95255FCCAD0095FC73 /* CreateHardlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AA1F10890B0000B3EE /* CreateHardlinkDialog.xib */; };
 		CF46FF9A255FCCAF0095FC73 /* CreateSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AC1F10890B0000B3EE /* CreateSymlinkDialog.xib */; };
-		CF46FFE7255FD04D0095FC73 /* Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF238E0E21A1948800569809 /* Helpers.cpp */; };
-		CF46FFE9255FD04D0095FC73 /* FileAlreadyExistDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF0B1F1EF579005F8414 /* FileAlreadyExistDialog.mm */; };
-		CF46FFEA255FD04D0095FC73 /* SourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCEE61F1D9CAA005F8414 /* SourceItems.cpp */; };
 		CF46FFED255FD04D0095FC73 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF571F2F1508005F8414 /* DisclosureViewController.m */; };
-		CF46FFEF255FD04D0095FC73 /* NativeFSHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF001F1EEFCE005F8414 /* NativeFSHelpers.cpp */; };
 		CF46FFF5255FD0530095FC73 /* Deletion.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9181F09D9740000B3EE /* Deletion.mm */; };
 		CF46FFF6255FD0530095FC73 /* DeletionJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9191F09D9740000B3EE /* DeletionJob.cpp */; };
 		CF46FFF7255FD0530095FC73 /* DeletionDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F95B1F0CB07A0000B3EE /* DeletionDialog.mm */; };
@@ -864,13 +860,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF46FFE7255FD04D0095FC73 /* Helpers.cpp in Sources */,
-				CF46FFEA255FD04D0095FC73 /* SourceItems.cpp in Sources */,
 				CF460005255FD0600095FC73 /* CreateHardlinkDialog.mm in Sources */,
 				CF46FFFC255FD0590095FC73 /* DirectoryCreationDialog.mm in Sources */,
 				CF46FFED255FD04D0095FC73 /* DisclosureViewController.m in Sources */,
 				CF46FFF5255FD0530095FC73 /* Deletion.mm in Sources */,
-				CF46FFEF255FD04D0095FC73 /* NativeFSHelpers.cpp in Sources */,
 				CF460004255FD0600095FC73 /* LinkageJob.cpp in Sources */,
 				CF47861A2EE7127500736117 /* _Operations.cpp in Sources */,
 				CF460007255FD0600095FC73 /* CreateSymlinkDialog.mm in Sources */,
@@ -879,7 +872,6 @@
 				CF460003255FD0600095FC73 /* AlterSymlinkDialog.mm in Sources */,
 				CF460006255FD0600095FC73 /* Linkage.mm in Sources */,
 				CF46FFF7255FD0530095FC73 /* DeletionDialog.mm in Sources */,
-				CF46FFE9255FD04D0095FC73 /* FileAlreadyExistDialog.mm in Sources */,
 				CFB7BD42260F696C00E2EA4D /* DeletionJobCallbacks.cpp in Sources */,
 				CF47861C2EE7144500736117 /* _Operations.mm in Sources */,
 				CF46FFF6255FD0530095FC73 /* DeletionJob.cpp in Sources */,

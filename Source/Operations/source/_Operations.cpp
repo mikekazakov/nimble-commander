@@ -8,3 +8,6 @@
 #include "Compression/CompressionJob.cpp"
 #include "Copying/ChecksumExpectation.cpp"
 #include "Copying/CopyingJob.cpp"
+#include "Copying/Helpers.cpp"
+#include "Copying/NativeFSHelpers.cpp"
+#include "Copying/SourceItems.cpp"

@@ -21,3 +21,4 @@
 #include "Copying/Copying.mm"
 #include "Copying/CopyingDialog.mm"
 #include "Copying/CopyingTitleBuilder.mm"
+#include "Copying/FileAlreadyExistDialog.mm"

@@ -1,12 +1,11 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "StatisticsFormatter.h"
+#include <Operations/Localizable.h>
 #include <Utility/ByteCountFormatter.h>
 #include "Statistics.h"
 #include "Internal.h"
 
 namespace nc::ops {
-
-static NSString *FormatETAString(std::chrono::nanoseconds _eta);
 
 StatisticsFormatter::StatisticsFormatter(const Statistics &_stats) noexcept : m_Stats(_stats)
 {
@@ -29,19 +28,23 @@ NSString *StatisticsFormatter::WithItems() const
     const auto volume_processed_str = [NSString stringWithFormat:@"%llu", volume_processed];
 
     if( m_Stats.IsPaused() ) {
-        auto fmt = NSLocalizedString(@"%@ of %@ - Paused", "");
-        return [NSString localizedStringWithFormat:fmt, volume_processed_str, volume_total_str];
+        return [NSString localizedStringWithFormat:localizable::StatisticsFormatterVolOfVolPaused(),
+                                                   volume_processed_str,
+                                                   volume_total_str];
     }
     else {
         const auto eta = m_Stats.ETA(Statistics::SourceType::Items);
         const auto eta_str = eta ? FormatETAString(*eta) : nil;
         if( eta_str ) {
-            auto fmt = NSLocalizedString(@"%@ of %@, %@", "");
-            return [NSString localizedStringWithFormat:fmt, volume_processed_str, volume_total_str, eta_str];
+            return [NSString localizedStringWithFormat:localizable::StatisticsFormatterVolOfVolEta(),
+                                                       volume_processed_str,
+                                                       volume_total_str,
+                                                       eta_str];
         }
         else {
-            auto fmt = NSLocalizedString(@"%@ of %@", "");
-            return [NSString localizedStringWithFormat:fmt, volume_processed_str, volume_total_str];
+            return [NSString localizedStringWithFormat:localizable::StatisticsFormatterVolOfVol(),
+                                                       volume_processed_str,
+                                                       volume_total_str];
         }
     }
 }
@@ -58,8 +61,9 @@ NSString *StatisticsFormatter::WithBytes() const
     const auto volume_processed_str = formatter.ToNSString(volume_processed, fmt_type);
 
     if( m_Stats.IsPaused() ) {
-        auto fmt = NSLocalizedString(@"%@ of %@ - Paused", "");
-        return [NSString localizedStringWithFormat:fmt, volume_processed_str, volume_total_str];
+        return [NSString localizedStringWithFormat:localizable::StatisticsFormatterVolOfVolPaused(),
+                                                   volume_processed_str,
+                                                   volume_total_str];
     }
     else {
         const auto speed = m_Stats.SpeedPerSecondDirect(Statistics::SourceType::Bytes);
@@ -68,23 +72,28 @@ NSString *StatisticsFormatter::WithBytes() const
             const auto eta = m_Stats.ETA(Statistics::SourceType::Bytes);
             const auto eta_str = eta ? FormatETAString(*eta) : nil;
             if( eta_str ) {
-                auto fmt = NSLocalizedString(@"%@ of %@ - %@/s, %@", "");
-                return [NSString
-                    localizedStringWithFormat:fmt, volume_processed_str, volume_total_str, speed_str, eta_str];
+                return [NSString localizedStringWithFormat:localizable::StatisticsFormatterVolOfVolSpeedEta(),
+                                                           volume_processed_str,
+                                                           volume_total_str,
+                                                           speed_str,
+                                                           eta_str];
             }
             else {
-                auto fmt = NSLocalizedString(@"%@ of %@ - %@/s", "");
-                return [NSString localizedStringWithFormat:fmt, volume_processed_str, volume_total_str, speed_str];
+                return [NSString localizedStringWithFormat:localizable::StatisticsFormatterVolOfVolSpeed(),
+                                                           volume_processed_str,
+                                                           volume_total_str,
+                                                           speed_str];
             }
         }
         else {
-            auto fmt = NSLocalizedString(@"%@ of %@", "");
-            return [NSString localizedStringWithFormat:fmt, volume_processed_str, volume_total_str];
+            return [NSString localizedStringWithFormat:localizable::StatisticsFormatterVolOfVol(),
+                                                       volume_processed_str,
+                                                       volume_total_str];
         }
     }
 }
 
-static NSString *FormatETAString(std::chrono::nanoseconds _eta)
+NSString *StatisticsFormatter::FormatETAString(std::chrono::nanoseconds _eta)
 {
     static const auto fmt = [] {
         NSDateComponentsFormatter *const fmt = [[NSDateComponentsFormatter alloc] init];

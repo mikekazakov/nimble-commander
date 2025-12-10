@@ -1,13 +1,12 @@
 // Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GenericErrorDialog.h"
+#include <Operations/Localizable.h>
 #include <VFS/VFS.h>
 #include "Internal.h"
 #include "ModalDialogResponses.h"
 #include <Base/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
-
-using namespace nc::ops;
 
 @interface NCOpsGenericErrorDialog ()
 @property(strong, nonatomic) IBOutlet NSTextField *pathLabel;
@@ -21,7 +20,7 @@ using namespace nc::ops;
 @end
 
 @implementation NCOpsGenericErrorDialog {
-    GenericErrorDialogStyle m_Style;
+    nc::ops::GenericErrorDialogStyle m_Style;
     NSModalResponse m_EscapeButtonResponse;
     NSString *m_Message;
     NSString *m_Path;
@@ -48,6 +47,7 @@ using namespace nc::ops;
 
 - (instancetype)initWithContext:(std::shared_ptr<nc::ops::AsyncDialogResponse>)_context
 {
+    using namespace nc::ops;
     dispatch_assert_main_queue();
     const auto nib_path = [Bundle() pathForResource:@"GenericErrorDialog" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
@@ -67,6 +67,7 @@ using namespace nc::ops;
 
 - (void)windowDidLoad
 {
+    using namespace nc::ops;
     [super windowDidLoad];
 
     [self placeButtons];
@@ -85,8 +86,9 @@ using namespace nc::ops;
 
 - (void)placeButtons
 {
+    using namespace nc::ops;
     if( m_Buttons.empty() ) {
-        auto title = NSLocalizedString(@"Close", "");
+        auto title = localizable::GenericErrorDialogCloseTitle();
         m_Buttons.emplace_back(title, m_EscapeButtonResponse);
     }
 
@@ -154,12 +156,12 @@ static bool IsShiftPressed() noexcept
     }
 }
 
-- (void)setStyle:(GenericErrorDialogStyle)style
+- (void)setStyle:(nc::ops::GenericErrorDialogStyle)style
 {
     m_Style = style;
 }
 
-- (GenericErrorDialogStyle)style
+- (nc::ops::GenericErrorDialogStyle)style
 {
     return m_Style;
 }
@@ -187,20 +189,21 @@ static bool IsShiftPressed() noexcept
 
 - (void)addAbortButton
 {
-    auto title = NSLocalizedString(@"Abort", "");
-    [self addButtonWithTitle:title responseCode:nc::ops::NSModalResponseStop];
+    using namespace nc::ops;
+    [self addButtonWithTitle:localizable::GenericErrorDialogAbortTitle() responseCode:nc::ops::NSModalResponseStop];
 }
 
 - (void)addSkipButton
 {
-    auto title = NSLocalizedString(@"Skip", "");
-    [self addButtonWithTitle:title responseCode:nc::ops::NSModalResponseSkip];
+    using namespace nc::ops;
+    [self addButtonWithTitle:localizable::GenericErrorDialogSkipTitle() responseCode:nc::ops::NSModalResponseSkip];
 }
 
 - (void)addSkipAllButton
 {
-    auto title = NSLocalizedString(@"Skip All", "");
-    [self addButtonWithTitle:title responseCode:nc::ops::NSModalResponseSkipAll];
+    using namespace nc::ops;
+    [self addButtonWithTitle:localizable::GenericErrorDialogSkipAllTitle()
+                responseCode:nc::ops::NSModalResponseSkipAll];
 }
 
 @end

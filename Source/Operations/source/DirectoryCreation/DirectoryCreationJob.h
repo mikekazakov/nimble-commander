@@ -30,6 +30,7 @@ private:
     const std::vector<std::string> &m_DirectoriesChain;
     std::string m_RootFolder;
     VFSHostPtr m_VFS;
+    static constexpr int m_CreateMode = 0755;
 };
 
 } // namespace nc::ops

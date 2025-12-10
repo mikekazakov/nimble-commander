@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenamingScheme.h"
 #include <Utility/StringExtras.h>
 #include <fmt/format.h>
@@ -258,7 +258,7 @@ bool BatchRenamingScheme::ParsePlaceholder(NSString *_ph)
 }
 
 // parsed short -> characters consumed
-static std::optional<std::pair<unsigned short, short>> EatUShort(NSString *s, const unsigned long pos)
+std::optional<std::pair<unsigned short, short>> BatchRenamingScheme::EatUShort(NSString *s, const unsigned long pos)
 {
     const auto l = s.length;
     if( pos == l )
@@ -281,7 +281,7 @@ static std::optional<std::pair<unsigned short, short>> EatUShort(NSString *s, co
 }
 
 // parsed short -> characters consumed
-static std::optional<std::pair<int, short>> EatInt(NSString *s, const unsigned long pos)
+std::optional<std::pair<int, short>> BatchRenamingScheme::EatInt(NSString *s, const unsigned long pos)
 {
     const auto l = s.length;
     if( pos == l )
@@ -315,7 +315,8 @@ static std::optional<std::pair<int, short>> EatInt(NSString *s, const unsigned l
     return std::make_pair(r * (minus ? -1 : 1), short(n));
 }
 
-static std::optional<std::pair<int, short>> EatIntWithPreffix(NSString *s, const unsigned long pos, char prefix)
+std::optional<std::pair<int, short>>
+BatchRenamingScheme::EatIntWithPreffix(NSString *s, const unsigned long pos, char prefix)
 {
     const auto l = s.length;
     auto n = 0;
@@ -645,7 +646,7 @@ void BatchRenamingScheme::SetCaseTransform(CaseTransform _ct, bool _apply_to_ext
     m_CaseTransformWithExt = _apply_to_ext;
 }
 
-static inline NSString *StringByTransform(NSString *_s, BatchRenamingScheme::CaseTransform _ct)
+NSString *BatchRenamingScheme::StringByTransform(NSString *_s, BatchRenamingScheme::CaseTransform _ct)
 {
     switch( _ct ) {
         case BatchRenamingScheme::CaseTransform::Uppercase:
@@ -659,7 +660,8 @@ static inline NSString *StringByTransform(NSString *_s, BatchRenamingScheme::Cas
     };
 }
 
-static NSString *StringByTransform(NSString *_s, BatchRenamingScheme::CaseTransform _ct, bool _apply_to_ext)
+NSString *
+BatchRenamingScheme::StringByTransform(NSString *_s, BatchRenamingScheme::CaseTransform _ct, bool _apply_to_ext)
 {
     if( _apply_to_ext )
         return StringByTransform(_s, _ct);
@@ -679,42 +681,42 @@ static NSString *StringByTransform(NSString *_s, BatchRenamingScheme::CaseTransf
     return [StringByTransform(name, _ct) stringByAppendingString:extension];
 }
 
-static NSString *FormatTimeSeconds(const struct tm &_t)
+NSString *BatchRenamingScheme::FormatTimeSeconds(const struct tm &_t)
 {
     char buf[16];
     *fmt::format_to(buf, "{:02}", _t.tm_sec) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 
-static NSString *FormatTimeMinutes(const struct tm &_t)
+NSString *BatchRenamingScheme::FormatTimeMinutes(const struct tm &_t)
 {
     char buf[16];
     *fmt::format_to(buf, "{:02}", _t.tm_min) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 
-static NSString *FormatTimeHours(const struct tm &_t)
+NSString *BatchRenamingScheme::FormatTimeHours(const struct tm &_t)
 {
     char buf[16];
     *fmt::format_to(buf, "{:02}", _t.tm_hour) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 
-static NSString *FormatTimeDay(const struct tm &_t)
+NSString *BatchRenamingScheme::FormatTimeDay(const struct tm &_t)
 {
     char buf[16];
     *fmt::format_to(buf, "{:02}", _t.tm_mday) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 
-static NSString *FormatTimeMonth(const struct tm &_t)
+NSString *BatchRenamingScheme::FormatTimeMonth(const struct tm &_t)
 {
     char buf[16];
     *fmt::format_to(buf, "{:02}", _t.tm_mon + 1) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 
-static NSString *FormatTimeYear2(const struct tm &_t)
+NSString *BatchRenamingScheme::FormatTimeYear2(const struct tm &_t)
 {
     char buf[16];
     if( _t.tm_year >= 100 )
@@ -724,14 +726,14 @@ static NSString *FormatTimeYear2(const struct tm &_t)
     return [NSString stringWithUTF8String:buf];
 }
 
-static NSString *FormatTimeYear4(const struct tm &_t)
+NSString *BatchRenamingScheme::FormatTimeYear4(const struct tm &_t)
 {
     char buf[16];
     *fmt::format_to(buf, "{:04}", _t.tm_year + 1900) = 0;
     return [NSString stringWithUTF8String:buf];
 }
 
-static NSString *FormatDate(time_t _t)
+NSString *BatchRenamingScheme::FormatDate(time_t _t)
 {
     static auto formatter = []() {
         NSDateFormatter *const fmt = [NSDateFormatter new];
@@ -748,7 +750,7 @@ static NSString *FormatDate(time_t _t)
     return str;
 }
 
-static NSString *FormatTime(time_t _t)
+NSString *BatchRenamingScheme::FormatTime(time_t _t)
 {
     static auto formatter = []() {
         NSDateFormatter *const fmt = [NSDateFormatter new];

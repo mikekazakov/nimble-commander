@@ -9,6 +9,7 @@
 namespace nc::ops {
 
 class DeletionJob;
+struct DeletionJobCallbacks;
 
 class Deletion final : public Operation
 {
@@ -17,6 +18,8 @@ public:
     ~Deletion();
 
 private:
+    using Callbacks = DeletionJobCallbacks;
+
     virtual Job *GetJob() noexcept override;
 
     DeletionJobCallbacks::ReadDirErrorResolution OnReadDirError(Error _err, const std::string &_path, VFSHost &_vfs);
@@ -62,6 +65,8 @@ private:
                          const std::string &_path,
                          std::shared_ptr<VFSHost> _vfs,
                          std::shared_ptr<AsyncDialogResponse> _ctx);
+
+    static NSString *Caption(const std::vector<VFSListingItem> &_files);
 
     std::unique_ptr<DeletionJob> m_Job;
     bool m_SkipAll = false;

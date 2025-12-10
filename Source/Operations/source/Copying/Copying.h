@@ -9,6 +9,7 @@
 namespace nc::ops {
 
 class CopyingJob;
+struct CopyingJobCallbacks;
 
 class Copying : public Operation
 {

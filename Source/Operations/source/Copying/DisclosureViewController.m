@@ -70,6 +70,10 @@
     NSString *_hideTitle;
     NSString *_showTitle;
 }
+@synthesize titleTextField = _titleTextField;
+@synthesize disclosureButton = _disclosureButton;
+@synthesize headerView = _headerView;
+@synthesize closingConstraint = _closingConstraint;
 
 - (id)init
 {
@@ -190,3 +194,4 @@
 }
 
 @end
+

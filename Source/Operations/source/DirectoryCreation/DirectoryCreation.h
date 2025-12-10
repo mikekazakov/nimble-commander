@@ -7,6 +7,7 @@
 namespace nc::ops {
 
 class DirectoryCreationJob;
+struct DirectoryCreationJobCallbacks;
 
 class DirectoryCreation final : public Operation
 {
@@ -17,8 +18,11 @@ public:
     const std::vector<std::string> &DirectoryNames() const;
 
 private:
+    using Callbacks = DirectoryCreationJobCallbacks;
+
     virtual Job *GetJob() noexcept override;
     int OnError(Error _err, const std::string &_path, VFSHost &_vfs);
+    static std::vector<std::string> Split(std::string_view _directory);
 
     std::vector<std::string> m_Directories;
     std::unique_ptr<DirectoryCreationJob> m_Job;

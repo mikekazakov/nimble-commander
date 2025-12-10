@@ -7,6 +7,7 @@
 namespace nc::ops {
 
 class BatchRenamingJob;
+struct BatchRenamingJobCallbacks;
 
 class BatchRenaming final : public Operation
 {
@@ -17,8 +18,11 @@ public:
     ~BatchRenaming();
 
 private:
+    using Callbacks = BatchRenamingJobCallbacks;
+
     Job *GetJob() noexcept override;
     int OnRenameError(Error _err, const std::string &_path, VFSHost &_vfs);
+    static std::string Caption(const std::vector<std::string> &_paths);
 
     std::unique_ptr<BatchRenamingJob> m_Job;
     bool m_SkipAll = false;

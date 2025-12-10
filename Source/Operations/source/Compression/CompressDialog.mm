@@ -1,11 +1,10 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CompressDialog.h"
+#include <Operations/Localizable.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 #include <Operations/FilenameTextControl.h>
 #include "../Internal.h"
-
-using namespace nc::ops;
 
 @interface NCOpsCompressDialog ()
 @property(weak, nonatomic) IBOutlet NSButton *compressButton;
@@ -48,6 +47,7 @@ using namespace nc::ops;
                destinationVFS:(const VFSHostPtr &)_destination_host
            initialDestination:(const std::string &)_initial_destination
 {
+    using namespace nc::ops;
     const auto nib_path = [Bundle() pathForResource:@"CompressDialog" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
@@ -68,18 +68,15 @@ using namespace nc::ops;
 
 - (void)windowDidLoad
 {
+    using namespace nc::ops;
     [super windowDidLoad];
     const auto amount = static_cast<int>(m_SourceItems.size());
     if( amount > 1 )
-        self.destinationTitleTextField.stringValue =
-            [NSString stringWithFormat:NSLocalizedString(@"Compress %@ items to:",
-                                                         "Compress files sheet prompt, compressing many files"),
-                                       [NSNumber numberWithInt:amount]];
+        self.destinationTitleTextField.stringValue = [NSString
+            stringWithFormat:localizable::CompressionDiaglogCompressItemsToTitle(), [NSNumber numberWithInt:amount]];
     else
-        self.destinationTitleTextField.stringValue =
-            [NSString stringWithFormat:NSLocalizedString(@"Compress \u201c%@\u201d to:",
-                                                         "Compress files sheet prompt, compressing single file"),
-                                       m_SourceItems.front().FilenameNS()];
+        self.destinationTitleTextField.stringValue = [NSString
+            stringWithFormat:localizable::CompressionDiaglogCompressItemToTitle(), m_SourceItems.front().FilenameNS()];
 }
 
 - (void)validate

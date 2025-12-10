@@ -1,5 +1,6 @@
 // Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DirectoryCreation.h"
+#include <Operations/Localizable.h>
 #include "../AsyncDialogResponse.h"
 #include "../Internal.h"
 #include "DirectoryCreationJob.h"
@@ -8,13 +9,10 @@
 #include <ranges>
 
 // TODO: remove once callback results are no longer wrapped into 'int'
+#pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wold-style-cast"
 
 namespace nc::ops {
-
-static std::vector<std::string> Split(std::string_view _directory);
-
-using Callbacks = DirectoryCreationJobCallbacks;
 
 DirectoryCreation::DirectoryCreation(std::string _directory_name, std::string _root_folder, VFSHost &_vfs)
 {
@@ -25,8 +23,7 @@ DirectoryCreation::DirectoryCreation(std::string _directory_name, std::string _r
         return static_cast<Callbacks::ErrorResolution>(OnError(_err, _path, _vfs));
     };
 
-    const auto title = [NSString localizedStringWithFormat:NSLocalizedString(@"Creating a directory \u201c%@\u201d",
-                                                                             "Creating a directory \u201c%@\u201d"),
+    const auto title = [NSString localizedStringWithFormat:localizable::MkdirCreatingDirectoryTitle(),
                                                            [NSString stringWithUTF8StdString:_directory_name]];
     SetTitle(title.UTF8String);
 }
@@ -53,7 +50,7 @@ int DirectoryCreation::OnError(Error _err, const std::string &_path, VFSHost &_v
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(
-        GenericDialog::AbortRetry, NSLocalizedString(@"Failed to create a directory", ""), _err, {_vfs, _path}, ctx);
+        GenericDialog::AbortRetry, localizable::MkdirFailedToCreateDirectoryMessage(), _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseRetry )
@@ -62,7 +59,7 @@ int DirectoryCreation::OnError(Error _err, const std::string &_path, VFSHost &_v
         return (int)Callbacks::ErrorResolution::Stop;
 }
 
-static std::vector<std::string> Split(std::string_view _directory)
+std::vector<std::string> DirectoryCreation::Split(std::string_view _directory)
 {
     std::vector<std::string> parts;
     for( const auto str : std::views::split(std::string_view{_directory}, '/') )
@@ -72,3 +69,5 @@ static std::vector<std::string> Split(std::string_view _directory)
 }
 
 } // namespace nc::ops
+
+#pragma clang diagnostic pop

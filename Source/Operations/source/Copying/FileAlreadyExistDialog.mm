@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <Carbon/Carbon.h>
 #include "FileAlreadyExistDialog.h"
@@ -7,8 +7,6 @@
 #include <Utility/StringExtras.h>
 #include <Utility/SheetWithHotkeys.h>
 #include <Utility/ObjCpp.h>
-
-using namespace nc::ops;
 
 @interface NCOpsFileAlreadyExistWindow : NCSheetWithHotkeys
 @end
@@ -51,16 +49,11 @@ using namespace nc::ops;
 
 @end
 
-static bool IsShiftPressed()
-{
-    return (NSEvent.modifierFlags & NSEventModifierFlagShift) != 0;
-}
-
 @implementation NCOpsFileAlreadyExistDialog {
     std::string m_DestPath;
     struct stat m_SourceStat;
     struct stat m_DestinationStat;
-    std::shared_ptr<AsyncDialogResponse> m_Ctx;
+    std::shared_ptr<nc::ops::AsyncDialogResponse> m_Ctx;
 }
 @synthesize allowAppending;
 @synthesize allowKeepingBoth;
@@ -80,8 +73,9 @@ static bool IsShiftPressed()
 - (id)initWithDestPath:(const std::string &)_path
          withSourceStat:(const struct stat &)_src_stat
     withDestinationStat:(const struct stat &)_dst_stat
-             andContext:(std::shared_ptr<AsyncDialogResponse>)_ctx
+             andContext:(std::shared_ptr<nc::ops::AsyncDialogResponse>)_ctx
 {
+    using namespace nc::ops;
     const auto nib_path = [Bundle() pathForResource:@"FileAlreadyExistDialog" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
@@ -125,22 +119,22 @@ static bool IsShiftPressed()
 
 - (IBAction)OnOverwrite:(id) [[maybe_unused]] _sender
 {
-    [self endDialogWithReturnCode:NSModalResponseOverwrite];
+    [self endDialogWithReturnCode:nc::ops::NSModalResponseOverwrite];
 }
 
 - (IBAction)OnOverwriteOlder:(id) [[maybe_unused]] _sender
 {
-    [self endDialogWithReturnCode:NSModalResponseOverwriteOld];
+    [self endDialogWithReturnCode:nc::ops::NSModalResponseOverwriteOld];
 }
 
 - (IBAction)OnSkip:(id) [[maybe_unused]] _sender
 {
-    [self endDialogWithReturnCode:NSModalResponseSkip];
+    [self endDialogWithReturnCode:nc::ops::NSModalResponseSkip];
 }
 
 - (IBAction)OnAppend:(id) [[maybe_unused]] _sender
 {
-    [self endDialogWithReturnCode:NSModalResponseAppend];
+    [self endDialogWithReturnCode:nc::ops::NSModalResponseAppend];
 }
 
 - (IBAction)OnCancel:(id) [[maybe_unused]] _sender
@@ -150,12 +144,12 @@ static bool IsShiftPressed()
 
 - (IBAction)OnKeepBoth:(id) [[maybe_unused]] _sender
 {
-    [self endDialogWithReturnCode:NSModalResponseKeepBoth];
+    [self endDialogWithReturnCode:nc::ops::NSModalResponseKeepBoth];
 }
 
 - (void)endDialogWithReturnCode:(NSInteger)_returnCode
 {
-    if( IsShiftPressed() )
+    if( (NSEvent.modifierFlags & NSEventModifierFlagShift) != 0 )
         self.RememberCheck.state = NSControlStateValueOn;
 
     if( m_Ctx )

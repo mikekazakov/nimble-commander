@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AggregateProgressTracker.h"
 #include "Statistics.h"
 #include <Base/dispatch_cpp.h>
@@ -7,10 +7,6 @@
 #include <ranges>
 
 namespace nc::ops {
-
-using namespace std::literals;
-
-static const auto g_UpdateDelay = 100ms;
 
 AggregateProgressTracker::AggregateProgressTracker() : m_IsTracking{false}, m_IsUpdateScheduled{false}
 {
@@ -49,7 +45,7 @@ void AggregateProgressTracker::PoolsChanged()
         if( !m_IsUpdateScheduled ) {
             m_IsUpdateScheduled = true;
             const auto weak_this = std::weak_ptr<AggregateProgressTracker>(shared_from_this());
-            dispatch_to_main_queue_after(g_UpdateDelay, [weak_this] {
+            dispatch_to_main_queue_after(m_UpdateDelay, [weak_this] {
                 if( auto me = weak_this.lock() )
                     me->Update();
             });
@@ -103,7 +99,7 @@ void AggregateProgressTracker::Update()
 
     if( m_IsTracking ) {
         const auto weak_this = std::weak_ptr<AggregateProgressTracker>(shared_from_this());
-        dispatch_to_main_queue_after(g_UpdateDelay, [weak_this] {
+        dispatch_to_main_queue_after(m_UpdateDelay, [weak_this] {
             if( auto me = weak_this.lock() )
                 me->Update();
         });

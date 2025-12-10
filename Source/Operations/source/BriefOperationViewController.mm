@@ -1,6 +1,7 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefOperationViewController.h"
 #include "Internal.h"
+#include <Operations/Localizable.h>
 #include "Operation.h"
 #include "Statistics.h"
 #include "StatisticsFormatter.h"
@@ -9,13 +10,9 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 
-using namespace nc::ops;
-
-using namespace std::literals;
-
-static const auto g_ViewAppearTimeout = 100ms;
-static const auto g_RapidUpdateFreq = 30.0;
-static const auto g_SlowUpdateFreq = 1.0;
+static const std::chrono::milliseconds g_BriefOperationViewAppearTimeout = std::chrono::milliseconds{100};
+static const double g_BriefOperationViewRapidUpdateFreq = 30.0;
+static const double g_BriefOperationViewSlowUpdateFreq = 1.0;
 
 @interface NCOpsBriefOperationViewController ()
 @property(strong, nonatomic) IBOutlet NSTextField *titleLabel;
@@ -48,6 +45,7 @@ static const auto g_SlowUpdateFreq = 1.0;
 
 - (instancetype)initWithOperation:(const std::shared_ptr<nc::ops::Operation> &)_operation
 {
+    using namespace nc::ops;
     dispatch_assert_main_queue();
     assert(_operation);
 
@@ -81,7 +79,7 @@ static const auto g_SlowUpdateFreq = 1.0;
     [super viewDidLoad];
     if( m_ShouldDelayAppearance ) {
         self.view.hidden = true;
-        dispatch_to_main_queue_after(g_ViewAppearTimeout, [self] { self.view.hidden = false; });
+        dispatch_to_main_queue_after(g_BriefOperationViewAppearTimeout, [self] { self.view.hidden = false; });
     }
     self.ETA.font = [NSFont monospacedDigitSystemFontOfSize:self.ETA.font.pointSize weight:NSFontWeightRegular];
     [self onOperationTitleChanged];
@@ -104,7 +102,7 @@ static const auto g_SlowUpdateFreq = 1.0;
 {
     dispatch_assert_main_queue();
     if( !m_RapidTimer ) {
-        m_RapidTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 / g_RapidUpdateFreq
+        m_RapidTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 / g_BriefOperationViewRapidUpdateFreq
                                                         target:self
                                                       selector:@selector(updateRapid)
                                                       userInfo:nil
@@ -112,7 +110,7 @@ static const auto g_SlowUpdateFreq = 1.0;
         m_RapidTimer.tolerance = m_RapidTimer.timeInterval / 10.;
     }
     if( !m_SlowTimer ) {
-        m_SlowTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 / g_SlowUpdateFreq
+        m_SlowTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 / g_BriefOperationViewSlowUpdateFreq
                                                        target:self
                                                      selector:@selector(updateSlow)
                                                      userInfo:nil
@@ -149,8 +147,9 @@ static const auto g_SlowUpdateFreq = 1.0;
 
 - (void)updateSlow
 {
+    using namespace nc::ops;
     if( m_Operation->State() == OperationState::Cold )
-        self.ETA.stringValue = NSLocalizedString(@"Waiting in the queue...", "");
+        self.ETA.stringValue = localizable::BriefOperationViewControllerWaitingInTheQueueTitle();
     else
         self.ETA.stringValue = StatisticsFormatter{m_Operation->Statistics()}.ProgressCaption();
 }
@@ -175,6 +174,7 @@ static const auto g_SlowUpdateFreq = 1.0;
 
 - (void)onOperationStateChanged
 {
+    using namespace nc::ops;
     const auto new_state = m_Operation->State();
     self.isPaused = new_state == OperationState::Paused;
     self.isCold = new_state == OperationState::Cold;

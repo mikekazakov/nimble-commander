@@ -1,6 +1,7 @@
 // Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Deletion.h"
 #include "DeletionJob.h"
+#include <Operations/Localizable.h>
 #include "../Internal.h"
 #include "../AsyncDialogResponse.h"
 #include "../ModalDialogResponses.h"
@@ -10,10 +11,6 @@
 #include <memory>
 
 namespace nc::ops {
-
-static NSString *Caption(const std::vector<VFSListingItem> &_files);
-
-using Callbacks = DeletionJobCallbacks;
 
 Deletion::Deletion(std::vector<VFSListingItem> _items, DeletionOptions _options) : m_OrigOptions(_options)
 {
@@ -48,7 +45,8 @@ Job *Deletion::GetJob() noexcept
     return m_Job.get();
 }
 
-Callbacks::ReadDirErrorResolution Deletion::OnReadDirError(Error _err, const std::string &_path, VFSHost &_vfs)
+DeletionJobCallbacks::ReadDirErrorResolution
+Deletion::OnReadDirError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ? Callbacks::ReadDirErrorResolution::Skip : Callbacks::ReadDirErrorResolution::Stop;
@@ -77,19 +75,19 @@ void Deletion::OnReadDirErrorUI(Error _err,
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
 
     sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = NSLocalizedString(@"Failed to access a directory", "");
+    sheet.message = localizable::DeletionFailedToAccessDirectoryMessage();
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.error = _err;
-    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
+    [sheet addButtonWithTitle:localizable::OperationAbortTitle() responseCode:NSModalResponseStop];
+    [sheet addButtonWithTitle:localizable::OperationAbortTitle() responseCode:NSModalResponseSkip];
     if( m_Job->ItemsInScript() > 0 )
-        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
+        [sheet addButtonWithTitle:localizable::OperationSkipAllTitle() responseCode:NSModalResponseSkipAll];
+    [sheet addButtonWithTitle:localizable::OperationRetryTitle() responseCode:NSModalResponseRetry];
 
     Show(sheet.window, _ctx);
 }
 
-Callbacks::UnlinkErrorResolution Deletion::OnUnlinkError(Error _err, const std::string &_path, VFSHost &_vfs)
+DeletionJobCallbacks::UnlinkErrorResolution Deletion::OnUnlinkError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ? Callbacks::UnlinkErrorResolution::Skip : Callbacks::UnlinkErrorResolution::Stop;
@@ -118,19 +116,19 @@ void Deletion::OnUnlinkErrorUI(Error _err,
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
 
     sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = NSLocalizedString(@"Failed to delete a file", "");
+    sheet.message = localizable::DeletionFailedToDeleteFileMessage();
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.error = _err;
-    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
+    [sheet addButtonWithTitle:localizable::OperationAbortTitle() responseCode:NSModalResponseStop];
+    [sheet addButtonWithTitle:localizable::OperationSkipTitle() responseCode:NSModalResponseSkip];
     if( m_Job->ItemsInScript() > 0 )
-        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
+        [sheet addButtonWithTitle:localizable::OperationSkipAllTitle() responseCode:NSModalResponseSkipAll];
+    [sheet addButtonWithTitle:localizable::OperationRetryTitle() responseCode:NSModalResponseRetry];
 
     Show(sheet.window, _ctx);
 }
 
-Callbacks::RmdirErrorResolution Deletion::OnRmdirError(Error _err, const std::string &_path, VFSHost &_vfs)
+DeletionJobCallbacks::RmdirErrorResolution Deletion::OnRmdirError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ? Callbacks::RmdirErrorResolution::Skip : Callbacks::RmdirErrorResolution::Stop;
@@ -159,19 +157,20 @@ void Deletion::OnRmdirErrorUI(Error _err,
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
 
     sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = NSLocalizedString(@"Failed to delete a directory", "");
+    sheet.message = localizable::DeletionFailedToDeleteDirectoryMessage();
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.error = _err;
-    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
+    [sheet addButtonWithTitle:localizable::OperationAbortTitle() responseCode:NSModalResponseStop];
+    [sheet addButtonWithTitle:localizable::OperationSkipTitle() responseCode:NSModalResponseSkip];
     if( m_Job->ItemsInScript() > 0 )
-        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
+        [sheet addButtonWithTitle:localizable::OperationSkipAllTitle() responseCode:NSModalResponseSkipAll];
+    [sheet addButtonWithTitle:localizable::OperationRetryTitle() responseCode:NSModalResponseRetry];
 
     Show(sheet.window, _ctx);
 }
 
-Callbacks::TrashErrorResolution Deletion::OnTrashError(const Error _err, const std::string &_path, VFSHost &_vfs)
+DeletionJobCallbacks::TrashErrorResolution
+Deletion::OnTrashError(const Error _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_DeleteAllOnTrashError )
         return Callbacks::TrashErrorResolution::DeletePermanently;
@@ -207,19 +206,19 @@ void Deletion::OnTrashErrorUI(const Error _err,
     const auto sheet = [[NCOpsGenericErrorDialog alloc] initWithContext:_ctx];
 
     sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = NSLocalizedString(@"Failed to move an item to Trash", "");
+    sheet.message = localizable::DeletionFailedToMoveToTrashMessage();
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.showApplyToAll = m_Job->ItemsInScript() > 0;
     sheet.error = _err;
-    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Delete Permanently", "")
+    [sheet addButtonWithTitle:localizable::OperationAbortTitle() responseCode:NSModalResponseStop];
+    [sheet addButtonWithTitle:localizable::DeletionDeletePermanentlyTitle()
                  responseCode:NSModalResponseDeletePermanently];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
+    [sheet addButtonWithTitle:localizable::OperationSkipTitle() responseCode:NSModalResponseSkip];
+    [sheet addButtonWithTitle:localizable::OperationRetryTitle() responseCode:NSModalResponseRetry];
     Show(sheet.window, _ctx);
 }
 
-Callbacks::LockedItemResolution
+DeletionJobCallbacks::LockedItemResolution
 Deletion::OnLockedItem(const Error _err, const std::string &_path, VFSHost &_vfs, DeletionType _type)
 {
     switch( m_LockedItemBehaviour ) {
@@ -266,15 +265,15 @@ void Deletion::OnLockedItemUI(const Error _err,
     const auto sheet = [[NCOpsGenericErrorDialog alloc] initWithContext:_ctx];
 
     sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = _type == DeletionType::Permanent ? NSLocalizedString(@"Cannot delete a locked item", "")
-                                                     : NSLocalizedString(@"Cannot move a locked item to Trash", "");
+    sheet.message = _type == DeletionType::Permanent ? localizable::DeletionCannotDeleteLockedMessage()
+                                                     : localizable::DeletionCannotTrashLockedMessage();
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.showApplyToAll = m_Job->ItemsInScript() > 0;
     sheet.error = _err;
-    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Unlock", "") responseCode:NSModalResponseUnlock];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
+    [sheet addButtonWithTitle:localizable::OperationAbortTitle() responseCode:NSModalResponseStop];
+    [sheet addButtonWithTitle:localizable::DeletionUnlockTitle() responseCode:NSModalResponseUnlock];
+    [sheet addButtonWithTitle:localizable::OperationSkipTitle() responseCode:NSModalResponseSkip];
+    [sheet addButtonWithTitle:localizable::OperationRetryTitle() responseCode:NSModalResponseRetry];
     Show(sheet.window, _ctx);
 }
 
@@ -307,27 +306,24 @@ void Deletion::OnUnlockErrorUI(Error _err,
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
 
     sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = NSLocalizedString(@"Failed to unlock an item", "");
+    sheet.message = localizable::DeletionFailedToUnlockMessage();
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.error = _err;
-    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
+    [sheet addButtonWithTitle:localizable::OperationAbortTitle() responseCode:NSModalResponseStop];
+    [sheet addButtonWithTitle:localizable::OperationSkipTitle() responseCode:NSModalResponseSkip];
     if( m_Job->ItemsInScript() > 0 )
-        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
+        [sheet addButtonWithTitle:localizable::OperationSkipAllTitle() responseCode:NSModalResponseSkipAll];
+    [sheet addButtonWithTitle:localizable::OperationRetryTitle() responseCode:NSModalResponseRetry];
 
     Show(sheet.window, _ctx);
 }
 
-static NSString *Caption(const std::vector<VFSListingItem> &_files)
+NSString *Deletion::Caption(const std::vector<VFSListingItem> &_files)
 {
     if( _files.size() == 1 )
-        return [NSString localizedStringWithFormat:NSLocalizedString(@"Deleting \u201c%@\u201d",
-                                                                     "Operation title for single item deletion"),
-                                                   _files.front().DisplayNameNS()];
+        return [NSString localizedStringWithFormat:localizable::DeletionSingleTitle(), _files.front().DisplayNameNS()];
     else
-        return [NSString localizedStringWithFormat:NSLocalizedString(@"Deleting %@ items",
-                                                                     "Operation title for multiple items deletion"),
+        return [NSString localizedStringWithFormat:localizable::DeletionMultiTitle(),
                                                    [NSNumber numberWithUnsignedLong:_files.size()]];
 }
 

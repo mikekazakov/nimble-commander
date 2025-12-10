@@ -12,6 +12,7 @@
 namespace nc::ops {
 
 class CompressionJob;
+struct CompressionJobCallbacks;
 
 class Compression final : public Operation
 {
@@ -25,6 +26,8 @@ public:
     std::string ArchivePath() const;
 
 private:
+    using Callbacks = CompressionJobCallbacks;
+
     virtual Job *GetJob() noexcept override;
     NSString *BuildTitlePrefix() const;
     std::string BuildInitialTitle() const;

@@ -10,9 +10,6 @@ struct AttrsChangingJob::Meta {
     int origin_item;
 };
 
-static std::pair<uint16_t, uint16_t> PermissionsValueAndMask(const AttrsChangingCommand::Permissions &_p);
-static std::pair<uint32_t, uint32_t> FlagsValueAndMask(const AttrsChangingCommand::Flags &_f);
-
 AttrsChangingJob::AttrsChangingJob(AttrsChangingCommand _command) : m_Command(std::move(_command))
 {
     if( m_Command.permissions )
@@ -307,7 +304,7 @@ bool AttrsChangingJob::ChtimesSingleItem(const std::string &_path, VFSHost &_vfs
     return true;
 }
 
-static std::pair<uint16_t, uint16_t> PermissionsValueAndMask(const AttrsChangingCommand::Permissions &_p)
+std::pair<uint16_t, uint16_t> AttrsChangingJob::PermissionsValueAndMask(const AttrsChangingCommand::Permissions &_p)
 {
     uint16_t value = 0;
     uint16_t mask = 0;
@@ -335,7 +332,7 @@ static std::pair<uint16_t, uint16_t> PermissionsValueAndMask(const AttrsChanging
     return {value, mask};
 }
 
-static std::pair<uint32_t, uint32_t> FlagsValueAndMask(const AttrsChangingCommand::Flags &_f)
+std::pair<uint32_t, uint32_t> AttrsChangingJob::FlagsValueAndMask(const AttrsChangingCommand::Flags &_f)
 {
     uint32_t value = 0;
     uint32_t mask = 0;

@@ -2,14 +2,11 @@
 #include <memory>
 
 #include "Linkage.h"
+#include <Operations/Localizable.h>
 #include "LinkageJob.h"
 #include "../Internal.h"
 
 namespace nc::ops {
-
-using Callbacks = LinkageJobCallbacks;
-
-static NSString *Caption(LinkageType _type);
 
 Linkage::Linkage(const std::string &_link_path,
                  const std::string &_link_value,
@@ -38,27 +35,27 @@ Job *Linkage::GetJob() noexcept
 
 void Linkage::OnCreateSymlinkError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
-    ReportHaltReason(NSLocalizedString(@"Failed to create a symbolic link", ""), _err, _path, _vfs);
+    ReportHaltReason(localizable::LinkFailedToCreateSymlinkMessage(), _err, _path, _vfs);
 }
 
 void Linkage::OnAlterSymlinkError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
-    ReportHaltReason(NSLocalizedString(@"Failed to alter a symbolic link", ""), _err, _path, _vfs);
+    ReportHaltReason(localizable::LinkFailedToAlterSymlinkMessage(), _err, _path, _vfs);
 }
 
 void Linkage::OnCreatehardlinkError(Error _err, const std::string &_path, VFSHost &_vfs)
 {
-    ReportHaltReason(NSLocalizedString(@"Failed to create a hard link", ""), _err, _path, _vfs);
+    ReportHaltReason(localizable::LinkFailedToCreateHardlinkMessage(), _err, _path, _vfs);
 }
 
-static NSString *Caption(LinkageType _type)
+NSString *Linkage::Caption(LinkageType _type)
 {
     if( _type == LinkageType::CreateSymlink )
-        return NSLocalizedString(@"Creating a new symbolic link", "");
+        return localizable::LinkCreatingNewSymlinkTitle();
     if( _type == LinkageType::AlterSymlink )
-        return NSLocalizedString(@"Altering a symbolic link", "");
+        return localizable::LinkAlteringSymlinkTitle();
     if( _type == LinkageType::CreateHardlink )
-        return NSLocalizedString(@"Creating a new hard link", "");
+        return localizable::LinkCreatingHardlinkTitle();
     return @"";
 }
 

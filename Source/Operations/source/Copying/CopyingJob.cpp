@@ -20,9 +20,9 @@
 #include <sys/types.h>
 #include <sys/xattr.h>
 
-using namespace nc::ops::copying;
-
 namespace nc::ops {
+
+namespace copying {
 
 // A permission of a newly created directory - 0755
 static constexpr mode_t g_NewDirectoryMode = S_IRUSR | S_IXUSR | S_IWUSR | // User:  r, x, w
@@ -35,6 +35,17 @@ static constexpr mode_t g_ChModMask = S_IRWXU | S_IRWXG | S_IRWXO | S_ISUID | S_
 // return true if _1st is older than _2nd
 static bool EntryIsOlder(const struct stat &_1st, const struct stat &_2nd);
 static bool EntryIsOlder(const VFSStat &_1st, const VFSStat &_2nd);
+
+static utility::NativeFSManager::Info FindFirstFSInfoUpToRoot(const nc::utility::NativeFSManager &_fs_man,
+                                                              const std::string &_path);
+
+static bool IsSingleDirectoryCaseRenaming(const CopyingOptions &_options,
+                                          const std::vector<VFSListingItem> &_items,
+                                          const VFSHost &_dest_host,
+                                          const std::string &_dest_path,
+                                          const VFSStat &_dest_stat);
+
+} // namespace copying
 
 CopyingJob::CopyingJob(std::vector<VFSListingItem> _source_items,
                        const std::string &_dest_path,
@@ -75,25 +86,6 @@ enum CopyingJob::Stage CopyingJob::Stage() const noexcept
     return m_Stage;
 }
 
-static utility::NativeFSManager::Info FindFirstFSInfoUpToRoot(const nc::utility::NativeFSManager &_fs_man,
-                                                              const std::string &_path)
-{
-    auto info = _fs_man.VolumeFromPath(_path);
-    if( info )
-        return info;
-
-    auto p = std::filesystem::path(_path).parent_path();
-    while( true ) {
-        info = _fs_man.VolumeFromPath(p.native());
-        if( info )
-            return info;
-        if( p == "/" )
-            break;
-        p = p.parent_path();
-    }
-    return nullptr;
-}
-
 void CopyingJob::Perform()
 {
     SetStage(Stage::Preparing);
@@ -109,7 +101,7 @@ void CopyingJob::Perform()
     m_PathCompositionType = composition_type;
 
     if( m_IsDestinationHostNative ) {
-        auto fs_info = FindFirstFSInfoUpToRoot(*m_NativeFSManager, m_DestinationPath);
+        auto fs_info = copying::FindFirstFSInfoUpToRoot(*m_NativeFSManager, m_DestinationPath);
         if( !fs_info ) {
             Stop(); // we're totally broken. can't go on
             return;
@@ -193,7 +185,8 @@ CopyingJob::StepResult CopyingJob::ProcessItemNo(int _item_number)
     auto destination_path = ComposeDestinationNameForItem(_item_number);
     auto source_path = m_SourceItems.ComposeFullPath(_item_number);
     const auto nonexistent_dst_req_handler = RequestNonexistentDst([&] {
-        auto new_path = FindNonExistingItemPath(destination_path, *m_DestinationHost, [&] { return IsStopped(); });
+        auto new_path =
+            copying::FindNonExistingItemPath(destination_path, *m_DestinationHost, [&] { return IsStopped(); });
         if( !new_path.empty() )
             destination_path = std::move(new_path);
     });
@@ -446,50 +439,12 @@ std::string CopyingJob::ComposeDestinationNameForItem(int _src_item_index) const
     return ComposeDestinationNameForItemInDB(_src_item_index, m_SourceItems);
 }
 
-static bool IsSingleDirectoryCaseRenaming(const CopyingOptions &_options,
-                                          const std::vector<VFSListingItem> &_items,
-                                          const VFSHost &_dest_host,
-                                          const std::string &_dest_path,
-                                          const VFSStat &_dest_stat)
-{
-    if( !S_ISDIR(_dest_stat.mode) )
-        return false;
-
-    if( _options.docopy )
-        return false;
-
-    if( _items.size() != 1 )
-        return false;
-
-    const auto &item = _items.front();
-
-    if( !item.IsDir() )
-        return false;
-
-    if( item.Host().get() != &_dest_host )
-        return false;
-
-    if( item.Host()->IsNativeFS() ) {
-        // for native fs we use inodes comparisons
-        if( item.Inode() != _dest_stat.inode )
-            return false;
-    }
-    else {
-        if( _dest_host.IsCaseSensitiveAtPath(_dest_path) )
-            return false;
-
-        if( !LowercaseEqual(_dest_path, item.Path()) )
-            return false;
-    }
-    return true;
-}
-
 CopyingJob::PathCompositionType CopyingJob::AnalyzeInitialDestination(std::string &_result_destination,
                                                                       bool &_need_to_build)
 {
     if( const std::expected<VFSStat, Error> st = m_DestinationHost->Stat(m_InitialDestinationPath, 0) ) {
         // destination entry already exist
-        m_IsSingleDirectoryCaseRenaming = IsSingleDirectoryCaseRenaming(
+        m_IsSingleDirectoryCaseRenaming = copying::IsSingleDirectoryCaseRenaming(
             m_Options, m_VFSListingItems, *m_DestinationHost, m_InitialDestinationPath, *st);
         if( S_ISDIR(st->mode) && !m_IsSingleDirectoryCaseRenaming ) {
             _result_destination = EnsureTrailingSlash(m_InitialDestinationPath);
@@ -557,7 +512,7 @@ CopyingJob::StepResult CopyingJob::BuildDestinationDirectory() const
     // build absent directories. no skipping here - all or nothing.
     for( auto &path : paths_to_build ) {
         while( true ) {
-            const std::expected<void, Error> rc = m_DestinationHost->CreateDirectory(path, g_NewDirectoryMode);
+            const std::expected<void, Error> rc = m_DestinationHost->CreateDirectory(path, copying::g_NewDirectoryMode);
             if( rc )
                 break;
             switch( m_OnCantCreateDestinationRootDir(rc.error(), path, *m_DestinationHost) ) {
@@ -572,9 +527,9 @@ CopyingJob::StepResult CopyingJob::BuildDestinationDirectory() const
     return StepResult::Ok;
 }
 
-std::tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
+std::tuple<CopyingJob::StepResult, copying::SourceItems> CopyingJob::ScanSourceItems()
 {
-    class SourceItems db;
+    copying::SourceItems db;
     auto stat_flags = m_Options.preserve_symlinks ? VFSFlags::F_NoFollow : 0;
 
     for( auto &i : m_VFSListingItems ) {
@@ -614,7 +569,7 @@ std::tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
 
             if( S_ISREG(st.mode) ) {
                 // check if file is an external EA
-                if( IsAnExternalExtenedAttributesStorage(host, path, _item_name, st, m_NativeFSManager) )
+                if( copying::IsAnExternalExtenedAttributesStorage(host, path, _item_name, st, m_NativeFSManager) )
                     // we're skipping "._xxx" files as they are processed by OS itself
                     // when we copy xattrs
                     return StepResult::Ok;
@@ -823,7 +778,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
             case CopyDestExistsResolution::Skip:
                 return StepResult::Skipped;
             case CopyDestExistsResolution::OverwriteOld:
-                if( !EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
+                if( !copying::EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
                 [[fallthrough]];
             case CopyDestExistsResolution::Overwrite:
@@ -894,10 +849,10 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
         return StepResult::Stop; // something VERY BAD has happened, can't go on
     auto &dst_fs_info = *dst_fs_info_holder;
 
-    if( ShouldPreallocateSpace(preallocate_delta, dst_fs_info) ) {
+    if( copying::ShouldPreallocateSpace(preallocate_delta, dst_fs_info) ) {
         // tell the system to preallocate a space for data since we dont want to trash our disk
-        if( TryToPreallocateSpace(preallocate_delta, destination_fd) ) {
-            if( SupportsFastTruncationAfterPreallocation(dst_fs_info) ) {
+        if( copying::TryToPreallocateSpace(preallocate_delta, destination_fd) ) {
+            if( copying::SupportsFastTruncationAfterPreallocation(dst_fs_info) ) {
                 // truncate is needed for actual preallocation
                 need_dst_truncate = true;
             }
@@ -1075,7 +1030,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
 
     // do times things #1
     if( m_Options.copy_file_times && do_set_times && m_DestinationNativeFSInfo->mount_flags.local ) {
-        AdjustFileTimesForNativeFD(destination_fd, src_stat_buffer);
+        copying::AdjustFileTimesForNativeFD(destination_fd, src_stat_buffer);
         do_set_times = false;
     }
 
@@ -1085,7 +1040,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
     // do times things #2
     if( m_Options.copy_file_times && do_set_times ) {
         // thanks to the issue in SMB driver, we need to have a separate logic for remote mounts
-        AdjustFileTimesForNativePath(_dst_path.c_str(), src_stat_buffer);
+        copying::AdjustFileTimesForNativePath(_dst_path.c_str(), src_stat_buffer);
     }
 
     return StepResult::Ok;
@@ -1277,10 +1232,10 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
         return StepResult::Stop; // something VERY BAD has happened, can't go on
     auto &dst_fs_info = *dst_fs_info_holder;
 
-    if( ShouldPreallocateSpace(preallocate_delta, dst_fs_info) ) {
+    if( copying::ShouldPreallocateSpace(preallocate_delta, dst_fs_info) ) {
         // tell the system to preallocate a space for data since we dont want to trash our disk
-        if( TryToPreallocateSpace(preallocate_delta, destination_fd) ) {
-            if( SupportsFastTruncationAfterPreallocation(dst_fs_info) ) {
+        if( copying::TryToPreallocateSpace(preallocate_delta, destination_fd) ) {
+            if( copying::SupportsFastTruncationAfterPreallocation(dst_fs_info) ) {
                 // truncate is needed for actual preallocation
                 need_dst_truncate = true;
             }
@@ -1456,7 +1411,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
 
     // do times things #1
     if( m_Options.copy_file_times && do_set_times && m_DestinationNativeFSInfo->mount_flags.local ) {
-        AdjustFileTimesForNativeFD(destination_fd, src_stat_buffer);
+        copying::AdjustFileTimesForNativeFD(destination_fd, src_stat_buffer);
         do_set_times = false;
     }
 
@@ -1466,7 +1421,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
     // do times things #2
     if( m_Options.copy_file_times && do_set_times ) {
         // thanks to the issue in SMB driver, we need to have a separate logic for remote mounts
-        AdjustFileTimesForNativePath(_dst_path.c_str(), src_stat_buffer);
+        copying::AdjustFileTimesForNativePath(_dst_path.c_str(), src_stat_buffer);
     }
 
     return StepResult::Ok;
@@ -1580,7 +1535,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
             case CopyDestExistsResolution::Skip:
                 return StepResult::Skipped;
             case CopyDestExistsResolution::OverwriteOld:
-                if( !EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
+                if( !copying::EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
                 [[fallthrough]];
             case CopyDestExistsResolution::Overwrite:
@@ -1870,7 +1825,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeDirectoryToNativeDirectory(vfs::Nat
     else {
         // create the target directory
         while( true ) {
-            const auto rc = io.mkdir(_dst_path.c_str(), g_NewDirectoryMode);
+            const auto rc = io.mkdir(_dst_path.c_str(), copying::g_NewDirectoryMode);
             if( rc == 0 )
                 break;
             switch( m_OnCantCreateDestinationDir(Error{Error::POSIX, errno}, _dst_path, _native_host) ) {
@@ -1902,8 +1857,8 @@ CopyingJob::StepResult CopyingJob::CopyNativeDirectoryToNativeDirectory(vfs::Nat
 
     if( m_Options.copy_unix_flags ) {
         // change unix mode - only schedule if needed
-        const mode_t mode = src_stat.st_mode & g_ChModMask;
-        if( mode != g_NewDirectoryMode )
+        const mode_t mode = src_stat.st_mode & copying::g_ChModMask;
+        if( mode != copying::g_NewDirectoryMode )
             m_TargetPermissionsFixupEpilogue.push_back({std::filesystem::path{_dst_path}, mode});
 
         // change flags
@@ -1948,7 +1903,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_s
     else {
         // create target directory
         while( true ) {
-            const auto rc = io.mkdir(_dst_path.c_str(), g_NewDirectoryMode);
+            const auto rc = io.mkdir(_dst_path.c_str(), copying::g_NewDirectoryMode);
             if( rc == 0 )
                 break;
             switch( m_OnCantCreateDestinationDir(Error{Error::POSIX, errno}, _dst_path, _dst_host) ) {
@@ -1975,8 +1930,8 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_s
 
     if( m_Options.copy_unix_flags ) {
         // change unix mode - only schedule if needed
-        const mode_t mode = src_stat_buffer.mode & g_ChModMask;
-        if( mode != g_NewDirectoryMode )
+        const mode_t mode = src_stat_buffer.mode & copying::g_ChModMask;
+        if( mode != copying::g_NewDirectoryMode )
             m_TargetPermissionsFixupEpilogue.push_back({std::filesystem::path{_dst_path}, mode});
 
         // change flags
@@ -2033,7 +1988,8 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
     }
     else {
         while( true ) {
-            const std::expected<void, Error> rc = m_DestinationHost->CreateDirectory(_dst_path, g_NewDirectoryMode);
+            const std::expected<void, Error> rc =
+                m_DestinationHost->CreateDirectory(_dst_path, copying::g_NewDirectoryMode);
             if( rc )
                 break;
             switch( m_OnCantCreateDestinationDir(rc.error(), _dst_path, *m_DestinationHost) ) {
@@ -2049,8 +2005,8 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
 
     if( m_Options.copy_unix_flags && (m_DestinationHost->Features() & vfs::HostFeatures::SetPermissions) ) {
         // change unix mode - only schedule if needed
-        const mode_t mode = src_st.mode & g_ChModMask;
-        if( mode != g_NewDirectoryMode )
+        const mode_t mode = src_st.mode & copying::g_ChModMask;
+        if( mode != copying::g_NewDirectoryMode )
             m_TargetPermissionsFixupEpilogue.push_back({std::filesystem::path{_dst_path}, mode});
 
         // TODO: chflags??
@@ -2106,7 +2062,7 @@ CopyingJob::RenameNativeDirectory(vfs::NativeHost &_native_host,
         }
 
         while( true ) {
-            const auto rc = io.mkdir(_dst_path.c_str(), g_NewDirectoryMode);
+            const auto rc = io.mkdir(_dst_path.c_str(), copying::g_NewDirectoryMode);
             if( rc == 0 )
                 break;
             switch( m_OnCantCreateDestinationDir(Error{Error::POSIX, errno}, _dst_path, _native_host) ) {
@@ -2149,7 +2105,7 @@ CopyingJob::RenameNativeDirectory(vfs::NativeHost &_native_host,
                     case RenameDestExistsResolution::Skip:
                         return {StepResult::Skipped, SourceItemAftermath::NoChanges};
                     case RenameDestExistsResolution::OverwriteOld:
-                        if( !EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
+                        if( !copying::EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
                             return {StepResult::Skipped, SourceItemAftermath::NoChanges};
                         [[fallthrough]];
                     case RenameDestExistsResolution::Overwrite:
@@ -2186,7 +2142,7 @@ CopyingJob::RenameNativeDirectory(vfs::NativeHost &_native_host,
                 CopyXattrsFromNativeFDToNativeFD(src_fd, dst_fd);
 
             if( m_Options.copy_file_times )
-                AdjustFileTimesForNativeFD(dst_fd, src_stat);
+                copying::AdjustFileTimesForNativeFD(dst_fd, src_stat);
 
             return {StepResult::Ok, SourceItemAftermath::NeedsToBeDeleted};
         }
@@ -2261,7 +2217,7 @@ CopyingJob::RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_pa
         }
 
         while( true ) {
-            const std::expected<void, Error> rc = _common_host.CreateDirectory(_dst_path, g_NewDirectoryMode);
+            const std::expected<void, Error> rc = _common_host.CreateDirectory(_dst_path, copying::g_NewDirectoryMode);
             if( rc )
                 break;
             switch( m_OnCantCreateDestinationDir(rc.error(), _dst_path, _common_host) ) {
@@ -2307,7 +2263,7 @@ CopyingJob::RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_pa
                     case RenameDestExistsResolution::Skip:
                         return {StepResult::Skipped, SourceItemAftermath::NoChanges};
                     case RenameDestExistsResolution::OverwriteOld:
-                        if( !EntryIsOlder(dst_stat_buffer, src_stat) )
+                        if( !copying::EntryIsOlder(dst_stat_buffer, src_stat) )
                             return {StepResult::Skipped, SourceItemAftermath::NoChanges};
                         [[fallthrough]];
                     case RenameDestExistsResolution::Overwrite:
@@ -2403,7 +2359,7 @@ CopyingJob::StepResult CopyingJob::RenameNativeFile(vfs::NativeHost &_native_hos
                 case RenameDestExistsResolution::Skip:
                     return StepResult::Skipped;
                 case RenameDestExistsResolution::OverwriteOld:
-                    if( !EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
+                    if( !copying::EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
                         return StepResult::Skipped;
                     [[fallthrough]];
                 case RenameDestExistsResolution::Overwrite:
@@ -2489,7 +2445,7 @@ CopyingJob::StepResult CopyingJob::RenameVFSFile(VFSHost &_common_host,
             case RenameDestExistsResolution::Skip:
                 return StepResult::Skipped;
             case RenameDestExistsResolution::OverwriteOld:
-                if( !EntryIsOlder(*dst_stat_buffer, src_stat_buffer) )
+                if( !copying::EntryIsOlder(*dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
                 [[fallthrough]];
             case RenameDestExistsResolution::Overwrite:
@@ -2613,7 +2569,7 @@ void CopyingJob::ApplyTimestampsFixups()
                 st.st_mtimespec = i.mtime;
                 st.st_ctimespec = i.ctime;
                 st.st_birthtimespec = i.btime;
-                AdjustFileTimesForNativeFD(fd, st);
+                copying::AdjustFileTimesForNativeFD(fd, st);
             }
         }
     }
@@ -2622,7 +2578,7 @@ void CopyingJob::ApplyTimestampsFixups()
     }
 }
 
-CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation &_exp, bool &_matched)
+CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const copying::ChecksumExpectation &_exp, bool &_matched)
 {
     _matched = false;
     VFSFilePtr file;
@@ -2733,7 +2689,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeSymlinkToNative(vfs::NativeHost &_n
             case RenameDestExistsResolution::Skip:
                 return StepResult::Skipped;
             case RenameDestExistsResolution::OverwriteOld:
-                if( !EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
+                if( !copying::EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
                 [[fallthrough]];
             case RenameDestExistsResolution::Overwrite:
@@ -2837,7 +2793,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
             case RenameDestExistsResolution::Skip:
                 return StepResult::Skipped;
             case RenameDestExistsResolution::OverwriteOld:
-                if( !EntryIsOlder(dst_stat_buffer, posix_src_stat_buffer) )
+                if( !copying::EntryIsOlder(dst_stat_buffer, posix_src_stat_buffer) )
                     return StepResult::Skipped;
                 [[fallthrough]];
             case RenameDestExistsResolution::Overwrite:
@@ -2941,7 +2897,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
             case RenameDestExistsResolution::Skip:
                 return StepResult::Skipped;
             case RenameDestExistsResolution::OverwriteOld:
-                if( !EntryIsOlder(*dst_stat_buffer, src_stat_buffer) )
+                if( !copying::EntryIsOlder(*dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
                 [[fallthrough]];
             case RenameDestExistsResolution::Overwrite:
@@ -3085,6 +3041,8 @@ CopyingJob::OnCantOpenDestinationFile(const Error &_error, const std::string &_p
     }
 }
 
+namespace copying {
+
 static bool EntryIsOlder(const struct stat &_1st, const struct stat &_2nd)
 {
     if( _1st.st_mtimespec.tv_sec < _2nd.st_mtimespec.tv_sec )
@@ -3102,5 +3060,64 @@ static bool EntryIsOlder(const VFSStat &_1st, const VFSStat &_2nd)
         return false;
     return _1st.mtime.tv_nsec < _2nd.mtime.tv_nsec;
 }
+
+static utility::NativeFSManager::Info FindFirstFSInfoUpToRoot(const nc::utility::NativeFSManager &_fs_man,
+                                                              const std::string &_path)
+{
+    auto info = _fs_man.VolumeFromPath(_path);
+    if( info )
+        return info;
+
+    auto p = std::filesystem::path(_path).parent_path();
+    while( true ) {
+        info = _fs_man.VolumeFromPath(p.native());
+        if( info )
+            return info;
+        if( p == "/" )
+            break;
+        p = p.parent_path();
+    }
+    return nullptr;
+}
+
+static bool IsSingleDirectoryCaseRenaming(const CopyingOptions &_options,
+                                          const std::vector<VFSListingItem> &_items,
+                                          const VFSHost &_dest_host,
+                                          const std::string &_dest_path,
+                                          const VFSStat &_dest_stat)
+{
+    if( !S_ISDIR(_dest_stat.mode) )
+        return false;
+
+    if( _options.docopy )
+        return false;
+
+    if( _items.size() != 1 )
+        return false;
+
+    const auto &item = _items.front();
+
+    if( !item.IsDir() )
+        return false;
+
+    if( item.Host().get() != &_dest_host )
+        return false;
+
+    if( item.Host()->IsNativeFS() ) {
+        // for native fs we use inodes comparisons
+        if( item.Inode() != _dest_stat.inode )
+            return false;
+    }
+    else {
+        if( _dest_host.IsCaseSensitiveAtPath(_dest_path) )
+            return false;
+
+        if( !LowercaseEqual(_dest_path, item.Path()) )
+            return false;
+    }
+    return true;
+}
+
+} // namespace copying
 
 } // namespace nc::ops

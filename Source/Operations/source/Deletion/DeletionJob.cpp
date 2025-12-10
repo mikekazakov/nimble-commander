@@ -9,8 +9,6 @@
 
 namespace nc::ops {
 
-static bool IsEAStorage(VFSHost &_host, const std::string &_directory, const char *_filename, uint8_t _unix_type);
-
 DeletionJob::DeletionJob(std::vector<VFSListingItem> _items, DeletionType _type)
 {
     m_SourceItems = std::move(_items);
@@ -333,7 +331,7 @@ std::expected<void, Error> DeletionJob::UnlockItem(std::string_view _path, VFSHo
     return chflags_rc;
 }
 
-static bool IsEAStorage(VFSHost &_host, const std::string &_directory, const char *_filename, uint8_t _unix_type)
+bool DeletionJob::IsEAStorage(VFSHost &_host, const std::string &_directory, const char *_filename, uint8_t _unix_type)
 {
     if( _unix_type != DT_REG || !_host.IsNativeFS() || _filename[0] != '.' || _filename[1] != '_' || _filename[2] == 0 )
         return false;

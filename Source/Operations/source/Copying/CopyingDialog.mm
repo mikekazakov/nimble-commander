@@ -1,19 +1,18 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/CommonPaths.h>
 #include <Base/algo.h>
 #include "../Internal.h"
 #include "DisclosureViewController.h"
 #include "CopyingDialog.h"
 #include "Copying.h"
+#include <Operations/Localizable.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 #include <Operations/FilenameTextControl.h>
 
-using namespace nc::ops;
-
 // removes entries of ".." and "."
 // quite a bad implementation with O(n^2) complexity and possibly some allocations
-static std::string MakeCanonicPath(std::string _input)
+static std::string CopyingDialogMakeCanonicPath(std::string _input)
 {
     using namespace std::literals;
 
@@ -23,7 +22,7 @@ static std::string MakeCanonicPath(std::string _input)
         auto sl = _input.rfind('/', pos - 1);
         if( sl != std::string::npos ) {
             _input.erase(sl + 1, pos - sl + dotdot.size() - 1);
-            return MakeCanonicPath(std::move(_input));
+            return CopyingDialogMakeCanonicPath(std::move(_input));
         }
     }
 
@@ -31,7 +30,7 @@ static std::string MakeCanonicPath(std::string _input)
     pos = _input.find(dot);
     if( pos != std::string::npos ) {
         _input.erase(pos, 2);
-        return MakeCanonicPath(std::move(_input));
+        return CopyingDialogMakeCanonicPath(std::move(_input));
     }
 
     return _input;
@@ -64,7 +63,7 @@ static std::string MakeCanonicPath(std::string _input)
     std::string m_SourceDirectory; // may be "" if SourceHost is nullptr
     std::string m_InitialDestination;
     VFSHostPtr m_DestinationHost; // can be nullptr in case of non-uniform listing
-    CopyingOptions m_Options;
+    nc::ops::CopyingOptions m_Options;
 
     std::string m_ResultDestination;
     VFSHostPtr m_ResultHost;
@@ -98,8 +97,9 @@ static std::string MakeCanonicPath(std::string _input)
               sourceDirectory:(const std::string &)_source_directory
            initialDestination:(const std::string &)_initial_destination
                destinationVFS:(const VFSHostPtr &)_destination_host
-             operationOptions:(const CopyingOptions &)_options
+             operationOptions:(const nc::ops::CopyingOptions &)_options
 {
+    using namespace nc::ops;
     const auto nib_path = [Bundle() pathForResource:@"CopyingDialog" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
@@ -123,6 +123,7 @@ static std::string MakeCanonicPath(std::string _input)
 
 - (void)windowDidLoad
 {
+    using namespace nc::ops;
     [super windowDidLoad];
     [self.DisclosedViewController toggleDisclosure:self];
     [self.StackView insertView:self.PathPart atIndex:0 inGravity:NSStackViewGravityTop];
@@ -145,25 +146,20 @@ static std::string MakeCanonicPath(std::string _input)
     if( m_Options.docopy ) {
         if( amount > 1 )
             self.DescriptionText.stringValue = [NSString
-                stringWithFormat:NSLocalizedString(@"Copy %@ items to:", "Copy files sheet prompt, copying many files"),
-                                 [NSNumber numberWithInt:amount]];
+                stringWithFormat:localizable::CopyingDialogCopyItemsToTitle(), [NSNumber numberWithInt:amount]];
         else
             self.DescriptionText.stringValue =
-                [NSString stringWithFormat:NSLocalizedString(@"Copy \u201c%@\u201d to:",
-                                                             "Copy files sheet prompt, copying single file"),
+                [NSString stringWithFormat:localizable::CopyingDialogCopyItemToTitle(),
                                            [NSString stringWithUTF8String:m_SourceItems.front().FilenameC()]];
         self.CopyButton.title = self.CopyButtonStringStub.title;
     }
     else {
         if( amount > 1 )
-            self.DescriptionText.stringValue =
-                [NSString stringWithFormat:NSLocalizedString(@"Rename/move %@ items to:",
-                                                             "Move files sheet prompt, moving many files"),
-                                           [NSNumber numberWithInt:amount]];
+            self.DescriptionText.stringValue = [NSString
+                stringWithFormat:localizable::CopyingDialogMoveItemsToTitle(), [NSNumber numberWithInt:amount]];
         else
             self.DescriptionText.stringValue =
-                [NSString stringWithFormat:NSLocalizedString(@"Rename/move \u201c%@\u201d to:",
-                                                             "Move files sheet prompt, moving single file"),
+                [NSString stringWithFormat:localizable::CopyingDialogMoveItemToTitle(),
                                            [NSString stringWithUTF8String:m_SourceItems.front().FilenameC()]];
         self.CopyButton.title = self.RenameButtonStringStub.title;
     }
@@ -200,7 +196,7 @@ static std::string MakeCanonicPath(std::string _input)
             return not_valid();
 
         // do '..'/'.' stuff
-        input = MakeCanonicPath(input);
+        input = CopyingDialogMakeCanonicPath(input);
 
         m_ResultDestination = input;
         m_ResultHost = m_DestinationHost;
@@ -217,7 +213,7 @@ static std::string MakeCanonicPath(std::string _input)
             input = m_SourceDirectory + input;
 
         // do '..'/'.' stuff
-        input = MakeCanonicPath(input);
+        input = CopyingDialogMakeCanonicPath(input);
 
         m_ResultDestination = input;
         m_ResultHost = m_SourceHost;
@@ -233,7 +229,7 @@ static std::string MakeCanonicPath(std::string _input)
     m_Options.copy_file_times = self.CopyFileTimesCheckbox.state == NSControlStateValueOn;
     m_Options.copy_unix_flags = self.CopyUNIXFlagsCheckbox.state == NSControlStateValueOn;
     m_Options.copy_unix_owners = self.CopyUnixOwnersCheckbox.state == NSControlStateValueOn;
-    m_Options.verification = static_cast<CopyingOptions::ChecksumVerification>(self.VerifySetting.selectedTag);
+    m_Options.verification = static_cast<nc::ops::CopyingOptions::ChecksumVerification>(self.VerifySetting.selectedTag);
 }
 
 - (void)validate

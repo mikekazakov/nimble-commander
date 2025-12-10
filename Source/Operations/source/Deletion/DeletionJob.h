@@ -35,6 +35,7 @@ private:
     void ScanDirectory(const std::string &_path, int _listing_item_index, const base::chained_strings::node *_prefix);
     static bool IsNativeLockedItem(const nc::Error &_err, const std::string &_path, VFSHost &_vfs);
     static std::expected<void, Error> UnlockItem(std::string_view _path, VFSHost &_vfs);
+    static bool IsEAStorage(VFSHost &_host, const std::string &_directory, const char *_filename, uint8_t _unix_type);
 
     std::vector<VFSListingItem> m_SourceItems;
     DeletionType m_Type;

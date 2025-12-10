@@ -1,9 +1,10 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Utility/SheetWithHotkeys.h>
 #include "BatchRenamingDialog.h"
 #include "BatchRenamingRangeSelectionPopover.h"
 #include "BatchRenamingScheme.h"
+#include <Operations/Localizable.h>
 #include <Base/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
@@ -12,98 +13,98 @@
 
 #include <algorithm>
 
-using namespace nc::ops;
+static NSString *_Nonnull const g_BatchRenamingDialogTableViewDataType =
+    @"com.magnumbytes.nc.ops.BatchRenameSheetControllerPrivateTableViewDataType";
 
-static auto g_MyPrivateTableViewDataType = @"com.magnumbytes.nc.ops.BatchRenameSheetControllerPrivateTableViewDataType";
-
-[[clang::no_destroy]] static const ankerl::unordered_dense::map<long, NSString *> g_InsertSnippets = {
-    {101, @"[N]"},        //
-    {102, @"[N1]"},       //
-    {103, @"[N2-5]"},     //
-    {104, @"[N2,5]"},     //
-    {105, @"[N2-]"},      //
-    {106, @"[N02-9]"},    //
-    {107, @"[N 2-9]"},    //
-    {108, @"[N-8,5]"},    //
-    {109, @"[N-8-5]"},    //
-    {110, @"[N2--5]"},    //
-    {111, @"[N-5-]"},     //
-    {201, @"[E]"},        //
-    {202, @"[E1]"},       //
-    {203, @"[E2-5]"},     //
-    {204, @"[E2,5]"},     //
-    {205, @"[E2-]"},      //
-    {206, @"[E02-9]"},    //
-    {207, @"[E 2-9]"},    //
-    {208, @"[E-8,5]"},    //
-    {209, @"[E-8-5]"},    //
-    {210, @"[E2--5]"},    //
-    {211, @"[E-5-]"},     //
-    {301, @"[d]"},        //
-    {302, @"[Y]"},        //
-    {303, @"[y]"},        //
-    {304, @"[M]"},        //
-    {305, @"[D]"},        //
-    {306, @"[t]"},        //
-    {307, @"[h]"},        //
-    {308, @"[m]"},        //
-    {309, @"[s]"},        //
-    {401, @"[U]"},        //
-    {402, @"[L]"},        //
-    {403, @"[F]"},        //
-    {404, @"[n]"},        //
-    {501, @"[C]"},        //
-    {502, @"[C10]"},      //
-    {503, @"[C10+2]"},    //
-    {504, @"[C10+2/1]"},  //
-    {505, @"[C10+2/1:5"}, //
-    {601, @"[A]"},        //
-    {602, @"[["},         //
-    {603, @"]]"},         //
-    {701, @"[A]"},        //
-    {702, @"[A1]"},       //
-    {703, @"[A2-5]"},     //
-    {704, @"[A2,5]"},     //
-    {705, @"[A2-]"},      //
-    {706, @"[A02-9]"},    //
-    {707, @"[A 2-9]"},    //
-    {708, @"[A-8,5]"},    //
-    {709, @"[A-8-5]"},    //
-    {710, @"[A2--5]"},    //
-    {711, @"[A-5-]"},     //
-    {801, @"[P]"},        //
-    {802, @"[P1]"},       //
-    {803, @"[P2-5]"},     //
-    {804, @"[P2,5]"},     //
-    {805, @"[P2-]"},      //
-    {806, @"[P02-9]"},    //
-    {807, @"[P 2-9]"},    //
-    {808, @"[P-8,5]"},    //
-    {809, @"[P-8-5]"},    //
-    {810, @"[P2--5]"},    //
-    {811, @"[P-5-]"},     //
-    {901, @"[G]"},        //
-    {902, @"[G1]"},       //
-    {903, @"[G2-5]"},     //
-    {904, @"[G2,5]"},     //
-    {905, @"[G2-]"},      //
-    {906, @"[G02-9]"},    //
-    {907, @"[G 2-9]"},    //
-    {908, @"[G-8,5]"},    //
-    {909, @"[G-8-5]"},    //
-    {910, @"[G2--5]"},    //
-    {911, @"[G-5-]"},     //
+[[clang::no_destroy]] static const ankerl::unordered_dense::map<long, NSString *> g_BatchRenamingDialogInsertSnippets =
+    {
+        {101, @"[N]"},        //
+        {102, @"[N1]"},       //
+        {103, @"[N2-5]"},     //
+        {104, @"[N2,5]"},     //
+        {105, @"[N2-]"},      //
+        {106, @"[N02-9]"},    //
+        {107, @"[N 2-9]"},    //
+        {108, @"[N-8,5]"},    //
+        {109, @"[N-8-5]"},    //
+        {110, @"[N2--5]"},    //
+        {111, @"[N-5-]"},     //
+        {201, @"[E]"},        //
+        {202, @"[E1]"},       //
+        {203, @"[E2-5]"},     //
+        {204, @"[E2,5]"},     //
+        {205, @"[E2-]"},      //
+        {206, @"[E02-9]"},    //
+        {207, @"[E 2-9]"},    //
+        {208, @"[E-8,5]"},    //
+        {209, @"[E-8-5]"},    //
+        {210, @"[E2--5]"},    //
+        {211, @"[E-5-]"},     //
+        {301, @"[d]"},        //
+        {302, @"[Y]"},        //
+        {303, @"[y]"},        //
+        {304, @"[M]"},        //
+        {305, @"[D]"},        //
+        {306, @"[t]"},        //
+        {307, @"[h]"},        //
+        {308, @"[m]"},        //
+        {309, @"[s]"},        //
+        {401, @"[U]"},        //
+        {402, @"[L]"},        //
+        {403, @"[F]"},        //
+        {404, @"[n]"},        //
+        {501, @"[C]"},        //
+        {502, @"[C10]"},      //
+        {503, @"[C10+2]"},    //
+        {504, @"[C10+2/1]"},  //
+        {505, @"[C10+2/1:5"}, //
+        {601, @"[A]"},        //
+        {602, @"[["},         //
+        {603, @"]]"},         //
+        {701, @"[A]"},        //
+        {702, @"[A1]"},       //
+        {703, @"[A2-5]"},     //
+        {704, @"[A2,5]"},     //
+        {705, @"[A2-]"},      //
+        {706, @"[A02-9]"},    //
+        {707, @"[A 2-9]"},    //
+        {708, @"[A-8,5]"},    //
+        {709, @"[A-8-5]"},    //
+        {710, @"[A2--5]"},    //
+        {711, @"[A-5-]"},     //
+        {801, @"[P]"},        //
+        {802, @"[P1]"},       //
+        {803, @"[P2-5]"},     //
+        {804, @"[P2,5]"},     //
+        {805, @"[P2-]"},      //
+        {806, @"[P02-9]"},    //
+        {807, @"[P 2-9]"},    //
+        {808, @"[P-8,5]"},    //
+        {809, @"[P-8-5]"},    //
+        {810, @"[P2--5]"},    //
+        {811, @"[P-5-]"},     //
+        {901, @"[G]"},        //
+        {902, @"[G1]"},       //
+        {903, @"[G2-5]"},     //
+        {904, @"[G2,5]"},     //
+        {905, @"[G2-]"},      //
+        {906, @"[G02-9]"},    //
+        {907, @"[G 2-9]"},    //
+        {908, @"[G-8,5]"},    //
+        {909, @"[G-8-5]"},    //
+        {910, @"[G2--5]"},    //
+        {911, @"[G-5-]"},     //
 };
 
 @interface BatchRenameSheetControllerNilNumberValueTransformer : NSValueTransformer
 @end
 
 @implementation BatchRenameSheetControllerNilNumberValueTransformer
-+ (Class)transformedValueClass
++ (Class _Nonnull)transformedValueClass
 {
     return [NSNumber class];
 }
-- (id)transformedValue:(id)value
+- (id _Nullable)transformedValue:(id _Nullable)value
 {
     if( value == nil )
         return @0;
@@ -114,42 +115,42 @@ static auto g_MyPrivateTableViewDataType = @"com.magnumbytes.nc.ops.BatchRenameS
 
 @interface NCOpsBatchRenamingDialog ()
 
-@property(strong, nonatomic) IBOutlet NSTableView *FilenamesTable;
-@property(strong, nonatomic) IBOutlet NSComboBox *FilenameMask;
-@property(strong, nonatomic) IBOutlet NSComboBox *SearchForComboBox;
-@property(strong, nonatomic) IBOutlet NSComboBox *ReplaceWithComboBox;
-@property(strong, nonatomic) IBOutlet NSButton *SearchCaseSensitive;
-@property(strong, nonatomic) IBOutlet NSButton *SearchOnlyOnce;
-@property(strong, nonatomic) IBOutlet NSButton *SearchInExtension;
-@property(strong, nonatomic) IBOutlet NSButton *SearchWithRegExp;
-@property(strong, nonatomic) IBOutlet NSPopUpButton *CaseProcessing;
-@property(strong, nonatomic) IBOutlet NSButton *CaseProcessingWithExtension;
-@property(strong, nonatomic) IBOutlet NSPopUpButton *CounterDigits;
-@property(strong, nonatomic) IBOutlet NSButton *InsertNameRangePlaceholderButton;
-@property(strong, nonatomic) IBOutlet NSButton *InsertPlaceholderMenuButton;
-@property(strong, nonatomic) IBOutlet NSMenu *InsertPlaceholderMenu;
-@property(strong, nonatomic) IBOutlet NSButton *OkButton;
+@property(strong, nonatomic) IBOutlet NSTableView *_Nonnull FilenamesTable;
+@property(strong, nonatomic) IBOutlet NSComboBox *_Nonnull FilenameMask;
+@property(strong, nonatomic) IBOutlet NSComboBox *_Nonnull SearchForComboBox;
+@property(strong, nonatomic) IBOutlet NSComboBox *_Nonnull ReplaceWithComboBox;
+@property(strong, nonatomic) IBOutlet NSButton *_Nonnull SearchCaseSensitive;
+@property(strong, nonatomic) IBOutlet NSButton *_Nonnull SearchOnlyOnce;
+@property(strong, nonatomic) IBOutlet NSButton *_Nonnull SearchInExtension;
+@property(strong, nonatomic) IBOutlet NSButton *_Nonnull SearchWithRegExp;
+@property(strong, nonatomic) IBOutlet NSPopUpButton *_Nonnull CaseProcessing;
+@property(strong, nonatomic) IBOutlet NSButton *_Nonnull CaseProcessingWithExtension;
+@property(strong, nonatomic) IBOutlet NSPopUpButton *_Nonnull CounterDigits;
+@property(strong, nonatomic) IBOutlet NSButton *_Nonnull InsertNameRangePlaceholderButton;
+@property(strong, nonatomic) IBOutlet NSButton *_Nonnull InsertPlaceholderMenuButton;
+@property(strong, nonatomic) IBOutlet NSMenu *_Nonnull InsertPlaceholderMenu;
+@property(strong, nonatomic) IBOutlet NSButton *_Nonnull OkButton;
 @property(nonatomic, readwrite) int CounterStartsAt;
 @property(nonatomic, readwrite) int CounterStepsBy;
 
-- (IBAction)OnFilenameMaskChanged:(id)sender;
-- (IBAction)OnInsertNamePlaceholder:(id)sender;
-- (IBAction)OnInsertNameRangePlaceholder:(id)sender;
-- (IBAction)OnInsertCounterPlaceholder:(id)sender;
-- (IBAction)OnInsertExtensionPlaceholder:(id)sender;
-- (IBAction)OnInsertDatePlaceholder:(id)sender;
-- (IBAction)OnInsertTimePlaceholder:(id)sender;
-- (IBAction)OnInsertMenu:(id)sender;
-- (IBAction)OnInsertPlaceholderFromMenu:(id)sender;
+- (IBAction)OnFilenameMaskChanged:(id _Nullable)_sender;
+- (IBAction)OnInsertNamePlaceholder:(id _Nullable)_sender;
+- (IBAction)OnInsertNameRangePlaceholder:(id _Nullable)_sender;
+- (IBAction)OnInsertCounterPlaceholder:(id _Nullable)_sender;
+- (IBAction)OnInsertExtensionPlaceholder:(id _Nullable)_sender;
+- (IBAction)OnInsertDatePlaceholder:(id _Nullable)_sender;
+- (IBAction)OnInsertTimePlaceholder:(id _Nullable)_sender;
+- (IBAction)OnInsertMenu:(id _Nullable)_sender;
+- (IBAction)OnInsertPlaceholderFromMenu:(id _Nullable)_sender;
 
-- (IBAction)OnSearchForChanged:(id)sender;
-- (IBAction)OnReplaceWithChanged:(id)sender;
-- (IBAction)OnSearchReplaceOptionsChanged:(id)sender;
-- (IBAction)OnCaseProcessingChanged:(id)sender;
-- (IBAction)OnCounterSettingsChanged:(id)sender;
+- (IBAction)OnSearchForChanged:(id _Nullable)_sender;
+- (IBAction)OnReplaceWithChanged:(id _Nullable)_sender;
+- (IBAction)OnSearchReplaceOptionsChanged:(id _Nullable)_sender;
+- (IBAction)OnCaseProcessingChanged:(id _Nullable)_sender;
+- (IBAction)OnCounterSettingsChanged:(id _Nullable)_sender;
 
-- (IBAction)OnOK:(id)sender;
-- (IBAction)OnCancel:(id)sender;
+- (IBAction)OnOK:(id _Nullable)_sender;
+- (IBAction)OnCancel:(id _Nullable)_sender;
 
 @end
 
@@ -157,7 +158,7 @@ using SourceReverseMappingStorage =
     ankerl::unordered_dense::map<std::string, size_t, nc::UnorderedStringHashEqual, nc::UnorderedStringHashEqual>;
 
 @implementation NCOpsBatchRenamingDialog {
-    std::vector<BatchRenamingScheme::FileInfo> m_FileInfos;
+    std::vector<nc::ops::BatchRenamingScheme::FileInfo> m_FileInfos;
     SourceReverseMappingStorage m_SourceReverseMapping;
 
     std::vector<NSTextField *> m_LabelsBefore;
@@ -199,8 +200,9 @@ using SourceReverseMappingStorage =
 @synthesize InsertPlaceholderMenu;
 @synthesize OkButton;
 
-- (instancetype)initWithItems:(std::vector<VFSListingItem>)_items
+- (instancetype _Nonnull)initWithItems:(std::vector<VFSListingItem>)_items
 {
+    using namespace nc::ops;
     const auto nib_path = [Bundle() pathForResource:@"BatchRenamingDialog" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
@@ -253,7 +255,7 @@ using SourceReverseMappingStorage =
     [self InsertStringIntoMask:@"[N].[E]"];
     self.isValidRenaming = true;
 
-    [self.FilenamesTable registerForDraggedTypes:@[g_MyPrivateTableViewDataType]];
+    [self.FilenamesTable registerForDraggedTypes:@[g_BatchRenamingDialogTableViewDataType]];
 
     // set up data sources for comboboxes
     if( !m_RenamePatternDataSource )
@@ -289,19 +291,21 @@ using SourceReverseMappingStorage =
     sheet.onCtrlW = [sheet makeFocusHotkey:self.ReplaceWithComboBox];
 }
 
-- (IBAction)OnCancel:(id) [[maybe_unused]] _sender
+- (IBAction)OnCancel:(id _Nullable) [[maybe_unused]] _sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseStop];
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *_Nonnull)tableView
 {
     if( tableView == self.FilenamesTable )
         return m_LabelsBefore.size();
     return 0;
 }
 
-- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
+- (NSView *_Nullable)tableView:(NSTableView *_Nonnull)tableView
+            viewForTableColumn:(NSTableColumn *_Nullable)tableColumn
+                           row:(NSInteger)row
 {
     if( tableView == self.FilenamesTable ) {
         if( [tableColumn.identifier isEqualToString:@"original"] ) {
@@ -317,13 +321,14 @@ using SourceReverseMappingStorage =
     return nil;
 }
 
-- (IBAction)OnFilenameMaskChanged:(id) [[maybe_unused]] _sender
+- (IBAction)OnFilenameMaskChanged:(id _Nullable) [[maybe_unused]] _sender
 {
     [self updateRenamedFilenames];
 }
 
 - (void)updateRenamedFilenames
 {
+    using namespace nc::ops;
     NSString *filename_mask = self.FilenameMask.stringValue ? self.FilenameMask.stringValue : @"";
 
     NSString *search_for = self.SearchForComboBox.stringValue ? self.SearchForComboBox.stringValue : @"";
@@ -403,13 +408,14 @@ using SourceReverseMappingStorage =
     }
 }
 
-- (IBAction)OnInsertNamePlaceholder:(id) [[maybe_unused]] _sender
+- (IBAction)OnInsertNamePlaceholder:(id _Nullable) [[maybe_unused]] _sender
 {
     [self InsertStringIntoMask:@"[N]"];
 }
 
-- (IBAction)OnInsertNameRangePlaceholder:(id) [[maybe_unused]] _sender
+- (IBAction)OnInsertNameRangePlaceholder:(id _Nullable) [[maybe_unused]] _sender
 {
+    using namespace nc::ops;
     auto *pc = [NCOpsBatchRenamingRangeSelectionPopover new];
     auto curr_sel = self.currentMaskSelection;
     pc.handler = ^(NSRange _range) {
@@ -442,27 +448,27 @@ using SourceReverseMappingStorage =
                     preferredEdge:NSMaxXEdge];
 }
 
-- (IBAction)OnInsertCounterPlaceholder:(id) [[maybe_unused]] _sender
+- (IBAction)OnInsertCounterPlaceholder:(id _Nullable) [[maybe_unused]] _sender
 {
     [self InsertStringIntoMask:@"[C]"];
 }
 
-- (IBAction)OnInsertExtensionPlaceholder:(id) [[maybe_unused]] _sender
+- (IBAction)OnInsertExtensionPlaceholder:(id _Nullable) [[maybe_unused]] _sender
 {
     [self InsertStringIntoMask:@"[E]"];
 }
 
-- (IBAction)OnInsertDatePlaceholder:(id) [[maybe_unused]] _sender
+- (IBAction)OnInsertDatePlaceholder:(id _Nullable) [[maybe_unused]] _sender
 {
     [self InsertStringIntoMask:@"[YMD]"];
 }
 
-- (IBAction)OnInsertTimePlaceholder:(id) [[maybe_unused]] _sender
+- (IBAction)OnInsertTimePlaceholder:(id _Nullable) [[maybe_unused]] _sender
 {
     [self InsertStringIntoMask:@"[hms]"];
 }
 
-- (IBAction)OnInsertMenu:(id) [[maybe_unused]] _sender
+- (IBAction)OnInsertMenu:(id _Nullable) [[maybe_unused]] _sender
 {
     const auto r = self.InsertPlaceholderMenuButton.bounds;
     [self.InsertPlaceholderMenu popUpMenuPositioningItem:nil
@@ -470,35 +476,35 @@ using SourceReverseMappingStorage =
                                                   inView:self.InsertPlaceholderMenuButton];
 }
 
-- (IBAction)OnInsertPlaceholderFromMenu:(id)sender
+- (IBAction)OnInsertPlaceholderFromMenu:(id _Nullable)sender
 {
     if( auto item = nc::objc_cast<NSMenuItem>(sender) ) {
-        if( g_InsertSnippets.contains(item.tag) )
-            [self InsertStringIntoMask:g_InsertSnippets.at(item.tag)];
+        if( g_BatchRenamingDialogInsertSnippets.contains(item.tag) )
+            [self InsertStringIntoMask:g_BatchRenamingDialogInsertSnippets.at(item.tag)];
     }
 }
 
-- (IBAction)OnSearchForChanged:(id) [[maybe_unused]] _sender
+- (IBAction)OnSearchForChanged:(id _Nullable) [[maybe_unused]] _sender
 {
     [self updateRenamedFilenames];
 }
 
-- (IBAction)OnReplaceWithChanged:(id) [[maybe_unused]] _sender
+- (IBAction)OnReplaceWithChanged:(id _Nullable) [[maybe_unused]] _sender
 {
     [self updateRenamedFilenames];
 }
 
-- (IBAction)OnSearchReplaceOptionsChanged:(id) [[maybe_unused]] _sender
+- (IBAction)OnSearchReplaceOptionsChanged:(id _Nullable) [[maybe_unused]] _sender
 {
     [self updateRenamedFilenames];
 }
 
-- (IBAction)OnCaseProcessingChanged:(id) [[maybe_unused]] _sender
+- (IBAction)OnCaseProcessingChanged:(id _Nullable) [[maybe_unused]] _sender
 {
     [self updateRenamedFilenames];
 }
 
-- (IBAction)OnCounterSettingsChanged:(id) [[maybe_unused]] _sender
+- (IBAction)OnCounterSettingsChanged:(id _Nullable) [[maybe_unused]] _sender
 {
     [self updateRenamedFilenames];
 }
@@ -511,7 +517,7 @@ using SourceReverseMappingStorage =
         return NSMakeRange(NSNotFound, 0);
 }
 
-- (void)InsertStringIntoMask:(NSString *)_str
+- (void)InsertStringIntoMask:(NSString *_Nonnull)_str
 {
     NSString *current_mask = self.FilenameMask.stringValue ? self.FilenameMask.stringValue : @"";
     if( self.FilenameMask.currentEditor ) {
@@ -524,7 +530,7 @@ using SourceReverseMappingStorage =
     [self SetNewMask:current_mask];
 }
 
-- (void)InsertStringIntoMask:(NSString *)_str withSelection:(NSRange)_r
+- (void)InsertStringIntoMask:(NSString *_Nonnull)_str withSelection:(NSRange)_r
 {
     NSString *current_mask = self.FilenameMask.stringValue ? self.FilenameMask.stringValue : @"";
     if( _r.location != NSNotFound )
@@ -535,7 +541,7 @@ using SourceReverseMappingStorage =
     [self SetNewMask:current_mask];
 }
 
-- (void)SetNewMask:(NSString *)_str
+- (void)SetNewMask:(NSString *_Nonnull)_str
 {
     [self.FilenameMask.undoManager registerUndoWithTarget:self
                                                  selector:@selector(SetNewMask:)
@@ -545,7 +551,7 @@ using SourceReverseMappingStorage =
     [self OnFilenameMaskChanged:self.FilenameMask];
 }
 
-- (void)controlTextDidChange:(NSNotification *)notification
+- (void)controlTextDidChange:(NSNotification *_Nonnull)notification
 {
     if( nc::objc_cast<NSTextField>(notification.object) == self.FilenameMask )
         [self OnFilenameMaskChanged:self.FilenameMask];
@@ -557,30 +563,30 @@ using SourceReverseMappingStorage =
         [self updateRenamedFilenames];
 }
 
-- (NSDragOperation)tableView:(NSTableView *) [[maybe_unused]] aTableView
-                validateDrop:(id<NSDraggingInfo>) [[maybe_unused]] info
+- (NSDragOperation)tableView:(NSTableView *_Nonnull) [[maybe_unused]] aTableView
+                validateDrop:(id<NSDraggingInfo> _Nonnull) [[maybe_unused]] info
                  proposedRow:(NSInteger) [[maybe_unused]] row
        proposedDropOperation:(NSTableViewDropOperation)operation
 {
     return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
 }
 
-- (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view pasteboardWriterForRow:(NSInteger)_row
+- (nullable id<NSPasteboardWriting>)tableView:(NSTableView *_Nonnull)_table_view pasteboardWriterForRow:(NSInteger)_row
 {
     auto data = [NSKeyedArchiver archivedDataWithRootObject:[NSNumber numberWithInteger:_row]
                                       requiringSecureCoding:false
                                                       error:nil];
     NSPasteboardItem *pbitem = [[NSPasteboardItem alloc] init];
-    [pbitem setData:data forType:g_MyPrivateTableViewDataType];
+    [pbitem setData:data forType:g_BatchRenamingDialogTableViewDataType];
     return pbitem;
 }
 
-- (BOOL)tableView:(NSTableView *) [[maybe_unused]] aTableView
-       acceptDrop:(id<NSDraggingInfo>)info
+- (BOOL)tableView:(NSTableView *_Nonnull) [[maybe_unused]] aTableView
+       acceptDrop:(id<NSDraggingInfo> _Nonnull)info
               row:(NSInteger)drag_to
     dropOperation:(NSTableViewDropOperation) [[maybe_unused]] operation
 {
-    NSData *data = [info.draggingPasteboard dataForType:g_MyPrivateTableViewDataType];
+    NSData *data = [info.draggingPasteboard dataForType:g_BatchRenamingDialogTableViewDataType];
     NSNumber *ind = [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
     NSInteger drag_from = ind.integerValue;
 
@@ -614,7 +620,7 @@ using SourceReverseMappingStorage =
                                          m_LabelsAfter[i].stringValue.fileSystemRepresentationSafe);
 }
 
-- (IBAction)OnOK:(id) [[maybe_unused]] _sender
+- (IBAction)OnOK:(id _Nullable) [[maybe_unused]] _sender
 {
     [self updateRenamedFilenames];
     [self buildResultDestinations];
@@ -626,7 +632,7 @@ using SourceReverseMappingStorage =
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
 
-- (void)keyDown:(NSEvent *)event
+- (void)keyDown:(NSEvent *_Nonnull)event
 {
     if( event.type == NSEventTypeKeyDown && event.keyCode == kVK_Delete &&
         self.window.firstResponder == self.FilenamesTable && self.FilenamesTable.selectedRow != -1 ) {
@@ -638,7 +644,7 @@ using SourceReverseMappingStorage =
     return;
 }
 
-- (BOOL)validateMenuItem:(NSMenuItem *)item
+- (BOOL)validateMenuItem:(NSMenuItem *_Nonnull)item
 {
     if( item.menu == self.FilenamesTable.menu ) {
         auto clicked_row = self.FilenamesTable.clickedRow;
@@ -650,12 +656,11 @@ using SourceReverseMappingStorage =
 
 - (void)removeItemAtIndex:(size_t)_index
 {
+    using namespace nc::ops;
     assert(_index < m_FileInfos.size());
     if( _index == 0 && m_FileInfos.size() == 1 ) {
         NSAlert *alert = [[NSAlert alloc] init];
-        [alert setMessageText:NSLocalizedString(
-                                  @"Cannot remove the last item being renamed",
-                                  "Alert shown when a user tries to remove all item from a Batch Rename dialog")];
+        [alert setMessageText:localizable::BatchRenamingCantRemoveLastItemMessage()];
         [alert runModal];
         return;
     }
@@ -677,7 +682,7 @@ using SourceReverseMappingStorage =
     dispatch_to_main_queue([=] { [self updateRenamedFilenames]; });
 }
 
-- (IBAction)onContextMenuRemoveItem:(id) [[maybe_unused]] _sender
+- (IBAction)onContextMenuRemoveItem:(id _Nullable) [[maybe_unused]] _sender
 {
     auto clicked_row = self.FilenamesTable.clickedRow;
     if( clicked_row < 0 && clicked_row >= self.FilenamesTable.numberOfRows )

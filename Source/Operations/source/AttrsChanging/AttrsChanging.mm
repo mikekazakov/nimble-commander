@@ -3,17 +3,17 @@
 
 #include "AttrsChanging.h"
 #include "AttrsChangingJob.h"
+#include <Operations/Localizable.h>
 #include "../AsyncDialogResponse.h"
 #include "../Internal.h"
 #include "../ModalDialogResponses.h"
 #include "../GenericErrorDialog.h"
 
 // TODO: remove once callback results are no longer wrapped into 'int'
+#pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wold-style-cast"
 
 namespace nc::ops {
-
-using Callbacks = AttrsChangingJobCallbacks;
 
 AttrsChanging::AttrsChanging(AttrsChangingCommand _command)
 {
@@ -33,7 +33,7 @@ AttrsChanging::AttrsChanging(AttrsChangingCommand _command)
     m_Job->m_OnTimesError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         return (Callbacks::TimesErrorResolution)OnTimesError(_err, _path, _vfs);
     };
-    auto title = NSLocalizedString(@"Altering file attributes", "Title for attributes changing operation");
+    auto title = localizable::AttrChangingAlteringFileAttributesTitle();
     SetTitle(title.UTF8String);
 }
 
@@ -55,7 +55,7 @@ int AttrsChanging::OnSourceAccessError(Error _err, const std::string &_path, VFS
     const auto ctx = std::make_shared<AsyncDialogResponse>();
 
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
-                      NSLocalizedString(@"Failed to access an item", ""),
+                      localizable::AttrChangingFailedToAccessAnItemMessage(),
                       _err,
                       {_vfs, _path},
                       ctx);
@@ -80,7 +80,7 @@ int AttrsChanging::OnChmodError(Error _err, const std::string &_path, VFSHost &_
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
-                      NSLocalizedString(@"Failed to perform chmod", ""),
+                      localizable::AttrChangingFailedToPerformChmodMessage(),
                       _err,
                       {_vfs, _path},
                       ctx);
@@ -105,7 +105,7 @@ int AttrsChanging::OnChownError(Error _err, const std::string &_path, VFSHost &_
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
-                      NSLocalizedString(@"Failed to perform chown", ""),
+                      localizable::AttrChangingFailedToPerformChownMessage(),
                       _err,
                       {_vfs, _path},
                       ctx);
@@ -130,7 +130,7 @@ int AttrsChanging::OnFlagsError(Error _err, const std::string &_path, VFSHost &_
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
-                      NSLocalizedString(@"Failed to perform chflags", ""),
+                      localizable::AttrChangingFailedToPerformChflagsMessage(),
                       _err,
                       {_vfs, _path},
                       ctx);
@@ -155,7 +155,7 @@ int AttrsChanging::OnTimesError(Error _err, const std::string &_path, VFSHost &_
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
-                      NSLocalizedString(@"Failed to set file time", ""),
+                      localizable::AttrChangingFailedToPerformSetTimeMessage(),
                       _err,
                       {_vfs, _path},
                       ctx);
@@ -174,3 +174,5 @@ int AttrsChanging::OnTimesError(Error _err, const std::string &_path, VFSHost &_
 }
 
 } // namespace nc::ops
+
+#pragma clang diagnostic pop

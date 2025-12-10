@@ -69,5 +69,20 @@ NSString *CopyingTitlePreparingToCopyMulti();
 NSString *CopyingTitlePreparingToMoveMulti();
 NSString *CopyingTitleVerifyingResult();
 NSString *CopyingTitleCleaningUp();
+NSString *DeletionFailedToAccessDirectoryMessage();
+NSString *DeletionFailedToDeleteFileMessage();
+NSString *DeletionFailedToDeleteDirectoryMessage();
+NSString *DeletionFailedToMoveToTrashMessage();
+NSString *DeletionDeletePermanentlyTitle();
+NSString *DeletionCannotDeleteLockedMessage();
+NSString *DeletionCannotTrashLockedMessage();
+NSString *DeletionUnlockTitle();
+NSString *DeletionFailedToUnlockMessage();
+NSString *DeletionSingleTitle();
+NSString *DeletionMultiTitle();
+NSString *DeletionDialogMoveToTrashTitle();
+NSString *DeletionDialogDeletePermanentlyTitle();
+NSString *DeletionDialogDoYouWantToDeleteSingleMessage();
+NSString *DeletionDialogDoYouWantToDeleteMultiMessage();
 
 } // namespace nc::ops::localizable

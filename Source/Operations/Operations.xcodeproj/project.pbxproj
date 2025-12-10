@@ -46,9 +46,6 @@
 		CF46FF95255FCCAD0095FC73 /* CreateHardlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AA1F10890B0000B3EE /* CreateHardlinkDialog.xib */; };
 		CF46FF9A255FCCAF0095FC73 /* CreateSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AC1F10890B0000B3EE /* CreateSymlinkDialog.xib */; };
 		CF46FFED255FD04D0095FC73 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF571F2F1508005F8414 /* DisclosureViewController.m */; };
-		CF46FFF5255FD0530095FC73 /* Deletion.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9181F09D9740000B3EE /* Deletion.mm */; };
-		CF46FFF6255FD0530095FC73 /* DeletionJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9191F09D9740000B3EE /* DeletionJob.cpp */; };
-		CF46FFF7255FD0530095FC73 /* DeletionDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F95B1F0CB07A0000B3EE /* DeletionDialog.mm */; };
 		CF46FFFC255FD0590095FC73 /* DirectoryCreationDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F94D1F0CA84D0000B3EE /* DirectoryCreationDialog.mm */; };
 		CF46FFFD255FD0590095FC73 /* DirectoryCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9051F06253D0000B3EE /* DirectoryCreation.mm */; };
 		CF46FFFE255FD0590095FC73 /* DirectoryCreationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.cpp */; };
@@ -56,7 +53,6 @@
 		CF47861C2EE7144500736117 /* _Operations.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47861B2EE7144500736117 /* _Operations.mm */; };
 		CF4786212EE7171400736117 /* Localizable.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4786202EE7171400736117 /* Localizable.mm */; };
 		CF86D5E2255E8AF00049F7F8 /* AttrsChanging_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.cpp */; };
-		CFB7BD42260F696C00E2EA4D /* DeletionJobCallbacks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB7BD40260F696C00E2EA4D /* DeletionJobCallbacks.cpp */; };
 		CFB7BD43260F696C00E2EA4D /* DeletionJobCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = CFB7BD41260F696C00E2EA4D /* DeletionJobCallbacks.h */; };
 		CFCFAC712D3D2F8D008C6E26 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CFCFAC702D3D2F8D008C6E26 /* Localizable.xcstrings */; };
 		CFCFAC722D3D2F8D008C6E26 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CFCFAC702D3D2F8D008C6E26 /* Localizable.xcstrings */; };
@@ -863,7 +859,6 @@
 				CF460005255FD0600095FC73 /* CreateHardlinkDialog.mm in Sources */,
 				CF46FFFC255FD0590095FC73 /* DirectoryCreationDialog.mm in Sources */,
 				CF46FFED255FD04D0095FC73 /* DisclosureViewController.m in Sources */,
-				CF46FFF5255FD0530095FC73 /* Deletion.mm in Sources */,
 				CF460004255FD0600095FC73 /* LinkageJob.cpp in Sources */,
 				CF47861A2EE7127500736117 /* _Operations.cpp in Sources */,
 				CF460007255FD0600095FC73 /* CreateSymlinkDialog.mm in Sources */,
@@ -871,10 +866,7 @@
 				CF46FFFE255FD0590095FC73 /* DirectoryCreationJob.cpp in Sources */,
 				CF460003255FD0600095FC73 /* AlterSymlinkDialog.mm in Sources */,
 				CF460006255FD0600095FC73 /* Linkage.mm in Sources */,
-				CF46FFF7255FD0530095FC73 /* DeletionDialog.mm in Sources */,
-				CFB7BD42260F696C00E2EA4D /* DeletionJobCallbacks.cpp in Sources */,
 				CF47861C2EE7144500736117 /* _Operations.mm in Sources */,
-				CF46FFF6255FD0530095FC73 /* DeletionJob.cpp in Sources */,
 				CF46FFFD255FD0590095FC73 /* DirectoryCreation.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

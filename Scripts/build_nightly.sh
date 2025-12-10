@@ -37,6 +37,7 @@ XC="xcodebuild \
  -project ${XCODEPROJ} \
  -scheme NimbleCommander-NonMAS \
  -configuration Release \
+ -parallelizeTargets \
  OTHER_CFLAGS=\"-fdebug-prefix-map=${ROOT_DIR}=.\""
 
 # Build and archive the project

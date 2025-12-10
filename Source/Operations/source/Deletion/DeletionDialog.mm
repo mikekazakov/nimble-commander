@@ -1,9 +1,8 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DeletionDialog.h"
+#include <Operations/Localizable.h>
 #include "../Internal.h"
 #include <VFS/VFS.h>
-
-using namespace nc::ops;
 
 @interface NCOpsDeletionDialog ()
 
@@ -14,8 +13,8 @@ using namespace nc::ops;
 @end
 
 @implementation NCOpsDeletionDialog {
-    DeletionType m_DefaultType;
-    DeletionType m_ResultType;
+    nc::ops::DeletionType m_DefaultType;
+    nc::ops::DeletionType m_ResultType;
 
     std::shared_ptr<std::vector<VFSListingItem>> m_Items;
     bool m_AllowMoveToTrash;
@@ -30,6 +29,7 @@ using namespace nc::ops;
 
 - (id)initWithItems:(const std::shared_ptr<std::vector<VFSListingItem>> &)_items
 {
+    using namespace nc::ops;
     const auto nib_path = [Bundle() pathForResource:@"DeletionDialog" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
@@ -44,23 +44,21 @@ using namespace nc::ops;
 
 - (void)windowDidLoad
 {
+    using namespace nc::ops;
     [super windowDidLoad];
 
     if( m_DefaultType == DeletionType::Trash ) {
-        self.primaryActionButton.title = NSLocalizedString(@"Move to Trash", "Menu item title in file deletion sheet");
+        self.primaryActionButton.title = localizable::DeletionDialogMoveToTrashTitle();
 
-        [self.auxiliaryActionPopup
-            addItemWithTitle:NSLocalizedString(@"Delete Permanently", "Menu item title in file deletion sheet")];
+        [self.auxiliaryActionPopup addItemWithTitle:localizable::DeletionDialogDeletePermanentlyTitle()];
         self.auxiliaryActionPopup.lastItem.target = self;
         self.auxiliaryActionPopup.lastItem.action = @selector(onAuxActionPermDelete:);
     }
     else if( m_DefaultType == DeletionType::Permanent ) {
-        self.primaryActionButton.title =
-            NSLocalizedString(@"Delete Permanently", "Menu item title in file deletion sheet");
+        self.primaryActionButton.title = localizable::DeletionDialogDeletePermanentlyTitle();
 
         if( m_AllowMoveToTrash ) {
-            [self.auxiliaryActionPopup
-                addItemWithTitle:NSLocalizedString(@"Move to Trash", "Menu item title in file deletion sheet")];
+            [self.auxiliaryActionPopup addItemWithTitle:localizable::DeletionDialogMoveToTrashTitle()];
             self.auxiliaryActionPopup.lastItem.target = self;
             self.auxiliaryActionPopup.lastItem.action = @selector(onAuxActionTrash:);
         }
@@ -80,13 +78,13 @@ using namespace nc::ops;
 
 - (IBAction)onAuxActionTrash:(id) [[maybe_unused]] _sender
 {
-    m_ResultType = DeletionType::Trash;
+    m_ResultType = nc::ops::DeletionType::Trash;
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
 
 - (IBAction)onAuxActionPermDelete:(id) [[maybe_unused]] _sender
 {
-    m_ResultType = DeletionType::Permanent;
+    m_ResultType = nc::ops::DeletionType::Permanent;
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
 
@@ -107,13 +105,13 @@ using namespace nc::ops;
 
 - (void)buildTitle
 {
+    using namespace nc::ops;
     if( m_Items->size() == 1 )
-        self.Label.stringValue = [NSString
-            stringWithFormat:NSLocalizedString(@"Do you want to delete “%@”?", "Asking user to delete a file"),
-                             [NSString stringWithUTF8String:m_Items->front().FilenameC()]];
+        self.Label.stringValue =
+            [NSString stringWithFormat:localizable::DeletionDialogDoYouWantToDeleteSingleMessage(),
+                                       [NSString stringWithUTF8String:m_Items->front().FilenameC()]];
     else
-        self.Label.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Do you want to delete %@ items?",
-                                                                              "Asking user to delete multiple files"),
+        self.Label.stringValue = [NSString stringWithFormat:localizable::DeletionDialogDoYouWantToDeleteMultiMessage(),
                                                             [NSNumber numberWithUnsignedLong:m_Items->size()]];
 }
 

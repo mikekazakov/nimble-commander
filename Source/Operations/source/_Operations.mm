@@ -22,3 +22,5 @@
 #include "Copying/CopyingDialog.mm"
 #include "Copying/CopyingTitleBuilder.mm"
 #include "Copying/FileAlreadyExistDialog.mm"
+#include "Deletion/Deletion.mm"
+#include "Deletion/DeletionDialog.mm"

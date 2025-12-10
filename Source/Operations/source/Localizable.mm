@@ -331,4 +331,79 @@ NSString *CopyingTitleCleaningUp()
     return NSLocalizedString(@"Cleaning up..", "");
 }
 
+NSString *DeletionFailedToAccessDirectoryMessage()
+{
+    return NSLocalizedString(@"Failed to access a directory", "");
+}
+
+NSString *DeletionFailedToDeleteFileMessage()
+{
+    return NSLocalizedString(@"Failed to delete a file", "");
+}
+
+NSString *DeletionFailedToDeleteDirectoryMessage()
+{
+    return NSLocalizedString(@"Failed to delete a directory", "");
+}
+
+NSString *DeletionFailedToMoveToTrashMessage()
+{
+    return NSLocalizedString(@"Failed to move an item to Trash", "");
+}
+
+NSString *DeletionDeletePermanentlyTitle()
+{
+    return NSLocalizedString(@"Delete Permanently", "");
+}
+
+NSString *DeletionCannotDeleteLockedMessage()
+{
+    return NSLocalizedString(@"Cannot delete a locked item", "");
+}
+
+NSString *DeletionCannotTrashLockedMessage()
+{
+    return NSLocalizedString(@"Cannot move a locked item to Trash", "");
+}
+
+NSString *DeletionUnlockTitle()
+{
+    return NSLocalizedString(@"Unlock", "");
+}
+
+NSString *DeletionFailedToUnlockMessage()
+{
+    return NSLocalizedString(@"Failed to unlock an item", "");
+}
+
+NSString *DeletionSingleTitle()
+{
+    return NSLocalizedString(@"Deleting \u201c%@\u201d", "Operation title for single item deletion");
+}
+
+NSString *DeletionMultiTitle()
+{
+    return NSLocalizedString(@"Deleting %@ items", "Operation title for multiple items deletion");
+}
+
+NSString *DeletionDialogMoveToTrashTitle()
+{
+    return NSLocalizedString(@"Move to Trash", "Menu item title in file deletion sheet");
+}
+
+NSString *DeletionDialogDeletePermanentlyTitle()
+{
+    return NSLocalizedString(@"Delete Permanently", "Menu item title in file deletion sheet");
+}
+
+NSString *DeletionDialogDoYouWantToDeleteSingleMessage()
+{
+    return NSLocalizedString(@"Do you want to delete “%@”?", "Asking user to delete a file");
+}
+
+NSString *DeletionDialogDoYouWantToDeleteMultiMessage()
+{
+    return NSLocalizedString(@"Do you want to delete %@ items?", "Asking user to delete multiple files");
+}
+
 } // namespace nc::ops::localizable

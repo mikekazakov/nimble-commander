@@ -11,3 +11,5 @@
 #include "Copying/Helpers.cpp"
 #include "Copying/NativeFSHelpers.cpp"
 #include "Copying/SourceItems.cpp"
+#include "Deletion/DeletionJob.cpp"
+#include "Deletion/DeletionJobCallbacks.cpp"

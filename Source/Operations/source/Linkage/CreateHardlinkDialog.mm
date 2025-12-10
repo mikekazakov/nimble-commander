@@ -1,10 +1,9 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CreateHardlinkDialog.h"
+#include <Operations/Localizable.h>
 #include "../Internal.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
-
-using namespace nc::ops;
 
 @interface NCOpsCreateHardlinkDialog ()
 
@@ -26,6 +25,7 @@ using namespace nc::ops;
 
 - (instancetype)initWithSourceName:(const std::string &)_src
 {
+    using namespace nc::ops;
     const auto nib_path = [Bundle() pathForResource:@"CreateHardlinkDialog" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
@@ -37,10 +37,11 @@ using namespace nc::ops;
 
 - (void)windowDidLoad
 {
+    using namespace nc::ops;
     [super windowDidLoad];
 
-    auto t = [NSString stringWithFormat:NSLocalizedString(@"Create a hardlink of \'%@\' to:", ""),
-                                        [NSString stringWithUTF8StdString:m_SourceName]];
+    auto t = [NSString
+        stringWithFormat:localizable::LinkCreateHardlinkOfMessage(), [NSString stringWithUTF8StdString:m_SourceName]];
     self.Text.stringValue = t;
     [self.window makeFirstResponder:self.LinkName];
 }
@@ -50,12 +51,12 @@ using namespace nc::ops;
     if( self.LinkName.stringValue )
         m_Result = self.LinkName.stringValue.fileSystemRepresentationSafe;
 
-    [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
+    [self.window.sheetParent endSheet:self.window returnCode:nc::ops::NSModalResponseOK];
 }
 
 - (IBAction)OnCancel:(id) [[maybe_unused]] _sender
 {
-    [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
+    [self.window.sheetParent endSheet:self.window returnCode:nc::ops::NSModalResponseCancel];
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification

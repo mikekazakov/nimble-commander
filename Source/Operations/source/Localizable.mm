@@ -416,4 +416,44 @@ NSString *MkdirFailedToCreateDirectoryMessage()
     return NSLocalizedString(@"Failed to create a directory", "");
 }
 
+NSString *LinkSymbolicLinkPointsAtMessage()
+{
+    return NSLocalizedString(@"Symbolic link \'%@\' points at:", "");
+}
+
+NSString *LinkCreateHardlinkOfMessage()
+{
+    return NSLocalizedString(@"Create a hardlink of \'%@\' to:", "");
+}
+
+NSString *LinkFailedToCreateSymlinkMessage()
+{
+    return NSLocalizedString(@"Failed to create a symbolic link", "");
+}
+
+NSString *LinkFailedToAlterSymlinkMessage()
+{
+    return NSLocalizedString(@"Failed to alter a symbolic link", "");
+}
+
+NSString *LinkFailedToCreateHardlinkMessage()
+{
+    return NSLocalizedString(@"Failed to create a hard link", "");
+}
+
+NSString *LinkCreatingNewSymlinkTitle()
+{
+    return NSLocalizedString(@"Creating a new symbolic link", "");
+}
+
+NSString *LinkAlteringSymlinkTitle()
+{
+    return NSLocalizedString(@"Altering a symbolic link", "");
+}
+
+NSString *LinkCreatingHardlinkTitle()
+{
+    return NSLocalizedString(@"Creating a new hard link", "");
+}
+
 } // namespace nc::ops::localizable

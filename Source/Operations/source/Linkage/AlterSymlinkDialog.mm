@@ -1,9 +1,8 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AlterSymlinkDialog.h"
+#include <Operations/Localizable.h>
 #include "../Internal.h"
 #include <Utility/StringExtras.h>
-
-using namespace nc::ops;
 
 @interface NCOpsAlterSymlinkDialog ()
 
@@ -26,6 +25,7 @@ using namespace nc::ops;
 
 - (instancetype)initWithSourcePath:(const std::string &)_src_path andLinkName:(const std::string &)_link_name
 {
+    using namespace nc::ops;
     const auto nib_path = [Bundle() pathForResource:@"AlterSymlinkDialog" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
@@ -37,9 +37,10 @@ using namespace nc::ops;
 
 - (void)windowDidLoad
 {
+    using namespace nc::ops;
     [super windowDidLoad];
-    auto t = [NSString stringWithFormat:NSLocalizedString(@"Symbolic link \'%@\' points at:", ""),
-                                        [NSString stringWithUTF8StdString:m_LinkPath]];
+    auto t = [NSString
+        stringWithFormat:localizable::LinkSymbolicLinkPointsAtMessage(), [NSString stringWithUTF8StdString:m_LinkPath]];
     self.Text.stringValue = t;
     self.SourcePath.stringValue = [NSString stringWithUTF8StdString:m_SrcPath];
     [self.window makeFirstResponder:self.SourcePath];
@@ -48,12 +49,12 @@ using namespace nc::ops;
 - (IBAction)OnOk:(id) [[maybe_unused]] _sender
 {
     m_SrcPath = self.SourcePath.stringValue.fileSystemRepresentationSafe;
-    [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
+    [self.window.sheetParent endSheet:self.window returnCode:nc::ops::NSModalResponseOK];
 }
 
 - (IBAction)OnCancel:(id) [[maybe_unused]] _sender
 {
-    [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
+    [self.window.sheetParent endSheet:self.window returnCode:nc::ops::NSModalResponseCancel];
 }
 
 @end

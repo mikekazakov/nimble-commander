@@ -23,11 +23,6 @@
 		CF40238A256DA6850028E0B3 /* Archive_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF402389256DA6850028E0B3 /* Archive_IT.mm */; };
 		CF402397256EFA580028E0B3 /* DirectoryCreations_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_IT.mm */; };
 		CF4023A02570FA950028E0B3 /* Deletion_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9211F09DFD80000B3EE /* Deletion_IT.mm */; };
-		CF460003255FD0600095FC73 /* AlterSymlinkDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9AF1F10890B0000B3EE /* AlterSymlinkDialog.mm */; };
-		CF460004255FD0600095FC73 /* LinkageJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9881F0F22850000B3EE /* LinkageJob.cpp */; };
-		CF460005255FD0600095FC73 /* CreateHardlinkDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9B11F10890B0000B3EE /* CreateHardlinkDialog.mm */; };
-		CF460006255FD0600095FC73 /* Linkage.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9871F0F22850000B3EE /* Linkage.mm */; };
-		CF460007255FD0600095FC73 /* CreateSymlinkDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9B31F10890B0000B3EE /* CreateSymlinkDialog.mm */; };
 		CF46FF45255FCC350095FC73 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8DF1EFCD9A50000B3EE /* Media.xcassets */; };
 		CF46FF4F255FCC4C0095FC73 /* PoolViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8CB1EFA05DA0000B3EE /* PoolViewController.xib */; };
 		CF46FF54255FCC500095FC73 /* HaltReasonDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8E81F00E5D30000B3EE /* HaltReasonDialog.xib */; };
@@ -45,7 +40,6 @@
 		CF46FF90255FCCA90095FC73 /* AlterSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9A81F10890B0000B3EE /* AlterSymlinkDialog.xib */; };
 		CF46FF95255FCCAD0095FC73 /* CreateHardlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AA1F10890B0000B3EE /* CreateHardlinkDialog.xib */; };
 		CF46FF9A255FCCAF0095FC73 /* CreateSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AC1F10890B0000B3EE /* CreateSymlinkDialog.xib */; };
-		CF46FFED255FD04D0095FC73 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF571F2F1508005F8414 /* DisclosureViewController.m */; };
 		CF47861A2EE7127500736117 /* _Operations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4786192EE7127500736117 /* _Operations.cpp */; };
 		CF47861C2EE7144500736117 /* _Operations.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47861B2EE7144500736117 /* _Operations.mm */; };
 		CF4786212EE7171400736117 /* Localizable.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4786202EE7171400736117 /* Localizable.mm */; };
@@ -853,14 +847,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF460005255FD0600095FC73 /* CreateHardlinkDialog.mm in Sources */,
-				CF46FFED255FD04D0095FC73 /* DisclosureViewController.m in Sources */,
-				CF460004255FD0600095FC73 /* LinkageJob.cpp in Sources */,
 				CF47861A2EE7127500736117 /* _Operations.cpp in Sources */,
-				CF460007255FD0600095FC73 /* CreateSymlinkDialog.mm in Sources */,
 				CF4786212EE7171400736117 /* Localizable.mm in Sources */,
-				CF460003255FD0600095FC73 /* AlterSymlinkDialog.mm in Sources */,
-				CF460006255FD0600095FC73 /* Linkage.mm in Sources */,
 				CF47861C2EE7144500736117 /* _Operations.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

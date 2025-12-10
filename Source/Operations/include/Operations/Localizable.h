@@ -86,5 +86,13 @@ NSString *DeletionDialogDoYouWantToDeleteSingleMessage();
 NSString *DeletionDialogDoYouWantToDeleteMultiMessage();
 NSString *MkdirCreatingDirectoryTitle();
 NSString *MkdirFailedToCreateDirectoryMessage();
+NSString *LinkSymbolicLinkPointsAtMessage();
+NSString *LinkCreateHardlinkOfMessage();
+NSString *LinkFailedToCreateSymlinkMessage();
+NSString *LinkFailedToAlterSymlinkMessage();
+NSString *LinkFailedToCreateHardlinkMessage();
+NSString *LinkCreatingNewSymlinkTitle();
+NSString *LinkAlteringSymlinkTitle();
+NSString *LinkCreatingHardlinkTitle();
 
 } // namespace nc::ops::localizable

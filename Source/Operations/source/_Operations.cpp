@@ -14,3 +14,4 @@
 #include "Deletion/DeletionJob.cpp"
 #include "Deletion/DeletionJobCallbacks.cpp"
 #include "DirectoryCreation/DirectoryCreationJob.cpp"
+#include "Linkage/LinkageJob.cpp"

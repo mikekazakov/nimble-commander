@@ -1,10 +1,8 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CreateSymlinkDialog.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 #include "../Internal.h"
-
-using namespace nc::ops;
 
 @interface NCOpsCreateSymlinkDialog ()
 
@@ -26,6 +24,7 @@ using namespace nc::ops;
 
 - (instancetype)initWithSourcePath:(const std::string &)_src_path andDestPath:(const std::string &)_link_path
 {
+    using namespace nc::ops;
     const auto nib_path = [Bundle() pathForResource:@"CreateSymlinkDialog" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {

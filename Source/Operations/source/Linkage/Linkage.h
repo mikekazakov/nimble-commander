@@ -23,6 +23,7 @@ private:
     void OnCreateSymlinkError(Error _err, const std::string &_path, VFSHost &_vfs);
     void OnAlterSymlinkError(Error _err, const std::string &_path, VFSHost &_vfs);
     void OnCreatehardlinkError(Error _err, const std::string &_path, VFSHost &_vfs);
+    static NSString *Caption(LinkageType _type);
 
     std::unique_ptr<LinkageJob> m_Job;
 };

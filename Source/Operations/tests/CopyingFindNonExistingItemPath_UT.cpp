@@ -1,7 +1,9 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include "../source/Copying/Helpers.h"
+
+namespace CopyingTests {
 
 using nc::ops::copying::FindNonExistingItemPath;
 
@@ -105,3 +107,7 @@ TEST_CASE(PREFIX "returns empty string on cancellation")
 
     CHECK(proposed_path.empty());
 }
+
+} // namespace CopyingTests
+
+#undef PREFIX

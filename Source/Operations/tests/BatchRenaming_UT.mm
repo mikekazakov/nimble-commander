@@ -1,10 +1,11 @@
 // Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
-
 #include "Tests.h"
 #include "TestEnv.h"
 #include "../source/BatchRenaming/BatchRenamingScheme.h"
 
 #define PREFIX "Operations::BatchRenaming "
+
+namespace BatchRenamingTests {
 
 using namespace nc;
 using namespace nc::ops;
@@ -452,3 +453,7 @@ static VFSListingItem GetRegListingItem(const std::string &_filename, const std:
     REQUIRE(items->size() == 1);
     return items->front();
 }
+
+} // namespace BatchRenamingTests
+
+#undef PREFIX

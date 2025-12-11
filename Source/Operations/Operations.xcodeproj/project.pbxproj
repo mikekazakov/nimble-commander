@@ -8,12 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CF22F0C2258F43610033E850 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2C101822A0731500A5359D /* Tests.cpp */; };
-		CF22F0C6258F43610033E850 /* BasicOperationsSemantics_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF402371256D9C440028E0B3 /* BasicOperationsSemantics_UT.mm */; };
-		CF22F0C8258F43610033E850 /* BatchRenaming_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F1152256C528400622405 /* BatchRenaming_UT.mm */; };
-		CF22F0C9258F43610033E850 /* CopyingFindNonExistingItemPath_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFAB6D7D258A742D00397DB5 /* CopyingFindNonExistingItemPath_UT.cpp */; };
 		CF22F0CA258F43610033E850 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.mm */; };
-		CF22F0F5258F43A80033E850 /* Deletion_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF22F0F4258F43A80033E850 /* Deletion_UT.cpp */; };
-		CF287FDC26EE0A5600FC24B5 /* Pool_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF287FDB26EE0A5600FC24B5 /* Pool_UT.mm */; };
 		CF287FF426F6876200FC24B5 /* PoolEnqueueFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = CF287FF226F6876200FC24B5 /* PoolEnqueueFilter.h */; };
 		CF2C101A22A0731500A5359D /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2C101822A0731500A5359D /* Tests.cpp */; };
 		CF2C102622A4116F00A5359D /* DirectoryPathAutoCompetion_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C102422A4116B00A5359D /* DirectoryPathAutoCompetion_IT.mm */; };
@@ -44,6 +39,8 @@
 		CF47861C2EE7144500736117 /* _Operations.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47861B2EE7144500736117 /* _Operations.mm */; };
 		CF4786212EE7171400736117 /* Localizable.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4786202EE7171400736117 /* Localizable.mm */; };
 		CF86D5E2255E8AF00049F7F8 /* AttrsChanging_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.cpp */; };
+		CF91790E2EEAC60100A5A578 /* _OperationsUT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF91790D2EEAC60100A5A578 /* _OperationsUT.mm */; };
+		CF9179102EEAC76900A5A578 /* _OperationsUT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF91790F2EEAC76900A5A578 /* _OperationsUT.cpp */; };
 		CFB7BD43260F696C00E2EA4D /* DeletionJobCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = CFB7BD41260F696C00E2EA4D /* DeletionJobCallbacks.h */; };
 		CFCFAC712D3D2F8D008C6E26 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CFCFAC702D3D2F8D008C6E26 /* Localizable.xcstrings */; };
 		CFCFAC722D3D2F8D008C6E26 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CFCFAC702D3D2F8D008C6E26 /* Localizable.xcstrings */; };
@@ -149,6 +146,8 @@
 		CF7084DA1EF7CCB00072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = include/Operations/Pool.h; sourceTree = "<group>"; };
 		CF7084DC1EF7CF7E0072F0F6 /* Compression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Compression.h; path = include/Operations/Compression.h; sourceTree = "<group>"; };
 		CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttrsChanging_IT.cpp; sourceTree = "<group>"; };
+		CF91790D2EEAC60100A5A578 /* _OperationsUT.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _OperationsUT.mm; sourceTree = "<group>"; };
+		CF91790F2EEAC76900A5A578 /* _OperationsUT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = _OperationsUT.cpp; sourceTree = "<group>"; };
 		CFAAF0721FA9D8B8009230B3 /* CopyingTitleBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingTitleBuilder.h; path = source/Copying/CopyingTitleBuilder.h; sourceTree = "<group>"; };
 		CFAAF0731FA9D8B8009230B3 /* CopyingTitleBuilder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CopyingTitleBuilder.mm; path = source/Copying/CopyingTitleBuilder.mm; sourceTree = "<group>"; };
 		CFAB6D7D258A742D00397DB5 /* CopyingFindNonExistingItemPath_UT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CopyingFindNonExistingItemPath_UT.cpp; sourceTree = "<group>"; };
@@ -547,6 +546,8 @@
 		CFF53B3C1EDD197300F567C4 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF91790F2EEAC76900A5A578 /* _OperationsUT.cpp */,
+				CF91790D2EEAC60100A5A578 /* _OperationsUT.mm */,
 				CF402389256DA6850028E0B3 /* Archive_IT.mm */,
 				CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.cpp */,
 				CF402371256D9C440028E0B3 /* BasicOperationsSemantics_UT.mm */,
@@ -810,12 +811,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF22F0C2258F43610033E850 /* Tests.cpp in Sources */,
-				CF22F0C6258F43610033E850 /* BasicOperationsSemantics_UT.mm in Sources */,
-				CF22F0C8258F43610033E850 /* BatchRenaming_UT.mm in Sources */,
-				CF22F0C9258F43610033E850 /* CopyingFindNonExistingItemPath_UT.cpp in Sources */,
-				CF22F0F5258F43A80033E850 /* Deletion_UT.cpp in Sources */,
+				CF91790E2EEAC60100A5A578 /* _OperationsUT.mm in Sources */,
+				CF9179102EEAC76900A5A578 /* _OperationsUT.cpp in Sources */,
 				CF22F0CA258F43610033E850 /* TestEnv.mm in Sources */,
-				CF287FDC26EE0A5600FC24B5 /* Pool_UT.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

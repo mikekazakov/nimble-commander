@@ -1,8 +1,10 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include <thread>
 #include "../include/Operations/Operation.h"
 #include "../include/Operations/Job.h"
+
+namespace BasicOperationsSemanticsTests {
 
 using namespace std;
 using namespace nc::ops;
@@ -73,3 +75,7 @@ TEST_CASE(PREFIX "non-started operation behaviour")
     const MyOperation myop;
     REQUIRE(myop.State() == OperationState::Cold);
 }
+
+#undef PREFIX
+
+} // namespace BasicOperationsSemanticsTests

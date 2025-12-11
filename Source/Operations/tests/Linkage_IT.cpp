@@ -5,6 +5,8 @@
 #include <VFS/Native.h>
 #include <filesystem>
 
+namespace LinkageTests {
+
 using namespace nc::ops;
 using namespace std::literals;
 
@@ -77,3 +79,7 @@ TEST_CASE(PREFIX "hardlink creation")
     const VFSStat st2 = host->Stat(value, 0).value();
     REQUIRE(st1.inode == st2.inode);
 }
+
+} // namespace LinkageTests
+
+#undef PREFIX

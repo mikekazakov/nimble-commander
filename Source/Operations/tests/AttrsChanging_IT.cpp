@@ -7,6 +7,8 @@
 #include <chrono>
 #include <set>
 
+namespace AttrChangingTests {
+
 using namespace nc;
 using namespace nc::ops;
 using namespace std::literals;
@@ -165,3 +167,7 @@ FetchItems(const std::string &_directory_path, const std::vector<std::string> &_
 {
     return _host.FetchFlexibleListingItems(_directory_path, _filenames, 0).value_or(std::vector<VFSListingItem>{});
 }
+
+} // namespace AttrChangingTests
+
+#undef PREFIX

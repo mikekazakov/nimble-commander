@@ -1,0 +1,7 @@
+#include "Archive_IT.cpp"
+#include "AttrsChanging_IT.cpp"
+#include "Compression_IT.cpp"
+#include "Copying_IT.cpp"
+#include "Deletion_IT.cpp"
+#include "DirectoryCreations_IT.cpp"
+#include "Linkage_IT.cpp"

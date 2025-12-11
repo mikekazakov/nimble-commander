@@ -9,6 +9,8 @@
 #include <sys/xattr.h>
 #include <vector>
 
+namespace ArchiveTests {
+
 using namespace nc;
 using namespace nc::ops;
 using namespace std::literals;
@@ -136,3 +138,7 @@ static std::vector<std::byte> MakeNoise(size_t _size)
         b = static_cast<std::byte>(std::rand() % 256);
     return bytes;
 }
+
+} // namespace ArchiveTests
+
+#undef PREFIX

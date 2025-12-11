@@ -14,6 +14,8 @@
 #include <VFS/ArcLA.h>
 #include <VFS/Native.h>
 
+namespace CompressionTests {
+
 using namespace nc;
 using namespace nc::ops;
 using namespace nc::vfs;
@@ -435,3 +437,7 @@ static bool touch(const std::filesystem::path &_path)
 {
     return close(open(_path.c_str(), O_CREAT | O_RDWR, S_IRWXU)) == 0;
 }
+
+} // namespace CompressionTests
+
+#undef PREFIX

@@ -1,4 +1,4 @@
-// Copyright (C) 2021-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include "../source/Pool.h"
@@ -7,6 +7,8 @@
 #include <Base/mach_time.h>
 #include <chrono>
 #include <thread>
+
+namespace PoolTests {
 
 using namespace nc;
 using namespace nc::ops;
@@ -332,3 +334,7 @@ TEST_CASE(PREFIX "Does enqueueing as the callback says")
         CHECK(op2->State() == nc::ops::OperationState::Completed);
     }
 }
+
+} // namespace PoolTests
+
+#undef PREFIX

@@ -17,6 +17,8 @@
 #include <thread>
 #include <condition_variable>
 
+namespace CopyingTests {
+
 using nc::Error;
 using nc::ops::Copying;
 using nc::ops::CopyingOptions;
@@ -1423,7 +1425,7 @@ TEST_CASE(PREFIX "Copying a native file that is being written to")
 
     std::mutex m;
     std::condition_variable cv; // should be a std::latch instead, but isn't
-                                // available on macosx10.15 :-(
+    // available on macosx10.15 :-(
     std::atomic_bool started = false;
     std::atomic_bool stop = false;
     std::thread t([&] {
@@ -1514,3 +1516,7 @@ static std::expected<int, Error> VFSCompareEntries(const std::filesystem::path &
     }
     return 0;
 }
+
+} // namespace CopyingTests
+
+#undef PREFIX

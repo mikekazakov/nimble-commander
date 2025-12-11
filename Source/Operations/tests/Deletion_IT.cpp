@@ -9,6 +9,8 @@
 #include <sys/stat.h>
 #include <iostream>
 
+namespace DeletionTests {
+
 using namespace nc;
 using namespace nc::ops;
 using namespace nc::vfs;
@@ -331,3 +333,7 @@ FetchItems(const std::string &_directory_path, const std::vector<std::string> &_
 {
     return _host.FetchFlexibleListingItems(_directory_path, _filenames, 0).value_or(std::vector<VFSListingItem>{});
 }
+
+} // namespace DeletionTests
+
+#undef PREFIX

@@ -9,6 +9,8 @@
 #include <sys/stat.h>
 #include <iostream>
 
+namespace DirectoryCreationTests {
+
 using namespace nc::ops;
 using namespace nc::vfs;
 
@@ -134,3 +136,7 @@ TEST_CASE(PREFIX "On local FTP server")
     REQUIRE(host->Stat("/Public/!FilesTesting/AnotherDir/AndSecondOne", 0));
     REQUIRE(easy::VFSEasyDelete("/Public/!FilesTesting/AnotherDir", host));
 }
+
+} // namespace DirectoryCreationTests
+
+#undef PREFIX

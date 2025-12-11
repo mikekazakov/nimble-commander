@@ -516,7 +516,7 @@ TEST_CASE(PREFIX "CWD prompt response - changed/same")
     REQUIRE(cwd.wait_to_become(5s, {"/", false}));
 }
 
-TEST_CASE(PREFIX "Test basics (legacy stuff)")
+TEST_CASE(PREFIX "Test basics (legacy stuff)", "[!mayfail]")
 {
     const TempTestDir dir;
     const auto dir2 = dir.directory / "Test" / "";

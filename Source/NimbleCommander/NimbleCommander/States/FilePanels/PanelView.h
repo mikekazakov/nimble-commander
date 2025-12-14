@@ -15,7 +15,9 @@
 @class PanelView;
 @class NCPanelViewHeader;
 @class NCPanelViewFooter;
+@class NCPanelBriefView;
 @class NCPanelGalleryView;
+@class NCPanelListView;
 
 namespace nc::vfs {
 class NativeHost;
@@ -33,8 +35,8 @@ class Model;
 } // namespace data
 
 struct PresentationFactory {
-    // TODO: create_brief_view
-    // TODO: create_list_view
+    std::function<NCPanelBriefView *(NSRect, nc::vfsicon::IconRepository &)> create_brief_view;
+    std::function<NCPanelListView *(NSRect, nc::vfsicon::IconRepository &)> create_list_view;
     std::function<NCPanelGalleryView *(NSRect, nc::vfsicon::IconRepository &)> create_gallery_view;
 };
 

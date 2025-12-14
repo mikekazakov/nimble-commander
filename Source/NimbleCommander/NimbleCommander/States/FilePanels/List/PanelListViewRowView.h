@@ -5,7 +5,7 @@
 #include <VFS/VFS.h>
 #include <Panel/PanelDataItemVolatileData.h>
 
-@class PanelListView;
+@class NCPanelListView;
 @class PanelListViewNameView;
 @class PanelListViewSizeView;
 
@@ -15,7 +15,7 @@
 
 @property(nonatomic) VFSListingItem item; // may be empty!
 @property(nonatomic) nc::panel::data::ItemVolatileData vd;
-@property(nonatomic, weak) PanelListView *listView;
+@property(nonatomic, weak) NCPanelListView *listView;
 @property(nonatomic, readonly) NSColor *rowBackgroundColor;
 @property(nonatomic, readonly) NSColor *rowTextColor;
 @property(nonatomic, readonly) NSColor *rowSecondaryTextColor;

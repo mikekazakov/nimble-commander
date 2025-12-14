@@ -96,9 +96,9 @@ using namespace nc::panel;
         return nc::CurrentTheme().FilePanelsBriefFocusedInactiveItemBackgroundColor();
 }
 
-- (PanelBriefView *)briefView
+- (NCPanelBriefView *)briefView
 {
-    return static_cast<PanelBriefView *>(self.collectionView.delegate);
+    return static_cast<NCPanelBriefView *>(self.collectionView.delegate);
 }
 
 - (int)itemIndex

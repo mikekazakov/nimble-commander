@@ -7,7 +7,7 @@
 
 - (NSMenu *)menu
 {
-    if( auto v = nc::objc_cast<PanelListView>(self.tableView.enclosingScrollView.superview) )
+    if( auto v = nc::objc_cast<NCPanelListView>(self.tableView.enclosingScrollView.superview) )
         if( auto menu = v.columnsSelectionMenu ) {
             menu.allowsContextMenuPlugIns = false;
             menu.font = [NSFont menuFontOfSize:11];

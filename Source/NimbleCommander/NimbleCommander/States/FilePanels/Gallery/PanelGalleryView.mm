@@ -16,6 +16,7 @@
 #include <Utility/StringExtras.h>
 #include <Utility/FontExtras.h>
 #include <Utility/PathManip.h>
+#include <Utility/UTI.h>
 #include <ankerl/unordered_dense.h>
 #include <Quartz/Quartz.h>
 
@@ -26,8 +27,9 @@ using namespace nc::panel::gallery;
 static constexpr auto g_HazardousExtensionsList = "filePanel.presentation.quickLookHazardousExtensionsList";
 static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrolling";
 
-@implementation PanelGalleryView {
+@implementation NCPanelGalleryView {
     data::Model *m_Data;
+    const nc::utility::UTIDB *m_UTIDB;
     PanelGalleryViewLayout m_Layout;
     ItemLayout m_ItemLayout;
 
@@ -37,6 +39,7 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     NSLayoutConstraint *m_ScrollViewHeightConstraint;
     QLPreviewView *m_QLView;
     NSImageView *m_FallbackImageView;
+    std::filesystem::path m_FallbackImagePath;
 
     __weak PanelView *m_PanelView;
 
@@ -50,7 +53,9 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     nc::ThemesManager::ObservationTicket m_ThemeObservation;
 }
 
-- (instancetype)initWithFrame:(NSRect)_frame andIR:(nc::vfsicon::IconRepository &)_ir
+- (instancetype)initWithFrame:(NSRect)_frame
+               iconRepository:(nc::vfsicon::IconRepository &)_ir
+                        UTIDB:(const nc::utility::UTIDB &)_UTIDB
 {
     self = [super initWithFrame:_frame];
     if( !self )
@@ -58,6 +63,7 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 
     m_Data = nullptr;
     m_IconRepository = &_ir;
+    m_UTIDB = &_UTIDB;
     m_CurrentPreviewIsHazardous = false;
 
     [self rebuildItemLayout];
@@ -121,7 +127,7 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_ScrollViewHeightConstraint.priority = 400; // TODO: why 400?
     [self addConstraint:m_ScrollViewHeightConstraint];
 
-    __weak PanelGalleryView *weak_self = self;
+    __weak NCPanelGalleryView *weak_self = self;
     m_IconRepository->SetUpdateCallback([=](vfsicon::IconRepository::SlotKey _icon_no, NSImage *_icon) {
         if( auto strong_self = weak_self )
             [strong_self onIconUpdated:_icon_no image:_icon];
@@ -184,15 +190,21 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
         return -1;
 }
 
-static bool IsQLSupportedSync(NSURL *_url)
+- (bool)couldBeSupportedByQuickLook:(const VFSListingItem &)_item
 {
-    // TODO: never call this in the main thread
-    const CGImageRef image = QLThumbnailImageCreate(nullptr, (__bridge CFURLRef)(_url), CGSizeMake(64, 64), nullptr);
-    if( image ) {
-        CGImageRelease(image);
-        return true;
+    if( !_item.HasExtension() ) {
+        // No extensions -> no UTI mapping -> no QL generator / preview appex / thumbnail appex can support it
+        return false;
     }
-    return false;
+
+    const std::string_view extension = _item.Extension();
+    if( extension == "app" ) {
+        return false; // QL cannot preview .app bundles, leave it to NSWorkspace
+    }
+
+    // Anything permanently registered in the system can be theoretically supported by QL
+    const std::string uti = m_UTIDB->UTIForExtension(extension);
+    return m_UTIDB->IsDeclaredUTI(uti);
 }
 
 - (void)setCursorPosition:(int)_cursor_position
@@ -217,13 +229,16 @@ static bool IsQLSupportedSync(NSURL *_url)
         [m_CollectionView ensureItemIsVisible:_cursor_position];
     }
 
-    if( auto vfs_item = m_Data->EntryAtSortPosition(_cursor_position) ) {
+    // For now only supporting native vfs
+    if( auto vfs_item = m_Data->EntryAtSortPosition(_cursor_position); vfs_item.Host()->IsNativeFS() ) {
         const std::string path = vfs_item.Path();
         if( NSString *ns_path = [NSString stringWithUTF8StdString:path] ) {
             if( NSURL *url = [NSURL fileURLWithPath:ns_path] ) {
-                if( IsQLSupportedSync(url) ) {
+                //                if( IsQLSupportedSync(url) ) {
+                if( [self couldBeSupportedByQuickLook:vfs_item] ) {
                     m_QLView.hidden = false;
                     m_FallbackImageView.hidden = true;
+                    m_FallbackImagePath = "";
                     if( m_CurrentPreviewIsHazardous ) {
                         m_QLView.previewItem =
                             nil; // to prevent an ObjC exception from inside QL - reset the view first
@@ -237,7 +252,11 @@ static bool IsQLSupportedSync(NSURL *_url)
                     m_FallbackImageView.hidden = false;
 
                     // TODO: never call this in the main thread
-                    m_FallbackImageView.image = [[NSWorkspace sharedWorkspace] iconForFile:ns_path];
+                    if( m_FallbackImagePath != path ) {
+                        // fmt::println("Gallery fallback image for path: {}", path);
+                        m_FallbackImageView.image = [[NSWorkspace sharedWorkspace] iconForFile:ns_path];
+                        m_FallbackImagePath = path;
+                    }
                 }
                 m_CurrentPreviewIsHazardous = [self isHazardousPath:path];
             }

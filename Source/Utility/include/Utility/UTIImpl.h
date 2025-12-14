@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "UTI.h"
@@ -30,6 +30,10 @@ private:
         UnorderedStringHashEqual>
         m_ConformsTo;
     mutable std::mutex m_ConformsToLock;
+
+    mutable ankerl::unordered_dense::map<std::string, bool, UnorderedStringHashEqual, UnorderedStringHashEqual>
+        m_DeclaredUTIs;
+    mutable std::mutex m_DeclaredLock;
 };
 
 } // namespace nc::utility

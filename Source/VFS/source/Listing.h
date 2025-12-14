@@ -85,8 +85,15 @@ public:
     mode_t UnixMode(unsigned _ind) const;
     uint8_t UnixType(unsigned _ind) const;
 
+    // Returns true if the item has a well-specified extension.
     bool HasExtension(unsigned _ind) const;
+
+    // Returns the offset in the filename string where the extension starts.
+    // In case the item has no extension, returns 0.
     uint16_t ExtensionOffset(unsigned _ind) const;
+
+    // Returns the C-string pointer to the extension within the filename.
+    // In case the item has no extension, returns a pointer to the beginning of the filename.
     const char *Extension(unsigned _ind) const;
 
     std::string FilenameWithoutExt(unsigned _ind) const;

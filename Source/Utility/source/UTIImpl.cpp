@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/UTIImpl.h>
 #include <CoreServices/CoreServices.h>
 #include <Base/CFPtr.h>
@@ -29,8 +29,19 @@ std::string UTIDBImpl::UTIForExtension(std::string_view _extension) const
 
 bool UTIDBImpl::IsDeclaredUTI(std::string_view _uti) const
 {
+    if( IsDynamicUTI(_uti) ) {
+        return false; // dynamic UTIs are never declared
+    }
+
+    const std::lock_guard lock{m_DeclaredLock};
+    if( const auto it = m_DeclaredUTIs.find(_uti); it != m_DeclaredUTIs.end() ) {
+        return it->second;
+    }
+
     if( const auto ext = CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StringNoCopy(_uti)) ) {
-        return UTTypeIsDeclared(ext.get());
+        const bool declared = UTTypeIsDeclared(ext.get());
+        m_DeclaredUTIs.emplace(_uti, declared);
+        return declared;
     }
     return false;
 }

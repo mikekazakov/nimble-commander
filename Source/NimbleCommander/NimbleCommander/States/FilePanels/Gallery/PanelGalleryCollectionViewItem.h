@@ -6,7 +6,7 @@
 #include <Panel/PanelDataItemVolatileData.h>
 #include "Layout.h"
 
-@class PanelGalleryView;
+@class NCPanelGalleryView;
 @class NCPanelViewFieldEditor;
 
 @interface NCPanelGalleryCollectionViewItem : NSCollectionViewItem
@@ -25,7 +25,7 @@
 
 @property(nonatomic) NSImage *icon;
 
-@property(nonatomic, readonly) PanelGalleryView *galleryView;
+@property(nonatomic, readonly) NCPanelGalleryView *galleryView;
 
 - (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor;
 

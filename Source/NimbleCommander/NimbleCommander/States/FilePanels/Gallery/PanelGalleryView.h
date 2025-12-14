@@ -5,14 +5,20 @@
 #include "Layout.h"
 #include <VFSIcon/IconRepository.h>
 
+namespace nc::utility {
+class UTIDB;
+}
+
 @class PanelView;
 
-@interface PanelGalleryView
+@interface NCPanelGalleryView
     : NSView <NCPanelViewPresentationProtocol, NSCollectionViewDelegate, NSCollectionViewDataSource>
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithFrame:(NSRect)_frame NS_UNAVAILABLE;
-- (instancetype)initWithFrame:(NSRect)_frame andIR:(nc::vfsicon::IconRepository &)_ir;
+- (instancetype)initWithFrame:(NSRect)_frame
+               iconRepository:(nc::vfsicon::IconRepository &)_ir
+                        UTIDB:(const nc::utility::UTIDB &)_UTIDB;
 
 @property(nonatomic) nc::panel::PanelGalleryViewLayout galleryLayout;
 

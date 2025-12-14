@@ -162,9 +162,9 @@ using namespace nc::panel::gallery;
     return -1;
 }
 
-- (PanelGalleryView *)galleryView
+- (NCPanelGalleryView *)galleryView
 {
-    return static_cast<PanelGalleryView *>(self.collectionView.delegate);
+    return static_cast<NCPanelGalleryView *>(self.collectionView.delegate);
 }
 
 - (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor

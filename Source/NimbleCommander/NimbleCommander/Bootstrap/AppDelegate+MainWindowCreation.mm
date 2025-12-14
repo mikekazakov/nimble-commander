@@ -29,6 +29,7 @@
 #include <NimbleCommander/States/FilePanels/StateActions.h>
 #include <NimbleCommander/States/FilePanels/Views/QuickLookPanel.h>
 #include <NimbleCommander/States/FilePanels/Views/QuickLookVFSBridge.h>
+#include <NimbleCommander/States/FilePanels/Gallery/PanelGalleryView.h>
 #include <Operations/Pool.h>
 #include <Operations/PoolEnqueueFilter.h>
 #include <Operations/AggregateProgressTracker.h>
@@ -153,13 +154,19 @@ static std::vector<std::string> CommaSeparatedStrings(const nc::config::Config &
         [[NCPanelViewFooter alloc] initWithFrame:NSRect()
                                            theme:std::make_unique<nc::panel::FooterThemeImpl>(self.themesManager)];
 
+    nc::panel::PresentationFactory presentation_factory;
+    presentation_factory.create_gallery_view = [](NSRect _rc, nc::vfsicon::IconRepository &_icon_repo) {
+        return [[NCPanelGalleryView alloc] initWithFrame:_rc iconRepository:_icon_repo UTIDB:NCAppDelegate.me.utiDB];
+    };
+
     const auto pv_rect = NSMakeRect(0, 0, 100, 100);
     return [[PanelView alloc] initWithFrame:pv_rect
                              iconRepository:[self allocateIconRepository]
                     actionsShortcutsManager:self.actionsShortcutsManager
                                   nativeVFS:self.nativeHost
                                      header:header
-                                     footer:footer];
+                                     footer:footer
+                        presentationFactory:presentation_factory];
 }
 
 - (PanelController *)allocatePanelController

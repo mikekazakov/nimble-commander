@@ -14,9 +14,10 @@ QuickLookVFSBridge::QuickLookVFSBridge(nc::utility::TemporaryFileStorage &_stora
 {
 }
 
-NSURL *QuickLookVFSBridge::FetchItem(const std::string &_path, VFSHost &_host)
+NSURL *
+QuickLookVFSBridge::FetchItem(const std::string &_path, VFSHost &_host, const std::function<bool()> &_cancel_checker)
 {
-    const auto is_dir = _host.IsDirectory(_path, 0);
+    const bool is_dir = _host.IsDirectory(_path, 0);
 
     if( !is_dir ) {
         const std::expected<VFSStat, Error> st = _host.Stat(_path, 0);
@@ -25,11 +26,12 @@ NSURL *QuickLookVFSBridge::FetchItem(const std::string &_path, VFSHost &_host)
         if( st->size > m_MaxSize )
             return nil;
 
-        const auto copied_path = CopyFileToTempStorage(_path, _host, m_TempStorage);
+        const std::optional<std::filesystem::path> copied_path =
+            CopyFileToTempStorage(_path, _host, m_TempStorage, _cancel_checker);
         if( !copied_path )
             return nil;
 
-        const auto ns_copied_path = [NSString stringWithUTF8StdString:*copied_path];
+        NSString *const ns_copied_path = [NSString stringWithUTF8StdString:*copied_path];
         if( !ns_copied_path )
             return nil;
 
@@ -41,11 +43,12 @@ NSURL *QuickLookVFSBridge::FetchItem(const std::string &_path, VFSHost &_host)
             std::filesystem::path(_path).filename() == std::filesystem::path(_path).extension() )
             return nil;
 
-        const auto copied_path = CopyDirectoryToTempStorage(_path, _host, m_MaxSize, m_TempStorage);
+        const std::optional<std::filesystem::path> copied_path =
+            CopyDirectoryToTempStorage(_path, _host, m_MaxSize, m_TempStorage, _cancel_checker);
         if( !copied_path )
             return nil;
 
-        const auto ns_copied_path = [NSString stringWithUTF8StdString:*copied_path];
+        NSString *const ns_copied_path = [NSString stringWithUTF8StdString:*copied_path];
         if( !ns_copied_path )
             return nil;
 

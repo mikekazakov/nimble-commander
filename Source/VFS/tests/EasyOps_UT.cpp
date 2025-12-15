@@ -55,9 +55,9 @@ TEST_CASE(PREFIX "CopyDirectoryToTempStorage works")
     REQUIRE(copied_path != std::nullopt);
     CHECK(std::filesystem::path(*copied_path).parent_path().filename() == "A");
     CHECK(VFSEasyCompareFiles(
-              (test_dir.directory / "A/B/aaa.txt").c_str(), host, (*copied_path + "B/aaa.txt").c_str(), host) == 0);
+              (test_dir.directory / "A/B/aaa.txt").c_str(), host, (*copied_path / "B/aaa.txt").c_str(), host) == 0);
     CHECK(VFSEasyCompareFiles(
-              (test_dir.directory / "A/C/bbb.txt").c_str(), host, (*copied_path + "C/bbb.txt").c_str(), host) == 0);
+              (test_dir.directory / "A/C/bbb.txt").c_str(), host, (*copied_path / "C/bbb.txt").c_str(), host) == 0);
 }
 
 static bool Save(const std::string &_filepath, const std::string &_content)

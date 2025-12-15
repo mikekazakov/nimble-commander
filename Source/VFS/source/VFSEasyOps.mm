@@ -340,10 +340,10 @@ std::expected<int, nc::Error> VFSCompareNodes(const std::filesystem::path &_file
     return 0;
 }
 
-std::optional<std::string> CopyFileToTempStorage(const std::string &_vfs_filepath,
-                                                 VFSHost &_host,
-                                                 nc::utility::TemporaryFileStorage &_temp_storage,
-                                                 const std::function<bool()> &_cancel_checker)
+std::optional<std::filesystem::path> CopyFileToTempStorage(const std::string &_vfs_filepath,
+                                                           VFSHost &_host,
+                                                           nc::utility::TemporaryFileStorage &_temp_storage,
+                                                           const std::function<bool()> &_cancel_checker)
 {
     const std::expected<VFSFilePtr, nc::Error> evfs_file = _host.CreateFile(_vfs_filepath, _cancel_checker);
     if( !evfs_file )
@@ -366,6 +366,8 @@ std::optional<std::string> CopyFileToTempStorage(const std::string &_vfs_filepat
     std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
 
     while( true ) {
+        if( _cancel_checker && _cancel_checker() )
+            return std::nullopt;
         const std::expected<size_t, Error> res_read = vfs_file.Read(buf.get(), bufsz);
         if( !res_read )
             return std::nullopt;
@@ -543,11 +545,11 @@ static bool ExtractEntry(const TraversedFSEntry &_entry,
     return true;
 }
 
-std::optional<std::string> CopyDirectoryToTempStorage(const std::string &_vfs_dirpath,
-                                                      VFSHost &_host,
-                                                      uint64_t _max_total_size,
-                                                      nc::utility::TemporaryFileStorage &_temp_storage,
-                                                      const std::function<bool()> &_cancel_checker)
+std::optional<std::filesystem::path> CopyDirectoryToTempStorage(const std::string &_vfs_dirpath,
+                                                                VFSHost &_host,
+                                                                uint64_t _max_total_size,
+                                                                nc::utility::TemporaryFileStorage &_temp_storage,
+                                                                const std::function<bool()> &_cancel_checker)
 {
     const auto traversed = Traverse(_vfs_dirpath, _host, _cancel_checker);
     if( traversed == std::nullopt )
@@ -559,7 +561,7 @@ std::optional<std::string> CopyDirectoryToTempStorage(const std::string &_vfs_di
 
     assert(traversed->empty() == false);
 
-    auto tmp_dir = _temp_storage.MakeDirectory(traversed->front().rel_path);
+    const std::optional<std::string> tmp_dir = _temp_storage.MakeDirectory(traversed->front().rel_path);
     if( tmp_dir == std::nullopt )
         return {};
 

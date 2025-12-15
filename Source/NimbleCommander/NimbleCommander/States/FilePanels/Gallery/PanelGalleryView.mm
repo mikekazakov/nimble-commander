@@ -1,5 +1,6 @@
 // Copyright (C) 2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelGalleryView.h"
+#include "PanelGalleryCentralView.h"
 #include "PanelGalleryCollectionView.h"
 #include "PanelGalleryCollectionViewItem.h"
 #include "../Helpers/IconRepositoryCleaner.h"
@@ -16,6 +17,7 @@
 #include <Utility/StringExtras.h>
 #include <Utility/FontExtras.h>
 #include <Utility/PathManip.h>
+#include <Utility/UTI.h>
 #include <ankerl/unordered_dense.h>
 #include <Quartz/Quartz.h>
 
@@ -26,7 +28,7 @@ using namespace nc::panel::gallery;
 static constexpr auto g_HazardousExtensionsList = "filePanel.presentation.quickLookHazardousExtensionsList";
 static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrolling";
 
-@implementation PanelGalleryView {
+@implementation NCPanelGalleryView {
     data::Model *m_Data;
     PanelGalleryViewLayout m_Layout;
     ItemLayout m_ItemLayout;
@@ -35,22 +37,20 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     NCPanelGalleryViewCollectionView *m_CollectionView;
     NSCollectionViewFlowLayout *m_CollectionViewLayout;
     NSLayoutConstraint *m_ScrollViewHeightConstraint;
-    QLPreviewView *m_QLView;
-    NSImageView *m_FallbackImageView;
+    NCPanelGalleryCentralView *m_CentralView;
 
     __weak PanelView *m_PanelView;
 
     ankerl::unordered_dense::map<vfsicon::IconRepository::SlotKey, int> m_IconSlotToItemIndexMapping;
     vfsicon::IconRepository *m_IconRepository;
 
-    // It's a workaround for the macOS bug reported in FB9809109/FB5352643.
-    bool m_CurrentPreviewIsHazardous;
-    std::optional<nc::utility::ExtensionsLowercaseList> m_HazardousExtsList; // empty means everything is hazardous
-
     nc::ThemesManager::ObservationTicket m_ThemeObservation;
 }
 
-- (instancetype)initWithFrame:(NSRect)_frame andIR:(nc::vfsicon::IconRepository &)_ir
+- (instancetype)initWithFrame:(NSRect)_frame
+               iconRepository:(nc::vfsicon::IconRepository &)_ir
+                        UTIDB:(const nc::utility::UTIDB &)_UTIDB
+                  QLVFSBridge:(nc::panel::QuickLookVFSBridge &)_ql_vfs_bridge
 {
     self = [super initWithFrame:_frame];
     if( !self )
@@ -58,7 +58,6 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 
     m_Data = nullptr;
     m_IconRepository = &_ir;
-    m_CurrentPreviewIsHazardous = false;
 
     [self rebuildItemLayout];
 
@@ -87,17 +86,13 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_CollectionScrollView.drawsBackground = true;
     [self addSubview:m_CollectionScrollView];
 
-    m_QLView = [[QLPreviewView alloc] initWithFrame:_frame style:QLPreviewViewStyleNormal];
-    m_QLView.translatesAutoresizingMaskIntoConstraints = false;
-    [self addSubview:m_QLView];
+    m_CentralView = [[NCPanelGalleryCentralView alloc] initWithFrame:_frame
+                                                               UTIDB:_UTIDB
+                                           QLHazardousExtensionsList:GlobalConfig().GetString(g_HazardousExtensionsList)
+                                                         QLVFSBridge:_ql_vfs_bridge];
+    [self addSubview:m_CentralView];
 
-    m_FallbackImageView = [[NSImageView alloc] initWithFrame:_frame];
-    m_FallbackImageView.translatesAutoresizingMaskIntoConstraints = false;
-    m_FallbackImageView.imageScaling = NSImageScaleProportionallyUpOrDown;
-    m_FallbackImageView.hidden = true;
-    [self addSubview:m_FallbackImageView];
-
-    const auto views_dict = NSDictionaryOfVariableBindings(m_CollectionScrollView, m_QLView, m_FallbackImageView);
+    const auto views_dict = NSDictionaryOfVariableBindings(m_CollectionScrollView, m_CentralView);
     const auto add_constraints = [&](NSString *_vis_fmt) {
         const auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_vis_fmt
                                                                          options:0
@@ -106,10 +101,8 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
         [self addConstraints:constraints];
     };
     add_constraints(@"|-(0)-[m_CollectionScrollView]-(0)-|");
-    add_constraints(@"|-(0)-[m_QLView]-(0)-|");
-    add_constraints(@"|-(0)-[m_FallbackImageView]-(0)-|");
-    add_constraints(@"V:|-(0)-[m_QLView]-(0)-[m_CollectionScrollView]");
-    add_constraints(@"V:|-(0)-[m_FallbackImageView]-(0)-[m_CollectionScrollView]");
+    add_constraints(@"|-(0)-[m_CentralView]-(0)-|");
+    add_constraints(@"V:|-(0)-[m_CentralView]-(0)-[m_CollectionScrollView]");
     add_constraints(@"V:[m_CollectionScrollView]-(0)-|");
     m_ScrollViewHeightConstraint = [NSLayoutConstraint constraintWithItem:m_CollectionScrollView
                                                                 attribute:NSLayoutAttributeHeight
@@ -121,15 +114,11 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_ScrollViewHeightConstraint.priority = 400; // TODO: why 400?
     [self addConstraint:m_ScrollViewHeightConstraint];
 
-    __weak PanelGalleryView *weak_self = self;
+    __weak NCPanelGalleryView *weak_self = self;
     m_IconRepository->SetUpdateCallback([=](vfsicon::IconRepository::SlotKey _icon_no, NSImage *_icon) {
         if( auto strong_self = weak_self )
             [strong_self onIconUpdated:_icon_no image:_icon];
     });
-
-    if( const std::string hazard_list = GlobalConfig().GetString(g_HazardousExtensionsList); hazard_list != "*" ) {
-        m_HazardousExtsList.emplace(hazard_list);
-    }
 
     m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
         nc::ThemesManager::Notifications::FilePanelsGallery | nc::ThemesManager::Notifications::FilePanelsGeneral,
@@ -145,6 +134,7 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 
 - (void)viewDidMoveToSuperview
 {
+    [super viewDidMoveToSuperview];
     if( PanelView *panel_view = nc::objc_cast<PanelView>(self.superview) ) {
         m_PanelView = panel_view;
         [panel_view addObserver:self forKeyPath:@"active" options:0 context:nullptr];
@@ -184,29 +174,20 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
         return -1;
 }
 
-static bool IsQLSupportedSync(NSURL *_url)
-{
-    // TODO: never call this in the main thread
-    const CGImageRef image = QLThumbnailImageCreate(nullptr, (__bridge CFURLRef)(_url), CGSizeMake(64, 64), nullptr);
-    if( image ) {
-        CGImageRelease(image);
-        return true;
-    }
-    return false;
-}
-
 - (void)setCursorPosition:(int)_cursor_position
 {
+    Log::Trace("[PanelGalleryView setCursorPosition:{}]", _cursor_position);
     assert(m_Data);
     if( self.cursorPosition == _cursor_position )
         return;
 
-    const auto entries_count = [m_CollectionView numberOfItemsInSection:0];
+    const long entries_count = [m_CollectionView numberOfItemsInSection:0];
 
     if( _cursor_position >= 0 && _cursor_position >= entries_count ) {
         return; // currently data<->cursor invariant is temporary broken => skipping this request
     }
 
+    // Update selection in the collection view, which serves as cursor representation
     if( _cursor_position < 0 ) {
         m_CollectionView.selectionIndexPaths = [NSSet set];
     }
@@ -217,31 +198,9 @@ static bool IsQLSupportedSync(NSURL *_url)
         [m_CollectionView ensureItemIsVisible:_cursor_position];
     }
 
-    if( auto vfs_item = m_Data->EntryAtSortPosition(_cursor_position) ) {
-        const std::string path = vfs_item.Path();
-        if( NSString *ns_path = [NSString stringWithUTF8StdString:path] ) {
-            if( NSURL *url = [NSURL fileURLWithPath:ns_path] ) {
-                if( IsQLSupportedSync(url) ) {
-                    m_QLView.hidden = false;
-                    m_FallbackImageView.hidden = true;
-                    if( m_CurrentPreviewIsHazardous ) {
-                        m_QLView.previewItem =
-                            nil; // to prevent an ObjC exception from inside QL - reset the view first
-                    }
-                    m_QLView.previewItem = url;
-                }
-                else {
-                    m_QLView.hidden = true;
-                    m_QLView.previewItem =
-                        nil; // NB! Without resetting the preview to nil, it somehow manages to completely freeze NC
-                    m_FallbackImageView.hidden = false;
-
-                    // TODO: never call this in the main thread
-                    m_FallbackImageView.image = [[NSWorkspace sharedWorkspace] iconForFile:ns_path];
-                }
-                m_CurrentPreviewIsHazardous = [self isHazardousPath:path];
-            }
-        }
+    // Update the central view with the new vfs item
+    if( const VFSListingItem vfs_item = m_Data->EntryAtSortPosition(_cursor_position) ) {
+        [m_CentralView showVFSItem:vfs_item];
     }
 }
 
@@ -271,6 +230,7 @@ static bool IsQLSupportedSync(NSURL *_url)
 
 - (void)setData:(data::Model *)_data
 {
+    Log::Trace("[PanelGalleryView setData:{}]", static_cast<void *>(_data));
     m_Data = _data;
 }
 
@@ -288,6 +248,9 @@ static bool IsQLSupportedSync(NSURL *_url)
 
 - (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor forItemAtIndex:(int)_sorted_item_index
 {
+    Log::Trace("[PanelGalleryView setupFieldEditor:{} forItemAtIndex:{}]",
+               nc::objc_bridge_cast<void>(_editor),
+               _sorted_item_index);
     NSIndexPath *const index = [NSIndexPath indexPathForItem:_sorted_item_index inSection:0];
     if( auto i = nc::objc_cast<NCPanelGalleryCollectionViewItem>([m_CollectionView itemAtIndexPath:index]) )
         [i setupFieldEditor:_editor];
@@ -364,13 +327,6 @@ static bool IsQLSupportedSync(NSURL *_url)
     }
 }
 
-- (bool)isHazardousPath:(std::string_view)_path
-{
-    if( m_HazardousExtsList == std::nullopt )
-        return true;
-    return m_HazardousExtsList->contains(nc::utility::PathManip::Extension(_path));
-}
-
 - (void)rebuildItemLayout
 {
     const int logical_icon_size = 32;
@@ -392,6 +348,7 @@ static bool IsQLSupportedSync(NSURL *_url)
 
 - (void)themeDidChange
 {
+    Log::Trace("[PanelGalleryView themeDidChange]");
     const int cursor_position = self.cursorPosition;
     [self rebuildItemLayout];
     [m_CollectionView reloadData];
@@ -402,6 +359,7 @@ static bool IsQLSupportedSync(NSURL *_url)
 
 - (void)viewDidMoveToWindow
 {
+    Log::Trace("[PanelGalleryView viewDidMoveToWindow]");
     [super viewDidMoveToWindow];
     [self rebuildItemLayout]; // we call this here due to a possible DPI change
 }

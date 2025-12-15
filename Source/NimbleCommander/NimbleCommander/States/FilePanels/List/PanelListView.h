@@ -15,10 +15,10 @@ class Model;
 
 @class PanelView;
 
-@interface PanelListView
+@interface NCPanelListView
     : NSView <NCPanelViewPresentationProtocol, NSTableViewDataSource, NSTableViewDelegate, NSMenuItemValidation>
 
-- (id)initWithFrame:(NSRect)frameRect andIR:(nc::vfsicon::IconRepository &)_ir;
+- (id)initWithFrame:(NSRect)frameRect iconRepository:(nc::vfsicon::IconRepository &)_ir;
 
 @property(nonatomic, readonly) int itemsInColumn;
 @property(nonatomic) int cursorPosition;

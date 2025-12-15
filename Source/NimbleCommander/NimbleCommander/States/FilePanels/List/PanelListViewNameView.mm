@@ -208,7 +208,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     return static_cast<PanelListViewRowView *>(self.superview);
 }
 
-- (PanelListView *)listView
+- (NCPanelListView *)listView
 {
     return self.row.listView;
 }

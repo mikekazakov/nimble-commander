@@ -104,7 +104,7 @@ BuildItemsLayout(NSFont *_font, PanelBriefViewColumnsLayout _layout, NSUInteger 
     return lc;
 }
 
-@implementation PanelBriefView {
+@implementation NCPanelBriefView {
     NSScrollView *m_ScrollView;
     PanelBriefViewCollectionView *m_CollectionView;
     NSCollectionViewLayout<NCPanelBriefViewLayoutProtocol> *m_Layout;
@@ -128,7 +128,7 @@ BuildItemsLayout(NSFont *_font, PanelBriefViewColumnsLayout _layout, NSUInteger 
     [self onDataChanged];
 }
 
-- (id)initWithFrame:(NSRect)frameRect andIR:(IconRepository &)_ir
+- (id)initWithFrame:(NSRect)frameRect iconRepository:(IconRepository &)_ir
 {
     self = [super initWithFrame:frameRect];
     if( !self )
@@ -169,7 +169,7 @@ BuildItemsLayout(NSFont *_font, PanelBriefViewColumnsLayout _layout, NSUInteger 
 
     m_ScrollView.documentView = m_CollectionView;
 
-    __weak PanelBriefView *weak_self = self;
+    __weak NCPanelBriefView *weak_self = self;
     m_IconsRepository->SetUpdateCallback([=](IconRepository::SlotKey _icon_no, NSImage *_icon) {
         if( auto strong_self = weak_self )
             [strong_self onIconUpdated:_icon_no image:_icon];

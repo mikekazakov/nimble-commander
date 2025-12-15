@@ -56,6 +56,7 @@ struct StateStorage {
     NCPanelViewFieldEditor *m_RenamingEditor;
 
     __weak id<PanelViewDelegate> m_Delegate;
+    nc::panel::PresentationFactory m_PresentationFactory;
     NSView<NCPanelViewPresentationProtocol> *m_ItemsView;
     NCPanelViewHeader *m_HeaderView;
     NCPanelViewFooter *m_FooterView;
@@ -78,6 +79,7 @@ struct StateStorage {
                   nativeVFS:(nc::vfs::NativeHost &)_native_vfs
                      header:(NCPanelViewHeader *)_header
                      footer:(NCPanelViewFooter *)_footer
+        presentationFactory:(const PresentationFactory &)_factory
 {
     self = [super initWithFrame:frame];
     if( self ) {
@@ -87,6 +89,7 @@ struct StateStorage {
         m_IconRepository = std::move(_icon_repository);
         m_NativeHost = _native_vfs.SharedPtr();
         m_ActionsShortcutsManager = &_actions_shortcuts_manager;
+        m_PresentationFactory = _factory;
 
         m_ItemsView = [[NCPanelViewDummyPresentation alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         [self addSubview:m_ItemsView];
@@ -175,30 +178,30 @@ struct StateStorage {
     [super setNextResponder:newNextResponder];
 }
 
-- (PanelListView *)spawnListView
+- (NCPanelListView *)spawnListView
 {
-    PanelListView *v = [[PanelListView alloc] initWithFrame:self.bounds andIR:*m_IconRepository];
-    v.translatesAutoresizingMaskIntoConstraints = false;
+    NCPanelListView *const view = m_PresentationFactory.create_list_view(self.bounds, *m_IconRepository);
+    view.translatesAutoresizingMaskIntoConstraints = false;
     __weak PanelView *weak_self = self;
-    v.sortModeChangeCallback = [=](data::SortMode _sm) {
+    view.sortModeChangeCallback = [=](data::SortMode _sm) {
         if( PanelView *const strong_self = weak_self )
             [strong_self.controller changeSortingModeTo:_sm];
     };
-    return v;
+    return view;
 }
 
-- (PanelBriefView *)spawnBriefView
+- (NCPanelBriefView *)spawnBriefView
 {
-    auto v = [[PanelBriefView alloc] initWithFrame:self.bounds andIR:*m_IconRepository];
-    v.translatesAutoresizingMaskIntoConstraints = false;
-    return v;
+    NCPanelBriefView *const view = m_PresentationFactory.create_brief_view(self.bounds, *m_IconRepository);
+    view.translatesAutoresizingMaskIntoConstraints = false;
+    return view;
 }
 
-- (PanelGalleryView *)spawnGalleryView
+- (NCPanelGalleryView *)spawnGalleryView
 {
-    auto v = [[PanelGalleryView alloc] initWithFrame:self.bounds andIR:*m_IconRepository];
-    v.translatesAutoresizingMaskIntoConstraints = false;
-    return v;
+    NCPanelGalleryView *const view = m_PresentationFactory.create_gallery_view(self.bounds, *m_IconRepository);
+    view.translatesAutoresizingMaskIntoConstraints = false;
+    return view;
 }
 
 - (BOOL)isOpaque
@@ -734,7 +737,7 @@ struct StateStorage {
 
 - (void)setupBriefPresentationWithLayout:(PanelBriefViewColumnsLayout)_layout
 {
-    PanelBriefView *view = nc::objc_cast<PanelBriefView>(m_ItemsView);
+    NCPanelBriefView *view = nc::objc_cast<NCPanelBriefView>(m_ItemsView);
     if( view == nil ) {
         view = [self spawnBriefView];
 
@@ -767,7 +770,7 @@ struct StateStorage {
 
 - (void)setupListPresentationWithLayout:(PanelListViewColumnsLayout)_layout
 {
-    PanelListView *view = nc::objc_cast<PanelListView>(m_ItemsView);
+    NCPanelListView *view = nc::objc_cast<NCPanelListView>(m_ItemsView);
 
     if( view == nil ) {
         view = [self spawnListView];
@@ -801,7 +804,7 @@ struct StateStorage {
 
 - (void)setupGalleryPresentationWithLayout:(PanelGalleryViewLayout)_layout
 {
-    PanelGalleryView *view = nc::objc_cast<PanelGalleryView>(m_ItemsView);
+    NCPanelGalleryView *view = nc::objc_cast<NCPanelGalleryView>(m_ItemsView);
     if( view == nil ) {
         view = [self spawnGalleryView];
 
@@ -834,11 +837,11 @@ struct StateStorage {
 
 - (std::any)presentationLayout
 {
-    if( auto v = nc::objc_cast<PanelBriefView>(m_ItemsView) )
+    if( auto v = nc::objc_cast<NCPanelBriefView>(m_ItemsView) )
         return std::any{[v columnsLayout]};
-    if( auto v = nc::objc_cast<PanelListView>(m_ItemsView) )
+    if( auto v = nc::objc_cast<NCPanelListView>(m_ItemsView) )
         return std::any{[v columnsLayout]};
-    if( auto v = nc::objc_cast<PanelGalleryView>(m_ItemsView) )
+    if( auto v = nc::objc_cast<NCPanelGalleryView>(m_ItemsView) )
         return std::any{[v galleryLayout]};
     return std::any{PanelViewDisabledLayout{}};
 }

@@ -237,6 +237,8 @@
 		CF5DE0A325840E9200604DEE /* libNimbleCommanderCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */; };
 		CF5DE0C22584157B00604DEE /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5DE0C12584157B00604DEE /* Tests.cpp */; };
 		CF5DE0DA2584186600604DEE /* libNimbleCommanderCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */; };
+		CF669D662EF01757001B7FA5 /* PanelGalleryCentralView.h in Headers */ = {isa = PBXBuildFile; fileRef = CF669D642EF01757001B7FA5 /* PanelGalleryCentralView.h */; };
+		CF669D672EF01757001B7FA5 /* PanelGalleryCentralView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF669D652EF01757001B7FA5 /* PanelGalleryCentralView.mm */; };
 		CF67F1B52952034200B92944 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF67F19A2952034200B92944 /* Icon.icns */; };
 		CF67F1B62952034200B92944 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF67F19A2952034200B92944 /* Icon.icns */; };
 		CF67F1B72952034200B92944 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF67F19A2952034200B92944 /* Icon.icns */; };
@@ -1058,6 +1060,8 @@
 		CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ThemesManager.mm; path = NimbleCommander/Core/Theming/ThemesManager.mm; sourceTree = SOURCE_ROOT; };
 		CF5FE80C1E16461600CD83B4 /* PanelListViewTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewTableHeaderView.h; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderView.h; sourceTree = SOURCE_ROOT; };
 		CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewTableHeaderView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderView.mm; sourceTree = SOURCE_ROOT; };
+		CF669D642EF01757001B7FA5 /* PanelGalleryCentralView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelGalleryCentralView.h; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryCentralView.h; sourceTree = "<group>"; };
+		CF669D652EF01757001B7FA5 /* PanelGalleryCentralView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelGalleryCentralView.mm; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryCentralView.mm; sourceTree = "<group>"; };
 		CF67F19A2952034200B92944 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Icon.icns; path = NimbleCommander/Resources/Icon.icns; sourceTree = "<group>"; };
 		CF67F1BE2954689000B92944 /* Theme_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Theme_UT.mm; path = NimbleCommander/Tests/Theme_UT.mm; sourceTree = "<group>"; };
 		CF67F1C42954BF9400B92944 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowThemesTabAutomaticSwitchingSheet.xib; sourceTree = "<group>"; };
@@ -1655,6 +1659,8 @@
 			children = (
 				CF3FC99C2D99502900878079 /* Layout.h */,
 				CF3FC99D2D99502900878079 /* Layout.cpp */,
+				CF669D642EF01757001B7FA5 /* PanelGalleryCentralView.h */,
+				CF669D652EF01757001B7FA5 /* PanelGalleryCentralView.mm */,
 				CFF836B72DCFE98B00CED300 /* PanelGalleryCollectionView.h */,
 				CFF836B82DCFE98B00CED300 /* PanelGalleryCollectionView.mm */,
 				CFF835F62DC9504A00CED300 /* PanelGalleryCollectionViewItem.h */,
@@ -2290,6 +2296,7 @@
 				CFCBA8BB2CC3B1B4009ABD2C /* ShowContextMenu.h in Headers */,
 				CFCF44012BA2418100B513C7 /* ConfigBinder.h in Headers */,
 				CFF835F82DC9504A00CED300 /* PanelGalleryCollectionViewItem.h in Headers */,
+				CF669D662EF01757001B7FA5 /* PanelGalleryCentralView.h in Headers */,
 				CFEADD49259CF60D009ECA14 /* ChangePanelsPosition.h in Headers */,
 				CFEADD54259D01AD009ECA14 /* FocusOverlappedTerminal.h in Headers */,
 				CFAB6CE32587C38800397DB5 /* FollowSymlink.h in Headers */,
@@ -3085,6 +3092,7 @@
 				CF764D002587671A00D7ED17 /* FilesDraggingSource.mm in Sources */,
 				CF0A481D2BDDA02C00833160 /* PanelController.mm in Sources */,
 				CF0A48442BDDA27500833160 /* OpenWithExternalEditor.mm in Sources */,
+				CF669D672EF01757001B7FA5 /* PanelGalleryCentralView.mm in Sources */,
 				CF0A48702BDDA41A00833160 /* PanelViewFooterThemeImpl.mm in Sources */,
 				CF0A48272BDDA06400833160 /* StateActions.mm in Sources */,
 				CF0A48392BDDA19100833160 /* ExecuteInTerminal.mm in Sources */,

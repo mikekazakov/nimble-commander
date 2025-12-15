@@ -15,6 +15,9 @@
 @class PanelView;
 @class NCPanelViewHeader;
 @class NCPanelViewFooter;
+@class NCPanelBriefView;
+@class NCPanelGalleryView;
+@class NCPanelListView;
 
 namespace nc::vfs {
 class NativeHost;
@@ -30,6 +33,13 @@ namespace data {
 struct ItemVolatileData;
 class Model;
 } // namespace data
+
+struct PresentationFactory {
+    std::function<NCPanelBriefView *(NSRect, nc::vfsicon::IconRepository &)> create_brief_view;
+    std::function<NCPanelListView *(NSRect, nc::vfsicon::IconRepository &)> create_list_view;
+    std::function<NCPanelGalleryView *(NSRect, nc::vfsicon::IconRepository &)> create_gallery_view;
+};
+
 } // namespace nc::panel
 
 @interface PanelView : NSView <NSDraggingDestination>
@@ -55,7 +65,8 @@ class Model;
     actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager
                   nativeVFS:(nc::vfs::NativeHost &)_native_vfs // this dependency is weird
                      header:(NCPanelViewHeader *)_header
-                     footer:(NCPanelViewFooter *)_footer;
+                     footer:(NCPanelViewFooter *)_footer
+        presentationFactory:(const nc::panel::PresentationFactory &)_factory;
 
 /**
  * called by controlled when a directory has been entirely changed in PanelData.

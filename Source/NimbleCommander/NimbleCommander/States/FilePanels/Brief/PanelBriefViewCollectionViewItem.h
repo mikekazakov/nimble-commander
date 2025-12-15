@@ -4,7 +4,7 @@
 #include <VFS/VFS.h>
 #include <Panel/PanelDataItemVolatileData.h>
 
-@class PanelBriefView;
+@class NCPanelBriefView;
 @class NCPanelViewFieldEditor;
 
 @interface PanelBriefViewItem : NSCollectionViewItem
@@ -25,7 +25,7 @@
 - (void)setIcon:(NSImage *)_icon;
 @property(nonatomic) bool panelActive;
 
-- (PanelBriefView *)briefView;
+- (NCPanelBriefView *)briefView;
 
 - (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor;
 

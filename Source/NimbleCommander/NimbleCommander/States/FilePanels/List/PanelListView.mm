@@ -49,7 +49,7 @@ static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndica
 static PanelListViewColumns IdentifierToKind(char _letter) noexcept;
 static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
 
-@interface PanelListView ()
+@interface NCPanelListView ()
 
 @property(nonatomic) AdaptiveDateFormatting::Style dateCreatedFormattingStyle;
 @property(nonatomic) AdaptiveDateFormatting::Style dateAddedFormattingStyle;
@@ -58,7 +58,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
 
 @end
 
-@implementation PanelListView {
+@implementation NCPanelListView {
     NSScrollView *m_ScrollView;
     PanelListViewTableView *m_TableView;
     data::Model *m_Data;
@@ -92,7 +92,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
 @synthesize dateAccessedFormattingStyle = m_DateAccessedFormattingStyle;
 @synthesize sortModeChangeCallback = m_SortModeChangeCallback;
 
-- (id)initWithFrame:(NSRect)_frame andIR:(nc::vfsicon::IconRepository &)_ir
+- (id)initWithFrame:(NSRect)_frame iconRepository:(nc::vfsicon::IconRepository &)_ir
 {
     self = [super initWithFrame:_frame];
     if( self ) {
@@ -142,7 +142,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
 
         m_ScrollView.documentView = m_TableView;
 
-        __weak PanelListView *weak_self = self;
+        __weak NCPanelListView *weak_self = self;
         m_IconRepository->SetUpdateCallback([=](IconRepository::SlotKey _slot, NSImage *_icon) {
             if( auto strong_self = weak_self )
                 [strong_self onIconUpdated:_slot image:_icon];
@@ -1103,9 +1103,9 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 {
     // may be triggered from a background notification thread, so kick the handling to the main
     // thread
-    __weak PanelListView *weak_self = self;
+    __weak NCPanelListView *weak_self = self;
     dispatch_to_main_queue([weak_self] {
-        if( PanelListView *const strong_self = weak_self )
+        if( NCPanelListView *const strong_self = weak_self )
             [strong_self dateDidChangeImpl];
     });
 }

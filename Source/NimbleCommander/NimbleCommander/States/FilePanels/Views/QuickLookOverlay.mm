@@ -111,6 +111,7 @@ static const auto g_HazardousExtensionsList = "filePanel.presentation.quickLookH
 
     m_CurrentPath = _path;
     m_CurrentHost = _host;
+    ++m_CurrentTicket; // Discard any previous request
 
     if( _host->IsNativeFS() )
         [self doNativeNative:_path];
@@ -132,11 +133,12 @@ static const auto g_HazardousExtensionsList = "filePanel.presentation.quickLookH
 {
     const std::filesystem::path &path = _path;
     const VFSHostPtr &host = _host;
+    // Debounce expensive requests by delaying them slightly + relying on ticketing that discards previous requests.
     dispatch_after(g_Delay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [=] {
         if( _ticket != m_CurrentTicket || m_Closed )
             return;
 
-        const auto url = m_Bridge->FetchItem(path, *host);
+        NSURL *const url = m_Bridge->FetchItem(path, *host, [&] { return m_Closed || _ticket != m_CurrentTicket; });
 
         if( _ticket != m_CurrentTicket || m_Closed )
             return;

@@ -55,15 +55,15 @@ std::expected<int, Error> VFSCompareNodes(const std::filesystem::path &_file1_fu
                                           const std::filesystem::path &_file2_full_path,
                                           const VFSHostPtr &_file2_host);
 
-std::optional<std::string> CopyFileToTempStorage(const std::string &_vfs_filepath,
-                                                 VFSHost &_host,
-                                                 nc::utility::TemporaryFileStorage &_temp_storage,
-                                                 const std::function<bool()> &_cancel_checker = {});
+std::optional<std::filesystem::path> CopyFileToTempStorage(const std::string &_vfs_filepath,
+                                                           VFSHost &_host,
+                                                           nc::utility::TemporaryFileStorage &_temp_storage,
+                                                           const std::function<bool()> &_cancel_checker = {});
 
-std::optional<std::string> CopyDirectoryToTempStorage(const std::string &_vfs_dirpath,
-                                                      VFSHost &_host,
-                                                      uint64_t _max_total_size,
-                                                      nc::utility::TemporaryFileStorage &_temp_storage,
-                                                      const std::function<bool()> &_cancel_checker = {});
+std::optional<std::filesystem::path> CopyDirectoryToTempStorage(const std::string &_vfs_dirpath,
+                                                                VFSHost &_host,
+                                                                uint64_t _max_total_size,
+                                                                nc::utility::TemporaryFileStorage &_temp_storage,
+                                                                const std::function<bool()> &_cancel_checker = {});
 
 } // namespace nc::vfs::easy

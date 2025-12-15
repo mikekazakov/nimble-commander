@@ -1,5 +1,6 @@
 // Copyright (C) 2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelGalleryCentralView.h"
+#include <NimbleCommander/States/FilePanels/Views/QuickLookVFSBridge.h>
 #include <Utility/UTI.h>
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <Utility/StringExtras.h>
@@ -12,6 +13,7 @@ static const std::chrono::nanoseconds g_DebounceDelay = std::chrono::millisecond
 
 @implementation NCPanelGalleryCentralView {
     const nc::utility::UTIDB *m_UTIDB;
+    nc::panel::QuickLookVFSBridge *m_VFSBridge;
     QLPreviewView *m_QLView;
     NSImageView *m_FallbackImageView;
     std::atomic_ullong m_CurrentTicket;
@@ -27,12 +29,14 @@ static const std::chrono::nanoseconds g_DebounceDelay = std::chrono::millisecond
 - (instancetype)initWithFrame:(NSRect)_frame
                         UTIDB:(const nc::utility::UTIDB &)_UTIDB
     QLHazardousExtensionsList:(const std::string &)_ql_hazard_list
+                  QLVFSBridge:(nc::panel::QuickLookVFSBridge &)_ql_vfs_bridge
 {
     dispatch_assert_main_queue();
     self = [super initWithFrame:_frame];
     if( !self )
         return nil;
     m_UTIDB = &_UTIDB;
+    m_VFSBridge = &_ql_vfs_bridge;
     m_CurrentPreviewIsHazardous = false;
     m_CurrentTicket = 0;
 
@@ -87,14 +91,25 @@ static const std::chrono::nanoseconds g_DebounceDelay = std::chrono::millisecond
     m_CurrentHost = _item.Host();
     m_CurrentPath = _item.Path();
 
-    if( is_native_vfs && potentially_ql ) {
-        // Dispatch this request to QL right away, let it deal with it asynchronously
-        [self previewNativeQL:_item];
-        return;
+    if( is_native_vfs ) {
+        if( potentially_ql ) {
+            // Dispatch this request to QL right away, let it deal with it asynchronously
+            [self previewNativeQL:_item];
+        }
+        else {
+            // Icon preview via NSWorkspace, offload to background queue even for native FS
+            [self previewNativeIcon:_item ticket:m_CurrentTicket];
+        }
     }
-
-    if( is_native_vfs && !potentially_ql ) {
-        [self previewNativeIcon:_item ticket:m_CurrentTicket];
+    else {
+        if( potentially_ql ) {
+            // First fetch the item and them display via QL
+            [self previewVFSQL:_item ticket:m_CurrentTicket];
+        }
+        else {
+            // Icon preview via NSWorkspace, first fetch the item and then build an icon
+            [self previewVFSIcon:_item ticket:m_CurrentTicket];
+        }
     }
 }
 
@@ -112,6 +127,20 @@ static const std::chrono::nanoseconds g_DebounceDelay = std::chrono::millisecond
             m_CurrentPreviewIsHazardous = [self isHazardousPath:path];
         }
     }
+}
+
+- (void)commitVFSQL:(const VFSListingItem &)_item native:(NSURL *)_url ticket:(uint64_t)_ticket
+{
+    dispatch_assert_main_queue();
+    assert(_item);
+    if( _ticket != m_CurrentTicket )
+        return; // Expired request
+
+    [self ensureQLVisible];
+    if( m_CurrentPreviewIsHazardous )
+        m_QLView.previewItem = nil; // to prevent an ObjC exception from inside QL - reset the view first
+    m_QLView.previewItem = _url;
+    m_CurrentPreviewIsHazardous = [self isHazardousPath:_item.Path()];
 }
 
 - (void)previewNativeIcon:(const VFSListingItem &)_item ticket:(uint64_t)_ticket
@@ -138,6 +167,94 @@ static const std::chrono::nanoseconds g_DebounceDelay = std::chrono::millisecond
 
         if( NCPanelGalleryCentralView *const strong_self = weak_self;
             strong_self == nil || _ticket != strong_self->m_CurrentTicket )
+            return; // Expired request
+
+        // Force image rendering at ~ desired size, here at the background, instead of the main thread.
+        // This avoids (or at least reduces) stuttering when the image is finally assigned to the image view.
+        // The result of this operation is purposely discarded.
+        // TODO: how to handle pixel scaling here?
+        NSRect tmp_bounds = bounds;
+        [image CGImageForProposedRect:&tmp_bounds context:nil hints:nil];
+
+        dispatch_to_main_queue([weak_self, image, _ticket] {
+            if( NCPanelGalleryCentralView *const strong_self = weak_self ) {
+                [strong_self commitPreviewedIcon:image ticket:_ticket];
+            }
+        });
+    };
+
+    // Debounce expensive requests by delaying them slightly + relying on ticketing that discards previous requests.
+    dispatch_after(g_DebounceDelay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), worker);
+}
+
+- (void)previewVFSQL:(const VFSListingItem &)_item ticket:(uint64_t)_ticket
+{
+    dispatch_assert_main_queue();
+    assert(_item);
+
+    __weak NCPanelGalleryCentralView *const weak_self = self;
+
+    auto worker = [weak_self, _item, _ticket, bridge = m_VFSBridge] {
+        dispatch_assert_background_queue();
+        NCPanelGalleryCentralView *const strong_self = weak_self;
+        if( strong_self == nil || _ticket != strong_self->m_CurrentTicket )
+            return; // Expired request
+
+        const std::string path = _item.Path();
+
+        NSURL *const url =
+            bridge->FetchItem(path, *_item.Host(), [&] { return _ticket != strong_self->m_CurrentTicket; });
+
+        if( url == nil )
+            return; // Failed to fetch the item
+
+        dispatch_to_main_queue([weak_self, url, _item, _ticket] {
+            if( NCPanelGalleryCentralView *const strong_self = weak_self ) {
+                [strong_self commitVFSQL:_item native:url ticket:_ticket];
+            }
+        });
+    };
+
+    // Debounce expensive requests by delaying them slightly + relying on ticketing that discards previous requests.
+    dispatch_after(g_DebounceDelay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), worker);
+}
+
+- (void)previewVFSIcon:(const VFSListingItem &)_item ticket:(uint64_t)_ticket
+{
+    dispatch_assert_main_queue();
+    assert(_item);
+
+    __weak NCPanelGalleryCentralView *const weak_self = self;
+    const NSRect bounds = self.bounds;
+
+    if( _item.IsDir() && !_item.HasExtension() ) {
+        // QuickLookVFSBridge won't fetch it anyway, so just use the generic folder icon right away
+        [self commitPreviewedIcon:[NSImage imageNamed:NSImageNameFolder] ticket:_ticket];
+        return;
+    }
+
+    auto worker = [weak_self, _item, _ticket, bounds, bridge = m_VFSBridge] {
+        dispatch_assert_background_queue();
+        NCPanelGalleryCentralView *const strong_self = weak_self;
+        if( strong_self == nil || _ticket != strong_self->m_CurrentTicket )
+            return; // Expired request
+
+        const std::string path = _item.Path();
+        NSURL *const url =
+            bridge->FetchItem(path, *_item.Host(), [&] { return _ticket != strong_self->m_CurrentTicket; });
+
+        if( url == nil )
+            return; // Failed to fetch the item
+
+        if( _ticket != strong_self->m_CurrentTicket )
+            return; // Expired request
+
+        // Produce the icon. It can be a (very) lazy NSImage, which is completely opaque and system-dependent.
+        NSString *const ns_path = [[NSString alloc] initWithCString:url.fileSystemRepresentation
+                                                           encoding:NSUTF8StringEncoding];
+        NSImage *const image = [[NSWorkspace sharedWorkspace] iconForFile:ns_path];
+
+        if( _ticket != strong_self->m_CurrentTicket )
             return; // Expired request
 
         // Force image rendering at ~ desired size, here at the background, instead of the main thread.
@@ -204,6 +321,18 @@ static const std::chrono::nanoseconds g_DebounceDelay = std::chrono::millisecond
     if( m_HazardousExtsList == std::nullopt )
         return true;
     return m_HazardousExtsList->contains(nc::utility::PathManip::Extension(_path));
+}
+
+- (void)viewDidMoveToSuperview
+{
+    [super viewDidMoveToSuperview];
+    ++m_CurrentTicket; // Better safe than sorry
+}
+
+- (void)viewDidMoveToWindow
+{
+    [super viewDidMoveToWindow];
+    ++m_CurrentTicket; // Better safe than sorry
 }
 
 @end

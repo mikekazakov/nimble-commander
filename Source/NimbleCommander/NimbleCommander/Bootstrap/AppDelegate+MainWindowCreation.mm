@@ -164,7 +164,10 @@ static std::vector<std::string> CommaSeparatedStrings(const nc::config::Config &
         return [[NCPanelListView alloc] initWithFrame:_rc iconRepository:_icon_repo];
     };
     presentation_factory.create_gallery_view = [](NSRect _rc, nc::vfsicon::IconRepository &_icon_repo) {
-        return [[NCPanelGalleryView alloc] initWithFrame:_rc iconRepository:_icon_repo UTIDB:NCAppDelegate.me.utiDB];
+        return [[NCPanelGalleryView alloc] initWithFrame:_rc
+                                          iconRepository:_icon_repo
+                                                   UTIDB:NCAppDelegate.me.utiDB
+                                             QLVFSBridge:NCAppDelegate.me.QLVFSBridge];
     };
 
     const auto pv_rect = NSMakeRect(0, 0, 100, 100);

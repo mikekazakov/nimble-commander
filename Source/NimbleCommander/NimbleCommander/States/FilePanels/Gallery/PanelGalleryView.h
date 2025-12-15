@@ -9,6 +9,10 @@ namespace nc::utility {
 class UTIDB;
 }
 
+namespace nc::panel {
+class QuickLookVFSBridge;
+}
+
 @class PanelView;
 
 @interface NCPanelGalleryView
@@ -18,7 +22,8 @@ class UTIDB;
 - (instancetype)initWithFrame:(NSRect)_frame NS_UNAVAILABLE;
 - (instancetype)initWithFrame:(NSRect)_frame
                iconRepository:(nc::vfsicon::IconRepository &)_ir
-                        UTIDB:(const nc::utility::UTIDB &)_UTIDB;
+                        UTIDB:(const nc::utility::UTIDB &)_UTIDB
+                  QLVFSBridge:(nc::panel::QuickLookVFSBridge &)_ql_vfs_bridge;
 
 @property(nonatomic) nc::panel::PanelGalleryViewLayout galleryLayout;
 

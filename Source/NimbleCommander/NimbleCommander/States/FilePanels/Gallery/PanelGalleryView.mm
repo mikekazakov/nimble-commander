@@ -50,6 +50,7 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 - (instancetype)initWithFrame:(NSRect)_frame
                iconRepository:(nc::vfsicon::IconRepository &)_ir
                         UTIDB:(const nc::utility::UTIDB &)_UTIDB
+                  QLVFSBridge:(nc::panel::QuickLookVFSBridge &)_ql_vfs_bridge
 {
     self = [super initWithFrame:_frame];
     if( !self )
@@ -85,10 +86,10 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_CollectionScrollView.drawsBackground = true;
     [self addSubview:m_CollectionScrollView];
 
-    m_CentralView =
-        [[NCPanelGalleryCentralView alloc] initWithFrame:_frame
-                                                   UTIDB:_UTIDB
-                               QLHazardousExtensionsList:GlobalConfig().GetString(g_HazardousExtensionsList)];
+    m_CentralView = [[NCPanelGalleryCentralView alloc] initWithFrame:_frame
+                                                               UTIDB:_UTIDB
+                                           QLHazardousExtensionsList:GlobalConfig().GetString(g_HazardousExtensionsList)
+                                                         QLVFSBridge:_ql_vfs_bridge];
     [self addSubview:m_CentralView];
 
     const auto views_dict = NSDictionaryOfVariableBindings(m_CollectionScrollView, m_CentralView);
@@ -133,6 +134,7 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 
 - (void)viewDidMoveToSuperview
 {
+    [super viewDidMoveToSuperview];
     if( PanelView *panel_view = nc::objc_cast<PanelView>(self.superview) ) {
         m_PanelView = panel_view;
         [panel_view addObserver:self forKeyPath:@"active" options:0 context:nullptr];

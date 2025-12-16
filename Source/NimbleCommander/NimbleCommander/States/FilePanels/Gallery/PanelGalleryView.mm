@@ -123,7 +123,7 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
         nc::objc_callback(self, @selector(themeDidChange)));
 
     [self themeDidChange];
-    
+
     return self;
 }
 
@@ -206,6 +206,9 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 
 - (void)onDataChanged
 {
+    // TODO: current bug - when a data changes there a small period when the cursor position remains the same with the
+    // new data, then it changes according to what PanelView wants. During this period there is a visible flicker if the
+    // central view switches between QL and Icon modes.
     Log::Trace("[PanelGalleryView dataChanged]");
     dispatch_assert_main_queue();
     assert(m_Data);

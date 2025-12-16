@@ -382,4 +382,36 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     return m_PanelView;
 }
 
+- (void)onPageUp:(NSEvent *) [[maybe_unused]] _event
+{
+    NSRect rect;
+    rect = m_CollectionView.visibleRect;
+    rect.origin.x -= rect.size.width;
+    [m_CollectionView scrollRectToVisible:rect];
+}
+
+- (void)onPageDown:(NSEvent *) [[maybe_unused]] _event
+{
+    NSRect rect;
+    rect = m_CollectionView.visibleRect;
+    rect.origin.x += rect.size.width;
+    [m_CollectionView scrollRectToVisible:rect];
+}
+
+- (void)onScrollToBeginning:(NSEvent *) [[maybe_unused]] _event
+{
+    NSRect rect;
+    rect = m_CollectionView.visibleRect;
+    rect.origin.x = 0;
+    [m_CollectionView scrollRectToVisible:rect];
+}
+
+- (void)onScrollToEnd:(NSEvent *) [[maybe_unused]] _event
+{
+    NSRect rect;
+    rect = m_CollectionView.visibleRect;
+    rect.origin.x = m_CollectionView.bounds.size.width - rect.size.width;
+    [m_CollectionView scrollRectToVisible:rect];
+}
+
 @end

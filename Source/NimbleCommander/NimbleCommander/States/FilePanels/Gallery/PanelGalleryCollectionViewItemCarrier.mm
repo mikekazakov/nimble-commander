@@ -68,6 +68,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     nc::panel::data::QuickSearchHighlight m_QSHighlight;
     bool m_PermitFieldRenaming;
     bool m_IsSymlink;
+    bool m_Highlighted;
 }
 
 @synthesize controller = m_Controller;
@@ -78,6 +79,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 @synthesize filenameColor = m_FilenameColor;
 @synthesize qsHighlight = m_QSHighlight;
 @synthesize isSymlink = m_IsSymlink;
+@synthesize highlighted = m_Highlighted;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -87,6 +89,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
         self.autoresizesSubviews = false;
         m_PermitFieldRenaming = false;
         m_IsSymlink = false;
+        m_Highlighted = false;
     }
     return self;
 }
@@ -449,6 +452,24 @@ static bool HasNoModifiers(NSEvent *_event)
     m_ItemLayout = _item_layout;
     m_AttrStrings.clear();
     [self setNeedsDisplay:true];
+}
+
+- (void)setHighlighted:(bool)highlighted
+{
+    if( m_Highlighted == highlighted )
+        return;
+    m_Highlighted = highlighted;
+    [self updateBorder];
+}
+
+- (void)updateBorder
+{
+    if( /*m_IsDropTarget || */ m_Highlighted ) {
+        self.layer.borderWidth = 1;
+        self.layer.borderColor = nc::CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
+    }
+    else
+        self.layer.borderWidth = 0;
 }
 
 @end

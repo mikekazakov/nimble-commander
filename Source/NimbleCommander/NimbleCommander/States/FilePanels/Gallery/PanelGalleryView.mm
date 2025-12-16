@@ -74,7 +74,6 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_CollectionView.dataSource = self;
     m_CollectionView.delegate = self;
     m_CollectionView.smoothScrolling = GlobalConfig().GetBool(g_SmoothScrolling);
-    m_CollectionView.backgroundColors = @[nc::CurrentTheme().FilePanelsGalleryBackgroundColor()];
     [m_CollectionView registerClass:NCPanelGalleryCollectionViewItem.class forItemWithIdentifier:@"GalleryItem"];
 
     m_CollectionScrollView = [[NSScrollView alloc] initWithFrame:_frame];
@@ -82,7 +81,6 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_CollectionScrollView.hasVerticalScroller = false;
     m_CollectionScrollView.hasHorizontalScroller = true;
     m_CollectionScrollView.documentView = m_CollectionView;
-    m_CollectionScrollView.backgroundColor = nc::CurrentTheme().FilePanelsGalleryBackgroundColor();
     m_CollectionScrollView.drawsBackground = true;
     [self addSubview:m_CollectionScrollView];
 
@@ -124,6 +122,8 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
         nc::ThemesManager::Notifications::FilePanelsGallery | nc::ThemesManager::Notifications::FilePanelsGeneral,
         nc::objc_callback(self, @selector(themeDidChange)));
 
+    [self themeDidChange];
+    
     return self;
 }
 
@@ -356,12 +356,15 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 - (void)themeDidChange
 {
     Log::Trace("[PanelGalleryView themeDidChange]");
-    const int cursor_position = self.cursorPosition;
-    [self rebuildItemLayout];
-    [m_CollectionView reloadData];
-    self.cursorPosition = cursor_position; // TODO: why is this here?
+    if( m_Data ) {
+        const int cursor_position = self.cursorPosition;
+        [self rebuildItemLayout];
+        [m_CollectionView reloadData];
+        self.cursorPosition = cursor_position; // TODO: why is this here?
+    }
     m_CollectionView.backgroundColors = @[nc::CurrentTheme().FilePanelsGalleryBackgroundColor()];
     m_CollectionScrollView.backgroundColor = nc::CurrentTheme().FilePanelsGalleryBackgroundColor();
+    m_CentralView.backgroundColor = nc::CurrentTheme().FilePanelsGalleryBackgroundColor();
 }
 
 - (void)viewDidMoveToWindow

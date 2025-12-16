@@ -14,6 +14,7 @@ static const std::chrono::nanoseconds g_DebounceDelay = std::chrono::millisecond
 @implementation NCPanelGalleryCentralView {
     const nc::utility::UTIDB *m_UTIDB;
     nc::panel::QuickLookVFSBridge *m_VFSBridge;
+    NSColor *m_BackgroundColor;
     QLPreviewView *m_QLView;
     NSImageView *m_FallbackImageView;
     std::atomic_ullong m_CurrentTicket;
@@ -25,6 +26,8 @@ static const std::chrono::nanoseconds g_DebounceDelay = std::chrono::millisecond
     bool m_CurrentPreviewIsHazardous;
     std::optional<nc::utility::ExtensionsLowercaseList> m_HazardousExtsList; // empty means everything is hazardous
 }
+
+@synthesize backgroundColor = m_BackgroundColor;
 
 - (instancetype)initWithFrame:(NSRect)_frame
                         UTIDB:(const nc::utility::UTIDB &)_UTIDB
@@ -41,6 +44,7 @@ static const std::chrono::nanoseconds g_DebounceDelay = std::chrono::millisecond
     m_CurrentTicket = 0;
 
     self.translatesAutoresizingMaskIntoConstraints = false;
+    self.wantsLayer = true;
 
     m_QLView = [[QLPreviewView alloc] initWithFrame:_frame style:QLPreviewViewStyleNormal];
     m_QLView.translatesAutoresizingMaskIntoConstraints = false;
@@ -70,6 +74,16 @@ static const std::chrono::nanoseconds g_DebounceDelay = std::chrono::millisecond
     }
 
     return self;
+}
+
+- (BOOL)isOpaque
+{
+    return true;
+}
+
+- (BOOL)wantsUpdateLayer
+{
+    return true;
 }
 
 - (void)showVFSItem:(VFSListingItem)_item
@@ -294,9 +308,12 @@ static const std::chrono::nanoseconds g_DebounceDelay = std::chrono::millisecond
 - (void)ensureFallbackVisible
 {
     dispatch_assert_main_queue();
-    m_QLView.hidden = true;
-    m_QLView.previewItem = nil; // NB! Without resetting the preview to nil, it somehow manages to completely freeze
-    m_FallbackImageView.hidden = false;
+    if( !m_QLView.hidden )
+        m_QLView.hidden = true;
+    if( m_QLView.previewItem != nil )
+        m_QLView.previewItem = nil; // NB! Without resetting the preview to nil, it somehow manages to completely freeze
+    if( m_FallbackImageView.hidden )
+        m_FallbackImageView.hidden = false;
 }
 
 - (bool)couldBeSupportedByQuickLook:(const VFSListingItem &)_item
@@ -333,6 +350,19 @@ static const std::chrono::nanoseconds g_DebounceDelay = std::chrono::millisecond
 {
     [super viewDidMoveToWindow];
     ++m_CurrentTicket; // Better safe than sorry
+}
+
+- (void)setBackgroundColor:(NSColor *)_background_color
+{
+    if( m_BackgroundColor == _background_color || [m_BackgroundColor isEqual:_background_color] )
+        return;
+    m_BackgroundColor = _background_color;
+    [self setNeedsDisplay:true];
+}
+
+- (void)updateLayer
+{
+    self.layer.backgroundColor = m_BackgroundColor.CGColor;
 }
 
 @end

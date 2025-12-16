@@ -29,19 +29,19 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
         NSMutableParagraphStyle *const p0 = [NSMutableParagraphStyle new];
         p0.alignment = NSTextAlignmentCenter;
         p0.lineBreakMode = NSLineBreakByTruncatingHead;
-        p0.allowsDefaultTighteningForTruncation = true;
+        p0.allowsDefaultTighteningForTruncation = false;
         styles[0] = p0;
 
         NSMutableParagraphStyle *const p1 = [NSMutableParagraphStyle new];
         p1.alignment = NSTextAlignmentCenter;
         p1.lineBreakMode = NSLineBreakByTruncatingTail;
-        p1.allowsDefaultTighteningForTruncation = true;
+        p1.allowsDefaultTighteningForTruncation = false;
         styles[1] = p1;
 
         NSMutableParagraphStyle *const p2 = [NSMutableParagraphStyle new];
         p2.alignment = NSTextAlignmentCenter;
         p2.lineBreakMode = NSLineBreakByTruncatingMiddle;
-        p2.allowsDefaultTighteningForTruncation = true;
+        p2.allowsDefaultTighteningForTruncation = false;
         styles[2] = p2;
     });
 
@@ -259,7 +259,7 @@ CutFilenameIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double
         NSMutableParagraphStyle *const p = [NSMutableParagraphStyle new];
         p.alignment = NSTextAlignmentCenter;
         p.lineBreakMode = NSLineBreakByWordWrapping;
-        p.allowsDefaultTighteningForTruncation = true;
+        p.allowsDefaultTighteningForTruncation = false;
         return p;
     }();
 

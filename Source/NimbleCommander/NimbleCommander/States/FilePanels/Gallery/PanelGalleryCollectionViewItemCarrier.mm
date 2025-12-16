@@ -67,6 +67,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     ItemLayout m_ItemLayout;
     nc::panel::data::QuickSearchHighlight m_QSHighlight;
     bool m_PermitFieldRenaming;
+    bool m_IsDropTarget;
     bool m_IsSymlink;
     bool m_Highlighted;
 }
@@ -90,6 +91,8 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
         m_PermitFieldRenaming = false;
         m_IsSymlink = false;
         m_Highlighted = false;
+        m_IsDropTarget = false;
+        [self registerForDraggedTypes:PanelView.acceptedDragAndDropTypes];
     }
     return self;
 }
@@ -106,18 +109,15 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 
 - (void)drawRect:(NSRect) [[maybe_unused]] _dirty_rect
 {
-    const auto bounds = self.bounds;
-    const auto context = NSGraphicsContext.currentContext.CGContext;
+    const NSRect bounds = self.bounds;
+    const CGContextRef context = NSGraphicsContext.currentContext.CGContext;
 
     CGContextSetFillColorWithColor(context, m_BackgroundColor.CGColor);
     CGContextFillRect(context, bounds);
 
     if( m_ItemLayout.icon_size > 0 ) {
-        const auto icon_rect = NSMakeRect(m_ItemLayout.icon_left_margin,
-                                          bounds.size.height - static_cast<double>(m_ItemLayout.icon_top_margin) -
-                                              static_cast<double>(m_ItemLayout.icon_size),
-                                          m_ItemLayout.icon_size,
-                                          m_ItemLayout.icon_size);
+        const NSRect icon_rect = [self calculateIconSegmentFromBounds:bounds];
+
         [m_Icon drawInRect:icon_rect
                   fromRect:NSZeroRect
                  operation:NSCompositingOperationSourceOver
@@ -193,6 +193,16 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
         return;
     m_Icon = _icon;
     [self setNeedsDisplay:true];
+}
+
+- (NSRect)calculateIconSegmentFromBounds:(NSRect)_bounds
+{
+    const NSRect icon_rect = NSMakeRect(m_ItemLayout.icon_left_margin,
+                                        _bounds.size.height - static_cast<double>(m_ItemLayout.icon_top_margin) -
+                                            static_cast<double>(m_ItemLayout.icon_size),
+                                        m_ItemLayout.icon_size,
+                                        m_ItemLayout.icon_size);
+    return icon_rect;
 }
 
 - (NSRect)calculateTextSegmentFromBounds:(NSRect)_bounds
@@ -454,22 +464,117 @@ static bool HasNoModifiers(NSEvent *_event)
     [self setNeedsDisplay:true];
 }
 
-- (void)setHighlighted:(bool)highlighted
+- (void)setHighlighted:(bool)_highlighted
 {
-    if( m_Highlighted == highlighted )
+    if( m_Highlighted == _highlighted )
         return;
-    m_Highlighted = highlighted;
+    m_Highlighted = _highlighted;
     [self updateBorder];
+}
+
+- (void)setIsDropTarget:(bool)_is_drop_target
+{
+    if( m_IsDropTarget != _is_drop_target ) {
+        m_IsDropTarget = _is_drop_target;
+        [self updateBorder];
+    }
+}
+
+- (bool)isDropTarget
+{
+    return m_IsDropTarget;
 }
 
 - (void)updateBorder
 {
-    if( /*m_IsDropTarget || */ m_Highlighted ) {
+    if( m_IsDropTarget || m_Highlighted ) {
         self.layer.borderWidth = 1;
         self.layer.borderColor = nc::CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
     }
     else
         self.layer.borderWidth = 0;
+}
+
+- (bool)validateDropHitTest:(id<NSDraggingInfo>)_sender
+{
+    const NSPoint position = [self convertPoint:_sender.draggingLocation fromView:nil];
+
+    const NSRect bounds = self.bounds;
+
+    const NSRect icon_segment_rect = [self calculateIconSegmentFromBounds:bounds];
+    if( NSPointInRect(position, icon_segment_rect) )
+        return true;
+
+    const NSRect text_segment_rect = [self calculateTextSegmentFromBounds:bounds];
+    if( !NSPointInRect(position, text_segment_rect) )
+        return false;
+
+    double current_y = text_segment_rect.origin.y +    //
+                       text_segment_rect.size.height - //
+                       m_ItemLayout.font_height +      //
+                       m_ItemLayout.font_baseline;
+    for( NSAttributedString *attr_str : m_AttrStrings ) {
+        const NSRect line_pos = NSMakeRect(text_segment_rect.origin.x, current_y, text_segment_rect.size.width, 0);
+        const NSRect line_bounds = [attr_str boundingRectWithSize:line_pos.size options:0 context:nil];
+        const double ht_width = std::max(line_bounds.size.width, 32.0);
+        const NSRect line_rc = NSMakeRect(line_pos.origin.x + (text_segment_rect.size.width - ht_width) / 2.0,
+                                          line_bounds.origin.y + line_pos.origin.y,
+                                          ht_width,
+                                          line_bounds.size.height);
+        if( NSPointInRect(position, line_rc) )
+            return true;
+        current_y -= m_ItemLayout.font_height;
+    }
+    return false;
+}
+
+- (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)_sender
+{
+    const int my_index = m_Controller.itemIndex;
+    if( my_index < 0 )
+        return NSDragOperationNone;
+
+    if( [self validateDropHitTest:_sender] ) {
+        const NSDragOperation op = [m_Controller.galleryView.panelView panelItem:my_index operationForDragging:_sender];
+        if( op != NSDragOperationNone ) {
+            self.isDropTarget = true;
+            [self.superview draggingExited:_sender];
+            return op;
+        }
+    }
+
+    self.isDropTarget = false;
+    return [self.superview draggingEntered:_sender];
+}
+
+- (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)_sender
+{
+    return [self draggingEntered:_sender];
+}
+
+- (void)draggingExited:(id<NSDraggingInfo>)_sender
+{
+    self.isDropTarget = false;
+    [self.superview draggingExited:_sender];
+}
+
+- (BOOL)prepareForDragOperation:(id<NSDraggingInfo>) [[maybe_unused]] _sender
+{
+    return YES; // possibly add some checking stage here later
+}
+
+- (BOOL)performDragOperation:(id<NSDraggingInfo>)_sender
+{
+    const int my_index = m_Controller.itemIndex;
+    if( my_index < 0 )
+        return false;
+
+    if( self.isDropTarget ) {
+        self.isDropTarget = false;
+        return [m_Controller.galleryView.panelView panelItem:my_index performDragOperation:_sender];
+    }
+    else
+        return [self.superview performDragOperation:_sender];
 }
 
 @end

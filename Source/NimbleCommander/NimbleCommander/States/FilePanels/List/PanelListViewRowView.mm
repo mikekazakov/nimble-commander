@@ -489,9 +489,7 @@ static NSPoint g_LastMouseDownPos = {};
     if( self.dropTarget ) {
         self.dropTarget = false;
     }
-    else {
-        [self.superview draggingExited:sender];
-    }
+    [self.superview draggingExited:sender];
 }
 
 - (BOOL)prepareForDragOperation:(id<NSDraggingInfo>) [[maybe_unused]] sender

@@ -509,9 +509,7 @@ static bool HasNoModifiers(NSEvent *_event)
     if( self.isDropTarget ) {
         self.isDropTarget = false;
     }
-    else {
-        [self.superview draggingExited:sender];
-    }
+    [self.superview draggingExited:sender];
 }
 
 - (BOOL)prepareForDragOperation:(id<NSDraggingInfo>) [[maybe_unused]] sender

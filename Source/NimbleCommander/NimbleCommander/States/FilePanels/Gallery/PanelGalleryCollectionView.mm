@@ -1,10 +1,12 @@
 // Copyright (C) 2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelGalleryCollectionView.h"
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelView.h"
 #include <Utility/ObjCpp.h>
 
 @implementation NCPanelGalleryViewCollectionView {
     bool m_SmoothScrolling;
+    bool m_IsDropTarget;
 }
 
 @synthesize smoothScrolling = m_SmoothScrolling;
@@ -15,6 +17,7 @@
     if( self ) {
         self.selectable = true;
         self.backgroundViewScrollsWithContent = true;
+        m_IsDropTarget = false;
     }
     return self;
 }
@@ -134,6 +137,59 @@ static NSEvent *SwapScrollAxis(NSEvent *_event)
     }
 
     [super scrollWheel:event];
+}
+
+- (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender
+{
+    const NSDragOperation op = [self.panelView panelItem:-1 operationForDragging:sender];
+    if( op != NSDragOperationNone ) {
+        self.isDropTarget = true;
+    }
+    return op;
+}
+
+- (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)sender
+{
+    return [self draggingEntered:sender];
+}
+
+- (void)draggingExited:(id<NSDraggingInfo>) [[maybe_unused]] _sender
+{
+    self.isDropTarget = false;
+}
+
+- (BOOL)prepareForDragOperation:(id<NSDraggingInfo>) [[maybe_unused]] _sender
+{
+    // possibly add some checking stage here later
+    return YES;
+}
+
+- (BOOL)performDragOperation:(id<NSDraggingInfo>)sender
+{
+    if( self.isDropTarget ) {
+        self.isDropTarget = false;
+        return [self.panelView panelItem:-1 performDragOperation:sender];
+    }
+    else
+        return false;
+}
+
+- (bool)isDropTarget
+{
+    return m_IsDropTarget;
+}
+
+- (void)setIsDropTarget:(bool)isDropTarget
+{
+    if( m_IsDropTarget != isDropTarget ) {
+        m_IsDropTarget = isDropTarget;
+        if( m_IsDropTarget ) {
+            self.layer.borderWidth = 1;
+            self.layer.borderColor = nc::CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
+        }
+        else
+            self.layer.borderWidth = 0;
+    }
 }
 
 @end

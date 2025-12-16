@@ -536,7 +536,7 @@ static bool HasNoModifiers(NSEvent *_event)
         const NSRect line_pos = NSMakeRect(text_segment_rect.origin.x, current_y, text_segment_rect.size.width, 0);
         const NSRect line_bounds = [attr_str boundingRectWithSize:line_pos.size options:0 context:nil];
         const double ht_width = std::max(line_bounds.size.width, 32.0);
-        const NSRect line_rc = NSMakeRect(line_pos.origin.x + (text_segment_rect.size.width - ht_width) / 2.0,
+        const NSRect line_rc = NSMakeRect(line_pos.origin.x + ((text_segment_rect.size.width - ht_width) / 2.0),
                                           line_bounds.origin.y + line_pos.origin.y,
                                           ht_width,
                                           line_bounds.size.height);

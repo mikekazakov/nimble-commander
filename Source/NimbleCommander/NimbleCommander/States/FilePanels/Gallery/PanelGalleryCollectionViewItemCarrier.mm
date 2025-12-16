@@ -336,7 +336,7 @@ CutFilenameIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double
     return true; /* really always??? */
 }
 
-static bool g_RowReadyToDrag = false;
+static bool g_ItemReadyToDrag = false;
 static void *g_MouseDownCarrier = nullptr;
 static NSPoint g_LastMouseDownPos = {};
 
@@ -372,7 +372,7 @@ static bool HasNoModifiers(NSEvent *_event)
     const bool lb_pressed = NSEvent.pressedMouseButtons == 1;
 
     if( lb_pressed ) {
-        g_RowReadyToDrag = true;
+        g_ItemReadyToDrag = true;
         g_MouseDownCarrier = (__bridge void *)self;
         g_LastMouseDownPos = local_point;
     }
@@ -414,9 +414,28 @@ static bool HasNoModifiers(NSEvent *_event)
     }
 
     m_PermitFieldRenaming = false;
-    g_RowReadyToDrag = false;
+    g_ItemReadyToDrag = false;
     g_MouseDownCarrier = nullptr;
     g_LastMouseDownPos = {};
+}
+
+- (void)mouseDragged:(NSEvent *)_event
+{
+    const double max_drag_dist = 10.;
+    if( g_ItemReadyToDrag && g_MouseDownCarrier == (__bridge void *)self ) {
+        const NSPoint lp = [self convertPoint:_event.locationInWindow fromView:nil];
+        const double dist = hypot(lp.x - g_LastMouseDownPos.x, lp.y - g_LastMouseDownPos.y);
+        if( dist > max_drag_dist ) {
+            const auto my_index = m_Controller.itemIndex;
+            if( my_index < 0 )
+                return;
+
+            [m_Controller.galleryView.panelView panelItem:my_index mouseDragged:_event];
+            g_ItemReadyToDrag = false;
+            g_MouseDownCarrier = nullptr;
+            g_LastMouseDownPos = {};
+        }
+    }
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)_event

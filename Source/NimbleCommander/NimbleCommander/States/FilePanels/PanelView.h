@@ -4,6 +4,7 @@
 #include <VFS/VFS.h>
 #include <VFSIcon/IconRepository.h>
 #include "PanelViewTypes.h"
+#include "PanelViewLayoutSupport.h"
 
 #include <any>
 #include <memory>
@@ -28,7 +29,6 @@ class ActionsShortcutsManager;
 }
 
 namespace nc::panel {
-struct PanelViewLayout;
 namespace data {
 struct ItemVolatileData;
 class Model;
@@ -96,8 +96,8 @@ struct PresentationFactory {
 - (void)startFieldEditorRenaming;
 - (void)discardFieldEditor;
 
-// PanelViewLayout
-- (std::any)presentationLayout;
+// Encodes a layout of the currently active presentation mode as PanelViewLayout's variant
+- (nc::panel::PanelViewLayout::LayoutVariant)presentationLayout;
 - (void)setPresentationLayout:(const nc::panel::PanelViewLayout &)_layout;
 
 // Returns a frame of the view representing the item at the specified sorted position.

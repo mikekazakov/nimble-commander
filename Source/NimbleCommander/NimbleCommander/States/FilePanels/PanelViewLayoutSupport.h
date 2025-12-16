@@ -9,33 +9,52 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <variant>
 #include <Cocoa/Cocoa.h>
 
 namespace nc::panel {
 
 struct PanelViewDisabledLayout {
     /* dummy layout, used to indicate that this layout is not active */
+    constexpr bool operator==(const PanelViewDisabledLayout &) const noexcept = default;
 };
 
 struct PanelViewLayout {
-    enum class Type : signed char {
-        Disabled = -1,
-        Brief = 0,
-        List = 1,
-        Gallery = 2
+    enum class Type : unsigned char {
+        Disabled = 0,
+        Brief = 1,
+        List = 2,
+        Gallery = 3
     };
 
-    std::string name;
-    std::any layout; // perhaps switch to variant?
-    // may be PanelListViewColumnsLayout, PanelBriefViewColumnsLayout, PanelGalleryViewLayout or PanelViewDisabledLayout
-    // at the moment.
-    bool is_disabled() const;
-    Type type() const;
+    using LayoutVariant = std::variant<PanelViewDisabledLayout,
+                                       PanelBriefViewColumnsLayout,
+                                       PanelListViewColumnsLayout,
+                                       PanelGalleryViewLayout>;
+
+    // Returns true if this layout is disabled (PanelViewDisabledLayout).
+    bool is_disabled() const noexcept;
+
+    // Returns an type of the layout decorated as the Type enumeration, effectively "layout.index()".
+    Type type() const noexcept;
+
+    // Returns a Brief layout configuration if this layout is stored, otherwise nullptr
     const PanelBriefViewColumnsLayout *brief() const noexcept;
-    const PanelGalleryViewLayout *gallery() const noexcept;
+
+    // Returns a List layout configuration if this layout is stored, otherwise nullptr
     const PanelListViewColumnsLayout *list() const noexcept;
 
+    // Returns a Gallery layout configuration if this layout is stored, otherwise nullptr
+    const PanelGalleryViewLayout *gallery() const noexcept;
+
+    // Equality operator
     bool operator==(const PanelViewLayout &) const noexcept;
+
+    // User-facing name of the layout
+    std::string name;
+
+    // Layout configuration, specific to its type
+    LayoutVariant layout;
 };
 
 // supposed to be thread-safe

@@ -25,6 +25,7 @@ struct ItemLayout {
     unsigned char text_left_margin = 0;
     unsigned char text_right_margin = 0;
     unsigned char text_bottom_margin = 0;
+    bool operator==(const ItemLayout &_rhs) const noexcept = default;
 };
 
 ItemLayout

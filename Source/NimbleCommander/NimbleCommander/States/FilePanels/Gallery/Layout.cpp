@@ -23,9 +23,15 @@ ItemLayout BuildItemLayout(unsigned _icon_size_px, unsigned _font_height, unsign
     il.text_left_margin = text_margin;
     il.text_right_margin = text_margin;
     il.text_bottom_margin = text_margin;
-    il.width = il.icon_size + il.icon_left_margin + il.icon_right_margin;
-    il.height = static_cast<unsigned short>(il.icon_top_margin + il.icon_size + il.icon_bottom_margin +
-                                            (_font_height * _text_lines) + il.text_bottom_margin);
+    il.width = (il.icon_size > 0 ? il.icon_size : 64) + //
+               il.icon_left_margin +                    //
+               il.icon_right_margin;
+    il.height = static_cast<unsigned short>(il.icon_top_margin +           //
+                                            il.icon_size +                 //
+                                            il.icon_bottom_margin +        //
+                                            (_font_height * _text_lines) + //
+                                            il.text_bottom_margin          //
+    );
     return il;
 }
 

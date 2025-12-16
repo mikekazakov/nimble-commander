@@ -272,8 +272,11 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 
 - (void)setGalleryLayout:(nc::panel::PanelGalleryViewLayout)_layout
 {
-    // TODO: implement
+    if( m_Layout == _layout )
+        return;
     m_Layout = _layout;
+    [self rebuildItemLayout];
+    [m_CollectionView.collectionViewLayout invalidateLayout];
 }
 
 - (BOOL)isOpaque
@@ -329,21 +332,25 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 
 - (void)rebuildItemLayout
 {
-    const int logical_icon_size = 32;
+    const int logical_icon_size = 32 * std::clamp(static_cast<int>(m_Layout.icon_scale), 0, 2);
+    const int text_lines = std::clamp(static_cast<int>(m_Layout.text_lines), 1, 4);
 
-    if( self.window ) {
+    if( self.window && logical_icon_size > 0 ) {
         const int physical_icon_size = static_cast<int>(logical_icon_size * self.window.backingScaleFactor);
         m_IconRepository->SetPxSize(physical_icon_size);
     }
 
     nc::utility::FontGeometryInfo info(nc::CurrentTheme().FilePanelsGalleryFont());
     m_ItemLayout = BuildItemLayout(
-        logical_icon_size, static_cast<unsigned>(info.LineHeight()), static_cast<unsigned>(info.Descent()), 2);
+        logical_icon_size, static_cast<unsigned>(info.LineHeight()), static_cast<unsigned>(info.Descent()), text_lines);
 
     if( m_ScrollViewHeightConstraint != nil )
         m_ScrollViewHeightConstraint.constant = m_ItemLayout.height;
     if( m_CollectionViewLayout != nil )
         m_CollectionViewLayout.itemSize = NSMakeSize(m_ItemLayout.width, m_ItemLayout.height);
+
+    for( NCPanelGalleryCollectionViewItem *i in m_CollectionView.visibleItems )
+        i.itemLayout = m_ItemLayout;
 }
 
 - (void)themeDidChange

@@ -106,31 +106,31 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     const auto bounds = self.bounds;
     const auto context = NSGraphicsContext.currentContext.CGContext;
 
-    NSColor *background = m_BackgroundColor;
-
-    CGContextSetFillColorWithColor(context, background.CGColor);
+    CGContextSetFillColorWithColor(context, m_BackgroundColor.CGColor);
     CGContextFillRect(context, bounds);
 
-    const auto icon_rect = NSMakeRect(m_ItemLayout.icon_left_margin,
-                                      bounds.size.height - static_cast<double>(m_ItemLayout.icon_top_margin) -
-                                          static_cast<double>(m_ItemLayout.icon_size),
-                                      m_ItemLayout.icon_size,
-                                      m_ItemLayout.icon_size);
-    [m_Icon drawInRect:icon_rect
-              fromRect:NSZeroRect
-             operation:NSCompositingOperationSourceOver
-              fraction:1.0
-        respectFlipped:false
-                 hints:nil];
+    if( m_ItemLayout.icon_size > 0 ) {
+        const auto icon_rect = NSMakeRect(m_ItemLayout.icon_left_margin,
+                                          bounds.size.height - static_cast<double>(m_ItemLayout.icon_top_margin) -
+                                              static_cast<double>(m_ItemLayout.icon_size),
+                                          m_ItemLayout.icon_size,
+                                          m_ItemLayout.icon_size);
+        [m_Icon drawInRect:icon_rect
+                  fromRect:NSZeroRect
+                 operation:NSCompositingOperationSourceOver
+                  fraction:1.0
+            respectFlipped:false
+                     hints:nil];
 
-    // Draw symlink arrow over an icon
-    if( m_IsSymlink )
-        [g_SymlinkArrowImage drawInRect:icon_rect
-                               fromRect:NSZeroRect
-                              operation:NSCompositingOperationSourceOver
-                               fraction:1.0
-                         respectFlipped:false
-                                  hints:nil];
+        // Draw symlink arrow over an icon
+        if( m_IsSymlink )
+            [g_SymlinkArrowImage drawInRect:icon_rect
+                                   fromRect:NSZeroRect
+                                  operation:NSCompositingOperationSourceOver
+                                   fraction:1.0
+                             respectFlipped:false
+                                      hints:nil];
+    }
 
     if( m_AttrStrings.empty() ) {
         [self buildTextAttributes];
@@ -439,6 +439,15 @@ static bool HasNoModifiers(NSEvent *_event)
     if( m_IsSymlink == _is_symlink )
         return;
     m_IsSymlink = _is_symlink;
+    [self setNeedsDisplay:true];
+}
+
+- (void)setItemLayout:(nc::panel::gallery::ItemLayout)_item_layout
+{
+    if( m_ItemLayout == _item_layout )
+        return;
+    m_ItemLayout = _item_layout;
+    m_AttrStrings.clear();
     [self setNeedsDisplay:true];
 }
 

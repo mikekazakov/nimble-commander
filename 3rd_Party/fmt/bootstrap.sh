@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/fmt.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b 11.1.4 --single-branch --depth=1 https://github.com/fmtlib/fmt.git
+git clone -b 12.1.0 --single-branch --depth=1 https://github.com/fmtlib/fmt.git
 
 cd fmt
 mkdir build

@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/ud.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v4.5.0 --single-branch https://github.com/martinus/unordered_dense.git
+git clone -b v4.8.1 --single-branch https://github.com/martinus/unordered_dense.git
 
 cd ..
 

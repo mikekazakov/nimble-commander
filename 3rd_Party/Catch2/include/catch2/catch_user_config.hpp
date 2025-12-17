@@ -178,6 +178,33 @@
 #endif
 
 
+/* #undef CATCH_CONFIG_USE_BUILTIN_CONSTANT_P */
+/* #undef CATCH_CONFIG_NO_USE_BUILTIN_CONSTANT_P */
+
+#if defined( CATCH_CONFIG_USE_BUILTIN_CONSTANT_P ) && \
+    defined( CATCH_CONFIG_NO_USE_BUILTIN_CONSTANT_P )
+#    error Cannot force USE_BUILTIN_CONSTANT_P to both ON and OFF
+#endif
+
+
+/* #undef CATCH_CONFIG_DEPRECATION_ANNOTATIONS */
+/* #undef CATCH_CONFIG_NO_DEPRECATION_ANNOTATIONS */
+
+#if defined( CATCH_CONFIG_DEPRECATION_ANNOTATIONS ) && \
+    defined( CATCH_CONFIG_NO_DEPRECATION_ANNOTATIONS )
+#    error Cannot force DEPRECATION_ANNOTATIONS to both ON and OFF
+#endif
+
+
+/* #undef CATCH_CONFIG_EXPERIMENTAL_THREAD_SAFE_ASSERTIONS */
+/* #undef CATCH_CONFIG_NO_EXPERIMENTAL_THREAD_SAFE_ASSERTIONS */
+
+#if defined( CATCH_CONFIG_EXPERIMENTAL_THREAD_SAFE_ASSERTIONS ) && \
+    defined( CATCH_CONFIG_NO_EXPERIMENTAL_THREAD_SAFE_ASSERTIONS )
+#    error Cannot force EXPERIMENTAL_THREAD_SAFE_ASSERTIONS to both ON and OFF
+#endif
+
+
 // ------
 // Simple toggle defines
 // their value is never used and they cannot be overridden

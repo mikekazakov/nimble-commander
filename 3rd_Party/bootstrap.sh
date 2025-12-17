@@ -19,7 +19,6 @@ set -e
 ./fmt/bootstrap.sh
 ./spdlog/bootstrap.sh
 ./googletest/bootstrap.sh
-./AppAuth/bootstrap.sh
 ./Sparkle/bootstrap.sh
 ./LetsMove/bootstrap.sh
 ./frozen/bootstrap.sh

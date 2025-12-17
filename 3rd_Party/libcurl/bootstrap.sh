@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/curl.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b curl-8_11_1 --single-branch --depth=1 https://github.com/curl/curl.git
+git clone -b curl-8_14_1 --single-branch --depth=1 https://github.com/curl/curl.git
 
 cd curl
 
@@ -25,6 +25,8 @@ cmake \
   -D USE_APPLE_IDN="ON" \
   -D CURL_USE_LIBSSH="OFF" \
   -D CURL_USE_LIBSSH2="OFF" \
+  -D CURL_BROTLI="OFF" \
+  -D CURL_USE_LIBPSL="OFF" \
   -D USE_LIBIDN="OFF" \
   -D USE_LIBIDN2="OFF" \
   -D USE_NGHTTP2="OFF" \
@@ -34,8 +36,12 @@ cmake \
   -D BUILD_SHARED_LIBS="OFF" \
   -D ZLIB_INCLUDE_DIR=${CUR_DIR}/../z/include \
   -D ZLIB_LIBRARY=${CUR_DIR}/../z/lib/libz.a \
+  -D ZSTD_INCLUDE_DIR=${CUR_DIR}/../zstd/include \
+  -D ZSTD_LIBRARY=${CUR_DIR}/../zstd/lib/libzstd.a \
   ..
 make -j
+
+#  --debug-find
 
 cd ./../../../
 rm -rf ./include/

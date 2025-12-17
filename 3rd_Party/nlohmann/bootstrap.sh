@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/json.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v3.11.3 --single-branch --depth 1 https://github.com/nlohmann/json.git
+git clone -b v3.12.0 --single-branch --depth 1 https://github.com/nlohmann/json.git
 
 cd ..
 

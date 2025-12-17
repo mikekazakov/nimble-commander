@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/catch2.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v3.7.1 --single-branch --depth=1 https://github.com/catchorg/Catch2
+git clone -b v3.11.0 --single-branch --depth=1 https://github.com/catchorg/Catch2
 
 cd Catch2
 

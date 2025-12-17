@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/pugixml.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v1.14 --single-branch --depth=1 https://github.com/zeux/pugixml.git
+git clone -b v1.15 --single-branch --depth=1 https://github.com/zeux/pugixml.git
 cd pugixml
 mkdir build
 cd build
@@ -17,6 +17,7 @@ cmake \
   -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
   -D CMAKE_OSX_DEPLOYMENT_TARGET="11.0" \
   -D CMAKE_CXX_FLAGS="-fvisibility=hidden -flto -Os" \
+  -D CMAKE_CXX_STANDARD="23" \
   ..
 make -j
 cd ../../..

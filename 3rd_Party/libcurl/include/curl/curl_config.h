@@ -197,6 +197,9 @@
 /* Define to 1 if you have _Atomic support. */
 #define HAVE_ATOMIC 1
 
+/* Define to 1 if you have the `accept4' function. */
+/* #undef HAVE_ACCEPT4 */
+
 /* Define to 1 if you have the `fnmatch' function. */
 #define HAVE_FNMATCH 1
 
@@ -324,10 +327,10 @@
 /* Define to 1 if you have the <ifaddrs.h> header file. */
 #define HAVE_IFADDRS_H 1
 
-/* Define to 1 if you have a IPv6 capable working inet_ntop function. */
+/* Define to 1 if you have an IPv6 capable working inet_ntop function. */
 #define HAVE_INET_NTOP 1
 
-/* Define to 1 if you have a IPv6 capable working inet_pton function. */
+/* Define to 1 if you have an IPv6 capable working inet_pton function. */
 #define HAVE_INET_PTON 1
 
 /* Define to 1 if symbol `sa_family_t' exists */
@@ -386,7 +389,7 @@
 /* #undef HAVE_BROTLI */
 
 /* if zstd is available */
-/* #undef HAVE_ZSTD */
+#define HAVE_ZSTD 1
 
 /* Define to 1 if you have the <locale.h> header file. */
 #define HAVE_LOCALE_H 1
@@ -427,11 +430,17 @@
 /* Define to 1 if you have the `pipe' function. */
 #define HAVE_PIPE 1
 
+/* Define to 1 if you have the `pipe2' function. */
+/* #undef HAVE_PIPE2 */
+
 /* Define to 1 if you have the `eventfd' function. */
 /* #undef HAVE_EVENTFD */
 
 /* If you have poll */
 #define HAVE_POLL 1
+
+/* If you have realpath */
+#define HAVE_REALPATH 1
 
 /* Define to 1 if you have the <poll.h> header file. */
 #define HAVE_POLL_H 1
@@ -465,6 +474,9 @@
 
 /* Define to 1 if you have the sendmmsg function. */
 /* #undef HAVE_SENDMMSG */
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#define HAVE_STDINT_H 1
 
 /* Define to 1 if you have the 'fsetxattr' function. */
 #define HAVE_FSETXATTR 1
@@ -544,12 +556,6 @@
 /* Define to 1 if you have the <stropts.h> header file. */
 /* #undef HAVE_STROPTS_H */
 
-/* Define to 1 if you have the strtok_r function. */
-#define HAVE_STRTOK_R 1
-
-/* Define to 1 if you have the strtoll function. */
-#define HAVE_STRTOLL 1
-
 /* Define to 1 if you have the memrchr function. */
 /* #undef HAVE_MEMRCHR */
 
@@ -564,9 +570,6 @@
 
 /* Define to 1 if you have the <sys/filio.h> header file. */
 #define HAVE_SYS_FILIO_H 1
-
-/* Define to 1 if you have the <sys/wait.h> header file. */
-#define HAVE_SYS_WAIT_H 1
 
 /* Define to 1 if you have the <sys/ioctl.h> header file. */
 #define HAVE_SYS_IOCTL_H 1
@@ -625,32 +628,14 @@
 /* Define this symbol if your OS supports changing the contents of argv */
 #define HAVE_WRITABLE_ARGV 1
 
-/* Define to 1 if you need the malloc.h header file even with stdlib.h */
-/* #undef NEED_MALLOC_H */
+/* Define this if time_t is unsigned */
+/* #undef HAVE_TIME_T_UNSIGNED */
 
 /* Define to 1 if _REENTRANT preprocessor symbol must be defined. */
 /* #undef NEED_REENTRANT */
 
 /* cpu-machine-OS */
 #define CURL_OS "Darwin"
-
-/* Name of package */
-/* #undef PACKAGE */
-
-/* Define to the address where bug reports for this package should be sent. */
-/* #undef PACKAGE_BUGREPORT */
-
-/* Define to the full name of this package. */
-/* #undef PACKAGE_NAME */
-
-/* Define to the full name and version of this package. */
-/* #undef PACKAGE_STRING */
-
-/* Define to the one symbol short name of this package. */
-/* #undef PACKAGE_TARNAME */
-
-/* Define to the version of this package. */
-/* #undef PACKAGE_VERSION */
 
 /*
  Note: SIZEOF_* variables are fetched with CMake through check_type_size().
@@ -703,6 +688,9 @@
 /* if Secure Transport is enabled */
 #define USE_SECTRANSP 1
 
+/* if SSL session export support is available */
+/* #undef USE_SSLS_EXPORT */
+
 /* if mbedTLS is enabled */
 /* #undef USE_MBEDTLS */
 
@@ -715,14 +703,20 @@
 /* if wolfSSL is enabled */
 /* #undef USE_WOLFSSL */
 
+/* if wolfSSL has the wolfSSL_get_peer_certificate function. */
+/* #undef HAVE_WOLFSSL_GET_PEER_CERTIFICATE */
+
+/* if wolfSSL has the wolfSSL_UseALPN function. */
+/* #undef HAVE_WOLFSSL_USEALPN */
+
 /* if wolfSSL has the wolfSSL_DES_ecb_encrypt function. */
 /* #undef HAVE_WOLFSSL_DES_ECB_ENCRYPT */
 
 /* if wolfSSL has the wolfSSL_BIO_new function. */
-/* #undef HAVE_WOLFSSL_BIO */
+/* #undef HAVE_WOLFSSL_BIO_NEW */
 
 /* if wolfSSL has the wolfSSL_BIO_set_shutdown function. */
-/* #undef HAVE_WOLFSSL_FULL_BIO */
+/* #undef HAVE_WOLFSSL_BIO_SET_SHUTDOWN */
 
 /* if libssh is in use */
 /* #undef USE_LIBSSH */
@@ -741,6 +735,9 @@
 
 /* if OpenSSL is in use */
 /* #undef USE_OPENSSL */
+
+/* if AmiSSL is in use */
+/* #undef USE_AMISSL */
 
 /* if librtmp/rtmpdump is in use */
 /* #undef USE_LIBRTMP */
@@ -773,6 +770,9 @@
 /* to enable openssl + nghttp3 */
 /* #undef USE_OPENSSL_QUIC */
 
+/* to enable openssl + ngtcp2 + nghttp3 */
+/* #undef OPENSSL_QUIC_API2 */
+
 /* Define to 1 if you have the quiche_conn_set_qlog_fd function. */
 /* #undef HAVE_QUICHE_CONN_SET_QLOG_FD */
 
@@ -791,11 +791,11 @@
 /* to enable Windows SSL  */
 /* #undef USE_SCHANNEL */
 
+/* if Watt-32 is in use */
+/* #undef USE_WATT32 */
+
 /* enable multiple SSL backends */
 /* #undef CURL_WITH_MULTI_SSL */
-
-/* Version number of package */
-/* #undef VERSION */
 
 /* Number of bits in a file offset, on hosts where this is settable. */
 #define _FILE_OFFSET_BITS 64
@@ -808,9 +808,6 @@
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */
-
-/* Type to use in place of in_addr_t when system does not provide it. */
-/* #undef in_addr_t */
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 /* #undef size_t */
@@ -841,3 +838,9 @@
 
 /* if ECH support is available */
 /* #undef USE_ECH */
+
+/* Define to 1 if you have the wolfSSL_CTX_GenerateEchConfig function. */
+/* #undef HAVE_WOLFSSL_CTX_GENERATEECHCONFIG */
+
+/* Define to 1 if you have the SSL_set1_ech_config_list function. */
+/* #undef HAVE_SSL_SET1_ECH_CONFIG_LIST */

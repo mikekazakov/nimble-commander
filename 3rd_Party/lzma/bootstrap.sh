@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/lzma.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR}
 
-git clone -b v5.6.3 --single-branch --depth=1 https://github.com/tukaani-project/xz.git
+git clone -b v5.8.1 --single-branch --depth=1 https://github.com/tukaani-project/xz.git
 cd xz
 mkdir build
 cd build
@@ -17,7 +17,7 @@ cmake \
   -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
   -D CMAKE_OSX_DEPLOYMENT_TARGET="11.0" \
   -D CMAKE_C_FLAGS="-fvisibility=hidden -flto -Os" \
-  -D ENABLE_NLS=OFF \
+  -D XZ_NLS=OFF \
   ..
 make DESTDIR=./installed -j install
 cd ../../..

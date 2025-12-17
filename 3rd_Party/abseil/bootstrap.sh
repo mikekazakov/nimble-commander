@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/abseil.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR}
 
-git clone -b 20240722.0 --single-branch --depth=1 https://github.com/abseil/abseil-cpp.git
+git clone -b 20250814.1 --single-branch --depth=1 https://github.com/abseil/abseil-cpp.git
 cd abseil-cpp
 mkdir build_cmake
 cd build_cmake

@@ -9,12 +9,12 @@ TMP_DIR=${CUR_DIR}/spdlog.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v1.15.2 --single-branch --depth=1 https://github.com/gabime/spdlog.git
+git clone -b v1.16.0 --single-branch --depth=1 https://github.com/gabime/spdlog.git
 cd spdlog
 
 clang++ -c \
   -arch arm64 -arch x86_64 \
-  -std=c++2b \
+  -std=c++23 \
   -fvisibility=hidden \
   -flto \
   -Os \

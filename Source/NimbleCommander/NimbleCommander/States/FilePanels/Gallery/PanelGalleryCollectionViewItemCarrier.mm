@@ -29,19 +29,19 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
         NSMutableParagraphStyle *const p0 = [NSMutableParagraphStyle new];
         p0.alignment = NSTextAlignmentCenter;
         p0.lineBreakMode = NSLineBreakByTruncatingHead;
-        p0.allowsDefaultTighteningForTruncation = true;
+        p0.allowsDefaultTighteningForTruncation = false;
         styles[0] = p0;
 
         NSMutableParagraphStyle *const p1 = [NSMutableParagraphStyle new];
         p1.alignment = NSTextAlignmentCenter;
         p1.lineBreakMode = NSLineBreakByTruncatingTail;
-        p1.allowsDefaultTighteningForTruncation = true;
+        p1.allowsDefaultTighteningForTruncation = false;
         styles[1] = p1;
 
         NSMutableParagraphStyle *const p2 = [NSMutableParagraphStyle new];
         p2.alignment = NSTextAlignmentCenter;
         p2.lineBreakMode = NSLineBreakByTruncatingMiddle;
-        p2.allowsDefaultTighteningForTruncation = true;
+        p2.allowsDefaultTighteningForTruncation = false;
         styles[2] = p2;
     });
 
@@ -67,7 +67,9 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     ItemLayout m_ItemLayout;
     nc::panel::data::QuickSearchHighlight m_QSHighlight;
     bool m_PermitFieldRenaming;
+    bool m_IsDropTarget;
     bool m_IsSymlink;
+    bool m_Highlighted;
 }
 
 @synthesize controller = m_Controller;
@@ -78,6 +80,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 @synthesize filenameColor = m_FilenameColor;
 @synthesize qsHighlight = m_QSHighlight;
 @synthesize isSymlink = m_IsSymlink;
+@synthesize highlighted = m_Highlighted;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -87,6 +90,9 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
         self.autoresizesSubviews = false;
         m_PermitFieldRenaming = false;
         m_IsSymlink = false;
+        m_Highlighted = false;
+        m_IsDropTarget = false;
+        [self registerForDraggedTypes:PanelView.acceptedDragAndDropTypes];
     }
     return self;
 }
@@ -103,34 +109,31 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 
 - (void)drawRect:(NSRect) [[maybe_unused]] _dirty_rect
 {
-    const auto bounds = self.bounds;
-    const auto context = NSGraphicsContext.currentContext.CGContext;
+    const NSRect bounds = self.bounds;
+    const CGContextRef context = NSGraphicsContext.currentContext.CGContext;
 
-    NSColor *background = m_BackgroundColor;
-
-    CGContextSetFillColorWithColor(context, background.CGColor);
+    CGContextSetFillColorWithColor(context, m_BackgroundColor.CGColor);
     CGContextFillRect(context, bounds);
 
-    const auto icon_rect = NSMakeRect(m_ItemLayout.icon_left_margin,
-                                      bounds.size.height - static_cast<double>(m_ItemLayout.icon_top_margin) -
-                                          static_cast<double>(m_ItemLayout.icon_size),
-                                      m_ItemLayout.icon_size,
-                                      m_ItemLayout.icon_size);
-    [m_Icon drawInRect:icon_rect
-              fromRect:NSZeroRect
-             operation:NSCompositingOperationSourceOver
-              fraction:1.0
-        respectFlipped:false
-                 hints:nil];
+    if( m_ItemLayout.icon_size > 0 ) {
+        const NSRect icon_rect = [self calculateIconSegmentFromBounds:bounds];
 
-    // Draw symlink arrow over an icon
-    if( m_IsSymlink )
-        [g_SymlinkArrowImage drawInRect:icon_rect
-                               fromRect:NSZeroRect
-                              operation:NSCompositingOperationSourceOver
-                               fraction:1.0
-                         respectFlipped:false
-                                  hints:nil];
+        [m_Icon drawInRect:icon_rect
+                  fromRect:NSZeroRect
+                 operation:NSCompositingOperationSourceOver
+                  fraction:1.0
+            respectFlipped:false
+                     hints:nil];
+
+        // Draw symlink arrow over an icon
+        if( m_IsSymlink )
+            [g_SymlinkArrowImage drawInRect:icon_rect
+                                   fromRect:NSZeroRect
+                                  operation:NSCompositingOperationSourceOver
+                                   fraction:1.0
+                             respectFlipped:false
+                                      hints:nil];
+    }
 
     if( m_AttrStrings.empty() ) {
         [self buildTextAttributes];
@@ -190,6 +193,16 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
         return;
     m_Icon = _icon;
     [self setNeedsDisplay:true];
+}
+
+- (NSRect)calculateIconSegmentFromBounds:(NSRect)_bounds
+{
+    const NSRect icon_rect = NSMakeRect(m_ItemLayout.icon_left_margin,
+                                        _bounds.size.height - static_cast<double>(m_ItemLayout.icon_top_margin) -
+                                            static_cast<double>(m_ItemLayout.icon_size),
+                                        m_ItemLayout.icon_size,
+                                        m_ItemLayout.icon_size);
+    return icon_rect;
 }
 
 - (NSRect)calculateTextSegmentFromBounds:(NSRect)_bounds
@@ -259,7 +272,7 @@ CutFilenameIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double
         NSMutableParagraphStyle *const p = [NSMutableParagraphStyle new];
         p.alignment = NSTextAlignmentCenter;
         p.lineBreakMode = NSLineBreakByWordWrapping;
-        p.allowsDefaultTighteningForTruncation = true;
+        p.allowsDefaultTighteningForTruncation = false;
         return p;
     }();
 
@@ -323,7 +336,7 @@ CutFilenameIntoWrappedAndTailSubstrings(NSAttributedString *_attr_string, double
     return true; /* really always??? */
 }
 
-static bool g_RowReadyToDrag = false;
+static bool g_ItemReadyToDrag = false;
 static void *g_MouseDownCarrier = nullptr;
 static NSPoint g_LastMouseDownPos = {};
 
@@ -359,7 +372,7 @@ static bool HasNoModifiers(NSEvent *_event)
     const bool lb_pressed = NSEvent.pressedMouseButtons == 1;
 
     if( lb_pressed ) {
-        g_RowReadyToDrag = true;
+        g_ItemReadyToDrag = true;
         g_MouseDownCarrier = (__bridge void *)self;
         g_LastMouseDownPos = local_point;
     }
@@ -401,9 +414,28 @@ static bool HasNoModifiers(NSEvent *_event)
     }
 
     m_PermitFieldRenaming = false;
-    g_RowReadyToDrag = false;
+    g_ItemReadyToDrag = false;
     g_MouseDownCarrier = nullptr;
     g_LastMouseDownPos = {};
+}
+
+- (void)mouseDragged:(NSEvent *)_event
+{
+    const double max_drag_dist = 10.;
+    if( g_ItemReadyToDrag && g_MouseDownCarrier == (__bridge void *)self ) {
+        const NSPoint lp = [self convertPoint:_event.locationInWindow fromView:nil];
+        const double dist = hypot(lp.x - g_LastMouseDownPos.x, lp.y - g_LastMouseDownPos.y);
+        if( dist > max_drag_dist ) {
+            const auto my_index = m_Controller.itemIndex;
+            if( my_index < 0 )
+                return;
+
+            [m_Controller.galleryView.panelView panelItem:my_index mouseDragged:_event];
+            g_ItemReadyToDrag = false;
+            g_MouseDownCarrier = nullptr;
+            g_LastMouseDownPos = {};
+        }
+    }
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)_event
@@ -440,6 +472,128 @@ static bool HasNoModifiers(NSEvent *_event)
         return;
     m_IsSymlink = _is_symlink;
     [self setNeedsDisplay:true];
+}
+
+- (void)setItemLayout:(nc::panel::gallery::ItemLayout)_item_layout
+{
+    if( m_ItemLayout == _item_layout )
+        return;
+    m_ItemLayout = _item_layout;
+    m_AttrStrings.clear();
+    [self setNeedsDisplay:true];
+}
+
+- (void)setHighlighted:(bool)_highlighted
+{
+    if( m_Highlighted == _highlighted )
+        return;
+    m_Highlighted = _highlighted;
+    [self updateBorder];
+}
+
+- (void)setIsDropTarget:(bool)_is_drop_target
+{
+    if( m_IsDropTarget != _is_drop_target ) {
+        m_IsDropTarget = _is_drop_target;
+        [self updateBorder];
+    }
+}
+
+- (bool)isDropTarget
+{
+    return m_IsDropTarget;
+}
+
+- (void)updateBorder
+{
+    if( m_IsDropTarget || m_Highlighted ) {
+        self.layer.borderWidth = 1;
+        self.layer.borderColor = nc::CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
+    }
+    else
+        self.layer.borderWidth = 0;
+}
+
+- (bool)validateDropHitTest:(id<NSDraggingInfo>)_sender
+{
+    const NSPoint position = [self convertPoint:_sender.draggingLocation fromView:nil];
+
+    const NSRect bounds = self.bounds;
+
+    const NSRect icon_segment_rect = [self calculateIconSegmentFromBounds:bounds];
+    if( NSPointInRect(position, icon_segment_rect) )
+        return true;
+
+    const NSRect text_segment_rect = [self calculateTextSegmentFromBounds:bounds];
+    if( !NSPointInRect(position, text_segment_rect) )
+        return false;
+
+    double current_y = text_segment_rect.origin.y +    //
+                       text_segment_rect.size.height - //
+                       m_ItemLayout.font_height +      //
+                       m_ItemLayout.font_baseline;
+    for( NSAttributedString *attr_str : m_AttrStrings ) {
+        const NSRect line_pos = NSMakeRect(text_segment_rect.origin.x, current_y, text_segment_rect.size.width, 0);
+        const NSRect line_bounds = [attr_str boundingRectWithSize:line_pos.size options:0 context:nil];
+        const double ht_width = std::max(line_bounds.size.width, 32.0);
+        const NSRect line_rc = NSMakeRect(line_pos.origin.x + ((text_segment_rect.size.width - ht_width) / 2.0),
+                                          line_bounds.origin.y + line_pos.origin.y,
+                                          ht_width,
+                                          line_bounds.size.height);
+        if( NSPointInRect(position, line_rc) )
+            return true;
+        current_y -= m_ItemLayout.font_height;
+    }
+    return false;
+}
+
+- (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)_sender
+{
+    const int my_index = m_Controller.itemIndex;
+    if( my_index < 0 )
+        return NSDragOperationNone;
+
+    if( [self validateDropHitTest:_sender] ) {
+        const NSDragOperation op = [m_Controller.galleryView.panelView panelItem:my_index operationForDragging:_sender];
+        if( op != NSDragOperationNone ) {
+            self.isDropTarget = true;
+            [self.superview draggingExited:_sender];
+            return op;
+        }
+    }
+
+    self.isDropTarget = false;
+    return [self.superview draggingEntered:_sender];
+}
+
+- (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)_sender
+{
+    return [self draggingEntered:_sender];
+}
+
+- (void)draggingExited:(id<NSDraggingInfo>)_sender
+{
+    self.isDropTarget = false;
+    [self.superview draggingExited:_sender];
+}
+
+- (BOOL)prepareForDragOperation:(id<NSDraggingInfo>) [[maybe_unused]] _sender
+{
+    return YES; // possibly add some checking stage here later
+}
+
+- (BOOL)performDragOperation:(id<NSDraggingInfo>)_sender
+{
+    const int my_index = m_Controller.itemIndex;
+    if( my_index < 0 )
+        return false;
+
+    if( self.isDropTarget ) {
+        self.isDropTarget = false;
+        return [m_Controller.galleryView.panelView panelItem:my_index performDragOperation:_sender];
+    }
+    else
+        return [self.superview performDragOperation:_sender];
 }
 
 @end

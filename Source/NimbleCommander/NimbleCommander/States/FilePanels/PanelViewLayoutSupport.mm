@@ -8,60 +8,32 @@
 
 namespace nc::panel {
 
-bool PanelViewLayout::is_disabled() const
+bool PanelViewLayout::is_disabled() const noexcept
 {
-    return std::any_cast<PanelViewDisabledLayout>(&layout) != nullptr;
+    return type() == Type::Disabled;
 }
 
-PanelViewLayout::Type PanelViewLayout::type() const
+PanelViewLayout::Type PanelViewLayout::type() const noexcept
 {
-    if( std::any_cast<PanelListViewColumnsLayout>(&layout) )
-        return Type::List;
-    if( std::any_cast<PanelGalleryViewLayout>(&layout) )
-        return Type::Gallery;
-    if( std::any_cast<PanelBriefViewColumnsLayout>(&layout) )
-        return Type::Brief;
-    return Type::Disabled;
+    return static_cast<Type>(layout.index());
 }
 
 const PanelBriefViewColumnsLayout *PanelViewLayout::brief() const noexcept
 {
-    return std::any_cast<PanelBriefViewColumnsLayout>(&layout);
+    return std::get_if<PanelBriefViewColumnsLayout>(&layout);
 }
 
 const PanelGalleryViewLayout *PanelViewLayout::gallery() const noexcept
 {
-    return std::any_cast<PanelGalleryViewLayout>(&layout);
+    return std::get_if<PanelGalleryViewLayout>(&layout);
 }
 
 const PanelListViewColumnsLayout *PanelViewLayout::list() const noexcept
 {
-    return std::any_cast<PanelListViewColumnsLayout>(&layout);
+    return std::get_if<PanelListViewColumnsLayout>(&layout);
 }
 
-bool PanelViewLayout::operator==(const PanelViewLayout &_rhs) const noexcept
-{
-    if( this == &_rhs )
-        return true;
-
-    if( name != _rhs.name )
-        return false;
-
-    const auto mytype = type();
-    if( mytype != _rhs.type() )
-        return false;
-
-    switch( mytype ) {
-        case Type::Brief:
-            return *brief() == *_rhs.brief();
-        case Type::Gallery:
-            return *gallery() == *_rhs.gallery();
-        case Type::List:
-            return *list() == *_rhs.list();
-        default:
-            return true;
-    }
-}
+bool PanelViewLayout::operator==(const PanelViewLayout &_rhs) const noexcept = default;
 
 static const auto g_TitleKey = "title";
 static const auto g_BriefKey = "brief";
@@ -81,6 +53,7 @@ static const auto g_ListColumMinWidth = "min_width";
 static const auto g_ListIconScale = "icon_scale";
 static const auto g_GalleryKey = "gallery";
 static const auto g_GalleryIconScale = "icon_scale";
+static const auto g_GalleryTextLines = "text_lines";
 static const auto g_DisabledKey = "disabled";
 
 static config::Value SaveLayout(const PanelViewLayout &_l)
@@ -129,6 +102,7 @@ static config::Value SaveLayout(const PanelViewLayout &_l)
     else if( auto gallery = _l.gallery() ) {
         config::Value d{kObjectType};
         d.AddMember(MakeStandaloneString(g_GalleryIconScale), config::Value(gallery->icon_scale), g_CrtAllocator);
+        d.AddMember(MakeStandaloneString(g_GalleryTextLines), config::Value(gallery->text_lines), g_CrtAllocator);
         v.AddMember(MakeStandaloneString(g_GalleryKey), std::move(d), g_CrtAllocator);
     }
     else if( _l.is_disabled() ) {
@@ -197,6 +171,8 @@ static std::optional<PanelViewLayout> LoadLayout(const config::Value &_from)
         PanelGalleryViewLayout gallery;
         if( o.HasMember(g_GalleryIconScale) && o[g_GalleryIconScale].IsInt() )
             gallery.icon_scale = static_cast<uint8_t>(o[g_GalleryIconScale].GetInt());
+        if( o.HasMember(g_GalleryTextLines) && o[g_GalleryTextLines].IsInt() )
+            gallery.text_lines = static_cast<uint8_t>(o[g_GalleryTextLines].GetInt());
         l.layout = gallery;
     }
     else if( _from.HasMember(g_DisabledKey) )

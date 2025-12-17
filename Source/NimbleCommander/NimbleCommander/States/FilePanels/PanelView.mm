@@ -136,15 +136,20 @@ struct StateStorage {
 
 - (NSView<NCPanelViewPresentationProtocol> *)spawnItemViewWithLayout:(const PanelViewLayout &)_layout
 {
-    if( auto ll = std::any_cast<PanelListViewColumnsLayout>(&_layout.layout) ) {
-        auto v = [self spawnListView];
-        v.columnsLayout = *ll;
-        return v;
+    if( const PanelListViewColumnsLayout *list_layout = _layout.list() ) {
+        NCPanelListView *const view = [self spawnListView];
+        view.columnsLayout = *list_layout;
+        return view;
     }
-    else if( auto bl = std::any_cast<PanelBriefViewColumnsLayout>(&_layout.layout) ) {
-        auto v = [self spawnBriefView];
-        v.columnsLayout = *bl;
-        return v;
+    if( const PanelBriefViewColumnsLayout *brief_layout = _layout.brief() ) {
+        NCPanelBriefView *const view = [self spawnBriefView];
+        view.columnsLayout = *brief_layout;
+        return view;
+    }
+    if( const PanelGalleryViewLayout *gallery_layout = _layout.gallery() ) {
+        NCPanelGalleryView *const view = [self spawnGalleryView];
+        view.galleryLayout = *gallery_layout;
+        return view;
     }
     return nil;
 }
@@ -835,27 +840,27 @@ struct StateStorage {
     view.galleryLayout = _layout;
 }
 
-- (std::any)presentationLayout
+- (nc::panel::PanelViewLayout::LayoutVariant)presentationLayout
 {
     if( auto v = nc::objc_cast<NCPanelBriefView>(m_ItemsView) )
-        return std::any{[v columnsLayout]};
+        return [v columnsLayout];
     if( auto v = nc::objc_cast<NCPanelListView>(m_ItemsView) )
-        return std::any{[v columnsLayout]};
+        return [v columnsLayout];
     if( auto v = nc::objc_cast<NCPanelGalleryView>(m_ItemsView) )
-        return std::any{[v galleryLayout]};
-    return std::any{PanelViewDisabledLayout{}};
+        return [v galleryLayout];
+    return PanelViewDisabledLayout{};
 }
 
 - (void)setPresentationLayout:(const PanelViewLayout &)_layout
 {
-    if( auto ll = std::any_cast<PanelListViewColumnsLayout>(&_layout.layout) ) {
-        [self setupListPresentationWithLayout:*ll];
+    if( const PanelListViewColumnsLayout *list_layout = _layout.list() ) {
+        [self setupListPresentationWithLayout:*list_layout];
     }
-    else if( auto bl = std::any_cast<PanelBriefViewColumnsLayout>(&_layout.layout) ) {
-        [self setupBriefPresentationWithLayout:*bl];
+    else if( const PanelBriefViewColumnsLayout *brief_layout = _layout.brief() ) {
+        [self setupBriefPresentationWithLayout:*brief_layout];
     }
-    else if( auto gl = std::any_cast<PanelGalleryViewLayout>(&_layout.layout) ) {
-        [self setupGalleryPresentationWithLayout:*gl];
+    else if( const PanelGalleryViewLayout *gallery_layout = _layout.gallery() ) {
+        [self setupGalleryPresentationWithLayout:*gallery_layout];
     }
 }
 

@@ -109,6 +109,8 @@ static const auto g_TagsDDType = @"com.magnumbytes.nc.pref.PreferencesWindowPane
 @property(nonatomic) IBOutlet NSTextField *layoutTitle;
 @property(nonatomic) IBOutlet NSPopUpButton *layoutType;
 @property(nonatomic) IBOutlet NSTabView *layoutDetailsTabView;
+
+// Brief
 @property(nonatomic) IBOutlet NSButton *layoutsBriefFixedRadio;
 @property(nonatomic) bool layoutsBriefFixedRadioChoosen;
 @property(nonatomic) IBOutlet NSTextField *layoutsBriefFixedValueTextField;
@@ -123,10 +125,18 @@ static const auto g_TagsDDType = @"com.magnumbytes.nc.pref.PreferencesWindowPane
 @property(nonatomic) IBOutlet NSButton *layoutsBriefIcon0x;
 @property(nonatomic) IBOutlet NSButton *layoutsBriefIcon1x;
 @property(nonatomic) IBOutlet NSButton *layoutsBriefIcon2x;
+
+// List
 @property(nonatomic) IBOutlet NSTableView *layoutsListColumnsTable;
 @property(nonatomic) IBOutlet NSButton *layoutsListIcon0x;
 @property(nonatomic) IBOutlet NSButton *layoutsListIcon1x;
 @property(nonatomic) IBOutlet NSButton *layoutsListIcon2x;
+
+// Gallery
+@property(nonatomic) IBOutlet NSPopUpButton *layoutsGalleryTextLines;
+@property(nonatomic) IBOutlet NSButton *layoutsGalleryIcon0x;
+@property(nonatomic) IBOutlet NSButton *layoutsGalleryIcon1x;
+@property(nonatomic) IBOutlet NSButton *layoutsGalleryIcon2x;
 
 // tags bindings
 @property(nonatomic) IBOutlet NSTableView *tagsTable;
@@ -170,6 +180,10 @@ static const auto g_TagsDDType = @"com.magnumbytes.nc.pref.PreferencesWindowPane
 @synthesize layoutsListIcon0x;
 @synthesize layoutsListIcon1x;
 @synthesize layoutsListIcon2x;
+@synthesize layoutsGalleryTextLines;
+@synthesize layoutsGalleryIcon0x;
+@synthesize layoutsGalleryIcon1x;
+@synthesize layoutsGalleryIcon2x;
 @synthesize tagsTable;
 @synthesize tagsPlusMinus;
 @synthesize tagsAdditionalMenu;
@@ -581,7 +595,12 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
         self.layoutsListIcon2x.state = list->icon_scale == 2;
     }
 
-    // TODO: Add Gallery options later
+    if( auto gallery = l->gallery() ) {
+        [layoutsGalleryTextLines selectItemWithTag:gallery->text_lines];
+        self.layoutsGalleryIcon0x.state = gallery->icon_scale == 0;
+        self.layoutsGalleryIcon1x.state = gallery->icon_scale == 1;
+        self.layoutsGalleryIcon2x.state = gallery->icon_scale == 2;
+    }
 }
 
 - (void)clearLayoutFields
@@ -664,6 +683,8 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
             new_layout.layout = [self gatherBriefLayoutInfo];
         if( self.layoutType.selectedTag == static_cast<int>(PanelViewLayout::Type::List) )
             new_layout.layout = [self gatherListLayoutInfo];
+        if( self.layoutType.selectedTag == static_cast<int>(PanelViewLayout::Type::Gallery) )
+            new_layout.layout = [self gatherGalleryLayoutInfo];
         if( self.layoutType.selectedTag == static_cast<int>(PanelViewLayout::Type::Disabled) )
             new_layout.layout = PanelViewDisabledLayout{};
 
@@ -719,6 +740,20 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
     }();
 
     return l;
+}
+
+- (PanelGalleryViewLayout)gatherGalleryLayoutInfo
+{
+    PanelGalleryViewLayout layout;
+    layout.text_lines = static_cast<uint8_t>(self.layoutsGalleryTextLines.selectedTag);
+    layout.icon_scale = [&]() -> uint8_t {
+        if( self.layoutsGalleryIcon2x.state )
+            return 2;
+        if( self.layoutsGalleryIcon1x.state )
+            return 1;
+        return 0;
+    }();
+    return layout;
 }
 
 - (IBAction)onHeaderClicked:(id)sender
@@ -920,6 +955,19 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
                       completionHandler:^(NSModalResponse){
                       }];
     }
+}
+
+- (IBAction)onLayoutGalleryIconScaleClicked:(id)_sender
+{
+    self.layoutsGalleryIcon0x.state = _sender == self.layoutsGalleryIcon0x;
+    self.layoutsGalleryIcon1x.state = _sender == self.layoutsGalleryIcon1x;
+    self.layoutsGalleryIcon2x.state = _sender == self.layoutsGalleryIcon2x;
+    [self commitLayoutChanges];
+}
+
+- (IBAction)onLayoutGalleryTextLinesChanged:(id) [[maybe_unused]] _sender
+{
+    [self commitLayoutChanges];
 }
 
 @end

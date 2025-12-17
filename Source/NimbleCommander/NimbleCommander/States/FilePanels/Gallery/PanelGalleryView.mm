@@ -74,7 +74,6 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_CollectionView.dataSource = self;
     m_CollectionView.delegate = self;
     m_CollectionView.smoothScrolling = GlobalConfig().GetBool(g_SmoothScrolling);
-    m_CollectionView.backgroundColors = @[nc::CurrentTheme().FilePanelsGalleryBackgroundColor()];
     [m_CollectionView registerClass:NCPanelGalleryCollectionViewItem.class forItemWithIdentifier:@"GalleryItem"];
 
     m_CollectionScrollView = [[NSScrollView alloc] initWithFrame:_frame];
@@ -82,7 +81,6 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_CollectionScrollView.hasVerticalScroller = false;
     m_CollectionScrollView.hasHorizontalScroller = true;
     m_CollectionScrollView.documentView = m_CollectionView;
-    m_CollectionScrollView.backgroundColor = nc::CurrentTheme().FilePanelsGalleryBackgroundColor();
     m_CollectionScrollView.drawsBackground = true;
     [self addSubview:m_CollectionScrollView];
 
@@ -123,6 +121,8 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
     m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
         nc::ThemesManager::Notifications::FilePanelsGallery | nc::ThemesManager::Notifications::FilePanelsGeneral,
         nc::objc_callback(self, @selector(themeDidChange)));
+
+    [self themeDidChange];
 
     return self;
 }
@@ -206,6 +206,9 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 
 - (void)onDataChanged
 {
+    // TODO: current bug - when a data changes there a small period when the cursor position remains the same with the
+    // new data, then it changes according to what PanelView wants. During this period there is a visible flicker if the
+    // central view switches between QL and Icon modes.
     Log::Trace("[PanelGalleryView dataChanged]");
     dispatch_assert_main_queue();
     assert(m_Data);
@@ -272,8 +275,11 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 
 - (void)setGalleryLayout:(nc::panel::PanelGalleryViewLayout)_layout
 {
-    // TODO: implement
+    if( m_Layout == _layout )
+        return;
     m_Layout = _layout;
+    [self rebuildItemLayout];
+    [m_CollectionView.collectionViewLayout invalidateLayout];
 }
 
 - (BOOL)isOpaque
@@ -329,32 +335,39 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 
 - (void)rebuildItemLayout
 {
-    const int logical_icon_size = 32;
+    const int logical_icon_size = 32 * std::clamp(static_cast<int>(m_Layout.icon_scale), 0, 2);
+    const int text_lines = std::clamp(static_cast<int>(m_Layout.text_lines), 1, 4);
 
-    if( self.window ) {
+    if( self.window && logical_icon_size > 0 ) {
         const int physical_icon_size = static_cast<int>(logical_icon_size * self.window.backingScaleFactor);
         m_IconRepository->SetPxSize(physical_icon_size);
     }
 
     nc::utility::FontGeometryInfo info(nc::CurrentTheme().FilePanelsGalleryFont());
     m_ItemLayout = BuildItemLayout(
-        logical_icon_size, static_cast<unsigned>(info.LineHeight()), static_cast<unsigned>(info.Descent()), 2);
+        logical_icon_size, static_cast<unsigned>(info.LineHeight()), static_cast<unsigned>(info.Descent()), text_lines);
 
     if( m_ScrollViewHeightConstraint != nil )
         m_ScrollViewHeightConstraint.constant = m_ItemLayout.height;
     if( m_CollectionViewLayout != nil )
         m_CollectionViewLayout.itemSize = NSMakeSize(m_ItemLayout.width, m_ItemLayout.height);
+
+    for( NCPanelGalleryCollectionViewItem *i in m_CollectionView.visibleItems )
+        i.itemLayout = m_ItemLayout;
 }
 
 - (void)themeDidChange
 {
     Log::Trace("[PanelGalleryView themeDidChange]");
-    const int cursor_position = self.cursorPosition;
-    [self rebuildItemLayout];
-    [m_CollectionView reloadData];
-    self.cursorPosition = cursor_position; // TODO: why is this here?
+    if( m_Data ) {
+        const int cursor_position = self.cursorPosition;
+        [self rebuildItemLayout];
+        [m_CollectionView reloadData];
+        self.cursorPosition = cursor_position; // TODO: why is this here?
+    }
     m_CollectionView.backgroundColors = @[nc::CurrentTheme().FilePanelsGalleryBackgroundColor()];
     m_CollectionScrollView.backgroundColor = nc::CurrentTheme().FilePanelsGalleryBackgroundColor();
+    m_CentralView.backgroundColor = nc::CurrentTheme().FilePanelsGalleryBackgroundColor();
 }
 
 - (void)viewDidMoveToWindow
@@ -367,6 +380,38 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 - (PanelView *)panelView
 {
     return m_PanelView;
+}
+
+- (void)onPageUp:(NSEvent *) [[maybe_unused]] _event
+{
+    NSRect rect;
+    rect = m_CollectionView.visibleRect;
+    rect.origin.x -= rect.size.width;
+    [m_CollectionView scrollRectToVisible:rect];
+}
+
+- (void)onPageDown:(NSEvent *) [[maybe_unused]] _event
+{
+    NSRect rect;
+    rect = m_CollectionView.visibleRect;
+    rect.origin.x += rect.size.width;
+    [m_CollectionView scrollRectToVisible:rect];
+}
+
+- (void)onScrollToBeginning:(NSEvent *) [[maybe_unused]] _event
+{
+    NSRect rect;
+    rect = m_CollectionView.visibleRect;
+    rect.origin.x = 0;
+    [m_CollectionView scrollRectToVisible:rect];
+}
+
+- (void)onScrollToEnd:(NSEvent *) [[maybe_unused]] _event
+{
+    NSRect rect;
+    rect = m_CollectionView.visibleRect;
+    rect.origin.x = m_CollectionView.bounds.size.width - rect.size.width;
+    [m_CollectionView scrollRectToVisible:rect];
 }
 
 @end

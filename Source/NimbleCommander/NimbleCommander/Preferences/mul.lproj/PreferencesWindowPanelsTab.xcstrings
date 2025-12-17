@@ -247,6 +247,18 @@
         }
       }
     },
+    "8Cm-J5-gLv.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Text Lines:\"; ObjectID = \"8Cm-J5-gLv\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Text Lines:"
+          }
+        }
+      }
+    },
     "8nl-FW-wYu.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Redirect keyboard input to the overlapped terminal\"; ObjectID = \"8nl-FW-wYu\";",
       "extractionState" : "extracted_with_value",
@@ -513,6 +525,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Уведомления:"
+          }
+        }
+      }
+    },
+    "crB-Uh-64P.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"1\"; ObjectID = \"crB-Uh-64P\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "1"
           }
         }
       }
@@ -919,6 +943,18 @@
         }
       }
     },
+    "JCX-W1-7FW.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"4\"; ObjectID = \"JCX-W1-7FW\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "4"
+          }
+        }
+      }
+    },
     "jHr-rF-U71.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"10 minutes\"; ObjectID = \"jHr-rF-U71\";",
       "extractionState" : "extracted_with_value",
@@ -933,6 +969,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "10 минут"
+          }
+        }
+      }
+    },
+    "JOB-XL-jZ5.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Icon Size:\"; ObjectID = \"JOB-XL-jZ5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Icon Size:"
           }
         }
       }
@@ -1005,6 +1053,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Середине"
+          }
+        }
+      }
+    },
+    "kM5-ET-sdn.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"2\"; ObjectID = \"kM5-ET-sdn\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "2"
           }
         }
       }
@@ -1383,6 +1443,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Игнорировать символы:"
+          }
+        }
+      }
+    },
+    "RxC-5n-qUi.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"3\"; ObjectID = \"RxC-5n-qUi\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "3"
           }
         }
       }
@@ -1875,6 +1947,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "2"
+          }
+        }
+      }
+    },
+    "ZnE-OJ-r4P.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"disabled\"; ObjectID = \"ZnE-OJ-r4P\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "disabled"
           }
         }
       }

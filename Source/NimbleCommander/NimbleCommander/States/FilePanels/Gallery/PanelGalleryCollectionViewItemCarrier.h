@@ -20,6 +20,7 @@
 @property(nonatomic) NSColor *backgroundColor;
 @property(nonatomic) nc::panel::data::QuickSearchHighlight qsHighlight;
 @property(nonatomic) bool isSymlink;
+@property(nonatomic) bool highlighted;
 
 - (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor;
 

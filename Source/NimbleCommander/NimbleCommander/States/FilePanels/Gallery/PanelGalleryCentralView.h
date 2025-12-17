@@ -23,4 +23,6 @@ class QuickLookVFSBridge;
 
 - (void)showVFSItem:(VFSListingItem)_item;
 
+@property(nonatomic) NSColor *backgroundColor;
+
 @end

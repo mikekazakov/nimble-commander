@@ -5,6 +5,7 @@ namespace nc::panel {
 
 struct PanelGalleryViewLayout {
     unsigned char icon_scale = 1;
+    unsigned char text_lines = 2;
     bool operator==(const PanelGalleryViewLayout &_rhs) const noexcept = default;
 };
 
@@ -24,6 +25,7 @@ struct ItemLayout {
     unsigned char text_left_margin = 0;
     unsigned char text_right_margin = 0;
     unsigned char text_bottom_margin = 0;
+    bool operator==(const ItemLayout &_rhs) const noexcept = default;
 };
 
 ItemLayout

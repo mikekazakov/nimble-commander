@@ -94,7 +94,7 @@ using namespace nc::panel::gallery;
     [self updateForegroundColor];
     [self updateBackgroundColor];
     self.carrier.qsHighlight = _vd.highlight;
-    //    self.carrier.highlighted = _vd.is_highlighted();
+    self.carrier.highlighted = _vd.is_highlighted();
 }
 
 - (nc::panel::data::ItemVolatileData)vd

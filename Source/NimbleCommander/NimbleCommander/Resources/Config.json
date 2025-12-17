@@ -365,7 +365,8 @@
                            {
                                 "title": "Gallery",
                                 "gallery": {
-                                    "icon_scale": 1
+                                    "icon_scale": 1,
+                                    "text_lines": 2
                                 }
                            },
                            {

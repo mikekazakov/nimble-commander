@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewHeader.h"
 #include <Utility/Layout.h>
 #include <Utility/ObjCpp.h>
@@ -64,7 +64,8 @@ static bool IsDark(NSColor *_color);
         m_SearchTextField.target = self;
         m_SearchTextField.action = @selector(onSearchFieldAction:);
         m_SearchTextField.bordered = false;
-        m_SearchTextField.bezeled = true;
+        m_SearchTextField.usesSingleLineMode = true;
+        m_SearchTextField.bezeled = false;
         m_SearchTextField.editable = true;
         m_SearchTextField.drawsBackground = false;
         m_SearchTextField.focusRingType = NSFocusRingTypeNone;
@@ -176,28 +177,28 @@ static bool IsDark(NSColor *_color);
                                                         toItem:self
                                                      attribute:NSLayoutAttributeLeft
                                                     multiplier:1
-                                                      constant:-2]];
+                                                      constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:m_SearchTextField
                                                      attribute:NSLayoutAttributeRight
                                                      relatedBy:NSLayoutRelationEqual
                                                         toItem:self
                                                      attribute:NSLayoutAttributeRight
                                                     multiplier:1
-                                                      constant:2]];
+                                                      constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:m_SearchTextField
                                                      attribute:NSLayoutAttributeTop
                                                      relatedBy:NSLayoutRelationEqual
                                                         toItem:self
                                                      attribute:NSLayoutAttributeTop
                                                     multiplier:1
-                                                      constant:-2]];
+                                                      constant:1.0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:m_SearchTextField
                                                      attribute:NSLayoutAttributeBottom
                                                      relatedBy:NSLayoutRelationEqual
                                                         toItem:self
                                                      attribute:NSLayoutAttributeBottom
                                                     multiplier:1
-                                                      constant:1]];
+                                                      constant:0.0]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_SeparatorLine]-(0)-|"
                                                                  options:0
                                                                  metrics:nil

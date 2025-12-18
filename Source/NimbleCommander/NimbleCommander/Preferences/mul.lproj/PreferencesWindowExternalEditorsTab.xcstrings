@@ -3,7 +3,7 @@
   "strings" : {
     "29m-Fx-ZcC.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"When choosing an editor to start, editors are checked in order of appearance in this list.\"; ObjectID = \"29m-Fx-ZcC\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -33,6 +33,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Маска файла"
+          }
+        }
+      }
+    },
+    "lyi-ta-ZdJ.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"When choosing an editor to start, editors are checked in order of appearance in this list.\"; ObjectID = \"lyi-ta-ZdJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "When choosing an editor to start, editors are checked in order of appearance in this list."
           }
         }
       }

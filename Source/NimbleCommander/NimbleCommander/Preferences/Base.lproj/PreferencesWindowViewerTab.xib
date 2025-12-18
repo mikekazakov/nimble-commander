@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24412" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22690"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24412"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -28,7 +28,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="262">
-                                        <rect key="frame" x="327" y="319" width="159" height="18"/>
+                                        <rect key="frame" x="329" y="312" width="155" height="16"/>
                                         <buttonCell key="cell" type="check" title="Auto-detect encoding" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="263">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -41,7 +41,7 @@
                                         </connections>
                                     </button>
                                     <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="272">
-                                        <rect key="frame" x="18" y="347" width="305" height="16"/>
+                                        <rect key="frame" x="18" y="340" width="305" height="16"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="gkp-TF-wuo"/>
                                         </constraints>
@@ -52,10 +52,10 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="279">
-                                        <rect key="frame" x="326" y="340" width="203" height="25"/>
+                                        <rect key="frame" x="329" y="336" width="196" height="24"/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="280">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="message"/>
                                             <menu key="menu" id="281"/>
                                         </popUpButtonCell>
                                         <constraints>
@@ -66,7 +66,7 @@
                                         </connections>
                                     </popUpButton>
                                     <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="605">
-                                        <rect key="frame" x="18" y="265" width="305" height="16"/>
+                                        <rect key="frame" x="18" y="254" width="305" height="16"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="GKn-1c-8CM"/>
                                         </constraints>
@@ -77,10 +77,10 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="613">
-                                        <rect key="frame" x="326" y="258" width="107" height="25"/>
+                                        <rect key="frame" x="329" y="250" width="100" height="24"/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="614">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="message"/>
                                             <menu key="menu" id="615">
                                                 <items>
                                                     <menuItem title="32 Kb" id="616">
@@ -112,7 +112,7 @@
                                         </connections>
                                     </popUpButton>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="Q1Z-tG-gn0">
-                                        <rect key="frame" x="327" y="297" width="216" height="18"/>
+                                        <rect key="frame" x="329" y="290" width="212" height="16"/>
                                         <buttonCell key="cell" type="check" title="Check com.apple.TextEncoding" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="dec-0H-tCg">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -125,7 +125,7 @@
                                         </connections>
                                     </button>
                                     <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="339">
-                                        <rect key="frame" x="18" y="230" width="305" height="16"/>
+                                        <rect key="frame" x="18" y="218" width="305" height="16"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="Bm5-Ow-CA9"/>
                                         </constraints>
@@ -136,7 +136,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="346">
-                                        <rect key="frame" x="327" y="229" width="152" height="18"/>
+                                        <rect key="frame" x="329" y="218" width="150" height="16"/>
                                         <buttonCell key="cell" type="check" title="Save position" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="348">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -149,7 +149,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="374">
-                                        <rect key="frame" x="327" y="207" width="124" height="18"/>
+                                        <rect key="frame" x="329" y="196" width="120" height="16"/>
                                         <buttonCell key="cell" type="check" title="Save view mode" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="375">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -159,7 +159,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="381">
-                                        <rect key="frame" x="327" y="185" width="115" height="18"/>
+                                        <rect key="frame" x="329" y="174" width="111" height="16"/>
                                         <buttonCell key="cell" type="check" title="Save encoding" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="382">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -169,7 +169,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="388">
-                                        <rect key="frame" x="327" y="163" width="115" height="18"/>
+                                        <rect key="frame" x="329" y="152" width="111" height="16"/>
                                         <buttonCell key="cell" type="check" title="Save wrapping" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="389">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -179,7 +179,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="395">
-                                        <rect key="frame" x="327" y="141" width="114" height="18"/>
+                                        <rect key="frame" x="329" y="130" width="110" height="16"/>
                                         <buttonCell key="cell" type="check" title="Save selection" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="396">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -189,7 +189,7 @@
                                         </connections>
                                     </button>
                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MRR-gL-5uN">
-                                        <rect key="frame" x="224" y="383" width="99" height="16"/>
+                                        <rect key="frame" x="224" y="380" width="99" height="16"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Show viewer in:" id="R3d-db-TY3">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -197,10 +197,10 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wAW-jb-ud7">
-                                        <rect key="frame" x="326" y="376" width="143" height="25"/>
+                                        <rect key="frame" x="329" y="376" width="151" height="24"/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="pcu-aT-6ha">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="message"/>
                                             <menu key="menu" id="eHt-bP-Hrb">
                                                 <items>
                                                     <menuItem title="Same window" tag="1" id="5Gm-Pq-yfz"/>
@@ -217,7 +217,7 @@
                                         </connections>
                                     </popUpButton>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="vXq-0Y-dWV">
-                                        <rect key="frame" x="327" y="61" width="152" height="18"/>
+                                        <rect key="frame" x="329" y="30" width="150" height="16"/>
                                         <buttonCell key="cell" type="check" title="Reload automatically" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="UJD-ca-RTx">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -230,7 +230,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="LPg-ly-unG">
-                                        <rect key="frame" x="327" y="39" width="185" height="18"/>
+                                        <rect key="frame" x="329" y="-8" width="180" height="32"/>
                                         <buttonCell key="cell" type="check" title="Enable syntax highlighting" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="tgW-Zz-ajT">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -240,7 +240,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="63V-cs-RtR">
-                                        <rect key="frame" x="327" y="119" width="115" height="18"/>
+                                        <rect key="frame" x="329" y="92" width="110" height="32"/>
                                         <buttonCell key="cell" type="check" title="Save language" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="hZn-wm-Xh0">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -250,7 +250,7 @@
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="595">
-                                        <rect key="frame" x="322" y="87" width="111" height="32"/>
+                                        <rect key="frame" x="329" y="62" width="101" height="24"/>
                                         <buttonCell key="cell" type="push" title="Clear history" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="596">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>

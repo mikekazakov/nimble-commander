@@ -21,7 +21,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="611" height="483"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1049"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1050"/>
             <value key="minSize" type="size" width="611" height="483"/>
             <value key="maxSize" type="size" width="1000" height="800"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
@@ -29,13 +29,13 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bxy-cT-TgS">
-                        <rect key="frame" x="20" y="84" width="571" height="379"/>
+                        <rect key="frame" x="20" y="64" width="571" height="399"/>
                         <clipView key="contentView" id="iJR-Ty-nbg">
-                            <rect key="frame" x="1" y="1" width="569" height="377"/>
+                            <rect key="frame" x="1" y="1" width="569" height="397"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="K0P-Bb-xhr" viewBased="YES" id="NUn-bn-bEY">
-                                    <rect key="frame" x="0.0" y="0.0" width="569" height="354"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="569" height="374"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -160,16 +160,13 @@ Gw
                         </connections>
                     </button>
                     <segmentedControl horizontalHuggingPriority="1" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="7X3-e3-N7L">
-                        <rect key="frame" x="20" y="63" width="73" height="24"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="73" id="edz-Rr-kOB"/>
-                        </constraints>
+                        <rect key="frame" x="21" y="39" width="71" height="24"/>
                         <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillEqually" style="smallSquare" trackingMode="momentary" id="T1K-Qg-QUI">
                             <font key="font" metaFont="system"/>
                             <segments>
-                                <segment toolTip="^A" image="NSAddTemplate" imageScaling="none" width="22"/>
-                                <segment toolTip="^X, ⌫" image="NSRemoveTemplate" imageScaling="none" width="20" enabled="NO" tag="1"/>
-                                <segment toolTip="^E" image="NSActionTemplate" imageScaling="none" width="20" enabled="NO">
+                                <segment toolTip="^A" image="NSAddTemplate" imageScaling="none" width="23"/>
+                                <segment toolTip="^X, ⌫" image="NSRemoveTemplate" imageScaling="none" width="23" enabled="NO" tag="1"/>
+                                <segment toolTip="^E" image="NSActionTemplate" imageScaling="none" width="23" enabled="NO">
                                     <nil key="label"/>
                                 </segment>
                             </segments>
@@ -178,30 +175,17 @@ Gw
                             <action selector="onControlButtonClicked:" target="-2" id="vHy-cm-hGp"/>
                         </connections>
                     </segmentedControl>
-                    <button horizontalHuggingPriority="1" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4lo-R2-W5i">
-                        <rect key="frame" x="87" y="63" width="504" height="23"/>
-                        <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" refusesFirstResponder="YES" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="LGS-SZ-adP">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="21" id="Blf-HL-iNR"/>
-                        </constraints>
-                    </button>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="4lo-R2-W5i" firstAttribute="top" secondItem="bxy-cT-TgS" secondAttribute="bottom" constant="-1" id="2Ux-Kx-aaK"/>
-                    <constraint firstItem="7X3-e3-N7L" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="IzD-Ar-150"/>
-                    <constraint firstItem="4lo-R2-W5i" firstAttribute="centerY" secondItem="7X3-e3-N7L" secondAttribute="centerY" id="KWx-Hm-WGY"/>
-                    <constraint firstItem="4lo-R2-W5i" firstAttribute="leading" secondItem="7X3-e3-N7L" secondAttribute="trailing" constant="-6" id="Ruk-aq-HOO"/>
+                    <constraint firstItem="vN1-7z-qe6" firstAttribute="top" secondItem="bxy-cT-TgS" secondAttribute="bottom" constant="20" symbolic="YES" id="Dyh-dl-BKf"/>
                     <constraint firstItem="bxy-cT-TgS" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="SZb-MX-JxL"/>
                     <constraint firstItem="d4n-Aj-vJt" firstAttribute="leading" secondItem="vN1-7z-qe6" secondAttribute="trailing" constant="12" symbolic="YES" id="WFN-F8-Pcf"/>
-                    <constraint firstItem="vN1-7z-qe6" firstAttribute="top" secondItem="4lo-R2-W5i" secondAttribute="bottom" constant="20" symbolic="YES" id="XXr-SC-JDU"/>
                     <constraint firstItem="d4n-Aj-vJt" firstAttribute="centerY" secondItem="vN1-7z-qe6" secondAttribute="centerY" id="Z6i-Kq-v3N"/>
-                    <constraint firstItem="bxy-cT-TgS" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" id="ZJ8-YD-VH1"/>
-                    <constraint firstAttribute="trailing" secondItem="4lo-R2-W5i" secondAttribute="trailing" constant="20" symbolic="YES" id="avE-Dh-kvv"/>
+                    <constraint firstItem="bxy-cT-TgS" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="ZJ8-YD-VH1"/>
+                    <constraint firstItem="7X3-e3-N7L" firstAttribute="top" secondItem="bxy-cT-TgS" secondAttribute="bottom" constant="1" id="cGZ-SG-aRF"/>
                     <constraint firstAttribute="bottom" secondItem="d4n-Aj-vJt" secondAttribute="bottom" constant="20" symbolic="YES" id="dCa-gW-qd7"/>
-                    <constraint firstAttribute="trailing" secondItem="bxy-cT-TgS" secondAttribute="trailing" constant="20" id="p3p-W0-xN7"/>
+                    <constraint firstAttribute="trailing" secondItem="bxy-cT-TgS" secondAttribute="trailing" constant="20" symbolic="YES" id="p3p-W0-xN7"/>
+                    <constraint firstItem="7X3-e3-N7L" firstAttribute="leading" secondItem="NUn-bn-bEY" secondAttribute="leading" id="sB2-Jz-iM1"/>
                     <constraint firstAttribute="trailing" secondItem="d4n-Aj-vJt" secondAttribute="trailing" constant="20" symbolic="YES" id="zRE-eB-Tk5"/>
                 </constraints>
             </view>

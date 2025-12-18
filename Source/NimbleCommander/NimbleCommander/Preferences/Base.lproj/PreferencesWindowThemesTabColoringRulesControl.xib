@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24412" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24412"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -182,12 +182,9 @@
                     </tableHeaderView>
                 </scrollView>
                 <segmentedControl horizontalHuggingPriority="1" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="CV9-ra-BaN">
-                    <rect key="frame" x="0.0" y="-1" width="49" height="23"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="49" id="M39-4x-Dud"/>
-                    </constraints>
-                    <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="momentary" id="XQf-Al-xp6">
-                        <font key="font" metaFont="system"/>
+                    <rect key="frame" x="0.0" y="0.0" width="47" height="20"/>
+                    <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="smallSquare" trackingMode="momentary" id="XQf-Al-xp6">
+                        <font key="font" metaFont="smallSystem"/>
                         <segments>
                             <segment image="NSAddTemplate" imageScaling="none" width="23"/>
                             <segment image="NSRemoveTemplate" imageScaling="none" width="23" tag="1"/>
@@ -197,26 +194,13 @@
                         <action selector="onPlusMinusButton:" target="-2" id="vth-qX-Vo8"/>
                     </connections>
                 </segmentedControl>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dBF-9n-N5r">
-                    <rect key="frame" x="48" y="-1" width="432" height="23"/>
-                    <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="6sn-pf-m7y">
-                        <behavior key="behavior" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="21" id="Wdk-hz-cM6"/>
-                    </constraints>
-                </button>
             </subviews>
             <constraints>
                 <constraint firstItem="RNZ-Qr-pWu" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="2" id="28f-Tl-Xwu"/>
                 <constraint firstAttribute="bottom" secondItem="CV9-ra-BaN" secondAttribute="bottom" id="8Kc-MR-gUB"/>
-                <constraint firstAttribute="trailing" secondItem="dBF-9n-N5r" secondAttribute="trailing" id="CLE-2r-SlO"/>
-                <constraint firstAttribute="bottom" secondItem="dBF-9n-N5r" secondAttribute="bottom" id="Uwf-JV-dne"/>
                 <constraint firstItem="CV9-ra-BaN" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" id="bfW-ji-VcR"/>
-                <constraint firstItem="dBF-9n-N5r" firstAttribute="top" secondItem="RNZ-Qr-pWu" secondAttribute="bottom" id="f2y-HI-oUt"/>
+                <constraint firstItem="CV9-ra-BaN" firstAttribute="top" secondItem="RNZ-Qr-pWu" secondAttribute="bottom" constant="1" id="l26-st-yUk"/>
                 <constraint firstItem="RNZ-Qr-pWu" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" id="mUj-7D-xdD"/>
-                <constraint firstItem="dBF-9n-N5r" firstAttribute="leading" secondItem="CV9-ra-BaN" secondAttribute="trailing" constant="-1" id="qVA-R7-RS5"/>
                 <constraint firstAttribute="trailing" secondItem="RNZ-Qr-pWu" secondAttribute="trailing" id="wva-bd-Xca"/>
             </constraints>
             <point key="canvasLocation" x="172" y="274"/>

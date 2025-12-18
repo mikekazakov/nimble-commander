@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24412" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24412"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -84,13 +84,13 @@
                     </scroller>
                 </scrollView>
                 <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y7J-p6-HI3">
-                    <rect key="frame" x="20" y="40" width="144" height="312"/>
+                    <rect key="frame" x="20" y="45" width="144" height="307"/>
                     <clipView key="contentView" id="si4-5i-E4Z">
-                        <rect key="frame" x="1" y="1" width="142" height="310"/>
+                        <rect key="frame" x="1" y="1" width="142" height="305"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="19" headerView="PHP-Ho-EVu" id="ImX-HS-wyQ">
-                                <rect key="frame" x="0.0" y="0.0" width="142" height="282"/>
+                                <rect key="frame" x="0.0" y="0.0" width="142" height="277"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <size key="intercellSpacing" width="17" height="0.0"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -118,21 +118,8 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </tableHeaderView>
                 </scrollView>
-                <button horizontalHuggingPriority="1000" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="P1x-SI-ICv">
-                    <rect key="frame" x="102" y="19" width="62" height="23"/>
-                    <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="P9u-4v-kME">
-                        <behavior key="behavior" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="21" id="hum-M2-Ckn"/>
-                    </constraints>
-                </button>
                 <segmentedControl horizontalHuggingPriority="1" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="YHF-J9-jbm">
-                    <rect key="frame" x="20" y="19" width="83" height="23"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="83" id="D1V-oC-4dm"/>
-                    </constraints>
+                    <rect key="frame" x="20" y="20" width="77" height="24"/>
                     <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="momentary" id="3si-DR-eNS">
                         <font key="font" metaFont="system"/>
                         <segments>
@@ -149,19 +136,16 @@
                 </segmentedControl>
             </subviews>
             <constraints>
+                <constraint firstItem="0oI-YO-0HY" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="YHF-J9-jbm" secondAttribute="trailing" constant="8" symbolic="YES" id="23d-cG-H8R"/>
                 <constraint firstAttribute="bottom" secondItem="YHF-J9-jbm" secondAttribute="bottom" constant="20" symbolic="YES" id="2hy-Zi-XnZ"/>
                 <constraint firstItem="0oI-YO-0HY" firstAttribute="leading" secondItem="Y7J-p6-HI3" secondAttribute="trailing" constant="8" symbolic="YES" id="9E5-Lx-FbU"/>
                 <constraint firstItem="Y7J-p6-HI3" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="Gkd-KK-fPL"/>
                 <constraint firstAttribute="trailing" secondItem="0oI-YO-0HY" secondAttribute="trailing" constant="20" symbolic="YES" id="OLT-i1-KyI"/>
                 <constraint firstItem="0oI-YO-0HY" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="PTR-Ud-aJu"/>
-                <constraint firstItem="P1x-SI-ICv" firstAttribute="trailing" secondItem="Y7J-p6-HI3" secondAttribute="trailing" id="PwC-ba-9nz"/>
                 <constraint firstItem="Y7J-p6-HI3" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="U7f-9B-ZLV"/>
                 <constraint firstItem="YHF-J9-jbm" firstAttribute="leading" secondItem="Y7J-p6-HI3" secondAttribute="leading" id="YWh-OT-egA"/>
-                <constraint firstItem="YHF-J9-jbm" firstAttribute="top" secondItem="Y7J-p6-HI3" secondAttribute="bottom" constant="-1" id="bFS-Vk-YtO"/>
+                <constraint firstItem="YHF-J9-jbm" firstAttribute="top" secondItem="Y7J-p6-HI3" secondAttribute="bottom" constant="1" id="bFS-Vk-YtO"/>
                 <constraint firstAttribute="bottom" secondItem="0oI-YO-0HY" secondAttribute="bottom" constant="20" symbolic="YES" id="dGY-ci-hjg"/>
-                <constraint firstItem="P1x-SI-ICv" firstAttribute="leading" secondItem="YHF-J9-jbm" secondAttribute="trailing" constant="-1" id="fSd-xI-nNM"/>
-                <constraint firstAttribute="bottom" secondItem="P1x-SI-ICv" secondAttribute="bottom" constant="20" symbolic="YES" id="obh-NE-WWe"/>
-                <constraint firstItem="P1x-SI-ICv" firstAttribute="top" secondItem="YHF-J9-jbm" secondAttribute="top" id="vXU-oH-kqT"/>
             </constraints>
             <point key="canvasLocation" x="139" y="135"/>
         </customView>

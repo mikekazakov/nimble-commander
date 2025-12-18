@@ -190,6 +190,7 @@ static NSString *EncodeToolIdentifier(const ExternalTool &_et)
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_PoolViewController.view;
         item.paletteLabel = item.label = NSLocalizedString(@"Operations", "Toolbar palette");
+        item.bordered = false;
         m_PoolViewToolbarItem = item;
         return item;
     }

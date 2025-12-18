@@ -46,7 +46,15 @@
       }
     },
     "New Tool" : {
-      "comment" : "A placeholder title for a new external tool"
+      "comment" : "A placeholder title for a new external tool",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Новый инструмент"
+          }
+        }
+      }
     },
     "Options" : {
       "comment" : "Title for options menu item in selection by mask popup",

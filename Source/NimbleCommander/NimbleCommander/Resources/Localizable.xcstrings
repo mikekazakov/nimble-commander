@@ -667,7 +667,8 @@
             "value" : "Ошибка подключения к Dropbox:"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Enable Admin Mode" : {
       "comment" : "Menu item title for enabling an admin mode",
@@ -1895,7 +1896,15 @@
       }
     },
     "The name “%@” is already taken.\nPlease choose a different name." : {
-      "comment" : "Alert shown when a user tries to enter a tag label that is already in use"
+      "comment" : "Alert shown when a user tries to enter a tag label that is already in use",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Имя “%@” уже используется использовано. Пожалуйста, выберите другое имя."
+          }
+        }
+      }
     },
     "The window has %@ tabs. Are you sure you want to close this window?" : {
       "comment" : "Asking user to close window with additional tabs",
@@ -2050,7 +2059,15 @@
       }
     },
     "Unable to run the external tool \"%s\"" : {
-      "comment" : "Message text alerting the inability to run an external tool"
+      "comment" : "Message text alerting the inability to run an external tool",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Невозможно запустить внешний инструмент “%s”."
+          }
+        }
+      }
     },
     "Untitled" : {
       "comment" : "Name of a newly created tag",

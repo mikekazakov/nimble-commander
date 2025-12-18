@@ -735,7 +735,9 @@ There are two ways to use the terminal emulator in Nimble Commander:
 
 # Hotkeys
 The available hotkeys are listed below. 
-These are the default settings, which can be customized as needed. 
+These are the default settings and can be customized as needed.
+To modify them, go to `Settings > Hotkeys`.
+Up to four hotkeys (also known as "key equivalents") can be assigned to a single action.
 Some actions do not have default hotkeys but can still be accessed through the application’s menu.
 
 | Action                                       | Key Equivalent            |

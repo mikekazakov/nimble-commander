@@ -118,6 +118,12 @@
             "state" : "new",
             "value" : "Gallery"
           }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Галерея"
+          }
         }
       }
     },
@@ -255,6 +261,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Text Lines:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Строк текста:"
           }
         }
       }
@@ -536,6 +548,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "1"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "1"
           }
         }
@@ -952,6 +970,12 @@
             "state" : "new",
             "value" : "4"
           }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4"
+          }
         }
       }
     },
@@ -981,6 +1005,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Icon Size:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Размер иконки:"
           }
         }
       }
@@ -1064,6 +1094,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "2"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "2"
           }
         }
@@ -1456,6 +1492,12 @@
             "state" : "new",
             "value" : "3"
           }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3"
+          }
         }
       }
     },
@@ -1738,6 +1780,12 @@
             "state" : "new",
             "value" : "Fuzzy"
           }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нечётко"
+          }
         }
       }
     },
@@ -1876,6 +1924,12 @@
             "state" : "new",
             "value" : "Gallery"
           }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Галерея"
+          }
         }
       }
     },
@@ -1959,6 +2013,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "disabled"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "откл."
           }
         }
       }

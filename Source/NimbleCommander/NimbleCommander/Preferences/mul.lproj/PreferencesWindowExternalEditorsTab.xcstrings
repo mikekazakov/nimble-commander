@@ -46,6 +46,12 @@
             "state" : "new",
             "value" : "When choosing an editor to start, editors are checked in order of appearance in this list."
           }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "При выборе редактора они проверяются в очередности этого списка."
+          }
         }
       }
     },

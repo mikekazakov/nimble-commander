@@ -9,7 +9,7 @@ This website contains an in-depth study of this kind of software: [Less is More:
 
 ## System Requirements
 
-The current version of Nimble Commander supports any Mac running the following versions of macOS:
+The current version of Nimble Commander supports any Mac running one of the following versions of macOS:
 
 - macOS 26 Tahoe
 - macOS 15 Sequoia
@@ -18,9 +18,12 @@ The current version of Nimble Commander supports any Mac running the following v
 - macOS 12 Monterey
 - macOS 11 Big Sur
 
-It runs natively on both Intel and Apple Silicon (ARM) architectures.
+While not a strict policy, a maintenance goal is to support the last six major releases of macOS.
+This typically covers Mac hardware with a time span of approximately 12 years.
 
-Below is the compatibility table for older releases of Nimble Commander:
+Nimble Commander runs natively on both Intel and Apple Silicon (ARM) architectures.
+
+Below is the compatibility table for the older releases:
 
 | Versions      | Architecture  | Minimum macOS Version
 | ------------- | ------------- | -----------------

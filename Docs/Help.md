@@ -315,21 +315,29 @@ When filtered-out items are configured to still be shown, and a key modifier is 
 Using normal keyboard navigation (Arrows, Home, End, etc.) while holding the modifier will restrict the cursor movement to only the matching files.
 
 ## View Modes
-Nimble Commander can display the contents of a panel in two modes: Brief and List.
-The Brief mode shows only basic item information, such as the filename, icon, and tag colors, and arranges the items in consecutive columns.
-This allows more items to fit on the screen and enables the cursor to move both vertically and horizontally.
-The List mode, on the other hand, displays panel items in a table format, where each row represents a single item and each column represents an attribute.
-This mode allows only vertical cursor movement.
+Nimble Commander can display the contents of a panel in three modes: Brief, List, and Gallery.
+
+- Brief mode shows only basic item information, such as the filename, icon, and tag colors, and arranges the items in consecutive columns.
+  This allows more items to fit on the screen and enables the cursor to move both vertically and horizontally.
+- List mode, on the other hand, displays panel items in a table format, where each row represents a single item and each column represents an attribute.
+  This mode allows only vertical cursor movement.
+- Gallery mode displays items horizontally as labeled icons at the bottom of the panel, along with an interactive QuickLook preview of the currently focused item.
+
 The screenshot below shows how the same folder, `/usr/bin`, is displayed in Brief and List modes:
 
 ![Brief and List modes](Help-panel-modes.png)
 
-By default, Nimble Commander has 4 preconfigured modes, which you can switch using the `View > View Mode` menu or via the hotkeys listed below:
+This screenshot shows Gallery mode with the other panel collapsed:
+
+![Gallery mode](Help-panel-gallery.png)
+
+By default, Nimble Commander has 5 preconfigured modes, which you can switch using the `View > View Mode` menu or via the hotkeys listed below:
 
 - `Ctrl + 1` - `Short`: A Brief mode that shows 3 equal-sized columns per panel.
 - `Ctrl + 2` - `Medium`: A Brief mode that uses dynamically sized columns depending on the widths of filenames.
 - `Ctrl + 3` - `Full`: A List mode that shows the following columns: filename, size, date created, date modified, and date added.
 - `Ctrl + 4` - `Wide`: A List mode that shows two columns: filename and size.
+- `Ctrl + 5` - `Gallery`: A Gallery mode that shows icons and uses two lines to display filenames.
 
 You can fine-tune, rearrange, and add new custom panel layouts in the Settings dialog: `Settings > Panels > Layout`.
 
@@ -779,7 +787,7 @@ Some actions do not have default hotkeys but can still be accessed through the a
 | &nbsp; &nbsp; Toggle Medium View Mode        | Ctrl + 2                  |
 | &nbsp; &nbsp; Toggle Full View Mode          | Ctrl + 3                  |
 | &nbsp; &nbsp; Toggle Wide View Mode          | Ctrl + 4                  |
-| &nbsp; &nbsp; Toggle View Mode V             | Ctrl + 5                  |
+| &nbsp; &nbsp; Toggle Gallery View Mode       | Ctrl + 5                  |
 | &nbsp; &nbsp; Toggle View Mode VI            | Ctrl + 6                  |
 | &nbsp; &nbsp; Toggle View Mode VII           | Ctrl + 7                  |
 | &nbsp; &nbsp; Toggle View Mode VIII          | Ctrl + 8                  |

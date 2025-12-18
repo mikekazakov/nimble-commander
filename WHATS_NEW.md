@@ -1,5 +1,27 @@
 # What's New in Nimble Commander
 
+## Version 1.8.0 (19 Dec 2025)
+- Updated for macOS Tahoe.
+- Added a new presentation mode: Gallery.
+- Added support for up to four hotkeys per action.
+- Added syntax highlighting for Dart, Diff, Rust, and Zig.
+- Added configurable padding between rows in Brief and List modes.
+- Added an option to dim secondary columns in List mode.
+- Updated the icons in the Settings dialog.
+- Improved handling of config files by allowing symlink traversal.
+- Allowed external tools to use the %r / %-r placeholders when the panel has no items.
+- Extended the application documentation.
+- Fixed a bug causing the Go To popup to appear on the wrong screen.
+- Fixed an issue in the Find Files dialog where the text search query would sometimes not apply.
+- Fixed a bug causing incorrect handling of external tool icons placed on the toolbar.
+- Fixed a bug that prevented correct symlink resolution in some archives.
+- Fixed a bug causing symlinks to regular files to be compressed incorrectly. 
+- Disabled the File Attributes dialog for VFSs that do not support it.
+- Reassigned the hotkey for the internal viewer to F3.
+- Raised the minimum supported macOS version to Big Sur.
+- Removed the Dropbox VFS.
+- Many other internal improvements and minor fixes.
+
 ## Version 1.7.0 (18 Dec 2024)
 - Updated for macOS Sequoia.
 - The integrated viewer now provides syntax highlighting using the Lexilla library.

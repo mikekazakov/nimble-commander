@@ -1097,6 +1097,14 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                           backgroundColor:CurrentTheme().FilePanelsListHeaderBackgroundColor()];
         }
     }
+
+    // Notify both active and stashed rows about the theme change
+    [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *_row_view, [[maybe_unused]] long _row) {
+      [_row_view notifyThemeChanged];
+    }];
+    for( PanelListViewRowView *row_view : m_RowsStash ) {
+        [row_view notifyThemeChanged];
+    }
 }
 
 - (void)dateDidChange:(NSNotification *) [[maybe_unused]] _notification

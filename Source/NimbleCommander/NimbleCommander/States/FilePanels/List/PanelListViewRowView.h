@@ -25,4 +25,8 @@
 @property(nonatomic, readonly) PanelListViewNameView *nameView;
 @property(nonatomic, readonly) PanelListViewSizeView *sizeView;
 
+// Called by the owner to notify theme change.
+// Row itself does not listed to these events.
+- (void)notifyThemeChanged;
+
 @end

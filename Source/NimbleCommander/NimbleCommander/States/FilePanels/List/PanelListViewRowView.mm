@@ -267,18 +267,24 @@ static NSColor *FindBackgroundColor(bool _is_focused, bool _is_active, bool _is_
     }
 }
 
+- (void)notifyThemeChanged
+{
+    [self updateColors];
+}
+
 - (BOOL)wantsUpdateLayer
 {
-    return true; // just use background color
+    return false;
 }
 
 - (void)updateLayer
 {
-    self.layer.backgroundColor = m_RowColor.CGColor;
 }
 
-- (void)drawRect:(NSRect) [[maybe_unused]] dirtyRect
+- (void)drawRect:(NSRect) [[maybe_unused]] _dirty_rect
 {
+    [m_RowColor set];
+    NSRectFill(_dirty_rect);
 }
 
 - (void)addSubview:(NSView *)view

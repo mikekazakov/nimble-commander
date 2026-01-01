@@ -101,6 +101,11 @@
             "filemask": "*.rs, *.rlib"
         },
         {
+            "name": "TOML",
+            "settings": "TOML.json",
+            "filemask": "*.toml"
+        },
+        {
             "name": "XML",
             "settings": "XML.json",
             "filemask": "*.xml, *.plist"

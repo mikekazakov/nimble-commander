@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/ioctl.h>
 #include <sys/sysctl.h>
 
@@ -28,8 +28,9 @@ static std::vector<std::string> SplitArgs(const char *_args)
 {
     std::vector<std::string> vec;
 
+    const size_t initial_len = std::string_view{_args}.length();
     char *args = strdup(_args);
-    int sz = static_cast<int>(std::strlen(args));
+    int sz = static_cast<int>(initial_len);
     int lp = 0;
     for( int i = 0; i < sz; ++i ) {
         if( args[i] == '\\' ) {
@@ -196,7 +197,7 @@ end_of_all:
 
 void SingleTask::EscapeSpaces(char *_buf)
 {
-    size_t sz = strlen(_buf);
+    size_t sz = std::string_view{_buf}.length();
     for( size_t i = 0; i < sz; ++i )
         if( _buf[i] == ' ' ) {
             memmove(_buf + i + 1, _buf + i, sz - i + 1);

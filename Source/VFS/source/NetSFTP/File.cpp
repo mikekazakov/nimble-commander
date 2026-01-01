@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include <libssh2.h>
 #include <libssh2_sftp.h>
@@ -44,8 +44,13 @@ std::expected<void, Error> File::Open(unsigned long _open_flags,
 
     const int mode = _open_flags & (S_IRWXU | S_IRWXG | S_IRWXO);
 
-    LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open_ex(
-        (*conn)->sftp, Path(), static_cast<unsigned>(std::strlen(Path())), sftp_flags, mode, LIBSSH2_SFTP_OPENFILE);
+    const char *const path = Path();
+    LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open_ex((*conn)->sftp,
+                                                       path,
+                                                       static_cast<unsigned>(std::string_view{path}.length()),
+                                                       sftp_flags,
+                                                       mode,
+                                                       LIBSSH2_SFTP_OPENFILE);
     if( handle == nullptr ) {
         const Error err = SFTPHost::ErrorForConnection(**conn);
         sftp_host->ReturnConnection(std::move(*conn));

@@ -1,7 +1,8 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/chained_strings.h>
 #include <cstdlib>
 #include <memory.h>
+#include <string_view>
 
 namespace nc::base {
 
@@ -66,7 +67,7 @@ void chained_strings::push_back(const char *_str, const node *_prefix)
     if( _str == nullptr )
         throw std::exception();
 
-    push_back(_str, static_cast<unsigned>(strlen(_str)), _prefix);
+    push_back(_str, static_cast<unsigned>(std::string_view{_str}.length()), _prefix);
 }
 
 void chained_strings::push_back(const std::string &_str, const node *_prefix)

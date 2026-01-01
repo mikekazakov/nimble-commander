@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #define _LIBCPP_DISABLE_DEPRECATION_WARNINGS
 #include <ParserImpl.h>
 #include <InterpreterImpl.h>
@@ -11,7 +11,7 @@
 using namespace nc::term;
 #define PREFIX "nc::term::Interpreter "
 
-const static std::pair<const char *, const char *> g_SimpleCases[] = {
+const static std::pair<std::string_view, std::string_view> g_SimpleCases[] = {
     // clang-format off
     {
         "Hello",
@@ -385,7 +385,7 @@ const static std::pair<const char *, const char *> g_SimpleCases[] = {
     // clang-format on
 };
 
-const static std::pair<const char *, const char *> g_ResponseCases[] = {
+const static std::pair<std::string_view, std::string_view> g_ResponseCases[] = {
     // clang-format off
     {
         "\x1B[c",
@@ -580,7 +580,7 @@ TEST_CASE(PREFIX "Simple cases")
 
         INFO(test_case.first);
         const auto input_bytes =
-            Parser::Bytes(reinterpret_cast<const std::byte *>(test_case.first), strlen(test_case.first));
+            Parser::Bytes(reinterpret_cast<const std::byte *>(test_case.first.data()), test_case.first.length());
         interpreter.Interpret(parser.Parse(input_bytes));
 
         const auto result = screen.Buffer().DumpScreenAsANSI();
@@ -603,7 +603,7 @@ TEST_CASE(PREFIX "Response cases")
         });
 
         const auto input_bytes =
-            Parser::Bytes(reinterpret_cast<const std::byte *>(test_case.first), strlen(test_case.first));
+            Parser::Bytes(reinterpret_cast<const std::byte *>(test_case.first.data()), test_case.first.length());
         interpreter.Interpret(parser.Parse(input_bytes));
 
         const auto expectation = test_case.second;

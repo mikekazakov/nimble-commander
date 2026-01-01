@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include <Utility/NativeFSManager.h>
 #include <RoutedIO/RoutedIO.h>
@@ -201,7 +201,7 @@ unsigned File::XAttrCount() const
     unsigned count = 0;
     while( s < e ) {
         ++count;
-        s += strlen(s) + 1;
+        s += std::string_view{s}.length() + 1;
     }
     return count;
 }
@@ -228,7 +228,7 @@ void File::XAttrIterateNames(const XAttrIterateNamesCallback &_handler) const
         if( !_handler(s) )
             break;
 
-        s += strlen(s) + 1;
+        s += std::string_view{s}.length() + 1;
     }
 }
 

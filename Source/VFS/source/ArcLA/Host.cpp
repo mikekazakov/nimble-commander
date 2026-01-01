@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
 
@@ -25,6 +25,7 @@ namespace nc::vfs {
 const char *const ArchiveHost::UniqueTag = "arc_libarchive";
 
 struct ArchiveHost::Impl {
+    // Path to a dir including trailing slash -> Dir structure
     using PathToDirT = ankerl::unordered_dense::
         segmented_map<std::string, arc::Dir, nc::UnorderedStringHashEqual, nc::UnorderedStringHashEqual>;
 
@@ -245,8 +246,8 @@ static bool SplitIntoFilenameAndParentPath(const char *_path,
     if( !_path || !_filename || !_parent_path )
         return false;
 
-    const auto path_sz = std::strlen(_path);
-    const auto slash = std::strrchr(_path, '/');
+    const size_t path_sz = std::string_view{_path}.length();
+    const char *const slash = std::strrchr(_path, '/');
     if( !slash )
         return false;
 
@@ -308,11 +309,11 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
         if( stat == nullptr )
             continue; // check for broken archives
 
-        const auto entry_pathname = archive_entry_pathname(aentry);
+        const char *entry_pathname = archive_entry_pathname(aentry);
         if( entry_pathname == nullptr )
             continue; // check for broken archives
 
-        const auto entry_pathname_len = strlen(entry_pathname);
+        const size_t entry_pathname_len = std::string_view{entry_pathname}.length();
         if( entry_pathname_len == 0 )
             continue;
 
@@ -354,11 +355,11 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
         if( strcmp(path, "/.") == 0 )
             continue; // skip "." entry for ISO for example
 
-        const int path_len = static_cast<int>(std::strlen(path));
+        const size_t path_len = std::string_view{path}.length();
 
-        const auto isdir = (stat->st_mode & S_IFMT) == S_IFDIR;
-        const auto isreg = (stat->st_mode & S_IFMT) == S_IFREG;
-        const auto issymlink = (stat->st_mode & S_IFMT) == S_IFLNK;
+        const bool isdir = (stat->st_mode & S_IFMT) == S_IFDIR;
+        const bool isreg = (stat->st_mode & S_IFMT) == S_IFREG;
+        const bool issymlink = (stat->st_mode & S_IFMT) == S_IFLNK;
 
         char short_name[256];
         char parent_path[1024];
@@ -418,7 +419,7 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
 
         if( isdir ) {
             // it's a directory
-            if( path[strlen(path) - 1] != '/' )
+            if( path[path_len - 1] != '/' )
                 strcat(path, "/");
             if( !I->m_PathToDir.contains(path) ) { // check if it wasn't added before via FindOrBuildDir
                 char tmp[1024];
@@ -721,54 +722,37 @@ uint32_t ArchiveHost::ItemUID(const char *_filename)
     return 0;
 }
 
-const arc::DirEntry *ArchiveHost::FindEntry(std::string_view _path)
+const arc::DirEntry *ArchiveHost::FindEntry(std::string_view _path) noexcept
 {
     if( _path.empty() || _path[0] != '/' )
-        return nullptr;
+        return nullptr; // sanitation
 
-    // TODO: rewrite without using C-style strings
+    if( _path == "/" )
+        return nullptr; // we have no info about root dir
+
+    // Split the full path into a parent directory (including the trailing slash!) and filename
+    const std::string_view parent_directory = utility::PathManip::Parent(_path);
+    const std::string_view filename = utility::PathManip::Filename(_path);
+
+    // special treatment for dot-dot
+    if( filename == ".." )
+        return FindEntry(parent_directory);
 
     // 1st - try to find _path directly (assume it's directory)
-    char full_path[1024];
-    char short_name[256];
-    memcpy(full_path, _path.data(), _path.length());
-    full_path[_path.length()] = 0;
-
-    char *last_sl = strrchr(full_path, '/');
-
-    if( last_sl == full_path && strlen(full_path) == 1 )
-        return nullptr; // we have no info about root dir
-    if( last_sl == full_path + strlen(full_path) - 1 ) {
-        *last_sl = 0; // cut trailing slash
-        last_sl = strrchr(full_path, '/');
-        assert(last_sl != nullptr); // sanity check
-    }
-
-    strcpy(short_name, last_sl + 1);
-    *(last_sl + 1) = 0;
-    // now:
-    // buf - directory with trailing slash
-    // short_name - entry name within that directory
-
-    if( strcmp(short_name, "..") == 0 ) { // special treatment for dot-dot
-        const std::string_view directory = utility::PathManip::Parent(full_path);
-        return FindEntry(directory);
-    }
-
-    const auto i = I->m_PathToDir.find(full_path);
+    const auto i = I->m_PathToDir.find(parent_directory);
     if( i == I->m_PathToDir.end() )
         return nullptr;
 
     // ok, found dir, now let's find item
-    const size_t short_name_len = strlen(short_name);
-    for( const auto &it : i->second.entries )
-        if( it.name.length() == short_name_len && it.name == short_name )
-            return &it;
+    const auto found_entry_it =
+        std::ranges::find_if(i->second.entries, [&](const arc::DirEntry &entry) { return entry.name == filename; });
+    if( found_entry_it != i->second.entries.end() )
+        return &(*found_entry_it);
 
     return nullptr;
 }
 
-const arc::DirEntry *ArchiveHost::FindEntry(uint32_t _uid)
+const arc::DirEntry *ArchiveHost::FindEntry(uint32_t _uid) noexcept
 {
     if( !_uid || _uid >= I->m_EntryByUID.size() )
         return nullptr;
@@ -782,6 +766,7 @@ const arc::DirEntry *ArchiveHost::FindEntry(uint32_t _uid)
 
 std::expected<void, Error> ArchiveHost::ResolvePath(std::string_view _path, std::pmr::string &_resolved_path)
 {
+    // TODO: make this malloc-free somehow, or at least use stack-backed malloc...
     if( _path.empty() || _path[0] != '/' )
         return std::unexpected(Error{Error::POSIX, ENOENT});
 
@@ -792,7 +777,7 @@ std::expected<void, Error> ArchiveHost::ResolvePath(std::string_view _path, std:
     for( auto i : p ) {
         result_path /= i;
 
-        auto entry = FindEntry(result_path.c_str());
+        const arc::DirEntry *const entry = FindEntry(result_path.native());
         if( !entry )
             return std::unexpected(Error{Error::POSIX, ENOENT});
 

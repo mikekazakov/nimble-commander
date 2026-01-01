@@ -1,7 +1,8 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 #include <Utility/StringExtras.h>
 #include <Base/CFStackAllocator.h>
+#include <string_view>
 
 static void StringTruncateTo(NSMutableString *str, unsigned maxCharacters, ETruncationType truncationType)
 {
@@ -108,16 +109,17 @@ StringByTruncatingToWidth(NSString *str, double inWidth, ETruncationType truncat
     return [self substringFromIndex:i];
 }
 
-+ (instancetype)stringWithUTF8StringNoCopy:(const char *)nullTerminatedCString
++ (instancetype)stringWithUTF8StringNoCopy:(const char *)_c_str
 {
     auto cf_str = CFStringCreateWithBytesNoCopy(nullptr,
-                                                reinterpret_cast<const UInt8 *>(nullTerminatedCString),
-                                                std::strlen(nullTerminatedCString),
+                                                reinterpret_cast<const UInt8 *>(_c_str),
+                                                std::string_view{_c_str}.length(),
                                                 kCFStringEncodingUTF8,
                                                 false,
                                                 kCFAllocatorNull);
     return static_cast<NSString *>(CFBridgingRelease(cf_str));
 }
+
 + (instancetype)stringWithUTF8StdString:(const std::string &)stdstring
 {
     auto cf_str = CFStringCreateWithBytes(

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
 
@@ -22,7 +22,7 @@ File::~File()
 
 std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
-    if( strlen(Path()) < 2 || Path()[0] != '/' )
+    if( std::string_view{Path()}.length() < 2 || Path()[0] != '/' )
         return std::unexpected(Error{Error::POSIX, ENOENT});
 
     if( _open_flags & VFSFlags::OF_Write )

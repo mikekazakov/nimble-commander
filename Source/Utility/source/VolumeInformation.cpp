@@ -1,8 +1,9 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <CoreFoundation/CoreFoundation.h>
 #include <Utility/VolumeInformation.h>
 #include <cerrno>
 #include <cstring>
+#include <string_view>
 #include <memory.h>
 #include <sys/attr.h>
 #include <sys/mount.h>
@@ -333,7 +334,7 @@ int FetchVolumeAttributesInformation(const char *_path,
     _a->fs_owner = stat_fs.f_owner;
 
     CFURLRef cfurl = CFURLCreateFromFileSystemRepresentation(
-        nullptr, reinterpret_cast<const UInt8 *>(_path), std::strlen(_path), false);
+        nullptr, reinterpret_cast<const UInt8 *>(_path), std::string_view{_path}.length(), false);
     CFStringRef fsverbname;
     if( !static_cast<bool>(CFURLCopyResourcePropertyForKey(
             cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, static_cast<void *>(&fsverbname), nullptr)) ) {

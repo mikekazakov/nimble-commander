@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../../include/VFS/Host.h"
@@ -112,10 +112,10 @@ public:
     };
 
     /** searches for entry in archive without any path resolving */
-    const arc::DirEntry *FindEntry(std::string_view _path);
+    const arc::DirEntry *FindEntry(std::string_view _path) noexcept;
 
     /** searches for entry in archive by id */
-    const arc::DirEntry *FindEntry(uint32_t _uid);
+    const arc::DirEntry *FindEntry(uint32_t _uid) noexcept;
 
     /** find symlink and resolves it if not already. returns nullptr on error. */
     const Symlink *ResolvedSymlink(uint32_t _uid);

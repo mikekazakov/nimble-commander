@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/algo.h>
 #include <Utility/PathManip.h>
 #include <libssh2.h>
@@ -565,7 +565,7 @@ SFTPHost::IterateDirectoryListing(std::string_view _path, const std::function<bo
             break; // can't process without meanful mode
 
         strcpy(e.name, mem);
-        e.name_len = uint16_t(strlen(mem));
+        e.name_len = uint16_t(std::string_view{mem}.length());
         e.type = IFTODT(attrs.permissions);
 
         if( !_handler(e) )

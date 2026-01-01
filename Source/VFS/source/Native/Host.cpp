@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Host.h"
 #include <sys/attr.h>
 #include <sys/errno.h>
@@ -459,7 +459,7 @@ std::expected<uint64_t, Error> NativeHost::CalculateDirectorySize(std::string_vi
 
     std::atomic_uint64_t size{0};
     const std::expected<void, Error> result =
-        CalculateDirectoriesSizesHelper(path, strlen(path), iscancelling, _cancel_checker, stat_queue, size);
+        CalculateDirectoriesSizesHelper(path, _path.length(), iscancelling, _cancel_checker, stat_queue, size);
     stat_queue.sync([] {});
     if( !result )
         return std::unexpected(result.error());

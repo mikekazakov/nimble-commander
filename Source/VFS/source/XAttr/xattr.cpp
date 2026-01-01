@@ -62,7 +62,8 @@ std::expected<void, Error> XAttrHost::EnumerateAttrs(int _fd, std::vector<std::p
                         // 65536/XATTR_MAXNAMELEN=512 xattrs per entry...
         return std::unexpected(Error{Error::POSIX, errno});
 
-    for( auto s = buf.get(), e = buf.get() + used_size; s < e; s += strlen(s) + 1 ) { // iterate thru xattr names..
+    for( auto s = buf.get(), e = buf.get() + used_size; s < e;
+         s += std::string_view{s}.length() + 1 ) { // iterate thru xattr names..
         auto xattr_size = fgetxattr(_fd, s, nullptr, 0, 0, 0);
         if( xattr_size >= 0 )
             _attrs.emplace_back(s, xattr_size);

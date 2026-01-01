@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Trash.h"
 #include <Security/Security.h>
 #include <cerrno>
@@ -572,7 +572,7 @@ static bool CheckSignature(const char *_bin_path)
     OSStatus status = 0;
 
     CFURLRef url = CFURLCreateFromFileSystemRepresentation(
-        nullptr, reinterpret_cast<const UInt8 *>(_bin_path), std::strlen(_bin_path), false);
+        nullptr, reinterpret_cast<const UInt8 *>(_bin_path), std::string_view{_bin_path}.length(), false);
     if( !url )
         return false;
 

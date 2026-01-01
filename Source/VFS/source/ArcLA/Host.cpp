@@ -11,6 +11,7 @@
 #include <Base/UnorderedUtil.h>
 #include <Base/algo.h>
 #include <Base/StackAllocator.h>
+#include <Base/CFPtr.h>
 #include <Utility/DataBlockAnalysis.h>
 #include <Utility/PathManip.h>
 #include <VFS/AppleDoubleEA.h>
@@ -79,21 +80,29 @@ static VFSConfiguration ComposeConfiguration(const std::string_view _path, std::
     return {std::move(config)};
 }
 
-static void DecodeStringToUTF8(const void *_bytes, size_t _sz, CFStringEncoding _enc, char *_buf, size_t _buf_sz)
+void ArchiveHost::AppendDecodedStringToUTF8(const std::span<const std::byte> _bytes,
+                                            const CFStringEncoding _encoding,
+                                            std::pmr::string &_to)
 {
     const base::CFStackAllocator alloc;
-    auto str = CFStringCreateWithBytesNoCopy(
-        alloc, reinterpret_cast<const UInt8 *>(_bytes), _sz, _enc, false, kCFAllocatorNull);
+    const base::CFPtr<CFStringRef> str = base::CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(
+        alloc, reinterpret_cast<const UInt8 *>(_bytes.data()), _bytes.size(), _encoding, false, kCFAllocatorNull));
     if( str ) {
-        if( auto utf8 = CFStringGetCStringPtr(str, kCFStringEncodingUTF8) )
-            strcpy(_buf, utf8);
-        else
-            CFStringGetCString(str, _buf, _buf_sz, kCFStringEncodingUTF8);
-        CFRelease(str);
+        if( const char *utf8 = CFStringGetCStringPtr(str.get(), kCFStringEncodingUTF8) ) {
+            _to.append(utf8);
+            return;
+        }
+        else {
+            char buf[4096];
+            if( CFStringGetCString(str.get(), buf, std::size(buf), kCFStringEncodingUTF8) ) {
+                _to.append(buf);
+                return;
+            }
+        }
     }
-    else {
-        std::strcpy(_buf, static_cast<const char *>(_bytes));
-    }
+
+    // corrupt string - just append raw bytes as a fallback
+    _to.append(reinterpret_cast<const char *>(_bytes.data()), _bytes.size());
 }
 
 ArchiveHost::ArchiveHost(const std::string_view _path,
@@ -300,9 +309,13 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
     }
 
     std::optional<CFStringEncoding> detected_encoding;
+    StackAllocator alloc;
+
+    // This string will be reused for each entry path decoding
+    std::pmr::string path{&alloc};
 
     struct archive_entry *aentry;
-    int ret;
+    int ret = 0;
     while( (ret = archive_read_next_header(I->m_Arc, &aentry)) == ARCHIVE_OK ) {
         aruid++;
         const struct stat *stat = archive_entry_stat(aentry);
@@ -317,26 +330,26 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
         if( entry_pathname_len == 0 )
             continue;
 
-        const bool entry_has_heading_slash = entry_pathname[0] == '/';
+        const bool entry_pathname_has_heading_slash = entry_pathname[0] == '/';
 
-        char path[1024];
-        path[0] = '/';
+        // When decoding each entry path - reuse the same buffer, clearing it first.
+        // If the entry doesn't start with a slash - add it manually to the beginning.
+        path.clear();
+        if( !entry_pathname_has_heading_slash )
+            path += '/';
 
         // pathname can be represented in ANY encoding.
         // if we already have figured out it - convert from it to UTF8 immediately
         if( detected_encoding ) {
-            DecodeStringToUTF8(entry_pathname,
-                               entry_pathname_len,
-                               *detected_encoding,
-                               path + (entry_has_heading_slash ? 0 : 1),
-                               sizeof(path) - 2);
+            AppendDecodedStringToUTF8(
+                {reinterpret_cast<const std::byte *>(entry_pathname), entry_pathname_len}, *detected_encoding, path);
         }
         else {
-            // if we don't know any specific encoding setting for this archive - check for UTF8
+            // if we don't know any specific encoding setting for this archive - check for UTF8.
             // this checking is supposed to be very fast, for most archives it will return true
             if( IsValidUTF8String(entry_pathname, entry_pathname_len) ) {
-                // we can path straightaway
-                strcpy(path + (entry_has_heading_slash ? 0 : 1), entry_pathname);
+                // we can use the path straightaway
+                path.append(entry_pathname, entry_pathname_len);
             }
             else {
                 // if this archive doesn't use a valid UTF8 encoding -
@@ -344,18 +357,14 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
                 if( !detected_encoding )
                     detected_encoding = DetectEncoding(entry_pathname, entry_pathname_len);
 
-                DecodeStringToUTF8(entry_pathname,
-                                   entry_pathname_len,
-                                   *detected_encoding,
-                                   path + (entry_has_heading_slash ? 0 : 1),
-                                   sizeof(path) - 2);
+                AppendDecodedStringToUTF8({reinterpret_cast<const std::byte *>(entry_pathname), entry_pathname_len},
+                                          *detected_encoding,
+                                          path);
             }
         }
 
-        if( strcmp(path, "/.") == 0 )
+        if( path == "/." )
             continue; // skip "." entry for ISO for example
-
-        const size_t path_len = std::string_view{path}.length();
 
         const bool isdir = (stat->st_mode & S_IFMT) == S_IFDIR;
         const bool isreg = (stat->st_mode & S_IFMT) == S_IFREG;
@@ -363,7 +372,8 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
 
         char short_name[256];
         char parent_path[1024];
-        if( !SplitIntoFilenameAndParentPath(path, short_name, sizeof(short_name), parent_path, sizeof(parent_path)) )
+        if( !SplitIntoFilenameAndParentPath(
+                path.c_str(), short_name, sizeof(short_name), parent_path, sizeof(parent_path)) )
             continue;
 
         if( parent_dir->full_path != parent_path ) {
@@ -418,16 +428,15 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
         }
 
         if( isdir ) {
-            // it's a directory
-            if( path[path_len - 1] != '/' )
-                strcat(path, "/");
-            if( !I->m_PathToDir.contains(path) ) { // check if it wasn't added before via FindOrBuildDir
-                char tmp[1024];
-                strcpy(tmp, path);
-                tmp[path_len - 1] = 0;
+            // It's a directory, so ensure the path has a trailing slash to conform map key style
+            if( !path.ends_with('/') )
+                path += '/';
+
+            // Check if it wasn't added before via FindOrBuildDir
+            if( !I->m_PathToDir.contains(path) ) {
                 Dir dir;
                 dir.full_path = path; // full_path is with trailing slash
-                dir.name_in_parent = strrchr(tmp, '/') + 1;
+                dir.name_in_parent = utility::PathManip::Filename(path);
                 I->m_PathToDir.emplace(path, std::move(dir));
             }
         }

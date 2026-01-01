@@ -48,7 +48,7 @@ TEST_CASE(PREFIX "XNUSource - TAR")
         REQUIRE(file->Open(VFSFlags::OF_Read));
         auto d = file->ReadFile();
         REQUIRE(d->size() == 957);
-        std::string_view ref = "# See top level .clang-format for explanation of options";
+        const std::string_view ref = "# See top level .clang-format for explanation of options";
         REQUIRE(std::memcmp(d->data(), ref.data(), ref.length()) == 0);
     }
 

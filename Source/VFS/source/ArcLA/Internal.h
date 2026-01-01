@@ -66,7 +66,7 @@ struct DirEntry {
 };
 
 struct Dir {
-    std::string full_path;      // should alway be with trailing slash
+    std::string full_path;      // should always be with a trailing slash
     std::string name_in_parent; // can be "" only for root directory, full_path will be "/"
     uint64_t content_size = 0;
     std::vector<DirEntry> entries;

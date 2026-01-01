@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Job.h"
@@ -7,6 +7,7 @@
 #include <VFS/VFS.h>
 #include <Base/chained_strings.h>
 #include <stack>
+#include <string_view>
 
 namespace nc::ops {
 
@@ -35,7 +36,8 @@ private:
     void ScanDirectory(const std::string &_path, int _listing_item_index, const base::chained_strings::node *_prefix);
     static bool IsNativeLockedItem(const nc::Error &_err, const std::string &_path, VFSHost &_vfs);
     static std::expected<void, Error> UnlockItem(std::string_view _path, VFSHost &_vfs);
-    static bool IsEAStorage(VFSHost &_host, const std::string &_directory, const char *_filename, uint8_t _unix_type);
+    static bool
+    IsEAStorage(VFSHost &_host, std::string_view _directory, std::string_view _filename, uint8_t _unix_type);
 
     std::vector<VFSListingItem> m_SourceItems;
     DeletionType m_Type;

@@ -137,6 +137,9 @@ private:
 
     void ResolveSymlink(uint32_t _uid);
 
+    static void
+    AppendDecodedStringToUTF8(std::span<const std::byte> _bytes, CFStringEncoding _encoding, std::pmr::string &_to);
+
     std::unique_ptr<Impl> I;
     VFSConfiguration m_Configuration; // TODO: move into I
 };

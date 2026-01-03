@@ -257,10 +257,7 @@ ArchiveRawHost::IterateDirectoryListing(std::string_view _path,
 
     VFSDirEnt entry;
     entry.type = VFSDirEnt::Reg;
-    if( m_Filename.size() > sizeof(entry.name) - 1 )
-        return std::unexpected(Error{Error::POSIX, ENAMETOOLONG});
-    strcpy(entry.name, m_Filename.c_str());
-    entry.name_len = static_cast<uint16_t>(m_Filename.size());
+    entry.name = m_Filename;
 
     _handler(entry);
 

@@ -1,7 +1,8 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
+#include <string_view>
 #include <functional>
 #include <compare>
 #include <Base/intrusive_ptr.h>
@@ -11,8 +12,11 @@ struct stat;
 
 namespace nc::vfs {
 
+// DirEnt struct mimicks struct dirent from <dirent.h>, but it's explicitly an interface view-only type.
+// It should be used only within the scope of directory listing iteration, if the client code needs to store the data,
+// it should copy the name string manually.
 struct DirEnt {
-    enum {
+    enum Type : uint16_t {
         Unknown = 0,  /* = DT_UNKNOWN */
         FIFO = 1,     /* = DT_FIFO    */
         Char = 2,     /* = DT_CHR     */
@@ -24,9 +28,8 @@ struct DirEnt {
         Whiteout = 14 /* = DT_WHT     */
     };
 
-    uint16_t type;
-    uint16_t name_len;
-    char name[1024];
+    Type type = Unknown;
+    std::string_view name;
 };
 
 struct StatFS {

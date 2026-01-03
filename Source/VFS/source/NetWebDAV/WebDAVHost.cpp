@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WebDAVHost.h"
 #include "Internal.h"
 #include <Utility/PathManip.h>
@@ -172,9 +172,8 @@ WebDAVHost::IterateDirectoryListing(std::string_view _path,
 
     for( const auto &i : items ) {
         VFSDirEnt e;
-        strcpy(e.name, i.filename.c_str());
-        e.name_len = uint16_t(i.filename.length());
-        e.type = i.is_directory ? DT_DIR : DT_REG;
+        e.name = i.filename;
+        e.type = i.is_directory ? VFSDirEnt::Dir : VFSDirEnt::Reg;
         if( !_handler(e) )
             return std::unexpected(nc::Error{nc::Error::POSIX, ECANCELED});
     }

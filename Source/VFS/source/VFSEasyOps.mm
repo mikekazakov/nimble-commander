@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSEasyOps.h"
 #include <Base/SerialQueue.h>
 #include <Base/DispatchGroup.h>
@@ -439,13 +439,14 @@ Traverse(const std::string &_vfs_dirpath, VFSHost &_host, const std::function<bo
             if( _cancel_checker && _cancel_checker() )
                 return false;
 
-            auto full_entry_path = current.src_full_path + "/" + _dirent.name;
+            std::string full_entry_path = fmt::format("{}/{}", current.src_full_path, _dirent.name);
             const std::expected<VFSStat, Error> st = _host.Stat(full_entry_path, VFSFlags::F_NoFollow, _cancel_checker);
             if( !st )
                 return false;
 
-            result.emplace_back(TraversedFSEntry{
-                .src_full_path = full_entry_path, .rel_path = current.rel_path + "/" + _dirent.name, .st = *st});
+            result.emplace_back(TraversedFSEntry{.src_full_path = full_entry_path,
+                                                 .rel_path = fmt::format("{}/{}", current.rel_path, _dirent.name),
+                                                 .st = *st});
             if( st->mode_bits.dir )
                 traverse.push(result.back());
 

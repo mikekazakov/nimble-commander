@@ -73,9 +73,14 @@ void DeletionJob::ScanDirectory(const std::string &_path,
 {
     auto &vfs = *m_SourceItems[_listing_item_index].Host();
 
-    std::vector<VFSDirEnt> dir_entries;
+    struct Entry {
+        VFSDirEnt::Type type;
+        std::string name;
+    };
+
+    std::vector<Entry> dir_entries;
     const auto it_callback = [&](const VFSDirEnt &_entry) {
-        dir_entries.emplace_back(_entry);
+        dir_entries.emplace_back(_entry.type, std::string{_entry.name});
         return true;
     };
     while( true ) {

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Host.h"
 #include <libproc.h>
 #include <sys/resource.h>
@@ -551,8 +551,7 @@ PSHost::IterateDirectoryListing(std::string_view _path, const std::function<bool
 
     for( auto &i : snapshot->plain_filenames ) {
         VFSDirEnt dir;
-        strcpy(dir.name, i.c_str());
-        dir.name_len = uint16_t(i.size());
+        dir.name = i;
         dir.type = VFSDirEnt::Reg;
 
         if( !_handler(dir) )

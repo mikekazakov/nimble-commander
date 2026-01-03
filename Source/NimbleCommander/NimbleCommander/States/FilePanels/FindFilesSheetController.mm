@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FindFilesSheetController.h"
 #include <Base/DispatchGroup.h>
 #include <Base/dispatch_cpp.h>
@@ -486,7 +486,7 @@ private:
 
     m_FileSearch->SetFilterSize(self.searchFilterSizeFromUI);
 
-    auto found_callback = [=](const char *_filename, const char *_in_path, VFSHost &_in_host, CFRange _cont_pos) {
+    auto found_callback = [=](std::string_view _filename, const char *_in_path, VFSHost &_in_host, CFRange _cont_pos) {
         FindFilesSheetControllerFoundItem it;
         it.host = _in_host.SharedPtr();
         it.filename = _filename;

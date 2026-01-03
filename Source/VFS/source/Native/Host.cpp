@@ -535,16 +535,15 @@ NativeHost::IterateDirectoryListing(std::string_view _path,
         return std::unexpected(Error{Error::POSIX, errno});
     const auto close_dirp = at_scope_end([&] { io.closedir(dirp); });
 
-    dirent *entp;
-    VFSDirEnt vfs_dirent;
+    dirent *entp = nullptr;
     while( (entp = io.readdir(dirp)) != nullptr ) {
         if( (entp->d_namlen == 1 && entp->d_name[0] == '.') ||
             (entp->d_namlen == 2 && entp->d_name[0] == '.' && entp->d_name[1] == '.') )
             continue;
 
-        vfs_dirent.type = entp->d_type;
-        vfs_dirent.name_len = entp->d_namlen;
-        memcpy(vfs_dirent.name, entp->d_name, entp->d_namlen + 1);
+        VFSDirEnt vfs_dirent;
+        vfs_dirent.type = static_cast<VFSDirEnt::Type>(entp->d_type);
+        vfs_dirent.name = std::string_view{entp->d_name, entp->d_namlen};
 
         if( !_handler(vfs_dirent) )
             break;

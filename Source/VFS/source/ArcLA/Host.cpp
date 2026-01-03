@@ -657,11 +657,9 @@ ArchiveHost::IterateDirectoryListing(std::string_view _path,
     if( i == I->m_PathToDir.end() )
         return std::unexpected(Error{Error::POSIX, ENOENT});
 
-    VFSDirEnt dir;
-
     for( const auto &it : i->second.entries ) {
-        strcpy(dir.name, it.name.c_str());
-        dir.name_len = uint16_t(it.name.length());
+        VFSDirEnt dir;
+        dir.name = it.name;
 
         if( S_ISDIR(it.st.st_mode) )
             dir.type = VFSDirEnt::Dir;

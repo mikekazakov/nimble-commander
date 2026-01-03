@@ -1,4 +1,4 @@
-// Copyright (C) 2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2025-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -10,6 +10,7 @@
 #include <expected>
 #include <Base/intrusive_ptr.h>
 #include <fmt/format.h>
+#include <CoreFoundation/CFError.h>
 
 #ifdef __OBJC__
 @class NSError;
@@ -60,6 +61,9 @@ public:
 
     // Construct an Error with the specified domain and the error code.
     Error(std::string_view _domain, int64_t _code) noexcept;
+
+    // Construct an Error out of the existing CFError.
+    explicit Error(CFErrorRef _error) noexcept;
 
 #ifdef __OBJC__
     // Construct an Error out of the existing NSError.

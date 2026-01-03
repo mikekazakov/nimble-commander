@@ -1,7 +1,8 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/VolumeInformation.h>
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/NativeFSManager.h>
+#include <Utility/StringExtras.h>
 #include "DetailedVolumeInformationSheetController.h"
 
 @interface DetailedVolumeInformationSheetController ()
@@ -28,8 +29,8 @@
 
 @implementation DetailedVolumeInformationSheetController {
     std::string m_Root;
-    VolumeCapabilitiesInformation m_Capabilities;
-    VolumeAttributesInformation m_Attributes;
+    nc::utility::VolumeCapabilitiesInformation m_Capabilities;
+    nc::utility::VolumeAttributesInformation m_Attributes;
     NSTimer *m_UpdateTimer;
     nc::utility::NativeFSManager *m_NativeFSManager;
 }
@@ -70,8 +71,10 @@ static NSString *Bool2ToString(const bool b[2])
 
 - (void)UpdateByTimer:(NSTimer *) [[maybe_unused]] _the_timer
 {
-    if( FetchVolumeAttributesInformation(m_Root.c_str(), &m_Capabilities, &m_Attributes) == 0 )
+    if( auto fetched_attributes = FetchVolumeAttributesInformation(m_Root.c_str(), m_Capabilities) ) {
+        m_Attributes = *fetched_attributes;
         [self PopulateControls];
+    }
 }
 
 - (void)windowDidLoad
@@ -307,8 +310,12 @@ static NSString *Bool2ToString(const bool b[2])
 
     if( FetchVolumeCapabilitiesInformation(m_Root.c_str(), &m_Capabilities) != 0 )
         return;
-    if( FetchVolumeAttributesInformation(m_Root.c_str(), &m_Capabilities, &m_Attributes) != 0 )
+
+    if( auto fetched_attributes = FetchVolumeAttributesInformation(m_Root.c_str(), m_Capabilities);
+        !fetched_attributes )
         return;
+    else
+        m_Attributes = *fetched_attributes;
 
     [self beginSheetForWindow:_window
             completionHandler:^([[maybe_unused]] NSModalResponse returnCode){
@@ -317,10 +324,10 @@ static NSString *Bool2ToString(const bool b[2])
 
 - (void)PopulateControls
 {
-    [[self NameTextField] setStringValue:[NSString stringWithUTF8String:m_Attributes.name]];
-    [[self MountedAtTextField] setStringValue:[NSString stringWithUTF8String:m_Attributes.mount_point]];
-    [[self DeviceTextField] setStringValue:[NSString stringWithUTF8String:m_Attributes.mounted_device]];
-    [[self FormatTextField] setStringValue:[NSString stringWithUTF8String:m_Attributes.fs_type_verb]];
+    [[self NameTextField] setStringValue:[NSString stringWithUTF8StdString:m_Attributes.name]];
+    [[self MountedAtTextField] setStringValue:[NSString stringWithUTF8StdString:m_Attributes.mount_point]];
+    [[self DeviceTextField] setStringValue:[NSString stringWithUTF8StdString:m_Attributes.mounted_device]];
+    [[self FormatTextField] setStringValue:[NSString stringWithUTF8StdString:m_Attributes.fs_type_verb]];
     [[self TotalBytesTextField] setIntegerValue:m_Attributes.size];
     [[self FreeBytesTextField] setIntegerValue:m_Attributes.space_free];
     [[self AvailableBytesTextField] setIntegerValue:m_Attributes.space_avail];

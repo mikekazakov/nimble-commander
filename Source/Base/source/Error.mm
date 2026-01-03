@@ -1,4 +1,4 @@
-// Copyright (C) 2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2025-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/Error.h>
 #include <Base/UnorderedUtil.h>
 #include <Base/spinlock.h>
@@ -239,6 +239,12 @@ static std::string_view RemapDomain(std::string_view _domain) noexcept
     if( _domain == "NSURLErrorDomain" )
         return Error::NSURL;
     return _domain;
+}
+
+Error::Error(CFErrorRef _error) noexcept : Error((__bridge NSError *)(_error))
+{
+    // TODO: it might be more efficient to extract domain and code directly from CFErrorRef
+    // More hassle with CoreFoundation, might it might be a bit faster than talking via Objective-C
 }
 
 Error::Error(NSError *_error) noexcept

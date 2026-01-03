@@ -1,9 +1,13 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <sys/param.h>
 #include <sys/mount.h>
 #include <unistd.h>
+#include <Base/Error.h>
+#include <string>
+
+namespace nc::utility {
 
 // see getattrlist function documentation to get info about values
 struct VolumeCapabilitiesInformation {
@@ -126,38 +130,39 @@ struct VolumeCapabilitiesInformation {
 };
 
 struct VolumeAttributesInformation {
-    u_int32_t fs_type;
-    u_int32_t signature;
-    off_t size;
-    off_t space_free;
-    off_t space_avail;
-    off_t min_allocation;
-    off_t allocation_clump;
-    u_int32_t io_block_size;
-    u_int32_t obj_count;
-    u_int32_t file_count;
-    u_int32_t dir_count;
-    u_int32_t max_obj_count;
-    char mount_point[MAXPATHLEN];
-    char name[NAME_MAX + 1];
-    u_int32_t mount_flags;
-    char mounted_device[MAXPATHLEN];
-    unsigned long long encoding_used;
-    uuid_t uuid;
-    char fs_type_name[MFSNAMELEN]; // this field is retrieved from statfs, not from getattrlist
-    uid_t fs_owner;                // this field is retrieved from statfs, not from getattrlist
-    char fs_type_verb[256];        // from CFURL framework
-    bool is_sw_ejectable;
-    bool is_sw_removable;
-    bool is_local;
-    bool is_internal;
+    u_int32_t fs_type = 0;
+    u_int32_t signature = 0;
+    off_t size = 0;
+    off_t space_free = 0;
+    off_t space_avail = 0;
+    off_t min_allocation = 0;
+    off_t allocation_clump = 0;
+    u_int32_t io_block_size = 0;
+    u_int32_t obj_count = 0;
+    u_int32_t file_count = 0;
+    u_int32_t dir_count = 0;
+    u_int32_t max_obj_count = 0;
+    std::string mount_point;
+    std::string name;
+    u_int32_t mount_flags = 0;
+    std::string mounted_device;
+    unsigned long long encoding_used = 0;
+    uuid_t uuid = {0};
+    std::string fs_type_name; // this field is retrieved from statfs, not from getattrlist
+    uid_t fs_owner = 0;       // this field is retrieved from statfs, not from getattrlist
+    std::string fs_type_verb; // from CFURL framework
+    bool is_sw_ejectable = false;
+    bool is_sw_removable = false;
+    bool is_local = false;
+    bool is_internal = false;
 };
 
 // all functions below return 0 on successful completion or errno on error
 int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInformation *_c);
 
-int FetchVolumeAttributesInformation(const char *_path,
-                                     const VolumeCapabilitiesInformation *_c,
-                                     VolumeAttributesInformation *_a);
-// fetches only information available for current volume, choosing it whith _c
-// it fetches available info even it's not native for file system - when drivers layer emulates it
+// fetches only information available for current volume, choosing it whith _capabilities.
+// it fetches available info even it's not native for file system, i.e. when the drivers layer emulates it
+std::expected<VolumeAttributesInformation, Error>
+FetchVolumeAttributesInformation(const char *_path, const VolumeCapabilitiesInformation &_capabilities);
+
+} // namespace nc::utility

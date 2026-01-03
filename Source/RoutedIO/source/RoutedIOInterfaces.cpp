@@ -620,7 +620,12 @@ ssize_t PosixIOInterfaceRouted::readlink(const char *_path, char *_symlink, size
     }
 
     const size_t sz = std::string_view{value}.length();
-    strncpy(_symlink, value, _buf_sz);
+    if( sz + 1 >= _buf_sz ) {
+        xpc_release(reply);
+        errno = ERANGE;
+        return -1;
+    }
+    memcpy(_symlink, value, sz + 1);
 
     xpc_release(reply);
 

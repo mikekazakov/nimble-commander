@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Internals.h"
 #include "Host.h"
 #include "Errors.h"
@@ -21,7 +21,7 @@ size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *us
     return sz;
 }
 
-static int parse_dir_unix(const char *line, struct stat *sbuf, char *file, char *link)
+static int parse_dir_unix(const char *line, struct stat *sbuf, char *file, std::string &link)
 {
     char mode[12];
     long nlink = 1;
@@ -77,7 +77,7 @@ static int parse_dir_unix(const char *line, struct stat *sbuf, char *file, char 
 
     char *link_marker = strstr(file, " -> ");
     if( link_marker ) {
-        strcpy(link, link_marker + 4);
+        link = link_marker + 4;
         *link_marker = '\0';
     }
 
@@ -121,7 +121,7 @@ static int parse_dir_unix(const char *line, struct stat *sbuf, char *file, char 
     return 1;
 }
 
-static int parse_dir_win(const char *line, struct stat *sbuf, char *file, char *link)
+static int parse_dir_win(const char *line, struct stat *sbuf, char *file, [[maybe_unused]] std::string &link)
 {
     char date[9];
     char hour[8];
@@ -129,7 +129,6 @@ static int parse_dir_win(const char *line, struct stat *sbuf, char *file, char *
     struct tm tm;
     time_t tt;
     int res;
-    (void)link;
 
     memset(file, 0, sizeof(char) * 1024);
     memset(&tm, 0, sizeof(tm));
@@ -174,6 +173,9 @@ std::shared_ptr<Directory> ParseListing(const char *_str)
 
     static const auto current_line_sz = 4096;
     char current_line[current_line_sz];
+
+    std::string link;
+
     while( (line_end = strchr(line_start, '\n')) != nullptr ) {
         //      handle win-style newlines somehow:
         //        if (end > start && *(end-1) == '\r') end--;
@@ -185,7 +187,7 @@ std::shared_ptr<Directory> ParseListing(const char *_str)
         struct stat st;
         memset(&st, 0, sizeof(st));
         char filename[2048];
-        char link[2048];
+        link.clear();
         if( parse_dir_unix(current_line, &st, filename, link) || parse_dir_win(current_line, &st, filename, link) ) {
             if( strcmp(filename, ".") != 0 && strcmp(filename, "..") != 0 ) {
                 entries.emplace_back();

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <CoreFoundation/CoreFoundation.h>
 #include <cstdlib>
 #include <cstring>
@@ -348,7 +348,7 @@ std::vector<std::byte> BuildAppleDoubleFromEA(VFSFile &_file)
             entry->offset = SWAP32(ea.attr_data_offset);
             entry->length = SWAP32(ea.data_sz);
             entry->namelen = uint8_t(ea.name.length() + 1);
-            strcpy((char *)&entry->name[0], ea.name.c_str());
+            memcpy(&entry->name[0], ea.name.c_str(), ea.name.length() + 1);
             memcpy(apple_double.data() + ea.attr_data_offset, ea.data.get(), ea.data_sz);
         }
     }

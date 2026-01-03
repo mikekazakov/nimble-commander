@@ -195,18 +195,6 @@ end_of_all:
     CleanUp();
 }
 
-void SingleTask::EscapeSpaces(char *_buf)
-{
-    size_t sz = std::string_view{_buf}.length();
-    for( size_t i = 0; i < sz; ++i )
-        if( _buf[i] == ' ' ) {
-            memmove(_buf + i + 1, _buf + i, sz - i + 1);
-            _buf[i] = '\\';
-            ++sz;
-            ++i;
-        }
-}
-
 void SingleTask::ResizeWindow(int _sx, int _sy)
 {
     if( m_MasterFD < 0 || m_TaskPID < 0 )

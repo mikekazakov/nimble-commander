@@ -871,8 +871,6 @@ std::expected<std::unique_ptr<arc::State>, Error> ArchiveHost::ArchiveStateForIt
     }
 
     bool found = false;
-    char path[1024];
-    strcpy(path, _filename + 1); // skip first symbol, which is '/'
     // TODO: need special case for directories
 
     // consider case-insensitive comparison later

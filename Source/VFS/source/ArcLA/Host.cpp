@@ -246,51 +246,6 @@ std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_c
     return {};
 }
 
-static bool SplitIntoFilenameAndParentPath(const char *_path,
-                                           char *_filename,
-                                           int _filename_sz,
-                                           char *_parent_path,
-                                           int _parent_path_sz)
-{
-    if( !_path || !_filename || !_parent_path )
-        return false;
-
-    const size_t path_sz = std::string_view{_path}.length();
-    const char *const slash = std::strrchr(_path, '/');
-    if( !slash )
-        return false;
-
-    if( slash == _path + path_sz - 1 ) {
-        const std::string_view path(_path, path_sz - 1);
-        const auto second_slash_pos = path.rfind('/');
-        if( second_slash_pos == std::string_view::npos )
-            return false;
-        const auto filename_sz = path_sz - second_slash_pos - 2;
-        const auto parent_path_sz = second_slash_pos + 1;
-
-        if( static_cast<int>(filename_sz) >= _filename_sz || static_cast<int>(parent_path_sz) >= _parent_path_sz )
-            return false;
-
-        std::strncpy(_filename, _path + second_slash_pos + 1, filename_sz);
-        _filename[filename_sz] = 0;
-        std::strncpy(_parent_path, _path, parent_path_sz);
-        _parent_path[parent_path_sz] = 0;
-    }
-    else {
-        const auto filename_sz = path_sz - (slash + 1 - _path);
-        const auto parent_path_sz = slash - _path + 1;
-
-        if( static_cast<int>(filename_sz) >= _filename_sz || static_cast<int>(parent_path_sz) >= _parent_path_sz )
-            return false;
-
-        std::strcpy(_filename, slash + 1);
-        std::strncpy(_parent_path, _path, parent_path_sz);
-        _parent_path[parent_path_sz] = 0;
-    }
-
-    return true;
-}
-
 std::expected<void, Error> ArchiveHost::ReadArchiveListing()
 {
     using namespace arc;
@@ -363,18 +318,17 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
             }
         }
 
+        if( path == "/" )
+            continue; // skip root entry - they are handled manually outside
+
         if( path == "/." )
             continue; // skip "." entry for ISO for example
 
         const bool isdir = (stat->st_mode & S_IFMT) == S_IFDIR;
         const bool isreg = (stat->st_mode & S_IFMT) == S_IFREG;
         const bool issymlink = (stat->st_mode & S_IFMT) == S_IFLNK;
-
-        char short_name[256];
-        char parent_path[1024];
-        if( !SplitIntoFilenameAndParentPath(
-                path.c_str(), short_name, sizeof(short_name), parent_path, sizeof(parent_path)) )
-            continue;
+        const std::string_view parent_path = utility::PathManip::Parent(path);
+        const std::string_view filename = utility::PathManip::Filename(path);
 
         if( parent_dir->full_path != parent_path ) {
             Dir *const new_parent = FindOrBuildDir(parent_path);
@@ -389,7 +343,7 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
         if( isdir ) // check if it wasn't added before via FindOrBuildDir
             for( size_t i = 0, e = parent_dir->entries.size(); i < e; ++i ) {
                 auto &it = parent_dir->entries[i];
-                if( (it.st.st_mode & S_IFMT) == S_IFDIR && it.name == short_name ) {
+                if( (it.st.st_mode & S_IFMT) == S_IFDIR && it.name == filename ) {
                     assert(it.aruid == SyntheticArUID);
                     entry = &it;
                     entry_index_in_dir = static_cast<unsigned>(i);
@@ -401,7 +355,7 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
             parent_dir->entries.emplace_back();
             entry_index_in_dir = static_cast<unsigned>(parent_dir->entries.size() - 1);
             entry = &parent_dir->entries.back();
-            entry->name = short_name;
+            entry->name = filename;
         }
 
         entry->aruid = aruid;
@@ -436,6 +390,8 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
             if( !I->m_PathToDir.contains(path) ) {
                 Dir dir;
                 dir.full_path = path; // full_path is with trailing slash
+
+                // NB! do no use 'filename' here - it potentially dangles here
                 dir.name_in_parent = utility::PathManip::Filename(path);
                 I->m_PathToDir.emplace(path, std::move(dir));
             }

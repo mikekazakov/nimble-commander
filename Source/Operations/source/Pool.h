@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Operation.h"
@@ -13,18 +13,20 @@ class Pool : public std::enable_shared_from_this<Pool>, private base::ScopedObse
 
 public:
     static std::shared_ptr<Pool> Make();
+
+    Pool(const Pool &) = delete;
     ~Pool();
+
+    void operator=(const Pool &) = delete;
 
     // Operations and requests
     void Enqueue(std::shared_ptr<Operation> _operation);
     void StopAndWaitForShutdown();
 
     // Notifications
-    enum {
-        NotifyAboutAddition = 1 << 0,
-        NotifyAboutRemoval = 1 << 1,
-        NotifyAboutChange = NotifyAboutAddition | NotifyAboutRemoval
-    };
+    static constexpr uint64_t NotifyAboutAddition = 1 << 0;
+    static constexpr uint64_t NotifyAboutRemoval = 1 << 1;
+    static constexpr uint64_t NotifyAboutChange = NotifyAboutAddition | NotifyAboutRemoval;
     using ObservationTicket = ScopedObservableBase::ObservationTicket;
     ObservationTicket Observe(uint64_t _notification_mask, std::function<void()> _callback);
     void ObserveUnticketed(uint64_t _notification_mask, std::function<void()> _callback);
@@ -48,8 +50,6 @@ public:
     void SetOperationCompletionCallback(std::function<void(const std::shared_ptr<Operation> &)> _callback);
 
 private:
-    Pool(const Pool &) = delete;
-    void operator=(const Pool &) = delete;
     void OperationDidStart(const std::shared_ptr<Operation> &_operation);
     void OperationDidFinish(const std::shared_ptr<Operation> &_operation);
     bool ShowDialog(NSWindow *_dialog, std::function<void(NSModalResponse)> _callback);

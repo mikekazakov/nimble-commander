@@ -1,7 +1,8 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingJob.h"
 #include <Utility/PathManip.h>
 #include <sys/stat.h>
+#include <fmt/format.h>
 
 namespace nc::ops {
 
@@ -97,7 +98,7 @@ void AttrsChangingJob::ScanItem(unsigned _origin_item)
 
         const auto prefix = &m_Filenames.back();
         for( auto &dirent : dir_entries )
-            ScanItem(path + "/" + dirent, dirent, _origin_item, prefix);
+            ScanItem(fmt::format("{}/{}", path, dirent), dirent, _origin_item, prefix);
     }
 }
 
@@ -156,7 +157,7 @@ void AttrsChangingJob::ScanItem(const std::string &_full_path,
         }
         const auto prefix = &m_Filenames.back();
         for( auto &dirent : dir_entries )
-            ScanItem(_full_path + "/" + dirent, dirent, _origin_item, prefix);
+            ScanItem(fmt::format("{}/{}", _full_path, dirent), dirent, _origin_item, prefix);
     }
 }
 

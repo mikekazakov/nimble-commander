@@ -18,20 +18,20 @@ public:
             const std::string &_destination_path,
             const std::shared_ptr<VFSHost> &_destination_host,
             const CopyingOptions &_options);
-    ~Copying();
+    ~Copying() override;
 
     void SetCallbackHooks(const CopyingJobCallbacks *_callbacks);
 
 private:
     using CB = CopyingJobCallbacks;
 
-    enum class LockedItemCause {
+    enum class LockedItemCause : uint8_t {
         Moving,
         Deletion,
         Opening
     };
 
-    virtual Job *GetJob() noexcept override;
+    Job *GetJob() noexcept override;
     void SetupCallbacks();
 
     CB::CopyDestExistsResolution

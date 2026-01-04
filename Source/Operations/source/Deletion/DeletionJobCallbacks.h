@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/Error.h>
@@ -10,7 +10,7 @@
 namespace nc::ops {
 
 struct DeletionJobCallbacks {
-    enum class ReadDirErrorResolution {
+    enum class ReadDirErrorResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -18,7 +18,7 @@ struct DeletionJobCallbacks {
     std::function<ReadDirErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnReadDirError =
         [](Error, const std::string &, VFSHost &) { return ReadDirErrorResolution::Stop; };
 
-    enum class UnlinkErrorResolution {
+    enum class UnlinkErrorResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -26,7 +26,7 @@ struct DeletionJobCallbacks {
     std::function<UnlinkErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnUnlinkError =
         [](Error, const std::string &, VFSHost &) { return UnlinkErrorResolution::Stop; };
 
-    enum class RmdirErrorResolution {
+    enum class RmdirErrorResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -34,7 +34,7 @@ struct DeletionJobCallbacks {
     std::function<RmdirErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnRmdirError =
         [](Error, const std::string &, VFSHost &) { return RmdirErrorResolution::Stop; };
 
-    enum class TrashErrorResolution {
+    enum class TrashErrorResolution : uint8_t {
         Stop,
         Skip,
         DeletePermanently,
@@ -43,7 +43,7 @@ struct DeletionJobCallbacks {
     std::function<TrashErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnTrashError =
         [](Error, const std::string &, VFSHost &) { return TrashErrorResolution::Stop; };
 
-    enum class LockedItemResolution {
+    enum class LockedItemResolution : uint8_t {
         Stop,
         Skip,
         Unlock,
@@ -52,7 +52,7 @@ struct DeletionJobCallbacks {
     std::function<LockedItemResolution(Error _err, const std::string &_path, VFSHost &_vfs, DeletionType _type)>
         m_OnLockedItem = [](Error, const std::string &, VFSHost &, DeletionType) { return LockedItemResolution::Stop; };
 
-    enum class UnlockErrorResolution {
+    enum class UnlockErrorResolution : uint8_t {
         Stop,
         Skip,
         Retry

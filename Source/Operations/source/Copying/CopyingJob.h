@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/algo.h>
@@ -23,9 +23,9 @@ public:
                const std::string &_dest_path,
                const VFSHostPtr &_dest_host,
                CopyingOptions _opts);
-    ~CopyingJob();
+    ~CopyingJob() override;
 
-    enum class Stage {
+    enum class Stage : uint8_t {
         Default,
         Preparing,
         Process,
@@ -43,7 +43,7 @@ public:
 private:
     using ChecksumVerification = CopyingOptions::ChecksumVerification;
 
-    enum class StepResult {
+    enum class StepResult : uint8_t {
         // operation was successful
         Ok = 0,
 
@@ -54,12 +54,12 @@ private:
         Skipped,
     };
 
-    enum class PathCompositionType {
+    enum class PathCompositionType : uint8_t {
         PathPreffix, // path = dest_path + source_rel_path
         FixedPath    // path = dest_path
     };
 
-    enum class SourceItemAftermath {
+    enum class SourceItemAftermath : uint8_t {
         NoChanges,
         Moved,
         NeedsToBeDeleted
@@ -74,10 +74,10 @@ private:
 
     struct TimestampFixup {
         std::filesystem::path path;
-        timespec atime = {0, 0};
-        timespec mtime = {0, 0};
-        timespec ctime = {0, 0};
-        timespec btime = {0, 0};
+        timespec atime = {.tv_sec = 0, .tv_nsec = 0};
+        timespec mtime = {.tv_sec = 0, .tv_nsec = 0};
+        timespec ctime = {.tv_sec = 0, .tv_nsec = 0};
+        timespec btime = {.tv_sec = 0, .tv_nsec = 0};
     };
 
     void Perform() override;

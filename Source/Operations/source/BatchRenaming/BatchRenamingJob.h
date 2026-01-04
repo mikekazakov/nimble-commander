@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Job.h"
@@ -7,7 +7,7 @@
 namespace nc::ops {
 
 struct BatchRenamingJobCallbacks {
-    enum class RenameErrorResolution {
+    enum class RenameErrorResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -22,10 +22,10 @@ public:
     BatchRenamingJob(std::vector<std::string> _src_paths,
                      std::vector<std::string> _dst_paths,
                      std::shared_ptr<VFSHost> _vfs);
-    ~BatchRenamingJob();
+    ~BatchRenamingJob() override;
 
 private:
-    virtual void Perform() override;
+    void Perform() override;
     void Rename(const std::string &_src, const std::string &_dst);
 
     std::vector<std::string> m_Source;

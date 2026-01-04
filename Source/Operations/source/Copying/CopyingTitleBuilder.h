@@ -13,8 +13,8 @@ public:
                         const std::string &_destination_path,
                         const CopyingOptions &_options);
 
-    std::string TitleForPreparing() const;
-    std::string TitleForProcessing() const;
+    [[nodiscard]] std::string TitleForPreparing() const;
+    [[nodiscard]] std::string TitleForProcessing() const;
     static std::string TitleForVerifying();
     static std::string TitleForCleanup();
 

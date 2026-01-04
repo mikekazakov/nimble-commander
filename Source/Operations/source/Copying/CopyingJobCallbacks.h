@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -9,7 +9,7 @@
 namespace nc::ops {
 
 struct CopyingJobCallbacks {
-    enum class CantAccessSourceItemResolution {
+    enum class CantAccessSourceItemResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -18,7 +18,7 @@ struct CopyingJobCallbacks {
         m_OnCantAccessSourceItem =
             [](Error, const std::string &, VFSHost &) { return CantAccessSourceItemResolution::Stop; };
 
-    enum class CopyDestExistsResolution {
+    enum class CopyDestExistsResolution : uint8_t {
         Stop,
         Skip,
         Overwrite,
@@ -31,7 +31,7 @@ struct CopyingJobCallbacks {
             return CopyDestExistsResolution::Stop;
         };
 
-    enum class RenameDestExistsResolution {
+    enum class RenameDestExistsResolution : uint8_t {
         Stop,
         Skip,
         Overwrite,
@@ -44,7 +44,7 @@ struct CopyingJobCallbacks {
             return RenameDestExistsResolution::Stop;
         };
 
-    enum class CantOpenDestinationFileResolution {
+    enum class CantOpenDestinationFileResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -53,7 +53,7 @@ struct CopyingJobCallbacks {
         m_OnCantOpenDestinationFile =
             [](Error, const std::string &, VFSHost &) { return CantOpenDestinationFileResolution::Stop; };
 
-    enum class SourceFileReadErrorResolution {
+    enum class SourceFileReadErrorResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -62,7 +62,7 @@ struct CopyingJobCallbacks {
         m_OnSourceFileReadError =
             [](Error, const std::string &, VFSHost &) { return SourceFileReadErrorResolution::Stop; };
 
-    enum class DestinationFileReadErrorResolution {
+    enum class DestinationFileReadErrorResolution : uint8_t {
         Stop,
         Skip
     };
@@ -70,7 +70,7 @@ struct CopyingJobCallbacks {
         m_OnDestinationFileReadError =
             [](Error, const std::string &, VFSHost &) { return DestinationFileReadErrorResolution::Stop; };
 
-    enum class DestinationFileWriteErrorResolution {
+    enum class DestinationFileWriteErrorResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -79,7 +79,7 @@ struct CopyingJobCallbacks {
         m_OnDestinationFileWriteError =
             [](Error, const std::string &, VFSHost &) { return DestinationFileWriteErrorResolution::Stop; };
 
-    enum class CantCreateDestinationRootDirResolution {
+    enum class CantCreateDestinationRootDirResolution : uint8_t {
         Stop,
         Retry
     };
@@ -87,7 +87,7 @@ struct CopyingJobCallbacks {
         m_OnCantCreateDestinationRootDir =
             [](Error, const std::string &, VFSHost &) { return CantCreateDestinationRootDirResolution::Stop; };
 
-    enum class CantCreateDestinationDirResolution {
+    enum class CantCreateDestinationDirResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -96,7 +96,7 @@ struct CopyingJobCallbacks {
         m_OnCantCreateDestinationDir =
             [](Error, const std::string &, VFSHost &) { return CantCreateDestinationDirResolution::Stop; };
 
-    enum class CantDeleteDestinationFileResolution {
+    enum class CantDeleteDestinationFileResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -105,7 +105,7 @@ struct CopyingJobCallbacks {
         m_OnCantDeleteDestinationFile =
             [](Error, const std::string &, VFSHost &) { return CantDeleteDestinationFileResolution::Stop; };
 
-    enum class CantDeleteSourceFileResolution {
+    enum class CantDeleteSourceFileResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -114,7 +114,7 @@ struct CopyingJobCallbacks {
         m_OnCantDeleteSourceItem =
             [](Error, const std::string &, VFSHost &) { return CantDeleteSourceFileResolution::Stop; };
 
-    enum class NotADirectoryResolution {
+    enum class NotADirectoryResolution : uint8_t {
         Stop,
         Skip,
         Overwrite
@@ -122,7 +122,7 @@ struct CopyingJobCallbacks {
     std::function<NotADirectoryResolution(const std::string &_path, VFSHost &_vfs)> m_OnNotADirectory =
         [](const std::string &, VFSHost &) { return NotADirectoryResolution::Stop; };
 
-    enum class LockedItemResolution {
+    enum class LockedItemResolution : uint8_t {
         Stop,
         Skip,
         Unlock,
@@ -135,7 +135,7 @@ struct CopyingJobCallbacks {
     std::function<LockedItemResolution(Error _vfs_error, const std::string &_path, VFSHost &_vfs)>
         m_OnCantOpenLockedItem = [](Error, const std::string &, VFSHost &) { return LockedItemResolution::Stop; };
 
-    enum class UnlockErrorResolution {
+    enum class UnlockErrorResolution : uint8_t {
         Stop,
         Skip,
         Retry

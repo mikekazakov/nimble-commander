@@ -13,14 +13,14 @@ class DirectoryCreation final : public Operation
 {
 public:
     DirectoryCreation(std::string _directory_name, std::string _root_folder, VFSHost &_vfs);
-    ~DirectoryCreation();
+    ~DirectoryCreation() override;
 
     const std::vector<std::string> &DirectoryNames() const;
 
 private:
     using Callbacks = DirectoryCreationJobCallbacks;
 
-    virtual Job *GetJob() noexcept override;
+    Job *GetJob() noexcept override;
     int OnError(Error _err, const std::string &_path, VFSHost &_vfs);
     static std::vector<std::string> Split(std::string_view _directory);
 

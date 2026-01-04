@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Job.h"
@@ -9,7 +9,7 @@
 namespace nc::ops {
 
 struct AttrsChangingJobCallbacks {
-    enum class SourceAccessErrorResolution {
+    enum class SourceAccessErrorResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -17,7 +17,7 @@ struct AttrsChangingJobCallbacks {
     std::function<SourceAccessErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)>
         m_OnSourceAccessError = [](Error, const std::string &, VFSHost &) { return SourceAccessErrorResolution::Stop; };
 
-    enum class ChmodErrorResolution {
+    enum class ChmodErrorResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -25,7 +25,7 @@ struct AttrsChangingJobCallbacks {
     std::function<ChmodErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnChmodError =
         [](Error, const std::string &, VFSHost &) { return ChmodErrorResolution::Stop; };
 
-    enum class ChownErrorResolution {
+    enum class ChownErrorResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -33,7 +33,7 @@ struct AttrsChangingJobCallbacks {
     std::function<ChownErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnChownError =
         [](Error, const std::string &, VFSHost &) { return ChownErrorResolution::Stop; };
 
-    enum class FlagsErrorResolution {
+    enum class FlagsErrorResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -41,7 +41,7 @@ struct AttrsChangingJobCallbacks {
     std::function<FlagsErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_OnFlagsError =
         [](Error, const std::string &, VFSHost &) { return FlagsErrorResolution::Stop; };
 
-    enum class TimesErrorResolution {
+    enum class TimesErrorResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -54,10 +54,10 @@ class AttrsChangingJob : public Job, public AttrsChangingJobCallbacks
 {
 public:
     AttrsChangingJob(AttrsChangingCommand _command);
-    ~AttrsChangingJob();
+    ~AttrsChangingJob() override;
 
 private:
-    virtual void Perform() override;
+    void Perform() override;
     void DoScan();
     void ScanItem(unsigned _origin_item);
     void ScanItem(const std::string &_full_path,

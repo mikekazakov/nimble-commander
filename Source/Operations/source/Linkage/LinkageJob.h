@@ -25,10 +25,10 @@ public:
                const std::string &_link_value,
                const std::shared_ptr<VFSHost> &_vfs,
                LinkageType _type);
-    ~LinkageJob();
+    ~LinkageJob() override;
 
 private:
-    virtual void Perform() override;
+    void Perform() override;
     void DoSymlinkCreation();
     void DoSymlinkAlteration();
     void DoHardlinkCreation();

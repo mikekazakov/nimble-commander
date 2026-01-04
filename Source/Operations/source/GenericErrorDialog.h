@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #import <Cocoa/Cocoa.h>
 #import <Base/Error.h>
@@ -7,7 +7,7 @@
 
 namespace nc::ops {
 
-enum class GenericErrorDialogStyle {
+enum class GenericErrorDialogStyle : uint8_t {
     Stop = 0,
     Caution = 1
 };

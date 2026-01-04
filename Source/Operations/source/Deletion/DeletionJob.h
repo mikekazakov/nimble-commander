@@ -15,7 +15,7 @@ class DeletionJob final : public Job, public DeletionJobCallbacks
 {
 public:
     DeletionJob(std::vector<VFSListingItem> _items, DeletionType _type);
-    ~DeletionJob();
+    ~DeletionJob() override;
 
     int ItemsInScript() const;
 
@@ -26,7 +26,7 @@ private:
         const base::chained_strings::node *filename;
     };
 
-    virtual void Perform() override;
+    void Perform() override;
     void DoScan();
     void DoDelete();
     void DoRmDir(const std::string &_path, VFSHost &_vfs);

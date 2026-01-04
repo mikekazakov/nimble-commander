@@ -180,11 +180,10 @@ void intrusive_ptr_dec_refcount(const intrusive_ref_counter<T> *p) noexcept;
 template <typename T>
 class intrusive_ref_counter
 {
-public:
     intrusive_ref_counter() noexcept : c{0} {}
-
     intrusive_ref_counter(const intrusive_ref_counter & /*unused*/) noexcept : c{0} {}
 
+public:
     intrusive_ref_counter &operator=(const intrusive_ref_counter & /*unused*/) noexcept { return *this; }
 
     int use_count() const noexcept { return c.load(std::memory_order_relaxed); }
@@ -196,6 +195,7 @@ private:
     mutable std::atomic<int> c;
     friend void intrusive_ptr_add_refcount<T>(const intrusive_ref_counter<T> *p) noexcept;
     friend void intrusive_ptr_dec_refcount<T>(const intrusive_ref_counter<T> *p) noexcept;
+    friend T;
 };
 
 template <typename T>

@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/NativeFSManager.h>
@@ -24,7 +24,7 @@ public:
         NSImage *menu_icon;
     };
 
-    enum RenderOptions {
+    enum RenderOptions : int8_t {
         RenderMenuTitle = 1,
         RenderMenuIcon = 2,
         RenderMenuTooltip = 4,

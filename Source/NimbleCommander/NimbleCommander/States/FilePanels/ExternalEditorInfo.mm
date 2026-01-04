@@ -182,10 +182,7 @@ struct ExternalEditorsPersistence {
 
 @end
 
-ExternalEditorStartupInfo::ExternalEditorStartupInfo() noexcept
-    : m_MaxFileSize(0), m_OnlyFiles(true), m_OpenInTerminal(false)
-{
-}
+ExternalEditorStartupInfo::ExternalEditorStartupInfo() noexcept = default;
 
 const std::string &ExternalEditorStartupInfo::Name() const noexcept
 {

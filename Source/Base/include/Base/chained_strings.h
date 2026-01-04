@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <assert.h>
@@ -8,11 +8,9 @@ namespace nc::base {
 
 class chained_strings
 {
-    enum {
-        strings_per_block = 42,
-        buffer_length = 14,
-        max_depth = 128
-    };
+    static constexpr size_t strings_per_block = 42;
+    static constexpr size_t buffer_length = 14;
+    static constexpr size_t max_depth = 128;
 
 public:
 #pragma pack(1)
@@ -35,10 +33,10 @@ public:
         // element with .prefix = 0) or just use str_with_pref function
 
     public:
-        const char *c_str() const;
-        unsigned short size() const;
+        [[nodiscard]] const char *c_str() const;
+        [[nodiscard]] unsigned short size() const;
         void str_with_pref(char *_buf) const;
-        std::string to_str_with_pref() const;
+        [[nodiscard]] std::string to_str_with_pref() const;
     }; // 24 bytes long
 #pragma pack()
 
@@ -56,16 +54,16 @@ public:
     struct iterator {
         const block *current;
         unsigned index;
-        inline void operator++()
+        void operator++()
         {
             index++;
             assert(index <= current->amount);
-            if( index == strings_per_block && current->next != 0 ) {
+            if( index == strings_per_block && current->next != nullptr ) {
                 index = 0;
                 current = current->next;
             }
         }
-        inline bool operator==(const iterator &_right) const
+        bool operator==(const iterator &_right) const
         {
             if( _right.current == m_Sentinel ) { // caller asked us if we're finished
                 if( current == nullptr )
@@ -78,7 +76,7 @@ public:
                 return current == _right.current && index == _right.index;
         }
 
-        inline bool operator!=(const iterator &_right) const
+        bool operator!=(const iterator &_right) const
         {
             if( _right.current == m_Sentinel ) { // caller asked us if we're finished
                 if( current == nullptr )
@@ -91,7 +89,7 @@ public:
                 return current != _right.current || index != _right.index;
         }
 
-        inline const node &operator*() const
+        const node &operator*() const
         {
             assert(index <= current->amount);
             return current->strings[index];
@@ -101,10 +99,11 @@ public:
     chained_strings();
     chained_strings(const char *_allocate_with_this_string);
     chained_strings(const std::string &_allocate_with_this_string);
+    chained_strings(const chained_strings &) = delete;
     chained_strings(chained_strings &&_rhs) noexcept;
 
     template <class T>
-    inline chained_strings(std::initializer_list<T> l) : m_Begin(nullptr), m_Last(nullptr)
+    chained_strings(std::initializer_list<T> l) : m_Begin(nullptr), m_Last(nullptr)
     {
         construct();
         for( auto &i : l )
@@ -113,29 +112,29 @@ public:
 
     ~chained_strings();
 
-    inline iterator begin() const { return {m_Begin, 0}; }
-    inline iterator end() const { return {m_Sentinel, static_cast<unsigned>(-1)}; }
+    void operator=(const chained_strings &) = delete;
+    chained_strings &operator=(chained_strings && /*_rhs*/) noexcept;
+
+    [[nodiscard]] iterator begin() const { return {.current = m_Begin, .index = 0}; }
+    [[nodiscard]] static iterator end() { return {.current = m_Sentinel, .index = static_cast<unsigned>(-1)}; }
 
     void push_back(const char *_str, unsigned _len, const node *_prefix);
     void push_back(const char *_str, const node *_prefix);
     void push_back(const std::string &_str, const node *_prefix);
 
-    const node &front() const; // O(1)
-    const node &back() const;  // O(1)
-    bool empty() const;        // O(1)
-    unsigned size() const;     // O(N) linear(!) time, N - number of blocks
-    bool singleblock() const;  // O(1)
+    [[nodiscard]] const node &front() const; // O(1)
+    [[nodiscard]] const node &back() const;  // O(1)
+    [[nodiscard]] bool empty() const;        // O(1)
+    [[nodiscard]] unsigned size() const;     // O(N) linear(!) time, N - number of blocks
+    [[nodiscard]] bool singleblock() const;  // O(1)
 
     void swap(chained_strings &_rhs) noexcept;
-    chained_strings &operator=(chained_strings &&) noexcept;
 
 private:
     static void insert_into(block *_to, const char *_str, unsigned _len, const node *_prefix);
     void construct();
     void destroy();
     void grow();
-    chained_strings(const chained_strings &) = delete;
-    void operator=(const chained_strings &) = delete;
 
     block *m_Begin;
     block *m_Last;

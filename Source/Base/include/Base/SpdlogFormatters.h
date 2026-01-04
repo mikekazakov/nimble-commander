@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <spdlog/fmt/fmt.h>
@@ -6,7 +6,7 @@
 
 template <>
 struct fmt::formatter<CGSize> : fmt::formatter<std::string> {
-    constexpr auto parse(fmt::format_parse_context &ctx) { return ctx.begin(); }
+    static constexpr auto parse(fmt::format_parse_context &ctx) { return ctx.begin(); }
 
     template <typename FormatContext>
     auto format(const CGSize &sz, FormatContext &ctx) const
@@ -17,7 +17,7 @@ struct fmt::formatter<CGSize> : fmt::formatter<std::string> {
 
 template <>
 struct fmt::formatter<CGPoint> : fmt::formatter<std::string> {
-    constexpr auto parse(fmt::format_parse_context &ctx) { return ctx.begin(); }
+    static constexpr auto parse(fmt::format_parse_context &ctx) { return ctx.begin(); }
 
     template <typename FormatContext>
     auto format(const CGPoint &pt, FormatContext &ctx) const
@@ -28,7 +28,7 @@ struct fmt::formatter<CGPoint> : fmt::formatter<std::string> {
 
 template <>
 struct fmt::formatter<CGRect> : fmt::formatter<std::string> {
-    constexpr auto parse(fmt::format_parse_context &ctx) { return ctx.begin(); }
+    static constexpr auto parse(fmt::format_parse_context &ctx) { return ctx.begin(); }
 
     template <typename FormatContext>
     auto format(const CGRect &rc, FormatContext &ctx) const

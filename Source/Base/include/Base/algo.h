@@ -2,14 +2,14 @@
 #pragma once
 
 #include <algorithm>
-#include <memory>
-#include <string>
 #include <assert.h>
+#include <fmt/format.h>
+#include <memory>
 #include <stdio.h>
 #include <string>
 #include <string_view>
-#include <vector>
 #include <sys/stat.h>
+#include <vector>
 
 template <typename T>
 auto linear_generator(T _base, T _step)
@@ -24,7 +24,8 @@ auto linear_generator(T _base, T _step)
 template <typename C, typename T>
 size_t linear_find_or_insert(C &_c, const T &_v)
 {
-    auto b = std::begin(_c), e = std::end(_c);
+    auto b = std::begin(_c);
+    auto e = std::end(_c);
     auto it = std::find(b, e, _v);
     if( it != e )
         return std::distance(b, it);
@@ -36,7 +37,7 @@ size_t linear_find_or_insert(C &_c, const T &_v)
 template <typename C>
 std::shared_ptr<C> to_shared_ptr(C &&_object)
 {
-    return std::make_shared<C>(std::move(_object));
+    return std::make_shared<C>(std::forward<C>(_object));
 }
 
 template <typename T>
@@ -53,11 +54,11 @@ auto at_scope_end(T _l)
                 try {
                     m_l();
                 } catch( ... ) {
-                    fprintf(stderr, "exception thrown inside a at_scope_end() lambda!\n");
+                    fmt::println(stderr, "exception thrown inside a at_scope_end() lambda!");
                 }
         }
 
-        bool engaded() const noexcept { return m_engaged; }
+        [[nodiscard]] bool engaded() const noexcept { return m_engaged; }
 
         void engage() noexcept { m_engaged = true; }
 

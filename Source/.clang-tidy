@@ -291,4 +291,4 @@ ImplementationFileExtensions:
   - mm
 
 HeaderFilterRegex: '.*'
-ExcludeHeaderFilterRegex: '3rd_Party'
+ExcludeHeaderFilterRegex: '(3rd_Party|NimbleCommanderCommon-Swift.h)'

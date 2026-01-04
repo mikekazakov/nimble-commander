@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Config.h"
@@ -20,7 +20,7 @@ public:
                std::shared_ptr<OverwritesStorage> _storage,
                std::shared_ptr<Executor> _overwrites_dump_executor = std::make_shared<ImmediateExecutor>(),
                std::shared_ptr<Executor> _overwrites_reload_executor = std::make_shared<ImmediateExecutor>());
-    virtual ~ConfigImpl();
+    ~ConfigImpl() override;
 
     bool Has(std::string_view _path) const override;
 

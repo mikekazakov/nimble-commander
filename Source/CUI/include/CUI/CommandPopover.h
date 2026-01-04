@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <Cocoa/Cocoa.h>
 
@@ -6,7 +6,7 @@
 @class NCCommandPopoverItem;
 
 // Controls the horizontal alignment of the popover window relative to the positioning rectangle
-enum class NCCommandPopoverAlignment {
+enum class NCCommandPopoverAlignment : uint8_t {
     Left = 0,
     Center = 1,
     Right = 2

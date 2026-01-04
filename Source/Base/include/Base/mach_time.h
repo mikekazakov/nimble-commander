@@ -9,7 +9,7 @@ std::chrono::nanoseconds machtime() noexcept;
 
 struct MachTimeBenchmark {
     MachTimeBenchmark() noexcept;
-    std::chrono::nanoseconds Delta() const;
+    [[nodiscard]] std::chrono::nanoseconds Delta() const;
     void ResetNano(const char *_msg = "");
     void ResetMicro(const char *_msg = "");
     void ResetMilli(const char *_msg = "");

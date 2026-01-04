@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/chained_strings.h>
 #include <cstdlib>
 #include <memory.h>
@@ -142,7 +142,7 @@ void chained_strings::node::str_with_pref(char *_buf) const
     int nodes_n = 0;
     do {
         nodes[nodes_n++] = n;
-        assert(nodes_n < max_depth);
+        assert(nodes_n < static_cast<int>(max_depth));
     } while( (n = n->prefix) != nullptr );
 
     for( int i = nodes_n - 1; i >= 0; --i ) {
@@ -161,7 +161,7 @@ std::string chained_strings::node::to_str_with_pref() const
     do {
         bufsz += n->len;
         nodes[nodes_n++] = n;
-        assert(nodes_n < max_depth);
+        assert(nodes_n < static_cast<int>(max_depth));
     } while( (n = n->prefix) != nullptr );
 
     std::string res;

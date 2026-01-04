@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <utility>
@@ -23,7 +23,7 @@ class tribool
 public:
     constexpr tribool() noexcept;
     constexpr tribool(bool _value) noexcept;
-    constexpr tribool(indeterminate_type_t) noexcept;
+    constexpr tribool(indeterminate_type_t /*unused*/) noexcept;
 
     constexpr explicit operator bool() const noexcept;
 
@@ -44,13 +44,13 @@ constexpr tribool::tribool(bool _value) noexcept : value{_value ? value_t::true_
 {
 }
 
-constexpr tribool::tribool(indeterminate_type_t) noexcept : value{value_t::indeterminate_value}
+constexpr tribool::tribool(indeterminate_type_t /*unused*/) noexcept : value{value_t::indeterminate_value}
 {
 }
 
 constexpr tribool::operator bool() const noexcept
 {
-    return value == value_t::true_value ? true : false;
+    return value == value_t::true_value;
 }
 
 constexpr tribool operator!(tribool _v) noexcept

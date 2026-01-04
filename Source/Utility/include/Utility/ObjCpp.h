@@ -50,7 +50,7 @@ std::function<void()> objc_callback(T *_obj, SEL _sel) noexcept
     __weak id weak_obj = _obj;
     return [weak_obj, _sel] {
         if( __strong T *strong_obj = weak_obj ) {
-            typedef void (*func_type)(id, SEL);
+            using func_type = void (*)(id, SEL);
             func_type func = reinterpret_cast<func_type>([T instanceMethodForSelector:_sel]);
             func(strong_obj, _sel);
         }
@@ -60,7 +60,7 @@ std::function<void()> objc_callback(T *_obj, SEL _sel) noexcept
 template <typename T>
 std::function<void()> objc_callback_to_main_queue(T *_obj, SEL _sel) noexcept
 {
-    typedef void (*func_type)(id, SEL);
+    using func_type = void (*)(id, SEL);
     __weak id weak_obj = _obj;
     return [weak_obj, _sel] {
         if( __strong T *strong_obj_test = weak_obj ) {

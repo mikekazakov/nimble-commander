@@ -572,32 +572,32 @@ public:
     /**
      * Returns a list of volumes in a system.
      */
-    virtual std::vector<Info> Volumes() const = 0;
+    [[nodiscard]] virtual std::vector<Info> Volumes() const = 0;
 
     /**
      * VolumeFromFD() uses POSIX fstatfs() to get mount point for specified path,
      * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
      */
-    virtual Info VolumeFromFD(int _fd) const noexcept = 0;
+    [[nodiscard]] virtual Info VolumeFromFD(int _fd) const noexcept = 0;
 
     /**
      * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
      * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
      */
-    virtual Info VolumeFromPath(std::string_view _path) const noexcept = 0;
+    [[nodiscard]] virtual Info VolumeFromPath(std::string_view _path) const noexcept = 0;
 
     /**
      * VolumeFromPathFast() chooses the closest volume to _path, using plain strings comparison.
      * It don't take into consideration invalid paths or symlinks following somewhere in _path,
      * so should be used very carefully only time-critical paths (this method doesn't make any syscalls).
      */
-    virtual Info VolumeFromPathFast(std::string_view _path) const noexcept = 0;
+    [[nodiscard]] virtual Info VolumeFromPathFast(std::string_view _path) const noexcept = 0;
 
     /**
      * VolumeFromMountPoint() searches to a volume mounted at _mount_point using plain strings comparison.
      * Is fast, since dont make any syscalls.
      */
-    virtual Info VolumeFromMountPoint(std::string_view _mount_point) const noexcept = 0;
+    [[nodiscard]] virtual Info VolumeFromMountPoint(std::string_view _mount_point) const noexcept = 0;
 
     /**
      * UpdateSpaceInformation() forces to fetch and recalculate space information contained in _volume.

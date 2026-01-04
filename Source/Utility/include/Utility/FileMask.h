@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <string>
 #include <string_view>
@@ -12,7 +12,7 @@ namespace nc::utility {
 class FileMask
 {
 public:
-    enum class Type {
+    enum class Type : uint8_t {
         Mask, // old-style classic mask, supporting wildcards ('*') and placeholders ('?').
               // Can contain multiple such masks separated by commas (',').
         RegEx // a regular expression string
@@ -33,17 +33,17 @@ public:
     // Returns true if the name maches the mask.
     // Will return false on empty names regardless of current file mask.
     // Any input will be normalized into FormC Lowercase format to perform matching.
-    bool MatchName(std::string_view _name) const noexcept;
+    [[nodiscard]] bool MatchName(std::string_view _name) const noexcept;
 
     /**
      * Return true if there's no valid mask to match for.
      */
-    bool IsEmpty() const noexcept;
+    [[nodiscard]] bool IsEmpty() const noexcept;
 
     /**
      * Get current file mask.
      */
-    const std::string &Mask() const noexcept;
+    [[nodiscard]] const std::string &Mask() const noexcept;
 
     /**
      * Return true if _mask is a wildcard(s).

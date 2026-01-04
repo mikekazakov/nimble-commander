@@ -11,10 +11,9 @@ namespace nc::utility {
 
 // see getattrlist function documentation to get info about values
 struct VolumeCapabilitiesInformation {
-    enum {
-        attr_valid = 0,
-        attr_native = 1
-    };
+    static constexpr size_t attr_valid = 0;
+    static constexpr size_t attr_native = 1;
+
     struct {
         bool persistent_objects_ids;
         bool symbolic_links;

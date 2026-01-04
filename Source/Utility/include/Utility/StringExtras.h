@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
@@ -12,11 +12,12 @@
 
 #ifdef __OBJC__
 
-typedef enum {
+enum ETruncationType : uint8_t {
     kTruncateAtStart,
     kTruncateAtMiddle,
     kTruncateAtEnd
-} ETruncationType;
+};
+
 NSString *
 StringByTruncatingToWidth(NSString *str, double inWidth, ETruncationType truncationType, NSDictionary *attributes);
 

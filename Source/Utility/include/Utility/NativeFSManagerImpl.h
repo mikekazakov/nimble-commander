@@ -21,7 +21,7 @@ class NativeFSManagerImpl : public NativeFSManager
 public:
     NativeFSManagerImpl();
     NativeFSManagerImpl(const NativeFSManagerImpl &) = delete;
-    ~NativeFSManagerImpl();
+    ~NativeFSManagerImpl() override;
     NativeFSManagerImpl &operator=(const NativeFSManagerImpl &) = delete;
 
     using NativeFSManager::Info;

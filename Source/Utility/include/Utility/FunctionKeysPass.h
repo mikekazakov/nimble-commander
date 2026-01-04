@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <CoreGraphics/CGEventTypes.h>
@@ -8,13 +8,14 @@ namespace nc::utility {
 class FunctionalKeysPass
 {
     FunctionalKeysPass();
+
+public:
     FunctionalKeysPass(const FunctionalKeysPass &) = delete;
     void operator=(const FunctionalKeysPass &) = delete;
 
-public:
     static FunctionalKeysPass &Instance() noexcept;
 
-    bool Enabled() const;
+    [[nodiscard]] bool Enabled() const;
     bool Enable();
     void Disable();
 

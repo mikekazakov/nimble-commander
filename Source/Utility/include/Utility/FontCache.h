@@ -24,14 +24,14 @@ public:
     FontCache(const FontCache &) = delete;
     ~FontCache();
 
-    CTFontRef BaseFont() const noexcept;
-    CTFontRef Font(unsigned _no) const noexcept;
-    double Size() const noexcept;
-    double Height() const noexcept;
-    double Width() const noexcept;
-    double Ascent() const noexcept;
-    double Descent() const noexcept;
-    double Leading() const noexcept;
+    [[nodiscard]] CTFontRef BaseFont() const noexcept;
+    [[nodiscard]] CTFontRef Font(unsigned _no) const noexcept;
+    [[nodiscard]] double Size() const noexcept;
+    [[nodiscard]] double Height() const noexcept;
+    [[nodiscard]] double Width() const noexcept;
+    [[nodiscard]] double Ascent() const noexcept;
+    [[nodiscard]] double Descent() const noexcept;
+    [[nodiscard]] double Leading() const noexcept;
     Pair Get(uint32_t _c) noexcept;
 
     static std::shared_ptr<FontCache> FontCacheFromFont(CTFontRef _basic_font);

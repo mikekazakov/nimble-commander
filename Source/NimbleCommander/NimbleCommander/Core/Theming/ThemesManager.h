@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/Observable.h>
@@ -30,6 +30,12 @@ public:
     // _config's lifespan must be longer than the theme manager's - it's referenced at internally.
     // '_current_theme_path' denotes the path to the string value with a name of currently selected theme.
     ThemesManager(config::Config &_config, std::string_view _current_theme_path, std::string_view _themes_storage_path);
+
+    // Not copy-constructable
+    ThemesManager(const ThemesManager &) = delete;
+
+    // Not copy-assignable
+    ThemesManager &operator=(const ThemesManager &) = delete;
 
     /**
      * Returns name of a currently selected user theme.
@@ -143,12 +149,6 @@ public:
     ObservationTicket ObserveChanges(uint64_t _notification_mask, std::function<void()> _callback);
 
 private:
-    // Not copy-constructable
-    ThemesManager(const ThemesManager &) = delete;
-
-    // Note copy-assignable
-    ThemesManager &operator=(const ThemesManager &) = delete;
-
     using ThemesDataT = ankerl::unordered_dense::map<std::string,
                                                      std::shared_ptr<const nc::config::Document>,
                                                      UnorderedStringHashEqual,
@@ -177,40 +177,38 @@ private:
 };
 
 struct ThemesManager::Notifications {
-    enum : uint64_t {
-        // Current theme has changed completely (i.e. another one was selected)
-        Name = 1 << 0,
+    // Current theme has changed completely (i.e. another one was selected)
+    static constexpr uint64_t Name = 1 << 0;
 
-        // Appearance has changed
-        Appearance = 1 << 1,
+    // Appearance has changed
+    static constexpr uint64_t Appearance = 1 << 1;
 
-        // File panels - general theming has changed
-        FilePanelsGeneral = 1 << 2,
+    // File panels - general theming has changed
+    static constexpr uint64_t FilePanelsGeneral = 1 << 2;
 
-        // File panels - tabs theming has changed
-        FilePanelsTabs = 1 << 3,
+    // File panels - tabs theming has changed
+    static constexpr uint64_t FilePanelsTabs = 1 << 3;
 
-        // File panels - header theming has changed
-        FilePanelsHeader = 1 << 4,
+    // File panels - header theming has changed
+    static constexpr uint64_t FilePanelsHeader = 1 << 4;
 
-        // File panels - footer theming has changed
-        FilePanelsFooter = 1 << 5,
+    // File panels - footer theming has changed
+    static constexpr uint64_t FilePanelsFooter = 1 << 5;
 
-        // File panels - brief presentation mode's theming has changed
-        FilePanelsBrief = 1 << 6,
+    // File panels - brief presentation mode's theming has changed
+    static constexpr uint64_t FilePanelsBrief = 1 << 6;
 
-        // File panels - list presentation mode's theming has changed
-        FilePanelsList = 1 << 7,
+    // File panels - list presentation mode's theming has changed
+    static constexpr uint64_t FilePanelsList = 1 << 7;
 
-        // File panels - gallery presentation mode's theming has changed
-        FilePanelsGallery = 1 << 8,
+    // File panels - gallery presentation mode's theming has changed
+    static constexpr uint64_t FilePanelsGallery = 1 << 8;
 
-        // Viewer-related theming has changed
-        Viewer = 1 << 9,
+    // Viewer-related theming has changed
+    static constexpr uint64_t Viewer = 1 << 9;
 
-        // Terminal-related theming has changed
-        Terminal = 1 << 10
-    };
+    // Terminal-related theming has changed
+    static constexpr uint64_t Terminal = 1 << 10;
 };
 
 struct ThemesManager::AutoSwitchingSettings {

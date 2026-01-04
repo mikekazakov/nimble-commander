@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "VFSInstanceManager.h"
@@ -13,66 +13,65 @@ public:
     using Promise = VFSInstancePromise;
 
     VFSInstanceManagerImpl();
-    ~VFSInstanceManagerImpl();
+    ~VFSInstanceManagerImpl() override;
 
     /**
      * Will register information about the instance if not yet.
      * Returned promise may be used for later vfs restoration.
      */
-    Promise TameVFS(const std::shared_ptr<VFSHost> &_instance);
+    Promise TameVFS(const std::shared_ptr<VFSHost> &_instance) override;
 
     /**
      * Returns a promise for specified vfs, if the information is available.
      */
-    Promise PreserveVFS(const std::weak_ptr<VFSHost> &_instance);
+    Promise PreserveVFS(const std::weak_ptr<VFSHost> &_instance) override;
 
     /**
      * Will return and alive instance if it's alive, will try to recreate it (will all upchain) if otherwise.
      * May throw vfs exceptions on vfs rebuilding.
      * May return nullptr on failure.
      */
-    std::shared_ptr<VFSHost> RetrieveVFS(const Promise &_promise, std::function<bool()> _cancel_checker = nullptr);
+    std::shared_ptr<VFSHost> RetrieveVFS(const Promise &_promise,
+                                         std::function<bool()> _cancel_checker = nullptr) override;
 
     /**
      * Will find an info for promise and return a corresponding vfs tag.
      */
-    const char *GetTag(const Promise &_promise);
+    const char *GetTag(const Promise &_promise) override;
 
     /**
      * Will return empty promise if there's no parent vfs, or it was somehow not registered
      */
-    Promise GetParentPromise(const Promise &_promise);
+    Promise GetParentPromise(const Promise &_promise) override;
 
     /**
      * Will return empty string on any errors.
      */
-    std::string GetVerboseVFSTitle(const Promise &_promise);
+    std::string GetVerboseVFSTitle(const Promise &_promise) override;
 
-    std::vector<std::weak_ptr<VFSHost>> AliveHosts();
+    std::vector<std::weak_ptr<VFSHost>> AliveHosts() override;
 
-    unsigned KnownVFSCount();
-    Promise GetVFSPromiseByPosition(unsigned _at);
+    unsigned KnownVFSCount() override;
+    Promise GetVFSPromiseByPosition(unsigned _at) override;
 
-    ObservationTicket ObserveAliveVFSListChanged(std::function<void()> _callback);
-    ObservationTicket ObserveKnownVFSListChanged(std::function<void()> _callback);
+    ObservationTicket ObserveAliveVFSListChanged(std::function<void()> _callback) override;
+    ObservationTicket ObserveKnownVFSListChanged(std::function<void()> _callback) override;
 
 private:
-    enum : uint64_t {
-        AliveVFSListObservation = 0x0001,
-        KnownVFSListObservation = 0x0002,
-    };
+    static constexpr uint64_t AliveVFSListObservation = 0x0001;
+    static constexpr uint64_t KnownVFSListObservation = 0x0002;
 
     struct Info;
 
     /**
      * Thread-safe.
      */
-    void IncPromiseCount(uint64_t _inst_id);
+    void IncPromiseCount(uint64_t _inst_id) override;
 
     /**
      * Thread-safe.
      */
-    void DecPromiseCount(uint64_t _inst_id);
+    void DecPromiseCount(uint64_t _inst_id) override;
 
     /**
      * Thread-safe.

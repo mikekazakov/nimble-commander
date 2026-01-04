@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Dock.h"
 #include <Utility/VerticallyCenteredTextFieldCell.h>
 #include <cmath>
@@ -10,7 +10,7 @@ namespace nc::core {
 
 static const auto g_AdminBadge = @"ADMIN";
 
-Dock::Dock() : m_Progress{-1.}, m_Admin{false}, m_Tile{NSApplication.sharedApplication.dockTile}
+Dock::Dock() : m_Tile{NSApplication.sharedApplication.dockTile}
 {
     m_ContentView = [NSImageView new];
     m_ContentView.image = NSApplication.sharedApplication.applicationIconImage;

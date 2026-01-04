@@ -1,10 +1,10 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
 #include <string>
 
-enum class PreferencesWindowThemesTabItemType {
+enum class PreferencesWindowThemesTabItemType : uint8_t {
     Color,
     Font,
     ColoringRules,

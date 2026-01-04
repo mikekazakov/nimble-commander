@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stdint.h>
@@ -42,11 +42,11 @@ public:
     ~Theme();
 
     // General info querying ///////////////////////////////////////////////////////////////////////
-    uint64_t Generation() const noexcept; // monotonically increasing starting with 1
+    [[nodiscard]] uint64_t Generation() const noexcept; // monotonically increasing starting with 1
 
     // General appearance settings /////////////////////////////////////////////////////////////////
-    ThemeAppearance AppearanceType() const noexcept;
-    NSAppearance *Appearance() const noexcept;
+    [[nodiscard]] ThemeAppearance AppearanceType() const noexcept;
+    [[nodiscard]] NSAppearance *Appearance() const noexcept;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     //  File Panels section
@@ -54,118 +54,118 @@ public:
 
     // File Panels --> General appearance //////////////////////////////////////////////////////////
     using ColoringRule = nc::panel::PresentationItemsColoringRule;
-    const std::vector<ColoringRule> &FilePanelsItemsColoringRules() const noexcept;
-    NSColor *FilePanelsGeneralDropBorderColor() const noexcept;
-    NSColor *FilePanelsGeneralOverlayColor() const noexcept;
-    NSColor *FilePanelsGeneralSplitterColor() const noexcept;
-    NSColor *FilePanelsGeneralTopSeparatorColor() const noexcept;
+    [[nodiscard]] const std::vector<ColoringRule> &FilePanelsItemsColoringRules() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsGeneralDropBorderColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsGeneralOverlayColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsGeneralSplitterColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsGeneralTopSeparatorColor() const noexcept;
 
     // File Panels --> Tabs bar settings ///////////////////////////////////////////////////////////
-    NSFont *FilePanelsTabsFont() const noexcept;
-    NSColor *FilePanelsTabsTextColor() const noexcept;
-    NSColor *FilePanelsTabsSelectedKeyWndActiveBackgroundColor() const noexcept;
-    NSColor *FilePanelsTabsSelectedKeyWndInactiveBackgroundColor() const noexcept;
-    NSColor *FilePanelsTabsSelectedNotKeyWndBackgroundColor() const noexcept;
-    NSColor *FilePanelsTabsRegularKeyWndHoverBackgroundColor() const noexcept;
-    NSColor *FilePanelsTabsRegularKeyWndRegularBackgroundColor() const noexcept;
-    NSColor *FilePanelsTabsRegularNotKeyWndBackgroundColor() const noexcept;
-    NSColor *FilePanelsTabsSeparatorColor() const noexcept;
-    NSColor *FilePanelsTabsPictogramColor() const noexcept;
+    [[nodiscard]] NSFont *FilePanelsTabsFont() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsTabsTextColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsTabsSelectedKeyWndActiveBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsTabsSelectedKeyWndInactiveBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsTabsSelectedNotKeyWndBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsTabsRegularKeyWndHoverBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsTabsRegularKeyWndRegularBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsTabsRegularNotKeyWndBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsTabsSeparatorColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsTabsPictogramColor() const noexcept;
 
     // File Panels --> Header bar settings /////////////////////////////////////////////////////////
-    NSFont *FilePanelsHeaderFont() const noexcept;
-    NSColor *FilePanelsHeaderTextColor() const noexcept;
-    NSColor *FilePanelsHeaderActiveTextColor() const noexcept;
-    NSColor *FilePanelsHeaderActiveBackgroundColor() const noexcept;
-    NSColor *FilePanelsHeaderInactiveBackgroundColor() const noexcept;
-    NSColor *FilePanelsHeaderSeparatorColor() const noexcept;
+    [[nodiscard]] NSFont *FilePanelsHeaderFont() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsHeaderTextColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsHeaderActiveTextColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsHeaderActiveBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsHeaderInactiveBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsHeaderSeparatorColor() const noexcept;
 
     // File Panels --> Footer bar settings /////////////////////////////////////////////////////////
-    NSFont *FilePanelsFooterFont() const noexcept;
-    NSColor *FilePanelsFooterTextColor() const noexcept;
-    NSColor *FilePanelsFooterActiveTextColor() const noexcept;
-    NSColor *FilePanelsFooterSeparatorsColor() const noexcept;
-    NSColor *FilePanelsFooterActiveBackgroundColor() const noexcept;
-    NSColor *FilePanelsFooterInactiveBackgroundColor() const noexcept;
+    [[nodiscard]] NSFont *FilePanelsFooterFont() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsFooterTextColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsFooterActiveTextColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsFooterSeparatorsColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsFooterActiveBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsFooterInactiveBackgroundColor() const noexcept;
 
     // File Panels --> List presentation settings //////////////////////////////////////////////////
-    NSFont *FilePanelsListFont() const noexcept;
-    unsigned FilePanelsListRowVerticalPadding() const noexcept;
-    unsigned FilePanelsListSecondaryColumnsOpacity() const noexcept;
-    NSColor *FilePanelsListGridColor() const noexcept;
-    NSFont *FilePanelsListHeaderFont() const noexcept;
-    NSColor *FilePanelsListHeaderBackgroundColor() const noexcept;
-    NSColor *FilePanelsListHeaderTextColor() const noexcept;
-    NSColor *FilePanelsListHeaderSeparatorColor() const noexcept;
-    NSColor *FilePanelsListRegularEvenRowBackgroundColor() const noexcept;
-    NSColor *FilePanelsListRegularOddRowBackgroundColor() const noexcept;
-    NSColor *FilePanelsListFocusedActiveRowBackgroundColor() const noexcept;
-    NSColor *FilePanelsListFocusedInactiveRowBackgroundColor() const noexcept;
-    NSColor *FilePanelsListSelectedRowBackgroundColor() const noexcept;
+    [[nodiscard]] NSFont *FilePanelsListFont() const noexcept;
+    [[nodiscard]] unsigned FilePanelsListRowVerticalPadding() const noexcept;
+    [[nodiscard]] unsigned FilePanelsListSecondaryColumnsOpacity() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsListGridColor() const noexcept;
+    [[nodiscard]] NSFont *FilePanelsListHeaderFont() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsListHeaderBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsListHeaderTextColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsListHeaderSeparatorColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsListRegularEvenRowBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsListRegularOddRowBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsListFocusedActiveRowBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsListFocusedInactiveRowBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsListSelectedRowBackgroundColor() const noexcept;
 
     // File Panels --> Brief presentation settings /////////////////////////////////////////////////
-    NSFont *FilePanelsBriefFont() const noexcept;
-    unsigned FilePanelsBriefRowVerticalPadding() const noexcept;
-    NSColor *FilePanelsBriefGridColor() const noexcept;
-    NSColor *FilePanelsBriefRegularEvenRowBackgroundColor() const noexcept;
-    NSColor *FilePanelsBriefRegularOddRowBackgroundColor() const noexcept;
-    NSColor *FilePanelsBriefFocusedActiveItemBackgroundColor() const noexcept;
-    NSColor *FilePanelsBriefFocusedInactiveItemBackgroundColor() const noexcept;
-    NSColor *FilePanelsBriefSelectedItemBackgroundColor() const noexcept;
+    [[nodiscard]] NSFont *FilePanelsBriefFont() const noexcept;
+    [[nodiscard]] unsigned FilePanelsBriefRowVerticalPadding() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsBriefGridColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsBriefRegularEvenRowBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsBriefRegularOddRowBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsBriefFocusedActiveItemBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsBriefFocusedInactiveItemBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsBriefSelectedItemBackgroundColor() const noexcept;
 
     // File Panels --> Gallery presentation settings /////////////////////////////////////////////////
-    NSFont *FilePanelsGalleryFont() const noexcept;
-    NSColor *FilePanelsGalleryBackgroundColor() const noexcept;
-    NSColor *FilePanelsGalleryFocusedActiveItemBackgroundColor() const noexcept;
-    NSColor *FilePanelsGalleryFocusedInactiveItemBackgroundColor() const noexcept;
-    NSColor *FilePanelsGallerySelectedItemBackgroundColor() const noexcept;
+    [[nodiscard]] NSFont *FilePanelsGalleryFont() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsGalleryBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsGalleryFocusedActiveItemBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsGalleryFocusedInactiveItemBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsGallerySelectedItemBackgroundColor() const noexcept;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Terminal Emulator section
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Terminal --> General appearance /////////////////////////////////////////////////////////////
-    NSFont *TerminalFont() const noexcept;
-    NSColor *TerminalOverlayColor() const noexcept;
-    NSColor *TerminalForegroundColor() const noexcept;
-    NSColor *TerminalBoldForegroundColor() const noexcept;
-    NSColor *TerminalBackgroundColor() const noexcept;
-    NSColor *TerminalSelectionColor() const noexcept;
-    NSColor *TerminalCursorColor() const noexcept;
-    NSColor *TerminalAnsiColor0() const noexcept;
-    NSColor *TerminalAnsiColor1() const noexcept;
-    NSColor *TerminalAnsiColor2() const noexcept;
-    NSColor *TerminalAnsiColor3() const noexcept;
-    NSColor *TerminalAnsiColor4() const noexcept;
-    NSColor *TerminalAnsiColor5() const noexcept;
-    NSColor *TerminalAnsiColor6() const noexcept;
-    NSColor *TerminalAnsiColor7() const noexcept;
-    NSColor *TerminalAnsiColor8() const noexcept;
-    NSColor *TerminalAnsiColor9() const noexcept;
-    NSColor *TerminalAnsiColorA() const noexcept;
-    NSColor *TerminalAnsiColorB() const noexcept;
-    NSColor *TerminalAnsiColorC() const noexcept;
-    NSColor *TerminalAnsiColorD() const noexcept;
-    NSColor *TerminalAnsiColorE() const noexcept;
-    NSColor *TerminalAnsiColorF() const noexcept;
+    [[nodiscard]] NSFont *TerminalFont() const noexcept;
+    [[nodiscard]] NSColor *TerminalOverlayColor() const noexcept;
+    [[nodiscard]] NSColor *TerminalForegroundColor() const noexcept;
+    [[nodiscard]] NSColor *TerminalBoldForegroundColor() const noexcept;
+    [[nodiscard]] NSColor *TerminalBackgroundColor() const noexcept;
+    [[nodiscard]] NSColor *TerminalSelectionColor() const noexcept;
+    [[nodiscard]] NSColor *TerminalCursorColor() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColor0() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColor1() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColor2() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColor3() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColor4() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColor5() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColor6() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColor7() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColor8() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColor9() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColorA() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColorB() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColorC() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColorD() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColorE() const noexcept;
+    [[nodiscard]] NSColor *TerminalAnsiColorF() const noexcept;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Internal Viewer section
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Viewer --> General appearance ///////////////////////////////////////////////////////////////
-    NSFont *ViewerFont() const noexcept;
-    NSColor *ViewerOverlayColor() const noexcept;
-    NSColor *ViewerTextColor() const noexcept;
-    NSColor *ViewerTextSyntaxCommentColor() const noexcept;
-    NSColor *ViewerTextSyntaxPreprocessorColor() const noexcept;
-    NSColor *ViewerTextSyntaxKeywordColor() const noexcept;
-    NSColor *ViewerTextSyntaxOperatorColor() const noexcept;
-    NSColor *ViewerTextSyntaxIdentifierColor() const noexcept;
-    NSColor *ViewerTextSyntaxNumberColor() const noexcept;
-    NSColor *ViewerTextSyntaxStringColor() const noexcept;
-    NSColor *ViewerSelectionColor() const noexcept;
-    NSColor *ViewerBackgroundColor() const noexcept;
+    [[nodiscard]] NSFont *ViewerFont() const noexcept;
+    [[nodiscard]] NSColor *ViewerOverlayColor() const noexcept;
+    [[nodiscard]] NSColor *ViewerTextColor() const noexcept;
+    [[nodiscard]] NSColor *ViewerTextSyntaxCommentColor() const noexcept;
+    [[nodiscard]] NSColor *ViewerTextSyntaxPreprocessorColor() const noexcept;
+    [[nodiscard]] NSColor *ViewerTextSyntaxKeywordColor() const noexcept;
+    [[nodiscard]] NSColor *ViewerTextSyntaxOperatorColor() const noexcept;
+    [[nodiscard]] NSColor *ViewerTextSyntaxIdentifierColor() const noexcept;
+    [[nodiscard]] NSColor *ViewerTextSyntaxNumberColor() const noexcept;
+    [[nodiscard]] NSColor *ViewerTextSyntaxStringColor() const noexcept;
+    [[nodiscard]] NSColor *ViewerSelectionColor() const noexcept;
+    [[nodiscard]] NSColor *ViewerBackgroundColor() const noexcept;
 
 private:
     struct Internals;

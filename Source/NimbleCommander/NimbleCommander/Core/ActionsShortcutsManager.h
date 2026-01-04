@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 // ⇧ - NSShiftKeyMask
@@ -32,44 +32,47 @@ public:
                             std::span<const std::pair<const char *, const char *>> _default_shortcuts,
                             nc::config::Config &_config);
 
+    ActionsShortcutsManager(const ActionsShortcutsManager &) = delete;
+
     // Destructor.
-    virtual ~ActionsShortcutsManager();
+    ~ActionsShortcutsManager() override;
 
     // Returns a numeric tag that corresponds to the given action name.
-    std::optional<int> TagFromAction(std::string_view _action) const noexcept override;
+    [[nodiscard]] std::optional<int> TagFromAction(std::string_view _action) const noexcept override;
 
     // Returns an action name of the given numeric tag.
-    std::optional<std::string_view> ActionFromTag(int _tag) const noexcept override;
+    [[nodiscard]] std::optional<std::string_view> ActionFromTag(int _tag) const noexcept override;
 
     // Returns a shortcut assigned to the specified action.
     // Returns std::nullopt such action cannot be found.
     // Overrides have priority over the default shortcuts.
-    std::optional<Shortcuts> ShortcutsFromAction(std::string_view _action) const noexcept override;
+    [[nodiscard]] std::optional<Shortcuts> ShortcutsFromAction(std::string_view _action) const noexcept override;
 
     // Returns a shortcut assigned to the specified numeric action tag.
     // Returns std::nullopt such action cannot be found.
     // Overrides have priority over the default shortcuts.
-    std::optional<Shortcuts> ShortcutsFromTag(int _tag) const noexcept override;
+    [[nodiscard]] std::optional<Shortcuts> ShortcutsFromTag(int _tag) const noexcept override;
 
     // Returns a default shortcut for an action specified by its numeric tag.
     // Returns std::nullopt such action cannot be found.
-    std::optional<Shortcuts> DefaultShortcutsFromTag(int _tag) const noexcept override;
+    [[nodiscard]] std::optional<Shortcuts> DefaultShortcutsFromTag(int _tag) const noexcept override;
 
     // Returns an unordered list of numeric tags of actions that have the specified shortcut.
     // An optional domain parameter can be specified to filter the output by only leaving actions that have the
     // specified domain in their name.
-    std::optional<ActionTags> ActionTagsFromShortcut(Shortcut _sc,
-                                                     std::string_view _in_domain = {}) const noexcept override;
+    [[nodiscard]] std::optional<ActionTags>
+    ActionTagsFromShortcut(Shortcut _sc, std::string_view _in_domain = {}) const noexcept override;
 
     // Syntax sugar around ActionTagsFromShortCut(_sc, _in_domain) and find_first_of(_of_tags).
     // Returns the first tag from the specified set.
     // The order is not defined in case of ambiguities.
-    std::optional<int> FirstOfActionTagsFromShortcut(std::span<const int> _of_tags,
-                                                     Shortcut _sc,
-                                                     std::string_view _in_domain = {}) const noexcept override;
+    [[nodiscard]] std::optional<int>
+    FirstOfActionTagsFromShortcut(std::span<const int> _of_tags,
+                                  Shortcut _sc,
+                                  std::string_view _in_domain = {}) const noexcept override;
 
     // Returns the list of actions alongside with their tags, preserving the order.
-    std::vector<std::pair<std::string, int>> AllShortcuts() const override;
+    [[nodiscard]] std::vector<std::pair<std::string, int>> AllShortcuts() const override;
 
     // Removes any hotkeys overrides.
     void RevertToDefaults() override;
@@ -89,8 +92,6 @@ private:
     // An unordered list of numeric tags indicating which actions are using a shortcut.
     // An inlined vector is used to avoid memory allocating for such tiny memory blocks.
     using TagsUsingShortcut = absl::InlinedVector<int, 4>;
-
-    ActionsShortcutsManager(const ActionsShortcutsManager &) = delete;
 
     void ReadOverrideFromConfig();
     void WriteOverridesToConfig() const;

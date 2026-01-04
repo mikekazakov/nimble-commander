@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -13,9 +13,9 @@ public:
     LauchServicesHandlers(const VFSListingItem &_item, const nc::utility::UTIDB &_uti_db);
     LauchServicesHandlers(const std::vector<LauchServicesHandlers> &_handlers_to_merge);
 
-    const std::vector<std::string> &HandlersPaths() const noexcept;
-    const std::string &DefaultHandlerPath() const noexcept; // may be empty after merge
-    const std::string &CommonUTI() const noexcept;          // may be empty after merge
+    [[nodiscard]] const std::vector<std::string> &HandlersPaths() const noexcept;
+    [[nodiscard]] const std::string &DefaultHandlerPath() const noexcept; // may be empty after merge
+    [[nodiscard]] const std::string &CommonUTI() const noexcept;          // may be empty after merge
 
 private:
     std::vector<std::string> m_Paths;
@@ -28,13 +28,13 @@ class LaunchServiceHandler
 public:
     LaunchServiceHandler(const std::string &_handler_path); // may throw on fetch error
 
-    const std::string &Path() const noexcept;
-    NSString *Name() const noexcept;
-    NSImage *Icon() const noexcept;
-    NSString *Version() const noexcept;
-    NSString *Identifier() const noexcept;
+    [[nodiscard]] const std::string &Path() const noexcept;
+    [[nodiscard]] NSString *Name() const noexcept;
+    [[nodiscard]] NSImage *Icon() const noexcept;
+    [[nodiscard]] NSString *Version() const noexcept;
+    [[nodiscard]] NSString *Identifier() const noexcept;
 
-    bool SetAsDefaultHandlerForUTI(const std::string &_uti) const;
+    [[nodiscard]] bool SetAsDefaultHandlerForUTI(const std::string &_uti) const;
 
 private:
     std::string m_Path;

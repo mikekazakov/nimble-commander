@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/UUID.h>
@@ -35,18 +35,18 @@ public:
      */
     static std::string TitleForConnection(const Connection &_conn);
 
-    virtual std::optional<Connection> ConnectionByUUID(const nc::base::UUID &_uuid) const = 0;
-    virtual std::optional<Connection> ConnectionForVFS(const VFSHost &_vfs) const = 0;
+    [[nodiscard]] virtual std::optional<Connection> ConnectionByUUID(const nc::base::UUID &_uuid) const = 0;
+    [[nodiscard]] virtual std::optional<Connection> ConnectionForVFS(const VFSHost &_vfs) const = 0;
 
     virtual void InsertConnection(const Connection &_connection) = 0;
     virtual void RemoveConnection(const Connection &_connection) = 0;
 
     virtual void ReportUsage(const Connection &_connection) = 0;
 
-    virtual std::vector<Connection> AllConnectionsByMRU() const = 0;
-    virtual std::vector<Connection> FTPConnectionsByMRU() const = 0;
-    virtual std::vector<Connection> SFTPConnectionsByMRU() const = 0;
-    virtual std::vector<Connection> LANShareConnectionsByMRU() const = 0;
+    [[nodiscard]] virtual std::vector<Connection> AllConnectionsByMRU() const = 0;
+    [[nodiscard]] virtual std::vector<Connection> FTPConnectionsByMRU() const = 0;
+    [[nodiscard]] virtual std::vector<Connection> SFTPConnectionsByMRU() const = 0;
+    [[nodiscard]] virtual std::vector<Connection> LANShareConnectionsByMRU() const = 0;
 
     virtual bool SetPassword(const Connection &_conn, const std::string &_password) = 0;
     virtual bool GetPassword(const Connection &_conn, std::string &_password) = 0;
@@ -87,17 +87,17 @@ public:
     template <class T>
     explicit Connection(T _t) : m_Object(std::make_shared<Model<T>>(std::move(_t)))
     {
-        static_assert(std::is_class<T>::value, "connection should be a class/struct");
+        static_assert(std::is_class_v<T>, "connection should be a class/struct");
     }
 
     template <class T>
-    bool IsType() const noexcept
+    [[nodiscard]] bool IsType() const noexcept
     {
         return std::dynamic_pointer_cast<const Model<T>>(m_Object) != nullptr;
     }
 
     template <class T>
-    const T &Get() const
+    [[nodiscard]] const T &Get() const
     {
         if( auto p = std::dynamic_pointer_cast<const Model<T>>(m_Object) )
             return p->obj;
@@ -105,7 +105,7 @@ public:
     }
 
     template <class T>
-    const T *Cast() const noexcept
+    [[nodiscard]] const T *Cast() const noexcept
     {
         if( auto p = std::dynamic_pointer_cast<const Model<T>>(m_Object) )
             return &p->obj;
@@ -114,8 +114,8 @@ public:
 
     void Accept(NetworkConnectionsManager::ConnectionVisitor &_visitor) const;
 
-    const std::string &Title() const noexcept;
-    const nc::base::UUID &Uuid() const noexcept;
+    [[nodiscard]] const std::string &Title() const noexcept;
+    [[nodiscard]] const nc::base::UUID &Uuid() const noexcept;
 
     bool operator==(const Connection &_rhs) const noexcept;
     bool operator!=(const Connection &_rhs) const noexcept;
@@ -159,7 +159,7 @@ public:
 class NetworkConnectionsManager::LANShare : public NetworkConnectionsManager::BaseConnection
 {
 public:
-    enum class Protocol { /* persistent values, do not change */
+    enum class Protocol : uint8_t { /* persistent values, do not change */
         SMB = 0,
         AFP = 1,
         NFS = 2
@@ -185,11 +185,11 @@ public:
 
 struct NetworkConnectionsManager::Connection::Concept {
     virtual ~Concept() = default;
-    virtual const std::string &Title() const noexcept = 0;
-    virtual const nc::base::UUID &Uuid() const noexcept = 0;
+    [[nodiscard]] virtual const std::string &Title() const noexcept = 0;
+    [[nodiscard]] virtual const nc::base::UUID &Uuid() const noexcept = 0;
     virtual void Accept(NetworkConnectionsManager::ConnectionVisitor &_visitor) const = 0;
-    virtual const std::type_info &TypeID() const noexcept = 0;
-    virtual bool Equal(const Concept &_rhs) const noexcept = 0;
+    [[nodiscard]] virtual const std::type_info &TypeID() const noexcept = 0;
+    [[nodiscard]] virtual bool Equal(const Concept &_rhs) const noexcept = 0;
 };
 
 template <class T>
@@ -198,15 +198,15 @@ struct NetworkConnectionsManager::Connection::Model final : NetworkConnectionsMa
 
     Model(T _t) : obj(std::move(_t)) {}
 
-    virtual const std::string &Title() const noexcept override { return obj.title; }
+    [[nodiscard]] const std::string &Title() const noexcept override { return obj.title; }
 
-    virtual const nc::base::UUID &Uuid() const noexcept override { return obj.uuid; }
+    [[nodiscard]] const nc::base::UUID &Uuid() const noexcept override { return obj.uuid; }
 
-    virtual void Accept(NetworkConnectionsManager::ConnectionVisitor &_visitor) const override { _visitor.Visit(obj); }
+    void Accept(NetworkConnectionsManager::ConnectionVisitor &_visitor) const override { _visitor.Visit(obj); }
 
-    virtual const std::type_info &TypeID() const noexcept override { return typeid(T); }
+    [[nodiscard]] const std::type_info &TypeID() const noexcept override { return typeid(T); }
 
-    virtual bool Equal(const Concept &_rhs) const noexcept override
+    [[nodiscard]] bool Equal(const Concept &_rhs) const noexcept override
     {
         return TypeID() == _rhs.TypeID() && obj == static_cast<const Model<T> &>(_rhs).obj;
     }

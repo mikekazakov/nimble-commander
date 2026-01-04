@@ -17,10 +17,12 @@ public:
     // it would be good to transform these methods into something like this:
     // pair<vector<unsigned>,vector<bool>> to reduce redundant operations.
 
-    std::vector<bool> SelectionByExtension(const std::string &_extension, bool _result_selection = true) const;
-    std::vector<bool> SelectionByMask(const utility::FileMask &_mask, bool _result_selection = true) const;
+    [[nodiscard]] std::vector<bool> SelectionByExtension(const std::string &_extension,
+                                                         bool _result_selection = true) const;
+    [[nodiscard]] std::vector<bool> SelectionByMask(const utility::FileMask &_mask,
+                                                    bool _result_selection = true) const;
 
-    std::vector<bool> InvertSelection() const;
+    [[nodiscard]] std::vector<bool> InvertSelection() const;
 
 private:
     const nc::panel::data::Model &m_Data;

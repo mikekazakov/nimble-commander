@@ -22,7 +22,7 @@ using namespace nc;
 using namespace nc::panel;
 using namespace std::chrono_literals;
 
-static bool WaitForChildProcess(int _pid, std::chrono::nanoseconds _deadline, std::chrono::nanoseconds _poll_period)
+bool WaitForChildProcess(int _pid, std::chrono::nanoseconds _deadline, std::chrono::nanoseconds _poll_period)
 {
     if( _pid < 0 )
         return true;

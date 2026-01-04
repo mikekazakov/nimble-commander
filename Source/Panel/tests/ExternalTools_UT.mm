@@ -22,7 +22,7 @@ using Location = ExternalToolsParameters::Location;
 using SelectedItems = ExternalToolsParameters::SelectedItems;
 using FI = ExternalToolsParameters::FileInfo;
 
-static void touch(const std::filesystem::path &p)
+void touch(const std::filesystem::path &p)
 {
     const int fd = open(p.c_str(), O_RDWR | O_CREAT | S_IRUSR | S_IWUSR);
     CHECK(fd > 0);

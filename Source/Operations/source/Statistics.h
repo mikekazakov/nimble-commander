@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Progress.h"
@@ -8,7 +8,7 @@ namespace nc::ops {
 class Statistics
 {
 public:
-    enum class SourceType {
+    enum class SourceType : uint8_t {
         Bytes,
         Items
     };
@@ -49,7 +49,7 @@ private:
     std::chrono::nanoseconds m_PauseTimePoint;
     std::chrono::nanoseconds m_SleptTimeDuration;
     std::chrono::nanoseconds m_FinalTimeDuration;
-    SourceType m_PreferredSource;
+    SourceType m_PreferredSource{SourceType::Bytes};
 
     Progress m_BytesTimeline;
     Progress m_ItemsTimeline;

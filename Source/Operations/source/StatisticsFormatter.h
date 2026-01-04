@@ -12,13 +12,13 @@ class StatisticsFormatter
 public:
     StatisticsFormatter(const Statistics &_stats) noexcept;
 
-    NSString *ProgressCaption() const;
+    [[nodiscard]] NSString *ProgressCaption() const;
 
 private:
     static NSString *FormatETAString(std::chrono::nanoseconds _eta);
 
-    NSString *WithItems() const;
-    NSString *WithBytes() const;
+    [[nodiscard]] NSString *WithItems() const;
+    [[nodiscard]] NSString *WithBytes() const;
     const Statistics &m_Stats;
 };
 

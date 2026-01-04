@@ -39,16 +39,16 @@ struct TextualFilter {
     static Where WhereFromInt(int _v) noexcept;
     static TextualFilter NoFilter() noexcept;
     bool IsValidItem(const VFSListingItem &_item, QuickSearchHighlight &_found_range) const;
-    bool IsValidItem(const VFSListingItem &_item) const;
+    [[nodiscard]] bool IsValidItem(const VFSListingItem &_item) const;
     void OnPanelDataLoad();
-    bool IsFiltering() const noexcept;
+    [[nodiscard]] bool IsFiltering() const noexcept;
 } __attribute__((packed));
 
 struct HardFilter {
     TextualFilter text = TextualFilter::NoFilter();
     bool show_hidden = true;
     bool IsValidItem(const VFSListingItem &_item, QuickSearchHighlight &_found_range) const;
-    bool IsFiltering() const noexcept;
+    [[nodiscard]] bool IsFiltering() const noexcept;
     bool operator==(const HardFilter &_r) const noexcept = default;
     bool operator!=(const HardFilter &_r) const noexcept = default;
 };

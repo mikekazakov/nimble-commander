@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Config/Config.h>
@@ -10,7 +10,7 @@
 namespace nc::panel {
 
 struct FindFilesMask {
-    enum Type {
+    enum Type : uint8_t {
         Classic = 0,
         RegEx = 1
     };

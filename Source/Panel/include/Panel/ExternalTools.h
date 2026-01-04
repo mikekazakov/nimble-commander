@@ -92,15 +92,15 @@ public:
         friend auto operator<=>(Step _lhs, Step _rhs) noexcept = default;
     };
 
-    std::span<const Step> Steps() const noexcept;
-    const Step &StepNo(size_t _number) const;
-    size_t StepsAmount() const;
+    [[nodiscard]] std::span<const Step> Steps() const noexcept;
+    [[nodiscard]] const Step &StepNo(size_t _number) const;
+    [[nodiscard]] size_t StepsAmount() const;
 
-    const UserDefined &GetUserDefined(size_t _index) const;
-    const EnterValue &GetEnterValue(size_t _index) const;
-    const CurrentItem &GetCurrentItem(size_t _index) const;
-    const SelectedItems &GetSelectedItems(size_t _index) const;
-    unsigned GetMaximumTotalFiles() const;
+    [[nodiscard]] const UserDefined &GetUserDefined(size_t _index) const;
+    [[nodiscard]] const EnterValue &GetEnterValue(size_t _index) const;
+    [[nodiscard]] const CurrentItem &GetCurrentItem(size_t _index) const;
+    [[nodiscard]] const SelectedItems &GetSelectedItems(size_t _index) const;
+    [[nodiscard]] unsigned GetMaximumTotalFiles() const;
 
 private:
     void InsertUserDefinedText(UserDefined _ud, bool _partial = false);
@@ -172,24 +172,24 @@ public:
 
     ExternalToolExecution(const Context &_ctx, const ExternalTool &_et);
 
-    bool RequiresUserInput() const noexcept;
-    std::span<const std::string> UserInputPrompts() const noexcept;
+    [[nodiscard]] bool RequiresUserInput() const noexcept;
+    [[nodiscard]] std::span<const std::string> UserInputPrompts() const noexcept;
     void CommitUserInput(std::span<const std::string> _input);
 
-    std::vector<std::string> BuildArguments() const;
+    [[nodiscard]] std::vector<std::string> BuildArguments() const;
 
-    ExternalTool::StartupMode DeduceStartupMode() const;
+    [[nodiscard]] ExternalTool::StartupMode DeduceStartupMode() const;
 
-    bool IsBundle() const;
+    [[nodiscard]] bool IsBundle() const;
 
-    std::filesystem::path ExecutablePath() const;
+    [[nodiscard]] std::filesystem::path ExecutablePath() const;
 
     // returns a pid (that can already be -1 if the process quit too fast) or an error description
     // automatically deduces if the app should be started via UI (StartDetachedUI) or as headless fork
     // (StartDetachedFork)
     std::expected<pid_t, std::string> StartDetached();
 
-    std::expected<pid_t, std::string> StartDetachedFork() const;
+    [[nodiscard]] std::expected<pid_t, std::string> StartDetachedFork() const;
 
     std::expected<pid_t, std::string> StartDetachedUI();
 

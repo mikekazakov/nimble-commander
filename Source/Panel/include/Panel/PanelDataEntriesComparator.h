@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -10,15 +10,13 @@ namespace nc::panel::data {
 
 struct ExternalEntryKey;
 
-class ListingComparatorBase
-{
-public:
+struct ListingComparatorBase {
     ListingComparatorBase(const VFSListing &_items, std::span<const ItemVolatileData> _vd, SortMode _sort_mode);
 
-protected:
     int Compare(CFStringRef _1st, CFStringRef _2nd) const noexcept;
     int Compare(const char *_1st, const char *_2nd) const noexcept;
     static int NaturalCompare(CFStringRef _1st, CFStringRef _2nd) noexcept;
+
     const VFSListing &l;
     const std::span<const ItemVolatileData> vd;
     const SortMode sort_mode;
@@ -31,22 +29,22 @@ public:
     bool operator()(unsigned _1, unsigned _2) const;
 
 private:
-    int CompareNames(unsigned _1, unsigned _2) const;
-    bool IsLessByName(unsigned _1, unsigned _2) const;
-    bool IsLessByNameReversed(unsigned _1, unsigned _2) const;
-    bool IsLessByExension(unsigned _1, unsigned _2) const;
-    bool IsLessByExensionReversed(unsigned _1, unsigned _2) const;
-    bool IsLessByModificationTime(unsigned _1, unsigned _2) const;
-    bool IsLessByModificationTimeReversed(unsigned _1, unsigned _2) const;
-    bool IsLessByBirthTime(unsigned _1, unsigned _2) const;
-    bool IsLessByBirthTimeReversed(unsigned _1, unsigned _2) const;
-    bool IsLessByAddedTime(unsigned _1, unsigned _2) const;
-    bool IsLessByAddedTimeReversed(unsigned _1, unsigned _2) const;
-    bool IsLessByAccessTime(unsigned _1, unsigned _2) const;
-    bool IsLessByAccessTimeReversed(unsigned _1, unsigned _2) const;
-    bool IsLessBySize(unsigned _1, unsigned _2) const;
-    bool IsLessBySizeReversed(unsigned _1, unsigned _2) const;
-    bool IsLessByFilesystemRepresentation(unsigned _1, unsigned _2) const;
+    [[nodiscard]] int CompareNames(unsigned _1, unsigned _2) const;
+    [[nodiscard]] bool IsLessByName(unsigned _1, unsigned _2) const;
+    [[nodiscard]] bool IsLessByNameReversed(unsigned _1, unsigned _2) const;
+    [[nodiscard]] bool IsLessByExension(unsigned _1, unsigned _2) const;
+    [[nodiscard]] bool IsLessByExensionReversed(unsigned _1, unsigned _2) const;
+    [[nodiscard]] bool IsLessByModificationTime(unsigned _1, unsigned _2) const;
+    [[nodiscard]] bool IsLessByModificationTimeReversed(unsigned _1, unsigned _2) const;
+    [[nodiscard]] bool IsLessByBirthTime(unsigned _1, unsigned _2) const;
+    [[nodiscard]] bool IsLessByBirthTimeReversed(unsigned _1, unsigned _2) const;
+    [[nodiscard]] bool IsLessByAddedTime(unsigned _1, unsigned _2) const;
+    [[nodiscard]] bool IsLessByAddedTimeReversed(unsigned _1, unsigned _2) const;
+    [[nodiscard]] bool IsLessByAccessTime(unsigned _1, unsigned _2) const;
+    [[nodiscard]] bool IsLessByAccessTimeReversed(unsigned _1, unsigned _2) const;
+    [[nodiscard]] bool IsLessBySize(unsigned _1, unsigned _2) const;
+    [[nodiscard]] bool IsLessBySizeReversed(unsigned _1, unsigned _2) const;
+    [[nodiscard]] bool IsLessByFilesystemRepresentation(unsigned _1, unsigned _2) const;
 };
 
 class ExternalListingComparator : private ListingComparatorBase

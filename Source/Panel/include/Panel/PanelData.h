@@ -56,102 +56,102 @@ public:
     /**
      * Tells whether Model was provided with a valid listing object.
      */
-    bool IsLoaded() const noexcept;
+    [[nodiscard]] bool IsLoaded() const noexcept;
 
     /**
      * Returns a common VHS host referred by the stored listing.
      * Will throw logic_error if called on a listing with no common host.
      */
-    const std::shared_ptr<VFSHost> &Host() const;
+    [[nodiscard]] const std::shared_ptr<VFSHost> &Host() const;
 
     /**
      * Returns a stored VFS listing.
      */
-    const VFSListing &Listing() const noexcept;
+    [[nodiscard]] const VFSListing &Listing() const noexcept;
 
     /**
      * Returns a shared pointer to a stored VFS listing.
      */
-    const VFSListingPtr &ListingPtr() const noexcept;
+    [[nodiscard]] const VFSListingPtr &ListingPtr() const noexcept;
 
     /**
      * Returns a panel type provided upen loading.
      */
-    PanelType Type() const noexcept;
+    [[nodiscard]] PanelType Type() const noexcept;
 
     /**
      * Returns the number of raw i.e. unfiltered entires in the listing.
      */
-    int RawEntriesCount() const noexcept;
+    [[nodiscard]] int RawEntriesCount() const noexcept;
 
     /**
      * Returns the number of sorted i.e. possibly filtered entires in the listing.
      */
-    int SortedEntriesCount() const noexcept;
+    [[nodiscard]] int SortedEntriesCount() const noexcept;
 
-    const std::vector<unsigned> &SortedDirectoryEntries() const noexcept;
+    [[nodiscard]] const std::vector<unsigned> &SortedDirectoryEntries() const noexcept;
 
     /**
      * EntriesBySoftFiltering return a vector of filtered indeces of sorted entries (not raw ones)
      */
-    const std::vector<unsigned> &EntriesBySoftFiltering() const noexcept;
+    [[nodiscard]] const std::vector<unsigned> &EntriesBySoftFiltering() const noexcept;
 
     // will return an "empty" item upon invalid index
-    VFSListingItem EntryAtRawPosition(int _pos) const noexcept;
+    [[nodiscard]] VFSListingItem EntryAtRawPosition(int _pos) const noexcept;
 
     // will throw an exception upon invalid index
     ItemVolatileData &VolatileDataAtRawPosition(int _pos);
 
     // will throw an exception upon invalid index
-    const ItemVolatileData &VolatileDataAtRawPosition(int _pos) const;
+    [[nodiscard]] const ItemVolatileData &VolatileDataAtRawPosition(int _pos) const;
 
-    bool IsValidSortPosition(int _pos) const noexcept;
+    [[nodiscard]] bool IsValidSortPosition(int _pos) const noexcept;
 
     // will return an "empty" item upon invalid index
-    VFSListingItem EntryAtSortPosition(int _pos) const noexcept;
+    [[nodiscard]] VFSListingItem EntryAtSortPosition(int _pos) const noexcept;
 
     // will throw an exception upon invalid index
     ItemVolatileData &VolatileDataAtSortPosition(int _pos);
 
     // will throw an exception upon invalid index
-    const ItemVolatileData &VolatileDataAtSortPosition(int _pos) const;
+    [[nodiscard]] const ItemVolatileData &VolatileDataAtSortPosition(int _pos) const;
 
     // Syntax sugar around SortedIndexForRawIndex(_item.Index()), but also checks
     // if the item's listing is the same as the model's.
     // Returns "-1" if the item is not found in the sorted representation.
     // O(1) complexity.
-    int SortPositionOfEntry(const VFSListingItem &_item) const noexcept;
+    [[nodiscard]] int SortPositionOfEntry(const VFSListingItem &_item) const noexcept;
 
-    std::vector<std::string> SelectedEntriesFilenames() const;
+    [[nodiscard]] std::vector<std::string> SelectedEntriesFilenames() const;
 
     /**
      * Returns a list of selected VFS items, without a specific order,
      * according to the raw structure of a listing.
      * O(N) complexity.
      */
-    std::vector<VFSListingItem> SelectedEntriesUnsorted() const;
+    [[nodiscard]] std::vector<VFSListingItem> SelectedEntriesUnsorted() const;
 
     /**
      * Returns a list of selected VFS items, ordered according to the selected sort mode.
      * O(N) complexity.
      */
-    std::vector<VFSListingItem> SelectedEntriesSorted() const;
+    [[nodiscard]] std::vector<VFSListingItem> SelectedEntriesSorted() const;
 
     /**
      * Will throw an invalid_argument on invalid _pos.
      */
-    ExternalEntryKey EntrySortKeysAtSortPosition(int _pos) const;
+    [[nodiscard]] ExternalEntryKey EntrySortKeysAtSortPosition(int _pos) const;
 
     /**
      * will redirect ".." upwards
      */
-    std::string FullPathForEntry(int _raw_index) const;
+    [[nodiscard]] std::string FullPathForEntry(int _raw_index) const;
 
     /**
      * Converts sorted index into raw index. Returns -1 on any errors.
      * O(1) complexity.
      */
-    int RawIndexForSortIndex(int _index) const noexcept;
+    [[nodiscard]] int RawIndexForSortIndex(int _index) const noexcept;
 
     /**
      * Performs a binary case-sensivitive search.
@@ -160,7 +160,7 @@ public:
      * NB! it has issues with non-uniform listings - it can return only the first entry.
      * Complexity: O(logN ), N - total number of items in the listing.
      */
-    int RawIndexForName(std::string_view _filename) const noexcept;
+    [[nodiscard]] int RawIndexForName(std::string_view _filename) const noexcept;
 
     /**
      * Performs a binary case-sensivitive search.
@@ -168,14 +168,14 @@ public:
      * Returning value is in raw land, that is Listing()[N], not sorted ones.
      * Complexity: O(2 * logN ), N - total number of items in the listing.
      */
-    std::span<const unsigned> RawIndicesForName(std::string_view _filename) const noexcept;
+    [[nodiscard]] std::span<const unsigned> RawIndicesForName(std::string_view _filename) const noexcept;
 
     /**
      * Performs a search using current sort settings with prodived keys.
      * Return a lower bound entry - first entry with is not less than a key from _keys.
      * Returns -1 if such entry wasn't found.
      */
-    int SortLowerBoundForEntrySortKeys(const ExternalEntryKey &_key) const;
+    [[nodiscard]] int SortLowerBoundForEntrySortKeys(const ExternalEntryKey &_key) const;
 
     /**
      * Returns a sorted index for a given filename.
@@ -185,7 +185,7 @@ public:
      * NB! for non-uniform listings this will return only the first item, while there can be more, as filename is not
      * unique there.
      */
-    int SortedIndexForName(std::string_view _filename) const noexcept;
+    [[nodiscard]] int SortedIndexForName(std::string_view _filename) const noexcept;
 
     /**
      * Returns a sorted index for the raw index.
@@ -193,36 +193,36 @@ public:
      * For OOB access returns -1 as well.
      * O(1) complexity.
      */
-    int SortedIndexForRawIndex(int _desired_raw_index) const noexcept;
+    [[nodiscard]] int SortedIndexForRawIndex(int _desired_raw_index) const noexcept;
 
     /**
      * return current directory in long variant starting from /
      */
-    std::string DirectoryPathWithoutTrailingSlash() const;
+    [[nodiscard]] std::string DirectoryPathWithoutTrailingSlash() const;
 
     /**
      * same as DirectoryPathWithoutTrailingSlash() but path will ends with slash
      */
-    std::string DirectoryPathWithTrailingSlash() const;
+    [[nodiscard]] std::string DirectoryPathWithTrailingSlash() const;
 
     /**
      * return name of a current directory in a parent directory.
      * returns a zero string for a root dir.
      */
-    std::string DirectoryPathShort() const;
+    [[nodiscard]] std::string DirectoryPathShort() const;
 
-    std::string VerboseDirectoryFullPath() const;
+    [[nodiscard]] std::string VerboseDirectoryFullPath() const;
 
     // sorting
     void SetSortMode(SortMode _mode);
-    SortMode SortMode() const;
+    [[nodiscard]] SortMode SortMode() const;
 
     // hard filtering filtering
     void SetHardFiltering(const HardFilter &_filter);
-    HardFilter HardFiltering() const;
+    [[nodiscard]] HardFilter HardFiltering() const;
 
     void SetSoftFiltering(const TextualFilter &_filter);
-    TextualFilter SoftFiltering() const;
+    [[nodiscard]] TextualFilter SoftFiltering() const;
 
     /**
      * ClearTextFiltering() efficiently sets SoftFiltering.text = nil and HardFiltering.text.text =
@@ -232,7 +232,7 @@ public:
      */
     bool ClearTextFiltering();
 
-    const Statistics &Stats() const noexcept;
+    [[nodiscard]] const Statistics &Stats() const noexcept;
 
     // manupulation with user flags for directory entries
 

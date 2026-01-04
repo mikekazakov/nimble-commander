@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS_fwd.h>
@@ -23,7 +23,7 @@ public:
         };
         std::vector<PerVFS> per_vfs;
 
-        size_t EntriesCount() const noexcept;
+        [[nodiscard]] size_t EntriesCount() const noexcept;
     };
 
     using StorageT = std::variant<UniformListing, NonUniformListing>;
@@ -42,7 +42,7 @@ public:
                           const PromiseVFSAdapter &_adapter,
                           const std::function<bool()> &_cancel_checker) const;
 
-    const StorageT &Description() const noexcept;
+    [[nodiscard]] const StorageT &Description() const noexcept;
 
 private:
     friend bool operator==(const ListingPromise &_lhs, const ListingPromise &_rhs) noexcept;
@@ -55,7 +55,7 @@ private:
                                     const std::function<bool()> &_cancel_checker) const;
     static NonUniformListing FromNonUniformListing(const VFSListing &_listing, const VFSPromiseAdapter &_adapter);
     static UniformListing FromUniformListing(const VFSListing &_listing, const VFSPromiseAdapter &_adapter);
-    const StorageT &Storage() const noexcept;
+    [[nodiscard]] const StorageT &Storage() const noexcept;
 
     std::shared_ptr<const StorageT> m_Storage;
 };

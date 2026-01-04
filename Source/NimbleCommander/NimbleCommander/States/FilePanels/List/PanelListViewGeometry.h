@@ -11,16 +11,16 @@ public:
     PanelListViewGeometry();
     PanelListViewGeometry(NSFont *_font, int _icon_scale, unsigned _padding);
 
-    short LineHeight() const { return m_LineHeight; }
-    short TextBaseLine() const { return m_TextBaseLine; }
-    short IconSize() const { return m_IconSize; }
-    short LeftInset() const { return 7; }
-    short TopInset() const { return 1; }
-    short RightInset() const { return 5; }
-    short BottomInset() const { return 1; }
+    [[nodiscard]] short LineHeight() const { return m_LineHeight; }
+    [[nodiscard]] short TextBaseLine() const { return m_TextBaseLine; }
+    [[nodiscard]] short IconSize() const { return m_IconSize; }
+    [[nodiscard]] static short LeftInset() { return 7; }
+    [[nodiscard]] static short TopInset() { return 1; }
+    [[nodiscard]] static short RightInset() { return 5; }
+    [[nodiscard]] static short BottomInset() { return 1; }
 
     // Returns the the left offset of the filename text in its column
-    short FilenameOffsetInColumn() const noexcept;
+    [[nodiscard]] short FilenameOffsetInColumn() const noexcept;
 
 private:
     short m_LineHeight;

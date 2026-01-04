@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS_fwd.h>
@@ -19,18 +19,18 @@ class History
 public:
     using Path = ListingPromise;
 
-    bool IsRecording() const noexcept;
-    unsigned Length() const noexcept;
-    bool Empty() const noexcept;
+    [[nodiscard]] bool IsRecording() const noexcept;
+    [[nodiscard]] unsigned Length() const noexcept;
+    [[nodiscard]] bool Empty() const noexcept;
 
-    bool CanMoveForth() const noexcept;
+    [[nodiscard]] bool CanMoveForth() const noexcept;
 
     /**
      * Will throw if CanMoveForth() == false.
      */
     void MoveForth();
 
-    bool CanMoveBack() const noexcept;
+    [[nodiscard]] bool CanMoveBack() const noexcept;
 
     /**
      * Will throw if CanMoveBack() == false.
@@ -46,7 +46,7 @@ public:
     /**
      * Will return nullptr if history is in "recording" state.
      */
-    const Path *CurrentPlaying() const;
+    [[nodiscard]] const Path *CurrentPlaying() const;
 
     /**
      * Will put History in "playing" state and adjust playing position accordingly,
@@ -57,11 +57,11 @@ public:
     /**
      * Returns the one most recently visited, either in a recording state or in a playing state.
      */
-    const Path *MostRecent() const;
+    [[nodiscard]] const Path *MostRecent() const;
 
-    std::vector<std::reference_wrapper<const Path>> All() const;
+    [[nodiscard]] std::vector<std::reference_wrapper<const Path>> All() const;
 
-    const std::string &LastNativeDirectoryVisited() const noexcept;
+    [[nodiscard]] const std::string &LastNativeDirectoryVisited() const noexcept;
 
     void SetVFSInstanceManager(core::VFSInstanceManager &_mgr);
 
@@ -72,10 +72,8 @@ private:
     unsigned m_PlayingPosition = 0; // have meaningful value only when m_IsRecording==false
     bool m_IsRecording = true;
     std::string m_LastNativeDirectory;
-    enum {
-        m_HistoryLength = 128
-    };
     core::VFSInstanceManager *m_VFSMgr = nullptr;
+    static constexpr size_t m_HistoryLength = 128;
 };
 
 } // namespace nc::panel

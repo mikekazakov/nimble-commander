@@ -98,7 +98,8 @@ static NSParagraphStyle *const g_Style = [] {
                 const auto geometry = lv.geometry;
                 const auto context = NSGraphicsContext.currentContext.CGContext;
                 CGContextSetFillColorWithColor(context, rv.rowSecondaryTextColor.CGColor);
-                CGContextSetTextPosition(context, geometry.LeftInset(), geometry.TextBaseLine());
+                CGContextSetTextPosition(
+                    context, nc::panel::PanelListViewGeometry::LeftInset(), geometry.TextBaseLine());
                 CGContextSetTextDrawingMode(context, kCGTextFill);
                 CTLineDraw(m_Line.get(), context);
             }

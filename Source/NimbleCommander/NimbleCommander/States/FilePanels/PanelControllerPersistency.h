@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Config/RapidJSON_fwd.h>
@@ -13,7 +13,7 @@ namespace nc::panel {
 struct PersistentLocation;
 
 struct ControllerStateEncoding {
-    enum Options {
+    enum Options : int8_t {
         EncodeDataOptions = 1,
         EncodeViewOptions = 2,
         EncodeContentState = 4,
@@ -50,7 +50,7 @@ private:
     void RecoverSavedContentAsync(PersistentLocation _location, PanelController *_panel);
     void RecoverSavedContentSync(const PersistentLocation &_location, PanelController *_panel);
     void RecoverSavedContent(const config::Value &_saved_state, PanelController *_panel);
-    bool AllowSyncRecovery(const PersistentLocation &_location) const;
+    [[nodiscard]] bool AllowSyncRecovery(const PersistentLocation &_location) const;
 
     const utility::NativeFSManager &m_NativeFSManager;
     nc::core::VFSInstanceManager &m_VFSInstanceManager;

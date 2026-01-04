@@ -13,12 +13,12 @@ class AttrsChanging : public Operation
 {
 public:
     AttrsChanging(AttrsChangingCommand _command);
-    ~AttrsChanging();
+    ~AttrsChanging() override;
 
 private:
     using Callbacks = AttrsChangingJobCallbacks;
 
-    virtual Job *GetJob() noexcept override;
+    Job *GetJob() noexcept override;
     int OnSourceAccessError(Error _err, const std::string &_path, VFSHost &_vfs);
     int OnChmodError(Error _err, const std::string &_path, VFSHost &_vfs);
     int OnChownError(Error _err, const std::string &_path, VFSHost &_vfs);

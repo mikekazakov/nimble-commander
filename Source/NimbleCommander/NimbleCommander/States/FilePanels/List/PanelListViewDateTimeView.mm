@@ -165,7 +165,8 @@ using nc::utility::AdaptiveDateFormatting;
 
             if( m_Line ) {
                 CGContextSetFillColorWithColor(context, rv.rowSecondaryTextColor.CGColor);
-                CGContextSetTextPosition(context, geometry.LeftInset(), geometry.TextBaseLine());
+                CGContextSetTextPosition(
+                    context, nc::panel::PanelListViewGeometry::LeftInset(), geometry.TextBaseLine());
                 CGContextSetTextDrawingMode(context, kCGTextFill);
                 CTLineDraw(m_Line, context);
             }

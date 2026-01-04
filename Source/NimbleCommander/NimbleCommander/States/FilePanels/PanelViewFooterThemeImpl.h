@@ -10,13 +10,13 @@ class FooterThemeImpl final : public FooterTheme
 {
 public:
     FooterThemeImpl(ThemesManager &_themes_mgr);
-    virtual ~FooterThemeImpl();
-    NSFont *Font() const override;
-    NSColor *TextColor() const override;
-    NSColor *ActiveTextColor() const override;
-    NSColor *SeparatorsColor() const override;
-    NSColor *ActiveBackgroundColor() const override;
-    NSColor *InactiveBackgroundColor() const override;
+    ~FooterThemeImpl() override;
+    [[nodiscard]] NSFont *Font() const override;
+    [[nodiscard]] NSColor *TextColor() const override;
+    [[nodiscard]] NSColor *ActiveTextColor() const override;
+    [[nodiscard]] NSColor *SeparatorsColor() const override;
+    [[nodiscard]] NSColor *ActiveBackgroundColor() const override;
+    [[nodiscard]] NSColor *InactiveBackgroundColor() const override;
     void ObserveChanges(std::function<void()> _callback) override;
 
 private:

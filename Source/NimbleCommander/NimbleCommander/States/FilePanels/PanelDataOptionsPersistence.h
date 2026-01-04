@@ -11,7 +11,7 @@ class OptionsExporter
 {
 public:
     OptionsExporter(const Model &_data);
-    nc::config::Value Export() const;
+    [[nodiscard]] nc::config::Value Export() const;
 
 private:
     const Model &m_Data;

@@ -17,8 +17,8 @@ class VFSInstanceManager;
 namespace nc::panel {
 
 struct PersistentLocation {
-    bool is_native() const noexcept;
-    bool is_network() const noexcept;
+    [[nodiscard]] [[nodiscard]] [[nodiscard]] [[nodiscard]] bool is_native() const noexcept;
+    [[nodiscard]] [[nodiscard]] [[nodiscard]] [[nodiscard]] bool is_network() const noexcept;
     std::vector<std::any> hosts; // .front() is a deepest host, .back() is topmost
                                  // empty hosts means using native vfs
     std::string path;

@@ -18,12 +18,10 @@ class SearchForFiles
 {
 public:
     struct Options {
-        enum {
-            GoIntoSubDirs = 0x0001,
-            SearchForDirs = 0x0002,
-            SearchForFiles = 0x0004,
-            LookInArchives = 0x0008,
-        };
+        static constexpr int GoIntoSubDirs = 0x0001;
+        static constexpr int SearchForDirs = 0x0002;
+        static constexpr int SearchForFiles = 0x0004;
+        static constexpr int LookInArchives = 0x0008;
     };
 
     struct FilterContent {

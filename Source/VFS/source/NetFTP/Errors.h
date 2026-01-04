@@ -36,8 +36,8 @@ struct Errors {
 class ErrorDescriptionProvider : public nc::base::ErrorDescriptionProvider
 {
 public:
-    std::string Description(int64_t _code) const noexcept override;
-    std::string LocalizedFailureReason(int64_t _code) const noexcept override;
+    [[nodiscard]] std::string Description(int64_t _code) const noexcept override;
+    [[nodiscard]] std::string LocalizedFailureReason(int64_t _code) const noexcept override;
 };
 
 } // namespace nc::vfs::ftp

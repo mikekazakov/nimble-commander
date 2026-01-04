@@ -12,7 +12,7 @@ class File : public VFSFile
 {
 public:
     File(std::string_view _relative_path, const std::shared_ptr<NativeHost> &_host);
-    ~File();
+    ~File() override;
 
     std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     bool IsOpened() const override;
@@ -35,9 +35,9 @@ public:
     std::shared_ptr<VFSFile> Clone() const override;
 
 private:
-    int m_FD;
-    unsigned long m_OpenFlags;
-    ssize_t m_Position;
+    int m_FD{-1};
+    unsigned long m_OpenFlags{0};
+    ssize_t m_Position{0};
     ssize_t m_Size;
 };
 

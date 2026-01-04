@@ -10,8 +10,7 @@
 
 namespace nc::vfs::native {
 
-File::File(std::string_view _relative_path, const std::shared_ptr<NativeHost> &_host)
-    : VFSFile(_relative_path, _host), m_FD(-1), m_OpenFlags(0), m_Position(0)
+File::File(std::string_view _relative_path, const std::shared_ptr<NativeHost> &_host) : VFSFile(_relative_path, _host)
 {
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
@@ -19,9 +19,9 @@ namespace nc::vfs {
 class SearchInFile
 {
 public:
-    enum class Response : int;
+    enum class Response : uint8_t;
 
-    enum class Options : int;
+    enum class Options : uint8_t;
 
     struct Location {
         uint64_t offset;
@@ -36,14 +36,17 @@ public:
     // will not own _file, caller need to close it after work
     // assumes that _file is in exclusive use in SearchInFile - that no one else will alter it
     SearchInFile(nc::vfs::FileWindow &_file);
+    SearchInFile(const SearchInFile &) = delete; // forbid
     ~SearchInFile();
+
+    void operator=(const SearchInFile &) = delete; // forbid
 
     void MoveCurrentPosition(uint64_t _pos);
 
     void SetSearchOptions(Options _options);
-    Options SearchOptions() const;
+    [[nodiscard]] Options SearchOptions() const;
 
-    bool IsEOF() const;
+    [[nodiscard]] bool IsEOF() const;
 
     void ToggleTextSearch(CFStringRef _string, utility::Encoding _encoding);
     CFStringRef TextSearchString();         // may be NULL. don't alter it. don't release it
@@ -53,13 +56,10 @@ public:
     Result Search(const CancelChecker &_checker = {});
 
 private:
-    SearchInFile(const SearchInFile &);   // forbid
-    void operator=(const SearchInFile &); // forbid
-
     Response SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker _checker);
     static bool IsWholePhrase(CFStringRef _string, CFRange _range);
 
-    enum class WorkMode {
+    enum class WorkMode : uint8_t {
         NotSet,
         Text
         /* binary(hex) and regexp(tempates) later */
@@ -84,7 +84,7 @@ private:
 
     // text search related stuff
     CFStringRef m_RequestedTextSearch = nullptr;
-    utility::Encoding m_TextSearchEncoding;
+    utility::Encoding m_TextSearchEncoding{utility::Encoding::ENCODING_INVALID};
 
     std::unique_ptr<uint16_t[]> m_DecodedBuffer;
     std::unique_ptr<uint32_t[]> m_DecodedBufferIndx;
@@ -95,7 +95,7 @@ private:
     WorkMode m_WorkMode = WorkMode::NotSet;
 };
 
-enum class SearchInFile::Response : int {
+enum class SearchInFile::Response : uint8_t {
     // Invalid search request
     Invalid,
 
@@ -116,7 +116,7 @@ enum class SearchInFile::Response : int {
     Canceled
 };
 
-enum class SearchInFile::Options : int {
+enum class SearchInFile::Options : uint8_t {
     None = 0,
 
     // default search option is case _insensitive_
@@ -128,11 +128,11 @@ enum class SearchInFile::Options : int {
 
 inline SearchInFile::Options operator|(SearchInFile::Options _lhs, SearchInFile::Options _rhs)
 {
-    return SearchInFile::Options{static_cast<int>(_lhs) | static_cast<int>(_rhs)};
+    return SearchInFile::Options{static_cast<uint8_t>(static_cast<uint8_t>(_lhs) | static_cast<uint8_t>(_rhs))};
 }
 inline SearchInFile::Options operator&(SearchInFile::Options _lhs, SearchInFile::Options _rhs)
 {
-    return SearchInFile::Options{static_cast<int>(_lhs) & static_cast<int>(_rhs)};
+    return SearchInFile::Options{static_cast<uint8_t>(static_cast<uint8_t>(_lhs) & static_cast<uint8_t>(_rhs))};
 }
 inline SearchInFile::Options &operator|=(SearchInFile::Options &_lhs, SearchInFile::Options _rhs)
 {

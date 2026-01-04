@@ -116,12 +116,12 @@ TEST_CASE(PREFIX "Firing logic")
     }
 }
 
-static void touch(const std::string &_path)
+void touch(const std::string &_path)
 {
     close(open(_path.c_str(), O_CREAT | O_RDWR, S_IRWXU));
 }
 
-static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation)
+bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation)
 {
     dispatch_assert_main_queue();
     assert(_timeout.count() > 0);

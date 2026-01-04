@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <libarchive/archive.h>
@@ -26,16 +26,17 @@ struct Mediator {
 struct State {
     // passes ownership of _arc
     State(const VFSFilePtr &_file, struct archive *_arc);
+    State(const State &) = delete;
     ~State();
 
-    inline struct ::archive *Archive() { return m_Archive; }
-    inline struct ::archive_entry *Entry() { return m_Entry; }
-    inline uint32_t UID() { return m_UID; }
-    inline bool Consumed() { return m_Consumed; }
+    struct ::archive *Archive() { return m_Archive; }
+    struct ::archive_entry *Entry() { return m_Entry; }
+    uint32_t UID() { return m_UID; }
+    bool Consumed() { return m_Consumed; }
 
     // assumes that this call is in  archive_read_next_header cycle. sets consumed flag to false
     void SetEntry(struct ::archive_entry *_e, uint32_t _uid);
-    inline void ConsumeEntry() { m_Consumed = true; }
+    void ConsumeEntry() { m_Consumed = true; }
 
     // libarchive API wrapping
     // any error codes are raw libarchive one, not converted to VFSError
@@ -43,7 +44,6 @@ struct State {
     int Errno();
 
 private:
-    State(const State &) = delete;
     void Setup();
     static ssize_t myread(struct ::archive *a, void *client_data, const void **buff);
     static off_t myseek(struct ::archive *a, void *client_data, off_t offset, int whence);

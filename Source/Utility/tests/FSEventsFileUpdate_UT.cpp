@@ -133,9 +133,9 @@ TEST_CASE(PREFIX "Notify from file events")
     REQUIRE(run_until_timeout_or_predicate(5s, 10ms, [&] { return fired; }));
 }
 
-static bool run_until_timeout_or_predicate(std::chrono::nanoseconds _timeout,
-                                           std::chrono::nanoseconds _slice,
-                                           std::function<bool()> _done)
+bool run_until_timeout_or_predicate(std::chrono::nanoseconds _timeout,
+                                    std::chrono::nanoseconds _slice,
+                                    std::function<bool()> _done)
 {
     assert(_done);
     const auto deadline = nc::base::machtime() + _timeout;

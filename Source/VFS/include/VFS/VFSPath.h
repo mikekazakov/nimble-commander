@@ -17,8 +17,8 @@ public:
     VFSPath(const VFSPath &_rhs) = default;
     VFSPath(VFSPath &&_rhs) = default;
 
-    const VFSHostPtr &Host() const noexcept;
-    const std::string &Path() const noexcept;
+    [[nodiscard]] const VFSHostPtr &Host() const noexcept;
+    [[nodiscard]] const std::string &Path() const noexcept;
     operator bool() const noexcept;
     void Reset();
 
@@ -54,7 +54,7 @@ public:
         /**
          * Will compare parts without respect to host ptr and will compare options by it's content.
          */
-        bool weak_equal(const Part &_r) const;
+        [[nodiscard]] bool weak_equal(const Part &_r) const;
     };
 
     VFSPathStack();
@@ -63,12 +63,12 @@ public:
     bool operator==(const VFSPathStack &_r) const;
     bool operator!=(const VFSPathStack &_r) const;
     const Part &operator[](size_t _n) const;
-    bool empty() const;
-    size_t size() const;
-    const Part &back() const;
-    const std::string &path() const;
-    bool weak_equal(const VFSPathStack &_r) const;
-    std::string verbose_string() const;
+    [[nodiscard]] bool empty() const;
+    [[nodiscard]] size_t size() const;
+    [[nodiscard]] const Part &back() const;
+    [[nodiscard]] const std::string &path() const;
+    [[nodiscard]] bool weak_equal(const VFSPathStack &_r) const;
+    [[nodiscard]] std::string verbose_string() const;
 
 private:
     friend struct std::hash<VFSPathStack>;
@@ -81,7 +81,7 @@ private:
 // calculating hash() of VFSPathStack
 template <>
 struct std::hash<nc::vfs::VFSPathStack> {
-    typedef nc::vfs::VFSPathStack argument_type;
-    typedef std::size_t value_type;
+    using argument_type = nc::vfs::VFSPathStack;
+    using value_type = std::size_t;
     value_type operator()(const argument_type &_v) const;
 };

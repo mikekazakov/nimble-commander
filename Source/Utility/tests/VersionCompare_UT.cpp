@@ -15,7 +15,7 @@ struct Exp {
     int cmp;
 };
 
-static constexpr Exp g_Expectations[] = {
+constexpr Exp g_Expectations[] = {
     {.lhs = "", .rhs = "", .cmp = 0},
     {.lhs = "0", .rhs = "0", .cmp = 0},
     {.lhs = "1.0", .rhs = "1.1", .cmp = -1},

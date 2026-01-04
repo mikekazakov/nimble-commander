@@ -34,12 +34,12 @@ struct Directory {
     bool dirty_structure = false; // true when there're mismatching between this cache and ftp server
     bool has_dirty_items = false;
 
-    inline bool IsOutdated() const
+    [[nodiscard]] bool IsOutdated() const
     {
         return dirty_structure; // || (GetTimeInNanoseconds() > snapshot_time + g_ListingOutdateLimit);
     }
 
-    const Entry *EntryByName(const std::string &_name) const;
+    [[nodiscard]] const Entry *EntryByName(const std::string &_name) const;
 };
 
 class Cache

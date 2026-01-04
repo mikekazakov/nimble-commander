@@ -30,7 +30,7 @@ public:
     ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker = {});
 
     // Destructor
-    ~ArchiveHost();
+    ~ArchiveHost() override;
 
     // The fixed tag identifying this VFS class
     static const char *const UniqueTag;

@@ -145,7 +145,7 @@ TEST_CASE(PREFIX "Can detect filesystem renames", "[!mayfail]")
     REQUIRE(predicate_old() == false);
 }
 
-static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation)
+bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation)
 {
     dispatch_assert_main_queue();
     assert(_timeout.count() > 0);
@@ -161,7 +161,7 @@ static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeo
     }
 }
 
-static int Execute(const std::string &_command)
+int Execute(const std::string &_command)
 {
     using namespace boost::process;
     ipstream pipe_stream;

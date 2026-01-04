@@ -16,7 +16,7 @@ namespace nc::vfs {
 // It should be used only within the scope of directory listing iteration, if the client code needs to store the data,
 // it should copy the name string manually.
 struct DirEnt {
-    enum Type : uint16_t {
+    enum Type : uint8_t {
         Unknown = 0,  /* = DT_UNKNOWN */
         FIFO = 1,     /* = DT_FIFO    */
         Char = 2,     /* = DT_CHR     */
@@ -42,19 +42,19 @@ struct StatFS {
 };
 
 struct Stat {
-    uint64_t size = 0;       /* File size, in bytes */
-    uint64_t blocks = 0;     /* blocks allocated for file */
-    uint64_t inode = 0;      /* File serial number */
-    int32_t dev = 0;         /* ID of device containing file */
-    int32_t rdev = 0;        /* Device ID (if special file) */
-    uint32_t uid = 0;        /* User ID of the file */
-    uint32_t gid = 0;        /* Group ID of the file */
-    int32_t blksize = 0;     /* Optimal blocksize for I/O */
-    uint32_t flags = 0;      /* User defined flags for file */
-    timespec atime = {0, 0}; /* Time of last access */
-    timespec mtime = {0, 0}; /* Time of last data modification */
-    timespec ctime = {0, 0}; /* Time of last status change */
-    timespec btime = {0, 0}; /* Time of file creation(birth) */
+    uint64_t size = 0;                            /* File size, in bytes */
+    uint64_t blocks = 0;                          /* blocks allocated for file */
+    uint64_t inode = 0;                           /* File serial number */
+    int32_t dev = 0;                              /* ID of device containing file */
+    int32_t rdev = 0;                             /* Device ID (if special file) */
+    uint32_t uid = 0;                             /* User ID of the file */
+    uint32_t gid = 0;                             /* Group ID of the file */
+    int32_t blksize = 0;                          /* Optimal blocksize for I/O */
+    uint32_t flags = 0;                           /* User defined flags for file */
+    timespec atime = {.tv_sec = 0, .tv_nsec = 0}; /* Time of last access */
+    timespec mtime = {.tv_sec = 0, .tv_nsec = 0}; /* Time of last data modification */
+    timespec ctime = {.tv_sec = 0, .tv_nsec = 0}; /* Time of last status change */
+    timespec btime = {.tv_sec = 0, .tv_nsec = 0}; /* Time of file creation(birth) */
     union {
         uint16_t mode = 0; /* Mode of file */
         struct {
@@ -102,14 +102,14 @@ struct Stat {
     // TODO: return the value instead of using the out parameter
     static void ToSysStat(const Stat &_from, struct ::stat &_to);
 
-    struct ::stat SysStat() const noexcept;
+    [[nodiscard]] struct ::stat SysStat() const noexcept;
 
-    inline static meaningT AllMeaning()
+    static meaningT AllMeaning()
     {
         const uint64_t t = ~0ull;
         return *reinterpret_cast<const meaningT *>(&t);
     }
-    inline static meaningT NoMeaning()
+    static meaningT NoMeaning()
     {
         const uint64_t t = 0ull;
         return *reinterpret_cast<const meaningT *>(&t);

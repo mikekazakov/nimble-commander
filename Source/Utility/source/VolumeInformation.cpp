@@ -343,7 +343,7 @@ FetchVolumeAttributesInformation(const char *_path, const VolumeCapabilitiesInfo
     if( !static_cast<bool>(CFURLCopyResourcePropertyForKey(
             cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, static_cast<void *>(&fsverbname), &cf_error)) ) {
         assert(cf_error != nullptr);
-        Error err{cf_error};
+        const Error err{cf_error};
         CFRelease(cfurl);
         CFRelease(cf_error);
         return std::unexpected(err);

@@ -25,17 +25,17 @@ struct CURLInstance {
     }
 
     template <typename T>
-    inline CURLcode EasySetOpt(CURLoption _option, T _t)
+    CURLcode EasySetOpt(CURLoption _option, T _t)
     {
         return curl_easy_setopt(curl, _option, _t);
     }
-    inline void EasyReset() { curl_easy_reset(curl); }
+    void EasyReset() { curl_easy_reset(curl); }
 
-    bool IsAttached() const { return attached; }
+    [[nodiscard]] bool IsAttached() const { return attached; }
     CURLMcode Attach();
     CURLMcode Detach();
-    CURLcode PerformEasy() const;
-    CURLcode PerformMulti() const;
+    [[nodiscard]] CURLcode PerformEasy() const;
+    [[nodiscard]] CURLcode PerformMulti() const;
 
     void EasySetupProgFunc(); // after this call client code can set/change prog_func, that will be
                               // called upon curl work and thus control it's flow
@@ -57,10 +57,10 @@ class ReadBuffer
 {
 public:
     // Returns the amount of data stored in the buffer
-    size_t Size() const noexcept;
+    [[nodiscard]] size_t Size() const noexcept;
 
     // Provides access to the memory managed by the buffer
-    const void *Data() const noexcept;
+    [[nodiscard]] const void *Data() const noexcept;
 
     // Clears the contents of the buffer
     void Clear();
@@ -85,13 +85,13 @@ public:
     void Write(const void *_mem, size_t _size);
 
     // Returns the amount of data stored in the buffer
-    size_t Size() const noexcept;
+    [[nodiscard]] size_t Size() const noexcept;
 
     // Returns the amount of data fed into the read function out of the available size
-    size_t Consumed() const noexcept;
+    [[nodiscard]] size_t Consumed() const noexcept;
 
     // Returns true if there's no available data to provide to the read function
-    bool Exhausted() const noexcept;
+    [[nodiscard]] bool Exhausted() const noexcept;
 
     // Removes the portion of the buffer that has been written.
     // Consumed() will be 0 afterwards.

@@ -13,13 +13,13 @@ class LRUCache
 {
 public:
     LRUCache();
-    LRUCache(const LRUCache &);
+    LRUCache(const LRUCache & /*_rhs*/);
     LRUCache(LRUCache &&) = default;
     ~LRUCache() = default;
 
-    bool empty() const noexcept;
-    size_t size() const noexcept;
-    size_t max_size() const noexcept;
+    [[nodiscard]] bool empty() const noexcept;
+    [[nodiscard]] size_t size() const noexcept;
+    [[nodiscard]] size_t max_size() const noexcept;
 
     void clear();
     void insert(_Key _key, _Value _value);
@@ -29,7 +29,7 @@ public:
      * Does not change LRU order.
      * O(1).
      */
-    size_t count(const _Key &_key) const noexcept;
+    [[nodiscard]] size_t count(const _Key &_key) const noexcept;
 
     /**
      * Checks whether there is a value corresponding to _key. If there is - makes it the most
@@ -47,8 +47,8 @@ public:
      */
     _Value &operator[](const _Key &_key);
 
-    LRUCache &operator=(const LRUCache &);
-    LRUCache &operator=(LRUCache &&);
+    LRUCache &operator=(const LRUCache & /*_rhs*/);
+    LRUCache &operator=(LRUCache && /*_rhs*/) noexcept;
 
 private:
     using KeyValue = std::pair<_Key, _Value>;
@@ -163,7 +163,7 @@ LRUCache<_Key, _Value, _Capacity, _Hash> &LRUCache<_Key, _Value, _Capacity, _Has
 }
 
 template <class _Key, class _Value, size_t _Capacity, class _Hash>
-LRUCache<_Key, _Value, _Capacity, _Hash> &LRUCache<_Key, _Value, _Capacity, _Hash>::operator=(LRUCache &&_rhs)
+LRUCache<_Key, _Value, _Capacity, _Hash> &LRUCache<_Key, _Value, _Capacity, _Hash>::operator=(LRUCache &&_rhs) noexcept
 {
     if( this == &_rhs )
         return *this;

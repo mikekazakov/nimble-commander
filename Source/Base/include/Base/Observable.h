@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <functional>
@@ -17,9 +17,13 @@ namespace nc::base {
 class ObservableBase
 {
 public:
-    ObservableBase();
-    ~ObservableBase();
     struct ObservationTicket;
+
+    ObservableBase();
+    ObservableBase(const ObservableBase &) = delete;
+    ~ObservableBase();
+
+    ObservableBase &operator=(const ObservableBase &) = delete;
 
 protected:
     ObservationTicket AddObserver(std::function<void()> _callback,
@@ -27,8 +31,6 @@ protected:
     void FireObservers(uint64_t _mask = std::numeric_limits<uint64_t>::max()) const;
 
 private:
-    ObservableBase(const ObservableBase &) = delete;
-    ObservableBase &operator=(const ObservableBase &) = delete;
     void StopObservation(uint64_t _ticket);
 
     struct Observer {
@@ -44,15 +46,17 @@ private:
 
 struct ObservableBase::ObservationTicket {
     ObservationTicket() noexcept;
-    ObservationTicket(ObservationTicket &&) noexcept;
+    ObservationTicket(const ObservationTicket &) = delete;
+    ObservationTicket(ObservationTicket && /*_r*/) noexcept;
     ~ObservationTicket();
-    ObservationTicket &operator=(ObservationTicket &&) noexcept;
+
+    void operator=(const ObservationTicket &) = delete;
+    ObservationTicket &operator=(ObservationTicket && /*_r*/) noexcept;
+
     operator bool() const noexcept;
 
 private:
     ObservationTicket(ObservableBase *_inst, unsigned long _ticket) noexcept;
-    ObservationTicket(const ObservationTicket &) = delete;
-    void operator=(const ObservationTicket &) = delete;
 
     ObservableBase *instance;
     uint64_t ticket;

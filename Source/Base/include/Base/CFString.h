@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2023 Michael G. Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael G. Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
@@ -23,7 +23,7 @@ public:
     operator bool() const noexcept;
     CFStringRef operator*() const noexcept;
 #ifdef __OBJC__
-    NSString *ns() const noexcept;
+    [[nodiscard]] NSString *ns() const noexcept;
 #endif
 
 private:

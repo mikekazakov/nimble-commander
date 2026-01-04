@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string_view>
@@ -18,52 +18,52 @@ public:
     /**
      * Returns true if the config contains a value at the specified path.
      */
-    virtual bool Has(std::string_view _path) const = 0;
+    [[nodiscard]] virtual bool Has(std::string_view _path) const = 0;
 
     /**
      * Returns null when a value can't be found.
      */
-    virtual Value Get(std::string_view _path) const = 0;
+    [[nodiscard]] virtual Value Get(std::string_view _path) const = 0;
 
     /**
      * Returns null when a value can't be found.
      */
-    virtual Value GetDefault(std::string_view _path) const = 0;
+    [[nodiscard]] virtual Value GetDefault(std::string_view _path) const = 0;
 
     /**
      * Returns "" when a value can't be found.
      */
-    virtual std::string GetString(std::string_view _path) const noexcept = 0;
+    [[nodiscard]] virtual std::string GetString(std::string_view _path) const noexcept = 0;
 
     /**
      * Returns false when a value can't be found.
      */
-    virtual bool GetBool(std::string_view _path) const noexcept = 0;
+    [[nodiscard]] virtual bool GetBool(std::string_view _path) const noexcept = 0;
 
     /**
      * Returns 0 when a value can't be found.
      */
-    virtual int GetInt(std::string_view _path) const noexcept = 0;
+    [[nodiscard]] virtual int GetInt(std::string_view _path) const noexcept = 0;
 
     /**
      * Returns 0 when a value can't be found.
      */
-    virtual unsigned int GetUInt(std::string_view _path) const noexcept = 0;
+    [[nodiscard]] virtual unsigned int GetUInt(std::string_view _path) const noexcept = 0;
 
     /**
      * Returns 0 when a value can't be found.
      */
-    virtual long GetLong(std::string_view _path) const noexcept = 0;
+    [[nodiscard]] virtual long GetLong(std::string_view _path) const noexcept = 0;
 
     /**
      * Returns 0 when a value can't be found.
      */
-    virtual unsigned long GetULong(std::string_view _path) const noexcept = 0;
+    [[nodiscard]] virtual unsigned long GetULong(std::string_view _path) const noexcept = 0;
 
     /**
      * Returns 0. when a value can't be found.
      */
-    virtual double GetDouble(std::string_view _path) const noexcept = 0;
+    [[nodiscard]] virtual double GetDouble(std::string_view _path) const noexcept = 0;
 
     virtual void Set(std::string_view _path, const Value &_value) = 0;
     virtual void Set(std::string_view _path, int _value) = 0;
@@ -105,17 +105,17 @@ class Token
 {
 public:
     Token() = default;
-    Token(Token &&) noexcept;
+    Token(const Token &) = delete;
+    Token(Token && /*_rhs*/) noexcept;
     ~Token();
 
-    Token &operator=(Token &&) noexcept;
+    void operator=(const Token &) = delete;
+    Token &operator=(Token && /*_rhs*/) noexcept;
 
     operator bool() const noexcept;
 
 private:
     Token(Config *_instance, unsigned long _token) noexcept;
-    Token(const Token &) = delete;
-    void operator=(const Token &) = delete;
     Config *m_Instance = nullptr;
     unsigned long m_Token = 0;
     friend class Config;

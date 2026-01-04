@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFSDeclarations.h>
@@ -7,7 +7,7 @@
 
 namespace nc::ops {
 
-enum class ItemStatus {
+enum class ItemStatus : uint8_t {
     Processed = 0,
     Skipped = 1
 };

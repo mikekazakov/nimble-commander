@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConfigBackedNetworkConnectionsManager.h"
 #include <dirent.h>
 #include <NetFS/NetFS.h>
@@ -239,7 +239,7 @@ static std::string KeychainAccountFromConnection(const NetworkConnectionsManager
 ConfigBackedNetworkConnectionsManager::ConfigBackedNetworkConnectionsManager(
     nc::config::Config &_config,
     nc::utility::NativeFSManager &_native_fs_man)
-    : m_Config(_config), m_NativeFSManager(_native_fs_man), m_IsWritingConfig(false)
+    : m_Config(_config), m_NativeFSManager(_native_fs_man)
 {
     // Load current configuration
     Load();

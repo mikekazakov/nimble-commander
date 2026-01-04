@@ -1,14 +1,18 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <CoreFoundation/CoreFoundation.h>
 #include <Utility/VolumeInformation.h>
+#include <Base/CFString.h>
 #include <cerrno>
 #include <cstring>
+#include <string_view>
 #include <memory.h>
 #include <sys/attr.h>
 #include <sys/mount.h>
 #include <sys/param.h>
 #include <sys/vnode.h>
 #include <unistd.h>
+
+namespace nc::utility {
 
 int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInformation *_c)
 {
@@ -138,9 +142,8 @@ int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInfo
     }
 };
 
-int FetchVolumeAttributesInformation(const char *_path,
-                                     const VolumeCapabilitiesInformation *_c,
-                                     VolumeAttributesInformation *_a)
+std::expected<VolumeAttributesInformation, Error>
+FetchVolumeAttributesInformation(const char *_path, const VolumeCapabilitiesInformation &_capabilities)
 {
     struct {
         u_int32_t attr_length;
@@ -205,152 +208,158 @@ int FetchVolumeAttributesInformation(const char *_path,
         };
     } __attribute__((aligned(4), packed)) info;
 
-    memset(_a, 0, sizeof(VolumeAttributesInformation));
+    VolumeAttributesInformation out_info;
 
     struct attrlist attrs;
     memset(&attrs, 0, sizeof(attrs));
     attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
 
-    if( _c->attr.vol.fs_type[0] ) {
+    if( _capabilities.attr.vol.fs_type[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_FSTYPE;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        _a->fs_type = info.fstype.val;
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.fs_type = info.fstype.val;
     }
-    if( _c->attr.vol.signature[0] ) {
+    if( _capabilities.attr.vol.signature[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_SIGNATURE;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        _a->signature = info.signature.val;
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.signature = info.signature.val;
     }
-    if( _c->attr.vol.size[0] ) {
+    if( _capabilities.attr.vol.size[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_SIZE;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        _a->size = info.size.val;
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.size = info.size.val;
     }
-    if( _c->attr.vol.space_free[0] ) {
+    if( _capabilities.attr.vol.space_free[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_SPACEFREE;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        _a->space_free = info.spacefree.val;
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.space_free = info.spacefree.val;
     }
-    if( _c->attr.vol.space_avail[0] ) {
+    if( _capabilities.attr.vol.space_avail[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_SPACEAVAIL;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        _a->space_avail = info.spaceavail.val;
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.space_avail = info.spaceavail.val;
     }
-    if( _c->attr.vol.min_allocation[0] ) {
+    if( _capabilities.attr.vol.min_allocation[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_MINALLOCATION;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        _a->min_allocation = info.minallocation.val;
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.min_allocation = info.minallocation.val;
     }
-    if( _c->attr.vol.allocation_clump[0] ) {
+    if( _capabilities.attr.vol.allocation_clump[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_ALLOCATIONCLUMP;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        _a->allocation_clump = info.allocationclump.val;
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.allocation_clump = info.allocationclump.val;
     }
-    if( _c->attr.vol.io_block_size[0] ) {
+    if( _capabilities.attr.vol.io_block_size[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_IOBLOCKSIZE;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        _a->io_block_size = info.ioblocksize.val;
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.io_block_size = info.ioblocksize.val;
     }
-    if( _c->attr.vol.obj_count[0] ) {
+    if( _capabilities.attr.vol.obj_count[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_OBJCOUNT;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        _a->obj_count = info.objcount.val;
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.obj_count = info.objcount.val;
     }
-    if( _c->attr.vol.file_count[0] ) {
+    if( _capabilities.attr.vol.file_count[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_FILECOUNT;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        _a->file_count = info.filecount.val;
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.file_count = info.filecount.val;
     }
-    if( _c->attr.vol.dir_count[0] ) {
+    if( _capabilities.attr.vol.dir_count[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_DIRCOUNT;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        _a->dir_count = info.dircount.val;
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.dir_count = info.dircount.val;
     }
-    if( _c->attr.vol.max_obj_count[0] ) {
+    if( _capabilities.attr.vol.max_obj_count[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_MAXOBJCOUNT;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        _a->max_obj_count = info.maxobjcount.val;
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.max_obj_count = info.maxobjcount.val;
     }
-    if( _c->attr.vol.mount_point[0] ) {
+    if( _capabilities.attr.vol.mount_point[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_MOUNTPOINT;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        std::memcpy(_a->mount_point,
-                    reinterpret_cast<char *>(&info.mountpoint.val) + info.mountpoint.val.attr_dataoffset,
-                    info.mountpoint.val.attr_length);
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.mount_point =
+            std::string_view{reinterpret_cast<char *>(&info.mountpoint.val) + info.mountpoint.val.attr_dataoffset,
+                             info.mountpoint.val.attr_length - 1};
     }
-    if( _c->attr.vol.name[0] ) {
+    if( _capabilities.attr.vol.name[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_NAME;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        std::memcpy(_a->name,
-                    reinterpret_cast<char *>(&info.name.val) + info.name.val.attr_dataoffset,
-                    info.name.val.attr_length);
+            return std::unexpected(Error{Error::POSIX, errno});
+
+        out_info.name = std::string_view{reinterpret_cast<char *>(&info.name.val) + info.name.val.attr_dataoffset,
+                                         info.name.val.attr_length - 1};
     }
-    if( _c->attr.vol.mount_flags[0] ) {
+    if( _capabilities.attr.vol.mount_flags[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_MOUNTFLAGS;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        _a->mount_flags = info.mountflags.val;
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.mount_flags = info.mountflags.val;
     }
-    if( _c->attr.vol.mounted_device[0] ) {
+    if( _capabilities.attr.vol.mounted_device[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_MOUNTEDDEVICE;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        std::memcpy(_a->mounted_device,
-                    reinterpret_cast<char *>(&info.mounteddevice.val) + info.mounteddevice.val.attr_dataoffset,
-                    info.mounteddevice.val.attr_length);
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.mounted_device =
+            std::string_view{reinterpret_cast<char *>(&info.mounteddevice.val) + info.mounteddevice.val.attr_dataoffset,
+                             info.mounteddevice.val.attr_length - 1};
     }
-    if( _c->attr.vol.encoding_used[0] ) {
+    if( _capabilities.attr.vol.encoding_used[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_ENCODINGSUSED;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        _a->encoding_used = info.encodingused.val;
+            return std::unexpected(Error{Error::POSIX, errno});
+        out_info.encoding_used = info.encodingused.val;
     }
-    if( _c->attr.vol.uuid[0] ) {
+    if( _capabilities.attr.vol.uuid[0] ) {
         attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_UUID;
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 )
-            return errno;
-        memcpy(_a->uuid, info.uuid.val, sizeof(info.uuid.val));
+            return std::unexpected(Error{Error::POSIX, errno});
+        memcpy(out_info.uuid, info.uuid.val, sizeof(info.uuid.val));
     }
 
     struct statfs stat_fs;
     if( statfs(_path, &stat_fs) != 0 )
-        return errno;
-    strcpy(_a->fs_type_name, stat_fs.f_fstypename);
-    _a->fs_owner = stat_fs.f_owner;
+        return std::unexpected(Error{Error::POSIX, errno});
+    out_info.fs_type_name = stat_fs.f_fstypename;
+    out_info.fs_owner = stat_fs.f_owner;
 
     CFURLRef cfurl = CFURLCreateFromFileSystemRepresentation(
-        nullptr, reinterpret_cast<const UInt8 *>(_path), std::strlen(_path), false);
-    CFStringRef fsverbname;
+        nullptr, reinterpret_cast<const UInt8 *>(_path), std::string_view{_path}.length(), false);
+    CFStringRef fsverbname = nullptr;
+    CFErrorRef cf_error = nullptr;
+
     if( !static_cast<bool>(CFURLCopyResourcePropertyForKey(
-            cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, static_cast<void *>(&fsverbname), nullptr)) ) {
+            cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, static_cast<void *>(&fsverbname), &cf_error)) ) {
+        assert(cf_error != nullptr);
+        const Error err{cf_error};
         CFRelease(cfurl);
-        return -1; // what to return???
+        CFRelease(cf_error);
+        return std::unexpected(err);
     }
+
     // TODO: how some unknown reasons kCFURLVolume"Localized"FormatDescriptionKey now returns
     // "Mac OS Extended (Journaled)" instead of "Mac OS Extended (журнальный)"
     // need to investigate why
-    CFStringGetCString(fsverbname, _a->fs_type_verb, sizeof(_a->fs_type_verb), kCFStringEncodingUTF8);
+    out_info.fs_type_verb = base::CFStringGetUTF8StdString(fsverbname);
     CFRelease(fsverbname);
 
     CFBooleanRef isejectable = nullptr;
     if( CFURLCopyResourcePropertyForKey(
             cfurl, kCFURLVolumeIsEjectableKey, static_cast<void *>(&isejectable), nullptr) &&
         isejectable ) {
-        _a->is_sw_ejectable = CFBooleanGetValue(isejectable);
+        out_info.is_sw_ejectable = CFBooleanGetValue(isejectable);
         CFRelease(isejectable);
     }
 
@@ -358,25 +367,27 @@ int FetchVolumeAttributesInformation(const char *_path,
     if( CFURLCopyResourcePropertyForKey(
             cfurl, kCFURLVolumeIsRemovableKey, static_cast<void *>(&isremovable), nullptr) &&
         isremovable ) {
-        _a->is_sw_removable = CFBooleanGetValue(isremovable);
+        out_info.is_sw_removable = CFBooleanGetValue(isremovable);
         CFRelease(isremovable);
     }
 
     CFBooleanRef islocal = nullptr;
     if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsLocalKey, static_cast<void *>(&islocal), nullptr) &&
         islocal ) {
-        _a->is_local = CFBooleanGetValue(islocal);
+        out_info.is_local = CFBooleanGetValue(islocal);
         CFRelease(islocal);
     }
 
     CFBooleanRef isinternal = nullptr;
     if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsInternalKey, static_cast<void *>(&isinternal), nullptr) &&
         isinternal ) {
-        _a->is_internal = CFBooleanGetValue(isinternal);
+        out_info.is_internal = CFBooleanGetValue(isinternal);
         CFRelease(isinternal);
     }
 
     CFRelease(cfurl);
 
-    return 0;
+    return out_info;
 }
+
+} // namespace nc::utility

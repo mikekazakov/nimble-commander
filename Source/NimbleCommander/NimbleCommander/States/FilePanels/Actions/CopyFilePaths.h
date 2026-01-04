@@ -6,17 +6,17 @@
 namespace nc::panel::actions {
 
 struct CopyFileName final : PanelAction {
-    bool Predicate(PanelController *_source) const override;
+    [[nodiscard]] bool Predicate(PanelController *_source) const override;
     void Perform(PanelController *_source, id _sender) const override;
 };
 
 struct CopyFilePath final : PanelAction {
-    bool Predicate(PanelController *_source) const override;
+    [[nodiscard]] bool Predicate(PanelController *_source) const override;
     void Perform(PanelController *_source, id _sender) const override;
 };
 
 struct CopyFileDirectory final : PanelAction {
-    bool Predicate(PanelController *_source) const override;
+    [[nodiscard]] bool Predicate(PanelController *_source) const override;
     void Perform(PanelController *_source, id _sender) const override;
 };
 

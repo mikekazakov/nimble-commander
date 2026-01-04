@@ -20,13 +20,13 @@ public:
     FontGeometryInfo(NSFont *_font);
 #endif
 
-    double Size() const noexcept { return m_Size; }
-    double Ascent() const noexcept { return m_Ascent; }
-    double Descent() const noexcept { return m_Descent; }
-    double Leading() const noexcept { return m_Leading; }
-    double LineHeight() const noexcept { return m_LineHeight; }
-    double MonospaceWidth() const noexcept { return m_MonospaceWidth; }
-    double PreciseMonospaceWidth() const noexcept { return m_PreciseMonospaceWidth; }
+    [[nodiscard]] double Size() const noexcept { return m_Size; }
+    [[nodiscard]] double Ascent() const noexcept { return m_Ascent; }
+    [[nodiscard]] double Descent() const noexcept { return m_Descent; }
+    [[nodiscard]] double Leading() const noexcept { return m_Leading; }
+    [[nodiscard]] double LineHeight() const noexcept { return m_LineHeight; }
+    [[nodiscard]] double MonospaceWidth() const noexcept { return m_MonospaceWidth; }
+    [[nodiscard]] double PreciseMonospaceWidth() const noexcept { return m_PreciseMonospaceWidth; }
 
 #ifdef __OBJC__
     // Returns a list of widths of each string in the container.

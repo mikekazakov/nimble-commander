@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Host.h"
 #include <sys/attr.h>
 #include <sys/errno.h>
@@ -459,7 +459,7 @@ std::expected<uint64_t, Error> NativeHost::CalculateDirectorySize(std::string_vi
 
     std::atomic_uint64_t size{0};
     const std::expected<void, Error> result =
-        CalculateDirectoriesSizesHelper(path, strlen(path), iscancelling, _cancel_checker, stat_queue, size);
+        CalculateDirectoriesSizesHelper(path, _path.length(), iscancelling, _cancel_checker, stat_queue, size);
     stat_queue.sync([] {});
     if( !result )
         return std::unexpected(result.error());
@@ -535,16 +535,15 @@ NativeHost::IterateDirectoryListing(std::string_view _path,
         return std::unexpected(Error{Error::POSIX, errno});
     const auto close_dirp = at_scope_end([&] { io.closedir(dirp); });
 
-    dirent *entp;
-    VFSDirEnt vfs_dirent;
+    dirent *entp = nullptr;
     while( (entp = io.readdir(dirp)) != nullptr ) {
         if( (entp->d_namlen == 1 && entp->d_name[0] == '.') ||
             (entp->d_namlen == 2 && entp->d_name[0] == '.' && entp->d_name[1] == '.') )
             continue;
 
-        vfs_dirent.type = entp->d_type;
-        vfs_dirent.name_len = entp->d_namlen;
-        memcpy(vfs_dirent.name, entp->d_name, entp->d_namlen + 1);
+        VFSDirEnt vfs_dirent;
+        vfs_dirent.type = static_cast<VFSDirEnt::Type>(entp->d_type);
+        vfs_dirent.name = std::string_view{entp->d_name, entp->d_namlen};
 
         if( !_handler(vfs_dirent) )
             break;

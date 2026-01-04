@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "IconRepository.h"
@@ -26,13 +26,13 @@ struct IconRepositoryImplBase {
     struct LimitedConcurrentQueue {
         virtual ~LimitedConcurrentQueue() = default;
         virtual void Execute(std::function<void()> _block) = 0;
-        virtual int QueueLength() const = 0;
+        [[nodiscard]] virtual int QueueLength() const = 0;
     };
     class GCDLimitedConcurrentQueue final : public LimitedConcurrentQueue
     {
     public:
         GCDLimitedConcurrentQueue(short _concurrency_limit);
-        ~GCDLimitedConcurrentQueue();
+        ~GCDLimitedConcurrentQueue() override;
         void Execute(std::function<void()> _block) override;
         int QueueLength() const override;
 
@@ -58,14 +58,14 @@ public:
                        const std::shared_ptr<Executor> &_client_executor = MainQueueExecutor::instance,
                        int _max_prod_queue_length = 512,
                        int _capacity = std::numeric_limits<SlotKey>::max());
-    ~IconRepositoryImpl();
+    ~IconRepositoryImpl() override;
 
-    bool IsValidSlot(SlotKey _key) const override;
-    NSImage *AvailableIconForSlot(SlotKey _key) const override;
-    NSImage *AvailableIconForListingItem(const VFSListingItem &_item) const override;
+    [[nodiscard]] bool IsValidSlot(SlotKey _key) const override;
+    [[nodiscard]] NSImage *AvailableIconForSlot(SlotKey _key) const override;
+    [[nodiscard]] NSImage *AvailableIconForListingItem(const VFSListingItem &_item) const override;
 
     SlotKey Register(const VFSListingItem &_item) override;
-    std::vector<SlotKey> AllSlots() const override;
+    [[nodiscard]] std::vector<SlotKey> AllSlots() const override;
     void Unregister(SlotKey _key) override;
 
     void ScheduleIconProduction(SlotKey _key, const VFSListingItem &_item) override;
@@ -81,7 +81,7 @@ private:
         NSImage *result_thumbnail = nil;
     };
 
-    enum class SlotState {
+    enum class SlotState : uint8_t {
         Empty = 0,
         Initial = 1,
         Production = 2
@@ -97,7 +97,7 @@ private:
         base::intrusive_ptr<WorkerContext> production;
     };
 
-    int NumberOfUsedSlots() const;
+    [[nodiscard]] int NumberOfUsedSlots() const;
     int AllocateSlot();
     void ProduceRealIcon(WorkerContext &_ctx);
     void CommitProductionResult(int _slot_index, WorkerContext &_ctx);

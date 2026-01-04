@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <vector>
@@ -10,7 +10,7 @@ namespace nc::base {
 class Hash
 {
 public:
-    enum Mode {
+    enum Mode : uint8_t {
         Adler32,
         CRC32,
         MD2,

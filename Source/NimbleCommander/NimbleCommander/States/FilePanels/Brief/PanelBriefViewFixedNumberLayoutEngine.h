@@ -17,9 +17,9 @@ public:
 
     void Layout(const Params &_params);
 
-    bool ShouldRelayoutForNewBounds(const NSRect clip_view_bounds) const noexcept;
-    int ColumnsPerScreen() const noexcept;
-    NSArray<NSCollectionViewLayoutAttributes *> *AttributesForItemsInRect(NSRect _rect) const noexcept;
+    [[nodiscard]] bool ShouldRelayoutForNewBounds(const NSRect clip_view_bounds) const noexcept;
+    [[nodiscard]] int ColumnsPerScreen() const noexcept;
+    [[nodiscard]] NSArray<NSCollectionViewLayoutAttributes *> *AttributesForItemsInRect(NSRect _rect) const noexcept;
 
 private:
     void CopyInput(const Params &_params);

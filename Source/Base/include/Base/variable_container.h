@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <cassert>
@@ -43,7 +43,7 @@ public:
     variable_container(T &&_value);
 
     // Returns the current container's type.
-    constexpr type mode() const noexcept;
+    [[nodiscard]] constexpr type mode() const noexcept;
 
     // Reverts the container to an empty state with a specified type.
     void reset(type _type);
@@ -56,7 +56,7 @@ public:
     // Returns a reference to an element at the specified index and throws if it doesn't exist.
     // For the common mode returns the common value.
     // For other modes uses .at() of vector<> and unordered_flat_map<>.
-    const T &at(size_t _at) const;
+    [[nodiscard]] const T &at(size_t _at) const;
 
     // Returns a reference to an existing element at the specified index.
     // For the common mode returns the common value.
@@ -73,10 +73,10 @@ public:
     // Returns the amount of elements inside the container.
     // For common mode always returns 1.
     // For other modes return the size of a corresponding container.
-    size_t size() const noexcept;
+    [[nodiscard]] size_t size() const noexcept;
 
     // returns size() == 0;
-    bool empty() const noexcept;
+    [[nodiscard]] bool empty() const noexcept;
 
     // Resizes the container to a new size.
     // Can be used only with Dense mode, ignored otherwise.
@@ -96,13 +96,13 @@ public:
     // For the common mode always returns true.
     // For the sparse mode checks for presence of this item in the unordered map.
     // For the dense mode checks the vector bounds.
-    bool has(size_t _at) const noexcept;
+    [[nodiscard]] bool has(size_t _at) const noexcept;
 
     // Checks if the container has no gaps in the seqence of used indices.
     // Returns true if:
     //  - the type is common or dense
     //  - the type is sparse and the map contains all keys in [0, size)
-    bool is_contiguous() const noexcept;
+    [[nodiscard]] bool is_contiguous() const noexcept;
 
     // Transforms a sparse container with contiguous elements into a dense container.
     // Will throw a logic_error if any element is missing (i.e., the container is non contiguous).
@@ -115,21 +115,30 @@ private:
     using dense_type = std::vector<T>;
     using StorageT = std::variant<dense_type, sparse_type, common_type>;
 
+    StorageT Construct(type _type);
+
     common_type &Common() noexcept;
-    const common_type &Common() const noexcept;
+    [[nodiscard]] const common_type &Common() const noexcept;
     sparse_type &Sparse() noexcept;
-    const sparse_type &Sparse() const noexcept;
+    [[nodiscard]] const sparse_type &Sparse() const noexcept;
     dense_type &Dense() noexcept;
-    const dense_type &Dense() const noexcept;
+    [[nodiscard]] const dense_type &Dense() const noexcept;
 
     StorageT m_Storage;
 };
 
 template <class T>
-variable_container<T>::variable_container(type _type)
-    : m_Storage(_type == type::common   ? StorageT{std::in_place_type<common_type>}
-                : _type == type::sparse ? StorageT{std::in_place_type<sparse_type>}
-                                        : StorageT{std::in_place_type<dense_type>})
+variable_container<T>::StorageT variable_container<T>::Construct(type _type)
+{
+    if( _type == type::common )
+        return StorageT{std::in_place_type<common_type>};
+    if( _type == type::sparse )
+        return StorageT{std::in_place_type<sparse_type>};
+    return StorageT{std::in_place_type<dense_type>};
+}
+
+template <class T>
+variable_container<T>::variable_container(type _type) : m_Storage(Construct(_type))
 {
 }
 
@@ -383,7 +392,8 @@ void variable_container<T>::compress_contiguous()
 
     variable_container<T> new_dense(type::dense);
 
-    size_t i = 0, e = size();
+    size_t i = 0;
+    const size_t e = size();
     auto &dense = new_dense.Dense();
     dense.reserve(e);
 

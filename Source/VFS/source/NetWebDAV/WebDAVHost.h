@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../../include/VFS/Host.h"
@@ -23,7 +23,7 @@ public:
                bool _https = false,
                int _port = -1);
     WebDAVHost(const VFSConfiguration &_config);
-    ~WebDAVHost();
+    ~WebDAVHost() override;
 
     VFSConfiguration Configuration() const override;
 
@@ -68,8 +68,8 @@ public:
     int Port() const noexcept;
 
     const webdav::HostConfiguration &Config() const noexcept;
-    class webdav::ConnectionsPool &ConnectionsPool();
-    class webdav::Cache &Cache();
+    webdav::ConnectionsPool &ConnectionsPool();
+    webdav::Cache &Cache();
 
 private:
     void Init();

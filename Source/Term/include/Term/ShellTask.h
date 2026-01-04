@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Task.h"
@@ -14,7 +14,7 @@ namespace nc::term {
 class ShellTask : public Task
 {
 public:
-    enum class TaskState {
+    enum class TaskState : uint8_t {
 
         // initial state - shell is not initialized and is not running
         Inactive = 0,
@@ -35,7 +35,7 @@ public:
         Dead = 4
     };
 
-    enum class ShellType {
+    enum class ShellType : int8_t {
         Unknown = -1,
         Bash = 0,
         ZSH = 1,
@@ -47,7 +47,10 @@ public:
     using OnChildOutput = std::function<void(std::span<const std::byte> _data)>;
 
     ShellTask();
+    ShellTask(const ShellTask &) = delete;
     ~ShellTask();
+
+    ShellTask &operator=(const ShellTask &) = delete;
 
     // _callback will be called with any output from the child shell process, unless the output is suppressed.
     void SetOnChildOutput(OnChildOutput _callback);
@@ -123,26 +126,26 @@ public:
      * Returns the current shell task state.
      * Thread-safe.
      */
-    TaskState State() const;
+    [[nodiscard]] TaskState State() const;
 
     /**
      * Current working directory. With trailing slash, in form: /Users/migun/.
      * Return string by value to minimize potential chance to get race
      * condition. Thread-safe.
      */
-    std::string CWD() const;
+    [[nodiscard]] std::string CWD() const;
 
     /**
      * returns a list of children excluding topmost shell (ie bash).
      * Thread-safe.
      */
-    std::vector<std::string> ChildrenList() const;
+    [[nodiscard]] std::vector<std::string> ChildrenList() const;
 
     /**
      * Returns  a PID of a shell if any, -1 otherwise.
      * Thread-safe.
      */
-    int ShellPID() const;
+    [[nodiscard]] int ShellPID() const;
 
     /**
      * Returns  a PID of a process currently executed by a shell.
@@ -150,20 +153,17 @@ public:
      * Based on same mech as ChildrenList() so may be time-costly.
      * Thread-safe.
      */
-    int ShellChildPID() const;
+    [[nodiscard]] int ShellChildPID() const;
 
     /**
      * Returns a shell type, depending on a startup path, regardless of an actual state
      */
-    ShellType GetShellType() const;
+    [[nodiscard]] ShellType GetShellType() const;
 
 private:
-    ShellTask(const ShellTask &) = delete;
-    ShellTask &operator=(const ShellTask &) = delete;
-
-    bool IsCurrentWD(std::string_view _what) const noexcept;
-    char **BuildShellArgs() const;
-    std::string ComposePromptCommand() const;
+    [[nodiscard]] bool IsCurrentWD(std::string_view _what) const noexcept;
+    [[nodiscard]] char **BuildShellArgs() const;
+    [[nodiscard]] std::string ComposePromptCommand() const;
     struct Impl;
     std::unique_ptr<Impl> I;
 };

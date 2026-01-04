@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <chrono>
@@ -14,21 +14,24 @@ namespace nc::core {
 class UserNotificationsCenter
 {
 public:
+    UserNotificationsCenter(const UserNotificationsCenter &) = delete;
+
+    ~UserNotificationsCenter() = default;
+
+    void operator=(const UserNotificationsCenter &) = delete;
+
     static UserNotificationsCenter &Instance();
 
     void ReportCompletedOperation(const nc::ops::Operation &_operation, NSWindow *_in_window);
 
-    bool ShowWhenActive() const noexcept;
+    [[nodiscard]] bool ShowWhenActive() const noexcept;
     void SetShowWhenActive(bool _value);
 
-    std::chrono::nanoseconds MinElapsedOperationTime() const noexcept;
+    [[nodiscard]] std::chrono::nanoseconds MinElapsedOperationTime() const noexcept;
     void SetMinElapsedOperationTime(std::chrono::nanoseconds _value);
 
 private:
     UserNotificationsCenter();
-    UserNotificationsCenter(const UserNotificationsCenter &) = delete;
-    ~UserNotificationsCenter() = default;
-    void operator=(const UserNotificationsCenter &) = delete;
     bool m_ShowWhenActive = true;
     bool m_NotificationsAutorized = false;
     std::chrono::nanoseconds m_MinElapsedOperationTime;

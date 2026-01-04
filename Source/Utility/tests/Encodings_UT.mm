@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UnitTests_main.h"
 #include "Encodings.h"
 #include <string_view>
@@ -14,14 +14,14 @@ TEST_CASE(PREFIX "InterpretUnicharsAsUTF8")
         size_t output_sz;
 
         unsigned char output_should_be[32] = {0x24, 0xC2, 0xA2, 0xE2, 0x82, 0xAC, 0xF0, 0xA4, 0xAD, 0xA2, 0x0};
-        const size_t output_should_be_sz = std::strlen(reinterpret_cast<char *>(output_should_be));
+        const size_t output_should_be_sz = std::string_view{reinterpret_cast<char *>(output_should_be)}.length();
 
         size_t input_eaten;
 
         nc::utility::InterpretUnicharsAsUTF8(input, 5, output, 32, output_sz, &input_eaten);
         CHECK(input_eaten == 5);
         CHECK(output_sz == output_should_be_sz);
-        CHECK(std::strlen(reinterpret_cast<char *>(output)) == output_should_be_sz);
+        CHECK(std::string_view{reinterpret_cast<char *>(output)}.length() == output_should_be_sz);
         for( size_t i = 0; i < output_sz; ++i )
             CHECK(output[i] == output_should_be[i]);
     }
@@ -38,7 +38,7 @@ TEST_CASE(PREFIX "InterpretUnicharsAsUTF8")
         nc::utility::InterpretUnicharsAsUTF8(input, input_ns.length, output, 128, output_sz, &input_eaten);
 
         CHECK(input_eaten == input_ns.length);
-        CHECK(output_sz == strlen(input_ns_utf8));
+        CHECK(output_sz == std::string_view{input_ns_utf8}.length());
         for( size_t i = 0; i < output_sz; ++i )
             CHECK(output[i] == static_cast<unsigned char>(input_ns_utf8[i]));
     }
@@ -65,7 +65,7 @@ TEST_CASE(PREFIX "InterpretUnicodeAsUTF8")
         size_t input_eaten;
         nc::utility::InterpretUnicodeAsUTF8(input, input_sz, output, 128, output_sz, &input_eaten);
         CHECK(input_eaten == input_sz);
-        CHECK(output_sz == strlen(input_ns_utf8));
+        CHECK(output_sz == std::string_view{input_ns_utf8}.length());
         for( size_t i = 0; i < output_sz; ++i )
             CHECK(output[i] == static_cast<unsigned char>(input_ns_utf8[i]));
     }

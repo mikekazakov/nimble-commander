@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -132,7 +132,6 @@ static void check(const Case &test_case)
         CHECK(ents_encountered++ == 0);
         CHECK(_dirent.type == VFSDirEnt::Reg);
         CHECK(_dirent.name == std::string_view("hello.txt"));
-        CHECK(_dirent.name_len == std::string_view("hello.txt").size());
         return true;
     };
     CHECK(host->IterateDirectoryListing("", iter_cb).error() == Error{Error::POSIX, EINVAL});

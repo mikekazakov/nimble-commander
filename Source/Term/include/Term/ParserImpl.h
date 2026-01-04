@@ -18,7 +18,7 @@ public:
 
     struct CSIParamsScanner;
 
-    enum class EscState {
+    enum class EscState : uint8_t {
         Text = 0,
         Control = 1,
         Esc = 2,
@@ -31,7 +31,7 @@ public:
     ~ParserImpl() override;
     std::vector<input::Command> Parse(Bytes _to_parse) override;
 
-    EscState GetEscState() const noexcept;
+    [[nodiscard]] EscState GetEscState() const noexcept;
 
 private:
     using Me = ParserImpl;
@@ -126,12 +126,12 @@ private:
         void (Me::*exit)() noexcept;
         bool (Me::*consume)(unsigned char _byte) noexcept;
     } m_SubStates[6] = {
-        {&Me::SSTextEnter, &Me::SSTextExit, &Me::SSTextConsume},
-        {&Me::SSControlEnter, &Me::SSControlExit, &Me::SSControlConsume},
-        {&Me::SSEscEnter, &Me::SSEscExit, &Me::SSEscConsume},
-        {&Me::SSOSCEnter, &Me::SSOSCExit, &Me::SSOSCConsume},
-        {&Me::SSCSIEnter, &Me::SSCSIExit, &Me::SSCSIConsume},
-        {&Me::SSDCSEnter, &Me::SSDCSExit, &Me::SSDCSConsume},
+        {.enter = &Me::SSTextEnter, .exit = &Me::SSTextExit, .consume = &Me::SSTextConsume},
+        {.enter = &Me::SSControlEnter, .exit = &Me::SSControlExit, .consume = &Me::SSControlConsume},
+        {.enter = &Me::SSEscEnter, .exit = &Me::SSEscExit, .consume = &Me::SSEscConsume},
+        {.enter = &Me::SSOSCEnter, .exit = &Me::SSOSCExit, .consume = &Me::SSOSCConsume},
+        {.enter = &Me::SSCSIEnter, .exit = &Me::SSCSIExit, .consume = &Me::SSCSIConsume},
+        {.enter = &Me::SSDCSEnter, .exit = &Me::SSDCSExit, .consume = &Me::SSDCSConsume},
     };
 
     EscState m_SubState = EscState::Text;

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShellTask.h"
 #include "Log.h"
 #include <Base/CloseFrom.h>
@@ -835,26 +835,27 @@ void ShellTask::Execute(const char *_short_fn, const char *_at, const char *_par
     const std::string cmd = EscapeShellFeed(_short_fn);
 
     // process cwd stuff if any
-    char cwd[MAXPATHLEN];
-    cwd[0] = 0;
+    std::optional<std::string> cwd;
     if( _at != nullptr ) {
-        strcpy(cwd, _at);
-        if( utility::PathManip::HasTrailingSlash(cwd) && strlen(cwd) > 1 ) // cd command don't like trailing slashes
-            cwd[strlen(cwd) - 1] = 0;
+        cwd = _at;
 
-        if( IsCurrentWD(cwd) ) {
-            cwd[0] = 0;
+        // cd command don't like trailing slashes
+        if( utility::PathManip::HasTrailingSlash(*cwd) && cwd->length() > 1 )
+            cwd->pop_back();
+
+        if( IsCurrentWD(*cwd) ) {
+            cwd.reset();
         }
         else {
-            if( !IsDirectoryAvailableForBrowsing(cwd) ) // file I/O here
+            if( !IsDirectoryAvailableForBrowsing(*cwd) ) // file I/O here
                 return;
         }
     }
 
     std::string input;
-    if( cwd[0] != 0 )
+    if( cwd )
         input = fmt::format("cd '{}'; ./{}{}{}\n",
-                            cwd,
+                            *cwd,
                             cmd,
                             _parameters != nullptr ? " " : "",
                             _parameters != nullptr ? _parameters : "");

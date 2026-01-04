@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SearchForFiles.h"
 #include <sys/stat.h>
 #include <VFS/FileWindow.h>
@@ -249,7 +249,7 @@ bool SearchForFiles::FilterByContent(const char *_full_path, VFSHost &_in_host, 
     return false;
 }
 
-bool SearchForFiles::FilterByFilename(const char *_filename) const
+bool SearchForFiles::FilterByFilename(const std::string_view _filename) const
 {
     return m_FilterName.MatchName(_filename);
 }

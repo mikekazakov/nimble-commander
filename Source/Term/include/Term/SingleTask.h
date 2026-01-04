@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Task.h"
@@ -21,8 +21,7 @@ public:
 
     void ResizeWindow(int _sx, int _sy);
 
-    static void EscapeSpaces(char *_buf);
-    inline const std::string &TaskBinaryName() const { return m_TaskBinaryName; }
+    const std::string &TaskBinaryName() const { return m_TaskBinaryName; }
 
 private:
     void CleanUp();
@@ -32,6 +31,7 @@ private:
     volatile int m_TaskPID = -1;
     int m_TermSX = 0;
     int m_TermSY = 0;
+    mutable std::mutex m_MasterLock;
     std::string m_TaskBinaryName;
 };
 

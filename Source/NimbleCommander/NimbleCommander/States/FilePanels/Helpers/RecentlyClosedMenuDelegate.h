@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
@@ -10,12 +10,12 @@
 namespace nc::panel {
 
 struct RestoreClosedTabRequest {
-    enum class Side {
+    enum class Side : uint8_t {
         Left,
         Right
     };
 
-    inline RestoreClosedTabRequest(Side _side, ListingPromise _promise) : side(_side), promise(std::move(_promise)) {}
+    RestoreClosedTabRequest(Side _side, ListingPromise _promise) : side(_side), promise(std::move(_promise)) {}
 
     Side side;
     ListingPromise promise;

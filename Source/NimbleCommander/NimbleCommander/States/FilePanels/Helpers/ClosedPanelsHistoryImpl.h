@@ -12,8 +12,8 @@ public:
     ClosedPanelsHistoryImpl(size_t _max_capacity = 32);
     void AddListing(ListingPromise _listing) override;
     void RemoveListing(ListingPromise _listing) override;
-    int Size() const override;
-    std::vector<ListingPromise> FrontElements(int _count) const override;
+    [[nodiscard]] int Size() const override;
+    [[nodiscard]] std::vector<ListingPromise> FrontElements(int _count) const override;
 
 private:
     size_t m_MaxCapacity;

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -10,13 +10,15 @@ class FooterVolumeInfoFetcher
 {
 public:
     FooterVolumeInfoFetcher();
+    FooterVolumeInfoFetcher(const FooterVolumeInfoFetcher &_r) = delete;
     ~FooterVolumeInfoFetcher();
+    void operator=(const FooterVolumeInfoFetcher &_r) = delete;
 
     void SetCallback(std::function<void(const VFSStatFS &)> _callback);
     void SetTarget(const VFSListingPtr &_listing);
-    const VFSStatFS &Current() const;
+    [[nodiscard]] const VFSStatFS &Current() const;
 
-    bool IsActive() const;
+    [[nodiscard]] bool IsActive() const;
     void PauseUpdates();
     void ResumeUpdates();
 
@@ -28,8 +30,6 @@ private:
     bool m_Active = false;
 
     void Accept(const VFSStatFS &_stat);
-    FooterVolumeInfoFetcher(const FooterVolumeInfoFetcher &_r) = delete;
-    void operator=(const FooterVolumeInfoFetcher &_r) = delete;
     friend struct PanelViewFooterVolumeInfoFetcherInternals;
 };
 

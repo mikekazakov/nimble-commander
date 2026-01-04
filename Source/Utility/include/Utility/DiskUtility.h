@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Foundation/Foundation.h>
@@ -22,7 +22,7 @@ class APFSTree
 public:
     APFSTree(NSDictionary *_objects_list_from_disk_utility);
 
-    enum class Role {
+    enum class Role : uint8_t {
         None = 0x0000,
         System = 0x0001,
         User = 0x0002,
@@ -37,30 +37,32 @@ public:
     /**
      * Returns an unordered list of APFS containers.
      */
-    std::vector<std::string> ContainersNames() const;
+    [[nodiscard]] std::vector<std::string> ContainersNames() const;
 
     /**
      * Returns BSD name if was found.
      */
-    std::optional<std::string> FindContainerOfVolume(std::string_view _bsd_volume_name) const;
+    [[nodiscard]] std::optional<std::string> FindContainerOfVolume(std::string_view _bsd_volume_name) const;
 
     /**
      * Returns BSD names if were found.
      * Volumes are returned in the order of their appearance in the dictionary, not sorting is
      * applied.
      */
-    std::optional<std::vector<std::string>> FindVolumesOfContainer(std::string_view _container_name) const;
+    [[nodiscard]] std::optional<std::vector<std::string>>
+    FindVolumesOfContainer(std::string_view _container_name) const;
 
     /**
      * Returns BSD names if were found.
      */
-    std::optional<std::vector<std::string>> FindPhysicalStoresOfContainer(std::string_view _container_name) const;
+    [[nodiscard]] std::optional<std::vector<std::string>>
+    FindPhysicalStoresOfContainer(std::string_view _container_name) const;
 
     /**
      * Returns BSD names if were found.
      */
-    std::optional<std::vector<std::string>> FindVolumesInContainerWithRole(std::string_view _container_name,
-                                                                           Role _role) const;
+    [[nodiscard]] std::optional<std::vector<std::string>>
+    FindVolumesInContainerWithRole(std::string_view _container_name, Role _role) const;
 
 private:
     static bool DoesContainerContainVolume(NSDictionary *_container, std::string_view _bsd_volume_name);

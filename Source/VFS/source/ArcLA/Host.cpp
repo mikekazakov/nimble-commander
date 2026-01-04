@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
 
@@ -11,6 +11,7 @@
 #include <Base/UnorderedUtil.h>
 #include <Base/algo.h>
 #include <Base/StackAllocator.h>
+#include <Base/CFPtr.h>
 #include <Utility/DataBlockAnalysis.h>
 #include <Utility/PathManip.h>
 #include <VFS/AppleDoubleEA.h>
@@ -25,6 +26,7 @@ namespace nc::vfs {
 const char *const ArchiveHost::UniqueTag = "arc_libarchive";
 
 struct ArchiveHost::Impl {
+    // Path to a dir including trailing slash -> Dir structure
     using PathToDirT = ankerl::unordered_dense::
         segmented_map<std::string, arc::Dir, nc::UnorderedStringHashEqual, nc::UnorderedStringHashEqual>;
 
@@ -78,21 +80,29 @@ static VFSConfiguration ComposeConfiguration(const std::string_view _path, std::
     return {std::move(config)};
 }
 
-static void DecodeStringToUTF8(const void *_bytes, size_t _sz, CFStringEncoding _enc, char *_buf, size_t _buf_sz)
+void ArchiveHost::AppendDecodedStringToUTF8(const std::span<const std::byte> _bytes,
+                                            const CFStringEncoding _encoding,
+                                            std::pmr::string &_to)
 {
     const base::CFStackAllocator alloc;
-    auto str = CFStringCreateWithBytesNoCopy(
-        alloc, reinterpret_cast<const UInt8 *>(_bytes), _sz, _enc, false, kCFAllocatorNull);
+    const base::CFPtr<CFStringRef> str = base::CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(
+        alloc, reinterpret_cast<const UInt8 *>(_bytes.data()), _bytes.size(), _encoding, false, kCFAllocatorNull));
     if( str ) {
-        if( auto utf8 = CFStringGetCStringPtr(str, kCFStringEncodingUTF8) )
-            strcpy(_buf, utf8);
-        else
-            CFStringGetCString(str, _buf, _buf_sz, kCFStringEncodingUTF8);
-        CFRelease(str);
+        if( const char *utf8 = CFStringGetCStringPtr(str.get(), kCFStringEncodingUTF8) ) {
+            _to.append(utf8);
+            return;
+        }
+        else {
+            char buf[4096];
+            if( CFStringGetCString(str.get(), buf, std::size(buf), kCFStringEncodingUTF8) ) {
+                _to.append(buf);
+                return;
+            }
+        }
     }
-    else {
-        std::strcpy(_buf, static_cast<const char *>(_bytes));
-    }
+
+    // corrupt string - just append raw bytes as a fallback
+    _to.append(reinterpret_cast<const char *>(_bytes.data()), _bytes.size());
 }
 
 ArchiveHost::ArchiveHost(const std::string_view _path,
@@ -236,51 +246,6 @@ std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_c
     return {};
 }
 
-static bool SplitIntoFilenameAndParentPath(const char *_path,
-                                           char *_filename,
-                                           int _filename_sz,
-                                           char *_parent_path,
-                                           int _parent_path_sz)
-{
-    if( !_path || !_filename || !_parent_path )
-        return false;
-
-    const auto path_sz = std::strlen(_path);
-    const auto slash = std::strrchr(_path, '/');
-    if( !slash )
-        return false;
-
-    if( slash == _path + path_sz - 1 ) {
-        const std::string_view path(_path, path_sz - 1);
-        const auto second_slash_pos = path.rfind('/');
-        if( second_slash_pos == std::string_view::npos )
-            return false;
-        const auto filename_sz = path_sz - second_slash_pos - 2;
-        const auto parent_path_sz = second_slash_pos + 1;
-
-        if( static_cast<int>(filename_sz) >= _filename_sz || static_cast<int>(parent_path_sz) >= _parent_path_sz )
-            return false;
-
-        std::strncpy(_filename, _path + second_slash_pos + 1, filename_sz);
-        _filename[filename_sz] = 0;
-        std::strncpy(_parent_path, _path, parent_path_sz);
-        _parent_path[parent_path_sz] = 0;
-    }
-    else {
-        const auto filename_sz = path_sz - (slash + 1 - _path);
-        const auto parent_path_sz = slash - _path + 1;
-
-        if( static_cast<int>(filename_sz) >= _filename_sz || static_cast<int>(parent_path_sz) >= _parent_path_sz )
-            return false;
-
-        std::strcpy(_filename, slash + 1);
-        std::strncpy(_parent_path, _path, parent_path_sz);
-        _parent_path[parent_path_sz] = 0;
-    }
-
-    return true;
-}
-
 std::expected<void, Error> ArchiveHost::ReadArchiveListing()
 {
     using namespace arc;
@@ -299,43 +264,47 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
     }
 
     std::optional<CFStringEncoding> detected_encoding;
+    StackAllocator alloc;
+
+    // This string will be reused for each entry path decoding
+    std::pmr::string path{&alloc};
 
     struct archive_entry *aentry;
-    int ret;
+    int ret = 0;
     while( (ret = archive_read_next_header(I->m_Arc, &aentry)) == ARCHIVE_OK ) {
         aruid++;
         const struct stat *stat = archive_entry_stat(aentry);
         if( stat == nullptr )
             continue; // check for broken archives
 
-        const auto entry_pathname = archive_entry_pathname(aentry);
+        const char *entry_pathname = archive_entry_pathname(aentry);
         if( entry_pathname == nullptr )
             continue; // check for broken archives
 
-        const auto entry_pathname_len = strlen(entry_pathname);
+        const size_t entry_pathname_len = std::string_view{entry_pathname}.length();
         if( entry_pathname_len == 0 )
             continue;
 
-        const bool entry_has_heading_slash = entry_pathname[0] == '/';
+        const bool entry_pathname_has_heading_slash = entry_pathname[0] == '/';
 
-        char path[1024];
-        path[0] = '/';
+        // When decoding each entry path - reuse the same buffer, clearing it first.
+        // If the entry doesn't start with a slash - add it manually to the beginning.
+        path.clear();
+        if( !entry_pathname_has_heading_slash )
+            path += '/';
 
         // pathname can be represented in ANY encoding.
         // if we already have figured out it - convert from it to UTF8 immediately
         if( detected_encoding ) {
-            DecodeStringToUTF8(entry_pathname,
-                               entry_pathname_len,
-                               *detected_encoding,
-                               path + (entry_has_heading_slash ? 0 : 1),
-                               sizeof(path) - 2);
+            AppendDecodedStringToUTF8(
+                {reinterpret_cast<const std::byte *>(entry_pathname), entry_pathname_len}, *detected_encoding, path);
         }
         else {
-            // if we don't know any specific encoding setting for this archive - check for UTF8
+            // if we don't know any specific encoding setting for this archive - check for UTF8.
             // this checking is supposed to be very fast, for most archives it will return true
             if( IsValidUTF8String(entry_pathname, entry_pathname_len) ) {
-                // we can path straightaway
-                strcpy(path + (entry_has_heading_slash ? 0 : 1), entry_pathname);
+                // we can use the path straightaway
+                path.append(entry_pathname, entry_pathname_len);
             }
             else {
                 // if this archive doesn't use a valid UTF8 encoding -
@@ -343,27 +312,23 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
                 if( !detected_encoding )
                     detected_encoding = DetectEncoding(entry_pathname, entry_pathname_len);
 
-                DecodeStringToUTF8(entry_pathname,
-                                   entry_pathname_len,
-                                   *detected_encoding,
-                                   path + (entry_has_heading_slash ? 0 : 1),
-                                   sizeof(path) - 2);
+                AppendDecodedStringToUTF8({reinterpret_cast<const std::byte *>(entry_pathname), entry_pathname_len},
+                                          *detected_encoding,
+                                          path);
             }
         }
 
-        if( strcmp(path, "/.") == 0 )
+        if( path == "/" )
+            continue; // skip root entry - they are handled manually outside
+
+        if( path == "/." )
             continue; // skip "." entry for ISO for example
 
-        const int path_len = static_cast<int>(std::strlen(path));
-
-        const auto isdir = (stat->st_mode & S_IFMT) == S_IFDIR;
-        const auto isreg = (stat->st_mode & S_IFMT) == S_IFREG;
-        const auto issymlink = (stat->st_mode & S_IFMT) == S_IFLNK;
-
-        char short_name[256];
-        char parent_path[1024];
-        if( !SplitIntoFilenameAndParentPath(path, short_name, sizeof(short_name), parent_path, sizeof(parent_path)) )
-            continue;
+        const bool isdir = (stat->st_mode & S_IFMT) == S_IFDIR;
+        const bool isreg = (stat->st_mode & S_IFMT) == S_IFREG;
+        const bool issymlink = (stat->st_mode & S_IFMT) == S_IFLNK;
+        const std::string_view parent_path = utility::PathManip::Parent(path);
+        const std::string_view filename = utility::PathManip::Filename(path);
 
         if( parent_dir->full_path != parent_path ) {
             Dir *const new_parent = FindOrBuildDir(parent_path);
@@ -378,7 +343,7 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
         if( isdir ) // check if it wasn't added before via FindOrBuildDir
             for( size_t i = 0, e = parent_dir->entries.size(); i < e; ++i ) {
                 auto &it = parent_dir->entries[i];
-                if( (it.st.st_mode & S_IFMT) == S_IFDIR && it.name == short_name ) {
+                if( (it.st.st_mode & S_IFMT) == S_IFDIR && it.name == filename ) {
                     assert(it.aruid == SyntheticArUID);
                     entry = &it;
                     entry_index_in_dir = static_cast<unsigned>(i);
@@ -390,7 +355,7 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
             parent_dir->entries.emplace_back();
             entry_index_in_dir = static_cast<unsigned>(parent_dir->entries.size() - 1);
             entry = &parent_dir->entries.back();
-            entry->name = short_name;
+            entry->name = filename;
         }
 
         entry->aruid = aruid;
@@ -417,16 +382,17 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
         }
 
         if( isdir ) {
-            // it's a directory
-            if( path[strlen(path) - 1] != '/' )
-                strcat(path, "/");
-            if( !I->m_PathToDir.contains(path) ) { // check if it wasn't added before via FindOrBuildDir
-                char tmp[1024];
-                strcpy(tmp, path);
-                tmp[path_len - 1] = 0;
+            // It's a directory, so ensure the path has a trailing slash to conform map key style
+            if( !path.ends_with('/') )
+                path += '/';
+
+            // Check if it wasn't added before via FindOrBuildDir
+            if( !I->m_PathToDir.contains(path) ) {
                 Dir dir;
                 dir.full_path = path; // full_path is with trailing slash
-                dir.name_in_parent = strrchr(tmp, '/') + 1;
+
+                // NB! do no use 'filename' here - it potentially dangles here
+                dir.name_in_parent = utility::PathManip::Filename(path);
                 I->m_PathToDir.emplace(path, std::move(dir));
             }
         }
@@ -691,11 +657,9 @@ ArchiveHost::IterateDirectoryListing(std::string_view _path,
     if( i == I->m_PathToDir.end() )
         return std::unexpected(Error{Error::POSIX, ENOENT});
 
-    VFSDirEnt dir;
-
     for( const auto &it : i->second.entries ) {
-        strcpy(dir.name, it.name.c_str());
-        dir.name_len = uint16_t(it.name.length());
+        VFSDirEnt dir;
+        dir.name = it.name;
 
         if( S_ISDIR(it.st.st_mode) )
             dir.type = VFSDirEnt::Dir;
@@ -721,54 +685,37 @@ uint32_t ArchiveHost::ItemUID(const char *_filename)
     return 0;
 }
 
-const arc::DirEntry *ArchiveHost::FindEntry(std::string_view _path)
+const arc::DirEntry *ArchiveHost::FindEntry(std::string_view _path) noexcept
 {
     if( _path.empty() || _path[0] != '/' )
-        return nullptr;
+        return nullptr; // sanitation
 
-    // TODO: rewrite without using C-style strings
+    if( _path == "/" )
+        return nullptr; // we have no info about root dir
+
+    // Split the full path into a parent directory (including the trailing slash!) and filename
+    const std::string_view parent_directory = utility::PathManip::Parent(_path);
+    const std::string_view filename = utility::PathManip::Filename(_path);
+
+    // special treatment for dot-dot
+    if( filename == ".." )
+        return FindEntry(parent_directory);
 
     // 1st - try to find _path directly (assume it's directory)
-    char full_path[1024];
-    char short_name[256];
-    memcpy(full_path, _path.data(), _path.length());
-    full_path[_path.length()] = 0;
-
-    char *last_sl = strrchr(full_path, '/');
-
-    if( last_sl == full_path && strlen(full_path) == 1 )
-        return nullptr; // we have no info about root dir
-    if( last_sl == full_path + strlen(full_path) - 1 ) {
-        *last_sl = 0; // cut trailing slash
-        last_sl = strrchr(full_path, '/');
-        assert(last_sl != nullptr); // sanity check
-    }
-
-    strcpy(short_name, last_sl + 1);
-    *(last_sl + 1) = 0;
-    // now:
-    // buf - directory with trailing slash
-    // short_name - entry name within that directory
-
-    if( strcmp(short_name, "..") == 0 ) { // special treatment for dot-dot
-        const std::string_view directory = utility::PathManip::Parent(full_path);
-        return FindEntry(directory);
-    }
-
-    const auto i = I->m_PathToDir.find(full_path);
+    const auto i = I->m_PathToDir.find(parent_directory);
     if( i == I->m_PathToDir.end() )
         return nullptr;
 
     // ok, found dir, now let's find item
-    const size_t short_name_len = strlen(short_name);
-    for( const auto &it : i->second.entries )
-        if( it.name.length() == short_name_len && it.name == short_name )
-            return &it;
+    const auto found_entry_it =
+        std::ranges::find_if(i->second.entries, [&](const arc::DirEntry &entry) { return entry.name == filename; });
+    if( found_entry_it != i->second.entries.end() )
+        return &(*found_entry_it);
 
     return nullptr;
 }
 
-const arc::DirEntry *ArchiveHost::FindEntry(uint32_t _uid)
+const arc::DirEntry *ArchiveHost::FindEntry(uint32_t _uid) noexcept
 {
     if( !_uid || _uid >= I->m_EntryByUID.size() )
         return nullptr;
@@ -782,6 +729,7 @@ const arc::DirEntry *ArchiveHost::FindEntry(uint32_t _uid)
 
 std::expected<void, Error> ArchiveHost::ResolvePath(std::string_view _path, std::pmr::string &_resolved_path)
 {
+    // TODO: make this malloc-free somehow, or at least use stack-backed malloc...
     if( _path.empty() || _path[0] != '/' )
         return std::unexpected(Error{Error::POSIX, ENOENT});
 
@@ -792,7 +740,7 @@ std::expected<void, Error> ArchiveHost::ResolvePath(std::string_view _path, std:
     for( auto i : p ) {
         result_path /= i;
 
-        auto entry = FindEntry(result_path.c_str());
+        const arc::DirEntry *const entry = FindEntry(result_path.native());
         if( !entry )
             return std::unexpected(Error{Error::POSIX, ENOENT});
 
@@ -923,8 +871,6 @@ std::expected<std::unique_ptr<arc::State>, Error> ArchiveHost::ArchiveStateForIt
     }
 
     bool found = false;
-    char path[1024];
-    strcpy(path, _filename + 1); // skip first symbol, which is '/'
     // TODO: need special case for directories
 
     // consider case-insensitive comparison later

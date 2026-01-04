@@ -60,14 +60,14 @@ private:
 };
 
 struct GoToEnclosingFolder final : PanelAction {
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 };
 
 struct GoIntoFolder final : PanelAction {
     GoIntoFolder(bool _force_checking_for_archive = false);
-    bool Predicate(PanelController *_target) const override;
-    bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:

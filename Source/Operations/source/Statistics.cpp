@@ -16,7 +16,7 @@ StatisticsTimingPauser::~StatisticsTimingPauser()
 
 Statistics::Statistics()
     : m_IsTiming{false}, m_PauseCount{0}, m_StartTimePoint{0}, m_PauseTimePoint{0}, m_SleptTimeDuration{0},
-      m_FinalTimeDuration{0}, m_PreferredSource{SourceType::Bytes}
+      m_FinalTimeDuration{0}
 {
 }
 

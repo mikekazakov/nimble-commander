@@ -32,12 +32,16 @@ public:
     static NSArray<NSString *> *AcceptedUTIs();
 
 private:
-    vfs::VFSPath ComposeDestination() const;
-    std::pair<NSDragOperation, int> ScanLocalSource(FilesDraggingSource *_source, const vfs::VFSPath &_dest) const;
-    std::pair<NSDragOperation, int> ScanURLsSource(NSArray<NSURL *> *_urls, const vfs::VFSPath &_dest) const;
-    std::pair<NSDragOperation, int> ScanURLsPromiseSource(const vfs::VFSPath &_dest) const;
-    NSDragOperation BuildOperationForLocal(FilesDraggingSource *_source, const vfs::VFSPath &_destination) const;
-    NSDragOperation BuildOperationForURLs(NSArray<NSURL *> *_source, const vfs::VFSPath &_destination) const;
+    [[nodiscard]] vfs::VFSPath ComposeDestination() const;
+    [[nodiscard]] std::pair<NSDragOperation, int> ScanLocalSource(FilesDraggingSource *_source,
+                                                                  const vfs::VFSPath &_dest) const;
+    [[nodiscard]] std::pair<NSDragOperation, int> ScanURLsSource(NSArray<NSURL *> *_urls,
+                                                                 const vfs::VFSPath &_dest) const;
+    [[nodiscard]] std::pair<NSDragOperation, int> ScanURLsPromiseSource(const vfs::VFSPath &_dest) const;
+    [[nodiscard]] NSDragOperation BuildOperationForLocal(FilesDraggingSource *_source,
+                                                         const vfs::VFSPath &_destination) const;
+    [[nodiscard]] NSDragOperation BuildOperationForURLs(NSArray<NSURL *> *_source,
+                                                        const vfs::VFSPath &_destination) const;
     bool PerformWithLocalSource(FilesDraggingSource *_source, const vfs::VFSPath &_dest);
     bool PerformWithURLsSource(NSArray<NSURL *> *_source, const vfs::VFSPath &_dest);
     bool PerformWithURLsPromiseSource(const vfs::VFSPath &_dest);

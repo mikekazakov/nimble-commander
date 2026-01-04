@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Config/Config.h>
@@ -11,7 +11,7 @@ class Model;
 
 namespace QuickSearch {
 
-enum class KeyModif { // persistancy-bound values, don't change it
+enum class KeyModif : int8_t { // persistancy-bound values, don't change it
     WithAlt = 0,
     WithCtrlAlt = 1,
     WithShiftAlt = 2,

@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Panel/NetworkConnectionsManager.h>
@@ -14,7 +14,7 @@ class ConfigBackedNetworkConnectionsManager : public nc::panel::NetworkConnectio
 {
 public:
     ConfigBackedNetworkConnectionsManager(nc::config::Config &_config, nc::utility::NativeFSManager &_native_fs_man);
-    ~ConfigBackedNetworkConnectionsManager();
+    ~ConfigBackedNetworkConnectionsManager() override;
 
     std::optional<Connection> ConnectionByUUID(const nc::base::UUID &_uuid) const override;
     std::optional<Connection> ConnectionForVFS(const VFSHost &_vfs) const override;
@@ -56,7 +56,7 @@ private:
     nc::config::Config &m_Config;
     nc::utility::NativeFSManager &m_NativeFSManager;
     std::vector<nc::config::Token> m_ConfigObservations;
-    bool m_IsWritingConfig;
+    bool m_IsWritingConfig{false};
 
     mutable std::mutex m_PendingMountRequestsLock;
     std::vector<std::pair<void *, MountShareCallback>> m_PendingMountRequests;

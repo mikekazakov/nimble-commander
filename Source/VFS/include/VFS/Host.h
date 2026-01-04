@@ -18,17 +18,18 @@ class HostDirObservationTicket
 public:
     HostDirObservationTicket() noexcept;
     HostDirObservationTicket(unsigned long _ticket, std::weak_ptr<Host> _host) noexcept;
+    HostDirObservationTicket(const HostDirObservationTicket &_rhs) = delete;
     HostDirObservationTicket(HostDirObservationTicket &&_rhs) noexcept;
     ~HostDirObservationTicket();
 
+    HostDirObservationTicket &operator=(const HostDirObservationTicket &_rhs) = delete;
     HostDirObservationTicket &operator=(HostDirObservationTicket &&_rhs) noexcept;
+
     operator bool() const noexcept;
-    bool valid() const noexcept;
+    [[nodiscard]] bool valid() const noexcept;
     void reset();
 
 private:
-    HostDirObservationTicket(const HostDirObservationTicket &_rhs) = delete;
-    HostDirObservationTicket &operator=(const HostDirObservationTicket &_rhs) = delete;
     unsigned long m_Ticket;
     std::weak_ptr<Host> m_Host;
 };
@@ -54,15 +55,13 @@ private:
 };
 
 struct HostFeatures {
-    enum Features : uint64_t {
-        FetchUsers = 1 << 0,
-        FetchGroups = 1 << 1,
-        SetPermissions = 1 << 2,
-        SetFlags = 1 << 3,
-        SetOwnership = 1 << 4,
-        SetTimes = 1 << 5,
-        NonEmptyRmDir = 1 << 6
-    };
+    static constexpr uint64_t FetchUsers = 1 << 0;
+    static constexpr uint64_t FetchGroups = 1 << 1;
+    static constexpr uint64_t SetPermissions = 1 << 2;
+    static constexpr uint64_t SetFlags = 1 << 3;
+    static constexpr uint64_t SetOwnership = 1 << 4;
+    static constexpr uint64_t SetTimes = 1 << 5;
+    static constexpr uint64_t NonEmptyRmDir = 1 << 6;
 };
 
 class Host : public std::enable_shared_from_this<Host>
@@ -75,7 +74,12 @@ public:
      * junction path and parent can be nil
      */
     Host(std::string_view _junction_path, const std::shared_ptr<Host> &_parent, const char *_fs_tag);
+
+    Host(const Host &_r) = delete;
+
     virtual ~Host();
+
+    void operator=(const Host &_r) = delete;
 
     /***********************************************************************************************
      * Configuration / meta data
@@ -366,12 +370,9 @@ private:
     const std::string m_JunctionPath; // path in Parent VFS, relative to it's root
     const std::shared_ptr<Host> m_Parent;
     const char *m_Tag;
-    uint64_t m_Features;
+    uint64_t m_Features{0};
     std::function<void(const VFSHost *)> m_OnDesctruct;
 
-    // forbid copying
-    Host(const Host &_r) = delete;
-    void operator=(const Host &_r) = delete;
     friend class HostDirObservationTicket;
     friend class FileObservationToken;
 };

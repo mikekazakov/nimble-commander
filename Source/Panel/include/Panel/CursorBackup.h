@@ -14,10 +14,10 @@ class CursorBackup
 public:
     CursorBackup(int _current_cursor_pos, const data::Model &_data) noexcept;
 
-    int RestoredCursorPosition() const noexcept;
+    [[nodiscard]] int RestoredCursorPosition() const noexcept;
 
 private:
-    int FindRestoredCursorPosition() const noexcept;
+    [[nodiscard]] int FindRestoredCursorPosition() const noexcept;
 
     const data::Model &m_Data;
     data::ExternalEntryKey m_Keys;

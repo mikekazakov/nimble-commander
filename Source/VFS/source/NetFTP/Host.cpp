@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Host.h"
 #include <Utility/PathManip.h>
 #include "../ListingInput.h"
@@ -617,9 +617,8 @@ FTPHost::IterateDirectoryListing(std::string_view _path, const std::function<boo
 
     for( auto &i : (*dir)->entries ) {
         VFSDirEnt e;
-        strcpy(e.name, i.name.c_str());
-        e.name_len = uint16_t(i.name.length());
-        e.type = IFTODT(i.mode);
+        e.type = static_cast<VFSDirEnt::Type>(IFTODT(i.mode));
+        e.name = i.name;
 
         if( !_handler(e) )
             break;

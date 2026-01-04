@@ -14,20 +14,20 @@ public:
                    std::string _item_name,
                    const VFSStat &_stat);
 
-    uint64_t TotalRegBytes() const noexcept;
-    int ItemsAmount() const noexcept;
+    [[nodiscard]] uint64_t TotalRegBytes() const noexcept;
+    [[nodiscard]] int ItemsAmount() const noexcept;
 
-    std::string ComposeFullPath(int _item_no) const;
-    std::string ComposeRelativePath(int _item_no) const;
-    const std::string &ItemName(int _item_no) const;
-    mode_t ItemMode(int _item_no) const;
-    uint64_t ItemSize(int _item_no) const;
-    VFSHost &ItemHost(int _item_no) const;
+    [[nodiscard]] std::string ComposeFullPath(int _item_no) const;
+    [[nodiscard]] std::string ComposeRelativePath(int _item_no) const;
+    [[nodiscard]] const std::string &ItemName(int _item_no) const;
+    [[nodiscard]] mode_t ItemMode(int _item_no) const;
+    [[nodiscard]] uint64_t ItemSize(int _item_no) const;
+    [[nodiscard]] VFSHost &ItemHost(int _item_no) const;
 
-    VFSHost &Host(uint16_t _host_ind) const;
+    [[nodiscard]] VFSHost &Host(uint16_t _host_ind) const;
     uint16_t InsertOrFindHost(const VFSHostPtr &_host);
 
-    const std::string &BaseDir(unsigned _base_dir_ind) const;
+    [[nodiscard]] const std::string &BaseDir(unsigned _base_dir_ind) const;
     unsigned InsertOrFindBaseDir(const std::string &_dir);
 
 private:

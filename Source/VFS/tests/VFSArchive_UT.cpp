@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -572,8 +572,8 @@ TEST_CASE(PREFIX "Cyrilic encoding in a file downloaded from GDrive")
 
     auto d = file->ReadFile();
     REQUIRE(d->size() == 9);
-    auto ref = "Тест!";
-    REQUIRE(std::memcmp(d->data(), ref, std::strlen(ref)) == 0);
+    const std::string_view ref = "Тест!";
+    REQUIRE(std::memcmp(d->data(), ref.data(), ref.length()) == 0);
 }
 
 TEST_CASE(PREFIX "Encrypted zip archive")
@@ -617,8 +617,8 @@ TEST_CASE(PREFIX "Encrypted zip archive")
     REQUIRE(file->Open(VFSFlags::OF_Read));
     auto d = file->ReadFile();
     REQUIRE(d->size() == 19);
-    auto ref = "contents of file2.\0A";
-    REQUIRE(memcmp(d->data(), ref, strlen(ref)) == 0);
+    const std::string_view ref = "contents of file2.\0A";
+    REQUIRE(memcmp(d->data(), ref.data(), ref.length()) == 0);
 }
 
 TEST_CASE(PREFIX "Reading xattr from an archive")
@@ -752,8 +752,8 @@ TEST_CASE(PREFIX "archive with a slash dir")
     REQUIRE(file->Open(VFSFlags::OF_Read));
     auto d = file->ReadFile();
     REQUIRE(d->size() == 13);
-    auto ref = "Hello, World!";
-    REQUIRE(memcmp(d->data(), ref, strlen(ref)) == 0);
+    const std::string_view ref = "Hello, World!";
+    REQUIRE(memcmp(d->data(), ref.data(), ref.length()) == 0);
 }
 
 TEST_CASE(PREFIX "zip archive with a heading slash in a filename")
@@ -1828,8 +1828,8 @@ TEST_CASE(PREFIX "lzma support")
     REQUIRE(file->Open(VFSFlags::OF_Read));
     auto d = file->ReadFile();
     REQUIRE(d->size() == 5);
-    auto ref = "World";
-    REQUIRE(memcmp(d->data(), ref, strlen(ref)) == 0);
+    const std::string_view ref = "World";
+    REQUIRE(memcmp(d->data(), ref.data(), ref.length()) == 0);
 }
 
 TEST_CASE(PREFIX "zip with GB18030-2020 support")

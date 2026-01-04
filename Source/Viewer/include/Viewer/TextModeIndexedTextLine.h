@@ -15,23 +15,23 @@ public:
                             int _bytes_len,
                             CTLineRef _line // 'sinks' _line - no need to call CFRelease afterwards
     );
-    TextModeIndexedTextLine(const TextModeIndexedTextLine &) noexcept;
+    TextModeIndexedTextLine(const TextModeIndexedTextLine & /*_rhs*/) noexcept;
     TextModeIndexedTextLine(TextModeIndexedTextLine &&_r) noexcept;
     ~TextModeIndexedTextLine() noexcept;
 
-    TextModeIndexedTextLine &operator=(const TextModeIndexedTextLine &) noexcept;
-    TextModeIndexedTextLine &operator=(TextModeIndexedTextLine &&) noexcept;
+    TextModeIndexedTextLine &operator=(const TextModeIndexedTextLine & /*_rhs*/) noexcept;
+    TextModeIndexedTextLine &operator=(TextModeIndexedTextLine && /*_rhs*/) noexcept;
 
-    int UniCharsStart() const noexcept;
-    int UniCharsLen() const noexcept;
-    int UniCharsEnd() const noexcept;
-    int BytesStart() const noexcept;
-    int BytesLen() const noexcept;
-    int BytesEnd() const noexcept;
-    CTLineRef Line() const noexcept;
+    [[nodiscard]] int UniCharsStart() const noexcept;
+    [[nodiscard]] int UniCharsLen() const noexcept;
+    [[nodiscard]] int UniCharsEnd() const noexcept;
+    [[nodiscard]] int BytesStart() const noexcept;
+    [[nodiscard]] int BytesLen() const noexcept;
+    [[nodiscard]] int BytesEnd() const noexcept;
+    [[nodiscard]] CTLineRef Line() const noexcept;
 
-    bool UniCharInside(int _unichar_index) const noexcept;
-    bool ByteInside(int _byte_index) const noexcept;
+    [[nodiscard]] bool UniCharInside(int _unichar_index) const noexcept;
+    [[nodiscard]] bool ByteInside(int _byte_index) const noexcept;
 
 private:
     /**

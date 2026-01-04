@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Favorites.h"
@@ -33,9 +33,7 @@ public:
     ObservationTicket ObserveFavoritesChanges(std::function<void()> _callback) override;
 
 private:
-    enum ObservationEvents : uint64_t {
-        FavoritesChanged = 1
-    };
+    static constexpr uint64_t FavoritesChanged = 1;
 
     struct Visit {
         std::shared_ptr<const Location> location;

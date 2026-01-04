@@ -7,7 +7,7 @@ class VFSSeqToRandomROWrapperFile : public VFSFile
 {
 public:
     VFSSeqToRandomROWrapperFile(const VFSFilePtr &_file_to_wrap);
-    ~VFSSeqToRandomROWrapperFile();
+    ~VFSSeqToRandomROWrapperFile() override;
 
     std::expected<void, nc::Error> Open(unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 

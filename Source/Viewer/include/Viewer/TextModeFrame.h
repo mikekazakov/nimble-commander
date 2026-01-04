@@ -30,13 +30,13 @@ public:
     TextModeFrame &operator=(const TextModeFrame &) = delete;
     TextModeFrame &operator=(TextModeFrame &&) noexcept;
 
-    const std::vector<TextModeIndexedTextLine> &Lines() const noexcept;
-    bool Empty() const noexcept;
+    [[nodiscard]] const std::vector<TextModeIndexedTextLine> &Lines() const noexcept;
+    [[nodiscard]] bool Empty() const noexcept;
     /** Returns the number of IndexedTextLine lines in the frame. */
-    int LinesNumber() const noexcept;
-    const TextModeIndexedTextLine &Line(int _index) const;
-    double LineWidth(int _index) const;
-    CGSize Bounds() const noexcept;
+    [[nodiscard]] int LinesNumber() const noexcept;
+    [[nodiscard]] const TextModeIndexedTextLine &Line(int _index) const;
+    [[nodiscard]] double LineWidth(int _index) const;
+    [[nodiscard]] CGSize Bounds() const noexcept;
 
     /**
      * Returns an index of a character which corresponds to the pixel specified by _position.
@@ -50,36 +50,36 @@ public:
      * position which would correspond to the _position see CTLineGetStringIndexForPosition()
      * for more details.
      */
-    int CharIndexForPosition(CGPoint _position) const;
+    [[nodiscard]] int CharIndexForPosition(CGPoint _position) const;
 
     /** Returns an index for a line corresponding to _position.
      * If _position is above any exisiting lines - will return -1.
      * If _position is below any exisiting lines - will return LinesNumber().
      * This function guarantees to return a value in the range of [-1, LinesNumber()].
      */
-    int LineIndexForPosition(CGPoint _position) const;
+    [[nodiscard]] int LineIndexForPosition(CGPoint _position) const;
 
     /**
      * Returns a range [characters_begin, characters_end) corresponding a word substring in a
      * specified position. That's a behaviour of double-click selection.
      * Will always return a valid range, which can be empty.
      */
-    std::pair<int, int> WordRangeForPosition(CGPoint _position) const;
+    [[nodiscard]] std::pair<int, int> WordRangeForPosition(CGPoint _position) const;
 
     /**
      * Returns the wrapping width which used to layout out this frame.
      */
-    double WrappingWidth() const noexcept;
+    [[nodiscard]] double WrappingWidth() const noexcept;
 
     /**
      * Returns the underlying immutable working set.
      */
-    const TextModeWorkingSet &WorkingSet() const noexcept;
+    [[nodiscard]] const TextModeWorkingSet &WorkingSet() const noexcept;
 
     /**
      * Returns the info on the font used to lay out the frame.
      */
-    const nc::utility::FontGeometryInfo &FontGeometryInfo() const noexcept;
+    [[nodiscard]] const nc::utility::FontGeometryInfo &FontGeometryInfo() const noexcept;
 
 private:
     static void CalculateLinesWidths(const TextModeIndexedTextLine *_lines_begin,

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -48,8 +48,8 @@ TEST_CASE(PREFIX "XNUSource - TAR")
         REQUIRE(file->Open(VFSFlags::OF_Read));
         auto d = file->ReadFile();
         REQUIRE(d->size() == 957);
-        auto ref = "# See top level .clang-format for explanation of options";
-        REQUIRE(std::memcmp(d->data(), ref, strlen(ref)) == 0);
+        const std::string_view ref = "# See top level .clang-format for explanation of options";
+        REQUIRE(std::memcmp(d->data(), ref.data(), ref.length()) == 0);
     }
 
     const std::vector<std::string> filenames{"/xnu-xnu-3248.20.55/bsd/bsm/audit_domain.h",

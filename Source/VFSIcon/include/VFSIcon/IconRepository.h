@@ -17,25 +17,25 @@ public:
 
     using SlotKey = uint16_t;
 
-    static inline constexpr SlotKey InvalidKey = SlotKey{0};
+    static constexpr SlotKey InvalidKey = SlotKey{0};
 
     /**
      * Checks whether _key refers to a valid slot. A key which is equal to InvalidKey is always invalid.
      */
-    virtual bool IsValidSlot(SlotKey _key) const = 0;
+    [[nodiscard]] virtual bool IsValidSlot(SlotKey _key) const = 0;
 
     /**
      * Returns the icon currently available for the given slot.
      * This function does no blocking I/O.
      */
-    virtual NSImage *AvailableIconForSlot(SlotKey _key) const = 0;
+    [[nodiscard]] virtual NSImage *AvailableIconForSlot(SlotKey _key) const = 0;
 
     /**
      * Returns an icon for VFS item in case when it's not possible to register this item at first
      * (for instance when IconRegistry is full).
      * This function does no blocking I/O.
      */
-    virtual NSImage *AvailableIconForListingItem(const VFSListingItem &_item) const = 0;
+    [[nodiscard]] virtual NSImage *AvailableIconForListingItem(const VFSListingItem &_item) const = 0;
 
     /**
      * Creates an entry corresponding to the VFS item.
@@ -49,7 +49,7 @@ public:
      * Returns a list of all used registered slots.
      * The result will be sorted in ascending order.
      */
-    virtual std::vector<SlotKey> AllSlots() const = 0;
+    [[nodiscard]] virtual std::vector<SlotKey> AllSlots() const = 0;
 
     /**
      * Removes a registry entity corresponding to _key. _key becomes invalid afterwards.

@@ -19,7 +19,7 @@ using namespace nc::panel;
 using data::ItemVolatileData;
 using data::Model;
 
-static VFSListingPtr ProduceDummyListing(const std::vector<std::string> &_filenames)
+VFSListingPtr ProduceDummyListing(const std::vector<std::string> &_filenames)
 {
     vfs::ListingInput l;
 
@@ -39,7 +39,7 @@ static VFSListingPtr ProduceDummyListing(const std::vector<std::string> &_filena
 }
 
 // filename, is_directory
-static VFSListingPtr ProduceDummyListing(const std::vector<std::tuple<std::string, bool>> &_entries)
+VFSListingPtr ProduceDummyListing(const std::vector<std::tuple<std::string, bool>> &_entries)
 {
     vfs::ListingInput l;
 
@@ -60,8 +60,7 @@ static VFSListingPtr ProduceDummyListing(const std::vector<std::tuple<std::strin
 }
 
 // directory, filename, size
-static VFSListingPtr
-ProduceNonUniformDummyListing(const std::vector<std::tuple<std::string, std::string, size_t>> &_entries)
+VFSListingPtr ProduceNonUniformDummyListing(const std::vector<std::tuple<std::string, std::string, size_t>> &_entries)
 {
     vfs::ListingInput l;
     l.directories.reset(variable_container<>::type::dense);

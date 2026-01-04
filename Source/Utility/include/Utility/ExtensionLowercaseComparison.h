@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -30,9 +30,6 @@ public:
     bool Equal(std::string_view _filename_ext, std::string_view _compare_to_formc_lc);
 
 private:
-    enum {
-        m_MaxLength = 16
-    };
     using Storage =
         ankerl::unordered_dense::map<std::string, std::string, UnorderedStringHashEqual, UnorderedStringHashEqual>;
 
@@ -40,13 +37,14 @@ private:
 
     Storage m_Data;
     nc::spinlock m_Lock;
+    static constexpr size_t m_MaxLength = 16;
 };
 
 class ExtensionsLowercaseList
 {
 public:
     ExtensionsLowercaseList(std::string_view _comma_separated_list);
-    bool contains(std::string_view _extension) const noexcept;
+    [[nodiscard]] bool contains(std::string_view _extension) const noexcept;
 
 private:
     using Storage = ankerl::unordered_dense::set<std::string, UnorderedStringHashEqual, UnorderedStringHashEqual>;

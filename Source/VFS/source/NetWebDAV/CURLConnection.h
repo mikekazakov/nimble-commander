@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Connection.h"
@@ -17,7 +17,9 @@ class CURLConnection : public Connection
 {
 public:
     CURLConnection(const HostConfiguration &_config);
-    ~CURLConnection();
+    CURLConnection(const CURLConnection &) = delete;
+    ~CURLConnection() override;
+    void operator=(const CURLConnection &) = delete;
 
     void Clear() override;
 
@@ -49,8 +51,6 @@ private:
     using SlistPtr = std::unique_ptr<struct curl_slist, decltype(&curl_slist_free_all)>;
     using ProgressCallback = std::function<bool(long _dltotal, long _dlnow, long _ultotal, long _ulnow)>;
 
-    void operator=(const CURLConnection &) = delete;
-    CURLConnection(const CURLConnection &) = delete;
     void DetachMultiHandle();
     void SetProgreessCallback(ProgressCallback _callback);
     static int Progress(void *_clientp, long _dltotal, long _dlnow, long _ultotal, long _ulnow);

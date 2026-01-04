@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../../include/VFS/Host.h"
@@ -30,7 +30,7 @@ public:
     ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker = {});
 
     // Destructor
-    ~ArchiveHost();
+    ~ArchiveHost() override;
 
     // The fixed tag identifying this VFS class
     static const char *const UniqueTag;
@@ -112,10 +112,10 @@ public:
     };
 
     /** searches for entry in archive without any path resolving */
-    const arc::DirEntry *FindEntry(std::string_view _path);
+    const arc::DirEntry *FindEntry(std::string_view _path) noexcept;
 
     /** searches for entry in archive by id */
-    const arc::DirEntry *FindEntry(uint32_t _uid);
+    const arc::DirEntry *FindEntry(uint32_t _uid) noexcept;
 
     /** find symlink and resolves it if not already. returns nullptr on error. */
     const Symlink *ResolvedSymlink(uint32_t _uid);
@@ -136,6 +136,9 @@ private:
     std::expected<void, Error> ResolvePath(std::string_view _path, std::pmr::string &_resolved_path);
 
     void ResolveSymlink(uint32_t _uid);
+
+    static void
+    AppendDecodedStringToUTF8(std::span<const std::byte> _bytes, CFStringEncoding _encoding, std::pmr::string &_to);
 
     std::unique_ptr<Impl> I;
     VFSConfiguration m_Configuration; // TODO: move into I

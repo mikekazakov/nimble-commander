@@ -1,9 +1,10 @@
-// Copyright (C) 2015-2025 Michael G. Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael G. Kazakov. Subject to GNU General Public License version 3.
 #include <Base/CFString.h>
 #include <Base/StackAllocator.h>
 
 #include <memory>
 #include <vector>
+#include <string_view>
 
 namespace nc::base {
 
@@ -35,8 +36,12 @@ CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const std::string &_s) noexcep
 
 CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s) noexcept
 {
-    return CFStringCreateWithBytesNoCopy(
-        nullptr, reinterpret_cast<const UInt8 *>(_s), std::strlen(_s), kCFStringEncodingUTF8, false, kCFAllocatorNull);
+    return CFStringCreateWithBytesNoCopy(nullptr,
+                                         reinterpret_cast<const UInt8 *>(_s),
+                                         std::string_view{_s}.length(),
+                                         kCFStringEncodingUTF8,
+                                         false,
+                                         kCFAllocatorNull);
 }
 
 CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s, size_t _len) noexcept
@@ -57,8 +62,12 @@ CFStringRef CFStringCreateWithMacOSRomanStdStringNoCopy(const std::string &_s) n
 
 CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s) noexcept
 {
-    return CFStringCreateWithBytesNoCopy(
-        nullptr, reinterpret_cast<const UInt8 *>(_s), strlen(_s), kCFStringEncodingMacRoman, false, kCFAllocatorNull);
+    return CFStringCreateWithBytesNoCopy(nullptr,
+                                         reinterpret_cast<const UInt8 *>(_s),
+                                         std::string_view{_s}.length(),
+                                         kCFStringEncodingMacRoman,
+                                         false,
+                                         kCFAllocatorNull);
 }
 
 CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s, size_t _len) noexcept
@@ -101,7 +110,7 @@ CFString::CFString(const char *_str, CFStringEncoding _encoding) noexcept
 {
     if( _str )
         p = nc::base::CFPtr<CFStringRef>::adopt(CFStringCreateWithBytes(
-            nullptr, reinterpret_cast<const UInt8 *>(_str), std::strlen(_str), _encoding, false));
+            nullptr, reinterpret_cast<const UInt8 *>(_str), std::string_view{_str}.length(), _encoding, false));
 }
 
 CFString::operator bool() const noexcept

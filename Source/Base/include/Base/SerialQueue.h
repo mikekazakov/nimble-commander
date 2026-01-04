@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <memory>
@@ -16,10 +16,14 @@ class SerialQueue
 public:
     SerialQueue(const char *_label = nullptr);
 
+    SerialQueue(const SerialQueue &) = delete;
+
     /**
      * Will invoke Stop() and Wait() inside.
      */
     ~SerialQueue();
+
+    void operator=(const SerialQueue &) = delete;
 
     /**
      * Starts _f asynchronously in this queue.
@@ -80,8 +84,6 @@ public:
     void SetOnChange(std::function<void()> _on_change);
 
 private:
-    SerialQueue(const SerialQueue &) = delete;
-    void operator=(const SerialQueue &) = delete;
     void Increment() const;
     void Decrement() const;
     void FireDry() const;
@@ -105,7 +107,7 @@ void SerialQueue::Run(T _f) const
     };
     Increment();
     dispatch_async_f(m_Queue, new Ctx{std::move(_f), this}, [](void *_p) {
-        Ctx *context = static_cast<Ctx *>(_p);
+        const auto context = static_cast<Ctx *>(_p);
         auto cleanup = at_scope_end([context] { delete context; });
         context->f();
         context->q->Decrement();

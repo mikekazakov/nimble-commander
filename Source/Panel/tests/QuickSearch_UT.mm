@@ -52,7 +52,7 @@ using namespace nc::panel;
 using namespace nc::panel::QuickSearch;
 using namespace nc::panel::data;
 
-static const auto g_ConfigJSON = "{\
+const auto g_ConfigJSON = "{\
 \"filePanel\": {\
 \"quickSearch\": {\
     \"typingView\": true,\
@@ -416,7 +416,7 @@ TEST_CASE("soft typing")
     CHECK(ctx.delegate.cursorPosition == 9);
 }
 
-static NSEvent *KeyDown(NSString *_key, NSEventModifierFlags _flags)
+NSEvent *KeyDown(NSString *_key, NSEventModifierFlags _flags)
 {
     return [NSEvent keyEventWithType:NSEventTypeKeyDown
                             location:NSMakePoint(0, 0)
@@ -430,12 +430,12 @@ static NSEvent *KeyDown(NSString *_key, NSEventModifierFlags _flags)
                              keyCode:0];
 }
 
-static NSString *SingleCharStr(unichar _c)
+NSString *SingleCharStr(unichar _c)
 {
     return [NSString stringWithCharacters:&_c length:1];
 }
 
-static VFSListingPtr QuickSearch_ProduceDummyListing(const std::vector<std::string> &_filenames)
+VFSListingPtr QuickSearch_ProduceDummyListing(const std::vector<std::string> &_filenames)
 {
     nc::vfs::ListingInput l;
 
@@ -454,7 +454,7 @@ static VFSListingPtr QuickSearch_ProduceDummyListing(const std::vector<std::stri
     return VFSListing::Build(std::move(l));
 }
 
-static VFSListingPtr AppsListing()
+VFSListingPtr AppsListing()
 {
     return QuickSearch_ProduceDummyListing({"App Store.app",
                                             "Automator.app",

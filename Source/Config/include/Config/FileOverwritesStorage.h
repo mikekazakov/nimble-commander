@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "OverwritesStorage.h"
@@ -14,14 +14,15 @@ class FileOverwritesStorage : public OverwritesStorage
 public:
     FileOverwritesStorage(const std::filesystem::path &_file_path);
     FileOverwritesStorage(const FileOverwritesStorage &) = delete;
-    ~FileOverwritesStorage();
+    ~FileOverwritesStorage() override;
+
+    void operator=(const FileOverwritesStorage &) = delete;
 
     std::optional<std::string> Read() const override;
     void Write(std::string_view _overwrites_json) override;
     void SetExternalChangeCallback(std::function<void()> _callback) override;
 
 private:
-    void operator=(const FileOverwritesStorage &) = delete;
     void OverwritesDirChanged();
 
     std::filesystem::path m_Path;

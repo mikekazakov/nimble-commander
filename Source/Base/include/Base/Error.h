@@ -1,4 +1,4 @@
-// Copyright (C) 2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2025-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -10,6 +10,7 @@
 #include <expected>
 #include <Base/intrusive_ptr.h>
 #include <fmt/format.h>
+#include <CoreFoundation/CFError.h>
 
 #ifdef __OBJC__
 @class NSError;
@@ -28,11 +29,11 @@ public:
     // Provides a short string description of the error code.
     // Not intended to be human-readable.
     // Empty strings are treated as no response.
-    virtual std::string Description(int64_t _code) const noexcept;
+    [[nodiscard]] virtual std::string Description(int64_t _code) const noexcept;
 
     // Provides a localized human-readable reason for the failure kind encoded with the specified code.
     // Empty strings are treated as no response.
-    virtual std::string LocalizedFailureReason(int64_t _code) const noexcept;
+    [[nodiscard]] virtual std::string LocalizedFailureReason(int64_t _code) const noexcept;
 };
 
 } // namespace base
@@ -61,6 +62,9 @@ public:
     // Construct an Error with the specified domain and the error code.
     Error(std::string_view _domain, int64_t _code) noexcept;
 
+    // Construct an Error out of the existing CFError.
+    explicit Error(CFErrorRef _error) noexcept;
+
 #ifdef __OBJC__
     // Construct an Error out of the existing NSError.
     explicit Error(NSError *_error) noexcept;
@@ -82,20 +86,20 @@ public:
     Error &operator=(Error &&_rhs) noexcept;
 
     // Returns the domain of this error.
-    std::string Domain() const noexcept;
+    [[nodiscard]] std::string Domain() const noexcept;
 
     // Returns the error code of this error.
-    int64_t Code() const noexcept;
+    [[nodiscard]] int64_t Code() const noexcept;
 
     // Returns a mechanical representation of the error that includes the domain name, the error code and optionally a
     // verbose non-localized description from the description provider.
-    std::string Description() const noexcept;
+    [[nodiscard]] std::string Description() const noexcept;
 
     // Returns a user-facing failure reason that is app-locale dependent.
     // It is intended for the UI.
     // The reason is first queried from the custom value contained in the error, otherwise if it's not set the
     // description provider is queried.
-    std::string LocalizedFailureReason() const noexcept;
+    [[nodiscard]] std::string LocalizedFailureReason() const noexcept;
 
     // Set a custom failure reason.
     void LocalizedFailureReason(std::string_view _failure_reason) noexcept;
@@ -140,7 +144,7 @@ public:
     ErrorException(Error &&_err) noexcept;
 
     // Destructor.
-    ~ErrorException();
+    ~ErrorException() override;
 
     // Provides the description of the underlying Error.
     const char *what() const noexcept override;
@@ -157,7 +161,7 @@ private:
 
 template <>
 struct fmt::formatter<nc::Error> : fmt::formatter<std::string> {
-    constexpr auto parse(fmt::format_parse_context &_ctx) { return _ctx.begin(); }
+    static constexpr auto parse(fmt::format_parse_context &_ctx) { return _ctx.begin(); }
 
     template <typename FormatContext>
     auto format(const nc::Error &_err, FormatContext &_ctx) const

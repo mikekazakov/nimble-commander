@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <memory>
@@ -12,7 +12,7 @@ namespace nc::base {
 class DispatchGroup
 {
 public:
-    enum Priority {
+    enum Priority : int16_t {
         High = DISPATCH_QUEUE_PRIORITY_HIGH,
         Default = DISPATCH_QUEUE_PRIORITY_DEFAULT,
         Low = DISPATCH_QUEUE_PRIORITY_LOW,
@@ -24,10 +24,14 @@ public:
      */
     DispatchGroup(Priority _priority = Default);
 
+    DispatchGroup(const DispatchGroup &) = delete;
+
     /**
      * Will wait for completion before destruction.
      */
     ~DispatchGroup();
+
+    void operator=(const DispatchGroup &) = delete;
 
     /**
      * Run _f in group on queue with prioriry specified at construction time.
@@ -81,8 +85,6 @@ private:
     void FireWet() const;
     void FireChange() const;
 
-    DispatchGroup(const DispatchGroup &) = delete;
-    void operator=(const DispatchGroup &) = delete;
     dispatch_queue_t m_Queue;
     dispatch_group_t m_Group;
     mutable std::atomic_int m_Count{0};

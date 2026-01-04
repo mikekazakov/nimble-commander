@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFSFile.h>
@@ -12,7 +12,7 @@ class File final : public VFSFile
 {
 public:
     File(std::string_view _relative_path, std::shared_ptr<FTPHost> _host);
-    ~File();
+    ~File() override;
 
     //        OF_Truncate is implicitly added to VFSFile when OF_Append is not used - FTP specific
     std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
@@ -28,7 +28,7 @@ public:
     bool Eof() const override;
 
 private:
-    enum class Mode {
+    enum class Mode : uint8_t {
         Closed = 0,
         Read,
         Write
@@ -49,7 +49,7 @@ private:
     std::string m_URLRequest;
     uint64_t m_FileSize = 0;
     uint64_t m_FilePos = 0;
-    constexpr static const struct timeval m_SelectTimeout = {0, 10000};
+    constexpr static const struct timeval m_SelectTimeout = {.tv_sec = 0, .tv_usec = 10000};
 };
 
 } // namespace nc::vfs::ftp

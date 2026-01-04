@@ -19,10 +19,10 @@ public:
 
     void Layout(const Params &_params);
 
-    bool ShouldRelayoutForNewBounds(const NSRect clip_view_bounds) const noexcept;
-    int ItemMinWidth() const noexcept;
-    int ItemMaxWidth() const noexcept;
-    NSArray<NSCollectionViewLayoutAttributes *> *AttributesForItemsInRect(NSRect _rect) const noexcept;
+    [[nodiscard]] bool ShouldRelayoutForNewBounds(const NSRect clip_view_bounds) const noexcept;
+    [[nodiscard]] int ItemMinWidth() const noexcept;
+    [[nodiscard]] int ItemMaxWidth() const noexcept;
+    [[nodiscard]] NSArray<NSCollectionViewLayoutAttributes *> *AttributesForItemsInRect(NSRect _rect) const noexcept;
 
 private:
     void CopyInputData(const Params &_params);

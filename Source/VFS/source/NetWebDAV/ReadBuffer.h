@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stddef.h>
@@ -11,10 +11,12 @@ class ReadBuffer
 {
 public:
     ReadBuffer();
+    ReadBuffer(const ReadBuffer &) = delete;
     ~ReadBuffer();
+    void operator=(const ReadBuffer &) = delete;
 
-    bool Empty() const noexcept;
-    size_t Size() const noexcept;
+    [[nodiscard]] bool Empty() const noexcept;
+    [[nodiscard]] size_t Size() const noexcept;
 
     void Clear();
     size_t Read(void *_buffer, size_t _bytes) noexcept;
@@ -23,8 +25,6 @@ public:
     static size_t Write(void *_buffer, size_t _size, size_t _nmemb, void *_userp);
 
 private:
-    ReadBuffer(const ReadBuffer &) = delete;
-    void operator=(const ReadBuffer &) = delete;
     void Grow(int _new_size) noexcept;
     void PushBack(const void *_data, int _size) noexcept;
     void PopFront(int _size) noexcept;

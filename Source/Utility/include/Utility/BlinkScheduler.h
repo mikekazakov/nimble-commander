@@ -33,17 +33,17 @@ public:
                    std::chrono::milliseconds _blink_time = DefaultBlinkTime,
                    IO &_io = DefaultIO::Instance);
 
-    BlinkScheduler(const BlinkScheduler &);
+    BlinkScheduler(const BlinkScheduler & /*_rhs*/);
     BlinkScheduler(BlinkScheduler &&) noexcept;
 
     ~BlinkScheduler();
-    BlinkScheduler &operator=(const BlinkScheduler &);
+    BlinkScheduler &operator=(const BlinkScheduler & /*_rhs*/);
     BlinkScheduler &operator=(BlinkScheduler &&) noexcept;
 
-    bool Enabled() const noexcept;
+    [[nodiscard]] bool Enabled() const noexcept;
     void Enable(bool _enabled = true) noexcept;
 
-    bool Visible() const noexcept;
+    [[nodiscard]] bool Visible() const noexcept;
 
 private:
     struct Impl;

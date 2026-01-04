@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -20,9 +20,9 @@ public:
     operator bool() const noexcept;
     bool operator==(const VFSInstancePromise &_rhs) const noexcept;
     bool operator!=(const VFSInstancePromise &_rhs) const noexcept;
-    const char *tag() const;           // may return ""
-    std::string verbose_title() const; // may return ""
-    uint64_t id() const;
+    [[nodiscard]] const char *tag() const;           // may return ""
+    [[nodiscard]] std::string verbose_title() const; // may return ""
+    [[nodiscard]] uint64_t id() const;
 
 private:
     VFSInstancePromise(uint64_t _inst_id, VFSInstanceManager &_manager);

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NCPanelOpenWithMenuDelegate.h"
 #include <NimbleCommander/Core/LaunchServices.h>
 #include <Utility/ObjCpp.h>
@@ -272,7 +272,7 @@ FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, const UTIDB
         const auto &handler = m_OpenWithHandlers[app_no];
         [self openItemsWithHandler:handler];
         if( [self isAlwaysOpenWith:menu_item.menu] )
-            handler.SetAsDefaultHandlerForUTI(m_ItemsUTI);
+            std::ignore = handler.SetAsDefaultHandlerForUTI(m_ItemsUTI);
     }
 }
 
@@ -304,7 +304,7 @@ static void ShowOpenPanel(NSOpenPanel *_panel, NSWindow *_window, std::function<
                 const LaunchServiceHandler handler{_path};
                 [self openItemsWithHandler:handler];
                 if( [self isAlwaysOpenWith:menu_item.menu] )
-                    handler.SetAsDefaultHandlerForUTI(m_ItemsUTI);
+                    std::ignore = handler.SetAsDefaultHandlerForUTI(m_ItemsUTI);
             } catch( ... ) {
             }
         });

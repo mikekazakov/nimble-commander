@@ -68,10 +68,10 @@ public:
     ActivityTicket();
     ActivityTicket(PanelController *_panel, uint64_t _ticket);
     ActivityTicket(const ActivityTicket &) = delete;
-    ActivityTicket(ActivityTicket &&) noexcept;
+    ActivityTicket(ActivityTicket && /*_rhs*/) noexcept;
     ~ActivityTicket();
     void operator=(const ActivityTicket &) = delete;
-    ActivityTicket &operator=(ActivityTicket &&) noexcept;
+    ActivityTicket &operator=(ActivityTicket && /*_rhs*/) noexcept;
 
 private:
     void Reset();
@@ -92,12 +92,12 @@ struct DelayedFocusing {
 
 struct DirectoryChangeRequest {
     /* required */
-    std::string RequestedDirectory = "";
+    std::string RequestedDirectory;
     std::shared_ptr<VFSHost> VFS = nullptr;
 
     /* optional */
-    std::string RequestFocusedEntry = "";
-    std::vector<std::string> RequestSelectedEntries = {};
+    std::string RequestFocusedEntry;
+    std::vector<std::string> RequestSelectedEntries;
     bool PerformAsynchronous = true;
     bool LoadPreviousViewState = false;
     bool InitiatedByUser = false;
@@ -241,7 +241,7 @@ using ContextMenuProvider =
 
 template <>
 struct fmt::formatter<nc::panel::DirectoryChangeRequest> : fmt::formatter<std::string> {
-    constexpr auto parse(fmt::format_parse_context &ctx) { return ctx.begin(); }
+    static constexpr auto parse(fmt::format_parse_context &ctx) { return ctx.begin(); }
 
     template <typename FormatContext>
     auto format(const nc::panel::DirectoryChangeRequest &_req, FormatContext &_ctx) const

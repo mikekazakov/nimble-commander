@@ -1,15 +1,15 @@
-// Copyright (C) 2021-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Trash.h"
 #include <Foundation/Foundation.h>
 #include <Base/CFPtr.h>
-#include <cstring>
+#include <string_view>
 
 namespace nc::routedio {
 
 int TrashItemAtPath(const char *_path) noexcept
 {
     const auto url = nc::base::CFPtr<CFURLRef>::adopt(CFURLCreateFromFileSystemRepresentation(
-        nullptr, reinterpret_cast<const UInt8 *>(_path), std::strlen(_path), false));
+        nullptr, reinterpret_cast<const UInt8 *>(_path), std::string_view{_path}.length(), false));
 
     if( !url ) {
         errno = ENOENT;

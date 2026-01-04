@@ -23,23 +23,23 @@ struct NSEventModifierFlagsHolder {
     {
     }
 
-    constexpr bool is_empty() const noexcept { return flags == 0; }
+    [[nodiscard]] constexpr bool is_empty() const noexcept { return flags == 0; }
 
-    constexpr bool is_capslock() const noexcept { return flags & (flag_caps_lock >> offset); }
+    [[nodiscard]] constexpr bool is_capslock() const noexcept { return flags & (flag_caps_lock >> offset); }
 
-    constexpr bool is_shift() const noexcept { return flags & (flag_shift >> offset); }
+    [[nodiscard]] constexpr bool is_shift() const noexcept { return flags & (flag_shift >> offset); }
 
-    constexpr bool is_control() const noexcept { return flags & (flag_control >> offset); }
+    [[nodiscard]] constexpr bool is_control() const noexcept { return flags & (flag_control >> offset); }
 
-    constexpr bool is_option() const noexcept { return flags & (flag_option >> offset); }
+    [[nodiscard]] constexpr bool is_option() const noexcept { return flags & (flag_option >> offset); }
 
-    constexpr bool is_command() const noexcept { return flags & (flag_command >> offset); }
+    [[nodiscard]] constexpr bool is_command() const noexcept { return flags & (flag_command >> offset); }
 
-    constexpr bool is_numpad() const noexcept { return flags & (flag_numeric_pad >> offset); }
+    [[nodiscard]] constexpr bool is_numpad() const noexcept { return flags & (flag_numeric_pad >> offset); }
 
-    constexpr bool is_help() const noexcept { return flags & (flag_help >> offset); }
+    [[nodiscard]] constexpr bool is_help() const noexcept { return flags & (flag_help >> offset); }
 
-    constexpr bool is_func() const noexcept { return flags & (flag_function >> offset); }
+    [[nodiscard]] constexpr bool is_func() const noexcept { return flags & (flag_function >> offset); }
 
     constexpr bool operator==(const NSEventModifierFlagsHolder &_rhs) const noexcept = default;
 

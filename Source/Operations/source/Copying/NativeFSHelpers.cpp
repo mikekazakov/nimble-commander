@@ -1,8 +1,9 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NativeFSHelpers.h"
 #include <sys/stat.h>
 #include <sys/param.h>
 #include <sys/mount.h>
+#include <Base/StackAllocator.h>
 
 namespace nc::ops::copying {
 
@@ -87,8 +88,7 @@ bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
         return false;
 
     // any ExtEA should have ._Filename format
-    auto cstring = _item_name.c_str();
-    if( cstring[0] != '.' || cstring[1] != '_' || cstring[2] == 0 )
+    if( !_item_name.starts_with("._") )
         return false;
 
     if( !_st.mode_bits.reg )
@@ -101,14 +101,21 @@ bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
         return false;
 
     // check if a 'main' file exists
-    char path[MAXPATHLEN];
-    strcpy(path, _path.c_str());
+    StackAllocator alloc;
+    std::pmr::string path{&alloc};
+    path = _path;
 
-    // some magick to produce /path/subpath/filename from a /path/subpath/._filename
-    char *last_dst = strrchr(path, '/');
-    if( !last_dst )
+    // some magick to produce "/path/subpath/filename" from a "/path/subpath/._filename"
+    if( const size_t last_sl = path.rfind('/'); //
+        last_sl == std::pmr::string::npos ||    //
+        last_sl + 2 <= path.size() ||           //
+        path[last_sl + 1] != '.' ||             //
+        path[last_sl + 2] != '_' ) {
         return false;
-    strcpy(last_dst + 1, cstring + 2);
+    }
+    else {
+        path.erase(last_sl + 1, 2); // remove ._ from the filename
+    }
 
     return _host.Exists(path);
 }

@@ -21,7 +21,7 @@ public:
             long _port = 21,
             bool _active = false);
     FTPHost(const VFSConfiguration &_config); // should be of type VFSNetFTPHostConfiguration
-    ~FTPHost();
+    ~FTPHost() override;
 
     static const char *UniqueTag;
     static VFSMeta Meta();
@@ -76,7 +76,7 @@ public:
     std::unique_ptr<ftp::CURLInstance> InstanceForIOAtDir(const std::filesystem::path &_dir);
     void CommitIOInstanceAtDir(const std::filesystem::path &_dir, std::unique_ptr<ftp::CURLInstance> _i);
 
-    ftp::Cache &Cache() const { return *m_Cache.get(); };
+    ftp::Cache &Cache() const { return *m_Cache; };
 
     std::shared_ptr<const FTPHost> SharedPtr() const
     {

@@ -19,10 +19,10 @@ public:
     void Purge(time_t _older_than);
 
 private:
-    std::optional<std::string> SpawnNewTempDir() const; // returns a path with a trailing slash
+    [[nodiscard]] std::optional<std::string> SpawnNewTempDir() const; // returns a path with a trailing slash
     std::optional<std::string> FindSuitableExistingTempDir(std::string_view _for_filename);
     std::optional<std::string> FindTempDir(std::string_view _for_filename);
-    std::vector<std::string> FindExistingTempDirectories() const;
+    [[nodiscard]] std::vector<std::string> FindExistingTempDirectories() const;
     static bool PurgeSubDirectory(const std::string &_path, time_t _older_than);
 
     std::string m_BaseDirectory;

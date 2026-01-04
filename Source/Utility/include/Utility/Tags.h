@@ -95,8 +95,8 @@ class Tags::Tag
 {
 public:
     Tag(const std::string *_label, Color _color) noexcept;
-    const std::string &Label() const noexcept;
-    Tags::Color Color() const noexcept;
+    [[nodiscard]] const std::string &Label() const noexcept;
+    [[nodiscard]] Tags::Color Color() const noexcept;
     bool operator==(const Tag &_rhs) const noexcept;
     bool operator!=(const Tag &_rhs) const noexcept;
     static const std::string *Internalize(std::string_view _label) noexcept;
@@ -109,7 +109,7 @@ private:
 
 template <>
 struct fmt::formatter<nc::utility::Tags::Tag> : fmt::formatter<std::string> {
-    constexpr auto parse(fmt::format_parse_context &ctx) const { return ctx.begin(); }
+    static constexpr auto parse(fmt::format_parse_context &ctx) { return ctx.begin(); }
 
     template <typename FormatContext>
     auto format(const nc::utility::Tags::Tag &_tag, FormatContext &_ctx) const

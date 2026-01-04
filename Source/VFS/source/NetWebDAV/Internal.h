@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -23,14 +23,14 @@ public:
     int port;
 
     static const char *Tag();
-    const char *Junction() const;
-    const char *VerboseJunction() const;
+    [[nodiscard]] const char *Junction() const;
+    [[nodiscard]] const char *VerboseJunction() const;
     bool operator==(const HostConfiguration &_rhs) const;
 };
 
 namespace HTTPRequests {
-using Mask = int;
-enum {
+using Mask = uint16_t;
+enum : uint16_t {
     None = 0x0000,
     Get = 0x0001,
     Head = 0x0002,
@@ -49,7 +49,7 @@ enum {
     PropPatch = 0x4000
 };
 
-enum {
+enum : uint16_t {
     //        MinimalRequiredSet = Get | Put | PropFind | PropPatch | Mkcol
     MinimalRequiredSet = Get | PropFind | PropPatch
 };

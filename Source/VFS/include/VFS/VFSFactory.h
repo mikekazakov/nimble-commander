@@ -28,7 +28,7 @@ class VFSFactory
 public:
     static VFSFactory &Instance();
 
-    const VFSMeta *Find(const std::string &_tag) const;
+    [[nodiscard]] const VFSMeta *Find(const std::string &_tag) const;
     const VFSMeta *Find(const char *_tag) const;
 
     void RegisterVFS(VFSMeta _meta);

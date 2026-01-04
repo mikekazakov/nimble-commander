@@ -25,7 +25,7 @@ struct DummyListingEntry {
 };
 } // namespace
 
-static VFSListingPtr ProduceDummyListing(std::span<const DummyListingEntry> _entries)
+VFSListingPtr ProduceDummyListing(std::span<const DummyListingEntry> _entries)
 {
     vfs::ListingInput l;
 

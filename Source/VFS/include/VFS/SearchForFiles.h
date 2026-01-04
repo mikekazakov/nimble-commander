@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/SerialQueue.h>
@@ -8,6 +8,7 @@
 
 #include <functional>
 #include <string>
+#include <string_view>
 #include <queue>
 #include <stdint.h>
 
@@ -17,12 +18,10 @@ class SearchForFiles
 {
 public:
     struct Options {
-        enum {
-            GoIntoSubDirs = 0x0001,
-            SearchForDirs = 0x0002,
-            SearchForFiles = 0x0004,
-            LookInArchives = 0x0008,
-        };
+        static constexpr int GoIntoSubDirs = 0x0001;
+        static constexpr int SearchForDirs = 0x0002;
+        static constexpr int SearchForFiles = 0x0004;
+        static constexpr int LookInArchives = 0x0008;
     };
 
     struct FilterContent {
@@ -39,8 +38,8 @@ public:
     };
 
     // _content_found used to pass info where requested content was found, or {-1,0} if not used
-    using FoundCallback =
-        std::function<void(const char *_filename, const char *_in_path, VFSHost &_in_host, CFRange _content_found)>;
+    using FoundCallback = std::function<
+        void(std::string_view _filename, const char *_in_path, VFSHost &_in_host, CFRange _content_found)>;
 
     using SpawnArchiveCallback = std::function<VFSHostPtr(const char *_for_path, VFSHost &_in_host)>;
 
@@ -113,7 +112,7 @@ private:
 
     void NotifyLookingIn(const char *_path, VFSHost &_in_host) const;
     bool FilterByContent(const char *_full_path, VFSHost &_in_host, CFRange &_r);
-    bool FilterByFilename(const char *_filename) const;
+    bool FilterByFilename(std::string_view _filename) const;
     static utility::Encoding EncodingFromXAttr(const VFSFilePtr &_f);
 
     base::SerialQueue m_Queue;

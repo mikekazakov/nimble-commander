@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <dispatch/dispatch.h>
@@ -108,10 +108,12 @@ private:
 template <class T>
 void dispatch_async(dispatch_queue_t _queue, T _f)
 {
+    // NOLINTBEGIN(bugprone-multi-level-implicit-pointer-conversion)
     dispatch_async_f(_queue, new T(std::move(_f)), [](void *_p) {
         nc::base::dispatch_cpp_support::wrapped_call(
             [](void *_p) { (*static_cast<T *>(_p))(); }, [](void *_p) { delete static_cast<T *>(_p); }, _p);
     });
+    // NOLINTEND(bugprone-multi-level-implicit-pointer-conversion)
 }
 
 template <class T>
@@ -153,10 +155,12 @@ void dispatch_apply(size_t _iterations, const T &_f)
 template <class T>
 void dispatch_after(std::chrono::nanoseconds _when, dispatch_queue_t _queue, T _f)
 {
+    // NOLINTBEGIN(bugprone-multi-level-implicit-pointer-conversion)
     dispatch_after_f(dispatch_time(DISPATCH_TIME_NOW, _when.count()), _queue, new T(std::move(_f)), [](void *_p) {
         nc::base::dispatch_cpp_support::wrapped_call(
             [](void *_p) { (*static_cast<T *>(_p))(); }, [](void *_p) { delete static_cast<T *>(_p); }, _p);
     });
+    // NOLINTEND(bugprone-multi-level-implicit-pointer-conversion)
 }
 
 template <class T>

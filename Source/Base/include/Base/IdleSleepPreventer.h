@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <memory>
@@ -12,12 +12,12 @@ public:
     class Promise
     {
     public:
+        Promise(Promise &) = delete;
         ~Promise();
+        void operator=(Promise &) = delete;
 
     private:
         Promise();
-        Promise(Promise &) = delete;
-        void operator=(Promise &) = delete;
         friend class IdleSleepPreventer;
     };
 

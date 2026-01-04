@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/ioctl.h>
 #include <sys/sysctl.h>
 
@@ -28,8 +28,9 @@ static std::vector<std::string> SplitArgs(const char *_args)
 {
     std::vector<std::string> vec;
 
+    const size_t initial_len = std::string_view{_args}.length();
     char *args = strdup(_args);
-    int sz = static_cast<int>(std::strlen(args));
+    int sz = static_cast<int>(initial_len);
     int lp = 0;
     for( int i = 0; i < sz; ++i ) {
         if( args[i] == '\\' ) {
@@ -137,7 +138,7 @@ void SingleTask::WriteChildInput(const void *_d, size_t _sz)
     if( m_MasterFD < 0 || m_TaskPID < 0 || _sz == 0 )
         return;
 
-    const std::lock_guard<std::mutex> lock(m_Lock);
+    const std::lock_guard<std::mutex> lock(m_MasterLock);
     write(m_MasterFD, _d, _sz);
 }
 
@@ -194,18 +195,6 @@ end_of_all:
     CleanUp();
 }
 
-void SingleTask::EscapeSpaces(char *_buf)
-{
-    size_t sz = strlen(_buf);
-    for( size_t i = 0; i < sz; ++i )
-        if( _buf[i] == ' ' ) {
-            memmove(_buf + i + 1, _buf + i, sz - i + 1);
-            _buf[i] = '\\';
-            ++sz;
-            ++i;
-        }
-}
-
 void SingleTask::ResizeWindow(int _sx, int _sy)
 {
     if( m_MasterFD < 0 || m_TaskPID < 0 )
@@ -214,7 +203,7 @@ void SingleTask::ResizeWindow(int _sx, int _sy)
     if( m_TermSX == _sx && m_TermSY == _sy )
         return;
 
-    const std::lock_guard<std::mutex> lock(m_Lock);
+    const std::lock_guard<std::mutex> lock(m_MasterLock);
 
     m_TermSX = _sx;
     m_TermSY = _sy;
@@ -224,7 +213,7 @@ void SingleTask::ResizeWindow(int _sx, int _sy)
 
 void SingleTask::CleanUp()
 {
-    const std::lock_guard<std::mutex> lock(m_Lock);
+    const std::lock_guard<std::mutex> lock(m_MasterLock);
 
     if( m_TaskPID > 0 ) {
         const int pid = m_TaskPID;

@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "TextModeWorkingSet.h"
@@ -37,18 +37,18 @@ public:
     HexModeFrame &operator=(const HexModeFrame &) = delete;
     HexModeFrame &operator=(HexModeFrame &&) = delete;
 
-    int BytesPerRow() const noexcept;
-    int BytesPerColumn() const noexcept;
-    int NumberOfColumns() const noexcept;
-    int DigitsInAddress() const noexcept;
-    const TextModeWorkingSet &WorkingSet() const noexcept;
-    const nc::utility::FontGeometryInfo &FontInfo() const noexcept;
+    [[nodiscard]] int BytesPerRow() const noexcept;
+    [[nodiscard]] int BytesPerColumn() const noexcept;
+    [[nodiscard]] int NumberOfColumns() const noexcept;
+    [[nodiscard]] int DigitsInAddress() const noexcept;
+    [[nodiscard]] const TextModeWorkingSet &WorkingSet() const noexcept;
+    [[nodiscard]] const nc::utility::FontGeometryInfo &FontInfo() const noexcept;
 
-    int NumberOfRows() const noexcept;
-    bool Empty() const noexcept;
+    [[nodiscard]] int NumberOfRows() const noexcept;
+    [[nodiscard]] bool Empty() const noexcept;
 
-    const Row &RowAtIndex(int _row_index) const;
-    const std::vector<Row> &Rows() const noexcept;
+    [[nodiscard]] const Row &RowAtIndex(int _row_index) const;
+    [[nodiscard]] const std::vector<Row> &Rows() const noexcept;
 
     /**
      * Returns the index of the row which has the closest start byte index to _bytes_offset.
@@ -114,11 +114,9 @@ public:
     /** Returns a numbers of unicode chars covered by this row */
     int CharsNum() const noexcept;
 
-    enum {
-        AddressIndex = 0,
-        SnippetIndex = 1,
-        ColumnsBaseIndex = 2
-    };
+    static constexpr size_t AddressIndex = 0;
+    static constexpr size_t SnippetIndex = 1;
+    static constexpr size_t ColumnsBaseIndex = 2;
 
 private:
     /**
@@ -142,9 +140,9 @@ class HexModeFrame::RowsBuilder
 public:
     RowsBuilder(const Source &_source);
 
-    Row Build(std::pair<int, int> _chars_indices,    // start index, number of characters
-              std::pair<int, int> _string_bytes,     // start index, number of bytes
-              std::pair<int, int> _row_bytes) const; // start index, number of bytes
+    [[nodiscard]] Row Build(std::pair<int, int> _chars_indices,    // start index, number of characters
+                            std::pair<int, int> _string_bytes,     // start index, number of bytes
+                            std::pair<int, int> _row_bytes) const; // start index, number of bytes
 
 private:
     const Source &m_Source;
@@ -257,4 +255,5 @@ inline int HexModeFrame::Row::BytesInColum(int _column) const
     const auto chars_per_byte = 3;
     return int((CFStringGetLength(ColumnString(_column)) + 1) / chars_per_byte);
 }
+
 } // namespace nc::viewer

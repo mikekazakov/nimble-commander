@@ -1,11 +1,10 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/CFStackAllocator.h>
 #include <fmt/core.h>
 
 namespace nc::base {
 
-CFStackAllocator::CFStackAllocator() noexcept
-    : m_Left(m_Size), m_StackObjects(0), m_HeapObjects(0), m_Alloc(Construct())
+CFStackAllocator::CFStackAllocator() noexcept : m_Alloc(Construct())
 {
     static_assert(sizeof(CFStackAllocator) == m_Size + 16);
 }

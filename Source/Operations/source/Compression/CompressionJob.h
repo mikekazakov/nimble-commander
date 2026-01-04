@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Job.h"
@@ -13,7 +13,7 @@ namespace nc::ops {
 struct CompressionJobCallbacks {
     std::function<void()> m_TargetPathDefined = [] {};
 
-    enum class SourceScanErrorResolution {
+    enum class SourceScanErrorResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -21,7 +21,7 @@ struct CompressionJobCallbacks {
     std::function<SourceScanErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)> m_SourceScanError =
         [](Error, const std::string &, VFSHost &) { return SourceScanErrorResolution::Stop; };
 
-    enum class SourceAccessErrorResolution {
+    enum class SourceAccessErrorResolution : uint8_t {
         Stop,
         Skip,
         Retry
@@ -29,7 +29,7 @@ struct CompressionJobCallbacks {
     std::function<SourceAccessErrorResolution(Error _err, const std::string &_path, VFSHost &_vfs)>
         m_SourceAccessError = [](Error, const std::string &, VFSHost &) { return SourceAccessErrorResolution::Stop; };
 
-    enum class SourceReadErrorResolution {
+    enum class SourceReadErrorResolution : uint8_t {
         Stop,
         Skip
     };
@@ -47,19 +47,19 @@ public:
                    std::string _dst_root,
                    VFSHostPtr _dst_vfs,
                    std::string _password);
-    ~CompressionJob();
+    ~CompressionJob() override;
 
     const std::string &TargetArchivePath() const;
 
 private:
     struct Source;
-    enum class StepResult {
+    enum class StepResult : uint8_t {
         Stopped,
         Done,
         Skipped
     };
 
-    virtual void Perform() override;
+    void Perform() override;
     std::optional<Source> ScanItems();
     bool ScanItem(const VFSListingItem &_item, Source &_ctx);
     bool ScanItem(const std::string &_full_path,

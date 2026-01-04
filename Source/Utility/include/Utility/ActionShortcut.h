@@ -35,10 +35,10 @@ struct ActionShortcut {
     operator bool() const noexcept;
 
 #ifdef __OBJC__
-    NSString *Key() const noexcept;
-    NSString *PrettyString() const noexcept;
+    [[nodiscard]] NSString *Key() const noexcept;
+    [[nodiscard]] NSString *PrettyString() const noexcept;
 #endif
-    std::string ToPersString() const noexcept;
+    [[nodiscard]] std::string ToPersString() const noexcept;
 
     // Lower-case english letters, numbers, generic symbols and control characters.
     // Only characters from Unicode Plane 0 are supported
@@ -65,7 +65,7 @@ struct ActionShortcut::EventData {
 
 template <>
 struct std::hash<nc::utility::ActionShortcut> {
-    size_t operator()(const nc::utility::ActionShortcut &) const noexcept;
+    size_t operator()(const nc::utility::ActionShortcut & /*_ac*/) const noexcept;
 };
 
 #ifdef __OBJC__

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include "VFSDeclarations.h"
 #include <Base/Error.h>
-#include <optional>
 
 #ifdef __OBJC__
 #include <Foundation/Foundation.h>
@@ -15,7 +14,7 @@
 class VFSFile : public std::enable_shared_from_this<VFSFile>
 {
 public:
-    enum class ReadParadigm {
+    enum class ReadParadigm : uint8_t {
         // The best possible variant - can read a block of data at a random offset.
         // Seeking is also possible.
         Random = 3,
@@ -32,7 +31,7 @@ public:
         NoRead = 0
     };
 
-    enum class WriteParadigm {
+    enum class WriteParadigm : uint8_t {
         // Supports writing at a random offset, not currently implemented.
         Random = 4,
 
@@ -123,11 +122,9 @@ public:
     // Returns the amount of bytes written.
     virtual std::expected<size_t, nc::Error> Write(const void *_buf, size_t _size);
 
-    enum {
-        Seek_Set = 0,
-        Seek_Cur = 1,
-        Seek_End = 2
-    };
+    static constexpr int Seek_Set = 0;
+    static constexpr int Seek_Cur = 1;
+    static constexpr int Seek_End = 2;
 
     // Seek() is available if Read paradigm is Seek or above.
     virtual std::expected<uint64_t, nc::Error> Seek(off_t _off, int _basis);

@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
@@ -9,18 +9,21 @@ namespace nc::panel::view::brief {
 class LayoutEngineBase
 {
 public:
-    int ItemsNumber() const noexcept;
-    int ItemHeight() const noexcept;
-    int RowsNumber() const noexcept;
-    int ColumnsNumber() const noexcept;
-    NSSize ContentSize() const noexcept;
-    NSCollectionViewLayoutAttributes *AttributesForItemNumber(int _number) const noexcept;
-    const std::vector<int> &ColumnsPositions() const noexcept;
-    const std::vector<int> &ColumnsWidths() const noexcept;
+    [[nodiscard]] int ItemsNumber() const noexcept;
+    [[nodiscard]] int ItemHeight() const noexcept;
+    [[nodiscard]] int RowsNumber() const noexcept;
+    [[nodiscard]] int ColumnsNumber() const noexcept;
+    [[nodiscard]] NSSize ContentSize() const noexcept;
+    [[nodiscard]] NSCollectionViewLayoutAttributes *AttributesForItemNumber(int _number) const noexcept;
+    [[nodiscard]] const std::vector<int> &ColumnsPositions() const noexcept;
+    [[nodiscard]] const std::vector<int> &ColumnsWidths() const noexcept;
 
 protected:
     static int NumberOfRowsForViewHeight(double _view_height, int _item_height) noexcept;
-    NSArray<NSCollectionViewLayoutAttributes *> *LogarithmicSearchForItemsInRect(NSRect _rect) const noexcept;
+    [[nodiscard]] NSArray<NSCollectionViewLayoutAttributes *> *
+    LogarithmicSearchForItemsInRect(NSRect _rect) const noexcept;
+
+    // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
 
     // input data:
     int m_ItemsNumber = 0;
@@ -35,6 +38,8 @@ protected:
     std::vector<NSCollectionViewLayoutAttributes *> m_Attributes;
     std::vector<int> m_ColumnsPositions;
     std::vector<int> m_ColumnsWidths;
+
+    // NOLINTEND(misc-non-private-member-variables-in-classes)
 };
 
 inline int LayoutEngineBase::ItemsNumber() const noexcept

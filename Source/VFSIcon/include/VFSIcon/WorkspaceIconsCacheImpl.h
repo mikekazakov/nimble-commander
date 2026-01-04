@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
@@ -46,7 +46,7 @@ class WorkspaceIconsCacheImpl final : public WorkspaceIconsCache, public detail:
 public:
     WorkspaceIconsCacheImpl(FileStateReader &_file_state_reader = FileStateReaderImpl::instance,
                             IconBuilder &_icon_builder = IconBuilderImpl::instance);
-    ~WorkspaceIconsCacheImpl();
+    ~WorkspaceIconsCacheImpl() override;
 
     NSImage *IconIfHas(const std::string &_file_path) override;
 
@@ -55,9 +55,7 @@ public:
     static int CacheMaxSize() noexcept { return m_CacheSize; }
 
 private:
-    enum {
-        m_CacheSize = 4096
-    };
+    static constexpr size_t m_CacheSize = 4096;
 
     struct Info : base::intrusive_ref_counter<Info> {
         uint64_t file_size = 0;

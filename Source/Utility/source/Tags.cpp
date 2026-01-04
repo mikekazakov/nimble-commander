@@ -617,13 +617,15 @@ static bool ClearAllTags(int _fd)
     if( buf_len == 0 )
         return true; // nothing to do
 
-    const bool has_usertags = memmem(buf.data(), buf_len, g_MDItemUserTags, strlen(g_MDItemUserTags) + 1) != nullptr;
+    const bool has_usertags =
+        memmem(buf.data(), buf_len, g_MDItemUserTags, std::string_view{g_MDItemUserTags}.length() + 1) != nullptr;
     if( has_usertags ) {
         if( fremovexattr(_fd, g_MDItemUserTags, 0) != 0 )
             return false;
     }
 
-    const bool has_finfo = memmem(buf.data(), buf_len, g_FinderInfo, strlen(g_FinderInfo) + 1) != nullptr;
+    const bool has_finfo =
+        memmem(buf.data(), buf_len, g_FinderInfo, std::string_view{g_FinderInfo}.length() + 1) != nullptr;
     if( has_finfo ) {
         std::array<uint8_t, 32> finder_info;
         const ssize_t ff_read = fgetxattr(_fd, g_FinderInfo, finder_info.data(), finder_info.size(), 0, 0);
@@ -657,7 +659,8 @@ bool Tags::WriteTags(int _fd, std::span<const Tag> _tags) noexcept
 
     std::array<uint8_t, 32> finder_info;
     finder_info.fill(0);
-    const bool has_finfo = memmem(buf.data(), res, g_FinderInfo, strlen(g_FinderInfo) + 1) != nullptr;
+    const bool has_finfo =
+        memmem(buf.data(), res, g_FinderInfo, std::string_view{g_FinderInfo}.length() + 1) != nullptr;
     if( has_finfo ) {
         const ssize_t ff_read = fgetxattr(_fd, g_FinderInfo, finder_info.data(), finder_info.size(), 0, 0);
         if( ff_read != finder_info.size() )

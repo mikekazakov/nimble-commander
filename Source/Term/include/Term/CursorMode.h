@@ -15,7 +15,7 @@ enum class CursorMode : int8_t {
     SteadyBar = 5
 };
 
-constexpr inline bool IsSteady(CursorMode _mode) noexcept
+constexpr bool IsSteady(CursorMode _mode) noexcept
 {
     return _mode == CursorMode::SteadyBar || _mode == CursorMode::SteadyBlock || _mode == CursorMode::SteadyUnderline;
 }

@@ -19,7 +19,7 @@ struct InvertSelection final : PanelAction {
 
 struct SelectAllByExtension final : PanelAction {
     SelectAllByExtension(bool _result_selection);
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:

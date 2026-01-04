@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include <Utility/NativeFSManager.h>
 #include <RoutedIO/RoutedIO.h>
@@ -10,8 +10,7 @@
 
 namespace nc::vfs::native {
 
-File::File(std::string_view _relative_path, const std::shared_ptr<NativeHost> &_host)
-    : VFSFile(_relative_path, _host), m_FD(-1), m_OpenFlags(0), m_Position(0)
+File::File(std::string_view _relative_path, const std::shared_ptr<NativeHost> &_host) : VFSFile(_relative_path, _host)
 {
 }
 
@@ -201,7 +200,7 @@ unsigned File::XAttrCount() const
     unsigned count = 0;
     while( s < e ) {
         ++count;
-        s += strlen(s) + 1;
+        s += std::string_view{s}.length() + 1;
     }
     return count;
 }
@@ -228,7 +227,7 @@ void File::XAttrIterateNames(const XAttrIterateNamesCallback &_handler) const
         if( !_handler(s) )
             break;
 
-        s += strlen(s) + 1;
+        s += std::string_view{s}.length() + 1;
     }
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/CFPtr.h>
 #include <cassert>
 #include <cerrno>
@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
+#include <string_view>
 #include <dirent.h>
 #include <ftw.h>
 #include <sys/mount.h>
@@ -618,8 +619,13 @@ ssize_t PosixIOInterfaceRouted::readlink(const char *_path, char *_symlink, size
         return -1;
     }
 
-    const size_t sz = strlen(value);
-    strncpy(_symlink, value, _buf_sz);
+    const size_t sz = std::string_view{value}.length();
+    if( sz + 1 >= _buf_sz ) {
+        xpc_release(reply);
+        errno = ERANGE;
+        return -1;
+    }
+    memcpy(_symlink, value, sz + 1);
 
     xpc_release(reply);
 

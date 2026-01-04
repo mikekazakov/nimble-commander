@@ -1,7 +1,8 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DeletionJob.h"
 #include <Utility/PathManip.h>
 #include <Utility/NativeFSManager.h>
+#include <Base/StackAllocator.h>
 #include <dirent.h>
 #include <sys/param.h>
 #include <sys/stat.h>
@@ -72,9 +73,14 @@ void DeletionJob::ScanDirectory(const std::string &_path,
 {
     auto &vfs = *m_SourceItems[_listing_item_index].Host();
 
-    std::vector<VFSDirEnt> dir_entries;
+    struct Entry {
+        VFSDirEnt::Type type;
+        std::string name;
+    };
+
+    std::vector<Entry> dir_entries;
     const auto it_callback = [&](const VFSDirEnt &_entry) {
-        dir_entries.emplace_back(_entry);
+        dir_entries.emplace_back(_entry.type, std::string{_entry.name});
         return true;
     };
     while( true ) {
@@ -331,16 +337,26 @@ std::expected<void, Error> DeletionJob::UnlockItem(std::string_view _path, VFSHo
     return chflags_rc;
 }
 
-bool DeletionJob::IsEAStorage(VFSHost &_host, const std::string &_directory, const char *_filename, uint8_t _unix_type)
+// TODO: this is not covered with unit tests
+bool DeletionJob::IsEAStorage(VFSHost &_host,
+                              const std::string_view _directory,
+                              const std::string_view _filename,
+                              const uint8_t _unix_type)
 {
-    if( _unix_type != DT_REG || !_host.IsNativeFS() || _filename[0] != '.' || _filename[1] != '_' || _filename[2] == 0 )
+    if( _unix_type != DT_REG || //
+        !_host.IsNativeFS() ||  //
+        !_filename.starts_with("._") )
         return false;
 
-    char origin_file_path[MAXPATHLEN];
-    strcpy(origin_file_path, _directory.c_str());
+    StackAllocator alloc;
+    std::pmr::string origin_file_path{&alloc};
+
+    // reconstruct original filename: "Dir" + "._Meow" -> "Dir/Meow"
+    origin_file_path = _directory;
     if( !utility::PathManip::HasTrailingSlash(origin_file_path) )
-        strcat(origin_file_path, "/");
-    strcat(origin_file_path, _filename + 2);
+        origin_file_path += '/';
+    origin_file_path += _filename.substr(2);
+
     return _host.Exists(origin_file_path);
 }
 

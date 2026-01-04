@@ -17,7 +17,7 @@ namespace {
 using namespace std::literals;
 using nc::utility::TemporaryFileStorageImpl;
 
-static auto g_TestDirPrefix = "_nc__utility__temporary_file_storage__test_";
+auto g_TestDirPrefix = "_nc__utility__temporary_file_storage__test_";
 static int RMRF(const std::string &_path);
 static std::string MakeTempFilesStorage();
 static std::optional<std::string> Load(const std::string &_filepath);
@@ -134,7 +134,6 @@ TEST_CASE(PREFIX "Creates a temp file with a provided data")
     const auto base_dir = MakeTempFilesStorage();
     const auto remove_base_dir = at_scope_end([&] { RMRF(base_dir); });
     const auto prefix = "some_prefix";
-    const auto full_path_prefix = base_dir + prefix;
     auto storage = TemporaryFileStorageImpl{base_dir, prefix};
     const auto memory = std::string(1000000, 'Z');
 
@@ -161,7 +160,6 @@ TEST_CASE(PREFIX "Opens a temp file")
     const auto base_dir = MakeTempFilesStorage();
     const auto remove_base_dir = at_scope_end([&] { RMRF(base_dir); });
     const auto prefix = "some_prefix";
-    const auto full_path_prefix = base_dir + prefix;
     auto storage = TemporaryFileStorageImpl{base_dir, prefix};
     const auto memory = std::string(1000000, 'Z');
     SECTION("Without a filename")
@@ -193,7 +191,6 @@ TEST_CASE(PREFIX "Purge remove old entries")
     const auto base_dir = MakeTempFilesStorage();
     const auto remove_base_dir = at_scope_end([&] { RMRF(base_dir); });
     const auto prefix = "some_prefix";
-    const auto full_path_prefix = base_dir + prefix;
     auto storage = TemporaryFileStorageImpl{base_dir, prefix};
 
     SECTION("Removes old regular files")
@@ -245,7 +242,6 @@ TEST_CASE(PREFIX "Makes a new dir after purging")
     const auto base_dir = MakeTempFilesStorage();
     const auto remove_base_dir = at_scope_end([&] { RMRF(base_dir); });
     const auto prefix = "some_prefix";
-    const auto full_path_prefix = base_dir + prefix;
     auto storage = TemporaryFileStorageImpl{base_dir, prefix};
 
     const auto path1 = storage.MakeDirectory("dir");
@@ -255,7 +251,7 @@ TEST_CASE(PREFIX "Makes a new dir after purging")
     CHECK(path1 != path2);
 }
 
-static std::string MakeTempFilesStorage()
+std::string MakeTempFilesStorage()
 {
     const auto base_path = EnsureTrailingSlash(NSTemporaryDirectory().fileSystemRepresentation);
     const auto tmp_path = base_path + g_TestDirPrefix + "/";
@@ -266,7 +262,7 @@ static std::string MakeTempFilesStorage()
     return tmp_path;
 }
 
-static int RMRF(const std::string &_path)
+int RMRF(const std::string &_path)
 {
     auto unlink_cb = [](const char *fpath,
                         [[maybe_unused]] const struct stat *sb,
@@ -281,7 +277,7 @@ static int RMRF(const std::string &_path)
     return nftw(_path.c_str(), unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
 }
 
-static std::optional<std::string> Load(const std::string &_filepath)
+std::optional<std::string> Load(const std::string &_filepath)
 {
     std::ifstream in(_filepath, std::ios::in | std::ios::binary);
     if( !in )
@@ -296,7 +292,7 @@ static std::optional<std::string> Load(const std::string &_filepath)
     return contents;
 }
 
-static bool IsEmptyDir(const std::string &_dir_path)
+bool IsEmptyDir(const std::string &_dir_path)
 {
     const auto directory = opendir(_dir_path.c_str());
     if( directory == nullptr )

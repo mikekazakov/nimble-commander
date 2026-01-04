@@ -5,12 +5,12 @@
 namespace nc::panel::actions {
 
 struct SyncPanels final : StateAction {
-    bool Predicate(MainWindowFilePanelState *_target) const override;
+    [[nodiscard]] bool Predicate(MainWindowFilePanelState *_target) const override;
     void Perform(MainWindowFilePanelState *_target, id _sender) const override;
 };
 
 struct SwapPanels final : StateAction {
-    bool Predicate(MainWindowFilePanelState *_target) const override;
+    [[nodiscard]] bool Predicate(MainWindowFilePanelState *_target) const override;
     void Perform(MainWindowFilePanelState *_target, id _sender) const override;
 };
 

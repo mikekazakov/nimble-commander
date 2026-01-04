@@ -12,7 +12,7 @@ class ExtensionsWhitelistImpl : public ExtensionsWhitelist
 {
 public:
     ExtensionsWhitelistImpl(const nc::utility::UTIDB &_uti_db, const std::vector<std::string> &_allowed_utis);
-    ~ExtensionsWhitelistImpl();
+    ~ExtensionsWhitelistImpl() override;
     bool AllowExtension(const std::string &_extension) const override;
 
 private:

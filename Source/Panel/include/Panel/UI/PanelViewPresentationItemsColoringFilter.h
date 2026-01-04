@@ -21,14 +21,14 @@ struct PresentationItemsColoringFilter {
     /**
      * Return true if all filtering options are in non-set state.
      */
-    bool IsEmpty() const;
+    [[nodiscard]] bool IsEmpty() const;
 
     /**
      * Will return true if no defined filters fail to accept _item.
      * If any defined filter disagree with _item - will return false immediately.
      * Any empty coloring filter will return true on any _item.
      */
-    bool Filter(const VFSListingItem &_item, const data::ItemVolatileData &_item_vd) const;
+    [[nodiscard]] bool Filter(const VFSListingItem &_item, const data::ItemVolatileData &_item_vd) const;
 };
 
 bool operator==(const PresentationItemsColoringFilter &_lhs, const PresentationItemsColoringFilter &_rhs) noexcept;

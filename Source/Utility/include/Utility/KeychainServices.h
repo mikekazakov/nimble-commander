@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -6,6 +6,8 @@
 class KeychainServices
 {
 public:
+    KeychainServices(const KeychainServices &) = delete;
+    void operator=(const KeychainServices &) = delete;
     static KeychainServices &Instance();
 
     // will override on duplicate
@@ -17,6 +19,4 @@ public:
 
 private:
     KeychainServices();
-    KeychainServices(const KeychainServices &) = delete;
-    void operator=(const KeychainServices &) = delete;
 };

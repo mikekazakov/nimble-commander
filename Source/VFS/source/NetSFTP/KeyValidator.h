@@ -10,7 +10,7 @@ class KeyValidator
 public:
     KeyValidator(const std::string &_private_key_path, const std::string &_passphrase);
 
-    bool Validate() const;
+    [[nodiscard]] bool Validate() const;
 
 private:
     std::string m_KeyPath;

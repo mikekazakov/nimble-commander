@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <atomic>
@@ -19,7 +19,10 @@ struct AtomicHolder {
                                      const T &_new_value,
                                      bool _dump_on_fail = false);
     void store(const T &_new_value);
+
+    // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     T value;
+    // NOLINTEND(misc-non-private-member-variables-in-classes)
 
 private:
     std::condition_variable condvar;
@@ -92,7 +95,7 @@ template <class T>
 void AtomicHolder<T>::store(const T &_new_value)
 {
     {
-        std::lock_guard<std::mutex> lock(mutex);
+        const std::lock_guard<std::mutex> lock(mutex);
         value = _new_value;
     }
     condvar.notify_all();
@@ -112,7 +115,7 @@ bool QueuedAtomicHolder<T>::wait_to_become(std::chrono::nanoseconds _timeout, co
 {
     std::unique_lock<std::mutex> lock(m_Mutex);
     const auto pred = [&_new_value, this] {
-        if( m_Strict == false ) {
+        if( !m_Strict ) {
             while( !m_Queue.empty() && m_Queue.front() != _new_value )
                 m_Queue.pop();
         }
@@ -150,7 +153,7 @@ template <class T>
 void QueuedAtomicHolder<T>::store(const T &_new_value)
 {
     {
-        std::lock_guard<std::mutex> lock(m_Mutex);
+        const std::lock_guard<std::mutex> lock(m_Mutex);
         m_Queue.push(_new_value);
     }
     m_CondVar.notify_all();

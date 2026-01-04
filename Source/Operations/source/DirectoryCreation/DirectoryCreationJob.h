@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Job.h"
@@ -7,7 +7,7 @@
 namespace nc::ops {
 
 struct DirectoryCreationJobCallbacks {
-    enum class ErrorResolution {
+    enum class ErrorResolution : uint8_t {
         Stop,
         Retry
     };
@@ -21,10 +21,10 @@ public:
     DirectoryCreationJob(const std::vector<std::string> &_directories_chain,
                          const std::string &_root_folder,
                          const VFSHostPtr &_vfs);
-    ~DirectoryCreationJob();
+    ~DirectoryCreationJob() override;
 
 private:
-    virtual void Perform() override;
+    void Perform() override;
     bool MakeDir(const std::string &_path);
 
     const std::vector<std::string> &m_DirectoriesChain;

@@ -6,7 +6,7 @@
 namespace nc::panel::actions {
 
 struct RenameInPlace final : PanelAction {
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 };
 

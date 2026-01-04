@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -15,10 +15,10 @@ public:
         Range(unsigned short loc, unsigned short len);
 
         constexpr static unsigned short max_length();
-        NSRange toNSRange() const;
-        Range intersection(const Range _rhs) const;
-        bool intersects(const Range _rhs) const;
-        unsigned max() const;
+        [[nodiscard]] NSRange toNSRange() const;
+        [[nodiscard]] Range intersection(const Range _rhs) const;
+        [[nodiscard]] bool intersects(const Range _rhs) const;
+        [[nodiscard]] unsigned max() const;
     };
 
     struct TextExtraction {
@@ -53,8 +53,8 @@ public:
     struct FileInfo {
         FileInfo() = default;
         FileInfo(VFSListingItem _item);
-        NSString *ParentFilename() const;
-        NSString *GrandparentFilename() const;
+        [[nodiscard]] NSString *ParentFilename() const;
+        [[nodiscard]] NSString *GrandparentFilename() const;
 
         VFSListingItem item;
         NSString *filename;  // filename.txt
@@ -64,7 +64,7 @@ public:
         struct tm mod_time_tm;
     };
 
-    enum class CaseTransform {
+    enum class CaseTransform : uint8_t {
         Unchanged = 0,
         Uppercase = 1,
         Lowercase = 2,
@@ -102,10 +102,10 @@ public:
 
     void SetDefaultCounter(long _start, long _step, unsigned _stripe, unsigned _width);
 
-    NSString *Rename(const FileInfo &_fi, int _number) const;
+    [[nodiscard]] NSString *Rename(const FileInfo &_fi, int _number) const;
 
 private:
-    enum class ActionType : short {
+    enum class ActionType : uint8_t {
         Static,
         Filename,            // full file name
         Name,                // name without extension and dot
@@ -195,7 +195,7 @@ inline BatchRenamingScheme::Range::Range(unsigned short loc, unsigned short len)
 {
 }
 
-inline constexpr unsigned short BatchRenamingScheme::Range::max_length()
+constexpr unsigned short BatchRenamingScheme::Range::max_length()
 {
     return std::numeric_limits<unsigned short>::max();
 }
@@ -207,7 +207,7 @@ inline NSRange BatchRenamingScheme::Range::toNSRange() const
 
 inline BatchRenamingScheme::Range BatchRenamingScheme::Range::intersection(const Range _rhs) const
 {
-    unsigned short min_v = std::max(location, _rhs.location);
+    const unsigned short min_v = std::max(location, _rhs.location);
     unsigned max_v = std::min(max(), _rhs.max());
     if( max_v < min_v )
         return {0, 0};
@@ -220,7 +220,7 @@ inline BatchRenamingScheme::Range BatchRenamingScheme::Range::intersection(const
 
 inline bool BatchRenamingScheme::Range::intersects(const Range _rhs) const
 {
-    return (max() < _rhs.location || _rhs.max() < location) ? false : true;
+    return max() >= _rhs.location && _rhs.max() >= location;
 }
 
 inline unsigned BatchRenamingScheme::Range::max() const

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalEditorInfo.h"
 #include <VFS/VFS.h>
 #include <Term/SingleTask.h>
@@ -182,10 +182,7 @@ struct ExternalEditorsPersistence {
 
 @end
 
-ExternalEditorStartupInfo::ExternalEditorStartupInfo() noexcept
-    : m_MaxFileSize(0), m_OnlyFiles(true), m_OpenInTerminal(false)
-{
-}
+ExternalEditorStartupInfo::ExternalEditorStartupInfo() noexcept = default;
 
 const std::string &ExternalEditorStartupInfo::Name() const noexcept
 {
@@ -247,9 +244,12 @@ bool ExternalEditorStartupInfo::IsValidForItem(const VFSListingItem &_item, bool
 
 std::string ExternalEditorStartupInfo::SubstituteFileName(const std::string &_path) const
 {
-    char esc_buf[MAXPATHLEN];
-    strcpy(esc_buf, _path.c_str());
-    nc::term::SingleTask::EscapeSpaces(esc_buf);
+    std::string esc_buf;
+    for( const char c : _path ) {
+        if( c == ' ' )
+            esc_buf += '\\';
+        esc_buf += c;
+    }
 
     if( m_Arguments.empty() )
         return esc_buf; // just return escaped file path

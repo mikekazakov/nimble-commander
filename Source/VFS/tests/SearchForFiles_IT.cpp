@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include "SearchForFiles.h"
@@ -26,7 +26,7 @@ TEST_CASE(PREFIX "Test basic searching")
 
     using set = std::set<std::string>;
     set filenames;
-    auto callback = [&](const char *_filename, [[maybe_unused]] const char *_in_path, VFSHost &, CFRange) {
+    auto callback = [&](std::string_view _filename, [[maybe_unused]] const char *_in_path, VFSHost &, CFRange) {
         filenames.emplace(_filename);
     };
 
@@ -97,7 +97,7 @@ TEST_CASE(PREFIX "Test size filter")
 
     using set = std::set<std::string>;
     set filenames;
-    auto callback = [&](const char *_filename, [[maybe_unused]] const char *_in_path, VFSHost &, CFRange) {
+    auto callback = [&](std::string_view _filename, [[maybe_unused]] const char *_in_path, VFSHost &, CFRange) {
         filenames.emplace(_filename);
     };
 
@@ -143,7 +143,7 @@ TEST_CASE(PREFIX "Test content filter")
 
     using set = std::set<std::string>;
     set filenames;
-    auto callback = [&](const char *_filename, [[maybe_unused]] const char *_in_path, VFSHost &, CFRange) {
+    auto callback = [&](std::string_view _filename, [[maybe_unused]] const char *_in_path, VFSHost &, CFRange) {
         filenames.emplace(_filename);
     };
 

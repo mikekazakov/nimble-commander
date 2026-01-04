@@ -6,8 +6,7 @@
 
 namespace nc::vfs {
 
-SearchInFile::SearchInFile(nc::vfs::FileWindow &_file)
-    : m_File(_file), m_TextSearchEncoding(utility::Encoding::ENCODING_INVALID)
+SearchInFile::SearchInFile(nc::vfs::FileWindow &_file) : m_File(_file)
 {
     if( !m_File.FileOpened() )
         throw std::invalid_argument("SearchInFile: FileWindow should be opened");

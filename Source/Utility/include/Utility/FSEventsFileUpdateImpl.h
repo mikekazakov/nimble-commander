@@ -15,7 +15,7 @@ class FSEventsFileUpdateImpl : public FSEventsFileUpdate
 public:
     FSEventsFileUpdateImpl();
     FSEventsFileUpdateImpl(const FSEventsFileUpdateImpl &) = delete;
-    ~FSEventsFileUpdateImpl();
+    ~FSEventsFileUpdateImpl() override;
     void operator=(const FSEventsFileUpdateImpl &) = delete;
 
     uint64_t AddWatchPath(const std::filesystem::path &_path, std::function<void()> _handler) override;

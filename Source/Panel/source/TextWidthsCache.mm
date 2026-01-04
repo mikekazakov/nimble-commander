@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextWidthsCache.h"
 #include <Utility/FontExtras.h>
 #include <Base/dispatch_cpp.h>
@@ -100,11 +100,11 @@ std::vector<unsigned short> TextWidthsCache::Widths(std::span<const CFStringRef>
 TextWidthsCache::Cache &TextWidthsCache::ForFont(NSFont *_font)
 {
     // compose e.g. "12Times New Roman Regular" as a key
+    const char *const name = _font.fontName.UTF8String;
+    const int font_size = static_cast<int>(std::floor(_font.pointSize + 0.5));
+
     char buf[1024];
-    const auto name = _font.fontName.UTF8String;
-    const auto font_size = static_cast<int>(std::floor(_font.pointSize + 0.5));
-    const auto rc = std::to_chars(std::begin(buf), std::end(buf), font_size);
-    strcpy(rc.ptr, name);
+    *fmt::format_to(buf, "{}{}", font_size, name) = 0;
     const std::string_view key(buf);
 
     auto lock = std::lock_guard{m_Lock};

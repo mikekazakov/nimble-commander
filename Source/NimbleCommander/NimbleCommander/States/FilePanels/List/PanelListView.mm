@@ -365,7 +365,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
                         m_DateAccessedColumn,
                         m_TagsColumn} ) {
         if( auto cell = objc_cast<PanelListViewTableHeaderCell>(column.headerCell) ) {
-            cell.leftOffset = static_cast<double>(m_Geometry.LeftInset());
+            cell.leftOffset = static_cast<double>(nc::panel::PanelListViewGeometry::LeftInset());
         }
     }
     // But for the filename column the offset is special

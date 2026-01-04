@@ -18,41 +18,42 @@ public:
     Document(std::string_view _text);
     ~Document();
 
-    char StyleAt(Sci_Position position) const noexcept override;
+    [[nodiscard]] char StyleAt(Sci_Position position) const noexcept override;
 
-    int GetLevel(Sci_Position line) const noexcept override;
+    [[nodiscard]] int GetLevel(Sci_Position line) const noexcept override;
 
     int SetLevel(Sci_Position line, int level) noexcept override;
 
-    int GetLineState(Sci_Position line) const noexcept override;
+    [[nodiscard]] int GetLineState(Sci_Position line) const noexcept override;
 
     int SetLineState(Sci_Position line, int state) noexcept override;
 
-    int CodePage() const noexcept override;
+    [[nodiscard]] int CodePage() const noexcept override;
 
-    bool IsDBCSLeadByte(char ch) const noexcept override;
+    [[nodiscard]] bool IsDBCSLeadByte(char ch) const noexcept override;
 
     int GetLineIndentation(Sci_Position line) noexcept override;
 
-    Sci_Position LineStart(Sci_Position line) const noexcept override;
+    [[nodiscard]] Sci_Position LineStart(Sci_Position line) const noexcept override;
 
-    Sci_Position LineEnd(Sci_Position line) const noexcept override;
+    [[nodiscard]] Sci_Position LineEnd(Sci_Position line) const noexcept override;
 
-    Sci_Position GetRelativePosition(Sci_Position _position, Sci_Position _offset) const noexcept override;
+    [[nodiscard]] Sci_Position GetRelativePosition(Sci_Position _position,
+                                                   Sci_Position _offset) const noexcept override;
 
     int GetCharacterAndWidth(Sci_Position position, Sci_Position *_width) const noexcept override;
 
-    int Version() const noexcept override;
+    [[nodiscard]] int Version() const noexcept override;
 
     void SetErrorStatus(int status) noexcept override;
 
-    Sci_Position Length() const noexcept override;
+    [[nodiscard]] Sci_Position Length() const noexcept override;
 
     void GetCharRange(char *buffer, Sci_Position position, Sci_Position _length) const noexcept override;
 
     const char *BufferPointer() noexcept override;
 
-    Sci_Position LineFromPosition(Sci_Position pos) const noexcept override;
+    [[nodiscard]] Sci_Position LineFromPosition(Sci_Position pos) const noexcept override;
 
     void StartStyling(Sci_Position position) noexcept override;
 
@@ -66,7 +67,7 @@ public:
 
     void ChangeLexerState(Sci_Position start, Sci_Position end) noexcept override;
 
-    std::span<const char> Styles() const noexcept;
+    [[nodiscard]] std::span<const char> Styles() const noexcept;
 
 private:
     std::string_view m_Text;

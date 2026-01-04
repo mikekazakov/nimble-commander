@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/algo.h>
 #include <Utility/PathManip.h>
 #include <libssh2.h>
@@ -546,7 +546,6 @@ SFTPHost::IterateDirectoryListing(std::string_view _path, const std::function<bo
     }
     const auto close_sftp_handle = at_scope_end([&] { libssh2_sftp_closedir(sftp_handle); });
 
-    VFSDirEnt e;
     while( true ) {
         char mem[MAXPATHLEN];
         LIBSSH2_SFTP_ATTRIBUTES attrs;
@@ -564,9 +563,9 @@ SFTPHost::IterateDirectoryListing(std::string_view _path, const std::function<bo
         if( !(attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) )
             break; // can't process without meanful mode
 
-        strcpy(e.name, mem);
-        e.name_len = uint16_t(strlen(mem));
-        e.type = IFTODT(attrs.permissions);
+        VFSDirEnt e;
+        e.type = static_cast<VFSDirEnt::Type>(IFTODT(attrs.permissions));
+        e.name = mem;
 
         if( !_handler(e) )
             break;

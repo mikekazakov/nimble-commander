@@ -13,7 +13,7 @@ namespace nc::panel::actions {
 
 struct PasteFromPasteboard final : PanelAction {
     PasteFromPasteboard(nc::vfs::NativeHost &_native_host);
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:
@@ -22,7 +22,7 @@ private:
 
 struct MoveFromPasteboard final : PanelAction {
     MoveFromPasteboard(nc::vfs::NativeHost &_native_host);
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:

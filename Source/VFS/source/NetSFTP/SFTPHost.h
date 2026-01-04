@@ -4,10 +4,10 @@
 #include <VFS/Host.h>
 #include <mutex>
 
-typedef struct _LIBSSH2_SFTP LIBSSH2_SFTP;
-typedef struct _LIBSSH2_SESSION LIBSSH2_SESSION;
-typedef struct _LIBSSH2_USERAUTH_KBDINT_PROMPT LIBSSH2_USERAUTH_KBDINT_PROMPT;
-typedef struct _LIBSSH2_USERAUTH_KBDINT_RESPONSE LIBSSH2_USERAUTH_KBDINT_RESPONSE;
+using LIBSSH2_SFTP = struct _LIBSSH2_SFTP;
+using LIBSSH2_SESSION = struct _LIBSSH2_SESSION;
+using LIBSSH2_USERAUTH_KBDINT_PROMPT = struct _LIBSSH2_USERAUTH_KBDINT_PROMPT;
+using LIBSSH2_USERAUTH_KBDINT_RESPONSE = struct _LIBSSH2_USERAUTH_KBDINT_RESPONSE;
 
 #include "OSType.h"
 
@@ -105,7 +105,7 @@ public:
     // internal stuff
     struct Connection {
         ~Connection();
-        bool Alive() const;
+        [[nodiscard]] bool Alive() const;
         LIBSSH2_SFTP *sftp = nullptr;
         LIBSSH2_SESSION *ssh = nullptr;
         int socket = -1;

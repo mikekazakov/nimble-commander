@@ -5,7 +5,7 @@
 #include <optional>
 #include <chrono>
 
-typedef struct kinfo_proc kinfo_proc;
+using kinfo_proc = struct kinfo_proc;
 
 namespace nc::utility {
 

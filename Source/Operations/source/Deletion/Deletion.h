@@ -15,12 +15,12 @@ class Deletion final : public Operation
 {
 public:
     Deletion(std::vector<VFSListingItem> _items, DeletionOptions _options);
-    ~Deletion();
+    ~Deletion() override;
 
 private:
     using Callbacks = DeletionJobCallbacks;
 
-    virtual Job *GetJob() noexcept override;
+    Job *GetJob() noexcept override;
 
     DeletionJobCallbacks::ReadDirErrorResolution OnReadDirError(Error _err, const std::string &_path, VFSHost &_vfs);
 

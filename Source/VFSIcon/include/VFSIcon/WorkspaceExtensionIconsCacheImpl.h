@@ -13,7 +13,7 @@ class WorkspaceExtensionIconsCacheImpl : public WorkspaceExtensionIconsCache
 {
 public:
     WorkspaceExtensionIconsCacheImpl(const nc::utility::UTIDB &_uti_db);
-    ~WorkspaceExtensionIconsCacheImpl();
+    ~WorkspaceExtensionIconsCacheImpl() override;
 
     NSImage *CachedIconForExtension(const std::string &_extension) const override;
     NSImage *IconForExtension(const std::string &_extension) override;

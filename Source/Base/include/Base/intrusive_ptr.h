@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <utility>
@@ -37,7 +37,8 @@ public:
     }
 
     template <typename U>
-    intrusive_ptr(const intrusive_ptr<U> &_rhs, std::enable_if_t<std::is_convertible_v<U *, T *>> * = nullptr) noexcept
+    intrusive_ptr(const intrusive_ptr<U> &_rhs,
+                  std::enable_if_t<std::is_convertible_v<U *, T *>> * /*unused*/ = nullptr) noexcept
         : p(_rhs.get())
     {
         if( p )
@@ -47,7 +48,8 @@ public:
     intrusive_ptr(intrusive_ptr &&_rhs) noexcept : p(_rhs.p) { _rhs.p = nullptr; }
 
     template <typename U>
-    intrusive_ptr(intrusive_ptr<U> &&_rhs, std::enable_if_t<std::is_convertible_v<U *, T *>> * = nullptr) noexcept
+    intrusive_ptr(intrusive_ptr<U> &&_rhs,
+                  std::enable_if_t<std::is_convertible_v<U *, T *>> * /*unused*/ = nullptr) noexcept
         : p(_rhs.get())
     {
         _rhs.release();
@@ -80,12 +82,13 @@ public:
     void reset() noexcept { intrusive_ptr().swap(*this); }
 
     template <typename U>
-    std::enable_if_t<std::is_convertible_v<U *, T *>, void> reset(U *_p) noexcept
+    void reset(U *_p) noexcept
+        requires(std::is_convertible_v<U *, T *>)
     {
         intrusive_ptr(_p).swap(*this);
     }
 
-    T *get() const noexcept { return p; }
+    [[nodiscard]] T *get() const noexcept { return p; }
 
     T *release() noexcept
     {
@@ -177,12 +180,11 @@ void intrusive_ptr_dec_refcount(const intrusive_ref_counter<T> *p) noexcept;
 template <typename T>
 class intrusive_ref_counter
 {
-public:
     intrusive_ref_counter() noexcept : c{0} {}
+    intrusive_ref_counter(const intrusive_ref_counter & /*unused*/) noexcept : c{0} {}
 
-    intrusive_ref_counter(const intrusive_ref_counter &) noexcept : c{0} {}
-
-    intrusive_ref_counter &operator=(const intrusive_ref_counter &) noexcept { return *this; }
+public:
+    intrusive_ref_counter &operator=(const intrusive_ref_counter & /*unused*/) noexcept { return *this; }
 
     int use_count() const noexcept { return c.load(std::memory_order_relaxed); }
 
@@ -193,6 +195,7 @@ private:
     mutable std::atomic<int> c;
     friend void intrusive_ptr_add_refcount<T>(const intrusive_ref_counter<T> *p) noexcept;
     friend void intrusive_ptr_dec_refcount<T>(const intrusive_ref_counter<T> *p) noexcept;
+    friend T;
 };
 
 template <typename T>

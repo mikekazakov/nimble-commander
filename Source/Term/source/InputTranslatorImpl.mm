@@ -1,13 +1,15 @@
-// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InputTranslatorImpl.h"
 #include <cassert>
 #include <string>
+#include <string_view>
+#include <optional>
 #include <Carbon/Carbon.h>
 #include <algorithm>
 
 namespace nc::term {
 
-static_assert(sizeof(InputTranslator::MouseEvent) == 8);
+static_assert(sizeof(InputTranslator::MouseEvent) == 6);
 
 static CFStringRef CreateModifiedCharactersForKeyPress(unsigned short _keycode, NSEventModifierFlags _flags);
 static std::string ReportX10(InputTranslator::MouseEvent _event) noexcept;
@@ -36,7 +38,7 @@ void InputTranslatorImpl::ProcessKeyDown(NSEvent *_event)
     const uint16_t unicode = [character characterAtIndex:0];
     const auto modflags = _event.modifierFlags;
 
-    const char *seq_resp = nullptr;
+    std::optional<std::string_view> seq_resp;
     switch( unicode ) {
         case NSUpArrowFunctionKey:
             seq_resp = m_ApplicationCursorKeys ? "\eOA" : "\e[A";
@@ -115,7 +117,7 @@ void InputTranslatorImpl::ProcessKeyDown(NSEvent *_event)
     }
 
     if( seq_resp ) {
-        m_Output(Bytes(reinterpret_cast<const std::byte *>(seq_resp), std::strlen(seq_resp)));
+        m_Output(Bytes(reinterpret_cast<const std::byte *>(seq_resp->data()), seq_resp->length()));
         return;
     }
 
@@ -146,8 +148,8 @@ void InputTranslatorImpl::ProcessKeyDown(NSEvent *_event)
     else if( (modflags & NSEventModifierFlagDeviceIndependentFlagsMask) == NSEventModifierFlagCapsLock )
         character = _event.characters;
 
-    const char *utf8 = character.UTF8String;
-    m_Output(Bytes(reinterpret_cast<const std::byte *>(utf8), strlen(utf8)));
+    const std::string_view utf8 = character.UTF8String;
+    m_Output(Bytes(reinterpret_cast<const std::byte *>(utf8.data()), utf8.length()));
 }
 
 void InputTranslatorImpl::ProcessTextInput(NSString *_str)
@@ -155,10 +157,8 @@ void InputTranslatorImpl::ProcessTextInput(NSString *_str)
     if( !_str || _str.length == 0 )
         return;
 
-    const char *utf8str = [_str UTF8String];
-    const size_t sz = strlen(utf8str);
-
-    m_Output(Bytes(reinterpret_cast<const std::byte *>(utf8str), sz));
+    const std::string_view utf8str = _str.UTF8String;
+    m_Output(Bytes(reinterpret_cast<const std::byte *>(utf8str.data()), utf8str.length()));
 }
 
 void InputTranslatorImpl::SetApplicationCursorKeys(bool _enabled)

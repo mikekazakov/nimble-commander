@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <chrono>
@@ -20,7 +20,7 @@ public:
     Cache();
     ~Cache();
 
-    enum class E {
+    enum class E : uint8_t {
         Ok = 0,
         Unknown = 1,
         NonExist = 2
@@ -54,7 +54,7 @@ private:
     };
 
     void Notify(const std::string &_changed_dir_path);
-    static bool IsOutdated(const Directory &);
+    static bool IsOutdated(const Directory & /*_listing*/);
 
     std::unordered_map<std::string, Directory> m_Dirs;
     mutable std::mutex m_Lock;

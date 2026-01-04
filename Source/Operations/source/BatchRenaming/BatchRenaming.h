@@ -15,7 +15,7 @@ public:
     BatchRenaming(std::vector<std::string> _src_paths,
                   std::vector<std::string> _dst_paths,
                   std::shared_ptr<VFSHost> _vfs);
-    ~BatchRenaming();
+    ~BatchRenaming() override;
 
 private:
     using Callbacks = BatchRenamingJobCallbacks;

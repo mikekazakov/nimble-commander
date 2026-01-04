@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefOnDiskStorageImpl.h"
 #include <Base/PosixFilesystemMock.h>
 #include "UnitTests_main.h"
@@ -21,7 +21,9 @@ TEST_CASE("BriefOnDiskStorageImpl writes the entire file")
 
     nc::base::PosixFilesystemMock fs;
     EXPECT_CALL(fs, mkstemp(Eq(expected_pattern))).WillOnce(Invoke([fake_path](char *p) {
+        // NOLINTBEGIN(bugprone-unsafe-functions)
         strcpy(p, fake_path.c_str());
+        // NOLINTEND(bugprone-unsafe-functions)
         return fake_fd;
     }));
     EXPECT_CALL(fs, write(fake_fd, data.c_str(), data.length())).WillOnce(Return(data.length()));
@@ -57,7 +59,6 @@ TEST_CASE("BriefOnDiskStorageImpl renames a temp file when a specific extension 
 TEST_CASE("BriefOnDiskStorageImpl does as many write()s as needed")
 {
     const auto data = std::string{"Hello, World!"};
-    const auto expected_pattern = "/temp/dir/prefix.XXXXXX"s;
 
     nc::base::PosixFilesystemMock fs;
     EXPECT_CALL(fs, mkstemp(_)).WillOnce(Return(42));

@@ -11,7 +11,7 @@ namespace nc::panel::actions {
 
 struct ShowVolumeInformation final : PanelAction {
     ShowVolumeInformation(nc::utility::NativeFSManager &_nfsm);
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:

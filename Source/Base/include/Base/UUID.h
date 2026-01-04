@@ -1,4 +1,4 @@
-// Copyright (C) 2023-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <array>
 #include <cstdint>
@@ -13,8 +13,8 @@ class UUID
 {
 public:
     UUID() noexcept;
-    std::string ToString() const noexcept;
-    size_t Hash() const noexcept;
+    [[nodiscard]] std::string ToString() const noexcept;
+    [[nodiscard]] size_t Hash() const noexcept;
     static UUID Generate() noexcept;
     static std::optional<UUID> FromString(std::string_view _str) noexcept;
     constexpr bool operator==(const UUID &) const noexcept = default;

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CopyingJob.h"
 #include "../Statistics.h"
 #include "Helpers.h"
@@ -1757,8 +1757,9 @@ void CopyingJob::EraseXattrsFromNativeFD(int _fd_in) const
 {
     auto xnames = reinterpret_cast<char *>(m_Buffers[0].get());
     auto xnamesizes = flistxattr(_fd_in, xnames, m_BufferSize, 0);
-    for( auto s = xnames, e = xnames + xnamesizes; s < e; s += strlen(s) + 1 ) // iterate thru xattr names..
-        fremovexattr(_fd_in, s, 0);                                            // ..and remove everyone
+    for( auto s = xnames, e = xnames + xnamesizes; s < e;
+         s += std::string_view{s}.length() + 1 ) // iterate thru xattr names..
+        fremovexattr(_fd_in, s, 0);              // ..and remove everyone
 }
 
 // uses m_Buffer[0] and m_Buffer[1] to reduce mallocs
@@ -1768,8 +1769,9 @@ void CopyingJob::CopyXattrsFromNativeFDToNativeFD(int _fd_from, int _fd_to) cons
     auto xnames = reinterpret_cast<char *>(m_Buffers[0].get());
     auto xdata = m_Buffers[1].get();
     auto xnamesizes = flistxattr(_fd_from, xnames, m_BufferSize, 0);
-    for( auto s = xnames, e = xnames + xnamesizes; s < e; s += strlen(s) + 1 ) { // iterate thru xattr names..
-        auto xattrsize = fgetxattr(_fd_from, s, xdata, m_BufferSize, 0, 0);      // and read all these xattrs
+    for( auto s = xnames, e = xnames + xnamesizes; s < e;
+         s += std::string_view{s}.length() + 1 ) {                          // iterate thru xattr names..
+        auto xattrsize = fgetxattr(_fd_from, s, xdata, m_BufferSize, 0, 0); // and read all these xattrs
         if( xattrsize >= 0 )                              // xattr can be zero-length, just a tag itself
             fsetxattr(_fd_to, s, xdata, xattrsize, 0, 0); // write them into _fd_to
     }

@@ -7,8 +7,8 @@
 namespace nc::panel::actions {
 
 struct CopyToPasteboard : PanelAction {
-    bool Predicate(PanelController *_target) const override;
-    bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 protected:
@@ -19,8 +19,8 @@ namespace context {
 
 struct CopyToPasteboard final : panel::actions::CopyToPasteboard {
     CopyToPasteboard(const std::vector<VFSListingItem> &_items);
-    bool Predicate(PanelController *_target) const override;
-    bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:

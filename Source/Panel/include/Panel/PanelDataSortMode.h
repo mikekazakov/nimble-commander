@@ -78,8 +78,8 @@ struct SortMode {
     // text-comparison method
     Collation collation : 2 = Collation::CaseInsensitive;
 
-    bool isdirect() const noexcept;
-    bool isrevert() const noexcept;
+    [[nodiscard]] bool isdirect() const noexcept;
+    [[nodiscard]] bool isrevert() const noexcept;
     static bool validate(Mode _mode) noexcept;
     static bool validate(Collation _collation) noexcept;
     constexpr bool operator==(const SortMode &_r) const noexcept = default;

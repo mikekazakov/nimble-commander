@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "VFSFile.h"
@@ -13,9 +13,7 @@ namespace nc::vfs {
 class FileWindow
 {
 public:
-    enum {
-        DefaultWindowSize = 32768
-    };
+    static constexpr size_t DefaultWindowSize = 32768;
 
     // Default constructor, creates an inactive file window.
     FileWindow() = default;
@@ -31,20 +29,20 @@ public:
     void CloseFile();
 
     // ...
-    bool FileOpened() const;
+    [[nodiscard]] bool FileOpened() const;
 
     // Returns current size of an underlying VFS file, effectively calling File()->Size().
-    size_t FileSize() const;
+    [[nodiscard]] size_t FileSize() const;
 
     // Return the raw pointer to the data window in file. Size of this window is WindowSize().
-    const void *Window() const;
+    [[nodiscard]] const void *Window() const;
 
     // Size of a file window in bytes.
     // WindowSize can't be larger than FileSize.
-    size_t WindowSize() const;
+    [[nodiscard]] size_t WindowSize() const;
 
     // Returns the current window position in file.
-    size_t WindowPos() const;
+    [[nodiscard]] size_t WindowPos() const;
 
     // Moves the window position in the file and immediately reload its content.
     // Will move only inside valid boundaries. In case of invalid boundaries returns InvalidCall.
@@ -55,7 +53,7 @@ public:
     std::expected<void, Error> MoveWindow(size_t _offset);
 
     // Returns the underlying VFS file.
-    const VFSFilePtr &File() const;
+    [[nodiscard]] const VFSFilePtr &File() const;
 
 private:
     std::expected<void, Error> ReadFileWindowRandomPart(size_t _offset, size_t _len);

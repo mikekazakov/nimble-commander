@@ -18,7 +18,7 @@ public:
     ~ChildrenTracker();
     ChildrenTracker &operator=(const ChildrenTracker &) = delete;
 
-    int pid() const;
+    [[nodiscard]] int pid() const;
 
 private:
     void Drain();

@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <Config/Config.h>
 #include <Config/ObjCBridge.h>
@@ -23,7 +23,7 @@ private:
     void ConfigChanged()
     {
         auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:m_Config];
-        if( id v = [bridge valueForKeyPath:[NSString stringWithUTF8String:m_ConfigPath]] )
+        if( const id v = [bridge valueForKeyPath:[NSString stringWithUTF8String:m_ConfigPath]] )
             [m_Object setValue:v forKey:m_ObjectKey];
     }
 

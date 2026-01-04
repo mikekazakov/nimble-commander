@@ -26,7 +26,7 @@ public:
     virtual void RemoveWatchPathWithToken(uint64_t _token) = 0;
 
     // a token with with this (zero) value is interpreted as invalid.
-    constexpr static inline uint64_t empty_token = 0;
+    constexpr static uint64_t empty_token = 0;
 };
 
 } // namespace nc::utility

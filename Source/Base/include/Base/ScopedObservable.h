@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <functional>
@@ -18,9 +18,13 @@ namespace nc::base {
 class ScopedObservableBase
 {
 public:
-    ScopedObservableBase();
-    ~ScopedObservableBase();
     struct ObservationTicket;
+
+    ScopedObservableBase();
+    ScopedObservableBase(ScopedObservableBase &) = delete;
+    ~ScopedObservableBase();
+
+    void operator=(ScopedObservableBase &) = delete;
 
 protected:
     ObservationTicket AddTicketedObserver(std::function<void()> _callback,
@@ -29,8 +33,6 @@ protected:
     void FireObservers(uint64_t _mask = std::numeric_limits<uint64_t>::max()) const;
 
 private:
-    ScopedObservableBase(ScopedObservableBase &) = delete;
-    void operator=(ScopedObservableBase &) = delete;
     void StopObservation(uint64_t _ticket);
 
     struct Indirect {
@@ -54,15 +56,19 @@ private:
 
 struct ScopedObservableBase::ObservationTicket {
     ObservationTicket() noexcept;
-    ObservationTicket(ObservationTicket &&) noexcept;
+
+    ObservationTicket(const ObservationTicket &) = delete;
+    ObservationTicket(ObservationTicket && /*_r*/) noexcept;
+
     ~ObservationTicket();
-    ObservationTicket &operator=(ObservationTicket &&) noexcept;
+
+    void operator=(const ObservationTicket &) = delete;
+    ObservationTicket &operator=(ObservationTicket && /*_r*/) noexcept;
+
     operator bool() const noexcept;
 
 private:
     ObservationTicket(std::shared_ptr<ScopedObservableBase::Indirect> _inst, unsigned long _ticket) noexcept;
-    ObservationTicket(const ObservationTicket &) = delete;
-    void operator=(const ObservationTicket &) = delete;
 
     std::shared_ptr<ScopedObservableBase::Indirect> indirect;
     uint64_t ticket;

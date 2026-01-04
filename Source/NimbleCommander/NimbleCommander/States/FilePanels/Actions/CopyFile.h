@@ -24,7 +24,7 @@ protected:
     void AddDeselectorIfNeeded(nc::ops::Operation &_with_operation, PanelController *_to_target) const;
 
 private:
-    bool ShouldAutomaticallyDeselect() const;
+    [[nodiscard]] bool ShouldAutomaticallyDeselect() const;
     nc::config::Config &m_Config;
 };
 
@@ -32,7 +32,7 @@ class CopyTo final : public StateAction, CopyBase
 {
 public:
     CopyTo(nc::config::Config &_config);
-    bool Predicate(MainWindowFilePanelState *_target) const override;
+    [[nodiscard]] bool Predicate(MainWindowFilePanelState *_target) const override;
     void Perform(MainWindowFilePanelState *_target, id _sender) const override;
 };
 
@@ -40,21 +40,21 @@ class CopyAs final : public StateAction, CopyBase
 {
 public:
     CopyAs(nc::config::Config &_config);
-    bool Predicate(MainWindowFilePanelState *_target) const override;
+    [[nodiscard]] bool Predicate(MainWindowFilePanelState *_target) const override;
     void Perform(MainWindowFilePanelState *_target, id _sender) const override;
 };
 
 class MoveTo final : public StateAction
 {
 public:
-    bool Predicate(MainWindowFilePanelState *_target) const override;
+    [[nodiscard]] bool Predicate(MainWindowFilePanelState *_target) const override;
     void Perform(MainWindowFilePanelState *_target, id _sender) const override;
 };
 
 class MoveAs final : public StateAction
 {
 public:
-    bool Predicate(MainWindowFilePanelState *_target) const override;
+    [[nodiscard]] bool Predicate(MainWindowFilePanelState *_target) const override;
     void Perform(MainWindowFilePanelState *_target, id _sender) const override;
 };
 

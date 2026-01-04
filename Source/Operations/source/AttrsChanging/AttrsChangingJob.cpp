@@ -1,7 +1,8 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingJob.h"
 #include <Utility/PathManip.h>
 #include <sys/stat.h>
+#include <fmt/format.h>
 
 namespace nc::ops {
 
@@ -75,10 +76,10 @@ void AttrsChangingJob::ScanItem(unsigned _origin_item)
     Statistics().CommitEstimated(Statistics::SourceType::Items, 1);
 
     if( m_Command.apply_to_subdirs && item.IsDir() ) {
-        std::vector<VFSDirEnt> dir_entries;
+        std::vector<std::string> dir_entries;
         while( true ) {
             const auto callback = [&](const VFSDirEnt &_entry) {
-                dir_entries.emplace_back(_entry);
+                dir_entries.emplace_back(_entry.name);
                 return true;
             };
             const std::expected<void, Error> list_rc = vfs.IterateDirectoryListing(path, callback);
@@ -97,7 +98,7 @@ void AttrsChangingJob::ScanItem(unsigned _origin_item)
 
         const auto prefix = &m_Filenames.back();
         for( auto &dirent : dir_entries )
-            ScanItem(path + "/" + dirent.name, dirent.name, _origin_item, prefix);
+            ScanItem(fmt::format("{}/{}", path, dirent), dirent, _origin_item, prefix);
     }
 }
 
@@ -135,10 +136,10 @@ void AttrsChangingJob::ScanItem(const std::string &_full_path,
     Statistics().CommitEstimated(Statistics::SourceType::Items, 1);
 
     if( m_Command.apply_to_subdirs && S_ISDIR(st.mode) ) {
-        std::vector<VFSDirEnt> dir_entries;
+        std::vector<std::string> dir_entries;
         while( true ) {
             const auto callback = [&](const VFSDirEnt &_entry) {
-                dir_entries.emplace_back(_entry);
+                dir_entries.emplace_back(_entry.name);
                 return true;
             };
             const std::expected<void, Error> list_rc = vfs.IterateDirectoryListing(_full_path, callback);
@@ -156,7 +157,7 @@ void AttrsChangingJob::ScanItem(const std::string &_full_path,
         }
         const auto prefix = &m_Filenames.back();
         for( auto &dirent : dir_entries )
-            ScanItem(_full_path + "/" + dirent.name, dirent.name, _origin_item, prefix);
+            ScanItem(fmt::format("{}/{}", _full_path, dirent), dirent, _origin_item, prefix);
     }
 }
 

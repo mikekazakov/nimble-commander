@@ -1,7 +1,9 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS_fwd.h>
+
+#include <cstddef>
 
 namespace nc::utility {
 class TemporaryFileStorage;
@@ -13,7 +15,8 @@ namespace nc::panel {
 class QuickLookVFSBridge
 {
 public:
-    QuickLookVFSBridge(nc::utility::TemporaryFileStorage &_storage, uint64_t _max_size = 64 * 1024 * 1024);
+    QuickLookVFSBridge(nc::utility::TemporaryFileStorage &_storage,
+                       uint64_t _max_size = static_cast<uint64_t>(64 * 1024 * 1024));
 
     // Synchronously fetches the item at the specified path from the specified host into a temporary storage on the real
     // native filesystem.

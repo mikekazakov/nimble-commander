@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Pool.h"
@@ -9,15 +9,16 @@ class AggregateProgressTracker : public std::enable_shared_from_this<AggregatePr
 {
 public:
     AggregateProgressTracker();
+    AggregateProgressTracker(const AggregateProgressTracker &) = delete;
     ~AggregateProgressTracker();
+    void operator=(const AggregateProgressTracker &) = delete;
+
     void AddPool(Pool &_pool);
     void SetProgressCallback(std::function<void(double _progress)> _callback);
 
     static constexpr auto InvalidProgess = -1.;
 
 private:
-    AggregateProgressTracker(const AggregateProgressTracker &) = delete;
-    void operator=(const AggregateProgressTracker &) = delete;
     void PoolsChanged();
     bool ArePoolsEmpty() const;
     std::tuple<int, double> OperationsAmountAndProgress() const;

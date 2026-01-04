@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/ScopedObservable.h>
@@ -19,10 +19,10 @@ using NCOpsGenericErrorDialog = void *;
 namespace nc::ops {
 
 class Job;
-class Statistics;
+class Statistics; // NOLINT
 struct AsyncDialogResponse;
 
-enum class OperationState {
+enum class OperationState : uint8_t {
     Cold = 0,
     Running = 1,
     Paused = 2,
@@ -39,7 +39,10 @@ enum class OperationState {
 class Operation : private base::ScopedObservableBase
 {
 public:
+    Operation(const Operation &) = delete;
     virtual ~Operation();
+
+    void operator=(const Operation &) = delete;
 
     void Start();
     void Pause();
@@ -53,17 +56,16 @@ public:
     void Wait() const;
     bool Wait(std::chrono::nanoseconds _wait_for_time) const;
 
-    enum {
-        NotifyAboutStart = 1 << 0,
-        NotifyAboutPause = 1 << 1,
-        NotifyAboutResume = 1 << 2,
-        NotifyAboutStop = 1 << 3,
-        NotifyAboutCompletion = 1 << 4,
-        NotifyAboutTitleChange = 1 << 5,
-        NotifyAboutFinish = NotifyAboutStop | NotifyAboutCompletion,
-        NotifyAboutStateChange =
-            NotifyAboutStart | NotifyAboutPause | NotifyAboutResume | NotifyAboutStop | NotifyAboutCompletion
-    };
+    static constexpr uint64_t NotifyAboutStart = 1 << 0;
+    static constexpr uint64_t NotifyAboutPause = 1 << 1;
+    static constexpr uint64_t NotifyAboutResume = 1 << 2;
+    static constexpr uint64_t NotifyAboutStop = 1 << 3;
+    static constexpr uint64_t NotifyAboutCompletion = 1 << 4;
+    static constexpr uint64_t NotifyAboutTitleChange = 1 << 5;
+    static constexpr uint64_t NotifyAboutFinish = NotifyAboutStop | NotifyAboutCompletion;
+    static constexpr uint64_t NotifyAboutStateChange =
+        NotifyAboutStart | NotifyAboutPause | NotifyAboutResume | NotifyAboutStop | NotifyAboutCompletion;
+
     using ObservationTicket = ScopedObservableBase::ObservationTicket;
     ObservationTicket Observe(uint64_t _notification_mask, std::function<void()> _callback);
     void ObserveUnticketed(uint64_t _notification_mask, std::function<void()> _callback);
@@ -76,7 +78,7 @@ public:
     void SetItemStatusCallback(ItemStateReportCallback _callback);
 
 protected:
-    enum class GenericDialog {
+    enum class GenericDialog : uint8_t {
         AbortRetry,
         AbortSkipSkipAll,
         AbortSkipSkipAllRetry,
@@ -102,8 +104,6 @@ protected:
     void SetTitle(std::string _title);
 
 private:
-    Operation(const Operation &) = delete;
-    void operator=(const Operation &) = delete;
     const Job *GetJob() const;
     void JobFinished();
     void JobPaused();

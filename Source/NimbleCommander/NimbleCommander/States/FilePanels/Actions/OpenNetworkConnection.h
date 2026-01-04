@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "DefaultAction.h"
@@ -9,40 +9,39 @@ class NetworkConnectionsManager;
 
 namespace nc::panel::actions {
 
-struct OpenConnectionBase : PanelAction {
+struct OpenConnectionBase {
     OpenConnectionBase(NetworkConnectionsManager &_net_mgr);
 
-protected:
     NetworkConnectionsManager &m_NetMgr;
 };
 
-struct OpenNewFTPConnection final : OpenConnectionBase {
+struct OpenNewFTPConnection final : PanelAction, private OpenConnectionBase {
     OpenNewFTPConnection(NetworkConnectionsManager &_net_mgr);
     void Perform(PanelController *_target, id _sender) const override;
 };
 
-struct OpenNewSFTPConnection final : OpenConnectionBase {
+struct OpenNewSFTPConnection final : PanelAction, private OpenConnectionBase {
     OpenNewSFTPConnection(NetworkConnectionsManager &_net_mgr);
     void Perform(PanelController *_target, id _sender) const override;
 };
 
-struct OpenNewWebDAVConnection final : OpenConnectionBase {
+struct OpenNewWebDAVConnection final : PanelAction, private OpenConnectionBase {
     OpenNewWebDAVConnection(NetworkConnectionsManager &_net_mgr);
     void Perform(PanelController *_target, id _sender) const override;
 };
 
-struct OpenNewLANShare final : OpenConnectionBase {
+struct OpenNewLANShare final : PanelAction, private OpenConnectionBase {
     OpenNewLANShare(NetworkConnectionsManager &_net_mgr);
     void Perform(PanelController *_target, id _sender) const override;
 };
 
-struct OpenNetworkConnections final : OpenConnectionBase {
+struct OpenNetworkConnections final : PanelAction, private OpenConnectionBase {
     OpenNetworkConnections(NetworkConnectionsManager &_net_mgr);
     void Perform(PanelController *_target, id _sender) const override;
 };
 
 // will extract additional context from _sender.representedObject
-struct OpenExistingNetworkConnection final : OpenConnectionBase {
+struct OpenExistingNetworkConnection final : PanelAction, private OpenConnectionBase {
     OpenExistingNetworkConnection(NetworkConnectionsManager &_net_mgr);
     void Perform(PanelController *_target, id _sender) const override;
 };

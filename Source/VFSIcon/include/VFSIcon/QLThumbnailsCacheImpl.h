@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "QLThumbnailsCache.h"
@@ -16,7 +16,7 @@ class QLThumbnailsCacheImpl : public QLThumbnailsCache
 {
 public:
     QLThumbnailsCacheImpl();
-    ~QLThumbnailsCacheImpl();
+    ~QLThumbnailsCacheImpl() override;
 
     NSImage *ThumbnailIfHas(const std::string &_filename, int _px_size) override;
 
@@ -25,9 +25,7 @@ public:
     NSImage *ProduceThumbnail(const std::string &_filename, int _px_size, const FileStateHint &_hint) override;
 
 private:
-    enum {
-        m_CacheSize = 4096
-    };
+    static constexpr size_t m_CacheSize = 4096;
 
     /**
      * This string_view/string abomination is used to mitigate the lack of heterogenious
@@ -38,9 +36,9 @@ private:
         } no_ownership;
         Key();
         Key(const std::string &_path, int _px_size);
-        Key(std::string_view _path, int _px_size, no_ownership_tag);
-        Key(const Key &);
-        Key(Key &&) noexcept;
+        Key(std::string_view _path, int _px_size, no_ownership_tag /*unused*/);
+        Key(const Key & /*_key*/);
+        Key(Key && /*_key*/) noexcept;
         Key &operator=(const Key &_rhs);
         Key &operator=(Key &&_rhs) noexcept = default;
         bool operator==(const Key &_rhs) const noexcept;

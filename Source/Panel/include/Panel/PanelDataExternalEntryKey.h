@@ -22,14 +22,14 @@ struct ExternalEntryKey {
     time_t atime = 0;
     time_t add_time; // -1 means absent
     bool is_dir = false;
-    bool is_valid() const noexcept;
+    [[nodiscard]] bool is_valid() const noexcept;
 };
 
 } // namespace nc::panel::data
 
 template <>
 struct fmt::formatter<nc::panel::data::ExternalEntryKey> : fmt::formatter<std::string> {
-    constexpr auto parse(fmt::format_parse_context &ctx) { return ctx.begin(); }
+    static constexpr auto parse(fmt::format_parse_context &ctx) { return ctx.begin(); }
 
     template <typename FormatContext>
     auto format(const nc::panel::data::ExternalEntryKey &_key, FormatContext &_ctx) const

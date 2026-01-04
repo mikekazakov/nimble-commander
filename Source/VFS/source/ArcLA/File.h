@@ -13,7 +13,7 @@ class File final : public VFSFile
 {
 public:
     File(std::string_view _relative_path, const std::shared_ptr<ArchiveHost> &_host);
-    ~File();
+    ~File() override;
 
     std::expected<void, Error> Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     bool IsOpened() const override;

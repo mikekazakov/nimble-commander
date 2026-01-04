@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <xpc/xpc.h>
@@ -17,7 +17,7 @@ class PosixIOInterface
 {
 public:
     virtual ~PosixIOInterface() = 0;
-    virtual bool isrouted() const noexcept = 0;
+    [[nodiscard]] virtual bool isrouted() const noexcept = 0;
     virtual int open(const char *_path, int _flags, int _mode = 0) noexcept = 0;
     virtual int close(int _fd) noexcept = 0;
     virtual ssize_t read(int _fd, void *_buf, size_t _nbyte) noexcept = 0;
@@ -55,6 +55,9 @@ public:
     static PosixIOInterface &InterfaceForAccess(const char *_path, int _mode) noexcept;
 
     RoutedIO();
+    RoutedIO(RoutedIO &) = delete;
+    void operator=(RoutedIO &) = delete;
+
     static RoutedIO &Instance();
 
     bool Enabled() const noexcept;
@@ -68,8 +71,6 @@ public:
     static void UninstallViaRootCLI();
 
 private:
-    RoutedIO(RoutedIO &) = delete;
-    void operator=(RoutedIO &) = delete;
     bool Connect();
     bool AskToInstallHelper();
     static bool IsHelperInstalled();

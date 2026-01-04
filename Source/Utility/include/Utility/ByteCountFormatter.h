@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Foundation/Foundation.h>
@@ -42,9 +42,11 @@ class ByteCountFormatter
 {
 public:
     ByteCountFormatter(bool _localized);
+    ByteCountFormatter(const ByteCountFormatter &) = delete;
+    ByteCountFormatter &operator=(const ByteCountFormatter &) = delete;
     static ByteCountFormatter &Instance();
 
-    enum Type {
+    enum Type : uint8_t {
         SpaceSeparated = 0,
         Fixed6 = 1,
         Adaptive6 = 2,
@@ -54,7 +56,7 @@ public:
     unsigned ToUTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size, Type _type) const;
     unsigned ToUTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size, Type _type) const;
 #ifdef __OBJC__
-    NSString *ToNSString(uint64_t _size, Type _type) const;
+    [[nodiscard]] NSString *ToNSString(uint64_t _size, Type _type) const;
 #endif
 
 private:
@@ -67,10 +69,10 @@ private:
     unsigned Adaptive8_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size) const;
     unsigned Adaptive8_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size) const;
 #ifdef __OBJC__
-    NSString *Fixed6_NSString(uint64_t _size) const;
-    NSString *SpaceSeparated_NSString(uint64_t _size) const;
-    NSString *Adaptive_NSString(uint64_t _size) const;
-    NSString *Adaptive8_NSString(uint64_t _size) const;
+    [[nodiscard]] NSString *Fixed6_NSString(uint64_t _size) const;
+    [[nodiscard]] NSString *SpaceSeparated_NSString(uint64_t _size) const;
+    [[nodiscard]] NSString *Adaptive_NSString(uint64_t _size) const;
+    [[nodiscard]] NSString *Adaptive8_NSString(uint64_t _size) const;
 #endif
 
     int Fixed6_Impl(uint64_t _size, unsigned short _buf[6]) const;
@@ -78,9 +80,6 @@ private:
     int Adaptive6_Impl(uint64_t _size, unsigned short _buf[6]) const;
     int Adaptive8_Impl(uint64_t _size, unsigned short _buf[8]) const;
     void MessWithSeparator(char *_s) const;
-
-    ByteCountFormatter(const ByteCountFormatter &) = delete;
-    ByteCountFormatter &operator=(const ByteCountFormatter &) = delete;
 
     std::vector<uint16_t> m_SI;    // localizable
     uint16_t m_B;                  // localizable

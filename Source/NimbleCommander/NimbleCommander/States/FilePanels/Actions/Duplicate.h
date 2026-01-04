@@ -12,7 +12,7 @@ namespace nc::panel::actions {
 
 struct Duplicate final : PanelAction {
     Duplicate(nc::config::Config &_config);
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:
@@ -23,7 +23,7 @@ namespace context {
 
 struct Duplicate final : PanelAction {
     Duplicate(nc::config::Config &_config, const std::vector<VFSListingItem> &_items);
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:

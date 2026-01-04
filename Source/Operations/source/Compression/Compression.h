@@ -21,14 +21,14 @@ public:
                 std::string _dst_root,
                 VFSHostPtr _dst_vfs,
                 std::string _passphrase = "");
-    virtual ~Compression();
+    ~Compression() override;
 
     std::string ArchivePath() const;
 
 private:
     using Callbacks = CompressionJobCallbacks;
 
-    virtual Job *GetJob() noexcept override;
+    Job *GetJob() noexcept override;
     NSString *BuildTitlePrefix() const;
     std::string BuildInitialTitle() const;
     std::string BuildTitleWithArchiveFilename() const;
@@ -41,7 +41,7 @@ private:
     std::unique_ptr<CompressionJob> m_Job;
     bool m_SkipAll = false;
     int m_InitialSourceItemsAmount = 0;
-    std::string m_InitialSingleItemFilename = "";
+    std::string m_InitialSingleItemFilename;
 };
 
 } // namespace nc::ops

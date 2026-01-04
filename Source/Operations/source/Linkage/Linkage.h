@@ -16,10 +16,10 @@ public:
             const std::string &_link_value,
             const std::shared_ptr<VFSHost> &_vfs,
             LinkageType _type);
-    ~Linkage();
+    ~Linkage() override;
 
 private:
-    virtual Job *GetJob() noexcept override;
+    Job *GetJob() noexcept override;
     void OnCreateSymlinkError(Error _err, const std::string &_path, VFSHost &_vfs);
     void OnAlterSymlinkError(Error _err, const std::string &_path, VFSHost &_vfs);
     void OnCreatehardlinkError(Error _err, const std::string &_path, VFSHost &_vfs);

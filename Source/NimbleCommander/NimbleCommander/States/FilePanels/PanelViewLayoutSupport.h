@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/Observable.h>
@@ -33,19 +33,19 @@ struct PanelViewLayout {
                                        PanelGalleryViewLayout>;
 
     // Returns true if this layout is disabled (PanelViewDisabledLayout).
-    bool is_disabled() const noexcept;
+    [[nodiscard]] bool is_disabled() const noexcept;
 
     // Returns an type of the layout decorated as the Type enumeration, effectively "layout.index()".
-    Type type() const noexcept;
+    [[nodiscard]] Type type() const noexcept;
 
     // Returns a Brief layout configuration if this layout is stored, otherwise nullptr
-    const PanelBriefViewColumnsLayout *brief() const noexcept;
+    [[nodiscard]] const PanelBriefViewColumnsLayout *brief() const noexcept;
 
     // Returns a List layout configuration if this layout is stored, otherwise nullptr
-    const PanelListViewColumnsLayout *list() const noexcept;
+    [[nodiscard]] const PanelListViewColumnsLayout *list() const noexcept;
 
     // Returns a Gallery layout configuration if this layout is stored, otherwise nullptr
-    const PanelGalleryViewLayout *gallery() const noexcept;
+    [[nodiscard]] const PanelGalleryViewLayout *gallery() const noexcept;
 
     // Equality operator
     bool operator==(const PanelViewLayout &) const noexcept;

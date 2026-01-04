@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
@@ -80,7 +80,7 @@ public:
         return *this;
     }
 
-    PointerType get() const noexcept { return m_Ptr; }
+    [[nodiscard]] PointerType get() const noexcept { return m_Ptr; }
 
     explicit operator PointerType() const noexcept { return m_Ptr; }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <span>
@@ -13,14 +13,14 @@ namespace nc::term {
 class Interpreter
 {
 public:
-    enum class RequestedMouseEvents {
+    enum class RequestedMouseEvents : uint8_t {
         None,           // no mouse events - default
         X10,            // only mouse press
         Normal,         // press/release
         ButtonTracking, // press->drag->release
         Any             // press/release/drag/motion
     };
-    enum class TitleKind {
+    enum class TitleKind : uint8_t {
         Icon,
         Window
     };

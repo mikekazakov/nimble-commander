@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
@@ -11,7 +11,7 @@ namespace nc::term {
 class ColorMap
 {
 public:
-    enum class Special {
+    enum class Special : uint8_t {
         Foreground = 0,
         BoldForeground = 1,
         Background = 2,

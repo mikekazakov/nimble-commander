@@ -138,7 +138,7 @@ void SingleTask::WriteChildInput(const void *_d, size_t _sz)
     if( m_MasterFD < 0 || m_TaskPID < 0 || _sz == 0 )
         return;
 
-    const std::lock_guard<std::mutex> lock(m_Lock);
+    const std::lock_guard<std::mutex> lock(m_MasterLock);
     write(m_MasterFD, _d, _sz);
 }
 
@@ -203,7 +203,7 @@ void SingleTask::ResizeWindow(int _sx, int _sy)
     if( m_TermSX == _sx && m_TermSY == _sy )
         return;
 
-    const std::lock_guard<std::mutex> lock(m_Lock);
+    const std::lock_guard<std::mutex> lock(m_MasterLock);
 
     m_TermSX = _sx;
     m_TermSY = _sy;
@@ -213,7 +213,7 @@ void SingleTask::ResizeWindow(int _sx, int _sy)
 
 void SingleTask::CleanUp()
 {
-    const std::lock_guard<std::mutex> lock(m_Lock);
+    const std::lock_guard<std::mutex> lock(m_MasterLock);
 
     if( m_TaskPID > 0 ) {
         const int pid = m_TaskPID;

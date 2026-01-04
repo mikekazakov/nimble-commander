@@ -1,4 +1,4 @@
-// Copyright (C) 2023-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "ExtendedCharRegistry.h"
 #include <CoreText/CoreText.h>
@@ -16,25 +16,25 @@ public:
     CTCache(base::CFPtr<CTFontRef> _font, const ExtendedCharRegistry &_reg);
 
     // Returns a base font for this cache, no refcnt changes is made
-    CTFontRef GetBaseFont() const noexcept;
+    [[nodiscard]] CTFontRef GetBaseFont() const noexcept;
 
     // Size of the base font
-    double Size() const noexcept;
+    [[nodiscard]] double Size() const noexcept;
 
     // Glyph height of the base font
-    double Height() const noexcept;
+    [[nodiscard]] double Height() const noexcept;
 
     // Glyph height of the base font, rounded
-    double Width() const noexcept;
+    [[nodiscard]] double Width() const noexcept;
 
     // Ascent of the base font
-    double Ascent() const noexcept;
+    [[nodiscard]] double Ascent() const noexcept;
 
     // Descent of the base font
-    double Descent() const noexcept;
+    [[nodiscard]] double Descent() const noexcept;
 
     // Leading of the base font
-    double Leading() const noexcept;
+    [[nodiscard]] double Leading() const noexcept;
 
     // Draw a single character with semanantics following CTLineDraw.
     // Use CGContextSetTextPosition to set up a start position.
@@ -47,7 +47,7 @@ public:
     void DrawCharacters(const char32_t *_codes, const CGPoint *_positions, size_t _count, CGContextRef _ctx);
 
 private:
-    enum class Kind : int {
+    enum class Kind : uint8_t {
         Single = 0,  // A simple single glyph, stored in m_Singles
         Complex = 1, // A complext CTLine, stored in m_Complexes
         Empty = 2,   // Nothing to draw

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <functional>
@@ -47,8 +47,6 @@ protected:
     // returns amount of bytes read
     // no error return available
     static unsigned ReadInputAsMuchAsAvailable(int _fd, void *_buf, unsigned _buf_sz, int _usec_wait = 1);
-
-    mutable std::mutex m_Lock;
 
 private:
     std::shared_ptr<std::function<void(const void *_d, size_t _sz)>> m_OnChildOutput;

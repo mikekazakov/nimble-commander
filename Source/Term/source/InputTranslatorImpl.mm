@@ -9,7 +9,7 @@
 
 namespace nc::term {
 
-static_assert(sizeof(InputTranslator::MouseEvent) == 8);
+static_assert(sizeof(InputTranslator::MouseEvent) == 6);
 
 static CFStringRef CreateModifiedCharactersForKeyPress(unsigned short _keycode, NSEventModifierFlags _flags);
 static std::string ReportX10(InputTranslator::MouseEvent _event) noexcept;
@@ -148,7 +148,7 @@ void InputTranslatorImpl::ProcessKeyDown(NSEvent *_event)
     else if( (modflags & NSEventModifierFlagDeviceIndependentFlagsMask) == NSEventModifierFlagCapsLock )
         character = _event.characters;
 
-    std::string_view utf8 = character.UTF8String;
+    const std::string_view utf8 = character.UTF8String;
     m_Output(Bytes(reinterpret_cast<const std::byte *>(utf8.data()), utf8.length()));
 }
 
@@ -157,7 +157,7 @@ void InputTranslatorImpl::ProcessTextInput(NSString *_str)
     if( !_str || _str.length == 0 )
         return;
 
-    std::string_view utf8str = _str.UTF8String;
+    const std::string_view utf8str = _str.UTF8String;
     m_Output(Bytes(reinterpret_cast<const std::byte *>(utf8str.data()), utf8str.length()));
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
@@ -15,7 +15,7 @@ namespace nc::term {
 struct ScreenPoint {
     int x = 0;
     int y = 0;
-    ScreenPoint() noexcept {};
+    ScreenPoint() noexcept = default;
     ScreenPoint(int _x, int _y) noexcept : x(_x), y(_y) {};
     bool operator>(const ScreenPoint &_r) const noexcept { return (y > _r.y) || (y == _r.y && x > _r.x); }
     bool operator>=(const ScreenPoint &_r) const noexcept { return (y > _r.y) || (y == _r.y && x >= _r.x); }
@@ -43,7 +43,7 @@ public:
         bool invisible : 1;
         bool blink : 1;
 
-        constexpr bool HaveSameAttributes(const Space &_rhs) const noexcept;
+        [[nodiscard]] constexpr bool HaveSameAttributes(const Space &_rhs) const noexcept;
     }; // 8 bytes per screen space
 
     struct Snapshot {
@@ -66,9 +66,9 @@ public:
                  unsigned _height,
                  ExtendedCharRegistry &_reg = ExtendedCharRegistry::SharedInstance());
 
-    unsigned Width() const;
-    unsigned Height() const;
-    unsigned BackScreenLines() const;
+    [[nodiscard]] unsigned Width() const;
+    [[nodiscard]] unsigned Height() const;
+    [[nodiscard]] unsigned BackScreenLines() const;
 
     // negative _line_number means backscreen, zero and positive - current screen
     // backscreen: [-BackScreenLines(), -1]
@@ -76,22 +76,22 @@ public:
     // -1 is the last (most recent) backscreen line
     // return an iterator pair [i,e)
     // on invalid input parameters return [nullptr,nullptr)
-    std::span<const Space> LineFromNo(int _line_number) const noexcept;
+    [[nodiscard]] std::span<const Space> LineFromNo(int _line_number) const noexcept;
     std::span<Space> LineFromNo(int _line_number) noexcept;
 
     // Returns a value at the specified column (x) of the specified line (y).
     // Line number can be negative, same as with LineFromNo().
     // Throws an exception on invalid position.
-    Space At(int x, int y) const;
+    [[nodiscard]] Space At(int x, int y) const;
 
     void ResizeScreen(unsigned _new_sx, unsigned _new_sy, bool _merge_with_backscreen);
 
     void FeedBackscreen(std::span<const Space> _with_spaces, bool _wrapped);
 
-    bool LineWrapped(int _line_number) const;
+    [[nodiscard]] bool LineWrapped(int _line_number) const;
     void SetLineWrapped(int _line_number, bool _wrapped);
 
-    Space EraseChar() const;
+    [[nodiscard]] Space EraseChar() const;
     void SetEraseChar(Space _ch);
     static Space DefaultEraseChar() noexcept;
 
@@ -100,21 +100,21 @@ public:
      * lines should have any non-zero symbol, including space (32).
      * if screen is absolutely clean it will return nullopt
      */
-    std::optional<std::pair<int, int>> OccupiedOnScreenLines() const;
+    [[nodiscard]] std::optional<std::pair<int, int>> OccupiedOnScreenLines() const;
 
-    std::vector<uint16_t> DumpUnicodeString(ScreenPoint _begin, ScreenPoint _end) const;
+    [[nodiscard]] std::vector<uint16_t> DumpUnicodeString(ScreenPoint _begin, ScreenPoint _end) const;
 
     using LayedOutUTF16Dump = std::pair<std::vector<uint16_t>, std::vector<ScreenPoint>>;
-    LayedOutUTF16Dump DumpUTF16StringWithLayout(ScreenPoint _begin, ScreenPoint _end) const;
+    [[nodiscard]] LayedOutUTF16Dump DumpUTF16StringWithLayout(ScreenPoint _begin, ScreenPoint _end) const;
 
     // use for diagnose and test purposes only
-    std::string DumpScreenAsANSI() const;
-    std::string DumpScreenAsANSIBreaked() const;
-    std::u32string DumpScreenAsUTF32(int _options = DumpOptions::Default) const;
+    [[nodiscard]] std::string DumpScreenAsANSI() const;
+    [[nodiscard]] std::string DumpScreenAsANSIBreaked() const;
+    [[nodiscard]] std::u32string DumpScreenAsUTF32(int _options = DumpOptions::Default) const;
     void LoadScreenFromANSI(std::string_view _dump);
-    std::string DumpBackScreenAsANSI() const;
+    [[nodiscard]] std::string DumpBackScreenAsANSI() const;
 
-    Snapshot MakeSnapshot() const;
+    [[nodiscard]] Snapshot MakeSnapshot() const;
     void RevertToSnapshot(const Snapshot &_snapshot);
 
     static unsigned OccupiedChars(std::span<const Space> _line) noexcept;
@@ -123,11 +123,12 @@ public:
     // Returns 'true' if the range contains and non-null characters
     static bool HasOccupiedChars(const Space *_begin, const Space *_end) noexcept;
 
-    unsigned OccupiedChars(int _line_no) const;
-    bool HasOccupiedChars(int _line_no) const;
+    [[nodiscard]] unsigned OccupiedChars(int _line_no) const;
+    [[nodiscard]] bool HasOccupiedChars(int _line_no) const;
 
-    std::vector<std::vector<Space>> ComposeContinuousLines(int _from,
-                                                           int _to) const; // [_from, _to), _from is less than _to
+    [[nodiscard]] std::vector<std::vector<Space>>
+    ComposeContinuousLines(int _from,
+                           int _to) const; // [_from, _to), _from is less than _to
 
 private:
     struct LineMeta {
@@ -137,7 +138,7 @@ private:
     };
 
     LineMeta *MetaFromLineNo(int _line_number);
-    const LineMeta *MetaFromLineNo(int _line_number) const;
+    [[nodiscard]] const LineMeta *MetaFromLineNo(int _line_number) const;
 
     static void
     FixupOnScreenLinesIndeces(std::vector<LineMeta>::iterator _i, std::vector<LineMeta>::iterator _e, unsigned _width);
@@ -160,9 +161,9 @@ private:
 
 constexpr bool ScreenBuffer::Space::HaveSameAttributes(const Space &_rhs) const noexcept
 {
-    uint64_t mask = 0x3FFFFFF00000000ULL;
-    uint64_t lhs = *static_cast<const uint64_t *>(static_cast<const void *>(this));
-    uint64_t rhs = *static_cast<const uint64_t *>(static_cast<const void *>(&_rhs));
+    const uint64_t mask = 0x3FFFFFF00000000ULL;
+    const uint64_t lhs = *reinterpret_cast<const uint64_t *>(this);
+    const uint64_t rhs = *reinterpret_cast<const uint64_t *>(&_rhs);
     return (lhs & mask) == (rhs & mask);
 }
 

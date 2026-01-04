@@ -40,14 +40,14 @@ class BriefOnDiskStorage::PlacementResult
 public:
     PlacementResult() = delete;
     PlacementResult(std::string _path, std::function<void()> _cleanup) noexcept;
-    PlacementResult(PlacementResult &&) noexcept;
+    PlacementResult(PlacementResult && /*_pr*/) noexcept;
     PlacementResult(const PlacementResult &) = delete;
     ~PlacementResult() noexcept;
 
     void operator=(const PlacementResult &) = delete;
     void operator=(PlacementResult &&) = delete;
 
-    const std::string &Path() const noexcept;
+    [[nodiscard]] const std::string &Path() const noexcept;
 
 private:
     std::string m_Path;

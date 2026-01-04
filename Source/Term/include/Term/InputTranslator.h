@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #ifdef __OBJC__
@@ -19,7 +19,7 @@ public:
     using Bytes = std::span<const std::byte>;
     using Output = std::function<void(Bytes _bytes)>;
     struct MouseEvent;
-    enum class MouseReportingMode;
+    enum class MouseReportingMode : uint8_t;
     virtual ~InputTranslator() = default;
     virtual void SetOuput(Output _output) = 0;
     virtual void ProcessKeyDown(NSEvent *_event) = 0;
@@ -32,7 +32,7 @@ public:
 };
 
 struct InputTranslator::MouseEvent {
-    enum Type : short {
+    enum Type : uint8_t {
         LDown,
         LDrag,
         LUp,
@@ -54,7 +54,7 @@ struct InputTranslator::MouseEvent {
     bool control : 1 = false;
 };
 
-enum class InputTranslator::MouseReportingMode {
+enum class InputTranslator::MouseReportingMode : uint8_t {
     X10,
     Normal,
     UTF8,

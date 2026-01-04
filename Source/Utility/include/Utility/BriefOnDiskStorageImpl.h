@@ -12,7 +12,7 @@ public:
     BriefOnDiskStorageImpl(const std::string &_base_path,
                            const std::string &_file_prefix = "",
                            base::PosixFilesystem &_fs = base::PosixFilesystemImpl::instance);
-    ~BriefOnDiskStorageImpl();
+    ~BriefOnDiskStorageImpl() override;
 
     std::optional<PlacementResult> Place(const void *_data, long _bytes) override;
 

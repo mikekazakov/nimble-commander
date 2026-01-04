@@ -21,7 +21,7 @@ public:
 
     void ResizeWindow(int _sx, int _sy);
 
-    inline const std::string &TaskBinaryName() const { return m_TaskBinaryName; }
+    const std::string &TaskBinaryName() const { return m_TaskBinaryName; }
 
 private:
     void CleanUp();
@@ -31,6 +31,7 @@ private:
     volatile int m_TaskPID = -1;
     int m_TermSX = 0;
     int m_TermSY = 0;
+    mutable std::mutex m_MasterLock;
     std::string m_TaskBinaryName;
 };
 

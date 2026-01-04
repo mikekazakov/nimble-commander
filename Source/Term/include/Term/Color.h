@@ -37,11 +37,11 @@ struct Color {
     uint8_t c = Black;
 };
 
-inline constexpr Color::Color(uint8_t _c) noexcept : c(_c)
+constexpr Color::Color(uint8_t _c) noexcept : c(_c)
 {
 }
 
-inline constexpr Color::Color(uint8_t _r, uint8_t _g, uint8_t _b) noexcept
+constexpr Color::Color(uint8_t _r, uint8_t _g, uint8_t _b) noexcept
 {
     if( _r == _g && _r == _b ) {
         // quantize 255 values into 24 bands: [232..255]
@@ -78,7 +78,7 @@ inline constexpr Color::Color(uint8_t _r, uint8_t _g, uint8_t _b) noexcept
         const uint8_t r = _r / 43;
         const uint8_t g = _g / 43;
         const uint8_t b = _b / 43;
-        c = 16 + 36 * r + 6 * g + b;
+        c = 16 + (36 * r) + (6 * g) + b;
     }
 }
 

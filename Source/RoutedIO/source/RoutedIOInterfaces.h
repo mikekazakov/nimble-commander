@@ -8,15 +8,15 @@ namespace nc::routedio {
 class PosixIOInterfaceNative : public PosixIOInterface
 {
 public:
-    bool isrouted() const noexcept override;
+    [[nodiscard]] bool isrouted() const noexcept override;
     int open(const char *_path, int _flags, int _mode) noexcept override;
     int close(int _fd) noexcept override;
     ssize_t read(int _fildes, void *_buf, size_t _nbyte) noexcept override;
     ssize_t write(int _fildes, const void *_buf, size_t _nbyte) noexcept override;
     off_t lseek(int _fd, off_t _offset, int _whence) noexcept override;
     DIR *opendir(const char *_path) noexcept override;
-    int closedir(DIR *) noexcept override;
-    dirent *readdir(DIR *) noexcept override;
+    int closedir(DIR * /*_dir*/) noexcept override;
+    dirent *readdir(DIR * /*_dir*/) noexcept override;
     int stat(const char *_path, struct stat *_st) noexcept override;
     int lstat(const char *_path, struct stat *_st) noexcept override;
     int mkdir(const char *_path, mode_t _mode) noexcept override;
@@ -45,7 +45,7 @@ class PosixIOInterfaceRouted : public PosixIOInterfaceNative
 {
 public:
     PosixIOInterfaceRouted(RoutedIO &_inst);
-    bool isrouted() const noexcept override;
+    [[nodiscard]] bool isrouted() const noexcept override;
     int open(const char *_path, int _flags, int _mode) noexcept override;
     int close(int _fd) noexcept override;
     DIR *opendir(const char *_path) noexcept override;
@@ -71,7 +71,7 @@ public:
 
 private:
     xpc_connection_t Connection();
-    typedef PosixIOInterfaceNative super;
+    using super = PosixIOInterfaceNative;
     RoutedIO &inst;
 };
 

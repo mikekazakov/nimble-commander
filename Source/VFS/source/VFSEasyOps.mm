@@ -439,7 +439,7 @@ Traverse(const std::string &_vfs_dirpath, VFSHost &_host, const std::function<bo
             if( _cancel_checker && _cancel_checker() )
                 return false;
 
-            std::string full_entry_path = fmt::format("{}/{}", current.src_full_path, _dirent.name);
+            const std::string full_entry_path = fmt::format("{}/{}", current.src_full_path, _dirent.name);
             const std::expected<VFSStat, Error> st = _host.Stat(full_entry_path, VFSFlags::F_NoFollow, _cancel_checker);
             if( !st )
                 return false;

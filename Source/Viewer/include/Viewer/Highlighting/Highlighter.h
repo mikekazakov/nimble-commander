@@ -18,7 +18,7 @@ public:
     ~Highlighter();
     Highlighter &operator=(const Highlighter &) = delete;
 
-    std::vector<Style> Highlight(std::string_view _text) const;
+    [[nodiscard]] std::vector<Style> Highlight(std::string_view _text) const;
 
 private:
     LexerSettings m_Settings;

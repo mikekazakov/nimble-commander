@@ -19,7 +19,7 @@ public:
      * Otherwise returns nil.
      * Can return nil if the cache wasn't able to produce a corresponding image previously.
      */
-    virtual NSImage *CachedIconForExtension(const std::string &_extension) const = 0;
+    [[nodiscard]] virtual NSImage *CachedIconForExtension(const std::string &_extension) const = 0;
 
     /**
      * Checks whether the cache already contains an icon for the extension.
@@ -29,9 +29,9 @@ public:
      */
     virtual NSImage *IconForExtension(const std::string &_extension) = 0;
 
-    virtual NSImage *GenericFileIcon() const = 0;
+    [[nodiscard]] virtual NSImage *GenericFileIcon() const = 0;
 
-    virtual NSImage *GenericFolderIcon() const = 0;
+    [[nodiscard]] virtual NSImage *GenericFolderIcon() const = 0;
 };
 
 } // namespace nc::vfsicon

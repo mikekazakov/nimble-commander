@@ -12,7 +12,7 @@ class XAttrHost final : public Host
 public:
     XAttrHost(std::string_view _file_path, const VFSHostPtr &_host); // _host must be native currently
     XAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config);
-    ~XAttrHost();
+    ~XAttrHost() override;
 
     static const char *UniqueTag;
 

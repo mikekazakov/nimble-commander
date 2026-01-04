@@ -572,7 +572,7 @@ TEST_CASE(PREFIX "Cyrilic encoding in a file downloaded from GDrive")
 
     auto d = file->ReadFile();
     REQUIRE(d->size() == 9);
-    std::string_view ref = "Тест!";
+    const std::string_view ref = "Тест!";
     REQUIRE(std::memcmp(d->data(), ref.data(), ref.length()) == 0);
 }
 
@@ -617,7 +617,7 @@ TEST_CASE(PREFIX "Encrypted zip archive")
     REQUIRE(file->Open(VFSFlags::OF_Read));
     auto d = file->ReadFile();
     REQUIRE(d->size() == 19);
-    std::string_view ref = "contents of file2.\0A";
+    const std::string_view ref = "contents of file2.\0A";
     REQUIRE(memcmp(d->data(), ref.data(), ref.length()) == 0);
 }
 
@@ -752,7 +752,7 @@ TEST_CASE(PREFIX "archive with a slash dir")
     REQUIRE(file->Open(VFSFlags::OF_Read));
     auto d = file->ReadFile();
     REQUIRE(d->size() == 13);
-    std::string_view ref = "Hello, World!";
+    const std::string_view ref = "Hello, World!";
     REQUIRE(memcmp(d->data(), ref.data(), ref.length()) == 0);
 }
 
@@ -1828,7 +1828,7 @@ TEST_CASE(PREFIX "lzma support")
     REQUIRE(file->Open(VFSFlags::OF_Read));
     auto d = file->ReadFile();
     REQUIRE(d->size() == 5);
-    std::string_view ref = "World";
+    const std::string_view ref = "World";
     REQUIRE(memcmp(d->data(), ref.data(), ref.length()) == 0);
 }
 

@@ -11,10 +11,10 @@ class PSHost final : public Host
 {
 public:
     PSHost();
-    ~PSHost();
+    ~PSHost() override;
 
     static const char *UniqueTag;
-    virtual VFSConfiguration Configuration() const override;
+    VFSConfiguration Configuration() const override;
     static VFSMeta Meta();
 
     std::expected<std::shared_ptr<VFSFile>, Error> CreateFile(std::string_view _path,

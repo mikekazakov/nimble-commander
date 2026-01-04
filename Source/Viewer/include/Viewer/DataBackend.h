@@ -20,7 +20,7 @@ public:
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     // settings
-    utility::Encoding Encoding() const;
+    [[nodiscard]] utility::Encoding Encoding() const;
     void SetEncoding(utility::Encoding _encoding);
 
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,31 +34,31 @@ public:
      * Returns true if FileWindow is buffering whole file contents.
      * Thus no window movements is needed (and cannot be done).
      */
-    bool IsFullCoverage() const;
+    [[nodiscard]] bool IsFullCoverage() const;
 
     /**
      * Whole file size.
      */
-    uint64_t FileSize() const;
+    [[nodiscard]] uint64_t FileSize() const;
 
     /**
      * Position of a file window (offset of it's first byte from the beginning of a file).
      */
-    uint64_t FilePos() const;
+    [[nodiscard]] uint64_t FilePos() const;
 
-    const void *Raw() const; // data of current file window
+    [[nodiscard]] const void *Raw() const; // data of current file window
 
     /**
      * File window size. It will not change while this object lives
      */
-    uint64_t RawSize() const;
+    [[nodiscard]] uint64_t RawSize() const;
 
-    const UniChar *UniChars() const;              // decoded buffer
-    const uint32_t *UniCharToByteIndeces() const; // byte indeces within file window of decoded unichars
-    uint32_t UniCharsSize() const;                // decoded buffer size in unichars
+    [[nodiscard]] const UniChar *UniChars() const;              // decoded buffer
+    [[nodiscard]] const uint32_t *UniCharToByteIndeces() const; // byte indeces within file window of decoded unichars
+    [[nodiscard]] uint32_t UniCharsSize() const;                // decoded buffer size in unichars
 
     // Returns a filename component of the underlying VFS file's path
-    std::filesystem::path FileName() const;
+    [[nodiscard]] std::filesystem::path FileName() const;
 
 private:
     void DecodeBuffer(); // called by internal update logic

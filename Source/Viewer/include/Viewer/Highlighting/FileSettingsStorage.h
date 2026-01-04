@@ -13,7 +13,7 @@ class FileSettingsStorage : public SettingsStorage
 public:
     FileSettingsStorage(const std::filesystem::path &_base_dir, const std::filesystem::path &_overrides_dir);
     FileSettingsStorage(const FileSettingsStorage &) = delete;
-    ~FileSettingsStorage();
+    ~FileSettingsStorage() override;
     FileSettingsStorage &operator=(const FileSettingsStorage &) = delete;
 
     std::optional<std::string> Language(std::string_view _filename) noexcept override;

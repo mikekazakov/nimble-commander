@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "QLVFSThumbnailsCache.h"
@@ -12,7 +12,7 @@ class QLVFSThumbnailsCacheImpl : public QLVFSThumbnailsCache
 {
 public:
     QLVFSThumbnailsCacheImpl(const std::shared_ptr<utility::BriefOnDiskStorage> &_temp_storage);
-    ~QLVFSThumbnailsCacheImpl();
+    ~QLVFSThumbnailsCacheImpl() override;
 
     NSImage *ThumbnailIfHas(const std::string &_file_path, VFSHost &_host, int _px_size) override;
 
@@ -25,9 +25,7 @@ private:
     // - it pretends that file do not change on VFSes
     // also, it's pretty inefficient in dealing with strings
 
-    enum {
-        m_CacheSize = 1024
-    };
+    static constexpr size_t m_CacheSize = 1024;
     using Container = base::LRUCache<std::string, NSImage *, m_CacheSize>;
 
     NSImage *ProduceThumbnail(const std::string &_path, const std::string &_ext, VFSHost &_host, CGSize _sz);

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stdint.h>
@@ -10,10 +10,12 @@ class WriteBuffer
 {
 public:
     WriteBuffer();
+    WriteBuffer(const WriteBuffer &) = delete;
     ~WriteBuffer();
+    void operator=(const WriteBuffer &) = delete;
 
-    bool Empty() const noexcept;
-    size_t Size() const noexcept;
+    [[nodiscard]] bool Empty() const noexcept;
+    [[nodiscard]] size_t Size() const noexcept;
 
     void Clear() noexcept;
     void Write(const void *_buffer, size_t _bytes) noexcept;
@@ -22,8 +24,6 @@ public:
     static size_t ReadCURL(void *_ptr, size_t _elements, size_t _nmemb, void *_data) noexcept;
 
 private:
-    WriteBuffer(const WriteBuffer &) = delete;
-    void operator=(const WriteBuffer &) = delete;
     void Grow(size_t _new_size) noexcept;
     void PushBack(const void *_data, size_t _size) noexcept;
     void PopFront(size_t _size) noexcept;

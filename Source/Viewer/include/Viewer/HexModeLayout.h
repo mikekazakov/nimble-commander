@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "HexModeFrame.h"
@@ -18,7 +18,7 @@ public:
     struct ScrollOffset {
         int row = 0;
         double smooth = 0.;
-        ScrollOffset WithoutSmoothOffset() const noexcept;
+        [[nodiscard]] ScrollOffset WithoutSmoothOffset() const noexcept;
     };
     struct Source {
         std::shared_ptr<const HexModeFrame> frame;
@@ -41,7 +41,7 @@ public:
         double snippet;
         std::vector<double> columns;
     };
-    enum class HitPart {
+    enum class HitPart : uint8_t {
         Address,
         AddressColumsGap,
         Columns,
@@ -50,17 +50,17 @@ public:
     };
     HexModeLayout(const Source &_source);
 
-    ScrollerPosition CalcScrollerPosition() const noexcept;
-    int64_t CalcGlobalOffset() const noexcept;
-    int64_t CalcGlobalOffsetForScrollerPosition(ScrollerPosition _scroller_position) const noexcept;
+    [[nodiscard]] ScrollerPosition CalcScrollerPosition() const noexcept;
+    [[nodiscard]] int64_t CalcGlobalOffset() const noexcept;
+    [[nodiscard]] int64_t CalcGlobalOffsetForScrollerPosition(ScrollerPosition _scroller_position) const noexcept;
 
-    ScrollOffset GetOffset() const noexcept;
+    [[nodiscard]] ScrollOffset GetOffset() const noexcept;
     void SetOffset(ScrollOffset _new_offset);
 
     /** Number of rows that can theoretically fit in the view without being clipped */
-    int RowsInView() const noexcept;
+    [[nodiscard]] int RowsInView() const noexcept;
     /** Number of bytes that can theoretically be presented in the view without being clipped */
-    int BytesInView() const noexcept;
+    [[nodiscard]] int BytesInView() const noexcept;
 
     void SetFileSize(int64_t _file_size);
 
@@ -68,33 +68,33 @@ public:
 
     void SetViewSize(CGSize _new_view_size);
 
-    std::optional<int> FindRowToScrollWithGlobalOffset(int64_t _global_offset) const noexcept;
+    [[nodiscard]] std::optional<int> FindRowToScrollWithGlobalOffset(int64_t _global_offset) const noexcept;
 
     void SetGaps(Gaps _gaps);
-    Gaps GetGaps() const noexcept;
+    [[nodiscard]] Gaps GetGaps() const noexcept;
 
-    HorizontalOffsets CalcHorizontalOffsets() const noexcept;
+    [[nodiscard]] HorizontalOffsets CalcHorizontalOffsets() const noexcept;
 
     /**
      * Does a primitive hit-testing, considering only a horizontal position.
      * Does not take into consideration any real row of the frame.
      */
-    HitPart HitTest(double _x) const;
+    [[nodiscard]] HitPart HitTest(double _x) const;
 
     /**
      * Returns a range [x1, x2) which should be highlighted in columns to reflect a selected
      * range(_bytes_selection) inside a working set. Returns {0., 0.} if there's no intersection.
      */
-    std::pair<double, double> CalcColumnSelectionBackground(CFRange _bytes_selection,
-                                                            int _row,
-                                                            int _colum,
-                                                            const HorizontalOffsets &_offsets) const;
+    [[nodiscard]] std::pair<double, double> CalcColumnSelectionBackground(CFRange _bytes_selection,
+                                                                          int _row,
+                                                                          int _colum,
+                                                                          const HorizontalOffsets &_offsets) const;
 
     /**
      * Returns a range [x1, x2) which should be highlighted in a snippet to reflect a selected
      * range(_chars_selection) inside a working set. Returns {0., 0.} if there's no intersection.
      */
-    std::pair<double, double>
+    [[nodiscard]] std::pair<double, double>
     CalcSnippetSelectionBackground(CFRange _chars_selection, int _row, const HorizontalOffsets &_offsets) const;
 
     /**
@@ -102,13 +102,13 @@ public:
      * If the coordinate is above any existing content, -1 is returned.
      * If the coordinate is below any existing content, Frame->NumberOfRow() is returned.
      */
-    int RowIndexFromYCoordinate(double _y) const;
+    [[nodiscard]] int RowIndexFromYCoordinate(double _y) const;
 
     /** Returns a byte offset inside a working set which corresponds to the position. */
-    int ByteOffsetFromColumnHit(CGPoint _position) const;
+    [[nodiscard]] int ByteOffsetFromColumnHit(CGPoint _position) const;
 
     /** Returns a char offset inside a working set which corresponds to the position. */
-    int CharOffsetFromSnippetHit(CGPoint _position) const;
+    [[nodiscard]] int CharOffsetFromSnippetHit(CGPoint _position) const;
 
     static int FindEqualVerticalOffsetForRebuiltFrame(const HexModeFrame &old_frame,
                                                       const int old_vertical_offset,

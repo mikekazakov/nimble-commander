@@ -9,8 +9,8 @@ namespace nc::panel::actions {
 
 struct Enter final : PanelAction {
     Enter(const PanelAction &_open_files_action);
-    bool Predicate(PanelController *_target) const override;
-    bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -23,20 +23,20 @@ protected:
     void AddDeselectorIfNeeded(nc::ops::Operation &_with_operation, PanelController *_to_target) const;
 
 private:
-    bool ShouldAutomaticallyDeselect() const;
+    [[nodiscard]] bool ShouldAutomaticallyDeselect() const;
 
     nc::config::Config &m_Config;
 };
 
 struct CompressHere final : PanelAction, CompressBase {
     CompressHere(nc::config::Config &_config);
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 };
 
 struct CompressToOpposite final : PanelAction, CompressBase {
     CompressToOpposite(nc::config::Config &_config);
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 };
 
@@ -44,8 +44,8 @@ namespace context {
 
 struct CompressHere final : PanelAction, CompressBase {
     CompressHere(nc::config::Config &_config, const std::vector<VFSListingItem> &_items);
-    bool Predicate(PanelController *_target) const override;
-    bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:
@@ -54,8 +54,8 @@ private:
 
 struct CompressToOpposite final : PanelAction, CompressBase {
     CompressToOpposite(nc::config::Config &_config, const std::vector<VFSListingItem> &_items);
-    bool Predicate(PanelController *_target) const override;
-    bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:

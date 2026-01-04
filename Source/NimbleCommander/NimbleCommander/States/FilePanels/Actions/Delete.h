@@ -12,7 +12,7 @@ namespace nc::panel::actions {
 
 struct Delete final : PanelAction {
     Delete(nc::utility::NativeFSManager &_nat_fsman, bool _permanently = false);
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:
@@ -22,7 +22,7 @@ private:
 
 struct MoveToTrash final : PanelAction {
     MoveToTrash(nc::utility::NativeFSManager &_nat_fsman);
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:
@@ -33,7 +33,7 @@ namespace context {
 
 struct DeletePermanently final : PanelAction {
     DeletePermanently(const std::vector<VFSListingItem> &_items);
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:
@@ -43,7 +43,7 @@ private:
 
 struct MoveToTrash final : PanelAction {
     MoveToTrash(const std::vector<VFSListingItem> &_items);
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:

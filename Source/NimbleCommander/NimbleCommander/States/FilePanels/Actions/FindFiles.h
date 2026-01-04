@@ -16,7 +16,7 @@ namespace nc::panel::actions {
 struct FindFiles final : PanelAction {
     FindFiles(std::function<NCViewerView *(NSRect)> _make_viewer,
               std::function<NCViewerViewController *()> _make_controller);
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:

@@ -6,13 +6,13 @@
 namespace nc::panel::actions {
 
 struct RevealInOppositePanel final : StateAction {
-    virtual bool Predicate(MainWindowFilePanelState *_target) const;
-    virtual void Perform(MainWindowFilePanelState *_target, id _sender) const;
+    [[nodiscard]] bool Predicate(MainWindowFilePanelState *_target) const override;
+    void Perform(MainWindowFilePanelState *_target, id _sender) const override;
 };
 
 struct RevealInOppositePanelTab final : StateAction {
-    virtual bool Predicate(MainWindowFilePanelState *_target) const;
-    virtual void Perform(MainWindowFilePanelState *_target, id _sender) const;
+    [[nodiscard]] bool Predicate(MainWindowFilePanelState *_target) const override;
+    void Perform(MainWindowFilePanelState *_target, id _sender) const override;
 };
 
 } // namespace nc::panel::actions

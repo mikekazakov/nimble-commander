@@ -11,7 +11,7 @@ namespace nc::panel::actions {
 
 struct ChangeAttributes final : PanelAction {
     ChangeAttributes(nc::config::Config &_config);
-    bool Predicate(PanelController *_target) const override;
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 
 private:

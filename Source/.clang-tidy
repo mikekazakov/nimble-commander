@@ -244,7 +244,7 @@ CheckOptions:
   - key:    bugprone-unsafe-functions.ReportDefaultFunctions
     value:  false
   - key:    bugprone-unsafe-functions.CustomFunctions
-    value:  '^strlen$;^strcpy$;^strncpy$' # to be gradually expanded
+    value:  '^strlen$;^strcpy$;^strncpy$;^strcat$' # to be gradually expanded
   - key:    modernize-loop-convert.MinConfidence
     value:  safe
   - key:    modernize-loop-convert.UseCxx20ReverseRanges

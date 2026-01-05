@@ -415,10 +415,52 @@ struct KeycodesHardcode {
     return obj;
 }
 
-- (id)init
-{
-    if( self = [super init] )
+- (id)init {
+    if (self = [super init]) {
         self.fieldEditor = YES; // We are a field editor
+
+        m_ClearButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 11, 11)];
+        m_ClearButton.translatesAutoresizingMaskIntoConstraints = false;
+        m_ClearButton.attributedTitle =
+            [[NSAttributedString alloc] initWithString:@"−"
+                                            attributes:@{
+                                                NSForegroundColorAttributeName : NSColor.textColor,
+                                                NSFontAttributeName : [NSFont labelFontOfSize:9]
+                                            }];
+        m_ClearButton.refusesFirstResponder = true;
+        m_ClearButton.bordered = false;
+        m_ClearButton.target = self;
+        m_ClearButton.action = @selector(OnClearButton:);
+        static_cast<NSButtonCell *>(m_ClearButton.cell).controlSize = NSControlSizeMini;
+        [self addSubview:m_ClearButton positioned:NSWindowAbove relativeTo:nil];
+
+        m_RevertButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 11, 11)];
+        m_RevertButton.translatesAutoresizingMaskIntoConstraints = false;
+        m_RevertButton.attributedTitle =
+            [[NSAttributedString alloc] initWithString:@"↺"
+                                            attributes:@{
+                                                NSForegroundColorAttributeName : NSColor.textColor,
+                                                NSFontAttributeName : [NSFont labelFontOfSize:9]
+                                            }];
+        m_RevertButton.refusesFirstResponder = true;
+        m_RevertButton.bordered = false;
+        m_RevertButton.target = self;
+        m_RevertButton.action = @selector(OnRevertButton:);
+        static_cast<NSButtonCell *>(m_RevertButton.cell).controlSize = NSControlSizeMini;
+        [self addSubview:m_RevertButton positioned:NSWindowAbove relativeTo:nil];
+
+        [[m_ClearButton.centerYAnchor anchorWithOffsetToAnchor:self.centerYAnchor] constraintEqualToConstant:0.]
+            .active = true;
+        [[m_RevertButton.centerYAnchor anchorWithOffsetToAnchor:self.centerYAnchor] constraintEqualToConstant:0.]
+            .active = true;
+        [self
+            addConstraints:[NSLayoutConstraint
+                               constraintsWithVisualFormat:@"[m_RevertButton(==11)]-(==2)-[m_ClearButton(==11)]-(==1)-|"
+                                                   options:0
+                                                   metrics:nil
+                                                     views:NSDictionaryOfVariableBindings(m_ClearButton,
+                                                                                          m_RevertButton)]];
+    }
     return self;
 }
 
@@ -442,32 +484,6 @@ struct KeycodesHardcode {
                                            selector:@selector(windowResigned:)
                                                name:NSWindowDidResignKeyNotification
                                              object:self.window];
-    if( !m_ClearButton ) {
-        m_ClearButton = [[NSButton alloc]
-            initWithFrame:NSMakeRect(self.bounds.size.width - 20, (self.bounds.size.height - 22) / 2, 22, 22)];
-        m_ClearButton.title = @"−";
-        m_ClearButton.font = [NSFont labelFontOfSize:9];
-        m_ClearButton.refusesFirstResponder = true;
-        m_ClearButton.bezelStyle = NSBezelStyleCircular;
-        m_ClearButton.target = self;
-        m_ClearButton.action = @selector(OnClearButton:);
-        static_cast<NSButtonCell *>(m_ClearButton.cell).controlSize = NSControlSizeMini;
-        [self addSubview:m_ClearButton];
-    }
-
-    if( !m_RevertButton ) {
-        m_RevertButton = [[NSButton alloc]
-            initWithFrame:NSMakeRect(self.bounds.size.width - 36, (self.bounds.size.height - 22) / 2, 22, 22)];
-        m_RevertButton.title = @"↺";
-        m_RevertButton.font = [NSFont labelFontOfSize:9];
-        m_RevertButton.refusesFirstResponder = true;
-        m_RevertButton.bezelStyle = NSBezelStyleCircular;
-        m_RevertButton.target = self;
-        m_RevertButton.action = @selector(OnRevertButton:);
-        static_cast<NSButtonCell *>(m_RevertButton.cell).controlSize = NSControlSizeMini;
-        [self addSubview:m_RevertButton];
-    }
-
     return [super becomeFirstResponder];
 }
 
@@ -491,10 +507,6 @@ struct KeycodesHardcode {
 {
     // No longer interested in window resign
     [NSNotificationCenter.defaultCenter removeObserver:self];
-    if( m_ClearButton ) {
-        [m_ClearButton removeFromSuperview];
-        m_ClearButton = nil;
-    }
 
     return [super resignFirstResponder];
 }

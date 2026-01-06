@@ -336,7 +336,7 @@ NSString *FileOpener::DeduceDefaultAppBundleForOpeningFiles(std::span<std::strin
     for( const std::string &path : _filepaths )
         per_item_handlers.emplace_back(path, *_host, m_UTIDB);
 
-    core::LauchServicesHandlers items_handlers{per_item_handlers};
+    const core::LauchServicesHandlers items_handlers{per_item_handlers};
 
     if( items_handlers.DefaultHandlerPath().empty() ) {
         // give up - there's no common default handler, the content is heterogeneous
@@ -345,7 +345,7 @@ NSString *FileOpener::DeduceDefaultAppBundleForOpeningFiles(std::span<std::strin
     }
 
     try {
-        core::LaunchServiceHandler handler{items_handlers.DefaultHandlerPath()};
+        const core::LaunchServiceHandler handler{items_handlers.DefaultHandlerPath()};
         return handler.Identifier();
     } catch( ... ) {
         return nil;

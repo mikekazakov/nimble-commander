@@ -42,7 +42,8 @@ public:
 
 private:
     // May return nil if no default app was found
-    NSString *DeduceDefaultAppBundleForOpeningFiles(std::span<std::string> _filepaths, VFSHostPtr _host) const;
+    [[nodiscard]] NSString *DeduceDefaultAppBundleForOpeningFiles(std::span<std::string> _filepaths,
+                                                                  VFSHostPtr _host) const;
 
     nc::utility::TemporaryFileStorage &m_TemporaryFileStorage;
     nc::utility::UTIDB &m_UTIDB;

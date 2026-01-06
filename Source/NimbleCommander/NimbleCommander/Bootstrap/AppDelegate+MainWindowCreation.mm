@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate+MainWindowCreation.h"
 #include "AppDelegate.Private.h"
 #include <VFSIcon/IconRepositoryImpl.h>
@@ -318,7 +318,7 @@ static PanelController *PanelFactory()
 
 - (nc::panel::FileOpener &)fileOpener
 {
-    static auto instance = nc::panel::FileOpener{self.temporaryFileStorage};
+    static auto instance = nc::panel::FileOpener{self.temporaryFileStorage, self.utiDB};
     return instance;
 }
 

@@ -3,6 +3,7 @@
 
 #include <VFS/VFS.h>
 #include <Utility/UTI.h>
+#include <string_view>
 
 namespace nc::core {
 
@@ -11,6 +12,7 @@ class LauchServicesHandlers
 public:
     LauchServicesHandlers();
     LauchServicesHandlers(const VFSListingItem &_item, const nc::utility::UTIDB &_uti_db);
+    LauchServicesHandlers(std::string_view _item_path, VFSHost &_host, const nc::utility::UTIDB &_uti_db);
     LauchServicesHandlers(const std::vector<LauchServicesHandlers> &_handlers_to_merge);
 
     [[nodiscard]] const std::vector<std::string> &HandlersPaths() const noexcept;

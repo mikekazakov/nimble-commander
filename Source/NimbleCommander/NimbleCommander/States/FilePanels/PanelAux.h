@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFS.h>
 #include <Operations/CopyingOptions.h>
 #include <string_view>
@@ -8,7 +8,8 @@ class ExternalEditorStartupInfo;
 
 namespace nc::utility {
 class TemporaryFileStorage;
-}
+class UTIDB;
+} // namespace nc::utility
 
 namespace nc::panel {
 
@@ -18,7 +19,7 @@ namespace nc::panel {
 class FileOpener
 {
 public:
-    FileOpener(nc::utility::TemporaryFileStorage &_temp_storage);
+    FileOpener(nc::utility::TemporaryFileStorage &_temp_storage, nc::utility::UTIDB &_uti_db);
 
     // can be called from main thread - it will execute it's job in background
     void Open(std::string _filepath, VFSHostPtr _host, PanelController *_panel);
@@ -40,7 +41,11 @@ public:
                                       PanelController *_panel);
 
 private:
+    // May return nil if no default app was found
+    NSString *DeduceDefaultAppBundleForOpeningFiles(std::span<std::string> _filepaths, VFSHostPtr _host) const;
+
     nc::utility::TemporaryFileStorage &m_TemporaryFileStorage;
+    nc::utility::UTIDB &m_UTIDB;
 };
 
 bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item);

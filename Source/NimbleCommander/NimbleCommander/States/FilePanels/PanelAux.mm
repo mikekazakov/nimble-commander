@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -6,6 +6,7 @@
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <Utility/TemporaryFileStorage.h>
 #include <NimbleCommander/Core/TemporaryNativeFileChangesSentinel.h>
+#include <NimbleCommander/Core/LaunchServices.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
@@ -107,7 +108,8 @@ static void RegisterRemoteFileUploading(const std::string &_original_path,
     sentinel.WatchFile(_native_path, on_file_change, UploadingCheckDelay(), UploadingDropDelay());
 }
 
-FileOpener::FileOpener(nc::utility::TemporaryFileStorage &_temp_storage) : m_TemporaryFileStorage{_temp_storage}
+FileOpener::FileOpener(nc::utility::TemporaryFileStorage &_temp_storage, nc::utility::UTIDB &_uti_db)
+    : m_TemporaryFileStorage{_temp_storage}, m_UTIDB{_uti_db}
 {
 }
 
@@ -194,29 +196,44 @@ void FileOpener::Open(std::vector<std::string> _filepaths,
                       NSString *_with_app_bundle, // can be nil, use default app in such case
                       PanelController *_panel)
 {
+    // If there's no explicit app bundle - try to deduce default one from the input
+    if( _with_app_bundle == nil ) {
+        _with_app_bundle = DeduceDefaultAppBundleForOpeningFiles(_filepaths, _host);
+    }
+
+    // If we have app bundle identifier - try to get app url for it
+    NSURL *app_url = nil;
+    if( _with_app_bundle != nil && _with_app_bundle.length > 0 ) {
+        app_url = [[NSWorkspace sharedWorkspace] URLForApplicationWithBundleIdentifier:_with_app_bundle];
+        if( !app_url ) {
+            NSBeep();
+            return;
+        }
+    }
+
     if( _host->IsNativeFS() ) {
         NSMutableArray *const arr = [NSMutableArray arrayWithCapacity:_filepaths.size()];
-        for( auto &i : _filepaths )
-            if( NSString *const s = [NSString stringWithUTF8String:i.c_str()] )
+        for( const std::string &path : _filepaths )
+            if( NSString *const s = [NSString stringWithUTF8String:path.c_str()] )
                 [arr addObject:[[NSURL alloc] initFileURLWithPath:s]];
 
-        NSURL *app_url = nil;
-        if( _with_app_bundle != nil && _with_app_bundle.length > 0 ) {
-            app_url = [[NSWorkspace sharedWorkspace] URLForApplicationWithBundleIdentifier:_with_app_bundle];
-            if( !app_url ) {
-                NSBeep();
-                return;
+        if( app_url ) {
+            // In case we managed to get an app url - use it and open all items at once
+            [[NSWorkspace sharedWorkspace] openURLs:arr
+                               withApplicationAtURL:app_url
+                                      configuration:[NSWorkspaceOpenConfiguration configuration]
+                                  completionHandler:^(NSRunningApplication *_app, NSError *) {
+                                    if( !_app )
+                                        NSBeep();
+                                  }];
+        }
+        else {
+            // Otherwise, as a fallback, open items one by one with default app - leave it to the system
+            for( NSURL *const url in arr ) {
+                if( ![[NSWorkspace sharedWorkspace] openURL:url] )
+                    NSBeep();
             }
         }
-
-        [[NSWorkspace sharedWorkspace] openURLs:arr
-                           withApplicationAtURL:app_url
-                                  configuration:[NSWorkspaceOpenConfiguration configuration]
-                              completionHandler:^(NSRunningApplication *_app, NSError *) {
-                                if( !_app )
-                                    NSBeep();
-                              }];
-
         return;
     }
 
@@ -241,22 +258,23 @@ void FileOpener::Open(std::vector<std::string> _filepaths,
             }
         }
 
-        NSURL *app_url = nil;
-        if( _with_app_bundle != nil && _with_app_bundle.length > 0 ) {
-            app_url = [[NSWorkspace sharedWorkspace] URLForApplicationWithBundleIdentifier:_with_app_bundle];
-            if( !app_url ) {
-                NSBeep();
-                return;
+        if( app_url ) {
+            // In case we managed to get an app url - use it and open all items at once
+            [[NSWorkspace sharedWorkspace] openURLs:arr
+                               withApplicationAtURL:app_url
+                                      configuration:[NSWorkspaceOpenConfiguration configuration]
+                                  completionHandler:^(NSRunningApplication *_app, NSError *) {
+                                    if( !_app )
+                                        NSBeep();
+                                  }];
+        }
+        else {
+            // Otherwise, as a fallback, open items one by one with default app - leave it to the system
+            for( NSURL *const url in arr ) {
+                if( ![[NSWorkspace sharedWorkspace] openURL:url] )
+                    NSBeep();
             }
         }
-
-        [[NSWorkspace sharedWorkspace] openURLs:arr
-                           withApplicationAtURL:app_url
-                                  configuration:[NSWorkspaceOpenConfiguration configuration]
-                              completionHandler:^(NSRunningApplication *_app, NSError *) {
-                                if( !_app )
-                                    NSBeep();
-                              }];
     });
 }
 
@@ -307,6 +325,31 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
                 });
             }
         });
+}
+
+NSString *FileOpener::DeduceDefaultAppBundleForOpeningFiles(std::span<std::string> _filepaths, VFSHostPtr _host) const
+{
+    // TODO: this approach is ludicrously inefficient for large number of files...
+    // It does much more than necessary.
+    std::vector<core::LauchServicesHandlers> per_item_handlers;
+    per_item_handlers.reserve(_filepaths.size());
+    for( const std::string &path : _filepaths )
+        per_item_handlers.emplace_back(path, *_host, m_UTIDB);
+
+    const core::LauchServicesHandlers items_handlers{per_item_handlers};
+
+    if( items_handlers.DefaultHandlerPath().empty() ) {
+        // give up - there's no common default handler, the content is heterogeneous
+        // maybe it's a bit bitter to "cluster" the files by their default handlers, but that's rather complex.
+        return nil;
+    }
+
+    try {
+        const core::LaunchServiceHandler handler{items_handlers.DefaultHandlerPath()};
+        return handler.Identifier();
+    } catch( ... ) {
+        return nil;
+    }
 }
 
 bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item)

@@ -1,8 +1,10 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "LaunchServices.h"
 #include <sys/stat.h>
 #include <VFS/VFS.h>
 #include <Utility/StringExtras.h>
+#include <Utility/PathManip.h>
+#include <Base/UnorderedUtil.h>
 #include <Cocoa/Cocoa.h>
 #include <unordered_map>
 #include <ankerl/unordered_dense.h>
@@ -33,11 +35,11 @@ inline T all_equal_or_default(InputIterator _first, InputIterator _last, UnaryPr
     return std::move(val);
 }
 
-static std::string GetDefaultHandlerPathForNativeItem(const std::string &_path)
+static std::string GetDefaultHandlerPathForNativeItem(std::string_view _path)
 {
     std::string result;
     const auto url = CFURLCreateFromFileSystemRepresentation(
-        nullptr, reinterpret_cast<const UInt8 *>(_path.c_str()), _path.length(), false);
+        nullptr, reinterpret_cast<const UInt8 *>(_path.data()), _path.length(), false);
     if( url ) {
         const auto handler_url = LSCopyDefaultApplicationURLForURL(url, kLSRolesAll, nullptr);
 
@@ -50,11 +52,11 @@ static std::string GetDefaultHandlerPathForNativeItem(const std::string &_path)
     return result;
 }
 
-static std::vector<std::string> GetHandlersPathsForNativeItem(const std::string &_path)
+static std::vector<std::string> GetHandlersPathsForNativeItem(std::string_view _path)
 {
     std::vector<std::string> result;
     const auto url = CFURLCreateFromFileSystemRepresentation(
-        nullptr, reinterpret_cast<const UInt8 *>(_path.c_str()), _path.length(), false);
+        nullptr, reinterpret_cast<const UInt8 *>(_path.data()), _path.length(), false);
     if( url ) {
         auto apps = (__bridge_transfer NSArray *)LSCopyApplicationURLsForURL(url, kLSRolesAll);
         for( NSURL *app_url in apps )
@@ -112,6 +114,23 @@ LauchServicesHandlers::LauchServicesHandlers(const VFSListingItem &_item, const 
     }
 }
 
+LauchServicesHandlers::LauchServicesHandlers(std::string_view _item_path,
+                                             VFSHost &_host,
+                                             const nc::utility::UTIDB &_uti_db)
+{
+    const std::string_view extension = nc::utility::PathManip::Extension(_item_path);
+    if( _host.IsNativeFS() ) {
+        m_UTI = extension.empty() ? "public.data" : _uti_db.UTIForExtension(extension);
+        m_Paths = GetHandlersPathsForNativeItem(_item_path);
+        m_DefaultHandlerPath = GetDefaultHandlerPathForNativeItem(_item_path);
+    }
+    else if( !extension.empty() ) {
+        m_UTI = _uti_db.UTIForExtension(extension);
+        m_Paths = GetHandlersPathsForUTI(m_UTI);
+        m_DefaultHandlerPath = GetDefaultHandlerPathForUTI(m_UTI);
+    }
+}
+
 LauchServicesHandlers::LauchServicesHandlers(const std::vector<LauchServicesHandlers> &_handlers_to_merge)
 {
     // empty handler path means that there's no default handler available
@@ -124,15 +143,17 @@ LauchServicesHandlers::LauchServicesHandlers(const std::vector<LauchServicesHand
     // maps handler path to usage amount
     // then use only handlers with usage amount == _input.size() (or common ones)
     ankerl::unordered_dense::map<std::string, int> handlers_count;
+    ankerl::unordered_dense::set<std::string_view, nc::UnorderedStringHashEqual, nc::UnorderedStringHashEqual> inserted;
     for( auto &i : _handlers_to_merge ) {
         // a very inefficient approach, should be rewritten if will cause lags on UI
-        ankerl::unordered_dense::set<std::string> inserted;
-        for( auto &p : i.m_Paths )
+        for( auto &p : i.m_Paths ) {
             // here we exclude multiple counting for repeating handlers for one content type
             if( !inserted.contains(p) ) {
                 handlers_count[p]++;
                 inserted.insert(p);
             }
+        }
+        inserted.clear();
     }
 
     for( auto &i : handlers_count )

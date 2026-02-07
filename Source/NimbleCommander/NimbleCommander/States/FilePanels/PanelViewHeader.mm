@@ -1,14 +1,13 @@
-// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewHeader.h"
 #include <Utility/Layout.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/ColoredSeparatorLine.h>
-#include <Utility/VerticallyCenteredTextFieldCell.h>
 
 using namespace nc::panel;
 
 static NSString *SortLetter(data::SortMode _mode) noexcept;
-static void ChangeForegroundColor(NSButton *_button, NSColor *_new_color);
+static void ChangeButtonAttrString(NSButton *_button, NSColor *_new_color, NSFont *_font);
 static void ChangeAttributedTitle(NSButton *_button, NSString *_new_text);
 static bool IsDark(NSColor *_color);
 
@@ -18,8 +17,11 @@ static bool IsDark(NSColor *_color);
 
 @implementation NCPanelViewHeader {
     NSTextField *m_PathTextField;
-    NSSearchField *m_SearchTextField;
+    NSTextField *m_SearchTextField;
     NSTextField *m_SearchMatchesField;
+    NSButton *m_SearchMagGlassButton;
+    NSButton *m_SearchClearButton;
+
     ColoredSeparatorLine *m_SeparatorLine;
     NSColor *m_Background;
     NSString *m_SearchPrompt;
@@ -45,35 +47,33 @@ static bool IsDark(NSColor *_color);
         m_SearchPrompt = nil;
         m_Active = false;
 
+        // NB! Don't use "single line mode" - it doesn't do what you expect.
+        // https://stackoverflow.com/questions/36179012/nstextfield-non-system-font-content-clipped-when-usessinglelinemode-is-true
+
         m_PathTextField = [[NSTextField alloc] initWithFrame:NSRect()];
         m_PathTextField.translatesAutoresizingMaskIntoConstraints = false;
-        m_PathTextField.cell = [VerticallyCenteredTextFieldCell new];
         m_PathTextField.stringValue = @"";
         m_PathTextField.bordered = false;
         m_PathTextField.editable = false;
         m_PathTextField.drawsBackground = false;
         m_PathTextField.lineBreakMode = NSLineBreakByTruncatingHead;
-        m_PathTextField.usesSingleLineMode = true;
+        m_PathTextField.maximumNumberOfLines = 1;
         m_PathTextField.alignment = NSTextAlignmentCenter;
         [self addSubview:m_PathTextField];
 
-        m_SearchTextField = [[NSSearchField alloc] initWithFrame:NSRect()];
+        m_SearchTextField = [[NSTextField alloc] initWithFrame:NSRect()];
         m_SearchTextField.stringValue = @"";
         m_SearchTextField.translatesAutoresizingMaskIntoConstraints = false;
-        m_SearchTextField.sendsWholeSearchString = false;
         m_SearchTextField.target = self;
         m_SearchTextField.action = @selector(onSearchFieldAction:);
         m_SearchTextField.bordered = false;
-        m_SearchTextField.usesSingleLineMode = true;
         m_SearchTextField.bezeled = false;
         m_SearchTextField.editable = true;
         m_SearchTextField.drawsBackground = false;
-        m_SearchTextField.focusRingType = NSFocusRingTypeNone;
+        m_SearchTextField.lineBreakMode = NSLineBreakByTruncatingHead;
         m_SearchTextField.alignment = NSTextAlignmentCenter;
+        m_SearchTextField.focusRingType = NSFocusRingTypeNone;
         m_SearchTextField.delegate = self;
-        auto search_tf_cell = static_cast<NSSearchFieldCell *>(m_SearchTextField.cell);
-        search_tf_cell.cancelButtonCell.target = self;
-        search_tf_cell.cancelButtonCell.action = @selector(onSearchFieldDiscardButton:);
         [self addSubview:m_SearchTextField];
 
         m_SearchMatchesField = [[NSTextField alloc] initWithFrame:NSRect()];
@@ -83,11 +83,29 @@ static bool IsDark(NSColor *_color);
         m_SearchMatchesField.editable = false;
         m_SearchMatchesField.drawsBackground = false;
         m_SearchMatchesField.lineBreakMode = NSLineBreakByTruncatingHead;
-        m_SearchMatchesField.usesSingleLineMode = true;
         m_SearchMatchesField.alignment = NSTextAlignmentRight;
-        m_SearchMatchesField.font = [NSFont labelFontOfSize:11];
-        m_SearchMatchesField.textColor = [NSColor systemGrayColor];
         [self addSubview:m_SearchMatchesField];
+
+        m_SearchClearButton = [[NSButton alloc] initWithFrame:NSRect()];
+        m_SearchClearButton.translatesAutoresizingMaskIntoConstraints = false;
+        m_SearchClearButton.image = [NSImage imageWithSystemSymbolName:@"xmark.circle.fill"
+                                              accessibilityDescription:nil];
+        m_SearchClearButton.imageScaling = NSImageScaleProportionallyDown;
+        m_SearchClearButton.refusesFirstResponder = true;
+        m_SearchClearButton.bordered = false;
+        m_SearchClearButton.target = self;
+        m_SearchClearButton.action = @selector(onSearchFieldDiscardButton:);
+        [self addSubview:m_SearchClearButton];
+
+        m_SearchMagGlassButton = [[NSButton alloc] initWithFrame:NSRect()];
+        m_SearchMagGlassButton.translatesAutoresizingMaskIntoConstraints = false;
+        m_SearchMagGlassButton.image = [NSImage imageWithSystemSymbolName:@"magnifyingglass"
+                                                 accessibilityDescription:nil];
+        m_SearchMagGlassButton.imageScaling = NSImageScaleProportionallyDown;
+        m_SearchMagGlassButton.refusesFirstResponder = true;
+        m_SearchMagGlassButton.bordered = false;
+        m_SearchMagGlassButton.enabled = false;
+        [self addSubview:m_SearchMagGlassButton];
 
         m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
         m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = false;
@@ -128,36 +146,37 @@ static bool IsDark(NSColor *_color);
 
 - (void)setupAppearance
 {
-    const auto font = m_Theme->Font();
+    NSFont *const font = m_Theme->Font();
     m_PathTextField.font = font;
     m_SearchTextField.font = font;
+    m_SearchMatchesField.font = font;
+
     m_SeparatorLine.borderColor = m_Theme->SeparatorColor();
-    m_SortButton.font = font;
 
     const bool active = m_Active;
     m_Background = active ? m_Theme->ActiveBackgroundColor() : m_Theme->InactiveBackgroundColor();
 
-    const auto text_color = active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
+    NSColor *text_color = active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
     m_PathTextField.textColor = text_color;
+    m_SearchTextField.textColor = text_color;
+    m_SearchMatchesField.textColor = text_color;
 
-    ChangeForegroundColor(m_SortButton, text_color);
-
+    ChangeButtonAttrString(m_SortButton, text_color, font);
+    m_SearchClearButton.contentTintColor = text_color;
+    m_SearchMagGlassButton.contentTintColor = text_color;
     self.needsDisplay = true;
 }
 
 - (void)setupLayout
 {
-    NSDictionary *views = NSDictionaryOfVariableBindings(
-        m_PathTextField, m_SearchTextField, m_SeparatorLine, m_SearchMatchesField, m_SortButton, m_BusyIndicator);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                                                 @"V:|-(==0)-[m_PathTextField]-(==0)-[m_SeparatorLine(==1)]-(==0)-|"
-                                                                 options:0
-                                                                 metrics:nil
-                                                                   views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SortButton]-(==0)-|"
-                                                                 options:0
-                                                                 metrics:nil
-                                                                   views:views]];
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_PathTextField,
+                                                         m_SearchTextField,
+                                                         m_SeparatorLine,
+                                                         m_SearchMatchesField,
+                                                         m_SearchClearButton,
+                                                         m_SearchMagGlassButton,
+                                                         m_SortButton,
+                                                         m_BusyIndicator);
     [self addConstraints:[NSLayoutConstraint
                              constraintsWithVisualFormat:@"|-(==0)-[m_SortButton(==20)]-(==0)-[m_PathTextField]-(==2)-|"
                                                  options:0
@@ -167,47 +186,38 @@ static bool IsDark(NSColor *_color);
                                                                  options:0
                                                                  metrics:nil
                                                                    views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_BusyIndicator]-(==2)-|"
-                                                                 options:0
-                                                                 metrics:nil
-                                                                   views:views]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:m_SearchTextField
-                                                     attribute:NSLayoutAttributeLeft
-                                                     relatedBy:NSLayoutRelationEqual
-                                                        toItem:self
-                                                     attribute:NSLayoutAttributeLeft
-                                                    multiplier:1
-                                                      constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:m_SearchTextField
-                                                     attribute:NSLayoutAttributeRight
-                                                     relatedBy:NSLayoutRelationEqual
-                                                        toItem:self
-                                                     attribute:NSLayoutAttributeRight
-                                                    multiplier:1
-                                                      constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:m_SearchTextField
-                                                     attribute:NSLayoutAttributeTop
-                                                     relatedBy:NSLayoutRelationEqual
-                                                        toItem:self
-                                                     attribute:NSLayoutAttributeTop
-                                                    multiplier:1
-                                                      constant:1.0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:m_SearchTextField
-                                                     attribute:NSLayoutAttributeBottom
-                                                     relatedBy:NSLayoutRelationEqual
-                                                        toItem:self
-                                                     attribute:NSLayoutAttributeBottom
-                                                    multiplier:1
-                                                      constant:0.0]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_SeparatorLine]-(0)-|"
                                                                  options:0
                                                                  metrics:nil
                                                                    views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_SearchMatchesField(==50)]-(25)-|"
+    [self addConstraints:[NSLayoutConstraint
+                             constraintsWithVisualFormat:@"|-(4)-[m_SearchMagGlassButton(==15)]-[m_SearchTextField]-[m_"
+                                                         @"SearchMatchesField]-[m_SearchClearButton(==15)]-(4)-|"
+                                                 options:0
+                                                 metrics:nil
+                                                   views:views]];
+
+    [m_SearchTextField setContentHuggingPriority:NSLayoutPriorityDefaultLow
+                                  forOrientation:NSLayoutConstraintOrientationHorizontal];
+
+    [m_SearchMatchesField setContentHuggingPriority:NSLayoutPriorityRequired
+                                     forOrientation:NSLayoutConstraintOrientationHorizontal];
+
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_SeparatorLine(==1)]-(==0)-|"
                                                                  options:0
                                                                  metrics:nil
                                                                    views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_BusyIndicator]-(==2)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
+
+    [self addConstraint:LayoutConstraintForCenteringViewVertically(m_PathTextField, self)];
+    [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchTextField, self)];
+    [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchMagGlassButton, self)];
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchMatchesField, self)];
+    [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchClearButton, self)];
+    [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SortButton, self)];
 }
 
 - (BOOL)isOpaque
@@ -241,8 +251,10 @@ static bool IsDark(NSColor *_color);
 {
     static const auto isnil = @{NSValueTransformerNameBindingOption: NSIsNilTransformerName};
     static const auto isnotnil = @{NSValueTransformerNameBindingOption: NSIsNotNilTransformerName};
+    [m_SearchMagGlassButton bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnil];
     [m_SearchTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnil];
     [m_SearchMatchesField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnil];
+    [m_SearchClearButton bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnil];
     [m_PathTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnotnil];
     [m_SortButton bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnotnil];
     [m_BusyIndicator bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnotnil];
@@ -250,8 +262,10 @@ static bool IsDark(NSColor *_color);
 
 - (void)removeBindings
 {
+    [m_SearchMagGlassButton unbind:@"hidden"];
     [m_SearchTextField unbind:@"hidden"];
     [m_SearchMatchesField unbind:@"hidden"];
+    [m_SearchClearButton unbind:@"hidden"];
     [m_PathTextField unbind:@"hidden"];
     [m_SortButton unbind:@"hidden"];
     [m_BusyIndicator unbind:@"hidden"];
@@ -442,12 +456,25 @@ static bool IsDark(NSColor *_color);
     return m_Active;
 }
 
+- (void)cancelOperation:(id)_sender
+{
+    if( m_SearchPrompt != nil ) {
+        [self onSearchFieldDiscardButton:m_SearchTextField];
+        return;
+    }
+
+    [super cancelOperation:_sender];
+}
+
 @end
 
-static void ChangeForegroundColor(NSButton *_button, NSColor *_new_color)
+static void ChangeButtonAttrString(NSButton *_button, NSColor *_new_color, NSFont *_font)
 {
-    const auto sort_title = [[NSMutableAttributedString alloc] initWithAttributedString:_button.attributedTitle];
-    [sort_title addAttribute:NSForegroundColorAttributeName value:_new_color range:NSMakeRange(0, sort_title.length)];
+    NSMutableAttributedString *const sort_title =
+        [[NSMutableAttributedString alloc] initWithAttributedString:_button.attributedTitle];
+    const unsigned long length = sort_title.length;
+    [sort_title addAttribute:NSForegroundColorAttributeName value:_new_color range:NSMakeRange(0, length)];
+    [sort_title addAttribute:NSFontAttributeName value:_font range:NSMakeRange(0, length)];
     _button.attributedTitle = sort_title;
 }
 

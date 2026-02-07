@@ -1,10 +1,10 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewFooter.h"
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/ColoredSeparatorLine.h>
-#include <Utility/VerticallyCenteredTextFieldCell.h>
 #include <Utility/AdaptiveDateFormatting.h>
 #include <Utility/StringExtras.h>
+#include <Utility/Layout.h>
 #include <Base/dispatch_cpp.h>
 #include "PanelViewPresentationSettings.h"
 #include "PanelViewFooterVolumeInfoFetcher.h"
@@ -175,83 +175,80 @@ static NSString *FormHumanReadableBytesAndFiles(uint64_t _sz,
 
 - (void)createControls
 {
+    // NB! Don't use "single line mode" - it doesn't do what you expect.
+    // https://stackoverflow.com/questions/36179012/nstextfield-non-system-font-content-clipped-when-usessinglelinemode-is-true
+
     m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
     m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
 
     m_FilenameLabel = [[NSTextField alloc] initWithFrame:NSRect()];
     m_FilenameLabel.translatesAutoresizingMaskIntoConstraints = false;
-    m_FilenameLabel.cell = [VerticallyCenteredTextFieldCell new];
     m_FilenameLabel.stringValue = @"";
     m_FilenameLabel.bordered = false;
     m_FilenameLabel.editable = false;
     m_FilenameLabel.selectable = false;
     m_FilenameLabel.drawsBackground = false;
     m_FilenameLabel.lineBreakMode = NSLineBreakByTruncatingHead;
-    m_FilenameLabel.usesSingleLineMode = true;
+    m_FilenameLabel.maximumNumberOfLines = 1;
     m_FilenameLabel.alignment = NSTextAlignmentLeft;
     [m_FilenameLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultLow
                                               forOrientation:NSLayoutConstraintOrientationHorizontal];
 
     m_SizeLabel = [[NSTextField alloc] initWithFrame:NSRect()];
     m_SizeLabel.translatesAutoresizingMaskIntoConstraints = false;
-    m_SizeLabel.cell = [VerticallyCenteredTextFieldCell new];
     m_SizeLabel.stringValue = @"";
     m_SizeLabel.bordered = false;
     m_SizeLabel.editable = false;
     m_SizeLabel.drawsBackground = false;
     m_SizeLabel.lineBreakMode = NSLineBreakByTruncatingHead;
-    m_SizeLabel.usesSingleLineMode = true;
+    m_SizeLabel.maximumNumberOfLines = 1;
     m_SizeLabel.alignment = NSTextAlignmentRight;
     [m_SizeLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh
                                           forOrientation:NSLayoutConstraintOrientationHorizontal];
 
     m_ModTime = [[NSTextField alloc] initWithFrame:NSRect()];
     m_ModTime.translatesAutoresizingMaskIntoConstraints = false;
-    m_ModTime.cell = [VerticallyCenteredTextFieldCell new];
     m_ModTime.stringValue = @"";
     m_ModTime.bordered = false;
     m_ModTime.editable = false;
     m_ModTime.drawsBackground = false;
     m_ModTime.lineBreakMode = NSLineBreakByTruncatingHead;
-    m_ModTime.usesSingleLineMode = true;
+    m_ModTime.maximumNumberOfLines = 1;
     m_ModTime.alignment = NSTextAlignmentRight;
     [m_ModTime setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh
                                         forOrientation:NSLayoutConstraintOrientationHorizontal];
 
     m_SelectionLabel = [[NSTextField alloc] initWithFrame:NSRect()];
     m_SelectionLabel.translatesAutoresizingMaskIntoConstraints = false;
-    m_SelectionLabel.cell = [VerticallyCenteredTextFieldCell new];
     m_SelectionLabel.stringValue = @"";
     m_SelectionLabel.bordered = false;
     m_SelectionLabel.editable = false;
     m_SelectionLabel.drawsBackground = false;
     m_SelectionLabel.lineBreakMode = NSLineBreakByTruncatingHead;
-    m_SelectionLabel.usesSingleLineMode = true;
+    m_SelectionLabel.maximumNumberOfLines = 1;
     m_SelectionLabel.alignment = NSTextAlignmentCenter;
     [m_SelectionLabel setContentHuggingPriority:NSLayoutPriorityFittingSizeCompression
                                  forOrientation:NSLayoutConstraintOrientationHorizontal];
 
     m_ItemsLabel = [[NSTextField alloc] initWithFrame:NSRect()];
     m_ItemsLabel.translatesAutoresizingMaskIntoConstraints = false;
-    m_ItemsLabel.cell = [VerticallyCenteredTextFieldCell new];
     m_ItemsLabel.stringValue = @"";
     m_ItemsLabel.bordered = false;
     m_ItemsLabel.editable = false;
     m_ItemsLabel.drawsBackground = false;
     m_ItemsLabel.lineBreakMode = NSLineBreakByClipping;
-    m_ItemsLabel.usesSingleLineMode = true;
+    m_ItemsLabel.maximumNumberOfLines = 1;
     m_ItemsLabel.alignment = NSTextAlignmentCenter;
     [m_ItemsLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh
                                            forOrientation:NSLayoutConstraintOrientationHorizontal];
 
     m_VolumeLabel = [[NSTextField alloc] initWithFrame:NSRect()];
     m_VolumeLabel.translatesAutoresizingMaskIntoConstraints = false;
-    m_VolumeLabel.cell = [VerticallyCenteredTextFieldCell new];
     m_VolumeLabel.stringValue = @"";
     m_VolumeLabel.bordered = false;
     m_VolumeLabel.editable = false;
     m_VolumeLabel.drawsBackground = false;
-    m_VolumeLabel.usesSingleLineMode = true;
+    m_VolumeLabel.maximumNumberOfLines = 1;
     m_VolumeLabel.alignment = NSTextAlignmentRight;
     m_VolumeLabel.lineBreakMode = NSLineBreakByClipping;
     [m_VolumeLabel setContentCompressionResistancePriority:40 forOrientation:NSLayoutConstraintOrientationHorizontal];
@@ -282,14 +279,15 @@ static NSString *FormHumanReadableBytesAndFiles(uint64_t _sz,
         auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_vf options:0 metrics:metrics views:views];
         [self addConstraints:constraints];
     };
-    ac(@"V:|-(0)-[m_SeparatorLine(==1)]-(==0)-[m_FilenameLabel]-(==0)-|");
+    ac(@"V:|-(0)-[m_SeparatorLine(==1)]");
     ac(@"V:[m_SeparatorLine]-(==0)-[m_VSeparatorLine1]-(0)-|");
     ac(@"V:[m_SeparatorLine]-(==0)-[m_VSeparatorLine2]-(0)-|");
-    ac(@"V:|-(0)-[m_SeparatorLine]-(==0)-[m_FilenameLabel]-(==0)-|");
-    ac(@"V:[m_SeparatorLine]-(==0)-[m_SizeLabel]-(==0)-|");
-    ac(@"V:[m_SeparatorLine]-(==0)-[m_ModTime]-(==0)-|");
-    ac(@"V:[m_SeparatorLine]-(==0)-[m_ItemsLabel]-(==0)-|");
-    ac(@"V:[m_SeparatorLine]-(==0)-[m_VolumeLabel]-(==0)-|");
+    [self addConstraint:LayoutConstraintForCenteringViewVertically(m_FilenameLabel, self)];
+    [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SizeLabel, self)];
+    [self addConstraint:LayoutConstraintForCenteringViewVertically(m_ModTime, self)];
+    [self addConstraint:LayoutConstraintForCenteringViewVertically(m_ItemsLabel, self)];
+    [self addConstraint:LayoutConstraintForCenteringViewVertically(m_VolumeLabel, self)];
+
     ac(@"|-(0)-[m_SeparatorLine]-(0)-|");
     ac(@"[m_ModTime]-(>=4@500)-|");
     ac(@"|-(7)-[m_FilenameLabel]-(>=4)-[m_SizeLabel]-(4)-[m_ModTime(>=140@500)]-(4@400)-"

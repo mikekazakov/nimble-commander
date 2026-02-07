@@ -71,6 +71,7 @@ static bool IsDark(NSColor *_color);
         m_SearchTextField.editable = true;
         m_SearchTextField.drawsBackground = false;
         m_SearchTextField.lineBreakMode = NSLineBreakByTruncatingHead;
+        m_SearchTextField.maximumNumberOfLines = 1;
         m_SearchTextField.alignment = NSTextAlignmentCenter;
         m_SearchTextField.focusRingType = NSFocusRingTypeNone;
         m_SearchTextField.delegate = self;
@@ -83,6 +84,7 @@ static bool IsDark(NSColor *_color);
         m_SearchMatchesField.editable = false;
         m_SearchMatchesField.drawsBackground = false;
         m_SearchMatchesField.lineBreakMode = NSLineBreakByTruncatingHead;
+        m_SearchMatchesField.maximumNumberOfLines = 1;
         m_SearchMatchesField.alignment = NSTextAlignmentRight;
         [self addSubview:m_SearchMatchesField];
 

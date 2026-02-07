@@ -74,10 +74,13 @@ static std::string GetDefaultHandlerPathForUTI(const std::string &_uti)
 
     NSString *const bundle =
         (__bridge_transfer NSString *)LSCopyDefaultRoleHandlerForContentType((__bridge CFStringRef)uti, kLSRolesAll);
+    if( !bundle )
+        return {};
+
     NSURL *const app_url = [NSWorkspace.sharedWorkspace URLForApplicationWithBundleIdentifier:bundle];
     if( app_url )
         return app_url.path.fileSystemRepresentation;
-    return "";
+    return {};
 }
 
 static std::vector<std::string> GetHandlersPathsForUTI(const std::string &_uti)

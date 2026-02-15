@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/Host.h>
@@ -50,6 +50,7 @@ public:
                                                const VFSCancelChecker &_cancel_checker = {}) override;
 
     bool IsDirectoryChangeObservationAvailable(std::string_view _path) override;
+
     HostDirObservationTicket ObserveDirectoryChanges(std::string_view _path, std::function<void()> _handler) override;
 
     void StopDirChangeObserving(unsigned long _ticket) override;
@@ -102,11 +103,9 @@ public:
 
     bool ShouldProduceThumbnails() const override;
 
-    std::shared_ptr<const NativeHost> SharedPtr() const
-    {
-        return std::static_pointer_cast<const NativeHost>(Host::SharedPtr());
-    }
-    std::shared_ptr<NativeHost> SharedPtr() { return std::static_pointer_cast<NativeHost>(Host::SharedPtr()); }
+    std::shared_ptr<const NativeHost> SharedPtr() const;
+
+    std::shared_ptr<NativeHost> SharedPtr();
 
     bool IsNativeFS() const noexcept override;
 
@@ -114,6 +113,10 @@ public:
 
 private:
     static uint32_t MergeUnixFlags(uint32_t _symlink_flags, uint32_t _target_flags) noexcept;
+
+    // This function only allows fetching tags if it was originally requsted and the path does not lead to a network
+    // filesystem.
+    bool TagsFetchingAllowed(unsigned long _fetch_flags, std::string_view _path) const;
 
     nc::utility::NativeFSManager &m_NativeFSManager;
     [[maybe_unused]] nc::utility::FSEventsFileUpdate &m_FSEventsFileUpdate;

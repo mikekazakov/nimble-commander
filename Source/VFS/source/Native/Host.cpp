@@ -21,7 +21,7 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/Tags.h>
 #include <sys/mount.h>
-
+#include <pstld/pstld.h>
 #include <fmt/ranges.h>
 #include <algorithm>
 
@@ -181,8 +181,24 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchDirectoryListing(std::strin
     if( next_entry_index < allocated_size )
         resize_dense(next_entry_index);
 
-    // a little more work with symlinks, if there are any
-    for( size_t n = 0; n < next_entry_index; ++n )
+    // Now the main fetching is done there's a second pass to gather optional attributes per item:
+    // - symlinks
+    // - tags
+    // Run the pass in parallel to reduce the latency of the critical path.
+    std::mutex listing_source_tags_mut;     // guard access to 'listing_source.tags'
+    std::mutex listing_source_symlinks_mut; // guard access to 'listing_source.symlinks'
+    auto epilogue_pass = [fd,
+                          _flags,
+                          is_native_io,
+                          &io,
+                          &listing_source,
+                          &listing_source_tags_mut,
+                          &listing_source_symlinks_mut,
+                          &ext_flags](const std::string &filename) {
+        // index of the item in the listing
+        const size_t n = &filename - listing_source.filenames.data();
+
+        // If this entry is symbolic link - read the target path, stat it and the target into in the listing.
         if( listing_source.unix_types[n] == DT_LNK ) {
             // read an actual link path
             char linkpath[MAXPATHLEN];
@@ -191,48 +207,52 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchDirectoryListing(std::strin
                                    : io.readlink((listing_source.directories[0] + listing_source.filenames[n]).c_str(),
                                                  linkpath,
                                                  MAXPATHLEN);
-            if( sz != -1 ) {
+            if( sz >= 0 ) {
                 linkpath[sz] = 0;
-                listing_source.symlinks.insert(n, linkpath);
-            }
+                {
+                    const std::lock_guard<std::mutex> lock(listing_source_symlinks_mut);
+                    listing_source.symlinks.insert(n, linkpath);
+                }
 
-            // stat the target file
-            struct ::stat stat_buffer;
-            const auto stat_ret =
-                is_native_io
-                    ? fstatat(fd, listing_source.filenames[n].c_str(), &stat_buffer, 0)
-                    : io.stat((listing_source.directories[0] + listing_source.filenames[n]).c_str(), &stat_buffer);
-            if( stat_ret == 0 ) {
-                listing_source.unix_modes[n] = stat_buffer.st_mode;
-                listing_source.unix_flags[n] = MergeUnixFlags(listing_source.unix_flags[n], stat_buffer.st_flags);
-                listing_source.uids[n] = stat_buffer.st_uid;
-                listing_source.gids[n] = stat_buffer.st_gid;
-                listing_source.sizes[n] = S_ISDIR(stat_buffer.st_mode) ? -1 : stat_buffer.st_size;
+                // stat the target file
+                struct ::stat stat_buffer;
+                const int stat_ret =
+                    is_native_io
+                        ? fstatat(fd, listing_source.filenames[n].c_str(), &stat_buffer, 0)
+                        : io.stat((listing_source.directories[0] + listing_source.filenames[n]).c_str(), &stat_buffer);
+                if( stat_ret == 0 ) {
+                    listing_source.unix_modes[n] = stat_buffer.st_mode;
+                    listing_source.unix_flags[n] = MergeUnixFlags(listing_source.unix_flags[n], stat_buffer.st_flags);
+                    listing_source.uids[n] = stat_buffer.st_uid;
+                    listing_source.gids[n] = stat_buffer.st_gid;
+                    listing_source.sizes[n] = S_ISDIR(stat_buffer.st_mode) ? -1 : stat_buffer.st_size;
+                }
             }
         }
 
-    // Fetch FinderTags if they were requested AND if an entry doesn't have an EF_NO_XATTRS flag (to do less unnecessary
-    // syscalls).
-    if( _flags & Flags::F_LoadTags ) {
-        for( size_t n = 0; n < next_entry_index; ++n ) {
-            if( ext_flags[n] & EF_NO_XATTRS )
-                continue; // tags are stored in xattrs and if we no in advance that there are no xattrs in this entry -
-                          // there's no point trying
-
+        // Fetch FinderTags if they were requested AND
+        // if an entry doesn't have an EF_NO_XATTRS flag (to do less unnecessary syscalls).
+        // Tags are stored in xattrs and if we know in advance that there are no xattrs in this entry - there's no
+        // point trying. Unfortunately, some filesystems (like SMB) don't report EF_NO_XATTRS, so this algorithm
+        // has to check every single item...
+        if( (_flags & Flags::F_LoadTags) && !(ext_flags[n] & EF_NO_XATTRS) ) {
             // TODO: is it worth routing the I/O here? guess not atm
-            const std::string &filename = listing_source.filenames[n];
             const int entry_fd = openat(fd, filename.c_str(), O_RDONLY | O_NONBLOCK);
-            if( entry_fd < 0 )
-                continue; // guess silenty skipping the errors is ok here...
-            auto close_entry_fd = at_scope_end([entry_fd] { close(entry_fd); });
+            if( entry_fd >= 0 ) {
+                auto close_entry_fd = at_scope_end([entry_fd] { close(entry_fd); });
 
-            if( auto tags = utility::Tags::ReadTags(entry_fd); !tags.empty() ) {
-                Log::Debug("Extracted the tags of the file '{}': {}", filename, fmt::join(tags, ", "));
-                listing_source.tags.emplace(n, std::move(tags));
+                if( auto tags = utility::Tags::ReadTags(entry_fd); !tags.empty() ) {
+                    Log::Debug("Extracted the tags of the file '{}': {}", filename, fmt::join(tags, ", "));
+
+                    const std::lock_guard<std::mutex> lock(listing_source_tags_mut);
+                    listing_source.tags.emplace(n, std::move(tags));
+                }
             }
         }
-    }
+    };
+    pstld::for_each_n(listing_source.filenames.begin(), next_entry_index, epilogue_pass);
 
+    // And, finally, compose the listing source into a compact immutable listing object.
     return VFSListing::Build(std::move(listing_source));
 }
 

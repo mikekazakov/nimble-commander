@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/mach_time.h>
 #include <fmt/format.h>
 #include <mach/mach_time.h>
@@ -40,24 +40,30 @@ std::chrono::nanoseconds MachTimeBenchmark::Delta() const
     return machtime() - last;
 }
 
-void MachTimeBenchmark::ResetNano(const char *_msg)
+void MachTimeBenchmark::ResetNano(std::string_view _msg)
 {
     auto now = machtime();
-    fmt::println("{}{}", _msg, (now - last).count());
+    fmt::println("{}{}{}ns", _msg, _msg.empty() ? "" : " ", (now - last).count());
     last = now;
 }
 
-void MachTimeBenchmark::ResetMicro(const char *_msg)
+void MachTimeBenchmark::ResetMicro(std::string_view _msg)
 {
     auto now = machtime();
-    fmt::println("{}{}", _msg, std::chrono::duration_cast<std::chrono::microseconds>(now - last).count());
+    fmt::println("{}{}{}um",
+                 _msg,
+                 _msg.empty() ? "" : " ",
+                 std::chrono::duration_cast<std::chrono::microseconds>(now - last).count());
     last = now;
 }
 
-void MachTimeBenchmark::ResetMilli(const char *_msg)
+void MachTimeBenchmark::ResetMilli(std::string_view _msg)
 {
     auto now = machtime();
-    fmt::println("{}{}", _msg, std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count());
+    fmt::println("{}{}{}ms",
+                 _msg,
+                 _msg.empty() ? "" : " ",
+                 std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count());
     last = now;
 }
 

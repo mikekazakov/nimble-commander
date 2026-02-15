@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <NativeSpecialDirectories.h>
@@ -6,6 +6,10 @@
 #include <sys/stat.h>
 #include <sys/xattr.h>
 #include <algorithm>
+#include <filesystem>
+#include <fstream>
+#include <random>
+#include <unordered_set>
 
 #define PREFIX "VFSNative "
 
@@ -187,6 +191,69 @@ TEST_CASE(PREFIX "FetchGroups")
     REQUIRE(groups);
     REQUIRE(std::ranges::contains(groups.value(), VFSGroup{0, "wheel", "System Group"}));
     REQUIRE(std::ranges::contains(groups.value(), VFSGroup{20, "staff", "Staff"}));
+}
+
+TEST_CASE(PREFIX "FetchDirectoryListing reads symlink value and resolves target type")
+{
+    const TestDir test_dir_holder;
+    const std::filesystem::path test_dir = test_dir_holder.directory;
+
+    // Create a regular file with known content
+    const std::filesystem::path target_path = test_dir / "file.txt";
+    std::ofstream{target_path} << "Hello, world!";
+
+    // Generate 50 random, unique symlink names and create them pointing to the file (relative target)
+    std::mt19937 rng(123456);
+    const std::string_view alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
+    std::uniform_int_distribution<int> len_dist(6, 16);
+    std::uniform_int_distribution<int> ch_dist(0, static_cast<int>(alphabet.length() - 1));
+
+    std::unordered_set<std::string> link_names;
+    while( link_names.size() < 50 ) {
+        const int len = len_dist(rng);
+        std::string name;
+        for( int i = 0; i < len; ++i )
+            name += alphabet[ch_dist(rng)];
+        name += ".lnk";
+        if( name == "file.txt" )
+            continue; // just in case
+        link_names.insert(std::move(name));
+    }
+
+    for( const auto &name : link_names )
+        REQUIRE_NOTHROW(std::filesystem::create_symlink("file.txt", test_dir / name));
+
+    const auto listing_exp = host().FetchDirectoryListing(test_dir.c_str(), Flags::F_NoDotDot);
+    REQUIRE(listing_exp);
+    REQUIRE(*listing_exp);
+    const VFSListing &listing = **listing_exp;
+    REQUIRE(listing.Count() == 1 + link_names.size());
+
+    int idx_file = -1;
+    for( unsigned i = 0; i != listing.Count(); ++i )
+        if( listing.Filename(i) == "file.txt" ) {
+            idx_file = static_cast<int>(i);
+            break;
+        }
+    REQUIRE(idx_file >= 0);
+
+    // Verify the regular file entry
+    CHECK(listing.IsReg(idx_file));
+    CHECK(!listing.IsSymlink(idx_file));
+    CHECK(!listing.HasSymlink(idx_file));
+    const uint64_t file_size = listing.Size(idx_file);
+
+    // Verify that all other entries are the generated symlinks and resolve to the target type/size
+    for( unsigned i = 0; i != listing.Count(); ++i ) {
+        if( static_cast<int>(i) == idx_file )
+            continue;
+        CHECK(link_names.contains(listing.Filename(i)));
+        CHECK(listing.IsSymlink(i));
+        CHECK(listing.HasSymlink(i));
+        CHECK(listing.Symlink(i) == "file.txt");
+        CHECK(listing.IsReg(i));
+        CHECK(listing.Size(i) == file_size);
+    }
 }
 
 } // namespace VFSNativeTests

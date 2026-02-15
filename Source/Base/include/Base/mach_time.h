@@ -1,6 +1,7 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <chrono>
+#include <string_view>
 
 namespace nc::base {
 
@@ -10,9 +11,9 @@ std::chrono::nanoseconds machtime() noexcept;
 struct MachTimeBenchmark {
     MachTimeBenchmark() noexcept;
     [[nodiscard]] std::chrono::nanoseconds Delta() const;
-    void ResetNano(const char *_msg = "");
-    void ResetMicro(const char *_msg = "");
-    void ResetMilli(const char *_msg = "");
+    void ResetNano(std::string_view _msg = {});
+    void ResetMicro(std::string_view _msg = {});
+    void ResetMilli(std::string_view _msg = {});
 
 private:
     std::chrono::nanoseconds last;

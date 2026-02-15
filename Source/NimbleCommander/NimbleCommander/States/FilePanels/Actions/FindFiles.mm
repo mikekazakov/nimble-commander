@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFSListingInput.h>
 #include <NimbleCommander/States/FilePanels/FindFilesSheetController.h>
 #include "../PanelController.h"
@@ -8,6 +8,7 @@
 #include <Viewer/ViewerSheet.h>
 #include <Viewer/ViewerViewController.h>
 #include <Viewer/InternalViewerWindowController.h>
+#include <pstld/pstld.h>
 
 // TEMP - need to refactor this bullcrap!
 #include <NimbleCommander/Bootstrap/Config.h>
@@ -32,18 +33,33 @@ static VFSListingPtr FetchSearchResultsAsListing(const std::vector<vfs::VFSPath>
                                                  unsigned long _fetch_flags,
                                                  const VFSCancelChecker &_cancel_checker)
 {
-    std::vector<VFSListingPtr> listings;
+    // Fetch the per-item listings in parallel
+    std::vector<VFSListingPtr> listings(_filepaths.size());
+    pstld::transform(
+        _filepaths.begin(), _filepaths.end(), listings.begin(), [&](const vfs::VFSPath &_path) -> VFSListingPtr {
+            try {
+                if( _cancel_checker && _cancel_checker() )
+                    return {};
 
-    for( auto &p : _filepaths ) {
-        const std::expected<VFSListingPtr, Error> listing =
-            p.Host()->FetchSingleItemListing(p.Path(), _fetch_flags, _cancel_checker);
-        if( listing )
-            listings.emplace_back(*listing);
+                const std::expected<VFSListingPtr, Error> listing =
+                    _path.Host()->FetchSingleItemListing(_path.Path(), _fetch_flags, _cancel_checker);
 
-        if( _cancel_checker && _cancel_checker() )
+                if( listing )
+                    return *listing;
+            } catch( ... ) {
+                // PSTL gets very upset when the functor throws an exception, so swallow it silently instead of
+                // terminating.
+            }
             return {};
-    }
+        });
 
+    if( _cancel_checker && _cancel_checker() )
+        return {};
+
+    // Erase any potential holes
+    std::erase_if(listings, [](const VFSListingPtr &_listing) { return !_listing; });
+
+    // Finally, build a single listing from the results
     return VFSListing::Build(VFSListing::Compose(listings));
 }
 

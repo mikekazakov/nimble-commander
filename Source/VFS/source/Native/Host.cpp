@@ -21,7 +21,7 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/Tags.h>
 #include <sys/mount.h>
-
+#include <pstld/pstld.h>
 #include <fmt/ranges.h>
 #include <algorithm>
 
@@ -69,6 +69,8 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchDirectoryListing(std::strin
                                                                       const unsigned long _flags,
                                                                       const VFSCancelChecker &_cancel_checker)
 {
+    Log::Trace("NativeHost::FetchDirectoryListing() called with path='{}',_flags: {}", _path, _flags);
+
     using namespace native;
     if( !_path.starts_with("/") )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
@@ -181,8 +183,25 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchDirectoryListing(std::strin
     if( next_entry_index < allocated_size )
         resize_dense(next_entry_index);
 
-    // a little more work with symlinks, if there are any
-    for( size_t n = 0; n < next_entry_index; ++n )
+    // Now the main fetching is done there's a second pass to gather optional attributes per item:
+    // - symlinks
+    // - tags
+    // Run the pass in parallel to reduce the latency of the critical path.
+    const bool tags_reading_enabled = TagsFetchingAllowed(_flags, _path);
+    std::mutex listing_source_tags_mut;     // guard access to 'listing_source.tags'
+    std::mutex listing_source_symlinks_mut; // guard access to 'listing_source.symlinks'
+    auto epilogue_pass = [fd,
+                          tags_reading_enabled,
+                          is_native_io,
+                          &io,
+                          &listing_source,
+                          &listing_source_tags_mut,
+                          &listing_source_symlinks_mut,
+                          &ext_flags](const std::string &filename) {
+        // index of the item in the listing
+        const size_t n = &filename - listing_source.filenames.data();
+
+        // If this entry is symbolic link - read the target path, stat it and the target into in the listing.
         if( listing_source.unix_types[n] == DT_LNK ) {
             // read an actual link path
             char linkpath[MAXPATHLEN];
@@ -191,48 +210,58 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchDirectoryListing(std::strin
                                    : io.readlink((listing_source.directories[0] + listing_source.filenames[n]).c_str(),
                                                  linkpath,
                                                  MAXPATHLEN);
-            if( sz != -1 ) {
+            if( sz >= 0 ) {
                 linkpath[sz] = 0;
-                listing_source.symlinks.insert(n, linkpath);
-            }
+                {
+                    const std::lock_guard<std::mutex> lock(listing_source_symlinks_mut);
+                    listing_source.symlinks.insert(n, linkpath);
+                }
 
-            // stat the target file
-            struct ::stat stat_buffer;
-            const auto stat_ret =
-                is_native_io
-                    ? fstatat(fd, listing_source.filenames[n].c_str(), &stat_buffer, 0)
-                    : io.stat((listing_source.directories[0] + listing_source.filenames[n]).c_str(), &stat_buffer);
-            if( stat_ret == 0 ) {
-                listing_source.unix_modes[n] = stat_buffer.st_mode;
-                listing_source.unix_flags[n] = MergeUnixFlags(listing_source.unix_flags[n], stat_buffer.st_flags);
-                listing_source.uids[n] = stat_buffer.st_uid;
-                listing_source.gids[n] = stat_buffer.st_gid;
-                listing_source.sizes[n] = S_ISDIR(stat_buffer.st_mode) ? -1 : stat_buffer.st_size;
+                // stat the target file
+                struct ::stat stat_buffer;
+                const int stat_ret =
+                    is_native_io
+                        ? fstatat(fd, listing_source.filenames[n].c_str(), &stat_buffer, 0)
+                        : io.stat((listing_source.directories[0] + listing_source.filenames[n]).c_str(), &stat_buffer);
+                if( stat_ret == 0 ) {
+                    listing_source.unix_modes[n] = stat_buffer.st_mode;
+                    listing_source.unix_flags[n] = MergeUnixFlags(listing_source.unix_flags[n], stat_buffer.st_flags);
+                    listing_source.uids[n] = stat_buffer.st_uid;
+                    listing_source.gids[n] = stat_buffer.st_gid;
+                    listing_source.sizes[n] = S_ISDIR(stat_buffer.st_mode) ? -1 : stat_buffer.st_size;
+                }
             }
         }
 
-    // Fetch FinderTags if they were requested AND if an entry doesn't have an EF_NO_XATTRS flag (to do less unnecessary
-    // syscalls).
-    if( _flags & Flags::F_LoadTags ) {
-        for( size_t n = 0; n < next_entry_index; ++n ) {
-            if( ext_flags[n] & EF_NO_XATTRS )
-                continue; // tags are stored in xattrs and if we no in advance that there are no xattrs in this entry -
-                          // there's no point trying
-
+        // Fetch FinderTags if they were requested AND
+        // if an entry doesn't have an EF_NO_XATTRS flag (to do less unnecessary syscalls).
+        // Tags are stored in xattrs and if we know in advance that there are no xattrs in this entry - there's no
+        // point trying. Unfortunately, some filesystems (like SMB) don't report EF_NO_XATTRS, so this algorithm
+        // has to check every single item...
+        if( tags_reading_enabled && !(ext_flags[n] & EF_NO_XATTRS) ) {
             // TODO: is it worth routing the I/O here? guess not atm
-            const std::string &filename = listing_source.filenames[n];
             const int entry_fd = openat(fd, filename.c_str(), O_RDONLY | O_NONBLOCK);
-            if( entry_fd < 0 )
-                continue; // guess silenty skipping the errors is ok here...
-            auto close_entry_fd = at_scope_end([entry_fd] { close(entry_fd); });
+            if( entry_fd >= 0 ) {
+                auto close_entry_fd = at_scope_end([entry_fd] { close(entry_fd); });
 
-            if( auto tags = utility::Tags::ReadTags(entry_fd); !tags.empty() ) {
-                Log::Debug("Extracted the tags of the file '{}': {}", filename, fmt::join(tags, ", "));
-                listing_source.tags.emplace(n, std::move(tags));
+                if( auto tags = utility::Tags::ReadTags(entry_fd); !tags.empty() ) {
+                    Log::Debug("Extracted the tags of the file '{}': {}", filename, fmt::join(tags, ", "));
+
+                    const std::lock_guard<std::mutex> lock(listing_source_tags_mut);
+                    listing_source.tags.emplace(n, std::move(tags));
+                }
             }
         }
-    }
+    };
+    pstld::for_each_n(listing_source.filenames.begin(), next_entry_index, [epilogue_pass](const std::string &filename) {
+        try {
+            epilogue_pass(filename);
+        } catch( ... ) {
+            // PSTL gets very upset when the functor throws an exception, so swallow it silently instead of terminating.
+        }
+    });
 
+    // And, finally, compose the listing source into a compact immutable listing object.
     return VFSListing::Build(std::move(listing_source));
 }
 
@@ -240,6 +269,8 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchSingleItemListing(std::stri
                                                                        unsigned long _flags,
                                                                        const VFSCancelChecker &_cancel_checker)
 {
+    Log::Trace("NativeHost::FetchSingleItemListing() called with path='{}',_flags: {}", _path, _flags);
+
     using namespace native;
     if( !_path.starts_with("/") )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
@@ -339,7 +370,8 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchSingleItemListing(std::stri
 
     // Fetch FinderTags if they were requested AND if an entry doesn't have an EF_NO_XATTRS flag (to do less unnecessary
     // syscalls).
-    if( (_flags & Flags::F_LoadTags) && !(ext_flags & EF_NO_XATTRS) ) {
+    const bool tags_reading_enabled = TagsFetchingAllowed(_flags, _path);
+    if( tags_reading_enabled && !(ext_flags & EF_NO_XATTRS) ) {
         // TODO: is it worth routing the I/O here? guess not atm
         const int entry_fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
         if( entry_fd >= 0 ) {
@@ -814,6 +846,31 @@ uint32_t NativeHost::MergeUnixFlags(uint32_t _symlink_flags, uint32_t _target_fl
 {
     const uint32_t hidden_flag = _symlink_flags & UF_HIDDEN;
     return _target_flags | hidden_flag;
+}
+
+bool NativeHost::TagsFetchingAllowed(unsigned long _fetch_flags, std::string_view _path) const
+{
+    if( !(_fetch_flags & Flags::F_LoadTags) )
+        return false; // was not originally requested - nothing to think about.
+
+    // Disallow fetching tags on remote volumes - use a fast No-I/O approximation to check that.
+    const std::shared_ptr<const utility::NativeFileSystemInfo> fast_fs_info =
+        m_NativeFSManager.VolumeFromPathFast(_path);
+    if( !fast_fs_info )
+        return false; // Something is truly fishy going on with the path - let's be on the safe side.
+
+    // If the FS is local => it is not network => allow it.
+    return fast_fs_info->mount_flags.local;
+}
+
+std::shared_ptr<const NativeHost> NativeHost::SharedPtr() const
+{
+    return std::static_pointer_cast<const NativeHost>(Host::SharedPtr());
+}
+
+std::shared_ptr<NativeHost> NativeHost::SharedPtr()
+{
+    return std::static_pointer_cast<NativeHost>(Host::SharedPtr());
 }
 
 } // namespace nc::vfs

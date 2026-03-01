@@ -1,17 +1,19 @@
 // Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <Cocoa/Cocoa.h>
+
 namespace nc::utility {
 class ActionsShortcutsManager;
 }
 
-@class MMTabBarView;
+@class NCPanelTabBarView;
 @class PanelView;
 @class PanelController;
 
 @interface FilePanelsTabbedHolder : NSView
 
-@property(nonatomic, readonly) MMTabBarView *tabBar;
+@property(nonatomic, readonly) NCPanelTabBarView *tabBar;
 @property(nonatomic, readonly) NSTabView *tabView;
 @property(nonatomic, readonly)
     PanelView *current; // can return nil in case if there's no panels inserted or in some other weird cases

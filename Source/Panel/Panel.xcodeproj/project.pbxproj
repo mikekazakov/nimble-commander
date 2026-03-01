@@ -25,6 +25,7 @@
 		CF4652592699F97C0085840A /* PanelViewFieldEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4652582699F97C0085840A /* PanelViewFieldEditor.h */; };
 		CF465284269A4C150085840A /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF465283269A4C150085840A /* libOperations.a */; };
 		CF60DF252A6D3BAB00478BA0 /* libTerm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF60DF242A6D3BAB00478BA0 /* libTerm.a */; };
+		CF86B8EE2F54C07900AE36DF /* PanelTabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86B8ED2F54C07900AE36DF /* PanelTabBarView.swift */; };
 		CFA89D822804C86E00BEA127 /* FindFilesData.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA89D812804C86E00BEA127 /* FindFilesData.h */; };
 		CFC762CD2D3D2D41000498AA /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CFC762CB2D3D2B17000498AA /* Localizable.xcstrings */; };
 		CFCF43E22B8B642C00B513C7 /* TagsStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CFCF43E12B8B642C00B513C7 /* TagsStorage.h */; };
@@ -115,6 +116,8 @@
 		CF5D1DCE2B58798A00750174 /* TagsPresentation_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TagsPresentation_UT.mm; path = tests/UI/TagsPresentation_UT.mm; sourceTree = "<group>"; };
 		CF60DF242A6D3BAB00478BA0 /* libTerm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libTerm.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF60DF262A6D47CB00478BA0 /* ExternalTools_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalTools_IT.mm; path = tests/ExternalTools_IT.mm; sourceTree = "<group>"; };
+		CF86B8ED2F54C07900AE36DF /* PanelTabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PanelTabBarView.swift; path = source/UI/PanelTabBarView.swift; sourceTree = "<group>"; };
+		CF86B8EF2F54D4C800AE36DF /* PanelTabBarView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelTabBarView.h; path = include/Panel/UI/PanelTabBarView.h; sourceTree = "<group>"; };
 		CF8B0FAD2CA7FF300098C4D6 /* NetworkConnectionsManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkConnectionsManager.h; path = include/Panel/NetworkConnectionsManager.h; sourceTree = "<group>"; };
 		CF8B0FAE2CA7FF440098C4D6 /* NetworkConnectionsManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkConnectionsManager.mm; path = source/NetworkConnectionsManager.mm; sourceTree = "<group>"; };
 		CF96DC7529CF460F003EC4EB /* ItemVolatileData_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ItemVolatileData_UT.mm; path = tests/ItemVolatileData_UT.mm; sourceTree = "<group>"; };
@@ -213,6 +216,7 @@
 		CF0B0403281F013800076FDF /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				CF86B8EF2F54D4C800AE36DF /* PanelTabBarView.h */,
 				CFCB68FF28968C3600086E40 /* PanelViewPresentationItemsColoringFilter.h */,
 				CFCB68FE28968C3600086E40 /* PanelViewPresentationItemsColoringFilterPersistence.h */,
 				CF0B0404281F014800076FDF /* SelectionWithMaskPopupViewController.h */,
@@ -224,6 +228,7 @@
 		CF0B0406281F015A00076FDF /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				CF86B8ED2F54C07900AE36DF /* PanelTabBarView.swift */,
 				CFCB690128968C4800086E40 /* PanelViewPresentationItemsColoringFilter.mm */,
 				CFCB690028968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm */,
 				CF0B0407281F016300076FDF /* SelectionWithMaskPopupViewController.mm */,
@@ -480,6 +485,7 @@
 					};
 					CFF33F5E2556924900B3C92C = {
 						CreatedOnToolsVersion = 12.0;
+						LastSwiftMigration = 2630;
 					};
 					CFF33FE325569DA700B3C92C = {
 						CreatedOnToolsVersion = 12.0;
@@ -550,6 +556,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFF762412EDC5E2B002DD1EE /* Localizable.mm in Sources */,
+				CF86B8EE2F54C07900AE36DF /* PanelTabBarView.swift in Sources */,
 				CFF7623C2EDB1F58002DD1EE /* _Panel.mm in Sources */,
 				CFF7623A2EDB1E98002DD1EE /* _Panel.cpp in Sources */,
 			);

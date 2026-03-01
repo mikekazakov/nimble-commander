@@ -1,5 +1,4 @@
 // Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#import <MMTabBarView/MMAttachedTabBarButton.h>
 #include "MainWindowFilePanelState+TabsSupport.h"
 #include <Base/CommonPaths.h>
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
@@ -57,13 +56,16 @@ using namespace nc::panel;
     }
 }
 
+#if 0
 - (BOOL)tabView:(NSTabView *) [[maybe_unused]] aTabView
     shouldAllowTabViewItem:(NSTabViewItem *) [[maybe_unused]] tabViewItem
          toLeaveTabBarView:(MMTabBarView *) [[maybe_unused]] tabBarView
 {
     return aTabView.numberOfTabViewItems > 1;
 }
+#endif
 
+#if 0
 - (NSDragOperation)tabView:(NSTabView *) [[maybe_unused]] aTabView
               validateDrop:(id<NSDraggingInfo>) [[maybe_unused]] sender
               proposedItem:(NSTabViewItem *)tabViewItem
@@ -79,7 +81,9 @@ using namespace nc::panel;
 
     return NSDragOperationGeneric;
 }
+#endif
 
+#if 0
 - (void)tabView:(NSTabView *) [[maybe_unused]] aTabView
     didDropTabViewItem:(NSTabViewItem *)tabViewItem
           inTabBarView:(MMTabBarView *)tabBarView
@@ -117,6 +121,7 @@ using namespace nc::panel;
 
     // empty or unselected tab view?
 }
+#endif
 
 static std::string TabNameForController(PanelController *_controller)
 {
@@ -204,9 +209,11 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
         [popover addItem:item];
     }
 
+#if 0
     const auto add_rc = holder.tabBar.addTabButtonRect;
     m_CommandPopover = popover;
     [popover showRelativeToRect:add_rc ofView:holder.tabBar alignment:NCCommandPopoverAlignment::Right];
+#endif
 }
 
 - (void)respawnRecentlyClosedCallout:(id)sender
@@ -294,12 +301,14 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     }
 }
 
+#if 0
 - (BOOL)tabView:(NSTabView *)aTabView
     shouldDragTabViewItem:(NSTabViewItem *) [[maybe_unused]] tabViewItem
              inTabBarView:(MMTabBarView *) [[maybe_unused]] tabBarView
 {
     return aTabView.numberOfTabViewItems > 1;
 }
+#endif
 
 - (NSArray *)allowedDraggedTypesForTabView:(NSTabView *) [[maybe_unused]] aTabView
 {
@@ -324,8 +333,9 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
 
 - (void)closeTabForController:(PanelController *)_controller
 {
+#if 0
     NSTabViewItem *it;
-    MMTabBarView *bar;
+    NCPanelTabBarView *bar;
 
     if( [self isLeftController:_controller] ) {
         it = [m_SplitView.leftTabbedHolder tabViewItemForController:_controller];
@@ -342,11 +352,13 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
                 if( const auto close_button = button.closeButton )
                     [close_button sendAction:close_button.action to:close_button.target];
             });
+#endif
 }
 
 - (void)closeOtherTabsForController:(PanelController *)_controller
 {
-    MMTabBarView *bar;
+#if 0
+    NCPanelTabBarView *bar;
     if( [self isLeftController:_controller] )
         bar = m_SplitView.leftTabbedHolder.tabBar;
     else if( [self isRightController:_controller] )
@@ -371,6 +383,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
                         [close_button sendAction:close_button.action to:close_button.target];
             });
     });
+#endif
 }
 
 - (unsigned)currentSideTabsCount
@@ -387,7 +400,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     return tabs;
 }
 
-- (MMTabBarView *)activeTabBarView
+- (NCPanelTabBarView *)activeTabBarView
 {
     PanelController *cur = self.activePanelController;
     if( !cur )
@@ -438,12 +451,14 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
 
 - (void)updateTabBarButtons
 {
+#if 0
     const auto handler =
         ^(MMAttachedTabBarButton *aButton, [[maybe_unused]] NSUInteger idx, [[maybe_unused]] BOOL *stop) {
           [aButton setNeedsDisplay:true];
         };
     [m_SplitView.leftTabbedHolder.tabBar enumerateAttachedButtonsUsingBlock:handler];
     [m_SplitView.rightTabbedHolder.tabBar enumerateAttachedButtonsUsingBlock:handler];
+#endif
 }
 
 - (FilePanelsTabbedHolder *)leftTabbedHolder

@@ -900,6 +900,15 @@ CA
                                     <action selector="OnMoveToTrash:" target="-1" id="6mM-F6-n4u"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Empty Trash" tag="15161" id="RPv-bD-NjT">
+                                <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                <connections>
+                                    <action selector="OnEmptyTrash:" target="-1" id="Nl7-dq-1DP"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Delete..." tag="15170" keyEquivalent="" id="832">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>

@@ -2893,14 +2893,25 @@
         }
       }
     },
+    "RPv-bD-NjT.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Empty Trash\"; ObjectID = \"RPv-bD-NjT\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Empty Trash"
+          }
+        }
+      }
+    },
     "shC-cZ-x2T.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Forward\"; ObjectID = \"shC-cZ-x2T\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Forward"
+            "state" : "new",            "value" : "Forward"
           }
         },
         "ru" : {

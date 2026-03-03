@@ -9,6 +9,7 @@
 #include "Actions/InsertFromPasteboard.h"
 #include "Actions/OpenXAttr.h"
 #include "Actions/SpotlightSearch.h"
+#include "Actions/EmptyTrash.h"
 #include "Actions/OpenWithExternalEditor.h"
 #include "Actions/ToggleSort.h"
 #include "Actions/FindFiles.h"
@@ -59,6 +60,7 @@ PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
     add(@selector(onAlwaysOpenFileWith:), new AlwaysOpenFileWithSubmenu{_open_with_menu_delegate});
     add(@selector(onMainMenuPerformFindAction:), new FindFiles{_make_viewer, _make_viewer_controller});
     add(@selector(OnSpotlightSearch:), new SpotlightSearch);
+    add(@selector(OnEmptyTrash:), new EmptyTrash(_native_fs_mgr));
     add(@selector(OnDuplicate:), new Duplicate{_global_config});
     add(@selector(OnAddToFavorites:), new AddToFavorites);
     add(@selector(OnCalculateSizes:), new CalculateSizes);

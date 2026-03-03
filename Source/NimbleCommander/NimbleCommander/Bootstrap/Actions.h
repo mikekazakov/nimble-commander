@@ -150,6 +150,7 @@ static constexpr std::pair<const char*,int> g_ActionsTags[] = {
     {"menu.command.rename_in_place",                    15'141},
     {"menu.command.create_directory",                   15'150},
     {"menu.command.move_to_trash",                      15'160},
+	{"menu.command.empty_trash",                        15'161},
     {"menu.command.delete",                             15'170},
     {"menu.command.delete_permanently",                 15'180},
     {"menu.command.compress_here",                      15'100},
@@ -357,6 +358,7 @@ static constinit std::pair<const char*, const char*> g_DefaultActionShortcuts[] 
     {"menu.command.rename_in_place",                        "^\uF709" }, // ctrl+F6
     {"menu.command.create_directory",                       "\uF70a"  }, // F7
     {"menu.command.move_to_trash",                          "⌘\u007f" }, // cmd+backspace
+	{"menu.command.empty_trash",                           "⌘⇧\u007f" }, // cmd+shift+backspace
     {"menu.command.delete",                                 "\uF70b"  }, // F8
     {"menu.command.delete_permanently",                     "⇧\uF70b" }, // shift+F8
     {"menu.command.compress_here",                          "\uF70c"  }, // F9

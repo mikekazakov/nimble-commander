@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9D8138992F57771C0042DD24 /* EmptyTrash.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D8138982F57771C0042DD24 /* EmptyTrash.h */; };
+		9D81389B2F5777200042DD24 /* EmptyTrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9D81389A2F5777200042DD24 /* EmptyTrash.mm */; };
 		CF0A46FA2BDD830D00833160 /* PFMoveToApplicationsShim.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A46F92BDD830D00833160 /* PFMoveToApplicationsShim.mm */; };
 		CF0A46FB2BDD830D00833160 /* PFMoveToApplicationsShim.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A46F92BDD830D00833160 /* PFMoveToApplicationsShim.mm */; };
 		CF0A46FC2BDD830D00833160 /* PFMoveToApplicationsShim.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A46F92BDD830D00833160 /* PFMoveToApplicationsShim.mm */; };
@@ -864,6 +866,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9D8138982F57771C0042DD24 /* EmptyTrash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EmptyTrash.h; path = NimbleCommander/States/FilePanels/Actions/EmptyTrash.h; sourceTree = "<group>"; };
+		9D81389A2F5777200042DD24 /* EmptyTrash.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = EmptyTrash.mm; path = NimbleCommander/States/FilePanels/Actions/EmptyTrash.mm; sourceTree = "<group>"; };
 		CF0139AD1E99DAC100E44F2D /* ToggleSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToggleSort.h; path = NimbleCommander/States/FilePanels/Actions/ToggleSort.h; sourceTree = SOURCE_ROOT; };
 		CF0139AE1E99DAC100E44F2D /* ToggleSort.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ToggleSort.mm; path = NimbleCommander/States/FilePanels/Actions/ToggleSort.mm; sourceTree = SOURCE_ROOT; };
 		CF0139B01E99EC4A00E44F2D /* DefaultAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DefaultAction.h; path = NimbleCommander/States/FilePanels/Actions/DefaultAction.h; sourceTree = SOURCE_ROOT; };
@@ -1824,7 +1828,9 @@
 				CFD8CDBD1E8CD6A700E4DC53 /* ShowVolumeInformation.mm */,
 				CFD8CDD41E8DEDB200E4DC53 /* SpotlightSearch.h */,
 				CFD8CDD51E8DEDB200E4DC53 /* SpotlightSearch.mm */,
+				9D81389A2F5777200042DD24 /* EmptyTrash.mm */,
 				CF20DF491FC693440074ABB8 /* SyncPanels.h */,
+				9D8138982F57771C0042DD24 /* EmptyTrash.h */,
 				CF20DF4A1FC693440074ABB8 /* SyncPanels.mm */,
 				CF27408C1E594C46000D4365 /* TabsManagement.h */,
 				CF27408D1E594C46000D4365 /* TabsManagement.mm */,
@@ -2308,6 +2314,7 @@
 				CFA999F4264F17A800F72E93 /* CLI.h in Headers */,
 				CF9B07C626FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.h in Headers */,
 				CFF8353F2DC8D1B400CED300 /* PanelGalleryView.h in Headers */,
+				9D8138992F57771C0042DD24 /* EmptyTrash.h in Headers */,
 				CFF836BA2DCFE98B00CED300 /* PanelGalleryCollectionView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3028,6 +3035,7 @@
 				CF0A47112BDD87D400833160 /* NCHelpMenuDelegate.mm in Sources */,
 				CF0A48142BDD9FF300833160 /* ContextMenu.mm in Sources */,
 				CF0A48262BDDA05F00833160 /* PanelViewPresentationSettings.mm in Sources */,
+				9D81389B2F5777200042DD24 /* EmptyTrash.mm in Sources */,
 				CF0A47232BDD885300833160 /* VFSInstanceManager.cpp in Sources */,
 				CF0A485E2BDDA3B800833160 /* PanelBriefViewFixedNumberLayout.mm in Sources */,
 				CF0A48712BDDA41E00833160 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */,

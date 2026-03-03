@@ -94,6 +94,13 @@ public protocol NCPanelTabBarViewDelegate: NSTabViewDelegate {
     // Extend with NCPanelTabBarView-specific delegate methods if needed
 }
 
+class NCPanelTabBarViewHiddenScroller: NSScroller {
+    // let NSScroller tell NSScrollView that its own width is 0, so that it will not really occupy the drawing area.
+    override class func scrollerWidth(for controlSize: ControlSize, scrollerStyle: Style) -> CGFloat {
+        0
+    }
+}
+
 @objc
 public class NCPanelTabBarView: NSView, NSTabViewDelegate, NSCollectionViewDataSource, NSCollectionViewDelegate {
     // MARK: - Delegate
@@ -139,8 +146,12 @@ public class NCPanelTabBarView: NSView, NSTabViewDelegate, NSCollectionViewDataS
         
         // Embed in scroll view
         scrollView.drawsBackground = false
+        scrollView.scrollerStyle = .overlay
+        scrollView.horizontalScroller = NCPanelTabBarViewHiddenScroller()
         scrollView.hasHorizontalScroller = true
         scrollView.hasVerticalScroller = false
+        scrollView.autohidesScrollers = true
+        scrollView.horizontalScrollElasticity = .automatic
         scrollView.borderType = .noBorder
         scrollView.documentView = collectionView
         scrollView.translatesAutoresizingMaskIntoConstraints = false

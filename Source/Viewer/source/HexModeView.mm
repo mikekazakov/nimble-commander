@@ -642,7 +642,7 @@ static const double g_HexModeViewTopInset = 1.;
 {
     const auto bytes = [self localBytesSelection];
     if( nc::base::CFRangeEmpty(bytes) )
-        return {-1, 0};
+        return {.location = -1, .length = 0};
 
     const auto first = m_WorkingSet->ToLocalCharIndex(static_cast<int>(bytes.location));
     const auto last = m_WorkingSet->ToLocalCharIndex(static_cast<int>(nc::base::CFRangeMax(bytes)));

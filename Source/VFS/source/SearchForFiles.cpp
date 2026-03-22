@@ -181,7 +181,7 @@ void SearchForFiles::ProcessDirent(const char *_full_path,
     }
 
     // Filter by file content
-    CFRange content_pos{-1, 0};
+    CFRange content_pos{.location = -1, .length = 0};
     if( !failed_filtering && m_FilterContent ) {
         if( _dirent.type != VFSDirEnt::Reg || !FilterByContent(_full_path, _in_host, content_pos) )
             failed_filtering = true;

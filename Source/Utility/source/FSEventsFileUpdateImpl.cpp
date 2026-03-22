@@ -118,8 +118,11 @@ FSEventStreamRef FSEventsFileUpdateImpl::CreateEventStream(const std::filesystem
         return nullptr;
 
     const auto flags = kFSEventStreamCreateFlagNoDefer | kFSEventStreamCreateFlagFileEvents;
-    auto context =
-        FSEventStreamContext{0, const_cast<void *>(reinterpret_cast<const void *>(this)), nullptr, nullptr, nullptr};
+    auto context = FSEventStreamContext{.version = 0,
+                                        .info = const_cast<void *>(reinterpret_cast<const void *>(this)),
+                                        .retain = nullptr,
+                                        .release = nullptr,
+                                        .copyDescription = nullptr};
 
     FSEventStreamRef stream = nullptr;
     auto create_schedule_and_run = [&] {

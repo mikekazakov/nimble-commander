@@ -374,7 +374,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
     // draw selection if it's here
     if( m_HasSelection ) {
-        CGRect rc = {{-1, -1}, {0, 0}};
+        CGRect rc = {.origin = {.x = -1, .y = -1}, .size = {.width = 0, .height = 0}};
         if( m_SelStart.y == m_SelEnd.y && m_SelStart.y == _sel_y )
             rc = CGRectMake(m_SelStart.x * width, _y * height, (m_SelEnd.x - m_SelStart.x) * width, height);
         else if( _sel_y < m_SelEnd.y && _sel_y > m_SelStart.y )
@@ -418,7 +418,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             const double rx = x * width;
             const double ry = (_y * height) + height - descent;
             codes.push_back(cs.l);
-            positions.push_back({rx, ry});
+            positions.push_back({.x = rx, .y = ry});
         }
 
         // pick the cells' foreground color

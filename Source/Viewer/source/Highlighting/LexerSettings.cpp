@@ -47,7 +47,7 @@ std::expected<LexerSettings, std::string> ParseLexerSettings(std::string_view _j
         if( json_obj.contains("properties") ) {
             auto &props = json_obj.at("properties");
             for( auto it = props.begin(); it != props.end(); ++it ) {
-                sets.properties.push_back({it.key(), it.value()});
+                sets.properties.push_back({.key = it.key(), .value = it.value()});
             }
         }
 

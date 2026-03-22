@@ -12,7 +12,7 @@ public:
         int items_number = 0;
         int item_width = 100;
         int item_height = 20;
-        NSRect clip_view_bounds = {{0.0, 0.0}, {0.0, 0.0}};
+        NSRect clip_view_bounds = {.origin = {.x = 0.0, .y = 0.0}, .size = {.width = 0.0, .height = 0.0}};
     };
 
     void Layout(const Params &_params);

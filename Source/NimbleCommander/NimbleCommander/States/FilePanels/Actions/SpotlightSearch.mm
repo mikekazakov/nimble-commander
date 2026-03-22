@@ -20,11 +20,10 @@ static const auto g_ConfigSpotlightMaxCount = "filePanel.spotlight.maxCount";
 
 static std::string CookSpotlightSearchQuery(const std::string &_format, const std::string &_input)
 {
-    const auto npos = std::string::npos;
     const bool should_split =
-        _format.find("#{query1}") != npos || _format.find("#{query2}") != npos || _format.find("#{query3}") != npos ||
-        _format.find("#{query4}") != npos || _format.find("#{query5}") != npos || _format.find("#{query6}") != npos ||
-        _format.find("#{query7}") != npos || _format.find("#{query8}") != npos || _format.find("#{query9}") != npos;
+        _format.contains("#{query1}") || _format.contains("#{query2}") || _format.contains("#{query3}") ||
+        _format.contains("#{query4}") || _format.contains("#{query5}") || _format.contains("#{query6}") ||
+        _format.contains("#{query7}") || _format.contains("#{query8}") || _format.contains("#{query9}");
 
     if( !should_split )
         return base::ReplaceAll(_format, "#{query}", _input);

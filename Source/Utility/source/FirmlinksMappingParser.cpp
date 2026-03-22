@@ -13,7 +13,7 @@ std::vector<FirmlinksMappingParser::Firmlink> FirmlinksMappingParser::Parse(std:
     for( const auto &line : by_line ) {
         std::vector<std::string> by_part = base::SplitByDelimiter(line, '\x09');
         if( by_part.size() == 2 ) {
-            result.push_back({by_part[0], by_part[1]});
+            result.push_back({.target = by_part[0], .source = by_part[1]});
         }
     }
     return result;

@@ -32,7 +32,7 @@ protected:
     // inferred grid:
     int m_RowsNumber = 0;
     int m_ColumnsNumber = 0;
-    NSSize m_ContentSize = {0.0, 0.0};
+    NSSize m_ContentSize = {.width = 0.0, .height = 0.0};
 
     // inferred items layout:
     std::vector<NSCollectionViewLayoutAttributes *> m_Attributes;

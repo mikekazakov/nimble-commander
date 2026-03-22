@@ -10,7 +10,7 @@
 using namespace nc;
 using namespace nc::term;
 
-static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
+static const NSEdgeInsets g_Insets = {.top = 2., .left = 5., .bottom = 2., .right = 5.};
 
 @implementation NCTermScrollView {
     NCTermView *m_View;

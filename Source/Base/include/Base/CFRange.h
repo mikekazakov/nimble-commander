@@ -21,10 +21,10 @@ constexpr CFRange CFRangeIntersect(const CFRange &_lhs, const CFRange &_rhs) noe
     const auto start = std::max(_lhs.location, _rhs.location);
     const auto end = std::min(_lhs.location + _lhs.length, _rhs.location + _rhs.length);
     if( end <= start ) {
-        return {0, -1};
+        return {.location = 0, .length = -1};
     }
     else {
-        return {start, end - start};
+        return {.location = start, .length = end - start};
     }
 }
 

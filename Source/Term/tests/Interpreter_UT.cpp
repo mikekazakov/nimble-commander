@@ -498,13 +498,13 @@ TEST_CASE(PREFIX "G0 - DEC Special Graphics")
     InterpreterImpl interpreter(screen);
     SECTION("Graph")
     {
-        interpreter.Interpret(Command(Type::designate_character_set, CSD{0, CSD::DECSpecialGraphics}));
+        interpreter.Interpret(Command(Type::designate_character_set, CSD{.target = 0, .set = CSD::DECSpecialGraphics}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"n"}));
         CHECK(screen.Buffer().At(0, 0).l == U'┼');
     }
     SECTION("Graph and back")
     {
-        interpreter.Interpret(Command(Type::designate_character_set, CSD{0, CSD::USASCII}));
+        interpreter.Interpret(Command(Type::designate_character_set, CSD{.target = 0, .set = CSD::USASCII}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"n"}));
         CHECK(screen.Buffer().At(0, 0).l == 'n');
     }
@@ -557,7 +557,7 @@ TEST_CASE(PREFIX "Save/restore")
     {
         using CSD = CharacterSetDesignation;
         interpreter.Interpret(Command{Type::save_state});
-        interpreter.Interpret(Command(Type::designate_character_set, CSD{0, CSD::DECSpecialGraphics}));
+        interpreter.Interpret(Command(Type::designate_character_set, CSD{.target = 0, .set = CSD::DECSpecialGraphics}));
         interpreter.Interpret(Command{Type::restore_state});
         interpreter.Interpret(Command(Type::text, UTF8Text{"n"}));
         CHECK(screen.Buffer().At(0, 0).l == 'n');

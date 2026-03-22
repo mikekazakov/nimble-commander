@@ -112,7 +112,8 @@ FSEventStreamRef FSEventsDirUpdateImpl::CreateEventStream(const std::string &pat
     FSEventStreamRef stream = nullptr;
     auto create_stream = [&] {
         const auto flags = kFSEventStreamCreateFlagNoDefer | kFSEventStreamCreateFlagWatchRoot;
-        auto context = FSEventStreamContext{0, context_ptr, nullptr, nullptr, nullptr};
+        auto context = FSEventStreamContext{
+            .version = 0, .info = context_ptr, .retain = nullptr, .release = nullptr, .copyDescription = nullptr};
         stream = FSEventStreamCreate(nullptr,
                                      &FSEventsDirUpdateImpl::FSEventsDirUpdateCallback,
                                      &context,

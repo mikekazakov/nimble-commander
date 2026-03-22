@@ -160,7 +160,7 @@ CTCache::DisplayChar CTCache::Internalize(CTLineRef _line)
         return {.kind = Kind::Empty, .index = 0};
 
     const uint16_t font_idx = FindOrInsert(font);
-    m_Singles.push_back({glyphs[0], font_idx});
+    m_Singles.push_back({.glyph = glyphs[0], .font = font_idx});
 
     return {.kind = Kind::Single, .index = static_cast<uint32_t>(m_Singles.size() - 1)};
 }
@@ -181,7 +181,7 @@ void CTCache::DrawCharacter(char32_t _code, CGContextRef _ctx)
             CGContextSetShouldAntialias(_ctx, false);
 
         const uint16_t glyph = s.glyph;
-        const CGPoint pos{0., 0.};
+        const CGPoint pos{.x = 0., .y = 0.};
         CTFontDrawGlyphs(font, &glyph, &pos, 1, _ctx);
 
         if( is_box )
@@ -238,10 +238,12 @@ void CTCache::DrawCharacters(const char32_t *_codes, const CGPoint *_positions, 
         if( dc.kind == Kind::Single ) {
             const bool is_box = IsBoxDrawingCharacter(code);
             (is_box ? simple_box_glyphs : simple_glyphs)
-                .push_back({m_Singles[dc.index].glyph, m_Singles[dc.index].font, static_cast<uint32_t>(idx)});
+                .push_back({.glyph = m_Singles[dc.index].glyph,
+                            .font = m_Singles[dc.index].font,
+                            .idx = static_cast<uint32_t>(idx)});
         }
         if( dc.kind == Kind::Complex ) {
-            complex_glyphs.push_back({m_Complexes[dc.index].get(), _positions[idx]});
+            complex_glyphs.push_back({.line = m_Complexes[dc.index].get(), .pos = _positions[idx]});
         }
     }
 

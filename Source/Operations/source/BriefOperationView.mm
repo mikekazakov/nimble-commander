@@ -20,7 +20,7 @@
     const auto mouse = [self convertPoint:self.window.mouseLocationOutsideOfEventStream fromView:nil];
 
     static const auto dummy_event = [NSEvent otherEventWithType:NSEventTypeApplicationDefined
-                                                       location:{0, 0}
+                                                       location:{.x = 0, .y = 0}
                                                   modifierFlags:0
                                                       timestamp:0
                                                    windowNumber:0

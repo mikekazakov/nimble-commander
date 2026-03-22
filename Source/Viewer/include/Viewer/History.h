@@ -31,7 +31,7 @@ public:
         bool wrapping = false;
         ViewMode view_mode = ViewMode::Text;
         utility::Encoding encoding = utility::Encoding::ENCODING_INVALID;
-        CFRange selection = {-1, 0};
+        CFRange selection = {.location = -1, .length = 0};
         std::optional<std::string> language;
     };
 

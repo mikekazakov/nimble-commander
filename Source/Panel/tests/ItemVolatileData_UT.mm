@@ -33,10 +33,18 @@ TEST_CASE(PREFIX "ranges constructor")
     SECTION("Single segment")
     {
         const R test_cases[] = {
-            {0, 1},   {1, 1},   {15, 1},   {16, 1},  {29, 1},  {30, 1},   {31, 1},  {70, 1},  {120, 1},
-            {0, 15},  {15, 15}, {16, 15},  {30, 15}, {31, 15}, {120, 15}, {0, 16},  {15, 16}, {16, 16},
-            {30, 16}, {31, 16}, {105, 16}, {0, 30},  {15, 30}, {16, 30},  {29, 30}, {30, 30}, {31, 30},
-            {90, 30}, {0, 31},  {15, 31},  {16, 31}, {29, 31}, {30, 31},  {31, 31}, {0, 120},
+            {.offset = 0, .length = 1},   {.offset = 1, .length = 1},   {.offset = 15, .length = 1},
+            {.offset = 16, .length = 1},  {.offset = 29, .length = 1},  {.offset = 30, .length = 1},
+            {.offset = 31, .length = 1},  {.offset = 70, .length = 1},  {.offset = 120, .length = 1},
+            {.offset = 0, .length = 15},  {.offset = 15, .length = 15}, {.offset = 16, .length = 15},
+            {.offset = 30, .length = 15}, {.offset = 31, .length = 15}, {.offset = 120, .length = 15},
+            {.offset = 0, .length = 16},  {.offset = 15, .length = 16}, {.offset = 16, .length = 16},
+            {.offset = 30, .length = 16}, {.offset = 31, .length = 16}, {.offset = 105, .length = 16},
+            {.offset = 0, .length = 30},  {.offset = 15, .length = 30}, {.offset = 16, .length = 30},
+            {.offset = 29, .length = 30}, {.offset = 30, .length = 30}, {.offset = 31, .length = 30},
+            {.offset = 90, .length = 30}, {.offset = 0, .length = 31},  {.offset = 15, .length = 31},
+            {.offset = 16, .length = 31}, {.offset = 29, .length = 31}, {.offset = 30, .length = 31},
+            {.offset = 31, .length = 31}, {.offset = 0, .length = 120},
         };
         for( auto test_case : test_cases ) {
             const QuickSearchHighlight hl({&test_case, 1});
@@ -111,8 +119,8 @@ TEST_CASE(PREFIX "ranges constructor")
         struct TC {
             R src, dst;
         } const tcs[] = {{
-            .src = {0, 1000},
-            .dst = {0, 120},
+            .src = {.offset = 0, .length = 1000},
+            .dst = {.offset = 0, .length = 120},
             // TODO: more?
         }};
         for( auto test_case : tcs ) {

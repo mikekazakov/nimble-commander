@@ -1861,7 +1861,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeDirectoryToNativeDirectory(vfs::Nat
         // change unix mode - only schedule if needed
         const mode_t mode = src_stat.st_mode & copying::g_ChModMask;
         if( mode != copying::g_NewDirectoryMode )
-            m_TargetPermissionsFixupEpilogue.push_back({std::filesystem::path{_dst_path}, mode});
+            m_TargetPermissionsFixupEpilogue.push_back({.path = std::filesystem::path{_dst_path}, .mode = mode});
 
         // change flags
         fchflags(dst_fd, src_stat.st_flags);
@@ -1875,11 +1875,11 @@ CopyingJob::StepResult CopyingJob::CopyNativeDirectoryToNativeDirectory(vfs::Nat
 
     if( m_Options.copy_file_times ) {
         // adjust destination times
-        m_TargetTimestampFixupEpilogue.push_back({std::filesystem::path{_dst_path},
-                                                  src_stat.st_atimespec,
-                                                  src_stat.st_mtimespec,
-                                                  src_stat.st_ctimespec,
-                                                  src_stat.st_birthtimespec});
+        m_TargetTimestampFixupEpilogue.push_back({.path = std::filesystem::path{_dst_path},
+                                                  .atime = src_stat.st_atimespec,
+                                                  .mtime = src_stat.st_mtimespec,
+                                                  .ctime = src_stat.st_ctimespec,
+                                                  .btime = src_stat.st_birthtimespec});
     }
 
     return StepResult::Ok;
@@ -1934,7 +1934,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_s
         // change unix mode - only schedule if needed
         const mode_t mode = src_stat_buffer.mode & copying::g_ChModMask;
         if( mode != copying::g_NewDirectoryMode )
-            m_TargetPermissionsFixupEpilogue.push_back({std::filesystem::path{_dst_path}, mode});
+            m_TargetPermissionsFixupEpilogue.push_back({.path = std::filesystem::path{_dst_path}, .mode = mode});
 
         // change flags
         if( src_stat_buffer.meaning.flags )
@@ -1954,11 +1954,11 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_s
 
     if( m_Options.copy_file_times ) {
         // adjust destination times
-        m_TargetTimestampFixupEpilogue.push_back({std::filesystem::path{_dst_path},
-                                                  src_stat_buffer.atime,
-                                                  src_stat_buffer.mtime,
-                                                  src_stat_buffer.ctime,
-                                                  src_stat_buffer.btime});
+        m_TargetTimestampFixupEpilogue.push_back({.path = std::filesystem::path{_dst_path},
+                                                  .atime = src_stat_buffer.atime,
+                                                  .mtime = src_stat_buffer.mtime,
+                                                  .ctime = src_stat_buffer.ctime,
+                                                  .btime = src_stat_buffer.btime});
     }
 
     return StepResult::Ok;
@@ -2009,7 +2009,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
         // change unix mode - only schedule if needed
         const mode_t mode = src_st.mode & copying::g_ChModMask;
         if( mode != copying::g_NewDirectoryMode )
-            m_TargetPermissionsFixupEpilogue.push_back({std::filesystem::path{_dst_path}, mode});
+            m_TargetPermissionsFixupEpilogue.push_back({.path = std::filesystem::path{_dst_path}, .mode = mode});
 
         // TODO: chflags??
     }

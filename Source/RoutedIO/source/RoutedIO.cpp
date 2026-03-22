@@ -224,16 +224,18 @@ bool RoutedIO::AskToInstallHelper()
         return false;
     }
 
-    AuthorizationItem auth_item = {kSMRightBlessPrivilegedHelper, 0, nullptr, 0};
-    const AuthorizationRights auth_rights = {1, &auth_item};
+    AuthorizationItem auth_item = {
+        .name = kSMRightBlessPrivilegedHelper, .valueLength = 0, .value = nullptr, .flags = 0};
+    const AuthorizationRights auth_rights = {.count = 1, .items = &auth_item};
     const AuthorizationFlags flags =
         kAuthorizationFlagInteractionAllowed | kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
     AuthorizationRef auth_ref = nullptr;
 
     // Provide a text prompt for the request
     std::string prompt = MessageInstallHelperApp();
-    AuthorizationItem auth_env_item = {kAuthorizationEnvironmentPrompt, prompt.size(), prompt.data(), 0};
-    const AuthorizationEnvironment auth_env = {1, &auth_env_item};
+    AuthorizationItem auth_env_item = {
+        .name = kAuthorizationEnvironmentPrompt, .valueLength = prompt.size(), .value = prompt.data(), .flags = 0};
+    const AuthorizationEnvironment auth_env = {.count = 1, .items = &auth_env_item};
 
     // Obtain the right to install privileged helper tools (kSMRightBlessPrivilegedHelper).
     const OSStatus status = AuthorizationCreate(&auth_rights, &auth_env, flags, &auth_ref);
@@ -288,13 +290,15 @@ bool RoutedIO::AuthenticateAsAdmin()
     }
 
     // Request to auth as admin
-    AuthorizationItem auth_rights_item = {kAuthorizationRuleAuthenticateAsAdmin, 0, nullptr, 0};
-    const AuthorizationRights auth_rights = {1, &auth_rights_item};
+    AuthorizationItem auth_rights_item = {
+        .name = kAuthorizationRuleAuthenticateAsAdmin, .valueLength = 0, .value = nullptr, .flags = 0};
+    const AuthorizationRights auth_rights = {.count = 1, .items = &auth_rights_item};
 
     // Provide a text prompt for the request
     std::string prompt = MessageAuthAsAdmin();
-    AuthorizationItem auth_env_item = {kAuthorizationEnvironmentPrompt, prompt.size(), prompt.data(), 0};
-    const AuthorizationEnvironment auth_env = {1, &auth_env_item};
+    AuthorizationItem auth_env_item = {
+        .name = kAuthorizationEnvironmentPrompt, .valueLength = prompt.size(), .value = prompt.data(), .flags = 0};
+    const AuthorizationEnvironment auth_env = {.count = 1, .items = &auth_env_item};
 
     // What to auth now
     const AuthorizationFlags flags =
@@ -417,8 +421,9 @@ void RoutedIO::InstallViaRootCLI()
         return;
     }
 
-    AuthorizationItem auth_item = {kSMRightBlessPrivilegedHelper, 0, nullptr, 0};
-    const AuthorizationRights auth_rights = {1, &auth_item};
+    AuthorizationItem auth_item = {
+        .name = kSMRightBlessPrivilegedHelper, .valueLength = 0, .value = nullptr, .flags = 0};
+    const AuthorizationRights auth_rights = {.count = 1, .items = &auth_item};
     const AuthorizationFlags flags = kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
     AuthorizationRef auth_ref = nullptr;
 

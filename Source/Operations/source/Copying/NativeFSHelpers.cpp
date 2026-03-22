@@ -26,7 +26,11 @@ bool ShouldPreallocateSpace(uint64_t _bytes_to_write, const utility::NativeFileS
 bool TryToPreallocateSpace(uint64_t _preallocate_delta, int _file_des) noexcept
 {
     // at first try to request a single contiguous block
-    fstore_t preallocstore = {F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, static_cast<off_t>(_preallocate_delta), 0};
+    fstore_t preallocstore = {.fst_flags = F_ALLOCATECONTIG,
+                              .fst_posmode = F_PEOFPOSMODE,
+                              .fst_offset = 0,
+                              .fst_length = static_cast<off_t>(_preallocate_delta),
+                              .fst_bytesalloc = 0};
     if( fcntl(_file_des, F_PREALLOCATE, &preallocstore) == 0 )
         return true;
 

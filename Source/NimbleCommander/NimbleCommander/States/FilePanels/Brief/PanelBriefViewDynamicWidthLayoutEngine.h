@@ -14,7 +14,7 @@ public:
         int item_min_width = 50;
         int item_max_width = 200;
         const std::vector<unsigned short> *items_intrinsic_widths;
-        NSRect clip_view_bounds = {{0.0, 0.0}, {0.0, 0.0}};
+        NSRect clip_view_bounds = {.origin = {.x = 0.0, .y = 0.0}, .size = {.width = 0.0, .height = 0.0}};
     };
 
     void Layout(const Params &_params);

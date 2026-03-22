@@ -68,7 +68,7 @@ static bool FuzzySearchSatisfiable(CFStringRef _hay,
         const UniChar c = [_needle characterAtIndex:idx];
         const auto cs =
             base::CFPtr<CFStringRef>::adopt(CFStringCreateWithCharactersNoCopy(alloc, &c, 1, kCFAllocatorNull));
-        CFRange result = {0, 0};
+        CFRange result = {.location = 0, .length = 0};
         const bool found = CFStringFindWithOptions(
             _hay, cs.get(), CFRangeMake(pos, _hay_len - pos), kCFCompareCaseInsensitive, &result);
         if( !found )
@@ -123,7 +123,7 @@ std::optional<QuickSearchHighlight> FuzzySearch(NSString *_filename, NSString *_
             }
 
             // ok, seems legit, memorize and carry on with the leftovers
-            found.push_back({result.location, result.length});
+            found.push_back({.offset = result.location, .length = result.length});
             filename_pos = result.location + result.length;
             text = [text substringFromIndex:result.length];
             break;

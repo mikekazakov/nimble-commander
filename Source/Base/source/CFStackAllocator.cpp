@@ -23,7 +23,15 @@ CFStackAllocator::~CFStackAllocator() noexcept
 
 CFAllocatorRef CFStackAllocator::Construct() noexcept
 {
-    CFAllocatorContext context = {0, this, nullptr, nullptr, nullptr, DoAlloc, nullptr, DoDealloc, nullptr};
+    CFAllocatorContext context = {.version = 0,
+                                  .info = this,
+                                  .retain = nullptr,
+                                  .release = nullptr,
+                                  .copyDescription = nullptr,
+                                  .allocate = DoAlloc,
+                                  .reallocate = nullptr,
+                                  .deallocate = DoDealloc,
+                                  .preferredSize = nullptr};
     return CFAllocatorCreate(kCFAllocatorUseContext, &context);
 }
 

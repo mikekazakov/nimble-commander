@@ -200,7 +200,7 @@ static constexpr double g_ContentViewCornerRadius = 10.;
     m_ScrollView.horizontalScrollElasticity = NSScrollElasticityNone;
     m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
     m_ScrollView.drawsBackground = false;
-    m_ScrollView.contentInsets = NSEdgeInsets{0., 0., 0., 0.};
+    m_ScrollView.contentInsets = NSEdgeInsets{.top = 0., .left = 0., .bottom = 0., .right = 0.};
 
     m_TableView = [[NCCommandPopoverTableView alloc] initWithFrame:NSRect()];
     m_TableView.autoresizingMask = NSViewNotSizable;

@@ -93,6 +93,7 @@ if [ $check_mode -eq 1 ]; then
     echo "Running in check mode. No fixes will be applied."
     ${RUNTIDY} \
      -p ${SCRIPTS_DIR} \
+     -config-file ${ROOT_DIR}/Source/.clang-tidy \
      -clang-tidy-binary ${TIDY} \
      -clang-apply-replacements-binary ${APPLY} \
      -j $(sysctl -n hw.activecpu) \
@@ -102,6 +103,7 @@ else
     echo "Running in fix mode. Fixes will be applied."
     ${RUNTIDY} \
      -p ${SCRIPTS_DIR} \
+     -config-file ${ROOT_DIR}/Source/.clang-tidy \
      -clang-tidy-binary ${TIDY} \
      -clang-apply-replacements-binary ${APPLY} \
      -j $(sysctl -n hw.activecpu) \

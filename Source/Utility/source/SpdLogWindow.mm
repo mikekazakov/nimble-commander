@@ -258,7 +258,7 @@ void SpdLogUISink::DoFlush()
     auto backing = NSBackingStoreBuffered;
 
     auto wnd = [[NSPanel alloc] initWithContentRect:rc styleMask:style backing:backing defer:true];
-    wnd.minSize = {400, 300};
+    wnd.minSize = {.width = 400, .height = 300};
     wnd.title = @"Logs";
     [wnd setFrameAutosaveName:@"NCSpdLogWindow"]; // doesn't work??
     return wnd;

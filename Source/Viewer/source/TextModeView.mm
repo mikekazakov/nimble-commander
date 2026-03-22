@@ -1023,7 +1023,7 @@ static TextModeScrollPosition CalculateScrollPosition(const TextModeFrame &_fram
         const auto full_height = _frame.LinesNumber() * line_height;
         if( full_height > _view_size.height ) {
             scroll_position.position =
-                (_vertical_line_offset * line_height + _vertical_px_offset) / (full_height - _view_size.height);
+                ((_vertical_line_offset * line_height) + _vertical_px_offset) / (full_height - _view_size.height);
             scroll_position.proportion = _view_size.height / full_height;
         }
         else { /* handled by the default initialization */

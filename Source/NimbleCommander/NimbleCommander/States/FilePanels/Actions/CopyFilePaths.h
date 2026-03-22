@@ -25,7 +25,6 @@ namespace context {
 
 struct CopyPathname final : PanelAction {
     explicit CopyPathname(const std::vector<VFSListingItem> &_items);
-    [[nodiscard]] bool Predicate(PanelController *_source) const override;
     [[nodiscard]] bool ValidateMenuItem(PanelController *_source, NSMenuItem *_item) const override;
     void Perform(PanelController *_source, id _sender) const override;
 

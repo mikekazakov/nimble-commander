@@ -71,25 +71,18 @@ context::CopyPathname::CopyPathname(const std::vector<VFSListingItem> &_items) :
         throw std::invalid_argument("CopyPathname was made with empty items set");
 }
 
-bool context::CopyPathname::Predicate([[maybe_unused]] PanelController *_source) const
-{
-    return !m_Items.empty();
-}
-
 bool context::CopyPathname::ValidateMenuItem([[maybe_unused]] PanelController *_source, NSMenuItem *_item) const
 {
     if( m_Items.size() > 1 ) {
-        _item.title =
-            [NSString stringWithFormat:NSLocalizedStringFromTable(@"Copy %lu Items as Pathnames",
-                                                                  @"FilePanelsContextMenu",
-                                                                  "Copy many items as plain-text pathnames"),
-                                     m_Items.size()];
+        _item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Copy %lu Items as Pathnames",
+                                                                            @"FilePanelsContextMenu",
+                                                                            "Copy many items as plain-text pathnames"),
+                                                 m_Items.size()];
     }
     else {
-        _item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(
-                                                     @"Copy “%@” as Pathname",
-                                                     @"FilePanelsContextMenu",
-                                                     "Copy one item as a plain-text pathname"),
+        _item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Copy “%@” as Pathname",
+                                                                            @"FilePanelsContextMenu",
+                                                                            "Copy one item as a plain-text pathname"),
                                                  m_Items.front().DisplayNameNS()];
     }
     return Predicate(_source);

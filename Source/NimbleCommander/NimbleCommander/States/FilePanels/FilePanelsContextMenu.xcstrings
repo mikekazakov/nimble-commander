@@ -145,6 +145,30 @@
         }
       }
     },
+    "Copy %lu Items as Pathnames" : {
+      "comment" : "Copy many items as plain-text pathnames",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копировать %lu объектов как пути"
+          }
+        }
+      }
+    },
+    "Copy “%@” as Pathname" : {
+      "comment" : "Copy one item as a plain-text pathname",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копировать “%@” как путь"
+          }
+        }
+      }
+    },
     "default" : {
       "comment" : "Menu item postfix marker for default apps to open with, for English is 'default'",
       "extractionState" : "manual",

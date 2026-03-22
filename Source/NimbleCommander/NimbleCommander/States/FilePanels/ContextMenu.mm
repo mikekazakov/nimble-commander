@@ -1,6 +1,7 @@
 // Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ContextMenu.h"
 #include "Actions/Compress.h"
+#include "Actions/CopyFilePaths.h"
 #include "Actions/CopyToPasteboard.h"
 #include "Actions/Delete.h"
 #include "Actions/Duplicate.h"
@@ -34,6 +35,7 @@ using namespace nc::panel;
     NSMutableArray *m_ShareItemsURLs;
     NCPanelOpenWithMenuDelegate *m_OpenWithDelegate;
     std::unique_ptr<actions::PanelAction> m_CopyAction;
+    std::unique_ptr<actions::PanelAction> m_CopyPathnameAction;
     std::unique_ptr<actions::PanelAction> m_MoveToTrashAction;
     std::unique_ptr<actions::PanelAction> m_DeletePermanentlyAction;
     std::unique_ptr<actions::PanelAction> m_DuplicateAction;
@@ -59,6 +61,7 @@ using namespace nc::panel;
         auto &global_config = NCAppDelegate.me.globalConfig;
 
         m_CopyAction = std::make_unique<actions::context::CopyToPasteboard>(m_Items);
+        m_CopyPathnameAction = std::make_unique<actions::context::CopyPathname>(m_Items);
         m_MoveToTrashAction = std::make_unique<actions::context::MoveToTrash>(m_Items);
         m_DeletePermanentlyAction = std::make_unique<actions::context::DeletePermanently>(m_Items);
         m_DuplicateAction = std::make_unique<actions::context::Duplicate>(global_config, m_Items);
@@ -257,6 +260,14 @@ using namespace nc::panel;
         item.target = self;
         item.action = @selector(OnCopyPaths:);
         [self addItem:item];
+
+        item = [NSMenuItem new];
+        item.target = self;
+        item.action = @selector(OnCopyPathname:);
+        item.alternate = true;
+        item.keyEquivalent = @"";
+        item.keyEquivalentModifierMask = NSEventModifierFlagOption;
+        [self addItem:item];
     }
 
     [self addItem:NSMenuItem.separatorItem];
@@ -266,6 +277,8 @@ using namespace nc::panel;
 {
     if( item.action == @selector(OnCopyPaths:) )
         return m_CopyAction->ValidateMenuItem(m_Panel, item);
+    if( item.action == @selector(OnCopyPathname:) )
+        return m_CopyPathnameAction->ValidateMenuItem(m_Panel, item);
     if( item.action == @selector(OnMoveToTrash:) )
         return m_MoveToTrashAction->ValidateMenuItem(m_Panel, item);
     if( item.action == @selector(OnDeletePermanently:) )
@@ -300,6 +313,11 @@ using namespace nc::panel;
 - (void)OnCopyPaths:(id)sender
 {
     m_CopyAction->Perform(m_Panel, sender);
+}
+
+- (void)OnCopyPathname:(id)sender
+{
+    m_CopyPathnameAction->Perform(m_Panel, sender);
 }
 
 - (void)OnCompressToOppositePanel:(id)sender

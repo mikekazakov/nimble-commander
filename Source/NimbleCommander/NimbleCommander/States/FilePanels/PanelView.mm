@@ -24,6 +24,8 @@
 #include "PanelViewDummyPresentation.h"
 #include "PanelControllerActionsDispatcher.h"
 
+#include <vector>
+
 using namespace nc::panel;
 using nc::vfsicon::IconRepository;
 
@@ -38,6 +40,93 @@ enum class CursorSelectionType : int8_t {
 struct StateStorage {
     std::string focused_item;
 };
+
+[[nodiscard]] static std::vector<PanelHeaderBreadcrumb> BuildPanelHeaderBreadcrumbs(const data::Model &_model)
+{
+    std::vector<PanelHeaderBreadcrumb> out;
+    const std::string verbose_full = _model.VerboseDirectoryFullPath();
+    if( verbose_full.empty() )
+        return out;
+
+    // Must match VerboseDirectoryFullPath(), which appends '/' when Directory() omits it.
+    std::string dir_slash = _model.DirectoryPathWithTrailingSlash();
+    if( dir_slash.empty() )
+        return out;
+    if( dir_slash.back() != '/' )
+        dir_slash += '/';
+    if( verbose_full.size() < dir_slash.size() )
+        return out;
+    if( verbose_full.compare(verbose_full.size() - dir_slash.size(), dir_slash.size(), dir_slash) != 0 )
+        return out;
+
+    std::string junction = verbose_full.substr(0, verbose_full.size() - dir_slash.size());
+    while( !junction.empty() && junction.back() == '/' )
+        junction.pop_back();
+
+    const std::string path_only = _model.DirectoryPathWithoutTrailingSlash();
+
+    if( !junction.empty() ) {
+        PanelHeaderBreadcrumb j;
+        j.label = [NSString stringWithUTF8String:junction.c_str()];
+        j.navigate_to_vfs_path = "/";
+        out.push_back(std::move(j));
+    }
+
+    if( path_only == "/" ) {
+        if( junction.empty() ) {
+            PanelHeaderBreadcrumb b;
+            b.label = @"/";
+            out.push_back(std::move(b));
+        }
+        return out;
+    }
+
+    if( path_only.empty() || path_only.front() != '/' )
+        return out;
+
+    if( junction.empty() ) {
+        PanelHeaderBreadcrumb root;
+        root.label = @"/";
+        root.navigate_to_vfs_path = "/";
+        out.push_back(std::move(root));
+    }
+
+    const std::string rest = path_only.substr(1);
+    std::vector<std::string> comps;
+    size_t start = 0;
+    while( start <= rest.size() ) {
+        const size_t slash = rest.find('/', start);
+        if( slash == std::string::npos ) {
+            if( start < rest.size() )
+                comps.emplace_back(rest.substr(start));
+            break;
+        }
+        if( slash > start )
+            comps.emplace_back(rest.substr(start, slash - start));
+        start = slash + 1;
+    }
+
+    std::string acc;
+    for( size_t i = 0; i < comps.size(); ++i ) {
+        acc += "/";
+        acc += comps[i];
+        PanelHeaderBreadcrumb b;
+        b.label = [NSString stringWithUTF8String:comps[i].c_str()];
+        if( i + 1 < comps.size() )
+            b.navigate_to_vfs_path = acc;
+        out.push_back(std::move(b));
+    }
+    return out;
+}
+
+static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
+{
+    if( verbosePath.length <= 1 )
+        return verbosePath ?: @"";
+    if( [verbosePath hasSuffix:@"/"] )
+        return [verbosePath substringToIndex:verbosePath.length - 1];
+    return verbosePath;
+}
 
 } // namespace nc::panel
 
@@ -101,6 +190,38 @@ struct StateStorage {
         m_HeaderView.sortModeChangeCallback = [weak_self](data::SortMode _sm) {
             if( PanelView *const strong_self = weak_self )
                 [strong_self.controller changeSortingModeTo:_sm];
+        };
+        m_HeaderView.pathNavigateToVFSPathCallback = [weak_self](const std::string &_path) {
+            PanelView *const strong_self = weak_self;
+            if( !strong_self )
+                return;
+            PanelController *const pc = strong_self.controller;
+            if( !pc )
+                return;
+            auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
+            req->RequestedDirectory = _path;
+            req->VFS = pc.vfs;
+            req->PerformAsynchronous = true;
+            req->InitiatedByUser = true;
+            [pc GoToDirWithContext:req];
+        };
+        m_HeaderView.pathManualEntryCommitCallback = [weak_self](NSString *_typed) {
+            PanelView *const strong_self = weak_self;
+            if( !strong_self || _typed.length == 0 )
+                return;
+            PanelController *const pc = strong_self.controller;
+            if( !pc )
+                return;
+            const std::string utf8{_typed.UTF8String};
+            const std::string expanded = [pc expandPath:utf8];
+            if( expanded.empty() || expanded.front() != '/' )
+                return;
+            auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
+            req->RequestedDirectory = expanded;
+            req->VFS = pc.vfs;
+            req->PerformAsynchronous = true;
+            req->InitiatedByUser = true;
+            [pc GoToDirWithContext:req];
         };
         [self addSubview:m_HeaderView];
 
@@ -1052,10 +1173,21 @@ struct StateStorage {
 - (void)setHeaderTitle:(NSString *)headerTitle
 {
     dispatch_assert_main_queue();
-    if( m_HeaderTitle != headerTitle ) {
-        m_HeaderTitle = headerTitle;
-        [m_HeaderView setPath:m_HeaderTitle];
+    NSString *const next = headerTitle ?: @"";
+    if( (m_HeaderTitle == next) || [m_HeaderTitle isEqualToString:next] )
+        return;
+    m_HeaderTitle = [next copy];
+
+    const bool uniform_dir =
+        m_Data && m_Data->Type() == data::Model::PanelType::Directory && m_Data->Listing().IsUniform();
+    if( uniform_dir ) {
+        const auto crumbs = BuildPanelHeaderBreadcrumbs(*m_Data);
+        if( !crumbs.empty() ) {
+            [m_HeaderView setInteractiveBreadcrumbs:crumbs fullPathForEditing:PanelViewPathStringForEditing(m_HeaderTitle)];
+            return;
+        }
     }
+    [m_HeaderView setPlainHeaderPath:m_HeaderTitle];
 }
 
 - (NSString *)headerTitle

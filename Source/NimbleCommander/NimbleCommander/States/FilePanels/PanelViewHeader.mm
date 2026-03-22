@@ -10,13 +10,157 @@ static NSString *SortLetter(data::SortMode _mode) noexcept;
 static void ChangeButtonAttrString(NSButton *_button, NSColor *_new_color, NSFont *_font);
 static void ChangeAttributedTitle(NSButton *_button, NSString *_new_text);
 static bool IsDark(NSColor *_color);
+static NSURL *PanelHeaderMakeLinkURLFromVFSPath(const std::string &_path) noexcept;
+static NSMutableAttributedString *PanelHeaderBuildInteractivePathAttributedString(const std::vector<PanelHeaderBreadcrumb> &_crumbs,
+                                                                                NSFont *_font,
+                                                                                NSColor *_text_color);
+static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColor *_text_color);
+
+@class NCPanelViewHeader;
+
+@interface NCPanelViewHeader (PathBarEditingPrivate)
+- (BOOL)panelPathBarIsInteractive;
+- (void)beginInlinePathEditing;
+@end
+
+@interface NCPanelPathDisplayTextView : NSTextView
+@property(nonatomic, weak) NCPanelViewHeader *pathHeader;
+@end
+
+@implementation NCPanelPathDisplayTextView
+@synthesize pathHeader;
+
+- (void)resetCursorRects
+{
+    // Do not call super: NSTextView registers I-beam rects for text; we keep a normal arrow over the path bar.
+    if( self.bounds.size.width > 0 && self.bounds.size.height > 0 )
+        [self addCursorRect:self.bounds cursor:[NSCursor arrowCursor]];
+}
+
+- (void)cursorUpdate:(NSEvent *)event
+{
+    (void)event;
+    [[NSCursor arrowCursor] set];
+}
+
+- (void)layout
+{
+    [super layout];
+    if( self.window != nil )
+        [self.window invalidateCursorRectsForView:self];
+}
+
+- (void)copy:(id)sender
+{
+    (void)sender;
+    NSString *const s = self.string;
+    if( s.length == 0 )
+        return;
+    NSPasteboard *const pb = NSPasteboard.generalPasteboard;
+    [pb clearContents];
+    [pb setString:s forType:NSPasteboardTypeString];
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)item
+{
+    if( item.action == @selector(copy:) )
+        return self.string.length > 0;
+    return [super validateMenuItem:item];
+}
+
+- (NSMenu *)menuForEvent:(NSEvent *)event
+{
+    (void)event;
+    NSMenu *const menu = [[NSMenu alloc] initWithTitle:@""];
+    NSMenuItem *const copy_item =
+        [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Copy", @"Menu item: copy to pasteboard")
+                                   action:@selector(copy:)
+                            keyEquivalent:@""];
+    copy_item.target = self;
+    [menu addItem:copy_item];
+    return menu;
+}
+
+- (BOOL)nc_pointIsInsideLaidOutPathGlyphs:(NSPoint)p_in_view_coords
+{
+    if( self.textStorage.length == 0 )
+        return NO;
+    NSLayoutManager *const lm = self.layoutManager;
+    NSTextContainer *const tc = self.textContainer;
+    NSRect used = [lm usedRectForTextContainer:tc];
+    if( used.size.width <= 0 || used.size.height <= 0 )
+        return NO;
+    const NSPoint o = [self textContainerOrigin];
+    used.origin.x += o.x;
+    used.origin.y += o.y;
+    return NSPointInRect(p_in_view_coords, used);
+}
+
+- (void)mouseDown:(NSEvent *)event
+{
+    if( !self.pathHeader ) {
+        [super mouseDown:event];
+        return;
+    }
+    if( ![self.pathHeader panelPathBarIsInteractive] ) {
+        [super mouseDown:event];
+        return;
+    }
+    if( event.clickCount >= 2 ) {
+        [self.pathHeader beginInlinePathEditing];
+        return;
+    }
+    const NSPoint p = [self convertPoint:event.locationInWindow fromView:nil];
+    // Clicks in the margins map to the nearest character (often index 0 = root link). Ignore unless over real glyphs.
+    if( ![self nc_pointIsInsideLaidOutPathGlyphs:p] )
+        return;
+
+    const NSUInteger len = self.textStorage.length;
+    const NSUInteger idx = [self characterIndexForInsertionAtPoint:p];
+    if( len == 0 || idx >= len ) {
+        [self.pathHeader beginInlinePathEditing];
+        return;
+    }
+    NSRange link_range = {};
+    id link = [self.textStorage attribute:NSLinkAttributeName atIndex:idx effectiveRange:&link_range];
+    if( link && NSLocationInRange(idx, link_range) ) {
+        id<NSTextViewDelegate> dg = self.delegate;
+        if( [dg respondsToSelector:@selector(textView:clickedOnLink:atIndex:)] ) {
+            if( [dg textView:self clickedOnLink:link atIndex:link_range.location] )
+                return;
+        }
+    }
+    [self.pathHeader beginInlinePathEditing];
+}
+@end
+
+@interface NCPanelPathChromeTextField : NSTextField
+@end
+
+@implementation NCPanelPathChromeTextField
+
+- (void)resetCursorRects
+{
+    if( self.bounds.size.width > 0 && self.bounds.size.height > 0 )
+        [self addCursorRect:self.bounds cursor:[NSCursor arrowCursor]];
+}
+
+- (void)cursorUpdate:(NSEvent *)event
+{
+    (void)event;
+    [[NSCursor arrowCursor] set];
+}
+
+@end
 
 @interface NCPanelViewHeader ()
 @property(nonatomic) IBOutlet NSMenu *sortMenuPopup;
 @end
 
 @implementation NCPanelViewHeader {
-    NSTextField *m_PathTextField;
+    NSView *m_PathArea;
+    NCPanelPathDisplayTextView *m_PathTextView;
+    NSTextField *m_PathEditField;
     NSTextField *m_SearchTextField;
     NSTextField *m_SearchMatchesField;
     NSButton *m_SearchMagGlassButton;
@@ -32,12 +176,22 @@ static bool IsDark(NSColor *_color);
     std::function<void(NSString *)> m_SearchRequestChangeCallback;
     std::unique_ptr<nc::panel::HeaderTheme> m_Theme;
     bool m_Active;
+
+    bool m_PathBarInteractive;
+    std::vector<PanelHeaderBreadcrumb> m_LastBreadcrumbs;
+    NSString *m_LastPlainPath;
+    NSString *m_LastFullPathForEditing;
+    std::function<void(const std::string &)> m_PathNavigateCallback;
+    std::function<void(NSString *)> m_PathCommitCallback;
+    id m_PathEditOutsideClickMonitor;
 }
 
 @synthesize sortMode = m_SortMode;
 @synthesize sortModeChangeCallback = m_SortModeChangeCallback;
 @synthesize defaultResponder;
 @synthesize sortMenuPopup;
+@synthesize pathNavigateToVFSPathCallback = m_PathNavigateCallback;
+@synthesize pathManualEntryCommitCallback = m_PathCommitCallback;
 
 - (id)initWithFrame:(NSRect)frameRect theme:(std::unique_ptr<nc::panel::HeaderTheme>)_theme
 {
@@ -46,20 +200,58 @@ static bool IsDark(NSColor *_color);
         m_Theme = std::move(_theme);
         m_SearchPrompt = nil;
         m_Active = false;
+        m_PathBarInteractive = false;
 
-        // NB! Don't use "single line mode" - it doesn't do what you expect.
-        // https://stackoverflow.com/questions/36179012/nstextfield-non-system-font-content-clipped-when-usessinglelinemode-is-true
+        m_PathArea = [[NSView alloc] initWithFrame:NSRect()];
+        m_PathArea.translatesAutoresizingMaskIntoConstraints = false;
+        [self addSubview:m_PathArea];
 
-        m_PathTextField = [[NSTextField alloc] initWithFrame:NSRect()];
-        m_PathTextField.translatesAutoresizingMaskIntoConstraints = false;
-        m_PathTextField.stringValue = @"";
-        m_PathTextField.bordered = false;
-        m_PathTextField.editable = false;
-        m_PathTextField.drawsBackground = false;
-        m_PathTextField.lineBreakMode = NSLineBreakByTruncatingHead;
-        m_PathTextField.maximumNumberOfLines = 1;
-        m_PathTextField.alignment = NSTextAlignmentCenter;
-        [self addSubview:m_PathTextField];
+        m_PathTextView = [[NCPanelPathDisplayTextView alloc] initWithFrame:NSRect()];
+        m_PathTextView.pathHeader = self;
+        m_PathTextView.translatesAutoresizingMaskIntoConstraints = false;
+        m_PathTextView.editable = false;
+        m_PathTextView.selectable = false;
+        m_PathTextView.richText = true;
+        m_PathTextView.importsGraphics = false;
+        m_PathTextView.drawsBackground = false;
+        m_PathTextView.focusRingType = NSFocusRingTypeNone;
+        m_PathTextView.horizontallyResizable = false;
+        m_PathTextView.verticallyResizable = false;
+        m_PathTextView.textContainer.lineFragmentPadding = 0;
+        m_PathTextView.textContainer.widthTracksTextView = true;
+        m_PathTextView.textContainer.heightTracksTextView = true;
+        m_PathTextView.textContainerInset = NSMakeSize(0, 0);
+        m_PathTextView.alignment = NSTextAlignmentCenter;
+        m_PathTextView.maxSize = NSMakeSize(CGFLOAT_MAX, CGFLOAT_MAX);
+        m_PathTextView.minSize = NSMakeSize(0, 0);
+        m_PathTextView.delegate = self;
+        [m_PathArea addSubview:m_PathTextView];
+
+        m_PathEditField = [[NCPanelPathChromeTextField alloc] initWithFrame:NSRect()];
+        m_PathEditField.translatesAutoresizingMaskIntoConstraints = false;
+        m_PathEditField.stringValue = @"";
+        m_PathEditField.bordered = false;
+        m_PathEditField.bezeled = false;
+        m_PathEditField.editable = true;
+        m_PathEditField.drawsBackground = false;
+        m_PathEditField.lineBreakMode = NSLineBreakByTruncatingHead;
+        m_PathEditField.maximumNumberOfLines = 1;
+        m_PathEditField.alignment = NSTextAlignmentCenter;
+        m_PathEditField.focusRingType = NSFocusRingTypeNone;
+        m_PathEditField.hidden = true;
+        m_PathEditField.delegate = self;
+        [m_PathArea addSubview:m_PathEditField];
+
+        [NSLayoutConstraint activateConstraints:@[
+            [m_PathTextView.leadingAnchor constraintEqualToAnchor:m_PathArea.leadingAnchor],
+            [m_PathTextView.trailingAnchor constraintEqualToAnchor:m_PathArea.trailingAnchor],
+            [m_PathTextView.topAnchor constraintEqualToAnchor:m_PathArea.topAnchor],
+            [m_PathTextView.bottomAnchor constraintEqualToAnchor:m_PathArea.bottomAnchor],
+            [m_PathEditField.leadingAnchor constraintEqualToAnchor:m_PathArea.leadingAnchor],
+            [m_PathEditField.trailingAnchor constraintEqualToAnchor:m_PathArea.trailingAnchor],
+            [m_PathEditField.topAnchor constraintEqualToAnchor:m_PathArea.topAnchor],
+            [m_PathEditField.bottomAnchor constraintEqualToAnchor:m_PathArea.bottomAnchor],
+        ]];
 
         m_SearchTextField = [[NSTextField alloc] initWithFrame:NSRect()];
         m_SearchTextField.stringValue = @"";
@@ -132,7 +324,7 @@ static bool IsDark(NSColor *_color);
         m_BusyIndicator.displayedWhenStopped = false;
         if( IsDark(m_Theme->ActiveBackgroundColor()) )
             m_BusyIndicator.appearance = [NSAppearance appearanceNamed:NSAppearanceNameVibrantDark];
-        [self addSubview:m_BusyIndicator positioned:NSWindowAbove relativeTo:m_PathTextField];
+        [self addSubview:m_BusyIndicator positioned:NSWindowAbove relativeTo:m_PathArea];
 
         [self setupAppearance];
         [self setupLayout];
@@ -146,10 +338,68 @@ static bool IsDark(NSColor *_color);
     return self;
 }
 
+- (BOOL)panelPathBarIsInteractive
+{
+    return m_PathBarInteractive;
+}
+
+- (void)removePathEditOutsideClickMonitorIfNeeded
+{
+    if( m_PathEditOutsideClickMonitor != nil ) {
+        [NSEvent removeMonitor:m_PathEditOutsideClickMonitor];
+        m_PathEditOutsideClickMonitor = nil;
+    }
+}
+
+- (void)handleOutsideMouseDownWhilePathEditing:(NSEvent *)event
+{
+    if( m_PathEditField.hidden )
+        return;
+    NSWindow *const event_window = event.window;
+    if( !event_window )
+        return;
+    if( event_window != self.window ) {
+        [self cancelInlinePathEditing];
+        return;
+    }
+    const NSPoint p = event.locationInWindow;
+    const NSRect field_in_window = [m_PathEditField convertRect:m_PathEditField.bounds toView:nil];
+    if( NSPointInRect(p, field_in_window) )
+        return;
+    [self cancelInlinePathEditing];
+}
+
+- (void)beginInlinePathEditing
+{
+    if( !m_PathBarInteractive )
+        return;
+    if( self.searchPrompt != nil )
+        return;
+
+    [self removePathEditOutsideClickMonitorIfNeeded];
+
+    m_PathEditField.stringValue = m_LastFullPathForEditing ?: @"";
+    m_PathTextView.hidden = true;
+    m_PathEditField.hidden = false;
+    [self.window makeFirstResponder:m_PathEditField];
+    [m_PathEditField.currentEditor setSelectedRange:NSMakeRange(0, m_PathEditField.stringValue.length)];
+
+    __weak NCPanelViewHeader *weak_header = self;
+    m_PathEditOutsideClickMonitor =
+        [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskLeftMouseDown handler:^NSEvent *(NSEvent *event) {
+            NCPanelViewHeader *const h = weak_header;
+            if( !h || h->m_PathEditField.hidden )
+                return event;
+            [h handleOutsideMouseDownWhilePathEditing:event];
+            return event;
+        }];
+}
+
 - (void)setupAppearance
 {
     NSFont *const font = m_Theme->Font();
-    m_PathTextField.font = font;
+    m_PathTextView.font = font;
+    m_PathEditField.font = font;
     m_SearchTextField.font = font;
     m_SearchMatchesField.font = font;
 
@@ -159,7 +409,7 @@ static bool IsDark(NSColor *_color);
     m_Background = active ? m_Theme->ActiveBackgroundColor() : m_Theme->InactiveBackgroundColor();
 
     NSColor *text_color = active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
-    m_PathTextField.textColor = text_color;
+    m_PathEditField.textColor = text_color;
     m_SearchTextField.textColor = text_color;
     m_SearchMatchesField.textColor = text_color;
 
@@ -167,11 +417,38 @@ static bool IsDark(NSColor *_color);
     m_SearchClearButton.contentTintColor = text_color;
     m_SearchMagGlassButton.contentTintColor = text_color;
     self.needsDisplay = true;
+
+    [self refreshPathBarAttributedText];
+}
+
+- (void)refreshPathBarAttributedText
+{
+    NSFont *const font = m_Theme->Font();
+    NSColor *const text_color = m_Active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
+    if( m_PathBarInteractive && !m_LastBreadcrumbs.empty() ) {
+        NSMutableAttributedString *const as = PanelHeaderBuildInteractivePathAttributedString(m_LastBreadcrumbs, font, text_color);
+        [m_PathTextView.textStorage setAttributedString:as];
+        m_PathTextView.linkTextAttributes = @{
+            NSForegroundColorAttributeName: text_color,
+            NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),
+        };
+        // selectable=YES forces NSTextView's text-cursor behavior over the whole path bar; keep NO and use copy:/menu.
+        m_PathTextView.selectable = false;
+    }
+    else {
+        NSMutableAttributedString *const as =
+            PanelHeaderBuildPlainPathAttributedString(m_LastPlainPath ?: @"", font, text_color);
+        [m_PathTextView.textStorage setAttributedString:as];
+        m_PathTextView.linkTextAttributes = @{};
+        m_PathTextView.selectable = false;
+    }
+    if( self.window != nil )
+        [self.window invalidateCursorRectsForView:m_PathTextView];
 }
 
 - (void)setupLayout
 {
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_PathTextField,
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_PathArea,
                                                          m_SearchTextField,
                                                          m_SeparatorLine,
                                                          m_SearchMatchesField,
@@ -180,7 +457,7 @@ static bool IsDark(NSColor *_color);
                                                          m_SortButton,
                                                          m_BusyIndicator);
     [self addConstraints:[NSLayoutConstraint
-                             constraintsWithVisualFormat:@"|-(==0)-[m_SortButton(==20)]-(==0)-[m_PathTextField]-(==2)-|"
+                             constraintsWithVisualFormat:@"|-(==0)-[m_SortButton(==20)]-(==0)-[m_PathArea]-(==2)-|"
                                                  options:0
                                                  metrics:nil
                                                    views:views]];
@@ -214,7 +491,14 @@ static bool IsDark(NSColor *_color);
                                                                  metrics:nil
                                                                    views:views]];
 
-    [self addConstraint:LayoutConstraintForCenteringViewVertically(m_PathTextField, self)];
+    [self addConstraint:LayoutConstraintForCenteringViewVertically(m_PathArea, self)];
+    // m_PathArea is a plain NSView (unlike NSTextField) and has no intrinsic height; pin a definite line height so the
+    // path bar cannot collapse to zero. Matches a single line in the panel header (~20pt total chrome).
+    [NSLayoutConstraint activateConstraints:@[
+        [m_PathArea.heightAnchor constraintEqualToConstant:18],
+        [m_PathArea.topAnchor constraintGreaterThanOrEqualToAnchor:self.topAnchor],
+        [m_PathArea.bottomAnchor constraintLessThanOrEqualToAnchor:self.bottomAnchor],
+    ]];
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchTextField, self)];
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchMagGlassButton, self)];
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchMatchesField, self)];
@@ -246,7 +530,82 @@ static bool IsDark(NSColor *_color);
 
 - (void)setPath:(NSString *)_path
 {
-    m_PathTextField.stringValue = _path;
+    [self setPlainHeaderPath:_path];
+}
+
+- (void)setPlainHeaderPath:(NSString *)_path
+{
+    [self endInlinePathEditingUI];
+    m_PathBarInteractive = false;
+    m_LastBreadcrumbs.clear();
+    m_LastFullPathForEditing = nil;
+    m_LastPlainPath = [_path copy] ?: @"";
+    [self refreshPathBarAttributedText];
+}
+
+- (void)setInteractiveBreadcrumbs:(const std::vector<PanelHeaderBreadcrumb> &)_breadcrumbs
+               fullPathForEditing:(NSString *)_full_path_for_editing
+{
+    [self endInlinePathEditingUI];
+    m_PathBarInteractive = !_breadcrumbs.empty();
+    m_LastBreadcrumbs = _breadcrumbs;
+    m_LastFullPathForEditing = [_full_path_for_editing copy];
+    m_LastPlainPath = nil;
+    [self refreshPathBarAttributedText];
+}
+
+- (void)endInlinePathEditingUI
+{
+    [self removePathEditOutsideClickMonitorIfNeeded];
+    m_PathTextView.hidden = false;
+    m_PathEditField.hidden = true;
+}
+
+- (void)commitInlinePathEditing
+{
+    NSString *const raw =
+        [[m_PathEditField stringValue] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    [self endInlinePathEditingUI];
+    if( self.window && self.defaultResponder )
+        [self.window makeFirstResponder:self.defaultResponder];
+    if( raw.length > 0 && m_PathCommitCallback )
+        m_PathCommitCallback(raw);
+}
+
+- (void)cancelInlinePathEditing
+{
+    [self endInlinePathEditingUI];
+    if( self.window && self.defaultResponder )
+        [self.window makeFirstResponder:self.defaultResponder];
+}
+
+- (BOOL)textView:(NSTextView *)textView clickedOnLink:(id)link atIndex:(NSUInteger)charIndex
+{
+    (void)textView;
+    (void)charIndex;
+    if( auto url = nc::objc_cast<NSURL>(link) ) {
+        if( ![url.scheme isEqualToString:@"x-nc-panel-path"] )
+            return NO;
+        NSString *p = url.path;
+        if( !p.length )
+            return NO;
+        const std::string utf8{p.UTF8String};
+        if( m_PathNavigateCallback )
+            m_PathNavigateCallback(utf8);
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)control:(NSControl *)control
+              textView:(NSTextView *) [[maybe_unused]] fieldEditor
+       doCommandBySelector:(SEL)commandSelector
+{
+    if( control == m_PathEditField && commandSelector == @selector(insertNewline:) ) {
+        [self commitInlinePathEditing];
+        return YES;
+    }
+    return NO;
 }
 
 - (void)setupBindings
@@ -257,7 +616,7 @@ static bool IsDark(NSColor *_color);
     [m_SearchTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnil];
     [m_SearchMatchesField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnil];
     [m_SearchClearButton bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnil];
-    [m_PathTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnotnil];
+    [m_PathArea bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnotnil];
     [m_SortButton bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnotnil];
     [m_BusyIndicator bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnotnil];
 }
@@ -268,7 +627,7 @@ static bool IsDark(NSColor *_color);
     [m_SearchTextField unbind:@"hidden"];
     [m_SearchMatchesField unbind:@"hidden"];
     [m_SearchClearButton unbind:@"hidden"];
-    [m_PathTextField unbind:@"hidden"];
+    [m_PathArea unbind:@"hidden"];
     [m_SortButton unbind:@"hidden"];
     [m_BusyIndicator unbind:@"hidden"];
 }
@@ -277,8 +636,10 @@ static bool IsDark(NSColor *_color);
 {
     if( self.superview )
         [self setupBindings];
-    else
+    else {
+        [self removePathEditOutsideClickMonitorIfNeeded];
         [self removeBindings];
+    }
 }
 
 - (void)setSearchRequestChangeCallback:(std::function<void(NSString *)>)searchRequestChangeCallback
@@ -465,10 +826,85 @@ static bool IsDark(NSColor *_color);
         return;
     }
 
+    if( !m_PathEditField.hidden ) {
+        [self cancelInlinePathEditing];
+        return;
+    }
+
     [super cancelOperation:_sender];
 }
 
 @end
+
+static NSURL *PanelHeaderMakeLinkURLFromVFSPath(const std::string &_path) noexcept
+{
+    if( _path.empty() || _path.front() != '/' )
+        return nil;
+    NSURLComponents *const c = [[NSURLComponents alloc] init];
+    c.scheme = @"x-nc-panel-path";
+    c.path = [NSString stringWithUTF8String:_path.c_str()];
+    return c.URL;
+}
+
+static NSMutableAttributedString *PanelHeaderBuildInteractivePathAttributedString(const std::vector<PanelHeaderBreadcrumb> &_crumbs,
+                                                                                NSFont *_font,
+                                                                                NSColor *_text_color)
+{
+    NSMutableParagraphStyle *const paragraph = [[NSMutableParagraphStyle alloc] init];
+    paragraph.lineBreakMode = NSLineBreakByTruncatingHead;
+    paragraph.alignment = NSTextAlignmentCenter;
+
+    NSDictionary *const base_attrs = @{
+        NSFontAttributeName: _font,
+        NSForegroundColorAttributeName: _text_color,
+        NSParagraphStyleAttributeName: paragraph,
+    };
+
+    auto *const result = [[NSMutableAttributedString alloc] init];
+    bool first = true;
+    NSString *prev_label = nil;
+    for( const auto &crumb : _crumbs ) {
+        if( !crumb.label.length )
+            continue;
+        if( !first ) {
+            // Root segment is already shown as "/"; do not add another "/" before "Users" (would show "//Users").
+            if( ![prev_label isEqualToString:@"/"] )
+                [result appendAttributedString:[[NSAttributedString alloc] initWithString:@"/" attributes:base_attrs]];
+        }
+        first = false;
+
+        if( crumb.navigate_to_vfs_path ) {
+            NSURL *const url = PanelHeaderMakeLinkURLFromVFSPath(*crumb.navigate_to_vfs_path);
+            if( url ) {
+                NSMutableDictionary *const attrs = [base_attrs mutableCopy];
+                attrs[NSLinkAttributeName] = url;
+                attrs[NSUnderlineStyleAttributeName] = @(NSUnderlineStyleNone);
+                [result appendAttributedString:[[NSAttributedString alloc] initWithString:crumb.label attributes:attrs]];
+            }
+            else {
+                [result appendAttributedString:[[NSAttributedString alloc] initWithString:crumb.label attributes:base_attrs]];
+            }
+        }
+        else {
+            [result appendAttributedString:[[NSAttributedString alloc] initWithString:crumb.label attributes:base_attrs]];
+        }
+        prev_label = crumb.label;
+    }
+    return result;
+}
+
+static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColor *_text_color)
+{
+    NSMutableParagraphStyle *const paragraph = [[NSMutableParagraphStyle alloc] init];
+    paragraph.lineBreakMode = NSLineBreakByTruncatingHead;
+    paragraph.alignment = NSTextAlignmentCenter;
+    NSDictionary *const attrs = @{
+        NSFontAttributeName: _font,
+        NSForegroundColorAttributeName: _text_color,
+        NSParagraphStyleAttributeName: paragraph,
+    };
+    return [[NSMutableAttributedString alloc] initWithString:_path ?: @"" attributes:attrs];
+}
 
 static void ChangeButtonAttrString(NSButton *_button, NSColor *_new_color, NSFont *_font)
 {

@@ -25,14 +25,19 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 
 @interface NCPanelPathDisplayTextView : NSTextView
 @property(nonatomic, weak) NCPanelViewHeader *pathHeader;
+@property(nonatomic, strong) NSColor *linkHoverColor;
+- (void)clearHover;
 @end
 
-@implementation NCPanelPathDisplayTextView
+@implementation NCPanelPathDisplayTextView {
+    NSRange m_HoveredRange;
+}
+
 @synthesize pathHeader;
+@synthesize linkHoverColor;
 
 - (void)resetCursorRects
 {
-    // Do not call super: NSTextView registers I-beam rects for text; we keep a normal arrow over the path bar.
     if( self.bounds.size.width > 0 && self.bounds.size.height > 0 )
         [self addCursorRect:self.bounds cursor:[NSCursor arrowCursor]];
 }
@@ -41,6 +46,66 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 {
     (void)event;
     [[NSCursor arrowCursor] set];
+}
+
+- (void)updateTrackingAreas
+{
+    [super updateTrackingAreas];
+    for( NSTrackingArea *ta in [self.trackingAreas copy] )
+        if( ta.owner == self )
+            [self removeTrackingArea:ta];
+    if( self.bounds.size.width > 0 && self.bounds.size.height > 0 ) {
+        auto *const ta = [[NSTrackingArea alloc]
+            initWithRect:self.bounds
+                 options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow
+                   owner:self
+                userInfo:nil];
+        [self addTrackingArea:ta];
+    }
+}
+
+- (void)mouseMoved:(NSEvent *)event
+{
+    if( !self.linkHoverColor || ![self.pathHeader panelPathBarIsInteractive] ) {
+        [super mouseMoved:event];
+        return;
+    }
+    const NSPoint p = [self convertPoint:event.locationInWindow fromView:nil];
+    if( ![self nc_pointIsInsideLaidOutPathGlyphs:p] ) {
+        [self setHoveredRange:NSMakeRange(NSNotFound, 0)];
+        return;
+    }
+    const NSUInteger idx = [self characterIndexForInsertionAtPoint:p];
+    if( idx >= self.textStorage.length ) {
+        [self setHoveredRange:NSMakeRange(NSNotFound, 0)];
+        return;
+    }
+    NSRange range = {};
+    id link = [self.textStorage attribute:NSLinkAttributeName atIndex:idx effectiveRange:&range];
+    [self setHoveredRange:(link && NSLocationInRange(idx, range)) ? range : NSMakeRange(NSNotFound, 0)];
+}
+
+- (void)mouseExited:(NSEvent *)event
+{
+    [self setHoveredRange:NSMakeRange(NSNotFound, 0)];
+    [super mouseExited:event];
+}
+
+- (void)setHoveredRange:(NSRange)range
+{
+    if( NSEqualRanges(m_HoveredRange, range) )
+        return;
+    NSLayoutManager *const lm = self.layoutManager;
+    if( m_HoveredRange.location != NSNotFound )
+        [lm removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:m_HoveredRange];
+    m_HoveredRange = range;
+    if( range.location != NSNotFound && self.linkHoverColor )
+        [lm setTemporaryAttributes:@{NSBackgroundColorAttributeName: self.linkHoverColor} forCharacterRange:range];
+}
+
+- (void)clearHover
+{
+    [self setHoveredRange:NSMakeRange(NSNotFound, 0)];
 }
 
 - (void)layout
@@ -378,11 +443,18 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 
     [self removePathEditOutsideClickMonitorIfNeeded];
 
+    [m_PathTextView clearHover];
     m_PathEditField.stringValue = m_LastFullPathForEditing ?: @"";
     m_PathTextView.hidden = true;
     m_PathEditField.hidden = false;
     [self.window makeFirstResponder:m_PathEditField];
     [m_PathEditField.currentEditor setSelectedRange:NSMakeRange(0, m_PathEditField.stringValue.length)];
+    if( auto *const editor = nc::objc_cast<NSTextView>(m_PathEditField.currentEditor) ) {
+        NSColor *const tc = m_Active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
+        NSColor *const sel = m_Theme->PathSelectionColor();
+        editor.insertionPointColor = tc;
+        editor.selectedTextAttributes = @{NSBackgroundColorAttributeName: sel ?: NSColor.selectedTextBackgroundColor};
+    }
 
     __weak NCPanelViewHeader *weak_header = self;
     m_PathEditOutsideClickMonitor =
@@ -419,14 +491,25 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     self.needsDisplay = true;
 
     [self refreshPathBarAttributedText];
+
+    if( !m_PathEditField.hidden ) {
+        if( auto *const editor = nc::objc_cast<NSTextView>(m_PathEditField.currentEditor) ) {
+            editor.insertionPointColor = text_color;
+            NSColor *const sel = m_Theme->PathSelectionColor();
+            editor.selectedTextAttributes = @{NSBackgroundColorAttributeName: sel ?: NSColor.selectedTextBackgroundColor};
+        }
+    }
 }
 
 - (void)refreshPathBarAttributedText
 {
+    [m_PathTextView clearHover];
     NSFont *const font = m_Theme->Font();
     NSColor *const text_color = m_Active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
+    m_PathTextView.linkHoverColor = m_Theme->PathHoverColor();
     if( m_PathBarInteractive && !m_LastBreadcrumbs.empty() ) {
-        NSMutableAttributedString *const as = PanelHeaderBuildInteractivePathAttributedString(m_LastBreadcrumbs, font, text_color);
+        NSMutableAttributedString *const as =
+            PanelHeaderBuildInteractivePathAttributedString(m_LastBreadcrumbs, font, text_color);
         [m_PathTextView.textStorage setAttributedString:as];
         m_PathTextView.linkTextAttributes = @{
             NSForegroundColorAttributeName: text_color,
@@ -959,13 +1042,8 @@ static NSString *SortLetter(data::SortMode _mode) noexcept
     }
 }
 
-static double Brightness(NSColor *_color)
-{
-    const auto c = [_color colorUsingColorSpace:NSColorSpace.genericRGBColorSpace];
-    return c.brightnessComponent;
-}
-
 static bool IsDark(NSColor *_color)
 {
-    return Brightness(_color) < 0.60;
+    const auto c = [_color colorUsingColorSpace:NSColorSpace.genericRGBColorSpace];
+    return c.brightnessComponent < 0.60;
 }

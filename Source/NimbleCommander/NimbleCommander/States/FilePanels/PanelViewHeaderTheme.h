@@ -16,6 +16,8 @@ public:
     [[nodiscard]] virtual NSColor *ActiveBackgroundColor() const = 0;
     [[nodiscard]] virtual NSColor *InactiveBackgroundColor() const = 0;
     [[nodiscard]] virtual NSColor *SeparatorColor() const = 0;
+    [[nodiscard]] virtual NSColor *PathHoverColor() const = 0;
+    [[nodiscard]] virtual NSColor *PathSelectionColor() const = 0;
     virtual void ObserveChanges(std::function<void()> _callback) = 0;
 };
 

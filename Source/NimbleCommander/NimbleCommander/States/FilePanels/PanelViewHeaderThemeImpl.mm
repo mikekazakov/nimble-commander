@@ -38,6 +38,16 @@ NSColor *HeaderThemeImpl::SeparatorColor() const
     return m_ThemesManager.SelectedTheme().FilePanelsHeaderSeparatorColor();
 }
 
+NSColor *HeaderThemeImpl::PathHoverColor() const
+{
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathHoverColor();
+}
+
+NSColor *HeaderThemeImpl::PathSelectionColor() const
+{
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathSelectionColor();
+}
+
 void HeaderThemeImpl::ObserveChanges(std::function<void()> _callback)
 {
     const auto filter = ThemesManager::Notifications::FilePanelsHeader;

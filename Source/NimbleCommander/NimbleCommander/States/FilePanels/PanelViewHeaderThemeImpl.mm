@@ -38,14 +38,9 @@ NSColor *HeaderThemeImpl::SeparatorColor() const
     return m_ThemesManager.SelectedTheme().FilePanelsHeaderSeparatorColor();
 }
 
-NSColor *HeaderThemeImpl::PathHoverColor() const
+NSColor *HeaderThemeImpl::PathAccentColor() const
 {
-    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathHoverColor();
-}
-
-NSColor *HeaderThemeImpl::PathSelectionColor() const
-{
-    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathSelectionColor();
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathAccentColor();
 }
 
 void HeaderThemeImpl::ObserveChanges(std::function<void()> _callback)

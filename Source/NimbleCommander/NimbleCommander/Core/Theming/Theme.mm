@@ -30,8 +30,7 @@ struct Theme::Internals {
     NSColor *m_FilePanelsHeaderActiveBackgroundColor;
     NSColor *m_FilePanelsHeaderInactiveBackgroundColor;
     NSColor *m_FilePanelsHeaderSeparatorColor;
-    NSColor *m_FilePanelsHeaderPathHoverColor;
-    NSColor *m_FilePanelsHeaderPathSelectionColor;
+    NSColor *m_FilePanelsHeaderPathAccentColor;
     NSFont *m_FilePanelsFooterFont;
     NSColor *m_FilePanelsFooterTextColor;
     NSColor *m_FilePanelsFooterActiveTextColor;
@@ -190,28 +189,19 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     I->m_FilePanelsHeaderActiveBackgroundColor = ExtractColor("filePanelsHeaderActiveBackgroundColor");
     I->m_FilePanelsHeaderInactiveBackgroundColor = ExtractColor("filePanelsHeaderInactiveBackgroundColor");
     I->m_FilePanelsHeaderSeparatorColor = ExtractColor("filePanelsHeaderSeparatorColor");
-    I->m_FilePanelsHeaderPathHoverColor = ExtractOptionalColor("filePanelsHeaderPathHoverColor");
-    I->m_FilePanelsHeaderPathSelectionColor = ExtractOptionalColor("filePanelsHeaderPathSelectionColor");
+    I->m_FilePanelsHeaderPathAccentColor = ExtractOptionalColor("filePanelsHeaderPathAccentColor");
 
-    // Match bundled Light / Dark themes (Config.json): custom themes use the same hover & selection
-    // tints when keys are missing or inherited overlays would read wrong on the header.
-    const auto bundle_path_hover_for_appearance = [&]() -> NSColor * {
+    // Match bundled Light / Dark themes (Config.json): when the key is missing or an inherited overlay
+    // would read wrong on the header.
+    const auto bundle_path_accent_for_appearance = [&]() -> NSColor * {
         return I->m_ThemeAppearanceType == ThemeAppearance::Dark
                    ? [NSColor colorWithHexString:std::string_view{"#FFFFFF24"}]
                    : [NSColor colorWithHexString:std::string_view{"#0000001F"}];
     };
-    const auto bundle_path_selection_for_appearance = [&]() -> NSColor * {
-        return I->m_ThemeAppearanceType == ThemeAppearance::Dark
-                   ? [NSColor colorWithHexString:std::string_view{"#FFFFFF3D"}]
-                   : [NSColor colorWithHexString:std::string_view{"#0000003D"}];
-    };
-    if( I->m_FilePanelsHeaderPathHoverColor == nil )
-        I->m_FilePanelsHeaderPathHoverColor = bundle_path_hover_for_appearance();
-    if( I->m_FilePanelsHeaderPathSelectionColor == nil )
-        I->m_FilePanelsHeaderPathSelectionColor = bundle_path_selection_for_appearance();
+    if( I->m_FilePanelsHeaderPathAccentColor == nil )
+        I->m_FilePanelsHeaderPathAccentColor = bundle_path_accent_for_appearance();
 
-    // Custom themes often merge Light backup keys: semi-transparent black hover/selection on a
-    // dark header reads as a hole. If the configured overlay would darken the header, replace it.
+    // Custom themes often merge Light backup keys: semi-transparent black accent on a dark header reads as a hole.
     {
         NSColor *const path_bg = I->m_FilePanelsHeaderActiveBackgroundColor ?: I->m_FilePanelsHeaderInactiveBackgroundColor;
         const auto rgba_from_color = [](NSColor *c, CGFloat *r, CGFloat *g, CGFloat *bl, CGFloat *a) -> bool {
@@ -257,10 +247,8 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
                 lum(br * (1.f - va) + vr * va, bgc * (1.f - va) + vg * va, bb * (1.f - va) + vb * va);
             return out_lum + 0.008f < blum;
         };
-        if( overlay_darkens_header(I->m_FilePanelsHeaderPathHoverColor) )
-            I->m_FilePanelsHeaderPathHoverColor = bundle_path_hover_for_appearance();
-        if( overlay_darkens_header(I->m_FilePanelsHeaderPathSelectionColor) )
-            I->m_FilePanelsHeaderPathSelectionColor = bundle_path_selection_for_appearance();
+        if( overlay_darkens_header(I->m_FilePanelsHeaderPathAccentColor) )
+            I->m_FilePanelsHeaderPathAccentColor = bundle_path_accent_for_appearance();
     }
 
     I->m_FilePanelsListFont = ExtractFont("filePanelsListFont");
@@ -560,14 +548,9 @@ NSColor *Theme::FilePanelsHeaderSeparatorColor() const noexcept
     return I->m_FilePanelsHeaderSeparatorColor;
 }
 
-NSColor *Theme::FilePanelsHeaderPathHoverColor() const noexcept
+NSColor *Theme::FilePanelsHeaderPathAccentColor() const noexcept
 {
-    return I->m_FilePanelsHeaderPathHoverColor;
-}
-
-NSColor *Theme::FilePanelsHeaderPathSelectionColor() const noexcept
-{
-    return I->m_FilePanelsHeaderPathSelectionColor;
+    return I->m_FilePanelsHeaderPathAccentColor;
 }
 
 NSFont *Theme::FilePanelsBriefFont() const noexcept
@@ -832,10 +815,8 @@ NSColor *Theme::ColorForPreferencesEditorFromMergedTheme(const nc::config::Value
     if( !_key || !_persisted_theme_doc || !_backup_theme_doc )
         return nil;
     const Theme merged{*_persisted_theme_doc, *_backup_theme_doc};
-    if( std::strcmp(_key, "filePanelsHeaderPathHoverColor") == 0 )
-        return merged.FilePanelsHeaderPathHoverColor();
-    if( std::strcmp(_key, "filePanelsHeaderPathSelectionColor") == 0 )
-        return merged.FilePanelsHeaderPathSelectionColor();
+    if( std::strcmp(_key, "filePanelsHeaderPathAccentColor") == 0 )
+        return merged.FilePanelsHeaderPathAccentColor();
     return nil;
 }
 

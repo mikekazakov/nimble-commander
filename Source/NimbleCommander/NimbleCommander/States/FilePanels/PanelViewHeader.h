@@ -16,11 +16,22 @@ namespace nc::panel {
  * absolute path on the current panel VFS. The last segment omits it and is shown as plain text (current folder).
  */
 struct PanelHeaderBreadcrumb {
-    NSString *label = nil;
+    NSString *_Nullable label = nil;
     std::optional<std::string> navigate_to_vfs_path;
 };
 
 } // namespace nc::panel
+
+typedef NS_ENUM(NSInteger, NCPanelPathBarContextCommand) {
+    NCPanelPathBarContextCommandOpen = 0,
+    NCPanelPathBarContextCommandOpenInNewTab,
+    NCPanelPathBarContextCommandCopyPath,
+};
+
+typedef void (^NCPanelPathBarContextMenuActionBlock)(NSString *_Nonnull posixPath,
+                                                     NCPanelPathBarContextCommand command);
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface NCPanelViewHeader : NSView <NSTextFieldDelegate, NSTextViewDelegate>
 
@@ -41,13 +52,16 @@ struct PanelHeaderBreadcrumb {
 @property(nonatomic) std::function<void(const std::string &)> pathNavigateToVFSPathCallback;
 
 // Invoked when the user commits a typed path from the inline editor (Enter). Should expand and navigate.
-@property(nonatomic) std::function<void(NSString *)> pathManualEntryCommitCallback;
+@property(nonatomic) std::function<void(NSString *_Nullable)> pathManualEntryCommitCallback;
+
+// Right-click path bar: Open / Open in New Tab / Copy Path (Marta-style). Optional.
+@property(nonatomic, copy, nullable) NCPanelPathBarContextMenuActionBlock pathBarContextMenuAction;
 
 // Progress indicator located in the header. Shown only when displaying activity.
 @property(nonatomic, readonly) NSProgressIndicator *busyIndicator;
 
 // Search field located in the header. Hidden when not searching.
-@property(nonatomic) NSString *searchPrompt;
+@property(nonatomic, nullable) NSString *searchPrompt;
 
 // Number of matches for the current search query. Should be set by controller when search query is changed.
 @property(nonatomic) int searchMatches;
@@ -60,12 +74,14 @@ struct PanelHeaderBreadcrumb {
 
 // Called by the view when search query is changed by user via search field in header.
 // When the argument is nil this should be interpreted as discarding the search via (X) or Esc button.
-@property(nonatomic) std::function<void(NSString *_query)> searchRequestChangeCallback;
+@property(nonatomic) std::function<void(NSString *_Nullable _query)> searchRequestChangeCallback;
 
 // Updates the look of the header depending on the parent panel being active or not.
 @property(nonatomic) bool active;
 
 // Used to return the focus when search field is dismissed.
-@property(nonatomic, weak) NSResponder *defaultResponder;
+@property(nonatomic, weak, nullable) NSResponder *defaultResponder;
 
 @end
+
+NS_ASSUME_NONNULL_END

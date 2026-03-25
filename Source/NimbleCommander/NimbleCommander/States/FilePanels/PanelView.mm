@@ -10,6 +10,9 @@
 #include <Panel/PanelData.h>
 #include <Panel/Log.h>
 #include "PanelController.h"
+#include "MainWindowFilePanelState.h"
+#include "MainWindowFilePanelState+TabsSupport.h"
+#include "Views/FilePanelsTabbedHolder.h"
 #include "Brief/PanelBriefView.h"
 #include "List/PanelListView.h"
 #include "Gallery/PanelGalleryView.h"
@@ -222,6 +225,51 @@ static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
             req->PerformAsynchronous = true;
             req->InitiatedByUser = true;
             [pc GoToDirWithContext:req];
+        };
+        m_HeaderView.pathBarContextMenuAction = ^(NSString *path, NCPanelPathBarContextCommand cmd) {
+            PanelView *const strong_self = weak_self;
+            if( !strong_self || path.length == 0 )
+                return;
+            PanelController *const pc = strong_self.controller;
+            if( !pc )
+                return;
+            const std::string utf8{path.UTF8String};
+            switch( cmd ) {
+                case NCPanelPathBarContextCommandOpen: {
+                    auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
+                    req->RequestedDirectory = utf8;
+                    req->VFS = pc.vfs;
+                    req->PerformAsynchronous = true;
+                    req->InitiatedByUser = true;
+                    (void)[pc GoToDirWithContext:req];
+                    break;
+                }
+                case NCPanelPathBarContextCommandOpenInNewTab: {
+                    MainWindowFilePanelState *const state = pc.state;
+                    if( !state )
+                        return;
+                    NSTabView *const tab_view = [state isLeftController:pc] ? state.leftTabbedHolder.tabView
+                                                                           : state.rightTabbedHolder.tabView;
+                    PanelController *const new_pc = [state spawnNewTabInTabView:tab_view
+                                                         autoDirectoryLoading:false
+                                                             activateNewPanel:true];
+                    if( !new_pc )
+                        return;
+                    auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
+                    req->RequestedDirectory = utf8;
+                    req->VFS = pc.vfs;
+                    req->PerformAsynchronous = true;
+                    req->InitiatedByUser = true;
+                    (void)[new_pc GoToDirWithContext:req];
+                    break;
+                }
+                case NCPanelPathBarContextCommandCopyPath:
+                    [NSPasteboard.generalPasteboard clearContents];
+                    [NSPasteboard.generalPasteboard setString:path forType:NSPasteboardTypeString];
+                    break;
+                default:
+                    break;
+            }
         };
         [self addSubview:m_HeaderView];
 

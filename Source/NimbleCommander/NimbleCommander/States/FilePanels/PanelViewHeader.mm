@@ -21,11 +21,14 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 @interface NCPanelViewHeader (PathBarEditingPrivate)
 - (BOOL)panelPathBarIsInteractive;
 - (void)beginInlinePathEditing;
+- (nullable NSString *)posixPathForPathBarContextMenuAtPoint:(NSPoint)pInTextViewCoords;
+- (NSMenu *)pathBarContextMenuForPOSIXPath:(NSString *)path;
+- (void)handlePathBarContextMenuItem:(NSMenuItem *)item;
 @end
 
 @interface NCPanelPathDisplayTextView : NSTextView
 @property(nonatomic, weak) NCPanelViewHeader *pathHeader;
-@property(nonatomic, strong) NSColor *linkHoverColor;
+@property(nonatomic, strong) NSColor *pathAccentColor;
 - (void)clearHover;
 @end
 
@@ -34,7 +37,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 }
 
 @synthesize pathHeader;
-@synthesize linkHoverColor;
+@synthesize pathAccentColor;
 
 - (void)resetCursorRects
 {
@@ -66,7 +69,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 
 - (void)mouseMoved:(NSEvent *)event
 {
-    if( !self.linkHoverColor || ![self.pathHeader panelPathBarIsInteractive] ) {
+    if( !self.pathAccentColor || ![self.pathHeader panelPathBarIsInteractive] ) {
         [super mouseMoved:event];
         return;
     }
@@ -99,8 +102,8 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     if( m_HoveredRange.location != NSNotFound )
         [lm removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:m_HoveredRange];
     m_HoveredRange = range;
-    if( range.location != NSNotFound && self.linkHoverColor )
-        [lm setTemporaryAttributes:@{NSBackgroundColorAttributeName: self.linkHoverColor} forCharacterRange:range];
+    if( range.location != NSNotFound && self.pathAccentColor )
+        [lm setTemporaryAttributes:@{NSBackgroundColorAttributeName: self.pathAccentColor} forCharacterRange:range];
 }
 
 - (void)clearHover
@@ -135,15 +138,14 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 
 - (NSMenu *)menuForEvent:(NSEvent *)event
 {
-    (void)event;
-    NSMenu *const menu = [[NSMenu alloc] initWithTitle:@""];
-    NSMenuItem *const copy_item =
-        [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Copy", @"Menu item: copy to pasteboard")
-                                   action:@selector(copy:)
-                            keyEquivalent:@""];
-    copy_item.target = self;
-    [menu addItem:copy_item];
-    return menu;
+    NCPanelViewHeader *const header = self.pathHeader;
+    if( !header || !header.pathBarContextMenuAction )
+        return [super menuForEvent:event];
+    const NSPoint p = [self convertPoint:event.locationInWindow fromView:nil];
+    NSString *const path = [header posixPathForPathBarContextMenuAtPoint:p];
+    if( path.length == 0 )
+        return [super menuForEvent:event];
+    return [header pathBarContextMenuForPOSIXPath:path];
 }
 
 - (BOOL)nc_pointIsInsideLaidOutPathGlyphs:(NSPoint)p_in_view_coords
@@ -257,6 +259,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 @synthesize sortMenuPopup;
 @synthesize pathNavigateToVFSPathCallback = m_PathNavigateCallback;
 @synthesize pathManualEntryCommitCallback = m_PathCommitCallback;
+@synthesize pathBarContextMenuAction;
 
 - (id)initWithFrame:(NSRect)frameRect theme:(std::unique_ptr<nc::panel::HeaderTheme>)_theme
 {
@@ -451,9 +454,10 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     [m_PathEditField.currentEditor setSelectedRange:NSMakeRange(0, m_PathEditField.stringValue.length)];
     if( auto *const editor = nc::objc_cast<NSTextView>(m_PathEditField.currentEditor) ) {
         NSColor *const tc = m_Active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
-        NSColor *const sel = m_Theme->PathSelectionColor();
+        NSColor *const accent = m_Theme->PathAccentColor();
         editor.insertionPointColor = tc;
-        editor.selectedTextAttributes = @{NSBackgroundColorAttributeName: sel ?: NSColor.selectedTextBackgroundColor};
+        editor.selectedTextAttributes =
+            @{NSBackgroundColorAttributeName: accent ?: NSColor.selectedTextBackgroundColor};
     }
 
     __weak NCPanelViewHeader *weak_header = self;
@@ -495,8 +499,9 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     if( !m_PathEditField.hidden ) {
         if( auto *const editor = nc::objc_cast<NSTextView>(m_PathEditField.currentEditor) ) {
             editor.insertionPointColor = text_color;
-            NSColor *const sel = m_Theme->PathSelectionColor();
-            editor.selectedTextAttributes = @{NSBackgroundColorAttributeName: sel ?: NSColor.selectedTextBackgroundColor};
+            NSColor *const accent = m_Theme->PathAccentColor();
+            editor.selectedTextAttributes =
+                @{NSBackgroundColorAttributeName: accent ?: NSColor.selectedTextBackgroundColor};
         }
     }
 }
@@ -506,7 +511,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     [m_PathTextView clearHover];
     NSFont *const font = m_Theme->Font();
     NSColor *const text_color = m_Active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
-    m_PathTextView.linkHoverColor = m_Theme->PathHoverColor();
+    m_PathTextView.pathAccentColor = m_Theme->PathAccentColor();
     if( m_PathBarInteractive && !m_LastBreadcrumbs.empty() ) {
         NSMutableAttributedString *const as =
             PanelHeaderBuildInteractivePathAttributedString(m_LastBreadcrumbs, font, text_color);
@@ -648,11 +653,17 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 {
     NSString *const raw =
         [[m_PathEditField stringValue] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    if( raw.length > 0 && m_PathCommitCallback ) {
+        // Keep the editor visible until panel data really updates the path header. This avoids a brief fallback to
+        // stale breadcrumbs between Enter and async GoToDir completion.
+        m_PathCommitCallback(raw);
+        if( self.window && self.defaultResponder )
+            [self.window makeFirstResponder:self.defaultResponder];
+        return;
+    }
     [self endInlinePathEditingUI];
     if( self.window && self.defaultResponder )
         [self.window makeFirstResponder:self.defaultResponder];
-    if( raw.length > 0 && m_PathCommitCallback )
-        m_PathCommitCallback(raw);
 }
 
 - (void)cancelInlinePathEditing
@@ -678,6 +689,82 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
         return YES;
     }
     return NO;
+}
+
+- (nullable NSMenu *)textView:(NSTextView *)textView
+                         menu:(NSMenu *)menu
+                      forEvent:(NSEvent *)event
+                       atIndex:(NSUInteger)charIndex
+{
+    (void)charIndex;
+    // AppKit augments NSTextView context menus (Services, "Open", "Show in Finder", etc.). This delegate hook is the
+    // supported way to replace that menu with our path-bar-specific items only.
+    if( textView != m_PathTextView || !self.pathBarContextMenuAction )
+        return menu;
+    const NSPoint p = [textView convertPoint:event.locationInWindow fromView:nil];
+    NSString *const path = [self posixPathForPathBarContextMenuAtPoint:p];
+    if( path.length == 0 )
+        return menu;
+    return [self pathBarContextMenuForPOSIXPath:path];
+}
+
+- (nullable NSString *)posixPathForPathBarContextMenuAtPoint:(NSPoint)pInTextViewCoords
+{
+    if( m_PathTextView.textStorage.length == 0 )
+        return nil;
+    if( ![m_PathTextView nc_pointIsInsideLaidOutPathGlyphs:pInTextViewCoords] )
+        return nil;
+    if( !m_PathBarInteractive ) {
+        NSString *const s = m_LastPlainPath ?: @"";
+        return s.length ? s : nil;
+    }
+    const NSUInteger len = m_PathTextView.textStorage.length;
+    NSUInteger idx = [m_PathTextView characterIndexForInsertionAtPoint:pInTextViewCoords];
+    if( idx >= len ) {
+        NSString *const full = m_LastFullPathForEditing ?: @"";
+        return full.length ? full : nil;
+    }
+    NSRange link_range = {};
+    id link = [m_PathTextView.textStorage attribute:NSLinkAttributeName atIndex:idx effectiveRange:&link_range];
+    if( link && NSLocationInRange(idx, link_range) ) {
+        if( auto url = nc::objc_cast<NSURL>(link) ) {
+            if( [url.scheme isEqualToString:@"x-nc-panel-path"] ) {
+                NSString *const p = url.path;
+                return p.length ? p : nil;
+            }
+        }
+        return nil;
+    }
+    NSString *const full = m_LastFullPathForEditing ?: @"";
+    return full.length ? full : nil;
+}
+
+- (NSMenu *)pathBarContextMenuForPOSIXPath:(NSString *)path
+{
+    NSMenu *const menu = [[NSMenu alloc] initWithTitle:@""];
+    auto add = ^(NSString *title, NCPanelPathBarContextCommand cmd) {
+        NSMenuItem *const it = [[NSMenuItem alloc] initWithTitle:title
+                                                          action:@selector(handlePathBarContextMenuItem:)
+                                                   keyEquivalent:@""];
+        it.target = self;
+        it.tag = cmd;
+        it.representedObject = path;
+        [menu addItem:it];
+    };
+    add(NSLocalizedString(@"Open", @"Path bar context: open directory in panel"), NCPanelPathBarContextCommandOpen);
+    add(NSLocalizedString(@"Open in New Tab", @"Path bar context: open directory in a new tab"),
+        NCPanelPathBarContextCommandOpenInNewTab);
+    [menu addItem:[NSMenuItem separatorItem]];
+    add(NSLocalizedString(@"Copy Path", @"Path bar context: copy POSIX path"), NCPanelPathBarContextCommandCopyPath);
+    return menu;
+}
+
+- (void)handlePathBarContextMenuItem:(NSMenuItem *)item
+{
+    NSString *const path = nc::objc_cast<NSString>(item.representedObject);
+    if( path.length == 0 || !self.pathBarContextMenuAction )
+        return;
+    self.pathBarContextMenuAction(path, static_cast<NCPanelPathBarContextCommand>(item.tag));
 }
 
 - (BOOL)control:(NSControl *)control

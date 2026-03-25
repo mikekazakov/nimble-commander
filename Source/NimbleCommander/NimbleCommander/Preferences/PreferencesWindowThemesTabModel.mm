@@ -110,8 +110,7 @@ NSArray *BuildThemeSettingsNodesTree()
         SpawnColorNode(@"Active background", "filePanelsHeaderActiveBackgroundColor"),
         SpawnColorNode(@"Inactive background", "filePanelsHeaderInactiveBackgroundColor"),
         SpawnColorNode(@"Separator", "filePanelsHeaderSeparatorColor"),
-        SpawnColorNode(@"Path bar link hover", "filePanelsHeaderPathHoverColor"),
-        SpawnColorNode(@"Path bar editor selection", "filePanelsHeaderPathSelectionColor")
+        SpawnColorNode(@"Path bar accent", "filePanelsHeaderPathAccentColor")
     ];
 
     auto fp_footer_nodes = @[

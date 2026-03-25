@@ -815,8 +815,17 @@ NSColor *Theme::ColorForPreferencesEditorFromMergedTheme(const nc::config::Value
     if( !_key || !_persisted_theme_doc || !_backup_theme_doc )
         return nil;
     const Theme merged{*_persisted_theme_doc, *_backup_theme_doc};
-    if( std::strcmp(_key, "filePanelsHeaderPathAccentColor") == 0 )
-        return merged.FilePanelsHeaderPathAccentColor();
+    using Getter = NSColor *(Theme::*)() const noexcept;
+    struct Entry {
+        const char *key;
+        Getter getter;
+    };
+    static constexpr Entry kEntries[] = {
+        {"filePanelsHeaderPathAccentColor", &Theme::FilePanelsHeaderPathAccentColor},
+    };
+    for( const auto &e : kEntries )
+        if( std::strcmp(_key, e.key) == 0 )
+            return (merged.*(e.getter))();
     return nil;
 }
 

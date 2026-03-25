@@ -157,6 +157,7 @@
 		CF0A48722BDDA42200833160 /* PanelViewHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */; };
 		CF0A48732BDDA42700833160 /* PanelViewHeaderTheme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB672157399E0009EB81 /* PanelViewHeaderTheme.mm */; };
 		CF0A48742BDDA42B00833160 /* PanelViewHeaderThemeImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB6D21573BE30009EB81 /* PanelViewHeaderThemeImpl.mm */; };
+		CF3A1B2C3D4E5F6000A1B2C3 /* PanelViewHeaderPathBarBreadcrumbs.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3A1B2C3D4E5F6000A1B2C1 /* PanelViewHeaderPathBarBreadcrumbs.mm */; };
 		CF0A48752BDDA4FE00833160 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
 		CF0A48762BDDA50200833160 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E61DFD152C0039A104 /* FilePanelMainSplitView.mm */; };
 		CF0A48772BDDA50800833160 /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E81DFD152C0039A104 /* FilePanelOverlappedTerminal.mm */; };
@@ -1192,6 +1193,8 @@
 		CFB2AB672157399E0009EB81 /* PanelViewHeaderTheme.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewHeaderTheme.mm; path = NimbleCommander/States/FilePanels/PanelViewHeaderTheme.mm; sourceTree = "<group>"; };
 		CFB2AB6C21573BE30009EB81 /* PanelViewHeaderThemeImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewHeaderThemeImpl.h; path = NimbleCommander/States/FilePanels/PanelViewHeaderThemeImpl.h; sourceTree = "<group>"; };
 		CFB2AB6D21573BE30009EB81 /* PanelViewHeaderThemeImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewHeaderThemeImpl.mm; path = NimbleCommander/States/FilePanels/PanelViewHeaderThemeImpl.mm; sourceTree = "<group>"; };
+		CF3A1B2C3D4E5F6000A1B2C0 /* PanelViewHeaderPathBarBreadcrumbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewHeaderPathBarBreadcrumbs.h; path = NimbleCommander/States/FilePanels/PanelViewHeaderPathBarBreadcrumbs.h; sourceTree = "<group>"; };
+		CF3A1B2C3D4E5F6000A1B2C1 /* PanelViewHeaderPathBarBreadcrumbs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewHeaderPathBarBreadcrumbs.mm; path = NimbleCommander/States/FilePanels/PanelViewHeaderPathBarBreadcrumbs.mm; sourceTree = "<group>"; };
 		CFB44F0A1F35F0B900E7555E /* UserNotificationsCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserNotificationsCenter.h; path = NimbleCommander/Core/UserNotificationsCenter.h; sourceTree = SOURCE_ROOT; };
 		CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = UserNotificationsCenter.mm; path = NimbleCommander/Core/UserNotificationsCenter.mm; sourceTree = SOURCE_ROOT; };
 		CFB7006B28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowThemesTabAutomaticSwitchingSheet.h; path = NimbleCommander/Preferences/PreferencesWindowThemesTabAutomaticSwitchingSheet.h; sourceTree = "<group>"; };
@@ -1472,6 +1475,8 @@
 				CFB2AB672157399E0009EB81 /* PanelViewHeaderTheme.mm */,
 				CFB2AB6C21573BE30009EB81 /* PanelViewHeaderThemeImpl.h */,
 				CFB2AB6D21573BE30009EB81 /* PanelViewHeaderThemeImpl.mm */,
+				CF3A1B2C3D4E5F6000A1B2C0 /* PanelViewHeaderPathBarBreadcrumbs.h */,
+				CF3A1B2C3D4E5F6000A1B2C1 /* PanelViewHeaderPathBarBreadcrumbs.mm */,
 				CF94CF9B1DD4A09A00EEA420 /* PanelViewImplementationProtocol.h */,
 			);
 			name = Presentation;
@@ -3055,6 +3060,7 @@
 				CF0A48382BDDA18200833160 /* ExecuteExternalTool.mm in Sources */,
 				CF0A48522BDDA2B900833160 /* TabsManagement.mm in Sources */,
 				CF0A48732BDDA42700833160 /* PanelViewHeaderTheme.mm in Sources */,
+				CF3A1B2C3D4E5F6000A1B2C3 /* PanelViewHeaderPathBarBreadcrumbs.mm in Sources */,
 				CF0A487F2BDDA54100833160 /* SFTPConnectionSheetController.mm in Sources */,
 				CFAB6CE42587C38800397DB5 /* FollowSymlink.mm in Sources */,
 				CF0A47242BDD886400833160 /* VFSInstancePromise.cpp in Sources */,

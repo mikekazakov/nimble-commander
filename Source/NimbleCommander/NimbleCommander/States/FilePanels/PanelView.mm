@@ -17,6 +17,7 @@
 #include "List/PanelListView.h"
 #include "Gallery/PanelGalleryView.h"
 #include "PanelViewHeader.h"
+#include "PanelViewHeaderPathBarBreadcrumbs.h"
 #include "PanelViewFooter.h"
 #include "PanelViewDelegate.h"
 #include "DragReceiver.h"
@@ -43,84 +44,6 @@ enum class CursorSelectionType : int8_t {
 struct StateStorage {
     std::string focused_item;
 };
-
-[[nodiscard]] static std::vector<PanelHeaderBreadcrumb> BuildPanelHeaderBreadcrumbs(const data::Model &_model)
-{
-    std::vector<PanelHeaderBreadcrumb> out;
-    const std::string verbose_full = _model.VerboseDirectoryFullPath();
-    if( verbose_full.empty() )
-        return out;
-
-    // Must match VerboseDirectoryFullPath(), which appends '/' when Directory() omits it.
-    std::string dir_slash = _model.DirectoryPathWithTrailingSlash();
-    if( dir_slash.empty() )
-        return out;
-    if( dir_slash.back() != '/' )
-        dir_slash += '/';
-    if( verbose_full.size() < dir_slash.size() )
-        return out;
-    if( verbose_full.compare(verbose_full.size() - dir_slash.size(), dir_slash.size(), dir_slash) != 0 )
-        return out;
-
-    std::string junction = verbose_full.substr(0, verbose_full.size() - dir_slash.size());
-    while( !junction.empty() && junction.back() == '/' )
-        junction.pop_back();
-
-    const std::string path_only = _model.DirectoryPathWithoutTrailingSlash();
-
-    if( !junction.empty() ) {
-        PanelHeaderBreadcrumb j;
-        j.label = [NSString stringWithUTF8String:junction.c_str()];
-        j.navigate_to_vfs_path = "/";
-        out.push_back(std::move(j));
-    }
-
-    if( path_only == "/" ) {
-        if( junction.empty() ) {
-            PanelHeaderBreadcrumb b;
-            b.label = @"/";
-            out.push_back(std::move(b));
-        }
-        return out;
-    }
-
-    if( path_only.empty() || path_only.front() != '/' )
-        return out;
-
-    if( junction.empty() ) {
-        PanelHeaderBreadcrumb root;
-        root.label = @"/";
-        root.navigate_to_vfs_path = "/";
-        out.push_back(std::move(root));
-    }
-
-    const std::string rest = path_only.substr(1);
-    std::vector<std::string> comps;
-    size_t start = 0;
-    while( start <= rest.size() ) {
-        const size_t slash = rest.find('/', start);
-        if( slash == std::string::npos ) {
-            if( start < rest.size() )
-                comps.emplace_back(rest.substr(start));
-            break;
-        }
-        if( slash > start )
-            comps.emplace_back(rest.substr(start, slash - start));
-        start = slash + 1;
-    }
-
-    std::string acc;
-    for( size_t i = 0; i < comps.size(); ++i ) {
-        acc += "/";
-        acc += comps[i];
-        PanelHeaderBreadcrumb b;
-        b.label = [NSString stringWithUTF8String:comps[i].c_str()];
-        if( i + 1 < comps.size() )
-            b.navigate_to_vfs_path = acc;
-        out.push_back(std::move(b));
-    }
-    return out;
-}
 
 static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
 {
@@ -215,7 +138,10 @@ static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
             PanelController *const pc = strong_self.controller;
             if( !pc )
                 return;
-            const std::string utf8{_typed.UTF8String};
+            const char *const raw = _typed.UTF8String;
+            if( !raw )
+                return;
+            const std::string utf8{raw};
             const std::string expanded = [pc expandPath:utf8];
             if( expanded.empty() || expanded.front() != '/' )
                 return;
@@ -233,7 +159,10 @@ static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
             PanelController *const pc = strong_self.controller;
             if( !pc )
                 return;
-            const std::string utf8{path.UTF8String};
+            const char *const raw = path.UTF8String;
+            if( !raw )
+                return;
+            const std::string utf8{raw};
             switch( cmd ) {
                 case NCPanelPathBarContextCommandOpen: {
                     auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
@@ -1229,7 +1158,9 @@ static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
     const bool uniform_dir =
         m_Data && m_Data->Type() == data::Model::PanelType::Directory && m_Data->Listing().IsUniform();
     if( uniform_dir ) {
-        const auto crumbs = BuildPanelHeaderBreadcrumbs(*m_Data);
+        const auto crumbs = BuildPanelHeaderBreadcrumbsFromPaths(m_Data->VerboseDirectoryFullPath(),
+                                                                 m_Data->DirectoryPathWithTrailingSlash(),
+                                                                 m_Data->DirectoryPathWithoutTrailingSlash());
         if( !crumbs.empty() ) {
             [m_HeaderView setInteractiveBreadcrumbs:crumbs fullPathForEditing:PanelViewPathStringForEditing(m_HeaderTitle)];
             return;

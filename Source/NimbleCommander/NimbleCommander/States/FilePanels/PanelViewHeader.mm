@@ -138,6 +138,8 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 
 - (NSMenu *)menuForEvent:(NSEvent *)event
 {
+    // With selectable=NO the text view never builds its own context menu and never calls the
+    // textView:menu:forEvent:atIndex: delegate. We must intercept menuForEvent: here directly.
     NCPanelViewHeader *const header = self.pathHeader;
     if( !header || !header.pathBarContextMenuAction )
         return [super menuForEvent:event];
@@ -251,6 +253,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     std::function<void(const std::string &)> m_PathNavigateCallback;
     std::function<void(NSString *)> m_PathCommitCallback;
     id m_PathEditOutsideClickMonitor;
+    uint64_t m_PathEditCommitSeq;
 }
 
 @synthesize sortMode = m_SortMode;
@@ -261,6 +264,11 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 @synthesize pathManualEntryCommitCallback = m_PathCommitCallback;
 @synthesize pathBarContextMenuAction;
 
+- (void)dealloc
+{
+    [self removePathEditOutsideClickMonitorIfNeeded];
+}
+
 - (id)initWithFrame:(NSRect)frameRect theme:(std::unique_ptr<nc::panel::HeaderTheme>)_theme
 {
     self = [super initWithFrame:frameRect];
@@ -269,6 +277,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
         m_SearchPrompt = nil;
         m_Active = false;
         m_PathBarInteractive = false;
+        m_PathEditCommitSeq = 0;
 
         m_PathArea = [[NSView alloc] initWithFrame:NSRect()];
         m_PathArea.translatesAutoresizingMaskIntoConstraints = false;
@@ -656,9 +665,23 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     if( raw.length > 0 && m_PathCommitCallback ) {
         // Keep the editor visible until panel data really updates the path header. This avoids a brief fallback to
         // stale breadcrumbs between Enter and async GoToDir completion.
+        const uint64_t seq = ++m_PathEditCommitSeq;
         m_PathCommitCallback(raw);
         if( self.window && self.defaultResponder )
             [self.window makeFirstResponder:self.defaultResponder];
+
+        // If navigation fails (or takes too long), don't leave the editor stuck on screen indefinitely.
+        __weak NCPanelViewHeader *weak_self = self;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, static_cast<int64_t>(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            NCPanelViewHeader *const strong_self = weak_self;
+            if( !strong_self )
+                return;
+            if( strong_self->m_PathEditCommitSeq != seq )
+                return;
+            if( strong_self->m_PathEditField.hidden )
+                return;
+            [strong_self endInlinePathEditingUI];
+        });
         return;
     }
     [self endInlinePathEditingUI];
@@ -683,7 +706,10 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
         NSString *p = url.path;
         if( !p.length )
             return NO;
-        const std::string utf8{p.UTF8String};
+        const char *const raw = p.UTF8String;
+        if( !raw )
+            return NO;
+        const std::string utf8{raw};
         if( m_PathNavigateCallback )
             m_PathNavigateCallback(utf8);
         return YES;

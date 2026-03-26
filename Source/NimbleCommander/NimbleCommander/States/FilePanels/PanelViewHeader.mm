@@ -55,20 +55,6 @@ static NSRect NCPanelPathBarTypographicLineRectInStripBounds(NSRect bounds, NSFo
     return bounds;
 }
 
-// Non-flipped cell (NSTextFieldCell): NSRect.origin.y is the bottom of the rect; match strip layout
-// (T top, T + bottomExtra below line) so edit mode matches breadcrumbs.
-static NSRect NCPanelPathBarTypographicLineRectInStripCellBounds(NSRect bounds, NSFont *font, NSView *view) noexcept
-{
-    const CGFloat lh = NCPanelPathBarTypographicLineHeight(font);
-    if( lh <= 0.5 )
-        return bounds;
-    const CGFloat T = NCPanelPathBarVerticalPaddingPoints;
-    const CGFloat bottom_extra = NCPanelPathBarOneDisplayPixelInPoints(view);
-    bounds.origin.y = std::floor(NSMinY(bounds) + T + bottom_extra);
-    bounds.size.height = lh;
-    return bounds;
-}
-
 static NSString *SortLetter(data::SortMode _mode) noexcept;
 static void ChangeButtonAttrString(NSButton *_button, NSColor *_new_color, NSFont *_font);
 static void ChangeAttributedTitle(NSButton *_button, NSString *_new_text);
@@ -81,9 +67,11 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 
 @class NCPanelViewHeader;
 
-@interface NCPanelViewHeader (PathBarEditingPrivate)
+@interface NCPanelViewHeader (PathBarPrivate)
 - (BOOL)panelPathBarIsInteractive;
-- (void)beginInlinePathEditing;
+- (BOOL)panelPathBarFullPathSelectionActive;
+- (void)beginPathBarFullPathSelection;
+- (BOOL)pathBarConsumeCancelIfFullPathSelectionActive;
 - (nullable NSString *)posixPathForPathBarContextMenuAtPoint:(NSPoint)pInTextViewCoords;
 - (NSMenu *)pathBarContextMenuForPOSIXPath:(NSString *)path;
 - (void)handlePathBarContextMenuItem:(NSMenuItem *)item;
@@ -93,6 +81,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 @property(nonatomic, weak) NCPanelViewHeader *pathHeader;
 @property(nonatomic, strong) NSColor *pathAccentColor;
 - (void)clearHover;
+- (BOOL)nc_pointIsInsideLaidOutPathGlyphs:(NSPoint)p_in_view_coords;
 - (NSRect)nc_hoverBackgroundRectForCharacterRange:(NSRange)range;
 @end
 
@@ -171,7 +160,6 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
         return;
     const NSRange prev = m_HoveredRange;
     m_HoveredRange = range;
-    // Rounded hover is drawn in drawRect: (NSBackgroundColorAttributeName is rectangular only).
     if( prev.location != NSNotFound )
         [self setNeedsDisplayInRect:[self nc_hoverBackgroundRectForCharacterRange:prev]];
     if( range.location != NSNotFound )
@@ -259,11 +247,20 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     return [super validateMenuItem:item];
 }
 
+- (void)cancelOperation:(id)sender
+{
+    NCPanelViewHeader *const h = self.pathHeader;
+    if( h && [h pathBarConsumeCancelIfFullPathSelectionActive] )
+        return;
+    [super cancelOperation:sender];
+}
+
 - (NSMenu *)menuForEvent:(NSEvent *)event
 {
-    // With selectable=NO the text view never builds its own context menu and never calls the
-    // textView:menu:forEvent:atIndex: delegate. We must intercept menuForEvent: here directly.
     NCPanelViewHeader *const header = self.pathHeader;
+    // Full-path selection is plain text: use only the standard NSTextView menu (as before custom path menus).
+    if( header && [header panelPathBarFullPathSelectionActive] )
+        return [super menuForEvent:event];
     if( !header || !header.pathBarContextMenuAction )
         return [super menuForEvent:event];
     const NSPoint p = [self convertPoint:event.locationInWindow fromView:nil];
@@ -303,7 +300,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     const bool over_glyphs = [self nc_pointIsInsideLaidOutPathGlyphs:p];
 
     if( event.clickCount >= 2 && !over_glyphs ) {
-        [self.pathHeader beginInlinePathEditing];
+        [self.pathHeader beginPathBarFullPathSelection];
         return;
     }
 
@@ -318,7 +315,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     NSRange attr_range = {};
     id is_current = [self.textStorage attribute:NCPanelPathBarCurrentCrumbAttributeName atIndex:idx effectiveRange:&attr_range];
     if( is_current && NSLocationInRange(idx, attr_range) ) {
-        [self.pathHeader beginInlinePathEditing];
+        [self.pathHeader beginPathBarFullPathSelection];
         return;
     }
 
@@ -331,67 +328,6 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
         }
     }
 }
-@end
-
-@interface NCPanelPathChromeTextFieldCell : NSTextFieldCell
-@end
-
-@implementation NCPanelPathChromeTextFieldCell
-
-- (NSRect)drawingRectForBounds:(NSRect)rect
-{
-    return NCPanelPathBarTypographicLineRectInStripCellBounds(rect, self.font, self.controlView);
-}
-
-- (NSRect)editingRectForBounds:(NSRect)rect
-{
-    return NCPanelPathBarTypographicLineRectInStripCellBounds(rect, self.font, self.controlView);
-}
-
-- (void)selectWithFrame:(NSRect)aRect
-                 inView:(NSView *)controlView
-                 editor:(NSText *)textObj
-               delegate:(id)anObject
-                  start:(NSInteger)selStart
-                 length:(NSInteger)selLength
-{
-    const NSRect r = NCPanelPathBarTypographicLineRectInStripCellBounds(aRect, self.font, controlView);
-    [super selectWithFrame:r inView:controlView editor:textObj delegate:anObject start:selStart length:selLength];
-}
-
-- (void)editWithFrame:(NSRect)aRect
-               inView:(NSView *)controlView
-               editor:(NSText *)textObj
-             delegate:(id)anObject
-                event:(NSEvent *)event
-{
-    const NSRect r = NCPanelPathBarTypographicLineRectInStripCellBounds(aRect, self.font, controlView);
-    [super editWithFrame:r inView:controlView editor:textObj delegate:anObject event:event];
-}
-
-@end
-
-@interface NCPanelPathChromeTextField : NSTextField
-@end
-
-@implementation NCPanelPathChromeTextField
-
-+ (Class)cellClass
-{
-    return NCPanelPathChromeTextFieldCell.class;
-}
-
-- (void)resetCursorRects
-{
-    if( self.bounds.size.width > 0 && self.bounds.size.height > 0 )
-        [self addCursorRect:self.bounds cursor:[NSCursor arrowCursor]];
-}
-
-- (void)cursorUpdate:(NSEvent *)event
-{
-    (void)event;
-    [[NSCursor arrowCursor] set];
-}
 
 @end
 
@@ -403,7 +339,6 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 @implementation NCPanelViewHeader {
     NSView *m_PathArea;
     NCPanelPathDisplayTextView *m_PathTextView;
-    NSTextField *m_PathEditField;
     NSTextField *m_SearchTextField;
     NSTextField *m_SearchMatchesField;
     NSButton *m_SearchMagGlassButton;
@@ -421,12 +356,12 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     bool m_Active;
 
     bool m_PathBarInteractive;
+    bool m_PathBarFullPathSelectionActive;
     std::vector<PanelHeaderBreadcrumb> m_LastBreadcrumbs;
     NSString *m_LastPlainPath;
     NSString *m_LastFullPathForEditing;
     std::function<void(const std::string &)> m_PathNavigateCallback;
-    std::function<void(NSString *)> m_PathCommitCallback;
-    id m_PathEditOutsideClickMonitor;
+    id m_PathBarOutsideClickMonitor;
     NSLayoutConstraint *m_StripHeightConstraint;
     NSLayoutConstraint *m_PathAreaHeightConstraint;
 }
@@ -436,12 +371,11 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 @synthesize defaultResponder;
 @synthesize sortMenuPopup;
 @synthesize pathNavigateToVFSPathCallback = m_PathNavigateCallback;
-@synthesize pathManualEntryCommitCallback = m_PathCommitCallback;
 @synthesize pathBarContextMenuAction;
 
 - (void)dealloc
 {
-    [self removePathEditOutsideClickMonitorIfNeeded];
+    [self removePathBarOutsideClickMonitorIfNeeded];
 }
 
 - (id)initWithFrame:(NSRect)frameRect theme:(std::unique_ptr<nc::panel::HeaderTheme>)_theme
@@ -452,6 +386,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
         m_SearchPrompt = nil;
         m_Active = false;
         m_PathBarInteractive = false;
+        m_PathBarFullPathSelectionActive = false;
         m_StripHeightConstraint = nil;
         m_PathAreaHeightConstraint = nil;
 
@@ -480,30 +415,11 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
         m_PathTextView.delegate = self;
         [m_PathArea addSubview:m_PathTextView];
 
-        m_PathEditField = [[NCPanelPathChromeTextField alloc] initWithFrame:NSRect()];
-        m_PathEditField.translatesAutoresizingMaskIntoConstraints = false;
-        m_PathEditField.stringValue = @"";
-        m_PathEditField.bordered = false;
-        m_PathEditField.bezeled = false;
-        m_PathEditField.editable = true;
-        m_PathEditField.drawsBackground = false;
-        m_PathEditField.lineBreakMode = NSLineBreakByTruncatingHead;
-        m_PathEditField.maximumNumberOfLines = 1;
-        m_PathEditField.alignment = NSTextAlignmentCenter;
-        m_PathEditField.focusRingType = NSFocusRingTypeNone;
-        m_PathEditField.hidden = true;
-        m_PathEditField.delegate = self;
-        [m_PathArea addSubview:m_PathEditField];
-
         [NSLayoutConstraint activateConstraints:@[
             [m_PathTextView.leadingAnchor constraintEqualToAnchor:m_PathArea.leadingAnchor],
             [m_PathTextView.trailingAnchor constraintEqualToAnchor:m_PathArea.trailingAnchor],
             [m_PathTextView.topAnchor constraintEqualToAnchor:m_PathArea.topAnchor],
             [m_PathTextView.bottomAnchor constraintEqualToAnchor:m_PathArea.bottomAnchor],
-            [m_PathEditField.leadingAnchor constraintEqualToAnchor:m_PathArea.leadingAnchor],
-            [m_PathEditField.trailingAnchor constraintEqualToAnchor:m_PathArea.trailingAnchor],
-            [m_PathEditField.topAnchor constraintEqualToAnchor:m_PathArea.topAnchor],
-            [m_PathEditField.bottomAnchor constraintEqualToAnchor:m_PathArea.bottomAnchor],
         ]];
 
         m_SearchTextField = [[NSTextField alloc] initWithFrame:NSRect()];
@@ -603,62 +519,79 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     return m_PathBarInteractive;
 }
 
-- (void)removePathEditOutsideClickMonitorIfNeeded
+- (BOOL)panelPathBarFullPathSelectionActive
 {
-    if( m_PathEditOutsideClickMonitor != nil ) {
-        [NSEvent removeMonitor:m_PathEditOutsideClickMonitor];
-        m_PathEditOutsideClickMonitor = nil;
+    return m_PathBarFullPathSelectionActive;
+}
+
+- (BOOL)pathBarConsumeCancelIfFullPathSelectionActive
+{
+    if( !m_PathBarFullPathSelectionActive )
+        return NO;
+    [self cancelPathBarFullPathSelection];
+    return YES;
+}
+
+- (void)removePathBarOutsideClickMonitorIfNeeded
+{
+    if( m_PathBarOutsideClickMonitor != nil ) {
+        [NSEvent removeMonitor:m_PathBarOutsideClickMonitor];
+        m_PathBarOutsideClickMonitor = nil;
     }
 }
 
-- (void)handleOutsideMouseDownWhilePathEditing:(NSEvent *)event
+- (void)handleOutsideMouseDownWhilePathBarFullPathSelection:(NSEvent *)event
 {
-    if( m_PathEditField.hidden )
+    if( !m_PathBarFullPathSelectionActive )
         return;
     NSWindow *const event_window = event.window;
     if( !event_window )
         return;
     if( event_window != self.window ) {
-        [self cancelInlinePathEditing];
+        [self cancelPathBarFullPathSelection];
         return;
     }
     const NSPoint p = event.locationInWindow;
-    const NSRect field_in_window = [m_PathEditField convertRect:m_PathEditField.bounds toView:nil];
-    if( NSPointInRect(p, field_in_window) )
+    const NSRect tv_in_window = [m_PathTextView convertRect:m_PathTextView.bounds toView:nil];
+    if( NSPointInRect(p, tv_in_window) )
         return;
-    [self cancelInlinePathEditing];
+    [self cancelPathBarFullPathSelection];
 }
 
-- (void)beginInlinePathEditing
+- (void)beginPathBarFullPathSelection
 {
     if( !m_PathBarInteractive )
         return;
     if( self.searchPrompt != nil )
         return;
 
-    [self removePathEditOutsideClickMonitorIfNeeded];
+    [self removePathBarOutsideClickMonitorIfNeeded];
 
     [m_PathTextView clearHover];
-    m_PathEditField.stringValue = m_LastFullPathForEditing ?: @"";
-    m_PathTextView.hidden = true;
-    m_PathEditField.hidden = false;
-    [self.window makeFirstResponder:m_PathEditField];
-    [m_PathEditField.currentEditor setSelectedRange:NSMakeRange(0, m_PathEditField.stringValue.length)];
-    if( auto *const editor = nc::objc_cast<NSTextView>(m_PathEditField.currentEditor) ) {
-        NSColor *const tc = m_Active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
-        NSColor *const accent = m_Theme->PathAccentColor();
-        editor.insertionPointColor = tc;
-        editor.selectedTextAttributes =
-            @{NSBackgroundColorAttributeName: accent ?: NSColor.selectedTextBackgroundColor};
-    }
+
+    NSString *const full = m_LastFullPathForEditing ?: @"";
+    NSFont *const font = m_Theme->Font();
+    NSColor *const text_color = m_Active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
+    NSMutableAttributedString *const as = PanelHeaderBuildPlainPathAttributedString(full, font, text_color);
+    [m_PathTextView.textStorage setAttributedString:as];
+    m_PathTextView.linkTextAttributes = @{};
+    m_PathTextView.editable = false;
+    m_PathTextView.selectable = true;
+    NSColor *const accent = m_Theme->PathAccentColor();
+    m_PathTextView.selectedTextAttributes =
+        @{NSBackgroundColorAttributeName: accent ?: NSColor.selectedTextBackgroundColor};
+    m_PathBarFullPathSelectionActive = true;
+
+    [self.window makeFirstResponder:m_PathTextView];
+    [m_PathTextView setSelectedRange:NSMakeRange(0, full.length)];
 
     __weak NCPanelViewHeader *weak_header = self;
-    m_PathEditOutsideClickMonitor =
+    m_PathBarOutsideClickMonitor =
         [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskLeftMouseDown handler:^NSEvent *(NSEvent *event) {
             NCPanelViewHeader *const h = weak_header;
-            if( !h || h->m_PathEditField.hidden )
+            if( !h || !h->m_PathBarFullPathSelectionActive )
                 return event;
-            [h handleOutsideMouseDownWhilePathEditing:event];
+            [h handleOutsideMouseDownWhilePathBarFullPathSelection:event];
             return event;
         }];
 }
@@ -667,7 +600,6 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 {
     NSFont *const font = m_Theme->Font();
     m_PathTextView.font = font;
-    m_PathEditField.font = font;
     m_SearchTextField.font = font;
     m_SearchMatchesField.font = font;
 
@@ -677,7 +609,6 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     m_Background = active ? m_Theme->ActiveBackgroundColor() : m_Theme->InactiveBackgroundColor();
 
     NSColor *text_color = active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
-    m_PathEditField.textColor = text_color;
     m_SearchTextField.textColor = text_color;
     m_SearchMatchesField.textColor = text_color;
 
@@ -687,24 +618,26 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     self.needsDisplay = true;
     [self updatePathBarHeightConstraints];
 
-    [self refreshPathBarAttributedText];
-
-    if( !m_PathEditField.hidden ) {
-        if( auto *const editor = nc::objc_cast<NSTextView>(m_PathEditField.currentEditor) ) {
-            editor.insertionPointColor = text_color;
-            NSColor *const accent = m_Theme->PathAccentColor();
-            editor.selectedTextAttributes =
-                @{NSBackgroundColorAttributeName: accent ?: NSColor.selectedTextBackgroundColor};
-        }
+    m_PathTextView.pathAccentColor = m_Theme->PathAccentColor();
+    if( m_PathBarFullPathSelectionActive ) {
+        NSColor *const accent = m_Theme->PathAccentColor();
+        m_PathTextView.selectedTextAttributes =
+            @{NSBackgroundColorAttributeName: accent ?: NSColor.selectedTextBackgroundColor};
+    }
+    else {
+        [self refreshPathBarAttributedText];
     }
 }
 
 - (void)refreshPathBarAttributedText
 {
+    if( m_PathBarFullPathSelectionActive )
+        return;
     [m_PathTextView clearHover];
     NSFont *const font = m_Theme->Font();
     NSColor *const text_color = m_Active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
     m_PathTextView.pathAccentColor = m_Theme->PathAccentColor();
+    m_PathTextView.editable = false;
     if( m_PathBarInteractive && !m_LastBreadcrumbs.empty() ) {
         NSMutableAttributedString *const as =
             PanelHeaderBuildInteractivePathAttributedString(m_LastBreadcrumbs, font, text_color);
@@ -713,7 +646,6 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
             NSForegroundColorAttributeName: text_color,
             NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),
         };
-        // selectable=YES forces NSTextView's text-cursor behavior over the whole path bar; keep NO and use copy:/menu.
         m_PathTextView.selectable = false;
     }
     else {
@@ -825,7 +757,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 
 - (void)setPlainHeaderPath:(NSString *)_path
 {
-    [self endInlinePathEditingUI];
+    [self endPathBarFullPathSelectionUI];
     m_PathBarInteractive = false;
     m_LastBreadcrumbs.clear();
     m_LastFullPathForEditing = nil;
@@ -836,7 +768,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 - (void)setInteractiveBreadcrumbs:(const std::vector<PanelHeaderBreadcrumb> &)_breadcrumbs
                fullPathForEditing:(NSString *)_full_path_for_editing
 {
-    [self endInlinePathEditingUI];
+    [self endPathBarFullPathSelectionUI];
     m_PathBarInteractive = !_breadcrumbs.empty();
     m_LastBreadcrumbs = _breadcrumbs;
     m_LastFullPathForEditing = [_full_path_for_editing copy];
@@ -844,31 +776,18 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     [self refreshPathBarAttributedText];
 }
 
-- (void)endInlinePathEditingUI
+- (void)endPathBarFullPathSelectionUI
 {
-    [self removePathEditOutsideClickMonitorIfNeeded];
-    m_PathTextView.hidden = false;
-    m_PathEditField.hidden = true;
+    [self removePathBarOutsideClickMonitorIfNeeded];
+    m_PathBarFullPathSelectionActive = false;
+    m_PathTextView.editable = false;
+    m_PathTextView.selectable = false;
+    [self refreshPathBarAttributedText];
 }
 
-- (void)commitInlinePathEditing
+- (void)cancelPathBarFullPathSelection
 {
-    NSString *const raw =
-        [[m_PathEditField stringValue] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    if( raw.length > 0 && m_PathCommitCallback ) {
-        m_PathCommitCallback(raw);
-        if( self.window && self.defaultResponder )
-            [self.window makeFirstResponder:self.defaultResponder];
-        return;
-    }
-    [self endInlinePathEditingUI];
-    if( self.window && self.defaultResponder )
-        [self.window makeFirstResponder:self.defaultResponder];
-}
-
-- (void)cancelInlinePathEditing
-{
-    [self endInlinePathEditingUI];
+    [self endPathBarFullPathSelectionUI];
     if( self.window && self.defaultResponder )
         [self.window makeFirstResponder:self.defaultResponder];
 }
@@ -900,9 +819,9 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
                        atIndex:(NSUInteger)charIndex
 {
     (void)charIndex;
-    // AppKit augments NSTextView context menus (Services, "Open", "Show in Finder", etc.). This delegate hook is the
-    // supported way to replace that menu with our path-bar-specific items only.
     if( textView != m_PathTextView || !self.pathBarContextMenuAction )
+        return menu;
+    if( m_PathBarFullPathSelectionActive )
         return menu;
     const NSPoint p = [textView convertPoint:event.locationInWindow fromView:nil];
     NSString *const path = [self posixPathForPathBarContextMenuAtPoint:p];
@@ -970,17 +889,6 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     self.pathBarContextMenuAction(path, static_cast<NCPanelPathBarContextCommand>(item.tag));
 }
 
-- (BOOL)control:(NSControl *)control
-              textView:(NSTextView *) [[maybe_unused]] fieldEditor
-       doCommandBySelector:(SEL)commandSelector
-{
-    if( control == m_PathEditField && commandSelector == @selector(insertNewline:) ) {
-        [self commitInlinePathEditing];
-        return YES;
-    }
-    return NO;
-}
-
 - (void)setupBindings
 {
     static const auto isnil = @{NSValueTransformerNameBindingOption: NSIsNilTransformerName};
@@ -1010,7 +918,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     if( self.superview )
         [self setupBindings];
     else {
-        [self removePathEditOutsideClickMonitorIfNeeded];
+        [self removePathBarOutsideClickMonitorIfNeeded];
         [self removeBindings];
     }
 }
@@ -1199,8 +1107,8 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
         return;
     }
 
-    if( !m_PathEditField.hidden ) {
-        [self cancelInlinePathEditing];
+    if( m_PathBarFullPathSelectionActive ) {
+        [self cancelPathBarFullPathSelection];
         return;
     }
 
@@ -1243,7 +1151,6 @@ static NSMutableAttributedString *PanelHeaderBuildInteractivePathAttributedStrin
     auto *const result = [[NSMutableAttributedString alloc] init];
     bool first = true;
 
-    // Find last non-empty crumb index for marking the current segment.
     NSInteger last_crumb_idx = -1;
     for( NSInteger i = static_cast<NSInteger>(_crumbs.size()) - 1; i >= 0; --i ) {
         if( _crumbs[static_cast<size_t>(i)].label.length ) {

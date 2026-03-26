@@ -44,18 +44,13 @@ NS_ASSUME_NONNULL_BEGIN
 // Plain non-interactive title (e.g. temporary panel).
 - (void)setPlainHeaderPath:(NSString *)_path;
 
-// Clickable breadcrumbs plus manual path entry; fullPathForEditing is shown when the user edits the path.
+// Clickable breadcrumbs. fullPathForEditing is the full path string for read-only display (editable=NO) when the user
+// opens full-path mode from the last crumb or double-click outside the glyphs.
 - (void)setInteractiveBreadcrumbs:(const std::vector<nc::panel::PanelHeaderBreadcrumb> &)_breadcrumbs
                fullPathForEditing:(NSString *)_full_path_for_editing;
 
-// Dismiss inline path editing and restore the path bar presentation (Esc / invalid typed path).
-- (void)cancelInlinePathEditing;
-
 // Invoked when the user activates a breadcrumb (absolute path on the current VFS, always starts with '/').
 @property(nonatomic) std::function<void(const std::string &)> pathNavigateToVFSPathCallback;
-
-// Invoked when the user commits a typed path from the inline editor (Enter). Should expand and navigate.
-@property(nonatomic) std::function<void(NSString *_Nullable)> pathManualEntryCommitCallback;
 
 // Right-click path bar: Open / Open in New Tab / Copy Path (Marta-style). Optional.
 @property(nonatomic, copy, nullable) NCPanelPathBarContextMenuActionBlock pathBarContextMenuAction;

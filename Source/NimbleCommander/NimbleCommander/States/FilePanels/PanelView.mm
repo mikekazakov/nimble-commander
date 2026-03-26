@@ -27,7 +27,6 @@
 #include <Panel/PanelViewKeystrokeSink.h>
 #include "PanelViewDummyPresentation.h"
 #include "PanelControllerActionsDispatcher.h"
-#include <Base/dispatch_cpp.h>
 
 #include <vector>
 
@@ -60,7 +59,6 @@ static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
 @interface PanelView ()
 
 @property(nonatomic, readonly) PanelController *controller;
-- (void)revertOptimisticManualPathHeaderIfCommitGeneration:(uint64_t)generation;
 
 @end
 
@@ -85,7 +83,6 @@ static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
     int m_CursorPos;
     nc::utility::NSEventModifierFlagsHolder m_KeyboardModifierFlags;
     CursorSelectionType m_KeyboardCursorSelectionType;
-    uint64_t m_ManualPathCommitGeneration;
 }
 
 @synthesize headerView = m_HeaderView;
@@ -103,7 +100,6 @@ static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
     if( self ) {
         m_Data = nullptr;
         m_CursorPos = -1;
-        m_ManualPathCommitGeneration = 0;
         m_HeaderTitle = @"";
         m_IconRepository = std::move(_icon_repository);
         m_NativeHost = _native_vfs.SharedPtr();
@@ -133,48 +129,6 @@ static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
             req->VFS = pc.vfs;
             req->PerformAsynchronous = true;
             req->InitiatedByUser = true;
-            [pc GoToDirWithContext:req];
-        };
-        m_HeaderView.pathManualEntryCommitCallback = [weak_self](NSString *_typed) {
-            PanelView *const strong_self = weak_self;
-            if( !strong_self || _typed.length == 0 )
-                return;
-            PanelController *const pc = strong_self.controller;
-            if( !pc )
-                return;
-            const char *const raw = _typed.UTF8String;
-            if( !raw ) {
-                [strong_self.headerView cancelInlinePathEditing];
-                return;
-            }
-            const std::string utf8{raw};
-            const std::string expanded = [pc expandPath:utf8];
-            if( expanded.empty() || expanded.front() != '/' ) {
-                [strong_self.headerView cancelInlinePathEditing];
-                return;
-            }
-            NSString *display_path = [NSString stringWithUTF8StdString:expanded];
-            display_path = PanelViewPathStringForEditing(display_path);
-            [strong_self.headerView setPlainHeaderPath:display_path];
-            strong_self->m_HeaderTitle = [display_path copy];
-
-            auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
-            req->RequestedDirectory = expanded;
-            req->VFS = pc.vfs;
-            req->PerformAsynchronous = true;
-            req->InitiatedByUser = true;
-            const uint64_t commit_gen = ++strong_self->m_ManualPathCommitGeneration;
-            __weak PanelView *weak_pv = strong_self;
-            req->LoadingResultCallback = [weak_pv, commit_gen](const std::expected<void, nc::Error> &_result) {
-                if( _result.has_value() )
-                    return;
-                dispatch_to_main_queue([weak_pv, commit_gen] {
-                    PanelView *const pv = weak_pv;
-                    if( !pv )
-                        return;
-                    [pv revertOptimisticManualPathHeaderIfCommitGeneration:commit_gen];
-                });
-            };
             [pc GoToDirWithContext:req];
         };
         m_HeaderView.pathBarContextMenuAction = ^(NSString *path, NCPanelPathBarContextCommand cmd) {
@@ -1198,13 +1152,6 @@ static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
 - (NSString *)headerTitle
 {
     return m_HeaderTitle;
-}
-
-- (void)revertOptimisticManualPathHeaderIfCommitGeneration:(uint64_t)generation
-{
-    if( m_ManualPathCommitGeneration != generation )
-        return;
-    [self setHeaderTitle:self.headerTitleForPanel];
 }
 
 - (NSString *)headerTitleForPanel

@@ -262,6 +262,7 @@
 		CF764D432587837200D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF764D422587837200D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine_UT.mm */; };
 		CF764D4F258785CC00D7ED17 /* PanelBriefViewFixedNumberLayoutEngine_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF764D4E258785CC00D7ED17 /* PanelBriefViewFixedNumberLayoutEngine_UT.mm */; };
 		CF764D572587875E00D7ED17 /* PanelBriefViewFixedWidthLayoutEngine_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF764D562587875E00D7ED17 /* PanelBriefViewFixedWidthLayoutEngine_UT.mm */; };
+		CF764D592587876000D7ED17 /* PanelViewHeaderBreadcrumbs_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF764D582587876000D7ED17 /* PanelViewHeaderBreadcrumbs_UT.mm */; };
 		CF7C7CBD1E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7C7CC21E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib */; };
 		CF7C7CBE1E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7C7CC21E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib */; };
 		CF7C7CBF1E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7C7CC21E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib */; };
@@ -1101,6 +1102,7 @@
 		CF764D422587837200D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewDynamicWidthLayoutEngine_UT.mm; path = NimbleCommander/Tests/PanelBriefViewDynamicWidthLayoutEngine_UT.mm; sourceTree = "<group>"; };
 		CF764D4E258785CC00D7ED17 /* PanelBriefViewFixedNumberLayoutEngine_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedNumberLayoutEngine_UT.mm; path = NimbleCommander/Tests/PanelBriefViewFixedNumberLayoutEngine_UT.mm; sourceTree = "<group>"; };
 		CF764D562587875E00D7ED17 /* PanelBriefViewFixedWidthLayoutEngine_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedWidthLayoutEngine_UT.mm; path = NimbleCommander/Tests/PanelBriefViewFixedWidthLayoutEngine_UT.mm; sourceTree = "<group>"; };
+		CF764D582587876000D7ED17 /* PanelViewHeaderBreadcrumbs_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewHeaderBreadcrumbs_UT.mm; path = NimbleCommander/Tests/PanelViewHeaderBreadcrumbs_UT.mm; sourceTree = "<group>"; };
 		CF7A09941EC2B37000533B07 /* Duplicate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Duplicate.h; path = NimbleCommander/States/FilePanels/Actions/Duplicate.h; sourceTree = SOURCE_ROOT; };
 		CF7A09951EC2B37000533B07 /* Duplicate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Duplicate.mm; path = NimbleCommander/States/FilePanels/Actions/Duplicate.mm; sourceTree = SOURCE_ROOT; };
 		CF7C7CC11E5C3D84002DB0E2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PanelViewHeaderSortPopup.xib; sourceTree = "<group>"; };
@@ -1734,6 +1736,7 @@
 				CF764D422587837200D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine_UT.mm */,
 				CF764D4E258785CC00D7ED17 /* PanelBriefViewFixedNumberLayoutEngine_UT.mm */,
 				CF764D562587875E00D7ED17 /* PanelBriefViewFixedWidthLayoutEngine_UT.mm */,
+				CF764D582587876000D7ED17 /* PanelViewHeaderBreadcrumbs_UT.mm */,
 				CF5DE0C02584157B00604DEE /* Tests.h */,
 				CF5DE0C12584157B00604DEE /* Tests.cpp */,
 				CF67F1BE2954689000B92944 /* Theme_UT.mm */,
@@ -3238,6 +3241,7 @@
 				CF5DE0C22584157B00604DEE /* Tests.cpp in Sources */,
 				CFD2D27B28A03DC5003C18F9 /* ThemesManager_UT.mm in Sources */,
 				CF764D432587837200D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine_UT.mm in Sources */,
+				CF764D592587876000D7ED17 /* PanelViewHeaderBreadcrumbs_UT.mm in Sources */,
 				CF764CE72587661300D7ED17 /* DragSender_UT.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

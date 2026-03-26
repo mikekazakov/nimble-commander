@@ -427,7 +427,6 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     std::function<void(const std::string &)> m_PathNavigateCallback;
     std::function<void(NSString *)> m_PathCommitCallback;
     id m_PathEditOutsideClickMonitor;
-    uint64_t m_PathEditCommitSeq;
     NSLayoutConstraint *m_StripHeightConstraint;
     NSLayoutConstraint *m_PathAreaHeightConstraint;
 }
@@ -453,7 +452,6 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
         m_SearchPrompt = nil;
         m_Active = false;
         m_PathBarInteractive = false;
-        m_PathEditCommitSeq = 0;
         m_StripHeightConstraint = nil;
         m_PathAreaHeightConstraint = nil;
 
@@ -858,25 +856,9 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     NSString *const raw =
         [[m_PathEditField stringValue] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if( raw.length > 0 && m_PathCommitCallback ) {
-        // Keep the editor visible until panel data really updates the path header. This avoids a brief fallback to
-        // stale breadcrumbs between Enter and async GoToDir completion.
-        const uint64_t seq = ++m_PathEditCommitSeq;
         m_PathCommitCallback(raw);
         if( self.window && self.defaultResponder )
             [self.window makeFirstResponder:self.defaultResponder];
-
-        // If navigation fails (or takes too long), don't leave the editor stuck on screen indefinitely.
-        __weak NCPanelViewHeader *weak_self = self;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, static_cast<int64_t>(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            NCPanelViewHeader *const strong_self = weak_self;
-            if( !strong_self )
-                return;
-            if( strong_self->m_PathEditCommitSeq != seq )
-                return;
-            if( strong_self->m_PathEditField.hidden )
-                return;
-            [strong_self endInlinePathEditingUI];
-        });
         return;
     }
     [self endInlinePathEditingUI];

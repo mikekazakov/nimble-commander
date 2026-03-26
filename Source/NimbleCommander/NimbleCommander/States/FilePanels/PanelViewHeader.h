@@ -48,6 +48,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setInteractiveBreadcrumbs:(const std::vector<nc::panel::PanelHeaderBreadcrumb> &)_breadcrumbs
                fullPathForEditing:(NSString *)_full_path_for_editing;
 
+// Dismiss inline path editing and restore the path bar presentation (Esc / invalid typed path).
+- (void)cancelInlinePathEditing;
+
 // Invoked when the user activates a breadcrumb (absolute path on the current VFS, always starts with '/').
 @property(nonatomic) std::function<void(const std::string &)> pathNavigateToVFSPathCallback;
 

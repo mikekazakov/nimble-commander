@@ -160,6 +160,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
         return;
     const NSRange prev = m_HoveredRange;
     m_HoveredRange = range;
+    // Rounded hover is drawn in drawRect: (NSBackgroundColorAttributeName is rectangular only).
     if( prev.location != NSNotFound )
         [self setNeedsDisplayInRect:[self nc_hoverBackgroundRectForCharacterRange:prev]];
     if( range.location != NSNotFound )
@@ -258,7 +259,8 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 - (NSMenu *)menuForEvent:(NSEvent *)event
 {
     NCPanelViewHeader *const header = self.pathHeader;
-    // Full-path selection is plain text: use only the standard NSTextView menu (as before custom path menus).
+    // With selectable=NO (breadcrumbs), AppKit often never calls the text delegate for a menu; we handle it here.
+    // Full-path selection uses selectable=YES and keeps the standard NSTextView menu only.
     if( header && [header panelPathBarFullPathSelectionActive] )
         return [super menuForEvent:event];
     if( !header || !header.pathBarContextMenuAction )
@@ -646,6 +648,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
             NSForegroundColorAttributeName: text_color,
             NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),
         };
+        // selectable=YES shows an I-beam over the whole strip; keep NO and use context menu / full-path selection.
         m_PathTextView.selectable = false;
     }
     else {
@@ -821,6 +824,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     (void)charIndex;
     if( textView != m_PathTextView || !self.pathBarContextMenuAction )
         return menu;
+    // Full-path mode: leave AppKit's default menu (Copy, etc.); breadcrumb mode uses our items below.
     if( m_PathBarFullPathSelectionActive )
         return menu;
     const NSPoint p = [textView convertPoint:event.locationInWindow fromView:nil];
@@ -1151,6 +1155,7 @@ static NSMutableAttributedString *PanelHeaderBuildInteractivePathAttributedStrin
     auto *const result = [[NSMutableAttributedString alloc] init];
     bool first = true;
 
+    // Find last non-empty crumb index for marking the current segment.
     NSInteger last_crumb_idx = -1;
     for( NSInteger i = static_cast<NSInteger>(_crumbs.size()) - 1; i >= 0; --i ) {
         if( _crumbs[static_cast<size_t>(i)].label.length ) {

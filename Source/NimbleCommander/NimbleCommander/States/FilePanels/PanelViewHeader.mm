@@ -1,10 +1,73 @@
 // Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewHeader.h"
+#include <algorithm>
+#include <cmath>
 #include <Utility/Layout.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/ColoredSeparatorLine.h>
 
 using namespace nc::panel;
+
+static NSString *const NCPanelPathBarCurrentCrumbAttributeName = @"NCPanelPathBarCurrentCrumb";
+
+static CGFloat NCPanelPathBarOneDisplayPixelInPoints(NSView *view) noexcept
+{
+    CGFloat s = 0.;
+    if( view.window != nil )
+        s = view.window.backingScaleFactor;
+    if( s <= 0.01 && view.window.screen != nil )
+        s = view.window.screen.backingScaleFactor;
+    if( s <= 0.01 )
+        s = NSScreen.mainScreen.backingScaleFactor;
+    if( s <= 0.01 )
+        s = 2.;
+    return 1. / s;
+}
+
+static CGFloat NCPanelPathBarTypographicLineHeight(NSFont *font) noexcept
+{
+    if( !font )
+        return 0.;
+    NSLayoutManager *const lm = [[NSLayoutManager alloc] init];
+    return std::ceil([lm defaultLineHeightForFont:font]);
+}
+
+// Same padding top and bottom around the typographic line, except an extra 1 display pixel at the bottom
+// of the strip (taller bar + content shifted up by that pixel vs symmetric centering).
+static constexpr CGFloat NCPanelPathBarVerticalPaddingPoints = 4.0;
+
+static CGFloat NCPanelPathBarAdaptiveRowHeight(NSFont *font, NSView *view) noexcept
+{
+    const CGFloat line = NCPanelPathBarTypographicLineHeight(font);
+    const CGFloat bottom_extra = NCPanelPathBarOneDisplayPixelInPoints(view);
+    const CGFloat h = line + 2.0 * NCPanelPathBarVerticalPaddingPoints + bottom_extra;
+    return std::ceil(std::max<CGFloat>(h, 1.0));
+}
+
+// Flipped view (NSTextView): NSMinY is the top — padding is measured from the top edge.
+static NSRect NCPanelPathBarTypographicLineRectInStripBounds(NSRect bounds, NSFont *font) noexcept
+{
+    const CGFloat lh = NCPanelPathBarTypographicLineHeight(font);
+    if( lh <= 0.5 )
+        return bounds;
+    bounds.origin.y = std::floor(NSMinY(bounds) + NCPanelPathBarVerticalPaddingPoints);
+    bounds.size.height = lh;
+    return bounds;
+}
+
+// Non-flipped cell (NSTextFieldCell): NSRect.origin.y is the bottom of the rect; match strip layout
+// (T top, T + bottomExtra below line) so edit mode matches breadcrumbs.
+static NSRect NCPanelPathBarTypographicLineRectInStripCellBounds(NSRect bounds, NSFont *font, NSView *view) noexcept
+{
+    const CGFloat lh = NCPanelPathBarTypographicLineHeight(font);
+    if( lh <= 0.5 )
+        return bounds;
+    const CGFloat T = NCPanelPathBarVerticalPaddingPoints;
+    const CGFloat bottom_extra = NCPanelPathBarOneDisplayPixelInPoints(view);
+    bounds.origin.y = std::floor(NSMinY(bounds) + T + bottom_extra);
+    bounds.size.height = lh;
+    return bounds;
+}
 
 static NSString *SortLetter(data::SortMode _mode) noexcept;
 static void ChangeButtonAttrString(NSButton *_button, NSColor *_new_color, NSFont *_font);
@@ -30,6 +93,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 @property(nonatomic, weak) NCPanelViewHeader *pathHeader;
 @property(nonatomic, strong) NSColor *pathAccentColor;
 - (void)clearHover;
+- (NSRect)nc_hoverBackgroundRectForCharacterRange:(NSRange)range;
 @end
 
 @implementation NCPanelPathDisplayTextView {
@@ -38,6 +102,13 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 
 @synthesize pathHeader;
 @synthesize pathAccentColor;
+
+- (NSPoint)textContainerOrigin
+{
+    NSPoint o = [super textContainerOrigin];
+    o.y = NSMinY(NCPanelPathBarTypographicLineRectInStripBounds(self.bounds, self.font));
+    return o;
+}
 
 - (void)resetCursorRects
 {
@@ -98,12 +169,64 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 {
     if( NSEqualRanges(m_HoveredRange, range) )
         return;
-    NSLayoutManager *const lm = self.layoutManager;
-    if( m_HoveredRange.location != NSNotFound )
-        [lm removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:m_HoveredRange];
+    const NSRange prev = m_HoveredRange;
     m_HoveredRange = range;
-    if( range.location != NSNotFound && self.pathAccentColor )
-        [lm setTemporaryAttributes:@{NSBackgroundColorAttributeName: self.pathAccentColor} forCharacterRange:range];
+    // Rounded hover is drawn in drawRect: (NSBackgroundColorAttributeName is rectangular only).
+    if( prev.location != NSNotFound )
+        [self setNeedsDisplayInRect:[self nc_hoverBackgroundRectForCharacterRange:prev]];
+    if( range.location != NSNotFound )
+        [self setNeedsDisplayInRect:[self nc_hoverBackgroundRectForCharacterRange:range]];
+}
+
+- (NSRect)nc_hoverBackgroundRectForCharacterRange:(NSRange)range
+{
+    if( range.location == NSNotFound || range.length == 0 )
+        return NSZeroRect;
+    if( self.textStorage.length == 0 || range.location >= self.textStorage.length )
+        return NSZeroRect;
+    NSLayoutManager *const lm = self.layoutManager;
+    NSTextContainer *const tc = self.textContainer;
+    if( !lm || !tc )
+        return NSZeroRect;
+
+    NSRange actual = {};
+    const NSRange glyph_range = [lm glyphRangeForCharacterRange:range actualCharacterRange:&actual];
+    if( glyph_range.length == 0 )
+        return NSZeroRect;
+
+    NSRect r = [lm boundingRectForGlyphRange:glyph_range inTextContainer:tc];
+    const NSPoint o = [self textContainerOrigin];
+    r.origin.x += o.x;
+    r.origin.y += o.y;
+
+    static constexpr CGFloat kPadX = 2.0;
+    static constexpr CGFloat kPadY = 0.5;
+    r = NSInsetRect(r, -kPadX, 0.0);
+    const NSRect line = NCPanelPathBarTypographicLineRectInStripBounds(self.bounds, self.font);
+    r.origin.y = NSMinY(line) - kPadY;
+    r.size.height = NSHeight(line) + 2.0 * kPadY;
+    r = NSIntersectionRect(r, self.bounds);
+    if( r.size.height < 2.0 )
+        return NSZeroRect;
+
+    r.origin.x = std::floor(r.origin.x) + 0.5;
+    r.origin.y = std::floor(r.origin.y) + 0.5;
+    r.size.width = std::ceil(r.size.width);
+    r.size.height = std::ceil(r.size.height);
+    return r;
+}
+
+- (void)drawRect:(NSRect)dirtyRect
+{
+    if( m_HoveredRange.location != NSNotFound && self.pathAccentColor ) {
+        const NSRect r = [self nc_hoverBackgroundRectForCharacterRange:m_HoveredRange];
+        if( !NSIsEmptyRect(NSIntersectionRect(dirtyRect, r)) ) {
+            [self.pathAccentColor setFill];
+            const CGFloat radius = std::min<CGFloat>(4.0, std::floor(r.size.height * 0.5));
+            [[NSBezierPath bezierPathWithRoundedRect:r xRadius:radius yRadius:radius] fill];
+        }
+    }
+    [super drawRect:dirtyRect];
 }
 
 - (void)clearHover
@@ -175,38 +298,88 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
         [super mouseDown:event];
         return;
     }
-    if( event.clickCount >= 2 ) {
+
+    const NSPoint p = [self convertPoint:event.locationInWindow fromView:nil];
+    const bool over_glyphs = [self nc_pointIsInsideLaidOutPathGlyphs:p];
+
+    if( event.clickCount >= 2 && !over_glyphs ) {
         [self.pathHeader beginInlinePathEditing];
         return;
     }
-    const NSPoint p = [self convertPoint:event.locationInWindow fromView:nil];
-    // Clicks in the margins map to the nearest character (often index 0 = root link). Ignore unless over real glyphs.
-    if( ![self nc_pointIsInsideLaidOutPathGlyphs:p] )
+
+    if( !over_glyphs )
         return;
 
     const NSUInteger len = self.textStorage.length;
     const NSUInteger idx = [self characterIndexForInsertionAtPoint:p];
-    if( len == 0 || idx >= len ) {
+    if( len == 0 || idx >= len )
+        return;
+
+    NSRange attr_range = {};
+    id is_current = [self.textStorage attribute:NCPanelPathBarCurrentCrumbAttributeName atIndex:idx effectiveRange:&attr_range];
+    if( is_current && NSLocationInRange(idx, attr_range) ) {
         [self.pathHeader beginInlinePathEditing];
         return;
     }
+
     NSRange link_range = {};
     id link = [self.textStorage attribute:NSLinkAttributeName atIndex:idx effectiveRange:&link_range];
     if( link && NSLocationInRange(idx, link_range) ) {
         id<NSTextViewDelegate> dg = self.delegate;
         if( [dg respondsToSelector:@selector(textView:clickedOnLink:atIndex:)] ) {
-            if( [dg textView:self clickedOnLink:link atIndex:link_range.location] )
-                return;
+            [dg textView:self clickedOnLink:link atIndex:link_range.location];
         }
     }
-    [self.pathHeader beginInlinePathEditing];
 }
+@end
+
+@interface NCPanelPathChromeTextFieldCell : NSTextFieldCell
+@end
+
+@implementation NCPanelPathChromeTextFieldCell
+
+- (NSRect)drawingRectForBounds:(NSRect)rect
+{
+    return NCPanelPathBarTypographicLineRectInStripCellBounds(rect, self.font, self.controlView);
+}
+
+- (NSRect)editingRectForBounds:(NSRect)rect
+{
+    return NCPanelPathBarTypographicLineRectInStripCellBounds(rect, self.font, self.controlView);
+}
+
+- (void)selectWithFrame:(NSRect)aRect
+                 inView:(NSView *)controlView
+                 editor:(NSText *)textObj
+               delegate:(id)anObject
+                  start:(NSInteger)selStart
+                 length:(NSInteger)selLength
+{
+    const NSRect r = NCPanelPathBarTypographicLineRectInStripCellBounds(aRect, self.font, controlView);
+    [super selectWithFrame:r inView:controlView editor:textObj delegate:anObject start:selStart length:selLength];
+}
+
+- (void)editWithFrame:(NSRect)aRect
+               inView:(NSView *)controlView
+               editor:(NSText *)textObj
+             delegate:(id)anObject
+                event:(NSEvent *)event
+{
+    const NSRect r = NCPanelPathBarTypographicLineRectInStripCellBounds(aRect, self.font, controlView);
+    [super editWithFrame:r inView:controlView editor:textObj delegate:anObject event:event];
+}
+
 @end
 
 @interface NCPanelPathChromeTextField : NSTextField
 @end
 
 @implementation NCPanelPathChromeTextField
+
++ (Class)cellClass
+{
+    return NCPanelPathChromeTextFieldCell.class;
+}
 
 - (void)resetCursorRects
 {
@@ -224,6 +397,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 
 @interface NCPanelViewHeader ()
 @property(nonatomic) IBOutlet NSMenu *sortMenuPopup;
+- (void)updatePathBarHeightConstraints;
 @end
 
 @implementation NCPanelViewHeader {
@@ -254,6 +428,8 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     std::function<void(NSString *)> m_PathCommitCallback;
     id m_PathEditOutsideClickMonitor;
     uint64_t m_PathEditCommitSeq;
+    NSLayoutConstraint *m_StripHeightConstraint;
+    NSLayoutConstraint *m_PathAreaHeightConstraint;
 }
 
 @synthesize sortMode = m_SortMode;
@@ -278,6 +454,8 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
         m_Active = false;
         m_PathBarInteractive = false;
         m_PathEditCommitSeq = 0;
+        m_StripHeightConstraint = nil;
+        m_PathAreaHeightConstraint = nil;
 
         m_PathArea = [[NSView alloc] initWithFrame:NSRect()];
         m_PathArea.translatesAutoresizingMaskIntoConstraints = false;
@@ -406,6 +584,13 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
         [self setupAppearance];
         [self setupLayout];
 
+        // Own strip height here so it does not depend on PanelView adding an external height constraint.
+        m_StripHeightConstraint = [self.heightAnchor constraintEqualToConstant:1.0];
+        m_StripHeightConstraint.priority = NSLayoutPriorityRequired;
+        m_StripHeightConstraint.identifier = @"NCPanelViewHeader.StripHeight";
+        m_StripHeightConstraint.active = YES;
+        [self updatePathBarHeightConstraints];
+
         __weak NCPanelViewHeader *weak_self = self;
         m_Theme->ObserveChanges([weak_self] {
             if( auto strong_self = weak_self )
@@ -502,6 +687,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     m_SearchClearButton.contentTintColor = text_color;
     m_SearchMagGlassButton.contentTintColor = text_color;
     self.needsDisplay = true;
+    [self updatePathBarHeightConstraints];
 
     [self refreshPathBarAttributedText];
 
@@ -589,10 +775,10 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
                                                                    views:views]];
 
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_PathArea, self)];
-    // m_PathArea is a plain NSView (unlike NSTextField) and has no intrinsic height; pin a definite line height so the
-    // path bar cannot collapse to zero. Matches a single line in the panel header (~20pt total chrome).
+    // m_PathArea has no intrinsic height; keep path row height in sync with the adaptive strip height.
+    m_PathAreaHeightConstraint = [m_PathArea.heightAnchor constraintEqualToConstant:1.0];
     [NSLayoutConstraint activateConstraints:@[
-        [m_PathArea.heightAnchor constraintEqualToConstant:18],
+        m_PathAreaHeightConstraint,
         [m_PathArea.topAnchor constraintGreaterThanOrEqualToAnchor:self.topAnchor],
         [m_PathArea.bottomAnchor constraintLessThanOrEqualToAnchor:self.bottomAnchor],
     ]];
@@ -601,6 +787,15 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchMatchesField, self)];
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchClearButton, self)];
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SortButton, self)];
+}
+
+- (void)updatePathBarHeightConstraints
+{
+    const CGFloat row_h = NCPanelPathBarAdaptiveRowHeight(m_Theme ? m_Theme->Font() : nil, self);
+    if( m_PathAreaHeightConstraint )
+        m_PathAreaHeightConstraint.constant = row_h;
+    if( m_StripHeightConstraint )
+        m_StripHeightConstraint.constant = row_h;
 }
 
 - (BOOL)isOpaque
@@ -1056,35 +1251,58 @@ static NSMutableAttributedString *PanelHeaderBuildInteractivePathAttributedStrin
         NSParagraphStyleAttributeName: paragraph,
     };
 
+    NSColor *const sep_color = [_text_color colorWithAlphaComponent:0.55];
+    NSDictionary *const sep_attrs = @{
+        NSFontAttributeName: _font,
+        NSForegroundColorAttributeName: sep_color,
+        NSParagraphStyleAttributeName: paragraph,
+    };
+
     auto *const result = [[NSMutableAttributedString alloc] init];
     bool first = true;
-    NSString *prev_label = nil;
+
+    // Find last non-empty crumb index for marking the current segment.
+    NSInteger last_crumb_idx = -1;
+    for( NSInteger i = static_cast<NSInteger>(_crumbs.size()) - 1; i >= 0; --i ) {
+        if( _crumbs[static_cast<size_t>(i)].label.length ) {
+            last_crumb_idx = i;
+            break;
+        }
+    }
+
+    NSInteger crumb_idx = -1;
     for( const auto &crumb : _crumbs ) {
+        ++crumb_idx;
         if( !crumb.label.length )
             continue;
-        if( !first ) {
-            // Root segment is already shown as "/"; do not add another "/" before "Users" (would show "//Users").
-            if( ![prev_label isEqualToString:@"/"] )
-                [result appendAttributedString:[[NSAttributedString alloc] initWithString:@"/" attributes:base_attrs]];
-        }
+        if( !first )
+            [result appendAttributedString:[[NSAttributedString alloc] initWithString:@" › " attributes:sep_attrs]];
         first = false;
 
+        const bool is_last = (crumb_idx == last_crumb_idx);
         if( crumb.navigate_to_vfs_path ) {
             NSURL *const url = PanelHeaderMakeLinkURLFromVFSPath(*crumb.navigate_to_vfs_path);
             if( url ) {
                 NSMutableDictionary *const attrs = [base_attrs mutableCopy];
                 attrs[NSLinkAttributeName] = url;
                 attrs[NSUnderlineStyleAttributeName] = @(NSUnderlineStyleNone);
+                if( is_last )
+                    attrs[NCPanelPathBarCurrentCrumbAttributeName] = @YES;
                 [result appendAttributedString:[[NSAttributedString alloc] initWithString:crumb.label attributes:attrs]];
             }
             else {
-                [result appendAttributedString:[[NSAttributedString alloc] initWithString:crumb.label attributes:base_attrs]];
+                NSMutableDictionary *const attrs = [base_attrs mutableCopy];
+                if( is_last )
+                    attrs[NCPanelPathBarCurrentCrumbAttributeName] = @YES;
+                [result appendAttributedString:[[NSAttributedString alloc] initWithString:crumb.label attributes:attrs]];
             }
         }
         else {
-            [result appendAttributedString:[[NSAttributedString alloc] initWithString:crumb.label attributes:base_attrs]];
+            NSMutableDictionary *const attrs = [base_attrs mutableCopy];
+            if( is_last )
+                attrs[NCPanelPathBarCurrentCrumbAttributeName] = @YES;
+            [result appendAttributedString:[[NSAttributedString alloc] initWithString:crumb.label attributes:attrs]];
         }
-        prev_label = crumb.label;
     }
     return result;
 }

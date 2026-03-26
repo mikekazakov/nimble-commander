@@ -221,10 +221,11 @@ static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
 - (void)setupLayout
 {
     const auto views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView, m_FooterView);
-    const auto constraints = {@"V:|-(==0)-[m_HeaderView(==20)]-(==0)-[m_ItemsView]-(==0)-[m_FooterView(==20)]-(==0)-|",
-                              @"|-(0)-[m_HeaderView]-(0)-|",
-                              @"|-(0)-[m_ItemsView]-(0)-|",
-                              @"|-(0)-[m_FooterView]-(0)-|"};
+    const auto constraints = {
+        @"V:|-(==0)-[m_HeaderView]-(==0)-[m_ItemsView]-(==0)-[m_FooterView(==20)]-(==0)-|",
+        @"|-(0)-[m_HeaderView]-(0)-|",
+        @"|-(0)-[m_ItemsView]-(0)-|",
+        @"|-(0)-[m_FooterView]-(0)-|"};
     for( auto constraint : constraints )
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:constraint
                                                                      options:0

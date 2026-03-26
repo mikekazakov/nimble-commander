@@ -362,6 +362,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     std::vector<PanelHeaderBreadcrumb> m_LastBreadcrumbs;
     NSString *m_LastPlainPath;
     NSString *m_LastFullPathForEditing;
+    NSString *m_LastPOSIXPathForActions;
     std::function<void(const std::string &)> m_PathNavigateCallback;
     id m_PathBarOutsideClickMonitor;
     NSLayoutConstraint *m_StripHeightConstraint;
@@ -764,17 +765,20 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     m_PathBarInteractive = false;
     m_LastBreadcrumbs.clear();
     m_LastFullPathForEditing = nil;
+    m_LastPOSIXPathForActions = nil;
     m_LastPlainPath = [_path copy] ?: @"";
     [self refreshPathBarAttributedText];
 }
 
 - (void)setInteractiveBreadcrumbs:(const std::vector<PanelHeaderBreadcrumb> &)_breadcrumbs
                fullPathForEditing:(NSString *)_full_path_for_editing
+               posixPathForActions:(NSString *)_posix_path_for_actions
 {
     [self endPathBarFullPathSelectionUI];
     m_PathBarInteractive = !_breadcrumbs.empty();
     m_LastBreadcrumbs = _breadcrumbs;
     m_LastFullPathForEditing = [_full_path_for_editing copy];
+    m_LastPOSIXPathForActions = [_posix_path_for_actions copy];
     m_LastPlainPath = nil;
     [self refreshPathBarAttributedText];
 }
@@ -847,8 +851,8 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     const NSUInteger len = m_PathTextView.textStorage.length;
     NSUInteger idx = [m_PathTextView characterIndexForInsertionAtPoint:pInTextViewCoords];
     if( idx >= len ) {
-        NSString *const full = m_LastFullPathForEditing ?: @"";
-        return full.length ? full : nil;
+        NSString *const posix = m_LastPOSIXPathForActions ?: @"";
+        return posix.length ? posix : nil;
     }
     NSRange link_range = {};
     id link = [m_PathTextView.textStorage attribute:NSLinkAttributeName atIndex:idx effectiveRange:&link_range];
@@ -861,8 +865,8 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
         }
         return nil;
     }
-    NSString *const full = m_LastFullPathForEditing ?: @"";
-    return full.length ? full : nil;
+    NSString *const posix = m_LastPOSIXPathForActions ?: @"";
+    return posix.length ? posix : nil;
 }
 
 - (NSMenu *)pathBarContextMenuForPOSIXPath:(NSString *)path

@@ -160,7 +160,7 @@ static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
                                                                            : state.rightTabbedHolder.tabView;
                     PanelController *const new_pc = [state spawnNewTabInTabView:tab_view
                                                          autoDirectoryLoading:false
-                                                             activateNewPanel:true];
+                                                             activateNewPanel:false];
                     if( !new_pc )
                         return;
                     auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
@@ -1142,7 +1142,11 @@ static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
                                                                  m_Data->DirectoryPathWithTrailingSlash(),
                                                                  m_Data->DirectoryPathWithoutTrailingSlash());
         if( !crumbs.empty() ) {
-            [m_HeaderView setInteractiveBreadcrumbs:crumbs fullPathForEditing:PanelViewPathStringForEditing(m_HeaderTitle)];
+            const auto posix_for_actions =
+                NormalizePanelHeaderPOSIXPathForActions(m_Data->DirectoryPathWithoutTrailingSlash());
+            [m_HeaderView setInteractiveBreadcrumbs:crumbs
+                                 fullPathForEditing:PanelViewPathStringForEditing(m_HeaderTitle)
+                                 posixPathForActions:[NSString stringWithUTF8StdString:posix_for_actions]];
             return;
         }
     }

@@ -1,5 +1,8 @@
 # What's New in Nimble Commander
 
+## Unreleased
+- Improved the panel header path bar with interactive breadcrumbs and a context menu.
+
 ## Version 1.8.0 (19 Dec 2025)
 - Updated for macOS Tahoe.
 - Added a new presentation mode: Gallery.

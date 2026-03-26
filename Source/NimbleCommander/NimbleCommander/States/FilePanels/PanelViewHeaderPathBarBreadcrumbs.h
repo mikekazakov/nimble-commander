@@ -17,5 +17,12 @@ BuildPanelHeaderBreadcrumbsFromPaths(const std::string &verbose_full,
                                      const std::string &dir_with_trailing_slash,
                                      const std::string &path_without_trailing_slash);
 
+// Returns a clean absolute POSIX path for path-bar actions.
+// Guarantees:
+// - never empty (returns "/" for invalid/empty input),
+// - always starts with '/',
+// - has no trailing slash except the root path itself.
+[[nodiscard]] std::string NormalizePanelHeaderPOSIXPathForActions(const std::string &path_without_trailing_slash);
+
 } // namespace nc::panel
 

@@ -44,10 +44,14 @@ NS_ASSUME_NONNULL_BEGIN
 // Plain non-interactive title (e.g. temporary panel).
 - (void)setPlainHeaderPath:(NSString *)_path;
 
-// Clickable breadcrumbs. fullPathForEditing is the full path string for read-only display (editable=NO) when the user
-// opens full-path mode from the last crumb or double-click outside the glyphs.
+// Clickable breadcrumbs.
+// - fullPathForEditing is the full path string for read-only display (editable=NO) when the user opens
+//   full-path mode from the last crumb or double-click outside the glyphs.
+// - posixPathForActions is used by context actions when user clicks outside crumbs (must be a clean POSIX path
+//   on the current VFS, without junction/prefix decorations).
 - (void)setInteractiveBreadcrumbs:(const std::vector<nc::panel::PanelHeaderBreadcrumb> &)_breadcrumbs
-               fullPathForEditing:(NSString *)_full_path_for_editing;
+               fullPathForEditing:(NSString *)_full_path_for_editing
+               posixPathForActions:(NSString *)_posix_path_for_actions;
 
 // Invoked when the user activates a breadcrumb (absolute path on the current VFS, always starts with '/').
 @property(nonatomic) std::function<void(const std::string &)> pathNavigateToVFSPathCallback;

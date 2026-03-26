@@ -4,6 +4,7 @@
 #include <NimbleCommander/States/FilePanels/PanelViewHeaderPathBarBreadcrumbs.h>
 
 using nc::panel::BuildPanelHeaderBreadcrumbsFromPaths;
+using nc::panel::NormalizePanelHeaderPOSIXPathForActions;
 using nc::panel::PanelHeaderBreadcrumb;
 
 #define PREFIX "PanelViewHeaderPathBarBreadcrumbs "
@@ -61,5 +62,14 @@ TEST_CASE(PREFIX "Non-root with junction prefix")
 
     CHECK(ToUTF8(crumbs[2].label) == "me");
     CHECK(!crumbs[2].navigate_to_vfs_path.has_value());
+}
+
+TEST_CASE(PREFIX "Normalizes POSIX path for actions")
+{
+    CHECK(NormalizePanelHeaderPOSIXPathForActions("") == "/");
+    CHECK(NormalizePanelHeaderPOSIXPathForActions("/") == "/");
+    CHECK(NormalizePanelHeaderPOSIXPathForActions("/Users/me") == "/Users/me");
+    CHECK(NormalizePanelHeaderPOSIXPathForActions("/Users/me/") == "/Users/me");
+    CHECK(NormalizePanelHeaderPOSIXPathForActions("Users/me") == "/Users/me");
 }
 

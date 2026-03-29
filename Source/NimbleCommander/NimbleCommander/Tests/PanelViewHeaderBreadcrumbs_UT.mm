@@ -27,7 +27,8 @@ TEST_CASE(PREFIX "Root without junction")
 
 TEST_CASE(PREFIX "Simple path without junction")
 {
-    const auto crumbs = BuildPanelHeaderBreadcrumbsFromPaths("/Users/me/Projects/", "/Users/me/Projects/", "/Users/me/Projects");
+    const auto crumbs =
+        BuildPanelHeaderBreadcrumbsFromPaths("/Users/me/Projects/", "/Users/me/Projects/", "/Users/me/Projects");
     REQUIRE(crumbs.size() == 4);
     CHECK(ToUTF8(crumbs[0].label) == "/");
     CHECK(crumbs[0].navigate_to_vfs_path == "/");
@@ -72,4 +73,3 @@ TEST_CASE(PREFIX "Normalizes POSIX path for actions")
     CHECK(NormalizePanelHeaderPOSIXPathForActions("/Users/me/") == "/Users/me");
     CHECK(NormalizePanelHeaderPOSIXPathForActions("Users/me") == "/Users/me");
 }
-

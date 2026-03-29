@@ -22,7 +22,7 @@ BuildPanelHeaderBreadcrumbsFromPaths(const std::string &verbose_full,
         dir_slash += '/';
     if( verbose_full.size() < dir_slash.size() )
         return out;
-    if( verbose_full.compare(verbose_full.size() - dir_slash.size(), dir_slash.size(), dir_slash) != 0 )
+    if( !verbose_full.ends_with(dir_slash) )
         return out;
 
     std::string junction = verbose_full.substr(0, verbose_full.size() - dir_slash.size());
@@ -98,4 +98,3 @@ std::string NormalizePanelHeaderPOSIXPathForActions(const std::string &path_with
 }
 
 } // namespace nc::panel
-

@@ -22,14 +22,17 @@ struct PanelHeaderBreadcrumb {
 
 } // namespace nc::panel
 
+// NOLINTBEGIN(modernize-use-using, performance-enum-size)
+// NS_ENUM(NSInteger, …) is the standard Obj-C export for this API; NSInteger width is intentional.
 typedef NS_ENUM(NSInteger, NCPanelPathBarContextCommand) {
     NCPanelPathBarContextCommandOpen = 0,
     NCPanelPathBarContextCommandOpenInNewTab,
     NCPanelPathBarContextCommandCopyPath,
 };
+// NOLINTEND(modernize-use-using, performance-enum-size)
 
-typedef void (^NCPanelPathBarContextMenuActionBlock)(NSString *_Nonnull posixPath,
-                                                     NCPanelPathBarContextCommand command);
+using NCPanelPathBarContextMenuActionBlock = void (^)(NSString *_Nonnull posixPath,
+                                                      NCPanelPathBarContextCommand command);
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -51,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 //   on the current VFS, without junction/prefix decorations).
 - (void)setInteractiveBreadcrumbs:(const std::vector<nc::panel::PanelHeaderBreadcrumb> &)_breadcrumbs
                fullPathForEditing:(NSString *)_full_path_for_editing
-               posixPathForActions:(NSString *)_posix_path_for_actions;
+              posixPathForActions:(NSString *)_posix_path_for_actions;
 
 // Invoked when the user activates a breadcrumb (absolute path on the current VFS, always starts with '/').
 @property(nonatomic) std::function<void(const std::string &)> pathNavigateToVFSPathCallback;

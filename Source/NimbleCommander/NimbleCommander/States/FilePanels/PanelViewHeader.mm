@@ -40,7 +40,7 @@ static CGFloat NCPanelPathBarAdaptiveRowHeight(NSFont *font, NSView *view) noexc
 {
     const CGFloat line = NCPanelPathBarTypographicLineHeight(font);
     const CGFloat bottom_extra = NCPanelPathBarOneDisplayPixelInPoints(view);
-    const CGFloat h = line + 2.0 * NCPanelPathBarVerticalPaddingPoints + bottom_extra;
+    const CGFloat h = line + (2.0 * NCPanelPathBarVerticalPaddingPoints) + bottom_extra;
     return std::ceil(std::max<CGFloat>(h, 1.0));
 }
 
@@ -60,10 +60,12 @@ static void ChangeButtonAttrString(NSButton *_button, NSColor *_new_color, NSFon
 static void ChangeAttributedTitle(NSButton *_button, NSString *_new_text);
 static bool IsDark(NSColor *_color);
 static NSURL *PanelHeaderMakeLinkURLFromVFSPath(const std::string &_path) noexcept;
-static NSMutableAttributedString *PanelHeaderBuildInteractivePathAttributedString(const std::vector<PanelHeaderBreadcrumb> &_crumbs,
-                                                                                NSFont *_font,
-                                                                                NSColor *_text_color);
-static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColor *_text_color);
+static NSMutableAttributedString *
+PanelHeaderBuildInteractivePathAttributedString(const std::vector<PanelHeaderBreadcrumb> &_crumbs,
+                                                NSFont *_font,
+                                                NSColor *_text_color);
+static NSMutableAttributedString *
+PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColor *_text_color);
 
 @class NCPanelViewHeader;
 
@@ -193,7 +195,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
     r = NSInsetRect(r, -kPadX, 0.0);
     const NSRect line = NCPanelPathBarTypographicLineRectInStripBounds(self.bounds, self.font);
     r.origin.y = NSMinY(line) - kPadY;
-    r.size.height = NSHeight(line) + 2.0 * kPadY;
+    r.size.height = NSHeight(line) + (2.0 * kPadY);
     r = NSIntersectionRect(r, self.bounds);
     if( r.size.height < 2.0 )
         return NSZeroRect;
@@ -315,7 +317,9 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
         return;
 
     NSRange attr_range = {};
-    id is_current = [self.textStorage attribute:NCPanelPathBarCurrentCrumbAttributeName atIndex:idx effectiveRange:&attr_range];
+    id is_current = [self.textStorage attribute:NCPanelPathBarCurrentCrumbAttributeName
+                                        atIndex:idx
+                                 effectiveRange:&attr_range];
     if( is_current && NSLocationInRange(idx, attr_range) ) {
         [self.pathHeader beginPathBarFullPathSelection];
         return;
@@ -590,13 +594,14 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 
     __weak NCPanelViewHeader *weak_header = self;
     m_PathBarOutsideClickMonitor =
-        [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskLeftMouseDown handler:^NSEvent *(NSEvent *event) {
-            NCPanelViewHeader *const h = weak_header;
-            if( !h || !h->m_PathBarFullPathSelectionActive )
-                return event;
-            [h handleOutsideMouseDownWhilePathBarFullPathSelection:event];
-            return event;
-        }];
+        [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskLeftMouseDown
+                                              handler:^NSEvent *(NSEvent *event) {
+                                                NCPanelViewHeader *const h = weak_header;
+                                                if( !h || !h->m_PathBarFullPathSelectionActive )
+                                                    return event;
+                                                [h handleOutsideMouseDownWhilePathBarFullPathSelection:event];
+                                                return event;
+                                              }];
 }
 
 - (void)setupAppearance
@@ -772,7 +777,7 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 
 - (void)setInteractiveBreadcrumbs:(const std::vector<PanelHeaderBreadcrumb> &)_breadcrumbs
                fullPathForEditing:(NSString *)_full_path_for_editing
-               posixPathForActions:(NSString *)_posix_path_for_actions
+              posixPathForActions:(NSString *)_posix_path_for_actions
 {
     [self endPathBarFullPathSelectionUI];
     m_PathBarInteractive = !_breadcrumbs.empty();
@@ -822,8 +827,8 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 
 - (nullable NSMenu *)textView:(NSTextView *)textView
                          menu:(NSMenu *)menu
-                      forEvent:(NSEvent *)event
-                       atIndex:(NSUInteger)charIndex
+                     forEvent:(NSEvent *)event
+                      atIndex:(NSUInteger)charIndex
 {
     (void)charIndex;
     if( textView != m_PathTextView || !self.pathBarContextMenuAction )
@@ -873,13 +878,13 @@ static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSSt
 {
     NSMenu *const menu = [[NSMenu alloc] initWithTitle:@""];
     auto add = ^(NSString *title, NCPanelPathBarContextCommand cmd) {
-        NSMenuItem *const it = [[NSMenuItem alloc] initWithTitle:title
-                                                          action:@selector(handlePathBarContextMenuItem:)
-                                                   keyEquivalent:@""];
-        it.target = self;
-        it.tag = cmd;
-        it.representedObject = path;
-        [menu addItem:it];
+      NSMenuItem *const it = [[NSMenuItem alloc] initWithTitle:title
+                                                        action:@selector(handlePathBarContextMenuItem:)
+                                                 keyEquivalent:@""];
+      it.target = self;
+      it.tag = cmd;
+      it.representedObject = path;
+      [menu addItem:it];
     };
     add(NSLocalizedString(@"Open", @"Path bar context: open directory in panel"), NCPanelPathBarContextCommandOpen);
     add(NSLocalizedString(@"Open in New Tab", @"Path bar context: open directory in a new tab"),
@@ -1135,9 +1140,10 @@ static NSURL *PanelHeaderMakeLinkURLFromVFSPath(const std::string &_path) noexce
     return c.URL;
 }
 
-static NSMutableAttributedString *PanelHeaderBuildInteractivePathAttributedString(const std::vector<PanelHeaderBreadcrumb> &_crumbs,
-                                                                                NSFont *_font,
-                                                                                NSColor *_text_color)
+static NSMutableAttributedString *
+PanelHeaderBuildInteractivePathAttributedString(const std::vector<PanelHeaderBreadcrumb> &_crumbs,
+                                                NSFont *_font,
+                                                NSColor *_text_color)
 {
     NSMutableParagraphStyle *const paragraph = [[NSMutableParagraphStyle alloc] init];
     paragraph.lineBreakMode = NSLineBreakByTruncatingHead;
@@ -1186,13 +1192,15 @@ static NSMutableAttributedString *PanelHeaderBuildInteractivePathAttributedStrin
                 attrs[NSUnderlineStyleAttributeName] = @(NSUnderlineStyleNone);
                 if( is_last )
                     attrs[NCPanelPathBarCurrentCrumbAttributeName] = @YES;
-                [result appendAttributedString:[[NSAttributedString alloc] initWithString:crumb.label attributes:attrs]];
+                [result appendAttributedString:[[NSAttributedString alloc] initWithString:crumb.label
+                                                                               attributes:attrs]];
             }
             else {
                 NSMutableDictionary *const attrs = [base_attrs mutableCopy];
                 if( is_last )
                     attrs[NCPanelPathBarCurrentCrumbAttributeName] = @YES;
-                [result appendAttributedString:[[NSAttributedString alloc] initWithString:crumb.label attributes:attrs]];
+                [result appendAttributedString:[[NSAttributedString alloc] initWithString:crumb.label
+                                                                               attributes:attrs]];
             }
         }
         else {
@@ -1205,7 +1213,8 @@ static NSMutableAttributedString *PanelHeaderBuildInteractivePathAttributedStrin
     return result;
 }
 
-static NSMutableAttributedString *PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColor *_text_color)
+static NSMutableAttributedString *
+PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColor *_text_color)
 {
     NSMutableParagraphStyle *const paragraph = [[NSMutableParagraphStyle alloc] init];
     paragraph.lineBreakMode = NSLineBreakByTruncatingHead;

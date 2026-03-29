@@ -203,12 +203,13 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
 
     // Custom themes often merge Light backup keys: semi-transparent black accent on a dark header reads as a hole.
     {
-        NSColor *const path_bg = I->m_FilePanelsHeaderActiveBackgroundColor ?: I->m_FilePanelsHeaderInactiveBackgroundColor;
+        NSColor *const path_bg =
+            I->m_FilePanelsHeaderActiveBackgroundColor ?: I->m_FilePanelsHeaderInactiveBackgroundColor;
         const auto rgba_from_color = [](NSColor *c, CGFloat *r, CGFloat *g, CGFloat *bl, CGFloat *a) -> bool {
             NSColor *const rgb = [c colorUsingColorSpace:NSColorSpace.genericRGBColorSpace];
             if( !rgb )
                 return false;
-            CGColorRef const cg = rgb.CGColor;
+            const CGColorRef cg = rgb.CGColor;
             if( !cg )
                 return false;
             const size_t n = CGColorGetNumberOfComponents(cg);
@@ -230,8 +231,14 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
         const auto overlay_darkens_header = [&](NSColor *ov) -> bool {
             if( !path_bg || !ov )
                 return false;
-            CGFloat br, bgc, bb, ba;
-            CGFloat vr, vg, vb, va;
+            CGFloat br;
+            CGFloat bgc;
+            CGFloat bb;
+            CGFloat ba;
+            CGFloat vr;
+            CGFloat vg;
+            CGFloat vb;
+            CGFloat va;
             if( !rgba_from_color(path_bg, &br, &bgc, &bb, &ba) )
                 return false;
             (void)ba;
@@ -240,12 +247,12 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
             if( va <= 0.02 )
                 return false;
             const auto lum = [](CGFloat r, CGFloat g, CGFloat bl) {
-                return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+                return (0.2126 * r) + (0.7152 * g) + (0.0722 * bl);
             };
             const CGFloat blum = lum(br, bgc, bb);
             const CGFloat out_lum =
-                lum(br * (1.f - va) + vr * va, bgc * (1.f - va) + vg * va, bb * (1.f - va) + vb * va);
-            return out_lum + 0.008f < blum;
+                lum((br * (1.f - va)) + (vr * va), (bgc * (1.f - va)) + (vg * va), (bb * (1.f - va)) + (vb * va));
+            return (out_lum + 0.008f) < blum;
         };
         if( overlay_darkens_header(I->m_FilePanelsHeaderPathAccentColor) )
             I->m_FilePanelsHeaderPathAccentColor = bundle_path_accent_for_appearance();
@@ -809,8 +816,8 @@ NSColor *Theme::FilePanelsBriefGridColor() const noexcept
 }
 
 NSColor *Theme::ColorForPreferencesEditorFromMergedTheme(const nc::config::Value *_persisted_theme_doc,
-                                                        const nc::config::Value *_backup_theme_doc,
-                                                        const char *_key)
+                                                         const nc::config::Value *_backup_theme_doc,
+                                                         const char *_key)
 {
     if( !_key || !_persisted_theme_doc || !_backup_theme_doc )
         return nil;
@@ -821,7 +828,7 @@ NSColor *Theme::ColorForPreferencesEditorFromMergedTheme(const nc::config::Value
         Getter getter;
     };
     static constexpr Entry kEntries[] = {
-        {"filePanelsHeaderPathAccentColor", &Theme::FilePanelsHeaderPathAccentColor},
+        {.key = "filePanelsHeaderPathAccentColor", .getter = &Theme::FilePanelsHeaderPathAccentColor},
     };
     for( const auto &e : kEntries )
         if( std::strcmp(_key, e.key) == 0 )

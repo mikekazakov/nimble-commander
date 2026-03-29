@@ -25,4 +25,3 @@ BuildPanelHeaderBreadcrumbsFromPaths(const std::string &verbose_full,
 [[nodiscard]] std::string NormalizePanelHeaderPOSIXPathForActions(const std::string &path_without_trailing_slash);
 
 } // namespace nc::panel
-

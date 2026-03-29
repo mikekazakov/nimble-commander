@@ -132,52 +132,52 @@ static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
             [pc GoToDirWithContext:req];
         };
         m_HeaderView.pathBarContextMenuAction = ^(NSString *path, NCPanelPathBarContextCommand cmd) {
-            PanelView *const strong_self = weak_self;
-            if( !strong_self || path.length == 0 )
-                return;
-            PanelController *const pc = strong_self.controller;
-            if( !pc )
-                return;
-            const char *const raw = path.UTF8String;
-            if( !raw )
-                return;
-            const std::string utf8{raw};
-            switch( cmd ) {
-                case NCPanelPathBarContextCommandOpen: {
-                    auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
-                    req->RequestedDirectory = utf8;
-                    req->VFS = pc.vfs;
-                    req->PerformAsynchronous = true;
-                    req->InitiatedByUser = true;
-                    (void)[pc GoToDirWithContext:req];
-                    break;
-                }
-                case NCPanelPathBarContextCommandOpenInNewTab: {
-                    MainWindowFilePanelState *const state = pc.state;
-                    if( !state )
-                        return;
-                    NSTabView *const tab_view = [state isLeftController:pc] ? state.leftTabbedHolder.tabView
-                                                                           : state.rightTabbedHolder.tabView;
-                    PanelController *const new_pc = [state spawnNewTabInTabView:tab_view
+          PanelView *const strong_self = weak_self;
+          if( !strong_self || path.length == 0 )
+              return;
+          PanelController *const pc = strong_self.controller;
+          if( !pc )
+              return;
+          const char *const raw = path.UTF8String;
+          if( !raw )
+              return;
+          const std::string utf8{raw};
+          switch( cmd ) {
+              case NCPanelPathBarContextCommandOpen: {
+                  auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
+                  req->RequestedDirectory = utf8;
+                  req->VFS = pc.vfs;
+                  req->PerformAsynchronous = true;
+                  req->InitiatedByUser = true;
+                  (void)[pc GoToDirWithContext:req];
+                  break;
+              }
+              case NCPanelPathBarContextCommandOpenInNewTab: {
+                  MainWindowFilePanelState *const state = pc.state;
+                  if( !state )
+                      return;
+                  NSTabView *const tab_view =
+                      [state isLeftController:pc] ? state.leftTabbedHolder.tabView : state.rightTabbedHolder.tabView;
+                  PanelController *const new_pc = [state spawnNewTabInTabView:tab_view
                                                          autoDirectoryLoading:false
                                                              activateNewPanel:false];
-                    if( !new_pc )
-                        return;
-                    auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
-                    req->RequestedDirectory = utf8;
-                    req->VFS = pc.vfs;
-                    req->PerformAsynchronous = true;
-                    req->InitiatedByUser = true;
-                    (void)[new_pc GoToDirWithContext:req];
-                    break;
-                }
-                case NCPanelPathBarContextCommandCopyPath:
-                    [NSPasteboard.generalPasteboard clearContents];
-                    [NSPasteboard.generalPasteboard setString:path forType:NSPasteboardTypeString];
-                    break;
-                default:
-                    break;
-            }
+                  if( !new_pc )
+                      return;
+                  auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
+                  req->RequestedDirectory = utf8;
+                  req->VFS = pc.vfs;
+                  req->PerformAsynchronous = true;
+                  req->InitiatedByUser = true;
+                  (void)[new_pc GoToDirWithContext:req];
+                  break;
+              }
+              case NCPanelPathBarContextCommandCopyPath:
+                  [NSPasteboard.generalPasteboard clearContents];
+                  [NSPasteboard.generalPasteboard setString:path forType:NSPasteboardTypeString];
+                  break;
+              default:
+                  break;
+          }
         };
         [self addSubview:m_HeaderView];
 
@@ -200,11 +200,10 @@ static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
 - (void)setupLayout
 {
     const auto views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView, m_FooterView);
-    const auto constraints = {
-        @"V:|-(==0)-[m_HeaderView]-(==0)-[m_ItemsView]-(==0)-[m_FooterView(==20)]-(==0)-|",
-        @"|-(0)-[m_HeaderView]-(0)-|",
-        @"|-(0)-[m_ItemsView]-(0)-|",
-        @"|-(0)-[m_FooterView]-(0)-|"};
+    const auto constraints = {@"V:|-(==0)-[m_HeaderView]-(==0)-[m_ItemsView]-(==0)-[m_FooterView(==20)]-(==0)-|",
+                              @"|-(0)-[m_HeaderView]-(0)-|",
+                              @"|-(0)-[m_ItemsView]-(0)-|",
+                              @"|-(0)-[m_FooterView]-(0)-|"};
     for( auto constraint : constraints )
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:constraint
                                                                      options:0
@@ -1146,7 +1145,7 @@ static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
                 NormalizePanelHeaderPOSIXPathForActions(m_Data->DirectoryPathWithoutTrailingSlash());
             [m_HeaderView setInteractiveBreadcrumbs:crumbs
                                  fullPathForEditing:PanelViewPathStringForEditing(m_HeaderTitle)
-                                 posixPathForActions:[NSString stringWithUTF8StdString:posix_for_actions]];
+                                posixPathForActions:[NSString stringWithUTF8StdString:posix_for_actions]];
             return;
         }
     }

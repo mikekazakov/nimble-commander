@@ -46,9 +46,10 @@ public:
      * effective runtime color from merging persisted theme JSON with its backup (optional / derived keys).
      * Call only after ThemePersistence::ExtractColor(editor_doc, key) returned nil.
      */
-    [[nodiscard]] static NSColor *ColorForPreferencesEditorFromMergedTheme(const nc::config::Value *_persisted_theme_doc,
-                                                                           const nc::config::Value *_backup_theme_doc,
-                                                                           const char *_key);
+    [[nodiscard]] static NSColor *
+    ColorForPreferencesEditorFromMergedTheme(const nc::config::Value *_persisted_theme_doc,
+                                             const nc::config::Value *_backup_theme_doc,
+                                             const char *_key);
 
     // General info querying ///////////////////////////////////////////////////////////////////////
     [[nodiscard]] uint64_t Generation() const noexcept; // monotonically increasing starting with 1

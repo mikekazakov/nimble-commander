@@ -307,9 +307,8 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
                     const auto &theme_name = m_ThemeNames[m_SelectedTheme];
                     if( auto theme_data = m_Manager->ThemeData(theme_name) )
                         if( auto backup_data = m_Manager->BackupThemeData(theme_name) )
-                            color = nc::Theme::ColorForPreferencesEditorFromMergedTheme(theme_data.get(),
-                                                                                       backup_data.get(),
-                                                                                       i.entry.c_str());
+                            color = nc::Theme::ColorForPreferencesEditorFromMergedTheme(
+                                theme_data.get(), backup_data.get(), i.entry.c_str());
                 }
                 if( color != nil )
                     v.color = color;

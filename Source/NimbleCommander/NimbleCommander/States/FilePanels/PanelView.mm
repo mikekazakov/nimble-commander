@@ -10,10 +10,14 @@
 #include <Panel/PanelData.h>
 #include <Panel/Log.h>
 #include "PanelController.h"
+#include "MainWindowFilePanelState.h"
+#include "MainWindowFilePanelState+TabsSupport.h"
+#include "Views/FilePanelsTabbedHolder.h"
 #include "Brief/PanelBriefView.h"
 #include "List/PanelListView.h"
 #include "Gallery/PanelGalleryView.h"
 #include "PanelViewHeader.h"
+#include "PanelViewHeaderPathBarBreadcrumbs.h"
 #include "PanelViewFooter.h"
 #include "PanelViewDelegate.h"
 #include "DragReceiver.h"
@@ -23,6 +27,8 @@
 #include <Panel/PanelViewKeystrokeSink.h>
 #include "PanelViewDummyPresentation.h"
 #include "PanelControllerActionsDispatcher.h"
+
+#include <vector>
 
 using namespace nc::panel;
 using nc::vfsicon::IconRepository;
@@ -38,6 +44,15 @@ enum class CursorSelectionType : int8_t {
 struct StateStorage {
     std::string focused_item;
 };
+
+static NSString *PanelViewPathStringForEditing(NSString *verbosePath)
+{
+    if( verbosePath.length <= 1 )
+        return verbosePath ?: @"";
+    if( [verbosePath hasSuffix:@"/"] )
+        return [verbosePath substringToIndex:verbosePath.length - 1];
+    return verbosePath;
+}
 
 } // namespace nc::panel
 
@@ -102,6 +117,68 @@ struct StateStorage {
             if( PanelView *const strong_self = weak_self )
                 [strong_self.controller changeSortingModeTo:_sm];
         };
+        m_HeaderView.pathNavigateToVFSPathCallback = [weak_self](const std::string &_path) {
+            PanelView *const strong_self = weak_self;
+            if( !strong_self )
+                return;
+            PanelController *const pc = strong_self.controller;
+            if( !pc )
+                return;
+            auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
+            req->RequestedDirectory = _path;
+            req->VFS = pc.vfs;
+            req->PerformAsynchronous = true;
+            req->InitiatedByUser = true;
+            [pc GoToDirWithContext:req];
+        };
+        m_HeaderView.pathBarContextMenuAction = ^(NSString *path, NCPanelPathBarContextCommand cmd) {
+          PanelView *const strong_self = weak_self;
+          if( !strong_self || path.length == 0 )
+              return;
+          PanelController *const pc = strong_self.controller;
+          if( !pc )
+              return;
+          const char *const raw = path.UTF8String;
+          if( !raw )
+              return;
+          const std::string utf8{raw};
+          switch( cmd ) {
+              case NCPanelPathBarContextCommandOpen: {
+                  auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
+                  req->RequestedDirectory = utf8;
+                  req->VFS = pc.vfs;
+                  req->PerformAsynchronous = true;
+                  req->InitiatedByUser = true;
+                  (void)[pc GoToDirWithContext:req];
+                  break;
+              }
+              case NCPanelPathBarContextCommandOpenInNewTab: {
+                  MainWindowFilePanelState *const state = pc.state;
+                  if( !state )
+                      return;
+                  NSTabView *const tab_view =
+                      [state isLeftController:pc] ? state.leftTabbedHolder.tabView : state.rightTabbedHolder.tabView;
+                  PanelController *const new_pc = [state spawnNewTabInTabView:tab_view
+                                                         autoDirectoryLoading:false
+                                                             activateNewPanel:false];
+                  if( !new_pc )
+                      return;
+                  auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
+                  req->RequestedDirectory = utf8;
+                  req->VFS = pc.vfs;
+                  req->PerformAsynchronous = true;
+                  req->InitiatedByUser = true;
+                  (void)[new_pc GoToDirWithContext:req];
+                  break;
+              }
+              case NCPanelPathBarContextCommandCopyPath:
+                  [NSPasteboard.generalPasteboard clearContents];
+                  [NSPasteboard.generalPasteboard setString:path forType:NSPasteboardTypeString];
+                  break;
+              default:
+                  break;
+          }
+        };
         [self addSubview:m_HeaderView];
 
         m_FooterView = _footer;
@@ -123,7 +200,7 @@ struct StateStorage {
 - (void)setupLayout
 {
     const auto views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView, m_FooterView);
-    const auto constraints = {@"V:|-(==0)-[m_HeaderView(==20)]-(==0)-[m_ItemsView]-(==0)-[m_FooterView(==20)]-(==0)-|",
+    const auto constraints = {@"V:|-(==0)-[m_HeaderView]-(==0)-[m_ItemsView]-(==0)-[m_FooterView(==20)]-(==0)-|",
                               @"|-(0)-[m_HeaderView]-(0)-|",
                               @"|-(0)-[m_ItemsView]-(0)-|",
                               @"|-(0)-[m_FooterView]-(0)-|"};
@@ -1052,10 +1129,27 @@ struct StateStorage {
 - (void)setHeaderTitle:(NSString *)headerTitle
 {
     dispatch_assert_main_queue();
-    if( m_HeaderTitle != headerTitle ) {
-        m_HeaderTitle = headerTitle;
-        [m_HeaderView setPath:m_HeaderTitle];
+    NSString *const next = headerTitle ?: @"";
+    if( (m_HeaderTitle == next) || [m_HeaderTitle isEqualToString:next] )
+        return;
+    m_HeaderTitle = [next copy];
+
+    const bool uniform_dir =
+        m_Data && m_Data->Type() == data::Model::PanelType::Directory && m_Data->Listing().IsUniform();
+    if( uniform_dir ) {
+        const auto crumbs = BuildPanelHeaderBreadcrumbsFromPaths(m_Data->VerboseDirectoryFullPath(),
+                                                                 m_Data->DirectoryPathWithTrailingSlash(),
+                                                                 m_Data->DirectoryPathWithoutTrailingSlash());
+        if( !crumbs.empty() ) {
+            const auto posix_for_actions =
+                NormalizePanelHeaderPOSIXPathForActions(m_Data->DirectoryPathWithoutTrailingSlash());
+            [m_HeaderView setInteractiveBreadcrumbs:crumbs
+                                 fullPathForEditing:PanelViewPathStringForEditing(m_HeaderTitle)
+                                posixPathForActions:[NSString stringWithUTF8StdString:posix_for_actions]];
+            return;
+        }
     }
+    [m_HeaderView setPlainHeaderPath:m_HeaderTitle];
 }
 
 - (NSString *)headerTitle

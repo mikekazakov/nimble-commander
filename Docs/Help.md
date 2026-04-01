@@ -107,6 +107,13 @@ Each panel is vertically divided into three logical parts:
 - File items: displays a list of the file items in the location of this panel.
 - Footer: shows the filename of the focused item, its size and modification date, the total number of items in the panel, and the free space available on this storage.
 
+### Header Path Bar
+
+The path area in the header supports interactive **breadcrumbs** for regular directory panels.
+You can click a breadcrumb segment to navigate directly to that location.
+When you click the current segment, or double-click on an empty area of the path strip, Nimble Commander switches to a **full-path** selection mode so the entire path can be copied quickly.
+Right-clicking the path bar opens a context menu with quick actions: opening the selected location in the current tab, opening it in a new tab, and copying its path.
+
 ## Navigation
 Nimble Commander supports both mouse-based and keyboard-based navigation inside the file panel, although the keyboard is preferred.
 Use a single mouse click to change the cursor position (i.e., the focused item) and scroll gestures to scroll through the contents of the file panel without changing the cursor position.

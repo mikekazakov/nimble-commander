@@ -8,6 +8,7 @@
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/ThemePersistence.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 #include <Utility/ObjCpp.h>
@@ -301,7 +302,16 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
         if( [tableColumn.identifier isEqualToString:@"value"] ) {
             if( i.type == PreferencesWindowThemesTabItemType::Color ) {
                 auto v = [[PreferencesWindowThemesTabColorControl alloc] initWithFrame:NSRect{}];
-                v.color = ThemePersistence::ExtractColor(self.selectedThemeFrontend, i.entry.c_str());
+                NSColor *color = ThemePersistence::ExtractColor(self.selectedThemeFrontend, i.entry.c_str());
+                if( color == nil ) {
+                    const auto &theme_name = m_ThemeNames[m_SelectedTheme];
+                    if( auto theme_data = m_Manager->ThemeData(theme_name) )
+                        if( auto backup_data = m_Manager->BackupThemeData(theme_name) )
+                            color = nc::Theme::ColorForPreferencesEditorFromMergedTheme(
+                                theme_data.get(), backup_data.get(), i.entry.c_str());
+                }
+                if( color != nil )
+                    v.color = color;
                 v.action = @selector(onColorChanged:);
                 v.target = self;
                 return v;

@@ -1,350 +1,67 @@
 // Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewHeader.h"
-#include <algorithm>
-#include <cmath>
+#include "PanelViewHeaderPathBarBreadcrumbs.h"
+#import "NCPanelPathBarView.h"
+#import "NCPanelBreadcrumbsView.h"
+#import "NCPanelPathSegment.h"
 #include <Utility/Layout.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/ColoredSeparatorLine.h>
 
 using namespace nc::panel;
 
-static NSString *const NCPanelPathBarCurrentCrumbAttributeName = @"NCPanelPathBarCurrentCrumb";
-
-static CGFloat NCPanelPathBarOneDisplayPixelInPoints(NSView *view) noexcept
-{
-    CGFloat s = 0.;
-    if( view.window != nil )
-        s = view.window.backingScaleFactor;
-    if( s <= 0.01 && view.window.screen != nil )
-        s = view.window.screen.backingScaleFactor;
-    if( s <= 0.01 )
-        s = NSScreen.mainScreen.backingScaleFactor;
-    if( s <= 0.01 )
-        s = 2.;
-    return 1. / s;
-}
-
-static CGFloat NCPanelPathBarTypographicLineHeight(NSFont *font) noexcept
-{
-    if( !font )
-        return 0.;
-    NSLayoutManager *const lm = [[NSLayoutManager alloc] init];
-    return std::ceil([lm defaultLineHeightForFont:font]);
-}
-
-// Same padding top and bottom around the typographic line, except an extra 1 display pixel at the bottom
-// of the strip (taller bar + content shifted up by that pixel vs symmetric centering).
-static constexpr CGFloat NCPanelPathBarVerticalPaddingPoints = 4.0;
-
-static CGFloat NCPanelPathBarAdaptiveRowHeight(NSFont *font, NSView *view) noexcept
-{
-    const CGFloat line = NCPanelPathBarTypographicLineHeight(font);
-    const CGFloat bottom_extra = NCPanelPathBarOneDisplayPixelInPoints(view);
-    const CGFloat h = line + (2.0 * NCPanelPathBarVerticalPaddingPoints) + bottom_extra;
-    return std::ceil(std::max<CGFloat>(h, 1.0));
-}
-
-// Flipped view (NSTextView): NSMinY is the top — padding is measured from the top edge.
-static NSRect NCPanelPathBarTypographicLineRectInStripBounds(NSRect bounds, NSFont *font) noexcept
-{
-    const CGFloat lh = NCPanelPathBarTypographicLineHeight(font);
-    if( lh <= 0.5 )
-        return bounds;
-    bounds.origin.y = std::floor(NSMinY(bounds) + NCPanelPathBarVerticalPaddingPoints);
-    bounds.size.height = lh;
-    return bounds;
-}
+// Fixed strip height (do not change with theme font). Must match -[PanelView headerBarHeight] (20).
+static constexpr CGFloat NCPanelViewHeaderPathBarFixedHeight = 20.;
 
 static NSString *SortLetter(data::SortMode _mode) noexcept;
 static void ChangeButtonAttrString(NSButton *_button, NSColor *_new_color, NSFont *_font);
 static void ChangeAttributedTitle(NSButton *_button, NSString *_new_text);
 static bool IsDark(NSColor *_color);
-static NSURL *PanelHeaderMakeLinkURLFromVFSPath(const std::string &_path) noexcept;
-static NSMutableAttributedString *
-PanelHeaderBuildInteractivePathAttributedString(const std::vector<PanelHeaderBreadcrumb> &_crumbs,
-                                                NSFont *_font,
-                                                NSColor *_text_color);
-static NSMutableAttributedString *
-PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColor *_text_color);
 
-@class NCPanelViewHeader;
-
-@interface NCPanelViewHeader (PathBarPrivate)
-- (BOOL)panelPathBarIsInteractive;
-- (BOOL)panelPathBarFullPathSelectionActive;
-- (void)beginPathBarFullPathSelection;
-- (BOOL)pathBarConsumeCancelIfFullPathSelectionActive;
-- (nullable NSString *)posixPathForPathBarContextMenuAtPoint:(NSPoint)pInTextViewCoords;
-- (NSMenu *)pathBarContextMenuForPOSIXPath:(NSString *)path;
-- (void)handlePathBarContextMenuItem:(NSMenuItem *)item;
-@end
-
-@interface NCPanelPathDisplayTextView : NSTextView
-@property(nonatomic, weak) NCPanelViewHeader *pathHeader;
-@property(nonatomic, strong) NSColor *pathAccentColor;
-- (void)clearHover;
-- (BOOL)nc_pointIsInsideLaidOutPathGlyphs:(NSPoint)p_in_view_coords;
-- (NSRect)nc_hoverBackgroundRectForCharacterRange:(NSRange)range;
-@end
-
-@implementation NCPanelPathDisplayTextView {
-    NSRange m_HoveredRange;
-}
-
-@synthesize pathHeader;
-@synthesize pathAccentColor;
-
-- (NSPoint)textContainerOrigin
+static NSArray<NCPanelPathSegment *> *PanelHeaderMakePathSegments(const std::vector<PanelHeaderBreadcrumb> &_crumbs)
 {
-    NSPoint o = [super textContainerOrigin];
-    o.y = NSMinY(NCPanelPathBarTypographicLineRectInStripBounds(self.bounds, self.font));
-    return o;
-}
-
-- (void)resetCursorRects
-{
-    if( self.bounds.size.width > 0 && self.bounds.size.height > 0 )
-        [self addCursorRect:self.bounds cursor:[NSCursor arrowCursor]];
-}
-
-- (void)cursorUpdate:(NSEvent *)event
-{
-    (void)event;
-    [[NSCursor arrowCursor] set];
-}
-
-- (void)updateTrackingAreas
-{
-    [super updateTrackingAreas];
-    for( NSTrackingArea *ta in [self.trackingAreas copy] )
-        if( ta.owner == self )
-            [self removeTrackingArea:ta];
-    if( self.bounds.size.width > 0 && self.bounds.size.height > 0 ) {
-        auto *const ta = [[NSTrackingArea alloc]
-            initWithRect:self.bounds
-                 options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow
-                   owner:self
-                userInfo:nil];
-        [self addTrackingArea:ta];
-    }
-}
-
-- (void)mouseMoved:(NSEvent *)event
-{
-    if( !self.pathAccentColor || ![self.pathHeader panelPathBarIsInteractive] ) {
-        [super mouseMoved:event];
-        return;
-    }
-    const NSPoint p = [self convertPoint:event.locationInWindow fromView:nil];
-    if( ![self nc_pointIsInsideLaidOutPathGlyphs:p] ) {
-        [self setHoveredRange:NSMakeRange(NSNotFound, 0)];
-        return;
-    }
-    const NSUInteger idx = [self characterIndexForInsertionAtPoint:p];
-    if( idx >= self.textStorage.length ) {
-        [self setHoveredRange:NSMakeRange(NSNotFound, 0)];
-        return;
-    }
-    NSRange range = {};
-    id link = [self.textStorage attribute:NSLinkAttributeName atIndex:idx effectiveRange:&range];
-    [self setHoveredRange:(link && NSLocationInRange(idx, range)) ? range : NSMakeRange(NSNotFound, 0)];
-}
-
-- (void)mouseExited:(NSEvent *)event
-{
-    [self setHoveredRange:NSMakeRange(NSNotFound, 0)];
-    [super mouseExited:event];
-}
-
-- (void)setHoveredRange:(NSRange)range
-{
-    if( NSEqualRanges(m_HoveredRange, range) )
-        return;
-    const NSRange prev = m_HoveredRange;
-    m_HoveredRange = range;
-    // Rounded hover is drawn in drawRect: (NSBackgroundColorAttributeName is rectangular only).
-    if( prev.location != NSNotFound )
-        [self setNeedsDisplayInRect:[self nc_hoverBackgroundRectForCharacterRange:prev]];
-    if( range.location != NSNotFound )
-        [self setNeedsDisplayInRect:[self nc_hoverBackgroundRectForCharacterRange:range]];
-}
-
-- (NSRect)nc_hoverBackgroundRectForCharacterRange:(NSRange)range
-{
-    if( range.location == NSNotFound || range.length == 0 )
-        return NSZeroRect;
-    if( self.textStorage.length == 0 || range.location >= self.textStorage.length )
-        return NSZeroRect;
-    NSLayoutManager *const lm = self.layoutManager;
-    NSTextContainer *const tc = self.textContainer;
-    if( !lm || !tc )
-        return NSZeroRect;
-
-    NSRange actual = {};
-    const NSRange glyph_range = [lm glyphRangeForCharacterRange:range actualCharacterRange:&actual];
-    if( glyph_range.length == 0 )
-        return NSZeroRect;
-
-    NSRect r = [lm boundingRectForGlyphRange:glyph_range inTextContainer:tc];
-    const NSPoint o = [self textContainerOrigin];
-    r.origin.x += o.x;
-    r.origin.y += o.y;
-
-    static constexpr CGFloat kPadX = 2.0;
-    static constexpr CGFloat kPadY = 0.5;
-    r = NSInsetRect(r, -kPadX, 0.0);
-    const NSRect line = NCPanelPathBarTypographicLineRectInStripBounds(self.bounds, self.font);
-    r.origin.y = NSMinY(line) - kPadY;
-    r.size.height = NSHeight(line) + (2.0 * kPadY);
-    r = NSIntersectionRect(r, self.bounds);
-    if( r.size.height < 2.0 )
-        return NSZeroRect;
-
-    r.origin.x = std::floor(r.origin.x) + 0.5;
-    r.origin.y = std::floor(r.origin.y) + 0.5;
-    r.size.width = std::ceil(r.size.width);
-    r.size.height = std::ceil(r.size.height);
-    return r;
-}
-
-- (void)drawRect:(NSRect)dirtyRect
-{
-    if( m_HoveredRange.location != NSNotFound && self.pathAccentColor ) {
-        const NSRect r = [self nc_hoverBackgroundRectForCharacterRange:m_HoveredRange];
-        if( !NSIsEmptyRect(NSIntersectionRect(dirtyRect, r)) ) {
-            [self.pathAccentColor setFill];
-            const CGFloat radius = std::min<CGFloat>(4.0, std::floor(r.size.height * 0.5));
-            [[NSBezierPath bezierPathWithRoundedRect:r xRadius:radius yRadius:radius] fill];
+    NSMutableArray<NCPanelPathSegment *> *const out = [NSMutableArray array];
+    NSInteger last_nonempty = -1;
+    for( NSInteger i = static_cast<NSInteger>(_crumbs.size()) - 1; i >= 0; --i ) {
+        if( _crumbs[static_cast<size_t>(i)].label.length ) {
+            last_nonempty = i;
+            break;
         }
     }
-    [super drawRect:dirtyRect];
-}
-
-- (void)clearHover
-{
-    [self setHoveredRange:NSMakeRange(NSNotFound, 0)];
-}
-
-- (void)layout
-{
-    [super layout];
-    if( self.window != nil )
-        [self.window invalidateCursorRectsForView:self];
-}
-
-- (void)copy:(id)sender
-{
-    (void)sender;
-    NSString *const s = self.string;
-    if( s.length == 0 )
-        return;
-    NSPasteboard *const pb = NSPasteboard.generalPasteboard;
-    [pb clearContents];
-    [pb setString:s forType:NSPasteboardTypeString];
-}
-
-- (BOOL)validateMenuItem:(NSMenuItem *)item
-{
-    if( item.action == @selector(copy:) )
-        return self.string.length > 0;
-    return [super validateMenuItem:item];
-}
-
-- (void)cancelOperation:(id)sender
-{
-    NCPanelViewHeader *const h = self.pathHeader;
-    if( h && [h pathBarConsumeCancelIfFullPathSelectionActive] )
-        return;
-    [super cancelOperation:sender];
-}
-
-- (NSMenu *)menuForEvent:(NSEvent *)event
-{
-    NCPanelViewHeader *const header = self.pathHeader;
-    // With selectable=NO (breadcrumbs), AppKit often never calls the text delegate for a menu; we handle it here.
-    // Full-path selection uses selectable=YES and keeps the standard NSTextView menu only.
-    if( header && [header panelPathBarFullPathSelectionActive] )
-        return [super menuForEvent:event];
-    if( !header || !header.pathBarContextMenuAction )
-        return [super menuForEvent:event];
-    const NSPoint p = [self convertPoint:event.locationInWindow fromView:nil];
-    NSString *const path = [header posixPathForPathBarContextMenuAtPoint:p];
-    if( path.length == 0 )
-        return [super menuForEvent:event];
-    return [header pathBarContextMenuForPOSIXPath:path];
-}
-
-- (BOOL)nc_pointIsInsideLaidOutPathGlyphs:(NSPoint)p_in_view_coords
-{
-    if( self.textStorage.length == 0 )
-        return NO;
-    NSLayoutManager *const lm = self.layoutManager;
-    NSTextContainer *const tc = self.textContainer;
-    NSRect used = [lm usedRectForTextContainer:tc];
-    if( used.size.width <= 0 || used.size.height <= 0 )
-        return NO;
-    const NSPoint o = [self textContainerOrigin];
-    used.origin.x += o.x;
-    used.origin.y += o.y;
-    return NSPointInRect(p_in_view_coords, used);
-}
-
-- (void)mouseDown:(NSEvent *)event
-{
-    if( !self.pathHeader ) {
-        [super mouseDown:event];
-        return;
-    }
-    if( ![self.pathHeader panelPathBarIsInteractive] ) {
-        [super mouseDown:event];
-        return;
-    }
-
-    const NSPoint p = [self convertPoint:event.locationInWindow fromView:nil];
-    const bool over_glyphs = [self nc_pointIsInsideLaidOutPathGlyphs:p];
-
-    if( event.clickCount >= 2 && !over_glyphs ) {
-        [self.pathHeader beginPathBarFullPathSelection];
-        return;
-    }
-
-    if( !over_glyphs )
-        return;
-
-    const NSUInteger len = self.textStorage.length;
-    const NSUInteger idx = [self characterIndexForInsertionAtPoint:p];
-    if( len == 0 || idx >= len )
-        return;
-
-    NSRange attr_range = {};
-    id is_current = [self.textStorage attribute:NCPanelPathBarCurrentCrumbAttributeName
-                                        atIndex:idx
-                                 effectiveRange:&attr_range];
-    if( is_current && NSLocationInRange(idx, attr_range) ) {
-        [self.pathHeader beginPathBarFullPathSelection];
-        return;
-    }
-
-    NSRange link_range = {};
-    id link = [self.textStorage attribute:NSLinkAttributeName atIndex:idx effectiveRange:&link_range];
-    if( link && NSLocationInRange(idx, link_range) ) {
-        id<NSTextViewDelegate> dg = self.delegate;
-        if( [dg respondsToSelector:@selector(textView:clickedOnLink:atIndex:)] ) {
-            [dg textView:self clickedOnLink:link atIndex:link_range.location];
+    NSInteger crumb_idx = -1;
+    for( const auto &crumb : _crumbs ) {
+        ++crumb_idx;
+        if( !crumb.label.length )
+            continue;
+        NCPanelPathSegment *const s = [NCPanelPathSegment new];
+        s.title = crumb.label;
+        if( crumb.navigate_to_vfs_path ) {
+            NSString *const p = [NSString stringWithUTF8String:crumb.navigate_to_vfs_path->c_str()];
+            s.navigatePOSIXPath = p;
         }
+        s.isCurrentDirectory = (crumb_idx == last_nonempty);
+        [out addObject:s];
     }
+    return out;
 }
 
-@end
+static NSArray<NCPanelPathSegment *> *PanelHeaderMakePlainSegments(NSString *_path)
+{
+    NCPanelPathSegment *const s = [NCPanelPathSegment new];
+    s.title = _path ?: @"";
+    s.isCurrentDirectory = YES;
+    return @[s];
+}
 
-@interface NCPanelViewHeader ()
+@interface NCPanelViewHeader () <NCPanelBreadcrumbsViewDelegate>
 @property(nonatomic) IBOutlet NSMenu *sortMenuPopup;
-- (void)updatePathBarHeightConstraints;
+- (void)refreshPathBarContent;
+- (void)pathBarApplyEditedPOSIXPath:(NSString *)path;
 @end
 
 @implementation NCPanelViewHeader {
     NSView *m_PathArea;
-    NCPanelPathDisplayTextView *m_PathTextView;
+    NCPanelPathBarView *m_PathBar;
     NSTextField *m_SearchTextField;
     NSTextField *m_SearchMatchesField;
     NSButton *m_SearchMagGlassButton;
@@ -401,33 +118,26 @@ PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColo
         m_PathArea.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_PathArea];
 
-        m_PathTextView = [[NCPanelPathDisplayTextView alloc] initWithFrame:NSRect()];
-        m_PathTextView.pathHeader = self;
-        m_PathTextView.translatesAutoresizingMaskIntoConstraints = false;
-        m_PathTextView.editable = false;
-        m_PathTextView.selectable = false;
-        m_PathTextView.richText = true;
-        m_PathTextView.importsGraphics = false;
-        m_PathTextView.drawsBackground = false;
-        m_PathTextView.focusRingType = NSFocusRingTypeNone;
-        m_PathTextView.horizontallyResizable = false;
-        m_PathTextView.verticallyResizable = false;
-        m_PathTextView.textContainer.lineFragmentPadding = 0;
-        m_PathTextView.textContainer.widthTracksTextView = true;
-        m_PathTextView.textContainer.heightTracksTextView = true;
-        m_PathTextView.textContainerInset = NSMakeSize(0, 0);
-        m_PathTextView.alignment = NSTextAlignmentCenter;
-        m_PathTextView.maxSize = NSMakeSize(CGFLOAT_MAX, CGFLOAT_MAX);
-        m_PathTextView.minSize = NSMakeSize(0, 0);
-        m_PathTextView.delegate = self;
-        [m_PathArea addSubview:m_PathTextView];
+        m_PathBar = [[NCPanelPathBarView alloc] initWithFrame:NSRect()];
+        m_PathBar.translatesAutoresizingMaskIntoConstraints = false;
+        [m_PathArea addSubview:m_PathBar];
 
         [NSLayoutConstraint activateConstraints:@[
-            [m_PathTextView.leadingAnchor constraintEqualToAnchor:m_PathArea.leadingAnchor],
-            [m_PathTextView.trailingAnchor constraintEqualToAnchor:m_PathArea.trailingAnchor],
-            [m_PathTextView.topAnchor constraintEqualToAnchor:m_PathArea.topAnchor],
-            [m_PathTextView.bottomAnchor constraintEqualToAnchor:m_PathArea.bottomAnchor],
+            [m_PathBar.leadingAnchor constraintEqualToAnchor:m_PathArea.leadingAnchor],
+            [m_PathBar.trailingAnchor constraintEqualToAnchor:m_PathArea.trailingAnchor],
+            [m_PathBar.topAnchor constraintEqualToAnchor:m_PathArea.topAnchor],
+            [m_PathBar.bottomAnchor constraintEqualToAnchor:m_PathArea.bottomAnchor],
         ]];
+
+        __weak NCPanelViewHeader *weak_path_header = self;
+        m_PathBar.onCommitEditedPath = ^(NSString *path) {
+            if( NCPanelViewHeader *const h = weak_path_header )
+                [h pathBarApplyEditedPOSIXPath:path];
+        };
+        m_PathBar.onCancelFullPathEdit = ^{
+            if( NCPanelViewHeader *const h = weak_path_header )
+                [h cancelPathBarFullPathSelection];
+        };
 
         m_SearchTextField = [[NSTextField alloc] initWithFrame:NSRect()];
         m_SearchTextField.stringValue = @"";
@@ -506,11 +216,10 @@ PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColo
         [self setupLayout];
 
         // Own strip height here so it does not depend on PanelView adding an external height constraint.
-        m_StripHeightConstraint = [self.heightAnchor constraintEqualToConstant:1.0];
+        m_StripHeightConstraint = [self.heightAnchor constraintEqualToConstant:NCPanelViewHeaderPathBarFixedHeight];
         m_StripHeightConstraint.priority = NSLayoutPriorityRequired;
         m_StripHeightConstraint.identifier = @"NCPanelViewHeader.StripHeight";
         m_StripHeightConstraint.active = YES;
-        [self updatePathBarHeightConstraints];
 
         __weak NCPanelViewHeader *weak_self = self;
         m_Theme->ObserveChanges([weak_self] {
@@ -559,8 +268,8 @@ PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColo
         return;
     }
     const NSPoint p = event.locationInWindow;
-    const NSRect tv_in_window = [m_PathTextView convertRect:m_PathTextView.bounds toView:nil];
-    if( NSPointInRect(p, tv_in_window) )
+    const NSRect bar_in_window = [m_PathBar convertRect:m_PathBar.bounds toView:nil];
+    if( NSPointInRect(p, bar_in_window) )
         return;
     [self cancelPathBarFullPathSelection];
 }
@@ -574,23 +283,13 @@ PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColo
 
     [self removePathBarOutsideClickMonitorIfNeeded];
 
-    [m_PathTextView clearHover];
+    m_PathBar.breadcrumbsView.hoveredSegmentIndex = -1;
 
     NSString *const full = m_LastFullPathForEditing ?: @"";
     NSFont *const font = m_Theme->Font();
     NSColor *const text_color = m_Active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
-    NSMutableAttributedString *const as = PanelHeaderBuildPlainPathAttributedString(full, font, text_color);
-    [m_PathTextView.textStorage setAttributedString:as];
-    m_PathTextView.linkTextAttributes = @{};
-    m_PathTextView.editable = false;
-    m_PathTextView.selectable = true;
-    NSColor *const accent = m_Theme->PathAccentColor();
-    m_PathTextView.selectedTextAttributes =
-        @{NSBackgroundColorAttributeName: accent ?: NSColor.selectedTextBackgroundColor};
     m_PathBarFullPathSelectionActive = true;
-
-    [self.window makeFirstResponder:m_PathTextView];
-    [m_PathTextView setSelectedRange:NSMakeRange(0, full.length)];
+    [m_PathBar enterFullPathEditWithString:full font:font textColor:text_color];
 
     __weak NCPanelViewHeader *weak_header = self;
     m_PathBarOutsideClickMonitor =
@@ -607,7 +306,7 @@ PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColo
 - (void)setupAppearance
 {
     NSFont *const font = m_Theme->Font();
-    m_PathTextView.font = font;
+    m_PathBar.pathEditField.font = font;
     m_SearchTextField.font = font;
     m_SearchMatchesField.font = font;
 
@@ -624,48 +323,66 @@ PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColo
     m_SearchClearButton.contentTintColor = text_color;
     m_SearchMagGlassButton.contentTintColor = text_color;
     self.needsDisplay = true;
-    [self updatePathBarHeightConstraints];
 
-    m_PathTextView.pathAccentColor = m_Theme->PathAccentColor();
     if( m_PathBarFullPathSelectionActive ) {
-        NSColor *const accent = m_Theme->PathAccentColor();
-        m_PathTextView.selectedTextAttributes =
-            @{NSBackgroundColorAttributeName: accent ?: NSColor.selectedTextBackgroundColor};
+        m_PathBar.pathEditField.font = font;
+        m_PathBar.pathEditField.textColor = text_color;
+        [m_PathBar syncPathEditFieldVerticalAlignmentWithFont:font];
     }
     else {
-        [self refreshPathBarAttributedText];
+        [self refreshPathBarContent];
     }
 }
 
-- (void)refreshPathBarAttributedText
+- (void)refreshPathBarContent
 {
     if( m_PathBarFullPathSelectionActive )
         return;
-    [m_PathTextView clearHover];
+    m_PathBar.breadcrumbsView.hoveredSegmentIndex = -1;
     NSFont *const font = m_Theme->Font();
     NSColor *const text_color = m_Active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
-    m_PathTextView.pathAccentColor = m_Theme->PathAccentColor();
-    m_PathTextView.editable = false;
+    NSColor *const sep = [text_color colorWithAlphaComponent:0.55];
+    NSColor *const accent = m_Theme->PathAccentColor();
+    NCPanelBreadcrumbsView *const bv = m_PathBar.breadcrumbsView;
+    bv.crumbFont = font;
+    bv.textColor = text_color;
+    bv.linkColor = text_color;
+    bv.separatorColor = sep;
+    bv.hoverFillColor = accent ? [accent colorWithAlphaComponent:0.22] : [[NSColor whiteColor] colorWithAlphaComponent:0.08];
+
+    __weak NCPanelViewHeader *weak_self = self;
+    __weak NCPanelBreadcrumbsView *weak_bv = bv;
+    bv.menuForEventBlock = ^NSMenu *(NSEvent *event) {
+        NCPanelBreadcrumbsView *const b = weak_bv;
+        NCPanelViewHeader *const h = weak_self;
+        if( !b || !h || !h.pathBarContextMenuAction )
+            return nil;
+        const NSPoint p = [b convertPoint:event.locationInWindow fromView:nil];
+        NSString *const path = [h posixPathForPathBarContextMenuAtPoint:p];
+        if( path.length == 0 )
+            return nil;
+        return [h pathBarContextMenuForPOSIXPath:path];
+    };
+
     if( m_PathBarInteractive && !m_LastBreadcrumbs.empty() ) {
-        NSMutableAttributedString *const as =
-            PanelHeaderBuildInteractivePathAttributedString(m_LastBreadcrumbs, font, text_color);
-        [m_PathTextView.textStorage setAttributedString:as];
-        m_PathTextView.linkTextAttributes = @{
-            NSForegroundColorAttributeName: text_color,
-            NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),
-        };
-        // selectable=YES shows an I-beam over the whole strip; keep NO and use context menu / full-path selection.
-        m_PathTextView.selectable = false;
+        bv.segments = PanelHeaderMakePathSegments(m_LastBreadcrumbs);
+        bv.crumbDelegate = self;
     }
     else {
-        NSMutableAttributedString *const as =
-            PanelHeaderBuildPlainPathAttributedString(m_LastPlainPath ?: @"", font, text_color);
-        [m_PathTextView.textStorage setAttributedString:as];
-        m_PathTextView.linkTextAttributes = @{};
-        m_PathTextView.selectable = false;
+        bv.segments = PanelHeaderMakePlainSegments(m_LastPlainPath ?: @"");
+        bv.crumbDelegate = nil;
     }
-    if( self.window != nil )
-        [self.window invalidateCursorRectsForView:m_PathTextView];
+    [m_PathBar exitFullPathEdit];
+}
+
+- (void)pathBarApplyEditedPOSIXPath:(NSString *)path
+{
+    const char *const raw = path.UTF8String;
+    std::string utf8 = raw ? std::string(raw) : std::string();
+    utf8 = NormalizePanelHeaderPOSIXPathForActions(utf8);
+    if( m_PathNavigateCallback )
+        m_PathNavigateCallback(utf8);
+    [self cancelPathBarFullPathSelection];
 }
 
 - (void)setupLayout
@@ -714,8 +431,8 @@ PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColo
                                                                    views:views]];
 
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_PathArea, self)];
-    // m_PathArea has no intrinsic height; keep path row height in sync with the adaptive strip height.
-    m_PathAreaHeightConstraint = [m_PathArea.heightAnchor constraintEqualToConstant:1.0];
+    m_PathAreaHeightConstraint =
+        [m_PathArea.heightAnchor constraintEqualToConstant:NCPanelViewHeaderPathBarFixedHeight];
     [NSLayoutConstraint activateConstraints:@[
         m_PathAreaHeightConstraint,
         [m_PathArea.topAnchor constraintGreaterThanOrEqualToAnchor:self.topAnchor],
@@ -726,15 +443,6 @@ PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColo
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchMatchesField, self)];
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchClearButton, self)];
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SortButton, self)];
-}
-
-- (void)updatePathBarHeightConstraints
-{
-    const CGFloat row_h = NCPanelPathBarAdaptiveRowHeight(m_Theme ? m_Theme->Font() : nil, self);
-    if( m_PathAreaHeightConstraint )
-        m_PathAreaHeightConstraint.constant = row_h;
-    if( m_StripHeightConstraint )
-        m_StripHeightConstraint.constant = row_h;
 }
 
 - (BOOL)isOpaque
@@ -772,7 +480,7 @@ PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColo
     m_LastFullPathForEditing = nil;
     m_LastPOSIXPathForActions = nil;
     m_LastPlainPath = [_path copy] ?: @"";
-    [self refreshPathBarAttributedText];
+    [self refreshPathBarContent];
 }
 
 - (void)setInteractiveBreadcrumbs:(const std::vector<PanelHeaderBreadcrumb> &)_breadcrumbs
@@ -785,16 +493,15 @@ PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColo
     m_LastFullPathForEditing = [_full_path_for_editing copy];
     m_LastPOSIXPathForActions = [_posix_path_for_actions copy];
     m_LastPlainPath = nil;
-    [self refreshPathBarAttributedText];
+    [self refreshPathBarContent];
 }
 
 - (void)endPathBarFullPathSelectionUI
 {
     [self removePathBarOutsideClickMonitorIfNeeded];
     m_PathBarFullPathSelectionActive = false;
-    m_PathTextView.editable = false;
-    m_PathTextView.selectable = false;
-    [self refreshPathBarAttributedText];
+    [m_PathBar exitFullPathEdit];
+    [self refreshPathBarContent];
 }
 
 - (void)cancelPathBarFullPathSelection
@@ -804,74 +511,40 @@ PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColo
         [self.window makeFirstResponder:self.defaultResponder];
 }
 
-- (BOOL)textView:(NSTextView *)textView clickedOnLink:(id)link atIndex:(NSUInteger)charIndex
+- (void)breadcrumbsView:(NCPanelBreadcrumbsView *) [[maybe_unused]] v didActivatePOSIXPath:(NSString *)path
 {
-    (void)textView;
-    (void)charIndex;
-    if( auto url = nc::objc_cast<NSURL>(link) ) {
-        if( ![url.scheme isEqualToString:@"x-nc-panel-path"] )
-            return NO;
-        NSString *p = url.path;
-        if( !p.length )
-            return NO;
-        const char *const raw = p.UTF8String;
-        if( !raw )
-            return NO;
-        const std::string utf8{raw};
-        if( m_PathNavigateCallback )
-            m_PathNavigateCallback(utf8);
-        return YES;
-    }
-    return NO;
-}
-
-- (nullable NSMenu *)textView:(NSTextView *)textView
-                         menu:(NSMenu *)menu
-                     forEvent:(NSEvent *)event
-                      atIndex:(NSUInteger)charIndex
-{
-    (void)charIndex;
-    if( textView != m_PathTextView || !self.pathBarContextMenuAction )
-        return menu;
-    // Full-path mode: leave AppKit's default menu (Copy, etc.); breadcrumb mode uses our items below.
-    if( m_PathBarFullPathSelectionActive )
-        return menu;
-    const NSPoint p = [textView convertPoint:event.locationInWindow fromView:nil];
-    NSString *const path = [self posixPathForPathBarContextMenuAtPoint:p];
     if( path.length == 0 )
-        return menu;
-    return [self pathBarContextMenuForPOSIXPath:path];
+        return;
+    const char *const raw = path.UTF8String;
+    if( !raw )
+        return;
+    const std::string utf8{raw};
+    if( m_PathNavigateCallback )
+        m_PathNavigateCallback(utf8);
 }
 
-- (nullable NSString *)posixPathForPathBarContextMenuAtPoint:(NSPoint)pInTextViewCoords
+- (void)breadcrumbsViewDidActivateCurrentSegment:(NCPanelBreadcrumbsView *) [[maybe_unused]] v
 {
-    if( m_PathTextView.textStorage.length == 0 )
+    [self beginPathBarFullPathSelection];
+}
+
+- (void)breadcrumbsViewDidRequestFullPathEdit:(NCPanelBreadcrumbsView *) [[maybe_unused]] v
+{
+    [self beginPathBarFullPathSelection];
+}
+
+- (nullable NSString *)posixPathForPathBarContextMenuAtPoint:(NSPoint)pInBreadcrumbsCoords
+{
+    if( m_PathBarFullPathSelectionActive )
         return nil;
-    if( ![m_PathTextView nc_pointIsInsideLaidOutPathGlyphs:pInTextViewCoords] )
+    NCPanelBreadcrumbsView *const bv = m_PathBar.breadcrumbsView;
+    if( bv.segments.count == 0 )
         return nil;
     if( !m_PathBarInteractive ) {
         NSString *const s = m_LastPlainPath ?: @"";
         return s.length ? s : nil;
     }
-    const NSUInteger len = m_PathTextView.textStorage.length;
-    NSUInteger idx = [m_PathTextView characterIndexForInsertionAtPoint:pInTextViewCoords];
-    if( idx >= len ) {
-        NSString *const posix = m_LastPOSIXPathForActions ?: @"";
-        return posix.length ? posix : nil;
-    }
-    NSRange link_range = {};
-    id link = [m_PathTextView.textStorage attribute:NSLinkAttributeName atIndex:idx effectiveRange:&link_range];
-    if( link && NSLocationInRange(idx, link_range) ) {
-        if( auto url = nc::objc_cast<NSURL>(link) ) {
-            if( [url.scheme isEqualToString:@"x-nc-panel-path"] ) {
-                NSString *const p = url.path;
-                return p.length ? p : nil;
-            }
-        }
-        return nil;
-    }
-    NSString *const posix = m_LastPOSIXPathForActions ?: @"";
-    return posix.length ? posix : nil;
+    return [bv posixPathAtViewPoint:pInBreadcrumbsCoords fallbackPOSIXPath:m_LastPOSIXPathForActions plainPath:m_LastPlainPath];
 }
 
 - (NSMenu *)pathBarContextMenuForPOSIXPath:(NSString *)path
@@ -1129,103 +802,6 @@ PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColo
 }
 
 @end
-
-static NSURL *PanelHeaderMakeLinkURLFromVFSPath(const std::string &_path) noexcept
-{
-    if( _path.empty() || _path.front() != '/' )
-        return nil;
-    NSURLComponents *const c = [[NSURLComponents alloc] init];
-    c.scheme = @"x-nc-panel-path";
-    c.path = [NSString stringWithUTF8String:_path.c_str()];
-    return c.URL;
-}
-
-static NSMutableAttributedString *
-PanelHeaderBuildInteractivePathAttributedString(const std::vector<PanelHeaderBreadcrumb> &_crumbs,
-                                                NSFont *_font,
-                                                NSColor *_text_color)
-{
-    NSMutableParagraphStyle *const paragraph = [[NSMutableParagraphStyle alloc] init];
-    paragraph.lineBreakMode = NSLineBreakByTruncatingHead;
-    paragraph.alignment = NSTextAlignmentCenter;
-
-    NSDictionary *const base_attrs = @{
-        NSFontAttributeName: _font,
-        NSForegroundColorAttributeName: _text_color,
-        NSParagraphStyleAttributeName: paragraph,
-    };
-
-    NSColor *const sep_color = [_text_color colorWithAlphaComponent:0.55];
-    NSDictionary *const sep_attrs = @{
-        NSFontAttributeName: _font,
-        NSForegroundColorAttributeName: sep_color,
-        NSParagraphStyleAttributeName: paragraph,
-    };
-
-    auto *const result = [[NSMutableAttributedString alloc] init];
-    bool first = true;
-
-    // Find last non-empty crumb index for marking the current segment.
-    NSInteger last_crumb_idx = -1;
-    for( NSInteger i = static_cast<NSInteger>(_crumbs.size()) - 1; i >= 0; --i ) {
-        if( _crumbs[static_cast<size_t>(i)].label.length ) {
-            last_crumb_idx = i;
-            break;
-        }
-    }
-
-    NSInteger crumb_idx = -1;
-    for( const auto &crumb : _crumbs ) {
-        ++crumb_idx;
-        if( !crumb.label.length )
-            continue;
-        if( !first )
-            [result appendAttributedString:[[NSAttributedString alloc] initWithString:@" › " attributes:sep_attrs]];
-        first = false;
-
-        const bool is_last = (crumb_idx == last_crumb_idx);
-        if( crumb.navigate_to_vfs_path ) {
-            NSURL *const url = PanelHeaderMakeLinkURLFromVFSPath(*crumb.navigate_to_vfs_path);
-            if( url ) {
-                NSMutableDictionary *const attrs = [base_attrs mutableCopy];
-                attrs[NSLinkAttributeName] = url;
-                attrs[NSUnderlineStyleAttributeName] = @(NSUnderlineStyleNone);
-                if( is_last )
-                    attrs[NCPanelPathBarCurrentCrumbAttributeName] = @YES;
-                [result appendAttributedString:[[NSAttributedString alloc] initWithString:crumb.label
-                                                                               attributes:attrs]];
-            }
-            else {
-                NSMutableDictionary *const attrs = [base_attrs mutableCopy];
-                if( is_last )
-                    attrs[NCPanelPathBarCurrentCrumbAttributeName] = @YES;
-                [result appendAttributedString:[[NSAttributedString alloc] initWithString:crumb.label
-                                                                               attributes:attrs]];
-            }
-        }
-        else {
-            NSMutableDictionary *const attrs = [base_attrs mutableCopy];
-            if( is_last )
-                attrs[NCPanelPathBarCurrentCrumbAttributeName] = @YES;
-            [result appendAttributedString:[[NSAttributedString alloc] initWithString:crumb.label attributes:attrs]];
-        }
-    }
-    return result;
-}
-
-static NSMutableAttributedString *
-PanelHeaderBuildPlainPathAttributedString(NSString *_path, NSFont *_font, NSColor *_text_color)
-{
-    NSMutableParagraphStyle *const paragraph = [[NSMutableParagraphStyle alloc] init];
-    paragraph.lineBreakMode = NSLineBreakByTruncatingHead;
-    paragraph.alignment = NSTextAlignmentCenter;
-    NSDictionary *const attrs = @{
-        NSFontAttributeName: _font,
-        NSForegroundColorAttributeName: _text_color,
-        NSParagraphStyleAttributeName: paragraph,
-    };
-    return [[NSMutableAttributedString alloc] initWithString:_path ?: @"" attributes:attrs];
-}
 
 static void ChangeButtonAttrString(NSButton *_button, NSColor *_new_color, NSFont *_font)
 {

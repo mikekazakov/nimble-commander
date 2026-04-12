@@ -36,7 +36,7 @@ using NCPanelPathBarContextMenuActionBlock = void (^)(NSString *_Nonnull posixPa
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NCPanelViewHeader : NSView <NSTextFieldDelegate, NSTextViewDelegate>
+@interface NCPanelViewHeader : NSView <NSTextFieldDelegate>
 
 - (id)initWithFrame:(NSRect)frameRect NS_UNAVAILABLE;
 - (id)initWithFrame:(NSRect)frameRect theme:(std::unique_ptr<nc::panel::HeaderTheme>)_theme;

@@ -51,6 +51,13 @@ TEST_CASE(PREFIX "Constructs from JSON")
         'filePanelsHeaderActiveBackgroundColor': '#010107',\
         'filePanelsHeaderInactiveBackgroundColor': '#010108',\
         'filePanelsHeaderSeparatorColor': '#010109',\
+        'filePanelsHeaderPathSeparatorColor': '#01010A',\
+        'filePanelsHeaderPathHoverPadX': '6',\
+        'filePanelsHeaderPathHoverPadY': '0',\
+        'filePanelsHeaderPathHoverPadYTop': '3',\
+        'filePanelsHeaderPathHoverPadYBottom': '4',\
+        'filePanelsHeaderPathHoverCornerRadius': '8',\
+        'filePanelsHeaderPathAreaBottomInset': '2',\
         'filePanelsFooterFont': '@boldSystemFont,43',\
         'filePanelsFooterTextColor': '#01010A',\
         'filePanelsFooterActiveTextColor': '#01010B',\
@@ -124,6 +131,13 @@ TEST_CASE(PREFIX "Constructs from JSON")
     CHECK(t.FilePanelsHeaderActiveBackgroundColor().toHexStdString == "#010107");
     CHECK(t.FilePanelsHeaderInactiveBackgroundColor().toHexStdString == "#010108");
     CHECK(t.FilePanelsHeaderSeparatorColor().toHexStdString == "#010109");
+    CHECK(t.FilePanelsHeaderPathSeparatorColor().toHexStdString == "#01010A");
+    CHECK(t.FilePanelsHeaderPathHoverPadX() == 6);
+    CHECK(t.FilePanelsHeaderPathHoverPadY() == 0);
+    CHECK(t.FilePanelsHeaderPathHoverPadYTop() == 3);
+    CHECK(t.FilePanelsHeaderPathHoverPadYBottom() == 4);
+    CHECK(t.FilePanelsHeaderPathHoverCornerRadius() == 8);
+    CHECK(t.FilePanelsHeaderPathAreaBottomInset() == 2);
     CHECK([t.FilePanelsFooterFont() isEqualTo:[NSFont boldSystemFontOfSize:43]]);
     CHECK(t.FilePanelsFooterTextColor().toHexStdString == "#01010A");
     CHECK(t.FilePanelsFooterActiveTextColor().toHexStdString == "#01010B");
@@ -187,4 +201,27 @@ TEST_CASE(PREFIX "Constructs from JSON")
     CHECK(t.ViewerBackgroundColor().toHexStdString == "#01013D");
     CHECK(t.FilePanelsItemsColoringRules().size() == 1);
     CHECK(t.FilePanelsItemsColoringRules().at(0) == Theme::ColoringRule{});
+}
+
+TEST_CASE(PREFIX "Path hover Y top/bottom falls back to legacy padY")
+{
+    const auto json = "{\
+        'themeName': 'meow',\
+        'filePanelsHeaderFont': '@boldSystemFont,42',\
+        'filePanelsHeaderTextColor': '#010105',\
+        'filePanelsHeaderActiveTextColor': '#010106',\
+        'filePanelsHeaderActiveBackgroundColor': '#010107',\
+        'filePanelsHeaderInactiveBackgroundColor': '#010108',\
+        'filePanelsHeaderSeparatorColor': '#010109',\
+        'filePanelsHeaderPathSeparatorColor': '#01010A',\
+        'filePanelsHeaderPathAccentColor': '#01010B',\
+        'filePanelsHeaderPathHoverPadX': '6',\
+        'filePanelsHeaderPathHoverPadY': '2',\
+        'filePanelsHeaderPathHoverCornerRadius': '8'\
+    }";
+    const Theme t{JSONToObj(json), JSONToObj("{}")};
+    CHECK(t.FilePanelsHeaderPathHoverPadY() == 2);
+    CHECK(t.FilePanelsHeaderPathHoverPadYTop() == 2);
+    CHECK(t.FilePanelsHeaderPathHoverPadYBottom() == 2);
+    CHECK(t.FilePanelsHeaderPathAreaBottomInset() == 1);
 }

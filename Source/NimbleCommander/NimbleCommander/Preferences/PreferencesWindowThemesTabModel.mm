@@ -110,6 +110,7 @@ NSArray *BuildThemeSettingsNodesTree()
         SpawnColorNode(@"Active background", "filePanelsHeaderActiveBackgroundColor"),
         SpawnColorNode(@"Inactive background", "filePanelsHeaderInactiveBackgroundColor"),
         SpawnColorNode(@"Separator", "filePanelsHeaderSeparatorColor"),
+        SpawnColorNode(@"Path bar separator", "filePanelsHeaderPathSeparatorColor"),
         SpawnColorNode(@"Path bar accent", "filePanelsHeaderPathAccentColor")
     ];
 

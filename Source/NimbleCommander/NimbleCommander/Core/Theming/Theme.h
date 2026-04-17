@@ -41,16 +41,6 @@ public:
     Theme(const nc::config::Value &_theme_data, const nc::config::Value &_backup_theme_data);
     ~Theme();
 
-    /**
-     * When a color key is absent from the in-memory theme document shown in Preferences, returns the
-     * effective runtime color from merging persisted theme JSON with its backup (optional / derived keys).
-     * Call only after ThemePersistence::ExtractColor(editor_doc, key) returned nil.
-     */
-    [[nodiscard]] static NSColor *
-    ColorForPreferencesEditorFromMergedTheme(const nc::config::Value *_persisted_theme_doc,
-                                             const nc::config::Value *_backup_theme_doc,
-                                             const char *_key);
-
     // General info querying ///////////////////////////////////////////////////////////////////////
     [[nodiscard]] uint64_t Generation() const noexcept; // monotonically increasing starting with 1
 
@@ -89,7 +79,14 @@ public:
     [[nodiscard]] NSColor *FilePanelsHeaderActiveBackgroundColor() const noexcept;
     [[nodiscard]] NSColor *FilePanelsHeaderInactiveBackgroundColor() const noexcept;
     [[nodiscard]] NSColor *FilePanelsHeaderSeparatorColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsHeaderPathSeparatorColor() const noexcept;
     [[nodiscard]] NSColor *FilePanelsHeaderPathAccentColor() const noexcept;
+    [[nodiscard]] unsigned FilePanelsHeaderPathHoverPadX() const noexcept;
+    [[nodiscard]] unsigned FilePanelsHeaderPathHoverPadY() const noexcept;
+    [[nodiscard]] unsigned FilePanelsHeaderPathHoverPadYTop() const noexcept;
+    [[nodiscard]] unsigned FilePanelsHeaderPathHoverPadYBottom() const noexcept;
+    [[nodiscard]] unsigned FilePanelsHeaderPathHoverCornerRadius() const noexcept;
+    [[nodiscard]] unsigned FilePanelsHeaderPathAreaBottomInset() const noexcept;
 
     // File Panels --> Footer bar settings /////////////////////////////////////////////////////////
     [[nodiscard]] NSFont *FilePanelsFooterFont() const noexcept;

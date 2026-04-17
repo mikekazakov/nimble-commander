@@ -5,8 +5,6 @@
 #include "ThemePersistence.h"
 #include <Utility/HexadecimalColor.h>
 #include <Config/RapidJSON.h>
-#include <cstring>
-#include <string_view>
 
 namespace nc {
 
@@ -30,7 +28,14 @@ struct Theme::Internals {
     NSColor *m_FilePanelsHeaderActiveBackgroundColor;
     NSColor *m_FilePanelsHeaderInactiveBackgroundColor;
     NSColor *m_FilePanelsHeaderSeparatorColor;
+    NSColor *m_FilePanelsHeaderPathSeparatorColor;
     NSColor *m_FilePanelsHeaderPathAccentColor;
+    unsigned m_FilePanelsHeaderPathHoverPadX;
+    unsigned m_FilePanelsHeaderPathHoverPadY;
+    unsigned m_FilePanelsHeaderPathHoverPadYTop;
+    unsigned m_FilePanelsHeaderPathHoverPadYBottom;
+    unsigned m_FilePanelsHeaderPathHoverCornerRadius;
+    unsigned m_FilePanelsHeaderPathAreaBottomInset;
     NSFont *m_FilePanelsFooterFont;
     NSColor *m_FilePanelsFooterTextColor;
     NSColor *m_FilePanelsFooterActiveTextColor;
@@ -136,13 +141,6 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
         panel::Log::Warn("Theme: unable to extract {} from both primary and backup documents", _path);
         return NSColor.blackColor;
     };
-    const auto ExtractOptionalColor = [&](const char *_path) -> NSColor * {
-        if( NSColor *const v = ThemePersistence::ExtractColor(doc, _path) )
-            return v;
-        if( NSColor *const v = ThemePersistence::ExtractColor(backup, _path) )
-            return v;
-        return nil;
-    };
     const auto ExtractSyntaxColor = [&](const char *_path) -> NSColor * {
         if( NSColor *const v = ThemePersistence::ExtractColor(doc, _path) )
             return v;
@@ -189,74 +187,49 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     I->m_FilePanelsHeaderActiveBackgroundColor = ExtractColor("filePanelsHeaderActiveBackgroundColor");
     I->m_FilePanelsHeaderInactiveBackgroundColor = ExtractColor("filePanelsHeaderInactiveBackgroundColor");
     I->m_FilePanelsHeaderSeparatorColor = ExtractColor("filePanelsHeaderSeparatorColor");
-    I->m_FilePanelsHeaderPathAccentColor = ExtractOptionalColor("filePanelsHeaderPathAccentColor");
-
-    // Match bundled Light / Dark themes (Config.json): when the key is missing or an inherited overlay
-    // would read wrong on the header.
-    const auto bundle_path_accent_for_appearance = [&]() -> NSColor * {
-        return I->m_ThemeAppearanceType == ThemeAppearance::Dark
-                   ? [NSColor colorWithHexString:std::string_view{"#FFFFFF24"}]
-                   : [NSColor colorWithHexString:std::string_view{"#0000001F"}];
+    I->m_FilePanelsHeaderPathSeparatorColor = ExtractColor("filePanelsHeaderPathSeparatorColor");
+    I->m_FilePanelsHeaderPathAccentColor = ExtractColor("filePanelsHeaderPathAccentColor");
+    constexpr unsigned kDefaultHeaderPathHoverPad = 2;
+    constexpr unsigned kDefaultHeaderPathHoverCornerRadius = 4;
+    constexpr unsigned kDefaultHeaderPathAreaBottomInset = 1;
+    constexpr unsigned kMaxHeaderPathHoverPad = 12;
+    constexpr unsigned kMaxHeaderPathHoverCornerRadius = 12;
+    constexpr unsigned kMaxHeaderPathAreaBottomInset = 8;
+    const auto extract_optional_header_metric = [&](const char *_path, unsigned max_value) -> std::optional<unsigned> {
+        if( const std::optional<unsigned> v = ThemePersistence::ExtractUInt(doc, _path) )
+            return std::min(v.value(), max_value);
+        if( const std::optional<unsigned> v = ThemePersistence::ExtractUInt(backup, _path) )
+            return std::min(v.value(), max_value);
+        return std::nullopt;
     };
-    if( I->m_FilePanelsHeaderPathAccentColor == nil )
-        I->m_FilePanelsHeaderPathAccentColor = bundle_path_accent_for_appearance();
-
-    // Custom themes often merge Light backup keys: semi-transparent black accent on a dark header reads as a hole.
-    {
-        NSColor *const path_bg =
-            I->m_FilePanelsHeaderActiveBackgroundColor ?: I->m_FilePanelsHeaderInactiveBackgroundColor;
-        const auto rgba_from_color = [](NSColor *c, CGFloat *r, CGFloat *g, CGFloat *bl, CGFloat *a) -> bool {
-            NSColor *const rgb = [c colorUsingColorSpace:NSColorSpace.genericRGBColorSpace];
-            if( !rgb )
-                return false;
-            const CGColorRef cg = rgb.CGColor;
-            if( !cg )
-                return false;
-            const size_t n = CGColorGetNumberOfComponents(cg);
-            const CGFloat *const p = CGColorGetComponents(cg);
-            if( n >= 4 ) {
-                *r = p[0];
-                *g = p[1];
-                *bl = p[2];
-                *a = p[3];
-                return true;
-            }
-            if( n == 2 ) {
-                *r = *g = *bl = p[0];
-                *a = p[1];
-                return true;
-            }
-            return false;
-        };
-        const auto overlay_darkens_header = [&](NSColor *ov) -> bool {
-            if( !path_bg || !ov )
-                return false;
-            CGFloat br;
-            CGFloat bgc;
-            CGFloat bb;
-            CGFloat ba;
-            CGFloat vr;
-            CGFloat vg;
-            CGFloat vb;
-            CGFloat va;
-            if( !rgba_from_color(path_bg, &br, &bgc, &bb, &ba) )
-                return false;
-            (void)ba;
-            if( !rgba_from_color(ov, &vr, &vg, &vb, &va) )
-                return false;
-            if( va <= 0.02 )
-                return false;
-            const auto lum = [](CGFloat r, CGFloat g, CGFloat bl) {
-                return (0.2126 * r) + (0.7152 * g) + (0.0722 * bl);
-            };
-            const CGFloat blum = lum(br, bgc, bb);
-            const CGFloat out_lum =
-                lum((br * (1.f - va)) + (vr * va), (bgc * (1.f - va)) + (vg * va), (bb * (1.f - va)) + (vb * va));
-            return (out_lum + 0.008f) < blum;
-        };
-        if( overlay_darkens_header(I->m_FilePanelsHeaderPathAccentColor) )
-            I->m_FilePanelsHeaderPathAccentColor = bundle_path_accent_for_appearance();
-    }
+    const auto extract_header_metric =
+        [&](const char *_path, unsigned fallback, unsigned max_value) -> unsigned {
+        if( const std::optional<unsigned> v = ThemePersistence::ExtractUInt(doc, _path) )
+            return std::min(v.value(), max_value);
+        if( const std::optional<unsigned> v = ThemePersistence::ExtractUInt(backup, _path) )
+            return std::min(v.value(), max_value);
+        panel::Log::Warn("Theme: unable to extract {} from both primary and backup documents", _path);
+        return fallback;
+    };
+    I->m_FilePanelsHeaderPathHoverPadX =
+        extract_header_metric("filePanelsHeaderPathHoverPadX", kDefaultHeaderPathHoverPad, kMaxHeaderPathHoverPad);
+    const unsigned legacy_hover_pad_y =
+        extract_optional_header_metric("filePanelsHeaderPathHoverPadY", kMaxHeaderPathHoverPad)
+            .value_or(kDefaultHeaderPathHoverPad);
+    I->m_FilePanelsHeaderPathHoverPadY = legacy_hover_pad_y;
+    I->m_FilePanelsHeaderPathHoverPadYTop =
+        extract_optional_header_metric("filePanelsHeaderPathHoverPadYTop", kMaxHeaderPathHoverPad).value_or(
+            legacy_hover_pad_y);
+    I->m_FilePanelsHeaderPathHoverPadYBottom =
+        extract_optional_header_metric("filePanelsHeaderPathHoverPadYBottom", kMaxHeaderPathHoverPad).value_or(
+            legacy_hover_pad_y);
+    I->m_FilePanelsHeaderPathHoverCornerRadius = extract_header_metric("filePanelsHeaderPathHoverCornerRadius",
+                                                                       kDefaultHeaderPathHoverCornerRadius,
+                                                                       kMaxHeaderPathHoverCornerRadius);
+    I->m_FilePanelsHeaderPathAreaBottomInset =
+        extract_header_metric("filePanelsHeaderPathAreaBottomInset",
+                              kDefaultHeaderPathAreaBottomInset,
+                              kMaxHeaderPathAreaBottomInset);
 
     I->m_FilePanelsListFont = ExtractFont("filePanelsListFont");
     I->m_FilePanelsListRowVerticalPadding = ExtractUInt("filePanelsListRowVerticalPadding");
@@ -555,9 +528,44 @@ NSColor *Theme::FilePanelsHeaderSeparatorColor() const noexcept
     return I->m_FilePanelsHeaderSeparatorColor;
 }
 
+NSColor *Theme::FilePanelsHeaderPathSeparatorColor() const noexcept
+{
+    return I->m_FilePanelsHeaderPathSeparatorColor;
+}
+
 NSColor *Theme::FilePanelsHeaderPathAccentColor() const noexcept
 {
     return I->m_FilePanelsHeaderPathAccentColor;
+}
+
+unsigned Theme::FilePanelsHeaderPathHoverPadX() const noexcept
+{
+    return I->m_FilePanelsHeaderPathHoverPadX;
+}
+
+unsigned Theme::FilePanelsHeaderPathHoverPadY() const noexcept
+{
+    return I->m_FilePanelsHeaderPathHoverPadY;
+}
+
+unsigned Theme::FilePanelsHeaderPathHoverPadYTop() const noexcept
+{
+    return I->m_FilePanelsHeaderPathHoverPadYTop;
+}
+
+unsigned Theme::FilePanelsHeaderPathHoverPadYBottom() const noexcept
+{
+    return I->m_FilePanelsHeaderPathHoverPadYBottom;
+}
+
+unsigned Theme::FilePanelsHeaderPathHoverCornerRadius() const noexcept
+{
+    return I->m_FilePanelsHeaderPathHoverCornerRadius;
+}
+
+unsigned Theme::FilePanelsHeaderPathAreaBottomInset() const noexcept
+{
+    return I->m_FilePanelsHeaderPathAreaBottomInset;
 }
 
 NSFont *Theme::FilePanelsBriefFont() const noexcept
@@ -813,27 +821,6 @@ NSColor *Theme::FilePanelsGeneralTopSeparatorColor() const noexcept
 NSColor *Theme::FilePanelsBriefGridColor() const noexcept
 {
     return I->m_FilePanelsBriefGridColor;
-}
-
-NSColor *Theme::ColorForPreferencesEditorFromMergedTheme(const nc::config::Value *_persisted_theme_doc,
-                                                         const nc::config::Value *_backup_theme_doc,
-                                                         const char *_key)
-{
-    if( !_key || !_persisted_theme_doc || !_backup_theme_doc )
-        return nil;
-    const Theme merged{*_persisted_theme_doc, *_backup_theme_doc};
-    using Getter = NSColor *(Theme::*)() const noexcept;
-    struct Entry {
-        const char *key;
-        Getter getter;
-    };
-    static constexpr Entry kEntries[] = {
-        {.key = "filePanelsHeaderPathAccentColor", .getter = &Theme::FilePanelsHeaderPathAccentColor},
-    };
-    for( const auto &e : kEntries )
-        if( std::strcmp(_key, e.key) == 0 )
-            return (merged.*(e.getter))();
-    return nil;
 }
 
 } // namespace nc

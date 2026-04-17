@@ -16,7 +16,13 @@ public:
     [[nodiscard]] virtual NSColor *ActiveBackgroundColor() const = 0;
     [[nodiscard]] virtual NSColor *InactiveBackgroundColor() const = 0;
     [[nodiscard]] virtual NSColor *SeparatorColor() const = 0;
+    [[nodiscard]] virtual NSColor *PathSeparatorColor() const = 0;
     [[nodiscard]] virtual NSColor *PathAccentColor() const = 0;
+    [[nodiscard]] virtual unsigned PathHoverPadX() const = 0;
+    [[nodiscard]] virtual unsigned PathHoverPadYTop() const = 0;
+    [[nodiscard]] virtual unsigned PathHoverPadYBottom() const = 0;
+    [[nodiscard]] virtual unsigned PathHoverCornerRadius() const = 0;
+    [[nodiscard]] virtual unsigned PathAreaBottomInset() const = 0;
     virtual void ObserveChanges(std::function<void()> _callback) = 0;
 };
 

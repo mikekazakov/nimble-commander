@@ -87,7 +87,7 @@ static NSArray<NCPanelPathSegment *> *PanelHeaderMakePlainSegments(NSString *_pa
     std::function<void(const std::string &)> m_PathNavigateCallback;
     id m_PathBarOutsideClickMonitor;
     NSLayoutConstraint *m_StripHeightConstraint;
-    NSLayoutConstraint *m_PathAreaHeightConstraint;
+    NSLayoutConstraint *m_PathAreaBottomConstraint;
 }
 
 @synthesize sortMode = m_SortMode;
@@ -112,7 +112,7 @@ static NSArray<NCPanelPathSegment *> *PanelHeaderMakePlainSegments(NSString *_pa
         m_PathBarInteractive = false;
         m_PathBarFullPathSelectionActive = false;
         m_StripHeightConstraint = nil;
-        m_PathAreaHeightConstraint = nil;
+        m_PathAreaBottomConstraint = nil;
 
         m_PathArea = [[NSView alloc] initWithFrame:NSRect()];
         m_PathArea.translatesAutoresizingMaskIntoConstraints = false;
@@ -311,6 +311,8 @@ static NSArray<NCPanelPathSegment *> *PanelHeaderMakePlainSegments(NSString *_pa
     m_SearchMatchesField.font = font;
 
     m_SeparatorLine.borderColor = m_Theme->SeparatorColor();
+    if( m_PathAreaBottomConstraint != nil )
+        m_PathAreaBottomConstraint.constant = -static_cast<CGFloat>(m_Theme->PathAreaBottomInset());
 
     const bool active = m_Active;
     m_Background = active ? m_Theme->ActiveBackgroundColor() : m_Theme->InactiveBackgroundColor();
@@ -341,14 +343,18 @@ static NSArray<NCPanelPathSegment *> *PanelHeaderMakePlainSegments(NSString *_pa
     m_PathBar.breadcrumbsView.hoveredSegmentIndex = -1;
     NSFont *const font = m_Theme->Font();
     NSColor *const text_color = m_Active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
-    NSColor *const sep = [text_color colorWithAlphaComponent:0.55];
     NSColor *const accent = m_Theme->PathAccentColor();
+    NSColor *const sep = m_Theme->PathSeparatorColor();
     NCPanelBreadcrumbsView *const bv = m_PathBar.breadcrumbsView;
     bv.crumbFont = font;
     bv.textColor = text_color;
     bv.linkColor = text_color;
     bv.separatorColor = sep;
-    bv.hoverFillColor = accent ? [accent colorWithAlphaComponent:0.22] : [[NSColor whiteColor] colorWithAlphaComponent:0.08];
+    bv.hoverFillColor = accent;
+    bv.hoverPadX = m_Theme->PathHoverPadX();
+    bv.hoverPadYTop = m_Theme->PathHoverPadYTop();
+    bv.hoverPadYBottom = m_Theme->PathHoverPadYBottom();
+    bv.hoverCornerRadius = m_Theme->PathHoverCornerRadius();
 
     __weak NCPanelViewHeader *weak_self = self;
     __weak NCPanelBreadcrumbsView *weak_bv = bv;
@@ -430,13 +436,12 @@ static NSArray<NCPanelPathSegment *> *PanelHeaderMakePlainSegments(NSString *_pa
                                                                  metrics:nil
                                                                    views:views]];
 
-    [self addConstraint:LayoutConstraintForCenteringViewVertically(m_PathArea, self)];
-    m_PathAreaHeightConstraint =
-        [m_PathArea.heightAnchor constraintEqualToConstant:NCPanelViewHeaderPathBarFixedHeight];
+    m_PathAreaBottomConstraint = [m_PathArea.bottomAnchor constraintEqualToAnchor:m_SeparatorLine.topAnchor
+                                                                          constant:-static_cast<CGFloat>(
+                                                                                       m_Theme->PathAreaBottomInset())];
     [NSLayoutConstraint activateConstraints:@[
-        m_PathAreaHeightConstraint,
-        [m_PathArea.topAnchor constraintGreaterThanOrEqualToAnchor:self.topAnchor],
-        [m_PathArea.bottomAnchor constraintLessThanOrEqualToAnchor:self.bottomAnchor],
+        [m_PathArea.topAnchor constraintEqualToAnchor:self.topAnchor],
+        m_PathAreaBottomConstraint,
     ]];
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchTextField, self)];
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchMagGlassButton, self)];

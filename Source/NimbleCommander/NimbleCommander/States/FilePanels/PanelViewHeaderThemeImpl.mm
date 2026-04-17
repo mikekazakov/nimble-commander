@@ -38,9 +38,39 @@ NSColor *HeaderThemeImpl::SeparatorColor() const
     return m_ThemesManager.SelectedTheme().FilePanelsHeaderSeparatorColor();
 }
 
+NSColor *HeaderThemeImpl::PathSeparatorColor() const
+{
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathSeparatorColor();
+}
+
 NSColor *HeaderThemeImpl::PathAccentColor() const
 {
     return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathAccentColor();
+}
+
+unsigned HeaderThemeImpl::PathHoverPadX() const
+{
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathHoverPadX();
+}
+
+unsigned HeaderThemeImpl::PathHoverPadYTop() const
+{
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathHoverPadYTop();
+}
+
+unsigned HeaderThemeImpl::PathHoverPadYBottom() const
+{
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathHoverPadYBottom();
+}
+
+unsigned HeaderThemeImpl::PathHoverCornerRadius() const
+{
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathHoverCornerRadius();
+}
+
+unsigned HeaderThemeImpl::PathAreaBottomInset() const
+{
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathAreaBottomInset();
 }
 
 void HeaderThemeImpl::ObserveChanges(std::function<void()> _callback)

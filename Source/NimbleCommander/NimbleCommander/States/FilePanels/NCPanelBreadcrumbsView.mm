@@ -1,11 +1,24 @@
 // Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "NCPanelBreadcrumbsView.h"
 #import "NCPanelPathSegment.h"
+#include "PanelViewHeaderPathBarBreadcrumbs.h"
 #include <Panel/Log.h>
 #include <algorithm>
 #include <cmath>
+#include <optional>
+#include <string>
 
 static NSString *const kSep = @"›";
+
+static std::optional<std::string> NCBreadcrumbOptionalUTF8(NSString *_Nullable s) noexcept
+{
+    if( s.length == 0 )
+        return std::nullopt;
+    const char *const u = s.UTF8String;
+    if( !u )
+        return std::nullopt;
+    return std::string{u};
+}
 
 static NSRect NCBreadcrumbPaddedLinkRect(NSRect hoverBase, CGFloat padX, CGFloat padYTop, CGFloat padYBottom) noexcept
 {
@@ -540,11 +553,14 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
     if( idx < 0 )
         return fallback.length ? fallback : (plain.length ? plain : nil);
     NCPanelPathSegment *const s = self.segments[static_cast<size_t>(idx)];
-    if( s.navigatePOSIXPath.length )
-        return s.navigatePOSIXPath;
-    if( s.isCurrentDirectory )
-        return fallback.length ? fallback : nil;
-    return fallback.length ? fallback : plain;
+    const auto resolved = nc::panel::ResolvePanelBreadcrumbSegmentPOSIXForMenu(
+        s.isCurrentDirectory,
+        NCBreadcrumbOptionalUTF8(s.navigatePOSIXPath),
+        NCBreadcrumbOptionalUTF8(fallback),
+        NCBreadcrumbOptionalUTF8(plain));
+    if( !resolved.has_value() )
+        return nil;
+    return [NSString stringWithUTF8String:resolved->c_str()];
 }
 
 - (void)drawRect:(NSRect)dirtyRect
@@ -690,13 +706,13 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
     if( idx < 0 )
         return;
     NCPanelPathSegment *const s = self.segments[static_cast<size_t>(idx)];
-    if( s.navigatePOSIXPath.length > 0 ) {
-        if( [self.crumbDelegate respondsToSelector:@selector(breadcrumbsView:didActivatePOSIXPath:)] )
-            [self.crumbDelegate breadcrumbsView:self didActivatePOSIXPath:s.navigatePOSIXPath];
-    }
-    else if( s.isCurrentDirectory ) {
+    if( s.isCurrentDirectory ) {
         if( [self.crumbDelegate respondsToSelector:@selector(breadcrumbsViewDidActivateCurrentSegment:)] )
             [self.crumbDelegate breadcrumbsViewDidActivateCurrentSegment:self];
+    }
+    else if( s.navigatePOSIXPath.length > 0 ) {
+        if( [self.crumbDelegate respondsToSelector:@selector(breadcrumbsView:didActivatePOSIXPath:)] )
+            [self.crumbDelegate breadcrumbsView:self didActivatePOSIXPath:s.navigatePOSIXPath];
     }
 }
 

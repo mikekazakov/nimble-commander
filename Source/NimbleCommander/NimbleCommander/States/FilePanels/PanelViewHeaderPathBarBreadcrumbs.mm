@@ -97,4 +97,21 @@ std::string NormalizePanelHeaderPOSIXPathForActions(const std::string &path_with
     return p;
 }
 
+std::optional<std::string> ResolvePanelBreadcrumbSegmentPOSIXForMenu(bool is_current_directory,
+                                                                     const std::optional<std::string> &navigate_to_vfs_path,
+                                                                     const std::optional<std::string> &fallback_posix_path,
+                                                                     const std::optional<std::string> &plain_path)
+{
+    if( is_current_directory ) {
+        if( fallback_posix_path.has_value() && !fallback_posix_path->empty() )
+            return fallback_posix_path;
+        return std::nullopt;
+    }
+    if( navigate_to_vfs_path.has_value() && !navigate_to_vfs_path->empty() )
+        return navigate_to_vfs_path;
+    if( fallback_posix_path.has_value() && !fallback_posix_path->empty() )
+        return fallback_posix_path;
+    return plain_path;
+}
+
 } // namespace nc::panel

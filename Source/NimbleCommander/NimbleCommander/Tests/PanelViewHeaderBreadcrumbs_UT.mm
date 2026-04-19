@@ -6,6 +6,7 @@
 using nc::panel::BuildPanelHeaderBreadcrumbsFromPaths;
 using nc::panel::NormalizePanelHeaderPOSIXPathForActions;
 using nc::panel::PanelHeaderBreadcrumb;
+using nc::panel::ResolvePanelBreadcrumbSegmentPOSIXForMenu;
 
 #define PREFIX "PanelViewHeaderPathBarBreadcrumbs "
 
@@ -72,4 +73,30 @@ TEST_CASE(PREFIX "Normalizes POSIX path for actions")
     CHECK(NormalizePanelHeaderPOSIXPathForActions("/Users/me") == "/Users/me");
     CHECK(NormalizePanelHeaderPOSIXPathForActions("/Users/me/") == "/Users/me");
     CHECK(NormalizePanelHeaderPOSIXPathForActions("Users/me") == "/Users/me");
+}
+
+TEST_CASE(PREFIX "Junction root current segment uses panel path for menu actions, not navigate link")
+{
+    // Model: single crumb "sftp://host" with navigate "/" and isCurrentDirectory (see Root with junction prefix).
+    const auto r = ResolvePanelBreadcrumbSegmentPOSIXForMenu(true, "/", "/", std::nullopt);
+    REQUIRE(r.has_value());
+    CHECK(*r == "/");
+}
+
+TEST_CASE(PREFIX "Context menu path: parent link still uses navigate target")
+{
+    const auto r = ResolvePanelBreadcrumbSegmentPOSIXForMenu(false, "/Users", "/Users/me", std::nullopt);
+    REQUIRE(r.has_value());
+    CHECK(*r == "/Users");
+}
+
+TEST_CASE(PREFIX "Non-current segment without navigate uses fallback or plain path")
+{
+    CHECK(!ResolvePanelBreadcrumbSegmentPOSIXForMenu(false, std::nullopt, std::nullopt, std::nullopt).has_value());
+    const auto fb = ResolvePanelBreadcrumbSegmentPOSIXForMenu(false, std::nullopt, "/x", std::nullopt);
+    REQUIRE(fb.has_value());
+    CHECK(*fb == "/x");
+    const auto pl = ResolvePanelBreadcrumbSegmentPOSIXForMenu(false, std::nullopt, std::nullopt, "/plain");
+    REQUIRE(pl.has_value());
+    CHECK(*pl == "/plain");
 }

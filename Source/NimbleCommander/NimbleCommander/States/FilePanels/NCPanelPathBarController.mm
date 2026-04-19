@@ -77,6 +77,19 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
             if( NCPanelPathBarController *const controller = weak_self )
                 [controller cancelFullPathSelectionIfActive];
         };
+
+        __weak NCPanelBreadcrumbsView *weak_breadcrumbs = m_View.breadcrumbsView;
+        m_View.breadcrumbsView.menuForEventBlock = ^NSMenu *(NSEvent *event) {
+            NCPanelPathBarController *const controller = weak_self;
+            NCPanelBreadcrumbsView *const breadcrumbs = weak_breadcrumbs;
+            if( controller == nil || breadcrumbs == nil || !controller.contextMenuAction )
+                return nil;
+            const NSPoint point = [breadcrumbs convertPoint:event.locationInWindow fromView:nil];
+            NSString *const path = [controller posixPathForContextMenuAtPoint:point];
+            if( path.length == 0 )
+                return nil;
+            return [controller contextMenuForPOSIXPath:path];
+        };
     }
     return self;
 }
@@ -183,20 +196,6 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     breadcrumbs_view.hoverPadYTop = m_HoverPadYTop;
     breadcrumbs_view.hoverPadYBottom = m_HoverPadYBottom;
     breadcrumbs_view.hoverCornerRadius = m_HoverCornerRadius;
-
-    __weak NCPanelPathBarController *weak_self = self;
-    __weak NCPanelBreadcrumbsView *weak_breadcrumbs = breadcrumbs_view;
-    breadcrumbs_view.menuForEventBlock = ^NSMenu *(NSEvent *event) {
-        NCPanelPathBarController *const controller = weak_self;
-        NCPanelBreadcrumbsView *const breadcrumbs = weak_breadcrumbs;
-        if( controller == nil || breadcrumbs == nil || !controller.contextMenuAction )
-            return nil;
-        const NSPoint point = [breadcrumbs convertPoint:event.locationInWindow fromView:nil];
-        NSString *const path = [controller posixPathForContextMenuAtPoint:point];
-        if( path.length == 0 )
-            return nil;
-        return [controller contextMenuForPOSIXPath:path];
-    };
 
     if( !m_Breadcrumbs.empty() ) {
         [breadcrumbs_view setBreadcrumbs:m_Breadcrumbs];

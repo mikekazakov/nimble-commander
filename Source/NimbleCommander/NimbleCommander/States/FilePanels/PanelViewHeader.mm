@@ -159,8 +159,8 @@ static bool IsDark(NSColor *_color);
             m_BusyIndicator.appearance = [NSAppearance appearanceNamed:NSAppearanceNameVibrantDark];
         [self addSubview:m_BusyIndicator positioned:NSWindowAbove relativeTo:m_PathArea];
 
-        [self setupAppearance];
         [self setupLayout];
+        [self setupAppearance];
 
         // Own strip height here so it does not depend on PanelView adding an external height constraint.
         m_StripHeightConstraint = [self.heightAnchor constraintEqualToConstant:NCPanelViewHeaderPathBarFixedHeight];
@@ -209,8 +209,7 @@ static bool IsDark(NSColor *_color);
     m_SearchMatchesField.font = font;
 
     m_SeparatorLine.borderColor = m_Theme->SeparatorColor();
-    if( m_PathAreaBottomConstraint != nil )
-        m_PathAreaBottomConstraint.constant = -NCPanelPathAreaBottomInset(font);
+    m_PathAreaBottomConstraint.constant = -NCPanelPathAreaBottomInset(font);
 
     const bool active = m_Active;
     m_Background = active ? m_Theme->ActiveBackgroundColor() : m_Theme->InactiveBackgroundColor();

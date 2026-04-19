@@ -262,6 +262,7 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
                                  viewX:(CGFloat)viewX;
 @end
 @implementation NCBreadcrumbTextLayout {
+    NSTextStorage *_ts;  ///< Keeps ts alive; NSLayoutManager holds only a weak back-reference to its text storage.
     NSLayoutManager *_lm;
     NSRange _glyphRange;
     CGFloat _yContainer;
@@ -306,6 +307,7 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
     const NSRect visualRect = (gb.size.width >= 0.5 && gb.size.height >= 0.5) ? gb : used;
     const CGFloat yContainer = NCBreadcrumbCenterContainerYForVisualRect(stripH, visualRect);
     NCBreadcrumbTextLayout *const item = [[NCBreadcrumbTextLayout alloc] init];
+    item->_ts = ts;
     item->_lm = lm;
     item->_glyphRange = glyphRange;
     item->_yContainer = yContainer;

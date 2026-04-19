@@ -252,6 +252,7 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
                                          NSView *view,
                                          CGFloat x,
                                          CGFloat stripH,
+                                         CGFloat verticalNudge,
                                          CGFloat *outContainerOriginY) noexcept
 {
     if( outContainerOriginY )
@@ -280,12 +281,15 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
     const CGFloat yContainer = NCBreadcrumbCenterContainerYForVisualRect(stripH, visualRect);
     if( outContainerOriginY )
         *outContainerOriginY = yContainer;
-    const NSRect lineRect =
-        NSMakeRect(x + used.origin.x, yContainer + used.origin.y, used.size.width, used.size.height);
+    const CGFloat yContainerWithNudge = yContainer + verticalNudge;
+    const NSRect lineRect = NSMakeRect(x + used.origin.x,
+                                       yContainerWithNudge + used.origin.y,
+                                       used.size.width,
+                                       used.size.height);
     {
         NSFont *const traceFont = [effectiveAttrs objectForKey:NSFontAttributeName];
         const CGFloat usedH = NSHeight(used);
-        const CGFloat midY = yContainer + used.origin.y + usedH * 0.5;
+        const CGFloat midY = yContainerWithNudge + used.origin.y + usedH * 0.5;
         const CGFloat stripMid = stripH * 0.5;
         NSString *const prev = text.length > 32 ? [text substringToIndex:32] : text;
         const char *const ut = prev.UTF8String;
@@ -302,7 +306,7 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
                               used.origin.y,
                               used.size.width,
                               used.size.height,
-                              yContainer,
+                              yContainerWithNudge,
                               lineRect.origin.y,
                               lineRect.size.height,
                               traceFont != nil ? traceFont.pointSize : 0.,
@@ -315,7 +319,7 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
     [gctx saveGraphicsState];
     [[NSBezierPath bezierPathWithRect:NSMakeRect(0., 0., NSWidth(view.bounds), stripH)] addClip];
     if( glyphRange.length > 0 )
-        [lm drawGlyphsForGlyphRange:glyphRange atPoint:NSMakePoint(x, yContainer)];
+        [lm drawGlyphsForGlyphRange:glyphRange atPoint:NSMakePoint(x, yContainerWithNudge)];
     else {
         NSAttributedString *const drawn = [[NSAttributedString alloc] initWithString:text attributes:effectiveAttrs];
         [drawn drawWithRect:lineRect
@@ -561,7 +565,7 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
         NSDictionary *ellAttr = @{NSFontAttributeName: font, NSForegroundColorAttributeName: self.textColor ?: NSColor.textColor};
         NSString *const ell = @"… ";
         CGFloat yEll = 0.;
-        const NSRect usedEll = NCBreadcrumbTextKitDrawLine(ell, ellAttr, font, self, x, stripH, &yEll);
+        const NSRect usedEll = NCBreadcrumbTextKitDrawLine(ell, ellAttr, font, self, x, stripH, 0., &yEll);
         x += usedEll.size.width;
     }
 
@@ -571,7 +575,9 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
             continue;
         if( i > start ) {
             CGFloat ySep = 0.;
-            (void)NCBreadcrumbTextKitDrawLine(kSep, sepAttr, font, self, x + sepSideInset, stripH, &ySep);
+            const CGFloat separatorNudgeUp = -1. / NCBreadcrumbViewBackingScale(self);
+            (void)NCBreadcrumbTextKitDrawLine(
+                kSep, sepAttr, font, self, x + sepSideInset, stripH, separatorNudgeUp, &ySep);
             x += sepAdvance;
         }
         NSDictionary *const a = [self titleAttributesForSegment:s];
@@ -599,7 +605,7 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
         }
 
         CGFloat y = 0.;
-        const NSRect usedTitle = NCBreadcrumbTextKitDrawLine(s.title, a, font, self, x, stripH, &y);
+        const NSRect usedTitle = NCBreadcrumbTextKitDrawLine(s.title, a, font, self, x, stripH, 0., &y);
 
         if( isHovered ) {
             NSRect layoutStoredLink = NSZeroRect;

@@ -11,7 +11,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) NSTextField *pathEditField;
 @property(nonatomic) BOOL fullPathEditActive;
 
-@property(nonatomic, copy, nullable) void (^onCommitEditedPath)(NSString *path);
 @property(nonatomic, copy, nullable) void (^onCancelFullPathEdit)(void);
 
 - (void)enterFullPathEditWithString:(NSString *)path font:(NSFont *)font textColor:(NSColor *)textColor;

@@ -11,7 +11,6 @@
 @synthesize breadcrumbsView = m_Breadcrumbs;
 @synthesize pathEditField = m_PathField;
 @synthesize fullPathEditActive = _fullPathEditActive;
-@synthesize onCommitEditedPath = _onCommitEditedPath;
 @synthesize onCancelFullPathEdit = _onCancelFullPathEdit;
 
 - (instancetype)initWithFrame:(NSRect)frameRect
@@ -29,7 +28,8 @@
         m_PathField.bordered = NO;
         m_PathField.drawsBackground = NO;
         m_PathField.focusRingType = NSFocusRingTypeNone;
-        m_PathField.editable = YES;
+        // Full-path mode is selection and copy only; never commit as a POSIX navigate target.
+        m_PathField.editable = NO;
         m_PathField.selectable = YES;
         m_PathField.alignment = NSTextAlignmentCenter;
         m_PathField.lineBreakMode = NSLineBreakByTruncatingHead;
@@ -110,8 +110,8 @@
         return YES;
     }
     if( commandSelector == @selector(insertNewline:) ) {
-        if( self.onCommitEditedPath )
-            self.onCommitEditedPath(m_PathField.stringValue ?: @"");
+        if( self.onCancelFullPathEdit )
+            self.onCancelFullPathEdit();
         return YES;
     }
     return NO;

@@ -56,7 +56,6 @@ static NSArray<NCPanelPathSegment *> *PanelHeaderMakePlainSegments(NSString *_pa
 @interface NCPanelViewHeader () <NCPanelBreadcrumbsViewDelegate>
 @property(nonatomic) IBOutlet NSMenu *sortMenuPopup;
 - (void)refreshPathBarContent;
-- (void)pathBarApplyEditedPOSIXPath:(NSString *)path;
 @end
 
 @implementation NCPanelViewHeader {
@@ -130,10 +129,6 @@ static NSArray<NCPanelPathSegment *> *PanelHeaderMakePlainSegments(NSString *_pa
         ]];
 
         __weak NCPanelViewHeader *weak_path_header = self;
-        m_PathBar.onCommitEditedPath = ^(NSString *path) {
-            if( NCPanelViewHeader *const h = weak_path_header )
-                [h pathBarApplyEditedPOSIXPath:path];
-        };
         m_PathBar.onCancelFullPathEdit = ^{
             if( NCPanelViewHeader *const h = weak_path_header )
                 [h cancelPathBarFullPathSelection];
@@ -379,16 +374,6 @@ static NSArray<NCPanelPathSegment *> *PanelHeaderMakePlainSegments(NSString *_pa
         bv.crumbDelegate = nil;
     }
     [m_PathBar exitFullPathEdit];
-}
-
-- (void)pathBarApplyEditedPOSIXPath:(NSString *)path
-{
-    const char *const raw = path.UTF8String;
-    std::string utf8 = raw ? std::string(raw) : std::string();
-    utf8 = NormalizePanelHeaderPOSIXPathForActions(utf8);
-    if( m_PathNavigateCallback )
-        m_PathNavigateCallback(utf8);
-    [self cancelPathBarFullPathSelection];
 }
 
 - (void)setupLayout

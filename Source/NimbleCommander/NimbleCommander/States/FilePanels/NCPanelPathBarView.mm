@@ -2,6 +2,9 @@
 #import "NCPanelPathBarView.h"
 #import "NCPanelBreadcrumbsView.h"
 
+/// Defined in NCPanelBreadcrumbsView.mm; used here to align the path edit field vertically.
+CGFloat NCPanelPathBarContainerOriginYForLine(NSFont *_Nullable font, CGFloat stripH, CGFloat usedH, CGFloat usedOriginY);
+
 @implementation NCPanelPathBarView {
     NCPanelBreadcrumbsView *m_Breadcrumbs;
     NSTextField *m_PathField;

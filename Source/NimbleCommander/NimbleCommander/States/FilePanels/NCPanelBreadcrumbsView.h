@@ -6,14 +6,6 @@
 
 @class NCPanelBreadcrumbsView;
 
-/// Upward shift (points) so glyph ink aligns with tab/header labels; linear in (lineHeight − capHeight).
-FOUNDATION_EXTERN CGFloat NCPanelPathBarOpticalShiftUp(NSFont *_Nullable font, CGFloat lineBoxHeight);
-
-/// Text-container Y origin for one TextKit line (`used` height / origin.y) in a strip; geometric center minus optical
-/// shift, clamped when the line is taller than the strip.
-FOUNDATION_EXTERN CGFloat NCPanelPathBarContainerOriginYForLine(
-    NSFont *_Nullable font, CGFloat stripH, CGFloat usedH, CGFloat usedOriginY);
-
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol NCPanelBreadcrumbsViewDelegate <NSObject>

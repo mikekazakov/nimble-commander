@@ -157,8 +157,8 @@
 		CF0A48722BDDA42200833160 /* PanelViewHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */; };
 		CF0A48732BDDA42700833160 /* PanelViewHeaderTheme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB672157399E0009EB81 /* PanelViewHeaderTheme.mm */; };
 		CF0A48742BDDA42B00833160 /* PanelViewHeaderThemeImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB6D21573BE30009EB81 /* PanelViewHeaderThemeImpl.mm */; };
-		CF3A1B2C3D4E5F6000A1B2C3 /* PanelViewHeaderPathBarBreadcrumbs.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3A1B2C3D4E5F6000A1B2C1 /* PanelViewHeaderPathBarBreadcrumbs.mm */; };
-		CF3A1B2E3D4E5F6000A1B2F9 /* NCPanelPathSegment.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3A1B2E3D4E5F6000A1B2F4 /* NCPanelPathSegment.mm */; };
+		CF3A1B2C3D4E5F6000A1B2C3 /* NCPanelPathBarPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3A1B2C3D4E5F6000A1B2C1 /* NCPanelPathBarPresentation.mm */; };
+		CF3A1B2E3D4E5F6000A1B2F9 /* NCPanelPathBarController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3A1B2E3D4E5F6000A1B2F4 /* NCPanelPathBarController.mm */; };
 		CF3A1B2E3D4E5F6000A1B2FA /* NCPanelBreadcrumbsView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3A1B2E3D4E5F6000A1B2F6 /* NCPanelBreadcrumbsView.mm */; };
 		CF3A1B2E3D4E5F6000A1B2FB /* NCPanelPathBarView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3A1B2E3D4E5F6000A1B2F8 /* NCPanelPathBarView.mm */; };
 		CF0A48752BDDA4FE00833160 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
@@ -1198,10 +1198,10 @@
 		CFB2AB672157399E0009EB81 /* PanelViewHeaderTheme.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewHeaderTheme.mm; path = NimbleCommander/States/FilePanels/PanelViewHeaderTheme.mm; sourceTree = "<group>"; };
 		CFB2AB6C21573BE30009EB81 /* PanelViewHeaderThemeImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewHeaderThemeImpl.h; path = NimbleCommander/States/FilePanels/PanelViewHeaderThemeImpl.h; sourceTree = "<group>"; };
 		CFB2AB6D21573BE30009EB81 /* PanelViewHeaderThemeImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewHeaderThemeImpl.mm; path = NimbleCommander/States/FilePanels/PanelViewHeaderThemeImpl.mm; sourceTree = "<group>"; };
-		CF3A1B2C3D4E5F6000A1B2C0 /* PanelViewHeaderPathBarBreadcrumbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewHeaderPathBarBreadcrumbs.h; path = NimbleCommander/States/FilePanels/PanelViewHeaderPathBarBreadcrumbs.h; sourceTree = "<group>"; };
-		CF3A1B2C3D4E5F6000A1B2C1 /* PanelViewHeaderPathBarBreadcrumbs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewHeaderPathBarBreadcrumbs.mm; path = NimbleCommander/States/FilePanels/PanelViewHeaderPathBarBreadcrumbs.mm; sourceTree = "<group>"; };
-		CF3A1B2E3D4E5F6000A1B2F3 /* NCPanelPathSegment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NCPanelPathSegment.h; path = NimbleCommander/States/FilePanels/NCPanelPathSegment.h; sourceTree = "<group>"; };
-		CF3A1B2E3D4E5F6000A1B2F4 /* NCPanelPathSegment.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NCPanelPathSegment.mm; path = NimbleCommander/States/FilePanels/NCPanelPathSegment.mm; sourceTree = "<group>"; };
+		CF3A1B2C3D4E5F6000A1B2C0 /* NCPanelPathBarPresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NCPanelPathBarPresentation.h; path = NimbleCommander/States/FilePanels/NCPanelPathBarPresentation.h; sourceTree = "<group>"; };
+		CF3A1B2C3D4E5F6000A1B2C1 /* NCPanelPathBarPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NCPanelPathBarPresentation.mm; path = NimbleCommander/States/FilePanels/NCPanelPathBarPresentation.mm; sourceTree = "<group>"; };
+		CF3A1B2E3D4E5F6000A1B2F3 /* NCPanelPathBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NCPanelPathBarController.h; path = NimbleCommander/States/FilePanels/NCPanelPathBarController.h; sourceTree = "<group>"; };
+		CF3A1B2E3D4E5F6000A1B2F4 /* NCPanelPathBarController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NCPanelPathBarController.mm; path = NimbleCommander/States/FilePanels/NCPanelPathBarController.mm; sourceTree = "<group>"; };
 		CF3A1B2E3D4E5F6000A1B2F5 /* NCPanelBreadcrumbsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NCPanelBreadcrumbsView.h; path = NimbleCommander/States/FilePanels/NCPanelBreadcrumbsView.h; sourceTree = "<group>"; };
 		CF3A1B2E3D4E5F6000A1B2F6 /* NCPanelBreadcrumbsView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NCPanelBreadcrumbsView.mm; path = NimbleCommander/States/FilePanels/NCPanelBreadcrumbsView.mm; sourceTree = "<group>"; };
 		CF3A1B2E3D4E5F6000A1B2F7 /* NCPanelPathBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NCPanelPathBarView.h; path = NimbleCommander/States/FilePanels/NCPanelPathBarView.h; sourceTree = "<group>"; };
@@ -1486,10 +1486,10 @@
 				CFB2AB672157399E0009EB81 /* PanelViewHeaderTheme.mm */,
 				CFB2AB6C21573BE30009EB81 /* PanelViewHeaderThemeImpl.h */,
 				CFB2AB6D21573BE30009EB81 /* PanelViewHeaderThemeImpl.mm */,
-				CF3A1B2C3D4E5F6000A1B2C0 /* PanelViewHeaderPathBarBreadcrumbs.h */,
-				CF3A1B2C3D4E5F6000A1B2C1 /* PanelViewHeaderPathBarBreadcrumbs.mm */,
-				CF3A1B2E3D4E5F6000A1B2F3 /* NCPanelPathSegment.h */,
-				CF3A1B2E3D4E5F6000A1B2F4 /* NCPanelPathSegment.mm */,
+				CF3A1B2C3D4E5F6000A1B2C0 /* NCPanelPathBarPresentation.h */,
+				CF3A1B2C3D4E5F6000A1B2C1 /* NCPanelPathBarPresentation.mm */,
+				CF3A1B2E3D4E5F6000A1B2F3 /* NCPanelPathBarController.h */,
+				CF3A1B2E3D4E5F6000A1B2F4 /* NCPanelPathBarController.mm */,
 				CF3A1B2E3D4E5F6000A1B2F5 /* NCPanelBreadcrumbsView.h */,
 				CF3A1B2E3D4E5F6000A1B2F6 /* NCPanelBreadcrumbsView.mm */,
 				CF3A1B2E3D4E5F6000A1B2F7 /* NCPanelPathBarView.h */,
@@ -3078,8 +3078,8 @@
 				CF0A48382BDDA18200833160 /* ExecuteExternalTool.mm in Sources */,
 				CF0A48522BDDA2B900833160 /* TabsManagement.mm in Sources */,
 				CF0A48732BDDA42700833160 /* PanelViewHeaderTheme.mm in Sources */,
-				CF3A1B2C3D4E5F6000A1B2C3 /* PanelViewHeaderPathBarBreadcrumbs.mm in Sources */,
-				CF3A1B2E3D4E5F6000A1B2F9 /* NCPanelPathSegment.mm in Sources */,
+				CF3A1B2C3D4E5F6000A1B2C3 /* NCPanelPathBarPresentation.mm in Sources */,
+				CF3A1B2E3D4E5F6000A1B2F9 /* NCPanelPathBarController.mm in Sources */,
 				CF3A1B2E3D4E5F6000A1B2FA /* NCPanelBreadcrumbsView.mm in Sources */,
 				CF3A1B2E3D4E5F6000A1B2FB /* NCPanelPathBarView.mm in Sources */,
 				CF0A487F2BDDA54100833160 /* SFTPConnectionSheetController.mm in Sources */,

@@ -1,21 +1,25 @@
 // Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "PanelViewHeaderPathBarBreadcrumbs.h"
+#include "NCPanelPathBarPresentation.h"
 
 #include <Foundation/Foundation.h>
 
 namespace nc::panel {
 
-[[nodiscard]] std::vector<PanelHeaderBreadcrumb>
-BuildPanelHeaderBreadcrumbsFromPaths(const std::string &verbose_full,
-                                     const std::string &dir_with_trailing_slash,
-                                     const std::string &path_without_trailing_slash)
+static void MarkCurrentDirectoryBreadcrumb(std::vector<PanelHeaderBreadcrumb> &breadcrumbs)
+{
+    if( !breadcrumbs.empty() )
+        breadcrumbs.back().is_current_directory = true;
+}
+
+[[nodiscard]] std::vector<PanelHeaderBreadcrumb> BuildPanelHeaderBreadcrumbs(const PanelPathContext &path_context)
 {
     std::vector<PanelHeaderBreadcrumb> out;
+    const auto &verbose_full = path_context.verbose_full_path;
     if( verbose_full.empty() )
         return out;
 
     // Must match VerboseDirectoryFullPath(), which appends '/' when Directory() omits it.
-    std::string dir_slash = dir_with_trailing_slash;
+    std::string dir_slash = path_context.directory_path;
     if( dir_slash.empty() )
         return out;
     if( dir_slash.back() != '/' )
@@ -29,7 +33,7 @@ BuildPanelHeaderBreadcrumbsFromPaths(const std::string &verbose_full,
     while( !junction.empty() && junction.back() == '/' )
         junction.pop_back();
 
-    const std::string &path_only = path_without_trailing_slash;
+    const std::string &path_only = path_context.posix_path;
 
     if( !junction.empty() ) {
         PanelHeaderBreadcrumb j;
@@ -44,6 +48,7 @@ BuildPanelHeaderBreadcrumbsFromPaths(const std::string &verbose_full,
             b.label = @"/";
             out.push_back(std::move(b));
         }
+        MarkCurrentDirectoryBreadcrumb(out);
         return out;
     }
 
@@ -82,6 +87,7 @@ BuildPanelHeaderBreadcrumbsFromPaths(const std::string &verbose_full,
             b.navigate_to_vfs_path = acc;
         out.push_back(std::move(b));
     }
+    MarkCurrentDirectoryBreadcrumb(out);
     return out;
 }
 

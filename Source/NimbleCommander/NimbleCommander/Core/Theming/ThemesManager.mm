@@ -60,7 +60,6 @@ static constexpr std::pair<const char *, uint64_t> g_EntryToNotificationMappingT
     {"filePanelsHeaderPathHoverPadYTop", TMN::FilePanelsHeader},
     {"filePanelsHeaderPathHoverPadYBottom", TMN::FilePanelsHeader},
     {"filePanelsHeaderPathHoverCornerRadius", TMN::FilePanelsHeader},
-    {"filePanelsHeaderPathAreaBottomInset", TMN::FilePanelsHeader},
     {"filePanelsFooterFont", TMN::FilePanelsFooter},
     {"filePanelsFooterTextColor", TMN::FilePanelsFooter},
     {"filePanelsFooterActiveTextColor", TMN::FilePanelsFooter},

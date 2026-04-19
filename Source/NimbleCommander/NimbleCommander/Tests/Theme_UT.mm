@@ -57,7 +57,6 @@ TEST_CASE(PREFIX "Constructs from JSON")
         'filePanelsHeaderPathHoverPadYTop': '3',\
         'filePanelsHeaderPathHoverPadYBottom': '4',\
         'filePanelsHeaderPathHoverCornerRadius': '8',\
-        'filePanelsHeaderPathAreaBottomInset': '2',\
         'filePanelsFooterFont': '@boldSystemFont,43',\
         'filePanelsFooterTextColor': '#01010A',\
         'filePanelsFooterActiveTextColor': '#01010B',\
@@ -137,7 +136,6 @@ TEST_CASE(PREFIX "Constructs from JSON")
     CHECK(t.FilePanelsHeaderPathHoverPadYTop() == 3);
     CHECK(t.FilePanelsHeaderPathHoverPadYBottom() == 4);
     CHECK(t.FilePanelsHeaderPathHoverCornerRadius() == 8);
-    CHECK(t.FilePanelsHeaderPathAreaBottomInset() == 2);
     CHECK([t.FilePanelsFooterFont() isEqualTo:[NSFont boldSystemFontOfSize:43]]);
     CHECK(t.FilePanelsFooterTextColor().toHexStdString == "#01010A");
     CHECK(t.FilePanelsFooterActiveTextColor().toHexStdString == "#01010B");
@@ -223,5 +221,4 @@ TEST_CASE(PREFIX "Path hover Y top/bottom falls back to legacy padY")
     CHECK(t.FilePanelsHeaderPathHoverPadY() == 2);
     CHECK(t.FilePanelsHeaderPathHoverPadYTop() == 2);
     CHECK(t.FilePanelsHeaderPathHoverPadYBottom() == 2);
-    CHECK(t.FilePanelsHeaderPathAreaBottomInset() == 1);
 }

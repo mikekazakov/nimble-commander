@@ -22,7 +22,6 @@ public:
     [[nodiscard]] virtual unsigned PathHoverPadYTop() const = 0;
     [[nodiscard]] virtual unsigned PathHoverPadYBottom() const = 0;
     [[nodiscard]] virtual unsigned PathHoverCornerRadius() const = 0;
-    [[nodiscard]] virtual unsigned PathAreaBottomInset() const = 0;
     virtual void ObserveChanges(std::function<void()> _callback) = 0;
 };
 

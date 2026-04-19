@@ -1,7 +1,6 @@
 // Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "NCPanelBreadcrumbsView.h"
-#import "NCPanelPathSegment.h"
-#include "PanelViewHeaderPathBarBreadcrumbs.h"
+#include "NCPanelPathBarPresentation.h"
 #include <Panel/Log.h>
 #include <algorithm>
 #include <cmath>
@@ -18,6 +17,18 @@ static std::optional<std::string> NCBreadcrumbOptionalUTF8(NSString *_Nullable s
     if( !u )
         return std::nullopt;
     return std::string{u};
+}
+
+static NSString *NCBreadcrumbLabel(const nc::panel::PanelHeaderBreadcrumb &breadcrumb) noexcept
+{
+    return breadcrumb.label ?: @"";
+}
+
+static NSString *NCBreadcrumbNavigatePath(const nc::panel::PanelHeaderBreadcrumb &breadcrumb) noexcept
+{
+    if( !breadcrumb.navigate_to_vfs_path.has_value() || breadcrumb.navigate_to_vfs_path->empty() )
+        return @"";
+    return [NSString stringWithUTF8String:breadcrumb.navigate_to_vfs_path->c_str()] ?: @"";
 }
 
 static NSRect NCBreadcrumbPaddedLinkRect(NSRect hoverBase, CGFloat padX, CGFloat padYTop, CGFloat padYBottom) noexcept
@@ -208,6 +219,18 @@ static CGFloat NCBreadcrumbSeparatorSideInset(NSFont *font) noexcept
     return std::max<CGFloat>(2., std::round(pointSize * 0.5));
 }
 
+// Returns the vertical nudge (in points) to push the › glyph up for optical alignment with text.
+// The › sits visually at x-height level while text glyphs reach cap height, so the glyph reads
+// as low. The nudge is 20% of (capHeight - xHeight) — the gap between caps and lowercase —
+// snapped to the physical pixel grid with a minimum of 1 physical pixel.
+// Example results on Retina (2x): 13pt → 0.5pt (1px), 22pt → 1.0pt (2px).
+static CGFloat NCBreadcrumbSeparatorVerticalNudge(NSFont *font, CGFloat backingScale) noexcept
+{
+    const CGFloat capToX = font != nil ? std::max(0., font.capHeight - font.xHeight) : 2.3;
+    const CGFloat raw = capToX * 0.2;
+    return -(std::max(std::round(raw * backingScale), 1.) / backingScale);
+}
+
 static CGFloat NCBreadcrumbSeparatorAdvance(NSDictionary *separatorAttributes, NSFont *font) noexcept
 {
     const CGFloat glyphWidth = NCBreadcrumbTextKitUsedSize(kSep, separatorAttributes, font).width;
@@ -222,17 +245,44 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
     return (stripH - visualRect.size.height) * 0.5 - visualRect.origin.y;
 }
 
-/// Segment hit/hover base uses the same glyph geometry as text drawing.
-static NSRect NCBreadcrumbSegmentLinkBaseRectInView(NSString *text,
-                                                    NSDictionary *attrs,
-                                                    NSFont *fallbackFont,
-                                                    NSView *view,
-                                                    CGFloat x,
-                                                    CGFloat stripH) noexcept
+/// Pre-laid-out TextKit state for one text item.
+/// Created once in rebuildLayout and consumed in drawRect: by calling
+/// drawGlyphsForGlyphRange:atPoint: with no new TextKit allocations in the hot path.
+@interface NCBreadcrumbTextLayout : NSObject
+@property(nonatomic, readonly) NSLayoutManager *lm;
+@property(nonatomic, readonly) NSRange glyphRange;
+@property(nonatomic, readonly) CGFloat yContainer;  ///< Container-origin Y for drawGlyphs:atPoint:
+@property(nonatomic, readonly) CGFloat advance;     ///< Text advance width (= used.size.width)
+@property(nonatomic, readonly) CGFloat usedHeight;  ///< Text used height (for tracing)
+@property(nonatomic, readonly) NSRect hoverBase;    ///< Visual-glyph rect in view coords; for hover tracing
++ (nullable instancetype)layoutForText:(NSString *)text
+                            attributes:(NSDictionary *)attrs
+                          fallbackFont:(nullable NSFont *)fallbackFont
+                                stripH:(CGFloat)stripH
+                                 viewX:(CGFloat)viewX;
+@end
+@implementation NCBreadcrumbTextLayout {
+    NSLayoutManager *_lm;
+    NSRange _glyphRange;
+    CGFloat _yContainer;
+    CGFloat _advance;
+    CGFloat _usedHeight;
+    NSRect _hoverBase;
+}
+@synthesize lm = _lm;
+@synthesize glyphRange = _glyphRange;
+@synthesize yContainer = _yContainer;
+@synthesize advance = _advance;
+@synthesize usedHeight = _usedHeight;
+@synthesize hoverBase = _hoverBase;
++ (nullable instancetype)layoutForText:(NSString *)text
+                            attributes:(NSDictionary *)attrs
+                          fallbackFont:(nullable NSFont *)fallbackFont
+                                stripH:(CGFloat)stripH
+                                 viewX:(CGFloat)viewX
 {
-    (void)view;
     if( text.length == 0 || attrs == nil )
-        return NSZeroRect;
+        return nil;
     NSDictionary *effectiveAttrs = attrs;
     NSMutableDictionary *withFont = nil;
     if( [attrs objectForKey:NSFontAttributeName] == nil && fallbackFont != nil ) {
@@ -250,110 +300,42 @@ static NSRect NCBreadcrumbSegmentLinkBaseRectInView(NSString *text,
     [lm ensureLayoutForTextContainer:tc];
     const NSRect used = [lm usedRectForTextContainer:tc];
     if( used.size.width < 0.5 )
-        return NSZeroRect;
+        return nil;
     const NSRange glyphRange = [lm glyphRangeForTextContainer:tc];
     const NSRect gb = glyphRange.length ? [lm boundingRectForGlyphRange:glyphRange inTextContainer:tc] : NSZeroRect;
     const NSRect visualRect = (gb.size.width >= 0.5 && gb.size.height >= 0.5) ? gb : used;
     const CGFloat yContainer = NCBreadcrumbCenterContainerYForVisualRect(stripH, visualRect);
-    return NSMakeRect(x + visualRect.origin.x, yContainer + visualRect.origin.y, visualRect.size.width, visualRect.size.height);
+    NCBreadcrumbTextLayout *const item = [[NCBreadcrumbTextLayout alloc] init];
+    item->_lm = lm;
+    item->_glyphRange = glyphRange;
+    item->_yContainer = yContainer;
+    item->_advance = used.size.width;
+    item->_usedHeight = used.size.height;
+    item->_hoverBase = NSMakeRect(viewX + visualRect.origin.x,
+                                  yContainer + visualRect.origin.y,
+                                  visualRect.size.width,
+                                  visualRect.size.height);
+    return item;
 }
-
-/// TextKit metrics + `NSAttributedString drawWithRect:options:` clipped to the strip.
-static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
-                                         NSDictionary *attrs,
-                                         NSFont *fallbackFont,
-                                         NSView *view,
-                                         CGFloat x,
-                                         CGFloat stripH,
-                                         CGFloat verticalNudge,
-                                         CGFloat *outContainerOriginY) noexcept
-{
-    if( outContainerOriginY )
-        *outContainerOriginY = 0.;
-    if( text.length == 0 || attrs == nil )
-        return NSZeroRect;
-    NSDictionary *effectiveAttrs = attrs;
-    NSMutableDictionary *withFont = nil;
-    if( [attrs objectForKey:NSFontAttributeName] == nil && fallbackFont != nil ) {
-        withFont = [attrs mutableCopy];
-        withFont[NSFontAttributeName] = fallbackFont;
-        effectiveAttrs = withFont;
-    }
-    NSTextStorage *const ts = [[NSTextStorage alloc] initWithString:text attributes:effectiveAttrs];
-    NSLayoutManager *const lm = [[NSLayoutManager alloc] init];
-    NSTextContainer *const tc = [[NSTextContainer alloc] initWithContainerSize:NSMakeSize(CGFLOAT_MAX, CGFLOAT_MAX)];
-    tc.lineFragmentPadding = 0.;
-    [lm addTextContainer:tc];
-    [ts addLayoutManager:lm];
-    (void)[lm glyphRangeForTextContainer:tc];
-    [lm ensureLayoutForTextContainer:tc];
-    const NSRect used = [lm usedRectForTextContainer:tc];
-    const NSRange glyphRange = [lm glyphRangeForTextContainer:tc];
-    const NSRect gb = glyphRange.length ? [lm boundingRectForGlyphRange:glyphRange inTextContainer:tc] : NSZeroRect;
-    const NSRect visualRect = (gb.size.width >= 0.5 && gb.size.height >= 0.5) ? gb : used;
-    const CGFloat yContainer = NCBreadcrumbCenterContainerYForVisualRect(stripH, visualRect);
-    if( outContainerOriginY )
-        *outContainerOriginY = yContainer;
-    const CGFloat yContainerWithNudge = yContainer + verticalNudge;
-    const NSRect lineRect = NSMakeRect(x + used.origin.x,
-                                       yContainerWithNudge + used.origin.y,
-                                       used.size.width,
-                                       used.size.height);
-    {
-        NSFont *const traceFont = [effectiveAttrs objectForKey:NSFontAttributeName];
-        const CGFloat usedH = NSHeight(used);
-        const CGFloat midY = yContainerWithNudge + used.origin.y + usedH * 0.5;
-        const CGFloat stripMid = stripH * 0.5;
-        NSString *const prev = text.length > 32 ? [text substringToIndex:32] : text;
-        const char *const ut = prev.UTF8String;
-        const CGFloat defLH = traceFont != nil ? [lm defaultLineHeightForFont:traceFont] : 0.;
-        nc::panel::Log::Trace("[PathBar] \"{}\" stripH={:.3f} viewWH={:.1f}x{:.1f} "
-                              "used.origin=({:.3f},{:.3f}) used.size={:.3f}x{:.3f} "
-                              "yContainer={:.3f} lineRect.y={:.3f} lineRect.h={:.3f} "
-                              "fontPt={:.1f} defaultLineH={:.3f} midY={:.3f} stripMid={:.3f} dMid={:.3f}",
-                              ut ? ut : "",
-                              stripH,
-                              NSWidth(view.bounds),
-                              NSHeight(view.bounds),
-                              used.origin.x,
-                              used.origin.y,
-                              used.size.width,
-                              used.size.height,
-                              yContainerWithNudge,
-                              lineRect.origin.y,
-                              lineRect.size.height,
-                              traceFont != nil ? traceFont.pointSize : 0.,
-                              defLH,
-                              midY,
-                              stripMid,
-                              midY - stripMid);
-    }
-    NSGraphicsContext *const gctx = NSGraphicsContext.currentContext;
-    [gctx saveGraphicsState];
-    [[NSBezierPath bezierPathWithRect:NSMakeRect(0., 0., NSWidth(view.bounds), stripH)] addClip];
-    if( glyphRange.length > 0 )
-        [lm drawGlyphsForGlyphRange:glyphRange atPoint:NSMakePoint(x, yContainerWithNudge)];
-    else {
-        NSAttributedString *const drawn = [[NSAttributedString alloc] initWithString:text attributes:effectiveAttrs];
-        [drawn drawWithRect:lineRect
-                    options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesDeviceMetrics)
-                      context:nil];
-    }
-    [gctx restoreGraphicsState];
-    return used;
-}
+@end
 
 @implementation NCPanelBreadcrumbsView {
+    std::vector<nc::panel::PanelHeaderBreadcrumb> m_Breadcrumbs;
     /// Padded text line rects in view coords (link hit / hover), aligned with `m_TitleSegmentIndices`.
     NSMutableArray<NSValue *> *m_SegmentLinkRects;
     NSMutableArray<NSNumber *> *m_TitleSegmentIndices;
     NSInteger m_LayoutStartIndex;
     CGFloat m_LeadingEllipsisWidth;
     CGFloat m_ContentOriginX;
+    /// Drawing cache: populated by rebuildLayout, consumed by drawRect: without new TextKit allocations.
+    NCBreadcrumbTextLayout *m_DrawCacheEll;               ///< Leading "… " layout; nil when path fits without truncation.
+    NCBreadcrumbTextLayout *m_DrawCacheSep;               ///< Separator "›" layout; shared for all separator draws.
+    CGFloat m_DrawCacheSepAdvance;                        ///< Separator advance = glyph width + 2×side-inset.
+    CGFloat m_DrawCacheSepSideInset;                      ///< Side spacing around the separator glyph.
+    NSMutableArray<NCBreadcrumbTextLayout *> *m_DrawCacheSegments; ///< Per visible segment, from m_LayoutStartIndex.
 }
 
 @synthesize crumbDelegate = _crumbDelegate;
-@synthesize segments = _segments;
 @synthesize hoveredSegmentIndex = _hoveredSegmentIndex;
 @synthesize crumbFont = _crumbFont;
 @synthesize textColor = _textColor;
@@ -372,6 +354,7 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
     if( self ) {
         m_SegmentLinkRects = [NSMutableArray array];
         m_TitleSegmentIndices = [NSMutableArray array];
+        m_DrawCacheSegments = [NSMutableArray array];
         self.hoveredSegmentIndex = -1;
         m_LayoutStartIndex = 0;
         m_LeadingEllipsisWidth = 0;
@@ -385,17 +368,17 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
     return YES;
 }
 
-- (void)setSegments:(NSArray<NCPanelPathSegment *> *)segments
+- (void)setBreadcrumbs:(const std::vector<nc::panel::PanelHeaderBreadcrumb> &)breadcrumbs
 {
-    _segments = [segments copy];
+    m_Breadcrumbs = breadcrumbs;
     [self rebuildLayout];
     [self setNeedsDisplay:YES];
 }
 
-- (NSDictionary *)titleAttributesForSegment:(NCPanelPathSegment *)seg
+- (NSDictionary *)titleAttributesForSegment:(const nc::panel::PanelHeaderBreadcrumb &)segment
 {
     NSFont *const font = self.crumbFont ?: [NSFont systemFontOfSize:13];
-    if( seg.navigatePOSIXPath.length && !seg.isCurrentDirectory )
+    if( segment.navigate_to_vfs_path.has_value() && !segment.is_current_directory )
         return @{NSFontAttributeName: font, NSForegroundColorAttributeName: self.linkColor ?: NSColor.linkColor};
     return @{NSFontAttributeName: font, NSForegroundColorAttributeName: self.textColor ?: NSColor.textColor};
 }
@@ -409,7 +392,7 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
 }
 
 - (CGFloat)measureTotalWidthFromStartIndex:(NSInteger)start includeLeadingEllipsis:(BOOL)ell
-    segs:(NSArray<NCPanelPathSegment *> *)segments
+    breadcrumbs:(const std::vector<nc::panel::PanelHeaderBreadcrumb> &)breadcrumbs
     pad:(CGFloat)pad
 {
     NSFont *const font = self.crumbFont ?: [NSFont systemFontOfSize:13.];
@@ -420,20 +403,22 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
     if( ell ) {
         w += NCBreadcrumbTextKitUsedSize(@"… ", @{NSFontAttributeName: font}, font).width;
     }
-    for( NSInteger i = start; i < static_cast<NSInteger>(segments.count); ++i ) {
-        NCPanelPathSegment *const s = segments[static_cast<size_t>(i)];
-        if( s.title.length == 0 )
+    for( NSInteger i = start; i < static_cast<NSInteger>(breadcrumbs.size()); ++i ) {
+        const auto &segment = breadcrumbs[static_cast<size_t>(i)];
+        NSString *const title = NCBreadcrumbLabel(segment);
+        if( title.length == 0 )
             continue;
-        NSDictionary *const a = [self titleAttributesForSegment:s];
-        w += NCBreadcrumbTextKitUsedSize(s.title, a, font).width;
-        if( i < static_cast<NSInteger>(segments.count) - 1 )
+        NSDictionary *const a = [self titleAttributesForSegment:segment];
+        w += NCBreadcrumbTextKitUsedSize(title, a, font).width;
+        if( i < static_cast<NSInteger>(breadcrumbs.size()) - 1 )
             w += sepAdvance;
     }
     return w;
 }
 
 /// Width of ellipsis + visible titles and separators only (no side padding), for centering.
-- (CGFloat)visibleTrailWidthFromStartIndex:(NSInteger)start segs:(NSArray<NCPanelPathSegment *> *)segments
+- (CGFloat)visibleTrailWidthFromStartIndex:(NSInteger)start
+                               breadcrumbs:(const std::vector<nc::panel::PanelHeaderBreadcrumb> &)breadcrumbs
 {
     NSFont *const font = self.crumbFont ?: [NSFont systemFontOfSize:13.];
     NSDictionary *const sepAttr = [self separatorAttributes];
@@ -441,14 +426,15 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
     CGFloat w = 0.;
     if( start > 0 )
         w += NCBreadcrumbTextKitUsedSize(@"… ", @{NSFontAttributeName: font}, font).width;
-    for( NSInteger i = start; i < static_cast<NSInteger>(segments.count); ++i ) {
-        NCPanelPathSegment *const s = segments[static_cast<size_t>(i)];
-        if( s.title.length == 0 )
+    for( NSInteger i = start; i < static_cast<NSInteger>(breadcrumbs.size()); ++i ) {
+        const auto &segment = breadcrumbs[static_cast<size_t>(i)];
+        NSString *const title = NCBreadcrumbLabel(segment);
+        if( title.length == 0 )
             continue;
         if( i > start )
             w += sepAdvance;
-        NSDictionary *const a = [self titleAttributesForSegment:s];
-        w += NCBreadcrumbTextKitUsedSize(s.title, a, font).width;
+        NSDictionary *const a = [self titleAttributesForSegment:segment];
+        w += NCBreadcrumbTextKitUsedSize(title, a, font).width;
     }
     return w;
 }
@@ -457,12 +443,17 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
 {
     [m_SegmentLinkRects removeAllObjects];
     [m_TitleSegmentIndices removeAllObjects];
+    [m_DrawCacheSegments removeAllObjects];
+    m_DrawCacheEll = nil;
+    m_DrawCacheSep = nil;
+    m_DrawCacheSepAdvance = 0.;
+    m_DrawCacheSepSideInset = 0.;
     m_LayoutStartIndex = 0;
     m_LeadingEllipsisWidth = 0;
     m_ContentOriginX = 0.;
 
-    NSArray<NCPanelPathSegment *> *const segs = self.segments;
-    if( segs.count == 0 || self.bounds.size.width < 8 )
+    const auto &breadcrumbs = m_Breadcrumbs;
+    if( breadcrumbs.empty() || self.bounds.size.width < 8 )
         return;
 
     const CGFloat pad = 6.;
@@ -470,20 +461,18 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
     NSFont *const font = self.crumbFont ?: [NSFont systemFontOfSize:13.];
 
     NSInteger start = 0;
-    while( start < static_cast<NSInteger>(segs.count) ) {
+    while( start < static_cast<NSInteger>(breadcrumbs.size()) ) {
         const CGFloat tw = [self measureTotalWidthFromStartIndex:start
                                         includeLeadingEllipsis:(start > 0)
-                                                            segs:segs
+                                                     breadcrumbs:breadcrumbs
                                                              pad:pad];
         if( tw <= maxW )
             break;
         ++start;
     }
     m_LayoutStartIndex = start;
-    if( start > 0 )
-        m_LeadingEllipsisWidth = NCBreadcrumbTextKitUsedSize(@"… ", @{NSFontAttributeName: font}, font).width;
 
-    const CGFloat trailW = [self visibleTrailWidthFromStartIndex:start segs:segs];
+    const CGFloat trailW = [self visibleTrailWidthFromStartIndex:start breadcrumbs:breadcrumbs];
     const CGFloat boundsW = NSWidth(self.bounds);
     if( start > 0 ) {
         // Truncated: keep trail aligned to the leading padding (Finder-style).
@@ -496,30 +485,56 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
     }
 
     NSDictionary *const sepAttr = [self separatorAttributes];
-    const CGFloat sepAdvance = NCBreadcrumbSeparatorAdvance(sepAttr, font);
     const CGFloat stripH = NSHeight(self.bounds);
 
-    CGFloat x = m_ContentOriginX;
-    if( start > 0 )
-        x += m_LeadingEllipsisWidth;
+    // Build draw cache for separator (shared for all separator draws; x is provided at draw time).
+    m_DrawCacheSep = [NCBreadcrumbTextLayout layoutForText:kSep
+                                               attributes:sepAttr
+                                             fallbackFont:font
+                                                   stripH:stripH
+                                                    viewX:0.];
+    m_DrawCacheSepSideInset = NCBreadcrumbSeparatorSideInset(font);
+    m_DrawCacheSepAdvance = (m_DrawCacheSep ? m_DrawCacheSep.advance : 0.) + 2. * m_DrawCacheSepSideInset;
 
-    for( NSInteger i = start; i < static_cast<NSInteger>(segs.count); ++i ) {
-        NCPanelPathSegment *const s = segs[static_cast<size_t>(i)];
-        if( s.title.length == 0 )
+    CGFloat x = m_ContentOriginX;
+
+    // Build draw cache for the leading ellipsis if the path is truncated.
+    if( start > 0 ) {
+        NSDictionary *const ellAttr = @{NSFontAttributeName: font,
+                                        NSForegroundColorAttributeName: self.textColor ?: NSColor.textColor};
+        m_DrawCacheEll = [NCBreadcrumbTextLayout layoutForText:@"… "
+                                                    attributes:ellAttr
+                                                  fallbackFont:font
+                                                        stripH:stripH
+                                                         viewX:x];
+        m_LeadingEllipsisWidth = m_DrawCacheEll ? m_DrawCacheEll.advance : 0.;
+        x += m_LeadingEllipsisWidth;
+    }
+
+    for( NSInteger i = start; i < static_cast<NSInteger>(breadcrumbs.size()); ++i ) {
+        const auto &segment = breadcrumbs[static_cast<size_t>(i)];
+        NSString *const title = NCBreadcrumbLabel(segment);
+        if( title.length == 0 )
             continue;
         if( i > start )
-            x += sepAdvance;
-        NSDictionary *const a = [self titleAttributesForSegment:s];
-        const NSSize ts = NCBreadcrumbTextKitUsedSize(s.title, a, font);
-        const NSRect hoverBase = NCBreadcrumbSegmentLinkBaseRectInView(s.title, a, font, self, x, stripH);
+            x += m_DrawCacheSepAdvance;
+        NSDictionary *const a = [self titleAttributesForSegment:segment];
+        // Single TextKit pass yields both the draw-cache item and the hover-base rect.
+        NCBreadcrumbTextLayout *const segItem = [NCBreadcrumbTextLayout layoutForText:title
+                                                                           attributes:a
+                                                                         fallbackFont:font
+                                                                               stripH:stripH
+                                                                                viewX:x];
+        [m_DrawCacheSegments addObject:segItem ?: [NCBreadcrumbTextLayout new]];
+        const NSRect hoverBase = segItem ? segItem.hoverBase : NSZeroRect;
         const CGFloat padX = static_cast<CGFloat>(self.hoverPadX);
         const CGFloat padYTop = static_cast<CGFloat>(self.hoverPadYTop);
         const CGFloat padYBottom = static_cast<CGFloat>(self.hoverPadYBottom);
         const NSRect linkRect = NCBreadcrumbPaddedLinkRect(hoverBase, padX, padYTop, padYBottom);
-        NCBreadcrumbTraceHoverLayout(s.title, i, x, hoverBase, linkRect, padX, padYTop, padYBottom, stripH, self.bounds);
+        NCBreadcrumbTraceHoverLayout(title, i, x, hoverBase, linkRect, padX, padYTop, padYBottom, stripH, self.bounds);
         [m_SegmentLinkRects addObject:[NSValue valueWithRect:linkRect]];
         [m_TitleSegmentIndices addObject:@(i)];
-        x += ts.width;
+        x += segItem ? segItem.advance : NCBreadcrumbTextKitUsedSize(title, a, font).width;
     }
 }
 
@@ -547,15 +562,15 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
 
 - (nullable NSString *)posixPathAtViewPoint:(NSPoint)p fallbackPOSIXPath:(nullable NSString *)fallback plainPath:(nullable NSString *)plain
 {
-    if( self.segments.count == 0 )
+    if( m_Breadcrumbs.empty() )
         return plain.length ? plain : nil;
     const NSInteger idx = [self segmentIndexAtPoint:p];
     if( idx < 0 )
         return fallback.length ? fallback : (plain.length ? plain : nil);
-    NCPanelPathSegment *const s = self.segments[static_cast<size_t>(idx)];
+    const auto &segment = m_Breadcrumbs[static_cast<size_t>(idx)];
     const auto resolved = nc::panel::ResolvePanelBreadcrumbSegmentPOSIXForMenu(
-        s.isCurrentDirectory,
-        NCBreadcrumbOptionalUTF8(s.navigatePOSIXPath),
+        segment.is_current_directory,
+        segment.navigate_to_vfs_path,
         NCBreadcrumbOptionalUTF8(fallback),
         NCBreadcrumbOptionalUTF8(plain));
     if( !resolved.has_value() )
@@ -566,37 +581,53 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
 - (void)drawRect:(NSRect)dirtyRect
 {
     (void)dirtyRect;
-    if( self.segments.count == 0 || NSWidth(self.bounds) < 4 )
+    if( m_Breadcrumbs.empty() || NSWidth(self.bounds) < 4 )
         return;
 
     const NSInteger start = m_LayoutStartIndex;
-    NSDictionary *const sepAttr = [self separatorAttributes];
-    NSFont *const font = self.crumbFont ?: [NSFont systemFontOfSize:13.];
-    const CGFloat sepAdvance = NCBreadcrumbSeparatorAdvance(sepAttr, font);
-    const CGFloat sepSideInset = NCBreadcrumbSeparatorSideInset(font);
     const CGFloat stripH = NSHeight(self.bounds);
+    const CGFloat boundsW = NSWidth(self.bounds);
 
     CGFloat x = m_ContentOriginX;
-    if( start > 0 ) {
-        NSDictionary *ellAttr = @{NSFontAttributeName: font, NSForegroundColorAttributeName: self.textColor ?: NSColor.textColor};
-        NSString *const ell = @"… ";
-        CGFloat yEll = 0.;
-        const NSRect usedEll = NCBreadcrumbTextKitDrawLine(ell, ellAttr, font, self, x, stripH, 0., &yEll);
-        x += usedEll.size.width;
+
+    // Draw leading ellipsis from cache (no TextKit allocation).
+    if( start > 0 && m_DrawCacheEll != nil ) {
+        NSGraphicsContext *const gctx = NSGraphicsContext.currentContext;
+        [gctx saveGraphicsState];
+        [[NSBezierPath bezierPathWithRect:NSMakeRect(0., 0., boundsW, stripH)] addClip];
+        [m_DrawCacheEll.lm drawGlyphsForGlyphRange:m_DrawCacheEll.glyphRange
+                                           atPoint:NSMakePoint(x, m_DrawCacheEll.yContainer)];
+        [gctx restoreGraphicsState];
+        x += m_DrawCacheEll.advance;
     }
 
-    for( NSInteger i = start; i < static_cast<NSInteger>(self.segments.count); ++i ) {
-        NCPanelPathSegment *const s = self.segments[static_cast<size_t>(i)];
-        if( s.title.length == 0 )
+    NSUInteger segCacheIdx = 0;
+    // Separator nudge is a display-scale correction; compute once per repaint (pure arithmetic, no allocation).
+    const CGFloat sepNudge = NCBreadcrumbSeparatorVerticalNudge(self.crumbFont, NCBreadcrumbViewBackingScale(self));
+    for( NSInteger i = start; i < static_cast<NSInteger>(m_Breadcrumbs.size()); ++i ) {
+        const auto &segment = m_Breadcrumbs[static_cast<size_t>(i)];
+        NSString *const title = NCBreadcrumbLabel(segment);
+        if( title.length == 0 )
             continue;
-        if( i > start ) {
-            CGFloat ySep = 0.;
-            const CGFloat separatorNudgeUp = -1. / NCBreadcrumbViewBackingScale(self);
-            (void)NCBreadcrumbTextKitDrawLine(
-                kSep, sepAttr, font, self, x + sepSideInset, stripH, separatorNudgeUp, &ySep);
-            x += sepAdvance;
+
+        // Draw separator from cache (shared item; x is provided here, not baked into the cache).
+        if( i > start && m_DrawCacheSep != nil ) {
+            NSGraphicsContext *const gctx = NSGraphicsContext.currentContext;
+            [gctx saveGraphicsState];
+            [[NSBezierPath bezierPathWithRect:NSMakeRect(0., 0., boundsW, stripH)] addClip];
+            [m_DrawCacheSep.lm drawGlyphsForGlyphRange:m_DrawCacheSep.glyphRange
+                                               atPoint:NSMakePoint(x + m_DrawCacheSepSideInset,
+                                                                   m_DrawCacheSep.yContainer + sepNudge)];
+            [gctx restoreGraphicsState];
+            x += m_DrawCacheSepAdvance;
         }
-        NSDictionary *const a = [self titleAttributesForSegment:s];
+
+        if( segCacheIdx >= m_DrawCacheSegments.count ) {
+            ++segCacheIdx;
+            continue;
+        }
+        NCBreadcrumbTextLayout *const segItem = m_DrawCacheSegments[segCacheIdx++];
+
         const BOOL isHovered = (self.hoveredSegmentIndex == i &&
                                 self.hoverFillColor &&
                                 self.hoverFillColor != NSColor.clearColor);
@@ -608,7 +639,7 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
             const CGFloat padYTop = static_cast<CGFloat>(self.hoverPadYTop);
             const CGFloat padYBottom = static_cast<CGFloat>(self.hoverPadYBottom);
             const CGFloat cr = static_cast<CGFloat>(self.hoverCornerRadius);
-            hoverBase = NCBreadcrumbSegmentLinkBaseRectInView(s.title, a, font, self, x, stripH);
+            hoverBase = segItem.hoverBase;
             hr = NCBreadcrumbPaddedLinkRect(hoverBase, padX, padYTop, padYBottom);
             NSGraphicsContext *const gctx = NSGraphicsContext.currentContext;
             [gctx saveGraphicsState];
@@ -620,8 +651,14 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
             [gctx restoreGraphicsState];
         }
 
-        CGFloat y = 0.;
-        const NSRect usedTitle = NCBreadcrumbTextKitDrawLine(s.title, a, font, self, x, stripH, 0., &y);
+        // Draw segment title from cache (no TextKit allocation).
+        {
+            NSGraphicsContext *const gctx = NSGraphicsContext.currentContext;
+            [gctx saveGraphicsState];
+            [[NSBezierPath bezierPathWithRect:NSMakeRect(0., 0., boundsW, stripH)] addClip];
+            [segItem.lm drawGlyphsForGlyphRange:segItem.glyphRange atPoint:NSMakePoint(x, segItem.yContainer)];
+            [gctx restoreGraphicsState];
+        }
 
         if( isHovered ) {
             NSRect layoutStoredLink = NSZeroRect;
@@ -633,21 +670,12 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
                     break;
                 }
             }
-            NCBreadcrumbTraceHoverDraw(i,
-                                       s.title,
-                                       x,
-                                       y,
-                                       usedTitle,
-                                       hoverBase,
-                                       hr,
-                                       self.bounds,
-                                       self.bounds,
-                                       stripH,
-                                       layoutStoredLink,
-                                       haveLayoutLink);
+            const NSRect usedTitle = NSMakeRect(x, segItem.yContainer, segItem.advance, segItem.usedHeight);
+            NCBreadcrumbTraceHoverDraw(i, title, x, segItem.yContainer, usedTitle, hoverBase, hr,
+                                       self.bounds, self.bounds, stripH, layoutStoredLink, haveLayoutLink);
         }
 
-        x += usedTitle.size.width;
+        x += segItem.advance;
     }
 }
 
@@ -705,14 +733,17 @@ static NSRect NCBreadcrumbTextKitDrawLine(NSString *text,
     const NSInteger idx = [self segmentIndexAtPoint:p];
     if( idx < 0 )
         return;
-    NCPanelPathSegment *const s = self.segments[static_cast<size_t>(idx)];
-    if( s.isCurrentDirectory ) {
+    const auto &segment = m_Breadcrumbs[static_cast<size_t>(idx)];
+    if( segment.is_current_directory ) {
         if( [self.crumbDelegate respondsToSelector:@selector(breadcrumbsViewDidActivateCurrentSegment:)] )
             [self.crumbDelegate breadcrumbsViewDidActivateCurrentSegment:self];
     }
-    else if( s.navigatePOSIXPath.length > 0 ) {
+    else {
+        NSString *const navigate_path = NCBreadcrumbNavigatePath(segment);
+        if( navigate_path.length == 0 )
+            return;
         if( [self.crumbDelegate respondsToSelector:@selector(breadcrumbsView:didActivatePOSIXPath:)] )
-            [self.crumbDelegate breadcrumbsView:self didActivatePOSIXPath:s.navigatePOSIXPath];
+            [self.crumbDelegate breadcrumbsView:self didActivatePOSIXPath:navigate_path];
     }
 }
 

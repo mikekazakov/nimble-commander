@@ -22,7 +22,6 @@ public:
     [[nodiscard]] unsigned PathHoverPadYTop() const override;
     [[nodiscard]] unsigned PathHoverPadYBottom() const override;
     [[nodiscard]] unsigned PathHoverCornerRadius() const override;
-    [[nodiscard]] unsigned PathAreaBottomInset() const override;
     void ObserveChanges(std::function<void()> _callback) override;
 
 private:

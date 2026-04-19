@@ -35,7 +35,6 @@ struct Theme::Internals {
     unsigned m_FilePanelsHeaderPathHoverPadYTop;
     unsigned m_FilePanelsHeaderPathHoverPadYBottom;
     unsigned m_FilePanelsHeaderPathHoverCornerRadius;
-    unsigned m_FilePanelsHeaderPathAreaBottomInset;
     NSFont *m_FilePanelsFooterFont;
     NSColor *m_FilePanelsFooterTextColor;
     NSColor *m_FilePanelsFooterActiveTextColor;
@@ -191,10 +190,8 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     I->m_FilePanelsHeaderPathAccentColor = ExtractColor("filePanelsHeaderPathAccentColor");
     constexpr unsigned kDefaultHeaderPathHoverPad = 2;
     constexpr unsigned kDefaultHeaderPathHoverCornerRadius = 4;
-    constexpr unsigned kDefaultHeaderPathAreaBottomInset = 1;
     constexpr unsigned kMaxHeaderPathHoverPad = 12;
     constexpr unsigned kMaxHeaderPathHoverCornerRadius = 12;
-    constexpr unsigned kMaxHeaderPathAreaBottomInset = 8;
     const auto extract_optional_header_metric = [&](const char *_path, unsigned max_value) -> std::optional<unsigned> {
         if( const std::optional<unsigned> v = ThemePersistence::ExtractUInt(doc, _path) )
             return std::min(v.value(), max_value);
@@ -226,10 +223,6 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     I->m_FilePanelsHeaderPathHoverCornerRadius = extract_header_metric("filePanelsHeaderPathHoverCornerRadius",
                                                                        kDefaultHeaderPathHoverCornerRadius,
                                                                        kMaxHeaderPathHoverCornerRadius);
-    I->m_FilePanelsHeaderPathAreaBottomInset =
-        extract_header_metric("filePanelsHeaderPathAreaBottomInset",
-                              kDefaultHeaderPathAreaBottomInset,
-                              kMaxHeaderPathAreaBottomInset);
 
     I->m_FilePanelsListFont = ExtractFont("filePanelsListFont");
     I->m_FilePanelsListRowVerticalPadding = ExtractUInt("filePanelsListRowVerticalPadding");
@@ -561,11 +554,6 @@ unsigned Theme::FilePanelsHeaderPathHoverPadYBottom() const noexcept
 unsigned Theme::FilePanelsHeaderPathHoverCornerRadius() const noexcept
 {
     return I->m_FilePanelsHeaderPathHoverCornerRadius;
-}
-
-unsigned Theme::FilePanelsHeaderPathAreaBottomInset() const noexcept
-{
-    return I->m_FilePanelsHeaderPathAreaBottomInset;
 }
 
 NSFont *Theme::FilePanelsBriefFont() const noexcept

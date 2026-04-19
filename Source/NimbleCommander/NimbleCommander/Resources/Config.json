@@ -585,7 +585,6 @@
                       "filePanelsHeaderPathHoverPadYTop": "0",
                       "filePanelsHeaderPathHoverPadYBottom": "1",
                       "filePanelsHeaderPathHoverCornerRadius": "4",
-                      "filePanelsHeaderPathAreaBottomInset": "1",
                       
                       /* File Panels -> footer settings */
                       "filePanelsFooterFont": "@labelFont, 13",
@@ -723,7 +722,6 @@
                       "filePanelsHeaderPathHoverPadYTop": "0",
                       "filePanelsHeaderPathHoverPadYBottom": "1",
                       "filePanelsHeaderPathHoverCornerRadius": "4",
-                      "filePanelsHeaderPathAreaBottomInset": "1",
                       
                       /* File Panels -> footer settings */
                       "filePanelsFooterFont": "@labelFont, 13",
@@ -878,7 +876,6 @@
                       "filePanelsHeaderPathHoverPadYTop": "0",
                       "filePanelsHeaderPathHoverPadYBottom": "1",
                       "filePanelsHeaderPathHoverCornerRadius": "4",
-                      "filePanelsHeaderPathAreaBottomInset": "1",
                       
                       /* File Panels -> footer settings */
                       "filePanelsFooterFont": "Menlo-Regular, 13",

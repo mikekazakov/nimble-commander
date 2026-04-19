@@ -86,7 +86,6 @@ public:
     [[nodiscard]] unsigned FilePanelsHeaderPathHoverPadYTop() const noexcept;
     [[nodiscard]] unsigned FilePanelsHeaderPathHoverPadYBottom() const noexcept;
     [[nodiscard]] unsigned FilePanelsHeaderPathHoverCornerRadius() const noexcept;
-    [[nodiscard]] unsigned FilePanelsHeaderPathAreaBottomInset() const noexcept;
 
     // File Panels --> Footer bar settings /////////////////////////////////////////////////////////
     [[nodiscard]] NSFont *FilePanelsFooterFont() const noexcept;

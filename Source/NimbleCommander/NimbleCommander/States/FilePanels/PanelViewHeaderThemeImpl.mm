@@ -68,11 +68,6 @@ unsigned HeaderThemeImpl::PathHoverCornerRadius() const
     return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathHoverCornerRadius();
 }
 
-unsigned HeaderThemeImpl::PathAreaBottomInset() const
-{
-    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathAreaBottomInset();
-}
-
 void HeaderThemeImpl::ObserveChanges(std::function<void()> _callback)
 {
     const auto filter = ThemesManager::Notifications::FilePanelsHeader;

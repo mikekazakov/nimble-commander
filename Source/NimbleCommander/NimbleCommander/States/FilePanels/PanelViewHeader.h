@@ -3,36 +3,10 @@
 
 #include <functional>
 #include <optional>
-#include <string>
-#include <vector>
 
 #include <Panel/PanelDataSortMode.h>
+#include "NCPanelPathBarTypes.h"
 #include "PanelViewHeaderTheme.h"
-
-namespace nc::panel {
-
-/**
- * One visual segment in the directory path bar. When navigate_to_vfs_path is set, the segment is a link to that
- * absolute path on the current panel VFS. The last segment omits it and is shown as plain text (current folder).
- */
-struct PanelHeaderBreadcrumb {
-    NSString *_Nullable label = nil;
-    std::optional<std::string> navigate_to_vfs_path;
-};
-
-} // namespace nc::panel
-
-// NOLINTBEGIN(modernize-use-using, performance-enum-size)
-// NS_ENUM(NSInteger, …) is the standard Obj-C export for this API; NSInteger width is intentional.
-typedef NS_ENUM(NSInteger, NCPanelPathBarContextCommand) {
-    NCPanelPathBarContextCommandOpen = 0,
-    NCPanelPathBarContextCommandOpenInNewTab,
-    NCPanelPathBarContextCommandCopyPath,
-};
-// NOLINTEND(modernize-use-using, performance-enum-size)
-
-using NCPanelPathBarContextMenuActionBlock = void (^)(NSString *_Nonnull posixPath,
-                                                      NCPanelPathBarContextCommand command);
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -41,26 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (id)initWithFrame:(NSRect)frameRect NS_UNAVAILABLE;
 - (id)initWithFrame:(NSRect)frameRect theme:(std::unique_ptr<nc::panel::HeaderTheme>)_theme;
 
-// Updates header title according to the new path. Should be called by controller when path is changed.
-- (void)setPath:(NSString *)_path;
+// Updates the path/title strip. Path bar presentation details stay encapsulated in the internal path-bar controller.
+- (void)setPath:(NSString *)path;
 
-// Plain non-interactive title (e.g. temporary panel).
-- (void)setPlainHeaderPath:(NSString *)_path;
-
-// Clickable breadcrumbs.
-// - fullPathForEditing is the full path string for read-only display (editable=NO) when the user opens
-//   full-path mode from the last crumb or double-click outside the glyphs.
-// - posixPathForActions is used by context actions when user clicks outside crumbs (must be a clean POSIX path
-//   on the current VFS, without junction/prefix decorations).
-- (void)setInteractiveBreadcrumbs:(const std::vector<nc::panel::PanelHeaderBreadcrumb> &)_breadcrumbs
-               fullPathForEditing:(NSString *)_full_path_for_editing
-              posixPathForActions:(NSString *)_posix_path_for_actions;
-
-// Invoked when the user activates a breadcrumb (absolute path on the current VFS, always starts with '/').
-@property(nonatomic) std::function<void(const std::string &)> pathNavigateToVFSPathCallback;
-
-// Right-click path bar: Open / Open in New Tab / Copy Path (Marta-style). Optional.
-@property(nonatomic, copy, nullable) NCPanelPathBarContextMenuActionBlock pathBarContextMenuAction;
+// Wires panel-specific path bar integration without exposing the internal controller outside the header boundary.
+- (void)configurePathBarWithContextSource:(std::function<std::optional<nc::panel::PanelPathContext>(void)>)context_source
+                        navigationHandler:(std::function<void(const std::string &)>)navigation_handler
+                        contextMenuAction:(NCPanelPathBarContextMenuAction)context_menu_action;
 
 // Progress indicator located in the header. Shown only when displaying activity.
 @property(nonatomic, readonly) NSProgressIndicator *busyIndicator;

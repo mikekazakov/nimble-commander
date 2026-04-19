@@ -2,8 +2,9 @@
 #pragma once
 #import <Cocoa/Cocoa.h>
 
+#include "NCPanelPathBarTypes.h"
+
 @class NCPanelBreadcrumbsView;
-@class NCPanelPathSegment;
 
 /// Upward shift (points) so glyph ink aligns with tab/header labels; linear in (lineHeight − capHeight).
 FOUNDATION_EXTERN CGFloat NCPanelPathBarOpticalShiftUp(NSFont *_Nullable font, CGFloat lineBoxHeight);
@@ -21,10 +22,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)breadcrumbsViewDidRequestFullPathEdit:(NCPanelBreadcrumbsView *)v;
 @end
 
-/// Manual draw + layout: vertical centering is explicit in drawRect (same idea as TabBarStyle title rect).
+/// Manual draw: layout and vertical centering are precomputed in rebuildLayout (see NCBreadcrumbTextLayout);
+/// drawRect: uses the cached geometry with no TextKit allocations.
 @interface NCPanelBreadcrumbsView : NSView
 @property(nonatomic, weak, nullable) id<NCPanelBreadcrumbsViewDelegate> crumbDelegate;
-@property(nonatomic, copy, nullable) NSArray<NCPanelPathSegment *> *segments;
 @property(nonatomic) NSInteger hoveredSegmentIndex; // -1 none
 @property(nonatomic, strong) NSFont *crumbFont;
 @property(nonatomic, strong) NSColor *textColor;
@@ -37,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) unsigned hoverCornerRadius;
 @property(nonatomic, copy, nullable) NSMenu * (^menuForEventBlock)(NSEvent *event);
 
+- (void)setBreadcrumbs:(const std::vector<nc::panel::PanelHeaderBreadcrumb> &)breadcrumbs;
 - (void)rebuildLayout;
 /// Context menu: POSIX path for link under point, else fallback for empty/gap clicks.
 - (nullable NSString *)posixPathAtViewPoint:(NSPoint)p fallbackPOSIXPath:(nullable NSString *)fallback plainPath:(nullable NSString *)plain;

@@ -28,7 +28,7 @@
         m_PathField.bordered = NO;
         m_PathField.drawsBackground = NO;
         m_PathField.focusRingType = NSFocusRingTypeNone;
-        // Full-path mode is selection and copy only; never commit as a POSIX navigate target.
+        // Read-only: full-path mode is for selecting and copying the path. Enter and Escape both dismiss it.
         m_PathField.editable = NO;
         m_PathField.selectable = YES;
         m_PathField.alignment = NSTextAlignmentCenter;

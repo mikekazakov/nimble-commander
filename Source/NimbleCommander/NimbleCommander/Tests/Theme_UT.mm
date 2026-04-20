@@ -52,10 +52,11 @@ TEST_CASE(PREFIX "Constructs from JSON")
         'filePanelsHeaderInactiveBackgroundColor': '#010108',\
         'filePanelsHeaderSeparatorColor': '#010109',\
         'filePanelsHeaderPathSeparatorColor': '#01010A',\
-        'filePanelsHeaderPathHoverPadX': '6',\
+        'filePanelsHeaderPathHoverPadX': '6.5',\
         'filePanelsHeaderPathHoverPadYTop': '3',\
-        'filePanelsHeaderPathHoverPadYBottom': '4',\
+        'filePanelsHeaderPathHoverPadYBottom': '4.5',\
         'filePanelsHeaderPathHoverCornerRadius': '8',\
+        'filePanelsHeaderPathSeparatorVerticalNudgeCoefficient': '0.35',\
         'filePanelsFooterFont': '@boldSystemFont,43',\
         'filePanelsFooterTextColor': '#01010A',\
         'filePanelsFooterActiveTextColor': '#01010B',\
@@ -130,10 +131,11 @@ TEST_CASE(PREFIX "Constructs from JSON")
     CHECK(t.FilePanelsHeaderInactiveBackgroundColor().toHexStdString == "#010108");
     CHECK(t.FilePanelsHeaderSeparatorColor().toHexStdString == "#010109");
     CHECK(t.FilePanelsHeaderPathSeparatorColor().toHexStdString == "#01010A");
-    CHECK(t.FilePanelsHeaderPathHoverPadX() == 6);
-    CHECK(t.FilePanelsHeaderPathHoverPadYTop() == 3);
-    CHECK(t.FilePanelsHeaderPathHoverPadYBottom() == 4);
+    CHECK(t.FilePanelsHeaderPathHoverPadX() == 6.5);
+    CHECK(t.FilePanelsHeaderPathHoverPadYTop() == 3.);
+    CHECK(t.FilePanelsHeaderPathHoverPadYBottom() == 4.5);
     CHECK(t.FilePanelsHeaderPathHoverCornerRadius() == 8);
+    CHECK(t.FilePanelsHeaderPathSeparatorVerticalNudgeCoefficient() == 0.35);
     CHECK([t.FilePanelsFooterFont() isEqualTo:[NSFont boldSystemFontOfSize:43]]);
     CHECK(t.FilePanelsFooterTextColor().toHexStdString == "#01010A");
     CHECK(t.FilePanelsFooterActiveTextColor().toHexStdString == "#01010B");
@@ -211,12 +213,15 @@ TEST_CASE(PREFIX "Path hover pad top and bottom load independently from theme")
         'filePanelsHeaderSeparatorColor': '#010109',\
         'filePanelsHeaderPathSeparatorColor': '#01010A',\
         'filePanelsHeaderPathAccentColor': '#01010B',\
-        'filePanelsHeaderPathHoverPadX': '6',\
-        'filePanelsHeaderPathHoverPadYTop': '1',\
-        'filePanelsHeaderPathHoverPadYBottom': '3',\
-        'filePanelsHeaderPathHoverCornerRadius': '8'\
+        'filePanelsHeaderPathHoverPadX': '2.5',\
+        'filePanelsHeaderPathHoverPadYTop': '0',\
+        'filePanelsHeaderPathHoverPadYBottom': '0.5',\
+        'filePanelsHeaderPathHoverCornerRadius': '4',\
+        'filePanelsHeaderPathSeparatorVerticalNudgeCoefficient': '0.25'\
     }";
     const Theme t{JSONToObj(json), JSONToObj("{}")};
-    CHECK(t.FilePanelsHeaderPathHoverPadYTop() == 1);
-    CHECK(t.FilePanelsHeaderPathHoverPadYBottom() == 3);
+    CHECK(t.FilePanelsHeaderPathHoverPadX() == 2.5);
+    CHECK(t.FilePanelsHeaderPathHoverPadYTop() == 0.);
+    CHECK(t.FilePanelsHeaderPathHoverPadYBottom() == 0.5);
+    CHECK(t.FilePanelsHeaderPathSeparatorVerticalNudgeCoefficient() == 0.25);
 }

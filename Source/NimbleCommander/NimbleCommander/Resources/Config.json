@@ -581,10 +581,11 @@
                       "filePanelsHeaderSeparatorColor": "#8080806B",
                       "filePanelsHeaderPathSeparatorColor": "#666666",
                       "filePanelsHeaderPathAccentColor": "#0000001F",
-                      "filePanelsHeaderPathHoverPadX": "3",
-                      "filePanelsHeaderPathHoverPadYTop": "0",
-                      "filePanelsHeaderPathHoverPadYBottom": "1",
+                      "filePanelsHeaderPathHoverPadX": "2.5",
+                      "filePanelsHeaderPathHoverPadYTop": "3",
+                      "filePanelsHeaderPathHoverPadYBottom": "3",
                       "filePanelsHeaderPathHoverCornerRadius": "4",
+                      "filePanelsHeaderPathSeparatorVerticalNudgeCoefficient": "0.3",
                       
                       /* File Panels -> footer settings */
                       "filePanelsFooterFont": "@labelFont, 13",
@@ -718,10 +719,11 @@
                       "filePanelsHeaderSeparatorColor": "#8080806B",
                       "filePanelsHeaderPathSeparatorColor": "#666666",
                       "filePanelsHeaderPathAccentColor": "#FFFFFF24",
-                      "filePanelsHeaderPathHoverPadX": "3",
-                      "filePanelsHeaderPathHoverPadYTop": "0",
-                      "filePanelsHeaderPathHoverPadYBottom": "1",
+                      "filePanelsHeaderPathHoverPadX": "2.5",
+                      "filePanelsHeaderPathHoverPadYTop": "3",
+                      "filePanelsHeaderPathHoverPadYBottom": "3",
                       "filePanelsHeaderPathHoverCornerRadius": "4",
+                      "filePanelsHeaderPathSeparatorVerticalNudgeCoefficient": "0.3",
                       
                       /* File Panels -> footer settings */
                       "filePanelsFooterFont": "@labelFont, 13",
@@ -872,10 +874,11 @@
                       "filePanelsHeaderSeparatorColor": "#00FFFF",
                       "filePanelsHeaderPathSeparatorColor": "#00FFFF",
                       "filePanelsHeaderPathAccentColor": "#00FFFF30",
-                      "filePanelsHeaderPathHoverPadX": "3",
-                      "filePanelsHeaderPathHoverPadYTop": "0",
-                      "filePanelsHeaderPathHoverPadYBottom": "1",
+                      "filePanelsHeaderPathHoverPadX": "2.5",
+                      "filePanelsHeaderPathHoverPadYTop": "3",
+                      "filePanelsHeaderPathHoverPadYBottom": "3",
                       "filePanelsHeaderPathHoverCornerRadius": "4",
+                      "filePanelsHeaderPathSeparatorVerticalNudgeCoefficient": "0.3",
                       
                       /* File Panels -> footer settings */
                       "filePanelsFooterFont": "Menlo-Regular, 13",

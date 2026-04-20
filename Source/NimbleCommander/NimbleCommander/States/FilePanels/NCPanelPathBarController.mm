@@ -49,10 +49,11 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     NSColor *m_LinkColor;
     NSColor *m_SeparatorColor;
     NSColor *m_HoverFillColor;
-    unsigned m_HoverPadX;
-    unsigned m_HoverPadYTop;
-    unsigned m_HoverPadYBottom;
+    double m_HoverPadX;
+    double m_HoverPadYTop;
+    double m_HoverPadYBottom;
     unsigned m_HoverCornerRadius;
+    double m_SeparatorVerticalNudgeCoefficient;
 }
 
 @synthesize defaultResponder;
@@ -115,6 +116,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     m_HoverPadYTop = theme.PathHoverPadYTop();
     m_HoverPadYBottom = theme.PathHoverPadYBottom();
     m_HoverCornerRadius = theme.PathHoverCornerRadius();
+    m_SeparatorVerticalNudgeCoefficient = theme.PathSeparatorVerticalNudgeCoefficient();
 
     m_View.pathEditField.font = m_Font;
     if( self.fullPathSelectionActive ) {
@@ -196,6 +198,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     breadcrumbs_view.hoverPadYTop = m_HoverPadYTop;
     breadcrumbs_view.hoverPadYBottom = m_HoverPadYBottom;
     breadcrumbs_view.hoverCornerRadius = m_HoverCornerRadius;
+    breadcrumbs_view.separatorVerticalNudgeCoefficient = m_SeparatorVerticalNudgeCoefficient;
 
     if( !m_Breadcrumbs.empty() ) {
         [breadcrumbs_view setBreadcrumbs:m_Breadcrumbs];

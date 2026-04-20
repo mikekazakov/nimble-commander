@@ -2,6 +2,7 @@
 #import "NCPanelBreadcrumbsView.h"
 #include "NCPanelPathBarPresentation.h"
 #include <Panel/Log.h>
+#include <Utility/ObjCpp.h>
 #include <algorithm>
 #include <cmath>
 #include <optional>
@@ -169,6 +170,17 @@ static inline CGFloat NCBreadcrumbAlignToPixelGrid(CGFloat value, CGFloat scale)
     return std::round(value * scale) / scale;
 }
 
+/// Snaps all four edges of a rect to the device pixel grid. Applied to the hover pill before filling
+/// so the rounded rect has crisp edges on both @1x and @2x displays.
+static NSRect NCBreadcrumbPixelAlignRect(NSRect r, CGFloat scale) noexcept
+{
+    const CGFloat x0 = std::round(r.origin.x * scale) / scale;
+    const CGFloat y0 = std::round(r.origin.y * scale) / scale;
+    const CGFloat x1 = std::round((r.origin.x + r.size.width) * scale) / scale;
+    const CGFloat y1 = std::round((r.origin.y + r.size.height) * scale) / scale;
+    return NSMakeRect(x0, y0, x1 - x0, y1 - y0);
+}
+
 /// Pre-laid-out TextKit state for one text item.
 /// Created once in rebuildLayout and consumed in drawRect: by calling
 /// drawGlyphsForGlyphRange:atPoint: with no new TextKit allocations in the hot path.
@@ -197,13 +209,12 @@ static CGFloat NCBreadcrumbSeparatorSideInset(NSFont *font) noexcept
 
 // Returns the vertical nudge (in points) to push the › glyph up for optical alignment with text.
 // The › sits visually at x-height level while text glyphs reach cap height, so the glyph reads
-// as low. The nudge is 20% of (capHeight - xHeight) — the gap between caps and lowercase —
+// as low. The nudge is calculated as: coefficient * (capHeight - xHeight) — the gap between caps and lowercase —
 // snapped to the physical pixel grid with a minimum of 1 physical pixel.
-// Example results on Retina (2x): 13pt → 0.5pt (1px), 22pt → 1.0pt (2px).
-static CGFloat NCBreadcrumbSeparatorVerticalNudge(NSFont *font, CGFloat backingScale) noexcept
+static CGFloat NCBreadcrumbSeparatorVerticalNudge(NSFont *font, CGFloat backingScale, CGFloat coefficient) noexcept
 {
     const CGFloat capToX = font != nil ? std::max(0., font.capHeight - font.xHeight) : 2.3;
-    const CGFloat raw = capToX * 0.2;
+    const CGFloat raw = capToX * coefficient;
     return -(std::max(std::round(raw * backingScale), 1.) / backingScale);
 }
 
@@ -270,9 +281,36 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
     if( used.size.width < 0.5 )
         return nil;
     const NSRange glyphRange = [lm glyphRangeForTextContainer:tc];
-    const NSRect gb = glyphRange.length ? [lm boundingRectForGlyphRange:glyphRange inTextContainer:tc] : NSZeroRect;
-    const NSRect visualRect = (gb.size.width >= 0.5 && gb.size.height >= 0.5) ? gb : used;
-    const CGFloat yContainer = NCBreadcrumbCenterContainerYForVisualRect(stripH, visualRect);
+
+    NSFont *const font = nc::objc_cast<NSFont>([effectiveAttrs objectForKey:NSFontAttributeName]) ?: fallbackFont;
+
+    CGFloat yContainer;
+    NSRect hoverBase;
+    if( stripH > 0. && glyphRange.length > 0 && font != nil ) {
+        // Use font metrics to position the container and compute the hover-pill bounds.
+        // NSLayoutManager's glyph bounding rect can include full typographic ascent/descent
+        // even for short glyphs (e.g. all-x-height text), leaving unwanted space inside the
+        // pill above the ink. Centering on capHeight gives a tight, consistent result
+        // regardless of which specific glyphs are present in the label.
+        const CGFloat capH = font.capHeight > 0. ? font.capHeight : font.ascender;
+        // Baseline Y in the text container (Y increases downward from container top).
+        const CGFloat baselineY = [lm locationForGlyphAtIndex:glyphRange.location].y;
+        // Place the container so the cap-height range is centered in the strip.
+        // Cap-height top in view = (stripH - capH) / 2  =>  yContainer = (stripH+capH)/2 - baselineY
+        yContainer = (stripH + capH) * 0.5 - baselineY;
+        hoverBase = NSMakeRect(viewX, (stripH - capH) * 0.5, used.size.width, capH);
+    }
+    else {
+        // Fallback: used for width-only measurements (stripH == 0) or when font is unavailable.
+        const NSRect gb = glyphRange.length ? [lm boundingRectForGlyphRange:glyphRange inTextContainer:tc] : NSZeroRect;
+        const NSRect visualRect = (gb.size.width >= 0.5 && gb.size.height >= 0.5) ? gb : used;
+        yContainer = NCBreadcrumbCenterContainerYForVisualRect(stripH, visualRect);
+        hoverBase = NSMakeRect(viewX + visualRect.origin.x,
+                               yContainer + visualRect.origin.y,
+                               visualRect.size.width,
+                               visualRect.size.height);
+    }
+
     NCBreadcrumbTextLayout *const item = [[NCBreadcrumbTextLayout alloc] init];
     item->_ts = ts;
     item->_lm = lm;
@@ -280,10 +318,7 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
     item->_yContainer = yContainer;
     item->_advance = used.size.width;
     item->_usedHeight = used.size.height;
-    item->_hoverBase = NSMakeRect(viewX + visualRect.origin.x,
-                                  yContainer + visualRect.origin.y,
-                                  visualRect.size.width,
-                                  visualRect.size.height);
+    item->_hoverBase = hoverBase;
     return item;
 }
 @end
@@ -315,6 +350,7 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
 @synthesize hoverPadYTop = _hoverPadYTop;
 @synthesize hoverPadYBottom = _hoverPadYBottom;
 @synthesize hoverCornerRadius = _hoverCornerRadius;
+@synthesize separatorVerticalNudgeCoefficient = _separatorVerticalNudgeCoefficient;
 @synthesize menuForEventBlock = _menuForEventBlock;
 
 - (instancetype)initWithFrame:(NSRect)frameRect
@@ -503,9 +539,9 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
         }
         [m_DrawCacheSegments addObject:segItem];
         const NSRect hoverBase = segItem.hoverBase;
-        const CGFloat padX = static_cast<CGFloat>(self.hoverPadX);
-        const CGFloat padYTop = static_cast<CGFloat>(self.hoverPadYTop);
-        const CGFloat padYBottom = static_cast<CGFloat>(self.hoverPadYBottom);
+        const CGFloat padX = self.hoverPadX;
+        const CGFloat padYTop = self.hoverPadYTop;
+        const CGFloat padYBottom = self.hoverPadYBottom;
         const NSRect linkRect = NCBreadcrumbPaddedLinkRect(hoverBase, padX, padYTop, padYBottom);
         if( nc::panel::Log::Level() <= spdlog::level::trace )
             NCBreadcrumbTraceHoverLayout(title, i, x, hoverBase, linkRect, padX, padYTop, padYBottom, stripH, self.bounds);
@@ -583,7 +619,7 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
 
     NSUInteger segCacheIdx = 0;
     // Separator nudge is a display-scale correction; compute once per repaint (pure arithmetic, no allocation).
-    const CGFloat sepNudge = NCBreadcrumbSeparatorVerticalNudge(self.crumbFont, NCBreadcrumbViewBackingScale(self));
+    const CGFloat sepNudge = NCBreadcrumbSeparatorVerticalNudge(self.crumbFont, NCBreadcrumbViewBackingScale(self), self.separatorVerticalNudgeCoefficient);
     for( NSInteger i = start; i < static_cast<NSInteger>(m_Breadcrumbs.size()); ++i ) {
         const auto &segment = m_Breadcrumbs[static_cast<size_t>(i)];
         NSString *const title = NCBreadcrumbLabel(segment);
@@ -614,12 +650,13 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
         NSRect hr = NSZeroRect;
 
         if( isHovered ) {
-            const CGFloat padX = static_cast<CGFloat>(self.hoverPadX);
-            const CGFloat padYTop = static_cast<CGFloat>(self.hoverPadYTop);
-            const CGFloat padYBottom = static_cast<CGFloat>(self.hoverPadYBottom);
+            const CGFloat padX = self.hoverPadX;
+            const CGFloat padYTop = self.hoverPadYTop;
+            const CGFloat padYBottom = self.hoverPadYBottom;
             const CGFloat cr = static_cast<CGFloat>(self.hoverCornerRadius);
             hoverBase = segItem.hoverBase;
-            hr = NCBreadcrumbPaddedLinkRect(hoverBase, padX, padYTop, padYBottom);
+            hr = NCBreadcrumbPixelAlignRect(NCBreadcrumbPaddedLinkRect(hoverBase, padX, padYTop, padYBottom),
+                                            NCBreadcrumbViewBackingScale(self));
             NSGraphicsContext *const gctx = NSGraphicsContext.currentContext;
             [gctx saveGraphicsState];
             [[NSBezierPath bezierPathWithRect:self.bounds] addClip];

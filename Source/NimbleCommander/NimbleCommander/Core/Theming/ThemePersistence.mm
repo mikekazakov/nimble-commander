@@ -27,6 +27,24 @@ std::optional<unsigned> ThemePersistence::ExtractUInt(const Value &_doc, const c
     return std::nullopt;
 }
 
+std::optional<double> ThemePersistence::ExtractDouble(const Value &_doc, const char *_path)
+{
+    auto cr = _doc.FindMember(_path);
+    if( cr == _doc.MemberEnd() )
+        return std::nullopt;
+
+    if( !cr->value.IsString() )
+        return std::nullopt;
+
+    const char *str = cr->value.GetString();
+    char *end = nullptr;
+    const double result = std::strtod(str, &end);
+    if( end == str || end == nullptr )
+        return std::nullopt;
+
+    return result;
+}
+
 NSColor *ThemePersistence::ExtractColor(const Value &_doc, const char *_path)
 {
     auto cr = _doc.FindMember(_path);

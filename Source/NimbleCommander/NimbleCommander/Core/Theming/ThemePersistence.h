@@ -31,6 +31,7 @@ struct ThemePersistence {
     static Value EncodeAppearance(ThemeAppearance _appearance);
 
     static std::optional<unsigned> ExtractUInt(const Value &_doc, const char *_path);
+    static std::optional<double> ExtractDouble(const Value &_doc, const char *_path);
     static Value EncodeUInt(unsigned _value);
 };
 

@@ -1,26 +1,12 @@
 #pragma once
 
-#import <Cocoa/Cocoa.h>
+#include <Panel/PathBar.h>
 
 #include <functional>
-#include <optional>
-#include <string>
-#include <vector>
 
 namespace nc::panel {
 
-struct PanelHeaderBreadcrumb {
-    NSString *_Nullable label = nil;
-    std::optional<std::string> navigate_to_vfs_path;
-    bool is_current_directory = false;
-};
-
-struct PanelPathContext {
-    std::string verbose_full_path;
-    std::string directory_path;
-    std::string posix_path;
-};
-
+// UI-level commands triggered from the path bar context menu.
 enum class NCPanelPathBarContextCommand : int {
     Open = 0,
     OpenInNewTab,

@@ -908,10 +908,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
 
     try {
         if( ![self probeDirectoryAccessForRequest:*_request] ) {
-            const auto perm_error = Error{Error::POSIX, EPERM};
-            if( _request->LoadingResultCallback )
-                _request->LoadingResultCallback(std::unexpected(perm_error));
-            return std::unexpected(perm_error);
+            return std::unexpected(Error{Error::POSIX, EPERM});
         }
 
         auto directory = _request->RequestedDirectory;

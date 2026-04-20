@@ -7,6 +7,7 @@
 #include "PanelDataFilter.mm"
 #include "PanelDataSelection.mm"
 #include "PanelViewFieldEditor.mm"
+#include "PathBar.mm"
 #include "QuickSearch.mm"
 #include "TextWidthsCache.mm"
 #include "UI/PanelViewPresentationItemsColoringFilter.mm"

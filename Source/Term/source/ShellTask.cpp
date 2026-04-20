@@ -551,7 +551,7 @@ void ShellTask::Impl::OnMasterSourceData()
 void ShellTask::Impl::OnCwdSourceData()
 {
     dispatch_assert_background_queue(); // must be called on io_queue
-    const size_t estimated_size = dispatch_source_get_data(cwd_source);
+    const size_t estimated_size = dispatch_source_get_data(master_source);
     Log::Trace("OnCwdSourceData() estimated {} bytes available", estimated_size);
     if( estimated_size == 0 ) {
         // GCD reports dead FDs as zero available data

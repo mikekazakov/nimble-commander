@@ -46,7 +46,6 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     id m_OutsideClickMonitor;
     NSFont *m_Font;
     NSColor *m_TextColor;
-    NSColor *m_LinkColor;
     NSColor *m_SeparatorColor;
     NSColor *m_HoverFillColor;
     double m_HoverPadX;
@@ -109,7 +108,6 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
 {
     m_Font = theme.Font();
     m_TextColor = active ? theme.ActiveTextColor() : theme.TextColor();
-    m_LinkColor = m_TextColor;
     m_SeparatorColor = theme.PathSeparatorColor();
     m_HoverFillColor = theme.PathAccentColor();
     m_HoverPadX = theme.PathHoverPadX();
@@ -191,7 +189,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     breadcrumbs_view.hoveredSegmentIndex = -1;
     breadcrumbs_view.crumbFont = m_Font ?: [NSFont systemFontOfSize:13.];
     breadcrumbs_view.textColor = m_TextColor ?: NSColor.textColor;
-    breadcrumbs_view.linkColor = m_LinkColor ?: breadcrumbs_view.textColor;
+    breadcrumbs_view.linkColor = breadcrumbs_view.textColor;
     breadcrumbs_view.separatorColor = m_SeparatorColor ?: NSColor.secondaryLabelColor;
     breadcrumbs_view.hoverFillColor = m_HoverFillColor;
     breadcrumbs_view.hoverPadX = m_HoverPadX;

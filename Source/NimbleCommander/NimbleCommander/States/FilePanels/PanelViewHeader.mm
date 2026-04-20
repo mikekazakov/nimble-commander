@@ -172,9 +172,9 @@ static bool IsDark(NSColor *_color);
     [m_PathBarController setDisplayPath:path];
 }
 
-- (void)configurePathBarWithContextSource:(std::function<std::optional<nc::panel::PanelPathContext>(void)>)context_source
-                        navigationHandler:(std::function<void(const std::string &)>)navigation_handler
-                        contextMenuAction:(nc::panel::NCPanelPathBarContextMenuAction)context_menu_action
+- (void)wirePathBarWithContextSource:(std::function<std::optional<nc::panel::PanelPathContext>(void)>)context_source
+                   navigationHandler:(std::function<void(const std::string &)>)navigation_handler
+                   contextMenuAction:(nc::panel::NCPanelPathBarContextMenuAction)context_menu_action
 {
     m_PathBarController.directoryContextProvider = std::move(context_source);
     m_PathBarController.navigateToVFSPathCallback = std::move(navigation_handler);

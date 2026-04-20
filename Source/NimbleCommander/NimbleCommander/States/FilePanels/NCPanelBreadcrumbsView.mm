@@ -643,7 +643,7 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
         }
         NCBreadcrumbTextLayout *const segItem = m_DrawCacheSegments[segCacheIdx++];
 
-        const BOOL isHovered = (self.hoveredSegmentIndex == i &&
+        const bool isHovered = (self.hoveredSegmentIndex == i &&
                                 self.hoverFillColor &&
                                 self.hoverFillColor != NSColor.clearColor);
         NSRect hoverBase = NSZeroRect;

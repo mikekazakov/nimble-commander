@@ -15,37 +15,29 @@ NS_ASSUME_NONNULL_BEGIN
 - (id)initWithFrame:(NSRect)frameRect NS_UNAVAILABLE;
 - (id)initWithFrame:(NSRect)frameRect theme:(std::unique_ptr<nc::panel::HeaderTheme>)_theme;
 
-// Updates the path/title strip. Path bar presentation details stay encapsulated in the internal path-bar controller.
+// Panel directory changed; plain title or breadcrumbs depending on wirePathBar.
 - (void)setPath:(NSString *)path;
 
-// Wires panel-specific path bar integration without exposing the internal controller outside the header boundary.
-- (void)configurePathBarWithContextSource:(std::function<std::optional<nc::panel::PanelPathContext>(void)>)context_source
-                        navigationHandler:(std::function<void(const std::string &)>)navigation_handler
-                        contextMenuAction:(nc::panel::NCPanelPathBarContextMenuAction)context_menu_action;
+// One-time after PanelView exists; then setPath: can show breadcrumbs.
+- (void)wirePathBarWithContextSource:(std::function<std::optional<nc::panel::PanelPathContext>(void)>)context_source
+                   navigationHandler:(std::function<void(const std::string &)>)navigation_handler
+                   contextMenuAction:(nc::panel::NCPanelPathBarContextMenuAction)context_menu_action;
 
-// Progress indicator located in the header. Shown only when displaying activity.
 @property(nonatomic, readonly) NSProgressIndicator *busyIndicator;
 
-// Search field located in the header. Hidden when not searching.
 @property(nonatomic, nullable) NSString *searchPrompt;
 
-// Number of matches for the current search query. Should be set by controller when search query is changed.
 @property(nonatomic) int searchMatches;
 
-// Sort mode for the panel. Displayed in a drop-down button.
 @property(nonatomic) nc::panel::data::SortMode sortMode;
 
-// Called by the view when sort mode is changed by user via sort mode button in header.
 @property(nonatomic) std::function<void(nc::panel::data::SortMode)> sortModeChangeCallback;
 
-// Called by the view when search query is changed by user via search field in header.
-// When the argument is nil this should be interpreted as discarding the search via (X) or Esc button.
+// nil means clear search (X or Esc).
 @property(nonatomic) std::function<void(NSString *_Nullable _query)> searchRequestChangeCallback;
 
-// Updates the look of the header depending on the parent panel being active or not.
 @property(nonatomic) bool active;
 
-// Used to return the focus when search field is dismissed.
 @property(nonatomic, weak, nullable) NSResponder *defaultResponder;
 
 @end

@@ -301,22 +301,7 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
         if( [tableColumn.identifier isEqualToString:@"value"] ) {
             if( i.type == PreferencesWindowThemesTabItemType::Color ) {
                 auto v = [[PreferencesWindowThemesTabColorControl alloc] initWithFrame:NSRect{}];
-                NSColor *color = ThemePersistence::ExtractColor(self.selectedThemeFrontend, i.entry.c_str());
-                if( color == nil ) {
-                    const auto &theme_name = m_ThemeNames[m_SelectedTheme];
-                    std::string backup_name = "Light";
-                    if( m_Manager->HasDefaultSettings(theme_name) ) {
-                        backup_name = theme_name;
-                    }
-                    else if( ThemePersistence::ExtractAppearance(self.selectedThemeFrontend, "themeAppearance") ==
-                             nc::ThemeAppearance::Dark ) {
-                        backup_name = "Dark";
-                    }
-
-                    if( auto backup = m_Manager->BackupThemeData(backup_name) )
-                        color = ThemePersistence::ExtractColor(*backup, i.entry.c_str());
-                }
-                if( color != nil )
+                if( NSColor *color = [self colorForEntry:i.entry.c_str()] )
                     v.color = color;
                 v.action = @selector(onColorChanged:);
                 v.target = self;
@@ -431,6 +416,21 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
     return m_Doc; // possibly some more logic here
 }
 /* also theme backend if any */
+
+- (nullable NSColor *)colorForEntry:(const char *)entry
+{
+    if( NSColor *color = ThemePersistence::ExtractColor(self.selectedThemeFrontend, entry) )
+        return color;
+    const auto &theme_name = m_ThemeNames[m_SelectedTheme];
+    std::string backup_name = "Light";
+    if( m_Manager->HasDefaultSettings(theme_name) )
+        backup_name = theme_name;
+    else if( ThemePersistence::ExtractAppearance(self.selectedThemeFrontend, "themeAppearance") == nc::ThemeAppearance::Dark )
+        backup_name = "Dark";
+    if( auto backup = m_Manager->BackupThemeData(backup_name) )
+        return ThemePersistence::ExtractColor(*backup, entry);
+    return nil;
+}
 
 - (void)commitChangedValue:(const nc::config::Value &)_value forKey:(const std::string &)_key
 {

@@ -2,8 +2,22 @@
 #import "NCPanelPathBarView.h"
 #import "NCPanelBreadcrumbsView.h"
 
-/// Defined in NCPanelBreadcrumbsView.mm; used here to align the path edit field vertically.
-CGFloat NCPanelPathBarContainerOriginYForLine(NSFont *_Nullable font, CGFloat stripH, CGFloat usedH, CGFloat usedOriginY);
+/// Aligns a text container vertically inside a strip by centering on the used-rect height, clamped when text is taller.
+static CGFloat NCPanelPathBarContainerOriginYForLine(CGFloat stripH, CGFloat usedH, CGFloat usedOriginY) noexcept
+{
+    if( usedH <= 0. )
+        return 0.;
+    CGFloat y = (stripH - usedH) * 0.5 - usedOriginY;
+    if( usedH > stripH ) {
+        const CGFloat lo = stripH - usedH - usedOriginY;
+        const CGFloat hi = -usedOriginY;
+        if( y < lo )
+            y = lo;
+        else if( y > hi )
+            y = hi;
+    }
+    return y;
+}
 
 @implementation NCPanelPathBarView {
     NCPanelBreadcrumbsView *m_Breadcrumbs;
@@ -68,7 +82,7 @@ CGFloat NCPanelPathBarContainerOriginYForLine(NSFont *_Nullable font, CGFloat st
         return;
     }
     const CGFloat geometric = (stripH - lineH) * 0.5;
-    const CGFloat y = NCPanelPathBarContainerOriginYForLine(f, stripH, lineH, 0.);
+    const CGFloat y = NCPanelPathBarContainerOriginYForLine(stripH, lineH, 0.);
     m_PathFieldCenterY.constant = y - geometric;
 }
 

@@ -137,7 +137,7 @@ struct StateStorage {
                            req->InitiatedByUser = true;
                            [pc GoToDirWithContext:req];
                          }
-                         contextMenuAction:[weak_self](NSString *path, NCPanelPathBarContextCommand cmd) {
+                         contextMenuAction:[weak_self](NSString *path, nc::panel::NCPanelPathBarContextCommand cmd) {
                            PanelView *const strong_self = weak_self;
                            if( !strong_self || path.length == 0 )
                                return;
@@ -149,7 +149,7 @@ struct StateStorage {
                                return;
                            const std::string utf8{raw};
                            switch( cmd ) {
-                               case NCPanelPathBarContextCommand::Open: {
+                               case nc::panel::NCPanelPathBarContextCommand::Open: {
                                    auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
                                    req->RequestedDirectory = utf8;
                                    req->VFS = pc.vfs;
@@ -158,7 +158,7 @@ struct StateStorage {
                                    (void)[pc GoToDirWithContext:req];
                                    break;
                                }
-                               case NCPanelPathBarContextCommand::OpenInNewTab: {
+                               case nc::panel::NCPanelPathBarContextCommand::OpenInNewTab: {
                                    MainWindowFilePanelState *const state = pc.state;
                                    if( !state )
                                        return;
@@ -177,7 +177,7 @@ struct StateStorage {
                                    (void)[new_pc GoToDirWithContext:req];
                                    break;
                                }
-                               case NCPanelPathBarContextCommand::CopyPath:
+                               case nc::panel::NCPanelPathBarContextCommand::CopyPath:
                                    [NSPasteboard.generalPasteboard clearContents];
                                    [NSPasteboard.generalPasteboard setString:path forType:NSPasteboardTypeString];
                                    break;

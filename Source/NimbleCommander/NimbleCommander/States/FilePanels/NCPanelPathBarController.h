@@ -1,3 +1,4 @@
+// Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #import <Cocoa/Cocoa.h>
@@ -14,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, weak, nullable) NSResponder *defaultResponder;
 @property(nonatomic) std::function<std::optional<nc::panel::PanelPathContext>(void)> directoryContextProvider;
 @property(nonatomic) std::function<void(const std::string &)> navigateToVFSPathCallback;
-@property(nonatomic) NCPanelPathBarContextMenuAction contextMenuAction;
+@property(nonatomic) nc::panel::NCPanelPathBarContextMenuAction contextMenuAction;
 @property(nonatomic, readonly) bool fullPathSelectionActive;
 
 - (instancetype)init;

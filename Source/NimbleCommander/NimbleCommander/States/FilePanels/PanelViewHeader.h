@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 // Wires panel-specific path bar integration without exposing the internal controller outside the header boundary.
 - (void)configurePathBarWithContextSource:(std::function<std::optional<nc::panel::PanelPathContext>(void)>)context_source
                         navigationHandler:(std::function<void(const std::string &)>)navigation_handler
-                        contextMenuAction:(NCPanelPathBarContextMenuAction)context_menu_action;
+                        contextMenuAction:(nc::panel::NCPanelPathBarContextMenuAction)context_menu_action;
 
 // Progress indicator located in the header. Shown only when displaying activity.
 @property(nonatomic, readonly) NSProgressIndicator *busyIndicator;
@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 // Number of matches for the current search query. Should be set by controller when search query is changed.
 @property(nonatomic) int searchMatches;
 
-// Sort mode for the panel. Displayed in a down-down button.
+// Sort mode for the panel. Displayed in a drop-down button.
 @property(nonatomic) nc::panel::data::SortMode sortMode;
 
 // Called by the view when sort mode is changed by user via sort mode button in header.

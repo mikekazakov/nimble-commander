@@ -284,7 +284,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
 - (NSMenu *)contextMenuForPOSIXPath:(NSString *)path
 {
     NSMenu *const menu = [[NSMenu alloc] initWithTitle:@""];
-    auto add = ^(NSString *title, NCPanelPathBarContextCommand command) {
+    auto add = ^(NSString *title, nc::panel::NCPanelPathBarContextCommand command) {
         NSMenuItem *const item = [[NSMenuItem alloc] initWithTitle:title
                                                             action:@selector(handleContextMenuItem:)
                                                      keyEquivalent:@""];
@@ -293,11 +293,11 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
         item.representedObject = path;
         [menu addItem:item];
     };
-    add(NSLocalizedString(@"Open", @"Path bar context: open directory in panel"), NCPanelPathBarContextCommand::Open);
+    add(NSLocalizedString(@"Open", @"Path bar context: open directory in panel"), nc::panel::NCPanelPathBarContextCommand::Open);
     add(NSLocalizedString(@"Open in New Tab", @"Path bar context: open directory in a new tab"),
-        NCPanelPathBarContextCommand::OpenInNewTab);
+        nc::panel::NCPanelPathBarContextCommand::OpenInNewTab);
     [menu addItem:[NSMenuItem separatorItem]];
-    add(NSLocalizedString(@"Copy Path", @"Path bar context: copy POSIX path"), NCPanelPathBarContextCommand::CopyPath);
+    add(NSLocalizedString(@"Copy Path", @"Path bar context: copy POSIX path"), nc::panel::NCPanelPathBarContextCommand::CopyPath);
     return menu;
 }
 
@@ -306,7 +306,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     NSString *const path = nc::objc_cast<NSString>(item.representedObject);
     if( path.length == 0 || !self.contextMenuAction )
         return;
-    self.contextMenuAction(path, static_cast<NCPanelPathBarContextCommand>(item.tag));
+    self.contextMenuAction(path, static_cast<nc::panel::NCPanelPathBarContextCommand>(item.tag));
 }
 
 - (void)breadcrumbsView:(NCPanelBreadcrumbsView *)[[maybe_unused]]view didActivatePOSIXPath:(NSString *)path

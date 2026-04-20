@@ -21,8 +21,6 @@ struct PanelPathContext {
     std::string posix_path;
 };
 
-} // namespace nc::panel
-
 enum class NCPanelPathBarContextCommand : int {
     Open = 0,
     OpenInNewTab,
@@ -31,3 +29,5 @@ enum class NCPanelPathBarContextCommand : int {
 
 using NCPanelPathBarContextMenuAction = std::function<void(NSString *_Nonnull posixPath,
                                                            NCPanelPathBarContextCommand command)>;
+
+} // namespace nc::panel

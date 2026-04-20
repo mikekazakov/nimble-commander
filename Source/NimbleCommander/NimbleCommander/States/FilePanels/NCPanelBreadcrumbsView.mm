@@ -39,6 +39,21 @@ static NSRect NCBreadcrumbPaddedLinkRect(NSRect hoverBase, CGFloat padX, CGFloat
                       hoverBase.size.height + padYTop + padYBottom);
 }
 
+/// Extra horizontal/vertical expansion applied to stored link rects during hit testing so narrow
+/// glyphs and separator gaps remain easy to click. Values are empirical: ~2pts at 13pt, scaling
+/// gently with font size. Vertical slop is small because the header row already fills the strip.
+static CGFloat NCBreadcrumbHitTestHorizontalSlop(NSFont *font) noexcept
+{
+    const CGFloat ps = font != nil ? font.pointSize : 13.;
+    return std::max<CGFloat>(3., std::floor(ps * 0.22));
+}
+
+static CGFloat NCBreadcrumbHitTestVerticalSlop(NSFont *font) noexcept
+{
+    const CGFloat ps = font != nil ? font.pointSize : 13.;
+    return std::max<CGFloat>(1., std::floor(ps * 0.08));
+}
+
 static void NCBreadcrumbTraceHoverLayout(NSString *titleSnippet,
                                          NSInteger segmentIndex,
                                          CGFloat xBase,
@@ -173,6 +188,7 @@ static inline CGFloat NCBreadcrumbAlignToPixelGrid(CGFloat value, CGFloat scale)
 + (instancetype)placeholderWithAdvance:(CGFloat)advance;
 @end
 
+/// Horizontal padding on each side of the › separator glyph: half the em size (rounded), floor 2pt, reads well at any font size.
 static CGFloat NCBreadcrumbSeparatorSideInset(NSFont *font) noexcept
 {
     const CGFloat pointSize = font != nil ? font.pointSize : 13.;
@@ -344,43 +360,20 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
     };
 }
 
-- (CGFloat)measureTotalWidthFromStartIndex:(NSInteger)start includeLeadingEllipsis:(BOOL)ell
-    breadcrumbs:(const std::vector<nc::panel::PanelHeaderBreadcrumb> &)breadcrumbs
-    pad:(CGFloat)pad
+- (CGFloat)breadcrumbTrailWidthFromIndex:(NSInteger)start
+                             breadcrumbs:(const std::vector<nc::panel::PanelHeaderBreadcrumb> &)breadcrumbs
+                    includeSidePadding:(CGFloat)sidePaddingTotal
+                    includeLeadingEllipsis:(BOOL)includeEllipsis
 {
     NSFont *const font = self.crumbFont ?: [NSFont systemFontOfSize:13.];
     NSDictionary *const sepAttr = [self separatorAttributes];
     const CGFloat sepAdvance = NCBreadcrumbSeparatorAdvance(sepAttr, font);
 
-    CGFloat w = 2. * pad;
-    if( ell ) {
+    CGFloat w = sidePaddingTotal;
+    if( includeEllipsis ) {
         w += [NCBreadcrumbTextLayout layoutForText:@"… " attributes:@{NSFontAttributeName: font}
                                       fallbackFont:font stripH:0 viewX:0].advance;
     }
-    for( NSInteger i = start; i < static_cast<NSInteger>(breadcrumbs.size()); ++i ) {
-        const auto &segment = breadcrumbs[static_cast<size_t>(i)];
-        NSString *const title = NCBreadcrumbLabel(segment);
-        if( title.length == 0 )
-            continue;
-        NSDictionary *const a = [self titleAttributesForSegment:segment];
-        w += [NCBreadcrumbTextLayout layoutForText:title attributes:a fallbackFont:font stripH:0 viewX:0].advance;
-        if( i < static_cast<NSInteger>(breadcrumbs.size()) - 1 )
-            w += sepAdvance;
-    }
-    return w;
-}
-
-/// Width of ellipsis + visible titles and separators only (no side padding), for centering.
-- (CGFloat)visibleTrailWidthFromStartIndex:(NSInteger)start
-                               breadcrumbs:(const std::vector<nc::panel::PanelHeaderBreadcrumb> &)breadcrumbs
-{
-    NSFont *const font = self.crumbFont ?: [NSFont systemFontOfSize:13.];
-    NSDictionary *const sepAttr = [self separatorAttributes];
-    const CGFloat sepAdvance = NCBreadcrumbSeparatorAdvance(sepAttr, font);
-    CGFloat w = 0.;
-    if( start > 0 )
-        w += [NCBreadcrumbTextLayout layoutForText:@"… " attributes:@{NSFontAttributeName: font}
-                                      fallbackFont:font stripH:0 viewX:0].advance;
     for( NSInteger i = start; i < static_cast<NSInteger>(breadcrumbs.size()); ++i ) {
         const auto &segment = breadcrumbs[static_cast<size_t>(i)];
         NSString *const title = NCBreadcrumbLabel(segment);
@@ -392,6 +385,26 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
         w += [NCBreadcrumbTextLayout layoutForText:title attributes:a fallbackFont:font stripH:0 viewX:0].advance;
     }
     return w;
+}
+
+- (CGFloat)measureTotalWidthFromStartIndex:(NSInteger)start includeLeadingEllipsis:(BOOL)ell
+    breadcrumbs:(const std::vector<nc::panel::PanelHeaderBreadcrumb> &)breadcrumbs
+    pad:(CGFloat)pad
+{
+    return [self breadcrumbTrailWidthFromIndex:start
+                                   breadcrumbs:breadcrumbs
+                          includeSidePadding:2. * pad
+                          includeLeadingEllipsis:ell];
+}
+
+/// Width of ellipsis + visible titles and separators only (no side padding), for centering.
+- (CGFloat)visibleTrailWidthFromStartIndex:(NSInteger)start
+                               breadcrumbs:(const std::vector<nc::panel::PanelHeaderBreadcrumb> &)breadcrumbs
+{
+    return [self breadcrumbTrailWidthFromIndex:start
+                                   breadcrumbs:breadcrumbs
+                          includeSidePadding:0.
+                          includeLeadingEllipsis:(start > 0)];
 }
 
 - (void)rebuildLayout
@@ -411,6 +424,7 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
     if( breadcrumbs.empty() || self.bounds.size.width < 8 )
         return;
 
+    // Horizontal inset from view edges to breadcrumb content (not font-derived; pairs with truncation/centering math).
     const CGFloat pad = 6.;
     const CGFloat maxW = std::max(0., NSWidth(self.bounds) - 2 * pad);
     NSFont *const font = self.crumbFont ?: [NSFont systemFontOfSize:13.];
@@ -493,7 +507,8 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
         const CGFloat padYTop = static_cast<CGFloat>(self.hoverPadYTop);
         const CGFloat padYBottom = static_cast<CGFloat>(self.hoverPadYBottom);
         const NSRect linkRect = NCBreadcrumbPaddedLinkRect(hoverBase, padX, padYTop, padYBottom);
-        NCBreadcrumbTraceHoverLayout(title, i, x, hoverBase, linkRect, padX, padYTop, padYBottom, stripH, self.bounds);
+        if( nc::panel::Log::Level() <= spdlog::level::trace )
+            NCBreadcrumbTraceHoverLayout(title, i, x, hoverBase, linkRect, padX, padYTop, padYBottom, stripH, self.bounds);
         [m_SegmentLinkRects addObject:[NSValue valueWithRect:linkRect]];
         [m_TitleSegmentIndices addObject:@(i)];
         x += segItem.advance;
@@ -514,8 +529,11 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
 
 - (NSInteger)segmentIndexAtPoint:(NSPoint)p
 {
+    NSFont *const font = self.crumbFont ?: [NSFont systemFontOfSize:13.];
+    const CGFloat hSlop = NCBreadcrumbHitTestHorizontalSlop(font);
+    const CGFloat vSlop = NCBreadcrumbHitTestVerticalSlop(font);
     for( NSUInteger i = 0; i < m_SegmentLinkRects.count; ++i ) {
-        const NSRect r = [m_SegmentLinkRects[i] rectValue];
+        const NSRect r = NSInsetRect([m_SegmentLinkRects[i] rectValue], -hSlop, -vSlop);
         if( NSPointInRect(p, r) )
             return [m_TitleSegmentIndices[i] integerValue];
     }
@@ -585,7 +603,7 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
         }
 
         if( segCacheIdx >= m_DrawCacheSegments.count ) {
-            continue; // caches out of sync — skip drawing, do not advance index
+            continue; // caches out of sync, skip drawing, do not advance index
         }
         NCBreadcrumbTextLayout *const segItem = m_DrawCacheSegments[segCacheIdx++];
 
@@ -621,7 +639,7 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
             [gctx restoreGraphicsState];
         }
 
-        if( isHovered ) {
+        if( isHovered && nc::panel::Log::Level() <= spdlog::level::trace ) {
             // segCacheIdx was already incremented after fetching segItem, so [segCacheIdx-1] aligns with this segment.
             const NSRect layoutStoredLink = [m_SegmentLinkRects[segCacheIdx - 1] rectValue];
             const NSRect usedTitle = NSMakeRect(x, segItem.yContainer, segItem.advance, segItem.usedHeight);

@@ -31,7 +31,6 @@ struct Theme::Internals {
     NSColor *m_FilePanelsHeaderPathSeparatorColor;
     NSColor *m_FilePanelsHeaderPathAccentColor;
     unsigned m_FilePanelsHeaderPathHoverPadX;
-    unsigned m_FilePanelsHeaderPathHoverPadY;
     unsigned m_FilePanelsHeaderPathHoverPadYTop;
     unsigned m_FilePanelsHeaderPathHoverPadYBottom;
     unsigned m_FilePanelsHeaderPathHoverCornerRadius;
@@ -188,41 +187,10 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     I->m_FilePanelsHeaderSeparatorColor = ExtractColor("filePanelsHeaderSeparatorColor");
     I->m_FilePanelsHeaderPathSeparatorColor = ExtractColor("filePanelsHeaderPathSeparatorColor");
     I->m_FilePanelsHeaderPathAccentColor = ExtractColor("filePanelsHeaderPathAccentColor");
-    constexpr unsigned kDefaultHeaderPathHoverPad = 2;
-    constexpr unsigned kDefaultHeaderPathHoverCornerRadius = 4;
-    constexpr unsigned kMaxHeaderPathHoverPad = 12;
-    constexpr unsigned kMaxHeaderPathHoverCornerRadius = 12;
-    const auto extract_optional_header_metric = [&](const char *_path, unsigned max_value) -> std::optional<unsigned> {
-        if( const std::optional<unsigned> v = ThemePersistence::ExtractUInt(doc, _path) )
-            return std::min(v.value(), max_value);
-        if( const std::optional<unsigned> v = ThemePersistence::ExtractUInt(backup, _path) )
-            return std::min(v.value(), max_value);
-        return std::nullopt;
-    };
-    const auto extract_header_metric =
-        [&](const char *_path, unsigned fallback, unsigned max_value) -> unsigned {
-        if( const std::optional<unsigned> v = ThemePersistence::ExtractUInt(doc, _path) )
-            return std::min(v.value(), max_value);
-        if( const std::optional<unsigned> v = ThemePersistence::ExtractUInt(backup, _path) )
-            return std::min(v.value(), max_value);
-        panel::Log::Warn("Theme: unable to extract {} from both primary and backup documents", _path);
-        return fallback;
-    };
-    I->m_FilePanelsHeaderPathHoverPadX =
-        extract_header_metric("filePanelsHeaderPathHoverPadX", kDefaultHeaderPathHoverPad, kMaxHeaderPathHoverPad);
-    const unsigned legacy_hover_pad_y =
-        extract_optional_header_metric("filePanelsHeaderPathHoverPadY", kMaxHeaderPathHoverPad)
-            .value_or(kDefaultHeaderPathHoverPad);
-    I->m_FilePanelsHeaderPathHoverPadY = legacy_hover_pad_y;
-    I->m_FilePanelsHeaderPathHoverPadYTop =
-        extract_optional_header_metric("filePanelsHeaderPathHoverPadYTop", kMaxHeaderPathHoverPad).value_or(
-            legacy_hover_pad_y);
-    I->m_FilePanelsHeaderPathHoverPadYBottom =
-        extract_optional_header_metric("filePanelsHeaderPathHoverPadYBottom", kMaxHeaderPathHoverPad).value_or(
-            legacy_hover_pad_y);
-    I->m_FilePanelsHeaderPathHoverCornerRadius = extract_header_metric("filePanelsHeaderPathHoverCornerRadius",
-                                                                       kDefaultHeaderPathHoverCornerRadius,
-                                                                       kMaxHeaderPathHoverCornerRadius);
+    I->m_FilePanelsHeaderPathHoverPadX = ExtractUInt("filePanelsHeaderPathHoverPadX");
+    I->m_FilePanelsHeaderPathHoverPadYTop = ExtractUInt("filePanelsHeaderPathHoverPadYTop");
+    I->m_FilePanelsHeaderPathHoverPadYBottom = ExtractUInt("filePanelsHeaderPathHoverPadYBottom");
+    I->m_FilePanelsHeaderPathHoverCornerRadius = ExtractUInt("filePanelsHeaderPathHoverCornerRadius");
 
     I->m_FilePanelsListFont = ExtractFont("filePanelsListFont");
     I->m_FilePanelsListRowVerticalPadding = ExtractUInt("filePanelsListRowVerticalPadding");
@@ -534,11 +502,6 @@ NSColor *Theme::FilePanelsHeaderPathAccentColor() const noexcept
 unsigned Theme::FilePanelsHeaderPathHoverPadX() const noexcept
 {
     return I->m_FilePanelsHeaderPathHoverPadX;
-}
-
-unsigned Theme::FilePanelsHeaderPathHoverPadY() const noexcept
-{
-    return I->m_FilePanelsHeaderPathHoverPadY;
 }
 
 unsigned Theme::FilePanelsHeaderPathHoverPadYTop() const noexcept

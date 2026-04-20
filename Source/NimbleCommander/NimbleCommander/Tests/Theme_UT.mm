@@ -53,7 +53,6 @@ TEST_CASE(PREFIX "Constructs from JSON")
         'filePanelsHeaderSeparatorColor': '#010109',\
         'filePanelsHeaderPathSeparatorColor': '#01010A',\
         'filePanelsHeaderPathHoverPadX': '6',\
-        'filePanelsHeaderPathHoverPadY': '0',\
         'filePanelsHeaderPathHoverPadYTop': '3',\
         'filePanelsHeaderPathHoverPadYBottom': '4',\
         'filePanelsHeaderPathHoverCornerRadius': '8',\
@@ -132,7 +131,6 @@ TEST_CASE(PREFIX "Constructs from JSON")
     CHECK(t.FilePanelsHeaderSeparatorColor().toHexStdString == "#010109");
     CHECK(t.FilePanelsHeaderPathSeparatorColor().toHexStdString == "#01010A");
     CHECK(t.FilePanelsHeaderPathHoverPadX() == 6);
-    CHECK(t.FilePanelsHeaderPathHoverPadY() == 0);
     CHECK(t.FilePanelsHeaderPathHoverPadYTop() == 3);
     CHECK(t.FilePanelsHeaderPathHoverPadYBottom() == 4);
     CHECK(t.FilePanelsHeaderPathHoverCornerRadius() == 8);
@@ -201,7 +199,7 @@ TEST_CASE(PREFIX "Constructs from JSON")
     CHECK(t.FilePanelsItemsColoringRules().at(0) == Theme::ColoringRule{});
 }
 
-TEST_CASE(PREFIX "Path hover Y top/bottom falls back to legacy padY")
+TEST_CASE(PREFIX "Path hover pad top and bottom load independently from theme")
 {
     const auto json = "{\
         'themeName': 'meow',\
@@ -214,11 +212,11 @@ TEST_CASE(PREFIX "Path hover Y top/bottom falls back to legacy padY")
         'filePanelsHeaderPathSeparatorColor': '#01010A',\
         'filePanelsHeaderPathAccentColor': '#01010B',\
         'filePanelsHeaderPathHoverPadX': '6',\
-        'filePanelsHeaderPathHoverPadY': '2',\
+        'filePanelsHeaderPathHoverPadYTop': '1',\
+        'filePanelsHeaderPathHoverPadYBottom': '3',\
         'filePanelsHeaderPathHoverCornerRadius': '8'\
     }";
     const Theme t{JSONToObj(json), JSONToObj("{}")};
-    CHECK(t.FilePanelsHeaderPathHoverPadY() == 2);
-    CHECK(t.FilePanelsHeaderPathHoverPadYTop() == 2);
-    CHECK(t.FilePanelsHeaderPathHoverPadYBottom() == 2);
+    CHECK(t.FilePanelsHeaderPathHoverPadYTop() == 1);
+    CHECK(t.FilePanelsHeaderPathHoverPadYBottom() == 3);
 }

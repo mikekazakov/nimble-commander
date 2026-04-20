@@ -82,7 +82,6 @@ public:
     [[nodiscard]] NSColor *FilePanelsHeaderPathSeparatorColor() const noexcept;
     [[nodiscard]] NSColor *FilePanelsHeaderPathAccentColor() const noexcept;
     [[nodiscard]] unsigned FilePanelsHeaderPathHoverPadX() const noexcept;
-    [[nodiscard]] unsigned FilePanelsHeaderPathHoverPadY() const noexcept;
     [[nodiscard]] unsigned FilePanelsHeaderPathHoverPadYTop() const noexcept;
     [[nodiscard]] unsigned FilePanelsHeaderPathHoverPadYBottom() const noexcept;
     [[nodiscard]] unsigned FilePanelsHeaderPathHoverCornerRadius() const noexcept;

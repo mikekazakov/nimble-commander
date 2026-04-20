@@ -7,17 +7,14 @@
 
 using namespace nc::panel;
 
-// Fixed strip height (do not change with theme font). Must match -[PanelView headerBarHeight] (20).
-static constexpr CGFloat NCPanelViewHeaderPathBarFixedHeight = 20.;
-
 // Returns the bottom inset (points) between the path area and the separator line.
 // Derived from the font's descender depth: deeper descenders need more breathing room.
 // Uses one-third of the descender depth, rounded to the nearest point, minimum 1.
 // Example results: 13pt → 1pt, 22pt → 2pt.
 static CGFloat NCPanelPathAreaBottomInset(NSFont *font) noexcept
 {
-    const CGFloat descenderDepth = font != nil ? std::abs(font.descender) : 3.;
-    return std::max(1., std::round(descenderDepth / 3.));
+    const double descenderDepth = font != nil ? std::abs(static_cast<double>(font.descender)) : 3.;
+    return static_cast<CGFloat>(std::max(1., std::round(descenderDepth / 3.)));
 }
 
 static NSString *SortLetter(data::SortMode _mode) noexcept;
@@ -47,7 +44,6 @@ static bool IsDark(NSColor *_color);
     std::function<void(NSString *)> m_SearchRequestChangeCallback;
     std::unique_ptr<nc::panel::HeaderTheme> m_Theme;
     bool m_Active;
-    NSLayoutConstraint *m_StripHeightConstraint;
     NSLayoutConstraint *m_PathAreaBottomConstraint;
 }
 
@@ -68,9 +64,10 @@ static bool IsDark(NSColor *_color);
         m_Theme = std::move(_theme);
         m_SearchPrompt = nil;
         m_Active = false;
-        m_StripHeightConstraint = nil;
         m_PathAreaBottomConstraint = nil;
 
+        // Path bar lives in this container so the sort button and path strip share one H stack, the busy spinner
+        // layers above the path, and search-prompt mode can hide the whole path slot via one binding.
         m_PathArea = [[NSView alloc] initWithFrame:NSRect()];
         m_PathArea.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_PathArea];
@@ -161,12 +158,6 @@ static bool IsDark(NSColor *_color);
 
         [self setupLayout];
         [self setupAppearance];
-
-        // Own strip height here so it does not depend on PanelView adding an external height constraint.
-        m_StripHeightConstraint = [self.heightAnchor constraintEqualToConstant:NCPanelViewHeaderPathBarFixedHeight];
-        m_StripHeightConstraint.priority = NSLayoutPriorityRequired;
-        m_StripHeightConstraint.identifier = @"NCPanelViewHeader.StripHeight";
-        m_StripHeightConstraint.active = YES;
 
         __weak NCPanelViewHeader *weak_self = self;
         m_Theme->ObserveChanges([weak_self] {

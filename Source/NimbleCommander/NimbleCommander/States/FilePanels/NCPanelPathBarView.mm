@@ -1,6 +1,7 @@
 // Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "NCPanelPathBarView.h"
 #import "NCPanelBreadcrumbsView.h"
+#include <Utility/ObjCpp.h>
 
 /// Aligns a text container vertically inside a strip by centering on the used-rect height, clamped when text is taller.
 static CGFloat NCPanelPathBarContainerOriginYForLine(CGFloat stripH, CGFloat usedH, CGFloat usedOriginY) noexcept
@@ -104,6 +105,23 @@ static CGFloat NCPanelPathBarContainerOriginYForLine(CGFloat stripH, CGFloat use
     self.fullPathEditActive = YES;
     [self.window makeFirstResponder:m_PathField];
     [m_PathField selectText:nil];
+    if( textColor != nil && textColor.type == NSColorTypeComponentBased ) {
+        NSColor *const rgb = [textColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+        if( rgb != nil ) {
+            CGFloat r = 0., g = 0., b = 0., a = 0.;
+            [rgb getRed:&r green:&g blue:&b alpha:&a];
+            const CGFloat luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+            if( luminance > 0.85 ) {
+                if( NSTextView *const tv = nc::objc_cast<NSTextView>(m_PathField.currentEditor) ) {
+                    tv.selectedTextAttributes = @{
+                        NSBackgroundColorAttributeName: NSColor.textBackgroundColor,
+                        NSForegroundColorAttributeName: NSColor.controlTextColor,
+                    };
+                    tv.insertionPointColor = textColor;
+                }
+            }
+        }
+    }
 }
 
 - (void)exitFullPathEdit

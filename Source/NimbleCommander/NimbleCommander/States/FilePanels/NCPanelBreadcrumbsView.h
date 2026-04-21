@@ -9,6 +9,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol NCPanelBreadcrumbsViewDelegate <NSObject>
+- (void)breadcrumbsViewWillHandleMouseDown:(NCPanelBreadcrumbsView *)v;
 - (void)breadcrumbsView:(NCPanelBreadcrumbsView *)v didActivatePOSIXPath:(NSString *)path;
 - (void)breadcrumbsViewDidActivateCurrentSegment:(NCPanelBreadcrumbsView *)v;
 - (void)breadcrumbsViewDidRequestFullPathEdit:(NCPanelBreadcrumbsView *)v;

@@ -31,7 +31,7 @@ static bool IsDark(NSColor *_color);
     NSProgressIndicator *m_BusyIndicator;
     data::SortMode m_SortMode;
     std::function<void(data::SortMode)> m_SortModeChangeCallback;
-    std::function<void(NSString *)> m_SearchRequestChangeCallback;
+    std::function<void(NSString * _Nullable)> m_SearchRequestChangeCallback;
     std::unique_ptr<nc::panel::HeaderTheme> m_Theme;
     bool m_Active;
 }
@@ -315,12 +315,12 @@ static bool IsDark(NSColor *_color);
     }
 }
 
-- (void)setSearchRequestChangeCallback:(std::function<void(NSString *)>)searchRequestChangeCallback
+- (void)setSearchRequestChangeCallback:(std::function<void(NSString * _Nullable)>)searchRequestChangeCallback
 {
     m_SearchRequestChangeCallback = std::move(searchRequestChangeCallback);
 }
 
-- (std::function<void(NSString *)>)searchRequestChangeCallback
+- (std::function<void(NSString * _Nullable)>)searchRequestChangeCallback
 {
     return m_SearchRequestChangeCallback;
 }

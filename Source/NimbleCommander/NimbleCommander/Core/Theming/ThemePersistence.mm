@@ -1,5 +1,6 @@
 // Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ThemePersistence.h"
+#include <cctype>
 #include <charconv>
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
@@ -39,7 +40,11 @@ std::optional<double> ThemePersistence::ExtractDouble(const Value &_doc, const c
     const char *str = cr->value.GetString();
     char *end = nullptr;
     const double result = std::strtod(str, &end);
-    if( end == str || end == nullptr )
+    if( end == str )
+        return std::nullopt;
+    while( *end != '\0' && std::isspace(static_cast<unsigned char>(*end)) )
+        ++end;
+    if( *end != '\0' )
         return std::nullopt;
 
     return result;

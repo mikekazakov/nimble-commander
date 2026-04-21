@@ -35,6 +35,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
 - (nullable NSString *)posixPathForContextMenuAtPoint:(NSPoint)pointInBreadcrumbsCoords;
 - (NSMenu *)contextMenuForPOSIXPath:(NSString *)path;
 - (void)handleContextMenuItem:(NSMenuItem *)item;
+- (void)activateOwningPanelIfNeeded;
 @end
 
 @implementation NCPanelPathBarController {
@@ -305,6 +306,17 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     if( path.length == 0 || !self.contextMenuAction )
         return;
     self.contextMenuAction(path, static_cast<nc::panel::NCPanelPathBarContextCommand>(item.tag));
+}
+
+- (void)activateOwningPanelIfNeeded
+{
+    if( m_View.window != nil && self.defaultResponder != nil )
+        [m_View.window makeFirstResponder:self.defaultResponder];
+}
+
+- (void)breadcrumbsViewWillHandleMouseDown:(NCPanelBreadcrumbsView *)[[maybe_unused]]view
+{
+    [self activateOwningPanelIfNeeded];
 }
 
 - (void)breadcrumbsView:(NCPanelBreadcrumbsView *)[[maybe_unused]]view didActivatePOSIXPath:(NSString *)path

@@ -746,6 +746,9 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
         return;
     }
 
+    if( [self.crumbDelegate respondsToSelector:@selector(breadcrumbsViewWillHandleMouseDown:)] )
+        [self.crumbDelegate breadcrumbsViewWillHandleMouseDown:self];
+
     if( event.clickCount >= 2 ) {
         if( [self.crumbDelegate respondsToSelector:@selector(breadcrumbsViewDidRequestFullPathEdit:)] )
             [self.crumbDelegate breadcrumbsViewDidRequestFullPathEdit:self];

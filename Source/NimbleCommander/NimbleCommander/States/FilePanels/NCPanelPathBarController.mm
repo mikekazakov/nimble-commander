@@ -49,8 +49,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     NSColor *m_SeparatorColor;
     NSColor *m_HoverFillColor;
     double m_HoverPadX;
-    double m_HoverPadYTop;
-    double m_HoverPadYBottom;
+    double m_HoverPadY;
     unsigned m_HoverCornerRadius;
     double m_SeparatorVerticalNudgeCoefficient;
 }
@@ -68,9 +67,9 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
         m_View = [[NCPanelPathBarView alloc] initWithFrame:NSZeroRect];
         _fullPathSelectionActive = NO;
         m_HoverPadX = 0;
-        m_HoverPadYTop = 0;
-        m_HoverPadYBottom = 0;
+        m_HoverPadY = 0;
         m_HoverCornerRadius = 0;
+        m_SeparatorVerticalNudgeCoefficient = 0.;
 
         __weak NCPanelPathBarController *weak_self = self;
         m_View.onCancelFullPathEdit = ^{
@@ -111,8 +110,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     m_SeparatorColor = theme.PathSeparatorColor();
     m_HoverFillColor = theme.PathAccentColor();
     m_HoverPadX = theme.PathHoverPadX();
-    m_HoverPadYTop = theme.PathHoverPadYTop();
-    m_HoverPadYBottom = theme.PathHoverPadYBottom();
+    m_HoverPadY = theme.PathHoverPadY();
     m_HoverCornerRadius = theme.PathHoverCornerRadius();
     m_SeparatorVerticalNudgeCoefficient = theme.PathSeparatorVerticalNudgeCoefficient();
 
@@ -193,8 +191,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     breadcrumbs_view.separatorColor = m_SeparatorColor ?: NSColor.secondaryLabelColor;
     breadcrumbs_view.hoverFillColor = m_HoverFillColor;
     breadcrumbs_view.hoverPadX = m_HoverPadX;
-    breadcrumbs_view.hoverPadYTop = m_HoverPadYTop;
-    breadcrumbs_view.hoverPadYBottom = m_HoverPadYBottom;
+    breadcrumbs_view.hoverPadY = m_HoverPadY;
     breadcrumbs_view.hoverCornerRadius = m_HoverCornerRadius;
     breadcrumbs_view.separatorVerticalNudgeCoefficient = m_SeparatorVerticalNudgeCoefficient;
 

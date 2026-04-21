@@ -25,8 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) NSColor *separatorColor;
 @property(nonatomic, strong, nullable) NSColor *hoverFillColor;
 @property(nonatomic) double hoverPadX;
-@property(nonatomic) double hoverPadYTop;
-@property(nonatomic) double hoverPadYBottom;
+@property(nonatomic) double hoverPadY;
 @property(nonatomic) unsigned hoverCornerRadius;
 @property(nonatomic) double separatorVerticalNudgeCoefficient;
 @property(nonatomic, copy, nullable) NSMenu * (^menuForEventBlock)(NSEvent *event);

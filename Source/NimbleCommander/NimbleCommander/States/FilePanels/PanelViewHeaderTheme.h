@@ -19,8 +19,7 @@ public:
     [[nodiscard]] virtual NSColor *PathSeparatorColor() const = 0;
     [[nodiscard]] virtual NSColor *PathAccentColor() const = 0;
     [[nodiscard]] virtual double PathHoverPadX() const = 0;
-    [[nodiscard]] virtual double PathHoverPadYTop() const = 0;
-    [[nodiscard]] virtual double PathHoverPadYBottom() const = 0;
+    [[nodiscard]] virtual double PathHoverPadY() const = 0;
     [[nodiscard]] virtual unsigned PathHoverCornerRadius() const = 0;
     [[nodiscard]] virtual double PathSeparatorVerticalNudgeCoefficient() const = 0;
     virtual void ObserveChanges(std::function<void()> _callback) = 0;

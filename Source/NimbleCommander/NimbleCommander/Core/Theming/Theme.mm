@@ -31,8 +31,7 @@ struct Theme::Internals {
     NSColor *m_FilePanelsHeaderPathSeparatorColor;
     NSColor *m_FilePanelsHeaderPathAccentColor;
     double m_FilePanelsHeaderPathHoverPadX;
-    double m_FilePanelsHeaderPathHoverPadYTop;
-    double m_FilePanelsHeaderPathHoverPadYBottom;
+    double m_FilePanelsHeaderPathHoverPadY;
     unsigned m_FilePanelsHeaderPathHoverCornerRadius;
     double m_FilePanelsHeaderPathSeparatorVerticalNudgeCoefficient;
     NSFont *m_FilePanelsFooterFont;
@@ -197,8 +196,7 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
         return 0.;
     };
     I->m_FilePanelsHeaderPathHoverPadX = ExtractDouble("filePanelsHeaderPathHoverPadX");
-    I->m_FilePanelsHeaderPathHoverPadYTop = ExtractDouble("filePanelsHeaderPathHoverPadYTop");
-    I->m_FilePanelsHeaderPathHoverPadYBottom = ExtractDouble("filePanelsHeaderPathHoverPadYBottom");
+    I->m_FilePanelsHeaderPathHoverPadY = ExtractDouble("filePanelsHeaderPathHoverPadY");
     I->m_FilePanelsHeaderPathHoverCornerRadius = ExtractUInt("filePanelsHeaderPathHoverCornerRadius");
     I->m_FilePanelsHeaderPathSeparatorVerticalNudgeCoefficient = ExtractDouble("filePanelsHeaderPathSeparatorVerticalNudgeCoefficient");
 
@@ -514,14 +512,9 @@ double Theme::FilePanelsHeaderPathHoverPadX() const noexcept
     return I->m_FilePanelsHeaderPathHoverPadX;
 }
 
-double Theme::FilePanelsHeaderPathHoverPadYTop() const noexcept
+double Theme::FilePanelsHeaderPathHoverPadY() const noexcept
 {
-    return I->m_FilePanelsHeaderPathHoverPadYTop;
-}
-
-double Theme::FilePanelsHeaderPathHoverPadYBottom() const noexcept
-{
-    return I->m_FilePanelsHeaderPathHoverPadYBottom;
+    return I->m_FilePanelsHeaderPathHoverPadY;
 }
 
 unsigned Theme::FilePanelsHeaderPathHoverCornerRadius() const noexcept

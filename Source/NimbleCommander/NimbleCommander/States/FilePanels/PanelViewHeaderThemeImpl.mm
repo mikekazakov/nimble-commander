@@ -53,14 +53,9 @@ double HeaderThemeImpl::PathHoverPadX() const
     return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathHoverPadX();
 }
 
-double HeaderThemeImpl::PathHoverPadYTop() const
+double HeaderThemeImpl::PathHoverPadY() const
 {
-    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathHoverPadYTop();
-}
-
-double HeaderThemeImpl::PathHoverPadYBottom() const
-{
-    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathHoverPadYBottom();
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathHoverPadY();
 }
 
 unsigned HeaderThemeImpl::PathHoverCornerRadius() const

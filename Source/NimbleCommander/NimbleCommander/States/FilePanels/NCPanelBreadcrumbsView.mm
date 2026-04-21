@@ -218,10 +218,23 @@ static CGFloat NCBreadcrumbSeparatorVerticalNudge(NSFont *font, CGFloat backingS
     return -(std::max(std::round(raw * backingScale), 1.) / backingScale);
 }
 
-static CGFloat NCBreadcrumbSeparatorAdvance(NSDictionary *separatorAttributes, NSFont *font) noexcept
+/// When `layoutForText:...:stripH:0` returns nil (TextKit `usedRect` width &lt; 0.5pt), approximate width for layout math.
+static CGFloat NCBreadcrumbTextFallbackAdvance(NSString *text, NSDictionary *attrs)
 {
-    const CGFloat glyphWidth = [NCBreadcrumbTextLayout layoutForText:kSep attributes:separatorAttributes
-                                                        fallbackFont:font stripH:0 viewX:0].advance;
+    if( text.length == 0 || attrs == nil )
+        return 0.;
+    const NSAttributedString *const as = [[NSAttributedString alloc] initWithString:text attributes:attrs];
+    const NSRect b =
+        [as boundingRectWithSize:NSMakeSize(CGFLOAT_MAX, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin];
+    const CGFloat w = NSWidth(b);
+    return std::max(0.5, w);
+}
+
+static CGFloat NCBreadcrumbSeparatorAdvance(NSDictionary *separatorAttributes, NSFont *font)
+{
+    NCBreadcrumbTextLayout *const lay = [NCBreadcrumbTextLayout layoutForText:kSep attributes:separatorAttributes
+                                                                 fallbackFont:font stripH:0 viewX:0];
+    const CGFloat glyphWidth = lay ? lay.advance : NCBreadcrumbTextFallbackAdvance(kSep, separatorAttributes);
     return glyphWidth + 2. * NCBreadcrumbSeparatorSideInset(font);
 }
 
@@ -347,8 +360,7 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
 @synthesize separatorColor = _separatorColor;
 @synthesize hoverFillColor = _hoverFillColor;
 @synthesize hoverPadX = _hoverPadX;
-@synthesize hoverPadYTop = _hoverPadYTop;
-@synthesize hoverPadYBottom = _hoverPadYBottom;
+@synthesize hoverPadY = _hoverPadY;
 @synthesize hoverCornerRadius = _hoverCornerRadius;
 @synthesize separatorVerticalNudgeCoefficient = _separatorVerticalNudgeCoefficient;
 @synthesize menuForEventBlock = _menuForEventBlock;
@@ -407,8 +419,10 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
 
     CGFloat w = sidePaddingTotal;
     if( includeEllipsis ) {
-        w += [NCBreadcrumbTextLayout layoutForText:@"… " attributes:@{NSFontAttributeName: font}
-                                      fallbackFont:font stripH:0 viewX:0].advance;
+        NSDictionary *const ellAttrs = @{NSFontAttributeName: font};
+        NCBreadcrumbTextLayout *const ell =
+            [NCBreadcrumbTextLayout layoutForText:@"… " attributes:ellAttrs fallbackFont:font stripH:0 viewX:0];
+        w += ell ? ell.advance : NCBreadcrumbTextFallbackAdvance(@"… ", ellAttrs);
     }
     for( NSInteger i = start; i < static_cast<NSInteger>(breadcrumbs.size()); ++i ) {
         const auto &segment = breadcrumbs[static_cast<size_t>(i)];
@@ -418,7 +432,9 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
         if( i > start )
             w += sepAdvance;
         NSDictionary *const a = [self titleAttributesForSegment:segment];
-        w += [NCBreadcrumbTextLayout layoutForText:title attributes:a fallbackFont:font stripH:0 viewX:0].advance;
+        NCBreadcrumbTextLayout *const titleLay =
+            [NCBreadcrumbTextLayout layoutForText:title attributes:a fallbackFont:font stripH:0 viewX:0];
+        w += titleLay ? titleLay.advance : NCBreadcrumbTextFallbackAdvance(title, a);
     }
     return w;
 }
@@ -531,20 +547,18 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
                                                                          stripH:stripH
                                                                           viewX:x];
         if( segItem == nil ) {
-            // layoutForText: returns nil only when used width < 0.5pt (degenerate case).
-            // Use a placeholder carrying the correct advance so drawRect: keeps x in sync.
-            const CGFloat measuredAdvance = [NCBreadcrumbTextLayout layoutForText:title attributes:a
-                                                                     fallbackFont:font stripH:0 viewX:0].advance;
+            // layoutForText: returns nil only when used width < 0.5pt (degenerate case). A second TextKit pass
+            // with the same parameters also returns nil; use attributed bounding width for layout/draw x sync.
+            const CGFloat measuredAdvance = NCBreadcrumbTextFallbackAdvance(title, a);
             segItem = [NCBreadcrumbTextLayout placeholderWithAdvance:measuredAdvance];
         }
         [m_DrawCacheSegments addObject:segItem];
         const NSRect hoverBase = segItem.hoverBase;
         const CGFloat padX = self.hoverPadX;
-        const CGFloat padYTop = self.hoverPadYTop;
-        const CGFloat padYBottom = self.hoverPadYBottom;
-        const NSRect linkRect = NCBreadcrumbPaddedLinkRect(hoverBase, padX, padYTop, padYBottom);
+        const CGFloat padY = self.hoverPadY;
+        const NSRect linkRect = NCBreadcrumbPaddedLinkRect(hoverBase, padX, padY, padY);
         if( nc::panel::Log::Level() <= spdlog::level::trace )
-            NCBreadcrumbTraceHoverLayout(title, i, x, hoverBase, linkRect, padX, padYTop, padYBottom, stripH, self.bounds);
+            NCBreadcrumbTraceHoverLayout(title, i, x, hoverBase, linkRect, padX, padY, padY, stripH, self.bounds);
         [m_SegmentLinkRects addObject:[NSValue valueWithRect:linkRect]];
         [m_TitleSegmentIndices addObject:@(i)];
         x += segItem.advance;
@@ -651,11 +665,10 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
 
         if( isHovered ) {
             const CGFloat padX = self.hoverPadX;
-            const CGFloat padYTop = self.hoverPadYTop;
-            const CGFloat padYBottom = self.hoverPadYBottom;
+            const CGFloat padY = self.hoverPadY;
             const CGFloat cr = static_cast<CGFloat>(self.hoverCornerRadius);
             hoverBase = segItem.hoverBase;
-            hr = NCBreadcrumbPixelAlignRect(NCBreadcrumbPaddedLinkRect(hoverBase, padX, padYTop, padYBottom),
+            hr = NCBreadcrumbPixelAlignRect(NCBreadcrumbPaddedLinkRect(hoverBase, padX, padY, padY),
                                             NCBreadcrumbViewBackingScale(self));
             NSGraphicsContext *const gctx = NSGraphicsContext.currentContext;
             [gctx saveGraphicsState];

@@ -582,8 +582,7 @@
                       "filePanelsHeaderPathSeparatorColor": "#666666",
                       "filePanelsHeaderPathAccentColor": "#0000001F",
                       "filePanelsHeaderPathHoverPadX": "2.5",
-                      "filePanelsHeaderPathHoverPadYTop": "3",
-                      "filePanelsHeaderPathHoverPadYBottom": "3",
+                      "filePanelsHeaderPathHoverPadY": "3",
                       "filePanelsHeaderPathHoverCornerRadius": "4",
                       "filePanelsHeaderPathSeparatorVerticalNudgeCoefficient": "0.3",
                       
@@ -720,8 +719,7 @@
                       "filePanelsHeaderPathSeparatorColor": "#666666",
                       "filePanelsHeaderPathAccentColor": "#FFFFFF24",
                       "filePanelsHeaderPathHoverPadX": "2.5",
-                      "filePanelsHeaderPathHoverPadYTop": "3",
-                      "filePanelsHeaderPathHoverPadYBottom": "3",
+                      "filePanelsHeaderPathHoverPadY": "3",
                       "filePanelsHeaderPathHoverCornerRadius": "4",
                       "filePanelsHeaderPathSeparatorVerticalNudgeCoefficient": "0.3",
                       
@@ -875,8 +873,7 @@
                       "filePanelsHeaderPathSeparatorColor": "#00FFFF",
                       "filePanelsHeaderPathAccentColor": "#00FFFF30",
                       "filePanelsHeaderPathHoverPadX": "2.5",
-                      "filePanelsHeaderPathHoverPadYTop": "3",
-                      "filePanelsHeaderPathHoverPadYBottom": "3",
+                      "filePanelsHeaderPathHoverPadY": "3",
                       "filePanelsHeaderPathHoverCornerRadius": "4",
                       "filePanelsHeaderPathSeparatorVerticalNudgeCoefficient": "0.3",
                       

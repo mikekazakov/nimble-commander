@@ -1,7 +1,6 @@
 // Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "NCPanelBreadcrumbsView.h"
 #include "NCPanelPathBarPresentation.h"
-#include <Panel/Log.h>
 #include <Utility/ObjCpp.h>
 #include <algorithm>
 #include <cmath>
@@ -53,102 +52,6 @@ static CGFloat NCBreadcrumbHitTestVerticalSlop(NSFont *font) noexcept
 {
     const CGFloat ps = font != nil ? font.pointSize : 13.;
     return std::max<CGFloat>(1., std::floor(ps * 0.08));
-}
-
-static void NCBreadcrumbTraceHoverLayout(NSString *titleSnippet,
-                                         NSInteger segmentIndex,
-                                         CGFloat xBase,
-                                         NSRect hoverBaseRect,
-                                         NSRect linkRect,
-                                         CGFloat padX,
-                                         CGFloat padYTop,
-                                         CGFloat padYBottom,
-                                         CGFloat stripH,
-                                         NSRect bounds) noexcept
-{
-    NSString *const t = titleSnippet.length > 24 ? [titleSnippet substringToIndex:24] : titleSnippet;
-    const char *const ut = t.UTF8String;
-    nc::panel::Log::Trace("[PathBarHover] layout seg={} title=\"{}\" xBase={:.3f} hoverBase=({:.3f},{:.3f},{:.3f},{:.3f}) "
-                          "linkRect=({:.3f},{:.3f},{:.3f},{:.3f}) padX={:.3f} padYTop={:.3f} padYBottom={:.3f} "
-                          "stripH={:.3f} bounds=({:.3f},{:.3f},{:.3f},{:.3f})",
-                          static_cast<int>(segmentIndex),
-                          ut ? ut : "",
-                          xBase,
-                          hoverBaseRect.origin.x,
-                          hoverBaseRect.origin.y,
-                          hoverBaseRect.size.width,
-                          hoverBaseRect.size.height,
-                          linkRect.origin.x,
-                          linkRect.origin.y,
-                          linkRect.size.width,
-                          linkRect.size.height,
-                          padX,
-                          padYTop,
-                          padYBottom,
-                          stripH,
-                          bounds.origin.x,
-                          bounds.origin.y,
-                          bounds.size.width,
-                          bounds.size.height);
-}
-
-static void NCBreadcrumbTraceHoverDraw(NSInteger segmentIndex,
-                                         NSString *titleSnippet,
-                                         CGFloat x,
-                                         CGFloat yContainer,
-                                         NSRect usedTitle,
-                                         NSRect hoverBaseRect,
-                                         NSRect linkRect,
-                                         NSRect bounds,
-                                         CGFloat stripH,
-                                         NSRect layoutStoredLinkRect) noexcept
-{
-    NSString *const t = titleSnippet.length > 24 ? [titleSnippet substringToIndex:24] : titleSnippet;
-    const char *const ut = t.UTF8String;
-    const NSRect inter = NSIntersectionRect(linkRect, bounds);
-    nc::panel::Log::Trace("[PathBarHover] draw seg={} title=\"{}\" x={:.3f} yCont={:.3f} "
-                          "used=({:.3f},{:.3f},{:.3f},{:.3f}) hoverBase=({:.3f},{:.3f},{:.3f},{:.3f}) "
-                          "linkRect=({:.3f},{:.3f},{:.3f},{:.3f}) bounds=({:.3f},{:.3f},{:.3f},{:.3f}) "
-                          "stripH={:.3f}",
-                          static_cast<int>(segmentIndex),
-                          ut ? ut : "",
-                          x,
-                          yContainer,
-                          usedTitle.origin.x,
-                          usedTitle.origin.y,
-                          usedTitle.size.width,
-                          usedTitle.size.height,
-                          hoverBaseRect.origin.x,
-                          hoverBaseRect.origin.y,
-                          hoverBaseRect.size.width,
-                          hoverBaseRect.size.height,
-                          linkRect.origin.x,
-                          linkRect.origin.y,
-                          linkRect.size.width,
-                          linkRect.size.height,
-                          bounds.origin.x,
-                          bounds.origin.y,
-                          bounds.size.width,
-                          bounds.size.height,
-                          stripH);
-    const CGFloat dx = linkRect.origin.x - layoutStoredLinkRect.origin.x;
-    const CGFloat dy = linkRect.origin.y - layoutStoredLinkRect.origin.y;
-    const CGFloat dw = linkRect.size.width - layoutStoredLinkRect.size.width;
-    const CGFloat dh = linkRect.size.height - layoutStoredLinkRect.size.height;
-    nc::panel::Log::Trace("[PathBarHover] draw vs layout linkRect d.origin=({:.3f},{:.3f}) d.size=({:.3f},{:.3f}) "
-                          "layoutStored=({:.3f},{:.3f},{:.3f},{:.3f}) link_inter_bounds=({:.3f},{:.3f},{:.3f},{:.3f})",
-                          dx,
-                          dy,
-                          dw,
-                          dh,
-                          layoutStoredLinkRect.origin.x,
-                          layoutStoredLinkRect.origin.y,
-                          layoutStoredLinkRect.size.width,
-                          layoutStoredLinkRect.size.height,
-                          inter.origin.x,
-                          inter.origin.y,
-                          inter.size.width,
-                          inter.size.height);
 }
 
 /// Points per pixel for this view (1 on non-Retina, 2 on typical Retina). Used to snap coordinates to the device pixel grid.
@@ -557,8 +460,6 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
         const CGFloat padX = self.hoverPadX;
         const CGFloat padY = self.hoverPadY;
         const NSRect linkRect = NCBreadcrumbPaddedLinkRect(hoverBase, padX, padY, padY);
-        if( nc::panel::Log::Level() <= spdlog::level::trace )
-            NCBreadcrumbTraceHoverLayout(title, i, x, hoverBase, linkRect, padX, padY, padY, stripH, self.bounds);
         [m_SegmentLinkRects addObject:[NSValue valueWithRect:linkRect]];
         [m_TitleSegmentIndices addObject:@(i)];
         x += segItem.advance;
@@ -660,14 +561,13 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
         const bool isHovered = (self.hoveredSegmentIndex == i &&
                                 self.hoverFillColor &&
                                 self.hoverFillColor != NSColor.clearColor);
-        NSRect hoverBase = NSZeroRect;
         NSRect hr = NSZeroRect;
 
         if( isHovered ) {
             const CGFloat padX = self.hoverPadX;
             const CGFloat padY = self.hoverPadY;
             const CGFloat cr = static_cast<CGFloat>(self.hoverCornerRadius);
-            hoverBase = segItem.hoverBase;
+            const NSRect hoverBase = segItem.hoverBase;
             hr = NCBreadcrumbPixelAlignRect(NCBreadcrumbPaddedLinkRect(hoverBase, padX, padY, padY),
                                             NCBreadcrumbViewBackingScale(self));
             NSGraphicsContext *const gctx = NSGraphicsContext.currentContext;
@@ -687,14 +587,6 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
             [[NSBezierPath bezierPathWithRect:NSMakeRect(0., 0., boundsW, stripH)] addClip];
             [segItem.lm drawGlyphsForGlyphRange:segItem.glyphRange atPoint:NSMakePoint(x, segItem.yContainer)];
             [gctx restoreGraphicsState];
-        }
-
-        if( isHovered && nc::panel::Log::Level() <= spdlog::level::trace ) {
-            // segCacheIdx was already incremented after fetching segItem, so [segCacheIdx-1] aligns with this segment.
-            const NSRect layoutStoredLink = [m_SegmentLinkRects[segCacheIdx - 1] rectValue];
-            const NSRect usedTitle = NSMakeRect(x, segItem.yContainer, segItem.advance, segItem.usedHeight);
-            NCBreadcrumbTraceHoverDraw(i, title, x, segItem.yContainer, usedTitle, hoverBase, hr,
-                                       self.bounds, stripH, layoutStoredLink);
         }
 
         x += segItem.advance;
@@ -722,11 +614,6 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
     const NSPoint p = [self convertPoint:event.locationInWindow fromView:nil];
     const NSInteger idx = [self segmentIndexAtPoint:p];
     if( idx != self.hoveredSegmentIndex ) {
-        nc::panel::Log::Trace("[PathBarHover] mouse p=({:.3f},{:.3f}) hitSeg={} prevHoverSeg={}",
-                              p.x,
-                              p.y,
-                              static_cast<int>(idx),
-                              static_cast<int>(self.hoveredSegmentIndex));
         self.hoveredSegmentIndex = idx;
         [self setNeedsDisplay:YES];
     }

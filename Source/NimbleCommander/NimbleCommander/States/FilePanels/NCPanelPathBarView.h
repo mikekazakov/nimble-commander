@@ -6,17 +6,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NCPanelPathBarView : NSView <NSTextFieldDelegate>
+@interface NCPanelPathBarView : NSView <NSTextViewDelegate>
 @property(nonatomic, readonly) NCPanelBreadcrumbsView *breadcrumbsView;
-@property(nonatomic, readonly) NSTextField *pathEditField;
-@property(nonatomic) BOOL fullPathEditActive;
+@property(nonatomic, readonly) NSTextView *pathTextView;
+@property(nonatomic) bool fullPathEditActive;
 
 @property(nonatomic, copy, nullable) void (^onCancelFullPathEdit)(void);
 
 - (void)enterFullPathEditWithString:(NSString *)path font:(NSFont *)font textColor:(NSColor *)textColor;
 - (void)exitFullPathEdit;
-/// Keeps single-line path field aligned with drawn breadcrumbs when theme font changes during edit.
-- (void)syncPathEditFieldVerticalAlignmentWithFont:(NSFont *)font;
+- (void)syncPathTextViewVerticalAlignmentWithFont:(NSFont *)font;
 @end
 
 NS_ASSUME_NONNULL_END

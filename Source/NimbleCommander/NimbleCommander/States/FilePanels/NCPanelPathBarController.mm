@@ -66,7 +66,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     self = [super init];
     if( self ) {
         m_View = [[NCPanelPathBarView alloc] initWithFrame:NSZeroRect];
-        _fullPathSelectionActive = NO;
+        _fullPathSelectionActive = false;
         m_HoverPadX = 0;
         m_HoverPadY = 0;
         m_HoverCornerRadius = 0;
@@ -115,10 +115,10 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     m_HoverCornerRadius = theme.PathHoverCornerRadius();
     m_SeparatorVerticalNudgeCoefficient = theme.PathSeparatorVerticalNudgeCoefficient();
 
-    m_View.pathEditField.font = m_Font;
+    m_View.pathTextView.font = m_Font;
     if( self.fullPathSelectionActive ) {
-        m_View.pathEditField.textColor = m_TextColor;
-        [m_View syncPathEditFieldVerticalAlignmentWithFont:m_Font];
+        m_View.pathTextView.textColor = m_TextColor;
+        [m_View syncPathTextViewVerticalAlignmentWithFont:m_Font];
     }
     else {
         [self refreshPathBarContent];
@@ -167,11 +167,11 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
 - (bool)cancelFullPathSelectionIfActive
 {
     if( !self.fullPathSelectionActive )
-        return NO;
+        return false;
     [self endFullPathSelectionUI];
     if( m_View.window != nil && self.defaultResponder != nil )
         [m_View.window makeFirstResponder:self.defaultResponder];
-    return YES;
+    return true;
 }
 
 - (void)invalidate
@@ -244,7 +244,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     [self removeOutsideClickMonitorIfNeeded];
 
     m_View.breadcrumbsView.hoveredSegmentIndex = -1;
-    _fullPathSelectionActive = YES;
+    _fullPathSelectionActive = true;
     [m_View enterFullPathEditWithString:(m_FullPathForEditing ?: @"")
                                    font:(m_Font ?: [NSFont systemFontOfSize:13.])
                               textColor:(m_TextColor ?: NSColor.textColor)];
@@ -262,7 +262,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
 - (void)endFullPathSelectionUI
 {
     [self removeOutsideClickMonitorIfNeeded];
-    _fullPathSelectionActive = NO;
+    _fullPathSelectionActive = false;
     [m_View exitFullPathEdit];
     [self refreshPathBarContent];
 }

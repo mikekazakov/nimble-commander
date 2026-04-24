@@ -71,6 +71,9 @@ static bool IsDark(NSColor *_color);
             [m_PathBarController.view.bottomAnchor constraintEqualToAnchor:m_PathArea.bottomAnchor],
         ]];
 
+        // NB! Don't use "single line mode" - it doesn't do what you expect.
+        // https://stackoverflow.com/questions/36179012/nstextfield-non-system-font-content-clipped-when-usessinglelinemode-is-true
+
         m_SearchTextField = [[NSTextField alloc] initWithFrame:NSRect()];
         m_SearchTextField.stringValue = @"";
         m_SearchTextField.translatesAutoresizingMaskIntoConstraints = false;

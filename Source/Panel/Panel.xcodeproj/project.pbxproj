@@ -23,6 +23,7 @@
 		CF3ED50E25860F7E00D67AF2 /* libConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3ED50C25860F7200D67AF2 /* libConfig.a */; };
 		CF465229268D163E0085840A /* Log.h in Headers */ = {isa = PBXBuildFile; fileRef = CF465228268D163E0085840A /* Log.h */; };
 		CF4652592699F97C0085840A /* PanelViewFieldEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4652582699F97C0085840A /* PanelViewFieldEditor.h */; };
+		CF9A00012F010001000PB001 /* PathBar.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9A00002F010001000PB001 /* PathBar.h */; };
 		CF465284269A4C150085840A /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF465283269A4C150085840A /* libOperations.a */; };
 		CF60DF252A6D3BAB00478BA0 /* libTerm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF60DF242A6D3BAB00478BA0 /* libTerm.a */; };
 		CFA89D822804C86E00BEA127 /* FindFilesData.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA89D812804C86E00BEA127 /* FindFilesData.h */; };
@@ -109,6 +110,8 @@
 		CF46522C268D16500085840A /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Log.cpp; path = source/Log.cpp; sourceTree = "<group>"; };
 		CF4652582699F97C0085840A /* PanelViewFieldEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewFieldEditor.h; path = include/Panel/PanelViewFieldEditor.h; sourceTree = "<group>"; };
 		CF46525C2699F9830085840A /* PanelViewFieldEditor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewFieldEditor.mm; path = source/PanelViewFieldEditor.mm; sourceTree = "<group>"; };
+		CF9A00002F010001000PB001 /* PathBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PathBar.h; path = include/Panel/PathBar.h; sourceTree = "<group>"; };
+		CF9A00022F010001000PB002 /* PathBar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PathBar.mm; path = source/PathBar.mm; sourceTree = "<group>"; };
 		CF465283269A4C150085840A /* libOperations.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libOperations.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF5D1DCA2B56E5AE00750174 /* TagsPresentation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TagsPresentation.h; path = include/Panel/UI/TagsPresentation.h; sourceTree = "<group>"; };
 		CF5D1DCB2B56E5C000750174 /* TagsPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TagsPresentation.mm; path = source/UI/TagsPresentation.mm; sourceTree = "<group>"; };
@@ -293,6 +296,7 @@
 				CFF33FA2255694DC00B3C92C /* PanelDataStatistics.h */,
 				CF4652582699F97C0085840A /* PanelViewFieldEditor.h */,
 				CF3ED4E625860BFE00D67AF2 /* PanelViewKeystrokeSink.h */,
+				CF9A00002F010001000PB001 /* PathBar.h */,
 				CF3ED4F925860D5900D67AF2 /* QuickSearch.h */,
 				CFCF43E12B8B642C00B513C7 /* TagsStorage.h */,
 				CFA89DA02814793600BEA127 /* TextWidthsCache.h */,
@@ -323,6 +327,7 @@
 				CFF33F9F2556948900B3C92C /* PanelDataSortMode.cpp */,
 				CFF33FA5255694E300B3C92C /* PanelDataStatistics.cpp */,
 				CF46525C2699F9830085840A /* PanelViewFieldEditor.mm */,
+				CF9A00022F010001000PB002 /* PathBar.mm */,
 				CF3ED50025860D5E00D67AF2 /* QuickSearch.mm */,
 				CFCF43E32B8B644B00B513C7 /* TagsStorage.cpp */,
 				CFA89DA12814794000BEA127 /* TextWidthsCache.mm */,
@@ -376,6 +381,7 @@
 				CF0B0405281F014800076FDF /* SelectionWithMaskPopupViewController.h in Headers */,
 				CF3ED4FA25860D5900D67AF2 /* QuickSearch.h in Headers */,
 				CF4652592699F97C0085840A /* PanelViewFieldEditor.h in Headers */,
+				CF9A00012F010001000PB001 /* PathBar.h in Headers */,
 				CFCF43E22B8B642C00B513C7 /* TagsStorage.h in Headers */,
 				CFA89D822804C86E00BEA127 /* FindFilesData.h in Headers */,
 				CFF33FAF2556954200B3C92C /* PanelDataItemVolatileData.h in Headers */,

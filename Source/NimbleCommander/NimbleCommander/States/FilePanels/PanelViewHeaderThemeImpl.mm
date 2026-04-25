@@ -38,6 +38,36 @@ NSColor *HeaderThemeImpl::SeparatorColor() const
     return m_ThemesManager.SelectedTheme().FilePanelsHeaderSeparatorColor();
 }
 
+NSColor *HeaderThemeImpl::PathSeparatorColor() const
+{
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathSeparatorColor();
+}
+
+NSColor *HeaderThemeImpl::PathAccentColor() const
+{
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathAccentColor();
+}
+
+double HeaderThemeImpl::PathHoverPadX() const
+{
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathHoverPadX();
+}
+
+double HeaderThemeImpl::PathHoverPadY() const
+{
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathHoverPadY();
+}
+
+unsigned HeaderThemeImpl::PathHoverCornerRadius() const
+{
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathHoverCornerRadius();
+}
+
+double HeaderThemeImpl::PathSeparatorVerticalNudgeCoefficient() const
+{
+    return m_ThemesManager.SelectedTheme().FilePanelsHeaderPathSeparatorVerticalNudgeCoefficient();
+}
+
 void HeaderThemeImpl::ObserveChanges(std::function<void()> _callback)
 {
     const auto filter = ThemesManager::Notifications::FilePanelsHeader;

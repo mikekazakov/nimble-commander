@@ -28,6 +28,12 @@ struct Theme::Internals {
     NSColor *m_FilePanelsHeaderActiveBackgroundColor;
     NSColor *m_FilePanelsHeaderInactiveBackgroundColor;
     NSColor *m_FilePanelsHeaderSeparatorColor;
+    NSColor *m_FilePanelsHeaderPathSeparatorColor;
+    NSColor *m_FilePanelsHeaderPathAccentColor;
+    double m_FilePanelsHeaderPathHoverPadX;
+    double m_FilePanelsHeaderPathHoverPadY;
+    unsigned m_FilePanelsHeaderPathHoverCornerRadius;
+    double m_FilePanelsHeaderPathSeparatorVerticalNudgeCoefficient;
     NSFont *m_FilePanelsFooterFont;
     NSColor *m_FilePanelsFooterTextColor;
     NSColor *m_FilePanelsFooterActiveTextColor;
@@ -179,6 +185,20 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
     I->m_FilePanelsHeaderActiveBackgroundColor = ExtractColor("filePanelsHeaderActiveBackgroundColor");
     I->m_FilePanelsHeaderInactiveBackgroundColor = ExtractColor("filePanelsHeaderInactiveBackgroundColor");
     I->m_FilePanelsHeaderSeparatorColor = ExtractColor("filePanelsHeaderSeparatorColor");
+    I->m_FilePanelsHeaderPathSeparatorColor = ExtractColor("filePanelsHeaderPathSeparatorColor");
+    I->m_FilePanelsHeaderPathAccentColor = ExtractColor("filePanelsHeaderPathAccentColor");
+    const auto ExtractDouble = [&](const char *_path) -> double {
+        if( const std::optional<double> v = ThemePersistence::ExtractDouble(doc, _path) )
+            return v.value();
+        if( const std::optional<double> v = ThemePersistence::ExtractDouble(backup, _path) )
+            return v.value();
+        panel::Log::Warn("Theme: unable to extract {} from both primary and backup documents", _path);
+        return 0.;
+    };
+    I->m_FilePanelsHeaderPathHoverPadX = ExtractDouble("filePanelsHeaderPathHoverPadX");
+    I->m_FilePanelsHeaderPathHoverPadY = ExtractDouble("filePanelsHeaderPathHoverPadY");
+    I->m_FilePanelsHeaderPathHoverCornerRadius = ExtractUInt("filePanelsHeaderPathHoverCornerRadius");
+    I->m_FilePanelsHeaderPathSeparatorVerticalNudgeCoefficient = ExtractDouble("filePanelsHeaderPathSeparatorVerticalNudgeCoefficient");
 
     I->m_FilePanelsListFont = ExtractFont("filePanelsListFont");
     I->m_FilePanelsListRowVerticalPadding = ExtractUInt("filePanelsListRowVerticalPadding");
@@ -475,6 +495,36 @@ NSColor *Theme::FilePanelsListHeaderSeparatorColor() const noexcept
 NSColor *Theme::FilePanelsHeaderSeparatorColor() const noexcept
 {
     return I->m_FilePanelsHeaderSeparatorColor;
+}
+
+NSColor *Theme::FilePanelsHeaderPathSeparatorColor() const noexcept
+{
+    return I->m_FilePanelsHeaderPathSeparatorColor;
+}
+
+NSColor *Theme::FilePanelsHeaderPathAccentColor() const noexcept
+{
+    return I->m_FilePanelsHeaderPathAccentColor;
+}
+
+double Theme::FilePanelsHeaderPathHoverPadX() const noexcept
+{
+    return I->m_FilePanelsHeaderPathHoverPadX;
+}
+
+double Theme::FilePanelsHeaderPathHoverPadY() const noexcept
+{
+    return I->m_FilePanelsHeaderPathHoverPadY;
+}
+
+unsigned Theme::FilePanelsHeaderPathHoverCornerRadius() const noexcept
+{
+    return I->m_FilePanelsHeaderPathHoverCornerRadius;
+}
+
+double Theme::FilePanelsHeaderPathSeparatorVerticalNudgeCoefficient() const noexcept
+{
+    return I->m_FilePanelsHeaderPathSeparatorVerticalNudgeCoefficient;
 }
 
 NSFont *Theme::FilePanelsBriefFont() const noexcept

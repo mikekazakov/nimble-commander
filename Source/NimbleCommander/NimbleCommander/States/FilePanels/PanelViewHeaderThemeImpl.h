@@ -16,6 +16,12 @@ public:
     [[nodiscard]] NSColor *ActiveBackgroundColor() const override;
     [[nodiscard]] NSColor *InactiveBackgroundColor() const override;
     [[nodiscard]] NSColor *SeparatorColor() const override;
+    [[nodiscard]] NSColor *PathSeparatorColor() const override;
+    [[nodiscard]] NSColor *PathAccentColor() const override;
+    [[nodiscard]] double PathHoverPadX() const override;
+    [[nodiscard]] double PathHoverPadY() const override;
+    [[nodiscard]] unsigned PathHoverCornerRadius() const override;
+    [[nodiscard]] double PathSeparatorVerticalNudgeCoefficient() const override;
     void ObserveChanges(std::function<void()> _callback) override;
 
 private:

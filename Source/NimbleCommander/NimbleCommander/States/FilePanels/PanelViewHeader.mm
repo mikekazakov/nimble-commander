@@ -1,5 +1,6 @@
 // Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewHeader.h"
+#import "NCPanelPathBarController.h"
 #include <Utility/Layout.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/ColoredSeparatorLine.h>
@@ -16,7 +17,8 @@ static bool IsDark(NSColor *_color);
 @end
 
 @implementation NCPanelViewHeader {
-    NSTextField *m_PathTextField;
+    NSView *m_PathArea;
+    NCPanelPathBarController *m_PathBarController;
     NSTextField *m_SearchTextField;
     NSTextField *m_SearchMatchesField;
     NSButton *m_SearchMagGlassButton;
@@ -29,15 +31,19 @@ static bool IsDark(NSColor *_color);
     NSProgressIndicator *m_BusyIndicator;
     data::SortMode m_SortMode;
     std::function<void(data::SortMode)> m_SortModeChangeCallback;
-    std::function<void(NSString *)> m_SearchRequestChangeCallback;
+    std::function<void(NSString * _Nullable)> m_SearchRequestChangeCallback;
     std::unique_ptr<nc::panel::HeaderTheme> m_Theme;
     bool m_Active;
 }
 
 @synthesize sortMode = m_SortMode;
 @synthesize sortModeChangeCallback = m_SortModeChangeCallback;
-@synthesize defaultResponder;
 @synthesize sortMenuPopup;
+
+- (void)dealloc
+{
+    [m_PathBarController invalidate];
+}
 
 - (id)initWithFrame:(NSRect)frameRect theme:(std::unique_ptr<nc::panel::HeaderTheme>)_theme
 {
@@ -47,19 +53,25 @@ static bool IsDark(NSColor *_color);
         m_SearchPrompt = nil;
         m_Active = false;
 
+        // Path bar lives in this container so the sort button and path strip share one H stack, the busy spinner
+        // layers above the path, and search-prompt mode can hide the whole path slot via one binding.
+        m_PathArea = [[NSView alloc] initWithFrame:NSRect()];
+        m_PathArea.translatesAutoresizingMaskIntoConstraints = false;
+        [self addSubview:m_PathArea];
+
+        m_PathBarController = [[NCPanelPathBarController alloc] init];
+        m_PathBarController.view.translatesAutoresizingMaskIntoConstraints = false;
+        [m_PathArea addSubview:m_PathBarController.view];
+
+        [NSLayoutConstraint activateConstraints:@[
+            [m_PathBarController.view.leadingAnchor constraintEqualToAnchor:m_PathArea.leadingAnchor],
+            [m_PathBarController.view.trailingAnchor constraintEqualToAnchor:m_PathArea.trailingAnchor],
+            [m_PathBarController.view.topAnchor constraintEqualToAnchor:m_PathArea.topAnchor],
+            [m_PathBarController.view.bottomAnchor constraintEqualToAnchor:m_PathArea.bottomAnchor],
+        ]];
+
         // NB! Don't use "single line mode" - it doesn't do what you expect.
         // https://stackoverflow.com/questions/36179012/nstextfield-non-system-font-content-clipped-when-usessinglelinemode-is-true
-
-        m_PathTextField = [[NSTextField alloc] initWithFrame:NSRect()];
-        m_PathTextField.translatesAutoresizingMaskIntoConstraints = false;
-        m_PathTextField.stringValue = @"";
-        m_PathTextField.bordered = false;
-        m_PathTextField.editable = false;
-        m_PathTextField.drawsBackground = false;
-        m_PathTextField.lineBreakMode = NSLineBreakByTruncatingHead;
-        m_PathTextField.maximumNumberOfLines = 1;
-        m_PathTextField.alignment = NSTextAlignmentCenter;
-        [self addSubview:m_PathTextField];
 
         m_SearchTextField = [[NSTextField alloc] initWithFrame:NSRect()];
         m_SearchTextField.stringValue = @"";
@@ -132,10 +144,10 @@ static bool IsDark(NSColor *_color);
         m_BusyIndicator.displayedWhenStopped = false;
         if( IsDark(m_Theme->ActiveBackgroundColor()) )
             m_BusyIndicator.appearance = [NSAppearance appearanceNamed:NSAppearanceNameVibrantDark];
-        [self addSubview:m_BusyIndicator positioned:NSWindowAbove relativeTo:m_PathTextField];
+        [self addSubview:m_BusyIndicator positioned:NSWindowAbove relativeTo:m_PathArea];
 
-        [self setupAppearance];
         [self setupLayout];
+        [self setupAppearance];
 
         __weak NCPanelViewHeader *weak_self = self;
         m_Theme->ObserveChanges([weak_self] {
@@ -146,10 +158,33 @@ static bool IsDark(NSColor *_color);
     return self;
 }
 
+- (void)setDefaultResponder:(NSResponder *)default_responder
+{
+    m_PathBarController.defaultResponder = default_responder;
+}
+
+- (NSResponder *)defaultResponder
+{
+    return m_PathBarController.defaultResponder;
+}
+
+- (void)setPath:(NSString *)path
+{
+    [m_PathBarController setDisplayPath:path];
+}
+
+- (void)wirePathBarWithContextSource:(std::function<std::optional<nc::panel::PanelPathContext>(void)>)context_source
+                   navigationHandler:(std::function<void(const std::string &)>)navigation_handler
+                   contextMenuAction:(nc::panel::NCPanelPathBarContextMenuAction)context_menu_action
+{
+    m_PathBarController.directoryContextProvider = std::move(context_source);
+    m_PathBarController.navigateToVFSPathCallback = std::move(navigation_handler);
+    m_PathBarController.contextMenuAction = std::move(context_menu_action);
+}
+
 - (void)setupAppearance
 {
     NSFont *const font = m_Theme->Font();
-    m_PathTextField.font = font;
     m_SearchTextField.font = font;
     m_SearchMatchesField.font = font;
 
@@ -159,7 +194,6 @@ static bool IsDark(NSColor *_color);
     m_Background = active ? m_Theme->ActiveBackgroundColor() : m_Theme->InactiveBackgroundColor();
 
     NSColor *text_color = active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
-    m_PathTextField.textColor = text_color;
     m_SearchTextField.textColor = text_color;
     m_SearchMatchesField.textColor = text_color;
 
@@ -167,11 +201,12 @@ static bool IsDark(NSColor *_color);
     m_SearchClearButton.contentTintColor = text_color;
     m_SearchMagGlassButton.contentTintColor = text_color;
     self.needsDisplay = true;
+    [m_PathBarController applyTheme:*m_Theme active:m_Active];
 }
 
 - (void)setupLayout
 {
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_PathTextField,
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_PathArea,
                                                          m_SearchTextField,
                                                          m_SeparatorLine,
                                                          m_SearchMatchesField,
@@ -180,7 +215,7 @@ static bool IsDark(NSColor *_color);
                                                          m_SortButton,
                                                          m_BusyIndicator);
     [self addConstraints:[NSLayoutConstraint
-                             constraintsWithVisualFormat:@"|-(==0)-[m_SortButton(==20)]-(==0)-[m_PathTextField]-(==2)-|"
+                             constraintsWithVisualFormat:@"|-(==0)-[m_SortButton(==20)]-(==0)-[m_PathArea]-(==2)-|"
                                                  options:0
                                                  metrics:nil
                                                    views:views]];
@@ -214,7 +249,10 @@ static bool IsDark(NSColor *_color);
                                                                  metrics:nil
                                                                    views:views]];
 
-    [self addConstraint:LayoutConstraintForCenteringViewVertically(m_PathTextField, self)];
+    [NSLayoutConstraint activateConstraints:@[
+        [m_PathArea.topAnchor constraintEqualToAnchor:self.topAnchor],
+        [m_PathArea.bottomAnchor constraintEqualToAnchor:m_SeparatorLine.topAnchor],
+    ]];
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchTextField, self)];
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchMagGlassButton, self)];
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchMatchesField, self)];
@@ -244,11 +282,6 @@ static bool IsDark(NSColor *_color);
     }
 }
 
-- (void)setPath:(NSString *)_path
-{
-    m_PathTextField.stringValue = _path;
-}
-
 - (void)setupBindings
 {
     static const auto isnil = @{NSValueTransformerNameBindingOption: NSIsNilTransformerName};
@@ -257,7 +290,7 @@ static bool IsDark(NSColor *_color);
     [m_SearchTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnil];
     [m_SearchMatchesField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnil];
     [m_SearchClearButton bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnil];
-    [m_PathTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnotnil];
+    [m_PathArea bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnotnil];
     [m_SortButton bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnotnil];
     [m_BusyIndicator bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnotnil];
 }
@@ -268,7 +301,7 @@ static bool IsDark(NSColor *_color);
     [m_SearchTextField unbind:@"hidden"];
     [m_SearchMatchesField unbind:@"hidden"];
     [m_SearchClearButton unbind:@"hidden"];
-    [m_PathTextField unbind:@"hidden"];
+    [m_PathArea unbind:@"hidden"];
     [m_SortButton unbind:@"hidden"];
     [m_BusyIndicator unbind:@"hidden"];
 }
@@ -277,16 +310,18 @@ static bool IsDark(NSColor *_color);
 {
     if( self.superview )
         [self setupBindings];
-    else
+    else {
+        [m_PathBarController invalidate];
         [self removeBindings];
+    }
 }
 
-- (void)setSearchRequestChangeCallback:(std::function<void(NSString *)>)searchRequestChangeCallback
+- (void)setSearchRequestChangeCallback:(std::function<void(NSString * _Nullable)>)searchRequestChangeCallback
 {
     m_SearchRequestChangeCallback = std::move(searchRequestChangeCallback);
 }
 
-- (std::function<void(NSString *)>)searchRequestChangeCallback
+- (std::function<void(NSString * _Nullable)>)searchRequestChangeCallback
 {
     return m_SearchRequestChangeCallback;
 }
@@ -465,6 +500,10 @@ static bool IsDark(NSColor *_color);
         return;
     }
 
+    if( [m_PathBarController cancelFullPathSelectionIfActive] ) {
+        return;
+    }
+
     [super cancelOperation:_sender];
 }
 
@@ -523,13 +562,8 @@ static NSString *SortLetter(data::SortMode _mode) noexcept
     }
 }
 
-static double Brightness(NSColor *_color)
-{
-    const auto c = [_color colorUsingColorSpace:NSColorSpace.genericRGBColorSpace];
-    return c.brightnessComponent;
-}
-
 static bool IsDark(NSColor *_color)
 {
-    return Brightness(_color) < 0.60;
+    const auto c = [_color colorUsingColorSpace:NSColorSpace.genericRGBColorSpace];
+    return c.brightnessComponent < 0.60;
 }

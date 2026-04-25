@@ -24,6 +24,8 @@
 #include "PanelViewDummyPresentation.h"
 #include "PanelControllerActionsDispatcher.h"
 
+#include <vector>
+
 using namespace nc::panel;
 using nc::vfsicon::IconRepository;
 
@@ -102,6 +104,7 @@ struct StateStorage {
             if( PanelView *const strong_self = weak_self )
                 [strong_self.controller changeSortingModeTo:_sm];
         };
+        [self wirePathBar];
         [self addSubview:m_HeaderView];
 
         m_FooterView = _footer;
@@ -1052,10 +1055,12 @@ struct StateStorage {
 - (void)setHeaderTitle:(NSString *)headerTitle
 {
     dispatch_assert_main_queue();
-    if( m_HeaderTitle != headerTitle ) {
-        m_HeaderTitle = headerTitle;
-        [m_HeaderView setPath:m_HeaderTitle];
-    }
+    NSString *const next = headerTitle ?: @"";
+    if( (m_HeaderTitle == next) || [m_HeaderTitle isEqualToString:next] )
+        return;
+    m_HeaderTitle = [next copy];
+
+    [m_HeaderView setPath:m_HeaderTitle];
 }
 
 - (NSString *)headerTitle
@@ -1222,6 +1227,85 @@ struct StateStorage {
     if( !frame )
         return {};
     return [self convertRect:*frame fromView:m_ItemsView];
+}
+
+- (std::optional<nc::panel::PanelPathContext>)currentPathContext
+{
+    if( !m_Data )
+        return std::nullopt;
+    const bool uniform_dir =
+        m_Data->Type() == data::Model::PanelType::Directory && m_Data->Listing().IsUniform();
+    if( !uniform_dir )
+        return std::nullopt;
+    PanelPathContext ctx;
+    ctx.verbose_full_path = m_Data->VerboseDirectoryFullPath();
+    ctx.directory_path = m_Data->DirectoryPathWithTrailingSlash();
+    ctx.posix_path = m_Data->DirectoryPathWithoutTrailingSlash();
+    return ctx;
+}
+
+- (void)navigateToDirectory:(const std::string &)path
+{
+    PanelController *const pc = self.controller;
+    if( !pc )
+        return;
+    auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
+    req->RequestedDirectory = path;
+    req->VFS = pc.vfs;
+    req->PerformAsynchronous = true;
+    req->InitiatedByUser = true;
+    [pc GoToDirWithContext:req];
+}
+
+- (void)handlePathBarContextMenuCommand:(nc::panel::NCPanelPathBarContextCommand)cmd forPath:(NSString *)path
+{
+    if( path.length == 0 )
+        return;
+    PanelController *const pc = self.controller;
+    if( !pc )
+        return;
+    const char *const raw = path.UTF8String;
+    if( !raw )
+        return;
+    const std::string utf8{raw};
+    switch( cmd ) {
+        case nc::panel::NCPanelPathBarContextCommand::Open: {
+            auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
+            req->RequestedDirectory = utf8;
+            req->VFS = pc.vfs;
+            req->PerformAsynchronous = true;
+            req->InitiatedByUser = true;
+            (void)[pc GoToDirWithContext:req];
+            break;
+        }
+        case nc::panel::NCPanelPathBarContextCommand::OpenInNewTab:
+            [pc openPathInNewTab:utf8];
+            break;
+        case nc::panel::NCPanelPathBarContextCommand::CopyPath:
+            [NSPasteboard.generalPasteboard clearContents];
+            [NSPasteboard.generalPasteboard setString:path forType:NSPasteboardTypeString];
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)wirePathBar
+{
+    __weak PanelView *weak_self = self;
+    [m_HeaderView
+        wirePathBarWithContextSource:[weak_self]() -> std::optional<nc::panel::PanelPathContext> {
+          PanelView *const s = weak_self;
+          return s ? [s currentPathContext] : std::nullopt;
+        }
+                   navigationHandler:[weak_self](const std::string &path) {
+                     if( PanelView *const s = weak_self )
+                         [s navigateToDirectory:path];
+                   }
+                   contextMenuAction:[weak_self](NSString *path, nc::panel::NCPanelPathBarContextCommand cmd) {
+                     if( PanelView *const s = weak_self )
+                         [s handlePathBarContextMenuCommand:cmd forPath:path];
+                   }];
 }
 
 @end

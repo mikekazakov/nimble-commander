@@ -79,6 +79,12 @@ public:
     [[nodiscard]] NSColor *FilePanelsHeaderActiveBackgroundColor() const noexcept;
     [[nodiscard]] NSColor *FilePanelsHeaderInactiveBackgroundColor() const noexcept;
     [[nodiscard]] NSColor *FilePanelsHeaderSeparatorColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsHeaderPathSeparatorColor() const noexcept;
+    [[nodiscard]] NSColor *FilePanelsHeaderPathAccentColor() const noexcept;
+    [[nodiscard]] double FilePanelsHeaderPathHoverPadX() const noexcept;
+    [[nodiscard]] double FilePanelsHeaderPathHoverPadY() const noexcept;
+    [[nodiscard]] unsigned FilePanelsHeaderPathHoverCornerRadius() const noexcept;
+    [[nodiscard]] double FilePanelsHeaderPathSeparatorVerticalNudgeCoefficient() const noexcept;
 
     // File Panels --> Footer bar settings /////////////////////////////////////////////////////////
     [[nodiscard]] NSFont *FilePanelsFooterFont() const noexcept;

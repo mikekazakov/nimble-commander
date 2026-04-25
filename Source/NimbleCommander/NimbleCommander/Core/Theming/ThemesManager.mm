@@ -53,6 +53,12 @@ static constexpr std::pair<const char *, uint64_t> g_EntryToNotificationMappingT
     {"filePanelsHeaderActiveBackgroundColor", TMN::FilePanelsHeader},
     {"filePanelsHeaderInactiveBackgroundColor", TMN::FilePanelsHeader},
     {"filePanelsHeaderSeparatorColor", TMN::FilePanelsHeader},
+    {"filePanelsHeaderPathSeparatorColor", TMN::FilePanelsHeader},
+    {"filePanelsHeaderPathAccentColor", TMN::FilePanelsHeader},
+    {"filePanelsHeaderPathHoverPadX", TMN::FilePanelsHeader},
+    {"filePanelsHeaderPathHoverPadY", TMN::FilePanelsHeader},
+    {"filePanelsHeaderPathHoverCornerRadius", TMN::FilePanelsHeader},
+    {"filePanelsHeaderPathSeparatorVerticalNudgeCoefficient", TMN::FilePanelsHeader},
     {"filePanelsFooterFont", TMN::FilePanelsFooter},
     {"filePanelsFooterTextColor", TMN::FilePanelsFooter},
     {"filePanelsFooterActiveTextColor", TMN::FilePanelsFooter},
@@ -290,7 +296,15 @@ void ThemesManager::UpdateCurrentTheme()
     // comprose new theme object
     auto theme_data = SelectedThemeData();
     assert(theme_data);
-    auto new_theme = std::make_shared<Theme>(*theme_data, *BackupThemeData(m_SelectedThemeName));
+
+    std::string backup_name = m_SelectedThemeName;
+    if( !m_DefaultThemes.contains(backup_name) ) {
+        auto it = theme_data->FindMember("themeAppearance");
+        const bool is_dark = it != theme_data->MemberEnd() && it->value.IsString() &&
+                             std::string_view{it->value.GetString()} == "dark";
+        backup_name = is_dark ? "Dark" : "Light";
+    }
+    auto new_theme = std::make_shared<Theme>(*theme_data, *BackupThemeData(backup_name));
 
     // release current theme some time after - dispatch release with 10s delay
     auto old_theme = g_CurrentTheme;

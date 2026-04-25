@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)breadcrumbsViewWillHandleMouseDown:(NCPanelBreadcrumbsView *)v;
 - (void)breadcrumbsView:(NCPanelBreadcrumbsView *)v didActivatePOSIXPath:(NSString *)path;
 - (void)breadcrumbsViewDidActivateCurrentSegment:(NCPanelBreadcrumbsView *)v;
-- (void)breadcrumbsViewDidRequestFullPathEdit:(NCPanelBreadcrumbsView *)v;
+- (void)breadcrumbsViewDidRequestFullPathSelection:(NCPanelBreadcrumbsView *)v;
 @end
 
 /// Manual draw: layout and vertical centering are precomputed in rebuildLayout (see NCBreadcrumbTextLayout);

@@ -9,12 +9,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface NCPanelPathBarView : NSView <NSTextViewDelegate>
 @property(nonatomic, readonly) NCPanelBreadcrumbsView *breadcrumbsView;
 @property(nonatomic, readonly) NSTextView *pathTextView;
-@property(nonatomic) bool fullPathEditActive;
+@property(nonatomic) bool fullPathSelectionActive;
 
-@property(nonatomic, copy, nullable) void (^onCancelFullPathEdit)(void);
+@property(nonatomic, copy, nullable) void (^onCancelFullPathSelection)(void);
 
-- (void)enterFullPathEditWithString:(NSString *)path font:(NSFont *)font textColor:(NSColor *)textColor;
-- (void)exitFullPathEdit;
+- (void)enterFullPathSelectionWithString:(NSString *)path font:(NSFont *)font textColor:(NSColor *)textColor;
+- (void)exitFullPathSelection;
 - (void)syncPathTextViewVerticalAlignmentWithFont:(NSFont *)font;
 @end
 

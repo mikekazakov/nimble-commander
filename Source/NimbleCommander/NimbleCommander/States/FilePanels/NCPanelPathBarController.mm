@@ -15,7 +15,7 @@ static std::vector<PanelHeaderBreadcrumb> NCPlainPathBreadcrumbs(NSString *path)
     return {breadcrumb};
 }
 
-static NSString *NCPathDisplayStringForEditing(NSString *display_path)
+static NSString *NCPathDisplayStringForSelection(NSString *display_path)
 {
     if( display_path.length <= 1 )
         return display_path ?: @"";
@@ -42,7 +42,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     NCPanelPathBarView *m_View;
     std::vector<PanelHeaderBreadcrumb> m_Breadcrumbs;
     NSString *m_PlainPath;
-    NSString *m_FullPathForEditing;
+    NSString *m_FullPathForSelection;
     NSString *m_POSIXPathForActions;
     id m_OutsideClickMonitor;
     NSFont *m_Font;
@@ -73,7 +73,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
         m_SeparatorVerticalNudgeCoefficient = 0.;
 
         __weak NCPanelPathBarController *weak_self = self;
-        m_View.onCancelFullPathEdit = ^{
+        m_View.onCancelFullPathSelection = ^{
             if( NCPanelPathBarController *const controller = weak_self )
                 [controller cancelFullPathSelectionIfActive];
         };
@@ -141,7 +141,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
 {
     [self endFullPathSelectionUI];
     m_Breadcrumbs.clear();
-    m_FullPathForEditing = nil;
+    m_FullPathForSelection = nil;
     m_POSIXPathForActions = nil;
     m_PlainPath = [displayPath copy] ?: @"";
     [self refreshPathBarContent];
@@ -157,7 +157,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     }
 
     m_Breadcrumbs = breadcrumbs;
-    m_FullPathForEditing = [NCPathDisplayStringForEditing(displayPath) copy];
+    m_FullPathForSelection = [NCPathDisplayStringForSelection(displayPath) copy];
     const auto posix_path = NormalizePanelHeaderPOSIXPathForActions(directoryContext.posix_path);
     m_POSIXPathForActions = [NSString stringWithUTF8StdString:posix_path];
     m_PlainPath = nil;
@@ -204,7 +204,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
         [breadcrumbs_view setBreadcrumbs:NCPlainPathBreadcrumbs(m_PlainPath ?: @"")];
         breadcrumbs_view.crumbDelegate = nil;
     }
-    [m_View exitFullPathEdit];
+    [m_View exitFullPathSelection];
 }
 
 - (void)removeOutsideClickMonitorIfNeeded
@@ -245,9 +245,9 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
 
     m_View.breadcrumbsView.hoveredSegmentIndex = -1;
     _fullPathSelectionActive = true;
-    [m_View enterFullPathEditWithString:(m_FullPathForEditing ?: @"")
-                                   font:(m_Font ?: [NSFont systemFontOfSize:13.])
-                              textColor:(m_TextColor ?: NSColor.textColor)];
+    [m_View enterFullPathSelectionWithString:(m_FullPathForSelection ?: @"")
+                                        font:(m_Font ?: [NSFont systemFontOfSize:13.])
+                                   textColor:(m_TextColor ?: NSColor.textColor)];
 
     __weak NCPanelPathBarController *weak_self = self;
     m_OutsideClickMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskLeftMouseDown
@@ -263,7 +263,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
 {
     [self removeOutsideClickMonitorIfNeeded];
     _fullPathSelectionActive = false;
-    [m_View exitFullPathEdit];
+    [m_View exitFullPathSelection];
     [self refreshPathBarContent];
 }
 
@@ -335,7 +335,7 @@ static NSString *NCPathDisplayStringForEditing(NSString *display_path)
     [self beginFullPathSelection];
 }
 
-- (void)breadcrumbsViewDidRequestFullPathEdit:(NCPanelBreadcrumbsView *)[[maybe_unused]]view
+- (void)breadcrumbsViewDidRequestFullPathSelection:(NCPanelBreadcrumbsView *)[[maybe_unused]]view
 {
     [self beginFullPathSelection];
 }

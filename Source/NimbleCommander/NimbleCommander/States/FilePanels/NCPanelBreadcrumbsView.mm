@@ -637,8 +637,8 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
         [self.crumbDelegate breadcrumbsViewWillHandleMouseDown:self];
 
     if( event.clickCount >= 2 ) {
-        if( [self.crumbDelegate respondsToSelector:@selector(breadcrumbsViewDidRequestFullPathEdit:)] )
-            [self.crumbDelegate breadcrumbsViewDidRequestFullPathEdit:self];
+        if( [self.crumbDelegate respondsToSelector:@selector(breadcrumbsViewDidRequestFullPathSelection:)] )
+            [self.crumbDelegate breadcrumbsViewDidRequestFullPathSelection:self];
         return;
     }
     const NSPoint p = [self convertPoint:event.locationInWindow fromView:nil];

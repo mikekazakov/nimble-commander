@@ -40,7 +40,7 @@ static const CGFloat kNCPathScrollFallbackLinePixels = 16.;
 
     NSClipView *const clip = self.contentView;
     NSPoint origin = clip.bounds.origin;
-    const CGFloat maxX = MAX(0.0, NSWidth(self.documentView.frame) - NSWidth(clip.bounds));
+    const CGFloat maxX = MAX(0.0, NSWidth(self.documentView.bounds) - NSWidth(clip.bounds));
     origin.x = MAX(0.0, MIN(origin.x - hDelta, maxX));
     [clip scrollToPoint:origin];
     [self reflectScrolledClipView:clip];
@@ -56,8 +56,8 @@ static const CGFloat kNCPathScrollFallbackLinePixels = 16.;
 
 @synthesize breadcrumbsView = m_Breadcrumbs;
 @synthesize pathTextView = m_PathTextView;
-@synthesize fullPathEditActive = _fullPathEditActive;
-@synthesize onCancelFullPathEdit = _onCancelFullPathEdit;
+@synthesize fullPathSelectionActive = _fullPathSelectionActive;
+@synthesize onCancelFullPathSelection = _onCancelFullPathSelection;
 
 - (instancetype)initWithFrame:(NSRect)frameRect
 {
@@ -93,6 +93,7 @@ static const CGFloat kNCPathScrollFallbackLinePixels = 16.;
         m_PathTextView.verticallyResizable = NO;
         m_PathTextView.autoresizingMask = NSViewNotSizable;
         m_PathTextView.delegate = self;
+        m_PathTextView.alignment = NSTextAlignmentCenter;
         m_PathScrollView.documentView = m_PathTextView;
         {
             NSLayoutManager *const lm = [[NSLayoutManager alloc] init];
@@ -100,7 +101,7 @@ static const CGFloat kNCPathScrollFallbackLinePixels = 16.;
             m_PathScrollView.horizontalLineScroll = defaultLine;
         }
 
-        self.fullPathEditActive = false;
+        self.fullPathSelectionActive = false;
 
         [NSLayoutConstraint activateConstraints:@[
             [m_Breadcrumbs.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
@@ -129,15 +130,49 @@ static const CGFloat kNCPathScrollFallbackLinePixels = 16.;
     [self resizeTextViewToContent];
 }
 
+/// Horizontal scroll so the document’s trailing edge aligns with the clip (same idea as breadcrumbs:
+/// `rebuildLayout` drops leading segments and keeps the path tail visible).
+- (void)scrollFullPathClipToTrailingEdge
+{
+    NSClipView *const clip = m_PathScrollView.contentView;
+    NSView *const doc = m_PathScrollView.documentView;
+    if( doc == nil )
+        return;
+    const CGFloat docW = NSWidth(doc.bounds);
+    const CGFloat clipW = NSWidth(clip.bounds);
+    const CGFloat maxX = MAX(0., docW - clipW);
+    NSPoint origin = clip.bounds.origin;
+    origin.x = maxX;
+    [clip scrollToPoint:origin];
+    [m_PathScrollView reflectScrolledClipView:clip];
+}
+
+/// Pure layout: sizes the text container and document view to match the current clip and content,
+/// but does NOT touch the scroll position. Trailing-edge alignment is owned exclusively by
+/// `enterFullPathSelectionWithString:` so re-layouts (window resize, theme change) do not stomp on the
+/// user's manual scroll position.
 - (void)resizeTextViewToContent
 {
-    [m_PathTextView.layoutManager ensureLayoutForTextContainer:m_PathTextView.textContainer];
-    const NSRect used = [m_PathTextView.layoutManager usedRectForTextContainer:m_PathTextView.textContainer];
     const CGFloat clipH = NSHeight(m_PathScrollView.contentView.bounds);
     const CGFloat clipW = NSWidth(m_PathScrollView.contentView.bounds);
     const CGFloat insetW = m_PathTextView.textContainerInset.width;
     const CGFloat insetH = m_PathTextView.textContainerInset.height;
-    const CGFloat contentW = MAX(clipW, ceil(used.size.width) + insetW * 2.0);
+    const CGFloat innerW = MAX(1., clipW - 2. * insetW);
+
+    // Pass 1: probe natural text width with an unconstrained container.
+    m_PathTextView.textContainer.containerSize = NSMakeSize(CGFLOAT_MAX, CGFLOAT_MAX);
+    [m_PathTextView.layoutManager ensureLayoutForTextContainer:m_PathTextView.textContainer];
+    const NSRect usedNatural = [m_PathTextView.layoutManager usedRectForTextContainer:m_PathTextView.textContainer];
+    const CGFloat textW = ceil(usedNatural.size.width);
+
+    // Pass 2: lock container to max(visibleInner, naturalWidth) so center alignment has room to
+    // center for short paths and the document still grows for long ones.
+    const CGFloat containerW = MAX(innerW, textW);
+    m_PathTextView.textContainer.containerSize = NSMakeSize(containerW, CGFLOAT_MAX);
+    [m_PathTextView.layoutManager ensureLayoutForTextContainer:m_PathTextView.textContainer];
+    const NSRect used = [m_PathTextView.layoutManager usedRectForTextContainer:m_PathTextView.textContainer];
+
+    const CGFloat contentW = MAX(clipW, containerW + 2. * insetW);
     const CGFloat contentH = MAX(clipH, ceil(used.size.height) + insetH * 2.0);
     m_PathTextView.frame = NSMakeRect(0.0, 0.0, contentW, contentH);
 }
@@ -145,11 +180,11 @@ static const CGFloat kNCPathScrollFallbackLinePixels = 16.;
 - (void)layout
 {
     [super layout];
-    if( self.fullPathEditActive )
+    if( self.fullPathSelectionActive )
         [self resizeTextViewToContent];
 }
 
-- (void)enterFullPathEditWithString:(NSString *)path font:(NSFont *)font textColor:(NSColor *)textColor
+- (void)enterFullPathSelectionWithString:(NSString *)path font:(NSFont *)font textColor:(NSColor *)textColor
 {
     NSFont *const f = font ?: [NSFont systemFontOfSize:13.];
     NSColor *const c = textColor ?: NSColor.textColor;
@@ -158,14 +193,16 @@ static const CGFloat kNCPathScrollFallbackLinePixels = 16.;
     m_PathTextView.textColor = c;
     m_PathTextView.string = path ?: @"";
 
-    [self syncPathTextViewVerticalAlignmentWithFont:f];
-
     m_Breadcrumbs.hidden = YES;
     m_PathScrollView.hidden = NO;
-    self.fullPathEditActive = true;
+    self.fullPathSelectionActive = true;
+    [self syncPathTextViewVerticalAlignmentWithFont:f];
 
     [self.window makeFirstResponder:m_PathTextView];
     [m_PathTextView selectAll:nil];
+    // selectAll: scrolls the text view to the start of its selection (i.e. the leading edge);
+    // realign to the trailing edge so the actual current directory tail stays visible for long paths.
+    [self scrollFullPathClipToTrailingEdge];
 
     if( c.type == NSColorTypeComponentBased ) {
         NSColor *const rgb = [c colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
@@ -181,15 +218,13 @@ static const CGFloat kNCPathScrollFallbackLinePixels = 16.;
             }
         }
     }
-
-    [m_PathTextView scrollRangeToVisible:NSMakeRange(m_PathTextView.string.length, 0)];
 }
 
-- (void)exitFullPathEdit
+- (void)exitFullPathSelection
 {
     m_Breadcrumbs.hidden = NO;
     m_PathScrollView.hidden = YES;
-    self.fullPathEditActive = false;
+    self.fullPathSelectionActive = false;
 }
 
 - (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
@@ -197,8 +232,8 @@ static const CGFloat kNCPathScrollFallbackLinePixels = 16.;
     bool handled = false;
     if( textView == m_PathTextView &&
         (commandSelector == @selector(cancelOperation:) || commandSelector == @selector(insertNewline:)) ) {
-        if( self.onCancelFullPathEdit )
-            self.onCancelFullPathEdit();
+        if( self.onCancelFullPathSelection )
+            self.onCancelFullPathSelection();
         handled = true;
     }
     return handled;

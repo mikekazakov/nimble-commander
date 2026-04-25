@@ -6,6 +6,8 @@
 #include "../MainWindowController.h"
 #include "PanelPreview.h"
 #include "MainWindowFilePanelState.h"
+#include "MainWindowFilePanelState+TabsSupport.h"
+#include "Views/FilePanelsTabbedHolder.h"
 #include "Views/BriefSystemOverview.h"
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
@@ -126,6 +128,7 @@ static void HeatUpConfigValues()
 
 @property(nonatomic, readonly)
     bool receivesUpdateNotifications; // returns true if underlying vfs will notify controller that content has changed
+
 @end
 
 @implementation PanelController {
@@ -197,6 +200,26 @@ static void HeatUpConfigValues()
 @synthesize layoutIndex = m_ViewLayoutIndex;
 @synthesize vfsFetchingFlags = m_VFSFetchingFlags;
 @synthesize dataGeneration = m_DataGeneration;
+
+- (void)openPathInNewTab:(const std::string &)path
+{
+    MainWindowFilePanelState *const state = self.state;
+    if( !state )
+        return;
+    NSTabView *const tab_view =
+        [state isLeftController:self] ? state.leftTabbedHolder.tabView : state.rightTabbedHolder.tabView;
+    PanelController *const new_pc = [state spawnNewTabInTabView:tab_view
+                                            autoDirectoryLoading:false
+                                                activateNewPanel:false];
+    if( !new_pc )
+        return;
+    auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
+    req->RequestedDirectory = path;
+    req->VFS = self.vfs;
+    req->PerformAsynchronous = true;
+    req->InitiatedByUser = true;
+    (void)[new_pc GoToDirWithContext:req];
+}
 
 - (instancetype)initWithView:(PanelView *)_panel_view
                      layouts:(std::shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts

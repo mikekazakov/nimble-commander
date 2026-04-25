@@ -52,6 +52,7 @@ TEST_CASE(PREFIX "Constructs from JSON")
         'filePanelsHeaderInactiveBackgroundColor': '#010108',\
         'filePanelsHeaderSeparatorColor': '#010109',\
         'filePanelsHeaderPathSeparatorColor': '#01010A',\
+        'filePanelsHeaderPathAccentColor': '#01010B',\
         'filePanelsHeaderPathHoverPadX': '6.5',\
         'filePanelsHeaderPathHoverPadY': '3.75',\
         'filePanelsHeaderPathHoverCornerRadius': '8',\
@@ -130,6 +131,7 @@ TEST_CASE(PREFIX "Constructs from JSON")
     CHECK(t.FilePanelsHeaderInactiveBackgroundColor().toHexStdString == "#010108");
     CHECK(t.FilePanelsHeaderSeparatorColor().toHexStdString == "#010109");
     CHECK(t.FilePanelsHeaderPathSeparatorColor().toHexStdString == "#01010A");
+    CHECK(t.FilePanelsHeaderPathAccentColor().toHexStdString == "#01010B");
     CHECK(t.FilePanelsHeaderPathHoverPadX() == 6.5);
     CHECK(t.FilePanelsHeaderPathHoverPadY() == 3.75);
     CHECK(t.FilePanelsHeaderPathHoverCornerRadius() == 8);

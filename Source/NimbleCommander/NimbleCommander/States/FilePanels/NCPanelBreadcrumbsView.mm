@@ -518,6 +518,7 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
     const NSInteger start = m_LayoutStartIndex;
     const CGFloat stripH = NSHeight(self.bounds);
     const CGFloat boundsW = NSWidth(self.bounds);
+    const CGFloat backingScale = NCBreadcrumbViewBackingScale(self);
 
     CGFloat x = m_ContentOriginX;
 
@@ -534,12 +535,15 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
 
     NSUInteger segCacheIdx = 0;
     // Separator nudge is a display-scale correction; compute once per repaint (pure arithmetic, no allocation).
-    const CGFloat sepNudge = NCBreadcrumbSeparatorVerticalNudge(self.crumbFont, NCBreadcrumbViewBackingScale(self), self.separatorVerticalNudgeCoefficient);
+    const CGFloat sepNudge = NCBreadcrumbSeparatorVerticalNudge(self.crumbFont, backingScale, self.separatorVerticalNudgeCoefficient);
     for( NSInteger i = start; i < static_cast<NSInteger>(m_Breadcrumbs.size()); ++i ) {
         const auto &segment = m_Breadcrumbs[static_cast<size_t>(i)];
         NSString *const title = NCBreadcrumbLabel(segment);
         if( title.length == 0 )
             continue;
+
+        if( segCacheIdx >= m_DrawCacheSegments.count )
+            break; // layout invariant violated, stop drawing entirely
 
         // Draw separator from cache (shared item; x is provided here, not baked into the cache).
         if( i > start && m_DrawCacheSep != nil ) {
@@ -553,9 +557,6 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
             x += m_DrawCacheSepAdvance;
         }
 
-        if( segCacheIdx >= m_DrawCacheSegments.count ) {
-            continue; // caches out of sync, skip drawing, do not advance index
-        }
         NCBreadcrumbTextLayout *const segItem = m_DrawCacheSegments[segCacheIdx++];
 
         const bool isHovered = (self.hoveredSegmentIndex == i &&
@@ -569,7 +570,7 @@ static CGFloat NCBreadcrumbCenterContainerYForVisualRect(CGFloat stripH, NSRect 
             const CGFloat cr = static_cast<CGFloat>(self.hoverCornerRadius);
             const NSRect hoverBase = segItem.hoverBase;
             hr = NCBreadcrumbPixelAlignRect(NCBreadcrumbPaddedLinkRect(hoverBase, padX, padY, padY),
-                                            NCBreadcrumbViewBackingScale(self));
+                                            backingScale);
             NSGraphicsContext *const gctx = NSGraphicsContext.currentContext;
             [gctx saveGraphicsState];
             [[NSBezierPath bezierPathWithRect:self.bounds] addClip];

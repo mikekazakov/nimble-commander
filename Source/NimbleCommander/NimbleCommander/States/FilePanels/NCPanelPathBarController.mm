@@ -263,7 +263,6 @@ static NSString *NCPathDisplayStringForSelection(NSString *display_path)
 {
     [self removeOutsideClickMonitorIfNeeded];
     _fullPathSelectionActive = false;
-    [m_View exitFullPathSelection];
     [self refreshPathBarContent];
 }
 

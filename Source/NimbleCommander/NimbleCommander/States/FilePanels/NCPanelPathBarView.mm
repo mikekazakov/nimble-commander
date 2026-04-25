@@ -95,11 +95,8 @@ static const CGFloat kNCPathScrollFallbackLinePixels = 16.;
         m_PathTextView.delegate = self;
         m_PathTextView.alignment = NSTextAlignmentCenter;
         m_PathScrollView.documentView = m_PathTextView;
-        {
-            NSLayoutManager *const lm = [[NSLayoutManager alloc] init];
-            const CGFloat defaultLine = [lm defaultLineHeightForFont:[NSFont systemFontOfSize:13.]];
-            m_PathScrollView.horizontalLineScroll = defaultLine;
-        }
+        m_PathScrollView.horizontalLineScroll =
+            [m_PathTextView.layoutManager defaultLineHeightForFont:[NSFont systemFontOfSize:13.]];
 
         self.fullPathSelectionActive = false;
 
@@ -120,8 +117,7 @@ static const CGFloat kNCPathScrollFallbackLinePixels = 16.;
 - (void)syncPathTextViewVerticalAlignmentWithFont:(NSFont *)font
 {
     NSFont *const f = font ?: [NSFont systemFontOfSize:13.];
-    NSLayoutManager *const lm = [[NSLayoutManager alloc] init];
-    const CGFloat lineH = [lm defaultLineHeightForFont:f];
+    const CGFloat lineH = [m_PathTextView.layoutManager defaultLineHeightForFont:f];
     const CGFloat viewH = NSHeight(m_PathScrollView.contentView.bounds);
     const CGFloat insetY = (viewH > lineH) ? floor((viewH - lineH) * 0.5) : 0.0;
     m_PathTextView.textContainerInset = NSMakeSize(kNCPanelPathBarFullPathHorizontalInset, insetY);

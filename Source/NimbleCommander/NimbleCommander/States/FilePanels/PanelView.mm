@@ -10,9 +10,6 @@
 #include <Panel/PanelData.h>
 #include <Panel/Log.h>
 #include "PanelController.h"
-#include "MainWindowFilePanelState.h"
-#include "MainWindowFilePanelState+TabsSupport.h"
-#include "Views/FilePanelsTabbedHolder.h"
 #include "Brief/PanelBriefView.h"
 #include "List/PanelListView.h"
 #include "Gallery/PanelGalleryView.h"
@@ -1281,25 +1278,9 @@ struct StateStorage {
             (void)[pc GoToDirWithContext:req];
             break;
         }
-        case nc::panel::NCPanelPathBarContextCommand::OpenInNewTab: {
-            MainWindowFilePanelState *const state = pc.state;
-            if( !state )
-                return;
-            NSTabView *const tab_view =
-                [state isLeftController:pc] ? state.leftTabbedHolder.tabView : state.rightTabbedHolder.tabView;
-            PanelController *const new_pc = [state spawnNewTabInTabView:tab_view
-                                                    autoDirectoryLoading:false
-                                                        activateNewPanel:false];
-            if( !new_pc )
-                return;
-            auto req = std::make_shared<nc::panel::DirectoryChangeRequest>();
-            req->RequestedDirectory = utf8;
-            req->VFS = pc.vfs;
-            req->PerformAsynchronous = true;
-            req->InitiatedByUser = true;
-            (void)[new_pc GoToDirWithContext:req];
+        case nc::panel::NCPanelPathBarContextCommand::OpenInNewTab:
+            [pc openPathInNewTab:utf8];
             break;
-        }
         case nc::panel::NCPanelPathBarContextCommand::CopyPath:
             [NSPasteboard.generalPasteboard clearContents];
             [NSPasteboard.generalPasteboard setString:path forType:NSPasteboardTypeString];

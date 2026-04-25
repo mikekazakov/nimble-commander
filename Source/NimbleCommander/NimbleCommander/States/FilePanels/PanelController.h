@@ -223,6 +223,9 @@ using ContextMenuProvider =
 - (void)updateAttachedQuickLook;
 - (void)updateAttachedBriefSystemOverview;
 
+// Opens the given VFS path in a new tab on the same side as this controller, using the panel's current VFS.
+- (void)openPathInNewTab:(const std::string &)path;
+
 /**
  * Allows changing Data options and ensures consitency with View afterwards.
  */

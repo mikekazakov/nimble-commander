@@ -5,7 +5,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol NCPanelTabBarViewDelegate <NSTabViewDelegate>
 @optional
-// Extend with NCPanelTabBarView-specific delegate methods if needed
+- (void)tabView:(NSTabView *)_view didCloseTabViewItem:(NSTabViewItem *)_item;
 @end
 
 [[clang::objc_runtime_name("_TtC5Panel17NCPanelTabBarView")]]
@@ -24,10 +24,12 @@ NS_ASSUME_NONNULL_BEGIN
 // Public API
 - (void)reloadTabs;
 - (long)numberOfTabViewItems;
-- (long)indexOfTabViewItem:(NSTabViewItem *)item;
+- (long)indexOfTabViewItem:(NSTabViewItem *)_item;
 - (nullable NSTabViewItem *)selectedTabViewItem;
-- (void)selectTabViewItem:(NSTabViewItem *)item;
-- (void)removeTabViewItem:(NSTabViewItem *)item;
+- (void)selectTabViewItem:(NSTabViewItem *)_item;
+- (void)removeTabViewItem:(NSTabViewItem *)_item;
+
+- (NSButton *)closeButtonOfTabViewItem:(NSTabViewItem *)_item;
 
 @end
 

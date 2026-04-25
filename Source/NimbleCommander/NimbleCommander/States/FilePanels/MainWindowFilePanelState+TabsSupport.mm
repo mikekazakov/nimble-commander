@@ -333,7 +333,6 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
 
 - (void)closeTabForController:(PanelController *)_controller
 {
-#if 0
     NSTabViewItem *it;
     NCPanelTabBarView *bar;
 
@@ -347,17 +346,14 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     }
 
     if( it && bar )
-        if( const auto button = [bar attachedButtonForTabViewItem:it] )
+        if( NSButton * const button = [bar closeButtonOfTabViewItem:it] )
             dispatch_to_main_queue([=] {
-                if( const auto close_button = button.closeButton )
-                    [close_button sendAction:close_button.action to:close_button.target];
+                [button sendAction:button.action to:button.target];
             });
-#endif
 }
 
 - (void)closeOtherTabsForController:(PanelController *)_controller
 {
-#if 0
     NCPanelTabBarView *bar;
     if( [self isLeftController:_controller] )
         bar = m_SplitView.leftTabbedHolder.tabBar;
@@ -378,12 +374,10 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     dispatch_to_background([=] {
         for( auto it : items )
             dispatch_to_main_queue([=] {
-                if( const auto button = [bar attachedButtonForTabViewItem:it] )
-                    if( const auto close_button = button.closeButton )
-                        [close_button sendAction:close_button.action to:close_button.target];
+                if( NSButton * const button = [bar closeButtonOfTabViewItem:it] )
+                    [button sendAction:button.action to:button.target];
             });
     });
-#endif
 }
 
 - (unsigned)currentSideTabsCount

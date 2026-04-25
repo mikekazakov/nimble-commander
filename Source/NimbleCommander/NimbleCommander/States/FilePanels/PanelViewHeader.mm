@@ -1,7 +1,6 @@
 // Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewHeader.h"
 #import "NCPanelPathBarController.h"
-#import <objc/runtime.h>
 #include <Utility/Layout.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/ColoredSeparatorLine.h>
@@ -39,7 +38,6 @@ static bool IsDark(NSColor *_color);
 
 @synthesize sortMode = m_SortMode;
 @synthesize sortModeChangeCallback = m_SortModeChangeCallback;
-@synthesize defaultResponder = _defaultResponder;
 @synthesize sortMenuPopup;
 
 - (void)dealloc
@@ -162,13 +160,12 @@ static bool IsDark(NSColor *_color);
 
 - (void)setDefaultResponder:(NSResponder *)default_responder
 {
-    (void)objc_storeWeak(&_defaultResponder, (id)default_responder);
     m_PathBarController.defaultResponder = default_responder;
 }
 
 - (NSResponder *)defaultResponder
 {
-    return (NSResponder *)objc_loadWeak(&_defaultResponder);
+    return m_PathBarController.defaultResponder;
 }
 
 - (void)setPath:(NSString *)path

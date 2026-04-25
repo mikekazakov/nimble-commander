@@ -1,5 +1,10 @@
 import Cocoa
 
+@objc
+public protocol NCPanelTabBarViewDelegate: NSTabViewDelegate {
+    @objc optional func tabView(_ tabView: NSTabView, didCloseTabViewItem tabViewItem: NSTabViewItem)
+}
+
 @MainActor
 public class NCPanelTabBarItem: NSCollectionViewItem {
     // Colors
@@ -64,7 +69,7 @@ public class NCPanelTabBarItem: NSCollectionViewItem {
         }
     }
     
-    private lazy var closeButton: NSButton = {
+    public lazy var closeButton: NSButton = {
         let btn = NSButton(title: "X", target: self, action: #selector(closeTapped))
         btn.bezelStyle = .inline
         btn.isBordered = false
@@ -189,7 +194,7 @@ public class NCPanelTabBarItem: NSCollectionViewItem {
     
     @objc private func closeTapped() {
         guard let tabViewItem = tabViewItem, let tabBarView = tabBarView else { return }
-        tabBarView.removeTabViewItem(tabViewItem)
+        tabBarView.tabBarItemCloseButtonClicked(tabViewItem)
     }
     
     public override func prepareForReuse() {
@@ -201,11 +206,6 @@ public class NCPanelTabBarItem: NSCollectionViewItem {
         isHovered = false
         updateBackground()
     }
-}
-
-@objc
-public protocol NCPanelTabBarViewDelegate: NSTabViewDelegate {
-    // Extend with NCPanelTabBarView-specific delegate methods if needed
 }
 
 class NCPanelTabBarViewHiddenScroller: NSScroller {
@@ -235,13 +235,10 @@ public class NCPanelTabBarView: NSView,
                                 NSCollectionViewDelegate,
                                 NSCollectionViewDelegateFlowLayout
 {
-    // MARK: - Delegate
     @objc public weak var delegate: NCPanelTabBarViewDelegate?
     
-    // MARK: - Tab View Reference
     @objc public var tabView: NSTabView?
     
-    // MARK: - Collection View
     private let collectionView: NSCollectionView = NSCollectionView()
     private let scrollView: NSScrollView = NSScrollView()
     private let flowLayout: SeparatorFlowLayout = SeparatorFlowLayout()
@@ -269,6 +266,7 @@ public class NCPanelTabBarView: NSView,
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.isSelectable = true
+        collectionView.allowsMultipleSelection = false
         collectionView.backgroundColors = [.clear]
         collectionView.register(
             NCPanelTabBarItem.self,
@@ -302,14 +300,17 @@ public class NCPanelTabBarView: NSView,
     @objc public func reloadTabs() {
         collectionView.reloadData()
         collectionView.collectionViewLayout?.invalidateLayout()
-        // Select current selected tab if available
+        syncSelectionToCollectionView()
+    }
+    
+    private func syncSelectionToCollectionView() {
         if let tabView = tabView, tabView.numberOfTabViewItems > 0 {
-            let selectedIndex = tabView.indexOfTabViewItem(tabView.selectedTabViewItem ?? NSTabViewItem())
-            if selectedIndex != NSNotFound {
-                collectionView.selectItems(
-                    at: [IndexPath(item: selectedIndex, section: 0)],
-                    scrollPosition: .centeredHorizontally
-                )
+            if let selectedTabView = tabView.selectedTabViewItem {
+                let selectedIndex = tabView.indexOfTabViewItem(selectedTabView)
+                if selectedIndex != NSNotFound {
+                    collectionView.selectionIndexPaths = [IndexPath(item: selectedIndex, section: 0)]
+                    collectionView.scrollToItems(at: [IndexPath(item: selectedIndex, section: 0)], scrollPosition: .nearestVerticalEdge)
+                }
             }
         }
     }
@@ -327,7 +328,10 @@ public class NCPanelTabBarView: NSView,
     }
     
     @objc public func selectTabViewItem(_ item: NSTabViewItem) {
-        tabView?.selectTabViewItem(item)
+        if let tab_index = tabView?.indexOfTabViewItem(item), tab_index != NSNotFound {
+            tabView?.selectTabViewItem(item)
+            syncSelectionToCollectionView()
+        }
     }
     
     @objc public func removeTabViewItem(_ item: NSTabViewItem) {
@@ -336,7 +340,6 @@ public class NCPanelTabBarView: NSView,
         self.tabViewDidChangeNumberOfTabViewItems(tabView)
     }
     
-    // MARK: - NSTabViewDelegate
     public func tabView(_ tabView: NSTabView, shouldSelect tabViewItem: NSTabViewItem?) -> Bool {
         // Forward to delegate if implemented; default to true
         if let delegate = delegate, delegate.responds(to: #selector(NSTabViewDelegate.tabView(_:shouldSelect:))) {
@@ -356,6 +359,7 @@ public class NCPanelTabBarView: NSView,
         if let delegate = delegate, delegate.responds(to: #selector(NSTabViewDelegate.tabView(_:didSelect:))) {
             delegate.tabView?(tabView, didSelect: tabViewItem)
         }
+        syncSelectionToCollectionView()
     }
     
     public func tabViewDidChangeNumberOfTabViewItems(_ tabView: NSTabView) {
@@ -368,7 +372,6 @@ public class NCPanelTabBarView: NSView,
         reloadTabs()
     }
     
-    // MARK: - NSCollectionViewDataSource
     public func numberOfSections(in collectionView: NSCollectionView) -> Int { 1 }
     
     public func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -391,7 +394,6 @@ public class NCPanelTabBarView: NSView,
         return item
     }
     
-    // MARK: - NSCollectionViewDelegate
     public func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
         guard let idx = indexPaths.first?.item, let tabView = tabView, idx < tabView.numberOfTabViewItems else {
             return
@@ -418,5 +420,31 @@ public class NCPanelTabBarView: NSView,
         else {
             return NSSize(width: CGFloat(itemWidth), height: baseItemSize.height)
         }
+    }
+    
+    fileprivate func tabBarItemCloseButtonClicked(_ tabViewItem: NSTabViewItem) {
+        guard let tabView else { return }
+        
+        // TODO: add shouldClose / willClose?
+        
+        removeTabViewItem(tabViewItem)
+        
+        if let delegate = delegate, delegate.responds(to: #selector(NCPanelTabBarViewDelegate.tabView(_:didCloseTabViewItem:))) {
+            delegate.tabView?(tabView, didCloseTabViewItem: tabViewItem)
+        }
+    }
+        
+    @objc public func closeButtonOfTabViewItem(_ item: NSTabViewItem) -> NSButton? {
+        guard let tabView else { return nil }
+        let index = tabView.indexOfTabViewItem(item)
+        if index == NSNotFound {
+            return nil
+        }
+        
+        if let tabBarItem = collectionView.item(at: IndexPath(item: index, section: 0)) as? NCPanelTabBarItem {
+            return tabBarItem.closeButton
+        }
+        
+        return nil
     }
 }

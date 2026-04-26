@@ -25,17 +25,6 @@ using namespace nc::panel;
 
 @implementation MainWindowFilePanelState (TabsSupport)
 
-- (BOOL)tabView:(NSTabView *) [[maybe_unused]] tabView
-    shouldSelectTabViewItem:(NSTabViewItem *) [[maybe_unused]] tabViewItem
-{
-    return true;
-}
-
-- (void)tabView:(NSTabView *) [[maybe_unused]] tabView
-    willSelectTabViewItem:(NSTabViewItem *) [[maybe_unused]] tabViewItem
-{
-}
-
 - (void)tabView:(NSTabView *) [[maybe_unused]] tabView didSelectTabViewItem:(NSTabViewItem *)tabViewItem
 {
     if( const auto panel_view = nc::objc_cast<PanelView>(tabViewItem.view) ) {

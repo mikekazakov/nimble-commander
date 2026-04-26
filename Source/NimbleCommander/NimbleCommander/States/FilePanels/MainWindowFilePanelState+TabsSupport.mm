@@ -346,10 +346,8 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     }
 
     if( it && bar )
-        if( NSButton * const button = [bar closeButtonOfTabViewItem:it] )
-            dispatch_to_main_queue([=] {
-                [button sendAction:button.action to:button.target];
-            });
+        if( NSButton *const button = [bar closeButtonOfTabViewItem:it] )
+            dispatch_to_main_queue([=] { [button sendAction:button.action to:button.target]; });
 }
 
 - (void)closeOtherTabsForController:(PanelController *)_controller
@@ -374,7 +372,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     dispatch_to_background([=] {
         for( auto it : items )
             dispatch_to_main_queue([=] {
-                if( NSButton * const button = [bar closeButtonOfTabViewItem:it] )
+                if( NSButton *const button = [bar closeButtonOfTabViewItem:it] )
                     [button sendAction:button.action to:button.target];
             });
     });

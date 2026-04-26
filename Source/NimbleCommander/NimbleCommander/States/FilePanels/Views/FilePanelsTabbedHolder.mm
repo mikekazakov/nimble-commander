@@ -50,16 +50,16 @@
         //        m_TabBar = [[MMTabBarView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_TabBar.translatesAutoresizingMaskIntoConstraints = NO;
         m_TabBar.tabView = m_TabView;
-//        m_TabBar.showAddTabButton = true;
-//        m_TabBar.allowAddTabButtonMenu = true;
-//        m_TabBar.canCloseOnlyTab = false;
-//        m_TabBar.disableTabClose = false;
-//        m_TabBar.onlyShowCloseOnHover = true;
-//        m_TabBar.useOverflowMenu = false;
-//        m_TabBar.buttonMinWidth = 100;
-//        m_TabBar.buttonMaxWidth = 2000;
-//        m_TabBar.buttonOptimumWidth = 2000;
-//        [m_TabBar setStyleNamed:@"NC"];
+        //        m_TabBar.showAddTabButton = true;
+        //        m_TabBar.allowAddTabButtonMenu = true;
+        //        m_TabBar.canCloseOnlyTab = false;
+        //        m_TabBar.disableTabClose = false;
+        //        m_TabBar.onlyShowCloseOnHover = true;
+        //        m_TabBar.useOverflowMenu = false;
+        //        m_TabBar.buttonMinWidth = 100;
+        //        m_TabBar.buttonMaxWidth = 2000;
+        //        m_TabBar.buttonOptimumWidth = 2000;
+        //        [m_TabBar setStyleNamed:@"NC"];
         [m_TabBar addConstraint:[NSLayoutConstraint constraintWithItem:m_TabBar
                                                              attribute:NSLayoutAttributeWidth
                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual
@@ -73,9 +73,8 @@
                                             toItem:nil
                                          attribute:NSLayoutAttributeNotAnAttribute
                                         multiplier:1.0
-                                          constant:
-                 25.
-//                 m_TabBar.heightOfTabBarButtons
+                                          constant:25.
+            //                 m_TabBar.heightOfTabBarButtons
         ];
         c.priority = NSLayoutPriorityDefaultLow + 1;
         [m_TabBar addConstraint:c];
@@ -136,10 +135,10 @@
 
 - (void)addPanel:(PanelView *)_panel
 {
-//    FilePanelsTabbedBarItem *bar_item = [FilePanelsTabbedBarItem new];
-//    bar_item.hasCloseButton = true;
+    //    FilePanelsTabbedBarItem *bar_item = [FilePanelsTabbedBarItem new];
+    //    bar_item.hasCloseButton = true;
 
-//    NSTabViewItem *item = [[NSTabViewItem alloc] initWithIdentifier:bar_item];
+    //    NSTabViewItem *item = [[NSTabViewItem alloc] initWithIdentifier:bar_item];
     NSTabViewItem *item = [[NSTabViewItem alloc] initWithIdentifier:nil];
     item.view = _panel;
     item.initialFirstResponder = _panel;

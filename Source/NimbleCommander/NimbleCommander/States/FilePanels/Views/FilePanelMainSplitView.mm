@@ -10,10 +10,10 @@
 #include <Base/dispatch_cpp.h>
 #include <cmath>
 
-static constexpr auto g_MidGuideGap = 24.;
-static constexpr auto g_MinPanelWidth = 120;
-static constexpr auto g_ResizingGran = 14.;
-static constexpr auto g_DividerThickness = 1.;
+static constexpr double g_MidGuideGap = 24.;
+static constexpr double g_MinPanelWidth = 120.;
+static constexpr double g_ResizingGran = 14.;
+static constexpr double g_DividerThickness = 1.;
 
 @implementation FilePanelMainSplitView {
     // if there's no overlays - these will be nils
@@ -59,15 +59,20 @@ static constexpr auto g_DividerThickness = 1.;
     return true;
 }
 
-- (CGFloat)splitView:(NSSplitView *) [[maybe_unused]] splitView
-    constrainSplitPosition:(CGFloat)proposedPosition
-               ofSubviewAt:(NSInteger) [[maybe_unused]] dividerIndex
+- (CGFloat)splitView:(NSSplitView *) [[maybe_unused]] _split_view
+    constrainSplitPosition:(CGFloat)_proposed_position
+               ofSubviewAt:(NSInteger) [[maybe_unused]] _divider_index
 {
+    if( _divider_index != 0 )
+        return _proposed_position;
+
     auto mid = std::floor(self.frame.size.width / 2.);
-    if( proposedPosition > mid - g_MidGuideGap && proposedPosition < mid + g_MidGuideGap )
+    if( _proposed_position > mid - g_MidGuideGap && _proposed_position < mid + g_MidGuideGap )
         return mid;
 
-    return proposedPosition;
+    // Explicitly floor the proposed position, since it can income with fractions, e.g. 275.50,
+    // which causes interesting layout effects in the subviews.
+    return std::floor(_proposed_position);
 }
 
 - (void)viewDidChangeBackingProperties
@@ -77,6 +82,42 @@ static constexpr auto g_DividerThickness = 1.;
     // Without this adjustment the subviews sometimes end up with .5 coords when switching between
     // Retina and non-Retina.
     [self adjustSubviews];
+}
+
+- (void)adjustSubviews
+{
+    [super adjustSubviews];
+
+    NSArray<__kindof NSView *> *subviews = self.subviews;
+    if( subviews.count < 2 ||                    //
+        [self isSubviewCollapsed:subviews[0]] || //
+        [self isSubviewCollapsed:subviews[1]] )
+        return;
+
+    if( NSView *left = [subviews objectAtIndex:0] ) {
+        const NSRect left_frame = left.frame;
+        const double rounded_width = std::round(left_frame.size.width);
+        if( std::abs(left_frame.size.width - rounded_width) > 0.05 ) {
+            // The subviews have fractional widths, re-position them to get rid of this.
+            // Find the fractional part and redistribute it amoung the two views.
+            const double fraction = left_frame.size.width - rounded_width;
+
+            const NSRect new_left_rect = NSMakeRect(left_frame.origin.x, //
+                                                    left_frame.origin.y, //
+                                                    rounded_width,       //
+                                                    left_frame.size.height);
+
+            NSView *right = [subviews objectAtIndex:1];
+            const NSRect right_frame = right.frame;
+
+            const NSRect new_right_rect = NSMakeRect(right_frame.origin.x - fraction, //
+                                                     right_frame.origin.y,
+                                                     right_frame.size.width + fraction,
+                                                     right_frame.size.height);
+            left.frame = new_left_rect;
+            right.frame = new_right_rect;
+        }
+    }
 }
 
 - (CGFloat)splitView:(NSSplitView *)splitView
@@ -127,9 +168,10 @@ static constexpr auto g_DividerThickness = 1.;
 
 - (bool)anyCollapsed
 {
-    if( self.subviews.count == 0 )
-        return false;
-    return [self isSubviewCollapsed:self.subviews[0]] || [self isSubviewCollapsed:self.subviews[1]];
+    NSArray<__kindof NSView *> *subviews = self.subviews;
+    unsigned long count = subviews.count;
+    return (count > 0 && [self isSubviewCollapsed:subviews[0]]) || //
+           (count > 1 && [self isSubviewCollapsed:subviews[1]]);
 }
 
 - (bool)anyCollapsedOrOverlayed

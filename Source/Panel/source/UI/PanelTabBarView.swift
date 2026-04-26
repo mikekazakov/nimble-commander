@@ -16,6 +16,7 @@ public class NCPanelTabBarItem: NSCollectionViewItem {
     private var isHovered: Bool = false
     private var trackingArea: NSTrackingArea?
     
+    // TODO: debug stuff, remove this
     private let leftEdgeLine: NSView = {
         let v = NSView()
         v.wantsLayer = true
@@ -69,14 +70,21 @@ public class NCPanelTabBarItem: NSCollectionViewItem {
         }
     }
     
-    public lazy var closeButton: NSButton = {
-        let btn = NSButton(title: "X", target: self, action: #selector(closeTapped))
-        btn.bezelStyle = .inline
-        btn.isBordered = false
-        btn.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.setContentHuggingPriority(.required, for: .horizontal)
-        return btn
+    public let closeButton: NSButton = {
+        let button = NSButton()
+        button.action = #selector(closeTapped)
+        button.image = NSImage(systemSymbolName: "xmark", accessibilityDescription: "")?
+            .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 10, weight: .regular))
+        button.imagePosition = .imageOnly
+        button.imageScaling = .scaleNone
+        button.setButtonType(.momentaryChange)
+        button.bezelStyle = .circular
+        button.isBordered = true
+        button.isHidden = true
+        button.showsBorderOnlyWhileMouseInside = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setContentHuggingPriority(.required, for: .horizontal)
+        return button
     }()
     
     public override func loadView() {
@@ -89,12 +97,14 @@ public class NCPanelTabBarItem: NSCollectionViewItem {
         view.layer?.backgroundColor = defaultBackgroundColor.cgColor
         view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(closeButton)
+        closeButton.target = self
         view.addSubview(titleField)
         NSLayoutConstraint.activate([
-            closeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 6),
+            closeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 4),
             closeButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            
-            titleField.leadingAnchor.constraint(equalTo: closeButton.trailingAnchor, constant: 6),
+            closeButton.widthAnchor.constraint(equalToConstant: 16),
+            closeButton.heightAnchor.constraint(equalToConstant: 16),
+            titleField.leadingAnchor.constraint(equalTo: closeButton.trailingAnchor, constant: 4),
             titleField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
             titleField.topAnchor.constraint(equalTo: view.topAnchor, constant: 4),
             titleField.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -4),
@@ -137,11 +147,17 @@ public class NCPanelTabBarItem: NSCollectionViewItem {
     public override func mouseEntered(with event: NSEvent) {
         isHovered = true
         updateBackground()
+                
+        if let tabViewItem = tabViewItem, let tabBarView = tabBarView,
+           tabBarView.tabBarItemShouldShowCloseButton(tabViewItem) {
+            self.closeButton.isHidden = false
+        }
     }
     
     public override func mouseExited(with event: NSEvent) {
         isHovered = false
         updateBackground()
+        self.closeButton.isHidden = true
     }
     
     public override func viewWillAppear() {
@@ -205,6 +221,10 @@ public class NCPanelTabBarItem: NSCollectionViewItem {
         titleField.stringValue = ""
         isHovered = false
         updateBackground()
+        self.closeButton.isHidden = true
+        if let trackingArea = trackingArea {
+            view.removeTrackingArea(trackingArea)
+        }
     }
 }
 
@@ -432,6 +452,13 @@ public class NCPanelTabBarView: NSView,
         if let delegate = delegate, delegate.responds(to: #selector(NCPanelTabBarViewDelegate.tabView(_:didCloseTabViewItem:))) {
             delegate.tabView?(tabView, didCloseTabViewItem: tabViewItem)
         }
+    }
+    
+    fileprivate func tabBarItemShouldShowCloseButton(_ tabViewItem: NSTabViewItem) -> Bool {
+        if collectionView.numberOfItems(inSection: 0) > 1 {
+            return true
+        }
+        return false
     }
         
     @objc public func closeButtonOfTabViewItem(_ item: NSTabViewItem) -> NSButton? {

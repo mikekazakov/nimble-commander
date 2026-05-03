@@ -179,6 +179,11 @@ TEST_CASE(PREFIX "Expand")
         {.path = "..", .home = "", .cwd = "/a/b/", .expected = "/a/"},
         {.path = "../", .home = "", .cwd = "/a/b/", .expected = "/a/"},
         {.path = "../c", .home = "", .cwd = "/a/b/", .expected = "/a/c"},
+        // quoted paths
+        {.path = "'/a/b'", .home = "", .cwd = "", .expected = "/a/b"},
+        {.path = "\"/a/b\"", .home = "", .cwd = "", .expected = "/a/b"},
+        {.path = "'/a/b", .home = "", .cwd = "", .expected = "/'/a/b"},
+        {.path = "\"/a/b", .home = "", .cwd = "", .expected = "/\"/a/b"},
     };
     for( auto &tc : tcs ) {
         INFO(tc.path);

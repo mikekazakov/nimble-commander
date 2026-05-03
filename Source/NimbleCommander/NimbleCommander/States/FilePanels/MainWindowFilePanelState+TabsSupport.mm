@@ -72,10 +72,9 @@ using namespace nc::panel;
 }
 #endif
 
-#if 0
 - (void)tabView:(NSTabView *) [[maybe_unused]] aTabView
     didDropTabViewItem:(NSTabViewItem *)tabViewItem
-          inTabBarView:(MMTabBarView *)tabBarView
+          inTabBarView:(NCPanelTabBarView *)tabBarView
 {
     const auto dropped_panel_view = nc::objc_cast<PanelView>(tabViewItem.view);
     if( !dropped_panel_view )
@@ -110,7 +109,6 @@ using namespace nc::panel;
 
     // empty or unselected tab view?
 }
-#endif
 
 static std::string TabNameForController(PanelController *_controller)
 {

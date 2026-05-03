@@ -1,8 +1,11 @@
 import Cocoa
 
+let NCPanelTabBarDraggingUTI = NSPasteboard.PasteboardType("com.magnumbytes.nimblecommander.NCPanelTabBarDraggingUTI")
+
 @objc
 public protocol NCPanelTabBarViewDelegate: NSTabViewDelegate {
     @objc optional func tabView(_ tabView: NSTabView, didCloseTabViewItem tabViewItem: NSTabViewItem)
+    @objc optional func tabView(_ tabView: NSTabView, didDropTabViewItem tabViewItem: NSTabViewItem, inTabBarView tabBarView: NCPanelTabBarView)
 }
 
 @MainActor
@@ -147,7 +150,7 @@ public class NCPanelTabBarItem: NSCollectionViewItem {
     public override func mouseEntered(with event: NSEvent) {
         isHovered = true
         updateBackground()
-                
+        
         if let tabViewItem = tabViewItem, let tabBarView = tabBarView,
            tabBarView.tabBarItemShouldShowCloseButton(tabViewItem) {
             self.closeButton.isHidden = false
@@ -249,6 +252,20 @@ private final class SeparatorFlowLayout: NSCollectionViewFlowLayout {
 }
 
 @objc
+public class NCPanelTabBarDraggingItem: NSPasteboardItem {
+    @objc public let sourceIndexPath: IndexPath
+    @objc public init(sourceIndexPath: IndexPath) {
+        self.sourceIndexPath = sourceIndexPath
+        super.init()
+        super.setString("", forType: NCPanelTabBarDraggingUTI)
+    }
+    
+    required init?(pasteboardPropertyList propertyList: Any, ofType type: NSPasteboard.PasteboardType) {
+        fatalError("init(pasteboardPropertyList:ofType:) has not been implemented")
+    }
+}
+
+@objc
 public class NCPanelTabBarView: NSView,
                                 NSTabViewDelegate,
                                 NSCollectionViewDataSource,
@@ -292,6 +309,9 @@ public class NCPanelTabBarView: NSView,
             NCPanelTabBarItem.self,
             forItemWithIdentifier: NSUserInterfaceItemIdentifier("NCPanelTabBarItem")
         )
+        collectionView.registerForDraggedTypes([NCPanelTabBarDraggingUTI])
+        collectionView.setDraggingSourceOperationMask(NSDragOperation.move, forLocal: true)
+        collectionView.setDraggingSourceOperationMask([], forLocal: false)
         collectionView.autoresizingMask = [.width, .height]
         
         // Embed in scroll view
@@ -367,6 +387,7 @@ public class NCPanelTabBarView: NSView,
         }
         return true
     }
+    
     public func tabView(_ tabView: NSTabView, willSelect tabViewItem: NSTabViewItem?) {
         // Forward to delegate if implemented
         if let delegate = delegate, delegate.responds(to: #selector(NSTabViewDelegate.tabView(_:willSelect:))) {
@@ -442,6 +463,73 @@ public class NCPanelTabBarView: NSView,
         }
     }
     
+    public func collectionView(_ collectionView: NSCollectionView, canDragItemsAt indexPaths: Set<IndexPath>, with event: NSEvent) -> Bool {
+        if collectionView.numberOfItems(inSection: 0) > 1 {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    
+    public func collectionView(_ collectionView: NSCollectionView,
+                               pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {
+        return NCPanelTabBarDraggingItem(sourceIndexPath: indexPath)
+    }
+    
+    public func collectionView(_ collectionView: NSCollectionView,
+                               validateDrop draggingInfo: any NSDraggingInfo,
+                               proposedIndexPath proposedDropIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>,
+                               dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>) -> NSDragOperation {
+        NSLog("validateDrop: proposedIndex=\(proposedDropIndexPath.pointee), proposedDropOperation=\(proposedDropOperation.pointee)")
+        var operation: NSDragOperation = []
+                
+        if let draggingSource = draggingInfo.draggingSource as? NSCollectionView, draggingSource == collectionView {
+            // Only allow internal moves within the same collection view for now
+            if( proposedDropOperation.pointee == .on ) {
+                proposedDropOperation.pointee = .before
+                proposedDropIndexPath.pointee = NSIndexPath(forItem: proposedDropIndexPath.pointee.item + 1, inSection: 0)
+            }                        
+            operation = [.move]
+        }
+        NSLog("validateDrop result: proposedIndex=\(proposedDropIndexPath.pointee), proposedDropOperation=\(proposedDropOperation.pointee), operation=\(operation)")
+        return operation
+    }
+    
+    public func collectionView(_ collectionView: NSCollectionView,
+                               acceptDrop draggingInfo: any NSDraggingInfo,
+                               indexPath: IndexPath,
+                               dropOperation: NSCollectionView.DropOperation) -> Bool {
+        NSLog("acceptDrop: indexPath=\(indexPath), dropOperation=\(dropOperation)")
+        if let draggingSource = draggingInfo.draggingSource as? NSCollectionView, draggingSource != collectionView {
+            return false // Only allow internal moves within the same collection view for now
+        }
+        
+        draggingInfo.enumerateDraggingItems(for: collectionView,
+                                            classes: [NCPanelTabBarDraggingItem.self]) { draggingItem, idx, stop in
+            guard let draggingItem = draggingItem.item as? NCPanelTabBarDraggingItem else { return }
+            let sourceIndexPath = draggingItem.sourceIndexPath
+            let destinationIndexPath = indexPath
+            NSLog("Moving item from \(sourceIndexPath) to \(destinationIndexPath)")
+            if let tabView = self.tabView, sourceIndexPath.item < tabView.numberOfTabViewItems,
+               destinationIndexPath.item < tabView.numberOfTabViewItems {
+                let itemToMove = tabView.tabViewItem(at: sourceIndexPath.item)
+                tabView.removeTabViewItem(itemToMove)
+                if sourceIndexPath.item > destinationIndexPath.item {
+                    tabView.insertTabViewItem(itemToMove, at: destinationIndexPath.item)
+                }
+                else {
+                    tabView.insertTabViewItem(itemToMove, at: destinationIndexPath.item - 1)
+                }
+                self.reloadTabs()
+                if let delegate = self.delegate, delegate.responds(to: #selector(NCPanelTabBarViewDelegate.tabView(_:didDropTabViewItem:inTabBarView:))) {
+                    delegate.tabView?(tabView, didDropTabViewItem: itemToMove, inTabBarView: self)
+                }
+            }
+        }   
+        return true
+    }
+    
     fileprivate func tabBarItemCloseButtonClicked(_ tabViewItem: NSTabViewItem) {
         guard let tabView else { return }
         
@@ -460,7 +548,7 @@ public class NCPanelTabBarView: NSView,
         }
         return false
     }
-        
+    
     @objc public func closeButtonOfTabViewItem(_ item: NSTabViewItem) -> NSButton? {
         guard let tabView else { return nil }
         let index = tabView.indexOfTabViewItem(item)

@@ -85,6 +85,12 @@ std::filesystem::path PathManip::Expand(std::string_view _path, std::string_view
     if( _cwd.empty() )
         _cwd = "/";
 
+    if( _path.size() >= 2 ) {
+        const char first = _path.front();
+        if( (first == '\'' || first == '"') && _path.back() == first )
+            _path = _path.substr(1, _path.size() - 2);
+    }
+
     if( _path.empty() ) {
         // empty path - return empty
         return {};

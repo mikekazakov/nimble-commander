@@ -8,7 +8,9 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol NCPanelTabBarViewDelegate <NSTabViewDelegate>
 @optional
 - (void)tabView:(NSTabView *)_view didCloseTabViewItem:(NSTabViewItem *)_item;
-- (void)tabView:(NSTabView *)_view didDropTabViewItem:(NSTabViewItem *)_item inTabBarView:(NCPanelTabBarView *)_tabBarView;
+- (void)tabView:(NSTabView *)_view
+    didDropTabViewItem:(NSTabViewItem *)_item
+          inTabBarView:(NCPanelTabBarView *)_tabBarView;
 @end
 
 [[clang::objc_runtime_name("_TtC5Panel17NCPanelTabBarView")]]

@@ -45,33 +45,6 @@ using namespace nc::panel;
     }
 }
 
-#if 0
-- (BOOL)tabView:(NSTabView *) [[maybe_unused]] aTabView
-    shouldAllowTabViewItem:(NSTabViewItem *) [[maybe_unused]] tabViewItem
-         toLeaveTabBarView:(MMTabBarView *) [[maybe_unused]] tabBarView
-{
-    return aTabView.numberOfTabViewItems > 1;
-}
-#endif
-
-#if 0
-- (NSDragOperation)tabView:(NSTabView *) [[maybe_unused]] aTabView
-              validateDrop:(id<NSDraggingInfo>) [[maybe_unused]] sender
-              proposedItem:(NSTabViewItem *)tabViewItem
-             proposedIndex:(NSUInteger) [[maybe_unused]] proposedIndex
-              inTabBarView:(MMTabBarView *) [[maybe_unused]] tabBarView
-{
-    const auto dragged_panel_view = nc::objc_cast<PanelView>(tabViewItem.view);
-    if( !dragged_panel_view )
-        return NSDragOperationNone;
-
-    if( dragged_panel_view.window != self.window )
-        return NSDragOperationNone;
-
-    return NSDragOperationGeneric;
-}
-#endif
-
 - (void)tabView:(NSTabView *) [[maybe_unused]] aTabView
     didDropTabViewItem:(NSTabViewItem *)tabViewItem
           inTabBarView:(NCPanelTabBarView *)tabBarView
@@ -287,15 +260,6 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
         m_RightPanelControllers.insert(begin(m_RightPanelControllers) + index, pc);
     }
 }
-
-#if 0
-- (BOOL)tabView:(NSTabView *)aTabView
-    shouldDragTabViewItem:(NSTabViewItem *) [[maybe_unused]] tabViewItem
-             inTabBarView:(MMTabBarView *) [[maybe_unused]] tabBarView
-{
-    return aTabView.numberOfTabViewItems > 1;
-}
-#endif
 
 - (NSArray *)allowedDraggedTypesForTabView:(NSTabView *) [[maybe_unused]] aTabView
 {

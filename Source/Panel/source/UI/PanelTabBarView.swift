@@ -632,13 +632,10 @@ public class NCPanelTabBarView: NSView,
     /// right half → insert after it.
     private func computeTargetSlot(for draggingInfo: NSDraggingInfo, slotCount: Int) -> Int {
         // TODO: optimize this
-        guard let window = collectionView.window, slotCount > 0 else { return 0 }
-        let inWindow = window.convertPoint(fromScreen: draggingInfo.draggingLocation)
-        let inView   = collectionView.convert(inWindow, from: nil)
-        
-        let itemCount = collectionView.numberOfItems(inSection: 0)
+        let inView : NSPoint = collectionView.convert(draggingInfo.draggingLocation, from: nil)
+        let itemCount : Int = collectionView.numberOfItems(inSection: 0)
         // Walk visible layout attributes to find which item the cursor is over.
-        if let layout = collectionView.collectionViewLayout {
+        if let layout : NSCollectionViewLayout = collectionView.collectionViewLayout {
             for i in 0..<itemCount {
                 let ip = IndexPath(item: i, section: 0)
                 if let attrs = layout.layoutAttributesForItem(at: ip) {

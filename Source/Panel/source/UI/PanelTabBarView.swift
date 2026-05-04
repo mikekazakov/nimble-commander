@@ -229,6 +229,25 @@ public class NCPanelTabBarItem: NSCollectionViewItem {
             view.removeTrackingArea(trackingArea)
         }
     }
+    
+    public override var draggingImageComponents: [NSDraggingImageComponent] {
+        // TODO: build a real image representation of the collection item for dragging
+        let img = NSImage(systemSymbolName: "table.furniture.fill", accessibilityDescription: "")!
+        img.size = NSSize(width: 32, height: 32)
+        let comp = NSDraggingImageComponent(key: .icon)
+        comp.contents = img
+        comp.frame = NSRect(origin: .zero, size: img.size)
+        return [comp]
+    }
+}
+
+private class NCPanelTabBarCollectionView: NSCollectionView {
+    override func draggingExited(_ sender: (any NSDraggingInfo)?) {
+        if let tabBarView = delegate as? NCPanelTabBarView {
+            tabBarView.collectionView(self, draggingExited: sender)
+        }
+        super.draggingExited(sender)
+    }
 }
 
 class NCPanelTabBarViewHiddenScroller: NSScroller {
@@ -253,9 +272,15 @@ private final class SeparatorFlowLayout: NSCollectionViewFlowLayout {
 
 @objc
 public class NCPanelTabBarDraggingItem: NSPasteboardItem {
+    /// Index of the item inside the source collection view that's being dragged
     @objc public let sourceIndexPath: IndexPath
-    @objc public init(sourceIndexPath: IndexPath) {
+    
+    /// The tab view item being dragged
+    @objc public let tabViewItem: NSTabViewItem
+    
+    @objc public init(sourceIndexPath: IndexPath, tabViewItem: NSTabViewItem) {
         self.sourceIndexPath = sourceIndexPath
+        self.tabViewItem = tabViewItem
         super.init()
         super.setString("", forType: NCPanelTabBarDraggingUTI)
     }
@@ -268,7 +293,6 @@ public class NCPanelTabBarDraggingItem: NSPasteboardItem {
 @objc
 public class NCPanelTabBarView: NSView,
                                 NSTabViewDelegate,
-                                NSCollectionViewDataSource,
                                 NSCollectionViewDelegate,
                                 NSCollectionViewDelegateFlowLayout
 {
@@ -276,9 +300,13 @@ public class NCPanelTabBarView: NSView,
     
     @objc public var tabView: NSTabView?
     
-    private let collectionView: NSCollectionView = NSCollectionView()
+    private let collectionView: NCPanelTabBarCollectionView = NCPanelTabBarCollectionView()
     private let scrollView: NSScrollView = NSScrollView()
     private let flowLayout: SeparatorFlowLayout = SeparatorFlowLayout()
+    private var dataSource: NSCollectionViewDiffableDataSource<Int, NSTabViewItem>!
+    
+    /// When true, tabViewDidChangeNumberOfTabViewItems won't trigger a reload.
+    private var suppressCollectionViewReload = false
     
     public override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -300,7 +328,6 @@ public class NCPanelTabBarView: NSView,
         flowLayout.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 0)
         
         collectionView.collectionViewLayout = flowLayout
-        collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.isSelectable = true
         collectionView.allowsMultipleSelection = false
@@ -310,9 +337,23 @@ public class NCPanelTabBarView: NSView,
             forItemWithIdentifier: NSUserInterfaceItemIdentifier("NCPanelTabBarItem")
         )
         collectionView.registerForDraggedTypes([NCPanelTabBarDraggingUTI])
-        collectionView.setDraggingSourceOperationMask(NSDragOperation.move, forLocal: true)
+        collectionView.setDraggingSourceOperationMask(.move, forLocal: true)
         collectionView.setDraggingSourceOperationMask([], forLocal: false)
         collectionView.autoresizingMask = [.width, .height]
+        
+        // Build the diffable data source.  The closure is the sole place that
+        // dequeues and configures NCPanelTabBarItem cells.
+        let identifier = NSUserInterfaceItemIdentifier("NCPanelTabBarItem")
+        dataSource = NSCollectionViewDiffableDataSource<Int, NSTabViewItem>(collectionView: collectionView) { [weak self] cv, indexPath, tabViewItem in
+            guard let self else { return NSCollectionViewItem() }
+            let cell = cv.makeItem(withIdentifier: identifier, for: indexPath)
+            if let barItem = cell as? NCPanelTabBarItem {
+                barItem.configure(with: tabViewItem.label)
+                barItem.tabViewItem = tabViewItem
+                barItem.tabBarView = self
+            }
+            return cell
+        }
         
         // Embed in scroll view
         scrollView.drawsBackground = false
@@ -336,23 +377,28 @@ public class NCPanelTabBarView: NSView,
         ])
     }
     
-    // Reload when tabView changes
+    /// Reload when tabView changes
     @objc public func reloadTabs() {
-        collectionView.reloadData()
+        rebuildCollectionViewFromTabView()
         collectionView.collectionViewLayout?.invalidateLayout()
         syncSelectionToCollectionView()
     }
     
+    /// Fill the collection with the tabs of the underlying TabView
+    private func rebuildCollectionViewFromTabView() {
+        guard let tabView else { return }
+        var snapshot = NSDiffableDataSourceSnapshot<Int, NSTabViewItem>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(tabView.tabViewItems)
+        dataSource.apply(snapshot, animatingDifferences: false)
+    }
+    
     private func syncSelectionToCollectionView() {
-        if let tabView = tabView, tabView.numberOfTabViewItems > 0 {
-            if let selectedTabView = tabView.selectedTabViewItem {
-                let selectedIndex = tabView.indexOfTabViewItem(selectedTabView)
-                if selectedIndex != NSNotFound {
-                    collectionView.selectionIndexPaths = [IndexPath(item: selectedIndex, section: 0)]
-                    collectionView.scrollToItems(at: [IndexPath(item: selectedIndex, section: 0)], scrollPosition: .nearestVerticalEdge)
-                }
-            }
-        }
+        guard let tabView = tabView,
+              let selected = tabView.selectedTabViewItem,
+              let indexPath = dataSource.indexPath(for: selected) else { return }
+        collectionView.selectionIndexPaths = [indexPath]
+        collectionView.scrollToItems(at: [indexPath], scrollPosition: .nearestVerticalEdge)
     }
     
     @objc public func numberOfTabViewItems() -> Int {
@@ -404,42 +450,19 @@ public class NCPanelTabBarView: NSView,
     }
     
     public func tabViewDidChangeNumberOfTabViewItems(_ tabView: NSTabView) {
-        // Forward to delegate if implemented
         if let delegate = delegate,
            delegate.responds(to: #selector(NSTabViewDelegate.tabViewDidChangeNumberOfTabViewItems(_:)))
         {
             delegate.tabViewDidChangeNumberOfTabViewItems?(tabView)
         }
+        guard !suppressCollectionViewReload else { return }
         reloadTabs()
     }
     
-    public func numberOfSections(in collectionView: NSCollectionView) -> Int { 1 }
-    
-    public func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        return tabView?.numberOfTabViewItems ?? 0
-    }
-    
-    public func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath)
-    -> NSCollectionViewItem
-    {
-        let identifier = NSUserInterfaceItemIdentifier("NCPanelTabBarItem")
-        let item = collectionView.makeItem(withIdentifier: identifier, for: indexPath)
-        if let tabView = tabView, indexPath.item < tabView.numberOfTabViewItems,
-           let tabItem = tabView.tabViewItem(at: indexPath.item) as NSTabViewItem?
-        {
-            let title = tabItem.label
-            (item as? NCPanelTabBarItem)?.configure(with: title)
-            (item as? NCPanelTabBarItem)?.tabViewItem = tabItem
-            (item as? NCPanelTabBarItem)?.tabBarView = self
-        }
-        return item
-    }
-    
     public func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
-        guard let idx = indexPaths.first?.item, let tabView = tabView, idx < tabView.numberOfTabViewItems else {
-            return
-        }
-        tabView.selectTabViewItem(at: idx)
+        guard let indexPath = indexPaths.first,
+              let tabViewItem = dataSource.itemIdentifier(for: indexPath) else { return }
+        tabView?.selectTabViewItem(tabViewItem)
     }
     
     public func collectionView(
@@ -464,70 +487,173 @@ public class NCPanelTabBarView: NSView,
     }
     
     public func collectionView(_ collectionView: NSCollectionView, canDragItemsAt indexPaths: Set<IndexPath>, with event: NSEvent) -> Bool {
-        if collectionView.numberOfItems(inSection: 0) > 1 {
-            return true
-        }
-        else {
-            return false
-        }
+        // Only allow dragging if there's more than one tab, since we can't leave the panel empty
+        return collectionView.numberOfItems(inSection: 0) > 1
     }
     
     public func collectionView(_ collectionView: NSCollectionView,
                                pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {
-        return NCPanelTabBarDraggingItem(sourceIndexPath: indexPath)
+        guard let tabViewItem = dataSource.itemIdentifier(for: indexPath) else { return nil }
+        let item = NCPanelTabBarDraggingItem(sourceIndexPath: indexPath, tabViewItem: tabViewItem)
+        return item
     }
     
     public func collectionView(_ collectionView: NSCollectionView,
                                validateDrop draggingInfo: any NSDraggingInfo,
                                proposedIndexPath proposedDropIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>,
                                dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>) -> NSDragOperation {
-        NSLog("validateDrop: proposedIndex=\(proposedDropIndexPath.pointee), proposedDropOperation=\(proposedDropOperation.pointee)")
-        var operation: NSDragOperation = []
-                
-        if let draggingSource = draggingInfo.draggingSource as? NSCollectionView, draggingSource == collectionView {
-            // Only allow internal moves within the same collection view for now
-            if( proposedDropOperation.pointee == .on ) {
-                proposedDropOperation.pointee = .before
-                proposedDropIndexPath.pointee = NSIndexPath(forItem: proposedDropIndexPath.pointee.item + 1, inSection: 0)
-            }                        
-            operation = [.move]
+        guard let pasteboardItem: NCPanelTabBarDraggingItem = draggingItem(from: draggingInfo.draggingPasteboard) else { return [] }
+        let draggedItem: NSTabViewItem = pasteboardItem.tabViewItem
+        
+        // The drop operation should use the index where the item is placed, not before it
+        proposedDropOperation.pointee = .on
+        
+        // The collection of tabs in this collection prior to any transformations (possibly including the phantom one)
+        let snapshotItems: [NSTabViewItem] = dataSource.snapshot().itemIdentifiers(inSection: 0)
+        
+        // Whether the dragged item is already inserted into this collection view
+        let itemPresent: Bool = snapshotItems.contains(draggedItem)
+        
+        // The number of item this collection should have, including a phantom slot
+        let targetSlotCount: Int = snapshotItems.count + (itemPresent ? 0 : 1)
+        assert(targetSlotCount > 0)
+        
+        // Index where the dragged item should be in this collection
+        let targetVisualIndex = computeTargetSlot(for: draggingInfo, slotCount: targetSlotCount)
+        
+        // Current index of the dragged item inside this collection, if any
+        let currentIdx: Int = itemPresent ? snapshotItems.firstIndex(of: draggedItem)! : -1
+        if targetVisualIndex != currentIdx {
+            // Need to adjust this collection to reflect the changed drag position
+            var snapshot = dataSource.snapshot()
+            if itemPresent {
+                snapshot.deleteItems([draggedItem])
+            }
+            let remaining : [NSTabViewItem] = snapshot.itemIdentifiers(inSection: 0)
+            if targetVisualIndex < remaining.count {
+                snapshot.insertItems([draggedItem], beforeItem: remaining[targetVisualIndex])
+            } else {
+                snapshot.appendItems([draggedItem], toSection: 0)
+            }
+            dataSource.apply(snapshot, animatingDifferences: true)
         }
-        NSLog("validateDrop result: proposedIndex=\(proposedDropIndexPath.pointee), proposedDropOperation=\(proposedDropOperation.pointee), operation=\(operation)")
-        return operation
+        
+        // Update the proposed drop index to reflect the visual index where we predict the item should fall
+        if  proposedDropIndexPath.pointee.item != targetVisualIndex  {
+            proposedDropIndexPath.pointee = NSIndexPath(forItem: targetVisualIndex, inSection: 0)
+        }
+        
+        return .move
     }
     
     public func collectionView(_ collectionView: NSCollectionView,
                                acceptDrop draggingInfo: any NSDraggingInfo,
                                indexPath: IndexPath,
                                dropOperation: NSCollectionView.DropOperation) -> Bool {
-        NSLog("acceptDrop: indexPath=\(indexPath), dropOperation=\(dropOperation)")
-        if let draggingSource = draggingInfo.draggingSource as? NSCollectionView, draggingSource != collectionView {
-            return false // Only allow internal moves within the same collection view for now
+        guard let sourceBar : NCPanelTabBarView = (draggingInfo.draggingSource as? NSCollectionView)?.delegate as? NCPanelTabBarView,
+              let pasteboardItem : NCPanelTabBarDraggingItem = draggingItem(from: draggingInfo.draggingPasteboard),
+              let tabView else { return false }
+        let draggedItem: NSTabViewItem = pasteboardItem.tabViewItem
+        
+        // Did we drop into ourselves?
+        let isSameInstance = (sourceBar === self)
+        let snapshotItems   = dataSource.snapshot().itemIdentifiers(inSection: 0)
+        assert(snapshotItems.contains(draggedItem), "Dragged item not found in the snapshot")
+        
+        if isSameInstance {
+            // Reorder within the same NSTabView.
+            // For simplicity, dump the entire snapshot back into NSTabView (that's suboptimal)
+            suppressCollectionViewReload = true
+            tabView.tabViewItems = snapshotItems
+            suppressCollectionViewReload = false
+        } else {
+            // Cross-instance: move draggedItem from source's NSTabView into ours.
+            guard let sourceTabView : NSTabView = sourceBar.tabView else { return false }
+            
+            // Remove the source item from the source NSTabView instance and force-reload the connected NCPanelTabBarView
+            sourceBar.suppressCollectionViewReload = true
+            sourceTabView.removeTabViewItem(draggedItem)
+            sourceBar.suppressCollectionViewReload = false
+            sourceBar.reloadTabs()
+
+            // Update our underlying NSTabView by inserting the new tab
+            let insertionIdx : Int = snapshotItems.firstIndex(of: draggedItem)!
+            suppressCollectionViewReload = true
+            tabView.insertTabViewItem(draggedItem, at: insertionIdx)
+            suppressCollectionViewReload = false
         }
         
-        draggingInfo.enumerateDraggingItems(for: collectionView,
-                                            classes: [NCPanelTabBarDraggingItem.self]) { draggingItem, idx, stop in
-            guard let draggingItem = draggingItem.item as? NCPanelTabBarDraggingItem else { return }
-            let sourceIndexPath = draggingItem.sourceIndexPath
-            let destinationIndexPath = indexPath
-            NSLog("Moving item from \(sourceIndexPath) to \(destinationIndexPath)")
-            if let tabView = self.tabView, sourceIndexPath.item < tabView.numberOfTabViewItems,
-               destinationIndexPath.item < tabView.numberOfTabViewItems {
-                let itemToMove = tabView.tabViewItem(at: sourceIndexPath.item)
-                tabView.removeTabViewItem(itemToMove)
-                if sourceIndexPath.item > destinationIndexPath.item {
-                    tabView.insertTabViewItem(itemToMove, at: destinationIndexPath.item)
-                }
-                else {
-                    tabView.insertTabViewItem(itemToMove, at: destinationIndexPath.item - 1)
-                }
-                self.reloadTabs()
-                if let delegate = self.delegate, delegate.responds(to: #selector(NCPanelTabBarViewDelegate.tabView(_:didDropTabViewItem:inTabBarView:))) {
-                    delegate.tabView?(tabView, didDropTabViewItem: itemToMove, inTabBarView: self)
+        syncSelectionToCollectionView()
+        
+        if let delegate,
+           delegate.responds(to: #selector(NCPanelTabBarViewDelegate.tabView(_:didDropTabViewItem:inTabBarView:))) {
+            delegate.tabView?(tabView, didDropTabViewItem: draggedItem, inTabBarView: self)
+        }
+        return true
+    }
+    
+    public func collectionView(_ collectionView: NSCollectionView,
+                               draggingSession session: NSDraggingSession,
+                               willBeginAt screenPoint: NSPoint,
+                               forItemsAt indexPaths: Set<IndexPath>) {
+        // If the drag is ended without a drop - immediately revert the UI to the original state
+        session.animatesToStartingPositionsOnCancelOrFail = false
+    }
+    
+    public func collectionView(_ collectionView: NSCollectionView,
+                               draggingSession session: NSDraggingSession,
+                               endedAt screenPoint: NSPoint,
+                               dragOperation operation: NSDragOperation) {
+        // Successful drops are fully committed in acceptDrop; only cancellations need cleanup.
+        guard operation == [] else { return }
+        rebuildCollectionViewFromTabView()
+    }
+    
+    fileprivate func collectionView(_ collectionView: NSCollectionView,
+                                    draggingExited session: (any NSDraggingInfo)?) {
+        // Whenever a drag leaves this collection view, we need to remove the temporary placed item from it
+        guard let session = session,
+              let draggedItem = self.draggingItem(from: session.draggingPasteboard) else { return }
+        let draggedTabView : NSTabViewItem = draggedItem.tabViewItem
+        var snapshot = dataSource.snapshot()
+        guard snapshot.itemIdentifiers(inSection: 0).contains(draggedTabView) else { return }
+        snapshot.deleteItems([draggedTabView])
+        dataSource.apply(snapshot, animatingDifferences: true)
+    }
+            
+    /// Retrieves the live NCPanelTabBarDraggingItem from a pasteboard (local drags preserve identity).
+    private func draggingItem(from pasteboard: NSPasteboard) -> NCPanelTabBarDraggingItem? {
+        guard let items = pasteboard.pasteboardItems else { return nil }
+        return items.first as? NCPanelTabBarDraggingItem
+    }
+        
+    /// Converts the drag cursor position to a slot index in [0, slotCount).
+    /// Snaps to the nearest inter-item gap: left half of an item → insert before it,
+    /// right half → insert after it.
+    private func computeTargetSlot(for draggingInfo: NSDraggingInfo, slotCount: Int) -> Int {
+        // TODO: optimize this
+        guard let window = collectionView.window, slotCount > 0 else { return 0 }
+        let inWindow = window.convertPoint(fromScreen: draggingInfo.draggingLocation)
+        let inView   = collectionView.convert(inWindow, from: nil)
+        
+        let itemCount = collectionView.numberOfItems(inSection: 0)
+        // Walk visible layout attributes to find which item the cursor is over.
+        if let layout = collectionView.collectionViewLayout {
+            for i in 0..<itemCount {
+                let ip = IndexPath(item: i, section: 0)
+                if let attrs = layout.layoutAttributesForItem(at: ip) {
+                    if attrs.frame.contains(inView) {
+                        // Left half → before this item; right half → after it.
+                        let midX = attrs.frame.midX
+                        return inView.x < midX ? i : i + 1
+                    }
                 }
             }
-        }   
-        return true
+        }
+        
+        // Cursor is outside all items — clamp to nearest end.
+        let itemWidth = collectionView.bounds.width / CGFloat(max(itemCount, 1))
+        return max(0, min(Int((inView.x / max(itemWidth, 1)).rounded()), slotCount))
     }
     
     fileprivate func tabBarItemCloseButtonClicked(_ tabViewItem: NSTabViewItem) {
@@ -543,23 +669,14 @@ public class NCPanelTabBarView: NSView,
     }
     
     fileprivate func tabBarItemShouldShowCloseButton(_ tabViewItem: NSTabViewItem) -> Bool {
-        if collectionView.numberOfItems(inSection: 0) > 1 {
-            return true
-        }
-        return false
+        return collectionView.numberOfItems(inSection: 0) > 1
     }
     
     @objc public func closeButtonOfTabViewItem(_ item: NSTabViewItem) -> NSButton? {
-        guard let tabView else { return nil }
-        let index = tabView.indexOfTabViewItem(item)
-        if index == NSNotFound {
+        guard let indexPath = dataSource.indexPath(for: item),
+              let tabBarItem = collectionView.item(at: indexPath) as? NCPanelTabBarItem else {
             return nil
         }
-        
-        if let tabBarItem = collectionView.item(at: IndexPath(item: index, section: 0)) as? NCPanelTabBarItem {
-            return tabBarItem.closeButton
-        }
-        
-        return nil
+        return tabBarItem.closeButton
     }
 }

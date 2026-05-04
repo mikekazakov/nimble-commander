@@ -6,6 +6,7 @@ let NCPanelTabBarDraggingUTI = NSPasteboard.PasteboardType("com.magnumbytes.nimb
 public protocol NCPanelTabBarViewDelegate: NSTabViewDelegate {
     @objc optional func tabView(_ tabView: NSTabView, didCloseTabViewItem tabViewItem: NSTabViewItem)
     @objc optional func tabView(_ tabView: NSTabView, didDropTabViewItem tabViewItem: NSTabViewItem, inTabBarView tabBarView: NCPanelTabBarView)
+    @objc optional func tabView(_ tabView: NSTabView, menuForTabViewItem tabViewItem: NSTabViewItem) -> NSMenu?
 }
 
 @MainActor
@@ -675,5 +676,24 @@ public class NCPanelTabBarView: NSView,
             return nil
         }
         return tabBarItem.closeButton
+    }
+    
+    @objc public override func menu(for event: NSEvent) -> NSMenu? {
+        guard let tabView else { return super.menu(for: event) }
+
+        let localPosition : NSPoint = convert(event.locationInWindow, from: nil)
+        
+        // If the menu request lands into the collection view - try to delegate it to the client
+        if scrollView.frame.contains(localPosition) {
+            let collectionViewPosition : NSPoint = collectionView.convert(localPosition, from: self)
+            if let indexPath = collectionView.indexPathForItem(at: collectionViewPosition), indexPath.last != nil {
+                let item : NSTabViewItem = tabView.tabViewItem(at: indexPath.last!)
+                if let delegate = delegate, delegate.responds(to: #selector(NCPanelTabBarViewDelegate.tabView(_:menuForTabViewItem:))) {
+                    return delegate.tabView?(tabView, menuForTabViewItem: item)
+                }
+            }
+        }
+        
+        return super.menu(for: event)
     }
 }

@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)tabView:(NSTabView *)_view
     didDropTabViewItem:(NSTabViewItem *)_item
           inTabBarView:(NCPanelTabBarView *)_tabBarView;
+- (NSMenu *)tabView:(NSTabView *)_view menuForTabViewItem:(NSTabViewItem *)_item;
 @end
 
 [[clang::objc_runtime_name("_TtC5Panel17NCPanelTabBarView")]]

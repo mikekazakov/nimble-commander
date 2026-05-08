@@ -88,7 +88,7 @@ std::filesystem::path PathManip::Expand(std::string_view _path, std::string_view
     if( _path.size() >= 2 ) {
         const char first = _path.front();
         const char second = _path[1];
-        if( (first == '\'' || first == '"') && _path.back() == first && (second == '/' || second == '~') )
+        if( (first == '\'' || first == '"') && (second == '/' || second == '~') && _path.back() == first )
             _path = _path.substr(1, _path.size() - 2);
     }
 

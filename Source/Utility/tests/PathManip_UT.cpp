@@ -180,13 +180,13 @@ TEST_CASE(PREFIX "Expand")
         {.path = "../", .home = "", .cwd = "/a/b/", .expected = "/a/"},
         {.path = "../c", .home = "", .cwd = "/a/b/", .expected = "/a/c"},
         // strip surrounding quotes for absolute or home-relative paths
-        {.path = "'/a/b'", .home = "", .cwd = "", .expected = "/a/b"}, // single-quoted abs path: strip
-        {.path = "\"/a/b\"", .home = "", .cwd = "", .expected = "/a/b"}, // double-quoted abs path: strip
-        {.path = "'~/a/b'", .home = "/h", .cwd = "", .expected = "/h/a/b"}, // single-quoted home path: strip
+        {.path = "'/a/b'", .home = "", .cwd = "", .expected = "/a/b"},        // single-quoted abs path: strip
+        {.path = "\"/a/b\"", .home = "", .cwd = "", .expected = "/a/b"},      // double-quoted abs path: strip
+        {.path = "'~/a/b'", .home = "/h", .cwd = "", .expected = "/h/a/b"},   // single-quoted home path: strip
         {.path = "\"~/a/b\"", .home = "/h", .cwd = "", .expected = "/h/a/b"}, // double-quoted home path: strip
-        {.path = "'a'", .home = "", .cwd = "/c", .expected = "/c/'a'"}, // surrounded with single quotes: keep
-        {.path = "\"a\"", .home = "", .cwd = "/c", .expected = "/c/\"a\""}, // surrounded with double quotes: keep
-        {.path = "'/a/b", .home = "", .cwd = "/c", .expected = "/c/'/a/b"}, // mismatched single quote: keep
+        {.path = "'a'", .home = "", .cwd = "/c", .expected = "/c/'a'"},       // surrounded with single quotes: keep
+        {.path = "\"a\"", .home = "", .cwd = "/c", .expected = "/c/\"a\""},   // surrounded with double quotes: keep
+        {.path = "'/a/b", .home = "", .cwd = "/c", .expected = "/c/'/a/b"},   // mismatched single quote: keep
         {.path = "\"/a/b", .home = "", .cwd = "/c", .expected = "/c/\"/a/b"}, // mismatched double quote: keep
     };
     for( auto &tc : tcs ) {

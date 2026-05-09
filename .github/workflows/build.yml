@@ -19,6 +19,7 @@ env:
 jobs:
 
   unit-tests:
+    needs: clang-format
     runs-on: macos-15
     strategy:
       matrix:
@@ -37,6 +38,7 @@ jobs:
         if-no-files-found: ignore
   
   integration-tests:
+    needs: unit-tests
     runs-on: macos-15
     steps:
     - name: Select the Xcode version
@@ -76,6 +78,7 @@ jobs:
 
 
   clang-tidy:
+    needs: unit-tests
     runs-on: macos-15
     steps:
     - name: Select the Xcode version
@@ -90,6 +93,7 @@ jobs:
 
 
   build-unsigned:
+    needs: unit-tests
     runs-on: macos-15
     steps:
     - name: Select the Xcode version

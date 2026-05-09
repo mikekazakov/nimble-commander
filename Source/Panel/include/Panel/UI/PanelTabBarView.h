@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
     didDropTabViewItem:(NSTabViewItem *)_item
           inTabBarView:(NCPanelTabBarView *)_tabBarView;
 - (NSMenu *)tabView:(NSTabView *)_view menuForTabViewItem:(NSTabViewItem *)_item;
+- (void)addNewTabToTabView:(NSTabView *)_view;
+- (void)showAddTabMenuForTabView:(NSTabView *)_view;
 @end
 
 [[clang::objc_runtime_name("_TtC5Panel17NCPanelTabBarView")]]
@@ -36,6 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeTabViewItem:(NSTabViewItem *)_item;
 
 - (NSButton *)closeButtonOfTabViewItem:(NSTabViewItem *)_item;
+
+- (NSButton *)addTabButton;
 
 @end
 

@@ -7,6 +7,8 @@ public protocol NCPanelTabBarViewDelegate: NSTabViewDelegate {
     @objc optional func tabView(_ tabView: NSTabView, didCloseTabViewItem tabViewItem: NSTabViewItem)
     @objc optional func tabView(_ tabView: NSTabView, didDropTabViewItem tabViewItem: NSTabViewItem, inTabBarView tabBarView: NCPanelTabBarView)
     @objc optional func tabView(_ tabView: NSTabView, menuForTabViewItem tabViewItem: NSTabViewItem) -> NSMenu?
+    @objc optional func addNewTabToTabView(_ view: NSTabView)
+    @objc optional func showAddTabMenuForTabView(_ view: NSTabView)
 }
 
 @MainActor
@@ -38,7 +40,7 @@ public class NCPanelTabBarItem: NSCollectionViewItem {
     
     private let titleField: NSTextField = {
         let tf = NSTextField(labelWithString: "")
-        tf.font = NSFont.systemFont(ofSize: NSFont.systemFontSize)
+        tf.font = NSFont.systemFont(ofSize: 12)
         tf.lineBreakMode = .byTruncatingMiddle
         tf.alignment = .center
         tf.translatesAutoresizingMaskIntoConstraints = false
@@ -110,8 +112,7 @@ public class NCPanelTabBarItem: NSCollectionViewItem {
             closeButton.heightAnchor.constraint(equalToConstant: 16),
             titleField.leadingAnchor.constraint(equalTo: closeButton.trailingAnchor, constant: 4),
             titleField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            titleField.topAnchor.constraint(equalTo: view.topAnchor, constant: 4),
-            titleField.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -4),
+            titleField.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
         
         view.addSubview(leftEdgeLine)
@@ -258,6 +259,89 @@ class NCPanelTabBarViewHiddenScroller: NSScroller {
     }
 }
 
+@MainActor
+private final class AddTabButton: NSButton {
+    
+    var trackingArea: NSTrackingArea?
+    
+    var backgroundColor = NSColor.clear {
+        didSet { needsDisplay = true }
+    }
+    
+    var hoverColor = NSColor.separatorColor.withAlphaComponent(0.2) {
+        didSet { needsDisplay = true }
+    }
+    
+    var longPressAction: Selector?
+    
+    var longPressDelay: TimeInterval = 0.33
+    
+    var longPressScheduled: Bool = false
+    
+    var longPressFired: Bool = false
+    
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        (self.cell as? NSButtonCell)?.backgroundColor = backgroundColor
+        self.isBordered = false
+        self.image = NSImage(systemSymbolName: "plus", accessibilityDescription: "")?
+            .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 12, weight: .regular))
+        self.imagePosition = .imageOnly
+        self.imageScaling = .scaleNone
+        self.setButtonType(.momentaryChange)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        if let ta = trackingArea {
+            self.removeTrackingArea(ta)
+        }
+        
+        let options: NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .inVisibleRect]
+        trackingArea = NSTrackingArea(rect: self.bounds, options: options, owner: self, userInfo: nil)
+        self.addTrackingArea(trackingArea!)
+    }
+    
+    @objc func fireLongPress() {
+        guard let action = longPressAction, let target = self.target, longPressScheduled else { return }
+        longPressScheduled = false
+        longPressFired = true
+        _ = self.sendAction(action, to: target)
+    }
+    
+    override func mouseDown(with event: NSEvent) {
+        if self.longPressAction != nil {
+            longPressScheduled = true
+            longPressFired = false
+            self.perform(#selector(fireLongPress), with: nil, afterDelay: longPressDelay, inModes: [.common])
+        }
+        super.mouseDown(with: event)
+    }
+    
+    override func sendAction(_ action: Selector?, to target: Any?) -> Bool {
+        if action == self.action && longPressFired {
+            longPressFired = false
+            return true
+        }
+        longPressScheduled = false
+        return super.sendAction(action, to: target)
+    }
+    
+    override func mouseEntered(with event: NSEvent) {
+        (self.cell as? NSButtonCell)?.backgroundColor = hoverColor
+    }
+    
+    override func mouseExited(with event: NSEvent) {
+        (self.cell as? NSButtonCell)?.backgroundColor = backgroundColor
+        longPressScheduled = false
+        longPressFired = false
+    }
+}
+
 private final class SeparatorFlowLayout: NSCollectionViewFlowLayout {
     override func shouldInvalidateLayout(forBoundsChange newBounds: NSRect) -> Bool {
         return true
@@ -297,9 +381,11 @@ public class NCPanelTabBarView: NSView,
                                 NSCollectionViewDelegate,
                                 NSCollectionViewDelegateFlowLayout
 {
-    @objc public weak var delegate: NCPanelTabBarViewDelegate?
-    
+    /// The NSTabView instance this TabBar represents
     @objc public var tabView: NSTabView?
+    
+    /// The delegate for both NSTabView and NCPanelTabBarView, events from NSTabView and received by this class and trampolined to this delegate
+    @objc public weak var delegate: NCPanelTabBarViewDelegate?
     
     private let collectionView: NCPanelTabBarCollectionView = NCPanelTabBarCollectionView()
     private let scrollView: NSScrollView = NSScrollView()
@@ -309,23 +395,25 @@ public class NCPanelTabBarView: NSView,
     /// When true, tabViewDidChangeNumberOfTabViewItems won't trigger a reload.
     private var suppressCollectionViewReload = false
     
+    private var addTabPlusButton : AddTabButton!
+    
     public override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
-        setupCollectionView()
+        setupViews()
     }
     
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupCollectionView()
+        setupViews()
     }
     
-    private func setupCollectionView() {
+    private func setupViews() {
         wantsLayer = true
         
         flowLayout.scrollDirection = .horizontal
         flowLayout.minimumInteritemSpacing = 0
         flowLayout.minimumLineSpacing = 0
-        flowLayout.itemSize = NSSize(width: 120, height: 25)
+        flowLayout.itemSize = NSSize(width: 120, height: 23)
         flowLayout.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 0)
         
         collectionView.collectionViewLayout = flowLayout
@@ -366,15 +454,25 @@ public class NCPanelTabBarView: NSView,
         scrollView.borderType = .noBorder
         scrollView.documentView = collectionView
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        
         addSubview(scrollView)
         
-        // Pin scroll view to edges
+        addTabPlusButton = AddTabButton(frame: .zero)
+        addTabPlusButton.action = #selector(addTabButtonPressed)
+        addTabPlusButton.longPressAction = #selector(addTabButtonLongPressed)
+        addTabPlusButton.target = self
+        addTabPlusButton.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(addTabPlusButton)
+        
         NSLayoutConstraint.activate([
             scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: addTabPlusButton.leadingAnchor),
             scrollView.topAnchor.constraint(equalTo: topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            addTabPlusButton.trailingAnchor.constraint(equalTo: trailingAnchor),
+            addTabPlusButton.topAnchor.constraint(equalTo: topAnchor),
+            addTabPlusButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+            addTabPlusButton.heightAnchor.constraint(equalToConstant: 23.0),
+            addTabPlusButton.widthAnchor.constraint(equalToConstant: 23.0)
         ])
     }
     
@@ -576,7 +674,7 @@ public class NCPanelTabBarView: NSView,
             sourceTabView.removeTabViewItem(draggedItem)
             sourceBar.suppressCollectionViewReload = false
             sourceBar.reloadTabs()
-
+            
             // Update our underlying NSTabView by inserting the new tab
             let insertionIdx : Int = snapshotItems.firstIndex(of: draggedItem)!
             suppressCollectionViewReload = true
@@ -621,13 +719,13 @@ public class NCPanelTabBarView: NSView,
         snapshot.deleteItems([draggedTabView])
         dataSource.apply(snapshot, animatingDifferences: true)
     }
-            
+    
     /// Retrieves the live NCPanelTabBarDraggingItem from a pasteboard (local drags preserve identity).
     private func draggingItem(from pasteboard: NSPasteboard) -> NCPanelTabBarDraggingItem? {
         guard let items = pasteboard.pasteboardItems else { return nil }
         return items.first as? NCPanelTabBarDraggingItem
     }
-        
+    
     /// Converts the drag cursor position to a slot index in [0, slotCount).
     /// Snaps to the nearest inter-item gap: left half of an item → insert before it,
     /// right half → insert after it.
@@ -678,9 +776,13 @@ public class NCPanelTabBarView: NSView,
         return tabBarItem.closeButton
     }
     
+    @objc public func addTabButton() -> NSButton? {
+        return addTabPlusButton
+    }
+    
     @objc public override func menu(for event: NSEvent) -> NSMenu? {
         guard let tabView else { return super.menu(for: event) }
-
+        
         let localPosition : NSPoint = convert(event.locationInWindow, from: nil)
         
         // If the menu request lands into the collection view - try to delegate it to the client
@@ -695,5 +797,19 @@ public class NCPanelTabBarView: NSView,
         }
         
         return super.menu(for: event)
+    }
+    
+    @objc public func addTabButtonPressed() {
+        guard let tabView else { return }
+        if let delegate = delegate, delegate.responds(to: #selector(NCPanelTabBarViewDelegate.addNewTabToTabView(_:) )) {
+            delegate.addNewTabToTabView?(tabView)
+        }
+    }
+    
+    @objc public func addTabButtonLongPressed() {
+        guard let tabView else { return }
+        if let delegate = delegate, delegate.responds(to: #selector(NCPanelTabBarViewDelegate.showAddTabMenuForTabView(_:) )) {
+            delegate.showAddTabMenuForTabView?(tabView)
+        }
     }
 }

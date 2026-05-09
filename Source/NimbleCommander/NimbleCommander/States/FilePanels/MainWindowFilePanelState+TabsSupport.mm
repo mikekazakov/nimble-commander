@@ -169,11 +169,9 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
         [popover addItem:item];
     }
 
-#if 0
-    const auto add_rc = holder.tabBar.addTabButtonRect;
+    NSButton *const add_button = holder.tabBar.addTabButton;
     m_CommandPopover = popover;
-    [popover showRelativeToRect:add_rc ofView:holder.tabBar alignment:NCCommandPopoverAlignment::Right];
-#endif
+    [popover showRelativeToRect:add_button.bounds ofView:add_button alignment:NCCommandPopoverAlignment::Right];
 }
 
 - (void)respawnRecentlyClosedCallout:(id)sender

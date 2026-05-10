@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState+TabsSupport.h"
 #include <Base/CommonPaths.h>
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
@@ -410,50 +410,6 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
 - (FilePanelsTabbedHolder *)rightTabbedHolder
 {
     return m_SplitView.rightTabbedHolder;
-}
-
-static NSImage *ResizeImage(NSImage *_img, NSSize _new_size)
-{
-    if( !_img.valid )
-        return nil;
-
-    NSImage *const small_img = [[NSImage alloc] initWithSize:_new_size];
-    [small_img lockFocus];
-    _img.size = _new_size;
-    NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;
-    [_img drawAtPoint:NSZeroPoint
-             fromRect:CGRectMake(0, 0, _new_size.width, _new_size.height)
-            operation:NSCompositingOperationCopy
-             fraction:1.0];
-    [small_img unlockFocus];
-
-    return small_img;
-}
-
-- (NSImage *)tabView:(NSTabView *) [[maybe_unused]] aTabView
-    imageForTabViewItem:(NSTabViewItem *)tabViewItem
-                 offset:(NSSize *) [[maybe_unused]] offset
-              styleMask:(NSUInteger *) [[maybe_unused]] styleMask
-{
-    const auto panel_view = nc::objc_cast<PanelView>(tabViewItem.view);
-    if( !panel_view )
-        return nil;
-
-    const auto bitmap = [panel_view bitmapImageRepForCachingDisplayInRect:panel_view.bounds];
-    if( !bitmap )
-        return nil;
-
-    [panel_view cacheDisplayInRect:panel_view.bounds toBitmapImageRep:bitmap];
-
-    auto image = [[NSImage alloc] init];
-    [image addRepresentation:bitmap];
-
-    const auto max_dim = 320.;
-    const auto scale = std::max(bitmap.size.width, bitmap.size.height) / max_dim;
-    if( scale > 1 )
-        image = ResizeImage(image, NSMakeSize(bitmap.size.width / scale, bitmap.size.height / scale));
-
-    return image;
 }
 
 - (NSMenu *)tabView:(NSTabView *) [[maybe_unused]] aTabView menuForTabViewItem:(NSTabViewItem *)tabViewItem

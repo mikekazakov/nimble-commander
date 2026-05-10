@@ -234,13 +234,63 @@ class TabBarItem: NSCollectionViewItem {
     
     public override var draggingImageComponents: [NSDraggingImageComponent] {
         NSLog("draggingImageComponents")
-        // TODO: build a real image representation of the collection item for dragging
-        let img = NSImage(systemSymbolName: "table.furniture.fill", accessibilityDescription: "")!
-        img.size = NSSize(width: 32, height: 32)
+        let img = buildDraggingImage()
         let comp = NSDraggingImageComponent(key: .icon)
         comp.contents = img
-        comp.frame = NSRect(origin: .zero, size: img.size)
+        comp.frame = NSRect(origin: NSPoint(x: -6, y: -6), size: img.size)
         return [comp]
+    }
+    
+    func buildDraggingImage() -> NSImage {
+        let shadow = NSShadow()
+        shadow.shadowBlurRadius = 6
+        shadow.shadowOffset = NSSize(width: 0, height: -2)
+        shadow.shadowColor = NSColor.black.withAlphaComponent(0.3)
+        let shadowPadding: CGFloat = shadow.shadowBlurRadius + abs(shadow.shadowOffset.height)
+        
+        let rawSize = NSSize(width: 160, height: 23)
+        let size = NSSize(width: rawSize.width + shadowPadding * 2,
+                          height: rawSize.height + shadowPadding * 2)
+        let contentRect = NSRect(x: shadowPadding, y: shadowPadding, width: rawSize.width, height: rawSize.height)
+        let cornerRadius: CGFloat = 6
+        let image = NSImage(size: size)
+        image.lockFocus()
+        
+        // Background (with shadow)
+        shadow.set()
+        let bgPath = NSBezierPath(roundedRect: contentRect, xRadius: cornerRadius, yRadius: cornerRadius)
+        NSColor.windowBackgroundColor.withAlphaComponent(0.7).setFill()
+        bgPath.fill()
+        
+        // Border (no shadow)
+        NSShadow().set()
+        NSColor.separatorColor.withAlphaComponent(0.2).setStroke()
+        bgPath.lineWidth = 1
+        bgPath.stroke()
+        
+        // Label
+        let margin: CGFloat = 8
+        let title = titleField.stringValue
+        let style = NSMutableParagraphStyle()
+        style.lineBreakMode = .byTruncatingMiddle
+        style.alignment = .center
+        let attrs: [NSAttributedString.Key: Any] = [
+            .font: NSFont.systemFont(ofSize: 12),
+            .foregroundColor: NSColor.labelColor,
+            .paragraphStyle: style
+        ]
+        let attrString = NSAttributedString(string: title, attributes: attrs)
+        let textHeight = attrString.size().height
+        let textRect = NSRect(
+            x: contentRect.minX + margin,
+            y: contentRect.minY + (contentRect.height - textHeight) / 2,
+            width: contentRect.width - margin * 2,
+            height: textHeight
+        )
+        attrString.draw(in: textRect)
+        
+        image.unlockFocus()
+        return image
     }
 }
 

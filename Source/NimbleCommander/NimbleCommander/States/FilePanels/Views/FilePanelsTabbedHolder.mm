@@ -73,7 +73,7 @@
                                             toItem:nil
                                          attribute:NSLayoutAttributeNotAnAttribute
                                         multiplier:1.0
-                                          constant:25.
+                                          constant:24.
             //                 m_TabBar.heightOfTabBarButtons
         ];
         c.priority = NSLayoutPriorityDefaultLow + 1;

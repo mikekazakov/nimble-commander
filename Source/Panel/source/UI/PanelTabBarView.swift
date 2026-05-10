@@ -11,32 +11,39 @@ public protocol NCPanelTabBarViewDelegate: NSTabViewDelegate {
     @objc optional func showAddTabMenuForTabView(_ view: NSTabView)
 }
 
+private class TabBarItemView : NSView {
+    public var backgroundColor: NSColor = NSColor.windowBackgroundColor {
+        didSet { needsDisplay = true }
+    }
+    
+    public var separatorColor: NSColor = NSColor.separatorColor  {
+        didSet { needsDisplay = true }
+    }
+    
+    override func draw(_ dirtyRect: NSRect) {
+        backgroundColor.set()
+        self.bounds.fill()
+        
+        if self.frame.origin.x > 0 {
+            separatorColor.set()
+            let separatorRect = NSRect(x: 0, y: 0, width: 1, height: self.bounds.height)
+            separatorRect.fill()
+        }
+    }
+}
+
+
 @MainActor
-class TabBarItem: NSCollectionViewItem {
+private class TabBarItem: NSCollectionViewItem {
     // Colors
     public var selectedBackgroundColor: NSColor = NSColor.controlAccentColor.withAlphaComponent(0.25)
     public var hoverBackgroundColor: NSColor = NSColor.separatorColor.withAlphaComponent(0.2)
     public var defaultBackgroundColor: NSColor = NSColor.clear
     public var inactiveBackgroundColor: NSColor = NSColor.windowBackgroundColor.withAlphaComponent(0.1)
+    public var separatorColor: NSColor = NSColor.separatorColor
     
     private var isHovered: Bool = false
     private var trackingArea: NSTrackingArea?
-    
-    // TODO: debug stuff, remove this
-    private let leftEdgeLine: NSView = {
-        let v = NSView()
-        v.wantsLayer = true
-        v.layer?.backgroundColor = NSColor.systemBlue.cgColor
-        v.translatesAutoresizingMaskIntoConstraints = false
-        return v
-    }()
-    private let rightEdgeLine: NSView = {
-        let v = NSView()
-        v.wantsLayer = true
-        v.layer?.backgroundColor = NSColor.systemRed.cgColor
-        v.translatesAutoresizingMaskIntoConstraints = false
-        return v
-    }()
     
     private let titleField: NSTextField = {
         let tf = NSTextField(labelWithString: "")
@@ -48,6 +55,7 @@ class TabBarItem: NSCollectionViewItem {
     }()
     
     @objc public weak var tabBarView: NCPanelTabBarView?
+    
     private var labelObservation: NSKeyValueObservation?
     
     @objc public weak var tabViewItem: NSTabViewItem? {
@@ -94,7 +102,7 @@ class TabBarItem: NSCollectionViewItem {
     }()
     
     public override func loadView() {
-        self.view = NSView()
+        self.view = TabBarItemView()
     }
     
     public override func viewDidLoad() {
@@ -113,20 +121,6 @@ class TabBarItem: NSCollectionViewItem {
             titleField.leadingAnchor.constraint(equalTo: closeButton.trailingAnchor, constant: 4),
             titleField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
             titleField.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-        ])
-        
-        view.addSubview(leftEdgeLine)
-        view.addSubview(rightEdgeLine)
-        NSLayoutConstraint.activate([
-            leftEdgeLine.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            leftEdgeLine.topAnchor.constraint(equalTo: view.topAnchor),
-            leftEdgeLine.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            leftEdgeLine.widthAnchor.constraint(equalToConstant: 1),
-            
-            rightEdgeLine.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            rightEdgeLine.topAnchor.constraint(equalTo: view.topAnchor),
-            rightEdgeLine.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            rightEdgeLine.widthAnchor.constraint(equalToConstant: 1),
         ])
     }
     
@@ -188,24 +182,29 @@ class TabBarItem: NSCollectionViewItem {
         NotificationCenter.default.removeObserver(self, name: NSWindow.didResignKeyNotification, object: view.window)
     }
     
-    @objc private func windowBecameKey(_ note: Notification) { updateBackground() }
-    @objc private func windowResignedKey(_ note: Notification) { updateBackground() }
+    @objc private func windowBecameKey(_ note: Notification) {
+        updateBackground()
+    }
+    @objc private func windowResignedKey(_ note: Notification) {
+        updateBackground()
+    }
     
     private func updateBackground() {
+        (self.view as! TabBarItemView).backgroundColor = determineBackgroundColor()
+    }
+    
+    func determineBackgroundColor() -> NSColor {
         guard let window = view.window else {
-            view.layer?.backgroundColor = defaultBackgroundColor.cgColor
-            return
+            return defaultBackgroundColor
         }
         if !window.isKeyWindow {
-            view.layer?.backgroundColor = inactiveBackgroundColor.cgColor
-            return
-        }
-        if isSelected {
-            view.layer?.backgroundColor = selectedBackgroundColor.cgColor
+            return inactiveBackgroundColor
+        } else if isSelected {
+            return selectedBackgroundColor
         } else if isHovered {
-            view.layer?.backgroundColor = hoverBackgroundColor.cgColor
+            return hoverBackgroundColor
         } else {
-            view.layer?.backgroundColor = defaultBackgroundColor.cgColor
+            return defaultBackgroundColor
         }
     }
     
@@ -294,7 +293,7 @@ class TabBarItem: NSCollectionViewItem {
     }
 }
 
-class CollectionView: NSCollectionView {
+private class CollectionView: NSCollectionView {
     override func draggingExited(_ sender: (any NSDraggingInfo)?) {
         if let tabBarView = delegate as? NCPanelTabBarView {
             tabBarView.collectionView(self, draggingExited: sender)
@@ -303,15 +302,33 @@ class CollectionView: NSCollectionView {
     }
 }
 
-class HiddenScroller: NSScroller {
+private class HiddenScroller: NSScroller {
     // let NSScroller tell NSScrollView that its own width is 0, so that it will not really occupy the drawing area.
     override class func scrollerWidth(for controlSize: ControlSize, scrollerStyle: Style) -> CGFloat {
         0
     }
 }
 
+private class ColorSeparatorLine : NSView {
+    var borderColor : NSColor = NSColor.separatorColor {
+        didSet { needsDisplay = true }
+    }
+    
+    override func draw(_ dirtyRect: NSRect) {
+        let b = self.bounds
+        let rc = b.size.width > b.size.height ? NSMakeRect(0, 0, b.size.width, 1) : NSMakeRect(0, 0, 1, b.size.height)
+        borderColor.set()
+        if borderColor.alphaComponent == 1.0 {
+            rc.fill()
+        }
+        else {
+            rc.fill(using: .sourceOver)
+        }
+    }
+}
+
 @MainActor
-class AddTabButton: NSButton {
+private class AddTabButton: NSButton {
     
     var trackingArea: NSTrackingArea?
     
@@ -334,9 +351,12 @@ class AddTabButton: NSButton {
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         (self.cell as? NSButtonCell)?.backgroundColor = backgroundColor
+        self.controlSize = .mini
+        self.bezelStyle = .smallSquare
         self.isBordered = false
+        // TODO: place a real image, this setup messes the layout for some reason and forces the button be larger than 23pt
         self.image = NSImage(systemSymbolName: "plus", accessibilityDescription: "")?
-            .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 12, weight: .regular))
+            .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 8, weight: .regular))
         self.imagePosition = .imageOnly
         self.imageScaling = .scaleNone
         self.setButtonType(.momentaryChange)
@@ -398,7 +418,7 @@ class AddTabButton: NSButton {
     }
 }
 
-class SeparatorFlowLayout: NSCollectionViewFlowLayout {
+private class SeparatorFlowLayout: NSCollectionViewFlowLayout {
     override func shouldInvalidateLayout(forBoundsChange newBounds: NSRect) -> Bool {
         return true
     }
@@ -412,7 +432,7 @@ class SeparatorFlowLayout: NSCollectionViewFlowLayout {
 }
 
 @objc
-class DraggingItem: NSPasteboardItem {
+private class DraggingItem: NSPasteboardItem {
     /// Index of the item inside the source collection view that's being dragged
     @objc public let sourceIndexPath: IndexPath
     
@@ -454,6 +474,9 @@ public class NCPanelTabBarView: NSView,
     private var suppressCollectionViewReload = false
     
     private var addTabPlusButton : AddTabButton!
+    
+    private var addTabPlusSeparator: ColorSeparatorLine!
+    private var bottomSeparatorLine: ColorSeparatorLine!
     
     public override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -514,6 +537,16 @@ public class NCPanelTabBarView: NSView,
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(scrollView)
         
+        addTabPlusSeparator = ColorSeparatorLine()
+        addTabPlusSeparator.borderColor = NSColor.systemOrange
+        addTabPlusSeparator.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(addTabPlusSeparator)
+        
+        bottomSeparatorLine = ColorSeparatorLine()
+        bottomSeparatorLine.borderColor = NSColor.systemOrange
+        bottomSeparatorLine.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(bottomSeparatorLine)
+        
         addTabPlusButton = AddTabButton(frame: .zero)
         addTabPlusButton.action = #selector(addTabButtonPressed)
         addTabPlusButton.longPressAction = #selector(addTabButtonLongPressed)
@@ -522,14 +555,24 @@ public class NCPanelTabBarView: NSView,
         addSubview(addTabPlusButton)
         
         NSLayoutConstraint.activate([
+            bottomSeparatorLine.leadingAnchor.constraint(equalTo: leadingAnchor),
+            bottomSeparatorLine.trailingAnchor.constraint(equalTo: trailingAnchor),
+            bottomSeparatorLine.bottomAnchor.constraint(equalTo: bottomAnchor),
+            bottomSeparatorLine.heightAnchor.constraint(equalToConstant: 1.0),
+            
             scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: addTabPlusButton.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: addTabPlusSeparator.leadingAnchor),
             scrollView.topAnchor.constraint(equalTo: topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: bottomSeparatorLine.topAnchor),
+            
+            addTabPlusSeparator.topAnchor.constraint(equalTo: topAnchor),
+            addTabPlusSeparator.trailingAnchor.constraint(equalTo: addTabPlusButton.leadingAnchor),
+            addTabPlusSeparator.bottomAnchor.constraint(equalTo: bottomSeparatorLine.topAnchor),
+            addTabPlusSeparator.widthAnchor.constraint(equalToConstant: 1.0),
+            
             addTabPlusButton.trailingAnchor.constraint(equalTo: trailingAnchor),
             addTabPlusButton.topAnchor.constraint(equalTo: topAnchor),
-            addTabPlusButton.bottomAnchor.constraint(equalTo: bottomAnchor),
-            addTabPlusButton.heightAnchor.constraint(equalToConstant: 23.0),
+            addTabPlusButton.bottomAnchor.constraint(equalTo: bottomSeparatorLine.topAnchor),
             addTabPlusButton.widthAnchor.constraint(equalToConstant: 23.0)
         ])
     }

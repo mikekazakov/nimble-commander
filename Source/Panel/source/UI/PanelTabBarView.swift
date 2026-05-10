@@ -12,7 +12,7 @@ public protocol NCPanelTabBarViewDelegate: NSTabViewDelegate {
 }
 
 @MainActor
-public class NCPanelTabBarItem: NSCollectionViewItem {
+class TabBarItem: NSCollectionViewItem {
     // Colors
     public var selectedBackgroundColor: NSColor = NSColor.controlAccentColor.withAlphaComponent(0.25)
     public var hoverBackgroundColor: NSColor = NSColor.separatorColor.withAlphaComponent(0.2)
@@ -233,6 +233,7 @@ public class NCPanelTabBarItem: NSCollectionViewItem {
     }
     
     public override var draggingImageComponents: [NSDraggingImageComponent] {
+        NSLog("draggingImageComponents")
         // TODO: build a real image representation of the collection item for dragging
         let img = NSImage(systemSymbolName: "table.furniture.fill", accessibilityDescription: "")!
         img.size = NSSize(width: 32, height: 32)
@@ -243,7 +244,7 @@ public class NCPanelTabBarItem: NSCollectionViewItem {
     }
 }
 
-private class NCPanelTabBarCollectionView: NSCollectionView {
+class CollectionView: NSCollectionView {
     override func draggingExited(_ sender: (any NSDraggingInfo)?) {
         if let tabBarView = delegate as? NCPanelTabBarView {
             tabBarView.collectionView(self, draggingExited: sender)
@@ -252,7 +253,7 @@ private class NCPanelTabBarCollectionView: NSCollectionView {
     }
 }
 
-class NCPanelTabBarViewHiddenScroller: NSScroller {
+class HiddenScroller: NSScroller {
     // let NSScroller tell NSScrollView that its own width is 0, so that it will not really occupy the drawing area.
     override class func scrollerWidth(for controlSize: ControlSize, scrollerStyle: Style) -> CGFloat {
         0
@@ -260,7 +261,7 @@ class NCPanelTabBarViewHiddenScroller: NSScroller {
 }
 
 @MainActor
-private final class AddTabButton: NSButton {
+class AddTabButton: NSButton {
     
     var trackingArea: NSTrackingArea?
     
@@ -322,6 +323,11 @@ private final class AddTabButton: NSButton {
         super.mouseDown(with: event)
     }
     
+    override func rightMouseDown(with event: NSEvent) {
+        guard let action = longPressAction, let target = self.target else { return }
+        _ = self.sendAction(action, to: target)
+    }
+    
     override func sendAction(_ action: Selector?, to target: Any?) -> Bool {
         if action == self.action && longPressFired {
             longPressFired = false
@@ -342,7 +348,7 @@ private final class AddTabButton: NSButton {
     }
 }
 
-private final class SeparatorFlowLayout: NSCollectionViewFlowLayout {
+class SeparatorFlowLayout: NSCollectionViewFlowLayout {
     override func shouldInvalidateLayout(forBoundsChange newBounds: NSRect) -> Bool {
         return true
     }
@@ -356,12 +362,14 @@ private final class SeparatorFlowLayout: NSCollectionViewFlowLayout {
 }
 
 @objc
-public class NCPanelTabBarDraggingItem: NSPasteboardItem {
+class DraggingItem: NSPasteboardItem {
     /// Index of the item inside the source collection view that's being dragged
     @objc public let sourceIndexPath: IndexPath
     
     /// The tab view item being dragged
     @objc public let tabViewItem: NSTabViewItem
+    
+    @objc public var didReinsertIntoInitial: Bool = false
     
     @objc public init(sourceIndexPath: IndexPath, tabViewItem: NSTabViewItem) {
         self.sourceIndexPath = sourceIndexPath
@@ -387,7 +395,7 @@ public class NCPanelTabBarView: NSView,
     /// The delegate for both NSTabView and NCPanelTabBarView, events from NSTabView and received by this class and trampolined to this delegate
     @objc public weak var delegate: NCPanelTabBarViewDelegate?
     
-    private let collectionView: NCPanelTabBarCollectionView = NCPanelTabBarCollectionView()
+    private let collectionView: CollectionView = CollectionView()
     private let scrollView: NSScrollView = NSScrollView()
     private let flowLayout: SeparatorFlowLayout = SeparatorFlowLayout()
     private var dataSource: NSCollectionViewDiffableDataSource<Int, NSTabViewItem>!
@@ -422,7 +430,7 @@ public class NCPanelTabBarView: NSView,
         collectionView.allowsMultipleSelection = false
         collectionView.backgroundColors = [.clear]
         collectionView.register(
-            NCPanelTabBarItem.self,
+            TabBarItem.self,
             forItemWithIdentifier: NSUserInterfaceItemIdentifier("NCPanelTabBarItem")
         )
         collectionView.registerForDraggedTypes([NCPanelTabBarDraggingUTI])
@@ -436,7 +444,7 @@ public class NCPanelTabBarView: NSView,
         dataSource = NSCollectionViewDiffableDataSource<Int, NSTabViewItem>(collectionView: collectionView) { [weak self] cv, indexPath, tabViewItem in
             guard let self else { return NSCollectionViewItem() }
             let cell = cv.makeItem(withIdentifier: identifier, for: indexPath)
-            if let barItem = cell as? NCPanelTabBarItem {
+            if let barItem = cell as? TabBarItem {
                 barItem.configure(with: tabViewItem.label)
                 barItem.tabViewItem = tabViewItem
                 barItem.tabBarView = self
@@ -447,7 +455,7 @@ public class NCPanelTabBarView: NSView,
         // Embed in scroll view
         scrollView.drawsBackground = false
         scrollView.scrollerStyle = .overlay
-        scrollView.horizontalScroller = NCPanelTabBarViewHiddenScroller()
+        scrollView.horizontalScroller = HiddenScroller()
         scrollView.hasHorizontalScroller = true
         scrollView.hasVerticalScroller = false
         scrollView.horizontalScrollElasticity = .automatic
@@ -586,14 +594,16 @@ public class NCPanelTabBarView: NSView,
     }
     
     public func collectionView(_ collectionView: NSCollectionView, canDragItemsAt indexPaths: Set<IndexPath>, with event: NSEvent) -> Bool {
+        NSLog("canDragItemsAt")
         // Only allow dragging if there's more than one tab, since we can't leave the panel empty
         return collectionView.numberOfItems(inSection: 0) > 1
     }
     
     public func collectionView(_ collectionView: NSCollectionView,
                                pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {
+        NSLog("pasteboardWriterForItemAt")
         guard let tabViewItem = dataSource.itemIdentifier(for: indexPath) else { return nil }
-        let item = NCPanelTabBarDraggingItem(sourceIndexPath: indexPath, tabViewItem: tabViewItem)
+        let item = DraggingItem(sourceIndexPath: indexPath, tabViewItem: tabViewItem)
         return item
     }
     
@@ -601,8 +611,23 @@ public class NCPanelTabBarView: NSView,
                                validateDrop draggingInfo: any NSDraggingInfo,
                                proposedIndexPath proposedDropIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>,
                                dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>) -> NSDragOperation {
-        guard let pasteboardItem: NCPanelTabBarDraggingItem = draggingItem(from: draggingInfo.draggingPasteboard) else { return [] }
+        //        NSLog("validateDrop")
+        guard let pasteboardItem: DraggingItem = draggingItem(from: draggingInfo.draggingPasteboard) else { return [] }
         let draggedItem: NSTabViewItem = pasteboardItem.tabViewItem
+        
+        // By default, if the dragged tab is not leaving the original and is only dragged inside it,
+        // NSCollectionView shows it as a blank spot, which looks super weird.
+        // To work around that, simply remove the element and place it back in the same spot once.
+        if pasteboardItem.didReinsertIntoInitial == false {
+            var snapshot = dataSource.snapshot()
+            if snapshot.itemIdentifiers(inSection: 0).contains(draggedItem)  {
+                let orig = snapshot
+                snapshot.deleteItems([draggedItem])
+                dataSource.apply(snapshot, animatingDifferences: false)
+                dataSource.apply(orig, animatingDifferences: false)
+            }
+            pasteboardItem.didReinsertIntoInitial = true;
+        }
         
         // The drop operation should use the index where the item is placed, not before it
         proposedDropOperation.pointee = .on
@@ -650,7 +675,7 @@ public class NCPanelTabBarView: NSView,
                                indexPath: IndexPath,
                                dropOperation: NSCollectionView.DropOperation) -> Bool {
         guard let sourceBar : NCPanelTabBarView = (draggingInfo.draggingSource as? NSCollectionView)?.delegate as? NCPanelTabBarView,
-              let pasteboardItem : NCPanelTabBarDraggingItem = draggingItem(from: draggingInfo.draggingPasteboard),
+              let pasteboardItem : DraggingItem = draggingItem(from: draggingInfo.draggingPasteboard),
               let tabView else { return false }
         let draggedItem: NSTabViewItem = pasteboardItem.tabViewItem
         
@@ -695,6 +720,8 @@ public class NCPanelTabBarView: NSView,
                                draggingSession session: NSDraggingSession,
                                willBeginAt screenPoint: NSPoint,
                                forItemsAt indexPaths: Set<IndexPath>) {
+        NSLog("draggingSession willBeginAt")
+        
         // If the drag is ended without a drop - immediately revert the UI to the original state
         session.animatesToStartingPositionsOnCancelOrFail = false
     }
@@ -703,6 +730,7 @@ public class NCPanelTabBarView: NSView,
                                draggingSession session: NSDraggingSession,
                                endedAt screenPoint: NSPoint,
                                dragOperation operation: NSDragOperation) {
+        NSLog("endedAt")
         // Successful drops are fully committed in acceptDrop; only cancellations need cleanup.
         guard operation == [] else { return }
         rebuildCollectionViewFromTabView()
@@ -710,6 +738,7 @@ public class NCPanelTabBarView: NSView,
     
     fileprivate func collectionView(_ collectionView: NSCollectionView,
                                     draggingExited session: (any NSDraggingInfo)?) {
+        NSLog("draggingExited")
         // Whenever a drag leaves this collection view, we need to remove the temporary placed item from it
         guard let session = session,
               let draggedItem = self.draggingItem(from: session.draggingPasteboard) else { return }
@@ -721,9 +750,9 @@ public class NCPanelTabBarView: NSView,
     }
     
     /// Retrieves the live NCPanelTabBarDraggingItem from a pasteboard (local drags preserve identity).
-    private func draggingItem(from pasteboard: NSPasteboard) -> NCPanelTabBarDraggingItem? {
+    private func draggingItem(from pasteboard: NSPasteboard) -> DraggingItem? {
         guard let items = pasteboard.pasteboardItems else { return nil }
-        return items.first as? NCPanelTabBarDraggingItem
+        return items.first as? DraggingItem
     }
     
     /// Converts the drag cursor position to a slot index in [0, slotCount).
@@ -770,7 +799,7 @@ public class NCPanelTabBarView: NSView,
     
     @objc public func closeButtonOfTabViewItem(_ item: NSTabViewItem) -> NSButton? {
         guard let indexPath = dataSource.indexPath(for: item),
-              let tabBarItem = collectionView.item(at: indexPath) as? NCPanelTabBarItem else {
+              let tabBarItem = collectionView.item(at: indexPath) as? TabBarItem else {
             return nil
         }
         return tabBarItem.closeButton

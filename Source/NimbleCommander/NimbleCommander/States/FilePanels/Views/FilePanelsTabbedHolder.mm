@@ -4,8 +4,66 @@
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <NimbleCommander/States/FilePanels/PanelView.h>
 #include <Utility/ActionsShortcutsManager.h>
-#include "TabBarStyle.h"
 #include <Utility/ObjCpp.h>
+
+// TODO: temp here, this is WRONG and needs to be refactored and moved away. DO NOT MERGE THIS INTO MAIN!
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
+
+@interface NCPanelTabBarThemeProviderImpl : NSObject<NCPanelTabBarThemeProvider>
+@end
+
+@implementation NCPanelTabBarThemeProviderImpl
+{
+    nc::ThemesManager::ObservationTicket m_ThemeChangesObservation;
+}
+
+- (NSColor *)selectedKeyWndActiveBackgroundColor
+{
+    return nc::CurrentTheme().FilePanelsTabsSelectedKeyWndActiveBackgroundColor();
+}
+
+- (NSColor *)selectedKeyWndInactiveBackgroundColor
+{
+    return nc::CurrentTheme().FilePanelsTabsSelectedKeyWndInactiveBackgroundColor();
+}
+
+- (NSColor *)selectedNotKeyWndBackgroundColor
+{
+    return nc::CurrentTheme().FilePanelsTabsSelectedNotKeyWndBackgroundColor();
+}
+
+- (NSColor *)regularKeyWndBackgroundColor
+{
+    return nc::CurrentTheme().FilePanelsTabsRegularKeyWndRegularBackgroundColor();
+}
+
+- (NSColor *)regularKeyWndHoverBackgroundColor
+{
+    return nc::CurrentTheme().FilePanelsTabsRegularKeyWndHoverBackgroundColor();
+}
+
+- (NSColor *)regularNotKeyWndBackgroundColor
+{
+    return nc::CurrentTheme().FilePanelsTabsRegularNotKeyWndBackgroundColor();
+}
+
+- (NSColor *)separatorColor
+{
+    return nc::CurrentTheme().FilePanelsTabsSeparatorColor();
+}
+
+- (void)observeChangesWith:(void (^)(void))_callback
+{
+    assert(_callback);
+    m_ThemeChangesObservation = NCAppDelegate.me.themesManager.ObserveChanges(
+        nc::ThemesManager::Notifications::FilePanelsTabs, [_callback] {
+            _callback();
+        });
+}
+
+@end
 
 @implementation FilePanelsTabbedHolder {
     const nc::utility::ActionsShortcutsManager *m_ActionsShortcutsManager;
@@ -50,6 +108,7 @@
         //        m_TabBar = [[MMTabBarView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_TabBar.translatesAutoresizingMaskIntoConstraints = NO;
         m_TabBar.tabView = m_TabView;
+        m_TabBar.themeProvider = [NCPanelTabBarThemeProviderImpl new];        
         //        m_TabBar.showAddTabButton = true;
         //        m_TabBar.allowAddTabButtonMenu = true;
         //        m_TabBar.canCloseOnlyTab = false;
@@ -135,10 +194,6 @@
 
 - (void)addPanel:(PanelView *)_panel
 {
-    //    FilePanelsTabbedBarItem *bar_item = [FilePanelsTabbedBarItem new];
-    //    bar_item.hasCloseButton = true;
-
-    //    NSTabViewItem *item = [[NSTabViewItem alloc] initWithIdentifier:bar_item];
     NSTabViewItem *item = [[NSTabViewItem alloc] initWithIdentifier:nil];
     item.view = _panel;
     item.initialFirstResponder = _panel;

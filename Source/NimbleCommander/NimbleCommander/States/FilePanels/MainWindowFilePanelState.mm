@@ -519,7 +519,6 @@ static bool Has(std::span<PanelController *> _c, PanelController *_p) noexcept
 - (void)activePanelChangedTo:(PanelController *)controller
 {
     [self updateTitle];
-    [self updateTabBarButtons];
     m_LastFocusedPanelController = controller;
     [self synchronizeOverlappedTerminalWithPanel:controller];
     [self markRestorableStateAsInvalid];

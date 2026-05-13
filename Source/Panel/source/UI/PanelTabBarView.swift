@@ -11,13 +11,31 @@ public protocol NCPanelTabBarViewDelegate: NSTabViewDelegate {
     @objc optional func showAddTabMenuForTabView(_ view: NSTabView)
 }
 
-private class TabBarItemView : NSView {
+@objc
+public protocol NCPanelTabBarThemeProvider: AnyObject {
+    @objc var selectedKeyWndActiveBackgroundColor: NSColor { get }
+    @objc var selectedKeyWndInactiveBackgroundColor: NSColor { get }
+    @objc var selectedNotKeyWndBackgroundColor: NSColor { get }
+    @objc var regularKeyWndBackgroundColor: NSColor { get }
+    @objc var regularKeyWndHoverBackgroundColor: NSColor { get }
+    @objc var regularNotKeyWndBackgroundColor: NSColor { get }
+    @objc var separatorColor: NSColor { get }
+    @objc func observeChangesWith(_ callback: @escaping () -> Void)
+}
+
+private class TabBarItemView: NSView {
     public var backgroundColor: NSColor = NSColor.windowBackgroundColor {
-        didSet { needsDisplay = true }
+        didSet {
+            if backgroundColor.isEqual(to: oldValue) { return }
+            needsDisplay = true
+        }
     }
     
     public var separatorColor: NSColor = NSColor.separatorColor  {
-        didSet { needsDisplay = true }
+        didSet {
+            if separatorColor.isEqual(to: oldValue) { return }
+            needsDisplay = true
+        }
     }
     
     override func draw(_ dirtyRect: NSRect) {
@@ -32,15 +50,56 @@ private class TabBarItemView : NSView {
     }
 }
 
-
 @MainActor
 private class TabBarItem: NSCollectionViewItem {
-    // Colors
-    public var selectedBackgroundColor: NSColor = NSColor.controlAccentColor.withAlphaComponent(0.25)
-    public var hoverBackgroundColor: NSColor = NSColor.separatorColor.withAlphaComponent(0.2)
-    public var defaultBackgroundColor: NSColor = NSColor.clear
-    public var inactiveBackgroundColor: NSColor = NSColor.windowBackgroundColor.withAlphaComponent(0.1)
-    public var separatorColor: NSColor = NSColor.separatorColor
+    public var selectedKeyWndActiveBackgroundColor: NSColor = NSColor.darkGray {
+        didSet {
+            if selectedKeyWndActiveBackgroundColor.isEqual(to: oldValue) { return }
+            updateBackground()
+        }
+    }
+    
+    public var selectedKeyWndInactiveBackgroundColor: NSColor = NSColor.blue {
+        didSet {
+            if selectedKeyWndInactiveBackgroundColor.isEqual(to: oldValue) { return }
+            updateBackground()
+        }
+    }
+    
+    public var selectedNotKeyWndBackgroundColor: NSColor = NSColor.cyan {
+        didSet {
+            if selectedNotKeyWndBackgroundColor.isEqual(to: oldValue) { return }
+            updateBackground()
+        }
+    }
+
+    public var regularKeyWndHoverBackgroundColor: NSColor = NSColor.gray {
+        didSet {
+            if regularKeyWndHoverBackgroundColor.isEqual(to: oldValue) { return }
+            updateBackground()
+        }
+    }
+    
+    public var regularKeyWndBackgroundColor: NSColor = NSColor.windowBackgroundColor {
+        didSet {
+            if regularKeyWndBackgroundColor.isEqual(to: oldValue) { return }
+            updateBackground()
+        }
+    }
+    
+    public var regularNotKeyWndBackgroundColor: NSColor = NSColor.windowBackgroundColor {
+        didSet {
+            if regularNotKeyWndBackgroundColor.isEqual(to: oldValue) { return }
+            updateBackground()
+        }
+    }
+    
+    public var separatorColor: NSColor = NSColor.separatorColor {
+        didSet {
+            if separatorColor.isEqual(to: oldValue) { return }
+            updateBackground()
+        }
+    }
     
     private var isHovered: Bool = false
     private var trackingArea: NSTrackingArea?
@@ -57,6 +116,8 @@ private class TabBarItem: NSCollectionViewItem {
     @objc public weak var tabBarView: NCPanelTabBarView?
     
     private var labelObservation: NSKeyValueObservation?
+    
+    private var firstResponderObservation: NSKeyValueObservation?
     
     @objc public weak var tabViewItem: NSTabViewItem? {
         didSet {
@@ -108,7 +169,6 @@ private class TabBarItem: NSCollectionViewItem {
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.wantsLayer = true
-        view.layer?.backgroundColor = defaultBackgroundColor.cgColor
         view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(closeButton)
         closeButton.target = self
@@ -130,7 +190,10 @@ private class TabBarItem: NSCollectionViewItem {
     }
     
     public override var isSelected: Bool {
-        didSet { updateBackground() }
+        didSet {
+            if isSelected == oldValue { return }
+            updateBackground()
+        }
     }
     
     private func updateTrackingArea() {
@@ -173,6 +236,14 @@ private class TabBarItem: NSCollectionViewItem {
             name: NSWindow.didResignKeyNotification,
             object: view.window
         )
+        // currently every single tab bar item observers the changes of firstResponder of its window.
+        // this seem to be suboptimal, since currently only the selected one should care about this.
+        // TODO: something to streamline...
+        firstResponderObservation = view.window?.observe(\.firstResponder) { window, change in
+            Task { @MainActor in
+                self.updateBackground()
+            }
+        }
         updateBackground()
     }
     
@@ -180,6 +251,8 @@ private class TabBarItem: NSCollectionViewItem {
         super.viewWillDisappear()
         NotificationCenter.default.removeObserver(self, name: NSWindow.didBecomeKeyNotification, object: view.window)
         NotificationCenter.default.removeObserver(self, name: NSWindow.didResignKeyNotification, object: view.window)
+        firstResponderObservation?.invalidate()
+        firstResponderObservation = nil
     }
     
     @objc private func windowBecameKey(_ note: Notification) {
@@ -190,21 +263,40 @@ private class TabBarItem: NSCollectionViewItem {
     }
     
     private func updateBackground() {
-        (self.view as! TabBarItemView).backgroundColor = determineBackgroundColor()
+        guard let view = self.view as? TabBarItemView else { return }
+        view.backgroundColor = determineBackgroundColor()
+        view.separatorColor = separatorColor
     }
     
     func determineBackgroundColor() -> NSColor {
-        guard let window = view.window else {
-            return defaultBackgroundColor
+        let windowActive = view.window?.isKeyWindow ?? false
+        if isSelected {
+            if windowActive {
+                let isFirstResponder = tabViewItem?.view == view.window?.firstResponder
+                if isFirstResponder {
+                    return selectedKeyWndActiveBackgroundColor
+                }
+                else {
+                    return selectedKeyWndInactiveBackgroundColor
+                }
+            }
+            else {
+                return selectedNotKeyWndBackgroundColor
+            }
         }
-        if !window.isKeyWindow {
-            return inactiveBackgroundColor
-        } else if isSelected {
-            return selectedBackgroundColor
-        } else if isHovered {
-            return hoverBackgroundColor
-        } else {
-            return defaultBackgroundColor
+        else {
+            if windowActive {
+                if isHovered {
+                    return regularKeyWndHoverBackgroundColor
+                }
+                else {
+                    return regularKeyWndBackgroundColor
+                }
+            }
+            else {
+                return regularNotKeyWndBackgroundColor
+                
+            }
         }
     }
     
@@ -221,6 +313,8 @@ private class TabBarItem: NSCollectionViewItem {
         super.prepareForReuse()
         labelObservation?.invalidate()
         labelObservation = nil
+        firstResponderObservation?.invalidate()
+        firstResponderObservation = nil
         tabViewItem = nil
         titleField.stringValue = ""
         isHovered = false
@@ -461,7 +555,13 @@ public class NCPanelTabBarView: NSView,
 {
     /// The NSTabView instance this TabBar represents
     @objc public var tabView: NSTabView?
-    
+
+    @objc public var themeProvider: NCPanelTabBarThemeProvider? {
+        didSet {
+            themeProviderWasUpdated()
+        }
+    }
+
     /// The delegate for both NSTabView and NCPanelTabBarView, events from NSTabView and received by this class and trampolined to this delegate
     @objc public weak var delegate: NCPanelTabBarViewDelegate?
     
@@ -473,7 +573,7 @@ public class NCPanelTabBarView: NSView,
     /// When true, tabViewDidChangeNumberOfTabViewItems won't trigger a reload.
     private var suppressCollectionViewReload = false
     
-    private var addTabPlusButton : AddTabButton!
+    private var addTabPlusButton: AddTabButton!
     
     private var addTabPlusSeparator: ColorSeparatorLine!
     private var bottomSeparatorLine: ColorSeparatorLine!
@@ -521,6 +621,7 @@ public class NCPanelTabBarView: NSView,
                 barItem.configure(with: tabViewItem.label)
                 barItem.tabViewItem = tabViewItem
                 barItem.tabBarView = self
+                updateTabBarItemFromTheme(barItem)
             }
             return cell
         }
@@ -934,4 +1035,37 @@ public class NCPanelTabBarView: NSView,
             delegate.showAddTabMenuForTabView?(tabView)
         }
     }
+
+    private func themeProviderWasUpdated() {
+        guard let themeProvider else { return }
+        updateFromTheme()
+        themeProvider.observeChangesWith {
+            [weak self] in
+            self?.updateFromTheme()
+        }
+    }
+
+    private func updateFromTheme() {
+        guard let themeProvider else { return }
+        addTabPlusSeparator.borderColor = themeProvider.separatorColor
+        bottomSeparatorLine.borderColor = themeProvider.separatorColor
+        
+        for item in collectionView.visibleItems() {
+            if let tabBarItem = item as? TabBarItem {
+                updateTabBarItemFromTheme(tabBarItem)
+            }
+        }
+    }
+    
+    private func updateTabBarItemFromTheme(_ item: TabBarItem) {
+        guard let themeProvider else { return }
+        item.selectedKeyWndActiveBackgroundColor = themeProvider.selectedKeyWndActiveBackgroundColor
+        item.selectedKeyWndInactiveBackgroundColor = themeProvider.selectedKeyWndInactiveBackgroundColor
+        item.selectedNotKeyWndBackgroundColor = themeProvider.selectedNotKeyWndBackgroundColor
+        item.regularKeyWndBackgroundColor = themeProvider.regularKeyWndBackgroundColor
+        item.regularKeyWndHoverBackgroundColor = themeProvider.regularKeyWndHoverBackgroundColor
+        item.regularNotKeyWndBackgroundColor = themeProvider.regularNotKeyWndBackgroundColor
+        item.separatorColor = themeProvider.separatorColor
+    }
+        
 }

@@ -390,18 +390,6 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     m_SplitView.rightTabbedHolder.tabBarShown = should_be_shown;
 }
 
-- (void)updateTabBarButtons
-{
-#if 0
-    const auto handler =
-        ^(MMAttachedTabBarButton *aButton, [[maybe_unused]] NSUInteger idx, [[maybe_unused]] BOOL *stop) {
-          [aButton setNeedsDisplay:true];
-        };
-    [m_SplitView.leftTabbedHolder.tabBar enumerateAttachedButtonsUsingBlock:handler];
-    [m_SplitView.rightTabbedHolder.tabBar enumerateAttachedButtonsUsingBlock:handler];
-#endif
-}
-
 - (FilePanelsTabbedHolder *)leftTabbedHolder
 {
     return m_SplitView.leftTabbedHolder;

@@ -1,3 +1,4 @@
+// Copyright (C) 2026 Michael Kazakov. Subject to GNU General Public License version 3.
 import Cocoa
 
 let NCPanelTabBarDraggingUTI = NSPasteboard.PasteboardType("com.magnumbytes.nimblecommander.NCPanelTabBarDraggingUTI")
@@ -13,6 +14,8 @@ public protocol NCPanelTabBarViewDelegate: NSTabViewDelegate {
 
 @objc
 public protocol NCPanelTabBarThemeProvider: AnyObject {
+    @objc var font: NSFont { get }
+    @objc var textColor: NSColor { get }
     @objc var selectedKeyWndActiveBackgroundColor: NSColor { get }
     @objc var selectedKeyWndInactiveBackgroundColor: NSColor { get }
     @objc var selectedNotKeyWndBackgroundColor: NSColor { get }
@@ -98,6 +101,20 @@ private class TabBarItem: NSCollectionViewItem {
         didSet {
             if separatorColor.isEqual(to: oldValue) { return }
             updateBackground()
+        }
+    }
+    
+    public var titleFont: NSFont = NSFont.systemFont(ofSize: 12) {
+        didSet {
+            if titleFont.isEqual(to: oldValue) { return }
+            titleField.font = titleFont
+        }
+    }
+    
+    public var titleColor: NSColor = NSColor.labelColor {
+        didSet {
+            if titleColor.isEqual(to: oldValue) { return }
+            titleField.textColor = titleColor
         }
     }
     
@@ -1066,6 +1083,8 @@ public class NCPanelTabBarView: NSView,
         item.regularKeyWndHoverBackgroundColor = themeProvider.regularKeyWndHoverBackgroundColor
         item.regularNotKeyWndBackgroundColor = themeProvider.regularNotKeyWndBackgroundColor
         item.separatorColor = themeProvider.separatorColor
+        item.titleFont = themeProvider.font
+        item.titleColor = themeProvider.textColor
     }
         
 }

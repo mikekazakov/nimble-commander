@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilePanelsTabbedHolder.h"
 #include <Panel/UI/PanelTabBarView.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
@@ -11,12 +11,21 @@
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 
-@interface NCPanelTabBarThemeProviderImpl : NSObject<NCPanelTabBarThemeProvider>
+@interface NCPanelTabBarThemeProviderImpl : NSObject <NCPanelTabBarThemeProvider>
 @end
 
-@implementation NCPanelTabBarThemeProviderImpl
-{
+@implementation NCPanelTabBarThemeProviderImpl {
     nc::ThemesManager::ObservationTicket m_ThemeChangesObservation;
+}
+
+- (NSFont *)font
+{
+    return nc::CurrentTheme().FilePanelsTabsFont();
+}
+
+- (NSColor *)textColor
+{
+    return nc::CurrentTheme().FilePanelsTabsTextColor();
 }
 
 - (NSColor *)selectedKeyWndActiveBackgroundColor
@@ -58,9 +67,7 @@
 {
     assert(_callback);
     m_ThemeChangesObservation = NCAppDelegate.me.themesManager.ObserveChanges(
-        nc::ThemesManager::Notifications::FilePanelsTabs, [_callback] {
-            _callback();
-        });
+        nc::ThemesManager::Notifications::FilePanelsTabs, [_callback] { _callback(); });
 }
 
 @end
@@ -108,7 +115,7 @@
         //        m_TabBar = [[MMTabBarView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_TabBar.translatesAutoresizingMaskIntoConstraints = NO;
         m_TabBar.tabView = m_TabView;
-        m_TabBar.themeProvider = [NCPanelTabBarThemeProviderImpl new];        
+        m_TabBar.themeProvider = [NCPanelTabBarThemeProviderImpl new];
         //        m_TabBar.showAddTabButton = true;
         //        m_TabBar.allowAddTabButtonMenu = true;
         //        m_TabBar.canCloseOnlyTab = false;

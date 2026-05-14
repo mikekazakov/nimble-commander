@@ -58,49 +58,49 @@ private class TabBarItem: NSCollectionViewItem {
     public var selectedKeyWndActiveBackgroundColor: NSColor = NSColor.darkGray {
         didSet {
             if selectedKeyWndActiveBackgroundColor.isEqual(to: oldValue) { return }
-            updateBackground()
+            updateColors()
         }
     }
     
     public var selectedKeyWndInactiveBackgroundColor: NSColor = NSColor.blue {
         didSet {
             if selectedKeyWndInactiveBackgroundColor.isEqual(to: oldValue) { return }
-            updateBackground()
+            updateColors()
         }
     }
     
     public var selectedNotKeyWndBackgroundColor: NSColor = NSColor.cyan {
         didSet {
             if selectedNotKeyWndBackgroundColor.isEqual(to: oldValue) { return }
-            updateBackground()
+            updateColors()
         }
     }
 
     public var regularKeyWndHoverBackgroundColor: NSColor = NSColor.gray {
         didSet {
             if regularKeyWndHoverBackgroundColor.isEqual(to: oldValue) { return }
-            updateBackground()
+            updateColors()
         }
     }
     
     public var regularKeyWndBackgroundColor: NSColor = NSColor.windowBackgroundColor {
         didSet {
             if regularKeyWndBackgroundColor.isEqual(to: oldValue) { return }
-            updateBackground()
+            updateColors()
         }
     }
     
     public var regularNotKeyWndBackgroundColor: NSColor = NSColor.windowBackgroundColor {
         didSet {
             if regularNotKeyWndBackgroundColor.isEqual(to: oldValue) { return }
-            updateBackground()
+            updateColors()
         }
     }
     
     public var separatorColor: NSColor = NSColor.separatorColor {
         didSet {
             if separatorColor.isEqual(to: oldValue) { return }
-            updateBackground()
+            updateColors()
         }
     }
     
@@ -114,7 +114,7 @@ private class TabBarItem: NSCollectionViewItem {
     public var titleColor: NSColor = NSColor.labelColor {
         didSet {
             if titleColor.isEqual(to: oldValue) { return }
-            titleField.textColor = titleColor
+            updateColors()
         }
     }
     
@@ -209,7 +209,7 @@ private class TabBarItem: NSCollectionViewItem {
     public override var isSelected: Bool {
         didSet {
             if isSelected == oldValue { return }
-            updateBackground()
+            updateColors()
         }
     }
     
@@ -225,7 +225,7 @@ private class TabBarItem: NSCollectionViewItem {
     
     public override func mouseEntered(with event: NSEvent) {
         isHovered = true
-        updateBackground()
+        updateColors()
         
         if let tabViewItem = tabViewItem, let tabBarView = tabBarView,
            tabBarView.tabBarItemShouldShowCloseButton(tabViewItem) {
@@ -235,7 +235,7 @@ private class TabBarItem: NSCollectionViewItem {
     
     public override func mouseExited(with event: NSEvent) {
         isHovered = false
-        updateBackground()
+        updateColors()
         self.closeButton.isHidden = true
     }
     
@@ -258,10 +258,10 @@ private class TabBarItem: NSCollectionViewItem {
         // TODO: something to streamline...
         firstResponderObservation = view.window?.observe(\.firstResponder) { window, change in
             Task { @MainActor in
-                self.updateBackground()
+                self.updateColors()
             }
         }
-        updateBackground()
+        updateColors()
     }
     
     public override func viewWillDisappear() {
@@ -273,16 +273,20 @@ private class TabBarItem: NSCollectionViewItem {
     }
     
     @objc private func windowBecameKey(_ note: Notification) {
-        updateBackground()
+        updateColors()
     }
     @objc private func windowResignedKey(_ note: Notification) {
-        updateBackground()
+        updateColors()
     }
     
-    private func updateBackground() {
+    private func updateColors() {
         guard let view = self.view as? TabBarItemView else { return }
         view.backgroundColor = determineBackgroundColor()
         view.separatorColor = separatorColor
+  
+        titleField.textColor = view.window?.isKeyWindow ?? false ?
+            titleColor :
+            titleColor.withAlphaComponent(0.75)
     }
     
     func determineBackgroundColor() -> NSColor {
@@ -335,7 +339,7 @@ private class TabBarItem: NSCollectionViewItem {
         tabViewItem = nil
         titleField.stringValue = ""
         isHovered = false
-        updateBackground()
+        updateColors()
         self.closeButton.isHidden = true
         if let trackingArea = trackingArea {
             view.removeTrackingArea(trackingArea)

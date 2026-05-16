@@ -63,6 +63,11 @@
     return nc::CurrentTheme().FilePanelsTabsSeparatorColor();
 }
 
+- (NSColor*)pictogramColor
+{
+    return nc::CurrentTheme().FilePanelsTabsPictogramColor();
+}
+
 - (void)observeChangesWith:(void (^)(void))_callback
 {
     assert(_callback);

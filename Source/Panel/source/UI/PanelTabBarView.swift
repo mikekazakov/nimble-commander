@@ -23,6 +23,7 @@ public protocol NCPanelTabBarThemeProvider: AnyObject {
     @objc var regularKeyWndHoverBackgroundColor: NSColor { get }
     @objc var regularNotKeyWndBackgroundColor: NSColor { get }
     @objc var separatorColor: NSColor { get }
+    @objc var pictogramColor: NSColor { get }
     @objc func observeChangesWith(_ callback: @escaping () -> Void)
 }
 
@@ -43,12 +44,28 @@ private class TabBarItemView: NSView {
     
     override func draw(_ dirtyRect: NSRect) {
         backgroundColor.set()
-        self.bounds.fill()
+        
+        var backgroundRect = self.bounds
+        if self.frame.origin.x > 0 {
+            backgroundRect.origin.x += 1
+            backgroundRect.size.width -= 1
+        }
+        if backgroundColor.alphaComponent == 1.0 {
+            backgroundRect.fill()
+        }
+        else {
+            backgroundRect.fill(using: .sourceOver)
+        }
         
         if self.frame.origin.x > 0 {
             separatorColor.set()
             let separatorRect = NSRect(x: 0, y: 0, width: 1, height: self.bounds.height)
-            separatorRect.fill()
+            if separatorColor.alphaComponent == 1.0 {
+                separatorRect.fill()
+            }
+            else {
+                separatorRect.fill(using: .sourceOver)
+            }
         }
     }
 }
@@ -75,7 +92,7 @@ private class TabBarItem: NSCollectionViewItem {
             updateColors()
         }
     }
-
+    
     public var regularKeyWndHoverBackgroundColor: NSColor = NSColor.gray {
         didSet {
             if regularKeyWndHoverBackgroundColor.isEqual(to: oldValue) { return }
@@ -100,6 +117,13 @@ private class TabBarItem: NSCollectionViewItem {
     public var separatorColor: NSColor = NSColor.separatorColor {
         didSet {
             if separatorColor.isEqual(to: oldValue) { return }
+            updateColors()
+        }
+    }
+    
+    public var pictogramColor: NSColor = NSColor.separatorColor {
+        didSet {
+            if pictogramColor.isEqual(to: oldValue) { return }
             updateColors()
         }
     }
@@ -163,19 +187,10 @@ private class TabBarItem: NSCollectionViewItem {
     }
     
     public let closeButton: NSButton = {
-        let button = NSButton()
+        let button = CloseTabButton()
         button.action = #selector(closeTapped)
-        button.image = NSImage(systemSymbolName: "xmark", accessibilityDescription: "")?
-            .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 10, weight: .regular))
-        button.imagePosition = .imageOnly
-        button.imageScaling = .scaleNone
-        button.setButtonType(.momentaryChange)
-        button.bezelStyle = .circular
-        button.isBordered = true
         button.isHidden = true
-        button.showsBorderOnlyWhileMouseInside = true
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setContentHuggingPriority(.required, for: .horizontal)
         return button
     }()
     
@@ -283,10 +298,12 @@ private class TabBarItem: NSCollectionViewItem {
         guard let view = self.view as? TabBarItemView else { return }
         view.backgroundColor = determineBackgroundColor()
         view.separatorColor = separatorColor
-  
+        
         titleField.textColor = view.window?.isKeyWindow ?? false ?
-            titleColor :
-            titleColor.withAlphaComponent(0.75)
+        titleColor :
+        titleColor.withAlphaComponent(0.75)
+        
+        closeButton.contentTintColor = pictogramColor
     }
     
     func determineBackgroundColor() -> NSColor {
@@ -442,6 +459,63 @@ private class ColorSeparatorLine : NSView {
     }
 }
 
+
+@MainActor
+private class CloseTabButton: NSButton {
+    
+    private static let defaultImage : NSImage! = NSImage(systemSymbolName: "xmark", accessibilityDescription: "")?
+        .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 8, weight: .regular))
+    
+    private static let hoverImage : NSImage = makeHoverImage()
+    
+    private static func makeHoverImage() -> NSImage {
+        let conf : NSImage.SymbolConfiguration
+        if #available(macOS 13.0, *) {
+            conf = NSImage.SymbolConfiguration.preferringHierarchical().applying(NSImage.SymbolConfiguration(pointSize: 14, weight: .regular))
+        } else {
+            conf = NSImage.SymbolConfiguration(pointSize: 14, weight: .regular)
+        }
+        return NSImage(systemSymbolName: "xmark.circle.fill", accessibilityDescription: "")!.withSymbolConfiguration(conf)!
+    }
+    
+    private var trackingArea: NSTrackingArea?
+    
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        self.isBordered = false
+        self.image = CloseTabButton.defaultImage
+        self.imagePosition = .imageOnly
+        self.imageScaling = .scaleNone
+        self.setButtonType(.momentaryChange)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        
+        if let ta = trackingArea {
+            if ta.rect == self.bounds {
+                return // only rebuild the tracking area if there's a reason to
+            }
+            self.removeTrackingArea(ta)
+        }
+        let options: NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .inVisibleRect]
+        trackingArea = NSTrackingArea(rect: self.bounds, options: options, owner: self, userInfo: nil)
+        self.addTrackingArea(trackingArea!)
+    }
+    
+    override func mouseEntered(with event: NSEvent) {
+        self.image = CloseTabButton.hoverImage
+    }
+    
+    override func mouseExited(with event: NSEvent) {
+        self.image = CloseTabButton.defaultImage
+    }
+}
+
 @MainActor
 private class AddTabButton: NSButton {
     
@@ -469,9 +543,8 @@ private class AddTabButton: NSButton {
         self.controlSize = .mini
         self.bezelStyle = .smallSquare
         self.isBordered = false
-        // TODO: place a real image, this setup messes the layout for some reason and forces the button be larger than 23pt
         self.image = NSImage(systemSymbolName: "plus", accessibilityDescription: "")?
-            .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 8, weight: .regular))
+            .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 13, weight: .regular))
         self.imagePosition = .imageOnly
         self.imageScaling = .scaleNone
         self.setButtonType(.momentaryChange)
@@ -479,6 +552,12 @@ private class AddTabButton: NSButton {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override var alignmentRectInsets: NSEdgeInsets {
+        // Default implementation reports NSEdgeInsets(top: 2.0, left: 0.0, bottom: 1.5, right: 0.0),
+        // which causes the frame of NSButton to be taller than we need (23x26.5 instead of 23x23)
+        return NSEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
     
     override func updateTrackingAreas() {
@@ -576,13 +655,13 @@ public class NCPanelTabBarView: NSView,
 {
     /// The NSTabView instance this TabBar represents
     @objc public var tabView: NSTabView?
-
+    
     @objc public var themeProvider: NCPanelTabBarThemeProvider? {
         didSet {
             themeProviderWasUpdated()
         }
     }
-
+    
     /// The delegate for both NSTabView and NCPanelTabBarView, events from NSTabView and received by this class and trampolined to this delegate
     @objc public weak var delegate: NCPanelTabBarViewDelegate?
     
@@ -695,7 +774,7 @@ public class NCPanelTabBarView: NSView,
             addTabPlusButton.trailingAnchor.constraint(equalTo: trailingAnchor),
             addTabPlusButton.topAnchor.constraint(equalTo: topAnchor),
             addTabPlusButton.bottomAnchor.constraint(equalTo: bottomSeparatorLine.topAnchor),
-            addTabPlusButton.widthAnchor.constraint(equalToConstant: 23.0)
+            addTabPlusButton.widthAnchor.constraint(equalTo: addTabPlusButton.heightAnchor)
         ])
     }
     
@@ -1056,7 +1135,7 @@ public class NCPanelTabBarView: NSView,
             delegate.showAddTabMenuForTabView?(tabView)
         }
     }
-
+    
     private func themeProviderWasUpdated() {
         guard let themeProvider else { return }
         updateFromTheme()
@@ -1065,11 +1144,14 @@ public class NCPanelTabBarView: NSView,
             self?.updateFromTheme()
         }
     }
-
+    
     private func updateFromTheme() {
         guard let themeProvider else { return }
         addTabPlusSeparator.borderColor = themeProvider.separatorColor
         bottomSeparatorLine.borderColor = themeProvider.separatorColor
+        addTabPlusButton.contentTintColor = themeProvider.pictogramColor
+        addTabPlusButton.backgroundColor = themeProvider.selectedKeyWndInactiveBackgroundColor
+        addTabPlusButton.hoverColor = themeProvider.regularKeyWndHoverBackgroundColor
         
         for item in collectionView.visibleItems() {
             if let tabBarItem = item as? TabBarItem {
@@ -1087,8 +1169,9 @@ public class NCPanelTabBarView: NSView,
         item.regularKeyWndHoverBackgroundColor = themeProvider.regularKeyWndHoverBackgroundColor
         item.regularNotKeyWndBackgroundColor = themeProvider.regularNotKeyWndBackgroundColor
         item.separatorColor = themeProvider.separatorColor
+        item.pictogramColor = themeProvider.pictogramColor
         item.titleFont = themeProvider.font
         item.titleColor = themeProvider.textColor
     }
-        
+    
 }

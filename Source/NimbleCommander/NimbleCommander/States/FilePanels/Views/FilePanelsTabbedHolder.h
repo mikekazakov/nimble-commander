@@ -1,10 +1,14 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
 
 namespace nc::utility {
 class ActionsShortcutsManager;
+}
+
+namespace nc {
+class ThemesManager;
 }
 
 @class NCPanelTabBarView;
@@ -23,7 +27,8 @@ class ActionsShortcutsManager;
 
 - (id)initWithFrame:(NSRect)_frame_rect NS_UNAVAILABLE;
 - (id)initWithFrame:(NSRect)_frame_rect
-    actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager;
+    actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager
+              themesManager:(nc::ThemesManager &)_themes_manager;
 
 - (void)addPanel:(PanelView *)_panel;
 - (NSTabViewItem *)tabViewItemForController:(PanelController *)_controller;

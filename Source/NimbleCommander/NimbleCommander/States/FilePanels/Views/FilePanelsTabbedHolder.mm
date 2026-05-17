@@ -1,81 +1,11 @@
 // Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilePanelsTabbedHolder.h"
+#include "PanelTabBarThemeProviderImpl.h"
 #include <Panel/UI/PanelTabBarView.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <NimbleCommander/States/FilePanels/PanelView.h>
 #include <Utility/ActionsShortcutsManager.h>
 #include <Utility/ObjCpp.h>
-
-// TODO: temp here, this is WRONG and needs to be refactored and moved away. DO NOT MERGE THIS INTO MAIN!
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
-#include <NimbleCommander/Core/Theming/Theme.h>
-#include <NimbleCommander/Core/Theming/ThemesManager.h>
-
-@interface NCPanelTabBarThemeProviderImpl : NSObject <NCPanelTabBarThemeProvider>
-@end
-
-@implementation NCPanelTabBarThemeProviderImpl {
-    nc::ThemesManager::ObservationTicket m_ThemeChangesObservation;
-}
-
-- (NSFont *)font
-{
-    return nc::CurrentTheme().FilePanelsTabsFont();
-}
-
-- (NSColor *)textColor
-{
-    return nc::CurrentTheme().FilePanelsTabsTextColor();
-}
-
-- (NSColor *)selectedKeyWndActiveBackgroundColor
-{
-    return nc::CurrentTheme().FilePanelsTabsSelectedKeyWndActiveBackgroundColor();
-}
-
-- (NSColor *)selectedKeyWndInactiveBackgroundColor
-{
-    return nc::CurrentTheme().FilePanelsTabsSelectedKeyWndInactiveBackgroundColor();
-}
-
-- (NSColor *)selectedNotKeyWndBackgroundColor
-{
-    return nc::CurrentTheme().FilePanelsTabsSelectedNotKeyWndBackgroundColor();
-}
-
-- (NSColor *)regularKeyWndBackgroundColor
-{
-    return nc::CurrentTheme().FilePanelsTabsRegularKeyWndRegularBackgroundColor();
-}
-
-- (NSColor *)regularKeyWndHoverBackgroundColor
-{
-    return nc::CurrentTheme().FilePanelsTabsRegularKeyWndHoverBackgroundColor();
-}
-
-- (NSColor *)regularNotKeyWndBackgroundColor
-{
-    return nc::CurrentTheme().FilePanelsTabsRegularNotKeyWndBackgroundColor();
-}
-
-- (NSColor *)separatorColor
-{
-    return nc::CurrentTheme().FilePanelsTabsSeparatorColor();
-}
-
-- (NSColor *)pictogramColor
-{
-    return nc::CurrentTheme().FilePanelsTabsPictogramColor();
-}
-
-- (void)observeChangesWith:(void (^)(void))_callback
-{
-    assert(_callback);
-    m_ThemeChangesObservation = NCAppDelegate.me.themesManager.ObserveChanges(
-        nc::ThemesManager::Notifications::FilePanelsTabs, [_callback] { _callback(); });
-}
-
-@end
 
 @implementation FilePanelsTabbedHolder {
     const nc::utility::ActionsShortcutsManager *m_ActionsShortcutsManager;
@@ -86,6 +16,7 @@
 
 - (id)initWithFrame:(NSRect)frameRect
     actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager
+              themesManager:(nc::ThemesManager &)_themes_manager
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
@@ -119,7 +50,7 @@
         m_TabBar = [[NCPanelTabBarView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_TabBar.translatesAutoresizingMaskIntoConstraints = NO;
         m_TabBar.tabView = m_TabView;
-        m_TabBar.themeProvider = [NCPanelTabBarThemeProviderImpl new];
+        m_TabBar.themeProvider = [[NCPanelTabBarThemeProviderImpl alloc] initWithThemesManager:_themes_manager];
         [m_TabBar addConstraint:[NSLayoutConstraint constraintWithItem:m_TabBar
                                                              attribute:NSLayoutAttributeWidth
                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual
@@ -133,8 +64,7 @@
                                             toItem:nil
                                          attribute:NSLayoutAttributeNotAnAttribute
                                         multiplier:1.0
-                                          constant:24.
-        ];
+                                          constant:24.];
         c.priority = NSLayoutPriorityDefaultLow + 1;
         [m_TabBar addConstraint:c];
         m_TabView.delegate = m_TabBar;

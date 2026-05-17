@@ -189,6 +189,8 @@
 		CF0B78F425739F61003061D0 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
 		CF1257552CA96CAD003906C6 /* PanelListViewTableHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1257542CA96CAD003906C6 /* PanelListViewTableHeaderCell.swift */; };
 		CF12580E2CB5C1B4003906C6 /* PreferencesWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF12580D2CB5C1B4003906C6 /* PreferencesWindow.swift */; };
+		CF35C5B42FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF35C5B22FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.h */; };
+		CF35C5B52FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF35C5B32FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.mm */; };
 		CF36DBE01F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
 		CF36DBE11F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
 		CF36DBE21F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
@@ -935,6 +937,8 @@
 		CF31F66C1DFE6268005A1A40 /* PanelViewLayoutSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewLayoutSupport.mm; path = NimbleCommander/States/FilePanels/PanelViewLayoutSupport.mm; sourceTree = SOURCE_ROOT; };
 		CF31F66E1DFE644B005A1A40 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = NimbleCommander/States/FilePanels/Brief/Layout.h; sourceTree = SOURCE_ROOT; };
 		CF31F66F1DFE644B005A1A40 /* Layout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Layout.cpp; path = NimbleCommander/States/FilePanels/Brief/Layout.cpp; sourceTree = SOURCE_ROOT; };
+		CF35C5B22FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelTabBarThemeProviderImpl.h; path = NimbleCommander/States/FilePanels/Views/PanelTabBarThemeProviderImpl.h; sourceTree = "<group>"; };
+		CF35C5B32FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelTabBarThemeProviderImpl.mm; path = NimbleCommander/States/FilePanels/Views/PanelTabBarThemeProviderImpl.mm; sourceTree = "<group>"; };
 		CF36DBE41F6BCDA0004A018E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/WebDAVConnectionSheetController.xib; sourceTree = "<group>"; };
 		CF371DA92D18472E0034EB3F /* ActionsShortcutsManager_UT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ActionsShortcutsManager_UT.cpp; path = NimbleCommander/Tests/ActionsShortcutsManager_UT.cpp; sourceTree = "<group>"; };
 		CF3989C12B44447D006103C1 /* Base.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Base.xcodeproj; path = ../Base/Base.xcodeproj; sourceTree = "<group>"; };
@@ -1610,6 +1614,8 @@
 				CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */,
 				CFCCFBC61A5D7F0E00313845 /* GoToFolderSheetController.xib */,
 				CFA7E0141EB83B8D001FE66C /* Network */,
+				CF35C5B22FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.h */,
+				CF35C5B32FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.mm */,
 				CFDAC2DC1DFD137F0039A104 /* QuickLookOverlay.h */,
 				CFDAC2DD1DFD137F0039A104 /* QuickLookOverlay.mm */,
 				CF5E9A5E1FCD6ADF005608F5 /* QuickLookPanel.h */,
@@ -2278,6 +2284,7 @@
 				CFD2D28228A7876C003C18F9 /* SystemThemeDetector.h in Headers */,
 				CFA999F4264F17A800F72E93 /* CLI.h in Headers */,
 				CF9B07C626FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.h in Headers */,
+				CF35C5B42FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.h in Headers */,
 				CFF8353F2DC8D1B400CED300 /* PanelGalleryView.h in Headers */,
 				CFF836BA2DCFE98B00CED300 /* PanelGalleryCollectionView.h in Headers */,
 			);
@@ -3050,6 +3057,7 @@
 				CF0A48412BDDA1D600833160 /* NavigateHistory.mm in Sources */,
 				CF764D002587671A00D7ED17 /* FilesDraggingSource.mm in Sources */,
 				CF0A481D2BDDA02C00833160 /* PanelController.mm in Sources */,
+				CF35C5B52FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.mm in Sources */,
 				CF0A48442BDDA27500833160 /* OpenWithExternalEditor.mm in Sources */,
 				CF669D672EF01757001B7FA5 /* PanelGalleryCentralView.mm in Sources */,
 				CF0A48702BDDA41A00833160 /* PanelViewFooterThemeImpl.mm in Sources */,

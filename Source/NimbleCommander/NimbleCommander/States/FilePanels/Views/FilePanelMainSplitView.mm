@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/States/FilePanels/PanelView.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -36,10 +36,12 @@ static constexpr double g_DividerThickness = 1.;
         self.delegate = self;
 
         FilePanelsTabbedHolder *th1 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)
-                                                            actionsShortcutsManager:*m_ActionsShortcutsManager];
+                                                            actionsShortcutsManager:*m_ActionsShortcutsManager
+                                                                      themesManager:NCAppDelegate.me.themesManager];
         [self addSubview:th1];
         FilePanelsTabbedHolder *th2 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)
-                                                            actionsShortcutsManager:*m_ActionsShortcutsManager];
+                                                            actionsShortcutsManager:*m_ActionsShortcutsManager
+                                                                      themesManager:NCAppDelegate.me.themesManager];
         [self addSubview:th2];
 
         __weak FilePanelMainSplitView *weak_self = self;

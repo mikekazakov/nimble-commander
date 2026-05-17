@@ -889,6 +889,7 @@ public class NCPanelTabBarView: NSView,
         rebuildCollectionViewFromTabView()
         collectionView.collectionViewLayout?.invalidateLayout()
         syncSelectionToCollectionView()
+        updateActiveFlags()
     }
     
     /// Fill the collection with the tabs of the underlying TabView
@@ -954,6 +955,7 @@ public class NCPanelTabBarView: NSView,
             delegate.tabView?(tabView, didSelect: tabViewItem)
         }
         syncSelectionToCollectionView()
+        updateActiveFlags()
     }
     
     public func tabViewDidChangeNumberOfTabViewItems(_ tabView: NSTabView) {

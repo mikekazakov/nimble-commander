@@ -171,7 +171,6 @@
 		CF0A48812BDDA54F00833160 /* QuickLookOverlay.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DD1DFD137F0039A104 /* QuickLookOverlay.mm */; };
 		CF0A48822BDDA55600833160 /* QuickLookPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A5F1FCD6ADF005608F5 /* QuickLookPanel.mm */; };
 		CF0A48832BDDA55F00833160 /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; };
-		CF0A48842BDDA56400833160 /* TabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */; };
 		CF0A48852BDDA57100833160 /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
 		CF0A48862BDDA57B00833160 /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2AB1DFD096E0039A104 /* ConnectionsMenuDelegate.mm */; };
 		CF0A48872BDDA58000833160 /* FavoriteComposing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD501E7A31A100E4DC53 /* FavoriteComposing.mm */; };
@@ -1368,8 +1367,6 @@
 		CFEADD53259D01AD009ECA14 /* FocusOverlappedTerminal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FocusOverlappedTerminal.mm; path = NimbleCommander/States/FilePanels/Actions/FocusOverlappedTerminal.mm; sourceTree = "<group>"; };
 		CFF33F842556929300B3C92C /* Panel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Panel.xcodeproj; path = ../Panel/Panel.xcodeproj; sourceTree = "<group>"; };
 		CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Operations.xcodeproj; path = ../Operations/Operations.xcodeproj; sourceTree = "<group>"; };
-		CFF695701E20C6CF0069EEA4 /* TabBarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TabBarStyle.h; path = NimbleCommander/States/FilePanels/Views/TabBarStyle.h; sourceTree = SOURCE_ROOT; };
-		CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TabBarStyle.mm; path = NimbleCommander/States/FilePanels/Views/TabBarStyle.mm; sourceTree = SOURCE_ROOT; };
 		CFF8353C2DC8D1B400CED300 /* PanelGalleryView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelGalleryView.h; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryView.h; sourceTree = "<group>"; };
 		CFF8353D2DC8D1B400CED300 /* PanelGalleryView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelGalleryView.mm; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryView.mm; sourceTree = "<group>"; };
 		CFF835F62DC9504A00CED300 /* PanelGalleryCollectionViewItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelGalleryCollectionViewItem.h; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryCollectionViewItem.h; sourceTree = "<group>"; };
@@ -1637,8 +1634,6 @@
 				CFFED0891CC0B41F0059611B /* SpotlightSearchPopupViewController.h */,
 				CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */,
 				CF8D0CFD1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib */,
-				CFF695701E20C6CF0069EEA4 /* TabBarStyle.h */,
-				CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -3210,7 +3205,6 @@
 				CF0A484D2BDDA2A300833160 /* ShowTabs.mm in Sources */,
 				CF0A48672BDDA3EB00833160 /* PanelListViewRowView.mm in Sources */,
 				CF0A48852BDDA57100833160 /* AskForPasswordWindowController.mm in Sources */,
-				CF0A48842BDDA56400833160 /* TabBarStyle.mm in Sources */,
 				CFCBA8BC2CC3B1B4009ABD2C /* ShowContextMenu.mm in Sources */,
 				CFA999F3264F17A800F72E93 /* CLI.cpp in Sources */,
 				CF0A482E2BDDA0C200833160 /* ChangeAttributes.mm in Sources */,

@@ -88,6 +88,7 @@ private class TabBarItemView: NSView {
     }
     
     public override func prepareForReuse() {
+        super.prepareForReuse()
         if let ta = trackingArea {
             self.removeTrackingArea(ta)
             trackingArea = nil
@@ -124,6 +125,7 @@ private class TabBarItemView: NSView {
     }
     
     override func mouseEntered(with event: NSEvent) {
+        super.mouseEntered(with: event)
         if hovered == true { return }
         hovered = true
         if let callback = hoverredCallback {
@@ -132,6 +134,7 @@ private class TabBarItemView: NSView {
     }
     
     override func mouseExited(with event: NSEvent) {
+        super.mouseExited(with: event)
         if hovered == false { return }
         hovered = false
         if let callback = hoverredCallback {
@@ -411,7 +414,6 @@ private class TabBarItem: NSCollectionViewItem {
     }
     
     public override var draggingImageComponents: [NSDraggingImageComponent] {
-        NSLog("draggingImageComponents")
         let img = buildDraggingImage()
         let comp = NSDraggingImageComponent(key: .icon)
         comp.contents = img
@@ -996,14 +998,12 @@ public class NCPanelTabBarView: NSView,
     }
     
     public func collectionView(_ collectionView: NSCollectionView, canDragItemsAt indexPaths: Set<IndexPath>, with event: NSEvent) -> Bool {
-        NSLog("canDragItemsAt")
         // Only allow dragging if there's more than one tab, since we can't leave the panel empty
         return collectionView.numberOfItems(inSection: 0) > 1
     }
     
     public func collectionView(_ collectionView: NSCollectionView,
                                pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {
-        NSLog("pasteboardWriterForItemAt")
         guard let tabViewItem = dataSource.itemIdentifier(for: indexPath) else { return nil }
         let item = DraggingItem(sourceIndexPath: indexPath, tabViewItem: tabViewItem)
         return item
@@ -1013,7 +1013,6 @@ public class NCPanelTabBarView: NSView,
                                validateDrop draggingInfo: any NSDraggingInfo,
                                proposedIndexPath proposedDropIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>,
                                dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>) -> NSDragOperation {
-        //        NSLog("validateDrop")
         guard let pasteboardItem: DraggingItem = draggingItem(from: draggingInfo.draggingPasteboard) else { return [] }
         let draggedItem: NSTabViewItem = pasteboardItem.tabViewItem
         
@@ -1122,8 +1121,6 @@ public class NCPanelTabBarView: NSView,
                                draggingSession session: NSDraggingSession,
                                willBeginAt screenPoint: NSPoint,
                                forItemsAt indexPaths: Set<IndexPath>) {
-        NSLog("draggingSession willBeginAt")
-        
         // If the drag is ended without a drop - immediately revert the UI to the original state
         session.animatesToStartingPositionsOnCancelOrFail = false
     }
@@ -1132,7 +1129,6 @@ public class NCPanelTabBarView: NSView,
                                draggingSession session: NSDraggingSession,
                                endedAt screenPoint: NSPoint,
                                dragOperation operation: NSDragOperation) {
-        NSLog("endedAt")
         // Successful drops are fully committed in acceptDrop; only cancellations need cleanup.
         guard operation == [] else { return }
         rebuildCollectionViewFromTabView()
@@ -1140,7 +1136,6 @@ public class NCPanelTabBarView: NSView,
     
     fileprivate func collectionView(_ collectionView: NSCollectionView,
                                     draggingExited session: (any NSDraggingInfo)?) {
-        NSLog("draggingExited")
         // Whenever a drag leaves this collection view, we need to remove the temporary placed item from it
         guard let session = session,
               let draggedItem = self.draggingItem(from: session.draggingPasteboard) else { return }

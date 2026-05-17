@@ -42,6 +42,20 @@ private class TabBarItemView: NSView {
         }
     }
     
+    private var hovered: Bool = false
+    
+    private var hoverredCallback: (() -> Void)?
+    
+    public var isHovered : Bool {
+        get { hovered }
+    }
+    
+    public func setHoverredCallback(_ callback: @escaping () -> Void) {
+        self.hoverredCallback = callback
+    }
+    
+    private var trackingArea: NSTrackingArea?
+    
     override func draw(_ dirtyRect: NSRect) {
         backgroundColor.set()
         
@@ -66,6 +80,57 @@ private class TabBarItemView: NSView {
             else {
                 separatorRect.fill(using: .sourceOver)
             }
+        }
+    }
+    
+    override var acceptsFirstResponder: Bool {
+        return false
+    }
+    
+    public override func prepareForReuse() {
+        if let ta = trackingArea {
+            self.removeTrackingArea(ta)
+            trackingArea = nil
+        }
+    }
+    
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        
+        if let ta = trackingArea {
+            if ta.rect == self.bounds {
+                return // only rebuild the tracking area if there's a reason to
+            }
+            self.removeTrackingArea(ta)
+        }
+        let options: NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .inVisibleRect]
+        trackingArea = NSTrackingArea(rect: self.bounds, options: options, owner: self, userInfo: nil)
+        self.addTrackingArea(trackingArea!)
+        
+        if hovered {
+            // If we were hovered before but the change bounds have changed we might not get the mouseExited event.
+            // Circumvent this by manuallty checking if the mouse is still inside the bounds, and if not, trigger mouseExited.
+            let mouseLocation = self.window?.mouseLocationOutsideOfEventStream ?? .zero
+            let localPoint = self.convert(mouseLocation, from: nil)
+            if !self.bounds.contains(localPoint) {
+                mouseExited(with: NSApp.currentEvent ?? NSEvent())
+            }
+        }
+    }
+    
+    override func mouseEntered(with event: NSEvent) {
+        if hovered == true { return }
+        hovered = true
+        if let callback = hoverredCallback {
+            callback()
+        }
+    }
+    
+    override func mouseExited(with event: NSEvent) {
+        if hovered == false { return }
+        hovered = false
+        if let callback = hoverredCallback {
+            callback()
         }
     }
 }
@@ -150,7 +215,6 @@ private class TabBarItem: NSCollectionViewItem {
     }
     
     private var isHovered: Bool = false
-    private var trackingArea: NSTrackingArea?
     
     private let titleField: NSTextField = {
         let tf = NSTextField(labelWithString: "")
@@ -200,7 +264,11 @@ private class TabBarItem: NSCollectionViewItem {
     }()
     
     public override func loadView() {
-        self.view = TabBarItemView()
+        let v = TabBarItemView()
+        v.setHoverredCallback { [weak self] in
+            self?.hoverChanged()
+        }
+        self.view = v
     }
     
     public override func viewDidLoad() {
@@ -221,11 +289,6 @@ private class TabBarItem: NSCollectionViewItem {
         ])
     }
     
-    public override func viewDidLayout() {
-        super.viewDidLayout()
-        updateTrackingArea()
-    }
-    
     public override var isSelected: Bool {
         didSet {
             if isSelected == oldValue { return }
@@ -233,30 +296,21 @@ private class TabBarItem: NSCollectionViewItem {
         }
     }
     
-    private func updateTrackingArea() {
-        if let trackingArea = trackingArea {
-            view.removeTrackingArea(trackingArea)
+    private func hoverChanged() {
+        guard let view = self.view as? TabBarItemView else  { return }
+        if view.isHovered {
+            isHovered = true
+            updateColors()
+            if let tabViewItem = tabViewItem, let tabBarView = tabBarView,
+               tabBarView.tabBarItemShouldShowCloseButton(tabViewItem) {
+                self.closeButton.isHidden = false
+            }
         }
-        let options: NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .inVisibleRect]
-        let ta = NSTrackingArea(rect: view.bounds, options: options, owner: self, userInfo: nil)
-        view.addTrackingArea(ta)
-        trackingArea = ta
-    }
-    
-    public override func mouseEntered(with event: NSEvent) {
-        isHovered = true
-        updateColors()
-        
-        if let tabViewItem = tabViewItem, let tabBarView = tabBarView,
-           tabBarView.tabBarItemShouldShowCloseButton(tabViewItem) {
-            self.closeButton.isHidden = false
+        else {
+            isHovered = false
+            updateColors()
+            self.closeButton.isHidden = true
         }
-    }
-    
-    public override func mouseExited(with event: NSEvent) {
-        isHovered = false
-        updateColors()
-        self.closeButton.isHidden = true
     }
     
     public override func viewWillAppear() {
@@ -351,9 +405,7 @@ private class TabBarItem: NSCollectionViewItem {
         isActive = false
         updateColors()
         self.closeButton.isHidden = true
-        if let trackingArea = trackingArea {
-            view.removeTrackingArea(trackingArea)
-        }
+        (self.view as? TabBarItemView)?.prepareForReuse()
     }
     
     public override var draggingImageComponents: [NSDraggingImageComponent] {
@@ -424,6 +476,10 @@ private class CollectionView: NSCollectionView {
             tabBarView.collectionView(self, draggingExited: sender)
         }
         super.draggingExited(sender)
+    }
+    
+    override var acceptsFirstResponder: Bool {
+        return false
     }
 }
 
@@ -507,6 +563,10 @@ private class CloseTabButton: NSButton {
     override func mouseExited(with event: NSEvent) {
         self.image = CloseTabButton.defaultImage
     }
+    
+    override var acceptsFirstResponder: Bool {
+        return false
+    }
 }
 
 @MainActor
@@ -555,10 +615,13 @@ private class AddTabButton: NSButton {
     
     override func updateTrackingAreas() {
         super.updateTrackingAreas()
+
         if let ta = trackingArea {
+            if ta.rect == self.bounds {
+                return // only rebuild the tracking area if there's a reason to
+            }
             self.removeTrackingArea(ta)
         }
-        
         let options: NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .inVisibleRect]
         trackingArea = NSTrackingArea(rect: self.bounds, options: options, owner: self, userInfo: nil)
         self.addTrackingArea(trackingArea!)
@@ -602,6 +665,10 @@ private class AddTabButton: NSButton {
         (self.cell as? NSButtonCell)?.backgroundColor = backgroundColor
         longPressScheduled = false
         longPressFired = false
+    }
+    
+    override var acceptsFirstResponder: Bool {
+        return false
     }
 }
 

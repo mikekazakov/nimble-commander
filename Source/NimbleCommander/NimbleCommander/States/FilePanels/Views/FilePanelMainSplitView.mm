@@ -371,7 +371,7 @@ static constexpr double g_DividerThickness = 1.;
 
     v1.frame = left;
     v2.frame = right;
-    [self setNeedsLayout:true];
+    [self display];
 }
 
 - (IBAction)OnViewPanelsPositionMoveRight:(id) [[maybe_unused]] sender
@@ -413,7 +413,7 @@ static constexpr double g_DividerThickness = 1.;
 
     v1.frame = left;
     v2.frame = right;
-    [self setNeedsLayout:true];
+    [self display];
 }
 
 - (void)collapseLeftView

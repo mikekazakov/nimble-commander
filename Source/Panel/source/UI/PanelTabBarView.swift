@@ -348,10 +348,7 @@ private class TabBarItem: NSCollectionViewItem {
         view.backgroundColor = determineBackgroundColor()
         view.separatorColor = separatorColor
         
-        titleField.textColor = view.window?.isKeyWindow ?? false ?
-        titleColor :
-        titleColor.withAlphaComponent(0.75)
-        
+        titleField.textColor = titleColor
         closeButton.contentTintColor = pictogramColor
     }
     
@@ -575,7 +572,10 @@ private class AddTabButton: NSButton {
     var trackingArea: NSTrackingArea?
     
     var backgroundColor = NSColor.clear {
-        didSet { needsDisplay = true }
+        didSet {
+            (self.cell as? NSButtonCell)?.backgroundColor = backgroundColor
+            needsDisplay = true
+        }
     }
     
     var hoverColor = NSColor.separatorColor.withAlphaComponent(0.2) {

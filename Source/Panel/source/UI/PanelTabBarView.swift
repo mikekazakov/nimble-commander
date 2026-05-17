@@ -94,6 +94,11 @@ private class TabBarItemView: NSView {
         }
     }
     
+    override func layout() {
+        super.layout()
+        updateTrackingAreas()
+    }
+    
     override func updateTrackingAreas() {
         super.updateTrackingAreas()
         

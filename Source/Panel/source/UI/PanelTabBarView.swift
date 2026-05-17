@@ -439,12 +439,12 @@ private class TabBarItem: NSCollectionViewItem {
         // Background (with shadow)
         shadow.set()
         let bgPath = NSBezierPath(roundedRect: contentRect, xRadius: cornerRadius, yRadius: cornerRadius)
-        NSColor.windowBackgroundColor.withAlphaComponent(0.7).setFill()
+        regularKeyWndBackgroundColor.withAlphaComponent(0.7).setFill()
         bgPath.fill()
         
         // Border (no shadow)
         NSShadow().set()
-        NSColor.separatorColor.withAlphaComponent(0.2).setStroke()
+        separatorColor.withAlphaComponent(0.2).setStroke()
         bgPath.lineWidth = 1
         bgPath.stroke()
         
@@ -455,8 +455,8 @@ private class TabBarItem: NSCollectionViewItem {
         style.lineBreakMode = .byTruncatingMiddle
         style.alignment = .center
         let attrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 12),
-            .foregroundColor: NSColor.labelColor,
+            .font: titleFont,
+            .foregroundColor: titleColor,
             .paragraphStyle: style
         ]
         let attrString = NSAttributedString(string: title, attributes: attrs)

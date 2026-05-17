@@ -142,6 +142,13 @@ private class TabBarItem: NSCollectionViewItem {
         }
     }
     
+    public var isActive: Bool = false {
+        didSet {
+            if isActive == oldValue { return }
+            updateColors()
+        }
+    }
+    
     private var isHovered: Bool = false
     private var trackingArea: NSTrackingArea?
     
@@ -157,9 +164,7 @@ private class TabBarItem: NSCollectionViewItem {
     @objc public weak var tabBarView: NCPanelTabBarView?
     
     private var labelObservation: NSKeyValueObservation?
-    
-    private var firstResponderObservation: NSKeyValueObservation?
-    
+        
     @objc public weak var tabViewItem: NSTabViewItem? {
         didSet {
             // Stop observing old
@@ -268,14 +273,6 @@ private class TabBarItem: NSCollectionViewItem {
             name: NSWindow.didResignKeyNotification,
             object: view.window
         )
-        // currently every single tab bar item observers the changes of firstResponder of its window.
-        // this seem to be suboptimal, since currently only the selected one should care about this.
-        // TODO: something to streamline...
-        firstResponderObservation = view.window?.observe(\.firstResponder) { window, change in
-            Task { @MainActor in
-                self.updateColors()
-            }
-        }
         updateColors()
     }
     
@@ -283,8 +280,6 @@ private class TabBarItem: NSCollectionViewItem {
         super.viewWillDisappear()
         NotificationCenter.default.removeObserver(self, name: NSWindow.didBecomeKeyNotification, object: view.window)
         NotificationCenter.default.removeObserver(self, name: NSWindow.didResignKeyNotification, object: view.window)
-        firstResponderObservation?.invalidate()
-        firstResponderObservation = nil
     }
     
     @objc private func windowBecameKey(_ note: Notification) {
@@ -310,8 +305,7 @@ private class TabBarItem: NSCollectionViewItem {
         let windowActive = view.window?.isKeyWindow ?? false
         if isSelected {
             if windowActive {
-                let isFirstResponder = tabViewItem?.view == view.window?.firstResponder
-                if isFirstResponder {
+                if isActive {
                     return selectedKeyWndActiveBackgroundColor
                 }
                 else {
@@ -351,11 +345,10 @@ private class TabBarItem: NSCollectionViewItem {
         super.prepareForReuse()
         labelObservation?.invalidate()
         labelObservation = nil
-        firstResponderObservation?.invalidate()
-        firstResponderObservation = nil
         tabViewItem = nil
         titleField.stringValue = ""
         isHovered = false
+        isActive = false
         updateColors()
         self.closeButton.isHidden = true
         if let trackingArea = trackingArea {
@@ -678,6 +671,8 @@ public class NCPanelTabBarView: NSView,
     private var addTabPlusSeparator: ColorSeparatorLine!
     private var bottomSeparatorLine: ColorSeparatorLine!
     
+    private var firstResponderObservation: NSKeyValueObservation?
+    
     public override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         setupViews()
@@ -776,6 +771,45 @@ public class NCPanelTabBarView: NSView,
             addTabPlusButton.bottomAnchor.constraint(equalTo: bottomSeparatorLine.topAnchor),
             addTabPlusButton.widthAnchor.constraint(equalTo: addTabPlusButton.heightAnchor)
         ])
+    }
+    
+    public override func viewDidMoveToWindow() {
+        if let window = self.window {
+            firstResponderObservation = window.observe(\.firstResponder) { window, change in
+                MainActor.assumeIsolated {
+                    self.updateActiveFlags()
+                }
+            }
+        }
+        else {
+            firstResponderObservation?.invalidate()
+            firstResponderObservation = nil
+        }
+    }
+    
+    // Returns either the selected tab if it's the first responder or it's ancestor, or nil otherwise
+    private func getActiveTabItem() -> NSTabViewItem? {
+        let firstResponder = self.window?.firstResponder
+        if let tabView = tabView, let selected = tabView.selectedTabViewItem {
+            if let view = selected.view {
+                if view == firstResponder {
+                    return selected
+                }
+                if let firstResponderView = firstResponder as? NSView, firstResponderView.isDescendant(of: view) {
+                    return selected
+                }
+            }
+        }
+        return nil
+    }
+    
+    private func updateActiveFlags() {
+        let activeTab = getActiveTabItem()
+        for item in collectionView.visibleItems() {
+            if let tabBarItem = item as? TabBarItem {
+                tabBarItem.isActive = tabBarItem.tabViewItem == activeTab
+            }
+        }
     }
     
     /// Reload when tabView changes

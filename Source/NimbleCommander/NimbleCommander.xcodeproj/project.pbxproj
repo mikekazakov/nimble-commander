@@ -747,20 +747,6 @@
 			remoteGlobalIDString = CF5C1D1C255ED68200ADE703;
 			remoteInfo = ViewerResources;
 		};
-		CFC706662B49856B0045D2C9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CFACF9BA1E24AAB800FD6AB6;
-			remoteInfo = MMTabBarViewLib;
-		};
-		CFC706682B49858F0045D2C9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CFACF9B91E24AAB800FD6AB6;
-			remoteInfo = MMTabBarViewLib;
-		};
 		CFC7067E2B49D1050045D2C9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF3989C12B44447D006103C1 /* Base.xcodeproj */;
@@ -1182,7 +1168,6 @@
 		CFAA4D1F2BC6A330003073A2 /* PanelListViewTagsView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewTagsView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewTagsView.mm; sourceTree = "<group>"; };
 		CFAB6CC92587C38700397DB5 /* FollowSymlink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FollowSymlink.h; path = NimbleCommander/States/FilePanels/Actions/FollowSymlink.h; sourceTree = "<group>"; };
 		CFAB6CE22587C38700397DB5 /* FollowSymlink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FollowSymlink.mm; path = NimbleCommander/States/FilePanels/Actions/FollowSymlink.mm; sourceTree = "<group>"; };
-		CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMTabBarViewLib.xcodeproj; path = ../../3rd_Party/MMTabBarView/MMTabBarViewLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CFB2AB4721560CDB0009EB81 /* PanelViewFooterTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewFooterTheme.h; path = NimbleCommander/States/FilePanels/PanelViewFooterTheme.h; sourceTree = "<group>"; };
 		CFB2AB5B21560CDB0009EB81 /* PanelViewFooterTheme.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewFooterTheme.mm; path = NimbleCommander/States/FilePanels/PanelViewFooterTheme.mm; sourceTree = "<group>"; };
 		CFB2AB6021560EA90009EB81 /* PanelViewFooterThemeImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewFooterThemeImpl.mm; path = NimbleCommander/States/FilePanels/PanelViewFooterThemeImpl.mm; sourceTree = "<group>"; };
@@ -2244,14 +2229,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CFC706632B49856B0045D2C9 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CFC706672B49856B0045D2C9 /* libMMTabBarViewLib.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		CFC7067A2B49D1050045D2C9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2264,7 +2241,6 @@
 		CFDA1110177E8A15009E29F7 /* 3rd_party */ = {
 			isa = PBXGroup;
 			children = (
-				CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */,
 			);
 			name = 3rd_party;
 			path = ../../3rd_Party;
@@ -2322,7 +2298,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CFC706692B49858F0045D2C9 /* PBXTargetDependency */,
 				CFC706452B497E880045D2C9 /* PBXTargetDependency */,
 				CFC706432B497E850045D2C9 /* PBXTargetDependency */,
 				CFC706412B497E810045D2C9 /* PBXTargetDependency */,
@@ -2495,10 +2470,6 @@
 				{
 					ProductGroup = CFC705B82B497D010045D2C9 /* Products */;
 					ProjectRef = CFD79AD821FE29420043A26D /* CUI.xcodeproj */;
-				},
-				{
-					ProductGroup = CFC706632B49856B0045D2C9 /* Products */;
-					ProjectRef = CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */;
 				},
 				{
 					ProductGroup = CFC705C02B497D090045D2C9 /* Products */;
@@ -2753,13 +2724,6 @@
 			fileType = wrapper.cfbundle;
 			path = ViewerResources.bundle;
 			remoteRef = CFC7060F2B497D680045D2C9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CFC706672B49856B0045D2C9 /* libMMTabBarViewLib.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libMMTabBarViewLib.a;
-			remoteRef = CFC706662B49856B0045D2C9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CFC7067F2B49D1050045D2C9 /* libBase.a */ = {
@@ -3362,11 +3326,6 @@
 			isa = PBXTargetDependency;
 			name = ViewerResources;
 			targetProxy = CFC706442B497E880045D2C9 /* PBXContainerItemProxy */;
-		};
-		CFC706692B49858F0045D2C9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MMTabBarViewLib;
-			targetProxy = CFC706682B49858F0045D2C9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

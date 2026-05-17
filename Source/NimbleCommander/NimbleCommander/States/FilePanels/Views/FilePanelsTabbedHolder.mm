@@ -117,20 +117,9 @@
         [self addSubview:m_TabView];
 
         m_TabBar = [[NCPanelTabBarView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
-        //        m_TabBar = [[MMTabBarView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_TabBar.translatesAutoresizingMaskIntoConstraints = NO;
         m_TabBar.tabView = m_TabView;
         m_TabBar.themeProvider = [NCPanelTabBarThemeProviderImpl new];
-        //        m_TabBar.showAddTabButton = true;
-        //        m_TabBar.allowAddTabButtonMenu = true;
-        //        m_TabBar.canCloseOnlyTab = false;
-        //        m_TabBar.disableTabClose = false;
-        //        m_TabBar.onlyShowCloseOnHover = true;
-        //        m_TabBar.useOverflowMenu = false;
-        //        m_TabBar.buttonMinWidth = 100;
-        //        m_TabBar.buttonMaxWidth = 2000;
-        //        m_TabBar.buttonOptimumWidth = 2000;
-        //        [m_TabBar setStyleNamed:@"NC"];
         [m_TabBar addConstraint:[NSLayoutConstraint constraintWithItem:m_TabBar
                                                              attribute:NSLayoutAttributeWidth
                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual
@@ -145,7 +134,6 @@
                                          attribute:NSLayoutAttributeNotAnAttribute
                                         multiplier:1.0
                                           constant:24.
-            //                 m_TabBar.heightOfTabBarButtons
         ];
         c.priority = NSLayoutPriorityDefaultLow + 1;
         [m_TabBar addConstraint:c];

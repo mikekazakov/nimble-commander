@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/MIMResponder.h>
@@ -73,6 +73,7 @@ using PanelActionsMap = ankerl::unordered_dense::map<SEL, std::unique_ptr<const 
 - (IBAction)OnGoToProcessesList:(id)sender;
 - (IBAction)OnGoToFolder:(id)sender;
 - (IBAction)OnCreateDirectoryCommand:(id)sender;
+- (IBAction)OnCreateDirectoryInOppositePanel:(id)sender;
 - (IBAction)OnQuickNewFolder:(id)sender;
 - (IBAction)OnQuickNewFolderWithSelection:(id)sender;
 - (IBAction)OnQuickNewFile:(id)sender;

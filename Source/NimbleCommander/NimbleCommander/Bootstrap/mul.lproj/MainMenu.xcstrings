@@ -3127,6 +3127,24 @@
         }
       }
     },
+    "vWu-jf-pDu.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Create Directory In Opposite Panel...\"; ObjectID = \"vWu-jf-pDu\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create Directory In Opposite Panel..."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Создать папку в противоположной панели…"
+          }
+        }
+      }
+    },
     "Wal-pf-St1.title" : {
       "comment" : "Class = \"NSMenu\"; title = \"Tools\"; ObjectID = \"Wal-pf-St1\";",
       "extractionState" : "extracted_with_value",

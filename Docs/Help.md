@@ -543,6 +543,7 @@ There are two ways to create a folder in Nimble Commander:
     This command opens the Create Directory dialog, where you can specify the name of the new folder before making any changes to the filesystem.
     This method also allows you to create missing folders in a nested path.
     For example, entering `New 1/New 2/New 3` will create three nested folders if they do not already exist on the filesystem.
+    There is also an alternative form that performs the same action but creates the folder in the opposite panel: use the `Shift + F7` hotkey or the menu item `Command > Create Directory In Opposite Panel`.
   - Using the `Shift + Cmd + N` hotkey or the menu item `File > New Folder`.
     This command creates a new empty folder with a temporary name and opens an in-place rename editor, allowing you to change the name immediately.
 
@@ -876,7 +877,8 @@ Some actions do not have default hotkeys but can still be accessed through the a
 | &nbsp; Move To...                            | F6                        |
 | &nbsp; Move As...                            | Shift + F6                |
 | &nbsp; Rename In Place                       | Ctrl + F6                 |
-| &nbsp; Create Directory                      | F7                        |
+| &nbsp; Create Directory...                   | F7                        |
+| &nbsp; Create Directory In Opposite Panel... | Shift + F7                |
 | &nbsp; Move To Trash                         | Cmd + Backward Delete     |
 | &nbsp; Delete...                             | F8                        |
 | &nbsp; Delete Permanently...                 | Shift + F8                |

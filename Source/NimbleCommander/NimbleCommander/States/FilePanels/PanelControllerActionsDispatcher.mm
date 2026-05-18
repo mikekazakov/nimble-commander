@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerActionsDispatcher.h"
 #include <Utility/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/Alert.h>
@@ -388,6 +388,10 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
     PERFORM;
 }
 - (IBAction)OnCreateDirectoryCommand:(id)sender
+{
+    PERFORM;
+}
+- (IBAction)OnCreateDirectoryInOppositePanel:(id)sender
 {
     PERFORM;
 }

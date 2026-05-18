@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "DefaultAction.h"
@@ -18,6 +18,11 @@ struct MakeNewFolder final : PanelAction {
 };
 
 struct MakeNewNamedFolder final : PanelAction {
+    [[nodiscard]] bool Predicate(PanelController *_target) const override;
+    void Perform(PanelController *_target, id _sender) const override;
+};
+
+struct MakeNewNamedFolderInOppositePanel final : PanelAction {
     [[nodiscard]] bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
 };

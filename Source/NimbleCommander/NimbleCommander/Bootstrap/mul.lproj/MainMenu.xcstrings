@@ -3136,6 +3136,12 @@
             "state" : "new",
             "value" : "Create Directory In Opposite Panel..."
           }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Создать папку в противоположной панели…"
+          }
         }
       }
     },

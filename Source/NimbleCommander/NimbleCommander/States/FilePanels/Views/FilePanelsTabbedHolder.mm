@@ -1,46 +1,23 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
-#import <MMTabBarView/MMTabBarView.h>
-#import <MMTabBarView/MMTabBarItem.h>
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilePanelsTabbedHolder.h"
+#include "PanelTabBarThemeProviderImpl.h"
+#include <Panel/UI/PanelTabBarView.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <NimbleCommander/States/FilePanels/PanelView.h>
 #include <Utility/ActionsShortcutsManager.h>
-#include "TabBarStyle.h"
 #include <Utility/ObjCpp.h>
-
-@interface FilePanelsTabbedBarItem : NSObject <MMTabBarItem>
-
-@property(atomic, assign) BOOL hasCloseButton;
-
-@end
-
-@implementation FilePanelsTabbedBarItem
-@synthesize hasCloseButton;
-
-- (id)init
-{
-    self = [super init];
-    if( self ) {
-        self.hasCloseButton = true;
-    }
-    return self;
-}
-
-@end
 
 @implementation FilePanelsTabbedHolder {
     const nc::utility::ActionsShortcutsManager *m_ActionsShortcutsManager;
-    MMTabBarView *m_TabBar;
+    NCPanelTabBarView *m_TabBar;
     NSTabView *m_TabView;
     bool m_TabBarShown;
 }
 
 - (id)initWithFrame:(NSRect)frameRect
     actionsShortcutsManager:(const nc::utility::ActionsShortcutsManager &)_actions_shortcuts_manager
+              themesManager:(nc::ThemesManager &)_themes_manager
 {
-    static std::once_flag once;
-    std::call_once(once, [] { [MMTabBarView registerTabStyleClass:TabBarStyle.class]; });
-
     self = [super initWithFrame:frameRect];
     if( self ) {
         m_ActionsShortcutsManager = &_actions_shortcuts_manager;
@@ -70,19 +47,10 @@
         [m_TabView addConstraint:c];
         [self addSubview:m_TabView];
 
-        m_TabBar = [[MMTabBarView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+        m_TabBar = [[NCPanelTabBarView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_TabBar.translatesAutoresizingMaskIntoConstraints = NO;
         m_TabBar.tabView = m_TabView;
-        m_TabBar.showAddTabButton = true;
-        m_TabBar.allowAddTabButtonMenu = true;
-        m_TabBar.canCloseOnlyTab = false;
-        m_TabBar.disableTabClose = false;
-        m_TabBar.onlyShowCloseOnHover = true;
-        m_TabBar.useOverflowMenu = false;
-        m_TabBar.buttonMinWidth = 100;
-        m_TabBar.buttonMaxWidth = 2000;
-        m_TabBar.buttonOptimumWidth = 2000;
-        [m_TabBar setStyleNamed:@"NC"];
+        m_TabBar.themeProvider = [[NCPanelTabBarThemeProviderImpl alloc] initWithThemesManager:_themes_manager];
         [m_TabBar addConstraint:[NSLayoutConstraint constraintWithItem:m_TabBar
                                                              attribute:NSLayoutAttributeWidth
                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual
@@ -96,7 +64,7 @@
                                             toItem:nil
                                          attribute:NSLayoutAttributeNotAnAttribute
                                         multiplier:1.0
-                                          constant:m_TabBar.heightOfTabBarButtons];
+                                          constant:24.];
         c.priority = NSLayoutPriorityDefaultLow + 1;
         [m_TabBar addConstraint:c];
         m_TabView.delegate = m_TabBar;
@@ -144,7 +112,7 @@
                                                                  views:views]];
 }
 
-- (MMTabBarView *)tabBar
+- (NCPanelTabBarView *)tabBar
 {
     return m_TabBar;
 }
@@ -156,10 +124,7 @@
 
 - (void)addPanel:(PanelView *)_panel
 {
-    FilePanelsTabbedBarItem *bar_item = [FilePanelsTabbedBarItem new];
-    bar_item.hasCloseButton = true;
-
-    NSTabViewItem *item = [[NSTabViewItem alloc] initWithIdentifier:bar_item];
+    NSTabViewItem *item = [[NSTabViewItem alloc] initWithIdentifier:nil];
     item.view = _panel;
     item.initialFirstResponder = _panel;
     [m_TabView addTabViewItem:item];

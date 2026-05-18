@@ -15,7 +15,6 @@
 - (void)closeTabForController:(PanelController *)_controller;
 - (void)closeOtherTabsForController:(PanelController *)_controller;
 - (void)updateTabBarsVisibility;
-- (void)updateTabBarButtons;
 - (void)respawnRecentlyClosedCallout:(id)sender;
 
 /**

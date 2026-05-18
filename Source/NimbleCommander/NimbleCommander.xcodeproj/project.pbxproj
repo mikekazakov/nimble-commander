@@ -171,7 +171,6 @@
 		CF0A48812BDDA54F00833160 /* QuickLookOverlay.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DD1DFD137F0039A104 /* QuickLookOverlay.mm */; };
 		CF0A48822BDDA55600833160 /* QuickLookPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A5F1FCD6ADF005608F5 /* QuickLookPanel.mm */; };
 		CF0A48832BDDA55F00833160 /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; };
-		CF0A48842BDDA56400833160 /* TabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */; };
 		CF0A48852BDDA57100833160 /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
 		CF0A48862BDDA57B00833160 /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2AB1DFD096E0039A104 /* ConnectionsMenuDelegate.mm */; };
 		CF0A48872BDDA58000833160 /* FavoriteComposing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD501E7A31A100E4DC53 /* FavoriteComposing.mm */; };
@@ -190,6 +189,8 @@
 		CF0B78F425739F61003061D0 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
 		CF1257552CA96CAD003906C6 /* PanelListViewTableHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1257542CA96CAD003906C6 /* PanelListViewTableHeaderCell.swift */; };
 		CF12580E2CB5C1B4003906C6 /* PreferencesWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF12580D2CB5C1B4003906C6 /* PreferencesWindow.swift */; };
+		CF35C5B42FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF35C5B22FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.h */; };
+		CF35C5B52FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF35C5B32FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.mm */; };
 		CF36DBE01F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
 		CF36DBE11F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
 		CF36DBE21F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
@@ -748,20 +749,6 @@
 			remoteGlobalIDString = CF5C1D1C255ED68200ADE703;
 			remoteInfo = ViewerResources;
 		};
-		CFC706662B49856B0045D2C9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CFACF9BA1E24AAB800FD6AB6;
-			remoteInfo = MMTabBarViewLib;
-		};
-		CFC706682B49858F0045D2C9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CFACF9B91E24AAB800FD6AB6;
-			remoteInfo = MMTabBarViewLib;
-		};
 		CFC7067E2B49D1050045D2C9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF3989C12B44447D006103C1 /* Base.xcodeproj */;
@@ -950,6 +937,8 @@
 		CF31F66C1DFE6268005A1A40 /* PanelViewLayoutSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewLayoutSupport.mm; path = NimbleCommander/States/FilePanels/PanelViewLayoutSupport.mm; sourceTree = SOURCE_ROOT; };
 		CF31F66E1DFE644B005A1A40 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = NimbleCommander/States/FilePanels/Brief/Layout.h; sourceTree = SOURCE_ROOT; };
 		CF31F66F1DFE644B005A1A40 /* Layout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Layout.cpp; path = NimbleCommander/States/FilePanels/Brief/Layout.cpp; sourceTree = SOURCE_ROOT; };
+		CF35C5B22FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelTabBarThemeProviderImpl.h; path = NimbleCommander/States/FilePanels/Views/PanelTabBarThemeProviderImpl.h; sourceTree = "<group>"; };
+		CF35C5B32FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelTabBarThemeProviderImpl.mm; path = NimbleCommander/States/FilePanels/Views/PanelTabBarThemeProviderImpl.mm; sourceTree = "<group>"; };
 		CF36DBE41F6BCDA0004A018E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/WebDAVConnectionSheetController.xib; sourceTree = "<group>"; };
 		CF371DA92D18472E0034EB3F /* ActionsShortcutsManager_UT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ActionsShortcutsManager_UT.cpp; path = NimbleCommander/Tests/ActionsShortcutsManager_UT.cpp; sourceTree = "<group>"; };
 		CF3989C12B44447D006103C1 /* Base.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Base.xcodeproj; path = ../Base/Base.xcodeproj; sourceTree = "<group>"; };
@@ -1183,7 +1172,6 @@
 		CFAA4D1F2BC6A330003073A2 /* PanelListViewTagsView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewTagsView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewTagsView.mm; sourceTree = "<group>"; };
 		CFAB6CC92587C38700397DB5 /* FollowSymlink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FollowSymlink.h; path = NimbleCommander/States/FilePanels/Actions/FollowSymlink.h; sourceTree = "<group>"; };
 		CFAB6CE22587C38700397DB5 /* FollowSymlink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FollowSymlink.mm; path = NimbleCommander/States/FilePanels/Actions/FollowSymlink.mm; sourceTree = "<group>"; };
-		CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMTabBarViewLib.xcodeproj; path = ../../3rd_Party/MMTabBarView/MMTabBarViewLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CFB2AB4721560CDB0009EB81 /* PanelViewFooterTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewFooterTheme.h; path = NimbleCommander/States/FilePanels/PanelViewFooterTheme.h; sourceTree = "<group>"; };
 		CFB2AB5B21560CDB0009EB81 /* PanelViewFooterTheme.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewFooterTheme.mm; path = NimbleCommander/States/FilePanels/PanelViewFooterTheme.mm; sourceTree = "<group>"; };
 		CFB2AB6021560EA90009EB81 /* PanelViewFooterThemeImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewFooterThemeImpl.mm; path = NimbleCommander/States/FilePanels/PanelViewFooterThemeImpl.mm; sourceTree = "<group>"; };
@@ -1368,8 +1356,6 @@
 		CFEADD53259D01AD009ECA14 /* FocusOverlappedTerminal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FocusOverlappedTerminal.mm; path = NimbleCommander/States/FilePanels/Actions/FocusOverlappedTerminal.mm; sourceTree = "<group>"; };
 		CFF33F842556929300B3C92C /* Panel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Panel.xcodeproj; path = ../Panel/Panel.xcodeproj; sourceTree = "<group>"; };
 		CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Operations.xcodeproj; path = ../Operations/Operations.xcodeproj; sourceTree = "<group>"; };
-		CFF695701E20C6CF0069EEA4 /* TabBarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TabBarStyle.h; path = NimbleCommander/States/FilePanels/Views/TabBarStyle.h; sourceTree = SOURCE_ROOT; };
-		CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TabBarStyle.mm; path = NimbleCommander/States/FilePanels/Views/TabBarStyle.mm; sourceTree = SOURCE_ROOT; };
 		CFF8353C2DC8D1B400CED300 /* PanelGalleryView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelGalleryView.h; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryView.h; sourceTree = "<group>"; };
 		CFF8353D2DC8D1B400CED300 /* PanelGalleryView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelGalleryView.mm; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryView.mm; sourceTree = "<group>"; };
 		CFF835F62DC9504A00CED300 /* PanelGalleryCollectionViewItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelGalleryCollectionViewItem.h; path = NimbleCommander/States/FilePanels/Gallery/PanelGalleryCollectionViewItem.h; sourceTree = "<group>"; };
@@ -1628,6 +1614,8 @@
 				CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */,
 				CFCCFBC61A5D7F0E00313845 /* GoToFolderSheetController.xib */,
 				CFA7E0141EB83B8D001FE66C /* Network */,
+				CF35C5B22FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.h */,
+				CF35C5B32FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.mm */,
 				CFDAC2DC1DFD137F0039A104 /* QuickLookOverlay.h */,
 				CFDAC2DD1DFD137F0039A104 /* QuickLookOverlay.mm */,
 				CF5E9A5E1FCD6ADF005608F5 /* QuickLookPanel.h */,
@@ -1637,8 +1625,6 @@
 				CFFED0891CC0B41F0059611B /* SpotlightSearchPopupViewController.h */,
 				CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */,
 				CF8D0CFD1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib */,
-				CFF695701E20C6CF0069EEA4 /* TabBarStyle.h */,
-				CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -2249,14 +2235,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CFC706632B49856B0045D2C9 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CFC706672B49856B0045D2C9 /* libMMTabBarViewLib.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		CFC7067A2B49D1050045D2C9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2269,7 +2247,6 @@
 		CFDA1110177E8A15009E29F7 /* 3rd_party */ = {
 			isa = PBXGroup;
 			children = (
-				CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */,
 			);
 			name = 3rd_party;
 			path = ../../3rd_Party;
@@ -2307,6 +2284,7 @@
 				CFD2D28228A7876C003C18F9 /* SystemThemeDetector.h in Headers */,
 				CFA999F4264F17A800F72E93 /* CLI.h in Headers */,
 				CF9B07C626FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.h in Headers */,
+				CF35C5B42FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.h in Headers */,
 				CFF8353F2DC8D1B400CED300 /* PanelGalleryView.h in Headers */,
 				CFF836BA2DCFE98B00CED300 /* PanelGalleryCollectionView.h in Headers */,
 			);
@@ -2327,7 +2305,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CFC706692B49858F0045D2C9 /* PBXTargetDependency */,
 				CFC706452B497E880045D2C9 /* PBXTargetDependency */,
 				CFC706432B497E850045D2C9 /* PBXTargetDependency */,
 				CFC706412B497E810045D2C9 /* PBXTargetDependency */,
@@ -2500,10 +2477,6 @@
 				{
 					ProductGroup = CFC705B82B497D010045D2C9 /* Products */;
 					ProjectRef = CFD79AD821FE29420043A26D /* CUI.xcodeproj */;
-				},
-				{
-					ProductGroup = CFC706632B49856B0045D2C9 /* Products */;
-					ProjectRef = CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */;
 				},
 				{
 					ProductGroup = CFC705C02B497D090045D2C9 /* Products */;
@@ -2758,13 +2731,6 @@
 			fileType = wrapper.cfbundle;
 			path = ViewerResources.bundle;
 			remoteRef = CFC7060F2B497D680045D2C9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CFC706672B49856B0045D2C9 /* libMMTabBarViewLib.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libMMTabBarViewLib.a;
-			remoteRef = CFC706662B49856B0045D2C9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CFC7067F2B49D1050045D2C9 /* libBase.a */ = {
@@ -3091,6 +3057,7 @@
 				CF0A48412BDDA1D600833160 /* NavigateHistory.mm in Sources */,
 				CF764D002587671A00D7ED17 /* FilesDraggingSource.mm in Sources */,
 				CF0A481D2BDDA02C00833160 /* PanelController.mm in Sources */,
+				CF35C5B52FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.mm in Sources */,
 				CF0A48442BDDA27500833160 /* OpenWithExternalEditor.mm in Sources */,
 				CF669D672EF01757001B7FA5 /* PanelGalleryCentralView.mm in Sources */,
 				CF0A48702BDDA41A00833160 /* PanelViewFooterThemeImpl.mm in Sources */,
@@ -3210,7 +3177,6 @@
 				CF0A484D2BDDA2A300833160 /* ShowTabs.mm in Sources */,
 				CF0A48672BDDA3EB00833160 /* PanelListViewRowView.mm in Sources */,
 				CF0A48852BDDA57100833160 /* AskForPasswordWindowController.mm in Sources */,
-				CF0A48842BDDA56400833160 /* TabBarStyle.mm in Sources */,
 				CFCBA8BC2CC3B1B4009ABD2C /* ShowContextMenu.mm in Sources */,
 				CFA999F3264F17A800F72E93 /* CLI.cpp in Sources */,
 				CF0A482E2BDDA0C200833160 /* ChangeAttributes.mm in Sources */,
@@ -3368,11 +3334,6 @@
 			isa = PBXTargetDependency;
 			name = ViewerResources;
 			targetProxy = CFC706442B497E880045D2C9 /* PBXContainerItemProxy */;
-		};
-		CFC706692B49858F0045D2C9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MMTabBarViewLib;
-			targetProxy = CFC706682B49858F0045D2C9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

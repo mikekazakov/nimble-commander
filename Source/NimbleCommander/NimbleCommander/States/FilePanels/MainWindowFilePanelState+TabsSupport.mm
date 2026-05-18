@@ -1,5 +1,4 @@
-// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
-#import <MMTabBarView/MMAttachedTabBarButton.h>
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState+TabsSupport.h"
 #include <Base/CommonPaths.h>
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
@@ -26,17 +25,6 @@ using namespace nc::panel;
 
 @implementation MainWindowFilePanelState (TabsSupport)
 
-- (BOOL)tabView:(NSTabView *) [[maybe_unused]] tabView
-    shouldSelectTabViewItem:(NSTabViewItem *) [[maybe_unused]] tabViewItem
-{
-    return true;
-}
-
-- (void)tabView:(NSTabView *) [[maybe_unused]] tabView
-    willSelectTabViewItem:(NSTabViewItem *) [[maybe_unused]] tabViewItem
-{
-}
-
 - (void)tabView:(NSTabView *) [[maybe_unused]] tabView didSelectTabViewItem:(NSTabViewItem *)tabViewItem
 {
     if( const auto panel_view = nc::objc_cast<PanelView>(tabViewItem.view) ) {
@@ -57,32 +45,9 @@ using namespace nc::panel;
     }
 }
 
-- (BOOL)tabView:(NSTabView *) [[maybe_unused]] aTabView
-    shouldAllowTabViewItem:(NSTabViewItem *) [[maybe_unused]] tabViewItem
-         toLeaveTabBarView:(MMTabBarView *) [[maybe_unused]] tabBarView
-{
-    return aTabView.numberOfTabViewItems > 1;
-}
-
-- (NSDragOperation)tabView:(NSTabView *) [[maybe_unused]] aTabView
-              validateDrop:(id<NSDraggingInfo>) [[maybe_unused]] sender
-              proposedItem:(NSTabViewItem *)tabViewItem
-             proposedIndex:(NSUInteger) [[maybe_unused]] proposedIndex
-              inTabBarView:(MMTabBarView *) [[maybe_unused]] tabBarView
-{
-    const auto dragged_panel_view = nc::objc_cast<PanelView>(tabViewItem.view);
-    if( !dragged_panel_view )
-        return NSDragOperationNone;
-
-    if( dragged_panel_view.window != self.window )
-        return NSDragOperationNone;
-
-    return NSDragOperationGeneric;
-}
-
 - (void)tabView:(NSTabView *) [[maybe_unused]] aTabView
     didDropTabViewItem:(NSTabViewItem *)tabViewItem
-          inTabBarView:(MMTabBarView *)tabBarView
+          inTabBarView:(NCPanelTabBarView *)tabBarView
 {
     const auto dropped_panel_view = nc::objc_cast<PanelView>(tabViewItem.view);
     if( !dropped_panel_view )
@@ -204,9 +169,9 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
         [popover addItem:item];
     }
 
-    const auto add_rc = holder.tabBar.addTabButtonRect;
+    NSButton *const add_button = holder.tabBar.addTabButton;
     m_CommandPopover = popover;
-    [popover showRelativeToRect:add_rc ofView:holder.tabBar alignment:NCCommandPopoverAlignment::Right];
+    [popover showRelativeToRect:add_button.bounds ofView:add_button alignment:NCCommandPopoverAlignment::Right];
 }
 
 - (void)respawnRecentlyClosedCallout:(id)sender
@@ -294,13 +259,6 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     }
 }
 
-- (BOOL)tabView:(NSTabView *)aTabView
-    shouldDragTabViewItem:(NSTabViewItem *) [[maybe_unused]] tabViewItem
-             inTabBarView:(MMTabBarView *) [[maybe_unused]] tabBarView
-{
-    return aTabView.numberOfTabViewItems > 1;
-}
-
 - (NSArray *)allowedDraggedTypesForTabView:(NSTabView *) [[maybe_unused]] aTabView
 {
     return @[FilesDraggingSource.privateDragUTI];
@@ -325,7 +283,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
 - (void)closeTabForController:(PanelController *)_controller
 {
     NSTabViewItem *it;
-    MMTabBarView *bar;
+    NCPanelTabBarView *bar;
 
     if( [self isLeftController:_controller] ) {
         it = [m_SplitView.leftTabbedHolder tabViewItemForController:_controller];
@@ -337,16 +295,13 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     }
 
     if( it && bar )
-        if( const auto button = [bar attachedButtonForTabViewItem:it] )
-            dispatch_to_main_queue([=] {
-                if( const auto close_button = button.closeButton )
-                    [close_button sendAction:close_button.action to:close_button.target];
-            });
+        if( NSButton *const button = [bar closeButtonOfTabViewItem:it] )
+            dispatch_to_main_queue([=] { [button sendAction:button.action to:button.target]; });
 }
 
 - (void)closeOtherTabsForController:(PanelController *)_controller
 {
-    MMTabBarView *bar;
+    NCPanelTabBarView *bar;
     if( [self isLeftController:_controller] )
         bar = m_SplitView.leftTabbedHolder.tabBar;
     else if( [self isRightController:_controller] )
@@ -366,9 +321,8 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     dispatch_to_background([=] {
         for( auto it : items )
             dispatch_to_main_queue([=] {
-                if( const auto button = [bar attachedButtonForTabViewItem:it] )
-                    if( const auto close_button = button.closeButton )
-                        [close_button sendAction:close_button.action to:close_button.target];
+                if( NSButton *const button = [bar closeButtonOfTabViewItem:it] )
+                    [button sendAction:button.action to:button.target];
             });
     });
 }
@@ -387,7 +341,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     return tabs;
 }
 
-- (MMTabBarView *)activeTabBarView
+- (NCPanelTabBarView *)activeTabBarView
 {
     PanelController *cur = self.activePanelController;
     if( !cur )
@@ -436,16 +390,6 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     m_SplitView.rightTabbedHolder.tabBarShown = should_be_shown;
 }
 
-- (void)updateTabBarButtons
-{
-    const auto handler =
-        ^(MMAttachedTabBarButton *aButton, [[maybe_unused]] NSUInteger idx, [[maybe_unused]] BOOL *stop) {
-          [aButton setNeedsDisplay:true];
-        };
-    [m_SplitView.leftTabbedHolder.tabBar enumerateAttachedButtonsUsingBlock:handler];
-    [m_SplitView.rightTabbedHolder.tabBar enumerateAttachedButtonsUsingBlock:handler];
-}
-
 - (FilePanelsTabbedHolder *)leftTabbedHolder
 {
     return m_SplitView.leftTabbedHolder;
@@ -454,50 +398,6 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
 - (FilePanelsTabbedHolder *)rightTabbedHolder
 {
     return m_SplitView.rightTabbedHolder;
-}
-
-static NSImage *ResizeImage(NSImage *_img, NSSize _new_size)
-{
-    if( !_img.valid )
-        return nil;
-
-    NSImage *const small_img = [[NSImage alloc] initWithSize:_new_size];
-    [small_img lockFocus];
-    _img.size = _new_size;
-    NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;
-    [_img drawAtPoint:NSZeroPoint
-             fromRect:CGRectMake(0, 0, _new_size.width, _new_size.height)
-            operation:NSCompositingOperationCopy
-             fraction:1.0];
-    [small_img unlockFocus];
-
-    return small_img;
-}
-
-- (NSImage *)tabView:(NSTabView *) [[maybe_unused]] aTabView
-    imageForTabViewItem:(NSTabViewItem *)tabViewItem
-                 offset:(NSSize *) [[maybe_unused]] offset
-              styleMask:(NSUInteger *) [[maybe_unused]] styleMask
-{
-    const auto panel_view = nc::objc_cast<PanelView>(tabViewItem.view);
-    if( !panel_view )
-        return nil;
-
-    const auto bitmap = [panel_view bitmapImageRepForCachingDisplayInRect:panel_view.bounds];
-    if( !bitmap )
-        return nil;
-
-    [panel_view cacheDisplayInRect:panel_view.bounds toBitmapImageRep:bitmap];
-
-    auto image = [[NSImage alloc] init];
-    [image addRepresentation:bitmap];
-
-    const auto max_dim = 320.;
-    const auto scale = std::max(bitmap.size.width, bitmap.size.height) / max_dim;
-    if( scale > 1 )
-        image = ResizeImage(image, NSMakeSize(bitmap.size.width / scale, bitmap.size.height / scale));
-
-    return image;
 }
 
 - (NSMenu *)tabView:(NSTabView *) [[maybe_unused]] aTabView menuForTabViewItem:(NSTabViewItem *)tabViewItem

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MakeNew.h"
 #include <NimbleCommander/Core/Alert.h>
 #include "../PanelController.h"
@@ -243,30 +243,89 @@ void MakeNewNamedFolder::Perform(PanelController *_target, id /*_sender*/) const
 
     cd.validationCallback = ValidateDirectoryInput;
 
-    [_target.mainWindowController beginSheet:cd.window
-                           completionHandler:^(NSModalResponse returnCode) {
-                             if( returnCode == NSModalResponseOK && !cd.result.empty() ) {
-                                 const std::string name = cd.result;
-                                 const std::string dir = _target.currentDirectoryPath;
-                                 const auto vfs = _target.vfs;
-                                 __weak PanelController *weak_panel = _target;
+    auto handler = ^(NSModalResponse returnCode) {
+      if( returnCode == NSModalResponseOK && !cd.result.empty() ) {
+          const std::string name = cd.result;
+          const std::string dir = _target.currentDirectoryPath;
+          const auto vfs = _target.vfs;
+          __weak PanelController *weak_panel = _target;
 
-                                 const auto op = std::make_shared<nc::ops::DirectoryCreation>(name, dir, *vfs);
-                                 const auto weak_op = std::weak_ptr<nc::ops::DirectoryCreation>{op};
-                                 op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
-                                     const auto &dir_names = weak_op.lock()->DirectoryNames();
-                                     const std::string to_focus = dir_names.empty() ? ""s : dir_names.front();
-                                     dispatch_to_main_queue([=] {
-                                         if( PanelController *const panel = weak_panel ) {
-                                             [panel hintAboutFilesystemChange];
-                                             ScheduleFocus(to_focus, panel);
-                                         }
-                                     });
-                                 });
+          const auto op = std::make_shared<nc::ops::DirectoryCreation>(name, dir, *vfs);
+          const auto weak_op = std::weak_ptr<nc::ops::DirectoryCreation>{op};
+          op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
+              const auto &dir_names = weak_op.lock()->DirectoryNames();
+              const std::string to_focus = dir_names.empty() ? ""s : dir_names.front();
+              dispatch_to_main_queue([=] {
+                  if( PanelController *const panel = weak_panel ) {
+                      [panel hintAboutFilesystemChange];
+                      ScheduleFocus(to_focus, panel);
+                  }
+              });
+          });
 
-                                 [_target.mainWindowController enqueueOperation:op];
-                             }
-                           }];
+          [_target.mainWindowController enqueueOperation:op];
+      }
+    };
+    [_target.mainWindowController beginSheet:cd.window completionHandler:handler];
+}
+
+static PanelController *FindOppositeController(PanelController *_source)
+{
+    auto state = _source.state;
+    if( !state.bothPanelsAreVisible )
+        return nil;
+    if( [state isLeftController:_source] )
+        return state.rightPanelController;
+    if( [state isRightController:_source] )
+        return state.leftPanelController;
+    return nil;
+}
+
+bool MakeNewNamedFolderInOppositePanel::Predicate(PanelController *_target) const
+{
+    PanelController *const opposite = FindOppositeController(_target);
+    if( !opposite )
+        return false;
+    return opposite.isUniform && opposite.vfs->IsWritable();
+}
+
+void MakeNewNamedFolderInOppositePanel::Perform(PanelController *_target, id /*_sender*/) const
+{
+    PanelController *const opposite = FindOppositeController(_target);
+    if( !opposite || !opposite.isUniform || !opposite.vfs->IsWritable() )
+        return;
+
+    const auto cd = [[NCOpsDirectoryCreationDialog alloc] init];
+    if( const auto item = _target.view.item )
+        if( !item.IsDotDot() )
+            cd.suggestion = item.Filename();
+
+    cd.validationCallback = ValidateDirectoryInput;
+
+    auto handler = ^(NSModalResponse returnCode) {
+      if( returnCode == NSModalResponseOK && !cd.result.empty() ) {
+          const std::string name = cd.result;
+          const std::string dir = opposite.currentDirectoryPath;
+          const auto vfs = opposite.vfs;
+          __weak PanelController *weak_opposite = opposite;
+
+          const auto op = std::make_shared<nc::ops::DirectoryCreation>(name, dir, *vfs);
+          const auto weak_op = std::weak_ptr<nc::ops::DirectoryCreation>{op};
+          op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
+              const auto &dir_names = weak_op.lock()->DirectoryNames();
+              const std::string to_focus = dir_names.empty() ? ""s : dir_names.front();
+              dispatch_to_main_queue([=] {
+                  if( PanelController *const panel = weak_opposite ) {
+                      [panel hintAboutFilesystemChange];
+                      ScheduleFocus(to_focus, panel);
+                  }
+              });
+          });
+
+          [_target.mainWindowController enqueueOperation:op];
+      }
+    };
+    [_target.mainWindowController beginSheet:cd.window completionHandler:handler];
 }
 
 } // namespace nc::panel::actions

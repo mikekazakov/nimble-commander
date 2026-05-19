@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerActions.h"
 #include "PanelControllerActionsDispatcher.h"
 #include "Actions/CopyFilePaths.h"
@@ -140,6 +140,7 @@ PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
     add(@selector(OnCopyCurrentFilePath:), new CopyFilePath);
     add(@selector(OnCopyCurrentFileDirectory:), new CopyFileDirectory);
     add(@selector(OnCreateDirectoryCommand:), new MakeNewNamedFolder);
+    add(@selector(OnCreateDirectoryInOppositePanel:), new MakeNewNamedFolderInOppositePanel);
     add(@selector(OnBatchRename:), new BatchRename);
     add(@selector(OnRenameFileInPlace:), new RenameInPlace);
     add(@selector(OnOpenExtendedAttributes:), new OpenXAttr);

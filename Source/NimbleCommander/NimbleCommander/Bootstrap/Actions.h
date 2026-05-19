@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <utility>
@@ -149,6 +149,7 @@ static constexpr std::pair<const char*,int> g_ActionsTags[] = {
     {"menu.command.move_as",                            15'140},
     {"menu.command.rename_in_place",                    15'141},
     {"menu.command.create_directory",                   15'150},
+    {"menu.command.create_directory_in_opposite_panel", 15'151},
     {"menu.command.move_to_trash",                      15'160},
     {"menu.command.delete",                             15'170},
     {"menu.command.delete_permanently",                 15'180},
@@ -356,6 +357,7 @@ static constinit std::pair<const char*, const char*> g_DefaultActionShortcuts[] 
     {"menu.command.move_as",                                "⇧\uF709" }, // shift+F6
     {"menu.command.rename_in_place",                        "^\uF709" }, // ctrl+F6
     {"menu.command.create_directory",                       "\uF70a"  }, // F7
+    {"menu.command.create_directory_in_opposite_panel",     "⇧\uF70a" }, // shift+F7
     {"menu.command.move_to_trash",                          "⌘\u007f" }, // cmd+backspace
     {"menu.command.delete",                                 "\uF70b"  }, // F8
     {"menu.command.delete_permanently",                     "⇧\uF70b" }, // shift+F8

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -238,6 +238,10 @@
 		CFFA956E1F5A4EDC0035E606 /* ReadBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ReadBuffer.cpp; path = source/NetWebDAV/ReadBuffer.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		CF35C5E52FBCF5A800370B89 /* data */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = data; path = tests/data; sourceTree = SOURCE_ROOT; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		CF26DE1521D285A6003F0E93 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -274,6 +278,7 @@
 		CF1846FF1E41C86D008B7C9F /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF35C5E52FBCF5A800370B89 /* data */,
 				CFF762C02EDE0D52002DD1EE /* _VFSUT.cpp */,
 				CF3D24142D14B72B005C36F6 /* DisplayNamesCache_UT.mm */,
 				CF26DE3521E297AE003F0E93 /* EasyOps_UT.cpp */,

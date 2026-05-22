@@ -17,8 +17,9 @@ public:
     std::string user;
     std::string passwd;
     std::string path;
-    std::string verbose;  // cached only. not counted in operator ==
-    std::string full_url; // http[s]://server:port/base_path/
+    std::string verbose;     // cached only. not counted in operator ==
+    std::string full_url;    // http[s]://server:port/base_path/
+    std::string host_header; // "server" or "server:port" for use in the Host: header
     bool https;
     int port;
 

@@ -278,7 +278,7 @@ std::expected<void, Error> VFSEasyCreateEmptyFile(const std::string_view _path, 
     const std::expected<void, Error> ret =
         file.Open(VFSFlags::OF_IRUsr | VFSFlags::OF_IRGrp | VFSFlags::OF_IROth | VFSFlags::OF_IWUsr |
                   VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist);
-    if( !ret != 0 )
+    if( !ret )
         return std::unexpected(ret.error());
 
     if( file.GetWriteParadigm() == VFSFile::WriteParadigm::Upload )

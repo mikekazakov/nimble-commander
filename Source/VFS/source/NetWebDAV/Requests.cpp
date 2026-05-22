@@ -328,7 +328,7 @@ RequestMKCOL(const HostConfiguration &_options, Connection &_connection, const s
     if( std::expected<void, Error> rc = _connection.SetCustomRequest("MKCOL"); !rc )
         return std::unexpected(rc.error());
 
-    const auto header_host = "Host: "s + _options.server_url;
+    const auto header_host = "Host: "s + _options.host_header;
     if( std::expected<void, Error> rc = _connection.SetHeader(std::initializer_list<std::string_view>{header_host});
         !rc )
         return std::unexpected(rc.error());
@@ -356,7 +356,7 @@ RequestDelete(const HostConfiguration &_options, Connection &_connection, std::s
     if( std::expected<void, Error> rc = _connection.SetCustomRequest("DELETE"); !rc )
         return std::unexpected(rc.error());
 
-    const auto header_host = "Host: "s + _options.server_url;
+    const auto header_host = "Host: "s + _options.host_header;
     if( std::expected<void, Error> rc = _connection.SetHeader(std::initializer_list<std::string_view>{header_host});
         !rc )
         return std::unexpected(rc.error());
@@ -385,7 +385,7 @@ std::expected<void, Error> RequestMove(const HostConfiguration &_options,
     if( std::expected<void, Error> rc = _connection.SetCustomRequest("MOVE"); !rc )
         return std::unexpected(rc.error());
 
-    const auto header_host = "Host: " + _options.server_url;
+    const auto header_host = "Host: " + _options.host_header;
     const auto header_dest = "Destination: " + URIForPath(_options, _dst);
     if( std::expected<void, Error> rc =
             _connection.SetHeader(std::initializer_list<std::string_view>{header_host, header_dest});

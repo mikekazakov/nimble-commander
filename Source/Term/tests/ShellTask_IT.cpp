@@ -687,9 +687,7 @@ TEST_CASE(PREFIX "Test vim interaction via output")
 }
 
 // this is a torture test to verify assumptions about synchronization under load.
-// unfortunately, this test case works fine on my laptop, but fails on GitHub Actions.
-// after already spending several evenings on this, I'm giving up for now...
-TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
+TEST_CASE(PREFIX "Test multiple shells in parallel via output")
 {
     const TempTestDir dir;
     constexpr size_t number = 10; // just casually spawn 10 shells, not a big deal...

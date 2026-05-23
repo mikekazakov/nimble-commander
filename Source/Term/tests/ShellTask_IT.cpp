@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
 #include "AtomicHolder.h"
@@ -37,8 +37,6 @@ using namespace std::chrono_literals;
         _input.append(_to - _input.size(), _with);
     return _input;
 }
-
-#if 0
 
 static bool WaitChildrenListToBecome(const ShellTask &_shell,
                                      const std::vector<std::string> &_expected,
@@ -691,8 +689,6 @@ TEST_CASE(PREFIX "Test vim interaction via output")
     REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected3));
 }
 
-#endif
-
 // this is a torture test to verify assumptions about synchronization under load.
 TEST_CASE(PREFIX "Test multiple shells in parallel via output")
 {
@@ -801,7 +797,6 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output")
         REQUIRE(ctx.shell_state.wait_to_become(5s, TaskState::Inactive));
 }
 
-#if 0
 TEST_CASE(PREFIX "doesn't keep external cwd change commands in history")
 {
     AtomicHolder<std::string> buffer_dump;
@@ -1060,4 +1055,3 @@ TEST_CASE(PREFIX "ChDir respects literal square-bracketed directory despite glob
     REQUIRE(cwd.wait_to_become(5s, {bracketedDir, true}));
     CHECK(shell.CWD() == bracketedDir.generic_string());
 }
-#endif

@@ -454,6 +454,7 @@ VFSConfiguration WebDAVHost::ComposeConfiguration(const std::string &_serv_url,
                                   (default_port ? "" : ":"),
                                   (default_port ? "" : std::to_string(_port)),
                                   (_path.empty() ? "" : _path + "/"));
+    config.host_header = default_port ? _serv_url : fmt::format("{}:{}", _serv_url, _port);
 
     return {std::move(config)};
 }

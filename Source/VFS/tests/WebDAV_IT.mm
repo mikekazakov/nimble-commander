@@ -14,11 +14,11 @@
 using namespace nc;
 using namespace nc::vfs;
 
-// Apache/2.4.41 on Ubuntu 20.04 LTS running in a Docker
-static const auto g_Ubuntu2004Host = "127.0.0.1";
-static const auto g_Ubuntu2004Username = "r2d2";
-static const auto g_Ubuntu2004Password = "Hello";
-static const auto g_Ubuntu2004Port = 9080;
+// lighttpd/1.4 on Alpine 3.21 running in a Docker
+static const auto g_AlpineHost = "127.0.0.1";
+static const auto g_AlpineUsername = "r2d2";
+static const auto g_AlpinePassword = "Hello";
+static const auto g_AlpinePort = 9080;
 
 static std::vector<std::byte> MakeNoise(size_t size);
 static void VerifyFileContent(VFSHost &_host, const std::filesystem::path &_path, std::span<const std::byte> _content);
@@ -27,7 +27,7 @@ static void WriteWholeFile(VFSHost &_host, const std::filesystem::path &_path, s
 static std::shared_ptr<WebDAVHost> spawnLocalHost()
 {
     return std::make_shared<WebDAVHost>(
-        g_Ubuntu2004Host, g_Ubuntu2004Username, g_Ubuntu2004Password, "webdav", false, g_Ubuntu2004Port);
+        g_AlpineHost, g_AlpineUsername, g_AlpinePassword, "webdav", false, g_AlpinePort);
 }
 
 static std::shared_ptr<WebDAVHost> Spawn(const std::string &_server)
@@ -53,7 +53,7 @@ TEST_CASE(PREFIX "can connect to localhost")
 TEST_CASE(PREFIX "invalid credentials")
 {
     REQUIRE_THROWS_AS(
-        new WebDAVHost("localhost", g_Ubuntu2004Username, "SomeRandomGibberish", "webdav", false, g_Ubuntu2004Port),
+        new WebDAVHost(g_AlpineHost, g_AlpineUsername, "SomeRandomGibberish", "webdav", false, g_AlpinePort),
         ErrorException);
 }
 
@@ -113,6 +113,8 @@ static void TestFetchDirectoryListing(VFSHostPtr _host)
     REQUIRE(st.mode_bits.reg);
     REQUIRE(st.size == 13);
     REQUIRE(!_host->Stat("/SomeGibberish/MoreGibberish/EvenMoregibberish.txt", 0));
+
+    std::ignore = easy::VFSEasyDelete(p1, _host);
 }
 INSTANTIATE_TEST("directory listing", TestFetchDirectoryListing, "local");
 

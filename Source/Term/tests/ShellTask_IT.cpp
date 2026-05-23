@@ -238,6 +238,7 @@ TEST_CASE(PREFIX "Launch=>Exit via output (Bash)")
         shell.SetShellPath("/bin/bash");
         shell.SetEnvVar("PS1", "Hello=>");
         shell.AddCustomShellArgument("bash");
+        shell.AddCustomShellArgument("--norc");
     }
     SECTION("zsh")
     {
@@ -309,6 +310,7 @@ TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
         shell.SetShellPath("/bin/bash");
         shell.SetEnvVar("PS1", ">");
         shell.AddCustomShellArgument("bash");
+        shell.AddCustomShellArgument("--norc");
     }
     SECTION("zsh")
     {
@@ -615,6 +617,7 @@ TEST_CASE(PREFIX "Test vim interaction via output")
         shell.SetShellPath("/bin/bash");
         shell.SetEnvVar("PS1", ">");
         shell.AddCustomShellArgument("bash");
+        shell.AddCustomShellArgument("--norc");
     }
     SECTION("zsh")
     {
@@ -708,6 +711,7 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output")
             ctx.shell.SetShellPath("/bin/bash");
             ctx.shell.SetEnvVar("PS1", ">");
             ctx.shell.AddCustomShellArgument("bash");
+            ctx.shell.AddCustomShellArgument("--norc");
         }
     }
     SECTION("zsh")
@@ -799,6 +803,7 @@ TEST_CASE(PREFIX "doesn't keep external cwd change commands in history")
         shell.SetShellPath("/bin/bash");
         shell.SetEnvVar("PS1", ">");
         shell.AddCustomShellArgument("bash");
+        shell.AddCustomShellArgument("--norc");
     }
     SECTION("zsh")
     {

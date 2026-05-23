@@ -640,6 +640,7 @@ void ShellTask::Impl::ProcessPwdPrompt(const void *_d, int _sz)
 
 void ShellTask::Impl::DoOnPwdPromptCallout(std::string_view _cwd, bool _changed) const
 {
+    Log::Trace("shell PID={} current working directory: '{}', changed={}", shell_pid.load(), _cwd, _changed);
     callback_lock.lock();
     auto on_pwd = on_pwd_prompt;
     callback_lock.unlock();
@@ -749,6 +750,7 @@ void ShellTask::Impl::DoCleanUp()
 void ShellTask::Impl::OnShellDied()
 {
     dispatch_assert_background_queue();
+    Log::Info("shell has died, pid={}", shell_pid.load());
 
     // no need to call it if PID is already set to invalid - we're in closing state
     if( shell_pid <= 0 )

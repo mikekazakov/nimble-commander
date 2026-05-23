@@ -711,6 +711,7 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output")
 
     SECTION("bash")
     {
+        INFO("Running a bash shell");
         for( auto &ctx : shells ) {
             ctx.shell.SetShellPath("/bin/bash");
             ctx.shell.SetEnvVar("PS1", ">");
@@ -720,6 +721,7 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output")
     }
     SECTION("zsh")
     {
+        INFO("Running a zsh shell");
         for( auto &ctx : shells ) {
             ctx.shell.SetShellPath("/bin/zsh");
             ctx.shell.SetEnvVar("PS1", ">");
@@ -729,12 +731,14 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output")
     }
     SECTION("csh")
     {
+        INFO("Running a csh shell");
         for( auto &ctx : shells ) {
             ctx.shell.SetShellPath("/bin/csh");
         }
     }
     SECTION("tcsh")
     {
+        INFO("Running a tcsh shell");
         for( auto &ctx : shells ) {
             ctx.shell.SetShellPath("/bin/tcsh");
         }

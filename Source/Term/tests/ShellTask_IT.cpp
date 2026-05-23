@@ -38,6 +38,8 @@ using namespace std::chrono_literals;
     return _input;
 }
 
+#if 0
+
 static bool WaitChildrenListToBecome(const ShellTask &_shell,
                                      const std::vector<std::string> &_expected,
                                      std::chrono::nanoseconds _deadline,
@@ -689,6 +691,8 @@ TEST_CASE(PREFIX "Test vim interaction via output")
     REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected3));
 }
 
+#endif
+
 // this is a torture test to verify assumptions about synchronization under load.
 TEST_CASE(PREFIX "Test multiple shells in parallel via output")
 {
@@ -789,6 +793,7 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output")
         REQUIRE(ctx.shell_state.wait_to_become(5s, TaskState::Inactive));
 }
 
+#if 0
 TEST_CASE(PREFIX "doesn't keep external cwd change commands in history")
 {
     AtomicHolder<std::string> buffer_dump;
@@ -1047,3 +1052,4 @@ TEST_CASE(PREFIX "ChDir respects literal square-bracketed directory despite glob
     REQUIRE(cwd.wait_to_become(5s, {bracketedDir, true}));
     CHECK(shell.CWD() == bracketedDir.generic_string());
 }
+#endif

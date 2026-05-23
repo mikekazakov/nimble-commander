@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
 #include "AtomicHolder.h"
@@ -238,6 +238,7 @@ TEST_CASE(PREFIX "Launch=>Exit via output (Bash)")
         shell.SetShellPath("/bin/bash");
         shell.SetEnvVar("PS1", "Hello=>");
         shell.AddCustomShellArgument("bash");
+        shell.AddCustomShellArgument("--norc");
     }
     SECTION("zsh")
     {
@@ -309,6 +310,7 @@ TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
         shell.SetShellPath("/bin/bash");
         shell.SetEnvVar("PS1", ">");
         shell.AddCustomShellArgument("bash");
+        shell.AddCustomShellArgument("--norc");
     }
     SECTION("zsh")
     {
@@ -615,6 +617,7 @@ TEST_CASE(PREFIX "Test vim interaction via output")
         shell.SetShellPath("/bin/bash");
         shell.SetEnvVar("PS1", ">");
         shell.AddCustomShellArgument("bash");
+        shell.AddCustomShellArgument("--norc");
     }
     SECTION("zsh")
     {
@@ -687,9 +690,7 @@ TEST_CASE(PREFIX "Test vim interaction via output")
 }
 
 // this is a torture test to verify assumptions about synchronization under load.
-// unfortunately, this test case works fine on my laptop, but fails on GitHub Actions.
-// after already spending several evenings on this, I'm giving up for now...
-TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
+TEST_CASE(PREFIX "Test multiple shells in parallel via output")
 {
     const TempTestDir dir;
     constexpr size_t number = 10; // just casually spawn 10 shells, not a big deal...
@@ -706,14 +707,17 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
 
     SECTION("bash")
     {
+        INFO("Running a bash shell");
         for( auto &ctx : shells ) {
             ctx.shell.SetShellPath("/bin/bash");
             ctx.shell.SetEnvVar("PS1", ">");
             ctx.shell.AddCustomShellArgument("bash");
+            ctx.shell.AddCustomShellArgument("--norc");
         }
     }
     SECTION("zsh")
     {
+        INFO("Running a zsh shell");
         for( auto &ctx : shells ) {
             ctx.shell.SetShellPath("/bin/zsh");
             ctx.shell.SetEnvVar("PS1", ">");
@@ -723,12 +727,14 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
     }
     SECTION("csh")
     {
+        INFO("Running a csh shell");
         for( auto &ctx : shells ) {
             ctx.shell.SetShellPath("/bin/csh");
         }
     }
     SECTION("tcsh")
     {
+        INFO("Running a tcsh shell");
         for( auto &ctx : shells ) {
             ctx.shell.SetShellPath("/bin/tcsh");
         }
@@ -757,7 +763,9 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
                                      "                    "
                                      "                    "
                                      "                    ";
-        REQUIRE(shells[i].buffer_dump.wait_to_become(5s, expected));
+        if( const bool arrived = shells[i].buffer_dump.wait_to_become(5s, expected); !arrived ) {
+            FAIL(fmt::format("Shell {} didn't arrive in time, current state: {}", i, shells[i].buffer_dump.value));
+        }
     }
 
     // write the shell number to each shell
@@ -775,7 +783,9 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
                                             "                    "
                                             "                    "
                                             "                    ";
-        REQUIRE(shells[i].buffer_dump.wait_to_become(5s, expected));
+        if( const bool arrived = shells[i].buffer_dump.wait_to_become(5s, expected); !arrived ) {
+            FAIL(fmt::format("Shell {} didn't arrive in time, current state: {}", i, shells[i].buffer_dump.value));
+        }
     }
 
     // now tell all the shell to bugger off
@@ -801,6 +811,7 @@ TEST_CASE(PREFIX "doesn't keep external cwd change commands in history")
         shell.SetShellPath("/bin/bash");
         shell.SetEnvVar("PS1", ">");
         shell.AddCustomShellArgument("bash");
+        shell.AddCustomShellArgument("--norc");
     }
     SECTION("zsh")
     {

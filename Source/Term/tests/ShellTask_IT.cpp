@@ -767,7 +767,9 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output")
                                      "                    "
                                      "                    "
                                      "                    ";
-        REQUIRE(shells[i].buffer_dump.wait_to_become(5s, expected));
+        if( const bool arrived = shells[i].buffer_dump.wait_to_become(5s, expected); !arrived ) {
+            FAIL(fmt::format("Shell {} didn't arrive in time, current state: {}", i, shells[i].buffer_dump.value));
+        }
     }
 
     // write the shell number to each shell
@@ -785,7 +787,9 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output")
                                             "                    "
                                             "                    "
                                             "                    ";
-        REQUIRE(shells[i].buffer_dump.wait_to_become(5s, expected));
+        if( const bool arrived = shells[i].buffer_dump.wait_to_become(5s, expected); !arrived ) {
+            FAIL(fmt::format("Shell {} didn't arrive in time, current state: {}", i, shells[i].buffer_dump.value));
+        }
     }
 
     // now tell all the shell to bugger off

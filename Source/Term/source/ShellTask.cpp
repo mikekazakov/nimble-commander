@@ -491,15 +491,52 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
 
         if( I->shell_type != ShellType::TCSH ) {
             // setup piping for CWD prompt
-            // using FDs g_PromptPipe/g_SemaphorePipe becuse bash is closing fds [3,20) upon
+            // using FDs g_PromptPipe/g_SemaphorePipe because Bash is closing fds [3,20) upon
             // opening in logon mode (our case)
-            const int cwd_dup_rc = dup2(I->cwd_pipe[1], g_PromptPipe);
-            if( cwd_dup_rc != g_PromptPipe )
-                exit(-1);
 
-            const int semaphore_dup_rc = dup2(I->semaphore_pipe[0], g_SemaphorePipe);
-            if( semaphore_dup_rc != g_SemaphorePipe )
-                exit(-1);
+            // This remapping has to be done "atomically" respecting that FDs can clobber each other
+            if( I->cwd_pipe[1] != g_PromptPipe &&       //
+                I->cwd_pipe[1] != g_SemaphorePipe &&    //
+                I->semaphore_pipe[0] != g_PromptPipe && //
+                I->semaphore_pipe[0] != g_SemaphorePipe ) {
+                // Common/sane case: both FDs are different from each other and from the target ones, just dup2 them
+                if( dup2(I->cwd_pipe[1], g_PromptPipe) != g_PromptPipe )
+                    exit(-1);
+
+                if( dup2(I->semaphore_pipe[0], g_SemaphorePipe) != g_SemaphorePipe )
+                    exit(-1);
+            }
+            else if( I->cwd_pipe[1] == g_PromptPipe ) {
+                // Lucky case: the cwd_pipe write end is already at the target fd, just need to dup2 the semaphore_pipe
+                if( dup2(I->semaphore_pipe[0], g_SemaphorePipe) != g_SemaphorePipe ) // safe if equal
+                    exit(-1);
+            }
+            else if( I->semaphore_pipe[0] == g_SemaphorePipe ) {
+                // Lucky case: the semaphore_pipe read end is already at the target fd, just need to dup2 the cwd_pipe
+                if( dup2(I->cwd_pipe[1], g_PromptPipe) != g_PromptPipe ) // safe if equal
+                    exit(-1);
+            }
+            else if( I->cwd_pipe[1] == g_SemaphorePipe ) {
+                // Unlucky case: the cwd_pipe write end is at the other target fd, need to move it somewhere else first
+                const int tmp_cwd_pipe_fd = dup(I->cwd_pipe[1]);
+                if( tmp_cwd_pipe_fd < 0 )
+                    exit(-1);
+                if( dup2(I->semaphore_pipe[0], g_SemaphorePipe) != g_SemaphorePipe )
+                    exit(-1);
+                if( dup2(tmp_cwd_pipe_fd, g_PromptPipe) != g_PromptPipe )
+                    exit(-1);
+            }
+            else /* if( I->semaphore_pipe[0] == g_PromptPipe  ) */ {
+                // Unlucky case: the semaphore_pipe read end is at the other target fd, need to move it somewhere else
+                // first
+                const int tmp_semaphore_pipe_fd = dup(I->semaphore_pipe[0]);
+                if( tmp_semaphore_pipe_fd < 0 )
+                    exit(-1);
+                if( dup2(I->cwd_pipe[1], g_PromptPipe) != g_PromptPipe )
+                    exit(-1);
+                if( dup2(tmp_semaphore_pipe_fd, g_SemaphorePipe) != g_SemaphorePipe )
+                    exit(-1);
+            }
         }
 
         if( I->shell_type == ShellType::Bash ) {

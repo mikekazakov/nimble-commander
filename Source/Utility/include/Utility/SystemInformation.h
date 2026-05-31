@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -53,8 +53,6 @@ struct SystemOverview {
     std::string computer_name;
     std::string user_name;
     std::string user_full_name;
-    std::string human_model; // like MacBook Pro (mid 2012), or MacBook Air (early 2013),localizable
-    std::string coded_model; // like "Macmini6,2"
 };
 
 std::optional<MemoryInfo> GetMemoryInfo() noexcept;

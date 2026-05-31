@@ -1,9 +1,11 @@
-// Copyright (C) 2023-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ChildrenTracker.h"
 #include <Base/dispatch_cpp.h>
 #include <algorithm>
 #include <array>
 #include <libproc.h>
+#include <sys/proc.h>
+#include <sys/proc_info.h>
 #include <memory_resource>
 #include <span>
 #include <vector>
@@ -40,11 +42,12 @@ static void Subscribe(const int _kq, const std::span<const pid_t> _pids)
     kevent(_kq, chg.data(), static_cast<int>(chg.size()), nullptr, 0, nullptr);
 }
 
-static void Subscribe(const int _kq, const int _pid) noexcept
+static bool Subscribe(const int _kq, const int _pid) noexcept
 {
     struct kevent change;
     EV_SET(&change, _pid, EVFILT_PROC, EV_ADD | EV_RECEIPT, g_Notes, 0, nullptr);
-    kevent(_kq, &change, 1, nullptr, 0, nullptr);
+    const int res = kevent(_kq, &change, 1, nullptr, 0, nullptr);
+    return res != -1;
 }
 
 static void Unsubscribe(const int _kq, const int _pid) noexcept
@@ -92,14 +95,22 @@ void ChildrenTracker::Drain()
         }
         const pid_t pid = static_cast<pid_t>(event.ident);
         if( event.fflags & NOTE_FORK ) {
-            ++meaningful;
             pid_t pids[4096];
             const int npids = proc_listchildpids(pid, pids, std::size(pids) * sizeof(pid_t));
             for( const pid_t child : std::span{pids, static_cast<size_t>(std::max(npids, 0))} ) {
                 auto it = std::ranges::lower_bound(m_Tracked, child);
                 if( it == m_Tracked.end() || *it != child ) {
-                    Subscribe(m_KQ, child);
-                    m_Tracked.insert(it, child);
+                    // Check the process status before subscribing to its events, it might be a zombie
+                    struct proc_bsdshortinfo bsd_info;
+                    const int pidinfo_ret = proc_pidinfo(child, PROC_PIDT_SHORTBSDINFO, 0, &bsd_info, sizeof(bsd_info));
+                    if( pidinfo_ret != sizeof(bsd_info) || bsd_info.pbsi_status == SZOMB ) {
+                        continue; // no zombies allowed
+                    }
+
+                    if( Subscribe(m_KQ, child) ) {
+                        ++meaningful;
+                        m_Tracked.insert(it, child);
+                    }
                 }
             }
         }

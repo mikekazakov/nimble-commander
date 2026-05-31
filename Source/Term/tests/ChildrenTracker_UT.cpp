@@ -25,8 +25,15 @@ static int reap(const int pid)
 TEST_CASE(PREFIX "Generic cases")
 {
     const int p1 = getpid();
-    QueuedAtomicHolder<int> ncalled{0};
-    auto cb = [&ncalled, next = 1] mutable { ncalled.store(next++); };
+    QueuedAtomicHolder<ChildrenTracker::Event> ncalled;
+    ncalled.strict(false);
+
+    auto cb = [&ncalled, current = ChildrenTracker::Event{}](ChildrenTracker::Event _event) mutable {
+        current.forks += _event.forks;
+        current.execs += _event.execs;
+        current.exits += _event.exits;
+        ncalled.store(current);
+    };
 
     const ChildrenTracker tracker{p1, cb};
 
@@ -41,8 +48,9 @@ TEST_CASE(PREFIX "Generic cases")
             exit(0);
         }
         CHECK(p2 > 0);
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 1)); // p1 fork -> p2
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 2)); // p2 exit
+        // p1 fork -> p2
+        // p2 exit
+        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, {.forks = 1, .execs = 0, .exits = 1}, true));
         CHECK(reap(p2) == p2);
     }
     SECTION("Two sequent forks")
@@ -53,16 +61,18 @@ TEST_CASE(PREFIX "Generic cases")
             exit(0);
         }
         CHECK(p2 > 0);
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 1)); // p1 fork -> p2
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 2)); // p2 exit
+        // p1 fork -> p2
+        // p2 exit
+        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, {.forks = 1, .execs = 0, .exits = 1}, true));
         const int p3 = fork();
         if( p3 == 0 ) {
             std::this_thread::sleep_for(10ms);
             exit(0);
         }
         CHECK(p3 > 0);
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 3)); // p1 fork -> p3
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 4)); // p3 exit
+        // p1 fork -> p3
+        // p3 exit
+        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, {.forks = 2, .execs = 0, .exits = 2}, true));
         CHECK(reap(p2) == p2);
         CHECK(reap(p3) == p3);
     }
@@ -80,10 +90,11 @@ TEST_CASE(PREFIX "Generic cases")
             exit(0);
         }
         CHECK(p2 > 0);
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 1)); // p1 fork -> p2
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 2)); // p2 fork -> p3
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 3)); // p3 exit
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 4)); // p2 exit
+        // p1 fork -> p2
+        // p2 fork -> p3
+        // p3 exit
+        // p2 exit
+        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, {.forks = 2, .execs = 0, .exits = 2}, true));
         CHECK(reap(p2) == p2);
     }
     SECTION("Three recursive forks")
@@ -106,12 +117,13 @@ TEST_CASE(PREFIX "Generic cases")
             exit(0);
         }
         CHECK(p2 > 0);
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 1)); // p1 fork -> p2
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 2)); // p2 fork -> p3
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 3)); // p3 fork -> p4
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 4)); // p4 exit
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 5)); // p3 exit
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 6)); // p2 exit
+        // p1 fork -> p2
+        // p2 fork -> p3
+        // p3 fork -> p4
+        // p4 exit
+        // p3 exit
+        // p2 exit
+        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, {.forks = 3, .execs = 0, .exits = 3}, true));
         CHECK(reap(p2) == p2);
     }
     SECTION("2 x two recursive forks")
@@ -140,14 +152,15 @@ TEST_CASE(PREFIX "Generic cases")
         }
         CHECK(p2 > 0);
         CHECK(p4 > 0);
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 1)); // p1 fork -> p2
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 2)); // p1 fork -> p4
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 3)); // p2 fork -> p3
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 4)); // p4 fork -> p5
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 5)); // p3 exit
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 6)); // p5 exit
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 7)); // p2 exit
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 8)); // p4 exit <-- this one fails on GHA
+        // p1 fork -> p2
+        // p1 fork -> p4
+        // p2 fork -> p3
+        // p4 fork -> p5
+        // p3 exit
+        // p5 exit
+        // p2 exit
+        // p4 exit
+        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, {.forks = 4, .execs = 0, .exits = 4}, true));
         CHECK(reap(p2) == p2);
         CHECK(reap(p4) == p4);
     }
@@ -160,11 +173,13 @@ TEST_CASE(PREFIX "Generic cases")
             execl("/usr/bin/uptime", "uptime", nullptr);
         }
         CHECK(p2 > 0);
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 1)); // p1 fork -> p2
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 2)); // p2 exec
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 3)); // p2 exit
+        // p1 fork -> p2
+        // p2 exec
+        // p2 exit
+        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, {.forks = 1, .execs = 1, .exits = 1}, true));
         CHECK(reap(p2) == p2);
     }
+
     SECTION("Two recursive forks and exec")
     {
         const int p2 = fork();
@@ -180,18 +195,19 @@ TEST_CASE(PREFIX "Generic cases")
             exit(0);
         }
         CHECK(p2 > 0);
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 1)); // p1 fork -> p2
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 2)); // p2 fork -> p3
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 3)); // p3 exec
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 4)); // p3 exit
-        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, 5)); // p2 exit
+        // p1 fork -> p2
+        // p2 fork -> p3
+        // p3 exec
+        // p3 exit
+        // p2 exit
+        CHECK(ncalled.wait_to_become_with_runloop(5s, 1ms, {.forks = 2, .execs = 1, .exits = 2}, true));
         CHECK(reap(p2) == p2);
     }
 }
 
 TEST_CASE(PREFIX "Invalid input")
 {
-    const ChildrenTracker tracker{std::numeric_limits<int>::max(), [] { FAIL(); }};
+    const ChildrenTracker tracker{std::numeric_limits<int>::max(), [](ChildrenTracker::Event) { FAIL(); }};
     if( fork() == 0 ) {
         std::this_thread::sleep_for(10ms);
         exit(0);

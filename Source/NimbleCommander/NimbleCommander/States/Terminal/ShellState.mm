@@ -413,7 +413,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
         }
         else {
             __weak NCTermShellState *weakself = self;
-            auto cb = [weakself] {
+            auto cb = [weakself](ChildrenTracker::Event) {
                 dispatch_to_main_queue([weakself] {
                     if( auto strongself = weakself )
                         [strongself updateTitle];

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefSystemOverview.h"
 #include <Utility/SystemInformation.h>
 #include <Utility/NSTimer+Tolerance.h>
@@ -41,7 +41,6 @@ static NSTextField *CreateStockTF()
     NSTextField *m_TextMemCompressed;
     NSTextField *m_TextMemCache;
 
-    NSTextField *m_TextMachineModel;
     NSTextField *m_TextComputerName;
     NSTextField *m_TextUserName;
 
@@ -427,16 +426,8 @@ static NSTextField *CreateStockTF()
         system_box.title = NSLocalizedString(@"General", "Brief System Information general box title");
         [self addSubview:system_box];
 
-        NSBox *line1 = line_separator();
-        [system_box addSubview:line1];
-
         NSBox *line2 = line_separator();
         [system_box addSubview:line2];
-
-        auto model_title = CreateStockTF();
-        model_title.stringValue = NSLocalizedString(@"Mac Model:", "Brief System Information mac model label title");
-        model_title.font = text_font;
-        [system_box addSubview:model_title];
 
         auto computer_title = CreateStockTF();
         computer_title.stringValue =
@@ -449,11 +440,6 @@ static NSTextField *CreateStockTF()
         user_title.font = text_font;
         [system_box addSubview:user_title];
 
-        m_TextMachineModel = CreateStockTF();
-        m_TextMachineModel.alignment = NSTextAlignmentRight;
-        m_TextMachineModel.font = text_font;
-        [system_box addSubview:m_TextMachineModel];
-
         m_TextComputerName = CreateStockTF();
         m_TextComputerName.alignment = NSTextAlignmentRight;
         m_TextComputerName.font = text_font;
@@ -464,14 +450,8 @@ static NSTextField *CreateStockTF()
         m_TextUserName.font = text_font;
         [system_box addSubview:m_TextUserName];
 
-        NSDictionary *system_box_views = NSDictionaryOfVariableBindings(m_TextMachineModel,
-                                                                        m_TextComputerName,
-                                                                        m_TextUserName,
-                                                                        line1,
-                                                                        line2,
-                                                                        model_title,
-                                                                        computer_title,
-                                                                        user_title);
+        NSDictionary *system_box_views =
+            NSDictionaryOfVariableBindings(m_TextComputerName, m_TextUserName, line2, computer_title, user_title);
         auto vis_fmt = [system_box, system_box_views](NSString *_format) {
             auto csts = [NSLayoutConstraint constraintsWithVisualFormat:_format
                                                                 options:0
@@ -479,14 +459,10 @@ static NSTextField *CreateStockTF()
                                                                   views:system_box_views];
             [system_box addConstraints:csts];
         };
-        vis_fmt(@"|-(==8)-[model_title]-(==8)-[m_TextMachineModel]-(==8)-|");
         vis_fmt(@"|-(==8)-[computer_title]-(==8)-[m_TextComputerName]-(==8)-|");
         vis_fmt(@"|-(==8)-[user_title]-(==8)-[m_TextUserName]-(==8)-|");
-        vis_fmt(@"|-(==8)-[line1]-(==8)-|");
         vis_fmt(@"|-(==8)-[line2]-(==8)-|");
-        vis_fmt(@"V:|-(==8)-[model_title]-(==4)-[line1(==1)]-(==5)-[computer_title]"
-                @"-(==4)-[line2(==1)]-(==5)-[user_title]");
-        vis_fmt(@"V:[m_TextMachineModel]-(==4)-[line1]");
+        vis_fmt(@"V:|-(==8)-[computer_title]-(==4)-[line2(==1)]-(==5)-[user_title]");
         vis_fmt(@"V:[m_TextComputerName]-(==4)-[line2]");
         vis_fmt(@"V:[line2]-(==5)-[m_TextUserName]");
     }
@@ -566,7 +542,7 @@ static NSTextField *CreateStockTF()
     }
 
     NSDictionary *views = NSDictionaryOfVariableBindings(title, system_box, cpu_box, ram_box, storage_box);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==8)-[title]-[system_box(==94)]-["
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==8)-[title]-[system_box(==70)]-["
                                                                          @"cpu_box(==188)]-[storage_box(==94)]"
                                                                  options:0
                                                                  metrics:nil
@@ -683,7 +659,6 @@ static NSTextField *CreateStockTF()
     m_TextMemCache.stringValue = f.ToNSString(m_MemoryInfo.file_cache, ByteCountFormatter::Adaptive8);
     m_TextMemSwap.stringValue = f.ToNSString(m_MemoryInfo.swap, ByteCountFormatter::Adaptive8);
 
-    m_TextMachineModel.stringValue = [NSString stringWithUTF8StdString:m_Overview.human_model];
     m_TextComputerName.stringValue = [NSString stringWithUTF8StdString:m_Overview.computer_name];
     m_TextUserName.stringValue = [NSString stringWithUTF8StdString:m_Overview.user_full_name];
     if( !m_StatFS.volume_name.empty() )

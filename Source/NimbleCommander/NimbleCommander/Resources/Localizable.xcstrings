@@ -1317,6 +1317,7 @@
     },
     "Mac Model:" : {
       "comment" : "Brief System Information mac model label title",
+      "extractionState" : "stale",
       "localizations" : {
         "ru" : {
           "stringUnit" : {

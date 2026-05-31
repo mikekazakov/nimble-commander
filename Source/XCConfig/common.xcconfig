@@ -67,7 +67,7 @@ DEAD_CODE_STRIPPING = YES
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // C
-OTHER_CFLAGS = -fvisibility=hidden -Wframe-larger-than=32768 -fbracket-depth=512
+OTHER_CFLAGS = -fvisibility=hidden -Wframe-larger-than=32768 -fbracket-depth=512 -fno-sanitize-recover=all
 
 // C++
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -Wall -Wextra -Wold-style-cast -Werror

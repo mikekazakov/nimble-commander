@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2024-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tags.h"
 #include <Base/CFPtr.h>
 #include <Base/CFStackAllocator.h>
@@ -142,9 +142,10 @@ static_assert(sizeof(Trailer) == 32);
 
 } // namespace
 
-static Trailer BSwap(const Trailer &_in_big_endian) noexcept
+static Trailer LoadStoredBETrailer(const void *_unaligned_trailer_ptr) noexcept
 {
-    Trailer t = _in_big_endian;
+    Trailer t;
+    std::memcpy(&t, _unaligned_trailer_ptr, sizeof(Trailer));
     t.num_objects = std::byteswap(t.num_objects);
     t.top_object = std::byteswap(t.top_object);
     t.offset_table_offset = std::byteswap(t.offset_table_offset);
@@ -288,7 +289,7 @@ std::vector<Tags::Tag> Tags::ParseMDItemUserTags(const std::span<const std::byte
     if( !std::string_view(reinterpret_cast<const char *>(_bytes.data()), _bytes.size()).starts_with(g_Prologue) )
         return {}; // missing a valid header, bail out
 
-    const Trailer trailer = BSwap(*reinterpret_cast<const Trailer *>(_bytes.data() + _bytes.size() - sizeof(Trailer)));
+    const Trailer trailer = LoadStoredBETrailer(_bytes.data() + _bytes.size() - sizeof(Trailer));
     const size_t table_size = trailer.num_objects * trailer.offset_int_size;
     if( trailer.num_objects == 0 || trailer.offset_int_size == 0 || trailer.object_ref_size == 0 ||
         trailer.top_object >= trailer.num_objects || trailer.offset_table_offset < g_Prologue.size() ||
@@ -313,14 +314,29 @@ std::vector<Tags::Tag> Tags::ParseMDItemUserTags(const std::span<const std::byte
 
         const uint8_t byte_marker = *reinterpret_cast<const uint8_t *>(byte_marker_ptr);
         if( (byte_marker & 0xF0) == 0x50 ) { // ASCII string...
-            if( const auto vl = ExtractVarLen(byte_marker_ptr); vl && vl->start + vl->length <= objs_end )
+            if( const std::optional<VarLen> vl = ExtractVarLen(byte_marker_ptr);
+                vl && vl->start + vl->length <= objs_end )
                 if( auto tag = ParseTag({reinterpret_cast<const char *>(vl->start), vl->length}) )
                     tags.push_back(*tag);
         }
         if( (byte_marker & 0xF0) == 0x60 ) { // Unicode string...
-            if( const auto vl = ExtractVarLen(byte_marker_ptr); vl && vl->start + (vl->length * 2) <= objs_end )
-                if( auto tag = ParseTag({reinterpret_cast<const char16_t *>(vl->start), vl->length}) )
-                    tags.push_back(*tag);
+            if( const std::optional<VarLen> vl = ExtractVarLen(byte_marker_ptr);
+                vl && vl->start + (vl->length * 2) <= objs_end ) {
+                if( reinterpret_cast<ptrdiff_t>(vl->start) % 2 == 0 ) {
+                    // Happy aligned case - we can directly read the UTF16 characters
+                    if( auto tag = ParseTag({reinterpret_cast<const char16_t *>(vl->start), vl->length}) )
+                        tags.push_back(*tag);
+                }
+                else {
+                    // Sad unaligned case - we need to copy the string to a temporary buffer before parsing it
+                    std::array<char, 256> mem_buffer;
+                    std::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
+                    std::pmr::vector<std::byte> str_buf(vl->length * 2, &mem_resource);
+                    std::memcpy(str_buf.data(), vl->start, vl->length * 2);
+                    if( auto tag = ParseTag({reinterpret_cast<const char16_t *>(str_buf.data()), vl->length}) )
+                        tags.push_back(*tag);
+                }
+            }
         }
     }
     return tags;

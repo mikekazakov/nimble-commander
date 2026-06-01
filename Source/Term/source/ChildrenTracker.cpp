@@ -11,6 +11,7 @@
 #include <span>
 #include <vector>
 #include <thread>
+#include <ranges>
 #include <fmt/format.h>
 #include <signal.h>
 
@@ -119,8 +120,8 @@ void ChildrenTracker::Drain()
     struct kevent events[32];
     const int nevents = kevent(m_KQ, nullptr, 0, events, std::size(events), nullptr);
     Event callback_event;
-
-    for( const struct kevent &event : std::span{events, static_cast<size_t>(std::max(nevents, 0))} ) {
+    const std::span<const struct kevent> events_span{events, static_cast<size_t>(std::max(nevents, 0))};
+    for( const struct kevent &event : events_span ) {
         if( event.filter != EVFILT_PROC || (event.flags & EV_ERROR) == EV_ERROR ) {
             continue;
         }
@@ -182,6 +183,17 @@ void ChildrenTracker::Drain()
                 it->status = SZOMB;
             }
         }
+    }
+
+    if( callback_event.forks == 0 && std::ranges::any_of(events_span, [](const struct kevent &_event) -> bool {
+            return _event.fflags & NOTE_FORK;
+        }) ) {
+        // We're in a bit of pickle here...
+        // There was a report of a fork yet we didn't manage to register any.
+        // This can happen when the child process was already existed and reaped before we got to it.
+        // Not much we can do about it, but at least let's invent a synthetic event for this situation.
+        ++callback_event.forks;
+        ++callback_event.exits;
     }
 
     if( callback_event.forks > 0 || //

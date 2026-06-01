@@ -38,7 +38,8 @@ static std::vector<pid_t> InitialPIDs(pid_t _root_pid)
 
 static bool Subscribe(const int _kq, const int _pid) noexcept
 {
-    struct kevent change, result{};
+    struct kevent change = {};
+    struct kevent result = {};
     EV_SET(&change, _pid, EVFILT_PROC, EV_ADD | EV_RECEIPT, g_Notes, 0, nullptr);
     const int res = kevent(_kq, &change, 1, &result, 1, nullptr);
     if( res < 0 )

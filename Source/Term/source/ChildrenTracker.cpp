@@ -77,7 +77,7 @@ ChildrenTracker::ChildrenTracker(int _root_pid, std::function<void(Event _event)
             continue; // failed to subscribe, some other issue => skip
         }
 
-        m_Tracked.push_back({.pid = pid, .status = bsd_info.pbsi_status /*, .tracked = true*/});
+        m_Tracked.push_back({.pid = pid, .status = bsd_info.pbsi_status});
     }
 
     m_Queue = dispatch_queue_create("nc::term::ChildrenTracker event queue", DISPATCH_QUEUE_SERIAL);

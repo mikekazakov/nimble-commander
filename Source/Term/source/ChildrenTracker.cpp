@@ -1,5 +1,6 @@
 // Copyright (C) 2023-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ChildrenTracker.h"
+#include "Log.h"
 #include <Base/dispatch_cpp.h>
 #include <algorithm>
 #include <array>
@@ -13,6 +14,8 @@
 #include <thread>
 #include <ranges>
 #include <fmt/format.h>
+#include <fmt/ranges.h>
+#include <fmt/ostream.h>
 #include <signal.h>
 
 namespace nc::term {
@@ -102,6 +105,8 @@ ChildrenTracker::~ChildrenTracker()
 
 void ChildrenTracker::Drain()
 {
+    Log::Debug("ChildrenTracker::Drain() called");
+
     // Use this opportunity to clean up the zombies that were already reaped
     std::erase_if(m_Tracked, [](ProcessInfo &_process) {
         if( _process.status == SZOMB ) {
@@ -109,10 +114,16 @@ void ChildrenTracker::Drain()
             struct proc_bsdshortinfo bsd_info;
             const int pidinfo_ret = proc_pidinfo(_process.pid, PROC_PIDT_SHORTBSDINFO, 0, &bsd_info, sizeof(bsd_info));
             if( pidinfo_ret != sizeof(bsd_info) ) {
+                Log::Trace("ChildrenTracker: Process with PID {} was reaped", _process.pid);
                 return true; // already reaped, just remove it
             }
             // The process with this PID is now longer a zombie => we have an ABA here
-            return bsd_info.pbsi_status != SZOMB;
+            const bool pid_reused = bsd_info.pbsi_status != SZOMB;
+            if( pid_reused ) {
+                Log::Trace("ChildrenTracker: Process with PID {} was reaped and PID was reused for a new process",
+                           _process.pid);
+            }
+            return pid_reused;
         }
         return false;
     });
@@ -122,6 +133,10 @@ void ChildrenTracker::Drain()
     Event callback_event;
     const std::span<const struct kevent> events_span{events, static_cast<size_t>(std::max(nevents, 0))};
     for( const struct kevent &event : events_span ) {
+        Log::Trace("ChildrenTracker: Received event for PID={} with filter={} and flags={:#x}",
+                   event.ident,
+                   event.filter,
+                   event.flags);
         if( event.filter != EVFILT_PROC || (event.flags & EV_ERROR) == EV_ERROR ) {
             continue;
         }
@@ -130,7 +145,9 @@ void ChildrenTracker::Drain()
 
             pid_t pids[4096];
             const int npids = proc_listchildpids(pid, pids, std::size(pids) * sizeof(pid_t));
-            for( const pid_t child : std::span{pids, static_cast<size_t>(std::max(npids, 0))} ) {
+            const std::span<const pid_t> pids_span{pids, static_cast<size_t>(std::max(npids, 0))};
+            Log::Trace("ChildrenTracker: Process with PID {} forked, current child PIDs: {}", pid, pids_span);
+            for( const pid_t child : pids_span ) {
                 auto it = std::ranges::lower_bound(m_Tracked, child, {}, &ProcessInfo::pid);
                 if( it == m_Tracked.end() || it->pid != child ) {
                     // We haven't seen this process before, let's take a closer look at it...
@@ -139,6 +156,7 @@ void ChildrenTracker::Drain()
                     struct proc_bsdshortinfo bsd_info;
                     const int pidinfo_ret = proc_pidinfo(child, PROC_PIDT_SHORTBSDINFO, 0, &bsd_info, sizeof(bsd_info));
                     if( pidinfo_ret != sizeof(bsd_info) ) {
+                        Log::Info("ChildrenTracker: unable to get info for child process with PID {}", child);
                         continue; // process might have died and reaped since we got the pid, skip it
                     }
 
@@ -146,6 +164,7 @@ void ChildrenTracker::Drain()
                         // The child process is already a zombie, make a mark for ourselves, but don't subscribe to it
                         // (no events won't come anyway). Since it's the first time the process appeared, and it's
                         // already a zombie, issue a fork + exit event for it.
+                        Log::Trace("ChildrenTracker: Child process with PID {} is already a zombie", child);
                         ++callback_event.forks;
                         ++callback_event.exits;
                         m_Tracked.insert(it, {.pid = child, .status = SZOMB});
@@ -159,11 +178,15 @@ void ChildrenTracker::Drain()
                         // NB! A TOCTOU remains here - here's a small chance that process
                         // exists AFTER the proc_pidinfo() call and BEFORE the Subscribe() call,
                         // this leads to a situation when NOTE_EXIT will never be delivered.
+                        Log::Trace("ChildrenTracker: Subscribed to child process with PID {}", child);
                         ++callback_event.forks;
                         m_Tracked.insert(it, {.pid = child, .status = bsd_info.pbsi_status});
                     }
                     else {
                         // Failed to subscribe, pronounce it dead and list as a zombie
+                        Log::Info(
+                            "ChildrenTracker: unable to subscribe to child process with PID {}, assuming it's a zombie",
+                            child);
                         ++callback_event.forks;
                         ++callback_event.exits;
                         m_Tracked.insert(it, {.pid = child, .status = SZOMB});
@@ -192,6 +215,7 @@ void ChildrenTracker::Drain()
         // There was a report of a fork yet we didn't manage to register any.
         // This can happen when the child process was already existed and reaped before we got to it.
         // Not much we can do about it, but at least let's invent a synthetic event for this situation.
+        Log::Info("ChildrenTracker: Detected a fork event, but no the new child process, inventing fork+exit");
         ++callback_event.forks;
         ++callback_event.exits;
     }
@@ -199,6 +223,7 @@ void ChildrenTracker::Drain()
     if( callback_event.forks > 0 || //
         callback_event.execs > 0 || //
         callback_event.exits > 0 ) {
+        Log::Trace("ChildrenTracker: Emitting callback with {}", fmt::streamed(callback_event));
         m_Callback(callback_event);
     }
 }

@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 {
     const nc::base::ExecutionDeadline deadline(nc::base::AmIBeingDebugged() ? std::chrono::hours(1)
                                                                             : std::chrono::minutes(1));
-    g_Log->set_level(spdlog::level::debug);
+    g_Log->set_level(spdlog::level::trace);
     Log::Set(g_Log);
     const int result = Catch::Session().run(argc, argv);
     return result;

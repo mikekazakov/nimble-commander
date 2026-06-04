@@ -36,6 +36,11 @@ public:
     // Returns the root PID for which this tracker is tracking the children.
     [[nodiscard]] int pid() const;
 
+    // Returns the number of process the tracker is currently aware of, in various states.
+    // This number might be larger than the number of processes currently actively tracked,
+    // since it includes the zombies tracker aware of.
+    [[nodiscard]] size_t KnownProcesses() const;
+
 private:
     struct ProcessInfo {
         pid_t pid = -1;

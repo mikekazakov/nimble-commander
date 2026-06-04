@@ -136,7 +136,7 @@ void ChildrenTracker::Drain()
         Log::Trace("ChildrenTracker: Received event for PID={} with filter={} and flags={:#x}",
                    event.ident,
                    event.filter,
-                   event.flags);
+                   event.fflags);
         if( event.filter != EVFILT_PROC || (event.flags & EV_ERROR) == EV_ERROR ) {
             continue;
         }
@@ -231,6 +231,11 @@ void ChildrenTracker::Drain()
 int ChildrenTracker::pid() const
 {
     return m_RootPID;
+}
+
+size_t ChildrenTracker::KnownProcesses() const
+{
+    return m_Tracked.size();
 }
 
 std::ostream &operator<<(std::ostream &_os, const ChildrenTracker::Event &_event)

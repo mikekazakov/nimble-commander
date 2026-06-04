@@ -36,6 +36,7 @@ TEST_CASE(PREFIX "Generic cases")
     };
 
     const ChildrenTracker tracker{p1, cb};
+    CHECK(tracker.KnownProcesses() == 1); // expect only this single process and no children at the beginning
 
     SECTION("Nothing")
     {
@@ -208,9 +209,12 @@ TEST_CASE(PREFIX "Generic cases")
 TEST_CASE(PREFIX "Invalid input")
 {
     const ChildrenTracker tracker{std::numeric_limits<int>::max(), [](ChildrenTracker::Event) { FAIL(); }};
-    if( fork() == 0 ) {
+    if( const int p = fork(); p == 0 ) {
         std::this_thread::sleep_for(10ms);
         exit(0);
+    }
+    else {
+        CHECK(reap(p));
     }
 }
 

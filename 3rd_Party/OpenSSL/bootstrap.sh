@@ -9,40 +9,47 @@ TMP_DIR=${CUR_DIR}/openssl.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR}
 
-git clone -b OpenSSL_1_1_1w --single-branch --depth 1 https://github.com/openssl/openssl.git openssl.x64
+git clone -b openssl-3.5.5 --single-branch --depth 1 https://github.com/openssl/openssl.git openssl.x64
 cp -r openssl.x64 openssl.arm64
 
-CFLAGS="-mmacosx-version-min=11.0 -fvisibility=hidden -flto -Os -isysroot $(xcrun --sdk macosx --show-sdk-path)"
+# NB! No -fvisibility=hidden neither -flto passed, since OpenSSL3 is quite a snowflake...
+CFLAGS="-mmacosx-version-min=11.0 -Os -isysroot $(xcrun --sdk macosx --show-sdk-path)"
 
 cd openssl.x64
 arch -arch x86_64 ./config \
   --with-zlib-include=../../../z/include \
-  --with-zlib-lib=../../../z/built \
+  --with-zlib-lib=../../../z/lib \
+  --with-zstd-include=../../../zstd/include \
+  --with-zstd-lib=../../../zstd/lib \
   --prefix=${CUR_DIR}/openssl.tmp/installed.x64/ \
   no-shared \
   no-asm \
   zlib \
+  enable-zstd \
   enable-md2 \
   enable-rc5 \
   CFLAGS="${CFLAGS}"
-make -j
-make -j test
-make -j install
+make -j4
+make -j4 test
+make -j4 install
 
 cd ../openssl.arm64
 arch -arch arm64 ./config \
   --with-zlib-include=../../../z/include \
-  --with-zlib-lib=../../../z/built \
+  --with-zlib-lib=../../../z/lib \
+  --with-zstd-include=../../../zstd/include \
+  --with-zstd-lib=../../../zstd/lib \
   --prefix=${CUR_DIR}/openssl.tmp/installed.arm64/ \
   no-shared \
   no-asm \
   zlib \
+  enable-zstd \
   enable-md2 \
   enable-rc5 \
   CFLAGS="${CFLAGS}"
-make -j
-make -j test
-make -j install
+make -j4
+make -j4 test
+make -j4 install
 
 cd ..
 lipo -create ./installed.arm64/lib/libcrypto.a ./installed.x64/lib/libcrypto.a -output ./libcrypto.a

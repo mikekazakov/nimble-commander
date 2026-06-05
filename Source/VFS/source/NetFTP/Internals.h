@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <curl/curl.h>
@@ -9,7 +9,7 @@
 
 namespace nc::vfs::ftp {
 
-inline constexpr curl_ftpmethod g_CURLFTPMethod = CURLFTPMETHOD_SINGLECWD;
+inline constexpr long g_CURLFTPMethod = CURLFTPMETHOD_SINGLECWD;
 inline constexpr int g_CURLVerbose = 0;
 
 struct CURLInstance {

@@ -34,6 +34,9 @@
 /* Default SSL backend */
 /* #undef CURL_DEFAULT_SSL_BACKEND */
 
+/* Use native CA store */
+/* #undef CURL_CA_NATIVE */
+
 /* disables alt-svc */
 /* #undef CURL_DISABLE_ALTSVC */
 
@@ -115,8 +118,8 @@
 /* disables netrc parser */
 /* #undef CURL_DISABLE_NETRC */
 
-/* disables NTLM support */
-/* #undef CURL_DISABLE_NTLM */
+/* enables NTLM support */
+/* #undef CURL_ENABLE_NTLM */
 
 /* disables date parsing */
 /* #undef CURL_DISABLE_PARSEDATE */
@@ -143,15 +146,15 @@
 /* #undef CURL_DISABLE_SHUFFLE_DNS */
 
 /* disables SMB */
-/* #undef CURL_DISABLE_SMB */
+/* #undef CURL_ENABLE_SMB */
 
 /* disables SMTP */
 /* #undef CURL_DISABLE_SMTP */
 
-/* disabled WebSockets */
+/* disabled WebSocket */
 /* #undef CURL_DISABLE_WEBSOCKETS */
 
-/* disables use of socketpair for curl_multi_poll */
+/* disables use of socketpair for curl_multi_poll() */
 /* #undef CURL_DISABLE_SOCKETPAIR */
 
 /* disables TELNET */
@@ -249,9 +252,6 @@
 /* Define to 1 if you have the fseeko declaration. */
 #define HAVE_DECL_FSEEKO 1
 
-/* Define to 1 if you have the ftruncate function. */
-#define HAVE_FTRUNCATE 1
-
 /* Define to 1 if you have a working getaddrinfo function. */
 #define HAVE_GETADDRINFO 1
 
@@ -315,14 +315,17 @@
 /* if you have the gssapi libraries */
 /* #undef HAVE_GSSAPI */
 
-/* Define to 1 if you have the <gssapi/gssapi_generic.h> header file. */
-/* #undef HAVE_GSSAPI_GSSAPI_GENERIC_H */
-
-/* Define to 1 if you have the <gssapi/gssapi.h> header file. */
-/* #undef HAVE_GSSAPI_GSSAPI_H */
-
 /* if you have the GNU gssapi libraries */
 /* #undef HAVE_GSSGNU */
+
+/* MIT Kerberos version */
+/* #undef CURL_KRB5_VERSION */
+
+/* BoringSSL version */
+/* #undef CURL_BORINGSSL_VERSION */
+
+/* Patch stamp */
+/* #undef CURL_PATCHSTAMP */
 
 /* Define to 1 if you have the <ifaddrs.h> header file. */
 #define HAVE_IFADDRS_H 1
@@ -335,9 +338,6 @@
 
 /* Define to 1 if symbol `sa_family_t' exists */
 #define HAVE_SA_FAMILY_T 1
-
-/* Define to 1 if symbol `ADDRESS_FAMILY' exists */
-/* #undef HAVE_ADDRESS_FAMILY */
 
 /* Define to 1 if you have the ioctlsocket function. */
 /* #undef HAVE_IOCTLSOCKET */
@@ -394,14 +394,11 @@
 /* Define to 1 if you have the <locale.h> header file. */
 #define HAVE_LOCALE_H 1
 
-/* Define to 1 if the compiler supports the 'long long' data type. */
-#define HAVE_LONGLONG 1
+/* Define to 1 if you have a working localtime_r function. */
+#define HAVE_LOCALTIME_R 1
 
 /* Define to 1 if you have the 'suseconds_t' data type. */
 #define HAVE_SUSECONDS_T 1
-
-/* Define to 1 if you have the MSG_NOSIGNAL flag. */
-#define HAVE_MSG_NOSIGNAL 1
 
 /* Define to 1 if you have the <netdb.h> header file. */
 #define HAVE_NETDB_H 1
@@ -424,9 +421,6 @@
 /* Define to 1 if you have the <net/if.h> header file. */
 #define HAVE_NET_IF_H 1
 
-/* if you have an old MIT gssapi library, lacking GSS_C_NT_HOSTBASED_SERVICE */
-/* #undef HAVE_OLD_GSSMIT */
-
 /* Define to 1 if you have the `pipe' function. */
 #define HAVE_PIPE 1
 
@@ -448,14 +442,11 @@
 /* Define to 1 if you have a working POSIX-style strerror_r function. */
 #define HAVE_POSIX_STRERROR_R 1
 
-/* Define to 1 if you have the <pthread.h> header file */
-#define HAVE_PTHREAD_H 1
-
 /* Define to 1 if you have the <pwd.h> header file. */
 #define HAVE_PWD_H 1
 
 /* Define to 1 if OpenSSL has the `SSL_set0_wbio` function. */
-/* #undef HAVE_SSL_SET0_WBIO */
+#define HAVE_SSL_SET0_WBIO 1
 
 /* Define to 1 if you have the recv function. */
 #define HAVE_RECV 1
@@ -475,9 +466,6 @@
 /* Define to 1 if you have the sendmmsg function. */
 /* #undef HAVE_SENDMMSG */
 
-/* Define to 1 if you have the <stdint.h> header file. */
-#define HAVE_STDINT_H 1
-
 /* Define to 1 if you have the 'fsetxattr' function. */
 #define HAVE_FSETXATTR 1
 
@@ -489,12 +477,6 @@
 
 /* Define to 1 if you have the `setlocale' function. */
 #define HAVE_SETLOCALE 1
-
-/* Define to 1 if you have the `setmode' function. */
-#define HAVE_SETMODE 1
-
-/* Define to 1 if you have the `_setmode' function. */
-/* #undef HAVE__SETMODE */
 
 /* Define to 1 if you have the `setrlimit' function. */
 #define HAVE_SETRLIMIT 1
@@ -513,9 +495,6 @@
 
 /* Define to 1 if you have the sigsetjmp function or macro. */
 #define HAVE_SIGSETJMP 1
-
-/* Define to 1 if you have the `snprintf' function. */
-#define HAVE_SNPRINTF 1
 
 /* Define to 1 if struct sockaddr_in6 has the sin6_scope_id member */
 #define HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID 1
@@ -540,9 +519,6 @@
 
 /* Define to 1 if you have the strcmpi function. */
 /* #undef HAVE_STRCMPI */
-
-/* Define to 1 if you have the strdup function. */
-#define HAVE_STRDUP 1
 
 /* Define to 1 if you have the strerror_r function. */
 #define HAVE_STRERROR_R 1
@@ -586,17 +562,8 @@
 /* Define to 1 if you have the <sys/select.h> header file. */
 #define HAVE_SYS_SELECT_H 1
 
-/* Define to 1 if you have the <sys/socket.h> header file. */
-#define HAVE_SYS_SOCKET_H 1
-
 /* Define to 1 if you have the <sys/sockio.h> header file. */
 #define HAVE_SYS_SOCKIO_H 1
-
-/* Define to 1 if you have the <sys/stat.h> header file. */
-#define HAVE_SYS_STAT_H 1
-
-/* Define to 1 if you have the <sys/time.h> header file. */
-#define HAVE_SYS_TIME_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
@@ -638,12 +605,12 @@
 #define CURL_OS "Darwin"
 
 /*
- Note: SIZEOF_* variables are fetched with CMake through check_type_size().
- As per CMake documentation on CheckTypeSize, C preprocessor code is
- generated by CMake into SIZEOF_*_CODE. This is what we use in the
- following statements.
+  Note: SIZEOF_* variables are fetched with CMake through check_type_size().
+  As per CMake documentation on CheckTypeSize, C preprocessor code is
+  generated by CMake into SIZEOF_*_CODE. This is what we use in the
+  following statements.
 
- Reference: https://cmake.org/cmake/help/latest/module/CheckTypeSize.html
+  Reference: https://cmake.org/cmake/help/latest/module/CheckTypeSize.html
 */
 
 /* The size of `int', as computed by sizeof. */
@@ -651,9 +618,6 @@
 
 /* The size of `long', as computed by sizeof. */
 #define SIZEOF_LONG 8
-
-/* The size of `long long', as computed by sizeof. */
-#define SIZEOF_LONG_LONG 8
 
 /* The size of `off_t', as computed by sizeof. */
 #define SIZEOF_OFF_T 8
@@ -673,20 +637,20 @@
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
+/* Define if you have POSIX pthreads */
+#define HAVE_THREADS_POSIX 1
+
 /* Define if you want to enable c-ares support */
 /* #undef USE_ARES */
 
-/* Define if you want to enable POSIX threaded DNS lookup */
-#define USE_THREADS_POSIX 1
+/* Define if you want to enable c-ares DNS lookup */
+/* #undef USE_RESOLV_ARES */
 
-/* Define if you want to enable Win32 threaded DNS lookup */
-/* #undef USE_THREADS_WIN32 */
+/* Define if you want to enable threaded DNS lookup */
+#define USE_RESOLV_THREADED 1
 
 /* if GnuTLS is enabled */
 /* #undef USE_GNUTLS */
-
-/* if Secure Transport is enabled */
-#define USE_SECTRANSP 1
 
 /* if SSL session export support is available */
 /* #undef USE_SSLS_EXPORT */
@@ -694,8 +658,8 @@
 /* if mbedTLS is enabled */
 /* #undef USE_MBEDTLS */
 
-/* if BearSSL is enabled */
-/* #undef USE_BEARSSL */
+/* if mbedTLS <4 has the mbedtls_des_crypt_ecb function. */
+/* #undef HAVE_MBEDTLS_DES_CRYPT_ECB */
 
 /* if Rustls is enabled */
 /* #undef USE_RUSTLS */
@@ -709,23 +673,20 @@
 /* if wolfSSL has the wolfSSL_UseALPN function. */
 /* #undef HAVE_WOLFSSL_USEALPN */
 
-/* if wolfSSL has the wolfSSL_DES_ecb_encrypt function. */
-/* #undef HAVE_WOLFSSL_DES_ECB_ENCRYPT */
-
 /* if wolfSSL has the wolfSSL_BIO_new function. */
 /* #undef HAVE_WOLFSSL_BIO_NEW */
 
 /* if wolfSSL has the wolfSSL_BIO_set_shutdown function. */
 /* #undef HAVE_WOLFSSL_BIO_SET_SHUTDOWN */
 
+/* if wolfSSL has the wc_Des_EcbEncrypt function. */
+/* #undef HAVE_WC_DES_ECBENCRYPT */
+
 /* if libssh is in use */
 /* #undef USE_LIBSSH */
 
 /* if libssh2 is in use */
 /* #undef USE_LIBSSH2 */
-
-/* if wolfssh is in use */
-/* #undef USE_WOLFSSH */
 
 /* if libpsl is in use */
 /* #undef USE_LIBPSL */
@@ -734,13 +695,10 @@
 /* #undef USE_OPENLDAP */
 
 /* if OpenSSL is in use */
-/* #undef USE_OPENSSL */
+#define USE_OPENSSL 1
 
 /* if AmiSSL is in use */
 /* #undef USE_AMISSL */
-
-/* if librtmp/rtmpdump is in use */
-/* #undef USE_LIBRTMP */
 
 /* if GSASL is in use */
 /* #undef USE_GSASL */
@@ -751,24 +709,24 @@
 /* Define to 1 if you have the <uv.h> header file. */
 /* #undef HAVE_UV_H */
 
+/* if libbacktrace is in use */
+/* #undef USE_BACKTRACE */
+
 /* Define to 1 if you do not want the OpenSSL configuration to be loaded
    automatically */
 /* #undef CURL_DISABLE_OPENSSL_AUTO_LOAD_CONFIG */
 
-/* to enable NGHTTP2  */
+/* to enable NGHTTP2 */
 /* #undef USE_NGHTTP2 */
 
 /* to enable NGTCP2 */
 /* #undef USE_NGTCP2 */
 
-/* to enable NGHTTP3  */
+/* to enable NGHTTP3 */
 /* #undef USE_NGHTTP3 */
 
 /* to enable quiche */
 /* #undef USE_QUICHE */
-
-/* to enable openssl + nghttp3 */
-/* #undef USE_OPENSSL_QUIC */
 
 /* to enable openssl + ngtcp2 + nghttp3 */
 /* #undef OPENSSL_QUIC_API2 */
@@ -776,19 +734,13 @@
 /* Define to 1 if you have the quiche_conn_set_qlog_fd function. */
 /* #undef HAVE_QUICHE_CONN_SET_QLOG_FD */
 
-/* to enable msh3 */
-/* #undef USE_MSH3 */
-
-/* if Unix domain sockets are enabled  */
+/* if Unix domain sockets are enabled */
 #define USE_UNIX_SOCKETS 1
-
-/* Define to 1 if you are building a Windows target with large file support. */
-/* #undef USE_WIN32_LARGE_FILES */
 
 /* to enable SSPI support */
 /* #undef USE_WINDOWS_SSPI */
 
-/* to enable Windows SSL  */
+/* to enable Windows SSL */
 /* #undef USE_SCHANNEL */
 
 /* if Watt-32 is in use */
@@ -799,18 +751,6 @@
 
 /* Number of bits in a file offset, on hosts where this is settable. */
 #define _FILE_OFFSET_BITS 64
-
-/* Define for large files, on AIX-style hosts. */
-/* #undef _LARGE_FILES */
-
-/* define this if you need it to compile thread-safe code */
-/* #undef _THREAD_SAFE */
-
-/* Define to empty if `const' does not conform to ANSI C. */
-/* #undef const */
-
-/* Define to `unsigned int' if <sys/types.h> does not define. */
-/* #undef size_t */
 
 /* the signed version of size_t */
 /* #undef ssize_t */
@@ -824,14 +764,17 @@
 /* to enable Apple IDN */
 #define USE_APPLE_IDN 1
 
+/* to enable Apple OS-native certificate verification */
+#define USE_APPLE_SECTRUST 1
+
 /* Define to 1 if OpenSSL has the SSL_CTX_set_srp_username function. */
-/* #undef HAVE_OPENSSL_SRP */
+#define HAVE_OPENSSL_SRP 1
 
 /* Define to 1 if GnuTLS has the gnutls_srp_verifier function. */
 /* #undef HAVE_GNUTLS_SRP */
 
 /* Define to 1 to enable TLS-SRP support. */
-/* #undef USE_TLS_SRP */
+#define USE_TLS_SRP 1
 
 /* Define to 1 to query for HTTPSRR when using DoH */
 /* #undef USE_HTTPSRR */
@@ -844,3 +787,6 @@
 
 /* Define to 1 if you have the SSL_set1_ech_config_list function. */
 /* #undef HAVE_SSL_SET1_ECH_CONFIG_LIST */
+
+/* Define to 1 if OpenSSL has the DES_ecb_encrypt function. */
+#define HAVE_DES_ECB_ENCRYPT 1

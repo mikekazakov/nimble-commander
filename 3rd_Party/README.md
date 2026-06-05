@@ -37,7 +37,7 @@ Verify the Xcode version with `xcode-select -p`.
 | boost           | 1.85.0     | 2024.04.15 | https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.gz
 | bz2             | 1.0.8      | 2019.07.13 | https://sourceware.org/git/bzip2.git
 | Catch2          | 3.11.0     | 2025.09.30 | https://github.com/catchorg/Catch2
-| curl            | 8.14.1     | 2024.12.11 | https://github.com/curl/curl.git
+| curl            | 8.20.0     | 2026.04.29 | https://github.com/curl/curl.git
 | fmt             | 12.1.0     | 2025.10.29 | https://github.com/fmtlib/fmt.git
 | frozen          | 1.2.0      | 2024.06.02 | https://github.com/serge-sans-paille/frozen
 | gtest           | 1.14.0     | 2025.04.30 | https://github.com/google/googletest.git
@@ -51,7 +51,7 @@ Verify the Xcode version with `xcode-select -p`.
 | lzo             | 2.10       | 2017.03.01 | http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz
 | nlohmann        | 3.12.0     | 2025.04.11 | https://github.com/nlohmann/json.git
 | magic_enum      | 0.9.7      | 2024.11.13 | https://github.com/Neargye/magic_enum
-| openssl         | 1.1.1w     | 2023.09.11 | https://github.com/openssl/openssl.git
+| openssl         | 3.5.5      | 2026.01.27 | https://github.com/openssl/openssl.git
 | pstld           | head       | 2024.06.21 | https://github.com/mikekazakov/pstld
 | pugixml         | 1.15       | 2025.01.10 | https://github.com/zeux/pugixml.git
 | rapidjson       | head       | 2025.02.05 | https://github.com/Tencent/rapidjson

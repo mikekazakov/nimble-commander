@@ -9,6 +9,11 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <mutex>
 
+template <typename T>
+concept Streamable = requires(std::ostream &_os, T _value) {
+    { _os << _value } -> std::convertible_to<std::ostream &>;
+};
+
 template <class T>
 struct AtomicHolder {
     AtomicHolder();
@@ -142,9 +147,11 @@ bool QueuedAtomicHolder<T>::wait_to_become_with_runloop(std::chrono::nanoseconds
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, std::chrono::duration<double>(_slice).count(), false);
     } while( deadline > nc::base::machtime() );
 
-    if( _dump_on_fail ) {
-        auto lg = std::lock_guard{m_Mutex};
-        std::cerr << m_Value << std::endl;
+    if constexpr( Streamable<T> ) {
+        if( _dump_on_fail ) {
+            auto lg = std::lock_guard{m_Mutex};
+            std::cerr << m_Value << std::endl;
+        }
     }
     return false;
 }

@@ -2133,7 +2133,7 @@ TEST_CASE(PREFIX "time handling")
     std::shared_ptr<ArchiveHost> host;
     REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(path.c_str(), TestEnv().vfs_native));
     const long expected_tv_sec = 1781540117L; // Monday, 15 June 2026 at 17:15:17 UTC+01:00 DST in seconds from Epoch
-    const long _24h = 24 * 60 * 60;           // Allow a huge leeway to work around any potential timezone issues.
+    const long _24h = 24L * 60L * 60L;        // Allow a huge leeway to work around any potential timezone issues.
     // Probe via Stat()
     const VFSStat st = host->Stat("/test.txt", 0).value();
     CHECK(std::abs(st.atime.tv_sec - expected_tv_sec) < _24h);

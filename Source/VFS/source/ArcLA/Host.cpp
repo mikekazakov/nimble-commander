@@ -362,6 +362,25 @@ std::expected<void, Error> ArchiveHost::ReadArchiveListing()
         entry->st = *stat;
         I->m_ArchivedFilesTotalSize += stat->st_size;
 
+        // Fixup the missing timestamps.
+        // On the outside ArchiveHost pretends that atime, btime, ctime and mtime are always set, but libarchive might
+        // provide only a subset if any at all.
+        // Also don't believe when a file reports with a straight face that its timestamp is legitimately 1970.
+        // Provide the first fallback priority to existing mtime and then to mtime of the source file itself.
+        if( const bool is_mtime_set = archive_entry_mtime_is_set(aentry) != 0 && entry->st.st_mtimespec.tv_sec != 0;
+            !is_mtime_set )
+            entry->st.st_mtimespec = I->m_SrcFileStat.st_mtimespec;
+        if( const bool is_ctime_set = archive_entry_ctime_is_set(aentry) != 0 && entry->st.st_ctimespec.tv_sec != 0;
+            !is_ctime_set )
+            entry->st.st_ctimespec = entry->st.st_mtimespec;
+        if( const bool is_atime_set = archive_entry_atime_is_set(aentry) != 0 && entry->st.st_atimespec.tv_sec != 0;
+            !is_atime_set )
+            entry->st.st_atimespec = entry->st.st_mtimespec;
+        if( const bool is_btime_set =
+                archive_entry_birthtime_is_set(aentry) != 0 && entry->st.st_birthtimespec.tv_sec != 0;
+            !is_btime_set )
+            entry->st.st_birthtimespec = entry->st.st_mtimespec;
+
         if( I->m_EntryByUID.size() <= entry->aruid )
             I->m_EntryByUID.resize(entry->aruid + 1, std::make_pair(nullptr, 0));
         I->m_EntryByUID[entry->aruid] = std::make_pair(parent_dir, entry_index_in_dir);
@@ -565,10 +584,7 @@ std::expected<VFSListingPtr, Error> ArchiveHost::FetchDirectoryListing(std::stri
             }
 
         listing_source.unix_modes.emplace_back(stat.st_mode);
-        listing_source.sizes.insert(index,
-                                    //                                    S_ISDIR(stat.st_mode) ?
-                                    //                                        VFSListingInput::unknown_size :
-                                    stat.st_size);
+        listing_source.sizes.insert(index, stat.st_size);
         listing_source.atimes.insert(index, stat.st_atime);
         listing_source.ctimes.insert(index, stat.st_ctime);
         listing_source.mtimes.insert(index, stat.st_mtime);

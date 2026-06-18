@@ -328,7 +328,7 @@ static void ShowOpenPanel(NSOpenPanel *_panel, NSWindow *_window, std::function<
         }
     }
     else if( source_items.size() == 1 ) {
-        m_FileOpener->Open(source_items.front().Path(), source_items.front().Host(), _handler.Path(), self.target);
+        m_FileOpener->Open(source_items.front().Path(), source_items.front().Host(), self.target, _handler.Path());
     }
 }
 

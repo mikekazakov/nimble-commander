@@ -13,21 +13,21 @@ class UTIDB;
 
 namespace nc::panel {
 
-// this class allows opening file in VFS with regular [NSWorkspace open]
-// after refactoring the need to keep this class at all is in doubts
-// opening files in writable non-native vfs will start background changes tracking and uploading changes back
+// This class allows opening file in VFS with e.g. regular [NSWorkspace open].
+// Opening files in writable non-native vfs will start background changes tracking and uploading changes back.
+// The instances of the class used to open the file must be kept alive until the opening is finished.
 class FileOpener
 {
 public:
     FileOpener(nc::utility::TemporaryFileStorage &_temp_storage, nc::utility::UTIDB &_uti_db);
 
-    // can be called from main thread - it will execute it's job in background
-    void Open(std::string _filepath, VFSHostPtr _host, PanelController *_panel);
-
-    void Open(std::string _filepath,
+    // Open the specified file with either a default of a specified application.
+    // Can be called from main thread - it will execute it's job in background.
+    void Open(std::string_view _filepath,
               VFSHostPtr _host,
-              std::string _with_app_path, // can be "", use default app in such case
-              PanelController *_panel);
+              PanelController *_panel,
+              std::string_view _with_app_at_path = {} // can be "", use default app in such case
+    );
 
     void Open(std::vector<std::string> _filepaths,
               VFSHostPtr _host,

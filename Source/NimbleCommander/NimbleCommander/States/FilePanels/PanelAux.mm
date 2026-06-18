@@ -113,22 +113,19 @@ FileOpener::FileOpener(nc::utility::TemporaryFileStorage &_temp_storage, nc::uti
 {
 }
 
-void FileOpener::Open(std::string _filepath, std::shared_ptr<VFSHost> _host, PanelController *_panel)
-{
-    Open(_filepath, _host, "", _panel);
-}
-
-void FileOpener::Open(std::string _filepath,
+void FileOpener::Open(std::string_view _filepath,
                       std::shared_ptr<VFSHost> _host,
-                      std::string _with_app_path,
-                      PanelController *_panel)
+                      PanelController *_panel,
+                      std::string_view _with_app_path)
 {
     if( _host->IsNativeFS() ) {
-        NSString *const filename = [NSString stringWithUTF8String:_filepath.c_str()];
+        // TODO: this can potentially block. Think about moving this to a background thread and providing a completion
+        // callback.
+        NSString *const filename = [NSString stringWithUTF8StdStringView:_filepath];
 
         NSURL *const file_url = [NSURL fileURLWithPath:filename];
         if( !_with_app_path.empty() ) {
-            NSURL *const app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:_with_app_path.c_str()]];
+            NSURL *const app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdStringView:_with_app_path]];
             [[NSWorkspace sharedWorkspace] openURLs:@[file_url]
                                withApplicationAtURL:app_url
                                       configuration:[NSWorkspaceOpenConfiguration configuration]
@@ -141,53 +138,59 @@ void FileOpener::Open(std::string _filepath,
             if( ![[NSWorkspace sharedWorkspace] openURL:file_url] )
                 NSBeep();
         }
-
-        return;
     }
+    else {
+        auto worker = [filepath = std::string{_filepath},
+                       panel = _panel,
+                       host = _host,
+                       with_app_path = std::string{_with_app_path},
+                       this] {
+            auto activity_ticket = [panel registerExtActivity];
+            if( host->IsDirectory(filepath, 0, nullptr) ) {
+                NSBeep();
+                return;
+            }
 
-    dispatch_to_default([=, this] {
-        auto activity_ticket = [_panel registerExtActivity];
-        if( _host->IsDirectory(_filepath, 0, nullptr) ) {
-            NSBeep();
-            return;
-        }
+            const std::expected<VFSStat, Error> st = host->Stat(filepath, 0);
+            if( !st ) {
+                NSBeep();
+                return;
+            }
 
-        const std::expected<VFSStat, Error> st = _host->Stat(_filepath, 0);
-        if( !st ) {
-            NSBeep();
-            return;
-        }
+            if( st->size > g_MaxFileSizeForVFSOpen ) {
+                NSBeep();
+                return;
+            }
 
-        if( st->size > g_MaxFileSizeForVFSOpen ) {
-            NSBeep();
-            return;
-        }
+            if( const std::optional<std::filesystem::path> tmp_path =
+                    CopyFileToTempStorage(filepath, *host, m_TemporaryFileStorage) ) {
+                RegisterRemoteFileUploading(filepath, host, *tmp_path, panel);
 
-        if( auto tmp_path = CopyFileToTempStorage(_filepath, *_host, m_TemporaryFileStorage) ) {
-            RegisterRemoteFileUploading(_filepath, _host, *tmp_path, _panel);
-
-            NSString *const fn = [NSString stringWithUTF8StdString:*tmp_path];
-            dispatch_to_main_queue([=] {
-                NSURL *const file_url = [NSURL fileURLWithPath:fn];
-                if( !_with_app_path.empty() ) {
-                    NSURL *const app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:_with_app_path]];
-                    [[NSWorkspace sharedWorkspace] openURLs:@[file_url]
-                                       withApplicationAtURL:app_url
-                                              configuration:[NSWorkspaceOpenConfiguration configuration]
-                                          completionHandler:^(NSRunningApplication *_app, NSError *) {
-                                            if( !_app )
-                                                NSBeep();
-                                          }];
-                }
-                else {
-                    if( ![[NSWorkspace sharedWorkspace] openURL:file_url] )
-                        NSBeep();
-                }
-            });
-        }
-        else
-            NSBeep();
-    });
+                NSString *const fn = [NSString stringWithUTF8StdString:*tmp_path];
+                dispatch_to_main_queue([=] {
+                    NSURL *const file_url = [NSURL fileURLWithPath:fn];
+                    if( !with_app_path.empty() ) {
+                        NSURL *const app_url =
+                            [NSURL fileURLWithPath:[NSString stringWithUTF8StdStringView:with_app_path]];
+                        [[NSWorkspace sharedWorkspace] openURLs:@[file_url]
+                                           withApplicationAtURL:app_url
+                                                  configuration:[NSWorkspaceOpenConfiguration configuration]
+                                              completionHandler:^(NSRunningApplication *_app, NSError *) {
+                                                if( !_app )
+                                                    NSBeep();
+                                              }];
+                    }
+                    else {
+                        if( ![[NSWorkspace sharedWorkspace] openURL:file_url] )
+                            NSBeep();
+                    }
+                });
+            }
+            else
+                NSBeep();
+        };
+        dispatch_to_default(std::move(worker));
+    }
 }
 
 // TODO: write version with FlexListingItem as an input - it would be much simplier

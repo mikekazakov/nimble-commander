@@ -23,9 +23,9 @@ public:
 
     // Open the specified file with either a default of a specified application.
     // Can be called from main thread - it will execute it's job in background.
-    void Open(std::string_view _filepath,
-              VFSHostPtr _host,
-              PanelController *_panel,
+    void Open(std::string_view _file_at_path,
+              VFSHostPtr _in_host,
+              PanelController *_within_panel,
               std::string_view _with_app_at_path = {} // can be "", use default app in such case
     );
 

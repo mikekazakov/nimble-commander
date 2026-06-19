@@ -113,19 +113,19 @@ FileOpener::FileOpener(nc::utility::TemporaryFileStorage &_temp_storage, nc::uti
 {
 }
 
-void FileOpener::Open(std::string_view _filepath,
-                      std::shared_ptr<VFSHost> _host,
-                      PanelController *_panel,
-                      std::string_view _with_app_path)
+void FileOpener::Open(std::string_view _file_at_path,
+                      std::shared_ptr<VFSHost> _in_host,
+                      PanelController *_within_panel,
+                      std::string_view _with_app_at_path)
 {
-    if( _host->IsNativeFS() ) {
+    if( _in_host->IsNativeFS() ) {
         // TODO: this can potentially block. Think about moving this to a background thread and providing a completion
         // callback.
-        NSString *const filename = [NSString stringWithUTF8StdStringView:_filepath];
+        NSString *const filename = [NSString stringWithUTF8StdStringView:_file_at_path];
 
         NSURL *const file_url = [NSURL fileURLWithPath:filename];
-        if( !_with_app_path.empty() ) {
-            NSURL *const app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdStringView:_with_app_path]];
+        if( !_with_app_at_path.empty() ) {
+            NSURL *const app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdStringView:_with_app_at_path]];
             [[NSWorkspace sharedWorkspace] openURLs:@[file_url]
                                withApplicationAtURL:app_url
                                       configuration:[NSWorkspaceOpenConfiguration configuration]
@@ -140,10 +140,10 @@ void FileOpener::Open(std::string_view _filepath,
         }
     }
     else {
-        auto worker = [filepath = std::string{_filepath},
-                       panel = _panel,
-                       host = _host,
-                       with_app_path = std::string{_with_app_path},
+        auto worker = [filepath = std::string{_file_at_path},
+                       panel = _within_panel,
+                       host = _in_host,
+                       with_app_path = std::string{_with_app_at_path},
                        this] {
             auto activity_ticket = [panel registerExtActivity];
             if( host->IsDirectory(filepath, 0, nullptr) ) {

@@ -29,10 +29,15 @@ public:
               std::string_view _with_app_at_path = {} // can be "", use default app in such case
     );
 
-    void Open(std::vector<std::string> _filepaths,
+    // Open the specified files at once with either a default of a specified application.
+    // This is NOT the same calling the Open() function about multiple times - the difference is potentially the number
+    // of opened windows.
+    // Can be called from main thread - it will execute it's job in background.
+    void Open(std::span<std::string> _filepaths,
               VFSHostPtr _host,
-              NSString *_with_app_bundle, // can be nil, use default app in such case
-              PanelController *_panel);
+              PanelController *_panel,
+              std::string_view _with_app_at_path = {} // can be "", use default app in such case
+    );
 
     void OpenInExternalEditorTerminal(std::string _filepath,
                                       VFSHostPtr _host,
@@ -41,9 +46,9 @@ public:
                                       PanelController *_panel);
 
 private:
-    // May return nil if no default app was found
-    [[nodiscard]] NSString *DeduceDefaultAppBundleForOpeningFiles(std::span<std::string> _filepaths,
-                                                                  VFSHostPtr _host) const;
+    // May return empty string if no default app was found
+    [[nodiscard]] std::string DeduceDefaultAppBundleForOpeningFiles(std::span<std::string> _filepaths,
+                                                                    VFSHostPtr _host) const;
 
     nc::utility::TemporaryFileStorage &m_TemporaryFileStorage;
     nc::utility::UTIDB &m_UTIDB;

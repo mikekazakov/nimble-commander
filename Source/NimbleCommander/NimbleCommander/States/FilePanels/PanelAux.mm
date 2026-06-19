@@ -194,21 +194,22 @@ void FileOpener::Open(std::string_view _file_at_path,
 }
 
 // TODO: write version with FlexListingItem as an input - it would be much simplier
-void FileOpener::Open(std::vector<std::string> _filepaths,
+void FileOpener::Open(std::span<std::string> _filepaths,
                       std::shared_ptr<VFSHost> _host,
-                      NSString *_with_app_bundle, // can be nil, use default app in such case
-                      PanelController *_panel)
+                      PanelController *_panel,
+                      std::string_view _with_app_at_path)
 {
     // If there's no explicit app bundle - try to deduce default one from the input
-    if( _with_app_bundle == nil ) {
-        _with_app_bundle = DeduceDefaultAppBundleForOpeningFiles(_filepaths, _host);
+    std::string effective_handler_app_path{_with_app_at_path};
+    if( effective_handler_app_path.empty() ) {
+        effective_handler_app_path = DeduceDefaultAppBundleForOpeningFiles(_filepaths, _host);
     }
 
     // If we have app bundle identifier - try to get app url for it
-    NSURL *app_url = nil;
-    if( _with_app_bundle != nil && _with_app_bundle.length > 0 ) {
-        app_url = [[NSWorkspace sharedWorkspace] URLForApplicationWithBundleIdentifier:_with_app_bundle];
-        if( !app_url ) {
+    NSURL *handler_app_url = nil;
+    if( !effective_handler_app_path.empty() ) {
+        handler_app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:effective_handler_app_path]];
+        if( !handler_app_url ) {
             NSBeep();
             return;
         }
@@ -220,10 +221,10 @@ void FileOpener::Open(std::vector<std::string> _filepaths,
             if( NSString *const s = [NSString stringWithUTF8String:path.c_str()] )
                 [arr addObject:[[NSURL alloc] initFileURLWithPath:s]];
 
-        if( app_url ) {
+        if( handler_app_url ) {
             // In case we managed to get an app url - use it and open all items at once
             [[NSWorkspace sharedWorkspace] openURLs:arr
-                               withApplicationAtURL:app_url
+                               withApplicationAtURL:handler_app_url
                                       configuration:[NSWorkspaceOpenConfiguration configuration]
                                   completionHandler:^(NSRunningApplication *_app, NSError *) {
                                     if( !_app )
@@ -240,10 +241,14 @@ void FileOpener::Open(std::vector<std::string> _filepaths,
         return;
     }
 
-    dispatch_to_default([=, this] {
+    dispatch_to_default([filepaths = std::vector<std::string>{_filepaths.begin(), _filepaths.end()},
+                         _panel,
+                         _host,
+                         handler_app_url,
+                         this] {
         auto activity_ticket = [_panel registerExtActivity];
-        NSMutableArray *const arr = [NSMutableArray arrayWithCapacity:_filepaths.size()];
-        for( auto &i : _filepaths ) {
+        NSMutableArray *const arr = [NSMutableArray arrayWithCapacity:filepaths.size()];
+        for( auto &i : filepaths ) {
             if( _host->IsDirectory(i, 0, nullptr) )
                 continue;
 
@@ -261,10 +266,10 @@ void FileOpener::Open(std::vector<std::string> _filepaths,
             }
         }
 
-        if( app_url ) {
+        if( handler_app_url ) {
             // In case we managed to get an app url - use it and open all items at once
             [[NSWorkspace sharedWorkspace] openURLs:arr
-                               withApplicationAtURL:app_url
+                               withApplicationAtURL:handler_app_url
                                       configuration:[NSWorkspaceOpenConfiguration configuration]
                                   completionHandler:^(NSRunningApplication *_app, NSError *) {
                                     if( !_app )
@@ -330,7 +335,7 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
         });
 }
 
-NSString *FileOpener::DeduceDefaultAppBundleForOpeningFiles(std::span<std::string> _filepaths, VFSHostPtr _host) const
+std::string FileOpener::DeduceDefaultAppBundleForOpeningFiles(std::span<std::string> _filepaths, VFSHostPtr _host) const
 {
     // TODO: this approach is ludicrously inefficient for large number of files...
     // It does much more than necessary.
@@ -343,15 +348,15 @@ NSString *FileOpener::DeduceDefaultAppBundleForOpeningFiles(std::span<std::strin
 
     if( items_handlers.DefaultHandlerPath().empty() ) {
         // give up - there's no common default handler, the content is heterogeneous
-        // maybe it's a bit bitter to "cluster" the files by their default handlers, but that's rather complex.
-        return nil;
+        // maybe it's a bit better to "cluster" the files by their default handlers, but that's rather complex.
+        return {};
     }
 
     try {
         const core::LaunchServiceHandler handler{items_handlers.DefaultHandlerPath()};
-        return handler.Identifier();
+        return handler.Path();
     } catch( ... ) {
-        return nil;
+        return {};
     }
 }
 

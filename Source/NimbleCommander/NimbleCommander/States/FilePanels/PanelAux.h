@@ -13,26 +13,35 @@ class UTIDB;
 
 namespace nc::panel {
 
-// this class allows opening file in VFS with regular [NSWorkspace open]
-// after refactoring the need to keep this class at all is in doubts
-// opening files in writable non-native vfs will start background changes tracking and uploading changes back
+// This class allows opening file in VFS with e.g. regular [NSWorkspace open].
+// Opening files in writable non-native vfs will start background changes tracking and uploading changes back.
+// The instances of the class used to open the file must be kept alive until the opening is finished.
 class FileOpener
 {
 public:
-    FileOpener(nc::utility::TemporaryFileStorage &_temp_storage, nc::utility::UTIDB &_uti_db);
+    FileOpener(nc::utility::TemporaryFileStorage &_temp_storage,
+               nc::utility::UTIDB &_uti_db,
+               uint64_t _vfs_threshold_for_implicit_opening);
 
-    // can be called from main thread - it will execute it's job in background
-    void Open(std::string _filepath, VFSHostPtr _host, PanelController *_panel);
+    // Open the specified file with either a default of a specified application.
+    // Can be called from main thread - it will execute it's job in background.
+    // The call to this function _must_ be intiated by a user action, since it can trigger a blocking dialog for
+    // confirmation to open a large file.
+    void Open(std::string_view _file_at_path,
+              VFSHostPtr _in_host,
+              PanelController *_within_panel,
+              std::string_view _with_app_at_path = {} // can be "", use default app in such case
+    );
 
-    void Open(std::string _filepath,
+    // Open the specified files at once with either a default of a specified application.
+    // This is NOT the same calling the Open() function about multiple times - the difference is potentially the number
+    // of opened windows.
+    // Can be called from main thread - it will execute it's job in background.
+    void Open(std::span<std::string> _filepaths,
               VFSHostPtr _host,
-              std::string _with_app_path, // can be "", use default app in such case
-              PanelController *_panel);
-
-    void Open(std::vector<std::string> _filepaths,
-              VFSHostPtr _host,
-              NSString *_with_app_bundle, // can be nil, use default app in such case
-              PanelController *_panel);
+              PanelController *_panel,
+              std::string_view _with_app_at_path = {} // can be "", use default app in such case
+    );
 
     void OpenInExternalEditorTerminal(std::string _filepath,
                                       VFSHostPtr _host,
@@ -41,12 +50,21 @@ public:
                                       PanelController *_panel);
 
 private:
-    // May return nil if no default app was found
-    [[nodiscard]] NSString *DeduceDefaultAppBundleForOpeningFiles(std::span<std::string> _filepaths,
-                                                                  VFSHostPtr _host) const;
+    // May return empty string if no default app was found
+    [[nodiscard]] std::string DeduceDefaultAppBundleForOpeningFiles(std::span<std::string> _filepaths,
+                                                                    VFSHostPtr _host) const;
+
+    [[nodiscard]] static bool
+    AskUserForPermissionToOpenLargeVFSFile(std::string_view _file_at_path, uint64_t _size, PanelController *_panel);
+
+    [[nodiscard]] static bool AskUserForPermissionToOpenLargeVFSFiles(uint64_t _size, PanelController *_panel);
+
+    [[nodiscard]] static bool
+    AskUserForPermissionToOpen(NSString *_message_str, NSString *_informative_str, PanelController *_panel);
 
     nc::utility::TemporaryFileStorage &m_TemporaryFileStorage;
     nc::utility::UTIDB &m_UTIDB;
+    uint64_t m_VFSThresholdForImplicitOpening;
 };
 
 bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item);

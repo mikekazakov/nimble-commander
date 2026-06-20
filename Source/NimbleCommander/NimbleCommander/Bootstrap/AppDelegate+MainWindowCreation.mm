@@ -318,7 +318,10 @@ static PanelController *PanelFactory()
 
 - (nc::panel::FileOpener &)fileOpener
 {
-    static auto instance = nc::panel::FileOpener{self.temporaryFileStorage, self.utiDB};
+    static auto instance = nc::panel::FileOpener{
+        self.temporaryFileStorage,
+        self.utiDB,
+        GlobalConfig().GetULong("filePanel.general.maximumAllowedVFSFileSizeForOpeningWithoutConfirmation")};
     return instance;
 }
 

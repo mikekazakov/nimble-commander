@@ -147,7 +147,14 @@
             /**
              * Automatically deselect items after they were processed by a file operation.
              */
-            "deselectItemsAfterFileOperations": true
+            "deselectItemsAfterFileOperations": true,
+            
+            /**
+             * When opening a file from a VFS, NC will have to copy it into a temporary location first.
+             * This setting controls the maximum size of a file that can be opened without confirmation.
+             * Default value: 64MB.
+             */
+            "maximumAllowedVFSFileSizeForOpeningWithoutConfirmation": 67108864
         },
         
         /**

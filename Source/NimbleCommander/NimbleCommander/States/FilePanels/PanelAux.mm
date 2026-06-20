@@ -33,7 +33,6 @@ static const std::string_view g_ConfigDisableSystemCaches = "filePanel.operation
 static const std::string_view g_CheckDelay = "filePanel.operations.vfsShadowUploadChangesCheckDelay";
 static const std::string_view g_DropDelay = "filePanel.operations.vfsShadowUploadObservationDropDelay";
 static const std::string_view g_QLPanel = "filePanel.presentation.showQuickLookAsFloatingPanel";
-static const uint64_t g_MaxFileSizeForVFSOpen = 64ull * 1024ull * 1024ull; // 64mb
 
 static std::chrono::milliseconds UploadingCheckDelay()
 {
@@ -110,8 +109,12 @@ static void RegisterRemoteFileUploading(const std::string &_original_path,
     sentinel.WatchFile(_native_path, on_file_change, UploadingCheckDelay(), UploadingDropDelay());
 }
 
-FileOpener::FileOpener(nc::utility::TemporaryFileStorage &_temp_storage, nc::utility::UTIDB &_uti_db)
-    : m_TemporaryFileStorage{_temp_storage}, m_UTIDB{_uti_db}
+FileOpener::FileOpener(nc::utility::TemporaryFileStorage &_temp_storage,
+                       nc::utility::UTIDB &_uti_db,
+                       uint64_t _vfs_threshold_for_implicit_opening)
+    : m_TemporaryFileStorage{_temp_storage}, //
+      m_UTIDB{_uti_db},                      //
+      m_VFSThresholdForImplicitOpening{_vfs_threshold_for_implicit_opening}
 {
 }
 
@@ -161,7 +164,7 @@ void FileOpener::Open(std::string_view _file_at_path,
                 return;
             }
 
-            if( st->size > g_MaxFileSizeForVFSOpen ) {
+            if( st->size > m_VFSThresholdForImplicitOpening ) {
                 const bool allow = AskUserForPermissionToOpenLargeVFSFile(filepath, st->size, panel); // NB! Blocking!
                 if( !allow ) {
                     return;
@@ -262,7 +265,7 @@ void FileOpener::Open(std::span<std::string> _filepaths,
             if( !st )
                 continue;
 
-            if( st->size > g_MaxFileSizeForVFSOpen )
+            if( st->size > m_VFSThresholdForImplicitOpening )
                 continue;
 
             if( auto tmp_path = CopyFileToTempStorage(i, *_host, m_TemporaryFileStorage) ) {
@@ -322,7 +325,7 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
                 return;
             }
 
-            if( st->size > g_MaxFileSizeForVFSOpen ) {
+            if( st->size > m_VFSThresholdForImplicitOpening ) {
                 NSBeep();
                 return;
             }

@@ -19,7 +19,9 @@ namespace nc::panel {
 class FileOpener
 {
 public:
-    FileOpener(nc::utility::TemporaryFileStorage &_temp_storage, nc::utility::UTIDB &_uti_db);
+    FileOpener(nc::utility::TemporaryFileStorage &_temp_storage,
+               nc::utility::UTIDB &_uti_db,
+               uint64_t _vfs_threshold_for_implicit_opening);
 
     // Open the specified file with either a default of a specified application.
     // Can be called from main thread - it will execute it's job in background.
@@ -58,6 +60,7 @@ private:
 
     nc::utility::TemporaryFileStorage &m_TemporaryFileStorage;
     nc::utility::UTIDB &m_UTIDB;
+    uint64_t m_VFSThresholdForImplicitOpening;
 };
 
 bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item);

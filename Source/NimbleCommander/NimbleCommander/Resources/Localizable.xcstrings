@@ -301,6 +301,16 @@
         }
       }
     },
+    "“%@” is %@ in size.\nAre you sure you want to open it?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "“%1$@” is %2$@ in size.\nAre you sure you want to open it?"
+          }
+        }
+      }
+    },
     "%@ available" : {
       "comment" : "Panels bottom volume bar, showing amount of bytes available",
       "localizations" : {
@@ -311,6 +321,12 @@
           }
         }
       }
+    },
+    "⏎" : {
+
+    },
+    "␛" : {
+
     },
     "Allow Access" : {
       "comment" : "Asking user for granting file system access for NC - button title",
@@ -1379,6 +1395,9 @@
           }
         }
       }
+    },
+    "Nimble Commander will create a copy in a temporary location before it can be opened." : {
+
     },
     "No" : {
       "localizations" : {

@@ -23,6 +23,8 @@ public:
 
     // Open the specified file with either a default of a specified application.
     // Can be called from main thread - it will execute it's job in background.
+    // The call to this function _must_ be intiated by a user action, since it can trigger a blocking dialog for
+    // confirmation to open a large file.
     void Open(std::string_view _file_at_path,
               VFSHostPtr _in_host,
               PanelController *_within_panel,
@@ -49,6 +51,10 @@ private:
     // May return empty string if no default app was found
     [[nodiscard]] std::string DeduceDefaultAppBundleForOpeningFiles(std::span<std::string> _filepaths,
                                                                     VFSHostPtr _host) const;
+
+    [[nodiscard]] bool AskUserForPermissionToOpenLargeVFSFile(std::string_view _file_at_path,
+                                                              uint64_t _size,
+                                                              PanelController *_panel) const;
 
     nc::utility::TemporaryFileStorage &m_TemporaryFileStorage;
     nc::utility::UTIDB &m_UTIDB;

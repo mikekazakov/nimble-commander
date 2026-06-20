@@ -4,9 +4,11 @@
 #include <dirent.h>
 #include <VFS/Native.h>
 #include <Utility/ExtensionLowercaseComparison.h>
+#include <Utility/PathManip.h>
 #include <Utility/TemporaryFileStorage.h>
 #include <NimbleCommander/Core/TemporaryNativeFileChangesSentinel.h>
 #include <NimbleCommander/Core/LaunchServices.h>
+#include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
@@ -145,6 +147,8 @@ void FileOpener::Open(std::string_view _file_at_path,
                        host = _in_host,
                        with_app_path = std::string{_with_app_at_path},
                        this] {
+            dispatch_assert_background_queue();
+
             auto activity_ticket = [panel registerExtActivity];
             if( host->IsDirectory(filepath, 0, nullptr) ) {
                 NSBeep();
@@ -153,13 +157,15 @@ void FileOpener::Open(std::string_view _file_at_path,
 
             const std::expected<VFSStat, Error> st = host->Stat(filepath, 0);
             if( !st ) {
-                NSBeep();
+                NSBeep(); // TODO: shown an error?
                 return;
             }
 
             if( st->size > g_MaxFileSizeForVFSOpen ) {
-                NSBeep();
-                return;
+                const bool allow = AskUserForPermissionToOpenLargeVFSFile(filepath, st->size, panel); // NB! Blocking!
+                if( !allow ) {
+                    return;
+                }
             }
 
             if( const std::optional<std::filesystem::path> tmp_path =
@@ -358,6 +364,56 @@ std::string FileOpener::DeduceDefaultAppBundleForOpeningFiles(std::span<std::str
     } catch( ... ) {
         return {};
     }
+}
+
+bool FileOpener::AskUserForPermissionToOpenLargeVFSFile(std::string_view _file_at_path,
+                                                        uint64_t _size,
+                                                        PanelController *_panel) const
+{
+    dispatch_assert_background_queue();
+    const std::string_view filename_sv = utility::PathManip::Filename(_file_at_path);
+    NSString *const filename = [NSString stringWithUTF8StdStringView:filename_sv];
+
+    NSByteCountFormatter *size_fmt = [[NSByteCountFormatter alloc] init];
+    size_fmt.formattingContext = NSFormattingContextMiddleOfSentence;
+    size_fmt.countStyle = NSByteCountFormatterCountStyleFile;
+    size_fmt.includesUnit = true;
+    size_fmt.includesCount = true;
+    size_fmt.includesActualByteCount = false;
+    size_fmt.adaptive = true;
+    size_fmt.zeroPadsFractionDigits = false;
+    NSString *const size_str = [size_fmt stringFromByteCount:_size];
+    NSString *const message_str = [NSString
+        localizedStringWithFormat:NSLocalizedString(@"“%@” is %@ in size.\nAre you sure you want to open it?", ""),
+                                  filename,
+                                  size_str];
+    NSString *const inform_str = [NSString
+        localizedStringWithFormat:
+            NSLocalizedString(@"Nimble Commander will create a copy in a temporary location before it can be opened.",
+                              ""),
+            filename,
+            size_str];
+
+    std::atomic<std::optional<bool>> allow;
+    dispatch_async(dispatch_get_main_queue(), [&allow, message_str, inform_str, _panel] {
+        dispatch_assert_main_queue();
+        Alert *const alert = [[Alert alloc] init];
+        alert.messageText = message_str;
+        alert.informativeText = inform_str;
+        [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+        [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+        [alert.buttons objectAtIndex:0].keyEquivalent = @"\r";
+        [alert.buttons objectAtIndex:0].toolTip = NSLocalizedString(@"⏎", "");
+        [alert.buttons objectAtIndex:1].keyEquivalent = @"\e";
+        [alert.buttons objectAtIndex:1].toolTip = NSLocalizedString(@"␛", "");
+        [alert beginSheetModalForWindow:_panel.window
+                      completionHandler:[&allow](NSModalResponse result) {
+                          allow.store(result == NSAlertFirstButtonReturn);
+                          allow.notify_one();
+                      }];
+    });
+    allow.wait(std::nullopt);
+    return allow.load().value();
 }
 
 bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item)

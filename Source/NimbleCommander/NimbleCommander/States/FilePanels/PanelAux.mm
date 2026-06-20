@@ -371,13 +371,13 @@ std::string FileOpener::DeduceDefaultAppBundleForOpeningFiles(std::span<std::str
 
 bool FileOpener::AskUserForPermissionToOpenLargeVFSFile(std::string_view _file_at_path,
                                                         uint64_t _size,
-                                                        PanelController *_panel) const
+                                                        PanelController *_panel)
 {
     dispatch_assert_background_queue();
     const std::string_view filename_sv = utility::PathManip::Filename(_file_at_path);
     NSString *const filename = [NSString stringWithUTF8StdStringView:filename_sv];
 
-    NSByteCountFormatter *size_fmt = [[NSByteCountFormatter alloc] init];
+    NSByteCountFormatter *const size_fmt = [[NSByteCountFormatter alloc] init];
     size_fmt.formattingContext = NSFormattingContextMiddleOfSentence;
     size_fmt.countStyle = NSByteCountFormatterCountStyleFile;
     size_fmt.includesUnit = true;

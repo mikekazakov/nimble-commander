@@ -54,9 +54,8 @@ private:
     [[nodiscard]] std::string DeduceDefaultAppBundleForOpeningFiles(std::span<std::string> _filepaths,
                                                                     VFSHostPtr _host) const;
 
-    [[nodiscard]] bool AskUserForPermissionToOpenLargeVFSFile(std::string_view _file_at_path,
-                                                              uint64_t _size,
-                                                              PanelController *_panel) const;
+    [[nodiscard]] static bool
+    AskUserForPermissionToOpenLargeVFSFile(std::string_view _file_at_path, uint64_t _size, PanelController *_panel);
 
     nc::utility::TemporaryFileStorage &m_TemporaryFileStorage;
     nc::utility::UTIDB &m_UTIDB;

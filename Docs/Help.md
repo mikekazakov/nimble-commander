@@ -197,7 +197,7 @@ The following screenshot provides an example of how single-pane mode looks:
 ![Single-pane mode](Help-panel-collapsed.png)
 
 ## Selection
-Nimble Commander follows the UX of orthodox file managers and diverges from the typical MacOS UX when it comes to item selection.
+Nimble Commander follows the UX of orthodox file managers and diverges from the typical macOS UX when it comes to item selection.
 It treats item selection and cursor position separately, which means moving the cursor does not change the selection of items in the panel.
 Below is an example of a panel with some selected items and the cursor focused on an item that is not selected:
 
@@ -582,8 +582,10 @@ They can be accessed via the `Command > Links` menu, which includes the followin
 - `Edit Symbolic Link`.
 
 # Virtual File Systems
-In addition to browsing the "real" filesystem available on MacOS, Nimble Commander allows you to interact with other resources as if they were part of the normal filesystem.
+In addition to browsing the "real" filesystem available on macOS, Nimble Commander allows you to interact with other resources as if they were part of the normal filesystem.
 Most operations, such as browsing, searching, viewing, and modifying, work seamlessly with these virtual filesystems (VFS).
+Opening a file stored on a VFS with an external application requires the file to be copied to a temporary location first.
+Small files are copied automatically, while opening larger files prompts for confirmation.
 When a file on a VFS is modified using an external editor, Nimble Commander automatically reflects the changes in the underlying VFS.
 
 Currently, the following virtual filesystems are supported:

@@ -18,6 +18,7 @@
 #include <Operations/Copying.h>
 #include <Base/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
+#include <ranges>
 
 // TODO: remove this, DI stuff instead
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
@@ -88,8 +89,8 @@ static void RegisterRemoteFileUploading(const std::string &_original_path,
         const auto changed_item_directory = std::filesystem::path(_native_path).parent_path().native();
         const auto changed_item_filename = std::filesystem::path(_native_path).filename().native();
         // TODO: why is FetchFlexibleListingItems() used here instead of FetchSingleItemListing()?
-        const std::expected<std::vector<VFSListingItem>, Error> listing_items =
-            storage_host.FetchFlexibleListingItems(changed_item_directory, {1, changed_item_filename}, 0);
+        const std::expected<std::vector<VFSListingItem>, Error> listing_items = storage_host.FetchFlexibleListingItems(
+            changed_item_directory, {1, changed_item_filename}, vfs::Flags::None);
         if( listing_items ) {
             auto opts = panel::MakeDefaultFileCopyOptions();
             opts.exist_behavior = nc::ops::CopyingOptions::ExistBehavior::OverwriteAll;
@@ -153,12 +154,12 @@ void FileOpener::Open(std::string_view _file_at_path,
             dispatch_assert_background_queue();
 
             auto activity_ticket = [panel registerExtActivity];
-            if( host->IsDirectory(filepath, 0, nullptr) ) {
+            if( host->IsDirectory(filepath, vfs::Flags::None) ) {
                 NSBeep();
                 return;
             }
 
-            const std::expected<VFSStat, Error> st = host->Stat(filepath, 0);
+            const std::expected<VFSStat, Error> st = host->Stat(filepath, vfs::Flags::None);
             if( !st ) {
                 NSBeep(); // TODO: shown an error?
                 return;
@@ -254,25 +255,39 @@ void FileOpener::Open(std::span<std::string> _filepaths,
                          _panel,
                          _host,
                          handler_app_url,
-                         this] {
+                         this] mutable {
         auto activity_ticket = [_panel registerExtActivity];
         NSMutableArray *const arr = [NSMutableArray arrayWithCapacity:filepaths.size()];
-        for( auto &i : filepaths ) {
-            if( _host->IsDirectory(i, 0, nullptr) )
-                continue;
 
-            const std::expected<VFSStat, Error> st = _host->Stat(i, 0);
+        // Remove any directories and any items that failed to stat from the list of files to be opened.
+        uint64_t total_size = 0;
+        std::erase_if(filepaths, [&](const std::string &_path) {
+            if( _host->IsDirectory(_path, vfs::Flags::None) )
+                return true;
+            const std::expected<VFSStat, Error> st = _host->Stat(_path, vfs::Flags::None);
             if( !st )
-                continue;
+                return true;
+            total_size += st->size;
+            return false;
+        });
 
-            if( st->size > m_VFSThresholdForImplicitOpening )
-                continue;
+        if( total_size > m_VFSThresholdForImplicitOpening ) {
+            const bool allow = AskUserForPermissionToOpenLargeVFSFiles(total_size, _panel);
+            if( !allow ) {
+                return;
+            }
+        }
 
+        for( auto &i : filepaths ) {
             if( auto tmp_path = CopyFileToTempStorage(i, *_host, m_TemporaryFileStorage) ) {
                 RegisterRemoteFileUploading(i, _host, *tmp_path, _panel);
                 if( NSString *const s = [NSString stringWithUTF8StdString:*tmp_path] )
                     [arr addObject:[[NSURL alloc] initFileURLWithPath:s]];
             }
+        }
+
+        if( arr.count == 0 ) {
+            return;
         }
 
         if( handler_app_url ) {
@@ -314,12 +329,12 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
                              this] { // do downloading down in a background thread
             auto activity_ticket = [_panel registerExtActivity];
 
-            if( _host->IsDirectory(_filepath, 0, nullptr) ) {
+            if( _host->IsDirectory(_filepath, vfs::Flags::None) ) {
                 NSBeep();
                 return;
             }
 
-            const std::expected<VFSStat, Error> st = _host->Stat(_filepath, 0);
+            const std::expected<VFSStat, Error> st = _host->Stat(_filepath, vfs::Flags::None);
             if( !st ) {
                 NSBeep();
                 return;
@@ -390,19 +405,41 @@ bool FileOpener::AskUserForPermissionToOpenLargeVFSFile(std::string_view _file_a
         localizedStringWithFormat:NSLocalizedString(@"“%@” is %@ in size.\nAre you sure you want to open it?", ""),
                                   filename,
                                   size_str];
-    NSString *const inform_str = [NSString
-        localizedStringWithFormat:
-            NSLocalizedString(@"Nimble Commander will create a copy in a temporary location before it can be opened.",
-                              ""),
-            filename,
-            size_str];
+    NSString *const inform_str =
+        NSLocalizedString(@"Nimble Commander will create a copy in a temporary location before it can be opened.", "");
+    return AskUserForPermissionToOpen(message_str, inform_str, _panel);
+}
 
+bool FileOpener::AskUserForPermissionToOpenLargeVFSFiles(uint64_t _size, PanelController *_panel)
+{
+    dispatch_assert_background_queue();
+    NSByteCountFormatter *const size_fmt = [[NSByteCountFormatter alloc] init];
+    size_fmt.formattingContext = NSFormattingContextMiddleOfSentence;
+    size_fmt.countStyle = NSByteCountFormatterCountStyleFile;
+    size_fmt.includesUnit = true;
+    size_fmt.includesCount = true;
+    size_fmt.includesActualByteCount = false;
+    size_fmt.adaptive = true;
+    size_fmt.zeroPadsFractionDigits = false;
+    NSString *const size_str = [size_fmt stringFromByteCount:_size];
+    NSString *const message_str = [NSString
+        localizedStringWithFormat:NSLocalizedString(
+                                      @"The selected items are %@ in size.\nAre you sure you want to open them?", ""),
+                                  size_str];
+    NSString *const inform_str =
+        NSLocalizedString(@"Nimble Commander will copy them to a temporary location before they can be opened.", "");
+    return AskUserForPermissionToOpen(message_str, inform_str, _panel);
+}
+
+bool FileOpener::AskUserForPermissionToOpen(NSString *_message_str, NSString *_informative_str, PanelController *_panel)
+{
+    dispatch_assert_background_queue();
     std::atomic<std::optional<bool>> allow;
-    dispatch_async(dispatch_get_main_queue(), [&allow, message_str, inform_str, _panel] {
+    dispatch_async(dispatch_get_main_queue(), [&allow, _message_str, _informative_str, _panel] {
         dispatch_assert_main_queue();
         Alert *const alert = [[Alert alloc] init];
-        alert.messageText = message_str;
-        alert.informativeText = inform_str;
+        alert.messageText = _message_str;
+        alert.informativeText = _informative_str;
         [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
         [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
         [alert.buttons objectAtIndex:0].keyEquivalent = @"\r";

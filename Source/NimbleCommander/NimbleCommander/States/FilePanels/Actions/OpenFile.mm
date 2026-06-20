@@ -126,7 +126,7 @@ static void PerformOpeningFilesWithDefaultHandler(const std::vector<VFSListingIt
             _file_opener.Open(items, _items.front().Host(), _target);
         }
     }
-    else if( _items.size() == 1 ) {
+    else /* if( _items.size() == 1 ) */ {
         auto &item = _items.front();
         const std::string path = item.IsDotDot() ? item.Directory() : item.Path();
         _file_opener.Open(path, item.Host(), _target);

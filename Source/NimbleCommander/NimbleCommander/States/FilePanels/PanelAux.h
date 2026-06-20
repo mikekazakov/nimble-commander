@@ -57,6 +57,11 @@ private:
     [[nodiscard]] static bool
     AskUserForPermissionToOpenLargeVFSFile(std::string_view _file_at_path, uint64_t _size, PanelController *_panel);
 
+    [[nodiscard]] static bool AskUserForPermissionToOpenLargeVFSFiles(uint64_t _size, PanelController *_panel);
+
+    [[nodiscard]] static bool
+    AskUserForPermissionToOpen(NSString *_message_str, NSString *_informative_str, PanelController *_panel);
+
     nc::utility::TemporaryFileStorage &m_TemporaryFileStorage;
     nc::utility::UTIDB &m_UTIDB;
     uint64_t m_VFSThresholdForImplicitOpening;

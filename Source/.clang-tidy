@@ -262,7 +262,7 @@ CheckOptions:
   - key:    misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
     value:  true
   - key:    misc-header-include-cycle.IgnoredFilesList
-    value:  MMTabBarView.h;MMAttachedTabBarButton.h;curl.h
+    value:  curl.h
 
 ExtraArgs:
 - -Wno-unknown-pragmas

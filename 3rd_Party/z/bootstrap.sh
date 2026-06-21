@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/libz.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-VER=1.3.1
+VER=1.3.2
 
 wget https://zlib.net/zlib-${VER}.tar.gz
 gunzip -c zlib-${VER}.tar.gz | tar xopf -

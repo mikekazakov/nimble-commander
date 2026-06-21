@@ -59,5 +59,5 @@ Verify the Xcode version with `xcode-select -p`.
 | sparkle         | 2.8.1      | 2025.11.15 | https://github.com/sparkle-project/Sparkle.git
 | spdlog          | 1.16.0     | 2025.10.11 | https://github.com/gabime/spdlog.git
 | unordered_dense | 4.8.1      | 2025.11.02 | https://github.com/martinus/unordered_dense.git
-| zlib            | 1.3.1      | 2024.01.22 | https://zlib.net/zlib-1.3.1.tar.gz
+| zlib            | 1.3.2      | 2026.02.17 | https://zlib.net/zlib-1.3.2.tar.gz
 | zstd            | 1.5.7      | 2025.02.19 | https://github.com/facebook/zstd.git

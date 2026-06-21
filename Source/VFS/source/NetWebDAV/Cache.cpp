@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Cache.h"
 #include <Utility/PathManip.h>
 #include "Internal.h"
@@ -69,12 +69,7 @@ std::pair<std::optional<PropFindResponse>, Cache::E> Cache::Item(std::string_vie
     if( IsOutdated(listing) )
         return {std::nullopt, E::Unknown};
 
-    // NOLINTBEGIN
-    const auto item =
-        std::lower_bound(std::begin(listing.items), std::end(listing.items), filename, [](auto &_1, auto &_2) {
-            return _1.filename < _2;
-        });
-    // NOLINTEND
+    const auto item = std::ranges::lower_bound(listing.items, filename, {}, &PropFindResponse::filename);
     if( item == std::end(listing.items) || item->filename != filename )
         return {std::nullopt, E::NonExist};
 
@@ -110,11 +105,8 @@ void Cache::CommitMkDir(const std::string &_at_path)
         if( dir_it == end(m_Dirs) )
             return;
 
-        auto &listing = dir_it->second;
-        // NOLINTBEGIN
-        const auto item_it = lower_bound(
-            begin(listing.items), end(listing.items), filename, [](auto &_1, auto &_2) { return _1.filename < _2; });
-        // NOLINTEND
+        Directory &listing = dir_it->second;
+        const auto item_it = std::ranges::lower_bound(listing.items, filename, {}, &PropFindResponse::filename);
         if( item_it == end(listing.items) || item_it->filename != filename ) {
             PropFindResponse r;
             r.filename = filename;
@@ -147,11 +139,8 @@ void Cache::CommitMkFile(const std::string &_at_path)
         if( dir_it == end(m_Dirs) )
             return;
 
-        auto &listing = dir_it->second;
-        // NOLINTBEGIN
-        const auto item_it = lower_bound(
-            begin(listing.items), end(listing.items), filename, [](auto &_1, auto &_2) { return _1.filename < _2; });
-        // NOLINTEND
+        Directory &listing = dir_it->second;
+        const auto item_it = std::ranges::lower_bound(listing.items, filename, {}, &PropFindResponse::filename);
         const auto index = distance(begin(listing.items), item_it);
         if( item_it == end(listing.items) || item_it->filename != filename ) {
             PropFindResponse r;
@@ -189,11 +178,8 @@ void Cache::CommitUnlink(std::string_view _at_path)
         if( dir_it == end(m_Dirs) )
             return;
 
-        auto &listing = dir_it->second;
-        // NOLINTBEGIN
-        const auto item_it = lower_bound(
-            begin(listing.items), end(listing.items), filename, [](auto &_1, auto &_2) { return _1.filename < _2; });
-        // NOLINTEND
+        Directory &listing = dir_it->second;
+        const auto item_it = std::ranges::lower_bound(listing.items, filename, {}, &PropFindResponse::filename);
         if( item_it != end(listing.items) && item_it->filename == filename ) {
             const auto index = distance(begin(listing.items), item_it);
             listing.items.erase(item_it);
@@ -229,13 +215,8 @@ void Cache::CommitMove(std::string_view _old_path, std::string_view _new_path)
         if( dir_it == end(m_Dirs) )
             return;
 
-        auto &listing = dir_it->second;
-        // NOLINTBEGIN
-        const auto item_it =
-            lower_bound(begin(listing.items), end(listing.items), old_filename, [](auto &_1, auto &_2) {
-                return _1.filename < _2;
-            });
-        // NOLINTEND
+        Directory &listing = dir_it->second;
+        const auto item_it = std::ranges::lower_bound(listing.items, old_filename, {}, &PropFindResponse::filename);
         if( item_it != end(listing.items) && item_it->filename == old_filename ) {
             entry = std::move(*item_it);
             const auto index = distance(begin(listing.items), item_it);
@@ -255,17 +236,12 @@ void Cache::CommitMove(std::string_view _old_path, std::string_view _new_path)
         const auto dir_it = m_Dirs.find(new_directory);
         if( dir_it == end(m_Dirs) )
             return;
-        auto &listing = dir_it->second;
+        Directory &listing = dir_it->second;
         listing.has_dirty_items = true;
 
         if( entry ) {
             entry->filename = new_filename;
-            // NOLINTBEGIN
-            const auto item_it = std::lower_bound(std::begin(listing.items),
-                                                  std::end(listing.items),
-                                                  new_filename,
-                                                  [](auto &_1, auto &_2) { return _1.filename < _2; });
-            // NOLINTEND
+            const auto item_it = std::ranges::lower_bound(listing.items, new_filename, {}, &PropFindResponse::filename);
             const auto index = std::distance(std::begin(listing.items), item_it);
             if( item_it == std::end(listing.items) || item_it->filename != new_filename ) {
                 listing.items.insert(item_it, std::move(*entry));

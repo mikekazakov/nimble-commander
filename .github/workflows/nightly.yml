@@ -6,11 +6,11 @@ on:
     - cron: '0 3 * * *' # at 03:00 AM UTC everyday
 
 env:
-  XC_VERSION: ${{ '26.1' }}
+  XC_VERSION: ${{ '26.5' }}
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-26
     if: github.ref == 'refs/heads/main' # run this job only for the main branch
     steps:
     - name: Select latest Xcode

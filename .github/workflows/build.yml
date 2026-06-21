@@ -14,13 +14,13 @@ on:
   workflow_dispatch:
 
 env:
-  XC_VERSION: ${{ '26.1' }}
+  XC_VERSION: ${{ '26.5' }}
 
 jobs:
 
   unit-tests:
     needs: clang-format
-    runs-on: macos-15
+    runs-on: macos-26
     strategy:
       matrix:
         configuration: ["Debug", "Release", "ASAN", "UBSAN"]
@@ -39,7 +39,7 @@ jobs:
   
   integration-tests:
     needs: unit-tests
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
     - name: Select the Xcode version
       run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
@@ -66,7 +66,7 @@ jobs:
 
 
   clang-format:
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
     - name: Install the dependencies
       run: |
@@ -79,7 +79,7 @@ jobs:
 
   clang-tidy:
     needs: unit-tests
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
     - name: Select the Xcode version
       run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
@@ -94,7 +94,7 @@ jobs:
 
   build-unsigned:
     needs: unit-tests
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
     - name: Select the Xcode version
       run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"

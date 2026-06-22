@@ -2,7 +2,7 @@
 // ip/address_v4.hpp
 // ~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -33,6 +33,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 
 /// Implements IP version 4 style addresses.
@@ -121,38 +122,8 @@ public:
   /// Get the address as an unsigned integer in host byte order.
   BOOST_ASIO_DECL uint_type to_uint() const noexcept;
 
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use to_uint().) Get the address as an unsigned long in host
-  /// byte order.
-  BOOST_ASIO_DECL unsigned long to_ulong() const;
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-
   /// Get the address as a string in dotted decimal format.
   BOOST_ASIO_DECL std::string to_string() const;
-
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use other overload.) Get the address as a string in dotted
-  /// decimal format.
-  BOOST_ASIO_DECL std::string to_string(boost::system::error_code& ec) const;
-
-  /// (Deprecated: Use make_address_v4().) Create an address from an IP address
-  /// string in dotted decimal form.
-  static address_v4 from_string(const char* str);
-
-  /// (Deprecated: Use make_address_v4().) Create an address from an IP address
-  /// string in dotted decimal form.
-  static address_v4 from_string(
-      const char* str, boost::system::error_code& ec);
-
-  /// (Deprecated: Use make_address_v4().) Create an address from an IP address
-  /// string in dotted decimal form.
-  static address_v4 from_string(const std::string& str);
-
-  /// (Deprecated: Use make_address_v4().) Create an address from an IP address
-  /// string in dotted decimal form.
-  static address_v4 from_string(
-      const std::string& str, boost::system::error_code& ec);
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
   /// Determine whether the address is a loopback address.
   /**
@@ -172,20 +143,6 @@ public:
    * @returns <tt>to_uint() == 0</tt>.
    */
   BOOST_ASIO_DECL bool is_unspecified() const noexcept;
-
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use network_v4 class.) Determine whether the address is a
-  /// class A address.
-  BOOST_ASIO_DECL bool is_class_a() const;
-
-  /// (Deprecated: Use network_v4 class.) Determine whether the address is a
-  /// class B address.
-  BOOST_ASIO_DECL bool is_class_b() const;
-
-  /// (Deprecated: Use network_v4 class.) Determine whether the address is a
-  /// class C address.
-  BOOST_ASIO_DECL bool is_class_c() const;
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
   /// Determine whether the address is a multicast address.
   /**
@@ -295,18 +252,6 @@ public:
     return address_v4(0xFFFFFFFF);
   }
 
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use network_v4 class.) Obtain an address object that
-  /// represents the broadcast address that corresponds to the specified
-  /// address and netmask.
-  BOOST_ASIO_DECL static address_v4 broadcast(
-      const address_v4& addr, const address_v4& mask);
-
-  /// (Deprecated: Use network_v4 class.) Obtain the netmask that corresponds
-  /// to the address, based on its address class.
-  BOOST_ASIO_DECL static address_v4 netmask(const address_v4& addr);
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-
 private:
   // The underlying IPv4 address.
   boost::asio::detail::in4_addr_type addr_;
@@ -396,6 +341,7 @@ std::basic_ostream<Elem, Traits>& operator<<(
 #endif // !defined(BOOST_ASIO_NO_IOSTREAM)
 
 } // namespace ip
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

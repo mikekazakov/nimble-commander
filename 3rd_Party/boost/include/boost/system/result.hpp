@@ -1,7 +1,7 @@
 #ifndef BOOST_SYSTEM_RESULT_HPP_INCLUDED
 #define BOOST_SYSTEM_RESULT_HPP_INCLUDED
 
-// Copyright 2017, 2021, 2022 Peter Dimov.
+// Copyright 2017, 2021-2025 Peter Dimov.
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
@@ -10,6 +10,7 @@
 #include <boost/system/detail/error_code.hpp>
 #include <boost/system/detail/error_category_impl.hpp>
 #include <boost/variant2/variant.hpp>
+#include <boost/compat/invoke.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/assert/source_location.hpp>
 #include <boost/assert.hpp>
@@ -73,10 +74,10 @@ BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( std::excep
 // in_place_*
 
 using in_place_value_t = variant2::in_place_index_t<0>;
-constexpr in_place_value_t in_place_value{};
+BOOST_INLINE_CONSTEXPR in_place_value_t in_place_value{};
 
 using in_place_error_t = variant2::in_place_index_t<1>;
-constexpr in_place_error_t in_place_error{};
+BOOST_INLINE_CONSTEXPR in_place_error_t in_place_error{};
 
 namespace detail
 {
@@ -204,7 +205,7 @@ public:
     {
         if( r2 )
         {
-            v_.template emplace<0>( *r2 );
+            v_.template emplace<0>( r2.unsafe_value() );
         }
     }
 
@@ -223,7 +224,7 @@ public:
     {
         if( r2 )
         {
-            v_.template emplace<0>( std::move( *r2 ) );
+            v_.template emplace<0>( std::move( r2 ).unsafe_value() );
         }
     }
 
@@ -316,85 +317,133 @@ public:
 
 #endif
 
-    // unchecked value access
+    // checked value access
 
-    BOOST_CXX14_CONSTEXPR T* operator->() noexcept
+    BOOST_CXX14_CONSTEXPR T* operator->()
     {
-        return variant2::get_if<0>( &v_ );
+        return &value();
     }
 
-    BOOST_CXX14_CONSTEXPR T const* operator->() const noexcept
+    BOOST_CXX14_CONSTEXPR T const* operator->() const
     {
-        return variant2::get_if<0>( &v_ );
+        return &value();
     }
 
 #if defined( BOOST_NO_CXX11_REF_QUALIFIERS )
 
-    BOOST_CXX14_CONSTEXPR T& operator*() noexcept
+    BOOST_CXX14_CONSTEXPR T& operator*()
     {
-        T* p = operator->();
-
-        BOOST_ASSERT( p != 0 );
-
-        return *p;
+        return value();
     }
 
-    BOOST_CXX14_CONSTEXPR T const& operator*() const noexcept
+    BOOST_CXX14_CONSTEXPR T const& operator*() const
     {
-        T const* p = operator->();
-
-        BOOST_ASSERT( p != 0 );
-
-        return *p;
+        return value();
     }
 
 #else
 
-    BOOST_CXX14_CONSTEXPR T& operator*() & noexcept
+    BOOST_CXX14_CONSTEXPR T& operator*() &
     {
-        T* p = operator->();
-
-        BOOST_ASSERT( p != 0 );
-
-        return *p;
+        return value();
     }
 
-    BOOST_CXX14_CONSTEXPR T const& operator*() const & noexcept
+    BOOST_CXX14_CONSTEXPR T const& operator*() const &
     {
-        T const* p = operator->();
-
-        BOOST_ASSERT( p != 0 );
-
-        return *p;
+        return value();
     }
 
     template<class U = T>
         BOOST_CXX14_CONSTEXPR
         typename std::enable_if<std::is_move_constructible<U>::value, T>::type
-        operator*() && noexcept(std::is_nothrow_move_constructible<T>::value)
+        operator*() &&
     {
-        return std::move(**this);
+        return std::move( value() );
     }
 
     template<class U = T>
         BOOST_CXX14_CONSTEXPR
         typename std::enable_if<!std::is_move_constructible<U>::value, T&&>::type
-        operator*() && noexcept
+        operator*() &&
     {
-        return std::move(**this);
+        return std::move( value() );
     }
 
     template<class U = T>
         BOOST_CXX14_CONSTEXPR
         typename std::enable_if<std::is_move_constructible<U>::value, T>::type
-        operator*() const && noexcept = delete;
+        operator*() const && = delete;
 
     template<class U = T>
         BOOST_CXX14_CONSTEXPR
         typename std::enable_if<!std::is_move_constructible<U>::value, T const&&>::type
-        operator*() const && noexcept
+        operator*() const &&
     {
-        return std::move(**this);
+        return std::move( value() );
+    }
+
+#endif
+
+    // unchecked value access
+
+#if defined( BOOST_NO_CXX11_REF_QUALIFIERS )
+
+    BOOST_CXX14_CONSTEXPR T& unsafe_value()
+    {
+        BOOST_ASSERT( has_value() );
+        return *variant2::get_if<0>( &v_ );
+    }
+
+    BOOST_CXX14_CONSTEXPR T const& unsafe_value() const
+    {
+        BOOST_ASSERT( has_value() );
+        return *variant2::get_if<0>( &v_ );
+    }
+
+#else
+
+    BOOST_CXX14_CONSTEXPR T& unsafe_value() &
+    {
+        BOOST_ASSERT( has_value() );
+        return *variant2::get_if<0>( &v_ );
+    }
+
+    BOOST_CXX14_CONSTEXPR T const& unsafe_value() const &
+    {
+        BOOST_ASSERT( has_value() );
+        return *variant2::get_if<0>( &v_ );
+    }
+
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<std::is_move_constructible<U>::value, T>::type
+        unsafe_value() &&
+    {
+        BOOST_ASSERT( has_value() );
+        return std::move( *variant2::get_if<0>( &v_ ) );
+    }
+
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<!std::is_move_constructible<U>::value, T&&>::type
+        unsafe_value() &&
+    {
+        BOOST_ASSERT( has_value() );
+        return std::move( *variant2::get_if<0>( &v_ ) );
+    }
+
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<std::is_move_constructible<U>::value, T>::type
+        unsafe_value() const && = delete;
+
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<!std::is_move_constructible<U>::value, T const&&>::type
+        unsafe_value() const &&
+    {
+        BOOST_ASSERT( has_value() );
+        return std::move( *variant2::get_if<0>( &v_ ) );
     }
 
 #endif
@@ -461,7 +510,7 @@ template<class Ch, class Tr, class T, class E> std::basic_ostream<Ch, Tr>& opera
 {
     if( r.has_value() )
     {
-        os << "value:" << *r;
+        os << "value:" << r.unsafe_value();
     }
     else
     {
@@ -592,19 +641,28 @@ public:
         }
     }
 
+    // checked value access
+
+    BOOST_CXX14_CONSTEXPR void* operator->()
+    {
+        value();
+        return &variant2::unsafe_get<0>( v_ );
+    }
+
+    BOOST_CXX14_CONSTEXPR void const* operator->() const
+    {
+        value();
+        return &variant2::unsafe_get<0>( v_ );
+    }
+
+    BOOST_CXX14_CONSTEXPR void operator*() const
+    {
+        return value();
+    }
+
     // unchecked value access
 
-    BOOST_CXX14_CONSTEXPR void* operator->() noexcept
-    {
-        return variant2::get_if<0>( &v_ );
-    }
-
-    BOOST_CXX14_CONSTEXPR void const* operator->() const noexcept
-    {
-        return variant2::get_if<0>( &v_ );
-    }
-
-    BOOST_CXX14_CONSTEXPR void operator*() const noexcept
+    BOOST_CXX14_CONSTEXPR void unsafe_value() const
     {
         BOOST_ASSERT( has_value() );
     }
@@ -794,7 +852,7 @@ public:
     {
         if( r2 )
         {
-            this->emplace( *r2 );
+            this->emplace( r2.unsafe_value() );
         }
     }
 
@@ -829,20 +887,24 @@ public:
         }
     }
 
-    // unchecked value access
+    // checked value access
 
-    BOOST_CXX14_CONSTEXPR U* operator->() const noexcept
+    BOOST_CXX14_CONSTEXPR U* operator->() const
     {
-        return has_value()? variant2::unsafe_get<0>( v_ ): 0;
+        return &value();
     }
 
-    BOOST_CXX14_CONSTEXPR U& operator*() const noexcept
+    BOOST_CXX14_CONSTEXPR U& operator*() const
     {
-        U* p = operator->();
+        return value();
+    }
 
-        BOOST_ASSERT( p != 0 );
+    // unchecked value access
 
-        return *p;
+    BOOST_CXX14_CONSTEXPR U& unsafe_value() const
+    {
+        BOOST_ASSERT( has_value() );
+        return *( has_value()? variant2::unsafe_get<0>( v_ ): 0 );
     }
 
     // error access
@@ -887,9 +949,9 @@ public:
     // equality
 
     friend constexpr bool operator==( result const & r1, result const & r2 )
-        noexcept( noexcept( r1 && r2? *r1 == *r2: r1.v_ == r2.v_ ) )
+        noexcept( noexcept( r1 && r2? r1.unsafe_value() == r2.unsafe_value(): r1.v_ == r2.v_ ) )
     {
-        return r1 && r2? *r1 == *r2: r1.v_ == r2.v_;
+        return r1 && r2? r1.unsafe_value() == r2.unsafe_value(): r1.v_ == r2.v_;
     }
 
     friend constexpr bool operator!=( result const & r1, result const & r2 )
@@ -934,13 +996,14 @@ template<class T, class E> struct is_result< result<T, E> >: std::true_type {};
 // result | value
 
 template<class T, class E, class U,
-    class En = typename std::enable_if<detail::is_value_convertible_to<U, T>::value>::type
+    class En = typename std::enable_if<std::is_convertible<U, typename std::decay<T>::type>::value>::type
 >
-T operator|( result<T, E> const& r, U&& u )
+typename std::decay<T>::type
+operator|( result<T, E> const& r, U&& u )
 {
     if( r )
     {
-        return *r;
+        return r.unsafe_value();
     }
     else
     {
@@ -949,13 +1012,14 @@ T operator|( result<T, E> const& r, U&& u )
 }
 
 template<class T, class E, class U,
-    class En = typename std::enable_if<detail::is_value_convertible_to<U, T>::value>::type
+    class En = typename std::enable_if<std::is_convertible<U, typename std::decay<T>::type>::value>::type
 >
-T operator|( result<T, E>&& r, U&& u )
+typename std::decay<T>::type
+operator|( result<T, E>&& r, U&& u )
 {
     if( r )
     {
-        return *std::move( r );
+        return std::move( r ).unsafe_value();
     }
     else
     {
@@ -973,7 +1037,7 @@ T operator|( result<T, E> const& r, F&& f )
 {
     if( r )
     {
-        return *r;
+        return r.unsafe_value();
     }
     else
     {
@@ -989,7 +1053,27 @@ T operator|( result<T, E>&& r, F&& f )
 {
     if( r )
     {
-        return *std::move( r );
+        return std::move( r ).unsafe_value();
+    }
+    else
+    {
+        return std::forward<F>( f )();
+    }
+}
+
+template<class T, class E, class F,
+    class U = decltype( std::declval<F>()() ),
+    class En = typename std::enable_if<
+        std::is_convertible<U, typename std::decay<T>::type>::value &&
+        !detail::is_value_convertible_to<U, T&>::value
+    >::type
+>
+typename std::decay<T>::type
+operator|( result<T&, E> const& r, F&& f )
+{
+    if( r )
+    {
+        return r.unsafe_value();
     }
     else
     {
@@ -1008,7 +1092,7 @@ U operator|( result<T, E> const& r, F&& f )
 {
     if( r )
     {
-        return *r;
+        return r.unsafe_value();
     }
     else
     {
@@ -1025,7 +1109,7 @@ U operator|( result<T, E>&& r, F&& f )
 {
     if( r )
     {
-        return *std::move( r );
+        return std::move( r ).unsafe_value();
     }
     else
     {
@@ -1123,8 +1207,26 @@ result<T, E>& operator|=( result<T, E>& r, F&& f )
 // result & unary-returning-value
 
 template<class T, class E, class F,
-    class U = decltype( std::declval<F>()( std::declval<T const&>() ) ),
-    class En = typename std::enable_if<!detail::is_result<U>::value>::type
+    class U = compat::invoke_result_t<F, T&>,
+    class En1 = typename std::enable_if<!detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<!std::is_void<U>::value>::type
+>
+result<U, E> operator&( result<T, E>& r, F&& f )
+{
+    if( r.has_error() )
+    {
+        return r.error();
+    }
+    else
+    {
+        return compat::invoke( std::forward<F>( f ), r.unsafe_value() );
+    }
+}
+
+template<class T, class E, class F,
+    class U = compat::invoke_result_t<F, T const&>,
+    class En1 = typename std::enable_if<!detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<!std::is_void<U>::value>::type
 >
 result<U, E> operator&( result<T, E> const& r, F&& f )
 {
@@ -1134,13 +1236,14 @@ result<U, E> operator&( result<T, E> const& r, F&& f )
     }
     else
     {
-        return std::forward<F>( f )( *r );
+        return compat::invoke( std::forward<F>( f ), r.unsafe_value() );
     }
 }
 
 template<class T, class E, class F,
-    class U = decltype( std::declval<F>()( std::declval<T>() ) ),
-    class En = typename std::enable_if<!detail::is_result<U>::value>::type
+    class U = typename std::decay< compat::invoke_result_t<F, T> >::type,
+    class En1 = typename std::enable_if<!detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<!std::is_void<U>::value>::type
 >
 result<U, E> operator&( result<T, E>&& r, F&& f )
 {
@@ -1150,13 +1253,65 @@ result<U, E> operator&( result<T, E>&& r, F&& f )
     }
     else
     {
-        return std::forward<F>( f )( *std::move( r ) );
+        return compat::invoke( std::forward<F>( f ), std::move( r ).unsafe_value() );
+    }
+}
+
+template<class T, class E, class F,
+    class U = compat::invoke_result_t<F, T&>,
+    class En1 = typename std::enable_if<!detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<!std::is_void<U>::value>::type
+>
+result<U, E> operator&( result<T&, E>&& r, F&& f )
+{
+    if( r.has_error() )
+    {
+        return r.error();
+    }
+    else
+    {
+        return compat::invoke( std::forward<F>( f ), std::move( r ).unsafe_value() );
+    }
+}
+
+template<class T, class E, class F,
+    class U = compat::invoke_result_t<F, T const&>,
+    class En = typename std::enable_if<std::is_void<U>::value>::type
+>
+result<U, E> operator&( result<T, E> const& r, F&& f )
+{
+    if( r.has_error() )
+    {
+        return r.error();
+    }
+    else
+    {
+        compat::invoke( std::forward<F>( f ), r.unsafe_value() );
+        return {};
+    }
+}
+
+template<class T, class E, class F,
+    class U = compat::invoke_result_t<F, T>,
+    class En = typename std::enable_if<std::is_void<U>::value>::type
+>
+result<U, E> operator&( result<T, E>&& r, F&& f )
+{
+    if( r.has_error() )
+    {
+        return r.error();
+    }
+    else
+    {
+        compat::invoke( std::forward<F>( f ), std::move( r ).unsafe_value() );
+        return {};
     }
 }
 
 template<class E, class F,
     class U = decltype( std::declval<F>()() ),
-    class En = typename std::enable_if<!detail::is_result<U>::value>::type
+    class En1 = typename std::enable_if<!detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<!std::is_void<U>::value>::type
 >
 result<U, E> operator&( result<void, E> const& r, F&& f )
 {
@@ -1170,10 +1325,44 @@ result<U, E> operator&( result<void, E> const& r, F&& f )
     }
 }
 
+template<class E, class F,
+    class U = decltype( std::declval<F>()() ),
+    class En = typename std::enable_if<std::is_void<U>::value>::type
+>
+result<U, E> operator&( result<void, E> const& r, F&& f )
+{
+    if( r.has_error() )
+    {
+        return r.error();
+    }
+    else
+    {
+        std::forward<F>( f )();
+        return {};
+    }
+}
+
 // result & unary-returning-result
 
 template<class T, class E, class F,
-    class U = decltype( std::declval<F>()( std::declval<T const&>() ) ),
+    class U = typename std::decay< compat::invoke_result_t<F, T&> >::type,
+    class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<std::is_convertible<E, typename U::error_type>::value>::type
+>
+U operator&( result<T, E>& r, F&& f )
+{
+    if( r.has_error() )
+    {
+        return r.error();
+    }
+    else
+    {
+        return compat::invoke( std::forward<F>( f ), r.unsafe_value() );
+    }
+}
+
+template<class T, class E, class F,
+    class U = typename std::decay< compat::invoke_result_t<F, T const&> >::type,
     class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<std::is_convertible<E, typename U::error_type>::value>::type
 >
@@ -1185,12 +1374,12 @@ U operator&( result<T, E> const& r, F&& f )
     }
     else
     {
-        return std::forward<F>( f )( *r );
+        return compat::invoke( std::forward<F>( f ), r.unsafe_value() );
     }
 }
 
 template<class T, class E, class F,
-    class U = decltype( std::declval<F>()( std::declval<T>() ) ),
+    class U = typename std::decay< compat::invoke_result_t<F, T> >::type,
     class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<std::is_convertible<E, typename U::error_type>::value>::type
 >
@@ -1202,7 +1391,7 @@ U operator&( result<T, E>&& r, F&& f )
     }
     else
     {
-        return std::forward<F>( f )( *std::move( r ) );
+        return compat::invoke( std::forward<F>( f ), std::move( r ).unsafe_value() );
     }
 }
 
@@ -1236,7 +1425,21 @@ result<T, E>& operator&=( result<T, E>& r, F&& f )
 {
     if( r )
     {
-        r = std::forward<F>( f )( *std::move( r ) );
+        r = std::forward<F>( f )( std::move( r ).unsafe_value() );
+    }
+
+    return r;
+}
+
+template<class E, class F,
+    class U = decltype( std::declval<F>()() ),
+    class En = typename std::enable_if<!detail::is_result<U>::value>::type
+>
+result<void, E>& operator&=( result<void, E>& r, F&& f )
+{
+    if( r )
+    {
+        std::forward<F>( f )();
     }
 
     return r;
@@ -1254,7 +1457,7 @@ result<T, E>& operator&=( result<T, E>& r, F&& f )
 {
     if( r )
     {
-        r = std::forward<F>( f )( *std::move( r ) );
+        r = std::forward<F>( f )( std::move( r ).unsafe_value() );
     }
 
     return r;

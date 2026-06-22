@@ -9,8 +9,8 @@ TMP_DIR=${CUR_DIR}/boost.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-wget https://archives.boost.io/release/1.85.0/source/boost_1_85_0.tar.gz
-tar -xf boost_1_85_0.tar.gz
+wget https://archives.boost.io/release/1.91.0/source/boost_1_91_0.tar.gz
+tar -xf boost_1_91_0.tar.gz
 
 cd ..
 
@@ -18,7 +18,7 @@ rm -rf ./include/
 mkdir include
 mkdir include/boost
 
-B=${TMP_DIR}/boost_1_85_0/boost
+B=${TMP_DIR}/boost_1_91_0/boost
 
 cp -R \
  ${B}/algorithm \
@@ -90,6 +90,7 @@ cp -R \
  ${B}/tokenizer.hpp \
  ${B}/type.hpp \
  ${B}/type_index.hpp \
+ ${B}/type_traits.hpp \
  ${B}/utility.hpp \
  ${B}/version.hpp \
  ./include/boost/

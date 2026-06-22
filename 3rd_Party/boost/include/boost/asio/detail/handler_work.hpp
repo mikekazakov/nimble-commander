@@ -2,7 +2,7 @@
 // detail/handler_work.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -33,6 +33,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 class executor;
 class io_context;
@@ -497,7 +498,7 @@ public:
         handler, *static_cast<const IoExecutor*>(io_ex));
 
     (initiate_dispatch_with_executor<immediate_ex_type>(immediate_ex))(
-        static_cast<Function&&>(function));
+        static_cast<Function&&>(function), empty_work_function());
   }
 
 private:
@@ -505,6 +506,7 @@ private:
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

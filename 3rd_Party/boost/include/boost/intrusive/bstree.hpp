@@ -585,8 +585,11 @@ struct bstbase
    //Detach all inserted nodes. This will add exception safety to bstree_impl
    //constructors inserting elements.
    ~bstbase()
+   #if defined(BOOST_INTRUSIVE_CONCEPTS_BASED_OVERLOADING)
+      requires (ValueTraits::link_mode != normal_link)
+   #endif
    {
-      if(is_safe_autounlink<value_traits::link_mode>::value){
+      BOOST_IF_CONSTEXPR(is_safe_autounlink<value_traits::link_mode>::value){
          node_algorithms::clear_and_dispose
             ( this->header_ptr()
             , detail::node_disposer<detail::null_disposer, value_traits, AlgoType>
@@ -594,6 +597,11 @@ struct bstbase
          node_algorithms::init(this->header_ptr());
       }
    }
+
+   #if !defined(BOOST_INTRUSIVE_DOXYGEN_INVOKED) && defined(BOOST_INTRUSIVE_CONCEPTS_BASED_OVERLOADING)
+   //Default destructor for normal links (allows conditional triviality)
+   ~bstbase() requires (ValueTraits::link_mode == normal_link) = default;
+   #endif
 };
 
 
@@ -876,7 +884,8 @@ class bstree_impl
    //! <b>Throws</b>: Nothing.
    //!
    //! <b>Complexity</b>: Constant.
-   static bstree_impl &container_from_end_iterator(iterator end_iterator) BOOST_NOEXCEPT
+   BOOST_INTRUSIVE_NO_DANGLING
+   static bstree_impl& container_from_end_iterator(iterator end_iterator) BOOST_NOEXCEPT
    {
       return static_cast<bstree_impl&>
                (data_type::get_tree_base_from_end_iterator(end_iterator));
@@ -890,7 +899,8 @@ class bstree_impl
    //! <b>Throws</b>: Nothing.
    //!
    //! <b>Complexity</b>: Constant.
-   static const bstree_impl &container_from_end_iterator(const_iterator end_iterator) BOOST_NOEXCEPT
+   BOOST_INTRUSIVE_NO_DANGLING
+   static const bstree_impl & container_from_end_iterator(const_iterator end_iterator) BOOST_NOEXCEPT
    {
       return static_cast<bstree_impl&>
                (data_type::get_tree_base_from_end_iterator(end_iterator));
@@ -904,7 +914,8 @@ class bstree_impl
    //! <b>Throws</b>: Nothing.
    //!
    //! <b>Complexity</b>: Logarithmic.
-   static bstree_impl &container_from_iterator(iterator it) BOOST_NOEXCEPT
+   BOOST_INTRUSIVE_NO_DANGLING
+   static bstree_impl & container_from_iterator(iterator it) BOOST_NOEXCEPT
    {  return container_from_end_iterator(it.end_iterator_from_it());   }
 
    //! <b>Precondition</b>: it must be a valid end const_iterator
@@ -915,7 +926,8 @@ class bstree_impl
    //! <b>Throws</b>: Nothing.
    //!
    //! <b>Complexity</b>: Logarithmic.
-   static const bstree_impl &container_from_iterator(const_iterator it) BOOST_NOEXCEPT
+   BOOST_INTRUSIVE_NO_DANGLING
+   static const bstree_impl & container_from_iterator(const_iterator it) BOOST_NOEXCEPT
    {  return container_from_end_iterator(it.end_iterator_from_it());   }
 
    #ifdef BOOST_INTRUSIVE_DOXYGEN_INVOKED
@@ -943,7 +955,7 @@ class bstree_impl
    //! <b>Throws</b>: Nothing.
    bool empty() const BOOST_NOEXCEPT
    {
-      if(ConstantTimeSize){
+      BOOST_IF_CONSTEXPR(constant_time_size){
          return !this->data_type::sz_traits().get_size();
       }
       else{
@@ -2069,7 +2081,8 @@ class bstree_impl
 
    friend bool operator==(const bstree_impl &x, const bstree_impl &y)
    {
-      if(constant_time_size && x.size() != y.size()){
+      BOOST_IF_CONSTEXPR(constant_time_size)
+      if(x.size() != y.size()){
          return false;
       }
       return boost::intrusive::algo_equal(x.cbegin(), x.cend(), y.cbegin(), y.cend());
@@ -2215,15 +2228,19 @@ class bstree
    inline void clone_from(BOOST_RV_REF(bstree) src, Cloner cloner, Disposer disposer)
    {  Base::clone_from(BOOST_MOVE_BASE(Base, src), cloner, disposer);  }
 
+   BOOST_INTRUSIVE_NO_DANGLING
    inline static bstree &container_from_end_iterator(iterator end_iterator) BOOST_NOEXCEPT
    {  return static_cast<bstree &>(Base::container_from_end_iterator(end_iterator));   }
 
+   BOOST_INTRUSIVE_NO_DANGLING
    inline static const bstree &container_from_end_iterator(const_iterator end_iterator) BOOST_NOEXCEPT
    {  return static_cast<const bstree &>(Base::container_from_end_iterator(end_iterator));   }
 
+   BOOST_INTRUSIVE_NO_DANGLING
    inline static bstree &container_from_iterator(iterator it) BOOST_NOEXCEPT
    {  return static_cast<bstree &>(Base::container_from_iterator(it));   }
 
+   BOOST_INTRUSIVE_NO_DANGLING
    inline static const bstree &container_from_iterator(const_iterator it) BOOST_NOEXCEPT
    {  return static_cast<const bstree &>(Base::container_from_iterator(it));   }
 };

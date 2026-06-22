@@ -2,7 +2,7 @@
 // detail/strand_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -20,12 +20,12 @@
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/operation.hpp>
-#include <boost/asio/detail/scoped_ptr.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 // Default service implementation for a strand.
@@ -125,7 +125,7 @@ private:
 #endif // defined(BOOST_ASIO_STRAND_IMPLEMENTATIONS)
 
   // Pool of implementations.
-  scoped_ptr<strand_impl> implementations_[num_implementations];
+  shared_ptr<strand_impl> implementations_[num_implementations];
 
   // Extra value used when hashing to prevent recycled memory locations from
   // getting the same strand implementation.
@@ -133,6 +133,7 @@ private:
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

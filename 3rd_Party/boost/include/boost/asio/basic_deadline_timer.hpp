@@ -2,7 +2,7 @@
 // basic_deadline_timer.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,6 +16,8 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
 
 #if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME) \
   || defined(GENERATING_DOCUMENTATION)
@@ -35,8 +37,10 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
-/// Provides waitable timer functionality.
+/// (Deprecated: Use basic_waitable_timer.) Provides waitable timer
+/// functionality.
 /**
  * The basic_deadline_timer class template provides the ability to perform a
  * blocking or asynchronous wait for a timer to expire.
@@ -64,7 +68,7 @@ namespace asio {
  * timer.wait();
  * @endcode
  *
- * @par 
+ * @par
  * Performing an asynchronous wait:
  * @code
  * void handler(const boost::system::error_code& error)
@@ -127,7 +131,7 @@ namespace asio {
 template <typename Time,
     typename TimeTraits = boost::asio::time_traits<Time>,
     typename Executor = any_io_executor>
-class basic_deadline_timer
+class BOOST_ASIO_DEPRECATED_MSG("Use basic_waitable_timer") basic_deadline_timer
 {
 private:
   class initiate_async_wait;
@@ -631,7 +635,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the completion handler will not be invoked from within this function.
    * On immediate completion, invocation of the handler will be performed in a
-   * manner equivalent to using boost::asio::post().
+   * manner equivalent to using boost::asio::async_immediate().
    *
    * @par Completion Signature
    * @code void(boost::system::error_code) @endcode
@@ -701,6 +705,7 @@ private:
     detail::deadline_timer_service<TimeTraits>, Executor> impl_;
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
@@ -708,5 +713,7 @@ private:
 
 #endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
        // || defined(GENERATING_DOCUMENTATION)
+
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 #endif // BOOST_ASIO_BASIC_DEADLINE_TIMER_HPP

@@ -19,9 +19,8 @@
 //
 
 #include <boost/smart_ptr/detail/sp_typeinfo_.hpp>
-#include <boost/smart_ptr/detail/sp_noexcept.hpp>
 #include <boost/config.hpp>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #if defined(BOOST_SP_REPORT_IMPLEMENTATION)
 
@@ -43,48 +42,48 @@ private:
     sp_counted_base( sp_counted_base const & );
     sp_counted_base & operator= ( sp_counted_base const & );
 
-    boost::int_least32_t use_count_;        // #shared
-    boost::int_least32_t weak_count_;       // #weak + (#shared != 0)
+    std::int_least32_t use_count_;        // #shared
+    std::int_least32_t weak_count_;       // #weak + (#shared != 0)
 
 public:
 
-    sp_counted_base() BOOST_SP_NOEXCEPT: use_count_( 1 ), weak_count_( 1 )
+    sp_counted_base() noexcept: use_count_( 1 ), weak_count_( 1 )
     {
     }
 
-    virtual ~sp_counted_base() /*BOOST_SP_NOEXCEPT*/
+    virtual ~sp_counted_base() /*noexcept*/
     {
     }
 
     // dispose() is called when use_count_ drops to zero, to release
     // the resources managed by *this.
 
-    virtual void dispose() BOOST_SP_NOEXCEPT = 0; // nothrow
+    virtual void dispose() noexcept = 0; // nothrow
 
     // destroy() is called when weak_count_ drops to zero.
 
-    virtual void destroy() BOOST_SP_NOEXCEPT // nothrow
+    virtual void destroy() noexcept // nothrow
     {
         delete this;
     }
 
-    virtual void * get_deleter( sp_typeinfo_ const & ti ) BOOST_SP_NOEXCEPT = 0;
-    virtual void * get_local_deleter( sp_typeinfo_ const & ti ) BOOST_SP_NOEXCEPT = 0;
-    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT = 0;
+    virtual void * get_deleter( sp_typeinfo_ const & ti ) noexcept = 0;
+    virtual void * get_local_deleter( sp_typeinfo_ const & ti ) noexcept = 0;
+    virtual void * get_untyped_deleter() noexcept = 0;
 
-    void add_ref_copy() BOOST_SP_NOEXCEPT
+    void add_ref_copy() noexcept
     {
         ++use_count_;
     }
 
-    bool add_ref_lock() BOOST_SP_NOEXCEPT // true on success
+    bool add_ref_lock() noexcept // true on success
     {
         if( use_count_ == 0 ) return false;
         ++use_count_;
         return true;
     }
 
-    void release() BOOST_SP_NOEXCEPT
+    void release() noexcept
     {
         if( --use_count_ == 0 )
         {
@@ -93,12 +92,12 @@ public:
         }
     }
 
-    void weak_add_ref() BOOST_SP_NOEXCEPT
+    void weak_add_ref() noexcept
     {
         ++weak_count_;
     }
 
-    void weak_release() BOOST_SP_NOEXCEPT
+    void weak_release() noexcept
     {
         if( --weak_count_ == 0 )
         {
@@ -106,7 +105,7 @@ public:
         }
     }
 
-    long use_count() const BOOST_SP_NOEXCEPT
+    long use_count() const noexcept
     {
         return use_count_;
     }

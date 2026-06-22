@@ -71,7 +71,7 @@ struct bound_launcher
     template<typename ExecutionContext, typename Args, typename ... Inits>
     auto operator()(ExecutionContext & context,
                     const typename std::enable_if<std::is_convertible<
-                            ExecutionContext&, BOOST_PROCESS_V2_ASIO_NAMESPACE::execution_context&>::value,
+                            ExecutionContext&, net::execution_context&>::value,
                             filesystem::path >::type & executable,
                     Args && args,
                     Inits && ... inits) -> basic_process<typename ExecutionContext::executor_type>
@@ -88,7 +88,7 @@ struct bound_launcher
     auto operator()(ExecutionContext & context,
                     error_code & ec,
                     const typename std::enable_if<std::is_convertible<
-                            ExecutionContext&, BOOST_PROCESS_V2_ASIO_NAMESPACE::execution_context&>::value,
+                            ExecutionContext&, net::execution_context&>::value,
                             filesystem::path >::type & executable,
                     Args && args,
                     Inits && ... inits ) -> basic_process<typename ExecutionContext::executor_type>
@@ -103,8 +103,8 @@ struct bound_launcher
     template<typename Executor, typename Args, typename ... Inits>
     auto operator()(Executor exec,
                     const typename std::enable_if<
-                            BOOST_PROCESS_V2_ASIO_NAMESPACE::execution::is_executor<Executor>::value ||
-                            BOOST_PROCESS_V2_ASIO_NAMESPACE::is_executor<Executor>::value,
+                            net::execution::is_executor<Executor>::value ||
+                            net::is_executor<Executor>::value,
                             filesystem::path >::type & executable,
                     Args && args,
                     Inits && ... inits ) -> basic_process<Executor>
@@ -120,8 +120,8 @@ struct bound_launcher
     auto operator()(Executor exec,
                     error_code & ec,
                     const typename std::enable_if<
-                            BOOST_PROCESS_V2_ASIO_NAMESPACE::execution::is_executor<Executor>::value ||
-                            BOOST_PROCESS_V2_ASIO_NAMESPACE::is_executor<Executor>::value,
+                            net::execution::is_executor<Executor>::value ||
+                            net::is_executor<Executor>::value,
                             filesystem::path >::type & executable,
                     Args && args,
                     Inits && ... inits ) -> basic_process<Executor>
@@ -138,7 +138,7 @@ struct bound_launcher
     auto invoke(detail::index_sequence<Idx...>, 
                 ExecutionContext & context,
                 const typename std::enable_if<std::is_convertible<
-                        ExecutionContext&, BOOST_PROCESS_V2_ASIO_NAMESPACE::execution_context&>::value,
+                        ExecutionContext&, net::execution_context&>::value,
                         filesystem::path >::type & executable,
                 Args && args,
                 Inits && ... inits) -> basic_process<typename ExecutionContext::executor_type>
@@ -156,7 +156,7 @@ struct bound_launcher
                 ExecutionContext & context,
                 error_code & ec,
                 const typename std::enable_if<std::is_convertible<
-                        ExecutionContext&, BOOST_PROCESS_V2_ASIO_NAMESPACE::execution_context&>::value,
+                        ExecutionContext&, net::execution_context&>::value,
                         filesystem::path >::type & executable,
                 Args && args,
                 Inits && ... inits ) -> basic_process<typename ExecutionContext::executor_type>
@@ -172,8 +172,8 @@ struct bound_launcher
     auto invoke(detail::index_sequence<Idx...>,
                 Executor exec,
                 const typename std::enable_if<
-                        BOOST_PROCESS_V2_ASIO_NAMESPACE::execution::is_executor<Executor>::value ||
-                        BOOST_PROCESS_V2_ASIO_NAMESPACE::is_executor<Executor>::value,
+                        net::execution::is_executor<Executor>::value ||
+                        net::is_executor<Executor>::value,
                         filesystem::path >::type & executable,
                 Args && args,
                 Inits && ... inits ) -> basic_process<Executor>
@@ -190,8 +190,8 @@ struct bound_launcher
                 Executor exec,
                 error_code & ec,
                 const typename std::enable_if<
-                        BOOST_PROCESS_V2_ASIO_NAMESPACE::execution::is_executor<Executor>::value ||
-                        BOOST_PROCESS_V2_ASIO_NAMESPACE::is_executor<Executor>::value,
+                        net::execution::is_executor<Executor>::value ||
+                        net::is_executor<Executor>::value,
                         filesystem::path >::type & executable,
                 Args && args,
                 Inits && ... inits ) -> basic_process<Executor>

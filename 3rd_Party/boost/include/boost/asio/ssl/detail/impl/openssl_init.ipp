@@ -3,7 +3,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
-// Copyright (c) 2005-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2005-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ssl {
 namespace detail {
 
@@ -38,7 +39,7 @@ public:
   {
 #if (OPENSSL_VERSION_NUMBER < 0x10100000L)
     ::SSL_library_init();
-    ::SSL_load_error_strings();        
+    ::SSL_load_error_strings();
     ::OpenSSL_add_all_algorithms();
 
     mutexes_.resize(::CRYPTO_num_locks());
@@ -113,18 +114,18 @@ private:
 #if (OPENSSL_VERSION_NUMBER < 0x10000000L)
   static unsigned long openssl_id_func()
   {
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
     return ::GetCurrentThreadId();
-#else // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#else // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
     void* id = &errno;
     BOOST_ASIO_ASSERT(sizeof(unsigned long) >= sizeof(void*));
     return reinterpret_cast<unsigned long>(id);
-#endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   }
 #endif // (OPENSSL_VERSION_NUMBER < 0x10000000L)
 
 #if (OPENSSL_VERSION_NUMBER < 0x10100000L)
-  static void openssl_locking_func(int mode, int n, 
+  static void openssl_locking_func(int mode, int n,
     const char* /*file*/, int /*line*/)
   {
     if (mode & CRYPTO_LOCK)
@@ -163,6 +164,7 @@ STACK_OF(SSL_COMP)* openssl_init_base::get_null_compression_methods()
 
 } // namespace detail
 } // namespace ssl
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -1197,12 +1197,20 @@ struct aligned_struct;
 template <> struct aligned_struct<1> { char data; };
 template <> struct aligned_struct<2> { short data; };
 template <> struct aligned_struct<4> { int data; };
-template <> struct aligned_struct<8> { double data; };
+//8 byte alignment does not propely work in x86 if attribute is not used.
+//If a user declares a variable with 8 byte alignment, such as a double
+//the compiler will not realign the stack.
+// 
+//If _declspec(align) is used MSVC will realign the stack.
+//
+//Disabled specialization
+//template <> struct aligned_struct<8> { double data; };
 
 #define BOOST_MOVE_ALIGNED_STRUCT(x) \
   template <> struct aligned_struct<x> { \
     __declspec(align(x)) char data; \
   }
+BOOST_MOVE_ALIGNED_STRUCT(8);
 BOOST_MOVE_ALIGNED_STRUCT(16);
 BOOST_MOVE_ALIGNED_STRUCT(32);
 BOOST_MOVE_ALIGNED_STRUCT(64);
@@ -1343,6 +1351,82 @@ struct aligned_storage
 
 }  //namespace move_detail {
 }  //namespace boost {
+
+
+#include <boost/move/detail/std_ns_begin.hpp>
+BOOST_MOVE_STD_NS_BEG
+
+template<class T1, class T2>
+struct pair;
+
+BOOST_MOVE_STD_NS_END
+#include <boost/move/detail/std_ns_end.hpp>
+
+namespace boost {
+namespace move_detail {
+
+template<class A, class B>
+struct is_trivially_copy_assignable<std::pair<A,B> >
+{
+   BOOST_STATIC_CONSTEXPR bool value = boost::move_detail::is_trivially_copy_assignable<A>::value &&
+                                       boost::move_detail::is_trivially_copy_assignable<B>::value;
+};
+
+template<class A, class B>
+struct is_trivially_move_assignable<std::pair<A,B> >
+{
+   BOOST_STATIC_CONSTEXPR bool value = boost::move_detail::is_trivially_move_assignable<A>::value &&
+                                       boost::move_detail::is_trivially_move_assignable<B>::value;
+};
+
+template<class A, class B>
+struct is_trivially_copy_constructible<std::pair<A,B> >
+{
+   BOOST_STATIC_CONSTEXPR bool value = boost::move_detail::is_trivially_copy_constructible<A>::value &&
+                                       boost::move_detail::is_trivially_copy_constructible<B>::value;
+};
+
+template<class A, class B>
+struct is_trivially_move_constructible<std::pair<A,B> >
+{
+   BOOST_STATIC_CONSTEXPR bool value = boost::move_detail::is_trivially_move_constructible<A>::value &&
+                                       boost::move_detail::is_trivially_move_constructible<B>::value;
+};
+
+template<class A, class B>
+struct is_trivially_destructible<std::pair<A,B> >
+{
+   BOOST_STATIC_CONSTEXPR bool value = boost::move_detail::is_trivially_destructible<A>::value &&
+                                       boost::move_detail::is_trivially_destructible<B>::value;
+};
+
+template <class T1, class T2>
+struct is_class< std::pair<T1, T2> >
+//This specialization is needed to avoid instantiation of pair in
+//is_class, and allow recursive maps.
+{
+   BOOST_STATIC_CONSTEXPR bool value = true;
+};
+
+template <class T1, class T2>
+struct is_union< std::pair<T1, T2> >
+//This specialization is needed to avoid instantiation of pair in
+//is_class, and allow recursive maps.
+{
+   BOOST_STATIC_CONSTEXPR bool value = false;
+};
+
+template <class T1, class T2>
+struct is_class_or_union< std::pair<T1, T2> >
+//This specialization is needed to avoid instantiation of pair in
+//is_class, and allow recursive maps.
+{
+   BOOST_STATIC_CONSTEXPR bool value = true;
+};
+
+}  //namespace move_detail {
+}  //namespace boost {
+
 
 #include <boost/move/detail/config_end.hpp>
 

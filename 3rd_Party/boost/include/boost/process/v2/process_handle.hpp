@@ -13,7 +13,7 @@
 
 #if defined(BOOST_PROCESS_V2_PIDFD_OPEN)
 #include <boost/process/v2/detail/process_handle_fd.hpp>
-#elif defined(BOOST_PROCESS_V2_PDFORK)
+#elif defined(BOOST_PROCESS_V2_PDFORK) || defined(BOOST_PROCESS_V2_PIPEFORK)
 #include <boost/process/v2/detail/process_handle_fd_or_signal.hpp>
 #else
 // with asio support we could use EVFILT_PROC:NOTE_EXIT as well.
@@ -26,13 +26,13 @@ BOOST_PROCESS_V2_BEGIN_NAMESPACE
 
 #if defined(GENERATING_DOCUMENTATION)
 /** A process handle is an unmanaged version of a process.
- * This means it does not terminate the proces on destruction and
+ * This means it does not terminate the process on destruction and
  * will not keep track of the exit-code. 
  * 
  * Note that the exit code might be discovered early, during a call to `running`.
  * Thus it can only be discovered that process has exited already.
  */
-template<typename Executor = BOOST_PROCESS_V2_ASIO_NAMESPACE::any_io_executor>
+template<typename Executor = net::any_io_executor>
 struct basic_process_handle
 {
     /// The native handle of the process. 
@@ -107,9 +107,9 @@ struct basic_process_handle
     void request_exit()
 
     /// Unconditionally terminates the process and stores the exit code in exit_status.
-    void terminate(native_exit_code_type &exit_status, error_code &ec);\
+    void terminate(native_exit_code_type &exit_status, error_code &ec);
     /// Throwing @overload void terminate(native_exit_code_type &exit_code, error_code & ec)
-    void terminate(native_exit_code_type &exit_status);/
+    void terminate(native_exit_code_type &exit_status);
 
     /// Checks if the current process is running. 
     /**If it has already completed, it assigns the exit code to `exit_code`.
@@ -123,28 +123,26 @@ struct basic_process_handle
 
     /// Asynchronously wait for the process to exit and deliver the native exit-code in the completion handler.
     template<BOOST_PROCESS_V2_COMPLETION_TOKEN_FOR(void(error_code, native_exit_code_type))
-             WaitHandler BOOST_PROCESS_V2_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-             BOOST_PROCESS_V2_INITFN_AUTO_RESULT_TYPE(WaitHandler, void (error_code, native_exit_code_type))
-    async_wait(WaitHandler &&handler BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type));
-
+             WaitHandler = net::default_completion_token_t<executor_type>>
+    auto async_wait(WaitHandler &&handler = net::default_completion_token_t<executor_type>());
 };
 
 
 #else
 #if defined(BOOST_PROCESS_V2_WINDOWS)
-template<typename Executor = BOOST_PROCESS_V2_ASIO_NAMESPACE::any_io_executor>
+template<typename Executor = net::any_io_executor>
 using basic_process_handle = detail::basic_process_handle_win<Executor>;
 #else
 
 #if defined(BOOST_PROCESS_V2_PIDFD_OPEN)
-template<typename Executor = BOOST_PROCESS_V2_ASIO_NAMESPACE::any_io_executor>
+template<typename Executor = net::any_io_executor>
 using basic_process_handle = detail::basic_process_handle_fd<Executor>;
-#elif defined(BOOST_PROCESS_V2_PDFORK)
-template<typename Executor = BOOST_PROCESS_V2_ASIO_NAMESPACE::any_io_executor>
+#elif defined(BOOST_PROCESS_V2_PDFORK) || defined(BOOST_PROCESS_V2_PIPEFORK)
+template<typename Executor = net::any_io_executor>
 using basic_process_handle = detail::basic_process_handle_fd_or_signal<Executor>;
 #else
 
-template<typename Executor = BOOST_PROCESS_V2_ASIO_NAMESPACE::any_io_executor>
+template<typename Executor = net::any_io_executor>
 using basic_process_handle = detail::basic_process_handle_signal<Executor>;
 
 #endif
@@ -156,14 +154,5 @@ using process_handle = basic_process_handle<>;
 #endif
 
 BOOST_PROCESS_V2_END_NAMESPACE
-
-#if defined(BOOST_PROCESS_V2_HEADER_ONLY)
-
-#include <boost/process/v2/impl/process_handle.ipp>
-
-#endif
-
-
-
 
 #endif //BOOST_PROCESS_V2_PROCESS_HANDLE_HPP

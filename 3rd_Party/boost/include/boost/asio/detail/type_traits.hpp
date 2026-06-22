@@ -2,7 +2,7 @@
 // detail/type_traits.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -20,6 +20,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 using std::add_const;
 
@@ -78,15 +79,25 @@ using std::is_convertible;
 
 using std::is_copy_constructible;
 
+using std::is_nothrow_default_constructible;
+
 using std::is_destructible;
 
 using std::is_function;
+
+using std::is_integral;
 
 using std::is_move_constructible;
 
 using std::is_nothrow_copy_constructible;
 
+using std::is_nothrow_copy_assignable;
+
 using std::is_nothrow_destructible;
+
+using std::is_nothrow_move_constructible;
+
+using std::is_nothrow_move_assignable;
 
 using std::is_object;
 
@@ -97,6 +108,10 @@ using std::is_reference;
 using std::is_same;
 
 using std::is_scalar;
+
+using std::is_unsigned;
+
+using std::is_void;
 
 using std::remove_cv;
 
@@ -174,6 +189,7 @@ struct type_identity { typedef T type; };
 template <typename T>
 using type_identity_t = typename type_identity<T>::type;
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

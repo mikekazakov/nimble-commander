@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/magic_enum.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v0.9.7 --single-branch https://github.com/Neargye/magic_enum
+git clone -b v0.9.8 --single-branch https://github.com/Neargye/magic_enum
 
 cd ..
 

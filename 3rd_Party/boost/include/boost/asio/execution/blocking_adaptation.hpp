@@ -2,7 +2,7 @@
 // execution/blocking_adaptation.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -36,6 +36,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 #if defined(GENERATING_DOCUMENTATION)
 
@@ -471,6 +472,36 @@ const T disallowed_t<I>::static_query_v;
 #endif // defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT)
        //   && defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
 
+template <typename>
+struct is_blocking_adaptation_t : false_type
+{
+};
+
+template <int I>
+struct is_blocking_adaptation_t<blocking_adaptation_t<I>> : true_type
+{
+};
+
+template <typename>
+struct is_allowed_t : false_type
+{
+};
+
+template <int I>
+struct is_allowed_t<allowed_t<I>> : true_type
+{
+};
+
+template <typename>
+struct is_disallowed_t : false_type
+{
+};
+
+template <int I>
+struct is_disallowed_t<disallowed_t<I>> : true_type
+{
+};
+
 template <typename Executor>
 class adapter
 {
@@ -510,7 +541,10 @@ public:
 
   template <typename Property>
   enable_if_t<
-    can_query<const Executor&, Property>::value,
+    can_query<const Executor&, Property>::value
+      && !is_blocking_adaptation_t<Property>::value
+      && !is_allowed_t<Property>::value
+      && !is_disallowed_t<Property>::value,
     query_result_t<const Executor&, Property>
   > query(const Property& p) const
     noexcept(is_nothrow_query<const Executor&, Property>::value)
@@ -526,7 +560,10 @@ public:
 
   template <typename Property>
   enable_if_t<
-    can_require<const Executor&, Property>::value,
+    can_require<const Executor&, Property>::value
+      && !is_blocking_adaptation_t<Property>::value
+      && !is_allowed_t<Property>::value
+      && !is_disallowed_t<Property>::value,
     adapter<decay_t<require_result_t<const Executor&, Property>>>
   > require(const Property& p) const
     noexcept(is_nothrow_require<const Executor&, Property>::value)
@@ -537,7 +574,10 @@ public:
 
   template <typename Property>
   enable_if_t<
-    can_prefer<const Executor&, Property>::value,
+    can_prefer<const Executor&, Property>::value
+      && !is_blocking_adaptation_t<Property>::value
+      && !is_allowed_t<Property>::value
+      && !is_disallowed_t<Property>::value,
     adapter<decay_t<prefer_result_t<const Executor&, Property>>>
   > prefer(const Property& p) const
     noexcept(is_nothrow_prefer<const Executor&, Property>::value)
@@ -719,7 +759,7 @@ void blocking_execute(
 
 typedef detail::blocking_adaptation_t<> blocking_adaptation_t;
 
-constexpr blocking_adaptation_t blocking_adaptation;
+BOOST_ASIO_INLINE_VARIABLE constexpr blocking_adaptation_t blocking_adaptation;
 
 } // namespace execution
 
@@ -1074,6 +1114,7 @@ struct prefer_member<
 
 #endif // defined(GENERATING_DOCUMENTATION)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

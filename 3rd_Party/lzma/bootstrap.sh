@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/lzma.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR}
 
-git clone -b v5.8.1 --single-branch --depth=1 https://github.com/tukaani-project/xz.git
+git clone -b v5.8.3 --single-branch --depth=1 https://github.com/tukaani-project/xz.git
 cd xz
 mkdir build
 cd build

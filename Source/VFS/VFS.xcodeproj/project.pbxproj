@@ -59,7 +59,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		CF1847021E41C86D008B7C9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF18470A1E41C8A5008B7C9F /* VFSArchive_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchive_IT.mm; path = tests/VFSArchive_IT.mm; sourceTree = SOURCE_ROOT; };
 		CF18470B1E41C8A5008B7C9F /* VFSFTP_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSFTP_IT.mm; path = tests/VFSFTP_IT.mm; sourceTree = SOURCE_ROOT; };
 		CF18470C1E41C8A5008B7C9F /* VFSPS_IT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSPS_IT.cpp; path = tests/VFSPS_IT.cpp; sourceTree = SOURCE_ROOT; };
@@ -284,7 +283,6 @@
 				CF26DE3521E297AE003F0E93 /* EasyOps_UT.cpp */,
 				CF26DE0E21CFA2CC003F0E93 /* FileWindow_UT.cpp */,
 				CF3BFC6A2D143F3300105999 /* Host_UT.cpp */,
-				CF1847021E41C86D008B7C9F /* Info.plist */,
 				CFE08AE823CB2D83007E99B8 /* ListingInput_UT.cpp */,
 				CF2343ED22CD31F300F516CB /* NetSFTP */,
 				CF24E1FD2290200400C166FA /* SearchForFiles_IT.cpp */,
@@ -304,7 +302,7 @@
 				CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */,
 				CFFA95571F4E65A60035E606 /* WebDAV_IT.mm */,
 			);
-			path = Tests;
+			name = Tests;
 			sourceTree = "<group>";
 		};
 		CF1847121E41C9C0008B7C9F /* Frameworks */ = {

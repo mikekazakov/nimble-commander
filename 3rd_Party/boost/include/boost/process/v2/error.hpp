@@ -41,10 +41,4 @@ static const error_category& exit_code_category = get_exit_code_category();
 
 BOOST_PROCESS_V2_END_NAMESPACE
 
-#if defined(BOOST_PROCESS_V2_HEADER_ONLY)
-
-#include <boost/process/v2/impl/error.ipp>
-
-#endif
-
 #endif //BOOST_PROCESS_V2_ERROR_HPP

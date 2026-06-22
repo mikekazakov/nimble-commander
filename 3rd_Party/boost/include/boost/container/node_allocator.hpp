@@ -8,8 +8,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef BOOST_CONTAINER_POOLED_NODE_ALLOCATOR_HPP
-#define BOOST_CONTAINER_POOLED_NODE_ALLOCATOR_HPP
+#ifndef BOOST_CONTAINER_NODE_ALLOCATOR_HPP
+#define BOOST_CONTAINER_NODE_ALLOCATOR_HPP
 
 #ifndef BOOST_CONFIG_HPP
 #  include <boost/config.hpp>
@@ -26,6 +26,7 @@
 #include <boost/container/detail/node_pool.hpp>
 #include <boost/container/detail/mpl.hpp>
 #include <boost/container/detail/multiallocation_chain.hpp>
+#include <boost/move/detail/iterator_to_raw_pointer.hpp>
 #include <boost/container/detail/dlmalloc.hpp>
 #include <boost/container/detail/singleton.hpp>
 
@@ -62,7 +63,7 @@ class node_allocator
    typedef unsigned int allocation_type;
    typedef node_allocator<T, NodesPerBlock, Version>   self_t;
 
-   static const std::size_t nodes_per_block = NodesPerBlock;
+   BOOST_STATIC_CONSTEXPR std::size_t nodes_per_block = NodesPerBlock;
 
    BOOST_CONTAINER_STATIC_ASSERT((Version <=2));
    #endif
@@ -136,28 +137,29 @@ class node_allocator
 
    //!Returns the number of elements that could be allocated.
    //!Never throws
-   size_type max_size() const
-   {  return size_type(-1)/sizeof(T);   }
+   BOOST_CONTAINER_NODISCARD
+   size_type max_size() const BOOST_NOEXCEPT_OR_NOTHROW
+   {  return size_type(-1)/(2u*sizeof(T));   }
 
    //!Allocate memory for an array of count elements.
    //!Throws bad_alloc if there is no enough memory
-   pointer allocate(size_type count, const void * = 0)
+   BOOST_CONTAINER_NODISCARD
+   pointer allocate(size_type count)
    {
       if(BOOST_UNLIKELY(count > this->max_size()))
          boost::container::throw_bad_alloc();
 
-      if(Version == 1 && count == 1){
+      BOOST_IF_CONSTEXPR(Version == 1)
+      if(count == 1){
          typedef dtl::shared_node_pool
-            <sizeof(T), NodesPerBlock> shared_pool_t;
+            <sizeof(T), NodesPerBlock, dtl::alignment_of<T>::value> shared_pool_t;
          typedef dtl::singleton_default<shared_pool_t> singleton_t;
          return pointer(static_cast<T*>(singleton_t::instance().allocate_node()));
       }
-      else{
-         void *ret = dlmalloc_malloc(count*sizeof(T));
-         if(BOOST_UNLIKELY(!ret))
-            boost::container::throw_bad_alloc();
-         return static_cast<pointer>(ret);
-      }
+      void *ret = dlmalloc_memalign(count*sizeof(T), dtl::alignment_of<T>::value);
+      if(BOOST_UNLIKELY(!ret))
+         boost::container::throw_bad_alloc();
+      return static_cast<pointer>(ret);
    }
 
    //!Deallocate allocated memory.
@@ -165,26 +167,27 @@ class node_allocator
    void deallocate(const pointer &ptr, size_type count) BOOST_NOEXCEPT_OR_NOTHROW
    {
       (void)count;
-      if(Version == 1 && count == 1){
+      BOOST_IF_CONSTEXPR(Version == 1)
+      if(count == 1){
          typedef dtl::shared_node_pool
-            <sizeof(T), NodesPerBlock> shared_pool_t;
+            <sizeof(T), NodesPerBlock, dtl::alignment_of<T>::value> shared_pool_t;
          typedef dtl::singleton_default<shared_pool_t> singleton_t;
          singleton_t::instance().deallocate_node(ptr);
+         return;
       }
-      else{
-         dlmalloc_free(ptr);
-      }
+      dlmalloc_free(ptr);
    }
 
    //!Deallocates all free blocks of the pool
    static void deallocate_free_blocks() BOOST_NOEXCEPT_OR_NOTHROW
    {
       typedef dtl::shared_node_pool
-         <sizeof(T), NodesPerBlock> shared_pool_t;
+         <sizeof(T), NodesPerBlock, dtl::alignment_of<T>::value> shared_pool_t;
       typedef dtl::singleton_default<shared_pool_t> singleton_t;
       singleton_t::instance().deallocate_free_blocks();
    }
 
+   BOOST_CONTAINER_NODISCARD
    pointer allocation_command
       (allocation_type command, size_type limit_size, size_type &prefer_in_recvd_out_size, pointer &reuse)
    {
@@ -197,6 +200,7 @@ class node_allocator
 
    //!Returns maximum the number of objects the previously allocated memory
    //!pointed by p can hold.
+   BOOST_CONTAINER_NODISCARD
    size_type size(pointer p) const BOOST_NOEXCEPT_OR_NOTHROW
    {
       BOOST_CONTAINER_STATIC_ASSERT(( Version > 1 ));
@@ -206,11 +210,12 @@ class node_allocator
    //!Allocates just one object. Memory allocated with this function
    //!must be deallocated only with deallocate_one().
    //!Throws bad_alloc if there is no enough memory
+   BOOST_CONTAINER_NODISCARD
    pointer allocate_one()
    {
       BOOST_CONTAINER_STATIC_ASSERT(( Version > 1 ));
       typedef dtl::shared_node_pool
-         <sizeof(T), NodesPerBlock> shared_pool_t;
+         <sizeof(T), NodesPerBlock, dtl::alignment_of<T>::value> shared_pool_t;
       typedef dtl::singleton_default<shared_pool_t> singleton_t;
       return (pointer)singleton_t::instance().allocate_node();
    }
@@ -221,11 +226,14 @@ class node_allocator
    {
       BOOST_CONTAINER_STATIC_ASSERT(( Version > 1 ));
       typedef dtl::shared_node_pool
-         <sizeof(T), NodesPerBlock> shared_pool_t;
+         <sizeof(T), NodesPerBlock, dtl::alignment_of<T>::value> shared_pool_t;
       typedef dtl::singleton_default<shared_pool_t> singleton_t;
       typename shared_pool_t::multiallocation_chain ch;
       singleton_t::instance().allocate_nodes(num_elements, ch);
-      chain.incorporate_after(chain.before_begin(), (T*)&*ch.begin(), (T*)&*ch.last(), ch.size());
+      chain.incorporate_after(chain.before_begin()
+                             , (T*)static_cast<void*>(boost::movelib::iterator_to_raw_pointer(ch.begin()))
+                             , (T*)static_cast<void*>(boost::movelib::iterator_to_raw_pointer(ch.last()))
+                             , ch.size());
    }
 
    //!Deallocates memory previously allocated with allocate_one().
@@ -235,7 +243,7 @@ class node_allocator
    {
       BOOST_CONTAINER_STATIC_ASSERT(( Version > 1 ));
       typedef dtl::shared_node_pool
-         <sizeof(T), NodesPerBlock> shared_pool_t;
+         <sizeof(T), NodesPerBlock, dtl::alignment_of<T>::value> shared_pool_t;
       typedef dtl::singleton_default<shared_pool_t> singleton_t;
       singleton_t::instance().deallocate_node(p);
    }
@@ -244,9 +252,12 @@ class node_allocator
    {
       BOOST_CONTAINER_STATIC_ASSERT(( Version > 1 ));
       typedef dtl::shared_node_pool
-         <sizeof(T), NodesPerBlock> shared_pool_t;
+         <sizeof(T), NodesPerBlock, dtl::alignment_of<T>::value> shared_pool_t;
       typedef dtl::singleton_default<shared_pool_t> singleton_t;
-      typename shared_pool_t::multiallocation_chain ch(&*chain.begin(), &*chain.last(), chain.size());
+      typename shared_pool_t::multiallocation_chain ch
+         ( boost::movelib::iterator_to_raw_pointer(chain.begin())
+         , boost::movelib::iterator_to_raw_pointer(chain.last())
+         , chain.size());
       singleton_t::instance().deallocate_nodes(ch);
    }
 
@@ -261,8 +272,8 @@ class node_allocator
          boost::container::throw_bad_alloc();
       }
       chain.incorporate_after( chain.before_begin()
-                             , (T*)BOOST_CONTAINER_MEMCHAIN_LASTMEM(&ch)
-                             , (T*)BOOST_CONTAINER_MEMCHAIN_LASTMEM(&ch)
+                             , (T*)static_cast<void*>(BOOST_CONTAINER_MEMCHAIN_LASTMEM(&ch))
+                             , (T*)static_cast<void*>(BOOST_CONTAINER_MEMCHAIN_LASTMEM(&ch))
                              , BOOST_CONTAINER_MEMCHAIN_SIZE(&ch));
    }
 
@@ -277,16 +288,16 @@ class node_allocator
          boost::container::throw_bad_alloc();
       }
       chain.incorporate_after( chain.before_begin()
-                             , (T*)BOOST_CONTAINER_MEMCHAIN_LASTMEM(&ch)
-                             , (T*)BOOST_CONTAINER_MEMCHAIN_LASTMEM(&ch)
+                             , (T*)static_cast<void*>(BOOST_CONTAINER_MEMCHAIN_LASTMEM(&ch))
+                             , (T*)static_cast<void*>(BOOST_CONTAINER_MEMCHAIN_LASTMEM(&ch))
                              , BOOST_CONTAINER_MEMCHAIN_SIZE(&ch));
    }
 
    void deallocate_many(multiallocation_chain &chain) BOOST_NOEXCEPT_OR_NOTHROW
    {
       BOOST_CONTAINER_STATIC_ASSERT(( Version > 1 ));
-      void *first = &*chain.begin();
-      void *last  = &*chain.last();
+      void *first = boost::movelib::iterator_to_raw_pointer(chain.begin());
+      void *last  = boost::movelib::iterator_to_raw_pointer(chain.last());
       size_t num  = chain.size();
       dlmalloc_memchain ch;
       BOOST_CONTAINER_MEMCHAIN_INIT_FROM(&ch, first, last, num);
@@ -300,32 +311,34 @@ class node_allocator
 
    //!An allocator always compares to true, as memory allocated with one
    //!instance can be deallocated by another instance
+   BOOST_CONTAINER_NODISCARD   
    friend bool operator==(const node_allocator &, const node_allocator &) BOOST_NOEXCEPT_OR_NOTHROW
    {  return true;   }
 
    //!An allocator always compares to false, as memory allocated with one
    //!instance can be deallocated by another instance
+   BOOST_CONTAINER_NODISCARD
    friend bool operator!=(const node_allocator &, const node_allocator &) BOOST_NOEXCEPT_OR_NOTHROW
    {  return false;   }
 
    private:
    pointer priv_allocation_command
       (allocation_type command,   std::size_t limit_size
-      ,size_type &prefer_in_recvd_out_size
-      ,pointer &reuse)
+      ,size_type &prefer_in_recvd_out_size, pointer &reuse_ptr)
    {
       std::size_t const preferred_size = prefer_in_recvd_out_size;
       dlmalloc_command_ret_t ret = {0 , 0};
-      if((limit_size > this->max_size()) || (preferred_size > this->max_size())){
+      if(BOOST_UNLIKELY(limit_size > this->max_size() || preferred_size > this->max_size())){
          return pointer();
       }
       std::size_t l_size = limit_size*sizeof(T);
       std::size_t p_size = preferred_size*sizeof(T);
       std::size_t r_size;
       {
-         void* reuse_ptr_void = reuse;
-         ret = dlmalloc_allocation_command(command, sizeof(T), l_size, p_size, &r_size, reuse_ptr_void);
-         reuse = static_cast<T*>(reuse_ptr_void);
+         void* reuse_ptr_void = reuse_ptr;
+         ret = dlmalloc_allocation_command( command, sizeof(T), dtl::alignment_of<T>::value
+                                          , l_size, p_size, &r_size, reuse_ptr_void);
+         reuse_ptr = ret.second ? static_cast<T*>(reuse_ptr_void) : 0;
       }
       prefer_in_recvd_out_size = r_size/sizeof(T);
       return (pointer)ret.first;
@@ -337,4 +350,4 @@ class node_allocator
 
 #include <boost/container/detail/config_end.hpp>
 
-#endif   //#ifndef BOOST_CONTAINER_POOLED_NODE_ALLOCATOR_HPP
+#endif   //#ifndef BOOST_CONTAINER_NODE_ALLOCATOR_HPP

@@ -1,8 +1,8 @@
-// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DiskUtility.h"
 #include "ObjCpp.h"
 #include <algorithm>
-#include <boost/process.hpp>
+#include <boost/process/v1.hpp>
 #include <iostream>
 
 static const auto g_APFSListCommand = "/usr/sbin/diskutil apfs list -plist";
@@ -260,7 +260,7 @@ NSDictionary *DiskUtility::DiskUtilityOutputToDictionary(std::string_view _text)
 
 static std::string Execute(const std::string &_command)
 {
-    using namespace boost::process;
+    using namespace boost::process::v1;
 
     ipstream pipe_stream;
     child c(_command, std_out > pipe_stream);

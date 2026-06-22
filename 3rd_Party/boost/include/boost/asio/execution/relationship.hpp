@@ -2,7 +2,7 @@
 // execution/relationship.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -30,6 +30,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 #if defined(GENERATING_DOCUMENTATION)
 
@@ -543,7 +544,7 @@ const T continuation_t<I>::static_query_v;
 
 typedef detail::relationship_t<> relationship_t;
 
-constexpr relationship_t relationship;
+BOOST_ASIO_INLINE_VARIABLE constexpr relationship_t relationship;
 
 } // namespace execution
 
@@ -745,6 +746,7 @@ struct static_query<T, execution::relationship_t::continuation_t,
 
 #endif // defined(GENERATING_DOCUMENTATION)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

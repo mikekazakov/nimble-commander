@@ -60,7 +60,7 @@ static std::vector<std::string> ProduceLongKeysForListing(const VFSListing &_l)
 static std::vector<unsigned> ProduceSortedIndirectIndecesForLongKeys(const std::vector<std::string> &_keys)
 {
     std::vector<unsigned> src_keys_ind(_keys.size());
-    std::iota(src_keys_ind.begin(), src_keys_ind.end(), 0); // NOLINT - Xcode16 doesn't have std::ranges::iota
+    std::ranges::iota(src_keys_ind, 0);
     std::ranges::sort(src_keys_ind, [&_keys](auto _1, auto _2) { return _keys[_1] < _keys[_2]; });
     return src_keys_ind;
 }
@@ -400,7 +400,7 @@ std::string Model::VerboseDirectoryFullPath() const
 static void DoRawSort(const VFSListing &_from, std::vector<unsigned> &_to)
 {
     _to.resize(_from.Count());
-    std::iota(_to.begin(), _to.end(), 0); // NOLINT - Xcode16 doesn't have std::ranges::iota
+    std::ranges::iota(_to, 0);
     std::ranges::sort(_to, [&_from](unsigned _1, unsigned _2) { return _from.Filename(_1) < _from.Filename(_2); });
 }
 
@@ -814,8 +814,7 @@ void Model::DoSortWithHardFiltering()
     }
     else {
         m_EntriesByCustomSort.resize(m_Listing->Count());
-        // NOLINTNEXTLINE - Xcode16 doesn't have std::ranges::iota
-        std::iota(m_EntriesByCustomSort.begin(), m_EntriesByCustomSort.end(), 0);
+        std::ranges::iota(m_EntriesByCustomSort, 0);
     }
 
     if( m_EntriesByCustomSort.empty() || m_CustomSortMode.sort == SortMode::SortNoSort )
@@ -877,8 +876,7 @@ void Model::BuildSoftFilteringIndeces()
     }
     else {
         m_EntriesBySoftFiltering.resize(m_EntriesByCustomSort.size());
-        // NOLINTNEXTLINE - Xcode16 doesn't have std::ranges::iota
-        std::iota(m_EntriesBySoftFiltering.begin(), m_EntriesBySoftFiltering.end(), 0);
+        std::ranges::iota(m_EntriesBySoftFiltering, 0);
     }
 }
 

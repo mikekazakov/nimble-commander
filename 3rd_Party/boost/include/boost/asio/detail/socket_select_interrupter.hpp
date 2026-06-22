@@ -2,7 +2,7 @@
 // detail/socket_select_interrupter.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -20,7 +20,7 @@
 #if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 #if defined(BOOST_ASIO_WINDOWS) \
-  || defined(__CYGWIN__) \
+  || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS) \
   || defined(__SYMBIAN32__)
 
 #include <boost/asio/detail/socket_types.hpp>
@@ -29,13 +29,14 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class socket_select_interrupter
 {
 public:
   // Constructor.
-  BOOST_ASIO_DECL socket_select_interrupter();
+  BOOST_ASIO_DECL explicit socket_select_interrupter(bool = true);
 
   // Destructor.
   BOOST_ASIO_DECL ~socket_select_interrupter();
@@ -75,6 +76,7 @@ private:
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
@@ -85,7 +87,7 @@ private:
 #endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 #endif // defined(BOOST_ASIO_WINDOWS)
-       // || defined(__CYGWIN__)
+       // || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
        // || defined(__SYMBIAN32__)
 
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)

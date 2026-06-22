@@ -1,10 +1,10 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UnitTests_main.h"
 #include <Base/algo.h>
 #include <Base/dispatch_cpp.h>
 #include <NativeFSManagerImpl.h>
 #include <algorithm>
-#include <boost/process.hpp>
+#include <boost/process/v1.hpp>
 #include <filesystem>
 
 #define PREFIX "nc::utility::NativeFSManager "
@@ -163,7 +163,7 @@ bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std
 
 int Execute(const std::string &_command)
 {
-    using namespace boost::process;
+    using namespace boost::process::v1;
     ipstream pipe_stream;
     child c(_command, std_out > pipe_stream);
     std::string line;

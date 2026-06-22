@@ -98,7 +98,7 @@ struct bind_fd
     }
 
     /// Implementation of the initialization function.
-    error_code on_exec_setup(posix::default_launcher & launcher, const filesystem::path &, const char * const *)
+    error_code on_exec_setup(posix::default_launcher & /*launcher*/, const filesystem::path &, const char * const *)
     {
         if (::dup2(fd, target) == -1)
             return error_code(errno, system_category());

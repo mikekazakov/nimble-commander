@@ -2,7 +2,7 @@
 // ssl/detail/impl/engine.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -27,6 +27,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ssl {
 namespace detail {
 
@@ -101,6 +102,18 @@ engine& engine::operator=(engine&& other) noexcept
 {
   if (this != &other)
   {
+    if (ssl_ && SSL_get_app_data(ssl_))
+    {
+      delete static_cast<verify_callback_base*>(SSL_get_app_data(ssl_));
+      SSL_set_app_data(ssl_, 0);
+    }
+
+    if (ext_bio_)
+      ::BIO_free(ext_bio_);
+
+    if (ssl_)
+      ::SSL_free(ssl_);
+
     ssl_ = other.ssl_;
     ext_bio_ = other.ext_bio_;
     other.ssl_ = 0;
@@ -371,6 +384,7 @@ int engine::do_write(void* data, std::size_t length)
 
 } // namespace detail
 } // namespace ssl
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

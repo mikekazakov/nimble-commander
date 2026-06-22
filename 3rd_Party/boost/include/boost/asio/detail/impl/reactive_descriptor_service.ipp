@@ -2,7 +2,7 @@
 // detail/impl/reactive_descriptor_service.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,7 +19,7 @@
 
 #if !defined(BOOST_ASIO_WINDOWS) \
   && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__) \
+  && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS) \
   && !defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
 #include <boost/asio/error.hpp>
@@ -29,6 +29,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 reactive_descriptor_service::reactive_descriptor_service(
@@ -199,18 +200,20 @@ boost::system::error_code reactive_descriptor_service::cancel(
 }
 
 void reactive_descriptor_service::do_start_op(implementation_type& impl,
-    int op_type, reactor_op* op, bool is_continuation, bool is_non_blocking,
-    bool noop, void (*on_immediate)(operation* op, bool, const void*),
+    int op_type, reactor_op* op, bool is_continuation,
+    bool allow_speculative, bool noop, bool needs_non_blocking,
+    void (*on_immediate)(operation* op, bool, const void*),
     const void* immediate_arg)
 {
   if (!noop)
   {
-    if ((impl.state_ & descriptor_ops::non_blocking) ||
-        descriptor_ops::set_internal_non_blocking(
+    if ((impl.state_ & descriptor_ops::non_blocking)
+        || !needs_non_blocking
+        || descriptor_ops::set_internal_non_blocking(
           impl.descriptor_, impl.state_, true, op->ec_))
     {
       reactor_.start_op(op_type, impl.descriptor_, impl.reactor_data_, op,
-          is_continuation, is_non_blocking, on_immediate, immediate_arg);
+          is_continuation, allow_speculative, on_immediate, immediate_arg);
       return;
     }
   }
@@ -219,6 +222,7 @@ void reactive_descriptor_service::do_start_op(implementation_type& impl,
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
@@ -226,7 +230,7 @@ void reactive_descriptor_service::do_start_op(implementation_type& impl,
 
 #endif // !defined(BOOST_ASIO_WINDOWS)
        //   && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
-       //   && !defined(__CYGWIN__)
+       //   && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
        //   && !defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
 #endif // BOOST_ASIO_DETAIL_IMPL_REACTIVE_DESCRIPTOR_SERVICE_IPP

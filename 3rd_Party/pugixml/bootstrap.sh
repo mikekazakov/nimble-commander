@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/pugixml.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v1.15 --single-branch --depth=1 https://github.com/zeux/pugixml.git
+git clone -b v1.16 --single-branch --depth=1 https://github.com/zeux/pugixml.git
 cd pugixml
 mkdir build
 cd build

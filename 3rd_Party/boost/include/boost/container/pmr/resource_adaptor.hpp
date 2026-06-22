@@ -31,27 +31,31 @@
 namespace boost {
 namespace container {
 
+#ifndef BOOST_CONTAINER_DOXYGEN_INVOKED
+
 namespace pmr_dtl {
 
 template<class T>
 struct max_allocator_alignment
 {
-   static const std::size_t value = 1;
+   BOOST_STATIC_CONSTEXPR std::size_t value = 1;
 };
 
 template<class T>
 struct max_allocator_alignment< ::boost::container::new_allocator<T> >
 {
-   static const std::size_t value = boost::move_detail::alignment_of<boost::move_detail::max_align_t>::value;
+   BOOST_STATIC_CONSTEXPR std::size_t value = boost::move_detail::alignment_of<boost::move_detail::max_align_t>::value;
 };
 
 template<class T>
 struct max_allocator_alignment< std::allocator<T> >
 {
-   static const std::size_t value = boost::move_detail::alignment_of<boost::move_detail::max_align_t>::value;
+   BOOST_STATIC_CONSTEXPR std::size_t value = boost::move_detail::alignment_of<boost::move_detail::max_align_t>::value;
 };
 
 }  //namespace pmr_dtl
+
+#endif   //BOOST_CONTAINER_DOXYGEN_INVOKED
 
 namespace pmr {
 

@@ -2,7 +2,7 @@
 // execution/occupancy.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 #if defined(GENERATING_DOCUMENTATION)
 
@@ -132,7 +133,7 @@ const T occupancy_t<I>::static_query_v;
 
 typedef detail::occupancy_t<> occupancy_t;
 
-constexpr occupancy_t occupancy;
+BOOST_ASIO_INLINE_VARIABLE constexpr occupancy_t occupancy;
 
 } // namespace execution
 
@@ -178,6 +179,7 @@ struct static_query<T, execution::occupancy_t,
 
 #endif // defined(GENERATING_DOCUMENTATION)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

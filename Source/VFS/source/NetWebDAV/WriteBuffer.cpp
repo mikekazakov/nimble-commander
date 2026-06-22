@@ -62,7 +62,7 @@ void WriteBuffer::Write(const void *_buffer, size_t _bytes) noexcept
 
 size_t WriteBuffer::Discard(size_t _bytes) noexcept
 {
-    const auto to_discard = std::min(size_t(m_Size), _bytes);
+    const size_t to_discard = std::min(m_Size, _bytes);
     PopFront(static_cast<int>(to_discard));
     return to_discard;
 }
@@ -78,7 +78,7 @@ size_t WriteBuffer::ReadCURL(void *_ptr, size_t _elements, size_t _nmemb, void *
 
 size_t WriteBuffer::Read(void *_ptr, size_t _size_bytes) noexcept
 {
-    const auto to_read = std::min(size_t(m_Size), _size_bytes);
+    const auto to_read = std::min(m_Size, _size_bytes);
     if( to_read == 0 )
         return 0;
 

@@ -2,7 +2,7 @@
 // experimental/detail/impl/channel_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,6 +19,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 namespace detail {
 
@@ -365,7 +366,7 @@ template <typename Message, typename Traits,
     typename... Signatures, typename... Args>
 std::size_t channel_service<Mutex>::try_send_n(
     channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl,
-		std::size_t count, bool via_dispatch, Args&&... args)
+    std::size_t count, bool via_dispatch, Args&&... args)
 {
   typedef typename implementation_type<Traits,
       Signatures...>::payload_type payload_type;
@@ -435,8 +436,8 @@ template <typename Mutex>
 template <typename Traits, typename... Signatures>
 void channel_service<Mutex>::start_send_op(
     channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl,
-		channel_send<typename implementation_type<
-			Traits, Signatures...>::payload_type>* send_op)
+    channel_send<typename implementation_type<
+      Traits, Signatures...>::payload_type>* send_op)
 {
   typedef typename implementation_type<Traits,
       Signatures...>::payload_type payload_type;
@@ -485,7 +486,7 @@ template <typename Mutex>
 template <typename Traits, typename... Signatures, typename Handler>
 bool channel_service<Mutex>::try_receive(
     channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl,
-		Handler&& handler)
+    Handler&& handler)
 {
   typedef typename implementation_type<Traits,
       Signatures...>::payload_type payload_type;
@@ -518,7 +519,8 @@ bool channel_service<Mutex>::try_receive(
       }
       lock.unlock();
       boost::asio::detail::non_const_lvalue<Handler> handler2(handler);
-      channel_handler<payload_type, decay_t<Handler>>(
+      boost::asio::detail::completion_payload_handler<
+        payload_type, decay_t<Handler>>(
           static_cast<payload_type&&>(payload), handler2.value)();
       return true;
     }
@@ -533,7 +535,8 @@ bool channel_service<Mutex>::try_receive(
       send_op->post();
       lock.unlock();
       boost::asio::detail::non_const_lvalue<Handler> handler2(handler);
-      channel_handler<payload_type, decay_t<Handler>>(
+      boost::asio::detail::completion_payload_handler<
+        payload_type, decay_t<Handler>>(
           static_cast<payload_type&&>(payload), handler2.value)();
       return true;
     }
@@ -549,8 +552,8 @@ template <typename Mutex>
 template <typename Traits, typename... Signatures>
 void channel_service<Mutex>::start_receive_op(
     channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl,
-		channel_receive<typename implementation_type<
-			Traits, Signatures...>::payload_type>* receive_op)
+    channel_receive<typename implementation_type<
+      Traits, Signatures...>::payload_type>* receive_op)
 {
   typedef typename implementation_type<Traits,
       Signatures...>::traits_type traits_type;
@@ -615,6 +618,7 @@ void channel_service<Mutex>::start_receive_op(
 
 } // namespace detail
 } // namespace experimental
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

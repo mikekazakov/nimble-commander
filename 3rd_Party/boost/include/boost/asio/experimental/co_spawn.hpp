@@ -18,16 +18,17 @@
 #include <boost/asio/detail/config.hpp>
 #include <utility>
 #include <boost/asio/compose.hpp>
+#include <boost/asio/deferred.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/experimental/coro.hpp>
-#include <boost/asio/experimental/deferred.hpp>
-#include <boost/asio/experimental/prepend.hpp>
+#include <boost/asio/prepend.hpp>
 #include <boost/asio/redirect_error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 namespace detail {
 
@@ -181,6 +182,7 @@ co_spawn(coro<void() noexcept, void, Executor> c, CompletionToken&& token)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

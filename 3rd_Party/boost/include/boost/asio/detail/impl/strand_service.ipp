@@ -2,7 +2,7 @@
 // detail/impl/strand_service.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 struct strand_service::on_do_complete_exit
@@ -81,8 +82,11 @@ void strand_service::construct(strand_service::implementation_type& impl)
 #endif // defined(BOOST_ASIO_ENABLE_SEQUENTIAL_STRAND_ALLOCATION)
   index = index % num_implementations;
 
-  if (!implementations_[index].get())
-    implementations_[index].reset(new strand_impl);
+  if (!implementations_[index])
+  {
+    execution_context::allocator<void> alloc(context());
+    implementations_[index] = allocate_shared<strand_impl>(alloc);
+  }
   impl = implementations_[index].get();
 }
 
@@ -196,6 +200,7 @@ void strand_service::do_complete(void* owner, operation* base,
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

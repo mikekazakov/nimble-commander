@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ThemesManager.h"
 #include "Theme.h"
 #include <Base/dispatch_cpp.h>
@@ -7,6 +7,7 @@
 #include <ankerl/unordered_dense.h>
 #include <charconv>
 #include <fmt/core.h>
+#include <fmt/format.h>
 #include <frozen/string.h>
 #include <frozen/unordered_map.h>
 #include <ranges>

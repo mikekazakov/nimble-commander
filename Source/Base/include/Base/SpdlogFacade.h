@@ -1,4 +1,4 @@
-// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <spdlog/spdlog.h>
@@ -57,37 +57,37 @@ public:
     template <typename... Args>
     static void Trace(SpdlogFmtAndLoc<std::type_identity_t<Args>...> _locfmt, const Args &...args)
     {
-        Get().log(_locfmt.loc, spdlog::level::trace, fmt::runtime(_locfmt.fmt), args...);
+        Get().log(_locfmt.loc, spdlog::level::trace, fmt::runtime(_locfmt.fmt.get()), args...);
     }
 
     template <typename... Args>
     static void Debug(SpdlogFmtAndLoc<std::type_identity_t<Args>...> _locfmt, const Args &...args)
     {
-        Get().log(_locfmt.loc, spdlog::level::debug, fmt::runtime(_locfmt.fmt), args...);
+        Get().log(_locfmt.loc, spdlog::level::debug, fmt::runtime(_locfmt.fmt.get()), args...);
     }
 
     template <typename... Args>
     static void Info(SpdlogFmtAndLoc<std::type_identity_t<Args>...> _locfmt, const Args &...args)
     {
-        Get().log(_locfmt.loc, spdlog::level::info, fmt::runtime(_locfmt.fmt), args...);
+        Get().log(_locfmt.loc, spdlog::level::info, fmt::runtime(_locfmt.fmt.get()), args...);
     }
 
     template <typename... Args>
     static void Warn(SpdlogFmtAndLoc<std::type_identity_t<Args>...> _locfmt, const Args &...args)
     {
-        Get().log(_locfmt.loc, spdlog::level::warn, fmt::runtime(_locfmt.fmt), args...);
+        Get().log(_locfmt.loc, spdlog::level::warn, fmt::runtime(_locfmt.fmt.get()), args...);
     }
 
     template <typename... Args>
     static void Error(SpdlogFmtAndLoc<std::type_identity_t<Args>...> _locfmt, const Args &...args)
     {
-        Get().log(_locfmt.loc, spdlog::level::err, fmt::runtime(_locfmt.fmt), args...);
+        Get().log(_locfmt.loc, spdlog::level::err, fmt::runtime(_locfmt.fmt.get()), args...);
     }
 
     template <typename... Args>
     static void Critical(SpdlogFmtAndLoc<std::type_identity_t<Args>...> _locfmt, const Args &...args)
     {
-        Get().log(_locfmt.loc, spdlog::level::critical, fmt::runtime(_locfmt.fmt), args...);
+        Get().log(_locfmt.loc, spdlog::level::critical, fmt::runtime(_locfmt.fmt.get()), args...);
     }
 };
 

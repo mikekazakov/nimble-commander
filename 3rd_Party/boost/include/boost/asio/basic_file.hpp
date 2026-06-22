@@ -2,7 +2,7 @@
 // basic_file.hpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -44,6 +44,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 #if !defined(BOOST_ASIO_BASIC_FILE_FWD_DECL)
 #define BOOST_ASIO_BASIC_FILE_FWD_DECL
@@ -129,6 +130,20 @@ public:
    *
    * @param open_flags A set of flags that determine how the file should be
    * opened.
+   *
+   * Exactly one of the following file_base::flags values must be specified:
+   *
+   * @li flags::read_only
+   * @li flags::write_only
+   * @li flags::read_write
+   *
+   * The following flags may be bitwise or-ed in addition:
+   *
+   * @li flags::append
+   * @li flags::create
+   * @li flags::exclusive
+   * @li flags::truncate
+   * @li flags::sync_all_on_write
    */
   explicit basic_file(const executor_type& ex,
       const char* path, file_base::flags open_flags)
@@ -139,7 +154,7 @@ public:
     boost::asio::detail::throw_error(ec, "open");
   }
 
-  /// Construct a basic_file without opening it.
+  /// Construct and open a basic_file.
   /**
    * This constructor initialises a file and opens it.
    *
@@ -151,6 +166,20 @@ public:
    *
    * @param open_flags A set of flags that determine how the file should be
    * opened.
+   *
+   * Exactly one of the following file_base::flags values must be specified:
+   *
+   * @li flags::read_only
+   * @li flags::write_only
+   * @li flags::read_write
+   *
+   * The following flags may be bitwise or-ed in addition:
+   *
+   * @li flags::append
+   * @li flags::create
+   * @li flags::exclusive
+   * @li flags::truncate
+   * @li flags::sync_all_on_write
    */
   template <typename ExecutionContext>
   explicit basic_file(ExecutionContext& context,
@@ -177,6 +206,20 @@ public:
    *
    * @param open_flags A set of flags that determine how the file should be
    * opened.
+   *
+   * Exactly one of the following file_base::flags values must be specified:
+   *
+   * @li flags::read_only
+   * @li flags::write_only
+   * @li flags::read_write
+   *
+   * The following flags may be bitwise or-ed in addition:
+   *
+   * @li flags::append
+   * @li flags::create
+   * @li flags::exclusive
+   * @li flags::truncate
+   * @li flags::sync_all_on_write
    */
   explicit basic_file(const executor_type& ex,
       const std::string& path, file_base::flags open_flags)
@@ -188,7 +231,7 @@ public:
     boost::asio::detail::throw_error(ec, "open");
   }
 
-  /// Construct a basic_file without opening it.
+  /// Construct and open a basic_file.
   /**
    * This constructor initialises a file and opens it.
    *
@@ -200,6 +243,20 @@ public:
    *
    * @param open_flags A set of flags that determine how the file should be
    * opened.
+   *
+   * Exactly one of the following file_base::flags values must be specified:
+   *
+   * @li flags::read_only
+   * @li flags::write_only
+   * @li flags::read_write
+   *
+   * The following flags may be bitwise or-ed in addition:
+   *
+   * @li flags::append
+   * @li flags::create
+   * @li flags::exclusive
+   * @li flags::truncate
+   * @li flags::sync_all_on_write
    */
   template <typename ExecutionContext>
   explicit basic_file(ExecutionContext& context,
@@ -355,6 +412,20 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
+   * Exactly one of the following file_base::flags values must be specified:
+   *
+   * @li flags::read_only
+   * @li flags::write_only
+   * @li flags::read_write
+   *
+   * The following flags may be bitwise or-ed in addition:
+   *
+   * @li flags::append
+   * @li flags::create
+   * @li flags::exclusive
+   * @li flags::truncate
+   * @li flags::sync_all_on_write
+   *
    * @par Example
    * @code
    * boost::asio::stream_file file(my_context);
@@ -376,6 +447,20 @@ public:
    *
    * @param open_flags A set of flags that determine how the file should be
    * opened.
+   *
+   * Exactly one of the following file_base::flags values must be specified:
+   *
+   * @li flags::read_only
+   * @li flags::write_only
+   * @li flags::read_write
+   *
+   * The following flags may be bitwise or-ed in addition:
+   *
+   * @li flags::append
+   * @li flags::create
+   * @li flags::exclusive
+   * @li flags::truncate
+   * @li flags::sync_all_on_write
    *
    * @param ec Set to indicate what error occurred, if any.
    *
@@ -408,6 +493,20 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
+   * Exactly one of the following file_base::flags values must be specified:
+   *
+   * @li flags::read_only
+   * @li flags::write_only
+   * @li flags::read_write
+   *
+   * The following flags may be bitwise or-ed in addition:
+   *
+   * @li flags::append
+   * @li flags::create
+   * @li flags::exclusive
+   * @li flags::truncate
+   * @li flags::sync_all_on_write
+   *
    * @par Example
    * @code
    * boost::asio::stream_file file(my_context);
@@ -432,6 +531,20 @@ public:
    * opened.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * Exactly one of the following file_base::flags values must be specified:
+   *
+   * @li flags::read_only
+   * @li flags::write_only
+   * @li flags::read_write
+   *
+   * The following flags may be bitwise or-ed in addition:
+   *
+   * @li flags::append
+   * @li flags::create
+   * @li flags::exclusive
+   * @li flags::truncate
+   * @li flags::sync_all_on_write
    *
    * @par Example
    * @code
@@ -815,6 +928,7 @@ private:
   basic_file& operator=(const basic_file&) = delete;
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

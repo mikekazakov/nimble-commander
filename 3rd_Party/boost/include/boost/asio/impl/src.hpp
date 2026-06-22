@@ -2,7 +2,7 @@
 // impl/src.hpp
 // ~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -21,7 +21,9 @@
 
 #include <boost/asio/impl/any_completion_executor.ipp>
 #include <boost/asio/impl/any_io_executor.ipp>
+#include <boost/asio/impl/awaitable.ipp>
 #include <boost/asio/impl/cancellation_signal.ipp>
+#include <boost/asio/impl/config.ipp>
 #include <boost/asio/impl/connect_pipe.ipp>
 #include <boost/asio/impl/error.ipp>
 #include <boost/asio/impl/execution_context.ipp>
@@ -52,6 +54,7 @@
 #include <boost/asio/detail/impl/reactive_descriptor_service.ipp>
 #include <boost/asio/detail/impl/reactive_socket_service_base.ipp>
 #include <boost/asio/detail/impl/resolver_service_base.ipp>
+#include <boost/asio/detail/impl/resolver_thread_pool.ipp>
 #include <boost/asio/detail/impl/scheduler.ipp>
 #include <boost/asio/detail/impl/select_reactor.ipp>
 #include <boost/asio/detail/impl/service_registry.ipp>
@@ -62,7 +65,6 @@
 #include <boost/asio/detail/impl/strand_service.ipp>
 #include <boost/asio/detail/impl/thread_context.ipp>
 #include <boost/asio/detail/impl/throw_error.ipp>
-#include <boost/asio/detail/impl/timer_queue_ptime.ipp>
 #include <boost/asio/detail/impl/timer_queue_set.ipp>
 #include <boost/asio/detail/impl/win_iocp_file_service.ipp>
 #include <boost/asio/detail/impl/win_iocp_handle_service.ipp>
@@ -70,7 +72,7 @@
 #include <boost/asio/detail/impl/win_iocp_serial_port_service.ipp>
 #include <boost/asio/detail/impl/win_iocp_socket_service_base.ipp>
 #include <boost/asio/detail/impl/win_event.ipp>
-#include <boost/asio/detail/impl/win_mutex.ipp>
+#include <boost/asio/detail/impl/win_critsec_mutex.ipp>
 #include <boost/asio/detail/impl/win_object_handle_service.ipp>
 #include <boost/asio/detail/impl/win_static_mutex.ipp>
 #include <boost/asio/detail/impl/win_thread.ipp>

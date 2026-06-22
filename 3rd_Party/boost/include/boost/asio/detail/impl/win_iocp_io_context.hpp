@@ -2,7 +2,7 @@
 // detail/impl/win_iocp_io_context.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -28,26 +28,29 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
-template <typename Time_Traits>
+template <typename TimeTraits, typename Allocator>
 void win_iocp_io_context::add_timer_queue(
-    timer_queue<Time_Traits>& queue)
+    timer_queue<TimeTraits, Allocator>& queue)
 {
   do_add_timer_queue(queue);
 }
 
-template <typename Time_Traits>
+template <typename TimeTraits, typename Allocator>
 void win_iocp_io_context::remove_timer_queue(
-    timer_queue<Time_Traits>& queue)
+    timer_queue<TimeTraits, Allocator>& queue)
 {
   do_remove_timer_queue(queue);
 }
 
-template <typename Time_Traits>
-void win_iocp_io_context::schedule_timer(timer_queue<Time_Traits>& queue,
-    const typename Time_Traits::time_type& time,
-    typename timer_queue<Time_Traits>::per_timer_data& timer, wait_op* op)
+template <typename TimeTraits, typename Allocator>
+void win_iocp_io_context::schedule_timer(
+    timer_queue<TimeTraits, Allocator>& queue,
+    const typename TimeTraits::time_type& time,
+    typename timer_queue<TimeTraits, Allocator>::per_timer_data& timer,
+    wait_op* op)
 {
   // If the service has been shut down we silently discard the timer.
   if (::InterlockedExchangeAdd(&shutdown_, 0) != 0)
@@ -64,9 +67,10 @@ void win_iocp_io_context::schedule_timer(timer_queue<Time_Traits>& queue,
     update_timeout();
 }
 
-template <typename Time_Traits>
-std::size_t win_iocp_io_context::cancel_timer(timer_queue<Time_Traits>& queue,
-    typename timer_queue<Time_Traits>::per_timer_data& timer,
+template <typename TimeTraits, typename Allocator>
+std::size_t win_iocp_io_context::cancel_timer(
+    timer_queue<TimeTraits, Allocator>& queue,
+    typename timer_queue<TimeTraits, Allocator>::per_timer_data& timer,
     std::size_t max_cancelled)
 {
   // If the service has been shut down we silently ignore the cancellation.
@@ -81,9 +85,10 @@ std::size_t win_iocp_io_context::cancel_timer(timer_queue<Time_Traits>& queue,
   return n;
 }
 
-template <typename Time_Traits>
-void win_iocp_io_context::cancel_timer_by_key(timer_queue<Time_Traits>& queue,
-    typename timer_queue<Time_Traits>::per_timer_data* timer,
+template <typename TimeTraits, typename Allocator>
+void win_iocp_io_context::cancel_timer_by_key(
+    timer_queue<TimeTraits, Allocator>& queue,
+    typename timer_queue<TimeTraits, Allocator>::per_timer_data* timer,
     void* cancellation_key)
 {
   // If the service has been shut down we silently ignore the cancellation.
@@ -97,10 +102,10 @@ void win_iocp_io_context::cancel_timer_by_key(timer_queue<Time_Traits>& queue,
   post_deferred_completions(ops);
 }
 
-template <typename Time_Traits>
-void win_iocp_io_context::move_timer(timer_queue<Time_Traits>& queue,
-    typename timer_queue<Time_Traits>::per_timer_data& to,
-    typename timer_queue<Time_Traits>::per_timer_data& from)
+template <typename TimeTraits, typename Allocator>
+void win_iocp_io_context::move_timer(timer_queue<TimeTraits, Allocator>& queue,
+    typename timer_queue<TimeTraits, Allocator>::per_timer_data& to,
+    typename timer_queue<TimeTraits, Allocator>::per_timer_data& from)
 {
   boost::asio::detail::mutex::scoped_lock lock(dispatch_mutex_);
   op_queue<operation> ops;
@@ -111,6 +116,7 @@ void win_iocp_io_context::move_timer(timer_queue<Time_Traits>& queue,
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

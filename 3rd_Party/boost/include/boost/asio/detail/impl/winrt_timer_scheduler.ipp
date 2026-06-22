@@ -2,7 +2,7 @@
 // detail/impl/winrt_timer_scheduler.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 winrt_timer_scheduler::winrt_timer_scheduler(execution_context& context)
@@ -34,12 +35,11 @@ winrt_timer_scheduler::winrt_timer_scheduler(execution_context& context)
     mutex_(),
     event_(),
     timer_queues_(),
-    thread_(0),
+    thread_(),
     stop_thread_(false),
     shutdown_(false)
 {
-  thread_ = new boost::asio::detail::thread(
-      bind_handler(&winrt_timer_scheduler::call_run_thread, this));
+  thread_ = thread(bind_handler(&winrt_timer_scheduler::call_run_thread, this));
 }
 
 winrt_timer_scheduler::~winrt_timer_scheduler()
@@ -54,13 +54,7 @@ void winrt_timer_scheduler::shutdown()
   stop_thread_ = true;
   event_.signal(lock);
   lock.unlock();
-
-  if (thread_)
-  {
-    thread_->join();
-    delete thread_;
-    thread_ = 0;
-  }
+  thread_.join();
 
   op_queue<operation> ops;
   timer_queues_.get_all_timers(ops);
@@ -113,6 +107,7 @@ void winrt_timer_scheduler::do_remove_timer_queue(timer_queue_base& queue)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

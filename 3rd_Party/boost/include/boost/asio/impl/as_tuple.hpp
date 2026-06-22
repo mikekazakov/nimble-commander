@@ -2,7 +2,7 @@
 // impl/as_tuple.hpp
 // ~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,15 +17,18 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <tuple>
+#include <boost/asio/associated_executor.hpp>
 #include <boost/asio/associator.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
+#include <boost/asio/detail/initiation_base.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 // Class to adapt a as_tuple_t as a completion handler.
@@ -62,7 +65,7 @@ template <typename Handler>
 inline bool asio_handler_is_continuation(
     as_tuple_handler<Handler>* this_handler)
 {
-  return boost_asio_handler_cont_helpers::is_continuation(
+  return BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
         this_handler->handler_);
 }
 
@@ -119,23 +122,27 @@ struct async_result<as_tuple_t<CompletionToken>, Signatures...>
       typename detail::as_tuple_signature<Signatures>::type...>
 {
   template <typename Initiation>
-  struct init_wrapper
+  struct init_wrapper : detail::initiation_base<Initiation>
   {
-    init_wrapper(Initiation init)
-      : initiation_(static_cast<Initiation&&>(init))
-    {
-    }
+    using detail::initiation_base<Initiation>::initiation_base;
 
     template <typename Handler, typename... Args>
-    void operator()(Handler&& handler, Args&&... args)
+    void operator()(Handler&& handler, Args&&... args) &&
     {
-      static_cast<Initiation&&>(initiation_)(
+      static_cast<Initiation&&>(*this)(
           detail::as_tuple_handler<decay_t<Handler>>(
             static_cast<Handler&&>(handler)),
           static_cast<Args&&>(args)...);
     }
 
-    Initiation initiation_;
+    template <typename Handler, typename... Args>
+    void operator()(Handler&& handler, Args&&... args) const &
+    {
+      static_cast<const Initiation&>(*this)(
+          detail::as_tuple_handler<decay_t<Handler>>(
+            static_cast<Handler&&>(handler)),
+          static_cast<Args&&>(args)...);
+    }
   };
 
   template <typename Initiation, typename RawCompletionToken, typename... Args>
@@ -172,23 +179,27 @@ struct async_result<as_tuple_t<CompletionToken>, Signature>
       typename detail::as_tuple_signature<Signature>::type>
 {
   template <typename Initiation>
-  struct init_wrapper
+  struct init_wrapper : detail::initiation_base<Initiation>
   {
-    init_wrapper(Initiation init)
-      : initiation_(static_cast<Initiation&&>(init))
-    {
-    }
+    using detail::initiation_base<Initiation>::initiation_base;
 
     template <typename Handler, typename... Args>
-    void operator()(Handler&& handler, Args&&... args)
+    void operator()(Handler&& handler, Args&&... args) &&
     {
-      static_cast<Initiation&&>(initiation_)(
+      static_cast<Initiation&&>(*this)(
           detail::as_tuple_handler<decay_t<Handler>>(
             static_cast<Handler&&>(handler)),
           static_cast<Args&&>(args)...);
     }
 
-    Initiation initiation_;
+    template <typename Handler, typename... Args>
+    void operator()(Handler&& handler, Args&&... args) const &
+    {
+      static_cast<const Initiation&>(*this)(
+          detail::as_tuple_handler<decay_t<Handler>>(
+            static_cast<Handler&&>(handler)),
+          static_cast<Args&&>(args)...);
+    }
   };
 
   template <typename Initiation, typename RawCompletionToken, typename... Args>
@@ -237,8 +248,30 @@ struct associator<Associator,
   }
 };
 
+template <typename... Signatures>
+struct async_result<partial_as_tuple, Signatures...>
+{
+  template <typename Initiation, typename RawCompletionToken, typename... Args>
+  static auto initiate(Initiation&& initiation,
+      RawCompletionToken&&, Args&&... args)
+    -> decltype(
+      async_initiate<Signatures...>(
+        static_cast<Initiation&&>(initiation),
+        as_tuple_t<
+          default_completion_token_t<associated_executor_t<Initiation>>>{},
+        static_cast<Args&&>(args)...))
+  {
+    return async_initiate<Signatures...>(
+        static_cast<Initiation&&>(initiation),
+        as_tuple_t<
+          default_completion_token_t<associated_executor_t<Initiation>>>{},
+        static_cast<Args&&>(args)...);
+  }
+};
+
 #endif // !defined(GENERATING_DOCUMENTATION)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

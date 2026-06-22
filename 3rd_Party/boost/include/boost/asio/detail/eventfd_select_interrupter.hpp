@@ -2,7 +2,7 @@
 // detail/eventfd_select_interrupter.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Roelof Naude (roelof.naude at gmail dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -24,13 +24,14 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class eventfd_select_interrupter
 {
 public:
   // Constructor.
-  BOOST_ASIO_DECL eventfd_select_interrupter();
+  BOOST_ASIO_DECL explicit eventfd_select_interrupter(bool use_eventfd = true);
 
   // Destructor.
   BOOST_ASIO_DECL ~eventfd_select_interrupter();
@@ -52,7 +53,7 @@ public:
 
 private:
   // Open the descriptors. Throws on error.
-  BOOST_ASIO_DECL void open_descriptors();
+  BOOST_ASIO_DECL void open_descriptors(bool use_eventfd);
 
   // Close the descriptors.
   BOOST_ASIO_DECL void close_descriptors();
@@ -71,6 +72,7 @@ private:
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

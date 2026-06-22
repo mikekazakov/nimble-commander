@@ -9,10 +9,10 @@ TMP_DIR=${CUR_DIR}/lexilla.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR}
 
-wget https://www.scintilla.org/scintilla554.zip
-unzip scintilla554.zip
+wget https://www.scintilla.org/scintilla563.zip
+unzip scintilla563.zip
 
-git clone -b rel-5-4-6 --single-branch --depth=1 https://github.com/ScintillaOrg/lexilla.git
+git clone -b rel-5-5-0 --single-branch --depth=1 https://github.com/ScintillaOrg/lexilla.git
 cd lexilla
 
 source_files=""

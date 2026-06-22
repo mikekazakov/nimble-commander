@@ -2,7 +2,7 @@
 // ssl/detail/read_op.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -24,6 +24,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ssl {
 namespace detail {
 
@@ -52,6 +53,10 @@ public:
     return eng.read(buffer, ec, bytes_transferred);
   }
 
+  void complete_sync(boost::system::error_code&) const
+  {
+  }
+
   template <typename Handler>
   void call_handler(Handler& handler,
       const boost::system::error_code& ec,
@@ -66,6 +71,7 @@ private:
 
 } // namespace detail
 } // namespace ssl
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

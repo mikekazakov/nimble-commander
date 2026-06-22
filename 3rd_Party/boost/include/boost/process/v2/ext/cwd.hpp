@@ -7,9 +7,10 @@
 #define BOOST_PROCESS_V2_CWD_HPP
 
 #include <boost/process/v2/detail/config.hpp>
-#include <boost/process/v2/detail/throw_error.hpp>
 
+#include <boost/process/v2/detail/throw_error.hpp>
 #include <boost/process/v2/pid.hpp>
+#include <boost/process/v2/process_handle.hpp>
 
 BOOST_PROCESS_V2_BEGIN_NAMESPACE
 
@@ -26,7 +27,7 @@ BOOST_PROCESS_V2_DECL filesystem::path cwd(pid_type pid, error_code & ec);
 BOOST_PROCESS_V2_DECL filesystem::path cwd(pid_type pid);
 
 template<typename Executor>
-BOOST_PROCESS_V2_DECL filesystem::path cwd(basic_process_handle<Executor> & handle, error_code & ec)
+inline filesystem::path cwd(basic_process_handle<Executor> & handle, error_code & ec)
 {
 #if defined(BOOST_PROCESS_V2_WINDOWS)
     return cwd(handle.native_handle(), ec);
@@ -36,7 +37,7 @@ BOOST_PROCESS_V2_DECL filesystem::path cwd(basic_process_handle<Executor> & hand
 }
 
 template<typename Executor>
-BOOST_PROCESS_V2_DECL filesystem::path cwd(basic_process_handle<Executor> & handle)
+inline filesystem::path cwd(basic_process_handle<Executor> & handle)
 {
 #if defined(BOOST_PROCESS_V2_WINDOWS)
     return cwd(handle.native_handle());
@@ -50,9 +51,5 @@ BOOST_PROCESS_V2_DECL filesystem::path cwd(basic_process_handle<Executor> & hand
 } // namespace ext
 
 BOOST_PROCESS_V2_END_NAMESPACE
-
-#if defined(BOOST_PROCESS_V2_HEADER_ONLY)
-#include <boost/process/v2/ext/impl/cwd.ipp>
-#endif
 
 #endif // BOOST_PROCESS_V2_CWD_HPP

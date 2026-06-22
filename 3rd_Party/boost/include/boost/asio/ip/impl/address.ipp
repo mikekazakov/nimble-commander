@@ -2,7 +2,7 @@
 // ip/impl/address.ipp
 // ~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 
 address::address() noexcept
@@ -178,15 +179,6 @@ std::string address::to_string() const
   return ipv4_address_.to_string();
 }
 
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-std::string address::to_string(boost::system::error_code& ec) const
-{
-  if (type_ == ipv6)
-    return ipv6_address_.to_string(ec);
-  return ipv4_address_.to_string(ec);
-}
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-
 bool address::is_loopback() const noexcept
 {
   return (type_ == ipv4)
@@ -229,6 +221,7 @@ bool operator<(const address& a1, const address& a2) noexcept
 }
 
 } // namespace ip
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

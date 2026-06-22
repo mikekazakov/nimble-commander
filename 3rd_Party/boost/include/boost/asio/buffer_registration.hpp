@@ -2,7 +2,7 @@
 // buffer_registration.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -36,6 +36,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class buffer_registration_base
@@ -130,7 +131,7 @@ public:
       service_->unregister_buffers();
 #endif // defined(BOOST_ASIO_HAS_IO_URING)
   }
-  
+
   /// Move assignment.
   buffer_registration& operator=(buffer_registration&& other) noexcept
   {
@@ -312,6 +313,7 @@ register_buffers(ExecutionContext& ctx,
       ctx, buffer_sequence, alloc);
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

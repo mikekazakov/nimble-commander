@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../../source/Native/Fetching.h" // EVIL!
 #include "TestEnv.h"
 #include "Tests.h"
@@ -6,7 +6,7 @@
 #include <Base/algo.h>
 #include <Base/dispatch_cpp.h>
 #include <algorithm>
-#include <boost/process.hpp>
+#include <boost/process/v1.hpp>
 #include <fmt/core.h>
 #include <fstream>
 #include <unistd.h>
@@ -251,7 +251,7 @@ TEST_CASE(PREFIX "Fetching")
 
 static int Execute(const std::string &_command)
 {
-    using namespace boost::process;
+    using namespace boost::process::v1;
     ipstream pipe_stream;
     child c(_command, std_out > pipe_stream);
     std::string line;
@@ -263,7 +263,7 @@ static int Execute(const std::string &_command)
 
 static int Execute(const std::string &_binary, const std::vector<std::string> &_args)
 {
-    using namespace boost::process;
+    using namespace boost::process::v1;
     ipstream pipe_stream;
     child c(_binary, _args, std_out > pipe_stream);
     std::string line;

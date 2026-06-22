@@ -2,7 +2,7 @@
 // detail/resolver_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -21,7 +21,6 @@
 
 #include <boost/asio/ip/basic_resolver_query.hpp>
 #include <boost/asio/ip/basic_resolver_results.hpp>
-#include <boost/asio/detail/concurrency_hint.hpp>
 #include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/resolve_endpoint_op.hpp>
 #include <boost/asio/detail/resolve_query_op.hpp>
@@ -31,6 +30,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename Protocol>
@@ -62,13 +62,6 @@ public:
   // Destroy all user-defined handler objects owned by the service.
   void shutdown()
   {
-    this->base_shutdown();
-  }
-
-  // Perform any fork-related housekeeping.
-  void notify_fork(execution_context::fork_event fork_ev)
-  {
-    this->base_notify_fork(fork_ev);
   }
 
   // Resolve a query to a list of entries.
@@ -95,12 +88,12 @@ public:
     typedef resolve_query_op<Protocol, Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(impl, qry, scheduler_, handler, io_ex);
+    p.p = new (p.v) op(impl, qry, thread_pool_.scheduler(), handler, io_ex);
 
-    BOOST_ASIO_HANDLER_CREATION((scheduler_.context(),
+    BOOST_ASIO_HANDLER_CREATION((thread_pool_.context(),
           *p.p, "resolver", &impl, 0, "async_resolve"));
 
-    start_resolve_op(p.p);
+    thread_pool_.start_resolve_op(p.p);
     p.v = p.p = 0;
   }
 
@@ -128,17 +121,19 @@ public:
     typedef resolve_endpoint_op<Protocol, Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(impl, endpoint, scheduler_, handler, io_ex);
+    p.p = new (p.v) op(impl, endpoint,
+        thread_pool_.scheduler(), handler, io_ex);
 
-    BOOST_ASIO_HANDLER_CREATION((scheduler_.context(),
+    BOOST_ASIO_HANDLER_CREATION((thread_pool_.context(),
           *p.p, "resolver", &impl, 0, "async_resolve"));
 
-    start_resolve_op(p.p);
+    thread_pool_.start_resolve_op(p.p);
     p.v = p.p = 0;
   }
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

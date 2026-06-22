@@ -109,13 +109,12 @@ inline int evaluate_exit_code(int code)
  *      {
  *        return asio::deferred.values(
  *                  check_exit_code(ec, proc.native_exit_code())
- *              );
- *
- *    [](error_code ec)
- *    {
- *      assert(ec.value() == 10);
- *      assert(ec.category() == error::get_exit_code_category());
- *    }));
+ *              ))
+ *      [](error_code ec)
+ *      {
+ *        assert(ec.value() == 10);
+ *        assert(ec.category() == error::get_exit_code_category());
+ *      }));
  * 
  * @endcode
  */

@@ -2,7 +2,7 @@
 // experimental/impl/as_single.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -20,12 +20,14 @@
 #include <boost/asio/associator.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
+#include <boost/asio/detail/initiation_base.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 namespace detail {
 
@@ -74,7 +76,7 @@ template <typename Handler>
 inline bool asio_handler_is_continuation(
     as_single_handler<Handler>* this_handler)
 {
-  return boost_asio_handler_cont_helpers::is_continuation(
+  return BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
         this_handler->handler_);
 }
 
@@ -111,23 +113,27 @@ template <typename CompletionToken, typename Signature>
 struct async_result<experimental::as_single_t<CompletionToken>, Signature>
 {
   template <typename Initiation>
-  struct init_wrapper
+  struct init_wrapper : detail::initiation_base<Initiation>
   {
-    init_wrapper(Initiation init)
-      : initiation_(static_cast<Initiation&&>(init))
-    {
-    }
+    using detail::initiation_base<Initiation>::initiation_base;
 
     template <typename Handler, typename... Args>
-    void operator()(Handler&& handler, Args&&... args)
+    void operator()(Handler&& handler, Args&&... args) &&
     {
-      static_cast<Initiation&&>(initiation_)(
+      static_cast<Initiation&&>(*this)(
           experimental::detail::as_single_handler<decay_t<Handler>>(
             static_cast<Handler&&>(handler)),
           static_cast<Args&&>(args)...);
     }
 
-    Initiation initiation_;
+    template <typename Handler, typename... Args>
+    void operator()(Handler&& handler, Args&&... args) const &
+    {
+      static_cast<const Initiation&>(*this)(
+          experimental::detail::as_single_handler<decay_t<Handler>>(
+            static_cast<Handler&&>(handler)),
+          static_cast<Args&&>(args)...);
+    }
   };
 
   template <typename Initiation, typename RawCompletionToken, typename... Args>
@@ -170,6 +176,7 @@ struct associator<Associator,
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

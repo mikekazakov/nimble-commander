@@ -2,7 +2,7 @@
 // read_at.hpp
 // ~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -30,6 +30,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename> class initiate_async_read_at;
@@ -191,7 +192,10 @@ template <typename SyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename CompletionCondition>
 std::size_t read_at(SyncRandomAccessReadDevice& d,
     uint64_t offset, const MutableBufferSequence& buffers,
-    CompletionCondition completion_condition);
+    CompletionCondition completion_condition,
+    constraint_t<
+      is_completion_condition<CompletionCondition>::value
+    > = 0);
 
 /// Attempt to read a certain amount of data at the specified offset before
 /// returning.
@@ -240,7 +244,10 @@ template <typename SyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename CompletionCondition>
 std::size_t read_at(SyncRandomAccessReadDevice& d,
     uint64_t offset, const MutableBufferSequence& buffers,
-    CompletionCondition completion_condition, boost::system::error_code& ec);
+    CompletionCondition completion_condition, boost::system::error_code& ec,
+    constraint_t<
+      is_completion_condition<CompletionCondition>::value
+    > = 0);
 
 #if !defined(BOOST_ASIO_NO_EXTENSIONS)
 #if !defined(BOOST_ASIO_NO_IOSTREAM)
@@ -351,7 +358,10 @@ template <typename SyncRandomAccessReadDevice, typename Allocator,
     typename CompletionCondition>
 std::size_t read_at(SyncRandomAccessReadDevice& d,
     uint64_t offset, basic_streambuf<Allocator>& b,
-    CompletionCondition completion_condition);
+    CompletionCondition completion_condition,
+    constraint_t<
+      is_completion_condition<CompletionCondition>::value
+    > = 0);
 
 /// Attempt to read a certain amount of data at the specified offset before
 /// returning.
@@ -395,7 +405,10 @@ template <typename SyncRandomAccessReadDevice, typename Allocator,
     typename CompletionCondition>
 std::size_t read_at(SyncRandomAccessReadDevice& d,
     uint64_t offset, basic_streambuf<Allocator>& b,
-    CompletionCondition completion_condition, boost::system::error_code& ec);
+    CompletionCondition completion_condition, boost::system::error_code& ec,
+    constraint_t<
+      is_completion_condition<CompletionCondition>::value
+    > = 0);
 
 #endif // !defined(BOOST_ASIO_NO_IOSTREAM)
 #endif // !defined(BOOST_ASIO_NO_EXTENSIONS)
@@ -454,7 +467,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using boost::asio::post().
+ * manner equivalent to using boost::asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(boost::system::error_code, std::size_t) @endcode
@@ -489,15 +502,24 @@ template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
       std::size_t)) ReadToken = default_completion_token_t<
         typename AsyncRandomAccessReadDevice::executor_type>>
-auto async_read_at(AsyncRandomAccessReadDevice& d,
+inline auto async_read_at(AsyncRandomAccessReadDevice& d,
     uint64_t offset, const MutableBufferSequence& buffers,
     ReadToken&& token = default_completion_token_t<
-      typename AsyncRandomAccessReadDevice::executor_type>())
+      typename AsyncRandomAccessReadDevice::executor_type>(),
+    constraint_t<
+      !is_completion_condition<ReadToken>::value
+    > = 0)
   -> decltype(
     async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
         declval<detail::initiate_async_read_at<AsyncRandomAccessReadDevice>>(),
-        token, offset, buffers, transfer_all()));
+        token, offset, buffers, transfer_all()))
+{
+  return async_initiate<ReadToken,
+    void (boost::system::error_code, std::size_t)>(
+      detail::initiate_async_read_at<AsyncRandomAccessReadDevice>(d),
+      token, offset, buffers, transfer_all());
+}
 
 /// Start an asynchronous operation to read a certain amount of data at the
 /// specified offset.
@@ -555,7 +577,7 @@ auto async_read_at(AsyncRandomAccessReadDevice& d,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using boost::asio::post().
+ * manner equivalent to using boost::asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(boost::system::error_code, std::size_t) @endcode
@@ -586,17 +608,27 @@ template <typename AsyncRandomAccessReadDevice,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
       std::size_t)) ReadToken = default_completion_token_t<
         typename AsyncRandomAccessReadDevice::executor_type>>
-auto async_read_at(AsyncRandomAccessReadDevice& d,
+inline auto async_read_at(AsyncRandomAccessReadDevice& d,
     uint64_t offset, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition,
     ReadToken&& token = default_completion_token_t<
-      typename AsyncRandomAccessReadDevice::executor_type>())
+      typename AsyncRandomAccessReadDevice::executor_type>(),
+    constraint_t<
+      is_completion_condition<CompletionCondition>::value
+    > = 0)
   -> decltype(
     async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
         declval<detail::initiate_async_read_at<AsyncRandomAccessReadDevice>>(),
         token, offset, buffers,
-        static_cast<CompletionCondition&&>(completion_condition)));
+        static_cast<CompletionCondition&&>(completion_condition)))
+{
+  return async_initiate<ReadToken,
+    void (boost::system::error_code, std::size_t)>(
+      detail::initiate_async_read_at<AsyncRandomAccessReadDevice>(d),
+      token, offset, buffers,
+      static_cast<CompletionCondition&&>(completion_condition));
+}
 
 #if !defined(BOOST_ASIO_NO_EXTENSIONS)
 #if !defined(BOOST_ASIO_NO_IOSTREAM)
@@ -641,7 +673,7 @@ auto async_read_at(AsyncRandomAccessReadDevice& d,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using boost::asio::post().
+ * manner equivalent to using boost::asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(boost::system::error_code, std::size_t) @endcode
@@ -667,16 +699,25 @@ template <typename AsyncRandomAccessReadDevice, typename Allocator,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
       std::size_t)) ReadToken = default_completion_token_t<
         typename AsyncRandomAccessReadDevice::executor_type>>
-auto async_read_at(AsyncRandomAccessReadDevice& d,
+inline auto async_read_at(AsyncRandomAccessReadDevice& d,
     uint64_t offset, basic_streambuf<Allocator>& b,
     ReadToken&& token = default_completion_token_t<
-      typename AsyncRandomAccessReadDevice::executor_type>())
+      typename AsyncRandomAccessReadDevice::executor_type>(),
+    constraint_t<
+      !is_completion_condition<ReadToken>::value
+    > = 0)
   -> decltype(
     async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
         declval<detail::initiate_async_read_at_streambuf<
           AsyncRandomAccessReadDevice>>(),
-        token, offset, &b, transfer_all()));
+        token, offset, &b, transfer_all()))
+{
+  return async_initiate<ReadToken,
+    void (boost::system::error_code, std::size_t)>(
+      detail::initiate_async_read_at_streambuf<AsyncRandomAccessReadDevice>(d),
+      token, offset, &b, transfer_all());
+}
 
 /// Start an asynchronous operation to read a certain amount of data at the
 /// specified offset.
@@ -732,7 +773,7 @@ auto async_read_at(AsyncRandomAccessReadDevice& d,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using boost::asio::post().
+ * manner equivalent to using boost::asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(boost::system::error_code, std::size_t) @endcode
@@ -753,23 +794,34 @@ template <typename AsyncRandomAccessReadDevice,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
       std::size_t)) ReadToken = default_completion_token_t<
         typename AsyncRandomAccessReadDevice::executor_type>>
-auto async_read_at(AsyncRandomAccessReadDevice& d, uint64_t offset,
+inline auto async_read_at(AsyncRandomAccessReadDevice& d, uint64_t offset,
     basic_streambuf<Allocator>& b, CompletionCondition completion_condition,
     ReadToken&& token = default_completion_token_t<
-      typename AsyncRandomAccessReadDevice::executor_type>())
+      typename AsyncRandomAccessReadDevice::executor_type>(),
+    constraint_t<
+      is_completion_condition<CompletionCondition>::value
+    > = 0)
   -> decltype(
     async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
         declval<detail::initiate_async_read_at_streambuf<
           AsyncRandomAccessReadDevice>>(),
         token, offset, &b,
-        static_cast<CompletionCondition&&>(completion_condition)));
+        static_cast<CompletionCondition&&>(completion_condition)))
+{
+  return async_initiate<ReadToken,
+    void (boost::system::error_code, std::size_t)>(
+      detail::initiate_async_read_at_streambuf<AsyncRandomAccessReadDevice>(d),
+      token, offset, &b,
+      static_cast<CompletionCondition&&>(completion_condition));
+}
 
 #endif // !defined(BOOST_ASIO_NO_IOSTREAM)
 #endif // !defined(BOOST_ASIO_NO_EXTENSIONS)
 
 /*@}*/
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -2,7 +2,7 @@
 // detail/push_options.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -62,6 +62,7 @@
 
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 # if (__clang_major__ >= 6)
 #  pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
 # endif // (__clang_major__ >= 6)
@@ -79,7 +80,7 @@
 
 // GNU C++
 
-# if defined(__MINGW32__) || defined(__CYGWIN__)
+# if defined(__MINGW32__) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 #  pragma pack (push, 8)
 # endif
 
@@ -106,6 +107,9 @@
 # if (__GNUC__ == 4 && __GNUC_MINOR__ >= 7) || (__GNUC__ > 4)
 #  pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
 # endif // (__GNUC__ == 4 && __GNUC_MINOR__ >= 7) || (__GNUC__ > 4)
+# if (__GNUC__ == 4 && __GNUC_MINOR__ >= 6) || (__GNUC__ > 4)
+#  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+# endif // (__GNUC__ == 4 && __GNUC_MINOR__ >= 6) || (__GNUC__ > 4)
 # if (__GNUC__ >= 7)
 #  pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 # endif // (__GNUC__ >= 7)
@@ -184,6 +188,7 @@
 # pragma warning (disable:4512)
 # pragma warning (disable:4610)
 # pragma warning (disable:4675)
+# pragma warning (disable:4996)
 # if (_MSC_VER < 1600)
 // Visual Studio 2008 generates spurious warnings about unused parameters.
 #  pragma warning (disable:4100)

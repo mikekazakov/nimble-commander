@@ -2,7 +2,7 @@
 // impl/thread_pool.hpp
 // ~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,6 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include <boost/asio/config.hpp>
 #include <boost/asio/detail/blocking_executor_op.hpp>
 #include <boost/asio/detail/executor_op.hpp>
 #include <boost/asio/detail/fenced_block.hpp>
@@ -26,6 +27,48 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
+
+#if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
+
+template <typename Allocator>
+thread_pool::thread_pool(allocator_arg_t, const Allocator& a)
+  : execution_context(std::allocator_arg, a),
+    scheduler_(boost::asio::make_service<detail::scheduler>(*this, false)),
+    threads_(allocator<void>(*this)),
+    num_threads_(default_thread_pool_size()),
+    joinable_(true)
+{
+  start();
+}
+
+#endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
+
+template <typename Allocator>
+thread_pool::thread_pool(allocator_arg_t,
+    const Allocator& a, std::size_t num_threads)
+  : execution_context(std::allocator_arg, a,
+      config_from_concurrency_hint(num_threads == 1 ? 1 : 0)),
+    scheduler_(boost::asio::make_service<detail::scheduler>(*this, false)),
+    threads_(allocator<void>(*this)),
+    num_threads_(clamp_thread_pool_size(num_threads)),
+    joinable_(true)
+{
+  start();
+}
+
+template <typename Allocator>
+thread_pool::thread_pool(allocator_arg_t,
+    const Allocator& a, std::size_t num_threads,
+    const execution_context::service_maker& initial_services)
+  : execution_context(std::allocator_arg, a, initial_services),
+    scheduler_(boost::asio::make_service<detail::scheduler>(*this, false)),
+    threads_(allocator<void>(*this)),
+    num_threads_(clamp_thread_pool_size(num_threads)),
+    joinable_(true)
+{
+  start();
+}
 
 inline thread_pool::executor_type
 thread_pool::get_executor() noexcept
@@ -114,7 +157,7 @@ void thread_pool::basic_executor_type<Allocator,
     }
     catch (...)
     {
-      pool_->scheduler_.capture_current_exception();
+      std::terminate();
       return;
     }
 #endif // !defined(BOOST_ASIO_NO_EXCEPTIONS)
@@ -271,6 +314,7 @@ void thread_pool::basic_executor_type<Allocator, Bits>::defer(
 }
 #endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

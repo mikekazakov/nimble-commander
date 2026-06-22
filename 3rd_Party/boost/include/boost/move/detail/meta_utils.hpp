@@ -17,10 +17,10 @@
 #if defined(BOOST_HAS_PRAGMA_ONCE)
 #  pragma once
 #endif
-#include <boost/move/detail/config_begin.hpp>
+
+#include <cstddef>
 #include <boost/move/detail/workaround.hpp>  //forceinline
 #include <boost/move/detail/meta_utils_core.hpp>
-#include <cstddef>   //for std::size_t
 #include <boost/move/detail/addressof.hpp>
 
 //Small meta-typetraits to support move
@@ -202,22 +202,6 @@ struct add_const_lvalue_reference
 };
 
 //////////////////////////////////////
-//             is_lvalue_reference
-//////////////////////////////////////
-template<class T>
-struct is_lvalue_reference
-{
-    static const bool value = false;
-};
-
-template<class T>
-struct is_lvalue_reference<T&>
-{
-    static const bool value = true;
-};
-
-
-//////////////////////////////////////
 //             identity
 //////////////////////////////////////
 template <class T>
@@ -225,7 +209,25 @@ struct identity
 {
    typedef T type;
    typedef typename add_const_lvalue_reference<T>::type reference;
+
    BOOST_MOVE_FORCEINLINE reference operator()(reference t) const
+   {  return t;   }
+
+   //For transparent types
+   template<class K>
+   BOOST_MOVE_FORCEINLINE const K & operator()(const K &t) const
+   {  return t;   }
+};
+
+//////////////////////////////////////
+//             identity
+//////////////////////////////////////
+template <>
+struct identity<void>
+{
+   template <class U>
+   BOOST_MOVE_FORCEINLINE typename add_const_lvalue_reference<U>::type
+      operator()(typename add_const_lvalue_reference<U>::type t) const
    {  return t;   }
 };
 
@@ -526,6 +528,10 @@ template< class T >
 struct add_rvalue_reference<T &>
 {  typedef T & type; };
 
+template< class T, std::size_t N >
+struct add_rvalue_reference<T[N]>
+{  typedef T (&type)[N]; };
+
 #endif // #ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
 
 template< class T > struct remove_rvalue_reference { typedef T type; };
@@ -557,7 +563,5 @@ template< class T > struct remove_rvalue_reference { typedef T type; };
 
 }  //namespace move_detail {
 }  //namespace boost {
-
-#include <boost/move/detail/config_end.hpp>
 
 #endif //#ifndef BOOST_MOVE_DETAIL_META_UTILS_HPP

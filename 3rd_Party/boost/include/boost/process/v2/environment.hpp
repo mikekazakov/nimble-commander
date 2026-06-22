@@ -40,16 +40,16 @@ namespace environment
 /// A char traits type that reflects the OS rules for string representing environment keys.
 /** Can be an alias of std::char_traits. May only be defined for `char` and `wchar_t`.
  * 
- * Windows treats keys as case-insensitive yet perserving. The char traits are made to reflect 
+ * Windows treats keys as case-insensitive yet preserving. The char traits are made to reflect 
  * that behaviour.
 */
-tempalte<typename Char>
+template<typename Char>
 using key_char_traits = implementation_defined ;
 
 /// A char traits type that reflects the OS rules for string representing environment values.
 /** Can be an alias of std::char_traits. May only be defined for `char` and `wchar_t`.
 */
-tempalte<typename Char>
+template<typename Char>
 using value_char_traits = implementation_defined ;
 
 /// The character type used by the environment. Either `char` or `wchar_t`.
@@ -764,7 +764,7 @@ struct value
     value& operator=( const Source& source )
     {
         value_ = BOOST_PROCESS_V2_NAMESPACE::detail::conv_string<char_type, traits_type>(
-            source.data(), source.size);
+            source.data(), source.size());
         return *this;
     }
 
@@ -1372,6 +1372,8 @@ struct current_view
         environment::native_iterator iterator_;
     };
 
+    using const_iterator = iterator;
+
     iterator begin() const {return iterator(handle_.get());}
     iterator   end() const {return iterator(detail::find_end(handle_.get()));}
 
@@ -1760,9 +1762,12 @@ struct process_environment
   std::vector<environment::key_value_pair> env_buffer;
   std::vector<wchar_t> unicode_env;
 
-  BOOST_PROCESS_V2_DECL
   error_code on_setup(windows::default_launcher & launcher,
-                      const filesystem::path &, const std::wstring &);
+                      const filesystem::path &, const std::wstring &)
+  {
+    return do_setup(launcher);
+  }                  
+  BOOST_PROCESS_V2_DECL error_code do_setup(windows::default_launcher & launcher);
 
 #else
 
@@ -1811,7 +1816,13 @@ struct process_environment
 
   BOOST_PROCESS_V2_DECL
   error_code on_setup(posix::default_launcher & launcher, 
-                      const filesystem::path &, const char * const *);
+                      const filesystem::path &, const char * const *)
+  {
+    return do_setup(launcher);
+  }
+
+  BOOST_PROCESS_V2_DECL error_code do_setup(posix::default_launcher & launcher);
+
 
   std::vector<environment::key_value_pair> env_buffer;
   std::vector<const char *> env;
@@ -1887,13 +1898,5 @@ struct hash<BOOST_PROCESS_V2_NAMESPACE::environment::key_value_pair>
 
 }
 
-
-
-#if defined(BOOST_PROCESS_V2_HEADER_ONLY)
-
-#include <boost/process/v2/impl/environment.ipp>
-#include <boost/process/v2/detail/impl/environment.ipp>
-
-#endif
 
 #endif //BOOST_PROCESS_V2_ENVIRONMENT_HPP

@@ -18,6 +18,8 @@
 #else
 #if defined(BOOST_PROCESS_V2_PDFORK)
 #include <boost/process/v2/posix/pdfork_launcher.hpp>
+#elif defined(BOOST_PROCESS_V2_PIPEFORK)
+#include <boost/process/v2/posix/pipe_fork_launcher.hpp>
 #else
 #include <boost/process/v2/posix/default_launcher.hpp>
 #endif
@@ -48,6 +50,8 @@ typedef windows::default_launcher default_process_launcher;
 #else
 #if defined(BOOST_PROCESS_V2_PDFORK)
 typedef posix::pdfork_launcher default_process_launcher;
+#elif defined(BOOST_PROCESS_V2_PIPEFORK)
+typedef posix::pipe_fork_launcher default_process_launcher;
 #else
 typedef posix::default_launcher default_process_launcher;
 #endif
@@ -59,8 +63,5 @@ typedef posix::default_launcher default_process_launcher;
 
 BOOST_PROCESS_V2_END_NAMESPACE
 
-#if defined(BOOST_PROCESS_V2_HEADER_ONLY)
-#include <boost/process/v2/impl/default_launcher.ipp>
-#endif
 
 #endif //BOOST_PROCESS_V2_DEFAULT_LAUNCHER_HPP

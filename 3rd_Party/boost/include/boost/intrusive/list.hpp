@@ -249,12 +249,20 @@ class list_impl
    //! <b>Complexity</b>: Linear to the number of elements in the list, if
    //!   it's a safe-mode or auto-unlink value . Otherwise constant.
    ~list_impl()
+   #if defined(BOOST_INTRUSIVE_CONCEPTS_BASED_OVERLOADING)
+      requires (ValueTraits::link_mode != normal_link)
+   #endif
    {
       BOOST_IF_CONSTEXPR(is_safe_autounlink<ValueTraits::link_mode>::value){
          this->clear();
          node_algorithms::init(this->get_root_node());
       }
    }
+
+   #if !defined(BOOST_INTRUSIVE_DOXYGEN_INVOKED) && defined(BOOST_INTRUSIVE_CONCEPTS_BASED_OVERLOADING)
+   //Default destructor for normal links (allows conditional triviality)
+   ~list_impl() requires (ValueTraits::link_mode == normal_link) = default;
+   #endif
 
    //! <b>Requires</b>: value must be an lvalue.
    //!
@@ -500,6 +508,7 @@ class list_impl
    //! <b>Throws</b>: Nothing.
    //!
    //! <b>Complexity</b>: Constant.
+   BOOST_INTRUSIVE_NO_DANGLING
    inline static list_impl &container_from_end_iterator(iterator end_iterator) BOOST_NOEXCEPT
    {  return list_impl::priv_container_from_end_iterator(end_iterator);   }
 
@@ -511,6 +520,7 @@ class list_impl
    //! <b>Throws</b>: Nothing.
    //!
    //! <b>Complexity</b>: Constant.
+   BOOST_INTRUSIVE_NO_DANGLING
    inline static const list_impl &container_from_end_iterator(const_iterator end_iterator) BOOST_NOEXCEPT
    {  return list_impl::priv_container_from_end_iterator(end_iterator);   }
 
@@ -1116,13 +1126,15 @@ class list_impl
    //!
    //! <b>Note</b>: The relative order of elements that are not removed is unchanged,
    //!   and iterators to elements that are not removed remain valid.
-   void remove(const_reference value) BOOST_NOEXCEPT
-   {  this->remove_if(detail::equal_to_value<const_reference>(value));  }
+   size_type remove(const_reference value) BOOST_NOEXCEPT
+   {  return this->remove_if(detail::equal_to_value<const_reference>(value));  }
 
    //! <b>Requires</b>: Disposer::operator()(pointer) shouldn't throw.
    //!
    //! <b>Effects</b>: Removes all the elements that compare equal to value.
    //!   Disposer::operator()(pointer) is called for every removed element.
+   //! 
+   //! <b>Returns</b>: The number of erased elements.
    //!
    //! <b>Throws</b>: If operator == throws. Basic guarantee.
    //!
@@ -1131,11 +1143,13 @@ class list_impl
    //! <b>Note</b>: The relative order of elements that are not removed is unchanged,
    //!   and iterators to elements that are not removed remain valid.
    template<class Disposer>
-   void remove_and_dispose(const_reference value, Disposer disposer) BOOST_NOEXCEPT
-   {  this->remove_and_dispose_if(detail::equal_to_value<const_reference>(value), disposer);  }
+   size_type remove_and_dispose(const_reference value, Disposer disposer) BOOST_NOEXCEPT
+   {  return this->remove_and_dispose_if(detail::equal_to_value<const_reference>(value), disposer);  }
 
    //! <b>Effects</b>: Removes all the elements for which a specified
    //!   predicate is satisfied. No destructors are called.
+   //!
+   //! <b>Returns</b>: The number of removed elements.
    //!
    //! <b>Throws</b>: If pred throws. Basic guarantee.
    //!
@@ -1144,7 +1158,7 @@ class list_impl
    //! <b>Note</b>: The relative order of elements that are not removed is unchanged,
    //!   and iterators to elements that are not removed remain valid.
    template<class Pred>
-   void remove_if(Pred pred)
+   size_type remove_if(Pred pred)
    {
       const node_ptr root_node = this->get_root_node();
       typename node_algorithms::stable_partition_info info;
@@ -1155,6 +1169,7 @@ class list_impl
       this->erase( const_iterator(node_traits::get_next(root_node), this->priv_value_traits_ptr())
                  , const_iterator(info.beg_2st_partition, this->priv_value_traits_ptr())
                  , info.num_1st_partition);
+      return info.num_1st_partition;
    }
 
    //! <b>Requires</b>: Disposer::operator()(pointer) shouldn't throw.
@@ -1163,6 +1178,8 @@ class list_impl
    //!   predicate is satisfied.
    //!   Disposer::operator()(pointer) is called for every removed element.
    //!
+   //! <b>Returns</b>: The number of removed elements.
+   //!
    //! <b>Throws</b>: If pred throws. Basic guarantee.
    //!
    //! <b>Complexity</b>: Linear time. It performs exactly size() comparisons for equality.
@@ -1170,7 +1187,7 @@ class list_impl
    //! <b>Note</b>: The relative order of elements that are not removed is unchanged,
    //!   and iterators to elements that are not removed remain valid.
    template<class Pred, class Disposer>
-   void remove_and_dispose_if(Pred pred, Disposer disposer)
+   size_type remove_and_dispose_if(Pred pred, Disposer disposer)
    {
       const node_ptr root_node = this->get_root_node();
       typename node_algorithms::stable_partition_info info;
@@ -1181,10 +1198,13 @@ class list_impl
       this->erase_and_dispose( const_iterator(node_traits::get_next(root_node), this->priv_value_traits_ptr())
                              , const_iterator(info.beg_2st_partition, this->priv_value_traits_ptr())
                              , disposer);
+      return info.num_1st_partition;
    }
 
    //! <b>Effects</b>: Removes adjacent duplicate elements or adjacent
    //!   elements that are equal from the list. No destructors are called.
+   //!
+   //! <b>Returns</b>: The number of removed elements.
    //!
    //! <b>Throws</b>: If the comparison operator throws. Basic guarantee.
    //!
@@ -1192,12 +1212,14 @@ class list_impl
    //!
    //! <b>Note</b>: The relative order of elements that are not removed is unchanged,
    //!   and iterators to elements that are not removed remain valid.
-   void unique()
-   {  this->unique_and_dispose(value_equal<value_type>(), detail::null_disposer());  }
+   size_type unique()
+   {  return this->unique_and_dispose(value_equal<value_type>(), detail::null_disposer());  }
 
    //! <b>Effects</b>: Removes adjacent duplicate elements or adjacent
    //!   elements that satisfy some binary predicate from the list.
    //!   No destructors are called.
+   //!
+   //! <b>Returns</b>: The number of removed elements.
    //!
    //! <b>Throws</b>: If pred throws. Basic guarantee.
    //!
@@ -1206,14 +1228,16 @@ class list_impl
    //! <b>Note</b>: The relative order of elements that are not removed is unchanged,
    //!   and iterators to elements that are not removed remain valid.
    template<class BinaryPredicate>
-   void unique(BinaryPredicate pred)
-   {  this->unique_and_dispose(pred, detail::null_disposer());  }
+   size_type unique(BinaryPredicate pred)
+   {  return this->unique_and_dispose(pred, detail::null_disposer());  }
 
    //! <b>Requires</b>: Disposer::operator()(pointer) shouldn't throw.
    //!
    //! <b>Effects</b>: Removes adjacent duplicate elements or adjacent
    //!   elements that are equal from the list.
    //!   Disposer::operator()(pointer) is called for every removed element.
+   //!
+   //! <b>Returns</b>: The number of removed elements.
    //!
    //! <b>Throws</b>: If the equality operator throws. Basic guarantee.
    //!
@@ -1222,14 +1246,16 @@ class list_impl
    //! <b>Note</b>: The relative order of elements that are not removed is unchanged,
    //!   and iterators to elements that are not removed remain valid.
    template<class Disposer>
-   void unique_and_dispose(Disposer disposer)
-   {  this->unique_and_dispose(value_equal<value_type>(), disposer);  }
+   size_type unique_and_dispose(Disposer disposer)
+   {  return this->unique_and_dispose(value_equal<value_type>(), disposer);  }
 
    //! <b>Requires</b>: Disposer::operator()(pointer) shouldn't throw.
    //!
    //! <b>Effects</b>: Removes adjacent duplicate elements or adjacent
    //!   elements that satisfy some binary predicate from the list.
    //!   Disposer::operator()(pointer) is called for every removed element.
+   //!
+   //! <b>Returns</b>: The number of removed elements.
    //!
    //! <b>Throws</b>: If pred throws. Basic guarantee.
    //!
@@ -1238,10 +1264,11 @@ class list_impl
    //! <b>Note</b>: The relative order of elements that are not removed is unchanged,
    //!   and iterators to elements that are not removed remain valid.
    template<class BinaryPredicate, class Disposer>
-   void unique_and_dispose(BinaryPredicate pred, Disposer disposer)
+   size_type unique_and_dispose(BinaryPredicate pred, Disposer disposer)
    {
       const_iterator itend(this->cend());
       const_iterator cur(this->cbegin());
+      size_type n = 0;
 
       if(cur != itend){
          const_iterator after(cur);
@@ -1249,6 +1276,7 @@ class list_impl
          while(after != itend){
             if(pred(*cur, *after)){
                after = this->erase_and_dispose(after, disposer);
+               ++n;
             }
             else{
                cur = after;
@@ -1256,9 +1284,10 @@ class list_impl
             }
          }
       }
+      return n;
    }
 
-   //! <b>Requires</b>: value must be a reference to a value inserted in a list.
+   //! <b>Requires</b>: `value` must be a reference to a value inserted in an instance of this container type.
    //!
    //! <b>Effects</b>: This function returns a const_iterator pointing to the element
    //!
@@ -1295,7 +1324,7 @@ class list_impl
       return const_iterator(value_traits::to_node_ptr(r), const_value_traits_ptr());
    }
 
-   //! <b>Requires</b>: value must be a reference to a value inserted in a list.
+   //! <b>Requires</b>: `value` must be a reference to a value inserted in an instance of this container type.
    //!
    //! <b>Effects</b>: This function returns a const_iterator pointing to the element
    //!
@@ -1364,7 +1393,8 @@ class list_impl
 
    friend bool operator==(const list_impl &x, const list_impl &y)
    {
-      if(constant_time_size && x.size() != y.size()){
+      BOOST_IF_CONSTEXPR(constant_time_size)
+      if(x.size() != y.size()){
          return false;
       }
       return ::boost::intrusive::algo_equal(x.cbegin(), x.cend(), y.cbegin(), y.cend());
@@ -1391,6 +1421,7 @@ class list_impl
    /// @cond
 
    private:
+   BOOST_INTRUSIVE_NO_DANGLING
    static list_impl &priv_container_from_end_iterator(const const_iterator &end_iterator) BOOST_NOEXCEPT
    {
       BOOST_INTRUSIVE_STATIC_ASSERT((has_container_from_iterator));
@@ -1501,9 +1532,11 @@ class list
    inline void clone_from(BOOST_RV_REF(list) src, Cloner cloner, Disposer disposer)
    {  Base::clone_from(BOOST_MOVE_BASE(Base, src), cloner, disposer);  }
 
+   BOOST_INTRUSIVE_NO_DANGLING
    inline static list &container_from_end_iterator(iterator end_iterator) BOOST_NOEXCEPT
    {  return static_cast<list &>(Base::container_from_end_iterator(end_iterator));   }
 
+   BOOST_INTRUSIVE_NO_DANGLING
    inline static const list &container_from_end_iterator(const_iterator end_iterator) BOOST_NOEXCEPT
    {  return static_cast<const list &>(Base::container_from_end_iterator(end_iterator));   }
 };

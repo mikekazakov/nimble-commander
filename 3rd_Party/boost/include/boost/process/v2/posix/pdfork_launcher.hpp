@@ -24,8 +24,8 @@ struct pdfork_launcher : default_launcher
 
     template<typename ExecutionContext, typename Args, typename ... Inits>
     auto operator()(ExecutionContext & context,
-                    const typename std::enable_if<is_convertible<
-                            ExecutionContext&, BOOST_PROCESS_V2_ASIO_NAMESPACE::execution_context&>::value,
+                    const typename std::enable_if<std::is_convertible<
+                            ExecutionContext&, net::execution_context&>::value,
                             filesystem::path >::type & executable,
                     Args && args,
                     Inits && ... inits ) -> basic_process<typename ExecutionContext::executor_type>
@@ -43,20 +43,20 @@ struct pdfork_launcher : default_launcher
     template<typename ExecutionContext, typename Args, typename ... Inits>
     auto operator()(ExecutionContext & context,
                     error_code & ec,
-                    const typename std::enable_if<is_convertible<
-                            ExecutionContext&, BOOST_PROCESS_V2_ASIO_NAMESPACE::execution_context&>::value,
+                    const typename std::enable_if<std::is_convertible<
+                            ExecutionContext&, net::execution_context&>::value,
                             filesystem::path >::type & executable,
                     Args && args,
                     Inits && ... inits ) -> basic_process<typename ExecutionContext::executor_type>
     {
-        return (*this)(context.get_executor(), executable, std::forward<Args>(args), std::forward<Inits>(inits)...);
+        return (*this)(context.get_executor(), ec, executable, std::forward<Args>(args), std::forward<Inits>(inits)...);
     }
 
     template<typename Executor, typename Args, typename ... Inits>
     auto operator()(Executor exec,
                     const typename std::enable_if<
-                            BOOST_PROCESS_V2_ASIO_NAMESPACE::execution::is_executor<Executor>::value ||
-                            BOOST_PROCESS_V2_ASIO_NAMESPACE::is_executor<Executor>::value,
+                            net::execution::is_executor<Executor>::value ||
+                            net::is_executor<Executor>::value,
                             filesystem::path >::type & executable,
                     Args && args,
                     Inits && ... inits ) -> basic_process<Executor>
@@ -74,8 +74,8 @@ struct pdfork_launcher : default_launcher
     auto operator()(Executor exec,
                     error_code & ec,
                     const typename std::enable_if<
-                            BOOST_PROCESS_V2_ASIO_NAMESPACE::execution::is_executor<Executor>::value ||
-                            BOOST_PROCESS_V2_ASIO_NAMESPACE::is_executor<Executor>::value,
+                            net::execution::is_executor<Executor>::value ||
+                            net::is_executor<Executor>::value,
                             filesystem::path >::type & executable,
                     Args && args,
                     Inits && ... inits ) -> basic_process<Executor>
@@ -85,12 +85,12 @@ struct pdfork_launcher : default_launcher
             pipe_guard pg;
             if (::pipe(pg.p))
             {
-                BOOST_PROCESS_V2_ASSIGN_EC(ec, errno, system_category())
+                BOOST_PROCESS_V2_ASSIGN_EC(ec, errno, system_category());
                 return basic_process<Executor>{exec};
             }
             if (::fcntl(pg.p[1], F_SETFD, FD_CLOEXEC))
             {
-                BOOST_PROCESS_V2_ASSIGN_EC(ec, errno, system_category())
+                BOOST_PROCESS_V2_ASSIGN_EC(ec, errno, system_category());
                 return basic_process<Executor>{exec};
             }
             ec = detail::on_setup(*this, executable, argv, inits ...);
@@ -101,22 +101,28 @@ struct pdfork_launcher : default_launcher
             }
             fd_whitelist.push_back(pg.p[1]);
 
-            auto & ctx = BOOST_PROCESS_V2_ASIO_NAMESPACE::query(
-                    exec, BOOST_PROCESS_V2_ASIO_NAMESPACE::execution::context);
-            ctx.notify_fork(BOOST_PROCESS_V2_ASIO_NAMESPACE::execution_context::fork_prepare);
+            auto & ctx = net::query(
+                    exec, net::execution::context);
+#if !defined(BOOST_PROCESS_V2_DISABLE_NOTIFY_FORK)
+            ctx.notify_fork(net::execution_context::fork_prepare);
+#endif
             pid = ::pdfork(&fd, PD_DAEMON | PD_CLOEXEC);
             if (pid == -1)
             {
-                ctx.notify_fork(BOOST_PROCESS_V2_ASIO_NAMESPACE::execution_context::fork_parent);
+#if !defined(BOOST_PROCESS_V2_DISABLE_NOTIFY_FORK)
+                ctx.notify_fork(net::execution_context::fork_parent);
+#endif
                 detail::on_fork_error(*this, executable, argv, ec, inits...);
                 detail::on_error(*this, executable, argv, ec, inits...);
 
-                BOOST_PROCESS_V2_ASSIGN_EC(ec, errno, system_category())
+                BOOST_PROCESS_V2_ASSIGN_EC(ec, errno, system_category());
                 return basic_process<Executor>{exec};
             }
             else if (pid == 0)
             {
-                ctx.notify_fork(BOOST_PROCESS_V2_ASIO_NAMESPACE::execution_context::fork_child);
+#if !defined(BOOST_PROCESS_V2_DISABLE_NOTIFY_FORK)
+                ctx.notify_fork(net::execution_context::fork_child);
+#endif
                 ::close(pg.p[0]);
 
                 ec = detail::on_exec_setup(*this, executable, argv, inits...);
@@ -128,12 +134,14 @@ struct pdfork_launcher : default_launcher
                     ::execve(executable.c_str(), const_cast<char * const *>(argv), const_cast<char * const *>(env));
 
                 default_launcher::ignore_unused(::write(pg.p[1], &errno, sizeof(int)));
-                BOOST_PROCESS_V2_ASSIGN_EC(ec, errno, system_category())
+                BOOST_PROCESS_V2_ASSIGN_EC(ec, errno, system_category());
                 detail::on_exec_error(*this, executable, argv, ec, inits...);
-                ::exit(EXIT_FAILURE);
+                ::_exit(EXIT_FAILURE);
                 return basic_process<Executor>{exec};
             }
-            ctx.notify_fork(BOOST_PROCESS_V2_ASIO_NAMESPACE::execution_context::fork_parent);
+#if !defined(BOOST_PROCESS_V2_DISABLE_NOTIFY_FORK)
+            ctx.notify_fork(net::execution_context::fork_parent);
+#endif
             ::close(pg.p[1]);
             pg.p[1] = -1;
             int child_error{0};
@@ -143,16 +151,17 @@ struct pdfork_launcher : default_launcher
                 int err = errno;
                 if ((err != EAGAIN) && (err != EINTR))
                 {
-                    BOOST_PROCESS_V2_ASSIGN_EC(ec, err, system_category())
+                    BOOST_PROCESS_V2_ASSIGN_EC(ec, err, system_category());
                     break;
                 }
             }
             if (count != 0)
-                BOOST_PROCESS_V2_ASSIGN_EC(ec, child_error, system_category())
+                BOOST_PROCESS_V2_ASSIGN_EC(ec, child_error, system_category());
 
             if (ec)
             {
                 detail::on_error(*this, executable, argv, ec, inits...);
+                do { ::waitpid(pid, nullptr, 0); } while (errno == EINTR);
                 return basic_process<Executor>{exec};
             }
         }

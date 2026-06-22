@@ -57,7 +57,7 @@ struct key_char_traits
     return to_lower(c1) < to_lower(c2);
   }
 
-  BOOST_CONSTEXPR static
+  BOOST_CXX14_CONSTEXPR static
   int compare(const char_type* s1, const char_type* s2, size_t n) BOOST_NOEXCEPT
   {
     auto itrs = std::mismatch(s1, s1 + n, s2, &eq);
@@ -69,23 +69,23 @@ struct key_char_traits
     return (c1 < c2 ) ? -1 : 1;
   }
 
-  BOOST_CONSTEXPR static size_t length(const char* s)    BOOST_NOEXCEPT  { return std::strlen(s); }
-  BOOST_CONSTEXPR static size_t length(const wchar_t* s) BOOST_NOEXCEPT  { return std::wcslen(s); }
+  static size_t length(const char* s)    BOOST_NOEXCEPT  { return std::strlen(s); }
+  static size_t length(const wchar_t* s) BOOST_NOEXCEPT  { return std::wcslen(s); }
 
-  BOOST_CONSTEXPR static
+  BOOST_CXX14_CONSTEXPR static
   const char_type* find(const char_type* s, size_t n, const char_type& a) BOOST_NOEXCEPT
   {
     const char_type u = to_lower(a);
     return std::find_if(s, s + n, [u](char_type c){return to_lower(c) == u;});
   }
 
-  BOOST_CONSTEXPR static
+  BOOST_CXX14_CONSTEXPR static
   char_type* move(char_type* s1, const char_type* s2, size_t n) BOOST_NOEXCEPT
   {
     if (s1 < s2)
       return std::move(s2, s2 + n, s1);
     else
-      return std::move_backward(s2, s2 + n, s1);
+      return std::move_backward(s2, s2 + n, s1 + n);
   }
 
   BOOST_CONSTEXPR static
@@ -94,7 +94,7 @@ struct key_char_traits
     return std::copy(s2, s2 + n, s1);
   }
 
-  BOOST_CONSTEXPR static
+  BOOST_CXX14_CONSTEXPR static
   char_type* assign(char_type* s, size_t n, char_type a) BOOST_NOEXCEPT
   {
     std::fill(s, s + n, a);
@@ -203,7 +203,15 @@ struct native_handle_deleter
 inline const char_type * dereference(native_iterator iterator) {return iterator;}
 BOOST_PROCESS_V2_DECL native_iterator next(native_iterator nh);
 BOOST_PROCESS_V2_DECL native_iterator find_end(native_handle_type nh);
-BOOST_PROCESS_V2_DECL bool is_executable(const filesystem::path & pth, error_code & ec);
+
+
+BOOST_PROCESS_V2_DECL bool is_exec_type(const wchar_t * pth);
+
+inline bool is_executable(const filesystem::path & pth, error_code & ec)
+{
+  return filesystem::is_regular_file(pth, ec) && is_exec_type(pth.c_str());
+}
+
 }
 
 }

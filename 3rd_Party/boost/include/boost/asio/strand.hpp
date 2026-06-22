@@ -2,7 +2,7 @@
 // strand.hpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Provides serialised function invocation for any executor type.
 template <typename Executor>
@@ -297,7 +298,7 @@ public:
   /**
    * This function is used to ask the executor to execute the given function
    * object. The function object will never be executed inside this function.
-   * Instead, it will be scheduled by the underlying executor's defer function.
+   * Instead, it will be scheduled by the underlying executor's post function.
    *
    * @param f The function object to be called. The executor will make
    * a copy of the handler object as required. The function signature of the
@@ -543,6 +544,7 @@ struct prefer_member<strand<Executor>, Property,
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

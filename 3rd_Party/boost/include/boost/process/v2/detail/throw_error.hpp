@@ -29,10 +29,5 @@ inline void throw_error(const error_code& err, const char* location)
 }
 BOOST_PROCESS_V2_END_NAMESPACE
 
-#if defined(BOOST_PROCESS_V2_HEADER_ONLY)
-
-#include <boost/process/v2/detail/impl/throw_error.ipp>
-
-#endif
 
 #endif //BOOST_PROCESS_V2_DETAIL_THROW_ERROR_HPP

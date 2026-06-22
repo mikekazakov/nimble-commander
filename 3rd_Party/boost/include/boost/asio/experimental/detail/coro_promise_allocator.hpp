@@ -13,10 +13,12 @@
 #define BOOST_ASIO_EXPERIMENTAL_DETAIL_CORO_PROMISE_ALLOCATOR_HPP
 
 #include <boost/asio/detail/config.hpp>
+#include <limits>
 #include <boost/asio/experimental/coro_traits.hpp>
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 namespace detail {
 
@@ -62,9 +64,8 @@ void deallocate_coroutine(void* raw_, const std::size_t size)
 template <typename T>
 constexpr std::size_t variadic_first(std::size_t = 0u)
 {
-  return std::numeric_limits<std::size_t>::max();
+  return (std::numeric_limits<std::size_t>::max)();
 }
-
 
 template <typename T, typename First, typename... Args>
 constexpr std::size_t variadic_first(std::size_t pos = 0u)
@@ -95,14 +96,14 @@ struct coro_promise_allocator
   allocator_type get_allocator() const {return alloc_;}
 
   template <typename... Args>
-  void* operator new(const std::size_t size, Args & ... args)
+  void* operator new(std::size_t size, Args & ... args)
   {
     return allocate_coroutine(size,
         get_variadic<variadic_first<std::allocator_arg_t,
           std::decay_t<Args>...>() + 1u>(args...));
   }
 
-  void operator delete(void* raw, const std::size_t size)
+  void operator delete(void* raw, std::size_t size)
   {
     deallocate_coroutine<allocator_type>(raw, size);
   }
@@ -137,6 +138,7 @@ struct coro_promise_allocator<std::allocator<void>>
 
 } // namespace detail
 } // namespace experimental
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

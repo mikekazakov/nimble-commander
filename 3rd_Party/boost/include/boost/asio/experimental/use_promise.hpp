@@ -24,6 +24,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 
 template <typename Allocator = std::allocator<void>>
@@ -100,9 +101,10 @@ private:
   Allocator allocator_;
 };
 
-constexpr use_promise_t<> use_promise;
+BOOST_ASIO_INLINE_VARIABLE constexpr use_promise_t<> use_promise;
 
 } // namespace experimental
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

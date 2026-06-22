@@ -70,7 +70,7 @@ class BOOST_CONTAINER_DECL monotonic_buffer_resource
    //! to the upstream allocator
    //!
    //! <b>Note</b>: Non-standard extension.
-   static const std::size_t initial_next_buffer_size = 32u*sizeof(void*);
+   BOOST_STATIC_CONSTEXPR std::size_t initial_next_buffer_size = 32u*sizeof(void*);
 
    //! <b>Requires</b>: `upstream` shall be the address of a valid memory resource or `nullptr`
    //!
@@ -112,6 +112,7 @@ class BOOST_CONTAINER_DECL monotonic_buffer_resource
    ~monotonic_buffer_resource() BOOST_OVERRIDE;
 
    //! <b>Effects</b>: `upstream_resource()->deallocate()` as necessary to release all allocated memory.
+   //!   Resets *this to its initial state at construction.
    //!   [Note: memory is released back to `upstream_resource()` even if some blocks that were allocated
    //!   from this have not been deallocated from this. - end note]
    void release() BOOST_NOEXCEPT;

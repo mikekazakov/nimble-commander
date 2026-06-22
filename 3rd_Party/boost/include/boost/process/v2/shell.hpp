@@ -140,10 +140,4 @@ struct shell
 
 BOOST_PROCESS_V2_END_NAMESPACE
 
-#if defined(BOOST_PROCESS_V2_HEADER_ONLY)
-
-#include <boost/process/v2/impl/shell.ipp>
-
-#endif
-
 #endif //BOOST_PROCESS_V2_ERROR_HPP

@@ -34,7 +34,7 @@ struct process_start_dir
   };
 
 #else
-  error_code on_exec_setup(posix::default_launcher & launcher, 
+  error_code on_exec_setup(posix::default_launcher & /*launcher*/,
                            const filesystem::path &, const char * const *)
   {
     if (::chdir(start_dir.c_str()) == -1)

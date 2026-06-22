@@ -2,7 +2,7 @@
 // coroutine.hpp
 // ~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -11,8 +11,11 @@
 #ifndef BOOST_ASIO_COROUTINE_HPP
 #define BOOST_ASIO_COROUTINE_HPP
 
+#include <boost/asio/detail/config.hpp>
+
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class coroutine_ref;
@@ -112,7 +115,7 @@ class coroutine_ref;
  *
  * @code yield
  * {
- *   mutable_buffers_1 b = buffer(*buffer_);
+ *   mutable_buffer b = buffer(*buffer_);
  *   socket_->async_read_some(b, *this);
  * } @endcode
  *
@@ -201,7 +204,7 @@ class coroutine_ref;
  * The @c fork pseudo-keyword is used when "forking" a coroutine, i.e. splitting
  * it into two (or more) copies. One use of @c fork is in a server, where a new
  * coroutine is created to handle each client connection:
- * 
+ *
  * @code reenter (this)
  * {
  *   do
@@ -212,9 +215,9 @@ class coroutine_ref;
  *   } while (is_parent());
  *   ... client-specific handling follows ...
  * } @endcode
- * 
+ *
  * The logical steps involved in a @c fork are:
- * 
+ *
  * @li @c fork saves the current state of the coroutine.
  * @li The statement creates a copy of the coroutine and either executes it
  *     immediately or schedules it for later execution.
@@ -259,7 +262,6 @@ private:
   int value_;
 };
 
-
 namespace detail {
 
 class coroutine_ref
@@ -277,12 +279,35 @@ private:
   bool modified_;
 };
 
+class coroutine_base_value
+{
+public:
+  constexpr coroutine_base_value(int value) : value_(value) {}
+  constexpr operator bool() const { return false; }
+  constexpr int get() const { return value_; }
+private:
+  int value_;
+};
+
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
+#if !defined(BOOST_ASIO_CORO_VALUE_INIT)
+# if defined(_MSC_VER)
+#  define BOOST_ASIO_CORO_VALUE_INIT __COUNTER__
+# else // defined(_MSC_VER)
+#  define BOOST_ASIO_CORO_VALUE_INIT __LINE__
+# endif // defined(_MSC_VER)
+#endif // !defined(BOOST_ASIO_CORO_VALUE_INIT)
+
 #define BOOST_ASIO_CORO_REENTER(c) \
-  switch (::boost::asio::detail::coroutine_ref _coro_value = c) \
+  if (constexpr ::boost::asio::detail::coroutine_base_value \
+      _coro_base_value = BOOST_ASIO_CORO_VALUE_INIT) \
+  { \
+  } \
+  else switch (::boost::asio::detail::coroutine_ref _coro_value = c) \
     case -1: if (_coro_value) \
     { \
       goto terminate_coroutine; \
@@ -320,12 +345,12 @@ private:
     } \
     else
 
-#if defined(_MSC_VER)
-# define BOOST_ASIO_CORO_YIELD BOOST_ASIO_CORO_YIELD_IMPL(__COUNTER__ + 1)
-# define BOOST_ASIO_CORO_FORK BOOST_ASIO_CORO_FORK_IMPL(__COUNTER__ + 1)
-#else // defined(_MSC_VER)
-# define BOOST_ASIO_CORO_YIELD BOOST_ASIO_CORO_YIELD_IMPL(__LINE__)
-# define BOOST_ASIO_CORO_FORK BOOST_ASIO_CORO_FORK_IMPL(__LINE__)
-#endif // defined(_MSC_VER)
+# define BOOST_ASIO_CORO_YIELD \
+  BOOST_ASIO_CORO_YIELD_IMPL( \
+    BOOST_ASIO_CORO_VALUE_INIT + 1 - _coro_base_value.get())
+
+# define BOOST_ASIO_CORO_FORK \
+  BOOST_ASIO_CORO_FORK_IMPL( \
+    BOOST_ASIO_CORO_VALUE_INIT + 1 - _coro_base_value.get())
 
 #endif // BOOST_ASIO_COROUTINE_HPP

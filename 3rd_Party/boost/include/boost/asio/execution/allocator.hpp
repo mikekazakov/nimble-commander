@@ -2,7 +2,7 @@
 // execution/allocator.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 #if defined(GENERATING_DOCUMENTATION)
 
@@ -226,7 +227,7 @@ const T allocator_t<void>::static_query_v;
 #endif // defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT)
        //   && defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
 
-constexpr allocator_t<void> allocator;
+BOOST_ASIO_INLINE_VARIABLE constexpr allocator_t<void> allocator;
 
 } // namespace execution
 
@@ -272,6 +273,7 @@ struct static_query<T, execution::allocator_t<ProtoAllocator>,
 
 #endif // defined(GENERATING_DOCUMENTATION)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

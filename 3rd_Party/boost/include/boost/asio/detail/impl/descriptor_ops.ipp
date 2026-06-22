@@ -2,7 +2,7 @@
 // detail/impl/descriptor_ops.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -22,12 +22,13 @@
 
 #if !defined(BOOST_ASIO_WINDOWS) \
   && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__)
+  && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 namespace descriptor_ops {
 
@@ -70,25 +71,24 @@ int close(int d, state_type& state, boost::system::error_code& ec)
         ::fcntl(d, F_SETFL, flags & ~O_NONBLOCK);
 #else // defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__)
       ioctl_arg_type arg = 0;
-# if defined(ENOTTY) || defined(ENOTCAPABLE)
-      result = ::ioctl(d, FIONBIO, &arg);
-      get_last_error(ec, result < 0);
-      if (false
-#  if defined(ENOTTY)
+      if ((state & possible_dup) == 0)
+      {
+        result = ::ioctl(d, FIONBIO, &arg);
+        get_last_error(ec, result < 0);
+      }
+      if ((state & possible_dup) != 0
+# if defined(ENOTTY)
           || ec.value() == ENOTTY
-#  endif // defined(ENOTTY)
-#  if defined(ENOTCAPABLE)
+# endif // defined(ENOTTY)
+# if defined(ENOTCAPABLE)
           || ec.value() == ENOTCAPABLE
-#  endif // defined(ENOTCAPABLE)
+# endif // defined(ENOTCAPABLE)
         )
       {
         int flags = ::fcntl(d, F_GETFL, 0);
         if (flags >= 0)
           ::fcntl(d, F_SETFL, flags & ~O_NONBLOCK);
       }
-# else // defined(ENOTTY) || defined(ENOTCAPABLE)
-      ::ioctl(d, FIONBIO, &arg);
-# endif // defined(ENOTTY) || defined(ENOTCAPABLE)
 #endif // defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__)
       state &= ~non_blocking;
 
@@ -115,21 +115,24 @@ bool set_user_non_blocking(int d, state_type& state,
   if (result >= 0)
   {
     int flag = (value ? (result | O_NONBLOCK) : (result & ~O_NONBLOCK));
-    result = ::fcntl(d, F_SETFL, flag);
+    result = (flag != result) ? ::fcntl(d, F_SETFL, flag) : 0;
     get_last_error(ec, result < 0);
   }
 #else // defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__)
   ioctl_arg_type arg = (value ? 1 : 0);
-  int result = ::ioctl(d, FIONBIO, &arg);
-  get_last_error(ec, result < 0);
-# if defined(ENOTTY) || defined(ENOTCAPABLE)
-  if (false
-#  if defined(ENOTTY)
+  int result = 0;
+  if ((state & possible_dup) == 0)
+  {
+    result = ::ioctl(d, FIONBIO, &arg);
+    get_last_error(ec, result < 0);
+  }
+  if ((state & possible_dup) != 0
+# if defined(ENOTTY)
       || ec.value() == ENOTTY
-#  endif // defined(ENOTTY)
-#  if defined(ENOTCAPABLE)
+# endif // defined(ENOTTY)
+# if defined(ENOTCAPABLE)
       || ec.value() == ENOTCAPABLE
-#  endif // defined(ENOTCAPABLE)
+# endif // defined(ENOTCAPABLE)
     )
   {
     result = ::fcntl(d, F_GETFL, 0);
@@ -137,11 +140,10 @@ bool set_user_non_blocking(int d, state_type& state,
     if (result >= 0)
     {
       int flag = (value ? (result | O_NONBLOCK) : (result & ~O_NONBLOCK));
-      result = ::fcntl(d, F_SETFL, flag);
+      result = (flag != result) ? ::fcntl(d, F_SETFL, flag) : 0;
       get_last_error(ec, result < 0);
     }
   }
-# endif // defined(ENOTTY) || defined(ENOTCAPABLE)
 #endif // defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__)
 
   if (result >= 0)
@@ -185,21 +187,24 @@ bool set_internal_non_blocking(int d, state_type& state,
   if (result >= 0)
   {
     int flag = (value ? (result | O_NONBLOCK) : (result & ~O_NONBLOCK));
-    result = ::fcntl(d, F_SETFL, flag);
+    result = (flag != result) ? ::fcntl(d, F_SETFL, flag) : 0;
     get_last_error(ec, result < 0);
   }
 #else // defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__)
   ioctl_arg_type arg = (value ? 1 : 0);
-  int result = ::ioctl(d, FIONBIO, &arg);
-  get_last_error(ec, result < 0);
-# if defined(ENOTTY) || defined(ENOTCAPABLE)
-  if (false
-#  if defined(ENOTTY)
+  int result = 0;
+  if ((state & possible_dup) == 0)
+  {
+    result = ::ioctl(d, FIONBIO, &arg);
+    get_last_error(ec, result < 0);
+  }
+  if ((state & possible_dup) != 0
+# if defined(ENOTTY)
       || ec.value() == ENOTTY
-#  endif // defined(ENOTTY)
-#  if defined(ENOTCAPABLE)
+# endif // defined(ENOTTY)
+# if defined(ENOTCAPABLE)
       || ec.value() == ENOTCAPABLE
-#  endif // defined(ENOTCAPABLE)
+# endif // defined(ENOTCAPABLE)
     )
   {
     result = ::fcntl(d, F_GETFL, 0);
@@ -207,11 +212,10 @@ bool set_internal_non_blocking(int d, state_type& state,
     if (result >= 0)
     {
       int flag = (value ? (result | O_NONBLOCK) : (result & ~O_NONBLOCK));
-      result = ::fcntl(d, F_SETFL, flag);
+      result = (flag != result) ? ::fcntl(d, F_SETFL, flag) : 0;
       get_last_error(ec, result < 0);
     }
   }
-# endif // defined(ENOTTY) || defined(ENOTCAPABLE)
 #endif // defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__)
 
   if (result >= 0)
@@ -981,6 +985,7 @@ int poll_error(int d, state_type state, boost::system::error_code& ec)
 
 } // namespace descriptor_ops
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
@@ -988,6 +993,6 @@ int poll_error(int d, state_type state, boost::system::error_code& ec)
 
 #endif // !defined(BOOST_ASIO_WINDOWS)
        //   && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
-       //   && !defined(__CYGWIN__)
+       //   && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 #endif // BOOST_ASIO_DETAIL_IMPL_DESCRIPTOR_OPS_IPP

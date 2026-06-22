@@ -18,7 +18,7 @@ namespace windows
 {
 
 
-/// An initializers to add to the dwFlags in the startup-info
+/// An initializer to add to the dwFlags in the startup-info
 /**
  * @tparam Flags The flags to be set.
  */

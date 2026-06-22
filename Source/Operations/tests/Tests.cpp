@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <algorithm>
 #include <catch2/catch_all.hpp>
 
@@ -10,7 +10,7 @@
 #include "TestEnv.h"
 #include <Base/CommonPaths.h>
 #include <Base/dispatch_cpp.h>
-#include <boost/process.hpp>
+#include <boost/process/v1.hpp>
 
 #include <spdlog/sinks/stdout_sinks.h>
 #include <VFS/Log.h>
@@ -83,7 +83,7 @@ TempTestDmg::~TempTestDmg()
 
 static int Execute(const std::string &_command)
 {
-    using namespace boost::process;
+    using namespace boost::process::v1;
     ipstream pipe_stream;
     child c(_command, std_out > pipe_stream);
     std::string line;

@@ -2,7 +2,7 @@
 // detail/impl/win_iocp_file_service.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -22,12 +22,14 @@
 
 #include <cstring>
 #include <sys/stat.h>
+#include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/win_iocp_file_service.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 win_iocp_file_service::win_iocp_file_service(
@@ -57,6 +59,27 @@ boost::system::error_code win_iocp_file_service::open(
   if (is_open(impl))
   {
     ec = boost::asio::error::already_open;
+    BOOST_ASIO_ERROR_LOCATION(ec);
+    return ec;
+  }
+
+  int required_path_length = ::MultiByteToWideChar(
+      CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, 0, 0);
+  if (required_path_length == 0)
+  {
+    DWORD last_error = ::GetLastError();
+    ec.assign(last_error, boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
+    return ec;
+  }
+
+  std::unique_ptr<wchar_t[]> wide_path(new wchar_t[required_path_length]);
+  int result = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+      path, -1, wide_path.get(), required_path_length);
+  if (result == 0)
+  {
+    DWORD last_error = ::GetLastError();
+    ec.assign(last_error, boost::asio::error::get_system_category());
     BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
@@ -95,7 +118,9 @@ boost::system::error_code win_iocp_file_service::open(
   if ((open_flags & file_base::sync_all_on_write) != 0)
     flags |= FILE_FLAG_WRITE_THROUGH;
 
-  HANDLE handle = ::CreateFileA(path, access, share, 0, disposition, flags, 0);
+  impl.offset_ = 0;
+  HANDLE handle = ::CreateFileW(wide_path.get(),
+      access, share, 0, disposition, flags, 0);
   if (handle != INVALID_HANDLE_VALUE)
   {
     if (disposition == OPEN_ALWAYS)
@@ -111,10 +136,18 @@ boost::system::error_code win_iocp_file_service::open(
           return ec;
         }
       }
-      else if ((open_flags & file_base::append) != 0)
+    }
+    if (disposition == OPEN_ALWAYS || disposition == OPEN_EXISTING)
+    {
+      if ((open_flags & file_base::append) != 0)
       {
-        if (::SetFilePointer(handle, 0, 0, FILE_END)
-            == INVALID_SET_FILE_POINTER)
+        LARGE_INTEGER distance, new_offset;
+        distance.QuadPart = 0;
+        if (::SetFilePointerEx(handle, distance, &new_offset, FILE_END))
+        {
+          impl.offset_ = static_cast<uint64_t>(new_offset.QuadPart);
+        }
+        else
         {
           DWORD last_error = ::GetLastError();
           ::CloseHandle(handle);
@@ -128,7 +161,6 @@ boost::system::error_code win_iocp_file_service::open(
     handle_service_.assign(impl, handle, ec);
     if (ec)
       ::CloseHandle(handle);
-    impl.offset_ = 0;
     BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
@@ -271,6 +303,7 @@ uint64_t win_iocp_file_service::seek(
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

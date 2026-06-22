@@ -25,6 +25,7 @@
 #include <boost/assert.hpp>
 #include <boost/system/error_category.hpp>
 #include <boost/iterator/is_iterator.hpp>
+#include <boost/filesystem/detail/type_traits/negation.hpp>
 #include <boost/filesystem/detail/type_traits/conjunction.hpp>
 #if defined(BOOST_FILESYSTEM_DETAIL_CXX23_STRING_VIEW_HAS_IMPLICIT_RANGE_CTOR)
 #include <boost/filesystem/detail/type_traits/disjunction.hpp>
@@ -41,19 +42,20 @@ namespace boost {
 template< typename, typename > class basic_string_view;
 
 namespace container {
-template< typename, typename, typename > class basic_string;
+template< typename, typename, typename, typename > class basic_string;
 } // namespace container
 
 namespace filesystem {
 
 BOOST_FILESYSTEM_DECL system::error_category const& codecvt_error_category() noexcept;
 
+class path;
 class directory_entry;
 
 namespace detail {
 namespace path_traits {
 
-#if defined(BOOST_WINDOWS_API)
+#if defined(BOOST_FILESYSTEM_WINDOWS_API)
 typedef wchar_t path_native_char_type;
 #define BOOST_FILESYSTEM_DETAIL_IS_CHAR_NATIVE false
 #define BOOST_FILESYSTEM_DETAIL_IS_WCHAR_T_NATIVE true
@@ -202,7 +204,7 @@ struct path_source_traits< std::wstring >
 };
 
 template< >
-struct path_source_traits< boost::container::basic_string< char, std::char_traits< char >, void > >
+struct path_source_traits< boost::container::basic_string< char, std::char_traits< char >, void, void > >
 {
     typedef boost_container_string_tag tag_type;
     typedef char char_type;
@@ -210,7 +212,7 @@ struct path_source_traits< boost::container::basic_string< char, std::char_trait
 };
 
 template< >
-struct path_source_traits< boost::container::basic_string< wchar_t, std::char_traits< wchar_t >, void > >
+struct path_source_traits< boost::container::basic_string< wchar_t, std::char_traits< wchar_t >, void, void > >
 {
     typedef boost_container_string_tag tag_type;
     typedef wchar_t char_type;
@@ -480,6 +482,11 @@ BOOST_FORCEINLINE typename Callback::result_type dispatch(Source const& source, 
 typedef char yes_type;
 struct no_type { char buf[2]; };
 
+// Note: check_convertible overloads below are deliberately not templates to allow for one of the overloads
+//       to be selected if the argument is some third-party type that is convertible to one of the supported
+//       string types. This is why we unfortunately can't ignore the irrelevant template parameters like allocator
+//       and Boost.Container options.
+
 #if !defined(BOOST_FILESYSTEM_DETAIL_CXX23_STRING_VIEW_HAS_IMPLICIT_RANGE_CTOR)
 
 namespace is_convertible_to_path_source_impl {
@@ -488,8 +495,8 @@ yes_type check_convertible(const char*);
 yes_type check_convertible(const wchar_t*);
 yes_type check_convertible(std::string const&);
 yes_type check_convertible(std::wstring const&);
-yes_type check_convertible(boost::container::basic_string< char, std::char_traits< char >, void > const&);
-yes_type check_convertible(boost::container::basic_string< wchar_t, std::char_traits< wchar_t >, void > const&);
+yes_type check_convertible(boost::container::basic_string< char, std::char_traits< char >, void, void > const&);
+yes_type check_convertible(boost::container::basic_string< wchar_t, std::char_traits< wchar_t >, void, void > const&);
 #if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
 yes_type check_convertible(std::string_view const&);
 yes_type check_convertible(std::wstring_view const&);
@@ -501,12 +508,30 @@ no_type check_convertible(...);
 
 } // namespace is_convertible_to_path_source_impl
 
-//! The type trait indicates whether the type has a conversion path to one of the path source types
+template< typename T >
+struct check_is_convertible_to_path_source :
+    public std::integral_constant<
+        bool,
+        sizeof(is_convertible_to_path_source_impl::check_convertible(std::declval< T const& >())) == sizeof(yes_type)
+    >
+{
+};
+
+/*!
+ * \brief The type trait indicates whether the type has a conversion path to one of the path source types.
+ *
+ * \note The type trait returns `false` if the type is convertible to `path`. This prevents testing other
+ *       conversion paths and forces the conversion to `path` to be chosen instead, to invoke a non-template
+ *       member of `path` accepting a `path` argument.
+ */
 template< typename T >
 struct is_convertible_to_path_source :
     public std::integral_constant<
         bool,
-        sizeof(is_convertible_to_path_source_impl::check_convertible(std::declval< T const& >())) == sizeof(yes_type)
+        detail::conjunction<
+            detail::negation< std::is_convertible< T, path > >,
+            check_is_convertible_to_path_source< T >
+        >::value
     >
 {
 };
@@ -529,7 +554,7 @@ no_type check_convertible(...);
 } // namespace is_convertible_to_std_string_view_impl
 
 template< typename T >
-struct is_convertible_to_std_string_view :
+struct check_is_convertible_to_std_string_view :
     public std::integral_constant<
         bool,
         sizeof(is_convertible_to_std_string_view_impl::check_convertible(std::declval< T const& >())) == sizeof(yes_type)
@@ -543,8 +568,8 @@ yes_type check_convertible(const char*);
 yes_type check_convertible(const wchar_t*);
 yes_type check_convertible(std::string const&);
 yes_type check_convertible(std::wstring const&);
-yes_type check_convertible(boost::container::basic_string< char, std::char_traits< char >, void > const&);
-yes_type check_convertible(boost::container::basic_string< wchar_t, std::char_traits< wchar_t >, void > const&);
+yes_type check_convertible(boost::container::basic_string< char, std::char_traits< char >, void, void > const&);
+yes_type check_convertible(boost::container::basic_string< wchar_t, std::char_traits< wchar_t >, void, void > const&);
 yes_type check_convertible(boost::basic_string_view< char, std::char_traits< char > > const&);
 yes_type check_convertible(boost::basic_string_view< wchar_t, std::char_traits< wchar_t > > const&);
 no_type check_convertible(std::nullptr_t);
@@ -553,7 +578,7 @@ no_type check_convertible(...);
 } // namespace is_convertible_to_path_source_non_std_string_view_impl
 
 template< typename T >
-struct is_convertible_to_path_source_non_std_string_view :
+struct check_is_convertible_to_path_source_non_std_string_view :
     public std::integral_constant<
         bool,
         sizeof(is_convertible_to_path_source_non_std_string_view_impl::check_convertible(std::declval< T const& >())) == sizeof(yes_type)
@@ -561,14 +586,23 @@ struct is_convertible_to_path_source_non_std_string_view :
 {
 };
 
-//! The type trait indicates whether the type has a conversion path to one of the path source types
+/*!
+ * \brief The type trait indicates whether the type has a conversion path to one of the path source types.
+ *
+ * \note The type trait returns `false` if the type is convertible to `path`. This prevents testing other
+ *       conversion paths and forces the conversion to `path` to be chosen instead, to invoke a non-template
+ *       member of `path` accepting a `path` argument.
+ */
 template< typename T >
 struct is_convertible_to_path_source :
     public std::integral_constant<
         bool,
-        detail::disjunction<
-            is_convertible_to_std_string_view< T >,
-            is_convertible_to_path_source_non_std_string_view< T >
+        detail::conjunction<
+            detail::negation< std::is_convertible< T, path > >,
+            detail::disjunction<
+                check_is_convertible_to_std_string_view< T >,
+                check_is_convertible_to_path_source_non_std_string_view< T >
+            >
         >::value
     >
 {
@@ -614,24 +648,24 @@ BOOST_FORCEINLINE typename Callback::result_type dispatch_convertible_impl(std::
 template< typename Source, typename Callback >
 BOOST_FORCEINLINE typename Callback::result_type dispatch_convertible_impl
 (
-    boost::container::basic_string< char, std::char_traits< char >, void > const& source,
+    boost::container::basic_string< char, std::char_traits< char >, void, void > const& source,
     Callback cb,
     const codecvt_type* cvt
 )
 {
-    typedef typename path_traits::make_dependent< boost::container::basic_string< char, std::char_traits< char >, void >, Source >::type source_t;
+    typedef typename path_traits::make_dependent< boost::container::basic_string< char, std::char_traits< char >, void, void >, Source >::type source_t;
     return path_traits::dispatch(static_cast< source_t const& >(source), cb, cvt);
 }
 
 template< typename Source, typename Callback >
 BOOST_FORCEINLINE typename Callback::result_type dispatch_convertible_impl
 (
-    boost::container::basic_string< wchar_t, std::char_traits< wchar_t >, void > const& source,
+    boost::container::basic_string< wchar_t, std::char_traits< wchar_t >, void, void > const& source,
     Callback cb,
     const codecvt_type* cvt
 )
 {
-    typedef typename path_traits::make_dependent< boost::container::basic_string< wchar_t, std::char_traits< wchar_t >, void >, Source >::type source_t;
+    typedef typename path_traits::make_dependent< boost::container::basic_string< wchar_t, std::char_traits< wchar_t >, void, void >, Source >::type source_t;
     return path_traits::dispatch(static_cast< source_t const& >(source), cb, cvt);
 }
 
@@ -704,7 +738,7 @@ BOOST_FORCEINLINE typename Callback::result_type dispatch_convertible_sv_impl(st
 
 template< typename Source, typename Callback >
 BOOST_FORCEINLINE typename std::enable_if<
-    !is_convertible_to_std_string_view< typename std::remove_cv< Source >::type >::value,
+    !check_is_convertible_to_std_string_view< typename std::remove_cv< Source >::type >::value,
     typename Callback::result_type
 >::type dispatch_convertible(Source const& source, Callback cb, const codecvt_type* cvt = nullptr)
 {
@@ -714,7 +748,7 @@ BOOST_FORCEINLINE typename std::enable_if<
 
 template< typename Source, typename Callback >
 BOOST_FORCEINLINE typename std::enable_if<
-    is_convertible_to_std_string_view< typename std::remove_cv< Source >::type >::value,
+    check_is_convertible_to_std_string_view< typename std::remove_cv< Source >::type >::value,
     typename Callback::result_type
 >::type dispatch_convertible(Source const& source, Callback cb, const codecvt_type* cvt = nullptr)
 {

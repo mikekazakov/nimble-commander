@@ -18,11 +18,5 @@ BOOST_PROCESS_V2_DECL error_code get_last_error();
 
 BOOST_PROCESS_V2_END_NAMESPACE
 
-#if defined(BOOST_PROCESS_V2_HEADER_ONLY)
-
-#include <boost/process/v2/detail/impl/last_error.ipp>
-
-#endif
-
 
 #endif //BOOST_PROCESS_V2_DETAIL_LAST_ERROR_HPP

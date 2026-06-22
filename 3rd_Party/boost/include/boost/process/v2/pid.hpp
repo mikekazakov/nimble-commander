@@ -10,6 +10,7 @@
 #include <boost/process/v2/detail/throw_error.hpp>
 
 #include <vector>
+#include <memory>
 
 BOOST_PROCESS_V2_BEGIN_NAMESPACE
 
@@ -41,28 +42,25 @@ constexpr static pid_type root_pid = 1;
 BOOST_PROCESS_V2_DECL pid_type current_pid();
 
 /// List all available pids.
-BOOST_PROCESS_V2_DECL std::vector<pid_type> all_pids(boost::system::error_code & ec);
+BOOST_PROCESS_V2_DECL std::vector<pid_type> all_pids(error_code & ec);
 
 /// List all available pids.
 BOOST_PROCESS_V2_DECL std::vector<pid_type> all_pids();
 
 // return parent pid of pid.
-BOOST_PROCESS_V2_DECL pid_type parent_pid(pid_type pid, boost::system::error_code & ec);
+BOOST_PROCESS_V2_DECL pid_type parent_pid(pid_type pid, error_code & ec);
 
 // return parent pid of pid.
 BOOST_PROCESS_V2_DECL pid_type parent_pid(pid_type pid);
 
 // return child pids of pid.
-BOOST_PROCESS_V2_DECL std::vector<pid_type> child_pids(pid_type pid, boost::system::error_code & ec);
+BOOST_PROCESS_V2_DECL std::vector<pid_type> child_pids(pid_type pid, error_code & ec);
 
 // return child pids of pid.
 BOOST_PROCESS_V2_DECL std::vector<pid_type> child_pids(pid_type pid);
 
 BOOST_PROCESS_V2_END_NAMESPACE
 
-#if defined(BOOST_PROCESS_V2_HEADER_ONLY)
-#include <boost/process/v2/impl/pid.ipp>
-#endif
 
 #endif // BOOST_PROCESS_V2_PID_HPP
 

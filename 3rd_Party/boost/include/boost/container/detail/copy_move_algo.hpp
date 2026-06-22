@@ -50,7 +50,7 @@
 #     pragma GCC diagnostic ignored "-Wstringop-overflow"
 #  endif
 //GCC 12 seems a bit confused about array access error with small_vector
-#  if defined(BOOST_GCC) && ((BOOST_GCC >= 120000) && (BOOST_GCC < 130000))
+#  if defined(BOOST_GCC) && (BOOST_GCC >= 110000)
 #     pragma GCC diagnostic ignored "-Wstringop-overread"
 #     pragma GCC diagnostic ignored "-Wstringop-overflow"
 #  endif
@@ -64,7 +64,7 @@ namespace dtl {
 template<class I>
 struct are_elements_contiguous
 {
-   static const bool value = false;
+   BOOST_STATIC_CONSTEXPR bool value = false;
 };
 
 /////////////////////////
@@ -74,7 +74,7 @@ struct are_elements_contiguous
 template<class T>
 struct are_elements_contiguous<T*>
 {
-   static const bool value = true;
+   BOOST_STATIC_CONSTEXPR bool value = true;
 };
 
 /////////////////////////
@@ -115,7 +115,7 @@ namespace dtl {
 template <class Pointer, bool IsConst>
 struct are_elements_contiguous<boost::container::vec_iterator<Pointer, IsConst> >
 {
-   static const bool value = true;
+   BOOST_STATIC_CONSTEXPR bool value = true;
 };
 
 
@@ -126,7 +126,7 @@ struct are_elements_contiguous<boost::container::vec_iterator<Pointer, IsConst> 
 template <class PointedType, class DifferenceType, class OffsetType, std::size_t OffsetAlignment>
 struct are_elements_contiguous< ::boost::interprocess::offset_ptr<PointedType, DifferenceType, OffsetType, OffsetAlignment> >
 {
-   static const bool value = true;
+   BOOST_STATIC_CONSTEXPR bool value = true;
 };
 
 template <typename I, typename O>
@@ -185,20 +185,20 @@ private:
    template <class U> static two test(int, ...);
    template <class U> static char test(int, const wrapper<U::single_value>*);
 public:
-   static const bool value = sizeof(test<T>(0, 0)) == 1;
+   BOOST_STATIC_CONSTEXPR bool value = sizeof(test<T>(0, 0)) == 1;
    void dummy() {}
 };
 
 template<class InsertionProxy, bool = has_single_value<InsertionProxy>::value>
 struct is_single_value_proxy_impl
 {
-   static const bool value = InsertionProxy::single_value;
+   BOOST_STATIC_CONSTEXPR bool value = InsertionProxy::single_value;
 };
 
 template<class InsertionProxy>
 struct is_single_value_proxy_impl<InsertionProxy, false>
 {
-   static const bool value = false;
+   BOOST_STATIC_CONSTEXPR bool value = false;
 };
 
 template<class InsertionProxy>
@@ -228,7 +228,7 @@ inline F memmove(I f, I l, F r) BOOST_NOEXCEPT_OR_NOTHROW
    const value_type *const end_raw = boost::movelib::iterator_to_raw_pointer(l);
    if(BOOST_LIKELY(beg_raw != end_raw && dest_raw && beg_raw)){
       const std::size_t n = std::size_t(end_raw - beg_raw)   ;
-      std::memmove(dest_raw, beg_raw, sizeof(value_type)*n);
+      std::memmove(reinterpret_cast<void *>(dest_raw), beg_raw, sizeof(value_type)*n);
       r += static_cast<r_difference_type>(n);
    }
    return r;
@@ -293,7 +293,7 @@ template <typename O>
 struct is_memzero_initializable
 {
    typedef typename ::boost::container::iterator_traits<O>::value_type value_type;
-   static const bool value = are_elements_contiguous<O>::value &&
+   BOOST_STATIC_CONSTEXPR bool value = are_elements_contiguous<O>::value &&
       (  dtl::is_integral<value_type>::value || dtl::is_enum<value_type>::value
       #if defined(BOOST_CONTAINER_MEMZEROED_POINTER_IS_NULL)
       || dtl::is_pointer<value_type>::value
@@ -800,10 +800,9 @@ inline typename dtl::enable_if_memtransfer_copy_assignable<I, F, F>::type
 
 template
 <typename I,   // I models InputIterator
-typename U,   // U models unsigned integral constant
 typename F>   // F models ForwardIterator
 inline typename dtl::disable_if_memtransfer_copy_assignable<I, F, F>::type
-   copy_n(I f, U n, F r)
+   copy_n(I f, std::size_t n, F r)
 {
    while (n) {
       --n;
@@ -815,10 +814,9 @@ inline typename dtl::disable_if_memtransfer_copy_assignable<I, F, F>::type
 
 template
 <typename I,   // I models InputIterator
-typename U,   // U models unsigned integral constant
 typename F>   // F models ForwardIterator
 inline typename dtl::enable_if_memtransfer_copy_assignable<I, F, F>::type
-   copy_n(I f, U n, F r) BOOST_NOEXCEPT_OR_NOTHROW
+   copy_n(I f, std::size_t n, F r) BOOST_NOEXCEPT_OR_NOTHROW
 {  return dtl::memmove_n(f, n, r); }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -829,10 +827,9 @@ inline typename dtl::enable_if_memtransfer_copy_assignable<I, F, F>::type
 
 template
 <typename I,   // I models InputIterator
-typename U,   // U models unsigned integral constant
 typename F>   // F models ForwardIterator
 inline typename dtl::disable_if_memtransfer_copy_assignable<I, F, I>::type
-   copy_n_source(I f, U n, F r)
+   copy_n_source(I f, std::size_t n, F r)
 {
    while (n) {
       --n;
@@ -910,10 +907,9 @@ inline typename dtl::enable_if_memtransfer_copy_assignable<I, F, F>::type
 
 template
 <typename I,   // I models InputIterator
-typename U,   // U models unsigned integral constant
 typename F>   // F models ForwardIterator
 inline typename dtl::disable_if_memtransfer_copy_assignable<I, F, F>::type
-   move_n(I f, U n, F r)
+   move_n(I f, std::size_t n, F r)
 {
    while (n) {
       --n;
@@ -925,12 +921,10 @@ inline typename dtl::disable_if_memtransfer_copy_assignable<I, F, F>::type
 
 template
 <typename I,   // I models InputIterator
-typename U,   // U models unsigned integral constant
 typename F>   // F models ForwardIterator
 inline typename dtl::enable_if_memtransfer_copy_assignable<I, F, F>::type
-   move_n(I f, U n, F r) BOOST_NOEXCEPT_OR_NOTHROW
+   move_n(I f, std::size_t n, F r) BOOST_NOEXCEPT_OR_NOTHROW
 {  return dtl::memmove_n(f, n, r); }
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -961,10 +955,85 @@ inline typename dtl::enable_if_memtransfer_copy_assignable<I, F, F>::type
    const std::size_t n = boost::container::iterator_udistance(f, l);
    if (BOOST_LIKELY(n != 0)){
       r -= n;
-      std::memmove((boost::movelib::iterator_to_raw_pointer)(r), (boost::movelib::iterator_to_raw_pointer)(f), sizeof(value_type)*n);
+      std::memmove(reinterpret_cast<void *>((boost::movelib::iterator_to_raw_pointer)(r)), (boost::movelib::iterator_to_raw_pointer)(f), sizeof(value_type)*n);
    }
    return r;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                         move_backward_n
+//
+//////////////////////////////////////////////////////////////////////////////
+
+template
+<typename I,   // I models BidirectionalIterator
+typename F>    // F models ForwardIterator
+inline typename dtl::disable_if_memtransfer_copy_assignable<I, F, F>::type
+   move_backward_n(I l, std::size_t n, F r)
+{
+   while (n) {
+      --n;
+      --l; --r;
+      *r = ::boost::move(*l);
+   }
+   return r;
+}
+
+template
+<typename I,   // I models InputIterator
+typename F>   // F models ForwardIterator
+inline typename dtl::enable_if_memtransfer_copy_assignable<I, F, F>::type
+   move_backward_n(I l, std::size_t n, F r) BOOST_NOEXCEPT_OR_NOTHROW
+{
+   typedef typename boost::container::iter_value<I>::type value_type;
+   if (BOOST_LIKELY(n != 0)){
+      r -= n;
+      std::memmove (reinterpret_cast<void *>((boost::movelib::iterator_to_raw_pointer)(r))
+                  , reinterpret_cast<const void *>((boost::movelib::iterator_to_raw_pointer)(l) - n)
+                  , sizeof(value_type)*n);
+   }
+   return r;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                         move_backward_n_source
+//
+//////////////////////////////////////////////////////////////////////////////
+
+template
+<typename I,   // I models BidirectionalIterator
+typename F>    // F models ForwardIterator
+inline typename dtl::disable_if_memtransfer_copy_assignable<I, F, I>::type
+   move_backward_n_source(I l, std::size_t n, F r)
+{
+   while (n) {
+      --n;
+      --l; --r;
+      *r = ::boost::move(*l);
+   }
+   return l;
+}
+
+template
+<typename I,   // I models InputIterator
+typename F>   // F models ForwardIterator
+inline typename dtl::enable_if_memtransfer_copy_assignable<I, F, I>::type
+   move_backward_n_source(I l, std::size_t n, F r) BOOST_NOEXCEPT_OR_NOTHROW
+{
+   typedef typename boost::container::iter_value<I>::type value_type;
+   
+   if (BOOST_LIKELY(n != 0)){
+      r -= n;
+      l -= n;
+      std::memmove( reinterpret_cast<void *>((boost::movelib::iterator_to_raw_pointer)(r))
+                  , l
+                  , sizeof(value_type)*n);
+   }
+   return l;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -974,10 +1043,9 @@ inline typename dtl::enable_if_memtransfer_copy_assignable<I, F, F>::type
 
 template
 <typename I    // I models InputIterator
-,typename U    // U models unsigned integral constant
 ,typename F>   // F models ForwardIterator
 inline typename dtl::disable_if_memtransfer_copy_assignable<I, F, I>::type
-   move_n_source_dest(I f, U n, F &r)
+   move_n_source_dest(I f, std::size_t n, F &r)
 {
    while (n) {
       --n;
@@ -1002,10 +1070,9 @@ inline typename dtl::enable_if_memtransfer_copy_assignable<I, F, I>::type
 
 template
 <typename I    // I models InputIterator
-,typename U    // U models unsigned integral constant
 ,typename F>   // F models ForwardIterator
 inline typename dtl::disable_if_memtransfer_copy_assignable<I, F, I>::type
-   move_n_source(I f, U n, F r)
+   move_n_source(I f, std::size_t n, F r)
 {
    while (n) {
       --n;
@@ -1043,10 +1110,9 @@ inline B move_backward_overlapping(B f, B l, B rl)
 
 template
    <typename Allocator
-   ,typename I   // I models InputIterator
-   ,typename U>  // U models unsigned integral constant
+   ,typename I>  // I models InputIterator
 inline typename dtl::disable_if_trivially_destructible<I, void>::type
-   destroy_alloc_n(Allocator &a, I f, U n)
+   destroy_alloc_n(Allocator &a, I f, std::size_t n)
 {
    while(n){
       --n;
@@ -1057,10 +1123,9 @@ inline typename dtl::disable_if_trivially_destructible<I, void>::type
 
 template
    <typename Allocator
-   ,typename I   // I models InputIterator
-   ,typename U>  // U models unsigned integral constant
+   ,typename I>   // I models InputIterator
 inline typename dtl::enable_if_trivially_destructible<I, void>::type
-   destroy_alloc_n(Allocator &, I, U)
+   destroy_alloc_n(Allocator &, I, std::size_t)
 {}
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1111,7 +1176,7 @@ inline typename dtl::disable_if_memtransfer_copy_assignable<F, G, void>::type
    boost::container::destroy_alloc_n(a, large_range_f, std::size_t(n_j - n_i));
 }
 
-static const std::size_t DeepSwapAllocNMaxStorage = std::size_t(1) << std::size_t(11); //2K bytes
+BOOST_CONTAINER_CONSTANT_VAR std::size_t DeepSwapAllocNMaxStorage = std::size_t(1) << std::size_t(11); //2K bytes
 
 template
    <std::size_t MaxTmpBytes
@@ -1496,8 +1561,8 @@ void expand_backward_forward_and_insert_alloc_move_backward
 {
    typedef std::size_t size_type;
    typedef typename allocator_traits<Allocator>::value_type value_type;
-   static const bool trivial_dctr_after_move = has_trivial_destructor_after_move<value_type>::value;
-   static const bool trivial_dctr = dtl::is_trivially_destructible<value_type>::value;
+   BOOST_STATIC_CONSTEXPR bool trivial_dctr_after_move = has_trivial_destructor_after_move<value_type>::value;
+   BOOST_STATIC_CONSTEXPR bool trivial_dctr = dtl::is_trivially_destructible<value_type>::value;
 
    typedef typename dtl::if_c
       <trivial_dctr
@@ -1554,7 +1619,7 @@ void expand_backward_forward_and_insert_alloc_move_backward
          //Old values destroyed automatically with "old_values_destroyer"
          //when "old_values_destroyer" goes out of scope unless the have trivial
          //destructor after move.
-         if(trivial_dctr_after_move)
+         BOOST_IF_CONSTEXPR(trivial_dctr_after_move)
             old_values_destroyer.release();
       }
       //raw_before is so big that divides old_end
@@ -1584,7 +1649,7 @@ void expand_backward_forward_and_insert_alloc_move_backward
             remaining_pos = ::boost::container::move_forward_overlapping(remaining_pos, old_finish, old_start);
             (void)remaining_pos;
             //Once moved, avoid calling the destructors if trivial after move
-            if(!trivial_dctr_after_move) {
+            BOOST_IF_CONSTEXPR(!trivial_dctr_after_move) {
                boost::container::destroy_alloc(a, remaining_pos, old_finish);
             }
          }
@@ -1655,7 +1720,7 @@ void expand_backward_forward_and_insert_alloc_move_backward
             B const new_first(make_iterator_uadvance(next, new_1st_range));
             B const p = ::boost::container::move_forward_overlapping(pos, old_finish, new_first);
             (void)p;
-            if(!trivial_dctr_after_move)
+            BOOST_IF_CONSTEXPR(!trivial_dctr_after_move)
                boost::container::destroy_alloc(a, p, old_finish);
          }
       }
@@ -1706,7 +1771,7 @@ void expand_backward_forward_and_insert_alloc_move_backward
                               //trivial_dctr_after_move is true
             //Destroy remaining moved elements from old_end except if they
             //have trivial destructor after being moved
-            if(!trivial_dctr_after_move) {
+            BOOST_IF_CONSTEXPR(!trivial_dctr_after_move) {
                boost::container::destroy_alloc(a, move_end, old_finish);
             }
          }
@@ -1796,8 +1861,8 @@ inline void expand_backward_forward_and_insert_alloc_move_forward
 {
    typedef std::size_t size_type;
    typedef typename allocator_traits<Allocator>::value_type value_type;
-   static const bool trivial_dctr_after_move = has_trivial_destructor_after_move<value_type>::value;
-   static const bool trivial_dctr = dtl::is_trivially_destructible<value_type>::value;
+   BOOST_STATIC_CONSTEXPR bool trivial_dctr_after_move = has_trivial_destructor_after_move<value_type>::value;
+   BOOST_STATIC_CONSTEXPR bool trivial_dctr = dtl::is_trivially_destructible<value_type>::value;
 
    typedef typename dtl::if_c
       <trivial_dctr
@@ -1857,7 +1922,7 @@ inline void expand_backward_forward_and_insert_alloc_move_forward
          //Old values destroyed automatically with "old_values_destroyer"
          //when "old_values_destroyer" goes out of scope unless the have trivial
          //destructor after move.
-         if(trivial_dctr_after_move)
+         BOOST_IF_CONSTEXPR(trivial_dctr_after_move)
             old_values_destroyer.release();
       }
       //raw_before is so big that divides old_end
@@ -1883,7 +1948,7 @@ inline void expand_backward_forward_and_insert_alloc_move_forward
          BOOST_ASSERT(old_start != old_finish);
          boost::container::move_backward_overlapping(old_start, pre_pos_raw, old_finish);
          old_values_destroyer.release();
-         if (!trivial_dctr_after_move) {
+         BOOST_IF_CONSTEXPR(!trivial_dctr_after_move) {
             boost::container::destroy_alloc(a, old_start, new_start);
          }
       }
@@ -1922,7 +1987,7 @@ inline void expand_backward_forward_and_insert_alloc_move_forward
          //Destroy remaining moved elements from old_begin except if they
          //have trivial destructor after being moved
          old_values_destroyer.release();
-         if (!trivial_dctr_after_move) {
+         BOOST_IF_CONSTEXPR(!trivial_dctr_after_move) {
             boost::container::destroy_alloc(a, old_start, p);
          }
       }
@@ -1949,9 +2014,8 @@ inline void expand_backward_forward_and_insert_alloc_move_forward
          insertion_proxy.copy_n_and_update(a, new_beg_pos, n);
          B const p = ::boost::container::move_backward_overlapping(old_start, pos, new_beg_pos);
          old_values_destroyer.release();
-
-         if (!trivial_dctr_after_move) {
-            (void)p;
+         (void)p;
+         BOOST_IF_CONSTEXPR(!trivial_dctr_after_move) {
             boost::container::destroy_alloc(a, old_start, p);
          }
       }

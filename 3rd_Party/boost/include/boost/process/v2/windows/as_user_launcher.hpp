@@ -28,7 +28,7 @@ struct as_user_launcher : default_launcher
   template<typename ExecutionContext, typename Args, typename ... Inits>
   auto operator()(ExecutionContext & context,
                   const typename std::enable_if<std::is_convertible<
-                             ExecutionContext&, BOOST_PROCESS_V2_ASIO_NAMESPACE::execution_context&>::value,
+                             ExecutionContext&, net::execution_context&>::value,
                              filesystem::path >::type & executable,
                   Args && args,
                   Inits && ... inits ) -> basic_process<typename ExecutionContext::executor_type>
@@ -47,19 +47,19 @@ struct as_user_launcher : default_launcher
   auto operator()(ExecutionContext & context,
                      error_code & ec,
                      const typename std::enable_if<std::is_convertible<
-                             ExecutionContext&, BOOST_PROCESS_V2_ASIO_NAMESPACE::execution_context&>::value,
+                             ExecutionContext&, net::execution_context&>::value,
                              filesystem::path >::type & executable,
                      Args && args,
                      Inits && ... inits ) -> basic_process<typename ExecutionContext::executor_type>
   {
-      return (*this)(context.get_executor(), executable, std::forward<Args>(args), std::forward<Inits>(inits)...);
+      return (*this)(context.get_executor(), ec, executable, std::forward<Args>(args), std::forward<Inits>(inits)...);
   }
 
   template<typename Executor, typename Args, typename ... Inits>
   auto operator()(Executor exec,
                      const typename std::enable_if<
-                             BOOST_PROCESS_V2_ASIO_NAMESPACE::execution::is_executor<Executor>::value ||
-                             BOOST_PROCESS_V2_ASIO_NAMESPACE::is_executor<Executor>::value,
+                             net::execution::is_executor<Executor>::value ||
+                             net::is_executor<Executor>::value,
                              filesystem::path >::type & executable,
                      Args && args,
                      Inits && ... inits ) -> basic_process<Executor>
@@ -77,8 +77,8 @@ struct as_user_launcher : default_launcher
   auto operator()(Executor exec,
                   error_code & ec,
                   const typename std::enable_if<
-                      BOOST_PROCESS_V2_ASIO_NAMESPACE::execution::is_executor<Executor>::value || 
-                      BOOST_PROCESS_V2_ASIO_NAMESPACE::is_executor<Executor>::value,
+                      net::execution::is_executor<Executor>::value ||
+                      net::is_executor<Executor>::value,
                         filesystem::path >::type & executable,
                   Args && args,
                   Inits && ... inits ) -> basic_process<Executor>
@@ -91,13 +91,21 @@ struct as_user_launcher : default_launcher
       detail::on_error(*this, executable, command_line, ec, inits...);
       return basic_process<Executor>(exec);
     }
+
+    if (!inherited_handles.empty())
+    {
+      set_handle_list(ec);
+      if (ec)
+        return basic_process<Executor>(exec);
+    }
+
     auto ok = ::CreateProcessAsUserW(
         token,
         executable.empty() ? nullptr : executable.c_str(),
         command_line.empty() ? nullptr : &command_line.front(),
         process_attributes,
         thread_attributes,
-        inherit_handles ? TRUE : FALSE,
+        inherited_handles.empty() ? FALSE : TRUE,
         creation_flags,
         environment,
         current_directory.empty() ? nullptr : current_directory.c_str(),
@@ -107,7 +115,7 @@ struct as_user_launcher : default_launcher
 
     if (ok == 0)
     {
-      BOOST_PROCESS_V2_ASSIGN_LAST_ERROR(ec)
+      BOOST_PROCESS_V2_ASSIGN_LAST_ERROR(ec);
       detail::on_error(*this, executable, command_line, ec, inits...);
 
       if (process_information.hProcess != INVALID_HANDLE_VALUE)

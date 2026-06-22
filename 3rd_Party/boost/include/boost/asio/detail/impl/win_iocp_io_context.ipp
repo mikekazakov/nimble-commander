@@ -2,7 +2,7 @@
 // detail/impl/win_iocp_io_context.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,6 +19,7 @@
 
 #if defined(BOOST_ASIO_HAS_IOCP)
 
+#include <boost/asio/config.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/detail/cstdint.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
@@ -31,6 +32,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 struct win_iocp_io_context::thread_function
@@ -79,7 +81,7 @@ struct win_iocp_io_context::timer_thread_function
 };
 
 win_iocp_io_context::win_iocp_io_context(
-    boost::asio::execution_context& ctx, int concurrency_hint, bool own_thread)
+    boost::asio::execution_context& ctx, bool own_thread)
   : execution_context_service_base<win_iocp_io_context>(ctx),
     iocp_(),
     outstanding_work_(0),
@@ -88,12 +90,13 @@ win_iocp_io_context::win_iocp_io_context(
     shutdown_(0),
     gqcs_timeout_(get_gqcs_timeout()),
     dispatch_required_(0),
-    concurrency_hint_(concurrency_hint)
+    concurrency_hint_(config(ctx).get("scheduler", "concurrency_hint", -1))
 {
   BOOST_ASIO_HANDLER_TRACKING_INIT;
 
   iocp_.handle = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0,
-      static_cast<DWORD>(concurrency_hint >= 0 ? concurrency_hint : DWORD(~0)));
+      static_cast<DWORD>(concurrency_hint_ >= 0
+        ? concurrency_hint_ : DWORD(~0)));
   if (!iocp_.handle)
   {
     DWORD last_error = ::GetLastError();
@@ -105,17 +108,42 @@ win_iocp_io_context::win_iocp_io_context(
   if (own_thread)
   {
     ::InterlockedIncrement(&outstanding_work_);
-    thread_.reset(new boost::asio::detail::thread(thread_function(this)));
+    thread_ = thread(thread_function(this));
+  }
+}
+
+win_iocp_io_context::win_iocp_io_context(
+    win_iocp_io_context::internal, boost::asio::execution_context& ctx)
+  : execution_context_service_base<win_iocp_io_context>(ctx),
+    iocp_(),
+    outstanding_work_(0),
+    stopped_(0),
+    stop_event_posted_(0),
+    shutdown_(0),
+    gqcs_timeout_(get_gqcs_timeout()),
+    dispatch_required_(0),
+    concurrency_hint_(-1)
+{
+  BOOST_ASIO_HANDLER_TRACKING_INIT;
+
+  iocp_.handle = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0,
+      static_cast<DWORD>(concurrency_hint_ >= 0
+        ? concurrency_hint_ : DWORD(~0)));
+  if (!iocp_.handle)
+  {
+    DWORD last_error = ::GetLastError();
+    boost::system::error_code ec(last_error,
+        boost::asio::error::get_system_category());
+    boost::asio::detail::throw_error(ec, "iocp");
   }
 }
 
 win_iocp_io_context::~win_iocp_io_context()
 {
-  if (thread_.get())
+  if (thread_.joinable())
   {
     stop();
-    thread_->join();
-    thread_.reset();
+    thread_.join();
   }
 }
 
@@ -123,18 +151,17 @@ void win_iocp_io_context::shutdown()
 {
   ::InterlockedExchange(&shutdown_, 1);
 
-  if (timer_thread_.get())
+  if (timer_thread_.joinable())
   {
     LARGE_INTEGER timeout;
     timeout.QuadPart = 1;
     ::SetWaitableTimer(waitable_timer_.handle, &timeout, 1, 0, 0, FALSE);
   }
 
-  if (thread_.get())
+  if (thread_.joinable())
   {
     stop();
-    thread_->join();
-    thread_.reset();
+    thread_.join();
     ::InterlockedDecrement(&outstanding_work_);
   }
 
@@ -167,11 +194,7 @@ void win_iocp_io_context::shutdown()
     }
   }
 
-  if (timer_thread_.get())
-  {
-    timer_thread_->join();
-    timer_thread_.reset();
-  }
+  timer_thread_.join();
 }
 
 boost::system::error_code win_iocp_io_context::register_handle(
@@ -572,10 +595,10 @@ void win_iocp_io_context::do_add_timer_queue(timer_queue_base& queue)
         &timeout, max_timeout_msec, 0, 0, FALSE);
   }
 
-  if (!timer_thread_.get())
+  if (!timer_thread_.joinable())
   {
     timer_thread_function thread_function = { this };
-    timer_thread_.reset(new thread(thread_function, 65536));
+    timer_thread_ = thread(thread_function, 65536);
   }
 }
 
@@ -588,7 +611,7 @@ void win_iocp_io_context::do_remove_timer_queue(timer_queue_base& queue)
 
 void win_iocp_io_context::update_timeout()
 {
-  if (timer_thread_.get())
+  if (timer_thread_.joinable())
   {
     // There's no point updating the waitable timer if the new timeout period
     // exceeds the maximum timeout. In that case, we might as well wait for the
@@ -606,6 +629,7 @@ void win_iocp_io_context::update_timeout()
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

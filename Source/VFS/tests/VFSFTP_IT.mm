@@ -10,19 +10,24 @@
 
 using namespace nc::vfs;
 
+static constexpr const char *g_FtpAddress = "127.0.0.1";
+static constexpr const char *g_FtpUser = "ftpuser";
+static constexpr const char *g_FtpPassword = "ftpuserpasswd";
+static constexpr long g_FtpPort = 9021;
+
 #define PREFIX "VFSFTP "
 
 TEST_CASE(PREFIX "just connect")
 {
-    REQUIRE_NOTHROW(std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
-    REQUIRE_THROWS(std::make_shared<FTPHost>("127.0.0.1", "wronguser", "ftpuserpasswd", "/", 9021));
-    REQUIRE_THROWS(std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "wronguserpasswd", "/", 9021));
+    REQUIRE_NOTHROW(std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
+    REQUIRE_THROWS(std::make_shared<FTPHost>(g_FtpAddress, "wronguser", g_FtpPassword, "/", g_FtpPort));
+    REQUIRE_THROWS(std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, "wronguserpasswd", "/", g_FtpPort));
 }
 
 TEST_CASE(PREFIX "upload and compare")
 {
     VFSHostPtr host;
-    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
 
     const char *fn1 = "/System/Library/Kernels/kernel";
     const char *fn2 = "/kernel";
@@ -51,7 +56,7 @@ TEST_CASE(PREFIX "upload and compare")
 TEST_CASE(PREFIX "empty file test")
 {
     VFSHostPtr host;
-    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
     const char *fn = "/empty_file";
 
     if( host->Stat(fn, 0) )
@@ -77,8 +82,8 @@ TEST_CASE(PREFIX "MKD RMD")
 {
     VFSHostPtr host;
     VFSHostPtr shadowhost;
-    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
-    REQUIRE_NOTHROW(shadowhost = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
+    REQUIRE_NOTHROW(shadowhost = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
     for( const auto &dir : std::vector<std::string>{"/" + nc::base::UUID::Generate().ToString(),
                                                     "/В лесу родилась елочка, В лесу она росла",
                                                     "/北京市 >≥±§ 😱"} ) {
@@ -139,7 +144,7 @@ TEST_CASE(PREFIX "MKD RMD")
 TEST_CASE(PREFIX "renaming")
 {
     VFSHostPtr host;
-    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
 
     const std::string fn1 = "/System/Library/Kernels/kernel";
     const std::string fn2 = "/kernel";
@@ -173,7 +178,7 @@ TEST_CASE(PREFIX "listing")
     {
         // Create the context to check with a separate instance of FTPHost to not have any cached state.
         VFSHostPtr host;
-        REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+        REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
         std::ignore = easy::VFSEasyDelete("/Test", host);
         auto touch = [&](const char *_path) {
             const VFSFilePtr file = host->CreateFile(_path).value();
@@ -190,7 +195,7 @@ TEST_CASE(PREFIX "listing")
         touch("/Test/FileName4.txt");
     }
     VFSHostPtr host;
-    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
     const std::set<std::string> expected_filenames = {"DirectoryName1",
                                                       "DirectoryName2",
                                                       "DirectoryName3",
@@ -225,7 +230,7 @@ TEST_CASE(PREFIX "seekread")
     {
         // Create the context to check with a separate instance of FTPHost to not have any cached state.
         VFSHostPtr host;
-        REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+        REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
         std::ignore = easy::VFSEasyDelete("/TestSeekRead", host);
 
         constexpr size_t sz = 50'000'000;
@@ -241,7 +246,7 @@ TEST_CASE(PREFIX "seekread")
     }
 
     VFSHostPtr host;
-    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
 
     constexpr auto fn = "/TestSeekRead/blob";
     const VFSFilePtr file = host->CreateFile(fn).value();
@@ -277,7 +282,7 @@ TEST_CASE(PREFIX "big files reading cancellation")
     {
         // Create the context to check with a separate instance of FTPHost to not have any cached state.
         VFSHostPtr host;
-        REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+        REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
         std::ignore = easy::VFSEasyDelete("/TestCancellation", host);
 
         constexpr size_t sz = 200'000'000;
@@ -293,7 +298,7 @@ TEST_CASE(PREFIX "big files reading cancellation")
     }
 
     VFSHostPtr host;
-    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
     const auto host_path = "/TestCancellation/blob";
     std::atomic_bool finished = false;
     std::jthread th{[&] {
@@ -320,7 +325,7 @@ TEST_CASE(PREFIX "repeated cancellations")
     {
         // Create the context to check with a separate instance of FTPHost to not have any cached state.
         VFSHostPtr host;
-        REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+        REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
         std::ignore = easy::VFSEasyDelete("/TestRepeatedCancellation", host);
 
         constexpr size_t sz = 50'000'000;
@@ -336,7 +341,7 @@ TEST_CASE(PREFIX "repeated cancellations")
     }
 
     VFSHostPtr host;
-    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
     const auto host_path = "/TestRepeatedCancellation/blob";
 
     for( int i = 0; i < 5; ++i ) {
@@ -363,7 +368,7 @@ TEST_CASE(PREFIX "connection timeout")
 {
     // port 9 is discard protocol, so it should not respond
     try {
-        VFSHostPtr host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9);
+        VFSHostPtr host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", 9);
         FAIL("did not throw");
     } catch( const nc::ErrorException &e ) {
         REQUIRE(e.error().Domain() == ftp::ErrorDomain);

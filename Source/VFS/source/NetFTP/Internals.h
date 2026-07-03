@@ -5,6 +5,7 @@
 #include <VFS/Host.h>
 #include <vector>
 #include <cstddef>
+#include <functional>
 #include "Cache.h"
 
 namespace nc::vfs::ftp {
@@ -44,7 +45,7 @@ struct CURLInstance {
     CURL *curl = nullptr;
     CURLM *curlm = nullptr;
     bool attached = false;
-    int (^prog_func)(curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) = nil;
+    std::function<int(curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow)> prog_func;
     std::mutex call_lock;
 
 private:

@@ -64,7 +64,7 @@ static std::chrono::milliseconds UploadingDropDelay()
 static void RegisterRemoteFileUploading(const std::string &_original_path,
                                         const VFSHostPtr &_original_vfs,
                                         const std::string &_native_path,
-                                        PanelController *_origin)
+                                        PanelController *_origin_controller)
 {
     if( _original_vfs->IsNativeFS() )
         return; // no reason to watch files from native fs
@@ -72,38 +72,53 @@ static void RegisterRemoteFileUploading(const std::string &_original_path,
     if( !_original_vfs->IsWritable() )
         return; // no reason to watch file we can't upload then
 
-    __weak NCMainWindowController *origin_window = _origin.mainWindowController;
-    __weak PanelController *origin_controller = _origin;
-    const VFSHostWeakPtr weak_host(_original_vfs);
+    __weak PanelController *weak_origin_controller = _origin_controller;
+    const VFSHostWeakPtr weak_host = _original_vfs;
 
-    auto on_file_change = [=] {
-        NCMainWindowController *const window = origin_window;
-        if( !window )
-            return;
+    auto on_file_change = [weak_host, weak_origin_controller, _native_path, _original_path] {
+        dispatch_assert_main_queue();
+        // in event of the file change - fetch a fresh listing in the background, return to the main thread and fire up
+        // a copying operation to transfer an updated file to the original storage
+        dispatch_to_background([weak_host, weak_origin_controller, _native_path, _original_path] {
+            dispatch_assert_background_queue();
+            const VFSHostPtr vfs = weak_host.lock();
+            if( !vfs )
+                return;
+            auto &storage_host = nc::bootstrap::NativeVFSHostInstance();
+            const std::string changed_item_directory = std::filesystem::path(_native_path).parent_path().native();
+            const std::string changed_item_filename = std::filesystem::path(_native_path).filename().native();
+            // TODO: why is FetchFlexibleListingItems() used here instead of FetchSingleItemListing()?
+            const std::expected<std::vector<VFSListingItem>, Error> listing_items =
+                storage_host.FetchFlexibleListingItems(
+                    changed_item_directory, {1, changed_item_filename}, vfs::Flags::None);
+            if( !listing_items ) {
+                return;
+            }
 
-        auto vfs = weak_host.lock();
-        if( !vfs )
-            return;
+            dispatch_to_main_queue([weak_host, weak_origin_controller, _native_path, _original_path, listing_items] {
+                dispatch_assert_main_queue();
+                const VFSHostPtr vfs = weak_host.lock();
+                if( !vfs )
+                    return;
+                PanelController *const controller = weak_origin_controller;
+                if( !controller )
+                    return;
+                NCMainWindowController *const window_controller = controller.mainWindowController;
+                if( !window_controller )
+                    return;
 
-        auto &storage_host = nc::bootstrap::NativeVFSHostInstance();
-        const auto changed_item_directory = std::filesystem::path(_native_path).parent_path().native();
-        const auto changed_item_filename = std::filesystem::path(_native_path).filename().native();
-        // TODO: why is FetchFlexibleListingItems() used here instead of FetchSingleItemListing()?
-        const std::expected<std::vector<VFSListingItem>, Error> listing_items = storage_host.FetchFlexibleListingItems(
-            changed_item_directory, {1, changed_item_filename}, vfs::Flags::None);
-        if( listing_items ) {
-            auto opts = panel::MakeDefaultFileCopyOptions();
-            opts.exist_behavior = nc::ops::CopyingOptions::ExistBehavior::OverwriteAll;
-            const auto op = std::make_shared<nc::ops::Copying>(*listing_items, _original_path, vfs, opts);
-            if( static_cast<PanelController *>(origin_controller) )
+                auto opts = panel::MakeDefaultFileCopyOptions();
+                opts.exist_behavior = nc::ops::CopyingOptions::ExistBehavior::OverwriteAll;
+                const auto op = std::make_shared<nc::ops::Copying>(*listing_items, _original_path, vfs, opts);
                 op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
                     dispatch_to_main_queue([=] {
                         // TODO: perhaps need to check that path didn't changed
-                        [static_cast<PanelController *>(origin_controller) hintAboutFilesystemChange];
+                        [controller hintAboutFilesystemChange];
                     });
                 });
-            [window enqueueOperation:op];
-        }
+                [window_controller enqueueOperation:op];
+            });
+        });
     };
 
     auto &sentinel = TemporaryNativeFileChangesSentinel::Instance();

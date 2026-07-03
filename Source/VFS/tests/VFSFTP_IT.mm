@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -296,7 +296,7 @@ TEST_CASE(PREFIX "big files reading cancellation")
     REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
     const auto host_path = "/TestCancellation/blob";
     std::atomic_bool finished = false;
-    std::thread th{[&] {
+    std::jthread th{[&] {
         char buf[256];
         const VFSFilePtr file = host->CreateFile(host_path).value();
         REQUIRE(file->Open(VFSFlags::OF_Read));
@@ -312,6 +312,61 @@ TEST_CASE(PREFIX "big files reading cancellation")
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         REQUIRE((std::chrono::system_clock::now() < deadline));
     }
-    th.join();
     std::ignore = easy::VFSEasyDelete("/TestCancellation", host);
+}
+
+TEST_CASE(PREFIX "repeated cancellations")
+{
+    {
+        // Create the context to check with a separate instance of FTPHost to not have any cached state.
+        VFSHostPtr host;
+        REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+        std::ignore = easy::VFSEasyDelete("/TestRepeatedCancellation", host);
+
+        constexpr size_t sz = 50'000'000;
+        std::vector<uint8_t> bytes(sz);
+        for( size_t i = 0; i < sz; ++i )
+            bytes[i] = static_cast<uint8_t>(i & 0xFF);
+
+        REQUIRE(host->CreateDirectory("/TestRepeatedCancellation", 0755));
+        const VFSFilePtr file = host->CreateFile("/TestRepeatedCancellation/blob").value();
+        REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
+        WriteAll(*file, bytes);
+        REQUIRE(file->Close());
+    }
+
+    VFSHostPtr host;
+    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+    const auto host_path = "/TestRepeatedCancellation/blob";
+
+    for( int i = 0; i < 5; ++i ) {
+        std::atomic_bool finished = false;
+        std::jthread th{[&] {
+            char buf[256];
+            const VFSFilePtr file = host->CreateFile(host_path).value();
+            REQUIRE(file->Open(VFSFlags::OF_Read));
+            REQUIRE(file->Read(buf, sizeof(buf)) == sizeof(buf));
+            REQUIRE(file->Close());
+            finished = true;
+        }};
+
+        const auto deadline = std::chrono::system_clock::now() + std::chrono::seconds(5);
+        while( !finished ) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            REQUIRE((std::chrono::system_clock::now() < deadline));
+        }
+    }
+    std::ignore = easy::VFSEasyDelete("/TestRepeatedCancellation", host);
+}
+
+TEST_CASE(PREFIX "connection timeout")
+{
+    // port 9 is discard protocol, so it should not respond
+    try {
+        VFSHostPtr host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9);
+        FAIL("did not throw");
+    } catch( const nc::ErrorException &e ) {
+        REQUIRE(e.error().Domain() == ftp::ErrorDomain);
+        REQUIRE(e.error().Code() == ftp::Errors::couldnt_connect);
+    }
 }

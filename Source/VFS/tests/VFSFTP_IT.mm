@@ -301,7 +301,7 @@ TEST_CASE(PREFIX "big files reading cancellation")
     REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
     const auto host_path = "/TestCancellation/blob";
     std::atomic_bool finished = false;
-    std::jthread th{[&] {
+    const std::jthread th{[&] {
         char buf[256];
         const VFSFilePtr file = host->CreateFile(host_path).value();
         REQUIRE(file->Open(VFSFlags::OF_Read));
@@ -346,7 +346,7 @@ TEST_CASE(PREFIX "repeated cancellations")
 
     for( int i = 0; i < 5; ++i ) {
         std::atomic_bool finished = false;
-        std::jthread th{[&] {
+        const std::jthread th{[&] {
             char buf[256];
             const VFSFilePtr file = host->CreateFile(host_path).value();
             REQUIRE(file->Open(VFSFlags::OF_Read));
@@ -368,7 +368,7 @@ TEST_CASE(PREFIX "connection timeout")
 {
     // port 9 is discard protocol, so it should not respond
     try {
-        VFSHostPtr host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", 9);
+        const VFSHostPtr host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", 9);
         FAIL("did not throw");
     } catch( const nc::ErrorException &e ) {
         REQUIRE(e.error().Domain() == ftp::ErrorDomain);

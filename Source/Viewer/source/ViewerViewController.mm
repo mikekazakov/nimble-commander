@@ -156,6 +156,7 @@ struct BackgroundFileOpener {
     m_SearchInFileQueue.Wait();
 
     [m_View detachFromFile];
+    m_View.searchView.hidden = true;
     m_SearchInFile.reset();
     m_ViewerFileWindow.reset();
     m_SearchFileWindow.reset();

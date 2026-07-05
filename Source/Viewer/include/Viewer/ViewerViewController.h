@@ -39,7 +39,10 @@ class ActionsShortcutsManager;
 - (bool)performBackgroundOpening;
 
 - (void)show;
+
+// Reverts the viewer to a default state, i.e. valid but with no contents
 - (void)clear;
+
 - (void)saveFileState;
 
 - (void)markSelection:(CFRange)_selection forSearchTerm:(std::string)_request;

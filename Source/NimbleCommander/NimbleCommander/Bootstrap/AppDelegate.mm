@@ -477,7 +477,12 @@ static NCAppDelegate *g_Me = nil;
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *) [[maybe_unused]] _app
 {
-    return NO;
+    return false;
+}
+
+- (BOOL)applicationSupportsSecureRestorableState:(NSApplication *) [[maybe_unused]] _app
+{
+    return true;
 }
 
 + (void)restoreWindowWithIdentifier:(NSString *)identifier

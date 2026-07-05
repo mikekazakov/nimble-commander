@@ -1,9 +1,9 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 class ExternalEditorStartupInfo;
 
-@interface ExternalEditorInfo : NSObject <NSCoding, NSCopying>
+@interface ExternalEditorInfo : NSObject <NSSecureCoding, NSCopying>
 
 @property(nonatomic) NSString *name;
 @property(nonatomic) NSString *path;

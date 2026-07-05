@@ -105,6 +105,7 @@ struct ExternalEditorsPersistence {
 @synthesize only_files = m_OnlyFiles;
 @synthesize terminal = m_Terminal;
 @synthesize max_size = m_MaxSize;
+
 - (id)init
 {
     self = [super init];
@@ -147,13 +148,13 @@ struct ExternalEditorsPersistence {
         self.terminal = false;
 
         if( [decoder containsValueForKey:@"name"] )
-            self.name = [decoder decodeObjectForKey:@"name"];
+            self.name = [decoder decodeObjectOfClass:NSString.class forKey:@"name"];
         if( [decoder containsValueForKey:@"path"] )
-            self.path = [decoder decodeObjectForKey:@"path"];
+            self.path = [decoder decodeObjectOfClass:NSString.class forKey:@"path"];
         if( [decoder containsValueForKey:@"arguments"] )
-            self.arguments = [decoder decodeObjectForKey:@"arguments"];
+            self.arguments = [decoder decodeObjectOfClass:NSString.class forKey:@"arguments"];
         if( [decoder containsValueForKey:@"mask"] )
-            self.mask = [decoder decodeObjectForKey:@"mask"];
+            self.mask = [decoder decodeObjectOfClass:NSString.class forKey:@"mask"];
         if( [decoder containsValueForKey:@"only_files"] )
             self.only_files = [decoder decodeBoolForKey:@"only_files"];
         if( [decoder containsValueForKey:@"max_size"] )
@@ -178,6 +179,11 @@ struct ExternalEditorsPersistence {
 - (std::shared_ptr<ExternalEditorStartupInfo>)toStartupInfo
 {
     return std::make_shared<ExternalEditorStartupInfo>(ExternalEditorsPersistence::LoadFromLegacyObjC(self));
+}
+
++ (BOOL)supportsSecureCoding
+{
+    return true;
 }
 
 @end

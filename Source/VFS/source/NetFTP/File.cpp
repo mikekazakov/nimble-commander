@@ -157,8 +157,6 @@ File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offset, cons
             m_CURL->EasySetOpt(CURLOPT_INFILESIZE, -1l);
             m_CURL->EasySetOpt(CURLOPT_READFUNCTION, nullptr);
             m_CURL->EasySetOpt(CURLOPT_READDATA, nullptr);
-            m_CURL->EasySetOpt(CURLOPT_LOW_SPEED_LIMIT, 1l);
-            m_CURL->EasySetOpt(CURLOPT_LOW_SPEED_TIME, 60l);
             m_CURL->EasySetupProgFunc();
 
             if( _file_offset != 0 ) {
@@ -273,19 +271,20 @@ std::expected<size_t, Error> File::Write(const void *_buf, size_t _size)
         int msgs_left = 1;
         while( msgs_left ) {
             const CURLMsg *msg = curl_multi_info_read(m_CURL->curlm, &msgs_left);
-            if( msg == nullptr || msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK ) {
+            if( msg != nullptr && (msg->msg != CURLMSG_DONE || msg->data.result != CURLE_OK) ) {
                 Log::Error("curl_multi_info_read() returned {}.", std::to_underlying(msg->msg));
                 error = true;
             }
         }
     }
 
+    m_WriteBuf.DiscardConsumed(); // discard unconditionally.
+
     if( error )
         return std::unexpected(Error{Error::POSIX, EIO});
 
     m_FilePos += m_WriteBuf.Consumed();
     m_FileSize += m_WriteBuf.Consumed();
-    m_WriteBuf.DiscardConsumed();
 
     return _size;
 }

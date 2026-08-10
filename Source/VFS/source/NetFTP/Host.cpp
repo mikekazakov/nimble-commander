@@ -680,6 +680,12 @@ void FTPHost::BasicOptsSetup(ftp::CURLInstance *_inst)
     if( Config().active )
         _inst->EasySetOpt(CURLOPT_FTPPORT, "-");
 
+    // Timeouts
+    _inst->EasySetOpt(CURLOPT_CONNECTTIMEOUT, 30L);       // 30s connection timeout
+    _inst->EasySetOpt(CURLOPT_FTP_RESPONSE_TIMEOUT, 30L); // 30s for FTP responses
+    _inst->EasySetOpt(CURLOPT_LOW_SPEED_LIMIT, 1L);       // Abort if < 1 byte/sec
+    _inst->EasySetOpt(CURLOPT_LOW_SPEED_TIME, 60L);       // For 60 seconds
+
     // TODO: SSL support
     // _inst->EasySetOpt(CURLOPT_USE_SSL, CURLUSESSL_TRY);
     // _inst->EasySetOpt(CURLOPT_SSL_VERIFYPEER, false);

@@ -11,7 +11,7 @@ TEST_CASE(PREFIX "Adaptive6")
     struct TC {
         uint64_t size;
         NSString *expected;
-    } tcs[] = {
+    } const tcs[] = {
         {.size = 0ull, .expected = @"0 B"},
         {.size = 5ull, .expected = @"5 B"},
         {.size = 20ull, .expected = @"20 B"},
@@ -55,7 +55,7 @@ TEST_CASE(PREFIX "Adaptive8")
     struct TC {
         uint64_t size;
         NSString *expected;
-    } tcs[] = {
+    } const tcs[] = {
         {.size = 0ull, .expected = @"0 B"},
         {.size = 5ull, .expected = @"5 B"},
         {.size = 20ull, .expected = @"20 B"},
@@ -95,7 +95,7 @@ TEST_CASE(PREFIX "Fixed6")
     struct TC {
         uint64_t size;
         NSString *expected;
-    } tcs[] = {
+    } const tcs[] = {
         {.size = 0ull, .expected = @"0"},
         {.size = 999999ull, .expected = @"999999"},
         {.size = 1000000ull, .expected = @"977 K"},
@@ -126,7 +126,7 @@ TEST_CASE(PREFIX "SpaceSeparated")
     struct TC {
         uint64_t size;
         NSString *expected;
-    } tcs[] = {
+    } const tcs[] = {
         {.size = 0ull, .expected = @"0 bytes"},
         {.size = 999ull, .expected = @"999 bytes"},
         {.size = 1'000ull, .expected = @"1 000 bytes"},

@@ -540,6 +540,8 @@ static nc::config::Value EncodePanelsStates(const std::vector<PanelController *>
     const auto encoding_opts = ControllerStateEncoding::EncodeEverything;
     PanelDataPersistency persistency(*NCAppDelegate.me.networkConnectionsManager); // TODO: evil, fix
 
+    // NOLINTBEGIN(misc-const-correctness)
+
     for( PanelController *pc : _left )
         if( auto v = ControllerStateJSONEncoder{pc, persistency}.Encode(encoding_opts); v.GetType() != kNullType )
             left.PushBack(std::move(v), nc::config::g_CrtAllocator);
@@ -547,6 +549,8 @@ static nc::config::Value EncodePanelsStates(const std::vector<PanelController *>
     for( PanelController *pc : _right )
         if( auto v = ControllerStateJSONEncoder{pc, persistency}.Encode(encoding_opts); v.GetType() != kNullType )
             right.PushBack(std::move(v), nc::config::g_CrtAllocator);
+
+    // NOLINTEND(misc-const-correctness)
 
     json.PushBack(std::move(left), nc::config::g_CrtAllocator);
     json.PushBack(std::move(right), nc::config::g_CrtAllocator);

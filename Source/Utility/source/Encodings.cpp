@@ -1333,13 +1333,14 @@ void InterpretUTF8BufferAsIndexedUTF16(const unsigned char *_input,
     //    *_output_buf = 0;
 }
 
-// NOLINTNEXTLINE(misc-const-correctness)
+// NOLINTBEGIN(misc-const-correctness)
 void InterpretUTF16LEBufferAsUniChar(const unsigned char *_input,
                                      size_t _input_size,
                                      unsigned short *_output_buf, // should be at least _input_size/2 16b words long
                                      size_t *_output_sz,          // size of an output
                                      unsigned short _bad_symb     // something like '?' or U+FFFD
 )
+// NOLINTEND(misc-const-correctness)
 {
     const uint16_t *cur = reinterpret_cast<const uint16_t *>(_input);
     const uint16_t *end = cur + (_input_size / sizeof(uint16_t));
@@ -1389,13 +1390,14 @@ void InterpretUTF16LEBufferAsUniChar(const unsigned char *_input,
     *_output_sz = total;
 }
 
-// NOLINTNEXTLINE(misc-const-correctness)
+// NOLINTBEGIN(misc-const-correctness)
 void InterpretUTF16BEBufferAsUniChar(const unsigned char *_input,
                                      size_t _input_size,
                                      unsigned short *_output_buf, // should be at least _input_size/2 16b words long
                                      size_t *_output_sz,          // size of an output
                                      unsigned short _bad_symb     // something like '?' or U+FFFD
 )
+// NOLINTEND(misc-const-correctness)
 {
     const uint16_t *cur = reinterpret_cast<const uint16_t *>(_input);
     const uint16_t *end = cur + (_input_size / sizeof(uint16_t));

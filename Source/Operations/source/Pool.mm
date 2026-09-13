@@ -8,8 +8,7 @@ namespace nc::ops {
 
 std::shared_ptr<Pool> Pool::Make()
 {
-    struct workaround : public Pool {
-    };
+    struct workaround : public Pool {};
     return std::make_shared<workaround>();
 }
 

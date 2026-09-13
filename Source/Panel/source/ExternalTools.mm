@@ -99,8 +99,7 @@ unsigned ExternalToolsParameters::GetMaximumTotalFiles() const
 
 namespace {
 
-struct InterpretInvertFlag {
-};
+struct InterpretInvertFlag {};
 struct SetMaximumFilesFlag {
     unsigned maximum = 0;
 };
